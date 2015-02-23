@@ -367,18 +367,20 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
 	vtkPointData* point_data = grid.GetPointData();
-	if (point_data == nullptr)
-		return;
-	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
-	for (unsigned i=0; i<n_point_arrays; ++i)
-		convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+	if (point_data != nullptr)
+	{
+		unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+		for (unsigned i=0; i<n_point_arrays; ++i)
+			convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+	}
 
 	vtkCellData* cell_data = grid.GetCellData();
-	if (cell_data == nullptr)
-		return;
-	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
-	for (unsigned i=0; i<n_cell_arrays; ++i)
-		convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+	if (cell_data != nullptr)
+	{
+		unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
+		for (unsigned i=0; i<n_cell_arrays; ++i)
+			convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+	}
 }
 
 void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
@@ -390,7 +392,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
 	if (double_array)
 	{
-		boost::optional<MeshLib::PropertyVector<double> &> vec 
+		boost::optional<MeshLib::PropertyVector<double> &> vec
 			(properties.createNewPropertyVector<double>(array_name, type, nComponents));
 		if (!vec)
 			return;
@@ -403,7 +405,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
 	if (int_array)
 	{
-		boost::optional<MeshLib::PropertyVector<int> &> vec 
+		boost::optional<MeshLib::PropertyVector<int> &> vec
 			(properties.createNewPropertyVector<int>(array_name, type, nComponents));
 		if (!vec)
 			return;
