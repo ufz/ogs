@@ -17,20 +17,20 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "FileTools.h"
-#include "RunTime.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 #ifndef WIN32
-#include "MemWatch.h"
+#include "BaseLib/MemWatch.h"
 #endif
-#include "LogogSimpleFormatter.h"
+#include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "FEFLOWInterface.h"
+#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/FEFLOWInterface.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
