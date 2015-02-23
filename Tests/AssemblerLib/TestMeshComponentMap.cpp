@@ -76,8 +76,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByComponent)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    //std::cout << "# database \n" << *cmap << std::endl;
-
     ASSERT_EQ(2 * mesh->getNNodes(), cmap->size());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
@@ -102,8 +100,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByLocation)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_LOCATION);
 
-    //std::cout << "# database \n" << *cmap << std::endl;
-
     ASSERT_EQ(2 * mesh->getNNodes(), cmap->size());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
@@ -125,8 +121,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, OutOfRangeAccess)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    //std::cout << "# database \n" << *cmap << std::endl;
-
     ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
         Location(mesh->getID(), MeshItemType::Node, mesh_size + 1), comp0_id));
     ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
@@ -142,8 +136,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    //std::cout << "# database \n" << *cmap << std::endl;
-
     // Select some nodes from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};
     std::vector<MeshLib::Node*> some_nodes;
@@ -158,7 +150,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
-    //std::cout << "# database \n" << cmap_subset << std::endl;
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.size());
@@ -176,8 +167,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_LOCATION);
 
-    //std::cout << "# database \n" << *cmap << std::endl;
-
     // Select some nodes from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};
     std::vector<MeshLib::Node*> some_nodes;
@@ -192,7 +181,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
 
     // Subset the original cmap.
     MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
-    //std::cout << "# database \n" << cmap_subset << std::endl;
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.size());
