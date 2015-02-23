@@ -127,8 +127,9 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, MeshComponentMap const& m)
     {
-        for (auto l = m._dict.begin(); l != m._dict.end(); ++l)
-            os << *l << "\n";
+        os << "Dictionary size: " << m._dict.size() << "\n";
+        for (auto l : m._dict)
+            os << l << "\n";
         return os;
     }
 #endif  // NDEBUG
