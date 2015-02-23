@@ -62,14 +62,7 @@ public:
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements,
         AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT) const
-    {
-        DBUG("Construct reduced local to global index map.");
-
-        return new LocalToGlobalIndexMap(mesh_subsets, elements,
-            _mesh_component_map.getSubset(mesh_subsets),
-            order);
-    }
+            AssemblerLib::ComponentOrder::BY_COMPONENT) const;
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
@@ -139,32 +132,10 @@ private:
     std::vector<LineIndex> const& _columns = _rows;
 
 #ifndef NDEBUG
-    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
-    {
-        std::size_t const max_lines = 10;
-        std::size_t lines_printed = 0;
-
-        os << "Rows of the local to global index map; " << map._rows.size()
-            << " rows\n";
-        for (auto line : map._rows)
-        {
-            if (lines_printed++ > max_lines)
-            {
-                os << "...";
-                break;
-            }
-
-            os << "{ ";
-            std::copy(line.cbegin(), line.cend(),
-                std::ostream_iterator<std::size_t>(os, " "));
-            os << " }\n";
-        }
-        lines_printed = 0;
-
-        os << "Mesh component map:\n" << map._mesh_component_map;
-        return os;
-    }
+    /// Prints first rows of the table, every line, and the mesh component map.
+    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);
 #endif  // NDEBUG
+
 };
 
 }   // namespace AssemblerLib
