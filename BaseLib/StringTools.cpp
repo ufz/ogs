@@ -14,13 +14,13 @@
 
 #include "StringTools.h"
 
-#include "logog/include/logog.hpp"
-
-#include <boost/property_tree/json_parser.hpp>
-
 #include <algorithm>
 #include <cctype>
 #include <iomanip>
+
+#include "logog/include/logog.hpp"
+
+#include <boost/property_tree/json_parser.hpp>
 
 
 namespace BaseLib
