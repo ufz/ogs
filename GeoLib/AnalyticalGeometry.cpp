@@ -579,5 +579,32 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 	}
 }
 
+GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
+	MathLib::Vector3 & plane_normal)
+{
+	// 1 copy all points
+	std::vector<GeoLib::Point*> *polygon_pnts(new std::vector<GeoLib::Point*>);
+	for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
+		polygon_pnts->push_back (new GeoLib::Point (*(polygon_in.getPoint(k))));
+
+	// 2 rotate points
+	double d_polygon (0.0);
+	GeoLib::getNewellPlane (*polygon_pnts, plane_normal, d_polygon);
+	MathLib::DenseMatrix<double> rot_mat(3,3);
+	GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
+	GeoLib::rotatePoints(rot_mat, *polygon_pnts);
+
+	// 3 set z coord to zero
+	std::for_each(polygon_pnts->begin(), polygon_pnts->end(),
+		[] (GeoLib::Point* p) { (*p)[2] = 0.0; }
+	);
+
+	// 4 create new polygon
+	GeoLib::Polyline rot_polyline(*polygon_pnts);
+	for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
+		rot_polyline.addPoint(k);
+	rot_polyline.addPoint(0);
+	return GeoLib::Polygon(rot_polyline);
+}
 
 } // end namespace GeoLib
