@@ -105,7 +105,7 @@ private:
             std::size_t const nnodes = (*e)->getNNodes();
             vec_items.reserve(nnodes);
 
-            for (std::size_t n = 0; n < nnodes; n++)
+            for (unsigned n = 0; n < nnodes; n++)
             {
                 vec_items.emplace_back(
                     mesh_id,
