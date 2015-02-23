@@ -107,8 +107,8 @@ int main (int argc, char* argv[])
 	logog_cout->SetFormatter(*custom_format);
 
 	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
-		"id iff all nodes of the element are within a polygonal region "
-		"given by a polygon read from a gml file.", ' ', "0.1");
+		"id iff at least one node of the element is within a polygonal region "
+		"that is given by a polygon read from a gml file.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
 		"the name of the file containing the input mesh", true,
 		"", "file name");
