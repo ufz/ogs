@@ -103,8 +103,12 @@ public:
         return _msh.getElements().cend();
     }
 
+    /// Constructs a new mesh subset which is a set intersection of the current
+    /// nodes and the provided vector of nodes.
+    /// An empty mesh subset may be returned, not a nullptr, in case of empty
+    /// intersection or empty input vector.
     MeshSubset*
-    setIntersectionByNodes(std::vector<Node*> const& nodes) const
+    getIntersectionByNodes(std::vector<Node*> const& nodes) const
     {
         std::vector<Node*>* active_nodes = new std::vector<Node*>;
 

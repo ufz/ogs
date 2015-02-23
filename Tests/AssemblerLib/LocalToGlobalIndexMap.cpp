@@ -91,7 +91,7 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
     std::vector<MeshLib::Node*> selected_nodes = MeshLib::selectNodes(some_elements);
 
     MeshLib::MeshSubset const* const selected_subset =
-        nodesSubset->setIntersectionByNodes(selected_nodes);
+        nodesSubset->getIntersectionByNodes(selected_nodes);
     std::vector<MeshLib::MeshSubsets*> selected_components;
     selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
     selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
