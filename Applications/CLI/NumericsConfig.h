@@ -54,27 +54,31 @@ namespace detail
 
 
 //
-// Global executor and vector/matrix builder.
+// Global vector/matrix builder.
 //
-#include "AssemblerLib/SerialExecutor.h"
-#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 
+#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 namespace detail
 {
-using GlobalExecutorType = AssemblerLib::SerialExecutor;
-
 using GlobalVectorMatrixBuilderType =
         AssemblerLib::SerialVectorMatrixBuilder<
             GlobalMatrixType,
             GlobalVectorType>;
 }
 
-
-#include "AssemblerLib/GlobalSetup.h"
+//
+// Global executor
+//
+#include "AssemblerLib/SerialExecutor.h"
+namespace detail
+{
+using GlobalExecutorType = AssemblerLib::SerialExecutor;
+}
 
 ///
 /// Global setup collects the previous configuration in single place.
 ///
+#include "AssemblerLib/GlobalSetup.h"
 using GlobalSetupType =
     AssemblerLib::GlobalSetup<
         detail::GlobalVectorMatrixBuilderType,

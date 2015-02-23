@@ -14,13 +14,9 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-#include "AssemblerLib/SerialDenseVectorMatrixBuilder.h"
+#include "AssemblerLib/SerialVectorMatrixBuilder.h"
 
-#ifdef USE_LIS
-#include "AssemblerLib/SerialLisVectorMatrixBuilder.h"
-#endif  // USE_LIS
-
-template <typename SerialBuilder>
+template <typename Builder>
 class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
 {
     public:
@@ -28,8 +24,8 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
     typedef MeshLib::Location Location;
     typedef AssemblerLib::MeshComponentMap MeshComponentMap;
 
-    typedef typename SerialBuilder::VectorType VectorType;
-    typedef typename SerialBuilder::MatrixType MatrixType;
+    typedef typename Builder::VectorType VectorType;
+    typedef typename Builder::MatrixType MatrixType;
 
     public:
     AssemblerLibSerialVectorMatrixBuilder()
@@ -68,8 +64,8 @@ TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder);
 TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
 {
     typedef typename TestFixture::VectorType V;
-    typedef TypeParam SerialBuilder;
-    V* v = SerialBuilder::createVector(this->cmap->size());
+    typedef TypeParam Builder;
+    V* v = Builder::createVector(this->cmap->size());
 
     ASSERT_TRUE(v != nullptr);
     ASSERT_EQ(this->cmap->size(), v->size());
@@ -80,24 +76,33 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
 TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
 {
     typedef typename TestFixture::MatrixType M;
-    typedef TypeParam SerialBuilder;
-    M* v = SerialBuilder::createMatrix(this->cmap->size());
+    typedef TypeParam Builder;
+    M* m = Builder::createMatrix(this->cmap->size());
 
-    ASSERT_TRUE(v != nullptr);
-    ASSERT_EQ(this->cmap->size(), v->getNRows());
-    ASSERT_EQ(this->cmap->size(), v->getNCols());
+    ASSERT_TRUE(m != nullptr);
+    ASSERT_EQ(this->cmap->size(), m->getNRows());
+    ASSERT_EQ(this->cmap->size(), m->getNCols());
 
-    delete v;
+    delete m;
 }
 
 REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
     createVector, createMatrix);
 
+#include "MathLib/LinAlg/Dense/DenseVector.h"
+#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+
+#ifdef USE_LIS
+#include "MathLib/LinAlg/Lis/LisVector.h"
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
+#endif  // USE_LIS
 
 typedef ::testing::Types
-    < AssemblerLib::SerialDenseVectorMatrixBuilder
+    < AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
 #ifdef USE_LIS
-    , AssemblerLib::SerialLisVectorMatrixBuilder
+    , AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
     > TestTypes;
 
