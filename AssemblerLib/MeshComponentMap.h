@@ -140,7 +140,7 @@ private:
         : _dict(dict)
     { }
 
-    /// Looks up of a line already stored in the dictionary.
+    /// Looks up if a line is already stored in the dictionary.
     /// \attention The line for the location l and component c must exist,
     /// the behaviour is undefined otherwise.
     /// \return a copy of the line.
