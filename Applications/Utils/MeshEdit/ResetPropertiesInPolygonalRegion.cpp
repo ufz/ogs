@@ -3,6 +3,10 @@
  * \brief Reset material properties in meshes in a polygonal region.
  */
 
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
+
 // TCLAP
 #include "tclap/CmdLine.h"
 
@@ -24,6 +28,7 @@
 
 // MathLib
 #include "MathLib/Vector3.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
