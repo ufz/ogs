@@ -18,8 +18,9 @@
 #include <cctype>
 #include <iomanip>
 
-// ThirdParty/logog
 #include "logog/include/logog.hpp"
+
+#include <boost/property_tree/json_parser.hpp>
 
 
 namespace BaseLib
@@ -66,9 +67,9 @@ void simplify(std::string &str)
 {
 	trim (str);
 	str.erase(
-	    std::unique(str.begin(), str.end(), [](char a, char b) { return a == ' ' && b == ' '; }), 
-		str.end() 
-	);  
+	    std::unique(str.begin(), str.end(), [](char a, char b) { return a == ' ' && b == ' '; }),
+		str.end()
+	);
 }
 
 std::string stringToUpper(std::string const& str)
@@ -82,6 +83,13 @@ std::string padLeft(std::string const& str, int maxlen, char ch)
 {
 	std::stringstream ss(str);
 	ss << std::right << std::setw(maxlen) << std::setfill(ch) << str;
+	return ss.str();
+}
+
+std::string propertyTreeToString(boost::property_tree::ptree const& tree)
+{
+	std::ostringstream ss;
+	boost::property_tree::write_json(ss, tree);
 	return ss.str();
 }
 
