@@ -362,15 +362,20 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
 	QDomElement xmlEle = nodesEle.firstChildElement(QString::fromStdString(tag));
 	if (xmlEle.isNull())
 		return;
-	QString str_pt_list1 = xmlEle.text().simplified();
+	QString str_pt_list1 = xmlEle.text();
 	std::istringstream ss(str_pt_list1.toStdString());
+	std::string line_str;
 	while (!ss.eof())
 	{
+		std::getline(ss, line_str);
+		BaseLib::trim(line_str, ' ');
+		if (line_str.empty()) continue;
+		std::istringstream line_ss(line_str);
 		size_t pt_id = 0;
 		double pt_xyz[3] = { };
-		ss >> pt_id;
+		line_ss >> pt_id;
 		for (int i = 0; i < dim; i++)
-			ss >> pt_xyz[i];
+			line_ss >> pt_xyz[i];
 		points[pt_id - 1] = new GeoLib::PointWithID(pt_xyz, pt_id);
 	}
 }
