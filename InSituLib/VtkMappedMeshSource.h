@@ -65,10 +65,8 @@ private:
 	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
 	void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
-	int addDoubleProperty(MeshLib::Properties const& properties,
-	                      std::string const& prop_name) const;
-	int addIntProperty(MeshLib::Properties const& properties,
-	                   std::string const& prop_name) const;
+	template<typename T> bool addProperty(MeshLib::Properties const& properties,
+	                                      std::string const& prop_name) const;
 
 	const MeshLib::Mesh* _mesh;
 
