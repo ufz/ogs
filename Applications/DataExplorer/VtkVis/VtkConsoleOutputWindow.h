@@ -9,8 +9,8 @@
 *
 */
 
-#ifndef VtkConsoleOutputWindow_h
-#define VtkConsoleOutputWindow_h
+#ifndef VTKCONSOLEOUTPUTWINDOW_H_
+#define VTKCONSOLEOUTPUTWINDOW_H_
 
 #include "vtkOutputWindow.h"
 
@@ -35,4 +35,4 @@ private:
 	void operator=(const VtkConsoleOutputWindow &);  // Not implemented.
 };
 
-#endif // VtkConsoleOutputWindow_h
+#endif // VTKCONSOLEOUTPUTWINDOW_H_
