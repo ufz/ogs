@@ -31,7 +31,7 @@ MeshComponentMap::MeshComponentMap(
     std::size_t comp_id = 0;
     for (auto c = components.cbegin(); c != components.cend(); ++c)
     {
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
         {
             MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
@@ -62,7 +62,7 @@ MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components
             comp_id++;
             continue;
         }
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
         {
             MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
