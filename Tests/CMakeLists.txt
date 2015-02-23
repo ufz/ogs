@@ -94,7 +94,7 @@ if(OGS_USE_PETSC)
 		DEPENDS testrunner
 	)
 	add_custom_target(tests_mpi
-		mpirun -np 3 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS}  --gtest_filter=MPITest*
+		mpirun -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
 		DEPENDS testrunner
 	)
 else()
