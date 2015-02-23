@@ -102,7 +102,7 @@ public:
 
 	/// Resets the IDs of all mesh-elements to their position in the element vector
 	void resetElementIDs();
-	
+
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
 
@@ -124,6 +124,7 @@ public:
 	MeshLib::Properties & getProperties() { return _properties; }
 	MeshLib::Properties const& getProperties() const { return _properties; }
 
+	/// Updates the property vector "MaterialIDs" with the values from the elements
 	void updateMaterialGroups();
 
 protected:
