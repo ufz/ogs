@@ -31,7 +31,7 @@ MeshComponentMap::MeshComponentMap(
     std::size_t comp_id = 0;
     for (auto c = components.cbegin(); c != components.cend(); ++c)
     {
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
         {
             MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
@@ -46,6 +46,39 @@ MeshComponentMap::MeshComponentMap(
 
     if (order == ComponentOrder::BY_LOCATION)
         renumberByLocation();
+}
+
+MeshComponentMap
+MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components) const
+{
+    // New dictionary for the subset.
+    ComponentGlobalIndexDict subset_dict;
+
+    std::size_t comp_id = 0;
+    for (auto c : components)
+    {
+        if (c == nullptr)   // Empty component
+        {
+            comp_id++;
+            continue;
+        }
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
+        {
+            MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
+            std::size_t const mesh_id = mesh_subset.getMeshID();
+            // Lookup the locations in the current mesh component map and
+            // insert the full lines into the subset dictionary.
+            for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
+                subset_dict.insert(getLine(Location(mesh_id,
+                    MeshLib::MeshItemType::Node, mesh_subset.getNodeID(j)), comp_id));
+            for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
+                subset_dict.insert(getLine(Location(mesh_id,
+                    MeshLib::MeshItemType::Cell, mesh_subset.getElementID(j)), comp_id));
+        }
+        comp_id++;
+    }
+
+    return MeshComponentMap(subset_dict);
 }
 
 void MeshComponentMap::renumberByLocation(std::size_t offset)
@@ -71,11 +104,20 @@ std::vector<std::size_t> MeshComponentMap::getComponentIDs(const Location &l) co
     return vec_compID;
 }
 
-std::size_t MeshComponentMap::getGlobalIndex(Location const& l,
-    std::size_t const c) const
+Line MeshComponentMap::getLine(Location const& l,
+    std::size_t const comp_id) const
 {
     auto const &m = _dict.get<ByLocationAndComponent>();
-    auto const itr = m.find(Line(l, c));
+    auto const itr = m.find(Line(l, comp_id));
+    assert(itr != m.end());     // The line must exist in the current dictionary.
+    return *itr;
+}
+
+std::size_t MeshComponentMap::getGlobalIndex(Location const& l,
+    std::size_t const comp_id) const
+{
+    auto const &m = _dict.get<ByLocationAndComponent>();
+    auto const itr = m.find(Line(l, comp_id));
     return itr!=m.end() ? itr->global_index : nop;
 }
 

@@ -18,6 +18,7 @@ namespace MeshLib
 // forward declarations
 class Mesh;
 class Element;
+class Node;
 
 /**
  * get a vector of elements connected to given nodes
@@ -33,6 +34,9 @@ std::vector<std::size_t> getConnectedElementIDs(MeshLib::Mesh const& msh, const 
  * @return a vector of node ID
  */
 std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*> &elements);
+
+/// Create a vector of unique nodes used by given elements.
+std::vector<Node*> selectNodes(std::vector<Element*> const& elements);
 
 } // end namespace MeshLib
 

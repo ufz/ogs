@@ -10,6 +10,10 @@
 #ifndef ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
 #define ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
 
+#ifndef NDEBUG
+#include <iostream>
+#endif  // NDEBUG
+
 #include <vector>
 
 #include "AssemblerLib/MeshComponentMap.h"
@@ -53,6 +57,16 @@ public:
         AssemblerLib::ComponentOrder const order =
             AssemblerLib::ComponentOrder::BY_COMPONENT);
 
+    /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
+    /// elements. A new mesh component map will be constructed using the passed
+    /// mesh_subsets.
+    ///
+    /// \note The elements are not necessary those used in the mesh_subsets.
+    LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<MeshLib::Element*> const& elements,
+        AssemblerLib::ComponentOrder const order =
+            AssemblerLib::ComponentOrder::BY_COMPONENT) const;
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
@@ -65,6 +79,18 @@ public:
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
 private:
+
+    /// Private constructor used by internally created local-to-global index
+    /// maps. The mesh_component_map is passed as argument instead of being
+    /// created by the constructor.
+    /// \attention The passed mesh_component_map is in undefined state after
+    /// this construtor.
+    explicit LocalToGlobalIndexMap(
+        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<MeshLib::Element*> const& elements,
+        AssemblerLib::MeshComponentMap&& mesh_component_map,
+        AssemblerLib::ComponentOrder const order);
+
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,
@@ -78,7 +104,7 @@ private:
             std::size_t const nnodes = (*e)->getNNodes();
             vec_items.reserve(nnodes);
 
-            for (std::size_t n = 0; n < nnodes; n++)
+            for (unsigned n = 0; n < nnodes; n++)
             {
                 vec_items.emplace_back(
                     mesh_id,
@@ -110,6 +136,12 @@ private:
     /// For non-parallel implementations the columns are equal to the rows.
     /// \todo This is to be overriden by any parallel implementation.
     std::vector<LineIndex> const& _columns = _rows;
+
+#ifndef NDEBUG
+    /// Prints first rows of the table, every line, and the mesh component map.
+    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);
+#endif  // NDEBUG
+
 };
 
 }   // namespace AssemblerLib

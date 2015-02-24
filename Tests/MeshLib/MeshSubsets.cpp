@@ -8,8 +8,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
-#include "MeshSubsets.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSubsets.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 using namespace MeshLib;
 
@@ -30,5 +31,30 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
 	EXPECT_NO_THROW(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 2));
 	EXPECT_THROW(MeshSubsets(&mesh_subsets[1], &mesh_subsets[1] + 2), std::logic_error);
 	EXPECT_THROW(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 3), std::logic_error);
+}
+
+
+TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
+{
+	Mesh const* const mesh = MeshGenerator::generateLineMesh(1., 10);
+	MeshSubset all_nodes_mesh_subset(*mesh, mesh->getNodes());
+
+	// Select nodes
+	std::vector<Node*> some_nodes;
+	some_nodes.assign({
+		const_cast<Node*>(mesh->getNode(0)),
+		const_cast<Node*>(mesh->getNode(2)),
+		const_cast<Node*>(mesh->getNode(5)),
+		const_cast<Node*>(mesh->getNode(7)) });
+	MeshSubset const* const some_nodes_mesh_subset =
+		all_nodes_mesh_subset.getIntersectionByNodes(some_nodes);
+
+	// Check sizes.
+	ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNNodes());
+
+	// Check ids.
+	std::size_t nnodes = some_nodes.size();
+	for (std::size_t i = 0; i < nnodes; ++i)
+		ASSERT_EQ(some_nodes[i]->getID(), some_nodes_mesh_subset->getNodeID(i));
 }
 

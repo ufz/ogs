@@ -45,6 +45,11 @@ public:
     MeshComponentMap(std::vector<MeshLib::MeshSubsets*> const& components,
         ComponentOrder order);
 
+    /// Creates a subset of the current mesh component map.
+    /// The order of components is the same as of the current map.
+    MeshComponentMap getSubset(
+        std::vector<MeshLib::MeshSubsets*> const& components) const;
+
     /// The number of components in the map.
     std::size_t size() const
     {
@@ -60,12 +65,12 @@ public:
     /// | l        | comp_id_n   |
     std::vector<std::size_t> getComponentIDs(const Location &l) const;
 
-    /// Global index of the given component \c c at given location \c l.
+    /// Global index of the given component id at given location \c l.
     ///
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
-    /// | l        | c           | gi          |
-    std::size_t getGlobalIndex(Location const &l, std::size_t const c) const;
+    /// | l        | comp_id     | gi          |
+    std::size_t getGlobalIndex(Location const &l, std::size_t const comp_id) const;
 
     /// Global indices for all components at the given location \c l.
     ///
@@ -122,13 +127,25 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, MeshComponentMap const& m)
     {
-        for (auto l = m._dict.begin(); l != m._dict.end(); ++l)
-            os << *l << "\n";
+        os << "Dictionary size: " << m._dict.size() << "\n";
+        for (auto l : m._dict)
+            os << l << "\n";
         return os;
     }
 #endif  // NDEBUG
 
 private:
+    /// Private constructor used by internally created mesh component maps.
+    MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
+        : _dict(dict)
+    { }
+
+    /// Looks up if a line is already stored in the dictionary.
+    /// \attention The line for the location l and component id must exist,
+    /// the behaviour is undefined otherwise.
+    /// \return a copy of the line.
+    detail::Line getLine(Location const& l, std::size_t const component_id) const;
+
     void renumberByLocation(std::size_t offset=0);
 
 private:
