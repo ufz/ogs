@@ -57,7 +57,11 @@ public:
         AssemblerLib::ComponentOrder const order =
             AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    // The elements are not necessary those used in the mesh_subsets.
+    /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
+    /// elements. A new mesh component map will be constructed using the passed
+    /// mesh_subsets.
+    ///
+    /// \note The elements are not necessary those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements,
