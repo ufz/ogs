@@ -76,6 +76,6 @@ private:
 	std::vector<BoundaryElementsOnSurface*> _boundary_elements_along_surfaces;
 };
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 
 #endif /* BOUNDARYELEMENTSSEARCHER_H_ */

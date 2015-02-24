@@ -29,11 +29,6 @@ namespace MeshLib
 class Mesh;
 }
 
-namespace MeshGeoTools
-{
-class MeshNodesAlongPolyline;
-}
-
 namespace NumLib
 {
 /**

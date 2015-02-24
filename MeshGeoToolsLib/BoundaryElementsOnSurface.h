@@ -64,6 +64,6 @@ private:
 	std::vector<MeshLib::Element*> _boundary_elements;
 };
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 
 #endif /* BOUNDARYELEMENTSONSURFACE_H_ */

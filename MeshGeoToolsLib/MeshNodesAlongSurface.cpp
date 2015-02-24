@@ -55,4 +55,4 @@ GeoLib::Surface const& MeshNodesAlongSurface::getSurface () const
 	return _sfc;
 }
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib

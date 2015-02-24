@@ -78,7 +78,7 @@ public:
 	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
 	 * The search for mesh nodes along a specific polyline will be performed
 	 * only once. The result ids will be stored inside an object
-	 * (@see class MeshGeoTools::MeshNodesAlongPolyline).
+	 * (@see class MeshGeoToolsLib::MeshNodesAlongPolyline).
 	 * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
 	 * @return a vector of mesh node ids
 	 */
@@ -88,7 +88,7 @@ public:
 	 * Searches for the nearest mesh nodes along a GeoLib::Surface.
 	 * The search for mesh nodes along a specific surface will be performed
 	 * only once. The result ids will be stored inside an object
-	 * (@see class MeshGeoTools::MeshNodesAlongSurface).
+	 * (@see class MeshGeoToolsLib::MeshNodesAlongSurface).
 	 * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
 	 * @return a vector of mesh node ids
 	 */
@@ -127,6 +127,6 @@ private:
 	static std::vector<std::unique_ptr<MeshNodeSearcher>> _mesh_node_searchers;
 };
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 
 #endif /* MESHNODESEARCHER_H_ */

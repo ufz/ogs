@@ -80,5 +80,5 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 	return _boundary_elements_along_surfaces.back()->getBoundaryElements();
 }
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 

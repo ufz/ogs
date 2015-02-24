@@ -139,4 +139,4 @@ MeshNodeSearcher::getMeshNodeSearcher(MeshLib::Mesh const& mesh)
 	return *_mesh_node_searchers[mesh_id];
 }
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib

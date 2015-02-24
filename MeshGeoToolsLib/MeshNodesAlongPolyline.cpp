@@ -65,4 +65,4 @@ std::vector<double> const& MeshNodesAlongPolyline::getDistOfProjNodeFromPlyStart
 {
 	return _dist_of_proj_node_from_ply_start;
 }
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
