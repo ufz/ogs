@@ -112,6 +112,17 @@ target_link_libraries (reviseMesh
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(reviseMesh)
+set_target_properties(reviseMesh
+	PROPERTIES FOLDER Utilities)
 
-set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
+add_executable(ResetPropertiesInPolygonalRegion
+	ResetPropertiesInPolygonalRegion.cpp )
+target_link_libraries(ResetPropertiesInPolygonalRegion
+	FileIO
+	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
 
+set_target_properties(ResetPropertiesInPolygonalRegion
+	PROPERTIES FOLDER Utilities)

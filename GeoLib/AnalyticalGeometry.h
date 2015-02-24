@@ -20,7 +20,7 @@
 
 #include "Triangle.h"
 #include "PointVec.h"
-
+#include "Polygon.h"
 
 namespace GeoLib
 {
@@ -280,6 +280,19 @@ double orientation3d(MathLib::Point3d const& p,
 void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
     std::vector<GeoLib::Polyline*> & plys);
 
+/**
+ * Function rotates a polygon to the xy plane. For this reason, (1) the points of
+ * the given polygon are copied, (2) a so called Newell plane is computed
+ * (getNewellPlane()) and the points are rotated, (3) for security the
+ * \f$z\f$ coordinates of the rotated points are set to zero and finally, (4) a
+ * new polygon is constructed using the rotated points.
+ * \see getNewellPlane()
+ * @param polygon_in a copy of the polygon_in polygon will be rotated
+ * @param plane_normal the normal of the original Newell plane
+ * @return a rotated polygon
+ */
+GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
+	MathLib::Vector3 & plane_normal);
 
 } // end namespace GeoLib
 
