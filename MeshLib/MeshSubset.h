@@ -13,6 +13,7 @@
 #ifndef MESHSUBSET_H_
 #define MESHSUBSET_H_
 
+#include <cassert>
 #include <vector>
 
 #include "Mesh.h"
@@ -65,13 +66,10 @@ public:
 
     /// Returns the global node id Node::getID() of i-th node in the mesh
     /// subset.
-    /// Throws std::out_of_range exception if there are no nodes available.
+    /// \pre The _nodes must be a valid pointer to a vector of size > i.
     std::size_t getNodeID(std::size_t const i) const
     {
-        if (!_nodes)
-            throw std::out_of_range(
-                "In MeshSubset::getNodeID(): no nodes or nodes are empty.");
-
+        assert(_nodes && i < _nodes->size());
         return (*_nodes)[i]->getID();
     }
 
@@ -83,13 +81,10 @@ public:
 
     /// Returns the global element id Element::getID() of i-th element in the
     /// mesh subset.
-    /// Throws std::out_of_range exception if there are no nodes available.
+    /// \pre The _eles must be a valid pointer to a vector of size > i.
     std::size_t getElementID(std::size_t const i) const
     {
-        if (!_eles)
-            throw std::out_of_range(
-                "In MeshSubset::getElementID(): no elements or elements are empty.");
-
+        assert(_eles && i < _eles->size());
         return (*_eles)[i]->getID();
     }
 
