@@ -83,10 +83,12 @@ private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being
     /// created by the constructor.
+    /// \attention The passed mesh_component_map is in undefined state after
+    /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements,
-        AssemblerLib::MeshComponentMap const& mesh_component_map,
+        AssemblerLib::MeshComponentMap&& mesh_component_map,
         AssemblerLib::ComponentOrder const order);
 
     template <typename ElementIterator>

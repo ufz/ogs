@@ -38,9 +38,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
     std::vector<MeshLib::Element*> const& elements,
-    AssemblerLib::MeshComponentMap const& mesh_component_map,
+    AssemblerLib::MeshComponentMap&& mesh_component_map,
     AssemblerLib::ComponentOrder const order)
-    : _mesh_subsets(mesh_subsets), _mesh_component_map(mesh_component_map)
+    : _mesh_subsets(mesh_subsets), _mesh_component_map(std::move(mesh_component_map))
 {
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
