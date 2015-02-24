@@ -125,7 +125,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // solve x=A^-1 rhs
     //--------------------------------------------------------------------------
-    typename GlobalSetup::LinearSolver ls(*A);
+    GlobalSetup::LinearSolver ls(*A);
     ls.solve(*rhs, *x);
 
     // copy solution to double vector
