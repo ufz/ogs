@@ -65,12 +65,12 @@ public:
     /// | l        | comp_id_n   |
     std::vector<std::size_t> getComponentIDs(const Location &l) const;
 
-    /// Global index of the given component \c c at given location \c l.
+    /// Global index of the given component id at given location \c l.
     ///
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
-    /// | l        | c           | gi          |
-    std::size_t getGlobalIndex(Location const &l, std::size_t const c) const;
+    /// | l        | comp_id     | gi          |
+    std::size_t getGlobalIndex(Location const &l, std::size_t const comp_id) const;
 
     /// Global indices for all components at the given location \c l.
     ///
@@ -141,10 +141,10 @@ private:
     { }
 
     /// Looks up if a line is already stored in the dictionary.
-    /// \attention The line for the location l and component c must exist,
+    /// \attention The line for the location l and component id must exist,
     /// the behaviour is undefined otherwise.
     /// \return a copy of the line.
-    detail::Line getLine(Location const& l, std::size_t const c) const;
+    detail::Line getLine(Location const& l, std::size_t const component_id) const;
 
     void renumberByLocation(std::size_t offset=0);
 
