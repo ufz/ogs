@@ -17,20 +17,21 @@
 #include "logog/include/logog.hpp"
 
 // BaseLib
-#include "FileTools.h"
-#include "RunTime.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 #ifndef WIN32
-#include "MemWatch.h"
+#include "BaseLib/MemWatch.h"
 #endif
-#include "LogogSimpleFormatter.h"
+#include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "FEFLOWInterface.h"
+#include "FileIO/writeMeshToFile.h"
+#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/FEFLOWInterface.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
@@ -85,20 +86,9 @@ int main (int argc, char* argv[])
 
 	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
+	INFO("Writing %s.", ogs_mesh_fname.c_str());
+	FileIO::writeMeshToFile(*mesh, ogs_mesh_fname);
 
-	if (BaseLib::getFileExtension(ogs_mesh_fname).compare("msh") == 0) {
-		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		FileIO::Legacy::MeshIO mesh_io;
-		mesh_io.setMesh(mesh);
-		mesh_io.writeToFile(ogs_mesh_fname);
-	} else {
-		if (BaseLib::getFileExtension(ogs_mesh_fname).compare("vtu") != 0) {
-			ogs_mesh_fname += ".vtu";
-		}
-		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		FileIO::VtuInterface mesh_io(mesh);
-		mesh_io.writeToFile(ogs_mesh_fname);
-	}
 	INFO("\tDone.");
 
 	delete mesh;
