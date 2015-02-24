@@ -1,4 +1,5 @@
 include(packaging/PackagingMacros)
+include(packaging/ArchiveTestdata)
 
 #### Packaging setup ####
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
