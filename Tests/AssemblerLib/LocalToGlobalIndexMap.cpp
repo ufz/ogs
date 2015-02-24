@@ -14,7 +14,7 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "MeshLib/ComponentSelector.h"
+#include "MeshLib/MeshSearcher.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
 
