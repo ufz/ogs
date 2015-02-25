@@ -105,7 +105,10 @@ int main(int argc, char *argv[])
 
 	GeoLib::SurfaceVec* sfc_vec (geo_objects.getSurfaceVecObj(geo_names[0]));
 	if (sfc_vec == nullptr)
+	{
 		geo_objects.addSurfaceVec(new_sfc, geo_names[0]);
+		sfc_vec = geo_objects.getSurfaceVecObj(geo_names[0]);
+	}
 	else
 		geo_objects.appendSurfaceVec(*new_sfc, geo_names[0]);
 	std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
