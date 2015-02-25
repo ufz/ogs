@@ -94,6 +94,9 @@ public:
 	/// \brief Enables / disables backface culling on all actors.
 	void setGlobalBackfaceCulling(bool enable) const;
 
+	/// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
+	void checkMeshQuality(VtkMeshSource* mesh, MeshQualityType t);
+
 public slots:
 	/// \brief Adds the given Model to the pipeline.
 	void addPipelineItem(MshModel* model, const QModelIndex &idx);
@@ -112,9 +115,6 @@ public slots:
 	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
 	/// vtkAlgorithms) from the pipeline.
 	void removePipelineItem(QModelIndex index);
-
-	/// Checks the quality of a mesh and cal a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh, MeshQualityType t);
 
 	/// Applies a VtkCompositeGeoObjectFilter to add a specific index of the given geometry-source to the pipeline for highlighted display in the render window.
 	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);

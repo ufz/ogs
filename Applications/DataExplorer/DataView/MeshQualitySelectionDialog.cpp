@@ -12,12 +12,12 @@
  *
  */
 
-#include "MshQualitySelectionDialog.h"
+#include "MeshQualitySelectionDialog.h"
 #include "VtkMeshSource.h"
 
 /// Constructor
-MshQualitySelectionDialog::MshQualitySelectionDialog(VtkMeshSource* msh, QDialog* parent)
-	: QDialog(parent), _msh(msh)
+MshQualitySelectionDialog::MshQualitySelectionDialog(QDialog* parent)
+: QDialog(parent), _metric (MeshQualityType::EDGERATIO)
 {
 	setupUi(this);
 	this->choiceEdges->toggle();
@@ -30,22 +30,20 @@ MshQualitySelectionDialog::~MshQualitySelectionDialog()
 /// Instructions if the OK-Button has been pressed.
 void MshQualitySelectionDialog::accept()
 {
-    MeshQualityType t;
-    if (this->choiceEdges->isChecked())
-        t = MeshQualityType::EDGERATIO;
-    else if (this->choiceArea->isChecked())
-        t = MeshQualityType::AREA;
-    else if (this->choiceVolume->isChecked())
-        t = MeshQualityType::VOLUME;
-    else if (this->choiceAngles->isChecked())
-        t = MeshQualityType::EQUIANGLESKEW;
-    else if (this->choiceRadius->isChecked())
-        t = MeshQualityType::RADIUSEDGERATIO;
-    else
-        t = MeshQualityType::INVALID;
+	if (this->choiceEdges->isChecked())
+		_metric = MeshQualityType::EDGERATIO;
+	else if (this->choiceArea->isChecked())
+		_metric = MeshQualityType::AREA;
+	else if (this->choiceVolume->isChecked())
+		_metric = MeshQualityType::VOLUME;
+	else if (this->choiceAngles->isChecked())
+		_metric = MeshQualityType::EQUIANGLESKEW;
+	else if (this->choiceRadius->isChecked())
+		_metric = MeshQualityType::RADIUSEDGERATIO;
+	else
+		_metric = MeshQualityType::INVALID;
 
-    emit measureSelected(_msh, t);
-    this->done(QDialog::Accepted);
+	this->done(QDialog::Accepted);
 }
 
 /// Instructions if the Cancel-Button has been pressed.

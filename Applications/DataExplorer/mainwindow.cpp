@@ -42,7 +42,7 @@
 #include "MergeGeometriesDialog.h"
 #include "MeshAnalysisDialog.h"
 #include "MeshElementRemovalDialog.h"
-#include "MshQualitySelectionDialog.h"
+#include "MeshQualitySelectionDialog.h"
 #include "NetCdfConfigureDialog.h"
 #include "SetNameDialog.h"
 #include "VisPrefsDialog.h"
@@ -1048,10 +1048,9 @@ void MainWindow::showMergeGeometriesDialog()
 
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
-	MshQualitySelectionDialog dlg(mshSource);
-	connect(&dlg, SIGNAL(measureSelected(VtkMeshSource *, MeshQualityType)),
-	        _vtkVisPipeline, SLOT(checkMeshQuality(VtkMeshSource *, MeshQualityType)));
+	MshQualitySelectionDialog dlg;
 	dlg.exec();
+	_vtkVisPipeline->checkMeshQuality(mshSource, dlg.getSelectedMetric());
 }
 
 void MainWindow::showVisalizationPrefsDialog()
