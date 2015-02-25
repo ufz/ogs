@@ -10,6 +10,7 @@
 #include "VtkConsoleOutputWindow.h"
 
 #include <string>
+#include <ostream>
 
 #include "vtkObjectFactory.h"
 #ifdef WIN32
@@ -44,40 +45,10 @@ void VtkConsoleOutputWindow::DisplayText(const char* someText)
 		(someTextString.find("Invalid framebuffer operation") != std::string::npos))
 		return;
 
-	// Create a buffer big enough to hold the entire text
-	char* buffer = new char[strlen(someText)+1];
-	// Start at the beginning
-	const char* NewLinePos = someText;
-	while(NewLinePos)
-	{
-		int len = 0;
-		// Find the next new line in text
-		NewLinePos = strchr(someText, '\n');
-		// if no new line is found then just add the text
-		if(NewLinePos == 0)
-		{
 #ifdef WIN32
-			OutputDebugString(someText);
+	OutputDebugString(someTextString.c_str());
 #endif
-			cerr << someText;
-		}
-		// if a new line is found copy it to the buffer
-		// and add the buffer with a control new line
-		else
-		{
-			len = NewLinePos - someText;
-			strncpy(buffer, someText, len);
-			buffer[len] = 0;
-			someText = NewLinePos+1;
-#ifdef WIN32
-			OutputDebugString(buffer);
-			OutputDebugString("\r\n");
-#endif
-			cerr << buffer;
-			cerr << "\r\n";
-		}
-	}
-	delete [] buffer;
+	std::cerr << someText;
 }
 
 //----------------------------------------------------------------------------

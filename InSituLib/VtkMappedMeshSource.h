@@ -40,6 +40,8 @@ namespace MeshLib {
 
 namespace InSituLib {
 
+/// Adapter which maps a MeshLib::Mesh to a vtkUnstructuredGridAlgorithm.
+/// Allows for zero-copy access of the mesh from the visualization side.
 class VtkMappedMeshSource : public vtkUnstructuredGridAlgorithm
 {
 public:
@@ -47,7 +49,10 @@ public:
 	vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
 	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
+	/// Sets the mesh. Calling is mandatory.
 	void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
+
+	/// Returns the mesh.
 	const MeshLib::Mesh* GetMesh() const { return _mesh; }
 
 protected:
@@ -65,6 +70,10 @@ private:
 	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
 	void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
+	/// Adds a zero-copy array (InSituLib::VtkMappedPropertyVectorTemplate) as
+	/// either point or cell data to the mesh.
+	/// \param properties Usually MeshLib::Mesh::getProperties()
+	/// \param prop_name The name of the property vector.
 	template<typename T> bool addProperty(MeshLib::Properties const& properties,
 	                                      std::string const& prop_name) const;
 
@@ -72,8 +81,6 @@ private:
 
 	int NumberOfDimensions;
 	int NumberOfNodes;
-	std::vector<std::string> NodalVariableNames;
-	std::vector<std::string> ElementVariableNames;
 
 	vtkNew<vtkPoints> Points;
 	vtkNew<vtkPointData> PointData;
