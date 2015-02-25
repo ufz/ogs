@@ -146,19 +146,11 @@ public:
 		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
-		if (it != _properties.end()) {
-			try {
-				return boost::optional<PropertyVector<T> const&>(
-						boost::any_cast<PropertyVector<T> const&>(it->second)
-					);
-			} catch (boost::bad_any_cast const&) {
-				ERR("A property with the specified data type is not available.");
-				return boost::optional<PropertyVector<T> const&>();
-			}
-		} else {
+		if (it == _properties.end()) {
 			ERR("A property with the specified name is not available.");
 			return boost::optional<PropertyVector<T> const&>();
 		}
+
 		PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
 		if (!t) {
 			ERR("Could not downcast PropertyVectorBase.");
