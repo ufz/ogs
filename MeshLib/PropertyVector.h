@@ -131,6 +131,7 @@ protected:
 	std::string const _property_name;
 
 private:
+	T* at(std::size_t);
 	std::vector<std::size_t> _item2group_mapping;
 };
 
