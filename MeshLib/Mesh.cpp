@@ -285,7 +285,7 @@ void Mesh::updateMaterialGroups()
 		return;
 	}
 	for (std::size_t i=0; i<nElements; ++i)
-		materials->at(i) = _elements[i]->getValue();
+		(*materials)[i] = _elements[i]->getValue();
 }
 
 }

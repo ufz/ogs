@@ -72,8 +72,8 @@ private:
 
 	/// Adds a zero-copy array (InSituLib::VtkMappedPropertyVectorTemplate) as
 	/// either point or cell data to the mesh.
-	/// \param properties Usually MeshLib::Mesh::getProperties()
-	/// \param prop_name The name of the property vector.
+	/// \param properties MeshLib::Properties object
+	/// \param prop_name The name of the property vector to be mapped from vtk-mesh to ogs-mesh.
 	template<typename T> bool addProperty(MeshLib::Properties const& properties,
 	                                      std::string const& prop_name) const;
 
