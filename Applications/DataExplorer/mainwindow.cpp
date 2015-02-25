@@ -885,15 +885,6 @@ void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
-
-void MainWindow::showFileConverter() const
-{
-	OGSFileConverter* dlg = new OGSFileConverter();
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->show();
-	dlg->raise();
-}
-
 void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                           unsigned param1, double param2, double param3, double param4,
                           bool delete_geo_file)
@@ -968,6 +959,14 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 	QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::showFileConverter() const
+{
+	OGSFileConverter* dlg = new OGSFileConverter();
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->show();
+	dlg->raise();
+}
+
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
@@ -999,23 +998,16 @@ void MainWindow::showDiagramPrefsDialog()
 		prefs->show();
 	}
 }
-/* TODO6
-void MainWindow::showFileConverterDialog()
-{
-	OGSFileConverter dlg;
-	dlg.exec();
-}
-*/
+
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id)
 {
 	std::string old_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
-	SetNameDialog dlg(geometry_name, GeoLib::convertGeoTypeToString(object_type), id, old_name);
-	connect(&dlg, SIGNAL(requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)),
-			dynamic_cast<GEOModels*>(_project.getGEOObjects()), SLOT(addNameForElement(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string)));
+	SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id, old_name);
 	dlg.exec();
 
+	static_cast<GEOModels*>(_project.getGEOObjects())->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
-		id,	this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
+		id, this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
 }
 
 void MainWindow::showMeshElementRemovalDialog()

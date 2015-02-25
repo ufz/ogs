@@ -20,10 +20,11 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 
-SetNameDialog::SetNameDialog(const std::string &parent_name, const std::string &object_type_name, size_t id, const std::string &old_name = "", QDialog* parent) :
-	QDialog(parent), _parent_name(parent_name), _object_type_name(object_type_name), _id(id)
+SetNameDialog::SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name = "", QDialog* parent) 
+:QDialog(parent)
 {
-	setupDialog(old_name);
+	QString const& label = QString::fromStdString(geo_object_type) + "#" + QString::number(id);
+	setupDialog(label, old_name);
 	show();
 }
 
@@ -35,12 +36,11 @@ SetNameDialog::~SetNameDialog()
 	delete _txt_label;
 }
 
-void SetNameDialog::setupDialog(const std::string &old_name)
+void SetNameDialog::setupDialog(const QString &label, const std::string &old_name)
 {
 	_layout = new QVBoxLayout(this);
-	QString dialog_text("Please enter a name for " + QString::fromStdString(_object_type_name) + " #" + QString::number(_id));
-	_txt_label = new QLabel(this);
-	_txt_label->setText(dialog_text);
+	QString dialog_text("Please enter a name for " + label);
+	_txt_label = new QLabel(dialog_text, this);
 	_new_name = new QLineEdit(QString::fromStdString(old_name));
 
 	setWindowTitle("Set name...");
@@ -54,9 +54,13 @@ void SetNameDialog::setupDialog(const std::string &old_name)
 	setLayout(_layout);
 }
 
+std::string SetNameDialog::getNewName() 
+{
+	return _new_name->text().toStdString(); 
+}
+
 void SetNameDialog::accept()
 {
-	emit requestNameChange(_parent_name, GeoLib::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
 	this->done(QDialog::Accepted);
 }
 
