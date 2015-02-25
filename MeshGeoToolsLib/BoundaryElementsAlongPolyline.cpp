@@ -97,5 +97,5 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(const Me
 	return new_edge;
 }
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 

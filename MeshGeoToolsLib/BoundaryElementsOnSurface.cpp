@@ -58,5 +58,5 @@ BoundaryElementsOnSurface::~BoundaryElementsOnSurface()
 		delete p;
 }
 
-} // end namespace MeshGeoTools
+} // end namespace MeshGeoToolsLib
 
