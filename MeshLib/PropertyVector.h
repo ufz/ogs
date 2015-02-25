@@ -40,7 +40,7 @@ protected:
 	/// nodes or cells (see enumeration @MeshItemType) (default:
 	/// MeshItemType::Cell)
 	/// @param tuple_size the number of elements of a tuple (default: 1)
-	PropertyVector(std::string const& property_name,
+	explicit PropertyVector(std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
 		std::size_t tuple_size = 1)
 		: std::vector<PROP_VAL_TYPE>(), _tuple_size(tuple_size),
@@ -55,7 +55,7 @@ protected:
 	/// nodes or cells (see enumeration @MeshItemType) (default:
 	/// MeshItemType::Cell)
 	/// @param tuple_size the number of elements of a tuple (default: 1)
-	explicit PropertyVector(std::size_t n_property_values,
+	PropertyVector(std::size_t n_property_values,
 		std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
 		std::size_t tuple_size = 1)
