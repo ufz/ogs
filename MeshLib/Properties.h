@@ -144,16 +144,16 @@ public:
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
 		);
-		if (it != _properties.end()) {
-			try {
-				return boost::optional<PropertyVector<T> const&>(
-						boost::any_cast<PropertyVector<T> const&>(it->second)
-					);
-			} catch (boost::bad_any_cast const&) {
-				return boost::optional<PropertyVector<T> const&>();
-			}
-		} else {
+		if (it == _properties.end()) {
 			ERR("A property with the specified name is not available.");
+			return boost::optional<PropertyVector<T> const&>();
+		}
+
+		try {
+			return boost::optional<PropertyVector<T> const&>(
+					boost::any_cast<PropertyVector<T> const&>(it->second)
+				);
+		} catch (boost::bad_any_cast const&) {
 			return boost::optional<PropertyVector<T> const&>();
 		}
 	}
@@ -166,16 +166,16 @@ public:
 		std::map<std::string, boost::any>::iterator it(
 			_properties.find(name)
 		);
-		if (it != _properties.end()) {
-			try {
-				return boost::optional<PropertyVector<T>&>(
-						boost::any_cast<PropertyVector<T>&>(it->second)
-					);
-			} catch (boost::bad_any_cast &) {
-				return boost::optional<PropertyVector<T>&>();
-			}
-		} else {
+		if (it == _properties.end()) {
 			ERR("A property with the specified name is not available.");
+			return boost::optional<PropertyVector<T>&>();
+		}
+
+		try {
+			return boost::optional<PropertyVector<T>&>(
+					boost::any_cast<PropertyVector<T>&>(it->second)
+				);
+		} catch (boost::bad_any_cast &) {
 			return boost::optional<PropertyVector<T>&>();
 		}
 	}
