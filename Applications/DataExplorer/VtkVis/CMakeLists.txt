@@ -5,6 +5,7 @@ set(SOURCES
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
+	VtkAlgorithmProperties.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
@@ -24,6 +25,7 @@ set(SOURCES
 	VtkCompositePointToGlyphFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConsoleOutputWindow.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
@@ -40,8 +42,6 @@ set(SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
-	VtkAlgorithmProperties.cpp
-	VtkConsoleOutputWindow.cpp
 )
 
 # Moc headers
@@ -58,6 +58,40 @@ set(MOC_HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
+)
+
+# Header files
+set(HEADERS
+	VtkAppendArrayFilter.h
+	VtkBGImageSource.h
+	VtkColorByHeightFilter.h
+	VtkColorLookupTable.h
+	VtkCompositeFilter.h
+	VtkCompositeColorByHeightFilter.h
+	VtkCompositeColormapToImageFilter.h
+	VtkCompositeContourFilter.h
+	VtkCompositeElementSelectionFilter.h
+	VtkCompositeGeoObjectFilter.h
+	VtkCompositeImageToCylindersFilter.h
+	VtkCompositeLineToTubeFilter.h
+	VtkCompositeNodeSelectionFilter.h
+	VtkCompositePointToGlyphFilter.h
+	VtkCompositeTextureOnSurfaceFilter.h
+	VtkCompositeThresholdFilter.h
+	VtkConsoleOutputWindow.h
+	VtkFilterFactory.h
+	VtkGeoImageSource.h
+	VtkImageDataToLinePolyDataFilter.h
+	VtkPolylinesSource.h
+	VtkPointsSource.h
+	VtkRaster.h
+	VtkStationSource.h
+	VtkSurfacesSource.h
+	VtkTextureOnSurfaceFilter.h
+	VtkVisHelper.h
+	VtkVisImageItem.h
+	VtkVisPipelineItem.h
+	VtkVisPointSetItem.h
 )
 
 # UI files
@@ -107,6 +141,7 @@ include_directories(
 
 # Create the library
 add_library(VtkVis STATIC
+	${HEADERS}
 	${SOURCES}
 	${MOC_HEADERS}
 	${MOC_SOURCES}
