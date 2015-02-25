@@ -1003,7 +1003,8 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 {
 	std::string old_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id, old_name);
-	dlg.exec();
+	if (dlg.exec() != QDialog::Accepted)
+		return;
 
 	static_cast<GEOModels*>(_project.getGEOObjects())->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
@@ -1049,7 +1050,8 @@ void MainWindow::showMergeGeometriesDialog()
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg;
-	dlg.exec();
+	if (dlg.exec() != QDialog::Accepted)
+		return;
 	_vtkVisPipeline->checkMeshQuality(mshSource, dlg.getSelectedMetric());
 }
 
