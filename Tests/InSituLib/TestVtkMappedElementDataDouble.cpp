@@ -11,6 +11,8 @@
 *              http://www.opengeosys.org/project/license
 *
 */
+
+#include <cstdlib>
 #include <numeric>
 
 #include <vtkNew.h>
@@ -25,7 +27,7 @@
 
 TEST(InSituLibMappedArrays, Double)
 {
-	const size_t mesh_size = 5;
+	const std::size_t mesh_size = 5;
 	const double length = 1.0;
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
@@ -56,7 +58,7 @@ TEST(InSituLibMappedArrays, Double)
 
 TEST(InSituLibMappedArrays, Int)
 {
-	const size_t mesh_size = 5;
+	const std::size_t mesh_size = 5;
 	const double length = 1.0;
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);

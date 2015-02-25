@@ -16,6 +16,8 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
+#include <cstdlib>
+
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Location.h"
 

@@ -14,6 +14,7 @@
 
 #include "BaseLib/BuildInfo.h"
 
+#include <cstdlib>
 #include <numeric>
 
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -83,7 +84,7 @@ class InSituMesh : public ::testing::Test
 	}
 
 	MeshLib::Mesh * mesh;
-	const size_t subdivisions = 5;
+	const std::size_t subdivisions = 5;
 	const double length = 1.0;
 	const double dx = length / subdivisions;
 };
