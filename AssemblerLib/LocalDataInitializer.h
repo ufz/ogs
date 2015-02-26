@@ -19,6 +19,8 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
 
+#include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
+
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
@@ -35,14 +37,18 @@ namespace AssemblerLib
 template <
     template <typename, typename> class LocalAssemblerDataInterface_,
     template <typename, typename, typename, typename> class LocalAssemblerData_,
-    template <typename> class IntegrationPolicy_,
     typename GlobalMatrix_,
     typename GlobalVector_>
 class LocalDataInitializer
 {
     template <typename ShapeFunction_>
+    using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
+                typename ShapeFunction_::MeshElement>::IntegrationMethod;
+
+    template <typename ShapeFunction_>
         using LAData = LocalAssemblerData_<
-                ShapeFunction_, IntegrationPolicy_<ShapeFunction_>,
+                ShapeFunction_,
+                IntegrationMethod<ShapeFunction_>,
                 GlobalMatrix_, GlobalVector_>;
 
 
