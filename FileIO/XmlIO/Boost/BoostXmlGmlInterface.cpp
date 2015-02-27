@@ -164,9 +164,22 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 		{
 			polylines->push_back(new GeoLib::Polyline(*points));
 
-			std::string p_name = polyline.second.get("<xmlattr>.name", "");
-			if (!p_name.empty())
-				ply_names->insert(std::pair<std::string, std::size_t>(p_name, polylines->size()-1));
+			std::string const p_name = polyline.second.get("<xmlattr>.name", "");
+			if (!p_name.empty()) {
+				std::map<std::string, std::size_t>::const_iterator it(
+					ply_names->find(p_name)
+				);
+				if (it == ply_names->end()) {
+					ply_names->insert(std::pair<std::string,std::size_t>(
+						p_name, polylines->size()-1)
+					);
+				} else {
+					WARN("Polyline \"%s\" exists already. The polyline will "
+						"be inserted without a name.\n%s",
+						p_name.c_str(),
+						BaseLib::propertyTreeToString(polyline.second).c_str());
+				}
+			}
 
 			BOOST_FOREACH( ptree::value_type const & pnt, polyline.second )
 			{
