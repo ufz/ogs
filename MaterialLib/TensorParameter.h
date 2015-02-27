@@ -15,14 +15,14 @@
 #ifndef TENSOR_PARAMETER_H_
 #define TENSOR_PARAMETER_H_
 
-#include<memory>
-#include<string>
+#include <memory>
+#include <string>
 
-#include<ParameterBase.h>
+#include <MaterialLib/ParameterBase.h>
 
 namespace MaterialLib
 {
-/// Density class
+/// Generic tensor parameter.
 template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL, typename T_MATRIX> class TensorParameter
     : public ParameterBase<T_PARAMETER_TYPE>
 {

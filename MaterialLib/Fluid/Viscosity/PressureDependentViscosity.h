@@ -14,10 +14,10 @@
 #ifndef PRESSURE_DEPENDENT_VISCOSITY_H_
 #define PRESSURE_DEPENDENT_VISCOSITY_H_
 
-#include<string>
+#include <string>
 #include <algorithm>    // std::max
 
-#include"ViscosityType.h"
+#include "ViscosityType.h"
 
 namespace MaterialLib
 {
@@ -30,7 +30,7 @@ class PressureDependentViscosity
              \brief Viscosity defined by \f$\mu_0(1+\gamma(p-p_0))\f$
              \param mu0   Reference viscosity.
              \param p0    Reference pressure.
-             \param gamma Paramater.
+             \param gamma Parameter.
         */
         PressureDependentViscosity(const double mu0, const double p0,
                                    const double gamma)
@@ -57,7 +57,7 @@ class PressureDependentViscosity
     private:
        double _mu0;    ///<  Reference viscosity..
        double _p0;     ///<  Reference pressure.
-       double _gamma;  ///<  Paramater.
+       double _gamma;  ///<  Parameter.
 };
 
 } // end namespace

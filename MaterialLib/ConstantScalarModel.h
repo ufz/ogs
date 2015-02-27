@@ -14,7 +14,7 @@
 #ifndef CONSTANT_SCALAR_MODEL_H_
 #define CONSTANT_SCALAR_MODEL_H_
 
-#include<string>
+#include <string>
 
 namespace MaterialLib
 {

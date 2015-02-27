@@ -15,9 +15,9 @@
 #ifndef LINEAR_SOLID_DENSITY_MODEL_H_
 #define LINEAR_SOLID_DENSITY_MODEL_H_
 
-#include<string>
+#include <string>
 
-#include"DensityType.h"
+#include "DensityType.h"
 
 namespace MaterialLib
 {

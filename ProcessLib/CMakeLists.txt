@@ -7,4 +7,5 @@ target_link_libraries(ProcessLib
     AssemblerLib
     MeshLib
     MeshGeoToolsLib
+    MaterialLib
 )
