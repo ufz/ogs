@@ -48,9 +48,6 @@ public:
 	~StationTreeModel();
 
 	void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);
-	void filterStations(const std::string &name,
-	                    const std::vector<GeoLib::Point*>* stations,
-	                    const std::vector<PropertyBounds> &bounds);
 	const std::vector<ModelTreeItem*> &getLists() { return _lists; }
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
 	//BaseItem* itemFromIndex( const QModelIndex& index ) const;

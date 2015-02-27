@@ -99,16 +99,6 @@ std::size_t PointVec::uniqueInsert (Point* pnt)
 	return _data_vec->size()-1;
 }
 
-std::vector<Point*>* PointVec::filterStations(const std::vector<PropertyBounds> &bounds) const
-{
-	std::vector<Point*>* tmpStations (new std::vector<Point*>);
-	std::size_t size (_data_vec->size());
-	for (std::size_t i = 0; i < size; i++)
-		if (static_cast<Station*>((*_data_vec)[i])->inSelection(bounds))
-			tmpStations->push_back((*_data_vec)[i]);
-	return tmpStations;
-}
-
 void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
                                std::vector<std::size_t> &pnt_id_map, double eps)
 {

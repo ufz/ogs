@@ -98,8 +98,6 @@ public:
 	 */
 	PointType getType() const { return _type; }
 
-	std::vector<Point*>* filterStations(const std::vector<PropertyBounds> &bounds) const;
-
 	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;

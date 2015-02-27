@@ -128,19 +128,6 @@ void GEOObjects::addStationVec(std::vector<Point*>* stations, std::string &name)
 	_pnt_vecs.push_back(new PointVec(name, stations, nullptr, PointVec::PointType::STATION));
 }
 
-std::vector<Point*>* GEOObjects::filterStationVec(const std::string &name,
-                                                  const std::vector<PropertyBounds> &bounds)
-{
-	for (std::vector<PointVec*>::iterator it(_pnt_vecs.begin());
-	     it != _pnt_vecs.end(); ++it)
-		if ((*it)->getName().compare(name) == 0 && (*it)->getType()
-		    == PointVec::PointType::STATION)
-			return (*it)->filterStations(bounds);
-
-	INFO("GEOObjects::filterStations() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
-}
-
 const std::vector<Point*>* GEOObjects::getStationVec(const std::string &name) const
 {
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin());

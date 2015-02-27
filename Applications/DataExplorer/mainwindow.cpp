@@ -38,7 +38,6 @@
 #include "GMSHPrefsDialog.h"
 #include "LicenseDialog.h"
 #include "LineEditDialog.h"
-#include "ListPropertiesDialog.h"
 #include "MergeGeometriesDialog.h"
 #include "MeshAnalysisDialog.h"
 #include "MeshElementRemovalDialog.h"
@@ -329,11 +328,6 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(presentationMenu, SIGNAL(aboutToShow()), this,
 	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
-
-	// connects for station model
-	connect(stationTabWidget->treeView,
-	        SIGNAL(propertiesDialogRequested(std::string)), this,
-	        SLOT(showPropertiesDialog(std::string)));
 
 	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
 }
@@ -769,17 +763,6 @@ void MainWindow::loadPetrelFiles()
 		QDir dir = QDir(sfc_file_names.at(0));
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
-}
-
-void MainWindow::showPropertiesDialog(std::string const& name)
-{
-	ListPropertiesDialog dlg(name, dynamic_cast<GEOModels*>(_project.getGEOObjects()));
-	connect(
-	        &dlg,
-	        SIGNAL(propertyBoundariesChanged(std::string, std::vector<PropertyBounds>)),
-	        dynamic_cast<GEOModels*>(_project.getGEOObjects()),
-	        SLOT(filterStationVec(std::string, std::vector<PropertyBounds>)));
-	dlg.exec();
 }
 
 void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)

@@ -16,7 +16,6 @@ set(SOURCES
 	LicenseDialog.cpp
 	LinearEditDialog.cpp
 	LineEditDialog.cpp
-	ListPropertiesDialog.cpp
 	MergeGeometriesDialog.cpp
 	MeshAnalysisDialog.cpp
 	MeshElementRemovalDialog.cpp
@@ -57,7 +56,6 @@ set(MOC_HEADERS
 	LicenseDialog.h
 	LinearEditDialog.h
 	LineEditDialog.h
-	ListPropertiesDialog.h
 	MergeGeometriesDialog.h
 	MeshAnalysisDialog.h
 	MeshElementRemovalDialog.h

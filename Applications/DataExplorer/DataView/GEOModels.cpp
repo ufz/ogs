@@ -118,14 +118,6 @@ void GEOModels::addStationVec( std::vector<GeoLib::Point*>* stations,
 	emit stationVectorAdded(_stationModel, name);
 }
 
-void GEOModels::filterStationVec(const std::string &name, const std::vector<PropertyBounds> &bounds)
-{
-	emit stationVectorRemoved(_stationModel, name);
-	const std::vector<GeoLib::Point*>* stations (GEOObjects::getStationVec(name));
-	_stationModel->filterStations(name, stations, bounds);
-	emit stationVectorAdded(_stationModel, name);
-}
-
 bool GEOModels::removeStationVec( const std::string &name )
 {
 	emit stationVectorRemoved(_stationModel, name);
