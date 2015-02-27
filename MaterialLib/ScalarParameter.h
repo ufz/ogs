@@ -14,10 +14,10 @@
 #ifndef SCALAR_PARAMETER_H_
 #define SCALAR_PARAMETER_H_
 
-#include<memory>
-#include<string>
+#include <memory>
+#include <string>
 
-#include<ParameterBase.h>
+#include <ParameterBase.h>
 
 namespace MaterialLib
 {

@@ -1,9 +1,9 @@
 /*!
-   \file  ViscosityType.h
-   \brief Declaration of viscosity types.
+   \file  StorageType.h
+   \brief Declaration of storage types.
 
    \author Wenqing Wang
-   \date Jan 2015
+   \date Feb 2015
 
    \copyright
     Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
@@ -11,16 +11,15 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef VISCOSITY_TYPE_H_
-#define VISCOSITY_TYPE_H_
+#ifndef STORAGE_TYPE_H_
+#define STORAGE_TYPE_H_
 
 namespace MaterialLib
 {
 
-enum class ViscosityType
+enum class StorageType
 {
-    CONSTANT = 0,
-    PRESSURE_DEPENDENT
+    CONSTANT = 0
 };
 
 } // end namespace

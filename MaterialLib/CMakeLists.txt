@@ -4,7 +4,11 @@ append_source_files(SOURCES Adsorption)
 append_source_files(SOURCES SolidModels)
 
 append_source_files(SOURCES Fluid/Density)
-append_source_files(SOURCES Solid/Density)
+append_source_files(SOURCES Fluid/Viscosity)
+append_source_files(SOURCES Fluid/Storage)
+append_source_files(SOURCES Fluid/Permeability)
+append_source_files(SOURCES Solid/density)
+
 
 add_library(MaterialLib ${SOURCES} )
 target_link_libraries(MaterialLib

@@ -15,9 +15,9 @@
 #ifndef IDEAL_GAS_LAW_H_
 #define IDEAL_GAS_LAW_H_
 
-#include<string>
+#include <string>
 
-#include"DensityType.h"
+#include "DensityType.h"
 
 namespace MaterialLib
 {
@@ -31,7 +31,7 @@ class IdealGasLaw
         {
         }
 
-        /// Get desity model name.
+        /// Get density model name.
         std::string getName() const
         {
            return "Ideal gas law";  
