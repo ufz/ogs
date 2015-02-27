@@ -8,15 +8,18 @@ macro(InstallDependencies TARGET INSTALL_COMPONENT)
 
 	if(EXISTS ${TARGET_EXE})
 		include(GetPrerequisites)
-		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 0 "" "")
+		# arg3: exclude system, arg4: recursive
+		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 1 "" "")
 		message(STATUS "${TARGET_EXE} dependencies:")
 		foreach(DEPENDENCY ${TARGET_DEPENDENCIES})
-			gp_resolve_item("/" "${DEPENDENCY}" ${TARGET_EXE}
-				"/usr/local/lib;/;${VTK_DIR};/usr/lib64;" DEPENDENCY_PATH)
-			get_filename_component(RESOLVED_DEPENDENCY_PATH "${DEPENDENCY_PATH}" REALPATH)
-			string(TOLOWER ${DEPENDENCY} DEPENDENCY_LOWER)
+			if(NOT ${DEPENDENCY} MATCHES "@loader_path")
+				gp_resolve_item("/" "${DEPENDENCY}" ${TARGET_EXE}
+					"/usr/local/lib;/;${VTK_DIR};/usr/lib64;" DEPENDENCY_PATH)
+				get_filename_component(RESOLVED_DEPENDENCY_PATH "${DEPENDENCY_PATH}" REALPATH)
+				string(TOLOWER ${DEPENDENCY} DEPENDENCY_LOWER)
 				set(DEPENDENCY_PATHS ${DEPENDENCY_PATHS} ${RESOLVED_DEPENDENCY_PATH})
 				message("    ${RESOLVED_DEPENDENCY_PATH}")
+			endif()
 		endforeach()
 		install(FILES ${DEPENDENCY_PATHS} DESTINATION bin COMPONENT ${INSTALL_COMPONENT})
 		add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ;)
