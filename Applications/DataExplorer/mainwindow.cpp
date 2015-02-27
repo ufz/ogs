@@ -1046,7 +1046,8 @@ void MainWindow::showMergeGeometriesDialog()
 	MergeGeometriesDialog dlg(_project.getGEOObjects());
 	if (dlg.exec() != QDialog::Accepted)
 		return;
-	if (_project.getGEOObjects()->mergeGeometries(dlg.getSelectedGeometries(), dlg.getGeometryName()) < 0)
+	std::string name (dlg.getGeometryName());
+	if (_project.getGEOObjects()->mergeGeometries(dlg.getSelectedGeometries(), name) < 0)
 		OGSError::box("Points are missing for\n at least one geometry.");
 }
 
