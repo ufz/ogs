@@ -165,12 +165,13 @@ MinimalBoundingSphere::recurseCalculation(
         {
             if (i>start_idx)
             {
-                MathLib::Point3d* tmp = sphere_points[start_idx+i];
                 using DiffType = std::vector<MathLib::Point3d*>::iterator::difference_type;
-                std::copy(sphere_points.begin()+static_cast<DiffType>(start_idx),
-                    sphere_points.begin()+static_cast<DiffType>(start_idx + i),
-                    sphere_points.begin()+static_cast<DiffType>(start_idx + 1));
-                sphere_points[start_idx] = tmp;
+                std::vector<MathLib::Point3d*> const tmp_ps(
+                    sphere_points.cbegin() + static_cast<DiffType>(start_idx),
+                    sphere_points.cbegin() + static_cast<DiffType>(start_idx + i + 1));
+                std::copy(tmp_ps.cbegin(), --tmp_ps.cend(),
+                    sphere_points.begin() + static_cast<DiffType>(start_idx + 1));
+                sphere_points[start_idx] = tmp_ps.back();
             }
             sphere = recurseCalculation(sphere_points, start_idx+1, i, n_boundary_points+1);
         }
