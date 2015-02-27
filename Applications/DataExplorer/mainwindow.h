@@ -96,7 +96,6 @@ protected slots:
 	void showMergeGeometriesDialog();
 	void showMeshAnalysisDialog();
 	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
-	void showPropertiesDialog(std::string const& name);
 	void showVisalizationPrefsDialog();
 	void updateDataViews();
 	void writeGeometryToFile(QString listName, QString fileName);

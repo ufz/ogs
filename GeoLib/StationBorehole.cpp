@@ -38,8 +38,6 @@ StationBorehole::StationBorehole(double x, double y, double z, const std::string
 	Station (x, y, z, name), _depth(0), _date(0)
 {
 	_type = Station::StationType::BOREHOLE;
-	addProperty("date", &StationBorehole::getDate, &StationBorehole::setDate);
-	addProperty("depth", &StationBorehole::getDepth, &StationBorehole::setDepth);
 
 	// add first point of borehole
 	_profilePntVec.push_back(this);

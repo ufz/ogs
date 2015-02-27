@@ -67,7 +67,6 @@ public slots:
 
 	virtual void addStationVec(std::vector<GeoLib::Point*>* stations,
 	                           std::string &name);
-	void filterStationVec(const std::string &name, const std::vector<PropertyBounds> &bounds);
 	virtual bool removeStationVec(const std::string &name);
 
 	virtual void addPolylineVec(std::vector<GeoLib::Polyline*>* lines,

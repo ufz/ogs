@@ -95,16 +95,10 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
 	if (item->childCount() > 0)
 	{
 		QMenu menu;
-		QAction* propertyAction = menu.addAction("Display list properties...");
 		QAction* exportAction   = menu.addAction("Export to GMS...");
-		//QAction* saveAction   = menu.addAction("Save to file...");
 		menu.addSeparator();
-		//QAction* removeAction   = menu.addAction("Remove station list");
 
-		connect(propertyAction, SIGNAL(triggered()), this, SLOT(showPropertiesDialog()));
 		connect(exportAction,   SIGNAL(triggered()), this, SLOT(exportList()));
-		//connect(saveAction,   SIGNAL(triggered()), this, SLOT(saveList()));
-		//connect(removeAction,   SIGNAL(triggered()), this, SLOT(removeStationList()));
 		menu.exec(event->globalPos());
 	}
 	// The current index refers to a station object
@@ -233,13 +227,6 @@ void StationTreeView::removeStationList()
 			emit enableRemoveButton(false);
 		}
 	}
-}
-
-void StationTreeView::showPropertiesDialog()
-{
-	QModelIndex index = this->selectionModel()->currentIndex();
-	QString name = (static_cast<ModelTreeItem*>(index.internalPointer())->data(0)).toString();
-	emit propertiesDialogRequested(name.toStdString());
 }
 
 void StationTreeView::showDiagramPrefsDialog()

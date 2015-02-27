@@ -127,10 +127,6 @@ public:
 	/// Adds a vector of stations with the given name and colour to GEOObjects.
 	virtual void addStationVec(std::vector<Point*>* stations, std::string &name);
 
-	/// Filters a list of stations with the given name based on the criteria in PropertyBounds.
-	/// (See property system in Station class for more information.)
-	std::vector<Point*>* filterStationVec(const std::string &name,
-	                                      const std::vector<PropertyBounds> &bounds);
 	/// Returns the station vector with the given name.
 	const std::vector<Point*>* getStationVec(const std::string &name) const;
 

@@ -168,29 +168,3 @@ void StationTreeModel::removeStationList(const std::string &name)
 			removeStationList(createIndex(_lists[i]->row(), 0, _lists[i]));
 }
 
-/**
- * Filters the station list based on the property boundaries given in bounds.
- * Technically, the complete station list is removed from the model and only those items are re-loaded that fit the description.
- * If no station in the list fulfills the given description an error msg is given.
- */
-void StationTreeModel::filterStations(const std::string &listName,
-                                      const std::vector<GeoLib::Point*>* stations,
-                                      const std::vector<PropertyBounds> &bounds)
-{
-	std::vector<GeoLib::Point*>* filteredStations = new std::vector<GeoLib::Point*>;
-
-	size_t vectorSize = stations->size();
-	for (size_t i = 0; i < vectorSize; i++)
-		if (static_cast<GeoLib::Station*>((*stations)[i])->inSelection(bounds))
-			filteredStations->push_back((*stations)[i]);
-
-	if (filteredStations->empty())
-		OGSError::box("No object is within the given boundaries.");  //The filtered list is empty.
-	else
-	{
-		removeStationList(listName);
-		this->addStationList(QString::fromStdString(listName), filteredStations);
-		INFO("Filter applied to List \"%s\", %d items added.", listName.c_str(),
-				filteredStations->size());
-	}
-}

@@ -15,16 +15,15 @@
 #ifndef QSTATIONTREEVIEW_H
 #define QSTATIONTREEVIEW_H
 
-#include "PropertyBounds.h"
+#include "Station.h"
+
 #include <QContextMenuEvent>
 #include <QTreeView>
-
-#include "Station.h"
 
 class vtkPolyDataAlgorithm;
 
 /**
- * \brief A view for the StationTreeModel with a number of properties adequate for this kind of data
+ * \brief A view for the StationTreeModel
  * \sa StationTreeModel, ModelTreeItem
  */
 class StationTreeView : public QTreeView
@@ -63,7 +62,6 @@ private slots:
 	void exportStation();
 	void removeStationList();
 	void writeToFile();
-	void showPropertiesDialog();
 	void showDiagramPrefsDialog();
 
 signals:

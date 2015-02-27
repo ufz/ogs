@@ -18,6 +18,8 @@
 
 #include "Station.h"
 
+#include <list>
+
 namespace GeoLib
 {
 
@@ -89,20 +91,6 @@ public:
 	 * is just the coordinate given for the last soil layer (i.e. the end of that layer).
 	 */
 	void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
-
-protected:
-	/// Returns the depth of this borehole. Please see the documentation for Station::getX for details concerning the syntax.
-	static double getDepth(void* stnObject)  { StationBorehole* stn =
-		                                           (StationBorehole*)stnObject;
-		                                   return stn->_depth; }
-	/// Returns the date this borehole has been drilled. Please see the documentation for Station::getX for details concerning the syntax.
-	static double getDate(void* stnObject)  { StationBorehole* stn = (StationBorehole*)stnObject; return stn->_date; }
-	/// Sets the depth of this borehole. Please see the documentation for Station::getX for details concerning the syntax.
-	static void setDepth(void* stnObject, double val) { StationBorehole* stn =
-		                                                    (StationBorehole*)stnObject;
-		                                            stn->_depth = val; }
-	/// Sets the date when this borehole has been drilled. Please see the documentation for Station::getX for details concerning the syntax.
-	static void setDate(void* stnObject, double val) { StationBorehole* stn = (StationBorehole*)stnObject; stn->_date = static_cast<int>(val); }
 
 private:
 	/// Adds a layer for the specified borehole profile based on the information given in the stringlist
