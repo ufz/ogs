@@ -244,7 +244,7 @@ public:
 	 * Stations points are not included in the resulting merged geometry.
 	 * @param names the names of the geometries that are to be merged
 	 * @param merged_geo_name the name of the resulting geometry
-	 * @return 1 if success, 0 if the mergelist only contains one geometry and -1 if no point-list is found for one of the geometries
+	 * @return 0 if success, 1 if no point-list is found for at least one of the geometries and 2 if the mergelist only contains less than two geometry
 	 */
 	int mergeGeometries(std::vector<std::string> const & names, std::string &merged_geo_name);
 
