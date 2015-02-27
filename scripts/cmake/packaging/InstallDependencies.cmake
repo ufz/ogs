@@ -2,15 +2,13 @@ macro(InstallDependencies TARGET INSTALL_COMPONENT)
 
 	if(MSVC)
 		set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/Release/${TARGET}.exe)
-		set(EXCLUDE_SYSTEM 0)
 	else()
 		set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/${TARGET})
-		set(EXCLUDE_SYSTEM 1)
 	endif()
 
 	if(EXISTS ${TARGET_EXE})
 		include(GetPrerequisites)
-		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES ${EXCLUDE_SYSTEM} 0 "" "")
+		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 0 "" "")
 		message(STATUS "${TARGET_EXE} dependencies:")
 		foreach(DEPENDENCY ${TARGET_DEPENDENCIES})
 			gp_resolve_item("/" "${DEPENDENCY}" ${TARGET_EXE}
