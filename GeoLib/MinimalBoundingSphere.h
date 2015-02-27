@@ -30,8 +30,6 @@ namespace GeoLib
 class MinimalBoundingSphere
 {
 public:
-    /// Copy constructor
-    MinimalBoundingSphere(MinimalBoundingSphere const&) = default;
     /// Point-Sphere
     MinimalBoundingSphere(MathLib::Point3d const& p, double radius = std::numeric_limits<double>::epsilon());
     /// Bounding sphere using two points
@@ -46,7 +44,6 @@ public:
         MathLib::Point3d const& s);
     /// Bounding sphere of n points
     MinimalBoundingSphere(std::vector<MathLib::Point3d*> const& points);
-    ~MinimalBoundingSphere() {}
 
     /// Returns the center point of the sphere
     MathLib::Point3d getCenter() const { return MathLib::Point3d(_center.getCoords()); }
