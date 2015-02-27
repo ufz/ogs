@@ -91,20 +91,10 @@ void MergeGeometriesDialog::on_deselectGeoButton_pressed()
 	_allGeo->setStringList(list);
 }
 
-
 void MergeGeometriesDialog::accept()
 {
-	std::vector<std::string> selected_geo_objects = this->getSelectedGeometries(_selGeo->stringList());
-	std::string new_geometry_name = this->newGeoNameEdit->text().toStdString();
-	
-	if (selected_geo_objects.size()>1)
-	{
-		int result = _geo_objects->mergeGeometries(selected_geo_objects, new_geometry_name);
-		if (result<0) 
-			OGSError::box("Points are missing for\n at least one geometry.");
-		else
-			this->done(QDialog::Accepted);
-	}
+	if (_selGeo->stringList().size() > 1)
+		this->done(QDialog::Accepted);
 	else
 		OGSError::box("At least two geometries need\n to be selected for merging.");
 }
@@ -114,10 +104,16 @@ void MergeGeometriesDialog::reject()
 	this->done(QDialog::Rejected);
 }
 
-std::vector<std::string> MergeGeometriesDialog::getSelectedGeometries(QStringList list)
+std::vector<std::string> const MergeGeometriesDialog::getSelectedGeometries() const
 {
 	std::vector<std::string> indexList;
-	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
+	QStringList const& list (_selGeo->stringList());
+	for (QStringList::const_iterator it = list.begin(); it != list.end(); ++it)
 		indexList.push_back(it->toStdString());
 	return indexList;
+}
+
+std::string MergeGeometriesDialog::getGeometryName() const
+{
+	return this->newGeoNameEdit->text().toStdString();
 }

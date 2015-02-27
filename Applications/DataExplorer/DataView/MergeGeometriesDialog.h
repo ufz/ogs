@@ -36,9 +36,13 @@ public:
 	MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDialog* parent = 0);
 	~MergeGeometriesDialog(void);
 
-private:
-	std::vector<std::string> getSelectedGeometries(QStringList list);
+	/// Returns a vector of selected geometries
+	std::vector<std::string> const getSelectedGeometries() const;
 
+	/// Returns the name of the new merged geometry
+	std::string getGeometryName() const;
+
+private:
 	GeoLib::GEOObjects* _geo_objects;
 	QStringListModel* _allGeo;
 	QStringListModel* _selGeo;
@@ -52,9 +56,6 @@ private slots:
 
 	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
-
-signals:
-	void requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool);
 };
 
 #endif //MERGEGEOMETRIESDIALOG_H

@@ -1044,7 +1044,10 @@ void MainWindow::showGMSHPrefsDialog()
 void MainWindow::showMergeGeometriesDialog()
 {
 	MergeGeometriesDialog dlg(_project.getGEOObjects());
-	dlg.exec();
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+	if (_project.getGEOObjects()->mergeGeometries(dlg.getSelectedGeometries(), dlg.getGeometryName()) < 0)
+		OGSError::box("Points are missing for\n at least one geometry.");
 }
 
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
