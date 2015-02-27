@@ -13,6 +13,8 @@
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 #include "NumLib/Fem/Integration/IntegrationGaussTri.h"
 
+#include "MeshLib/Elements/Tri.h"
+
 namespace NumLib
 {
 

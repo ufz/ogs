@@ -30,8 +30,6 @@
 #include "MeshLib/NodeAdjacencyTable.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
-#include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
-
 #include "BoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
 #include "ProcessVariable.h"
@@ -44,8 +42,6 @@ class GroundwaterFlowProcess : public Process
 {
     using ConfigTree = boost::property_tree::ptree;
 
-    template <typename ShapeFunction_>
-    using IntegrationPolicy = NumLib::IntegrationGaussRegular<ShapeFunction_::DIM>;
     unsigned const _integration_order = 2;
 
 public:
@@ -104,7 +100,6 @@ public:
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
             GroundwaterFlow::LocalAssemblerDataInterface,
             GroundwaterFlow::LocalAssemblerData,
-            IntegrationPolicy,
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType>;
 
