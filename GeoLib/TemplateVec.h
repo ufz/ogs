@@ -22,6 +22,9 @@
 #include <vector>
 #include <string>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 namespace GeoLib
 {
 /**
@@ -177,7 +180,15 @@ public:
 		if (!name || name->empty())
 			return;
 
-		_name_id_map->insert(NameIdPair(*name, _data_vec->size() - 1));
+		std::map<std::string, std::size_t>::const_iterator it(
+			_name_id_map->find(*name)
+		);
+		if (it == _name_id_map->end()) {
+			_name_id_map->insert(NameIdPair(*name, _data_vec->size() - 1));
+		} else {
+			WARN("Name \"%s\" exists already. The object will be inserted "
+				"without a name", name->c_str());
+		}
 	}
 
 	/// Sets the given name for the element of the given ID.

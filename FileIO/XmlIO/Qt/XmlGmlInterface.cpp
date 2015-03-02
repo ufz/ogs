@@ -128,9 +128,20 @@ void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
 		idx = polylines->size();
 		polylines->push_back(new GeoLib::Polyline(*points));
 
-		if (polyline.hasAttribute("name"))
-			ply_names->insert( std::pair<std::string, std::size_t>(
-												polyline.attribute("name").toStdString(), idx));
+		if (polyline.hasAttribute("name")) {
+			std::string const ply_name(
+				polyline.attribute("name").toStdString()
+			);
+			std::map<std::string, std::size_t>::const_iterator it(
+				ply_names->find(ply_name)
+			);
+			if (it == ply_names->end()) {
+				ply_names->insert(std::pair<std::string, std::size_t>(ply_name, idx));
+			} else {
+				WARN("Polyline \"%s\" exists already. The polyline will be "
+					"inserted without a name.", ply_name.c_str());
+			}
+		}
 
 		QDomElement point = polyline.firstChildElement();
 		while (!point.isNull())
