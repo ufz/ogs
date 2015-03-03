@@ -377,23 +377,23 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 }
 
 int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
-                                  std::string &merged_geo_name)
+                                 std::string &merged_geo_name)
 {
 	const std::size_t n_geo_names(geo_names.size());
 
 	if (n_geo_names < 2)
-		return 0;
+		return 2;
 
 	std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
 	if (! mergePoints(geo_names, merged_geo_name, pnt_offsets))
-		return -1;
+		return 1;
 
 	mergePolylines(geo_names, merged_geo_name, pnt_offsets);
 
 	mergeSurfaces(geo_names, merged_geo_name, pnt_offsets);
 
-	return 1;
+	return 0;
 }
 
 bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,

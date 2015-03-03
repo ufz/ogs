@@ -33,26 +33,19 @@ class SetNameDialog : public QDialog
 
 public:
 	/// Constructor
-	SetNameDialog(const std::string &parent_name,
-				  const std::string &object_type_name,
-				  std::size_t id,
-				  const std::string &old_name,
-				  QDialog* parent = 0);
+	SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name, QDialog* parent = 0);
 	~SetNameDialog();
 
-	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
+	std::string getNewName();
 
 private:
 	/// Constructs a dialog window
-	void setupDialog(const std::string &old_name);
+	void setupDialog(const QString &label, const std::string &old_name);
 
 	QLabel* _txt_label;
 	QLineEdit* _new_name;
 	QVBoxLayout* _layout;
-
-	std::string _parent_name;
-	std::string _object_type_name;
-	std::size_t _id;
+	QDialogButtonBox* _buttonBox;
 
 private slots:
 	/// Instructions if the OK-Button has been pressed.
@@ -60,9 +53,6 @@ private slots:
 
 	/// Instructions if the Cancel-Button has been pressed.
 	void reject();
-
-signals:
-	void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
 };
 
 #endif //SETNAMEDIALOG_H

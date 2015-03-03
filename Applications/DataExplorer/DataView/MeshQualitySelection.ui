@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MshQualitySelection</class>
- <widget class="QDialog" name="MshQualitySelection">
+ <class>MeshQualitySelection</class>
+ <widget class="QDialog" name="MeshQualitySelection">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
+    <width>256</width>
     <height>257</height>
    </rect>
   </property>
@@ -75,7 +75,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>MshQualitySelection</receiver>
+   <receiver>MeshQualitySelection</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -91,7 +91,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>MshQualitySelection</receiver>
+   <receiver>MeshQualitySelection</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -16,31 +16,30 @@
 #define MSHQUALITYSELECTIONDIALOG_H
 
 #include "MeshEnums.h"
-#include "ui_MshQualitySelection.h"
+#include "ui_MeshQualitySelection.h"
 #include <QDialog>
 
 class VtkMeshSource;
 
 /**
- * \brief A dialog window for settung up a database connection
+ * \brief A dialog for selecting a mesh quality metric
  */
-class MshQualitySelectionDialog : public QDialog, private Ui_MshQualitySelection
+class MshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelection
 {
 	Q_OBJECT
 
 public:
-	MshQualitySelectionDialog(VtkMeshSource* msh, QDialog* parent = 0);
+	MshQualitySelectionDialog(QDialog* parent = 0);
 	~MshQualitySelectionDialog(void);
 
+	MeshQualityType getSelectedMetric() { return _metric; }
+
 private:
-	VtkMeshSource* _msh;
+	MeshQualityType _metric;
 
 private slots:
 	void accept();
 	void reject();
-
-signals:
-	void measureSelected(VtkMeshSource*, MeshQualityType);
 };
 
 #endif //MSHQUALITYSELECTIONDIALOG_H
