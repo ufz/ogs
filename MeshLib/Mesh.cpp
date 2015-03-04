@@ -57,7 +57,7 @@ Mesh::Mesh(const Mesh &mesh)
 	  _node_distance(mesh._node_distance.first, mesh._node_distance.second),
 	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
 	  _n_base_nodes(mesh.getNBaseNodes()),
-	  _properties()
+	  _properties(mesh._properties)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
