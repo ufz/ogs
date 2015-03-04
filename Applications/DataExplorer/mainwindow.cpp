@@ -1039,7 +1039,7 @@ void MainWindow::showMergeGeometriesDialog()
 		OGSError::box("Points are missing for\n at least one geometry.");
 }
 
-void MainWindow::showMshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource)
+void MainWindow::showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource)
 {
 	MshQualitySelectionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
