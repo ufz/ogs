@@ -64,7 +64,7 @@ public:
     /// \note The elements are not necessary those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        std::vector<MeshLib::Element*> const& elements,
+        std::vector<MeshLib::Element const*> const& elements,
         AssemblerLib::ComponentOrder const order =
             AssemblerLib::ComponentOrder::BY_COMPONENT) const;
 
@@ -87,7 +87,7 @@ private:
     /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        std::vector<MeshLib::Element*> const& elements,
+        std::vector<MeshLib::Element const*> const& elements,
         AssemblerLib::MeshComponentMap&& mesh_component_map,
         AssemblerLib::ComponentOrder const order);
 

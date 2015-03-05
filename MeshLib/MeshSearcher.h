@@ -36,7 +36,7 @@ std::vector<std::size_t> getConnectedElementIDs(MeshLib::Mesh const& msh, const 
 std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*> &elements);
 
 /// Create a vector of unique nodes used by given elements.
-std::vector<Node*> selectNodes(std::vector<Element*> const& elements);
+std::vector<Node*> selectNodes(std::vector<Element const*> const& elements);
 
 } // end namespace MeshLib
 
