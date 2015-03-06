@@ -38,6 +38,9 @@ if(COMPILER_IS_GCC)
 		if(NOT APPLE AND NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 		endif()
+	else()
+		# Enable assertions in STL in debug mode.
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
 	endif()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
 endif() # COMPILER_IS_GCC
@@ -48,6 +51,10 @@ if(COMPILER_IS_CLANG)
 		message(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
 	endif()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
+	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		# Enable assertions in STL in debug mode.
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
+	endif()
 endif() # COMPILER_IS_CLANG
 
 ### Intel compiler
