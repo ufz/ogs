@@ -78,18 +78,31 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, 
 
 unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 {
-	std::vector<unsigned> value_mapping (ElementValueModification::getMeshValues(mesh));
+	boost::optional<MeshLib::PropertyVector<unsigned> &>
+		optional_property_value_vec(
+			mesh.getProperties().getProperty<unsigned>("MatID")
+		);
+
+	if (!optional_property_value_vec) {
+		return 0;
+	}
+
+	MeshLib::PropertyVector<unsigned> & property_value_vector(
+		optional_property_value_vec.get()
+	);
+	std::vector<unsigned> value_mapping(
+		ElementValueModification::getSortedPropertyValues(property_value_vector)
+	);
+
 	std::vector<unsigned> reverse_mapping(value_mapping.back()+1, 0);
 	const unsigned nValues (value_mapping.size());
 	for (unsigned i=0; i<nValues; ++i)
 		reverse_mapping[value_mapping[i]] = i;
 
-	const std::size_t nElements (mesh.getNElements());
-	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
-	for (unsigned i=0; i<nElements; ++i)
-		elements[i]->setValue(reverse_mapping[elements[i]->getValue()]);
+	std::size_t const n_property_values(property_value_vector.size());
+	for (std::size_t i=0; i<n_property_values; ++i)
+		property_value_vector[i] = reverse_mapping[property_value_vector[i]];
 
-	mesh.updateMaterialGroups();
 	return nValues;
 }
 
