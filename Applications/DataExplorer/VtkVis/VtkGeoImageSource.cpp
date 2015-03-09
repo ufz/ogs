@@ -70,9 +70,13 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
 	this->Superclass::PrintSelf(os, indent);
 }
 
-void VtkGeoImageSource::readImage(const QString &filename)
+bool VtkGeoImageSource::readImage(const QString &filename)
 {
-	this->setImage(VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing), filename, _x0, _y0, _spacing);
+	vtkImageAlgorithm* img (VtkRaster::loadImage(filename.toStdString(), _x0, _y0, _spacing));
+	if (img == nullptr)
+		return false;
+	this->setImage(img, filename, _x0, _y0, _spacing);
+	return true;
 }
 
 void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name, double x0, double y0, double spacing)

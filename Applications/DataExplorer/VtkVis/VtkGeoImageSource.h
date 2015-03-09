@@ -43,7 +43,7 @@ public:
 	vtkImageData* getImageData();
 
 	/// @brief Reads an image from file.
-	void readImage(const QString &filename);
+	bool readImage(const QString &filename);
 
 	/// @brief Imports an existing image object.
 	void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);

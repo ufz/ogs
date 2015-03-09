@@ -589,8 +589,13 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	else if (t == ImportFileType::RASTER)
 	{
 		VtkGeoImageSource* geoImage = VtkGeoImageSource::New();
-		geoImage->readImage(fileName);
-		_vtkVisPipeline->addPipelineItem(geoImage);
+		if (geoImage->readImage(fileName))
+			_vtkVisPipeline->addPipelineItem(geoImage);
+		else
+		{
+			geoImage->Delete();
+			OGSError::box("Error reading raster.");
+		}
 		settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::POLYRASTER)
