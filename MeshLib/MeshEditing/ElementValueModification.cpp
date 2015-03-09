@@ -24,8 +24,17 @@
 
 namespace MeshLib {
 
+bool ElementValueModification::replace(MeshLib::Mesh &mesh,
+	std::string const& property_name, unsigned old_value, unsigned new_value,
+	bool replace_if_exists)
 std::vector<unsigned> ElementValueModification::getMeshValues(const MeshLib::Mesh &mesh)
 {
+	boost::optional<MeshLib::PropertyVector<unsigned> &> optional_property_value_vec(
+		mesh.getProperties().getProperty<unsigned>(property_name)
+	);
+
+	if (!optional_property_value_vec) {
+		return false;
 	const std::size_t nElements (mesh.getNElements());
 	std::vector<unsigned> value_mapping;
 	for (unsigned i=0; i<nElements; ++i)
@@ -45,35 +54,37 @@ std::vector<unsigned> ElementValueModification::getMeshValues(const MeshLib::Mes
 			value_mapping.push_back(value);
 	}
 
+	MeshLib::PropertyVector<unsigned> & property_value_vec(
+		optional_property_value_vec.get()
+	);
 	std::sort(value_mapping.begin(), value_mapping.end());
 	return value_mapping;
 }
 
-bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists)
-{
-	std::vector<unsigned> value_mapping (ElementValueModification::getMeshValues(mesh));
+	const std::size_t n_property_values(property_value_vec.size());
 
-	if (!replace_if_exists)
-	{
-		const unsigned nValues (value_mapping.size());
-		for (unsigned j=0; j<nValues; ++j)
-		{
-			if (new_value == value_mapping[j])
-			{
-				WARN ("ElementValueModification::replaceElementValue() - Replacement value is already taken, no changes have been made.");
+	if (!replace_if_exists) {
+		for (std::size_t i=0; i<n_property_values; ++i) {
+			if (property_value_vec[i] == new_value) {
+				WARN ("ElementValueModification::replaceElementValue() "
+					"- Replacement value \"%d\" is already taken, "
+					"no changes have been made.", new_value);
 				return false;
 			}
 		}
 	}
-	const std::size_t nElements (mesh.getNElements());
-	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
-	for (unsigned i=0; i<nElements; ++i)
-	{
-		if (elements[i]->getValue() == old_value)
-			elements[i]->setValue(new_value);
+
+	for (std::size_t i=0; i<n_property_values; ++i) {
+		if (property_value_vec[i] == old_value)
+			property_value_vec[i] = new_value;
 	}
-	mesh.updateMaterialGroups();
+
 	return true;
+}
+
+bool ElementValueModification::replace(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists)
+{
+	return replace(mesh, "MatID", old_value, new_value, replace_if_exists);
 }
 
 unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
