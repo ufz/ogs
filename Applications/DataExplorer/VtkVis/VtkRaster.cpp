@@ -76,7 +76,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 #ifdef GEOTIFF_FOUND
 		return loadImageFromTIFF(fileName, x0, y0, delta);
 #else
-		ERR("VtkRaster::loadImage(): Tiff file format not support in this version!");
+		ERR("VtkRaster::loadImage(): Tiff file format not supported in this version!");
 		return nullptr;
 #endif
 	}
@@ -264,7 +264,7 @@ vtkImageReader2* VtkRaster::loadImageFromFile(const std::string &fileName)
 		image = vtkBMPReader::New();
 	else
 	{
-		ERR("VtkRaster::readImageFromFile(): File format not support, please convert to BMP, JPG or PNG.");
+		ERR("VtkRaster::readImageFromFile(): File format not supported, please convert to BMP, JPG or PNG.");
 		return nullptr;
 	}
 
