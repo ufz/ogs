@@ -75,8 +75,6 @@ private:
 		return value_mapping;
 	}
 
-	/// Returns the values of elements within the mesh
-	static std::vector<unsigned> getMeshValues(const MeshLib::Mesh &mesh);
 };
 
 } // end namespace MeshLib
