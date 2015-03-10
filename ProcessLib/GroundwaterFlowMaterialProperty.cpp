@@ -1,6 +1,6 @@
 /*!
-  \file  ProcessParameterFluid.cpp
-  \brief Define the members of class ProcessParameterFluid in this file.
+  \file  GroundwaterFlowMaterialProperty.cpp
+  \brief Define the members of class GroundwaterFlowMaterialProperty in this file.
 
   \author Wenqing Wang
   \date Feb 2015
@@ -15,16 +15,13 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
-#include "ProcessParameterFluid.h"
+#include "GroundwaterFlowMaterialProperty.h"
 
 namespace ProcessLib
 {
 
-ProcessParameterFluid::ProcessParameterFluid(ConfigTree const& config)
-    : _name(config.get<std::string>("name"))
+GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree const& config)
 {
-    DBUG("Set fluid parameters for %s", this->_name.c_str());
-
     // Permeabiliy
     {
         auto const &perm_config = config.find("permeability");
