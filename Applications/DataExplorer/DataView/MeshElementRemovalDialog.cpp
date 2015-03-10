@@ -44,7 +44,6 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, Q
 		OGSError::box("No meshes available.");
 		QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 	}
-
 }
 
 MeshElementRemovalDialog::~MeshElementRemovalDialog()
@@ -78,13 +77,21 @@ void MeshElementRemovalDialog::accept()
 	}
 	if (this->boundingBoxCheckBox->isChecked())
 	{
-		const MeshLib::Node min(this->xMinEdit->text().toDouble(),
-		                        this->yMinEdit->text().toDouble(),
-		                        this->zMinEdit->text().toDouble(),0);
-		const MeshLib::Node max(this->xMaxEdit->text().toDouble(),
-		                        this->yMaxEdit->text().toDouble(),
-		                        this->zMaxEdit->text().toDouble(),0);
-		ex.searchByBoundingBox(min, max);
+		std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+		GeoLib::AABB<MeshLib::Node> aabb(nodes.begin(), nodes.end());
+		MeshLib::Node minAABB = aabb.getMinPoint();
+		MeshLib::Node maxAABB = aabb.getMaxPoint();
+		double const eps (std::numeric_limits<double>::epsilon());
+
+		// only extract bounding box parameters that have been edited (otherwise there will be rounding errors!)
+		minAABB[0] = (aabb_edits[0]) ? this->xMinEdit->text().toDouble() : (minAABB[0] - eps);
+		maxAABB[0] = (aabb_edits[1]) ? this->xMaxEdit->text().toDouble() : (maxAABB[0] + eps);
+		minAABB[1] = (aabb_edits[2]) ? this->yMinEdit->text().toDouble() : (minAABB[1] - eps);
+		maxAABB[1] = (aabb_edits[3]) ? this->yMaxEdit->text().toDouble() : (maxAABB[1] + eps);
+		minAABB[2] = (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2] - eps);
+		maxAABB[2] = (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2] + eps);
+
+		ex.searchByBoundingBox(minAABB, maxAABB);
 		anything_checked = true;
 	}
 	if (this->zeroVolumeCheckBox->isChecked())
@@ -132,19 +139,18 @@ void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 	if (is_checked && (_currentIndex != _aabbIndex))
 	{
 		_aabbIndex = _currentIndex;
-		const std::vector<MeshLib::Node*> nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+		std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
 		GeoLib::AABB<MeshLib::Node> aabb(nodes.begin(), nodes.end());
-		const MeshLib::Node minAABB = aabb.getMinPoint();
-		const MeshLib::Node maxAABB = aabb.getMaxPoint();
+		MeshLib::Node const minAABB = aabb.getMinPoint();
+		MeshLib::Node const maxAABB = aabb.getMaxPoint();
 		this->xMinEdit->setText(QString::number(minAABB[0], 'f'));
 		this->xMaxEdit->setText(QString::number(maxAABB[0], 'f'));
 		this->yMinEdit->setText(QString::number(minAABB[1], 'f'));
 		this->yMaxEdit->setText(QString::number(maxAABB[1], 'f'));
 		this->zMinEdit->setText(QString::number(minAABB[2], 'f'));
 		this->zMaxEdit->setText(QString::number(maxAABB[2], 'f'));
-
+		std::fill(aabb_edits.begin(), aabb_edits.end(), false);
 	}
-
 }
 
 void MeshElementRemovalDialog::on_elementTypeCheckBox_toggled(bool is_checked)
