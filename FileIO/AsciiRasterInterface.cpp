@@ -89,13 +89,13 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, std::size_t &n_cols,
 	} else return false;
 
 	in >> tag;
-	if (tag.compare("xllcorner") == 0) {
+	if (tag.compare("xllcorner") == 0 || tag.compare("xllcenter") == 0) {
 		in >> value;
 		xllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
 
 	in >> tag;
-	if (tag.compare("yllcorner") == 0) {
+	if (tag.compare("yllcorner") == 0 || tag.compare("yllcenter") == 0) {
 		in >> value;
 		yllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
@@ -107,7 +107,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, std::size_t &n_cols,
 	} else return false;
 
 	in >> tag;
-	if (tag.compare("NODATA_value") == 0) {
+	if (tag.compare("NODATA_value") == 0 || tag.compare("nodata_value") == 0) {
 		in >> value;
 		no_data_val = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
