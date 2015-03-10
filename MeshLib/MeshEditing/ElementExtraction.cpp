@@ -45,7 +45,10 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	}
 
 	INFO("Removing total %d elements...", _marked_elements.size());
-	std::vector<MeshLib::Element*> tmp_elems = excludeElements(_mesh.getElements(), _marked_elements);
+	std::vector<MeshLib::Element*> tmp_elems = excludeElementCopy(
+		_mesh.getElements(),
+		_marked_elements
+	);
 	INFO("%d elements remain in mesh.", tmp_elems.size());
 	std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
 	std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(tmp_elems, new_nodes);
@@ -130,28 +133,30 @@ std::size_t ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, cons
 	return matchedIDs.size();
 }
 
+std::vector<MeshLib::Element*> ElementExtraction::excludeElementCopy(
+	std::vector<MeshLib::Element*> const& vec_src_eles,
+	std::vector<std::size_t> const& vec_removed) const
+{
+	std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size()-vec_removed.size());
+
+	unsigned cnt (0);
+	for (std::size_t i=0; i<vec_removed[0]; ++i)
+		vec_dest_eles[cnt++] = vec_src_eles[i];
+	for (std::size_t i=1; i<vec_removed.size(); ++i)
+		for (std::size_t j=vec_removed[i-1]+1; j<vec_removed[i]; ++j)
+			vec_dest_eles[cnt++] = vec_src_eles[j];
+	for (std::size_t i=vec_removed.back()+1; i<vec_src_eles.size(); ++i)
+		vec_dest_eles[cnt++] = vec_src_eles[i];
+
+	return vec_dest_eles;
+}
+
 void ElementExtraction::updateUnion(const std::vector<std::size_t> &vec)
 {
 	std::vector<std::size_t> vec_temp(vec.size() + _marked_elements.size());
 	auto it = std::set_union(vec.begin(), vec.end(), _marked_elements.begin(), _marked_elements.end(), vec_temp.begin());
 	vec_temp.resize(it - vec_temp.begin());
 	_marked_elements.assign(vec_temp.begin(), vec_temp.end());
-}
-
-std::vector<MeshLib::Element*> ElementExtraction::excludeElements(const std::vector<MeshLib::Element*> & vec_src_eles, const std::vector<std::size_t> &vec_removed) const
-{
-	std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size() - vec_removed.size());
-
-	unsigned cnt (0);
-	for (std::size_t i=0; i<vec_removed[0]; ++i) 
-			vec_dest_eles[cnt++] = vec_src_eles[i];
-	for (std::size_t i=1; i<vec_removed.size(); ++i) 
-		for (std::size_t j=vec_removed[i-1]+1; j<vec_removed[i]; ++j) 
-			vec_dest_eles[cnt++] = vec_src_eles[j];
-	for (std::size_t i=vec_removed.back()+1; i<vec_src_eles.size(); ++i) 
-			vec_dest_eles[cnt++] = vec_src_eles[i];
-
-	return vec_dest_eles;
 }
 
 } // end namespace MeshLib
