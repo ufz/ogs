@@ -118,7 +118,7 @@ public:
                 local_asm_builder,
                 _mesh.getElements(),
                 _local_assemblers,
-                1e-6,   // hydraulic conductivity
+                _hydraulic_conductivity,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -180,6 +180,8 @@ public:
 
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
+
+    double const _hydraulic_conductivity = 1e-6;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
