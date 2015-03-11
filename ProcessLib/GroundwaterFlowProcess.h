@@ -192,9 +192,10 @@ private:
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
-    std::vector<GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>*>
-            _local_assemblers;
+    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
+        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+    std::vector<LocalAssembler*> _local_assemblers;
 
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
