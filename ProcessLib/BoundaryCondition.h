@@ -16,6 +16,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "MathLib/ConstantFunction.h"
+
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace GeoLib
@@ -55,7 +57,11 @@ public:
 
         _value = config.get<double>("value", 0);
         DBUG("Using value %g", _value);
+
+        f = new MathLib::ConstantFunction<double>(_value);
     }
+
+    MathLib::ConstantFunction<double>* f = nullptr;
 
     /// Initialize Dirichlet type boundary conditions.
     /// Fills in global_ids of the particular geometry of the boundary condition
