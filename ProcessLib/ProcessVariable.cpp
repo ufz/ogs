@@ -80,6 +80,11 @@ ProcessVariable::ProcessVariable(
                     new UniformDirichletBoundaryCondition(
                         geometry, bc_config));
             }
+            else if (type == "UniformNeumann")
+            {
+                _neumann_bc_configs.emplace_back(
+                    new NeumannBcConfig(geometry, bc_config));
+            }
             else
             {
                 ERR("Unknown type \'%s\' of the boundary condition.",
@@ -95,6 +100,9 @@ ProcessVariable::~ProcessVariable()
     delete _initial_condition;
 
     for(auto p : _dirichlet_bcs)
+        delete p;
+
+    for(auto p : _neumann_bc_configs)
         delete p;
 }
 

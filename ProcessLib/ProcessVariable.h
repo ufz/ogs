@@ -17,6 +17,8 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+#include "NeumannBcConfig.h"
+
 namespace ProcessLib
 {
     class InitialCondition;
@@ -51,6 +53,7 @@ private:
     MeshLib::Mesh const& _mesh;
     InitialCondition* _initial_condition;
     std::vector<UniformDirichletBoundaryCondition*> _dirichlet_bcs;
+    std::vector<NeumannBcConfig*> _neumann_bc_configs;
 };
 
 }   // namespace ProcessLib
