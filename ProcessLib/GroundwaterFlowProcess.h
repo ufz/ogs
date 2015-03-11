@@ -28,10 +28,13 @@
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/NodeAdjacencyTable.h"
+#include "MeshLib/MeshSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "BoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
+#include "NeumannBCAssembler.h"
+#include "NeumannBC.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
@@ -133,6 +136,30 @@ public:
         _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
+
+        //
+        // Neumann boundary conditions.
+        //
+        {
+            // Find mesh nodes.
+            MeshGeoToolsLib::BoundaryElementsSearcher hydraulic_head_mesh_element_searcher(
+                _hydraulic_head->getMesh(), hydraulic_head_mesh_node_searcher);
+
+            // Create a neumann BC for the hydraulic head storing them in the
+            // _neumann_bcs vector.
+            _hydraulic_head->createNeumannBCs(
+                    std::back_inserter(_neumann_bcs),
+                    hydraulic_head_mesh_element_searcher,
+                    _global_setup,
+                    _integration_order,
+                    _hydraulic_conductivity,
+                    *_local_to_global_index_map,
+                    *_mesh_subset_all_nodes);
+        }
+
+        for (auto bc : _neumann_bcs)
+            bc->initialize(_global_setup, *_A, *_rhs);
+
     }
 
     void solve()
@@ -145,6 +172,10 @@ public:
 
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
+
+        // Call global assembler for each Neumann boundary local assembler.
+        for (auto bc : _neumann_bcs)
+            bc->integrate(_global_setup);
 
         // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
@@ -207,6 +238,8 @@ private:
         std::vector<std::size_t> global_ids;
         std::vector<double> values;
     } _dirichlet_bc;
+
+    std::vector<NeumannBC<GlobalSetup>*> _neumann_bcs;
 
     MeshLib::NodeAdjacencyTable _node_adjacency_table;
 };
