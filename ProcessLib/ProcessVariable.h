@@ -16,8 +16,10 @@
 #include "MeshLib/Mesh.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
 #include "NeumannBcConfig.h"
+#include "NeumannBC.h"
 
 namespace ProcessLib
 {
@@ -47,6 +49,18 @@ public:
     void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
             std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
+    template <typename OutputIterator, typename GlobalSetup, typename ...Args>
+    void createNeumannBCs(OutputIterator bcs,
+        MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+        GlobalSetup const& global_setup,
+        Args&&... args)
+    {
+        for (NeumannBcConfig* config : _neumann_bc_configs)
+        {
+            config->initialize(searcher);
+            bcs = new NeumannBC<GlobalSetup>(config, std::forward<Args>(args)...);
+        }
+    }
 
 private:
     std::string const _name;
