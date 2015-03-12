@@ -40,12 +40,19 @@ private slots:
 	void on_elementTypeCheckBox_toggled(bool is_checked);
 	void on_materialIDCheckBox_toggled(bool is_checked);
 	void on_meshNameComboBox_currentIndexChanged(int idx);
+	void on_xMinEdit_textChanged() { aabb_edits[0] = true; }
+	void on_xMaxEdit_textChanged() { aabb_edits[1] = true; }
+	void on_yMinEdit_textChanged() { aabb_edits[2] = true; }
+	void on_yMaxEdit_textChanged() { aabb_edits[3] = true; }
+	void on_zMinEdit_textChanged() { aabb_edits[4] = true; }
+	void on_zMaxEdit_textChanged() { aabb_edits[5] = true; }
 	void accept();
 	void reject();
 
 private:
 	const ProjectData& _project;
 	unsigned _currentIndex, _aabbIndex, _matIDIndex;
+	std::array<bool, 6> aabb_edits;
 
 signals:
 	void meshAdded(MeshLib::Mesh* mesh);

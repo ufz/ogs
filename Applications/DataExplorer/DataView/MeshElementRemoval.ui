@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>420</height>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -267,6 +267,23 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>meshNameComboBox</tabstop>
+  <tabstop>newMeshNameEdit</tabstop>
+  <tabstop>elementTypeCheckBox</tabstop>
+  <tabstop>elementTypeListWidget</tabstop>
+  <tabstop>materialIDCheckBox</tabstop>
+  <tabstop>materialListWidget</tabstop>
+  <tabstop>boundingBoxCheckBox</tabstop>
+  <tabstop>xMinEdit</tabstop>
+  <tabstop>xMaxEdit</tabstop>
+  <tabstop>yMinEdit</tabstop>
+  <tabstop>yMaxEdit</tabstop>
+  <tabstop>zMinEdit</tabstop>
+  <tabstop>zMaxEdit</tabstop>
+  <tabstop>zeroVolumeCheckBox</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -276,8 +293,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>388</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -292,8 +309,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>388</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
