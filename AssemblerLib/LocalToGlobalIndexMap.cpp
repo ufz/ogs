@@ -37,7 +37,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-    std::vector<MeshLib::Element*> const& elements,
+    std::vector<MeshLib::Element const*> const& elements,
     AssemblerLib::MeshComponentMap&& mesh_component_map,
     AssemblerLib::ComponentOrder const order)
     : _mesh_subsets(mesh_subsets), _mesh_component_map(std::move(mesh_component_map))
@@ -58,7 +58,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 LocalToGlobalIndexMap*
 LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-    std::vector<MeshLib::Element*> const& elements,
+    std::vector<MeshLib::Element const*> const& elements,
     AssemblerLib::ComponentOrder const order) const
 {
     DBUG("Construct reduced local to global index map.");

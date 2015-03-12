@@ -50,7 +50,7 @@ std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*
 }
 
 std::vector<Node*>
-selectNodes(std::vector<Element*> const& elements)
+selectNodes(std::vector<Element const*> const& elements)
 {
     std::set<Node*> nodes_set;
     for (auto e : elements)

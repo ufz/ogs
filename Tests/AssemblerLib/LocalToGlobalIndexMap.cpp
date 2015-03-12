@@ -83,9 +83,9 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
 
     // Select some elements from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
-    std::vector<MeshLib::Element*> some_elements;
+    std::vector<MeshLib::Element const*> some_elements;
     for (std::size_t id : ids)
-        some_elements.push_back(const_cast<MeshLib::Element*>(mesh->getElement(id)));
+        some_elements.push_back(mesh->getElement(id));
 
     // Find unique node ids of the selected elements for testing.
     std::vector<MeshLib::Node*> selected_nodes = MeshLib::selectNodes(some_elements);

@@ -118,7 +118,7 @@ public:
                 local_asm_builder,
                 _mesh.getElements(),
                 _local_assemblers,
-                1e-6,   // hydraulic conductivity
+                _hydraulic_conductivity,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -181,6 +181,8 @@ public:
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
 
+    double const _hydraulic_conductivity = 1e-6;
+
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
@@ -190,9 +192,10 @@ private:
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
-    std::vector<GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>*>
-            _local_assemblers;
+    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
+        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+    std::vector<LocalAssembler*> _local_assemblers;
 
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
