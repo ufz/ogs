@@ -88,6 +88,14 @@ ProcessVariable::ProcessVariable(
         }
 
     }
+
+    // Material properties
+    {
+        auto const& pmp_config = config.find("material_property");
+        if (pmp_config == config.not_found())
+            INFO("No material property found.");
+        _material = (new GroundwaterFlowMaterialProperty(config.get_child("material_property")));
+    }
 }
 
 ProcessVariable::~ProcessVariable()
@@ -96,6 +104,8 @@ ProcessVariable::~ProcessVariable()
 
     for(auto p : _boundary_conditions)
         delete p;
+
+    delete _material;
 }
 
 std::string const& ProcessVariable::getName() const

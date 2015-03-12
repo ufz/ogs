@@ -17,21 +17,43 @@
 
 #include "GroundwaterFlowMaterialProperty.h"
 
+#include "MaterialLib/ConstantTensor.h"
+
 namespace ProcessLib
 {
 
 GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree const& config)
 {
-    // Permeabiliy
+    // Porous medium properties
+    auto const& pmp_config = config.find("porous_medium_property");
+    if (pmp_config == config.not_found())
+        WARN("No porous medium property found.");
+
+    std::vector<std::size_t> mat_ids;
+    for (auto const& pmp_iterator : pmp_config->second)
     {
-        auto const &perm_config = config.find("permeability");
-        auto const &perm_k_config = perm_config  == config.not_found() ?
-                                    perm_config : config.find("hydraulic_conductivity");
-        if(perm_k_config == config.not_found())
+        ConfigTree const& pmp_config = pmp_iterator.second;
+        std::size_t const mat_id = pmp_config.get<std::size_t>("id");
+        mat_ids.push_back(mat_id);
+
+        auto const &hydraulic_conductivity_config = pmp_config.get_child("hydraulic_conductivity");
+        std::string const hy_type = hydraulic_conductivity_config.get<std::string>("type");
+        if(hy_type.find("isotropic") != std::string::npos)
         {
-            WARN("No permeability or hydraulic_conductivity found.");
+            const double K = hydraulic_conductivity_config.get<double>("value");
+         //TODO   _conductivity.push_back(new MaterialLib::ConstantTensor(K));
         }
+
+        // sort _conductivity
     }
 }
 
+GroundwaterFlowMaterialProperty::~GroundwaterFlowMaterialProperty()
+{
+    for(auto cd : _conductivity)
+        delete cd;
+
+    for(auto st: _storage)
+        delete st;
+}
 }   // namespace

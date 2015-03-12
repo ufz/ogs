@@ -32,17 +32,6 @@ using Permeability = MaterialLib::ParameterBase<MaterialLib::PermeabilityType>;
 using Storage = MaterialLib::ParameterBase<MaterialLib::StorageType>;
 using Density = MaterialLib::ParameterBase<MaterialLib::DensityType>;
 
-struct PorousMediumProperty
-{
-    /// Hydraulic conductivity for groundwater flow process.
-    std::unique_ptr<Permeability> conductivity;
-
-    /// Storage.
-    std::unique_ptr<Storage> storage;
-
-    // Porosity (add hereafter if it is needed)
-};
-
 /// Class of material parameters of groundwater flow process.
 class GroundwaterFlowMaterialProperty
 {
@@ -50,16 +39,16 @@ class GroundwaterFlowMaterialProperty
     public:
         GroundwaterFlowMaterialProperty(ConfigTree const& config);
 
-        ~GroundwaterFlowMaterialProperty() {}
+        ~GroundwaterFlowMaterialProperty();
 
         Permeability *getPermeability( const std::size_t mat_id) const
         {
-            return _porous_medium_property[mat_id]->conductivity.get();
+            return _conductivity[mat_id];
         }
 
         Storage *getStorage(std::size_t mat_id) const
         {
-            return _porous_medium_property[mat_id]->storage.get();
+            return _storage[mat_id];
         }
 
         Density *getDensity() const
@@ -72,8 +61,13 @@ class GroundwaterFlowMaterialProperty
         /// Density.
         std::unique_ptr<Density> _density;
 
-        /// Porous medium properties for each material zone.
-        std::vector<std::unique_ptr<PorousMediumProperty>> _porous_medium_property;
+        /// Hydraulic conductivity for groundwater flow process.
+        std::vector<Permeability*> _conductivity;
+
+        /// Storage.
+        std::vector<Storage*> _storage;
+
+        // Porosity (add hereafter if it is needed)
 };
 
 }   // namespace
