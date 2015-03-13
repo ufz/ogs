@@ -94,7 +94,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
 	// Arrays
 	MeshLib::Properties const & properties = _mesh->getProperties();
-	std::vector<std::string> const& propertyNames = properties.getPropertyNames();
+	std::vector<std::string> const& propertyNames = properties.getPropertyVectorNames();
 
 	for(std::vector<std::string>::const_iterator it = propertyNames.cbegin();
 		it != propertyNames.cend(); ++it)
@@ -118,7 +118,7 @@ template<typename T> bool VtkMappedMeshSource::addProperty(MeshLib::Properties c
                                                            std::string const& prop_name) const
 {
 	boost::optional<MeshLib::PropertyVector<T> const &>
-		propertyVector(properties.getProperty<T>(prop_name));
+		propertyVector(properties.getPropertyVector<T>(prop_name));
 	if(!propertyVector)
 		return false;
 

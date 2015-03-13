@@ -139,7 +139,7 @@ public:
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
-	getProperty(std::string const& name) const
+	getPropertyVector(std::string const& name) const
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
@@ -161,7 +161,7 @@ public:
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T>&>
-	getProperty(std::string const& name)
+	getPropertyVector(std::string const& name)
 	{
 		std::map<std::string, boost::any>::iterator it(
 			_properties.find(name)
@@ -180,7 +180,7 @@ public:
 		}
 	}
 
-	void removeProperty(std::string const& name)
+	void removePropertyVector(std::string const& name)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
@@ -196,7 +196,7 @@ public:
 	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	bool hasProperty(std::string const& name)
+	bool hasPropertyVector(std::string const& name)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
@@ -207,7 +207,7 @@ public:
 		return true;
 	}
 
-	std::vector<std::string> getPropertyNames() const
+	std::vector<std::string> getPropertyVectorNames() const
 	{
 		std::vector<std::string> names;
 		for (auto it(_properties.cbegin()); it != _properties.cend(); it++)

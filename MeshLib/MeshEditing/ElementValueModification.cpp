@@ -28,7 +28,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 	bool replace_if_exists)
 {
 	boost::optional<MeshLib::PropertyVector<unsigned> &> optional_property_value_vec(
-		mesh.getProperties().getProperty<unsigned>(property_name)
+		mesh.getProperties().getPropertyVector<unsigned>(property_name)
 	);
 
 	if (!optional_property_value_vec) {
@@ -69,7 +69,7 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 {
 	boost::optional<MeshLib::PropertyVector<unsigned> &>
 		optional_property_value_vec(
-			mesh.getProperties().getProperty<unsigned>("MatID")
+			mesh.getProperties().getPropertyVector<unsigned>("MatID")
 		);
 
 	if (!optional_property_value_vec) {

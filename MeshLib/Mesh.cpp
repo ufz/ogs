@@ -273,7 +273,9 @@ void Mesh::setNodesConnectedByElements()
 void Mesh::updateMaterialGroups()
 {
 	std::size_t const nElements (_elements.size());
-	boost::optional<PropertyVector<int>&> materials (_properties.getProperty<int>("MaterialIDs"));
+	boost::optional<PropertyVector<int>&> materials(
+		_properties.getPropertyVector<int>("MaterialIDs")
+	);
 	if (!materials)
 	{
 		materials = _properties.createNewPropertyVector<int>("MaterialIDs", MeshItemType::Cell, 1);
