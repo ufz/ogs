@@ -169,6 +169,7 @@ public:
 				name.c_str());
 			return;
 		}
+		delete it->second;
 		_properties.erase(it);
 	}
 

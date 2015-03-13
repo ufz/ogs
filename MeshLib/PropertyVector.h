@@ -16,15 +16,30 @@
 #include <type_traits>
 #include <memory>
 
+#include "BaseLib/excludeObjectCopy.h"
+
 namespace MeshLib
 {
+
+template <typename T>
+class PropertyVector;
+
+class PropertyVectorBase
+{
+public:
+	virtual PropertyVectorBase* clone(
+		std::vector<std::size_t> const& exclude_positions
+	) const = 0;
+	virtual ~PropertyVectorBase() = default;
+};
 
 /// Class template PropertyVector is a std::vector with template parameter
 /// PROP_VAL_TYPE. The reason for the derivation of std::vector is
 /// the template specialisation for pointer types below.
 /// \tparam PROP_VAL_TYPE typical this is a scalar, a vector or a matrix
 template <typename PROP_VAL_TYPE>
-class PropertyVector : public std::vector<PROP_VAL_TYPE>
+class PropertyVector : public std::vector<PROP_VAL_TYPE>,
+	public PropertyVectorBase
 {
 friend class Properties;
 
@@ -32,6 +47,14 @@ public:
 	std::size_t getTupleSize() const { return _tuple_size; }
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
+
+	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
+	{
+		PropertyVector<PROP_VAL_TYPE> *t(new PropertyVector<PROP_VAL_TYPE>(_property_name,
+			_mesh_item_type, _tuple_size));
+		BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
+		return t;
+	}
 
 protected:
 	/// @brief The constructor taking meta information for the data.
@@ -77,7 +100,8 @@ protected:
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type
 template <typename T>
-class PropertyVector<T*> : public std::vector<T*>
+class PropertyVector<T*> : public std::vector<T*>,
+	public PropertyVectorBase
 {
 friend class Properties;
 public:
@@ -96,9 +120,27 @@ public:
 		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
 
+	T* & operator[](std::size_t id)
+	{
+		return (*static_cast<std::vector<T*>*>(this))[_item2group_mapping[id]];
+	}
+
 	std::size_t getTupleSize() const { return _tuple_size; }
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
+
+	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
+	{
+		std::vector<std::size_t> item2group_mapping(
+			BaseLib::excludeObjectCopy(_item2group_mapping, exclude_positions)
+		);
+		PropertyVector<T*> *t (new PropertyVector<T*>(this->size()/_tuple_size,
+			item2group_mapping, _property_name, _mesh_item_type, _tuple_size));
+		for (std::size_t j(0); j<item2group_mapping.size(); j++) {
+			t->operator[](j) = (*static_cast<std::vector<T*> const*>(this))[item2group_mapping[j]];
+		}
+		return t;
+	}
 
 protected:
 	/// @brief The constructor taking meta information for the data.
