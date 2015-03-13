@@ -19,12 +19,23 @@
 namespace MeshLib
 {
 
+template <typename T>
+class PropertyVector;
+
+class PropertyVectorBase
+{
+public:
+	virtual void remove(std::size_t id) = 0;
+	virtual ~PropertyVectorBase() = default;
+};
+
 /// Class template PropertyVector is a std::vector with template parameter
 /// PROP_VAL_TYPE. The reason for the derivation of std::vector is
 /// the template specialisation for pointer types below.
 /// \tparam PROP_VAL_TYPE typical this is a scalar, a vector or a matrix
 template <typename PROP_VAL_TYPE>
-class PropertyVector : public std::vector<PROP_VAL_TYPE>
+class PropertyVector : public std::vector<PROP_VAL_TYPE>,
+	public PropertyVectorBase
 {
 friend class Properties;
 
@@ -32,6 +43,11 @@ public:
 	std::size_t getTupleSize() const { return _tuple_size; }
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
+
+	void remove(std::size_t id)
+	{
+		this->erase(this->begin()+id);
+	}
 
 protected:
 	/// @brief The constructor taking meta information for the data.
@@ -77,7 +93,8 @@ protected:
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type
 template <typename T>
-class PropertyVector<T*> : public std::vector<T*>
+class PropertyVector<T*> : public std::vector<T*>,
+	public PropertyVectorBase
 {
 friend class Properties;
 public:
@@ -99,6 +116,11 @@ public:
 	std::size_t getTupleSize() const { return _tuple_size; }
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
+
+	void remove(std::size_t id)
+	{
+		_item2group_mapping.erase(_item2group_mapping.begin()+id);
+	}
 
 protected:
 	/// @brief The constructor taking meta information for the data.
