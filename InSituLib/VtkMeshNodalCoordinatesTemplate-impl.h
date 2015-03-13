@@ -287,6 +287,13 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 	return;
 }
 
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*)
+{
+	vtkErrorMacro("Read only container.")
+	return;
+}
+
 template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 ::InsertNextTuple(vtkIdType, vtkAbstractArray *)
 {

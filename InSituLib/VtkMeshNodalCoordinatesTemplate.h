@@ -68,6 +68,7 @@ public:
 	void InsertTuple(vtkIdType i, const double *source);
 	void InsertTuples(vtkIdList *dstIds, vtkIdList *srcIds,
 	                  vtkAbstractArray *source);
+	void InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*);
 	vtkIdType InsertNextTuple(vtkIdType j, vtkAbstractArray *source);
 	vtkIdType InsertNextTuple(const float *source);
 	vtkIdType InsertNextTuple(const double *source);
