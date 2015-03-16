@@ -60,7 +60,7 @@ public:
 		MeshItemType mesh_item_type,
 		std::size_t tuple_size = 1)
 	{
-		std::map<std::string, boost::any>::const_iterator it(
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
 		if (it != _properties.end()) {
@@ -70,14 +70,15 @@ public:
 		}
 		auto entry_info(
 			_properties.insert(
-				std::pair<std::string, boost::any>(
-					name, boost::any(PropertyVector<T>(name, mesh_item_type))
+				std::make_pair(
+					name, new PropertyVector<T>(name, mesh_item_type, tuple_size)
 				)
 			)
 		);
-		return boost::optional<PropertyVector<T> &>(
-			boost::any_cast<PropertyVector<T> &>((entry_info.first)->second)
-			);
+		return boost::optional<PropertyVector<T> &>(*(
+				static_cast<PropertyVector<T>*>((entry_info.first)->second)
+			)
+		);
 	}
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
@@ -106,7 +107,7 @@ public:
 	{
 		// check if there is already a PropertyVector with the same name and
 		// mesh_item_type
-		std::map<std::string, boost::any>::const_iterator it(
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
 		if (it != _properties.end()) {
@@ -126,17 +127,15 @@ public:
 
 		auto entry_info(
 			_properties.insert(
-				std::pair<std::string, boost::any>(
+				std::pair<std::string, PropertyVectorBase*>(
 					name,
-					boost::any(PropertyVector<T>(n_prop_groups,
-						item2group_mapping, name, mesh_item_type))
+					new PropertyVector<T>(n_prop_groups,
+						item2group_mapping, name, mesh_item_type)
 				)
 			)
 		);
-		return boost::optional<PropertyVector<T> &>(
-			boost::any_cast<PropertyVector<T> &>(
-				(entry_info.first)->second)
-			);
+		return boost::optional<PropertyVector<T> &>
+			(*(static_cast<PropertyVector<T>*>((entry_info.first)->second)));
 	}
 
 	/// Method to get a vector of property values.
@@ -144,7 +143,7 @@ public:
 	boost::optional<PropertyVector<T> const&>
 	getPropertyVector(std::string const& name) const
 	{
-		std::map<std::string, boost::any>::const_iterator it(
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
 		if (it != _properties.end()) {
@@ -160,11 +159,38 @@ public:
 			ERR("A property with the specified name is not available.");
 			return boost::optional<PropertyVector<T> const&>();
 		}
+		PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
+		if (!t) {
+			ERR("Could not downcast PropertyVectorBase.");
+			return boost::optional<PropertyVector<T> const&>();
+		}
+		return *t;
+	}
+
+	/// Method to get a vector of property values.
+	template <typename T>
+	boost::optional<PropertyVector<T>&>
+	getPropertyVector(std::string const& name)
+	{
+		std::map<std::string, PropertyVectorBase*>::iterator it(
+			_properties.find(name)
+		);
+		if (it == _properties.end()) {
+			ERR("A property with the specified name is not available.");
+			return boost::optional<PropertyVector<T>&>();
+		}
+
+		PropertyVector<T> *t=dynamic_cast<PropertyVector<T>*>(it->second);
+		if (!t) {
+			ERR("Could not downcast PropertyVectorBase.");
+			return boost::optional<PropertyVector<T> &>();
+		}
+		return *t;
 	}
 
 	void removePropertyVector(std::string const& name)
 	{
-		std::map<std::string, boost::any>::const_iterator it(
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
 		if (it == _properties.end()) {
@@ -181,7 +207,7 @@ public:
 	/// @param name the name of the property (for instance porosity)
 	bool hasPropertyVector(std::string const& name)
 	{
-		std::map<std::string, boost::any>::const_iterator it(
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
 			_properties.find(name)
 		);
 		if (it == _properties.end()) {
@@ -201,7 +227,7 @@ public:
 private:
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
-	std::map<std::string, boost::any> _properties;
+	std::map<std::string, PropertyVectorBase*> _properties;
 }; // end class
 
 } // end namespace MeshLib
