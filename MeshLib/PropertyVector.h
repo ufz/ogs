@@ -16,6 +16,8 @@
 #include <type_traits>
 #include <memory>
 
+#include "BaseLib/excludeObjectCopy.h"
+
 namespace MeshLib
 {
 
@@ -25,7 +27,9 @@ class PropertyVector;
 class PropertyVectorBase
 {
 public:
-	virtual void remove(std::size_t id) = 0;
+	virtual PropertyVectorBase* clone(
+		std::vector<std::size_t> const& exclude_positions
+	) const = 0;
 	virtual ~PropertyVectorBase() = default;
 };
 
@@ -44,9 +48,12 @@ public:
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
 
-	void remove(std::size_t id)
+	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
 	{
-		this->erase(this->begin()+id);
+		PropertyVector<PROP_VAL_TYPE> *t (new PropertyVector<PROP_VAL_TYPE>(_property_name,
+			_mesh_item_type, _tuple_size));
+		BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
+		return t;
 	}
 
 protected:
@@ -113,13 +120,26 @@ public:
 		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
 	}
 
+	T* & operator[](std::size_t id)
+	{
+		return (*static_cast<std::vector<T*>*>(this))[_item2group_mapping[id]];
+	}
+
 	std::size_t getTupleSize() const { return _tuple_size; }
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
 
-	void remove(std::size_t id)
+	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
 	{
-		_item2group_mapping.erase(_item2group_mapping.begin()+id);
+		std::vector<std::size_t> item2group_mapping(
+			BaseLib::excludeObjectCopy(_item2group_mapping, exclude_positions)
+		);
+		PropertyVector<T*> *t (new PropertyVector<T*>(this->size()/_tuple_size,
+			item2group_mapping, _property_name, _mesh_item_type, _tuple_size));
+		for (std::size_t j(0); j<item2group_mapping.size(); j++) {
+			t->operator[](j) = (*static_cast<std::vector<T*> const*>(this))[item2group_mapping[j]];
+		}
+		return t;
 	}
 
 protected:
