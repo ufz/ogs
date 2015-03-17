@@ -17,7 +17,7 @@ before_install:
   - travis_retry sudo add-apt-repository --yes ppa:boost-latest
   - travis_retry sudo apt-get install python-software-properties
   - travis_retry sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:fenics-packages/fenics-dev; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:feelpp/petsc; fi
   - travis_retry sudo apt-get update -qq;
 
   # GCC 4.8
@@ -48,7 +48,7 @@ install:
   - rm -rf vtk-6.1.0.tar.gz VTK-Install
 
   # PetSc
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install -qq libpetsc3.4.2 libpetsc3.4.2-dev; fi
+  - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install -qq libpetsc3.4.2-dev; fi
 
 script:
   - mkdir build
