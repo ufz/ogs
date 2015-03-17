@@ -55,7 +55,10 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 
 	if (!new_elems.empty())
 	{
-		MeshLib::Mesh* new_mesh = new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems);
+		MeshLib::Mesh* new_mesh = new MeshLib::Mesh(new_mesh_name,
+			new_nodes, new_elems,
+			_mesh.getProperties().excludeCopyProperties(_marked_elements)
+		);
 		MeshValidation::removeUnusedMeshNodes(*new_mesh);
 		return new_mesh;
 	}
