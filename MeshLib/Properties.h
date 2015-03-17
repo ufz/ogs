@@ -211,6 +211,22 @@ public:
 		return names;
 	}
 
+	/** copy all PropertyVector objects stored in the (internal) map but only
+	 * those values of a PropertyVector whose ids are not in the vector
+	 * exclude_ids.
+	 */
+	Properties excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const
+	{
+		Properties exclude_copy;
+		for (auto property_vector : _properties) {
+			exclude_copy._properties.insert(
+				std::make_pair(property_vector.first,
+				property_vector.second->clone(exclude_ids))
+			);
+		}
+		return exclude_copy;
+	}
+
 private:
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
