@@ -48,6 +48,7 @@ public:
 	Mesh(const std::string &name,
 	     const std::vector<Node*> &nodes,
 	     const std::vector<Element*> &elements,
+	     Properties const& properties = Properties(),
 	     const std::size_t n_base_nodes = 0);
 
 	/// Copy constructor

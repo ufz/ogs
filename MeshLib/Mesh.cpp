@@ -29,13 +29,14 @@ namespace MeshLib
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
            const std::vector<Element*> &elements,
+           Properties const& properties,
            const std::size_t n_base_nodes)
 	: _id(_counter_value), _mesh_dimension(0),
 	  _edge_length(std::numeric_limits<double>::max(), 0),
 	  _node_distance(std::numeric_limits<double>::max(), 0),
 	  _name(name), _nodes(nodes), _elements(elements),
 	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
-	  _properties()
+	  _properties(properties)
 {
 	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
