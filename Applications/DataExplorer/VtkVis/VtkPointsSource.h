@@ -32,7 +32,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkPointsSource* New();
 
-	vtkTypeRevisionMacro(VtkPointsSource,vtkPolyDataAlgorithm);
+	vtkTypeMacro(VtkPointsSource,vtkPolyDataAlgorithm);
 
 	/// Sets the points as a vector
 	void setPoints(const std::vector<GeoLib::Point*>* points) { _points = points; }

@@ -24,7 +24,6 @@
 #include <vtkObjectFactory.h>
 
 vtkStandardNewMacro(VtkColorLookupTable);
-vtkCxxRevisionMacro(VtkColorLookupTable, "$Revision$");
 
 VtkColorLookupTable::VtkColorLookupTable()
 	: _type(VtkColorLookupTable::LUTType::LINEAR)

@@ -35,7 +35,6 @@
 #include "VtkVisHelper.h"
 
 vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
-vtkCxxRevisionMacro(VtkTextureOnSurfaceFilter, "$Revision$");
 
 VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() : _origin(.0f,.0f), _scalingFactor(.0f)
 {

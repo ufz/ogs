@@ -47,7 +47,7 @@ public:
 	/// \brief Create new objects with New() because of VTKs object reference counting.
 	static VtkColorLookupTable* New();
 
-	vtkTypeRevisionMacro(VtkColorLookupTable,vtkLookupTable);
+	vtkTypeMacro(VtkColorLookupTable,vtkLookupTable);
 
 	/// \brief Builds the colour table based on the previously set parameters.
 	/// This method should only be called after all options have been set.
@@ -71,7 +71,7 @@ public:
 
 	/// Sets the type of interpolation.
 	void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
-	
+
 	/// Exports a color table to a file.
 	void writeToFile(const std::string &filename);
 
