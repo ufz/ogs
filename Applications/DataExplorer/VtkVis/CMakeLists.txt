@@ -5,6 +5,7 @@ set(SOURCES
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
+	VtkAlgorithmProperties.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
@@ -24,10 +25,10 @@ set(SOURCES
 	VtkCompositePointToGlyphFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConsoleOutputWindow.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
-	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkRaster.cpp
@@ -41,7 +42,6 @@ set(SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
-	VtkAlgorithmProperties.cpp
 )
 
 # Moc headers
@@ -78,10 +78,10 @@ set(HEADERS
 	VtkCompositePointToGlyphFilter.h
 	VtkCompositeTextureOnSurfaceFilter.h
 	VtkCompositeThresholdFilter.h
+	VtkConsoleOutputWindow.h
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
-	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkRaster.h
@@ -141,8 +141,8 @@ include_directories(
 
 # Create the library
 add_library(VtkVis STATIC
-	${SOURCES}
 	${HEADERS}
+	${SOURCES}
 	${MOC_HEADERS}
 	${MOC_SOURCES}
 	${UIS}

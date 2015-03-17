@@ -35,7 +35,6 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 
 vtkStandardNewMacro(VtkPolylinesSource);
-vtkCxxRevisionMacro(VtkPolylinesSource, "$Revision$");
 
 VtkPolylinesSource::VtkPolylinesSource()
 	: _polylines(NULL)

@@ -35,7 +35,6 @@
 #include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkStationSource);
-vtkCxxRevisionMacro(VtkStationSource, "$Revision$");
 
 VtkStationSource::VtkStationSource()
 	: _stations(NULL)

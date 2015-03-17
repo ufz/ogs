@@ -35,7 +35,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkPolylinesSource* New();
 
-	vtkTypeRevisionMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
+	vtkTypeMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
 
 	/// Sets the polyline vector.
 	void setPolylines(const std::vector<GeoLib::Polyline*>* polylines) { _polylines = polylines; }

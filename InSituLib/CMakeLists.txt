@@ -10,6 +10,10 @@ add_library(InSituLib
 	VtkMappedMesh.cpp
 	VtkMappedMeshSource.h
 	VtkMappedMeshSource.cpp
+	VtkMappedPropertyVectorTemplate.h
+	VtkMappedPropertyVectorTemplate-impl.h
+	VtkMeshNodalCoordinatesTemplate.h
+	VtkMeshNodalCoordinatesTemplate-impl.h
 )
 
 include(AddCatalystDependency)

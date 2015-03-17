@@ -31,7 +31,7 @@ public:
 	/// @brief Create new objects with New() because of VTKs object reference counting.
 	static VtkAppendArrayFilter* New();
 
-	vtkTypeRevisionMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
+	vtkTypeMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
 
 	/// @brief Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);

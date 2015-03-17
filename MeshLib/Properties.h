@@ -56,11 +56,10 @@ public:
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
-	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type)
+	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type, std::size_t tuple_size = 1)
 	{
-		PropertyKeyType property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it != _properties.end()) {
 			ERR("A property of the name \"%s\" is already assigned to the mesh.",
@@ -69,14 +68,15 @@ public:
 		}
 		auto entry_info(
 			_properties.insert(
-				std::pair<PropertyKeyType, boost::any>(
-					property_key, boost::any(PropertyVector<T>())
+				std::make_pair(
+					name, new PropertyVector<T>(name, mesh_item_type, tuple_size)
 				)
 			)
 		);
-		return boost::optional<PropertyVector<T> &>(
-			boost::any_cast<PropertyVector<T> &>((entry_info.first)->second)
-			);
+		return boost::optional<PropertyVector<T> &>(*(
+				static_cast<PropertyVector<T>*>((entry_info.first)->second)
+			)
+		);
 	}
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
@@ -104,9 +104,8 @@ public:
 	{
 		// check if there is already a PropertyVector with the same name and
 		// mesh_item_type
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it != _properties.end()) {
 			ERR("A property of the name \"%s\" already assigned to the mesh.",
@@ -125,49 +124,62 @@ public:
 
 		auto entry_info(
 			_properties.insert(
-				std::pair<PropertyKeyType, boost::any>(
-					property_key,
-					boost::any(PropertyVector<T>(n_prop_groups, item2group_mapping))
+				std::pair<std::string, PropertyVectorBase*>(
+					name,
+					new PropertyVector<T>(n_prop_groups,
+						item2group_mapping, name, mesh_item_type)
 				)
 			)
 		);
-		return boost::optional<PropertyVector<T> &>(
-			boost::any_cast<PropertyVector<T> &>(
-				(entry_info.first)->second)
-			);
+		return boost::optional<PropertyVector<T> &>
+			(*(static_cast<PropertyVector<T>*>((entry_info.first)->second)));
 	}
 
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
-	getProperty(std::string const& name,
-		MeshItemType mesh_item_type) const
+	getPropertyVector(std::string const& name) const
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
+			_properties.find(name)
 		);
-		if (it != _properties.end()) {
-			try {
-				return boost::optional<PropertyVector<T> const&>(
-						boost::any_cast<PropertyVector<T> const&>(it->second)
-					);
-			} catch (boost::bad_any_cast const&) {
-				ERR("A property with the specified data type is not available.");
-				return boost::optional<PropertyVector<T> const&>();
-			}
-		} else {
-			ERR("A property with the specified name and MeshItemType is not available.");
+		if (it == _properties.end()) {
+			ERR("A property with the specified name is not available.");
 			return boost::optional<PropertyVector<T> const&>();
 		}
+		PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
+		if (!t) {
+			ERR("Could not downcast PropertyVectorBase.");
+			return boost::optional<PropertyVector<T> const&>();
+		}
+		return *t;
 	}
 
-	void removeProperty(std::string const& name,
-		MeshItemType mesh_item_type)
+	/// Method to get a vector of property values.
+	template <typename T>
+	boost::optional<PropertyVector<T>&>
+	getPropertyVector(std::string const& name)
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, PropertyVectorBase*>::iterator it(
+			_properties.find(name)
+		);
+		if (it == _properties.end()) {
+			ERR("A property with the specified name is not available.");
+			return boost::optional<PropertyVector<T>&>();
+		}
+
+		PropertyVector<T> *t=dynamic_cast<PropertyVector<T>*>(it->second);
+		if (!t) {
+			ERR("Could not downcast PropertyVectorBase.");
+			return boost::optional<PropertyVector<T> &>();
+		}
+		return *t;
+	}
+
+	void removePropertyVector(std::string const& name)
+	{
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it == _properties.end()) {
 			WARN("A property of the name \"%s\" does not exist.",
@@ -177,16 +189,13 @@ public:
 		_properties.erase(it);
 	}
 
-	/// Check if a PropertyVector accessible by a combination of the
-	/// name and the type of the mesh item (Node or Element) is already
+	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	/// @param mesh_item_type to which item type the property is assigned to
-	bool hasProperty(std::string const& name, MeshItemType mesh_item_type)
+	bool hasPropertyVector(std::string const& name)
 	{
-		PropertyKeyType const property_key(name, mesh_item_type);
-		std::map<PropertyKeyType, boost::any>::const_iterator it(
-			_properties.find(property_key)
+		std::map<std::string, PropertyVectorBase*>::const_iterator it(
+			_properties.find(name)
 		);
 		if (it == _properties.end()) {
 			return false;
@@ -194,29 +203,34 @@ public:
 		return true;
 	}
 
-private:
-	struct PropertyKeyType
+	std::vector<std::string> getPropertyVectorNames() const
 	{
-		PropertyKeyType(std::string const& n, MeshItemType t)
-			: name(n), mesh_item_type(t)
-		{}
+		std::vector<std::string> names;
+		for (auto it(_properties.cbegin()); it != _properties.cend(); it++)
+			names.push_back(it->first);
+		return names;
+	}
 
-		std::string const name;
-		MeshItemType const mesh_item_type;
-
-		bool operator<(PropertyKeyType const& other) const
-		{
-			int res(name.compare(other.name));
-			if (res == 0) {
-				return mesh_item_type < other.mesh_item_type;
-			}
-			return res < 0;
+	/** copy all PropertyVector objects stored in the (internal) map but only
+	 * those values of a PropertyVector whose ids are not in the vector
+	 * exclude_ids.
+	 */
+	Properties excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const
+	{
+		Properties exclude_copy;
+		for (auto property_vector : _properties) {
+			exclude_copy._properties.insert(
+				std::make_pair(property_vector.first,
+				property_vector.second->clone(exclude_ids))
+			);
 		}
-	};
+		return exclude_copy;
+	}
 
+private:
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
-	std::map<PropertyKeyType, boost::any> _properties;
+	std::map<std::string, PropertyVectorBase*> _properties;
 }; // end class
 
 } // end namespace MeshLib

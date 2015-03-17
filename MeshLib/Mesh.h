@@ -48,6 +48,7 @@ public:
 	Mesh(const std::string &name,
 	     const std::vector<Node*> &nodes,
 	     const std::vector<Element*> &elements,
+	     Properties const& properties = Properties(),
 	     const std::size_t n_base_nodes = 0);
 
 	/// Copy constructor
@@ -102,7 +103,7 @@ public:
 
 	/// Resets the IDs of all mesh-elements to their position in the element vector
 	void resetElementIDs();
-	
+
 	/// Resets the IDs of all mesh-nodes to their position in the node vector
 	void resetNodeIDs();
 
@@ -123,6 +124,9 @@ public:
 
 	MeshLib::Properties & getProperties() { return _properties; }
 	MeshLib::Properties const& getProperties() const { return _properties; }
+
+	/// Updates the property vector "MaterialIDs" with the values from the elements
+	void updateMaterialGroups();
 
 protected:
 	/// Set the minimum and maximum length over the edges of the mesh.

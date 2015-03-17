@@ -43,7 +43,10 @@ class MshModel;
 class StationTreeModel;
 class TreeModel;
 class VtkVisPipelineItem;
-class VtkMeshSource;
+
+namespace InSituLib {
+	class VtkMappedMeshSource;
+}
 
 /**
  * \brief VtkVisPipeline manages the VTK visualization.
@@ -95,7 +98,7 @@ public:
 	void setGlobalBackfaceCulling(bool enable) const;
 
 	/// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh, MeshQualityType t);
+	void checkMeshQuality(InSituLib::VtkMappedMeshSource* source, MeshQualityType t);
 
 public slots:
 	/// \brief Adds the given Model to the pipeline.

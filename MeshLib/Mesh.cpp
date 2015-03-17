@@ -29,13 +29,14 @@ namespace MeshLib
 Mesh::Mesh(const std::string &name,
            const std::vector<Node*> &nodes,
            const std::vector<Element*> &elements,
+           Properties const& properties,
            const std::size_t n_base_nodes)
 	: _id(_counter_value), _mesh_dimension(0),
 	  _edge_length(std::numeric_limits<double>::max(), 0),
 	  _node_distance(std::numeric_limits<double>::max(), 0),
 	  _name(name), _nodes(nodes), _elements(elements),
 	  _n_base_nodes(n_base_nodes==0 ? nodes.size() : n_base_nodes),
-	  _properties()
+	  _properties(properties)
 {
 	assert(n_base_nodes <= nodes.size());
 	this->resetNodeIDs();
@@ -48,6 +49,7 @@ Mesh::Mesh(const std::string &name,
 
 	this->calcEdgeLengthRange();
 	this->calcNodeDistanceRange();
+	this->updateMaterialGroups();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -56,7 +58,7 @@ Mesh::Mesh(const Mesh &mesh)
 	  _node_distance(mesh._node_distance.first, mesh._node_distance.second),
 	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
 	  _n_base_nodes(mesh.getNBaseNodes()),
-	  _properties()
+	  _properties(mesh._properties)
 {
 	const std::vector<Node*> nodes (mesh.getNodes());
 	const size_t nNodes (nodes.size());
@@ -269,5 +271,24 @@ void Mesh::setNodesConnectedByElements()
 	}
 }
 
+void Mesh::updateMaterialGroups()
+{
+	std::size_t const nElements (_elements.size());
+	boost::optional<PropertyVector<int>&> materials(
+		_properties.getPropertyVector<int>("MaterialIDs")
+	);
+	if (!materials)
+	{
+		materials = _properties.createNewPropertyVector<int>("MaterialIDs", MeshItemType::Cell, 1);
+		materials->resize(nElements, 0);
+	}
+	else if (materials->size() != nElements)
+	{
+		ERR ("Size of element vector and material vector do not match.");
+		return;
+	}
+	for (std::size_t i=0; i<nElements; ++i)
+		(*materials)[i] = _elements[i]->getValue();
+}
 
 }

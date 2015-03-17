@@ -32,7 +32,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkStationSource* New();
 
-	vtkTypeRevisionMacro(VtkStationSource,vtkPolyDataAlgorithm);
+	vtkTypeMacro(VtkStationSource,vtkPolyDataAlgorithm);
 
 	/// Returns the colour lookup table generated for boreholes.
 	/// This method should only be called after the colour lookup table has actually been build (via RequestData() or setColorLookupTable()).

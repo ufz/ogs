@@ -1,5 +1,5 @@
 /**
- * \file
+ * \file   VtkMeshConverter.cpp
  * \author Karsten Rink
  * \date   2011-08-23
  * \brief  Implementation of the VtkMeshConverter class.
@@ -32,6 +32,8 @@
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
 
 // Conversion from vtkUnstructuredGrid
 #include <vtkCell.h>
@@ -42,10 +44,10 @@
 namespace MeshLib {
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
-                                                     const double origin[3],
-                                                     const double scalingFactor,
-													 MeshElemType elem_type,
-													 UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const double scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -62,26 +64,26 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		return nullptr;
 	}
 
-	const size_t imgHeight = dims[0];
-	const size_t imgWidth  = dims[1];
-	const size_t incHeight = imgHeight+1;
-	const size_t incWidth  = imgWidth+1;
+	const std::size_t imgHeight = dims[0];
+	const std::size_t imgWidth  = dims[1];
+	const std::size_t incHeight = imgHeight+1;
+	const std::size_t incWidth  = imgWidth+1;
 	double* pixVal (new double[incHeight * incWidth]);
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
 
-	for (size_t j = 0; j < incHeight; j++)
+	for (std::size_t j = 0; j < incHeight; j++)
 	{
 		pixVal[j]=0;
 		visNodes[j]=false;
 		node_idx_map[j]=-1;
 	}
-	for (size_t i = 0; i < imgWidth; i++)
+	for (std::size_t i = 0; i < imgWidth; i++)
 	{
-		for (size_t j = 0; j < imgHeight; j++)
+		for (std::size_t j = 0; j < imgHeight; j++)
 		{
-			const size_t img_idx = i * imgHeight + j;
-			const size_t index = (i+1) * incHeight + j;
+			const std::size_t img_idx = i * imgHeight + j;
+			const std::size_t index = (i+1) * incHeight + j;
 			double* colour = pixelData->GetTuple(img_idx);
 			if (nTuple < 3)	// Grey (+ Alpha)
 				pixVal[index] = colour[0];
@@ -111,33 +113,33 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
-													 const double origin[3],
-													 const size_t imgHeight,
-													 const size_t imgWidth,
-													 const double &scalingFactor,
-													 MeshElemType elem_type,
-													UseIntensityAs intensity_type)
+                                                  const double origin[3],
+                                                  const std::size_t imgHeight,
+                                                  const std::size_t imgWidth,
+                                                  const double &scalingFactor,
+                                                  MeshElemType elem_type,
+                                                  UseIntensityAs intensity_type)
 {
-	const size_t incHeight = imgHeight+1;
-	const size_t incWidth  = imgWidth+1;
+	const std::size_t incHeight = imgHeight+1;
+	const std::size_t incWidth  = imgWidth+1;
 	double* pixVal (new double[incHeight * incWidth]);
 	bool* visNodes(new bool[incWidth * incHeight]);
 	int* node_idx_map(new int[incWidth * incHeight]);
 
 	double noDataValue = getExistingValue(img, imgWidth*imgHeight);
 
-	for (size_t j = 0; j < imgHeight; j++)
+	for (std::size_t j = 0; j < imgHeight; j++)
 	{
 		pixVal[j]=0;
 		visNodes[j]=false;
 		node_idx_map[j]=-1;
 	}
-	for (size_t i = 0; i < imgWidth; i++)
+	for (std::size_t i = 0; i < imgWidth; i++)
 	{
-		for (size_t j = 0; j < imgHeight; j++)
+		for (std::size_t j = 0; j < imgHeight; j++)
 		{
-			const size_t img_idx = i * imgHeight + j;
-			const size_t index = (i+1) * incHeight + j;
+			const std::size_t img_idx = i * imgHeight + j;
+			const std::size_t index = (i+1) * incHeight + j;
 			if (img[img_idx] == -9999)
 			{
 				visNodes[index] = false;
@@ -166,28 +168,28 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
 }
 
 MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
-												  int* node_idx_map,
-												  const bool* visNodes,
-												  const double origin[3],
-                                                  const size_t &imgHeight,
-												  const size_t &imgWidth,
-                                                  const double &scalingFactor,
-										 		  MeshElemType elem_type,
-												  UseIntensityAs intensity_type)
+                                               int* node_idx_map,
+                                               const bool* visNodes,
+                                               const double origin[3],
+                                               const std::size_t &imgHeight,
+                                               const std::size_t &imgWidth,
+                                               const double &scalingFactor,
+                                               MeshElemType elem_type,
+                                               UseIntensityAs intensity_type)
 {
-	const size_t incHeight = imgHeight+1;
-	const size_t incWidth  = imgWidth+1;
-	size_t node_idx_count(0);
+	const std::size_t incHeight = imgHeight+1;
+	const std::size_t incWidth  = imgWidth+1;
+	std::size_t node_idx_count(0);
 	const double x_offset(origin[0] - scalingFactor/2.0);
 	const double y_offset(origin[1] - scalingFactor/2.0);
 
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
 
-	for (size_t i = 0; i < incWidth; i++)
-		for (size_t j = 0; j < incHeight; j++)
+	for (std::size_t i = 0; i < incWidth; i++)
+		for (std::size_t j = 0; j < incHeight; j++)
 		{
-			const size_t index = i * incHeight + j;
+			const std::size_t index = i * incHeight + j;
 
 			bool set_node (false);
 			if (j==0 && i==imgWidth) set_node = visNodes[index];
@@ -206,8 +208,8 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 		}
 
 	// set mesh elements
-	for (size_t i = 0; i < imgWidth; i++)
-		for (size_t j = 0; j < imgHeight; j++)
+	for (std::size_t i = 0; i < imgWidth; i++)
+		for (std::size_t j = 0; j < imgHeight; j++)
 		{
 			const int index = i * incHeight + j;
 			if ((node_idx_map[index]!=-1) && (node_idx_map[index+1]!=-1) && (node_idx_map[index+incHeight]!=-1) && (node_idx_map[index+incHeight+1]!=-1) && (visNodes[index+incHeight]))
@@ -252,25 +254,25 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		return nullptr;
 
 	// set mesh nodes
-	const size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
+	const std::size_t nNodes = grid->GetPoints()->GetNumberOfPoints();
 	std::vector<MeshLib::Node*> nodes(nNodes);
 	double* coords = nullptr;
-	for (size_t i = 0; i < nNodes; i++)
+	for (std::size_t i = 0; i < nNodes; i++)
 	{
 		coords = grid->GetPoints()->GetPoint(i);
 		nodes[i] = new MeshLib::Node(coords[0], coords[1], coords[2]);
 	}
 
 	// set mesh elements
-	const size_t nElems = grid->GetNumberOfCells();
+	const std::size_t nElems = grid->GetNumberOfCells();
 	std::vector<MeshLib::Element*> elements(nElems);
 	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
-	for (size_t i = 0; i < nElems; i++)
+	for (std::size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* elem;
-		const size_t nElemNodes (grid->GetCell(i)->GetNumberOfPoints());
+		const std::size_t nElemNodes (grid->GetCell(i)->GetNumberOfPoints());
 		std::vector<unsigned> node_ids(nElemNodes);
-		for (size_t j=0; j<nElemNodes; j++)
+		for (std::size_t j=0; j<nElemNodes; j++)
 			node_ids[j] = grid->GetCell(i)->GetPointId(j);
 		const unsigned material = (scalars) ? static_cast<int>(scalars->GetComponent(i,0)) : 0;
 
@@ -356,13 +358,64 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		elements[i] = elem;
 	}
 
-	return new MeshLib::Mesh(mesh_name, nodes, elements);
+	MeshLib::Mesh* mesh = new MeshLib::Mesh(mesh_name, nodes, elements);
+	convertScalarArrays(*grid, *mesh);
 
+	return mesh;
 }
 
-double VtkMeshConverter::getExistingValue(const double* img, size_t length)
+void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
-	for (size_t i=0; i<length; i++)
+	vtkPointData* point_data = grid.GetPointData();
+	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+	for (unsigned i=0; i<n_point_arrays; ++i)
+		convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+
+	vtkCellData* cell_data = grid.GetCellData();
+	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
+	for (unsigned i=0; i<n_cell_arrays; ++i)
+		convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+}
+
+void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
+{
+	vtkIdType const nTuples (array->GetNumberOfTuples());
+	int const nComponents (array->GetNumberOfComponents());
+	char const*const array_name (array->GetName());
+
+	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
+	if (double_array)
+	{
+		boost::optional<MeshLib::PropertyVector<double> &> vec
+			(properties.createNewPropertyVector<double>(array_name, type, nComponents));
+		if (!vec)
+			return;
+		vec->reserve(nTuples*nComponents);
+		double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		return;
+	}
+
+	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
+	if (int_array)
+	{
+		boost::optional<MeshLib::PropertyVector<int> &> vec
+			(properties.createNewPropertyVector<int>(array_name, type, nComponents));
+		if (!vec)
+			return;
+		vec->reserve(nTuples*nComponents);
+		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		return;
+	}
+
+	ERR ("Array \"%s\" in VTU file uses unsupported data type.", array->GetName());
+	return;
+}
+
+double VtkMeshConverter::getExistingValue(const double* img, std::size_t length)
+{
+	for (std::size_t i=0; i<length; i++)
 	{
 		if (img[i] != -9999)
 			return img[i];

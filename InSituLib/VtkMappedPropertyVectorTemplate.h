@@ -25,20 +25,19 @@
 namespace InSituLib {
 
 template <class Scalar>
-class VtkMappedElementDataArrayTemplate:
-	public vtkTypeTemplate<VtkMappedElementDataArrayTemplate<Scalar>,
+class VtkMappedPropertyVectorTemplate :
+	public vtkTypeTemplate<VtkMappedPropertyVectorTemplate<Scalar>,
 	                       vtkMappedDataArray<Scalar> >
 {
 public:
-	vtkMappedDataArrayNewInstanceMacro(VtkMappedElementDataArrayTemplate<Scalar>)
-	static VtkMappedElementDataArrayTemplate *New();
+	vtkMappedDataArrayNewInstanceMacro(VtkMappedPropertyVectorTemplate<Scalar>)
+	static VtkMappedPropertyVectorTemplate *New();
 	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
 	// Description:
-	// Set the raw scalar arrays for the coordinate set. This class takes
-	// ownership of the arrays and deletes them with delete[].
-	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples);
-	void SetElements(std::vector<MeshLib::Element *> const * elements, vtkIdType numTuples, bool save);
+	// Set the raw scalar arrays for the coordinate set.
+	void SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector);
+	void SetPropertyVector(MeshLib::PropertyVector<Scalar> & propertyVector, bool save);
 
 	// Reimplemented virtuals -- see superclasses for descriptions:
 	void Initialize();
@@ -94,17 +93,16 @@ public:
 	void InsertValue(vtkIdType idx, Scalar v);
 
 protected:
-	VtkMappedElementDataArrayTemplate();
-	~VtkMappedElementDataArrayTemplate();
+	VtkMappedPropertyVectorTemplate();
+	~VtkMappedPropertyVectorTemplate();
 
-	//Scalar *Array;
-	std::vector<MeshLib::Element*> const * _elements;
+	MeshLib::PropertyVector<Scalar> * _propertyVector;
 
 private:
-	VtkMappedElementDataArrayTemplate(
-		const VtkMappedElementDataArrayTemplate &); // Not implemented.
+	VtkMappedPropertyVectorTemplate(
+		const VtkMappedPropertyVectorTemplate &); // Not implemented.
 	void operator=(
-		const VtkMappedElementDataArrayTemplate &); // Not implemented.
+		const VtkMappedPropertyVectorTemplate &); // Not implemented.
 
 	vtkIdType Lookup(const Scalar &val, vtkIdType startIndex);
 	double TempDouble;
@@ -115,6 +113,6 @@ private:
 
 } // end namespace InSituLib
 
-#include "VtkMappedElementDataArrayTemplate-impl.h"
+#include "VtkMappedPropertyVectorTemplate-impl.h"
 
 #endif // VTKMAPPEDELEMENTDATAARRAY_H_
