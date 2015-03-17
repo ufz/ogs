@@ -48,8 +48,16 @@ std::vector<T> excludeObjectCopy(std::vector<T> const& src_vec,
 		src_vec.cend(), std::back_inserter(dest_vec));
 
 	return dest_vec;
-
 }
+
+template <typename T>
+void excludeObjectCopy(std::vector<T> const& src_vec,
+	std::vector<std::size_t> const& exclude_positions,
+	std::vector<T> & dest_vec)
+{
+	dest_vec = excludeObjectCopy(src_vec, exclude_positions);
+}
+
 
 } // end namespace BaseLib
 
