@@ -29,7 +29,6 @@
 #include <vtkUnstructuredGrid.h>
 
 vtkStandardNewMacro(VtkAppendArrayFilter);
-vtkCxxRevisionMacro(VtkAppendArrayFilter, "$Revision$");
 
 VtkAppendArrayFilter::VtkAppendArrayFilter()
 {

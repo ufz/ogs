@@ -29,7 +29,6 @@
 #include <vtkImageShiftScale.h>
 
 vtkStandardNewMacro(VtkBGImageSource);
-vtkCxxRevisionMacro(VtkBGImageSource, "$Revision$");
 
 VtkBGImageSource::VtkBGImageSource() : _origin(0,0), _cellsize(1)
 {

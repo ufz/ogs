@@ -32,7 +32,6 @@
 #include <vtkFloatArray.h>
 
 vtkStandardNewMacro(VtkColorByHeightFilter);
-vtkCxxRevisionMacro(VtkColorByHeightFilter, "$Revision$");
 
 VtkColorByHeightFilter::VtkColorByHeightFilter()
 :  ColorLookupTable(VtkColorLookupTable::New()), _tableRangeScaling(1.0)

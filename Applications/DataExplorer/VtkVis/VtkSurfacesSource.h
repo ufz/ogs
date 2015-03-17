@@ -31,7 +31,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkSurfacesSource* New();
 
-	vtkTypeRevisionMacro(VtkSurfacesSource,vtkPolyDataAlgorithm);
+	vtkTypeMacro(VtkSurfacesSource,vtkPolyDataAlgorithm);
 
 	/// Sets the surfaces vector
 	void setSurfaces(const std::vector<GeoLib::Surface*>* surfaces) { _surfaces = surfaces; }

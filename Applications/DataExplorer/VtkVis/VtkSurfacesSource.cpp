@@ -29,7 +29,6 @@
 #include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkSurfacesSource);
-vtkCxxRevisionMacro(VtkSurfacesSource, "$Revision$");
 
 VtkSurfacesSource::VtkSurfacesSource()
 	: _surfaces(NULL)
