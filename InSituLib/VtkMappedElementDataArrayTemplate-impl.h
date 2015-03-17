@@ -307,6 +307,12 @@ template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
 	vtkErrorMacro("Read only container.")
 }
 
+template <class Scalar> void VtkMappedElementDataArrayTemplate<Scalar>
+::InsertTuples(vtkIdType, vtkIdType, vtkIdType, vtkAbstractArray*)
+{
+	vtkErrorMacro("Read only container.")
+}
+
 //------------------------------------------------------------------------------
 template <class Scalar> vtkIdType VtkMappedElementDataArrayTemplate<Scalar>
 ::InsertNextTuple(vtkIdType, vtkAbstractArray *)
