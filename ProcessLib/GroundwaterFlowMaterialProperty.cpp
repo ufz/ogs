@@ -17,10 +17,13 @@
 
 #include "GroundwaterFlowMaterialProperty.h"
 
-#include "MaterialLib/ConstantTensor.h"
+#include "MaterialLib/ConstantScalarModel.h"
+#include "MaterialLib/TensorParameter.h"
+#include "MaterialLib/Fluid/Permeability/PermeabilityType.h"
 
 namespace ProcessLib
 {
+using namespace MaterialLib;
 
 GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree const& config)
 {
@@ -40,8 +43,12 @@ GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree cons
         std::string const hy_type = hydraulic_conductivity_config.get<std::string>("type");
         if(hy_type.find("isotropic") != std::string::npos)
         {
-            const double K = hydraulic_conductivity_config.get<double>("value");
-         //TODO   _conductivity.push_back(new MaterialLib::ConstantTensor(K));
+            const double k = hydraulic_conductivity_config.get<double>("value");
+
+            MaterialLib::TensorParameter<PermeabilityType, MaterialLib::ConstantScalarModel, double> *K
+			   = new MaterialLib::TensorParameter<PermeabilityType, MaterialLib::ConstantScalarModel, double>(k);
+
+            _conductivity.push_back(K);
         }
 
         // sort _conductivity

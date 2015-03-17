@@ -16,6 +16,8 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
+#include "GroundwaterFlowMaterialProperty.h"
+
 namespace ProcessLib
 {
 
@@ -111,6 +113,12 @@ public:
 private:
     std::vector<ShapeMatrices> _shape_matrices;
     double _hydraulic_conductivity;
+
+    using Permeability = MaterialLib::ParameterBase<MaterialLib::PermeabilityType>;
+    Permeability* _conductivity;
+
+    using Storage = MaterialLib::ParameterBase<MaterialLib::StorageType>;
+    Storage* _storage;
 
     std::unique_ptr<NodalMatrixType> _localA;
     std::unique_ptr<NodalVectorType> _localRhs;

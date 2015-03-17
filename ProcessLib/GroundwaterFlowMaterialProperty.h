@@ -22,7 +22,6 @@
 
 #include "MaterialLib/ParameterBase.h"
 #include "MaterialLib/Fluid/Permeability/PermeabilityType.h"
-#include "MaterialLib/Fluid/Viscosity/ViscosityType.h"
 #include "MaterialLib/Fluid/Storage/StorageType.h"
 #include "MaterialLib/DensityType.h"
 
@@ -41,7 +40,7 @@ class GroundwaterFlowMaterialProperty
 
         ~GroundwaterFlowMaterialProperty();
 
-        Permeability *getPermeability( const std::size_t mat_id) const
+        Permeability *getConductivity( const std::size_t mat_id) const
         {
             return _conductivity[mat_id];
         }

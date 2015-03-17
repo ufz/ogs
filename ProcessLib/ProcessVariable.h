@@ -15,8 +15,6 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
-#include "GroundwaterFlowMaterialProperty.h"
-
 namespace ProcessLib
 {
     class BoundaryCondition;
@@ -64,8 +62,6 @@ private:
     MeshLib::Mesh const& _mesh;
     InitialCondition* _initial_condition;
     std::vector<BoundaryCondition*> _boundary_conditions;
-
-    GroundwaterFlowMaterialProperty *_material;
 };
 
 }   // namespace ProcessLib

@@ -17,9 +17,11 @@
 namespace MaterialLib
 {
 
+/// Intrinsic permeability or hydraulic conductivity type
 enum class PermeabilityType
 {
-    INTRISINC = 0
+    ISOTROPIC = 0,
+    ANSITROPIC = 0
 };
 
 } // end namespace
