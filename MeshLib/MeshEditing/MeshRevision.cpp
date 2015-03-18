@@ -144,7 +144,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 	const double sqr_eps(eps*eps);
 	std::iota(id_map.begin(), id_map.end(), 0);
 
-	GeoLib::Grid<MeshLib::Node> grid(nodes.begin(), nodes.end(), 64);
+	GeoLib::Grid<MeshLib::Node> const grid(nodes.begin(), nodes.end(), 64);
 
 	for (std::size_t k = 0; k < nNodes; ++k)
 	{
@@ -161,7 +161,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 			const std::size_t nGridCellNodes(cell_vector.size());
 			for (std::size_t j = 0; j < nGridCellNodes; ++j)
 			{
-				MeshLib::Node* test_node(cell_vector[j]);
+				MeshLib::Node const*const test_node(cell_vector[j]);
 				// are node indices already identical (i.e. nodes will be collapsed)
 				if (id_map[node->getID()] == id_map[test_node->getID()])
 					continue;
@@ -191,7 +191,7 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
 		// all nodes that have not been collapsed with other nodes are copied into new array
 		if (nodes[k]->getID() == id_map[k])
 		{
-			std::size_t id(new_nodes.size());
+			std::size_t const id(new_nodes.size());
 			new_nodes.push_back(new MeshLib::Node((*nodes[k])[0], (*nodes[k])[1], (*nodes[k])[2], id));
 			nodes[k]->setID(id); // the node in the old array gets the index of the same node in the new array
 		}
@@ -204,7 +204,7 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
 
 unsigned MeshRevision::getNUniqueNodes(MeshLib::Element const*const element) const
 {
-	unsigned nNodes(element->getNBaseNodes());
+	unsigned const nNodes(element->getNBaseNodes());
 	unsigned count(nNodes);
 
 	for (unsigned i = 0; i < nNodes - 1; ++i)
