@@ -48,7 +48,7 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
 	std::vector<MeshLib::Node*> new_nodes (this->constructNewNodesArray(this->collapseNodeIndices(eps)));
 	std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(_mesh.getElements(), new_nodes));
 	this->resetNodeIDs();
-	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
+	return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements, _mesh.getProperties());
 }
 
 unsigned MeshRevision::getNCollapsableNodes(double eps) const
