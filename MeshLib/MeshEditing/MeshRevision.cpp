@@ -266,7 +266,7 @@ std::size_t MeshRevision::subdivideElement(
 	return 0;
 }
 
-void MeshRevision::reduceElement(MeshLib::Element const*const element,
+std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
 	unsigned n_unique_nodes,
 	std::vector<MeshLib::Node*> const& nodes,
 	std::vector<MeshLib::Element*> & elements,
@@ -276,23 +276,30 @@ void MeshRevision::reduceElement(MeshLib::Element const*const element,
 	 * TODO: modify neighbouring elements if one elements has been subdivided
 	 ***************/
 	if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
+	{
 		elements.push_back (this->constructLine(element, nodes));
-	else if ((element->getGeomType() == MeshElemType::QUAD) ||
-		     (element->getGeomType() == MeshElemType::TETRAHEDRON))
+		return 1;
+	} else
+		if ((element->getGeomType() == MeshElemType::QUAD) ||
+			(element->getGeomType() == MeshElemType::TETRAHEDRON))
 	{
 		if (n_unique_nodes == 3 && min_elem_dim < 3)
 			elements.push_back (this->constructTri(element, nodes));
 		else if (min_elem_dim == 1)
 			elements.push_back (this->constructLine(element, nodes));
+		return 1;
 	}
-	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-		this->reduceHex(element, n_unique_nodes, nodes, elements, min_elem_dim);
-	else if (element->getGeomType() == MeshElemType::PYRAMID)
+	else if (element->getGeomType() == MeshElemType::HEXAHEDRON) {
+		return reduceHex(element, n_unique_nodes, nodes, elements, min_elem_dim);
+	} else if (element->getGeomType() == MeshElemType::PYRAMID) {
 		this->reducePyramid(element, n_unique_nodes, nodes, elements, min_elem_dim);
-	else if (element->getGeomType() == MeshElemType::PRISM)
-		this->reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
-	else
-		ERR ("Error: Unknown element type.");
+		return 1;
+	} else if (element->getGeomType() == MeshElemType::PRISM) {
+		return reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
+	}
+
+	ERR ("Error: Unknown element type.");
+	return 0;
 }
 
 unsigned MeshRevision::subdivideQuad(MeshLib::Element const*const quad,

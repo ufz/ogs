@@ -96,7 +96,7 @@ private:
 		std::vector<MeshLib::Element*> & elements) const;
 
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
-	void reduceElement(MeshLib::Element const*const element,
+	std::size_t reduceElement(MeshLib::Element const*const element,
 	                   unsigned n_unique_nodes,
 	    			   const std::vector<MeshLib::Node*> &nodes,
 	    			   std::vector<MeshLib::Element*> &elements,
