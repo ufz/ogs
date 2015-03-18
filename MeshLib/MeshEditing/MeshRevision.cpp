@@ -94,7 +94,6 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, doub
 			reduceElement(*elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim);
 		else
 			ERR ("Something is wrong, more unique nodes than actual nodes");
-
 	}
 
 	this->resetNodeIDs();
@@ -110,28 +109,52 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
 	if (this->_mesh.getNElements() == 0)
 		return nullptr;
 
+	// data structures for the new mesh
 	std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
 	std::vector<MeshLib::Element*> new_elements;
+	MeshLib::Properties new_properties;
+	boost::optional<PropertyVector<int> &> new_material_vec(
+		new_properties.createNewPropertyVector<int>(
+			"MaterialIDs", MeshItemType::Cell, 1
+		)
+	);
 
-	const std::vector<MeshLib::Element*> &elements(this->_mesh.getElements());
-	for (auto elem = elements.begin(); elem != elements.end(); ++elem)
-	{
-		ElementErrorCode e((*elem)->validate());
-		if (e[ElementErrorFlag::NonCoplanar])
+	// original data
+	std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
+	MeshLib::Properties const& properties(_mesh.getProperties());
+	boost::optional<MeshLib::PropertyVector<int> const&> material_vec(
+		properties.getPropertyVector<int>("MaterialIDs"));
+
+	for (std::size_t k(0); k<elements.size(); ++k) {
+		MeshLib::Element const*const elem(elements[k]);
+		ElementErrorCode error_code(elem->validate());
+		if (error_code[ElementErrorFlag::NonCoplanar])
 		{
-			if (!this->subdivideElement(*elem, new_nodes, new_elements))
+			std::size_t const n_new_elements(
+				subdivideElement(elem, new_nodes, new_elements));
+			if (n_new_elements == 0)
 			{
-				ERR("Error: Element %d has unknown element type.", std::distance(elements.begin(), elem));
+				ERR("Error: Element %d has unknown element type.", k);
 				this->cleanUp(new_nodes, new_elements);
 				return nullptr;
 			}
+			// transmit material values
+			if (!material_vec)
+				continue;
+			for (std::size_t j(0); j<n_new_elements; ++j)
+				new_material_vec->push_back((*material_vec)[k]);
+		} else {
+			new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
+			// transmit material values
+			if (!material_vec)
+				continue;
+			new_material_vec->push_back((*material_vec)[k]);
 		}
-		else
-			new_elements.push_back(MeshLib::copyElement(*elem, new_nodes));
 	}
 
 	if (!new_elements.empty())
-		return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements);
+		return new MeshLib::Mesh(
+			new_mesh_name, new_nodes, new_elements, new_properties);
 
 	this->cleanUp(new_nodes, new_elements);
 	return nullptr;
