@@ -146,7 +146,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 
 	GeoLib::Grid<MeshLib::Node> grid(nodes.begin(), nodes.end(), 64);
 
-	for (size_t k = 0; k < nNodes; ++k)
+	for (std::size_t k = 0; k < nNodes; ++k)
 	{
 		std::vector<std::vector<MeshLib::Node*> const*> node_vectors;
 		MeshLib::Node const*const node(nodes[k]);
@@ -154,12 +154,12 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 			continue;
 		grid.getPntVecsOfGridCellsIntersectingCube(node->getCoords(), half_eps, node_vectors);
 
-		const size_t nVectors(node_vectors.size());
-		for (size_t i = 0; i < nVectors; ++i)
+		const std::size_t nVectors(node_vectors.size());
+		for (std::size_t i = 0; i < nVectors; ++i)
 		{
 			const std::vector<MeshLib::Node*> &cell_vector(*node_vectors[i]);
-			const size_t nGridCellNodes(cell_vector.size());
-			for (size_t j = 0; j < nGridCellNodes; ++j)
+			const std::size_t nGridCellNodes(cell_vector.size());
+			for (std::size_t j = 0; j < nGridCellNodes; ++j)
 			{
 				MeshLib::Node* test_node(cell_vector[j]);
 				// are node indices already identical (i.e. nodes will be collapsed)
