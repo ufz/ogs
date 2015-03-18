@@ -142,8 +142,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 	std::vector<std::size_t> id_map(nNodes);
 	const double half_eps(eps / 2.0);
 	const double sqr_eps(eps*eps);
-	for (std::size_t k = 0; k < nNodes; ++k)
-		id_map[k] = k;
+	std::iota(id_map.begin(), id_map.end(), 0);
 
 	GeoLib::Grid<MeshLib::Node> grid(nodes.begin(), nodes.end(), 64);
 
