@@ -136,13 +136,14 @@ private:
 	 * @return The number of newly created elements
 	 */
 	unsigned reducePrism(MeshLib::Element const*const prism,
-		             unsigned n_unique_nodes,
-					 const std::vector<MeshLib::Node*> &nodes,
-					 std::vector<MeshLib::Element*> &new_elements,
-					 unsigned min_elem_dim) const;
-	
+		unsigned n_unique_nodes,
+		std::vector<MeshLib::Node*> const& nodes,
+		std::vector<MeshLib::Element*> & new_elements,
+		unsigned min_elem_dim) const;
+
 	// In an element with 5 unique nodes, return the node that will be the top of the resulting pyramid
-	unsigned findPyramidTopNode(const MeshLib::Element &element, const std::array<std::size_t,4> &base_node_ids) const;
+	unsigned findPyramidTopNode(MeshLib::Element const& element,
+		std::array<std::size_t,4> const& base_node_ids) const;
 
 	/// Lookup-table for returning the diametral node id of the given node id in a Hex
 	unsigned lutHexDiametralNode(unsigned id) const;
