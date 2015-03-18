@@ -227,21 +227,20 @@ void MeshRevision::resetNodeIDs()
 		nodes[i]->setID(i);
 }
 
-bool MeshRevision::subdivideElement(
+std::size_t MeshRevision::subdivideElement(
 	MeshLib::Element const*const element,
 	std::vector<MeshLib::Node*> const& nodes,
 	std::vector<MeshLib::Element*> & elements) const
 {
-	unsigned n_new_elems (0);
 	if (element->getGeomType() == MeshElemType::QUAD)
-		n_new_elems = this->subdivideQuad(element, nodes, elements);
+		return this->subdivideQuad(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::HEXAHEDRON)
-		n_new_elems = this->subdivideHex(element, nodes, elements);
+		return this->subdivideHex(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::PYRAMID)
-		n_new_elems = this->subdividePyramid(element, nodes, elements);
+		return this->subdividePyramid(element, nodes, elements);
 	else if (element->getGeomType() == MeshElemType::PRISM)
-		n_new_elems = this->subdividePrism(element, nodes, elements);
-	return (n_new_elems > 0);
+		return this->subdividePrism(element, nodes, elements);
+	return 0;
 }
 
 void MeshRevision::reduceElement(MeshLib::Element const*const element,

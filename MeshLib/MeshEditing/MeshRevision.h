@@ -85,7 +85,15 @@ private:
 	void resetNodeIDs();
 
 	/// Subdivides an element if it has a face that is not coplanar
-	bool subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
+	/// @param element the element that will be subdivided
+	/// @param nodes vector containing the nodes the elements originated by the
+	/// subdivision are based on
+	/// @param elements vector of MeshLib::Elements; the elements originated by
+	/// the subdivision will be inserted into elements
+	/// @return the number of elements originated by the subdivision
+	std::size_t subdivideElement(MeshLib::Element const*const element,
+		std::vector<MeshLib::Node*> const& nodes,
+		std::vector<MeshLib::Element*> & elements) const;
 
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
 	void reduceElement(MeshLib::Element const*const element,
