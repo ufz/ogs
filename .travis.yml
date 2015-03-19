@@ -55,7 +55,7 @@ script:
   - cd build
   - cmake $CMAKE_ARGS ..
   - make
-  - if [[ "$CASE" != "CLI_PETSC" ]]; then make tests; fi
+  - make tests
   # PetSc
   - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
