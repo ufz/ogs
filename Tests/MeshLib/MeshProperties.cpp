@@ -20,16 +20,16 @@
 #include <Eigen/Eigen>
 #endif
 
-class MeshLibMeshProperties : public ::testing::Test
+class MeshLibProperties : public ::testing::Test
 {
 public:
-	MeshLibMeshProperties()
+	MeshLibProperties()
 		: mesh(nullptr)
 	{
 		mesh = MeshLib::MeshGenerator::generateRegularHexMesh(1.0, mesh_size);
 	}
 
-	~MeshLibMeshProperties()
+	~MeshLibProperties()
 	{
 		delete mesh;
 	}
@@ -37,9 +37,9 @@ public:
 	static std::size_t const mesh_size = 5;
 	MeshLib::Mesh * mesh;
 };
-std::size_t const MeshLibMeshProperties::mesh_size;
+std::size_t const MeshLibProperties::mesh_size;
 
-TEST_F(MeshLibMeshProperties, PropertyVectorTestMetaData)
+TEST_F(MeshLibProperties, PropertyVectorTestMetaData)
 {
 	ASSERT_TRUE(mesh != nullptr);
 
@@ -55,7 +55,7 @@ TEST_F(MeshLibMeshProperties, PropertyVectorTestMetaData)
 }
 
 
-TEST_F(MeshLibMeshProperties, AddDoubleProperties)
+TEST_F(MeshLibProperties, AddDoubleProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 	const std::size_t size(mesh_size*mesh_size*mesh_size);
@@ -86,7 +86,7 @@ TEST_F(MeshLibMeshProperties, AddDoubleProperties)
 	ASSERT_TRUE(!removed_double_properties);
 }
 
-TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
+TEST_F(MeshLibProperties, AddDoublePointerProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 	std::string const& prop_name("GroupProperty");
@@ -148,7 +148,7 @@ TEST_F(MeshLibMeshProperties, AddDoublePointerProperties)
 	ASSERT_TRUE(!removed_group_properties);
 }
 
-TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
+TEST_F(MeshLibProperties, AddArrayPointerProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 	std::string const& prop_name("GroupPropertyWithArray");
@@ -211,7 +211,7 @@ TEST_F(MeshLibMeshProperties, AddArrayPointerProperties)
 	ASSERT_TRUE(!removed_group_properties);
 }
 
-TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
+TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 {
 	ASSERT_TRUE(mesh != nullptr);
 
@@ -358,3 +358,74 @@ TEST_F(MeshLibMeshProperties, AddVariousDifferentProperties)
 	}
 #endif
 }
+
+TEST_F(MeshLibProperties, CopyConstructor)
+{
+	ASSERT_TRUE(mesh != nullptr);
+	std::string const& prop_name("GroupProperty");
+	// data needed for the property
+	const std::size_t n_prop_val_groups(10);
+	const std::size_t n_items(mesh_size*mesh_size*mesh_size);
+	std::vector<std::size_t> prop_item2group_mapping(n_items);
+	// create simple mat_group to index mapping
+	for (std::size_t j(0); j<n_prop_val_groups; j++) {
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(j)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(j+1)/n_prop_val_groups)*n_items
+			)
+		);
+		for (std::size_t k(lower); k<upper; k++) {
+			prop_item2group_mapping[k] = j;
+		}
+	}
+	// obtain PropertyVector data structure
+	boost::optional<MeshLib::PropertyVector<double*> &> group_properties(
+		mesh->getProperties().createNewPropertyVector<double*>(
+			prop_name, n_prop_val_groups, prop_item2group_mapping,
+			MeshLib::MeshItemType::Cell
+		)
+	);
+	// initialize the property values
+	for (auto it=group_properties->begin(); it != group_properties->end(); it++) {
+		(*it) = new double;
+		*(*it) = static_cast<double>(
+			std::distance(group_properties->begin(), it)
+		);
+	}
+
+	// create a copy from the original Properties object
+	MeshLib::Properties properties_copy(mesh->getProperties());
+	// check if the Properties have a PropertyVector with the correct name
+	ASSERT_TRUE(properties_copy.hasPropertyVector(prop_name));
+	// fetch the PropertyVector from the copy of the Properties object
+	boost::optional<MeshLib::PropertyVector<double*> const&>
+		group_properties_cpy(properties_copy.getPropertyVector<double*>(
+			prop_name));
+	ASSERT_FALSE(!group_properties_cpy);
+
+	// check if the values in the PropertyVector of the copy of the Properties
+	// are the same
+	for (std::size_t k(0); k<n_items; k++) {
+		ASSERT_EQ((*group_properties)[k], (*group_properties_cpy)[k]);
+	}
+
+/*
+	mesh->getProperties().removePropertyVector(prop_name);
+	boost::optional<MeshLib::PropertyVector<double*> const&>
+		removed_group_properties(mesh->getProperties().getPropertyVector<double*>(
+			prop_name));
+	ASSERT_TRUE(!removed_group_properties);
+
+	properties_copy.removePropertyVector(prop_name);
+	boost::optional<MeshLib::PropertyVector<double*> const&>
+		removed_group_properties_copy(mesh->getProperties().getPropertyVector<double*>(
+			prop_name));
+	ASSERT_TRUE(!removed_group_properties_copy);
+*/
+}
+
