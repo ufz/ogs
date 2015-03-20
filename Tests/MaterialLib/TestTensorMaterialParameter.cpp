@@ -62,7 +62,7 @@ TEST(Material, checkConstantTensor)
 
    MaterialLib::TensorParameter<PermeabilityType, IntrisincPermeability<Matrix>, Matrix> K(anis_k);
 
-   Matrix laplace = mock_grad_phi.trans_dphi *  K.getParameterMatrix() * mock_grad_phi.dphi;
+   Matrix laplace = mock_grad_phi.trans_dphi *  K.getValue() * mock_grad_phi.dphi;
 
    ASSERT_NEAR(5.e-9, laplace(0,0), 1.e-16);
    ASSERT_NEAR(5.e-9, laplace(2,2), 1.e-16);

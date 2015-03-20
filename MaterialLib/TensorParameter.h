@@ -41,7 +41,7 @@ template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL, typename T_MATRIX> cla
         }
 
         /// Get the parameter tensor in a matrix.
-        template<typename... Args> T_MATRIX &getParameterMatrix(Args... args) const
+        template<typename... Args> T_MATRIX getValue(Args... args) const
         {
             return _material_model->getValue(args...);
         }

@@ -15,21 +15,35 @@
 #ifndef PROCESS_LIB_GROUNDWATER_FLOW_MATERIAL_PROPERTY_H_
 #define PROCESS_LIB_GROUNDWATER_FLOW_MATERIAL_PROPERTY_H_
 
-#include <boost/property_tree/ptree.hpp>
-
 #include <vector>
 #include <memory>
+
+#include <boost/property_tree/ptree.hpp>
+
+#ifdef OGS_USE_EIGEN
+#include <Eigen/Dense>
+#endif
 
 #include "MaterialLib/ParameterBase.h"
 #include "MaterialLib/Fluid/Permeability/PermeabilityType.h"
 #include "MaterialLib/Fluid/Storage/StorageType.h"
 #include "MaterialLib/DensityType.h"
 
+#include "MaterialLib/ConstantScalarModel.h"
+#include "MaterialLib/ConstantTensor.h"
+#include "MaterialLib/TensorParameter.h"
+
 namespace ProcessLib
 {
 using Permeability = MaterialLib::ParameterBase<MaterialLib::PermeabilityType>;
 using Storage = MaterialLib::ParameterBase<MaterialLib::StorageType>;
 using Density = MaterialLib::ParameterBase<MaterialLib::DensityType>;
+
+
+#ifdef OGS_USE_EIGEN
+using Matrix = Eigen::MatrixXd;
+#endif
+
 
 /// Class of material parameters of groundwater flow process.
 class GroundwaterFlowMaterialProperty
@@ -47,7 +61,7 @@ class GroundwaterFlowMaterialProperty
 
         Storage *getStorage(std::size_t mat_id) const
         {
-            return _storage[mat_id];
+            return _storage.size() ? _storage[mat_id] : nullptr;
         }
 
         Density *getDensity() const

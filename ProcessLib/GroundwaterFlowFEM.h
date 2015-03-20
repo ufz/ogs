@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "logog/include/logog.hpp"
+
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -32,7 +34,7 @@ public:
 
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
-            double const hydraulic_conductivity,
+            const GroundwaterFlowMaterialProperty &mat,
             unsigned const integration_order) = 0;
 
     virtual void assemble() = 0;
@@ -60,7 +62,7 @@ public:
     void
     init(MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        double const hydraulic_conductivity,
+		const GroundwaterFlowMaterialProperty &mat,
         unsigned const integration_order)
     {
         using FemType = NumLib::TemplateIsoparametric<
@@ -81,7 +83,10 @@ public:
                     _shape_matrices[ip]);
         }
 
-        _hydraulic_conductivity = hydraulic_conductivity;
+        // mat_group_id could be get by using MeshLib::Element const& e in future.
+        std::size_t const mat_group_id =0;
+        _hydraulic_conductivity = mat.getConductivity(mat_group_id);
+        _storage = mat.getStorage(mat_group_id);
 
         _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localRhs.reset(new NodalVectorType(local_matrix_size));
@@ -93,13 +98,35 @@ public:
         _localRhs->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
-        unsigned const n_integration_points = integration_method.getNPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
-            auto const& sm = _shape_matrices[ip];
-            auto const& wp = integration_method.getWeightedPoint(ip);
-            _localA->noalias() += sm.dNdx.transpose() * _hydraulic_conductivity *
-                        sm.dNdx * sm.detJ * wp.getWeight();
+        switch(_hydraulic_conductivity->getType())
+        {
+            case MaterialLib::PermeabilityType::ISOTROPIC:
+            {
+                using IsoHydraulicConductivity
+                          = MaterialLib::TensorParameter<MaterialLib::PermeabilityType,
+				                             MaterialLib::ConstantScalarModel, double>;
+                const IsoHydraulicConductivity *scalarK
+                          = reinterpret_cast<IsoHydraulicConductivity*>(_hydraulic_conductivity);
+
+                assemblyLaplacian(integration_method, *scalarK);
+            }
+            break;
+            case MaterialLib::PermeabilityType::ANISTROPIC:
+            {
+                using AnistropicHydraulicConductivity
+                          = MaterialLib::TensorParameter<MaterialLib::PermeabilityType,
+                                                         MaterialLib::ConstantTensor<Matrix>, Matrix>;
+                const AnistropicHydraulicConductivity *anisK
+                          = reinterpret_cast<AnistropicHydraulicConductivity*>(_hydraulic_conductivity);
+
+                assemblyLaplacian(integration_method, *anisK);
+            }
+            break;
+            default:
+            {
+                WARN("No hydraulic conductivity model is provided for this element.");
+            }
         }
     }
 
@@ -112,10 +139,9 @@ public:
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
-    double _hydraulic_conductivity;
 
     using Permeability = MaterialLib::ParameterBase<MaterialLib::PermeabilityType>;
-    Permeability* _conductivity;
+    Permeability* _hydraulic_conductivity;
 
     using Storage = MaterialLib::ParameterBase<MaterialLib::StorageType>;
     Storage* _storage;
@@ -124,8 +150,21 @@ private:
     std::unique_ptr<NodalVectorType> _localRhs;
 
     unsigned _integration_order = 2;
-};
 
+    template<typename LaplaceCoefficient>
+        void assemblyLaplacian(IntegrationMethod_ &integration_method,
+                               const LaplaceCoefficient & laplace_coefficient)
+    {
+        unsigned const n_integration_points = integration_method.getNPoints();
+
+        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+            auto const& sm = _shape_matrices[ip];
+            auto const& wp = integration_method.getWeightedPoint(ip);
+            _localA->noalias() += sm.dNdx.transpose() * laplace_coefficient.getValue() *
+                                  sm.dNdx * sm.detJ * wp.getWeight();
+        }
+    }
+};
 
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib

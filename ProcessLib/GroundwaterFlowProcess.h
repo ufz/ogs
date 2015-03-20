@@ -34,8 +34,6 @@
 #include "GroundwaterFlowFEM.h"
 #include "ProcessVariable.h"
 
-#include "GroundwaterFlowMaterialProperty.h"
-
 namespace ProcessLib
 {
 
@@ -75,7 +73,7 @@ public:
             auto const& pmp_config = config_variables.find("material_property");
             if (pmp_config == config_variables.not_found())
                 INFO("No material property found.");
-            _material = (new GroundwaterFlowMaterialProperty(config_variables.get_child("material_property")));
+            _material_property = (new GroundwaterFlowMaterialProperty(config_variables.get_child("material_property")));
         }
 
     }
@@ -128,7 +126,7 @@ public:
                 local_asm_builder,
                 _mesh.getElements(),
                 _local_assemblers,
-                _hydraulic_conductivity,
+				*_material_property,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -191,9 +189,7 @@ public:
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
 
-    double const _hydraulic_conductivity = 1e-6;
-
-    GroundwaterFlowMaterialProperty *_material;
+    GroundwaterFlowMaterialProperty *_material_property;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;

@@ -27,16 +27,16 @@ template<typename T_MATRIX> class ConstantTensor
         /// Get model name.
         std::string getName() const
         {
-            return "Intrisince permeability";
+            return "Constant tensor parameter";
         }
 
         unsigned getType() const
         {
-            return 0;
+            return 1;
         }
 
         /// Get permeability tensor.
-        T_MATRIX &getValue()
+        T_MATRIX getValue()
         {
             return _perm;
         }
