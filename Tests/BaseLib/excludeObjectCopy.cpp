@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <functional>
 #include <vector>
 
 #include "gtest/gtest.h"
