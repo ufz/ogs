@@ -97,6 +97,11 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 #endif  // USE_LIS
 
+#ifdef USE_PETSC
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#endif  // USE_PETSC
+
 typedef ::testing::Types
     < AssemblerLib::SerialVectorMatrixBuilder<
         MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
@@ -104,6 +109,10 @@ typedef ::testing::Types
     , AssemblerLib::SerialVectorMatrixBuilder<
         MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
+#ifdef USE_PETSC
+    , AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::PETScMatrix, MathLib::PETScVector>
+#endif  // USE_PETSC
     > TestTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibSerialVectorMatrixBuilder,

@@ -20,6 +20,10 @@ if(QT4_FOUND)
 	set(TEST_SOURCES ${TEST_SOURCES} FileIO/TestXmlGmlReader.cpp)
 endif()
 
+if(OGS_USE_PETSC OR OGS_USE_MPI)
+	list(REMOVE_ITEM TEST_SOURCES AssemblerLib/TestSerialLinearSolver.cpp)
+endif()
+
 include_directories(
 	${CMAKE_SOURCE_DIR}/AssemblerLib
 	${CMAKE_SOURCE_DIR}/BaseLib
@@ -90,7 +94,7 @@ if(DEFINED ENV{CI})
 endif()
 if(OGS_USE_PETSC)
 	add_custom_target(tests
-		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_filter=-MPITest*:*AssemblerLib*
+		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_filter=-MPITest*
 		DEPENDS testrunner
 	)
 	add_custom_target(tests_mpi
