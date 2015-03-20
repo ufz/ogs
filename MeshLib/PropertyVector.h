@@ -12,6 +12,8 @@
 #define PROPERTYVECTOR_H_
 
 #include <algorithm>
+#include <iostream>
+#include <iterator>
 #include <vector>
 #include <type_traits>
 #include <memory>
@@ -100,7 +102,7 @@ protected:
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type
 template <typename T>
-class PropertyVector<T*> : public std::vector<T*>,
+class PropertyVector<T*> : public std::vector<std::size_t>,
 	public PropertyVectorBase
 {
 friend class Properties;
@@ -109,7 +111,7 @@ public:
 	~PropertyVector()
 	{
 		std::for_each(
-			this->begin(), this->end(), std::default_delete<T>()
+			_values.begin(), _values.end(), std::default_delete<T>()
 		);
 	}
 
@@ -117,12 +119,17 @@ public:
 	/// correct property value/object.
 	T* const& operator[](std::size_t id) const
 	{
-		return (*static_cast<std::vector<T*> const*>(this))[_item2group_mapping[id]];
+		return _values[std::vector<std::size_t>::operator[](id)];
 	}
 
 	T* & operator[](std::size_t id)
 	{
-		return (*static_cast<std::vector<T*>*>(this))[_item2group_mapping[id]];
+		return _values[std::vector<std::size_t>::operator[](id)];
+	}
+
+	void initPropertyValue(std::size_t group_id, T const& value)
+	{
+		_values[group_id] = new T(value);
 	}
 
 	std::size_t getTupleSize() const { return _tuple_size; }
@@ -131,16 +138,35 @@ public:
 
 	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
 	{
-		std::vector<std::size_t> item2group_mapping(
-			BaseLib::excludeObjectCopy(_item2group_mapping, exclude_positions)
+		// create new PropertyVector with modified mapping
+		PropertyVector<T*> *t(new PropertyVector<T*>
+			(
+				_values.size()/_tuple_size,
+				BaseLib::excludeObjectCopy(*this, exclude_positions),
+				_property_name, _mesh_item_type, _tuple_size
+			)
 		);
-		PropertyVector<T*> *t (new PropertyVector<T*>(this->size()/_tuple_size,
-			item2group_mapping, _property_name, _mesh_item_type, _tuple_size));
-		for (std::size_t j(0); j<item2group_mapping.size(); j++) {
-			t->operator[](j) = (*static_cast<std::vector<T*> const*>(this))[item2group_mapping[j]];
+		// copy pointers to property values
+		for (std::size_t j(0); j<_values.size(); j++) {
+			t->initPropertyValue(j, *(_values[j]));
 		}
 		return t;
 	}
+
+#ifndef NDEBUG
+	std::ostream& print(std::ostream &os) const
+	{
+		os << "\nPropertyVector<T*> at address: " << this << ":\n";
+		os << "\tmapping (" << size() <<"):\n";
+		std::copy(this->cbegin(), this->cend(),
+			std::ostream_iterator<std::size_t>(os, " "));
+		std::cerr << "\n\tvalues (" << _values.size() << "):\n";
+		for (std::size_t k(0); k<_values.size(); k++) {
+			os << "val: " << *(_values[k]) << ", address: " << _values[k] << "\n";
+		}
+		return os;
+	}
+#endif
 
 protected:
 	/// @brief The constructor taking meta information for the data.
@@ -160,11 +186,11 @@ protected:
 		std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
 		std::size_t tuple_size = 1)
-		: std::vector<T*>(n_prop_groups * tuple_size),
+		: std::vector<std::size_t>(item2group_mapping),
 		_tuple_size(tuple_size),
 		_mesh_item_type(mesh_item_type),
 		_property_name(property_name),
-		_item2group_mapping(item2group_mapping)
+		_values(n_prop_groups * tuple_size)
 	{}
 
 protected:
@@ -173,8 +199,7 @@ protected:
 	std::string const _property_name;
 
 private:
-	T* at(std::size_t);
-	std::vector<std::size_t> _item2group_mapping;
+	std::vector<T*> _values;
 };
 
 } // end namespace MeshLib
