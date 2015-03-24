@@ -39,14 +39,18 @@ public:
 
 	/// Calculates the quality metric for each element of the mesh
 	virtual void calculateQuality () = 0;
+	
 	/// Returns the result vector
 	std::vector<double> const& getElementQuality () const;
+	
 	/// Returns the minimum calculated value
 	double getMinValue() const;
+	
 	/// Returns the maximum calculated value
 	double getMaxValue() const;
+	
 	/// Returns a histogram of the result
-	virtual BaseLib::Histogram<double> getHistogram (std::size_t nclasses = 0) const;
+	virtual BaseLib::Histogram<double> getHistogram (std::size_t n_bins = 0) const;
 
 protected:
 	void errorMsg (Element const& elem, std::size_t idx) const;
