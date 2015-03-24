@@ -120,12 +120,8 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
 		)
 	);
 	// initialize the property values
-	for (auto it=group_properties->begin(); it != group_properties->end(); it++)
-	{
-		(*it) = new double;
-		*(*it) = static_cast<double>(
-			std::distance(group_properties->begin(), it)
-		);
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		(*group_properties).initPropertyValue(i, i+1);
 	}
 
 	// the mesh should have the property assigned to cells
@@ -179,12 +175,13 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
 			)
 		);
 	// initialize the property values
-	for (auto it=(*group_properties).begin(); it != (*group_properties).end(); it++)
-	{
-		(*it) = new std::array<double,3>;
-		(*(*it))[0] = std::distance((*group_properties).begin(), it);
-		(*(*it))[1] = std::distance((*group_properties).begin(), it)+1;
-		(*(*it))[2] = std::distance((*group_properties).begin(), it)+2;
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		(*group_prop_vec).initPropertyValue(i,
+			std::array<double,3>({{static_cast<double>(i),
+				static_cast<double>(i+1),
+				static_cast<double>(i+2)}}
+			)
+		);
 	}
 
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
@@ -246,13 +243,13 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 			)
 		);
 	// initialize the property values
-	for (auto it=group_properties->begin(); it != group_properties->end(); it++) {
-		(*it) = new std::array<double,3>;
-		for (std::size_t idx(0); idx<(*it)->size(); idx++) {
-			(*(*it))[idx] = static_cast<double>(
-				static_cast<std::size_t>(
-					std::distance(group_properties->begin(),it)) + idx);
-		}
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		(*group_properties).initPropertyValue(i,
+			std::array<double,3>({{static_cast<double>(i),
+				static_cast<double>(i+1),
+				static_cast<double>(i+2)}}
+			)
+		);
 	}
 
 	// the mesh should have the property assigned to cells
@@ -285,13 +282,13 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 			std::array<float,9>
 		> (prop_name_2, MeshLib::MeshItemType::Cell)
 	);
-	// init property values
-	for (auto it=array_properties->begin(); it != array_properties->end(); it++)
-	{
-		for (std::size_t k(0); k<it->size(); k++) {
-			(*it)[k] = static_cast<float>(
-				static_cast<std::size_t>(
-					std::distance(array_properties->begin(), it)) + k);
+
+	// initialize the property values
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		// init property value
+		std::array<float,9> &matrix = (*array_properties)[i];
+		for (std::size_t k(0); k<matrix.size(); k++) {
+			matrix[k] = static_cast<float>(i+k);
 		}
 	}
 
@@ -391,11 +388,8 @@ TEST_F(MeshLibProperties, CopyConstructor)
 		)
 	);
 	// initialize the property values
-	for (auto it=group_properties->begin(); it != group_properties->end(); it++) {
-		(*it) = new double;
-		*(*it) = static_cast<double>(
-			std::distance(group_properties->begin(), it)
-		);
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		(*group_properties).initPropertyValue(i, i+1);
 	}
 
 	// create a copy from the original Properties object
@@ -411,21 +405,7 @@ TEST_F(MeshLibProperties, CopyConstructor)
 	// check if the values in the PropertyVector of the copy of the Properties
 	// are the same
 	for (std::size_t k(0); k<n_items; k++) {
-		ASSERT_EQ((*group_properties)[k], (*group_properties_cpy)[k]);
+		EXPECT_EQ(*(*group_properties)[k], *(*group_properties_cpy)[k]);
 	}
-
-/*
-	mesh->getProperties().removePropertyVector(prop_name);
-	boost::optional<MeshLib::PropertyVector<double*> const&>
-		removed_group_properties(mesh->getProperties().getPropertyVector<double*>(
-			prop_name));
-	ASSERT_TRUE(!removed_group_properties);
-
-	properties_copy.removePropertyVector(prop_name);
-	boost::optional<MeshLib::PropertyVector<double*> const&>
-		removed_group_properties_copy(mesh->getProperties().getPropertyVector<double*>(
-			prop_name));
-	ASSERT_TRUE(!removed_group_properties_copy);
-*/
 }
 
