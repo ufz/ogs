@@ -436,34 +436,12 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");
 }
 
-void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
+void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshQualityType t, std::vector<double> const& quality)
 {
 	if (!source)
 		return;
 
-	const MeshLib::Mesh* mesh = source->GetMesh();
-	MeshLib::ElementQualityMetric* quality_tester (nullptr);
-	if (t == MeshQualityType::EDGERATIO)
-		quality_tester = new MeshLib::EdgeRatioMetric(*mesh);
-	else if (t == MeshQualityType::AREA)
-		quality_tester = new MeshLib::AreaMetric(*mesh);
-	else if (t == MeshQualityType::VOLUME)
-		quality_tester = new MeshLib::VolumeMetric(*mesh);
-	else if (t == MeshQualityType::EQUIANGLESKEW)
-		quality_tester = new MeshLib::AngleSkewMetric(*mesh);
-	else if (t == MeshQualityType::RADIUSEDGERATIO)
-		quality_tester = new MeshLib::RadiusEdgeRatioMetric(*mesh);
-	else
-	{
-		ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");
-		delete quality_tester;
-		return;
-	}
-	quality_tester->calculateQuality();
-
-	std::vector<double> quality (quality_tester->getElementQuality());
-
-	int nSources = this->_rootItem->childCount();
+	int const nSources = this->_rootItem->childCount();
 	for (int i = 0; i < nSources; i++)
 	{
 		VtkVisPipelineItem* parentItem =
@@ -477,10 +455,12 @@ void VtkVisPipeline::checkMeshQuality(VtkMeshSource* source, MeshQualityType t)
 
 		VtkCompositeFilter* filter =
 			VtkFilterFactory::CreateCompositeFilter("VtkCompositeElementSelectionFilter",
-					                                parentItem->transformFilter());
+			                                        parentItem->transformFilter());
 		if (t == MeshQualityType::AREA || t == MeshQualityType::VOLUME)
-			static_cast<VtkCompositeElementSelectionFilter*>(filter)->
-				setRange(quality_tester->getMinValue(), quality_tester->getMaxValue());
+		{
+			auto const range (std::minmax_element(quality.cbegin(), quality.cend()));
+			static_cast<VtkCompositeElementSelectionFilter*>(filter)->setRange(*range.first, *range.second);
+		}
 		static_cast<VtkCompositeElementSelectionFilter*>(filter)->setSelectionArray("Selection", quality);
 		VtkVisPointSetItem* item = new VtkVisPointSetItem(filter, parentItem, itemData);
 		this->addPipelineItem(item, this->createIndex(i, 0, item));

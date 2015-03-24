@@ -19,7 +19,8 @@
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "FileTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Histogram.h"
 
 // models
 #include "ElementTreeModel.h"
@@ -46,6 +47,7 @@
 #include "SetNameDialog.h"
 #include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
+#include "VtkMeshSource.h"
 
 #include "SHPImportDialog.h"
 
@@ -60,26 +62,27 @@
 #include "VtkVisPipelineItem.h"
 
 // FileIO includes
-#include "FEFLOWInterface.h"
-#include "GMSInterface.h"
-#include "Legacy/MeshIO.h"
-#include "Legacy/OGSIOVer4.h"
-#include "GMSHInterface.h"
-#include "TetGenInterface.h"
-#include "PetrelInterface.h"
-#include "XmlIO/Qt/XmlGmlInterface.h"
-#include "XmlIO/Qt/XmlGspInterface.h"
-#include "XmlIO/Qt/XmlStnInterface.h"
+#include "FileIO/FEFLOWInterface.h"
+#include "FileIO/GMSInterface.h"
+#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/Legacy/OGSIOVer4.h"
+#include "FileIO/GMSHInterface.h"
+#include "FileIO/TetGenInterface.h"
+#include "FileIO/PetrelInterface.h"
+#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
+#include "FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "FileIO/XmlIO/Qt/XmlStnInterface.h"
+#include "FileIO/readMeshFromFile.h"
 
 #include "LastSavedFileDirectory.h"
 
 // MeshLib
-#include "Mesh.h"
+#include "Meshlib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "MeshSurfaceExtraction.h"
-#include "readMeshFromFile.h"
-#include "convertMeshToGeo.h"
+#include "Meshlib/Elements/Element.h"
+#include "Meshlib/MeshSurfaceExtraction.h"
+#include "Meshlib/convertMeshToGeo.h"
+#include "Meshlib/MeshQuality/ElementQualityInterface.h"
 
 // Qt includes
 #include <QDesktopWidget>
@@ -1041,10 +1044,18 @@ void MainWindow::showMergeGeometriesDialog()
 
 void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 {
-	MshQualitySelectionDialog dlg;
+	if (mshSource == nullptr)
+		return;
+
+	MeshQualitySelectionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
 		return;
-	_vtkVisPipeline->checkMeshQuality(mshSource, dlg.getSelectedMetric());
+	MeshQualityType const type (dlg.getSelectedMetric());
+	MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(), type);
+	_vtkVisPipeline->showMeshElementQuality(mshSource, type, quality_interface.getQualityVector());
+
+	if (dlg.getHistogram())
+		quality_interface.writeHistogram(dlg.getHistogramPath());
 }
 
 void MainWindow::showVisalizationPrefsDialog()

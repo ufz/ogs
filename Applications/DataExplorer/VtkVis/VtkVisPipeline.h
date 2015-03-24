@@ -16,6 +16,8 @@
 #define VTKVISPIPELINE_H
 
 // ** INCLUDES **
+#include "BaseLib/Histogram.h"
+
 #include "Color.h"
 #include "GeoType.h"
 #include "MeshEnums.h"
@@ -95,7 +97,7 @@ public:
 	void setGlobalBackfaceCulling(bool enable) const;
 
 	/// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
-	void checkMeshQuality(VtkMeshSource* mesh, MeshQualityType t);
+	void showMeshElementQuality(VtkMeshSource* mesh, MeshQualityType t, std::vector<double> const& quality);
 
 public slots:
 	/// \brief Adds the given Model to the pipeline.
