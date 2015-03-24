@@ -22,8 +22,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshQuality/ElementQualityMetric.h"
 #include "MeshLib/MeshQuality/EdgeRatioMetric.h"
-#include "MeshLib/MeshQuality/AreaMetric.h"
-#include "MeshLib/MeshQuality/VolumeMetric.h"
+#include "MeshLib/MeshQuality/ElementSizeMetric.h"
+//#include "MeshLib/MeshQuality/SizeDifferenceMetric.h"
 #include "MeshLib/MeshQuality/AngleSkewMetric.h"
 #include "MeshLib/MeshQuality/RadiusEdgeRatioMetric.h"
 
@@ -68,10 +68,10 @@ private:
 	{
 		if (t == MeshQualityType::EDGERATIO)
 			_quality_tester = new MeshLib::EdgeRatioMetric(mesh);
-		else if (t == MeshQualityType::AREA)
-			_quality_tester = new MeshLib::AreaMetric(mesh);
-		else if (t == MeshQualityType::VOLUME)
-			_quality_tester = new MeshLib::VolumeMetric(mesh);
+		else if (t == MeshQualityType::ELEMENTSIZE)
+			_quality_tester = new MeshLib::ElementSizeMetric(mesh);
+		//else if (t == MeshQualityType::SIZEDIFFERENCE)
+		//	_quality_tester = new MeshLib::SizeDifferenceMetric(mesh);
 		else if (t == MeshQualityType::EQUIANGLESKEW)
 			_quality_tester = new MeshLib::AngleSkewMetric(mesh);
 		else if (t == MeshQualityType::RADIUSEDGERATIO)

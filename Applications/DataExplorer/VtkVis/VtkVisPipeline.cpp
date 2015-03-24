@@ -24,8 +24,8 @@
 //#include "Model.h"
 #include "GeoTreeModel.h"
 #include "MeshQuality/AngleSkewMetric.h"
-#include "MeshQuality/AreaMetric.h"
-#include "MeshQuality/VolumeMetric.h"
+#include "MeshQuality/ElementSizeMetric.h"
+//#include "MeshQuality/SizeDifferenceMetric.h"
 #include "MeshQuality/EdgeRatioMetric.h"
 #include "MeshQuality/RadiusEdgeRatioMetric.h"
 #include "MshItem.h"
@@ -456,7 +456,7 @@ void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshQualityTy
 		VtkCompositeFilter* filter =
 			VtkFilterFactory::CreateCompositeFilter("VtkCompositeElementSelectionFilter",
 			                                        parentItem->transformFilter());
-		if (t == MeshQualityType::AREA || t == MeshQualityType::VOLUME)
+		if (t == MeshQualityType::ELEMENTSIZE)
 		{
 			auto const range (std::minmax_element(quality.cbegin(), quality.cend()));
 			static_cast<VtkCompositeElementSelectionFilter*>(filter)->setRange(*range.first, *range.second);

@@ -54,7 +54,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Area of 2D Elements</string>
+         <string>Size of Mesh Elements</string>
         </property>
        </widget>
       </item>
@@ -73,7 +73,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Volume of 3D Elements</string>
+         <string>Differences in Size of Mesh Elements</string>
         </property>
        </widget>
       </item>

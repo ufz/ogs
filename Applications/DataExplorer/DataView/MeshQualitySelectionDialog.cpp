@@ -53,9 +53,9 @@ void MeshQualitySelectionDialog::accept()
 	if (this->choiceEdges->isChecked())
 		_metric = MeshQualityType::EDGERATIO;
 	else if (this->choiceArea->isChecked())
-		_metric = MeshQualityType::AREA;
+		_metric = MeshQualityType::ELEMENTSIZE;
 	else if (this->choiceVolume->isChecked())
-		_metric = MeshQualityType::VOLUME;
+		_metric = MeshQualityType::SIZEDIFFERENCE;
 	else if (this->choiceAngles->isChecked())
 		_metric = MeshQualityType::EQUIANGLESKEW;
 	else if (this->choiceRadius->isChecked())
