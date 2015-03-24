@@ -14,6 +14,8 @@
 
 #include "MeshRevision.h"
 
+#include <numeric>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
