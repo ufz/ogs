@@ -14,7 +14,8 @@
 
 
 #include "ElementSizeMetric.h"
-#include "MathLib/MathTools.h"
+
+#include <limits>
 
 namespace MeshLib
 {

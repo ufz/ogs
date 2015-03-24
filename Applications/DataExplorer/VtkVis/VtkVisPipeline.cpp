@@ -23,11 +23,6 @@
 
 //#include "Model.h"
 #include "GeoTreeModel.h"
-#include "MeshQuality/AngleSkewMetric.h"
-#include "MeshQuality/ElementSizeMetric.h"
-//#include "MeshQuality/SizeDifferenceMetric.h"
-#include "MeshQuality/EdgeRatioMetric.h"
-#include "MeshQuality/RadiusEdgeRatioMetric.h"
 #include "MshItem.h"
 #include "MshModel.h"
 #include "StationTreeModel.h"
