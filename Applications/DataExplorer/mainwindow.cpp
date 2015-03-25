@@ -45,19 +45,19 @@
 #include "MeshQualitySelectionDialog.h"
 #include "NetCdfConfigureDialog.h"
 #include "SetNameDialog.h"
+#include "SHPImportDialog.h"
 #include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
-#include "VtkMeshSource.h"
 
-#include "SHPImportDialog.h"
-
+#include "LastSavedFileDirectory.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "OGSError.h"
-#include "VtkRaster.h"
 #include "RecentFiles.h"
 #include "TreeModelIterator.h"
 #include "VtkBGImageSource.h"
 #include "VtkGeoImageSource.h"
+#include "VtkMeshSource.h"
+#include "VtkRaster.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 
@@ -74,11 +74,9 @@
 #include "FileIO/XmlIO/Qt/XmlStnInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
-#include "LastSavedFileDirectory.h"
-
 // MeshLib
-#include "Meshlib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "Meshlib/Mesh.h"
 #include "Meshlib/Elements/Element.h"
 #include "Meshlib/MeshSurfaceExtraction.h"
 #include "Meshlib/convertMeshToGeo.h"
