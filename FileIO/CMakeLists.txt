@@ -1,6 +1,8 @@
 set(SOURCES
 	AsciiRasterInterface.h
 	AsciiRasterInterface.cpp
+	CsvInterface.h
+	CsvInterface.cpp
 	GMSInterface.h
 	GMSInterface.cpp
 	GMSHInterface.h
