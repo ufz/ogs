@@ -16,7 +16,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
-#include <ostream>
+#include <iostream>
+#include <fstream>
 #include <vector>
 
 namespace BaseLib

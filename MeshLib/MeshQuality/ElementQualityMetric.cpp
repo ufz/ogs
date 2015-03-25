@@ -30,10 +30,8 @@ ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) :
 
 BaseLib::Histogram<double> ElementQualityMetric::getHistogram (size_t n_bins) const
 {
-	if (n_bins == 0) {
-		// simple suggestion: number of classes with Sturges criterion
+	if (n_bins == 0)
 		n_bins = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
-	}
 
 	return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
 }

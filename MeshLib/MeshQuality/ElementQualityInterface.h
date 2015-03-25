@@ -36,35 +36,46 @@ namespace MeshLib
 class ElementQualityInterface
 {
 public:
+	/// Constructor
 	ElementQualityInterface(MeshLib::Mesh const& mesh, MeshQualityType t)
 	: _type(t), _mesh(mesh), _quality_tester(nullptr)
 	{
-		init(_mesh, _type);
+		calculateElementQuality(_mesh, _type);
 	}
 
+	/// Destructor
 	~ElementQualityInterface() 
 	{ 
 		delete _quality_tester; 
 	}
 
+	/// Returns the vector containing a quality measure for each element.
 	std::vector<double> const& getQualityVector() const
 	{ 
 		return _quality_tester->getElementQuality(); 
 	}
 
-	int writeHistogram(std::string const& file_name) const
+	/// Returns a histogram of the quality vector seperated into the given number of bins.
+	/// If no number of bins is specified, one will be calculated based on the Sturges criterium.
+	BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
+	{
+		return _quality_tester->getHistogram(static_cast<size_t>(n_bins));
+	}
+
+	/// Writes a histogram of the quality vector to a specified file.
+	int writeHistogram(std::string const& file_name, std::size_t n_bins = 0) const
 	{
 		if (_quality_tester == nullptr)
 			return 1;
 
-		double const n_bins (1 + 3.3 * log (static_cast<float>(_mesh.getNElements())));
-		BaseLib::Histogram<double> const histogram (_quality_tester->getHistogram(static_cast<size_t>(n_bins)));
+		BaseLib::Histogram<double> const histogram (_quality_tester->getHistogram(n_bins));
 		histogram.write(file_name, _mesh.getName(), MeshQualityType2String(_type));
 		return 0;
 	}
 	
 private:
-	void init(MeshLib::Mesh const& mesh, MeshQualityType t)
+	/// Calculates the quality of each mesh element based on the specified metric
+	void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)
 	{
 		if (t == MeshQualityType::EDGERATIO)
 			_quality_tester = new MeshLib::EdgeRatioMetric(mesh);
