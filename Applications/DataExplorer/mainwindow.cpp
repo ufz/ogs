@@ -75,12 +75,12 @@
 #include "FileIO/readMeshFromFile.h"
 
 // MeshLib
-#include "MeshLib/Node.h"
-#include "Meshlib/Mesh.h"
-#include "Meshlib/Elements/Element.h"
-#include "Meshlib/MeshSurfaceExtraction.h"
-#include "Meshlib/convertMeshToGeo.h"
-#include "Meshlib/MeshQuality/ElementQualityInterface.h"
+#include "Node.h"
+#include "Mesh.h"
+#include "Elements/Element.h"
+#include "MeshSurfaceExtraction.h"
+#include "convertMeshToGeo.h"
+#include "MeshQuality/ElementQualityInterface.h"
 
 // Qt includes
 #include <QDesktopWidget>
