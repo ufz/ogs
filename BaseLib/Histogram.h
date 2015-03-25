@@ -20,6 +20,10 @@
 #include <fstream>
 #include <vector>
 
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
+
 namespace BaseLib
 {
 /** Basic Histogram implementation.
