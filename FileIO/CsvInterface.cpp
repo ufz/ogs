@@ -13,8 +13,6 @@
 
 #include "CsvInterface.h"
 
-#include <array>
-
 #include "GeoLib/Point.h"
 
 namespace FileIO {
@@ -60,7 +58,7 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
                                     std::vector<GeoLib::Point*> &points,
                                     std::string const& x_row_name,
                                     std::string const& y_row_name,
-                                    std::string const& z_row_name = "")
+                                    std::string const& z_row_name)
 {
 	std::ifstream in(fname.c_str());
 	std::array<std::string, 3> const row_names = { x_row_name, y_row_name, z_row_name };
@@ -85,6 +83,33 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 				return -1;
 		}
 
+	return readPoints(in, delim, points, row_idx);
+}
+
+int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
+                                    std::vector<GeoLib::Point*> &points,
+                                    std::size_t x_row_idx,
+                                    std::size_t y_row_idx,
+                                    std::size_t z_row_idx)
+{
+	std::ifstream in(fname.c_str());
+
+	if (!in.is_open()) {
+		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		return -1;
+	}
+
+	if (z_row_idx == std::numeric_limits<std::size_t>::max())
+		z_row_idx = y_row_idx;
+	std::array<std::size_t, 3> const row_idx = { x_row_idx, y_row_idx, z_row_idx };
+	
+	return readPoints(in, delim, points, row_idx);
+}
+
+int CsvInterface::readPoints(std::ifstream &in, char delim,
+                             std::vector<GeoLib::Point*> &points,
+                             std::array<std::size_t, 3> const& row_idx)
+{
 	std::array<std::size_t, 3> order = { 0, 1, 2 };
 	std::sort(order.begin(), order.end(), 
 		[&row_idx](std::size_t idx1, std::size_t idx2) {return row_idx[idx1] < row_idx[idx2];});
@@ -93,6 +118,7 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 		  row_idx[order[1]]-row_idx[order[0]], 
 		  row_idx[order[2]]-row_idx[order[1]] };
 
+	std::string line;
 	std::size_t line_count(0);
 	std::size_t error_count(0);
 	std::list<std::string>::const_iterator it;
@@ -115,7 +141,7 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 		std::advance(it, row_advance[1]);
 		point[1] = strtod(it->c_str(), 0);
 		std::advance(it, row_advance[2]);
-		point[2] = (z_row_name.empty()) ? 0 : strtod(it->c_str(), 0);
+		point[2] = (row_idx[1] == row_idx[2]) ? 0 : strtod(it->c_str(), 0);
 		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
 	}
 	return error_count;
