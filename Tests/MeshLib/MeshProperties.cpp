@@ -49,11 +49,11 @@ TEST_F(MeshLibProperties, PropertyVectorTestMetaData)
 			MeshLib::MeshItemType::Cell)
 	);
 
-	ASSERT_EQ((*p).getPropertyName().compare(prop_name), 0u);
-	ASSERT_EQ((*p).getMeshItemType(), MeshLib::MeshItemType::Cell);
-	ASSERT_EQ((*p).getTupleSize(), 1u);
+	ASSERT_EQ(0u, (*p).getPropertyName().compare(prop_name));
+	ASSERT_EQ(MeshLib::MeshItemType::Cell, (*p).getMeshItemType());
+	ASSERT_EQ(1u, (*p).getTupleSize());
+	ASSERT_EQ(0u, (*p).size());
 }
-
 
 TEST_F(MeshLibProperties, AddDoubleProperties)
 {
@@ -168,7 +168,7 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
 		}
 	}
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> &>
-		group_properties(
+		group_prop_vec(
 			mesh->getProperties().createNewPropertyVector<std::array<double,3>*>(
 				prop_name, n_prop_val_groups, prop_item2group_mapping,
 				MeshLib::MeshItemType::Cell
@@ -191,11 +191,11 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
 	ASSERT_FALSE(!group_properties_cpy);
 
 	for (std::size_t k(0); k<n_items; k++) {
-		ASSERT_EQ((*((*group_properties)[k]))[0],
+		ASSERT_EQ((*((*group_prop_vec)[k]))[0],
 			(*((*group_properties_cpy)[k]))[0]);
-		ASSERT_EQ((*((*group_properties)[k]))[1],
+		ASSERT_EQ((*((*group_prop_vec)[k]))[1],
 			(*((*group_properties_cpy)[k]))[1]);
-		ASSERT_EQ((*((*group_properties)[k]))[2],
+		ASSERT_EQ((*((*group_prop_vec)[k]))[2],
 			(*((*group_properties_cpy)[k]))[2]);
 	}
 
@@ -283,14 +283,17 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 		> (prop_name_2, MeshLib::MeshItemType::Cell)
 	);
 
+	(*array_properties).resize(n_items_2);
+
 	// initialize the property values
-	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+	for (std::size_t i(0); i<n_items_2; i++) {
 		// init property value
-		std::array<float,9> &matrix = (*array_properties)[i];
-		for (std::size_t k(0); k<matrix.size(); k++) {
-			matrix[k] = static_cast<float>(i+k);
+		for (std::size_t k(0); k<(*array_properties)[i].size(); k++) {
+			(*array_properties)[i][k] = static_cast<float>(i+k);
 		}
 	}
+
+	EXPECT_EQ(9, (*array_properties)[0].size());
 
 	// the mesh should have the property assigned to cells
 	ASSERT_TRUE(mesh->getProperties().hasPropertyVector(prop_name_2));
@@ -304,7 +307,7 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 
 	// compare the values/matrices
 	for (std::size_t k(0); k<n_items_2; k++) {
-		for (std::size_t j(0); j<array_properties->size(); j++) {
+		for (std::size_t j(0); j<(*array_properties)[k].size(); j++) {
 			ASSERT_EQ((*array_properties)[k][j], (*array_properties_cpy)[k][j]);
 		}
 	}
