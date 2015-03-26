@@ -56,7 +56,9 @@ public:
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
-	createNewPropertyVector(std::string const& name, MeshItemType mesh_item_type)
+	createNewPropertyVector(std::string const& name,
+		MeshItemType mesh_item_type,
+		std::size_t tuple_size = 1)
 	{
 		std::map<std::string, boost::any>::const_iterator it(
 			_properties.find(name)
@@ -99,7 +101,8 @@ public:
 	createNewPropertyVector(std::string const& name,
 		std::size_t n_prop_groups,
 		std::vector<std::size_t> const& item2group_mapping,
-		MeshItemType mesh_item_type)
+		MeshItemType mesh_item_type,
+		std::size_t tuple_size = 1)
 	{
 		// check if there is already a PropertyVector with the same name and
 		// mesh_item_type
