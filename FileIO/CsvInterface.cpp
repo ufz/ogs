@@ -13,12 +13,7 @@
 
 #include "CsvInterface.h"
 
-#include <fstream>
 #include <array>
-#include <limits>
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
 #include "GeoLib/Point.h"
 
@@ -28,20 +23,21 @@
 
 namespace FileIO {
 
-std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& fname, char delim = ',')
+int CsvInterface::readPointsFromCSV(std::string const& fname, char delim, 
+                                    std::vector<GeoLib::Point*> &points)
 {
-	std::vector<GeoLib::Point*> points;
 	std::ifstream in(fname.c_str());
 
 	if (!in.is_open()) {
-		WARN("Raster::getRasterFromASCFile(): Could not open file %s.", fname.c_str());
-		return points;
+		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		return -1;
 	}
 
 	std::string line;
 	getline(in, line);
 
 	std::size_t line_count(0);
+	std::size_t error_count(0);
 	std::list<std::string>::const_iterator it;
 	while ( getline(in, line) )
 	{
@@ -51,6 +47,7 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 		if (fields.size() < 3)
 		{
 			ERR ("Line %d contains not enough rows of data. Skipping line...", line_count);
+			error_count++;
 			continue;
 		}
 		it = fields.begin();
@@ -60,21 +57,21 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 		point[2] = strtod((++it)->c_str(), 0);
 		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
 	}
-	return points;
+	return error_count;
 }
 
-std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
-                                                            std::string const& x_row_name,
-                                                            std::string const& y_row_name,
-                                                            std::string const& z_row_name)
+int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
+                                    std::vector<GeoLib::Point*> &points,
+                                    std::string const& x_row_name,
+                                    std::string const& y_row_name,
+                                    std::string const& z_row_name)
 {
-	std::vector<GeoLib::Point*> points;
 	std::ifstream in(fname.c_str());
 	std::array<std::string, 3> const row_names = { x_row_name, y_row_name, z_row_name };
 
 	if (!in.is_open()) {
-		WARN("Raster::getRasterFromASCFile(): Could not open file %s.", fname.c_str());
-		return points;
+		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		return -1;
 	}
 
 	std::string line;
@@ -86,8 +83,8 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 	for (std::size_t i=0; i<3; ++i)
 		if (row_idx[i] == std::numeric_limits<std::size_t>::max())
 		{
-			ERR ("Row \"%s\" not found in file header.", row_names[i]);
-			return points;
+			ERR ("Row \"%s\" not found in file header.", row_names[i].c_str());
+			return -1;
 		}
 
 	std::array<std::size_t, 3> order = { 0, 1, 2 };
@@ -99,6 +96,7 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 		  row_idx[order[2]]-row_idx[order[1]] };
 
 	std::size_t line_count(0);
+	std::size_t error_count(0);
 	std::list<std::string>::const_iterator it;
 	while ( getline(in, line) )
 	{
@@ -108,6 +106,7 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 		if (fields.size() < row_idx[order[2]]+1)
 		{
 			ERR ("Line %d contains not enough rows of data. Skipping line...", line_count);
+			error_count++;
 			continue;
 		}
 
@@ -121,7 +120,7 @@ std::vector<GeoLib::Point*> CsvInterface::readPointsFromCSV(std::string const& f
 		point[2] = strtod(it->c_str(), 0);
 		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
 	}
-	return points;
+	return error_count;
 }
 
 std::size_t CsvInterface::findRow(std::string const& line, char delim, std::string const& row_name)
