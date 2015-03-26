@@ -60,7 +60,7 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
                                     std::vector<GeoLib::Point*> &points,
                                     std::string const& x_row_name,
                                     std::string const& y_row_name,
-                                    std::string const& z_row_name)
+                                    std::string const& z_row_name = "")
 {
 	std::ifstream in(fname.c_str());
 	std::array<std::string, 3> const row_names = { x_row_name, y_row_name, z_row_name };
@@ -72,15 +72,17 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 
 	std::string line;
 	getline(in, line);
-	std::array<std::size_t, 3> const row_idx = { CsvInterface::findRow(line, delim, x_row_name),
-	                                             CsvInterface::findRow(line, delim, y_row_name),
-	                                             CsvInterface::findRow(line, delim, z_row_name) };
+	std::array<std::size_t, 3> const row_idx = 
+		{ CsvInterface::findRow(line, delim, x_row_name),
+		  CsvInterface::findRow(line, delim, y_row_name),
+		  (z_row_name.empty()) ? CsvInterface::findRow(line, delim, y_row_name) : CsvInterface::findRow(line, delim, z_row_name) };
 	
 	for (std::size_t i=0; i<3; ++i)
 		if (row_idx[i] == std::numeric_limits<std::size_t>::max())
 		{
 			ERR ("Row \"%s\" not found in file header.", row_names[i].c_str());
-			return -1;
+			if (!(i == 2 || row_names[2].empty()))
+				return -1;
 		}
 
 	std::array<std::size_t, 3> order = { 0, 1, 2 };
@@ -113,7 +115,7 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 		std::advance(it, row_advance[1]);
 		point[1] = strtod(it->c_str(), 0);
 		std::advance(it, row_advance[2]);
-		point[2] = strtod(it->c_str(), 0);
+		point[2] = (z_row_name.empty()) ? 0 : strtod(it->c_str(), 0);
 		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
 	}
 	return error_count;

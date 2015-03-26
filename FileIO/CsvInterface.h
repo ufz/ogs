@@ -51,8 +51,10 @@ public:
 
 	/** 
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
-	 * specifying a name for each of the rows. The rows specified in the function 
+	 * specifying a name for each of the rows. The rows specified in the function
 	 * call will be used for reading x-, y- and z-coordinates, respectively
+	 * If z_row_name is an empty string or not given at all, all z-coordinates
+	 * will be set to zero.
 	 * \param fname        Name of the file to be read
 	 * \param delim        Deliminator, default is ','
 	 * \param points       A vector containing the 3D points read from the file
