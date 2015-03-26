@@ -23,6 +23,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "StringTools.h"
 
 namespace GeoLib {
 	class Point;
@@ -68,7 +69,7 @@ public:
 
 	/**
 	 * Reads a row of the given name from a CSV file.
-     * \param fname        Name of the file to be read
+	 * \param fname        Name of the file to be read
 	 * \param delim        Deliminator, default is ','
 	 * \param data_arary   A vector containing the data read from the file
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)

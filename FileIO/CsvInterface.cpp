@@ -17,10 +17,6 @@
 
 #include "GeoLib/Point.h"
 
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
-
 namespace FileIO {
 
 int CsvInterface::readPointsFromCSV(std::string const& fname, char delim, 
