@@ -65,8 +65,15 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
 		mesh->getProperties().createNewPropertyVector<double>(prop_name,
 			MeshLib::MeshItemType::Cell)
 	);
+	ASSERT_EQ(0u, (*double_properties).size());
+
 	(*double_properties).resize(size);
+	ASSERT_EQ(size, (*double_properties).size());
+
 	std::iota((*double_properties).begin(), (*double_properties).end(), 1);
+	for (std::size_t k(0); k<size; k++) {
+		ASSERT_EQ(static_cast<double>(k+1), (*double_properties)[k]);
+	}
 
 	boost::optional<MeshLib::PropertyVector<double> const&>
 		double_properties_cpy(mesh->getProperties().getPropertyVector<double>(
@@ -119,9 +126,28 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
 			MeshLib::MeshItemType::Cell
 		)
 	);
+	ASSERT_EQ(prop_item2group_mapping.size(), (*group_properties).size());
+
 	// initialize the property values
 	for (std::size_t i(0); i<n_prop_val_groups; i++) {
 		(*group_properties).initPropertyValue(i, i+1);
+	}
+	// check mapping to values
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(i)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(i+1)/n_prop_val_groups)*n_items
+			)
+		);
+		for (std::size_t k(lower); k<upper; k++) {
+			ASSERT_NEAR(static_cast<double>(i+1), *(*group_properties)[k],
+				std::numeric_limits<double>::epsilon());
+		}
 	}
 
 	// the mesh should have the property assigned to cells
@@ -174,6 +200,8 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
 				MeshLib::MeshItemType::Cell
 			)
 		);
+	ASSERT_EQ(prop_item2group_mapping.size(), group_prop_vec->size());
+
 	// initialize the property values
 	for (std::size_t i(0); i<n_prop_val_groups; i++) {
 		(*group_prop_vec).initPropertyValue(i,
@@ -182,6 +210,27 @@ TEST_F(MeshLibProperties, AddArrayPointerProperties)
 				static_cast<double>(i+2)}}
 			)
 		);
+	}
+	// check the mapping to values
+	for (std::size_t i(0); i<n_prop_val_groups; i++) {
+		std::size_t const lower(
+			static_cast<std::size_t>(
+				(static_cast<double>(i)/n_prop_val_groups)*n_items
+			)
+		);
+		std::size_t const upper(
+			static_cast<std::size_t>(
+				(static_cast<double>(i+1)/n_prop_val_groups)*n_items
+			)
+		);
+		for (std::size_t k(lower); k<upper; k++) {
+			ASSERT_NEAR(static_cast<double>(i), (*(*group_prop_vec)[k])[0],
+				std::numeric_limits<double>::epsilon());
+			ASSERT_NEAR(static_cast<double>(i+1), (*(*group_prop_vec)[k])[1],
+				std::numeric_limits<double>::epsilon());
+			ASSERT_NEAR(static_cast<double>(i+2), (*(*group_prop_vec)[k])[2],
+				std::numeric_limits<double>::epsilon());
+		}
 	}
 
 	boost::optional<MeshLib::PropertyVector<std::array<double,3>*> const&>
