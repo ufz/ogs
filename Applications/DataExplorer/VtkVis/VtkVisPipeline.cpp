@@ -433,7 +433,7 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 
 void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshQualityType t, std::vector<double> const& quality)
 {
-	if (!source)
+	if (!source || quality.empty())
 		return;
 
 	int const nSources = this->_rootItem->childCount();

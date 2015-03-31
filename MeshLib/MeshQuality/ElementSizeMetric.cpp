@@ -2,7 +2,7 @@
  * \file   ElementSizeMetric.cpp
  * \author Karsten Rink
  * \date   2011-03-17
- * \brief  Implementation of the AreaMetric class.
+ * \brief  Implementation of the ElementSizeMetric class.
  *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
@@ -44,7 +44,7 @@ std::size_t ElementSizeMetric::calc1dQuality()
 	const std::size_t nElems(elements.size());
 	std::size_t error_count(0);
 
-	for (std::size_t k(0); k < nElems; k++) 
+	for (std::size_t k(0); k < nElems; k++)
 	{
 		double area(std::numeric_limits<double>::max());
 		_element_quality_metric[k] = elements[k]->getContent();
@@ -64,7 +64,7 @@ std::size_t ElementSizeMetric::calc2dQuality()
 	const std::size_t nElems(elements.size());
 	std::size_t error_count(0);
 
-	for (std::size_t k(0); k < nElems; k++) 
+	for (std::size_t k(0); k < nElems; k++)
 	{
 		Element const& elem (*elements[k]);
 
@@ -90,13 +90,13 @@ std::size_t ElementSizeMetric::calc3dQuality()
 	const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
 	const std::size_t nElems(elements.size());
 	std::size_t error_count(0);
-	
-	for (size_t k(0); k < nElems; k++)
+
+	for (std::size_t k(0); k < nElems; k++)
 	{
 		Element const& elem (*elements[k]);
 		if (elem.getDimension()<3)
 		{
-            _element_quality_metric[k] = 0.0;
+			_element_quality_metric[k] = 0.0;
             continue;
         }
 
@@ -106,7 +106,7 @@ std::size_t ElementSizeMetric::calc3dQuality()
 
 		if (_min > volume) _min = volume;
 		if (_max < volume) _max = volume;
-        _element_quality_metric[k] = volume;
+		_element_quality_metric[k] = volume;
 	}
 	return error_count;
 }

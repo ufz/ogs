@@ -50,16 +50,24 @@ public:
 	}
 
 	/// Returns the vector containing a quality measure for each element.
-	std::vector<double> const& getQualityVector() const
-	{ 
-		return _quality_tester->getElementQuality(); 
+	std::vector<double> const getQualityVector() const
+	{
+		if (_quality_tester)
+			return _quality_tester->getElementQuality();
+
+		std::vector<double> empty_quality_vec(0);
+		return empty_quality_vec;
 	}
 
 	/// Returns a histogram of the quality vector seperated into the given number of bins.
 	/// If no number of bins is specified, one will be calculated based on the Sturges criterium.
 	BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
 	{
-		return _quality_tester->getHistogram(static_cast<size_t>(n_bins));
+		if (_quality_tester)
+			return _quality_tester->getHistogram(static_cast<size_t>(n_bins));
+
+		std::vector<double> empty_quality_vec(0);
+		return empty_quality_vec;
 	}
 
 	/// Writes a histogram of the quality vector to a specified file.
@@ -89,7 +97,7 @@ private:
 			_quality_tester = new MeshLib::RadiusEdgeRatioMetric(mesh);
 		else
 		{
-			ERR("VtkVisPipeline::checkMeshQuality(): Unknown MeshQualityType.");
+			ERR("ElementQualityInterface::calculateElementQuality(): Unknown MeshQualityType.");
 			return;
 		}
 		_quality_tester->calculateQuality();

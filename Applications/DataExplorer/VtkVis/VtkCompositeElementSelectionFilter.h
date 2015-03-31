@@ -33,7 +33,7 @@ public:
 	virtual void init();
 
 	// Sets the range for the quality measure (default is [0,1] but this may vary for area- and volume-metrics).
-	void setRange(double min_val, double max_val) { _range = std::pair<double,double>(min_val, max_val); }
+	void setRange(double min_val, double max_val) { _range = std::make_pair(min_val, max_val); }
 
 	void setSelectionArray(const std::string &selection_name, const std::vector<double> &selection = std::vector<double>());
 

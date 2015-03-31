@@ -21,8 +21,8 @@ namespace MeshLib
 {
 
 /** 
- * Calculates the quality of mesh elements based the difference of element size in comparison to 
- * the size of its neighbors.
+ * Calculates the quality of mesh elements based ont the difference of element
+ * size in comparison to the size of its neighbors.
  */
 class SizeDifferenceMetric : public ElementQualityMetric
 {
