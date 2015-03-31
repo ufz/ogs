@@ -198,15 +198,15 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 {
 	MeshFromRasterDialog* dlg = new MeshFromRasterDialog();
 	connect(dlg, SIGNAL(setMeshParameters(QString, MeshElemType, MeshLib::UseIntensityAs)),
-		    this, SLOT(constructMeshFromImage(QString, MeshElemType, MeshLib::UseIntensityAs)));
+	        this, SLOT(constructMeshFromImage(QString, MeshElemType, MeshLib::UseIntensityAs)));
 	dlg->exec();
 }
 
 void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
-	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-	                                         getItem(this->selectionModel()->currentIndex()))->algorithm();
+		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
+			getItem(this->selectionModel()->currentIndex()))->algorithm();
 
 	vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
 	double origin[3];
@@ -226,8 +226,8 @@ void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType e
 
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
-	VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->getItem(
-												this->selectionModel()->currentIndex()));
+	VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(
+		static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()));
 	vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
 
 
@@ -269,8 +269,7 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 		emit itemSelected(item);
 		if (item->transformFilter())
 			emit dataObjectSelected(vtkDataObject::SafeDownCast(
-			                                item->transformFilter()->
-			                                GetOutputDataObject(0)));
+				item->transformFilter()->GetOutputDataObject(0)));
 	}
 	else
 	{
@@ -298,15 +297,14 @@ void VtkVisPipelineView::selectItem(const QModelIndex &index)
 void VtkVisPipelineView::addColorTable()
 {
 	VtkVisPipelineItem* item (
-	        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-	                                         getItem(
-	                                                 this->selectionModel()->currentIndex())) );
+		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
+		                                 getItem(this->selectionModel()->currentIndex())) );
 	const QString array_name = item->GetActiveAttribute();
 
 	QSettings settings;
 	QString filename = QFileDialog::getOpenFileName(this, "Select color table",
 	                                                settings.value("lastOpenedLutFileDirectory"). toString(),
-													"Color table files (*.xml);;");
+	                                                "Color table files (*.xml);;");
 	QFileInfo fi(filename);
 
 	if (fi.suffix().toLower() == "xml")
@@ -324,7 +322,7 @@ void VtkVisPipelineView::addColorTable()
 		}
 		else
 			QMessageBox::warning(NULL, "Color lookup table could not be applied.",
-								 "Color lookup tables can only be applied to VtkVisPointSetItem.");
+			                     "Color lookup tables can only be applied to VtkVisPointSetItem.");
 		QDir dir = QDir(filename);
 		settings.setValue("lastOpenedLutFileDirectory", dir.absolutePath());
 	}

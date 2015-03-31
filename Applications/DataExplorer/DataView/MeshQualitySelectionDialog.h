@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef MSHQUALITYSELECTIONDIALOG_H
-#define MSHQUALITYSELECTIONDIALOG_H
+#ifndef MESHQUALITYSELECTIONDIALOG_H
+#define MESHQUALITYSELECTIONDIALOG_H
 
 #include "MeshEnums.h"
 #include "ui_MeshQualitySelection.h"
@@ -24,22 +24,33 @@ class VtkMeshSource;
 /**
  * \brief A dialog for selecting a mesh quality metric
  */
-class MshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelection
+class MeshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelection
 {
 	Q_OBJECT
 
 public:
-	MshQualitySelectionDialog(QDialog* parent = 0);
-	~MshQualitySelectionDialog(void);
+	MeshQualitySelectionDialog(QDialog* parent = 0);
+	~MeshQualitySelectionDialog(void);
 
-	MeshQualityType getSelectedMetric() { return _metric; }
+	/// Returns selected metric
+	MeshQualityType getSelectedMetric() const { return _metric; }
+
+	/// Returns true if a histogram needs to be calculated
+	bool getHistogram() const { return this->histogramCheckBox->isChecked(); }
+
+	/// Returns selected path for histogram (or empty string if no histogram is required)
+	std::string getHistogramPath() const { return _histogram_path; }
 
 private:
 	MeshQualityType _metric;
+	std::string _histogram_path;
 
 private slots:
+	void on_histogramCheckBox_toggled(bool is_checked) const;
+	void on_histogramPathButton_pressed();
+
 	void accept();
 	void reject();
 };
 
-#endif //MSHQUALITYSELECTIONDIALOG_H
+#endif //MESHQUALITYSELECTIONDIALOG_H

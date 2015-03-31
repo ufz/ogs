@@ -1,5 +1,5 @@
 /**
- * \file   AreaMetric.cpp
+ * \file   ElementSizeMetric.h
  * \author Karsten Rink
  * \date   2011-03-17
  * \brief  Implementation of the AreaMetric class.
@@ -12,8 +12,8 @@
  *
  */
 
-#ifndef AREAMETRIC_H_
-#define AREAMETRIC_H_
+#ifndef ELEMENTSIZEMETRIC_H_
+#define ELEMENTSIZEMETRIC_H_
 
 #include "ElementQualityMetric.h"
 
@@ -21,16 +21,21 @@ namespace MeshLib
 {
 
 /** 
- * Calculates the quality of mesh elements based on the area of element or its faces
+ * Calculates the quality of mesh elements based on length/area/volume
  */
-class AreaMetric : public ElementQualityMetric
+class ElementSizeMetric : public ElementQualityMetric
 {
 public:
-	AreaMetric(Mesh const& mesh);
-	virtual ~AreaMetric() {}
+	ElementSizeMetric(Mesh const& mesh);
+	virtual ~ElementSizeMetric() {}
 
 	virtual void calculateQuality ();
+
+private:
+	std::size_t calc1dQuality();
+	std::size_t calc2dQuality();
+	std::size_t calc3dQuality();
 };
 }
 
-#endif /* AREAMETRIC_H_ */
+#endif /* ELEMENTSIZEMETRIC_H_ */

@@ -28,14 +28,12 @@ ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) :
 	_element_quality_metric.resize (_mesh.getNElements(), -1.0);
 }
 
-BaseLib::Histogram<double> ElementQualityMetric::getHistogram (size_t nclasses) const
+BaseLib::Histogram<double> ElementQualityMetric::getHistogram (size_t n_bins) const
 {
-	if (nclasses == 0) {
-		// simple suggestion: number of classes with Sturges criterion
-		nclasses = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
-	}
+	if (n_bins == 0)
+		n_bins = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
 
-	return BaseLib::Histogram<double>(getElementQuality(), nclasses, true);
+	return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
 }
 
 void ElementQualityMetric::errorMsg (Element const& elem, size_t idx) const

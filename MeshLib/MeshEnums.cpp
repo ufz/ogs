@@ -94,16 +94,16 @@ std::vector<std::string> getMeshElemTypeStringsShort()
 
 const std::string MeshQualityType2String(const MeshQualityType t)
 {
-    if (t == MeshQualityType::AREA)
-        return "Area";
+    if (t == MeshQualityType::ELEMENTSIZE)
+        return "ElementSize";
     if (t == MeshQualityType::EDGERATIO)
         return "EdgeRatio";
     if (t == MeshQualityType::EQUIANGLESKEW)
         return "EquiAngleSkew";
     if (t == MeshQualityType::RADIUSEDGERATIO)
         return "RadiusEdgeRatio";
-    if (t == MeshQualityType::VOLUME)
-        return "Volume";
+    if (t == MeshQualityType::SIZEDIFFERENCE)
+        return "SizeDifference";
     return "none";
 }
 

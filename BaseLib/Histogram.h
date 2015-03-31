@@ -16,8 +16,13 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
-#include <ostream>
+#include <iostream>
+#include <fstream>
 #include <vector>
+
+// ThirdParty/logog
+#include "logog/include/logog.hpp"
+
 
 namespace BaseLib
 {
@@ -29,8 +34,7 @@ template <typename T>
 class Histogram
 {
 public:
-	typedef typename std::vector<T> Data; ///< Underlying input data vector
-	                                      ///  type.
+	typedef typename std::vector<T> Data; /// Underlying input data vector type.
 
 public:
 	/** Creates histogram of the given element in the range \c [first, last).
@@ -73,8 +77,7 @@ public:
 	                   it             itEnd - 1      itEnd
 	   \endverbatim
 	 */
-	void
-	update()
+	void update()
 	{
 		if (!_dirty)
 			return;
@@ -123,6 +126,33 @@ public:
 		}
 	}
 
+	int write(std::string const& file_name, std::string const& data_set_name, std::string const& param_name) const
+	{
+		if (file_name.empty())
+		{
+			ERR ("No file name specified.");
+			return 1;
+		}
+
+		std::ofstream out (file_name);
+		if (!out)
+		{
+			ERR("Error writing histogram: Could not open file.");
+			return 1;
+		}
+
+		out << "# Histogram for parameter " << param_name << " of data set " << data_set_name << "\n";
+		std::size_t const n_bins = this->getNrBins();
+		std::vector<size_t> const& bin_cnts(this->getBinCounts());
+		double const min (this->getMinimum());
+		double const bin_width (this->getBinWidth());
+
+		for (size_t k(0); k < n_bins; k++)
+			out << min+k*bin_width << " " << bin_cnts[k] << "\n";
+		out.close ();
+		return 0;
+	}
+
 protected:
 	/** Initialize class members after constructor call.
 	 */
@@ -139,7 +169,6 @@ protected:
 			update();
 	}
 
-protected:
 	Data _data;
 	const unsigned int _nr_bins;
 	std::vector<std::size_t> _histogram;
