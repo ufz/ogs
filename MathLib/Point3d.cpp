@@ -15,6 +15,36 @@
 
 #include "Point3d.h"
 
+bool operator< (const MathLib::Point3d& p0, const MathLib::Point3d& p1)
+{
+	if (p0[0] > p1[0]) {
+		return false;
+	} else {
+		if (p0[0] < p1[0]) {
+			return true;
+		}
+	}
+	// => p0[0] == p1[0]
+
+	if (p0[1] > p1[1]) {
+		return false;
+	} else {
+		if (p0[1] < p1[1]) {
+			return true;
+		}
+	}
+	// => p0[1] == p1[1]
+
+	if (p0[2] > p1[2]) {
+		return false;
+	} else {
+		if (p0[2] < p1[2]) {
+			return true;
+		}
+		return false; // p0 == p1
+	}
+}
+
 bool operator<= (const MathLib::Point3d& p0, const MathLib::Point3d& p1)
 {
 	if (p0[0] > p1[0]) {
