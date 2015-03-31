@@ -40,7 +40,7 @@ class CsvInterface {
 public:
 	/** 
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
-	 * specifying a name for each of the rows. The first three rows will be 
+	 * specifying a name for each of the columns. The first three columns will be
 	 * interpreted as x-, y- and z-coordinate, respectively.
 	 * \param fname    Name of the file to be read
 	 * \param delim    Deliminator, default is ','
@@ -52,54 +52,54 @@ public:
 
 	/** 
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
-	 * specifying a name for each of the rows. The rows specified in the function
-	 * call will be used for reading x-, y- and z-coordinates, respectively
-	 * If z_row_name is an empty string or not given at all, all z-coordinates
-	 * will be set to zero.
-	 * \param fname        Name of the file to be read
-	 * \param delim        Deliminator, default is ','
-	 * \param points       A vector containing the 3D points read from the file
-	 * \param x_row_name   Name of the row to be interpreted as x-coordinate
-	 * \param y_row_name   Name of the row to be interpreted as y-coordinate
-	 * \param z_row_name   Name of the row to be interpreted as z-coordinate
+	 * specifying a name for each of the columns. The columns specified in the
+	 * function call will be used for reading x-, y- and z-coordinates, 
+	 * respectively If z_column_name is an empty string or not given at all, all
+	 * z-coordinates will be set to zero.
+	 * \param fname           Name of the file to be read
+	 * \param delim           Deliminator, default is ','
+	 * \param points          A vector containing the 3D points read from the file
+	 * \param x_column_name   Name of the column to be interpreted as x-coordinate
+	 * \param y_column_name   Name of the column to be interpreted as y-coordinate
+	 * \param z_column_name   Name of the column to be interpreted as z-coordinate
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
 	static int readPointsFromCSV(std::string const& fname, char delim,
 	                             std::vector<GeoLib::Point*> &points,
-	                             std::string const& x_row_name,
-	                             std::string const& y_row_name,
-	                             std::string const& z_row_name = "");
+	                             std::string const& x_column_name,
+	                             std::string const& y_column_name,
+	                             std::string const& z_column_name = "");
 
 	/** 
-	 * Reads 3D points from a headerless CSV file, so rows for x-, y- and 
+	 * Reads 3D points from a headerless CSV file, so columns for x-, y- and
 	 * z-coordinates have to be specified using indices (starting with 0).
-	 * If z_row_idx is not given (or set to numeric_limits::max()), all 
+	 * If z_column_idx is not given (or set to numeric_limits::max()), all
 	 * z-coordinates will be set to zero.
-	 * \param fname       Name of the file to be read
-	 * \param delim       Deliminator, default is ','
-	 * \param points      A vector containing the 3D points read from the file
-	 * \param x_row_idx   Index of the row to be interpreted as x-coordinate
-	 * \param y_row_idx   Index of the row to be interpreted as y-coordinate
-	 * \param z_row_idx   Index of the row to be interpreted as z-coordinate
+	 * \param fname          Name of the file to be read
+	 * \param delim          Deliminator, default is ','
+	 * \param points         A vector containing the 3D points read from the file
+	 * \param x_column_idx   Index of the column to be interpreted as x-coordinate
+	 * \param y_column_idx   Index of the column to be interpreted as y-coordinate
+	 * \param z_column_idx   Index of the column to be interpreted as z-coordinate
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
 	static int readPointsFromCSV(std::string const& fname, char delim,
 	                             std::vector<GeoLib::Point*> &points,
-	                             std::size_t x_row_idx,
-	                             std::size_t y_row_idx,
-	                             std::size_t z_row_idx = std::numeric_limits<std::size_t>::max());
+	                             std::size_t x_column_idx,
+	                             std::size_t y_column_idx,
+	                             std::size_t z_column_idx = std::numeric_limits<std::size_t>::max());
 
 	/**
-	 * Reads a row of the given name from a CSV file.
+	 * Reads a column of the given name from a CSV file.
 	 * \param fname        Name of the file to be read
 	 * \param delim        Deliminator, default is ','
 	 * \param data_arary   A vector containing the data read from the file
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
 	template <typename T>
-	static int readRowFromCSV(std::string const& fname, char delim,
+	static int readColumnFromCSV(std::string const& fname, char delim,
 	                          std::vector<T> &data_array,
-	                          std::string const& row_name)
+	                          std::string const& column_name)
 	{
 		std::ifstream in(fname.c_str());
 		if (!in.is_open()) {
@@ -109,39 +109,39 @@ public:
 
 		std::string line;
 		getline(in, line);
-		std::size_t const row_idx = CsvInterface::findRow(line, delim, row_name);
-		if (row_idx == std::numeric_limits<std::size_t>::max())
+		std::size_t const column_idx = CsvInterface::findColumn(line, delim, column_name);
+		if (column_idx == std::numeric_limits<std::size_t>::max())
 		{
-			ERR ("Row \"%s\" not found in file header.", row_name.c_str());
+			ERR ("Column \"%s\" not found in file header.", column_name.c_str());
 			return -1;
 		}
-		return readRow<T>(in, delim, data_array, row_idx);
+		return readColumn<T>(in, delim, data_array, column_idx);
 	}
 
 	template <typename T>
-	static int readRowFromCSV(std::string const& fname, char delim,
+	static int readColumnFromCSV(std::string const& fname, char delim,
 	                          std::vector<T> &data_array,
-	                          std::size_t row_idx)
+	                          std::size_t column_idx)
 	{
 		std::ifstream in(fname.c_str());
 		if (!in.is_open()) {
 			ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
 			return -1;
 		}
-		return readRow<T>(in, delim, data_array, row_idx);
+		return readColumn<T>(in, delim, data_array, column_idx);
 	}
 
 private:
 	/// Actual point reader for public methods
 	static int readPoints(std::ifstream &in, char delim,
 	                      std::vector<GeoLib::Point*> &points,
-	                      std::array<std::size_t, 3> const& row_idx);
+	                      std::array<std::size_t, 3> const& column_idx);
 
-	/// Actual row reader for public methods
+	/// Actual column reader for public methods
 	template <typename T>
-	static int readRow(std::ifstream &in, char delim,
+	static int readColumn(std::ifstream &in, char delim,
 	                   std::vector<T> &data_array,
-	                   std::size_t row_idx)
+	                   std::size_t column_idx)
 	{
 		std::string line;
 		std::size_t line_count(0);
@@ -152,26 +152,30 @@ private:
 			line_count++;
 			std::list<std::string> const fields = BaseLib::splitString(line, delim);
 
-			if (fields.size() < row_idx+1)
+			if (fields.size() < column_idx+1)
 			{
-				ERR ("Line %d contains not enough rows of data. Skipping line...", line_count);
+				ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
 				error_count++;
 				continue;
 			}
 			it = fields.begin();
-			std::advance(it, row_idx);
+			std::advance(it, column_idx);
 
 			std::istringstream stream(*it);
 			T value;
-			stream >> value;
+			if (!(stream >> value))
+			{ 
+				ERR("Error reading value in line %d.", line_count); 
+				continue; 
+			}
 
 			data_array.push_back(value);
 		}
 		return error_count;
 	}
 
-	/// Returns the number of the row with row_name (or std::numeric_limits::max() if no such row has been found).
-	static std::size_t findRow(std::string const& line, char delim, std::string const& row_name);
+	/// Returns the number of the column with column_name (or std::numeric_limits::max() if no such column has been found).
+	static std::size_t findColumn(std::string const& line, char delim, std::string const& column_name);
 };
 
 }

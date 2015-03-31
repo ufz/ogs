@@ -40,28 +40,32 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 
 		if (fields.size() < 3)
 		{
-			ERR ("Line %d contains not enough rows of data. Skipping line...", line_count);
+			ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
 			error_count++;
 			continue;
 		}
 		it = fields.begin();
 		std::array<double, 3> point;
-		point[0] = strtod(it->c_str(), 0);
-		point[1] = strtod((++it)->c_str(), 0);
-		point[2] = strtod((++it)->c_str(), 0);
-		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
+		try {
+			point[0] = std::stod(*it);
+			point[1] = std::stod(*(++it));
+			point[2] = std::stod(*(++it));
+			points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
+		} catch (const std::invalid_argument&) {
+			ERR ("Error converting data to coordinates in line %d.", line_count);
+		}
 	}
 	return error_count;
 }
 
 int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
                                     std::vector<GeoLib::Point*> &points,
-                                    std::string const& x_row_name,
-                                    std::string const& y_row_name,
-                                    std::string const& z_row_name)
+                                    std::string const& x_column_name,
+                                    std::string const& y_column_name,
+                                    std::string const& z_column_name)
 {
 	std::ifstream in(fname.c_str());
-	std::array<std::string, 3> const row_names = { x_row_name, y_row_name, z_row_name };
+	std::array<std::string, 3> const column_names = { x_column_name, y_column_name, z_column_name };
 
 	if (!in.is_open()) {
 		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
@@ -70,27 +74,28 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 
 	std::string line;
 	getline(in, line);
-	std::array<std::size_t, 3> const row_idx = 
-		{ CsvInterface::findRow(line, delim, x_row_name),
-		  CsvInterface::findRow(line, delim, y_row_name),
-		  (z_row_name.empty()) ? CsvInterface::findRow(line, delim, y_row_name) : CsvInterface::findRow(line, delim, z_row_name) };
+	std::array<std::size_t, 3> const column_idx = 
+		{ CsvInterface::findColumn(line, delim, x_column_name),
+		  CsvInterface::findColumn(line, delim, y_column_name),
+		  (z_column_name.empty()) ? CsvInterface::findColumn(line, delim, y_column_name) : 
+		                            CsvInterface::findColumn(line, delim, z_column_name) };
 	
 	for (std::size_t i=0; i<3; ++i)
-		if (row_idx[i] == std::numeric_limits<std::size_t>::max())
+		if (column_idx[i] == std::numeric_limits<std::size_t>::max())
 		{
-			ERR ("Row \"%s\" not found in file header.", row_names[i].c_str());
-			if (!(i == 2 || row_names[2].empty()))
+			ERR ("Column \"%s\" not found in file header.", column_names[i].c_str());
+			if (!(i == 2 || column_names[2].empty()))
 				return -1;
 		}
 
-	return readPoints(in, delim, points, row_idx);
+	return readPoints(in, delim, points, column_idx);
 }
 
 int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
                                     std::vector<GeoLib::Point*> &points,
-                                    std::size_t x_row_idx,
-                                    std::size_t y_row_idx,
-                                    std::size_t z_row_idx)
+                                    std::size_t x_column_idx,
+                                    std::size_t y_column_idx,
+                                    std::size_t z_column_idx)
 {
 	std::ifstream in(fname.c_str());
 
@@ -99,24 +104,24 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 		return -1;
 	}
 
-	if (z_row_idx == std::numeric_limits<std::size_t>::max())
-		z_row_idx = y_row_idx;
-	std::array<std::size_t, 3> const row_idx = { x_row_idx, y_row_idx, z_row_idx };
+	if (z_column_idx == std::numeric_limits<std::size_t>::max())
+		z_column_idx = y_column_idx;
+	std::array<std::size_t, 3> const column_idx = { x_column_idx, y_column_idx, z_column_idx };
 	
-	return readPoints(in, delim, points, row_idx);
+	return readPoints(in, delim, points, column_idx);
 }
 
 int CsvInterface::readPoints(std::ifstream &in, char delim,
                              std::vector<GeoLib::Point*> &points,
-                             std::array<std::size_t, 3> const& row_idx)
+                             std::array<std::size_t, 3> const& column_idx)
 {
 	std::array<std::size_t, 3> order = { 0, 1, 2 };
 	std::sort(order.begin(), order.end(), 
-		[&row_idx](std::size_t idx1, std::size_t idx2) {return row_idx[idx1] < row_idx[idx2];});
-	std::array<std::size_t, 3> const row_advance = 
-		{ row_idx[order[0]], 
-		  row_idx[order[1]]-row_idx[order[0]], 
-		  row_idx[order[2]]-row_idx[order[1]] };
+		[&column_idx](std::size_t idx1, std::size_t idx2) {return column_idx[idx1] < column_idx[idx2];});
+	std::array<std::size_t, 3> const column_advance = 
+		{ column_idx[order[0]], 
+		  column_idx[order[1]] - column_idx[order[0]], 
+		  column_idx[order[2]] - column_idx[order[1]] };
 
 	std::string line;
 	std::size_t line_count(0);
@@ -127,39 +132,43 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
 		line_count++;
 		std::list<std::string> const fields = BaseLib::splitString(line, delim);
 
-		if (fields.size() < row_idx[order[2]]+1)
+		if (fields.size() < column_idx[order[2]]+1)
 		{
-			ERR ("Line %d contains not enough rows of data. Skipping line...", line_count);
+			ERR ("Line %d contains not enough columns of data. Skipping line...", line_count);
 			error_count++;
 			continue;
 		}
 
 		std::array<double, 3> point;
 		it = fields.begin();
-		std::advance(it, row_advance[0]);
-		point[0] = strtod(it->c_str(), 0);
-		std::advance(it, row_advance[1]);
-		point[1] = strtod(it->c_str(), 0);
-		std::advance(it, row_advance[2]);
-		point[2] = (row_idx[1] == row_idx[2]) ? 0 : strtod(it->c_str(), 0);
-		points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
+		try {
+			std::advance(it, column_advance[0]);
+			point[0] = std::stod(*it);
+			std::advance(it, column_advance[1]);
+			point[1] = std::stod(*it);
+			std::advance(it, column_advance[2]);
+			point[2] = (column_idx[1] == column_idx[2]) ? 0 : std::stod(*it);
+			points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
+		} catch (const std::invalid_argument&) {
+			ERR ("Error converting data to coordinates in line %d.", line_count);
+		}
 	}
 	return error_count;
 }
 
-std::size_t CsvInterface::findRow(std::string const& line, char delim, std::string const& row_name)
+std::size_t CsvInterface::findColumn(std::string const& line, char delim, std::string const& column_name)
 {
 	std::list<std::string> const fields = BaseLib::splitString(line, delim);
 	if (fields.size() < 3)
 	{
-		ERR (" The csv-file needs to contain at least three rows of data");
+		ERR (" The csv-file needs to contain at least three columns of data");
 		return std::numeric_limits<std::size_t>::max();
 	}
 
 	std::size_t count(0);
 	for (auto it = fields.cbegin(); it != fields.cend(); ++it)
 	{
-		if ((*it).compare(row_name) == 0)
+		if ((*it).compare(column_name) == 0)
 			break;
 		else
 			count++;
