@@ -112,7 +112,7 @@ public:
                 assemblyLaplacian(integration_method, *scalarK);
             }
             break;
-            case MaterialLib::PermeabilityType::ANISTROPIC:
+            case MaterialLib::PermeabilityType::ANISOTROPIC:
             {
                 using AnistropicHydraulicConductivity
                           = MaterialLib::TensorParameter<MaterialLib::PermeabilityType,

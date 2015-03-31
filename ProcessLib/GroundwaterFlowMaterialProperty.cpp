@@ -38,8 +38,8 @@ GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree cons
         std::size_t const mat_id = pmp_config.get<std::size_t>("id");
 
         auto const &hydraulic_conductivity_config = pmp_config.get_child("hydraulic_conductivity");
-        std::string const hy_type = hydraulic_conductivity_config.get<std::string>("type");
-        if(hy_type.find("isotropic") != std::string::npos)
+        const std::string hy_type = hydraulic_conductivity_config.get<std::string>("type");
+        if(hy_type.find("isotropic") != std::string::npos && hy_type.find("aniso") == std::string::npos)
         {
             const double k = hydraulic_conductivity_config.get<double>("value");
 
@@ -51,7 +51,7 @@ GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree cons
 
             _conductivity[mat_id] = K;
         }
-        else if(hy_type.find("anistropic") != std::string::npos)
+        else if(hy_type.find("anisotropic") != std::string::npos)
         {
             const std::string values_in_str = hydraulic_conductivity_config.get<std::string>("values");
             std::vector<std::string> strs_tok;
@@ -67,7 +67,7 @@ GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree cons
             const std::size_t data_size= values.size();
             if(data_size != 4 || data_size != 9)
             {
-                ERR("Number of values for an anistropic hydraulic conductivity tensor must be 4 or 9.");
+                ERR("Number of values for an anisotropic hydraulic conductivity tensor must be 4 or 9.");
             }
             const int dim = (data_size == 4) ? 2 : 3;
             Matrix K(dim, dim);
@@ -78,10 +78,10 @@ GroundwaterFlowMaterialProperty::GroundwaterFlowMaterialProperty(ConfigTree cons
                     K(i, j) = values[i*dim + j];
                 }
             }
-            using AnistropicHydraulicConductivity
+            using AnisotropicHydraulicConductivity
             = MaterialLib::TensorParameter<MaterialLib::PermeabilityType,
             MaterialLib::ConstantTensor<Matrix>, Matrix>;
-            AnistropicHydraulicConductivity *anisK = new AnistropicHydraulicConductivity(K);
+            AnisotropicHydraulicConductivity *anisK = new AnisotropicHydraulicConductivity(K);
 
             _conductivity[mat_id] = anisK;
         }

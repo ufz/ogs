@@ -21,7 +21,7 @@ namespace MaterialLib
 enum class PermeabilityType
 {
     ISOTROPIC = 0,
-    ANISTROPIC = 1
+    ANISOTROPIC = 1
 };
 
 } // end namespace
