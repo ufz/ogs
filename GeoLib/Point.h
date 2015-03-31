@@ -46,6 +46,10 @@ public:
 		MathLib::Point3d(x), GeoLib::GeoObject()
 	{}
 
+	Point (std::array<double,3> const& x) :
+		MathLib::Point3d(x), GeoLib::GeoObject()
+	{}
+
 	/// return a geometry type
 	virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
 };
