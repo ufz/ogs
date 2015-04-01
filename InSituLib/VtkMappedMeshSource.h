@@ -34,6 +34,7 @@ class vtkPointData;
 class vtkPoints;
 namespace MeshLib {
 	class Mesh;
+	class Properties;
 }
 
 namespace InSituLib {
@@ -62,6 +63,13 @@ protected:
 private:
 	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
 	void operator=(const VtkMappedMeshSource &);      // Not implemented.
+
+	int addDoubleProperty(vtkUnstructuredGrid &output,
+	                      MeshLib::Properties const& properties,
+	                      std::string const& prop_name) const;
+	int addIntProperty(vtkUnstructuredGrid &output,
+	                   MeshLib::Properties const& properties,
+	                   std::string const& prop_name) const;
 
 	const MeshLib::Mesh* _mesh;
 
