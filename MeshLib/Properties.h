@@ -58,28 +58,7 @@ public:
 	boost::optional<PropertyVector<T> &>
 	createNewPropertyVector(std::string const& name,
 		MeshItemType mesh_item_type,
-		std::size_t tuple_size = 1)
-	{
-		std::map<std::string, PropertyVectorBase*>::const_iterator it(
-			_properties.find(name)
-		);
-		if (it != _properties.end()) {
-			ERR("A property of the name \"%s\" is already assigned to the mesh.",
-				name.c_str());
-			return boost::optional<PropertyVector<T> &>();
-		}
-		auto entry_info(
-			_properties.insert(
-				std::make_pair(
-					name, new PropertyVector<T>(name, mesh_item_type, tuple_size)
-				)
-			)
-		);
-		return boost::optional<PropertyVector<T> &>(*(
-				static_cast<PropertyVector<T>*>((entry_info.first)->second)
-			)
-		);
-	}
+		std::size_t tuple_size = 1);
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
 	/// and the same type T was not already created before. In case there exists
@@ -103,159 +82,46 @@ public:
 		std::size_t n_prop_groups,
 		std::vector<std::size_t> const& item2group_mapping,
 		MeshItemType mesh_item_type,
-		std::size_t tuple_size = 1)
-	{
-		// check if there is already a PropertyVector with the same name and
-		// mesh_item_type
-		std::map<std::string, PropertyVectorBase*>::const_iterator it(
-			_properties.find(name)
-		);
-		if (it != _properties.end()) {
-			ERR("A property of the name \"%s\" already assigned to the mesh.",
-				name.c_str());
-			return boost::optional<PropertyVector<T> &>();
-		}
-
-		// check entries of item2group_mapping of consistence
-		for (std::size_t k(0); k<item2group_mapping.size(); k++) {
-			std::size_t const group_id (item2group_mapping[k]);
-			if (group_id >= n_prop_groups) {
-				ERR("The mapping to property %d for item %d is not in the correct range [0,%d).", group_id, k, n_prop_groups);
-				return boost::optional<PropertyVector<T> &>();
-			}
-		}
-
-		auto entry_info(
-			_properties.insert(
-				std::pair<std::string, PropertyVectorBase*>(
-					name,
-					new PropertyVector<T>(n_prop_groups,
-						item2group_mapping, name, mesh_item_type)
-				)
-			)
-		);
-		return boost::optional<PropertyVector<T> &>
-			(*(static_cast<PropertyVector<T>*>((entry_info.first)->second)));
-	}
+		std::size_t tuple_size = 1);
 
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T> const&>
-	getPropertyVector(std::string const& name) const
-	{
-		std::map<std::string, PropertyVectorBase*>::const_iterator it(
-			_properties.find(name)
-		);
-		if (it == _properties.end()) {
-			ERR("A property with the specified name is not available.");
-			return boost::optional<PropertyVector<T> const&>();
-		}
-
-		PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
-		if (!t) {
-			ERR("Could not downcast PropertyVectorBase.");
-			return boost::optional<PropertyVector<T> const&>();
-		}
-		return *t;
-	}
+	getPropertyVector(std::string const& name) const;
 
 	/// Method to get a vector of property values.
 	template <typename T>
 	boost::optional<PropertyVector<T>&>
-	getPropertyVector(std::string const& name)
-	{
-		std::map<std::string, PropertyVectorBase*>::iterator it(
-			_properties.find(name)
-		);
-		if (it == _properties.end()) {
-			ERR("A property with the specified name is not available.");
-			return boost::optional<PropertyVector<T>&>();
-		}
+	getPropertyVector(std::string const& name);
 
-		PropertyVector<T> *t=dynamic_cast<PropertyVector<T>*>(it->second);
-		if (!t) {
-			ERR("Could not downcast PropertyVectorBase.");
-			return boost::optional<PropertyVector<T> &>();
-		}
-		return *t;
-	}
-
-	void removePropertyVector(std::string const& name)
-	{
-		std::map<std::string, PropertyVectorBase*>::const_iterator it(
-			_properties.find(name)
-		);
-		if (it == _properties.end()) {
-			WARN("A property of the name \"%s\" does not exist.",
-				name.c_str());
-			return;
-		}
-		delete it->second;
-		_properties.erase(it);
-	}
+	void removePropertyVector(std::string const& name);
 
 	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	bool hasPropertyVector(std::string const& name)
-	{
-		std::map<std::string, PropertyVectorBase*>::const_iterator it(
-			_properties.find(name)
-		);
-		if (it == _properties.end()) {
-			return false;
-		}
-		return true;
-	}
+	bool hasPropertyVector(std::string const& name);
 
-	std::vector<std::string> getPropertyVectorNames() const
-	{
-		std::vector<std::string> names;
-		for (auto it(_properties.cbegin()); it != _properties.cend(); it++)
-			names.push_back(it->first);
-		return names;
-	}
+	std::vector<std::string> getPropertyVectorNames() const;
 
 	/** copy all PropertyVector objects stored in the (internal) map but only
 	 * those values of a PropertyVector whose ids are not in the vector
 	 * exclude_ids.
 	 */
-	Properties excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const
-	{
-		Properties exclude_copy;
-		for (auto property_vector : _properties) {
-			exclude_copy._properties.insert(
-				std::make_pair(property_vector.first,
-				property_vector.second->clone(exclude_ids))
-			);
-		}
-		return exclude_copy;
-	}
+	Properties excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const;
 
 	Properties() {}
 
-	Properties(Properties const& properties)
-		: _properties(properties._properties)
-	{
-		std::vector<std::size_t> exclude_positions;
-		for (auto it(_properties.begin()); it != _properties.end(); ++it) {
-			PropertyVectorBase *t(it->second->clone(exclude_positions));
-			it->second = t;
-		}
-	}
+	Properties(Properties const& properties);
 
-	~Properties()
-	{
-		for (auto property_vector : _properties) {
-			delete property_vector.second;
-		}
-	}
+	~Properties();
 
 private:
 	/// A mapping from property's name to the stored object of any type.
 	/// See addProperty() and getProperty() documentation.
 	std::map<std::string, PropertyVectorBase*> _properties;
 }; // end class
+
+#include "Properties-impl.h"
 
 } // end namespace MeshLib
 
