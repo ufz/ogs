@@ -47,8 +47,8 @@ public:
 	 * \param points   A vector containing the 3D points read from the file
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
-	static int readPointsFromCSV(std::string const& fname, char delim,
-	                             std::vector<GeoLib::Point*> &points);
+	static int readPoints(std::string const& fname, char delim,
+	                      std::vector<GeoLib::Point*> &points);
 
 	/** 
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
@@ -64,11 +64,11 @@ public:
 	 * \param z_column_name   Name of the column to be interpreted as z-coordinate
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
-	static int readPointsFromCSV(std::string const& fname, char delim,
-	                             std::vector<GeoLib::Point*> &points,
-	                             std::string const& x_column_name,
-	                             std::string const& y_column_name,
-	                             std::string const& z_column_name = "");
+	static int readPoints(std::string const& fname, char delim,
+	                      std::vector<GeoLib::Point*> &points,
+	                      std::string const& x_column_name,
+	                      std::string const& y_column_name,
+	                      std::string const& z_column_name = "");
 
 	/** 
 	 * Reads 3D points from a headerless CSV file, so columns for x-, y- and
@@ -83,11 +83,11 @@ public:
 	 * \param z_column_idx   Index of the column to be interpreted as z-coordinate
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
-	static int readPointsFromCSV(std::string const& fname, char delim,
-	                             std::vector<GeoLib::Point*> &points,
-	                             std::size_t x_column_idx,
-	                             std::size_t y_column_idx,
-	                             std::size_t z_column_idx = std::numeric_limits<std::size_t>::max());
+	static int readPoints(std::string const& fname, char delim,
+	                      std::vector<GeoLib::Point*> &points,
+	                      std::size_t x_column_idx,
+	                      std::size_t y_column_idx,
+	                      std::size_t z_column_idx = std::numeric_limits<std::size_t>::max());
 
 	/**
 	 * Reads a column of the given name from a CSV file.
@@ -97,13 +97,13 @@ public:
 	 * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
 	 */
 	template <typename T>
-	static int readColumnFromCSV(std::string const& fname, char delim,
-	                          std::vector<T> &data_array,
-	                          std::string const& column_name)
+	static int readColumn(std::string const& fname, char delim,
+	                      std::vector<T> &data_array,
+	                      std::string const& column_name)
 	{
 		std::ifstream in(fname.c_str());
 		if (!in.is_open()) {
-			ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+			ERR ("CsvInterface::readColumn(): Could not open file %s.", fname.c_str());
 			return -1;
 		}
 
@@ -119,13 +119,13 @@ public:
 	}
 
 	template <typename T>
-	static int readColumnFromCSV(std::string const& fname, char delim,
+	static int readColumn(std::string const& fname, char delim,
 	                          std::vector<T> &data_array,
 	                          std::size_t column_idx)
 	{
 		std::ifstream in(fname.c_str());
 		if (!in.is_open()) {
-			ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+			ERR ("CsvInterface::readColumn(): Could not open file %s.", fname.c_str());
 			return -1;
 		}
 		return readColumn<T>(in, delim, data_array, column_idx);

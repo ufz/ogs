@@ -17,13 +17,13 @@
 
 namespace FileIO {
 
-int CsvInterface::readPointsFromCSV(std::string const& fname, char delim, 
-                                    std::vector<GeoLib::Point*> &points)
+int CsvInterface::readPoints(std::string const& fname, char delim, 
+                             std::vector<GeoLib::Point*> &points)
 {
 	std::ifstream in(fname.c_str());
 
 	if (!in.is_open()) {
-		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
 		return -1;
 	}
 
@@ -58,17 +58,17 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 	return error_count;
 }
 
-int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
-                                    std::vector<GeoLib::Point*> &points,
-                                    std::string const& x_column_name,
-                                    std::string const& y_column_name,
-                                    std::string const& z_column_name)
+int CsvInterface::readPoints(std::string const& fname, char delim,
+                             std::vector<GeoLib::Point*> &points,
+                             std::string const& x_column_name,
+                             std::string const& y_column_name,
+                             std::string const& z_column_name)
 {
 	std::ifstream in(fname.c_str());
 	std::array<std::string, 3> const column_names = { x_column_name, y_column_name, z_column_name };
 
 	if (!in.is_open()) {
-		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
 		return -1;
 	}
 
@@ -91,16 +91,16 @@ int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
 	return readPoints(in, delim, points, column_idx);
 }
 
-int CsvInterface::readPointsFromCSV(std::string const& fname, char delim,
-                                    std::vector<GeoLib::Point*> &points,
-                                    std::size_t x_column_idx,
-                                    std::size_t y_column_idx,
-                                    std::size_t z_column_idx)
+int CsvInterface::readPoints(std::string const& fname, char delim,
+                             std::vector<GeoLib::Point*> &points,
+                             std::size_t x_column_idx,
+                             std::size_t y_column_idx,
+                             std::size_t z_column_idx)
 {
 	std::ifstream in(fname.c_str());
 
 	if (!in.is_open()) {
-		ERR ("CsvInterface::readPointsFromCSV(): Could not open file %s.", fname.c_str());
+		ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
 		return -1;
 	}
 
@@ -159,11 +159,8 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
 std::size_t CsvInterface::findColumn(std::string const& line, char delim, std::string const& column_name)
 {
 	std::list<std::string> const fields = BaseLib::splitString(line, delim);
-	if (fields.size() < 3)
-	{
-		ERR (" The csv-file needs to contain at least three columns of data");
+	if (fields.empty())
 		return std::numeric_limits<std::size_t>::max();
-	}
 
 	std::size_t count(0);
 	for (auto it = fields.cbegin(); it != fields.cend(); ++it)
