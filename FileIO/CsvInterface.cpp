@@ -84,8 +84,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
 		if (column_idx[i] == std::numeric_limits<std::size_t>::max())
 		{
 			ERR ("Column \"%s\" not found in file header.", column_names[i].c_str());
-			if (!(i == 2 || column_names[2].empty()))
-				return -1;
+			return -1;
 		}
 
 	return readPoints(in, delim, points, column_idx);
@@ -143,14 +142,15 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
 		it = fields.begin();
 		try {
 			std::advance(it, column_advance[0]);
-			point[0] = std::stod(*it);
+			point[order[0]] = std::stod(*it);
 			std::advance(it, column_advance[1]);
-			point[1] = std::stod(*it);
+			point[order[1]] = std::stod(*it);
 			std::advance(it, column_advance[2]);
-			point[2] = (column_idx[1] == column_idx[2]) ? 0 : std::stod(*it);
+			point[order[2]] = (column_idx[1] == column_idx[2]) ? 0 : std::stod(*it);
 			points.push_back(new GeoLib::Point(point[0], point[1], point[2]));
 		} catch (const std::invalid_argument&) {
 			ERR ("Error converting data to coordinates in line %d.", line_count);
+			error_count++;
 		}
 	}
 	return error_count;

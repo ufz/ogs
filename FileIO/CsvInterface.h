@@ -166,6 +166,7 @@ private:
 			if (!(stream >> value))
 			{ 
 				ERR("Error reading value in line %d.", line_count); 
+				error_count++;
 				continue; 
 			}
 
