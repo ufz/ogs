@@ -21,33 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
 
-
 namespace MeshLib {
-
-std::vector<unsigned> ElementValueModification::getMeshValues(const MeshLib::Mesh &mesh)
-{
-	const std::size_t nElements (mesh.getNElements());
-	std::vector<unsigned> value_mapping;
-	for (unsigned i=0; i<nElements; ++i)
-	{
-		bool exists(false);
-		unsigned value (mesh.getElement(i)->getValue());
-		const unsigned nValues (value_mapping.size());
-		for (unsigned j=0; j<nValues; ++j)
-		{
-			if (value == value_mapping[j])
-			{
-				exists = true;
-				break;
-			}
-		}
-		if (!exists)
-			value_mapping.push_back(value);
-	}
-
-	std::sort(value_mapping.begin(), value_mapping.end());
-	return value_mapping;
-}
 
 bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 	std::string const& property_name, unsigned old_value, unsigned new_value,
