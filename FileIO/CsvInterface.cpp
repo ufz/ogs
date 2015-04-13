@@ -17,7 +17,7 @@
 
 namespace FileIO {
 
-int CsvInterface::readPoints(std::string const& fname, char delim, 
+int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::vector<GeoLib::Point*> &points)
 {
 	std::ifstream in(fname.c_str());
@@ -74,12 +74,12 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
 
 	std::string line;
 	getline(in, line);
-	std::array<std::size_t, 3> const column_idx = 
+	std::array<std::size_t, 3> const column_idx =
 		{ CsvInterface::findColumn(line, delim, x_column_name),
 		  CsvInterface::findColumn(line, delim, y_column_name),
-		  (z_column_name.empty()) ? CsvInterface::findColumn(line, delim, y_column_name) : 
+		  (z_column_name.empty()) ? CsvInterface::findColumn(line, delim, y_column_name) :
 		                            CsvInterface::findColumn(line, delim, z_column_name) };
-	
+
 	for (std::size_t i=0; i<3; ++i)
 		if (column_idx[i] == std::numeric_limits<std::size_t>::max())
 		{
@@ -115,17 +115,18 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
                              std::array<std::size_t, 3> const& column_idx)
 {
 	std::array<std::size_t, 3> order = { 0, 1, 2 };
-	std::sort(order.begin(), order.end(), 
+	std::sort(order.begin(), order.end(),
 		[&column_idx](std::size_t idx1, std::size_t idx2) {return column_idx[idx1] < column_idx[idx2];});
-	std::array<std::size_t, 3> const column_advance = 
-		{ column_idx[order[0]], 
-		  column_idx[order[1]] - column_idx[order[0]], 
+	std::array<std::size_t, 3> const column_advance =
+		{ column_idx[order[0]],
+		  column_idx[order[1]] - column_idx[order[0]],
 		  column_idx[order[2]] - column_idx[order[1]] };
 
 	std::string line;
 	std::size_t line_count(0);
 	std::size_t error_count(0);
 	std::list<std::string>::const_iterator it;
+
 	while ( getline(in, line) )
 	{
 		line_count++;

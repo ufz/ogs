@@ -38,7 +38,7 @@ namespace FileIO {
 class CsvInterface {
 
 public:
-	/** 
+	/**
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
 	 * specifying a name for each of the columns. The first three columns will be
 	 * interpreted as x-, y- and z-coordinate, respectively.
@@ -50,10 +50,10 @@ public:
 	static int readPoints(std::string const& fname, char delim,
 	                      std::vector<GeoLib::Point*> &points);
 
-	/** 
+	/**
 	 * Reads 3D points from a CSV file. It is assumed that the file has a header
 	 * specifying a name for each of the columns. The columns specified in the
-	 * function call will be used for reading x-, y- and z-coordinates, 
+	 * function call will be used for reading x-, y- and z-coordinates,
 	 * respectively If z_column_name is an empty string or not given at all, all
 	 * z-coordinates will be set to zero.
 	 * \param fname           Name of the file to be read
@@ -70,7 +70,7 @@ public:
 	                      std::string const& y_column_name,
 	                      std::string const& z_column_name = "");
 
-	/** 
+	/**
 	 * Reads 3D points from a headerless CSV file, so columns for x-, y- and
 	 * z-coordinates have to be specified using indices (starting with 0).
 	 * If z_column_idx is not given (or set to numeric_limits::max()), all
@@ -164,10 +164,10 @@ private:
 			std::istringstream stream(*it);
 			T value;
 			if (!(stream >> value))
-			{ 
-				ERR("Error reading value in line %d.", line_count); 
+			{
+				ERR("Error reading value in line %d.", line_count);
 				error_count++;
-				continue; 
+				continue;
 			}
 
 			data_array.push_back(value);
