@@ -41,6 +41,9 @@ public:
 	/// Returns true if successful or false if the value is already taken.
 	static bool replace(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists = false);
 
+	static bool replace(MeshLib::Mesh &mesh, std::string const& property_name,
+		unsigned old_value, unsigned new_value, bool replace_if_exists = false);
+
 	/// Sets new value for all elements having the given element type
 	/// Returns the number of elements having the given element type
 	static unsigned setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value);
