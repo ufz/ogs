@@ -65,7 +65,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::string const& z_column_name)
 {
 	std::ifstream in(fname.c_str());
-	std::array<std::string, 3> const column_names = { x_column_name, y_column_name, z_column_name };
+	std::array<std::string, 3> const column_names = {{x_column_name, y_column_name, z_column_name}};
 
 	if (!in.is_open()) {
 		ERR ("CsvInterface::readPoints(): Could not open file %s.", fname.c_str());
@@ -75,10 +75,10 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
 	std::string line;
 	getline(in, line);
 	std::array<std::size_t, 3> const column_idx =
-		{ CsvInterface::findColumn(line, delim, x_column_name),
-		  CsvInterface::findColumn(line, delim, y_column_name),
-		  (z_column_name.empty()) ? CsvInterface::findColumn(line, delim, y_column_name) :
-		                            CsvInterface::findColumn(line, delim, z_column_name) };
+		{{ CsvInterface::findColumn(line, delim, x_column_name),
+		   CsvInterface::findColumn(line, delim, y_column_name),
+		   (z_column_name.empty()) ?  CsvInterface::findColumn(line, delim, y_column_name) :
+		                              CsvInterface::findColumn(line, delim, z_column_name) }};
 
 	for (std::size_t i=0; i<3; ++i)
 		if (column_idx[i] == std::numeric_limits<std::size_t>::max())
@@ -105,8 +105,8 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
 
 	if (z_column_idx == std::numeric_limits<std::size_t>::max())
 		z_column_idx = y_column_idx;
-	std::array<std::size_t, 3> const column_idx = { x_column_idx, y_column_idx, z_column_idx };
-	
+	std::array<std::size_t, 3> const column_idx = {{ x_column_idx, y_column_idx, z_column_idx }};
+
 	return readPoints(in, delim, points, column_idx);
 }
 
@@ -114,13 +114,13 @@ int CsvInterface::readPoints(std::ifstream &in, char delim,
                              std::vector<GeoLib::Point*> &points,
                              std::array<std::size_t, 3> const& column_idx)
 {
-	std::array<std::size_t, 3> order = { 0, 1, 2 };
+	std::array<std::size_t, 3> order = {{ 0, 1, 2 }};
 	std::sort(order.begin(), order.end(),
 		[&column_idx](std::size_t idx1, std::size_t idx2) {return column_idx[idx1] < column_idx[idx2];});
 	std::array<std::size_t, 3> const column_advance =
-		{ column_idx[order[0]],
-		  column_idx[order[1]] - column_idx[order[0]],
-		  column_idx[order[2]] - column_idx[order[1]] };
+		{{ column_idx[order[0]],
+		   column_idx[order[1]] - column_idx[order[0]],
+		   column_idx[order[2]] - column_idx[order[1]] }};
 
 	std::string line;
 	std::size_t line_count(0);
