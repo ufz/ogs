@@ -367,11 +367,12 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
 	vtkPointData* point_data = grid.GetPointData();
-	if (point_data == nullptr)
-		return;
-	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
-	for (unsigned i=0; i<n_point_arrays; ++i)
-		convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+	if (point_data != nullptr)
+	{
+		unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+		for (unsigned i=0; i<n_point_arrays; ++i)
+			convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
+	}
 
 	vtkCellData* cell_data = grid.GetCellData();
 	if (cell_data == nullptr)
@@ -390,10 +391,13 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
 	if (double_array)
 	{
-		boost::optional<MeshLib::PropertyVector<double> &> vec 
+		boost::optional<MeshLib::PropertyVector<double> &> vec
 			(properties.createNewPropertyVector<double>(array_name, type, nComponents));
 		if (!vec)
+		{
+			WARN("vtkDoubleArray %s could not be converted to PropertyVector.", array_name);
 			return;
+		}
 		vec->reserve(nTuples*nComponents);
 		double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
 		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
@@ -403,10 +407,13 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
 	if (int_array)
 	{
-		boost::optional<MeshLib::PropertyVector<int> &> vec 
+		boost::optional<MeshLib::PropertyVector<int> &> vec
 			(properties.createNewPropertyVector<int>(array_name, type, nComponents));
 		if (!vec)
+		{
+			WARN("vtkFloatArray %s could not be converted to PropertyVector.", array_name);
 			return;
+		}
 		vec->reserve(nTuples*nComponents);
 		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
 		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));

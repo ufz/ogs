@@ -68,7 +68,7 @@ public:
 	                                      UseIntensityAs intensity_type);
 
 	/// Converts a vtkUnstructuredGrid object to a Mesh
-	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid, 
+	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid,
 	                                              std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:
