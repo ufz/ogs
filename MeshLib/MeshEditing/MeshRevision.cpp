@@ -339,13 +339,13 @@ unsigned MeshRevision::subdivideQuad(MeshLib::Element const*const quad,
 	tri1_nodes[0] = nodes[quad->getNode(0)->getID()];
 	tri1_nodes[1] = nodes[quad->getNode(1)->getID()];
 	tri1_nodes[2] = nodes[quad->getNode(2)->getID()];
-	new_elements.push_back(new MeshLib::Tri(tri1_nodes, quad->getValue()));
+	new_elements.push_back(new MeshLib::Tri(tri1_nodes));
 
 	MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
 	tri2_nodes[0] = nodes[quad->getNode(0)->getID()];
 	tri2_nodes[1] = nodes[quad->getNode(2)->getID()];
 	tri2_nodes[2] = nodes[quad->getNode(3)->getID()];
-	new_elements.push_back(new MeshLib::Tri(tri2_nodes, quad->getValue()));
+	new_elements.push_back(new MeshLib::Tri(tri2_nodes));
 
 	return 2;
 }
@@ -361,7 +361,7 @@ unsigned MeshRevision::subdivideHex(MeshLib::Element const*const hex,
 	prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
 	prism1_nodes[4] = nodes[hex->getNode(6)->getID()];
 	prism1_nodes[5] = nodes[hex->getNode(5)->getID()];
-	MeshLib::Prism* prism1 (new MeshLib::Prism(prism1_nodes, hex->getValue()));
+	MeshLib::Prism* prism1 (new MeshLib::Prism(prism1_nodes));
 	this->subdividePrism(prism1, nodes, new_elements);
 	delete prism1;
 
@@ -372,7 +372,7 @@ unsigned MeshRevision::subdivideHex(MeshLib::Element const*const hex,
 	prism2_nodes[3] = nodes[hex->getNode(0)->getID()];
 	prism2_nodes[4] = nodes[hex->getNode(2)->getID()];
 	prism2_nodes[5] = nodes[hex->getNode(3)->getID()];
-	MeshLib::Prism* prism2 (new MeshLib::Prism(prism2_nodes, hex->getValue()));
+	MeshLib::Prism* prism2 (new MeshLib::Prism(prism2_nodes));
 	this->subdividePrism(prism2, nodes, new_elements);
 	delete prism2;
 
@@ -388,14 +388,14 @@ unsigned MeshRevision::subdividePyramid(MeshLib::Element const*const pyramid,
 	tet1_nodes[1] = nodes[pyramid->getNode(1)->getID()];
 	tet1_nodes[2] = nodes[pyramid->getNode(2)->getID()];
 	tet1_nodes[3] = nodes[pyramid->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet1_nodes, pyramid->getValue()));
+	new_elements.push_back(new MeshLib::Tet(tet1_nodes));
 
 	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
 	tet2_nodes[0] = nodes[pyramid->getNode(0)->getID()];
 	tet2_nodes[1] = nodes[pyramid->getNode(2)->getID()];
 	tet2_nodes[2] = nodes[pyramid->getNode(3)->getID()];
 	tet2_nodes[3] = nodes[pyramid->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet2_nodes, pyramid->getValue()));
+	new_elements.push_back(new MeshLib::Tet(tet2_nodes));
 
 	return 2;
 }
@@ -409,21 +409,21 @@ unsigned MeshRevision::subdividePrism(MeshLib::Element const*const prism,
 	tet1_nodes[1] = nodes[prism->getNode(1)->getID()];
 	tet1_nodes[2] = nodes[prism->getNode(2)->getID()];
 	tet1_nodes[3] = nodes[prism->getNode(3)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet1_nodes, prism->getValue()));
+	new_elements.push_back(new MeshLib::Tet(tet1_nodes));
 
 	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
 	tet2_nodes[0] = nodes[prism->getNode(3)->getID()];
 	tet2_nodes[1] = nodes[prism->getNode(2)->getID()];
 	tet2_nodes[2] = nodes[prism->getNode(4)->getID()];
 	tet2_nodes[3] = nodes[prism->getNode(5)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet2_nodes, prism->getValue()));
+	new_elements.push_back(new MeshLib::Tet(tet2_nodes));
 
 	MeshLib::Node** tet3_nodes = new MeshLib::Node*[4];
 	tet3_nodes[0] = nodes[prism->getNode(2)->getID()];
 	tet3_nodes[1] = nodes[prism->getNode(1)->getID()];
 	tet3_nodes[2] = nodes[prism->getNode(3)->getID()];
 	tet3_nodes[3] = nodes[prism->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet3_nodes, prism->getValue()));
+	new_elements.push_back(new MeshLib::Tet(tet3_nodes));
 
 	return 3;
 }
@@ -452,7 +452,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 					pyr_nodes[2] = nodes[org_elem->getNode(base_nodes[2])->getID()];
 					pyr_nodes[3] = nodes[org_elem->getNode(base_nodes[3])->getID()];
 					pyr_nodes[4] = nodes[org_elem->getNode(i)->getID()];
-					new_elements.push_back (new MeshLib::Pyramid(pyr_nodes, org_elem->getValue()));
+					new_elements.push_back (new MeshLib::Pyramid(pyr_nodes));
 
 					if (i<4 && j>=4) std::swap(i,j);
 					MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
@@ -462,7 +462,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 					prism_nodes[3] = nodes[org_elem->getNode(base_nodes[1])->getID()];
 					prism_nodes[4] = nodes[org_elem->getNode(base_nodes[2])->getID()];
 					prism_nodes[5] = nodes[org_elem->getNode(this->lutHexDiametralNode(i))->getID()];
-					new_elements.push_back (new MeshLib::Prism(prism_nodes, org_elem->getValue()));
+					new_elements.push_back (new MeshLib::Prism(prism_nodes));
 					return 2;
 				}
 	}
@@ -481,7 +481,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 				prism_nodes[3] = nodes[org_elem->getNode(this->lutHexDiametralNode(org_elem->getNodeIDinElement(face->getNode(2))))->getID()];
 				prism_nodes[4] = nodes[org_elem->getNode(this->lutHexDiametralNode(org_elem->getNodeIDinElement(face->getNode(3))))->getID()];
 				prism_nodes[5] = nodes[org_elem->getNode(org_elem->getNodeIDinElement(face->getNode(0)))->getID()];
-				new_elements.push_back (new MeshLib::Prism(prism_nodes, org_elem->getValue()));
+				new_elements.push_back (new MeshLib::Prism(prism_nodes));
 				delete face;
 				return 1;
 			}
@@ -524,7 +524,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 								pris1_nodes[3] = const_cast<MeshLib::Node*>(org_elem->getNode(back.second));
 								pris1_nodes[4] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[1]));
 								pris1_nodes[5] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[2]));
-								MeshLib::Prism* prism1 (new MeshLib::Prism(pris1_nodes, org_elem->getValue()));
+								MeshLib::Prism* prism1 (new MeshLib::Prism(pris1_nodes));
 								unsigned nNewElements = this->reducePrism(prism1, 5, nodes, new_elements, min_elem_dim);
 								delete prism1;
 
@@ -535,7 +535,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 								pris2_nodes[3] = const_cast<MeshLib::Node*>(org_elem->getNode(this->lutHexDiametralNode(back.second)));
 								pris2_nodes[4] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[1]));
 								pris2_nodes[5] = const_cast<MeshLib::Node*>(org_elem->getNode(cutting_plane[2]));
-								MeshLib::Prism* prism2 (new MeshLib::Prism(pris2_nodes, org_elem->getValue()));
+								MeshLib::Prism* prism2 (new MeshLib::Prism(pris2_nodes));
 								nNewElements += this->reducePrism(prism2, 5, nodes, new_elements, min_elem_dim);
 								delete prism2;
 								return nNewElements;
@@ -558,7 +558,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 			tet1_nodes[1] = nodes[first_four_nodes[1]];
 			tet1_nodes[2] = nodes[first_four_nodes[2]];
 			tet1_nodes[3] = nodes[org_elem->getNode(fifth_node)->getID()];
-			new_elements.push_back(new MeshLib::Tet(tet1_nodes, org_elem->getValue()));
+			new_elements.push_back(new MeshLib::Tet(tet1_nodes));
 		}
 		else
 			new_elements.push_back(tet1);
@@ -568,7 +568,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const*const org_elem,
 		tet2_nodes[1] = nodes[first_four_nodes[2]];
 		tet2_nodes[2] = nodes[first_four_nodes[3]];
 		tet2_nodes[3] = nodes[org_elem->getNode(fifth_node)->getID()];
-		new_elements.push_back(new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
+		new_elements.push_back(new MeshLib::Tet(tet2_nodes));
 		return 2;
 	}
 	else if (n_unique_nodes == 4)
@@ -637,14 +637,14 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 						tet1_nodes[1] = nodes[org_elem->getNode((i+2)%3)->getID()];
 						tet1_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 						tet1_nodes[3] = nodes[org_elem->getNode((i+1)%3+3)->getID()];
-						new_elements.push_back (new MeshLib::Tet(tet1_nodes, org_elem->getValue()));
+						new_elements.push_back (new MeshLib::Tet(tet1_nodes));
 
 						MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
 						tet2_nodes[0] = nodes[org_elem->getNode((i+1)%3+3)->getID()];
 						tet2_nodes[1] = nodes[org_elem->getNode((i+2)%3)->getID()];
 						tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 						tet2_nodes[3] = nodes[org_elem->getNode((i+2)%3+3)->getID()];
-						new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
+						new_elements.push_back (new MeshLib::Tet(tet2_nodes));
 						return 2;
 					}
 
@@ -661,7 +661,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					tet1_nodes[1] = nodes[org_elem->getNode(j+offset)->getID()];
 					tet1_nodes[2] = nodes[org_elem->getNode(k+offset)->getID()];
 					tet1_nodes[3] = nodes[org_elem->getNode(i)->getID()];
-					new_elements.push_back (new MeshLib::Tet(tet1_nodes, org_elem->getValue()));
+					new_elements.push_back (new MeshLib::Tet(tet1_nodes));
 
 					unsigned l = (GeoLib::isCoplanar(*org_elem->getNode(i+offset), *org_elem->getNode(k+offset), *org_elem->getNode(i), *org_elem->getNode(k))) ? j : i;
 					MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
@@ -669,7 +669,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					tet2_nodes[1] = nodes[org_elem->getNode(k+offset)->getID()];
 					tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 					tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
-					new_elements.push_back (new MeshLib::Tet(tet2_nodes, org_elem->getValue()));
+					new_elements.push_back (new MeshLib::Tet(tet2_nodes));
 					return 2;
 				}
 	}
@@ -701,7 +701,7 @@ MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const eleme
 		}
 	}
 	assert(line_nodes[1] != nullptr);
-	return new MeshLib::Line(line_nodes, element->getValue());
+	return new MeshLib::Line(line_nodes);
 }
 
 MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const element,
@@ -730,7 +730,7 @@ MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const elemen
 		}
 	}
 	assert(tri_nodes[2] != nullptr);
-	return new MeshLib::Tri(tri_nodes, element->getValue());
+	return new MeshLib::Tri(tri_nodes);
 }
 
 MeshLib::Element* MeshRevision::constructFourNodeElement(
@@ -762,7 +762,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
 	const bool isQuad (GeoLib::isCoplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
 	if (isQuad && min_elem_dim < 3)
 	{
-		MeshLib::Element* elem (new MeshLib::Quad(new_nodes, element->getValue()));
+		MeshLib::Element* elem (new MeshLib::Quad(new_nodes));
 		for (unsigned i=1; i<3; ++i)
 		{
 			if (elem->validate().none())
@@ -778,7 +778,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
 		return elem;
 	}
 	else if (!isQuad)
-		return new MeshLib::Tet(new_nodes, element->getValue());
+		return new MeshLib::Tet(new_nodes);
 	else // is quad but min elem dim == 3
 		return nullptr;
 }
