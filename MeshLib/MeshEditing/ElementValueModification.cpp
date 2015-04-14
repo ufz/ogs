@@ -97,16 +97,29 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 
 unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
 {
-	std::vector<MeshLib::Element*> &elements (const_cast<std::vector<MeshLib::Element*>&>(mesh.getElements()));
-	unsigned nValues = 0;
-	for (auto e : elements) {
-		if (e->getGeomType()!=ele_type)
-			continue;
-		e->setValue(new_value);
-		nValues++;
+	boost::optional<MeshLib::PropertyVector<unsigned> &>
+		optional_property_value_vec(
+			mesh.getProperties().getPropertyVector<unsigned>("MaterialIDs")
+		);
+
+	if (!optional_property_value_vec) {
+		return 0;
 	}
 
-	return nValues;
+	MeshLib::PropertyVector<unsigned> & property_value_vector(
+		optional_property_value_vec.get()
+	);
+
+	std::vector<MeshLib::Element*> const& elements(mesh.getElements());
+	std::size_t cnt(0);
+	for (std::size_t k(0); k<elements.size(); k++) {
+		if (elements[k]->getGeomType()!=ele_type)
+			continue;
+		property_value_vector[k] = new_value;
+		cnt++;
+	}
+
+	return cnt;
 }
 
 } // end namespace MeshLib
