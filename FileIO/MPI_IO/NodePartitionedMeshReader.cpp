@@ -28,6 +28,8 @@
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 
+#include "MeshLib/Properties.h"
+
 // Check if the value can by converted to given type without overflow.
 template <typename VALUE, typename TYPE>
 bool
@@ -421,6 +423,7 @@ NodePartitionedMeshReader::newMesh(
     return new MeshLib::NodePartitionedMesh(
         mesh_name + std::to_string(_mpi_comm_size),
         mesh_nodes, glb_node_ids, mesh_elems,
+        MeshLib::Properties(),
         _mesh_info.regular_elements,
         _mesh_info.global_base_nodes,
         _mesh_info.global_nodes,
