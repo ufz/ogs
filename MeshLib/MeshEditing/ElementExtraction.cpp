@@ -72,14 +72,20 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 
 std::size_t ElementExtraction::searchByMaterialID(unsigned matID)
 {
-	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
+	boost::optional<MeshLib::PropertyVector<int> const&> opt_pv(
+		this->_mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+	);
+	if (!opt_pv)
+		return 0;
+
+	MeshLib::PropertyVector<int> const& pv(opt_pv.get());
+
 	std::vector<std::size_t> matchedIDs;
-	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
-		if (ele->getValue()==matID)
+	for (std::size_t i(0); i<pv.size(); ++i) {
+		if (pv[i]==matID)
 			matchedIDs.push_back(i);
-		i++;
 	}
+
 	this->updateUnion(matchedIDs);
 	return matchedIDs.size();
 }
