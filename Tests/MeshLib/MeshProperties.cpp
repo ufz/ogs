@@ -130,7 +130,7 @@ TEST_F(MeshLibProperties, AddDoublePointerProperties)
 
 	// initialize the property values
 	for (std::size_t i(0); i<n_prop_val_groups; i++) {
-		(*group_properties).initPropertyValue(i, i+1);
+		(*group_properties).initPropertyValue(i, static_cast<double>(i+1));
 	}
 	// check mapping to values
 	for (std::size_t i(0); i<n_prop_val_groups; i++) {
@@ -441,7 +441,7 @@ TEST_F(MeshLibProperties, CopyConstructor)
 	);
 	// initialize the property values
 	for (std::size_t i(0); i<n_prop_val_groups; i++) {
-		(*group_properties).initPropertyValue(i, i+1);
+		(*group_properties).initPropertyValue(i, static_cast<double>(i+1));
 	}
 
 	// create a copy from the original Properties object
