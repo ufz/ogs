@@ -184,7 +184,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		for (unsigned k(0); k < 2; ++k)
 			edge_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Line(edge_nodes, patch_index);
+		elem = new MeshLib::Line(edge_nodes);
 		break;
 	}
 	case MeshElemType::TRIANGLE: {
@@ -193,7 +193,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
 		for (unsigned k(0); k < 3; ++k)
 			tri_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Tri(tri_nodes, patch_index);
+		elem = new MeshLib::Tri(tri_nodes);
 		break;
 	}
 	case MeshElemType::QUAD: {
@@ -202,7 +202,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
 			quad_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Quad(quad_nodes, patch_index);
+		elem = new MeshLib::Quad(quad_nodes);
 		break;
 	}
 	case MeshElemType::TETRAHEDRON: {
@@ -211,7 +211,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; ++k)
 			tet_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Tet(tet_nodes, patch_index);
+		elem = new MeshLib::Tet(tet_nodes);
 		break;
 	}
 	case MeshElemType::HEXAHEDRON: {
@@ -220,7 +220,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k < 8; ++k)
 			hex_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Hex(hex_nodes, patch_index);
+		elem = new MeshLib::Hex(hex_nodes);
 		break;
 	}
 	case MeshElemType::PYRAMID: {
@@ -229,7 +229,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 5; ++k)
 			pyramid_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Pyramid(pyramid_nodes, patch_index);
+		elem = new MeshLib::Pyramid(pyramid_nodes);
 		break;
 	}
 	case MeshElemType::PRISM: {
@@ -238,7 +238,7 @@ MeshLib::Element* MeshIO::readElement(const std::string& line,
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k < 6; ++k)
 			prism_nodes[k] = nodes[idx[k]];
-		elem = new MeshLib::Prism(prism_nodes, patch_index);
+		elem = new MeshLib::Prism(prism_nodes);
 		break;
 	}
 	default:
