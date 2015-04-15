@@ -71,7 +71,7 @@ Properties::createNewPropertyVector(std::string const& name,
 			std::pair<std::string, PropertyVectorBase*>(
 				name,
 				new PropertyVector<T>(n_prop_groups,
-					item2group_mapping, name, mesh_item_type)
+					item2group_mapping, name, mesh_item_type, tuple_size)
 			)
 		)
 	);

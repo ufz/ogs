@@ -58,7 +58,7 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
     using namespace MeshLib;
 
     std::unique_ptr<Mesh> mesh(MeshGenerator::generateRegularQuadMesh(
-        double(1), double(1), std::size_t(10), std::size_t(10)));
+        1, 1, std::size_t(10), std::size_t(10)));
 
     NodeAdjacencyTable table(mesh->getNodes());
 

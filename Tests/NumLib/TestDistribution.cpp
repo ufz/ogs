@@ -150,7 +150,7 @@ TEST_F(NumLibDistributionHex, Linear)
 	// f(x,y,z) = 1 + 2x + 3y + 4z
 	std::array<double,4> f_coeff = {{1, 2, 3, 4}};
 	MathLib::LinearFunction<double,3> linear_f(f_coeff);
-	std::vector<double> expected(std::pow(_number_of_subdivisions_per_direction+1, 2));
+	std::vector<double> expected(static_cast<std::size_t>(std::pow(_number_of_subdivisions_per_direction+1, 2)));
 	const double dL = _geometric_size / _number_of_subdivisions_per_direction;
 	for (std::size_t i=0; i<expected.size(); i++) {
 		double x = 0;
@@ -200,7 +200,7 @@ TEST_F(NumLibDistributionQuad, InterpolationSurface)
 	const std::vector<double> vec_point_values = {{0., 100., 100., 0.}};
 	std::vector<double> expected(_msh->getNNodes());
 	for (std::size_t i=0; i<_msh->getNNodes(); i++) {
-		expected[i] = (i%(_number_of_subdivisions_per_direction+1)) * 10;
+		expected[i] = static_cast<double>((i%(_number_of_subdivisions_per_direction+1)) * 10);
 	}
 
 	NumLib::LinearInterpolationOnSurface interpolate(*_sfc1, vec_point_ids, vec_point_values, std::numeric_limits<double>::max());
@@ -215,9 +215,9 @@ TEST_F(NumLibDistributionHex, InterpolationSurface)
 {
 	const std::vector<std::size_t> vec_point_ids = {{0, 3, 7, 4}};
 	const std::vector<double> vec_point_values = {{0., 100., 100., 0.}};
-	std::vector<double> expected(std::pow(_number_of_subdivisions_per_direction+1, 2));
+	std::vector<double> expected(static_cast<std::size_t>(std::pow(_number_of_subdivisions_per_direction+1, 2)));
 	for (std::size_t i=0; i<expected.size(); i++) {
-		expected[i] = (i%(_number_of_subdivisions_per_direction+1)) * 10;
+		expected[i] = static_cast<double>((i%(_number_of_subdivisions_per_direction+1)) * 10);
 	}
 
 	NumLib::LinearInterpolationOnSurface interpolate(*_sfc1, vec_point_ids, vec_point_values, std::numeric_limits<double>::max());
