@@ -23,7 +23,8 @@
 
 #include "VtkMappedPropertyVectorTemplate.h"
 
-TEST(InSituLibMappedArrays, Double)
+// Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
+TEST(InSituLibMappedPropertyVector, Double)
 {
 	const size_t mesh_size = 5;
 	const double length = 1.0;
@@ -54,7 +55,8 @@ TEST(InSituLibMappedArrays, Double)
 	delete mesh;
 }
 
-TEST(InSituLibMappedArrays, Int)
+// Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
+TEST(InSituLibMappedPropertyVector, Int)
 {
 	const size_t mesh_size = 5;
 	const double length = 1.0;

@@ -367,28 +367,23 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh)
 {
 	vtkPointData* point_data = grid.GetPointData();
-	if (point_data != nullptr)
-	{
-		unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
-		for (unsigned i=0; i<n_point_arrays; ++i)
-			convertArray(point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
-	}
+	unsigned const n_point_arrays = static_cast<unsigned>(point_data->GetNumberOfArrays());
+	for (unsigned i=0; i<n_point_arrays; ++i)
+		convertArray(*point_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Node);
 
 	vtkCellData* cell_data = grid.GetCellData();
-	if (cell_data == nullptr)
-		return;
 	unsigned const n_cell_arrays = static_cast<unsigned>(cell_data->GetNumberOfArrays());
 	for (unsigned i=0; i<n_cell_arrays; ++i)
-		convertArray(cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
+		convertArray(*cell_data->GetArray(i), mesh.getProperties(), MeshLib::MeshItemType::Cell);
 }
 
-void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
+void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
 {
-	vtkIdType const nTuples (array->GetNumberOfTuples());
-	int const nComponents (array->GetNumberOfComponents());
-	char const*const array_name (array->GetName());
+	vtkIdType const nTuples (array.GetNumberOfTuples());
+	int const nComponents (array.GetNumberOfComponents());
+	char const*const array_name (array.GetName());
 
-	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(array);
+	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(&array);
 	if (double_array)
 	{
 		boost::optional<MeshLib::PropertyVector<double> &> vec
@@ -404,7 +399,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 		return;
 	}
 
-	vtkIntArray* int_array = vtkIntArray::SafeDownCast(array);
+	vtkIntArray* int_array = vtkIntArray::SafeDownCast(&array);
 	if (int_array)
 	{
 		boost::optional<MeshLib::PropertyVector<int> &> vec
@@ -420,7 +415,7 @@ void VtkMeshConverter::convertArray(vtkDataArray* array, MeshLib::Properties &pr
 		return;
 	}
 
-	ERR ("Array \"%s\" in VTU file uses unsupported data type.", array->GetName());
+	ERR ("Array \"%s\" in VTU file uses unsupported data type.", array.GetName());
 	return;
 }
 

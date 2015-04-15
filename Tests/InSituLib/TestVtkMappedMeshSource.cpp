@@ -36,6 +36,7 @@
 #include <vtkCellData.h>
 #include <vtkPointData.h>
 
+// Creates a mesh with double and int point and cell properties
 class InSituMesh : public ::testing::Test
 {
 	public:
@@ -94,7 +95,7 @@ TEST_F(InSituMesh, Construction)
 	ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), mesh->getNNodes());
 }
 
-
+// Maps the mesh into a vtkUnstructuredGrid-equivalent
 TEST_F(InSituMesh, MappedMesh)
 {
 	ASSERT_TRUE(mesh != nullptr);
@@ -113,6 +114,8 @@ TEST_F(InSituMesh, MappedMesh)
 	ASSERT_EQ(0, vtkMesh->GetNumberOfPoints()); // No points are defined
 }
 
+// Writes the mesh into a vtk file, reads the file back and converts it into a
+// OGS mesh
 TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 {
 	// TODO Add more comparison criteria

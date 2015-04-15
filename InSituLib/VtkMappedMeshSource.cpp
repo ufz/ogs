@@ -98,15 +98,15 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	std::vector<std::string> const& propertyNames = properties.getPropertyVectorNames();
 
 	// double
-	for(std::vector<std::string>::const_iterator it = propertyNames.cbegin(); it != propertyNames.cend(); ++it)
+	for(std::vector<std::string>::const_iterator name = propertyNames.cbegin(); name != propertyNames.cend(); ++name)
 	{
-		if (addDoubleProperty(*output, properties, *it))
+		if (addDoubleProperty(*output, properties, *name))
 			continue;
 
-		if (addIntProperty(*output, properties, *it))
+		if (addIntProperty(*output, properties, *name))
 			continue;
 
-		DBUG ("Mesh property \"%s\" with unknown data type.", *it->c_str());
+		DBUG ("Mesh property \"%s\" with unknown data type.", *name->c_str());
 	}
 	return 1;
 }

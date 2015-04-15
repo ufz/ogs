@@ -85,7 +85,7 @@ private:
 
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
 
-	static void convertArray(vtkDataArray* array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
+	static void convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
 
 	static double getExistingValue(const double* img, std::size_t length);
 };
