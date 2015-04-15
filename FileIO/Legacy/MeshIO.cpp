@@ -35,6 +35,7 @@
 #include "Elements/Tri.h"
 #include "MeshIO.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Location.h"
 
 // BaseLib
 #include "FileTools.h"
@@ -65,6 +66,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
+	std::vector<std::size_t> materials;
 
 	if(line_string.find("#FEM_MSH") != std::string::npos) // OGS mesh file
 	{
@@ -103,6 +105,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 				for (unsigned i = 0; i < nElements; ++i)
 				{
 					getline(in, line_string);
+					std::stringstream ss(line_string);
+					materials.push_back(readMaterialID(ss));
 					elements.push_back(readElement(line_string, nodes));
 				}
 			}
@@ -119,6 +123,17 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
 		                                               file_name), nodes, elements));
 
+		boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+			mesh->getProperties().createNewPropertyVector<int>(
+				"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
+		);
+		if (!opt_material_ids) {
+			WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+		} else {
+			MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
+			material_ids.insert(material_ids.end(), materials.cbegin(),
+				materials.cend());
+		}
 		INFO("\t... finished.");
 		INFO("Nr. Nodes: %d.", nodes.size());
 		INFO("Nr. Elements: %d.", elements.size());
@@ -131,6 +146,14 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 		in.close();
 		return nullptr;
 	}
+}
+
+std::size_t MeshIO::readMaterialID(std::istream & in) const
+{
+	unsigned index, material_id;
+	if (!(in >> index >> material_id))
+		return std::numeric_limits<std::size_t>::max();
+	return material_id;
 }
 
 MeshLib::Element* MeshIO::readElement(const std::string& line,
