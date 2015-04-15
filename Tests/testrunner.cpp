@@ -13,6 +13,8 @@
  */
 
 // ** INCLUDES **
+#include <clocale>
+
 #include "gtest/gtest.h"
 #include "logog/include/logog.hpp"
 
@@ -37,6 +39,7 @@
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
+    setlocale(LC_ALL, "C");
 #ifdef QT4_FOUND
     QApplication app(argc, argv, false);
 #endif
