@@ -134,7 +134,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 }
 
 MeshLib::Element* MeshIO::readElement(const std::string& line,
-                                      const std::vector<MeshLib::Node*> &nodes)
+	const std::vector<MeshLib::Node*> &nodes) const
 {
 	std::stringstream ss (line);
 	std::string elem_type_str("");

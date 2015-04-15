@@ -58,6 +58,7 @@ protected:
 private:
 	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out) const;
 	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes);
+	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes) const;
 	std::string ElemType2StringOutput(const MeshElemType t) const;
 
 	const MeshLib::Mesh* _mesh;
