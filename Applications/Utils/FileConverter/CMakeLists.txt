@@ -53,19 +53,17 @@ if (QT4_FOUND)
 	ADD_CATALYST_DEPENDENCY(FEFLOW2OGS)
 endif () # QT4_FOUND
 
-if (Boost_FOUND)
-	add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-	target_link_libraries(generateMatPropsFromMatID
-		FileIO
-		MeshLib
-		logog
-		InSituLib
-		${CATALYST_LIBRARIES}
-	)
-	ADD_CATALYST_DEPENDENCY(generateMatPropsFromMatID)
-	set_target_properties(generateMatPropsFromMatID
-		PROPERTIES FOLDER Utilities)
-endif () # Boost_FOUND
+add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
+target_link_libraries(generateMatPropsFromMatID
+	FileIO
+	MeshLib
+	logog
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
+ADD_CATALYST_DEPENDENCY(generateMatPropsFromMatID)
+set_target_properties(generateMatPropsFromMatID
+	PROPERTIES FOLDER Utilities)
 
 add_executable(GMSH2OGS GMSH2OGS.cpp)
 set_target_properties(GMSH2OGS PROPERTIES FOLDER Utilities)
