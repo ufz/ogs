@@ -87,7 +87,8 @@ Properties::getPropertyVector(std::string const& name) const
 		_properties.find(name)
 	);
 	if (it == _properties.end()) {
-		ERR("A property with the specified name is not available.");
+		ERR("A property with the specified name \"%s\" is not available.",
+			name.c_str());
 		return boost::optional<PropertyVector<T> const&>();
 	}
 
@@ -107,7 +108,8 @@ Properties::getPropertyVector(std::string const& name)
 		_properties.find(name)
 	);
 	if (it == _properties.end()) {
-		ERR("A property with the specified name is not available.");
+		ERR("A property with the specified name \"%s\" is not available.",
+			name.c_str());
 		return boost::optional<PropertyVector<T>&>();
 	}
 
