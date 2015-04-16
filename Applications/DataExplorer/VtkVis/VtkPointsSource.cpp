@@ -34,7 +34,6 @@
 #include <vtkProperty.h>
 
 vtkStandardNewMacro(VtkPointsSource);
-vtkCxxRevisionMacro(VtkPointsSource, "$Revision$");
 
 VtkPointsSource::VtkPointsSource()
 	: _points(NULL)

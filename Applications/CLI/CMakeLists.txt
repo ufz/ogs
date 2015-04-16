@@ -7,15 +7,12 @@ target_link_libraries(ogs
     ApplicationsLib
     BaseLib
     FileIO
+    InSituLib
     MeshLib
     ${Boost_LIBRARIES}
+    ${CATALYST_LIBRARIES}
+
 )
-if(NOT OGS_DONT_USE_VTK)
-    target_link_libraries(ogs
-        InSituLib
-        ${CATALYST_LIBRARIES}
-    )
-endif()
 
 ADD_CATALYST_DEPENDENCY(ogs)
 

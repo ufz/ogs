@@ -8,14 +8,12 @@ APPEND_SOURCE_FILES(TEST_SOURCES)
 APPEND_SOURCE_FILES(TEST_SOURCES AssemblerLib)
 APPEND_SOURCE_FILES(TEST_SOURCES BaseLib)
 APPEND_SOURCE_FILES(TEST_SOURCES GeoLib)
-if(NOT OGS_DONT_USE_VTK)
-	APPEND_SOURCE_FILES(TEST_SOURCES InSituLib)
-endif()
+APPEND_SOURCE_FILES(TEST_SOURCES InSituLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
 
-set(TEST_SOURCES ${TEST_SOURCES} 
+set(TEST_SOURCES ${TEST_SOURCES}
 	FileIO/TestGLIReader.cpp
 	FileIO/TestCsvReader.cpp
 )
@@ -53,6 +51,7 @@ target_link_libraries(testrunner
 	BaseLib
 	FileIO
 	GeoLib
+	InSituLib
 	MathLib
 	MeshLib
 	MeshGeoToolsLib
@@ -60,14 +59,10 @@ target_link_libraries(testrunner
 	logog
 	${BOOST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
+	${CATALYST_LIBRARIES}
 )
-if(NOT OGS_DONT_USE_VTK)
-	target_link_libraries(testrunner
-		InSituLib
-		${CATALYST_LIBRARIES}
-	)
-	ADD_CATALYST_DEPENDENCY(testrunner)
-endif()
+ADD_CATALYST_DEPENDENCY(testrunner)
+
 if(OGS_USE_PETSC)
 	target_link_libraries(testrunner ${PETSC_LIBRARIES})
 endif()

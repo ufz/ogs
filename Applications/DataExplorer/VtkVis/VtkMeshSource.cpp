@@ -46,7 +46,6 @@
 #include <vtkWedge.h> // == Prism
 
 vtkStandardNewMacro(VtkMeshSource);
-vtkCxxRevisionMacro(VtkMeshSource, "$Revision$");
 
 VtkMeshSource::VtkMeshSource() :
 		_grid(nullptr), _matName("MaterialIDs")

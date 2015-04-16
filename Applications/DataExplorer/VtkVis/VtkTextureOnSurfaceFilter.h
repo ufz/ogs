@@ -41,7 +41,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkTextureOnSurfaceFilter* New();
 
-	vtkTypeRevisionMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
+	vtkTypeMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
 
 	/// Prints the object data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);

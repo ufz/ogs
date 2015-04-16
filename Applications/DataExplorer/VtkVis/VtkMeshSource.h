@@ -36,7 +36,7 @@ public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkMeshSource* New();
 
-	vtkTypeRevisionMacro(VtkMeshSource, vtkUnstructuredGridAlgorithm);
+	vtkTypeMacro(VtkMeshSource, vtkUnstructuredGridAlgorithm);
 
 	const char* GetMaterialArrayName() const { return _matName; }
 
