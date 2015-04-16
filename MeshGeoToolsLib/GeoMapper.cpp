@@ -25,7 +25,6 @@
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
-#include "GeoLib/PointWithID.h"
 #include "GeoLib/Raster.h"
 #include "GeoLib/StationBorehole.h"
 
@@ -33,6 +32,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/MeshEditing/projectMeshOntoPlane.h"
 
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
 	: _geo_objects(geo_objects), _geo_name(const_cast<std::string&>(geo_name)), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
@@ -71,17 +71,17 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 		const MathLib::Vector3 dir(0,0,-1);
 		this->_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
 	}
-	std::vector<GeoLib::PointWithID*> sfc_pnts;
+
 	// init grid
-	_grid = this->getFlatGrid(_mesh, sfc_pnts);
+	MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
+	MathLib::Vector3 normal(0,0,-1);
+	MeshLib::Mesh const*const flat_mesh = MeshLib::projectMeshOntoPlane(*mesh, origin, normal);
+	std::vector<MeshLib::Node*> const& flat_nodes (flat_mesh->getNodes());
+	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
 	this->mapData();
 
 	delete _grid;
-
-	const size_t n_sfc_pnts(sfc_pnts.size());
-	for (size_t k(0); k<n_sfc_pnts; k++) {
-		delete sfc_pnts[k];
-	}
+	delete flat_mesh;
 }
 
 void GeoMapper::mapToConstantValue(double value)
@@ -152,7 +152,7 @@ float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const
 {
 	double coords[3] = {x,y,0};
-	const GeoLib::PointWithID* pnt = _grid->getNearestPoint(coords);
+	const MeshLib::Node* pnt = _grid->getNearestPoint(coords);
 	const std::vector<MeshLib::Element*> elements (_mesh->getNode(pnt->getID())->getElements());
 	GeoLib::Point* intersection (nullptr);
 
@@ -167,17 +167,6 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val, double ma
 		return (*intersection)[2];
 	// if something goes wrong, simply take the elevation of the nearest mesh node
 	return (*(_mesh->getNode(pnt->getID())))[2];
-}
-
-GeoLib::Grid<GeoLib::PointWithID>* GeoMapper::getFlatGrid(MeshLib::Mesh const*const mesh, std::vector<GeoLib::PointWithID*> sfc_pnts) const
-{
-	size_t nNodes (mesh->getNNodes());
-	sfc_pnts.resize(nNodes);
-	const std::vector<MeshLib::Node*> nodes (mesh->getNodes());
-	for (unsigned i(0); i<nNodes; ++i)
-		sfc_pnts[i] = new GeoLib::PointWithID((*nodes[i])[0], (*nodes[i])[1], 0.0, nodes[i]->getID());
-
-	return new GeoLib::Grid<GeoLib::PointWithID>(sfc_pnts.begin(), sfc_pnts.end());
 }
 
 unsigned getIndexInPntVec(GeoLib::Point const*const pnt, std::vector<GeoLib::Point*> const*const points)
