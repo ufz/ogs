@@ -72,6 +72,12 @@ public:
 	/// Destructor
 	virtual ~Node();
 
+	/// Shift the node according to the displacement vector v.
+	Node operator-(MathLib::Vector3 const& v) const
+	{
+		return Node(_x[0]-v[0], _x[1]-v[1], _x[2]-v[2]);
+	}
+
 protected:
 	/**
 	 * Add an element the node is part of.

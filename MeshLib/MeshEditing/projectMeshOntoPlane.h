@@ -43,11 +43,10 @@ MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh, MathLib::Point3d 
 	new_nodes.reserve(n_nodes);
 	for (std::size_t i=0; i<n_nodes; ++i)
 	{
-		MathLib::Vector3 const o (nodes[i]->getCoords());
-		MathLib::Vector3 const v (o, plane_origin);
-		double const dist (MathLib::scalarProduct(v, normal));
-		MathLib::Point3d result (o - (normal * -1 * dist));
-		new_nodes.push_back(new MeshLib::Node(result.getCoords()));
+		MeshLib::Node const& node(*nodes[i]);
+		MathLib::Vector3 const v(plane_origin, node);
+		new_nodes.push_back(
+			new MeshLib::Node(node-scalarProduct(v,plane_normal) * plane_normal));
 	}
 
 	return new MeshLib::Mesh("Projected_Mesh", new_nodes, MeshLib::copyElementVector(mesh.getElements(), new_nodes));
