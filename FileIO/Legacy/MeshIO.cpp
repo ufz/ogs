@@ -275,7 +275,9 @@ bool MeshIO::write()
 	_out << "$ELEMENTS\n"
 		<< "  ";
 
-	writeElements(_mesh->getElements(), _out);
+	boost::optional<MeshLib::PropertyVector<int> const&>
+		materials(_mesh->getProperties().getPropertyVector<int>("MaterialIDs"));
+	writeElements(_mesh->getElements(), materials, _out);
 
 	_out << "#STOP\n";
 
@@ -288,13 +290,19 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 }
 
 void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
-                                      std::ostream &out) const
+	boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
+	std::ostream &out) const
 {
 	const size_t ele_vector_size (ele_vec.size());
 
 	out << ele_vector_size << "\n";
 	for (size_t i(0); i < ele_vector_size; ++i) {
-		out << i << " " << ele_vec[i]->getValue() << " " << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
+		out << i << " ";
+		if (! material_ids)
+			out << "0 ";
+		else
+			out << (*material_ids)[i] << " ";
+		out << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
 		unsigned nElemNodes (ele_vec[i]->getNBaseNodes());
 		for(size_t j = 0; j < nElemNodes; ++j)
 			out << ele_vec[i]->getNode(j)->getID() << " ";
