@@ -94,7 +94,6 @@ Properties::getPropertyVector(std::string const& name) const
 
 	PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
 	if (!t) {
-		ERR("Could not downcast PropertyVectorBase.");
 		return boost::optional<PropertyVector<T> const&>();
 	}
 	return *t;
@@ -115,7 +114,6 @@ Properties::getPropertyVector(std::string const& name)
 
 	PropertyVector<T> *t=dynamic_cast<PropertyVector<T>*>(it->second);
 	if (!t) {
-		ERR("Could not downcast PropertyVectorBase.");
 		return boost::optional<PropertyVector<T> &>();
 	}
 	return *t;
