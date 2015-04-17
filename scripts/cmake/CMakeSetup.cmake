@@ -24,7 +24,7 @@ if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 	set(OGS_BUILD_CLI OFF CACHE BOOL "" FORCE)
 endif()
 
-if(DEFINED $ENV{CI})
+if($ENV{CI})
 	set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis) or subproject
 elseif(IS_SUBPROJECT)
 	set(OGS_VERSION x.x.x)
