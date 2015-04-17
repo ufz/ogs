@@ -87,13 +87,13 @@ Properties::getPropertyVector(std::string const& name) const
 		_properties.find(name)
 	);
 	if (it == _properties.end()) {
-		ERR("A property with the specified name is not available.");
+		ERR("A property with the specified name \"%s\" is not available.",
+			name.c_str());
 		return boost::optional<PropertyVector<T> const&>();
 	}
 
 	PropertyVector<T> const* t=dynamic_cast<PropertyVector<T>const*>(it->second);
 	if (!t) {
-		ERR("Could not downcast PropertyVectorBase.");
 		return boost::optional<PropertyVector<T> const&>();
 	}
 	return *t;
@@ -107,13 +107,13 @@ Properties::getPropertyVector(std::string const& name)
 		_properties.find(name)
 	);
 	if (it == _properties.end()) {
-		ERR("A property with the specified name is not available.");
+		ERR("A property with the specified name \"%s\" is not available.",
+			name.c_str());
 		return boost::optional<PropertyVector<T>&>();
 	}
 
 	PropertyVector<T> *t=dynamic_cast<PropertyVector<T>*>(it->second);
 	if (!t) {
-		ERR("Could not downcast PropertyVectorBase.");
 		return boost::optional<PropertyVector<T> &>();
 	}
 	return *t;

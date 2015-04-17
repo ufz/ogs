@@ -34,7 +34,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/ElementValueModification.h"
 
 std::vector<bool> markNodesOutSideOfPolygon(
 	std::vector<MeshLib::Node*> const& nodes,
