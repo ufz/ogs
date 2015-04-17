@@ -76,7 +76,17 @@ class InSituMesh : public ::testing::Test
 		);
 		(*cell_int_properties).resize(mesh->getNElements());
 		std::iota((*cell_int_properties).begin(), (*cell_int_properties).end(), 1);
+
+		std::string const material_ids_name("MaterialIDs");
+		boost::optional<MeshLib::PropertyVector<int> &> material_id_properties(
+			mesh->getProperties().createNewPropertyVector<int>(material_ids_name,
+				MeshLib::MeshItemType::Node)
+		);
+		(*material_id_properties).resize(mesh->getNNodes());
+		std::iota((*material_id_properties).begin(), (*material_id_properties).end(), 1);
 	}
+
+
 
 	~InSituMesh()
 	{
@@ -169,8 +179,9 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 	std::array<bool, 2> booleans = {{ true, false }};
 	for(int dataMode : dataModes)
 	{
-		for(bool compressed : booleans)
-		{
+		for(bool compressed : booleans) {
+			if(dataMode == vtkXMLWriter::Ascii && compressed)
+				continue;
 			FileIO::VtuInterface vtuInterface(mesh, dataMode, compressed);
 			ASSERT_EQ(vtuInterface.writeToFile(test_data_file), 1);
 
@@ -179,20 +190,51 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 				vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
 			reader->SetFileName(test_data_file.c_str());
 			reader->Update();
-			vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
+			vtkUnstructuredGrid *vtkMesh = reader->GetOutput();
 
 			// Both VTK meshes should be identical
 			ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
 			ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
-			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(), pointDoubleArray->GetNumberOfTuples());
-			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(), pointIntArray->GetNumberOfTuples());
-			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(), cellDoubleArray->GetNumberOfTuples());
-			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellIntProperty")->GetNumberOfTuples(), cellIntArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(),
+				pointDoubleArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(),
+				pointIntArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(),
+				cellDoubleArray->GetNumberOfTuples());
+			ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellIntProperty")->GetNumberOfTuples(),
+				cellIntArray->GetNumberOfTuples());
 
 			// Both OGS meshes should be identical
-			MeshLib::Mesh* newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
+			MeshLib::Mesh *newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
 			ASSERT_EQ(mesh->getNNodes(), newMesh->getNNodes());
 			ASSERT_EQ(mesh->getNElements(), newMesh->getNElements());
+
+			// Both properties should be identical
+			auto meshProperties = mesh->getProperties();
+			auto newMeshProperties = newMesh->getProperties();
+			ASSERT_EQ(newMeshProperties.hasPropertyVector("PointDoubleProperty"),
+				meshProperties.hasPropertyVector("PointDoubleProperty"));
+			ASSERT_EQ(newMeshProperties.hasPropertyVector("PointIntProperty"),
+				meshProperties.hasPropertyVector("PointIntProperty"));
+			ASSERT_EQ(newMeshProperties.hasPropertyVector("CellDoubleProperty"),
+				meshProperties.hasPropertyVector("CellDoubleProperty"));
+			ASSERT_EQ(newMeshProperties.hasPropertyVector("CellIntProperty"),
+				meshProperties.hasPropertyVector("CellIntProperty"));
+			ASSERT_EQ(newMeshProperties.hasPropertyVector("MaterialIDs"),
+				meshProperties.hasPropertyVector("MaterialIDs"));
+
+			// Check double and a int property
+			auto doubleProps = meshProperties.getPropertyVector<double>("PointDoubleProperty");
+			auto newDoubleProps = newMeshProperties.getPropertyVector<double>("PointDoubleProperty");
+			ASSERT_EQ((*newDoubleProps).size(), (*doubleProps).size());
+			for(std::size_t i = 0; i < (*doubleProps).size(); i++)
+				ASSERT_EQ((*newDoubleProps)[i], (*doubleProps)[i]);
+
+			auto materialIds = meshProperties.getPropertyVector<int>("MaterialIDs");
+			auto newMaterialIds = newMeshProperties.getPropertyVector<int>("MaterialIDs");
+			ASSERT_EQ((*newMaterialIds).size(), (*materialIds).size());
+			for(std::size_t i = 0; i < (*materialIds).size(); i++)
+				ASSERT_EQ((*newMaterialIds)[i], (*materialIds)[i]);
 		}
 	}
 }
