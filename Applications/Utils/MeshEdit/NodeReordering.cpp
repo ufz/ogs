@@ -27,6 +27,7 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 
+/// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
 {
 	std::size_t nElements (elements.size());
@@ -66,6 +67,28 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 	}
 }
 
+/// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib
+void reorderNodes2(std::vector<MeshLib::Element*> &elements)
+{
+	std::size_t nElements (elements.size());
+	for (std::size_t i=0; i<nElements; ++i)
+	{
+		const unsigned nElemNodes (elements[i]->getNBaseNodes());
+		std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
+
+		for(size_t j = 0; j < nElemNodes; ++j)
+			if (elements[i]->getGeomType() == MeshElemType::PRISM)
+			{
+				for(size_t j = 0; j < 3; ++j)
+				{
+					elements[i]->setNode(j, nodes[j+3]);
+					elements[i]->setNode(j+3, nodes[j]);
+				}
+				break;
+			}
+	}
+}
+
 int main (int argc, char* argv[])
 {
 	LOGOG_INITIALIZE();
@@ -73,26 +96,35 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
 	logogCout->SetFormatter(*formatter);
 
-	TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.",
-			' ', "0.1");
-	TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("OGS5_file_input_mesh",
-	                                           "the name of the mesh file used for input containing elements in OGS5 node ordering",
-	                                           true,
-	                                           "",
-	                                           "oldmesh.msh");
+	TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.\n" \
+	                   "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 meshes,\n" \
+	                   "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.",
+	                   ' ', "0.1");
+	TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("input_mesh",
+	                                                     "the name of the input mesh file",
+	                                                     true, "", "oldmesh.msh");
 	cmd.add(input_mesh_arg);
-	TCLAP::UnlabeledValueArg<std::string> output_mesh_arg("OGS6_file_output_mesh",
-	                                           "the name of the mesh file used for output with node ordering consistent to OGS-6",
-	                                           true,
-	                                           "",
-	                                           "newmesh.vtu");
+	TCLAP::UnlabeledValueArg<std::string> output_mesh_arg("output_mesh",
+	                                                      "the name of the output mesh file",
+	                                                      true, "", "newmesh.vtu");
 	cmd.add(output_mesh_arg);
+	TCLAP::ValueArg<int> method_arg("m", "method", "reordering method selection", false,  1, "value");
+
+	cmd.add(method_arg);
 	cmd.parse(argc, argv);
 
 	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
 	INFO("Reordering nodes... ");
-	reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+	if (!method_arg.isSet() || method_arg.getValue() == 1)
+		reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+	else if (method_arg.getValue() == 2)
+		reorderNodes2(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+	else
+	{
+		ERR ("Unknown re-ordering method. Exit program...");
+		return 1;
+	}
 
 	FileIO::VtuInterface writer(mesh);
 	writer.writeToFile(output_mesh_arg.getValue().c_str());
