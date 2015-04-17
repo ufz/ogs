@@ -18,8 +18,16 @@ include(GetGitRevisionDescription)
 GET_GIT_HEAD_REVISION(GIT_REFSPEC GIT_SHA1)
 string(SUBSTRING ${GIT_SHA1} 0 8 GIT_SHA1_SHORT)
 
-if($ENV{CI})
-	set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis)
+# Check if this project is included in another
+if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+	set(IS_SUBPROJECT ON CACHE INTERNAL "" FORCE)
+	set(OGS_BUILD_CLI OFF CACHE BOOL "" FORCE)
+endif()
+
+if(DEFINED $ENV{CI})
+	set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis) or subproject
+elseif(IS_SUBPROJECT)
+	set(OGS_VERSION x.x.x)
 else()
 	GIT_GET_TAG(GIT_DESCRIBE)
 	string(REGEX MATCH ^[0-9|\\.]* GIT_TAG ${GIT_DESCRIBE})

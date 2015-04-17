@@ -1,22 +1,22 @@
 # Source files
 set(SOURCES
 	mainwindow.cpp
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.cpp
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileListDialog.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/OGSFileConverter.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/FileListDialog.cpp
 )
 
 # Moc Header files
 set(MOC_HEADERS
 	mainwindow.h
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.h
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileListDialog.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/OGSFileConverter.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/FileListDialog.h
 )
 
 # UI files
 set(UIS
 	mainwindow.ui
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/OGSFileConverter.ui
-	${CMAKE_SOURCE_DIR}/Applications/Utils/OGSFileConverter/FileList.ui
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/OGSFileConverter.ui
+	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/FileList.ui
 )
 
 
@@ -59,7 +59,7 @@ source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 # Application icon
-set(APP_ICON ${CMAKE_SOURCE_DIR}/scripts/packaging/ogs-de-icon.icns)
+set(APP_ICON ${SOURCE_DIR_REL}/scripts/packaging/ogs-de-icon.icns)
 
 # Create the executable
 add_executable(DataExplorer MACOSX_BUNDLE

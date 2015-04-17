@@ -1,3 +1,8 @@
+if(IS_SUBPROJECT)
+	include (CPack)
+	return()
+endif()
+
 include(packaging/PackagingMacros)
 include(packaging/ArchiveTestdata)
 

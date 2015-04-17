@@ -24,7 +24,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "StringTools.h"
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib {
 	class Point;

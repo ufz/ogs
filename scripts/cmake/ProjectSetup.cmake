@@ -22,9 +22,4 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# Check if this project is included in another
-if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-	set(IS_SUBPROJECT ON INTERNAL)
-endif()
-
 site_name(HOSTNAME)
