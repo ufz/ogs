@@ -345,8 +345,11 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		}
 		case VTK_WEDGE: {
 			MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
-			for (unsigned k(0); k<6; k++)
-				prism_nodes[k] = nodes[node_ids[k]];
+			for (unsigned i=0; i<3; ++i)
+			{
+				prism_nodes[i] = nodes[node_ids[i+3]];
+				prism_nodes[i+3] = nodes[node_ids[i]];
+			}
 			elem = new MeshLib::Prism(prism_nodes, material);
 			break;
 		}

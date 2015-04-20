@@ -40,15 +40,15 @@ target_link_libraries(removeMeshElements
 ADD_CATALYST_DEPENDENCY(removeMeshElements)
 set_target_properties(removeMeshElements PROPERTIES FOLDER Utilities)
 
-add_executable(DataExplorer5NodeReordering DataExplorer5NodeReordering.cpp)
-target_link_libraries(DataExplorer5NodeReordering
+add_executable(NodeReordering NodeReordering.cpp)
+target_link_libraries(NodeReordering
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
-ADD_CATALYST_DEPENDENCY(DataExplorer5NodeReordering)
-set_target_properties(DataExplorer5NodeReordering PROPERTIES FOLDER Utilities)
+ADD_CATALYST_DEPENDENCY(NodeReordering)
+set_target_properties(NodeReordering PROPERTIES FOLDER Utilities)
 
 add_executable(MoveMesh MoveMesh.cpp)
 target_link_libraries(MoveMesh
