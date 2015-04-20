@@ -821,7 +821,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 
-	GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
+	MeshGeoToolsLib::GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
 	QFileInfo fi(file_name);
 	if (choice == 1) // load raster from file
 	{

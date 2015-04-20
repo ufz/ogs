@@ -34,6 +34,8 @@ namespace GeoLib {
 	class Raster;
 }
 
+namespace MeshGeoToolsLib {
+
 /**
  * \brief A set of tools for mapping the elevation of geometric objects
  */
@@ -89,7 +91,8 @@ private:
 
 	/// only necessary for mapping on DEM
 	GeoLib::Raster *_raster;
-
 };
+
+} // end namespace MeshGeoToolsLib
 
 #endif //GEOMAPPER_H

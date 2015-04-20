@@ -34,6 +34,8 @@
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/MeshEditing/projectMeshOntoPlane.h"
 
+namespace MeshGeoToolsLib {
+
 GeoMapper::GeoMapper(GeoLib::GEOObjects &geo_objects, const std::string &geo_name)
 	: _geo_objects(geo_objects), _geo_name(const_cast<std::string&>(geo_name)), _mesh(nullptr), _grid(nullptr), _raster(nullptr)
 {
@@ -366,8 +368,5 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
 	return max_segment_length;
 }
 
-
-
-
-
+} // end namespace MeshGeoToolsLib
 
