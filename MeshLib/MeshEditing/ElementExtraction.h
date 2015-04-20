@@ -57,8 +57,16 @@ private:
 	/// Updates the vector of marked elements with values from vec.
 	void updateUnion(const std::vector<std::size_t> &vec);
 
-	/// Removes elements from vec_removed in vec_src_elems
-	std::vector<MeshLib::Element*> excludeElements(const std::vector<MeshLib::Element*> & vec_src_elems, const std::vector<std::size_t> &vec_removed) const;
+	/// Returns a vector of shallow copies of the elements in the source vector.
+	/// The vector vec_removed contains the position of elements within the
+	/// source vector that should not be copied to the returned vector.
+	/// @param vec_src_eles vector of source elements which are shallow copied
+	/// @param vec_removed contains positions of elements in vec_src_eles that
+	///        should not be copied
+	/// @return vector of elements (shallow copy!)
+	std::vector<MeshLib::Element*> excludeElementCopy(
+		std::vector<MeshLib::Element*> const& vec_src_eles,
+		std::vector<std::size_t> const& vec_removed) const;
 
 	/// The mesh from which elements should be removed.
 	const MeshLib::Mesh &_mesh;
