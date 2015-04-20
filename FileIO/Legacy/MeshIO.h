@@ -16,16 +16,13 @@
 #ifndef MESHIO_H_
 #define MESHIO_H_
 
-#include "Writer.h"
-#include "MeshEnums.h"
-
-#include <sstream>
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include <boost/optional.hpp>
 
+#include "FileIO/Writer.h"
+#include "MeshLib/MeshEnums.h"
 #include "MeshLib/PropertyVector.h"
 
 namespace MeshLib
