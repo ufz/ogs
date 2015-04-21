@@ -85,15 +85,25 @@ void resetProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
 	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
 		polygon));
 
-	for(MeshLib::Element * elem : mesh.getElements()) {
+	boost::optional<MeshLib::PropertyVector<int> &> opt_pv(
+		mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+	);
+	if (!opt_pv) {
+		ERR("Did not find a PropertyVector with name MaterialIDs.");
+		return;
+	}
+	MeshLib::PropertyVector<int> & materials(opt_pv.get());
+
+	for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
 		bool elem_out(true);
+		MeshLib::Element const*const elem(mesh.getElements()[j]);
 		for(std::size_t k(0); k<elem->getNNodes() && elem_out; ++k) {
 			if (! outside[elem->getNode(k)->getID()]) {
 				elem_out = false;
 			}
 		}
 		if (elem_out) {
-			elem->setValue(new_property);
+			materials[j] = new_property;
 		}
 	}
 }
