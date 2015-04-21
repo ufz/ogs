@@ -115,7 +115,7 @@ inline void computeMappingMatrices(
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
         shapemat.invJ = shapemat.J.inverse();
-		
+
         GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(), ele.getNNodes());
         MeshLib::CoordinateSystem coords(aabb);
         if (coords.getDimension()==ele.getDimension()) {

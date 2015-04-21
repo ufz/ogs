@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <cmath>
 
 #include "GeoLib/AABB.h"
 
@@ -42,7 +43,7 @@ public:
     /// User provided coordinate system
     explicit CoordinateSystem(CoordinateSystemType coord) : _type (coord) {}
 
-    /// Decides a coordinate system from the bounding box
+    /// Decides a coordinate system from a bounding box
     template <class T>
     explicit CoordinateSystem(const GeoLib::AABB<T> &bbox);
 
@@ -80,11 +81,11 @@ private:
 template <class T>
 CoordinateSystem::CoordinateSystem(const GeoLib::AABB<T> &bbox)
 {
-    MathLib::Point3d pt_diff = bbox.getMaxPoint() - bbox.getMinPoint();
+    T pt_diff = bbox.getMaxPoint() - bbox.getMinPoint();
     MeshLib::CoordinateSystemType coords;
-    bool hasX = fabs(pt_diff[0]) > .0;
-    bool hasY = fabs(pt_diff[1]) > .0;
-    bool hasZ = fabs(pt_diff[2]) > .0;
+    bool hasX = std::abs(pt_diff[0]) > .0;
+    bool hasY = std::abs(pt_diff[1]) > .0;
+    bool hasZ = std::abs(pt_diff[2]) > .0;
 
     if (hasX) {
         if (hasY) {
