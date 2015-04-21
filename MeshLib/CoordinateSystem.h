@@ -22,13 +22,13 @@ namespace MeshLib
  */
 enum class CoordinateSystemType
 {
-	X = 10,
-	Y = 11,
-	Z = 12,
-	XY = 21,
-	XZ = 22,
-	YZ = 23,
-	XYZ = 32
+    X = 10,
+    Y = 11,
+    Z = 12,
+    XY = 21,
+    XZ = 22,
+    YZ = 23,
+    XYZ = 32
 };
 
 /**
