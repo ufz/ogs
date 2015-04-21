@@ -27,7 +27,7 @@ enum class ShapeMatrixType
     N,      ///< calculates N
     DNDR,   ///< calculates dNdr
     N_J,    ///< calculates N, dNdr, J, and detJ
-    DNDR_J, ///< caluclates dNdr, J, and detJ
+    DNDR_J, ///< calculates dNdr, J, and detJ
     DNDX,   ///< calculates dNdr, J, detJ, invJ, and dNdx
     ALL     ///< calculates all
 };
@@ -73,19 +73,19 @@ struct ShapeMatrices
         this->setZero();
     }
 
-	/**
-	 * Initialize matrices and vectors
-	 *
-	 * @param dim       Spatial dimension
-	 * @param n_nodes   The number of element nodes
-	 */
-	ShapeMatrices(std::size_t local_dim, std::size_t global_dim, std::size_t n_nodes)
-	: N(n_nodes), dNdr(local_dim, n_nodes), J(local_dim, local_dim), detJ(.0),
-	invJ(local_dim, local_dim), dNdx(global_dim, n_nodes)
-	{
-		this->setZero();
-	}
-	
+    /**
+     * Initialize matrices and vectors
+     *
+     * @param dim       Spatial dimension
+     * @param n_nodes   The number of element nodes
+     */
+    ShapeMatrices(std::size_t local_dim, std::size_t global_dim, std::size_t n_nodes)
+    : N(n_nodes), dNdr(local_dim, n_nodes), J(local_dim, local_dim), detJ(.0),
+    invJ(local_dim, local_dim), dNdx(global_dim, n_nodes)
+    {
+        this->setZero();
+    }
+
     ~ShapeMatrices() {}
 
     /// Reinitialize the matrices and vectors. When using dynamic size matrices
@@ -95,7 +95,7 @@ struct ShapeMatrices
     /// matrix/vector sizes must be the same as at construction (given by the
     /// template parameters).
     void resize(std::size_t const dim, std::size_t n_nodes);
-	
+
     /// reset all data with zero
     void setZero();
 
