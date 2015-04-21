@@ -51,12 +51,24 @@ public:
 	/// Maps geometry based on a mesh file
 	void mapOnMesh(const std::string &file_name);
 
-	/// Maps geometry based on a mesh
+	/**
+	 * Maps the geometry based on the given mesh file. The elevation value of all geometric
+	 * points are modified such that they are located on the mesh surface.
+	 */
 	void mapOnMesh(const MeshLib::Mesh* mesh);
 
-	/// Maps geometry to constant elevation value
+	/// Maps geometry to a constant elevation value
 	void mapToConstantValue(double value);
 
+	/**
+	 * Maps the geometry based on the given mesh file. A new geometry is created where all
+	 * geometric points are assigned an elevation value on the mesh surface. Additional points are
+	 * inserted whenever a polyline from the original geometry intersects a mesh node or the edge 
+	 * of a mesh element.
+	 * \param mesh          Mesh the geometry is mapped on
+	 * \param new_geo_name  Name of the newly created geometry
+	 * \result              A new geometry with the given name is inserted into _geo_objects
+	 */
 	void advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name);
 
 private:
