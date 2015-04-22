@@ -85,20 +85,6 @@ public:
 		}
 	}
 
-	/**
-	 * Construction of object using input pointer array.
-	 * @param pnt_array  an array of point pointers
-	 * @param size       size of the array
-	 */
-	AABB(PNT_TYPE * const* pnt_array, unsigned size) :
-	_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
-	_max_pnt(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest())
-	{
-		init(*pnt_array[0]);
-		for (unsigned i=1; i<size; i++)
-			update(*pnt_array[i]);
-	}
-
 	void update(PNT_TYPE const & pnt)
 	{
 		for (std::size_t k(0); k<3; k++) {
