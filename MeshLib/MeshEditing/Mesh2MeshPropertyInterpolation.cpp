@@ -104,7 +104,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
             for (std::size_t j(0); j<n_nodes_in_vec; j++) {
                 MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
                 if (elem_aabb.containsPoint(*j_th_node)) {
-                    if (dest_elements[k]->isPntInElement(*j_th_node, 30)) {
+                    if (dest_elements[k]->isPntInElement(*j_th_node)) {
                         dest_properties[k] += interpolated_src_node_properties[(*i_th_vec)[j]->getID()];
                         cnt++;
                     }
