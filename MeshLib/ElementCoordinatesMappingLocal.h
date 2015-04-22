@@ -15,7 +15,7 @@
 #include <Eigen/Eigen>
 #endif
 
-#include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/CoordinateSystem.h"
@@ -44,7 +44,7 @@ public:
     virtual ~ElementCoordinatesMappingLocal() {}
 
     /// return mapped coordinates of the node
-    const MathLib::Point3d* getMappedCoordinates(size_t node_id) const
+    const MeshLib::Node* getMappedCoordinates(size_t node_id) const
     {
         return &_point_vec[node_id];
     }
@@ -56,17 +56,17 @@ private:
     /// rotate points to local coordinates
     void rotateToLocal(
             const Element &e, const CoordinateSystem &coordinate_system,
-            const std::vector<MathLib::Point3d> &vec_pt, const RotationMatrix &matR2local,
-            std::vector<MathLib::Point3d> &local_pt) const;
+            const std::vector<MeshLib::Node> &vec_pt, const RotationMatrix &matR2local,
+            std::vector<MeshLib::Node> &local_pt) const;
 
     /// get a rotation matrix to the global coordinates
     /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
     void getRotationMatrixToGlobal(
             const Element &e, const CoordinateSystem &coordinate_system,
-            const std::vector<MathLib::Point3d> &vec_pt, RotationMatrix &matR2original) const;
+            const std::vector<MeshLib::Node> &vec_pt, RotationMatrix &matR2original) const;
 
 private:
-    std::vector<MathLib::Point3d> _point_vec;
+    std::vector<MeshLib::Node> _point_vec;
     RotationMatrix _matR2global;
 };
 
