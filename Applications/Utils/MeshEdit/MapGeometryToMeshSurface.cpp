@@ -53,10 +53,11 @@ int main (int argc, char* argv[])
 		"the name of the file containing the input geometry", true,
 		"", "file name");
 	cmd.add(input_geometry_fname);
-	TCLAP::ValueArg<bool> advanced_mapping("", "advanced-mapping",
-		"if true advanced mapping algorithm will be applied", false,
+	TCLAP::ValueArg<bool> additional_insert_mapping("a", "additional-insert-mapping",
+		"if true advanced mapping algorithm will be applied, i.e. a new "
+		"geometry will be created and possibly new points will be inserted.", false,
 		true, "boolean value");
-	cmd.add(advanced_mapping);
+	cmd.add(additional_insert_mapping);
 	TCLAP::ValueArg<std::string> output_geometry_fname("o", "output-geometry",
 		"the name of the file containing the input geometry", true,
 		"", "file name");
@@ -88,7 +89,7 @@ int main (int argc, char* argv[])
 
 	std::string new_geo_name(geo_name);
 	MeshGeoToolsLib::GeoMapper geo_mapper(geometries, geo_name);
-	if (advanced_mapping.getValue()) {
+	if (additional_insert_mapping.getValue()) {
 		new_geo_name += "-Mapped";
 		geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
 	} else {
