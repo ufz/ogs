@@ -84,12 +84,96 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
 }
 
 /**
+ * Computes a rotation matrix that rotates the given 2D normal vector parallel to X-axis
+ * @param v        a 2D normal vector to be rotated
+ * @param rot_mat  a 2x2 rotation matrix
+ */
+template<class T_MATRIX>
+void compute2DRotationMatrixToX(MathLib::Vector3 const& v,
+        T_MATRIX & rot_mat)
+{
+    const double cos_theta = v[0];
+    const double sin_theta = v[1];
+    rot_mat(0,0) = rot_mat(1,1) = cos_theta;
+    rot_mat(0,1) = sin_theta;
+    rot_mat(1,0) = -sin_theta;
+}
+
+/**
+ * Computes a rotation matrix that rotates the given 3D normal vector parallel to X-axis
+ * @param v        a 3D normal vector to be rotated
+ * @param rot_mat  a 3x3 rotation matrix
+ */
+template <class T_MATRIX>
+void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
+        T_MATRIX & rot_mat)
+{
+    // a vector on the plane
+    MathLib::Vector3 yy(0, 0, 0);
+    if (fabs(v[0]) > 0.0 && fabs(v[1]) + fabs(v[2]) < std::numeric_limits<double>::epsilon()) {
+        yy[2] = 1.0;
+    } else if (fabs(v[1]) > 0.0 && fabs(v[0]) + fabs(v[2]) < std::numeric_limits<double>::epsilon()) {
+        yy[0] = 1.0;
+    } else if (fabs(v[2]) > 0.0 && fabs(v[0]) + fabs(v[1]) < std::numeric_limits<double>::epsilon()) {
+        yy[1] = 1.0;
+    } else {
+        for (size_t i = 0; i < 3; i++) {
+            if (fabs(v[i]) > 0.0) {
+                yy[i] = -v[i];
+                break;
+            }
+        }
+    }
+    // z"_vec
+    MathLib::Vector3 zz(MathLib::crossProduct(v, yy));
+    zz.normalize();
+    // y"_vec
+    yy = MathLib::crossProduct(zz, v);
+    yy.normalize();
+
+    for (size_t i=0; i<3; ++i) {
+        rot_mat(0, i) = v[i];
+        rot_mat(1, i) = yy[i];
+        rot_mat(2, i) = zz[i];
+    }
+}
+
+/**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
  * @param plane_normal the (3d) vector that is rotated parallel to the \f$z\f$ axis
  * @param rot_mat 3x3 rotation matrix
  */
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::DenseMatrix<double> & rot_mat);
+
+/**
+ * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
+ * @param vec_pt  a vector of 3d points that is rotated parallel to the \f$z\f$ axis
+ * @param rot_mat 3x3 rotation matrix
+ */
+template <class T_MATRIX>
+void computeRotationMatrixToXY2(const std::vector<MathLib::Point3d*> &vec_pt,
+        T_MATRIX & rot_mat)
+{
+    assert(vec_pt.size()>2);
+    // x"_vec
+    MathLib::Vector3 xx((*vec_pt[0]), (*vec_pt[1]));
+    xx.normalize();
+    // a vector on the plane
+    MathLib::Vector3 yy((*vec_pt[1]), (*vec_pt[2]));
+    // z"_vec
+    MathLib::Vector3 zz(MathLib::crossProduct(xx, yy));
+    zz.normalize();
+    // y"_vec
+    yy = MathLib::crossProduct(zz, xx);
+    yy.normalize();
+
+    for (size_t i=0; i<3; ++i) {
+        rot_mat(0, i) = xx[i];
+        rot_mat(1, i) = yy[i];
+        rot_mat(2, i) = zz[i];
+    }
+}
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
