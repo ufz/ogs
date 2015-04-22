@@ -42,7 +42,7 @@ public:
     virtual ~ElementCoordinatesMappingLocal() {}
 
     /// return mapped coordinates of the node
-    virtual const MathLib::Point3d* getMappedPoint(size_t node_id) const
+    const MathLib::Point3d* getMappedCoordinates(size_t node_id) const
     {
         return &_point_vec[node_id];
     }
