@@ -92,21 +92,6 @@ public:
 		std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(), _x.begin());
 	}
 
-	/// operator -=
-	inline void operator-= (const TemplatePoint<T,DIM> &p)
-	{
-		for (std::size_t i=0; i<DIM; i++)
-			this->_x[i] -= p._x[i];
-	}
-
-	/// operator -
-	inline TemplatePoint<T,DIM> operator- (const TemplatePoint<T,DIM> &p) const
-	{
-		TemplatePoint<T,DIM> tmp(this->_x);
-		tmp -= p;
-		return tmp;
-	}
-
 protected:
 	std::array<T, DIM> _x;
 };
