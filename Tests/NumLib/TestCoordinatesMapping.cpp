@@ -11,10 +11,14 @@
 #include <limits>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
 #endif
+
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
@@ -313,25 +317,62 @@ TEST(NumLib, LowerDimensionMappingXY)
 }
 #endif
 
-TEST(NumLib, LowerCoordinatesMapping)
+#if 0
+TEST(NumLib, LowerCoordinatesMappingLineXY)
 {
-	auto line = TestLine2::createY();
-	//std::cout << "original" << std::endl;
-	//for (unsigned i=0; i<line->getNNodes(); i++)
-	//	std::cout << *line->getNode(i) << std::endl;
-	MeshLib::ElementCoordinatesMappingLocal mapping(line, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y));
-	//std::cout << "mapped" << std::endl;
-	//for (unsigned i=0; i<line->getNNodes(); i++)
-	//	std::cout << *mapping.getMappedPoint(i) << std::endl;
-	//std::cout << "R=" << mapping.getRotationMatrixToOriginal();
-	auto matR(mapping.getRotationMatrixToOriginal());
-	
-	double exp_R[2*2] = {0, -1, 1, 0}; //row major
-	const double eps(std::numeric_limits<double>::epsilon());
-	ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+    auto line = TestLine2::createXY();
+    //std::cout << "original" << std::endl;
+    //for (unsigned i=0; i<line->getNNodes(); i++)
+    //  std::cout << *line->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(line, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::XY));
+//    std::cout << "mapped" << std::endl;
+//    for (unsigned i=0; i<line->getNNodes(); i++)
+//      std::cout << *mapping.getMappedPoint(i) << std::endl;
+//    std::cout << "R=" << mapping.getRotationMatrixToOriginal();
+    auto matR(mapping.getRotationMatrixToOriginal());
+
+    double exp_R[2*2] = {std::sin(45*M_PI/180), -std::sin(45*M_PI/180), std::sin(45*M_PI/180), std::sin(45*M_PI/180)}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
 }
 
-TEST(NumLib, LowerDimensionMappingY)
+TEST(NumLib, LowerCoordinatesMappingLineY)
+{
+    auto line = TestLine2::createY();
+    //std::cout << "original" << std::endl;
+    //for (unsigned i=0; i<line->getNNodes(); i++)
+    //	std::cout << *line->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(line, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y));
+//    std::cout << "mapped" << std::endl;
+//    for (unsigned i=0; i<line->getNNodes(); i++)
+//    	std::cout << *mapping.getMappedPoint(i) << std::endl;
+//    std::cout << "R=" << mapping.getRotationMatrixToOriginal();
+    auto matR(mapping.getRotationMatrixToOriginal());
+
+    double exp_R[2*2] = {0, -1, 1, 0}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+TEST(NumLib, LowerCoordinatesMappingLineZ)
+{
+    auto line = TestLine2::createZ();
+    //std::cout << "original" << std::endl;
+    //for (unsigned i=0; i<line->getNNodes(); i++)
+    //  std::cout << *line->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(line, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Z));
+//    std::cout << "mapped" << std::endl;
+//    for (unsigned i=0; i<line->getNNodes(); i++)
+//      std::cout << *mapping.getMappedPoint(i) << std::endl;
+//    std::cout << "R=" << mapping.getRotationMatrixToOriginal();
+    auto matR(mapping.getRotationMatrixToOriginal());
+
+    double exp_R[3*3] = {0, 0, -1, 0, 1, 0, 1, 0, 0}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+TEST(NumLib, LowerCoordinatesShapeLineY)
 {
 #ifdef OGS_USE_EIGEN
 	typedef Eigen::Matrix<double, 2, 1> NodalVector;
@@ -349,7 +390,7 @@ TEST(NumLib, LowerDimensionMappingY)
 	static const unsigned e_nnodes = 2;
 	ShapeMatricesType shape(dim, 2, e_nnodes);
 	MappingType::computeShapeMatrices(*line, r, shape);
-	std::cout <<  std::setprecision(16) << shape;
+//	std::cout <<  std::setprecision(16) << shape;
 	
 	double exp_J[dim*dim]= {0.0};
 	for (unsigned i=0; i<dim; i++)
@@ -367,3 +408,87 @@ TEST(NumLib, LowerDimensionMappingY)
 	delete line;
 }
 
+TEST(NumLib, LowerCoordinatesMappingQuadXZ)
+{
+    auto ele = TestQuad4::createXZ();
+//    std::cout << "original=" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++)
+//      std::cout << *ele->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(ele,
+            MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::XYZ));
+//    std::cout << "local=" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++)
+//      std::cout << *mapping.getMappedPoint(i) << std::endl;
+//    std::cout << "R=" << mapping.getRotationMatrixToOriginal() << std::endl;
+    auto matR(mapping.getRotationMatrixToOriginal());
+//    std::cout << "inverted global=" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++) {
+//        double* raw = const_cast<double*>(&(*mapping.getMappedPoint(i))[0]);
+//        Eigen::Map<Eigen::Vector3d> v(raw);
+//        std::cout << (matR*v).transpose() << std::endl;
+//    }
+
+    double exp_R[3*3] = {0,  1,  0,
+                          0,  0, -1,
+                          -1, 0,  0}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+TEST(NumLib, LowerCoordinatesMappingQuadYZ)
+{
+    auto ele = TestQuad4::createYZ();
+//    std::cout << "original" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++)
+//      std::cout << *ele->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(ele,
+            MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::XYZ));
+//    std::cout << "local coords=" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++)
+//      std::cout << *mapping.getMappedPoint(i) << std::endl;
+//    std::cout << "R=\n" << mapping.getRotationMatrixToOriginal() << std::endl;
+    auto matR(mapping.getRotationMatrixToOriginal());
+//    std::cout << "global coords=" << std::endl;
+//    for (unsigned i=0; i<ele->getNNodes(); i++) {
+//        double* raw = const_cast<double*>(&(*mapping.getMappedPoint(i))[0]);
+//        Eigen::Map<Eigen::Vector3d> v(raw);
+//        std::cout << (matR*v).transpose() << std::endl;
+//    }
+
+    double exp_R[3*3] = { 0, 0, 1,
+                          0, 1, 0,
+                         -1, 0, 0}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+TEST(NumLib, LowerCoordinatesMappingQuadXYZ)
+{
+    auto ele = TestQuad4::createXYZ();
+    std::cout.precision(12);
+    std::cout << "original" << std::endl;
+    for (unsigned i=0; i<ele->getNNodes(); i++)
+      std::cout << *ele->getNode(i) << std::endl;
+    MeshLib::ElementCoordinatesMappingLocal mapping(ele,
+            MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::XYZ));
+    std::cout << "local coords=" << std::endl;
+    for (unsigned i=0; i<ele->getNNodes(); i++)
+      std::cout << *mapping.getMappedPoint(i) << std::endl;
+    std::cout << "R=\n" << mapping.getRotationMatrixToOriginal() << std::endl;
+    auto matR(mapping.getRotationMatrixToOriginal());
+    std::cout << "global coords=" << std::endl;
+    for (unsigned i=0; i<ele->getNNodes(); i++) {
+        double* raw = const_cast<double*>(&(*mapping.getMappedPoint(i))[0]);
+        Eigen::Map<Eigen::Vector3d> v(raw);
+        std::cout << (matR*v).transpose() << std::endl;
+    }
+
+
+    double exp_R[3*3] = { 0, 0, 1,
+                          0, 1, 0,
+                         -1, 0, 0}; //row major
+    const double eps(std::numeric_limits<double>::epsilon());
+    ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
+}
+
+#endif

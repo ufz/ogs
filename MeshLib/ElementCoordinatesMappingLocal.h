@@ -23,7 +23,9 @@
 namespace MeshLib
 {
 
-typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> EMatrix;
+#ifdef OGS_USE_EIGEN
+typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RotationMatrix;
+#endif
 
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.
@@ -33,10 +35,10 @@ class ElementCoordinatesMappingLocal
 public:
     /**
      * Constructor
-     * \param e                     Mesh element
-     * \param org_coord_system      Original coordinate system
+     * \param e                     Mesh element whose node coordinates are mapped
+     * \param global_coord_system   Global coordinate system
      */
-    ElementCoordinatesMappingLocal(const Element* e, const CoordinateSystem &org_coord_system);
+    ElementCoordinatesMappingLocal(const Element* e, const CoordinateSystem &global_coord_system);
 	
     /// Destructor
     virtual ~ElementCoordinatesMappingLocal() {}
@@ -47,27 +49,25 @@ public:
         return &_point_vec[node_id];
     }
 
-    /// return a rotation matrix converting to orinal coordinates
-    const EMatrix& getRotationMatrixToOriginal() const {return _matR2original;};
+    /// return a rotation matrix converting to global coordinates
+    const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;};
 
 private:
-    /// translate points to the origin
-    void translate(std::vector<MathLib::Point3d> &point_vec, const MathLib::Point3d origin);
+    /// rotate points to local coordinates
+    void rotateToLocal(
+            const Element &e, const CoordinateSystem &coordinate_system,
+            const std::vector<MathLib::Point3d> &vec_pt, const RotationMatrix &matR2local,
+            std::vector<MathLib::Point3d> &local_pt) const;
 
-    /// flip points vertically or horizontally
-    void flip(const CoordinateSystem &coordinate_system, std::vector<MathLib::Point3d> &vec_pt);
-
-    /// rotate points
-    void rotate(const Element &e, const CoordinateSystem &coordinate_system, std::vector<MathLib::Point3d> &vec_pt);
-
-    /// get a rotation matrix to the original coordinates
+    /// get a rotation matrix to the global coordinates
     /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
-    void getRotationMatrixToOriginal(const Element &e, const CoordinateSystem &coordinate_system, const std::vector<MathLib::Point3d> &vec_pt, EMatrix &matR2original);
+    void getRotationMatrixToGlobal(
+            const Element &e, const CoordinateSystem &coordinate_system,
+            const std::vector<MathLib::Point3d> &vec_pt, RotationMatrix &matR2original) const;
 
 private:
     std::vector<MathLib::Point3d> _point_vec;
-    MathLib::Point3d _pt_translate;
-    EMatrix _matR2original;
+    RotationMatrix _matR2global;
 };
 
 }
