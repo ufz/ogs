@@ -140,7 +140,7 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 // check if using the rotation matrix results in the original coordinates
 #define CHECK_COORDS(ele, mapping)\
     for (unsigned ii=0; ii<ele->getNNodes(); ii++) {\
-        Eigen::Map<Eigen::Vector3d> local(const_cast<double*>(&(*mapping.getMappedPoint(ii))[0]));\
+        Eigen::Map<Eigen::Vector3d> local(const_cast<double*>(&(*mapping.getMappedCoordinates(ii))[0]));\
         Eigen::Vector3d global(matR*local);\
         const double eps(std::numeric_limits<double>::epsilon());\
         ASSERT_ARRAY_NEAR(&(*ele->getNode(ii))[0], global.data(), 3u, eps);\
