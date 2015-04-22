@@ -190,21 +190,6 @@ inline constexpr T pow(T const x, unsigned const y)
 }
 #endif  // WIN32
 
-/**
- * normalize a vector
- * @param u  a vector to be normalized
- * @param n  the dimension of the vector
- * @param r  a vector where normalized result is stored
- */
-void normalizeVector(const double* u, std::size_t n, double* r);
-
-/**
- * normalize a vector
- * @param u  a vector to be normalized. The vector is overwritten by the normalized result.
- * @param n  the dimension of the vector
- */
-void normalizeVector(double* u, std::size_t n);
-
 } // namespace
 
 #endif /* MATHTOOLS_H_ */
