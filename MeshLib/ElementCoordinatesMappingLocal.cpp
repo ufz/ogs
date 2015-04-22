@@ -48,7 +48,7 @@ void ElementCoordinatesMappingLocal::rotateToLocal(
             dx[j] = vec_pt[i].getCoords()[j];
 
         x_new.head(global_dim) = matR2local * dx;
-        local_pt[i] = MathLib::Point3d(x_new.data());
+        local_pt[i] = MeshLib::Node(x_new.data());
     }
 };
 
@@ -75,7 +75,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
     } else if (global_dim == 3 && e.getDimension() == 2) {
         std::vector<MathLib::Point3d*> pnts;
         for (auto& p : vec_pt)
-            pnts.push_back(const_cast<MathLib::Node*>(&p));
+            pnts.push_back(const_cast<MeshLib::Node*>(&p));
 #if 1
         GeoLib::computeRotationMatrixToXY2(pnts, matR);
         matR.transposeInPlace();
