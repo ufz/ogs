@@ -60,9 +60,28 @@ Orientation getOrientation (const GeoLib::Point* p0,
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
  */
-void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
+template <class T_POINT>
+void getNewellPlane (const std::vector<T_POINT*>& pnts,
                      MathLib::Vector3 &plane_normal,
-                     double& d);
+                     double& d)
+{
+    d = 0;
+    MathLib::Vector3 centroid;
+    size_t n_pnts(pnts.size());
+    for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
+        plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
+                           * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
+        plane_normal[1] += ((*(pnts[i]))[2] - (*(pnts[j]))[2])
+                           * ((*(pnts[i]))[0] + (*(pnts[j]))[0]); // projection on xz
+        plane_normal[2] += ((*(pnts[i]))[0] - (*(pnts[j]))[0])
+                           * ((*(pnts[i]))[1] + (*(pnts[j]))[1]); // projection on xy
+
+        centroid += *(pnts[j]);
+    }
+
+    plane_normal *= 1.0 / plane_normal.getLength();
+    d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+}
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
