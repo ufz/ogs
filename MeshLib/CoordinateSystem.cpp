@@ -25,50 +25,13 @@ CoordinateSystem::CoordinateSystem(const Element &ele)
     if (bboxCoordSys.getDimension() >= ele.getDimension()) {
         _type = bboxCoordSys.getType();
     } else { // e.g. zero volume elements
-        if (ele.getDimension()==1)
+        if (ele.getDimension()>=1)
             _type = CoordinateSystemType::X;
-        else if (ele.getDimension()==2)
-            _type = CoordinateSystemType::XY;
-        else
-            _type = CoordinateSystemType::XYZ;
+        if (ele.getDimension()>=2)
+            _type |= CoordinateSystemType::Y;
+        if (ele.getDimension()==3)
+            _type |= CoordinateSystemType::Z;
     }
 }
-
-bool CoordinateSystem::hasX() const {
-    switch (_type) {
-    case CoordinateSystemType::X:
-    case CoordinateSystemType::XY:
-    case CoordinateSystemType::XZ:
-    case CoordinateSystemType::XYZ:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool CoordinateSystem::hasY() const {
-    switch (_type) {
-    case CoordinateSystemType::Y:
-    case CoordinateSystemType::XY:
-    case CoordinateSystemType::YZ:
-    case CoordinateSystemType::XYZ:
-        return true;
-    default:
-        return false;
-    }
-}
-
-bool CoordinateSystem::hasZ() const {
-    switch (_type) {
-    case CoordinateSystemType::Z:
-    case CoordinateSystemType::XZ:
-    case CoordinateSystemType::YZ:
-    case CoordinateSystemType::XYZ:
-        return true;
-    default:
-        return false;
-    }
-}
-
 
 } // end

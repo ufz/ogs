@@ -23,15 +23,14 @@ class Element;
 /**
  * \brief Coordinate system type
  */
-enum class CoordinateSystemType
+struct CoordinateSystemType
 {
-    X = 10,
-    Y = 11,
-    Z = 12,
-    XY = 21,
-    XZ = 22,
-    YZ = 23,
-    XYZ = 32
+    enum type
+    {
+        X = 0x01,
+        Y = 0x02,
+        Z = 0x04
+    };
 };
 
 /**
@@ -43,7 +42,7 @@ class CoordinateSystem
 {
 public:
     /// User provided coordinate system
-    explicit CoordinateSystem(CoordinateSystemType coord) : _type (coord) {}
+    explicit CoordinateSystem(unsigned char coord) : _type (coord) {}
 
     /// Decides for a given element
     explicit CoordinateSystem(const Element &ele);
@@ -53,72 +52,48 @@ public:
     explicit CoordinateSystem(const GeoLib::AABB<T> &bbox) : _type(getCoordinateSystem(bbox)) {}
 
     /// get this coordinate type
-    CoordinateSystemType getType() const {
-        return _type;
-    }
+    unsigned char getType() const { return _type; }
 
     /// get dimension size
     unsigned getDimension() const {
-        switch (_type) {
-            case CoordinateSystemType::X:
-                return 1;
-            case CoordinateSystemType::Y:
-            case CoordinateSystemType::XY:
-                return 2;
-            default:
-                return 3;
-        }
+        if (hasZ())
+            return 3;
+        else if (hasY())
+            return 2;
+        else
+            return 1;
     }
 
     /// has X dimension
-    bool hasX() const;
+    bool hasX() const { return (_type & CoordinateSystemType::type::X); }
 
     /// has Y dimension
-    bool hasY() const;
+    bool hasY() const { return (_type & CoordinateSystemType::type::Y); }
 
     /// has z dimension
-    bool hasZ() const;
+    bool hasZ() const { return (_type & CoordinateSystemType::type::Z); }
 
 private:
     template <class T>
-    CoordinateSystemType getCoordinateSystem(const GeoLib::AABB<T> &bbox) const;
+    unsigned char getCoordinateSystem(const GeoLib::AABB<T> &bbox) const;
 
-    CoordinateSystemType _type;
+    unsigned char _type;
 };
 
 template <class T>
-CoordinateSystemType CoordinateSystem::getCoordinateSystem(const GeoLib::AABB<T> &bbox) const
+unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB<T> &bbox) const
 {
-    MeshLib::CoordinateSystemType coords;
+    unsigned char coords = 0;
 
-    T pt_diff = bbox.getMaxPoint() - bbox.getMinPoint();
-    bool hasX = std::abs(pt_diff[0]) > .0;
-    bool hasY = std::abs(pt_diff[1]) > .0;
-    bool hasZ = std::abs(pt_diff[2]) > .0;
+    const T pt_diff = bbox.getMaxPoint() - bbox.getMinPoint();
 
-    if (hasX) {
-        if (hasY) {
-            if (hasZ) {
-                coords = CoordinateSystemType::XYZ;
-            } else {
-                coords = CoordinateSystemType::XY;
-            }
-        } else if (hasZ) {
-            coords = CoordinateSystemType::XZ;
-        } else {
-            coords = CoordinateSystemType::X;
-        }
-    } else if (hasY) {
-        if (hasZ) {
-            coords = CoordinateSystemType::YZ;
-        } else {
-            coords = CoordinateSystemType::Y;
-        }
-    } else if (hasZ) {
-        coords = CoordinateSystemType::Z;
-    } else {
-        coords = CoordinateSystemType::X;
-    }
+    if (std::abs(pt_diff[0]) > .0)
+        coords |= CoordinateSystemType::X;
+    if (std::abs(pt_diff[1]) > .0)
+        coords |= CoordinateSystemType::Y;
+    if (std::abs(pt_diff[2]) > .0)
+        coords |= CoordinateSystemType::Z;
+
     return coords;
 }
 
