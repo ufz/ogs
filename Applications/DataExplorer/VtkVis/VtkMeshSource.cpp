@@ -45,6 +45,8 @@
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
 
+#include "InSituLib/VtkOGSEnum.h"
+
 vtkStandardNewMacro(VtkMeshSource);
 
 VtkMeshSource::VtkMeshSource() :
@@ -144,39 +146,19 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->SetId(j, elem->getNode(j)->getID());
 
-		switch (elem->getGeomType())
-		{
-		case MeshElemType::LINE:
-			type = 3;
-			break;
-		case MeshElemType::TRIANGLE:
-			type = 5;
-			break;
-		case MeshElemType::QUAD:
-			type = 9;
-			break;
-		case MeshElemType::HEXAHEDRON:
-			type = 12;
-			break;
-		case MeshElemType::TETRAHEDRON:
-			type = 10;
-			break;
-		case MeshElemType::PRISM:
-			type = 13;
+		type = InSituLib::OGSToVtkCellType(elem->getCellType());
+		if (type==0) {
+			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
+					CellType2String(elem->getCellType()).c_str());
+			return 0;
+		}
+		if (elem->getCellType() == CellType::PRISM6) {
 			for (unsigned i=0; i<3; ++i)
 			{
 				const unsigned prism_swap_id = point_ids->GetId(i);
 				point_ids->SetId(i, point_ids->GetId(i+3));
 				point_ids->SetId(i+3, prism_swap_id);
 			}
-			break;
-		case MeshElemType::PYRAMID:
-			type = 14;
-			break;
-		default: // if none of the above can be applied
-			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
-					MeshElemType2String(elem->getGeomType()).c_str());
-			return 0;
 		}
 
 		output->InsertNextCell(type, point_ids);
