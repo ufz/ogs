@@ -344,35 +344,10 @@ double calcTetrahedronVolume(MathLib::Point3d const& x1,
 	return std::abs(GeoLib::scalarTriple(ac, ad, ab)) / 6.0;
 }
 
-// NewellPlane from book Real-Time Collision detection p. 494
-void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &plane_normal, double& d)
-{
-	d = 0;
-	MathLib::Vector3 centroid;
-	size_t n_pnts(pnts.size());
-	for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
-		plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
-		                   * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
-		plane_normal[1] += ((*(pnts[i]))[2] - (*(pnts[j]))[2])
-		                   * ((*(pnts[i]))[0] + (*(pnts[j]))[0]); // projection on xz
-		plane_normal[2] += ((*(pnts[i]))[0] - (*(pnts[j]))[0])
-		                   * ((*(pnts[i]))[1] + (*(pnts[j]))[1]); // projection on xy
-
-		centroid += *(pnts[j]);
-	}
-
-	plane_normal *= 1.0 / plane_normal.getLength();
-	d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
-}
-
-void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
+void computeRotationMatrixToXY(MathLib::Vector3 const& n,
 	MathLib::DenseMatrix<double> & rot_mat)
 {
-	// *** some frequently used terms ***
-	// sqrt (v_1^2 + v_2^2)
-	double h0(sqrt(plane_normal[0] * plane_normal[0] + plane_normal[1]
-	               * plane_normal[1]));
-	if (h0 == 0) {
+	if (sqrt(n[0]*n[0]+n[1]*n[1]) == 0) {
 		rot_mat(0,0) = 1.0;
 		rot_mat(0,1) = 0.0;
 		rot_mat(0,2) = 0.0;
@@ -384,21 +359,21 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
 		rot_mat(2,2) = 1.0;
 		return;
 	}
-	// 1 / sqrt (v_1^2 + v_2^2)
-	double h1(1 / h0);
-	// 1 / sqrt (h0 + v_3^2)
-	double h2(1.0 / sqrt(h0 + plane_normal[2] * plane_normal[2]));
+	// *** some frequently used terms ***
+	// sqrt (n_1^2 + n_3^2)
+	double h0(sqrt(n[0]*n[0]+n[2]*n[2]));
+	double h1(1 / n.getLength());
 
 	// calculate entries of rotation matrix
-	rot_mat(0, 0) = plane_normal[2] * plane_normal[0] * h2 * h1;
-	rot_mat(0, 1) = plane_normal[2] * plane_normal[1] * h2 * h1;
-	rot_mat(0, 2) = -h0 * h2;
-	rot_mat(1, 0) = -plane_normal[1] * h1;
-	rot_mat(1, 1) = plane_normal[0] * h1;
-	rot_mat(1, 2) = 0.0;
-	rot_mat(2, 0) = plane_normal[0] * h2;
-	rot_mat(2, 1) = plane_normal[1] * h2;
-	rot_mat(2, 2) = plane_normal[2] * h2;
+	rot_mat(0, 0) = n[2] / h0;
+	rot_mat(0, 1) = 0;
+	rot_mat(0, 2) = - n[0] / h0;
+	rot_mat(1, 0) = - n[1]*n[0]/h0 * h1;
+	rot_mat(1, 1) = h0 * h1;
+	rot_mat(1, 2) = - n[1]*n[2]/h0 * h1;
+	rot_mat(2, 0) = n[0] * h1;
+	rot_mat(2, 1) = n[1] * h1;
+	rot_mat(2, 2) = n[2] * h1;
 }
 
 void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)

@@ -9,6 +9,8 @@
 #ifndef COORDINATESMAPPINGTESTDATA_TESTLINE2_H_
 #define COORDINATESMAPPINGTESTDATA_TESTLINE2_H_
 
+#include <cmath>
+
 #include "MeshLib/Elements/Line.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 
@@ -73,6 +75,15 @@ public:
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(0.0, 0.0, 0.0);
+        return new MeshLib::Line(nodes);
+    }
+
+    // 1.5d line
+    static MeshLib::Line* createY()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node(0.0, -1.0, 0.0);
+        nodes[1] = new MeshLib::Node(0.0,  1.0, 0.0);
         return new MeshLib::Line(nodes);
     }
 };

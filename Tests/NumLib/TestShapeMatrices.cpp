@@ -34,7 +34,7 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
 
     // Shape data type
-    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix> ShapeMatricesType;
+    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,DimNodalMatrix> ShapeMatricesType;
 
     auto setShapeDataToOnes = [](ShapeMatricesType &shape)
             {

@@ -34,7 +34,8 @@ struct EigenFixedShapeMatrixPolicy
         NumLib::ShapeMatrices<
             NodalVectorType,
             DimNodalMatrixType,
-            DimMatrixType>;
+            DimMatrixType,
+            DimNodalMatrixType>;
 };
 
 /// An implementation of ShapeMatrixPolicy using dynamic size eigen matrices and
@@ -59,7 +60,8 @@ struct EigenDynamicShapeMatrixPolicy
         NumLib::ShapeMatrices<
             NodalVectorType,
             DimNodalMatrixType,
-            DimMatrixType>;
+            DimMatrixType,
+            DimNodalMatrixType>;
 };
 
 /// Default choice of the ShapeMatrixPolicy.
