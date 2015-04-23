@@ -67,7 +67,7 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
 {
     d = 0;
     MathLib::Vector3 centroid;
-    size_t n_pnts(pnts.size());
+    std::size_t n_pnts(pnts.size());
     for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
         plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
                            * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
@@ -79,7 +79,7 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
         centroid += *(pnts[j]);
     }
 
-    plane_normal *= 1.0 / plane_normal.getLength();
+    plane_normal.normalize();
     d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
@@ -117,7 +117,7 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
     } else if (fabs(v[2]) > 0.0 && fabs(v[0]) + fabs(v[1]) < std::numeric_limits<double>::epsilon()) {
         yy[1] = 1.0;
     } else {
-        for (size_t i = 0; i < 3; i++) {
+        for (unsigned i = 0; i < 3; i++) {
             if (fabs(v[i]) > 0.0) {
                 yy[i] = -v[i];
                 break;
@@ -131,7 +131,7 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
     yy = MathLib::crossProduct(zz, v);
     yy.normalize();
 
-    for (size_t i=0; i<3; ++i) {
+    for (unsigned i=0; i<3; ++i) {
         rot_mat(0, i) = v[i];
         rot_mat(1, i) = yy[i];
         rot_mat(2, i) = zz[i];
