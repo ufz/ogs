@@ -126,3 +126,15 @@ target_link_libraries(ResetPropertiesInPolygonalRegion
 
 set_target_properties(ResetPropertiesInPolygonalRegion
 	PROPERTIES FOLDER Utilities)
+
+add_executable(AddTopLayer
+	AddTopLayer.cpp )
+target_link_libraries(AddTopLayer
+	FileIO
+	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
+
+set_target_properties(AddTopLayer
+	PROPERTIES FOLDER Utilities)
