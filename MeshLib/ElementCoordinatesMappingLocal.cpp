@@ -20,15 +20,15 @@ namespace MeshLib
 {
 
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
-    const Element* e,
+    const Element& e,
     const CoordinateSystem &global_coords)
 {
-    assert(e->getDimension() <= global_coords.getDimension());
-    for(size_t i = 0; i < e->getNNodes(); i++)
-        _point_vec.push_back(MeshLib::Node(*(e->getNode(i))));
+    assert(e.getDimension() <= global_coords.getDimension());
+    for(size_t i = 0; i < e.getNNodes(); i++)
+        _point_vec.push_back(MeshLib::Node(*(e.getNode(i))));
 
-    getRotationMatrixToGlobal(*e, global_coords, _point_vec, _matR2global);
-    rotateToLocal(*e, global_coords, _point_vec, _matR2global.transpose(), _point_vec);
+    getRotationMatrixToGlobal(e, global_coords, _point_vec, _matR2global);
+    rotateToLocal(e, global_coords, _point_vec, _matR2global.transpose(), _point_vec);
 }
 
 void ElementCoordinatesMappingLocal::rotateToLocal(

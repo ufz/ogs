@@ -71,7 +71,7 @@ inline void computeMappingMatrices(
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
     MeshLib::CoordinateSystem coords(ele);
-    MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
+    MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, coords);
     for (std::size_t k=0; k<nnodes; k++) {
         double const* const xyz = ele_local_coord.getMappedCoordinates(k)->getCoords();
         // outer product of dNdr and xyz for a particular node
@@ -120,7 +120,7 @@ inline void computeMappingMatrices(
         if (coords.getDimension()==ele.getDimension()) {
             shapemat.dNdx.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
         } else {
-            MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
+            MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, coords);
             const EMatrix&matR = ele_local_coord.getRotationMatrixToGlobal();
             EMatrix dshape_local = EMatrix::Zero(matR.rows(), shapemat.dNdx.cols());
             dshape_local.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;

@@ -38,7 +38,7 @@ public:
      * \param e                     Mesh element whose node coordinates are mapped
      * \param global_coord_system   Global coordinate system
      */
-    ElementCoordinatesMappingLocal(const Element* e, const CoordinateSystem &global_coord_system);
+    ElementCoordinatesMappingLocal(const Element &e, const CoordinateSystem &global_coord_system);
 	
     /// Destructor
     virtual ~ElementCoordinatesMappingLocal() {}
