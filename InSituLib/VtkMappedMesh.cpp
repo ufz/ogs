@@ -30,6 +30,8 @@
 #include "MeshEnums.h"
 #include "VtkOGSEnum.h"
 
+#include "VtkOGSEnum.h"
+
 namespace InSituLib {
 
 vtkStandardNewMacro(VtkMappedMesh)
