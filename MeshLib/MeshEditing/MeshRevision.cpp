@@ -62,7 +62,8 @@ unsigned MeshRevision::getNCollapsableNodes(double eps) const
 	return count;
 }
 
-MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim)
+MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
+	double eps, unsigned min_elem_dim)
 {
 	if (this->_mesh.getNElements() == 0)
 		return nullptr;
