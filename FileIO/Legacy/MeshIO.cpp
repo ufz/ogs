@@ -107,6 +107,18 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 					getline(in, line_string);
 					std::stringstream ss(line_string);
 					materials.push_back(readMaterialID(ss));
+					MeshLib::Element const*const elem(readElement(ss,nodes));
+					if (elem == nullptr) {
+						ERR("Reading mesh element %d from file \"%s\" failed.",
+							i, file_name.c_str());
+						// clean up the elements vector
+						std::for_each(elements.begin(), elements.end(),
+							std::default_delete<MeshLib::Element>());
+						// clean up the nodes vector
+						std::for_each(nodes.begin(), nodes.end(),
+							std::default_delete<MeshLib::Node>());
+						return nullptr;
+					}
 					elements.push_back(readElement(ss, nodes));
 				}
 			}
