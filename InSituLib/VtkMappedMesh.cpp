@@ -60,30 +60,60 @@ vtkIdType VtkMappedMeshImpl::GetNumberOfCells()
 int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 {
 	int type = 0;
-	switch ((*_elements)[cellId]->getGeomType())
+	switch ((*_elements)[cellId]->getCellType())
 	{
-		case MeshElemType::INVALID:
+		case CellType::INVALID:
 			break;
-		case MeshElemType::LINE:
+		case CellType::LINE2:
 			type = VTK_LINE;
 			break;
-		case MeshElemType::TRIANGLE:
+		case CellType::LINE3:
+			type = VTK_QUADRATIC_EDGE;
+			break;
+		case CellType::TRI3:
 			type = VTK_TRIANGLE;
 			break;
-		case MeshElemType::QUAD:
+		case CellType::TRI6:
+			type = VTK_QUADRATIC_TRIANGLE;
+			break;
+		case CellType::QUAD4:
 			type = VTK_QUAD;
 			break;
-		case MeshElemType::HEXAHEDRON:
+		case CellType::QUAD8:
+			type = VTK_QUADRATIC_QUAD;
+			break;
+		case CellType::QUAD9:
+			type = VTK_BIQUADRATIC_QUAD;
+			break;
+		case CellType::HEX8:
 			type = VTK_HEXAHEDRON;
 			break;
-		case MeshElemType::TETRAHEDRON:
+		case CellType::HEX20:
+			type = VTK_QUADRATIC_HEXAHEDRON;
+			break;
+		case CellType::HEX27:
+			type = VTK_TRIQUADRATIC_HEXAHEDRON;
+			break;
+		case CellType::TET4:
 			type = VTK_TETRA;
 			break;
-		case MeshElemType::PRISM:
+		case CellType::TET10:
+			type = VTK_QUADRATIC_TETRA;
+			break;
+		case CellType::PRISM6:
 			type = VTK_WEDGE;
 			break;
-		case MeshElemType::PYRAMID:
+		case CellType::PRISM15:
+			type = VTK_QUADRATIC_WEDGE;
+			break;
+		case CellType::PRISM18:
+			type = VTK_BIQUADRATIC_QUADRATIC_WEDGE;
+			break;
+		case CellType::PYRAMID5:
 			type = VTK_PYRAMID;
+			break;
+		case CellType::PYRAMID13:
+			type = VTK_QUADRATIC_PYRAMID;
 			break;
 	}
 	return type;
@@ -133,16 +163,16 @@ void VtkMappedMeshImpl::GetIdsOfCellsOfType(int type, vtkIdTypeArray *array)
 
 	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
 	{
-		if ((*elem)->getGeomType() == VtkCellTypeToOGS(type))
+		if ((*elem)->getCellType() == VtkCellTypeToOGS(type))
 			array->InsertNextValue((*elem)->getID());
 	}
 }
 
 int VtkMappedMeshImpl::IsHomogeneous()
 {
-	MeshElemType type = (*(_elements->begin()))->getGeomType();
+	CellType type = (*(_elements->begin()))->getCellType();
 	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
-		if((*elem)->getGeomType() != type)
+		if((*elem)->getCellType() != type)
 			return 0;
 	return 1;
 }
