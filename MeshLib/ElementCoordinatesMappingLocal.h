@@ -43,6 +43,9 @@ public:
     /// Destructor
     virtual ~ElementCoordinatesMappingLocal() {}
 
+    /// return the global coordinate system
+    const CoordinateSystem getGlobalCoordinateSystem() const { return _coords; }
+
     /// return mapped coordinates of the node
     const MeshLib::Node* getMappedCoordinates(size_t node_id) const
     {
@@ -66,6 +69,7 @@ private:
             const std::vector<MeshLib::Node> &vec_pt, RotationMatrix &matR2original) const;
 
 private:
+    const CoordinateSystem _coords;
     std::vector<MeshLib::Node> _point_vec;
     RotationMatrix _matR2global;
 };

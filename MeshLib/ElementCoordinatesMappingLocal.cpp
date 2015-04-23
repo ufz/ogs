@@ -22,6 +22,7 @@ namespace MeshLib
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e,
     const CoordinateSystem &global_coords)
+: _coords(global_coords)
 {
     assert(e.getDimension() <= global_coords.getDimension());
     for(size_t i = 0; i < e.getNNodes(); i++)
