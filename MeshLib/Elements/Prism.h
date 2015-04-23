@@ -17,10 +17,12 @@
 
 #include "TemplateElement.h"
 #include "PrismRule6.h"
+#include "PrismRule15.h"
 
 namespace MeshLib {
 
 typedef TemplateElement<PrismRule6> Prism;
+typedef TemplateElement<PrismRule15> Prism15;
 
 }
 
