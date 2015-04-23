@@ -60,9 +60,26 @@ Orientation getOrientation (const GeoLib::Point* p0,
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
  */
-void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
+template <class T_POINT>
+void getNewellPlane (const std::vector<T_POINT*>& pnts,
                      MathLib::Vector3 &plane_normal,
                      double& d);
+
+/**
+ * Computes a rotation matrix that rotates the given 2D normal vector parallel to X-axis
+ * @param v        a 2D normal vector to be rotated
+ * @param rot_mat  a 2x2 rotation matrix
+ */
+template<class T_MATRIX>
+void compute2DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX & rot_mat);
+
+/**
+ * Computes a rotation matrix that rotates the given 3D normal vector parallel to X-axis
+ * @param v        a 3D normal vector to be rotated
+ * @param rot_mat  a 3x3 rotation matrix
+ */
+template <class T_MATRIX>
+void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
@@ -71,6 +88,15 @@ void getNewellPlane (const std::vector<GeoLib::Point*>& pnts,
  */
 void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::DenseMatrix<double> & rot_mat);
+
+/**
+ * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
+ * @param vec_pt  a vector of 3d points that is rotated parallel to the \f$z\f$ axis
+ * @param rot_mat 3x3 rotation matrix
+ */
+template <class T_MATRIX>
+void computeRotationMatrixToXY2(const std::vector<MathLib::Point3d*> &vec_pt,
+        T_MATRIX & rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
@@ -295,5 +321,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 	MathLib::Vector3 & plane_normal);
 
 } // end namespace GeoLib
+
+#include "AnalyticalGeometry-impl.h"
 
 #endif /* ANALYTICAL_GEOMETRY_H_ */
