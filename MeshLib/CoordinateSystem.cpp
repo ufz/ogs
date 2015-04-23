@@ -10,8 +10,29 @@
 
 #include <limits>
 
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
+
 namespace MeshLib
 {
+
+CoordinateSystem::CoordinateSystem(const Element &ele)
+{
+    GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(),
+        ele.getNodes()+ele.getNNodes());
+    MeshLib::CoordinateSystem coords(aabb);
+    CoordinateSystem bboxCoordSys(getCoordinateSystem(aabb));
+    if (bboxCoordSys.getDimension() >= ele.getDimension()) {
+        _type = bboxCoordSys.getType();
+    } else { // e.g. zero volume elements
+        if (ele.getDimension()==1)
+            _type = CoordinateSystemType::X;
+        else if (ele.getDimension()==2)
+            _type = CoordinateSystemType::XY;
+        else
+            _type = CoordinateSystemType::XYZ;
+    }
+}
 
 bool CoordinateSystem::hasX() const {
     switch (_type) {

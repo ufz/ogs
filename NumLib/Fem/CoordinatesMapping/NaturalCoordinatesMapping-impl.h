@@ -70,9 +70,7 @@ inline void computeMappingMatrices(
     const std::size_t nnodes = T_MESH_ELEMENT::n_all_nodes;
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
-    GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(),
-        ele.getNodes()+ele.getNNodes());
-    MeshLib::CoordinateSystem coords(aabb);
+    MeshLib::CoordinateSystem coords(ele);
     MeshLib::ElementCoordinatesMappingLocal ele_local_coord(&ele, coords);
     for (std::size_t k=0; k<nnodes; k++) {
         double const* const xyz = ele_local_coord.getMappedCoordinates(k)->getCoords();
@@ -118,9 +116,7 @@ inline void computeMappingMatrices(
         //J^-1, dshape/dx
         shapemat.invJ = shapemat.J.inverse();
 
-        GeoLib::AABB<MeshLib::Node> aabb(ele.getNodes(),
-            ele.getNodes()+ele.getNNodes());
-        MeshLib::CoordinateSystem coords(aabb);
+        MeshLib::CoordinateSystem coords(ele);
         if (coords.getDimension()==ele.getDimension()) {
             shapemat.dNdx.topLeftCorner(shapemat.dNdr.rows(), shapemat.dNdr.cols()) = shapemat.invJ * shapemat.dNdr;
         } else {
