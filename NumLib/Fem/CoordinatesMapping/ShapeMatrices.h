@@ -36,8 +36,9 @@ enum class ShapeMatrixType
  * \brief Coordinates mapping matrices at particular location
  *
  * \tparam T_N      Vector type for shape functions
- * \tparam T_DN     Matrix type for gradient of shape functions
+ * \tparam T_DNDR   Matrix type for gradient of shape functions in natural coordinates
  * \tparam T_J      Jacobian matrix type
+ * \tparam T_DNDX   Matrix type for gradient of shape functions in physical coordinates
  */
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
@@ -45,14 +46,14 @@ struct ShapeMatrices
     typedef T_N ShapeType;
     typedef T_DNDR DrShapeType;
     typedef T_J JacobianType;
-	typedef T_DNDX DxShapeType;
+    typedef T_DNDX DxShapeType;
 
     ShapeType N;        ///< Vector of shape functions, N(r)
-    DrShapeType dNdr;    ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr
+    DrShapeType dNdr;   ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr
     JacobianType J;     ///< Jacobian matrix, J=dx/dr
     double detJ;        ///< Determinant of the Jacobian
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
-    DxShapeType dNdx;    ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
+    DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
 
     /** The default constructor is used by fixed-size (at compile-time)
      * matrix/vector types where no resizing of the matrices/vectors is required
