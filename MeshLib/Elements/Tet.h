@@ -17,10 +17,12 @@
 
 #include "TemplateElement.h"
 #include "TetRule4.h"
+#include "TetRule10.h"
 
 namespace MeshLib {
 
 typedef TemplateElement<TetRule4> Tet;
+typedef TemplateElement<TetRule10> Tet10;
 
 }
 
