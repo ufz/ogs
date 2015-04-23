@@ -121,10 +121,14 @@ void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_a
 
 const Element* Element::getNeighbor(unsigned i) const
 {
+#ifndef NDEBUG
 	if (i < getNNeighbors())
+#endif
 		return _neighbors[i];
+#ifndef NDEBUG
 	ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
 	return nullptr;
+#endif
 }
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
@@ -138,24 +142,34 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 
 const Node* Element::getNode(unsigned i) const
 {
-	if (i < getNBaseNodes())
+#ifndef NDEBUG
+	if (i < getNNodes())
+#endif
 		return _nodes[i];
+#ifndef NDEBUG
 	ERR("Error in MeshLib::Element::getNode() - Index %d in %s", i, MeshElemType2String(getGeomType()).c_str());
 	return nullptr;
+#endif
 }
 
 void Element::setNode(unsigned idx, Node* node)
 {
-	if (idx < getNBaseNodes())
+#ifndef NDEBUG
+	if (idx < getNNodes())
+#endif
 		_nodes[idx] = node;
 }
 
 unsigned Element::getNodeIndex(unsigned i) const
 {
-	if (i<getNBaseNodes())
+#ifndef NDEBUG
+	if (i<getNNodes())
+#endif
 		return _nodes[i]->getID();
+#ifndef NDEBUG
 	ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
 	return std::numeric_limits<unsigned>::max();
+#endif
 }
 
 bool Element::hasNeighbor(Element* elem) const
