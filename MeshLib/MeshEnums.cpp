@@ -113,6 +113,7 @@ const std::string CellType2String(const CellType t)
 	RETURN_CELL_TYPE_STR(t, PRISM6);
 	RETURN_CELL_TYPE_STR(t, PRISM15);
 	RETURN_CELL_TYPE_STR(t, PYRAMID5);
+	RETURN_CELL_TYPE_STR(t, PYRAMID13);
 
 	return "none";
 
