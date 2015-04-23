@@ -212,7 +212,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
-#if 1
+#if 0
     double exp_R[3*3] = { -1,  0,  0,
                            0,  0, -1,
                            0, -1,  0}; //row major
@@ -233,7 +233,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
-#if 1
+#if 0
     double exp_R[3*3] = {  0,  0, 1,
                           -1,  0, 0,
                            0, -1, 0}; //row major
@@ -254,9 +254,15 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
+#if 0
     double exp_R[3*3] = { -1, 0, 0,
                            0, -0.70710678118654757, -0.70710678118654757,
                            0, -0.70710678118654757,  0.70710678118654757}; //row major
+#else
+    double exp_R[3*3] = {  1, 0, 0,
+                           0, 0.70710678118654757, -0.70710678118654757,
+                           0, 0.70710678118654757,  0.70710678118654757}; //row major
+#endif
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);

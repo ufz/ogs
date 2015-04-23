@@ -76,7 +76,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
         std::vector<MathLib::Point3d*> pnts;
         for (auto& p : vec_pt)
             pnts.push_back(const_cast<MeshLib::Node*>(&p));
-#if 1
+#if 0
         GeoLib::computeRotationMatrixToXY2(pnts, matR);
         matR.transposeInPlace();
 #else
@@ -84,7 +84,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
         MathLib::Vector3 plane_normal;
         double d;
         GeoLib::getNewellPlane (pnts, plane_normal, d);
-        std::cout << "pn=" << plane_normal << std::endl;
+        //std::cout << "pn=" << plane_normal << std::endl;
         // compute a rotation matrix to XY
         MathLib::DenseMatrix<double> matToXY(3,3,0.0);
         GeoLib::computeRotationMatrixToXY(plane_normal, matToXY);
