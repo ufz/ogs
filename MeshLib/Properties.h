@@ -18,7 +18,6 @@
 #include <string>
 #include <map>
 
-#include <boost/any.hpp>
 #include <boost/optional.hpp>
 
 #include "logog/include/logog.hpp"

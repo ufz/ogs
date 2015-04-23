@@ -24,6 +24,10 @@
 #include <string>
 #include <vector>
 
+#include <boost/optional.hpp>
+
+#include "MeshLib/PropertyVector.h"
+
 namespace MeshLib
 {
 	class Mesh;
@@ -56,8 +60,11 @@ protected:
 	bool write();
 
 private:
-	void writeElements(std::vector<MeshLib::Element*> const& ele_vec, std::ostream &out) const;
-	MeshLib::Element* readElement(const std::string& line, const std::vector<MeshLib::Node*> &nodes);
+	void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
+		boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
+		std::ostream &out) const;
+	std::size_t readMaterialID(std::istream & in) const;
+	MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
 	std::string ElemType2StringOutput(const MeshElemType t) const;
 
 	const MeshLib::Mesh* _mesh;

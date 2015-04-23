@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <memory>
 
+#include "Location.h"
 #include "BaseLib/excludeObjectCopy.h"
 
 namespace MeshLib
