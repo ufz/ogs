@@ -29,6 +29,8 @@
 #include "MeshLib/Node.h"
 #include "MeshEnums.h"
 
+#include "VtkOGSEnum.h"
+
 namespace InSituLib {
 
 vtkStandardNewMacro(VtkMappedMesh)
@@ -59,64 +61,7 @@ vtkIdType VtkMappedMeshImpl::GetNumberOfCells()
 
 int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 {
-	int type = 0;
-	switch ((*_elements)[cellId]->getCellType())
-	{
-		case CellType::INVALID:
-			break;
-		case CellType::LINE2:
-			type = VTK_LINE;
-			break;
-		case CellType::LINE3:
-			type = VTK_QUADRATIC_EDGE;
-			break;
-		case CellType::TRI3:
-			type = VTK_TRIANGLE;
-			break;
-		case CellType::TRI6:
-			type = VTK_QUADRATIC_TRIANGLE;
-			break;
-		case CellType::QUAD4:
-			type = VTK_QUAD;
-			break;
-		case CellType::QUAD8:
-			type = VTK_QUADRATIC_QUAD;
-			break;
-		case CellType::QUAD9:
-			type = VTK_BIQUADRATIC_QUAD;
-			break;
-		case CellType::HEX8:
-			type = VTK_HEXAHEDRON;
-			break;
-		case CellType::HEX20:
-			type = VTK_QUADRATIC_HEXAHEDRON;
-			break;
-		case CellType::HEX27:
-			type = VTK_TRIQUADRATIC_HEXAHEDRON;
-			break;
-		case CellType::TET4:
-			type = VTK_TETRA;
-			break;
-		case CellType::TET10:
-			type = VTK_QUADRATIC_TETRA;
-			break;
-		case CellType::PRISM6:
-			type = VTK_WEDGE;
-			break;
-		case CellType::PRISM15:
-			type = VTK_QUADRATIC_WEDGE;
-			break;
-		case CellType::PRISM18:
-			type = VTK_BIQUADRATIC_QUADRATIC_WEDGE;
-			break;
-		case CellType::PYRAMID5:
-			type = VTK_PYRAMID;
-			break;
-		case CellType::PYRAMID13:
-			type = VTK_QUADRATIC_PYRAMID;
-			break;
-	}
-	return type;
+	return OGSToVtkCellType((*_elements)[cellId]->getCellType());
 }
 
 void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
