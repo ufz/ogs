@@ -228,6 +228,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
+#if 0
 TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
 {
     // Refer to typedefs in the fixture
@@ -263,5 +264,5 @@ TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
     }
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 }
-
+#endif
 
