@@ -20,7 +20,7 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
 	Mesh const m0("first", std::vector<Node*>(), std::vector<Element*>());
 	Mesh const m1("second", std::vector<Node*>(), std::vector<Element*>());
 
-	std::vector<Node*> const empty_node_ptr_vector;
+	std::vector<Node*> const empty_node_ptr_vector(0);
 
 	MeshSubset const ms0(m0, empty_node_ptr_vector);
 	MeshSubset const ms1(m1, empty_node_ptr_vector);
