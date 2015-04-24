@@ -94,7 +94,7 @@ class InSituMesh : public ::testing::Test
 	}
 
 	MeshLib::Mesh * mesh;
-	const size_t subdivisions = 5;
+	const std::size_t subdivisions = 5;
 	const double length = 1.0;
 	const double dx = length / subdivisions;
 };
@@ -175,11 +175,10 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 
 	// -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
 	// atm vtkXMLWriter::Appended does not work, see http://www.paraview.org/Bug/view.php?id=13382
-	std::array<int, 2> dataModes = {{ vtkXMLWriter::Ascii, vtkXMLWriter::Binary }};
-	std::array<bool, 2> booleans = {{ true, false }};
-	for(int dataMode : dataModes)
+	for(int dataMode : { vtkXMLWriter::Ascii, vtkXMLWriter::Binary })
 	{
-		for(bool compressed : booleans) {
+		for(bool compressed : { true, false })
+		{
 			if(dataMode == vtkXMLWriter::Ascii && compressed)
 				continue;
 			FileIO::VtuInterface vtuInterface(mesh, dataMode, compressed);
