@@ -12,13 +12,8 @@
 
 #include "MeshEnums.h"
 
-namespace InSituLib
-{
-
 CellType VtkCellTypeToOGS(int type);
 
 int OGSToVtkCellType(CellType ogs);
-
-} // end namespace
 
 #endif // VTKOGSENUM_H_

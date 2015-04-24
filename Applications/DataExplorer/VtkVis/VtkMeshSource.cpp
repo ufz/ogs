@@ -45,7 +45,7 @@
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
 
-#include "InSituLib/VtkOGSEnum.h"
+#include "MeshLib/VtkOGSEnum.h"
 
 vtkStandardNewMacro(VtkMeshSource);
 
@@ -146,7 +146,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->SetId(j, elem->getNode(j)->getID());
 
-		type = InSituLib::OGSToVtkCellType(elem->getCellType());
+		type = OGSToVtkCellType(elem->getCellType());
 		if (type==0) {
 			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
 					CellType2String(elem->getCellType()).c_str());
