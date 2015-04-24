@@ -41,7 +41,20 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkFloatArray.h>
 
-namespace MeshLib {
+namespace MeshLib
+{
+
+namespace detail
+{
+template <class T_ELEMENT>
+MeshLib::Element* createElementWithSameNodeOrder(const std::vector<MeshLib::Node*> &nodes, const std::vector<unsigned> &node_ids, unsigned material)
+{
+	MeshLib::Node** ele_nodes = new MeshLib::Node*[T_ELEMENT::n_all_nodes];
+	for (unsigned k(0); k<T_ELEMENT::n_all_nodes; k++)
+		ele_nodes[k] = nodes[node_ids[k]];
+	return new T_ELEMENT(ele_nodes, material);
+}
+}
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                   const double origin[3],
@@ -280,24 +293,15 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 		switch (cell_type)
 		{
 		case VTK_LINE: {
-			MeshLib::Node** line_nodes = new MeshLib::Node*[2];
-			line_nodes[0] = nodes[node_ids[0]];
-			line_nodes[1] = nodes[node_ids[1]];
-			elem = new MeshLib::Line(line_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Line>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_TRIANGLE: {
-			MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-			for (unsigned k(0); k<3; k++)
-				tri_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Tri(tri_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_QUAD: {
-			MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-			for (unsigned k(0); k<4; k++)
-				quad_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Quad(quad_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_PIXEL: {
@@ -310,17 +314,11 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		case VTK_TETRA: {
-			MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
-			for (unsigned k(0); k<4; k++)
-				tet_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Tet(tet_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_HEXAHEDRON: {
-			MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
-			for (unsigned k(0); k<8; k++)
-				hex_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Hex(hex_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_VOXEL: {
@@ -337,10 +335,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			break;
 		}
 		case VTK_PYRAMID: {
-			MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
-			for (unsigned k(0); k<5; k++)
-				pyramid_nodes[k] = nodes[node_ids[k]];
-			elem = new MeshLib::Pyramid(pyramid_nodes, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid>(nodes, node_ids, material);
 			break;
 		}
 		case VTK_WEDGE: {
@@ -351,6 +346,51 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 				prism_nodes[i+3] = nodes[node_ids[i]];
 			}
 			elem = new MeshLib::Prism(prism_nodes, material);
+			break;
+		}
+		case VTK_QUADRATIC_EDGE: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Line3>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_TRIANGLE: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri6>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_QUAD: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad8>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_BIQUADRATIC_QUAD: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad9>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_TETRA: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet10>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_HEXAHEDRON: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex20>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_PYRAMID: {
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid13>(nodes, node_ids, material);
+			break;
+		}
+		case VTK_QUADRATIC_WEDGE: {
+			MeshLib::Node** prism_nodes = new MeshLib::Node*[15];
+			for (unsigned i=0; i<3; ++i)
+			{
+				prism_nodes[i] = nodes[node_ids[i+3]];
+				prism_nodes[i+3] = nodes[node_ids[i]];
+			}
+			for (unsigned i=0; i<3; ++i)
+				prism_nodes[6+i] = nodes[node_ids[8-i]];
+			prism_nodes[9] = nodes[node_ids[12]];
+			prism_nodes[10] = nodes[node_ids[14]];
+			prism_nodes[11] = nodes[node_ids[13]];
+			for (unsigned i=0; i<3; ++i)
+				prism_nodes[12+i] = nodes[node_ids[11-i]];
+			elem = new MeshLib::Prism15(prism_nodes, material);
 			break;
 		}
 		default:
