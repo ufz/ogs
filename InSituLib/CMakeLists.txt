@@ -10,8 +10,12 @@ add_library(InSituLib
 	VtkMappedMesh.cpp
 	VtkMappedMeshSource.h
 	VtkMappedMeshSource.cpp
-	VtkOGSEnum.h
-	VtkOGSEnum.cpp
+)
+
+target_link_libraries(InSituLib
+	BaseLib
+	MeshLib
+	logog
 )
 
 include(AddCatalystDependency)
