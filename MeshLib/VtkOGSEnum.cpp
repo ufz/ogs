@@ -11,9 +11,6 @@
 
 #include <vtkCellType.h>
 
-namespace InSituLib
-{
-
 CellType VtkCellTypeToOGS(int type)
 {
 	CellType ogs;
@@ -139,5 +136,4 @@ int OGSToVtkCellType(CellType ogs)
 	return type;
 }
 
-} // end namespace
 

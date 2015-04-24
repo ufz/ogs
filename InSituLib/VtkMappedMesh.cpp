@@ -28,7 +28,6 @@
 #include "Element.h"
 #include "MeshLib/Node.h"
 #include "MeshEnums.h"
-
 #include "VtkOGSEnum.h"
 
 namespace InSituLib {
