@@ -368,6 +368,7 @@ void getNewellPlane(const std::vector<GeoLib::Point*>& pnts, MathLib::Vector3 &p
 void computeRotationMatrixToXY(MathLib::Vector3 const& n,
 	MathLib::DenseMatrix<double> & rot_mat)
 {
+	// check if normal points already in the right direction
 	if (sqrt(n[0]*n[0]+n[1]*n[1]) == 0) {
 		rot_mat(0,0) = 1.0;
 		rot_mat(0,1) = 0.0;
@@ -380,12 +381,36 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n,
 		rot_mat(2,2) = 1.0;
 		return;
 	}
-	// *** some frequently used terms ***
+
 	// sqrt (n_1^2 + n_3^2)
-	double h0(sqrt(n[0]*n[0]+n[2]*n[2]));
+	double const h0(sqrt(n[0]*n[0]+n[2]*n[2]));
+
+	// In case the x and z components of the normal are both zero the rotation
+	// to the x-z-plane is not required, i.e. only the rotation in the z-axis is
+	// required. The angle is either pi/2 or 3/2*pi. Thus the components of
+	// rot_mat are as follows.
+	if (h0 < std::numeric_limits<double>::epsilon()) {
+		rot_mat(0,0) = 1.0;
+		rot_mat(0,1) = 0.0;
+		rot_mat(0,2) = 0.0;
+		rot_mat(1,0) = 0.0;
+		rot_mat(1,1) = 0.0;
+		if (n[1] > 0)
+			rot_mat(1,2) = -1.0;
+		else
+			rot_mat(1,2) = 1.0;
+		rot_mat(2,0) = 0.0;
+		if (n[1] > 0)
+			rot_mat(2,1) = 1.0;
+		else
+			rot_mat(2,1) = -1.0;
+		rot_mat(2,2) = 0.0;
+		return;
+	}
+
 	double h1(1 / n.getLength());
 
-	// calculate entries of rotation matrix
+	// general case: calculate entries of rotation matrix
 	rot_mat(0, 0) = n[2] / h0;
 	rot_mat(0, 1) = 0;
 	rot_mat(0, 2) = - n[0] / h0;
