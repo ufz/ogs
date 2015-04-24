@@ -46,8 +46,6 @@
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
 
-#include "MeshLib/VtkOGSEnum.h"
-
 vtkStandardNewMacro(VtkMeshSource);
 
 VtkMeshSource::VtkMeshSource() :
