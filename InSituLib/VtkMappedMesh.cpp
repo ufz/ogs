@@ -82,6 +82,24 @@ void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
 			ptIds->SetId(i+3, prism_swap_id);
 		}
 	}
+	else if(GetCellType(cellId) == VTK_QUADRATIC_WEDGE)
+	{
+		std::array<vtkIdType, 15> ogs_nodeIds;
+		for (unsigned i=0; i<15; ++i)
+			ogs_nodeIds[i] = ptIds->GetId(i);
+		for (unsigned i=0; i<3; ++i)
+		{
+			ptIds->SetId(i, ogs_nodeIds[i+3]);
+			ptIds->SetId(i+3, ogs_nodeIds[i]);
+		}
+		for (unsigned i=0; i<3; ++i)
+			ptIds->SetId(6+i, ogs_nodeIds[8-i]);
+		for (unsigned i=0; i<3; ++i)
+			ptIds->SetId(9+i, ogs_nodeIds[14-i]);
+		ptIds->SetId(12, ogs_nodeIds[9]);
+		ptIds->SetId(13, ogs_nodeIds[11]);
+		ptIds->SetId(14, ogs_nodeIds[10]);
+	}
 }
 
 void VtkMappedMeshImpl::GetPointCells(vtkIdType ptId, vtkIdList *cellIds)

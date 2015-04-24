@@ -20,6 +20,7 @@
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/VtkOGSEnum.h"
 #include "VtkColorLookupTable.h"
 
 #include "Color.h"
@@ -44,8 +45,6 @@
 #include <vtkTetra.h>
 #include <vtkTriangle.h>
 #include <vtkWedge.h> // == Prism
-
-#include "MeshLib/VtkOGSEnum.h"
 
 vtkStandardNewMacro(VtkMeshSource);
 
@@ -147,18 +146,39 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			point_ids->SetId(j, elem->getNode(j)->getID());
 
 		type = OGSToVtkCellType(elem->getCellType());
-		if (type==0) {
+		if (type==0)
+		{
 			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
 					CellType2String(elem->getCellType()).c_str());
 			return 0;
 		}
-		if (elem->getCellType() == CellType::PRISM6) {
+
+		if (elem->getCellType() == CellType::PRISM6)
+		{
 			for (unsigned i=0; i<3; ++i)
 			{
 				const unsigned prism_swap_id = point_ids->GetId(i);
 				point_ids->SetId(i, point_ids->GetId(i+3));
 				point_ids->SetId(i+3, prism_swap_id);
 			}
+		}
+		else if (elem->getCellType() == CellType::PRISM15)
+		{
+			std::array<vtkIdType, 15> ogs_nodeIds;
+			for (unsigned i=0; i<15; ++i)
+				ogs_nodeIds[i] = point_ids->GetId(i);
+			for (unsigned i=0; i<3; ++i)
+			{
+				point_ids->SetId(i, ogs_nodeIds[i+3]);
+				point_ids->SetId(i+3, ogs_nodeIds[i]);
+			}
+			for (unsigned i=0; i<3; ++i)
+				point_ids->SetId(6+i, ogs_nodeIds[8-i]);
+			for (unsigned i=0; i<3; ++i)
+				point_ids->SetId(9+i, ogs_nodeIds[14-i]);
+			point_ids->SetId(12, ogs_nodeIds[9]);
+			point_ids->SetId(13, ogs_nodeIds[11]);
+			point_ids->SetId(14, ogs_nodeIds[10]);
 		}
 
 		output->InsertNextCell(type, point_ids);
