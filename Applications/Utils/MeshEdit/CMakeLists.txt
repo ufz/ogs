@@ -154,3 +154,14 @@ ADD_CATALYST_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 
 set_target_properties(CreateBoundaryConditionsAlongPolylines
 	PROPERTIES FOLDER Utilities)
+
+add_executable(queryMesh
+	queryMesh.cpp )
+target_link_libraries(queryMesh
+	FileIO
+	MeshLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
+set_target_properties(queryMesh
+	PROPERTIES FOLDER Utilities)
