@@ -25,7 +25,7 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 : _coords(global_coords)
 {
     assert(e.getDimension() <= global_coords.getDimension());
-    for(size_t i = 0; i < e.getNNodes(); i++)
+    for(unsigned i = 0; i < e.getNNodes(); i++)
         _point_vec.push_back(MeshLib::Node(*(e.getNode(i))));
 
     getRotationMatrixToGlobal(e, global_coords, _point_vec, _matR2global);
@@ -40,18 +40,18 @@ void ElementCoordinatesMappingLocal::rotateToLocal(
     std::vector<MeshLib::Node> &local_pt) const
 {
     // rotate the point coordinates
-    const std::size_t global_dim = global_coords.getDimension();
+    const unsigned global_dim = global_coords.getDimension();
     Eigen::VectorXd dx = Eigen::VectorXd::Zero(global_dim);
     Eigen::VectorXd x_new = Eigen::VectorXd::Zero(3);
-    for(std::size_t i = 0; i < ele.getNNodes(); i++)
+    for(unsigned i = 0; i < ele.getNNodes(); i++)
     {
-        for (std::size_t j=0; j<global_dim; j++)
+        for (unsigned j=0; j<global_dim; j++)
             dx[j] = vec_pt[i].getCoords()[j];
 
         x_new.head(global_dim) = matR2local * dx;
         local_pt[i] = MeshLib::Node(x_new.data());
     }
-};
+}
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
     const Element &e,
@@ -61,7 +61,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
 {
     const std::size_t global_dim = global_coords.getDimension();
 
-    // compute R in x=R*x' where x is original coordinates and x' is local coordinates
+    // compute R in x=R*x' where x are original coordinates and x' are local coordinates
     matR = RotationMatrix::Zero(global_dim, global_dim);
     if (global_dim == e.getDimension()) {
         matR = RotationMatrix::Identity(global_dim, global_dim);
@@ -82,7 +82,6 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
         MathLib::Vector3 plane_normal;
         double d;
         GeoLib::getNewellPlane (pnts, plane_normal, d);
-        //std::cout << "pn=" << plane_normal << std::endl;
         // compute a rotation matrix to XY
         MathLib::DenseMatrix<double> matToXY(3,3,0.0);
         GeoLib::computeRotationMatrixToXY(plane_normal, matToXY);

@@ -86,7 +86,7 @@ class TestQuad4
     static MeshLib::Quad* createXYZ()
     {
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        // rotate 40 degree around x axis
+        // rotate 45 degree around x axis
         nodes[0] = new MeshLib::Node( 1.0,  0.7071067811865475,  0.7071067811865475);
         nodes[1] = new MeshLib::Node(-1.0,  0.7071067811865475,  0.7071067811865475);
         nodes[2] = new MeshLib::Node(-1.0, -0.7071067811865475, -0.7071067811865475);
@@ -118,6 +118,7 @@ class TestQuad4
 
 };
 
+#ifndef NDEBUG
 void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal &mapping)
 {
     std::cout.precision(12);
@@ -136,6 +137,7 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
         std::cout << (matR*v).transpose() << std::endl;
     }
 }
+#endif
 
 // check if using the rotation matrix results in the original coordinates
 #define CHECK_COORDS(ele, mapping)\
@@ -156,7 +158,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
     //debugOutput(ele, mapping);
 
     double exp_R[2*2] = {0, -1,
-                         1,  0}; //row major
+                         1,  0};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
@@ -170,7 +172,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
-    double exp_R[3*3] = {0, 0, -1, 0, 1, 0, 1, 0, 0}; //row major
+    double exp_R[3*3] = {0, 0, -1, 0, 1, 0, 1, 0, 0};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
@@ -184,7 +186,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     //debugOutput(ele, mapping);
 
     double exp_R[2*2] = {0.70710678118654757, -0.70710678118654757,
-                         0.70710678118654757, 0.70710678118654757}; //row major
+                         0.70710678118654757, 0.70710678118654757};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
@@ -199,7 +201,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
 
     double exp_R[3*3] = {0.57735026918962584, -0.81649658092772626,  0,
                          0.57735026918962584,  0.40824829046386313, -0.70710678118654757,
-                         0.57735026918962584,  0.40824829046386313,  0.70710678118654757}; //row major
+                         0.57735026918962584,  0.40824829046386313,  0.70710678118654757};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
@@ -215,11 +217,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     // results when using GeoLib::ComputeRotationMatrixToXY()
     double exp_R[3*3] = {  1, 0,  0,
                            0, 0, -1,
-                           0, 1,  0}; //row major
-//    // results when using GeoLib::ComputeRotationMatrixToXY2()
-//    double exp_R[3*3] = { -1,  0,  0,
-//                           0,  0, -1,
-//                           0, -1,  0}; //row major
+                           0, 1,  0};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
@@ -236,11 +234,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     // results when using GeoLib::ComputeRotationMatrixToXY()
     double exp_R[3*3] = { 0, 0, 1,
                           0, 1, 0,
-                         -1, 0, 0}; //row major
-//    // results when using GeoLib::ComputeRotationMatrixToXY2()
-//    double exp_R[3*3] = {  0,  0, 1,
-//                          -1,  0, 0,
-//                           0, -1, 0}; //row major
+                         -1, 0, 0};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
@@ -257,11 +251,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     // results when using GeoLib::ComputeRotationMatrixToXY()
     double exp_R[3*3] = {  1, 0, 0,
                            0, 0.70710678118654757, -0.70710678118654757,
-                           0, 0.70710678118654757,  0.70710678118654757}; //row major
-//    // results when using GeoLib::ComputeRotationMatrixToXY2()
-//    double exp_R[3*3] = { -1, 0, 0,
-//                           0, -0.70710678118654757, -0.70710678118654757,
-//                           0, -0.70710678118654757,  0.70710678118654757}; //row major
+                           0, 0.70710678118654757,  0.70710678118654757};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
