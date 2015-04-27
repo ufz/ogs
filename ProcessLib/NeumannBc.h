@@ -36,12 +36,10 @@ public:
     NeumannBc(
         NeumannBcConfig* bc,
         unsigned const integration_order,
-        double const scaling_value,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
         MeshLib::MeshSubset const& mesh_subset_all_nodes
         )
         :
-          _scaling_value(scaling_value),
           _function(*bc->getFunction()),
           _integration_order(integration_order)
     {
@@ -97,7 +95,7 @@ public:
 
         auto elementValueLookup = [this](MeshLib::Element const& e)
         {
-            return _function() * _scaling_value;
+            return _function();
         };
 
         DBUG("Calling local Neumann assembler builder for neumann boundary elements.");
@@ -122,8 +120,6 @@ public:
 
 
 private:
-    double const _scaling_value;
-
     MathLib::ConstantFunction<double> const _function;
 
     std::vector<MeshLib::Element const*> _elements;

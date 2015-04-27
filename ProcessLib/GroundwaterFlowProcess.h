@@ -152,7 +152,6 @@ public:
                     hydraulic_head_mesh_element_searcher,
                     _global_setup,
                     _integration_order,
-                    _hydraulic_conductivity,
                     *_local_to_global_index_map,
                     *_mesh_subset_all_nodes);
         }
