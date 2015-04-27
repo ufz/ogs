@@ -39,6 +39,7 @@ protected:
 };
 
 
+/// Configuration of a Neumann type boundary condition read from input file.
 class NeumannBcConfig : public BoundaryConditionConfig
 {
     using ConfigTree = boost::property_tree::ptree;
@@ -76,18 +77,22 @@ public:
                 std::mem_fn(&MeshLib::Element::clone));
     }
 
+    /// Iterator over elements of the boundary condition.
     std::vector<MeshLib::Element*>::const_iterator
     elementsBegin() const
     {
         return _elements.cbegin();
     }
 
+    /// Past the end iterator over elements of the boundary condition.
+    /// \sa elementsBegin().
     std::vector<MeshLib::Element*>::const_iterator
     elementsEnd() const
     {
         return _elements.cend();
     }
 
+    /// Returns the right-hand-side function of the boundary condition.
     MathLib::ConstantFunction<double>*
     getFunction() const
     {
@@ -95,7 +100,8 @@ public:
     }
 
 private:
-    std::vector<MeshLib::Element*> _elements;  ///< boundary domain
+    /// Domain of the boundary condition.
+    std::vector<MeshLib::Element*> _elements;
 
     /// A function given on the domain of the boundary condition.
     MathLib::ConstantFunction<double>* _function = nullptr;
