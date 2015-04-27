@@ -28,30 +28,17 @@ namespace GeoLib
 namespace ProcessLib
 {
 
-class BoundaryCondition
-{
-public:
-    BoundaryCondition(GeoLib::GeoObject const* const geometry)
-        : _geometry(geometry)
-    { }
-
-    virtual ~BoundaryCondition() = default;
-
-protected:
-    GeoLib::GeoObject const* const _geometry;
-};
-
 /// The UniformDirichletBoundaryCondition class describes a constant in space
 /// and time Dirichlet boundary condition.
 /// The expected parameter in the passed configuration is "value" which, when
 /// not present defaults to zero.
-class UniformDirichletBoundaryCondition : public BoundaryCondition
+class UniformDirichletBoundaryCondition
 {
     using ConfigTree = boost::property_tree::ptree;
 public:
     UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
             ConfigTree const& config)
-        : BoundaryCondition(geometry)
+        : _geometry(geometry)
     {
         DBUG("Constructing UniformDirichletBoundaryCondition from config.");
 
@@ -86,6 +73,7 @@ public:
 
 private:
     double _value;
+    GeoLib::GeoObject const* const _geometry;
 };
 
 
