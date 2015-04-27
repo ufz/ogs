@@ -92,6 +92,33 @@ std::vector<std::string> getMeshElemTypeStringsShort()
 	return vec;
 }
 
+const std::string CellType2String(const CellType t)
+{
+#define RETURN_CELL_TYPE_STR(t, type)\
+	if (t == CellType::type)\
+		return #type;
+
+	RETURN_CELL_TYPE_STR(t, LINE2);
+	RETURN_CELL_TYPE_STR(t, LINE3);
+	RETURN_CELL_TYPE_STR(t, QUAD4);
+	RETURN_CELL_TYPE_STR(t, QUAD8);
+	RETURN_CELL_TYPE_STR(t, QUAD9);
+	RETURN_CELL_TYPE_STR(t, HEX8);
+	RETURN_CELL_TYPE_STR(t, HEX20);
+	RETURN_CELL_TYPE_STR(t, HEX27);
+	RETURN_CELL_TYPE_STR(t, TRI3);
+	RETURN_CELL_TYPE_STR(t, TRI6);
+	RETURN_CELL_TYPE_STR(t, TET4);
+	RETURN_CELL_TYPE_STR(t, TET10);
+	RETURN_CELL_TYPE_STR(t, PRISM6);
+	RETURN_CELL_TYPE_STR(t, PRISM15);
+	RETURN_CELL_TYPE_STR(t, PYRAMID5);
+
+	return "none";
+
+#undef RETURN_CELL_TYPE_STR
+}
+
 const std::string MeshQualityType2String(const MeshQualityType t)
 {
     if (t == MeshQualityType::ELEMENTSIZE)

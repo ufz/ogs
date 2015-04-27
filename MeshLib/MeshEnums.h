@@ -86,6 +86,9 @@ std::vector<MeshElemType> getMeshElemTypes();
 /// Returns a vector of strings of mesh element types
 std::vector<std::string> getMeshElemTypeStringsShort();
 
+/// Given a MeshElemType this returns the appropriate string.
+const std::string CellType2String(const CellType t);
+
 const std::string MeshQualityType2String(const MeshQualityType t);
 
 #endif //MESHENUMS_H
