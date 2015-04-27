@@ -42,6 +42,8 @@ void compute2DRotationMatrixToX(MathLib::Vector3 const& v,
     rot_mat(0,0) = rot_mat(1,1) = cos_theta;
     rot_mat(0,1) = sin_theta;
     rot_mat(1,0) = -sin_theta;
+    rot_mat(0,2) = rot_mat(1,2) = rot_mat(2,0) = rot_mat(2,1) = 0.0;
+    rot_mat(2,2) = 1.0;
 }
 
 template <class T_MATRIX>

@@ -157,8 +157,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
-    double exp_R[2*2] = {0, -1,
-                         1,  0};
+    double exp_R[3*3] = {0, -1, 0,
+                         1,  0, 0,
+                         0,  0, 1};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
@@ -185,8 +186,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
-    double exp_R[2*2] = {0.70710678118654757, -0.70710678118654757,
-                         0.70710678118654757, 0.70710678118654757};
+    double exp_R[3*3] = {0.70710678118654757, -0.70710678118654757, 0,
+                         0.70710678118654757,  0.70710678118654757, 0,
+                         0,                    0,                   1};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);

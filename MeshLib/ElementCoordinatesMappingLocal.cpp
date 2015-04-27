@@ -26,47 +26,44 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 {
     assert(e.getDimension() <= global_coords.getDimension());
     for(unsigned i = 0; i < e.getNNodes(); i++)
-        _point_vec.push_back(MeshLib::Node(*(e.getNode(i))));
+        _point_vec.push_back(new MeshLib::Node(*(e.getNode(i))));
 
     getRotationMatrixToGlobal(e, global_coords, _point_vec, _matR2global);
-    rotateToLocal(e, global_coords, _point_vec, _matR2global.transpose(), _point_vec);
+    rotateToLocal(e, global_coords, _matR2global.transpose(), _point_vec);
+}
+
+ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
+{
+	for (auto p : _point_vec) delete p;
 }
 
 void ElementCoordinatesMappingLocal::rotateToLocal(
     const Element &ele,
     const CoordinateSystem &global_coords,
-    const std::vector<MeshLib::Node> &vec_pt,
     const RotationMatrix &matR2local,
-    std::vector<MeshLib::Node> &local_pt) const
+    std::vector<MeshLib::Node*> &vec_pt) const
 {
     // rotate the point coordinates
-    const unsigned global_dim = global_coords.getDimension();
-    Eigen::VectorXd dx = Eigen::VectorXd::Zero(global_dim);
-    Eigen::VectorXd x_new = Eigen::VectorXd::Zero(3);
     for(unsigned i = 0; i < ele.getNNodes(); i++)
     {
-        for (unsigned j=0; j<global_dim; j++)
-            dx[j] = vec_pt[i].getCoords()[j];
-
-        x_new.head(global_dim) = matR2local * dx;
-        local_pt[i] = MeshLib::Node(x_new.data());
+        Eigen::Vector3d  x_new = matR2local * Eigen::Map<Eigen::Vector3d>(const_cast<double*>(vec_pt[i]->getCoords()));
+        vec_pt[i]->setCoords(x_new.data());
     }
 }
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
     const Element &e,
     const CoordinateSystem &global_coords,
-    const std::vector<MeshLib::Node> &vec_pt,
+    const std::vector<MeshLib::Node*> &vec_pt,
     RotationMatrix &matR) const
 {
     const std::size_t global_dim = global_coords.getDimension();
 
     // compute R in x=R*x' where x are original coordinates and x' are local coordinates
-    matR = RotationMatrix::Zero(global_dim, global_dim);
     if (global_dim == e.getDimension()) {
-        matR = RotationMatrix::Identity(global_dim, global_dim);
+        matR = RotationMatrix::Identity();
     } else if (e.getDimension() == 1) {
-        MathLib::Vector3 xx(vec_pt[0], vec_pt[1]);
+        MathLib::Vector3 xx(*vec_pt[0], *vec_pt[1]);
         xx.normalize();
         if (global_dim == 2)
             GeoLib::compute2DRotationMatrixToX(xx, matR);
@@ -74,21 +71,14 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
             GeoLib::compute3DRotationMatrixToX(xx, matR);
         matR.transposeInPlace();
     } else if (global_dim == 3 && e.getDimension() == 2) {
-        std::vector<MathLib::Point3d*> pnts;
-        for (auto& p : vec_pt)
-            pnts.push_back(const_cast<MeshLib::Node*>(&p));
-
         // get plane normal
         MathLib::Vector3 plane_normal;
         double d;
-        GeoLib::getNewellPlane (pnts, plane_normal, d);
+        GeoLib::getNewellPlane (vec_pt, plane_normal, d);
         // compute a rotation matrix to XY
-        MathLib::DenseMatrix<double> matToXY(3,3,0.0);
-        GeoLib::computeRotationMatrixToXY(plane_normal, matToXY);
+        GeoLib::computeRotationMatrixToXY(plane_normal, matR);
         // set a transposed matrix
-        for (size_t i=0; i<global_dim; ++i)
-            for (size_t j=0; j<global_dim; ++j)
-                matR(i, j) = matToXY(j,i);
+        matR.transposeInPlace();
     }
 
 }
