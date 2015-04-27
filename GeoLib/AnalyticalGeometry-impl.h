@@ -50,15 +50,15 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
 {
     // a vector on the plane
     MathLib::Vector3 yy(0, 0, 0);
-    if (fabs(v[0]) > 0.0 && fabs(v[1]) + fabs(v[2]) < std::numeric_limits<double>::epsilon()) {
+    if (std::abs(v[0]) > 0.0 && std::abs(v[1]) + std::abs(v[2]) < std::numeric_limits<double>::epsilon()) {
         yy[2] = 1.0;
-    } else if (fabs(v[1]) > 0.0 && fabs(v[0]) + fabs(v[2]) < std::numeric_limits<double>::epsilon()) {
+    } else if (std::abs(v[1]) > 0.0 && std::abs(v[0]) + std::abs(v[2]) < std::numeric_limits<double>::epsilon()) {
         yy[0] = 1.0;
-    } else if (fabs(v[2]) > 0.0 && fabs(v[0]) + fabs(v[1]) < std::numeric_limits<double>::epsilon()) {
+    } else if (std::abs(v[2]) > 0.0 && std::abs(v[0]) + std::abs(v[1]) < std::numeric_limits<double>::epsilon()) {
         yy[1] = 1.0;
     } else {
         for (unsigned i = 0; i < 3; i++) {
-            if (fabs(v[i]) > 0.0) {
+            if (std::abs(v[i]) > 0.0) {
                 yy[i] = -v[i];
                 break;
             }
