@@ -45,7 +45,7 @@ std::vector<MeshLib::Element*> const& BoundaryElementsSearcher::getBoundaryEleme
 		return this->getBoundaryElementsOnSurface(*dynamic_cast<const GeoLib::Surface*>(&geoObj));
 		break;
 	default:
-		const static std::vector<MeshLib::Element*> dummy;
+		const static std::vector<MeshLib::Element*> dummy(0);
 		return dummy;
 	}
 }
