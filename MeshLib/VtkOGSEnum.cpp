@@ -13,127 +13,88 @@
 
 CellType VtkCellTypeToOGS(int type)
 {
-	CellType ogs;
 	switch (type)
 	{
 		case VTK_LINE:
-			ogs = CellType::LINE2;
-			break;
+			return CellType::LINE2;
 		case VTK_QUADRATIC_EDGE:
-			ogs = CellType::LINE3;
-			break;
+			return CellType::LINE3;
 		case VTK_TRIANGLE:
-			ogs = CellType::TRI3;
-			break;
+			return CellType::TRI3;
 		case VTK_QUADRATIC_TRIANGLE:
-			ogs = CellType::TRI6;
-			break;
+			return CellType::TRI6;
 		case VTK_QUAD:
-			ogs = CellType::QUAD4;
-			break;
+			return CellType::QUAD4;
 		case VTK_QUADRATIC_QUAD:
-			ogs = CellType::QUAD8;
-			break;
+			return CellType::QUAD8;
 		case VTK_BIQUADRATIC_QUAD:
-			ogs = CellType::QUAD9;
-			break;
+			return CellType::QUAD9;
 		case VTK_HEXAHEDRON:
-			ogs = CellType::HEX8;
-			break;
+			return CellType::HEX8;
 		case VTK_QUADRATIC_HEXAHEDRON:
-			ogs = CellType::HEX20;
-			break;
+			return CellType::HEX20;
 		case VTK_TRIQUADRATIC_HEXAHEDRON:
-			ogs = CellType::HEX27;
-			break;
+			return CellType::HEX27;
 		case VTK_TETRA:
-			ogs = CellType::TET4;
-			break;
+			return CellType::TET4;
 		case VTK_QUADRATIC_TETRA:
-			ogs = CellType::TET10;
-			break;
+			return CellType::TET10;
 		case VTK_WEDGE:
-			ogs = CellType::PRISM6;
-			break;
+			return CellType::PRISM6;
 		case VTK_QUADRATIC_WEDGE:
-			ogs = CellType::PRISM15;
-			break;
+			return CellType::PRISM15;
 		case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
-			ogs = CellType::PRISM18;
-			break;
+			return CellType::PRISM18;
 		case VTK_PYRAMID:
-			ogs = CellType::PYRAMID5;
-			break;
+			return CellType::PYRAMID5;
 		case VTK_QUADRATIC_PYRAMID:
-			ogs = CellType::PYRAMID13;
-			break;
+			return CellType::PYRAMID13;
 		default:
-			ogs = CellType::INVALID;
-			break;
+			return CellType::INVALID;
 	}
-	return ogs;
 }
 
 int OGSToVtkCellType(CellType ogs)
 {
-	int type = 0;
 	switch (ogs)
 	{
-		case CellType::INVALID:
-			break;
 		case CellType::LINE2:
-			type = VTK_LINE;
-			break;
+			return VTK_LINE;
 		case CellType::LINE3:
-			type = VTK_QUADRATIC_EDGE;
-			break;
+			return VTK_QUADRATIC_EDGE;
 		case CellType::TRI3:
-			type = VTK_TRIANGLE;
-			break;
+			return VTK_TRIANGLE;
 		case CellType::TRI6:
-			type = VTK_QUADRATIC_TRIANGLE;
-			break;
+			return VTK_QUADRATIC_TRIANGLE;
 		case CellType::QUAD4:
-			type = VTK_QUAD;
-			break;
+			return VTK_QUAD;
 		case CellType::QUAD8:
-			type = VTK_QUADRATIC_QUAD;
-			break;
+			return VTK_QUADRATIC_QUAD;
 		case CellType::QUAD9:
-			type = VTK_BIQUADRATIC_QUAD;
-			break;
+			return VTK_BIQUADRATIC_QUAD;
 		case CellType::HEX8:
-			type = VTK_HEXAHEDRON;
-			break;
+			return VTK_HEXAHEDRON;
 		case CellType::HEX20:
-			type = VTK_QUADRATIC_HEXAHEDRON;
-			break;
+			return VTK_QUADRATIC_HEXAHEDRON;
 		case CellType::HEX27:
-			type = VTK_TRIQUADRATIC_HEXAHEDRON;
-			break;
+			return VTK_TRIQUADRATIC_HEXAHEDRON;
 		case CellType::TET4:
-			type = VTK_TETRA;
-			break;
+			return VTK_TETRA;
 		case CellType::TET10:
-			type = VTK_QUADRATIC_TETRA;
-			break;
+			return VTK_QUADRATIC_TETRA;
 		case CellType::PRISM6:
-			type = VTK_WEDGE;
-			break;
+			return VTK_WEDGE;
 		case CellType::PRISM15:
-			type = VTK_QUADRATIC_WEDGE;
-			break;
+			return VTK_QUADRATIC_WEDGE;
 		case CellType::PRISM18:
-			type = VTK_BIQUADRATIC_QUADRATIC_WEDGE;
-			break;
+			return VTK_BIQUADRATIC_QUADRATIC_WEDGE;
 		case CellType::PYRAMID5:
-			type = VTK_PYRAMID;
-			break;
+			return VTK_PYRAMID;
 		case CellType::PYRAMID13:
-			type = VTK_QUADRATIC_PYRAMID;
-			break;
+			return VTK_QUADRATIC_PYRAMID;
+		default:
+			return -1;
 	}
-	return type;
 }
 
 

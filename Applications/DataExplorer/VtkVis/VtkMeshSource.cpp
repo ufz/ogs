@@ -135,7 +135,6 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 	// Generate mesh elements
 	for (unsigned i = 0; i < nElems; ++i)
 	{
-		int type(0);
 		const MeshLib::Element* elem (elems[i]);
 
 		materialIDs->InsertValue(i, elem->getValue());
@@ -145,8 +144,8 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 		for (unsigned j = 0; j < nElemNodes; ++j)
 			point_ids->SetId(j, elem->getNode(j)->getID());
 
-		type = OGSToVtkCellType(elem->getCellType());
-		if (type==0)
+		const int type = OGSToVtkCellType(elem->getCellType());
+		if (type == -1)
 		{
 			ERR("VtkMeshSource::RequestData(): Unknown element type \"%s\".",
 					CellType2String(elem->getCellType()).c_str());
