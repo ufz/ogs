@@ -33,8 +33,8 @@
 
 #include "UniformDirichletBoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
-#include "NeumannBCAssembler.h"
-#include "NeumannBC.h"
+#include "NeumannBcAssembler.h"
+#include "NeumannBc.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
@@ -147,7 +147,7 @@ public:
 
             // Create a neumann BC for the hydraulic head storing them in the
             // _neumann_bcs vector.
-            _hydraulic_head->createNeumannBCs(
+            _hydraulic_head->createNeumannBcs(
                     std::back_inserter(_neumann_bcs),
                     hydraulic_head_mesh_element_searcher,
                     _global_setup,
@@ -239,7 +239,7 @@ private:
         std::vector<double> values;
     } _dirichlet_bc;
 
-    std::vector<NeumannBC<GlobalSetup>*> _neumann_bcs;
+    std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 
     MeshLib::NodeAdjacencyTable _node_adjacency_table;
 };

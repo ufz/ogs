@@ -19,7 +19,7 @@
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
 #include "NeumannBcConfig.h"
-#include "NeumannBC.h"
+#include "NeumannBc.h"
 
 namespace ProcessLib
 {
@@ -50,7 +50,7 @@ public:
             std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
     template <typename OutputIterator, typename GlobalSetup, typename ...Args>
-    void createNeumannBCs(OutputIterator bcs,
+    void createNeumannBcs(OutputIterator bcs,
         MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
         GlobalSetup const& global_setup,
         Args&&... args)
@@ -58,7 +58,7 @@ public:
         for (NeumannBcConfig* config : _neumann_bc_configs)
         {
             config->initialize(searcher);
-            bcs = new NeumannBC<GlobalSetup>(config, std::forward<Args>(args)...);
+            bcs = new NeumannBc<GlobalSetup>(config, std::forward<Args>(args)...);
         }
     }
 

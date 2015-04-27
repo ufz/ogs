@@ -23,17 +23,17 @@
 #include "MeshLib/MeshSubset.h"
 
 #include "NeumannBcConfig.h"
-#include "NeumannBCAssembler.h"
+#include "NeumannBcAssembler.h"
 #include "MeshLib/MeshSearcher.h"
 
 namespace ProcessLib
 {
 
 template <typename GlobalSetup_>
-class NeumannBC
+class NeumannBc
 {
 public:
-    NeumannBC(
+    NeumannBc(
         NeumannBcConfig* bc,
         unsigned const integration_order,
         double const scaling_value,
@@ -61,7 +61,7 @@ public:
                 _all_mesh_subsets, _elements));
     }
 
-    ~NeumannBC()
+    ~NeumannBc()
     {
         for (auto e : _elements)
             delete e;
