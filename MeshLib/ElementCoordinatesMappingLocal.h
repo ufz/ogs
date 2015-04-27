@@ -57,9 +57,7 @@ public:
 
 private:
     /// rotate points to local coordinates
-    void rotateToLocal(
-            const Element &e, const CoordinateSystem &coordinate_system,
-            const RotationMatrix &matR2local, std::vector<MeshLib::Node*> &vec_pt) const;
+    void rotateToLocal(const RotationMatrix &matR2local, std::vector<MeshLib::Node*> &vec_pt) const;
 
     /// get a rotation matrix to the global coordinates
     /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates

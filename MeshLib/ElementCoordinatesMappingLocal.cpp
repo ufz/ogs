@@ -29,7 +29,7 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
         _point_vec.push_back(new MeshLib::Node(*(e.getNode(i))));
 
     getRotationMatrixToGlobal(e, global_coords, _point_vec, _matR2global);
-    rotateToLocal(e, global_coords, _matR2global.transpose(), _point_vec);
+    rotateToLocal(_matR2global.transpose(), _point_vec);
 }
 
 ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
@@ -38,17 +38,11 @@ ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
 }
 
 void ElementCoordinatesMappingLocal::rotateToLocal(
-    const Element &ele,
-    const CoordinateSystem &global_coords,
     const RotationMatrix &matR2local,
     std::vector<MeshLib::Node*> &vec_pt) const
 {
-    // rotate the point coordinates
-    for(unsigned i = 0; i < ele.getNNodes(); i++)
-    {
-        Eigen::Vector3d  x_new = matR2local * Eigen::Map<Eigen::Vector3d>(const_cast<double*>(vec_pt[i]->getCoords()));
-        vec_pt[i]->setCoords(x_new.data());
-    }
+    for(unsigned i = 0; i < vec_pt.size(); i++)
+        vec_pt[i]->setCoords((matR2local* (*vec_pt[i])).getCoords());
 }
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(

@@ -42,5 +42,23 @@ bool lessEq(const MathLib::Point3d& p0,
             const MathLib::Point3d& p1,
             double tol = std::numeric_limits<double>::epsilon());
 
+/**
+ * rotation of points
+ * @param mat a rotation matrix
+ * @param p   a point to be transformed
+ * @return a rotated point
+ */
+template <typename MATRIX>
+inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
+{
+    MathLib::Point3d new_p;
+    for (std::size_t i(0); i<3; ++i) {
+        for (std::size_t j(0); j<3; ++j) {
+            new_p[i] += mat(i,j)*p[j];
+        }
+    }
+    return new_p;
+}
+
 #endif /* POINT3D_H_ */
 
