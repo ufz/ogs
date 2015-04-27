@@ -13,7 +13,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
-#include "BoundaryCondition.h"
+#include "UniformDirichletBoundaryCondition.h"
 #include "InitialCondition.h"
 
 #include "ProcessVariable.h"

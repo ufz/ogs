@@ -31,7 +31,7 @@
 #include "MeshLib/MeshSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
-#include "BoundaryCondition.h"
+#include "UniformDirichletBoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBCAssembler.h"
 #include "NeumannBC.h"
