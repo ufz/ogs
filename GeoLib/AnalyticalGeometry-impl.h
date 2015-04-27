@@ -78,29 +78,5 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
     }
 }
 
-template <class T_MATRIX>
-void computeRotationMatrixToXY2(const std::vector<MathLib::Point3d*> &vec_pt,
-        T_MATRIX & rot_mat)
-{
-    assert(vec_pt.size()>2);
-    // x"_vec
-    MathLib::Vector3 xx((*vec_pt[0]), (*vec_pt[1]));
-    xx.normalize();
-    // a vector on the plane
-    MathLib::Vector3 yy((*vec_pt[1]), (*vec_pt[2]));
-    // z"_vec
-    MathLib::Vector3 zz(MathLib::crossProduct(xx, yy));
-    zz.normalize();
-    // y"_vec
-    yy = MathLib::crossProduct(zz, xx);
-    yy.normalize();
-
-    for (size_t i=0; i<3; ++i) {
-        rot_mat(0, i) = xx[i];
-        rot_mat(1, i) = yy[i];
-        rot_mat(2, i) = zz[i];
-    }
-}
-
 } // end namespace GeoLib
 

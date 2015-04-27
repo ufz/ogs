@@ -90,15 +90,6 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& plane_normal,
                                MathLib::DenseMatrix<double> & rot_mat);
 
 /**
- * Method computes the rotation matrix that rotates the given vector parallel to the \f$z\f$ axis.
- * @param vec_pt  a vector of 3d points that is rotated parallel to the \f$z\f$ axis
- * @param rot_mat 3x3 rotation matrix
- */
-template <class T_MATRIX>
-void computeRotationMatrixToXY2(const std::vector<MathLib::Point3d*> &vec_pt,
-        T_MATRIX & rot_mat);
-
-/**
  * Method computes the rotation matrix that rotates the given vector parallel to the \f$y\f$ axis.
  * @param plane_normal the (3d) vector that is rotated parallel to the \f$y\f$ axis
  * @param rot_mat 3x3 rotation matrix
