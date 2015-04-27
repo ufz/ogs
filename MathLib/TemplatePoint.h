@@ -78,6 +78,13 @@ public:
 		return _x.data();
 	}
 
+	/** set the coordinates of the point */
+	void setCoords (const T* coords)
+	{
+		for (unsigned i=0; i<DIM; i++)
+			_x[i] = coords[i];
+	}
+
 	/** write point coordinates into stream (used from operator<<)
 	 * \param os a standard output stream
 	 */
