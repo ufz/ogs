@@ -49,10 +49,10 @@ public:
     {
         DBUG("Constructing NeumannBcConfig from config.");
 
-        _value = config.get<double>("value", 0);
-        DBUG("Using value %g", _value);
+        double const value = config.get<double>("value", 0);
+        DBUG("Using value %g", value);
 
-        _function = new MathLib::ConstantFunction<double>(_value);
+        _function = new MathLib::ConstantFunction<double>(value);
     }
 
     ~NeumannBcConfig()
@@ -64,10 +64,8 @@ public:
     }
 
     /// Initialize Neumann type boundary conditions.
-    /// Fills in elements of the particular geometry of the boundary condition
-    /// and the corresponding values.
-    /// The elements are appended to the \c elements vector and the values are
-    /// filled with the constant _value.
+    /// Fills in elements of the particular geometry of the boundary condition.
+    /// The elements are appended to the \c elements vector.
     void initialize(MeshGeoToolsLib::BoundaryElementsSearcher& searcher)
     {
         std::vector<MeshLib::Element*> elems = searcher.getBoundaryElements(*_geometry);
@@ -97,7 +95,6 @@ public:
     }
 
 private:
-    double _value;
     std::vector<MeshLib::Element*> _elements;  ///< boundary domain
 
     /// A function given on the domain of the boundary condition.
