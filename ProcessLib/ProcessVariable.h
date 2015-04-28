@@ -58,7 +58,7 @@ public:
         for (NeumannBcConfig* config : _neumann_bc_configs)
         {
             config->initialize(searcher);
-            bcs = new NeumannBc<GlobalSetup>(config, std::forward<Args>(args)...);
+            bcs = new NeumannBc<GlobalSetup>(*config, std::forward<Args>(args)...);
         }
     }
 

@@ -50,17 +50,17 @@ public:
     /// DOF-table, and a mesh subset.
     /// A local DOF-table, a subset of the given one, is constructed.
     NeumannBc(
-        NeumannBcConfig* bc,
+        NeumannBcConfig const& bc,
         unsigned const integration_order,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
         MeshLib::MeshSubset const& mesh_subset_all_nodes
         )
         :
-          _function(*bc->getFunction()),
+          _function(*bc.getFunction()),
           _integration_order(integration_order)
     {
         // deep copy because the neumann bc config destroys the elements.
-        std::transform(bc->elementsBegin(), bc->elementsEnd(),
+        std::transform(bc.elementsBegin(), bc.elementsEnd(),
                 std::back_inserter(_elements),
                 std::mem_fn(&MeshLib::Element::clone));
 
