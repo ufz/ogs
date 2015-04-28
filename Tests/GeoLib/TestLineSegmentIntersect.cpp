@@ -108,7 +108,33 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments3d)
 	GeoLib::Point c(1.5, 1.5, 1.5);
 	GeoLib::Point d(2.5, 2.5, 2.5);
 	GeoLib::Point s;
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
 
+	// two axis parallel line segments that do not intersect
+	b[0] = 3.0;
+	b[1] = 0.0;
+	b[2] = 0.0;
+	c[0] = 4.0;
+	c[1] = 0.0;
+	c[2] = 0.0;
+	d[0] = 10.0;
+	d[1] = 0.0;
+	d[2] = 0.0;
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+
+	// two axis parallel line segments that do not intersect
+	a[0] = 1000.0;
+	a[1] = 0.0;
+	a[2] = 100.0;
+	b[0] = 400.0;
+	b[1] = 0.0;
+	b[2] = 100.0;
+	c[0] = 300.0;
+	c[1] = 0.0;
+	c[2] = 100.0;
+	d[0] = 0.0;
+	d[1] = 0.0;
+	d[2] = 100.0;
 	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
 }
 
