@@ -98,9 +98,16 @@ public:
 				// TODO at the moment we have only one mesh, later there can be
 				// several meshes. Then we have to assign the referenced mesh
 				// here.
-				_processes.push_back(
-					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
-						*_mesh_vec[0], _process_variables, pc));
+
+				for (auto pc_variable : _process_variables_configs)
+				{
+					if (pc_variable.get<std::string>("type") == "GROUNDWATER_FLOW") {
+					    _processes.push_back(
+							new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
+									*_mesh_vec[0], _process_variables, pc, pc_variable));
+					    break;
+					}
+				}
 			}
 		}
 	}
@@ -168,6 +175,9 @@ private:
 
 	/// Buffer for each process' config used in the process building function.
 	std::vector<ConfigTree> _process_configs;
+
+	/// Buffer for each process' variables config used in the reading of material data.
+	std::vector<ConfigTree> _process_variables_configs;
 
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;

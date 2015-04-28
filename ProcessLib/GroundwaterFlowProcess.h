@@ -47,7 +47,7 @@ class GroundwaterFlowProcess : public Process
 public:
     GroundwaterFlowProcess(MeshLib::Mesh const& mesh,
             std::vector<ProcessVariable> const& variables,
-            ConfigTree const& config)
+            ConfigTree const& config, ConfigTree const& config_variables)
         : Process(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");
@@ -67,6 +67,14 @@ public:
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
         _hydraulic_head = &*variable;
+
+        // Material properties
+        {
+            auto const& pmp_config = config_variables.find("material_property");
+            if (pmp_config == config_variables.not_found())
+                INFO("No material property found.");
+            _material_property = (new GroundwaterFlowMaterialProperty(config_variables.get_child("material_property")));
+        }
 
     }
 
@@ -118,7 +126,7 @@ public:
                 local_asm_builder,
                 _mesh.getElements(),
                 _local_assemblers,
-                _hydraulic_conductivity,
+				*_material_property,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -181,7 +189,7 @@ public:
 private:
     ProcessVariable const* _hydraulic_head = nullptr;
 
-    double const _hydraulic_conductivity = 1e-6;
+    GroundwaterFlowMaterialProperty *_material_property;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;

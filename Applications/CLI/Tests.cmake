@@ -55,3 +55,14 @@ foreach(mesh_size 1e5 1e6)
 		DATA square_${mesh_size}.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach()
+
+AddTest(
+	NAME MaterialPropertyGroundwater
+	PATH MaterialProperty/Groundwater
+	EXECUTABLE ogs
+	EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj
+	WRAPPER time
+	TESTER numdiff
+	DIFF_DATA quad_20x10_result_result.dat
+	DATA quad_20x10_GroundWaterFlow.prj quad_20x10_GroundWaterFlow.vtu quad_20x10_GroundWaterFlow.msh quad_20x10_left_right.gml
+)

@@ -12,6 +12,7 @@ APPEND_SOURCE_FILES(TEST_SOURCES InSituLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES NumLib)
+APPEND_SOURCE_FILES(TEST_SOURCES MaterialLib)
 
 set(TEST_SOURCES ${TEST_SOURCES}
 	FileIO/TestGLIReader.cpp
@@ -35,7 +36,8 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/MeshLib
 	${CMAKE_SOURCE_DIR}/MeshGeoToolsLib
 	${CMAKE_SOURCE_DIR}/NumLib
-	${CMAKE_BINARY_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/BaseLib
+	${CMAKE_SOURCE_DIR}/MaterialLib
 )
 
 add_executable(testrunner testrunner.cpp ${TEST_SOURCES})
@@ -56,6 +58,7 @@ target_link_libraries(testrunner
 	MeshLib
 	MeshGeoToolsLib
 	NumLib
+    MaterialLib
 	logog
 	${BOOST_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
