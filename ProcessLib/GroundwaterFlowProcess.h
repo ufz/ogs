@@ -205,7 +205,7 @@ public:
 private:
     ProcessVariable* _hydraulic_head = nullptr;
 
-    double const _hydraulic_conductivity = 1e-6;
+    double const _hydraulic_conductivity = 1;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
