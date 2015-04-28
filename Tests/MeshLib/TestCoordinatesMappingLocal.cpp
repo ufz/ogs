@@ -116,7 +116,8 @@ class TestQuad4
 
 };
 
-#ifndef NDEBUG
+#if 0
+// keep this function for debugging
 void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal &mapping)
 {
     std::cout.precision(12);
