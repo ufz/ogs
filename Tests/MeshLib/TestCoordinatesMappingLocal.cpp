@@ -36,7 +36,6 @@ class TestLine2
 {
 public:
     typedef MeshLib::Line ElementType;
-    static const unsigned dim = ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;
 
     static MeshLib::Line* createY()
@@ -79,7 +78,6 @@ class TestQuad4
  public:
     // Element information
     typedef MeshLib::Quad ElementType;
-    static const unsigned dim = 2; //ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;
 
     // 2.5D case: inclined
