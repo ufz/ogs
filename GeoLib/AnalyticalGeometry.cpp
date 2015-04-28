@@ -128,9 +128,13 @@ bool lineSegmentIntersect(
 
 	if (parallel(v,w)) {
 		if (parallel(pq,v)) {
-			const double sqr_dist_pq(pq.getSqrLength());
-			if (sqr_dist_pq < sqr_len_v || sqr_dist_pq < sqr_len_w)
+			// check if c is located at v (c-a = t (b-a), t in [0,1])
+			if (qp[0] / v[0] <= 1.0)
 				return true;
+			// check if d is located at v (d-a = t (b-a), t in [0,1])
+			if (MathLib::Vector3(a,d)[0]/v[0] <= 1.0)
+				return true;
+			return false;
 		}
 	}
 
