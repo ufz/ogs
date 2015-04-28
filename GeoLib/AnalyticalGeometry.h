@@ -55,7 +55,8 @@ Orientation getOrientation (const GeoLib::Point* p0,
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
  * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane
- * it holds \f$ n \cdot p + d = 0\f$
+ * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
+ * \cite Ericson:2004:RCD:1121584 .
  * @param pnts points of a closed polyline describing a polygon
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
