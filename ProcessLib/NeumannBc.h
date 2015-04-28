@@ -30,7 +30,7 @@ namespace ProcessLib
 {
 
 /// The NeumannBc class is a process which is integrating a single, Neumann type
-/// boundary conditions in to the global matrix and the right-hand-side.
+/// boundary condition in to the global matrix and the right-hand-side.
 ///
 /// The process operates on a set of elements and a subset of the DOF-table (the
 /// local to global index map). For each element a local assembler is created
@@ -41,7 +41,7 @@ namespace ProcessLib
 /// The creation of the local assemblers and binding to the global matrix and
 /// right-hand-sides happen in the initialize() function.
 /// The integration() function provides calls then the actual integration of the
-/// Neumann boundary conditions.
+/// Neumann boundary condition.
 template <typename GlobalSetup_>
 class NeumannBc
 {
@@ -116,7 +116,7 @@ public:
             return _function();
         };
 
-        DBUG("Calling local Neumann assembler builder for neumann boundary elements.");
+        DBUG("Calling local Neumann assembler builder for Neumann boundary elements.");
         global_setup.execute(
                 local_asm_builder,
                 _elements,
