@@ -138,3 +138,19 @@ target_link_libraries(AddTopLayer
 
 set_target_properties(AddTopLayer
 	PROPERTIES FOLDER Utilities)
+
+add_executable(CreateBoundaryConditionsAlongPolylines
+	CreateBoundaryConditionsAlongPolylines.cpp )
+target_link_libraries(CreateBoundaryConditionsAlongPolylines
+	BaseLib
+	FileIO
+	MathLib
+	MeshLib
+	MeshGeoToolsLib
+	InSituLib
+	${CATALYST_LIBRARIES}
+)
+ADD_CATALYST_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
+
+set_target_properties(CreateBoundaryConditionsAlongPolylines
+	PROPERTIES FOLDER Utilities)
