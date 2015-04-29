@@ -15,10 +15,16 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
+
+#include "NeumannBcConfig.h"
+#include "NeumannBc.h"
+
 namespace ProcessLib
 {
-    class BoundaryCondition;
     class InitialCondition;
+    class UniformDirichletBoundaryCondition;
 }
 
 namespace ProcessLib
@@ -40,28 +46,28 @@ public:
     /// Returns a mesh on which the process variable is defined.
     MeshLib::Mesh const& getMesh() const;
 
-    /// Const iterator over boundary conditions of the process variable.
-    using BoundaryConditionCI = std::vector<BoundaryCondition*>::const_iterator;
+    void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
+            std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
-    /// Returns a BoundaryConditionCI iterator to the beginning.
-    BoundaryConditionCI
-    beginBoundaryConditions() const
+    template <typename OutputIterator, typename GlobalSetup, typename ...Args>
+    void createNeumannBcs(OutputIterator bcs,
+        MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+        GlobalSetup const& global_setup,
+        Args&&... args)
     {
-        return _boundary_conditions.cbegin();
-    }
-
-    /// Returns a past-the-end BoundaryConditionCI iterator.
-    BoundaryConditionCI
-    endBoundaryConditions() const
-    {
-        return _boundary_conditions.cend();
+        for (NeumannBcConfig* config : _neumann_bc_configs)
+        {
+            config->initialize(searcher);
+            bcs = new NeumannBc<GlobalSetup>(*config, std::forward<Args>(args)...);
+        }
     }
 
 private:
     std::string const _name;
     MeshLib::Mesh const& _mesh;
     InitialCondition* _initial_condition;
-    std::vector<BoundaryCondition*> _boundary_conditions;
+    std::vector<UniformDirichletBoundaryCondition*> _dirichlet_bcs;
+    std::vector<NeumannBcConfig*> _neumann_bc_configs;
 };
 
 }   // namespace ProcessLib

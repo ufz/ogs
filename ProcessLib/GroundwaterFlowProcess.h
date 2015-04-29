@@ -28,10 +28,13 @@
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/NodeAdjacencyTable.h"
+#include "MeshLib/MeshSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
-#include "BoundaryCondition.h"
+#include "UniformDirichletBoundaryCondition.h"
 #include "GroundwaterFlowFEM.h"
+#include "NeumannBcAssembler.h"
+#include "NeumannBc.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
@@ -55,7 +58,7 @@ public:
         // Find the corresponding process variable.
         std::string const name = config.get<std::string>("process_variable");
 
-        auto const& variable = std::find_if(variables.cbegin(), variables.cend(),
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
                 [&name](ProcessVariable const& v) {
                     return v.getName() == name;
                 });
@@ -66,7 +69,7 @@ public:
 
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
             name.c_str());
-        _hydraulic_head = &*variable;
+        _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
 
     }
 
@@ -130,14 +133,31 @@ public:
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
                 _hydraulic_head->getMesh());
 
-        using BCCI = ProcessVariable::BoundaryConditionCI;
-        for (BCCI bc = _hydraulic_head->beginBoundaryConditions();
-                bc != _hydraulic_head->endBoundaryConditions(); ++bc)
-        {
-            (*bc)->initialize(
+        _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
+
+        //
+        // Neumann boundary conditions.
+        //
+        {
+            // Find mesh nodes.
+            MeshGeoToolsLib::BoundaryElementsSearcher hydraulic_head_mesh_element_searcher(
+                _hydraulic_head->getMesh(), hydraulic_head_mesh_node_searcher);
+
+            // Create a neumann BC for the hydraulic head storing them in the
+            // _neumann_bcs vector.
+            _hydraulic_head->createNeumannBcs(
+                    std::back_inserter(_neumann_bcs),
+                    hydraulic_head_mesh_element_searcher,
+                    _global_setup,
+                    _integration_order,
+                    *_local_to_global_index_map,
+                    *_mesh_subset_all_nodes);
         }
+
+        for (auto bc : _neumann_bcs)
+            bc->initialize(_global_setup, *_A, *_rhs);
 
     }
 
@@ -151,6 +171,10 @@ public:
 
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
+
+        // Call global assembler for each Neumann boundary local assembler.
+        for (auto bc : _neumann_bcs)
+            bc->integrate(_global_setup);
 
         // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
@@ -179,9 +203,9 @@ public:
     }
 
 private:
-    ProcessVariable const* _hydraulic_head = nullptr;
+    ProcessVariable* _hydraulic_head = nullptr;
 
-    double const _hydraulic_conductivity = 1e-6;
+    double const _hydraulic_conductivity = 1;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
@@ -213,6 +237,8 @@ private:
         std::vector<std::size_t> global_ids;
         std::vector<double> values;
     } _dirichlet_bc;
+
+    std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 
     MeshLib::NodeAdjacencyTable _node_adjacency_table;
 };

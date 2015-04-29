@@ -13,7 +13,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
-#include "BoundaryCondition.h"
+#include "UniformDirichletBoundaryCondition.h"
 #include "InitialCondition.h"
 
 #include "ProcessVariable.h"
@@ -76,9 +76,14 @@ ProcessVariable::ProcessVariable(
 
             if (type == "UniformDirichlet")
             {
-                _boundary_conditions.emplace_back(
+                _dirichlet_bcs.emplace_back(
                     new UniformDirichletBoundaryCondition(
                         geometry, bc_config));
+            }
+            else if (type == "UniformNeumann")
+            {
+                _neumann_bc_configs.emplace_back(
+                    new NeumannBcConfig(geometry, bc_config));
             }
             else
             {
@@ -94,7 +99,10 @@ ProcessVariable::~ProcessVariable()
 {
     delete _initial_condition;
 
-    for(auto p : _boundary_conditions)
+    for(auto p : _dirichlet_bcs)
+        delete p;
+
+    for(auto p : _neumann_bc_configs)
         delete p;
 }
 
@@ -106,6 +114,14 @@ std::string const& ProcessVariable::getName() const
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
     return _mesh;
+}
+
+void ProcessVariable::initializeDirichletBCs(
+    MeshGeoToolsLib::MeshNodeSearcher& searcher,
+    std::vector<std::size_t>& global_ids, std::vector<double>& values)
+{
+    for (UniformDirichletBoundaryCondition* bc : _dirichlet_bcs)
+        bc->initialize(searcher, global_ids, values);
 }
 
 }   // namespace ProcessLib
