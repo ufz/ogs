@@ -49,7 +49,7 @@ public:
     /// return mapped coordinates of the node
     const MeshLib::Node* getMappedCoordinates(size_t node_id) const
     {
-        return _point_vec[node_id];
+        return _vec_nodes[node_id];
     }
 
     /// return a rotation matrix converting to global coordinates
@@ -67,7 +67,7 @@ private:
 
 private:
     const CoordinateSystem _coords;
-    std::vector<MeshLib::Node*> _point_vec;
+    std::vector<MeshLib::Node*> _vec_nodes;
     RotationMatrix _matR2global;
 };
 

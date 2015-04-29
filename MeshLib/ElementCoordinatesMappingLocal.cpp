@@ -26,29 +26,29 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 {
     assert(e.getDimension() <= global_coords.getDimension());
     for(unsigned i = 0; i < e.getNNodes(); i++)
-        _point_vec.push_back(new MeshLib::Node(*(e.getNode(i))));
+        _vec_nodes.push_back(new MeshLib::Node(*(e.getNode(i))));
 
-    getRotationMatrixToGlobal(e, global_coords, _point_vec, _matR2global);
-    rotateToLocal(_matR2global.transpose(), _point_vec);
+    getRotationMatrixToGlobal(e, global_coords, _vec_nodes, _matR2global);
+    rotateToLocal(_matR2global.transpose(), _vec_nodes);
 }
 
 ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
 {
-	for (auto p : _point_vec) delete p;
+	for (auto p : _vec_nodes) delete p;
 }
 
 void ElementCoordinatesMappingLocal::rotateToLocal(
     const RotationMatrix &matR2local,
-    std::vector<MeshLib::Node*> &vec_pt) const
+    std::vector<MeshLib::Node*> &vec_nodes) const
 {
-    for (MeshLib::Node* node : vec_pt)
+    for (MeshLib::Node* node : vec_nodes)
         node->setCoords((matR2local* (*node)).getCoords());
 }
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
     const Element &e,
     const CoordinateSystem &global_coords,
-    const std::vector<MeshLib::Node*> &vec_pt,
+    const std::vector<MeshLib::Node*> &vec_nodes,
     RotationMatrix &matR) const
 {
     const std::size_t global_dim = global_coords.getDimension();
@@ -57,7 +57,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
     if (global_dim == e.getDimension()) {
         matR = RotationMatrix::Identity();
     } else if (e.getDimension() == 1) {
-        MathLib::Vector3 xx(*vec_pt[0], *vec_pt[1]);
+        MathLib::Vector3 xx(*vec_nodes[0], *vec_nodes[1]);
         xx.normalize();
         if (global_dim == 2)
             GeoLib::compute2DRotationMatrixToX(xx, matR);
@@ -68,7 +68,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
         // get plane normal
         MathLib::Vector3 plane_normal;
         double d;
-        GeoLib::getNewellPlane (vec_pt, plane_normal, d);
+        GeoLib::getNewellPlane (vec_nodes, plane_normal, d);
         // compute a rotation matrix to XY
         GeoLib::computeRotationMatrixToXY(plane_normal, matR);
         // set a transposed matrix
