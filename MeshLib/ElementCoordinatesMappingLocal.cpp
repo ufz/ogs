@@ -41,8 +41,8 @@ void ElementCoordinatesMappingLocal::rotateToLocal(
     const RotationMatrix &matR2local,
     std::vector<MeshLib::Node*> &vec_pt) const
 {
-    for(unsigned i = 0; i < vec_pt.size(); i++)
-        vec_pt[i]->setCoords((matR2local* (*vec_pt[i])).getCoords());
+    for (MeshLib::Node* node : vec_pt)
+        node->setCoords((matR2local* (*node)).getCoords());
 }
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
