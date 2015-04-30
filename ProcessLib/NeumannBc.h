@@ -111,7 +111,7 @@ public:
         LocalAssemblerBuilder local_asm_builder(
             initializer, *_local_to_global_index_map);
 
-        auto elementValueLookup = [this](MeshLib::Element const& e)
+        auto elementValueLookup = [this](MeshLib::Element const&)
         {
             return _function();
         };
