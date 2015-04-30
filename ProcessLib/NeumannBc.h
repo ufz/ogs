@@ -77,6 +77,11 @@ public:
 
     ~NeumannBc()
     {
+        for (auto p : _all_mesh_subsets)
+            delete p;
+
+        delete _mesh_subset_all_nodes;
+
         for (auto e : _elements)
             delete e;
 

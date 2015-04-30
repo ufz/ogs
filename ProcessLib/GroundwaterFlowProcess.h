@@ -193,6 +193,9 @@ public:
 
     ~GroundwaterFlowProcess()
     {
+        for (auto p : _neumann_bcs)
+            delete p;
+
         for (auto p : _local_assemblers)
             delete p;
 
