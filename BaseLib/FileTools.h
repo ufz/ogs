@@ -129,8 +129,7 @@ std::string getFileExtension(std::string const& filename);
 
 /**
  * Compares filename's extension with query extension. The comparison is case
- * insensitive done by converting to upper case with the std::toupper()
- * function.
+ * insensitive.
  */
 bool hasFileExtension(std::string const& extension,
                       std::string const& filename);

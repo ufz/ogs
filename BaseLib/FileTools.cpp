@@ -17,6 +17,7 @@
 
 #include <sys/stat.h>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace BaseLib
 {
@@ -116,10 +117,7 @@ std::string getFileExtension(const std::string &path)
 
 bool hasFileExtension(std::string const& extension, std::string const& filename)
 {
-	std::string ext = stringToUpper(extension); // Copy for modification.
-	std::string file_ext = stringToUpper(getFileExtension(filename));
-
-	return ext == file_ext;
+	return boost::iequals(extension, getFileExtension(filename));
 }
 
 std::string copyPathToFileName(const std::string &file_name,
