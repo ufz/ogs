@@ -70,7 +70,7 @@ MeshLib::Mesh* ElementExtraction::removeMeshElements(const std::string &new_mesh
 	}
 }
 
-std::size_t ElementExtraction::searchByMaterialID(unsigned matID)
+std::size_t ElementExtraction::searchByMaterialID(int const matID)
 {
 	boost::optional<MeshLib::PropertyVector<int> const&> opt_pv(
 		this->_mesh.getProperties().getPropertyVector<int>("MaterialIDs")
