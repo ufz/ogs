@@ -39,7 +39,7 @@ public:
      * \param global_coord_system   Global coordinate system
      */
     ElementCoordinatesMappingLocal(const Element &e, const CoordinateSystem &global_coord_system);
-	
+
     /// Destructor
     virtual ~ElementCoordinatesMappingLocal();
 
@@ -53,7 +53,7 @@ public:
     }
 
     /// return a rotation matrix converting to global coordinates
-    const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;};
+    const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;}
 
 private:
     /// rotate points to local coordinates
