@@ -404,19 +404,22 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 	std::vector<GeoLib::Point*>* merged_points (new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* merged_pnt_names(new std::map<std::string, std::size_t>);
 
-	for (std::size_t j(0); j < n_geo_names; j++) {
-		const std::vector<GeoLib::Point*>* pnts(this->getPointVec(geo_names[j]));
+	for (std::size_t j(0); j < n_geo_names; ++j) {
+		GeoLib::PointVec const*const pnt_vec(this->getPointVecObj(geo_names[j]));
+		if (pnt_vec == nullptr)
+			continue;
+		const std::vector<GeoLib::Point*>* pnts(pnt_vec->getVector());
 		if (pnts) {
 			std::size_t n_pnts(0);
 			// do not consider stations
 			if (!dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
 				std::string tmp_name;
 				n_pnts = pnts->size();
-				for (std::size_t k(0); k < n_pnts; k++) {
-					merged_points->push_back(new GeoLib::Point(((*pnts)[k])->getCoords()));
-					if (this->getPointVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
+				for (std::size_t k(0); k < n_pnts; ++k) {
+					merged_points->push_back(new GeoLib::Point(*(*pnts)[k]));
+					if (pnt_vec->getNameOfElementByID(k, tmp_name)) {
 						merged_pnt_names->insert(
-								std::pair<std::string, std::size_t>(tmp_name, pnt_offsets[j] + k));
+								std::make_pair(tmp_name, pnt_offsets[j] + k));
 					}
 				}
 			}
