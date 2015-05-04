@@ -39,10 +39,10 @@ public:
 
 	/// Replaces for all elements of mesh with the value old_value with new_value if possible.
 	/// Returns true if successful or false if the value is already taken.
-	static bool replace(MeshLib::Mesh &mesh, unsigned old_value, unsigned new_value, bool replace_if_exists = false);
+	static bool replace(MeshLib::Mesh &mesh, int const old_value, int const new_value, bool replace_if_exists = false);
 
 	static bool replace(MeshLib::Mesh &mesh, std::string const& property_name,
-		unsigned old_value, unsigned new_value, bool replace_if_exists = false);
+		int const old_value, int const new_value, bool replace_if_exists = false);
 
 	/// Sets new value for all elements having the given element type
 	/// Returns the number of elements having the given element type

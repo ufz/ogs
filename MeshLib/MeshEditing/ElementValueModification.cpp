@@ -24,7 +24,7 @@
 namespace MeshLib {
 
 bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-	std::string const& property_name, unsigned old_value, unsigned new_value,
+	std::string const& property_name, int const old_value, int const new_value,
 	bool replace_if_exists)
 {
 	boost::optional<MeshLib::PropertyVector<int> &> optional_property_value_vec(
@@ -60,7 +60,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 }
 
 bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-	unsigned old_value, unsigned new_value, bool replace_if_exists)
+	int const old_value, int const new_value, bool replace_if_exists)
 {
 	return replace(mesh, "MaterialIDs", old_value, new_value, replace_if_exists);
 }
@@ -95,18 +95,18 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	return nValues;
 }
 
-unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
+int ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
 {
-	boost::optional<MeshLib::PropertyVector<unsigned> &>
+	boost::optional<MeshLib::PropertyVector<int> &>
 		optional_property_value_vec(
-			mesh.getProperties().getPropertyVector<unsigned>("MaterialIDs")
+			mesh.getProperties().getPropertyVector<int>("MaterialIDs")
 		);
 
 	if (!optional_property_value_vec) {
 		return 0;
 	}
 
-	MeshLib::PropertyVector<unsigned> & property_value_vector(
+	MeshLib::PropertyVector<int> & property_value_vector(
 		optional_property_value_vec.get()
 	);
 
