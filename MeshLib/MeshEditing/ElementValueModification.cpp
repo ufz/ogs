@@ -65,7 +65,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 	return replace(mesh, "MaterialIDs", old_value, new_value, replace_if_exists);
 }
 
-unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
+std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
 {
 	boost::optional<MeshLib::PropertyVector<int> &>
 		optional_property_value_vec(
@@ -84,8 +84,8 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	);
 
 	std::vector<int> reverse_mapping(value_mapping.back()+1, 0);
-	const unsigned nValues (value_mapping.size());
-	for (unsigned i=0; i<nValues; ++i)
+	std::size_t const nValues (value_mapping.size());
+	for (std::size_t i=0; i<nValues; ++i)
 		reverse_mapping[value_mapping[i]] = i;
 
 	std::size_t const n_property_values(property_value_vector.size());
@@ -95,7 +95,7 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	return nValues;
 }
 
-int ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
+std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
 {
 	boost::optional<MeshLib::PropertyVector<int> &>
 		optional_property_value_vec(

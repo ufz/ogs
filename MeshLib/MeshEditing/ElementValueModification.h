@@ -35,7 +35,7 @@ class ElementValueModification
 public:
 	/// Reduces the values assigned the elements of mesh to the smallest possible range.
 	/// Returns the number of different values.
-	static unsigned condense(MeshLib::Mesh &mesh);
+	static std::size_t condense(MeshLib::Mesh &mesh);
 
 	/// Replaces for all elements of mesh with the value old_value with new_value if possible.
 	/// Returns true if successful or false if the value is already taken.
@@ -46,7 +46,7 @@ public:
 
 	/// Sets new value for all elements having the given element type
 	/// Returns the number of elements having the given element type
-	static unsigned setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value);
+	static std::size_t setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value);
 
 private:
 	/// Returns sorted values of properties within the PropertyVector
@@ -61,7 +61,7 @@ private:
 			bool exists(false);
 			T const& value (property_vector[i]);
 			std::size_t const size(value_mapping.size());
-			for (unsigned j=0; j<size; ++j) {
+			for (std::size_t j=0; j<size; ++j) {
 				if (value == value_mapping[j]) {
 					exists = true;
 					break;
