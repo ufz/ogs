@@ -461,3 +461,38 @@ TEST_F(MeshLibProperties, CopyConstructor)
 	}
 }
 
+TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
+{
+	ASSERT_TRUE(mesh != nullptr);
+	const std::size_t size(mesh_size*mesh_size*mesh_size);
+
+	std::string const prop_name("TestProperty");
+	boost::optional<MeshLib::PropertyVector<double> &> opt_pv(
+		mesh->getProperties().createNewPropertyVector<double>(prop_name,
+			MeshLib::MeshItemType::Cell, 2)
+	);
+	// PropertyVector should be created in a correct way
+	ASSERT_TRUE(!(!opt_pv));
+
+	MeshLib::PropertyVector<double> & pv(opt_pv.get());
+
+	ASSERT_EQ(0u, pv.getPropertyName().compare(prop_name));
+	ASSERT_EQ(MeshLib::MeshItemType::Cell, pv.getMeshItemType());
+	ASSERT_EQ(2u, pv.getTupleSize());
+	ASSERT_EQ(0u, pv.size());
+
+	// push some values (2 tuples) into the vector
+	for (std::size_t k(0); k<size; k++) {
+		pv.push_back(k);
+		pv.push_back(k);
+	}
+	// check the size, i.e., the number of tuples
+	ASSERT_EQ(size, pv.size());
+	// check the values
+	for (std::size_t k(0); k<size; k++) {
+		ASSERT_EQ(static_cast<double>(k), pv[2*k]);
+		ASSERT_EQ(static_cast<double>(k), pv[2*k+1]);
+	}
+}
+
+

@@ -59,6 +59,11 @@ public:
 		return t;
 	}
 
+	std::size_t size() const
+	{
+		return std::vector<PROP_VAL_TYPE>::size() / _tuple_size;
+	}
+
 protected:
 	/// @brief The constructor taking meta information for the data.
 	/// @param property_name a string describing the property
