@@ -25,7 +25,6 @@
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -97,7 +96,7 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		FileIO::XmlGmlInterface xml_io(geometries);
+		FileIO::BoostXmlGmlInterface xml_io(geometries);
 		xml_io.setNameForExport(new_geo_name);
 		xml_io.writeToFile(output_geometry_fname.getValue());
 	}

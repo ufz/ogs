@@ -34,7 +34,6 @@ if(QT4_FOUND)
 		FileIO
 		InSituLib
 		${CATALYST_LIBRARIES}
-		${QT_LIBRARIES}
 	)
 	ADD_CATALYST_DEPENDENCY(MapGeometryToMeshSurface)
 
