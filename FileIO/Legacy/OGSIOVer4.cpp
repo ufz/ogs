@@ -288,7 +288,7 @@ std::string readSurface(std::istream &in,
                         std::map<std::string,std::size_t>& sfc_names,
                         const std::vector<GeoLib::Polyline*> &ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
-                        std::vector<Point*> &pnt_vec,
+                        GeoLib::PointVec &pnt_vec,
                         std::string const& path, std::vector<std::string>& errors)
 {
 	std::string line;
@@ -401,7 +401,7 @@ std::string readSurfaces(std::istream &in,
                          std::map<std::string, std::size_t>& sfc_names,
                          const std::vector<GeoLib::Polyline*> &ply_vec,
                          const std::map<std::string,std::size_t>& ply_vec_names,
-                         std::vector<Point*> &pnt_vec,
+                         GeoLib::PointVec & pnt_vec,
                          const std::string &path, std::vector<std::string>& errors)
 {
 	if (!in.good())
@@ -479,7 +479,10 @@ bool readGLIFileV4(const std::string& fname,
 	// read names of plys into temporary string-vec
 	std::map<std::string,std::size_t>* ply_names (new std::map<std::string,std::size_t>);
 	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
-	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<Point*>*>(geo->getPointVec(unique_name)));
+	GeoLib::PointVec & point_vec(
+		*const_cast<GeoLib::PointVec*>(geo->getPointVecObj(unique_name)));
+	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
+		point_vec.getVector()));
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
@@ -501,7 +504,7 @@ bool readGLIFileV4(const std::string& fname,
 		                   *sfc_names,
 		                   *ply_vec,
 		                   *ply_names,
-		                   *pnt_vec,
+		                   point_vec,
 		                   path,
 		                   errors);
 		INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());

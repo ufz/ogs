@@ -25,6 +25,7 @@
 // GeoLib
 #include "GeoLib/Point.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/PointVec.h"
 
 // FileIO
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -55,11 +56,12 @@ int main (int argc, char* argv[])
 
 	INFO("reading the TIN file...");
 	const std::string tinFileName(inArg.getValue());
-	std::vector<GeoLib::Point*> pnt_vec;
-	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, pnt_vec));
+	std::vector<GeoLib::Point*> *pnt_vec(new std::vector<GeoLib::Point*>);
+	GeoLib::PointVec point_vec("SurfacePoints", pnt_vec);
+	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
 		return 1;
-	INFO("TIN read:  %d points, %d triangles", pnt_vec.size(), sfc->getNTriangles());
+	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
 
 	INFO("converting to mesh data");
 	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
@@ -69,7 +71,6 @@ int main (int argc, char* argv[])
 	FileIO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
-	for (auto p : pnt_vec) delete p;
 	delete custom_format;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
