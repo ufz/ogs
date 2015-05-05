@@ -418,13 +418,13 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 			continue;
 		}
 
-		std::string tmp_name;
 		std::size_t const n_pnts(pnts->size());
 		for (std::size_t k(0); k < n_pnts; ++k) {
 			merged_points->push_back(new GeoLib::Point(*(*pnts)[k]));
-			if (pnt_vec->getNameOfElementByID(k, tmp_name)) {
+			std::string const& item_name(pnt_vec->getItemNameByID(k));
+			if (! item_name.empty()) {
 				merged_pnt_names->insert(
-					std::make_pair(tmp_name, pnt_offsets[j] + k));
+					std::make_pair(item_name, pnt_offsets[j] + k));
 			}
 		}
 		if (n_geo_names - 1 > j) {
