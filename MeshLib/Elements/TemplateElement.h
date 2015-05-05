@@ -131,7 +131,7 @@ public:
 	unsigned identifyFace(Node* nodes[3]) const
 	{
 		return ELEMENT_RULE::identifyFace(this->_nodes, nodes);
-	};
+	}
 
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
 	virtual double computeVolume() {return ELEMENT_RULE::computeVolume(this->_nodes);}

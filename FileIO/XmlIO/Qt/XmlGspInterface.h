@@ -35,7 +35,7 @@ public:
 	 */
 	XmlGspInterface(ProjectData &project);
 
-	virtual ~XmlGspInterface() {};
+	virtual ~XmlGspInterface() {}
 
 	/// Reads an xml-file containing a GeoSys project.
 	/// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.

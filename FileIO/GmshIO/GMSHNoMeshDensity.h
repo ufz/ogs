@@ -23,8 +23,8 @@ namespace GMSH {
 
 class GMSHNoMeshDensity: public FileIO::GMSH::GMSHMeshDensityStrategy {
 public:
-	GMSHNoMeshDensity() {};
-	virtual ~GMSHNoMeshDensity() {};
+	GMSHNoMeshDensity() {}
+	virtual ~GMSHNoMeshDensity() {}
 	void init(std::vector<GeoLib::Point const*> const& vec)
 	{
 		// to avoid a warning here:
