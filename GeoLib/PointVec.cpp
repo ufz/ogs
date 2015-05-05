@@ -45,6 +45,12 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 		     number_of_all_input_pnts - _data_vec->size());
 
 	correctNameIDMapping();
+	// create the inverse mapping
+	_id_to_name_map.resize(_data_vec->size());
+	// fetch the names from the name id map
+	for (auto p : *_name_id_map) {
+		_id_to_name_map[p.second] = p.first;
+	}
 }
 
 PointVec::~PointVec ()
@@ -52,7 +58,8 @@ PointVec::~PointVec ()
 
 std::size_t PointVec::push_back (Point* pnt)
 {
-	_pnt_id_map.push_back (uniqueInsert(pnt));
+	_pnt_id_map.push_back(uniqueInsert(pnt));
+	_id_to_name_map.push_back("");
 	return _pnt_id_map[_pnt_id_map.size() - 1];
 }
 
@@ -60,11 +67,13 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 {
 	if (name == nullptr) {
 		_pnt_id_map.push_back (uniqueInsert(pnt));
+		_id_to_name_map.push_back("");
 		return;
 	}
 
 	std::map<std::string,std::size_t>::const_iterator it (_name_id_map->find (*name));
 	if (it != _name_id_map->end()) {
+		_id_to_name_map.push_back("");
 		WARN("PointVec::push_back(): two points share the name %s.", name->c_str());
 		return;
 	}
@@ -72,6 +81,7 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 	std::size_t id (uniqueInsert (pnt));
 	_pnt_id_map.push_back (id);
 	(*_name_id_map)[*name] = id;
+	_id_to_name_map.push_back(*name);
 }
 
 std::size_t PointVec::uniqueInsert (Point* pnt)
@@ -205,6 +215,14 @@ void PointVec::correctNameIDMapping()
 			++it;
 		}
 	}
+}
+
+boost::optional<std::string const&> PointVec::getItemNameByID(std::size_t id) const
+{
+	if (_id_to_name_map[id].empty())
+		return boost::optional<std::string const&>();
+	else
+		return boost::optional<std::string const&>(_id_to_name_map[id]);
 }
 
 } // end namespace

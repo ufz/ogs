@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/optional.hpp>
+
 #ifndef POINTVEC_H_
 #define POINTVEC_H_
 
@@ -100,6 +102,8 @@ public:
 
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
 
+	boost::optional<std::string const&> getItemNameByID(std::size_t id) const;
+
 private:
 	/**
 	 * Removes points out of the given point set that have the (nearly) same coordinates, i.e.
@@ -137,6 +141,10 @@ private:
 	 * to their lexicographical order
 	 */
 	std::vector<std::size_t> _pnt_id_map;
+
+	/// The reverse map to the name to id map, for fast lookup of the name to a
+	/// given point id.
+	std::vector<std::string> _id_to_name_map;
 
 	AABB<GeoLib::Point> _aabb;
 };
