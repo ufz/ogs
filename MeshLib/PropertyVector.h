@@ -90,7 +90,8 @@ protected:
 		std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
 		std::size_t tuple_size = 1)
-		: std::vector<PROP_VAL_TYPE>(n_property_values*tuple_size)
+		: std::vector<PROP_VAL_TYPE>(n_property_values*tuple_size),
+		_mesh_item_type(mesh_item_type), _property_name(property_name)
 	{}
 
 	std::size_t const _tuple_size;
