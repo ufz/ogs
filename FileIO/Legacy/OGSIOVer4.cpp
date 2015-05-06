@@ -16,6 +16,8 @@
 #include <limits>
 #include <sstream>
 
+#include <boost/optional.hpp>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -561,15 +563,15 @@ void writeGLIFileV4 (const std::string& fname,
 	std::vector<GeoLib::Point*> const* const pnts (pnt_vec->getVector());
 	std::ofstream os (fname.c_str());
 	if (pnts) {
-		std::string pnt_name;
 		const std::size_t n_pnts(pnts->size());
 		INFO("GeoLib::writeGLIFileV4(): writing %d points to file %s.", n_pnts, fname.c_str());
 		os << "#POINTS" << "\n";
 		os.precision(std::numeric_limits<double>::digits10);
 		for (std::size_t k(0); k < n_pnts; k++) {
 			os << k << " " << *((*pnts)[k]);
-			if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
-				os << " $NAME " << pnt_name;
+			boost::optional<std::string const&> pnt_name(pnt_vec->getItemNameByID(k));
+			if (pnt_name) {
+				os << " $NAME " << pnt_name.get();
 			}
 			os << "\n";
 		}
@@ -628,8 +630,9 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			const std::size_t n_pnts(pnts->size());
 			for (std::size_t k(0); k < n_pnts; k++) {
 				os << pnts_offset + k << " " << *((*pnts)[k]);
-				if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
-					os << " $NAME " << pnt_name;
+				boost::optional<std::string const&> pnt_name(pnt_vec->getItemNameByID(k));
+				if (pnt_name) {
+					os << "$NAME " << pnt_name.get();
 				}
 				os << "\n";
 			}

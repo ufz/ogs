@@ -12,6 +12,8 @@
  *
  */
 
+#include <boost/optional.hpp>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -244,10 +246,10 @@ bool XmlGmlInterface::write()
 				pointTag.setAttribute("y", QString::number((*(*points)[i])[1], 'f'));
 				pointTag.setAttribute("z", QString::number((*(*points)[i])[2], 'f'));
 
-				std::string point_name;
-				if (pnt_vec->getNameOfElementByID(i, point_name))
+				boost::optional<std::string const&> point_name(pnt_vec->getItemNameByID(i));
+				if (point_name)
 					pointTag.setAttribute("name",
-					                      QString::fromStdString(point_name));
+					                      QString::fromStdString(point_name.get()));
 
 				pointsListTag.appendChild(pointTag);
 			}
