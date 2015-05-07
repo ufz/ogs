@@ -30,7 +30,7 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
         : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
-        nodesSubset = new MeshLib::MeshSubset(*mesh, mesh->getNodes());
+        nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
         components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
@@ -142,7 +142,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, some_nodes);
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
 
     std::vector<MeshLib::MeshSubsets*> selected_components;
     selected_components.emplace_back(nullptr);  // empty component
@@ -173,7 +173,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
     for (std::size_t id : ids)
         some_nodes.push_back(const_cast<MeshLib::Node*>(mesh->getNode(id)));
 
-    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, some_nodes);
+    MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
 
     std::vector<MeshLib::MeshSubsets*> selected_components;
     selected_components.emplace_back(nullptr);  // empty component

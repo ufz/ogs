@@ -29,21 +29,21 @@ class MeshSubset
 {
 public:
     /// construct from nodes
-    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items,
+    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items,
         bool const delete_ptr = false)
-        : _msh(msh), _nodes(&vec_items), _eles(nullptr), _delete_ptr(delete_ptr)
+        : _msh(msh), _nodes(vec_items), _eles(nullptr), _delete_ptr(delete_ptr)
     {}
 
     /// construct from elements
-    MeshSubset(const Mesh& msh, std::vector<Element*> const& vec_items,
+    MeshSubset(const Mesh& msh, std::vector<Element*> const* vec_items,
         bool const delete_ptr = false)
-        : _msh(msh), _nodes(nullptr), _eles(&vec_items), _delete_ptr(delete_ptr)
+        : _msh(msh), _nodes(nullptr), _eles(vec_items), _delete_ptr(delete_ptr)
     {}
 
     /// construct from both nodes and elements
-    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_nodes,
-        std::vector<Element*> const& vec_eles, bool const delete_ptr = false)
-        : _msh(msh), _nodes(&vec_nodes), _eles(&vec_eles), _delete_ptr(delete_ptr)
+    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_nodes,
+        std::vector<Element*> const* vec_eles, bool const delete_ptr = false)
+        : _msh(msh), _nodes(vec_nodes), _eles(vec_eles), _delete_ptr(delete_ptr)
     {}
 
     ~MeshSubset()
@@ -117,7 +117,7 @@ public:
         std::vector<Node*>* active_nodes = new std::vector<Node*>;
 
         if (_nodes == nullptr || _nodes->empty())
-            return new MeshSubset(_msh, *active_nodes);   // Empty mesh subset
+            return new MeshSubset(_msh, active_nodes);   // Empty mesh subset
 
         for (auto n : nodes)
         {
@@ -127,7 +127,7 @@ public:
             active_nodes->push_back(n);
         }
 
-        return new MeshSubset(_msh, *active_nodes, true);
+        return new MeshSubset(_msh, active_nodes, true);
     }
 
 private:

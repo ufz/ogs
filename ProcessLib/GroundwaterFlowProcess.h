@@ -79,7 +79,7 @@ public:
 
         DBUG("Construct dof mappings.");
         // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, _mesh.getNodes());
+        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
 
         // Collect the mesh subsets in a vector.
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
