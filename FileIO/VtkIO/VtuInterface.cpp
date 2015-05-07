@@ -43,13 +43,17 @@ VtuInterface::~VtuInterface()
 
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
+	if (!BaseLib::IsFileExisting(file_name))
+		return nullptr;
+
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
 		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-
 	reader->SetFileName(file_name.c_str());
 	reader->Update();
 
 	vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
+	if (vtkGrid->GetNumberOfPoints() == 0)
+		return nullptr;
 
 	std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
 	return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
