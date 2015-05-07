@@ -66,7 +66,8 @@ public:
 	 * @param min_elem_dim Minimum dimension of elements to be inserted into new mesh (i.e.
 	 *                     min_elem_dim=3 will prevent the new mesh to contain 2D elements)
 	 */
-	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps, unsigned min_elem_dim = 1);
+	MeshLib::Mesh* simplifyMesh(const std::string &new_mesh_name, double eps,
+		unsigned min_elem_dim = 1);
 
 	/**
 	 * Create a new mesh where all elements with nonplanar faces are subdivided into simpler
@@ -76,7 +77,8 @@ public:
 
 private:
 	/// Constructs a new node vector for the resulting mesh by removing all nodes whose ID indicates they need to be merged/removed.
-	std::vector<MeshLib::Node*> constructNewNodesArray(const std::vector<std::size_t> &id_map) const;
+	std::vector<MeshLib::Node*> constructNewNodesArray(
+		const std::vector<std::size_t> &id_map) const;
 
 	/// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
 	unsigned getNUniqueNodes(MeshLib::Element const*const element) const;
@@ -85,52 +87,74 @@ private:
 	void resetNodeIDs();
 
 	/// Subdivides an element if it has a face that is not coplanar
-	bool subdivideElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &elements) const;
+	/// @param element the element that will be subdivided
+	/// @param nodes vector containing the nodes the elements originated by the
+	/// subdivision are based on
+	/// @param elements vector of MeshLib::Elements; the elements originated by
+	/// the subdivision will be inserted into elements
+	/// @return the number of elements originated by the subdivision
+	std::size_t subdivideElement(MeshLib::Element const*const element,
+		std::vector<MeshLib::Node*> const& nodes,
+		std::vector<MeshLib::Element*> & elements) const;
 
 	// Revises an element by removing collapsed nodes, using the nodes vector from the result mesh.
-	void reduceElement(MeshLib::Element const*const element,
-	                   unsigned n_unique_nodes,
-	    			   const std::vector<MeshLib::Node*> &nodes,
-	    			   std::vector<MeshLib::Element*> &elements,
-	    			   unsigned min_elem_dim) const;
+	std::size_t reduceElement(MeshLib::Element const*const element,
+		unsigned n_unique_nodes,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &elements,
+		unsigned min_elem_dim) const;
 
 	/// Cleans up all nodes and elements if something went wrong
-	void cleanUp(std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+	void cleanUp(std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a nonplanar quad into two triangles
-	unsigned subdivideQuad(MeshLib::Element const*const quad, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+	unsigned subdivideQuad(MeshLib::Element const*const quad,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a Hex with nonplanar faces into tets
-	unsigned subdivideHex(MeshLib::Element const*const hex, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+	unsigned subdivideHex(MeshLib::Element const*const hex,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a pyramid with a nonplanar base into two tets
-	unsigned subdividePyramid(MeshLib::Element const*const pyramid, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+	unsigned subdividePyramid(MeshLib::Element const*const pyramid,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Subdivides a prism with nonplanar quad faces into two tets
-	unsigned subdividePrism(MeshLib::Element const*const prism, const std::vector<MeshLib::Node*> &nodes, std::vector<MeshLib::Element*> &new_elements) const;
+	unsigned subdividePrism(MeshLib::Element const*const prism,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements) const;
 
 	/// Creates a line element from the first two unique nodes found in the element (element *should* have exactly two unique nodes!)
-	MeshLib::Element* constructLine(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const;
+	MeshLib::Element* constructLine(MeshLib::Element const*const element,
+		const std::vector<MeshLib::Node*> &nodes) const;
 	/// Creates a triangle element from the first three unique nodes found in the element (element *should* have exactly three unique nodes!)
-	MeshLib::Element* constructTri(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes) const;
+	MeshLib::Element* constructTri(MeshLib::Element const*const element,
+		const std::vector<MeshLib::Node*> &nodes) const;
 	/// Creates a quad or a tet, depending if the four nodes being coplanar or not (element *should* have exactly four unique nodes!)
-	MeshLib::Element* constructFourNodeElement(MeshLib::Element const*const element, const std::vector<MeshLib::Node*> &nodes, unsigned min_elem_dim = 1) const;
+	MeshLib::Element* constructFourNodeElement(
+		MeshLib::Element const*const element,
+		const std::vector<MeshLib::Node*> &nodes,
+		unsigned min_elem_dim = 1) const;
 
 	/**
 	 * Reduces a hexahedron element by removing collapsed nodes and constructing one or more new elements from the remaining nodes.
 	 * @return The number of newly created elements
 	 */
 	unsigned reduceHex(MeshLib::Element const*const hex,
-	                   unsigned n_unique_nodes,
-	                   const std::vector<MeshLib::Node*> &nodes,
-	                   std::vector<MeshLib::Element*> &new_elements,
-	                   unsigned min_elem_dim) const;
+		unsigned n_unique_nodes,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements,
+		unsigned min_elem_dim) const;
 	/// Reduces a pyramid element by removing collapsed nodes and constructing a new elements from the remaining nodes.
 	void reducePyramid(MeshLib::Element const*const pyramid,
-	                   unsigned n_unique_nodes,
-	                   const std::vector<MeshLib::Node*> &nodes,
-	                   std::vector<MeshLib::Element*> &new_elements,
-	                   unsigned min_elem_dim) const;
+		unsigned n_unique_nodes,
+		const std::vector<MeshLib::Node*> &nodes,
+		std::vector<MeshLib::Element*> &new_elements,
+		unsigned min_elem_dim) const;
 	/**
 	 * Reduces a prism element by removing collapsed nodes and constructing one or two new elements from the remaining nodes.
 	 * @return The number of newly created elements
@@ -152,7 +176,8 @@ private:
 	const std::array<unsigned,4> lutHexCuttingQuadNodes(unsigned id1, unsigned id2) const;
 
 	/// When a hex is subdivided into two prisms, this returns the nodes of the hex edge that will serve as the back of one of the prisms.
-	const std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j, unsigned k, unsigned l) const;
+	const std::pair<unsigned, unsigned> lutHexBackNodes(
+		unsigned i, unsigned j, unsigned k, unsigned l) const;
 
 	/// Lookup-table for returning the third node of bottom or top triangle given the other two
 	unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
