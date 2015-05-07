@@ -15,116 +15,84 @@
 #ifndef OCTTREE_H_
 #define OCTTREE_H_
 
+#include <cstdint>
+
+#include "MathLib/Point3d.h"
+#include "MathLib/MathTools.h"
+
 namespace GeoLib {
 
-template <typename POINT> class OctTree {
+/// @tparam POINT point data type the OctTree will use
+/// @tparam MAX_POINTS maximum number of pointers of POINT in a leaf
+template <typename POINT, std::size_t MAX_POINTS>
+class OctTree {
 public:
+	/// Create an OctTree object. The arguments ll and ur are used to compute a
+	/// cube domain the OctTree will living in.
+	/// @attention This cubic domain can not be resized during the life time of
+	/// the OctTree.
+	/// @param ll lower left front point, used for computation of cubic domain
+	/// @param ur upper right back point, used for computation of cubic domain
+	/// @param eps the euclidean distance as a threshold to make objects unique
+	/// [default std::numeric_limits<double>::epsilon()]
+	/// @param max_items_per_node The max number of items per OctTree node.
+	/// Adding a new item to an already "filled" OctTree node results in a
+	/// split of the OctTree node. The smaller this number is the more leaves
+	/// the OctTree will have, i.e. it needs more memory and more time to walk
+	/// through the OctTree, but the search inside a leaf is fast. In
+	/// contrast a big value results into a smaller number of OctTree leaves,
+	/// the memory requirements for the OctTree may be lower but the search
+	/// inside a OctTree leaf may be more expensive. The value should be
+	/// choosen application dependend. [default 8]
+	template <typename T>
+	static OctTree<POINT, MAX_POINTS> createOctTree(T ll, T ur,
+		double eps = std::numeric_limits<double>::epsilon());
 
-	static OctTree<POINT>* createOctTree(POINT & ll, POINT & ur, std::size_t max_points_per_node)
+	/// Destroys the children of this node. @attention Does not destroy the
+	/// pointers to the managed objects.
+	virtual ~OctTree();
+
+	/// This method adds the given point to the OctTree. If necessary,
+	/// new OctTree nodes will be inserted deploying a split of the
+	/// corresponding OctTree node.
+	/// @param pnt the pointer to a point that should be inserted
+	/// @param ret_pnt the pointer to a point in the OctTree. Three cases can
+	/// occure:
+	/// (1) ret_pnt is nullptr: the given point (pnt) is outside of the OctTree
+	/// domain
+	/// (2) ret_pnt is equal to pnt: the point is added to the OctTree
+	/// (3) In case ret_pnt is neither equal to pnt nor equal to nullptr,
+	/// another item within the eps distance is already in the OctTree and the
+	/// pointer to this object is returned.
+	/// @return If the point can be inserted the method returns true, else false.
+	bool addPoint(POINT * pnt, POINT *& ret_pnt);
+
+	/// range query - returns all points inside the range [min[0], max[0]) x
+	/// [min[1], max[1]) x [min[2], max[2])
+	/// @param min
+	/// @param max
+	/// @param pnts
+	template <typename T>
+	void
+	getPointsInRange(T const& min, T const& max, std::vector<POINT*> &pnts) const;
+
+#ifndef NDEBUG
+	MathLib::Point3d const& getLowerLeftCornerPoint() const { return _ll; }
+	MathLib::Point3d const& getUpperRightCornerPoint() const { return _ur; }
+	OctTree<POINT, MAX_POINTS> const* getChild(std::size_t i) const
 	{
-		const double dx(ur[0] - ll[0]);
-		const double dy(ur[1] - ll[1]);
-		const double dz(ur[2] - ll[2]);
-
-		if (dx >= dy && dx >= dz) {
-			ll[1] -= (dx-dy)/2.0;
-			ur[1] += (dx-dy)/2.0;
-			ll[2] -= (dx-dz)/2.0;
-			ur[2] += (dx-dz)/2.0;
-		} else {
-			if (dy >= dx && dy >= dz) {
-				ll[0] -= (dy-dx)/2.0;
-				ur[0] += (dy-dx)/2.0;
-				ll[2] -= (dy-dz)/2.0;
-				ur[2] += (dy-dz)/2.0;
-			} else {
-				ll[0] -= (dz-dx)/2.0;
-				ur[0] += (dz-dx)/2.0;
-				ll[1] -= (dz-dy)/2.0;
-				ur[1] += (dz-dy)/2.0;
-			}
-		}
-
-		OctTree<POINT>::_max_points_per_node = max_points_per_node;
-		return new OctTree<POINT>(ll, ur);
+		return _children[i];
 	}
-
-	virtual ~OctTree()
-	{
-		for (std::size_t k(0); k < 8; k++)
-			delete _childs[k];
-	}
-
-	/**
-	 * This method adds the given point to the OctTree. If necessary,
-	 * the OctTree will be extended.
-	 * @param pnt the point
-	 * @return If the point can be inserted the method returns true, else false.
-	 */
-	bool addPoint (POINT* pnt)
-	{
-		if ((*pnt)[0] < _ll[0]) return false;
-		if ((*pnt)[0] > _ur[0]) return false;
-		if ((*pnt)[1] < _ll[1]) return false;
-		if ((*pnt)[1] > _ur[1]) return false;
-		if ((*pnt)[2] < _ll[2]) return false;
-		if ((*pnt)[2] > _ur[2]) return false;
-
-		if (!_is_leaf) {
-			for (std::size_t k(0); k < 8; k++) {
-				if (_childs[k]->addPoint (pnt)) {
-					return true;
-				}
-			}
-		}
-
-		// check if point is already in OctTree
-		bool pnt_in_tree (false);
-		for (std::size_t k(0); k < _pnts.size() && !pnt_in_tree; k++) {
-			const double sqr_dist (MathLib::sqrDist( (_pnts[k])->getCoords(), pnt->getCoords() ));
-			if (sqr_dist < std::numeric_limits<double>::epsilon())
-				pnt_in_tree = true;
-		}
-		if (!pnt_in_tree)
-			_pnts.push_back (pnt);
-		else
-			return false;
-
-		if (_pnts.size () > OctTree<POINT>::_max_points_per_node)
-			splitNode ();
-		return true;
-	}
-
-	/**
-	 * range query - returns all points inside the range (min[0], max[0]) x (min[1], max[1]) x (min[2], max[2])
-	 * @param min
-	 * @param max
-	 * @param pnts
-	 */
-	void getPointsInRange(POINT const& min, POINT const& max, std::vector<POINT*> &pnts) const
-	{
-		if (_ur[0] < min[0]) return;
-		if (_ur[1] < min[1]) return;
-		if (_ur[2] < min[2]) return;
-
-		if (max[0] < _ll[0]) return;
-		if (max[1] < _ll[1]) return;
-		if (max[2] < _ll[2]) return;
-
-		if (_is_leaf) {
-			typename std::vector<POINT*>::const_iterator it;
-			for (it = (_pnts.begin()); it != _pnts.end(); it++) {
-				pnts.push_back(*it);
-			}
-		} else {
-			for (std::size_t k(0); k<8; k++) {
-				_childs[k]->getPointsInRange(min, max, pnts);
-			}
-		}
-	}
+	std::vector<POINT*> const& getPointVector() const { return _pnts; }
+#endif
 
 private:
-	enum class OctTreeQuadrant {
+	/// private constructor
+	/// @param ll lower left point
+	/// @param ur upper right point
+	OctTree(MathLib::Point3d const& ll, MathLib::Point3d const& ur, double eps);
+
+	enum class Quadrant : std::int8_t {
 		NEL = 0, //!< north east lower
 		NWL, //!< north west lower
 		SWL, //!< south west lower
@@ -135,114 +103,54 @@ private:
 		SEU //!< south east upper
 	};
 
-	/**
-	 * private constructor
-	 * @param ll lower left point
-	 * @param ur upper right point
-	 * @return
-	 */
-	OctTree (POINT const& ll, POINT const& ur) :
-		_ll (ll), _ur (ur), _is_leaf (true)
-	{
-		// init childs
-		for (std::size_t k(0); k < 8; k++)
-			_childs[k] = NULL;
-	}
-
-	void splitNode ()
-	{
-		const double x_mid((_ur[0] + _ll[0]) / 2.0);
-		const double y_mid((_ur[1] + _ll[1]) / 2.0);
-		const double z_mid((_ur[2] + _ll[2]) / 2.0);
-		POINT p0(x_mid, y_mid, _ll[2]), p1(_ur[0], _ur[1], z_mid);
-
-		// create child NEL
-		_childs[OctTreeQuadrant::NEL] = new OctTree<POINT> (p0, p1);
-
-		// create child NWL
-		p0[0] = _ll[0];
-		p1[0] = x_mid;
-		_childs[OctTreeQuadrant::NWL] = new OctTree<POINT> (p0, p1);
-
-		// create child SWL
-		p0[1] = _ll[1];
-		p1[1] = y_mid;
-		_childs[OctTreeQuadrant::SWL] = new OctTree<POINT> (_ll, p1);
-
-		// create child NEU
-		_childs[OctTreeQuadrant::NEU] = new OctTree<POINT> (p1, _ur);
-
-		// create child SEL
-		p0[0] = x_mid;
-		p1[0] = _ur[0];
-		_childs[OctTreeQuadrant::SEL] = new OctTree<POINT> (p0, p1);
-
-		// create child NWU
-		p0[0] = _ll[0];
-		p0[1] = y_mid;
-		p0[2] = z_mid;
-		p1[0] = x_mid;
-		p1[1] = _ur[1];
-		p1[2] = _ur[2];
-		_childs[OctTreeQuadrant::NWU] = new OctTree<POINT> (p0, p1);
-
-		// create child SWU
-		p0[1] = _ll[1];
-		p1[1] = y_mid;
-		_childs[OctTreeQuadrant::SWU] = new OctTree<POINT> (p0, p1);
-
-		// create child SEU
-		p0[0] = x_mid;
-		p1[0] = _ur[0];
-		p1[1] = y_mid;
-		p1[2] = _ur[2];
-		_childs[SEU] = new OctTree<POINT> (p0, p1);
-
-		// distribute points to sub quadtrees
-		const std::size_t n_pnts(_pnts.size());
-		for (std::size_t j(0); j < n_pnts; j++) {
-			bool nfound(true);
-			for (std::size_t k(0); k < 8 && nfound; k++) {
-				if (_childs[k]->addPoint(_pnts[j])) {
-					nfound = false;
-				}
-			}
-		}
-		_pnts.clear();
-		_is_leaf = false;
-	}
+	/// This method tries to add the given point to the OctTree. If necessary
+	/// for adding the point, new nodes will be inserted into the OctTree.
+	/// @param pnt, ret_pnt see documentation of addPoint()
+	/// @return If the point can be inserted the method returns true, else false.
+	bool addPoint_(POINT * pnt, POINT *& ret_pnt);
 
 	/**
-	 * childs are sorted:
-	 *   _childs[0] is north east lower child
-	 *   _childs[1] is north west lower child
-	 *   _childs[2] is south west lower child
-	 *   _childs[3] is south east lower child
-	 *   _childs[4] is north east upper child
-	 *   _childs[5] is north west upper child
-	 *   _childs[6] is south west upper child
-	 *   _childs[7] is south east upper child
+	 * This method adds the given point to the OctTree. If necessary,
+	 * the OctTree will be extended.
+	 * @param pnt the point
+	 * @return If the point can be inserted the method returns true, else false.
 	 */
-	OctTree<POINT>* _childs[8];
-	/**
-	 * lower left front face point of the cube
-	 */
-	POINT const _ll;
-	/**
-	 * upper right back face point of the cube
-	 */
-	POINT const _ur;
+	bool addPointToChild(POINT* pnt);
 
+	/// Creates the child nodes of this leaf and distribute the points stored
+	/// in _pnts to the children.
+	/// @param pnt the pointer to the points that is responsible for the split
+	void splitNode(POINT * pnt);
+
+	/// checks if the given point pnt is outside of the OctTree node.
+	/// @param pnt the point that check is performed on
+	/// @return true if the point is outside of the OctTree node.
+	bool isOutside(POINT * pnt) const;
+
+	/// children are sorted:
+	///   _children[0] is north east lower child
+	///   _children[1] is north west lower child
+	///   _children[2] is south west lower child
+	///   _children[3] is south east lower child
+	///   _children[4] is north east upper child
+	///   _children[5] is north west upper child
+	///   _children[6] is south west upper child
+	///   _children[7] is south east upper child
+	std::array<OctTree<POINT, MAX_POINTS>*, 8> _children;
+	/// lower left front face point of the cube
+	MathLib::Point3d const _ll;
+	/// upper right back face point of the cube
+	MathLib::Point3d const _ur;
+	/// vector of pointers to POINT objects
 	std::vector<POINT*> _pnts;
+	/// flag if this OctTree is a leaf
 	bool _is_leaf;
-	/**
-	 * maximum number of points per leaf
-	 */
-	static std::size_t _max_points_per_node;
+	/// threshold for point uniqueness
+	double const _eps;
 };
 
-template <typename POINT> std::size_t OctTree<POINT>::_max_points_per_node = 0;
-
 } // end namespace GeoLib
+
+#include "OctTree-impl.h"
 
 #endif /* OCTTREE_H_ */
