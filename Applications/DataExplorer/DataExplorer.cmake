@@ -15,8 +15,8 @@ set(MOC_HEADERS
 # UI files
 set(UIS
 	mainwindow.ui
-	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/OGSFileConverter.ui
-	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/FileList.ui
+	../Utils/OGSFileConverter/OGSFileConverter.ui
+	../Utils/OGSFileConverter/FileList.ui
 )
 
 
