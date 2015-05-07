@@ -28,6 +28,7 @@
 #include "Element.h"
 #include "MeshLib/Node.h"
 #include "MeshEnums.h"
+#include "VtkOGSEnum.h"
 
 namespace InSituLib {
 
@@ -59,34 +60,7 @@ vtkIdType VtkMappedMeshImpl::GetNumberOfCells()
 
 int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 {
-	int type = 0;
-	switch ((*_elements)[cellId]->getGeomType())
-	{
-		case MeshElemType::INVALID:
-			break;
-		case MeshElemType::LINE:
-			type = VTK_LINE;
-			break;
-		case MeshElemType::TRIANGLE:
-			type = VTK_TRIANGLE;
-			break;
-		case MeshElemType::QUAD:
-			type = VTK_QUAD;
-			break;
-		case MeshElemType::HEXAHEDRON:
-			type = VTK_HEXAHEDRON;
-			break;
-		case MeshElemType::TETRAHEDRON:
-			type = VTK_TETRA;
-			break;
-		case MeshElemType::PRISM:
-			type = VTK_WEDGE;
-			break;
-		case MeshElemType::PYRAMID:
-			type = VTK_PYRAMID;
-			break;
-	}
-	return type;
+	return OGSToVtkCellType((*_elements)[cellId]->getCellType());
 }
 
 void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
@@ -107,6 +81,24 @@ void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
 			ptIds->SetId(i, ptIds->GetId(i+3));
 			ptIds->SetId(i+3, prism_swap_id);
 		}
+	}
+	else if(GetCellType(cellId) == VTK_QUADRATIC_WEDGE)
+	{
+		std::array<vtkIdType, 15> ogs_nodeIds;
+		for (unsigned i=0; i<15; ++i)
+			ogs_nodeIds[i] = ptIds->GetId(i);
+		for (unsigned i=0; i<3; ++i)
+		{
+			ptIds->SetId(i, ogs_nodeIds[i+3]);
+			ptIds->SetId(i+3, ogs_nodeIds[i]);
+		}
+		for (unsigned i=0; i<3; ++i)
+			ptIds->SetId(6+i, ogs_nodeIds[8-i]);
+		for (unsigned i=0; i<3; ++i)
+			ptIds->SetId(9+i, ogs_nodeIds[14-i]);
+		ptIds->SetId(12, ogs_nodeIds[9]);
+		ptIds->SetId(13, ogs_nodeIds[11]);
+		ptIds->SetId(14, ogs_nodeIds[10]);
 	}
 }
 
@@ -133,16 +125,16 @@ void VtkMappedMeshImpl::GetIdsOfCellsOfType(int type, vtkIdTypeArray *array)
 
 	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
 	{
-		if ((*elem)->getGeomType() == VtkCellTypeToOGS(type))
+		if ((*elem)->getCellType() == VtkCellTypeToOGS(type))
 			array->InsertNextValue((*elem)->getID());
 	}
 }
 
 int VtkMappedMeshImpl::IsHomogeneous()
 {
-	MeshElemType type = (*(_elements->begin()))->getGeomType();
+	CellType type = (*(_elements->begin()))->getCellType();
 	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
-		if((*elem)->getGeomType() != type)
+		if((*elem)->getCellType() != type)
 			return 0;
 	return 1;
 }

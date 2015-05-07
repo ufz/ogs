@@ -70,39 +70,6 @@ private:
 	const std::vector<MeshLib::Node*>* _nodes;
 	const std::vector<MeshLib::Element*>* _elements;
 	vtkIdType NumberOfCells;
-
-	static MeshElemType VtkCellTypeToOGS(int type)
-	{
-		MeshElemType ogs;
-		switch (type)
-		{
-			case VTK_LINE:
-				ogs = MeshElemType::LINE;
-				break;
-			case VTK_TRIANGLE:
-				ogs = MeshElemType::TRIANGLE;
-				break;
-			case VTK_QUAD:
-				ogs = MeshElemType::QUAD;
-				break;
-			case VTK_HEXAHEDRON:
-				ogs = MeshElemType::HEXAHEDRON;
-				break;
-			case VTK_TETRA:
-				ogs = MeshElemType::TETRAHEDRON;
-				break;
-			case VTK_WEDGE:
-				ogs = MeshElemType::PRISM;
-				break;
-			case VTK_PYRAMID:
-				ogs = MeshElemType::PYRAMID;
-				break;
-			default:
-				ogs = MeshElemType::INVALID;
-				break;
-		}
-		return ogs;
-	}
 };
 
 vtkMakeMappedUnstructuredGrid(VtkMappedMesh, VtkMappedMeshImpl)

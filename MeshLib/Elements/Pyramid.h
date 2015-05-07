@@ -17,10 +17,12 @@
 
 #include "TemplateElement.h"
 #include "PyramidRule5.h"
+#include "PyramidRule13.h"
 
 namespace MeshLib {
 
 typedef TemplateElement<PyramidRule5> Pyramid;
+typedef TemplateElement<PyramidRule13> Pyramid13;
 
 }
 
