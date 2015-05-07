@@ -33,7 +33,7 @@ if(COMPILER_IS_GCC)
 	endif()
 	if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		message(STATUS "Set GCC release flags")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=native -DNDEBUG")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -DNDEBUG")
 		# Disable -march=native on mac or Ninja generator
 		if(NOT APPLE AND NOT "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
