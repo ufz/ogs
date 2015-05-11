@@ -51,7 +51,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Prepare mesh items where data are assigned
     //--------------------------------------------------------------------------
     const MeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
-                                                           ex1.msh->getNodes());
+                                                          &ex1.msh->getNodes());
 
     //--------------------------------------------------------------------------
     // Allocate a coefficient matrix, RHS and solution vectors

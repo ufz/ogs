@@ -32,7 +32,7 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
         : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
-        nodesSubset = new MeshLib::MeshSubset(*mesh, mesh->getNodes());
+        nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
         components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));

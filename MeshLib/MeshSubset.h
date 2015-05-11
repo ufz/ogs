@@ -28,23 +28,50 @@ namespace MeshLib
 class MeshSubset
 {
 public:
-    /// construct from nodes
-    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
-        : _msh(msh), _nodes(&vec_items), _eles(nullptr)
+    /// Construct a mesh subset from vector of nodes on the given mesh.
+    /// \param msh Mesh
+    /// \param vec_items Vector of Node pointers.
+    /// \param delete_ptr Deletes the vector of Node pointers if true.
+    /// \note When delete_ptr is set only the vector is deleted, not the
+    /// elements of the vector.
+    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_items,
+        bool const delete_ptr = false)
+        : _msh(msh), _nodes(vec_items), _eles(nullptr), _delete_ptr(delete_ptr)
     {}
 
-    /// construct from elements
-    MeshSubset(const Mesh& msh, std::vector<Element*> const& vec_items)
-        : _msh(msh), _nodes(nullptr), _eles(&vec_items)
+    /// Construct a mesh subset from vector of elements on the given mesh.
+    /// \param msh Mesh
+    /// \param vec_items Vector of Element pointers.
+    /// \param delete_ptr Deletes the vector of Element pointers if true.
+    /// \note When delete_ptr is set only the vector is deleted, not the
+    /// elements of the vector.
+    MeshSubset(const Mesh& msh, std::vector<Element*> const* vec_items,
+        bool const delete_ptr = false)
+        : _msh(msh), _nodes(nullptr), _eles(vec_items), _delete_ptr(delete_ptr)
     {}
 
     /// construct from both nodes and elements
-    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_nodes,
-               std::vector<Element*> const& vec_eles)
-        : _msh(msh), _nodes(&vec_nodes), _eles(&vec_eles)
+    /// Construct a mesh subset from vector of nodes and a vector of elements on
+    /// the given mesh.
+    /// \param msh Mesh
+    /// \param vec_nodes Vector of Node pointers.
+    /// \param vec_eles Vector of Element pointers.
+    /// \param delete_ptr Deletes the vector of Node pointers if true.
+    /// \note When delete_ptr is set only the vectors are deleted, not the
+    /// elements of the vectors.
+    MeshSubset(const Mesh& msh, std::vector<Node*> const* vec_nodes,
+        std::vector<Element*> const* vec_eles, bool const delete_ptr = false)
+        : _msh(msh), _nodes(vec_nodes), _eles(vec_eles), _delete_ptr(delete_ptr)
     {}
 
-    ~MeshSubset() {}
+    ~MeshSubset()
+    {
+        if (_delete_ptr)
+        {
+            delete _nodes;
+            delete _eles;
+        }
+    }
 
     /// return the total number of mesh items
     std::size_t getNTotalItems() const
@@ -108,7 +135,7 @@ public:
         std::vector<Node*>* active_nodes = new std::vector<Node*>;
 
         if (_nodes == nullptr || _nodes->empty())
-            return new MeshSubset(_msh, *active_nodes);   // Empty mesh subset
+            return new MeshSubset(_msh, active_nodes);   // Empty mesh subset
 
         for (auto n : nodes)
         {
@@ -118,13 +145,16 @@ public:
             active_nodes->push_back(n);
         }
 
-        return new MeshSubset(_msh, *active_nodes);
+        // Transfer the ownership of active_nodes to the new MeshSubset, which
+        // deletes the pointer itself.
+        return new MeshSubset(_msh, active_nodes, true);
     }
 
 private:
-    const Mesh& _msh;
+    Mesh const& _msh;
     std::vector<Node*> const* _nodes;
     std::vector<Element*> const* _eles;
+    bool const _delete_ptr = false;
 
 };
 

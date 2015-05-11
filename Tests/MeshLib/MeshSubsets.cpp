@@ -22,9 +22,9 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
 
 	std::vector<Node*> const empty_node_ptr_vector(0);
 
-	MeshSubset const ms0(m0, empty_node_ptr_vector);
-	MeshSubset const ms1(m1, empty_node_ptr_vector);
-	MeshSubset const ms1a(m1, empty_node_ptr_vector);
+	MeshSubset const ms0(m0, &empty_node_ptr_vector);
+	MeshSubset const ms1(m1, &empty_node_ptr_vector);
+	MeshSubset const ms1a(m1, &empty_node_ptr_vector);
 
 	MeshSubset const* const mesh_subsets[3] = {&ms0, &ms1, &ms1a};
 
@@ -37,7 +37,7 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
 TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
 {
 	Mesh const* const mesh = MeshGenerator::generateLineMesh(1., 10);
-	MeshSubset all_nodes_mesh_subset(*mesh, mesh->getNodes());
+	MeshSubset all_nodes_mesh_subset(*mesh, &mesh->getNodes());
 
 	// Select nodes
 	std::vector<Node*> some_nodes;
