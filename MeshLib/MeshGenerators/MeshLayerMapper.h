@@ -67,8 +67,6 @@ public:
 private:
 	/// Adds another layer to a subsurface mesh
 	void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
-
-	static const unsigned _pyramid_base[3][4];
 };
 
 #endif //MESHLAYERMAPPER_H
