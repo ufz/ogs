@@ -35,7 +35,7 @@ public:
 	* \param mesh_name The name of the newly created mesh
 	* \return A mesh with the requested number of layers of prism/hex elements
 	*/
-	MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh") const;
+	static MeshLib::Mesh* createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name = "SubsurfaceMesh");
 
 	/**
 	* Based on a 2D triangle mesh this method creates a 3D mesh with a given number of prism-layers.

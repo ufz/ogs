@@ -37,7 +37,7 @@ const unsigned MeshLayerMapper::_pyramid_base[3][4] =
 	{0, 3, 4, 1}, // Point 6 missing
 };
 
-MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name) const
+MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name)
 {
 	std::vector<float> thickness;
 	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
