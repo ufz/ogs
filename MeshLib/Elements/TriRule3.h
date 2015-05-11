@@ -72,7 +72,6 @@ public:
 
 	/**
 	 * Tests if the element is geometrically valid.
-	 * @param check_zero_volume indicates if volume == 0 should be checked
 	 */
 	static ElementErrorCode validate(const Element* e);
 

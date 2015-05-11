@@ -77,6 +77,11 @@ public:
 
     ~NeumannBc()
     {
+        for (auto p : _all_mesh_subsets)
+            delete p;
+
+        delete _mesh_subset_all_nodes;
+
         for (auto e : _elements)
             delete e;
 
@@ -111,7 +116,7 @@ public:
         LocalAssemblerBuilder local_asm_builder(
             initializer, *_local_to_global_index_map);
 
-        auto elementValueLookup = [this](MeshLib::Element const& e)
+        auto elementValueLookup = [this](MeshLib::Element const&)
         {
             return _function();
         };

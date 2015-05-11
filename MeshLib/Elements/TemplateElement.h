@@ -120,7 +120,6 @@ public:
 
 	/**
 	 * Tests if the element is geometrically valid.
-	 * @param check_zero_volume indicates if volume == 0 should be checked
 	 */
 	virtual ElementErrorCode validate() const
 	{
@@ -131,7 +130,7 @@ public:
 	unsigned identifyFace(Node* nodes[3]) const
 	{
 		return ELEMENT_RULE::identifyFace(this->_nodes, nodes);
-	};
+	}
 
 	/// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
 	virtual double computeVolume() {return ELEMENT_RULE::computeVolume(this->_nodes);}

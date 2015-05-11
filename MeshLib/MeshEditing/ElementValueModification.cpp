@@ -24,7 +24,7 @@
 namespace MeshLib {
 
 bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-	std::string const& property_name, unsigned old_value, unsigned new_value,
+	std::string const& property_name, int const old_value, int const new_value,
 	bool replace_if_exists)
 {
 	boost::optional<MeshLib::PropertyVector<int> &> optional_property_value_vec(
@@ -60,12 +60,12 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 }
 
 bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-	unsigned old_value, unsigned new_value, bool replace_if_exists)
+	int const old_value, int const new_value, bool replace_if_exists)
 {
 	return replace(mesh, "MaterialIDs", old_value, new_value, replace_if_exists);
 }
 
-unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
+std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
 {
 	boost::optional<MeshLib::PropertyVector<int> &>
 		optional_property_value_vec(
@@ -84,8 +84,8 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	);
 
 	std::vector<int> reverse_mapping(value_mapping.back()+1, 0);
-	const unsigned nValues (value_mapping.size());
-	for (unsigned i=0; i<nValues; ++i)
+	std::size_t const nValues (value_mapping.size());
+	for (std::size_t i=0; i<nValues; ++i)
 		reverse_mapping[value_mapping[i]] = i;
 
 	std::size_t const n_property_values(property_value_vector.size());
@@ -95,18 +95,18 @@ unsigned ElementValueModification::condense(MeshLib::Mesh &mesh)
 	return nValues;
 }
 
-unsigned ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, unsigned new_value)
+std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
 {
-	boost::optional<MeshLib::PropertyVector<unsigned> &>
+	boost::optional<MeshLib::PropertyVector<int> &>
 		optional_property_value_vec(
-			mesh.getProperties().getPropertyVector<unsigned>("MaterialIDs")
+			mesh.getProperties().getPropertyVector<int>("MaterialIDs")
 		);
 
 	if (!optional_property_value_vec) {
 		return 0;
 	}
 
-	MeshLib::PropertyVector<unsigned> & property_value_vector(
+	MeshLib::PropertyVector<int> & property_value_vector(
 		optional_property_value_vec.get()
 	);
 

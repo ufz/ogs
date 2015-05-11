@@ -52,21 +52,21 @@ std::vector<std::size_t> getConnectedNodeIDs(const std::vector<MeshLib::Element*
 std::vector<Node*>
 selectNodes(std::vector<Element const*> const& elements)
 {
-    std::set<Node*> nodes_set;
-    for (auto e : elements)
-    {
-        Node* const* nodes = e->getNodes();
-        unsigned const nnodes = e->getNNodes();
-        nodes_set.insert(nodes, nodes + nnodes);
-    }
+	std::set<Node*> nodes_set;
+	for (auto e : elements)
+	{
+		Node* const* nodes = e->getNodes();
+		unsigned const nnodes = e->getNNodes();
+		nodes_set.insert(nodes, nodes + nnodes);
+	}
 
-    std::vector<Node*> nodes;
-    nodes.reserve(nodes_set.size());
+	std::vector<Node*> nodes;
+	nodes.reserve(nodes_set.size());
 
-    std::move(nodes_set.cbegin(), nodes_set.cend(),
-        std::back_inserter(nodes));
+	std::move(nodes_set.cbegin(), nodes_set.cend(),
+		std::back_inserter(nodes));
 
-    return nodes;
+	return nodes;
 }
 
 } // end namespace MeshLib

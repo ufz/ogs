@@ -43,7 +43,7 @@ public:
      */
     LisLinearSolver(LisMatrix &A, boost::property_tree::ptree const*const option = nullptr);
 
-    virtual ~LisLinearSolver() {};
+    virtual ~LisLinearSolver() {}
 
     /**
      * configure linear solvers

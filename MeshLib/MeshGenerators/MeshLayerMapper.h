@@ -23,8 +23,7 @@
 class MeshLayerMapper : public LayeredMeshGenerator
 {
 public:
-	MeshLayerMapper() {}
-	~MeshLayerMapper() {}
+	virtual ~MeshLayerMapper() = default;
 
 	/**
 	* Based on a 2D triangle-or quad mesh this method creates a 3D mesh with a given number of prism- or hex-layers

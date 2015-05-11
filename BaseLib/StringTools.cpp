@@ -72,13 +72,6 @@ void simplify(std::string &str)
 	);
 }
 
-std::string stringToUpper(std::string const& str)
-{
-    std::string s = str;
-	std::transform(s.begin(), s.end(), s.begin(), (int(*)(int)) std::toupper);
-    return s;
-}
-
 std::string padLeft(std::string const& str, int maxlen, char ch)
 {
 	std::stringstream ss(str);

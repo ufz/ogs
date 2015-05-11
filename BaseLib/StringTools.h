@@ -22,7 +22,6 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-#include <ctype.h>
 
 namespace BaseLib {
 
@@ -68,13 +67,6 @@ void trim(std::string &str, char ch=' ');
  * Equivalent functionality to Qt::QString::simplify().
  */
 void simplify(std::string &str);
-
-/**
- * Returns same string with all characters in upper case.
- *
- * This uses std::toupper() function, and does not care about unicode.
- */
-std::string stringToUpper(std::string const& str);
 
 /**
  * Returns the string which is right aligned with padding on the left.

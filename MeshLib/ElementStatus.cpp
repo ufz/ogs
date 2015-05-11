@@ -101,10 +101,10 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
 		_element_status[i] = status;
 		const unsigned nElemNodes (_mesh->getElement(i)->getNBaseNodes());
 		MeshLib::Node const*const*const nodes = _mesh->getElement(i)->getNodes();
-		for (unsigned i=0; i<nElemNodes; ++i)
+		for (unsigned j=0; j<nElemNodes; ++j)
 		{
-			assert(_active_nodes[i]<255); // if one node has >255 connected elements the data type is too small
-			_active_nodes[nodes[i]->getID()] += change;
+			assert(_active_nodes[j]<255); // if one node has >255 connected elements the data type is too small
+			_active_nodes[nodes[j]->getID()] += change;
 		}
 	}
 }
