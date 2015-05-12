@@ -30,14 +30,7 @@
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
-const unsigned MeshLayerMapper::_pyramid_base[3][4] =
-{
-	{1, 3, 4, 2}, // Point 4 missing
-	{2, 4, 3, 0}, // Point 5 missing
-	{0, 3, 4, 1}, // Point 6 missing
-};
-
-MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name) const
+MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name)
 {
 	std::vector<float> thickness;
 	for (std::size_t i=0; i<layer_thickness_vector.size(); ++i)
@@ -155,6 +148,13 @@ bool MeshLayerMapper::createRasterLayers(
 
 void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
 {
+    const unsigned pyramid_base[3][4] =
+    {
+        {1, 3, 4, 2}, // Point 4 missing
+        {2, 4, 3, 0}, // Point 5 missing
+        {0, 3, 4, 1}, // Point 6 missing
+    };
+
     std::size_t const nNodes = dem_mesh.getNNodes();
     std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
     int const last_layer_node_offset = (layer_id-1) * nNodes;
@@ -190,10 +190,10 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             break;
         case 5:
             std::array<MeshLib::Node*, 5> pyramid_nodes;
-            pyramid_nodes[0] = new_elem_nodes[_pyramid_base[missing_idx][0]];
-            pyramid_nodes[1] = new_elem_nodes[_pyramid_base[missing_idx][1]];
-            pyramid_nodes[2] = new_elem_nodes[_pyramid_base[missing_idx][2]];
-            pyramid_nodes[3] = new_elem_nodes[_pyramid_base[missing_idx][3]];
+            pyramid_nodes[0] = new_elem_nodes[pyramid_base[missing_idx][0]];
+            pyramid_nodes[1] = new_elem_nodes[pyramid_base[missing_idx][1]];
+            pyramid_nodes[2] = new_elem_nodes[pyramid_base[missing_idx][2]];
+            pyramid_nodes[3] = new_elem_nodes[pyramid_base[missing_idx][3]];
             pyramid_nodes[4] = new_elem_nodes[missing_idx];
             _elements.push_back(new MeshLib::Pyramid(pyramid_nodes, layer_id));
             break;
