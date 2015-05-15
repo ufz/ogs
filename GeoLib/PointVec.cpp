@@ -35,7 +35,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	_aabb(points->begin(), points->end())
 {
 	assert (_data_vec);
-	std::size_t number_of_all_input_pnts (_data_vec->size());
+	std::size_t const number_of_all_input_pnts (_data_vec->size());
 
 	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
