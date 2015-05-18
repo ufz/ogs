@@ -128,7 +128,7 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 		else
 		{
 			_idx_map.insert (std::pair<std::size_t, std::size_t>(p_id, points->size()));
-			GeoLib::Point* p = new GeoLib::Point(p_x, p_y, p_z);
+			GeoLib::Point* p = new GeoLib::Point(p_x, p_y, p_z, p_id);
 			if (!p_name.empty())
 				pnt_names->insert( std::pair<std::string, std::size_t>(p_name, points->size()) );
 			points->push_back(p);
