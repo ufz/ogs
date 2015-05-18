@@ -26,12 +26,6 @@
 // FileIO
 #include "TetGenInterface.h"
 
-// GeoLib
-#include "GeoLib/PointWithID.h"
-
-// MathLib
-#include "TemplatePoint.h"
-
 // MeshLib
 #include "Mesh.h"
 #include "MeshLib/Node.h"
@@ -502,7 +496,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
                                        const GeoLib::GEOObjects &geo_objects,
                                        const std::string &geo_name,
-                                       const std::vector<GeoLib::PointWithID> &attribute_points) const
+                                       const std::vector<GeoLib::Point> &attribute_points) const
 {
 	std::vector<GeoLib::Point*> const*const points = geo_objects.getPointVec(geo_name);
 	std::vector<GeoLib::Surface*> const*const surfaces = geo_objects.getSurfaceVec(geo_name);

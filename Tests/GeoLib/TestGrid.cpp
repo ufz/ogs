@@ -16,7 +16,6 @@
 #include "gtest/gtest.h"
 
 #include "GeoLib/Point.h"
-#include "GeoLib/PointWithID.h"
 #include "GeoLib/Grid.h"
 
 #include "MathTools.h"
@@ -95,7 +94,7 @@ TEST(GeoLib, SearchNearestPointInGrid)
 TEST(GeoLib, SearchNearestPointsInDenseGrid)
 {
 	const std::size_t i_max(50), j_max(50), k_max(50);
-	std::vector<GeoLib::PointWithID*> pnts(i_max*j_max*k_max);
+	std::vector<GeoLib::Point*> pnts(i_max*j_max*k_max);
 
 	// fill the vector with equi-distant points in the
 	// cube [0,(i_max-1)/i_max] x [0,(j_max-1)/j_max] x [0,(k_max-1)/k_max]
@@ -104,19 +103,21 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 		for (std::size_t j(0); j < j_max; j++) {
 			std::size_t offset1(j * k_max + offset0);
 			for (std::size_t k(0); k < k_max; k++) {
-				pnts[offset1 + k] = new GeoLib::PointWithID(static_cast<double>(i) / i_max,
-						static_cast<double>(j) / j_max, static_cast<double>(k) / k_max, offset1+k);
+				pnts[offset1 + k] = new GeoLib::Point(
+					std::array<double,3>({{static_cast<double>(i) / i_max,
+						static_cast<double>(j) / j_max,
+						static_cast<double>(k) / k_max}}), offset1+k);
 			}
 		}
 	}
 
 	// create the grid
-	GeoLib::Grid<GeoLib::PointWithID>* grid(nullptr);
-	ASSERT_NO_THROW(grid = new GeoLib::Grid<GeoLib::PointWithID> (pnts.begin(), pnts.end()));
+	GeoLib::Grid<GeoLib::Point>* grid(nullptr);
+	ASSERT_NO_THROW(grid = new GeoLib::Grid<GeoLib::Point> (pnts.begin(), pnts.end()));
 
 	// search point (1,1,1) is outside of the point set
-	GeoLib::PointWithID search_pnt(1,1,1, 0);
-	GeoLib::PointWithID* res(grid->getNearestPoint(search_pnt.getCoords()));
+	GeoLib::Point search_pnt(std::array<double,3>({{1,1,1}}), 0);
+	GeoLib::Point* res(grid->getNearestPoint(search_pnt.getCoords()));
 	ASSERT_EQ(res->getID(), i_max*j_max*k_max-1);
 	ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, search_pnt)), sqrt(3.0)/50.0, std::numeric_limits<double>::epsilon());
 
@@ -145,5 +146,5 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 	}
 
 	delete grid;
-	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::PointWithID>());
+	std::for_each(pnts.begin(), pnts.end(), std::default_delete<GeoLib::Point>());
 }
