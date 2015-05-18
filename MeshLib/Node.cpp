@@ -18,17 +18,17 @@
 namespace MeshLib {
 
 Node::Node(const double coords[3], std::size_t id)
-	: MathLib::Point3d(coords), _id(id)
+	: MathLib::Point3dWithID(coords, id)
 {
 }
 
 Node::Node(double x, double y, double z, std::size_t id)
-	: MathLib::Point3d(std::array<double,3>({{x, y, z}})), _id(id)
+	: MathLib::Point3dWithID(std::array<double,3>({{x, y, z}}), id)
 {
 }
 
 Node::Node(const Node &node)
-	: MathLib::Point3d(node.getCoords()), _id(node.getID())
+	: MathLib::Point3dWithID(node.getCoords(), node.getID())
 {
 }
 
