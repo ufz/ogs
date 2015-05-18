@@ -21,7 +21,7 @@
 #include "MathLib/Vector3.h"
 
 namespace GeoLib {
-	class PointWithID;
+	class Point;
 }
 
 namespace MeshLib {
@@ -40,7 +40,7 @@ public:
 	static std::vector<double> getSurfaceAreaForNodes(const MeshLib::Mesh &mesh);
 
 	/// Returns the surface nodes of a mesh.
-	static std::vector<GeoLib::PointWithID*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle);
+	static std::vector<GeoLib::Point*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle);
 
 	/**
 	 * Returns the 2d-element mesh representing the surface of the given mesh.

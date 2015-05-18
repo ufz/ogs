@@ -18,7 +18,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/PointWithID.h"
+#include "GeoLib/Point.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
@@ -232,7 +232,7 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(std::vector<MeshLib::Node*> &sfc_n
 	}
 }
 
-std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle)
+std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle)
 {
 	INFO ("Extracting surface nodes...");
 	std::vector<MeshLib::Element*> sfc_elements;
@@ -246,10 +246,10 @@ std::vector<GeoLib::PointWithID*> MeshSurfaceExtraction::getSurfaceNodes(const M
 		delete e;
 
 	const std::size_t nNodes (sfc_nodes.size());
-	std::vector<GeoLib::PointWithID*> surface_pnts(nNodes);
+	std::vector<GeoLib::Point*> surface_pnts(nNodes);
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
-		surface_pnts[i] = new GeoLib::PointWithID(sfc_nodes[i]->getCoords(), sfc_nodes[i]->getID());
+		surface_pnts[i] = new GeoLib::Point(sfc_nodes[i]->getCoords(), sfc_nodes[i]->getID());
 		delete sfc_nodes[i];
 	}
 	return surface_pnts;

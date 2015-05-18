@@ -23,7 +23,6 @@
 
 #include "Raster.h"
 #include "MeshSurfaceExtraction.h"
-#include "PointWithID.h"
 #include "Mesh.h"
 #include "MeshLib/Node.h"
 
@@ -41,7 +40,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 		}
 
 		const MathLib::Vector3 dir(0,0,-1);
-		const std::vector<GeoLib::PointWithID*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90) );
+		const std::vector<GeoLib::Point*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90) );
 		const size_t nNodes(surface_nodes.size());
 		const double no_data (raster->getNoDataValue());
 		_direct_values.reserve(nNodes);
