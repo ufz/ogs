@@ -103,10 +103,7 @@ void ShapeHex20::computeGradShapeFunction(const T_X &rst, T_N &dNdr)
         dNdr[20 * i + 3] = sign2[i] * dShapeFunctionHexHQ_Corner(r,-s,t,i);
         dNdr[20 * i + 4] = sign3[i] * dShapeFunctionHexHQ_Corner(r,s,-t,i);
         dNdr[20 * i + 5] = sign1[i] * sign3[i] * dShapeFunctionHexHQ_Corner(-r,s,-t,i);
-        dNdr[20 * i + 6] = sign1[i] * sign2[i] * sign3[i] * dShapeFunctionHexHQ_Corner(-r,
-                                                                                       -s,
-                                                                                       -t,
-                                                                                       i);
+        dNdr[20 * i + 6] = sign1[i] * sign2[i] * sign3[i] * dShapeFunctionHexHQ_Corner(-r,-s,-t,i);
         dNdr[20 * i + 7] = sign2[i] * sign3[i] * dShapeFunctionHexHQ_Corner(r,-s,-t,i);
 
         dNdr[20 * i + 8] =  dShapeFunctionHexHQ_Middle(r,s,t,i);

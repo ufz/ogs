@@ -13,9 +13,9 @@ namespace NumLib
 template <class T_X, class T_N>
 void ShapePrism6::computeShapeFunction(const T_X &x, T_N &N)
 {
-	double L1 = x[0];
-	double L2 = x[1];
-	double t = x[2];
+	const double L1 = x[0];
+	const double L2 = x[1];
+	const double t = x[2];
 	N[0] = 0.5 * (1.0 - L1 - L2) * (1.0 - t);
 	N[1] = 0.5 * L1 * (1.0 - t);
 	N[2] = 0.5 * L2 * (1.0 - t);
@@ -27,21 +27,21 @@ void ShapePrism6::computeShapeFunction(const T_X &x, T_N &N)
 template <class T_X, class T_N>
 void ShapePrism6::computeGradShapeFunction(const T_X &x, T_N &dN)
 {
-	double L1 = x[0];
-	double L2 = x[1];
-	double t = x[2];
+	const double L1 = x[0];
+	const double L2 = x[1];
+	const double t = x[2];
 	//  dN/dL1
 	dN[0] = -0.5 * (1.0 - t);
 	dN[1] = -dN[0];
-	dN[2] = 0.0;
+	dN[2] =  0.0;
 	dN[3] = -0.5 * (1.0 + t);
 	dN[4] = -dN[3];
-	dN[5] = 0.0;
+	dN[5] =  0.0;
 	//  dN/dL2
-	dN[6] = dN[0];
-	dN[7] = 0.0;
+	dN[6] =  dN[0];
+	dN[7] =  0.0;
 	dN[8] = -dN[0];
-	dN[9] = dN[3];
+	dN[9] =  dN[3];
 	dN[10] = 0.0;
 	dN[11] = -dN[3];
 	//  dN/dt
