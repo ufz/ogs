@@ -38,7 +38,7 @@ void ShapeQuad8::computeGradShapeFunction(const T_X &rs, T_N &dNdr)
     dNdr[4] = -r * (1 - s);
     dNdr[5] = (1 - s * s) * 0.5;
     dNdr[6] = -r * (1 + s);
-    dNdr[7] = -(1 - s * s) * 0.5;
+    dNdr[7] = -dNdr[5];
 
     //dN/ds
     dNdr[8] = (1 - r) * (r + 2 * s) * 0.25;
@@ -47,7 +47,7 @@ void ShapeQuad8::computeGradShapeFunction(const T_X &rs, T_N &dNdr)
     dNdr[11] = -(1 - r) * (r - 2 * s) * 0.25;
     dNdr[12] = -(1 - r * r) * 0.5;
     dNdr[13] = -(1 + r) * s;
-    dNdr[14] = (1 - r * r) * 0.5;
+    dNdr[14] = -dNdr[12];
     dNdr[15] = -(1 - r) * s;
 }
 

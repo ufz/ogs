@@ -26,13 +26,10 @@ inline double dShapeFunctionHexHQ_Corner(const double r, const double s, const d
     {
     case 0:
         return 0.125 * (1 + s) * (1 + t) * (2.0 * r + s + t - 1.0);
-        break;
     case 1:
         return 0.125 * (1 + t) * (1 + r) * (2.0 * s + r + t - 1.0);
-        break;
     case 2:
         return 0.125 * (1 + r) * (1 + s) * (2.0 * t + s + r - 1.0);
-        break;
     }
     return 0.0;
 }
@@ -43,13 +40,10 @@ inline double dShapeFunctionHexHQ_Middle(const double r, const double s, const d
     {
     case 0:
         return -0.5 * r * (1 + s) * (1 + t);
-        break;
     case 1:
         return 0.25 * (1 - r * r) * (1 + t);
-        break;
     case 2:
         return 0.25 * (1 - r * r) * (1 + s);
-        break;
     }
     return 0.0;
 }

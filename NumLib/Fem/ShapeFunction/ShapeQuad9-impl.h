@@ -30,7 +30,7 @@ void ShapeQuad9::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[8] = -2.0 * r[0] * (1.0 - r[1] * r[1]);
     dNdr[7] = +0.5 * (1.0 - r[1] * r[1]) - 0.5 * dNdr[8];
     dNdr[6] = -1.0 * r[0] * (1.0 - r[1]) - 0.5 * dNdr[8];
-    dNdr[5] = -0.5 * (1.0 - r[1] * r[1]) - 0.5 * dNdr[8];
+    dNdr[5] = -dNdr[7];
     dNdr[4] = -1.0 * r[0] * (1.0 + r[1]) - 0.5 * dNdr[8];
     dNdr[3] = +0.25 * (1 - r[1]) - 0.5 * dNdr[6] - 0.5 * dNdr[7] - 0.25 * dNdr[8];
     dNdr[2] = -0.25 * (1 - r[1]) - 0.5 * dNdr[5] - 0.5 * dNdr[6] - 0.25 * dNdr[8];
@@ -41,7 +41,7 @@ void ShapeQuad9::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[16] = -1.0 * r[1] * (1.0 + r[0]) - 0.5 * dNdr[17];
     dNdr[15] = -0.5 * (1.0 - r[0] * r[0]) - 0.5 * dNdr[17];
     dNdr[14] = -1.0 * r[1] * (1.0 - r[0]) - 0.5 * dNdr[17];
-    dNdr[13] = +0.5 * (1 - r[0] * r[0]) - 0.5 * dNdr[17];
+    dNdr[13] = -dNdr[15];
     dNdr[12] = -0.25 * (1 + r[0]) - 0.5 * dNdr[15] - 0.5 * dNdr[16] - 0.25 * dNdr[17];
     dNdr[11] = -0.25 * (1 - r[0]) - 0.5 * dNdr[14] - 0.5 * dNdr[15] - 0.25 * dNdr[17];
     dNdr[10] = +0.25 * (1 - r[0]) - 0.5 * dNdr[13] - 0.5 * dNdr[14] - 0.25 * dNdr[17];

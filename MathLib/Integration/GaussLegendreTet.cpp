@@ -22,7 +22,7 @@ GaussLegendreTet<2>::X = {{ {{1./4., 1./4., 1./4.}},
                             {{1./2., 1./6., 1./6.}},
                             {{1./6., 1./2., 1./6.}},
                             {{1./6., 1./6., 1./2.}} }};
-double const GaussLegendreTet<2>::W[5] = {-0.133333333333333, 0.075, 0.075, 0.075, 0.075};
+double const GaussLegendreTet<2>::W[5] = {-2./15., 0.075, 0.075, 0.075, 0.075};
 
 const std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints>
 GaussLegendreTet<3>::X = {{ {{1./2., 1./2., 1./2.}},
