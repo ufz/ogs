@@ -22,14 +22,20 @@ namespace MeshLib
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e,
     const CoordinateSystem &global_coords)
-: _coords(global_coords)
+: _coords(global_coords), _matR2global(3,3)
 {
     assert(e.getDimension() <= global_coords.getDimension());
     for(unsigned i = 0; i < e.getNNodes(); i++)
         _vec_nodes.push_back(new MeshLib::Node(*(e.getNode(i))));
 
     getRotationMatrixToGlobal(e, global_coords, _vec_nodes, _matR2global);
+#ifdef OGS_USE_EIGEN
     rotateToLocal(_matR2global.transpose(), _vec_nodes);
+#else
+    RotationMatrix* m(_matR2global.transpose());
+    rotateToLocal(*m, _vec_nodes);
+    delete m;
+#endif
 }
 
 ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
@@ -42,7 +48,7 @@ void ElementCoordinatesMappingLocal::rotateToLocal(
     std::vector<MeshLib::Node*> &vec_nodes) const
 {
     for (MeshLib::Node* node : vec_nodes)
-        node->setCoords((matR2local* (*node)).getCoords());
+        node->setCoords((matR2local*static_cast<MathLib::Point3d>(*node)).getCoords());
 }
 
 void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
@@ -55,7 +61,7 @@ void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
 
     // compute R in x=R*x' where x are original coordinates and x' are local coordinates
     if (global_dim == e.getDimension()) {
-        matR = RotationMatrix::Identity();
+        matR.setIdentity();
     } else if (e.getDimension() == 1) {
         MathLib::Vector3 xx(*vec_nodes[0], *vec_nodes[1]);
         xx.normalize();

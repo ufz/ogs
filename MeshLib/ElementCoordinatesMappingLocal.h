@@ -16,6 +16,7 @@
 #endif
 
 #include "MathLib/Vector3.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/CoordinateSystem.h"
@@ -25,6 +26,8 @@ namespace MeshLib
 
 #ifdef OGS_USE_EIGEN
 typedef Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor> RotationMatrix;
+#else
+typedef MathLib::DenseMatrix<double> RotationMatrix;
 #endif
 
 /**
