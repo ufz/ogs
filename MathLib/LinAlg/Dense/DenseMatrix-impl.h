@@ -220,6 +220,26 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::transpose() const
 }
 
 template<typename FP_TYPE, typename IDX_TYPE>
+void
+DenseMatrix<FP_TYPE, IDX_TYPE>::transposeInPlace()
+{
+	if (_n_rows==_n_cols) { // square matrix
+		for (IDX_TYPE i = 0; i < _n_rows; i++)
+			for (IDX_TYPE j = i+1; j < _n_cols; j++)
+				std::swap(_data[address(i, j)], _data[address(j, i)]);
+	} else { // non-square matrix
+		const DenseMatrix<FP_TYPE, IDX_TYPE> org(*this);
+		std::swap(_n_rows, _n_cols);
+		for (IDX_TYPE i = 0; i < _n_rows; i++) {
+			for (IDX_TYPE j = 0; j < _n_cols; j++) {
+				_data[address(i, j)] = org(j, i);
+			}
+		}
+	}
+
+}
+
+template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::getSubMatrix(
 		IDX_TYPE b_row, IDX_TYPE b_col,
@@ -283,6 +303,16 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::write (std::ostream &out) const
 		}
 		out << "\n";
 	}
+}
+
+template <typename FP_TYPE, typename IDX_TYPE>
+void
+DenseMatrix<FP_TYPE, IDX_TYPE>::setIdentity()
+{
+	(*this) = 0.0;
+	const IDX_TYPE n_square_rows = std::min(_n_rows, _n_cols);
+	for (IDX_TYPE i=0; i<n_square_rows; i++)
+		_data[address(i,i)] = 1.0;
 }
 
 template <typename FP_TYPE, typename IDX_TYPE>

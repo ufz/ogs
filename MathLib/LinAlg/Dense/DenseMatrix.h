@@ -58,6 +58,14 @@ public:
    }
 
    /**
+    * Get all entries, which are stored in an array.
+   */
+   const FP_TYPE *data() const
+   {
+       return _data;
+   }
+
+   /**
     * Assignment operator, makes a copy of the internal data of the object.
     * @param rhs The DenseMatrix object to the right side of the assignment symbol.
     */
@@ -109,6 +117,11 @@ public:
     */
    DenseMatrix* transpose() const; // HB & ZC
 
+   /**
+    * transpose the matrix in place
+    */
+   void transposeInPlace();
+
    DenseMatrix* getSubMatrix (IDX_TYPE b_row, IDX_TYPE b_col, IDX_TYPE e_row, IDX_TYPE e_col) const;
 
    /**
@@ -138,6 +151,16 @@ public:
 	 * @return the number of columns
 	 */
 	IDX_TYPE getNCols () const { return _n_cols; }
+
+	/**
+	 * get the number of entries in the matrix
+	 */
+	IDX_TYPE size() const { return _n_rows*_n_cols; }
+
+	/**
+	 * set the identity matrix
+	 */
+	void setIdentity();
 
 protected:
 	/**
