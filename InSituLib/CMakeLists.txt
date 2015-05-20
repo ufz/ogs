@@ -18,5 +18,11 @@ target_link_libraries(InSituLib
 	logog
 )
 
+target_link_libraries(InSituLib
+	BaseLib
+	MeshLib
+	logog
+)
+
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(InSituLib)

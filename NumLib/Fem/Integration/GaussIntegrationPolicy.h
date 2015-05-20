@@ -12,8 +12,14 @@
 
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 #include "NumLib/Fem/Integration/IntegrationGaussTri.h"
+#include "NumLib/Fem/Integration/IntegrationGaussTet.h"
+#include "NumLib/Fem/Integration/IntegrationGaussPrism.h"
+#include "NumLib/Fem/Integration/IntegrationGaussPyramid.h"
 
 #include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
 
 namespace NumLib
 {
@@ -39,6 +45,55 @@ struct GaussIntegrationPolicy<MeshLib::Tri>
 {
     using MeshElement = MeshLib::Tri;
     using IntegrationMethod = NumLib::IntegrationGaussTri;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Tri6>
+{
+    using MeshElement = MeshLib::Tri6;
+    using IntegrationMethod = NumLib::IntegrationGaussTri;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Tet>
+{
+    using MeshElement = MeshLib::Tri;
+    using IntegrationMethod = NumLib::IntegrationGaussTet;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Tet10>
+{
+    using MeshElement = MeshLib::Tet10;
+    using IntegrationMethod = NumLib::IntegrationGaussTet;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Prism>
+{
+    using MeshElement = MeshLib::Prism;
+    using IntegrationMethod = NumLib::IntegrationGaussPrism;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Prism15>
+{
+    using MeshElement = MeshLib::Prism15;
+    using IntegrationMethod = NumLib::IntegrationGaussPrism;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Pyramid>
+{
+    using MeshElement = MeshLib::Pyramid;
+    using IntegrationMethod = NumLib::IntegrationGaussPyramid;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Pyramid13>
+{
+    using MeshElement = MeshLib::Pyramid13;
+    using IntegrationMethod = NumLib::IntegrationGaussPyramid;
 };
 
 }   // namespace NumLib
