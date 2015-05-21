@@ -85,7 +85,7 @@ std::string readPoints(std::istream &in, std::vector<Point*>* pnt_vec,
 				else
 					zero_based_indexing = false;
 			}
-			pnt_vec->push_back(new Point(x, y, z));
+			pnt_vec->push_back(new Point(x, y, z, id));
 
 			// read mesh density
 			if (line.find("$MD") != std::string::npos)

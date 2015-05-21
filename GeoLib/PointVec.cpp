@@ -19,7 +19,6 @@
 
 // GeoLib
 #include "PointVec.h"
-#include "PointWithID.h"
 
 // BaseLib
 #include "quicksort.h"
@@ -214,7 +213,7 @@ std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> 
 
 	const std::size_t nPoints(subset.size());
 	for (std::size_t i = 0; i < nPoints; i++)
-		(*new_points)[i] = new GeoLib::PointWithID((*this->_data_vec)[subset[i]]->getCoords(), subset[i]);
+		(*new_points)[i] = new GeoLib::Point(*(*this->_data_vec)[subset[i]]);
 
 	return new_points;
 }

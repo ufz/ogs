@@ -17,7 +17,9 @@
 
 #include <vector>
 
-#include "GEOObjects.h"
+// GeoLib
+#include "GeoLib/Point.h"
+#include "GeoLib/GEOObjects.h"
 
 // forward declaration of class Node and Element
 namespace MeshLib
@@ -71,7 +73,7 @@ public:
 	bool writeTetGenSmesh(const std::string &file_name,
 	                      const GeoLib::GEOObjects &geo_objects,
 	                      const std::string &geo_name,
-	                      const std::vector<GeoLib::PointWithID> &attribute_points) const;
+	                      const std::vector<GeoLib::Point> &attribute_points) const;
 
 	/**
 	 * Writes the geometry of a given name to TetGen smesh-file.

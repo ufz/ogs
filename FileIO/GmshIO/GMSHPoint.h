@@ -16,13 +16,13 @@
 #define GMSHPOINT_H_
 
 // GeoLib
-#include "PointWithID.h"
+#include "GeoLib/Point.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 
-class GMSHPoint : public GeoLib::PointWithID {
+class GMSHPoint : public GeoLib::Point {
 public:
 	GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density);
 	virtual ~GMSHPoint();

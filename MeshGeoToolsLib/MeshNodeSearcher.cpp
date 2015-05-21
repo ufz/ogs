@@ -14,7 +14,7 @@
 #include "logog/include/logog.hpp"
 
 // GeoLib
-#include "GeoLib/PointWithID.h"
+#include "GeoLib/Point.h"
 
 // MeshLib
 #include "MeshLib/Elements/Element.h"
@@ -57,7 +57,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	switch (geoObj.getGeoType()) {
 	case GeoLib::GEOTYPE::POINT:
 	{
-		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::PointWithID*>(&geoObj));
+		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::Point*>(&geoObj));
 		if (node_id) vec_nodes.push_back(*node_id);
 		break;
 	}

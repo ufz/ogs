@@ -26,7 +26,7 @@
 #include "Elements/Tri.h"
 
 // GeoLib
-#include "GeoLib/PointWithID.h"
+#include "GeoLib/Point.h"
 
 namespace FileIO
 {
@@ -372,11 +372,11 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
 		if (line_str.empty()) continue;
 		std::istringstream line_ss(line_str);
 		size_t pt_id = 0;
-		double pt_xyz[3] = { };
+		std::array<double,3> pt_xyz;
 		line_ss >> pt_id;
 		for (int i = 0; i < dim; i++)
 			line_ss >> pt_xyz[i];
-		points[pt_id - 1] = new GeoLib::PointWithID(pt_xyz, pt_id);
+		points[pt_id - 1] = new GeoLib::Point(pt_xyz, pt_id);
 	}
 }
 

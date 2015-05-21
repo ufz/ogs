@@ -31,7 +31,7 @@
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/PointWithID.h"
+#include "GeoLib/Point.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -217,14 +217,14 @@ int main (int argc, char* argv[])
 	GeoLib::PointVec const* pnt_vec(geometry_sets.getPointVecObj(merge_name));
 	std::vector<GeoLib::Point*> const* merged_pnts(pnt_vec->getVector());
 
-	std::vector<GeoLib::PointWithID> pnts_with_id;
+	std::vector<GeoLib::Point> pnts_with_id;
 	const size_t n_merged_pnts(merged_pnts->size());
 	for(std::size_t k(0); k<n_merged_pnts; ++k) {
 		pnts_with_id.emplace_back((*merged_pnts)[k]->getCoords(), k);
 	}
 
 	std::sort(pnts_with_id.begin(), pnts_with_id.end(),
-		[](GeoLib::PointWithID const& p0, GeoLib::PointWithID const& p1)
+		[](GeoLib::Point const& p0, GeoLib::Point const& p1)
 			{ return p0 < p1; }
 	);
 
@@ -242,8 +242,8 @@ int main (int argc, char* argv[])
 		std::pair<std::string, std::size_t>(element_name,0)
 	);
 	for (std::size_t k(1); k < n_merged_pnts; ++k) {
-		const GeoLib::PointWithID& p0 (pnts_with_id[k-1]);
-		const GeoLib::PointWithID& p1 (pnts_with_id[k]);
+		const GeoLib::Point& p0 (pnts_with_id[k-1]);
+		const GeoLib::Point& p1 (pnts_with_id[k]);
 		if (std::abs (p0[0] - p1[0]) > eps || std::abs (p0[1] - p1[1]) > eps) {
 			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k]));
 			std::string element_name;

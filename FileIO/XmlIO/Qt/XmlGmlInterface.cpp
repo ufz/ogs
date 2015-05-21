@@ -98,7 +98,8 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 			strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10), points->size()));
 		GeoLib::Point* p = new GeoLib::Point(point.attribute("x").toDouble(),
 		                                     point.attribute("y").toDouble(),
-		                                     point.attribute("z").toDouble());
+		                                     point.attribute("z").toDouble(),
+		                                     point.attribute("id").toInt());
 		if (point.hasAttribute("name"))
 			pnt_names->insert( std::pair<std::string, std::size_t>(
 										point.attribute("name").toStdString(), points->size()) );
