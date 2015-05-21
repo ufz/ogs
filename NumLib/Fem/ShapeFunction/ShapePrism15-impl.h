@@ -19,9 +19,9 @@ void ShapePrism15::computeShapeFunction(const T_X &x, T_N &N)
 	const double t = x[2];
 	const double tt1 = 1.0 - t * t;
 
-	const double v1 = 2.0 * L0 - 1;
-	const double v2 = 2.0 * L1 - 1;
-	const double v3 = 2.0 * L2 - 1;
+	double v1 = 2.0 * L0 - 1;
+	double v2 = 2.0 * L1 - 1;
+	double v3 = 2.0 * L2 - 1;
 	// Vertex, bottom
 	N[0] = 0.5 * L0 * (v1 * (1.0 - t) - tt1);
 	N[1] = 0.5 * L1 * (v2 * (1.0 - t) - tt1);
