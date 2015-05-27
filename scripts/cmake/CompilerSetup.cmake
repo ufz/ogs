@@ -1,4 +1,4 @@
-include(ResetConfigurations)        # To Debug, Release, RelWithDbgInfo
+include(ResetConfigurations)        # To Debug, Release, RelWithDebInfo
 include(SetDefaultBuildType)
 include(DisableCompilerFlag)
 SET_DEFAULT_BUILD_TYPE(Debug)
