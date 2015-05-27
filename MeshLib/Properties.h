@@ -98,7 +98,7 @@ public:
 	/// Check if a PropertyVector accessible by the name is already
 	/// stored within the Properties object.
 	/// @param name the name of the property (for instance porosity)
-	bool hasPropertyVector(std::string const& name);
+	bool hasPropertyVector(std::string const& name) const;
 
 	std::vector<std::string> getPropertyVectorNames() const;
 

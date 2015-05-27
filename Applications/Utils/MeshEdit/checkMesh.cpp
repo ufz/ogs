@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
 	cmd.add( mesh_arg );
 	TCLAP::SwitchArg valid_arg("v","validation","validate the mesh");
 	cmd.add( valid_arg );
+	TCLAP::SwitchArg print_properties_arg("p","print_properties","print properties stored in the mesh");
+	cmd.add( print_properties_arg );
 
 	cmd.parse( argc, argv );
 
@@ -86,6 +88,14 @@ int main(int argc, char *argv[])
 
 	const std::pair<unsigned, unsigned> minmax_values(MeshLib::MeshInformation::getValueBounds(*mesh));
 	INFO("Material IDs: [%d, %d]", minmax_values.first, minmax_values.second);
+
+	if (print_properties_arg.isSet()) {
+		MeshLib::Properties const& properties = mesh->getProperties();
+		std::vector<std::string> const& names = properties.getPropertyVectorNames();
+		INFO("There are %d properties in the mesh", names.size());
+		for (std::size_t i = 0; i < names.size(); ++i)
+			INFO("\t%d: %s", i, names[i].c_str());
+	}
 
 	if (valid_arg.isSet()) {
 		// Validation
