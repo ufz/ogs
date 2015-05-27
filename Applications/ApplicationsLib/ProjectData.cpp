@@ -192,7 +192,7 @@ void ProjectData::parseProcessVariables(
 
 void ProjectData::parseProcesses(ConfigTree const& processes_config)
 {
-	DBUG("Reading processes:\n");
+	DBUG("Reading processes:");
 	for (auto pc_it : processes_config) {
 		ConfigTree const& process_config = pc_it.second;
 
@@ -209,7 +209,7 @@ void ProjectData::parseProcesses(ConfigTree const& processes_config)
 void ProjectData::parseOutput(ConfigTree const& output_config,
 	std::string const& path)
 {
-	DBUG("Parse output configuration:\n");
+	DBUG("Parse output configuration:");
 
 	auto const file = output_config.get_optional<std::string>("file");
 	if (!file) {
