@@ -58,7 +58,7 @@ std::size_t PointVec::push_back (Point* pnt)
 
 void PointVec::push_back (Point* pnt, std::string const*const name)
 {
-	if (name == NULL) {
+	if (name == nullptr) {
 		_pnt_id_map.push_back (uniqueInsert(pnt));
 		return;
 	}
@@ -86,7 +86,7 @@ std::size_t PointVec::uniqueInsert (Point* pnt)
 	if (it != _data_vec->end())
 	{
 		delete pnt;
-		pnt = NULL;
+		pnt = nullptr;
 		return static_cast<std::size_t>(std::distance(_data_vec->begin(), it));
 	}
 

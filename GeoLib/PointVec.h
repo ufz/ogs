@@ -68,7 +68,7 @@ public:
 	 * \f$|p_1 - p_0| \le tol.\f$
 	 */
 	PointVec (const std::string& name, std::vector<Point*>* points,
-	          std::map<std::string, std::size_t>* name_id_map = NULL,
+	          std::map<std::string, std::size_t>* name_id_map = nullptr,
 	          PointType type = PointVec::PointType::POINT, double rel_eps = std::numeric_limits<double>::epsilon());
 
 	/** Destructor deletes all Points of this PointVec. */
