@@ -50,7 +50,7 @@ if(COMPILER_IS_CLANG)
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
 		message(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
 	endif()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic -march=native")
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		# Enable assertions in STL in debug mode.
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
