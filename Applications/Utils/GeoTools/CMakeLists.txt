@@ -15,4 +15,9 @@ if(QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 	set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
+	install(TARGETS
+		TriangulatePolyline
+		RUNTIME DESTINATION bin
+		COMPONENT Utilities
+	)
 endif() # QT4_FOUND

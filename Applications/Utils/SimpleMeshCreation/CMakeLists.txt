@@ -49,3 +49,19 @@ target_link_libraries(generateStructuredMesh
 )
 set_target_properties(generateStructuredMesh PROPERTIES FOLDER Utilities)
 
+####################
+### Installation ###
+####################
+install(TARGETS
+	generateStructuredMesh
+	RUNTIME DESTINATION bin
+	COMPONENT Utilities
+)
+if(TARGET VtkVis)
+	install(TARGETS
+		generateStructuredQuadMesh
+		createMeshElemPropertiesFromASCRaster
+		RUNTIME DESTINATION bin
+		COMPONENT Utilities
+	)
+endif()
