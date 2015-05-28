@@ -68,7 +68,7 @@ public:
 	 * \f$|p_1 - p_0| \le tol.\f$
 	 */
 	PointVec (const std::string& name, std::vector<Point*>* points,
-	          std::map<std::string, std::size_t>* name_id_map = NULL,
+	          std::map<std::string, std::size_t>* name_id_map = nullptr,
 	          PointType type = PointVec::PointType::POINT, double rel_eps = std::numeric_limits<double>::epsilon());
 
 	/** Destructor deletes all Points of this PointVec. */
@@ -99,9 +99,6 @@ public:
 	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
-
-	/// Returns a subset of this point vector containing only the points specified in "subset"
-	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset) const;
 
 private:
 	/**

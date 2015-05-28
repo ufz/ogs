@@ -35,7 +35,7 @@ namespace GeoLib {
 class Surface : public GeoObject
 {
 public:
-	Surface	(const std::vector<Point*> &pnt_vec);
+	Surface(const std::vector<Point*> &pnt_vec);
 	virtual ~Surface ();
 
 	/// return a geometry type

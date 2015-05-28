@@ -35,7 +35,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	_aabb(points->begin(), points->end())
 {
 	assert (_data_vec);
-	std::size_t number_of_all_input_pnts (_data_vec->size());
+	std::size_t const number_of_all_input_pnts (_data_vec->size());
 
 	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
 	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
@@ -58,7 +58,7 @@ std::size_t PointVec::push_back (Point* pnt)
 
 void PointVec::push_back (Point* pnt, std::string const*const name)
 {
-	if (name == NULL) {
+	if (name == nullptr) {
 		_pnt_id_map.push_back (uniqueInsert(pnt));
 		return;
 	}
@@ -86,7 +86,7 @@ std::size_t PointVec::uniqueInsert (Point* pnt)
 	if (it != _data_vec->end())
 	{
 		delete pnt;
-		pnt = NULL;
+		pnt = nullptr;
 		return static_cast<std::size_t>(std::distance(_data_vec->begin(), it));
 	}
 
@@ -207,14 +207,4 @@ void PointVec::correctNameIDMapping()
 	}
 }
 
-std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset) const
-{
-	std::vector<GeoLib::Point*> *new_points (new std::vector<GeoLib::Point*>(subset.size()));
-
-	const std::size_t nPoints(subset.size());
-	for (std::size_t i = 0; i < nPoints; i++)
-		(*new_points)[i] = new GeoLib::Point(*(*this->_data_vec)[subset[i]]);
-
-	return new_points;
-}
 } // end namespace
