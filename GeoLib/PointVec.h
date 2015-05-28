@@ -100,9 +100,6 @@ public:
 
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
 
-	/// Returns a subset of this point vector containing only the points specified in "subset"
-	std::vector<GeoLib::Point*>* getSubset(const std::vector<std::size_t> &subset) const;
-
 private:
 	/**
 	 * Removes points out of the given point set that have the (nearly) same coordinates, i.e.

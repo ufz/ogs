@@ -207,14 +207,4 @@ void PointVec::correctNameIDMapping()
 	}
 }
 
-std::vector<GeoLib::Point*>* PointVec::getSubset(const std::vector<std::size_t> &subset) const
-{
-	std::vector<GeoLib::Point*> *new_points (new std::vector<GeoLib::Point*>(subset.size()));
-
-	const std::size_t nPoints(subset.size());
-	for (std::size_t i = 0; i < nPoints; i++)
-		(*new_points)[i] = new GeoLib::Point(*(*this->_data_vec)[subset[i]]);
-
-	return new_points;
-}
 } // end namespace
