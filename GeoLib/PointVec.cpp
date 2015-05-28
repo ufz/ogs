@@ -217,12 +217,9 @@ void PointVec::correctNameIDMapping()
 	}
 }
 
-boost::optional<std::string const&> PointVec::getItemNameByID(std::size_t id) const
+std::string const& PointVec::getItemNameByID(std::size_t id) const
 {
-	if (_id_to_name_map[id].empty())
-		return boost::optional<std::string const&>();
-	else
-		return boost::optional<std::string const&>(_id_to_name_map[id]);
+    return _id_to_name_map[id];
 }
 
 } // end namespace

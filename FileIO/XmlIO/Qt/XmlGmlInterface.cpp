@@ -246,10 +246,10 @@ bool XmlGmlInterface::write()
 				pointTag.setAttribute("y", QString::number((*(*points)[i])[1], 'f'));
 				pointTag.setAttribute("z", QString::number((*(*points)[i])[2], 'f'));
 
-				boost::optional<std::string const&> point_name(pnt_vec->getItemNameByID(i));
-				if (point_name)
+				std::string const& point_name(pnt_vec->getItemNameByID(i));
+				if (!point_name.empty())
 					pointTag.setAttribute("name",
-					                      QString::fromStdString(point_name.get()));
+					                      QString::fromStdString(point_name));
 
 				pointsListTag.appendChild(pointTag);
 			}

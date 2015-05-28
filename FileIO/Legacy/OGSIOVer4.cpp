@@ -572,9 +572,9 @@ void writeGLIFileV4 (const std::string& fname,
 		os.precision(std::numeric_limits<double>::digits10);
 		for (std::size_t k(0); k < n_pnts; k++) {
 			os << k << " " << *((*pnts)[k]);
-			boost::optional<std::string const&> pnt_name(pnt_vec->getItemNameByID(k));
-			if (pnt_name) {
-				os << " $NAME " << pnt_name.get();
+			std::string const& pnt_name(pnt_vec->getItemNameByID(k));
+			if (!pnt_name.empty()) {
+				os << " $NAME " << pnt_name;
 			}
 			os << "\n";
 		}

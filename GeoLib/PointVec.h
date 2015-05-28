@@ -102,7 +102,7 @@ public:
 
 	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
 
-	boost::optional<std::string const&> getItemNameByID(std::size_t id) const;
+	std::string const& getItemNameByID(std::size_t id) const;
 
 private:
 	/**

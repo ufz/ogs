@@ -305,9 +305,9 @@ bool BoostXmlGmlInterface::write()
 		pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
 		pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);
 		pnt_tag.put("<xmlattr>.z", (*((*pnts)[k]))[2]);
-		boost::optional<std::string const&> point_name(pnt_vec->getItemNameByID(k));
-		if (point_name)
-			pnt_tag.put("<xmlattr>.name", point_name.get());
+		std::string const& point_name(pnt_vec->getItemNameByID(k));
+		if (!point_name.empty())
+			pnt_tag.put("<xmlattr>.name", point_name);
 	}
 
 #if BOOST_VERSION <= 105500

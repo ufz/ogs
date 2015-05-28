@@ -82,9 +82,9 @@ void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
 	std::ofstream bc_out (geo_name+".bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
 		out << k << " " << *(pnts[k]);
-		boost::optional<std::string const&> pnt_name(pnt_vec_objs->getItemNameByID(k));
-		if (pnt_name) {
-			out << "$NAME " << pnt_name.get();
+		std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
+		if (!pnt_name.empty()) {
+			out << "$NAME " << pnt_name;
 			bc_out << "#BOUNDARY_CONDITION\n";
 			bc_out << "  $PCS_TYPE\n";
 			bc_out << "    LIQUID_FLOW\n";
