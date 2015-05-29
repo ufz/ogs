@@ -12,8 +12,6 @@
  *
  */
 
-#include <boost/optional.hpp>
-
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 

@@ -14,8 +14,6 @@
 #include <vector>
 #include <fstream>
 
-#include <boost/optional.hpp>
-
 // TCLAP
 #include "tclap/CmdLine.h"
 

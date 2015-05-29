@@ -21,8 +21,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/optional.hpp>
-
 #ifndef POINTVEC_H_
 #define POINTVEC_H_
 

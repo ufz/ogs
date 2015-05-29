@@ -16,8 +16,6 @@
 #include <limits>
 #include <sstream>
 
-#include <boost/optional.hpp>
-
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -633,9 +631,9 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			const std::size_t n_pnts(pnts->size());
 			for (std::size_t k(0); k < n_pnts; k++) {
 				os << pnts_offset + k << " " << *((*pnts)[k]);
-				boost::optional<std::string const&> pnt_name(pnt_vec->getItemNameByID(k));
-				if (pnt_name) {
-					os << "$NAME " << pnt_name.get();
+				std::string const& pnt_name(pnt_vec->getItemNameByID(k));
+				if (! pnt_name.empty()) {
+					os << "$NAME " << pnt_name;
 				}
 				os << "\n";
 			}
