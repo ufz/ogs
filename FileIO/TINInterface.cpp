@@ -23,7 +23,7 @@ namespace FileIO
 {
 
 GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
-	std::vector<GeoLib::Point*> &pnt_vec,
+	GeoLib::PointVec &pnt_vec,
 	std::vector<std::string>* errors)
 {
 	// open file
@@ -35,7 +35,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
 		return nullptr;
 	}
 
-	GeoLib::Surface* sfc = new GeoLib::Surface(pnt_vec);
+	GeoLib::Surface* sfc = new GeoLib::Surface(*(pnt_vec.getVector()));
 	std::size_t id;
 	double p0[3], p1[3], p2[3];
 	std::string line;
@@ -99,12 +99,11 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
 		}
 
 		// determine size pnt_vec to insert the correct ids
-		std::size_t const pnt_pos(pnt_vec.size());
-		pnt_vec.push_back(new GeoLib::Point(p0));
-		pnt_vec.push_back(new GeoLib::Point(p1));
-		pnt_vec.push_back(new GeoLib::Point(p2));
+		std::size_t const pnt_pos_0(pnt_vec.push_back(new GeoLib::Point(p0)));
+		std::size_t const pnt_pos_1(pnt_vec.push_back(new GeoLib::Point(p1)));
+		std::size_t const pnt_pos_2(pnt_vec.push_back(new GeoLib::Point(p2)));
 		// create new Triangle
-		sfc->addTriangle(pnt_pos, pnt_pos + 1, pnt_pos + 2);
+		sfc->addTriangle(pnt_pos_0, pnt_pos_1, pnt_pos_2);
 	}
 
 	if (sfc->getNTriangles() == 0) {

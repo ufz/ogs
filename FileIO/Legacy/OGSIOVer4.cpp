@@ -286,7 +286,7 @@ std::string readSurface(std::istream &in,
                         std::map<std::string,std::size_t>& sfc_names,
                         const std::vector<GeoLib::Polyline*> &ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
-                        std::vector<Point*> &pnt_vec,
+                        GeoLib::PointVec &pnt_vec,
                         std::string const& path, std::vector<std::string>& errors)
 {
 	std::string line;
@@ -399,7 +399,7 @@ std::string readSurfaces(std::istream &in,
                          std::map<std::string, std::size_t>& sfc_names,
                          const std::vector<GeoLib::Polyline*> &ply_vec,
                          const std::map<std::string,std::size_t>& ply_vec_names,
-                         std::vector<Point*> &pnt_vec,
+                         GeoLib::PointVec & pnt_vec,
                          const std::string &path, std::vector<std::string>& errors)
 {
 	if (!in.good())
@@ -477,7 +477,10 @@ bool readGLIFileV4(const std::string& fname,
 	// read names of plys into temporary string-vec
 	std::map<std::string,std::size_t>* ply_names (new std::map<std::string,std::size_t>);
 	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
-	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<Point*>*>(geo->getPointVec(unique_name)));
+	GeoLib::PointVec & point_vec(
+		*const_cast<GeoLib::PointVec*>(geo->getPointVecObj(unique_name)));
+	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
+		point_vec.getVector()));
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
@@ -499,7 +502,7 @@ bool readGLIFileV4(const std::string& fname,
 		                   *sfc_names,
 		                   *ply_vec,
 		                   *ply_names,
-		                   *pnt_vec,
+		                   point_vec,
 		                   path,
 		                   errors);
 		INFO("GeoLib::readGLIFile(): \tok, %d surfaces read.", sfc_vec->size());
@@ -561,14 +564,14 @@ void writeGLIFileV4 (const std::string& fname,
 	std::vector<GeoLib::Point*> const* const pnts (pnt_vec->getVector());
 	std::ofstream os (fname.c_str());
 	if (pnts) {
-		std::string pnt_name;
 		const std::size_t n_pnts(pnts->size());
 		INFO("GeoLib::writeGLIFileV4(): writing %d points to file %s.", n_pnts, fname.c_str());
 		os << "#POINTS" << "\n";
 		os.precision(std::numeric_limits<double>::digits10);
 		for (std::size_t k(0); k < n_pnts; k++) {
 			os << k << " " << *((*pnts)[k]);
-			if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
+			std::string const& pnt_name(pnt_vec->getItemNameByID(k));
+			if (!pnt_name.empty()) {
 				os << " $NAME " << pnt_name;
 			}
 			os << "\n";
@@ -628,8 +631,9 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 			const std::size_t n_pnts(pnts->size());
 			for (std::size_t k(0); k < n_pnts; k++) {
 				os << pnts_offset + k << " " << *((*pnts)[k]);
-				if (pnt_vec->getNameOfElementByID(k, pnt_name)) {
-					os << " $NAME " << pnt_name;
+				std::string const& pnt_name(pnt_vec->getItemNameByID(k));
+				if (! pnt_name.empty()) {
+					os << "$NAME " << pnt_name;
 				}
 				os << "\n";
 			}

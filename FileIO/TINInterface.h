@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "GeoLib/Point.h"
+#include "GeoLib/PointVec.h"
 
 namespace GeoLib
 {
@@ -36,7 +37,7 @@ public:
 	 * @return a pointer to a GeoLib::Surface object created from TIN data. nullptr is returned if it fails to read the file.
 	 */
 	static GeoLib::Surface* readTIN(std::string const& fname,
-	                                std::vector<GeoLib::Point*> &pnt_vec,
+	                                GeoLib::PointVec &pnt_vec,
 	                                std::vector<std::string>* errors = nullptr);
 
 	/**

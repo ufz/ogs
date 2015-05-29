@@ -80,8 +80,8 @@ void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
 	std::ofstream bc_out (geo_name+".bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
 		out << k << " " << *(pnts[k]);
-		std::string pnt_name;
-		if (pnt_vec_objs->getNameOfElementByID(k, pnt_name)) {
+		std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
+		if (!pnt_name.empty()) {
 			out << "$NAME " << pnt_name;
 			bc_out << "#BOUNDARY_CONDITION\n";
 			bc_out << "  $PCS_TYPE\n";
