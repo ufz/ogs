@@ -255,6 +255,9 @@
    <property name="toolTip">
     <string>Loads a OGS-native file. E.g. gli, gsp, gml, msh, stn.</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="action_Exit">
    <property name="text">
@@ -262,6 +265,9 @@
    </property>
    <property name="toolTip">
     <string>Exits the application.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionPoints_view">
