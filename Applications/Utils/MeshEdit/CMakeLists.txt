@@ -23,7 +23,6 @@ if(QT4_FOUND)
 		${QT_LIBRARIES}
 	)
 	ADD_CATALYST_DEPENDENCY(moveMeshNodes)
-
 	set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 	add_executable(MapGeometryToMeshSurface
@@ -36,9 +35,8 @@ if(QT4_FOUND)
 		${CATALYST_LIBRARIES}
 	)
 	ADD_CATALYST_DEPENDENCY(MapGeometryToMeshSurface)
+	set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
-set_target_properties(MapGeometryToMeshSurface
-	PROPERTIES FOLDER Utilities)
 endif() # QT4_FOUND
 
 add_executable(removeMeshElements removeMeshElements.cpp)
@@ -84,9 +82,7 @@ target_link_libraries(appendLinesAlongPolyline
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(appendLinesAlongPolyline)
-
-set_target_properties(appendLinesAlongPolyline
-	PROPERTIES FOLDER Utilities)
+set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
 add_executable(editMaterialID editMaterialID.cpp)
 target_link_libraries(editMaterialID
@@ -98,9 +94,7 @@ target_link_libraries(editMaterialID
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(editMaterialID)
-
-set_target_properties(editMaterialID
-	PROPERTIES FOLDER Utilities)
+set_target_properties(editMaterialID PROPERTIES FOLDER Utilities)
 
 add_executable(checkMesh checkMesh.cpp)
 target_link_libraries(checkMesh
@@ -112,7 +106,6 @@ target_link_libraries(checkMesh
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(checkMesh)
-
 set_target_properties(checkMesh PROPERTIES FOLDER Utilities)
 
 add_executable(reviseMesh reviseMesh.cpp)
@@ -125,32 +118,27 @@ target_link_libraries (reviseMesh
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(reviseMesh)
-set_target_properties(reviseMesh
-	PROPERTIES FOLDER Utilities)
+set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
-	ResetPropertiesInPolygonalRegion.cpp )
+	ResetPropertiesInPolygonalRegion.cpp)
 target_link_libraries(ResetPropertiesInPolygonalRegion
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
-
 set_target_properties(ResetPropertiesInPolygonalRegion
 	PROPERTIES FOLDER Utilities)
 
-add_executable(AddTopLayer
-	AddTopLayer.cpp )
+add_executable(AddTopLayer AddTopLayer.cpp)
 target_link_libraries(AddTopLayer
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
-
-set_target_properties(AddTopLayer
-	PROPERTIES FOLDER Utilities)
+set_target_properties(AddTopLayer PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
 	CreateBoundaryConditionsAlongPolylines.cpp )
@@ -164,17 +152,40 @@ target_link_libraries(CreateBoundaryConditionsAlongPolylines
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
-
 set_target_properties(CreateBoundaryConditionsAlongPolylines
 	PROPERTIES FOLDER Utilities)
 
-add_executable(queryMesh
-	queryMesh.cpp )
+add_executable(queryMesh queryMesh.cpp)
 target_link_libraries(queryMesh
 	FileIO
 	MeshLib
 	InSituLib
 	${CATALYST_LIBRARIES}
 )
-set_target_properties(queryMesh
-	PROPERTIES FOLDER Utilities)
+set_target_properties(queryMesh PROPERTIES FOLDER Utilities)
+
+####################
+### Installation ###
+####################
+install(TARGETS
+	removeMeshElements
+	NodeReordering
+	MoveMesh
+	appendLinesAlongPolyline
+	editMaterialID
+	checkMesh
+	reviseMesh
+	ResetPropertiesInPolygonalRegion
+	AddTopLayer
+	CreateBoundaryConditionsAlongPolylines
+	queryMesh
+	RUNTIME DESTINATION bin COMPONENT Utilities
+)
+if(QT4_FOUND)
+	install(TARGETS
+		moveMeshNodes
+		MapGeometryToMeshSurface
+		RUNTIME DESTINATION bin
+		COMPONENT Utilities
+	)
+endif()
