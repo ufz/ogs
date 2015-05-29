@@ -30,8 +30,8 @@ public:
     virtual void solve() = 0;
 
     /// Postprocessing after solve().
-    /// The output stream is dedicated for the ascii result output.
-    virtual void post(std::ostream& os) = 0;
+    /// The file_name is indicating the name of possible output file.
+    virtual void post(std::string const& file_name) = 0;
 
 protected:
     MeshLib::Mesh const& _mesh;

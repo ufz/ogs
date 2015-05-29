@@ -21,6 +21,8 @@
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 
+#include "FileIO/VtkIO/VtuInterface.h"
+
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
@@ -182,13 +184,13 @@ public:
         _linearSolver->solve(*_rhs, *_x);
     }
 
-    void post(std::ostream& os)
+    void post(std::string const& file_name)
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
-        // Postprocessing of the linear system of equations solver results:
-        // For example, write _x to _hydraulic_head or convert to velocity etc.
-        for (std::size_t i = 0; i < _x->size(); ++i)
-            os << (*_x)[i] << "\n";
+
+        // Write output file
+        FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+        vtu_interface.writeToFile(file_name);
     }
 
     ~GroundwaterFlowProcess()

@@ -8,4 +8,6 @@ target_link_libraries(ApplicationsLib
 	GeoLib
 	MeshGeoToolsLib
 	ProcessLib
+	${CATALYST_LIBRARIES}
 )
+ADD_CATALYST_DEPENDENCY(ApplicationsLib)
