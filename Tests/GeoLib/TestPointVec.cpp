@@ -31,7 +31,9 @@ protected:
 	{
 		std::uniform_real_distribution<double> rnd(-1, 1);
 		std::generate_n(std::back_inserter(*ps_ptr), n,
-			[&]() { return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen)); });
+			[&]() {
+				return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen), ps_ptr->size());
+			});
 	}
 
 protected:
