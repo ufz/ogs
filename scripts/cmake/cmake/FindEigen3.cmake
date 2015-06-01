@@ -85,3 +85,6 @@ else ()
 
 endif()
 
+if(EIGEN3_INCLUDE_DIR)
+  message(STATUS "Eigen version ${EIGEN3_VERSION}")
+endif()
