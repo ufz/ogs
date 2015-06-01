@@ -140,6 +140,10 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     std::vector<const MeshElementType*> vec_eles;
     MeshElementType* mesh_element;
 
+ public:
+#ifdef OGS_USE_EIGEN
+   EIGEN_MAKE_ALIGNED_OPERATOR_NEW // required to use fixed size Eigen matrices
+#endif
 }; // NumLibFemIsoTest
 
 template <class T>
