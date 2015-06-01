@@ -69,10 +69,7 @@ if(OGS_NO_EXTERNAL_LIBS)
 	return()
 endif() # OGS_NO_EXTERNAL_LIBS
 
-# Clang does not have OpenMP support atm, see https://github.com/ufz/ogs/issues/8
-if(NOT COMPILER_IS_CLANG)
-	find_package(OpenMP)
-endif () # !clang
+find_package(OpenMP)
 if(OPENMP_FOUND)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
