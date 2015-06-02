@@ -92,7 +92,7 @@ int OGSToVtkCellType(CellType ogs)
 			return VTK_PYRAMID;
 		case CellType::PYRAMID13:
 			return VTK_QUADRATIC_PYRAMID;
-		case CellType::INVALID:
+		default:
 			return -1;
 	}
 }
