@@ -35,7 +35,7 @@ template <typename T, std::size_t DIM = 3> class TemplatePoint
 public:
 	typedef T FP_T;
 
-	/** default constructor */
+	/** default constructor with zero coordinates */
 	TemplatePoint();
 
 	/** constructor - constructs a TemplatePoint object
