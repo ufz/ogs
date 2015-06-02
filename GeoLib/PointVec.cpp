@@ -32,13 +32,14 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
                     std::map<std::string, std::size_t>* name_id_map, PointType type, double rel_eps) :
 	TemplateVec<Point> (name, points, name_id_map),
 	_type(type),
-	_aabb(points->begin(), points->end())
+	_aabb(points->begin(), points->end()),
+	_rel_eps(rel_eps)
 {
 	assert (_data_vec);
 	std::size_t const number_of_all_input_pnts (_data_vec->size());
 
-	rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
-	makePntsUnique (_data_vec, _pnt_id_map, rel_eps);
+	_rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
+	makePntsUnique (_data_vec, _pnt_id_map, _rel_eps);
 
 	if (number_of_all_input_pnts > _data_vec->size())
 		WARN("PointVec::PointVec(): there are %d double points.",
@@ -86,11 +87,10 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 
 std::size_t PointVec::uniqueInsert (Point* pnt)
 {
-	const double eps (std::numeric_limits<double>::epsilon());
 	auto const it = std::find_if(_data_vec->begin(), _data_vec->end(),
-		[&eps, &pnt](Point* const p)
+		[this, &pnt](Point* const p)
 		{
-			return MathLib::maxNormDist(p, pnt) <= eps;
+			return MathLib::maxNormDist(p, pnt) <= _rel_eps;
 		});
 
 	if (it != _data_vec->end())

@@ -145,6 +145,7 @@ private:
 	std::vector<std::string> _id_to_name_map;
 
 	AABB<GeoLib::Point> _aabb;
+	double _rel_eps;
 };
 } // end namespace
 

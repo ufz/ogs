@@ -404,27 +404,32 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 	std::vector<GeoLib::Point*>* merged_points (new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* merged_pnt_names(new std::map<std::string, std::size_t>);
 
-	for (std::size_t j(0); j < n_geo_names; j++) {
-		const std::vector<GeoLib::Point*>* pnts(this->getPointVec(geo_names[j]));
-		if (pnts) {
-			std::size_t n_pnts(0);
-			// do not consider stations
-			if (!dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
-				std::string tmp_name;
-				n_pnts = pnts->size();
-				for (std::size_t k(0); k < n_pnts; k++) {
-					merged_points->push_back(new GeoLib::Point(((*pnts)[k])->getCoords()));
-					if (this->getPointVecObj(geo_names[j])->getNameOfElementByID(k, tmp_name)) {
-						merged_pnt_names->insert(
-								std::pair<std::string, std::size_t>(tmp_name, pnt_offsets[j] + k));
-					}
-				}
+	for (std::size_t j(0); j < n_geo_names; ++j) {
+		GeoLib::PointVec const*const pnt_vec(this->getPointVecObj(geo_names[j]));
+		if (pnt_vec == nullptr)
+			continue;
+		const std::vector<GeoLib::Point*>* pnts(pnt_vec->getVector());
+		if (pnts == nullptr) {
+			return false;
+		}
+
+		// do not consider stations
+		if (dynamic_cast<GeoLib::Station*>((*pnts)[0])) {
+			continue;
+		}
+
+		std::size_t const n_pnts(pnts->size());
+		for (std::size_t k(0); k < n_pnts; ++k) {
+			merged_points->push_back(new GeoLib::Point(*(*pnts)[k]));
+			std::string const& item_name(pnt_vec->getItemNameByID(k));
+			if (! item_name.empty()) {
+				merged_pnt_names->insert(
+					std::make_pair(item_name, pnt_offsets[j] + k));
 			}
-			if (n_geo_names - 1 > j) {
-				pnt_offsets[j + 1] = n_pnts + pnt_offsets[j];
-			}
-		} else
-			return false; //if no points for a given geometry are found, something is fundamentally wrong
+		}
+		if (n_geo_names - 1 > j) {
+			pnt_offsets[j + 1] = n_pnts + pnt_offsets[j];
+		}
 	}
 
 	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
