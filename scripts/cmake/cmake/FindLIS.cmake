@@ -4,28 +4,18 @@
 #  LIS_FOUND
 #  LIS_INCLUDE_DIRS
 #  LIS_LIBRARIES
-
-set(LIS_ROOT_DIR
-    "${LIS_ROOT_DIR}"
-    CACHE
-    PATH
-    "Directory to search for Lis library")
+#
+#  Environment variable LIS_ROOT_DIR can be set to give hints
 	
-find_path( LIS_INCLUDE_DIR
-	NAMES lis.h
-	HINTS
-	${LIS_ROOT_DIR}/include
-    /usr/include/lis
-    $ENV{HOME}/include/
-	)
+find_path( LIS_INCLUDE_DIR lis.h
+	PATHS ENV LIS_ROOT_DIR
+	PATH_SUFFIXES include
+)
 
-find_library(LIS_LIBRARY
-    NAMES lis
-    HINTS 
-    ${LIS_ROOT_DIR}/lib
-    /usr/lib
-    $ENV{HOME}/lib/
-    ) 
+find_library(LIS_LIBRARY lis
+	PATHS ENV LIS_ROOT_DIR
+	PATH_SUFFIXES lib
+)
 
 set(LIS_LIBRARIES ${LIS_LIBRARY})
 
