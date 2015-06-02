@@ -53,7 +53,6 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
 {
     MathLib::Point3d new_p;
     for (std::size_t i(0); i<3; ++i) {
-        new_p[i] = 0.0;
         for (std::size_t j(0); j<3; ++j) {
             new_p[i] += mat(i,j)*p[j];
         }
