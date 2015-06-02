@@ -3,3 +3,10 @@ build*/
 *.sw[op]
 tags
 .ExternalData_*
+
+# CLion IDE project files
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/modules.xml
