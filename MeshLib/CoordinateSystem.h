@@ -63,13 +63,13 @@ public:
     }
 
     /// has X dimension
-    bool hasX() const { return (_type & CoordinateSystemType::type::X); }
+    bool hasX() const { return (_type & CoordinateSystemType::type::X) != 0; }
 
     /// has Y dimension
-    bool hasY() const { return (_type & CoordinateSystemType::type::Y); }
+    bool hasY() const { return (_type & CoordinateSystemType::type::Y) != 0; }
 
     /// has z dimension
-    bool hasZ() const { return (_type & CoordinateSystemType::type::Z); }
+    bool hasZ() const { return (_type & CoordinateSystemType::type::Z) != 0; }
 
 private:
     template <class T>

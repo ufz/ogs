@@ -105,7 +105,7 @@ protected:
 
 template <typename T, std::size_t DIM>
 TemplatePoint<T,DIM>::TemplatePoint() :
-	_x({})
+	_x({0})
 {}
 
 template <typename T, std::size_t DIM>
