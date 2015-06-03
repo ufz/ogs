@@ -123,58 +123,67 @@ double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 
 double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 {
-    // position in raster
-    double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
-    double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
-    // raster cell index
-    std::size_t const xIdx (static_cast<size_t>(std::floor(xPos)));
-    std::size_t const yIdx (static_cast<size_t>(std::floor(yPos)));
+	// position in raster
+	double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
+	double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
+	// raster cell index
+	std::size_t const xIdx (static_cast<size_t>(std::floor(xPos)));
+	std::size_t const yIdx (static_cast<size_t>(std::floor(yPos)));
 
-    // weights for bilinear interpolation
-    double const half_delta = 0.5*_cell_size;
-    double const xShift = std::fabs(xPos-(xIdx+half_delta)) / _cell_size;
-    double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _cell_size;
-    std::array<double,4> weight = {{ (1-xShift)*(1-xShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
+	// weights for bilinear interpolation
+	double const half_delta = 0.5*_cell_size;
+	double const xShift = std::fabs(xPos-(xIdx+half_delta)) / _cell_size;
+	double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _cell_size;
+	std::array<double,4> weight = {{ (1-xShift)*(1-yShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
-    // neightbors to include in interpolation
-    int const xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
-    int const yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
-    std::array<int,4> const x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
-    std::array<int,4> const y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
+	// neightbors to include in interpolation
+	int const xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
+	int const yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
+	std::array<int,4> const x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
+	std::array<int,4> const y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
 
-    // get pixel values
-    std::array<double,4>  pix_val;
-    unsigned no_data_count (0);
-    for (unsigned j=0; j<4; ++j)
-    {
-        pix_val[j] = _raster_data[(yIdx + y_nb[j])*_n_cols + (xIdx + x_nb[j])];
-        if (std::fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
-        {
-            weight[j] = 0;
-            no_data_count++;
-        }
-    }
+	// get pixel values
+	std::array<double,4>  pix_val;
+	unsigned no_data_count (0);
+	for (unsigned j=0; j<4; ++j)
+	{
+		// check if neighbour pixel is still on the raster, otherwise substitute a no data value
+		if ( (xIdx + x_nb[j]) < 0 ||
+		     (yIdx + y_nb[j]) < 0 ||
+		     (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
+		     (yIdx + y_nb[j]) > _ll_pnt[1]+(_n_rows*_cell_size) )
+			pix_val[j] = _no_data_val;
+		else
+			pix_val[j] = _raster_data[(yIdx + y_nb[j])*_n_cols + (xIdx + x_nb[j])];
 
-    // adjust weights if necessary
-    if (no_data_count > 0)
-    {
-        if (no_data_count == 4) // if there is absolutely no data just use the default value
-            return _no_data_val;
+		// remove no data values
+		if (std::fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
+		{
+			weight[j] = 0;
+			no_data_count++;
+		}
+	}
 
-        const double norm = (double)(4)/(4-no_data_count);
-        std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
-    }
+	// adjust weights if necessary
+	if (no_data_count > 0)
+	{
+		if (no_data_count == 4) // if there is absolutely no data just use the default value
+			return _no_data_val;
 
-    // new value
-    return MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
-}
+		const double norm = 1.0 / (weight[0]+weight[1]+weight[2]+weight[3]);
+		std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
+	}
+
+	// new value
+	return MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
+	}
 
 bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
 {
-    if ((pnt[0]<_ll_pnt[0]) || (pnt[0]>_ll_pnt[0]+(_n_cols*_cell_size)) || 
-        (pnt[1]<_ll_pnt[1]) || (pnt[1]>_ll_pnt[1]+(_n_rows*_cell_size)))
+	if ((pnt[0]<_ll_pnt[0]) || (pnt[0]>_ll_pnt[0]+(_n_cols*_cell_size)) ||
+	    (pnt[1]<_ll_pnt[1]) || (pnt[1]>_ll_pnt[1]+(_n_rows*_cell_size)))
 		return false;
-    return true;
+	return true;
 }
 
 } // end namespace GeoLib
