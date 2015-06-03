@@ -56,7 +56,7 @@ bool FixedTimeStepping::next()
 
 double FixedTimeStepping::computeEnd(double t_initial, double t_end, const std::vector<double> &dt_vector)
 {
-    double t_sum = t_initial + std::accumulate(dt_vector.begin(), dt_vector.end(), 0);
+    double t_sum = t_initial + std::accumulate(dt_vector.begin(), dt_vector.end(), 0.);
     return std::min(t_end, t_sum);
 }
 
