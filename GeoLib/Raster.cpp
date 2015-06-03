@@ -148,9 +148,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 	for (unsigned j=0; j<4; ++j)
 	{
 		// check if neighbour pixel is still on the raster, otherwise substitute a no data value
-		if ( (xIdx + x_nb[j]) < 0 ||
-		     (yIdx + y_nb[j]) < 0 ||
-		     (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
+		if ( (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
 		     (yIdx + y_nb[j]) > _ll_pnt[1]+(_n_rows*_cell_size) )
 			pix_val[j] = _no_data_val;
 		else
