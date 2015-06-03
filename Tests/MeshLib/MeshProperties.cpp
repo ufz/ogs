@@ -483,8 +483,8 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 
 	// push some values (2 tuples) into the vector
 	for (std::size_t k(0); k<size; k++) {
-		pv.push_back(k);
-		pv.push_back(k);
+		pv.push_back(static_cast<double>(k));
+		pv.push_back(static_cast<double>(k));
 	}
 	// check the size, i.e., the number of tuples
 	ASSERT_EQ(size, pv.size());
