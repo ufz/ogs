@@ -182,7 +182,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 			if(dataMode == vtkXMLWriter::Ascii && compressed)
 				continue;
 			FileIO::VtuInterface vtuInterface(mesh, dataMode, compressed);
-			ASSERT_EQ(vtuInterface.writeToFile(test_data_file), 1);
+			ASSERT_TRUE(vtuInterface.writeToFile(test_data_file));
 
 			// -- Read back VTK mesh
 			vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
