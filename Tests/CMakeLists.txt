@@ -41,9 +41,6 @@ include_directories(
 
 add_executable(testrunner testrunner.cpp ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
-if(TARGET Eigen)
-	add_dependencies(testrunner Eigen)
-endif()
 
 target_link_libraries(testrunner
 	GTest
@@ -81,7 +78,13 @@ if(OGS_BUILD_GUI)
 endif()
 
 if(QT4_FOUND)
-	target_link_libraries(testrunner ${QT_LIBRARIES})
+	target_link_libraries(testrunner Qt4::QtCore Qt4::QtGui Qt4::QtXml Qt4::QtNetwork)
+	if(CMAKE_CROSSCOMPILING)
+		target_link_libraries(testrunner
+			${QT_XML_DEPS_LIBRARIES}
+			${QT_GUI_DEPS_LIBRARIES}
+			${QT_NETWORK_DEPS_LIBRARIES})
+	endif()
 endif()
 
 include(AddCatalystDependency)

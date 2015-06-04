@@ -18,3 +18,7 @@ target_link_libraries(BaseLib
 if(WIN32)
 	target_link_libraries(BaseLib WinMM)
 endif()
+
+if(TARGET Eigen)
+	add_dependencies(BaseLib Eigen)
+endif()

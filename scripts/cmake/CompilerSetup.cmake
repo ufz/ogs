@@ -100,8 +100,11 @@ if (WIN32)
 		DisableCompilerFlag(DEBUG /RTC1)
 	# cygwin
 	else()
-		message (STATUS "Might be GCC under cygwin.")
-		add_definitions( -DGCC )
+		if(CMAKE_CROSSCOMPILING)
+			message(STATUS "Crosscompiling for Windows with MinGW.")
+		else()
+			message(STATUS "Might be GCC under cygwin.")
+		endif()
 	endif()
 endif ()
 

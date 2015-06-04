@@ -12,7 +12,7 @@ target_link_libraries(ogs
     NumLib
     ${Boost_LIBRARIES}
     ${CATALYST_LIBRARIES}
-
+    Threads::Threads
 )
 
 if(OGS_BUILD_GUI)

@@ -57,7 +57,7 @@ add_library(QtStratView STATIC
 
 # Link Qt library
 target_link_libraries(QtStratView
-	${QT_LIBRARIES}
+	Qt4::QtGui
 	BaseLib
 	GeoLib
 	MathLib
