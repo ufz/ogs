@@ -14,6 +14,7 @@
 
 // STL
 #include <string>
+#include <algorithm>
 
 // ThirdParty
 #include "tclap/CmdLine.h"
@@ -30,12 +31,13 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "GMSHInterface.h"
+#include "FileIO/GMSHInterface.h"
+#include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 // MeshLib
-#include "Mesh.h"
+#include "MeshLib/MeshEditing/ElementExtraction.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
@@ -64,6 +66,10 @@ int main (int argc, char* argv[])
 		"filename as string");
 	cmd.add(gmsh_mesh_arg);
 
+	TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
+		"if set, lines will not be written to the ogs mesh");
+	cmd.add(exclude_lines_arg);
+
 	cmd.parse(argc, argv);
 
 	// *** read mesh
@@ -74,7 +80,7 @@ int main (int argc, char* argv[])
 #endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-	MeshLib::Mesh const*const mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
+	MeshLib::Mesh * mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
 	if (mesh == nullptr) {
 		INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
@@ -88,9 +94,18 @@ int main (int argc, char* argv[])
 	INFO("Time for reading: %f seconds.", run_time.elapsed());
 	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
+	// *** remove line elements on request
+	if (exclude_lines_arg.getValue()) {
+		auto ex = MeshLib::ElementExtraction(*mesh);
+		ex.searchByElementType(MeshElemType::LINE);
+		auto m = ex.removeMeshElements(mesh->getName()+"-withoutLines");
+		INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
+		std::swap(m, mesh);
+		delete m;
+	}
+
 	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
-
 	if (BaseLib::getFileExtension(ogs_mesh_fname).compare("msh") == 0) {
 		INFO("Writing %s.", ogs_mesh_fname.c_str());
 		FileIO::Legacy::MeshIO mesh_io;
