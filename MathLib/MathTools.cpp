@@ -48,11 +48,6 @@ double sqrDist(const double* p0, const double* p1)
 	return scalarProduct<double,3>(v,v);
 }
 
-float normalize(float min, float max, float val)
-{
-	return (val - min) / static_cast<float>(max - min);
-}
-
 double getAngle (const double p0[3], const double p1[3], const double p2[3])
 {
 	const double v0[3] = {p0[0]-p1[0], p0[1]-p1[1], p0[2]-p1[2]};

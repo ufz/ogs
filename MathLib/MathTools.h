@@ -135,9 +135,6 @@ T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<
 	return std::max(x, std::max(y, z));
 }
 
-/** linear normalisation of val from [min, max] into [0,1] */
-float normalize(float min, float max, float val);
-
 /**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
