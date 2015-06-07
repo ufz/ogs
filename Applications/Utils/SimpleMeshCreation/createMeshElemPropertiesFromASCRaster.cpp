@@ -13,6 +13,7 @@
  */
 
 // stl
+#include <algorithm>
 #include <numeric>
 
 // BaseLib
@@ -46,6 +47,33 @@
 #include "Mesh.h"
 #include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshEnums.h"
+
+// From wikipedia:
+// http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance. The
+// original is citing D.E. Knuth. TAOCP, vol 2.
+template <typename InputIterator>
+std::pair<decltype(*first), decltype(*first)>
+computeMeanAndVariance(InputIterator first, InputIterator last)
+{
+	using T = decltype(*first);
+	std::size_t n = 0;
+	T mu = 0;
+	T M2 = 0;
+
+	while (first != last)
+	{
+		T const x = *first++;
+		n++;
+		delta = x - mu;
+		mu += delta/n;
+		M2 += delta * (x - mu);
+	}
+
+	if (n < 2)
+		return std::make_pair(mu, 0);
+
+	return std::make_pair(mu, M2/(n - 1));
+}
 
 int main (int argc, char* argv[])
 {
@@ -140,15 +168,10 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0.0) / size);
+		double mu, var;
+		std::tie(mu, var) = computeMeanAndVariance(src_properties.begin(), src_properties.end());
 		INFO("Mean value of source: %f.", mu);
-
-		double src_variance(MathLib::fastpow(src_properties[0] - mu, 2));
-		for (std::size_t k(1); k<size; k++) {
-			src_variance += MathLib::fastpow(src_properties[k] - mu, 2);
-		}
-		src_variance /= size;
-		INFO("Variance of source: %f.", src_variance);
+		INFO("Variance of source: %f.", var);
 	}
 
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshElemType::QUAD,
@@ -210,14 +233,10 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		const double mu(std::accumulate(dest_properties.begin(), dest_properties.end(), 0.0) / n_dest_mesh_elements);
+		double mu, var;
+		std::tie(mu, var) = computeMeanAndVariance(dest_properties.begin(), dest_properties.end());
 		INFO("Mean value of destination: %f.", mu);
-
-		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
-		for (std::size_t k(1); k < n_dest_mesh_elements; k++)
-			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
-		sigma_q /= n_dest_mesh_elements;
-		INFO("Variance of destination: %f.", sigma_q);
+		INFO("Variance of destination: %f.", var);
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {
