@@ -280,13 +280,16 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 	const size_t nElems = grid->GetNumberOfCells();
 	std::vector<MeshLib::Element*> elements(nElems);
 	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
+	auto point_id_list = vtkSmartPointer<vtkIdList>::New();
 	for (size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* elem;
-		const size_t nElemNodes (grid->GetCell(i)->GetNumberOfPoints());
-		std::vector<unsigned> node_ids(nElemNodes);
-		for (size_t j=0; j<nElemNodes; j++)
-			node_ids[j] = grid->GetCell(i)->GetPointId(j);
+		grid->GetCellPoints(i, point_id_list);
+		std::vector<unsigned> node_ids;
+		node_ids.reserve(point_id_list->GetNumberOfIds());
+		for (auto j = 0; j < point_id_list->GetNumberOfIds(); j++)
+			node_ids.push_back(point_id_list->GetId(j));
+
 		const unsigned material = (scalars) ? static_cast<int>(scalars->GetComponent(i,0)) : 0;
 
 		int cell_type = grid->GetCellType(i);
