@@ -1,5 +1,5 @@
-set(OGS_BOOST_URL "http://switch.dl.sourceforge.net/project/boost/boost/1.52.0/boost_1_52_0.tar.bz2")
-set(OGS_BOOST_MD5 "3a855e0f919107e0ca4de4d84ad3f750")
+set(OGS_BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download")
+set(OGS_BOOST_MD5 "b8839650e61e9c1c0a89f371dd475546")
 
 set(OGS_EIGEN_URL "http://opengeosys.org/images/dev/eigen-3.1.4.tar.gz")
 set(OGS_EIGEN_MD5 "e0fcbff1a486f0a305df67c36236b637")
