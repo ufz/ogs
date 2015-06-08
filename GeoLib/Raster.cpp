@@ -127,8 +127,8 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 	double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
 	double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
 	// raster cell index
-	std::size_t const xIdx (static_cast<size_t>(std::floor(xPos)));
-	std::size_t const yIdx (static_cast<size_t>(std::floor(yPos)));
+	double const xIdx (std::floor(xPos));    //carry out computions in double
+	double const yIdx (std::floor(yPos));    //  so not to over- or underflow.
 
 	// weights for bilinear interpolation
 	double const half_delta = 0.5*_cell_size;
@@ -136,7 +136,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 	double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _cell_size;
 	std::array<double,4> weight = {{ (1-xShift)*(1-yShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
-	// neightbors to include in interpolation
+	// neighbors to include in interpolation
 	int const xShiftIdx = (xPos-xIdx-half_delta>=0) ? 1 : -1;
 	int const yShiftIdx = (yPos-yIdx-half_delta>=0) ? 1 : -1;
 	std::array<int,4> const x_nb = {{ 0, xShiftIdx, xShiftIdx, 0 }};
@@ -147,12 +147,17 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 	unsigned no_data_count (0);
 	for (unsigned j=0; j<4; ++j)
 	{
-		// check if neighbour pixel is still on the raster, otherwise substitute a no data value
-		if ( (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
+		// check if neighbour pixel is still on the raster, otherwise substitute
+		// a no data value. This also allows the cast to unsigned type.
+		if ( (xIdx + x_nb[j]) < 0 ||
+		     (yIdx + y_nb[j]) < 0 ||
+		     (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
 		     (yIdx + y_nb[j]) > _ll_pnt[1]+(_n_rows*_cell_size) )
 			pix_val[j] = _no_data_val;
 		else
-			pix_val[j] = _raster_data[(yIdx + y_nb[j])*_n_cols + (xIdx + x_nb[j])];
+			pix_val[j] = _raster_data[
+				static_cast<std::size_t>(yIdx + y_nb[j]) * _n_cols +
+				static_cast<std::size_t>(xIdx + x_nb[j])];
 
 		// remove no data values
 		if (std::fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
