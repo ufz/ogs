@@ -71,12 +71,12 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	const std::vector<MeshLib::Element*> &elems = mesh->getElements();
 	const size_t nElems (elems.size());
 	QString elem_type_string("");
-	MeshElemType elem_type(MeshElemType::INVALID);
+	MeshLib::MeshElemType elem_type(MeshLib::MeshElemType::INVALID);
 
 	for (size_t i = 0; i < nElems; i++)
 	{
 		const MeshLib::Element* current_element (elems[i]);
-		MeshElemType t (current_element->getGeomType());
+		MeshLib::MeshElemType t (current_element->getGeomType());
 		QList<QVariant> elemData;
 		elemData.reserve(3);
 		if (t != elem_type)

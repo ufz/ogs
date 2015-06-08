@@ -436,7 +436,7 @@ void MainWindow::save()
 	}
 	else if (fi.suffix().toLower() == "geo")
 	{
-		int const return_val = 
+		int const return_val =
 			FileIO::GMSHInterface::writeGeoFile(*_project.getGEOObjects(), fileName.toStdString());
 
 		if (return_val == 1)
@@ -1048,7 +1048,7 @@ void MainWindow::showMshQualitySelectionDialog(VtkMeshSource* mshSource)
 	MeshQualitySelectionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
 		return;
-	MeshQualityType const type (dlg.getSelectedMetric());
+	MeshLib::MeshQualityType const type (dlg.getSelectedMetric());
 	MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(), type);
 	_vtkVisPipeline->showMeshElementQuality(mshSource, type, quality_interface.getQualityVector());
 

@@ -202,7 +202,7 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 	dlg->exec();
 }
 
-void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
+void VtkVisPipelineView::constructMeshFromImage(QString msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->

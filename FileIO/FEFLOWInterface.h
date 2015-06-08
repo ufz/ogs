@@ -25,6 +25,7 @@ namespace MeshLib
 class Mesh;
 class Element;
 class Node;
+enum class MeshElemType;
 }
 
 namespace FileIO
@@ -121,7 +122,7 @@ private:
 	};
 
 	/// read node indices and create a mesh element
-	MeshLib::Element* readElement(const FEM_DIM &fem_dim, const MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes);
+	MeshLib::Element* readElement(const FEM_DIM &fem_dim, const MeshLib::MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes);
 
 	/// read node coordinates
 	void readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &nodes);

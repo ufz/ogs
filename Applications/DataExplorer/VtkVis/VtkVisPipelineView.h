@@ -29,6 +29,7 @@ enum class MeshElemType;
 namespace MeshLib {
 	class Mesh;
 	enum class UseIntensityAs;
+	enum class MeshElemType;
 }
 
 /**
@@ -76,7 +77,7 @@ private slots:
 	void addPipelineFilterItem();
 
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
-	void constructMeshFromImage(QString msh_name, MeshElemType element_type, MeshLib::UseIntensityAs intensity_type);
+	void constructMeshFromImage(QString msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type);
 
 	/// Calls the dialog to
 	void showImageToMeshConversionDialog();

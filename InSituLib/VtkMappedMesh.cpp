@@ -132,7 +132,7 @@ void VtkMappedMeshImpl::GetIdsOfCellsOfType(int type, vtkIdTypeArray *array)
 
 int VtkMappedMeshImpl::IsHomogeneous()
 {
-	CellType type = (*(_elements->begin()))->getCellType();
+	MeshLib::CellType type = (*(_elements->begin()))->getCellType();
 	for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
 		if((*elem)->getCellType() != type)
 			return 0;

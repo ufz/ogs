@@ -12,8 +12,8 @@
 
 #include "MeshEnums.h"
 
-CellType VtkCellTypeToOGS(int type);
+MeshLib::CellType VtkCellTypeToOGS(int type);
 
-int OGSToVtkCellType(CellType ogs);
+int OGSToVtkCellType(MeshLib::CellType ogs);
 
 #endif // VTKOGSENUM_H_

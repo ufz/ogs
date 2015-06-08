@@ -157,19 +157,19 @@ int main (int argc, char* argv[])
 	std::size_t const n_sfc_elements(sfc_elements.size());
 	for (std::size_t k(0); k<n_sfc_elements; ++k) {
 		MeshLib::Element const*const sfc_elem(sfc_elements[k]);
-		if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE) {
+		if (sfc_elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE) {
 			// add a prism
 			subsfc_elements.push_back(extrudeElement(subsfc_nodes,
 				static_cast<MeshLib::Tri const*const>(sfc_elem),
 				subsfc_sfc_id_map));
 		} else {
-			if (sfc_elements[k]->getGeomType() == MeshElemType::QUAD) {
+			if (sfc_elements[k]->getGeomType() == MeshLib::MeshElemType::QUAD) {
 				// add a hexahedron
 				subsfc_elements.push_back(extrudeElement(subsfc_nodes,
 					static_cast<MeshLib::Quad const*const>(sfc_elem),
 					subsfc_sfc_id_map));
 			} else {
-				if (sfc_elements[k]->getGeomType() == MeshElemType::LINE) {
+				if (sfc_elements[k]->getGeomType() == MeshLib::MeshElemType::LINE) {
 					// add a quad
 					subsfc_elements.push_back(extrudeElement(subsfc_nodes,
 						static_cast<MeshLib::Line const*const>(sfc_elem),

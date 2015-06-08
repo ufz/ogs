@@ -14,6 +14,8 @@
 
 #include "MeshEnums.h"
 
+namespace MeshLib {
+
 const std::string MeshElemType2String(const MeshElemType t)
 {
 	if (t == MeshElemType::LINE)
@@ -135,3 +137,4 @@ const std::string MeshQualityType2String(const MeshQualityType t)
     return "none";
 }
 
+}

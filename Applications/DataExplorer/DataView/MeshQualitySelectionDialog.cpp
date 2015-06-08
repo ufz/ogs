@@ -21,7 +21,7 @@
 
 /// Constructor
 MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
-: QDialog(parent), _metric (MeshQualityType::EDGERATIO), _histogram_path("")
+: QDialog(parent), _metric (MeshLib::MeshQualityType::EDGERATIO), _histogram_path("")
 {
 	setupUi(this);
 	this->choiceEdges->toggle();
@@ -33,7 +33,7 @@ MeshQualitySelectionDialog::~MeshQualitySelectionDialog()
 
 void MeshQualitySelectionDialog::on_histogramCheckBox_toggled(bool is_checked) const
 {
-	histogramPathEdit->setEnabled(is_checked); 
+	histogramPathEdit->setEnabled(is_checked);
 	histogramPathButton->setEnabled(is_checked);
 }
 
@@ -51,17 +51,17 @@ void MeshQualitySelectionDialog::on_histogramPathButton_pressed()
 void MeshQualitySelectionDialog::accept()
 {
 	if (this->choiceEdges->isChecked())
-		_metric = MeshQualityType::EDGERATIO;
+		_metric = MeshLib::MeshQualityType::EDGERATIO;
 	else if (this->choiceArea->isChecked())
-		_metric = MeshQualityType::ELEMENTSIZE;
+		_metric = MeshLib::MeshQualityType::ELEMENTSIZE;
 	else if (this->choiceVolume->isChecked())
-		_metric = MeshQualityType::SIZEDIFFERENCE;
+		_metric = MeshLib::MeshQualityType::SIZEDIFFERENCE;
 	else if (this->choiceAngles->isChecked())
-		_metric = MeshQualityType::EQUIANGLESKEW;
+		_metric = MeshLib::MeshQualityType::EQUIANGLESKEW;
 	else if (this->choiceRadius->isChecked())
-		_metric = MeshQualityType::RADIUSEDGERATIO;
+		_metric = MeshLib::MeshQualityType::RADIUSEDGERATIO;
 	else
-		_metric = MeshQualityType::INVALID;
+		_metric = MeshLib::MeshQualityType::INVALID;
 
 	if (this->histogramCheckBox->isChecked())
 	{

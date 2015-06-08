@@ -28,14 +28,6 @@ namespace MeshLib {
 class Mesh;
 class Properties;
 
-/// Selection of possible interpretations for intensities
-enum class UseIntensityAs
-{
-	ELEVATION,
-	MATERIAL,
-	NONE
-};
-
 
 /**
  * \brief Adapter class to convert FEM Mesh to a representation more suited for visualisation purposes

@@ -172,20 +172,20 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 	const std::vector<MeshLib::Node*> &nodes) const
 {
 	std::string elem_type_str("");
-	MeshElemType elem_type (MeshElemType::INVALID);
+	MeshLib::MeshElemType elem_type (MeshLib::MeshElemType::INVALID);
 
 	do {
 		if (!(in >> elem_type_str))
 			return nullptr;
-		elem_type = String2MeshElemType(elem_type_str);
-	} while (elem_type == MeshElemType::INVALID);
+		elem_type = MeshLib::String2MeshElemType(elem_type_str);
+	} while (elem_type == MeshLib::MeshElemType::INVALID);
 
 	unsigned* idx = new unsigned[8];
 	MeshLib::Element* elem;
 
 	switch(elem_type)
 	{
-	case MeshElemType::LINE: {
+	case MeshLib::MeshElemType::LINE: {
 		for (int i = 0; i < 2; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -196,7 +196,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Line(edge_nodes);
 		break;
 	}
-	case MeshElemType::TRIANGLE: {
+	case MeshLib::MeshElemType::TRIANGLE: {
 		for (int i = 0; i < 3; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -206,7 +206,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Tri(tri_nodes);
 		break;
 	}
-	case MeshElemType::QUAD: {
+	case MeshLib::MeshElemType::QUAD: {
 		for (int i = 0; i < 4; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -216,7 +216,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Quad(quad_nodes);
 		break;
 	}
-	case MeshElemType::TETRAHEDRON: {
+	case MeshLib::MeshElemType::TETRAHEDRON: {
 		for (int i = 0; i < 4; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -226,7 +226,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Tet(tet_nodes);
 		break;
 	}
-	case MeshElemType::HEXAHEDRON: {
+	case MeshLib::MeshElemType::HEXAHEDRON: {
 		for (int i = 0; i < 8; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -236,7 +236,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Hex(hex_nodes);
 		break;
 	}
-	case MeshElemType::PYRAMID: {
+	case MeshLib::MeshElemType::PYRAMID: {
 		for (int i = 0; i < 5; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -246,7 +246,7 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
 		elem = new MeshLib::Pyramid(pyramid_nodes);
 		break;
 	}
-	case MeshElemType::PRISM: {
+	case MeshLib::MeshElemType::PRISM: {
 		for (int i = 0; i < 6; ++i)
 			if (!(in >> idx[i]))
 				return nullptr;
@@ -322,21 +322,21 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 	}
 }
 
-std::string MeshIO::ElemType2StringOutput(const MeshElemType t) const
+std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t) const
 {
-	if (t == MeshElemType::LINE)
+	if (t == MeshLib::MeshElemType::LINE)
 		return "line";
-	if (t == MeshElemType::QUAD)
+	if (t == MeshLib::MeshElemType::QUAD)
 		return "quad";
-	if (t == MeshElemType::HEXAHEDRON)
+	if (t == MeshLib::MeshElemType::HEXAHEDRON)
 		return "hex";
-	if (t == MeshElemType::TRIANGLE)
+	if (t == MeshLib::MeshElemType::TRIANGLE)
 		return "tri";
-	if (t == MeshElemType::TETRAHEDRON)
+	if (t == MeshLib::MeshElemType::TETRAHEDRON)
 		return "tet";
-	if (t == MeshElemType::PRISM)
+	if (t == MeshLib::MeshElemType::PRISM)
 		return "pris";
-	if (t == MeshElemType::PYRAMID)
+	if (t == MeshLib::MeshElemType::PYRAMID)
 		return "pyra";
 	return "none";
 }

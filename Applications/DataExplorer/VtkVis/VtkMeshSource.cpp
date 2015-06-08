@@ -152,7 +152,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 			return 0;
 		}
 
-		if (elem->getCellType() == CellType::PRISM6)
+		if (elem->getCellType() == MeshLib::CellType::PRISM6)
 		{
 			for (unsigned i=0; i<3; ++i)
 			{
@@ -161,7 +161,7 @@ int VtkMeshSource::RequestData( vtkInformation* request,
 				point_ids->SetId(i+3, prism_swap_id);
 			}
 		}
-		else if (elem->getCellType() == CellType::PRISM15)
+		else if (elem->getCellType() == MeshLib::CellType::PRISM15)
 		{
 			std::array<vtkIdType, 15> ogs_nodeIds;
 			for (unsigned i=0; i<15; ++i)

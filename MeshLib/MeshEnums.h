@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 
+namespace MeshLib {
+
 /**
  * \brief Types of mesh elements supported by OpenGeoSys.
  * Values are from VTKCellType enum
@@ -72,6 +74,16 @@ enum class MeshQualityType
 	RADIUSEDGERATIO
 };
 
+/**
+ * \brief Selection of possible interpretations for intensities.
+ */
+enum class UseIntensityAs
+{
+	ELEVATION,
+	MATERIAL,
+	NONE
+};
+
 /// Given a MeshElemType this returns the appropriate string.
 const std::string MeshElemType2String(const MeshElemType t);
 
@@ -91,5 +103,7 @@ std::vector<std::string> getMeshElemTypeStringsShort();
 const std::string CellType2String(const CellType t);
 
 const std::string MeshQualityType2String(const MeshQualityType t);
+
+}
 
 #endif //MESHENUMS_H

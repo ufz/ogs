@@ -35,13 +35,11 @@
 // GeoLib
 #include "Raster.h"
 
-// Gui/VtkVis
-#include "VtkMeshConverter.h"
-
 // MathLib
 #include "MathTools.h"
 
 // MeshLib
+#include "MeshGenerators/VtkMeshConverter.h"
 #include "MeshGenerators/ConvertRasterToMesh.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
@@ -142,7 +140,8 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
-	GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(raster_arg.getValue()));
+	GeoLib::Raster* raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(
+		raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
@@ -151,7 +150,7 @@ int main (int argc, char* argv[])
 			                                      raster_arg.getValue()));
 			new_raster_fname += "-" + std::to_string(raster->getNRows()) + "x" +
 			                    std::to_string(raster->getNCols()) + ".asc";
-			FileIO::AsciiRasterInterface::writeRasterAsASC(raster, new_raster_fname);
+			FileIO::AsciiRasterInterface::writeRasterAsASC(*raster, new_raster_fname);
 		}
 	}
 
@@ -174,7 +173,7 @@ int main (int argc, char* argv[])
 		INFO("Variance of source: %f.", var);
 	}
 
-	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshElemType::QUAD,
+	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshLib::MeshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
 	std::vector<std::size_t> src_perm(size);

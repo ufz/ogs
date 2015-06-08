@@ -30,6 +30,7 @@ namespace MeshLib
 	class Mesh;
 	class Node;
 	class Element;
+	enum class MeshElemType;
 }
 
 
@@ -62,7 +63,7 @@ private:
 		std::ostream &out) const;
 	std::size_t readMaterialID(std::istream & in) const;
 	MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
-	std::string ElemType2StringOutput(const MeshElemType t) const;
+	std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
 
 	const MeshLib::Mesh* _mesh;
 

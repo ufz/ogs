@@ -38,9 +38,9 @@ void MeshFromRasterDialog::accept()
 	if (this->materialButton->isChecked()) i_type = MeshLib::UseIntensityAs::MATERIAL;
 	else if (this->ignoreButton->isChecked()) i_type = MeshLib::UseIntensityAs::NONE;
 
-	MeshElemType e_type(MeshElemType::TRIANGLE);
-	if (this->quadButton->isChecked()) e_type = MeshElemType::QUAD;
-	else if (this->hexButton->isChecked()) e_type = MeshElemType::HEXAHEDRON;
+	MeshLib::MeshElemType e_type(MeshLib::MeshElemType::TRIANGLE);
+	if (this->quadButton->isChecked()) e_type = MeshLib::MeshElemType::QUAD;
+	else if (this->hexButton->isChecked()) e_type = MeshLib::MeshElemType::HEXAHEDRON;
 
 	emit setMeshParameters(this->mshNameEdit->text(), e_type, i_type);
 	this->done(QDialog::Accepted);
