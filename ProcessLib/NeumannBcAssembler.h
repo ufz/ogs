@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "MeshLib/CoordinateSystem.h"
+
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -27,6 +29,7 @@ public:
 
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
+            MeshLib::CoordinateSystem const& global_coordinate_system,
             std::function<double (MeshLib::Element const&)> const& value_lookup,
             unsigned const integration_order) = 0;
 
@@ -55,6 +58,7 @@ public:
     void
     init(MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        MeshLib::CoordinateSystem const& global_coordinate_system,
         std::function<double (MeshLib::Element const&)> const& value_lookup,
         unsigned const integration_order)
     {

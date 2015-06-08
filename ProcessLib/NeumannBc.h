@@ -129,6 +129,7 @@ public:
                 local_asm_builder,
                 _elements,
                 _local_assemblers,
+                _global_coordinate_system,
                 elementValueLookup,
                 _integration_order);
 
