@@ -58,15 +58,15 @@ inline void computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR>());
 
-    const std::size_t dim = T_MESH_ELEMENT::dimension;
-    const std::size_t nnodes = T_MESH_ELEMENT::n_all_nodes;
+    auto const dim = T_MESH_ELEMENT::dimension;
+    auto const nnodes = T_MESH_ELEMENT::n_all_nodes;
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
-    for (std::size_t k=0; k<nnodes; k++) {
+    for (auto k = decltype(nnodes){0}; k<nnodes; k++) {
         const MathLib::Point3d& mapped_pt = ele_local_coord.getMappedCoordinates(k);
         // outer product of dNdr and mapped_pt for a particular node
-        for (std::size_t i_r=0; i_r<dim; i_r++) {
-            for (std::size_t j_x=0; j_x<dim; j_x++) {
+        for (auto i_r = decltype(dim){0}; i_r<dim; i_r++) {
+            for (auto j_x = decltype(dim){0}; j_x<dim; j_x++) {
                 shapemat.J(i_r,j_x) += shapemat.dNdr(i_r,k) * mapped_pt[j_x];
             }
         }
