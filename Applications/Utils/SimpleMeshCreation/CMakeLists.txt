@@ -10,7 +10,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/Gui/VtkVis
 )
 
-if(TARGET VtkVis)
+if(OGS_BUILD_GUI)
 
 	add_executable(generateStructuredQuadMesh generateStructuredQuadMesh.cpp)
 	set_target_properties(generateStructuredQuadMesh PROPERTIES FOLDER Utils)
@@ -37,7 +37,7 @@ if(TARGET VtkVis)
 	)
 	ADD_CATALYST_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 
-endif() # VtkVis-target is existing
+endif() # OGS_BUILD_GUI (VtkVis-target is existing)
 
 
 add_executable(generateStructuredMesh generateStructuredMesh.cpp)
