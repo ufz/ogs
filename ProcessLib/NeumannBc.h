@@ -20,6 +20,7 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
+#include "MeshLib/CoordinateSystem.h"
 #include "MeshLib/MeshSubset.h"
 
 #include "NeumannBcConfig.h"
@@ -51,13 +52,15 @@ public:
     /// A local DOF-table, a subset of the given one, is constructed.
     NeumannBc(
         NeumannBcConfig const& bc,
+        MeshLib::CoordinateSystem const& global_coordinate_system,
         unsigned const integration_order,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
         MeshLib::MeshSubset const& mesh_subset_all_nodes
         )
         :
           _function(*bc.getFunction()),
-          _integration_order(integration_order)
+          _integration_order(integration_order),
+          _global_coordinate_system(global_coordinate_system)
     {
         // deep copy because the neumann bc config destroys the elements.
         std::transform(bc.elementsBegin(), bc.elementsEnd(),
@@ -163,6 +166,9 @@ private:
     /// Integration order for integration over the lower-dimensional elements of
     /// the #_function.
     unsigned const _integration_order;
+
+    /// Coordinate system of the original elements.
+    MeshLib::CoordinateSystem const& _global_coordinate_system;
 
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
