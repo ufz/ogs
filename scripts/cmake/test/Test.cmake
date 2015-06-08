@@ -1,7 +1,6 @@
 # Find tools and data
 find_program(DIFF_TOOL_PATH diff)
 find_program(NUMDIFF_TOOL_PATH numdiff)
-find_program(VTKDIFF_TOOL_PATH vtkdiff ${CMAKE_BINARY_DIR}/bin)
 # find_program(TIME_TOOL_PATH time) # TODO: does not work Travis
 set(TIME_TOOL_PATH time)
 find_program(GREP_TOOL_PATH grep)
