@@ -170,6 +170,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
+	std::vector<int> materials;
 	std::map<unsigned, unsigned> id_map;
 	while (line.find("$EndElements") == std::string::npos)
 	{
@@ -194,14 +195,21 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		if (line.find("$Elements") != std::string::npos)
 		{
 			std::size_t n_elements(0);
-			in >> n_elements >> std::ws; // number-of-elements
+			if (! (in >> n_elements >> std::ws)) { // number-of-elements
+				ERR("Read GMSH mesh does not contain any elements");
+			}
 			elements.reserve(n_elements);
+			materials.reserve(n_elements);
 			for (std::size_t i = 0; i < n_elements; i++)
 			{
-				MeshLib::Element* elem (readElement(in, nodes, id_map));
+				MeshLib::Element* elem(nullptr);
+				int mat_id(0);
+				std::tie(elem, mat_id) = readElement(in, nodes, id_map);
 
-				if (elem)
+				if (elem) {
 					elements.push_back(elem);
+					materials.push_back(mat_id);
+				}
 			}
 			getline(in, line); // END keyword
 		}
@@ -222,7 +230,26 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		}
 		return nullptr;
 	}
-	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements);
+
+	MeshLib::Mesh * mesh(new MeshLib::Mesh(
+		BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements));
+
+	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+		mesh->getProperties().createNewPropertyVector<int>(
+			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
+	);
+	if (!opt_material_ids) {
+		WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+	} else {
+		MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
+		material_ids.insert(material_ids.end(), materials.cbegin(),
+			materials.cend());
+	}
+	INFO("\t... finished.");
+	INFO("Nr. Nodes: %d.", nodes.size());
+	INFO("Nr. Elements: %d.", elements.size());
+
+	return mesh;
 }
 
 void GMSHInterface::readNodeIDs(std::ifstream &in,
@@ -238,9 +265,13 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 	}
 }
 
-MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map)
+std::pair<MeshLib::Element*, int>
+GMSHInterface::readElement(std::ifstream &in,
+	std::vector<MeshLib::Node*> const& nodes,
+	std::map<unsigned, unsigned> const& id_map)
 {
-	unsigned idx, type, n_tags, dummy, mat_id;
+	unsigned idx, type, n_tags, dummy;
+	int mat_id;
 	std::vector<unsigned> node_ids;
 	std::vector<MeshLib::Node*> elem_nodes;
 	in >> idx >> type >> n_tags >> dummy >> mat_id;
@@ -257,7 +288,7 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[node_ids[0]];
 		edge_nodes[1] = nodes[node_ids[1]];
-		return new MeshLib::Line(edge_nodes, 0);
+		return std::make_pair(new MeshLib::Line(edge_nodes), 0);
 	}
 	case 2: {
 		readNodeIDs(in, 3, node_ids, id_map);
@@ -265,42 +296,42 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 		tri_nodes[0] = nodes[node_ids[2]];
 		tri_nodes[1] = nodes[node_ids[1]];
 		tri_nodes[2] = nodes[node_ids[0]];
-		return new MeshLib::Tri(tri_nodes, mat_id);
+		return std::make_pair(new MeshLib::Tri(tri_nodes), mat_id);
 	}
 	case 3: {
 		readNodeIDs(in, 4, node_ids, id_map);
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; k++)
 			quad_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Quad(quad_nodes, mat_id);
+		return std::make_pair(new MeshLib::Quad(quad_nodes), mat_id);
 	}
 	case 4: {
 		readNodeIDs(in, 4, node_ids, id_map);
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 4; k++)
 			tet_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Tet(tet_nodes, mat_id);
+		return std::make_pair(new MeshLib::Tet(tet_nodes), mat_id);
 	}
 	case 5: {
 		readNodeIDs(in, 8, node_ids, id_map);
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k < 8; k++)
 			hex_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Hex(hex_nodes, mat_id);
+		return std::make_pair(new MeshLib::Hex(hex_nodes), mat_id);
 	}
 	case 6: {
 		readNodeIDs(in, 6, node_ids, id_map);
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k < 6; k++)
 			prism_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Prism(prism_nodes, mat_id);
+		return std::make_pair(new MeshLib::Prism(prism_nodes), mat_id);
 	}
 	case 7: {
 		readNodeIDs(in, 5, node_ids, id_map);
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 5; k++)
 			pyramid_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Pyramid(pyramid_nodes, mat_id);
+		return std::make_pair(new MeshLib::Pyramid(pyramid_nodes), mat_id);
 	}
 	case 15:
 		in >> dummy; // skip rest of line
@@ -308,7 +339,7 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 	default:
 		WARN("GMSHInterface::readGMSHMesh(): Unknown element type %d.", type);
 	}
-	return nullptr;
+	return std::make_pair(nullptr, -1);
 }
 
 

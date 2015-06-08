@@ -98,7 +98,9 @@ protected:
 
 private:
 	/// Reads a mesh element from the input stream
-	static MeshLib::Element* readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map);
+	static std::pair<MeshLib::Element*, int> readElement(std::ifstream &in,
+		std::vector<MeshLib::Node*> const& nodes,
+		std::map<unsigned, unsigned> const& id_map);
 
 	/**
 	 * 1. get and merge data from _geo_objs
