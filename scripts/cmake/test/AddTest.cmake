@@ -116,7 +116,7 @@ function (AddTest)
 		set(TESTER_ARGS "--statistics --absolute-tolerance=1e-5 --relative-tolerance=1e-4")
 	elseif(AddTest_TESTER STREQUAL "vtkdiff")
 		set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
-		set(TESTER_ARGS "-q --abs 1e-5 --rel 1e-4")
+		set(TESTER_ARGS "-q --abs 1e-2 --rel 1e-4")
 	endif()
 
 	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
