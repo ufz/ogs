@@ -26,6 +26,7 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
+#include "MeshLib/CoordinateSystem.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -147,12 +148,18 @@ public:
             MeshGeoToolsLib::BoundaryElementsSearcher hydraulic_head_mesh_element_searcher(
                 _hydraulic_head->getMesh(), hydraulic_head_mesh_node_searcher);
 
+            // Use coordinate system of the mesh for rotation transformation in
+            // boundary conditions.
+            auto const coordinate_system = MeshLib::CoordinateSystem
+                { *_mesh.getElement(0) };
+
             // Create a neumann BC for the hydraulic head storing them in the
             // _neumann_bcs vector.
             _hydraulic_head->createNeumannBcs(
                     std::back_inserter(_neumann_bcs),
                     hydraulic_head_mesh_element_searcher,
                     _global_setup,
+                    coordinate_system,
                     _integration_order,
                     *_local_to_global_index_map,
                     *_mesh_subset_all_nodes);

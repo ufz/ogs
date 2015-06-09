@@ -21,6 +21,8 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 		EXECUTABLE ogs
 		EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
 		WRAPPER time
+		TESTER vtkdiff
+        DIFF_DATA cube_${mesh_size}_neumann.vtu D1_left_front_N1_right Result
 		DATA cube_${mesh_size}_neumann.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1.gml
 	)
 endforeach()
@@ -43,6 +45,8 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
 		EXECUTABLE ogs
 		EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
 		WRAPPER time
+		TESTER vtkdiff
+        DIFF_DATA cube_${mesh_size}_neumann.vtu D1_left_front_N1_right Result
 		DATA cube_${mesh_size}_neumann.prj cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1.gml
 	)
 endforeach()
@@ -66,6 +70,8 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 		EXECUTABLE ogs
 		EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
 		WRAPPER time
+		TESTER vtkdiff
+        DIFF_DATA square_${mesh_size}_neumann.vtu D1_left_bottom_N1_right Result
 		DATA square_${mesh_size}_neumann.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach()
@@ -88,6 +94,8 @@ foreach(mesh_size 1e5 1e6)
 		EXECUTABLE ogs
 		EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
 		WRAPPER time
+		TESTER vtkdiff
+        DIFF_DATA square_${mesh_size}_neumann.vtu D1_left_bottom_N1_right Result
 		DATA square_${mesh_size}_neumann.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach()
