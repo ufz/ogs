@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MeshLib/CoordinateSystem.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -62,11 +63,25 @@ public:
         std::function<double (MeshLib::Element const&)> const& value_lookup,
         unsigned const integration_order)
     {
+
+        auto const local_coordinate_system = MeshLib::ElementCoordinatesMappingLocal
+            { e, global_coordinate_system };
+
+        // Create temporary element with local coordinates.
+        using MeshElement = typename ShapeFunction::MeshElement;
+        auto local_element = std::unique_ptr<MeshElement>{
+            static_cast<MeshElement*>(e.clone()) };
+
+        // Set nodes from the local coordinate system.
+        // The const cast is allowed here because the local_coordinate_system is
+        // a local variable in the same scope as the local_element.
+        for (std::size_t i = 0; i < e.getNNodes(); i++)
+            local_element->setNode(i, const_cast<MeshLib::Node*>(
+                local_coordinate_system.getMappedCoordinates(i)));
+
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
-
+        auto fe = FemType { *local_element };
 
         _integration_order = integration_order;
         IntegrationMethod_ integration_method(_integration_order);
