@@ -87,21 +87,21 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 		{
 			assert(!vec_nodes.empty());
 
-			MeshElemType eleType = MeshElemType::INVALID;
+			MeshLib::MeshElemType eleType = MeshLib::MeshElemType::INVALID;
 			if (fem_dim.n_nodes_of_element == 2)
-				eleType = MeshElemType::LINE;
+				eleType = MeshLib::MeshElemType::LINE;
 			else if (fem_dim.n_nodes_of_element == 3)
-				eleType = MeshElemType::TRIANGLE;
+				eleType = MeshLib::MeshElemType::TRIANGLE;
 			else if (fem_dim.n_nodes_of_element == 4 && fem_class.dimension == 2)
-				eleType = MeshElemType::TRIANGLE;
+				eleType = MeshLib::MeshElemType::TRIANGLE;
 			else if (fem_dim.n_nodes_of_element == 4 && fem_class.dimension == 3)
-				eleType = MeshElemType::TETRAHEDRON;
+				eleType = MeshLib::MeshElemType::TETRAHEDRON;
 			else if (fem_dim.n_nodes_of_element == 6 && fem_class.dimension == 3)
-				eleType = MeshElemType::PRISM;
+				eleType = MeshLib::MeshElemType::PRISM;
 			else if (fem_dim.n_nodes_of_element == 8 && fem_class.dimension == 3)
-				eleType = MeshElemType::HEXAHEDRON;
+				eleType = MeshLib::MeshElemType::HEXAHEDRON;
 
-			if (eleType == MeshElemType::INVALID) {
+			if (eleType == MeshLib::MeshElemType::INVALID) {
 				ERR("FEFLOWInterface::readFEFLOWFile(): Unsupported element type with the number of node = %d and dim = %d", fem_dim.n_nodes_of_element, fem_class.dimension);
 				std::for_each(vec_nodes.begin(), vec_nodes.end(), [](MeshLib::Node* nod) { delete nod;});
 				vec_nodes.clear();
@@ -312,7 +312,9 @@ void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_clas
 		in.seekg(pos_prev_line);
 }
 
-MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes)
+MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim,
+	const MeshLib::MeshElemType elem_type, const std::string& line,
+	const std::vector<MeshLib::Node*> &nodes)
 {
 	std::stringstream ss(line);
 
@@ -327,8 +329,8 @@ MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const Mes
 			for (unsigned k(0); k < fem_dim.n_nodes_of_element; ++k)
 				ele_nodes[k] = nodes[idx[k]-1];
 			break;
-		case MeshElemType::HEXAHEDRON:
-		case MeshElemType::PRISM:
+		case MeshLib::MeshElemType::HEXAHEDRON:
+		case MeshLib::MeshElemType::PRISM:
 			const unsigned n_half_nodes = fem_dim.n_nodes_of_element/2;
 			for (unsigned k(0); k < n_half_nodes; ++k) {
 				ele_nodes[k] = nodes[idx[k+n_half_nodes]-1];
@@ -339,17 +341,17 @@ MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim, const Mes
 
 	switch (elem_type)
 	{
-		case MeshElemType::LINE:
+		case MeshLib::MeshElemType::LINE:
 			return new MeshLib::Line(ele_nodes);
-		case MeshElemType::TRIANGLE:
+		case MeshLib::MeshElemType::TRIANGLE:
 			return new MeshLib::Tri(ele_nodes);
-		case MeshElemType::QUAD:
+		case MeshLib::MeshElemType::QUAD:
 			return new MeshLib::Quad(ele_nodes);
-		case MeshElemType::TETRAHEDRON:
+		case MeshLib::MeshElemType::TETRAHEDRON:
 			return new MeshLib::Tet(ele_nodes);
-		case MeshElemType::HEXAHEDRON:
+		case MeshLib::MeshElemType::HEXAHEDRON:
 			return new MeshLib::Hex(ele_nodes);
-		case MeshElemType::PRISM:
+		case MeshLib::MeshElemType::PRISM:
 			return new MeshLib::Prism(ele_nodes);
 		default:
 			assert(false);

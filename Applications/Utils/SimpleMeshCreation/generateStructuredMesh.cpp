@@ -38,21 +38,21 @@ namespace
 
 /// Get dimension of the mesh element type.
 /// @param eleType element type
-unsigned getDimension(MeshElemType eleType)
+unsigned getDimension(MeshLib::MeshElemType eleType)
 {
 	switch (eleType)
 	{
-		case MeshElemType::LINE:
+		case MeshLib::MeshElemType::LINE:
 			return 1;
-		case MeshElemType::QUAD:
-		case MeshElemType::TRIANGLE:
+		case MeshLib::MeshElemType::QUAD:
+		case MeshLib::MeshElemType::TRIANGLE:
 			return 2;
-		case MeshElemType::HEXAHEDRON:
-		case MeshElemType::PRISM:
-		case MeshElemType::PYRAMID:
-		case MeshElemType::TETRAHEDRON:
+		case MeshLib::MeshElemType::HEXAHEDRON:
+		case MeshLib::MeshElemType::PRISM:
+		case MeshLib::MeshElemType::PYRAMID:
+		case MeshLib::MeshElemType::TETRAHEDRON:
 			return 3;
-		case MeshElemType::INVALID:
+		case MeshLib::MeshElemType::INVALID:
 			return 0;
 	}
 	return 0;
@@ -144,7 +144,7 @@ int main (int argc, char* argv[])
 	// parse arguments
 	cmd.parse(argc, argv);
 	const std::string eleTypeName(eleTypeArg.getValue());
-	const MeshElemType eleType = String2MeshElemType(eleTypeName);
+	const MeshLib::MeshElemType eleType = MeshLib::String2MeshElemType(eleTypeName);
 	const unsigned dim = getDimension(eleType);
 
 	bool dim_used[3] = {false};
@@ -195,16 +195,16 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* mesh = nullptr;
 	switch (eleType)
 	{
-	case MeshElemType::LINE:
+	case MeshLib::MeshElemType::LINE:
 		mesh = MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]);
 		break;
-	case MeshElemType::TRIANGLE:
+	case MeshLib::MeshElemType::TRIANGLE:
 		mesh = MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]);
 		break;
-	case MeshElemType::QUAD:
+	case MeshLib::MeshElemType::QUAD:
 		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]);
 		break;
-	case MeshElemType::HEXAHEDRON:
+	case MeshLib::MeshElemType::HEXAHEDRON:
 		mesh = MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]);
 		break;
 	default:

@@ -24,13 +24,6 @@ std::ostream& operator<<(std::ostream& os, MeshItemType const& t)
     return os;
 }
 
-bool operator<(const Location& left, const Location& right)
-{
-    if (left.mesh_id != right.mesh_id) return left.mesh_id < right.mesh_id;
-    if (left.item_type != right.item_type) return left.item_type < right.item_type;
-    return left.item_id < right.item_id;
-}
-
 std::ostream& operator<<(std::ostream& os, Location const& l)
 {
     return os << "(" << l.mesh_id

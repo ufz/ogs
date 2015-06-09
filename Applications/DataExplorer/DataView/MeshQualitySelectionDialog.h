@@ -33,7 +33,7 @@ public:
 	~MeshQualitySelectionDialog(void);
 
 	/// Returns selected metric
-	MeshQualityType getSelectedMetric() const { return _metric; }
+	MeshLib::MeshQualityType getSelectedMetric() const { return _metric; }
 
 	/// Returns true if a histogram needs to be calculated
 	bool getHistogram() const { return this->histogramCheckBox->isChecked(); }
@@ -42,7 +42,7 @@ public:
 	std::string getHistogramPath() const { return _histogram_path; }
 
 private:
-	MeshQualityType _metric;
+	MeshLib::MeshQualityType _metric;
 	std::string _histogram_path;
 
 private slots:

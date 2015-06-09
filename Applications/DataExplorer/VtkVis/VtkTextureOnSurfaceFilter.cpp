@@ -107,13 +107,18 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 		textureCoordinates->InsertNextTuple(newcoords);
 	}
 */
-	for (size_t i = 0; i < nPoints; i++)
+
+	int const range[2] = { max.first - min.first, max.second - min.second };
+	// Scale values relative to the range.
+
+	double coords[3];
+	for (std::size_t i = 0; i < nPoints; i++)
 	{
-		double coords[3];
 		points->GetPoint(i, coords);
-		float newcoords[2] = { MathLib::normalize(min.first, max.first, coords[0]),
-		                       MathLib::normalize(min.second,max.second, coords[1])};
-		textureCoordinates->SetTuple(i, newcoords);
+
+		textureCoordinates->SetTuple2(i,
+			(coords[0] - min.first) / range[0],
+			(coords[1] - min.second) / range[1]);
 	}
 
 	// put it all together

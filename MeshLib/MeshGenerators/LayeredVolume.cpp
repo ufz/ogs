@@ -25,9 +25,9 @@
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 
 
-bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh, 
-                                       const std::vector<GeoLib::Raster const*> &rasters, 
-                                       double minimum_thickness, 
+bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
+                                       const std::vector<GeoLib::Raster const*> &rasters,
+                                       double minimum_thickness,
                                        double noDataReplacementValue)
 {
 	if (mesh.getDimension() != 2)
@@ -36,10 +36,10 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	_elevation_epsilon = calcEpsilon(*rasters[0], *rasters.back());
 	if (_elevation_epsilon <= 0)
 		return false;
-	
+
 	// remove line elements, only tri + quad remain
 	MeshLib::ElementExtraction ex(mesh);
-	ex.searchByElementType(MeshElemType::LINE);
+	ex.searchByElementType(MeshLib::MeshElemType::LINE);
 	MeshLib::Mesh* top (ex.removeMeshElements("MeshLayer"));
 	if (top==nullptr)
 		top = new MeshLib::Mesh(mesh);
@@ -84,14 +84,14 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 	const std::vector<MeshLib::Element*> &layer_elements (dem_mesh.getElements());
 	for (MeshLib::Element* elem : layer_elements)
 	{
-		if (elem->getGeomType() == MeshElemType::TRIANGLE)
+		if (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
 		{
 			std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(2)] }};
 			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id));
 		}
-		else if (elem->getGeomType() == MeshElemType::QUAD)
+		else if (elem->getGeomType() == MeshLib::MeshElemType::QUAD)
 		{
 			std::array<MeshLib::Node*,4> quad_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                             _nodes[node_id_offset+elem->getNodeIndex(1)],

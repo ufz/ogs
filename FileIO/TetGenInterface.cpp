@@ -660,9 +660,9 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const
 {
 	element_count++;
-	if (element.getGeomType() == MeshElemType::TRIANGLE)
+	if (element.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
 		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
-	else if (element.getGeomType() == MeshElemType::QUAD)
+	else if (element.getGeomType() == MeshLib::MeshElemType::QUAD)
 	{
 		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
 		element_count++;

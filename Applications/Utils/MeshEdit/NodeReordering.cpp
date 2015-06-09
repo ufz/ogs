@@ -38,22 +38,22 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 
 		switch (elements[i]->getGeomType())
 		{
-			case MeshElemType::TETRAHEDRON:
+			case MeshLib::MeshElemType::TETRAHEDRON:
 				for(size_t j = 0; j < 4; ++j)
 					elements[i]->setNode(j, nodes[(j+1)%4]);
 				break;
-			case MeshElemType::PYRAMID:
+			case MeshLib::MeshElemType::PYRAMID:
 				for(size_t j = 0; j < 5; ++j)
 					elements[i]->setNode(j, nodes[(j+1)%5]);
 				break;
-			case MeshElemType::PRISM:
+			case MeshLib::MeshElemType::PRISM:
 				for(size_t j = 0; j < 3; ++j)
 				{
 					elements[i]->setNode(j, nodes[j+3]);
 					elements[i]->setNode(j+3, nodes[j]);
 				}
 				break;
-			case MeshElemType::HEXAHEDRON:
+			case MeshLib::MeshElemType::HEXAHEDRON:
 				for(size_t j = 0; j < 4; ++j)
 				{
 					elements[i]->setNode(j, nodes[j+4]);
@@ -77,7 +77,7 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
 		std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
 
 		for(size_t j = 0; j < nElemNodes; ++j)
-			if (elements[i]->getGeomType() == MeshElemType::PRISM)
+			if (elements[i]->getGeomType() == MeshLib::MeshElemType::PRISM)
 			{
 				for(size_t j = 0; j < 3; ++j)
 				{

@@ -4,6 +4,7 @@
 #include "NetCdfConfigureDialog.h"
 
 #include "MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/MeshEnums.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
 
@@ -360,13 +361,13 @@ void NetCdfConfigureDialog::createDataObject()
 
 	if (this->radioMesh->isChecked())
 	{
-		MeshElemType meshElemType = MeshElemType::QUAD;
+		MeshLib::MeshElemType meshElemType = MeshLib::MeshElemType::QUAD;
 		MeshLib::UseIntensityAs useIntensity = MeshLib::UseIntensityAs::MATERIAL;
 		if (comboBoxMeshElemType->currentIndex() == 1)
 		{
-			meshElemType = MeshElemType::TRIANGLE;
+			meshElemType = MeshLib::MeshElemType::TRIANGLE;
 		}else{
-			meshElemType = MeshElemType::QUAD;
+			meshElemType = MeshLib::MeshElemType::QUAD;
 		}
 		if ((comboBoxUseIntensity->currentIndex()) == 1)
 		{

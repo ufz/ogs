@@ -431,7 +431,7 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");
 }
 
-void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshQualityType t, std::vector<double> const& quality)
+void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshLib::MeshQualityType t, std::vector<double> const& quality)
 {
 	if (!source || quality.empty())
 		return;
@@ -451,7 +451,7 @@ void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshQualityTy
 		VtkCompositeFilter* filter =
 			VtkFilterFactory::CreateCompositeFilter("VtkCompositeElementSelectionFilter",
 			                                        parentItem->transformFilter());
-		if (t == MeshQualityType::ELEMENTSIZE)
+		if (t == MeshLib::MeshQualityType::ELEMENTSIZE)
 		{
 			auto const range (std::minmax_element(quality.cbegin(), quality.cend()));
 			static_cast<VtkCompositeElementSelectionFilter*>(filter)->setRange(*range.first, *range.second);

@@ -13,6 +13,7 @@
  */
 
 // stl
+#include <algorithm>
 #include <numeric>
 
 // BaseLib
@@ -34,18 +35,43 @@
 // GeoLib
 #include "Raster.h"
 
-// Gui/VtkVis
-#include "VtkMeshConverter.h"
-
 // MathLib
 #include "MathTools.h"
 
 // MeshLib
+#include "MeshGenerators/VtkMeshConverter.h"
 #include "MeshGenerators/ConvertRasterToMesh.h"
 #include "Elements/Element.h"
 #include "Mesh.h"
 #include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshEnums.h"
+
+// From wikipedia:
+// http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance. The
+// original is citing D.E. Knuth. TAOCP, vol 2.
+template <typename InputIterator>
+auto computeMeanAndVariance(InputIterator first, InputIterator last) ->
+	std::pair<typename InputIterator::value_type, typename InputIterator::value_type>
+{
+	using T = typename InputIterator::value_type;
+	std::size_t n = 0;
+	auto mu = T{0};
+	auto M2 = T{0};
+
+	while (first != last)
+	{
+		T const x = *first++;
+		n++;
+		auto delta = x - mu;
+		mu += delta/n;
+		M2 += delta * (x - mu);
+	}
+
+	if (n < 2)
+		return std::make_pair(mu, T{0});
+
+	return std::make_pair(mu, M2/(n - 1));
+}
 
 int main (int argc, char* argv[])
 {
@@ -114,7 +140,8 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
-	GeoLib::Raster* raster(GeoLib::Raster::getRasterFromASCFile(raster_arg.getValue()));
+	GeoLib::Raster* raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(
+		raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
@@ -123,7 +150,7 @@ int main (int argc, char* argv[])
 			                                      raster_arg.getValue()));
 			new_raster_fname += "-" + std::to_string(raster->getNRows()) + "x" +
 			                    std::to_string(raster->getNCols()) + ".asc";
-			FileIO::AsciiRasterInterface::writeRasterAsASC(raster, new_raster_fname);
+			FileIO::AsciiRasterInterface::writeRasterAsASC(*raster, new_raster_fname);
 		}
 	}
 
@@ -140,18 +167,13 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		const double mu(std::accumulate(src_properties.begin(), src_properties.end(), 0.0) / size);
+		double mu, var;
+		std::tie(mu, var) = computeMeanAndVariance(src_properties.begin(), src_properties.end());
 		INFO("Mean value of source: %f.", mu);
-
-		double src_variance(MathLib::fastpow(src_properties[0] - mu, 2));
-		for (std::size_t k(1); k<size; k++) {
-			src_variance += MathLib::fastpow(src_properties[k] - mu, 2);
-		}
-		src_variance /= size;
-		INFO("Variance of source: %f.", src_variance);
+		INFO("Variance of source: %f.", var);
 	}
 
-	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshElemType::QUAD,
+	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshLib::MeshElemType::QUAD,
 					MeshLib::UseIntensityAs::MATERIAL).execute());
 
 	std::vector<std::size_t> src_perm(size);
@@ -210,14 +232,10 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		const double mu(std::accumulate(dest_properties.begin(), dest_properties.end(), 0.0) / n_dest_mesh_elements);
+		double mu, var;
+		std::tie(mu, var) = computeMeanAndVariance(dest_properties.begin(), dest_properties.end());
 		INFO("Mean value of destination: %f.", mu);
-
-		double sigma_q(MathLib::fastpow(dest_properties[0] - mu, 2));
-		for (std::size_t k(1); k < n_dest_mesh_elements; k++)
-			sigma_q += MathLib::fastpow(dest_properties[k] - mu, 2);
-		sigma_q /= n_dest_mesh_elements;
-		INFO("Variance of destination: %f.", sigma_q);
+		INFO("Variance of destination: %f.", var);
 	}
 
 	if (! out_mesh_arg.getValue().empty()) {

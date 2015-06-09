@@ -79,9 +79,9 @@ TEST_F(MeshLibTriLineMesh, Construction)
 {
     ASSERT_TRUE(mesh != nullptr);
     ASSERT_EQ(3u, mesh->getNElements());
-    ASSERT_EQ(MeshElemType::TRIANGLE, elements[0]->getGeomType());
-    ASSERT_EQ(MeshElemType::TRIANGLE, elements[1]->getGeomType());
-    ASSERT_EQ(MeshElemType::LINE, elements[2]->getGeomType());
+    ASSERT_EQ(MeshLib::MeshElemType::TRIANGLE, elements[0]->getGeomType());
+    ASSERT_EQ(MeshLib::MeshElemType::TRIANGLE, elements[1]->getGeomType());
+    ASSERT_EQ(MeshLib::MeshElemType::LINE, elements[2]->getGeomType());
     ASSERT_EQ(4u, mesh->getNNodes());
 }
 

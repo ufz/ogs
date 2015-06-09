@@ -19,9 +19,8 @@
 
 #include <QtGui/QDialog>
 
-enum class MeshElemType;
-
 namespace MeshLib {
+	enum class MeshElemType;
 	enum class UseIntensityAs;
 }
 
@@ -47,7 +46,7 @@ private slots:
 	void reject();
 
 signals:
-	void setMeshParameters(QString, MeshElemType, MeshLib::UseIntensityAs);
+	void setMeshParameters(QString, MeshLib::MeshElemType, MeshLib::UseIntensityAs);
 
 };
 

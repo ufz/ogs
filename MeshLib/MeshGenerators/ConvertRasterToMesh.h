@@ -23,15 +23,6 @@ namespace MeshLib {
 // forward declaration
 class Mesh;
 
-/**
- * Struct gives a selection of possible interpretations for intensities
- */
-enum class UseIntensityAs
-{
-	ELEVATION,
-	MATERIAL,
-	NONE
-};
 
 /**
  * Class to convert raster data into meshes. Based on Karsten Rinks algorithm.

@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
 	// *** remove line elements on request
 	if (exclude_lines_arg.getValue()) {
 		auto ex = MeshLib::ElementExtraction(*mesh);
-		ex.searchByElementType(MeshElemType::LINE);
+		ex.searchByElementType(MeshLib::MeshElemType::LINE);
 		auto m = ex.removeMeshElements(mesh->getName()+"-withoutLines");
 		INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
 		std::swap(m, mesh);

@@ -55,7 +55,7 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<unsigned> newIDArg("n", "new-material-id",
 	                                      "new material id", false, 0, "number");
 	cmd.add(newIDArg);
-	std::vector<std::string> eleList(getMeshElemTypeStringsShort());
+	std::vector<std::string> eleList(MeshLib::getMeshElemTypeStringsShort());
 	TCLAP::ValuesConstraint<std::string> allowedVals(eleList);
 	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
 	                                      "element type", false, "", &allowedVals);
@@ -98,7 +98,7 @@ int main (int argc, char* argv[])
 	} else if (specifyArg.isSet()) {
 		INFO("Specifying material ID...");
 		const std::string eleTypeName(eleTypeArg.getValue());
-		const MeshElemType eleType = String2MeshElemType(eleTypeName);
+		const MeshLib::MeshElemType eleType = MeshLib::String2MeshElemType(eleTypeName);
 		const unsigned newID = newIDArg.getValue();
 		unsigned cnt = MeshLib::ElementValueModification::setByElementType(*mesh, eleType, newID);
 		INFO("updated %d elements", cnt);

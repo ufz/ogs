@@ -80,7 +80,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 			const MeshLib::Element* sfc_elem( elems[i] );
 			if (sfc_elem->getDimension() < 2) // ignore line-elements
 				continue;
-				
+
 			const unsigned nElemNodes(sfc_elem->getNBaseNodes());
 			MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
 
@@ -90,9 +90,11 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 				e_nodes[j] = new_nodes[node_id+nNodes];
 				e_nodes[j+nElemNodes] = new_nodes[node_id];
 			}
-			if (sfc_elem->getGeomType() == MeshElemType::TRIANGLE)	// extrude triangles to prism
+			// extrude triangles to prism
+			if (sfc_elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
 				new_elems.push_back (new MeshLib::Prism(e_nodes, mat_id));
-			else if (sfc_elem->getGeomType() == MeshElemType::QUAD)	// extrude quads to hexes
+			// extrude quads to hexes
+			else if (sfc_elem->getGeomType() == MeshLib::MeshElemType::QUAD)
 				new_elems.push_back (new MeshLib::Hex(e_nodes, mat_id));
 		}
 	}
@@ -129,7 +131,8 @@ bool MeshLayerMapper::createRasterLayers(
 
 	// number of triangles in the original mesh
 	std::size_t const nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
-		[](MeshLib::Element const* elem) { return (elem->getGeomType() == MeshElemType::TRIANGLE);}));
+		[](MeshLib::Element const* elem)
+			{ return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE);}));
 	_elements.reserve(nElems * (nLayers-1));
 
 	// add bottom layer
@@ -137,7 +140,7 @@ bool MeshLayerMapper::createRasterLayers(
 	for (MeshLib::Node* node : nodes)
 		_nodes.push_back(new MeshLib::Node(*node));
 	delete bottom;
-	
+
 	// add the other layers
 	for (std::size_t i=1; i<nLayers; ++i)
 		addLayerToMesh(*top, i, *rasters[i]);
@@ -169,7 +172,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
     for (std::size_t i=0; i<nElems; ++i)
     {
         MeshLib::Element* elem (elems[i]);
-        if (elem->getGeomType() != MeshElemType::TRIANGLE)
+        if (elem->getGeomType() != MeshLib::MeshElemType::TRIANGLE)
             continue;
         unsigned node_counter(3), missing_idx(0);
         std::array<MeshLib::Node*, 6> new_elem_nodes;
@@ -248,7 +251,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 		}
 
 		double elevation (raster.interpolateValueAtPoint(*nodes[i]));
-		if (std::abs(elevation - no_data) < std::numeric_limits<double>::epsilon()) 
+		if (std::abs(elevation - no_data) < std::numeric_limits<double>::epsilon())
 			elevation = noDataReplacementValue;
 		nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], elevation);
 	}

@@ -27,7 +27,7 @@ TEST(MeshValidation, UnusedNodes)
 {
 	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
 	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
-	MeshLib::ConvertRasterToMesh conv(raster, MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
+	MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
 	MeshLib::Mesh* mesh = conv.execute();
 	std::vector<std::size_t> u_nodes = MeshLib::MeshValidation::findUnusedMeshNodes(*mesh);
 	ASSERT_EQ(0, u_nodes.size());
@@ -47,7 +47,7 @@ TEST(MeshValidation, DetectHolesTri)
 {
 	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
 	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
-	MeshLib::ConvertRasterToMesh conv(raster, MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
+	MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
 	MeshLib::Mesh* mesh = conv.execute();
 	unsigned n_holes = MeshLib::MeshValidation::detectHoles(*mesh);
 	ASSERT_EQ(0, n_holes);

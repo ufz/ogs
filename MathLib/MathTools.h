@@ -135,9 +135,6 @@ T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<
 	return std::max(x, std::max(y, z));
 }
 
-/** linear normalisation of val from [min, max] into [0,1] */
-float normalize(float min, float max, float val);
-
 /**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
@@ -147,24 +144,6 @@ float normalize(float min, float max, float val);
  * @return the angle between the edges
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
-
-
-/**
- * simple power function that takes as a second argument an integer instead of a float
- * @param base basis of the expression
- * @param exp exponent of the expression
- * @return base^exp
- */
-template <typename T> inline
-T fastpow (T base, std::size_t exp)
-{
-	T result (base);
-	if (exp == 0)
-		result = static_cast<T>(1);
-	for (std::size_t k(1); k < exp; k++)
-		result *= base;
-	return result;
-}
 
 /**
  * Template metaprogramming, compile-time version of pow() for integral
