@@ -31,6 +31,7 @@ if(OGS_BUILD_GUI)
 		MeshLib
 		FileIO
 		VtkVis
+		InSituLib
 		zlib
 		${CATALYST_LIBRARIES}
 		${QT_LIBRARIES}
