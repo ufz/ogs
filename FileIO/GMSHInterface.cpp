@@ -57,7 +57,7 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
                              GMSH::MeshDensityAlgorithm mesh_density_algorithm,
                              double param1,
                              double param2,
-                             size_t param3,
+                             std::size_t param3,
                              std::vector<std::string>& selected_geometries) :
 	_n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries)
 {
@@ -170,6 +170,7 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
+	std::vector<int> materials;
 	std::map<unsigned, unsigned> id_map;
 	while (line.find("$EndElements") == std::string::npos)
 	{
@@ -177,12 +178,12 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		getline(in, line); //$Nodes Keywords
 		if (line.find("$Nodes") != std::string::npos)
 		{
-			size_t n_nodes(0);
+			std::size_t n_nodes(0);
 			long id;
 			double x, y, z;
 			in >> n_nodes >> std::ws;
 			nodes.resize(n_nodes);
-			for (size_t i = 0; i < n_nodes; i++) {
+			for (std::size_t i = 0; i < n_nodes; i++) {
 				in >> id >> x >> y >> z >> std::ws;
 				id_map.insert(std::map<unsigned, unsigned>::value_type(id, i));
 				nodes[i] = new MeshLib::Node(x,y,z,id);
@@ -193,24 +194,31 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		// Element data
 		if (line.find("$Elements") != std::string::npos)
 		{
-			size_t n_elements(0);
-			in >> n_elements >> std::ws; // number-of-elements
+			std::size_t n_elements(0);
+			if (! (in >> n_elements >> std::ws)) { // number-of-elements
+				ERR("Read GMSH mesh does not contain any elements");
+			}
 			elements.reserve(n_elements);
-			for (size_t i = 0; i < n_elements; i++)
+			materials.reserve(n_elements);
+			for (std::size_t i = 0; i < n_elements; i++)
 			{
-				MeshLib::Element* elem (readElement(in, nodes, id_map));
+				MeshLib::Element* elem(nullptr);
+				int mat_id(0);
+				std::tie(elem, mat_id) = readElement(in, nodes, id_map);
 
-				if (elem)
+				if (elem) {
 					elements.push_back(elem);
+					materials.push_back(mat_id);
+				}
 			}
 			getline(in, line); // END keyword
 		}
 
 		if (line.find("PhysicalNames") != std::string::npos)
 		{
-			size_t n_lines(0);
+			std::size_t n_lines(0);
 			in >> n_lines >> std::ws; // number-of-lines
-			for (size_t i = 0; i < n_lines; i++)
+			for (std::size_t i = 0; i < n_lines; i++)
 				getline(in, line);
 			getline(in, line); // END keyword
 		}
@@ -222,7 +230,26 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		}
 		return nullptr;
 	}
-	return new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements);
+
+	MeshLib::Mesh * mesh(new MeshLib::Mesh(
+		BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements));
+
+	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+		mesh->getProperties().createNewPropertyVector<int>(
+			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
+	);
+	if (!opt_material_ids) {
+		WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+	} else {
+		MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
+		material_ids.insert(material_ids.end(), materials.cbegin(),
+			materials.cend());
+	}
+	INFO("\t... finished.");
+	INFO("Nr. Nodes: %d.", nodes.size());
+	INFO("Nr. Elements: %d.", elements.size());
+
+	return mesh;
 }
 
 void GMSHInterface::readNodeIDs(std::ifstream &in,
@@ -238,15 +265,19 @@ void GMSHInterface::readNodeIDs(std::ifstream &in,
 	}
 }
 
-MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<MeshLib::Node*> const& nodes, std::map<unsigned, unsigned> const& id_map)
+std::pair<MeshLib::Element*, int>
+GMSHInterface::readElement(std::ifstream &in,
+	std::vector<MeshLib::Node*> const& nodes,
+	std::map<unsigned, unsigned> const& id_map)
 {
-	unsigned idx, type, n_tags, dummy, mat_id;
+	unsigned idx, type, n_tags, dummy;
+	int mat_id;
 	std::vector<unsigned> node_ids;
 	std::vector<MeshLib::Node*> elem_nodes;
 	in >> idx >> type >> n_tags >> dummy >> mat_id;
 
 	// skip tags
-	for (size_t j = 2; j < n_tags; j++)
+	for (std::size_t j = 2; j < n_tags; j++)
 		in >> dummy;
 
 	switch (type)
@@ -257,7 +288,7 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[node_ids[0]];
 		edge_nodes[1] = nodes[node_ids[1]];
-		return new MeshLib::Line(edge_nodes, 0);
+		return std::make_pair(new MeshLib::Line(edge_nodes), 0);
 	}
 	case 2: {
 		readNodeIDs(in, 3, node_ids, id_map);
@@ -265,42 +296,42 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 		tri_nodes[0] = nodes[node_ids[2]];
 		tri_nodes[1] = nodes[node_ids[1]];
 		tri_nodes[2] = nodes[node_ids[0]];
-		return new MeshLib::Tri(tri_nodes, mat_id);
+		return std::make_pair(new MeshLib::Tri(tri_nodes), mat_id);
 	}
 	case 3: {
 		readNodeIDs(in, 4, node_ids, id_map);
 		MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 		for (unsigned k(0); k < 4; k++)
 			quad_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Quad(quad_nodes, mat_id);
+		return std::make_pair(new MeshLib::Quad(quad_nodes), mat_id);
 	}
 	case 4: {
 		readNodeIDs(in, 4, node_ids, id_map);
 		MeshLib::Node** tet_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 4; k++)
 			tet_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Tet(tet_nodes, mat_id);
+		return std::make_pair(new MeshLib::Tet(tet_nodes), mat_id);
 	}
 	case 5: {
 		readNodeIDs(in, 8, node_ids, id_map);
 		MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
 		for (unsigned k(0); k < 8; k++)
 			hex_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Hex(hex_nodes, mat_id);
+		return std::make_pair(new MeshLib::Hex(hex_nodes), mat_id);
 	}
 	case 6: {
 		readNodeIDs(in, 6, node_ids, id_map);
 		MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
 		for (unsigned k(0); k < 6; k++)
 			prism_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Prism(prism_nodes, mat_id);
+		return std::make_pair(new MeshLib::Prism(prism_nodes), mat_id);
 	}
 	case 7: {
 		readNodeIDs(in, 5, node_ids, id_map);
 		MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
 		for (unsigned k(0); k < 5; k++)
 			pyramid_nodes[k] = nodes[node_ids[k]];
-		return new MeshLib::Pyramid(pyramid_nodes, mat_id);
+		return std::make_pair(new MeshLib::Pyramid(pyramid_nodes), mat_id);
 	}
 	case 15:
 		in >> dummy; // skip rest of line
@@ -308,7 +339,7 @@ MeshLib::Element* GMSHInterface::readElement(std::ifstream &in, std::vector<Mesh
 	default:
 		WARN("GMSHInterface::readGMSHMesh(): Unknown element type %d.", type);
 	}
-	return nullptr;
+	return std::make_pair(nullptr, -1);
 }
 
 
@@ -346,8 +377,8 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
 		return;
 	} else {
-		const size_t n_pnts(merged_pnts->size());
-		for (size_t k(0); k<n_pnts; k++) {
+		const std::size_t n_pnts(merged_pnts->size());
+		for (std::size_t k(0); k<n_pnts; k++) {
 			(*((*merged_pnts)[k]))[2] = 0.0;
 		}
 	}
@@ -372,12 +403,12 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	// *** insert stations and polylines (except polygons) in the appropriate object of
 	//     class GMSHPolygonTree
 	// *** insert stations
-	const size_t n_geo_names(_selected_geometries.size());
-	for (size_t j(0); j < n_geo_names; j++) {
+	const std::size_t n_geo_names(_selected_geometries.size());
+	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_selected_geometries[j]));
 		if (stations) {
-			const size_t n_stations(stations->size());
-			for (size_t k(0); k < n_stations; k++) {
+			const std::size_t n_stations(stations->size());
+			for (std::size_t k(0); k < n_stations; k++) {
 				bool found(false);
 				for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 					it != _polygon_tree_list.end() && !found; ++it) {
@@ -389,8 +420,8 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		}
 	}
 	// *** insert polylines
-	const size_t n_plys(merged_plys->size());
-	for (size_t k(0); k<n_plys; k++) {
+	const std::size_t n_plys(merged_plys->size());
+	for (std::size_t k(0); k<n_plys; k++) {
 		if (! (*merged_plys)[k]->isClosed()) {
 			for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 				it != _polygon_tree_list.end(); ++it) {
@@ -406,9 +437,9 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	}
 
 	// *** create GMSH data structures
-	const size_t n_merged_pnts(merged_pnts->size());
+	const std::size_t n_merged_pnts(merged_pnts->size());
 	_gmsh_pnts.resize(n_merged_pnts);
-	for (size_t k(0); k<n_merged_pnts; k++) {
+	for (std::size_t k(0); k<n_merged_pnts; k++) {
 		_gmsh_pnts[k] = NULL;
 	}
 	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
@@ -418,7 +449,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 	// *** finally write data :-)
 	writePoints(out);
-	size_t pnt_id_offset(_gmsh_pnts.size());
+	std::size_t pnt_id_offset(_gmsh_pnts.size());
 	for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
 		it != _polygon_tree_list.end(); ++it) {
 		(*it)->writeLineLoop(_n_lines, _n_plane_sfc, out);
@@ -437,8 +468,8 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 void GMSHInterface::writePoints(std::ostream& out) const
 {
-	const size_t n_gmsh_pnts(_gmsh_pnts.size());
-	for (size_t k(0); k<n_gmsh_pnts; k++) {
+	const std::size_t n_gmsh_pnts(_gmsh_pnts.size());
+	for (std::size_t k(0); k<n_gmsh_pnts; k++) {
 		if (_gmsh_pnts[k]) {
 			out << *(_gmsh_pnts[k]) << "\n";
 		}
