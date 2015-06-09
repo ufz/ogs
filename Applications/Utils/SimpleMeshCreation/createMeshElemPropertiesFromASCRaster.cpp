@@ -50,25 +50,25 @@
 // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance. The
 // original is citing D.E. Knuth. TAOCP, vol 2.
 template <typename InputIterator>
-std::pair<decltype(*first), decltype(*first)>
-computeMeanAndVariance(InputIterator first, InputIterator last)
+auto computeMeanAndVariance(InputIterator first, InputIterator last) ->
+	std::pair<typename InputIterator::value_type, typename InputIterator::value_type>
 {
-	using T = decltype(*first);
+	using T = typename InputIterator::value_type;
 	std::size_t n = 0;
-	T mu = 0;
-	T M2 = 0;
+	auto mu = T{0};
+	auto M2 = T{0};
 
 	while (first != last)
 	{
 		T const x = *first++;
 		n++;
-		delta = x - mu;
+		auto delta = x - mu;
 		mu += delta/n;
 		M2 += delta * (x - mu);
 	}
 
 	if (n < 2)
-		return std::make_pair(mu, 0);
+		return std::make_pair(mu, T{0});
 
 	return std::make_pair(mu, M2/(n - 1));
 }
