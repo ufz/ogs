@@ -24,6 +24,10 @@
 #     - DIFF_DATA <list of files to numdiff>
 #       # the given file is compared to [filename]_expected.[extension]
 #
+#   vtkdiff-tester
+#     - DIFF_DATA <vtk file> <data array a name> <data array b name>
+#       # the given data arrays in the vtk file are compared
+#
 
 function (AddTest)
 
@@ -93,11 +97,14 @@ function (AddTest)
 	if(AddTest_TESTER STREQUAL "numdiff" AND NOT NUMDIFF_TOOL_PATH)
 		return()
 	endif()
+	if(AddTest_TESTER STREQUAL "vtkdiff" AND NOT TARGET vtkdiff)
+		return()
+	endif()
 	if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
 		return()
 	endif()
 
-	if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff") AND NOT AddTest_DIFF_DATA)
+	if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff" OR AddTest_TESTER STREQUAL "vtkdiff") AND NOT AddTest_DIFF_DATA)
 		message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
 	endif()
 
@@ -107,6 +114,9 @@ function (AddTest)
 	elseif(AddTest_TESTER STREQUAL "numdiff")
 		set(SELECTED_DIFF_TOOL_PATH ${NUMDIFF_TOOL_PATH})
 		set(TESTER_ARGS "--statistics --absolute-tolerance=1e-5 --relative-tolerance=1e-4")
+	elseif(AddTest_TESTER STREQUAL "vtkdiff")
+		set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
+		set(TESTER_ARGS "-q --abs 1e-5 --rel 1e-4")
 	endif()
 
 	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
@@ -123,6 +133,19 @@ function (AddTest)
 		endforeach()
 		string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
 		set(AddTest_DIFF_DATA_PARSED "${AddTest_SOURCE_PATH}/${AddTest_DIFF_DATA_PARSED}")
+	elseif(AddTest_TESTER STREQUAL "vtkdiff")
+		list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        if (NOT ${DiffDataLength} EQUAL 3)
+			message(FATAL_ERROR "For vtkdiff tester 3 diff data arguments are required.")
+		endif()
+		list(GET AddTest_DIFF_DATA 0 VTK_FILE)
+		list(GET AddTest_DIFF_DATA 1 NAME_A)
+		list(GET AddTest_DIFF_DATA 2 NAME_B)
+
+		set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
+			${AddTest_BINARY_PATH}/${VTK_FILE} -a ${NAME_A} -b ${NAME_B} \
+			${TESTER_ARGS}")
+		string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
 	elseif(tester STREQUAL "memcheck")
 		set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log")
 	endif()
@@ -163,6 +186,16 @@ function (AddTest)
 			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 			DATA{${AddTest_DIFF_DATA_PARSED}}
+		)
+	elseif(AddTest_TESTER STREQUAL "vtkdiff")
+		add_test(
+			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
+			COMMAND ${CMAKE_COMMAND}
+			-Dcase_path=${AddTest_SOURCE_PATH}
+			-Dcase_name=${AddTest_NAME}
+			-DTESTER_COMMAND=${TESTER_COMMAND}
+			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 		)
 	else()
 		add_test(

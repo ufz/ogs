@@ -21,6 +21,8 @@
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 
+#include "FileIO/VtkIO/VtuInterface.h"
+
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
@@ -48,7 +50,7 @@ class GroundwaterFlowProcess : public Process
     unsigned const _integration_order = 2;
 
 public:
-    GroundwaterFlowProcess(MeshLib::Mesh const& mesh,
+    GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
             ConfigTree const& config)
         : Process(mesh)
@@ -182,13 +184,34 @@ public:
         _linearSolver->solve(*_rhs, *_x);
     }
 
-    void post(std::ostream& os)
+    void post(std::string const& file_name)
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
-        // Postprocessing of the linear system of equations solver results:
-        // For example, write _x to _hydraulic_head or convert to velocity etc.
+        std::string const property_name = "Result";
+
+        // Get or create a property vector for results.
+        boost::optional<MeshLib::PropertyVector<double>&> result;
+        if (_mesh.getProperties().hasPropertyVector(property_name))
+        {
+            result = _mesh.getProperties().template
+                getPropertyVector<double>(property_name);
+        }
+        else
+        {
+            result = _mesh.getProperties().template
+                createNewPropertyVector<double>(property_name,
+                    MeshLib::MeshItemType::Node);
+            result->resize(_x->size());
+        }
+        assert(result && result->size() == _x->size());
+
+        // Copy result
         for (std::size_t i = 0; i < _x->size(); ++i)
-            os << (*_x)[i] << "\n";
+            (*result)[i] = (*_x)[i];
+
+        // Write output file
+        FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+        vtu_interface.writeToFile(file_name);
     }
 
     ~GroundwaterFlowProcess()
