@@ -75,29 +75,9 @@ public:
 
     }
 
-    void initialize()
+    template <unsigned GlobalDim>
+    void createLocalAssemblers()
     {
-        DBUG("Initialize GroundwaterFlowProcess.");
-
-        DBUG("Construct dof mappings.");
-        // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
-
-        // Collect the mesh subsets in a vector.
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-
-        _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
-
-        DBUG("Compute sparsity pattern");
-        _node_adjacency_table.createTable(_mesh.getNodes());
-
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
-        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
-
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.
         _local_assemblers.resize(_mesh.getNElements());
@@ -106,7 +86,8 @@ public:
             GroundwaterFlow::LocalAssemblerDataInterface,
             GroundwaterFlow::LocalAssemblerData,
             typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType>;
+            typename GlobalSetup::VectorType,
+            GlobalDim>;
 
         LocalDataInitializer initializer;
 
@@ -159,8 +140,39 @@ public:
         }
 
         for (auto bc : _neumann_bcs)
-            bc->initialize(_global_setup, *_A, *_rhs);
+            bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
 
+    }
+
+    void initialize()
+    {
+        DBUG("Initialize GroundwaterFlowProcess.");
+
+        DBUG("Construct dof mappings.");
+        // Create single component dof in every of the mesh's nodes.
+        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+
+        // Collect the mesh subsets in a vector.
+        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+
+        _local_to_global_index_map.reset(
+            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
+
+        DBUG("Compute sparsity pattern");
+        _node_adjacency_table.createTable(_mesh.getNodes());
+
+        DBUG("Allocate global matrix, vectors, and linear solver.");
+        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
+        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
+
+        if (_mesh.getDimension()==1)
+            createLocalAssemblers<1>();
+        else if (_mesh.getDimension()==2)
+            createLocalAssemblers<2>();
+        else if (_mesh.getDimension()==3)
+            createLocalAssemblers<3>();
     }
 
     void solve()
