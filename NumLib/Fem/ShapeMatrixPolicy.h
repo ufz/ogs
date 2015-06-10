@@ -17,7 +17,7 @@
 
 /// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
 /// matrices and vectors.
-template <typename ShapeFunction>
+template <typename ShapeFunction, unsigned GlobalDim>
 struct EigenFixedShapeMatrixPolicy
 {
     template <int N, int M>
@@ -29,17 +29,19 @@ struct EigenFixedShapeMatrixPolicy
     using NodalVectorType = _VectorType<ShapeFunction::NPOINTS>;
     using DimNodalMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
     using DimMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::DIM>;
+    using GlobalDimNodalMatrixType = _MatrixType<GlobalDim, ShapeFunction::NPOINTS>;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
             NodalVectorType,
             DimNodalMatrixType,
-            DimMatrixType>;
+            DimMatrixType,
+            GlobalDimNodalMatrixType>;
 };
 
 /// An implementation of ShapeMatrixPolicy using dynamic size eigen matrices and
 /// vectors.
-template <typename ShapeFunction>
+template <typename ShapeFunction, unsigned GlobalDim>
 struct EigenDynamicShapeMatrixPolicy
 {
     // Dynamic size local matrices are much slower in allocation than their
@@ -54,18 +56,20 @@ struct EigenDynamicShapeMatrixPolicy
     using NodalVectorType = _VectorType;
     using DimNodalMatrixType = _MatrixType;
     using DimMatrixType = _MatrixType;
+    using GlobalDimNodalMatrixType = _MatrixType;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
             NodalVectorType,
             DimNodalMatrixType,
-            DimMatrixType>;
+            DimMatrixType,
+            GlobalDimNodalMatrixType>;
 };
 
 /// Default choice of the ShapeMatrixPolicy.
-template <typename ShapeFunction>
-using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction>;
-//using ShapeMatrixPolicyType = EigenDynamicShapeMatrixPolicy<ShapeFunction>;
+template <typename ShapeFunction, unsigned GlobalDim>
+using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalDim>;
+//using ShapeMatrixPolicyType = EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 
 #endif  // OGS_USE_EIGEN
 
