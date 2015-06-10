@@ -76,6 +76,15 @@ public:
         nodes[1] = new MeshLib::Node(0.0, 0.0, 0.0);
         return new MeshLib::Line(nodes);
     }
+
+    // 1.5d line
+    static MeshLib::Line* createY()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node(0.0, -1.0, 0.0);
+        nodes[1] = new MeshLib::Node(0.0,  1.0, 0.0);
+        return new MeshLib::Line(nodes);
+    }
 };
 
 const double TestLine2::r[dim] = {0.5};

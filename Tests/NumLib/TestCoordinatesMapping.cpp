@@ -83,7 +83,7 @@ public:
                 vec_nodes.push_back(e->getNode(i));
     }
 
-    ~NumLibFemNaturalCoordinatesMappingTest()
+    virtual ~NumLibFemNaturalCoordinatesMappingTest()
     {
         for (auto itr = vec_nodes.begin(); itr!=vec_nodes.end(); ++itr )
             delete *itr;
@@ -280,4 +280,36 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), this->eps);
 }
 
+TEST(NumLib, FemNaturalCoordinatesMappingLineY)
+{
+#ifdef OGS_USE_EIGEN
+	typedef Eigen::Matrix<double, 2, 1> NodalVector;
+	typedef Eigen::Matrix<double, 1, 2, Eigen::RowMajor> DimNodalMatrix;
+	typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> DimMatrix;
+	typedef Eigen::Matrix<double, 2, 2, Eigen::RowMajor> GlobalDimNodalMatrix;
+#endif
+	// Shape data type
+	typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
+	typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
+	double r[] = {0.5};
+	auto line = TestLine2::createY();
+	static const unsigned dim = 1;
+	static const unsigned e_nnodes = 2;
+	ShapeMatricesType shape(dim, 2, e_nnodes);
+	MappingType::computeShapeMatrices(*line, r, shape);
 
+	double exp_J[dim*dim]= {0.0};
+	for (unsigned i=0; i<dim; i++)
+		exp_J[i+dim*i] = 1.0;
+
+	const double eps(std::numeric_limits<double>::epsilon());
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_N, shape.N.data(), shape.N.size(), eps);
+	ASSERT_ARRAY_NEAR(TestLine2::nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.J.data(), shape.J.size(), eps);
+	ASSERT_ARRAY_NEAR(exp_J, shape.invJ.data(), shape.invJ.size(), eps);
+	ASSERT_NEAR(1.0, shape.detJ, eps);
+	double exp_dNdx[2*e_nnodes] = {0, 0, -0.5, 0.5};
+	ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), eps);
+
+	delete line;
+}
