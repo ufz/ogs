@@ -60,6 +60,8 @@ endif()
 
 find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 
+find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
+
 ######################
 ### Find libraries ###
 ######################
