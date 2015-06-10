@@ -13,17 +13,21 @@
 
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
+#else
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #endif
 
-#include "MathLib/Vector3.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/Point3d.h"
 
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/CoordinateSystem.h"
 
 namespace MeshLib
 {
+    class Element;
+}
 
+namespace MeshLib
+{
 #ifdef OGS_USE_EIGEN
 typedef Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor> RotationMatrix;
 #else

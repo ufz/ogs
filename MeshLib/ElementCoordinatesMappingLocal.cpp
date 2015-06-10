@@ -13,8 +13,10 @@
 
 #include "GeoLib/AnalyticalGeometry.h"
 
-#include "MathLib/MathTools.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
+#include "MathLib/MathTools.h"
+#include "MathLib/Vector3.h"
 
 namespace MeshLib
 {
