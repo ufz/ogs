@@ -35,16 +35,12 @@ void rotateToLocal(
 /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
 void getRotationMatrixToGlobal(
     const unsigned element_dimension,
-    const MeshLib::CoordinateSystem &global_coords,
+    const unsigned global_dim,
     const std::vector<MathLib::Point3d> &points,
     MeshLib::RotationMatrix &matR)
 {
-    const std::size_t global_dim = global_coords.getDimension();
-
     // compute R in x=R*x' where x are original coordinates and x' are local coordinates
-    if (global_dim == element_dimension) {
-        matR.setIdentity();
-    } else if (element_dimension == 1) {
+    if (element_dimension == 1) {
         MathLib::Vector3 xx(points[0], points[1]);
         xx.normalize();
         if (global_dim == 2)
@@ -80,7 +76,16 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     for(unsigned i = 0; i < e.getNNodes(); i++)
         _points.emplace_back(e.getNode(i)->getCoords());
 
-    detail::getRotationMatrixToGlobal(e.getDimension(), global_coords, _points, _matR2global);
+    auto const element_dimension = e.getDimension();
+    auto const global_dimension = global_coords.getDimension();
+
+    if (global_dimension == element_dimension)
+    {
+        _matR2global.setIdentity();
+        return;
+    }
+
+    detail::getRotationMatrixToGlobal(element_dimension, global_dimension, _points, _matR2global);
 #ifdef OGS_USE_EIGEN
     detail::rotateToLocal(_matR2global.transpose(), _points);
 #else
