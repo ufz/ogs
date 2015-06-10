@@ -13,7 +13,7 @@
 #include <cassert>
 #include <memory>
 
-#include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
@@ -27,11 +27,9 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/NodeAdjacencyTable.h"
-#include "MeshLib/MeshSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
@@ -39,6 +37,13 @@
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
 #include "ProcessVariable.h"
+
+namespace MeshLib
+{
+    class Element;
+    class Mesh;
+    template <typename PROP_VAL_TYPE> class PropertyVector;
+};
 
 namespace ProcessLib
 {

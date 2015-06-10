@@ -10,8 +10,6 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Mesh.h"
 
 namespace ProcessLib
