@@ -25,8 +25,7 @@ namespace NumLib
  *
  * This class also supports coordinates mapping of mixed dimensional elements,
  * e.g. line elements in 2D space. Details of the mapping method can be found in
- * Kolditz O (2001) Non-linear flow in fractured rock. International Journal of
- * Numerical Methods for Heat & Fluid Flow 11:547–575.
+ * \cite Kolditz2001 .
  *
  * @tparam T_MESH_ELEMENT       Mesh element type
  * @tparam T_SHAPE_FUNC         Shape function class
