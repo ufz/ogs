@@ -10,6 +10,7 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
+#include <cassert>
 #include <memory>
 
 #include <boost/filesystem.hpp>
@@ -173,6 +174,8 @@ public:
             createLocalAssemblers<2>();
         else if (_mesh.getDimension()==3)
             createLocalAssemblers<3>();
+        else
+            assert(false);
     }
 
     void solve()
