@@ -37,7 +37,7 @@ typedef MathLib::DenseMatrix<double> RotationMatrix;
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.
  */
-class ElementCoordinatesMappingLocal
+class ElementCoordinatesMappingLocal final
 {
 public:
     /**
@@ -46,9 +46,6 @@ public:
      * \param global_coord_system   Global coordinate system
      */
     ElementCoordinatesMappingLocal(const Element &e, const CoordinateSystem &global_coord_system);
-
-    /// Destructor
-    virtual ~ElementCoordinatesMappingLocal();
 
     /// return the global coordinate system
     const CoordinateSystem getGlobalCoordinateSystem() const { return _coords; }

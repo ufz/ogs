@@ -70,11 +70,6 @@ void getRotationMatrixToGlobal(
 namespace MeshLib
 {
 
-ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
-{
-    for (auto p : _vec_nodes) delete p;
-}
-
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e,
     const CoordinateSystem &global_coords)
