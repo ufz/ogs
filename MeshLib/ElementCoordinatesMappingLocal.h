@@ -54,27 +54,17 @@ public:
     const CoordinateSystem getGlobalCoordinateSystem() const { return _coords; }
 
     /// return mapped coordinates of the node
-    const MeshLib::Node* getMappedCoordinates(size_t node_id) const
+    MathLib::Point3d const& getMappedCoordinates(std::size_t node_id) const
     {
-        return _vec_nodes[node_id];
+        return *_vec_nodes[node_id];
     }
 
     /// return a rotation matrix converting to global coordinates
     const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;}
 
 private:
-    /// rotate points to local coordinates
-    void rotateToLocal(const RotationMatrix &matR2local, std::vector<MeshLib::Node*> &vec_pt) const;
-
-    /// get a rotation matrix to the global coordinates
-    /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
-    void getRotationMatrixToGlobal(
-            const Element &e, const CoordinateSystem &coordinate_system,
-            const std::vector<MeshLib::Node*> &vec_pt, RotationMatrix &matR2original) const;
-
-private:
     const CoordinateSystem _coords;
-    std::vector<MeshLib::Node*> _vec_nodes;
+    std::vector<MathLib::Point3d*> _vec_nodes;
     RotationMatrix _matR2global;
 };
 
