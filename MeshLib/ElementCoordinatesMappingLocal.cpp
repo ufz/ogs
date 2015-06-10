@@ -25,10 +25,10 @@ namespace detail
 /// rotate points to local coordinates
 void rotateToLocal(
     const MeshLib::RotationMatrix &matR2local,
-    std::vector<MathLib::Point3d*> &vec_nodes)
+    std::vector<MathLib::Point3d> &points)
 {
-    for (auto node : vec_nodes)
-        node->setCoords((matR2local*(*node)).getCoords());
+    for (auto& p : points)
+        p.setCoords((matR2local*p).getCoords());
 }
 
 /// get a rotation matrix to the global coordinates
@@ -36,7 +36,7 @@ void rotateToLocal(
 void getRotationMatrixToGlobal(
     const MeshLib::Element &e,
     const MeshLib::CoordinateSystem &global_coords,
-    const std::vector<MathLib::Point3d*> &vec_nodes,
+    const std::vector<MathLib::Point3d> &points,
     MeshLib::RotationMatrix &matR)
 {
     const std::size_t global_dim = global_coords.getDimension();
@@ -45,7 +45,7 @@ void getRotationMatrixToGlobal(
     if (global_dim == e.getDimension()) {
         matR.setIdentity();
     } else if (e.getDimension() == 1) {
-        MathLib::Vector3 xx(*vec_nodes[0], *vec_nodes[1]);
+        MathLib::Vector3 xx(points[0], points[1]);
         xx.normalize();
         if (global_dim == 2)
             GeoLib::compute2DRotationMatrixToX(xx, matR);
@@ -56,8 +56,7 @@ void getRotationMatrixToGlobal(
         // get plane normal
         MathLib::Vector3 plane_normal;
         double d;
-        //std::tie(plane_normal, d) = GeoLib::getNewellPlane(vec_nodes);
-        GeoLib::getNewellPlane(vec_nodes, plane_normal, d);
+        std::tie(plane_normal, d) = GeoLib::getNewellPlane(points);
 
         // compute a rotation matrix to XY
         GeoLib::computeRotationMatrixToXY(plane_normal, matR);
@@ -82,16 +81,16 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 : _coords(global_coords), _matR2global(3,3)
 {
     assert(e.getDimension() <= global_coords.getDimension());
-    _vec_nodes.reserve(e.getNNodes());
+    _points.reserve(e.getNNodes());
     for(unsigned i = 0; i < e.getNNodes(); i++)
-        _vec_nodes.push_back(new MathLib::Point3d(*static_cast<MathLib::Point3d const*>(e.getNode(i))));
+        _points.emplace_back(e.getNode(i)->getCoords());
 
-    detail::getRotationMatrixToGlobal(e, global_coords, _vec_nodes, _matR2global);
+    detail::getRotationMatrixToGlobal(e, global_coords, _points, _matR2global);
 #ifdef OGS_USE_EIGEN
-    detail::rotateToLocal(_matR2global.transpose(), _vec_nodes);
+    detail::rotateToLocal(_matR2global.transpose(), _points);
 #else
     RotationMatrix* m(_matR2global.transpose());
-    detail::rotateToLocal(*m, _vec_nodes);
+    detail::rotateToLocal(*m, _points);
     delete m;
 #endif
 }

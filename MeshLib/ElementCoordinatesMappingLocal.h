@@ -56,7 +56,7 @@ public:
     /// return mapped coordinates of the node
     MathLib::Point3d const& getMappedCoordinates(std::size_t node_id) const
     {
-        return *_vec_nodes[node_id];
+        return _points[node_id];
     }
 
     /// return a rotation matrix converting to global coordinates
@@ -64,7 +64,7 @@ public:
 
 private:
     const CoordinateSystem _coords;
-    std::vector<MathLib::Point3d*> _vec_nodes;
+    std::vector<MathLib::Point3d> _points;
     RotationMatrix _matR2global;
 };
 
