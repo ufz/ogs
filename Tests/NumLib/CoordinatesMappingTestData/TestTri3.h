@@ -21,6 +21,7 @@ class TestTri3
     // Element information
     typedef MeshLib::Tri ElementType;
     typedef NumLib::ShapeTri3 ShapeFunctionType;
+    static const unsigned global_dim = ElementType::dimension;
     static const unsigned dim = 2; //ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;
     // Coordinates where shape functions are evaluated

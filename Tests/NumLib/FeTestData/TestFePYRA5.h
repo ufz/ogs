@@ -32,6 +32,7 @@ public:
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 5;
     static const unsigned n_sample_pt_order3 = 13;
+    static const unsigned global_dim = MeshElementType::dimension;
 
     /// create a mesh element
     MeshElementType* createMeshElement()

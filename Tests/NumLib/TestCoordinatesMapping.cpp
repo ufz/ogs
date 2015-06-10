@@ -50,14 +50,16 @@ public:
     typedef typename T_TEST::ShapeFunctionType ShapeFunctionType;
     static const unsigned dim = T_TEST::dim;
     static const unsigned e_nnodes = T_TEST::e_nnodes;
+    static const unsigned global_dim = T_TEST::global_dim;
     // Matrix types
 #ifdef OGS_USE_EIGEN
     typedef Eigen::Matrix<double, e_nnodes, 1> NodalVector;
     typedef Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor> DimNodalMatrix;
     typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
+    typedef Eigen::Matrix<double, global_dim, e_nnodes, Eigen::RowMajor> GlobalDimNodalMatrix;
 #endif
     // Shape data type
-    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix> ShapeMatricesType;
+    typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     // Natural coordinates mapping type
     typedef NaturalCoordinatesMapping<ElementType, ShapeFunctionType, ShapeMatricesType> NaturalCoordsMappingType;
 

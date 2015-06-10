@@ -21,6 +21,7 @@ public:
     // Element information
     typedef MeshLib::Line ElementType;
     typedef NumLib::ShapeLine2 ShapeFunctionType;
+    static const unsigned global_dim = ElementType::dimension;
     static const unsigned dim = ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;
     // Coordinates where shape functions are evaluated

@@ -38,13 +38,14 @@ namespace
 {
 
 // test cases
-template <class TestFeType_, template <typename> class ShapeMatrixPolicy_>
+template <class TestFeType_, template <typename, unsigned> class ShapeMatrixPolicy_>
 struct TestCase
 {
     typedef TestFeType_ TestFeType;
-    typedef ShapeMatrixPolicy_<typename TestFeType::ShapeFunction> ShapeMatrixTypes;
+    static const unsigned GlobalDim = TestFeType::global_dim;
+    using ShapeMatrixTypes = ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
     template <typename X>
-    using ShapeMatrixPolicy = ShapeMatrixPolicy_<X>;
+    using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
 };
 
 typedef ::testing::Types<
