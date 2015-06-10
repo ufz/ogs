@@ -33,6 +33,28 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
     d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
+template <class T_POINT>
+std::pair<MathLib::Vector3, double> getNewellPlane (const std::vector<T_POINT>& pnts)
+{
+    MathLib::Vector3 plane_normal;
+    MathLib::Vector3 centroid;
+    std::size_t n_pnts(pnts.size());
+    for (std::size_t i = n_pnts - 1, j = 0; j < n_pnts; i = j, j++) {
+        plane_normal[0] += (pnts[i][1] - pnts[j][1])
+                           * (pnts[i][2] + pnts[j][2]); // projection on yz
+        plane_normal[1] += (pnts[i][2] - pnts[j][2])
+                           * (pnts[i][0] + pnts[j][0]); // projection on xz
+        plane_normal[2] += (pnts[i][0] - pnts[j][0])
+                           * (pnts[i][1] + pnts[j][1]); // projection on xy
+
+        centroid += pnts[j];
+    }
+
+    plane_normal.normalize();
+    double d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+    return std::make_pair(plane_normal, d);
+}
+
 template<class T_MATRIX>
 void compute2DRotationMatrixToX(MathLib::Vector3 const& v,
         T_MATRIX & rot_mat)
