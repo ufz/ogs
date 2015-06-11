@@ -462,16 +462,33 @@ void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &pr
 	vtkUnsignedIntArray* uint_array = vtkUnsignedIntArray::SafeDownCast(&array);
 	if (uint_array)
 	{
-		boost::optional<MeshLib::PropertyVector<unsigned> &> vec
-			(properties.createNewPropertyVector<unsigned>(array_name, type, nComponents));
-		if (!vec)
+		// MaterialIDs are assumed to be integers
+		if(std::strncmp(array_name, "MaterialIDs", 11) == 0)
 		{
-			WARN("vtkUnsignedIntArray %s could not be converted to PropertyVector.", array_name);
-			return;
+			boost::optional<MeshLib::PropertyVector<int> &> vec
+				(properties.createNewPropertyVector<int>(array_name, type, nComponents));
+			if (!vec) {
+				WARN("vtkUnsignedIntArray %s could not be converted to PropertyVector.",
+					 array_name);
+				return;
+			}
+			vec->reserve(nTuples * nComponents);
+			int *data_array = static_cast<int *>(uint_array->GetVoidPointer(0));
+			std::copy(&data_array[0], &data_array[nTuples * nComponents], std::back_inserter(*vec));
 		}
-		vec->reserve(nTuples*nComponents);
-		unsigned* data_array = static_cast<unsigned*>(uint_array->GetVoidPointer(0));
-		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		else
+		{
+			boost::optional<MeshLib::PropertyVector<unsigned> &> vec
+				(properties.createNewPropertyVector<unsigned>(array_name, type, nComponents));
+			if (!vec) {
+				WARN("vtkUnsignedIntArray %s could not be converted to PropertyVector.",
+					 array_name);
+				return;
+			}
+			vec->reserve(nTuples * nComponents);
+			unsigned *data_array = static_cast<unsigned *>(uint_array->GetVoidPointer(0));
+			std::copy(&data_array[0], &data_array[nTuples * nComponents], std::back_inserter(*vec));
+		}
 		return;
 	}
 
