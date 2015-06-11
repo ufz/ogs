@@ -70,8 +70,8 @@ GeoLib::Point const& Raster::getOrigin() const
 
 Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val)
 {
-	Point const& ll (sfc.getAABB().getMinPoint());
-	Point const& ur (sfc.getAABB().getMaxPoint());
+	MathLib::Point3d const& ll(sfc.getAABB().getMinPoint());
+	MathLib::Point3d const& ur(sfc.getAABB().getMaxPoint());
 
 	const std::size_t n_cols = static_cast<size_t>(std::fabs(ur[0]-ll[0]) / cell_size)+1;
 	const std::size_t n_rows = static_cast<size_t>(std::fabs(ur[1]-ll[1]) / cell_size)+1;

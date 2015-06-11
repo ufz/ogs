@@ -131,9 +131,13 @@ int main (int argc, char* argv[])
 		if (aabb_error)
 		    return 1;
 
-		MeshLib::Node ll (xSmallArg.getValue(), ySmallArg.getValue(), zSmallArg.getValue());
-		MeshLib::Node ur (xLargeArg.getValue(), yLargeArg.getValue(), zLargeArg.getValue());
-		const std::size_t n_removed_elements = ex.searchByBoundingBox(ll, ur);
+		std::array<MathLib::Point3d, 2> extent({{
+			MathLib::Point3d(std::array<double,3>{{xSmallArg.getValue(),
+				ySmallArg.getValue(), zSmallArg.getValue()}}),
+			MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
+				yLargeArg.getValue(), zLargeArg.getValue()}})}});
+		const std::size_t n_removed_elements = ex.searchByBoundingBox(
+			GeoLib::AABB<MathLib::Point3d>(extent.begin(), extent.end()));
 		INFO("%d elements found.", n_removed_elements);
 	}
 

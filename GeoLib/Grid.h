@@ -25,6 +25,7 @@
 #include "GEOObjects.h"
 
 // MathLib
+#include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
 
 namespace GeoLib
@@ -233,8 +234,10 @@ public:
 	 */
 	void getPntVecsOfGridCellsIntersectingCube(POINT const& center, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
 
-	void getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt, POINT const& max_pnt, std::vector<std::vector<POINT*> const*>& pnts) const;
-
+	void getPntVecsOfGridCellsIntersectingCuboid(
+		MathLib::Point3d const& min_pnt,
+		MathLib::Point3d const& max_pnt,
+		std::vector<std::vector<POINT*> const*>& pnts) const;
 
 #ifndef NDEBUG
 	/**
@@ -318,7 +321,8 @@ private:
 	 * @param pnt (input) the coordinates of the point
 	 * @param coords (output) the coordinates of the grid cell
 	 */
-	inline void getGridCoords(POINT const& pnt, std::size_t* coords) const;
+	template <typename T>
+	inline void getGridCoords(T const& pnt, std::size_t* coords) const;
 
 	/**
 	 *
@@ -416,9 +420,10 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
 }
 
 template<typename POINT>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(POINT const& min_pnt,
-                                                          POINT const& max_pnt,
-                                                          std::vector<std::vector<POINT*> const*>& pnts) const
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
+	MathLib::Point3d const& min_pnt,
+	MathLib::Point3d const& max_pnt,
+	std::vector<std::vector<POINT*> const*>& pnts) const
 {
 	std::size_t min_coords[3];
 	getGridCoords(min_pnt, min_coords);
@@ -521,7 +526,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 #endif
 
 template <typename POINT>
-void Grid<POINT>::getGridCoords(POINT const& pnt, std::size_t* coords) const
+template <typename T>
+void Grid<POINT>::getGridCoords(T const& pnt, std::size_t* coords) const
 {
 	for (std::size_t k(0); k<3; k++) {
 		if (pnt[k] < this->_min_pnt[k]) {

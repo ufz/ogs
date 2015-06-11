@@ -118,13 +118,10 @@ std::size_t ElementExtraction::searchByContent(double eps)
 	return matchedIDs.size();
 }
 
-std::size_t ElementExtraction::searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2)
+std::size_t ElementExtraction::searchByBoundingBox(
+	GeoLib::AABB<MathLib::Point3d> const& aabb)
 {
 	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
-	std::vector<MeshLib::Node> extent;
-	extent.push_back(x1);
-	extent.push_back(x2);
-	const GeoLib::AABB<MeshLib::Node> aabb(extent.begin(), extent.end());
 
 	std::vector<std::size_t> matchedIDs;
 	const std::size_t n_elems(ele_vec.size());

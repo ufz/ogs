@@ -12,6 +12,7 @@
 #include <cmath>
 
 #include "GeoLib/AABB.h"
+#include "MathLib/Vector3.h"
 
 namespace MeshLib
 {
@@ -83,7 +84,7 @@ unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB<T> &bbox)
 {
     unsigned char coords = 0;
 
-    const T pt_diff = bbox.getMaxPoint() - bbox.getMinPoint();
+    const MathLib::Vector3 pt_diff(bbox.getMinPoint(), bbox.getMaxPoint());
 
     if (std::abs(pt_diff[0]) > .0)
         coords |= CoordinateSystemType::X;

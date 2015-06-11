@@ -79,8 +79,8 @@ void MeshElementRemovalDialog::accept()
 	{
 		std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
 		GeoLib::AABB<MeshLib::Node> const aabb(nodes.begin(), nodes.end());
-		MeshLib::Node minAABB = aabb.getMinPoint();
-		MeshLib::Node maxAABB = aabb.getMaxPoint();
+		auto minAABB = aabb.getMinPoint();
+		auto maxAABB = aabb.getMaxPoint();
 
 		// only extract bounding box parameters that have been edited (otherwise there will be rounding errors!)
 		minAABB[0] = (aabb_edits[0]) ? this->xMinEdit->text().toDouble() : (minAABB[0]);
@@ -89,7 +89,11 @@ void MeshElementRemovalDialog::accept()
 		maxAABB[1] = (aabb_edits[3]) ? this->yMaxEdit->text().toDouble() : (maxAABB[1]);
 		minAABB[2] = (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2]);
 		maxAABB[2] = (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2]);
-		ex.searchByBoundingBox(minAABB, maxAABB);
+		std::vector<MathLib::Point3d> extent;
+		extent.push_back(minAABB);
+		extent.push_back(maxAABB);
+		const GeoLib::AABB<MathLib::Point3d> updated_aabb(extent.begin(), extent.end());
+		ex.searchByBoundingBox(updated_aabb);
 		anything_checked = true;
 	}
 
@@ -140,8 +144,8 @@ void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 		_aabbIndex = _currentIndex;
 		std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
 		GeoLib::AABB<MeshLib::Node> aabb(nodes.begin(), nodes.end());
-		MeshLib::Node const minAABB = aabb.getMinPoint();
-		MeshLib::Node const maxAABB = aabb.getMaxPoint();
+		auto const& minAABB = aabb.getMinPoint();
+		auto const& maxAABB = aabb.getMaxPoint();
 		this->xMinEdit->setText(QString::number(minAABB[0], 'f'));
 		this->xMaxEdit->setText(QString::number(maxAABB[0], 'f'));
 		this->yMinEdit->setText(QString::number(minAABB[1], 'f'));
