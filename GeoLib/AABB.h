@@ -98,7 +98,8 @@ public:
 	/**
 	 * check if point is in the axis aligned bounding box
 	 */
-	bool containsPoint(PNT_TYPE const & pnt) const
+	template <typename T>
+	bool containsPoint(T const & pnt) const
 	{
 		if (pnt[0] < _min_pnt[0] || _max_pnt[0] < pnt[0]) return false;
 		if (pnt[1] < _min_pnt[1] || _max_pnt[1] < pnt[1]) return false;
