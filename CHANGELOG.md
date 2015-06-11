@@ -17,6 +17,7 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 - [Cross-compiling for Windows with MXE on Mac OS](http://docs.opengeosys.org/docs/devguide/advanced/cross-compiling)
 - [Support for new cross-platform IDE CLion](http://docs.opengeosys.org/docs/devguide/development-workflows/development-ides#clion)
 - Add gradual refinement to the structured mesh generator [PR #539](https://github.com/ufz/ogs/pull/539)
+- Add a command line tool "queryMesh" to search mesh information [PR #665](https://github.com/ufz/ogs/pull/665)
 
 ### Fixes
 
