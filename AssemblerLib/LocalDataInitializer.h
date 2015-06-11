@@ -36,9 +36,10 @@ namespace AssemblerLib
 /// NumLib::ShapeLine2 is created.
 template <
     template <typename, typename> class LocalAssemblerDataInterface_,
-    template <typename, typename, typename, typename> class LocalAssemblerData_,
+    template <typename, typename, typename, typename, unsigned> class LocalAssemblerData_,
     typename GlobalMatrix_,
-    typename GlobalVector_>
+    typename GlobalVector_,
+    unsigned GlobalDim>
 class LocalDataInitializer
 {
     template <typename ShapeFunction_>
@@ -49,7 +50,7 @@ class LocalDataInitializer
         using LAData = LocalAssemblerData_<
                 ShapeFunction_,
                 IntegrationMethod<ShapeFunction_>,
-                GlobalMatrix_, GlobalVector_>;
+                GlobalMatrix_, GlobalVector_, GlobalDim>;
 
 
 public:

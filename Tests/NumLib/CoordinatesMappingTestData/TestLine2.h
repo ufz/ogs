@@ -21,6 +21,7 @@ public:
     // Element information
     typedef MeshLib::Line ElementType;
     typedef NumLib::ShapeLine2 ShapeFunctionType;
+    static const unsigned global_dim = ElementType::dimension;
     static const unsigned dim = ElementType::dimension;
     static const unsigned e_nnodes = ElementType::n_all_nodes;
     // Coordinates where shape functions are evaluated
@@ -73,6 +74,15 @@ public:
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
         nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
         nodes[1] = new MeshLib::Node(0.0, 0.0, 0.0);
+        return new MeshLib::Line(nodes);
+    }
+
+    // 1.5d line
+    static MeshLib::Line* createY()
+    {
+        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node(0.0, -1.0, 0.0);
+        nodes[1] = new MeshLib::Node(0.0,  1.0, 0.0);
         return new MeshLib::Line(nodes);
     }
 };

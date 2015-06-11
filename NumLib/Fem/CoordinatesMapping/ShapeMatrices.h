@@ -27,7 +27,7 @@ enum class ShapeMatrixType
     N,      ///< calculates N
     DNDR,   ///< calculates dNdr
     N_J,    ///< calculates N, dNdr, J, and detJ
-    DNDR_J, ///< caluclates dNdr, J, and detJ
+    DNDR_J, ///< calculates dNdr, J, and detJ
     DNDX,   ///< calculates dNdr, J, detJ, invJ, and dNdx
     ALL     ///< calculates all
 };
@@ -36,22 +36,24 @@ enum class ShapeMatrixType
  * \brief Coordinates mapping matrices at particular location
  *
  * \tparam T_N      Vector type for shape functions
- * \tparam T_DN     Matrix type for gradient of shape functions
+ * \tparam T_DNDR   Matrix type for gradient of shape functions in natural coordinates
  * \tparam T_J      Jacobian matrix type
+ * \tparam T_DNDX   Matrix type for gradient of shape functions in physical coordinates
  */
-template <class T_N, class T_DN, class T_J>
+template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
 {
     typedef T_N ShapeType;
-    typedef T_DN DShapeType;
+    typedef T_DNDR DrShapeType;
     typedef T_J JacobianType;
+    typedef T_DNDX DxShapeType;
 
     ShapeType N;        ///< Vector of shape functions, N(r)
-    DShapeType dNdr;    ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr
+    DrShapeType dNdr;   ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr
     JacobianType J;     ///< Jacobian matrix, J=dx/dr
     double detJ;        ///< Determinant of the Jacobian
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
-    DShapeType dNdx;    ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
+    DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
 
     /** The default constructor is used by fixed-size (at compile-time)
      * matrix/vector types where no resizing of the matrices/vectors is required
@@ -68,6 +70,19 @@ struct ShapeMatrices
     ShapeMatrices(std::size_t dim, std::size_t n_nodes)
     : N(n_nodes), dNdr(dim, n_nodes), J(dim, dim), detJ(.0),
       invJ(dim, dim), dNdx(dim, n_nodes)
+    {
+        this->setZero();
+    }
+
+    /**
+     * Initialize matrices and vectors
+     *
+     * @param dim       Spatial dimension
+     * @param n_nodes   The number of element nodes
+     */
+    ShapeMatrices(std::size_t local_dim, std::size_t global_dim, std::size_t n_nodes)
+    : N(n_nodes), dNdr(local_dim, n_nodes), J(local_dim, local_dim), detJ(.0),
+    invJ(local_dim, local_dim), dNdx(global_dim, n_nodes)
     {
         this->setZero();
     }

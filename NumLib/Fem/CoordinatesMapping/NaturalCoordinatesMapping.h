@@ -23,6 +23,10 @@ namespace NumLib
 /**
  * Coordinates mapping tools for natural coordinates
  *
+ * This class also supports coordinates mapping of mixed dimensional elements,
+ * e.g. line elements in 2D space. Details of the mapping method can be found in
+ * \cite Kolditz2001 .
+ *
  * @tparam T_MESH_ELEMENT       Mesh element type
  * @tparam T_SHAPE_FUNC         Shape function class
  * @tparam T_SHAPE_MATRICES     Shape matrices class

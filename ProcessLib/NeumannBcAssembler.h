@@ -39,15 +39,16 @@ public:
 template <typename ShapeFunction_,
          typename IntegrationMethod_,
          typename GlobalMatrix,
-         typename GlobalVector>
+         typename GlobalVector,
+         unsigned GlobalDim>
 class LocalNeumannBcAsmData : public LocalNeumannBcAsmDataInterface<GlobalMatrix, GlobalVector>
 {
 public:
     using ShapeFunction = ShapeFunction_;
-    using NodalMatrixType = typename ShapeMatrixPolicyType<ShapeFunction>::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatrixPolicyType<ShapeFunction>::NodalVectorType;
+    using NodalMatrixType = typename ShapeMatrixPolicyType<ShapeFunction,GlobalDim>::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatrixPolicyType<ShapeFunction,GlobalDim>::NodalVectorType;
 
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction,GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
     /// The neumann_bc_value factor is directly integrated into the local
