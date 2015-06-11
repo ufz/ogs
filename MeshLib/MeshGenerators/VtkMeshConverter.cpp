@@ -40,6 +40,7 @@
 #include <vtkCellData.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkFloatArray.h>
+#include <vtkUnsignedIntArray.h>
 
 namespace MeshLib
 {
@@ -454,6 +455,22 @@ void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &pr
 		}
 		vec->reserve(nTuples*nComponents);
 		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		return;
+	}
+
+	vtkUnsignedIntArray* uint_array = vtkUnsignedIntArray::SafeDownCast(&array);
+	if (uint_array)
+	{
+		boost::optional<MeshLib::PropertyVector<unsigned> &> vec
+			(properties.createNewPropertyVector<unsigned>(array_name, type, nComponents));
+		if (!vec)
+		{
+			WARN("vtkUnsignedIntArray %s could not be converted to PropertyVector.", array_name);
+			return;
+		}
+		vec->reserve(nTuples*nComponents);
+		unsigned* data_array = static_cast<unsigned*>(uint_array->GetVoidPointer(0));
 		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
 		return;
 	}

@@ -70,6 +70,9 @@ private:
 	int addIntProperty(vtkUnstructuredGrid &output,
 	                   MeshLib::Properties const& properties,
 	                   std::string const& prop_name) const;
+	int addUnsignedProperty(vtkUnstructuredGrid &output,
+	                        MeshLib::Properties const& properties,
+	                        std::string const& prop_name) const;
 
 	const MeshLib::Mesh* _mesh;
 
