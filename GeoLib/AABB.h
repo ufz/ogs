@@ -20,7 +20,6 @@
 #include <iterator>
 #include <cassert>
 #include <vector>
-#include <stdexcept>
 
 #include "MathLib/MathTools.h"
 #include "Point.h"
