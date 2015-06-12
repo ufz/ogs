@@ -14,23 +14,13 @@
 
 #include "VtkMappedMeshSource.h"
 
-#include "logog/include/logog.hpp"
-
-#include <vtkCellData.h>
 #include <vtkDemandDrivenPipeline.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkDoubleArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include <vtkObjectFactory.h>
-#include <vtkPointData.h>
-#include <vtkPoints.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkIdTypeArray.h>
 
 #include "VtkMappedMesh.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
-#include "VtkMappedPropertyVectorTemplate.h"
 
 namespace InSituLib {
 
@@ -100,54 +90,17 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	// double
 	for(std::vector<std::string>::const_iterator name = propertyNames.cbegin(); name != propertyNames.cend(); ++name)
 	{
-		if (addDoubleProperty(*output, properties, *name))
+		if (addProperty<double>(*output, properties, *name))
 			continue;
 
-		if (addIntProperty(*output, properties, *name))
+		if (addProperty<int>(*output, properties, *name))
+			continue;
+
+		if (addProperty<unsigned>(*output, properties, *name))
 			continue;
 
 		DBUG ("Mesh property \"%s\" with unknown data type.", *name->c_str());
 	}
-	return 1;
-}
-
-int VtkMappedMeshSource::addDoubleProperty(vtkUnstructuredGrid &output,
-                                           MeshLib::Properties const& properties,
-                                           std::string const& prop_name) const
-{
-	boost::optional<MeshLib::PropertyVector<double> const &> propertyVector(properties.getPropertyVector<double>(prop_name));
-	if(!propertyVector)
-		return 0;
-
-	vtkNew<VtkMappedPropertyVectorTemplate<double> > dataArray;
-	dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<double> &>(*propertyVector));
-	dataArray->SetName(prop_name.c_str());
-
-	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-		output.GetPointData()->AddArray(dataArray.GetPointer());
-	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-		output.GetCellData()->AddArray(dataArray.GetPointer());
-
-	return 1;
-}
-
-int VtkMappedMeshSource::addIntProperty(vtkUnstructuredGrid &output,
-                                        MeshLib::Properties const& properties,
-                                        std::string const& prop_name) const
-{
-	boost::optional<MeshLib::PropertyVector<int> const &> propertyVector(properties.getPropertyVector<int>(prop_name));
-	if(!propertyVector)
-		return 0;
-
-	vtkNew<VtkMappedPropertyVectorTemplate<int> > dataArray;
-	dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<int> &>(*propertyVector));
-	dataArray->SetName(prop_name.c_str());
-
-	if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-		output.GetPointData()->AddArray(dataArray.GetPointer());
-	else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-		output.GetCellData()->AddArray(dataArray.GetPointer());
-
 	return 1;
 }
 

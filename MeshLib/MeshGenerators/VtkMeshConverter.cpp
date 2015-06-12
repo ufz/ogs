@@ -14,9 +14,6 @@
 
 #include "VtkMeshConverter.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Line.h"
@@ -39,7 +36,7 @@
 #include <vtkCell.h>
 #include <vtkCellData.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkFloatArray.h>
+#include <vtkUnsignedIntArray.h>
 
 namespace MeshLib
 {
@@ -422,39 +419,20 @@ void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::M
 
 void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
 {
-	vtkIdType const nTuples (array.GetNumberOfTuples());
-	int const nComponents (array.GetNumberOfComponents());
-	char const*const array_name (array.GetName());
+	if (vtkDoubleArray::SafeDownCast(&array))
+		VtkMeshConverter::convertTypedArray<double>(array, properties, type);
 
-	vtkDoubleArray* double_array = vtkDoubleArray::SafeDownCast(&array);
-	if (double_array)
-	{
-		boost::optional<MeshLib::PropertyVector<double> &> vec
-			(properties.createNewPropertyVector<double>(array_name, type, nComponents));
-		if (!vec)
-		{
-			WARN("vtkDoubleArray %s could not be converted to PropertyVector.", array_name);
-			return;
-		}
-		vec->reserve(nTuples*nComponents);
-		double* data_array = static_cast<double*>(double_array->GetVoidPointer(0));
-		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
-		return;
-	}
+	if (vtkIntArray::SafeDownCast(&array))
+		VtkMeshConverter::convertTypedArray<int>(array, properties, type);
 
-	vtkIntArray* int_array = vtkIntArray::SafeDownCast(&array);
-	if (int_array)
+	if (vtkUnsignedIntArray::SafeDownCast(&array))
 	{
-		boost::optional<MeshLib::PropertyVector<int> &> vec
-			(properties.createNewPropertyVector<int>(array_name, type, nComponents));
-		if (!vec)
-		{
-			WARN("vtkFloatArray %s could not be converted to PropertyVector.", array_name);
-			return;
-		}
-		vec->reserve(nTuples*nComponents);
-		int* data_array = static_cast<int*>(int_array->GetVoidPointer(0));
-		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		// MaterialIDs are assumed to be integers
+		if(std::strncmp(array.GetName(), "MaterialIDs", 11) == 0)
+			VtkMeshConverter::convertTypedArray<int>(array, properties, type);
+		else
+			VtkMeshConverter::convertTypedArray<unsigned>(array, properties, type);
+
 		return;
 	}
 

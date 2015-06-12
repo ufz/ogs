@@ -16,8 +16,16 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
-#include "MeshLib/MeshEnums.h"
+#include <boost/optional.hpp>
+#include <vtkDataArray.h>
+#include <vtkType.h>
+
+#include "logog/include/logog.hpp"
+
 #include "MeshLib/Location.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Properties.h"
+#include "MeshLib/PropertyVector.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
@@ -77,7 +85,30 @@ private:
 
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
 
-	static void convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
+	static void convertArray(vtkDataArray &array,
+	                         MeshLib::Properties &properties,
+	                         MeshLib::MeshItemType type);
+
+	template<typename T> static void convertTypedArray(vtkDataArray &array,
+	                                                   MeshLib::Properties &properties,
+	                                                   MeshLib::MeshItemType type)
+	{
+		vtkIdType const nTuples (array.GetNumberOfTuples());
+		int const nComponents (array.GetNumberOfComponents());
+		char const*const array_name (array.GetName());
+
+		boost::optional<MeshLib::PropertyVector<T> &> vec
+			(properties.createNewPropertyVector<T>(array_name, type, nComponents));
+		if (!vec)
+		{
+			WARN("vtkFloatArray %s could not be converted to PropertyVector.", array_name);
+			return;
+		}
+		vec->reserve(nTuples*nComponents);
+		T* data_array = static_cast<T*>(array.GetVoidPointer(0));
+		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
+		return;
+	}
 
 	static double getExistingValue(const double* img, std::size_t length);
 };
