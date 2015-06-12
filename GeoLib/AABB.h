@@ -41,13 +41,7 @@ public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
 	 * */
-	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids) :
-		_min_pnt(std::array<double,3>{{std::numeric_limits<double>::max(),
-			std::numeric_limits<double>::max(),
-			std::numeric_limits<double>::max()}}),
-		_max_pnt(std::array<double,3>{{std::numeric_limits<double>::lowest(),
-			std::numeric_limits<double>::lowest(),
-			std::numeric_limits<double>::lowest()}})
+	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids)
 	{
 		assert(! ids.empty());
 		init(pnts[ids[0]]);
@@ -74,13 +68,7 @@ public:
 	 * @attention{The iterator last must be reachable from first.}
 	 */
 	template <typename InputIterator>
-	AABB(InputIterator first, InputIterator last) :
-		_min_pnt(std::array<double,3>{{std::numeric_limits<double>::max(),
-			std::numeric_limits<double>::max(),
-			std::numeric_limits<double>::max()}}),
-		_max_pnt(std::array<double,3>{{std::numeric_limits<double>::lowest(),
-			std::numeric_limits<double>::lowest(),
-			std::numeric_limits<double>::lowest()}})
+	AABB(InputIterator first, InputIterator last)
 	{
 		if (! (std::distance(first,last) > 0)) {
 			throw std::invalid_argument("AABB::AABB(InputIterator first, InputIterator last): first == last");
@@ -142,8 +130,14 @@ public:
 	}
 
 protected:
-	MathLib::Point3d _min_pnt;
-	MathLib::Point3d _max_pnt;
+	MathLib::Point3d _min_pnt = std::array<double,3>{{
+		std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::max()}};
+	MathLib::Point3d _max_pnt = std::array<double,3>{{
+		std::numeric_limits<double>::lowest(),
+		std::numeric_limits<double>::lowest(),
+		std::numeric_limits<double>::lowest()}};
 private:
 	void init(PNT_TYPE const & pnt)
 	{
