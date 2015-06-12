@@ -94,7 +94,8 @@ public:
 
 TEST_F(TestVtkMeshConverter, Conversion)
 {
-	MeshLib::Mesh *mesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtu);
+	auto mesh = std::unique_ptr<MeshLib::Mesh>(
+		MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtu));
 	ASSERT_EQ(mesh->getNNodes(), vtu->GetNumberOfPoints());
 	ASSERT_EQ(mesh->getNElements(), vtu->GetNumberOfCells());
 
