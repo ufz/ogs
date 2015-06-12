@@ -38,15 +38,15 @@ MeshLib::Prism* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
 	std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
 {
 	std::array<MeshLib::Node*, 6> prism_nodes;
-	prism_nodes[0] = subsfc_nodes[sfc_elem->getNode(2)->getID()];
+	prism_nodes[0] = subsfc_nodes[sfc_elem->getNode(0)->getID()];
 	prism_nodes[1] = subsfc_nodes[sfc_elem->getNode(1)->getID()];
-	prism_nodes[2] = subsfc_nodes[sfc_elem->getNode(0)->getID()];
+	prism_nodes[2] = subsfc_nodes[sfc_elem->getNode(2)->getID()];
 	prism_nodes[3] = subsfc_nodes[
-			subsfc_sfc_id_map.at(sfc_elem->getNode(2)->getID())];
+			subsfc_sfc_id_map.at(sfc_elem->getNode(0)->getID())];
 	prism_nodes[4] = subsfc_nodes[
 			subsfc_sfc_id_map.at(sfc_elem->getNode(1)->getID())];
 	prism_nodes[5] = subsfc_nodes[
-				subsfc_sfc_id_map.at(sfc_elem->getNode(0)->getID())];
+				subsfc_sfc_id_map.at(sfc_elem->getNode(2)->getID())];
 	return new MeshLib::Prism(prism_nodes);
 }
 
