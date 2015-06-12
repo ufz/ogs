@@ -21,6 +21,7 @@
 #include <list>
 #include <iostream>
 
+#include "MathLib/Point3d.h"
 #include "Point.h"
 #include "AABB.h"
 
@@ -42,8 +43,8 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
 
-	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
-	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
+	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	 ASSERT_LE(minus_half_box_size, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size;
 	 ASSERT_LE(minus_half_box_size, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size;
@@ -75,8 +76,8 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
 
-	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
-	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
+	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	 ASSERT_LE(minus_half_box_size, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size;
 	 ASSERT_LE(minus_half_box_size, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size;
@@ -104,8 +105,8 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
-	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
-	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
+	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	 ASSERT_LE(minus_half_box_size, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size;
 	 ASSERT_LE(minus_half_box_size, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size;
@@ -137,8 +138,8 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 	 // construct from list points a axis algined bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
-	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
-	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
+	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	 ASSERT_LE(minus_half_box_size, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size;
 	 ASSERT_LE(minus_half_box_size, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size;
@@ -172,8 +173,8 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 	 // construct from list points a axis aligned bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
-	 GeoLib::Point const& min_pnt(aabb.getMinPoint());
-	 GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
+	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	 ASSERT_LE(minus_half_box_size_x, min_pnt[0]) << "coordinate 0 of min_pnt is smaller than " << minus_half_box_size_x;
 	 ASSERT_LE(minus_half_box_size_y, min_pnt[1]) << "coordinate 1 of min_pnt is smaller than " << minus_half_box_size_y;
@@ -194,7 +195,7 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesI)
 	ids.push_back(1);
 	GeoLib::AABB<GeoLib::Point> aabb(pnts, ids);
 
-	GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());
@@ -211,7 +212,7 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
 	// construct from points of the vector a axis aligned bounding box
 	GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
-	GeoLib::Point const& max_pnt(aabb.getMaxPoint());
+	MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
 	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());

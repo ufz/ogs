@@ -37,7 +37,8 @@ int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Nod
 	return idx;
 }
 
-bool containsPoint(MeshLib::Node const& pnt, MeshLib::Node const& min, MeshLib::Node const& max)
+bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
+	MathLib::Point3d const& max)
 {
 	if (pnt[0] < min[0] || max[0] < pnt[0]) return false;
 	if (pnt[1] < min[1] || max[1] < pnt[1]) return false;
@@ -140,8 +141,8 @@ int main (int argc, char* argv[])
 		MeshLib::Mesh* ground_truth (FileIO::readMeshFromFile(value));
 		const std::vector<MeshLib::Node*> ground_truth_nodes (ground_truth->getNodes());
 		GeoLib::AABB<MeshLib::Node> bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
-		const MeshLib::Node min (bounding_box.getMinPoint());
-		const MeshLib::Node max (bounding_box.getMaxPoint());
+		MathLib::Point3d const& min(bounding_box.getMinPoint());
+		MathLib::Point3d const& max(bounding_box.getMaxPoint());
 
 		const size_t nNodes(mesh->getNNodes());
 		std::vector<MeshLib::Node*> nodes (mesh->getNodes());

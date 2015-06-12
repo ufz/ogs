@@ -20,8 +20,8 @@
 #include <iterator>
 #include <cassert>
 #include <vector>
-#include <stdexcept>
 
+#include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
 #include "Point.h"
 
@@ -41,9 +41,7 @@ public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
 	 * */
-	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids) :
-		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
-		_max_pnt(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest())
+	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids)
 	{
 		assert(! ids.empty());
 		init(pnts[ids[0]]);
@@ -70,9 +68,7 @@ public:
 	 * @attention{The iterator last must be reachable from first.}
 	 */
 	template <typename InputIterator>
-	AABB(InputIterator first, InputIterator last) :
-		_min_pnt(std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max()),
-		_max_pnt(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest())
+	AABB(InputIterator first, InputIterator last)
 	{
 		if (! (std::distance(first,last) > 0)) {
 			throw std::invalid_argument("AABB::AABB(InputIterator first, InputIterator last): first == last");
@@ -98,7 +94,8 @@ public:
 	/**
 	 * check if point is in the axis aligned bounding box
 	 */
-	bool containsPoint(PNT_TYPE const & pnt) const
+	template <typename T>
+	bool containsPoint(T const & pnt) const
 	{
 		if (pnt[0] < _min_pnt[0] || _max_pnt[0] < pnt[0]) return false;
 		if (pnt[1] < _min_pnt[1] || _max_pnt[1] < pnt[1]) return false;
@@ -111,14 +108,14 @@ public:
 	 * for the given point set
 	 * @return a point
 	 */
-	PNT_TYPE const& getMinPoint() const { return _min_pnt; }
+	MathLib::Point3d const& getMinPoint() const { return _min_pnt; }
 
 	/**
 	 * returns a point that coordinates are maximal for each dimension
 	 * within the given point set
 	 * @return a point
 	 */
-	PNT_TYPE const& getMaxPoint() const { return _max_pnt; }
+	MathLib::Point3d const& getMaxPoint() const { return _max_pnt; }
 
 	/**
 	 * Method checks if the given AABB object is contained within the
@@ -133,8 +130,14 @@ public:
 	}
 
 protected:
-	PNT_TYPE _min_pnt;
-	PNT_TYPE _max_pnt;
+	MathLib::Point3d _min_pnt = std::array<double,3>{{
+		std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::max()}};
+	MathLib::Point3d _max_pnt = std::array<double,3>{{
+		std::numeric_limits<double>::lowest(),
+		std::numeric_limits<double>::lowest(),
+		std::numeric_limits<double>::lowest()}};
 private:
 	void init(PNT_TYPE const & pnt)
 	{

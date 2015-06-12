@@ -17,6 +17,9 @@
 
 #include <string>
 #include <vector>
+
+#include "GeoLib/AABB.h"
+
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
 
@@ -50,7 +53,7 @@ public:
 	std::size_t searchByContent(double eps = std::numeric_limits<double>::epsilon());
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
-	std::size_t searchByBoundingBox(const MeshLib::Node &x1, const MeshLib::Node &x2);
+	std::size_t searchByBoundingBox(GeoLib::AABB<MathLib::Point3d> const& aabb);
 
 
 private:
