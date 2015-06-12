@@ -26,8 +26,17 @@
 #include <string>
 #include <vector>
 
-#include "vtkUnstructuredGridAlgorithm.h"
-#include "vtkNew.h"
+#include <boost/optional.hpp>
+
+#include <vtkCellData.h>
+#include <vtkPointData.h>
+#include <vtkNew.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkUnstructuredGridAlgorithm.h>
+
+#include "InSituLib/VtkMappedPropertyVectorTemplate.h"
+#include "MeshLib/Properties.h"
+#include "MeshLib/PropertyVector.h"
 
 class vtkDataArrayCollection;
 class vtkPointData;
@@ -64,15 +73,25 @@ private:
 	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
 	void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
-	int addDoubleProperty(vtkUnstructuredGrid &output,
-	                      MeshLib::Properties const& properties,
-	                      std::string const& prop_name) const;
-	int addIntProperty(vtkUnstructuredGrid &output,
-	                   MeshLib::Properties const& properties,
-	                   std::string const& prop_name) const;
-	int addUnsignedProperty(vtkUnstructuredGrid &output,
-	                        MeshLib::Properties const& properties,
-	                        std::string const& prop_name) const;
+	template<typename T> int addProperty(vtkUnstructuredGrid &output,
+											MeshLib::Properties const& properties,
+											std::string const& prop_name) const
+	{
+		boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(properties.getPropertyVector<T>(prop_name));
+		if(!propertyVector)
+			return 0;
+
+		vtkNew<VtkMappedPropertyVectorTemplate<T> > dataArray;
+		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<T> &>(*propertyVector));
+		dataArray->SetName(prop_name.c_str());
+
+		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+			output.GetPointData()->AddArray(dataArray.GetPointer());
+		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+			output.GetCellData()->AddArray(dataArray.GetPointer());
+
+		return 1;
+	}
 
 	const MeshLib::Mesh* _mesh;
 
