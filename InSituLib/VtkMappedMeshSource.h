@@ -74,10 +74,11 @@ private:
 	void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
 	template<typename T> int addProperty(vtkUnstructuredGrid &output,
-											MeshLib::Properties const& properties,
-											std::string const& prop_name) const
+	                                     MeshLib::Properties const& properties,
+	                                     std::string const& prop_name) const
 	{
-		boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(properties.getPropertyVector<T>(prop_name));
+		boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(
+			properties.getPropertyVector<T>(prop_name));
 		if(!propertyVector)
 			return 0;
 

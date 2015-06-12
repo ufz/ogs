@@ -85,9 +85,13 @@ private:
 
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
 
-	static void convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type);
+	static void convertArray(vtkDataArray &array,
+	                         MeshLib::Properties &properties,
+	                         MeshLib::MeshItemType type);
 
-	template<typename T> static void convertTypedArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
+	template<typename T> static void convertTypedArray(vtkDataArray &array,
+	                                                   MeshLib::Properties &properties,
+	                                                   MeshLib::MeshItemType type)
 	{
 		vtkIdType const nTuples (array.GetNumberOfTuples());
 		int const nComponents (array.GetNumberOfComponents());
