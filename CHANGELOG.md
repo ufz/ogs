@@ -12,7 +12,7 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 - Implement mesh properties for storage of data fields. This also includes mapped values (e.g. based on material id) [PR #542](https://github.com/ufz/ogs/pull/542), [PR #644](https://github.com/ufz/ogs/pull/644), 
 - Refactored mesh property classes to [enable VTK output](https://github.com/ufz/ogs/pull/692)
 - Extended the available elements to quadratic (e.g. Quad8) based on generalized "element rules".  [#572](https://github.com/ufz/ogs/pull/572), [PR #656](https://github.com/ufz/ogs/pull/656), [PR #657](https://github.com/ufz/ogs/pull/657),
-- Extend computation of shape matrices to lower dimensional elements embedded in higher dimensional space [#655]((https://github.com/ufz/ogs/pull/655)
+- Extend computation of shape matrices to lower dimensional elements embedded in higher dimensional space [#655](https://github.com/ufz/ogs/pull/655)
 - Builds with MinGW (GCC) on Windows, see [Developer Guide](http://docs.opengeosys.org/docs/devguide/getting-started/prerequisites) and the new MinGW platform instructions
 - [Cross-compiling for Windows with MXE on Mac OS](http://docs.opengeosys.org/docs/devguide/advanced/cross-compiling)
 - [Support for new cross-platform IDE CLion](http://docs.opengeosys.org/docs/devguide/development-workflows/development-ides#clion)
