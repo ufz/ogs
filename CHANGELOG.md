@@ -32,9 +32,9 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 - Utilities are build by separate Jenkins Jobs, e.g. [Win_Utils](https://svn.ufz.de:8443/job/OGS-6/job/Win_Utils/)
 
 ## Test examples
-![](http://docs.opengeosys.org/assets/files/square_1e2_neumann_result.png)
 
- - Example 1: TODO
+- [Groundwater flow (Neumann)](http://docs.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann):
+![](http://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/groundwaterflow-neumann/square_1e2_neumann_result.png)
 
 ## Next steps
 
