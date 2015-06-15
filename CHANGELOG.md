@@ -1,6 +1,6 @@
 # 6.0.2
 
-| Release planned 2015/06/15, [GitHub Release Link](https://github.com/ufz/ogs/releases/tag/6.0.2)
+| Released on 2015/06/15, [GitHub Release Link](https://github.com/ufz/ogs/releases/tag/6.0.2)
 
 ## Release notes
 
