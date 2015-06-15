@@ -13,17 +13,21 @@
 
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
+#else
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #endif
 
-#include "MathLib/Vector3.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/Point3d.h"
 
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/CoordinateSystem.h"
 
 namespace MeshLib
 {
+    class Element;
+}
 
+namespace MeshLib
+{
 #ifdef OGS_USE_EIGEN
 typedef Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor> RotationMatrix;
 #else
@@ -33,7 +37,7 @@ typedef MathLib::DenseMatrix<double> RotationMatrix;
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.
  */
-class ElementCoordinatesMappingLocal
+class ElementCoordinatesMappingLocal final
 {
 public:
     /**
@@ -43,34 +47,21 @@ public:
      */
     ElementCoordinatesMappingLocal(const Element &e, const CoordinateSystem &global_coord_system);
 
-    /// Destructor
-    virtual ~ElementCoordinatesMappingLocal();
-
     /// return the global coordinate system
     const CoordinateSystem getGlobalCoordinateSystem() const { return _coords; }
 
     /// return mapped coordinates of the node
-    const MeshLib::Node* getMappedCoordinates(size_t node_id) const
+    MathLib::Point3d const& getMappedCoordinates(std::size_t node_id) const
     {
-        return _vec_nodes[node_id];
+        return _points[node_id];
     }
 
     /// return a rotation matrix converting to global coordinates
     const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;}
 
 private:
-    /// rotate points to local coordinates
-    void rotateToLocal(const RotationMatrix &matR2local, std::vector<MeshLib::Node*> &vec_pt) const;
-
-    /// get a rotation matrix to the global coordinates
-    /// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
-    void getRotationMatrixToGlobal(
-            const Element &e, const CoordinateSystem &coordinate_system,
-            const std::vector<MeshLib::Node*> &vec_pt, RotationMatrix &matR2original) const;
-
-private:
     const CoordinateSystem _coords;
-    std::vector<MeshLib::Node*> _vec_nodes;
+    std::vector<MathLib::Point3d> _points;
     RotationMatrix _matR2global;
 };
 

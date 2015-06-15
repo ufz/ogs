@@ -67,7 +67,7 @@ inline void computeMappingMatrices(
 
     //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
     for (std::size_t k=0; k<nnodes; k++) {
-        const MeshLib::Node& mapped_pt = *ele_local_coord.getMappedCoordinates(k);
+        const MathLib::Point3d& mapped_pt = ele_local_coord.getMappedCoordinates(k);
         // outer product of dNdr and mapped_pt for a particular node
         for (std::size_t i_r=0; i_r<dim; i_r++) {
             for (std::size_t j_x=0; j_x<dim; j_x++) {

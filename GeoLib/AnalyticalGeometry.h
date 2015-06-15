@@ -66,6 +66,11 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
                      MathLib::Vector3 &plane_normal,
                      double& d);
 
+/** Same as getNewellPlane(pnts, plane_normal, d).
+ */
+template <class T_POINT>
+std::pair<MathLib::Vector3, double> getNewellPlane(const std::vector<T_POINT>& pnts);
+
 /**
  * Computes a rotation matrix that rotates the given 2D normal vector parallel to X-axis
  * @param v        a 2D normal vector to be rotated

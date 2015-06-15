@@ -13,8 +13,55 @@
 
 #include "GeoLib/AnalyticalGeometry.h"
 
-#include "MathLib/MathTools.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
+#include "MathLib/MathTools.h"
+#include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
+
+namespace detail
+{
+
+/// rotate points to local coordinates
+void rotateToLocal(
+    const MeshLib::RotationMatrix &matR2local,
+    std::vector<MathLib::Point3d> &points)
+{
+    for (auto& p : points)
+        p.setCoords((matR2local*p).getCoords());
+}
+
+/// get a rotation matrix to the global coordinates
+/// it computes R in x=R*x' where x is original coordinates and x' is local coordinates
+void getRotationMatrixToGlobal(
+    const unsigned element_dimension,
+    const unsigned global_dim,
+    const std::vector<MathLib::Point3d> &points,
+    MeshLib::RotationMatrix &matR)
+{
+    // compute R in x=R*x' where x are original coordinates and x' are local coordinates
+    if (element_dimension == 1) {
+        MathLib::Vector3 xx(points[0], points[1]);
+        xx.normalize();
+        if (global_dim == 2)
+            GeoLib::compute2DRotationMatrixToX(xx, matR);
+        else
+            GeoLib::compute3DRotationMatrixToX(xx, matR);
+        matR.transposeInPlace();
+    } else if (global_dim == 3 && element_dimension == 2) {
+        // get plane normal
+        MathLib::Vector3 plane_normal;
+        double d;
+        std::tie(plane_normal, d) = GeoLib::getNewellPlane(points);
+
+        // compute a rotation matrix to XY
+        GeoLib::computeRotationMatrixToXY(plane_normal, matR);
+        // set a transposed matrix
+        matR.transposeInPlace();
+    }
+
+}
+}   // namespace detail
 
 namespace MeshLib
 {
@@ -25,62 +72,27 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 : _coords(global_coords), _matR2global(3,3)
 {
     assert(e.getDimension() <= global_coords.getDimension());
+    _points.reserve(e.getNNodes());
     for(unsigned i = 0; i < e.getNNodes(); i++)
-        _vec_nodes.push_back(new MeshLib::Node(*(e.getNode(i))));
+        _points.emplace_back(e.getNode(i)->getCoords());
 
-    getRotationMatrixToGlobal(e, global_coords, _vec_nodes, _matR2global);
-#ifdef OGS_USE_EIGEN
-    rotateToLocal(_matR2global.transpose(), _vec_nodes);
-#else
-    RotationMatrix* m(_matR2global.transpose());
-    rotateToLocal(*m, _vec_nodes);
-    delete m;
-#endif
-}
+    auto const element_dimension = e.getDimension();
+    auto const global_dimension = global_coords.getDimension();
 
-ElementCoordinatesMappingLocal::~ElementCoordinatesMappingLocal()
-{
-    for (auto p : _vec_nodes) delete p;
-}
-
-void ElementCoordinatesMappingLocal::rotateToLocal(
-    const RotationMatrix &matR2local,
-    std::vector<MeshLib::Node*> &vec_nodes) const
-{
-    for (MeshLib::Node* node : vec_nodes)
-        node->setCoords((matR2local*static_cast<MathLib::Point3d>(*node)).getCoords());
-}
-
-void ElementCoordinatesMappingLocal::getRotationMatrixToGlobal(
-    const Element &e,
-    const CoordinateSystem &global_coords,
-    const std::vector<MeshLib::Node*> &vec_nodes,
-    RotationMatrix &matR) const
-{
-    const std::size_t global_dim = global_coords.getDimension();
-
-    // compute R in x=R*x' where x are original coordinates and x' are local coordinates
-    if (global_dim == e.getDimension()) {
-        matR.setIdentity();
-    } else if (e.getDimension() == 1) {
-        MathLib::Vector3 xx(*vec_nodes[0], *vec_nodes[1]);
-        xx.normalize();
-        if (global_dim == 2)
-            GeoLib::compute2DRotationMatrixToX(xx, matR);
-        else
-            GeoLib::compute3DRotationMatrixToX(xx, matR);
-        matR.transposeInPlace();
-    } else if (global_dim == 3 && e.getDimension() == 2) {
-        // get plane normal
-        MathLib::Vector3 plane_normal;
-        double d;
-        GeoLib::getNewellPlane (vec_nodes, plane_normal, d);
-        // compute a rotation matrix to XY
-        GeoLib::computeRotationMatrixToXY(plane_normal, matR);
-        // set a transposed matrix
-        matR.transposeInPlace();
+    if (global_dimension == element_dimension)
+    {
+        _matR2global.setIdentity();
+        return;
     }
 
+    detail::getRotationMatrixToGlobal(element_dimension, global_dimension, _points, _matR2global);
+#ifdef OGS_USE_EIGEN
+    detail::rotateToLocal(_matR2global.transpose(), _points);
+#else
+    RotationMatrix* m(_matR2global.transpose());
+    detail::rotateToLocal(*m, _points);
+    delete m;
+#endif
 }
 
 } // MeshLib
