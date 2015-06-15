@@ -18,6 +18,7 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 - [Support for new cross-platform IDE CLion](http://docs.opengeosys.org/docs/devguide/development-workflows/development-ides#clion)
 - Add gradual refinement to the structured mesh generator [PR #539](https://github.com/ufz/ogs/pull/539)
 - Add a command line tool "queryMesh" to search mesh information [PR #665](https://github.com/ufz/ogs/pull/665)
+- Add a command line tool "AddTopLayer" to add an additional top layer (for example a soil layer, see also the [documentation](http://docs.opengeosys.org/docs/tools/meshing/addtoplayer)) [PR #649](https://github.com/ufz/ogs/pull/649)
 
 ### Fixes
 
