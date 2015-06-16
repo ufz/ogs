@@ -464,7 +464,7 @@ TEST_F(MeshLibProperties, CopyConstructor)
 TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 {
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t size(mesh_size*mesh_size*mesh_size);
+	const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
 	std::string const prop_name("TestProperty");
 	boost::optional<MeshLib::PropertyVector<double> &> opt_pv(
@@ -479,17 +479,19 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 	ASSERT_EQ(0u, pv.getPropertyName().compare(prop_name));
 	ASSERT_EQ(MeshLib::MeshItemType::Cell, pv.getMeshItemType());
 	ASSERT_EQ(2u, pv.getTupleSize());
+	ASSERT_EQ(0u, pv.getNumberOfTuples());
 	ASSERT_EQ(0u, pv.size());
 
 	// push some values (2 tuples) into the vector
-	for (std::size_t k(0); k<size; k++) {
+	for (std::size_t k(0); k<number_of_tuples; k++) {
 		pv.push_back(static_cast<double>(k));
 		pv.push_back(static_cast<double>(k));
 	}
-	// check the size, i.e., the number of tuples
-	ASSERT_EQ(size, pv.size());
+	// check the number of tuples
+	ASSERT_EQ(number_of_tuples, pv.getNumberOfTuples());
+	ASSERT_EQ(pv.getNumberOfTuples()*pv.getTupleSize(), pv.size());
 	// check the values
-	for (std::size_t k(0); k<size; k++) {
+	for (std::size_t k(0); k<number_of_tuples; k++) {
 		ASSERT_EQ(static_cast<double>(k), pv[2*k]);
 		ASSERT_EQ(static_cast<double>(k), pv[2*k+1]);
 	}

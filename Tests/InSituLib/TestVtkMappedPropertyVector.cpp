@@ -32,20 +32,20 @@ TEST(InSituLibMappedPropertyVector, Double)
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t size(mesh_size*mesh_size*mesh_size);
+	const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
 	std::string const prop_name("TestProperty");
 	boost::optional<MeshLib::PropertyVector<double> &> double_properties(
 		mesh->getProperties().createNewPropertyVector<double>(prop_name,
 			MeshLib::MeshItemType::Cell));
-	(*double_properties).resize(size);
+	(*double_properties).resize(number_of_tuples);
 	std::iota((*double_properties).begin(), (*double_properties).end(), 1);
 
 	vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
 	dataArray->SetPropertyVector(*double_properties);
 
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
-	ASSERT_EQ(dataArray->GetNumberOfTuples(), size);
+	ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
 	ASSERT_EQ(dataArray->GetValueReference(0), 1.0);
 	double* range = dataArray->GetRange(0);
@@ -64,20 +64,20 @@ TEST(InSituLibMappedPropertyVector, Int)
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t size(mesh_size*mesh_size*mesh_size);
+	const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
 	std::string const prop_name("TestProperty");
 	boost::optional<MeshLib::PropertyVector<int> &> properties(
 		mesh->getProperties().createNewPropertyVector<int>(prop_name,
 			MeshLib::MeshItemType::Cell));
-	(*properties).resize(size);
+	(*properties).resize(number_of_tuples);
 	std::iota((*properties).begin(), (*properties).end(), -5);
 
 	vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
 	dataArray->SetPropertyVector(*properties);
 
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
-	ASSERT_EQ(dataArray->GetNumberOfTuples(), size);
+	ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
 	ASSERT_EQ(dataArray->GetValueReference(0), -5);
 	double* range = dataArray->GetRange(0);
@@ -96,20 +96,20 @@ TEST(InSituLibMappedPropertyVector, Unsigned)
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
 	ASSERT_TRUE(mesh != nullptr);
-	const std::size_t size(mesh_size*mesh_size*mesh_size);
+	const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
 	std::string const prop_name("TestProperty");
 	boost::optional<MeshLib::PropertyVector<unsigned> &> properties(
 		mesh->getProperties().createNewPropertyVector<unsigned>(prop_name,
 														   MeshLib::MeshItemType::Cell));
-	(*properties).resize(size);
+	(*properties).resize(number_of_tuples);
 	std::iota((*properties).begin(), (*properties).end(), 0);
 
 	vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<unsigned> > dataArray;
 	dataArray->SetPropertyVector(*properties);
 
 	ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
-	ASSERT_EQ(dataArray->GetNumberOfTuples(), size);
+	ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
 
 	ASSERT_EQ(dataArray->GetValueReference(0), 0);
 	double* range = dataArray->GetRange(0);

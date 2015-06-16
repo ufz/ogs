@@ -81,7 +81,7 @@ std::size_t ElementExtraction::searchByMaterialID(int const matID)
 	MeshLib::PropertyVector<int> const& pv(opt_pv.get());
 
 	std::vector<std::size_t> matchedIDs;
-	for (std::size_t i(0); i<pv.size(); ++i) {
+	for (std::size_t i(0); i<pv.getNumberOfTuples(); ++i) {
 		if (pv[i]==matID)
 			matchedIDs.push_back(i);
 	}

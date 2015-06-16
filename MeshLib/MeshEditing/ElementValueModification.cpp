@@ -38,10 +38,10 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 	MeshLib::PropertyVector<int> & property_value_vec(
 		optional_property_value_vec.get()
 	);
-	const std::size_t n_property_values(property_value_vec.size());
+	const std::size_t n_property_tuples(property_value_vec.getNumberOfTuples());
 
 	if (!replace_if_exists) {
-		for (std::size_t i=0; i<n_property_values; ++i) {
+		for (std::size_t i=0; i<n_property_tuples; ++i) {
 			if (property_value_vec[i] == new_value) {
 				WARN ("ElementValueModification::replaceElementValue() "
 					"- Replacement value \"%d\" is already taken, "
@@ -51,7 +51,7 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 		}
 	}
 
-	for (std::size_t i=0; i<n_property_values; ++i) {
+	for (std::size_t i=0; i<n_property_tuples; ++i) {
 		if (property_value_vec[i] == old_value)
 			property_value_vec[i] = new_value;
 	}
