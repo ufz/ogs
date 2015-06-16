@@ -1,3 +1,10 @@
+# 6.0.3 (in preparation)
+
+### Features:
+
+- Implemented [OctTree](https://github.com/ufz/ogs/pull/714) for fast searching
+  points and nodes
+
 # 6.0.2
 
 | Released on 2015/06/15, [GitHub Release Link](https://github.com/ufz/ogs/releases/tag/6.0.2)
