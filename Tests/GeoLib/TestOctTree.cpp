@@ -97,9 +97,9 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 	EXPECT_EQ((*ps_ptr.front())[1], ll[1]);
 	EXPECT_EQ((*ps_ptr.front())[2], ll[2]);
 
-	EXPECT_EQ((*ps_ptr.back())[0], ur[0]);
-	EXPECT_EQ((*ps_ptr.back())[1], ur[1]);
-	EXPECT_EQ((*ps_ptr.back())[2], ur[2]);
+	EXPECT_NEAR((*ps_ptr.back())[0], ur[0], (ur[0]-ll[0])*1e-6);
+	EXPECT_NEAR((*ps_ptr.back())[1], ur[1], (ur[1]-ll[1])*1e-6);
+	EXPECT_NEAR((*ps_ptr.back())[2], ur[2], (ur[2]-ll[2])*1e-6);
 
 	checkOctTreeChildsNullptr<2>(*oct_tree);
 
