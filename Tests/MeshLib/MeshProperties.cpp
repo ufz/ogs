@@ -489,6 +489,7 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 	}
 	// check the number of tuples
 	ASSERT_EQ(number_of_tuples, pv.getNumberOfTuples());
+	ASSERT_EQ(pv.getNumberOfTuples()*pv.getTupleSize(), pv.size());
 	// check the values
 	for (std::size_t k(0); k<number_of_tuples; k++) {
 		ASSERT_EQ(static_cast<double>(k), pv[2*k]);
