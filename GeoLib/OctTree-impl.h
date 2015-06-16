@@ -40,6 +40,15 @@ OctTree<POINT, MAX_POINTS> OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
 			ur[1] += (dz-dy)/2.0;
 		}
 	}
+	if (eps == 0.0)
+		eps = std::numeric_limits<double>::epsilon();
+	for (std::size_t k(0); k<3; ++k) {
+		if (ur[k] - ll[k] > 0.0) {
+			ur[k] += (ur[k] - ll[k]) * 1e-6;
+		} else {
+			ur[k] += eps;
+		}
+	}
 	return OctTree<POINT, MAX_POINTS>(ll, ur, eps);
 }
 
