@@ -63,9 +63,10 @@ public:
 		return t;
 	}
 
+	/// Method returns the number of tuples times the number of tuple components.
 	std::size_t size() const
 	{
-		return std::vector<PROP_VAL_TYPE>::size() / _tuple_size;
+		return std::vector<PROP_VAL_TYPE>::size();
 	}
 
 protected:
@@ -147,6 +148,11 @@ public:
 	std::size_t getNumberOfTuples() const
 	{
 		return std::vector<std::size_t>::size();
+	}
+	/// Method returns the number of tuples times the number of tuple components.
+	std::size_t size() const
+	{
+		return _tuple_size * std::vector<std::size_t>::size();
 	}
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
