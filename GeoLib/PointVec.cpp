@@ -33,23 +33,44 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	TemplateVec<Point> (name, points, name_id_map),
 	_type(type),
 	_aabb(points->begin(), points->end()),
-	_rel_eps(rel_eps)
+	_rel_eps(rel_eps*sqrt(MathLib::sqrDist(_aabb.getMinPoint(), _aabb.getMaxPoint()))),
+	_oct_tree(OctTree<GeoLib::Point, 16>::createOctTree(
+		_aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps))
 {
 	assert (_data_vec);
-	std::size_t const number_of_all_input_pnts (_data_vec->size());
+	std::size_t const number_of_all_input_pnts(_data_vec->size());
 
-	_rel_eps *= sqrt(MathLib::sqrDist (_aabb.getMinPoint(),_aabb.getMaxPoint()));
-	makePntsUnique (_data_vec, _pnt_id_map, _rel_eps);
+	// add all points in the oct tree in order to make them unique
+	_pnt_id_map.resize(number_of_all_input_pnts);
+	std::iota(_pnt_id_map.begin(), _pnt_id_map.end(), 0);
+	GeoLib::Point * ret_pnt(nullptr);
+	std::size_t cnt(0);
+	for (std::size_t k(0); k<_data_vec->size(); ++k) {
+		GeoLib::Point *const pnt((*_data_vec)[k]);
+		if (! _oct_tree->addPoint(pnt, ret_pnt)) {
+			_pnt_id_map[pnt->getID()] = ret_pnt->getID();
+			delete (*_data_vec)[k];
+			(*_data_vec)[k] = nullptr;
+		} else {
+			_pnt_id_map[k] = cnt;
+			cnt++;
+		}
+	}
+
+	auto const data_vec_end = std::remove(_data_vec->begin(), _data_vec->end(), nullptr);
+	_data_vec->erase(data_vec_end, _data_vec->end());
 
 	if (number_of_all_input_pnts > _data_vec->size())
 		WARN("PointVec::PointVec(): there are %d double points.",
-		     number_of_all_input_pnts - _data_vec->size());
+			number_of_all_input_pnts - _data_vec->size());
 
 	correctNameIDMapping();
 	// create the inverse mapping
 	_id_to_name_map.resize(_data_vec->size());
 	// fetch the names from the name id map
 	for (auto p : *_name_id_map) {
+		if (p.second >= _id_to_name_map.size())
+			continue;
 		_id_to_name_map[p.second] = p.first;
 	}
 }
@@ -57,14 +78,14 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 PointVec::~PointVec ()
 {}
 
-std::size_t PointVec::push_back (Point* pnt)
+std::size_t PointVec::push_back(Point* pnt)
 {
 	_pnt_id_map.push_back(uniqueInsert(pnt));
 	_id_to_name_map.push_back("");
 	return _pnt_id_map[_pnt_id_map.size() - 1];
 }
 
-void PointVec::push_back (Point* pnt, std::string const*const name)
+void PointVec::push_back(Point* pnt, std::string const*const name)
 {
 	if (name == nullptr) {
 		_pnt_id_map.push_back (uniqueInsert(pnt));
@@ -85,102 +106,36 @@ void PointVec::push_back (Point* pnt, std::string const*const name)
 	_id_to_name_map.push_back(*name);
 }
 
-std::size_t PointVec::uniqueInsert (Point* pnt)
+std::size_t PointVec::uniqueInsert(Point* pnt)
 {
-	auto const it = std::find_if(_data_vec->begin(), _data_vec->end(),
-		[this, &pnt](Point* const p)
-		{
-			return MathLib::maxNormDist(p, pnt) <= _rel_eps;
-		});
+	GeoLib::Point * ret_pnt(nullptr);
+	if (_oct_tree->addPoint(pnt, ret_pnt)) {
+		_data_vec->push_back(pnt);
+		return _data_vec->size()-1;
+	}
 
-	if (it != _data_vec->end())
-	{
+	if (ret_pnt == nullptr) { // pnt is outside of OctTree object
+		// update the axis aligned bounding box
+		_aabb.update(*pnt);
+		// recreate the (enlarged) OctTree
+		_oct_tree.reset(GeoLib::OctTree<GeoLib::Point, 16>::createOctTree(
+			_aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
+		// add all points that are already in the _data_vec
+		for (std::size_t k(0); k<_data_vec->size(); ++k) {
+			GeoLib::Point *const p((*_data_vec)[k]);
+			_oct_tree->addPoint(p, ret_pnt);
+		}
+		// add the new point
+		ret_pnt = nullptr;
+		_oct_tree->addPoint(pnt, ret_pnt);
+		pnt->setID(_data_vec->size());
+		_data_vec->push_back(pnt);
+		return _data_vec->size()-1;
+	} else {
 		delete pnt;
-		pnt = nullptr;
-		return static_cast<std::size_t>(std::distance(_data_vec->begin(), it));
+		return ret_pnt->getID();
 	}
 
-	_data_vec->push_back(pnt);
-
-	// update bounding box
-	_aabb.update (*(_data_vec->back()));
-
-	return _data_vec->size()-1;
-}
-
-void PointVec::makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec,
-                               std::vector<std::size_t> &pnt_id_map, double eps)
-{
-	std::size_t const n_pnts_in_file(pnt_vec->size());
-	std::vector<std::size_t> perm(n_pnts_in_file);
-	pnt_id_map.resize(n_pnts_in_file);
-	std::iota(perm.begin(), perm.end(), 0);
-	std::iota(pnt_id_map.begin(), pnt_id_map.end(), 0);
-
-	// sort the points
-	BaseLib::Quicksort<GeoLib::Point*>(*pnt_vec, 0, n_pnts_in_file, perm);
-
-	// unfortunately quicksort is not stable -
-	// sort identical points by id - to make sorting stable
-	// determine intervals with identical points to resort for stability of sorting
-	std::vector<std::size_t> identical_pnts_interval;
-	bool identical(false);
-	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++)
-	{
-		if (MathLib::maxNormDist((*pnt_vec)[k + 1], (*pnt_vec)[k]) <= eps)
-		{
-			// points are identical, sort by id
-			if (!identical)
-				identical_pnts_interval.push_back(k);
-			identical = true;
-		} else {
-			if (identical)
-				identical_pnts_interval.push_back(k + 1);
-			identical = false;
-		}
-	}
-	if (identical)
-		identical_pnts_interval.push_back(n_pnts_in_file);
-
-	for (std::size_t i(0); i < identical_pnts_interval.size() / 2; i++) {
-		// bubble sort by id
-		std::size_t beg(identical_pnts_interval[2 * i]);
-		std::size_t end(identical_pnts_interval[2 * i + 1]);
-		for (std::size_t j(beg); j < end; j++)
-			for (std::size_t k(beg); k < end - 1; k++)
-				if (perm[k] > perm[k + 1])
-					std::swap(perm[k], perm[k + 1]);
-	}
-
-	// check if there are identical points
-	for (std::size_t k = 0; k < n_pnts_in_file - 1; k++)
-		if (MathLib::maxNormDist((*pnt_vec)[k + 1], (*pnt_vec)[k]) <= eps)
-			pnt_id_map[perm[k + 1]] = pnt_id_map[perm[k]];
-
-	// reverse permutation
-	BaseLib::Quicksort<std::size_t, GeoLib::Point*>(perm, 0, n_pnts_in_file, *pnt_vec);
-
-	// remove the second, third, ... occurrence from vector
-	for (std::size_t k(0); k < n_pnts_in_file; k++) {
-		if (pnt_id_map[k] < k) {
-			delete (*pnt_vec)[k];
-			(*pnt_vec)[k] = nullptr;
-		}
-	}
-
-	auto const pnt_vec_end = std::remove(pnt_vec->begin(), pnt_vec->end(), nullptr);
-	pnt_vec->erase(pnt_vec_end, pnt_vec->end());
-
-	// renumber id-mapping
-	std::size_t id(0);
-	for (std::size_t k(0); k < n_pnts_in_file; k++) {
-		if (pnt_id_map[k] == k) { // point not removed, if necessary: id change
-			pnt_id_map[k] = id;
-			id++;
-		} else {
-			pnt_id_map[k] = pnt_id_map[pnt_id_map[k]];
-		}
-	}
 }
 
 void PointVec::correctNameIDMapping()
