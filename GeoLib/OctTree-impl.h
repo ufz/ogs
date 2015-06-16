@@ -72,7 +72,7 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
 	if (! query_pnts.empty()) {
 		// check Euclidean norm
 		for (auto p : query_pnts) {
-			if (MathLib::sqrDist(*p, *pnt) < _eps*_eps) {
+			if (MathLib::sqrDist(*p, *pnt) <= _eps*_eps) {
 				ret_pnt = p;
 				return false;
 			}
