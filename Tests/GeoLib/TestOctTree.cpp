@@ -334,3 +334,58 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeafes)
 	ASSERT_EQ(10u, ret_pnt->getID());
 }
 
+TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
+{
+	ps_ptr.push_back(new GeoLib::Point(0,0,0,0));
+	ps_ptr.push_back(new GeoLib::Point(0,0,0,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+}
+
+TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPointsOne)
+{
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,0));
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+}
+
+TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
+{
+	ps_ptr.push_back(new GeoLib::Point(-1,-1,-1,0));
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[1], ret_pnt);
+}
+
+
