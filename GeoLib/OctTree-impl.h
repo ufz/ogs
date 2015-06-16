@@ -268,7 +268,7 @@ bool OctTree<POINT, MAX_POINTS>::isOutside(POINT * pnt) const
 {
 	if ((*pnt)[0] < _ll[0] || (*pnt)[1] < _ll[1] || (*pnt)[2] < _ll[2])
 		return true;
-	if ((*pnt)[0] > _ur[0] || (*pnt)[1] > _ur[1] || (*pnt)[2] > _ur[2])
+	if ((*pnt)[0] >= _ur[0] || (*pnt)[1] >= _ur[1] || (*pnt)[2] >= _ur[2])
 		return true;
 	return false;
 }
