@@ -48,6 +48,10 @@ friend class Properties;
 
 public:
 	std::size_t getTupleSize() const { return _tuple_size; }
+	std::size_t getNumberOfTuples() const
+	{
+		return std::vector<PROP_VAL_TYPE>::size() / _tuple_size;
+	}
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
 
@@ -140,6 +144,10 @@ public:
 	}
 
 	std::size_t getTupleSize() const { return _tuple_size; }
+	std::size_t getNumberOfTuples() const
+	{
+		return std::vector<std::size_t>::size();
+	}
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
 
