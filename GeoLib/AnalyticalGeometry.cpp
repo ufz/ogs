@@ -511,9 +511,9 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 		auto it1(it0);
 		++it1;
 		for (; it1 != plys.end(); ++it1) {
-			GeoLib::Point s;
 			for (std::size_t i(0); i<(*it0)->getNumberOfPoints()-1; i++) {
 				for (std::size_t j(0); j<(*it1)->getNumberOfPoints()-1; j++) {
+					GeoLib::Point s(0.0, 0.0, 0.0, pnt_vec.size());
 					if (lineSegmentIntersect(*(*it0)->getPoint(i), *(*it0)->getPoint(i+1),
 						*(*it1)->getPoint(j), *(*it1)->getPoint(j+1), s)) {
 						std::size_t const id(pnt_vec.push_back(new GeoLib::Point(s)));
