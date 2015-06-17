@@ -40,6 +40,13 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	assert (_data_vec);
 	std::size_t const number_of_all_input_pnts(_data_vec->size());
 
+	// correct the ids if necessary
+	for (std::size_t k(0); k<_data_vec->size(); ++k) {
+		if ((*_data_vec)[k]->getID() == std::numeric_limits<std::size_t>::max()) {
+			(*_data_vec)[k]->setID(k);
+		}
+	}
+
 	// add all points in the oct tree in order to make them unique
 	_pnt_id_map.resize(number_of_all_input_pnts);
 	std::iota(_pnt_id_map.begin(), _pnt_id_map.end(), 0);
