@@ -27,6 +27,9 @@ namespace GeoLib
  * \ingroup GeoLib
  */
 
+// forward declaration
+class PointVec;
+
 class Point : public MathLib::Point3dWithID, public GeoLib::GeoObject
 {
 public:
@@ -56,6 +59,11 @@ public:
 
 	/// return a geometry type
 	virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
+
+protected:
+	friend GeoLib::PointVec;
+	/// Resets the id.
+	void setID(std::size_t id) { _id = id; }
 };
 
 static const Point ORIGIN(0, 0, 0);
