@@ -33,11 +33,13 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std:
 		for (std::size_t j(0); j < pnts_per_edge; j++) {
 			const std::size_t offset(j * pnts_per_edge + k_offset);
 			for (std::size_t i(0); i < pnts_per_edge; i++) {
-				pnts->push_back(new GeoLib::Point(i+shift[0], j+shift[1], k+shift[2]));
+				std::size_t const id(i+offset);
+				pnts->push_back(
+					new GeoLib::Point(i+shift[0], j+shift[1], k+shift[2], id));
 				std::string pnt_name(
 						name + "-" + std::to_string(i) + "-" + std::to_string(j) + "-"
 								+ std::to_string(k));
-				pnt_name_map->insert(std::pair< std::string, std::size_t>(pnt_name, i + offset));
+				pnt_name_map->insert(std::make_pair(pnt_name, id));
 			}
 		}
 	}
