@@ -28,12 +28,13 @@ namespace GeoLib {
 Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
 	_pnts(pnt_vec), _initialized (false), _longest_edge (0.0)
 {
-	_pnt_ids[0] = std::numeric_limits<size_t>::max();
-	_pnt_ids[1] = std::numeric_limits<size_t>::max();
-	_pnt_ids[2] = std::numeric_limits<size_t>::max();
+	_pnt_ids[0] = std::numeric_limits<std::size_t>::max();
+	_pnt_ids[1] = std::numeric_limits<std::size_t>::max();
+	_pnt_ids[2] = std::numeric_limits<std::size_t>::max();
 }
 
-Triangle::Triangle (std::vector<Point *> const &pnt_vec, size_t pnt_a, size_t pnt_b, size_t pnt_c) :
+Triangle::Triangle (std::vector<Point *> const &pnt_vec,
+	std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
 	_pnts(pnt_vec), _initialized (true), _longest_edge (0.0)
 {
 	_pnt_ids[0] = pnt_a;
@@ -47,7 +48,7 @@ Triangle::Triangle (std::vector<Point *> const &pnt_vec, size_t pnt_a, size_t pn
 	_longest_edge = sqrt (_longest_edge);
 }
 
-void Triangle::setTriangle (size_t pnt_a, size_t pnt_b, size_t pnt_c)
+void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
 {
 	assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
 	_pnt_ids[0] = pnt_a;

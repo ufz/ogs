@@ -48,14 +48,14 @@ StationBorehole::~StationBorehole(void)
 {
 	// deletes profile vector of borehole, starting at layer 1
 	// the first point is NOT deleted as it points to the station object itself
-	for (size_t k(1); k < _profilePntVec.size(); k++)
+	for (std::size_t k(1); k < _profilePntVec.size(); k++)
 		delete _profilePntVec[k];
 }
 
 int StationBorehole::find(const std::string &str)
 {
-	size_t size = _soilName.size();
-	for (size_t i = 0; i < size; i++)
+	std::size_t size = _soilName.size();
+	for (std::size_t i = 0; i < size; i++)
 		if (_soilName[i].find(str) == 0)
 			return 1;
 	return 0;
@@ -89,14 +89,14 @@ int StationBorehole::addStratigraphy(const std::string &path, StationBorehole* b
 	std::vector<std::list<std::string> > data;
 	if (readStratigraphyFile(path, data))
 	{
-		size_t size = data.size();
-		for (size_t i = 0; i < size; i++)
+		std::size_t size = data.size();
+		for (std::size_t i = 0; i < size; i++)
 			addLayer(data[i], borehole);
 
 		// check if a layer is missing
 		size = borehole->_soilName.size();
 		INFO("StationBorehole::addStratigraphy ToDo");
-		//	for (size_t i=0; i<size; i++)
+		//	for (std::size_t i=0; i<size; i++)
 		//	{
 		//		if ((borehole->_soilLayerThickness[i] == -1) ||(borehole->_soilName[i].compare("") == 0))
 		//		{
@@ -145,8 +145,8 @@ int StationBorehole::addStratigraphy(const std::vector<Point*> &profile, const s
 	if (((profile.size()-1) == soil_names.size()) && (soil_names.size()>0))
 	{
 		this->_profilePntVec.push_back(profile[0]);
-		size_t nLayers = soil_names.size();
-		for (size_t i=0; i<nLayers; i++)
+		std::size_t nLayers = soil_names.size();
+		for (std::size_t i=0; i<nLayers; i++)
 		{
 			this->_profilePntVec.push_back(profile[i+1]);
 			this->_soilName.push_back(soil_names[i]);
@@ -166,9 +166,9 @@ int StationBorehole::addStratigraphies(const std::string &path, std::vector<Poin
 	{
 		std::string name;
 
-		size_t it = 0;
-		size_t nBoreholes = data.size();
-		for (size_t i = 0; i < nBoreholes; i++)
+		std::size_t it = 0;
+		std::size_t nBoreholes = data.size();
+		for (std::size_t i = 0; i < nBoreholes; i++)
 		{
 			std::list<std::string> fields = data[i];
 
@@ -256,8 +256,8 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
 
 void StationBorehole::createSurrogateStratigraphies(std::vector<Point*>* boreholes)
 {
-	size_t nBoreholes = boreholes->size();
-	for (size_t i = 0; i < nBoreholes; i++)
+	std::size_t nBoreholes = boreholes->size();
+	for (std::size_t i = 0; i < nBoreholes; i++)
 	{
 		StationBorehole* bore = static_cast<StationBorehole*>((*boreholes)[i]);
 		bore->addSoilLayer(bore->getDepth(), "depth");
@@ -271,7 +271,7 @@ void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_n
 	   if (_profilePntVec.empty())
 	    addSoilLayer ((*this)[0], (*this)[1], (*this)[2]-thickness, soil_name);
 	   else {
-	    size_t idx (_profilePntVec.size());
+	    std::size_t idx (_profilePntVec.size());
 	    // read coordinates from last above
 	    double x((*_profilePntVec[idx-1])[0]);
 	    double y((*_profilePntVec[idx-1])[1]);
@@ -284,7 +284,7 @@ void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_n
 	if (_profilePntVec.empty())
 		addSoilLayer ((*this)[0], (*this)[1], (*this)[2], "");
 
-	size_t idx (_profilePntVec.size());
+	std::size_t idx (_profilePntVec.size());
 	double x((*_profilePntVec[idx - 1])[0]);
 	double y((*_profilePntVec[idx - 1])[1]);
 	double z((*_profilePntVec[0])[2] - thickness);

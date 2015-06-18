@@ -18,7 +18,7 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
     d = 0;
     MathLib::Vector3 centroid;
     std::size_t n_pnts(pnts.size());
-    for (size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
+    for (std::size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
         plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
                            * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
         plane_normal[1] += ((*(pnts[i]))[2] - (*(pnts[j]))[2])
