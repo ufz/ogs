@@ -75,18 +75,6 @@ public:
 	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
 	/**
-	 * Method appends the point the the PointVec object with the name name. The PointVec
-	 * object takes care about deleting the point. If the point already exists within the
-	 * PointVec object this method will delete it.
-	 * @param point (input) the point (exact the pointer to the point) that should be added
-	 * @param name (input) the name of the geometry the point should be added
-	 * @param id (output) the id of the point within the PointVec object will be set
-	 * @return true, if the point could be inserted (i.e. was not already contained in the vector)
-	 * else false (the user have to delete the point itself)
-	 */
-	bool appendPoint(Point* point, std::string const &name, std::size_t& id);
-
-	/**
 	 * Returns the point vector with the given name.
 	 */
 	const std::vector<Point*>* getPointVec(const std::string &name) const;
