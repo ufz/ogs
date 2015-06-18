@@ -332,7 +332,7 @@ Polyline* Polyline::constructPolylineFromSegments(const std::vector<Polyline*> &
 		if (!ply_found)
 		{
 			ERR("Error in Polyline::contructPolylineFromSegments() - Not all segments are connected.");
-			new_ply = NULL;
+			new_ply = nullptr;
 			break;
 		}
 	}

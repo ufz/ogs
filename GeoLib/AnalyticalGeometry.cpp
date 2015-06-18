@@ -372,7 +372,7 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::De
 
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
-	double* tmp (NULL);
+	double* tmp (nullptr);
 	const std::size_t n_pnts(pnts.size());
 	for (std::size_t k(0); k < n_pnts; k++) {
 		tmp = rot_mat * pnts[k]->getCoords();

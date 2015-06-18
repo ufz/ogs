@@ -65,7 +65,7 @@ Surface* Surface::createSurface(const Polyline &ply)
 {
 	if (!ply.isClosed()) {
 		WARN("Error in Surface::createSurface() - Polyline is not closed.");
-		return NULL;
+		return nullptr;
 	}
 
 	if (ply.getNumberOfPoints() > 2) {

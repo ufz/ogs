@@ -125,11 +125,11 @@ public:
 	 * distance. A pointer to this object is returned.
 	 *
 	 * If there is not such a point, i.e., all the searched grid cells do not contain any
-	 * POINT object a NULL pointer is returned.
+	 * POINT object a nullptr pointer is returned.
 	 *
 	 * @param pnt a field that holds the coordinates of the point
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
-	 * outlined above or NULL
+	 * outlined above or nullptr
 	 */
 	POINT* getNearestPoint(POINT const& pnt) const
 	{
@@ -137,7 +137,7 @@ public:
 		getGridCoords(pnt, coords);
 
 		double sqr_min_dist (MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
-		POINT* nearest_pnt(NULL);
+		POINT* nearest_pnt(nullptr);
 
 		double dists[6];
 		getPointCellBorderDistances(pnt, dists, coords);
@@ -155,10 +155,10 @@ public:
 		} else {
 			// search in all border cells for at least one neighbor
 			double sqr_min_dist_tmp;
-			POINT * nearest_pnt_tmp(NULL);
+			POINT * nearest_pnt_tmp(nullptr);
 			std::size_t offset(1);
 
-			while (nearest_pnt == NULL) {
+			while (nearest_pnt == nullptr) {
 				std::size_t tmp_coords[3];
 				if (coords[0] < offset) {
 					tmp_coords[0] = 0;
@@ -478,7 +478,7 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 				points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
 				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
 				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
-				geo_obj->addPointVec(points, grid_names[grid_names.size()-1], NULL);
+				geo_obj->addPointVec(points, grid_names[grid_names.size()-1], nullptr);
 
 				std::vector<GeoLib::Polyline*>* plys (
 				        new std::vector<GeoLib::Polyline*>);
@@ -514,8 +514,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 				ply5->addPoint(7);
 				plys->push_back(ply5);
 
-				geo_obj->addPolylineVec(plys,
-				                        grid_names[grid_names.size() - 1], NULL);
+				geo_obj->addPolylineVec(plys, grid_names[grid_names.size() - 1],
+					nullptr);
 			}
 		}
 	}

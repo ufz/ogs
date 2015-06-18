@@ -71,7 +71,7 @@ public:
 	 */
 	virtual void addPointVec(std::vector<Point*>* points,
 	                         std::string &name,
-	                         std::map<std::string, std::size_t>* pnt_names = NULL,
+	                         std::map<std::string, std::size_t>* pnt_names = nullptr,
 	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
 	/**
@@ -119,7 +119,7 @@ public:
 	 */
 	virtual void addPolylineVec(std::vector<Polyline*>* lines,
 	                            const std::string &name,
-	                            std::map<std::string,std::size_t>* ply_names = NULL);
+	                            std::map<std::string,std::size_t>* ply_names = nullptr);
 
 	/** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
 	 * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
@@ -161,7 +161,7 @@ public:
 	/** Adds a vector of surfaces with the given name to GEOObjects. */
 	virtual void addSurfaceVec(std::vector<Surface*>* surfaces,
 	                           const std::string &name,
-	                           std::map<std::string, std::size_t>* sfc_names = NULL);
+	                           std::map<std::string, std::size_t>* sfc_names = nullptr);
 
 	/**
 	 * Copies the surfaces in the vector to the SurfaceVec with the given name.

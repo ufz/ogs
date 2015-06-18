@@ -258,7 +258,7 @@ bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
 /**
  * Calculates the intersection points of a line PQ and a triangle ABC.
  * This method requires ABC to be counterclockwise and PQ to point downward.
- * @return Intersection point or NULL if there is no intersection.
+ * @return Intersection point or nullptr if there is no intersection.
  */
 GeoLib::Point* triangleLineIntersection(MathLib::Point3d const& a, MathLib::Point3d const& b, MathLib::Point3d const& c, MathLib::Point3d const& p, MathLib::Point3d const& q);
 

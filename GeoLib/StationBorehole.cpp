@@ -207,17 +207,17 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 	StationBorehole* borehole = new StationBorehole();
 	std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
-	if (fields.size()      >= 5)
+	if (fields.size() >= 5)
 	{
-		borehole->_name     = fields.front();
+		borehole->_name = fields.front();
 		fields.pop_front();
-		(*borehole)[0]      = strtod((BaseLib::replaceString(",", ".", fields.front())).c_str(), NULL);
+		(*borehole)[0] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
 		fields.pop_front();
-		(*borehole)[1]      = strtod((BaseLib::replaceString(",", ".", fields.front())).c_str(), NULL);
+		(*borehole)[1] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
 		fields.pop_front();
-		(*borehole)[2]      = strtod((BaseLib::replaceString(",", ".", fields.front())).c_str(), NULL);
+		(*borehole)[2] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
 		fields.pop_front();
-		borehole->_depth    = strtod((BaseLib::replaceString(",", ".", fields.front())).c_str(), NULL);
+		borehole->_depth = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
 		fields.pop_front();
 		if (fields.empty())
 			borehole->_date = 0;
@@ -231,7 +231,7 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 	{
 		WARN("Station::createStation() - Unexpected file format.");
 		delete borehole;
-		return NULL;
+		return nullptr;
 	}
 	return borehole;
 }
