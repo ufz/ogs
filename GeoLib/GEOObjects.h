@@ -74,19 +74,6 @@ public:
 	                         std::map<std::string, std::size_t>* pnt_names = NULL,
 	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
 
-	/** copies the pointers to the points in the given vector to the PointVec of the provided name.
-	 * The pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Points at the
-	 * end of its scope.
-	 * \param points the vector with points
-	 * \param name the name of the internal PointVec
-	 * \param ids On return the vector holds the ids of the inserted points within the internal vector.
-	 * In case the ids are not needed it is possible to give a NULL pointer (default value).
-	 * \return true if the points are appended, false if the a PointVec with the
-	 * corresponding name does not exist
-	 * */
-	virtual bool appendPointVec(const std::vector<Point*> &points,
-	                            std::string const &name, std::vector<std::size_t>* ids = NULL);
-
 	/**
 	 * Method appends the point the the PointVec object with the name name. The PointVec
 	 * object takes care about deleting the point. If the point already exists within the
