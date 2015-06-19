@@ -15,7 +15,7 @@ namespace GeoLib {
 
 template <typename POINT, std::size_t MAX_POINTS>
 template <typename T>
-OctTree<POINT, MAX_POINTS> OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
+OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
 	double eps)
 {
 	// compute an axis aligned cube around the points ll and ur
@@ -49,7 +49,7 @@ OctTree<POINT, MAX_POINTS> OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
 			ur[k] += eps;
 		}
 	}
-	return OctTree<POINT, MAX_POINTS>(ll, ur, eps);
+	return new OctTree<POINT, MAX_POINTS>(ll, ur, eps);
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
