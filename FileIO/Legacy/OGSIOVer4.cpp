@@ -469,7 +469,8 @@ bool readGLIFileV4(const std::string& fname,
 
 	unique_name = BaseLib::extractBaseName(fname);
 	if (!pnt_vec->empty())
-		geo->addPointVec(pnt_vec, unique_name, pnt_id_names_map);  // KR: insert into GEOObjects if not empty
+		// KR: insert into GEOObjects if not empty
+		geo->addPointVec(pnt_vec, unique_name, pnt_id_names_map, 1e-6);
 
 	// extract path for reading external files
 	const std::string path = BaseLib::extractPath(fname);
