@@ -246,7 +246,7 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 
 TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
 {
-	// this case is not correctely handled by lexicographical sorting
+	// this case is not correctly handled by lexicographical sorting
 	double const eps(1e-1);
 	double const small_displacement(1e-2);
 	ps_ptr.push_back(new GeoLib::Point(0,0,0,0));
@@ -293,9 +293,9 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
 	ASSERT_EQ(ps_ptr[2], ret_pnt);
 }
 
-TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeafes)
+TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 {
-	// case where two points with a small distance but different OctTree leafes
+	// case where two points with a small distance but different OctTree leaves
 	// are inserted
 	double const eps(0.5);
 	std::vector<GeoLib::Point*> ps_ptr;
