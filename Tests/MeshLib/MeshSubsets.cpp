@@ -36,7 +36,7 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
 
 TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
 {
-	Mesh const* const mesh = MeshGenerator::generateLineMesh(1., 10);
+	auto mesh = std::unique_ptr<Mesh>{MeshGenerator::generateLineMesh(1., 10)};
 	MeshSubset all_nodes_mesh_subset(*mesh, &mesh->getNodes());
 
 	// Select nodes
@@ -46,8 +46,8 @@ TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
 		const_cast<Node*>(mesh->getNode(2)),
 		const_cast<Node*>(mesh->getNode(5)),
 		const_cast<Node*>(mesh->getNode(7)) });
-	MeshSubset const* const some_nodes_mesh_subset =
-		all_nodes_mesh_subset.getIntersectionByNodes(some_nodes);
+	auto some_nodes_mesh_subset = std::unique_ptr<MeshSubset>
+		{all_nodes_mesh_subset.getIntersectionByNodes(some_nodes)};
 
 	// Check sizes.
 	ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNNodes());

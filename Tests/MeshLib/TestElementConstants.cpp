@@ -30,6 +30,9 @@ TEST(MeshLib, ElementConstantsQuad4)
 	ASSERT_EQ(2u, quad.getDimension());
 	ASSERT_EQ(4u, quad.getNNodes());
 	ASSERT_EQ(4u, quad.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsQuad8)
@@ -54,6 +57,9 @@ TEST(MeshLib, ElementConstantsQuad8)
 	ASSERT_EQ(2u, quad8.getDimension());
 	ASSERT_EQ(8u, quad8.getNNodes());
 	ASSERT_EQ(4u, quad8.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsQuad9)
@@ -79,6 +85,9 @@ TEST(MeshLib, ElementConstantsQuad9)
 	ASSERT_EQ(2u, quad9.getDimension());
 	ASSERT_EQ(9u, quad9.getNNodes());
 	ASSERT_EQ(4u, quad9.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsHex8)
@@ -101,6 +110,9 @@ TEST(MeshLib, ElementConstantsHex8)
 	ASSERT_EQ(3u, ele.getDimension());
 	ASSERT_EQ(8u, ele.getNNodes());
 	ASSERT_EQ(8u, ele.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsHex20)
@@ -135,6 +147,9 @@ TEST(MeshLib, ElementConstantsHex20)
 	ASSERT_EQ( 3u, ele.getDimension());
 	ASSERT_EQ(20u, ele.getNNodes());
 	ASSERT_EQ( 8u, ele.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsTet4)
@@ -153,6 +168,9 @@ TEST(MeshLib, ElementConstantsTet4)
 	ASSERT_EQ(3u, ele.getDimension());
 	ASSERT_EQ(4u, ele.getNNodes());
 	ASSERT_EQ(4u, ele.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, ElementConstantsTet10)
@@ -178,5 +196,8 @@ TEST(MeshLib, ElementConstantsTet10)
 	ASSERT_EQ( 3u, ele.getDimension());
 	ASSERT_EQ(10u, ele.getNNodes());
 	ASSERT_EQ( 4u, ele.getNBaseNodes());
+
+	for (auto n : nodes)
+		delete n;
 }
 

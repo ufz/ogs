@@ -13,6 +13,7 @@
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 #include <vtkPointData.h>
+#include <vtkSmartPointer.h>
 #include <vtkUnsignedIntArray.h>
 #include <vtkUnstructuredGrid.h>
 
@@ -27,7 +28,7 @@ public:
 		: vtu(nullptr)
 	{
 		// Points and cells
-		auto points = vtkPoints::New();
+		auto points = vtkSmartPointer<vtkPoints>::New();
 		points->InsertNextPoint(703.875, 758.75, 0.9971);
 		points->InsertNextPoint(767.625, 679.5, 6.2356);
 		points->InsertNextPoint(835.25, 602.50, 11.2227);
@@ -41,8 +42,8 @@ public:
 		points->InsertNextPoint(672, 549.375, 117.4165);
 		points->InsertNextPoint(739.75, 472.5, 120.92995);
 
-		auto cells = vtkCellArray::New();
-		auto cell1 = vtkIdList::New();
+		auto cells = vtkSmartPointer<vtkCellArray>::New();
+		auto cell1 = vtkSmartPointer<vtkIdList>::New();
 		cell1->InsertNextId(4);
 		cell1->InsertNextId(1);
 		cell1->InsertNextId(0);
@@ -51,7 +52,7 @@ public:
 		cell1->InsertNextId(7);
 		cell1->InsertNextId(6);
 		cell1->InsertNextId(9);
-		auto cell2 = vtkIdList::New();
+		auto cell2 = vtkSmartPointer<vtkIdList>::New();
 		cell2->InsertNextId(5);
 		cell2->InsertNextId(2);
 		cell2->InsertNextId(1);
@@ -63,19 +64,19 @@ public:
 		cells->InsertNextCell(cell1);
 		cells->InsertNextCell(cell2);
 
-		vtu = vtkUnstructuredGrid::New();
+		vtu = vtkSmartPointer<vtkUnstructuredGrid>::New();
 		vtu->SetPoints(points);
 		vtu->SetCells(12, cells);
 
 		// Data arrays
-		auto pointIds = vtkIntArray::New();
+		auto pointIds = vtkSmartPointer<vtkIntArray>::New();
 		pointIds->SetNumberOfComponents(1);
 		pointIds->SetName("PointIDs");
 		for (int i = 0; i < 12; ++i)
 			pointIds->InsertNextTuple1(i);
 		vtu->GetPointData()->AddArray(pointIds);
 
-		auto materialIds = vtkUnsignedIntArray::New();
+		auto materialIds = vtkSmartPointer<vtkUnsignedIntArray>::New();
 		materialIds->SetNumberOfComponents(1);
 		materialIds->SetName("MaterialIDs");
 		materialIds->InsertNextTuple1(0);
@@ -83,13 +84,8 @@ public:
 		vtu->GetCellData()->AddArray(materialIds);
 	}
 
-	~TestVtkMeshConverter()
-	{
-		vtu->Delete();
-	}
-
 	static std::size_t const mesh_size = 5;
-	vtkUnstructuredGrid * vtu;
+	vtkSmartPointer<vtkUnstructuredGrid> vtu;
 };
 
 TEST_F(TestVtkMeshConverter, Conversion)

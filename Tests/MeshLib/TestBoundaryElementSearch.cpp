@@ -29,15 +29,10 @@ public:
 		_quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
 	{}
 
-	~MeshLibBoundaryElementSearchInSimpleQuadMesh()
-	{
-		delete _quad_mesh;
-	}
-
 protected:
 	const double _geometric_size;
 	const std::size_t _number_of_subdivisions_per_direction;
-	Mesh* _quad_mesh;
+	std::unique_ptr<Mesh> _quad_mesh;
 };
 
 class MeshLibBoundaryElementSearchInSimpleHexMesh : public testing::Test
@@ -110,7 +105,8 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 		ASSERT_EQ(n_nodes_per_dir*(n_nodes_per_dir-1)-n_nodes_per_dir*(i+1), edge3->getNodeIndex(1));
 	}
 
-	std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
+	for (auto p : pnts)
+		delete p;
 }
 
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
@@ -170,6 +166,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	for (auto nodeID : connected_nodeIDs_f)
 		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[1]); // check y coordinates
 
-	std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
+	for (auto p : pnts)
+		delete p;
 }
 
