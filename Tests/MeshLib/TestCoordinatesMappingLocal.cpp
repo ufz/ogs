@@ -32,13 +32,12 @@
 namespace
 {
 
-class TestLine2
+namespace TestLine2
 {
-public:
     typedef MeshLib::Line ElementType;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
+    const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    static std::unique_ptr<MeshLib::Line> createLine(
+    std::unique_ptr<MeshLib::Line> createLine(
         std::array<double, 3> const& a, std::array<double, 3> const& b)
     {
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
@@ -47,37 +46,36 @@ public:
         return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
     }
 
-    static std::unique_ptr<MeshLib::Line> createY()
+    std::unique_ptr<MeshLib::Line> createY()
     {
         return createLine({{0.0, -1.0, 0.0}}, {{0.0,  1.0, 0.0}});
     }
 
-    static std::unique_ptr<MeshLib::Line> createZ()
+    std::unique_ptr<MeshLib::Line> createZ()
     {
         return createLine({{0.0, 0.0, -1.0}}, {{0.0, 0.0,  1.0}});
     }
 
-    static std::unique_ptr<MeshLib::Line> createXY()
+    std::unique_ptr<MeshLib::Line> createXY()
     {
         // 45degree inclined
         return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(2), 2./sqrt(2), 0.0}});
     }
 
-    static std::unique_ptr<MeshLib::Line> createXYZ()
+    std::unique_ptr<MeshLib::Line> createXYZ()
     {
         return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(3), 2./sqrt(3), 2./sqrt(3)}});
     }
 
 };
 
-class TestQuad4
+namespace TestQuad4
 {
- public:
     // Element information
     typedef MeshLib::Quad ElementType;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
+    const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    static std::unique_ptr<MeshLib::Quad> createQuad(
+    std::unique_ptr<MeshLib::Quad> createQuad(
         std::array<double, 3> const& a, std::array<double, 3> const& b,
         std::array<double, 3> const& c, std::array<double, 3> const& d)
     {
@@ -90,7 +88,7 @@ class TestQuad4
     }
 
     // 2.5D case: inclined
-    static std::unique_ptr<MeshLib::Quad> createXYZ()
+    std::unique_ptr<MeshLib::Quad> createXYZ()
     {
         // rotate 45 degree around x axis
         return createQuad(
@@ -101,7 +99,7 @@ class TestQuad4
     }
 
     // 2.5D case: inclined
-    static std::unique_ptr<MeshLib::Quad> createXZ()
+    std::unique_ptr<MeshLib::Quad> createXZ()
     {
         return createQuad(
             {{ 1.0, 0.0,  1.0}},
@@ -111,7 +109,7 @@ class TestQuad4
     }
 
     // 2.5D case: inclined
-    static std::unique_ptr<MeshLib::Quad> createYZ()
+    std::unique_ptr<MeshLib::Quad> createYZ()
     {
         return createQuad(
             {{0.0,  1.0,  1.0}},
