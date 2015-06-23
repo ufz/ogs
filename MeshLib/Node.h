@@ -49,6 +49,9 @@ public:
 	/// Constructor using a coordinate array
 	Node(const double coords[3], std::size_t id = std::numeric_limits<std::size_t>::max());
 
+	/// Constructor using a coordinate array
+	Node(std::array<double, 3> const& coords, std::size_t id = std::numeric_limits<std::size_t>::max());
+
 	/// Constructor using single coordinates
 	Node(double x, double y, double z, std::size_t id = std::numeric_limits<std::size_t>::max());
 

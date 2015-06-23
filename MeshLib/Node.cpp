@@ -22,6 +22,11 @@ Node::Node(const double coords[3], std::size_t id)
 {
 }
 
+Node::Node(std::array<double, 3> const& coords, std::size_t id)
+	: MathLib::Point3dWithID(coords, id)
+{
+}
+
 Node::Node(double x, double y, double z, std::size_t id)
 	: MathLib::Point3dWithID(std::array<double,3>({{x, y, z}}), id)
 {
