@@ -103,4 +103,9 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
     // components.
     ASSERT_EQ(selected_nodes.size() * selected_components.size(),
             dof_map_subset->dofSize());
+
+    delete dof_map_subset;
+    for (auto p : selected_components)
+        delete p;
+    delete selected_subset;
 }

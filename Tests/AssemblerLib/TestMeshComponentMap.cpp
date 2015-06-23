@@ -161,7 +161,11 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
         EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
             cmap_subset.getGlobalIndex(l, comp1_id));
     }
+
+    for (auto p : selected_components)
+        delete p;
 }
+
 TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
 {
     cmap = new MeshComponentMap(components,
@@ -192,4 +196,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
         EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
             cmap_subset.getGlobalIndex(l, comp1_id));
     }
+
+    for (auto p : selected_components)
+        delete p;
 }

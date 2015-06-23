@@ -137,4 +137,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
         [](MeshLib::MeshSubsets * p) { delete p; return true; });
+
+    for (auto p : local_assembler_data)
+        delete p;
 }
