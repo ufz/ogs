@@ -298,7 +298,6 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 	// case where two points with a small distance but different OctTree leaves
 	// are inserted
 	double const eps(0.5);
-	std::vector<GeoLib::Point*> ps_ptr;
 	for (int k(-10); k<11; ++k) {
 		for (int j(-10); j<11; ++j) {
 			std::size_t id((k+10)*21+(j+10));
@@ -323,14 +322,14 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 	}
 
 	// point near the GeoLib::Point (0, -10, -10, 10) (with id 10)
-	GeoLib::Point *p0(new GeoLib::Point(0.1, -10.0, -10.0));
+	std::unique_ptr<GeoLib::Point> p0(new GeoLib::Point(0.1, -10.0, -10.0));
 	GeoLib::Point * ret_pnt(nullptr);
-	ASSERT_FALSE(oct_tree->addPoint(p0, ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
 	ASSERT_EQ(10u, ret_pnt->getID());
 
 	(*p0)[0] = -0.1;
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree->addPoint(p0, ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
 	ASSERT_EQ(10u, ret_pnt->getID());
 }
 
