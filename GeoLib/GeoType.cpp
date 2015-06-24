@@ -23,6 +23,7 @@ GEOTYPE convertGeoType (const std::string& geo_type_str)
 	if (geo_type_str.compare ("SURFACE") == 0) return GEOTYPE::SURFACE;
 	if (geo_type_str.compare ("VOLUME") == 0) return GEOTYPE::VOLUME;
 	if (geo_type_str.compare ("GEODOMAIN") == 0) return GEOTYPE::GEODOMAIN;
+	if (geo_type_str.compare ("DOMAIN") == 0) return GEOTYPE::GEODOMAIN;
 	return GEOTYPE::INVALID;
 }
 

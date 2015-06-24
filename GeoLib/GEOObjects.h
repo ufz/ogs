@@ -24,6 +24,7 @@
 #include "PolylineVec.h"
 #include "Surface.h"
 #include "SurfaceVec.h"
+#include "GeoDomain.h"
 
 #include "Station.h"
 
@@ -258,6 +259,8 @@ protected:
 	std::vector<PolylineVec*> _ply_vecs;
 	/** vector manages pointers to SurfaceVec objects */
 	std::vector<SurfaceVec*> _sfc_vecs;
+
+	GeoDomain _geo_domain;
 private:
 	/**
 	 * Method merges points from different geometries into one geometry. This

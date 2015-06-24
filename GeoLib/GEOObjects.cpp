@@ -522,6 +522,10 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
 							sfc_vec->getElementByName(geo_obj_name)));
 		break;
 	}
+	case GeoLib::GEOTYPE::GEODOMAIN: {
+		geo_obj = const_cast<GeoLib::GeoDomain*>(&_geo_domain);
+		break;
+	}
 	default:
 		ERR("GEOObjects::getGeoObject(): geometric type not handled.")
 		return nullptr;
@@ -547,6 +551,9 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 
 	if(!geo_obj)
 		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::SURFACE, geo_obj_name);
+
+	if(!geo_obj)
+		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::GEODOMAIN, geo_obj_name);
 
 	if (!geo_obj) {
 		ERR("GEOObjects::getGeoObject(): Could not find \"%s\" in geometry %s.",
