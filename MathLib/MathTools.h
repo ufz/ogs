@@ -122,7 +122,12 @@ bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 }
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
-double sqrDist(const double* p0, const double* p1);
+inline
+double sqrDist(const double* p0, const double* p1)
+{
+	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
+	return scalarProduct<double,3>(v,v);
+}
 
 /** Distance between points p0 and p1 in the maximum norm. */
 template <typename T>

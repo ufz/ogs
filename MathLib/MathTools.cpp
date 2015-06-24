@@ -42,12 +42,6 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 	return sqrt (sqrDist (p, proj_pnt));
 }
 
-double sqrDist(const double* p0, const double* p1)
-{
-	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scalarProduct<double,3>(v,v);
-}
-
 double getAngle (const double p0[3], const double p1[3], const double p2[3])
 {
 	const double v0[3] = {p0[0]-p1[0], p0[1]-p1[1], p0[2]-p1[2]};
