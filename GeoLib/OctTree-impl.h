@@ -15,7 +15,7 @@ namespace GeoLib {
 
 template <typename POINT, std::size_t MAX_POINTS>
 template <typename T>
-OctTree<POINT, MAX_POINTS> OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
+OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
 	double eps)
 {
 	// compute an axis aligned cube around the points ll and ur
@@ -40,7 +40,16 @@ OctTree<POINT, MAX_POINTS> OctTree<POINT, MAX_POINTS>::createOctTree(T ll, T ur,
 			ur[1] += (dz-dy)/2.0;
 		}
 	}
-	return OctTree<POINT, MAX_POINTS>(ll, ur, eps);
+	if (eps == 0.0)
+		eps = std::numeric_limits<double>::epsilon();
+	for (std::size_t k(0); k<3; ++k) {
+		if (ur[k] - ll[k] > 0.0) {
+			ur[k] += (ur[k] - ll[k]) * 1e-6;
+		} else {
+			ur[k] += eps;
+		}
+	}
+	return new OctTree<POINT, MAX_POINTS>(ll, ur, eps);
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
@@ -63,7 +72,7 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
 	if (! query_pnts.empty()) {
 		// check Euclidean norm
 		for (auto p : query_pnts) {
-			if (MathLib::sqrDist(*p, *pnt) < _eps*_eps) {
+			if (MathLib::sqrDist(*p, *pnt) <= _eps*_eps) {
 				ret_pnt = p;
 				return false;
 			}
@@ -259,7 +268,7 @@ bool OctTree<POINT, MAX_POINTS>::isOutside(POINT * pnt) const
 {
 	if ((*pnt)[0] < _ll[0] || (*pnt)[1] < _ll[1] || (*pnt)[2] < _ll[2])
 		return true;
-	if ((*pnt)[0] > _ur[0] || (*pnt)[1] > _ur[1] || (*pnt)[2] > _ur[2])
+	if ((*pnt)[0] >= _ur[0] || (*pnt)[1] >= _ur[1] || (*pnt)[2] >= _ur[2])
 		return true;
 	return false;
 }

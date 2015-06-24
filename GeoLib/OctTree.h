@@ -45,7 +45,7 @@ public:
 	/// inside a OctTree leaf may be more expensive. The value should be
 	/// choosen application dependend. [default 8]
 	template <typename T>
-	static OctTree<POINT, MAX_POINTS> createOctTree(T ll, T ur,
+	static OctTree<POINT, MAX_POINTS>* createOctTree(T ll, T ur,
 		double eps = std::numeric_limits<double>::epsilon());
 
 	/// Destroys the children of this node. @attention Does not destroy the

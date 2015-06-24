@@ -9,6 +9,7 @@
 #include "gtest/gtest.h"
 #include <ctime>
 #include <random>
+#include <memory>
 
 #include "GeoLib/OctTree.h"
 #include "GeoLib/AABB.h"
@@ -84,30 +85,30 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 {
 	generateEquidistantPoints3d();
 	double const eps(10*std::numeric_limits<double>::epsilon());
-	GeoLib::OctTree<GeoLib::Point, 2> oct_tree(
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
 		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(*ps_ptr.front(),
 		*ps_ptr.back(), eps));
 
 #ifndef NDEBUG
-	MathLib::Point3d const& ll(oct_tree.getLowerLeftCornerPoint());
-	MathLib::Point3d const& ur(oct_tree.getUpperRightCornerPoint());
+	MathLib::Point3d const& ll(oct_tree->getLowerLeftCornerPoint());
+	MathLib::Point3d const& ur(oct_tree->getUpperRightCornerPoint());
 
 	EXPECT_EQ((*ps_ptr.front())[0], ll[0]);
 	EXPECT_EQ((*ps_ptr.front())[1], ll[1]);
 	EXPECT_EQ((*ps_ptr.front())[2], ll[2]);
 
-	EXPECT_EQ((*ps_ptr.back())[0], ur[0]);
-	EXPECT_EQ((*ps_ptr.back())[1], ur[1]);
-	EXPECT_EQ((*ps_ptr.back())[2], ur[2]);
+	EXPECT_NEAR((*ps_ptr.back())[0], ur[0], (ur[0]-ll[0])*1e-6);
+	EXPECT_NEAR((*ps_ptr.back())[1], ur[1], (ur[1]-ll[1])*1e-6);
+	EXPECT_NEAR((*ps_ptr.back())[2], ur[2], (ur[2]-ll[2])*1e-6);
 
-	checkOctTreeChildsNullptr<2>(oct_tree);
+	checkOctTreeChildsNullptr<2>(*oct_tree);
 
-	ASSERT_EQ(static_cast<std::size_t>(0), oct_tree.getPointVector().size());
+	ASSERT_EQ(static_cast<std::size_t>(0), oct_tree->getPointVector().size());
 #endif
 
 	GeoLib::Point * ret_pnt(nullptr);
 	// insert the first point
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
 
 	// make a range query
 	MathLib::Point3d const min(
@@ -117,117 +118,117 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 		std::array<double,3>{{(*(ps_ptr[0]))[0]+eps,
 		(*(ps_ptr[0]))[1]+eps, (*(ps_ptr[0]))[2]+eps}});
 	std::vector<GeoLib::Point*> query_pnts;
-	oct_tree.getPointsInRange(min, max, query_pnts);
+	oct_tree->getPointsInRange(min, max, query_pnts);
 	ASSERT_EQ(1u, query_pnts.size());
 
 #ifndef NDEBUG
-	ASSERT_EQ(static_cast<std::size_t>(1), oct_tree.getPointVector().size());
+	ASSERT_EQ(static_cast<std::size_t>(1), oct_tree->getPointVector().size());
 #endif
 
 	// try to insert the first point a second time
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
 #ifndef NDEBUG
-	ASSERT_EQ(static_cast<std::size_t>(1), oct_tree.getPointVector().size());
+	ASSERT_EQ(static_cast<std::size_t>(1), oct_tree->getPointVector().size());
 #endif
 
 	// insert the second point
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
 #ifndef NDEBUG
-	ASSERT_EQ(static_cast<std::size_t>(2), oct_tree.getPointVector().size());
-	checkOctTreeChildsNullptr<2>(oct_tree);
+	ASSERT_EQ(static_cast<std::size_t>(2), oct_tree->getPointVector().size());
+	checkOctTreeChildsNullptr<2>(*oct_tree);
 #endif
 
 	// insert a third point -> there should be subtrees
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[2], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[2], ret_pnt));
 #ifndef NDEBUG
-	ASSERT_EQ(static_cast<std::size_t>(0), oct_tree.getPointVector().size());
-	checkOctTreeChildsNonNullptr<2>(oct_tree);
+	ASSERT_EQ(static_cast<std::size_t>(0), oct_tree->getPointVector().size());
+	checkOctTreeChildsNonNullptr<2>(*oct_tree);
 
 	// all inserted points are in the SWL -> there should be another subtree
 	// level
-	checkOctTreeChildsNonNullptr<2>(*(oct_tree.getChild(2)));
+	checkOctTreeChildsNonNullptr<2>(*(oct_tree->getChild(2)));
 
 	// still all inserted points are in the SWL of the SWL
 	// -> there should be another subtree level
-	checkOctTreeChildsNonNullptr<2>(*(oct_tree.getChild(2)->getChild(2)));
+	checkOctTreeChildsNonNullptr<2>(*(oct_tree->getChild(2)->getChild(2)));
 
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(0)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(1)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(3)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(4)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(5)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(6)));
-	checkOctTreeChildsNullptr<2>(*(oct_tree.getChild(2)->getChild(7)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(0)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(1)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(3)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(4)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(5)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(6)));
+	checkOctTreeChildsNullptr<2>(*(oct_tree->getChild(2)->getChild(7)));
 
 	ASSERT_EQ(static_cast<std::size_t>(2),
-		oct_tree.getChild(2)->getChild(2)->getChild(2)->getPointVector().size());
+		oct_tree->getChild(2)->getChild(2)->getChild(2)->getPointVector().size());
 	ASSERT_EQ(static_cast<std::size_t>(1),
-		oct_tree.getChild(2)->getChild(2)->getChild(3)->getPointVector().size());
+		oct_tree->getChild(2)->getChild(2)->getChild(3)->getPointVector().size());
 #endif
 
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[3], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[3], ret_pnt));
 #ifndef NDEBUG
 	ASSERT_EQ(static_cast<std::size_t>(1),
-		oct_tree.getChild(2)->getChild(3)->getPointVector().size());
+		oct_tree->getChild(2)->getChild(3)->getPointVector().size());
 #endif
 
 	GeoLib::Point range_query_ll(*(ps_ptr.front()));
 	GeoLib::Point range_query_ur(*(ps_ptr[ps_ptr.size()/2]));
 	std::vector<GeoLib::Point*> result;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(4), result.size());
 
 	result.clear();
 	range_query_ur[0] = -2.5;
 	range_query_ur[1] = -2.5;
 	range_query_ur[2] = -2.5;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(3), result.size());
 
 	// insert some points not resulting in a further refinement of SWL
 	for (std::size_t k(4); k<11; ++k)
-		ASSERT_TRUE(oct_tree.addPoint(ps_ptr[k], ret_pnt));
+		ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
 
 	result.clear();
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(3), result.size());
 
 	// insert some points *resulting* in a further refinement of SWL
 	for (std::size_t k(11); k<25; ++k)
-		ASSERT_TRUE(oct_tree.addPoint(ps_ptr[k], ret_pnt));
+		ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
 
 	result.clear();
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(9), result.size());
 	
 	// insert all points with z = -5.0 - this does not result in a further
 	// refinement of SWL
 	for (std::size_t k(25); k<121; ++k)
-		ASSERT_TRUE(oct_tree.addPoint(ps_ptr[k], ret_pnt));
+		ASSERT_TRUE(oct_tree->addPoint(ps_ptr[k], ret_pnt));
 
 	result.clear();
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(9), result.size());
 
 	result.clear();
 	range_query_ur[0] = -3.75;
 	range_query_ur[1] = -3.75;
 	range_query_ur[2] = -3.75;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(4), result.size());
 
 	result.clear();
 	range_query_ur[0] = -4.25;
 	range_query_ur[1] = -4.25;
 	range_query_ur[2] = -4.25;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(1), result.size());
 
 	result.clear();
 	range_query_ll[0] = -4.75;
 	range_query_ll[1] = -4.75;
 	range_query_ll[2] = -4.75;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	for (auto p : result)
 		std::cout << *p << "\n";
 	ASSERT_EQ(static_cast<std::size_t>(0), result.size());
@@ -239,13 +240,13 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
 	range_query_ur[0] = -0.25;
 	range_query_ur[1] = -4.75;
 	range_query_ur[2] = -4.75;
-	oct_tree.getPointsInRange(range_query_ll, range_query_ur, result);
+	oct_tree->getPointsInRange(range_query_ll, range_query_ur, result);
 	ASSERT_EQ(static_cast<std::size_t>(5), result.size());
 }
 
 TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
 {
-	// this case is not correctely handled by lexicographical sorting
+	// this case is not correctly handled by lexicographical sorting
 	double const eps(1e-1);
 	double const small_displacement(1e-2);
 	ps_ptr.push_back(new GeoLib::Point(0,0,0,0));
@@ -259,45 +260,44 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
 	GeoLib::AABB<GeoLib::Point> const aabb(ps_ptr.cbegin(), ps_ptr.cend());
 	MathLib::Point3d min(aabb.getMinPoint());
 	MathLib::Point3d max(aabb.getMaxPoint());
-	GeoLib::OctTree<GeoLib::Point, 8> oct_tree(
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 8>> oct_tree(
 		GeoLib::OctTree<GeoLib::Point, 8>::createOctTree(min, max, eps));
 
 	// pt_ptr[0] should be inserted correctly
 	GeoLib::Point * ret_pnt(nullptr);
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
 	ASSERT_EQ(ps_ptr[0], ret_pnt);
 	// ps_ptr[1] is in the eps-environment of ps_ptr[0]
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
 	ASSERT_EQ(ps_ptr[0], ret_pnt);
 	// pt_ptr[2] should be inserted correctly
 	ret_pnt = nullptr;
-	ASSERT_TRUE(oct_tree.addPoint(ps_ptr[2], ret_pnt));
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[2], ret_pnt));
 	ASSERT_EQ(ps_ptr[2], ret_pnt);
 	// ps_ptr[3] is in the eps-environment of ps_ptr[0]
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[3], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[3], ret_pnt));
 	ASSERT_EQ(ps_ptr[0], ret_pnt);
 	// ps_ptr[4] is in the eps-environment of ps_ptr[2]
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[4], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[4], ret_pnt));
 	ASSERT_EQ(ps_ptr[2], ret_pnt);
 	// ps_ptr[5] is in the eps-environment of ps_ptr[0]
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[5], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[5], ret_pnt));
 	ASSERT_EQ(ps_ptr[0], ret_pnt);
 	// ps_ptr[6] is in the eps-environment of ps_ptr[2]
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(ps_ptr[6], ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[6], ret_pnt));
 	ASSERT_EQ(ps_ptr[2], ret_pnt);
 }
 
-TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeafes)
+TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 {
-	// case where two points with a small distance but different OctTree leafes
+	// case where two points with a small distance but different OctTree leaves
 	// are inserted
 	double const eps(0.5);
-	std::vector<GeoLib::Point*> ps_ptr;
 	for (int k(-10); k<11; ++k) {
 		for (int j(-10); j<11; ++j) {
 			std::size_t id((k+10)*21+(j+10));
@@ -311,25 +311,80 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeafes)
 	GeoLib::AABB<GeoLib::Point> const aabb(ps_ptr.cbegin(), ps_ptr.cend());
 	MathLib::Point3d min(aabb.getMinPoint());
 	MathLib::Point3d max(aabb.getMaxPoint());
-	GeoLib::OctTree<GeoLib::Point, 2> oct_tree(
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
 		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
 	// fill OctTree
 	for (auto p : ps_ptr) {
 		GeoLib::Point * ret_pnt(nullptr);
-		ASSERT_TRUE(oct_tree.addPoint(p, ret_pnt));
+		ASSERT_TRUE(oct_tree->addPoint(p, ret_pnt));
 		ASSERT_EQ(p, ret_pnt);
 	}
 
 	// point near the GeoLib::Point (0, -10, -10, 10) (with id 10)
-	GeoLib::Point *p0(new GeoLib::Point(0.1, -10.0, -10.0));
+	std::unique_ptr<GeoLib::Point> p0(new GeoLib::Point(0.1, -10.0, -10.0));
 	GeoLib::Point * ret_pnt(nullptr);
-	ASSERT_FALSE(oct_tree.addPoint(p0, ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
 	ASSERT_EQ(10u, ret_pnt->getID());
 
 	(*p0)[0] = -0.1;
 	ret_pnt = nullptr;
-	ASSERT_FALSE(oct_tree.addPoint(p0, ret_pnt));
+	ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
 	ASSERT_EQ(10u, ret_pnt->getID());
 }
+
+TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
+{
+	ps_ptr.push_back(new GeoLib::Point(0,0,0,0));
+	ps_ptr.push_back(new GeoLib::Point(0,0,0,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+}
+
+TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPointsOne)
+{
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,0));
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_FALSE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+}
+
+TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
+{
+	ps_ptr.push_back(new GeoLib::Point(-1,-1,-1,0));
+	ps_ptr.push_back(new GeoLib::Point(1,1,1,1));
+	double const eps(0.0);
+
+	GeoLib::AABB<GeoLib::Point> aabb(ps_ptr.begin(), ps_ptr.end());
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+		GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+			aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+
+	GeoLib::Point * ret_pnt(nullptr);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
+	ASSERT_EQ(ps_ptr[0], ret_pnt);
+	ASSERT_TRUE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
+	ASSERT_EQ(ps_ptr[1], ret_pnt);
+}
+
 
