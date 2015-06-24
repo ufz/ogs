@@ -89,14 +89,6 @@ void GEOModels::addPointVec( std::vector<GeoLib::Point*>* points,
 	emit geoDataAdded(_geoModel, name, GeoLib::GEOTYPE::POINT);
 }
 
-bool GEOModels::appendPointVec(const std::vector<GeoLib::Point*> &points,
-                               const std::string &name, std::vector<std::size_t>* ids)
-{
-	bool ret (GeoLib::GEOObjects::appendPointVec (points, name, ids));
-	// TODO import new points into geo-treeview
-	return ret;
-}
-
 bool GEOModels::removePointVec( const std::string &name )
 {
 	if (!isPntVecUsed(name))

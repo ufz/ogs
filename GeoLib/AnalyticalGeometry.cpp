@@ -175,11 +175,11 @@ bool lineSegmentIntersect(
 }
 
 bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
-                           size_t &idx0,
-                           size_t &idx1,
+                           std::size_t &idx0,
+                           std::size_t &idx1,
                            GeoLib::Point& intersection_pnt)
 {
-	size_t n_segs(ply->getNumberOfPoints() - 1);
+	std::size_t n_segs(ply->getNumberOfPoints() - 1);
 	/**
 	 * computing the intersections of all possible pairs of line segments of the given polyline
 	 * as follows:
@@ -187,8 +187,8 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
 	 * of the polyline and segment \f$s_2 = (C,B)\f$ defined by \f$j\f$-th and
 	 * \f$j+1\f$-st point of the polyline, \f$j>k+1\f$
 	 */
-	for (size_t k(0); k < n_segs - 2; k++) {
-		for (size_t j(k + 2); j < n_segs; j++) {
+	for (std::size_t k(0); k < n_segs - 2; k++) {
+		for (std::size_t j(k + 2); j < n_segs; j++) {
 			if (k != 0 || j < n_segs - 1) {
 				if (lineSegmentIntersect(*(ply->getPoint(k)), *(ply->getPoint(k + 1)),
 				                         *(ply->getPoint(j)), *(ply->getPoint(j + 1)),
@@ -372,7 +372,7 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::De
 
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
-	double* tmp (NULL);
+	double* tmp (nullptr);
 	const std::size_t n_pnts(pnts.size());
 	for (std::size_t k(0); k < n_pnts; k++) {
 		tmp = rot_mat * pnts[k]->getCoords();

@@ -71,33 +71,8 @@ public:
 	 */
 	virtual void addPointVec(std::vector<Point*>* points,
 	                         std::string &name,
-	                         std::map<std::string, std::size_t>* pnt_names = NULL,
+	                         std::map<std::string, std::size_t>* pnt_names = nullptr,
 	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
-
-	/** copies the pointers to the points in the given vector to the PointVec of the provided name.
-	 * The pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Points at the
-	 * end of its scope.
-	 * \param points the vector with points
-	 * \param name the name of the internal PointVec
-	 * \param ids On return the vector holds the ids of the inserted points within the internal vector.
-	 * In case the ids are not needed it is possible to give a NULL pointer (default value).
-	 * \return true if the points are appended, false if the a PointVec with the
-	 * corresponding name does not exist
-	 * */
-	virtual bool appendPointVec(const std::vector<Point*> &points,
-	                            std::string const &name, std::vector<std::size_t>* ids = NULL);
-
-	/**
-	 * Method appends the point the the PointVec object with the name name. The PointVec
-	 * object takes care about deleting the point. If the point already exists within the
-	 * PointVec object this method will delete it.
-	 * @param point (input) the point (exact the pointer to the point) that should be added
-	 * @param name (input) the name of the geometry the point should be added
-	 * @param id (output) the id of the point within the PointVec object will be set
-	 * @return true, if the point could be inserted (i.e. was not already contained in the vector)
-	 * else false (the user have to delete the point itself)
-	 */
-	bool appendPoint(Point* point, std::string const &name, std::size_t& id);
 
 	/**
 	 * Returns the point vector with the given name.
@@ -144,7 +119,7 @@ public:
 	 */
 	virtual void addPolylineVec(std::vector<Polyline*>* lines,
 	                            const std::string &name,
-	                            std::map<std::string,std::size_t>* ply_names = NULL);
+	                            std::map<std::string,std::size_t>* ply_names = nullptr);
 
 	/** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
 	 * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
@@ -186,7 +161,7 @@ public:
 	/** Adds a vector of surfaces with the given name to GEOObjects. */
 	virtual void addSurfaceVec(std::vector<Surface*>* surfaces,
 	                           const std::string &name,
-	                           std::map<std::string, std::size_t>* sfc_names = NULL);
+	                           std::map<std::string, std::size_t>* sfc_names = nullptr);
 
 	/**
 	 * Copies the surfaces in the vector to the SurfaceVec with the given name.

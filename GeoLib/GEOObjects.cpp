@@ -48,40 +48,6 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
 	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::PointType::POINT, eps));
 }
 
-bool GEOObjects::appendPointVec(std::vector<Point*> const& new_points,
-                                std::string const &name, std::vector<std::size_t>* ids)
-{
-	// search vector
-	std::size_t const idx = this->exists(name);
-	if (idx == std::numeric_limits<std::size_t>::max())
-		return false;
-
-	std::size_t const n_new_pnts(new_points.size());
-
-	// append points
-	if (ids)
-		for (std::size_t k(0); k < n_new_pnts; k++)
-			ids->push_back (_pnt_vecs[idx]->push_back (new_points[k]));
-	else
-		for (std::size_t k(0); k < n_new_pnts; k++)
-			_pnt_vecs[idx]->push_back (new_points[k]);
-
-	return true;
-}
-
-bool GEOObjects::appendPoint(Point* point, std::string const &name, std::size_t& id)
-{
-	// search vector
-	std::size_t const idx = this->exists(name);
-	if (idx == std::numeric_limits<std::size_t>::max())
-		return false;
-
-	std::size_t const size_previous(_pnt_vecs[idx]->size());
-
-	id = _pnt_vecs[idx]->push_back(point);
-	return size_previous < _pnt_vecs[idx]->size();
-}
-
 const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) const
 {
 	std::size_t const idx = this->exists(name);

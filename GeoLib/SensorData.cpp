@@ -30,17 +30,17 @@ SensorData::SensorData(const std::string &file_name)
 	this->readDataFromFile(file_name);
 }
 
-SensorData::SensorData(std::vector<size_t> time_steps)
+SensorData::SensorData(std::vector<std::size_t> time_steps)
 : _start(time_steps[0]), _end(time_steps[time_steps.size()-1]), _step_size(0), _time_unit(TimeStepType::NONE), _time_steps(time_steps)
 {
-	for (size_t i=1; i<time_steps.size(); i++)
+	for (std::size_t i=1; i<time_steps.size(); i++)
 	{
 		if (time_steps[i-1]>=time_steps[i])
 			ERR("Error in SensorData() - Time series has no order!");
 	}
 }
 
-SensorData::SensorData(size_t first_timestep, size_t last_timestep, size_t step_size)
+SensorData::SensorData(std::size_t first_timestep, std::size_t last_timestep, std::size_t step_size)
 : _start(first_timestep), _end(last_timestep), _step_size(step_size), _time_unit(TimeStepType::NONE)
 {
 }
@@ -76,18 +76,18 @@ void SensorData::addTimeSeries(SensorDataType data_name, std::vector<float> *dat
 
 const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_name) const
 {
-	for (size_t i=0; i<_vec_names.size(); i++)
+	for (std::size_t i=0; i<_vec_names.size(); i++)
 	{
 		if (time_series_name == _vec_names[i])
 			return _data_vecs[i];
 	}
 	ERR("Error in SensorData::getTimeSeries() - Time series \"%d\" not found.", time_series_name);
-	return NULL;
+	return nullptr;
 }
 
 std::string SensorData::getDataUnit(SensorDataType time_series_name) const
 {
-	for (size_t i=0; i<_vec_names.size(); i++)
+	for (std::size_t i=0; i<_vec_names.size(); i++)
 	{
 		if (time_series_name == _vec_names[i])
 			return _data_unit_string[i];
@@ -112,15 +112,15 @@ int SensorData::readDataFromFile(const std::string &file_name)
 	getline(in, line);
 	std::list<std::string> fields = BaseLib::splitString(line, '\t');
 	std::list<std::string>::const_iterator it (fields.begin());
-	size_t nFields = fields.size();
+	std::size_t nFields = fields.size();
 
 	if (nFields<2)
 		return 0;
 
-	size_t nDataArrays(nFields-1);
+	std::size_t nDataArrays(nFields-1);
 
 	//create vectors necessary to hold the data
-	for (size_t i=0; i<nDataArrays; i++)
+	for (std::size_t i=0; i<nDataArrays; i++)
 	{
 		this->_vec_names.push_back(SensorData::convertString2SensorDataType(*++it));
 		this->_data_unit_string.push_back("");
@@ -135,11 +135,11 @@ int SensorData::readDataFromFile(const std::string &file_name)
 		if (nFields == fields.size())
 		{
 			it = fields.begin();
-			size_t pos(it->rfind("."));
-			size_t current_time_step = (pos == std::string::npos) ? atoi((it++)->c_str()) : BaseLib::strDate2int(*it++);
+			std::size_t pos(it->rfind("."));
+			std::size_t current_time_step = (pos == std::string::npos) ? atoi((it++)->c_str()) : BaseLib::strDate2int(*it++);
 			this->_time_steps.push_back(current_time_step);
 
-			for (size_t i=0; i<nDataArrays; i++)
+			for (std::size_t i=0; i<nDataArrays; i++)
 				this->_data_vecs[i]->push_back(static_cast<float>(strtod((it++)->c_str(), 0)));
 		}
 		else

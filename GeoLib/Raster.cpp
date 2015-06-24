@@ -30,9 +30,9 @@ void Raster::refineRaster(std::size_t scaling)
 
 	for (std::size_t row(0); row<_n_rows; row++) {
 		for (std::size_t col(0); col<_n_cols; col++) {
-			const size_t idx(row*_n_cols+col);
+			const std::size_t idx(row*_n_cols+col);
 			for (std::size_t new_row(row*scaling); new_row<(row+1)*scaling; new_row++) {
-				const size_t idx0(new_row*_n_cols*scaling);
+				const std::size_t idx0(new_row*_n_cols*scaling);
 				for (std::size_t new_col(col*scaling); new_col<(col+1)*scaling; new_col++) {
 					new_raster_data[idx0+new_col] = _raster_data[idx];
 				}
@@ -73,14 +73,14 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	MathLib::Point3d const& ll(sfc.getAABB().getMinPoint());
 	MathLib::Point3d const& ur(sfc.getAABB().getMaxPoint());
 
-	const std::size_t n_cols = static_cast<size_t>(std::fabs(ur[0]-ll[0]) / cell_size)+1;
-	const std::size_t n_rows = static_cast<size_t>(std::fabs(ur[1]-ll[1]) / cell_size)+1;
-	const size_t n_triangles (sfc.getNTriangles());
+	const std::size_t n_cols = static_cast<std::size_t>(std::fabs(ur[0]-ll[0]) / cell_size)+1;
+	const std::size_t n_rows = static_cast<std::size_t>(std::fabs(ur[1]-ll[1]) / cell_size)+1;
+	const std::size_t n_triangles (sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
-	size_t k(0);
+	std::size_t k(0);
 
-	for (size_t r(0); r < n_cols; r++) {
-		for (size_t c(0); c < n_rows; c++) {
+	for (std::size_t r(0); r < n_cols; r++) {
+		for (std::size_t c(0); c < n_rows; c++) {
 			const double test_pnt[3] = { ll[0] + r*cell_size, ll[1] + c*cell_size, 0};
 			for (k=0; k<n_triangles; k++) {
 				if (sfc[k]->containsPoint2D(test_pnt)) {

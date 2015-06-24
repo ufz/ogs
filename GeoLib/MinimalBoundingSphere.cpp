@@ -188,7 +188,7 @@ std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std
 {
     std::vector<MathLib::Point3d*> *pnts = new std::vector<MathLib::Point3d*>;
     pnts->reserve(n_points);
-    srand ( static_cast<unsigned>(time(NULL)) );
+    srand ( static_cast<unsigned>(time(nullptr)) );
 
     for (std::size_t k(0); k<n_points; ++k)
     {

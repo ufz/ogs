@@ -30,16 +30,18 @@
 namespace GeoLib
 {
 Station::Station(double x, double y, double z, std::string name) :
-	Point (x,y,z), _name(name), _type(Station::StationType::STATION), _station_value(0.0), _sensor_data(NULL)
+	Point (x,y,z), _name(name), _type(Station::StationType::STATION),
+	_station_value(0.0), _sensor_data(nullptr)
 {}
 
 Station::Station(Point* coords, std::string name) :
-	Point (*coords), _name(name), _type(Station::StationType::STATION), _station_value(0.0), _sensor_data(NULL)
+	Point (*coords), _name(name), _type(Station::StationType::STATION),
+	_station_value(0.0), _sensor_data(nullptr)
 {}
 
 Station::Station(Station const& src) :
 	Point(src.getCoords()), _name(src._name), _type(src._type),
-	_station_value(src._station_value), _sensor_data(NULL)
+	_station_value(src._station_value), _sensor_data(nullptr)
 {}
 
 Station::~Station()
@@ -56,17 +58,17 @@ Station* Station::createStation(const std::string & line)
 	if (fields.size() >= 3)
 	{
 		it = fields.begin();
-		station->_name  = *it;
-		(*station)[0]     = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), NULL);
-		(*station)[1]     = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), NULL);
+		station->_name = *it;
+		(*station)[0] = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+		(*station)[1] = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
 		if (++it != fields.end())
-			(*station)[2] = strtod((BaseLib::replaceString(",", ".", *it)).c_str(), NULL);
+			(*station)[2] = strtod((BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
 	}
 	else
 	{
 		INFO("Station::createStation() - Unexpected file format.");
 		delete station;
-		return NULL;
+		return nullptr;
 	}
 	return station;
 }
