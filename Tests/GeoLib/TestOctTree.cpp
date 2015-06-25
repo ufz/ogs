@@ -29,12 +29,12 @@ public:
 			delete p;
 		}
 	}
+#ifndef NDEBUG
 	template <std::size_t MAX_POINTS>
 	void
 	checkOctTreeChildsNonNullptr(
 		GeoLib::OctTree<GeoLib::Point, MAX_POINTS> const& oct_tree) const
 	{
-#ifndef NDEBUG
 		ASSERT_NE(nullptr, oct_tree.getChild(0));
 		ASSERT_NE(nullptr, oct_tree.getChild(1));
 		ASSERT_NE(nullptr, oct_tree.getChild(2));
@@ -43,14 +43,14 @@ public:
 		ASSERT_NE(nullptr, oct_tree.getChild(5));
 		ASSERT_NE(nullptr, oct_tree.getChild(6));
 		ASSERT_NE(nullptr, oct_tree.getChild(7));
-#endif
 	}
+#endif
 
+#ifndef NDEBUG
 	template <std::size_t MAX_POINTS>
 	void
 	checkOctTreeChildsNullptr(GeoLib::OctTree<GeoLib::Point, MAX_POINTS> const& oct_tree) const
 	{
-#ifndef NDEBUG
 		ASSERT_EQ(nullptr, oct_tree.getChild(0));
 		ASSERT_EQ(nullptr, oct_tree.getChild(1));
 		ASSERT_EQ(nullptr, oct_tree.getChild(2));
@@ -59,8 +59,8 @@ public:
 		ASSERT_EQ(nullptr, oct_tree.getChild(5));
 		ASSERT_EQ(nullptr, oct_tree.getChild(6));
 		ASSERT_EQ(nullptr, oct_tree.getChild(7));
-#endif
 	}
+#endif
 
 protected:
 	void
