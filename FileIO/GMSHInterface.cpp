@@ -274,7 +274,7 @@ GMSHInterface::readElement(std::ifstream &in,
 	int mat_id;
 	std::vector<unsigned> node_ids;
 	std::vector<MeshLib::Node*> elem_nodes;
-	in >> idx >> type >> n_tags >> dummy >> mat_id;
+	in >> idx >> type >> n_tags >> mat_id >> dummy;
 
 	// skip tags
 	for (std::size_t j = 2; j < n_tags; j++)
