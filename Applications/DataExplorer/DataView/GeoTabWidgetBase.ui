@@ -148,6 +148,12 @@
    <header>GeoTreeView.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>openGeoPushButton</tabstop>
+  <tabstop>saveGeoPushButton</tabstop>
+  <tabstop>removeGeoPushButton</tabstop>
+  <tabstop>treeView</tabstop>
+ </tabstops>
  <resources>
   <include location="../Img/icons.qrc"/>
  </resources>

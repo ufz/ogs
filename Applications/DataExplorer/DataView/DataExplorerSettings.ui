@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>111</height>
+    <height>115</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,9 +74,9 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>gmshPathEdit</tabstop>
   <tabstop>gmshPathButton</tabstop>
   <tabstop>buttonBox</tabstop>
-  <tabstop>gmshPathEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>

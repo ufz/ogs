@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>390</height>
+    <height>424</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -436,6 +436,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>allGeoView</tabstop>
+  <tabstop>selectGeoButton</tabstop>
+  <tabstop>deselectGeoButton</tabstop>
+  <tabstop>selectedGeoView</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>radioAdaptive</tabstop>
+  <tabstop>radioHomogeneous</tabstop>
+  <tabstop>geoFileDelete</tabstop>
+  <tabstop>param4</tabstop>
+  <tabstop>param1</tabstop>
+  <tabstop>param3</tabstop>
+  <tabstop>param2</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

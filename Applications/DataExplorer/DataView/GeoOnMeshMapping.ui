@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>464</width>
     <height>199</height>
    </rect>
   </property>
@@ -105,6 +105,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>meshNameComboBox</tabstop>
+  <tabstop>normalMappingButton</tabstop>
+  <tabstop>advancedMappingButton</tabstop>
+  <tabstop>geoNameEdit</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

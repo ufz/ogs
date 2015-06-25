@@ -183,6 +183,17 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>allPlyView</tabstop>
+  <tabstop>selectPlyButton</tabstop>
+  <tabstop>deselectPlyButton</tabstop>
+  <tabstop>selectedPlyView</tabstop>
+  <tabstop>proximityEdit</tabstop>
+  <tabstop>plyNameEdit</tabstop>
+  <tabstop>closePlyCheckBox</tabstop>
+  <tabstop>createSfcCheckBox</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

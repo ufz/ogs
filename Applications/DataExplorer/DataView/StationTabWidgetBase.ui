@@ -148,6 +148,12 @@
    <header>StationTreeView.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>openStnPushButton</tabstop>
+  <tabstop>saveStnPushButton</tabstop>
+  <tabstop>removeStnPushButton</tabstop>
+  <tabstop>treeView</tabstop>
+ </tabstops>
  <resources>
   <include location="../Img/icons.qrc"/>
  </resources>
