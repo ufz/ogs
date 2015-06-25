@@ -45,11 +45,13 @@ public:
 private:
     /// Reads the header of a Esri asc-file.
     static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-                              double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val);
+                              double &xllcorner, double &yllcorner, double &cell_size,
+                              double &no_data_val);
 
     /// Reads the header of a Surfer grd-file.
     static bool readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
-                                 double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max);
+                                 double &xllcorner, double &yllcorner, double &cell_size,
+                                 double &min, double &max);
 };
 
 }
