@@ -29,12 +29,12 @@ public:
 			delete p;
 		}
 	}
+#ifndef NDEBUG
 	template <std::size_t MAX_POINTS>
 	void
 	checkOctTreeChildsNonNullptr(
 		GeoLib::OctTree<GeoLib::Point, MAX_POINTS> const& oct_tree) const
 	{
-#ifndef NDEBUG
 		ASSERT_NE(nullptr, oct_tree.getChild(0));
 		ASSERT_NE(nullptr, oct_tree.getChild(1));
 		ASSERT_NE(nullptr, oct_tree.getChild(2));
@@ -43,14 +43,14 @@ public:
 		ASSERT_NE(nullptr, oct_tree.getChild(5));
 		ASSERT_NE(nullptr, oct_tree.getChild(6));
 		ASSERT_NE(nullptr, oct_tree.getChild(7));
-#endif
 	}
+#endif
 
+#ifndef NDEBUG
 	template <std::size_t MAX_POINTS>
 	void
 	checkOctTreeChildsNullptr(GeoLib::OctTree<GeoLib::Point, MAX_POINTS> const& oct_tree) const
 	{
-#ifndef NDEBUG
 		ASSERT_EQ(nullptr, oct_tree.getChild(0));
 		ASSERT_EQ(nullptr, oct_tree.getChild(1));
 		ASSERT_EQ(nullptr, oct_tree.getChild(2));
@@ -59,8 +59,8 @@ public:
 		ASSERT_EQ(nullptr, oct_tree.getChild(5));
 		ASSERT_EQ(nullptr, oct_tree.getChild(6));
 		ASSERT_EQ(nullptr, oct_tree.getChild(7));
-#endif
 	}
+#endif
 
 protected:
 	void
@@ -298,11 +298,11 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 	// case where two points with a small distance but different OctTree leaves
 	// are inserted
 	double const eps(0.5);
-	for (int k(-10); k<11; ++k) {
-		for (int j(-10); j<11; ++j) {
-			std::size_t id((k+10)*21+(j+10));
-			for (int i(-10); i<11; ++i) {
-				ps_ptr.push_back(new GeoLib::Point(1.0*i, 1.0*j, 1.0*k, id+i+10));
+	for (std::size_t k = 0; k < 21; ++k) {
+		for (std::size_t j = 0; j < 21; ++j) {
+			std::size_t id = k*21+j;
+			for (std::size_t i = 0; i < 21; ++i) {
+				ps_ptr.push_back(new GeoLib::Point(i-10., j-10., k-10., id+i));
 			}
 		}
 	}
