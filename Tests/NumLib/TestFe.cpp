@@ -15,12 +15,16 @@
 #include <Eigen/Eigen>
 #endif
 
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/CoordinateSystem.h"
+
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "FeTestData/TestFeLINE2.h"
+#include "FeTestData/TestFeLINE2Y.h"
 #include "FeTestData/TestFeLINE3.h"
 #include "FeTestData/TestFeTRI3.h"
 #include "FeTestData/TestFeQUAD4.h"
@@ -51,11 +55,13 @@ struct TestCase
 typedef ::testing::Types<
 #ifdef OGS_USE_EIGEN
         TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
+        TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
         TestCase<TestFeLINE3, EigenDynamicShapeMatrixPolicy>,
         TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
         TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
         TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
         TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
+        TestCase<TestFeLINE2Y, EigenFixedShapeMatrixPolicy>,
         TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>,
         TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
         TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>,
@@ -77,6 +83,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     typedef typename ShapeMatrixTypes::NodalVectorType NodalVector;
     typedef typename ShapeMatrixTypes::DimNodalMatrixType DimNodalMatrix;
     typedef typename ShapeMatrixTypes::DimMatrixType DimMatrix;
+    typedef typename ShapeMatrixTypes::GlobalDimMatrixType GlobalDimMatrixType;
 
     // Finite element type
     template <typename X>
@@ -109,6 +116,9 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
         // set a conductivity tensor
         setIdentityMatrix(dim, D);
         D *= conductivity;
+        MeshLib::ElementCoordinatesMappingLocal ele_local_coord(*mesh_element, MeshLib::CoordinateSystem(*mesh_element));
+        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(TestFeType::global_dim, TestFeType::global_dim);
+        globalD.noalias() = R.transpose() * (D * R);
 
         // set expected matrices
         this->setExpectedMassMatrix(expectedM);
@@ -136,6 +146,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     NodalMatrix expectedM;
     NodalMatrix expectedK;
     IntegrationMethod integration_method;
+    GlobalDimMatrixType globalD;
 
     std::vector<const MeshLib::Node*> vec_nodes;
     std::vector<const MeshElementType*> vec_eles;
@@ -209,7 +220,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
         fe.template computeShapeFunctions<ShapeMatrixType::DNDX>(wp.getCoords(), shape);
-        K.noalias() += shape.dNdx.transpose() * this->D * shape.dNdx * shape.detJ * wp.getWeight();
+        K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx * shape.detJ * wp.getWeight();
     }
     //std::cout << "K=\n" << K << std::endl;
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
@@ -236,10 +247,9 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
         auto wp = this->integration_method.getWeightedPoint(i);
         fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
-        K.noalias() += shape.dNdx.transpose() * this->D * shape.dNdx * shape.detJ * wp.getWeight();
+        K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) * shape.detJ * wp.getWeight();
     }
-//    std::cout << "M=\n" << M << std::endl;
-//    std::cout << "K=\n" << K << std::endl;
+
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }

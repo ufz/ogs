@@ -30,6 +30,7 @@ struct EigenFixedShapeMatrixPolicy
     using DimNodalMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
     using DimMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::DIM>;
     using GlobalDimNodalMatrixType = _MatrixType<GlobalDim, ShapeFunction::NPOINTS>;
+    using GlobalDimMatrixType = _MatrixType<GlobalDim, GlobalDim>;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
@@ -57,6 +58,7 @@ struct EigenDynamicShapeMatrixPolicy
     using DimNodalMatrixType = _MatrixType;
     using DimMatrixType = _MatrixType;
     using GlobalDimNodalMatrixType = _MatrixType;
+    using GlobalDimMatrixType = _MatrixType;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
