@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
-    <height>230</height>
+    <width>381</width>
+    <height>237</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -203,6 +203,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>meshBox</tabstop>
+  <tabstop>rasterEdit</tabstop>
+  <tabstop>selectButton</tabstop>
+  <tabstop>directButton</tabstop>
+  <tabstop>integrateButton</tabstop>
+  <tabstop>scalingEdit</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

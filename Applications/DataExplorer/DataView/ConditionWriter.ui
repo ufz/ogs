@@ -105,6 +105,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>geoBox</tabstop>
+  <tabstop>condTypeBox</tabstop>
+  <tabstop>fileNameEdit</tabstop>
+  <tabstop>fileNameButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

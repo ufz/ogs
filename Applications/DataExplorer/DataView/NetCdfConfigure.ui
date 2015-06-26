@@ -763,6 +763,26 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>comboBoxVariable</tabstop>
+  <tabstop>comboBoxDim1</tabstop>
+  <tabstop>doubleSpinBoxDim1Start</tabstop>
+  <tabstop>doubleSpinBoxDim1End</tabstop>
+  <tabstop>comboBoxDim2</tabstop>
+  <tabstop>doubleSpinBoxDim2Start</tabstop>
+  <tabstop>doubleSpinBoxDim2End</tabstop>
+  <tabstop>comboBoxDim3</tabstop>
+  <tabstop>dateTimeEditDim3</tabstop>
+  <tabstop>comboBoxDim4</tabstop>
+  <tabstop>spinBoxDim4</tabstop>
+  <tabstop>doubleSpinBoxResolution</tabstop>
+  <tabstop>radioMesh</tabstop>
+  <tabstop>comboBoxMeshElemType</tabstop>
+  <tabstop>radioImage</tabstop>
+  <tabstop>comboBoxUseIntensity</tabstop>
+  <tabstop>lineEditName</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

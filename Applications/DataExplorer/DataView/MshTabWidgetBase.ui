@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>227</width>
+    <width>278</width>
     <height>500</height>
    </rect>
   </property>
@@ -186,6 +186,13 @@
    <header>ElementTreeView.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>addMeshPushButton</tabstop>
+  <tabstop>saveMeshPushButton</tabstop>
+  <tabstop>removeMeshPushButton</tabstop>
+  <tabstop>treeView</tabstop>
+  <tabstop>elementView</tabstop>
+ </tabstops>
  <resources>
   <include location="../Img/icons.qrc"/>
  </resources>

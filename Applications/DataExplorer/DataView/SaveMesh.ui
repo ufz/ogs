@@ -101,6 +101,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>fileNameEdit</tabstop>
+  <tabstop>selectDirButton</tabstop>
+  <tabstop>dataModeBox</tabstop>
+  <tabstop>compressionCheckBox</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

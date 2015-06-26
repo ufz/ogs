@@ -143,6 +143,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>allGeoView</tabstop>
+  <tabstop>selectGeoButton</tabstop>
+  <tabstop>deselectGeoButton</tabstop>
+  <tabstop>selectedGeoView</tabstop>
+  <tabstop>newGeoNameEdit</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

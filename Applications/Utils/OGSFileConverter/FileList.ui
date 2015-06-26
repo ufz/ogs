@@ -116,6 +116,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>listView</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>removeButton</tabstop>
+  <tabstop>outputDirEdit</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
