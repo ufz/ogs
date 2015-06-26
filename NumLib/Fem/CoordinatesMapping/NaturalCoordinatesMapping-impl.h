@@ -120,7 +120,8 @@ inline void computeMappingMatrices(
             shapemat.dNdx.topLeftCorner(ele_dim, nnodes) = shapemat.invJ * shapemat.dNdr;
         } else {
             auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
-            auto dshape_global = matR.topLeftCorner(3u, ele_dim) * (shapemat.invJ * shapemat.dNdr); //3 x nnodes
+            auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
+            auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
             shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
         }
     }
