@@ -17,6 +17,8 @@
 
 #include "XmlGspInterface.h"
 
+#include "Applications/ApplicationsLib/ProjectData.h"
+
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
 
