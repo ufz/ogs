@@ -53,13 +53,13 @@ public:
 	std::size_t getRangeEnd() const { return this->size(); }
 
 	/// get entry
-	double get(std::size_t i) const { return (*this)[i]; }
+	T get(std::size_t i) const { return (*this)[i]; }
 
 	/// set a value to entry
-	void set(std::size_t i, double v) { (*this)[i] = v; }
+	void set(std::size_t i, T v) { (*this)[i] = v; }
 
 	/// add a value to entry
-	void add(std::size_t i, double v) { (*this)[i] += v; }
+	void add(std::size_t i, T v) { (*this)[i] += v; }
 
 	/**
 	 * add a sub vector
