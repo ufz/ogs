@@ -18,6 +18,7 @@
 #include "Station.h"
 
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,7 @@
 #define POINTVEC_H_
 
 #include "TemplateVec.h"
+#include "OctTree.h"
 
 namespace GeoLib
 {
@@ -104,16 +106,6 @@ public:
 
 private:
 	/**
-	 * Removes points out of the given point set that have the (nearly) same coordinates, i.e.
-	 * the distance of two points is smaller than eps measured in the maximum norm.
-	 * @param pnt_vec the given set of points stored in a vector
-	 * @param pnt_id_map the id mapping
-	 * @param eps if the distance (measured in maximum norm) between points \f$p_i\f$ and \f$p_j\f$
-	 * is smaller than eps the points \f$p_i\f$ and \f$p_j\f$ are considered as equal.
-	 */
-	void makePntsUnique (std::vector<GeoLib::Point*>* pnt_vec, std::vector<std::size_t> &pnt_id_map, double eps = std::numeric_limits<double>::epsilon());
-
-	/**
 	 * After the point set is modified (for example by makePntsUnique()) the mapping has to be corrected.
 	 */
 	void correctNameIDMapping();
@@ -146,6 +138,7 @@ private:
 
 	AABB<GeoLib::Point> _aabb;
 	double _rel_eps;
+	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> _oct_tree;
 };
 } // end namespace
 
