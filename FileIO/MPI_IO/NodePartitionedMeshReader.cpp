@@ -14,7 +14,7 @@
 
 #include "NodePartitionedMeshReader.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"

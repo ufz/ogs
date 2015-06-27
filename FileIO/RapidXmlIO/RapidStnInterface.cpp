@@ -12,18 +12,15 @@
  *
  */
 
-#include <iostream>
-
-//RapidXML
 #include "RapidStnInterface.h"
 
-// BaseLib
-#include "StringTools.h"
-#include "FileTools.h"
+#include <fstream>
 
-// GeoLib
-#include "Station.h"
-#include "StationBorehole.h"
+#include "BaseLib/StringTools.h"
+#include "BaseLib/FileTools.h"
+
+#include "GeoLib/Station.h"
+#include "GeoLib/StationBorehole.h"
 
 namespace FileIO
 {

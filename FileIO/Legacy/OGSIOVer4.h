@@ -20,15 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "Point.h"
-#include "Polyline.h"
-#include "StringTools.h"
-#include "Surface.h"
-
-// forward declaration
 namespace GeoLib
 {
-class GEOObjects;
+    class GEOObjects;
 }
 
 namespace FileIO

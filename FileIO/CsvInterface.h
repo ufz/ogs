@@ -21,8 +21,7 @@
 #include <string>
 #include <vector>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/StringTools.h"
 

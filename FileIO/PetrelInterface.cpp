@@ -15,17 +15,15 @@
  * @author Thomas Fischer
  */
 
-#include <fstream>
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "PetrelInterface.h"
 
-// BaseLib
-#include "StringTools.h"
+#include <fstream>
 
-#include "StationBorehole.h"
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/StringTools.h"
+#include "GeoLib/StationBorehole.h"
+#include "GeoLib/GEOObjects.h"
 
 namespace FileIO
 {

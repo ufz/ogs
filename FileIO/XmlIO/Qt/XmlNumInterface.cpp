@@ -12,15 +12,16 @@
  *
  */
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "XmlNumInterface.h"
-#include "FileFinder.h"
 
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml/QDomDocument>
+
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/FileFinder.h"
+
 
 namespace FileIO
 {

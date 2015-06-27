@@ -15,12 +15,14 @@
 #ifndef RAPIDXMLINTERFACE_H
 #define RAPIDXMLINTERFACE_H
 
-#include "RapidXML/rapidxml.hpp"
+#include <string>
 #include <vector>
 
-#include "Point.h"
+#include "RapidXML/rapidxml.hpp"
+
 
 namespace GeoLib {
+    class Point;
 	class StationBorehole;
 }
 

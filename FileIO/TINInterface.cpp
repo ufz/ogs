@@ -11,7 +11,7 @@
 #include <fstream>
 #include <limits>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"

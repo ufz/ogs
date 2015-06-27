@@ -18,11 +18,17 @@
 #ifndef PETRELIO_H_
 #define PETRELIO_H_
 
-#include "GEOObjects.h"
-#include <iostream>
+#include <istream>
 #include <list>
 #include <string>
 #include <vector>
+
+namespace GeoLib
+{
+    class GEOObjects;
+    class Point;
+    class Polyline;
+}
 
 namespace FileIO
 {

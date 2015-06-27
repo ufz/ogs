@@ -19,13 +19,16 @@
 #define SHPINTERFACE_H
 
 #include <string>
+#include <vector>
 
 //ShapeLib includes
 #include "shape/shapefil.h"
 
-// GeoLib
-#include "GEOObjects.h"
 
+namespace GeoLib {
+	class GEOObjects;
+	class Polyline;
+}
 
 namespace MeshLib {
 	class Mesh;

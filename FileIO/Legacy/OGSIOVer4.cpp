@@ -12,38 +12,28 @@
  *
  */
 
+#include "OGSIOVer4.h"
+
 #include <iomanip>
 #include <limits>
 #include <sstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// FileIO
-#include "GMSHInterface.h"
-#include "OGSIOVer4.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// BaseLib
-#include "FileTools.h"
-#include "quicksort.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/EarClippingTriangulation.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/PointVec.h"
+#include "GeoLib/Polygon.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/SimplePolygonTree.h"
+#include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 
-// GeoLib
-#include "GEOObjects.h"
-#include "Point.h"
-#include "Polygon.h"
-#include "Polyline.h"
-#include "SimplePolygonTree.h"
-#include "Surface.h"
-#include "Triangle.h"
-
-// for tests only
-#include "PointVec.h"
-
-// MathLib
-#include "AnalyticalGeometry.h"
-#include "EarClippingTriangulation.h"
-
-// FileIO
 #include "FileIO/TINInterface.h"
 
 using namespace GeoLib;

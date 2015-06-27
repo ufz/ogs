@@ -8,19 +8,15 @@
 
 #include "writeMeshToFile.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
-// FileIO
 #include "Legacy/MeshIO.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "VtkIO/VtuInterface.h"
 
 namespace FileIO
 {

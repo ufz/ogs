@@ -16,30 +16,27 @@
  * @author Karsten Rink
  */
 
+#include "MeshIO.h"
+
 #include <iomanip>
 #include <sstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// GeoLib
-#include "GEOObjects.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// MeshLib
-#include "Elements/Line.h"
-#include "Elements/Hex.h"
-#include "Elements/Prism.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Tri.h"
-#include "MeshIO.h"
+#include "GeoLib/GEOObjects.h"
+
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
-
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
 
 namespace FileIO
 {

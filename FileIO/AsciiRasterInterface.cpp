@@ -13,14 +13,12 @@
 
 #include "AsciiRasterInterface.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-#include "Raster.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
+#include "GeoLib/Raster.h"
 
 namespace FileIO {
 

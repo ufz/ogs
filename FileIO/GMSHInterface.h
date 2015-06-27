@@ -15,8 +15,9 @@
 #ifndef GMSHINTERFACE_H_
 #define GMSHINTERFACE_H_
 
-#include <string>
 #include <list>
+#include <map>
+#include <string>
 
 // FileIO
 #include "Writer.h"
@@ -24,11 +25,14 @@
 #include "GmshIO/GMSHPolygonTree.h"
 #include "GmshIO/GMSHMeshDensityStrategy.h"
 
-// GeoLib
-#include "GEOObjects.h"
-#include "Polygon.h"
+namespace GeoLib
+{
+	class GEOObjects;
+	class Polygon;
+}
 
-namespace MeshLib {
+namespace MeshLib
+{
 	class Mesh;
 	class Element;
 	class Node;

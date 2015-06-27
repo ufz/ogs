@@ -12,11 +12,16 @@
  *
  */
 
-#include "GmshIO/GMSHPolygonTree.h"
+#include "GMSHPolygonTree.h"
 
 #include "GMSHNoMeshDensity.h"
 #include "GMSHFixedMeshDensity.h"
 #include "GMSHAdaptiveMeshDensity.h"
+
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
+#include "GeoLib/PolylineWithSegmentMarker.h"
 
 namespace FileIO 
 {

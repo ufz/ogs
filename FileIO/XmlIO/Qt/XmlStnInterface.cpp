@@ -12,22 +12,21 @@
  *
  */
 
-#include <limits>
+#include "XmlStnInterface.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <limits>
 
 #include <QFile>
 #include <QtXml/QDomDocument>
 
-#include "XmlStnInterface.h"
+#include <logog/include/logog.hpp>
 
-// BaseLib
-#include "DateTools.h"
-#include "FileTools.h"
-#include "FileFinder.h"
+#include "BaseLib/DateTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/FileFinder.h"
 
-#include "StationBorehole.h"
+#include "GeoLib/StationBorehole.h"
+#include "GeoLib/GEOObjects.h"
 
 namespace FileIO
 {

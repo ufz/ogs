@@ -18,15 +18,13 @@
 // FileIO
 #include "GMSHMeshDensityStrategy.h"
 
-// GeoLib
-#include "Point.h"
-#include "QuadTree.h"
-
 namespace GeoLib
 {
-class Polygon;
+    class Polygon;
+    class Point;
+    template <typename T> class QuadTree;
 #ifndef NDEBUG
-class Polyline;
+    class Polyline;
 #endif
 }
 

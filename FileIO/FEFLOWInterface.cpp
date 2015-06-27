@@ -9,24 +9,25 @@
 #include "FEFLOWInterface.h"
 
 #include <cctype>
-
-#include "logog/include/logog.hpp"
 #include <QtXml>
 
-#include "StringTools.h"
-#include "FileTools.h"
-#include "Polygon.h"
-#include "Mesh.h"
-#include "MeshLib/Node.h"
-#include "Elements/Line.h"
-#include "Elements/Hex.h"
-#include "Elements/Prism.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Tri.h"
+#include <logog/include/logog.hpp>
 
-// GeoLib
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
+
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
+
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace FileIO
 {

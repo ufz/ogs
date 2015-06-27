@@ -16,6 +16,9 @@
 #define XMLGSPINTERFACE_H
 
 #include <string>
+
+#include <QString>
+
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 

@@ -50,10 +50,6 @@ add_library(FileIO STATIC ${SOURCES})
 
 include_directories(
 	.
-	${CMAKE_CURRENT_SOURCE_DIR}/../BaseLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib
 	${CMAKE_CURRENT_BINARY_DIR}/../BaseLib
 )
 

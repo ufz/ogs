@@ -18,15 +18,18 @@
 #include <vector>
 #include <string>
 
-// FileIO
 #include "GMSHMeshDensityStrategy.h"
 #include "GMSHPoint.h"
 #include "GMSHLine.h"
 
-// GeoLib
-#include "SimplePolygonTree.h"
-#include "GEOObjects.h"
-#include "PolylineWithSegmentMarker.h"
+#include "GeoLib/SimplePolygonTree.h"
+
+namespace GeoLib
+{
+    class GEOObjects;
+    class Polygon;
+    class PolylineWithSegmentMarker;
+}
 
 namespace FileIO 
 {
