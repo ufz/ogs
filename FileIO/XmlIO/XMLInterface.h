@@ -15,6 +15,8 @@
 #ifndef XMLINTERFACE_H
 #define XMLINTERFACE_H
 
+#include <string>
+
 #include "FileIO/Writer.h"
 
 namespace FileIO
