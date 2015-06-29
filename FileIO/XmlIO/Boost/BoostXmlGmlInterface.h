@@ -39,7 +39,7 @@ class BoostXmlGmlInterface : public XMLInterface
 {
 public:
 	BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
-	virtual ~BoostXmlGmlInterface()	{}
+	virtual ~BoostXmlGmlInterface() {}
 
 	/// Reads an xml-file containing OGS geometry
 	bool readFile(const std::string &fname);
