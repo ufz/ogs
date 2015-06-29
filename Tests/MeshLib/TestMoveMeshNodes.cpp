@@ -53,5 +53,10 @@ TEST(MeshLib, moveMeshNodes)
 		EXPECT_NEAR((*nodes_copy[0])[1], (*nodes[0])[1], eps);
 		EXPECT_NEAR((*nodes_copy[0])[2], (*nodes[0])[2], eps);
 	}
+
+	for (auto n : nodes)
+		delete n;
+	for (auto n : nodes_copy)
+		delete n;
 }
 

@@ -32,88 +32,91 @@
 namespace
 {
 
-class TestLine2
+namespace TestLine2
 {
-public:
     typedef MeshLib::Line ElementType;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
+    const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    static MeshLib::Line* createY()
+    std::unique_ptr<MeshLib::Line> createLine(
+        std::array<double, 3> const& a, std::array<double, 3> const& b)
     {
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0, -1.0, 0.0);
-        nodes[1] = new MeshLib::Node(0.0,  1.0, 0.0);
-        return new MeshLib::Line(nodes);
+        nodes[0] = new MeshLib::Node(a);
+        nodes[1] = new MeshLib::Node(b);
+        return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
     }
 
-    static MeshLib::Line* createZ()
+    std::unique_ptr<MeshLib::Line> createY()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0, 0.0, -1.0);
-        nodes[1] = new MeshLib::Node(0.0, 0.0,  1.0);
-        return new MeshLib::Line(nodes);
+        return createLine({{0.0, -1.0, 0.0}}, {{0.0,  1.0, 0.0}});
     }
 
-    static MeshLib::Line* createXY()
+    std::unique_ptr<MeshLib::Line> createZ()
+    {
+        return createLine({{0.0, 0.0, -1.0}}, {{0.0, 0.0,  1.0}});
+    }
+
+    std::unique_ptr<MeshLib::Line> createXY()
     {
         // 45degree inclined
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(2./sqrt(2), 2./sqrt(2), 0.0);
-        return new MeshLib::Line(nodes);
+        return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(2), 2./sqrt(2), 0.0}});
     }
 
-    static MeshLib::Line* createXYZ()
+    std::unique_ptr<MeshLib::Line> createXYZ()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0);
-        nodes[1] = new MeshLib::Node(2./sqrt(3), 2./sqrt(3), 2./sqrt(3));
-        return new MeshLib::Line(nodes);
+        return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(3), 2./sqrt(3), 2./sqrt(3)}});
     }
 
 };
 
-class TestQuad4
+namespace TestQuad4
 {
- public:
     // Element information
     typedef MeshLib::Quad ElementType;
-    static const unsigned e_nnodes = ElementType::n_all_nodes;
+    const unsigned e_nnodes = ElementType::n_all_nodes;
 
-    // 2.5D case: inclined
-    static MeshLib::Quad* createXYZ()
+    std::unique_ptr<MeshLib::Quad> createQuad(
+        std::array<double, 3> const& a, std::array<double, 3> const& b,
+        std::array<double, 3> const& c, std::array<double, 3> const& d)
     {
         MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+        nodes[0] = new MeshLib::Node(a);
+        nodes[1] = new MeshLib::Node(b);
+        nodes[2] = new MeshLib::Node(c);
+        nodes[3] = new MeshLib::Node(d);
+        return std::unique_ptr<MeshLib::Quad>{new MeshLib::Quad(nodes)};
+    }
+
+    // 2.5D case: inclined
+    std::unique_ptr<MeshLib::Quad> createXYZ()
+    {
         // rotate 45 degree around x axis
-        nodes[0] = new MeshLib::Node( 1.0,  0.7071067811865475,  0.7071067811865475);
-        nodes[1] = new MeshLib::Node(-1.0,  0.7071067811865475,  0.7071067811865475);
-        nodes[2] = new MeshLib::Node(-1.0, -0.7071067811865475, -0.7071067811865475);
-        nodes[3] = new MeshLib::Node( 1.0, -0.7071067811865475, -0.7071067811865475);
-        return new MeshLib::Quad(nodes);
+        return createQuad(
+            {{ 1.0,  0.7071067811865475,  0.7071067811865475}},
+            {{-1.0,  0.7071067811865475,  0.7071067811865475}},
+            {{-1.0, -0.7071067811865475, -0.7071067811865475}},
+            {{ 1.0, -0.7071067811865475, -0.7071067811865475}});
     }
 
     // 2.5D case: inclined
-    static MeshLib::Quad* createXZ()
+    std::unique_ptr<MeshLib::Quad> createXZ()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node( 1.0, 0.0,  1.0);
-        nodes[1] = new MeshLib::Node(-1.0, 0.0,  1.0);
-        nodes[2] = new MeshLib::Node(-1.0, 0.0, -1.0);
-        nodes[3] = new MeshLib::Node( 1.0, 0.0, -1.0);
-        return new MeshLib::Quad(nodes);
+        return createQuad(
+            {{ 1.0, 0.0,  1.0}},
+            {{-1.0, 0.0,  1.0}},
+            {{-1.0, 0.0, -1.0}},
+            {{ 1.0, 0.0, -1.0}});
     }
 
     // 2.5D case: inclined
-    static MeshLib::Quad* createYZ()
+    std::unique_ptr<MeshLib::Quad> createYZ()
     {
-        MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
-        nodes[0] = new MeshLib::Node(0.0,  1.0,  1.0);
-        nodes[1] = new MeshLib::Node(0.0, -1.0,  1.0);
-        nodes[2] = new MeshLib::Node(0.0, -1.0, -1.0);
-        nodes[3] = new MeshLib::Node(0.0,  1.0, -1.0);
-        return new MeshLib::Quad(nodes);
+        return createQuad(
+            {{0.0,  1.0,  1.0}},
+            {{0.0, -1.0,  1.0}},
+            {{0.0, -1.0, -1.0}},
+            {{0.0,  1.0, -1.0}});
     }
-
 };
 
 #if 0
@@ -161,6 +164,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
@@ -175,6 +181,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
@@ -190,6 +199,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
@@ -205,6 +217,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
@@ -222,6 +237,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
@@ -239,6 +257,9 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
@@ -256,5 +277,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
+
+    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+        delete ele->getNode(n);
 }
 

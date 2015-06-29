@@ -24,8 +24,10 @@ TEST(MeshLib, ElementStatus)
 {
 	const unsigned width (100);
 	const unsigned elements_per_side (20);
-	MeshLib::Mesh* mesh (MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side));
-	MeshLib::ElementStatus status(mesh);
+	auto const mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side)};
+
+	MeshLib::ElementStatus status(mesh.get());
 	const std::vector<MeshLib::Element*> elements (mesh->getElements());
 
 	for (unsigned i=0; i<elements_per_side; ++i)

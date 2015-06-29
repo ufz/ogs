@@ -23,7 +23,8 @@
 
 TEST(MeshLib, Duplicate)
 {
-	MeshLib::Mesh* mesh (MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1));
+	auto mesh = std::unique_ptr<MeshLib::Mesh>{
+		MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1)};
 
 	std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh->getNodes()));
 	std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(mesh->getElements(), new_nodes));

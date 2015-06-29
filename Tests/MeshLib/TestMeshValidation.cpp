@@ -13,6 +13,8 @@
 
 #include "gtest/gtest.h"
 
+#include <memory>
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
@@ -43,82 +45,45 @@ TEST(MeshValidation, UnusedNodes)
 	delete mesh;
 }
 
+void
+detectHoles(MeshLib::Mesh const& mesh,
+	std::vector<std::size_t> erase_elems,
+	std::size_t const expected_n_holes)
+{
+	std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh.getNodes());
+	std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh.getElements(),nodes);
+	for (auto pos : erase_elems)
+	{
+		delete elems[pos];
+		elems.erase(elems.begin()+pos);
+	}
+	MeshLib::Mesh mesh2("mesh2", nodes, elems);
+	ASSERT_EQ(expected_n_holes, MeshLib::MeshValidation::detectHoles(mesh2));
+};
+
 TEST(MeshValidation, DetectHolesTri)
 {
 	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
 	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
 	MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
-	MeshLib::Mesh* mesh = conv.execute();
-	unsigned n_holes = MeshLib::MeshValidation::detectHoles(*mesh);
-	ASSERT_EQ(0, n_holes);
+	auto mesh = std::unique_ptr<MeshLib::Mesh>{conv.execute()};
+	ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+12);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(1, n_holes);
-	}
-
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+11);
-		elems.erase(elems.begin()+11);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(1, n_holes);
-	}
-
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+10);
-		elems.erase(elems.begin()+12);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(2, n_holes);
-	}
-
-	delete mesh;
+	detectHoles(*mesh, {12}, 1);
+	detectHoles(*mesh, {11, 11}, 1);
+	detectHoles(*mesh, {10, 12}, 2);
 }
 
 TEST(MeshValidation, DetectHolesHex)
 {
-	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(5,4,4,1,1,1,GeoLib::ORIGIN, "mesh");
-	unsigned n_holes = MeshLib::MeshValidation::detectHoles(*mesh);
-	ASSERT_EQ(0, n_holes);
+	auto mesh = std::unique_ptr<MeshLib::Mesh>{
+		MeshLib::MeshGenerator::generateRegularHexMesh(
+			5,4,4,1,1,1,GeoLib::ORIGIN, "mesh")};
+	ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+27);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(1, n_holes);
-	}
-
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+28);
-		elems.erase(elems.begin()+27);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(1, n_holes);
-	}
-
-	{
-		std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-		std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-		elems.erase(elems.begin()+29);
-		elems.erase(elems.begin()+27);
-		MeshLib::Mesh mesh2("mesh2", nodes, elems);
-		n_holes = MeshLib::MeshValidation::detectHoles(mesh2);
-		ASSERT_EQ(1, n_holes);
-	}
-	delete mesh;
+	detectHoles(*mesh, {27}, 1);
+	detectHoles(*mesh, {28, 27}, 1);
+	detectHoles(*mesh, {29, 27}, 1);
 }
 
 
