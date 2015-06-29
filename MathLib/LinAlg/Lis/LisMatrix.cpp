@@ -14,6 +14,7 @@
 
 #include "LisMatrix.h"
 
+#include <cmath>
 #include <stdexcept>
 
 #include "LisVector.h"

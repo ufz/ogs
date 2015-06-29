@@ -10,7 +10,7 @@
  *
  */
 
-#include <iostream>
+#include <iosfwd>
 
 #ifndef LOCATION_H_
 #define LOCATION_H_

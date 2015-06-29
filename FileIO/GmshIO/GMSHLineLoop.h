@@ -16,13 +16,14 @@
 #define GMSHLINELOOP_H_
 
 #include <vector>
-#include <ostream>
+#include <iosfwd>
 
-#include "GMSHLine.h"
 
 namespace FileIO 
 {
 namespace GMSH {
+
+class GMSHLine;
 
 class GMSHLineLoop {
 public:

@@ -13,7 +13,7 @@
 #ifndef SHAPEMATRICES_H_
 #define SHAPEMATRICES_H_
 
-#include <iostream>
+#include <ostream>
 
 namespace NumLib
 {

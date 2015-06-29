@@ -11,7 +11,7 @@
 #define ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
 
 #ifndef NDEBUG
-#include <iostream>
+#include <iosfwd>
 #endif  // NDEBUG
 
 #include <vector>

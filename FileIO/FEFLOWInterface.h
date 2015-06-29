@@ -9,8 +9,7 @@
 #ifndef FEFLOWINTERFACE_H_
 #define FEFLOWINTERFACE_H_
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 

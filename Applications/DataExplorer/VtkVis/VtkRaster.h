@@ -14,7 +14,7 @@
 #ifndef VTKRASTER_H
 #define VTKRASTER_H
 
-#include <fstream>
+#include <string>
 
 class vtkImageAlgorithm;
 class vtkImageImport;

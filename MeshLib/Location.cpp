@@ -8,6 +8,7 @@
  */
 
 #include "Location.h"
+#include <ostream>
 
 namespace MeshLib
 {

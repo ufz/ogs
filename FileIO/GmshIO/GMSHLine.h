@@ -15,7 +15,7 @@
 #ifndef GMSHLINE_H_
 #define GMSHLINE_H_
 
-#include <ostream>
+#include <iosfwd>
 
 namespace FileIO 
 {

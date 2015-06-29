@@ -18,7 +18,7 @@
 #ifndef PETRELIO_H_
 #define PETRELIO_H_
 
-#include <istream>
+#include <iosfwd>
 #include <list>
 #include <string>
 #include <vector>

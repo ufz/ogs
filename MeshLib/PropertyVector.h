@@ -12,7 +12,7 @@
 #define PROPERTYVECTOR_H_
 
 #include <algorithm>
-#include <iostream>
+#include <iosfwd>
 #include <iterator>
 #include <vector>
 #include <type_traits>

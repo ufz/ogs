@@ -11,12 +11,10 @@
  */
 
 
-#include <iostream>
 #include <cassert>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-#include "MeshLib/Node.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/CoordinateSystem.h"
 

@@ -15,17 +15,16 @@
 #ifndef LISMATRIX_H_
 #define LISMATRIX_H_
 
-#include <iostream>
-#include <cmath>
+#include <string>
 #include <vector>
 
 #include "MathLib/LinAlg/RowColumnIndices.h"
-#include "MathLib/LinAlg/Lis/LisCheck.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #include "lis.h"
 
 #include "LisOption.h"
+#include "LisCheck.h"
 
 namespace MathLib
 {

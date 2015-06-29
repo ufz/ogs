@@ -15,8 +15,6 @@
 #ifndef OGSIOVER4_H_
 #define OGSIOVER4_H_
 
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 
