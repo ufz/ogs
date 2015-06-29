@@ -35,7 +35,6 @@ public:
 	/// @param ur upper right back point, used for computation of cubic domain
 	/// @param eps the euclidean distance as a threshold to make objects unique
 	/// [default std::numeric_limits<double>::epsilon()]
-	/// @param max_items_per_node The max number of items per OctTree node.
 	/// Adding a new item to an already "filled" OctTree node results in a
 	/// split of the OctTree node. The smaller this number is the more leaves
 	/// the OctTree will have, i.e. it needs more memory and more time to walk
@@ -69,9 +68,6 @@ public:
 
 	/// range query - returns all points inside the range [min[0], max[0]) x
 	/// [min[1], max[1]) x [min[2], max[2])
-	/// @param min
-	/// @param max
-	/// @param pnts
 	template <typename T>
 	void
 	getPointsInRange(T const& min, T const& max, std::vector<POINT*> &pnts) const;
