@@ -25,8 +25,8 @@
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTet10.h"
-#include "NumLib/Fem/ShapeFunction/ShapePrim6.h"
-#include "NumLib/Fem/ShapeFunction/ShapePrim15.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
 
