@@ -67,6 +67,13 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	auto const data_vec_end = std::remove(_data_vec->begin(), _data_vec->end(), nullptr);
 	_data_vec->erase(data_vec_end, _data_vec->end());
 
+	// set value of the point id to the position of the point within _data_vec
+	for (std::size_t k(0); k<_data_vec->size(); ++k) {
+		if ((*_data_vec)[k]->getID() != k) {
+			(*_data_vec)[k]->setID(k);
+		}
+	}
+
 	if (number_of_all_input_pnts > _data_vec->size())
 		WARN("PointVec::PointVec(): there are %d double points.",
 			number_of_all_input_pnts - _data_vec->size());
@@ -117,6 +124,8 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
 {
 	GeoLib::Point * ret_pnt(nullptr);
 	if (_oct_tree->addPoint(pnt, ret_pnt)) {
+		// set value of the point id to the position of the point within _data_vec
+		pnt->setID(_data_vec->size());
 		_data_vec->push_back(pnt);
 		return _data_vec->size()-1;
 	}
@@ -135,6 +144,7 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
 		// add the new point
 		ret_pnt = nullptr;
 		_oct_tree->addPoint(pnt, ret_pnt);
+		// set value of the point id to the position of the point within _data_vec
 		pnt->setID(_data_vec->size());
 		_data_vec->push_back(pnt);
 		return _data_vec->size()-1;
