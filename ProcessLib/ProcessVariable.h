@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
 #define PROCESS_LIB_PROCESS_VARIABLE_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 
 #include "NeumannBc.h"

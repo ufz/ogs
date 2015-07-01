@@ -15,7 +15,7 @@
 #ifndef STRINGTOOLS_H
 #define STRINGTOOLS_H
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 #include <string>
 #include <list>

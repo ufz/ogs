@@ -14,7 +14,7 @@
 #include <memory>
 
 #include <boost/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 #include "logog/include/logog.hpp"
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"

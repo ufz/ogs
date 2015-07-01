@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_INITIAL_CONDITION_H_
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 #include "logog/include/logog.hpp"
 
 #include "MeshLib/Mesh.h"

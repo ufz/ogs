@@ -17,7 +17,7 @@
 
 #include <cstddef>
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 #include "../Dense/DenseMatrix.h"
 #include "TriangularSolve.h"
