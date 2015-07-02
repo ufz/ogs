@@ -28,13 +28,7 @@
 
 #include "GeoLib/GEOObjects.h"
 
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Prism.h"
-#include "MeshLib/Elements/Pyramid.h"
-#include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Tet.h"
-#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
 
