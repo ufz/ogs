@@ -181,7 +181,7 @@ public:
 		os << "\tmapping (" << size() <<"):\n";
 		std::copy(this->cbegin(), this->cend(),
 			std::ostream_iterator<std::size_t>(os, " "));
-		std::cerr << "\n\tvalues (" << _values.size() << "):\n";
+		os << "\n\tvalues (" << _values.size() << "):\n";
 		for (std::size_t k(0); k<_values.size(); k++) {
 			os << "val: " << *(_values[k]) << ", address: " << _values[k] << "\n";
 		}
