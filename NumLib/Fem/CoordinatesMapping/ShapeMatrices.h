@@ -97,6 +97,8 @@ struct ShapeMatrices
     /// template parameters).
     void resize(std::size_t const dim, std::size_t n_nodes);
 
+    void resize(std::size_t const local_dim, std::size_t const global_dim, std::size_t n_nodes);
+
     /// reset all data with zero
     void setZero();
 
