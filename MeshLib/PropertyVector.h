@@ -11,12 +11,10 @@
 #ifndef PROPERTYVECTOR_H_
 #define PROPERTYVECTOR_H_
 
-#include <algorithm>
-#include <iosfwd>
 #include <iterator>
+#include <ostream>
+#include <string>
 #include <vector>
-#include <type_traits>
-#include <memory>
 
 #include "Location.h"
 #include "BaseLib/excludeObjectCopy.h"
@@ -24,8 +22,7 @@
 namespace MeshLib
 {
 
-template <typename T>
-class PropertyVector;
+//template <typename T> class PropertyVector;
 
 class PropertyVectorBase
 {
@@ -122,9 +119,8 @@ public:
 	/// Destructor ensures the deletion of the heap-constructed objects.
 	~PropertyVector()
 	{
-		std::for_each(
-			_values.begin(), _values.end(), std::default_delete<T>()
-		);
+		for (auto v : _values)
+			delete v;
 	}
 
 	/// The operator[] uses the item to group property map to access to the
