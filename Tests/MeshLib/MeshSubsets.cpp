@@ -6,6 +6,8 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <memory>
+
 #include "gtest/gtest.h"
 
 #include "MeshLib/Mesh.h"

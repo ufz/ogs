@@ -9,6 +9,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <memory>
+
 // TCLAP
 #include "tclap/CmdLine.h"
 
