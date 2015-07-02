@@ -19,6 +19,10 @@
 #include "TriRule3.h"
 #include "TriRule6.h"
 
+
+extern template class MeshLib::TemplateElement<MeshLib::TriRule3>;
+extern template class MeshLib::TemplateElement<MeshLib::TriRule6>;
+
 namespace MeshLib {
 
 typedef TemplateElement<TriRule3> Tri;

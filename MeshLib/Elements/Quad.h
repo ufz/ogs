@@ -20,6 +20,10 @@
 #include "QuadRule8.h"
 #include "QuadRule9.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::QuadRule4>;
+extern template class MeshLib::TemplateElement<MeshLib::QuadRule8>;
+extern template class MeshLib::TemplateElement<MeshLib::QuadRule9>;
+
 namespace MeshLib
 {
 

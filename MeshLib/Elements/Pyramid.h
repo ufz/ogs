@@ -19,6 +19,9 @@
 #include "PyramidRule5.h"
 #include "PyramidRule13.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::PyramidRule13>;
+extern template class MeshLib::TemplateElement<MeshLib::PyramidRule5>;
+
 namespace MeshLib {
 
 typedef TemplateElement<PyramidRule5> Pyramid;
