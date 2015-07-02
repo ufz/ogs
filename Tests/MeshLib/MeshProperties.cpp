@@ -12,8 +12,6 @@
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Line.h"
-#include "Location.h"
 #include "PropertyVector.h"
 
 #ifdef OGS_USE_EIGEN
