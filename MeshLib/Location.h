@@ -10,6 +10,7 @@
  *
  */
 
+#include <cstddef>
 #include <iosfwd>
 
 #ifndef LOCATION_H_
