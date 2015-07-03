@@ -23,6 +23,8 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
+#include "GeoLib/Triangle.h"
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

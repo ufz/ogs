@@ -21,6 +21,7 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/FileFinder.h"
+#include "GeoLib/Triangle.h"
 
 namespace FileIO
 {

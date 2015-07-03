@@ -22,6 +22,7 @@
 // GeoLib
 #include "GEOObjects.h"
 #include "SurfaceVec.h"
+#include "GeoLib/Triangle.h"
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 

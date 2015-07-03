@@ -17,6 +17,7 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/Triangle.h"
 #include "GeoLib/Surface.h"
 
 #include "Mesh.h"

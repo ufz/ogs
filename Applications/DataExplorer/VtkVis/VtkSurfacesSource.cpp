@@ -13,7 +13,6 @@
  */
 
 // ** INCLUDES **
-#include "Color.h"
 #include "VtkSurfacesSource.h"
 #include <limits>
 
@@ -27,6 +26,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkProperty.h>
+
+#include "GeoLib/Color.h"
+#include "GeoLib/Triangle.h"
 
 vtkStandardNewMacro(VtkSurfacesSource);
 

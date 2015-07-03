@@ -19,12 +19,13 @@
 
 #include "GeoObject.h"
 #include "Point.h"
-#include "Polyline.h"
-#include "Triangle.h"
 #include "AABB.h"
 
 namespace GeoLib {
 
+class Polyline;
+
+class Triangle;
 /**
  * \ingroup GeoLib
  *

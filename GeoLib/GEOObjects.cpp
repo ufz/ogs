@@ -20,6 +20,8 @@
 // GeoLib
 #include "GEOObjects.h"
 
+#include "Triangle.h"
+
 namespace GeoLib
 {
 GEOObjects::GEOObjects()

@@ -22,8 +22,8 @@
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 
-// GeoLib
-#include "Polyline.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Triangle.h"
 
 
 TEST(FileIO, XmlGmlWriterReaderTest)
