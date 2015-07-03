@@ -86,14 +86,20 @@ public:
 		}
 	}
 
-	void update(PNT_TYPE const & pnt)
+	bool update(PNT_TYPE const & pnt)
 	{
+		bool updated(false);
 		for (std::size_t k(0); k<3; k++) {
-			if (pnt[k] < _min_pnt[k])
+			if (pnt[k] < _min_pnt[k]) {
 				_min_pnt[k] = pnt[k];
-			if (_max_pnt[k] < pnt[k])
+				updated = true;
+			}
+			if (_max_pnt[k] < pnt[k]) {
 				_max_pnt[k] = pnt[k];
+				updated = true;
+			}
 		}
+		return updated;
 	}
 
 	/**
