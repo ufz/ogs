@@ -8,12 +8,12 @@
  *              See accompanying file LICENSE.txt or
  */
 
+#include "SurfaceGrid.h"
+
 #include <algorithm>
 #include <bitset>
 
 #include <logog/include/logog.hpp>
-
-#include "SurfaceGrid.h"
 
 #include "Surface.h"
 #include "Triangle.h"
