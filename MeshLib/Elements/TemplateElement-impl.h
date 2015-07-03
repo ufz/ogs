@@ -12,18 +12,6 @@
 namespace MeshLib
 {
 
-#ifndef WIN32
-/// \todo Windows compiler does not accept this definition and issues a linking error.
-template <class ELEMENT_RULE>
-const unsigned TemplateElement<ELEMENT_RULE>::n_all_nodes;
-
-template <class ELEMENT_RULE>
-const unsigned TemplateElement<ELEMENT_RULE>::n_base_nodes;
-
-template <class ELEMENT_RULE>
-const unsigned TemplateElement<ELEMENT_RULE>::dimension;
-#endif // WIN32
-
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], unsigned value, std::size_t id)
 : Element(value, id)
