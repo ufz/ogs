@@ -35,9 +35,9 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 	for (auto e : vec_new_eles)
 		max_matID = std::max(max_matID, e->getValue());
 
-	const size_t n_ply (ply_vec.size());
+	const std::size_t n_ply (ply_vec.size());
 	// for each polyline
-	for (size_t k(0); k < n_ply; k++)
+	for (std::size_t k(0); k < n_ply; k++)
 	{
 		const GeoLib::Polyline* ply = (*ply_vec.getVector())[k];
 
@@ -52,7 +52,7 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 		}
 
 		// add line elements
-		for (size_t i=0; i<vec_nodes_on_ply.size()-1; i++) {
+		for (std::size_t i=0; i<vec_nodes_on_ply.size()-1; i++) {
 			std::array<MeshLib::Node*, 2> element_nodes;
 			element_nodes[0] = vec_new_nodes[vec_nodes_on_ply[i]];
 			element_nodes[1] = vec_new_nodes[vec_nodes_on_ply[i+1]];

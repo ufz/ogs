@@ -112,7 +112,7 @@ void GeoMapper::mapData()
 		min_val = bounding_box.getMinPoint()[2];
 		max_val = bounding_box.getMaxPoint()[2];
 	}
-	size_t nPoints (points->size());
+	std::size_t nPoints (points->size());
 
 	if (!is_borehole)
 	{
@@ -133,7 +133,7 @@ void GeoMapper::mapData()
 
 			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
 			const std::vector<GeoLib::Point*> layers = borehole->getProfile();
-			size_t nLayers = layers.size();
+			std::size_t nLayers = layers.size();
 			for (unsigned k=0; k<nLayers; ++k)
 			{
 				GeoLib::Point* layer_pnt = layers[k];
@@ -204,7 +204,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	// copy geometry (and set z=0 for all points)
 	unsigned nGeoPoints ( points->size() );
 	std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nGeoPoints);
-	for (size_t i=0; i<nGeoPoints; ++i)
+	for (std::size_t i=0; i<nGeoPoints; ++i)
 		(*new_points)[i] = new GeoLib::Point((*(*points)[i])[0],(*(*points)[i])[1],0.0);
 	std::vector<GeoLib::Polyline*> *new_lines (copyPolylinesVector(this->_geo_objects.getPolylineVec(this->_geo_name), new_points));
 
@@ -215,7 +215,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	const unsigned nMeshNodes ( mesh->getNNodes() );
 	std::vector<int> closest_geo_point(nMeshNodes); // index of closest geo point for each mesh node in (x,y)-plane
 	std::vector<double> dist(nMeshNodes);  // distance between geo points and mesh nodes in (x,y)-plane
-	for (size_t i=0; i<nMeshNodes; ++i)
+	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
 		const double zero_coords[3] = {(* mesh->getNode(i))[0], (* mesh->getNode(i))[1], 0.0};
 		GeoLib::Point* pnt = grid.getNearestPoint(zero_coords);
@@ -224,7 +224,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	}
 
 	// store for each point the line segment to which it was added.
-	const size_t nLines (new_lines->size());
+	const std::size_t nLines (new_lines->size());
 	std::vector< std::vector<unsigned> > line_segment_map(nLines);
 	for (std::size_t i=0; i<nLines; ++i)
 	{

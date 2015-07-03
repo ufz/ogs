@@ -30,7 +30,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(
 	auto& mesh_nodes = _mesh.getNodes();
 	const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
 	// loop over all nodes
-	for (size_t i = 0; i < n_nodes; i++) {
+	for (std::size_t i = 0; i < n_nodes; i++) {
 		auto* node = mesh_nodes[i];
 		if (!sfc.isPntInBoundingVolume(node->getCoords()))
 			continue;
