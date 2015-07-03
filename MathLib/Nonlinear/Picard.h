@@ -75,7 +75,7 @@ public:
     double getRelError() const {return _rel_error; }
 
 private:
-#ifdef NDEBUG
+#ifdef DEBUG_PICARD
     /// print out for debugging
     template<class T_VALUE>
     inline void printout(std::ostream& os, std::size_t i, T_VALUE& x_new, T_VALUE& dx);

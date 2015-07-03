@@ -61,7 +61,7 @@ bool Picard::solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new)
         if (_printErrors)
             INFO("-> %d: ||dx||=%1.3e, ||x||=%1.3e, ||dx||/||x||=%1.3e", itr_cnt, abs_error, x_norm, rel_error);
 
-#ifdef NDEBUG
+#ifdef DEBUG_PICARD
         printout(std::cout, itr_cnt, x_new, dx);
 #endif
         if (converged) {
@@ -92,7 +92,7 @@ bool Picard::solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new)
 }
 
 
-#ifdef NDEBUG
+#ifdef DEBUG_PICARD
 template<class T_VALUE>
 inline void Picard::printout(std::ostream& os, std::size_t i, T_VALUE& x_new, T_VALUE& dx)
 {

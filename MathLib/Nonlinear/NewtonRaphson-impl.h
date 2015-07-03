@@ -67,7 +67,7 @@ bool NewtonRaphson::solve(F_RESIDUAL &f_residual, F_DX &f_dx, const T_VALUE &x0,
             x_new += dx;
             // evaluate residual
             f_residual(x_new, r);
-#ifdef NDEBUG
+#ifdef DEBUG_NEWTON_RAPHSON
             printout(std::cout, itr_cnt, x_new, r, dx);
 #endif
             // check convergence
@@ -110,7 +110,7 @@ bool NewtonRaphson::solve(F_RESIDUAL &f_residual, F_DX &f_dx, const T_VALUE &x0,
 }
 
 
-#ifdef NDEBUG
+#ifdef DEBUG_NEWTON_RAPHSON
 template<class T_VALUE>
 inline void NewtonRaphson::printout(std::ostream& os, std::size_t i, T_VALUE& x_new, T_VALUE& r, T_VALUE& dx)
 {
