@@ -19,6 +19,9 @@
 #include "TetRule4.h"
 #include "TetRule10.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::TetRule10>;
+extern template class MeshLib::TemplateElement<MeshLib::TetRule4>;
+
 namespace MeshLib {
 
 typedef TemplateElement<TetRule4> Tet;

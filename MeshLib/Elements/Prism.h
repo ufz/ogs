@@ -19,6 +19,9 @@
 #include "PrismRule6.h"
 #include "PrismRule15.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::PrismRule15>;
+extern template class MeshLib::TemplateElement<MeshLib::PrismRule6>;
+
 namespace MeshLib {
 
 typedef TemplateElement<PrismRule6> Prism;

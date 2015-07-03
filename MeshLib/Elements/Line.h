@@ -19,6 +19,9 @@
 #include "LineRule2.h"
 #include "LineRule3.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::LineRule2>;
+extern template class MeshLib::TemplateElement<MeshLib::LineRule3>;
+
 namespace MeshLib {
 
 typedef TemplateElement<LineRule2> Line;

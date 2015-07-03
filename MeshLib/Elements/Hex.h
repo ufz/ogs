@@ -19,6 +19,9 @@
 #include "HexRule8.h"
 #include "HexRule20.h"
 
+extern template class MeshLib::TemplateElement<MeshLib::HexRule20>;
+extern template class MeshLib::TemplateElement<MeshLib::HexRule8>;
+
 namespace MeshLib {
 typedef TemplateElement<HexRule8> Hex;
 typedef TemplateElement<HexRule20> Hex20;
