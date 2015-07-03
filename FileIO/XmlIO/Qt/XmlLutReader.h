@@ -15,13 +15,12 @@
 #ifndef XMLLUTREADER_H
 #define XMLLUTREADER_H
 
-#include "VtkColorLookupTable.h"
-
 #include <QFile>
 #include <QtXml/QDomDocument>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
+
+#include "VtkColorLookupTable.h"
 
 
 namespace FileIO

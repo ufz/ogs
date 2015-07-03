@@ -15,10 +15,10 @@
 #ifndef CRSMATRIX_H
 #define CRSMATRIX_H
 
-#include <string>
-#include <fstream>
-#include <iostream>
 #include <cassert>
+#include <fstream>
+#include <iosfwd>
+#include <string>
 
 // MathLib
 #include "SparseMatrixBase.h"

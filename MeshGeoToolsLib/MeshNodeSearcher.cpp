@@ -18,7 +18,6 @@
 
 // MeshLib
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Line.h"
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"

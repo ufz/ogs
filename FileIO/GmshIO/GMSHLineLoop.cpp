@@ -12,7 +12,10 @@
  *
  */
 
-#include "GmshIO/GMSHLineLoop.h"
+#include <ostream>
+
+#include "GMSHLine.h"
+#include "GMSHLineLoop.h"
 
 namespace FileIO 
 {
@@ -24,8 +27,8 @@ GMSHLineLoop::GMSHLineLoop(bool is_sfc) :
 
 GMSHLineLoop::~GMSHLineLoop()
 {
-	const size_t n_lines (_lines.size());
-	for (size_t k(0); k<n_lines; k++) {
+	const std::size_t n_lines (_lines.size());
+	for (std::size_t k(0); k<n_lines; k++) {
 		delete _lines[k];
 	}
 }
@@ -35,14 +38,14 @@ void GMSHLineLoop::addLine(GMSHLine* line)
 	_lines.push_back(line);
 }
 
-void GMSHLineLoop::write(std::ostream &os, size_t line_offset, size_t sfc_offset) const
+void GMSHLineLoop::write(std::ostream &os, std::size_t line_offset, std::size_t sfc_offset) const
 {
-	const size_t n_lines (_lines.size());
-	for (size_t k(0); k<n_lines; k++) {
+	const std::size_t n_lines (_lines.size());
+	for (std::size_t k(0); k<n_lines; k++) {
 		(_lines[k])->write(os, line_offset+k);
 	}
 	os << "Line Loop(" << line_offset+n_lines << ") = {";
-	for (size_t k(0); k < n_lines - 1; k++)
+	for (std::size_t k(0); k < n_lines - 1; k++)
 		os << line_offset + k << ",";
 	os << line_offset + n_lines - 1 << "};\n";
 

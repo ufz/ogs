@@ -12,26 +12,22 @@
  *
  */
 
+#include "TetGenInterface.h"
+
 #include <cstddef>
 #include <string>
 #include <fstream>
 
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
+#include <logog/include/logog.hpp>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// FileIO
-#include "TetGenInterface.h"
-
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "Elements/Tet.h"
-#include "MeshInformation.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/MeshInformation.h"
 
 namespace FileIO
 {

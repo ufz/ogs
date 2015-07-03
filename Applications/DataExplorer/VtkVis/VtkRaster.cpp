@@ -16,26 +16,11 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iomanip>
 #include <iostream>
-#include <sstream>
+#include <limits>
 
 #include <QFileInfo>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-#include "StringTools.h"
-
-#include "AsciiRasterInterface.h"
-
-// GeoLib
-#include "Raster.h"
-
-#include <vtkFloatArray.h>
-#include <vtkPointData.h>
-
-#include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
 #include <vtkImageReader2.h>
@@ -47,6 +32,13 @@
 #include "geo_tiffp.h"
 #include "xtiffio.h"
 #endif
+
+#include <logog/include/logog.hpp>
+
+#include "AsciiRasterInterface.h"
+
+#include "GeoLib/Raster.h"
+
 
 vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
                                         double& x0, double& y0, double& delta)

@@ -15,7 +15,6 @@
 #ifndef VECTOR_IO_H
 #define VECTOR_IO_H
 
-#include <iostream>
 #include <fstream>
 #include <string>
 

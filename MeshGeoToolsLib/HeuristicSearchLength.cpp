@@ -15,7 +15,6 @@
 #include "logog/include/logog.hpp"
 
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Line.h"
 
 namespace MeshGeoToolsLib
 {

@@ -16,7 +16,7 @@
 #ifndef MESHIO_H_
 #define MESHIO_H_
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 #include <boost/optional.hpp>

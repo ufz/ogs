@@ -11,7 +11,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "XmlIO/Qt/XMLQtInterface.h"
+#include "XMLQtInterface.h"
 
 #include <fstream>
 
@@ -22,8 +22,7 @@
 #include <QByteArray>
 #include <QCryptographicHash>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 namespace FileIO
 {

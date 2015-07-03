@@ -15,6 +15,7 @@
 // ** INCLUDES **
 #include "Writer.h"
 
+#include <iostream>
 #include <fstream>
 #include <limits>
 

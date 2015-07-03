@@ -12,17 +12,28 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include "GeoLib/GEOObjects.h"
-#include "MeshLib/Mesh.h"
 
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
-
-#include "NeumannBcConfig.h"
 #include "NeumannBc.h"
+
+namespace MeshGeoToolsLib
+{
+    class MeshNodeSearcher;
+    class BoundaryElementsSearcher;
+}
+
+namespace MeshLib
+{
+    class Mesh;
+}
+
+namespace GeoLib
+{
+    class GEOObjects;
+}
 
 namespace ProcessLib
 {
+    class NeumannBcConfig;
     class InitialCondition;
     class UniformDirichletBoundaryCondition;
 }

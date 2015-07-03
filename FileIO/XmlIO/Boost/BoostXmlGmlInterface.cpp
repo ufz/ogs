@@ -12,16 +12,26 @@
  *
  */
 
-#include <boost/version.hpp>
-#include <boost/foreach.hpp>
-#include <boost/tokenizer.hpp>
-
 #include "BoostXmlGmlInterface.h"
 
 #include <fstream>
+#include <limits>
+#include <utility>
+#include <cstdlib>
 
-#include "logog/include/logog.hpp"
+#include <boost/version.hpp>
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include <logog/include/logog.hpp>
+
 #include "BaseLib/StringTools.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/PointVec.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
 
 namespace FileIO
 {
@@ -183,7 +193,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 			BOOST_FOREACH( ptree::value_type const & pnt, polyline.second )
 			{
 				if (pnt.first.compare("pnt") == 0)
-					polylines->back()->addPoint(pnt_id_map[_idx_map[atoi(pnt.second.data().c_str())]]);
+					polylines->back()->addPoint(pnt_id_map[_idx_map[std::atoi(pnt.second.data().c_str())]]);
 			}
 		}
 	}

@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
-#include <iostream>
+#include <iosfwd>
 #include <fstream>
 #include <vector>
 

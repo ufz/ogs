@@ -13,6 +13,9 @@
 
 #include "CsvInterface.h"
 
+#include <algorithm>
+#include <stdexcept>
+
 #include "GeoLib/Point.h"
 
 namespace FileIO {

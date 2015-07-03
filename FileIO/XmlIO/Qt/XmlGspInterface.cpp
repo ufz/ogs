@@ -12,19 +12,26 @@
  *
  */
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "XmlGspInterface.h"
+
+#include <ostream>
+#include <vector>
+
+#include <logog/include/logog.hpp>
+
+#include "Applications/ApplicationsLib/ProjectData.h"
+#include "GeoLib/GEOObjects.h"
 
 #include "XmlGmlInterface.h"
 #include "XmlStnInterface.h"
 
-#include "FileTools.h"
-#include "FileFinder.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/FileFinder.h"
+
+#include "FileIO/Writer.h"
 #include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/readMeshFromFile.h"
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
 #include <QFile>
 #include <QFileInfo>

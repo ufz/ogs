@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <iostream>
+#include <iosfwd>
 #include <algorithm>
 
 #include <tclap/CmdLineInterface.h>

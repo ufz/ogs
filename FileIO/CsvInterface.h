@@ -14,15 +14,16 @@
 #ifndef CSVINTERFACE_H_
 #define CSVINTERFACE_H_
 
+#include <logog/include/logog.hpp>
+
 #include <array>
 #include <fstream>
+#include <iterator>
 #include <limits>
 #include <list>
 #include <string>
 #include <vector>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
 #include "BaseLib/StringTools.h"
 

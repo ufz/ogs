@@ -16,7 +16,6 @@
 #define WRITER_H
 
 #include <string>
-#include <iostream>
 #include <sstream>
 
 namespace FileIO

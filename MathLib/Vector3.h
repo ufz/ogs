@@ -17,14 +17,10 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
-// MathLib
-#include "TemplatePoint.h"
-
-// MathLib
-#include "MathTools.h"
-
 #include <cmath>
-#include <iostream>
+
+#include "TemplatePoint.h"
+#include "MathTools.h"
 
 namespace MathLib
 {

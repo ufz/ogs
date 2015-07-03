@@ -18,10 +18,8 @@
 
 #include "TemplatePoint.h"
 
-#include <cstdlib>
-#include <fstream>
-#include <list>
 #include <map>
+#include <string>
 
 namespace GeoLib
 {

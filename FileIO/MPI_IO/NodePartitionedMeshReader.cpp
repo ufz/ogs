@@ -14,20 +14,12 @@
 
 #include "NodePartitionedMeshReader.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Prism.h"
-#include "MeshLib/Elements/Pyramid.h"
-#include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Tet.h"
-#include "MeshLib/Elements/Tri.h"
-
+#include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Properties.h"
 
 // Check if the value can by converted to given type without overflow.

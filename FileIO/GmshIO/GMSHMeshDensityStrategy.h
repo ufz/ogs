@@ -15,11 +15,12 @@
 #ifndef GMSHMESHDENSITYSTRATEGY_H_
 #define GMSHMESHDENSITYSTRATEGY_H_
 
-#include <ostream>
 #include <vector>
 
-// GeoLib
-#include "Point.h"
+namespace GeoLib
+{
+    class Point;
+}
 
 namespace FileIO
 {

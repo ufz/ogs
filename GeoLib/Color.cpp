@@ -13,10 +13,10 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "Color.h"
 #include "StringTools.h"
@@ -34,16 +34,16 @@ Color* getRandomColor()
 
 int readColorLookupTable(std::map<std::string, Color*> &colors, const std::string &filename)
 {
-	std::string id = "", line = "";
 
 	std::ifstream in( filename.c_str() );
 
-	if (!in.is_open())
+	if (!in)
 	{
 		WARN("Color::readLookupTable() - Could not open file %s.", filename.c_str());
 		return 0;
 	}
 
+	std::string id = "", line = "";
 	while ( getline(in, line) )
 	{
 		std::list<std::string> fields = BaseLib::splitString(line, '\t');
@@ -53,11 +53,11 @@ int readColorLookupTable(std::map<std::string, Color*> &colors, const std::strin
 			Color *c = new Color();
 			id = fields.front();
 			fields.pop_front();
-			(*c)[0] = atoi(fields.front().c_str());
+			(*c)[0] = std::atoi(fields.front().c_str());
 			fields.pop_front();
-			(*c)[1] = atoi(fields.front().c_str());
+			(*c)[1] = std::atoi(fields.front().c_str());
 			fields.pop_front();
-			(*c)[2] = atoi(fields.front().c_str());
+			(*c)[2] = std::atoi(fields.front().c_str());
 			colors.insert(std::pair<std::string, Color*>(id, c));
 		}
 	}

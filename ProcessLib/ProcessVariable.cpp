@@ -7,6 +7,8 @@
  *
  */
 
+#include "ProcessVariable.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
@@ -16,7 +18,6 @@
 #include "UniformDirichletBoundaryCondition.h"
 #include "InitialCondition.h"
 
-#include "ProcessVariable.h"
 
 namespace ProcessLib
 {

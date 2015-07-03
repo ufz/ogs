@@ -18,36 +18,26 @@
 #include <fstream>
 #include <vector>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "FileTools.h"
-#include "StringTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
-// FileIO
-#include "GMSHInterface.h"
-#include "GmshIO/GMSHAdaptiveMeshDensity.h"
-#include "GmshIO/GMSHFixedMeshDensity.h"
-#include "GmshIO/GMSHNoMeshDensity.h"
+#include "FileIO/GMSHInterface.h"
+#include "FileIO/GmshIO/GMSHAdaptiveMeshDensity.h"
+#include "FileIO/GmshIO/GMSHFixedMeshDensity.h"
+#include "FileIO/GmshIO/GMSHNoMeshDensity.h"
 
-// GeoLib
-#include "Point.h"
-#include "Polygon.h"
-#include "Polyline.h"
-#include "PolylineWithSegmentMarker.h"
-#include "QuadTree.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/PolylineWithSegmentMarker.h"
+#include "GeoLib/QuadTree.h"
 
-// MSH
-#include "Elements/Line.h"
-#include "Elements/Hex.h"
-#include "Elements/Prism.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Tri.h"
-#include "Mesh.h"
+#include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
 namespace FileIO

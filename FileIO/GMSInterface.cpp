@@ -15,22 +15,22 @@
  * @author Karsten Rink
  */
 
-#include <fstream>
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-#include "Elements/Prism.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Tet.h"
 #include "GMSInterface.h"
-#include "Mesh.h"
-#include "MeshEnums.h"
+
+#include <fstream>
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
+
+#include "GeoLib/StationBorehole.h"
+
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
-#include "StationBorehole.h"
-// BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
 
 namespace FileIO
 {

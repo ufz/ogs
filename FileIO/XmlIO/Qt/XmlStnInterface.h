@@ -15,14 +15,16 @@
 #ifndef XMLSTNINTERFACE_H
 #define XMLSTNINTERFACE_H
 
+#include <vector>
+
 #include "RapidXML/rapidxml.hpp"
 
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
-#include "GeoLib/GEOObjects.h"
-
 namespace GeoLib {
+	class GEOObjects;
+	class Point;
 	class StationBorehole;
 }
 

@@ -15,20 +15,20 @@
  * @author Karsten Rink
  */
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "SHPInterface.h"
 
-// MathLib
-#include "AnalyticalGeometry.h"
+#include <logog/include/logog.hpp>
 
-// MeshLib
-#include "Mesh.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Point.h"
+
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
 
 namespace FileIO
 {

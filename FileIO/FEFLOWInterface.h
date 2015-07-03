@@ -9,23 +9,28 @@
 #ifndef FEFLOWINTERFACE_H_
 #define FEFLOWINTERFACE_H_
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 
-#include "GEOObjects.h"
-#include "MeshEnums.h"
+//#include "MeshLib/MeshEnums.h"
 
 class QDomElement;
 class QString;
 
+namespace GeoLib
+{
+    class GEOObjects;
+    class Point;
+    class Polyline;
+}
+
 namespace MeshLib
 {
-class Mesh;
-class Element;
-class Node;
-enum class MeshElemType;
+    class Mesh;
+    class Element;
+    class Node;
+    enum class MeshElemType;
 }
 
 namespace FileIO

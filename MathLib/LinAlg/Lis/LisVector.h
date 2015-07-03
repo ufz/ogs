@@ -15,7 +15,7 @@
 #ifndef LISVECTOR_H_
 #define LISVECTOR_H_
 
-#include <iostream>
+#include <string>
 #include <vector>
 
 #include "lis.h"

@@ -15,9 +15,7 @@
 #include <typeinfo>
 #include <unordered_map>
 
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Elements.h"
 
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 

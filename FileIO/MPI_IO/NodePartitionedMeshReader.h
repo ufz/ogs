@@ -14,7 +14,7 @@
 #ifndef NODE_PARTITIONED_MESH_READER_H
 #define NODE_PARTITIONED_MESH_READER_H
 
-#include <fstream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 

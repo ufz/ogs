@@ -23,12 +23,9 @@
 
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
+
 namespace MeshLib {
 	class Mesh;
-}
-
-namespace ProcessLib {
-	class Process;
 }
 
 /**

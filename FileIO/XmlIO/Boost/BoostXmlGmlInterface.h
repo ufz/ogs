@@ -19,16 +19,18 @@
 #include <string>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/optional.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 #include "../XMLInterface.h"
-#include "GeoLib/GEOObjects.h"
 
-class Point;
-class Polyline;
-class Surface;
+namespace GeoLib
+{
+    class GEOObjects;
+    class Point;
+    class Polyline;
+    class Surface;
+}
+
 
 namespace FileIO
 {

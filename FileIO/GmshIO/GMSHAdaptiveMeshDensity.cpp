@@ -15,22 +15,21 @@
  * @author Thomas Fischer
  */
 
+#include "GMSHAdaptiveMeshDensity.h"
+
 #include <list>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// FileIO
-#include "GmshIO/GMSHAdaptiveMeshDensity.h"
 
-// GeoLib
-#include "Polygon.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
 #ifndef NDEBUG
-#include "Polyline.h"
+#include "GeoLib/Polyline.h"
 #endif
+#include "GeoLib/QuadTree.h"
 
-// MathLib
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
 namespace FileIO
 {

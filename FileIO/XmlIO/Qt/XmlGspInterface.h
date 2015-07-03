@@ -15,10 +15,14 @@
 #ifndef XMLGSPINTERFACE_H
 #define XMLGSPINTERFACE_H
 
+#include <string>
+
+#include <QString>
+
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
-#include "Applications/ApplicationsLib/ProjectData.h"
+class ProjectData;
 
 namespace FileIO
 {

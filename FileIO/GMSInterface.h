@@ -19,14 +19,14 @@
 #define GMSINTERFACE_H_
 
 #include <list>
+#include <string>
 #include <vector>
-
-#include "Point.h"
 
 namespace GeoLib
 {
 class Station;
 class StationBorehole;
+class Point;
 }
 
 namespace MeshLib

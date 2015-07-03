@@ -13,18 +13,18 @@
 
 #include "VtuInterface.h"
 
-#include "logog/include/logog.hpp"
-
 #include <vtkNew.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-#include "FileTools.h"
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/FileTools.h"
 #include "InSituLib/VtkMappedMeshSource.h"
-#include "Mesh.h"
-#include "MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
 namespace FileIO
 {
