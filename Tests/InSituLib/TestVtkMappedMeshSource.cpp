@@ -14,6 +14,7 @@
 
 #include "BaseLib/BuildInfo.h"
 
+#include <memory>
 #include <numeric>
 
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -238,7 +239,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 					  cellUnsignedArray->GetNumberOfTuples());
 
 			// Both OGS meshes should be identical
-			MeshLib::Mesh *newMesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh);
+			auto newMesh = std::unique_ptr<MeshLib::Mesh>{MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh)};
 			ASSERT_EQ(mesh->getNNodes(), newMesh->getNNodes());
 			ASSERT_EQ(mesh->getNElements(), newMesh->getNElements());
 
