@@ -128,7 +128,7 @@ MeshNodeSearcher&
 MeshNodeSearcher::getMeshNodeSearcher(MeshLib::Mesh const& mesh)
 {
 	std::size_t const mesh_id = mesh.getID();
-	if (_mesh_node_searchers.size() < mesh_id)
+	if (_mesh_node_searchers.size() < mesh_id+1)
 		_mesh_node_searchers.resize(mesh_id+1);
 
 	if (!_mesh_node_searchers[mesh_id])
