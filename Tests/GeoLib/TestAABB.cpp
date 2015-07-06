@@ -200,6 +200,9 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesI)
 	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[2], std::numeric_limits<double>::epsilon());
+
+	for (auto p : pnts)
+		delete p;
 }
 
 TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
