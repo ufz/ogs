@@ -31,7 +31,7 @@ Mesh::Mesh(const std::string &name,
            const std::vector<Element*> &elements,
            Properties const& properties,
            const std::size_t n_base_nodes)
-	: _id(_counter_value), _mesh_dimension(0),
+	: _id(_counter_value-1), _mesh_dimension(0),
 	  _edge_length(std::numeric_limits<double>::max(), 0),
 	  _node_distance(std::numeric_limits<double>::max(), 0),
 	  _name(name), _nodes(nodes), _elements(elements),
@@ -52,7 +52,7 @@ Mesh::Mesh(const std::string &name,
 }
 
 Mesh::Mesh(const Mesh &mesh)
-	: _id(_counter_value), _mesh_dimension(mesh.getDimension()),
+	: _id(_counter_value-1), _mesh_dimension(mesh.getDimension()),
 	  _edge_length(mesh._edge_length.first, mesh._edge_length.second),
 	  _node_distance(mesh._node_distance.first, mesh._node_distance.second),
 	  _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
