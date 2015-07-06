@@ -12,6 +12,15 @@
 #include "gtest/gtest.h"
 #include "AnalyticalGeometry.h"
 
+auto test3equal = [](double a, double b, double c, double const* result)
+{
+	EXPECT_EQ(a, result[0]);
+	EXPECT_EQ(b, result[1]);
+	EXPECT_EQ(c, result[2]);
+
+	delete[] result;
+};
+
 TEST(GeoLib, ComputeRotationMatrixToXYnegative)
 {
 	MathLib::Vector3 const n(0.0, -1.0, 0.0);
@@ -29,22 +38,13 @@ TEST(GeoLib, ComputeRotationMatrixToXYnegative)
 	EXPECT_EQ(0.0, rot_mat(2,2));
 
 	MathLib::Vector3 const x(0.0,1.0,0.0);
-	MathLib::Vector3 const result(rot_mat*x.getCoords());
-	EXPECT_EQ(0.0, result[0]);
-	EXPECT_EQ(0.0, result[1]);
-	EXPECT_EQ(-1.0, result[2]);
+	test3equal(0, 0, -1, rot_mat*x.getCoords());
 
 	MathLib::Vector3 const x0(10.0,1.0,0.0);
-	MathLib::Vector3 const r0(rot_mat*x0.getCoords());
-	EXPECT_EQ(10.0, r0[0]);
-	EXPECT_EQ(0.0, r0[1]);
-	EXPECT_EQ(-1.0, r0[2]);
+	test3equal(10, 0, -1, rot_mat*x0.getCoords());
 
 	MathLib::Vector3 const x1(10.0,0.0,10.0);
-	MathLib::Vector3 const r1(rot_mat*x1.getCoords());
-	EXPECT_EQ(10.0, r1[0]);
-	EXPECT_EQ(10.0, r1[1]);
-	EXPECT_EQ(0.0, r1[2]);
+	test3equal(10, 10, 0, rot_mat*x1.getCoords());
 }
 
 TEST(GeoLib, ComputeRotationMatrixToXYpositive)
@@ -64,21 +64,12 @@ TEST(GeoLib, ComputeRotationMatrixToXYpositive)
 	EXPECT_EQ(0.0, rot_mat(2,2));
 
 	MathLib::Vector3 const x(0.0,1.0,0.0);
-	MathLib::Vector3 const result(rot_mat*x.getCoords());
-	EXPECT_EQ(0.0, result[0]);
-	EXPECT_EQ(0.0, result[1]);
-	EXPECT_EQ(1.0, result[2]);
+	test3equal(0, 0, 1, rot_mat*x.getCoords());
 
 	MathLib::Vector3 const x0(10.0,1.0,0.0);
-	MathLib::Vector3 const r0(rot_mat*x0.getCoords());
-	EXPECT_EQ(10.0, r0[0]);
-	EXPECT_EQ(0.0, r0[1]);
-	EXPECT_EQ(1.0, r0[2]);
+	test3equal(10, 0, 1, rot_mat*x0.getCoords());
 
 	MathLib::Vector3 const x1(10.0,0.0,10.0);
-	MathLib::Vector3 const r1(rot_mat*x1.getCoords());
-	EXPECT_EQ(10.0, r1[0]);
-	EXPECT_EQ(-10.0, r1[1]);
-	EXPECT_EQ(0.0, r1[2]);
+	test3equal(10, -10, 0, rot_mat*x1.getCoords());
 }
 
