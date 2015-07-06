@@ -98,11 +98,17 @@ inline void ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>::setZero()
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 void ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>::resize(std::size_t const dim, std::size_t n_nodes)
 {
+    resize(dim, dim, n_nodes);
+}
+
+template <class T_N, class T_DNDR, class T_J, class T_DNDX>
+void ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>::resize(std::size_t const local_dim, std::size_t const global_dim, std::size_t n_nodes)
+{
     N.resize(n_nodes);
-    dNdr.resize(dim, n_nodes);
-    J.resize(dim, dim);
-    invJ.resize(dim, dim);
-    dNdx.resize(dim, n_nodes);
+    dNdr.resize(local_dim, n_nodes);
+    J.resize(local_dim, local_dim);
+    invJ.resize(local_dim, local_dim);
+    dNdx.resize(global_dim, n_nodes);
 
     setZero();
 }
