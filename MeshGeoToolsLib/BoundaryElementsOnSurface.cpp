@@ -36,8 +36,8 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 		for (unsigned i=0; i<e->getNFaces(); i++) {
 			auto* face = e->getFace(i);
 			// check
-			size_t cnt_match = 0;
-			for (size_t j=0; j<face->getNBaseNodes(); j++) {
+			std::size_t cnt_match = 0;
+			for (std::size_t j=0; j<face->getNBaseNodes(); j++) {
 				if (std::find(node_ids_on_sfc.begin(), node_ids_on_sfc.end(), face->getNodeIndex(j)) != node_ids_on_sfc.end())
 					cnt_match++;
 				else

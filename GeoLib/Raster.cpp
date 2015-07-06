@@ -19,8 +19,8 @@
 #include "Raster.h"
 
 // BaseLib
-#include "FileTools.h"
-#include "StringTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib {
 
@@ -73,9 +73,9 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 	MathLib::Point3d const& ll(sfc.getAABB().getMinPoint());
 	MathLib::Point3d const& ur(sfc.getAABB().getMaxPoint());
 
-	const std::size_t n_cols = static_cast<std::size_t>(std::fabs(ur[0]-ll[0]) / cell_size)+1;
-	const std::size_t n_rows = static_cast<std::size_t>(std::fabs(ur[1]-ll[1]) / cell_size)+1;
-	const std::size_t n_triangles (sfc.getNTriangles());
+	const std::size_t n_cols = static_cast<std::size_t>(std::abs(ur[0]-ll[0]) / cell_size)+1;
+	const std::size_t n_rows = static_cast<std::size_t>(std::abs(ur[1]-ll[1]) / cell_size)+1;
+	const std::size_t n_triangles(sfc.getNTriangles());
 	double *z_vals (new double[n_cols*n_rows]);
 	std::size_t k(0);
 
@@ -84,7 +84,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 			const double test_pnt[3] = { ll[0] + r*cell_size, ll[1] + c*cell_size, 0};
 			for (k=0; k<n_triangles; k++) {
 				if (sfc[k]->containsPoint2D(test_pnt)) {
-					Triangle const * const tri (sfc[k]);
+					GeoLib::Triangle const * const tri (sfc[k]);
 					// compute coefficients c0, c1, c2 for the plane f(x,y) = c0 x + c1 y + c2
 					double coeff[3] = {0.0, 0.0, 0.0};
 					GeoLib::getPlaneCoefficients(*tri, coeff);

@@ -151,7 +151,7 @@ public:
 	}
 
 	/// Return the name of an element based on its ID.
-	void setNameOfElementByID (std::size_t id, std::string& element_name)
+	void setNameOfElementByID (std::size_t id, std::string const& element_name)
 	{
 		_name_id_map->insert(NameIdPair(element_name, id));
 	}

@@ -33,7 +33,7 @@ MeshNodesAlongPolyline::MeshNodesAlongPolyline(
 	const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
 	auto &mesh_nodes = _mesh.getNodes();
 	// loop over all nodes
-	for (size_t i = 0; i < n_nodes; i++) {
+	for (std::size_t i = 0; i < n_nodes; i++) {
 		double dist = _ply.getDistanceAlongPolyline(*mesh_nodes[i], epsilon_radius);
 		if (dist >= 0.0) {
 			_msh_node_ids.push_back(mesh_nodes[i]->getID());
@@ -51,7 +51,7 @@ MeshLib::Mesh const& MeshNodesAlongPolyline::getMesh () const
 	return _mesh;
 }
 
-std::vector<size_t> const& MeshNodesAlongPolyline::getNodeIDs () const
+std::vector<std::size_t> const& MeshNodesAlongPolyline::getNodeIDs () const
 {
 	return _msh_node_ids;
 }
