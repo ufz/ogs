@@ -99,9 +99,13 @@ int main (int argc, char* argv[])
 		auto ex = MeshLib::ElementExtraction(*mesh);
 		ex.searchByElementType(MeshLib::MeshElemType::LINE);
 		auto m = ex.removeMeshElements(mesh->getName()+"-withoutLines");
-		INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
-		std::swap(m, mesh);
-		delete m;
+		if (m != nullptr) {
+			INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
+			std::swap(m, mesh);
+			delete m;
+		} else {
+			INFO("Mesh does not contain any lines.");
+		}
 	}
 
 	// *** write mesh in new format
