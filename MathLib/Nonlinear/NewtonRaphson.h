@@ -87,7 +87,7 @@ public:
     double getRelDxError() const {return _dx_rel_error; }
 
 private:
-#ifdef NDEBUG
+#ifdef DEBUG_NEWTON_RAPHSON
     /// print out for debugging
     template<class T_VALUE>
     inline void printout(std::ostream& os, std::size_t i, T_VALUE& x_new, T_VALUE& r, T_VALUE& dx);

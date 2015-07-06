@@ -9,6 +9,7 @@ target_link_libraries(ogs
     FileIO
     InSituLib
     MeshLib
+    NumLib
     ${Boost_LIBRARIES}
     ${CATALYST_LIBRARIES}
 

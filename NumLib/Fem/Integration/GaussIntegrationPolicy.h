@@ -10,16 +10,16 @@
 #ifndef NUMLIB_GAUSSINTEGRATIONPOLICY_H_
 #define NUMLIB_GAUSSINTEGRATIONPOLICY_H_
 
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
+
 #include "NumLib/Fem/Integration/IntegrationGaussRegular.h"
 #include "NumLib/Fem/Integration/IntegrationGaussTri.h"
 #include "NumLib/Fem/Integration/IntegrationGaussTet.h"
 #include "NumLib/Fem/Integration/IntegrationGaussPrism.h"
 #include "NumLib/Fem/Integration/IntegrationGaussPyramid.h"
-
-#include "MeshLib/Elements/Tri.h"
-#include "MeshLib/Elements/Tet.h"
-#include "MeshLib/Elements/Prism.h"
-#include "MeshLib/Elements/Pyramid.h"
 
 namespace NumLib
 {
