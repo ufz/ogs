@@ -18,7 +18,8 @@
 namespace MeshLib {
 
 Node::Node(const double coords[3], std::size_t id)
-	: MathLib::Point3dWithID(coords, id)
+	: MathLib::Point3dWithID(
+		std::array<double,3>{{coords[0], coords[1], coords[2]}}, id)
 {
 }
 
@@ -33,7 +34,7 @@ Node::Node(double x, double y, double z, std::size_t id)
 }
 
 Node::Node(const Node &node)
-	: MathLib::Point3dWithID(node.getCoords(), node.getID())
+	: MathLib::Point3dWithID(node._x, node.getID())
 {
 }
 
