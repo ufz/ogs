@@ -60,6 +60,10 @@ int main(int argc, char *argv[])
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
 
+#ifdef USE_LIS
+	lis_initialize(&argc, &argv);
+#endif
+
 	// Project's configuration
 	ConfigTree project_config;
 
@@ -95,6 +99,10 @@ int main(int argc, char *argv[])
 	delete fmt;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
+
+#ifdef USE_LIS
+	lis_finalize();
+#endif
 
 	return 0;
 }
