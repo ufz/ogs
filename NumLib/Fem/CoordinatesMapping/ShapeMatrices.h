@@ -15,6 +15,9 @@
 
 #include <ostream>
 
+#ifdef OGS_USE_EIGEN
+#include <Eigen/Eigen>
+#endif
 namespace NumLib
 {
 
@@ -115,6 +118,11 @@ struct ShapeMatrices
      * @param out the output stream
      */
     void write (std::ostream& out) const;
+
+#ifdef OGS_USE_EIGEN
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
+
 }; // ShapeMatrices
 
 
