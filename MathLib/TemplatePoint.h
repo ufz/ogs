@@ -42,12 +42,12 @@ public:
 	 *
 	 * @param x std::array containing the coordinates of the point
 	 */
-	TemplatePoint(std::array<T,DIM> const& x);
+	explicit TemplatePoint(std::array<T,DIM> const& x);
 
 	/** constructor - constructs a TemplatePoint object
 	   \param x values for three coordinates
 	 */
-	TemplatePoint (T const* x);
+	explicit TemplatePoint (T const* x);
 
 	/** virtual destructor */
 	virtual ~TemplatePoint() {}
