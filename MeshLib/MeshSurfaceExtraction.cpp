@@ -190,19 +190,18 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
 				if ((*elem)->getNeighbor(j) != nullptr)
 					continue;
 
-				const MeshLib::Element* face = (*elem)->getFace(j);
+				auto const face = std::unique_ptr<MeshLib::Element const>{(*elem)->getFace(j)};
 				if (!complete_surface)
 				{
-					if (MathLib::scalarProduct(FaceRule::getSurfaceNormal(face).getNormalizedVector(), norm_dir) < cos_theta)
+					if (MathLib::scalarProduct(FaceRule::getSurfaceNormal(face.get()).getNormalizedVector(), norm_dir) < cos_theta)
 					{
-						delete face;
 						continue;
 					}
 				}
 				if (face->getGeomType() == MeshElemType::TRIANGLE)
-					sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face)));
+					sfc_elements.push_back(new MeshLib::Tri(*static_cast<const MeshLib::Tri*>(face.get())));
 				else
-					sfc_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face)));
+					sfc_elements.push_back(new MeshLib::Quad(*static_cast<const MeshLib::Quad*>(face.get())));
 			}
 		}
 	}

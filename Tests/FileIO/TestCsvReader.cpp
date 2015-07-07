@@ -71,6 +71,10 @@ TEST_F(CsvInterfaceTest, SimpleReadPoints)
 		ASSERT_TRUE((*points[i])[1] == (*points2[i])[0]);
 		ASSERT_TRUE((*points[i])[2] == (*points2[i])[1]);
 	}
+	for (auto p : points)
+		delete p;
+	for (auto p : points2)
+		delete p;
 }
 
 /// Dealing with unconvertable data types
@@ -103,6 +107,8 @@ TEST_F(CsvInterfaceTest, MissingValues)
 	ASSERT_EQ(3, _result);
 	ASSERT_EQ(7, points.size());
 	ASSERT_NEAR(437.539, (*points[4])[2], std::numeric_limits<double>::epsilon());
+	for (auto p : points)
+		delete p;
 }
 
 /// Reading 2D points
@@ -114,6 +120,8 @@ TEST_F(CsvInterfaceTest, Points2D)
 	ASSERT_EQ(10, points.size());
 	for (std::size_t i=0; i<points.size(); ++i)
 		ASSERT_NEAR(0, (*points[i])[2], std::numeric_limits<double>::epsilon());
+	for (auto p : points)
+		delete p;
 }
 
 /// Dealing with non-sequential column order
@@ -140,6 +148,12 @@ TEST_F(CsvInterfaceTest, CoordinateOrder)
 		ASSERT_EQ((*points1[i])[0], (*points3[i])[1]);
 		ASSERT_EQ((*points1[i])[1], (*points3[i])[0]);
 	}
+	for (auto p : points1)
+		delete p;
+	for (auto p : points2)
+		delete p;
+	for (auto p : points3)
+		delete p;
 }
 
 /// Getting single columns
