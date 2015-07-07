@@ -136,6 +136,7 @@ bool lineSegmentIntersect(
 				return true;
 			return false;
 		}
+		return false;
 	}
 
 	MathLib::DenseMatrix<double> mat(2,2);
