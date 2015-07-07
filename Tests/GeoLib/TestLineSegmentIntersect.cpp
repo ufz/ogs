@@ -19,7 +19,7 @@
 
 TEST(GeoLib, TestXAxisParallelLineSegmentIntersection2d)
 {
-	// two parallel line segments
+	// two intersecting parallel line segments
 	GeoLib::Point a(0.0, 0.0, 0.0);
 	GeoLib::Point b(1.0, 0.0, 0.0);
 	GeoLib::Point c(0.5, 0.0, 0.0);
@@ -31,7 +31,7 @@ TEST(GeoLib, TestXAxisParallelLineSegmentIntersection2d)
 
 TEST(GeoLib, TestParallelLineSegmentIntersection2d)
 {
-	// two parallel line segments
+	// two intersecting parallel line segments
 	GeoLib::Point a(0.0, 0.0, 0.0);
 	GeoLib::Point b(1.0, 1.0, 0.0);
 	GeoLib::Point c(0.5, 0.5, 0.0);
@@ -41,13 +41,25 @@ TEST(GeoLib, TestParallelLineSegmentIntersection2d)
 	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
 }
 
-TEST(GeoLib, TestNonIntersectingParallelLineSegments2d)
+TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseI)
 {
 	// two non intersecting parallel line segments
 	GeoLib::Point a(0.0, 0.0, 0.0);
 	GeoLib::Point b(1.0, 1.0, 0.0);
 	GeoLib::Point c(1.5, 1.5, 0.0);
 	GeoLib::Point d(2.5, 2.5, 0.0);
+	GeoLib::Point s;
+
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+}
+
+TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseII)
+{
+	// two non intersecting parallel line segments
+	GeoLib::Point a(0.0, 1.0, 0.0);
+	GeoLib::Point b(1.0, 0.0, 0.0);
+	GeoLib::Point c(0.0, -1.0, 0.0);
+	GeoLib::Point d(-1.0, 0.0, 0.0);
 	GeoLib::Point s;
 
 	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
