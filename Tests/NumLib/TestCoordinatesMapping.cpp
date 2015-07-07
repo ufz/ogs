@@ -311,7 +311,7 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 	double exp_dNdx[2*e_nnodes] = {0, 0, -0.5, 0.5};
 	ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), eps);
 
-	for (auto n = 0; n < line->getNNodes(); ++n)
+	for (auto n = 0u; n < line->getNNodes(); ++n)
 		delete line->getNode(n);
 	delete line;
 }
