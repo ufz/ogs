@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"

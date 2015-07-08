@@ -13,12 +13,14 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
+namespace GeoLib
+{
+	class GEOObjects;
+}
 #ifdef OGS_BUILD_GUI
 #include "Applications/DataExplorer/DataView/GEOModels.h"
-#else
-#include "GeoLib/GEOObjects.h"
 #endif
 
 #include "ProcessLib/ProcessVariable.h"

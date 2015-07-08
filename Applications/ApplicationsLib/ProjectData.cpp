@@ -15,8 +15,8 @@
 
 #include <algorithm>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include "BaseLib/FileTools.h"
 
@@ -25,6 +25,12 @@
 // FileIO
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
+
+#ifdef OGS_BUILD_GUI
+#include "Applications/DataExplorer/DataView/GEOModels.h"
+#else
+#include "GeoLib/GEOObjects.h"
+#endif
 
 namespace detail
 {

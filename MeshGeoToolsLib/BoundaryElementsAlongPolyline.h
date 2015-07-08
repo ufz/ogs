@@ -29,7 +29,7 @@ class MeshNodeSearcher;
  * This class collects element edges located along a polyline.
  * Note that internal edges are not collected in this class.
  */
-class BoundaryElementsAlongPolyline
+class BoundaryElementsAlongPolyline final
 {
 public:
 	/**
@@ -41,7 +41,7 @@ public:
 	BoundaryElementsAlongPolyline(MeshLib::Mesh const& mesh, MeshNodeSearcher &mshNodeSearcher, GeoLib::Polyline const& ply);
 
 	/// destructor
-	virtual ~BoundaryElementsAlongPolyline();
+	~BoundaryElementsAlongPolyline();
 
 	/// return the mesh object
 	MeshLib::Mesh const& getMesh() const {return _mesh;}

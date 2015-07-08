@@ -11,7 +11,10 @@
 #define PROCESS_LIB_NEUMANN_BC_CONFIG_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include "logog/include/logog.hpp"
+extern template class boost::property_tree::basic_ptree<std::basic_string<char>,
+      std::basic_string<char>, std::less<std::basic_string<char> > >;
+
+#include <logog/include/logog.hpp>
 
 #include "MathLib/ConstantFunction.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
