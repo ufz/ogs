@@ -62,7 +62,10 @@ double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) con
 	return val;
 }
 
-double LinearInterpolationOnSurface::interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const
+double LinearInterpolationOnSurface::interpolateInTri(
+	const GeoLib::Triangle &tri,
+	double const* const vertex_values,
+	MathLib::Point3d const& pnt) const
 {
 	std::vector<GeoLib::Point> pnts;
 	for (unsigned i=0; i<3; i++)
