@@ -81,7 +81,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 
 	for (std::size_t r(0); r < n_cols; r++) {
 		for (std::size_t c(0); c < n_rows; c++) {
-			const double test_pnt[3] = { ll[0] + r*cell_size, ll[1] + c*cell_size, 0};
+			GeoLib::Point const test_pnt = { ll[0] + r*cell_size, ll[1] + c*cell_size, 0};
 			for (k=0; k<n_triangles; k++) {
 				if (sfc[k]->containsPoint2D(test_pnt)) {
 					GeoLib::Triangle const * const tri (sfc[k]);

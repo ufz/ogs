@@ -248,7 +248,7 @@ std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib
 	std::vector<GeoLib::Point*> surface_pnts(nNodes);
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
-		surface_pnts[i] = new GeoLib::Point(sfc_nodes[i]->getCoords(), sfc_nodes[i]->getID());
+		surface_pnts[i] = new GeoLib::Point(*(sfc_nodes[i]), sfc_nodes[i]->getID());
 		delete sfc_nodes[i];
 	}
 	return surface_pnts;

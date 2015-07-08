@@ -220,7 +220,7 @@ int main (int argc, char* argv[])
 	std::vector<GeoLib::Point> pnts_with_id;
 	const size_t n_merged_pnts(merged_pnts->size());
 	for(std::size_t k(0); k<n_merged_pnts; ++k) {
-		pnts_with_id.emplace_back((*merged_pnts)[k]->getCoords(), k);
+		pnts_with_id.emplace_back(*((*merged_pnts)[k]), k);
 	}
 
 	std::sort(pnts_with_id.begin(), pnts_with_id.end(),

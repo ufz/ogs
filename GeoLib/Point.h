@@ -48,8 +48,8 @@ public:
 		GeoLib::GeoObject()
 	{}
 
-	Point(Point const& p, std::size_t id) :
-		MathLib::Point3dWithID(p, id), GeoLib::GeoObject()
+	Point(MathLib::Point3d const& x, std::size_t id) :
+		MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
 	{}
 
 	Point(std::array<double,3> const& x,
