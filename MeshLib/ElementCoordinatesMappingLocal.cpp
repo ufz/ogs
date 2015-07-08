@@ -74,7 +74,7 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     assert(e.getDimension() <= global_coords.getDimension());
     _points.reserve(e.getNNodes());
     for(unsigned i = 0; i < e.getNNodes(); i++)
-        _points.emplace_back(e.getNode(i)->getCoords());
+        _points.emplace_back(*(e.getNode(i)));
 
     auto const element_dimension = e.getDimension();
     auto const global_dimension = global_coords.getDimension();

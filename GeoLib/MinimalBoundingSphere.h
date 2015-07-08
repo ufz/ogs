@@ -46,7 +46,7 @@ public:
     MinimalBoundingSphere(std::vector<MathLib::Point3d*> const& points);
 
     /// Returns the center point of the sphere
-    MathLib::Point3d getCenter() const { return MathLib::Point3d(_center.getCoords()); }
+    MathLib::Point3d getCenter() const { return MathLib::Point3d(_center); }
 
     /// Returns the radius of the sphere
     double getRadius() const {return _radius; }
