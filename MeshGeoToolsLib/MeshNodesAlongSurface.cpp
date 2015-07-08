@@ -32,9 +32,9 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(
 	// loop over all nodes
 	for (std::size_t i = 0; i < n_nodes; i++) {
 		auto* node = mesh_nodes[i];
-		if (!sfc.isPntInBoundingVolume(node->getCoords()))
+		if (!sfc.isPntInBoundingVolume(*node))
 			continue;
-		if (sfc.isPntInSfc(node->getCoords())) {
+		if (sfc.isPntInSfc(*node)) {
 			_msh_node_ids.push_back(node->getID());
 		}
 	}
