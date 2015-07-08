@@ -63,7 +63,7 @@ void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pn
 	_longest_edge = sqrt (_longest_edge);
 }
 
-bool Triangle::containsPoint(Point const& q, double eps) const
+bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
 {
 	GeoLib::Point const& a(*(_pnts[_pnt_ids[0]]));
 	GeoLib::Point const& b(*(_pnts[_pnt_ids[1]]));
