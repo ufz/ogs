@@ -43,11 +43,6 @@ public:
 		MathLib::Point3dWithID(), GeoLib::GeoObject()
 	{}
 
-	Point(double const* x) :
-		MathLib::Point3dWithID(std::array<double,3>({{x[0], x[1], x[2]}}), 0),
-		GeoLib::GeoObject()
-	{}
-
 	Point(MathLib::Point3d const& x, std::size_t id) :
 		MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
 	{}
