@@ -52,7 +52,7 @@ void GMSHAdaptiveMeshDensity::init(std::vector<GeoLib::Point const*> const& pnts
 	// *** QuadTree - determining bounding box
 	DBUG("GMSHAdaptiveMeshDensity::init(): computing axis aligned bounding box (2D) for quadtree.");
 
-	GeoLib::Point min(pnts[0]->getCoords()), max(pnts[0]->getCoords());
+	GeoLib::Point min(*pnts[0]), max(*pnts[0]);
 	std::size_t n_pnts(pnts.size());
 	for (std::size_t k(1); k<n_pnts; k++) {
 		for (std::size_t j(0); j < 2; j++)

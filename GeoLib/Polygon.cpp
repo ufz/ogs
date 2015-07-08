@@ -479,7 +479,7 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, doubl
 	double angle (2.0 * M_PI / resolution);
 	for (std::size_t k(0); k < resolution; k++)
 	{
-		GeoLib::Point* pnt (new GeoLib::Point(middle_pnt.getCoords()));
+		GeoLib::Point* pnt(new GeoLib::Point(middle_pnt));
 		(*pnt)[0] += radius * cos (k * angle);
 		(*pnt)[1] += radius * sin (k * angle);
 		pnts.push_back (pnt);

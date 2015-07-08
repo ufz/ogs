@@ -47,7 +47,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
 	// 1 copy all mesh nodes to GeoLib::Points
 	std::vector<GeoLib::Point*> rotated_nodes;
 	for (std::size_t j(0); j < nodes.size(); j++)
-		rotated_nodes.push_back(new GeoLib::Point(nodes[j]->getCoords()));
+		rotated_nodes.push_back(new GeoLib::Point(*nodes[j], nodes[j]->getID()));
 	// 2 rotate the Points
 	MathLib::DenseMatrix<double> rot_mat(3,3);
 	GeoLib::computeRotationMatrixToXY(normal, rot_mat);
