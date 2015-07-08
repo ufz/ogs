@@ -153,8 +153,7 @@ float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 
 double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const
 {
-	double coords[3] = {x,y,0};
-	const MeshLib::Node* pnt = _grid->getNearestPoint(coords);
+	const MeshLib::Node* pnt = _grid->getNearestPoint(MathLib::Point3d{{{x,y,0}}});
 	const std::vector<MeshLib::Element*> elements (_mesh->getNode(pnt->getID())->getElements());
 	GeoLib::Point* intersection (nullptr);
 

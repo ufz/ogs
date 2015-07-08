@@ -59,7 +59,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
 		for (size_t k(0); k<n_pnts_for_search; k++) {
-			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]->getCoords()));
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(*pnts_for_search[k]));
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
@@ -83,7 +83,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
 		for (size_t k(0); k<n_pnts_for_search; k++) {
-			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]->getCoords()));
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]));
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	std::vector<GeoLib::Point*> pnts_for_search;
 	unsigned n(std::min(static_cast<unsigned>(nodes.size()), number_arg.getValue()));
 	for (size_t k(0); k<n; k++) {
-		pnts_for_search.push_back(new GeoLib::Point(nodes[k]->getCoords()));
+		pnts_for_search.push_back(new GeoLib::Point(nodes[k]));
 	}
 
 	std::vector<size_t> idx_found_nodes;
