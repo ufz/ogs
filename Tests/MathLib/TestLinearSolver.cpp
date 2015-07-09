@@ -23,6 +23,16 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
+#ifdef OGS_USE_EIGEN
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
+#endif
+
+#if defined(OGS_USE_EIGEN) && defined(USE_LIS)
+#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+#endif
+
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisLinearSolver.h"
 #endif
@@ -200,6 +210,40 @@ TEST(MathLib, CheckInterface_GaussAlgorithm)
     MathLib::GlobalDenseMatrix<double> A(Example1::dim_eqs, Example1::dim_eqs);
     checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>, LinearSolverType>(A, t_root);
 }
+
+#ifdef OGS_USE_EIGEN
+TEST(Math, CheckInterface_Eigen)
+{
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    t_solver.put("solver_type", "CG");
+    t_solver.put("precon_type", "NONE");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+    MathLib::EigenMatrix A(Example1::dim_eqs);
+    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector, MathLib::EigenLinearSolver>(A, t_root);
+}
+#endif
+
+#if defined(OGS_USE_EIGEN) && defined(USE_LIS)
+TEST(Math, CheckInterface_EigenLis)
+{
+    // set solver options using Boost property tree
+    boost::property_tree::ptree t_root;
+    boost::property_tree::ptree t_solver;
+    t_solver.put("solver_type", "CG");
+    t_solver.put("precon_type", "NONE");
+    t_solver.put("error_tolerance", 1e-15);
+    t_solver.put("max_iteration_step", 1000);
+    t_root.put_child("LinearSolver", t_solver);
+
+    MathLib::EigenMatrix A(Example1::dim_eqs);
+    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector, MathLib::EigenLisLinearSolver>(A, t_root);
+}
+#endif
 
 #ifdef USE_LIS
 TEST(Math, CheckInterface_Lis)

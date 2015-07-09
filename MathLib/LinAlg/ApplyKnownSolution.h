@@ -13,6 +13,10 @@
 
 #include "MathLib/LinAlg/Dense/DenseTools.h"
 
+#ifdef OGS_USE_EIGEN
+#include "MathLib/LinAlg/Eigen/EigenTools.h"
+#endif // USE_LIS
+
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisTools.h"
 #endif // USE_LIS

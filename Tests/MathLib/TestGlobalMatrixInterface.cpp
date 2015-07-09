@@ -19,6 +19,10 @@
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 
+#ifdef OGS_USE_EIGEN
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#endif
+
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 #endif
@@ -168,6 +172,14 @@ TEST(Math, CheckInterface_GlobalDenseMatrix)
     MathLib::GlobalDenseMatrix<double> m(10, 10);
     checkGlobalMatrixInterface(m);
 }
+
+#ifdef OGS_USE_EIGEN
+TEST(Math, CheckInterface_EigenMatrix)
+{
+    MathLib::EigenMatrix m(10);
+    checkGlobalMatrixInterface(m);
+}
+#endif
 
 #ifdef USE_LIS
 TEST(Math, CheckInterface_LisMatrix)
