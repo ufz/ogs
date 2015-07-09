@@ -81,7 +81,9 @@ private:
 	 * @param pnt
 	 * @return
 	 */
-	double interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const;
+	double interpolateInTri(const GeoLib::Triangle &tri,
+		double const* const vertex_values,
+		MathLib::Point3d const& pnt) const;
 
 	/// a surface object
 	const GeoLib::Surface& _sfc;

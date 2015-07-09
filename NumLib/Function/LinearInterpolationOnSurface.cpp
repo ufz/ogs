@@ -41,10 +41,9 @@ LinearInterpolationOnSurface::LinearInterpolationOnSurface(
 
 double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) const
 {
-	const double* coords = pnt.getCoords();
-	if (!_sfc.isPntInBoundingVolume(coords))
+	if (!_sfc.isPntInBoundingVolume(pnt))
 		return _default_value;
-	auto* tri = _sfc.findTriangle(coords);
+	auto* tri = _sfc.findTriangle(pnt);
 	if (tri == nullptr)
 		return _default_value;
 
@@ -58,11 +57,14 @@ double LinearInterpolationOnSurface::operator()(const MathLib::Point3d& pnt) con
 			pnt_values[j] = _default_value;
 		}
 	}
-	double val = interpolateInTri(*tri, pnt_values.data(), coords);
+	double val = interpolateInTri(*tri, pnt_values.data(), pnt);
 	return val;
 }
 
-double LinearInterpolationOnSurface::interpolateInTri(const GeoLib::Triangle &tri, double const* const vertex_values, double const* const pnt) const
+double LinearInterpolationOnSurface::interpolateInTri(
+	const GeoLib::Triangle &tri,
+	double const* const vertex_values,
+	MathLib::Point3d const& pnt) const
 {
 	std::vector<GeoLib::Point> pnts;
 	for (unsigned i=0; i<3; i++)

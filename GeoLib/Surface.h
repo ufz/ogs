@@ -61,14 +61,14 @@ public:
 	/**
 	 * is the given point in the bounding volume of the surface
 	 */
-	bool isPntInBoundingVolume(Point const& pnt) const;
+	bool isPntInBoundingVolume(MathLib::Point3d const& pnt) const;
 
 	/**
 	 * is the given point pnt located in the surface
 	 * @param pnt the point
 	 * @return true if the point is contained in the surface
 	 */
-	bool isPntInSfc (Point const& pnt) const;
+	bool isPntInSfc(MathLib::Point3d const& pnt) const;
 
 	/**
 	 * find a triangle in which the given point is located
@@ -76,7 +76,7 @@ public:
 	 * @return a pointer to a triangle. nullptr is returned if the point is not
 	 * contained in the surface
 	 */
-	const Triangle* findTriangle (Point const& pnt) const;
+	const Triangle* findTriangle(MathLib::Point3d const& pnt) const;
 
 	const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
 

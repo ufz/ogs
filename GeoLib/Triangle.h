@@ -68,7 +68,7 @@ public:
 	 * @param eps Checks the 'epsilon'-neighbourhood
 	 * @return true, if point is in triangle, else false
 	 */
-	bool containsPoint(Point const& q, double eps = std::numeric_limits<float>::epsilon()) const;
+	bool containsPoint(MathLib::Point3d const& q, double eps = std::numeric_limits<float>::epsilon()) const;
 
 	/**
 	 * projects the triangle points to the x-y-plane and

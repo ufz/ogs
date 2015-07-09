@@ -131,7 +131,8 @@ public:
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or nullptr
 	 */
-	POINT* getNearestPoint(POINT const& pnt) const
+	template <typename P>
+	POINT* getNearestPoint(P const& pnt) const
 	{
 		std::size_t coords[3];
 		getGridCoords(pnt, coords);
@@ -201,7 +202,7 @@ public:
 			} // end while
 		} // end else
 
-		double len (sqrt(MathLib::sqrDist(pnt.getCoords(), nearest_pnt->getCoords())));
+		double len(sqrt(MathLib::sqrDist(pnt, *nearest_pnt)));
 		// search all other grid cells within the cube with the edge nodes
 		std::vector<std::vector<POINT*> const*> vecs_of_pnts;
 		getPntVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
@@ -211,7 +212,7 @@ public:
 			std::vector<POINT*> const& pnts(*(vecs_of_pnts[j]));
 			const std::size_t n_pnts(pnts.size());
 			for (std::size_t k(0); k<n_pnts; k++) {
-				const double sqr_dist (MathLib::sqrDist(pnt.getCoords(), pnts[k]->getCoords()));
+				const double sqr_dist(MathLib::sqrDist(pnt, *pnts[k]));
 				if (sqr_dist < sqr_min_dist) {
 					sqr_min_dist = sqr_dist;
 					nearest_pnt = pnts[k];
@@ -232,7 +233,9 @@ public:
 	 * @param pnts (output) vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
-	void getPntVecsOfGridCellsIntersectingCube(POINT const& center, double half_len, std::vector<std::vector<POINT*> const*>& pnts) const;
+	template <typename P>
+	void getPntVecsOfGridCellsIntersectingCube(P const& center, double half_len,
+		std::vector<std::vector<POINT*> const*>& pnts) const;
 
 	void getPntVecsOfGridCellsIntersectingCuboid(
 		MathLib::Point3d const& min_pnt,
@@ -354,11 +357,13 @@ private:
 	 * ordered in the same sequence as above described
 	 * @param coords coordinates of the grid cell
 	 */
-	void getPointCellBorderDistances(POINT const& pnt,
+	template <typename P>
+	void getPointCellBorderDistances(P const& pnt,
 	                                 double dists[6],
 	                                 std::size_t const* const coords) const;
 
-	bool calcNearestPointInGridCell(POINT const& pnt, std::size_t const* const coords,
+	template <typename P>
+	bool calcNearestPointInGridCell(P const& pnt, std::size_t const* const coords,
 	                                double &sqr_min_dist,
 	                                POINT* &nearest_pnt) const
 	{
@@ -367,7 +372,7 @@ private:
 		if (pnts.empty()) return false;
 
 		const std::size_t n_pnts(pnts.size());
-		sqr_min_dist = MathLib::sqrDist(pnts[0]->getCoords(), pnt.getCoords());
+		sqr_min_dist = MathLib::sqrDist(*pnts[0], pnt);
 		nearest_pnt = pnts[0];
 		for (std::size_t i(1); i < n_pnts; i++) {
 			const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt.getCoords()));
@@ -393,11 +398,13 @@ private:
 };
 
 template<typename POINT>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(POINT const& center,
+template <typename P>
+void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
                                                         double half_len,
                                                         std::vector<std::vector<POINT*> const*>& pnts) const
 {
-	double tmp_pnt[3] = { center[0] - half_len, center[1] - half_len, center[2] - half_len }; // min
+	MathLib::Point3d tmp_pnt{
+		{{center[0]-half_len, center[1]-half_len, center[2]-half_len}}}; // min
 	std::size_t min_coords[3];
 	getGridCoords(tmp_pnt, min_coords);
 
@@ -543,7 +550,8 @@ void Grid<POINT>::getGridCoords(T const& pnt, std::size_t* coords) const
 }
 
 template <typename POINT>
-void Grid<POINT>::getPointCellBorderDistances(POINT const& pnt,
+template <typename P>
+void Grid<POINT>::getPointCellBorderDistances(P const& pnt,
                                               double dists[6],
                                               std::size_t const* const coords) const
 {

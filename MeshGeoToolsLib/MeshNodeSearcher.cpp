@@ -74,7 +74,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 
 boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
 {
-	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt.getCoords());
+	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt);
 	if (found)
 		return found->getID();
 	else
