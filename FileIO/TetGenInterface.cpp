@@ -70,7 +70,7 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 	points->reserve(nNodes);
 	for (std::size_t k(0); k<nNodes; ++k)
 	{
-		points->push_back(new GeoLib::Point(nodes[k]->getCoords()));
+		points->push_back(new GeoLib::Point(*(nodes[k]), nodes[k]->getID()));
 		delete nodes[k];
 	}
 	std::string geo_name (BaseLib::extractBaseNameWithoutExtension(geo_fname));

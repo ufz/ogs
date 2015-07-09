@@ -330,14 +330,6 @@ double calcTriangleArea(MathLib::Point3d const& a,
 	return 0.5 * w.getLength();
 }
 
-double calcTetrahedronVolume(const double* x1, const double* x2, const double* x3, const double* x4)
-{
-	const MathLib::Vector3 ab(x1, x2);
-	const MathLib::Vector3 ac(x1, x3);
-	const MathLib::Vector3 ad(x1, x4);
-	return std::abs(GeoLib::scalarTriple(ac, ad, ab)) / 6.0;
-}
-
 double calcTetrahedronVolume(MathLib::Point3d const& x1,
 	MathLib::Point3d const& x2,
 	MathLib::Point3d const& x3,

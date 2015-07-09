@@ -41,7 +41,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
 
 	for (unsigned i=0; i<nNodes; ++i)
-		(*points)[i] = new GeoLib::Point(nodes[i]->getCoords());
+		(*points)[i] = new GeoLib::Point(*nodes[i], nodes[i]->getID());
 
 	std::string mesh_name (mesh.getName());
 	geo_objects.addPointVec(points, mesh_name, nullptr, eps);

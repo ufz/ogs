@@ -42,12 +42,8 @@ public:
 	 *
 	 * @param x std::array containing the coordinates of the point
 	 */
-	TemplatePoint(std::array<T,DIM> const& x);
+	explicit TemplatePoint(std::array<T,DIM> const& x);
 
-	/** constructor - constructs a TemplatePoint object
-	   \param x values for three coordinates
-	 */
-	TemplatePoint (T const* x);
 
 	/** virtual destructor */
 	virtual ~TemplatePoint() {}
@@ -112,12 +108,6 @@ template <typename T, std::size_t DIM>
 TemplatePoint<T,DIM>::TemplatePoint(std::array<T,DIM> const& x) :
 	_x(x)
 {}
-
-template <typename T, std::size_t DIM>
-TemplatePoint<T, DIM>::TemplatePoint (T const* x)
-{
-	std::copy_n(x, DIM, _x.begin());
-}
 
 /** overload the output operator for class Point */
 template <typename T, std::size_t DIM>

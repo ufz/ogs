@@ -130,14 +130,14 @@ public:
 	}
 
 protected:
-	MathLib::Point3d _min_pnt = std::array<double,3>{{
+	MathLib::Point3d _min_pnt = MathLib::Point3d{std::array<double,3>{{
 		std::numeric_limits<double>::max(),
 		std::numeric_limits<double>::max(),
-		std::numeric_limits<double>::max()}};
-	MathLib::Point3d _max_pnt = std::array<double,3>{{
+		std::numeric_limits<double>::max()}}};
+	MathLib::Point3d _max_pnt = MathLib::Point3d{std::array<double,3>{{
 		std::numeric_limits<double>::lowest(),
 		std::numeric_limits<double>::lowest(),
-		std::numeric_limits<double>::lowest()}};
+		std::numeric_limits<double>::lowest()}}};
 private:
 	void init(PNT_TYPE const & pnt)
 	{

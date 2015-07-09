@@ -51,7 +51,7 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 		new std::map<std::string, std::size_t>);
 	std::size_t cnt(0);
 	for (std::size_t id: node_ids) {
-		pnts->push_back(new GeoLib::Point(nodes[id]->getCoords()));
+		pnts->push_back(new GeoLib::Point(*(nodes[id]), nodes[id]->getID()));
 		pnt_names->insert(std::pair<std::string, std::size_t>(
 			geo_name+"-PNT-"+std::to_string(cnt), cnt));
 		cnt++;
