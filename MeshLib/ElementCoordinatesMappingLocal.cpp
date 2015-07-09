@@ -28,7 +28,7 @@ void rotateToLocal(
     std::vector<MathLib::Point3d> &points)
 {
     for (auto& p : points)
-        p.setCoords((matR2local*p).getCoords());
+        p = matR2local*p;
 }
 
 /// get a rotation matrix to the global coordinates
