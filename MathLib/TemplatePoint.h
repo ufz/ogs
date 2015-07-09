@@ -44,7 +44,6 @@ public:
 	 */
 	explicit TemplatePoint(std::array<T,DIM> const& x);
 
-
 	/** virtual destructor */
 	virtual ~TemplatePoint() {}
 
@@ -72,13 +71,6 @@ public:
 	const T* getCoords () const
 	{
 		return _x.data();
-	}
-
-	/** set the coordinates of the point */
-	void setCoords (const T* coords)
-	{
-		for (unsigned i=0; i<DIM; i++)
-			_x[i] = coords[i];
 	}
 
 	/** write point coordinates into stream (used from operator<<)
