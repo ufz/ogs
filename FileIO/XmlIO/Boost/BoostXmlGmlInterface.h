@@ -68,6 +68,9 @@ private:
 	                  const std::vector<std::size_t>& pnt_id_map,
 	                  std::map<std::string, std::size_t>*& sfc_names);
 
+	void addSurfacesToPropertyTree(BaseLib::ConfigTree & pt);
+	void addPolylinesToPropertyTree(boost::property_tree::ptree & geometry_set);
+
 	/// Check if the root node really specifies an GML file
 	bool isGmlFile( BaseLib::ConfigTree const& root) const;
 

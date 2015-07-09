@@ -21,7 +21,6 @@
 
 #include <boost/version.hpp>
 #include <boost/foreach.hpp>
-#include <boost/tokenizer.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <logog/include/logog.hpp>
@@ -32,6 +31,7 @@
 #include "GeoLib/PointVec.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 
 namespace FileIO
 {
@@ -325,6 +325,8 @@ bool BoostXmlGmlInterface::write()
 			pnt_tag.put("<xmlattr>.name", point_name);
 	}
 
+	addSurfacesToPropertyTree(geometry_set);
+
 #if BOOST_VERSION <= 105500
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
 #else
@@ -332,6 +334,49 @@ bool BoostXmlGmlInterface::write()
 #endif  // BOOST_VERSION
 	write_xml(_out, pt, settings);
 	return true;
+}
+
+
+
+void BoostXmlGmlInterface::addSurfacesToPropertyTree(
+	BaseLib::ConfigTree & geometry_set)
+{
+	GeoLib::SurfaceVec const*const sfc_vec(_geo_objects.getSurfaceVecObj(_exportName));
+	if (!sfc_vec) {
+		INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
+			"No surfaces within the geometry \"%s\".", _exportName.c_str());
+		return;
+	}
+
+	std::vector<GeoLib::Surface*> const*const surfaces(sfc_vec->getVector());
+	if (! surfaces) {
+		INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
+			"No surfaces within the geometry \"%s\".", _exportName.c_str());
+		return;
+	}
+
+	if (surfaces->empty()) {
+		INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
+			"No surfaces within the geometry \"%s\".", _exportName.c_str());
+		return;
+	}
+
+	BaseLib::ConfigTree & surfaces_tag = geometry_set.add("surfaces", "");
+	for (std::size_t i=0; i<surfaces->size(); ++i) {
+		GeoLib::Surface const*const surface((*surfaces)[i]);
+		std::string sfc_name("");
+		sfc_vec->getNameOfElement(surface, sfc_name);
+		BaseLib::ConfigTree &surface_tag = surfaces_tag.add("surface", "");
+		surface_tag.put("<xmlattr>.id", i);
+		if (!sfc_name.empty())
+			surface_tag.put("<xmlattr>.name", sfc_name);
+		for (std::size_t j=0; j<surface->getNTriangles(); ++j) {
+			BaseLib::ConfigTree &element_tag = surface_tag.add("element", "");
+			element_tag.put("<xmlattr>.p1", (*(*surface)[j])[0]);
+			element_tag.put("<xmlattr>.p2", (*(*surface)[j])[1]);
+			element_tag.put("<xmlattr>.p3", (*(*surface)[j])[2]);
+		}
+	}
 }
 
 } // end namespace FileIO
