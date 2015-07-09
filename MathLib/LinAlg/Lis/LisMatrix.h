@@ -18,10 +18,10 @@
 #include <string>
 #include <vector>
 
+#include <lis.h>
+
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
-
-#include "lis.h"
 
 #include "LisOption.h"
 #include "LisCheck.h"
@@ -51,6 +51,18 @@ public:
      * @param mat_type default 1 CRS
      */
     LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type = LisOption::MatrixType::CRS);
+
+    /**
+     * constructor using raw CRS data
+     *
+     * Note that the given CRS data will not be deleted in this class.
+     * @param n_rows   the number of rows
+     * @param nonzero  the number of non zero entries
+     * @param row_ptr  array of row pointer indexes
+     * @param col_idx  array of column indexes
+     * @param data     the non-zero entry values
+     */
+    LisMatrix(std::size_t n_rows, int nonzero, int* row_ptr, int* col_idx, double* data);
 
     /**
      *
@@ -129,6 +141,7 @@ private:
     bool _is_assembled;
     LIS_INT _is;	///< location where the partial matrix _AA starts in global matrix.
     LIS_INT _ie;	///< location where the partial matrix _AA ends in global matrix.
+    bool _use_external_arrays;
 
     // friend function
     friend bool finalizeMatrixAssembly(LisMatrix &mat);
