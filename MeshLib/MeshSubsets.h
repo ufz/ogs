@@ -16,7 +16,6 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
-#include <stdexcept>
 #include <vector>
 
 #include "MeshSubset.h"
@@ -45,7 +44,8 @@ public:
         : _mesh_subsets(first, last)
     {
         if (!areMeshSubsetMeshesUnique())
-            throw std::logic_error("Mesh ids of input mesh subsets are not unique.");
+            ERR("Mesh ids of input mesh subsets are not unique.");
+        assert(areMeshSubsetMeshesUnique());
 
         _n_total_items = std::accumulate(first, last, 0u,
             [](std::size_t const& sum, MeshSubset const* const mesh_subset)

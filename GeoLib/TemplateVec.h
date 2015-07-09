@@ -17,7 +17,6 @@
 #define TEMPLATEVEC_H_
 
 #include <algorithm>
-#include <stdexcept>
 #include <map>
 #include <vector>
 #include <string>
@@ -58,9 +57,10 @@ public:
 	             NameIdMap* elem_name_map = nullptr) :
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{
-		if (_data_vec == nullptr) {
-			throw std::invalid_argument("Constructor TemplateVec: vector of data elements is a nullptr.");
-		}
+		if (_data_vec == nullptr)
+			ERR("Constructor TemplateVec: vector of data elements is a nullptr.");
+		assert(_data_vec);
+
 		if (!_name_id_map)
 			_name_id_map = new NameIdMap;
 	}
