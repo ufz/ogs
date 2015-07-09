@@ -32,6 +32,11 @@ install:
   # Boost
   - travis_retry sudo apt-get install -qq libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
 
+  # Eigen
+  - travis_retry wget http://bitbucket.org/eigen/eigen/get/3.2.5.tar.gz
+  - tar -xzf 3.2.5.tar.gz
+  - sudo cp -fR eigen-eigen-bdd17ee3b1b3/* /usr/include/eigen3/
+
   # CMake
   - travis_retry wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.tar.gz
   - tar -xzf cmake-3.1.1-Linux-x86_64.tar.gz
