@@ -9,6 +9,7 @@
 
 #include "EigenLisLinearSolver.h"
 
+#include <boost/property_tree/ptree.hpp>
 #ifdef _OPENMP
 #include <omp.h>
 #endif

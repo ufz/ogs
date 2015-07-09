@@ -9,6 +9,7 @@
 
 #include "EigenLinearSolver.h"
 
+#include <boost/property_tree/ptree.hpp>
 #include <logog/include/logog.hpp>
 #include <unsupported/Eigen/IterativeSolvers>
 
@@ -36,7 +37,7 @@ public:
         // Compute the numerical factorization
         _solver.factorize(A);
         if(_solver.info()!=Eigen::Success) {
-            INFO("\t failed");
+            ERR("The numerical factorization failed in Eigen");
             return;
         }
     }

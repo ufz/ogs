@@ -11,9 +11,10 @@
 #define EIGENMATRIX_H_
 
 #include <cassert>
+#ifndef NDEBUG
 #include <fstream>
-#include <iosfwd>
 #include <string>
+#endif
 
 #include <Eigen/Sparse>
 
@@ -122,6 +123,7 @@ public:
     /// return if this matrix is already assembled or not
     bool isAssembled() const { return true; }
 
+#ifndef NDEBUG
     /// printout this matrix for debugging
     void write(const std::string &filename) const
     {
@@ -138,6 +140,7 @@ public:
               os << it.row() << " " << it.col() << ": " << it.value() << "\n";
         os << std::endl;
     }
+#endif
 
     RawMatrixType& getRawMatrix() { return _mat; }
     const RawMatrixType& getRawMatrix() const { return _mat; }

@@ -23,7 +23,7 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
     typedef EigenMatrix::RawMatrixType SpMat;
     auto &A = A_.getRawMatrix();
     auto &b = b_.getRawVector();
-    const size_t n_rows = A.rows();
+    const std::size_t n_rows = A.rows();
     for (std::size_t ix=0; ix<vec_knownX_id.size(); ix++)
     {
         int row_id = vec_knownX_id[ix];
@@ -32,7 +32,7 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
         for (SpMat::InnerIterator it(A,row_id); it; ++it)
             it.valueRef() = .0;
         //b_i -= A(i,k)*val, i!=k
-        for (size_t i=0; i<n_rows; i++)
+        for (std::size_t i=0; i<n_rows; i++)
             for (SpMat::InnerIterator it(A,i); it; ++it)
             {
                 if (it.col()!=row_id) continue;
@@ -41,7 +41,7 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
         //b_k = val
         b[row_id] = x;
         //A(i, k) = 0., i!=k
-        for (size_t i=0; i<n_rows; i++)
+        for (std::size_t i=0; i<n_rows; i++)
             for (SpMat::InnerIterator it(A,i); it; ++it)
             {
                 if (it.col()!=row_id) continue;

@@ -12,8 +12,7 @@
 
 #include <vector>
 
-#include <boost/any.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 #include "EigenVector.h"
 #include "EigenOption.h"

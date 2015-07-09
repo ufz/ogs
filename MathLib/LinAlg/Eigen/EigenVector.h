@@ -10,9 +10,11 @@
 #ifndef EIGENVECTOR_H_
 #define EIGENVECTOR_H_
 
-#include <string>
 #include <vector>
+#ifndef NDEBUG
 #include <fstream>
+#include <string>
+#endif
 
 #include <Eigen/Eigen>
 
@@ -86,8 +88,10 @@ public:
         }
     }
 
+#ifndef NDEBUG
     /// printout this equation for debugging
     void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
+#endif
 
     /// return a raw Lis vector object
     RawVectorType& getRawVector() {return _vec; }

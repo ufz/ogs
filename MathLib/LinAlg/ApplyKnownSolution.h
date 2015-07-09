@@ -15,7 +15,7 @@
 
 #ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenTools.h"
-#endif // USE_LIS
+#endif // OGS_USE_EIGEN
 
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisTools.h"
