@@ -65,36 +65,36 @@ class LocalDataInitializer
 public:
     LocalDataInitializer()
     {
-        _builder[std::type_index(typeid(MeshLib::Hex20    ))] =
-            [](){ return new LAData<NumLib::ShapeHex20  >; };
-        _builder[std::type_index(typeid(MeshLib::Hex      ))] =
-            [](){ return new LAData<NumLib::ShapeHex8   >; };
-        _builder[std::type_index(typeid(MeshLib::Line     ))] =
-            [](){ return new LAData<NumLib::ShapeLine2  >; };
-        _builder[std::type_index(typeid(MeshLib::Line3    ))] =
-            [](){ return new LAData<NumLib::ShapeLine3  >; };
-        _builder[std::type_index(typeid(MeshLib::Prism15  ))] =
+        _builder[std::type_index(typeid(MeshLib::Hex20))] =
+            [](){ return new LAData<NumLib::ShapeHex20>; };
+        _builder[std::type_index(typeid(MeshLib::Hex))] =
+            [](){ return new LAData<NumLib::ShapeHex8>; };
+        _builder[std::type_index(typeid(MeshLib::Line))] =
+            [](){ return new LAData<NumLib::ShapeLine2>; };
+        _builder[std::type_index(typeid(MeshLib::Line3))] =
+            [](){ return new LAData<NumLib::ShapeLine3>; };
+        _builder[std::type_index(typeid(MeshLib::Prism15))] =
             [](){ return new LAData<NumLib::ShapePrism15>; };
-        _builder[std::type_index(typeid(MeshLib::Prism    ))] =
-            [](){ return new LAData<NumLib::ShapePrism6 >; };
+        _builder[std::type_index(typeid(MeshLib::Prism))] =
+            [](){ return new LAData<NumLib::ShapePrism6>; };
         _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
-            [](){ return new LAData<NumLib::ShapePyra13 >; };
-        _builder[std::type_index(typeid(MeshLib::Pyramid  ))] =
-            [](){ return new LAData<NumLib::ShapePyra5  >; };
-        _builder[std::type_index(typeid(MeshLib::Quad     ))] =
-            [](){ return new LAData<NumLib::ShapeQuad4  >; };
-        _builder[std::type_index(typeid(MeshLib::Quad8    ))] =
-            [](){ return new LAData<NumLib::ShapeQuad8  >; };
-        _builder[std::type_index(typeid(MeshLib::Quad9    ))] =
-            [](){ return new LAData<NumLib::ShapeQuad9  >; };
-        _builder[std::type_index(typeid(MeshLib::Tet10    ))] =
-            [](){ return new LAData<NumLib::ShapeTet10  >; };
-        _builder[std::type_index(typeid(MeshLib::Tet      ))] =
-            [](){ return new LAData<NumLib::ShapeTet4   >; };
-        _builder[std::type_index(typeid(MeshLib::Tri      ))] =
-            [](){ return new LAData<NumLib::ShapeTri3   >; };
-        _builder[std::type_index(typeid(MeshLib::Tri6     ))] =
-            [](){ return new LAData<NumLib::ShapeTri6   >; };
+            [](){ return new LAData<NumLib::ShapePyra13>; };
+        _builder[std::type_index(typeid(MeshLib::Pyramid))] =
+            [](){ return new LAData<NumLib::ShapePyra5>; };
+        _builder[std::type_index(typeid(MeshLib::Quad))] =
+            [](){ return new LAData<NumLib::ShapeQuad4>; };
+        _builder[std::type_index(typeid(MeshLib::Quad8))] =
+            [](){ return new LAData<NumLib::ShapeQuad8>; };
+        _builder[std::type_index(typeid(MeshLib::Quad9))] =
+            [](){ return new LAData<NumLib::ShapeQuad9>; };
+        _builder[std::type_index(typeid(MeshLib::Tet10))] =
+            [](){ return new LAData<NumLib::ShapeTet10>; };
+        _builder[std::type_index(typeid(MeshLib::Tet))] =
+            [](){ return new LAData<NumLib::ShapeTet4>; };
+        _builder[std::type_index(typeid(MeshLib::Tri))] =
+            [](){ return new LAData<NumLib::ShapeTri3>; };
+        _builder[std::type_index(typeid(MeshLib::Tri6))] =
+            [](){ return new LAData<NumLib::ShapeTri6>; };
     }
 
     /// Sets the provided data_ptr to the newly created local assembler data and
