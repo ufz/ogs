@@ -17,12 +17,12 @@
 #define TEMPLATEVEC_H_
 
 #include <algorithm>
+#include <cstdlib>
 #include <map>
 #include <vector>
 #include <string>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 namespace GeoLib
 {
@@ -58,8 +58,10 @@ public:
 		_name(name), _data_vec(data_vec), _name_id_map (elem_name_map)
 	{
 		if (_data_vec == nullptr)
+		{
 			ERR("Constructor TemplateVec: vector of data elements is a nullptr.");
-		assert(_data_vec);
+			std::abort();
+		}
 
 		if (!_name_id_map)
 			_name_id_map = new NameIdMap;
