@@ -15,6 +15,10 @@ target_link_libraries(ogs
 
 )
 
+if(OGS_BUILD_GUI)
+	target_link_libraries(ogs QtDataView VtkVis)
+endif()
+
 ADD_CATALYST_DEPENDENCY(ogs)
 
 if(OGS_USE_PETSC)
