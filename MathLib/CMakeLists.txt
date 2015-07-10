@@ -59,14 +59,6 @@ if(METIS_FOUND)
 	include_directories(${METIS_INCLUDE_DIR})
 endif()
 
-if(OGS_USE_PETSC)
-    include_directories(LinAlg/PETSc)
-
-    GET_SOURCE_FILES(SOURCES_LINALG_PETSC LinAlg/PETSc)
-    set(SOURCES ${SOURCES} ${SOURCES_LINALG_PETSC})
-endif()
-
-
 # Create the library
 add_library(MathLib STATIC ${SOURCES})
 
@@ -81,10 +73,15 @@ if(LAPACK_FOUND)
     target_link_libraries(MathLib INTERFACE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 endif()
 
-if (LIS_FOUND)
+if (OGS_USE_LIS)
     target_link_libraries(MathLib INTERFACE ${LIS_LIBRARIES})
+endif()
+
+if (OGS_USE_PETSC)
+    target_link_libraries(MathLib INTERFACE ${PETSC_LIBRARIES})
 endif()
 
 if(TARGET Boost)
     add_dependencies(MathLib Boost)
 endif()
+
