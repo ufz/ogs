@@ -17,6 +17,7 @@
 
 #include <limits>
 #include <cstddef>
+#include <cstdlib>
 #include <iterator>
 #include <cassert>
 #include <vector>
@@ -72,9 +73,11 @@ public:
 	template <typename InputIterator>
 	AABB(InputIterator first, InputIterator last)
 	{
-		if (!(std::distance(first,last) > 0))
+		if (std::distance(first,last) <= 0)
+		{
 			ERR("AABB::AABB(InputIterator first, InputIterator last): first > last");
-		assert(std::distance(first,last) > 0);
+			std::abort();
+		}
 		init(*first);
 		InputIterator it(first);
 		while (it != last) {
