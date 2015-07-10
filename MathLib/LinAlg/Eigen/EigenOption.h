@@ -41,7 +41,7 @@ struct EigenOption
     /// Preconditioner type
     PreconType precon_type;
     /// Maximum iteration count
-    long max_iterations;
+    std::size_t max_iterations;
     /// Error tolerance
     double error_tolerance;
 

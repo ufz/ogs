@@ -26,6 +26,8 @@ namespace MathLib
 
 /**
  * Global matrix based on Eigen sparse matrix
+ *
+ * The matrix will be dynamically allocated during construction.
  */
 class EigenMatrix
 {
@@ -52,20 +54,22 @@ public:
     /// return an end index of the active data range
     virtual std::size_t getRangeEnd() const  { return getNRows(); }
 
-    /// Reset data entries to zero.
+    /// reset data entries to zero.
     virtual void setZero()
     {
         _mat.setZero();
     }
 
-    /// set entry
+    /// set a value to the given entry. If the entry doesn't exist, this class
+    /// dynamically allocates it.
     int setValue(std::size_t row, std::size_t col, double val)
     {
         _mat.coeffRef(row, col) = val;
         return 0;
     }
 
-    /// add value
+    /// add a value to the given entry. If the entry doesn't exist, the value is
+    /// inserted.
     int add(std::size_t row, std::size_t col, double val)
     {
         assert(row < getNRows() && col < getNCols());
@@ -74,7 +78,7 @@ public:
     }
 
     /// Add sub-matrix at positions \c row_pos and same column positions as the
-    /// given row positions.
+    /// given row positions. If the entry doesn't exist, the value is inserted.
     template<class T_DENSE_MATRIX>
     void add(std::vector<std::size_t> const& row_pos,
             const T_DENSE_MATRIX &sub_matrix,
@@ -83,7 +87,8 @@ public:
         this->add(row_pos, row_pos, sub_matrix, fkt);
     }
 
-    /// Add sub-matrix at positions given by \c indices.
+    /// Add sub-matrix at positions given by \c indices. If the entry doesn't exist,
+    /// this class inserts the value.
     template<class T_DENSE_MATRIX>
     void add(RowColumnIndices<std::size_t> const& indices,
             const T_DENSE_MATRIX &sub_matrix,
@@ -92,27 +97,39 @@ public:
         this->add(indices.rows, indices.columns, sub_matrix, fkt);
     }
 
-    ///
+    /**
+     * Add sub-matrix at positions \c row_pos and \c col_pos. If the entries doesn't
+     * exist in the matrix, the values are inserted.
+     * @param row_pos     a vector of row position indices. The vector size should
+     *                    equal to the number of rows in the given sub-matrix.
+     * @param col_pos     a vector of column position indices. The vector size should
+     *                    equal to the number of columns in the given sub-matrix.
+     * @param sub_matrix  a sub-matrix to be added
+     * @param fkt         a scaling factor applied to all entries in the sub-matrix
+     */
     template <class T_DENSE_MATRIX>
     void add(std::vector<std::size_t> const& row_pos,
             std::vector<std::size_t> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0);
 
-    /// get value
-    double get(std::size_t row, std::size_t col)
+    /// get value. This function returns zero if the element doesn't exist.
+    double get(std::size_t row, std::size_t col) const
     {
         assert(row < getNRows() && col < getNCols());
         return _mat.coeff(row, col);
     }
 
-    /// get value
+    /// get value. This function returns zero if the element doesn't exist.
     double operator() (std::size_t row, std::size_t col) const
     {
-        return _mat.coeff(row, col);
+        return get(row, col);
     }
 
     /// get a maximum value in diagonal entries
-    virtual double getMaxDiagCoeff() {return 1;}
+    virtual double getMaxDiagCoeff() const
+    {
+        return _mat.diagonal().maxCoeff();
+    }
 
     /// y = mat * x
     virtual void multiply(const EigenVector &x, EigenVector &y) const
@@ -120,7 +137,7 @@ public:
         y.getRawVector() = _mat * x.getRawVector();
     }
 
-    /// return if this matrix is already assembled or not
+    /// return always true, i.e. the matrix is always ready for use
     bool isAssembled() const { return true; }
 
 #ifndef NDEBUG

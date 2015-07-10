@@ -11,7 +11,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <logog/include/logog.hpp>
-#include <unsupported/Eigen/IterativeSolvers>
 
 #include "EigenVector.h"
 #include "EigenMatrix.h"
