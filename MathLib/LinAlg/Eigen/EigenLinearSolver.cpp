@@ -24,30 +24,31 @@ using boost::property_tree::ptree;
 namespace details
 {
 
+/// Template class for Eigen direct linear solvers
 template <class T_SOLVER>
-class EigenDirectSolver : public EigenLinearSolver::IEigenSolver
+class EigenDirectLinearSolver : public EigenLinearSolver::IEigenSolver
 {
 public:
-    EigenDirectSolver(EigenMatrix::RawMatrixType &A) : _A(A)
+    explicit EigenDirectLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
     {
-        // fill A and b;
-        // Compute the ordering permutation vector from the structural pattern of A
-        _solver.analyzePattern(A);
-        // Compute the numerical factorization
-        _solver.factorize(A);
+        INFO("-> initialize with the coefficient matrix");
+        _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
-            ERR("The numerical factorization failed in Eigen");
+            ERR("Failed during Eigen linear solver initialization");
             return;
         }
     }
 
-    virtual ~EigenDirectSolver() {}
+    virtual ~EigenDirectLinearSolver() {}
 
-    void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &) override
+    void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &/*opt*/) override
     {
-        //Use the factors to solve the linear system
         INFO("-> solve");
         x = _solver.solve(b);
+        if(_solver.info()!=Eigen::Success) {
+            ERR("Failed during Eigen linear solve");
+            return;
+        }
     }
 
 private:
@@ -55,21 +56,22 @@ private:
     EigenMatrix::RawMatrixType& _A;
 };
 
+/// Template class for Eigen iterative linear solvers
 template <class T_SOLVER>
-class EigenIterativeSolver : public EigenLinearSolver::IEigenSolver
+class EigenIterativeLinearSolver : public EigenLinearSolver::IEigenSolver
 {
 public:
-    EigenIterativeSolver(EigenMatrix::RawMatrixType &A) : _A(A)
+    explicit EigenIterativeLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
     {
         INFO("-> initialize with the coefficient matrix");
         _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
-            INFO("\t failed");
+            ERR("Failed during Eigen linear solver initialization");
             return;
         }
     }
 
-    virtual ~EigenIterativeSolver() {}
+    virtual ~EigenIterativeLinearSolver() {}
 
     void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &opt) override
     {
@@ -78,8 +80,8 @@ public:
         _solver.setMaxIterations(opt.max_iterations);
         x = _solver.solveWithGuess(b, x);
         if(_solver.info()!=Eigen::Success) {
-            INFO("\t solving failed");
-          return;
+            ERR("Failed during Eigen linear solve");
+            return;
         }
         INFO("\t iteration: %d/%ld", _solver.iterations(), opt.max_iterations);
         INFO("\t residual: %e\n", _solver.error());
@@ -100,13 +102,13 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A, ptree const*const option)
     A.getRawMatrix().makeCompressed();
     if (_option.solver_type==EigenOption::SolverType::SparseLU) {
         typedef Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int> > SolverType;
-        _solver = new details::EigenDirectSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenDirectLinearSolver<SolverType>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::BiCGSTAB) {
         typedef Eigen::BiCGSTAB<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>> SolverType;
-        _solver = new details::EigenIterativeSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenIterativeLinearSolver<SolverType>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::CG) {
         typedef Eigen::ConjugateGradient<EigenMatrix::RawMatrixType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>> SolverType;
-        _solver = new details::EigenIterativeSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenIterativeLinearSolver<SolverType>(A.getRawMatrix());
     }
 }
 
