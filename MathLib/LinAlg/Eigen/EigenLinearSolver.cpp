@@ -25,8 +25,8 @@ namespace details
 {
 
 /// Template class for Eigen direct linear solvers
-template <class T_SOLVER>
-class EigenDirectLinearSolver : public EigenLinearSolver::IEigenSolver
+template <class T_SOLVER, class T_BASE>
+class EigenDirectLinearSolver : public T_BASE
 {
 public:
     explicit EigenDirectLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
@@ -57,8 +57,8 @@ private:
 };
 
 /// Template class for Eigen iterative linear solvers
-template <class T_SOLVER>
-class EigenIterativeLinearSolver : public EigenLinearSolver::IEigenSolver
+template <class T_SOLVER, class T_BASE>
+class EigenIterativeLinearSolver : public T_BASE
 {
 public:
     explicit EigenIterativeLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
@@ -102,13 +102,13 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A, ptree const*const option)
     A.getRawMatrix().makeCompressed();
     if (_option.solver_type==EigenOption::SolverType::SparseLU) {
         typedef Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int> > SolverType;
-        _solver = new details::EigenDirectLinearSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenDirectLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::BiCGSTAB) {
         typedef Eigen::BiCGSTAB<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>> SolverType;
-        _solver = new details::EigenIterativeLinearSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::CG) {
         typedef Eigen::ConjugateGradient<EigenMatrix::RawMatrixType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>> SolverType;
-        _solver = new details::EigenIterativeLinearSolver<SolverType>(A.getRawMatrix());
+        _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     }
 }
 
