@@ -29,7 +29,7 @@ namespace MathLib
  *
  * The matrix will be dynamically allocated during construction.
  */
-class EigenMatrix
+class EigenMatrix final
 {
 public:
     typedef Eigen::SparseMatrix<double, Eigen::RowMajor> RawMatrixType;
@@ -40,22 +40,22 @@ public:
      */
     explicit EigenMatrix(std::size_t n) :_mat(n, n) {}
 
-    virtual ~EigenMatrix() {}
+    ~EigenMatrix() {}
 
     /// return the number of rows
-    virtual std::size_t getNRows() const { return _mat.rows(); }
+    std::size_t getNRows() const { return _mat.rows(); }
 
     /// return the number of columns
-    virtual std::size_t getNCols() const { return _mat.cols(); }
+    std::size_t getNCols() const { return _mat.cols(); }
 
     /// return a start index of the active data range
-    virtual std::size_t getRangeBegin() const  { return 0; }
+    std::size_t getRangeBegin() const  { return 0; }
 
     /// return an end index of the active data range
-    virtual std::size_t getRangeEnd() const  { return getNRows(); }
+    std::size_t getRangeEnd() const  { return getNRows(); }
 
     /// reset data entries to zero.
-    virtual void setZero()
+    void setZero()
     {
         _mat.setZero();
     }
@@ -126,13 +126,13 @@ public:
     }
 
     /// get a maximum value in diagonal entries
-    virtual double getMaxDiagCoeff() const
+    double getMaxDiagCoeff() const
     {
         return _mat.diagonal().maxCoeff();
     }
 
     /// y = mat * x
-    virtual void multiply(const EigenVector &x, EigenVector &y) const
+    void multiply(const EigenVector &x, EigenVector &y) const
     {
         y.getRawVector() = _mat * x.getRawVector();
     }
