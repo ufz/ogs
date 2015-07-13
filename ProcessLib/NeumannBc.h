@@ -167,7 +167,7 @@ private:
 
     /// Vector of lower-dimensional elements on which the boundary condition is
     /// defined.
-    std::vector<MeshLib::Element const*> _elements;
+    std::vector<MeshLib::Element*> _elements;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
