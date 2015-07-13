@@ -17,9 +17,12 @@
 
 #include <limits>
 #include <cstddef>
+#include <cstdlib>
 #include <iterator>
 #include <cassert>
 #include <vector>
+
+#include <logog/include/logog.hpp>
 
 #include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
@@ -70,8 +73,10 @@ public:
 	template <typename InputIterator>
 	AABB(InputIterator first, InputIterator last)
 	{
-		if (! (std::distance(first,last) > 0)) {
-			throw std::invalid_argument("AABB::AABB(InputIterator first, InputIterator last): first == last");
+		if (std::distance(first,last) <= 0)
+		{
+			ERR("AABB::AABB(InputIterator first, InputIterator last): first > last");
+			std::abort();
 		}
 		init(*first);
 		InputIterator it(first);

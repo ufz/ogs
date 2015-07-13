@@ -46,14 +46,14 @@ protected:
 // Testing nullptr input vector.
 TEST_F(PointVecTest, TestPointVecCtorNullptr)
 {
-	ASSERT_ANY_THROW(GeoLib::PointVec(name, nullptr));
+	ASSERT_DEATH(GeoLib::PointVec(name, nullptr), "");
 	delete ps_ptr;
 }
 
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
-	ASSERT_ANY_THROW(GeoLib::PointVec(name, ps_ptr));
+	ASSERT_DEATH(GeoLib::PointVec(name, ps_ptr), "");
 }
 
 // Testing input vector with single point.
@@ -61,7 +61,7 @@ TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
 	ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	point_vec = new GeoLib::PointVec(name, ps_ptr);
 	ASSERT_EQ(std::size_t(1), point_vec->size());
 
 	delete point_vec;
@@ -74,7 +74,7 @@ TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 	ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
 
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	point_vec = new GeoLib::PointVec(name, ps_ptr);
 	ASSERT_EQ(std::size_t(2), point_vec->size());
 
 	delete point_vec;
@@ -87,7 +87,7 @@ TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 	ps_ptr->push_back(new GeoLib::Point(0,0,0,1));
 
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	point_vec = new GeoLib::PointVec(name, ps_ptr);
 	ASSERT_EQ(std::size_t(1), point_vec->size());
 
 	delete point_vec;
@@ -187,7 +187,7 @@ TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 	generateRandomPoints(10000);
 
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr));
+	point_vec = new GeoLib::PointVec(name, ps_ptr);
 
 	delete point_vec;
 }
@@ -196,8 +196,8 @@ TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
 	generateRandomPoints(10000);
 
 	GeoLib::PointVec* point_vec = nullptr;
-	ASSERT_NO_THROW(point_vec = new GeoLib::PointVec(name, ps_ptr,
-					nullptr, GeoLib::PointVec::PointType::POINT, 1e-2));
+	point_vec = new GeoLib::PointVec(name, ps_ptr,
+					nullptr, GeoLib::PointVec::PointType::POINT, 1e-2);
 
 	delete point_vec;
 }

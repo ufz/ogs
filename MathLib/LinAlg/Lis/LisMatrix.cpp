@@ -15,7 +15,9 @@
 #include "LisMatrix.h"
 
 #include <cmath>
-#include <stdexcept>
+#include <cstdlib>
+
+#include <logog/include/logog.hpp>
 
 #include "LisVector.h"
 #include "LisCheck.h"
@@ -80,7 +82,10 @@ int LisMatrix::add(std::size_t rowId, std::size_t colId, double v)
 void LisMatrix::write(const std::string &filename) const
 {
     if (!_is_assembled)
-        throw std::logic_error("LisMatrix::write(): matrix not assembled.");
+    {
+        ERR("LisMatrix::write(): matrix not assembled.");
+        std::abort();
+    }
     lis_output_matrix(_AA, LIS_FMT_MM, const_cast<char*>(filename.c_str()));
 }
 
@@ -105,7 +110,10 @@ double LisMatrix::getMaxDiagCoeff()
 void LisMatrix::multiply(const LisVector &x, LisVector &y) const
 {
     if (!_is_assembled)
-        throw std::logic_error("LisMatrix::matvec(): matrix not assembled.");
+    {
+        ERR("LisMatrix::multiply(): matrix not assembled.");
+        std::abort();
+    }
     int ierr = lis_matvec(_AA, const_cast<LisVector*>(&x)->getRawVector(), y.getRawVector());
     checkLisError(ierr);
 }

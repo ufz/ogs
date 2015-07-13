@@ -14,10 +14,12 @@
 #define MESHSUBSETS_H_
 
 #include <algorithm>
+#include <cstdlib>
 #include <functional>
 #include <numeric>
-#include <stdexcept>
 #include <vector>
+
+#include <logog/include/logog.hpp>
 
 #include "MeshSubset.h"
 
@@ -45,7 +47,10 @@ public:
         : _mesh_subsets(first, last)
     {
         if (!areMeshSubsetMeshesUnique())
-            throw std::logic_error("Mesh ids of input mesh subsets are not unique.");
+        {
+            ERR("Mesh ids of input mesh subsets are not unique.");
+            std::abort();
+        }
 
         _n_total_items = std::accumulate(first, last, 0u,
             [](std::size_t const& sum, MeshSubset const* const mesh_subset)
