@@ -16,7 +16,7 @@ target_link_libraries(ogs
 )
 
 if(OGS_BUILD_GUI)
-	target_link_libraries(ogs QtDataView VtkVis)
+	target_link_libraries(ogs QtDataView VtkVis vtkInteractionStyle)
 endif()
 
 ADD_CATALYST_DEPENDENCY(ogs)
