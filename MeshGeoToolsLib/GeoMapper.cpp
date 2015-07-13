@@ -12,19 +12,19 @@
  *
  */
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "GeoMapper.h"
 
 #include <algorithm>
 #include <numeric>
+
+#include <logog/include/logog.hpp>
 
 #include "FileIO/AsciiRasterInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Raster.h"
 #include "GeoLib/StationBorehole.h"
 

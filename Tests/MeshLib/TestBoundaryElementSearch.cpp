@@ -12,6 +12,7 @@
 #include <numeric>
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearcher.h"

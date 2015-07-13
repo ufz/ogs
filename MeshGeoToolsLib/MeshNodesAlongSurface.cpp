@@ -14,9 +14,11 @@
 
 #include <algorithm>
 
-#include "quicksort.h"
-#include "MathTools.h"
-
+#include "BaseLib/quicksort.h"
+#include "MathLib/MathTools.h"
+#include "GeoLib/Surface.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
 {

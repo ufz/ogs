@@ -11,13 +11,16 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 // ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 // GeoLib
 #include "GeoLib/Point.h"
+#include "GeoLib/Polyline.h"
 
 // MeshLib
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"

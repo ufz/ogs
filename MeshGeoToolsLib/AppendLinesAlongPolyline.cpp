@@ -9,16 +9,16 @@
 
 #include "AppendLinesAlongPolyline.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// MeshLib
-#include "Mesh.h"
+#include "GeoLib/Polyline.h"
+
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Line.h"
-#include "Elements/Element.h"
-#include "MeshEnums.h"
-#include "MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 

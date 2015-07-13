@@ -18,11 +18,9 @@
 #include <cstddef>
 #include <vector>
 
-#include "GEOObjects.h"
-#include "Point.h"
-#include "Grid.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Grid.h"
 
-// MathLib
 #include "MathLib/Point3d.h"
 
 namespace MeshLib {

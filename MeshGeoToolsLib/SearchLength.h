@@ -12,8 +12,6 @@
 #ifndef SEARCHLENGTH_H_
 #define SEARCHLENGTH_H_
 
-#include "MeshLib/Mesh.h"
-
 namespace MeshGeoToolsLib
 {
 
