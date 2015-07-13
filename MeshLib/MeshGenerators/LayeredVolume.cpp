@@ -20,9 +20,10 @@
 
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
-#include "MeshLib/MeshEditing/ElementExtraction.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 
 
 bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
@@ -38,9 +39,9 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 		return false;
 
 	// remove line elements, only tri + quad remain
-	MeshLib::ElementExtraction ex(mesh);
+	MeshLib::ElementSearch ex(mesh);
 	ex.searchByElementType(MeshLib::MeshElemType::LINE);
-	MeshLib::Mesh* top (ex.removeMeshElements("MeshLayer"));
+	MeshLib::Mesh* top (removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
 	if (top==nullptr)
 		top = new MeshLib::Mesh(mesh);
 

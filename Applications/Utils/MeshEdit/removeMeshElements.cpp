@@ -29,7 +29,8 @@
 #include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEnums.h"
-#include "MeshEditing/ElementExtraction.h"
+#include "MeshSearch/ElementSearch.h"
+#include "MeshEditing/RemoveMeshComponents.h"
 
 int main (int argc, char* argv[])
 {
@@ -84,7 +85,7 @@ int main (int argc, char* argv[])
 
 	MeshLib::Mesh const*const mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
-	MeshLib::ElementExtraction ex(*mesh);
+	MeshLib::ElementSearch ex(*mesh);
 
 	// search elements IDs to be removed
 	if (zveArg.isSet()) {
@@ -142,7 +143,7 @@ int main (int argc, char* argv[])
 	}
 
 	// remove the elements and create a new mesh object.
-	MeshLib::Mesh const*const new_mesh = ex.removeMeshElements(mesh->getName());
+	MeshLib::Mesh const*const new_mesh = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName());
 
 	// write into a file
 	FileIO::Legacy::MeshIO meshIO;

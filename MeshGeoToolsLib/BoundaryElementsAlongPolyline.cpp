@@ -16,7 +16,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
-#include "MeshLib/MeshSearcher.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
@@ -28,7 +28,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
 {
 	// search nodes and elements located along the polyline
 	auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);
-	auto ele_ids_near_ply = MeshLib::getConnectedElementIDs(_mesh, node_ids_on_poly);
+	MeshLib::ElementSearch es(_mesh);
+	es.searchByNodeIDs(node_ids_on_poly);
+	auto &ele_ids_near_ply = es.getSearchedElementIDs();
 
 	// check all edges of the elements near the polyline
 	for (auto ele_id : ele_ids_near_ply) {

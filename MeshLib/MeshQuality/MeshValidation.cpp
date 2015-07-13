@@ -23,8 +23,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/removeMeshNodes.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib {
@@ -65,7 +65,7 @@ std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh
 std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
 {
 	std::vector<std::size_t> del_node_idx = MeshValidation::findUnusedMeshNodes(mesh);
-	MeshLib::removeMeshNodes(mesh, del_node_idx);
+	MeshLib::removeNodes(mesh, del_node_idx, mesh.getName());
 
 	if (!del_node_idx.empty())
 		INFO("Removed %d unused mesh nodes.", del_node_idx.size());
