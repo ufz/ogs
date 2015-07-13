@@ -17,6 +17,11 @@
 TEST(ApplicationsLib, ProjectData)
 {
 	ProjectData project;
+#ifdef OGS_BUILD_GUI
+	GEOModels* geo_objects = dynamic_cast<GEOModels*>(project.getGEOObjects());
+#else
 	GeoLib::GEOObjects *geo_objects = project.getGEOObjects();
+#endif
+
 	ASSERT_TRUE(geo_objects);
 }
