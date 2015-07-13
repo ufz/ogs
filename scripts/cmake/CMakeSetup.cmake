@@ -26,6 +26,10 @@ endif()
 
 if($ENV{CI})
 	set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis) or subproject
+	# Workaround for https://issues.jenkins-ci.org/browse/JENKINS-29329
+	if(MSVC)
+		set(CMAKE_MAKE_PROGRAM ${CMAKE_MAKE_PROGRAM} CACHE FILEPATH "workaround for jenkins cmake-plugin")
+	endif()
 elseif(IS_SUBPROJECT)
 	set(OGS_VERSION x.x.x)
 else()
