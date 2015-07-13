@@ -31,7 +31,6 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	// Writer test
 	std::string test_data_file(BaseLib::BuildInfo::source_path + "/Tests/FileIO/xmlgmltestdata.gml");
 
-	ProjectData project;
 	GeoLib::GEOObjects geo_objects;
 
 	//setup test data
