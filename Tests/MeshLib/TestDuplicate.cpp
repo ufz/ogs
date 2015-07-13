@@ -19,6 +19,7 @@
 #include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEditing/DuplicateMeshComponents.h"
+#include "MeshEditing/removeMeshNodes.h"
 #include "MeshGenerators/MeshGenerator.h"
 #include "MeshQuality/MeshValidation.h"
 #include "MathTools.h"

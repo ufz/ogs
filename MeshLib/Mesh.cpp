@@ -16,6 +16,7 @@
 
 #include "BaseLib/RunTime.h"
 
+#include "Elements/Element.h"
 #include "Elements/Tri.h"
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
@@ -143,7 +144,7 @@ void Mesh::resetElementsConnectedToNodes()
 {
 	for (auto node = _nodes.begin(); node != _nodes.end(); ++node)
 		if (*node)
-			(*node)->_elements.clear();
+			(*node)->clearElements();
 	this->setElementsConnectedToNodes();
 }
 

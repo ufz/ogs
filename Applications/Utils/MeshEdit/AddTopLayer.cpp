@@ -29,6 +29,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
 
 MeshLib::Prism* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
 	MeshLib::Tri const*const sfc_elem,
