@@ -16,6 +16,7 @@
 #include "Mesh.h"
 #include "MeshQuality/MeshValidation.h"
 #include "MeshEditing/MeshRevision.h"
+#include "MeshSearch/NodeSearch.h"
 
 #include "StrictDoubleValidator.h"
 
@@ -49,7 +50,9 @@ void MeshAnalysisDialog::on_startButton_pressed()
 {
 	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
 
-	const std::vector<std::size_t> unusedNodesIdx (MeshLib::MeshValidation::removeUnusedMeshNodes(*const_cast<MeshLib::Mesh*>(mesh)));
+	MeshLib::NodeSearch ns(*mesh);
+	ns.searchUnused();
+	const std::vector<std::size_t> unusedNodesIdx (ns.getSearchedNodeIDs());
 	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
 	std::vector<std::size_t> const& collapsibleNodeIds (rev.collapseNodeIndices(
 		this->collapsibleNodesThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));

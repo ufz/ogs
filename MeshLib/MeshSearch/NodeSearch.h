@@ -34,6 +34,9 @@ public:
 	/// Marks all nodes connecting to any of the given elements
 	std::size_t searchByElementIDs(const std::vector<std::size_t> &element_ids, bool only_match_all_connected_elements = false);
 
+	/// Marks all unused nodes
+	std::size_t searchUnused();
+
 private:
 	/// Updates the vector of marked items with values from vec.
 	void updateUnion(const std::vector<std::size_t> &vec);

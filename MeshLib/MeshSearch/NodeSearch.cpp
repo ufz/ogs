@@ -64,6 +64,20 @@ std::size_t NodeSearch::searchByElementIDs(const std::vector<std::size_t> &eleme
 	return connected_nodes.size();
 }
 
+std::size_t NodeSearch::searchUnused()
+{
+	const size_t nNodes (_mesh.getNNodes());
+	const std::vector<MeshLib::Node*> &nodes (_mesh.getNodes());
+	std::vector<std::size_t> del_node_idx;
+
+	for (unsigned i=0; i<nNodes; ++i)
+		if (nodes[i]->getNElements() == 0)
+			del_node_idx.push_back(i);
+
+	this->updateUnion(del_node_idx);
+	return del_node_idx.size();
+}
+
 void NodeSearch::updateUnion(const std::vector<std::size_t> &vec)
 {
 	std::vector<std::size_t> vec_temp(vec.size() + _marked_nodes.size());

@@ -36,19 +36,6 @@ public:
 	MeshValidation(MeshLib::Mesh &mesh);
 	~MeshValidation() {}
 
-	/** 
-	 * Find mesh nodes that are not part of any element
-	 * @return Vector of node indices for unused mesh nodes
-	 */
-	static std::vector<std::size_t> findUnusedMeshNodes(const MeshLib::Mesh &mesh);
-
-	/**
-	 * Removes nodes from the mesh that are not part of any element.
-	 * Note: This method calls MeshQualityConroller::findUnusedMeshNodes() internally.
-	 * @return Indices of nodes that have been removed
-	 */
-	static std::vector<std::size_t> removeUnusedMeshNodes(MeshLib::Mesh &mesh);
-
 	/**
 	 * Tests if elements are geometrically correct.
 	 * @param mesh The mesh that is tested

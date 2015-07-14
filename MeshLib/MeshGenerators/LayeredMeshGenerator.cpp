@@ -25,6 +25,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 LayeredMeshGenerator::LayeredMeshGenerator()
 : _elevation_epsilon(0.0001), _minimum_thickness(std::numeric_limits<float>::epsilon())
@@ -55,7 +57,12 @@ MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
         return nullptr;
 
     MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements));
-    MeshLib::MeshValidation::removeUnusedMeshNodes(*result);
+    MeshLib::NodeSearch ns(*result);
+    if (ns.searchUnused() > 0) {
+        auto new_mesh = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), mesh_name);
+        delete result;
+        return new_mesh;
+    }
     return result;
 }
 
