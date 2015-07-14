@@ -151,14 +151,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	double sum_area_b = std::accumulate(found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
 				[](double v, MeshLib::Element*e){return v+e->getContent();});
 	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_b);
-	MeshLib::NodeSearch ns(*_hex_mesh);
-	std::vector<std::size_t> found_faces_sfc_b_ids;
-	for (auto e : found_faces_sfc_b) found_faces_sfc_b_ids.push_back(e->getID());
-	ns.searchByElementIDs(found_faces_sfc_b_ids);
-	auto& connected_nodeIDs_b = ns.getSearchedNodeIDs();
-	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_b.size());
-	for (auto nodeID : connected_nodeIDs_b)
-		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[2]); // check z coordinates
+	auto connected_nodes_b = MeshLib::getNodes(found_faces_sfc_b);
+	ASSERT_EQ(n_nodes_2d, connected_nodes_b.size());
+	for (auto node : connected_nodes_b)
+		ASSERT_EQ(0.0, (*node)[2]); // check z coordinates
 
 	// perform search on the front surface
 	std::vector<MeshLib::Element*> const& found_faces_sfc_f(boundary_element_searcher.getBoundaryElements(*sfc_front));
@@ -166,14 +162,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	double sum_area_f = std::accumulate(found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
 				[](double v, MeshLib::Element*e){return v+e->getContent();});
 	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_f);
-	MeshLib::NodeSearch ns_f(*_hex_mesh);
-    std::vector<std::size_t> found_faces_sfc_f_ids;
-    for (auto e : found_faces_sfc_f) found_faces_sfc_f_ids.push_back(e->getID());
-	ns_f.searchByElementIDs(found_faces_sfc_f_ids);
-	auto& connected_nodeIDs_f = ns_f.getSearchedNodeIDs();
-	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_f.size());
-	for (auto nodeID : connected_nodeIDs_f)
-		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[1]); // check y coordinates
+    auto connected_nodes_f = MeshLib::getNodes(found_faces_sfc_f);
+	ASSERT_EQ(n_nodes_2d, connected_nodes_f.size());
+	for (auto node : connected_nodes_f)
+		ASSERT_EQ(0.0, (*node)[1]); // check y coordinates
 
 	for (auto p : pnts)
 		delete p;
