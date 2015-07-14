@@ -16,8 +16,8 @@
 #include <string>
 #include <vector>
 
-#include "Location.h"
 #include "BaseLib/excludeObjectCopy.h"
+#include "Location.h"
 
 namespace MeshLib
 {

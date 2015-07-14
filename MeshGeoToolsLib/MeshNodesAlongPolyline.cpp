@@ -10,15 +10,15 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-// BaseLib
-#include "quicksort.h"
-
-// MeshGeoToolsLib
 #include "MeshNodesAlongPolyline.h"
 
-#include "MathTools.h"
-
 #include <algorithm>
+
+#include "BaseLib/quicksort.h"
+#include "MathLib/MathTools.h"
+#include "GeoLib/Polyline.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
 {

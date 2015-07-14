@@ -13,21 +13,27 @@
 #include <memory>
 #include <vector>
 
-#include "boost/optional.hpp"
+#include <boost/optional.hpp>
 
 // GeoLib
-#include "GeoLib/Point.h"
-#include "GeoLib/Polyline.h"
 #include "GeoLib/Grid.h"
-
-// MeshLib
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/SearchLength.h"
 
 // forward declaration
+namespace GeoLib
+{
+class Point;
+class Polyline;
+}
+
+namespace MeshLib
+{
+class Mesh;
+class Node;
+}
+
 namespace MeshGeoToolsLib
 {
 class MeshNodesAlongPolyline;

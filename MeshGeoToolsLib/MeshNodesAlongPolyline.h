@@ -15,11 +15,15 @@
 
 #include <vector>
 
-// GeoLib
-#include "Polyline.h"
+namespace GeoLib
+{
+class Polyline;
+}
 
-// MeshLib
-#include "MeshLib/Node.h"
+namespace MeshLib
+{
+class Mesh;
+}
 
 namespace MeshGeoToolsLib
 {

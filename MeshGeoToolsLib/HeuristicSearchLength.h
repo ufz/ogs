@@ -14,6 +14,11 @@
 
 #include "MeshGeoToolsLib/SearchLength.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace MeshGeoToolsLib
 {
 

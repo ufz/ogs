@@ -12,6 +12,7 @@
 
 #include "LinearInterpolationAlongPolyline.h"
 
+#include "GeoLib/Polyline.h"
 #include "MeshLib/Mesh.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 
