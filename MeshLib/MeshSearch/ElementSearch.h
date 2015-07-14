@@ -23,12 +23,10 @@ class Mesh;
 class Element;
 
 /// Element search class
-class ElementSearch
+class ElementSearch final
 {
 public:
 	explicit ElementSearch(const MeshLib::Mesh &mesh);
-
-	~ElementSearch();
 
 	/// return marked elements
 	const std::vector<std::size_t>& getSearchedElementIDs() const { return _marked_elements; }

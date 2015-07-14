@@ -64,7 +64,7 @@ public:
                 std::back_inserter(_elements),
                 std::mem_fn(&MeshLib::Element::clone));
 
-        std::vector<MeshLib::Node*> nodes = MeshLib::getNodes(_elements);
+        std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
 
         _mesh_subset_all_nodes =
             mesh_subset_all_nodes.getIntersectionByNodes(nodes);

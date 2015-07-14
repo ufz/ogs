@@ -24,10 +24,6 @@ NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
 {
 }
 
-NodeSearch::~NodeSearch()
-{
-}
-
 std::size_t NodeSearch::searchByElementIDs(const std::vector<std::size_t> &elements, bool only_match_all_connected_elements)
 {
 	std::vector<std::size_t> connected_nodes;
@@ -86,7 +82,7 @@ void NodeSearch::updateUnion(const std::vector<std::size_t> &vec)
 	_marked_nodes.assign(vec_temp.begin(), vec_temp.end());
 }
 
-std::vector<Node*> getNodes(std::vector<Element*> const& elements)
+std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements)
 {
 	std::set<Node*> nodes_set;
 	for (auto e : elements)

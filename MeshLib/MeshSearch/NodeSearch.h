@@ -21,12 +21,10 @@ class Element;
 class Node;
 
 /// Node search class
-class NodeSearch
+class NodeSearch final
 {
 public:
 	explicit NodeSearch(const MeshLib::Mesh &mesh);
-
-	~NodeSearch();
 
 	/// return marked node IDs
 	const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
@@ -48,7 +46,7 @@ private:
 };
 
 /// Create a vector of unique nodes used by given elements.
-std::vector<Node*> getNodes(std::vector<Element*> const& elements);
+std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements);
 
 } // end namespace MeshLib
 

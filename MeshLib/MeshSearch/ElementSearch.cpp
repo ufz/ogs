@@ -22,10 +22,6 @@ ElementSearch::ElementSearch(const MeshLib::Mesh &mesh)
 {
 }
 
-ElementSearch::~ElementSearch()
-{
-}
-
 std::size_t ElementSearch::searchByMaterialID(int const matID)
 {
 	boost::optional<MeshLib::PropertyVector<int> const&> opt_pv(
