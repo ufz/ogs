@@ -364,4 +364,42 @@ Mesh* MeshGenerator::generateRegularTriMesh(
 	return new Mesh(mesh_name, nodes, elements);
 }
 
+MeshLib::Mesh*
+MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
+	MathLib::Point3d const& ll, MathLib::Point3d const& ur,
+	std::array<std::size_t, 2> const& n_steps,
+	std::function<double(double,double)> f)
+{
+	std::array<double, 2> step_size{{
+		(ur[0]-ll[0])/n_steps[0], (ur[1]-ll[1])/n_steps[1]}};
+
+	std::vector<MeshLib::Node*> nodes;
+	for (std::size_t j(0); j<n_steps[1]; ++j) {
+		for (std::size_t i(0); i<n_steps[0]; ++i) {
+			std::size_t const id(i+j*n_steps[1]);
+			std::array<double, 3> coords;
+			coords[0] = ll[0]+i*step_size[0];
+			coords[1] = ll[1]+j*step_size[1];
+			coords[2] = f(coords[0],coords[1]);
+			nodes.push_back(new MeshLib::Node(coords, id));
+		}
+	}
+
+	std::vector<MeshLib::Element*> sfc_eles;
+	for (std::size_t j(0); j<n_steps[1]-1; ++j) {
+		for (std::size_t i(0); i<n_steps[0]-1; ++i) {
+			std::size_t id_ll(i+j*n_steps[0]);
+			std::size_t id_lr(i+1+j*n_steps[0]);
+			std::size_t id_ul(i+(j+1)*n_steps[0]);
+			std::size_t id_ur(i+1+(j+1)*n_steps[0]);
+			sfc_eles.push_back(new MeshLib::Tri(std::array<MeshLib::Node*,3>
+				{{nodes[id_ll], nodes[id_lr], nodes[id_ur]}}));
+			sfc_eles.push_back(new MeshLib::Tri(std::array<MeshLib::Node*,3>
+				{{nodes[id_ll], nodes[id_ur], nodes[id_ul]}}));
+		}
+	}
+
+	return new MeshLib::Mesh(mesh_name, nodes, sfc_eles);
+}
+
 }

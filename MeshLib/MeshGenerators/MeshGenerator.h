@@ -11,6 +11,7 @@
 #define MESHGENERATOR_H_
 
 #include <array>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -303,6 +304,16 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
 	                          const double   cell_size_y,
 	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
 	                          std::string   const& mesh_name = "mesh");
+
+/// Constructs a surface mesh approximating a surface in the 3d space given by
+/// a function.
+/// The surface within the xy-domain \f$[ll[0], ur[0]] \times [ll[1], ur[1]\f$
+/// is described using the function \f$f(x,y)\f$.
+MeshLib::Mesh*
+createSurfaceMesh(std::string const& mesh_name,
+	MathLib::Point3d const& ll, MathLib::Point3d const& ur,
+	std::array<std::size_t, 2> const& n_steps,
+	std::function<double(double,double)> f);
 
 }  //MeshGenerator
 } //MeshLib
