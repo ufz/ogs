@@ -28,15 +28,17 @@ std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements
 {
 	std::vector<std::size_t> connected_nodes;
 
-	std::vector<std::size_t> node_marked_counts(_mesh.getNNodes(), 0); //this approach is not optimum for memory size
-	std::for_each(elements.begin(), elements.end(),
-		[&](std::size_t eid)
-		{
-			auto* e = _mesh.getElement(eid);
-			for (unsigned i=0; i<e->getNBaseNodes(); i++) {
-				node_marked_counts[e->getNodeIndex(i)]++;
-			}
-		});
+	std::vector<std::size_t> node_marked_counts(_mesh.getNNodes(), 0);
+	//this approach is not optimal for memory size
+
+	for(std::size_t eid : elements)
+	{
+		auto* e = _mesh.getElement(eid);
+		for (unsigned i=0; i<e->getNBaseNodes(); i++) {
+			node_marked_counts[e->getNodeIndex(i)]++;
+		}
+	}
+
 	for (std::size_t i=0; i<node_marked_counts.size(); i++)
 	{
 		if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
@@ -49,14 +51,14 @@ std::vector<std::size_t> NodeSearch::searchByElementIDsNotMatchAllConnectedEleme
 {
 	std::vector<std::size_t> connected_nodes;
 
-	std::for_each(elements.begin(), elements.end(),
-		[&](std::size_t eid)
-		{
-			auto* e = _mesh.getElement(eid);
-			for (unsigned i=0; i<e->getNBaseNodes(); i++) {
-				connected_nodes.push_back(e->getNodeIndex(i));
-			}
-		});
+	for(std::size_t eid : elements)
+	{
+		auto* e = _mesh.getElement(eid);
+		for (unsigned i=0; i<e->getNBaseNodes(); i++) {
+			connected_nodes.push_back(e->getNodeIndex(i));
+		}
+	}
+
 	std::sort(connected_nodes.begin(), connected_nodes.end());
 	auto it = std::unique(connected_nodes.begin(), connected_nodes.end());
 	connected_nodes.resize(std::distance(connected_nodes.begin(),it));
