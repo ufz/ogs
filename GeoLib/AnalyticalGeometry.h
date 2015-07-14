@@ -138,7 +138,9 @@ void rotatePoints(
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
-void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
+template <typename P>
+void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
+	std::vector<P*> const& pnts);
 
 /**
  * rotate points to X-Y plane

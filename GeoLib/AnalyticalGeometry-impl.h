@@ -210,5 +210,12 @@ void rotatePointsToXY(
         (*(*it))[2] = 0.0; // should be -= d but there are numerical errors
 }
 
+template <typename P>
+void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
+	std::vector<P*> const& pnts)
+{
+	rotatePoints(rot_mat, pnts.begin(), pnts.end());
+}
+
 } // end namespace GeoLib
 
