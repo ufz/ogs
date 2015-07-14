@@ -15,12 +15,10 @@
 
 #include "Polyline.h"
 
-using namespace GeoLib;
-
 TEST(GeoLib, PolylineTest)
 {
-	std::vector<Point*> ply_pnts;
-	Polyline ply(ply_pnts);
+	std::vector<GeoLib::Point*> ply_pnts;
+	GeoLib::Polyline ply(ply_pnts);
 
 	// checking properties of empty polyline
 	ASSERT_EQ(std::size_t(0), ply.getNumberOfPoints());
@@ -28,7 +26,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_FALSE(ply.isPointIDInPolyline(0));
 	ASSERT_EQ(ply.getLength(0), 0.0);
 
-	ply_pnts.push_back(new Point(0.0, 0.0, 0.0));
+	ply_pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 	ply.addPoint(0);
 	// checking properties of polyline with one point
 	ASSERT_EQ(std::size_t(1), ply.getNumberOfPoints());
@@ -36,7 +34,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_TRUE(ply.isPointIDInPolyline(0));
 	ASSERT_EQ(ply.getLength(0), 0.0);
 
-	ply_pnts.push_back(new Point(1.0, 0.0, 0.0));
+	ply_pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 	ply.addPoint(1);
 	// checking properties of polyline with two points
 	ASSERT_EQ(std::size_t(2), ply.getNumberOfPoints());
@@ -45,7 +43,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(ply.getLength(1), 1);
 
 	// checking properties of polyline with two points
-	ply_pnts.push_back(new Point(0.5, 0.5, 0.0));
+	ply_pnts.push_back(new GeoLib::Point(0.5, 0.5, 0.0));
 	ply.addPoint(2);
 	ASSERT_EQ(std::size_t(3), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());

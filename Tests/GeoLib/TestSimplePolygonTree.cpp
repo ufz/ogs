@@ -19,8 +19,6 @@
 #include "Polygon.h"
 #include "SimplePolygonTree.h"
 
-using namespace GeoLib;
-
 /**
  *       2
  *      / \
@@ -46,46 +44,46 @@ public:
 		_p0(nullptr), _p1(nullptr), _p2(nullptr), _p3(nullptr)
 	{
 		// create points and construct polygon
-		_pnts.push_back(new Point(0.0,-1.0,0.0));
-		_pnts.push_back(new Point(1.0,0.0,0.0));
-		_pnts.push_back(new Point(0.0,1.0,0.0));
-		_pnts.push_back(new Point(-1.0,0.0,0.0));
+		_pnts.push_back(new GeoLib::Point(0.0,-1.0,0.0));
+		_pnts.push_back(new GeoLib::Point(1.0,0.0,0.0));
+		_pnts.push_back(new GeoLib::Point(0.0,1.0,0.0));
+		_pnts.push_back(new GeoLib::Point(-1.0,0.0,0.0));
 
-		_pnts.push_back(new Point(-0.9,0.0,0.0));
-		_pnts.push_back(new Point(0.75,-0.1,0.0));
-		_pnts.push_back(new Point(-0.75,-0.1,0.0));
+		_pnts.push_back(new GeoLib::Point(-0.9,0.0,0.0));
+		_pnts.push_back(new GeoLib::Point(0.75,-0.1,0.0));
+		_pnts.push_back(new GeoLib::Point(-0.75,-0.1,0.0));
 
 		// create closed polylines
-		Polyline ply0(_pnts);
+		GeoLib::Polyline ply0(_pnts);
 		ply0.addPoint(3);
 		ply0.addPoint(1);
 		ply0.addPoint(2);
 		ply0.addPoint(3);
 
-		Polyline ply1(_pnts);
+		GeoLib::Polyline ply1(_pnts);
 		ply1.addPoint(0);
 		ply1.addPoint(1);
 		ply1.addPoint(3);
 		ply1.addPoint(0);
 
-		Polyline ply2(_pnts);
+		GeoLib::Polyline ply2(_pnts);
 		ply2.addPoint(0);
 		ply2.addPoint(1);
 		ply2.addPoint(2);
 		ply2.addPoint(3);
 		ply2.addPoint(0);
 
-		Polyline ply3(_pnts);
+		GeoLib::Polyline ply3(_pnts);
 		ply3.addPoint(4);
 		ply3.addPoint(5);
 		ply3.addPoint(6);
 		ply3.addPoint(4);
 
 		// create polygons
-		_p0 = new Polygon(ply0);
-		_p1 = new Polygon(ply1);
-		_p2 = new Polygon(ply2);
-		_p3 = new Polygon(ply3);
+		_p0 = new GeoLib::Polygon(ply0);
+		_p1 = new GeoLib::Polygon(ply1);
+		_p2 = new GeoLib::Polygon(ply2);
+		_p3 = new GeoLib::Polygon(ply3);
 	}
 
 	~CreatePolygonTreesTest()
@@ -99,19 +97,19 @@ public:
 	}
 
 protected:
-	std::vector<Point*> _pnts;
-	Polygon *_p0;
-	Polygon *_p1;
-	Polygon *_p2;
-	Polygon *_p3;
+	std::vector<GeoLib::Point*> _pnts;
+	GeoLib::Polygon *_p0;
+	GeoLib::Polygon *_p1;
+	GeoLib::Polygon *_p2;
+	GeoLib::Polygon *_p3;
 };
 
 TEST_F(CreatePolygonTreesTest, P0AndP1)
 {
-	SimplePolygonTree *pt0(new SimplePolygonTree(_p0, nullptr));
-	SimplePolygonTree *pt1(new SimplePolygonTree(_p1, nullptr));
+	GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+	GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
 
-	std::list<SimplePolygonTree*> pt_list;
+	std::list<GeoLib::SimplePolygonTree*> pt_list;
 	pt_list.push_back(pt0);
 	pt_list.push_back(pt1);
 	ASSERT_EQ(2u, pt_list.size());
@@ -123,11 +121,11 @@ TEST_F(CreatePolygonTreesTest, P0AndP1)
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
 {
-	SimplePolygonTree *pt0(new SimplePolygonTree(_p0, nullptr));
-	SimplePolygonTree *pt1(new SimplePolygonTree(_p1, nullptr));
-	SimplePolygonTree *pt2(new SimplePolygonTree(_p2, nullptr));
+	GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+	GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
+	GeoLib::SimplePolygonTree *pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
 
-	std::list<SimplePolygonTree*> pt_list;
+	std::list<GeoLib::SimplePolygonTree*> pt_list;
 	pt_list.push_back(pt0);
 	pt_list.push_back(pt1);
 	pt_list.push_back(pt2);
@@ -148,12 +146,12 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2AndP3)
 {
-	SimplePolygonTree *pt0(new SimplePolygonTree(_p0, nullptr));
-	SimplePolygonTree *pt1(new SimplePolygonTree(_p1, nullptr));
-	SimplePolygonTree *pt2(new SimplePolygonTree(_p2, nullptr));
-	SimplePolygonTree *pt3(new SimplePolygonTree(_p3, nullptr));
+	GeoLib::SimplePolygonTree *pt0(new GeoLib::SimplePolygonTree(_p0, nullptr));
+	GeoLib::SimplePolygonTree *pt1(new GeoLib::SimplePolygonTree(_p1, nullptr));
+	GeoLib::SimplePolygonTree *pt2(new GeoLib::SimplePolygonTree(_p2, nullptr));
+	GeoLib::SimplePolygonTree *pt3(new GeoLib::SimplePolygonTree(_p3, nullptr));
 
-	std::list<SimplePolygonTree*> pt_list;
+	std::list<GeoLib::SimplePolygonTree*> pt_list;
 	pt_list.push_back(pt0);
 	pt_list.push_back(pt1);
 	pt_list.push_back(pt2);
