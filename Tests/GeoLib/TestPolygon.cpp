@@ -16,8 +16,6 @@
 #include "Point.h"
 #include "Polygon.h"
 
-using namespace GeoLib;
-
 /**
  * Polygon:
  *  2     4     6
@@ -40,17 +38,17 @@ public:
 		_polygon(nullptr)
 	{
 		// create points and construct polygon
-		_pnts.push_back(new Point( 0.0, 0.0,0.0)); // 0
-		_pnts.push_back(new Point(-2.0, 2.0,0.0)); // 1
-		_pnts.push_back(new Point(-2.0, 4.0,0.0)); // 2
-		_pnts.push_back(new Point(-1.0, 2.0,0.0)); // 3
-		_pnts.push_back(new Point( 0.0, 4.0,0.0)); // 4
-		_pnts.push_back(new Point( 1.0, 2.0,0.0)); // 5
-		_pnts.push_back(new Point( 2.0, 4.0,0.0)); // 6
-		_pnts.push_back(new Point( 2.0, 2.0,0.0)); // 7
+		_pnts.push_back(new GeoLib::Point( 0.0, 0.0,0.0)); // 0
+		_pnts.push_back(new GeoLib::Point(-2.0, 2.0,0.0)); // 1
+		_pnts.push_back(new GeoLib::Point(-2.0, 4.0,0.0)); // 2
+		_pnts.push_back(new GeoLib::Point(-1.0, 2.0,0.0)); // 3
+		_pnts.push_back(new GeoLib::Point( 0.0, 4.0,0.0)); // 4
+		_pnts.push_back(new GeoLib::Point( 1.0, 2.0,0.0)); // 5
+		_pnts.push_back(new GeoLib::Point( 2.0, 4.0,0.0)); // 6
+		_pnts.push_back(new GeoLib::Point( 2.0, 2.0,0.0)); // 7
 
 		// create closed polyline
-		Polyline ply(_pnts);
+		GeoLib::Polyline ply(_pnts);
 		ply.addPoint(0);
 		ply.addPoint(1);
 		ply.addPoint(2);
@@ -62,7 +60,7 @@ public:
 		ply.addPoint(0);
 
 		// create polygon
-		_polygon = new Polygon(ply);
+		_polygon = new GeoLib::Polygon(ply);
 	}
 
 	~PolygonTest()
@@ -73,8 +71,8 @@ public:
 	}
 
 protected:
-	std::vector<Point*> _pnts;
-	Polygon *_polygon;
+	std::vector<GeoLib::Point*> _pnts;
+	GeoLib::Polygon *_polygon;
 };
 
 TEST_F(PolygonTest, isPntInPolygonCheckCorners)
@@ -88,11 +86,11 @@ TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
 	for (std::size_t k(0); k<_pnts.size()-1; k++) {
 		for (double t(0.0); t<1.0; t+=0.001) {
 			EXPECT_TRUE(_polygon->isPntInPolygon(
-					Point(
-							(*_pnts[k])[0] + t*((*_pnts[k+1])[0]-(*_pnts[k])[0]),
-							(*_pnts[k])[1] + t*((*_pnts[k+1])[1]-(*_pnts[k])[1]),
-							(*_pnts[k])[2] + t*((*_pnts[k+1])[2]-(*_pnts[k])[2])
-					))
+				GeoLib::Point(
+					(*_pnts[k])[0] + t*((*_pnts[k+1])[0]-(*_pnts[k])[0]),
+					(*_pnts[k])[1] + t*((*_pnts[k+1])[1]-(*_pnts[k])[1]),
+					(*_pnts[k])[2] + t*((*_pnts[k+1])[2]-(*_pnts[k])[2])
+				))
 			);
 		}
 	}
@@ -100,20 +98,28 @@ TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
 
 TEST_F(PolygonTest, isPntInPolygonCheckInnerPoints)
 {
-	ASSERT_TRUE(_polygon->isPntInPolygon(Point(1.0,1.0,0.0)));
-	ASSERT_TRUE(_polygon->isPntInPolygon(Point(0.5,1.0,0.0)));
+	ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(1.0,1.0,0.0)));
+	ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(0.5,1.0,0.0)));
 }
 
 TEST_F(PolygonTest, isPntInPolygonCheckOuterPoints)
 {
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(0.0-std::numeric_limits<float>::epsilon(),0.0,0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(-2.0-std::numeric_limits<float>::epsilon(),2.0,0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(-2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(-1.0, 2.0+std::numeric_limits<float>::epsilon(),0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(0.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(1.0,2.0+std::numeric_limits<float>::epsilon(),0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-	ASSERT_FALSE(_polygon->isPntInPolygon(Point(2.0+std::numeric_limits<float>::epsilon(),2.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		0.0-std::numeric_limits<float>::epsilon(),0.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		-2.0-std::numeric_limits<float>::epsilon(),2.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		-2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		-1.0, 2.0+std::numeric_limits<float>::epsilon(),0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		0.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		1.0,2.0+std::numeric_limits<float>::epsilon(),0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
+	ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
+		2.0+std::numeric_limits<float>::epsilon(),2.0,0.0)));
 }
 
 /**

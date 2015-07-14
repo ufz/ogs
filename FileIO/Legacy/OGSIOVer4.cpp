@@ -36,8 +36,6 @@
 
 #include "FileIO/TINInterface.h"
 
-using namespace GeoLib;
-
 namespace FileIO
 {
 namespace Legacy {
@@ -50,7 +48,7 @@ namespace Legacy {
 **************************************************************************/
 /** reads the points inclusive their names from input stream in
  * using the OGS-4 file format */
-std::string readPoints(std::istream &in, std::vector<Point*>* pnt_vec,
+std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
                        bool &zero_based_indexing, std::map<std::string,std::size_t>* pnt_id_name_map)
 {
 	std::string line;
@@ -75,7 +73,7 @@ std::string readPoints(std::istream &in, std::vector<Point*>* pnt_vec,
 				else
 					zero_based_indexing = false;
 			}
-			pnt_vec->push_back(new Point(x, y, z, id));
+			pnt_vec->push_back(new GeoLib::Point(x, y, z, id));
 
 			// read mesh density
 			if (line.find("$MD") != std::string::npos)
@@ -110,7 +108,7 @@ std::string readPoints(std::istream &in, std::vector<Point*>* pnt_vec,
 
 /** reads points from a vector */
 void readPolylinePointVector(const std::string &fname,
-                             std::vector<Point*>& pnt_vec,
+                             std::vector<GeoLib::Point*>& pnt_vec,
                              GeoLib::Polyline* ply,
                              const std::string &path,
                              std::vector<std::string> &errors)
@@ -128,7 +126,7 @@ void readPolylinePointVector(const std::string &fname,
 	{
 		in >> x >> y >> z;
 		std::size_t pnt_id(pnt_vec.size());
-		pnt_vec.push_back(new Point(x, y, z));
+		pnt_vec.push_back(new GeoLib::Point(x, y, z));
 		ply->addPoint(pnt_id);
 	}
 }
@@ -148,7 +146,7 @@ void readPolylinePointVector(const std::string &fname,
 std::string readPolyline(std::istream &in,
                          std::vector<GeoLib::Polyline*>* ply_vec,
                          std::map<std::string,std::size_t>& ply_vec_names,
-                         std::vector<Point*> & pnt_vec,
+                         std::vector<GeoLib::Point*> & pnt_vec,
                          bool zero_based_indexing,
                          const std::vector<std::size_t>& pnt_id_map,
                          const std::string &path,
@@ -243,7 +241,7 @@ std::string readPolyline(std::istream &in,
 /** reads polylines */
 std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_vec,
                           std::map<std::string,std::size_t>& ply_vec_names,
-                          std::vector<Point*> & pnt_vec,
+                          std::vector<GeoLib::Point*> & pnt_vec,
                           bool zero_based_indexing, const std::vector<std::size_t>& pnt_id_map,
                           const std::string &path, std::vector<std::string>& errors)
 {
@@ -272,7 +270,7 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
 /** read a single Surface */
 std::string readSurface(std::istream &in,
                         std::vector<GeoLib::Polygon*> &polygon_vec,
-                        std::vector<Surface*> &sfc_vec,
+                        std::vector<GeoLib::Surface*> &sfc_vec,
                         std::map<std::string,std::size_t>& sfc_names,
                         const std::vector<GeoLib::Polyline*> &ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
@@ -280,7 +278,7 @@ std::string readSurface(std::istream &in,
                         std::string const& path, std::vector<std::string>& errors)
 {
 	std::string line;
-	Surface* sfc(NULL);
+	GeoLib::Surface* sfc(NULL);
 
 	int type (-1);
 	std::string name;
@@ -385,7 +383,7 @@ std::string readSurface(std::istream &in,
    01/2010 TF changed signature of function, big modifications
 **************************************************************************/
 std::string readSurfaces(std::istream &in,
-                         std::vector<Surface*> &sfc_vec,
+                         std::vector<GeoLib::Surface*> &sfc_vec,
                          std::map<std::string, std::size_t>& sfc_names,
                          const std::vector<GeoLib::Polyline*> &ply_vec,
                          const std::map<std::string,std::size_t>& ply_vec_names,
@@ -432,7 +430,7 @@ std::string readSurfaces(std::istream &in,
 }
 
 bool readGLIFileV4(const std::string& fname,
-                   GEOObjects* geo,
+                   GeoLib::GEOObjects* geo,
                    std::string& unique_name,
                    std::vector<std::string>& errors)
 {
@@ -452,7 +450,7 @@ bool readGLIFileV4(const std::string& fname,
 	// read names of points into vector of strings
 	std::map<std::string,std::size_t>* pnt_id_names_map (new std::map<std::string,std::size_t>);
 	bool zero_based_idx(true);
-	std::vector<Point*>* pnt_vec(new std::vector<Point*>);
+	std::vector<GeoLib::Point*>* pnt_vec(new std::vector<GeoLib::Point*>);
 	INFO("GeoLib::readGLIFile(): read points from stream.");
 	tag = readPoints(in, pnt_vec, zero_based_idx, pnt_id_names_map);
 	INFO("GeoLib::readGLIFile(): \t ok, %d points read.", pnt_vec->size());
@@ -470,7 +468,7 @@ bool readGLIFileV4(const std::string& fname,
 	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
 	GeoLib::PointVec & point_vec(
 		*const_cast<GeoLib::PointVec*>(geo->getPointVecObj(unique_name)));
-	std::vector<Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
+	std::vector<GeoLib::Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
 		point_vec.getVector()));
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
@@ -483,7 +481,7 @@ bool readGLIFileV4(const std::string& fname,
 	else
 		INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
-	std::vector<Surface*>* sfc_vec(new std::vector<Surface*>);
+	std::vector<GeoLib::Surface*>* sfc_vec(new std::vector<GeoLib::Surface*>);
 	std::map<std::string,std::size_t>* sfc_names (new std::map<std::string,std::size_t>);
 	if (tag.find("#SURFACE") != std::string::npos && in)
 	{
@@ -589,7 +587,7 @@ void writeGLIFileV4 (const std::string& fname,
 
 	// writing surfaces as TIN files
 	const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_name));
-	if (sfcs_vec) 
+	if (sfcs_vec)
 		writeTINSurfaces(os, sfcs_vec, 0, BaseLib::extractPath(fname));
 
 	os << "#STOP" << "\n";
