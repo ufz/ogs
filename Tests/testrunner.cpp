@@ -32,7 +32,7 @@
 
 #include "BaseLib/LogogCustomCout.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
-#ifdef QT4_FOUND
+#ifdef OGS_BUILD_GUI
 #include <QApplication>
 #endif
 
@@ -40,7 +40,7 @@
 int main(int argc, char* argv[])
 {
     setlocale(LC_ALL, "C");
-#ifdef QT4_FOUND
+#ifdef OGS_BUILD_GUI
     QApplication app(argc, argv, false);
 #endif
     int ret = 0;
