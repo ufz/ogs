@@ -171,7 +171,6 @@ public:
         _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
 
         if (_mesh.getDimension()==1)
             createLocalAssemblers<1>();
@@ -201,7 +200,8 @@ public:
         // Apply known values from the Dirichlet boundary conditions.
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
-        _linearSolver->solve(*_rhs, *_x);
+        typename GlobalSetup::LinearSolver linearSolver(*_A);
+        linearSolver.solve(*_rhs, *_x);
     }
 
     void post(std::string const& file_name)
@@ -257,7 +257,6 @@ private:
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     GlobalSetup _global_setup;
-    std::unique_ptr<typename GlobalSetup::LinearSolver> _linearSolver;
     std::unique_ptr<typename GlobalSetup::MatrixType> _A;
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
