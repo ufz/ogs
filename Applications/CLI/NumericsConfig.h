@@ -38,6 +38,18 @@ namespace detail
 }
 
 #else    // USE_LIS
+#ifdef OGS_USE_EIGEN
+    #include "MathLib/LinAlg/Eigen/EigenVector.h"
+    #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+    #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
+namespace detail
+{
+    using GlobalVectorType = MathLib::EigenVector;
+    using GlobalMatrixType = MathLib::EigenMatrix;
+
+    using LinearSolverType = MathLib::EigenLinearSolver;
+}
+#else   // OGS_USE_EIGEN
     #include "MathLib/LinAlg/Dense/DenseVector.h"
     #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
     #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -51,6 +63,7 @@ namespace detail
 }
 
 #endif    // USE_LIS
+#endif    // OGS_USE_EIGEN
 
 
 //

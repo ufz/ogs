@@ -102,6 +102,11 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #endif  // USE_PETSC
 
+#ifdef OGS_USE_EIGEN
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#endif  // OGS_USE_EIGEN
+
 typedef ::testing::Types
     < AssemblerLib::SerialVectorMatrixBuilder<
         MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
@@ -113,6 +118,10 @@ typedef ::testing::Types
     , AssemblerLib::SerialVectorMatrixBuilder<
         MathLib::PETScMatrix, MathLib::PETScVector>
 #endif  // USE_PETSC
+#ifdef OGS_USE_EIGEN
+    , AssemblerLib::SerialVectorMatrixBuilder<
+        MathLib::EigenMatrix, MathLib::EigenVector>
+#endif  // OGS_USE_EIGEN
     > TestTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibSerialVectorMatrixBuilder,
