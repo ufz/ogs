@@ -93,6 +93,7 @@ target_link_libraries(DataExplorer
 	${CATALYST_LIBRARIES}
 	zlib
 	shp
+	Threads::Threads
 )
 
 if(CMAKE_CROSSCOMPILING)

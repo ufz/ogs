@@ -16,7 +16,13 @@ target_link_libraries(ogs
 )
 
 if(OGS_BUILD_GUI)
-	target_link_libraries(ogs QtDataView VtkVis vtkInteractionStyle)
+	target_link_libraries(ogs QtDataView VtkVis vtkInteractionStyle Qt4::QtCore Qt4::QtGui Qt4::QtXml Qt4::QtNetwork)
+	if(CMAKE_CROSSCOMPILING)
+		target_link_libraries(ogs
+			${QT_XML_DEPS_LIBRARIES}
+			${QT_GUI_DEPS_LIBRARIES}
+			${QT_NETWORK_DEPS_LIBRARIES})
+	endif()
 endif()
 
 ADD_CATALYST_DEPENDENCY(ogs)
