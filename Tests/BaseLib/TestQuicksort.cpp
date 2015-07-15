@@ -14,6 +14,7 @@
 
 #include "gtest/gtest.h"
 #include "quickcheck/quickcheck.hh"
+#include "autocheck/autocheck.hpp"
 #include "quicksort.h"
 
 #include <algorithm>
@@ -22,6 +23,9 @@
 #include <vector>
 
 using namespace quickcheck;
+namespace ac = autocheck;
+ac::gtest_reporter gtest_reporter;
+
 
 // Quicksort result is sorted.
 class QuicksortSortsAsSTLSort : public Property<std::vector<int>> {
