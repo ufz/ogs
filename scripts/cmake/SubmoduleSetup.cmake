@@ -7,6 +7,7 @@ endif()
 set(REQUIRED_SUBMODULES
 	ThirdParty/quickcheck
 	ThirdParty/vtkdiff
+	ThirdParty/tclap
 	${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 
