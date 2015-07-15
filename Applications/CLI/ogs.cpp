@@ -17,7 +17,7 @@
 #include "logog/include/logog.hpp"
 
 // ThirdParty/tclap
-#include "ThirdParty/tclap/CmdLine.h"
+#include "tclap/CmdLine.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
