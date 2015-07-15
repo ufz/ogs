@@ -1,6 +1,3 @@
-[submodule "ThirdParty/quickcheck"]
-	path = ThirdParty/quickcheck
-	url = git://github.com/ufz/quickcheck.git
 [submodule "ThirdParty/VtkFbxConverter"]
 	path = ThirdParty/VtkFbxConverter
 	url = git://github.com/ufz-vislab/VtkFbxConverter.git

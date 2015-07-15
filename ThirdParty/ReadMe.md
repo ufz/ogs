@@ -28,6 +28,6 @@ Compression algorithms. Is integrated directly.
 
 Google testing framework for unit tests. Is integrated directly.
 
-## quickcheck ##
+## autocheck ##
 
 Is integrated as a submodule.

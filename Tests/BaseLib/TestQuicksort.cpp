@@ -13,7 +13,6 @@
  */
 
 #include "gtest/gtest.h"
-#include "quickcheck/quickcheck.hh"
 #include "autocheck/autocheck.hpp"
 #include "quicksort.h"
 
@@ -22,7 +21,6 @@
 #include <string>
 #include <vector>
 
-using namespace quickcheck;
 namespace ac = autocheck;
 ac::gtest_reporter gtest_reporter;
 

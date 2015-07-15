@@ -5,7 +5,6 @@ if(NOT OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT)
 	set(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "")
 endif()
 set(REQUIRED_SUBMODULES
-	ThirdParty/quickcheck
 	ThirdParty/autocheck
 	ThirdParty/vtkdiff
 	ThirdParty/tclap
