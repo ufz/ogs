@@ -26,7 +26,7 @@ namespace MathLib
 {
 
 LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
-    : _n_rows(n_rows), _mat_type(mat_type), _is_assembled(false)
+    : _n_rows(n_rows), _mat_type(mat_type), _is_assembled(false), _use_external_arrays(false)
 {
     int ierr = lis_matrix_create(0, &_AA);
     checkLisError(ierr);
@@ -37,9 +37,29 @@ LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
     checkLisError(ierr);
 }
 
+LisMatrix::LisMatrix(std::size_t n_rows, int nnz, int* row_ptr, int* col_idx, double* data)
+: _n_rows(n_rows), _mat_type(LisOption::MatrixType::CRS), _is_assembled(false), _use_external_arrays(true)
+{
+    int ierr = lis_matrix_create(0, &_AA);
+    checkLisError(ierr);
+    ierr = lis_matrix_set_size(_AA, 0, n_rows);
+    checkLisError(ierr);
+    ierr = lis_matrix_set_csr(nnz, row_ptr, col_idx, data, _AA);
+    checkLisError(ierr);
+    ierr = lis_matrix_assemble(_AA);
+    checkLisError(ierr);
+    _is_assembled = true;
+    lis_matrix_get_range(_AA, &_is, &_ie);
+    ierr = lis_vector_duplicate(_AA, &_diag);
+    checkLisError(ierr);
+}
+
 LisMatrix::~LisMatrix()
 {
-    int ierr = lis_matrix_destroy(_AA);
+    int ierr = 0;
+    if (_use_external_arrays)
+        ierr = lis_matrix_unset(_AA);
+    ierr = lis_matrix_destroy(_AA);
     checkLisError(ierr);
     ierr = lis_vector_destroy(_diag);
     checkLisError(ierr);

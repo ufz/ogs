@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "lis.h"
+#include <lis.h>
 
 namespace MathLib
 {
@@ -34,6 +34,13 @@ public:
 	 * @param length number of rows
 	 */
     explicit LisVector(std::size_t length);
+
+    /**
+     * Constructor using the given raw data
+     * @param length the length of the vector
+     * @param data   the raw data
+     */
+    LisVector(std::size_t length, double* data);
 
     /// copy constructor
     LisVector(LisVector const &src);

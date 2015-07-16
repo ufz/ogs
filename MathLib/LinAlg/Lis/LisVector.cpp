@@ -24,6 +24,14 @@ LisVector::LisVector(std::size_t length)
     lis_vector_set_size(_vec, 0, length);
 }
 
+LisVector::LisVector(std::size_t length, double* data)
+{
+    lis_vector_create(0, &_vec);
+    lis_vector_set_size(_vec, 0, length);
+    for (std::size_t i=0; i<length; i++)
+        lis_vector_set_value(LIS_INS_VALUE, i, data[i], _vec);
+}
+
 LisVector::LisVector(LisVector const &src)
 {
 	lis_vector_duplicate(src._vec, &_vec);
