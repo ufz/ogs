@@ -19,7 +19,31 @@
 using namespace MathLib;
 namespace ac = autocheck;
 
-ac::gtest_reporter gtest_reporter;
+
+template <typename T, std::size_t N>
+struct randomTupleGenerator
+{
+	ac::generator<T> source;
+
+	using result_type = std::array<T, N>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		result_type rv;
+		std::generate(rv.begin(), rv.end(), ac::fix(size, source));
+		return rv;
+	}
+};
+
+
+struct MathLibPoint3d : public ::testing::Test
+{
+	randomTupleGenerator<double, 3> tupleGen{};
+	ac::cons_generator<MathLib::Point3d, randomTupleGenerator<double, 3>>
+		pointGenerator{tupleGen};
+
+	ac::gtest_reporter gtest_reporter;
+};
 
 TEST(MathLib, Point3dComparisonLessEq)
 {
@@ -151,27 +175,9 @@ TEST(MathLib, Point3dComparisonOperatorEqual)
 	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
 }
 
-template <typename T, std::size_t N>
-struct randomTupleGenerator
-{
-	ac::generator<T> source;
-
-	using result_type = std::array<T, N>;
-
-	result_type operator()(std::size_t size = 0)
-	{
-		result_type rv;
-		std::generate(rv.begin(), rv.end(), ac::fix(size, source));
-		return rv;
-	}
-};
-
 // test for operator<
-TEST(MathLib, Point3dComparisonOperatorLess)
+TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 {
-	auto tupleGen = randomTupleGenerator<double, 3>{};
-	auto pointGenerator = ac::cons<MathLib::Point3d, randomTupleGenerator<double, 3>>(tupleGen);
-
 	// A point is never less than itself or its copy.
 	auto samePointLessCompare = [](MathLib::Point3d const& p)
 	{
