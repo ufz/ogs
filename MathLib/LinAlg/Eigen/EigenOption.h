@@ -19,7 +19,7 @@ namespace MathLib
 struct EigenOption final
 {
     /// Solver type
-    enum class SolverType : int
+    enum class SolverType : short
     {
         INVALID,
         CG,
@@ -28,7 +28,7 @@ struct EigenOption final
     };
 
     /// Preconditioner type
-    enum class PreconType : int
+    enum class PreconType : short
     {
         NONE,
         DIAGONAL
