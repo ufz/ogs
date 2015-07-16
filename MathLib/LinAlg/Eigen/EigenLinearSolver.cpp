@@ -101,13 +101,13 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A, ptree const*const option)
 
     A.getRawMatrix().makeCompressed();
     if (_option.solver_type==EigenOption::SolverType::SparseLU) {
-        typedef Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int> > SolverType;
+        using SolverType = Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int>>;
         _solver = new details::EigenDirectLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::BiCGSTAB) {
-        typedef Eigen::BiCGSTAB<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>> SolverType;
+        using SolverType = Eigen::BiCGSTAB<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>>;
         _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     } else if (_option.solver_type==EigenOption::SolverType::CG) {
-        typedef Eigen::ConjugateGradient<EigenMatrix::RawMatrixType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>> SolverType;
+        using SolverType = Eigen::ConjugateGradient<EigenMatrix::RawMatrixType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>>;
         _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
     }
 }

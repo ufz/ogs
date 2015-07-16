@@ -27,7 +27,7 @@ namespace MathLib
 class EigenVector
 {
 public:
-    typedef Eigen::VectorXd RawVectorType;
+    using RawVectorType = Eigen::VectorXd;
 
     /**
      * Constructor for initialization of the number of rows

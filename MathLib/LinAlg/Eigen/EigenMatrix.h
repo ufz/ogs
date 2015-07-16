@@ -32,7 +32,7 @@ namespace MathLib
 class EigenMatrix final
 {
 public:
-    typedef Eigen::SparseMatrix<double, Eigen::RowMajor> RawMatrixType;
+    using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
     /**
      * constructor
