@@ -22,8 +22,6 @@ namespace MathLib
 
 class EigenMatrix;
 
-/**
- */
 class EigenLinearSolver final
 {
 public:
@@ -35,20 +33,17 @@ public:
     }
 
     /**
-     * configure linear solvers
-     * @param option
+     * parse linear solvers configuration
      */
     void setOption(const boost::property_tree::ptree &option);
 
     /**
-     * configure linear solvers
-     * @param option
+     * copy linear solvers options
      */
     void setOption(const EigenOption &option) { _option = option; }
 
     /**
      * get linear solver options
-     * @return
      */
     EigenOption &getOption() { return _option; }
 

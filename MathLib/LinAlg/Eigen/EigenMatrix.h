@@ -36,7 +36,7 @@ public:
 
     /**
      * constructor
-     * @param n_rows the number of rows (that is equal to the number of columns)
+     * @param n the number of rows (that is equal to the number of columns)
      */
     explicit EigenMatrix(std::size_t n) :_mat(n, n) {}
 
@@ -95,16 +95,14 @@ public:
         this->add(indices.rows, indices.columns, sub_matrix, fkt);
     }
 
-    /**
-     * Add sub-matrix at positions \c row_pos and \c col_pos. If the entries doesn't
-     * exist in the matrix, the values are inserted.
-     * @param row_pos     a vector of row position indices. The vector size should
-     *                    equal to the number of rows in the given sub-matrix.
-     * @param col_pos     a vector of column position indices. The vector size should
-     *                    equal to the number of columns in the given sub-matrix.
-     * @param sub_matrix  a sub-matrix to be added
-     * @param fkt         a scaling factor applied to all entries in the sub-matrix
-     */
+    /// Add sub-matrix at positions \c row_pos and \c col_pos. If the entries doesn't
+    /// exist in the matrix, the values are inserted.
+    /// @param row_pos     a vector of row position indices. The vector size should
+    ///                    equal to the number of rows in the given sub-matrix.
+    /// @param col_pos     a vector of column position indices. The vector size should
+    ///                    equal to the number of columns in the given sub-matrix.
+    /// @param sub_matrix  a sub-matrix to be added
+    /// @param fkt         a scaling factor applied to all entries in the sub-matrix
     template <class T_DENSE_MATRIX>
     void add(std::vector<std::size_t> const& row_pos,
             std::vector<std::size_t> const& col_pos, const T_DENSE_MATRIX &sub_matrix,

@@ -15,9 +15,7 @@
 namespace MathLib
 {
 
-/**
- * \brief Option for Eigen sparse solver
- */
+/// \brief Option for Eigen sparse solver
 struct EigenOption final
 {
     /// Solver type
@@ -45,35 +43,29 @@ struct EigenOption final
     /// Error tolerance
     double error_tolerance;
 
-    /**
-     * Constructor
-     *
-     * Default options are CG, no preconditioner, iteration count 500 and
-     * tolerance 1e-10. Default matrix storage type is CRS.
-     */
+    /// Constructor
+    ///
+    /// Default options are CG, no preconditioner, iteration count 500 and
+    /// tolerance 1e-10. Default matrix storage type is CRS.
     EigenOption();
 
-    /**
-     * return a linear solver type from the solver name
-     *
-     * @param solver_name
-     * @return a linear solver type
-     *      If there is no solver type matched with the given name, INVALID
-     *      is returned.
-     */
+    /// return a linear solver type from the solver name
+    ///
+    /// @param solver_name
+    /// @return a linear solver type
+    ///      If there is no solver type matched with the given name, INVALID
+    ///      is returned.
     static SolverType getSolverType(const std::string &solver_name);
 
-    /**
-     * return a preconditioner type from the name
-     *
-     * @param precon_name
-     * @return a preconditioner type
-     *      If there is no preconditioner type matched with the given name, NONE
-     *      is returned.
-     */
+    /// return a preconditioner type from the name
+    ///
+    /// @param precon_name
+    /// @return a preconditioner type
+    ///      If there is no preconditioner type matched with the given name, NONE
+    ///      is returned.
     static PreconType getPreconType(const std::string &precon_name);
 
 };
 
 }
-#endif //LIS_OPTION_H_
+#endif // EIGENOPTION_H_
