@@ -12,10 +12,14 @@
 
 #include <ctime>
 #include "gtest/gtest.h"
+#include "autocheck/autocheck.hpp"
 
 #include "MathLib/Point3d.h"
 
 using namespace MathLib;
+namespace ac = autocheck;
+
+ac::gtest_reporter gtest_reporter;
 
 TEST(MathLib, Point3dComparisonLessEq)
 {
