@@ -170,16 +170,19 @@ struct randomTupleGenerator
 TEST(MathLib, Point3dComparisonOperatorLess)
 {
 	auto tupleGen = randomTupleGenerator<double, 3>{};
-	auto pointGenerator = ac::make_arbitrary(ac::cons<MathLib::Point3d, randomTupleGenerator<double, 3>>(tupleGen));
+	auto pointGenerator = ac::cons<MathLib::Point3d, randomTupleGenerator<double, 3>>(tupleGen);
 
-	srand(static_cast<unsigned>(time(nullptr)));
-	double x0(((double)(rand()) / RAND_MAX - 0.5));
-	double x1(((double)(rand()) / RAND_MAX - 0.5));
-	double x2(((double)(rand()) / RAND_MAX - 0.5));
+	// A point is never less than itself or its copy.
+	auto samePointLessCompare = [](MathLib::Point3d const& p)
+	{
+		auto q = p;
+		return !(p < p) && !(p < q) && !(q < p);
+	};
 
-	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
-	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_FALSE((a < b) && (b < a));
+	ac::check<MathLib::Point3d>(samePointLessCompare, 100,
+								ac::make_arbitrary(pointGenerator),
+								gtest_reporter);
+
 
 	double tol = std::numeric_limits<double>::epsilon();
 	ASSERT_TRUE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) <
