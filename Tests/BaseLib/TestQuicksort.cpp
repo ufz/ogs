@@ -66,7 +66,7 @@ TEST_F(BaseLibQuicksort, SortsAsSTLSort)
 }
 
 template <typename T>
-struct ordered_unique_list_gen
+struct OrderedUniqueListGen
 {
     ac::generator<std::vector<T>> source;
     typedef std::vector<T> result_type;
@@ -86,7 +86,7 @@ struct ordered_unique_list_gen
 // Permutations of sorted, unique vector remain untouched.
 TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
 {
-    auto gen = ac::make_arbitrary(ordered_unique_list_gen<int>());
+    auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
 
     auto quicksortCheckPermutations = [](const std::vector<int>& xs)
     {
@@ -117,7 +117,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
         return xs;
     };
 
-    auto gen = ac::make_arbitrary(ac::map(reverse, ordered_unique_list_gen<int>()));
+    auto gen =
+        ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
 
     auto quicksortCheckPermutations = [](const std::vector<int>& xs)
     {
