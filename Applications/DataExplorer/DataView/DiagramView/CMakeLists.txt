@@ -65,7 +65,7 @@ add_library(QtDiagramView STATIC
 
 # Link Qt library
 target_link_libraries(QtDiagramView
-	${QT_LIBRARIES}
+	Qt4::QtGui
 	GeoLib
 )
 

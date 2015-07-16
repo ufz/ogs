@@ -11,3 +11,7 @@ target_link_libraries(ApplicationsLib
 	${CATALYST_LIBRARIES}
 )
 ADD_CATALYST_DEPENDENCY(ApplicationsLib)
+
+if(OGS_BUILD_GUI)
+	target_link_libraries(ApplicationsLib Qt4::QtCore)
+endif()

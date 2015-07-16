@@ -47,6 +47,6 @@ add_library(QtBase STATIC
 	${MOC_SOURCES}
 )
 
-target_link_libraries(QtBase ${QT_LIBRARIES})
+target_link_libraries(QtBase Qt4::QtGui)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")

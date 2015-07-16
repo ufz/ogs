@@ -156,7 +156,7 @@ if(GEOTIFF_FOUND)
 	target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis ${QT_LIBRARIES})
+target_link_libraries(VtkVis Qt4::QtGui)
 
 add_dependencies(VtkVis QtDataView)
 

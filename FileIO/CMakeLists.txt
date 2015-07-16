@@ -59,6 +59,9 @@ target_link_libraries(FileIO
 	zlib
 	shp
 )
+if(QT4_FOUND)
+	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
+endif()
 
 ADD_CATALYST_DEPENDENCY(FileIO)
 

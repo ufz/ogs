@@ -176,7 +176,7 @@ add_library(QtDataView STATIC
 
 # Link Qt library
 target_link_libraries(QtDataView
-	${QT_LIBRARIES}
+	Qt4::QtCore
 	FileIO
 	GeoLib
 	MeshLib

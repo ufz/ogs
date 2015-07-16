@@ -15,6 +15,6 @@ target_link_libraries(BaseLib
 	${Boost_LIBRARIES}
 )
 
-if(WIN32)
-	target_link_libraries(BaseLib WinMM)
+if(TARGET Eigen)
+	add_dependencies(BaseLib Eigen)
 endif()

@@ -74,14 +74,16 @@ add_executable(DataExplorer MACOSX_BUNDLE
 )
 
 target_link_libraries(DataExplorer
-	${QT_LIBRARIES}
+	Qt4::QtCore
+	Qt4::QtGui
+	Qt4::QtXml
+	Qt4::QtNetwork
 	ApplicationsLib
 	BaseLib
 	GeoLib
 	FileIO
 	InSituLib
 	MeshLib
-	#MSHGEOTOOLS
 	QtBase
 	QtDataView
 	QtStratView
@@ -91,7 +93,16 @@ target_link_libraries(DataExplorer
 	${CATALYST_LIBRARIES}
 	zlib
 	shp
+	Threads::Threads
 )
+
+if(CMAKE_CROSSCOMPILING)
+	target_link_libraries(DataExplorer
+		${QT_XML_DEPS_LIBRARIES}
+		${QT_GUI_DEPS_LIBRARIES}
+		${QT_NETWORK_DEPS_LIBRARIES}
+	)
+endif()
 
 if(VTK_NETCDF_FOUND)
 	target_link_libraries(DataExplorer vtkNetCDF vtkNetCDF_cxx )

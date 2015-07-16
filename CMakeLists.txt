@@ -3,13 +3,11 @@
 #####################
 
 # Specify minimum CMake version
-cmake_minimum_required(VERSION 2.8.8)
+cmake_minimum_required(VERSION 3.1)
 
 # Set CMake policies
 cmake_policy(SET CMP0011 OLD)
-if(CMAKE_VERSION VERSION_GREATER 3.0.2)
-	cmake_policy(SET CMP0054 NEW)
-endif()
+cmake_policy(SET CMP0054 NEW)
 
 # Project name
 project( OGS-6 )
