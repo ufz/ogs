@@ -22,33 +22,28 @@ namespace MathLib
 
 class EigenMatrix;
 
-/**
- */
-class EigenLinearSolver
+class EigenLinearSolver final
 {
 public:
     EigenLinearSolver(EigenMatrix &A, boost::property_tree::ptree const*const option = nullptr);
 
-    virtual ~EigenLinearSolver()
+    ~EigenLinearSolver()
     {
         delete _solver;
     }
 
     /**
-     * configure linear solvers
-     * @param option
+     * parse linear solvers configuration
      */
     void setOption(const boost::property_tree::ptree &option);
 
     /**
-     * configure linear solvers
-     * @param option
+     * copy linear solvers options
      */
     void setOption(const EigenOption &option) { _option = option; }
 
     /**
      * get linear solver options
-     * @return
      */
     EigenOption &getOption() { return _option; }
 
@@ -64,8 +59,10 @@ protected:
     class IEigenSolver
     {
     public:
-        virtual ~IEigenSolver() {}
-        /// execute a linear solver
+        virtual ~IEigenSolver() = default;
+        /**
+         * execute a linear solver
+         */
         virtual void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &) = 0;
     };
 

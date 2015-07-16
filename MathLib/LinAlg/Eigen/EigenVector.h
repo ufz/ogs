@@ -21,27 +21,18 @@
 namespace MathLib
 {
 
-/**
- * Global vector based on Eigen vector
- */
-class EigenVector
+/// Global vector based on Eigen vector
+class EigenVector final
 {
 public:
-    typedef Eigen::VectorXd RawVectorType;
+    using RawVectorType = Eigen::VectorXd;
 
-    /**
-     * Constructor for initialization of the number of rows
-     * @param length number of rows
-     */
+    /// Constructor for initialization of the number of rows
+    /// @param length number of rows
     explicit EigenVector(std::size_t length) : _vec(length) {}
 
     /// copy constructor
     EigenVector(EigenVector const &src) : _vec(src._vec) {}
-
-    /**
-     *
-     */
-    virtual ~EigenVector() {}
 
     /// return a vector length
     std::size_t size() const { return _vec.size(); }
@@ -93,10 +84,10 @@ public:
     void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
 #endif
 
-    /// return a raw Lis vector object
+    /// return a raw Eigen vector object
     RawVectorType& getRawVector() {return _vec; }
 
-    /// return a raw Lis vector object
+    /// return a raw Eigen vector object
     const RawVectorType& getRawVector() const {return _vec; }
 
     /// vector operation: set data

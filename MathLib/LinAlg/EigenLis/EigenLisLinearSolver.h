@@ -25,7 +25,7 @@ class EigenMatrix;
 /**
  * Linear solver using Lis library with Eigen matrix and vector objects
  */
-class EigenLisLinearSolver
+class EigenLisLinearSolver final
 {
 public:
     /**
@@ -37,23 +37,18 @@ public:
      */
     EigenLisLinearSolver(EigenMatrix &A, boost::property_tree::ptree const*const option = nullptr);
 
-    virtual ~EigenLisLinearSolver() {}
-
     /**
-     * configure linear solvers
-     * @param option
+     * parse linear solvers configuration
      */
     void setOption(const boost::property_tree::ptree &option);
 
     /**
-     * configure linear solvers
-     * @param option
+     * copy linear solvers options
      */
     void setOption(const LisOption &option) { _option = option; }
 
     /**
      * get linear solver options
-     * @return
      */
     LisOption &getOption() { return _option; }
 

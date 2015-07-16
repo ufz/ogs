@@ -15,13 +15,11 @@
 namespace MathLib
 {
 
-/**
- * \brief Option for Eigen sparse solver
- */
-struct EigenOption
+/// \brief Option for Eigen sparse solver
+struct EigenOption final
 {
     /// Solver type
-    enum class SolverType : int
+    enum class SolverType : short
     {
         INVALID,
         CG,
@@ -30,7 +28,7 @@ struct EigenOption
     };
 
     /// Preconditioner type
-    enum class PreconType : int
+    enum class PreconType : short
     {
         NONE,
         DIAGONAL
@@ -41,42 +39,33 @@ struct EigenOption
     /// Preconditioner type
     PreconType precon_type;
     /// Maximum iteration count
-    std::size_t max_iterations;
+    int max_iterations;
     /// Error tolerance
     double error_tolerance;
 
-    /**
-     * Constructor
-     *
-     * Default options are CG, no preconditioner, iteration count 500 and
-     * tolerance 1e-10. Default matrix storage type is CRS.
-     */
+    /// Constructor
+    ///
+    /// Default options are CG, no preconditioner, iteration count 500 and
+    /// tolerance 1e-10. Default matrix storage type is CRS.
     EigenOption();
 
-    /// Destructor
-    ~EigenOption() {}
-
-    /**
-     * return a linear solver type from the solver name
-     *
-     * @param solver_name
-     * @return a linear solver type
-     *      If there is no solver type matched with the given name, INVALID
-     *      is returned.
-     */
+    /// return a linear solver type from the solver name
+    ///
+    /// @param solver_name
+    /// @return a linear solver type
+    ///      If there is no solver type matched with the given name, INVALID
+    ///      is returned.
     static SolverType getSolverType(const std::string &solver_name);
 
-    /**
-     * return a preconditioner type from the name
-     *
-     * @param precon_name
-     * @return a preconditioner type
-     *      If there is no preconditioner type matched with the given name, NONE
-     *      is returned.
-     */
+    /// return a preconditioner type from the name
+    ///
+    /// @param precon_name
+    /// @return a preconditioner type
+    ///      If there is no preconditioner type matched with the given name, NONE
+    ///      is returned.
     static PreconType getPreconType(const std::string &precon_name);
 
 };
 
 }
-#endif //LIS_OPTION_H_
+#endif // EIGENOPTION_H_
