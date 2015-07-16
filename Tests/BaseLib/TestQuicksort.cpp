@@ -22,26 +22,29 @@
 #include <vector>
 
 namespace ac = autocheck;
-ac::gtest_reporter gtest_reporter;
 
+struct BaseLibQuicksort : public ::testing::Test
+{
+    virtual void SetUp()
+    {
+        cls.trivial([](const std::vector<int>& xs)
+                    {
+                        return xs.size() < 2;
+                    });
+
+        cls.collect([](std::vector<int> const& xs)
+                    {
+                        return xs.size() < 10 ? "short" : "long";
+                    });
+    }
+
+    ac::gtest_reporter gtest_reporter;
+    ac::classifier<std::vector<int>> cls;
+};
 
 // Quicksort result is sorted.
-TEST(BaseLib, QuicksortSortsAsSTLSort) {
-
-    ac::classifier<std::vector<int>> cls;
-
-    cls.trivial(
-        [](const std::vector<int>& xs)
-        {
-            return xs.size() < 2;
-        });
-
-    cls.collect(
-        [](std::vector<int> const& xs)
-        {
-            return xs.size() < 10 ? "short" : "long";
-        });
-
+TEST_F(BaseLibQuicksort, SortsAsSTLSort)
+{
     cls.classify(
         [](std::vector<int> const& xs)
         {
@@ -81,22 +84,8 @@ struct ordered_unique_list_gen
 };
 
 // Permutations of sorted, unique vector remain untouched.
-TEST(BaseLib, QuicksortReportCorrectPermutations) {
-
-    ac::classifier<std::vector<int>> cls;
-
-    cls.trivial(
-        [](const std::vector<int>& xs)
-        {
-            return xs.size() < 2;
-        });
-
-    cls.collect(
-        [](std::vector<int> const& xs)
-        {
-            return xs.size() < 10 ? "short" : "long";
-        });
-
+TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
+{
     auto gen = ac::make_arbitrary(ordered_unique_list_gen<int>());
 
     auto quicksortCheckPermutations = [](const std::vector<int>& xs)
@@ -120,22 +109,8 @@ TEST(BaseLib, QuicksortReportCorrectPermutations) {
 }
 
 // Permutations of reverse sorted, unique vector is also reversed.
-TEST(BaseLib, QuicksortReportCorrectPermutationsReverse) {
-
-    ac::classifier<std::vector<int>> cls;
-
-    cls.trivial(
-        [](const std::vector<int>& xs)
-        {
-            return xs.size() < 2;
-        });
-
-    cls.collect(
-        [](std::vector<int> const& xs)
-        {
-            return xs.size() < 10 ? "short" : "long";
-        });
-
+TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
+{
     auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
     {
         std::reverse(xs.begin(), xs.end());
