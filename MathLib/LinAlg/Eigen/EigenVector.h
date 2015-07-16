@@ -24,7 +24,7 @@ namespace MathLib
 /**
  * Global vector based on Eigen vector
  */
-class EigenVector
+class EigenVector final
 {
 public:
     using RawVectorType = Eigen::VectorXd;
@@ -37,11 +37,6 @@ public:
 
     /// copy constructor
     EigenVector(EigenVector const &src) : _vec(src._vec) {}
-
-    /**
-     *
-     */
-    virtual ~EigenVector() {}
 
     /// return a vector length
     std::size_t size() const { return _vec.size(); }

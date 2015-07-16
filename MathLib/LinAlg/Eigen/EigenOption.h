@@ -18,7 +18,7 @@ namespace MathLib
 /**
  * \brief Option for Eigen sparse solver
  */
-struct EigenOption
+struct EigenOption final
 {
     /// Solver type
     enum class SolverType : int
@@ -52,9 +52,6 @@ struct EigenOption
      * tolerance 1e-10. Default matrix storage type is CRS.
      */
     EigenOption();
-
-    /// Destructor
-    ~EigenOption() {}
 
     /**
      * return a linear solver type from the solver name

@@ -40,8 +40,6 @@ public:
      */
     explicit EigenMatrix(std::size_t n) :_mat(n, n) {}
 
-    ~EigenMatrix() {}
-
     /// return the number of rows
     std::size_t getNRows() const { return _mat.rows(); }
 

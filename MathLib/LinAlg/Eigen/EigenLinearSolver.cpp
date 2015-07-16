@@ -26,7 +26,7 @@ namespace details
 
 /// Template class for Eigen direct linear solvers
 template <class T_SOLVER, class T_BASE>
-class EigenDirectLinearSolver : public T_BASE
+class EigenDirectLinearSolver final : public T_BASE
 {
 public:
     explicit EigenDirectLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
@@ -38,8 +38,6 @@ public:
             return;
         }
     }
-
-    virtual ~EigenDirectLinearSolver() {}
 
     void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &/*opt*/) override
     {
@@ -58,7 +56,7 @@ private:
 
 /// Template class for Eigen iterative linear solvers
 template <class T_SOLVER, class T_BASE>
-class EigenIterativeLinearSolver : public T_BASE
+class EigenIterativeLinearSolver final : public T_BASE
 {
 public:
     explicit EigenIterativeLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
@@ -70,8 +68,6 @@ public:
             return;
         }
     }
-
-    virtual ~EigenIterativeLinearSolver() {}
 
     void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &opt) override
     {

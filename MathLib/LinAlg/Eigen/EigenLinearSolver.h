@@ -24,12 +24,12 @@ class EigenMatrix;
 
 /**
  */
-class EigenLinearSolver
+class EigenLinearSolver final
 {
 public:
     EigenLinearSolver(EigenMatrix &A, boost::property_tree::ptree const*const option = nullptr);
 
-    virtual ~EigenLinearSolver()
+    ~EigenLinearSolver()
     {
         delete _solver;
     }
@@ -64,8 +64,10 @@ protected:
     class IEigenSolver
     {
     public:
-        virtual ~IEigenSolver() {}
-        /// execute a linear solver
+        virtual ~IEigenSolver() = default;
+        /**
+         * execute a linear solver
+         */
         virtual void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &) = 0;
     };
 
