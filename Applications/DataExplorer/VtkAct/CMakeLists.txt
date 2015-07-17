@@ -39,6 +39,6 @@ add_library( VtkAct STATIC
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(VtkAct)
 
-target_link_libraries( VtkAct Qt4::QtGui )
+target_link_libraries( VtkAct PUBLIC Qt4::QtCore )
 
 set_property(TARGET VtkAct PROPERTY FOLDER "DataExplorer")

@@ -12,8 +12,3 @@ include_directories(
 	../MathLib
 	../MeshLib
 )
-
-target_link_libraries(AssemblerLib
-	${Boost_LIBRARIES}
-	MeshLib
-)

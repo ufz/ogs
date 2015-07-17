@@ -38,7 +38,7 @@ add_library(NumLib STATIC ${SOURCES})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(NumLib
+target_link_libraries(NumLib INTERFACE
 	BaseLib
 	GeoLib
 	MathLib

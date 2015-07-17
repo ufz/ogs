@@ -11,7 +11,10 @@ include_directories(
 	.
 )
 
-target_link_libraries(BaseLib INTERFACE	${Boost_LIBRARIES})
+target_link_libraries(BaseLib INTERFACE
+	logog
+	${Boost_LIBRARIES}
+)
 
 if(MSVC)
 	target_link_libraries(BaseLib INTERFACE WinMM) # needed for timeGetTime

@@ -175,22 +175,14 @@ add_library(QtDataView STATIC
 )
 
 # Link Qt library
-target_link_libraries(QtDataView
-	Qt4::QtCore
-	FileIO
-	GeoLib
-	MeshLib
-	QtBase
-	QtDiagramView
-	QtStratView
-	shp
-)
+target_link_libraries(QtDataView PUBLIC Qt4::QtCore Qt4::QtGui)
+target_link_libraries(QtDataView INTERFACE QtBase)
 
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(QtDataView)
 
 if(GEOTIFF_FOUND)
-	target_link_libraries( QtDataView ${GEOTIFF_LIBRARIES} )
+	target_link_libraries( QtDataView INTERFACE ${GEOTIFF_LIBRARIES} )
 endif () # GEOTIFF_FOUND
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")

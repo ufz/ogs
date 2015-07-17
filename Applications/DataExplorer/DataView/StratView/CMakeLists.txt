@@ -56,11 +56,6 @@ add_library(QtStratView STATIC
 )
 
 # Link Qt library
-target_link_libraries(QtStratView
-	Qt4::QtGui
-	BaseLib
-	GeoLib
-	MathLib
-)
+target_link_libraries(QtStratView PUBLIC Qt4::QtGui)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")

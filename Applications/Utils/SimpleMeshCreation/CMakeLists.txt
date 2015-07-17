@@ -14,40 +14,19 @@ if(OGS_BUILD_GUI)
 
 	add_executable(generateStructuredQuadMesh generateStructuredQuadMesh.cpp)
 	set_target_properties(generateStructuredQuadMesh PROPERTIES FOLDER Utils)
-	target_link_libraries(generateStructuredQuadMesh
-		MeshLib
-		FileIO
-		GeoLib
-		MathLib
-		VtkVis
-		${CATALYST_LIBRARIES}
-		${QT_LIBRARIES}
-	)
+	target_link_libraries(generateStructuredQuadMesh FileIO)
 	ADD_CATALYST_DEPENDENCY(generateStructuredQuadMesh)
 
 	add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
 	set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
-	target_link_libraries(createMeshElemPropertiesFromASCRaster
-		MeshLib
-		FileIO
-		VtkVis
-		InSituLib
-		zlib
-		${CATALYST_LIBRARIES}
-		${QT_LIBRARIES}
-	)
+	target_link_libraries(createMeshElemPropertiesFromASCRaster FileIO)
 	ADD_CATALYST_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 
 endif() # OGS_BUILD_GUI (VtkVis-target is existing)
 
 
 add_executable(generateStructuredMesh generateStructuredMesh.cpp)
-target_link_libraries(generateStructuredMesh
-	BaseLib
-	FileIO
-	MathLib
-	MeshLib
-)
+target_link_libraries(generateStructuredMesh FileIO)
 set_target_properties(generateStructuredMesh PROPERTIES FOLDER Utilities)
 
 ####################

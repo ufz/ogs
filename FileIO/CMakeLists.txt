@@ -53,14 +53,16 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/../BaseLib
 )
 
-target_link_libraries(FileIO
+target_link_libraries(FileIO INTERFACE
 	GeoLib
+	InSituLib
 	MeshLib
-	zlib
+	logog
 	shp
+	zlib
 )
 if(QT4_FOUND)
-	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
+	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
 endif()
 
 ADD_CATALYST_DEPENDENCY(FileIO)

@@ -8,12 +8,7 @@ include_directories(
 
 if(QT4_FOUND)
 	add_executable(TriangulatePolyline TriangulatePolyline.cpp)
-	target_link_libraries(TriangulatePolyline
-		BaseLib
-		FileIO
-		MathLib
-		Qt4::QtCore
-	)
+	target_link_libraries(TriangulatePolyline FileIO)
 	set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
 	install(TARGETS
 		TriangulatePolyline
