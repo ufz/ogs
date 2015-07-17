@@ -16,14 +16,13 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
+#include <array>
 #include <map>
 #include <string>
 
-#include "MathLib/TemplatePoint.h"
-
 namespace GeoLib
 {
-typedef MathLib::TemplatePoint<unsigned char> Color;
+using Color = std::array<unsigned char, 3>;
 
 /// Returns a random RGB colour.
 Color* getRandomColor();
