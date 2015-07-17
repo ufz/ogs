@@ -12,23 +12,14 @@
  *
  */
 
-#include <cmath>
-#include <cstdlib> // for exit
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-#include <boost/math/constants/constants.hpp>
-
 #include "Polygon.h"
 
-// MathLib
-#include "AnalyticalGeometry.h"
-#include "MathTools.h"
-#include "Vector3.h"
+#include <logog/include/logog.hpp>
+#include <boost/math/constants/constants.hpp>
 
-// BaseLib
-#include "quicksort.h"
+#include "BaseLib/quicksort.h"
+
+#include "AnalyticalGeometry.h"
 
 namespace GeoLib
 {

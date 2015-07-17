@@ -14,14 +14,10 @@
 
 #include "Triangle.h"
 
-// GeoLib
+#include "Point.h"
 #include "AnalyticalGeometry.h"
 
-// MathLib
-#include "LinAlg/Solvers/GaussAlgorithm.h"
-#include "MathTools.h"
-#include "LinAlg/Dense/DenseMatrix.h"
-#include "Vector3.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 namespace GeoLib {
 

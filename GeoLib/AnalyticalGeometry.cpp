@@ -16,23 +16,14 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib> // for exit
-#include <fstream>
 #include <limits>
-#include <list>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// BaseLib
-#include "quicksort.h"
-
-// GeoLib
 #include "Polyline.h"
-#include "Triangle.h"
+#include "PointVec.h"
 
-// MathLib
-#include "LinAlg/Solvers/GaussAlgorithm.h"
-#include "MathTools.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 namespace GeoLib
 {

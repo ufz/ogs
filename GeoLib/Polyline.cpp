@@ -15,13 +15,9 @@
 // STL
 #include <algorithm>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// GeoLib
 #include "Polyline.h"
-
-// MathLib
 #include "AnalyticalGeometry.h"
 
 namespace GeoLib

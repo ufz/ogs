@@ -15,18 +15,17 @@
 #ifndef EARCLIPPINGTRIANGULATION_H_
 #define EARCLIPPINGTRIANGULATION_H_
 
-// STL
 #include <list>
+#include <vector>
 
-// GeoLib
-#include "Polygon.h"
-#include "Triangle.h"
-
-// MathLib
 #include "AnalyticalGeometry.h"
 
 namespace GeoLib
 {
+
+class Polygon;
+class Triangle;
+
 class EarClippingTriangulation
 {
 public:

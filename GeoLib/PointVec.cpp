@@ -14,17 +14,11 @@
 
 #include <numeric>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// GeoLib
 #include "PointVec.h"
 
-// BaseLib
-#include "quicksort.h"
-
-// MathLib
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
 namespace GeoLib
 {
