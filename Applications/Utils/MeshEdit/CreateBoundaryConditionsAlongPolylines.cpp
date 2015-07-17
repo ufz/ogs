@@ -36,6 +36,7 @@
 // MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
