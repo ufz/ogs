@@ -133,7 +133,11 @@ add_library(QtDataView STATIC
 
 # Link Qt library
 target_link_libraries(QtDataView PUBLIC Qt4::QtCore Qt4::QtGui)
-target_link_libraries(QtDataView INTERFACE QtBase)
+target_link_libraries(QtDataView INTERFACE
+	FileIO
+	QtBase
+)
+add_dependencies(QtDataView QtDiagramView)
 
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(QtDataView)
