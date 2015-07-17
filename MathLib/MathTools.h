@@ -15,10 +15,6 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
-#include <cmath>
-#include <limits>
-#include <vector>
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
