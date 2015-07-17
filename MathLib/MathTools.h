@@ -111,7 +111,8 @@ template <typename T, std::size_t DIM>
 bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 {
 	T const sqr_dist(sqrDist(a,b));
-	return (sqr_dist < pow(std::numeric_limits<T>::epsilon(),2));
+	auto const eps = std::numeric_limits<T>::epsilon();
+	return (sqr_dist < eps*eps);
 }
 
 /// Computes the squared dist between the two points p0 and p1.
