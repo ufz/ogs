@@ -12,7 +12,7 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshSearcher.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
@@ -24,7 +24,9 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 {
 	// search elements near the polyline
 	auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
-	auto ele_ids_near_sfc = MeshLib::getConnectedElementIDs(_mesh, node_ids_on_sfc);
+	MeshLib::ElementSearch es(_mesh);
+	es.searchByNodeIDs(node_ids_on_sfc);
+	auto &ele_ids_near_sfc = es.getSearchedElementIDs();
 
 	// get a list of faces made of the nodes
 	for (auto ele_id : ele_ids_near_sfc) {

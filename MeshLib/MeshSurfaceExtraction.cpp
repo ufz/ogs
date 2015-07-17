@@ -26,6 +26,8 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 namespace MeshLib {
 
@@ -149,8 +151,14 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
 			}
 	}
 	MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
-	MeshLib::MeshValidation::removeUnusedMeshNodes(*result);
-	return result;
+	MeshLib::NodeSearch ns(*result);
+	if (ns.searchUnused() == 0) {
+		return result;
+	} else {
+		auto removed = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), result->getName());
+		delete result;
+		return removed;
+	}
 }
 
 void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, double angle, unsigned mesh_dimension)

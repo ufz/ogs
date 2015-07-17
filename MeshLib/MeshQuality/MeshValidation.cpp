@@ -23,8 +23,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/removeMeshNodes.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib {
@@ -32,7 +32,12 @@ namespace MeshLib {
 MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 {
 	INFO ("Mesh Quality Control:");
-	this->removeUnusedMeshNodes(mesh);
+	INFO ("%Looking for unused nodes...");
+	NodeSearch ns(mesh);
+	ns.searchUnused();
+	if (!ns.getSearchedNodeIDs().empty()) {
+		INFO ("%d unused mesh nodes found.", ns.getSearchedNodeIDs().size());
+	}
 	MeshRevision rev(mesh);
 	INFO ("Found %d potentially collapsable nodes.", rev.getNCollapsableNodes());
 
@@ -42,38 +47,7 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 		INFO (output_str[i].c_str());
 }
 
-std::vector<std::size_t> MeshValidation::findUnusedMeshNodes(const MeshLib::Mesh &mesh)
-{
-	INFO ("Looking for unused mesh nodes...");
-	unsigned count(0);
-	const size_t nNodes (mesh.getNNodes());
-	const std::vector<MeshLib::Node*> &nodes (mesh.getNodes());
-	std::vector<std::size_t> del_node_idx;
-
-	for (unsigned i=0; i<nNodes; ++i)
-		if (nodes[i]->getNElements() == 0)
-		{
-			del_node_idx.push_back(i);
-			++count;
-		}
-
-	std::string nUnusedNodesStr = (count) ? std::to_string(count) : "No";
-	INFO ("%s unused mesh nodes found.", nUnusedNodesStr.c_str());
-	return del_node_idx;
-}
-
-std::vector<std::size_t> MeshValidation::removeUnusedMeshNodes(MeshLib::Mesh &mesh)
-{
-	std::vector<std::size_t> del_node_idx = MeshValidation::findUnusedMeshNodes(mesh);
-	MeshLib::removeMeshNodes(mesh, del_node_idx);
-
-	if (!del_node_idx.empty())
-		INFO("Removed %d unused mesh nodes.", del_node_idx.size());
-
-	return del_node_idx;
-}
-
- std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
+std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
 {
 	INFO ("Testing mesh element geometry:");
 	const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));

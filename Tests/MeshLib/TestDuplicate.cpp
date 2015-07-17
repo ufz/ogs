@@ -19,7 +19,7 @@
 #include "MeshLib/Node.h"
 #include "Elements/Element.h"
 #include "MeshEditing/DuplicateMeshComponents.h"
-#include "MeshEditing/removeMeshNodes.h"
+#include "MeshEditing/RemoveMeshComponents.h"
 #include "MeshGenerators/MeshGenerator.h"
 #include "MeshQuality/MeshValidation.h"
 #include "MathTools.h"
@@ -38,14 +38,14 @@ TEST(MeshLib, Duplicate)
 	ASSERT_EQ (mesh->getNNodes(), new_mesh.getNNodes());
 
 	std::vector<std::size_t> del_idx(1,1);
-	MeshLib::removeMeshNodes(*mesh, del_idx);
+	std::unique_ptr<MeshLib::Mesh> mesh2(MeshLib::removeNodes(*mesh, del_idx, "mesh2"));
 
-	ASSERT_EQ (mesh->getNElements(), new_mesh.getNElements()-2);
-	ASSERT_EQ (mesh->getNNodes(), new_mesh.getNNodes()-2);
+	ASSERT_EQ (mesh2->getNElements(), new_mesh.getNElements()-2);
+	ASSERT_EQ (mesh2->getNNodes(), new_mesh.getNNodes()-2);
 
-	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh->getNode(0), *new_mesh.getNode(0)));
-	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh->getNode(0), *new_mesh.getNode(2)));
+	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(0)));
+	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(2)));
 
-	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh->getElement(0)->getNode(0), *new_mesh.getElement(0)->getNode(0)));
-	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh->getElement(0)->getNode(0), *new_mesh.getElement(2)->getNode(0)));
+	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(0)->getNode(0)));
+	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(2)->getNode(0)));
 }

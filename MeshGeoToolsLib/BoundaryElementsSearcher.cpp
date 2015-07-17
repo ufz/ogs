@@ -14,7 +14,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshSearcher.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsAlongPolyline.h"

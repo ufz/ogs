@@ -14,7 +14,7 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "MeshLib/MeshSearcher.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
 
@@ -88,7 +88,7 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
         some_elements.push_back(const_cast<MeshLib::Element*>(mesh->getElement(id)));
 
     // Find unique node ids of the selected elements for testing.
-    std::vector<MeshLib::Node*> selected_nodes = MeshLib::selectNodes(some_elements);
+    std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
 
     MeshLib::MeshSubset const* const selected_subset =
         nodesSubset->getIntersectionByNodes(selected_nodes);

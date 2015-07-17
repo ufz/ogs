@@ -21,10 +21,10 @@
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
 
 #include "NeumannBcConfig.h"
 #include "NeumannBcAssembler.h"
-#include "MeshLib/MeshSearcher.h"
 
 namespace ProcessLib
 {
@@ -64,7 +64,7 @@ public:
                 std::back_inserter(_elements),
                 std::mem_fn(&MeshLib::Element::clone));
 
-        std::vector<MeshLib::Node*> nodes = MeshLib::selectNodes(_elements);
+        std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
 
         _mesh_subset_all_nodes =
             mesh_subset_all_nodes.getIntersectionByNodes(nodes);

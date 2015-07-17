@@ -17,7 +17,8 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "MeshEditing/ElementExtraction.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "AABB.h"
 #include "OGSError.h"
 
@@ -60,7 +61,8 @@ void MeshElementRemovalDialog::accept()
 
 	bool anything_checked (false);
 
-	MeshLib::ElementExtraction ex(*_project.getMesh(this->meshNameComboBox->currentText().toStdString()));
+	const MeshLib::Mesh* msh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
+	MeshLib::ElementSearch ex(*msh);
 	if (this->elementTypeCheckBox->isChecked())
 	{
 		QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();
@@ -105,15 +107,14 @@ void MeshElementRemovalDialog::accept()
 
 	if (anything_checked)
 	{
-		MeshLib::Mesh* new_mesh = ex.removeMeshElements(this->newMeshNameEdit->text().toStdString());
+		MeshLib::Mesh* new_mesh = MeshLib::removeElements(*msh, ex.getSearchedElementIDs(), this->newMeshNameEdit->text().toStdString());
 		if (new_mesh)
 			emit meshAdded(new_mesh);
 		else
 		{
-			const unsigned error_code (ex.getErrorCode());
-			if (error_code == 1)
+			if (new_mesh == nullptr)
 				OGSError::box("The current selection removes ALL mesh elements.\nPlease change the selection.");
-			if (error_code == 2)
+			if (ex.getSearchedElementIDs().empty())
 				OGSError::box("The current selection removes NO mesh elements.");
 			delete new_mesh;
 			return;

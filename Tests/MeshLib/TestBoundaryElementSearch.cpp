@@ -15,7 +15,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSearcher.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
@@ -151,10 +151,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	double sum_area_b = std::accumulate(found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
 				[](double v, MeshLib::Element*e){return v+e->getContent();});
 	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_b);
-	auto connected_nodeIDs_b = MeshLib::getConnectedNodeIDs(found_faces_sfc_b);
-	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_b.size());
-	for (auto nodeID : connected_nodeIDs_b)
-		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[2]); // check z coordinates
+	auto connected_nodes_b = MeshLib::getUniqueNodes(found_faces_sfc_b);
+	ASSERT_EQ(n_nodes_2d, connected_nodes_b.size());
+	for (auto node : connected_nodes_b)
+		ASSERT_EQ(0.0, (*node)[2]); // check z coordinates
 
 	// perform search on the front surface
 	std::vector<MeshLib::Element*> const& found_faces_sfc_f(boundary_element_searcher.getBoundaryElements(*sfc_front));
@@ -162,10 +162,10 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 	double sum_area_f = std::accumulate(found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
 				[](double v, MeshLib::Element*e){return v+e->getContent();});
 	ASSERT_EQ(_geometric_size*_geometric_size, sum_area_f);
-	auto connected_nodeIDs_f = MeshLib::getConnectedNodeIDs(found_faces_sfc_f);
-	ASSERT_EQ(n_nodes_2d, connected_nodeIDs_f.size());
-	for (auto nodeID : connected_nodeIDs_f)
-		ASSERT_EQ(0.0, (*_hex_mesh->getNode(nodeID))[1]); // check y coordinates
+    auto connected_nodes_f = MeshLib::getUniqueNodes(found_faces_sfc_f);
+	ASSERT_EQ(n_nodes_2d, connected_nodes_f.size());
+	for (auto node : connected_nodes_f)
+		ASSERT_EQ(0.0, (*node)[1]); // check y coordinates
 
 	for (auto p : pnts)
 		delete p;

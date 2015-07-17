@@ -25,26 +25,6 @@
 
 #include "GeoLib/Raster.h"
 
-TEST(MeshValidation, UnusedNodes)
-{
-	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
-	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
-	MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
-	MeshLib::Mesh* mesh = conv.execute();
-	std::vector<std::size_t> u_nodes = MeshLib::MeshValidation::findUnusedMeshNodes(*mesh);
-	ASSERT_EQ(0, u_nodes.size());
-
-	std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-	nodes.push_back(new MeshLib::Node(-1,-1,-1));
-	std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
-	MeshLib::Mesh mesh2("mesh2", nodes, elems);
-	u_nodes = MeshLib::MeshValidation::findUnusedMeshNodes(mesh2);
-	ASSERT_EQ(1, u_nodes.size());
-	ASSERT_EQ(nodes.back()->getID(), u_nodes[0]);
-
-	delete mesh;
-}
-
 void
 detectHoles(MeshLib::Mesh const& mesh,
 	std::vector<std::size_t> erase_elems,
