@@ -53,8 +53,6 @@ set(SOURCES ${SOURCES} ${SOURCES_NONLINEAR})
 
 include_directories(
 	.
-	../BaseLib
-	../GeoLib
 )
 
 if(METIS_FOUND)

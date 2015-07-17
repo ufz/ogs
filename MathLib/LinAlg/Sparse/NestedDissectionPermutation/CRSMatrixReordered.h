@@ -15,6 +15,8 @@
 #ifndef CRSMATRIXREORDERED_H_
 #define CRSMATRIXREORDERED_H_
 
+#include <string>
+
 #include "LinAlg/Sparse/CRSMatrix.h"
 
 namespace MathLib {

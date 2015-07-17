@@ -16,8 +16,7 @@
 
 #include "PiecewiseLinearInterpolation.h"
 
-// BaseLib
-#include "quicksort.h"
+#include "BaseLib/quicksort.h"
 
 namespace MathLib
 {
