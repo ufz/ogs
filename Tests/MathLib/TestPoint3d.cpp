@@ -203,35 +203,51 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 								gtest_reporter);
 
 
-	double tol = std::numeric_limits<double>::epsilon();
-	ASSERT_TRUE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,tol,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,tol}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
+	// A point with any positive value added to one of its coordinates is
+	// always larger then the original point.
+	auto pointWithAddedValue = [](MathLib::Point3d const& p, double const eps,
+								  unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + eps;
+		return (p < q) && !(q < p);
+	};
 
-	// very small difference in one coordinate
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0+tol,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0+tol,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0+tol}})));
+	ac::check<MathLib::Point3d, double, unsigned>(
+		pointWithAddedValue, 1000,
+		ac::make_arbitrary(
+			pointGenerator,
+			ac::map(&absoluteValue<double>, ac::generator<double>()),
+			ac::map(&mod3, ac::generator<unsigned>())	// any of {0,1,2}
+			)
+			.discard_if(
+				[](MathLib::Point3d const&, double const eps, unsigned const)
+				{
+					return eps == 0;
+				}),
+		gtest_reporter);
 
-	tol = std::numeric_limits<double>::min();
-	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{0.0,tol,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{0.0,0.0,tol}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
+	// A point with any positive value subtracted from one of its coordinates is
+	// always smaller then the original point.
+	auto pointWithSubtractedValue = [](
+		MathLib::Point3d const& p, double const eps, unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] - eps;
+		return (q < p) && !(p < q);
+	};
 
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{tol,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,tol,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,tol}})));
+	ac::check<MathLib::Point3d, double, unsigned>(
+		pointWithSubtractedValue, 1000,
+		ac::make_arbitrary(
+			pointGenerator,
+			ac::map(&absoluteValue<double>, ac::generator<double>()),
+			ac::map(&mod3, ac::generator<unsigned>())	// any of {0,1,2}
+			)
+			.discard_if(
+				[](MathLib::Point3d const&, double const eps, unsigned const)
+				{
+					return eps == 0;
+				}),
+		gtest_reporter);
 }
-
