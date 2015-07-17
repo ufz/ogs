@@ -34,12 +34,12 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 
 	// compute projected point
 	double proj_pnt[3];
-	for (size_t k(0); k < 3; k++)
+	for (std::size_t k(0); k < 3; k++)
 		proj_pnt[k] = a[k] + lambda * v[k];
 
-	d0 = sqrt (sqrDist (proj_pnt, a));
+	d0 = std::sqrt (sqrDist (proj_pnt, a));
 
-	return sqrt (sqrDist (p, proj_pnt));
+	return std::sqrt (sqrDist (p, proj_pnt));
 }
 
 double getAngle (const double p0[3], const double p1[3], const double p2[3])
@@ -48,7 +48,7 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
 	const double v1[3] = {p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]};
 
 	// apply Cauchy Schwarz inequality
-	return acos (scalarProduct<double,3> (v0,v1) / (sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
+	return std::acos (scalarProduct<double,3> (v0,v1) / (std::sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
 
