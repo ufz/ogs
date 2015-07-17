@@ -15,6 +15,9 @@
 
 #include "Point3d.h"
 
+namespace MathLib
+{
+
 bool operator< (const MathLib::Point3d& p0, const MathLib::Point3d& p1)
 {
 	if (p0[0] > p1[0]) {
@@ -101,3 +104,4 @@ bool lessEq(const MathLib::Point3d& p0, const MathLib::Point3d& p1, double tol)
 	}
 }
 
+}	// namespace MathLib

@@ -23,8 +23,6 @@
 #include <omp.h>
 #endif
 
-#include "Point3d.h"
-
 namespace MathLib
 {
 /**
@@ -106,14 +104,6 @@ void crossProd (const double u[3], const double v[3], double r[3]);
  */
 double calcProjPntToLineAndDists(const double p[3], const double a[3],
                                  const double b[3], double &lambda, double &d0);
-
-/// Computes the squared dist between the two points p0 and p1.
-inline
-double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
-{
-	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scalarProduct<double,3>(v,v);
-}
 
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 inline

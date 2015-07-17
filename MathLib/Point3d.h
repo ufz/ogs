@@ -17,11 +17,11 @@
 #include <limits>
 
 #include "TemplatePoint.h"
+#include "MathTools.h"
 
 namespace MathLib
 {
 typedef MathLib::TemplatePoint<double,3> Point3d;
-} // end namespace MathLib
 
 bool operator< (MathLib::Point3d const & p0, MathLib::Point3d const & p1);
 
@@ -59,6 +59,17 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
     }
     return new_p;
 }
+
+/** Computes the squared dist between the two points p0 and p1.
+ */
+inline
+double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
+{
+	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
+	return MathLib::scalarProduct<double,3>(v,v);
+}
+
+} // end namespace MathLib
 
 #endif /* POINT3D_H_ */
 
