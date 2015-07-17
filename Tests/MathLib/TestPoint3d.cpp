@@ -35,6 +35,19 @@ struct randomTupleGenerator
 	}
 };
 
+unsigned
+mod3(unsigned&& v, std::size_t)
+{
+	return v%3;
+}
+
+template <typename T>
+T
+absoluteValue(T&& v, std::size_t)
+{
+	return std::abs(v);
+}
+
 
 struct MathLibPoint3d : public ::testing::Test
 {
