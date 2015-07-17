@@ -44,22 +44,6 @@ set(SOURCES
 	VtkAlgorithmProperties.cpp
 )
 
-# Moc headers
-set(MOC_HEADERS
-	MeshFromRasterDialog.h
-	QVtkDataSetMapper.h
-	VisPrefsDialog.h
-	VisualizationWidget.h
-	VtkAddFilterDialog.h
-	VtkAlgorithmProperties.h
-	VtkAlgorithmPropertyLineEdit.h
-	VtkAlgorithmPropertyCheckbox.h
-	VtkAlgorithmPropertyVectorEdit.h
-	VtkVisPipeline.h
-	VtkVisPipelineView.h
-	VtkVisTabWidget.h
-)
-
 # Header files
 set(HEADERS
 	VtkAppendArrayFilter.h
@@ -92,15 +76,18 @@ set(HEADERS
 	VtkVisImageItem.h
 	VtkVisPipelineItem.h
 	VtkVisPointSetItem.h
-)
-
-# UI files
-set(UIS
-	MeshFromRaster.ui
-	VtkAddFilterDialogBase.ui
-	VtkVisTabWidgetBase.ui
-	VisualizationWidgetBase.ui
-	VisPrefs.ui
+	MeshFromRasterDialog.h
+	QVtkDataSetMapper.h
+	VisPrefsDialog.h
+	VisualizationWidget.h
+	VtkAddFilterDialog.h
+	VtkAlgorithmProperties.h
+	VtkAlgorithmPropertyLineEdit.h
+	VtkAlgorithmPropertyCheckbox.h
+	VtkAlgorithmPropertyVectorEdit.h
+	VtkVisPipeline.h
+	VtkVisPipelineView.h
+	VtkVisTabWidget.h
 )
 
 # Put moc files in a project folder
@@ -114,12 +101,6 @@ source_group("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
 # Put vtk source files in a folder
 source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
 source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
-
-# Run Qts user interface compiler uic on .ui files
-qt4_wrap_ui(UI_HEADERS ${UIS})
-
-# Run Qts meta object compiler moc on header files
-qt4_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -141,9 +122,6 @@ include_directories(
 add_library(VtkVis STATIC
 	${SOURCES}
 	${HEADERS}
-	${MOC_HEADERS}
-	${MOC_SOURCES}
-	${UIS}
 )
 
 include(AddCatalystDependency)
@@ -155,8 +133,7 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(VtkVis PUBLIC Qt4::QtGui)
-
-add_dependencies(VtkVis QtDataView)
+target_link_libraries(VtkVis INTERFACE VtkAct)
 
 if(VTKOSGCONVERTER_FOUND)
 	USE_OPENSG(VtkVis)

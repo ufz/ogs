@@ -64,6 +64,7 @@ endif()
 if(OGS_BUILD_GUI)
 	target_link_libraries(testrunner
 		QtDataView
+		QtStratView
 		VtkVis
 		vtkInteractionStyle
 	)

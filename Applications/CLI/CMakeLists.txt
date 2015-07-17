@@ -9,7 +9,16 @@ target_link_libraries(ogs
 )
 
 if(OGS_BUILD_GUI)
-	target_link_libraries(ogs QtDataView VtkVis vtkInteractionStyle Qt4::QtCore Qt4::QtGui Qt4::QtXml Qt4::QtNetwork)
+	target_link_libraries(ogs
+		QtDataView
+		QtStratView
+		VtkVis
+		vtkInteractionStyle
+		Qt4::QtCore
+		Qt4::QtGui
+		Qt4::QtXml
+		Qt4::QtNetwork
+	)
 	if(CMAKE_CROSSCOMPILING)
 		target_link_libraries(ogs
 			${QT_XML_DEPS_LIBRARIES}

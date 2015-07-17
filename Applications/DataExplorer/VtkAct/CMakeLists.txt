@@ -4,18 +4,15 @@ set(SOURCES
 	VtkCustomInteractorStyle.cpp
 )
 
-# Moc headers
-set(MOC_HEADERS
+# Headers
+set(HEADERS
 	VtkPickCallback.h
 	VtkCustomInteractorStyle.h
 )
 
 # Put moc files in a project folder
-source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
-# Run Qts meta object compiler moc on header files
-qt4_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
@@ -30,8 +27,7 @@ include_directories(
 # Create the library
 add_library( VtkAct STATIC
 	${SOURCES}
-	${MOC_HEADERS}
-	${MOC_SOURCES}
+	${HEADERS}
 )
 
 include(AddCatalystDependency)
