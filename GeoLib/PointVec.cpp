@@ -33,7 +33,7 @@ PointVec::PointVec (const std::string& name, std::vector<Point*>* points,
 	TemplateVec<Point> (name, points, name_id_map),
 	_type(type),
 	_aabb(points->begin(), points->end()),
-	_rel_eps(rel_eps*sqrt(MathLib::sqrDist(_aabb.getMinPoint(), _aabb.getMaxPoint()))),
+	_rel_eps(rel_eps*std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(), _aabb.getMaxPoint()))),
 	_oct_tree(OctTree<GeoLib::Point, 16>::createOctTree(
 		_aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps))
 {

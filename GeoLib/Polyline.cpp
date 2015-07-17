@@ -63,7 +63,7 @@ void Polyline::addPoint(std::size_t pnt_id)
 
 	if (n_pnts > 0)
 	{
-		double act_dist (sqrt(MathLib::sqrDist (*_ply_pnts[_ply_pnt_ids[n_pnts - 1]],
+		double act_dist (std::sqrt(MathLib::sqrDist (*_ply_pnts[_ply_pnt_ids[n_pnts - 1]],
 		                                        *_ply_pnts[pnt_id])));
 		double dist_until_now (0.0);
 		if (n_pnts > 1)
@@ -105,7 +105,7 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 		// update the _length vector
 		if (pos == 0) {
 			// insert at first position
-			double act_dist(sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[1]],
+			double act_dist(std::sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[1]],
 			                                      *_ply_pnts[pnt_id])));
 			_length.insert(_length.begin() + 1, act_dist);
 			const std::size_t s(_length.size());
@@ -114,7 +114,7 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 		} else {
 			if (pos == _ply_pnt_ids.size() - 1) {
 				// insert at last position
-				double act_dist(sqrt(MathLib::sqrDist(
+				double act_dist(std::sqrt(MathLib::sqrDist(
 				                             *_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
 				                             *_ply_pnts[pnt_id])));
 				double dist_until_now (0.0);
@@ -127,10 +127,10 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 				double dist_until_now (0.0);
 				if (pos > 1)
 					dist_until_now = _length[pos - 1];
-				double len_seg0(sqrt(MathLib::sqrDist(
+				double len_seg0(std::sqrt(MathLib::sqrDist(
 				                             *_ply_pnts[_ply_pnt_ids[pos - 1]],
 				                             *_ply_pnts[pnt_id])));
-				double len_seg1(sqrt(MathLib::sqrDist(
+				double len_seg1(std::sqrt(MathLib::sqrDist(
 				                             *_ply_pnts[_ply_pnt_ids[pos + 1]],
 				                             *_ply_pnts[pnt_id])));
 				double update_dist(
@@ -168,7 +168,7 @@ void Polyline::removePoint(std::size_t pos)
 		const double len_seg0(_length[pos] - _length[pos - 1]);
 		const double len_seg1(_length[pos + 1] - _length[pos]);
 		_length.erase(_length.begin() + pos);
-		const double len_new_seg(sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[pos - 1]],
+		const double len_new_seg(std::sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[pos - 1]],
 		                                               *_ply_pnts[_ply_pnt_ids[pos]])));
 		double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
 
@@ -373,7 +373,7 @@ Location Polyline::getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt)
 		return Location::SOURCE;
 	if (MathLib::sqrDist (pnt,
 	                      *_ply_pnts[_ply_pnt_ids[k + 1]]) <
-	    sqrt(std::numeric_limits<double>::epsilon()))
+	    std::sqrt(std::numeric_limits<double>::epsilon()))
 		return Location::DESTINATION;
 	return Location::BETWEEN;
 }
