@@ -16,10 +16,10 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
-#include "TemplatePoint.h"
-
 #include <map>
 #include <string>
+
+#include "MathLib/TemplatePoint.h"
 
 namespace GeoLib
 {

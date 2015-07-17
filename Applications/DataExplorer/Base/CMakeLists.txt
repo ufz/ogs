@@ -10,6 +10,7 @@ set(SOURCES
 	# modeltest.cpp # Not needed
 	CheckboxDelegate.cpp
 	QValueTooltipSlider.cpp
+	Color.cpp
 )
 
 # Moc headers
