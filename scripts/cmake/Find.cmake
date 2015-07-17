@@ -66,6 +66,18 @@ find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
 ### Find libraries ###
 ######################
 
+## pthread, is a requirement of logog ##
+if(CMAKE_CROSSCOMPILING)
+	set(THREADS_PTHREAD_ARG 0 CACHE STRING "Result from TRY_RUN" FORCE)
+endif()
+set(CMAKE_THREAD_PREFER_PTHREAD ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+if(CMAKE_USE_PTHREADS_INIT)
+	set(HAVE_PTHREADS TRUE)
+	add_definitions(-DHAVE_PTHREADS)
+endif()
+
 # Do not search for libs if this option is set
 if(OGS_NO_EXTERNAL_LIBS)
 	return()
@@ -93,18 +105,6 @@ if(OGS_BUILD_GUI)
 		pkg_check_modules(QT_NETWORK_DEPS REQUIRED QtNetwork)
 		list(REMOVE_ITEM QT_NETWORK_DEPS_LIBRARIES QtNetwork QtCore)
 	endif()
-endif()
-
-## pthread ##
-if(CMAKE_CROSSCOMPILING)
-	set(THREADS_PTHREAD_ARG 0 CACHE STRING "Result from TRY_RUN" FORCE)
-endif()
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-if(CMAKE_USE_PTHREADS_INIT)
-	set(HAVE_PTHREADS TRUE)
-	add_definitions(-DHAVE_PTHREADS)
 endif()
 
 # lapack
