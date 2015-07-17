@@ -12,6 +12,8 @@
  *
  */
 
+#include <cmath>
+
 #include "MathTools.h"
 
 namespace MathLib
