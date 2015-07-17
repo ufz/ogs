@@ -11,9 +11,11 @@ include_directories(
 	.
 )
 
-target_link_libraries(BaseLib
-	${Boost_LIBRARIES}
-)
+target_link_libraries(BaseLib INTERFACE	${Boost_LIBRARIES})
+
+if(MSVC)
+	target_link_libraries(BaseLib INTERFACE WinMM) # needed for timeGetTime
+endif()
 
 if(TARGET Eigen)
 	add_dependencies(BaseLib Eigen)
