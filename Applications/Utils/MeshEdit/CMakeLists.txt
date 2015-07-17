@@ -20,7 +20,7 @@ if(QT4_FOUND)
 		MeshLib
 		InSituLib
 		${CATALYST_LIBRARIES}
-		${QT_LIBRARIES}
+		Qt4::QtCore
 	)
 	ADD_CATALYST_DEPENDENCY(moveMeshNodes)
 	set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)

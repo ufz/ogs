@@ -12,7 +12,7 @@ if(QT4_FOUND)
 		BaseLib
 		FileIO
 		MathLib
-		${QT_LIBRARIES}
+		Qt4::QtCore
 	)
 	set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
 	install(TARGETS

@@ -23,7 +23,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 
 std::string output_question()
@@ -37,7 +37,7 @@ std::string output_question()
 
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv, false);
+	QCoreApplication app(argc, argv, false);
 
 	LOGOG_INITIALIZE();
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);

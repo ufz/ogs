@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 2.8.3)
 # Project name
 project(OGSFileConverter)
 
+cmake_policy(SET CMP0020 NEW)
+
 # Source files
 set(SOURCES
 	FileListDialog.cpp
