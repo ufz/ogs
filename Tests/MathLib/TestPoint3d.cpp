@@ -13,8 +13,7 @@
 #include <ctime>
 #include "gtest/gtest.h"
 
-#include "Point3d.h"
-#include "MathTools.h"
+#include "MathLib/Point3d.h"
 
 using namespace MathLib;
 
