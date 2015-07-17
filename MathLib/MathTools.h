@@ -15,6 +15,8 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
+#include <cstddef>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
