@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <memory>
 
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
