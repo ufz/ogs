@@ -112,16 +112,15 @@ TEST(MathLib, Point3dComparisonOperatorEqual)
 
 	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
 	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
 	ASSERT_TRUE(a == b);
 	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
 
 	double tol(std::numeric_limits<double>::min());
 	b[2] += tol;
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
 	b[1] = 0.0;
 	b[2] = 0.0;
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
 
 	tol = std::numeric_limits<double>::epsilon();
 	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
