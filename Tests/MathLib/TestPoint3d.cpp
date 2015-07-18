@@ -115,49 +115,74 @@ TEST(MathLib, Point3dComparisonLessEq)
 	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0}})),Point3d(std::array<double,3>({{10.0,10.0,10.0+half_eps}}))));
 }
 
-// test for operator==
-TEST(MathLib, Point3dComparisonOperatorEqual)
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualSamePoint)
 {
-	srand(static_cast<unsigned>(time(nullptr)));
-	double x0(((double)(rand()) / RAND_MAX - 0.5));
-	double x1(((double)(rand()) / RAND_MAX - 0.5));
-	double x2(((double)(rand()) / RAND_MAX - 0.5));
+	// A point is always equal to itself and its copy.
+	auto samePointEqualCompare = [](MathLib::Point3d const& p)
+	{
+		auto q = p;
+		return (p == p) && (p == q) && (q == p);
+	};
 
-	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
-	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_TRUE(a == b);
-	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+	ac::check<MathLib::Point3d>(samePointEqualCompare, 100,
+								ac::make_arbitrary(pointGenerator),
+								gtest_reporter);
+}
 
-	double tol(std::numeric_limits<double>::min());
-	b[2] += tol;
-	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
-	b[1] = 0.0;
-	b[2] = 0.0;
-	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
+{
+	// A point with any big, non-zero value added to one of its coordinates is
+	// never equal to the original point.
+	auto pointWithLargeAddedValue =
+		[](MathLib::Point3d const& p, double const perturbation,
+		   unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return !(p == q) && !(q == p);
+	};
 
-	tol = std::numeric_limits<double>::epsilon();
-	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,tol,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,tol}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
+	auto eps = std::numeric_limits<double>::epsilon();
 
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0+tol,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0+tol,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0+tol}})));
+	ac::check<MathLib::Point3d, double, unsigned>(
+		pointWithLargeAddedValue, 10000,
+		ac::make_arbitrary(
+			pointGenerator,
+			ac::generator<double>(),
+			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
+			)
+			.discard_if(
+				[&eps](MathLib::Point3d const&, double const v, unsigned const)
+				{
+					return !(std::abs(v) > eps);
+				}),
+		gtest_reporter);
+}
 
-	// very small difference in one coordinate
-	tol = std::numeric_limits<double>::min();
-	ASSERT_TRUE(Point3d(std::array<double,3>({{tol,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,tol,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,tol}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
+{
+	// A point with any non-zero value smaller than epsilon/2 added to one of
+	// its
+	// coordinates is always equal to the original point.
+	auto pointWithSmallAddedValue =
+		[](MathLib::Point3d const& p, double const perturbation,
+		   unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return (p == q) && (q == p);
+	};
 
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{tol,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,tol,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,tol}})));
+	auto eps = std::numeric_limits<double>::epsilon();
 
-	a = Point3d(std::array<double,3>({{0.0,0.0,0.0}}));
-	b = Point3d(std::array<double,3>({{0.0,0.0,0.0}}));
-	a[0] = pow(std::numeric_limits<double>::epsilon(),5);
-	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+	ac::check<MathLib::Point3d, double, unsigned>(
+		pointWithSmallAddedValue, 1000,
+		ac::make_arbitrary(
+			pointGenerator,
+			ac::progressivelySmallerGenerator<double>(eps / 2),
+			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
+			),
+		gtest_reporter);
 }
 
 // test for operator<
