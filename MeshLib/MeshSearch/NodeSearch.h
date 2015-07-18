@@ -29,13 +29,11 @@ public:
 	/// return marked node IDs
 	const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
 
-	/// Marks all nodes connecting to any of the given elements
-	std::size_t searchByElementIDs(const std::vector<std::size_t> &element_ids, bool only_match_all_connected_elements = false)
+	/// Marks all nodes connected to any of the given elements ids.
+	std::size_t searchByElementIDs(const std::vector<std::size_t> &element_ids)
 	{
 		std::vector<std::size_t> connected_nodes =
-			(only_match_all_connected_elements
-				? searchByElementIDsMatchAllConnectedElements(element_ids)
-				: searchByElementIDsNotMatchAllConnectedElements(element_ids));
+				searchByElementIDsMatchAllConnectedElements(element_ids);
 
 		this->updateUnion(connected_nodes);
 		return connected_nodes.size();
@@ -46,7 +44,6 @@ public:
 
 private:
 	std::vector<std::size_t> searchByElementIDsMatchAllConnectedElements(const std::vector<std::size_t> &element_ids);
-	std::vector<std::size_t> searchByElementIDsNotMatchAllConnectedElements(const std::vector<std::size_t> &element_ids);
 
 	/// Updates the vector of marked items with values from vec.
 	void updateUnion(const std::vector<std::size_t> &vec);

@@ -47,25 +47,6 @@ std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements
 	return connected_nodes;
 }
 
-std::vector<std::size_t> NodeSearch::searchByElementIDsNotMatchAllConnectedElements(const std::vector<std::size_t> &elements)
-{
-	std::vector<std::size_t> connected_nodes;
-
-	for(std::size_t eid : elements)
-	{
-		auto* e = _mesh.getElement(eid);
-		for (unsigned i=0; i<e->getNBaseNodes(); i++) {
-			connected_nodes.push_back(e->getNodeIndex(i));
-		}
-	}
-
-	std::sort(connected_nodes.begin(), connected_nodes.end());
-	auto it = std::unique(connected_nodes.begin(), connected_nodes.end());
-	connected_nodes.resize(std::distance(connected_nodes.begin(),it));
-
-	return connected_nodes;
-}
-
 std::size_t NodeSearch::searchUnused()
 {
 	const size_t nNodes (_mesh.getNNodes());
