@@ -15,10 +15,10 @@
 
 namespace autocheck
 {
-template <typename T, std::size_t N>
+template <typename T, std::size_t N, typename Gen = generator<T>>
 struct randomTupleGenerator
 {
-    generator<T> source;
+    Gen source;
 
     using result_type = std::array<T, N>;
 
