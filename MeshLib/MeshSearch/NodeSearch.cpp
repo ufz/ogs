@@ -26,10 +26,11 @@ NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
 
 std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements(const std::vector<std::size_t> &elements)
 {
-	std::vector<std::size_t> connected_nodes;
-
+	// Find out by how many elements a node would be removed.
+	//
+	// Note: If there are only few elements to be removed, using a different
+	// algorithm might be more memory efficient.
 	std::vector<std::size_t> node_marked_counts(_mesh.getNNodes(), 0);
-	//this approach is not optimal for memory size
 
 	for(std::size_t eid : elements)
 	{
@@ -39,6 +40,10 @@ std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements
 		}
 	}
 
+
+	// Push back nodes which counts are equal to number of connected elements to
+	// that node.
+	std::vector<std::size_t> connected_nodes;
 	for (std::size_t i=0; i<node_marked_counts.size(); i++)
 	{
 		if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
