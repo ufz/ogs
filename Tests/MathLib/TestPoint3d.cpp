@@ -16,43 +16,15 @@
 
 #include "MathLib/Point3d.h"
 
+#include "AutoCheckTools.h"
+
 using namespace MathLib;
 namespace ac = autocheck;
 
-
-template <typename T, std::size_t N>
-struct randomTupleGenerator
-{
-	ac::generator<T> source;
-
-	using result_type = std::array<T, N>;
-
-	result_type operator()(std::size_t size = 0)
-	{
-		result_type rv;
-		std::generate(rv.begin(), rv.end(), ac::fix(size, source));
-		return rv;
-	}
-};
-
-unsigned
-mod3(unsigned&& v, std::size_t)
-{
-	return v%3;
-}
-
-template <typename T>
-T
-absoluteValue(T&& v, std::size_t)
-{
-	return std::abs(v);
-}
-
-
 struct MathLibPoint3d : public ::testing::Test
 {
-	randomTupleGenerator<double, 3> tupleGen{};
-	ac::cons_generator<MathLib::Point3d, randomTupleGenerator<double, 3>>
+	ac::randomTupleGenerator<double, 3> tupleGen{};
+	ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
 		pointGenerator{tupleGen};
 
 	ac::gtest_reporter gtest_reporter;
@@ -217,8 +189,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 		pointWithAddedValue, 1000,
 		ac::make_arbitrary(
 			pointGenerator,
-			ac::map(&absoluteValue<double>, ac::generator<double>()),
-			ac::map(&mod3, ac::generator<unsigned>())	// any of {0,1,2}
+			ac::map(&ac::absoluteValue<double>, ac::generator<double>()),
+			ac::map(&ac::mod3, ac::generator<unsigned>())	// any of {0,1,2}
 			)
 			.discard_if(
 				[](MathLib::Point3d const&, double const eps, unsigned const)
@@ -241,8 +213,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 		pointWithSubtractedValue, 1000,
 		ac::make_arbitrary(
 			pointGenerator,
-			ac::map(&absoluteValue<double>, ac::generator<double>()),
-			ac::map(&mod3, ac::generator<unsigned>())	// any of {0,1,2}
+			ac::map(&ac::absoluteValue, ac::generator<double>()),
+			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
 			)
 			.discard_if(
 				[](MathLib::Point3d const&, double const eps, unsigned const)
