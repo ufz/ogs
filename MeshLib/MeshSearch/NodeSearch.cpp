@@ -24,7 +24,8 @@ NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
 {
 }
 
-std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements(const std::vector<std::size_t> &elements)
+std::size_t NodeSearch::markNodesConnectedToElements(
+		const std::vector<std::size_t> &elements)
 {
 	// Find out by how many elements a node would be removed.
 	//
@@ -49,7 +50,9 @@ std::vector<std::size_t> NodeSearch::searchByElementIDsMatchAllConnectedElements
 		if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
 			connected_nodes.push_back(i);
 	}
-	return connected_nodes;
+
+	this->updateUnion(connected_nodes);
+	return connected_nodes.size();
 }
 
 std::size_t NodeSearch::searchUnused()

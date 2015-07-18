@@ -30,14 +30,8 @@ public:
 	const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
 
 	/// Marks all nodes connected to any of the given elements ids.
-	std::size_t searchByElementIDs(const std::vector<std::size_t> &element_ids)
-	{
-		std::vector<std::size_t> connected_nodes =
-				searchByElementIDsMatchAllConnectedElements(element_ids);
-
-		this->updateUnion(connected_nodes);
-		return connected_nodes.size();
-	}
+    /// \return number of connected nodes.
+	std::size_t markNodesConnectedToElements(const std::vector<std::size_t> &element_ids);
 
 	/// Marks all unused nodes
 	std::size_t searchUnused();
