@@ -151,10 +151,27 @@ TEST(MathLib, Point3dComparisonOperatorEqual)
 	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
 }
 
+template <typename T, std::size_t N>
+struct randomTupleGenerator
+{
+	ac::generator<T> source;
+
+	using result_type = std::array<T, N>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		result_type rv;
+		std::generate(rv.begin(), rv.end(), ac::fix(size, source));
+		return rv;
+	}
+};
 
 // test for operator<
 TEST(MathLib, Point3dComparisonOperatorLess)
 {
+	auto tupleGen = randomTupleGenerator<double, 3>{};
+	auto pointGenerator = ac::make_arbitrary(ac::cons<MathLib::Point3d, randomTupleGenerator<double, 3>>(tupleGen));
+
 	srand(static_cast<unsigned>(time(nullptr)));
 	double x0(((double)(rand()) / RAND_MAX - 0.5));
 	double x1(((double)(rand()) / RAND_MAX - 0.5));
