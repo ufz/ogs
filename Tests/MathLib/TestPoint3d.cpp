@@ -172,7 +172,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
 }
 
 // test for operator<
-TEST_F(MathLibPoint3d, ComparisonOperatorLess)
+TEST_F(MathLibPoint3d, ComparisonOperatorLessSamePoint)
 {
 	// A point is never less than itself or its copy.
 	auto samePointLessCompare = [](MathLib::Point3d const& p)
@@ -184,8 +184,10 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 	ac::check<MathLib::Point3d>(samePointLessCompare, 100,
 								ac::make_arbitrary(pointGenerator),
 								gtest_reporter);
+}
 
-
+TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
+{
 	// A point with any positive value added to one of its coordinates is
 	// always larger then the original point.
 	auto pointWithAddedValue = [](MathLib::Point3d const& p, double const eps,
@@ -209,7 +211,10 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLess)
 					return eps == 0;
 				}),
 		gtest_reporter);
+}
 
+TEST_F(MathLibPoint3d, ComparisonOperatorLessSmallPerturbation)
+{
 	// A point with any positive value subtracted from one of its coordinates is
 	// always smaller then the original point.
 	auto pointWithSubtractedValue = [](
