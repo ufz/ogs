@@ -111,6 +111,25 @@ bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 	return (sqr_dist < eps*eps);
 }
 
+template <typename T, std::size_t DIM>
+bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
+{
+	for (std::size_t i = 0; i < DIM; ++i)
+	{
+		if (a[i] > b[i]) {
+			return false;
+		} else {
+			if (a[i] < b[i]) {
+				return true;
+			}
+		}
+		// continue with next dimension, because a[0] == b[0]
+	}
+
+	// The values in all dimenisions are equal.
+	return false;
+}
+
 /** Distance between points p0 and p1 in the maximum norm. */
 template <typename T>
 T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)

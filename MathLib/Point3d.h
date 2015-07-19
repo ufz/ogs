@@ -23,8 +23,6 @@ namespace MathLib
 {
 typedef MathLib::TemplatePoint<double,3> Point3d;
 
-bool operator< (MathLib::Point3d const & p0, MathLib::Point3d const & p1);
-
 /**
  * lexicographical comparison of points taking an epsilon into account
  * @param p0 first input Point3d
