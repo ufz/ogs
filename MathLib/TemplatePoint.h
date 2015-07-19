@@ -142,22 +142,28 @@ template <typename T, std::size_t DIM>
 bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 		double eps = std::numeric_limits<double>::epsilon())
 {
+	auto coordinateIsLargerEps = [&eps](T const a, T const b) -> bool
+	{
+		return std::fabs(a-b) > eps * std::min(std::fabs(b), std::fabs(a))
+			&& std::fabs(a-b) > eps;
+	};
+
 	// test a relative and an absolute criterion
-	if ((std::fabs(a[0]-b[0]) > eps * std::min(std::fabs(b[0]), std::fabs(a[0])) && std::fabs(a[0]-b[0]) > eps) {
+	if (coordinateIsLargerEps(a[0], b[0])) {
 		if (a[0] <= b[0])
 			return true;
 		else
 			return false;
 	} else {
 		// assume a[0] == b[0]
-		if (std::fabs (a[1]-b[1]) > eps * std::fabs(a[1]) && std::fabs(a[1]-b[1]) > eps) {
+		if (coordinateIsLargerEps(a[1], b[1])) {
 			if (a[1] <= b[1])
 				return true;
 			else
 				return false;
 		} else {
 			// assume a[1] == b[1] and a[0] == b[0]
-			if (std::fabs (a[2]-b[2]) > eps * std::fabs(a[2]) && std::fabs(a[2]-b[2]) > eps) {
+			if (coordinateIsLargerEps(a[2], b[2])) {
 				if (a[2] <= b[2])
 					return true;
 				else
