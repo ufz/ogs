@@ -130,6 +130,45 @@ bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 	return false;
 }
 
+/**
+ * lexicographical comparison of points taking an epsilon into account
+ * @param p0 first input Point3d
+ * @param p1 second input Point3d
+ * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
+ *     holds for the k-th coordinate the points are assumed the be equal in this coordinate)
+ * @return true, if p0 is lexicographically smaller than p1
+ */
+template <typename T, std::size_t DIM>
+bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
+		double tol = std::numeric_limits<double>::epsilon())
+{
+	// test a relative and an absolute criterion
+	if (fabs(a[0]-b[0]) > tol * std::min(fabs(b[0]), fabs(a[0])) && fabs(a[0]-b[0]) > tol) {
+		if (a[0] <= b[0])
+			return true;
+		else
+			return false;
+	} else {
+		// assume a[0] == b[0]
+		if (fabs (a[1]-b[1]) > tol * fabs(a[1]) && fabs(a[1]-b[1]) > tol) {
+			if (a[1] <= b[1])
+				return true;
+			else
+				return false;
+		} else {
+			// assume a[1] == b[1] and a[0] == b[0]
+			if (fabs (a[2]-b[2]) > tol * fabs(a[2]) && fabs(a[2]-b[2]) > tol) {
+				if (a[2] <= b[2])
+					return true;
+				else
+					return false;
+			} else {
+				return true;
+			}
+		}
+	}
+}
+
 /** Distance between points p0 and p1 in the maximum norm. */
 template <typename T>
 T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
