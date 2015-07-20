@@ -12,17 +12,7 @@ add_library(InSituLib
 	VtkMappedMeshSource.cpp
 )
 
-target_link_libraries(InSituLib
-	BaseLib
-	MeshLib
-	logog
-)
-
-target_link_libraries(InSituLib
-	BaseLib
-	MeshLib
-	logog
-)
+target_link_libraries(InSituLib INTERFACE MeshLib ${CATALYST_LIBRARIES})
 
 include(AddCatalystDependency)
 ADD_CATALYST_DEPENDENCY(InSituLib)

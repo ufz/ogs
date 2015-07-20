@@ -60,17 +60,7 @@ add_executable(OGSFileConverter
 	${UIS}
 )
 
-target_link_libraries(OGSFileConverter
-	${QT_LIBRARIES}
-	ApplicationsLib
-	FileIO
-	GeoLib
-	MeshLib
-	QtDataView
-	VtkVis
-	InSituLib
-	${CATALYST_LIBRARIES}
-)
+target_link_libraries(OGSFileConverter FileIO QtBase)
 ADD_CATALYST_DEPENDENCY(OGSFileConverter)
 
 # Adds useful macros and variables

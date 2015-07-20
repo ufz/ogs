@@ -74,15 +74,16 @@ add_library(MathLib STATIC ${SOURCES})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(MathLib
+target_link_libraries(MathLib INTERFACE
 	GeoLib
+	logog
 )
 
 if(LAPACK_FOUND)
-    target_link_libraries(MathLib ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+    target_link_libraries(MathLib INTERFACE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 endif()
 
 if (LIS_FOUND)
-    target_link_libraries(MathLib ${LIS_LIBRARIES})
+    target_link_libraries(MathLib INTERFACE ${LIS_LIBRARIES})
 endif()
 

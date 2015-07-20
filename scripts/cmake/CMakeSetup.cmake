@@ -71,3 +71,5 @@ if(APPLE)
 	endif()
 endif()
 mark_as_advanced(OSX_VERSION OSX_VERSION_NAME)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)

@@ -43,21 +43,13 @@ add_executable(testrunner testrunner.cpp ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
 
 target_link_libraries(testrunner
-	GTest
 	ApplicationsLib
 	AssemblerLib
-	BaseLib
 	FileIO
-	GeoLib
-	InSituLib
-	MathLib
-	MeshLib
 	MeshGeoToolsLib
 	NumLib
-	logog
-	${BOOST_LIBRARIES}
-	${CMAKE_THREAD_LIBS_INIT}
-	${CATALYST_LIBRARIES}
+	GTest
+	Threads::Threads
 )
 ADD_CATALYST_DEPENDENCY(testrunner)
 
@@ -72,6 +64,7 @@ endif()
 if(OGS_BUILD_GUI)
 	target_link_libraries(testrunner
 		QtDataView
+		QtStratView
 		VtkVis
 		vtkInteractionStyle
 	)
