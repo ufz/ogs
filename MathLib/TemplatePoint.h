@@ -18,6 +18,7 @@
 // STL
 #include <array>
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 #include <cassert>
 #include <iostream>
