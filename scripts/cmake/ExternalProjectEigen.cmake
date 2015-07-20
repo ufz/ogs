@@ -6,7 +6,7 @@ endif()
 
 # First check for system Eigen
 if(NOT EIGEN3_INCLUDE_DIR)
-	find_package(Eigen3)
+	find_package(Eigen3 3.2.5)
 	if(EIGEN3_FOUND)
 		set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
 		set(EIGEN3_INCLUDE_DIR "${EIGEN3_INCLUDE_DIR}" CACHE STRING "Eigen include dir" FORCE)
