@@ -11,8 +11,8 @@
  */
 
 #include <ctime>
-#include "gtest/gtest.h"
-#include "autocheck/autocheck.hpp"
+#include <gtest/gtest.h>
+#include <autocheck/autocheck.hpp>
 
 #include "MathLib/Point3d.h"
 

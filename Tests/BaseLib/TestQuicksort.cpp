@@ -12,10 +12,11 @@
  *
  */
 
-#include "gtest/gtest.h"
-#include "autocheck/autocheck.hpp"
-#include "quicksort.h"
+#include <gtest/gtest.h>
+#include <autocheck/autocheck.hpp>
+#include "BaseLib/quicksort.h"
 
+#include <numeric>
 #include <algorithm>
 #include <sstream>
 #include <string>
