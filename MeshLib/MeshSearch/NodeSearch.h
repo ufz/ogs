@@ -37,8 +37,6 @@ public:
 	std::size_t searchUnused();
 
 private:
-	std::vector<std::size_t> searchByElementIDsMatchAllConnectedElements(const std::vector<std::size_t> &element_ids);
-
 	/// Updates the vector of marked items with values from vec.
 	void updateUnion(const std::vector<std::size_t> &vec);
 
