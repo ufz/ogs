@@ -1,8 +1,8 @@
 set(OGS_BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download")
 set(OGS_BOOST_MD5 "b8839650e61e9c1c0a89f371dd475546")
 
-set(OGS_EIGEN_URL "http://opengeosys.org/images/dev/eigen-3.1.4.tar.gz")
-set(OGS_EIGEN_MD5 "e0fcbff1a486f0a305df67c36236b637")
+set(OGS_EIGEN_URL "http://bitbucket.org/eigen/eigen/get/3.2.5.tar.gz")
+set(OGS_EIGEN_MD5 "8cc513ac6ec687117acadddfcacf551b")
 
 set(OGS_VTK_VERSION 6.1.0)
 set(OGS_VTK_URL "http://www.vtk.org/files/release/6.1/VTK-6.1.0.tar.gz")
