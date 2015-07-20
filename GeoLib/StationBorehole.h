@@ -19,6 +19,8 @@
 #include "Station.h"
 
 #include <list>
+#include <string>
+#include <vector>
 
 namespace GeoLib
 {

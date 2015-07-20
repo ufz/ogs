@@ -17,10 +17,11 @@
 
 #include <vector>
 
-// GeoLib
-#include "Point.h"
+#include "MathLib/Point3d.h"
 
 namespace GeoLib {
+
+class Point;
 
 /** \brief Class Triangle consists of a reference to a point vector and
  * a vector that stores the indices in the point vector.

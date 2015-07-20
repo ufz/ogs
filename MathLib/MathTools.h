@@ -15,15 +15,11 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
-#include <cmath>
-#include <limits>
-#include <vector>
+#include <cstddef>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include "Point3d.h"
 
 namespace MathLib
 {
@@ -107,38 +103,12 @@ void crossProd (const double u[3], const double v[3], double r[3]);
 double calcProjPntToLineAndDists(const double p[3], const double a[3],
                                  const double b[3], double &lambda, double &d0);
 
-template <typename T, std::size_t DIM>
-bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
-{
-	T const sqr_dist(sqrDist(a,b));
-	return (sqr_dist < pow(std::numeric_limits<T>::epsilon(),2));
-}
-
-/// Computes the squared dist between the two points p0 and p1.
-inline
-double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
-{
-	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scalarProduct<double,3>(v,v);
-}
-
 /** squared dist between double arrays p0 and p1 (size of arrays is 3) */
 inline
 double sqrDist(const double* p0, const double* p1)
 {
 	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
 	return scalarProduct<double,3>(v,v);
-}
-
-/** Distance between points p0 and p1 in the maximum norm. */
-template <typename T>
-T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
-{
-	const T x = fabs((*p1)[0] - (*p0)[0]);
-	const T y = fabs((*p1)[1] - (*p0)[1]);
-	const T z = fabs((*p1)[2] - (*p0)[2]);
-
-	return std::max(x, std::max(y, z));
 }
 
 /**

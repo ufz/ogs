@@ -44,9 +44,6 @@ private:
 	void getMinMaxAngleFromTriangle(double const* const n0,
 	                                double const* const n1, double const* const n2,
 	                                double &min_angle, double &max_angle) const;
-
-	const double M_PI_THIRD;
-	const double TWICE_M_PI;
 };
 }
 

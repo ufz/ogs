@@ -12,14 +12,14 @@
  *
  */
 
-#include <iostream>
+#include "Color.h"
+
 #include <fstream>
 #include <sstream>
 
 #include <logog/include/logog.hpp>
 
-#include "Color.h"
-#include "StringTools.h"
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib {
 

@@ -12,10 +12,11 @@
  *
  */
 
-// BaseLib
-#include "quicksort.h"
+#include "CRSMatrixReordered.h"
 
-#include "LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReordered.h"
+#include <utility>
+
+#include "BaseLib/quicksort.h"
 
 namespace MathLib {
 
@@ -64,7 +65,7 @@ void CRSMatrixReordered::reorderMatrix(unsigned const*const op_perm, unsigned co
 
 	delete[] pos;
 	for (i = 0; i < size; ++i)
-		BaseLib::quicksort(jAn, static_cast<size_t>(iAn[i]), static_cast<size_t>(iAn[i + 1]), An);
+		BaseLib::quicksort(jAn, static_cast<std::size_t>(iAn[i]), static_cast<std::size_t>(iAn[i + 1]), An);
 
 	std::swap(iAn, _row_ptr);
 	std::swap(jAn, _col_idx);

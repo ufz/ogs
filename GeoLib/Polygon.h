@@ -15,11 +15,11 @@
 #ifndef POLYGON_H_
 #define POLYGON_H_
 
-// STL
 #include <list>
+#include <vector>
 
-// GeoLib
 #include "AABB.h"
+#include "Point.h"
 #include "Polyline.h"
 
 namespace GeoLib

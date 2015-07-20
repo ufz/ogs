@@ -12,20 +12,13 @@
  *
  */
 
-
-#include <cmath>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-// BaseLib
-#include "DateTools.h"
-#include "StringTools.h"
-// GeoLib
 #include "Station.h"
+
+#include <cstdlib>
+
+#include <logog/include/logog.hpp>
+
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib
 {
@@ -51,18 +44,17 @@ Station::~Station()
 
 Station* Station::createStation(const std::string & line)
 {
-	std::list<std::string>::const_iterator it;
 	Station* station = new Station();
 	std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
 	if (fields.size() >= 3)
 	{
-		it = fields.begin();
+		auto it = fields.begin();
 		station->_name = *it;
-		(*station)[0] = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
-		(*station)[1] = strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+		(*station)[0] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+		(*station)[1] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
 		if (++it != fields.end())
-			(*station)[2] = strtod((BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
+			(*station)[2] = std::strtod((BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
 	}
 	else
 	{

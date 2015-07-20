@@ -12,17 +12,13 @@
  *
  */
 
-// GeoLib
 #include "EarClippingTriangulation.h"
 
-// STL
-#include <vector>
+#include "BaseLib/uniqueInsert.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-// BaseLib
-#include "uniqueInsert.h"
+#include "Polygon.h"
+#include "Triangle.h"
+#include "Point.h"
 
 namespace GeoLib
 {

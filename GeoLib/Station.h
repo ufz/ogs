@@ -17,10 +17,8 @@
 #define GEO_STATION_H
 
 #include <string>
-#include <vector>
 
 #include "Point.h"
-#include "Polyline.h"
 #include "SensorData.h"
 
 namespace GeoLib

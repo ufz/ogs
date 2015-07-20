@@ -15,12 +15,15 @@
 #ifndef ANALYTICAL_GEOMETRY_H_
 #define ANALYTICAL_GEOMETRY_H_
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/Vector3.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
-#include "Triangle.h"
-#include "PointVec.h"
 #include "Polygon.h"
+
+namespace MathLib
+{
+    class PointVec;
+}
 
 namespace GeoLib
 {

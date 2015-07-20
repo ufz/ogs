@@ -12,25 +12,14 @@
  *
  */
 
-#include <cmath>
-#include <cstdlib> // for exit
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 #include "Polygon.h"
 
-// MathLib
-#include "AnalyticalGeometry.h"
-#include "MathTools.h"
-#include "Vector3.h"
+#include <logog/include/logog.hpp>
+#include <boost/math/constants/constants.hpp>
 
-// BaseLib
-#include "quicksort.h"
+#include "BaseLib/quicksort.h"
+
+#include "AnalyticalGeometry.h"
 
 namespace GeoLib
 {
@@ -476,7 +465,7 @@ GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, doubl
 {
 	const std::size_t off_set (pnts.size());
 	// create points
-	double angle (2.0 * M_PI / resolution);
+	double angle (boost::math::double_constants::two_pi / resolution);
 	for (std::size_t k(0); k < resolution; k++)
 	{
 		GeoLib::Point* pnt(new GeoLib::Point(middle_pnt));

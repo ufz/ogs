@@ -12,20 +12,16 @@
  *
  */
 
+#include "StationBorehole.h"
 
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
-#include <iomanip>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-// BaseLib
-#include "StringTools.h"
-#include "DateTools.h"
-// GeoLib
-#include "StationBorehole.h"
+#include "BaseLib/StringTools.h"
+#include "BaseLib/DateTools.h"
 
 namespace GeoLib
 {

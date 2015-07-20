@@ -12,17 +12,15 @@
  *
  */
 
+#include "SensorData.h"
+
 #include <cstdlib>
 #include <fstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-#include "SensorData.h"
-
-#include "StringTools.h"
-#include "DateTools.h"
-
+#include "BaseLib/StringTools.h"
+#include "BaseLib/DateTools.h"
 
 SensorData::SensorData(const std::string &file_name)
 : _start(0), _end(0), _step_size(0), _time_unit(TimeStepType::NONE)

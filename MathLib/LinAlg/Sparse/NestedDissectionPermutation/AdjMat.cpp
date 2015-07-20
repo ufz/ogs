@@ -12,10 +12,11 @@
  *
  */
 
-// Base
-#include "quicksort.h"
+#include "AdjMat.h"
 
-#include "LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
+#include <utility>
+
+#include "BaseLib/quicksort.h"
 
 namespace MathLib {
 

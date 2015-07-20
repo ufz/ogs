@@ -16,7 +16,9 @@
 
 #include <ctime>
 
-#include "MathTools.h"
+#include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
+
 #include "AnalyticalGeometry.h"
 
 namespace GeoLib {
