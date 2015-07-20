@@ -47,3 +47,6 @@ target_link_libraries(NumLib INTERFACE
 	logog
 )
 
+if(TARGET Eigen)
+	add_dependencies(NumLib Eigen)
+endif()
