@@ -63,7 +63,7 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
 
 	// delete unused nodes
 	NodeSearch ns(mesh);
-	ns.markNodesConnectedToElements(removed_element_ids);
+	ns.searchNodesConnectedToOnlyGivenElements(removed_element_ids);
 	auto &removed_node_ids(ns.getSearchedNodeIDs());
 	INFO("Removing total %d nodes...", removed_node_ids.size());
 	for (auto nodeid : removed_node_ids)

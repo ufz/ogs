@@ -24,7 +24,7 @@ NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
 {
 }
 
-std::size_t NodeSearch::markNodesConnectedToElements(
+std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
 		const std::vector<std::size_t> &elements)
 {
 	// Find out by how many elements a node would be removed.
