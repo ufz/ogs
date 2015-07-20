@@ -1,68 +1,64 @@
+sudo: false
 language: cpp
 
 compiler:
   - gcc
   - clang
 
+addons:
+  apt:
+    sources:
+      - boost-latest
+      - ubuntu-toolchain-r-test
+      # TODO: feelpp/petsc
+    packages:
+      - g++-4.8
+      - libeigen3-dev
+      - libboost1.55-dev
+      - libboost-date-time1.55-dev
+      - libboost-filesystem1.55-dev
+      - libboost-program-options1.55-dev
+      - libboost-system1.55-dev
+      - qt4-dev-tools
+      - libxt-dev
+      # TODO
+      # - libpetsc3.4.2-dev
+      # Not allowed yet:
+      # - numdiff
+      # - libshp-dev
+      # - libgeotiff-dev
+
+
+
 cache:
-  - apt
+  directories:
+    - $HOME/cmake-3.1.1-Linux-x86_64
+    - $HOME/VTK-Install
 
 env:
-  - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-  - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
-  - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON"
+  global:
+    - VTK_DIR=VTK-Install/lib/cmake/vtk-6.1
+  matrix:
+    - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON -DVTK_DIR=$HOME/$VTK_DIR"
+    # - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
+    - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF -DVTK_DIR=$HOME/$VTK_DIR"
 
 before_install:
-  # -- External package sources --
-  - travis_retry sudo add-apt-repository --yes ppa:boost-latest
-  - travis_retry sudo apt-get install python-software-properties
-  - travis_retry sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then sudo add-apt-repository --yes ppa:feelpp/petsc; fi
-  - travis_retry sudo apt-get update -qq;
+  - bash scripts/travis/cmake.sh
+  - bash scripts/travis/vtk.sh
 
-  # GCC 4.8
-  - travis_retry sudo apt-get install -qq g++-4.8
-  - export CXX="g++-4.8" CC="gcc-4.8"
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-
-install:
-  # -- Install packages --
-  - travis_retry sudo apt-get install -qq libeigen3-dev numdiff
-
-  # Boost
-  - travis_retry sudo apt-get install -qq libboost1.55-dev libboost-date-time1.55-dev libboost-filesystem1.55-dev libboost-program-options1.55-dev libboost-system1.55-dev
-
-  # Eigen
-  - travis_retry wget http://bitbucket.org/eigen/eigen/get/3.2.5.tar.gz
-  - tar -xzf 3.2.5.tar.gz
-  - sudo cp -fR eigen-eigen-bdd17ee3b1b3/* /usr/include/eigen3/
-
-  # CMake
-  - travis_retry wget http://www.cmake.org/files/v3.1/cmake-3.1.1-Linux-x86_64.tar.gz
-  - tar -xzf cmake-3.1.1-Linux-x86_64.tar.gz
-  - sudo cp -fR cmake-3.1.1-Linux-x86_64/* /usr
-  - rm -rf cmake-3.1.1-Linux-x86_64.tar.gz cmake-3.1.1-Linux-x86_64
-
-  # Qt
-  - if [[ "$CASE" == "GUI" ]]; then travis_retry sudo apt-get install -qq qt4-dev-tools libshp-dev libgeotiff-dev libxt-dev; fi
-
-  # VTK
-  - travis_retry wget http://www.opengeosys.org/images/dev/vtk-6.1.0.tar.gz
-  - tar -xzf vtk-6.1.0.tar.gz
-  - sudo cp -fR VTK-Install/* /usr
-  - rm -rf vtk-6.1.0.tar.gz VTK-Install
-
-  # PetSc
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then travis_retry sudo apt-get install -qq libpetsc3.4.2-dev; fi
+before_script:
+  - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
+  - export CXX=g++-4.8 CC=gcc-4.8
 
 script:
   - mkdir build
   - cd build
   - cmake $CMAKE_ARGS ..
-  - make
-  - make tests
+  - make -j 2
+  - if [[ "$CASE" == "CLI" ]]; then make tests; fi
   # PetSc
-  - if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
+  #- if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
 notifications:
   hipchat:
