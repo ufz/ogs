@@ -131,12 +131,15 @@ bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 }
 
 /**
- * lexicographical comparison of points taking an epsilon into account
- * @param p0 first input Point3d
- * @param p1 second input Point3d
- * @param eps tolerance (if in the comparison operation the property abs(p0[k] - p1[k]) < eps
- *     holds for the k-th coordinate the points are assumed the be equal in this coordinate)
- * @return true, if p0 is lexicographically smaller than p1
+ * Lexicographic comparison of points taking an epsilon into account.
+ *
+ * @param a first input point.
+ * @param b second input point.
+ * @param eps tolerance used in comparison of coordinates.
+ *
+ * @return true, if a is smaller then or equal to b according to the following
+ * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
+ * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < \textrm{DIM} \f$.
  */
 template <typename T, std::size_t DIM>
 bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
@@ -148,31 +151,21 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 			&& std::fabs(a-b) > eps;
 	};
 
-	// test a relative and an absolute criterion
-	if (coordinateIsLargerEps(a[0], b[0])) {
-		if (a[0] <= b[0])
-			return true;
-		else
-			return false;
-	} else {
-		// assume a[0] == b[0]
-		if (coordinateIsLargerEps(a[1], b[1])) {
-			if (a[1] <= b[1])
+	for (std::size_t i = 0; i < DIM; ++i)
+	{
+		// test a relative and an absolute criterion
+		if (coordinateIsLargerEps(a[i], b[i]))
+		{
+			if (a[i] <= b[i])
 				return true;
 			else
 				return false;
-		} else {
-			// assume a[1] == b[1] and a[0] == b[0]
-			if (coordinateIsLargerEps(a[2], b[2])) {
-				if (a[2] <= b[2])
-					return true;
-				else
-					return false;
-			} else {
-				return true;
-			}
 		}
+		// a[i] ~= b[i] up to an epsilon. Compare next dimension.
 	}
+
+	// all coordinates a equal up to an epsilon.
+	return true;
 }
 
 /** Distance between points p0 and p1 in the maximum norm. */
