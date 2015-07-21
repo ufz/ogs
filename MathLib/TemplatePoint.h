@@ -18,6 +18,7 @@
 // STL
 #include <array>
 #include <algorithm>
+#include <cmath>
 #include <iterator>
 #include <cassert>
 #include <iostream>
@@ -109,6 +110,63 @@ bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
 	T const sqr_dist(sqrDist(a,b));
 	auto const eps = std::numeric_limits<T>::epsilon();
 	return (sqr_dist < eps*eps);
+}
+
+template <typename T, std::size_t DIM>
+bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
+{
+	for (std::size_t i = 0; i < DIM; ++i)
+	{
+		if (a[i] > b[i]) {
+			return false;
+		} else {
+			if (a[i] < b[i]) {
+				return true;
+			}
+		}
+		// continue with next dimension, because a[0] == b[0]
+	}
+
+	// The values in all dimenisions are equal.
+	return false;
+}
+
+/**
+ * Lexicographic comparison of points taking an epsilon into account.
+ *
+ * @param a first input point.
+ * @param b second input point.
+ * @param eps tolerance used in comparison of coordinates.
+ *
+ * @return true, if a is smaller then or equal to b according to the following
+ * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
+ * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < \textrm{DIM} \f$.
+ */
+template <typename T, std::size_t DIM>
+bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
+		double eps = std::numeric_limits<double>::epsilon())
+{
+	auto coordinateIsLargerEps = [&eps](T const a, T const b) -> bool
+	{
+		return std::fabs(a-b) > eps * std::min(std::fabs(b), std::fabs(a))
+			&& std::fabs(a-b) > eps;
+	};
+
+	for (std::size_t i = 0; i < DIM; ++i)
+	{
+		// test a relative and an absolute criterion
+		if (coordinateIsLargerEps(a[i], b[i]))
+		{
+			if (a[i] <= b[i])
+				return true;
+			else
+				return false;
+		}
+		// a[i] ~= b[i] up to an epsilon. Compare next dimension.
+	}
+
+	// all coordinates a equal up to an epsilon.
+	return true;
 }
 
 /** Distance between points p0 and p1 in the maximum norm. */

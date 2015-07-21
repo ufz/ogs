@@ -23,20 +23,6 @@ namespace MathLib
 {
 typedef MathLib::TemplatePoint<double,3> Point3d;
 
-bool operator< (MathLib::Point3d const & p0, MathLib::Point3d const & p1);
-
-/**
- * lexicographical comparison of points taking an epsilon into account
- * @param p0 first input Point3d
- * @param p1 second input Point3d
- * @param tol tolerance (if in the comparison operation the property fabs(p0[k] - p1[k]) < tol
- *     holds for the k-th coordinate the points are assumed the be equal in this coordinate)
- * @return true, if p0 is lexicographically smaller than p1
- */
-bool lessEq(const MathLib::Point3d& p0,
-            const MathLib::Point3d& p1,
-            double tol = std::numeric_limits<double>::epsilon());
-
 /**
  * rotation of points
  * @param mat a rotation matrix
