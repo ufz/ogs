@@ -84,7 +84,7 @@ struct OrderedUniqueListGen
     }
 };
 
-// Permutations of sorted, unique vector remain untouched.
+// Permutations of non-empty, sorted, unique vector remain untouched.
 TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
 {
     auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
@@ -106,10 +106,14 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
     };
 
     ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
-            gen, gtest_reporter, cls);
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
 }
 
-// Permutations of reverse sorted, unique vector is also reversed.
+// Permutations of non-empty, reverse sorted, unique vector is also reversed.
 TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
 {
     auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
@@ -134,5 +138,9 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
     };
 
     ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
-            gen, gtest_reporter, cls);
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
 }
