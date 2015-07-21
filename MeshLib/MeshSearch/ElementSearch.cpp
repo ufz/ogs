@@ -42,30 +42,33 @@ std::size_t ElementSearch::searchByMaterialID(int const matID)
 	return matchedIDs.size();
 }
 
-std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
+template <typename Container, typename Predicate>
+std::vector<std::size_t> filter(Container const& container, Predicate const& p)
 {
-	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
 	std::vector<std::size_t> matchedIDs;
 	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
-		if (ele->getGeomType()==eleType)
+	for (auto value : container) {
+		if (p(value))
 			matchedIDs.push_back(i);
 		i++;
 	}
+	return matchedIDs;
+}
+
+std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
+{
+	auto matchedIDs = filter(_mesh.getElements(),
+		[&](MeshLib::Element* e) { return e->getGeomType()==eleType; });
+
 	this->updateUnion(matchedIDs);
 	return matchedIDs.size();
 }
 
 std::size_t ElementSearch::searchByContent(double eps)
 {
-	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
-	std::vector<std::size_t> matchedIDs;
-	std::size_t i = 0;
-	for (MeshLib::Element* ele : ele_vec) {
-		if (ele->getContent() < eps)
-			matchedIDs.push_back(i);
-		i++;
-	}
+	auto matchedIDs = filter(_mesh.getElements(),
+		[&eps](MeshLib::Element* e) { return e->getContent() < eps; });
+
 	this->updateUnion(matchedIDs);
 	return matchedIDs.size();
 }
@@ -73,20 +76,15 @@ std::size_t ElementSearch::searchByContent(double eps)
 std::size_t ElementSearch::searchByBoundingBox(
 	GeoLib::AABB<MathLib::Point3d> const& aabb)
 {
-	const std::vector<MeshLib::Element*> &ele_vec (this->_mesh.getElements());
+	auto matchedIDs = filter(_mesh.getElements(),
+		[&aabb](MeshLib::Element* e) {
+			std::size_t const nElemNodes (e->getNBaseNodes());
+			for (std::size_t n=0; n < nElemNodes; ++n)
+				if (aabb.containsPoint(*e->getNode(n)))
+					return true;	// any node of element is in aabb.
+			return false;	// no nodes of element are in aabb.
+		});
 
-	std::vector<std::size_t> matchedIDs;
-	const std::size_t n_elems(ele_vec.size());
-	for (std::size_t i = 0; i<n_elems; i++)
-	{
-		std::size_t nElemNodes (ele_vec[i]->getNBaseNodes());
-		for (std::size_t j=0; j<nElemNodes; ++j)
-			if (!aabb.containsPoint(*ele_vec[i]->getNode(j)))
-			{
-				matchedIDs.push_back(i);
-				break;
-			}
-	}
 	this->updateUnion(matchedIDs);
 	return matchedIDs.size();
 }
@@ -94,16 +92,16 @@ std::size_t ElementSearch::searchByBoundingBox(
 std::size_t ElementSearch::searchByNodeIDs(const std::vector<std::size_t> &nodes)
 {
 	std::vector<std::size_t> connected_elements;
-	std::for_each(nodes.begin(), nodes.end(),
-		[&](std::size_t node_id)
-		{
-			for (auto* e : _mesh.getNode(node_id)->getElements()) {
-				connected_elements.push_back(e->getID());
-			}
-		});
+	for (std::size_t node_id : nodes)
+	{
+		for (auto* e : _mesh.getNode(node_id)->getElements()) {
+			connected_elements.push_back(e->getID());
+		}
+	}
 	std::sort(connected_elements.begin(), connected_elements.end());
 	auto it = std::unique(connected_elements.begin(), connected_elements.end());
 	connected_elements.resize(std::distance(connected_elements.begin(),it));
+
 	this->updateUnion(connected_elements);
 	return connected_elements.size();
 }

@@ -29,8 +29,9 @@ public:
 	/// return marked node IDs
 	const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
 
-	/// Marks all nodes connecting to any of the given elements
-	std::size_t searchByElementIDs(const std::vector<std::size_t> &element_ids, bool only_match_all_connected_elements = false);
+	/// Marks all nodes connected to any of the given elements ids.
+    /// \return number of connected nodes.
+	std::size_t searchNodesConnectedToOnlyGivenElements(const std::vector<std::size_t> &element_ids);
 
 	/// Marks all unused nodes
 	std::size_t searchUnused();
