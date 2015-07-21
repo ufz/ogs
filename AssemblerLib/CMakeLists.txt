@@ -12,3 +12,7 @@ include_directories(
 	../MathLib
 	../MeshLib
 )
+
+if(TARGET Eigen)
+	add_dependencies(AssemblerLib Eigen)
+endif()
