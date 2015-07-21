@@ -9,3 +9,7 @@ target_link_libraries(ProcessLib INTERFACE
     MeshGeoToolsLib
     logog
 )
+
+if(TARGET Eigen)
+	add_dependencies(ProcessLib Eigen)
+endif()
