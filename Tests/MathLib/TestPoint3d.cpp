@@ -102,72 +102,6 @@ TEST(MathLib, Point3dComparisonLessEq)
 	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0}})),Point3d(std::array<double,3>({{10.0,10.0,10.0+half_eps}}))));
 }
 
-TEST(MathLib, Point3dComparisonOperatorLessEq)
-{
-	const double my_eps(std::numeric_limits<double>::epsilon());
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0+my_eps,1.0,1.0}})) <=
-	Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0+my_eps,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0+my_eps}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0+my_eps,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0+my_eps,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0+my_eps}})));
-
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0-my_eps,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0-my_eps,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0-my_eps}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0-my_eps,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0-my_eps,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <=
-		Point3d(std::array<double,3>({{1.0,1.0,1.0-my_eps}})));
-
-	std::size_t n(10000);
-	srand ( static_cast<unsigned>(time(NULL)) );
-	for (std::size_t k(0); k<n; ++k) {
-		double random_val_x(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
-		double random_val_y(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
-		double random_val_z(((double)(rand()) / RAND_MAX - 0.5)); //real_dist(rng));
-
-		double big_x(random_val_x * std::numeric_limits<double>::max());
-		double big_y(random_val_y * std::numeric_limits<double>::max());
-		double big_z(random_val_z * std::numeric_limits<double>::max());
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x-my_eps,big_y,big_z}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x,big_y-my_eps,big_z}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x,big_y,big_z-my_eps}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x-my_eps,big_y-my_eps,big_z}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x-my_eps,big_y,big_z-my_eps}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x,big_y-my_eps,big_z-my_eps}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{big_x-my_eps,big_y-my_eps,big_z-my_eps}})) <= Point3d(std::array<double,3>({{big_x,big_y,big_z}})));
-
-		double small_x(random_val_x * std::numeric_limits<double>::epsilon());
-		double small_y(random_val_y * std::numeric_limits<double>::epsilon());
-		double small_z(random_val_z * std::numeric_limits<double>::epsilon());
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x-my_eps,small_y,small_z}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x,small_y-my_eps,small_z}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x,small_y,small_z-my_eps}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x-my_eps,small_y-my_eps,small_z}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x-my_eps,small_y,small_z-my_eps}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x,small_y-my_eps,small_z-my_eps}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-
-		ASSERT_TRUE(Point3d(std::array<double,3>({{small_x-my_eps,small_y-my_eps,small_z-my_eps}})) <= Point3d(std::array<double,3>({{small_x,small_y,small_z}})));
-	}
-}
-
 // test for operator==
 TEST(MathLib, Point3dComparisonOperatorEqual)
 {
@@ -178,16 +112,15 @@ TEST(MathLib, Point3dComparisonOperatorEqual)
 
 	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
 	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
 	ASSERT_TRUE(a == b);
 	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
 
 	double tol(std::numeric_limits<double>::min());
 	b[2] += tol;
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
 	b[1] = 0.0;
 	b[2] = 0.0;
-	ASSERT_TRUE(((a <= b) && (b <= a)) == (a == b));
+	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
 
 	tol = std::numeric_limits<double>::epsilon();
 	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
