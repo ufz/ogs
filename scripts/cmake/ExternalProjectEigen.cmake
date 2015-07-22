@@ -1,6 +1,4 @@
-include(ThirdPartyLibVersions)
-include(ExternalProject)
-if(EIGEN3_FOUND AND EIGEN3_INCLUDE_DIR)
+if(EIGEN3_FOUND)
 	return()
 endif()
 
@@ -16,6 +14,12 @@ if(NOT EIGEN3_INCLUDE_DIR)
 	endif()
 endif()
 
+if(EIGEN3_FOUND)
+	return()
+endif()
+
+include(ThirdPartyLibVersions)
+include(ExternalProject)
 ExternalProject_Add(Eigen
 	PREFIX ${CMAKE_BINARY_DIR}/External/eigen
 	URL ${OGS_EIGEN_URL}
@@ -26,10 +30,11 @@ ExternalProject_Add(Eigen
 	BUILD_IN_SOURCE 1
 	INSTALL_COMMAND ""
 )
+
 ExternalProject_Get_Property( Eigen source_dir )
 
 if(NOT EIGEN3_INCLUDE_DIR)
-	set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
+	#set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
 	set( EIGEN3_INCLUDE_DIR ${source_dir} CACHE INTERNAL "Eigen include dir" FORCE)
 	message(STATUS "Downloading Eigen automatically.")
 endif()
