@@ -50,3 +50,6 @@ target_link_libraries(NumLib INTERFACE
 if(TARGET Eigen)
 	add_dependencies(NumLib Eigen)
 endif()
+if(TARGET Boost)
+	add_dependencies(NumLib Boost)
+endif()

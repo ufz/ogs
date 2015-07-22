@@ -85,3 +85,6 @@ if (LIS_FOUND)
     target_link_libraries(MathLib INTERFACE ${LIS_LIBRARIES})
 endif()
 
+if(TARGET Boost)
+    add_dependencies(MathLib Boost)
+endif()

@@ -12,3 +12,7 @@ include_directories(
 	../MathLib
 	../MeshLib
 )
+
+if(TARGET Boost)
+	add_dependencies(AssemblerLib Boost)
+endif()

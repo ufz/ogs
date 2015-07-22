@@ -13,3 +13,6 @@ target_link_libraries(ProcessLib INTERFACE
 if(TARGET Eigen)
 	add_dependencies(ProcessLib Eigen)
 endif()
+if(TARGET Boost)
+	add_dependencies(ProcessLib Boost)
+endif()

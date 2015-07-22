@@ -14,3 +14,6 @@ target_link_libraries(GeoLib INTERFACE
 	logog
 )
 
+if(TARGET Boost)
+	add_dependencies(GeoLib Boost)
+endif()

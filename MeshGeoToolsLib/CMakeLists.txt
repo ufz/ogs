@@ -20,3 +20,6 @@ target_link_libraries(MeshGeoToolsLib INTERFACE
 	logog
 )
 
+if(TARGET Boost)
+	add_dependencies(MeshGeoToolsLib Boost)
+endif()
