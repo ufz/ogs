@@ -23,7 +23,7 @@ namespace ac = autocheck;
 
 struct MathLibPoint3d : public ::testing::Test
 {
-	ac::randomTupleGenerator<double, 3> tupleGen{};
+	ac::randomTupleGenerator<double, 3> tupleGen;
 	ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
 		pointGenerator{tupleGen};
 
