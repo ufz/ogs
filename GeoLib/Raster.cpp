@@ -151,8 +151,8 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 		// a no data value. This also allows the cast to unsigned type.
 		if ( (xIdx + x_nb[j]) < 0 ||
 		     (yIdx + y_nb[j]) < 0 ||
-		     (xIdx + x_nb[j]) > _ll_pnt[0]+(_n_cols*_cell_size) ||
-		     (yIdx + y_nb[j]) > _ll_pnt[1]+(_n_rows*_cell_size) )
+		     (xIdx + x_nb[j]) > (_n_cols-1) ||
+		     (yIdx + y_nb[j]) > (_n_rows-1) )
 			pix_val[j] = _no_data_val;
 		else
 			pix_val[j] = _raster_data[
