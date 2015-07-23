@@ -52,7 +52,9 @@ void VtkCompositeColorByHeightFilter::init()
 	VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
 	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
 	ColorLookupTable->setColor(-50, a);
-	ColorLookupTable->setColor(200, b); // green at about 20m
+	ColorLookupTable->setColor(0, a);
+	ColorLookupTable->setColor(1, b);   // instant change at 0m a.s.l.
+	ColorLookupTable->setColor(200, b); // green at about 200m a.s.l.
 	ColorLookupTable->setColor(500, c); // yellow at about 500m and changing to red from then on
 	ColorLookupTable->setColor(1000, d);
 	ColorLookupTable->setColor(2000, e);
