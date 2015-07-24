@@ -15,8 +15,11 @@
 
 #include <memory>
 
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 

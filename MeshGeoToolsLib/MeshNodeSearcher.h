@@ -21,6 +21,7 @@
 // forward declaration
 namespace GeoLib
 {
+class GeoObject;
 class Point;
 class Polyline;
 class Surface;

@@ -14,8 +14,10 @@
 #include <logog/include/logog.hpp>
 
 // GeoLib
+#include "GeoLib/GeoObject.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
 
 // MeshLib
 #include "MeshLib/Elements/Element.h"
