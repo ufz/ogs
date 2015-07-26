@@ -103,7 +103,7 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(GeoLib::Point const& pnt
 {
 	std::vector<MeshNodesOnPoint*>::const_iterator it(_mesh_nodes_on_points.begin());
 	for (; it != _mesh_nodes_on_points.end(); ++it) {
-		if (&(*it)->getPoint() == &pnt) {
+		if ((*it)->getPoint() == pnt) {
 			return *(*it);
 		}
 	}

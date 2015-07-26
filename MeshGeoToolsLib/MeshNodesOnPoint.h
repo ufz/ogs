@@ -54,7 +54,7 @@ public:
 
 private:
 	MeshLib::Mesh const& _mesh;
-	GeoLib::Point const& _pnt;
+	GeoLib::Point const _pnt;
 	std::vector<std::size_t> _msh_node_ids;
 };
 } // end namespace MeshGeoToolsLib
