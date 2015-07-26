@@ -29,7 +29,7 @@ class MeshLibMeshNodeSearchInSimpleQuadMesh : public testing::Test
 {
 public:
 	MeshLibMeshNodeSearchInSimpleQuadMesh() :
-		_geometric_size(10.0), _number_of_subdivisions_per_direction(99),
+		_geometric_size(10.0), _number_of_subdivisions_per_direction(99), _dx(_geometric_size/_number_of_subdivisions_per_direction),
 		_quad_mesh(MeshGenerator::generateRegularQuadMesh(_geometric_size, _number_of_subdivisions_per_direction))
 	{}
 
@@ -41,6 +41,7 @@ public:
 protected:
 	const double _geometric_size;
 	const std::size_t _number_of_subdivisions_per_direction;
+	const double _dx;
 	Mesh* _quad_mesh;
 };
 
@@ -66,36 +67,46 @@ protected:
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 {
 	ASSERT_TRUE(_quad_mesh != nullptr);
-	// 1 create a geometry
-	GeoLib::Point pnt(0.0, 0.0, 0.0);
-
-	// 2 perform search and compare results with expected vals
-	MeshGeoToolsLib::SearchLength search_length;
+	const double dx_hlaf = _dx*0.5;
+	MeshGeoToolsLib::SearchLength search_length(dx_hlaf);
 	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
 		search_length);
 
-	// find ORIGIN
-	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	{
+		GeoLib::Point pnt(0.0, 0.0, 0.0);
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt).size());
+		ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	}
 
-	pnt[0] = 0.049;
-	pnt[1] = 0.049;
-	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	{
+		GeoLib::Point pnt(dx_hlaf*0.99, 0.0, 0.0);
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt).size());
+		ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	}
 
-	pnt[0] = 0.051;
-	pnt[1] = 0.049;
-	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	{
+		GeoLib::Point pnt(dx_hlaf, 0.0, 0.0);
+		ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDForPoint(pnt).size());
+	}
 
-	pnt[0] = 0.049;
-	pnt[1] = 0.051;
-	ASSERT_EQ(100u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	{
+		GeoLib::Point pnt(dx_hlaf*1.01, 0.0, 0.0);
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt).size());
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	}
 
-	pnt[0] = 0.051;
-	pnt[1] = 0.051;
-	ASSERT_EQ(101u, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	// test with a search length bit larger than half of the node distance
+	MeshGeoToolsLib::SearchLength search_length2(dx_hlaf*1.01);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher2(*_quad_mesh,
+		search_length2);
 
-	pnt[0] = 9.951;
-	pnt[1] = 9.951;
-	ASSERT_EQ((_number_of_subdivisions_per_direction+1) * (_number_of_subdivisions_per_direction+1) - 1, mesh_node_searcher.getMeshNodeIDForPoint(pnt)[0]);
+	{
+		GeoLib::Point pnt(dx_hlaf, 0.0, 0.0);
+		ASSERT_EQ(2u, mesh_node_searcher2.getMeshNodeIDForPoint(pnt).size());
+		ASSERT_EQ(0u, mesh_node_searcher2.getMeshNodeIDForPoint(pnt)[0]);
+		ASSERT_EQ(1u, mesh_node_searcher2.getMeshNodeIDForPoint(pnt)[1]);
+	}
+
 }
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)
