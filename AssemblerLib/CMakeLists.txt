@@ -13,6 +13,10 @@ include_directories(
 	../MeshLib
 )
 
+target_link_libraries(AssemblerLib INTERFACE
+	MeshLib
+)
+
 if(TARGET Boost)
 	add_dependencies(AssemblerLib Boost)
 endif()
