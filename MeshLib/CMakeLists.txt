@@ -21,6 +21,7 @@ target_link_libraries(MeshLib INTERFACE
 	BaseLib
 	GeoLib
 	MathLib
+	${CATALYST_LIBRARIES}
 	logog
 )
 

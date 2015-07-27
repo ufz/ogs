@@ -17,6 +17,7 @@ target_link_libraries(MeshGeoToolsLib INTERFACE
 	MathLib
 	MeshLib
 	GeoLib
+	FileIO
 	logog
 )
 
