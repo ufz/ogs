@@ -27,7 +27,7 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkProperty.h>
 
-#include "GeoLib/Color.h"
+#include "Applications/DataExplorer/Base/Color.h"
 #include "GeoLib/Triangle.h"
 
 vtkStandardNewMacro(VtkSurfacesSource);
