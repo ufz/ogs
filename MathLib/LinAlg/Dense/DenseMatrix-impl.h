@@ -147,6 +147,23 @@ V DenseMatrix<FP_TYPE, IDX_TYPE>::operator* (V const& x) const
 }
 
 template<typename FP_TYPE, typename IDX_TYPE>
+MathLib::Vector3
+DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(MathLib::Vector3 const& x) const
+{
+	assert(_n_rows>2);
+
+	MathLib::Vector3 y;
+	for (IDX_TYPE i(0); i < _n_rows; i++) {
+		y[i] = 0.0;
+		for (IDX_TYPE j(0); j < _n_cols; j++) {
+			y[i] += _data[address(i, j)] * x[j];
+		}
+	}
+
+	return y;
+}
+
+template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
 {

@@ -20,6 +20,8 @@
 #include <stdexcept>
 #include <iostream>
 
+#include "MathLib/Vector3.h"
+
 namespace MathLib {
 
 /**
@@ -94,6 +96,7 @@ public:
    FP_TYPE* operator* (FP_TYPE* const& x) const;
    FP_TYPE* operator* (FP_TYPE const* const& x) const;
    template <typename V> V operator* (V const& x) const;
+   MathLib::Vector3 operator*(MathLib::Vector3 const& x) const;
 
    /**
     * DenseMatrix matrix addition.
