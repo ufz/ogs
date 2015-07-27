@@ -132,7 +132,7 @@ private:
 	double _search_length;
 	bool _search_all_nodes;
 	// with newer compiler we can omit to use a pointer here
-    std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
+	std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
 	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
 	std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
 
