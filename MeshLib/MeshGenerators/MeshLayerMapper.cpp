@@ -30,6 +30,9 @@
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
+namespace MeshLib
+{
+
 MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name)
 {
 	std::vector<float> thickness;
@@ -258,3 +261,4 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 
 	return true;
 }
+} // end namespace MeshLib

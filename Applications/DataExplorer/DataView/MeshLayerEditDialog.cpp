@@ -194,7 +194,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 {
 	const unsigned nLayers = _layerEdit->text().toInt();
 
-	MeshLayerMapper mapper;
+	MeshLib::MeshLayerMapper mapper;
 	MeshLib::Mesh* new_mesh (nullptr);
 
 	QTime myTimer0;
@@ -258,7 +258,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		std::vector<float> layer_thickness;
 		for (unsigned i=0; i<nLayers; ++i)
 			layer_thickness.push_back(this->_edits[i]->text().toFloat());
-		tg_mesh = MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
+		tg_mesh = MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
 		std::vector<MeshLib::Node> tg_attr;
 		FileIO::TetGenInterface tetgen_interface;
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
@@ -304,7 +304,7 @@ void MeshLayerEditDialog::accept()
 		new_mesh = new MeshLib::Mesh(*_msh);
 		const std::string imgPath ( this->_edits[0]->text().toStdString() );
 		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
-		if (!MeshLayerMapper::layerMapping(*new_mesh, imgPath, noDataReplacementValue))
+		if (!MeshLib::MeshLayerMapper::layerMapping(*new_mesh, imgPath, noDataReplacementValue))
 		{
 			delete new_mesh;
 			return;
