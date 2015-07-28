@@ -248,7 +248,7 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
 			a[1] + y[0] * v[1] + y[1] * w[1],
 			a[2] + y[0] * v[2] + y[1] * w[2]
 		}});
-		if (MathLib::sqrDist(q, q_projected) < eps_pnt_out_of_plane)
+		if (MathLib::sqrDist(q, q_projected) <= eps_pnt_out_of_plane)
 			return true;
 	}
 
