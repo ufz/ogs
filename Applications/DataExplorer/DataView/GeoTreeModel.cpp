@@ -20,6 +20,8 @@
 #include "GeoTreeModel.h"
 #include "OGSError.h"
 
+#include "GeoLib/Triangle.h"
+
 /**
  * Constructor.
  */

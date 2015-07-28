@@ -16,8 +16,9 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
-#include "GeoLib/Surface.h"
 #include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 
 namespace FileIO
 {

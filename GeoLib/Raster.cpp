@@ -22,6 +22,8 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
+#include "Triangle.h"
+
 namespace GeoLib {
 
 void Raster::refineRaster(std::size_t scaling)

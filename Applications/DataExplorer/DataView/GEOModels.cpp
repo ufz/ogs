@@ -23,6 +23,8 @@
 
 #include "OGSError.h"
 
+#include "GeoLib/Triangle.h"
+
 GEOModels::GEOModels( QObject* parent /*= 0*/ ) :
 	QObject (parent)
 {

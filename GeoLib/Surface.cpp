@@ -24,6 +24,9 @@
 
 // MathLib
 #include "AnalyticalGeometry.h"
+
+#include "Triangle.h"
+#include "Polyline.h"
 #include "EarClippingTriangulation.h"
 
 namespace GeoLib
