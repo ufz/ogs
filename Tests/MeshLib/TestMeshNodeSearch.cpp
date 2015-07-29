@@ -60,6 +60,64 @@ protected:
 	Mesh* _hex_mesh;
 };
 
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch2)
+{
+	double _dx = _geometric_size / _number_of_subdivisions_per_direction;
+	double dx_half = _dx*0.5;
+
+	ASSERT_TRUE(_quad_mesh != nullptr);
+
+	// 2 perform search and compare results with expected vals
+	MeshGeoToolsLib::SearchLength search_length(dx_half);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+		search_length);
+
+	{
+		GeoLib::Point pnt(0.0, 0.0, 0.0);
+		std::vector<std::size_t> id_vec(mesh_node_searcher.getMeshNodeIDsForPoint(pnt));
+		EXPECT_EQ(1u, id_vec.size());
+		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt)[0]);
+	}
+	{
+		GeoLib::Point pnt(dx_half*0.99, 0.0, 0.0);
+		EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
+		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt)[0]);
+	}
+	{
+		GeoLib::Point p(dx_half, 0.0, 0.0);
+		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p).size());
+	}
+	{
+		GeoLib::Point p(dx_half*1.01, 0.0, 0.0);
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p).size());
+		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p)[0]);
+	}
+}
+
+/*
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch3)
+{
+	double _dx = _geometric_size / _number_of_subdivisions_per_direction;
+	double dx_half = _dx*0.5;
+
+	ASSERT_TRUE(_quad_mesh != nullptr);
+
+	// 2 perform search and compare results with expected vals
+	MeshGeoToolsLib::SearchLength search_length(dx_half*1.01);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+		search_length);
+
+	{
+		GeoLib::Point p(dx_half, 0.0, 0.0);
+		EXPECT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(p));
+	}
+	{
+		GeoLib::Point p(dx_half, 0.0, 0.0);
+		EXPECT_EQ(1u, *mesh_node_searcher.getMeshNodeIDForPoint(p));
+	}
+}
+*/
+
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 {
 	ASSERT_TRUE(_quad_mesh != nullptr);
@@ -72,27 +130,30 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 		search_length);
 
 	// find ORIGIN
-	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt)[0]);
 
 	pnt[0] = 0.049;
 	pnt[1] = 0.049;
-	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.049;
-	ASSERT_EQ(1u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
 
 	pnt[0] = 0.049;
 	pnt[1] = 0.051;
-	ASSERT_EQ(100u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
 
 	pnt[0] = 0.051;
 	pnt[1] = 0.051;
-	ASSERT_EQ(101u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
 
-	pnt[0] = 9.951;
-	pnt[1] = 9.951;
-	ASSERT_EQ((_number_of_subdivisions_per_direction+1) * (_number_of_subdivisions_per_direction+1) - 1, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	pnt[0] = 10;
+	pnt[1] = 10;
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt).size());
+	EXPECT_EQ(
+		pow(_number_of_subdivisions_per_direction+1,2)-1,
+		mesh_node_searcher.getMeshNodeIDsForPoint(pnt)[0]);
 }
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)

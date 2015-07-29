@@ -78,7 +78,7 @@ public:
 	 * @param pnt a GeoLib::Point the nearest mesh node is searched for
 	 * @return the id of the nearest mesh node
 	 */
-	boost::optional<std::size_t> getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
+	std::vector<std::size_t> getMeshNodeIDsForPoint(GeoLib::Point const& pnt) const;
 
 	/**
 	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
