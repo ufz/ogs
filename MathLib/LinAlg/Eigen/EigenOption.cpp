@@ -16,7 +16,7 @@ EigenOption::EigenOption()
 {
     solver_type = SolverType::SparseLU;
     precon_type = PreconType::NONE;
-    max_iterations = 1e6;
+    max_iterations = static_cast<int>(1e6);
     error_tolerance = 1.e-16;
 }
 
