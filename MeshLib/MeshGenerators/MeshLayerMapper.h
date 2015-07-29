@@ -17,6 +17,9 @@
 
 #include "LayeredMeshGenerator.h"
 
+namespace MeshLib
+{
+
 /**
  * \brief Manipulating and adding prism element layers to an existing 2D mesh
  */
@@ -68,5 +71,7 @@ private:
 	/// Adds another layer to a subsurface mesh
 	void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
 };
+
+} // end namespace MeshLib
 
 #endif //MESHLAYERMAPPER_H

@@ -35,6 +35,7 @@ class Node : public MathLib::Point3dWithID
 	friend class Mesh;
 	friend class MeshSurfaceExtraction;
 	friend class MeshRevision;
+	friend class MeshLayerMapper;
 
 public:
 	/// Constructor using a coordinate array
@@ -70,11 +71,11 @@ public:
 		return Node(_x[0]-v[0], _x[1]-v[1], _x[2]-v[2]);
 	}
 
+protected:
 	/// Update coordinates of a node.
 	/// This method automatically also updates the areas/volumes of all connected elements.
 	virtual void updateCoordinates(double x, double y, double z);
 
-protected:
 	/**
 	 * Add an element the node is part of.
 	 * This method is called by Mesh::addElement(Element*), see friend definition.
