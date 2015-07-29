@@ -15,10 +15,10 @@
 namespace MeshGeoToolsLib
 {
 
- /// Base class for all SearchLength strategy implementations.
- /// The default implementation is mesh independent and provides a strong
- /// criterion for searching mesh nodes near a geometry. The algorithm can be
- /// used for meshes that have nearly equi-sized elements.
+/// Base class for all SearchLength strategy implementations.
+/// The default implementation is mesh independent and provides a strong
+/// criterion for searching mesh nodes near a geometry. The algorithm can be
+/// used for meshes that have nearly equi-sized elements.
 class SearchLength
 {
 public:
