@@ -196,11 +196,11 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 
 	for (std::size_t k = 0; k < nNodes; ++k)
 	{
-		std::vector<std::vector<MeshLib::Node*> const*> node_vectors;
 		MeshLib::Node const*const node(nodes[k]);
 		if (node->getID() != k)
 			continue;
-		grid.getPntVecsOfGridCellsIntersectingCube(*node, half_eps, node_vectors);
+		std::vector<std::vector<MeshLib::Node*> const*> node_vectors(
+			grid.getPntVecsOfGridCellsIntersectingCube(*node, half_eps));
 
 		const std::size_t nVectors(node_vectors.size());
 		for (std::size_t i = 0; i < nVectors; ++i)
