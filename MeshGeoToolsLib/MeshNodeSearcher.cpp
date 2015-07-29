@@ -59,8 +59,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	switch (geoObj.getGeoType()) {
 	case GeoLib::GEOTYPE::POINT:
 	{
-		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::Point*>(&geoObj));
-		if (node_id) vec_nodes.push_back(*node_id);
+		vec_nodes = this->getMeshNodeIDsForPoint(*static_cast<const GeoLib::Point*>(&geoObj));
 		break;
 	}
 	case GeoLib::GEOTYPE::POLYLINE:
@@ -80,13 +79,12 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	return vec_nodes;
 }
 
-boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
+std::vector<std::size_t>
+MeshNodeSearcher::getMeshNodeIDsForPoint(GeoLib::Point const& pnt) const
 {
-	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt);
-	if (found)
-		return found->getID();
-	else
-		return boost::none;
+	std::vector<std::size_t> id_vec(
+		_mesh_grid.getPointsInEpsilonEnvironment(pnt, _search_length));
+	return id_vec;
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
