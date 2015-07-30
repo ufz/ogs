@@ -64,7 +64,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
 		pointWithLargeAddedValue, 10000,
 		ac::make_arbitrary(
 			pointGenerator,
-			ac::map(&ac::absoluteValue<double>, ac::generator<double>()),
+			ac::map(&ac::absoluteValue, ac::generator<double>()),
 			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
 			)
 			.discard_if(
@@ -202,8 +202,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
 		pointWithAddedValue, 1000,
 		ac::make_arbitrary(
 			pointGenerator,
-			ac::map(&ac::absoluteValue<double>, ac::generator<double>()),
-			ac::map(&ac::mod3, ac::generator<unsigned>())	// any of {0,1,2}
+			ac::map(&ac::absoluteValue, ac::generator<double>()),
+			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
 			)
 			.discard_if(
 				[](MathLib::Point3d const&, double const eps, unsigned const)

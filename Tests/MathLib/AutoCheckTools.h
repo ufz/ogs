@@ -35,9 +35,7 @@ unsigned mod3(unsigned&& v, std::size_t)
     return v % 3;
 }
 
-template <typename T>
-T
-absoluteValue(T&& v, std::size_t)
+static double absoluteValue(double&& v, std::size_t)
 {
     return std::abs(v);
 }
