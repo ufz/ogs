@@ -30,10 +30,19 @@ struct randomTupleGenerator
     }
 };
 
-unsigned mod3(unsigned&& v, std::size_t)
+// Generates non-negative integers from 0 to given maximum dimension DIM
+// independent of size.
+template <typename T, T DIM, typename Gen = generator<T>>
+struct randomCoordinateIndexGenerator
 {
-    return v % 3;
-}
+    Gen source;
+    using result_type = T;
+
+    result_type operator()(std::size_t)
+    {
+        return source() % DIM;
+    }
+};
 
 static double absoluteValue(double&& v, std::size_t)
 {

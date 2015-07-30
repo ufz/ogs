@@ -27,6 +27,8 @@ struct MathLibPoint3d : public ::testing::Test
 	ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
 		pointGenerator{tupleGen};
 
+	ac::randomCoordinateIndexGenerator<unsigned, 3>
+		coordGenerator;  // any of {0, 1, 2}
 	ac::gtest_reporter gtest_reporter;
 };
 
@@ -62,11 +64,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithLargeAddedValue, 10000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::map(&ac::absoluteValue, ac::generator<double>()),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			)
+		ac::make_arbitrary(pointGenerator,
+						   ac::map(&ac::absoluteValue, ac::generator<double>()),
+						   coordGenerator)
 			.discard_if(
 				[&eps](MathLib::Point3d const&, double const v, unsigned const)
 				{
@@ -93,11 +93,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualSmallPerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithSmallAddedValue, 10000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::progressivelySmallerGenerator<double>(eps / 2),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			),
+		ac::make_arbitrary(pointGenerator,
+						   ac::progressivelySmallerGenerator<double>(eps / 2),
+						   coordGenerator),
 		gtest_reporter);
 }
 
@@ -132,11 +130,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithLargeAddedValue, 10000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::generator<double>(),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			)
+		ac::make_arbitrary(pointGenerator, ac::generator<double>(),
+						   coordGenerator)
 			.discard_if(
 				[&eps](MathLib::Point3d const&, double const v, unsigned const)
 				{
@@ -163,11 +158,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithSmallAddedValue, 1000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::progressivelySmallerGenerator<double>(eps / 2),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			),
+		ac::make_arbitrary(pointGenerator,
+						   ac::progressivelySmallerGenerator<double>(eps / 2),
+						   coordGenerator),
 		gtest_reporter);
 }
 
@@ -200,11 +193,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithAddedValue, 1000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::map(&ac::absoluteValue, ac::generator<double>()),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			)
+		ac::make_arbitrary(pointGenerator,
+						   ac::map(&ac::absoluteValue, ac::generator<double>()),
+						   coordGenerator)
 			.discard_if(
 				[](MathLib::Point3d const&, double const eps, unsigned const)
 				{
@@ -227,11 +218,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessSmallPerturbation)
 
 	ac::check<MathLib::Point3d, double, unsigned>(
 		pointWithSubtractedValue, 1000,
-		ac::make_arbitrary(
-			pointGenerator,
-			ac::map(&ac::absoluteValue, ac::generator<double>()),
-			ac::map(&ac::mod3, ac::generator<unsigned>())  // any of {0,1,2}
-			)
+		ac::make_arbitrary(pointGenerator,
+						   ac::map(&ac::absoluteValue, ac::generator<double>()),
+						   coordGenerator)
 			.discard_if(
 				[](MathLib::Point3d const&, double const eps, unsigned const)
 				{
