@@ -414,10 +414,16 @@ void VtkMeshConverter::convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::M
 void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &properties, MeshLib::MeshItemType type)
 {
 	if (vtkDoubleArray::SafeDownCast(&array))
+	{
 		VtkMeshConverter::convertTypedArray<double>(array, properties, type);
+		return;
+	}
 
 	if (vtkIntArray::SafeDownCast(&array))
+	{
 		VtkMeshConverter::convertTypedArray<int>(array, properties, type);
+		return;
+	}
 
 	if (vtkUnsignedIntArray::SafeDownCast(&array))
 	{
