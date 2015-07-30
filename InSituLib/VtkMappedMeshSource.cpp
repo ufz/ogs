@@ -87,7 +87,6 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	MeshLib::Properties const & properties = _mesh->getProperties();
 	std::vector<std::string> const& propertyNames = properties.getPropertyVectorNames();
 
-	// double
 	for(std::vector<std::string>::const_iterator name = propertyNames.cbegin(); name != propertyNames.cend(); ++name)
 	{
 		if (addProperty<double>(*output, properties, *name))
