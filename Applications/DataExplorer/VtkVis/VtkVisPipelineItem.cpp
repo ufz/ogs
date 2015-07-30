@@ -229,6 +229,7 @@ void VtkVisPipelineItem::setBackfaceCullingOnChildren(bool enable) const
 
 QStringList VtkVisPipelineItem::getScalarArrayNames() const
 {
+	this->algorithm()->Update();
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->algorithm()->GetOutputDataObject(0));
 	QStringList dataSetAttributesList;
 	if (dataSet)
@@ -236,14 +237,18 @@ QStringList VtkVisPipelineItem::getScalarArrayNames() const
 		vtkPointData* pointData = dataSet->GetPointData();
 		//std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
 		for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
-			//std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
+		{
+			// std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
 			dataSetAttributesList.push_back(QString("P-") + pointData->GetArrayName(i));
+		}
 
 		vtkCellData* cellData = dataSet->GetCellData();
 		//std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
 		for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
-			//std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
+		{
+			// std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
 			dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
+		}
 	}
 	return dataSetAttributesList;
 }

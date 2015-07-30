@@ -19,7 +19,7 @@
 #include <map>
 
 #include "VtkAlgorithmProperties.h"
-#include <vtkUnstructuredGridAlgorithm.h>
+#include "InSituLib/VtkMappedMeshSource.h"
 
 class VtkColorLookupTable;
 
@@ -30,21 +30,15 @@ namespace MeshLib {
 /**
  * \brief VTK source object for the visualisation of unstructured grids
  */
-class VtkMeshSource : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
+class VtkMeshSource : public InSituLib::VtkMappedMeshSource, public VtkAlgorithmProperties
 {
 public:
 	/// Create new objects with New() because of VTKs object reference counting.
 	static VtkMeshSource* New();
 
-	vtkTypeMacro(VtkMeshSource, vtkUnstructuredGridAlgorithm);
+	vtkTypeMacro(VtkMeshSource, InSituLib::VtkMappedMeshSource);
 
 	const char* GetMaterialArrayName() const { return _matName; }
-
-	/// Returns the base object of this grid
-	const MeshLib::Mesh* GetMesh() const { return this->_grid; }
-
-	/// Sets the grid object that should be visualized
-	void SetMesh(const MeshLib::Mesh* grid) { _grid = grid; }
 
 	/// Prints the mesh data to an output stream.
 	void PrintSelf(ostream& os, vtkIndent indent);
