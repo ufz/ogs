@@ -66,6 +66,9 @@ if(QT4_FOUND)
 endif()
 
 ADD_CATALYST_DEPENDENCY(FileIO)
+if(TARGET Eigen)
+	add_dependencies(FileIO Eigen)
+endif()
 
 file(GLOB XSD_FILES . *.xsd)
 if(APPLE AND OGS_BUILD_GUI)
