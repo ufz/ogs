@@ -109,6 +109,8 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
     checkLisError(ierr);
     ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver);
     checkLisError(ierr);
+    ierr = lis_solver_set_optionC(solver);
+    checkLisError(ierr);
 
     // solve
     INFO("-> solve");
