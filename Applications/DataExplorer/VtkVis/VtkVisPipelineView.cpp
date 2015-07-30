@@ -196,7 +196,7 @@ void VtkVisPipelineView::addPipelineFilterItem()
 
 void VtkVisPipelineView::showImageToMeshConversionDialog()
 {
-	MeshFromRasterDialog* dlg = new MeshFromRasterDialog();
+	MeshFromRasterDialog* dlg = new MeshFromRasterDialog;
 	connect(dlg, SIGNAL(setMeshParameters(QString, MeshLib::MeshElemType, MeshLib::UseIntensityAs)),
 	        this, SLOT(constructMeshFromImage(QString, MeshLib::MeshElemType, MeshLib::UseIntensityAs)));
 	dlg->exec();

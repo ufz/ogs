@@ -35,7 +35,7 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 void MeshFromRasterDialog::accept()
 {
 	MeshLib::UseIntensityAs i_type(MeshLib::UseIntensityAs::ELEVATION);
-	if (this->materialButton->isChecked()) i_type = MeshLib::UseIntensityAs::MATERIAL;
+	if (this->materialButton->isChecked()) i_type = MeshLib::UseIntensityAs::DATAVECTOR;
 	else if (this->ignoreButton->isChecked()) i_type = MeshLib::UseIntensityAs::NONE;
 
 	MeshLib::MeshElemType e_type(MeshLib::MeshElemType::TRIANGLE);
