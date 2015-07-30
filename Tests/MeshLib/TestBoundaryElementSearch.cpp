@@ -11,6 +11,10 @@
 #include <memory>
 #include <numeric>
 
+#include "GeoLib/Point.h"
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

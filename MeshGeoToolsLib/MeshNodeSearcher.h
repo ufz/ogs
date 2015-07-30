@@ -15,17 +15,16 @@
 
 #include <boost/optional.hpp>
 
-// GeoLib
-#include "GeoLib/Grid.h"
-
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/SearchLength.h"
 
 // forward declaration
 namespace GeoLib
 {
+class GeoObject;
 class Point;
 class Polyline;
+class Surface;
 }
 
 namespace MeshLib
@@ -36,6 +35,7 @@ class Node;
 
 namespace MeshGeoToolsLib
 {
+class MeshNodesOnPoint;
 class MeshNodesAlongPolyline;
 class MeshNodesAlongSurface;
 }
@@ -76,9 +76,9 @@ public:
 	 * returned. The algorithm for the search is using GeoLib::Grid data
 	 * structure.
 	 * @param pnt a GeoLib::Point the nearest mesh node is searched for
-	 * @return the id of the nearest mesh node
+	 * @return  a vector of mesh node ids
 	 */
-	boost::optional<std::size_t> getMeshNodeIDForPoint(GeoLib::Point const& pnt) const;
+	std::vector<std::size_t> const& getMeshNodeIDForPoint(GeoLib::Point const& pnt);
 
 	/**
 	 * Searches for the nearest mesh nodes along a GeoLib::Polyline.
@@ -99,6 +99,13 @@ public:
 	 * @return a vector of mesh node ids
 	 */
 	std::vector<std::size_t> const& getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc);
+
+	/**
+	 * Return a MeshNodesOnPoint object for the given GeoLib::Point object.
+	 * @param pnt the GeoLib::Point the nearest mesh nodes are searched for
+	 * @return a reference to a MeshNodesOnPoint object
+	 */
+	MeshNodesOnPoint& getMeshNodesOnPoint(GeoLib::Point const& pnt);
 
 	/**
 	 * Return a MeshNodesAlongPolyline object for the given GeoLib::Polyline object.
@@ -122,10 +129,10 @@ public:
 
 private:
 	MeshLib::Mesh const& _mesh;
-	GeoLib::Grid<MeshLib::Node> _mesh_grid;
 	double _search_length;
 	bool _search_all_nodes;
 	// with newer compiler we can omit to use a pointer here
+	std::vector<MeshNodesOnPoint*> _mesh_nodes_on_points;
 	std::vector<MeshNodesAlongPolyline*> _mesh_nodes_along_polylines;
 	std::vector<MeshNodesAlongSurface*> _mesh_nodes_along_surfaces;
 
