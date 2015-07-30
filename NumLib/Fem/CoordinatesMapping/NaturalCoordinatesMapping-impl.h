@@ -110,8 +110,8 @@ inline void computeMappingMatrices(
         //J^-1, dshape/dx
         shapemat.invJ = shapemat.J.inverse();
 
-        const unsigned nnodes(shapemat.dNdr.cols());
-        const unsigned ele_dim(shapemat.dNdr.rows());
+        auto const nnodes(shapemat.dNdr.cols());
+        auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows()==ele.getDimension());
         const unsigned global_dim(ele_local_coord.getGlobalCoordinateSystem().getDimension());
         if (global_dim==ele_dim) {
