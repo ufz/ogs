@@ -226,7 +226,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 		pdWriter->SetFileName(file_name_cpy.c_str());
 		return pdWriter->Write();
 	}
-	
+
 	vtkUnstructuredGridAlgorithm* algUG = dynamic_cast<vtkUnstructuredGridAlgorithm*>(algorithm);
 	if (algUG)
 	{
@@ -238,7 +238,7 @@ int VtkVisPointSetItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string
 		ugWriter->SetFileName(file_name_cpy.c_str());
 		return ugWriter->Write();
 	}
-	
+
 	WARN("VtkVisPipelineItem::writeToFile(): Unknown data type.");
 	return 0;
 }
@@ -275,7 +275,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				if(activeAttributeExists(pointData, _activeArrayName))
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
-					_mapper->SetScalarModeToUsePointData();
+					_mapper->SetScalarModeToUsePointFieldData();
 					pointData->GetArray(charName)->GetRange(range);
 				}
 				else
@@ -295,7 +295,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 				if(activeAttributeExists(cellData, _activeArrayName))
 				{
 					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
-					_mapper->SetScalarModeToUseCellData();
+					_mapper->SetScalarModeToUseCellFieldData();
 					cellData->GetArray(charName)->GetRange(range);
 				}
 				else
@@ -308,7 +308,6 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 			}
 		}
 
-		//std::cout << "Range for " << name.toStdString() << " :" << range[0] << " " << range[1] << std::endl;
 		_vtkProps->SetActiveAttribute(name);
 
 		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
@@ -326,9 +325,9 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 
 			_mapper->SetLookupTable(lut);
 			_mapper->UseLookupTableScalarRangeOn();
-			//_mapper->SetScalarRange(range); // not necessary when UseLookupTableScalarRange is on
 		}
 
+		_mapper->SelectColorArray(charName);
 		_mapper->ScalarVisibilityOn();
 		_mapper->Update();
 	}
