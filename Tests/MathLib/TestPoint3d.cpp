@@ -70,7 +70,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
 			.discard_if(
 				[&eps](MathLib::Point3d const&, double const v, unsigned const)
 				{
-					return !(std::abs(v) > eps);
+					return !(v > eps);
 				}),
 		gtest_reporter);
 }
@@ -140,7 +140,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
 			.discard_if(
 				[&eps](MathLib::Point3d const&, double const v, unsigned const)
 				{
-					return !(std::abs(v) > eps);
+					return !(v > eps);
 				}),
 		gtest_reporter);
 }
