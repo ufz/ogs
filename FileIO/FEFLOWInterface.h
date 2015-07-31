@@ -136,7 +136,7 @@ private:
 	void readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes);
 
 	//// parse node lists
-	std::vector<size_t> getNodeList(const std::string &str_ranges);
+	std::vector<size_t> getIndexList(const std::string &str_ranges);
 
 	/// read Supermesh data
 	///
@@ -148,7 +148,7 @@ private:
 	void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
 
 	/// set element material IDs
-	void setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, std::vector<MeshLib::Element*> &vec_elements);
+	void setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, const std::vector<std::vector<std::size_t>> &vec_elementsets, std::vector<MeshLib::Element*> &vec_elements);
 
 	//// Geometric objects
 	GeoLib::GEOObjects* _geoObjects;
