@@ -165,7 +165,7 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 		// a[i] ~= b[i] up to an epsilon. Compare next dimension.
 	}
 
-	// all coordinates a equal up to an epsilon.
+	// all coordinates are equal up to an epsilon.
 	return true;
 }
 
