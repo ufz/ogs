@@ -362,7 +362,7 @@ void NetCdfConfigureDialog::createDataObject()
 	if (this->radioMesh->isChecked())
 	{
 		MeshLib::MeshElemType meshElemType = MeshLib::MeshElemType::QUAD;
-		MeshLib::UseIntensityAs useIntensity = MeshLib::UseIntensityAs::MATERIAL;
+		MeshLib::UseIntensityAs useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
 		if (comboBoxMeshElemType->currentIndex() == 1)
 		{
 			meshElemType = MeshLib::MeshElemType::TRIANGLE;
@@ -373,7 +373,7 @@ void NetCdfConfigureDialog::createDataObject()
 		{
 			useIntensity = MeshLib::UseIntensityAs::ELEVATION;
 		}else{
-			useIntensity = MeshLib::UseIntensityAs::MATERIAL;
+			useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
 		}
 
 		_currentMesh = MeshLib::VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);

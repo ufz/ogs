@@ -120,7 +120,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 					&& (node_idx_map[index + width] != -1)
 					&& (node_idx_map[index + width + 1] != -1)
 					&& (vis_nodes[index + width])) {
-				const int mat = (_intensity_type != UseIntensityAs::MATERIAL) ? 0
+				const int mat = (_intensity_type != UseIntensityAs::DATAVECTOR) ? 0
 								: static_cast<int> (pix_vals[index + width]);
 				if (_elem_type == MeshElemType::TRIANGLE) {
 					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];

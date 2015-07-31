@@ -204,7 +204,7 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 
 			if (set_node)
 			{
-				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : origin[2];
+				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0;
 				MeshLib::Node* node (new MeshLib::Node(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
 				nodes.push_back(node);
 				node_idx_map[index] = node_idx_count;
@@ -212,14 +212,17 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 			}
 		}
 
+	MeshLib::Properties properties;
+	boost::optional< MeshLib::PropertyVector<double>& > value_vec =
+		properties.createNewPropertyVector<double>("Colour", MeshLib::MeshItemType::Cell, 1);
+
 	// set mesh elements
 	for (size_t i = 0; i < imgWidth; i++)
 		for (size_t j = 0; j < imgHeight; j++)
 		{
-			const int index = i * incHeight + j;
+			int const index = i * incHeight + j;
 			if ((node_idx_map[index]!=-1) && (node_idx_map[index+1]!=-1) && (node_idx_map[index+incHeight]!=-1) && (node_idx_map[index+incHeight+1]!=-1) && (visNodes[index+incHeight]))
 			{
-				const int mat = (intensity_type != UseIntensityAs::MATERIAL) ? 0 : static_cast<int>(pixVal[index+incHeight]);
 				if (elem_type == MeshElemType::TRIANGLE)
 				{
 					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
@@ -232,8 +235,13 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 					tri2_nodes[1] = nodes[node_idx_map[index+incHeight+1]];
 					tri2_nodes[2] = nodes[node_idx_map[index+incHeight]];
 
-					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
-					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
+					elements.push_back(new MeshLib::Tri(tri1_nodes)); // upper left triangle
+					elements.push_back(new MeshLib::Tri(tri2_nodes)); // lower right triangle
+					if (intensity_type == UseIntensityAs::DATAVECTOR)
+					{
+						value_vec->push_back(pixVal[index+incHeight]);
+						value_vec->push_back(pixVal[index+incHeight]);
+					}
 				}
 				if (elem_type == MeshElemType::QUAD)
 				{
@@ -242,7 +250,9 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 					quad_nodes[1] = nodes[node_idx_map[index + 1]];
 					quad_nodes[2] = nodes[node_idx_map[index + incHeight + 1]];
 					quad_nodes[3] = nodes[node_idx_map[index + incHeight]];
-					elements.push_back(new MeshLib::Quad(quad_nodes, mat));
+					elements.push_back(new MeshLib::Quad(quad_nodes));
+					if (intensity_type == UseIntensityAs::DATAVECTOR)
+						value_vec->push_back(pixVal[index+incHeight]);
 				}
 			}
 		}
@@ -250,7 +260,14 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 	if (elements.empty())
 		return nullptr;
 
-	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
+	if (value_vec->empty())
+		properties.removePropertyVector("Colour");
+
+	boost::optional< MeshLib::PropertyVector<unsigned>& > materials =
+		properties.createNewPropertyVector<unsigned>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+	materials->insert(materials->end(), elements.size(), 0);
+
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties); // the name is only a temp-name, the name given in the dialog is set later
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid, std::string const& mesh_name)
