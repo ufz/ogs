@@ -109,6 +109,7 @@ function(SETUP_TARGET_FOR_COVERAGE_COBERTURA _targetname _testrunner _outputname
 		# Get relative paths
 		string(REPLACE $ENV{WORKSPACE} "." CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 		string(REPLACE "/gpfs0" "" CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_RELATIVE_SOURCE_DIR})
+		string(REPLACE "/gpfs1" "" CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_RELATIVE_SOURCE_DIR})
 
 		add_custom_target(${_targetname}
 
