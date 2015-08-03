@@ -54,6 +54,7 @@ TEST_F(PointVecTest, TestPointVecCtorNullptr)
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
 	ASSERT_DEATH(GeoLib::PointVec(name, ps_ptr), "");
+	delete ps_ptr;
 }
 
 // Testing input vector with single point.
