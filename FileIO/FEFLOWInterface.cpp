@@ -415,7 +415,7 @@ void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vect
 
 	std::string line_string;
 	std::string str_idList;
-	int pos_prev_line = 0;
+	std::streampos pos_prev_line = 0;
 	while (true)
 	{
 		pos_prev_line = in.tellg();
@@ -459,7 +459,7 @@ void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vect
 				set_name = line_string.substr(0, pos);
 				ids = line_string.substr(pos+1);
 			}
-			INFO("Found a element group - %s", set_name.data());
+			INFO("Found an element group - %s", set_name.data());
 			str_idList += compressSpaces(ids);
 		} else {
 			// continue reading a element ids
