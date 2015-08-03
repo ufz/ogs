@@ -11,184 +11,220 @@
  */
 
 #include <ctime>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
+#include <autocheck/autocheck.hpp>
 
 #include "MathLib/Point3d.h"
 
+#include "AutoCheckTools.h"
+
 using namespace MathLib;
+namespace ac = autocheck;
 
-TEST(MathLib, Point3dComparisonLessEq)
+struct MathLibPoint3d : public ::testing::Test
 {
-	// first coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{0,1,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{0,1,1}}))));
-	// second coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,0,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,0,1}}))));
-	// third coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,0}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1,0}}))));
+	ac::randomTupleGenerator<double, 3> tupleGen;
+	ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
+	    pointGenerator{tupleGen};
 
-	const double e(2*std::numeric_limits<double>::epsilon());
-	// first coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1-e,1,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1-e,1,1}}))));
-	// second coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1-e,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1-e,1}}))));
-	// third coordinate
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1-e}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_FALSE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1,1-e}}))));
+	ac::randomCoordinateIndexGenerator<unsigned, 3>
+	    coordGenerator;  // any of {0, 1, 2}
+	ac::gtest_reporter gtest_reporter;
+};
 
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
+TEST_F(MathLibPoint3d, ComparisonOperatorLessEqSamePoint)
+{
+	// A point is always less or equal to itself and its copy.
+	auto samePointLessEqualCompare = [](MathLib::Point3d const& p)
+	{
+		auto q = p;
+		return lessEq(p, p) && lessEq(p, q) && lessEq(q, p);
+	};
 
-	const double half_eps(0.5*std::numeric_limits<double>::epsilon());
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1+half_eps,1,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1+half_eps,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1+half_eps}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1+half_eps,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1+half_eps,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1,1+half_eps}}))));
-
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1-half_eps,1,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1-half_eps,1}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1-half_eps}})),Point3d(std::array<double,3>({{1,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1-half_eps,1,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1-half_eps,1}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{1,1,1}})),Point3d(std::array<double,3>({{1,1,1-half_eps}}))));
-
-	const double m(std::numeric_limits<double>::min());
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m+half_eps,m,m}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m+half_eps,m}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m+half_eps}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{m+half_eps,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{m,m+half_eps,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{m,m,m+half_eps}}))));
-
-	const double zero(0.0);
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero+half_eps,zero,zero}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero+half_eps,zero}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero+half_eps}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{zero+half_eps,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{zero,zero+half_eps,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{zero,zero,zero+half_eps}}))));
-
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m+half_eps,m,m}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m+half_eps,m}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m+half_eps}})),Point3d(std::array<double,3>({{zero,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{zero+half_eps,zero,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{zero,zero+half_eps,zero}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{m,m,m}})),Point3d(std::array<double,3>({{zero,zero,zero+half_eps}}))));
-
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero+half_eps,zero,zero}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero+half_eps,zero}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero+half_eps}})),Point3d(std::array<double,3>({{m,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{m+half_eps,m,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{m,m+half_eps,m}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero}})),Point3d(std::array<double,3>({{m,m,m+half_eps}}))));
-
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{half_eps+half_eps,half_eps,half_eps}})),Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{half_eps,half_eps+half_eps,zero}})),Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{zero,zero,zero+half_eps}})),Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}})),Point3d(std::array<double,3>({{half_eps+half_eps,half_eps,half_eps}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}})),Point3d(std::array<double,3>({{half_eps,half_eps+half_eps,half_eps}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{half_eps,half_eps,half_eps}})),Point3d(std::array<double,3>({{half_eps,half_eps,half_eps+half_eps}}))));
-
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0+half_eps,10.0,10.0}})),Point3d(std::array<double,3>({{10.0,10.0,10.0}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0+half_eps,10.0}})),Point3d(std::array<double,3>({{10.0,10.0,10.0}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0+half_eps}})),Point3d(std::array<double,3>({{10.0,10.0,10.0}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0}})),Point3d(std::array<double,3>({{10.0+half_eps,10.0,10.0}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0}})),Point3d(std::array<double,3>({{10.0,10.0+half_eps,10.0}}))));
-	ASSERT_TRUE(lessEq(Point3d(std::array<double,3>({{10.0,10.0,10.0}})),Point3d(std::array<double,3>({{10.0,10.0,10.0+half_eps}}))));
+	ac::check<MathLib::Point3d>(samePointLessEqualCompare, 1000,
+	                            ac::make_arbitrary(pointGenerator),
+	                            gtest_reporter);
 }
 
-// test for operator==
-TEST(MathLib, Point3dComparisonOperatorEqual)
+TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
 {
-	srand(static_cast<unsigned>(time(nullptr)));
-	double x0(((double)(rand()) / RAND_MAX - 0.5));
-	double x1(((double)(rand()) / RAND_MAX - 0.5));
-	double x2(((double)(rand()) / RAND_MAX - 0.5));
+	// A point with any big, positive value added to one of its coordinates is
+	// never smaller or equal to the original point.
+	// And the original point is always smaller or equal to the perturbed point.
+	auto pointWithLargeAddedValue =
+	    [](MathLib::Point3d const& p, double const perturbation,
+	       unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return !lessEq(q, p) && lessEq(p, q);
+	};
 
-	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
-	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_TRUE(a == b);
-	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+	auto eps = std::numeric_limits<double>::epsilon();
 
-	double tol(std::numeric_limits<double>::min());
-	b[2] += tol;
-	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
-	b[1] = 0.0;
-	b[2] = 0.0;
-	ASSERT_TRUE((lessEq(a, b) && lessEq(b, a)) == (a == b));
-
-	tol = std::numeric_limits<double>::epsilon();
-	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,tol,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,tol}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0+tol,1.0,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0+tol,1.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) == Point3d(std::array<double,3>({{1.0,1.0,1.0+tol}})));
-
-	// very small difference in one coordinate
-	tol = std::numeric_limits<double>::min();
-	ASSERT_TRUE(Point3d(std::array<double,3>({{tol,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,tol,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,tol}})) == Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{tol,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,tol,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) == Point3d(std::array<double,3>({{0.0,0.0,tol}})));
-
-	a = Point3d(std::array<double,3>({{0.0,0.0,0.0}}));
-	b = Point3d(std::array<double,3>({{0.0,0.0,0.0}}));
-	a[0] = pow(std::numeric_limits<double>::epsilon(),5);
-	ASSERT_TRUE((lessEq(a,b) && lessEq(b,a)) == (a == b));
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithLargeAddedValue, 10000,
+	    ac::make_arbitrary(pointGenerator,
+	                       ac::map(&ac::absoluteValue, ac::generator<double>()),
+	                       coordGenerator)
+	        .discard_if(
+	            [&eps](MathLib::Point3d const&, double const v, unsigned const)
+	            {
+		            return !(v > eps);
+		        }),
+	    gtest_reporter);
 }
 
+TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualSmallPerturbation)
+{
+	// A point with any non-zero value smaller than epsilon/2 added to one of
+	// its
+	// coordinates is always less or equal to the original point.
+	auto pointWithSmallAddedValue =
+	    [](MathLib::Point3d const& p, double const perturbation,
+	       unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return lessEq(p, q) && lessEq(q, p);
+	};
+
+	auto eps = std::numeric_limits<double>::epsilon();
+
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithSmallAddedValue, 10000,
+	    ac::make_arbitrary(pointGenerator,
+	                       ac::progressivelySmallerGenerator<double>(eps / 2),
+	                       coordGenerator),
+	    gtest_reporter);
+}
+
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualSamePoint)
+{
+	// A point is always equal to itself and its copy.
+	auto samePointEqualCompare = [](MathLib::Point3d const& p)
+	{
+		auto q = p;
+		return (p == p) && (p == q) && (q == p);
+	};
+
+	ac::check<MathLib::Point3d>(samePointEqualCompare, 100,
+	                            ac::make_arbitrary(pointGenerator),
+	                            gtest_reporter);
+}
+
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
+{
+	// A point with any big, non-zero value added to one of its coordinates is
+	// never equal to the original point.
+	auto pointWithLargeAddedValue =
+	    [](MathLib::Point3d const& p, double const perturbation,
+	       unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return !(p == q) && !(q == p);
+	};
+
+	auto eps = std::numeric_limits<double>::epsilon();
+
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithLargeAddedValue, 10000,
+	    ac::make_arbitrary(pointGenerator, ac::generator<double>(),
+	                       coordGenerator)
+	        .discard_if(
+	            [&eps](MathLib::Point3d const&, double const v, unsigned const)
+	            {
+		            return !(v > eps);
+		        }),
+	    gtest_reporter);
+}
+
+TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
+{
+	// A point with any non-zero value smaller than epsilon/2 added to one of
+	// its
+	// coordinates is always equal to the original point.
+	auto pointWithSmallAddedValue =
+	    [](MathLib::Point3d const& p, double const perturbation,
+	       unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + perturbation;
+		return (p == q) && (q == p);
+	};
+
+	auto eps = std::numeric_limits<double>::epsilon();
+
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithSmallAddedValue, 1000,
+	    ac::make_arbitrary(pointGenerator,
+	                       ac::progressivelySmallerGenerator<double>(eps / 2),
+	                       coordGenerator),
+	    gtest_reporter);
+}
 
 // test for operator<
-TEST(MathLib, Point3dComparisonOperatorLess)
+TEST_F(MathLibPoint3d, ComparisonOperatorLessSamePoint)
 {
-	srand(static_cast<unsigned>(time(nullptr)));
-	double x0(((double)(rand()) / RAND_MAX - 0.5));
-	double x1(((double)(rand()) / RAND_MAX - 0.5));
-	double x2(((double)(rand()) / RAND_MAX - 0.5));
+	// A point is never less than itself or its copy.
+	auto samePointLessCompare = [](MathLib::Point3d const& p)
+	{
+		auto q = p;
+		return !(p < p) && !(p < q) && !(q < p);
+	};
 
-	MathLib::Point3d a(std::array<double,3>({{x0, x1, x2}}));
-	MathLib::Point3d b(std::array<double,3>({{x0, x1, x2}}));
-	ASSERT_FALSE((a < b) && (b < a));
-
-	double tol = std::numeric_limits<double>::epsilon();
-	ASSERT_TRUE(Point3d(std::array<double,3>({{tol,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,tol,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,tol}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0}})));
-
-	// very small difference in one coordinate
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0+tol,1.0,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0+tol,1.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{1.0,1.0,1.0}})) <
-		Point3d(std::array<double,3>({{1.0,1.0,1.0+tol}})));
-
-	tol = std::numeric_limits<double>::min();
-	ASSERT_FALSE(Point3d(std::array<double,3>({{tol,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{0.0,tol,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-	ASSERT_FALSE(Point3d(std::array<double,3>({{0.0,0.0,tol}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,0.0}})));
-
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{tol,0.0,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,tol,0.0}})));
-	ASSERT_TRUE(Point3d(std::array<double,3>({{0.0,0.0,0.0}})) <
-		Point3d(std::array<double,3>({{0.0,0.0,tol}})));
+	ac::check<MathLib::Point3d>(samePointLessCompare, 100,
+	                            ac::make_arbitrary(pointGenerator),
+	                            gtest_reporter);
 }
 
+TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
+{
+	// A point with any positive value added to one of its coordinates is
+	// always larger then the original point.
+	auto pointWithAddedValue = [](MathLib::Point3d const& p, double const eps,
+	                              unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] + eps;
+		return (p < q) && !(q < p);
+	};
+
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithAddedValue, 1000,
+	    ac::make_arbitrary(pointGenerator,
+	                       ac::map(&ac::absoluteValue, ac::generator<double>()),
+	                       coordGenerator)
+	        .discard_if(
+	            [](MathLib::Point3d const&, double const eps, unsigned const)
+	            {
+		            return eps == 0;
+		        }),
+	    gtest_reporter);
+}
+
+TEST_F(MathLibPoint3d, ComparisonOperatorLessSmallPerturbation)
+{
+	// A point with any positive value subtracted from one of its coordinates is
+	// always smaller then the original point.
+	auto pointWithSubtractedValue = [](
+	    MathLib::Point3d const& p, double const eps, unsigned const coordinate)
+	{
+		auto q = p;
+		q[coordinate] = q[coordinate] - eps;
+		return (q < p) && !(p < q);
+	};
+
+	ac::check<MathLib::Point3d, double, unsigned>(
+	    pointWithSubtractedValue, 1000,
+	    ac::make_arbitrary(pointGenerator,
+	                       ac::map(&ac::absoluteValue, ac::generator<double>()),
+	                       coordGenerator)
+	        .discard_if(
+	            [](MathLib::Point3d const&, double const eps, unsigned const)
+	            {
+		            return eps == 0;
+		        }),
+	    gtest_reporter);
+}

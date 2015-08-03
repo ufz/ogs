@@ -12,122 +12,135 @@
  *
  */
 
-#include "gtest/gtest.h"
-#include "quickcheck/quickcheck.hh"
-#include "quicksort.h"
+#include <gtest/gtest.h>
+#include <autocheck/autocheck.hpp>
+#include "BaseLib/quicksort.h"
 
+#include <numeric>
 #include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
 
-using namespace quickcheck;
+namespace ac = autocheck;
+
+struct BaseLibQuicksort : public ::testing::Test
+{
+    virtual void SetUp()
+    {
+        cls.trivial([](const std::vector<int>& xs)
+                    {
+                        return xs.size() < 2;
+                    });
+
+        cls.collect([](std::vector<int> const& xs)
+                    {
+                        return xs.size() < 10 ? "short" : "long";
+                    });
+    }
+
+    ac::gtest_reporter gtest_reporter;
+    ac::classifier<std::vector<int>> cls;
+};
 
 // Quicksort result is sorted.
-class QuicksortSortsAsSTLSort : public Property<std::vector<int>> {
-    bool holdsFor(const std::vector<int>& xs)
+TEST_F(BaseLibQuicksort, SortsAsSTLSort)
+{
+    cls.classify(
+        [](std::vector<int> const& xs)
+        {
+            return std::is_sorted(xs.begin(), xs.end());
+        },
+        "sorted");
+
+    auto quicksortSortsAsSTLSort = [](const std::vector<int>& xs) -> bool
     {
-        std::vector<size_t> perm(xs.size());
-        if (! xs.empty())
-        	BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
+        std::vector<std::size_t> perm(xs.size());
+        if (!xs.empty())
+            BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
         return std::is_sorted(xs.begin(), xs.end());
-    }
+    };
 
-	bool isTrivial(const std::vector<int>& xs)
-	{
-		return xs.size() < 2;
-	}
-
-	const std::string classify(const std::vector<int>& xs)
-	{
-		std::string classification;
-		if (xs.size() < 4)
-			classification += "short";
-		else
-			classification += "long";
-
-		if (std::is_sorted(xs.begin(), xs.end()))
-			classification += ", sorted";
-		else
-			classification += ", unsorted";
-
-		return classification;
-	}
-};
-
-TEST(BaseLib, QuicksortSortsCorrectly) {
-    QuicksortSortsAsSTLSort quicksortSortsAsSTLSort;
-    ASSERT_TRUE(quicksortSortsAsSTLSort.check());
+    ac::check<std::vector<int>>(quicksortSortsAsSTLSort, 100,
+                                ac::make_arbitrary<std::vector<int>>(),
+                                gtest_reporter, cls);
 }
 
-// Permutations of sorted, unique vector remain untouched.
-class QuicksortCheckPermutations : public Property<std::vector<int>> {
-	bool accepts(const std::vector<int>& xs)
-	{
-		return xs.size() > 2 &&
-			std::is_sorted(xs.begin(), xs.end()) &&
-			(std::adjacent_find(xs.begin(), xs.end()) == xs.end());
-	}
+template <typename T>
+struct OrderedUniqueListGen
+{
+    ac::generator<std::vector<T>> source;
+    typedef std::vector<T> result_type;
 
-    bool holdsFor(const std::vector<int>& xs)
+    std::vector<T> operator()(std::size_t size)
     {
-        std::vector<size_t> perm(xs.size());
-		for (size_t i = 0; i < perm.size(); ++i)
-			perm[i] = i;
+        // Generate double as many elements because many will be discarded by
+        // applying unique.
+        result_type xs(source(2 * size));
+        std::sort(xs.begin(), xs.end());
+        auto last = std::unique(xs.begin(), xs.end());
+        xs.erase(last, xs.end());
+        return std::move(xs);
+    }
+};
+
+// Permutations of non-empty, sorted, unique vector remain untouched.
+TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
+{
+    auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
+
+    auto quicksortCheckPermutations = [](const std::vector<int>& xs)
+    {
+        std::vector<std::size_t> perm(xs.size());
+        std::iota(perm.begin(), perm.end(), 0);
 
         BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
 
-		for (size_t i = 0; i < perm.size(); ++i)
-			if (perm[i] != i)
-				return false;
+        for (std::size_t i = 0; i < perm.size(); ++i)
+            if (perm[i] != i)
+            {
+                std::cerr << i << " " << perm[i] << "\n";
+                return false;
+            }
         return true;
-    }
+    };
 
-	const std::string classify(const std::vector<int>& xs)
-	{
-		std::stringstream ss;
-		ss << "size " << xs.size();
-		return ss.str();
-	}
-};
-
-TEST(BaseLib, QuicksortReportCorrectPermutations) {
-    QuicksortCheckPermutations quicksortCheckPermutations;
-    ASSERT_TRUE(quicksortCheckPermutations.check(200, 100000));
+    ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
 }
 
-// Permutations of reverse sorted, unique vector is also reversed.
-class QuicksortCheckPermutationsReverse : public Property<std::vector<int>> {
-	bool accepts(const std::vector<int>& xs)
-	{
-		return xs.size() > 2 &&
-			std::is_sorted(xs.rbegin(), xs.rend()) &&
-			(std::adjacent_find(xs.rbegin(), xs.rend()) == xs.rend());
-	}
-
-    bool holdsFor(const std::vector<int>& xs)
+// Permutations of non-empty, reverse sorted, unique vector is also reversed.
+TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
+{
+    auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
     {
-        std::vector<size_t> perm(xs.size());
-		for (size_t i = 0; i < perm.size(); ++i)
-			perm[i] = i;
+        std::reverse(xs.begin(), xs.end());
+        return xs;
+    };
+
+    auto gen =
+        ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
+
+    auto quicksortCheckPermutations = [](const std::vector<int>& xs)
+    {
+        std::vector<std::size_t> perm(xs.size());
+        std::iota(perm.begin(), perm.end(), 0);
 
         BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
 
-		for (size_t i = 0; i < perm.size(); ++i)
-			if (perm[i] != perm.size() - i - 1)
-				return false;
+        for (std::size_t i = 0; i < perm.size(); ++i)
+            if (perm[i] != perm.size() - i - 1) return false;
         return true;
-    }
+    };
 
-	const std::string classify(const std::vector<int>& xs)
-	{
-		std::stringstream ss;
-		ss << "size " << xs.size();
-		return ss.str();
-	}
-};
-
-TEST(BaseLib, QuicksortReportCorrectPermutationsReverse) {
-    QuicksortCheckPermutationsReverse quicksortCheckPermutationsReverse;
-    ASSERT_TRUE(quicksortCheckPermutationsReverse.check(200, 100000));
+    ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
 }
