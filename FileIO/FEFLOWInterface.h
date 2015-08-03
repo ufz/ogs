@@ -138,6 +138,9 @@ private:
 	//// parse node lists
 	std::vector<size_t> getIndexList(const std::string &str_ranges);
 
+	/// parse ELEMENTALSETS
+	void readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets);
+
 	/// read Supermesh data
 	///
 	/// A super mesh is a collection of polygons, lines and points in the 2D plane

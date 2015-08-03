@@ -144,49 +144,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 		// ELEMENTALSETS
 		else if (line_string.compare("ELEMENTALSETS") == 0)
 		{
-			unsigned mode = 0;
-			std::string str_nodeList;
-			int pos_prev_line = 0;
-			while (true)
-			{
-				pos_prev_line = in.tellg();
-				getline(in, line_string);
-
-				auto columns = BaseLib::splitString(line_string, '\t');
-				if (!in)
-					mode = 0; // reached the end of the file
-				else if (line_string.empty())
-					continue; // skip and see what comes next
-				else if (std::isalpha(line_string[0]))
-					mode = 0; // reached the next section
-				else if (columns.size() > 1)
-					mode = 1; // start of the element set definition
-				else
-					mode = 2; // continue the definition
-
-				if (mode!=2 && !str_nodeList.empty()) {
-					vec_elementsets.push_back(getIndexList(str_nodeList));
-					str_nodeList.clear();
-				}
-
-				if (mode == 0) {
-					break;
-				} else if (mode == 1) {
-					// starting a new set
-					std::string set_name = columns.front();
-					BaseLib::trim(set_name, ' ');
-					INFO("Found a element group - %s", set_name.data());
-					str_nodeList = *(++columns.begin());
-				} else {
-					// continue reading a element ids
-					BaseLib::trim(line_string, '\t');
-					str_nodeList += " " + line_string;
-				}
-			}
-			// move stream position to previous line
-			if (std::isalpha(line_string[0]))
-				in.seekg(pos_prev_line);
-
+			readELEMENTALSETS(in, vec_elementsets);
 		}
 		//....................................................................
 		// SUPERMESH
@@ -198,6 +156,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	}
 	in.close();
 
+	INFO("setting material IDs");
 	setMaterialID(fem_class, fem_dim, lines, vec_elementsets, vec_elements);
 
 	if (isXZplane)
@@ -439,6 +398,79 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
 			line_ss >> pt_xyz[i];
 		points[pt_id - 1] = new GeoLib::Point(pt_xyz, pt_id);
 	}
+}
+
+void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets)
+{
+	auto compressSpaces = [](std::string const& str) {
+		std::stringstream ss(str);
+		std::string new_str;
+		std::string word;
+		while (ss) {
+			ss >> word;
+			new_str += " " + word;
+		}
+		return new_str;
+	};
+
+	std::string line_string;
+	std::string str_idList;
+	int pos_prev_line = 0;
+	while (true)
+	{
+		pos_prev_line = in.tellg();
+		getline(in, line_string);
+
+		unsigned mode = 0;
+		if (!in)
+			mode = 0; // reached the end of the file
+		else if (line_string.empty())
+			continue; // skip and see what comes next
+		else if (std::isalpha(line_string[0]))
+			mode = 0; // reached the next section
+		else if (line_string[0] == ' ')
+			mode = 1; // start of the element set definition
+		else if (line_string[0] == '\t')
+			mode = 2; // continue the definition
+		else
+		{
+			ERR("Failed during parsing of an ELEMENTALSETS section in a FEFLOW file");
+			break;
+		}
+
+		if (mode!=2 && !str_idList.empty()) {
+			vec_elementsets.push_back(getIndexList(str_idList));
+			str_idList.clear();
+		}
+
+		if (mode == 0) {
+			break;
+		} else if (mode == 1) {
+			// starting a new set
+			std::string set_name;
+			std::string ids;
+			BaseLib::trim(line_string, ' ');
+			if (line_string[0]=='"') { // multiple words
+				auto pos = line_string.find_last_of('"');
+				set_name = line_string.substr(1, pos-1); // without quotation
+				ids = line_string.substr(pos+1);
+			} else { // single word
+				auto pos = line_string.find_first_of(' ');
+				set_name = line_string.substr(0, pos);
+				ids = line_string.substr(pos+1);
+			}
+			INFO("Found a element group - %s", set_name.data());
+			str_idList += compressSpaces(ids);
+		} else {
+			// continue reading a element ids
+			BaseLib::trim(line_string, '\t');
+			str_idList += compressSpaces(line_string);
+		}
+	}
+	// move stream position to previous line
+	if (std::isalpha(line_string[0]))
+		in.seekg(pos_prev_line);
+
 }
 
 //
