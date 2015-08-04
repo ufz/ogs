@@ -23,13 +23,21 @@ namespace detail
 template<class T>
 void setMatrixZero(T &mat)
 {
-    mat.setZero(mat.rows(), mat.cols());
+    //mat.setZero();
+    const auto n = mat.rows()*mat.cols();
+    auto* v = mat.data();
+    for (std::size_t i=0; i<n; i++)
+        v[i] = .0;
 }
 
 template<class T>
 void setVectorZero(T &vec)
 {
-    vec.setZero(vec.size());
+    //vec.setZero();
+    const auto n = vec.size();
+    auto* v = vec.data();
+    for (std::size_t i=0; i<n; i++)
+        v[i] = .0;
 }
 
 /*
