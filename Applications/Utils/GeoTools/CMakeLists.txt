@@ -14,4 +14,13 @@ if(QT4_FOUND)
 		RUNTIME DESTINATION bin
 		COMPONENT Utilities
 	)
+
+	add_executable(MoveGeometry MoveGeometry.cpp)
+	target_link_libraries(MoveGeometry FileIO)
+	set_target_properties(MoveGeometry PROPERTIES FOLDER Utilities)
+	install(TARGETS
+		MoveGeometry
+		RUNTIME DESTINATION bin
+		COMPONENT Utilities
+	)	
 endif() # QT4_FOUND
