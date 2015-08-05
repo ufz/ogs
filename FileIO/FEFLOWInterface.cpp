@@ -202,7 +202,8 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
 	const size_t no_nodes_per_layer = (fem_class.dimension == 2) ? fem_dim.n_nodes : fem_dim.n_nodes / (fem_class.n_layers3d + 1);
-	const size_t n_lines = no_nodes_per_layer / 12 + 1;
+	assert(no_nodes_per_layer>0);
+	const size_t n_lines = (no_nodes_per_layer-1) / 12 + 1;
 	const size_t n_layers = (fem_class.dimension == 3) ? fem_class.n_layers3d + 1 : 1;
 	std::string line_string;
 	std::stringstream line_stream;
