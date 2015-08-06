@@ -216,6 +216,7 @@ void XmlGmlInterface::deleteGeometry(std::vector<GeoLib::Point*>* points,
 	delete points;
 	delete pnt_names;
 	deletePolylines(polylines, ply_names);
+	deleteSurfaces(surfaces, sfc_names);
 }
 
 void XmlGmlInterface::deletePolylines(std::vector<GeoLib::Polyline*>* polylines,
