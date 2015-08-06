@@ -35,6 +35,15 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
 
+	QDomDocument doc("OGS-GLI-DOM");
+	doc.setContent(_fileData);
+	QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
+	if (docElement.nodeName().compare("OpenGeoSysGLI"))
+	{
+		ERR("XmlGmlInterface::readFile() - Unexpected XML root.");
+		return 0;
+	}
+
 	std::string gliName("[NN]");
 
 	std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
@@ -45,17 +54,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
 	std::map<std::string, std::size_t>* sfc_names = new std::map<std::string, std::size_t>;
 
-	QDomDocument doc("OGS-GLI-DOM");
-	doc.setContent(_fileData);
-	QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
-	if (docElement.nodeName().compare("OpenGeoSysGLI"))
-	{
-		ERR("XmlGmlInterface::readFile() - Unexpected XML root.");
-		return 0;
-	}
-
 	QDomNodeList geoTypes = docElement.childNodes();
-
 	for (int i = 0; i < geoTypes.count(); i++)
 	{
 		const QDomNode type_node(geoTypes.at(i));
@@ -64,6 +63,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 			if (type_node.toElement().text().isEmpty())
 			{
 				ERR("XmlGmlInterface::readFile(): <name>-tag is empty.")
+				deleteGeometry(points, polylines, surfaces, pnt_names, ply_names, sfc_names);
 				return 0;
 			}
 			else
@@ -81,9 +81,14 @@ int XmlGmlInterface::readFile(const QString &fileName)
 			             _geo_objs.getPointVecObj(gliName)->getIDMap(), sfc_names);
 	}
 
-	if (!polylines->empty())
+	if (polylines->empty())
+		deletePolylines(polylines, ply_names);
+	else
 		_geo_objs.addPolylineVec(polylines, gliName, ply_names);
-	if (!surfaces->empty())
+
+	if (surfaces->empty())
+		deleteSurfaces(surfaces, sfc_names);
+	else
 		_geo_objs.addSurfaceVec(surfaces, gliName, sfc_names);
 	return 1;
 }
@@ -113,7 +118,7 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 	if (pnt_names->empty())
 	{
 		delete pnt_names;
-		pnt_names = NULL;
+		pnt_names = nullptr;
 	}
 }
 
@@ -159,7 +164,7 @@ void XmlGmlInterface::readPolylines(const QDomNode &polylinesRoot,
 	if (ply_names->empty())
 	{
 		delete ply_names;
-		ply_names = NULL; 
+		ply_names = nullptr;
 	}
 }
 
@@ -195,8 +200,40 @@ void XmlGmlInterface::readSurfaces(const QDomNode &surfacesRoot,
 	if (sfc_names->empty())
 	{
 		delete sfc_names;
-		sfc_names = NULL; 
+		sfc_names = nullptr;
 	}
+}
+
+void XmlGmlInterface::deleteGeometry(std::vector<GeoLib::Point*>* points,
+	                                 std::vector<GeoLib::Polyline*>* polylines,
+	                                 std::vector<GeoLib::Surface*>* surfaces,
+	                                 std::map<std::string, std::size_t>* pnt_names,
+	                                 std::map<std::string, std::size_t>* ply_names,
+	                                 std::map<std::string, std::size_t>* sfc_names) const
+{
+	for (GeoLib::Point* point : *points)
+		delete point;
+	delete points;
+	delete pnt_names;
+	deletePolylines(polylines, ply_names);
+}
+
+void XmlGmlInterface::deletePolylines(std::vector<GeoLib::Polyline*>* polylines,
+                                      std::map<std::string, std::size_t>* ply_names) const
+{
+	for (GeoLib::Polyline* line : *polylines)
+		delete line;
+	delete polylines;
+	delete ply_names;
+}
+
+void XmlGmlInterface::deleteSurfaces(std::vector<GeoLib::Surface*>* surfaces,
+                                     std::map<std::string, std::size_t>* sfc_names) const
+{
+	for (GeoLib::Surface* line : *surfaces)
+		delete line;
+	delete surfaces;
+	delete sfc_names;
 }
 
 bool XmlGmlInterface::write()
