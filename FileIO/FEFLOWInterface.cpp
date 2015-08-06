@@ -46,6 +46,8 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	std::vector<MeshLib::Node*> vec_nodes;
 	std::vector<MeshLib::Element*> vec_elements;
 
+	std::vector<std::vector<std::size_t>> vec_elementsets;
+
 	std::string line_string;
 	std::stringstream line_stream;
 	while (!in.eof())
@@ -139,6 +141,12 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 			line_stream.clear();
 		}
 		//....................................................................
+		// ELEMENTALSETS
+		else if (line_string.compare("ELEMENTALSETS") == 0)
+		{
+			readELEMENTALSETS(in, vec_elementsets);
+		}
+		//....................................................................
 		// SUPERMESH
 		else if (line_string.compare("SUPERMESH") == 0)
 		{
@@ -148,7 +156,8 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	}
 	in.close();
 
-	setMaterialID(fem_class, fem_dim, lines, vec_elements);
+	INFO("setting material IDs");
+	setMaterialID(fem_class, fem_dim, lines, vec_elementsets, vec_elements);
 
 	if (isXZplane)
 	{
@@ -173,14 +182,28 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	if (_geoObjects && lines)
 		_geoObjects->addPolylineVec(lines, project_name);
 
-	return new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
+	auto mesh = new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
+	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+		mesh->getProperties().createNewPropertyVector<int>(
+			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
+	);
+	if (!opt_material_ids) {
+		WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+	} else {
+		MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
+		for (auto e : vec_elements)
+			material_ids.push_back(e->getValue());
+	}
+
+	return mesh;
 }
 
 
 void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
 	const size_t no_nodes_per_layer = (fem_class.dimension == 2) ? fem_dim.n_nodes : fem_dim.n_nodes / (fem_class.n_layers3d + 1);
-	const size_t n_lines = no_nodes_per_layer / 12 + 1;
+	assert(no_nodes_per_layer>0);
+	const size_t n_lines = (no_nodes_per_layer-1) / 12 + 1;
 	const size_t n_layers = (fem_class.dimension == 3) ? fem_class.n_layers3d + 1 : 1;
 	std::string line_string;
 	std::stringstream line_stream;
@@ -214,7 +237,7 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
 	}
 }
 
-std::vector<size_t> FEFLOWInterface::getNodeList(const std::string &str_ranges)
+std::vector<size_t> FEFLOWInterface::getIndexList(const std::string &str_ranges)
 {
 	std::vector<size_t> vec_node_IDs;
 
@@ -274,7 +297,7 @@ void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_clas
 		// process stocked data
 		if (mode != 3 && !str_nodeList.empty()) {
 			// process previous lines
-			auto vec_nodeIDs = getNodeList(str_nodeList);
+			auto vec_nodeIDs = getIndexList(str_nodeList);
 			for (auto n0 : vec_nodeIDs)
 			{
 				const size_t n = n0 - 1 + l * no_nodes_per_layer;
@@ -378,6 +401,79 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
 	}
 }
 
+void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets)
+{
+	auto compressSpaces = [](std::string const& str) {
+		std::stringstream ss(str);
+		std::string new_str;
+		std::string word;
+		while (ss) {
+			ss >> word;
+			new_str += " " + word;
+		}
+		return new_str;
+	};
+
+	std::string line_string;
+	std::string str_idList;
+	std::streampos pos_prev_line = 0;
+	while (true)
+	{
+		pos_prev_line = in.tellg();
+		getline(in, line_string);
+
+		unsigned mode = 0;
+		if (!in)
+			mode = 0; // reached the end of the file
+		else if (line_string.empty())
+			continue; // skip and see what comes next
+		else if (std::isalpha(line_string[0]))
+			mode = 0; // reached the next section
+		else if (line_string[0] == ' ')
+			mode = 1; // start of the element set definition
+		else if (line_string[0] == '\t')
+			mode = 2; // continue the definition
+		else
+		{
+			ERR("Failed during parsing of an ELEMENTALSETS section in a FEFLOW file");
+			break;
+		}
+
+		if (mode!=2 && !str_idList.empty()) {
+			vec_elementsets.push_back(getIndexList(str_idList));
+			str_idList.clear();
+		}
+
+		if (mode == 0) {
+			break;
+		} else if (mode == 1) {
+			// starting a new set
+			std::string set_name;
+			std::string ids;
+			BaseLib::trim(line_string, ' ');
+			if (line_string[0]=='"') { // multiple words
+				auto pos = line_string.find_last_of('"');
+				set_name = line_string.substr(1, pos-1); // without quotation
+				ids = line_string.substr(pos+1);
+			} else { // single word
+				auto pos = line_string.find_first_of(' ');
+				set_name = line_string.substr(0, pos);
+				ids = line_string.substr(pos+1);
+			}
+			INFO("Found an element group - %s", set_name.data());
+			str_idList += compressSpaces(ids);
+		} else {
+			// continue reading a element ids
+			BaseLib::trim(line_string, '\t');
+			str_idList += compressSpaces(line_string);
+		}
+	}
+	// move stream position to previous line
+	if (std::isalpha(line_string[0]))
+		in.seekg(pos_prev_line);
+
+}
+
 //
 void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** p_points, std::vector<GeoLib::Polyline*>** p_lines)
 {
@@ -460,10 +556,15 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 	}
 }
 
-void FEFLOWInterface::setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, std::vector<MeshLib::Element*> &vec_elements)
+void FEFLOWInterface::setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, const std::vector<std::vector<std::size_t>> &vec_elementsets, std::vector<MeshLib::Element*> &vec_elements)
 {
-	if (lines && lines->size() > 1)
-	{
+	if (!vec_elementsets.empty()) {
+		for (std::size_t matid =0; matid<vec_elementsets.size(); matid++) {
+			auto &eids = vec_elementsets[matid];
+			for (auto eid : eids)
+				vec_elements[eid-1]->setValue(matid); // Element IDs given by FEFLOW starts from one!
+		}
+	} else if (lines && !lines->empty()) {
 		for (size_t i = 0; i < vec_elements.size(); i++)
 		{
 			MeshLib::Element* e = vec_elements[i];

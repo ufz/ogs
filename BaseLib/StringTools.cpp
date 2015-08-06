@@ -21,7 +21,7 @@
 #include "logog/include/logog.hpp"
 
 #include <boost/property_tree/json_parser.hpp>
-
+#include <boost/algorithm/string/replace.hpp>
 
 namespace BaseLib
 {
@@ -39,13 +39,7 @@ std::string replaceString(const std::string &searchString,
                           const std::string &replaceString,
                           std::string stringToReplace)
 {
-	std::string::size_type pos = stringToReplace.find(searchString, 0);
-	std::string::size_type const intLengthSearch = searchString.length();
-
-	while (std::string::npos != pos) {
-		stringToReplace.replace(pos, intLengthSearch, replaceString);
-		pos = stringToReplace.find(searchString, 0);
-	}
+	boost::replace_all(stringToReplace, searchString, replaceString);
 	return stringToReplace;
 }
 
