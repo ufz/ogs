@@ -21,49 +21,68 @@
 namespace MeshLib {
 
 ElementStatus::ElementStatus(Mesh const*const mesh)
-: _mesh(mesh), _element_status(mesh->getNElements(), true)
+: _mesh(mesh), _element_status(mesh->getNElements(), true), _hasAnyInactive(false)
 {
 	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
 	for (auto node = nodes.cbegin(); node != nodes.cend(); ++node)
 		_active_nodes.push_back((*node)->getNElements());
 }
 
-
-std::vector<std::size_t> ElementStatus::getActiveElements() const
+ElementStatus::ElementStatus(Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs)
+: _mesh(mesh), _element_status(mesh->getNElements(), true), _hasAnyInactive(!vec_inactive_matIDs.empty())
 {
-	std::vector<std::size_t> active_elements;
-	active_elements.reserve(this->getNActiveElements());
+	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
+	for (auto node = nodes.cbegin(); node != nodes.cend(); ++node)
+		_active_nodes.push_back((*node)->getNElements());
+
 	const std::size_t nElems (_mesh->getNElements());
+	for (auto material_id : vec_inactive_matIDs) {
+		for (auto e : _mesh->getElements())
+			if (e->getValue() == material_id)
+				this->setElementStatus(e->getID(), false);
+	}
+
+	_vec_active_eles.reserve(this->getNActiveElements());
 	for (std::size_t i=0; i<nElems; ++i)
 		if (_element_status[i])
-			active_elements.push_back(i);
-	return active_elements;
-}
+			_vec_active_eles.push_back(const_cast<MeshLib::Element*>(_mesh->getElement(i)));
 
-std::vector<std::size_t> ElementStatus::getActiveNodes() const
-{
-	std::vector<std::size_t> active_nodes;
-	active_nodes.reserve(this->getNActiveNodes());
+	_vec_active_nodes.reserve(this->getNActiveNodes());
 	const std::size_t nNodes (_mesh->getNNodes());
 	for (std::size_t i=0; i<nNodes; ++i)
 		if (_active_nodes[i]>0)
-			active_nodes.push_back(i);
-	return active_nodes;
+			_vec_active_nodes.push_back(const_cast<MeshLib::Node*>(_mesh->getNode(i)));
+
+	DBUG("Deactivated %d materials and resulting active %d nodes and %d elements", vec_inactive_matIDs.size(), _vec_active_nodes.size(), _vec_active_eles.size());
 }
 
-std::vector<std::size_t> ElementStatus::getActiveElementsAtNode(std::size_t node_id) const
+std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
+{
+	if (_hasAnyInactive)
+		return _vec_active_eles;
+	else
+		return _mesh->getElements();
+}
+
+std::vector<MeshLib::Node*> const& ElementStatus::getActiveNodes() const
+{
+	if (_hasAnyInactive)
+		return _vec_active_nodes;
+	else
+		return _mesh->getNodes();
+}
+
+std::vector<MeshLib::Element*> ElementStatus::getActiveElementsAtNode(std::size_t node_id) const
 {
 	const std::size_t nActiveElements (_active_nodes[node_id]);
-	const std::vector<Element*> &elements (_mesh->getNode(node_id)->getElements());
-	std::vector<std::size_t> active_elements;
+	std::vector<MeshLib::Element*> active_elements;
 	active_elements.reserve(nActiveElements);
-	for (auto elem = elements.cbegin(); elem != elements.cend(); ++elem)
+	for (auto elem : _mesh->getNode(node_id)->getElements())
 	{
 		if (active_elements.size() == nActiveElements)
 			return active_elements;
-		const std::size_t id ((*elem)->getID());
-		if (_element_status[id])
-			active_elements.push_back(id);
+		if (_element_status[elem->getID()])
+			active_elements.push_back(elem);
 	}
 	return active_elements;
 }
@@ -78,20 +97,6 @@ std::size_t ElementStatus::getNActiveElements() const
 	return static_cast<std::size_t>(std::count(_element_status.cbegin(), _element_status.cend(), true));
 }
 
-void ElementStatus::setAll(bool status)
-{
-	std::fill(_element_status.begin(), _element_status.end(), status);
-
-	if (status)
-	{
-		const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
-		const std::size_t nNodes (_mesh->getNNodes());
-		for (std::size_t i=0; i<nNodes; ++i)
-			_active_nodes[i] = nodes[i]->getNElements();
-	}
-	else
-		std::fill(_active_nodes.begin(), _active_nodes.end(), 0);
-}
 
 void ElementStatus::setElementStatus(std::size_t i, bool status)
 {
@@ -107,14 +112,6 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
 			_active_nodes[nodes[j]->getID()] += change;
 		}
 	}
-}
-
-void ElementStatus::setMaterialStatus(unsigned material_id, bool status)
-{
-	const std::size_t nElems (_mesh->getNElements());
-	for (std::size_t i=0; i<nElems; ++i)
-		if (_mesh->getElement(i)->getValue() == material_id)
-			this->setElementStatus(i, status);
 }
 
 }
