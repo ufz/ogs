@@ -9,8 +9,12 @@
 #ifndef APPENDLINESALONGPOLYLINES_H_
 #define APPENDLINESALONGPOLYLINES_H_
 
-// GeoLib
-#include "PolylineVec.h"
+namespace GeoLib
+{
+class Polyline;
+template <typename T> class TemplateVec;
+typedef TemplateVec<Polyline> PolylineVec;
+}
 
 namespace MeshLib
 {

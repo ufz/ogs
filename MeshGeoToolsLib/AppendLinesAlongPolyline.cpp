@@ -12,6 +12,7 @@
 #include <logog/include/logog.hpp>
 
 #include "GeoLib/Polyline.h"
+#include "GeoLib/PolylineVec.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
