@@ -22,17 +22,6 @@ set(SOURCES ${SOURCES} ${SOURCES_FUNCTION})
 GET_SOURCE_FILES(SOURCES_DISTRIBUTION Distribution)
 set(SOURCES ${SOURCES} ${SOURCES_DISTRIBUTION})
 
-
-include_directories(
-	.
-	${CMAKE_CURRENT_SOURCE_DIR}/../BaseLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../GeoLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../MathLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../MeshLib
-	${CMAKE_CURRENT_SOURCE_DIR}/../MeshGeoToolsLib
-)
-
-
 # Create the library
 add_library(NumLib STATIC ${SOURCES})
 

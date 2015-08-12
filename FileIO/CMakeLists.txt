@@ -48,11 +48,6 @@ endif()
 # Create the library
 add_library(FileIO STATIC ${SOURCES})
 
-include_directories(
-	.
-	${CMAKE_CURRENT_BINARY_DIR}/../BaseLib
-)
-
 target_link_libraries(FileIO INTERFACE
 	GeoLib
 	InSituLib

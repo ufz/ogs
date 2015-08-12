@@ -2,12 +2,6 @@ if(WIN32)
 	set(ADDITIONAL_LIBS Winmm.lib)
 endif()
 
-include_directories(
-	.
-	../../BaseLib/
-	../../MathLib/
-)
-
 add_executable(ConjugateGradientUnpreconditioned
 	ConjugateGradientUnpreconditioned.cpp
 	${SOURCES}

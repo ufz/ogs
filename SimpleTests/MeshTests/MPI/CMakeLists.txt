@@ -1,10 +1,3 @@
-include_directories(
-	.
-	${CMAKE_SOURCE_DIR}/BaseLib/
-	${CMAKE_SOURCE_DIR}/FileIO/
-	${CMAKE_SOURCE_DIR}/MeshLib/
-)
-
 add_executable(test_node_partitioned_mesh
 	NodePartitionedMeshTester.cpp
 )

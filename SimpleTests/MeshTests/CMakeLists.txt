@@ -2,15 +2,6 @@ if(WIN32)
 	set(ADDITIONAL_LIBS Winmm.lib)
 endif()
 
-include_directories(
-	.
-	${CMAKE_SOURCE_DIR}/BaseLib/
-	${CMAKE_SOURCE_DIR}/FileIO/
-	${CMAKE_SOURCE_DIR}/GeoLib/
-	${CMAKE_SOURCE_DIR}/MathLib/
-	${CMAKE_SOURCE_DIR}/MeshLib/
-)
-
 # Create the executable
 add_executable(MeshRead
 	MeshRead.cpp

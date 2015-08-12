@@ -5,14 +5,6 @@ set(SOURCES ${SOURCES_ASSEMBLERLIB})
 # Create the library
 add_library(AssemblerLib STATIC ${SOURCES})
 
-include_directories(
-	.
-	../BaseLib
-	../GeoLib
-	../MathLib
-	../MeshLib
-)
-
 target_link_libraries(AssemblerLib INTERFACE
 	MeshLib
 )

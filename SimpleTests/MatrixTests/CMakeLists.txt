@@ -7,13 +7,6 @@ if(CMAKE_USE_PTHREADS_INIT)
 	set(HAVE_PTHREADS TRUE)
 endif()
 
-include_directories(
-	.
-	${CMAKE_SOURCE_DIR}/BaseLib/
-	${CMAKE_BINARY_DIR}/BaseLib/
-	${CMAKE_SOURCE_DIR}/MathLib/
-)
-
 # Create the executable
 add_executable(MatMult
 	MatMult.cpp
