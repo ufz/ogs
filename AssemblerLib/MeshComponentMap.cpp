@@ -37,9 +37,9 @@ MeshComponentMap::MeshComponentMap(
             std::size_t const mesh_id = mesh_subset.getMeshID();
             // mesh items are ordered first by node, cell, ....
             for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
-                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j), comp_id, global_index++));
+                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, mesh_subset.getNodeID(j)), comp_id, global_index++));
             for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
-                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j), comp_id, global_index++));
+                _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, mesh_subset.getElementID(j)), comp_id, global_index++));
         }
         comp_id++;
     }
