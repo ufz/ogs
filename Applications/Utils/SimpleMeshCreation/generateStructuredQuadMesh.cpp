@@ -50,7 +50,7 @@ int main (int argc, char* argv[])
 	const double origin[3] = {origin_x_arg.getValue() + edge_length/2, origin_y_arg.getValue() + edge_length/2, origin_z_arg.getValue()};
 	for (unsigned i=0; i<size; ++i) values[i]=0;
 	MeshLib::Mesh* mesh(MeshLib::VtkMeshConverter::convertImgToMesh(values, origin, height, width,
-		edge_length, MeshLib::MeshElemType::QUAD, MeshLib::UseIntensityAs::MATERIAL));
+		edge_length, MeshLib::MeshElemType::QUAD, MeshLib::UseIntensityAs::DATAVECTOR));
 
 	delete [] values;
 
