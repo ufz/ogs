@@ -115,7 +115,7 @@ inline void computeMappingMatrices(
         assert(shapemat.dNdr.rows()==ele.getDimension());
         const unsigned global_dim(ele_local_coord.getGlobalCoordinateSystem().getDimension());
         if (global_dim==ele_dim) {
-            shapemat.dNdx.topLeftCorner(ele_dim, nnodes) = shapemat.invJ * shapemat.dNdr;
+            shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
         } else {
             auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
             auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
