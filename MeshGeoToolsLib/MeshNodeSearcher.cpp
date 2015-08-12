@@ -24,6 +24,7 @@
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
+#include "MeshGeoToolsLib/MeshNodesOnPoint.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
@@ -47,6 +48,8 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 
 MeshNodeSearcher::~MeshNodeSearcher()
 {
+	for (auto pointer : _mesh_nodes_on_points)
+		delete pointer;
 	for (auto pointer : _mesh_nodes_along_polylines)
 		delete pointer;
 	for (auto pointer : _mesh_nodes_along_surfaces)
@@ -79,12 +82,10 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	return vec_nodes;
 }
 
-std::vector<std::size_t>
-MeshNodeSearcher::getMeshNodeIDsForPoint(GeoLib::Point const& pnt) const
+std::vector<std::size_t> const&
+MeshNodeSearcher::getMeshNodeIDsForPoint(GeoLib::Point const& pnt)
 {
-	std::vector<std::size_t> id_vec(
-		_mesh_grid.getPointsInEpsilonEnvironment(pnt, _search_length));
-	return id_vec;
+	return getMeshNodesOnPoint(pnt).getNodeIDs();
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
@@ -96,6 +97,20 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc)
 {
 	return getMeshNodesAlongSurface(sfc).getNodeIDs();
+}
+
+MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(GeoLib::Point const& pnt)
+{
+	std::vector<MeshNodesOnPoint*>::const_iterator it(_mesh_nodes_on_points.begin());
+	for (; it != _mesh_nodes_on_points.end(); ++it) {
+		if (&(*it)->getPoint() == &pnt) {
+			return *(*it);
+		}
+	}
+
+	_mesh_nodes_on_points.push_back(
+			new MeshNodesOnPoint(_mesh, _mesh_grid, pnt, _search_length, _search_all_nodes));
+	return *_mesh_nodes_on_points.back();
 }
 
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
