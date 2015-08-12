@@ -6,10 +6,9 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <ctime>
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
 using namespace MeshLib;
 

@@ -6,17 +6,17 @@
  *			  http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <ctime>
 #include <numeric>
-#include "gtest/gtest.h"
-
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/Mesh.h"
-#include "PropertyVector.h"
 
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
 #endif
+
+#include "gtest/gtest.h"
+
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/PropertyVector.h"
 
 class MeshLibProperties : public ::testing::Test
 {

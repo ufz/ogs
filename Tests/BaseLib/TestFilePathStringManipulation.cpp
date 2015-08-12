@@ -13,8 +13,10 @@
 
 #include "gtest/gtest.h"
 
-#include "FileTools.h"
-#include "FileTools.cpp"
+#include "BaseLib/FileTools.h"
+
+// For testing of some internal functions used inside FileTools.cpp.
+#include "BaseLib/FileTools.cpp"
 
 TEST(BaseLib, FindLastPathSeparatorWin)
 {

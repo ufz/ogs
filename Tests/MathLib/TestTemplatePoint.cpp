@@ -13,7 +13,7 @@
 
 #include "gtest/gtest.h"
 
-#include "TemplatePoint.h"
+#include "MathLib/TemplatePoint.h"
 
 using namespace MathLib;
 

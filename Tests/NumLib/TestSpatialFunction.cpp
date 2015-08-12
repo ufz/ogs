@@ -7,13 +7,12 @@
  *
  */
 
-#include <gtest/gtest.h>
-
 #include <vector>
 #include <memory>
 
-#include "GEOObjects.h"
+#include <gtest/gtest.h>
 
+#include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/Function/LinearInterpolationAlongPolyline.h"

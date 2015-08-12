@@ -13,16 +13,16 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Node.h"
-#include "MeshEditing/MeshRevision.h"
-#include "Elements/Element.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
 
 
 TEST(MeshEditing, Tri)

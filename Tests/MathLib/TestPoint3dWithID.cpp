@@ -10,9 +10,10 @@
  */
 
 #include <ctime>
+
 #include "gtest/gtest.h"
 
-#include "Point3dWithID.h"
+#include "MathLib/Point3dWithID.h"
 
 using namespace MathLib;
 

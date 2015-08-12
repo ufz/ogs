@@ -10,7 +10,8 @@
  */
 
 #include "gtest/gtest.h"
-#include "AnalyticalGeometry.h"
+
+#include "GeoLib/AnalyticalGeometry.h"
 
 auto test3equal = [](double a, double b, double c, double const* result)
 {

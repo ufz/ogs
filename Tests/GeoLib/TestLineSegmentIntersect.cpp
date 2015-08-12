@@ -14,8 +14,8 @@
 
 #include "gtest/gtest.h"
 
-#include "Point.h"
-#include "AnalyticalGeometry.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/AnalyticalGeometry.h"
 
 TEST(GeoLib, TestXAxisParallelLineSegmentIntersection2d)
 {

@@ -13,8 +13,8 @@
 
 #include <gtest/gtest.h>
 
-#include "LinAlg/FinalizeMatrixAssembly.h"
-#include "LinAlg/Dense/GlobalDenseMatrix.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 
 TEST(MathLib, GlobalDenseMatrixAssembly)
 {

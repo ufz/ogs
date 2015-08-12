@@ -11,16 +11,16 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <gtest/gtest.h>
-
 #include <cstdlib>
 #include <ctime>
 #include <limits>
 #include <algorithm>
 
-#include "LinAlg/Dense/DenseMatrix.h"
-#include "LinAlg/Dense/DenseVector.h"
-#include "LinAlg/Solvers/GaussAlgorithm.h"
+#include <gtest/gtest.h>
+
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/LinAlg/Dense/DenseVector.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 TEST(MathLib, DenseGaussAlgorithm)
 {

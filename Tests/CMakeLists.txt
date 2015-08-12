@@ -26,19 +26,6 @@ if(OGS_USE_PETSC OR OGS_USE_MPI)
 	list(REMOVE_ITEM TEST_SOURCES AssemblerLib/TestSerialLinearSolver.cpp)
 endif()
 
-include_directories(
-	${CMAKE_SOURCE_DIR}/AssemblerLib
-	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/GeoLib
-	${CMAKE_SOURCE_DIR}/InSituLib
-	${CMAKE_SOURCE_DIR}/MathLib
-	${CMAKE_SOURCE_DIR}/MeshLib
-	${CMAKE_SOURCE_DIR}/MeshGeoToolsLib
-	${CMAKE_SOURCE_DIR}/NumLib
-	${CMAKE_BINARY_DIR}/BaseLib
-)
-
 add_executable(testrunner testrunner.cpp ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
 

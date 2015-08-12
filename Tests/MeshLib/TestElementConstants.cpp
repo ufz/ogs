@@ -8,9 +8,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Elements/Quad.h"
-#include "Elements/Hex.h"
-#include "Elements/Tet.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Tet.h"
 
 using namespace MeshLib;
 

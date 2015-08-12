@@ -15,13 +15,10 @@
 #include <boost/filesystem.hpp>
 
 #include "gtest/gtest.h"
-#include "BaseLib/BuildInfo.h"
-
-// FileIO
-#include "XmlIO/Qt/XmlGmlInterface.h"
 
 #include "Applications/ApplicationsLib/ProjectData.h"
-
+#include "BaseLib/BuildInfo.h"
+#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Triangle.h"
 

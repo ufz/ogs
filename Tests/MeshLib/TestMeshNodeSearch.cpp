@@ -11,12 +11,12 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "gtest/gtest.h"
-
 #include <memory>
 
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
+#include "gtest/gtest.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 

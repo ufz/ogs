@@ -15,9 +15,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Point.h"
-#include "Polygon.h"
-#include "SimplePolygonTree.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
+#include "GeoLib/SimplePolygonTree.h"
 
 /**
  *       2
