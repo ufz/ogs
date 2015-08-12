@@ -25,10 +25,10 @@
 #include <vtkObjectFactory.h>
 #include <vtkPoints.h>
 
-#include "Element.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
-#include "MeshEnums.h"
-#include "VtkOGSEnum.h"
+#include "MeshLib/VtkOGSEnum.h"
 
 namespace InSituLib {
 
