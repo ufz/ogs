@@ -174,7 +174,7 @@ int main (int argc, char* argv[])
 	}
 
 	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshLib::MeshElemType::QUAD,
-					MeshLib::UseIntensityAs::MATERIAL).execute());
+					MeshLib::UseIntensityAs::DATAVECTOR).execute());
 
 	std::vector<std::size_t> src_perm(size);
 	std::iota(src_perm.begin(), src_perm.end(), 0);
