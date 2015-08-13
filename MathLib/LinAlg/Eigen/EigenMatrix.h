@@ -55,7 +55,9 @@ public:
     /// reset data entries to zero.
     void setZero()
     {
-        _mat.setZero();
+        for (std::size_t i=0; i<_mat.nonZeros(); i++)
+            _mat.valuePtr()[i] = 0;
+        // don't use _mat.setZero(). it makes a matrix uncompressed 
     }
 
     /// set a value to the given entry. If the entry doesn't exist, this class

@@ -63,7 +63,8 @@ void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
     auto &b = b_.getRawVector();
     auto &x = x_.getRawVector();
 
-    A.makeCompressed();
+    if (!A.isCompressed())
+        A.makeCompressed();
     int nnz = A.nonZeros();
     int* ptr = A.outerIndexPtr();
     int* col = A.innerIndexPtr();
