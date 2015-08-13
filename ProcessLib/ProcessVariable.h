@@ -12,7 +12,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-
+#include "InitialCondition.h"
+#include "UniformDirichletBoundaryCondition.h"
 #include "NeumannBc.h"
 
 namespace MeshGeoToolsLib
@@ -46,11 +47,10 @@ namespace ProcessLib
 class ProcessVariable
 {
     using ConfigTree = boost::property_tree::ptree;
+
 public:
     ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
             GeoLib::GEOObjects const& geometries);
-
-    ~ProcessVariable();
 
     std::string const& getName() const;
 
@@ -66,7 +66,7 @@ public:
         GlobalSetup const&,
         Args&&... args)
     {
-        for (NeumannBcConfig* config : _neumann_bc_configs)
+        for (auto& config : _neumann_bc_configs)
         {
             config->initialize(searcher);
             bcs = new NeumannBc<GlobalSetup>(*config, std::forward<Args>(args)...);
@@ -76,9 +76,9 @@ public:
 private:
     std::string const _name;
     MeshLib::Mesh const& _mesh;
-    InitialCondition* _initial_condition;
-    std::vector<UniformDirichletBoundaryCondition*> _dirichlet_bcs;
-    std::vector<NeumannBcConfig*> _neumann_bc_configs;
+    std::unique_ptr<InitialCondition> _initial_condition;
+    std::vector<std::unique_ptr<UniformDirichletBoundaryCondition> > _dirichlet_bcs;
+    std::vector<std::unique_ptr<NeumannBcConfig> > _neumann_bc_configs;
 };
 
 }   // namespace ProcessLib
