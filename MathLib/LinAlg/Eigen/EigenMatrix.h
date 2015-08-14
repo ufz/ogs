@@ -37,8 +37,13 @@ public:
     /**
      * constructor
      * @param n the number of rows (that is equal to the number of columns)
+     * @param n_nonzero_columns the number of non-zero columns used for preallocation
      */
-    explicit EigenMatrix(std::size_t n) :_mat(n, n) {}
+    explicit EigenMatrix(std::size_t n, std::size_t n_nonzero_columns = 0) :_mat(n, n)
+    {
+        if (n_nonzero_columns > 0)
+            _mat.reserve(Eigen::VectorXi::Constant(n, n_nonzero_columns));
+    }
 
     /// return the number of rows
     std::size_t getNRows() const { return _mat.rows(); }
