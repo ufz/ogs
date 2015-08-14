@@ -95,7 +95,8 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A, ptree const*const option)
     if (option)
         setOption(*option);
 
-    A.getRawMatrix().makeCompressed();
+    if (!A.getRawMatrix().isCompressed())
+        A.getRawMatrix().makeCompressed();
     if (_option.solver_type==EigenOption::SolverType::SparseLU) {
         using SolverType = Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int>>;
         _solver = new details::EigenDirectLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
