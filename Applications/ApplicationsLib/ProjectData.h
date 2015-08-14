@@ -100,6 +100,10 @@ public:
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
 						*_mesh_vec[0], _process_variables, _parameters, pc));
 			}
+			else
+			{
+				WARN("Unknown process type: %s\n", pc.get<std::string>("type").c_str());
+			}
 		}
 	}
 
