@@ -1,7 +1,4 @@
 /**
- * \author Norihiro Watanabe
- * \date   2013-08-13
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -15,6 +12,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "MathLib/LinAlg/MatrixTools.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/CoordinateSystem.h"
 
@@ -74,15 +72,7 @@ inline void computeMappingMatrices(
         }
     }
 
-    //shapemat.detJ = shapemat.J.determinant();
-    if (ele.getDimension()==1)
-        shapemat.detJ = shapemat.J(0,0);
-    else if (ele.getDimension()==2)
-        shapemat.detJ = shapemat.J(0,0) * shapemat.J(1,1) - shapemat.J(0,1) * shapemat.J(1,0);
-    else if (ele.getDimension()==3)
-        shapemat.detJ = shapemat.J(0,0) * (shapemat.J(1,1) * shapemat.J(2,2) - shapemat.J(2,1) * shapemat.J(1,2))
-                 + shapemat.J(2,0) * (shapemat.J(0,1) * shapemat.J(1,2) - shapemat.J(1,1) * shapemat.J(0,2))
-                 + shapemat.J(1,0) * (shapemat.J(0,2) * shapemat.J(2,1) - shapemat.J(2,2) * shapemat.J(0,1));
+    shapemat.detJ = MathLib::determinant(shapemat.J);
 
 #ifndef NDEBUG
     if (shapemat.detJ<=.0)
@@ -118,28 +108,7 @@ inline void computeMappingMatrices(
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
         //shapemat.invJ.noalias() = shapemat.J.inverse();
-        if (ele.getDimension()==1) {
-            shapemat.invJ(0,0) = 1./shapemat.detJ;
-        } else if (ele.getDimension()==2) {
-            shapemat.invJ(0,0) = shapemat.J(1,1);
-            shapemat.invJ(0,1) = -shapemat.J(0,1);
-            shapemat.invJ(1,0) = -shapemat.J(1,0);
-            shapemat.invJ(1,1) = shapemat.J(0,0);
-            shapemat.invJ *= 1./shapemat.detJ;
-        } else if (ele.getDimension()==3) {
-            shapemat.invJ(0,0) =  shapemat.J(1,1) * shapemat.J(2,2) - shapemat.J(2,1) * shapemat.J(1,2);
-            shapemat.invJ(0,1) =  shapemat.J(0,2) * shapemat.J(2,1) - shapemat.J(0,1) * shapemat.J(2,2);
-            shapemat.invJ(0,2) =  shapemat.J(0,1) * shapemat.J(1,2) - shapemat.J(0,2) * shapemat.J(1,1);
-            //
-            shapemat.invJ(1,0) =  shapemat.J(1,2) * shapemat.J(2,0) - shapemat.J(2,2) * shapemat.J(1,0);
-            shapemat.invJ(1,1) =  shapemat.J(0,0) * shapemat.J(2,2) - shapemat.J(2,0) * shapemat.J(0,2);
-            shapemat.invJ(1,2) =  shapemat.J(0,2) * shapemat.J(1,0) - shapemat.J(1,2) * shapemat.J(0,0);
-            //
-            shapemat.invJ(2,0) =  shapemat.J(1,0) * shapemat.J(2,1) - shapemat.J(2,0) * shapemat.J(1,1);
-            shapemat.invJ(2,1) =  shapemat.J(0,1) * shapemat.J(2,0) - shapemat.J(2,1) * shapemat.J(0,0);
-            shapemat.invJ(2,2) =  shapemat.J(0,0) * shapemat.J(1,1) - shapemat.J(1,0) * shapemat.J(0,1);
-            shapemat.invJ /= shapemat.detJ;
-        }
+        MathLib::inverse(shapemat.J, shapemat.detJ, shapemat.invJ);
 
         auto const nnodes(shapemat.dNdr.cols());
         auto const ele_dim(shapemat.dNdr.rows());
