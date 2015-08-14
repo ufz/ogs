@@ -73,6 +73,7 @@ option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
 # Compiler flags
 set(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
+option(STL_NO_DEBUG "Disable STL debug in debug build" OFF)
 
 # Print CMake variable values
 if (OGS_CMAKE_DEBUG)
