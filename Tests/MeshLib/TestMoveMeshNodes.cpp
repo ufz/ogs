@@ -6,14 +6,15 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
-#include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <numeric>
+#include <vector>
 
+#include "gtest/gtest.h"
+
+#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
-#include "MeshEditing/moveMeshNodes.h"
 
 TEST(MeshLib, moveMeshNodes)
 {

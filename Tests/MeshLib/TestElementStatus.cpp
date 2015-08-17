@@ -15,11 +15,11 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "ElementStatus.h"
-#include "MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/ElementStatus.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 
 TEST(MeshLib, ElementStatus)

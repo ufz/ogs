@@ -11,16 +11,13 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-// google test include
-#include "gtest/gtest.h"
-
-// STL
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
-// GeoLib
-#include "GEOObjects.h"
+#include "gtest/gtest.h"
+
+#include "GeoLib/GEOObjects.h"
 
 void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std::string &name, GeoLib::Point const& shift)
 {

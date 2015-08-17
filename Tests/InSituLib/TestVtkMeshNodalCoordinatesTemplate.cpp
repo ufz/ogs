@@ -16,10 +16,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
-
-#include "VtkMeshNodalCoordinatesTemplate.h"
+#include "InSituLib/VtkMeshNodalCoordinatesTemplate.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 TEST(InSituLibNodalCoordinates, Init)
 {

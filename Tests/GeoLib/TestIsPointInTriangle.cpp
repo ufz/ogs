@@ -11,7 +11,7 @@
 
 #include "gtest/gtest.h"
 
-#include "AnalyticalGeometry.h"
+#include "GeoLib/AnalyticalGeometry.h"
 
 TEST(GeoLib, IsPointInTriangle)
 {

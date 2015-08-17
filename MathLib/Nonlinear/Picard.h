@@ -13,7 +13,7 @@
 #ifndef MATHLIB_NONLINEAR_PICARD_H_
 #define MATHLIB_NONLINEAR_PICARD_H_
 
-#include "LinAlg/VectorNorms.h"
+#include "MathLib/LinAlg/VectorNorms.h"
 
 namespace MathLib
 {

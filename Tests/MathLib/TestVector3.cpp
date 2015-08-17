@@ -13,8 +13,8 @@
 
 #include "gtest/gtest.h"
 
-#include "Point.h"
-#include "Vector3.h"
+#include "MathLib/Vector3.h"
+#include "GeoLib/Point.h"
 
 using namespace MathLib;
 

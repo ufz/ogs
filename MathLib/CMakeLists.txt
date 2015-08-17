@@ -51,10 +51,6 @@ endif ()
 GET_SOURCE_FILES(SOURCES_NONLINEAR Nonlinear)
 set(SOURCES ${SOURCES} ${SOURCES_NONLINEAR})
 
-include_directories(
-	.
-)
-
 if(METIS_FOUND)
 	include_directories(${METIS_INCLUDE_DIR})
 endif()

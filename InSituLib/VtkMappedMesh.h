@@ -20,8 +20,6 @@
 #include <vtkObject.h>
 #include <vtkMappedUnstructuredGrid.h>
 
-#include "MeshEnums.h"
-
 class vtkGenericCell;
 namespace MeshLib {
 	class Element;

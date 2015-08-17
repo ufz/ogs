@@ -15,14 +15,14 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
+#include "MathLib/MathTools.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "MeshEditing/DuplicateMeshComponents.h"
-#include "MeshEditing/RemoveMeshComponents.h"
-#include "MeshGenerators/MeshGenerator.h"
-#include "MeshQuality/MeshValidation.h"
-#include "MathTools.h"
 
 TEST(MeshLib, Duplicate)
 {

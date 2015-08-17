@@ -13,8 +13,8 @@
 
 #include "gtest/gtest.h"
 
-#include "Point.h"
-#include "Polygon.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
 
 /**
  * Polygon:

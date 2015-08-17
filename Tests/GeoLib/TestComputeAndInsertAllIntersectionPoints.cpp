@@ -14,10 +14,10 @@
 
 #include "gtest/gtest.h"
 
-#include "Point.h"
-#include "Polyline.h"
-#include "GEOObjects.h"
-#include "AnalyticalGeometry.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polyline.h"
 
 TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 {

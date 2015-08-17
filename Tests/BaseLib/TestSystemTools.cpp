@@ -15,7 +15,7 @@
 // ** INCLUDES **
 #include "gtest/gtest.h"
 
-#include "SystemTools.h"
+#include "BaseLib/SystemTools.h"
 
 TEST(BaseLib, EndianLittle) {
     bool isLittle = false;

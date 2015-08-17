@@ -18,7 +18,7 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Grid.h"
 
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
 TEST(GeoLib, InsertZeroPointsInGrid)
 {

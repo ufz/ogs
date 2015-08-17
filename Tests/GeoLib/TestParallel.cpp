@@ -11,10 +11,8 @@
 
 #include "gtest/gtest.h"
 
-#include "AnalyticalGeometry.h"
-
-// MathLib
-#include "Vector3.h"
+#include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/Vector3.h"
 
 TEST(GeoLib, TestParallel)
 {

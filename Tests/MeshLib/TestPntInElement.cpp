@@ -15,16 +15,16 @@
 
 #include "GeoLib/Point.h"
 
-#include "Mesh.h"
-#include "Node.h"
-#include "MeshEditing/MeshRevision.h"
-#include "Elements/Element.h"
-#include "Elements/Tri.h"
-#include "Elements/Quad.h"
-#include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Prism.h"
 
 
 std::vector<MeshLib::Node*> createNodes()

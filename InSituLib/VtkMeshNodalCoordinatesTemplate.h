@@ -20,6 +20,11 @@
 #include <vtkTypeTemplate.h>    // For templated vtkObject API
 #include <vtkObjectFactory.h>   // for vtkStandardNewMacro
 
+namespace MeshLib
+{
+	class Node;
+}
+
 namespace InSituLib
 {
 

@@ -12,18 +12,16 @@
  *
  */
 
-// ** INCLUDES **
-#include "gtest/gtest.h"
-
-// std lib
 #include <cstdlib>
 #include <ctime>
 #include <list>
 #include <iostream>
 
+#include "gtest/gtest.h"
+
+#include "GeoLib/AABB.h"
+#include "GeoLib/Point.h"
 #include "MathLib/Point3d.h"
-#include "Point.h"
-#include "AABB.h"
 
 TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 {

@@ -11,11 +11,11 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <gtest/gtest.h>
-
 #include <limits>
 
-#include "LinAlg/Dense/GlobalDenseMatrix.h"
+#include <gtest/gtest.h>
+
+#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 
 
 TEST(MathLib, GlobalDenseMatrix)

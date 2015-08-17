@@ -18,10 +18,9 @@
 
 #include "gtest/gtest.h"
 
-#include "Mesh.h"
-#include "MeshGenerators/MeshGenerator.h"
-
-#include "VtkMappedPropertyVectorTemplate.h"
+#include "InSituLib/VtkMappedPropertyVectorTemplate.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(InSituLibMappedPropertyVector, Double)
