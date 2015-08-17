@@ -46,8 +46,8 @@ public:
 	 * (in the average) should be a power of two (since std::vector objects resize itself
 	 * with this step size).
 	 *
-	 * @param pnts (input) the points that are managed with the Grid
-	 * @param max_num_per_grid_cell (input) max number per grid cell in the average (default 512)
+	 * @param first, last the range of elements to examine
+	 * @param items_per_cell (input) max number per grid cell in the average (default 512)
 	 *
 	 */
 	template <typename InputIterator>
@@ -71,7 +71,7 @@ public:
 	 * If there is not such a point, i.e., all the searched grid cells do not contain any
 	 * POINT object a nullptr is returned.
 	 *
-	 * @param pnt a field that holds the coordinates of the point
+	 * @param pnt search point
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or nullptr
 	 */
@@ -87,7 +87,7 @@ public:
 	 *
 	 * @param center (input) the center point of the axis aligned cube
 	 * @param half_len (input) half of the edge length of the axis aligned cube
-	 * @param pnts (output) vector of vectors of points within grid cells that intersects
+	 * @return vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
 	template <typename P>
@@ -117,10 +117,10 @@ private:
 	 * the point is located outside of the bounding box the coordinates of the
 	 * grid cell on the border that is nearest to given point will be returned.
 	 * @param pnt (input) the coordinates of the point
-	 * @param coords (output) the coordinates of the grid cell
+	 * @return the coordinates of the grid cell
 	 */
 	template <typename T>
-	inline std::array<std::size_t,3> getGridCoords(T const& pnt) const;
+	std::array<std::size_t,3> getGridCoords(T const& pnt) const;
 
 	/**
 	 *
@@ -148,13 +148,13 @@ private:
 	 *	4		3,0,4,7 left
 	 *	5		4,5,6,7 top
 	 * @param pnt (input) coordinates of the point
-	 * @param dists (output) squared distances of the point to the faces
+	 * @param coordinates of the grid cell
+	 * @return squared distances of the point to the faces of the grid cell
 	 * ordered in the same sequence as above described
-	 * @param coords coordinates of the grid cell
 	 */
 	template <typename P>
 	std::array<double, 6> getPointCellBorderDistances(
-		P const& pnt, std::array<std::size_t,3> const& coords) const;
+		P const& pnt, std::array<std::size_t,3> const& coordinates) const;
 
 	template <typename P>
 	bool calcNearestPointInGridCell(P const& pnt,
