@@ -421,41 +421,33 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 		std::size_t offset(1);
 
 		while (nearest_pnt == nullptr) {
-			std::array<std::size_t,3> tmp_coords;
-			if (coords[0] < offset) {
-				tmp_coords[0] = 0;
-			} else {
-				tmp_coords[0] = coords[0] - offset;
-			}
-			for (; tmp_coords[0] < coords[0] + offset; tmp_coords[0]++) {
-				if (coords[1] < offset) {
-					tmp_coords[1] = 0;
-				} else {
-					tmp_coords[1] = coords[1] - offset;
-				}
-				for (; tmp_coords[1] < coords[1] + offset; tmp_coords[1]++) {
-					if (coords[2] < offset) {
-						tmp_coords[2] = 0;
-					} else {
-						tmp_coords[2] = coords[2] - offset;
-					}
-					for (; tmp_coords[2] < coords[2] + offset; tmp_coords[2]++) {
+			std::array<std::size_t,3> ijk{{
+				coords[0]<offset ? 0 : coords[0]-offset,
+				coords[1]<offset ? 0 : coords[1]-offset,
+				coords[2]<offset ? 0 : coords[2]-offset}};
+			for (; ijk[0]<coords[0]+offset; ijk[0]++) {
+				for (; ijk[1] < coords[1] + offset; ijk[1]++) {
+					for (; ijk[2] < coords[2] + offset; ijk[2]++) {
 						// do not check the origin grid cell twice
-						if (!(tmp_coords[0] == coords[0] && tmp_coords[1] == coords[1]
-						                && tmp_coords[2] == coords[2])) {
-							// check if temporary grid cell coordinates are valid
-							if (tmp_coords[0] < _n_steps[0] && tmp_coords[1] < _n_steps[1]
-							                && tmp_coords[2] < _n_steps[2]) {
-								if (calcNearestPointInGridCell(pnt, tmp_coords,
-								                               sqr_min_dist_tmp,
-								                               nearest_pnt_tmp)) {
-									if (sqr_min_dist_tmp < sqr_min_dist) {
-										sqr_min_dist = sqr_min_dist_tmp;
-										nearest_pnt = nearest_pnt_tmp;
-									}
-								}
-							} // valid grid cell coordinates
-						} // same element
+						if (ijk[0] == coords[0]
+							&& ijk[1] == coords[1]
+							&& ijk[2] == coords[2]) {
+							continue;
+						}
+						// check if temporary grid cell coordinates are valid
+						if (ijk[0] >= _n_steps[0]
+							|| ijk[1] >= _n_steps[1]
+							|| ijk[2] >= _n_steps[2]) {
+							continue;
+						}
+
+						if (calcNearestPointInGridCell(pnt, ijk,
+								sqr_min_dist_tmp, nearest_pnt_tmp)) {
+							if (sqr_min_dist_tmp < sqr_min_dist) {
+								sqr_min_dist = sqr_min_dist_tmp;
+								nearest_pnt = nearest_pnt_tmp;
+							}
+						}
 					} // end k
 				} // end j
 			} // end i
