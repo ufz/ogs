@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include "gtest/gtest.h"
+
 #include <memory>
 
 #include "GeoLib/Polyline.h"
