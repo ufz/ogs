@@ -24,6 +24,7 @@
 
 // MeshGeoToolsLib
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
+#include "MeshGeoToolsLib/MeshNodesOnPoint.h"
 #include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
@@ -47,6 +48,8 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
 
 MeshNodeSearcher::~MeshNodeSearcher()
 {
+	for (auto pointer : _mesh_nodes_on_points)
+		delete pointer;
 	for (auto pointer : _mesh_nodes_along_polylines)
 		delete pointer;
 	for (auto pointer : _mesh_nodes_along_surfaces)
@@ -59,8 +62,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	switch (geoObj.getGeoType()) {
 	case GeoLib::GEOTYPE::POINT:
 	{
-		boost::optional<std::size_t> node_id = this->getMeshNodeIDForPoint(*static_cast<const GeoLib::Point*>(&geoObj));
-		if (node_id) vec_nodes.push_back(*node_id);
+		vec_nodes = this->getMeshNodeIDsForPoint(*static_cast<const GeoLib::Point*>(&geoObj));
 		break;
 	}
 	case GeoLib::GEOTYPE::POLYLINE:
@@ -80,13 +82,10 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	return vec_nodes;
 }
 
-boost::optional<std::size_t> MeshNodeSearcher::getMeshNodeIDForPoint(GeoLib::Point const& pnt) const
+std::vector<std::size_t> const&
+MeshNodeSearcher::getMeshNodeIDsForPoint(GeoLib::Point const& pnt)
 {
-	const MeshLib::Node* found = _mesh_grid.getNearestPoint(pnt);
-	if (found)
-		return found->getID();
-	else
-		return boost::none;
+	return getMeshNodesOnPoint(pnt).getNodeIDs();
 }
 
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
@@ -98,6 +97,20 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(GeoLib::Surface const& sfc)
 {
 	return getMeshNodesAlongSurface(sfc).getNodeIDs();
+}
+
+MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(GeoLib::Point const& pnt)
+{
+	std::vector<MeshNodesOnPoint*>::const_iterator it(_mesh_nodes_on_points.begin());
+	for (; it != _mesh_nodes_on_points.end(); ++it) {
+		if (&(*it)->getPoint() == &pnt) {
+			return *(*it);
+		}
+	}
+
+	_mesh_nodes_on_points.push_back(
+			new MeshNodesOnPoint(_mesh, _mesh_grid, pnt, _search_length, _search_all_nodes));
+	return *_mesh_nodes_on_points.back();
 }
 
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(GeoLib::Polyline const& ply)
