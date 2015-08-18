@@ -64,7 +64,7 @@ protected:
 	Mesh* _hex_mesh;
 };
 
-TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch2)
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
 {
 	double _dx = _geometric_size / _number_of_subdivisions_per_direction;
 	double dx_half = _dx*0.5;
@@ -77,27 +77,22 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch2)
 		search_length);
 
 	GeoLib::Point p1(0.0, 0.0, 0.0);
-	{
-		EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p1).size());
-		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p1)[0]);
-	}
+	EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p1).size());
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p1)[0]);
+
 	GeoLib::Point p2(dx_half*0.99, 0.0, 0.0);
-	{
-		EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p2).size());
-		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p2)[0]);
-	}
+	EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p2).size());
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p2)[0]);
+
 	GeoLib::Point p3(dx_half, 0.0, 0.0);
-	{
-		EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p3).size());
-	}
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p3).size());
+
 	GeoLib::Point p4(dx_half*1.01, 0.0, 0.0);
-	{
-		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4).size());
-		ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4)[0]);
-	}
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4).size());
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4)[0]);
 }
 
-TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
 {
 	ASSERT_TRUE(_quad_mesh != nullptr);
 	// 1 create a geometry
