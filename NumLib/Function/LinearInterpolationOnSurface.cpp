@@ -71,7 +71,7 @@ double LinearInterpolationOnSurface::interpolateInTri(
 		pnts.emplace_back(*tri.getPoint(i));
 	pnts.emplace_back(pnt, -1);
 	std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2], &pnts[3]}};
-	GeoLib::rotatePointsToXY(p_pnts);
+	GeoLib::rotatePointsToXY(p_pnts.begin(), p_pnts.begin()+3, p_pnts.begin(), p_pnts.end());
 
 	GeoLib::Point const& v1(pnts[0]);
 	GeoLib::Point const& v2(pnts[1]);

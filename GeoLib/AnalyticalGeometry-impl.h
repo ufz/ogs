@@ -10,27 +10,35 @@
 namespace GeoLib
 {
 
-template <class T_POINT>
-void getNewellPlane (const std::vector<T_POINT*>& pnts,
+template <typename InputIterator>
+void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
                      MathLib::Vector3 &plane_normal,
                      double& d)
 {
     d = 0;
     MathLib::Vector3 centroid;
-    std::size_t n_pnts(pnts.size());
-    for (std::size_t i(n_pnts - 1), j(0); j < n_pnts; i = j, j++) {
-        plane_normal[0] += ((*(pnts[i]))[1] - (*(pnts[j]))[1])
-                           * ((*(pnts[i]))[2] + (*(pnts[j]))[2]); // projection on yz
-        plane_normal[1] += ((*(pnts[i]))[2] - (*(pnts[j]))[2])
-                           * ((*(pnts[i]))[0] + (*(pnts[j]))[0]); // projection on xz
-        plane_normal[2] += ((*(pnts[i]))[0] - (*(pnts[j]))[0])
-                           * ((*(pnts[i]))[1] + (*(pnts[j]))[1]); // projection on xy
+    std::size_t n_pnts(std::distance(pnts_begin, pnts_end));
+    for (auto i=std::prev(pnts_end), j=pnts_begin; j!=pnts_end; i = j, ++j) {
+        plane_normal[0] += ((*(*i))[1] - (*(*j))[1])
+                           * ((*(*i))[2] + (*(*j))[2]); // projection on yz
+        plane_normal[1] += ((*(*i))[2] - (*(*j))[2])
+                           * ((*(*i))[0] + (*(*j))[0]); // projection on xz
+        plane_normal[2] += ((*(*i))[0] - (*(*j))[0])
+                           * ((*(*i))[1] + (*(*j))[1]); // projection on xy
 
-        centroid += *(pnts[j]);
+        centroid += *(*j);
     }
 
     plane_normal.normalize();
     d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+}
+
+template <class T_POINT>
+void getNewellPlane (const std::vector<T_POINT*>& pnts,
+                     MathLib::Vector3 &plane_normal,
+                     double& d)
+{
+    getNewellPlane(pnts.begin(), pnts.end(), plane_normal, d);
 }
 
 template <class T_POINT>
