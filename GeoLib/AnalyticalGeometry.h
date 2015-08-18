@@ -61,7 +61,7 @@ Orientation getOrientation (const GeoLib::Point* p0,
  * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
  * \cite Ericson:2004:RCD:1121584 .
  * @param pnts_begin Iterator pointing to the initial point of a closed polyline describing a polygon
- * @param pnts_end Iterator pointing to the end point of a closed polyline describing a polygon
+ * @param pnts_end Iterator pointing to the element following the last point of a closed polyline describing a polygon
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
  */
@@ -126,7 +126,7 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts_begin Iterator pointing to the initial element in a vector of points to be rotated
- * @param pnts_end Iterator pointing to the final element in a vector of points to be rotated
+ * @param pnts_end Iterator pointing to the element following the last element in a vector of points to be rotated
  */
 void rotatePoints(
         MathLib::DenseMatrix<double> const& rot_mat,
@@ -150,9 +150,9 @@ void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
 /**
  * rotate points to X-Y plane
  * @param p_pnts_begin Iterator pointing to the initial element in a vector of points used for computing a rotation matrix
- * @param p_pnts_end Iterator pointing to the final element in a vector of points used for computing a rotation matrix
+ * @param p_pnts_end Iterator pointing to the element following the last point in a vector of points used for computing a rotation matrix
  * @param r_pnts_begin Iterator pointing to the initial element in a vector of points to be rotated
- * @param r_pnts_end Iterator pointing to the final element in a vector of points to be rotated
+ * @param r_pnts_end Iterator pointing to the element following the last point in a vector of points to be rotated
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
