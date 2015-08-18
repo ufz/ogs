@@ -15,22 +15,25 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
                      MathLib::Vector3 &plane_normal,
                      double& d)
 {
-    d = 0;
     MathLib::Vector3 centroid;
-    std::size_t n_pnts(std::distance(pnts_begin, pnts_end));
     for (auto i=std::prev(pnts_end), j=pnts_begin; j!=pnts_end; i = j, ++j) {
-        plane_normal[0] += ((*(*i))[1] - (*(*j))[1])
-                           * ((*(*i))[2] + (*(*j))[2]); // projection on yz
-        plane_normal[1] += ((*(*i))[2] - (*(*j))[2])
-                           * ((*(*i))[0] + (*(*j))[0]); // projection on xz
-        plane_normal[2] += ((*(*i))[0] - (*(*j))[0])
-                           * ((*(*i))[1] + (*(*j))[1]); // projection on xy
+        auto &pt_i = *(*i);
+        auto &pt_j = *(*j);
+        plane_normal[0] += (pt_i[1] - pt_j[1])
+                           * (pt_i[2] + pt_j[2]); // projection on yz
+        plane_normal[1] += (pt_i[2] - pt_j[2])
+                           * (pt_i[0] + pt_j[0]); // projection on xz
+        plane_normal[2] += (pt_i[0] - pt_j[0])
+                           * (pt_i[1] + pt_j[1]); // projection on xy
 
-        centroid += *(*j);
+        centroid += pt_j;
     }
 
     plane_normal.normalize();
-    d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+    auto n_pnts(std::distance(pnts_begin, pnts_end));
+    assert(n_pnts > 2);
+    if (n_pnts > 0)
+        d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
 }
 
 template <class T_POINT>
@@ -112,60 +115,99 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
 
 template <class T_MATRIX>
 void computeRotationMatrixToXY(MathLib::Vector3 const& n,
-		T_MATRIX & rot_mat)
+        T_MATRIX & rot_mat)
 {
-	// check if normal points already in the right direction
-	if (sqrt(n[0]*n[0]+n[1]*n[1]) == 0) {
-		rot_mat(0,0) = 1.0;
-		rot_mat(0,1) = 0.0;
-		rot_mat(0,2) = 0.0;
-		rot_mat(1,0) = 0.0;
-		rot_mat(1,1) = 1.0;
-		rot_mat(1,2) = 0.0;
-		rot_mat(2,0) = 0.0;
-		rot_mat(2,1) = 0.0;
-		rot_mat(2,2) = 1.0;
-		return;
-	}
+    // check if normal points already in the right direction
+    if (sqrt(n[0]*n[0]+n[1]*n[1]) == 0) {
+        rot_mat(0,0) = 1.0;
+        rot_mat(0,1) = 0.0;
+        rot_mat(0,2) = 0.0;
+        rot_mat(1,0) = 0.0;
+        rot_mat(1,1) = 1.0;
+        rot_mat(1,2) = 0.0;
+        rot_mat(2,0) = 0.0;
+        rot_mat(2,1) = 0.0;
+        rot_mat(2,2) = 1.0;
+        return;
+    }
 
-	// sqrt (n_1^2 + n_3^2)
-	double const h0(sqrt(n[0]*n[0]+n[2]*n[2]));
+    // sqrt (n_1^2 + n_3^2)
+    double const h0(sqrt(n[0]*n[0]+n[2]*n[2]));
 
-	// In case the x and z components of the normal are both zero the rotation
-	// to the x-z-plane is not required, i.e. only the rotation in the z-axis is
-	// required. The angle is either pi/2 or 3/2*pi. Thus the components of
-	// rot_mat are as follows.
-	if (h0 < std::numeric_limits<double>::epsilon()) {
-		rot_mat(0,0) = 1.0;
-		rot_mat(0,1) = 0.0;
-		rot_mat(0,2) = 0.0;
-		rot_mat(1,0) = 0.0;
-		rot_mat(1,1) = 0.0;
-		if (n[1] > 0)
-			rot_mat(1,2) = -1.0;
-		else
-			rot_mat(1,2) = 1.0;
-		rot_mat(2,0) = 0.0;
-		if (n[1] > 0)
-			rot_mat(2,1) = 1.0;
-		else
-			rot_mat(2,1) = -1.0;
-		rot_mat(2,2) = 0.0;
-		return;
-	}
+    // In case the x and z components of the normal are both zero the rotation
+    // to the x-z-plane is not required, i.e. only the rotation in the z-axis is
+    // required. The angle is either pi/2 or 3/2*pi. Thus the components of
+    // rot_mat are as follows.
+    if (h0 < std::numeric_limits<double>::epsilon()) {
+        rot_mat(0,0) = 1.0;
+        rot_mat(0,1) = 0.0;
+        rot_mat(0,2) = 0.0;
+        rot_mat(1,0) = 0.0;
+        rot_mat(1,1) = 0.0;
+        if (n[1] > 0)
+            rot_mat(1,2) = -1.0;
+        else
+            rot_mat(1,2) = 1.0;
+        rot_mat(2,0) = 0.0;
+        if (n[1] > 0)
+            rot_mat(2,1) = 1.0;
+        else
+            rot_mat(2,1) = -1.0;
+        rot_mat(2,2) = 0.0;
+        return;
+    }
 
-	double h1(1 / n.getLength());
+    double h1(1 / n.getLength());
 
-	// general case: calculate entries of rotation matrix
-	rot_mat(0, 0) = n[2] / h0;
-	rot_mat(0, 1) = 0;
-	rot_mat(0, 2) = - n[0] / h0;
-	rot_mat(1, 0) = - n[1]*n[0]/h0 * h1;
-	rot_mat(1, 1) = h0 * h1;
-	rot_mat(1, 2) = - n[1]*n[2]/h0 * h1;
-	rot_mat(2, 0) = n[0] * h1;
-	rot_mat(2, 1) = n[1] * h1;
-	rot_mat(2, 2) = n[2] * h1;
+    // general case: calculate entries of rotation matrix
+    rot_mat(0, 0) = n[2] / h0;
+    rot_mat(0, 1) = 0;
+    rot_mat(0, 2) = - n[0] / h0;
+    rot_mat(1, 0) = - n[1]*n[0]/h0 * h1;
+    rot_mat(1, 1) = h0 * h1;
+    rot_mat(1, 2) = - n[1]*n[2]/h0 * h1;
+    rot_mat(2, 0) = n[0] * h1;
+    rot_mat(2, 1) = n[1] * h1;
+    rot_mat(2, 2) = n[2] * h1;
+}
+
+template <typename InputIterator>
+void rotatePoints(
+        MathLib::DenseMatrix<double> const& rot_mat,
+        InputIterator pnts_begin, InputIterator pnts_end)
+{
+    double* tmp (nullptr);
+    for (auto it=pnts_begin; it!=pnts_end; ++it) {
+        tmp = rot_mat * (*it)->getCoords();
+        for (std::size_t j(0); j < 3; j++)
+            (*(*it))[j] = tmp[j];
+        delete [] tmp;
+    }
+}
+
+template <typename InputIterator1, typename InputIterator2>
+void rotatePointsToXY(
+        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
+        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end)
+{
+    assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
+
+    // calculate supporting plane
+    MathLib::Vector3 plane_normal;
+    double d;
+    // compute the plane normal
+    GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end, plane_normal, d);
+
+    const double tol (std::numeric_limits<double>::epsilon());
+    if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
+        // rotate copied points into x-y-plane
+        MathLib::DenseMatrix<double> rot_mat(3, 3);
+        computeRotationMatrixToXY(plane_normal, rot_mat);
+        rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
+    }
+
+    for (auto it=r_pnts_begin; it!=r_pnts_end; ++it)
+        (*(*it))[2] = 0.0; // should be -= d but there are numerical errors
 }
 
 } // end namespace GeoLib

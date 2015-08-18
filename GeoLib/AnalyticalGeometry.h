@@ -128,9 +128,10 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
  * @param pnts_begin Iterator pointing to the initial element in a vector of points to be rotated
  * @param pnts_end Iterator pointing to the element following the last element in a vector of points to be rotated
  */
+template <typename InputIterator>
 void rotatePoints(
         MathLib::DenseMatrix<double> const& rot_mat,
-        std::vector<GeoLib::Point*>::iterator pnts_begin, std::vector<GeoLib::Point*>::iterator pnts_end);
+        InputIterator pnts_begin, InputIterator pnts_end);
 
 /**
  * rotate points according to the rotation matrix
@@ -156,9 +157,10 @@ void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
+template <typename InputIterator1, typename InputIterator2>
 void rotatePointsToXY(
-        std::vector<GeoLib::Point*>::iterator p_pnts_begin, std::vector<GeoLib::Point*>::iterator p_pnts_end,
-        std::vector<GeoLib::Point*>::iterator r_pnts_begin, std::vector<GeoLib::Point*>::iterator r_pnts_end);
+        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
+        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end);
 
 /**
  * rotate points to X-Z plane

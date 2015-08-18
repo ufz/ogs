@@ -354,46 +354,9 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::De
 	rot_mat(2, 2) = -sqrt(h0) * h2;
 }
 
-void rotatePoints(
-        MathLib::DenseMatrix<double> const& rot_mat,
-        std::vector<GeoLib::Point*>::iterator pnts_begin, std::vector<GeoLib::Point*>::iterator pnts_end)
-{
-	double* tmp (nullptr);
-	for (auto it=pnts_begin; it!=pnts_end; ++it) {
-		tmp = rot_mat * (*it)->getCoords();
-		for (std::size_t j(0); j < 3; j++)
-			(*(*it))[j] = tmp[j];
-		delete [] tmp;
-	}
-}
-
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
 	rotatePoints(rot_mat, pnts.begin(), pnts.end());
-}
-
-void rotatePointsToXY(
-        std::vector<GeoLib::Point*>::iterator p_pnts_begin, std::vector<GeoLib::Point*>::iterator p_pnts_end,
-        std::vector<GeoLib::Point*>::iterator r_pnts_begin, std::vector<GeoLib::Point*>::iterator r_pnts_end)
-{
-	assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
-
-	// calculate supporting plane
-	MathLib::Vector3 plane_normal;
-	double d;
-	// compute the plane normal
-	GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end, plane_normal, d);
-
-	const double tol (std::numeric_limits<double>::epsilon());
-	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
-		// rotate copied points into x-y-plane
-		MathLib::DenseMatrix<double> rot_mat(3, 3);
-		computeRotationMatrixToXY(plane_normal, rot_mat);
-		rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
-	}
-
-	for (auto it=r_pnts_begin; it!=r_pnts_end; ++it)
-		(*(*it))[2] = 0.0; // should be -= d but there are numerical errors
 }
 
 void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
