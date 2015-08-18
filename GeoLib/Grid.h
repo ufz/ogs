@@ -523,7 +523,7 @@ void Grid<POINT>::initNumberOfSteps(std::size_t n_per_cell,
 	case 1: // 1d cases
 		for (std::size_t k(0); k<3; ++k) {
 			if (dim[k]) {
-				_n_steps[k] = sc_ceil(n_pnts/n_per_cell);
+				_n_steps[k] = sc_ceil(static_cast<double>(n_pnts)/n_per_cell);
 			}
 		}
 	}
