@@ -411,7 +411,8 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)
 {
 	std::size_t n ((*polygon_it)->getNumberOfPoints() - 1), idx0 (0), idx1(0);
-	std::size_t* id_vec (new std::size_t[n]), *perm (new std::size_t[n]);
+	std::vector<std::size_t> id_vec(n);
+	std::vector<std::size_t> perm(n);
 	for (std::size_t k(0); k < n; k++)
 	{
 		id_vec[k] = (*polygon_it)->getPointID (k);
@@ -425,8 +426,6 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 		{
 			idx0 = perm[k];
 			idx1 = perm[k + 1];
-			delete [] perm;
-			delete [] id_vec;
 
 			if (idx0 > idx1)
 				std::swap (idx0, idx1);
@@ -456,8 +455,6 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 
 			return;
 		}
-	delete [] perm;
-	delete [] id_vec;
 }
 
 GeoLib::Polygon* createPolygonFromCircle (GeoLib::Point const& middle_pnt, double radius,

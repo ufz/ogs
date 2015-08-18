@@ -42,7 +42,7 @@ MeshNodesAlongPolyline::MeshNodesAlongPolyline(
 	}
 
 	// sort the nodes along the polyline according to their distances
-	BaseLib::Quicksort<double> (_dist_of_proj_node_from_ply_start, 0,
+	BaseLib::quicksort<double> (_dist_of_proj_node_from_ply_start, 0,
 					_dist_of_proj_node_from_ply_start.size(), _msh_node_ids);
 }
 
