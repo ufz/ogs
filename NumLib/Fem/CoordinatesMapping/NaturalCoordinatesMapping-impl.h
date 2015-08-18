@@ -1,7 +1,4 @@
 /**
- * \author Norihiro Watanabe
- * \date   2013-08-13
- *
  * \copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -15,6 +12,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "MathLib/LinAlg/MatrixTools.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/CoordinateSystem.h"
 
@@ -74,7 +72,8 @@ inline void computeMappingMatrices(
         }
     }
 
-    shapemat.detJ = shapemat.J.determinant();
+    shapemat.detJ = MathLib::determinant(shapemat.J);
+
 #ifndef NDEBUG
     if (shapemat.detJ<=.0)
         ERR("***error: det|J|=%e is not positive.\n", shapemat.detJ);
@@ -108,14 +107,15 @@ inline void computeMappingMatrices(
 
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
-        shapemat.invJ = shapemat.J.inverse();
+        //shapemat.invJ.noalias() = shapemat.J.inverse();
+        MathLib::inverse(shapemat.J, shapemat.detJ, shapemat.invJ);
 
         auto const nnodes(shapemat.dNdr.cols());
         auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows()==ele.getDimension());
         const unsigned global_dim(ele_local_coord.getGlobalCoordinateSystem().getDimension());
         if (global_dim==ele_dim) {
-            shapemat.dNdx.topLeftCorner(ele_dim, nnodes) = shapemat.invJ * shapemat.dNdr;
+            shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
         } else {
             auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
             auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;

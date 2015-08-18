@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef MATRIXTOOLS_H_
-#define MATRIXTOOLS_H_
+#ifndef TEST_MATRIXTOOLS_H_
+#define TEST_MATRIXTOOLS_H_
 
 namespace FeTestData
 {
