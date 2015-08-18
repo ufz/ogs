@@ -75,6 +75,34 @@ void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::v
 		perm[i] = data[i].second;
 	}
 }
+
+template <typename T1, typename T2 = std::size_t>
+void quicksort(T1* & array, std::size_t beg, std::size_t end, T2* & perm)
+{
+	// Zip input arrays.
+	std::vector<std::pair<T1, T2>> data;
+	data.reserve(end-beg);
+	std::transform(array+beg, array+(end-beg), perm+beg,
+		std::back_inserter(data),
+		[](T1 const& t1, T2 const& t2)
+		{
+			return std::make_pair(t1, t2);
+		});
+
+	// Sort data using first element of the pair.
+	std::sort(data.begin(), data.end(),
+		[](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b)
+		{
+			return (a.first < b.first);
+		});
+
+	// Unzip sorted data.
+	for (std::size_t i = 0; i < data.size(); i++)
+	{
+		array[beg+i] = data[i].first;
+		perm[beg+i] = data[i].second;
+	}
+}
 } // end namespace BaseLib
 
 #endif /* QUICKSORT_H_ */
