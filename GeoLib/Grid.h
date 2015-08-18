@@ -215,8 +215,7 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 	InputIterator it(first);
 	while (it != last) {
 		std::array<std::size_t,3> coords(getGridCoords(*copyOrAddress(*it)));
-		if (coords[0] < _n_steps[0] && coords[1] < _n_steps[1]
-			&& coords[2] < _n_steps[2]) {
+		if (coords < _n_steps) {
 			std::size_t const pos(coords[0]+coords[1]*_n_steps[0]+coords[2]*n_plane);
 			_grid_cell_nodes_map[pos].push_back(const_cast<POINT*>(copyOrAddress(*it)));
 		} else {
