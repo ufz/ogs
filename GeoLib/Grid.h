@@ -183,7 +183,7 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 		_step_sizes({{0.0,0.0,0.0}}), _inverse_step_sizes({{0.0,0.0,0.0}}),
 		_grid_cell_nodes_map(nullptr)
 {
-	std::size_t n_pnts(std::distance(first, last));
+	auto const n_pnts(std::distance(first,last));
 
 	for (std::size_t k(0); k < 3; k++) {
 		// make the bounding box a little bit bigger,
@@ -197,7 +197,8 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 		 this->_max_pnt[1]-this->_min_pnt[1],
 		 this->_max_pnt[2]-this->_min_pnt[2]}};
 
-	initNumberOfSteps(max_num_per_grid_cell, n_pnts, delta);
+	assert(n_pnts >= 0);
+	initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
 
 	const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
 	_grid_cell_nodes_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
