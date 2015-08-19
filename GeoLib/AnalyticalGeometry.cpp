@@ -356,35 +356,12 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::De
 
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
 {
-	double* tmp (nullptr);
-	const std::size_t n_pnts(pnts.size());
-	for (std::size_t k(0); k < n_pnts; k++) {
-		tmp = rot_mat * pnts[k]->getCoords();
-		for (std::size_t j(0); j < 3; j++)
-			(*(pnts[k]))[j] = tmp[j];
-		delete [] tmp;
-	}
+	rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }
 
 void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
 {
-	assert(pnts.size()>2);
-	// calculate supporting plane
-	MathLib::Vector3 plane_normal;
-	double d;
-	// compute the plane normal
-	GeoLib::getNewellPlane(pnts, plane_normal, d);
-
-	const double tol (std::numeric_limits<double>::epsilon());
-	if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
-		// rotate copied points into x-y-plane
-		MathLib::DenseMatrix<double> rot_mat(3, 3);
-		computeRotationMatrixToXY(plane_normal, rot_mat);
-		rotatePoints(rot_mat, pnts);
-	}
-
-	for (std::size_t k(0); k<pnts.size(); k++)
-		(*(pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
+	rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
 }
 
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)

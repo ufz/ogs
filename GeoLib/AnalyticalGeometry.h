@@ -60,6 +60,21 @@ Orientation getOrientation (const GeoLib::Point* p0,
  * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane
  * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
  * \cite Ericson:2004:RCD:1121584 .
+ * @param pnts_begin Iterator pointing to the initial point of a closed polyline describing a polygon
+ * @param pnts_end Iterator pointing to the element following the last point of a closed polyline describing a polygon
+ * @param plane_normal the normal of the plane the polygon is located in
+ * @param d parameter from the plane equation
+ */
+template <typename InputIterator>
+void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
+                     MathLib::Vector3 &plane_normal,
+                     double& d);
+
+/**
+ * compute a supporting plane (represented by plane_normal and the value d) for the polygon
+ * Let \f$n\f$ be the plane normal and \f$d\f$ a parameter. Then for all points \f$p \in R^3\f$ of the plane
+ * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
+ * \cite Ericson:2004:RCD:1121584 .
  * @param pnts points of a closed polyline describing a polygon
  * @param plane_normal the normal of the plane the polygon is located in
  * @param d parameter from the plane equation
@@ -110,6 +125,17 @@ void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal,
 /**
  * rotate points according to the rotation matrix
  * @param rot_mat 3x3 dimensional rotation matrix
+ * @param pnts_begin Iterator pointing to the initial element in a vector of points to be rotated
+ * @param pnts_end Iterator pointing to the element following the last element in a vector of points to be rotated
+ */
+template <typename InputIterator>
+void rotatePoints(
+        MathLib::DenseMatrix<double> const& rot_mat,
+        InputIterator pnts_begin, InputIterator pnts_end);
+
+/**
+ * rotate points according to the rotation matrix
+ * @param rot_mat 3x3 dimensional rotation matrix
  * @param pnts vector of points
  */
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts);
@@ -121,6 +147,20 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
 void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+
+/**
+ * rotate points to X-Y plane
+ * @param p_pnts_begin Iterator pointing to the initial element in a vector of points used for computing a rotation matrix
+ * @param p_pnts_end Iterator pointing to the element following the last point in a vector of points used for computing a rotation matrix
+ * @param r_pnts_begin Iterator pointing to the initial element in a vector of points to be rotated
+ * @param r_pnts_end Iterator pointing to the element following the last point in a vector of points to be rotated
+ * Points are rotated using a rotation matrix computed from the first three points
+ * in the vector. Point coordinates are modified as a result of the rotation.
+ */
+template <typename InputIterator1, typename InputIterator2>
+void rotatePointsToXY(
+        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
+        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end);
 
 /**
  * rotate points to X-Z plane

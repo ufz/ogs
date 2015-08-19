@@ -69,12 +69,14 @@ double LinearInterpolationOnSurface::interpolateInTri(
 	std::vector<GeoLib::Point> pnts;
 	for (unsigned i=0; i<3; i++)
 		pnts.emplace_back(*tri.getPoint(i));
-	std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2]}};
-	GeoLib::rotatePointsToXY(p_pnts);
+	pnts.emplace_back(pnt, -1);
+	std::vector<GeoLib::Point*> p_pnts = {{&pnts[0], &pnts[1], &pnts[2], &pnts[3]}};
+	GeoLib::rotatePointsToXY(p_pnts.begin(), p_pnts.begin()+3, p_pnts.begin(), p_pnts.end());
 
 	GeoLib::Point const& v1(pnts[0]);
 	GeoLib::Point const& v2(pnts[1]);
 	GeoLib::Point const& v3(pnts[2]);
+	GeoLib::Point const& v_pnt(pnts[3]);
 	const double area = GeoLib::calcTriangleArea(v1, v2, v3);
 
 	if (area==.0) {
@@ -102,7 +104,7 @@ double LinearInterpolationOnSurface::interpolateInTri(
 
 	double val = .0;
 	for (unsigned i=0; i<3; i++)
-		val += (a[i]+b[i]*pnt[0]+c[i]*pnt[1]) * vertex_values[i];
+		val += (a[i]+b[i]*v_pnt[0]+c[i]*v_pnt[1]) * vertex_values[i];
 
 	return val;
 }
