@@ -36,6 +36,7 @@
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
+#include "Parameter.h"
 #include "ProcessVariable.h"
 
 namespace MeshLib
@@ -58,6 +59,7 @@ class GroundwaterFlowProcess : public Process
 public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
+            std::vector<std::unique_ptr<ParameterBase>> const& parameters,
             ConfigTree const& config)
         : Process(mesh)
     {

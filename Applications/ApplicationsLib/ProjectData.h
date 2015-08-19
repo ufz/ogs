@@ -98,7 +98,7 @@ public:
 				// here.
 				_processes.push_back(
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
-						*_mesh_vec[0], _process_variables, pc));
+						*_mesh_vec[0], _process_variables, _parameters, pc));
 			}
 		}
 	}
