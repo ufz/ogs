@@ -17,6 +17,7 @@
 #include "GMSHFixedMeshDensity.h"
 #include "GMSHAdaptiveMeshDensity.h"
 
+#include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
@@ -77,7 +78,6 @@ void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
     for (auto * polygon_tree : _children) {
         dynamic_cast<GMSHPolygonTree*>(polygon_tree)->insertPolyline(ply);
     }
-    _plys.push_back(ply);
 
     // calculate possible intersection points between the node polygon
     // (_node_polygon) and the given polyline ply
@@ -141,11 +141,58 @@ void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
                     ((*(ply->getPoint(k)))[i] + (*(ply->getPoint(k + 1)))[i]) /
                     2;
             }
+
+            checkIntersectionsSegmentExistingPolylines(ply, k);
+            n_segments = ply->getNumberOfSegments(); // update
+
             if (_node_polygon->isPntInPolygon(tmp_pnt)) {
                 ply->markSegment(k, true);
                 // insert line segment as constraint
                 _gmsh_lines_for_constraints.push_back(
                     new GMSHLine(ply->getPointID(k), ply->getPointID(k + 1)));
+            }
+        }
+    }
+
+    _plys.push_back(ply);
+}
+
+void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
+        GeoLib::PolylineWithSegmentMarker * ply,
+        std::size_t & ply_segment_number)
+{
+    GeoLib::Point const& a(*(ply->getPoint(ply_segment_number)));
+    GeoLib::Point const& b(*(ply->getPoint(ply_segment_number+1)));
+
+    for(GeoLib::PolylineWithSegmentMarker *const p : _plys) {
+        std::size_t n_segments(p->getNumberOfSegments());
+        GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
+        for (std::size_t k(0); k<n_segments; k++) {
+            GeoLib::Point s; // intersection point
+            if (GeoLib::lineSegmentIntersect(a, b, *(p->getPoint(k)),
+                                             *(p->getPoint(k+1)), s))
+            {
+                const std::size_t pnt_vec_size(pnt_vec.size());
+                // point id of new point in GEOObjects instance
+                const std::size_t pnt_id(pnt_vec.push_back(new GeoLib::Point(s)));
+                if (pnt_vec_size < pnt_vec.size()) { // case: new point
+                    // modify polyline already in this node
+                    p->insertPoint(k+1, pnt_id);
+                    n_segments++;
+                    // modify polyline
+                    ply->insertPoint(ply_segment_number+1, pnt_id);
+                } else { // case: point exists already in geometry
+                    // check if point is not alread in polyline p
+                    if (p->getPointID(k) != pnt_id && p->getPointID(k+1) != pnt_id) {
+                        p->insertPoint(k+1, pnt_id);
+                        n_segments++;
+                    }
+                    // check if point is not already in polyline ply
+                    if (ply->getPointID(ply_segment_number) != pnt_id
+                            && ply->getPointID(ply_segment_number+1) != pnt_id) {
+                        ply->insertPoint(ply_segment_number+1, pnt_id);
+                    }
+                }
             }
         }
     }

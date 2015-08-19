@@ -1,7 +1,7 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   Mar 27m 2012
+ * \date   Mar 27 2012
  * \brief  Definition of the GMSHPolygonTree class.
  *
  * \copyright
@@ -86,6 +86,8 @@ public:
 private:
     void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
     void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
+    void checkIntersectionsSegmentExistingPolylines(GeoLib::PolylineWithSegmentMarker * ply,
+            std::size_t & ply_segment_number);
 
     GeoLib::GEOObjects & _geo_objs;
     std::string const& _geo_name;
