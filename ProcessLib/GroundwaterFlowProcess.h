@@ -65,21 +65,24 @@ public:
     {
         DBUG("Create GroundwaterFlowProcess.");
 
-        // Find the corresponding process variable.
-        std::string const name = config.get<std::string>("process_variable");
+        // Process variable.
+        {
+            // Find the corresponding process variable.
+            std::string const name = config.get<std::string>("process_variable");
 
-        auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                [&name](ProcessVariable const& v) {
-                    return v.getName() == name;
-                });
+            auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                    [&name](ProcessVariable const& v) {
+                        return v.getName() == name;
+                    });
 
-        if (variable == variables.end())
-            ERR("Expected process variable \'%s\' not found in provided variables list.",
+            if (variable == variables.end())
+                ERR("Expected process variable \'%s\' not found in provided variables list.",
+                    name.c_str());
+
+            DBUG("Associate hydraulic_head with process variable \'%s\'.",
                 name.c_str());
-
-        DBUG("Associate hydraulic_head with process variable \'%s\'.",
-            name.c_str());
-        _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+            _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+        }
 
     }
 
