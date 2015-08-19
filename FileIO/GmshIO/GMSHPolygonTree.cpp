@@ -48,6 +48,25 @@ GMSHPolygonTree::~GMSHPolygonTree()
     delete _node_polygon;
 }
 
+void GMSHPolygonTree::markSharedSegments()
+{
+    if (_children.empty())
+        return;
+
+    if (_parent == nullptr)
+        return;
+
+    for (auto it(_children.begin()); it != _children.end(); it++) {
+        std::size_t const n_pnts((*it)->getPolygon()->getNumberOfPoints());
+        for (std::size_t k(1); k<n_pnts; k++) {
+            if (GeoLib::containsEdge(*(_parent->getPolygon()),
+                _node_polygon->getPointID(k-1),
+                _node_polygon->getPointID(k)))
+            static_cast<GeoLib::PolygonWithSegmentMarker*>(_node_polygon)->markSegment(k, true);
+        }
+    }
+}
+
 bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 {
     if (_node_polygon->isPntInPolygon(*station)) {

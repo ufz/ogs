@@ -43,6 +43,9 @@ public:
                     GMSHMeshDensityStrategy * mesh_density_strategy);
     virtual ~GMSHPolygonTree();
 
+    /** Mark the segments shared by several polygons. */
+    void markSharedSegments();
+
     /**
      * If the station point is inside the polygon, the method inserts the station into
      * the internal vector of stations. This method works recursive!

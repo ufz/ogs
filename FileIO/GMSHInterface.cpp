@@ -398,22 +398,9 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** compute and insert all intersection points between polylines
-    GeoLib::PointVec * pnt_vec(const_cast<GeoLib::PointVec*>(_geo_objs.getPointVecObj(_gmsh_geo_name)));
-    for (auto it0(merged_plys->begin()); it0 != merged_plys->end(); it0++) {
-        auto it1(it0);
-        it1++;
-        for (; it1 != merged_plys->end(); it1++) {
-            std::vector<std::tuple<std::size_t, std::size_t, GeoLib::Point>> intersection_info(
-                GeoLib::computeIntersectionPoints(*(*it0), *(*it1)));
-
-            for (auto it(intersection_info.begin()); it != intersection_info.end(); it++) {
-                // add point to GeoLib::PointVec object
-                std::size_t const id(pnt_vec->push_back(new GeoLib::Point(std::get<2>(*it))));
-                (*it0)->insertPoint(std::get<0>(*it)+1, id); // insert intersection pnt in ply
-                (*it1)->insertPoint(std::get<1>(*it)+1, id); // insert intersection pnt in ply
-            }
-        }
-    }
+    GeoLib::PointVec &pnt_vec(*const_cast<GeoLib::PointVec*>(_geo_objs.getPointVecObj(_gmsh_geo_name)));
+    GeoLib::computeAndInsertAllIntersectionPoints(pnt_vec,
+        *(const_cast<std::vector<GeoLib::Polyline*>*>(merged_plys)));
 
     // *** compute topological hierarchy of polygons
     for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
@@ -430,6 +417,11 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
     DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - detected %d polygons.", _polygon_tree_list.size());
     GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
     DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - calculated %d polygon trees.", _polygon_tree_list.size());
+
+    // *** Mark in each polygon tree the segments shared by two polygons.
+    for (auto it(_polygon_tree_list.begin()); it != _polygon_tree_list.end(); it++) {
+        (*it)->markSharedSegments();
+    }
 
     // *** insert stations and polylines (except polygons) in the appropriate object of
     //     class GMSHPolygonTree
