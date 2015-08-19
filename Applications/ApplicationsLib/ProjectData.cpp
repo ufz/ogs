@@ -61,6 +61,9 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 	// process variables
 	parseProcessVariables(project_config.get_child("process_variables"));
 
+	// parameters
+	parseParameters(project_config.get_child("parameters"));
+
 	// processes
 	parseProcesses(project_config.get_child("processes"));
 
@@ -187,6 +190,55 @@ void ProjectData::parseProcessVariables(
 		ConfigTree const& var_config = it.second;
 		// TODO Extend to referenced meshes.
 		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
+	}
+}
+
+void ProjectData::parseParameters(ConfigTree const& parameters_config)
+{
+	using namespace ProcessLib;
+
+	DBUG("Reading parameters:");
+	for (auto pc_it : parameters_config)
+	{
+		// Skip non-parameter section.
+		if (pc_it.first != "parameter")
+			continue;
+		ConfigTree const& parameter_config = pc_it.second;
+
+		auto name = parameter_config.get_optional<std::string>("name");
+		if (!name)
+		{
+			ERR("The parameter config does not provide a name tag.");
+			std::abort();
+		}
+
+		auto type = parameter_config.get_optional<std::string>("type");
+		if (!type)
+		{
+			ERR("Could not find required parameter type.");
+			std::abort();
+		}
+
+		// Create parameter based on the provided type.
+		if (*type == "Constant")
+		{
+			INFO("ConstantParameter: %s.", name->c_str());
+			_parameters.push_back(createConstParameter(parameter_config));
+			_parameters.back()->name = *name;
+		}
+		else if (*type == "MeshProperty")
+		{
+			INFO("MeshPropertyParameter: %s", name->c_str());
+			_parameters.push_back(
+			    createMeshPropertyParameter(parameter_config, *_mesh_vec[0]));
+			_parameters.back()->name = *name;
+		}
+		else
+		{
+			ERR("Cannot construct property of given type \'%s\'.",
+			    type->c_str());
+			std::abort();
+		}
 	}
 }
 
