@@ -27,7 +27,8 @@ class ElementStatus
 
 public:
 	/// Constructor assuming all nodes and elements
-	explicit ElementStatus(MeshLib::Mesh const*const mesh);
+	explicit ElementStatus(MeshLib::Mesh const* const mesh,
+	                       bool hasAnyInactive = false);
 
 	/// Constructor taking a vector of inactive material IDs
 	ElementStatus(MeshLib::Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs);
@@ -50,8 +51,6 @@ public:
 	/// Returns the total number of active elements
 	std::size_t getNActiveElements() const;
 
-	~ElementStatus() {}
-
 protected:
 	/// Sets the status of element i
 	void setElementStatus(std::size_t i, bool status);
@@ -63,7 +62,7 @@ protected:
 	/// Node status for each mesh node (value = number of active elements connected to node, 0 means inactive)
 	std::vector<unsigned char> _active_nodes;
 
-	bool _hasAnyInactive;
+	bool const _hasAnyInactive;
 	std::vector<MeshLib::Node*> _vec_active_nodes;
 	std::vector<MeshLib::Element*> _vec_active_eles;
 
@@ -72,4 +71,3 @@ protected:
 } /* namespace */
 
 #endif /* ELEMENTSTATUS_H_ */
-
