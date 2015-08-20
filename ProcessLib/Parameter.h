@@ -46,9 +46,6 @@ struct Parameter : public ParameterBase
 	virtual ~Parameter() = default;
 
 	virtual ReturnType operator()(Args&&... args) const = 0;
-	virtual std::size_t numberOfTuples() const = 0;
-	virtual std::size_t tupleSize() const = 0;
-	virtual std::vector<ReturnType> getTuple(Args&&... args) const = 0;
 };
 
 /// Single, constant value parameter.
@@ -63,21 +60,6 @@ struct ConstParameter final
 	ReturnType operator()(MeshLib::Element const&) const override
 	{
 		return _value;
-	}
-
-	std::size_t numberOfTuples() const override
-	{
-		return 1;
-	}
-
-	std::size_t tupleSize() const override
-	{
-		return 1;
-	}
-
-	std::vector<ReturnType> getTuple(MeshLib::Element const&) const override
-	{
-		return {_value};
 	}
 
 private:
@@ -100,23 +82,6 @@ struct MeshPropertyParameter final
 	ReturnType operator()(MeshLib::Element const& e) const override
 	{
 		return _property[e.getID()];
-	}
-
-	std::size_t numberOfTuples() const override
-	{
-		return _property.size();
-	}
-
-	std::size_t tupleSize() const override
-	{
-		return _property.getTupleSize();
-	}
-
-	std::vector<ReturnType> getTuple(MeshLib::Element const& e) const override
-	{
-		auto const it = &_property[e.getID() * tupleSize()];
-
-		return std::vector<ReturnType>(it, it + tupleSize());
 	}
 
 private:
