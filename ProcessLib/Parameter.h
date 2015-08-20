@@ -27,7 +27,7 @@ class PropertyVector;
 namespace ProcessLib
 {
 /// Base class for all parameters, not an interface class. This avoids using of
-/// void* when storing parameters and convinient destruction.
+/// void* when storing parameters and convenient destruction.
 /// Its property name helps addressing the right parameter.
 struct ParameterBase
 {
