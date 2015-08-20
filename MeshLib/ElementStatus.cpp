@@ -23,9 +23,9 @@ namespace MeshLib {
 ElementStatus::ElementStatus(Mesh const*const mesh)
 : _mesh(mesh), _element_status(mesh->getNElements(), true), _hasAnyInactive(false)
 {
-	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
-	for (auto node = nodes.cbegin(); node != nodes.cend(); ++node)
-		_active_nodes.push_back((*node)->getNElements());
+	const std::vector<MeshLib::Node*>& nodes(_mesh->getNodes());
+	for (auto node : nodes)
+		_active_nodes.push_back(node->getNElements());
 }
 
 ElementStatus::ElementStatus(Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs)
