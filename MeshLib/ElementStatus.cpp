@@ -30,13 +30,10 @@ ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
 		_active_nodes.push_back(node->getNElements());
 }
 
-ElementStatus::ElementStatus(Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs)
-: _mesh(mesh), _element_status(mesh->getNElements(), true), _hasAnyInactive(!vec_inactive_matIDs.empty())
+ElementStatus::ElementStatus(Mesh const* const mesh,
+                             std::vector<unsigned> const& vec_inactive_matIDs)
+    : ElementStatus(mesh, !vec_inactive_matIDs.empty())
 {
-	const std::vector<MeshLib::Node*> &nodes (_mesh->getNodes());
-	for (auto node = nodes.cbegin(); node != nodes.cend(); ++node)
-		_active_nodes.push_back((*node)->getNElements());
-
 	const std::size_t nElems (_mesh->getNElements());
 	for (auto material_id : vec_inactive_matIDs) {
 		for (auto e : _mesh->getElements())
@@ -117,4 +114,3 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
 }
 
 }
-
