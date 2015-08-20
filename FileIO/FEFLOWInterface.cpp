@@ -91,7 +91,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 			else if (fem_dim.n_nodes_of_element == 3)
 				eleType = MeshLib::MeshElemType::TRIANGLE;
 			else if (fem_dim.n_nodes_of_element == 4 && fem_class.dimension == 2)
-				eleType = MeshLib::MeshElemType::TRIANGLE;
+				eleType = MeshLib::MeshElemType::QUAD;
 			else if (fem_dim.n_nodes_of_element == 4 && fem_class.dimension == 3)
 				eleType = MeshLib::MeshElemType::TETRAHEDRON;
 			else if (fem_dim.n_nodes_of_element == 6 && fem_class.dimension == 3)
