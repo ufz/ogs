@@ -52,7 +52,12 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
 		if (_active_nodes[i]>0)
 			_vec_active_nodes.push_back(const_cast<MeshLib::Node*>(_mesh->getNode(i)));
 
-	DBUG("Deactivated %d materials and resulting active %d nodes and %d elements", vec_inactive_matIDs.size(), _vec_active_nodes.size(), _vec_active_eles.size());
+	DBUG(
+	    "Deactivated %d materials and resulting active %d nodes and %d "
+	    "elements",
+	    vec_inactive_matIDs.size(),
+	    _vec_active_nodes.size(),
+	    _vec_active_eles.size());
 }
 
 std::vector<MeshLib::Element*> const& ElementStatus::getActiveElements() const
@@ -93,9 +98,9 @@ std::size_t ElementStatus::getNActiveNodes() const
 
 std::size_t ElementStatus::getNActiveElements() const
 {
-	return static_cast<std::size_t>(std::count(_element_status.cbegin(), _element_status.cend(), true));
+	return static_cast<std::size_t>(
+	    std::count(_element_status.cbegin(), _element_status.cend(), true));
 }
-
 
 void ElementStatus::setElementStatus(std::size_t i, bool status)
 {
@@ -107,7 +112,9 @@ void ElementStatus::setElementStatus(std::size_t i, bool status)
 		MeshLib::Node const*const*const nodes = _mesh->getElement(i)->getNodes();
 		for (unsigned j=0; j<nElemNodes; ++j)
 		{
-			assert(_active_nodes[j]<255); // if one node has >255 connected elements the data type is too small
+			assert(_active_nodes[j] < 255);  // if one node has >255 connected
+			                                 // elements the data type is too
+			                                 // small
 			_active_nodes[nodes[j]->getID()] += change;
 		}
 	}
