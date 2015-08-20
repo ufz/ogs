@@ -14,28 +14,23 @@
 
 #include <cstdlib>
 
-#include "BaseLib/BuildInfo.h"
-
 #ifdef UNIX
 #include <sys/unistd.h>
 #endif
 
-// BaseLib
-#include "RunTime.h"
-#include "CPUTime.h"
-// BaseLib/tclap
-#include "tclap/CmdLine.h"
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
+#include <logog/include/formatter.hpp>
 
-// MathLib
-#include "sparse.h"
+#include "BaseLib/BuildInfo.h"
+#include "BaseLib/RunTime.h"
+#include "BaseLib/CPUTime.h"
 
-#include "LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
-#include "LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReordered.h"
-#include "LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
-#include "LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/sparse.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReordered.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 
 /**
  * new formatter for logog

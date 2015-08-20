@@ -14,12 +14,13 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "LinAlg/Solvers/GMRes.h"
-#include "LinAlg/Sparse/CRSMatrixDiagPrecond.h"
-#include "sparse.h"
-#include "vector_io.h"
-#include "RunTime.h"
-#include "CPUTime.h"
+
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
+#include "MathLib/LinAlg/Solvers/GMRes.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixDiagPrecond.h"
+#include "MathLib/sparse.h"
+#include "MathLib/vector_io.h"
 
 int main(int argc, char *argv[])
 {

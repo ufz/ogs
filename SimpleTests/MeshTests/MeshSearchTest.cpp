@@ -9,23 +9,20 @@
  *  Created on  Aug 30, 2012 by Thomas Fischer
  */
 
-// BaseLib
-#include "MemWatch.h"
-#include "RunTime.h"
-#include "tclap/CmdLine.h"
-#include "LogogSimpleFormatter.h"
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/MemWatch.h"
+#include "BaseLib/RunTime.h"
 
-// GeoLib
-#include "Grid.h"
+#include "FileIO/Legacy/MeshIO.h"
 
-// MeshLib
+#include "GeoLib/Grid.h"
+
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "Mesh.h"
-#include "Legacy/MeshIO.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,

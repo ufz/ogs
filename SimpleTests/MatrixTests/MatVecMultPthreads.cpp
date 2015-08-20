@@ -14,29 +14,27 @@
 #include <cmath>
 #include <limits>
 #include <cstdlib>
-#include "sparse.h"
-#include "LinAlg/Sparse/CRSMatrix.h"
-#include "LinAlg/Sparse/CRSMatrixOpenMP.h"
-#include "LinAlg/Sparse/CRSMatrixPThreads.h"
-
-// BaseLib
-#include "RunTime.h"
-#include "CPUTime.h"
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
-// BaseLib/tclap
-#include "tclap/CmdLine.h"
 
 #ifdef UNIX
 #include <sys/unistd.h>
 #endif
 
-#include "BaseLib/BuildInfo.h"
-
 #ifdef HAVE_PTHREADS
 #include <pthread.h>
 #endif
+
+#include <logog/include/logog.hpp>
+#include <logog/include/formatter.hpp>
+#include <tclap/CmdLine.h>
+
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixOpenMP.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixPThreads.h"
+#include "MathLib/sparse.h"
+
+#include "BaseLib/BuildInfo.h"
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
 
 /**
  * new formatter for logog
