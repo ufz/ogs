@@ -11,11 +11,15 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include <memory>
-
 #include "gtest/gtest.h"
 
+#include <memory>
+
+#include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
+
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
@@ -60,11 +64,38 @@ protected:
 	Mesh* _hex_mesh;
 };
 
-TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
+{
+	double _dx = _geometric_size / _number_of_subdivisions_per_direction;
+	double dx_half = _dx*0.5;
+
+	ASSERT_TRUE(_quad_mesh != nullptr);
+
+	// 2 perform search and compare results with expected vals
+	MeshGeoToolsLib::SearchLength search_length(dx_half);
+	MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
+		search_length);
+
+	GeoLib::Point p1(0.0, 0.0, 0.0);
+	EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p1).size());
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p1)[0]);
+
+	GeoLib::Point p2(dx_half*0.99, 0.0, 0.0);
+	EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p2).size());
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p2)[0]);
+
+	GeoLib::Point p3(dx_half, 0.0, 0.0);
+	EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(p3).size());
+
+	GeoLib::Point p4(dx_half*1.01, 0.0, 0.0);
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4).size());
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(p4)[0]);
+}
+
+TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchZeroEps)
 {
 	ASSERT_TRUE(_quad_mesh != nullptr);
 	// 1 create a geometry
-	GeoLib::Point pnt(0.0, 0.0, 0.0);
 
 	// 2 perform search and compare results with expected vals
 	MeshGeoToolsLib::SearchLength search_length;
@@ -72,27 +103,26 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearch)
 		search_length);
 
 	// find ORIGIN
-	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt1(0.0, 0.0, 0.0);
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt1)[0]);
 
-	pnt[0] = 0.049;
-	pnt[1] = 0.049;
-	ASSERT_EQ(0u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt2(0.049, 0.049, 0.0);
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt2).size());
 
-	pnt[0] = 0.051;
-	pnt[1] = 0.049;
-	ASSERT_EQ(1u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt3(0.051, 0.049, 0.0);
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt3).size());
 
-	pnt[0] = 0.049;
-	pnt[1] = 0.051;
-	ASSERT_EQ(100u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt4(0.049, 0.051, 0.0);
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt4).size());
 
-	pnt[0] = 0.051;
-	pnt[1] = 0.051;
-	ASSERT_EQ(101u, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt5(0.051, 0.051, 0.0);
+	ASSERT_EQ(0u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt5).size());
 
-	pnt[0] = 9.951;
-	pnt[1] = 9.951;
-	ASSERT_EQ((_number_of_subdivisions_per_direction+1) * (_number_of_subdivisions_per_direction+1) - 1, *mesh_node_searcher.getMeshNodeIDForPoint(pnt));
+	GeoLib::Point pnt6(10, 10, 0.0);
+	ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDsForPoint(pnt6).size());
+	EXPECT_EQ(
+		pow(_number_of_subdivisions_per_direction+1,2)-1,
+		mesh_node_searcher.getMeshNodeIDsForPoint(pnt6)[0]);
 }
 
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PolylineSearch)

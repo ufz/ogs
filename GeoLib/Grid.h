@@ -15,6 +15,7 @@
 #ifndef GRID_H_
 #define GRID_H_
 
+#include <bitset>
 #include <vector>
 
 // ThirdParty/logog
@@ -45,12 +46,12 @@ public:
 	 * (in the average) should be a power of two (since std::vector objects resize itself
 	 * with this step size).
 	 *
-	 * @param pnts (input) the points that are managed with the Grid
-	 * @param max_num_per_grid_cell (input) max number per grid cell in the average (default 512)
+	 * @param first, last the range of elements to examine
+	 * @param items_per_cell (input) max number per grid cell in the average (default 512)
 	 *
 	 */
 	template <typename InputIterator>
-	Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell = 512);
+	Grid(InputIterator first, InputIterator last, std::size_t items_per_cell = 512);
 
 	/**
 	 * This is the destructor of the class. It deletes the internal data structures *not*
@@ -68,14 +69,16 @@ public:
 	 * distance. A pointer to this object is returned.
 	 *
 	 * If there is not such a point, i.e., all the searched grid cells do not contain any
-	 * POINT object a nullptr pointer is returned.
+	 * POINT object a nullptr is returned.
 	 *
-	 * @param pnt a field that holds the coordinates of the point
+	 * @param pnt search point
 	 * @return a pointer to the point with the smallest distance within the grid cells that are
 	 * outlined above or nullptr
 	 */
 	template <typename P> POINT* getNearestPoint(P const& pnt) const;
 
+	template <typename P> std::vector<std::size_t> getPointsInEpsilonEnvironment(
+		P const& pnt, double eps) const;
 
 	/**
 	 * Method fetches the vectors of all grid cells intersecting the axis aligned cuboid
@@ -84,12 +87,12 @@ public:
 	 *
 	 * @param center (input) the center point of the axis aligned cube
 	 * @param half_len (input) half of the edge length of the axis aligned cube
-	 * @param pnts (output) vector of vectors of points within grid cells that intersects
+	 * @return vector of vectors of points within grid cells that intersects
 	 * the axis aligned cube
 	 */
 	template <typename P>
-	void getPntVecsOfGridCellsIntersectingCube(P const& center, double half_len,
-		std::vector<std::vector<POINT*> const*>& pnts) const;
+	std::vector<std::vector<POINT*> const*>
+	getPntVecsOfGridCellsIntersectingCube(P const& center, double half_len) const;
 
 	void getPntVecsOfGridCellsIntersectingCuboid(
 		MathLib::Point3d const& min_pnt,
@@ -106,18 +109,18 @@ public:
 #endif
 
 private:
-	void initNumberOfSteps(std::size_t max_num_per_grid_cell,
-		std::size_t n_pnts, double delta[3]);
+	void initNumberOfSteps(std::size_t n_per_cell,
+		std::size_t n_pnts, std::array<double,3> const& delta);
 
 	/**
 	 * Method calculates the grid cell coordinates for the given point pnt. If
 	 * the point is located outside of the bounding box the coordinates of the
 	 * grid cell on the border that is nearest to given point will be returned.
 	 * @param pnt (input) the coordinates of the point
-	 * @param coords (output) the coordinates of the grid cell
+	 * @return the coordinates of the grid cell
 	 */
 	template <typename T>
-	inline void getGridCoords(T const& pnt, std::size_t* coords) const;
+	std::array<std::size_t,3> getGridCoords(T const& pnt) const;
 
 	/**
 	 *
@@ -145,18 +148,17 @@ private:
 	 *	4		3,0,4,7 left
 	 *	5		4,5,6,7 top
 	 * @param pnt (input) coordinates of the point
-	 * @param dists (output) squared distances of the point to the faces
+	 * @param coordinates of the grid cell
+	 * @return squared distances of the point to the faces of the grid cell
 	 * ordered in the same sequence as above described
-	 * @param coords coordinates of the grid cell
 	 */
 	template <typename P>
-	void getPointCellBorderDistances(P const& pnt,
-	                                 double dists[6],
-	                                 std::size_t const* const coords) const;
+	std::array<double, 6> getPointCellBorderDistances(
+		P const& pnt, std::array<std::size_t,3> const& coordinates) const;
 
 	template <typename P>
 	bool calcNearestPointInGridCell(P const& pnt,
-		std::size_t const* const coords,
+		std::array<std::size_t,3> const& coords,
 		double &sqr_min_dist,
 		POINT* &nearest_pnt) const;
 
@@ -175,34 +177,35 @@ private:
 
 template <typename POINT>
 template <typename InputIterator>
-Grid<POINT>::Grid(InputIterator first, InputIterator last, std::size_t max_num_per_grid_cell) :
-	GeoLib::AABB<POINT>(first, last),
-	_n_steps({{1,1,1}}),
-	_step_sizes({{0.0,0.0,0.0}}),
-	_inverse_step_sizes({{0.0,0.0,0.0}}),
-	_grid_cell_nodes_map(nullptr)
+Grid<POINT>::Grid(InputIterator first, InputIterator last,
+	std::size_t max_num_per_grid_cell)
+	: GeoLib::AABB<POINT>(first, last), _n_steps({{1,1,1}}),
+		_step_sizes({{0.0,0.0,0.0}}), _inverse_step_sizes({{0.0,0.0,0.0}}),
+		_grid_cell_nodes_map(nullptr)
 {
-	std::size_t n_pnts(std::distance(first, last));
+	auto const n_pnts(std::distance(first,last));
 
-	double delta[3] = { 0.0, 0.0, 0.0 };
 	for (std::size_t k(0); k < 3; k++) {
 		// make the bounding box a little bit bigger,
 		// such that the node with maximal coordinates fits into the grid
 		this->_max_pnt[k] += std::abs(this->_max_pnt[k]) * 1e-6;
-		if (fabs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
+		if (std::abs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
 			this->_max_pnt[k] = (this->_max_pnt[k] - this->_min_pnt[k]) * (1.0 + 1e-6);
 		}
-		delta[k] = this->_max_pnt[k] - this->_min_pnt[k];
 	}
+	std::array<double,3> delta = {{this->_max_pnt[0]-this->_min_pnt[0],
+		 this->_max_pnt[1]-this->_min_pnt[1],
+		 this->_max_pnt[2]-this->_min_pnt[2]}};
 
-	initNumberOfSteps(max_num_per_grid_cell, n_pnts, delta);
+	assert(n_pnts >= 0);
+	initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
 
 	const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
 	_grid_cell_nodes_map = new std::vector<POINT*>[n_plane * _n_steps[2]];
 
 	// some frequently used expressions to fill the grid vectors
 	for (std::size_t k(0); k < 3; k++) {
-		if (fabs(delta[k]) < std::numeric_limits<double>::epsilon()) {
+		if (std::abs(delta[k]) < std::numeric_limits<double>::epsilon()) {
 			delta[k] = std::numeric_limits<double>::epsilon();
 		}
 		_step_sizes[k] = delta[k] / _n_steps[k];
@@ -212,44 +215,34 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last, std::size_t max_num_p
 	// fill the grid vectors
 	InputIterator it(first);
 	while (it != last) {
-		double const* const pnt(copyOrAddress(*it)->getCoords());
-		const std::size_t i(static_cast<std::size_t> ((pnt[0] - this->_min_pnt[0]) * _inverse_step_sizes[0]));
-		const std::size_t j(static_cast<std::size_t> ((pnt[1] - this->_min_pnt[1]) * _inverse_step_sizes[1]));
-		const std::size_t k(static_cast<std::size_t> ((pnt[2] - this->_min_pnt[2]) * _inverse_step_sizes[2]));
-
-		if (i < _n_steps[0] && j < _n_steps[1] && k < _n_steps[2]) {
-			_grid_cell_nodes_map[i + j * _n_steps[0] + k * n_plane].push_back(const_cast<POINT*>(copyOrAddress(*it)));
+		std::array<std::size_t,3> coords(getGridCoords(*copyOrAddress(*it)));
+		if (coords < _n_steps) {
+			std::size_t const pos(coords[0]+coords[1]*_n_steps[0]+coords[2]*n_plane);
+			_grid_cell_nodes_map[pos].push_back(const_cast<POINT*>(copyOrAddress(*it)));
 		} else {
-			ERR("Grid constructor: error computing indices [%d, %d, %d], max indices [%d, %d, %d].", i, j, k, _n_steps[0], _n_steps[1], _n_steps[2]);
+			ERR("Grid constructor: error computing indices [%d, %d, %d], "
+				"max indices [%d, %d, %d].", coords[0], coords[1], coords[2],
+				_n_steps[0], _n_steps[1], _n_steps[2]);
 		}
 		it++;
 	}
-
-#ifndef NDEBUG
-	std::size_t pnts_cnt(0);
-	for (std::size_t k(0); k < n_plane * _n_steps[2]; k++)
-		pnts_cnt += _grid_cell_nodes_map[k].size();
-
-	assert(n_pnts==pnts_cnt);
-#endif
 }
 
 template<typename POINT>
 template <typename P>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
-                                                        double half_len,
-                                                        std::vector<std::vector<POINT*> const*>& pnts) const
+std::vector<std::vector<POINT*> const*>
+Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
+	double half_len) const
 {
+	std::vector<std::vector<POINT*> const*> pnts;
 	MathLib::Point3d tmp_pnt{
 		{{center[0]-half_len, center[1]-half_len, center[2]-half_len}}}; // min
-	std::size_t min_coords[3];
-	getGridCoords(tmp_pnt, min_coords);
+	std::array<std::size_t,3> min_coords(getGridCoords(tmp_pnt));
 
 	tmp_pnt[0] = center[0] + half_len;
 	tmp_pnt[1] = center[1] + half_len;
 	tmp_pnt[2] = center[2] + half_len;
-	std::size_t max_coords[3];
-	getGridCoords(tmp_pnt, max_coords);
+	std::array<std::size_t,3> max_coords(getGridCoords(tmp_pnt));
 
 	std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
 	for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++) {
@@ -261,6 +254,7 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
 			}
 		}
 	}
+	return pnts;
 }
 
 template<typename POINT>
@@ -269,11 +263,8 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
 	MathLib::Point3d const& max_pnt,
 	std::vector<std::vector<POINT*> const*>& pnts) const
 {
-	std::size_t min_coords[3];
-	getGridCoords(min_pnt, min_coords);
-
-	std::size_t max_coords[3];
-	getGridCoords(max_pnt, max_coords);
+	std::array<std::size_t,3> min_coords(getGridCoords(min_pnt));
+	std::array<std::size_t,3> max_coords(getGridCoords(max_pnt));
 
 	std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
 	for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++) {
@@ -371,8 +362,9 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 
 template <typename POINT>
 template <typename T>
-void Grid<POINT>::getGridCoords(T const& pnt, std::size_t* coords) const
+std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
+	std::array<std::size_t,3> coords;
 	for (std::size_t k(0); k<3; k++) {
 		if (pnt[k] < this->_min_pnt[k]) {
 			coords[k] = 0;
@@ -384,29 +376,42 @@ void Grid<POINT>::getGridCoords(T const& pnt, std::size_t* coords) const
 			}
 		}
 	}
+	return coords;
+}
+
+template <typename POINT>
+template <typename P>
+std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
+	std::array<std::size_t,3> const& coords) const
+{
+	std::array<double,6> dists;
+	dists[0] = std::abs(p[2]-this->_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
+	dists[5] = std::abs(p[2]-this->_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
+
+	dists[1] = std::abs(p[1]-this->_min_pnt[1] + coords[1]*_step_sizes[1]); // front
+	dists[3] = std::abs(p[1]-this->_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
+
+	dists[4] = std::abs(p[0]-this->_min_pnt[0] + coords[0]*_step_sizes[0]); // left
+	dists[2] = std::abs(p[0]-this->_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
+	return dists;
 }
 
 template <typename POINT>
 template <typename P>
 POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 {
-	std::size_t coords[3];
-	getGridCoords(pnt, coords);
+	std::array<std::size_t,3> coords(getGridCoords(pnt));
 
-	double sqr_min_dist (MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
+	double sqr_min_dist(MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
 	POINT* nearest_pnt(nullptr);
 
-	double dists[6];
-	getPointCellBorderDistances(pnt, dists, coords);
+	std::array<double,6> dists(getPointCellBorderDistances(pnt, coords));
 
 	if (calcNearestPointInGridCell(pnt, coords, sqr_min_dist, nearest_pnt)) {
 		double min_dist(sqrt(sqr_min_dist));
-		if (dists[0] >= min_dist
-						&& dists[1] >= min_dist
-						&& dists[2] >= min_dist
-						&& dists[3] >= min_dist
-						&& dists[4] >= min_dist
-						&& dists[5] >= min_dist) {
+		if (dists[0] >= min_dist && dists[1] >= min_dist
+			&& dists[2] >= min_dist && dists[3] >= min_dist
+			&& dists[4] >= min_dist && dists[5] >= min_dist) {
 			return nearest_pnt;
 		}
 	} else {
@@ -416,41 +421,33 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 		std::size_t offset(1);
 
 		while (nearest_pnt == nullptr) {
-			std::size_t tmp_coords[3];
-			if (coords[0] < offset) {
-				tmp_coords[0] = 0;
-			} else {
-				tmp_coords[0] = coords[0] - offset;
-			}
-			for (; tmp_coords[0] < coords[0] + offset; tmp_coords[0]++) {
-				if (coords[1] < offset) {
-					tmp_coords[1] = 0;
-				} else {
-					tmp_coords[1] = coords[1] - offset;
-				}
-				for (; tmp_coords[1] < coords[1] + offset; tmp_coords[1]++) {
-					if (coords[2] < offset) {
-						tmp_coords[2] = 0;
-					} else {
-						tmp_coords[2] = coords[2] - offset;
-					}
-					for (; tmp_coords[2] < coords[2] + offset; tmp_coords[2]++) {
+			std::array<std::size_t,3> ijk{{
+				coords[0]<offset ? 0 : coords[0]-offset,
+				coords[1]<offset ? 0 : coords[1]-offset,
+				coords[2]<offset ? 0 : coords[2]-offset}};
+			for (; ijk[0]<coords[0]+offset; ijk[0]++) {
+				for (; ijk[1] < coords[1] + offset; ijk[1]++) {
+					for (; ijk[2] < coords[2] + offset; ijk[2]++) {
 						// do not check the origin grid cell twice
-						if (!(tmp_coords[0] == coords[0] && tmp_coords[1] == coords[1]
-						                && tmp_coords[2] == coords[2])) {
-							// check if temporary grid cell coordinates are valid
-							if (tmp_coords[0] < _n_steps[0] && tmp_coords[1] < _n_steps[1]
-							                && tmp_coords[2] < _n_steps[2]) {
-								if (calcNearestPointInGridCell(pnt, tmp_coords,
-								                               sqr_min_dist_tmp,
-								                               nearest_pnt_tmp)) {
-									if (sqr_min_dist_tmp < sqr_min_dist) {
-										sqr_min_dist = sqr_min_dist_tmp;
-										nearest_pnt = nearest_pnt_tmp;
-									}
-								}
-							} // valid grid cell coordinates
-						} // same element
+						if (ijk[0] == coords[0]
+							&& ijk[1] == coords[1]
+							&& ijk[2] == coords[2]) {
+							continue;
+						}
+						// check if temporary grid cell coordinates are valid
+						if (ijk[0] >= _n_steps[0]
+							|| ijk[1] >= _n_steps[1]
+							|| ijk[2] >= _n_steps[2]) {
+							continue;
+						}
+
+						if (calcNearestPointInGridCell(pnt, ijk,
+								sqr_min_dist_tmp, nearest_pnt_tmp)) {
+							if (sqr_min_dist_tmp < sqr_min_dist) {
+								sqr_min_dist = sqr_min_dist_tmp;
+								nearest_pnt = nearest_pnt_tmp;
+							}
+						}
 					} // end k
 				} // end j
 			} // end i
@@ -460,8 +457,8 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 
 	double len(sqrt(MathLib::sqrDist(pnt, *nearest_pnt)));
 	// search all other grid cells within the cube with the edge nodes
-	std::vector<std::vector<POINT*> const*> vecs_of_pnts;
-	getPntVecsOfGridCellsIntersectingCube(pnt, len, vecs_of_pnts);
+	std::vector<std::vector<POINT*> const*> vecs_of_pnts(
+		getPntVecsOfGridCellsIntersectingCube(pnt, len));
 
 	const std::size_t n_vecs(vecs_of_pnts.size());
 	for (std::size_t j(0); j<n_vecs; j++) {
@@ -480,66 +477,53 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 }
 
 template <typename POINT>
-void Grid<POINT>::initNumberOfSteps(std::size_t max_num_per_grid_cell, std::size_t n_pnts, double delta[3])
+void Grid<POINT>::initNumberOfSteps(std::size_t n_per_cell,
+	std::size_t n_pnts, std::array<double,3> const& delta)
 {
-	// *** condition: n_pnts / (_n_steps[0] * _n_steps[1] * _n_steps[2]) < max_num_per_grid_cell
-	// *** with _n_steps[1] = _n_steps[0] * delta[1]/delta[0], _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-	const double eps(std::numeric_limits<double>::epsilon());
-	if (fabs(delta[0]) < eps) { // dx == 0
-		if(fabs(delta[1]) < eps) { // dy == 0
-			if(fabs(delta[2]) < eps) { // degenerated case, dx == 0, dy == 0, dz == 0
-				WARN("Grid constructor: Bounding volume [%f,%f] x [%f,%f] x [%f,%f] too small.",
-				this->_min_pnt[0], this->_max_pnt[0],
-				this->_min_pnt[1], this->_max_pnt[1],
-				this->_min_pnt[2], this->_max_pnt[2]
-				);
-			} else { // 1d case: dx == 0, dy == 0, dz != 0
-				_n_steps[0] = 1;
-				_n_steps[1] = 1;
-				_n_steps[2] = static_cast<std::size_t> (
-					ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
-				);
-			}
-		} else { // dy != 0
-			if(fabs(delta[2]) < eps) { // 1d case: dx == 0, dy != 0, dz == 0
-				_n_steps[0] = 1;
-				_n_steps[1] = static_cast<std::size_t> (
-					ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
-				);
-				_n_steps[2] = 1;
-			} else { // 2d case: dx == 0, dy != 0, dz != 0
-				_n_steps[0] = 1;
-				_n_steps[1] = static_cast<std::size_t> (
-					ceil(sqrt(n_pnts*delta[1]/(max_num_per_grid_cell*delta[2])))
-				);
-				_n_steps[2] = static_cast<std::size_t> (
-					ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
-				);
-			}
+	std::bitset<3> dim; // all bits set to zero
+	for (std::size_t k(0); k<3; ++k) {
+		if (std::abs(delta[k]) >= std::numeric_limits<double>::epsilon()) {
+			dim[k] = true;
 		}
-	} else { // dx != 0
-		if(fabs(delta[1]) < eps) { // dy == 0
-			if(fabs(delta[2]) < eps) { // 1d case: dx != 0, dy == 0, dz == 0
-				_n_steps[0] = static_cast<std::size_t> (
-					ceil(n_pnts/static_cast<double>(max_num_per_grid_cell))
-				);
-				_n_steps[1] = 1;
-				_n_steps[2] = 1;
-			} else { // 2d case: dx != 0, dy == 0, dz != 0
-				_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[2]))));
-				_n_steps[1] = 1;
-				_n_steps[2] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0]));
-			}
-		} else { // dy != 0
-			if(fabs(delta[2]) < eps) { // 2d case: dx != 0, dy != 0, dz == 0
-				_n_steps[0] = static_cast<std::size_t> (ceil(sqrt(n_pnts * delta[0] / (max_num_per_grid_cell * delta[1]))));
-				_n_steps[1] = static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0]));
-				_n_steps[2] = 1;
-			} else { // 3d case: dx != 0, dy != 0, dz != 0
-				_n_steps[0] = static_cast<std::size_t> (ceil(pow(n_pnts * delta[0] * delta[0]
-								/ (max_num_per_grid_cell * delta[1] * delta[2]), 1. / 3.)));
-				_n_steps[1] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[1] / delta[0])), static_cast<std::size_t>(100)));
-				_n_steps[2] = std::max(static_cast<std::size_t>(1), std::min(static_cast<std::size_t> (ceil(_n_steps[0] * delta[2] / delta[0])), static_cast<std::size_t>(100)));
+	}
+
+	// structured grid: n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
+	// *** condition: n_pnts / n_cells < n_per_cell
+	// => n_pnts / n_per_cell < n_cells
+	// _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
+	// _n_steps[2] = _n_steps[0] * delta[2]/delta[0],
+	// => n_cells = _n_steps[0]^3 * delta[1]/delta[0] * delta[2]/delta[0],
+	// => _n_steps[0] = cbrt(n_cells * delta[0]^2 / (delta[1]*delta[2]))
+	auto sc_ceil = [](double v) {
+		return static_cast<std::size_t>(ceil(v));
+	};
+
+	switch (dim.count()) {
+	case 3: // 3d case
+		_n_steps[0] = sc_ceil(std::cbrt(
+			n_pnts*delta[0]*delta[0]/(n_per_cell*delta[1]*delta[2])));
+		_n_steps[1] = sc_ceil(_n_steps[0]*std::min(delta[1]/delta[0],100.0));
+		_n_steps[2] = sc_ceil(_n_steps[0]*std::min(delta[2]/delta[0],100.0));
+		break;
+	case 2: // 2d cases
+		if (dim[0] && dim[1]) { // xy
+			_n_steps[0] = sc_ceil(std::sqrt(
+				n_pnts*delta[0]/(n_per_cell*delta[1])));
+			_n_steps[1] = sc_ceil(_n_steps[0]*std::min(delta[1]/delta[0],100.0));
+		} else if (dim[0] && dim[2]) { // xz
+			_n_steps[0] = sc_ceil(std::sqrt(
+				n_pnts*delta[0]/(n_per_cell*delta[2])));
+			_n_steps[2] = sc_ceil(_n_steps[0]*std::min(delta[2]/delta[0],100.0));
+		} else if (dim[1] && dim[2]) { // yz
+			_n_steps[1] = sc_ceil(std::sqrt(
+				n_pnts*delta[1]/(n_per_cell*delta[2])));
+			_n_steps[2] = sc_ceil(std::min(delta[2]/delta[1],100.0));
+		}
+		break;
+	case 1: // 1d cases
+		for (std::size_t k(0); k<3; ++k) {
+			if (dim[k]) {
+				_n_steps[k] = sc_ceil(static_cast<double>(n_pnts)/n_per_cell);
 			}
 		}
 	}
@@ -547,11 +531,12 @@ void Grid<POINT>::initNumberOfSteps(std::size_t max_num_per_grid_cell, std::size
 
 template <typename POINT>
 template <typename P>
-bool Grid<POINT>::calcNearestPointInGridCell(P const& pnt, std::size_t const* const coords,
-                                double &sqr_min_dist,
-                                POINT* &nearest_pnt) const
+bool Grid<POINT>::calcNearestPointInGridCell(P const& pnt,
+	std::array<std::size_t,3> const& coords,
+	double &sqr_min_dist,
+	POINT* &nearest_pnt) const
 {
-	const std::size_t grid_idx (coords[0] + coords[1] * _n_steps[0] + coords[2] * _n_steps[0] * _n_steps[1]);
+	const std::size_t grid_idx (coords[0]+coords[1]*_n_steps[0]+coords[2]*_n_steps[0]*_n_steps[1]);
 	std::vector<typename std::add_pointer<typename std::remove_pointer<POINT>::type>::type> const& pnts(_grid_cell_nodes_map[grid_idx]);
 	if (pnts.empty()) return false;
 
@@ -559,7 +544,7 @@ bool Grid<POINT>::calcNearestPointInGridCell(P const& pnt, std::size_t const* co
 	sqr_min_dist = MathLib::sqrDist(*pnts[0], pnt);
 	nearest_pnt = pnts[0];
 	for (std::size_t i(1); i < n_pnts; i++) {
-		const double sqr_dist(MathLib::sqrDist(pnts[i]->getCoords(), pnt.getCoords()));
+		const double sqr_dist(MathLib::sqrDist(*pnts[i], pnt));
 		if (sqr_dist < sqr_min_dist) {
 			sqr_min_dist = sqr_dist;
 			nearest_pnt = pnts[i];
@@ -570,19 +555,26 @@ bool Grid<POINT>::calcNearestPointInGridCell(P const& pnt, std::size_t const* co
 
 template <typename POINT>
 template <typename P>
-void Grid<POINT>::getPointCellBorderDistances(P const& pnt,
-                                              double dists[6],
-                                              std::size_t const* const coords) const
+std::vector<std::size_t>
+Grid<POINT>::getPointsInEpsilonEnvironment(P const& pnt, double eps) const
 {
-	dists[0] = fabs(pnt[2] - this->_min_pnt[2] + coords[2] * _step_sizes[2]); // bottom
-	dists[5] = fabs(pnt[2] - this->_min_pnt[2] + (coords[2] + 1) * _step_sizes[2]); // top
+	std::vector<std::vector<POINT*> const*> vec_pnts(
+		getPntVecsOfGridCellsIntersectingCube(pnt, eps));
 
-	dists[1] = fabs(pnt[1] - this->_min_pnt[1] + coords[1] * _step_sizes[1]); // front
-	dists[3] = fabs(pnt[1] - this->_min_pnt[1] + (coords[1] + 1) * _step_sizes[1]); // back
+	double const sqr_eps(eps*eps);
 
-	dists[4] = fabs(pnt[0] - this->_min_pnt[0] + coords[0] * _step_sizes[0]); // left
-	dists[2] = fabs(pnt[0] - this->_min_pnt[0] + (coords[0] + 1) * _step_sizes[0]); // right
+	std::vector<std::size_t> pnts;
+	for (auto vec : vec_pnts) {
+		for (auto const p : *vec) {
+			if (MathLib::sqrDist(*p, pnt) < sqr_eps) {
+				pnts.push_back(p->getID());
+			}
+		}
+	}
+
+	return pnts;
 }
+
 } // end namespace GeoLib
 
 #endif /* MESHGRID_H_ */
