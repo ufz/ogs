@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "Parameter.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -30,7 +31,7 @@ public:
 
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
-            double const hydraulic_conductivity,
+            Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
             unsigned const integration_order) = 0;
 
     virtual void assemble() = 0;
@@ -56,11 +57,11 @@ public:
 
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
-    void
-    init(MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
-        double const hydraulic_conductivity,
-        unsigned const integration_order)
+    void init(MeshLib::Element const& e,
+              std::size_t const local_matrix_size,
+              Parameter<double, MeshLib::Element const&> const&
+                  hydraulic_conductivity,
+              unsigned const integration_order)
     {
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatricesType>;
@@ -80,7 +81,10 @@ public:
                     _shape_matrices[ip]);
         }
 
-        _hydraulic_conductivity = hydraulic_conductivity;
+        _hydraulic_conductivity = [&hydraulic_conductivity, &e]()
+        {
+            return hydraulic_conductivity(e);
+        };
 
         _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localRhs.reset(new NodalVectorType(local_matrix_size));
@@ -97,8 +101,9 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _localA->noalias() += sm.dNdx.transpose() * _hydraulic_conductivity *
-                        sm.dNdx * sm.detJ * wp.getWeight();
+            _localA->noalias() += sm.dNdx.transpose() *
+                                  _hydraulic_conductivity() * sm.dNdx *
+                                  sm.detJ * wp.getWeight();
         }
     }
 
@@ -111,7 +116,7 @@ public:
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
-    double _hydraulic_conductivity;
+    std::function<double(void)> _hydraulic_conductivity;
 
     std::unique_ptr<NodalMatrixType> _localA;
     std::unique_ptr<NodalVectorType> _localRhs;

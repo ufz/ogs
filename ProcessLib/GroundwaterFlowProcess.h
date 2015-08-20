@@ -36,6 +36,7 @@
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
+#include "Parameter.h"
 #include "ProcessVariable.h"
 
 namespace MeshLib
@@ -58,27 +59,69 @@ class GroundwaterFlowProcess : public Process
 public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
+            std::vector<std::unique_ptr<ParameterBase>> const& parameters,
             ConfigTree const& config)
         : Process(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");
 
-        // Find the corresponding process variable.
-        std::string const name = config.get<std::string>("process_variable");
+        // Process variable.
+        {
+            // Find the corresponding process variable.
+            std::string const name = config.get<std::string>("process_variable");
 
-        auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                [&name](ProcessVariable const& v) {
-                    return v.getName() == name;
-                });
+            auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                    [&name](ProcessVariable const& v) {
+                        return v.getName() == name;
+                    });
 
-        if (variable == variables.end())
-            ERR("Expected process variable \'%s\' not found in provided variables list.",
+            if (variable == variables.end())
+                ERR("Expected process variable \'%s\' not found in provided variables list.",
+                    name.c_str());
+
+            DBUG("Associate hydraulic_head with process variable \'%s\'.",
                 name.c_str());
+            _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+        }
 
-        DBUG("Associate hydraulic_head with process variable \'%s\'.",
-            name.c_str());
-        _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+        // Hydraulic conductivity parameter.
+        {
+            // find hydraulic_conductivity in process config
+            boost::optional<std::string> const name =
+                config.get_optional<std::string>("hydraulic_conductivity");
+            if (!name)
+            {
+                ERR("Could not find required tag hydraulic_conductivity in "
+                    "the process config.");
+                std::abort();
+            }
 
+            // find corresponding parameter by name
+            auto const parameter =
+                std::find_if(parameters.cbegin(), parameters.cend(),
+                             [&name](std::unique_ptr<ParameterBase> const& p)
+                             {
+                                 return p->name == name;
+                             });
+
+            if (parameter == parameters.end())
+            {
+                ERR("Could not find required parameter config for \'%s\' "
+                    "among read parameters.",
+                    name->c_str());
+                std::abort();
+            }
+
+            _hydraulic_conductivity =
+                dynamic_cast<const Parameter<double, const MeshLib::Element&>*>(
+                    parameter->get());
+            if (!_hydraulic_conductivity)
+            {
+                ERR("The hydraulic conductivity parameter is of incompatible "
+                    "type.");
+                std::abort();
+            }
+        }
     }
 
     template <unsigned GlobalDim>
@@ -110,7 +153,7 @@ public:
                 local_asm_builder,
                 _mesh.getElements(),
                 _local_assemblers,
-                _hydraulic_conductivity,
+                *_hydraulic_conductivity,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -251,7 +294,7 @@ public:
 private:
     ProcessVariable* _hydraulic_head = nullptr;
 
-    double const _hydraulic_conductivity = 1;
+    Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;

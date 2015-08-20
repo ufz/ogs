@@ -13,6 +13,7 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
+#include <memory>
 #include <boost/property_tree/ptree.hpp>
 
 #ifdef OGS_BUILD_GUI
@@ -97,7 +98,7 @@ public:
 				// here.
 				_processes.push_back(
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
-						*_mesh_vec[0], _process_variables, pc));
+						*_mesh_vec[0], _process_variables, _parameters, pc));
 			}
 		}
 	}
@@ -144,6 +145,10 @@ private:
 	/// variable constructor.
 	void parseProcessVariables(ConfigTree const& process_variables_config);
 
+	/// Parses the parameters configuration and saves them in a list.
+	/// Checks if a parameter has name tag.
+	void parseParameters(ConfigTree const& parameters_config);
+
 	/// Parses the processes configuration and creates new processes for each
 	/// process entry passing the corresponding subtree to the process
 	/// constructor.
@@ -165,6 +170,9 @@ private:
 
 	/// Buffer for each process' config used in the process building function.
 	std::vector<ConfigTree> _process_configs;
+
+	/// Buffer for each parameter config passed to the process.
+	std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
 
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
