@@ -26,7 +26,7 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<dou
 	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
 {
 	if (!supp_pnts_sorted) {
-		BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
+		BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
 		                                   _supp_pnts.size(), _values_at_supp_pnts);
 	}
 }
@@ -39,7 +39,7 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<dou
 	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
 {
 	if (!supp_pnts_sorted) {
-		BaseLib::Quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
+		BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
 		                                   _supp_pnts.size(),
 		                                   _values_at_supp_pnts);
 	}

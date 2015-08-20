@@ -14,9 +14,8 @@
 
 #include "AdjMat.h"
 
+#include <algorithm>
 #include <utility>
-
-#include "BaseLib/quicksort.h"
 
 namespace MathLib {
 
@@ -62,8 +61,8 @@ AdjMat* AdjMat::getMat(unsigned beg, unsigned end,
 
 	delete[] pos;
 	for (i = 0; i < nsize; ++i)
-		BaseLib::quickSort(jAn, iAn[i], iAn[i + 1]);
-	return new AdjMat(nsize, iAn, jAn, NULL);
+		std::sort(jAn+iAn[i], jAn+iAn[i+1]);
+	return new AdjMat(nsize, iAn, jAn, nullptr);
 }
 
 /**

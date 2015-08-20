@@ -12,15 +12,16 @@
  *
  */
 
-#include <gtest/gtest.h>
-#include <autocheck/autocheck.hpp>
-#include "BaseLib/quicksort.h"
-
-#include <numeric>
 #include <algorithm>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include <gtest/gtest.h>
+#include <autocheck/autocheck.hpp>
+
+#include "BaseLib/quicksort.h"
 
 namespace ac = autocheck;
 
@@ -53,11 +54,11 @@ TEST_F(BaseLibQuicksort, SortsAsSTLSort)
         },
         "sorted");
 
-    auto quicksortSortsAsSTLSort = [](const std::vector<int>& xs) -> bool
+    auto quicksortSortsAsSTLSort = [](std::vector<int>& xs) -> bool
     {
         std::vector<std::size_t> perm(xs.size());
         if (!xs.empty())
-            BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
+            BaseLib::quicksort(xs, 0, xs.size(), perm);
         return std::is_sorted(xs.begin(), xs.end());
     };
 
@@ -89,12 +90,45 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
 {
     auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
 
-    auto quicksortCheckPermutations = [](const std::vector<int>& xs)
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
     {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
-        BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
+        BaseLib::quicksort(xs, 0, xs.size(), perm);
+
+        for (std::size_t i = 0; i < perm.size(); ++i)
+            if (perm[i] != i)
+            {
+                std::cerr << i << " " << perm[i] << "\n";
+                return false;
+            }
+        return true;
+    };
+
+    ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
+}
+
+// Permutations of non-empty, sorted, unique vector remain untouched.
+TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
+{
+    auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
+
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
+        std::vector<std::size_t> perm(xs.size());
+        std::iota(perm.begin(), perm.end(), 0);
+
+        std::vector<int*> p_xs;
+        for (std::size_t i=0; i<xs.size(); ++i)
+            p_xs.push_back(&xs[i]);
+
+        BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
             if (perm[i] != i)
@@ -125,12 +159,48 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
     auto gen =
         ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
 
-    auto quicksortCheckPermutations = [](const std::vector<int>& xs)
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
     {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
-        BaseLib::quicksort((int*)&(xs[0]), 0, xs.size(), &(perm[0]));
+        BaseLib::quicksort(xs, 0, xs.size(), perm);
+
+        for (std::size_t i = 0; i < perm.size(); ++i)
+            if (perm[i] != perm.size() - i - 1) return false;
+        return true;
+    };
+
+    ac::check<std::vector<int>>(quicksortCheckPermutations, 100,
+                                gen.discard_if([](std::vector<int> xs)
+                                               {
+                                                   return xs.empty();
+                                               }),
+                                gtest_reporter, cls);
+}
+
+// Permutations of non-empty, reverse sorted, unique vector is also reversed.
+TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
+{
+    auto reverse = [](std::vector<int>&& xs, std::size_t) -> std::vector<int>
+    {
+        std::reverse(xs.begin(), xs.end());
+        return xs;
+    };
+
+    auto gen =
+        ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
+
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
+        std::vector<std::size_t> perm(xs.size());
+        std::iota(perm.begin(), perm.end(), 0);
+
+        std::vector<int*> p_xs;
+        for (std::size_t i=0; i<xs.size(); ++i)
+            p_xs.push_back(&xs[i]);
+
+        BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 
         for (std::size_t i = 0; i < perm.size(); ++i)
             if (perm[i] != perm.size() - i - 1) return false;
