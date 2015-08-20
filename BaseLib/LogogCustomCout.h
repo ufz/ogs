@@ -10,6 +10,8 @@
 #ifndef LOGOGCUSTOMCOUT_H_
 #define LOGOGCUSTOMCOUT_H_
 
+#include <ostream>
+
 #include "logog/include/logog.hpp"
 
 #ifdef USE_MPI
@@ -46,7 +48,7 @@ public:
 
 	virtual int Output( const LOGOG_STRING &data )
 	{
-		LOGOG_COUT << (const LOGOG_CHAR *)data;
+		LOGOG_COUT << (const LOGOG_CHAR *)data << std::flush;
 		return 0;
 	}
 
