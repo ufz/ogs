@@ -20,8 +20,10 @@
 
 namespace MeshLib {
 
-ElementStatus::ElementStatus(Mesh const*const mesh)
-: _mesh(mesh), _element_status(mesh->getNElements(), true), _hasAnyInactive(false)
+ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
+    : _mesh(mesh),
+      _element_status(mesh->getNElements(), true),
+      _hasAnyInactive(hasAnyInactive)
 {
 	const std::vector<MeshLib::Node*>& nodes(_mesh->getNodes());
 	for (auto node : nodes)
