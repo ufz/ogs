@@ -77,7 +77,7 @@ struct ConstParameter final
 
 	std::vector<ReturnType> getTuple(MeshLib::Element const&) const override
 	{
-		return std::vector<ReturnType>(_value);
+		return {_value};
 	}
 
 private:
