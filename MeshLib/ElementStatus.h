@@ -50,8 +50,6 @@ public:
 	/// Returns the total number of active elements
 	std::size_t getNActiveElements() const;
 
-	~ElementStatus() {}
-
 protected:
 	/// Sets the status of element i
 	void setElementStatus(std::size_t i, bool status);
