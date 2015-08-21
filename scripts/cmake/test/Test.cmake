@@ -46,14 +46,14 @@ if(CMAKE_CONFIGURATION_TYPES)
 	set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 endif()
 add_custom_target(
-	ctest
+	ctest -T Test
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --exclude-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
 	DEPENDS data ogs vtkdiff
 )
 add_custom_target(
-	ctest-large
+	ctest-large -T Test
 	COMMAND ${CMAKE_CTEST_COMMAND}
 	--force-new-ctest-process --output-on-failure --tests-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
