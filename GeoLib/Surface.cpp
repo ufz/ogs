@@ -17,12 +17,12 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "Surface.h"
+
 // GeoLib
 #include "AABB.h"
 #include "Polygon.h"
-#include "Surface.h"
-
-// MathLib
+#include "SurfaceGrid.h"
 #include "AnalyticalGeometry.h"
 
 #include "Triangle.h"
@@ -32,7 +32,8 @@
 namespace GeoLib
 {
 Surface::Surface (const std::vector<Point*> &pnt_vec) :
-	GeoObject(), _sfc_pnts(pnt_vec), _bounding_volume(nullptr)
+	GeoObject(), _sfc_pnts(pnt_vec), _bounding_volume(nullptr),
+	_surface_grid(nullptr)
 {}
 
 Surface::~Surface ()
@@ -40,9 +41,10 @@ Surface::~Surface ()
 	for (std::size_t k(0); k < _sfc_triangles.size(); k++)
 		delete _sfc_triangles[k];
 	delete _bounding_volume;
+	delete _surface_grid;
 }
 
-void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
+void Surface::addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
 {
 	assert (pnt_a < _sfc_pnts.size() && pnt_b < _sfc_pnts.size() && pnt_c < _sfc_pnts.size());
 
@@ -50,17 +52,31 @@ void Surface::addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt
 	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c)
 		return;
 
-	_sfc_triangles.push_back (new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
+	_sfc_triangles.push_back(new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
 	if (!_bounding_volume) {
 		std::vector<size_t> ids(3);
 		ids[0] = pnt_a;
 		ids[1] = pnt_b;
 		ids[2] = pnt_c;
 		_bounding_volume = new AABB<Point>(_sfc_pnts, ids);
+		if (_surface_grid == nullptr) {
+			_surface_grid = new SurfaceGrid(this);
+		}
 	} else {
-		_bounding_volume->update (*_sfc_pnts[pnt_a]);
-		_bounding_volume->update (*_sfc_pnts[pnt_b]);
-		_bounding_volume->update (*_sfc_pnts[pnt_c]);
+		bool bbx_updated(_bounding_volume->update(*_sfc_pnts[pnt_a]));
+		bbx_updated = bbx_updated || _bounding_volume->update(*_sfc_pnts[pnt_b]);
+		bbx_updated = bbx_updated || _bounding_volume->update(*_sfc_pnts[pnt_c]);
+		if (bbx_updated) {
+			delete _surface_grid;
+			_surface_grid = new SurfaceGrid(this);
+		} else {
+			if (! _surface_grid->sortTriangleInGridCells(_sfc_triangles.back())) {
+				ERR("Fatal: Could not insert triangle into surface grid. "
+					"To keep things consistent, the triangle is removed from "
+					"the surface!");
+				_sfc_triangles.pop_back();
+			}
+		}
 	}
 }
 
@@ -125,7 +141,8 @@ bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt) const
 
 bool Surface::isPntInSfc(MathLib::Point3d const& pnt) const
 {
-	return (findTriangle(pnt)!=nullptr);
+	return _surface_grid->isPointInSurface(
+		pnt, std::numeric_limits<double>::epsilon());
 }
 
 const Triangle* Surface::findTriangle (MathLib::Point3d const& pnt) const

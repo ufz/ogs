@@ -26,12 +26,14 @@ namespace GeoLib {
 class Polyline;
 
 class Triangle;
+class SurfaceGrid;
+
 /**
  * \ingroup GeoLib
  *
  * \brief A Surface is represented by Triangles. It consists of a reference
- * to a vector of (pointers to) points (m_sfc_pnts) and a vector that stores
- * the Triangles consisting of points from m_sfc_pnts.
+ * to a vector of (pointers to) points (_sfc_pnts) and a vector that stores
+ * the Triangles consisting of points from _sfc_pnts.
  * */
 class Surface : public GeoObject
 {
@@ -94,6 +96,8 @@ protected:
 	std::vector<Triangle*> _sfc_triangles;
 	/** bounding volume is an axis aligned bounding box */
 	AABB<GeoLib::Point> *_bounding_volume;
+	/** a helper structure to accelerate the search */
+	SurfaceGrid * _surface_grid;
 };
 
 }
