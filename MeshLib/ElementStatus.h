@@ -20,47 +20,41 @@
 namespace MeshLib {
 	class Mesh;
 	class Element;
+	class Node;
 
-/**
- * Manages the active/inactive flags for mesh elements and their nodes
- */
 class ElementStatus
 {
 
 public:
-	/// Constructor
-	explicit ElementStatus(MeshLib::Mesh const*const mesh);
+	/// Constructor assuming all nodes and elements
+	explicit ElementStatus(MeshLib::Mesh const* const mesh,
+	                       bool hasAnyInactive = false);
+
+	/// Constructor taking a vector of inactive material IDs
+	ElementStatus(MeshLib::Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs);
 
 	/// Returns a vector of active element IDs
-	std::vector<std::size_t> getActiveElements() const;
+	std::vector<MeshLib::Element*> const& getActiveElements() const;
 
 	/// Returns a vector of active node IDs
-	std::vector<std::size_t> getActiveNodes() const;
-	
+	std::vector<MeshLib::Node*> const& getActiveNodes() const;
+
 	/// Returns the status of element i
-	bool getElementStatus(std::size_t i) const { return _element_status[i]; }
+	bool isActive(std::size_t i) const { return _element_status[i]; }
 
 	/// Returns a vector of active elements connected to a node
-	std::vector<std::size_t> getActiveElementsAtNode(std::size_t node_id) const;
-	
+	std::vector<MeshLib::Element*> getActiveElementsAtNode(std::size_t node_id) const;
+
 	/// Returns the total number of active nodes
 	std::size_t getNActiveNodes() const;
 
 	/// Returns the total number of active elements
 	std::size_t getNActiveElements() const;
 
-	/// Activates/Deactives all mesh elements
-	void setAll(bool status);
-
+protected:
 	/// Sets the status of element i
 	void setElementStatus(std::size_t i, bool status);
 
-	/// Sets the status of material group i
-	void setMaterialStatus(unsigned material_id, bool status);
-
-	~ElementStatus() {}
-
-protected:
 	/// The mesh for which the element status is administrated
 	MeshLib::Mesh const*const _mesh;
 	/// Element status for each mesh element (active/inactive = true/false)
@@ -68,9 +62,12 @@ protected:
 	/// Node status for each mesh node (value = number of active elements connected to node, 0 means inactive)
 	std::vector<unsigned char> _active_nodes;
 
+	bool const _hasAnyInactive;
+	std::vector<MeshLib::Node*> _vec_active_nodes;
+	std::vector<MeshLib::Element*> _vec_active_eles;
+
 }; /* class */
 
 } /* namespace */
 
 #endif /* ELEMENTSTATUS_H_ */
-
