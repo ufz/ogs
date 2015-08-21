@@ -146,10 +146,10 @@ template <typename T, std::size_t DIM>
 bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 		double eps = std::numeric_limits<double>::epsilon())
 {
-	auto coordinateIsLargerEps = [&eps](T const a, T const b) -> bool
+	auto coordinateIsLargerEps = [&eps](T const u, T const v) -> bool
 	{
-		return std::fabs(a-b) > eps * std::min(std::fabs(b), std::fabs(a))
-			&& std::fabs(a-b) > eps;
+		return std::fabs(u - v) > eps * std::min(std::fabs(v), std::fabs(u)) &&
+		       std::fabs(u - v) > eps;
 	};
 
 	for (std::size_t i = 0; i < DIM; ++i)
