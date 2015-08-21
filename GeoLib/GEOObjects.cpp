@@ -56,7 +56,7 @@ const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) cons
 	if (idx != std::numeric_limits<std::size_t>::max())
 		return _pnt_vecs[idx]->getVector();
 
-	INFO("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -66,7 +66,7 @@ const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 	if (idx != std::numeric_limits<std::size_t>::max())
 		return _pnt_vecs[idx];
 
-	INFO("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -74,7 +74,7 @@ bool GEOObjects::removePointVec(const std::string &name)
 {
 	if (isPntVecUsed (name))
 	{
-		INFO("GEOObjects::removePointVec() - There are still Polylines or Surfaces depending on these points.");
+		DBUG("GEOObjects::removePointVec() - There are still Polylines or Surfaces depending on these points.");
 		return false;
 	}
 
@@ -86,7 +86,7 @@ bool GEOObjects::removePointVec(const std::string &name)
 			_pnt_vecs.erase(it);
 			return true;
 		}
-	INFO("GEOObjects::removePointVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::removePointVec() - No entry found with name \"%s\".", name.c_str());
 	return false;
 }
 
@@ -104,7 +104,7 @@ const std::vector<Point*>* GEOObjects::getStationVec(const std::string &name) co
 			return (*it)->getVector();
 		}
 	}
-	INFO("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -158,7 +158,7 @@ const std::vector<Polyline*>* GEOObjects::getPolylineVec(const std::string &name
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i]->getVector();
 
-	INFO("GEOObjects::getPolylineVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getPolylineVec() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -169,7 +169,7 @@ const PolylineVec* GEOObjects::getPolylineVecObj(const std::string &name) const
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i];
 
-	INFO("GEOObjects::getPolylineVecObj() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getPolylineVecObj() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -184,7 +184,7 @@ bool GEOObjects::removePolylineVec(const std::string &name)
 			return true;
 		}
 
-	INFO("GEOObjects::removePolylineVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::removePolylineVec() - No entry found with name \"%s\".", name.c_str());
 	return false;
 }
 
@@ -222,7 +222,7 @@ const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) 
 	for (std::size_t i = 0; i < size; i++)
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i]->getVector();
-	INFO("GEOObjects::getSurfaceVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getSurfaceVec() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -237,7 +237,7 @@ bool GEOObjects::removeSurfaceVec(const std::string &name)
 			return true;
 		}
 
-	INFO("GEOObjects::removeSurfaceVec() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::removeSurfaceVec() - No entry found with name \"%s\".", name.c_str());
 	return false;
 }
 
@@ -247,7 +247,7 @@ const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string &name) const
 	for (std::size_t i = 0; i < size; i++)
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i];
-	INFO("GEOObjects::getSurfaceVecObj() - No entry found with name \"%s\".", name.c_str());
+	DBUG("GEOObjects::getSurfaceVecObj() - No entry found with name \"%s\".", name.c_str());
 	return nullptr;
 }
 
@@ -338,7 +338,7 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 		case GeoLib::GEOTYPE::GEODOMAIN:
 		case GeoLib::GEOTYPE::INVALID:
 		default:
-			INFO("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
+			WARN("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
 			break;
 	}
 	return name;
@@ -534,7 +534,7 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
 	};
 
 	if (!geo_obj) {
-		ERR("GEOObjects::getGeoObject(): Could not find %s \"%s\" in geometry.",
+		DBUG("GEOObjects::getGeoObject(): Could not find %s \"%s\" in geometry.",
 				GeoLib::convertGeoTypeToString(type).c_str(), geo_obj_name.c_str());
 	}
 	return geo_obj;
@@ -558,7 +558,7 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::GEODOMAIN, geo_obj_name);
 
 	if (!geo_obj) {
-		ERR("GEOObjects::getGeoObject(): Could not find \"%s\" in geometry %s.",
+		DBUG("GEOObjects::getGeoObject(): Could not find \"%s\" in geometry %s.",
 			geo_obj_name.c_str(), geo_name.c_str());
 	}
 	return geo_obj;
