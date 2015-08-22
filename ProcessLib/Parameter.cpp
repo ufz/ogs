@@ -27,7 +27,7 @@ std::unique_ptr<ParameterBase> createConstParameter(ConfigTree const config)
 		ERR("Could not find required parameter value.");
 		std::abort();
 	}
-	DBUG("Using value %d", *value);
+	DBUG("Using value %g", *value);
 
 	return std::unique_ptr<ParameterBase>(new ConstParameter<double>(*value));
 }
@@ -41,7 +41,7 @@ std::unique_ptr<ParameterBase> createMeshPropertyParameter(
 		ERR("Could not find required parameter field_name.");
 		std::abort();
 	}
-	DBUG("Using field_name %d", field_name->c_str());
+	DBUG("Using field_name %s", field_name->c_str());
 
 	if (!mesh.getProperties().hasPropertyVector(*field_name))
 	{
