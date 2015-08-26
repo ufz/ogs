@@ -112,47 +112,61 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 
 void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
-	std::size_t noOfPoints = 0, noOfParts = 0;
-	std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>();
+	if (numberOfElements <= 0)
+		return;
+	std::vector<GeoLib::Point*>* pnts = new std::vector<GeoLib::Point*>();
 	std::vector<GeoLib::Polyline*>* lines = new std::vector<GeoLib::Polyline*>();
-	SHPObject* hSHPObject;
 
-	// for each polyline)
-	for (int i = 0; i < numberOfElements; i++) {
-		hSHPObject = SHPReadObject(hSHP, i);
-		noOfPoints = hSHPObject->nVertices;
-		noOfParts = hSHPObject->nParts;
+	std::size_t pnt_id(0);
+	// for each polyline
+	for (int i = 0; i < numberOfElements; ++i) {
+		SHPObject *hSHPObject = SHPReadObject(hSHP, i);
+		int const noOfPoints = hSHPObject->nVertices;
+		int const noOfParts = hSHPObject->nParts;
 
-		for (std::size_t p = 0; p < noOfParts; p++) {
-			int firstPnt = *(hSHPObject->panPartStart + p);
-			int lastPnt = (p < (noOfParts - 1)) ? *(hSHPObject->panPartStart + p + 1) : noOfPoints;
-
-			GeoLib::Polyline* line = new GeoLib::Polyline(*points);
+		for (int p = 0; p < noOfParts; ++p) {
+			int const firstPnt = *(hSHPObject->panPartStart + p);
+			int const lastPnt = (p<(noOfParts - 1)) ?
+				*(hSHPObject->panPartStart + p + 1) : noOfPoints;
 
 			// for each point in that polyline
-			for (int j = firstPnt; j < lastPnt; j++) {
-				GeoLib::Point* pnt = new GeoLib::Point(*(hSHPObject->padfX + j),
-				                                       *(hSHPObject->padfY + j),
-				                                       *(hSHPObject->padfZ + j));
-				points->push_back(pnt);
-				line->addPoint(points->size() - 1);
+			for (int j = firstPnt; j < lastPnt; ++j) {
+				pnts->push_back(new GeoLib::Point(*(hSHPObject->padfX+j),
+					*(hSHPObject->padfY+j), *(hSHPObject->padfZ+j), pnt_id));
+				pnt_id++;
 			}
+		}
+		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
+	}
 
+	_geoObjects->addPointVec(pnts, listName);
+	GeoLib::PointVec const& points(*(_geoObjects->getPointVecObj(listName)));
+	std::vector<std::size_t> const& pnt_id_map(points.getIDMap());
+
+	pnt_id = 0;
+	for (int i = 0; i < numberOfElements; ++i) {
+		SHPObject* hSHPObject = SHPReadObject(hSHP, i);
+		int const noOfPoints = hSHPObject->nVertices;
+		int const noOfParts = hSHPObject->nParts;
+
+		for (int p = 0; p < noOfParts; ++p) {
+			int const firstPnt = *(hSHPObject->panPartStart + p);
+			int const lastPnt = (p<(noOfParts - 1)) ?
+				*(hSHPObject->panPartStart + p + 1) : noOfPoints;
+
+			GeoLib::Polyline* line = new GeoLib::Polyline(*points.getVector());
+
+			// create polyline
+			for (int j = firstPnt; j < lastPnt; ++j) {
+				line->addPoint(pnt_id_map[pnt_id]);
+				pnt_id++;
+			}
 			// add polyline to polyline vector
 			lines->push_back(line);
 		}
-	}
-
-	if (numberOfElements > 0) {
-		// add points vector to GEOObjects (and check for duplicate points)
-		_geoObjects->addPointVec(points, listName);
-
-		// adjust indeces of polylines, remove zero length elements and add vector to GEOObjects
-		this->adjustPolylines(lines, _geoObjects->getPointVecObj(listName)->getIDMap());
-		_geoObjects->addPolylineVec(lines, listName);
-
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
+	_geoObjects->addPolylineVec(lines, listName);
 }
 
 void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
