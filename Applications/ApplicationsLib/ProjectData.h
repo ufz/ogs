@@ -24,6 +24,7 @@
 
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Parameter.h"
 
 namespace MeshLib {
 	class Mesh;
