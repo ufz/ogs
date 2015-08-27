@@ -190,28 +190,6 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
 		_geoObjects->addSurfaceVec(sfc_vec, listName);
 }
 
-void SHPInterface::adjustPolylines(std::vector<GeoLib::Polyline*>* lines,
-                                   const std::vector<std::size_t> &id_map)
-
-{
-	for (std::size_t i = 0; i < lines->size(); i++) {
-		GeoLib::Polyline* line((*lines)[i]);
-		std::size_t previous_pnt_id(std::numeric_limits<std::size_t>::max());
-
-		for (std::size_t j = 0; j < line->getNumberOfPoints(); j++) {
-			std::size_t jth_pnt_id(id_map[line->getPointID(j)]);
-			if (previous_pnt_id == jth_pnt_id) {
-				line->removePoint(j);
-				j--;
-			} else {
-				line->setPointID(j, jth_pnt_id);
-			}
-			previous_pnt_id = jth_pnt_id;
-		}
-	}
-}
-
-
 bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)
 {
 	if (mesh.getDimension()!=2)

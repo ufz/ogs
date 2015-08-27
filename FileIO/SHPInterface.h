@@ -81,9 +81,6 @@ private:
 	/// Reads lines into a vector of Polyline and Surface objects.
 	void readPolygons  (const SHPHandle &hSHP, int numberOfElements, const std::string& listName);
 
-	void adjustPolylines (std::vector<GeoLib::Polyline*>* lines,
-	                      const std::vector<std::size_t>  &id_map);
-
 	GeoLib::GEOObjects* _geoObjects;
 };
 
