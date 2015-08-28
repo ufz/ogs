@@ -243,7 +243,7 @@ public:
         }
     }
 
-    void solve()
+    bool solve(const double /*delta_t*/) override
     {
         DBUG("Solve GroundwaterFlowProcess.");
 
@@ -263,6 +263,8 @@ public:
 
         typename GlobalSetup::LinearSolver linearSolver(*_A);
         linearSolver.solve(*_rhs, *_x);
+
+        return true;
     }
 
     void post(std::string const& file_name)
@@ -293,6 +295,11 @@ public:
         // Write output file
         FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
         vtu_interface.writeToFile(file_name);
+    }
+
+    void postTimestep(std::string const& file_name, const unsigned /*timestep*/) override
+    {
+        post(file_name);
     }
 
     ~GroundwaterFlowProcess()
