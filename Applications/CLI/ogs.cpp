@@ -68,7 +68,8 @@ int main(int argc, char *argv[])
 	ConfigTree project_config;
 
 	read_xml(project_arg.getValue(), project_config,
-			boost::property_tree::xml_parser::no_comments);
+			boost::property_tree::xml_parser::no_comments
+			 | boost::property_tree::xml_parser::trim_whitespace);
 	DBUG("Project configuration from file \'%s\' read.",
 		project_arg.getValue().c_str());
 
