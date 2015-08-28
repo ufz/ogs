@@ -52,6 +52,8 @@ public:
     ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
             GeoLib::GEOObjects const& geometries);
 
+    ProcessVariable(ProcessVariable&&) = default; // maybe circumvents VC++ compilation errors in combination with std::vector
+
     std::string const& getName() const;
 
     /// Returns a mesh on which the process variable is defined.
