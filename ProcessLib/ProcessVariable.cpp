@@ -95,6 +95,14 @@ ProcessVariable::ProcessVariable(
     }
 }
 
+ProcessVariable::ProcessVariable(ProcessVariable&& other)
+    : _name(std::move(other._name)),
+      _mesh(other._mesh),
+      _initial_condition(std::move(other._initial_condition)),
+      _dirichlet_bcs(std::move(other._dirichlet_bcs)),
+      _neumann_bc_configs(std::move(other._neumann_bc_configs))
+{}
+
 std::string const& ProcessVariable::getName() const
 {
     return _name;
