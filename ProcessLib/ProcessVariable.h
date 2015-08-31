@@ -52,7 +52,7 @@ public:
     ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
             GeoLib::GEOObjects const& geometries);
 
-    ProcessVariable(ProcessVariable&&); // maybe circumvents VC++ compilation errors in combination with std::vector
+    ProcessVariable(ProcessVariable&&);
 
     std::string const& getName() const;
 
