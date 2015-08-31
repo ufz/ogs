@@ -18,71 +18,73 @@
 
 namespace MeshGeoToolsLib
 {
-    class MeshNodeSearcher;
-    class BoundaryElementsSearcher;
+class MeshNodeSearcher;
+class BoundaryElementsSearcher;
 }
 
 namespace MeshLib
 {
-    class Mesh;
+class Mesh;
 }
 
 namespace GeoLib
 {
-    class GEOObjects;
+class GEOObjects;
 }
 
 namespace ProcessLib
 {
-    class NeumannBcConfig;
-    class InitialCondition;
-    class UniformDirichletBoundaryCondition;
+class NeumannBcConfig;
+class InitialCondition;
+class UniformDirichletBoundaryCondition;
 }
 
 namespace ProcessLib
 {
-
 /// A named process variable. Its properties includes the mesh, and the initial
 /// and boundary conditions.
 class ProcessVariable
 {
-    using ConfigTree = boost::property_tree::ptree;
+	using ConfigTree = boost::property_tree::ptree;
 
 public:
-    ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
-            GeoLib::GEOObjects const& geometries);
+	ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
+	                GeoLib::GEOObjects const& geometries);
 
-    ProcessVariable(ProcessVariable&&);
+	ProcessVariable(ProcessVariable&&);
 
-    std::string const& getName() const;
+	std::string const& getName() const;
 
-    /// Returns a mesh on which the process variable is defined.
-    MeshLib::Mesh const& getMesh() const;
+	/// Returns a mesh on which the process variable is defined.
+	MeshLib::Mesh const& getMesh() const;
 
-    void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            std::vector<std::size_t>& global_ids, std::vector<double>& values);
+	void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
+	                            std::vector<std::size_t>& global_ids,
+	                            std::vector<double>& values);
 
-    template <typename OutputIterator, typename GlobalSetup, typename ...Args>
-    void createNeumannBcs(OutputIterator bcs,
-        MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
-        GlobalSetup const&,
-        Args&&... args)
-    {
-        for (auto& config : _neumann_bc_configs)
-        {
-            config->initialize(searcher);
-            bcs = new NeumannBc<GlobalSetup>(*config, std::forward<Args>(args)...);
-        }
-    }
+	template <typename OutputIterator, typename GlobalSetup, typename... Args>
+	void createNeumannBcs(OutputIterator bcs,
+	                      MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+	                      GlobalSetup const&,
+	                      Args&&... args)
+	{
+		for (auto& config : _neumann_bc_configs)
+		{
+			config->initialize(searcher);
+			bcs = new NeumannBc<GlobalSetup>(*config,
+			                                 std::forward<Args>(args)...);
+		}
+	}
 
 private:
-    std::string const _name;
-    MeshLib::Mesh const& _mesh;
-    std::unique_ptr<InitialCondition> _initial_condition;
-    std::vector<std::unique_ptr<UniformDirichletBoundaryCondition> > _dirichlet_bcs;
-    std::vector<std::unique_ptr<NeumannBcConfig> > _neumann_bc_configs;
+	std::string const _name;
+	MeshLib::Mesh const& _mesh;
+	std::unique_ptr<InitialCondition> _initial_condition;
+	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
+	    _dirichlet_bcs;
+	std::vector<std::unique_ptr<NeumannBcConfig>> _neumann_bc_configs;
 };
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_PROCESS_VARIABLE_H_
