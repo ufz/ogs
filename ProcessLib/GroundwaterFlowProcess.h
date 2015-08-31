@@ -216,6 +216,8 @@ public:
         _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
         _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
 
+        setInitialConditions(*_hydraulic_head);
+
         if (_mesh.getDimension()==1)
             createLocalAssemblers<1>();
         else if (_mesh.getDimension()==2)
@@ -224,6 +226,20 @@ public:
             createLocalAssemblers<3>();
         else
             assert(false);
+    }
+
+    void setInitialConditions(ProcessVariable const& variable)
+    {
+        std::size_t const n = _mesh.getNNodes();
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            MeshLib::Location l(_mesh.getID(), MeshLib::MeshItemType::Node, i);
+            std::size_t const global_index =
+                _local_to_global_index_map->getGlobalIndex(
+                    l, 0);  // 0 is the component id.
+            _x->set(global_index,
+                   variable.getInitialConditionValue(*_mesh.getNode(i)));
+        }
     }
 
     void solve()
