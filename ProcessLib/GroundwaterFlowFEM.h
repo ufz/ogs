@@ -49,10 +49,9 @@ class LocalAssemblerData : public LocalAssemblerDataInterface<GlobalMatrix, Glob
 {
 public:
     using ShapeFunction = ShapeFunction_;
-    using NodalMatrixType = typename ShapeMatrixPolicyType<ShapeFunction, GlobalDim>::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatrixPolicyType<ShapeFunction, GlobalDim>::NodalVectorType;
-
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
     /// The hydraulic_conductivity factor is directly integrated into the local
