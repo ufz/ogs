@@ -20,13 +20,6 @@ namespace MathLib
 namespace Nonlinear
 {
 
-Picard::Picard()
-: _normType(VecNormType::INFINITY_N),
-  _abs_tol(std::numeric_limits<double>::max()), _rel_tol(1e-6), _max_itr(25),
-  _printErrors(false), _n_iterations(0), _abs_error(.0), _rel_error(.0)
-{
-}
-
 template<class T_FUNCTOR, class T_VALUE>
 bool Picard::solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new)
 {

@@ -26,8 +26,8 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
     const std::size_t n_rows = A.rows();
     for (std::size_t ix=0; ix<vec_knownX_id.size(); ix++)
     {
-        auto row_id = vec_knownX_id[ix];
-        auto x = vec_knownX_x[ix];
+        SpMat::Index const row_id = vec_knownX_id[ix];
+        auto const x = vec_knownX_x[ix];
         //A(k, j) = 0.
         for (SpMat::InnerIterator it(A,row_id); it; ++it)
             it.valueRef() = .0;

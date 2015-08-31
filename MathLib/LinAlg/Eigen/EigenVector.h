@@ -50,7 +50,8 @@ public:
     EigenVector& operator*= (double v) { _vec *= v; return *this; }
 
     /// access entry
-    double operator[] (std::size_t rowId) const { return get(rowId); }
+    double const & operator[] (std::size_t rowId) const { return _vec[rowId]; }
+    double& operator[] (std::size_t rowId) { return _vec[rowId]; }
 
     /// get entry
     double get(std::size_t rowId) const

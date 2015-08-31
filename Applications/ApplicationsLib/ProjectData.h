@@ -24,6 +24,7 @@
 
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Parameter.h"
 
 namespace MeshLib {
 	class Mesh;
@@ -99,6 +100,10 @@ public:
 				_processes.push_back(
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
 						*_mesh_vec[0], _process_variables, _parameters, pc));
+			}
+			else
+			{
+				WARN("Unknown process type: %s\n", pc.get<std::string>("type").c_str());
 			}
 		}
 	}

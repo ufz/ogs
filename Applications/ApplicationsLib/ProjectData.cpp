@@ -186,6 +186,8 @@ void ProjectData::parseProcessVariables(
 		return;
 	}
 
+	_process_variables.reserve(process_variables_config.size());
+
 	for (auto it : process_variables_config) {
 		ConfigTree const& var_config = it.second;
 		// TODO Extend to referenced meshes.

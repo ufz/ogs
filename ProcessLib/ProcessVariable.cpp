@@ -42,8 +42,7 @@ ProcessVariable::ProcessVariable(
             config.get<std::string>("initial_condition.type");
         if (type == "Uniform")
         {
-            _initial_condition =
-                new UniformInitialCondition(ic_config->second);
+            _initial_condition.reset(new UniformInitialCondition(ic_config->second));
         }
         else
         {
@@ -96,16 +95,13 @@ ProcessVariable::ProcessVariable(
     }
 }
 
-ProcessVariable::~ProcessVariable()
-{
-    delete _initial_condition;
-
-    for(auto p : _dirichlet_bcs)
-        delete p;
-
-    for(auto p : _neumann_bc_configs)
-        delete p;
-}
+ProcessVariable::ProcessVariable(ProcessVariable&& other)
+    : _name(std::move(other._name)),
+      _mesh(other._mesh),
+      _initial_condition(std::move(other._initial_condition)),
+      _dirichlet_bcs(std::move(other._dirichlet_bcs)),
+      _neumann_bc_configs(std::move(other._neumann_bc_configs))
+{}
 
 std::string const& ProcessVariable::getName() const
 {
@@ -121,7 +117,7 @@ void ProcessVariable::initializeDirichletBCs(
     MeshGeoToolsLib::MeshNodeSearcher& searcher,
     std::vector<std::size_t>& global_ids, std::vector<double>& values)
 {
-    for (UniformDirichletBoundaryCondition* bc : _dirichlet_bcs)
+    for (auto& bc : _dirichlet_bcs)
         bc->initialize(searcher, global_ids, values);
 }
 
