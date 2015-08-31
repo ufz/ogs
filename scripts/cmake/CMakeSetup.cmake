@@ -35,7 +35,7 @@ elseif(IS_SUBPROJECT)
 else()
 	GIT_GET_TAG(GIT_DESCRIBE)
 	if(GIT_DESCRIBE)
-		string(REGEX MATCH ^[0-9|\\.]* GIT_TAG ${GIT_DESCRIBE})
+		string(REGEX MATCH ^[0-9|\\.]+ GIT_TAG ${GIT_DESCRIBE})
 		set(OGS_VERSION ${GIT_TAG})
 
 		if(GIT_DESCRIBE MATCHES ".*-.*-.*")
