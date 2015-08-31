@@ -78,8 +78,13 @@ public:
     LineIndex rowIndices(std::size_t const mesh_item_id) const;
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
-private:
+    std::size_t getGlobalIndex(MeshLib::Location const& l,
+                               std::size_t const c) const
+    {
+        return _mesh_component_map.getGlobalIndex(l, c);
+    }
 
+private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being
     /// created by the constructor.
