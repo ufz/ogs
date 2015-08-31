@@ -25,6 +25,7 @@ class BoundaryElementsSearcher;
 namespace MeshLib
 {
 class Mesh;
+class Node;
 }
 
 namespace GeoLib
@@ -74,6 +75,11 @@ public:
 			bcs = new NeumannBc<GlobalSetup>(*config,
 			                                 std::forward<Args>(args)...);
 		}
+	}
+
+	double getInitialConditionValue(MeshLib::Node const& n) const
+	{
+		return _initial_condition->getValue(n);
 	}
 
 private:
