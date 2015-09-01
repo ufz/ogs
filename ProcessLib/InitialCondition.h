@@ -17,12 +17,15 @@
 
 namespace ProcessLib
 {
+/// The InitialCondition is a base class for spatial distributions of values
+/// defined on mesh nodes.
 class InitialCondition
 {
 public:
 	virtual ~InitialCondition() = default;
 };
 
+/// Uniform value initial condition
 class UniformInitialCondition : public InitialCondition
 {
 	using ConfigTree = boost::property_tree::ptree;
