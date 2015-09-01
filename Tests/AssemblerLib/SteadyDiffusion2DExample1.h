@@ -42,7 +42,8 @@ struct SteadyDiffusion2DExample1
 			_localRhs = &localRhs;
 		}
 
-		void assemble()
+		void assemble(std::vector<double> const& /*local_x*/,
+					  std::vector<double> const& /*local_x_prev_ts*/)
 		{
 			// The local contributions are computed here, usually, but for this
 			// particular test all contributions are equal for all elements and are

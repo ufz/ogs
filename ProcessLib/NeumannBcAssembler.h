@@ -30,7 +30,8 @@ public:
             std::function<double (MeshLib::Element const&)> const& value_lookup,
             unsigned const integration_order) = 0;
 
-    virtual void assemble() = 0;
+    virtual void assemble(std::vector<double> const& local_x,
+                          std::vector<double> const& local_x_prev_ts) = 0;
 
     virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
@@ -84,7 +85,8 @@ public:
     }
 
     void
-    assemble()
+    assemble(std::vector<double> const& /*local_x*/,
+             std::vector<double> const& /*local_x_prev_ts*/) override
     {
         _localA->setZero();
         _localRhs->setZero();

@@ -168,6 +168,7 @@ public:
 
         _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
+                _local_to_global_index_map->getMeshComponentMap(), 0,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
         //
