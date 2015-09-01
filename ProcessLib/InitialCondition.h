@@ -14,6 +14,7 @@
 #include "logog/include/logog.hpp"
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace ProcessLib
 {
@@ -23,6 +24,7 @@ class InitialCondition
 {
 public:
 	virtual ~InitialCondition() = default;
+	virtual double getValue(MeshLib::Node const&) const = 0;
 };
 
 /// Uniform value initial condition
@@ -37,6 +39,11 @@ public:
 
 		_value = config.get<double>("value", 0);
 		DBUG("Read value %g", _value);
+	}
+
+	virtual double getValue(MeshLib::Node const&) const override
+	{
+		return _value;
 	}
 
 private:
