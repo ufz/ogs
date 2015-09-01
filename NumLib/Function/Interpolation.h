@@ -10,6 +10,8 @@
 #ifndef NUMLIB_INTERPOLATION_H
 #define NUMLIB_INTERPOLATION_H
 
+#include<array>
+
 namespace NumLib
 {
 
@@ -19,24 +21,20 @@ namespace NumLib
  * This function simply does the usual finite-element interpolation, i.e. multiplication
  * of nodal values with the shape function.
  *
- * @param nodal_values   vector of nodal values
+ * @param nodal_values   vector of nodal values, ordered by component
  * @param shape_matrix_N shape matrix of the point to which will be interpolated
- * @param num_nodal_dof  number of nodal variables that will be interpolated
  * @param interpolated_values array of addresses to which the interpolated values will be written
- *
- * The size of interpolated_values must be equal to num_nodal_dof.
  */
-template<typename NodalValues, typename ShapeMatrix>
+template<typename NodalValues, typename ShapeMatrix, std::size_t NodalDOF>
 void shapeFunctionInterpolate(
         const NodalValues& nodal_values,
         const ShapeMatrix& shape_matrix_N,
-        const unsigned num_nodal_dof,
-        double** interpolated_values
+        std::array<double*, NodalDOF> interpolated_values
         )
 {
     auto const num_nodes = shape_matrix_N.size();
 
-    for (unsigned d=0; d<num_nodal_dof; ++d)
+    for (unsigned d=0; d<NodalDOF; ++d)
     {
         *interpolated_values[d] = 0.0;
 
