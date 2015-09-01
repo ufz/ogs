@@ -36,4 +36,34 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
 	    new UniformInitialCondition(*value));
 }
 
+std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
+    ConfigTree const& config, MeshLib::Mesh const& mesh)
+{
+	auto field_name = config.get_optional<std::string>("field_name");
+	if (!field_name)
+	{
+		ERR("Could not find required parameter field_name.");
+		std::abort();
+	}
+	DBUG("Using field_name %s", field_name->c_str());
+
+	if (!mesh.getProperties().hasPropertyVector(*field_name))
+	{
+		ERR("The required property %s does not exists in the mesh.",
+		    field_name->c_str());
+		std::abort();
+	}
+	auto const& property =
+	    mesh.getProperties().template getPropertyVector<double>(*field_name);
+	if (!property)
+	{
+		ERR("The required property %s is not of the requested type.",
+		    field_name->c_str());
+		std::abort();
+	}
+
+	return std::unique_ptr<InitialCondition>(
+	    new MeshPropertyInitialCondition(*property));
+}
+
 }  // namespace ProcessLib

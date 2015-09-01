@@ -10,9 +10,17 @@
 #ifndef PROCESS_LIB_INITIAL_CONDITION_H_
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
+#include <cassert>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
+
+namespace MeshLib
+{
+template <typename>
+class PropertyVector;
+class Mesh;
+}
 
 namespace ProcessLib
 {
@@ -46,6 +54,30 @@ using ConfigTree = boost::property_tree::ptree;
 /// Construct a UniformInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
     ConfigTree const& config);
+
+/// Distribution of values given by a mesh property defined on nodes.
+class MeshPropertyInitialCondition : public InitialCondition
+{
+public:
+	MeshPropertyInitialCondition(
+	    MeshLib::PropertyVector<double> const& property)
+	    : _property(property)
+	{
+		assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
+	}
+
+	virtual double getValue(MeshLib::Node const& n) const override
+	{
+		return _property[n.getID()];
+	}
+
+private:
+	MeshLib::PropertyVector<double> const& _property;
+};
+
+/// Construct a MeshPropertyInitialCondition from configuration.
+std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
+    ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 
