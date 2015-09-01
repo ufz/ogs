@@ -16,6 +16,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "AssemblerLib/MeshComponentMap.h"
+
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace GeoLib
@@ -49,12 +51,28 @@ public:
     /// and the corresponding values.
     /// The ids are appended to the global_ids and the values are filled with
     /// the constant _value.
-    void initialize(MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            std::vector<std::size_t>& global_ids, std::vector<double>& values)
+    void initialize(
+            MeshGeoToolsLib::MeshNodeSearcher& searcher,
+            AssemblerLib::MeshComponentMap const& mcmap,
+            std::size_t component_id,
+            std::vector<std::size_t>& global_ids,
+            std::vector<double>& values)
     {
         // Find nodes' ids on the given mesh on which this boundary condition
         // is defined.
         std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
+
+        // convert mesh node ids to global index for the given component
+        for (auto& id : ids)
+        {
+            id = mcmap.getGlobalIndex(
+                     MeshLib::Location(searcher.getMesh().getID(),
+                                       MeshLib::MeshItemType::Node,
+                                       id),
+                     component_id);
+            // id = nodal_dof_count * id + nodal_dof_index; // order by mesh node
+            // id = mesh_node_count * nodal_dof_index + id; // order by variable
+        }
 
         // Append node ids.
         global_ids.reserve(global_ids.size() + ids.size());
