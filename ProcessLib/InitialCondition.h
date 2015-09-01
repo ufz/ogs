@@ -10,11 +10,9 @@
 #ifndef PROCESS_LIB_INITIAL_CONDITION_H_
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
-#include <boost/property_tree/ptree.hpp>
-#include "logog/include/logog.hpp"
-
-#include "MeshLib/Mesh.h"
+#include <boost/property_tree/ptree_fwd.hpp>
 #include "MeshLib/Node.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace ProcessLib
 {
@@ -30,15 +28,9 @@ public:
 /// Uniform value initial condition
 class UniformInitialCondition : public InitialCondition
 {
-	using ConfigTree = boost::property_tree::ptree;
-
 public:
-	UniformInitialCondition(ConfigTree const& config)
+	UniformInitialCondition(double const value) : _value(value)
 	{
-		DBUG("Constructing Uniform initial condition");
-
-		_value = config.get<double>("value", 0);
-		DBUG("Read value %g", _value);
 	}
 
 	virtual double getValue(MeshLib::Node const&) const override
@@ -49,6 +41,11 @@ public:
 private:
 	double _value;
 };
+
+using ConfigTree = boost::property_tree::ptree;
+/// Construct a UniformInitialCondition from configuration.
+std::unique_ptr<InitialCondition> createUniformInitialCondition(
+    ConfigTree const& config);
 
 }  // namespace ProcessLib
 

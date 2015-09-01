@@ -37,8 +37,8 @@ ProcessVariable::ProcessVariable(ConfigTree const& config,
 		    config.get<std::string>("initial_condition.type");
 		if (type == "Uniform")
 		{
-			_initial_condition.reset(
-			    new UniformInitialCondition(ic_config->second));
+			_initial_condition =
+			    createUniformInitialCondition(ic_config->second);
 		}
 		else
 		{
