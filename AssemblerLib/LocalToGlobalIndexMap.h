@@ -84,6 +84,8 @@ public:
         return _mesh_component_map.getGlobalIndex(l, c);
     }
 
+    AssemblerLib::MeshComponentMap const& getMeshComponentMap() const { return _mesh_component_map; }
+
 private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being
