@@ -11,6 +11,7 @@
 #define NUMLIB_INTERPOLATION_H
 
 #include<array>
+#include<cassert>
 
 namespace NumLib
 {
@@ -34,13 +35,15 @@ void shapeFunctionInterpolate(
 {
     auto const num_nodes = shape_matrix_N.size();
 
+    assert(num_nodes*NodalDOF == nodal_values.size());
+
     for (unsigned d=0; d<NodalDOF; ++d)
     {
         *interpolated_values[d] = 0.0;
 
         for (unsigned n=0; n<num_nodes; ++n)
         {
-            *interpolated_values[d] += nodal_values[d*num_nodes+n] * shape_matrix_N(n);
+            *interpolated_values[d] += nodal_values[d*num_nodes+n] * shape_matrix_N[n];
         }
     }
 }
