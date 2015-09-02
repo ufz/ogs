@@ -37,6 +37,7 @@
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
 #include "Parameter.h"
+#include "Process.h"
 #include "ProcessVariable.h"
 
 namespace MeshLib

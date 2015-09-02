@@ -10,7 +10,12 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
-#include "MeshLib/Mesh.h"
+#include <string>
+
+namespace MeshLib
+{
+    class Mesh;
+}
 
 namespace ProcessLib
 {
@@ -36,10 +41,5 @@ protected:
 };
 
 }   // namespace ProcessLib
-
-//
-// Include all known processes here.
-//
-#include "GroundwaterFlowProcess.h"
 
 #endif  // PROCESS_LIB_PROCESS_H_

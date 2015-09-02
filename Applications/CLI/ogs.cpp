@@ -26,7 +26,7 @@
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 
-#include "NumericsConfig.h"
+#include "ProcessLib/NumericsConfig.h"
 
 
 int main(int argc, char *argv[])
