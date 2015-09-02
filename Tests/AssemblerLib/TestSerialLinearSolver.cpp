@@ -16,7 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#include "Applications/CLI/NumericsConfig.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 
@@ -32,6 +31,8 @@
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+
+#include "ProcessLib/NumericsConfig.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
