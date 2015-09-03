@@ -50,10 +50,9 @@ private:
 	double _value;
 };
 
-using ConfigTree = boost::property_tree::ptree;
 /// Construct a UniformInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    ConfigTree const& config);
+    boost::property_tree::ptree const& config);
 
 /// Distribution of values given by a mesh property defined on nodes.
 class MeshPropertyInitialCondition : public InitialCondition
@@ -77,7 +76,7 @@ private:
 
 /// Construct a MeshPropertyInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    ConfigTree const& config, MeshLib::Mesh const& mesh);
+    boost::property_tree::ptree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 
