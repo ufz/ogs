@@ -233,7 +233,8 @@ public:
         std::size_t const n = _mesh.getNNodes();
         for (std::size_t i = 0; i < n; ++i)
         {
-            MeshLib::Location l(_mesh.getID(), MeshLib::MeshItemType::Node, i);
+            MeshLib::Location const l(_mesh.getID(),
+                                      MeshLib::MeshItemType::Node, i);
             std::size_t const global_index =
                 _local_to_global_index_map->getGlobalIndex(
                     l, 0);  // 0 is the component id.
