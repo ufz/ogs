@@ -65,7 +65,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
                                        }, 0u, 0u);
 
     // set up shape function
-    FemType finite_element(*static_cast<const typename ShapeFunction::MeshElement*>(&element));
+    FemType finite_element(*static_cast<const ShapeFunction::MeshElement*>(&element));
 
     const unsigned integration_order = 2;
     IntegrationMethod integration_method(integration_order);
