@@ -10,38 +10,74 @@
 #ifndef PROCESS_LIB_INITIAL_CONDITION_H_
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
-#include <boost/property_tree/ptree.hpp>
-#include "logog/include/logog.hpp"
+#include <cassert>
+#include <boost/property_tree/ptree_fwd.hpp>
+#include "MeshLib/Node.h"
+#include "MeshLib/PropertyVector.h"
 
-#include "MeshLib/Mesh.h"
+namespace MeshLib
+{
+template <typename>
+class PropertyVector;
+class Mesh;
+}
 
 namespace ProcessLib
 {
-
+/// The InitialCondition is a base class for spatial distributions of values
+/// defined on mesh nodes.
 class InitialCondition
 {
 public:
-    virtual ~InitialCondition() = default;
+	virtual ~InitialCondition() = default;
+	virtual double getValue(MeshLib::Node const&) const = 0;
 };
 
-
+/// Uniform value initial condition
 class UniformInitialCondition : public InitialCondition
 {
-    using ConfigTree = boost::property_tree::ptree;
 public:
-    UniformInitialCondition(ConfigTree const& config)
-    {
-        DBUG("Constructing Uniform initial condition");
+	UniformInitialCondition(double const value) : _value(value)
+	{
+	}
 
-        _value = config.get<double>("value", 0);
-        DBUG("Read value %g", _value);
-    }
+	virtual double getValue(MeshLib::Node const&) const override
+	{
+		return _value;
+	}
 
 private:
-    double _value;
+	double _value;
 };
 
+/// Construct a UniformInitialCondition from configuration.
+std::unique_ptr<InitialCondition> createUniformInitialCondition(
+    boost::property_tree::ptree const& config);
 
-}   // namespace ProcessLib
+/// Distribution of values given by a mesh property defined on nodes.
+class MeshPropertyInitialCondition : public InitialCondition
+{
+public:
+	MeshPropertyInitialCondition(
+	    MeshLib::PropertyVector<double> const& property)
+	    : _property(property)
+	{
+		assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
+	}
+
+	virtual double getValue(MeshLib::Node const& n) const override
+	{
+		return _property[n.getID()];
+	}
+
+private:
+	MeshLib::PropertyVector<double> const& _property;
+};
+
+/// Construct a MeshPropertyInitialCondition from configuration.
+std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
+    boost::property_tree::ptree const& config, MeshLib::Mesh const& mesh);
+
+}  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_INITIAL_CONDITION_H_
