@@ -21,8 +21,6 @@
 
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 
-#include <iostream>
-
 
 TEST(NumLibFunctionInterpolationTest, TwoVariablesTwoNodes)
 {
