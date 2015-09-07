@@ -130,27 +130,27 @@ int main (int argc, char* argv[])
 	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
 		"id iff at least one node of the element is within a polygonal region "
 		"that is given by a polygon read from a gml file.", ' ', "0.1");
-	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
-		"the name of the file containing the input mesh", true,
-		"", "file name");
-	cmd.add(mesh_in);
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
 		"the name of the file the mesh will be written to", true,
 		"", "file name");
 	cmd.add(mesh_out);
+	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
+		"name of polygon in the geometry", true, "", "string");
+	cmd.add(polygon_name_arg);
 	TCLAP::ValueArg<std::string> geometry_fname("g", "geometry",
 		"the name of the file containing the input geometry", true,
 		"", "file name");
 	cmd.add(geometry_fname);
-	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
-		"name of polygon in the geometry", true, "", "string");
-	cmd.add(polygon_name_arg);
+	TCLAP::ValueArg<char> new_property_arg("v", "new-property-value",
+		"new property value", false, 'A', "number");
+	cmd.add(new_property_arg);
 	TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
 		"name of property in the mesh", false, "MaterialIDs", "string");
 	cmd.add(property_name_arg);
-	TCLAP::ValueArg<unsigned> new_property_arg("n", "new-property-value",
-		"new property value", false, 0, "number");
-	cmd.add(new_property_arg);
+	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
+		"the name of the file containing the input mesh", true,
+		"", "file name");
+	cmd.add(mesh_in);
 	cmd.parse(argc, argv);
 
 	// *** read geometry
