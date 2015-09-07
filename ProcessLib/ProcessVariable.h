@@ -65,7 +65,7 @@ public:
 	        const unsigned nodal_dof_idx,
 	        std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
-	template <typename OutputIterator, typename GlobalSetup, typename ...Args>
+	template <typename OutputIterator, typename GlobalSetup, typename... Args>
 	void createNeumannBcs(OutputIterator bcs,
 	                      MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
 	                      GlobalSetup const&,
@@ -74,7 +74,8 @@ public:
 		for (auto& config : _neumann_bc_configs)
 		{
 			config->initialize(searcher);
-			bcs = new NeumannBc<GlobalSetup>(*config, std::forward<Args>(args)...);
+			bcs = new NeumannBc<GlobalSetup>(*config,
+			                                 std::forward<Args>(args)...);
 		}
 	}
 
