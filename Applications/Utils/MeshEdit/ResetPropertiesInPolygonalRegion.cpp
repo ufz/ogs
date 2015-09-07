@@ -153,9 +153,6 @@ int main (int argc, char* argv[])
 	cmd.add(new_property_arg);
 	cmd.parse(argc, argv);
 
-	// *** read mesh
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
-
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
 	{
@@ -164,7 +161,6 @@ int main (int argc, char* argv[])
 			INFO("Read geometry from file \"%s\".",
 				geometry_fname.getValue().c_str());
 		} else {
-			delete mesh;
 			return EXIT_FAILURE;
 		}
 	}
@@ -182,7 +178,6 @@ int main (int argc, char* argv[])
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
@@ -192,7 +187,6 @@ int main (int argc, char* argv[])
 	);
 	if (! ply) {
 		ERR("Polyline \"%s\" not found.", polygon_name_arg.getValue().c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
@@ -202,7 +196,6 @@ int main (int argc, char* argv[])
 	{
 		ERR("Polyline \"%s\" is not closed, i.e. does not describe a\
 			region.", polygon_name_arg.getValue().c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
@@ -210,6 +203,9 @@ int main (int argc, char* argv[])
 
 	GeoLib::Polygon polygon(*(ply));
 
+	// *** read mesh
+	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::string const& property_name(property_name_arg.getValue());
 
 	resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
 
