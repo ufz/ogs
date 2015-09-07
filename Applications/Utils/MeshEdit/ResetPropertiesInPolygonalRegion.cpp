@@ -85,20 +85,26 @@ std::vector<bool> markNodesOutSideOfPolygon(
 	return outside;
 }
 
-void resetProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
-	std::size_t new_property)
+template <typename PT>
+void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
+	std::string const& property_name, PT new_property_value)
 {
 	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
 		polygon));
 
-	boost::optional<MeshLib::PropertyVector<int> &> opt_pv(
-		mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+	boost::optional<MeshLib::PropertyVector<PT> &> opt_pv(
+		mesh.getProperties().getPropertyVector<PT>(property_name)
 	);
 	if (!opt_pv) {
-		ERR("Did not find a PropertyVector with name MaterialIDs.");
+		WARN("Did not find a PropertyVector with name \"%s\".",
+			property_name.c_str());
 		return;
 	}
-	MeshLib::PropertyVector<int> & materials(opt_pv.get());
+	MeshLib::PropertyVector<PT> & pv(opt_pv.get());
+	if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
+		ERR("Values of the PropertyVector are not assigned to cells.");
+		return;
+	}
 
 	for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
 		bool elem_out(true);
@@ -109,7 +115,7 @@ void resetProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
 			}
 		}
 		if (elem_out) {
-			materials[j] = new_property;
+			pv[j] = new_property_value;
 		}
 	}
 }
@@ -139,9 +145,12 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
 		"name of polygon in the geometry", true, "", "string");
 	cmd.add(polygon_name_arg);
-	TCLAP::ValueArg<unsigned> new_material_id_arg("n", "new-material-id",
-		"new material id", false, 0, "number");
-	cmd.add(new_material_id_arg);
+	TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
+		"name of property in the mesh", false, "MaterialIDs", "string");
+	cmd.add(property_name_arg);
+	TCLAP::ValueArg<unsigned> new_property_arg("n", "new-property-value",
+		"new property value", false, 0, "number");
+	cmd.add(new_property_arg);
 	cmd.parse(argc, argv);
 
 	// *** read mesh
@@ -197,11 +206,12 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	std::size_t new_property(new_material_id_arg.getValue());
+	unsigned new_property_val(new_property_arg.getValue());
 
 	GeoLib::Polygon polygon(*(ply));
 
-	resetProperty(*mesh, polygon, new_property);
+
+	resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
 
 	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
