@@ -79,6 +79,11 @@ public:
 		}
 	}
 
+	double getInitialConditionValue(MeshLib::Node const& n) const
+	{
+		return _initial_condition->getValue(n);
+	}
+
 private:
 	std::string const _name;
 	MeshLib::Mesh const& _mesh;
