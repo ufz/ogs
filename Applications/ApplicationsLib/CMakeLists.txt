@@ -7,6 +7,7 @@ add_library(ApplicationsLib STATIC ${LIB_SOURCES})
 target_link_libraries(ApplicationsLib INTERFACE
 	GeoLib
 	MeshGeoToolsLib
+	NumLib
 	ProcessLib
 	${CATALYST_LIBRARIES}
 	logog
