@@ -20,6 +20,8 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+#include "MeshLib/Mesh.h"
+
 namespace GeoLib
 {
     class GeoObject;
