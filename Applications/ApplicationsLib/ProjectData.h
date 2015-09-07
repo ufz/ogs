@@ -22,6 +22,8 @@
 #include "GeoLib/GEOObjects.h"
 #endif
 
+#include "NumLib/TimeStepping/Algorithms/ITimeStepAlgorithm.h"
+
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
@@ -164,6 +166,8 @@ private:
 	/// Parses the file tag and sets output file prefix.
 	void parseOutput(ConfigTree const& output_config, std::string const& path);
 
+	void parseTimeStepping(ConfigTree const& timestepping_config);
+
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects = new GEOModels();
@@ -182,6 +186,9 @@ private:
 
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
+
+	/// Timestepper
+	std::unique_ptr<NumLib::ITimeStepAlgorithm> _time_stepper;
 };
 
 #endif //PROJECTDATA_H_
