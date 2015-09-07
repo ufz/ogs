@@ -132,6 +132,15 @@ public:
 		return _output_file_prefix;
 	}
 
+	NumLib::ITimeStepAlgorithm const& getTimeStepper() const
+	{
+		return *_time_stepper;
+	}
+	NumLib::ITimeStepAlgorithm& getTimeStepper()
+	{
+		return *_time_stepper;
+	}
+
 private:
 	/// Checks if a mesh with the same name exists and provides a unique name in
 	/// case of already existing mesh. Returns true if the mesh name is unique.
