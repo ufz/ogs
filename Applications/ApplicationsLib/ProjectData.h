@@ -118,10 +118,20 @@ public:
 	{
 		return _processes.begin();
 	}
+	std::vector<ProcessLib::Process*>::iterator
+	processesBegin()
+	{
+		return _processes.begin();
+	}
 
 	/// Iterator access for processes as in processesBegin().
 	std::vector<ProcessLib::Process*>::const_iterator
 	processesEnd() const
+	{
+		return _processes.end();
+	}
+	std::vector<ProcessLib::Process*>::iterator
+	processesEnd()
 	{
 		return _processes.end();
 	}
