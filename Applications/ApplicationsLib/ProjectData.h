@@ -22,6 +22,8 @@
 #include "GeoLib/GEOObjects.h"
 #endif
 
+#include "NumLib/TimeStepping/Algorithms/ITimeStepAlgorithm.h"
+
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
@@ -116,10 +118,20 @@ public:
 	{
 		return _processes.begin();
 	}
+	std::vector<ProcessLib::Process*>::iterator
+	processesBegin()
+	{
+		return _processes.begin();
+	}
 
 	/// Iterator access for processes as in processesBegin().
 	std::vector<ProcessLib::Process*>::const_iterator
 	processesEnd() const
+	{
+		return _processes.end();
+	}
+	std::vector<ProcessLib::Process*>::iterator
+	processesEnd()
 	{
 		return _processes.end();
 	}
@@ -128,6 +140,15 @@ public:
 	getOutputFilePrefix() const
 	{
 		return _output_file_prefix;
+	}
+
+	NumLib::ITimeStepAlgorithm const& getTimeStepper() const
+	{
+		return *_time_stepper;
+	}
+	NumLib::ITimeStepAlgorithm& getTimeStepper()
+	{
+		return *_time_stepper;
 	}
 
 private:
@@ -164,6 +185,8 @@ private:
 	/// Parses the file tag and sets output file prefix.
 	void parseOutput(ConfigTree const& output_config, std::string const& path);
 
+	void parseTimeStepping(ConfigTree const& timestepping_config);
+
 private:
 #ifdef OGS_BUILD_GUI
 	GEOModels *_geoObjects = new GEOModels();
@@ -182,6 +205,9 @@ private:
 
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
+
+	/// Timestepper
+	std::unique_ptr<NumLib::ITimeStepAlgorithm> _time_stepper;
 };
 
 #endif //PROJECTDATA_H_

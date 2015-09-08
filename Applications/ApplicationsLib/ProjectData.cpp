@@ -22,6 +22,8 @@
 
 #include "MeshLib/Mesh.h"
 
+#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
+
 // FileIO
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
@@ -69,6 +71,9 @@ ProjectData::ProjectData(ConfigTree const& project_config,
 
 	// output
 	parseOutput(project_config.get_child("output"), path);
+
+	// timestepping
+	parseTimeStepping(project_config.get_child("time_stepping"));
 }
 
 ProjectData::~ProjectData()
@@ -274,3 +279,40 @@ void ProjectData::parseOutput(ConfigTree const& output_config,
 
 	_output_file_prefix = path + *file;
 }
+
+void ProjectData::parseTimeStepping(ConfigTree const& timestepping_config)
+{
+	using namespace ProcessLib;
+
+	DBUG("Reading timestepping configuration.");
+
+	auto const type = timestepping_config.get_optional<std::string>("type");
+	if (!type)
+	{
+		ERR("Could not find required timestepper type.");
+		std::abort();
+	}
+
+	if (*type == "FixedTimeStepping")
+	{
+		_time_stepper.reset(NumLib::FixedTimeStepping::newInstance(timestepping_config));
+	}
+	else if (*type == "SingleStep")
+	{
+		_time_stepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
+	}
+	else
+	{
+		ERR("Unknown timestepper type: `%s'.", type->c_str());
+		std::abort();
+	}
+
+	if (!_time_stepper)
+	{
+		ERR("Initialization of timestepper failed.");
+		std::abort();
+	}
+}
+
+
+

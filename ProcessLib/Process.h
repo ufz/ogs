@@ -30,11 +30,12 @@ public:
     virtual ~Process() = default;
 
     virtual void initialize() = 0;
-    virtual void solve() = 0;
+    virtual bool solve(const double delta_t) = 0;
 
     /// Postprocessing after solve().
     /// The file_name is indicating the name of possible output file.
     virtual void post(std::string const& file_name) = 0;
+    virtual void postTimestep(std::string const& file_name, const unsigned timestep) = 0;
 
 protected:
     MeshLib::Mesh& _mesh;

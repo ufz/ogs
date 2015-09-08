@@ -13,6 +13,7 @@
 #define FIXEDTIMESTEPPING_H_
 
 #include <vector>
+#include <boost/property_tree/ptree.hpp>
 
 #include "ITimeStepAlgorithm.h"
 
@@ -26,6 +27,7 @@ namespace NumLib
  */
 class FixedTimeStepping : public ITimeStepAlgorithm
 {
+    using ConfigTree = boost::property_tree::ptree;
 public:
 
     /**
@@ -57,6 +59,13 @@ public:
      * @param vec_all_dt    a vector of all time steps
      */
     FixedTimeStepping(double t_initial, double t_end, const std::vector<double> &vec_all_dt);
+
+    /**
+     * @brief Create timestepper from the given configuration
+     *
+     * Currently this function only covers uniform timestep size.
+     */
+    static FixedTimeStepping* newInstance(ConfigTree const& config);
 
     virtual ~FixedTimeStepping() {}
 

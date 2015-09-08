@@ -17,6 +17,8 @@
 #include <limits>
 #include <cassert>
 
+#include "logog/include/logog.hpp"
+
 namespace NumLib
 {
 
@@ -27,6 +29,34 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, const std::vector<dou
 FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 : _t_initial(t0), _t_end(tn), _dt_vector(static_cast<std::size_t>(std::ceil((tn-t0)/dt)), dt), _ts_prev(t0), _ts_current(t0)
 {}
+
+FixedTimeStepping*
+FixedTimeStepping::newInstance(const ConfigTree &config)
+{
+    assert(config.get<std::string>("type") == "FixedTimeStepping");
+
+    auto const t_initial = config.get_optional<double>("t_initial");
+    auto const t_end     = config.get_optional<double>("t_end");
+    auto const dt        = config.get_optional<double>("dt");
+
+    if (!t_initial)
+    {
+        ERR("could not find required parameter t_initial.");
+        return nullptr;
+    }
+    if (!t_end)
+    {
+        ERR("could not find required parameter t_end.");
+        return nullptr;
+    }
+    if (!dt)
+    {
+        ERR("could not find required parameter dt.");
+        return nullptr;
+    }
+
+    return new FixedTimeStepping(*t_initial, *t_end, *dt);
+}
 
 const TimeStep FixedTimeStepping::getTimeStep() const
 {
