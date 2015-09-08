@@ -23,29 +23,7 @@ namespace BaseLib
 template <typename T1, typename T2 = std::size_t>
 void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 {
-	// Zip input arrays.
-	std::vector<std::pair<T1, T2>> data;
-	data.reserve(end-beg);
-	std::transform(array.begin()+beg, array.begin()+end, perm.begin()+beg,
-		std::back_inserter(data),
-		[](T1 const& t1, T2 const& t2)
-		{
-			return std::make_pair(t1, t2);
-		});
-
-	// Sort data using first element of the pair.
-	std::sort(data.begin(), data.end(),
-		[](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b)
-		{
-			return (a.first < b.first);
-		});
-
-	// Unzip sorted data.
-	for (std::size_t i = beg; i < end; i++)
-	{
-		array[i] = data[i-beg].first;
-		perm[i] = data[i-beg].second;
-	}
+	quicksort(array.data(), beg, end, perm.data());
 }
 
 template <typename T1, typename T2 = std::size_t>
