@@ -77,7 +77,7 @@ void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::v
 }
 
 template <typename T1, typename T2 = std::size_t>
-void quicksort(T1* & array, std::size_t beg, std::size_t end, T2* & perm)
+void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
 {
 	// Zip input arrays.
 	std::vector<std::pair<T1, T2>> data;
@@ -103,6 +103,7 @@ void quicksort(T1* & array, std::size_t beg, std::size_t end, T2* & perm)
 		perm[beg+i] = data[i].second;
 	}
 }
+
 } // end namespace BaseLib
 
 #endif /* QUICKSORT_H_ */
