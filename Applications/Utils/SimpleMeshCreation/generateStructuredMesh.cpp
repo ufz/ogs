@@ -31,7 +31,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 // FileIO
-#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/writeMeshToFile.h"
 
 namespace
 {
@@ -217,9 +217,7 @@ int main (int argc, char* argv[])
 		INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 		// write into a file
-		FileIO::Legacy::MeshIO meshIO;
-		meshIO.setMesh(mesh);
-		meshIO.writeToFile(mesh_out.getValue());
+		FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 		delete mesh;
 	}
