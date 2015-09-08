@@ -13,6 +13,7 @@
 #define QUICKSORT_H_
 
 #include <algorithm>
+#include <cassert>
 #include <cstddef>
 #include <iterator>
 #include <vector>
@@ -20,9 +21,12 @@
 namespace BaseLib
 {
 
+/// @pre {end<=array.size() and perm.size()==array.size()}
 template <typename T1, typename T2 = std::size_t>
 void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
 {
+	assert (beg <= end);
+
 	// Zip input arrays.
 	std::vector<std::pair<T1, T2>> data;
 	data.reserve(end-beg);
@@ -51,12 +55,20 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
 template <typename T1, typename T2 = std::size_t>
 void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 {
+	assert (beg<=end);
+	assert (end<=array.size());
+	assert (perm.size()==array.size());
+
 	quicksort(array.data(), beg, end, perm.data());
 }
 
 template <typename T1, typename T2 = std::size_t>
 void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
 {
+	assert (beg<=end);
+	assert (end<=array.size());
+	assert (perm.size()==array.size());
+
 	// Zip input arrays.
 	std::vector<std::pair<T1*, T2>> data;
 	data.reserve(end-beg);
