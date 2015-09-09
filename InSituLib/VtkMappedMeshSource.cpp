@@ -98,6 +98,9 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 		if (addProperty<unsigned>(*output, properties, *name))
 			continue;
 
+		if (addProperty<char>(*output, properties, *name))
+			continue;
+
 		DBUG ("Mesh property \"%s\" with unknown data type.", *name->c_str());
 	}
 	return 1;
