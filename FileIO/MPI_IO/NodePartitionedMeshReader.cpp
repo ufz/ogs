@@ -15,6 +15,7 @@
 #include "NodePartitionedMeshReader.h"
 
 #include <logog/include/logog.hpp>
+#include <boost/algorithm/string/erase.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
@@ -71,21 +72,25 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     MeshLib::NodePartitionedMesh* mesh = nullptr;
 
+    /// Prefix of the filename of the partitioned mesh files.
+    std::string filename_prefix = file_name_base;
+    boost::erase_last(filename_prefix, ".vtk");
+
     // Always try binary file first
-    std::string const fname_new = file_name_base + "_partitioned_msh_cfg" +
+    std::string const fname_new = filename_prefix + "_partitioned_msh_cfg" +
         std::to_string(_mpi_comm_size) + ".bin";
 
     if(!BaseLib::IsFileExisting(fname_new)) // doesn't exist binary file.
     {
         INFO("-->Reading ASCII mesh file ...");
 
-        mesh = readASCII(file_name_base);
+        mesh = readASCII(filename_prefix);
     }
     else
     {
         INFO("-->Reading binary mesh file ...");
 
-        mesh = readBinary(file_name_base);
+        mesh = readBinary(filename_prefix);
     }
 
     INFO("\t\n>>Total elapsed time in reading mesh:%f s\n", timer.elapsed());
