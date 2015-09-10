@@ -99,36 +99,7 @@ private:
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,
-        std::size_t const mesh_id, AssemblerLib::ComponentOrder const order)
-    {
-        // For each element find the global indices for node/element
-        // components.
-        for (ElementIterator e = first; e != last; ++e)
-        {
-            std::vector<MeshLib::Location> vec_items;
-            std::size_t const nnodes = (*e)->getNNodes();
-            vec_items.reserve(nnodes);
-
-            for (unsigned n = 0; n < nnodes; n++)
-            {
-                vec_items.emplace_back(
-                    mesh_id,
-                    MeshLib::MeshItemType::Node,
-                    (*e)->getNode(n)->getID());
-            }
-
-            // Save a line of indices for the current element.
-            switch (order)
-            {
-                case AssemblerLib::ComponentOrder::BY_LOCATION:
-                    _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
-                    break;
-                case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                    _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
-                    break;
-            }
-        }
-    }
+        std::size_t const mesh_id, AssemblerLib::ComponentOrder const order);
 
 private:
     std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
@@ -148,6 +119,41 @@ private:
 #endif  // NDEBUG
 
 };
+
+
+template <typename ElementIterator>
+void
+LocalToGlobalIndexMap::findGlobalIndices(ElementIterator first, ElementIterator last,
+    std::size_t const mesh_id, AssemblerLib::ComponentOrder const order)
+{
+    // For each element find the global indices for node/element
+    // components.
+    for (ElementIterator e = first; e != last; ++e)
+    {
+        std::vector<MeshLib::Location> vec_items;
+        std::size_t const nnodes = (*e)->getNNodes();
+        vec_items.reserve(nnodes);
+
+        for (unsigned n = 0; n < nnodes; n++)
+        {
+            vec_items.emplace_back(
+                mesh_id,
+                MeshLib::MeshItemType::Node,
+                (*e)->getNode(n)->getID());
+        }
+
+        // Save a line of indices for the current element.
+        switch (order)
+        {
+            case AssemblerLib::ComponentOrder::BY_LOCATION:
+                _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
+                break;
+            case AssemblerLib::ComponentOrder::BY_COMPONENT:
+                _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
+                break;
+        }
+    }
+}
 
 }   // namespace AssemblerLib
 
