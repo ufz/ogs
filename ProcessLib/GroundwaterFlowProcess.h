@@ -187,6 +187,7 @@ public:
                     _global_setup,
                     _integration_order,
                     *_local_to_global_index_map,
+                    0, 1,
                     *_mesh_subset_all_nodes);
         }
 
@@ -207,7 +208,7 @@ public:
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
 
         _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
+            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
         DBUG("Compute sparsity pattern");
         _node_adjacency_table.createTable(_mesh.getNodes());
