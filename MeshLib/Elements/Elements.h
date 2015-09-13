@@ -16,6 +16,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Quad.h"

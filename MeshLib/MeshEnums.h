@@ -27,6 +27,7 @@ namespace MeshLib {
 enum class MeshElemType
 {
 	INVALID = 0,
+	POINT = 1,
 	LINE = 3,
 	QUAD = 9,
 	HEXAHEDRON = 12,
@@ -42,6 +43,7 @@ enum class MeshElemType
 enum class CellType
 {
 	INVALID,
+	POINT1,
 	LINE2,
 	LINE3,
 	TRI3,
