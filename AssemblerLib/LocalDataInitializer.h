@@ -23,6 +23,7 @@
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
+#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
 #include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
 #include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
@@ -73,6 +74,8 @@ public:
             [](){ return new LAData<NumLib::ShapeLine2>; };
         _builder[std::type_index(typeid(MeshLib::Line3))] =
             [](){ return new LAData<NumLib::ShapeLine3>; };
+        _builder[std::type_index(typeid(MeshLib::Point))] =
+            [](){ return new LAData<NumLib::ShapePoint1>; };
         _builder[std::type_index(typeid(MeshLib::Prism15))] =
             [](){ return new LAData<NumLib::ShapePrism15>; };
         _builder[std::type_index(typeid(MeshLib::Prism))] =
