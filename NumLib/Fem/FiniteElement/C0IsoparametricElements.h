@@ -14,6 +14,7 @@
 #ifndef C0ISOPARAMETRICELEMENTS_H_
 #define C0ISOPARAMETRICELEMENTS_H_
 
+#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
@@ -34,6 +35,12 @@
 
 namespace NumLib
 {
+
+template <template <typename> class T_SHAPE_MATRIX_POLICY>
+struct FePOINT1
+{
+    typedef TemplateIsoparametric<ShapePoint1, T_SHAPE_MATRIX_POLICY<ShapePoint1>> type;
+};
 
 template <template <typename> class T_SHAPE_MATRIX_POLICY>
 struct FeLINE2
