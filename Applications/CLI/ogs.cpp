@@ -133,7 +133,6 @@ int main(int argc, char *argv[])
 	DBUG("Project configuration from file \'%s\' read.",
 		project_arg.getValue().c_str());
 
-
 	project_config = project_config.get_child("OpenGeoSysProject");
 
 	ProjectData project(project_config,
