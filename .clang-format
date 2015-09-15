@@ -1,0 +1,13 @@
+---
+Language:        Cpp
+BasedOnStyle:    Google
+
+AccessModifierOffset: -4
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+BreakBeforeBraces: Allman
+IndentWidth:     4
+TabWidth:        4
+UseTab:          ForIndentation
+ExperimentalAutoDetectBinPacking: true
+Standard:        C++11
