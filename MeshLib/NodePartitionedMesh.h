@@ -80,6 +80,12 @@ class NodePartitionedMesh : public Mesh
             return _n_global_nodes;
         }
 
+        /// Get the global node ID of a node with its local ID.
+        std::size_t getGlobalNodeID(const std::size_t node_id) const
+        {
+            return _global_node_ids[node_id];
+        }
+
         /// Get the number of the active nodes of the partition for linear elements.
         std::size_t getNActiveBaseNodes() const
         {
