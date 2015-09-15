@@ -15,15 +15,38 @@
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
 
+namespace detail
+{
+    /// Forwards the Eigen::Matrix type for general N and M.
+    /// There is a partial specialization for M = 1 to store the matrix in
+    /// column major storage order.
+    template <int N, int M>
+    struct EigenMatrixType
+    {
+        using type = Eigen::Matrix<double, N, M, Eigen::RowMajor>;
+    };
+
+    /// Specialisation for Nx1 matrices which can be stored only in column major
+    /// form in Eigen-3.2.5.
+    template <int N>
+    struct EigenMatrixType<N, 1>
+    {
+        using type = Eigen::Matrix<double, N, 1, Eigen::ColMajor>;
+    };
+
+
+}   // detail
+
 /// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
 /// matrices and vectors.
 template <typename ShapeFunction, unsigned GlobalDim>
 struct EigenFixedShapeMatrixPolicy
 {
-    template <int N, int M>
-    using _MatrixType = Eigen::Matrix<double, N, M, Eigen::RowMajor>;
     template <int N>
     using _VectorType = Eigen::Matrix<double, N, 1>;
+
+    template <int N, int M>
+    using _MatrixType = typename detail::EigenMatrixType<N, M>::type;
 
     using NodalMatrixType = _MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
     using NodalVectorType = _VectorType<ShapeFunction::NPOINTS>;
