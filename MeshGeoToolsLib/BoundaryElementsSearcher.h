@@ -13,6 +13,7 @@
 namespace GeoLib
 {
 class GeoObject;
+class Point;
 class Polyline;
 class Surface;
 }
@@ -26,6 +27,7 @@ class Element;
 namespace MeshGeoToolsLib
 {
 class MeshNodeSearcher;
+class BoundaryElementsAtPoint;
 class BoundaryElementsAlongPolyline;
 class BoundaryElementsOnSurface;
 
@@ -55,6 +57,13 @@ public:
 	std::vector<MeshLib::Element*> const& getBoundaryElements(GeoLib::GeoObject const& geoObj);
 
 	/**
+	 * generate boundary elements at the given point.
+	 * @param point Search the mesh for given point
+	 * @return a vector of boundary elements
+	 */
+	std::vector<MeshLib::Element*> const& getBoundaryElementsAtPoint(
+	    GeoLib::Point const& point);
+	/**
 	 * generate boundary elements on the given polyline.
 	 * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
 	 * @return a vector of boundary element objects
@@ -72,6 +81,7 @@ public:
 private:
 	MeshLib::Mesh const& _mesh;
 	MeshNodeSearcher &_mshNodeSearcher;
+	std::vector<BoundaryElementsAtPoint*> _boundary_elements_at_point;
 	std::vector<BoundaryElementsAlongPolyline*> _boundary_elements_along_polylines;
 	std::vector<BoundaryElementsOnSurface*> _boundary_elements_along_surfaces;
 };
