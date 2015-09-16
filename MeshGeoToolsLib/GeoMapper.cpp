@@ -77,7 +77,7 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	// init grid
 	MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
 	MathLib::Vector3 normal(0,0,-1);
-	MeshLib::Mesh const*const flat_mesh = MeshLib::projectMeshOntoPlane(*mesh, origin, normal);
+	MeshLib::Mesh const*const flat_mesh = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
 	std::vector<MeshLib::Node*> const& flat_nodes (flat_mesh->getNodes());
 	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
 	this->mapData();
