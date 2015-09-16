@@ -30,7 +30,7 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
 	// Zip input arrays.
 	std::vector<std::pair<T1, T2>> data;
 	data.reserve(end-beg);
-	std::transform(array+beg, array+(end-beg), perm+beg,
+	std::transform(array+beg, array+end, perm+beg,
 		std::back_inserter(data),
 		[](T1 const& t1, T2 const& t2)
 		{
@@ -72,7 +72,7 @@ void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::v
 	// Zip input arrays.
 	std::vector<std::pair<T1*, T2>> data;
 	data.reserve(end-beg);
-	std::transform(array.begin()+beg, array.begin()+(end-beg), perm.begin()+beg,
+	std::transform(array.begin()+beg, array.begin()+end, perm.begin()+beg,
 		std::back_inserter(data),
 		[](T1* const& t1, T2 const& t2)
 		{
