@@ -52,7 +52,7 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 		new std::map<std::string, std::size_t>);
 	std::size_t cnt(0);
 	for (std::size_t id: node_ids) {
-		pnts->push_back(new GeoLib::Point(*(nodes[id]), nodes[id]->getID()));
+		pnts->push_back(new GeoLib::Point(*(nodes[id]), cnt));
 		pnt_names->insert(std::pair<std::string, std::size_t>(
 			geo_name+"-PNT-"+std::to_string(cnt), cnt));
 		cnt++;
@@ -236,7 +236,8 @@ int main (int argc, char* argv[])
 	);
 
 	// insert first point
-	surface_pnts->push_back(new GeoLib::Point(pnts_with_id[0]));
+	surface_pnts->push_back(
+		new GeoLib::Point(pnts_with_id[0], surface_pnts->size()));
 	std::string element_name;
 	pnt_vec->getNameOfElementByID(0, element_name);
 	name_id_map->insert(
@@ -246,7 +247,8 @@ int main (int argc, char* argv[])
 		const GeoLib::Point& p0 (pnts_with_id[k-1]);
 		const GeoLib::Point& p1 (pnts_with_id[k]);
 		if (std::abs (p0[0] - p1[0]) > eps || std::abs (p0[1] - p1[1]) > eps) {
-			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k]));
+			surface_pnts->push_back(new GeoLib::Point(pnts_with_id[k],
+				surface_pnts->size()));
 			std::string element_name;
 			pnt_vec->getNameOfElementByID(k, element_name);
 			name_id_map->insert(
