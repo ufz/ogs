@@ -130,6 +130,7 @@ class NodePartitionedMesh : public Mesh
                     return (node_a->getConnectedNodes().size() <
                             node_b->getConnectedNodes().size());
                 });
+            // Return the number of connected nodes +1 for the node itself.
             return (*it_max_ncn)->getConnectedNodes().size() + 1;
         }
 
