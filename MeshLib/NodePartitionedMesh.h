@@ -16,16 +16,15 @@
 #ifndef NODE_PARTITIONED_MESH_H_
 #define NODE_PARTITIONED_MESH_H_
 
-#include <vector>
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include "Mesh.h"
+#include "Node.h"
 
 namespace MeshLib
 {
-class Node;
-class Element;
-
 /// A subdomain mesh.
 class NodePartitionedMesh : public Mesh
 {
@@ -80,6 +79,12 @@ class NodePartitionedMesh : public Mesh
             return _n_global_nodes;
         }
 
+        /// Get the global node ID of a node with its local ID.
+        std::size_t getGlobalNodeID(const std::size_t node_id) const
+        {
+            return _global_node_ids[node_id];
+        }
+
         /// Get the number of the active nodes of the partition for linear elements.
         std::size_t getNActiveBaseNodes() const
         {
@@ -96,11 +101,11 @@ class NodePartitionedMesh : public Mesh
         bool isGhostNode(const std::size_t node_id) const
         {
             if(node_id < _n_active_base_nodes)
-                return true;
-            else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
-                return true;
-            else
                 return false;
+            else if(node_id >= _n_base_nodes && node_id < getLargestActiveNodeID() )
+                return false;
+            else
+                return true;
         }
 
         /// Get the largest ID of active nodes for higher order elements in a partition.
@@ -113,6 +118,20 @@ class NodePartitionedMesh : public Mesh
         std::size_t getNNonGhostElements() const
         {
             return _n_nghost_elem;
+        }
+
+        /// Get the maximum number of connected nodes to node.
+        std::size_t getMaximumNConnectedNodesToNode() const
+        {
+            std::vector<Node *>::const_iterator it_max_ncn = std::max_element(
+                _nodes.cbegin(), _nodes.cend(),
+                [](Node const *const node_a, Node const *const node_b)
+                {
+                    return (node_a->getConnectedNodes().size() <
+                            node_b->getConnectedNodes().size());
+                });
+            // Return the number of connected nodes +1 for the node itself.
+            return (*it_max_ncn)->getConnectedNodes().size() + 1;
         }
 
     private:
