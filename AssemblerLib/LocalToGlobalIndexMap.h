@@ -54,8 +54,7 @@ public:
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT);
+        AssemblerLib::ComponentOrder const order);
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
@@ -64,9 +63,7 @@ public:
     /// \note The elements are not necessary those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        std::vector<MeshLib::Element*> const& elements,
-        AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT) const;
+        std::vector<MeshLib::Element*> const& elements) const;
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;

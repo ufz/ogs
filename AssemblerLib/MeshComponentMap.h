@@ -46,7 +46,9 @@ public:
         ComponentOrder order);
 
     /// Creates a subset of the current mesh component map.
-    /// The order of components is the same as of the current map.
+    /// The components are those from \c components which are not nullptrs.
+    /// The order (BY_LOCATION/BY_NODE) of components is the same as of the current map.
+    ///
     MeshComponentMap getSubset(
         std::vector<MeshLib::MeshSubsets*> const& components) const;
 
@@ -129,6 +131,8 @@ public:
 
 
     unsigned getNumComponents() const { return _num_components; }
+
+    ComponentOrder getOrder() const { return _order; }
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.

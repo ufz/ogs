@@ -57,6 +57,7 @@ MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components
     ComponentGlobalIndexDict subset_dict;
 
     std::size_t comp_id = 0;
+    std::size_t num_comp = 0;
     for (auto c : components)
     {
         if (c == nullptr)   // Empty component
@@ -77,10 +78,11 @@ MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components
                 subset_dict.insert(getLine(Location(mesh_id,
                     MeshLib::MeshItemType::Cell, mesh_subset.getElementID(j)), comp_id));
         }
+        num_comp++;
         comp_id++;
     }
 
-    return MeshComponentMap(subset_dict, _order, _num_components);
+    return MeshComponentMap(subset_dict, _order, num_comp);
 }
 
 void MeshComponentMap::renumberByLocation(std::size_t offset)

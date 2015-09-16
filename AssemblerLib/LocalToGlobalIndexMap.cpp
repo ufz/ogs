@@ -46,6 +46,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     // of that MeshSubset save a line of global indices.
     for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
     {
+        if (! mss) continue;
         for (MeshLib::MeshSubset const* const ms : *mss)
         {
             std::size_t const mesh_id = ms->getMeshID();
@@ -56,16 +57,13 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 }
 
 LocalToGlobalIndexMap*
-LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
-    std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-    std::vector<MeshLib::Element*> const& elements,
-    AssemblerLib::ComponentOrder const order) const
+LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+    std::vector<MeshLib::Element*> const& elements) const
 {
     DBUG("Construct reduced local to global index map.");
 
     return new LocalToGlobalIndexMap(mesh_subsets, elements,
-        _mesh_component_map.getSubset(mesh_subsets),
-        order);
+        _mesh_component_map.getSubset(mesh_subsets), _mesh_component_map.getOrder());
 }
 
 std::size_t

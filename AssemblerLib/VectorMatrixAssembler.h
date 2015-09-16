@@ -38,7 +38,7 @@ public:
 
     ~VectorMatrixAssembler() {}
 
-    void setX(GLOBAL_VECTOR_* x, GLOBAL_VECTOR_* x_prev_ts)
+    void setX(GLOBAL_VECTOR_ const * x, GLOBAL_VECTOR_ const * x_prev_ts)
     {
         assert(x->size() == x_prev_ts->size());
         _x = x;
@@ -95,12 +95,9 @@ public:
 protected:
     GLOBAL_MATRIX_ &_A;
     GLOBAL_VECTOR_ &_rhs;
-    GLOBAL_VECTOR_ *_x = nullptr;
-    GLOBAL_VECTOR_ *_x_prev_ts = nullptr;
+    GLOBAL_VECTOR_ const *_x = nullptr;
+    GLOBAL_VECTOR_ const *_x_prev_ts = nullptr;
     LocalToGlobalIndexMap const& _data_pos;
-
-    GLOBAL_VECTOR_* _secondary_variables = nullptr;
-    LocalToGlobalIndexMap const* _secondary_data_pos;
 };
 
 }   // namespace AssemblerLib

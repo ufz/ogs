@@ -53,10 +53,12 @@ public:
         NeumannBcConfig const& bc,
         unsigned const integration_order,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
+        std::size_t const component_index, std::size_t const num_components,
         MeshLib::MeshSubset const& mesh_subset_all_nodes
         )
         :
           _function(*bc.getFunction()),
+          _all_mesh_subsets(num_components, nullptr),
           _integration_order(integration_order)
     {
         // deep copy because the neumann bc config destroys the elements.
@@ -68,7 +70,9 @@ public:
 
         _mesh_subset_all_nodes =
             mesh_subset_all_nodes.getIntersectionByNodes(nodes);
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+
+        assert(component_index<num_components);
+        _all_mesh_subsets[component_index] = new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
 
         _local_to_global_index_map.reset(
             local_to_global_index_map.deriveBoundaryConstrainedMap(
@@ -154,8 +158,12 @@ public:
     /// matrix and the right-hand-side.
     template <typename GlobalSetup>
     void
-    integrate(GlobalSetup const& global_setup)
+    integrate(GlobalSetup const& global_setup,
+              typename GlobalSetup::VectorType const * x_curr = nullptr,
+              typename GlobalSetup::VectorType const * x_prev_ts = nullptr
+              )
     {
+        _global_assembler->setX(x_curr, x_prev_ts);
         global_setup.execute(*_global_assembler, _local_assemblers);
     }
 
