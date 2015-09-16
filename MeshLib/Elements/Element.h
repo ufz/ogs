@@ -15,7 +15,6 @@
 #ifndef ELEMENT_H_
 #define ELEMENT_H_
 
-#include <vector>
 #include <limits>
 #include <boost/optional.hpp>
 
