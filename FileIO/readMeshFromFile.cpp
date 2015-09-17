@@ -21,6 +21,8 @@
 #include <petsc.h>
 #endif
 
+#include <boost/algorithm/string/erase.hpp>
+
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
@@ -42,6 +44,8 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
 #ifdef USE_PETSC
 	NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
+	std::string const file_name_base =
+	    boost::erase_last_copy(file_name, ".vtk");
 	return read_pmesh.read(file_name);
 #else
 	if (BaseLib::hasFileExtension("msh", file_name))
