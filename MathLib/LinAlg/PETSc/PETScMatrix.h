@@ -164,10 +164,10 @@ class PETScMatrix
         void add(RowColumnIndices<PetscInt> const& indices,
                  T_DENSE_MATRIX &sub_matrix)
         {
-            for(std::size_t i=0; i<indices.non_ghost_local_ids.size(); i++)
+            for(std::size_t i=0; i<indices.ghost_local_ids.size(); i++)
             {
-                const std::size_t non_ghost_id = indices.non_ghost_local_ids[i];
-                sub_matrix->row(non_ghost_id).setZero();
+                const std::size_t ghost_ids = indices.ghost_local_ids[i];
+                sub_matrix->row(ghost_ids).setZero();
             }
             this->add(indices.rows, indices.columns, sub_matrix);
         }
