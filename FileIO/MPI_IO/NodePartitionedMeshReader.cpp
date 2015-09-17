@@ -73,8 +73,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
     MeshLib::NodePartitionedMesh* mesh = nullptr;
 
     /// Prefix of the filename of the partitioned mesh files.
-    std::string filename_prefix = file_name_base;
-    boost::erase_last(filename_prefix, ".vtk");
+    std::string const filename_prefix =
+        boost::erase_last_copy(file_name_base, ".vtk");
 
     // Always try binary file first
     std::string const fname_new = filename_prefix + "_partitioned_msh_cfg" +
