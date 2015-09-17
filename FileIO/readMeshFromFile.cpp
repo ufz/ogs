@@ -46,7 +46,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 	NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
 	std::string const file_name_base =
 	    boost::erase_last_copy(file_name, ".vtk");
-	return read_pmesh.read(file_name);
+	return read_pmesh.read(file_name_base);
 #else
 	if (BaseLib::hasFileExtension("msh", file_name))
 	{
