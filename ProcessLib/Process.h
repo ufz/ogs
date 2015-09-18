@@ -32,6 +32,14 @@ public:
     virtual void initialize() = 0;
     virtual bool solve(const double delta_t) = 0;
 
+    /// Explicitly release memory of global vector, matrix and linear solvers
+    /// for MPI based parallel computing
+    virtual void releaseEquationMemory()
+    {
+        // This is dummy code to fix _compilation_ of currently broken petsc
+        // configuration.
+    }
+
     /// Postprocessing after solve().
     /// The file_name is indicating the name of possible output file.
     virtual void post(std::string const& file_name) = 0;
