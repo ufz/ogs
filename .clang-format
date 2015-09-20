@@ -4,10 +4,12 @@ BasedOnStyle:    Google
 
 AccessModifierOffset: -4
 AllowShortLoopsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
 BreakBeforeBraces: Allman
+DerivePointerAlignment: false
+ExperimentalAutoDetectBinPacking: true
 IndentWidth:     4
+PointerAlignment: Left
+Standard:        C++11
 TabWidth:        4
 UseTab:          ForIndentation
-ExperimentalAutoDetectBinPacking: true
-Standard:        C++11
