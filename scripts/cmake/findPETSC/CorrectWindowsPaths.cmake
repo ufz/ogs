@@ -6,8 +6,9 @@
 
 macro (CONVERT_CYGWIN_PATH _path)
   if (WIN32)
-    execute_process(COMMAND cygpath.exe -m ${${_path}}
+    EXECUTE_PROCESS(COMMAND cygpath.exe -m ${${_path}}
       OUTPUT_VARIABLE ${_path})
     string (STRIP ${${_path}} ${_path})
-  endif ()
-endmacro ()
+  endif (WIN32)
+endmacro (CONVERT_CYGWIN_PATH)
+
