@@ -32,16 +32,19 @@ public:
     explicit EigenDirectLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
     {
         INFO("-> initialize with the coefficient matrix");
-        _solver.compute(A);
-        if(_solver.info()!=Eigen::Success) {
-            ERR("Failed during Eigen linear solver initialization");
-            return;
-        }
     }
 
     void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &/*opt*/) override
     {
         INFO("-> solve");
+        if (!_A.isCompressed())
+            _A.makeCompressed();
+        _solver.compute(_A);
+        if(_solver.info()!=Eigen::Success) {
+            ERR("Failed during Eigen linear solver initialization");
+            return;
+        }
+
         x = _solver.solve(b);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
@@ -62,11 +65,6 @@ public:
     explicit EigenIterativeLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
     {
         INFO("-> initialize with the coefficient matrix");
-        _solver.compute(A);
-        if(_solver.info()!=Eigen::Success) {
-            ERR("Failed during Eigen linear solver initialization");
-            return;
-        }
     }
 
     void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &opt) override
@@ -74,6 +72,13 @@ public:
         INFO("-> solve");
         _solver.setTolerance(opt.error_tolerance);
         _solver.setMaxIterations(opt.max_iterations);
+        if (!_A.isCompressed())
+            _A.makeCompressed();
+        _solver.compute(_A);
+        if(_solver.info()!=Eigen::Success) {
+            ERR("Failed during Eigen linear solver initialization");
+            return;
+        }
         x = _solver.solveWithGuess(b, x);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
