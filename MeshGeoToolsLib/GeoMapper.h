@@ -96,7 +96,7 @@ private:
 	std::string& _geo_name;
 
 	/// only necessary for mapping on mesh
-	MeshLib::Mesh* _mesh;
+	MeshLib::Mesh* _surface_mesh;
 	GeoLib::Grid<MeshLib::Node>* _grid;
 
 	/// only necessary for mapping on DEM
