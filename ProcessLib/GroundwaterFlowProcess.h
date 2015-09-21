@@ -194,7 +194,7 @@ public:
 
     }
 
-    void initialize()
+    void initialize() override
     {
         DBUG("Initialize GroundwaterFlowProcess.");
 
@@ -268,7 +268,7 @@ public:
         return true;
     }
 
-    void post(std::string const& file_name)
+    void post(std::string const& file_name) override
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
         std::string const property_name = "Result";
