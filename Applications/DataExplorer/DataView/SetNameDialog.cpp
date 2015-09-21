@@ -20,7 +20,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 
-SetNameDialog::SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name = "", QDialog* parent) 
+SetNameDialog::SetNameDialog(const std::string &geo_object_type, std::size_t id, const std::string &old_name = "", QDialog* parent)
 :QDialog(parent)
 {
 	QString const& label = QString::fromStdString(geo_object_type) + "#" + QString::number(id);
@@ -54,9 +54,9 @@ void SetNameDialog::setupDialog(const QString &label, const std::string &old_nam
 	setLayout(_layout);
 }
 
-std::string SetNameDialog::getNewName() 
+std::string SetNameDialog::getNewName()
 {
-	return _new_name->text().toStdString(); 
+	return _new_name->text().toStdString();
 }
 
 void SetNameDialog::accept()

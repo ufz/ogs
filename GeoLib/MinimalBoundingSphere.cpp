@@ -59,7 +59,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     if (cross_ab.getLength() > 0)
     {
         double const denom = 2.0 * scalarProduct(cross_ab,cross_ab);
-        MathLib::Vector3 const o = (scalarProduct(b,b) * crossProduct(cross_ab, a) 
+        MathLib::Vector3 const o = (scalarProduct(b,b) * crossProduct(cross_ab, a)
                                    + scalarProduct(a,a) * crossProduct(b, cross_ab))
                                   * (1.0 / denom);
         _radius = o.getLength() + std::numeric_limits<double>::epsilon();
@@ -89,9 +89,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     if (!GeoLib::isCoplanar(p, q, r, s))
     {
         double const denom = 2.0 * GeoLib::scalarTriple(a,b,c);
-        MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b) 
+        MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b)
                                   + scalarProduct(b,b) * crossProduct(c,a)
-                                  + scalarProduct(a,a) * crossProduct(b,c)) 
+                                  + scalarProduct(a,a) * crossProduct(b,c))
                                   * (1.0 / denom);
 
         _radius = o.getLength() + std::numeric_limits<double>::epsilon();

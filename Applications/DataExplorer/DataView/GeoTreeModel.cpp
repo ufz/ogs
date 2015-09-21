@@ -339,8 +339,8 @@ void GeoTreeModel::setNameForItem(const std::string &name,
 	}
 
 	auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo)
-	{ 
-		return (name.compare( geo->data(0).toString().toStdString() ) == 0); 
+	{
+		return (name.compare( geo->data(0).toString().toStdString() ) == 0);
 	});
 
 	for (int i = 0; i < (*it)->childCount(); i++)

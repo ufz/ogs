@@ -39,7 +39,7 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 {
     BaseLib::RunTime wtimer;
     wtimer.start();
-    	
+
 // define TEST_MEM_PETSC
 #ifdef TEST_MEM_PETSC
     PetscLogDouble mem1, mem2;

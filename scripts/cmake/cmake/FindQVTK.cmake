@@ -6,8 +6,8 @@
 #   QVTK_FOUND       - True if QVTK was found
 #   QVTK_INCLUDE_DIR - Directory containing the QVTK include files
 #   QVTK_LIBRARY     - QVTK library
-# 
-# If QVTK_FOUND then QVTK_INCLUDE_DIR is appended to VTK_INCLUDE_DIRS and 
+#
+# If QVTK_FOUND then QVTK_INCLUDE_DIR is appended to VTK_INCLUDE_DIRS and
 # QVTK_LIBRARY is appended to QVTK_LIBRARY_DIR.
 #
 

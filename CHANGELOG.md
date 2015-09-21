@@ -16,7 +16,7 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 ### Features:
 
 - [Neumann boundary conditions](http://docs.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann)
-- Implement mesh properties for storage of data fields. This also includes mapped values (e.g. based on material id) [PR #542](https://github.com/ufz/ogs/pull/542), [PR #644](https://github.com/ufz/ogs/pull/644), 
+- Implement mesh properties for storage of data fields. This also includes mapped values (e.g. based on material id) [PR #542](https://github.com/ufz/ogs/pull/542), [PR #644](https://github.com/ufz/ogs/pull/644),
 - Refactored mesh property classes to [enable VTK output](https://github.com/ufz/ogs/pull/692)
 - Extended the available elements to quadratic (e.g. Quad8) based on generalized "element rules".  [#572](https://github.com/ufz/ogs/pull/572), [PR #656](https://github.com/ufz/ogs/pull/656), [PR #657](https://github.com/ufz/ogs/pull/657),
 - Extend computation of shape matrices to lower dimensional elements embedded in higher dimensional space [#655](https://github.com/ufz/ogs/pull/655)

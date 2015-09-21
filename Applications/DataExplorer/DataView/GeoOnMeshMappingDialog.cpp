@@ -34,9 +34,9 @@ GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
 {
 }
 
-int GeoOnMeshMappingDialog::getDataSetChoice() const 
-{ 
-	return this->meshNameComboBox->currentIndex(); 
+int GeoOnMeshMappingDialog::getDataSetChoice() const
+{
+	return this->meshNameComboBox->currentIndex();
 }
 
 void GeoOnMeshMappingDialog::on_meshNameComboBox_currentIndexChanged(int idx)

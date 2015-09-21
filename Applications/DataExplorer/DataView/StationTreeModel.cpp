@@ -131,7 +131,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
 
 		ModelTreeItem* child = new ModelTreeItem(stn, group);
 		child->setStation(static_cast<GeoLib::Station*>((*stations)[i]));
-		group->appendChild(child);	
+		group->appendChild(child);
 	}
 
 	qDebug() << "List" << listName << "loaded, " << stations->size() << "items added.";

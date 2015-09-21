@@ -191,7 +191,7 @@ void MshView::extractSurfaceMesh()
 	SurfaceExtractionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
 		return;
-	
+
 	MathLib::Vector3 const& dir (dlg.getNormal());
 	int const tolerance (dlg.getTolerance());
 	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));

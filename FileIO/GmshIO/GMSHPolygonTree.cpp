@@ -23,7 +23,7 @@
 #include "GeoLib/Polygon.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

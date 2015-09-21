@@ -47,12 +47,12 @@ public:
 	* \param mesh                    The 2D triangle mesh that is the basis for the new 3D prism mesh
 	* \param rasters                 Containing all the raster-data for the subsurface layers from bottom to top (starting with the bottom of the oldest layer and ending with the DEM)
 	* \param minimum_thickness       Minimum thickness of each of the newly created layers (i.e. nodes with a vertical distance smaller than this will be collapsed)
-	* \param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0]) 
+	* \param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
 	* \return A mesh with the requested number of layers of prism elements (also including Tet- & Pyramid-elements in case of degenerated prisms)
 	*/
-	bool createRasterLayers(MeshLib::Mesh const& mesh, 
-	                        std::vector<GeoLib::Raster const*> const& rasters, 
-	                        double minimum_thickness, 
+	bool createRasterLayers(MeshLib::Mesh const& mesh,
+	                        std::vector<GeoLib::Raster const*> const& rasters,
+	                        double minimum_thickness,
 	                        double noDataReplacementValue = 0.0);
 
 	/**
@@ -62,7 +62,7 @@ public:
 	static bool layerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile, double noDataReplacementValue);
 
 	/**
-	* Maps the elevation of nodes of a given 2D mesh according to the raster. At locations wher no 
+	* Maps the elevation of nodes of a given 2D mesh according to the raster. At locations wher no
 	* information is given, node elevation is set to noDataReplacementValue.
 	*/
 	static bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);

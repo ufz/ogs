@@ -59,14 +59,14 @@ void VtkCompositeElementSelectionFilter::init()
 		idFilter->CellIdsOn();
 		idFilter->FieldDataOn();
 		idFilter->Update();
-		
+
 	vtkThreshold* threshold = vtkThreshold::New();
 		threshold->SetInputConnection(idFilter->GetOutputPort());
 		threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
 		threshold->SetSelectedComponent(0);
 		threshold->ThresholdBetween(thresholdLower, thresholdUpper);
 		threshold->Update();
-		
+
 	QList<QVariant> thresholdRangeList;
 	thresholdRangeList.push_back(thresholdLower);
 	thresholdRangeList.push_back(thresholdUpper);
@@ -78,7 +78,7 @@ void VtkCompositeElementSelectionFilter::setSelectionArray(const std::string &se
 {
 	_selection_name = selection_name;
 	_selection = selection;
-	init(); 
+	init();
 }
 
 void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)

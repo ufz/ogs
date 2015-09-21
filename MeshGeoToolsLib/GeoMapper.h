@@ -45,7 +45,7 @@ public:
 
 	/// Maps geometry based on a raster file
 	void mapOnDEM(const std::string &file_name);
-	
+
 	/// Maps geometry based on a mesh file
 	void mapOnMesh(const std::string &file_name);
 
@@ -61,7 +61,7 @@ public:
 	/**
 	 * Maps the geometry based on the given mesh file. A new geometry is created where all
 	 * geometric points are assigned an elevation value on the mesh surface. Additional points are
-	 * inserted whenever a polyline from the original geometry intersects a mesh node or the edge 
+	 * inserted whenever a polyline from the original geometry intersects a mesh node or the edge
 	 * of a mesh element.
 	 * \param mesh          Mesh the geometry is mapped on
 	 * \param new_geo_name  Name of the newly created geometry

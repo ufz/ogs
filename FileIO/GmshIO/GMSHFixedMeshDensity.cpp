@@ -14,7 +14,7 @@
 
 #include "GmshIO/GMSHFixedMeshDensity.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

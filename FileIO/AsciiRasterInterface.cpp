@@ -126,7 +126,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	std::size_t n_cols(0), n_rows(0);
 	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), min(0.0), max(0.0);
 
-	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max)) 
+	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max))
 	{
 		const double no_data_val (min-1);
 		double* values = new double[n_cols*n_rows];
@@ -157,7 +157,7 @@ bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, std::size_t &n_co
 				double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max)
 {
 	std::string tag;
-	
+
 	in >> tag;
 
 	if (tag.compare("DSAA") != 0)
@@ -205,7 +205,7 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
 
     // write data
     double const*const elevation(raster.begin());
-    for (unsigned row(0); row < nRows; ++row) 
+    for (unsigned row(0); row < nRows; ++row)
     {
         for (unsigned col(0); col < nCols; ++col)
         {

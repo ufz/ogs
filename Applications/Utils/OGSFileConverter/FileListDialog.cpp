@@ -43,7 +43,7 @@ void FileListDialog::on_addButton_pressed()
 	{
 		QStringList const file_names = dlg.selectedFiles();
 
-		if (file_names.empty()) 
+		if (file_names.empty())
 			return;
 
 		QStringList list = _allFiles.stringList();

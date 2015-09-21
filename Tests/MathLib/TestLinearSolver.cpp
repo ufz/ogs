@@ -190,11 +190,11 @@ void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &pre
     // solve
     T_LINEAR_SOVLER ls(A, prefix_name);
     EXPECT_TRUE(ls.solve(b, x));
-    
+
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
-    
+
     x.getGlobalVector(x1);
-    ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);        
+    ASSERT_ARRAY_NEAR(x0, x1, 6, 1e-5);
 }
 #endif
 

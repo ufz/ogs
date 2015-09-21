@@ -20,7 +20,7 @@
 
 #include <QModelIndex>
 
-ElementTreeView::ElementTreeView( QWidget* parent) 
+ElementTreeView::ElementTreeView( QWidget* parent)
 : QTreeView(parent)
 {
 }

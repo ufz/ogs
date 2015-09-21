@@ -109,7 +109,7 @@ void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib:
 		if (point.hasAttribute("name"))
 			pnt_names->insert( std::pair<std::string, std::size_t>(
 										point.attribute("name").toStdString(), points->size()) );
-		
+
 		points->push_back(p);
 		point = point.nextSiblingElement();
 	}

@@ -167,7 +167,7 @@ void StationTreeView::writeToFile()
 	{
 		TreeItem* item = static_cast<StationTreeModel*>(model())->getItem(index);
 		QString listName = item->data(0).toString();
-		QString fileName = QFileDialog::getSaveFileName(this, "Save station list", 
+		QString fileName = QFileDialog::getSaveFileName(this, "Save station list",
 			LastSavedFileDirectory::getDir() + listName, "*.stn");
 		if (!fileName.isEmpty())
 		{

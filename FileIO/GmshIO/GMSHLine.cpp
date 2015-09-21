@@ -15,7 +15,7 @@
 #include <ostream>
 #include "GMSHLine.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

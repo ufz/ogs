@@ -44,9 +44,9 @@ public:
 	}
 
 	/// Destructor
-	~ElementQualityInterface() 
-	{ 
-		delete _quality_tester; 
+	~ElementQualityInterface()
+	{
+		delete _quality_tester;
 	}
 
 	/// Returns the vector containing a quality measure for each element.
@@ -80,7 +80,7 @@ public:
 		histogram.write(file_name, _mesh.getName(), MeshQualityType2String(_type));
 		return 0;
 	}
-	
+
 private:
 	/// Calculates the quality of each mesh element based on the specified metric
 	void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)

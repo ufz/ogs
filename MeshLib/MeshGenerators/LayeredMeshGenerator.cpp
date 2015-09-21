@@ -33,8 +33,8 @@ LayeredMeshGenerator::LayeredMeshGenerator()
 {
 }
 
-bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh, 
-                                        std::vector<std::string> const& raster_paths, 
+bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh,
+                                        std::vector<std::string> const& raster_paths,
                                         double minimum_thickness,
                                         double noDataReplacementValue)
 {
@@ -73,9 +73,9 @@ double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& low, GeoLib::Rast
     return ((max-min)*1e-07);
 }
 
-MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_node, 
-                                                     MeshLib::Node const& last_layer_node, 
-                                                     GeoLib::Raster const& raster, 
+MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_node,
+                                                     MeshLib::Node const& last_layer_node,
+                                                     GeoLib::Raster const& raster,
                                                      std::size_t new_node_id) const
 {
     double const elevation = std::min(raster.interpolateValueAtPoint(dem_node), dem_node[2]);

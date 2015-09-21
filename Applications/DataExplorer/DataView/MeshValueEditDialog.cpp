@@ -56,7 +56,7 @@ void MeshValueEditDialog::accept()
 			return;
 		}
 	}
-		
+
 	emit valueEditFinished(_mesh);
 	this->done(QDialog::Accepted);
 }

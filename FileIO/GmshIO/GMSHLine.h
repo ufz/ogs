@@ -17,7 +17,7 @@
 
 #include <iosfwd>
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

@@ -258,7 +258,7 @@ void GeoTreeView::writeToFile() const
 		 file_type.append(";;Legacy geometry file (*.gli)");
 #endif // DEBUG
 		QString geoName = item->data(0).toString();
-		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as", 
+		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as",
 			LastSavedFileDirectory::getDir() + geoName, file_type);
 		if (!fileName.isEmpty())
 		{

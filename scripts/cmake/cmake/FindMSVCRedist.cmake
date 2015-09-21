@@ -8,7 +8,7 @@ if (MSVC)
   if (MSVC10)
 	set(VCVERS 10)
   endif()
-  
+
   if(CMAKE_CL_64)
     #if(MSVC_VERSION GREATER 1599)
       # VS 10 and later:
@@ -20,7 +20,7 @@ if (MSVC)
   else()
     set(CMAKE_MSVC_ARCH x86)
   endif()
-  
+
   set(SDKVERS "2.0")
   if(${VCVERS} EQUAL 8)
     set(SDKVERS "2.0")

@@ -6,7 +6,7 @@
 # The Configuration must be uppercased.
 #
 # Usage:
-# 
+#
 #   include(DisableCompilerFlag)
 #   if (MSVC)
 #     DisableCompilerFlag(DEBUG /RTC1)

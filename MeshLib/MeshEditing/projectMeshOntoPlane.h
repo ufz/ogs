@@ -33,8 +33,8 @@ namespace MeshLib {
  * Overlapping elements, collapsed nodes, and other issues are not handled by the method.
  * The normal vector need not be normalized.
  */
-MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh, 
-                                    MathLib::Point3d const& plane_origin, 
+MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
+                                    MathLib::Point3d const& plane_origin,
                                     MathLib::Vector3 const& plane_normal)
 {
 	std::size_t const n_nodes (mesh.getNNodes());
@@ -51,7 +51,7 @@ MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
 		new_nodes.push_back(new MeshLib::Node(node - dist * normal));
 	}
 
-	return new MeshLib::Mesh("Projected_Mesh", new_nodes, 
+	return new MeshLib::Mesh("Projected_Mesh", new_nodes,
 	                         MeshLib::copyElementVector(mesh.getElements(), new_nodes));
 }
 

@@ -6,7 +6,7 @@
 #  LIS_LIBRARIES
 #
 #  Environment variable LIS_ROOT_DIR can be set to give hints
-	
+
 find_path( LIS_INCLUDE_DIR lis.h
 	PATHS ENV LIS_ROOT_DIR
 	PATH_SUFFIXES include

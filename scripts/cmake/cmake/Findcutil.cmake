@@ -31,11 +31,11 @@ endif()
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(cutil DEFAULT_MSG CUDA_SDK_ROOT_DIR CUDA_FOUND)
 
-if(CUTIL_FOUND)	
+if(CUTIL_FOUND)
 	get_filename_component(_moddir "${CMAKE_CURRENT_LIST_FILE}" PATH)
 	add_subdirectory("${_moddir}/nested_targets/cutil")
-	
-	
+
+
 	function(install_cutil dest)
 		install(TARGETS cutil
 			RUNTIME DESTINATION "${dest}"

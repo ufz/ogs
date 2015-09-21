@@ -63,7 +63,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 		*mesh, this->zeroVolumeThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));
 	this->elementsGroupBox->setTitle("Elements (out of " + QString::number(mesh->getNElements()) + ")");
 	this->elementsMsgOutput(element_error_codes);
-	
+
 	unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
 	if (n_holes>0)
 		this->meshHoleOutputLabel->setText("<strong>" + QString::number(n_holes) + " hole(s) found within the mesh</strong>");

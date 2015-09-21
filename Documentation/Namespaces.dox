@@ -41,7 +41,7 @@ namespace FileIO {
 	 */
 	namespace GMSH {
 	}
-	
+
 	/**
 	 * @namespace FileIO::Legacy
 	 * Includes the interfaces to OGS legacy file formats (OGS-5 and below).
@@ -61,7 +61,7 @@ namespace FiniteElement {
  * Contains all functionality concerned with defining and obtaining information
  * about geometric objects such as points, (poly-)lines, polygones, surfaces, etc.
  * Also includes additional algorithms for modifying such data.
- */ 
+ */
 namespace GeoLib {
 }
 
@@ -71,7 +71,7 @@ namespace GeoLib {
  * or calculating a norm to integration schemes and matrix preconditioners.
  *
  * \sa detail
- */ 
+ */
 namespace MathLib {
 	/**
 	 * @namespace MathLib::detail
@@ -87,7 +87,7 @@ namespace MathLib {
  * algorithms for generating and modifying meshes and elements.
  *
  * \sa MeshGenerator
- */ 
+ */
 namespace MeshLib {
 	/**
 	 * @namespace MeshLib::MeshGenerator
@@ -104,7 +104,7 @@ namespace MeshLib {
 namespace NumLib {
 	/**
 	 * @namespace NumLib::detail
-	 */	
+	 */
 	namespace detail {
 	}
 }

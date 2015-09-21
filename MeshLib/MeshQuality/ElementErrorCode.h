@@ -20,7 +20,7 @@
 
 
 /// Possible error flags for mesh elements
-enum class ElementErrorFlag 
+enum class ElementErrorFlag
 {
 	ZeroVolume,
 	NonCoplanar,
@@ -35,7 +35,7 @@ class ElementErrorCode : public std::bitset<static_cast<std::size_t>(ElementErro
 {
 public:
 	ElementErrorCode() {}
-	//ElementErrorCode(std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > error_flags) 
+	//ElementErrorCode(std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > error_flags)
 	//	: _errors(error_flags) {}
 
 	~ElementErrorCode() {}
@@ -46,7 +46,7 @@ public:
 	void set(ElementErrorFlag e) { std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::set(static_cast<std::size_t>(e), true); }
 	/// Reset a specific flag
 	void reset(ElementErrorFlag e) { std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::set(static_cast<std::size_t>(e), false); }
-	
+
 	inline reference operator[](const ElementErrorFlag e) { return std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::operator[](static_cast<std::size_t>(e)); }
 	inline bool operator[](const ElementErrorFlag e) const { return std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>::operator[](static_cast<std::size_t>(e)); }
 
@@ -61,7 +61,7 @@ public:
 			return "non-convex geometry";
 		else if (e == ElementErrorFlag::NodeOrder)
 			return "wrong node order";
-		return "nonspecified error"; 
+		return "nonspecified error";
 	}
 
 private:

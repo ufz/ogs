@@ -63,7 +63,7 @@ public:
         auto const N = _mat.nonZeros();
         for (std::remove_const<decltype(N)>::type i=0; i<N; i++)
             _mat.valuePtr()[i] = 0;
-        // don't use _mat.setZero(). it makes a matrix uncompressed 
+        // don't use _mat.setZero(). it makes a matrix uncompressed
     }
 
     /// set a value to the given entry. If the entry doesn't exist, this class
