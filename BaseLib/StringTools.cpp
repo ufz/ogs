@@ -83,7 +83,7 @@ std::string propertyTreeToString(boost::property_tree::ptree const& tree)
 } // end namespace BaseLib
 
 #ifdef MSVC
-void correctScientificNotation(std::string filename, size_t precision)
+void correctScientificNotation(std::string filename, std::size_t precision)
 {
 	std::ifstream stream;
 	std::ofstream outputStream;
@@ -125,7 +125,7 @@ void correctScientificNotation(std::string filename, size_t precision)
 					while (!isdigit(word[i]))
 						--i;
 
-					size_t erasePos = wordSize - 3 - (wordSize - 1 - i);
+					std::size_t erasePos = wordSize - 3 - (wordSize - 1 - i);
 					std::string eraseString = word.substr(erasePos, 1);
 					if (eraseString.find("0") != std::string::npos)
 						word.erase(erasePos, 1);

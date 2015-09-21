@@ -74,8 +74,8 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
 
 	std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
-	const size_t n_dest_elements(dest_elements.size());
-	for (size_t k(0); k<n_dest_elements; k++) {
+	const std::size_t n_dest_elements(dest_elements.size());
+	for (std::size_t k(0); k<n_dest_elements; k++) {
 		// compute axis aligned bounding box around the current element
 		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
 
@@ -83,13 +83,13 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 		std::vector<std::vector<MeshLib::Node*> const*> nodes;
 		src_grid.getPntVecsOfGridCellsIntersectingCuboid(elem_aabb.getMinPoint(), elem_aabb.getMaxPoint(), nodes);
 
-		size_t cnt(0);
+		std::size_t cnt(0);
 		dest_properties[k] = 0.0;
 
-		for (size_t i(0); i<nodes.size(); ++i) {
+		for (std::size_t i(0); i<nodes.size(); ++i) {
 			std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
-			const size_t n_nodes_in_vec(i_th_vec->size());
-			for (size_t j(0); j<n_nodes_in_vec; j++) {
+			const std::size_t n_nodes_in_vec(i_th_vec->size());
+			for (std::size_t j(0); j<n_nodes_in_vec; j++) {
 				MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
 				if (elem_aabb.containsPoint(*j_th_node)) {
 					if (dest_elements[k]->isPntInElement(*j_th_node, 30)) {
@@ -119,11 +119,11 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 			std::string source_fname(base_name + "-SourceNodes.gli");
 			std::ofstream out_src(source_fname.c_str());
 			out_src << "#POINTS" << "\n";
-			size_t nodes_cnt(0);
-			for (size_t i(0); i<nodes.size(); ++i) {
+			std::size_t nodes_cnt(0);
+			for (std::size_t i(0); i<nodes.size(); ++i) {
 				std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
-				const size_t n_nodes_in_vec(i_th_vec->size());
-				for (size_t j(0); j<n_nodes_in_vec; j++) {
+				const std::size_t n_nodes_in_vec(i_th_vec->size());
+				for (std::size_t j(0); j<n_nodes_in_vec; j++) {
 					MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
 					out_src << nodes_cnt << " " << *(dynamic_cast<GeoLib::Point const*>(j_th_node)) << "\n";
 					nodes_cnt++;
@@ -139,12 +139,12 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const
 {
 	std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
-	const size_t n_src_nodes(src_nodes.size());
+	const std::size_t n_src_nodes(src_nodes.size());
 
-	for (size_t k(0); k<n_src_nodes; k++) {
-		const size_t n_con_elems (src_nodes[k]->getNElements());
+	for (std::size_t k(0); k<n_src_nodes; k++) {
+		const std::size_t n_con_elems (src_nodes[k]->getNElements());
 		interpolated_node_properties[k] = (*_src_properties)[(src_nodes[k]->getElement(0))->getValue()];
-		for (size_t j(1); j<n_con_elems; j++) {
+		for (std::size_t j(1); j<n_con_elems; j++) {
 			interpolated_node_properties[k] += (*_src_properties)[(src_nodes[k]->getElement(j))->getValue()];
 		}
 		interpolated_node_properties[k] /= n_con_elems;

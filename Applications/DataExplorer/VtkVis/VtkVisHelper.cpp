@@ -25,13 +25,13 @@
 
 vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
 {
-	size_t imgWidth = img.width(), imgHeight = img.height();
+	std::size_t imgWidth = img.width(), imgHeight = img.height();
 	vtkSmartPointer<vtkUnsignedCharArray> data = vtkSmartPointer<vtkUnsignedCharArray>::New();
 	data->SetNumberOfComponents(3);
 	data->SetNumberOfTuples( imgWidth * imgHeight );
 
-	for (size_t j = 0; j < imgHeight; j++)
-		for (size_t i = 0; i < imgWidth; i++)
+	for (std::size_t j = 0; j < imgHeight; j++)
+		for (std::size_t i = 0; i < imgWidth; i++)
 		{
 			QRgb pix = img.pixel(i,j);
 			const float color[3] = { static_cast<float>(qRed(pix)),

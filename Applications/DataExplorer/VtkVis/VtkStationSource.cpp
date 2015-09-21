@@ -84,13 +84,13 @@ int VtkStationSource::RequestData( vtkInformation* request,
 
 	if (!_stations)
 		return 0;
-	size_t nStations = _stations->size();
+	std::size_t nStations = _stations->size();
 	if (nStations == 0)
 		return 0;
 
 	bool useStationValues(false);
 	double sValue=static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
-	for (size_t i = 1; i < nStations; i++)
+	for (std::size_t i = 1; i < nStations; i++)
 		if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() != sValue)
 		{
 			useStationValues = true;
@@ -129,8 +129,8 @@ int VtkStationSource::RequestData( vtkInformation* request,
 	strat_ids->SetNumberOfComponents(1);
 	strat_ids->SetName("Stratigraphies");
 
-	size_t lastMaxIndex(0);
-	size_t site_count(0);
+	std::size_t lastMaxIndex(0);
+	std::size_t site_count(0);
 
 	// Generate graphic objects
 	for (std::vector<GeoLib::Point*>::const_iterator it = _stations->begin();
@@ -150,9 +150,9 @@ int VtkStationSource::RequestData( vtkInformation* request,
 			        static_cast<GeoLib::StationBorehole*>(*it)->getProfile();
 			std::vector<std::string> soilNames =
 			        static_cast<GeoLib::StationBorehole*>(*it)->getSoilNames();
-			const size_t nLayers = profile.size();
+			const std::size_t nLayers = profile.size();
 
-			for (size_t i = 1; i < nLayers; i++)
+			for (std::size_t i = 1; i < nLayers; i++)
 			{
 				double* pCoords = const_cast<double*>(profile[i]->getCoords());
 				double loc[3] = { pCoords[0], pCoords[1], pCoords[2] };
@@ -206,7 +206,7 @@ void VtkStationSource::SetUserProperty( QString name, QVariant value )
 	Q_UNUSED(value);
 }
 
-size_t VtkStationSource::GetIndexByName( std::string const& name )
+std::size_t VtkStationSource::GetIndexByName( std::string const& name )
 {
 	vtkIdType max_key(0);
 	for (std::map<std::string, vtkIdType>::const_iterator it = _id_map.begin();

@@ -121,7 +121,7 @@ int VtkImageDataToLinePolyDataFilter::RequestData(vtkInformation*,
 
 		// Compute the new point location
 		double newPt[3];
-		for(size_t i = 0; i < 3; ++i)
+		for(std::size_t i = 0; i < 3; ++i)
 			newPt[i] = p[i] + dir[i] * length;
 
 		// Copy the old point

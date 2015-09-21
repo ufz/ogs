@@ -70,7 +70,7 @@ void CondFromRasterDialog::accept()
 	std::string mesh_name (this->meshBox->currentText().toStdString());
 	std::string raster_name (this->rasterEdit->text().toStdString());
 	double scaling_factor = this->scalingEdit->text().toDouble();
-	std::vector< std::pair<size_t,double> > direct_values;
+	std::vector< std::pair<std::size_t,double> > direct_values;
 
 	if (mesh_name.empty())
 	{
@@ -84,7 +84,7 @@ void CondFromRasterDialog::accept()
 	}
 
 	MeshLib::Mesh* mesh (NULL);
-	for (size_t i=0; i<_msh_vec.size(); i++)
+	for (std::size_t i=0; i<_msh_vec.size(); i++)
 		if (_msh_vec[i]->getName().compare(mesh_name) == 0)
 		{
 			mesh = _msh_vec[i];

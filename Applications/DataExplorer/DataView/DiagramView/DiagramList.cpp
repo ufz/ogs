@@ -36,8 +36,8 @@ DiagramList::~DiagramList()
 float DiagramList::calcMinXValue()
 {
 	float min = std::numeric_limits<float>::max();
-	size_t nCoords = _coords.size();
-	for (size_t i = 0; i < nCoords; i++)
+	std::size_t nCoords = _coords.size();
+	for (std::size_t i = 0; i < nCoords; i++)
 		if (_coords[i].first < min)
 			min = _coords[i].first;
 	return min;
@@ -46,8 +46,8 @@ float DiagramList::calcMinXValue()
 float DiagramList::calcMaxXValue()
 {
 	float max = std::numeric_limits<float>::lowest();
-	size_t nCoords = _coords.size();
-	for (size_t i = 0; i < nCoords; i++)
+	std::size_t nCoords = _coords.size();
+	for (std::size_t i = 0; i < nCoords; i++)
 		if (_coords[i].first > max)
 			max = _coords[i].first;
 	return max;
@@ -56,8 +56,8 @@ float DiagramList::calcMaxXValue()
 float DiagramList::calcMinYValue()
 {
 	float min = std::numeric_limits<float>::max();
-	size_t nCoords = _coords.size();
-	for (size_t i = 0; i < nCoords; i++)
+	std::size_t nCoords = _coords.size();
+	for (std::size_t i = 0; i < nCoords; i++)
 		if (_coords[i].second < min)
 			min = _coords[i].second;
 	return min;
@@ -66,8 +66,8 @@ float DiagramList::calcMinYValue()
 float DiagramList::calcMaxYValue()
 {
 	float max = std::numeric_limits<float>::lowest();
-	size_t nCoords = _coords.size();
-	for (size_t i = 0; i < nCoords; i++)
+	std::size_t nCoords = _coords.size();
+	for (std::size_t i = 0; i < nCoords; i++)
 		if (_coords[i].second > max)
 			max = _coords[i].second;
 	return max;
@@ -81,8 +81,8 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
 		QPainterPath pp(QPointF(p.x() * scaleX, p.y() * scaleY));
 		path = pp;
 
-		size_t nCoords = _coords.size();
-		for (size_t i = 1; i < nCoords; i++)
+		std::size_t nCoords = _coords.size();
+		for (std::size_t i = 1; i < nCoords; i++)
 		{
 			getPoint(p,i);
 			path.lineTo(QPointF(p.x() * scaleX, p.y() * scaleY));
@@ -93,7 +93,7 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
 		return false;
 }
 
-bool DiagramList::getPoint(QPointF &p, size_t i)
+bool DiagramList::getPoint(QPointF &p, std::size_t i)
 {
 	if (i < _coords.size())
 	{
@@ -233,13 +233,13 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 	std::vector<SensorDataType> const& time_series_names (data->getTimeSeriesNames());
 	int nLists(time_series_names.size());
 
-	std::vector<size_t> time_steps;
+	std::vector<std::size_t> time_steps;
 	if (data->getStepSize()>0)
 	{
-		const size_t start    = data->getStartTime();
-		const size_t end      = data->getEndTime();
-		const size_t stepsize = data->getStepSize();
-		for (size_t i = start; i <= end;  i+=stepsize)
+		const std::size_t start    = data->getStartTime();
+		const std::size_t end      = data->getEndTime();
+		const std::size_t stepsize = data->getStepSize();
+		for (std::size_t i = start; i <= end;  i+=stepsize)
 			time_steps.push_back(i);
 	}
 	else
@@ -251,7 +251,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 		is_date = true;
 
 
-	size_t nValues (time_steps.size());
+	std::size_t nValues (time_steps.size());
 
 	for (int i = 0; i < nLists; i++)
 	{
@@ -268,7 +268,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 			QDateTime startDate(getDateTime(QString::fromStdString(BaseLib::int2date(time_steps[0]))));
 			lists[i]->setStartDate(startDate);
 			int numberOfSecs(0);
-			for (size_t j = 0; j < nValues; j++)
+			for (std::size_t j = 0; j < nValues; j++)
 			{
 				numberOfSecs = startDate.secsTo(getDateTime(QString::fromStdString(BaseLib::int2date(time_steps[j]))));
 				lists[i]->addNextPoint(numberOfSecs, (*time_series)[j]);
@@ -277,7 +277,7 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
 		else
 		{
 			l->setXUnit("time step");
-			for (size_t j = 0; j < nValues; j++)
+			for (std::size_t j = 0; j < nValues; j++)
 				lists[i]->addNextPoint(time_steps[j], (*time_series)[j]);
 		}
 
@@ -294,8 +294,8 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
 	this->_startDate = coords[0].first;
 	_coords.push_back(std::pair<float, float>(0.0f, coords[0].second));
 
-	size_t nCoords = coords.size();
-	for (size_t i = 1; i < nCoords; i++)
+	std::size_t nCoords = coords.size();
+	for (std::size_t i = 1; i < nCoords; i++)
 	{
 		numberOfDays = this->_startDate.daysTo(coords[i].first);
 		_coords.push_back(std::pair<float, float>(static_cast<float>(numberOfDays), coords[i].second));
@@ -307,14 +307,14 @@ void DiagramList::setList(std::vector< std::pair<QDateTime, float> > coords)
 void DiagramList::setList(std::vector< std::pair<float, float> > coords)
 {
 	this->_startDate = QDateTime();
-	size_t nCoords = coords.size();
-	for (size_t i = 0; i < nCoords; i++)
+	std::size_t nCoords = coords.size();
+	for (std::size_t i = 0; i < nCoords; i++)
 		_coords.push_back(coords[i]);
 
 	update();
 }
 
-size_t DiagramList::size()
+std::size_t DiagramList::size()
 {
 	if (!(_coords.empty()))
 		return _coords.size();

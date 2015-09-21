@@ -64,7 +64,7 @@ public:
 	BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
 	{
 		if (_quality_tester)
-			return _quality_tester->getHistogram(static_cast<size_t>(n_bins));
+			return _quality_tester->getHistogram(static_cast<std::size_t>(n_bins));
 
 		std::vector<double> empty_quality_vec(0);
 		return empty_quality_vec;

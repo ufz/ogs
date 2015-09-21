@@ -29,7 +29,7 @@
 #include <cmath>
 #include <limits>
 
-const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
+const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
 {
 	if (_direct_values.empty())
 	{
@@ -41,14 +41,14 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 
 		const MathLib::Vector3 dir(0,0,-1);
 		const std::vector<GeoLib::Point*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90) );
-		const size_t nNodes(surface_nodes.size());
+		const std::size_t nNodes(surface_nodes.size());
 		const double no_data (raster->getNoDataValue());
 		_direct_values.reserve(nNodes);
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 		{
 			double val (raster->getValueAtPoint(*surface_nodes[i]));
 			val = (val == no_data) ? 0 : val;
-			_direct_values.push_back (std::pair<size_t, double>(surface_nodes[i]->getID(), val));
+			_direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
 		}
 		delete raster;
 	}
@@ -59,7 +59,7 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directT
 }
 
 
-const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
+const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
 	if (_direct_values.empty())
 	{
@@ -74,14 +74,14 @@ const std::vector< std::pair<size_t,double> >& DirectConditionGenerator::directW
 		std::vector<double> node_area_vec =
 			MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*sfc_mesh);
 		const std::vector<MeshLib::Node*> &surface_nodes (sfc_mesh->getNodes());
-		const size_t nNodes(sfc_mesh->getNNodes());
+		const std::size_t nNodes(sfc_mesh->getNNodes());
 		const double no_data (raster->getNoDataValue());
 		_direct_values.reserve(nNodes);
-		for (size_t i=0; i<nNodes; ++i)
+		for (std::size_t i=0; i<nNodes; ++i)
 		{
 			double val (raster->getValueAtPoint(*surface_nodes[i]));
 			val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
-			_direct_values.push_back (std::pair<size_t, double>(surface_nodes[i]->getID(), val));
+			_direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
 		}
 
 		delete raster;
@@ -99,7 +99,7 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
 
 	if (out)
 	{
-		for (std::vector< std::pair<size_t,double> >::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
+		for (std::vector< std::pair<std::size_t,double> >::const_iterator it = _direct_values.begin(); it != _direct_values.end(); ++it)
 			out << it->first << "\t" << it->second << "\n";
 
 		out.close();

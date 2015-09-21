@@ -28,19 +28,19 @@ ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) :
 	_element_quality_metric.resize (_mesh.getNElements(), -1.0);
 }
 
-BaseLib::Histogram<double> ElementQualityMetric::getHistogram (size_t n_bins) const
+BaseLib::Histogram<double> ElementQualityMetric::getHistogram (std::size_t n_bins) const
 {
 	if (n_bins == 0)
-		n_bins = static_cast<size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
+		n_bins = static_cast<std::size_t>(1 + 3.3 * log (static_cast<float>((_mesh.getNElements()))));
 
 	return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
 }
 
-void ElementQualityMetric::errorMsg (Element const& elem, size_t idx) const
+void ElementQualityMetric::errorMsg (Element const& elem, std::size_t idx) const
 {
 	ERR ("Error in MeshQualityChecker::check() - Calculated value of element is below double precision minimum.");
 	ERR ("Points of %s-Element %d: ", MeshElemType2String(elem.getGeomType()).c_str(), idx);
-	for (size_t i(0); i < elem.getNBaseNodes(); i++)
+	for (std::size_t i(0); i < elem.getNBaseNodes(); i++)
 	{
 		const double* coords = elem.getNode(i)->getCoords();
 		ERR ("\t Node %d: (%f, %f, %f)", i, coords[0], coords[1], coords[2]);

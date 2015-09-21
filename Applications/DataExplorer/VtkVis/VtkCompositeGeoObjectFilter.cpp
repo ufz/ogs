@@ -88,7 +88,7 @@ void VtkCompositeGeoObjectFilter::init()
 		_outputAlgorithm = surface;
 }
 
-void VtkCompositeGeoObjectFilter::SetIndex(size_t idx)
+void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)
 {
 	_threshold->ThresholdBetween(idx, idx);
 }

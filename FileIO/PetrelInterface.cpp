@@ -98,7 +98,7 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
 		}
 
 		// read points
-		size_t idx(pnt_vec->size());
+		std::size_t idx(pnt_vec->size());
 		while (in)
 		{
 			pnt_vec->push_back(new GeoLib::Point);

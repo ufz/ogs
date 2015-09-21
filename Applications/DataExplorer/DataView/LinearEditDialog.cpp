@@ -15,7 +15,7 @@
 #include "LinearEditDialog.h"
 
 LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
-                                   const std::vector<size_t> &dis_nodes,
+                                   const std::vector<std::size_t> &dis_nodes,
                                    const std::vector<double> &dis_values,
                                    QDialog* parent)
 	: QDialog(parent), _line(line)
@@ -24,14 +24,14 @@ LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
 	setupDialog(dis_nodes, dis_values);
 }
 
-void LinearEditDialog::setupDialog(const std::vector<size_t> &dis_nodes,
+void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
                                    const std::vector<double> &dis_values)
 {
-	size_t nPoints(_line.getNumberOfPoints());
+	std::size_t nPoints(_line.getNumberOfPoints());
 	this->tableWidget->setRowCount(nPoints);
 	QList<QString> indexlist;
 
-	for (size_t i = 0; i < nPoints; i++)
+	for (std::size_t i = 0; i < nPoints; i++)
 	{
 		indexlist.push_back(QString::number(i));
 		QTableWidgetItem *newItem = new QTableWidgetItem("");
@@ -40,8 +40,8 @@ void LinearEditDialog::setupDialog(const std::vector<size_t> &dis_nodes,
 	QStringList vHeaders(indexlist);
 	tableWidget->setVerticalHeaderLabels(vHeaders);
 
-	size_t nValues (dis_values.size());
-	for (size_t i = 0; i < nValues; i++)
+	std::size_t nValues (dis_values.size());
+	for (std::size_t i = 0; i < nValues; i++)
 		tableWidget->item(dis_nodes[i],0)->setText(QString::number(dis_values[i]));
 }
 
@@ -53,8 +53,8 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 {
 	if (index > 0) //elevation
 	{
-		size_t nRows = tableWidget->rowCount();
-		for (size_t i = 0; i < nRows; i++)
+		std::size_t nRows = tableWidget->rowCount();
+		for (std::size_t i = 0; i < nRows; i++)
 			tableWidget->item(i,0)->setText(QString::number(_line.getPoint(i)->getCoords()[2]));
 	}
 }
@@ -63,8 +63,8 @@ void LinearEditDialog::accept()
 {
 	std::vector< std::pair<std::size_t,double> > linear_values;
 
-	size_t nRows = tableWidget->rowCount();
-	for (size_t i = 0; i < nRows; i++)
+	std::size_t nRows = tableWidget->rowCount();
+	for (std::size_t i = 0; i < nRows; i++)
 	{
 		QString row_text (tableWidget->item(i,0)->text());
 		if (row_text.length() > 0)

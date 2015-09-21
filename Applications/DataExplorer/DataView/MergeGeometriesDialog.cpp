@@ -36,7 +36,7 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDi
 	//geoNames.reserve(geo_station_names.size());
 	//std::copy(geo_station_names.begin(), geo_station_names.end(), std::back_inserter(geoNames));
 
-	size_t nGeoObjects(geoNames.size());
+	std::size_t nGeoObjects(geoNames.size());
 
 	QStringList list;
 	for (unsigned i = 0; i < nGeoObjects; ++i)

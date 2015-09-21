@@ -298,7 +298,7 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 	}
 
 	this->_geo_objects.addPointVec(new_points, const_cast<std::string&>(new_geo_name));
-	std::vector<size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
+	std::vector<std::size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
 	for (std::size_t i=0; i<new_lines->size(); ++i)
 		(*new_lines)[i]->updatePointIDs(pnt_id_map);
 	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
@@ -357,11 +357,11 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
 {
 	double max_segment_length (0);
 	const std::size_t nPlys ( lines.size() );
-	for (size_t i=0; i<nPlys; ++i)
+	for (std::size_t i=0; i<nPlys; ++i)
 	{
 		const GeoLib::Polyline* line = lines[i];
 		const std::size_t nPlyPoints = line->getNumberOfPoints();
-		for (size_t j=1; j<nPlyPoints; ++j)
+		for (std::size_t j=1; j<nPlyPoints; ++j)
 		{
 			const double dist (line->getLength(j)-line->getLength(j-1));
 			if (dist>max_segment_length)

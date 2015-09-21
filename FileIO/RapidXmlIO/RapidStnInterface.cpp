@@ -37,7 +37,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
 
 	// buffer file
 	in.seekg(0, std::ios::end);
-	size_t length = in.tellg();
+	std::size_t length = in.tellg();
 	in.seekg(0, std::ios::beg);
 	char* buffer = new char[length+1];
 	in.read(buffer, length);
@@ -90,7 +90,7 @@ int RapidStnInterface::rapidReadFile(const std::string &fileName)
 
 	// buffer file
 	in.seekg(0, std::ios::end);
-	size_t length = in.tellg();
+	std::size_t length = in.tellg();
 	in.seekg(0, std::ios::beg);
 	char* buffer = new char[length+1];
 	in.read(buffer, length);

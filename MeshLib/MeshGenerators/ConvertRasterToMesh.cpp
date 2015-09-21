@@ -29,9 +29,9 @@ ConvertRasterToMesh::~ConvertRasterToMesh()
 
 MeshLib::Mesh* ConvertRasterToMesh::execute() const
 {
-	const size_t height(_raster.getNRows()+1);
-	const size_t width(_raster.getNCols()+1);
-	const size_t size(height*width);
+	const std::size_t height(_raster.getNRows()+1);
+	const std::size_t width(_raster.getNCols()+1);
+	const std::size_t size(height*width);
 	double* pix_vals(new double[size]);
 	bool* vis_nodes(new bool[size]);
 
@@ -39,15 +39,15 @@ MeshLib::Mesh* ConvertRasterToMesh::execute() const
 	double substitution(getExistingValue(_raster.begin(), _raster.end()));
 
 	// fill first row with non visual nodes
-	for (size_t j = 0; j < _raster.getNCols(); j++) {
+	for (std::size_t j = 0; j < _raster.getNCols(); j++) {
 		pix_vals[j] = 0;
 		vis_nodes[j] = false;
 	}
 
 	GeoLib::Raster::const_iterator raster_it(_raster.begin());
-	for (size_t i = 0; i < _raster.getNRows(); ++i) {
-		for (size_t j = 0; j < _raster.getNCols(); ++j) {
-			const size_t index = (i+1) * width + j;
+	for (std::size_t i = 0; i < _raster.getNRows(); ++i) {
+		for (std::size_t j = 0; j < _raster.getNCols(); ++j) {
+			const std::size_t index = (i+1) * width + j;
 			if (*raster_it == _raster.getNoDataValue()) {
 				pix_vals[index] = substitution;
 				vis_nodes[index] = false;
@@ -72,23 +72,23 @@ MeshLib::Mesh* ConvertRasterToMesh::execute() const
 
 MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const bool* vis_nodes) const
 {
-	const size_t height = _raster.getNRows()+1;
-	const size_t width = _raster.getNCols()+1;
-	size_t node_idx_count(0);
+	const std::size_t height = _raster.getNRows()+1;
+	const std::size_t width = _raster.getNCols()+1;
+	std::size_t node_idx_count(0);
 	const double distance(_raster.getRasterPixelSize());
 	const double x_offset(_raster.getOrigin()[0]); // - distance / 2.0);
 	const double y_offset(_raster.getOrigin()[1]); // - distance / 2.0);
 
-	const size_t size(height*width);
+	const std::size_t size(height*width);
 	int* node_idx_map(new int[size]);
 	for (std::size_t k(0); k<size; ++k) node_idx_map[k] = -1;
 
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
 
-	for (size_t i = 0; i < height; i++) {
-		for (size_t j = 0; j < width; j++) {
-			const size_t index = i * width + j;
+	for (std::size_t i = 0; i < height; i++) {
+		for (std::size_t j = 0; j < width; j++) {
+			const std::size_t index = i * width + j;
 
 //			bool set_node(true);
 //			bool set_node(false);
@@ -113,8 +113,8 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 	}
 
 	// set mesh elements
-	for (size_t i = 0; i < _raster.getNRows(); i++) {
-		for (size_t j = 0; j < _raster.getNCols(); j++) {
+	for (std::size_t i = 0; i < _raster.getNRows(); i++) {
+		for (std::size_t j = 0; j < _raster.getNCols(); j++) {
 			const int index = i * width + j;
 			if ((node_idx_map[index] != -1) && (node_idx_map[index + 1] != -1)
 					&& (node_idx_map[index + width] != -1)

@@ -71,7 +71,7 @@ void setMatrix9x9(T_Mat &mat)
 struct Example1
 {
     MathLib::GlobalDenseMatrix<double> mat;
-    std::vector<size_t> vec_dirichlet_bc_id;
+    std::vector<std::size_t> vec_dirichlet_bc_id;
     std::vector<double> vec_dirichlet_bc_value;
     static const std::size_t dim_eqs = 9;
     double* exH;
@@ -106,9 +106,9 @@ void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_opt
 
     // set a coefficient matrix
     A.setZero();
-    for (size_t i=0; i<ex1.dim_eqs; i++)
+    for (std::size_t i=0; i<ex1.dim_eqs; i++)
     {
-        for (size_t j=0; j<ex1.dim_eqs; j++)
+        for (std::size_t j=0; j<ex1.dim_eqs; j++)
         {
             double v = ex1.mat(i, j);
             if (v!=.0)

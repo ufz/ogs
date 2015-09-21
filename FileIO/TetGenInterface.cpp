@@ -112,9 +112,9 @@ std::size_t TetGenInterface::getNFacets(std::ifstream &input)
 
 		const std::list<std::string> fields = BaseLib::splitString(line, ' ');
 		std::list<std::string>::const_iterator it = fields.begin();
-		const std::size_t nFacets (BaseLib::str2number<size_t> (*it));
+		const std::size_t nFacets (BaseLib::str2number<std::size_t> (*it));
 		if (fields.size() > 1)
-			_boundary_markers = (BaseLib::str2number<size_t> (*(++it)) == 0) ? false : true;
+			_boundary_markers = (BaseLib::str2number<std::size_t> (*(++it)) == 0) ? false : true;
 		return nFacets;
 	}
 	return 0;
@@ -239,7 +239,7 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
 {
 	std::string line;
 	getline (ins, line);
-	size_t n_nodes, dim, n_attributes;
+	std::size_t n_nodes, dim, n_attributes;
 	bool boundary_markers;
 
 	while (!ins.fail())
@@ -275,8 +275,8 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 		return false;
 	}
 	auto it = pnt_header.begin();
-	n_nodes = BaseLib::str2number<size_t> (*it);
-	dim = (pnt_header.size()==1) ? 3 : BaseLib::str2number<size_t> (*(++it));
+	n_nodes = BaseLib::str2number<std::size_t> (*it);
+	dim = (pnt_header.size()==1) ? 3 : BaseLib::str2number<std::size_t> (*(++it));
 
 	if (pnt_header.size()<4)
 	{
@@ -285,7 +285,7 @@ bool TetGenInterface::parseNodesFileHeader(std::string &line,
 		return true;
 	}
 
-	n_attributes = BaseLib::str2number<size_t> (*(++it));
+	n_attributes = BaseLib::str2number<std::size_t> (*(++it));
 	boundary_markers = ((++it)->compare("1") == 0) ? true : false;
 
 	return true;
@@ -321,7 +321,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 		}
 
 		if (pos_beg != std::string::npos && pos_end != std::string::npos) {
-			id = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
+			id = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
 			if (k == 0 && id == 0)
 				_zero_based_idx = true;
 		} else {
@@ -393,7 +393,7 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 	pos_beg = line.find_first_not_of (" ");
 	pos_end = line.find_first_of(" ", pos_beg);
 	if (pos_beg != std::string::npos && pos_end != std::string::npos)
-		n_tets = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
+		n_tets = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
 	else {
 		ERR("TetGenInterface::parseElementsFileHeader(): Could not read number of tetrahedra specified in header.");
 		return false;
@@ -401,7 +401,7 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 	// nodes per tet - either 4 or 10
 	pos_beg = line.find_first_not_of (" \t", pos_end);
 	pos_end = line.find_first_of(" \t", pos_beg);
-	n_nodes_per_tet = BaseLib::str2number<size_t> (line.substr(pos_beg, pos_end - pos_beg));
+	n_nodes_per_tet = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
 	// region attribute at tetrahedra?
 	pos_beg = line.find_first_not_of (" \t", pos_end);
 	pos_end = line.find_first_of(" \t\n", pos_beg);
@@ -423,7 +423,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
                                     bool region_attribute) const
 {
 	std::string line;
-	std::size_t* ids (static_cast<size_t*>(alloca (sizeof (size_t) * n_nodes_per_tet)));
+	std::size_t* ids (static_cast<std::size_t*>(alloca (sizeof (std::size_t) * n_nodes_per_tet)));
 	elements.reserve(n_tets);
 
 	const unsigned offset = (_zero_based_idx) ? 0 : 1;

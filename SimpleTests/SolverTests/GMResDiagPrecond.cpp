@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	double *b(new double[n]);
 
 	// *** init start vector x
-	for (size_t k(0); k < n; k++) {
+	for (std::size_t k(0); k < n; k++) {
 		x[k] = 1.0;
 	}
 	// *** read rhs
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	} else {
 		std::cout << "problem reading rhs - initializing b with 1.0"
 				<< std::endl;
-		for (size_t k(0); k < n; k++) {
+		for (std::size_t k(0); k < n; k++) {
 			b[k] = 1.0;
 		}
 	}

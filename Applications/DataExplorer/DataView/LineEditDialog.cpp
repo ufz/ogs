@@ -25,9 +25,9 @@ LineEditDialog::LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* pare
 
 	this->proximityEdit->setValidator(new QDoubleValidator(0, 100, 8, this));
 
-	size_t nPly(ply_vec.size());
+	std::size_t nPly(ply_vec.size());
 	QStringList list;
-	for (size_t i = 0; i < nPly; i++)
+	for (std::size_t i = 0; i < nPly; i++)
 	{
 		std::string ply_name("");
 		ply_vec.getNameOfElementByID(i, ply_name);
@@ -75,7 +75,7 @@ void LineEditDialog::on_deselectPlyButton_pressed()
 
 void LineEditDialog::accept()
 {
-	std::vector<size_t> selectedIndeces = this->getSelectedIndeces(_selPly->stringList());
+	std::vector<std::size_t> selectedIndeces = this->getSelectedIndeces(_selPly->stringList());
 
 	if (!selectedIndeces.empty())
 	{
@@ -101,9 +101,9 @@ void LineEditDialog::reject()
 	this->done(QDialog::Rejected);
 }
 
-std::vector<size_t> LineEditDialog::getSelectedIndeces(QStringList list)
+std::vector<std::size_t> LineEditDialog::getSelectedIndeces(QStringList list)
 {
-	std::vector<size_t> indexList;
+	std::vector<std::size_t> indexList;
 	for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		QString s = it->mid(5, it->indexOf("  ") - 5);

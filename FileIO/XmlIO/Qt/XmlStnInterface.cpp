@@ -228,8 +228,8 @@ bool XmlStnInterface::write()
 
 	bool useStationValue(false);
 	double sValue = static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
-	size_t nStations(stations->size());
-	for (size_t i = 1; i < nStations; i++)
+	std::size_t nStations(stations->size());
+	for (std::size_t i = 1; i < nStations; i++)
 		if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() - sValue) <
 		    std::numeric_limits<double>::epsilon())
 		{
@@ -237,7 +237,7 @@ bool XmlStnInterface::write()
 			break;
 		}
 
-	for (size_t i = 0; i < nStations; i++)
+	for (std::size_t i = 0; i < nStations; i++)
 	{
 		QString stationType =  (isBorehole) ? "borehole" : "station";
 		QDomElement stationTag = doc.createElement(stationType);
@@ -292,14 +292,14 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
 
 	std::vector<GeoLib::Point*> profile = borehole->getProfile();
 	std::vector<std::string> soilNames = borehole->getSoilNames();
-	size_t nHorizons(profile.size());
+	std::size_t nHorizons(profile.size());
 
 	if (nHorizons > 1)
 	{
 		QDomElement stratTag = doc.createElement("strat");
 		boreholeTag.appendChild(stratTag);
 
-		for (size_t j = 1; j < nHorizons; j++) /// the first entry in the profile vector is just the position of the borehole
+		for (std::size_t j = 1; j < nHorizons; j++) /// the first entry in the profile vector is just the position of the borehole
 		{
 			QDomElement horizonTag = doc.createElement("horizon");
 			horizonTag.setAttribute( "id", QString::number(j) );
@@ -327,7 +327,7 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 
 	// buffer file
 	in.seekg(0, std::ios::end);
-	size_t length = in.tellg();
+	std::size_t length = in.tellg();
 	in.seekg(0, std::ios::beg);
 	char* buffer = new char[length + 1];
 	in.read(buffer, length);

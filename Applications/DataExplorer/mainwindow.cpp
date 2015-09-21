@@ -279,7 +279,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_vtkWidget = visualizationWidget->vtkWidget;
 	QDesktopWidget* desktopWidget = QApplication::desktop();
 	const unsigned int screenCount = desktopWidget->screenCount();
-	for (size_t i = 0; i < screenCount; ++i)
+	for (std::size_t i = 0; i < screenCount; ++i)
 		_screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
 
 	// Setup import files menu
@@ -472,7 +472,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			std::string unique_name;
 			std::vector<std::string> errors;
 			if (! Legacy::readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
-				for (size_t k(0); k<errors.size(); k++)
+				for (std::size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
 		}
@@ -918,7 +918,7 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 				{
 				std::string fname (fileName.toStdString());
 					std::string gmsh_command = "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
-					size_t pos (fname.rfind ("."));
+					std::size_t pos (fname.rfind ("."));
 					if (pos != std::string::npos)
 						fname = fname.substr (0, pos);
 					gmsh_command += " -o " + fname + ".msh";
@@ -988,7 +988,7 @@ void MainWindow::showDiagramPrefsDialog()
 	}
 }
 
-void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, size_t id)
+void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id)
 {
 	std::string old_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id, old_name);

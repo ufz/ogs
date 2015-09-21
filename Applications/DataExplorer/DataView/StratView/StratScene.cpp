@@ -76,7 +76,7 @@ void StratScene::addDepthLabels(std::vector<GeoLib::Point*> profile, double offs
 	textBounds = depthText[0]->boundingRect();
 	depthText[0]->setPos(offset + textBounds.width() / 2, vertPos);
 
-	for (size_t i = 1; i < profile.size(); i++)
+	for (std::size_t i = 1; i < profile.size(); i++)
 	{
 		depthText.push_back(addNonScalableText(QString::number((*(profile[i]))[2])));
 		vertPos += log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100;
@@ -104,7 +104,7 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
 	//textBounds = soilText[0]->boundingRect();
 	soilText[0]->setPos(offset /* - textBounds.width() */, vertPos);
 
-	for (size_t i = 1; i < soilNames.size(); i++)
+	for (std::size_t i = 1; i < soilNames.size(); i++)
 	{
 		soilText.push_back(addNonScalableText(QString::fromStdString(soilNames[i])));
 		halfHeight = log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100 / 2;

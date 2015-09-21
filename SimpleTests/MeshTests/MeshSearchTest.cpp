@@ -29,16 +29,16 @@
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,
-				std::vector<size_t> &idx_found_nodes, bool contiguous)
+				std::vector<std::size_t> &idx_found_nodes, bool contiguous)
 {
 	// constructing Grid
 	INFO ("[MeshGridAlgorithm] constructing mesh grid object ...");
 
 	if (contiguous) {
 		std::vector<MeshLib::Node> mesh_nodes;
-		size_t n_nodes(mesh->getNodes().size());
+		std::size_t n_nodes(mesh->getNodes().size());
 		mesh_nodes.reserve(n_nodes);
-		for (size_t k(0); k<n_nodes; k++) {
+		for (std::size_t k(0); k<n_nodes; k++) {
 			mesh_nodes.push_back(MeshLib::Node(*(mesh->getNodes()[k])));
 		}
 #ifndef WIN32
@@ -55,10 +55,10 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 	#ifndef WIN32
 		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 	#endif
-		const size_t n_pnts_for_search(pnts_for_search.size());
+		const std::size_t n_pnts_for_search(pnts_for_search.size());
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
-		for (size_t k(0); k<n_pnts_for_search; k++) {
+		for (std::size_t k(0); k<n_pnts_for_search; k++) {
 			MeshLib::Node const* node(mesh_grid.getNearestPoint(*pnts_for_search[k]));
 			idx_found_nodes.push_back(node->getID());
 		}
@@ -79,10 +79,10 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 #ifndef WIN32
 		INFO ("[MeshGridAlgorithm] mem for mesh grid: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
-		const size_t n_pnts_for_search(pnts_for_search.size());
+		const std::size_t n_pnts_for_search(pnts_for_search.size());
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
-		for (size_t k(0); k<n_pnts_for_search; k++) {
+		for (std::size_t k(0); k<n_pnts_for_search; k++) {
 			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]));
 			idx_found_nodes.push_back(node->getID());
 		}
@@ -137,14 +137,14 @@ int main(int argc, char *argv[])
 	std::vector<MeshLib::Node*> const& nodes(mesh->getNodes());
 	std::vector<GeoLib::Point*> pnts_for_search;
 	unsigned n(std::min(static_cast<unsigned>(nodes.size()), number_arg.getValue()));
-	for (size_t k(0); k<n; k++) {
+	for (std::size_t k(0); k<n; k++) {
 		pnts_for_search.push_back(new GeoLib::Point(nodes[k]));
 	}
 
-	std::vector<size_t> idx_found_nodes;
+	std::vector<std::size_t> idx_found_nodes;
 	testMeshGridAlgorithm(mesh, pnts_for_search, idx_found_nodes, contiguous_arg.getValue());
 
-	for (size_t k(0); k<n; k++) {
+	for (std::size_t k(0); k<n; k++) {
 		delete pnts_for_search[k];
 	}
 

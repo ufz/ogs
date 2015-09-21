@@ -229,7 +229,7 @@ void NetCdfConfigureDialog::getDimEdges(int dimId, unsigned &size, double &first
 			int sizeOfDim = tmpVarOfDim->get_dim(0)->size();
 			size = sizeOfDim;
 			double arrayOfDimStart[1] = {0};
-			size_t edgeOfArray[1] = {1};
+			std::size_t edgeOfArray[1] = {1};
 			long edgeOrigin[1] = {0};
 			tmpVarOfDim->set_cur(edgeOrigin);
 			tmpVarOfDim->get(arrayOfDimStart,edgeOfArray);
@@ -313,7 +313,7 @@ double NetCdfConfigureDialog::getResolution()
 
 void NetCdfConfigureDialog::createDataObject()
 {
-	size_t* length = new size_t[_currentVar->num_dims()];
+	std::size_t* length = new std::size_t[_currentVar->num_dims()];
 	double originLon = 0, originLat = 0;
 	double lastLon = 0, lastLat = 0;
 	unsigned sizeLon = 0, sizeLat = 0;
@@ -328,7 +328,7 @@ void NetCdfConfigureDialog::createDataObject()
 
 	// set up array
 	double* data_array = new double[sizeLat*sizeLon];
-	for(size_t i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
+	for(std::size_t i=0; i < (sizeLat*sizeLon); i++) data_array[i]=0;
 
 	//Time-Dimension:
 	if (_currentVar->num_dims() > 2)
@@ -344,7 +344,7 @@ void NetCdfConfigureDialog::createDataObject()
 
 	_currentVar->get(data_array,length); //create Array of Values
 
-	for (size_t i=0; i < (sizeLat*sizeLon); i++)
+	for (std::size_t i=0; i < (sizeLat*sizeLon); i++)
 	{
 		//data_array[i] = data_array[i] - 273; // convert from kalvin to celsius
 		if (data_array[i] < -9999 ) data_array[i] = -9999; // all values < -10000, set to "no-value"
@@ -407,22 +407,22 @@ std::string NetCdfConfigureDialog::getName()
 	return name;
 }
 
-void NetCdfConfigureDialog::reverseNorthSouth(double* data, size_t width, size_t height)
+void NetCdfConfigureDialog::reverseNorthSouth(double* data, std::size_t width, std::size_t height)
 {
 	double* cp_array = new double[width*height];
 
-	for (size_t i=0; i<height; i++)
+	for (std::size_t i=0; i<height; i++)
 	{
-		for (size_t j=0; j<width; j++)
+		for (std::size_t j=0; j<width; j++)
 		{
-			size_t old_index((width*height)-(width*(i+1)));
-			size_t new_index(width*i);
+			std::size_t old_index((width*height)-(width*(i+1)));
+			std::size_t new_index(width*i);
 			cp_array[new_index+j] = data[old_index+j];
 		}
 	}
 
-	size_t length(height*width);
-	for (size_t i=0; i<length; i++)
+	std::size_t length(height*width);
+	for (std::size_t i=0; i<length; i++)
 		data[i] = cp_array[i];
 
 	delete[] cp_array;

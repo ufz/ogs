@@ -51,8 +51,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 		std::string s;
 		// read the data into the double-array
 		for (std::size_t j(0); j < n_rows; ++j) {
-			const size_t idx ((n_rows - j - 1) * n_cols);
-			for (size_t i(0); i < n_cols; ++i) {
+			const std::size_t idx ((n_rows - j - 1) * n_cols);
+			for (std::size_t i(0); i < n_cols; ++i) {
 				in >> s;
 				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
 
@@ -132,10 +132,10 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 		double* values = new double[n_cols*n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (size_t j(0); j < n_rows; ++j) 
+		for (std::size_t j(0); j < n_rows; ++j)
 		{
-			const size_t idx (j * n_cols);
-			for (size_t i(0); i < n_cols; ++i) 
+			const std::size_t idx (j * n_cols);
+			for (std::size_t i(0); i < n_cols; ++i)
 			{
 				in >> s;
 				const double val (strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
@@ -153,7 +153,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	}
 }
 
-bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
 				double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max)
 {
 	std::string tag;

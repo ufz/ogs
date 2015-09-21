@@ -95,8 +95,8 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
 
 vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
 {
-	size_t nLists = _lists.size();
-	for (size_t i = 0; i < nLists; i++)
+	std::size_t nLists = _lists.size();
+	for (std::size_t i = 0; i < nLists; i++)
 		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
 			return dynamic_cast<BaseItem*>(_lists[i]->getItem())->vtkSource();
 	return nullptr;
@@ -149,7 +149,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
 		ModelTreeItem* item = static_cast<ModelTreeItem*>(getItem(index));
 
 		// also delete the lists entry in the list directory of the model
-		for (size_t i = 0; i < _lists.size(); i++)
+		for (std::size_t i = 0; i < _lists.size(); i++)
 			if (item == _lists[i])
 				_lists.erase(_lists.begin() + i);
 
@@ -163,7 +163,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
  */
 void StationTreeModel::removeStationList(const std::string &name)
 {
-	for (size_t i = 0; i < _lists.size(); i++)
+	for (std::size_t i = 0; i < _lists.size(); i++)
 		if ( name.compare( _lists[i]->data(0).toString().toStdString() ) == 0 )
 			removeStationList(createIndex(_lists[i]->row(), 0, _lists[i]));
 }

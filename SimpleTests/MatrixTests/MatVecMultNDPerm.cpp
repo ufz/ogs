@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef UNIX
-	const size_t length(256);
+	const std::size_t length(256);
 	char *hostname(new char[length]);
 	gethostname (hostname, length);
 	INFO("hostname: %s", hostname);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 	}
 	run_timer.start();
 	cpu_timer.start();
-	for (size_t k(0); k<n_mults; k++) {
+	for (std::size_t k(0); k<n_mults; k++) {
 		mat.amux (1.0, x, y);
 	}
 

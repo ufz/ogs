@@ -56,10 +56,10 @@ int main (int argc, char* argv[])
 		std::cout << "could not found polylines" << std::endl;
 		return -1;
 	}
-	const size_t n_ply (ply_vec->size());
+	const std::size_t n_ply (ply_vec->size());
 
-	std::vector<size_t> ply_pnt_ids;
-	for (size_t k(0); k < n_ply; k++)
+	std::vector<std::size_t> ply_pnt_ids;
+	for (std::size_t k(0); k < n_ply; k++)
 	{
 		std::string ply_name;
 		if (ply_vec->getNameOfElementByID(k, ply_name))
@@ -70,8 +70,8 @@ int main (int argc, char* argv[])
 			{
 				std::cout << "found polyline " << ply_name << std::endl;
 				GeoLib::Polyline const* ply (ply_vec->getElementByName(ply_name));
-				const size_t n_ply_pnts (ply->getNumberOfPoints());
-				for (size_t j(0); j < n_ply_pnts; j++)
+				const std::size_t n_ply_pnts (ply->getNumberOfPoints());
+				for (std::size_t j(0); j < n_ply_pnts; j++)
 					ply_pnt_ids.push_back (ply->getPointID(j));
 			}
 		}
@@ -88,7 +88,7 @@ int main (int argc, char* argv[])
 	if (gli_out && bc_out)
 	{
 		gli_out << "#POINTS" << "\n";
-		for (size_t k(0); k < ply_pnt_ids.size(); k++)
+		for (std::size_t k(0); k < ply_pnt_ids.size(); k++)
 		{
 			gli_out << k << " " << *((*geo_pnts)[ply_pnt_ids[k]]) << " $NAME PLYPNT" <<
 			argv[2] << k << "\n";

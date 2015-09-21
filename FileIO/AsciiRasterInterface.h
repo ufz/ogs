@@ -49,7 +49,7 @@ private:
                               double &no_data_val);
 
     /// Reads the header of a Surfer grd-file.
-    static bool readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+    static bool readSurferHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
                                  double &xllcorner, double &yllcorner, double &cell_size,
                                  double &min, double &max);
 };

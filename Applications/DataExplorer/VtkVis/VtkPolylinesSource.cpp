@@ -107,7 +107,7 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
 
 	unsigned lastMaxIndex (0);
 	const std::size_t nPolylines (_polylines->size());
-	for (size_t j = 0; j < nPolylines; j++)
+	for (std::size_t j = 0; j < nPolylines; j++)
 	{
 		const int numPoints = (*_polylines)[j]->getNumberOfPoints();
 		const bool isClosed = (*_polylines)[j]->isClosed();

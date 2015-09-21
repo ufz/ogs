@@ -242,7 +242,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 	const std::pair<double, double> xDim(x0, x0 + raster.getNCols() * delta); // extension in x-dimension
 	const std::pair<double, double> yDim(y0, y0 + raster.getNRows() * delta); // extension in y-dimension
 
-	const size_t nNodes (new_mesh.getNNodes());
+	const std::size_t nNodes (new_mesh.getNNodes());
 	const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
 	for (unsigned i = 0; i < nNodes; ++i)
 	{

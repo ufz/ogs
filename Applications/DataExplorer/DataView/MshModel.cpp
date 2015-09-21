@@ -69,11 +69,11 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 
 	// display elements
 	const std::vector<MeshLib::Element*> &elems = mesh->getElements();
-	const size_t nElems (elems.size());
+	const std::size_t nElems (elems.size());
 	QString elem_type_string("");
 	MeshLib::MeshElemType elem_type(MeshLib::MeshElemType::INVALID);
 
-	for (size_t i = 0; i < nElems; i++)
+	for (std::size_t i = 0; i < nElems; i++)
 	{
 		const MeshLib::Element* current_element (elems[i]);
 		MeshLib::MeshElemType t (current_element->getGeomType());

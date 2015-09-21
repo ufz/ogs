@@ -36,9 +36,9 @@ void VtkCompositePointToGlyphFilter::init()
 	this->_inputDataObjectType = VTK_DATA_SET;
 	this->_outputDataObjectType = VTK_POLY_DATA;
 
-	size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
+	std::size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
 						->GetOutput()->GetPointData()->GetNumberOfTuples();
-	int phi (10 - static_cast<size_t>(nPoints / 2000.0));
+	int phi (10 - static_cast<std::size_t>(nPoints / 2000.0));
 	int theta (phi);
 	if (phi < 4)
 	{

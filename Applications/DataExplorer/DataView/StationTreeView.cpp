@@ -244,15 +244,15 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 	                                               toStdString()))
 	        ->getColorLookupTable();
 	std::vector<ModelTreeItem*> lists = static_cast<StationTreeModel*>(model())->getLists();
-	size_t nLists = lists.size();
-	for (size_t i = 0; i < nLists; i++)
+	std::size_t nLists = lists.size();
+	for (std::size_t i = 0; i < nLists; i++)
 		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() )
 		     == 0 )
 		{
 			const std::vector<GeoLib::Point*>* stations =
 			        dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
 
-			for (size_t i = 0; i < stations->size(); i++)
+			for (std::size_t i = 0; i < stations->size(); i++)
 			{
 				StratWindow* stratView =
 				        new StratWindow(static_cast<GeoLib::StationBorehole*>((*
