@@ -167,9 +167,9 @@ class PETScMatrix
             std::vector<PetscInt> cols;
             cols.reserve(indices.columns.size());
             for (auto col : indices.columns)
-                cols.push_back(abs(col));
+                cols.push_back(std::abs(col));
 
-            this->add(indices.rows, cols, sub_matrix);
+            add(indices.rows, cols, sub_matrix);
         }
 
         /*!
