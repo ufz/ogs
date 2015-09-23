@@ -44,9 +44,9 @@ public:
 	}
 
 	/// Destructor
-	~ElementQualityInterface() 
-	{ 
-		delete _quality_tester; 
+	~ElementQualityInterface()
+	{
+		delete _quality_tester;
 	}
 
 	/// Returns the vector containing a quality measure for each element.
@@ -64,7 +64,7 @@ public:
 	BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
 	{
 		if (_quality_tester)
-			return _quality_tester->getHistogram(static_cast<size_t>(n_bins));
+			return _quality_tester->getHistogram(static_cast<std::size_t>(n_bins));
 
 		std::vector<double> empty_quality_vec(0);
 		return empty_quality_vec;
@@ -80,7 +80,7 @@ public:
 		histogram.write(file_name, _mesh.getName(), MeshQualityType2String(_type));
 		return 0;
 	}
-	
+
 private:
 	/// Calculates the quality of each mesh element based on the specified metric
 	void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)

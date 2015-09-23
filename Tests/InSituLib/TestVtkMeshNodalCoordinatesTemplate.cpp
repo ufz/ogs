@@ -22,7 +22,7 @@
 
 TEST(InSituLibNodalCoordinates, Init)
 {
-	const size_t subdivisions = 99;
+	const std::size_t subdivisions = 99;
 	const double length = 10.0;
 	const double dx = length / subdivisions;
 
@@ -33,7 +33,7 @@ TEST(InSituLibNodalCoordinates, Init)
 	//nodeCoords->PrintSelf(std::cout, vtkIndent());
 
 	ASSERT_EQ(nodeCoords->GetNumberOfComponents(), 3);
-	const size_t numTuples = (subdivisions+1)*(subdivisions+1);
+	const std::size_t numTuples = (subdivisions+1)*(subdivisions+1);
 	ASSERT_EQ(nodeCoords->GetNumberOfTuples(), numTuples);
 
 	// First point

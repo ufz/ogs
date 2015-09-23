@@ -269,9 +269,9 @@ bool MeshIO::write()
 		<< "  NO_PCS\n"
 		<< "$NODES\n"
 		<< "  ";
-	const size_t n_nodes(_mesh->getNNodes());
+	const std::size_t n_nodes(_mesh->getNNodes());
 	_out << n_nodes << "\n";
-	for (size_t i(0); i < n_nodes; ++i) {
+	for (std::size_t i(0); i < n_nodes; ++i) {
 		_out << i << " " << *(_mesh->getNode(i)) << "\n";
 	}
 
@@ -296,10 +296,10 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 	boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
 	std::ostream &out) const
 {
-	const size_t ele_vector_size (ele_vec.size());
+	const std::size_t ele_vector_size (ele_vec.size());
 
 	out << ele_vector_size << "\n";
-	for (size_t i(0); i < ele_vector_size; ++i) {
+	for (std::size_t i(0); i < ele_vector_size; ++i) {
 		out << i << " ";
 		if (! material_ids)
 			out << "0 ";
@@ -307,7 +307,7 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
 			out << (*material_ids)[i] << " ";
 		out << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
 		unsigned nElemNodes (ele_vec[i]->getNBaseNodes());
-		for(size_t j = 0; j < nElemNodes; ++j)
+		for(std::size_t j = 0; j < nElemNodes; ++j)
 			out << ele_vec[i]->getNode(j)->getID() << " ";
 		out << "\n";
 	}

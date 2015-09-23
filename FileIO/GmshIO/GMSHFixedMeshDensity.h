@@ -17,7 +17,7 @@
 
 #include "GMSHMeshDensityStrategy.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

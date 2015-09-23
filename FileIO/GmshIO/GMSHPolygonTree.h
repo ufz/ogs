@@ -31,7 +31,7 @@ namespace GeoLib
     class PolylineWithSegmentMarker;
 }
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

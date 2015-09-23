@@ -47,7 +47,7 @@ VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlg
 		{
 			/* TODO
 			if (dynamic_cast<VtkStationSource*>(parentAlg)->getType() == GeoLib::Station::StationType::BOREHOLE)
-				_type = GeoLib::GEOTYPE::POLYLINE; 
+				_type = GeoLib::GEOTYPE::POLYLINE;
 			*/
 		}
 	  }
@@ -88,7 +88,7 @@ void VtkCompositeGeoObjectFilter::init()
 		_outputAlgorithm = surface;
 }
 
-void VtkCompositeGeoObjectFilter::SetIndex(size_t idx)
+void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)
 {
 	_threshold->ThresholdBetween(idx, idx);
 }

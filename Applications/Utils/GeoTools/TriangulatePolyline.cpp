@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 		std::string input ("");
 		while (input != "y" && input != "Y" && input != "n" && input != "N")
 			input = output_question();
-		
+
 		if (input == "y" || input == "Y")
 		{
 			line->closePolyline();

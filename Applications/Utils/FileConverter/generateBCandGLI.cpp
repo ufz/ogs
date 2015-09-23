@@ -54,10 +54,10 @@ int main (int argc, char* argv[])
 		std::cout << "could not found surfaces" << std::endl;
 		return -1;
 	}
-	const size_t n_sfc (sfc_vec->size());
+	const std::size_t n_sfc (sfc_vec->size());
 
-	std::vector<size_t> sfc_pnt_ids;
-	for (size_t k(0); k < n_sfc; k++)
+	std::vector<std::size_t> sfc_pnt_ids;
+	for (std::size_t k(0); k < n_sfc; k++)
 	{
 		std::string sfc_name;
 		if (sfc_vec->getNameOfElementByID(k, sfc_name))
@@ -65,11 +65,11 @@ int main (int argc, char* argv[])
 			{
 				std::cout << k << ": " << sfc_name << std::endl;
 				GeoLib::Surface const* sfc (sfc_vec->getElementByName(sfc_name));
-				const size_t n_triangles (sfc->getNTriangles());
-				for (size_t j(0); j < n_triangles; j++)
+				const std::size_t n_triangles (sfc->getNTriangles());
+				for (std::size_t j(0); j < n_triangles; j++)
 				{
 					GeoLib::Triangle const* tri ((*sfc)[j]);
-					for (size_t i(0); i < 3; i++)
+					for (std::size_t i(0); i < 3; i++)
 						sfc_pnt_ids.push_back ((*tri)[i]);
 				}
 			}
@@ -78,10 +78,10 @@ int main (int argc, char* argv[])
 	// make entries unique
 	std::cout << "make points unique ... " << std::flush;
 	std::sort (sfc_pnt_ids.begin(), sfc_pnt_ids.end());
-	std::vector<size_t>::iterator it (sfc_pnt_ids.begin());
+	std::vector<std::size_t>::iterator it (sfc_pnt_ids.begin());
 	while (it != sfc_pnt_ids.end())
 	{
-		std::vector<size_t>::iterator next (it);
+		std::vector<std::size_t>::iterator next (it);
 		++next;
 		if (next != sfc_pnt_ids.end())
 		{
@@ -103,7 +103,7 @@ int main (int argc, char* argv[])
 	if (gli_out && bc_out)
 	{
 		gli_out << "#POINTS" << "\n";
-		for (size_t k(0); k < sfc_pnt_ids.size(); k++)
+		for (std::size_t k(0); k < sfc_pnt_ids.size(); k++)
 		{
 			gli_out << k << " " << *((*geo_pnts)[sfc_pnt_ids[k]]) << " $NAME " << k <<
 			"\n";

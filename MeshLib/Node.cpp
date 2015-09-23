@@ -48,7 +48,7 @@ void Node::updateCoordinates(double x, double y, double z)
 	_x[1] = y;
 	_x[2] = z;
 
-	const size_t nElements (this->_elements.size());
+	const std::size_t nElements (this->_elements.size());
 	for (std::size_t i=0; i<nElements; i++)
 		_elements[i]->computeVolume();
 }

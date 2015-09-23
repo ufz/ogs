@@ -67,7 +67,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 		return 0;
 
 	const std::vector<GeoLib::Point*>* surfacePoints = (*_surfaces)[0]->getPointVec();
-	size_t nPoints = surfacePoints->size();
+	std::size_t nPoints = surfacePoints->size();
 
 	vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
 	vtkSmartPointer<vtkPolyData> output =
@@ -85,7 +85,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	sfcIDs->SetNumberOfComponents(1);
 	sfcIDs->SetName("SurfaceIDs");
 
-	for (size_t i = 0; i < nPoints; ++i)
+	for (std::size_t i = 0; i < nPoints; ++i)
 	{
 		const double* coords = const_cast<double*>((*surfacePoints)[i]->getCoords());
 		newPoints->SetPoint(i, coords);
@@ -95,15 +95,15 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
 	for (std::vector<GeoLib::Surface*>::const_iterator it = _surfaces->begin();
 	     it != _surfaces->end(); ++it)
 	{
-		const size_t nTriangles = (*it)->getNTriangles();
+		const std::size_t nTriangles = (*it)->getNTriangles();
 
-		for (size_t i = 0; i < nTriangles; ++i)
+		for (std::size_t i = 0; i < nTriangles; ++i)
 		{
 			vtkTriangle* new_tri = vtkTriangle::New();
 			new_tri->GetPointIds()->SetNumberOfIds(3);
 
 			const GeoLib::Triangle* triangle = (**it)[i];
-			for (size_t j = 0; j < 3; ++j)
+			for (std::size_t j = 0; j < 3; ++j)
 				new_tri->GetPointIds()->SetId(j, ((*triangle)[j]));
 			newPolygons->InsertNextCell(new_tri);
 			sfcIDs->InsertNextValue(count);

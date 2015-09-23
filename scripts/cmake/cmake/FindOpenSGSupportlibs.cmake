@@ -8,7 +8,7 @@
 if (NOT OpenSGSupportlibs_FOUND)
 
 	include(LibFindMacros)
-	
+
 	# Visual Studio x32
 	if (VS32)
 	  # Visual Studio x32
@@ -20,9 +20,9 @@ if (NOT OpenSGSupportlibs_FOUND)
 	  find_library(OpenSGSupportlibs_LIBRARY
 		NAMES glut32 libjpg libpng tif32 zlib
 		PATHS ${LIBRARIES_DIR}/supportlibs/lib
-		  ${CMAKE_SOURCE_DIR}/../supportlibs/lib )  
-	else ()  
-	  if (VS64) 
+		  ${CMAKE_SOURCE_DIR}/../supportlibs/lib )
+	else ()
+	  if (VS64)
 	    # Visual Studio x64
 		find_path( OpenSGSupportlibs_INCLUDE_DIR
 	    NAMES zlib.h
@@ -41,5 +41,5 @@ if (NOT OpenSGSupportlibs_FOUND)
 	set(OpenSGSupportlibs_PROCESS_INCLUDES OpenSGSupportlibs_INCLUDE_DIR)
 	set(OpenSGSupportlibs_PROCESS_LIBS OpenSGSupportlibs_LIBRARY)
 	libfind_process(OpenSGSupportlibs)
-	
+
 endif ()

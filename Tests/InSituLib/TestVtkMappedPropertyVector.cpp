@@ -25,7 +25,7 @@
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(InSituLibMappedPropertyVector, Double)
 {
-	const size_t mesh_size = 5;
+	const std::size_t mesh_size = 5;
 	const double length = 1.0;
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
@@ -57,7 +57,7 @@ TEST(InSituLibMappedPropertyVector, Double)
 // Creates a PropertyVector<int> and maps it into a vtkDataArray-equivalent
 TEST(InSituLibMappedPropertyVector, Int)
 {
-	const size_t mesh_size = 5;
+	const std::size_t mesh_size = 5;
 	const double length = 1.0;
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
@@ -89,7 +89,7 @@ TEST(InSituLibMappedPropertyVector, Int)
 // Creates a PropertyVector<unsigned> and maps it into a vtkDataArray-equivalent
 TEST(InSituLibMappedPropertyVector, Unsigned)
 {
-	const size_t mesh_size = 5;
+	const std::size_t mesh_size = 5;
 	const double length = 1.0;
 
 	MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);

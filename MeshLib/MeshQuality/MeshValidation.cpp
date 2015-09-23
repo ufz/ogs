@@ -142,7 +142,7 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 	delete boundary_mesh;
 
 	// Subtract "1" from the number of surfaces found to get the number of holes.
-	return (--current_surface_id); 
+	return (--current_surface_id);
 }
 
 void MeshValidation::trackSurface(MeshLib::Element const* element, std::vector<unsigned> &sfc_idx, unsigned const current_index)

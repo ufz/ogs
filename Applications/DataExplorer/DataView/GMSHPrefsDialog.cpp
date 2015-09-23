@@ -69,7 +69,7 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* 
 	for (unsigned k(0); k < geo_station_names.size(); ++k)
 		geoNames.push_back (geo_station_names[k]);
 
-	size_t nGeoObjects(geoNames.size());
+	std::size_t nGeoObjects(geoNames.size());
 
 	QStringList list;
 	for (unsigned i = 0; i < nGeoObjects; ++i)

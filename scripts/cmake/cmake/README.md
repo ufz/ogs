@@ -31,7 +31,7 @@ For updates:
 For pushing to upstream:
 
 	cd projectdir
-	
+
 	git subtree push --prefix=cmake git@github.com:bilke/cmake-modules.git master
 
 

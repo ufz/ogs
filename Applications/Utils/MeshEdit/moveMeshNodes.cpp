@@ -64,7 +64,7 @@ int main (int argc, char* argv[])
 		std::cout << std::endl;
 		std::cout << "Usage: " << argv[0] << " <msh-file.msh> <keyword> [<value1>] [<value2>]" << std::endl;
 		std::cout << "Available keywords:" << std::endl;
-		//for (size_t i=0; i<keywords.size(); i++)
+		//for (std::size_t i=0; i<keywords.size(); i++)
 		std::cout << "\t" << "-ALL <value1> <value2> : changes the elevation of all mesh nodes by <value2> in direction <value1> [x,y,z]." << std::endl;
 		std::cout << "\t" << "-MESH <value1> <value2> : changes the elevation of mesh nodes based on a second mesh <value1> with a search range of <value2>." << std::endl;
 		std::cout << "\t" << "-LOWPASS : applies a lowpass filter over node elevation using directly connected nodes." << std::endl;
@@ -84,7 +84,7 @@ int main (int argc, char* argv[])
 	}
 
 	bool is_keyword(false);
-	for (size_t i=0; i<keywords.size(); i++)
+	for (std::size_t i=0; i<keywords.size(); i++)
 		if (current_key.compare(keywords[i])==0)
 		{
 			is_keyword = true;
@@ -94,13 +94,13 @@ int main (int argc, char* argv[])
 	if (!is_keyword)
 	{
 		std::cout << "Keyword not recognised. Available keywords:" << std::endl;
-		for (size_t i=0; i<keywords.size(); i++)
+		for (std::size_t i=0; i<keywords.size(); i++)
 			std::cout << keywords[i] << std::endl;
 		return -1;
 	}
 
 	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(msh_name));
-	//std::vector<size_t> del_nodes;
+	//std::vector<std::size_t> del_nodes;
 
 	// Start keyword-specific selection of nodes
 
@@ -117,9 +117,9 @@ int main (int argc, char* argv[])
 		const double value(strtod(argv[4],0));
 		std::cout << "Moving all mesh nodes by " << value << " in direction " << idx << " (" << dir << ")..." << std::endl;
 		//double value(-10);
-		const size_t nNodes(mesh->getNNodes());
+		const std::size_t nNodes(mesh->getNNodes());
 		std::vector<MeshLib::Node*> nodes (mesh->getNodes());
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 		{
 			(*nodes[i])[idx] += value;
 		}
@@ -144,10 +144,10 @@ int main (int argc, char* argv[])
 		MathLib::Point3d const& min(bounding_box.getMinPoint());
 		MathLib::Point3d const& max(bounding_box.getMaxPoint());
 
-		const size_t nNodes(mesh->getNNodes());
+		const std::size_t nNodes(mesh->getNNodes());
 		std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 		{
 			bool is_inside (containsPoint(*nodes[i], min, max));
 			if (is_inside)
@@ -163,24 +163,24 @@ int main (int argc, char* argv[])
 	// weighted by 2 and the elevation of each connected node weighted by 1
 	if (current_key.compare("-LOWPASS")==0)
 	{
-		const size_t nNodes(mesh->getNNodes());
+		const std::size_t nNodes(mesh->getNNodes());
 		std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
 		std::vector<double> elevation(nNodes);
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 			elevation[i] = (*nodes[i])[2];
 
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 		{
 			const std::vector<MeshLib::Node*> conn_nodes (nodes[i]->getConnectedNodes());
 			const unsigned nConnNodes (conn_nodes.size());
 			elevation[i] = (2*(*nodes[i])[2]);
-			for (size_t j=0; j<nConnNodes; ++j)
+			for (std::size_t j=0; j<nConnNodes; ++j)
 				elevation[i] += (*conn_nodes[j])[2];
 			elevation[i] /= (nConnNodes+2);
 		}
 
-		for (size_t i=0; i<nNodes; i++)
+		for (std::size_t i=0; i<nNodes; i++)
 			(*nodes[i])[2] = elevation[i];
 	}
 	/**** add other keywords here ****/

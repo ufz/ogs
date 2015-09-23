@@ -70,7 +70,7 @@ void XmlNumInterface::readLinearSolverConfiguration(QDomElement const& lin_root)
 {
 	std::string const library = lin_root.attribute("Library").toStdString();
 	std::string lin_solver_type, precond_type("no");
-			
+
 	QDomElement linear_solver_node = lin_root.firstChildElement();
 	while (!linear_solver_node.isNull())
 	{

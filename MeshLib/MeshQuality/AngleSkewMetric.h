@@ -20,7 +20,7 @@
 namespace MeshLib
 {
 
-/** 
+/**
  * Calculates the quality of mesh elements based on the EquiAngleSkew measure
  */
 class AngleSkewMetric : public ElementQualityMetric

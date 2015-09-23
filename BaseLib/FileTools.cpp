@@ -65,7 +65,7 @@ void truncateFile( std::string const& filename)
  * found.
  */
 static
-size_t findLastPathSeparator(std::string const& path)
+std::size_t findLastPathSeparator(std::string const& path)
 {
 	return path.find_last_of("/\\");
 }
@@ -74,7 +74,7 @@ size_t findLastPathSeparator(std::string const& path)
  * This could be used to extract file extension.
  */
 static
-size_t findLastDot(std::string const& path)
+std::size_t findLastDot(std::string const& path)
 {
 	return path.find_last_of(".");
 }
@@ -82,12 +82,12 @@ size_t findLastDot(std::string const& path)
 std::string dropFileExtension(std::string const& filename)
 {
 	// Look for dots in filename.
-	const size_t p = findLastDot(filename);
+	const std::size_t p = findLastDot(filename);
 	if (p == std::string::npos)
 		return filename;
 
 	// Check position of the last path separator.
-	const size_t s = findLastPathSeparator(filename);
+	const std::size_t s = findLastPathSeparator(filename);
 	if (s != std::string::npos && p < s)
 		return filename;
 
@@ -96,7 +96,7 @@ std::string dropFileExtension(std::string const& filename)
 
 std::string extractBaseName(std::string const& pathname)
 {
-	const size_t p = findLastPathSeparator(pathname);
+	const std::size_t p = findLastPathSeparator(pathname);
 	return pathname.substr(p + 1);
 }
 
@@ -109,7 +109,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 std::string getFileExtension(const std::string &path)
 {
 	const std::string str = extractBaseName(path);
-	const size_t p = findLastDot(str);
+	const std::size_t p = findLastDot(str);
 	if (p == std::string::npos)
 		return std::string();
 	return str.substr(p + 1);
@@ -124,7 +124,7 @@ std::string copyPathToFileName(const std::string &file_name,
                                const std::string &source)
 {
 	// check if file_name already contains a full path
-	const size_t pos = findLastPathSeparator(file_name);
+	const std::size_t pos = findLastPathSeparator(file_name);
 	if (pos != std::string::npos)
 		return file_name;
 
@@ -133,7 +133,7 @@ std::string copyPathToFileName(const std::string &file_name,
 
 std::string extractPath(std::string const& pathname)
 {
-	const size_t pos = findLastPathSeparator(pathname);
+	const std::size_t pos = findLastPathSeparator(pathname);
 	return pathname.substr(0, pos + 1);
 }
 } // end namespace BaseLib

@@ -63,30 +63,30 @@ void VtkColorLookupTable::Build()
 	{
 		// make sure that color map starts with the first color in the dictionary
 		unsigned char startcolor[4] = { 0, 0 , 0 , 0 };
-		std::pair<size_t, unsigned char*> lastValue(0, startcolor);
-		size_t nextIndex(0);
+		std::pair<std::size_t, unsigned char*> lastValue(0, startcolor);
+		std::size_t nextIndex(0);
 
 		for (std::map<double, unsigned char*>::const_iterator it = _dict.begin(); it != _dict.end(); ++it)
 		{
 			double val = (it->first < range[0]) ? range[0] : ((it->first > range[1]) ? range[1] : it->first);
-			nextIndex = static_cast<size_t>( std::floor(val-range[0]) );
+			nextIndex = static_cast<std::size_t>( std::floor(val-range[0]) );
 
 			this->SetTableValue(nextIndex, it->second);
 
 			if ( nextIndex - lastValue.first > 0 )
-				for (size_t i = lastValue.first + 1; i < nextIndex; i++)
+				for (std::size_t i = lastValue.first + 1; i < nextIndex; i++)
 				{
 					unsigned char int_rgba[4];
 					double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
 
 					if (_type == VtkColorLookupTable::LUTType::LINEAR)
-						for (size_t j = 0; j < 4; j++)
+						for (std::size_t j = 0; j < 4; j++)
 							int_rgba[j] = linInterpolation( (lastValue.second)[j], (it->second)[j], pos);
 					else if (_type == VtkColorLookupTable::LUTType::EXPONENTIAL)
-						for (size_t j = 0; j < 4; j++)
+						for (std::size_t j = 0; j < 4; j++)
 							int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
 					else // no interpolation
-						for (size_t j = 0; j < 4; j++)
+						for (std::size_t j = 0; j < 4; j++)
 							int_rgba[j] = (lastValue.second)[j];
 
 					this->SetTableValue(i, int_rgba);
@@ -106,8 +106,8 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 	strout << "Writing color table to " << filename << " ... ";
 	std::ofstream out( filename.c_str(), std::ios::out );
 
-	size_t nColors = this->GetNumberOfTableValues();
-	for (size_t i = 0; i < nColors; i++)
+	std::size_t nColors = this->GetNumberOfTableValues();
+	for (std::size_t i = 0; i < nColors; i++)
 	{
 		unsigned char rgba[4];
 		this->GetTableValue(i, rgba);
@@ -140,7 +140,7 @@ void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
 void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
 {
 	unsigned char* dict_rgba = new unsigned char[4];
-	for (size_t i = 0; i < 4; i++)
+	for (std::size_t i = 0; i < 4; i++)
 		dict_rgba[i] = rgba[i];
 	_dict.insert( std::pair<double, unsigned char*>(pos, dict_rgba) );
 }
@@ -152,11 +152,11 @@ void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
 				? static_cast<vtkIdType>(this->TableRange[0])
 				: (indx >=this->TableRange[1] ? static_cast<vtkIdType>(this->TableRange[1]) - 1 : indx));
 	indx =
-	        static_cast<size_t>( std::floor( (indx - this->TableRange[0]) *
+	        static_cast<std::size_t>( std::floor( (indx - this->TableRange[0]) *
 	                                    (this->NumberOfColors / (this->TableRange[1] - this->TableRange[0])) ) );
 
 	unsigned char* _rgba;
 	_rgba = this->Table->GetPointer(indx * 4);
-	for (size_t i = 0; i < 4; i++)
+	for (std::size_t i = 0; i < 4; i++)
 		rgba[i] = _rgba[i];
 }

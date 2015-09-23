@@ -66,8 +66,8 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 
 	int dims[3];
 	this->GetTexture()->GetInput()->GetDimensions(dims);
-	size_t imgWidth = dims[0];
-	size_t imgHeight = dims[1];
+	std::size_t imgWidth = dims[0];
+	std::size_t imgHeight = dims[1];
 
 	std::pair<int, int> min((int)_origin.first, (int)_origin.second);
 	std::pair<int, int> max((int)(_origin.first + (imgWidth * _scalingFactor)),
@@ -77,12 +77,12 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
 	vtkPoints* points = input->GetPoints();
 	vtkSmartPointer<vtkFloatArray> textureCoordinates = vtkSmartPointer<vtkFloatArray>::New();
 	textureCoordinates->SetNumberOfComponents(2);
-	size_t nPoints = points->GetNumberOfPoints();
+	std::size_t nPoints = points->GetNumberOfPoints();
 	textureCoordinates->SetNumberOfTuples(nPoints);
 	textureCoordinates->SetName("textureCoords");
 /*  // adaptation for netcdf-curtain for TERENO Demo
 	double dist(0.0);
-	for (size_t i = 0; i < nPoints; i++)
+	for (std::size_t i = 0; i < nPoints; i++)
 	{
 		double coords[3];
 		if ((i==0) || (i==173))

@@ -143,11 +143,11 @@ public:
 
 		out << "# Histogram for parameter " << param_name << " of data set " << data_set_name << "\n";
 		std::size_t const n_bins = this->getNrBins();
-		std::vector<size_t> const& bin_cnts(this->getBinCounts());
+		std::vector<std::size_t> const& bin_cnts(this->getBinCounts());
 		double const min (this->getMinimum());
 		double const bin_width (this->getBinWidth());
 
-		for (size_t k(0); k < n_bins; k++)
+		for (std::size_t k(0); k < n_bins; k++)
 			out << min+k*bin_width << " " << bin_cnts[k] << "\n";
 		out.close ();
 		return 0;

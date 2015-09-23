@@ -2,7 +2,7 @@
  * @file GlobalDenseMatrix.h
  * @author Thomas Fischer
  * @date Jun 4, 2013
- * @brief 
+ * @brief
  *
  * @copyright
  * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)

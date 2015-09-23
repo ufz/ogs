@@ -12,8 +12,6 @@
 
 #include <functional>
 
-#include "MeshComponentMap.h"
-
 namespace AssemblerLib
 {
 

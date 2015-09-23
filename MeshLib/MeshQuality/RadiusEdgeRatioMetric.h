@@ -20,7 +20,7 @@
 namespace MeshLib
 {
 
-/** 
+/**
  * Calculates the quality of mesh elements based on the ratio between
  * radius of the smallest enclosing sphere and the shortest element edge
  */

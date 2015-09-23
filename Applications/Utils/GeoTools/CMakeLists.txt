@@ -22,5 +22,5 @@ if(QT4_FOUND)
 		MoveGeometry
 		RUNTIME DESTINATION bin
 		COMPONENT Utilities
-	)	
+	)
 endif() # QT4_FOUND

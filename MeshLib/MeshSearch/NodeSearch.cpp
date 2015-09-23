@@ -57,7 +57,7 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
 
 std::size_t NodeSearch::searchUnused()
 {
-	const size_t nNodes (_mesh.getNNodes());
+	const std::size_t nNodes (_mesh.getNNodes());
 	const std::vector<MeshLib::Node*> &nodes (_mesh.getNodes());
 	std::vector<std::size_t> del_node_idx;
 

@@ -52,11 +52,11 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 	//pen.setWidth(1);
 	std::vector<GeoLib::Point*> profile = _station->getProfile();
 	std::vector<std::string> soilNames = _station->getSoilNames();
-	size_t nLayers = profile.size();
+	std::size_t nLayers = profile.size();
 
 	painter->drawLine(0, 0, BARWIDTH + 5, 0);
 
-	for (size_t i = 1; i < nLayers; i++)
+	for (std::size_t i = 1; i < nLayers; i++)
 	{
 		top += height;
 		height = logHeight(((*(profile[i - 1]))[2] - (*(profile[i]))[2]));
@@ -79,7 +79,7 @@ double StratBar::totalLogHeight() const
 	double height = 0;
 	std::vector<GeoLib::Point*> profile = _station->getProfile();
 
-	for (size_t i = 1; i < profile.size(); i++)
+	for (std::size_t i = 1; i < profile.size(); i++)
 		height += ( log((*(profile[i - 1]))[2] - (*(profile[i]))[2] + 1) * 100 );
 
 	return height;

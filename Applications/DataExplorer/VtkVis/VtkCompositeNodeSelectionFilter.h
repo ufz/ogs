@@ -31,7 +31,7 @@ public:
 
 	/// Sets the point indeces to be highlighted
 	void setSelectionArray(const std::vector<unsigned> &point_indeces);
-	
+
 private:
 	std::vector<GeoLib::Point*> _selection;
 };

@@ -21,7 +21,7 @@ namespace FileIO
 {
 namespace GMSH {
 
-GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, size_t id, double mesh_density) :
+GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density) :
 	GeoLib::Point(pnt, id), _mesh_density(mesh_density)
 {}
 

@@ -221,7 +221,7 @@ void GeoTreeView::setElementAsCondition(bool set_on_points)
 {
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
-	const size_t id = item->row();
+	const std::size_t id = item->row();
 	const GeoLib::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestCondSetupDialog(geometry_name, type, id, set_on_points);
@@ -231,7 +231,7 @@ void GeoTreeView::setNameForElement()
 {
 	const TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(
 	        this->selectionModel()->currentIndex());
-	const size_t id = item->row();
+	const std::size_t id = item->row();
 	const GeoLib::GEOTYPE type = static_cast<GeoObjectListItem*>(item->parentItem())->getType();
 	const std::string geometry_name = item->parentItem()->parentItem()->data(0).toString().toStdString();
 	emit requestNameChangeDialog(geometry_name, type, id);
@@ -258,7 +258,7 @@ void GeoTreeView::writeToFile() const
 		 file_type.append(";;Legacy geometry file (*.gli)");
 #endif // DEBUG
 		QString geoName = item->data(0).toString();
-		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as", 
+		QString fileName = QFileDialog::getSaveFileName(NULL, "Save geometry as",
 			LastSavedFileDirectory::getDir() + geoName, file_type);
 		if (!fileName.isEmpty())
 		{

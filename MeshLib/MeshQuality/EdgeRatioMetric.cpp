@@ -28,8 +28,8 @@ void EdgeRatioMetric::calculateQuality()
 {
 	// get all elements of mesh
 	const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-	const size_t nElements (_mesh.getNElements());
-	for (size_t k(0); k < nElements; k++)
+	const std::size_t nElements (_mesh.getNElements());
+	for (std::size_t k(0); k < nElements; k++)
 	{
 		Element const& elem (*elements[k]);
 		switch (elem.getGeomType())
@@ -51,21 +51,21 @@ void EdgeRatioMetric::calculateQuality()
 		}
 		case MeshElemType::PRISM: {
 			std::vector<const MathLib::Point3d*> pnts;
-			for (size_t j(0); j < 6; j++)
+			for (std::size_t j(0); j < 6; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkPrism(pnts);
 			break;
 		}
 		case MeshElemType::PYRAMID: {
 			std::vector<const MathLib::Point3d*> pnts;
-			for (size_t j(0); j < 5; j++)
+			for (std::size_t j(0); j < 5; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkPyramid(pnts);
 			break;
 		}
 		case MeshElemType::HEXAHEDRON: {
 			std::vector<const MathLib::Point3d*> pnts;
-			for (size_t j(0); j < 8; j++)
+			for (std::size_t j(0); j < 8; j++)
 				pnts.push_back(elem.getNode(j));
 			_element_quality_metric[k] = checkHexahedron(pnts);
 			break;
@@ -122,8 +122,8 @@ double EdgeRatioMetric::checkQuad (MathLib::Point3d const& a,
 		                 MathLib::sqrDist (a,d)};
 
 	// sort lengths - since this is a very small array we use bubble sort
-	for (size_t i(0); i < 4; i++)
-		for (size_t j(i + 1); j < 4; j++)
+	for (std::size_t i(0); i < 4; i++)
+		for (std::size_t j(i + 1); j < 4; j++)
 			if (sqr_lengths[i] >= sqr_lengths[j])
 				std::swap (sqr_lengths[i], sqr_lengths[j]);
 
@@ -140,8 +140,8 @@ double EdgeRatioMetric::checkTetrahedron (MathLib::Point3d const& a,
 		                 MathLib::sqrDist (b,d), MathLib::sqrDist (c,d)};
 
 	// sort lengths - since this is a very small array we use bubble sort
-	for (size_t i(0); i < 6; i++)
-		for (size_t j(i + 1); j < 6; j++)
+	for (std::size_t i(0); i < 6; i++)
+		for (std::size_t j(i + 1); j < 6; j++)
 			if (sqr_lengths[i] >= sqr_lengths[j])
 				std::swap (sqr_lengths[i], sqr_lengths[j]);
 
@@ -161,8 +161,8 @@ double EdgeRatioMetric::checkPrism (std::vector<const MathLib::Point3d*> const& 
 		                 MathLib::sqrDist (*pnts[2],*pnts[5])};
 
 	// sort lengths - since this is a very small array we use bubble sort
-	for (size_t i(0); i < 9; i++)
-		for (size_t j(i + 1); j < 9; j++)
+	for (std::size_t i(0); i < 9; i++)
+		for (std::size_t j(i + 1); j < 9; j++)
 			if (sqr_lengths[i] >= sqr_lengths[j])
 				std::swap (sqr_lengths[i], sqr_lengths[j]);
 
@@ -181,8 +181,8 @@ double EdgeRatioMetric::checkPyramid (std::vector<const MathLib::Point3d*> const
 		                 MathLib::sqrDist (*pnts[3],*pnts[4])};
 
 	// sort lengths - since this is a very small array we use bubble sort
-	for (size_t i(0); i < 8; i++)
-		for (size_t j(i + 1); j < 8; j++)
+	for (std::size_t i(0); i < 8; i++)
+		for (std::size_t j(i + 1); j < 8; j++)
 			if (sqr_lengths[i] >= sqr_lengths[j])
 				std::swap (sqr_lengths[i], sqr_lengths[j]);
 
@@ -205,8 +205,8 @@ double EdgeRatioMetric::checkHexahedron (std::vector<const MathLib::Point3d*> co
 		                  MathLib::sqrDist (*pnts[3],*pnts[7])};
 
 	// sort lengths - since this is a very small array we use bubble sort
-	for (size_t i(0); i < 12; i++)
-		for (size_t j(i + 1); j < 12; j++)
+	for (std::size_t i(0); i < 12; i++)
+		for (std::size_t j(i + 1); j < 12; j++)
 			if (sqr_lengths[i] >= sqr_lengths[j])
 				std::swap (sqr_lengths[i], sqr_lengths[j]);
 

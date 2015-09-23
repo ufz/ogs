@@ -17,7 +17,7 @@
 #include "GMSHLine.h"
 #include "GMSHLineLoop.h"
 
-namespace FileIO 
+namespace FileIO
 {
 namespace GMSH {
 

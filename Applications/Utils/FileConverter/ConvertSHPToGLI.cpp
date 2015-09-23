@@ -40,10 +40,10 @@
 
 void convertPoints (DBFHandle dbf_handle,
                     std::string const& out_fname,
-                    size_t x_id,
-                    size_t y_id,
-                    size_t z_id,
-                    std::vector<size_t> const& name_component_ids,
+                    std::size_t x_id,
+                    std::size_t y_id,
+                    std::size_t z_id,
+                    std::vector<std::size_t> const& name_component_ids,
                     std::string& points_group_name,
                     bool station)
 {
@@ -58,13 +58,13 @@ void convertPoints (DBFHandle dbf_handle,
 		double x(DBFReadDoubleAttribute(dbf_handle, k, x_id));
 		double y(DBFReadDoubleAttribute(dbf_handle, k, y_id));
 		double z(0.0);
-		if (z_id != std::numeric_limits<size_t>::max())
+		if (z_id != std::numeric_limits<std::size_t>::max())
 			z = DBFReadDoubleAttribute(dbf_handle, k, z_id);
 
 		name.clear();
 		if (!name_component_ids.empty()) {
-			for (size_t j(0); j < name_component_ids.size(); j++)
-				if (name_component_ids[j] != std::numeric_limits<size_t>::max()) {
+			for (std::size_t j(0); j < name_component_ids.size(); j++)
+				if (name_component_ids[j] != std::numeric_limits<std::size_t>::max()) {
 					name += DBFReadStringAttribute(dbf_handle, k, name_component_ids[j]);
 					name += " ";
 				}
@@ -107,7 +107,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
 	out << "************************************************" << std::endl;
 	out << "field idx | name of field | data type of field " << std::endl;
 	out << "------------------------------------------------" << std::endl;
-	for (size_t field_idx(0); field_idx < n_fields; field_idx++) {
+	for (std::size_t field_idx(0); field_idx < n_fields; field_idx++) {
 		DBFGetFieldInfo(dbf_handle, field_idx, field_name, &width, &n_decimals);
 		if (field_idx < 10)
 			out << "        " << field_idx << " |";
@@ -186,7 +186,7 @@ int main (int argc, char* argv[])
 		std::size_t n_fields(DBFGetFieldCount(dbf_handle));
 		printFieldInformationTable(dbf_handle, n_fields);
 
-		size_t x_id, y_id, z_id;
+		std::size_t x_id, y_id, z_id;
 		INFO("Please give the field idx that should be used for reading the x coordinate: ");
 		std::cin >> x_id;
 		INFO("Please give the field idx that should be used for reading the y coordinate: ");
@@ -195,26 +195,26 @@ int main (int argc, char* argv[])
 		std::cin >> z_id;
 
 		if (z_id > n_fields)
-			z_id = std::numeric_limits<size_t>::max();
+			z_id = std::numeric_limits<std::size_t>::max();
 
-		size_t n_name_components;
+		std::size_t n_name_components;
 		INFO("Please give the number of fields that should be added to name: ");
 		std::cin >> n_name_components;
 
-		std::vector<size_t> name_component_ids (n_name_components,
-		                                        std::numeric_limits<size_t>::max());
+		std::vector<std::size_t> name_component_ids (n_name_components,
+		                                        std::numeric_limits<std::size_t>::max());
 		if (n_name_components != 0) {
-			for (size_t j(0); j < n_name_components; j++)
+			for (std::size_t j(0); j < n_name_components; j++)
 			{
 				INFO("- please give the field idx that should be used for reading the name: ");
 				std::cin >> name_component_ids[j];
 			}
 		}
-		for (size_t j(0); j < n_name_components; j++)
+		for (std::size_t j(0); j < n_name_components; j++)
 			if (name_component_ids[j] > n_fields)
-				name_component_ids[j] = std::numeric_limits<size_t>::max();
+				name_component_ids[j] = std::numeric_limits<std::size_t>::max();
 
-		size_t station (0);
+		std::size_t station (0);
 
 		INFO("Should I read the information as GeoLib::Station (0) or as GeoLib::Point (1)? Please give the number: ");
 		std::cin >> station;

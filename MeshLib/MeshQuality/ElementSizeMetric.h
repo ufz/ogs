@@ -20,7 +20,7 @@
 namespace MeshLib
 {
 
-/** 
+/**
  * Calculates the quality of mesh elements based on length/area/volume
  */
 class ElementSizeMetric : public ElementQualityMetric

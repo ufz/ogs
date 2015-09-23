@@ -105,7 +105,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 
 double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 {
-	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) && 
+	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) &&
 		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
 	{
 		int cell_x = static_cast<int>(std::floor((pnt[0] - _ll_pnt[0])/_cell_size));

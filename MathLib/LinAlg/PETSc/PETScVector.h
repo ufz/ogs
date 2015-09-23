@@ -118,7 +118,7 @@ class PETScVector
         /*!
            Add values to several entries
            \param e_idxs  Indicies of entries to be added
-                          Note: size_t cannot be the type of e_idxs template argument
+                          Note: std::size_t cannot be the type of e_idxs template argument
            \param sub_vec Entries to be added
         */
         template<class T_SUBVEC> void add(const std::vector<PetscInt> &e_idxs,
@@ -130,7 +130,7 @@ class PETScVector
         /*!
            Add values to several entries
            \param e_idxs  Indicies of entries to be added.
-                          Note: size_t cannot be the type of e_idxs template argument
+                          Note: std::size_t cannot be the type of e_idxs template argument
            \param sub_vec Entries to be added
         */
         template<class T_SUBVEC> void set(const std::vector<PetscInt> &e_idxs,
@@ -142,7 +142,7 @@ class PETScVector
         /*!
            Get several entries
            \param e_idxs  Indicies of entries to be gotten.
-                          Note: size_t cannot be the type of e_idxs template argument
+                          Note: std::size_t cannot be the type of e_idxs template argument
            \param sub_vec Values of entries
         */
         template<class T_SUBVEC> void get(const std::vector<PetscInt> &e_idxs,

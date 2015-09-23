@@ -43,9 +43,9 @@ public:
 	 * @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
 	 * @result true if the subsurface representation has been created, false if there was an error
 	 */
-	bool createRasterLayers(const MeshLib::Mesh &mesh, 
-	                        const std::vector<GeoLib::Raster const*> &rasters, 
-	                        double minimum_thickness, 
+	bool createRasterLayers(const MeshLib::Mesh &mesh,
+	                        const std::vector<GeoLib::Raster const*> &rasters,
+	                        double minimum_thickness,
 	                        double noDataReplacementValue = 0.0);
 
 	/// Returns the region attribute vector necessary for assigning region attributes via TetGen

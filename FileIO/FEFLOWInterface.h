@@ -88,10 +88,10 @@ private:
 	// DIMENSION
 	struct FEM_DIM
 	{
-		size_t n_nodes;
-		size_t n_elements;
-		size_t obs;
-		size_t np_cor;
+		std::size_t n_nodes;
+		std::size_t n_elements;
+		std::size_t obs;
+		std::size_t np_cor;
 		unsigned n_nodes_of_element;
 		unsigned n_steps;
 		unsigned icrank;
@@ -136,7 +136,7 @@ private:
 	void readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes);
 
 	//// parse node lists
-	std::vector<size_t> getIndexList(const std::string &str_ranges);
+	std::vector<std::size_t> getIndexList(const std::string &str_ranges);
 
 	/// parse ELEMENTALSETS
 	void readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets);

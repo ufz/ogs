@@ -52,7 +52,7 @@ void replaceExt(string& s, const string& newExt)
 // Get file extension
 string getFileExt(const string& s)
 {
-	size_t i = s.rfind('.', s.length());
+	std::size_t i = s.rfind('.', s.length());
 	if (i != string::npos)
 		return s.substr(i + 1, s.length() - i);
 	return "";

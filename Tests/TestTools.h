@@ -18,11 +18,11 @@
 #define TESTTOOLS_H_
 
 #define ASSERT_ARRAY_NEAR(E,A,N,eps)\
-    for (size_t i=0; i<(unsigned)(N); i++) \
+    for (std::size_t i=0; i<(unsigned)(N); i++) \
         ASSERT_NEAR((E)[i], (A)[i], (eps));
 
 #define ASSERT_ARRAY_EQ(E,A,N)\
-    for (size_t i=0; i<(unsigned)(N); i++) \
+    for (std::size_t i=0; i<(unsigned)(N); i++) \
         ASSERT_EQ((E)[i], (A)[i]);
 
 #endif // TESTTOOLS_H_

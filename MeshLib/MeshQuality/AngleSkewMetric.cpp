@@ -35,9 +35,9 @@ AngleSkewMetric::~AngleSkewMetric()
 void AngleSkewMetric::calculateQuality ()
 {
 	const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-	const size_t nElements (_mesh.getNElements());
+	const std::size_t nElements (_mesh.getNElements());
 
-	for (size_t k(0); k < nElements; k++)
+	for (std::size_t k(0); k < nElements; k++)
 	{
 		Element const& elem (*elements[k]);
 		switch (elem.getGeomType())

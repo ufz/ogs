@@ -30,8 +30,8 @@ class MeshNodesOnPoint
 {
 public:
 	/**
-	 * Constructor of object, that search mesh nodes at a GeoLib::Point point 
-	 * within a given search radius. 
+	 * Constructor of object, that search mesh nodes at a GeoLib::Point point
+	 * within a given search radius.
 	 * @param mesh Mesh object whose nodes are searched
 	 * @param mesh_grid Grid object constructed with mesh nodes
 	 * @param pnt a point

@@ -43,20 +43,20 @@ public:
 	 * @return Vector of error codes for each mesh element
 	 */
 	static std::vector<ElementErrorCode> testElementGeometry(
-		const MeshLib::Mesh &mesh, 
+		const MeshLib::Mesh &mesh,
 		double min_volume = std::numeric_limits<double>::epsilon());
 
-	/** 
+	/**
 	 * Detailed output which ElementID is associated with which error(s)
 	 * @return String containing the report
 	 */
 	static std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 		ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes);
 
-	/** 
-	 * Tests if holes are located within the mesh. 
+	/**
+	 * Tests if holes are located within the mesh.
 	 * In this context, a hole is a boundary of an element with no neighbor that cannot be reached from
-	 * the actual boundary of the mesh. Examples include a missing triangle in a 2D mesh or a missing 
+	 * the actual boundary of the mesh. Examples include a missing triangle in a 2D mesh or a missing
 	 * Tetrahedron in a 3D mesh.
 	 * Note, that this method does not work when complex 3D structures are build from 2D mesh elements,
 	 * e.g. using the LayeredVolume-class, where more than two 2D elements may share an edge.
@@ -66,7 +66,7 @@ public:
 	static unsigned detectHoles(MeshLib::Mesh const& mesh);
 
 private:
-	/** Finds all surface elements that can be reached from element. All elements that are found in this 
+	/** Finds all surface elements that can be reached from element. All elements that are found in this
 	 * way are marked in the global sfc_idx vector using the current_index.
 	 * @param element The mesh element from which the search is started
 	 * @param sfc_idx The global index vector notifying to which surface elements belong

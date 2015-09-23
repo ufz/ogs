@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 		else
 			INFO ("No holes found within the mesh.");
 	}
-	
+
 	delete mesh;
 	delete custom_format;
 	delete logog_cout;

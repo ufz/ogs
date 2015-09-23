@@ -264,7 +264,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
 	}
 	INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
-		
+
 	return tg_mesh;
 }
 

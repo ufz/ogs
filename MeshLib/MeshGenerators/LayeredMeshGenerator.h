@@ -43,9 +43,9 @@ public:
 	* @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
 	* @result true if the subsurface representation has been created, false if there was an error
 	*/
-	virtual bool createLayers(MeshLib::Mesh const& mesh, 
-	                          std::vector<std::string> const& raster_paths, 
-	                          double minimum_thickness, 
+	virtual bool createLayers(MeshLib::Mesh const& mesh,
+	                          std::vector<std::string> const& raster_paths,
+	                          double minimum_thickness,
 	                          double noDataReplacementValue = 0.0) final;
 
 	/**
@@ -56,9 +56,9 @@ public:
 	* @param noDataReplacementValue  Default z-coordinate if there are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
 	* @result true if the subsurface representation has been created, false if there was an error
 	*/
-	virtual bool createRasterLayers(MeshLib::Mesh const& mesh, 
-	                                std::vector<GeoLib::Raster const*> const& rasters, 
-	                                double minimum_thickness, 
+	virtual bool createRasterLayers(MeshLib::Mesh const& mesh,
+	                                std::vector<GeoLib::Raster const*> const& rasters,
+	                                double minimum_thickness,
 	                                double noDataReplacementValue) = 0;
 
 	/// Returns a mesh of the subsurface representation

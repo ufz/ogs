@@ -99,7 +99,7 @@ ElementErrorCode HexRule8::validate(const Element* e)
 {
 	ElementErrorCode error_code;
 	error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
-		
+
 	for (unsigned i=0; i<6; ++i)
 	{
 		if (error_code.all())

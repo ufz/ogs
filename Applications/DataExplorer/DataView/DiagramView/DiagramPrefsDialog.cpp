@@ -81,7 +81,7 @@ void DiagramPrefsDialog::accept()
 				window_is_empty = true;
 			}
 
-			for (size_t i = 0; i < _list.size(); i++)
+			for (std::size_t i = 0; i < _list.size(); i++)
 				if (this->_visability[i]->isChecked())
 				{
 					_window->addList(_list[i]);
@@ -129,7 +129,7 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
 {
 	if (DiagramList::readList(filename, _list))
 	{
-		for (size_t i = 0; i < _list.size(); i++)
+		for (std::size_t i = 0; i < _list.size(); i++)
 		{
 			//_list[i]->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
 			_list[i]->setXLabel("Time");
@@ -170,7 +170,7 @@ int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> 
 
 void DiagramPrefsDialog::createVisibilityCheckboxes()
 {
-	for (size_t i = 0; i < _list.size(); i++)
+	for (std::size_t i = 0; i < _list.size(); i++)
 	{
 		QCheckBox* box = new QCheckBox(_list[i]->getName());
 		box->setChecked(true);

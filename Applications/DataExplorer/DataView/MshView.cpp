@@ -55,8 +55,8 @@ void MshView::updateView()
 {
 	setAlternatingRowColors(true);
 	setColumnWidth(0,125);
-	size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
-	for (size_t i = 1; i < nColumns; i++)
+	std::size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
+	for (std::size_t i = 1; i < nColumns; i++)
 		resizeColumnToContents(i);
 }
 
@@ -191,7 +191,7 @@ void MshView::extractSurfaceMesh()
 	SurfaceExtractionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
 		return;
-	
+
 	MathLib::Vector3 const& dir (dlg.getNormal());
 	int const tolerance (dlg.getTolerance());
 	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));

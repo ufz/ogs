@@ -51,8 +51,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 		std::string s;
 		// read the data into the double-array
 		for (std::size_t j(0); j < n_rows; ++j) {
-			const size_t idx ((n_rows - j - 1) * n_cols);
-			for (size_t i(0); i < n_cols; ++i) {
+			const std::size_t idx ((n_rows - j - 1) * n_cols);
+			for (std::size_t i(0); i < n_cols; ++i) {
 				in >> s;
 				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
 
@@ -126,16 +126,16 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	std::size_t n_cols(0), n_rows(0);
 	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), min(0.0), max(0.0);
 
-	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max)) 
+	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max))
 	{
 		const double no_data_val (min-1);
 		double* values = new double[n_cols*n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (size_t j(0); j < n_rows; ++j) 
+		for (std::size_t j(0); j < n_rows; ++j)
 		{
-			const size_t idx (j * n_cols);
-			for (size_t i(0); i < n_cols; ++i) 
+			const std::size_t idx (j * n_cols);
+			for (std::size_t i(0); i < n_cols; ++i)
 			{
 				in >> s;
 				const double val (strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
@@ -153,11 +153,11 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	}
 }
 
-bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, size_t &n_cols, std::size_t &n_rows,
+bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
 				double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max)
 {
 	std::string tag;
-	
+
 	in >> tag;
 
 	if (tag.compare("DSAA") != 0)
@@ -205,7 +205,7 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
 
     // write data
     double const*const elevation(raster.begin());
-    for (unsigned row(0); row < nRows; ++row) 
+    for (unsigned row(0); row < nRows; ++row)
     {
         for (unsigned col(0); col < nCols; ++col)
         {
