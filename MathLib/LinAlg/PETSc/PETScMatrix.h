@@ -159,6 +159,19 @@ class PETScMatrix
             MatSetValue(_A, i, j, value, ADD_VALUES);
         }
 
+        /// Add sub-matrix at positions given by \c indices.
+        template<class T_DENSE_MATRIX>
+        void add(RowColumnIndices<PetscInt> const& indices,
+                 const T_DENSE_MATRIX &sub_matrix)
+        {
+            std::vector<PetscInt> cols;
+            cols.reserve(indices.columns.size());
+            for (auto col : indices.columns)
+                cols.push_back(std::abs(col));
+
+            add(indices.rows, cols, sub_matrix);
+        }
+
         /*!
           \brief         Add a submatrix to this.
           \param row_pos The row indices of the entries of the submatrix.
