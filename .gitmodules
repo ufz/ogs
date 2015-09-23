@@ -16,3 +16,6 @@
 [submodule "ThirdParty/autocheck"]
 	path = ThirdParty/autocheck
 	url = https://github.com/thejohnfreeman/autocheck.git
+[submodule "ThirdParty/cmake-modules"]
+	path = ThirdParty/cmake-modules
+	url = git@github.com:ufz/cmake-modules.git
