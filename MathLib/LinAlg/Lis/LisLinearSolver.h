@@ -44,7 +44,7 @@ public:
      *                    this argument, default settings follow those of
      *                    LisOption struct.
      */
-    LisLinearSolver(LisMatrix &A, const std::string& solver_name = "",
+    LisLinearSolver(LisMatrix &A, const std::string solver_name = "",
                     boost::property_tree::ptree const*const option = nullptr);
 
     virtual ~LisLinearSolver() {}

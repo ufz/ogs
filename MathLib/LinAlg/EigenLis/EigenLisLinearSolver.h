@@ -37,7 +37,7 @@ public:
      *                    this argument, default settings follow those of
      *                    LisOption struct.
      */
-    EigenLisLinearSolver(EigenMatrix &A, const std::string& solver_name = "",
+    EigenLisLinearSolver(EigenMatrix &A, const std::string solver_name = "",
                          boost::property_tree::ptree const*const option = nullptr);
 
     /**

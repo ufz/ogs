@@ -48,7 +48,7 @@ class PETScLinearSolver
             \param option  Not used here, just for the consistency of
                            the linear solver interface.
         */
-        PETScLinearSolver(PETScMatrix &A, const std::string &prefix="",
+        PETScLinearSolver(PETScMatrix &A, const std::string prefix="",
                           boost::property_tree::ptree const*const option = nullptr);
 
         ~PETScLinearSolver()

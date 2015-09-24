@@ -22,7 +22,7 @@
 namespace MathLib
 {
 PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
-                      const std::string &prefix,
+                      const std::string prefix,
                       boost::property_tree::ptree const*const /*option*/)
     : _A(A), _elapsed_ctime(0.)
 {

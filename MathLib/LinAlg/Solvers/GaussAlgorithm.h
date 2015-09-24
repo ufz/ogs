@@ -54,7 +54,7 @@ public:
 	 * of all solvers of systems of linear equations. For this reason the
 	 * second argument was introduced.
 	 */
-	GaussAlgorithm(MAT_T &A, const std::string& solver_name = "",
+	GaussAlgorithm(MAT_T &A, const std::string solver_name = "",
                    boost::property_tree::ptree const*const option = nullptr);
 	/**
 	 * destructor, deletes the permutation

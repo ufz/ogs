@@ -20,7 +20,7 @@ namespace MathLib {
 
 template <typename MAT_T, typename VEC_T>
 GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
-		const std::string& /*solver_name*/,
+		const std::string /*solver_name*/,
 		boost::property_tree::ptree const* const) :
 		_mat(A), _n(_mat.getNRows()), _perm(new IDX_T[_n])
 {}
