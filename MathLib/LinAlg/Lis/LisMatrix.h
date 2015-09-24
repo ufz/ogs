@@ -45,6 +45,8 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>;
 class LisMatrix
 {
 public:
+    using IndexType = LIS_INT;
+public:
     /**
      * constructor
      * @param n_rows the number of rows (that is equal to the number of columns)

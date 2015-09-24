@@ -28,6 +28,8 @@ namespace MathLib
 class LisVector
 {
 public:
+	using IndexType = LIS_INT;
+public:
 	/**
 	 * Constructor for initialization of the number of rows
 	 * @param length number of rows

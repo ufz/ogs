@@ -17,6 +17,7 @@
 #endif
 
 #include <Eigen/Eigen>
+#include <Eigen/Sparse>
 
 namespace MathLib
 {
@@ -26,6 +27,11 @@ class EigenVector final
 {
 public:
     using RawVectorType = Eigen::VectorXd;
+
+    // The Index type of the Eigen::VectorXd class differs from the
+    // Eigen::SparseMatrix<double> index type. Maybe an Eigen::SparseVector is a
+    // more appropriate RawVectorType for the global vectors.
+    using IndexType = Eigen::SparseMatrix<double>::Index;
 
     /// Constructor for initialization of the number of rows
     /// @param length number of rows

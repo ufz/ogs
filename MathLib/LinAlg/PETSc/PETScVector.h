@@ -35,6 +35,9 @@ namespace MathLib
 class PETScVector
 {
     public:
+        using IndexType = PetscInt;
+
+    public:
 
         /*!
             \brief Constructor

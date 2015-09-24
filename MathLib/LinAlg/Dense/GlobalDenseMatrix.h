@@ -30,6 +30,7 @@ class GlobalDenseMatrix: public DenseMatrix<FP_TYPE, IDX_TYPE>
 {
 public:
 	typedef FP_TYPE FP_T;
+	using IndexType = IDX_TYPE;
 
 public:
 	/// Dense square matrix constructor.

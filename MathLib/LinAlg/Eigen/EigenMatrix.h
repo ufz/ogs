@@ -33,6 +33,7 @@ class EigenMatrix final
 {
 public:
     using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+    using IndexType = RawMatrixType::Index;
 
     /**
      * constructor
