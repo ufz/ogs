@@ -12,6 +12,8 @@
  *
  */
 
+#include <cassert>
+
 #include "LisVector.h"
 #include "LisCheck.h"
 
@@ -66,10 +68,11 @@ LisVector& LisVector::operator=(double v)
 
 std::size_t LisVector::size() const
 {
-	LIS_INT dummy;
-	LIS_INT size;
+	IndexType dummy;
+	IndexType size;
 	int const ierr = lis_vector_get_size(_vec, &dummy, &size);
 	checkLisError(ierr);
+	assert(size >= 0);  // For safe implicit conversion to std::size_t.
 	return size;
 }
 

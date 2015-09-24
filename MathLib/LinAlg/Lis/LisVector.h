@@ -62,9 +62,9 @@ public:
 	LisVector& operator=(double v);
 
 	/// access entry
-	double operator[](std::size_t rowId) const { return get(rowId); }
+	double operator[](IndexType rowId) const { return get(rowId); }
 	/// get entry
-	double get(std::size_t rowId) const
+	double get(IndexType rowId) const
 	{
 		double v = .0;
 		lis_vector_get_value(_vec, rowId, &v);
@@ -72,13 +72,13 @@ public:
 	}
 
 	/// set entry
-	void set(std::size_t rowId, double v)
+	void set(IndexType rowId, double v)
 	{
 		lis_vector_set_value(LIS_INS_VALUE, rowId, v, _vec);
 	}
 
 	/// add entry
-	void add(std::size_t rowId, double v)
+	void add(IndexType rowId, double v)
 	{
 		lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _vec);
 	}
@@ -99,7 +99,7 @@ public:
 
 	///
 	template <class T_SUBVEC>
-	void add(const std::vector<std::size_t>& pos, const T_SUBVEC& sub_vec)
+	void add(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
 	{
 		for (std::size_t i = 0; i < pos.size(); ++i)
 		{
