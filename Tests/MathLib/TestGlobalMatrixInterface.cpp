@@ -30,6 +30,7 @@
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #endif
+#include "ProcessLib/NumericsConfig.h"
 
 namespace
 {
@@ -47,7 +48,7 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     m.setZero();
 
     MathLib::DenseMatrix<double> local_m(2, 2, 1.0);
-    std::vector<std::size_t> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 1;
     vec_pos[1] = 3;
     m.add(vec_pos, vec_pos, local_m);
@@ -84,8 +85,8 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     loc_m(1, 0) = 3.;
     loc_m(1, 1) = 4.;
 
-    std::vector<int> row_pos(2);
-    std::vector<int> col_pos(2);
+    std::vector<GlobalIndexType> row_pos(2);
+    std::vector<GlobalIndexType> col_pos(2);
     row_pos[0] = 2 * mrank;
     row_pos[1] = 2 * mrank + 1;
     col_pos[0] = row_pos[0];
@@ -143,8 +144,8 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     loc_m(1, 1) = 2.;
     loc_m(1, 2) = 3.;
 
-    std::vector<int> row_pos(2);
-    std::vector<int> col_pos(3);
+    std::vector<GlobalIndexType> row_pos(2);
+    std::vector<GlobalIndexType> col_pos(3);
     row_pos[0] = 2 * mrank;
     row_pos[1] = 2 * mrank + 1;
     col_pos[0] = 3 * mrank;

@@ -31,6 +31,8 @@
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #endif
 
+#include "ProcessLib/NumericsConfig.h"
+
 namespace
 {
 
@@ -66,7 +68,7 @@ void checkGlobalVectorInterface()
     ASSERT_EQ(2.0, y.get(0));
 
     std::vector<double> local_vec(2, 1.0);
-    std::vector<std::size_t> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 0;
     vec_pos[1] = 3;
     y.add(vec_pos, local_vec);
@@ -114,7 +116,7 @@ void checkGlobalVectorInterfaceMPI()
     ASSERT_EQ(40., y.getNorm());
 
     std::vector<double> local_vec(2, 10.0);
-    std::vector<int> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
 
     vec_pos[0] = r0;   // any index in [0,15]
     vec_pos[1] = r0+1; // any index in [0,15]
