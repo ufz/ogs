@@ -13,8 +13,6 @@
 #ifndef ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
 #define ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
 
-#include "AssemblerLib/MeshComponentMap.h"
-
 namespace AssemblerLib
 {
 
