@@ -16,21 +16,17 @@
 #include <gtest/gtest.h>
 #include "../TestTools.h"
 
-#include "MathLib/LinAlg/Dense/DenseVector.h"
-#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
-
-#ifdef OGS_USE_EIGEN
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
-#endif
-
-#ifdef USE_LIS
+#if defined(USE_LIS)
 #include "MathLib/LinAlg/Lis/LisVector.h"
-#endif
-
-#ifdef USE_PETSC
+#elif defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+#elif defined(OGS_USE_EIGEN)
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#else
+#include "MathLib/LinAlg/Dense/DenseVector.h"
 #endif
 
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "ProcessLib/NumericsConfig.h"
 
 namespace
@@ -196,29 +192,25 @@ void checkGlobalVectorInterfaceMPI()
 
 } // end namespace
 
-TEST(Math, CheckInterface_DenseVector)
-{
-    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
-}
-
-#ifdef OGS_USE_EIGEN
-TEST(Math, CheckInterface_EigenVector)
-{
-    checkGlobalVectorInterface<MathLib::EigenVector >();
-}
-#endif
-
-#ifdef USE_LIS
+//--------------------------------------------
+#if defined(USE_LIS)
 TEST(Math, CheckInterface_LisVector)
 {
     checkGlobalVectorInterface<MathLib::LisVector >();
 }
-#endif
-
-//--------------------------------------------
-#ifdef USE_PETSC
+#elif defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
+}
+#elif defined(OGS_USE_EIGEN)
+TEST(Math, CheckInterface_EigenVector)
+{
+    checkGlobalVectorInterface<MathLib::EigenVector >();
+}
+#else
+TEST(Math, CheckInterface_DenseVector)
+{
+    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 #endif
