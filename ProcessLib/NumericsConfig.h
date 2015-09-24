@@ -70,11 +70,11 @@ namespace detail
 // Global vector/matrix builder.
 //
 
-#include "AssemblerLib/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/VectorMatrixBuilder.h"
 namespace detail
 {
 using GlobalVectorMatrixBuilderType =
-        AssemblerLib::SerialVectorMatrixBuilder<
+        AssemblerLib::VectorMatrixBuilder<
             GlobalMatrixType,
             GlobalVectorType>;
 }

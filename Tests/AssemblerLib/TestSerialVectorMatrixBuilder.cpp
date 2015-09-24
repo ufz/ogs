@@ -14,7 +14,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-#include "AssemblerLib/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/VectorMatrixBuilder.h"
 
 template <typename Builder>
 class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
@@ -108,18 +108,18 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
 #endif  // OGS_USE_EIGEN
 
 typedef ::testing::Types
-    < AssemblerLib::SerialVectorMatrixBuilder<
+    < AssemblerLib::VectorMatrixBuilder<
         MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
 #ifdef USE_LIS
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
 #ifdef USE_PETSC
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::PETScMatrix, MathLib::PETScVector>
 #endif  // USE_PETSC
 #ifdef OGS_USE_EIGEN
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::EigenMatrix, MathLib::EigenVector>
 #endif  // OGS_USE_EIGEN
     > TestTypes;
