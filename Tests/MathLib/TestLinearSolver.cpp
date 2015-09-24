@@ -126,7 +126,7 @@ void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_opt
     MathLib::finalizeMatrixAssembly(A);
 
     // solve
-    T_LINEAR_SOVLER ls(A, &ls_option);
+    T_LINEAR_SOVLER ls(A, "dummy_name", &ls_option);
     ls.solve(rhs, x);
 
     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);

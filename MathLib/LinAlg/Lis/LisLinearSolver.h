@@ -16,6 +16,7 @@
 #define LISLINEARSOLVER_H_
 
 #include <vector>
+#include <string>
 #include <boost/property_tree/ptree.hpp>
 
 #include "lis.h"
@@ -36,12 +37,15 @@ class LisLinearSolver
 public:
     /**
      * Constructor
-     * @param A         Coefficient matrix object
-     * @param option    A pointer to a linear solver option. In case you omit
-     *                  this argument, default settings follow those of
-     *                  LisOption struct.
+     * @param A           Coefficient matrix object
+     * @param solver_name A name used as a prefix for command line options
+     *                    if there are such options available.
+     * @param option      A pointer to a linear solver option. In case you omit
+     *                    this argument, default settings follow those of
+     *                    LisOption struct.
      */
-    LisLinearSolver(LisMatrix &A, boost::property_tree::ptree const*const option = nullptr);
+    LisLinearSolver(LisMatrix &A, const std::string& solver_name = "",
+                    boost::property_tree::ptree const*const option = nullptr);
 
     virtual ~LisLinearSolver() {}
 

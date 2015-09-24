@@ -28,7 +28,9 @@ namespace MathLib
 
 using boost::property_tree::ptree;
 
-LisLinearSolver::LisLinearSolver(LisMatrix &A, ptree const*const option)
+LisLinearSolver::LisLinearSolver(LisMatrix &A,
+                    const std::string& /*solver_name*/,
+                    ptree const*const option)
 : _A(A)
 {
     if (option)

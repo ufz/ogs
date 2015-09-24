@@ -30,12 +30,15 @@ class EigenLisLinearSolver final
 public:
     /**
      * Constructor
-     * @param A         Coefficient matrix object
-     * @param option    A pointer to a linear solver option. In case you omit
-     *                  this argument, default settings follow those of
-     *                  LisOption struct.
+     * @param A           Coefficient matrix object
+     * @param solver_name A name used as a prefix for command line options
+     *                    if there are such options available.
+     * @param option      A pointer to a linear solver option. In case you omit
+     *                    this argument, default settings follow those of
+     *                    LisOption struct.
      */
-    EigenLisLinearSolver(EigenMatrix &A, boost::property_tree::ptree const*const option = nullptr);
+    EigenLisLinearSolver(EigenMatrix &A, const std::string& solver_name = "",
+                         boost::property_tree::ptree const*const option = nullptr);
 
     /**
      * parse linear solvers configuration

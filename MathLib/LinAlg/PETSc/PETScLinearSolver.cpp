@@ -14,12 +14,16 @@
                http://www.opengeosys.org/project/license
 */
 
+#include <boost/property_tree/ptree.hpp>
+
 #include "PETScLinearSolver.h"
 #include "BaseLib/RunTime.h"
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(PETScMatrix &A, const std::string &prefix)
+PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
+                      const std::string &prefix,
+                      boost::property_tree::ptree const*const /*option*/)
     : _A(A), _elapsed_ctime(0.)
 {
     KSPCreate(PETSC_COMM_WORLD, &_solver);

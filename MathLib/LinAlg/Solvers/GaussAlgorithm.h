@@ -47,12 +47,15 @@ public:
 	 * in the strictly lower part and the factor U in the upper part.
 	 * The diagonal entries of L are all 1.0 and are not explicitly stored.
 	 * @attention The entries of the given matrix will be changed!
+	 * @param solver_name A name used as a prefix for command line options
+	 *                    if there are such options available.
 	 * @param option For some solvers the user can give parameters to the
 	 * algorithm. GaussAlgorithm has to fulfill the common interface
 	 * of all solvers of systems of linear equations. For this reason the
 	 * second argument was introduced.
 	 */
-	GaussAlgorithm(MAT_T &A, boost::property_tree::ptree const*const option = nullptr);
+	GaussAlgorithm(MAT_T &A, const std::string& solver_name = "",
+                   boost::property_tree::ptree const*const option = nullptr);
 	/**
 	 * destructor, deletes the permutation
 	 */
