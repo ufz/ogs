@@ -237,7 +237,7 @@ public:
         {
             MeshLib::Location const l(_mesh.getID(),
                                       MeshLib::MeshItemType::Node, i);
-            std::size_t const global_index =
+            auto const global_index =
                 _local_to_global_index_map->getGlobalIndex(
                     l, 0);  // 0 is the component id.
             _x->set(global_index,
