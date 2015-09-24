@@ -22,6 +22,7 @@
 #include <boost/multi_index_container.hpp>
 
 #include "MeshLib/Location.h"
+#include "ProcessLib/NumericsConfig.h"
 
 namespace AssemblerLib
 {
@@ -38,21 +39,21 @@ struct Line
     std::size_t comp_id;
 
     // Position in global matrix or vector
-    std::size_t global_index;
+    GlobalIndexType global_index;
 
-    Line(MeshLib::Location const& l, std::size_t c, std::size_t i)
+    Line(MeshLib::Location const& l, std::size_t c, GlobalIndexType i)
     : location(l), comp_id(c), global_index(i)
     {}
 
     Line(MeshLib::Location const& l, std::size_t c)
     : location(l), comp_id(c),
-        global_index(std::numeric_limits<std::size_t>::max())
+        global_index(std::numeric_limits<GlobalIndexType>::max())
     {}
 
     explicit Line(MeshLib::Location const& l)
     : location(l),
         comp_id(std::numeric_limits<std::size_t>::max()),
-        global_index(std::numeric_limits<std::size_t>::max())
+        global_index(std::numeric_limits<GlobalIndexType>::max())
     {}
 
     friend std::ostream& operator<<(std::ostream& os, Line const& l)
@@ -112,7 +113,7 @@ typedef boost::multi_index::multi_index_container<
             boost::multi_index::ordered_non_unique
             <
                 boost::multi_index::tag<ByGlobalIndex>,
-                boost::multi_index::member<Line, std::size_t, &Line::global_index>
+                boost::multi_index::member<Line, GlobalIndexType, &Line::global_index>
             >
         >
     > ComponentGlobalIndexDict;
