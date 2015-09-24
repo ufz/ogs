@@ -62,14 +62,14 @@ public:
     void setZero()
     {
         auto const N = _mat.nonZeros();
-        for (std::remove_const<decltype(N)>::type i=0; i<N; i++)
+        for (auto i = decltype(N){0}; i<N; i++)
             _mat.valuePtr()[i] = 0;
         // don't use _mat.setZero(). it makes a matrix uncompressed
     }
 
     /// set a value to the given entry. If the entry doesn't exist, this class
     /// dynamically allocates it.
-    int setValue(std::size_t row, std::size_t col, double val)
+    int setValue(IndexType row, IndexType col, double val)
     {
         _mat.coeffRef(row, col) = val;
         return 0;
@@ -77,7 +77,7 @@ public:
 
     /// add a value to the given entry. If the entry doesn't exist, the value is
     /// inserted.
-    int add(std::size_t row, std::size_t col, double val)
+    int add(IndexType row, IndexType col, double val)
     {
         assert(row < getNRows() && col < getNCols());
         _mat.coeffRef(row, col) += val;
@@ -87,7 +87,7 @@ public:
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions. If the entry doesn't exist, the value is inserted.
     template<class T_DENSE_MATRIX>
-    void add(std::vector<std::size_t> const& row_pos,
+    void add(std::vector<IndexType> const& row_pos,
             const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0)
     {
@@ -97,7 +97,7 @@ public:
     /// Add sub-matrix at positions given by \c indices. If the entry doesn't exist,
     /// this class inserts the value.
     template<class T_DENSE_MATRIX>
-    void add(RowColumnIndices<std::size_t> const& indices,
+    void add(RowColumnIndices<IndexType> const& indices,
             const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0)
     {
@@ -113,19 +113,19 @@ public:
     /// @param sub_matrix  a sub-matrix to be added
     /// @param fkt         a scaling factor applied to all entries in the sub-matrix
     template <class T_DENSE_MATRIX>
-    void add(std::vector<std::size_t> const& row_pos,
-            std::vector<std::size_t> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
+    void add(std::vector<IndexType> const& row_pos,
+            std::vector<IndexType> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0);
 
     /// get value. This function returns zero if the element doesn't exist.
-    double get(std::size_t row, std::size_t col) const
+    double get(IndexType row, IndexType col) const
     {
         assert(row < getNRows() && col < getNCols());
         return _mat.coeff(row, col);
     }
 
     /// get value. This function returns zero if the element doesn't exist.
-    double operator() (std::size_t row, std::size_t col) const
+    double operator() (IndexType row, IndexType col) const
     {
         return get(row, col);
     }
@@ -171,18 +171,17 @@ protected:
     RawMatrixType _mat;
 };
 
-
-template<class T_DENSE_MATRIX>
-void
-EigenMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_t> const& col_pos,
-        const T_DENSE_MATRIX &sub_matrix, double fkt)
+template <class T_DENSE_MATRIX>
+void EigenMatrix::add(std::vector<IndexType> const& row_pos,
+                      std::vector<IndexType> const& col_pos,
+                      const T_DENSE_MATRIX& sub_matrix, double fkt)
 {
-    const std::size_t n_rows = row_pos.size();
-    const std::size_t n_cols = col_pos.size();
-    for (std::size_t i = 0; i < n_rows; i++) {
-        const std::size_t row = row_pos[i];
-        for (std::size_t j = 0; j < n_cols; j++) {
-            const std::size_t col = col_pos[j];
+    auto const n_rows = row_pos.size();
+    auto const n_cols = col_pos.size();
+    for (auto i = decltype(n_rows){0}; i < n_rows; i++) {
+        auto const row = row_pos[i];
+        for (auto j = decltype(n_cols){0}; j < n_cols; j++) {
+            auto const col = col_pos[j];
             add(row, col, fkt * sub_matrix(i, j));
         }
     }
@@ -192,4 +191,3 @@ EigenMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_
 } // end namespace MathLib
 
 #endif
-
