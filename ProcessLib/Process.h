@@ -33,7 +33,15 @@ public:
     virtual bool solve(const double delta_t) = 0;
 
     /// Explicitly release memory of global vector, matrix and linear solvers
-    /// for MPI based parallel computing
+    /// for MPI based parallel computing.
+    /// Since the global matrix, vector and linear equation in ProjectData
+    /// are defined as smarter point type (unique_ptr or might be shared_ptr)
+    /// variables, their memory occupations are automatically released at
+    /// the end of ProjectData terminated, i.e. the end of the main program.
+    /// However if  the global matrix, vector and linear equation are created
+    /// under MPI environment, their memory occupations must be released before
+    /// calling of MPI_Finalize, PetscFinalize. That is why the following fucntion
+    /// is needed.
     virtual void releaseEquationMemory() = 0;
 
     /// Postprocessing after solve().

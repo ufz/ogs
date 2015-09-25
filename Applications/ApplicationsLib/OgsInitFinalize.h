@@ -28,9 +28,8 @@
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 
-namespace BaseLib
-{
-
+/// Initialize MPI, PETSc, LIS or any other database from third party
+/// packages.
 void OgsInitialize(int argc, char *argv[])
 {
 #ifdef USE_MPI
@@ -51,9 +50,19 @@ void OgsInitialize(int argc, char *argv[])
 	(void)argv;    
 }
 
+/// Release MPI related memory in project, and finalize MPI, PETSc,
+/// LIS or any other database from third party
+/// packages.
 void OgsFinalize(ProjectData &project)
 {
 #ifdef USE_PETSC
+	// Since the global matrix, vector and linear equation in ProjectData
+	// are defined as smarter point type (unique_ptr or might be shared_ptr)
+	// variables, their memory occupations are automatically released at
+	// the end of ProjectData terminated, i.e. the end of the main program.
+	// However if  the global matrix, vector and linear equation are created
+	// under MPI environment, their memory occupations must be released before
+	// calling of MPI_Finalize, PetscFinalize. That is why the following loop is needed.
 	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
 	{
 		(*p_it)->releaseEquationMemory(); // possibly also needed under USE_MPI.
@@ -72,7 +81,5 @@ void OgsFinalize(ProjectData &project)
 	 // Avoid compilation warning in case that project is not used. 
 	(void) project;
 }
-
-} // end namespace BaseLib
 
 #endif  // OGS_INIT_FINALIZE_H

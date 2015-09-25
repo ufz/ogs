@@ -21,11 +21,11 @@
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/OgsInitFinalize.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
 #include "Applications/ApplicationsLib/ProjectData.h"
+#include "Applications/ApplicationsLib/OgsInitFinalize.h"
 
 #include "ProcessLib/NumericsConfig.h"
 
@@ -78,7 +78,9 @@ int main(int argc, char *argv[])
 {
 	using ConfigTree = boost::property_tree::ptree;
 
-	BaseLib::OgsInitialize(argc, argv);
+	// Initialize MPI, PETSc, LIS or any other database from third party
+	// packages.
+	OgsInitialize(argc, argv);
 
 	// logog
 	LOGOG_INITIALIZE();
@@ -134,7 +136,10 @@ int main(int argc, char *argv[])
 
 	solveProcesses(project);
 
-	BaseLib::OgsFinalize(project);
+	// Release MPI related memory in project, and finalize MPI, PETSc,
+	// LIS or any other database from third party
+	// packages.
+	OgsFinalize(project);
 
 	delete fmt;
 	delete logog_cout;
