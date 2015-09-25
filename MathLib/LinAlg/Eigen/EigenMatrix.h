@@ -10,7 +10,6 @@
 #ifndef EIGENMATRIX_H_
 #define EIGENMATRIX_H_
 
-#include <cassert>
 #ifndef NDEBUG
 #include <fstream>
 #include <string>
@@ -79,7 +78,6 @@ public:
     /// inserted.
     int add(IndexType row, IndexType col, double val)
     {
-        assert(row < getNRows() && col < getNCols());
         _mat.coeffRef(row, col) += val;
         return 0;
     }
@@ -120,7 +118,6 @@ public:
     /// get value. This function returns zero if the element doesn't exist.
     double get(IndexType row, IndexType col) const
     {
-        assert(row < getNRows() && col < getNCols());
         return _mat.coeff(row, col);
     }
 
