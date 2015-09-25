@@ -26,7 +26,9 @@ namespace MathLib
 
 using boost::property_tree::ptree;
 
-EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A, ptree const*const option)
+EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A,
+                      const std::string /*solver_name*/,
+                      ptree const*const option)
 : _A(A)
 {
     if (option)

@@ -153,10 +153,6 @@ int main(int argc, char *argv[])
 	solveProcesses(project);
 
 #ifdef USE_PETSC
-	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
-	{
-		(*p_it)->releaseEquationMemory();
-	}
 	PetscFinalize();
 #endif
 

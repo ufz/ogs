@@ -18,10 +18,11 @@
 #define PETSCLINEARSOLVER_H_
 
 #include<string>
+#include <boost/property_tree/ptree_fwd.hpp>
+
+#include <petscksp.h>
 
 #include "logog/include/logog.hpp"
-
-#include "petscksp.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -44,8 +45,11 @@ class PETScLinearSolver
             \param prefix  Name used to distinguish the options in the command
                            line for this solver. It can be the name of the PDE
                            that owns an instance of this class.
+            \param option  Not used here, just for the consistency of
+                           the linear solver interface.
         */
-        PETScLinearSolver(PETScMatrix &A, const std::string &prefix="");
+        PETScLinearSolver(PETScMatrix &A, const std::string prefix="",
+                          boost::property_tree::ptree const*const option = nullptr);
 
         ~PETScLinearSolver()
         {

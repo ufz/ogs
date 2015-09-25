@@ -95,7 +95,9 @@ private:
 
 } // details
 
-EigenLinearSolver::EigenLinearSolver(EigenMatrix &A, ptree const*const option)
+EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
+                            const std::string /*solver_name*/,
+                            ptree const*const option)
 {
     if (option)
         setOption(*option);
