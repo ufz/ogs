@@ -132,7 +132,6 @@ if(OGS_USE_PETSC)
 		set(PETSC_EXECUTABLE_RUNS YES)
 	endif()
 
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake/findPETSC")
 	find_package(PETSc REQUIRED)
 
 	include_directories(SYSTEM ${PETSC_INCLUDES})

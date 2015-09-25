@@ -6,6 +6,7 @@ if(NOT OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT)
 endif()
 set(REQUIRED_SUBMODULES
 	ThirdParty/autocheck
+	ThirdParty/cmake-modules
 	ThirdParty/vtkdiff
 	ThirdParty/tclap
 	${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
