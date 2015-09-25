@@ -28,6 +28,8 @@
 
 #include "Applications/ApplicationsLib/ProjectData.h"
 
+namespace detail
+{
 /// Initialize MPI, PETSc, LIS or any other database from third party
 /// packages.
 void OgsInitialize(int argc, char *argv[])
@@ -82,4 +84,5 @@ void OgsFinalize(ProjectData &project)
 	(void) project;
 }
 
+} // end of detail
 #endif  // OGS_INIT_FINALIZE_H

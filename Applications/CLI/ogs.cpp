@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
 	// Initialize MPI, PETSc, LIS or any other database from third party
 	// packages.
-	OgsInitialize(argc, argv);
+	detail::OgsInitialize(argc, argv);
 
 	// logog
 	LOGOG_INITIALIZE();
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 	// Release MPI related memory in project, and finalize MPI, PETSc,
 	// LIS or any other database from third party
 	// packages.
-	OgsFinalize(project);
+	detail::OgsFinalize(project);
 
 	delete fmt;
 	delete logog_cout;
