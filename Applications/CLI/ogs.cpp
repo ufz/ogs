@@ -13,14 +13,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#ifdef USE_MPI
-#include <mpi.h>
-#endif
-
-#ifdef USE_PETSC
-#include <petsc.h>
-#endif
-
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -29,6 +21,7 @@
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
+#include "BaseLib/OgsInitFinalize.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogSimpleFormatter.h"
 
@@ -85,14 +78,7 @@ int main(int argc, char *argv[])
 {
 	using ConfigTree = boost::property_tree::ptree;
 
-#ifdef USE_MPI
-	MPI_Init(&argc, &argv);
-#endif
-
-#ifdef USE_PETSC
-	char help[] = "ogs6 with PETSc \n";
-	PetscInitialize(&argc, &argv, nullptr, help);
-#endif
+	BaseLib::OgsInitialize(argc, argv);
 
 	// logog
 	LOGOG_INITIALIZE();
@@ -119,10 +105,6 @@ int main(int argc, char *argv[])
 
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
-
-#ifdef USE_LIS
-	lis_initialize(&argc, &argv);
-#endif
 
 	// Project's configuration
 	ConfigTree project_config;
@@ -152,21 +134,11 @@ int main(int argc, char *argv[])
 
 	solveProcesses(project);
 
-#ifdef USE_PETSC
-	PetscFinalize();
-#endif
-
-#ifdef USE_MPI
-	MPI_Finalize();
-#endif
+	BaseLib::OgsFinalize(project);
 
 	delete fmt;
 	delete logog_cout;
 	LOGOG_SHUTDOWN();
-
-#ifdef USE_LIS
-	lis_finalize();
-#endif
 
 	return 0;
 }
