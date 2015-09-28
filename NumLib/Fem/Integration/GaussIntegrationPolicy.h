@@ -10,6 +10,7 @@
 #ifndef NUMLIB_GAUSSINTEGRATIONPOLICY_H_
 #define NUMLIB_GAUSSINTEGRATIONPOLICY_H_
 
+#include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Prism.h"
@@ -20,6 +21,7 @@
 #include "NumLib/Fem/Integration/IntegrationGaussTet.h"
 #include "NumLib/Fem/Integration/IntegrationGaussPrism.h"
 #include "NumLib/Fem/Integration/IntegrationGaussPyramid.h"
+#include "NumLib/Fem/Integration/IntegrationPoint.h"
 
 namespace NumLib
 {
@@ -38,6 +40,13 @@ struct GaussIntegrationPolicy
     using MeshElement = MeshElement_;
     using IntegrationMethod =
         NumLib::IntegrationGaussRegular<MeshElement::dimension>;
+};
+
+template<>
+struct GaussIntegrationPolicy<MeshLib::Point>
+{
+    using MeshElement = MeshLib::Point;
+    using IntegrationMethod = NumLib::IntegrationPoint;
 };
 
 template<>
