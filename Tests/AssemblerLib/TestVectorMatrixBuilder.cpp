@@ -14,10 +14,10 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-#include "AssemblerLib/SerialVectorMatrixBuilder.h"
+#include "AssemblerLib/VectorMatrixBuilder.h"
 
 template <typename Builder>
-class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
+class AssemblerLibVectorMatrixBuilder : public ::testing::Test
 {
     public:
     typedef MeshLib::MeshItemType MeshItemType;
@@ -28,7 +28,7 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
     typedef typename Builder::MatrixType MatrixType;
 
     public:
-    AssemblerLibSerialVectorMatrixBuilder()
+    AssemblerLibVectorMatrixBuilder()
         : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
@@ -42,7 +42,7 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
             AssemblerLib::ComponentOrder::BY_COMPONENT);
     }
 
-    ~AssemblerLibSerialVectorMatrixBuilder()
+    ~AssemblerLibVectorMatrixBuilder()
     {
         delete cmap;
         std::remove_if(components.begin(), components.end(),
@@ -59,9 +59,9 @@ class AssemblerLibSerialVectorMatrixBuilder : public ::testing::Test
     MeshComponentMap const* cmap;
 };
 
-TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder);
+TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder);
 
-TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
+TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createVector)
 {
     typedef typename TestFixture::VectorType V;
     typedef TypeParam Builder;
@@ -73,7 +73,7 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createVector)
     delete v;
 }
 
-TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
+TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createMatrix)
 {
     typedef typename TestFixture::MatrixType M;
     typedef TypeParam Builder;
@@ -86,7 +86,7 @@ TYPED_TEST_P(AssemblerLibSerialVectorMatrixBuilder, createMatrix)
     delete m;
 }
 
-REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
+REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
     createVector, createMatrix);
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
@@ -108,22 +108,22 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialVectorMatrixBuilder,
 #endif  // OGS_USE_EIGEN
 
 typedef ::testing::Types
-    < AssemblerLib::SerialVectorMatrixBuilder<
+    < AssemblerLib::VectorMatrixBuilder<
         MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
 #ifdef USE_LIS
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
 #ifdef USE_PETSC
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::PETScMatrix, MathLib::PETScVector>
 #endif  // USE_PETSC
 #ifdef OGS_USE_EIGEN
-    , AssemblerLib::SerialVectorMatrixBuilder<
+    , AssemblerLib::VectorMatrixBuilder<
         MathLib::EigenMatrix, MathLib::EigenVector>
 #endif  // OGS_USE_EIGEN
     > TestTypes;
 
-INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibSerialVectorMatrixBuilder,
+INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibVectorMatrixBuilder,
     TestTypes);
 

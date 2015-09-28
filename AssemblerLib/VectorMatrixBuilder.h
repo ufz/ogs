@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_
-#define ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_
+#ifndef ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
+#define ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
 
 #include "AssemblerLib/MeshComponentMap.h"
 
@@ -19,7 +19,7 @@ namespace AssemblerLib
 {
 
 template <typename MatrixType_, typename VectorType_>
-class SerialVectorMatrixBuilder
+class VectorMatrixBuilder
 {
 public:
     typedef VectorType_ VectorType;
@@ -48,4 +48,4 @@ public:
 
 }   // namespace AssemblerLib
 
-#endif  // ASSEMBLERLIB_SERIALVECTORMATRIXBUILDER_H_
+#endif  // ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
