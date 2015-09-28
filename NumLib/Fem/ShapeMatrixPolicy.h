@@ -15,6 +15,8 @@
 #ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
 
+namespace NumLib
+{
 namespace detail
 {
     /// Forwards the Eigen::Matrix type for general N and M.
@@ -36,6 +38,7 @@ namespace detail
 
 
 }   // detail
+}   // NumLib
 
 /// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
 /// matrices and vectors.
@@ -46,7 +49,7 @@ struct EigenFixedShapeMatrixPolicy
     using _VectorType = Eigen::Matrix<double, N, 1>;
 
     template <int N, int M>
-    using _MatrixType = typename detail::EigenMatrixType<N, M>::type;
+    using _MatrixType = typename NumLib::detail::EigenMatrixType<N, M>::type;
 
     using NodalMatrixType = _MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
     using NodalVectorType = _VectorType<ShapeFunction::NPOINTS>;
