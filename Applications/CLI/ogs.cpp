@@ -78,8 +78,6 @@ int main(int argc, char *argv[])
 {
 	using ConfigTree = boost::property_tree::ptree;
 
-	// Initialize MPI, PETSc, LIS or any other database from third party
-	// packages.
 	detail::OgsInitialize(argc, argv);
 
 	// logog
@@ -136,9 +134,6 @@ int main(int argc, char *argv[])
 
 	solveProcesses(project);
 
-	// Release MPI related memory in project, and finalize MPI, PETSc,
-	// LIS or any other database from third party
-	// packages.
 	detail::OgsFinalize(project);
 
 	delete fmt;
