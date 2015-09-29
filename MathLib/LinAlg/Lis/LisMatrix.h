@@ -45,6 +45,8 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>;
 class LisMatrix
 {
 public:
+    using IndexType = LIS_INT;
+public:
     /**
      * constructor
      * @param n_rows the number of rows (that is equal to the number of columns)
@@ -62,7 +64,8 @@ public:
      * @param col_idx  array of column indexes
      * @param data     the non-zero entry values
      */
-    LisMatrix(std::size_t n_rows, int nonzero, int* row_ptr, int* col_idx, double* data);
+    LisMatrix(std::size_t n_rows, int nonzero, IndexType* row_ptr, IndexType* col_idx,
+              double* data);
 
     /**
      *
@@ -85,10 +88,10 @@ public:
     void setZero();
 
     /// set entry
-    int setValue(std::size_t rowId, std::size_t colId, double v);
+    int setValue(IndexType rowId, IndexType colId, double v);
 
     /// add value
-    int add(std::size_t rowId, std::size_t colId, double v);
+    int add(IndexType rowId, IndexType colId, double v);
 
     /// printout this equation for debugging
     void write(const std::string &filename) const;
@@ -105,7 +108,7 @@ public:
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions.
     template<class T_DENSE_MATRIX>
-    void add(std::vector<std::size_t> const& row_pos,
+    void add(std::vector<IndexType> const& row_pos,
             const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0)
     {
@@ -114,18 +117,17 @@ public:
 
     /// Add sub-matrix at positions given by \c indices.
     template<class T_DENSE_MATRIX>
-    void add(RowColumnIndices<std::size_t> const& indices,
+    void add(RowColumnIndices<IndexType> const& indices,
             const T_DENSE_MATRIX &sub_matrix,
             double fkt = 1.0)
     {
         this->add(indices.rows, indices.columns, sub_matrix, fkt);
     }
 
-    ///
     template <class T_DENSE_MATRIX>
-    void add(std::vector<std::size_t> const& row_pos,
-            std::vector<std::size_t> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
-            double fkt = 1.0);
+    void add(std::vector<IndexType> const& row_pos,
+             std::vector<IndexType> const& col_pos,
+             const T_DENSE_MATRIX& sub_matrix, double fkt = 1.0);
 
     /// get this matrix type
     LisOption::MatrixType getMatrixType() const { return _mat_type; }
@@ -139,8 +141,8 @@ private:
     LIS_MATRIX _AA;
     LIS_VECTOR _diag;
     bool _is_assembled;
-    LIS_INT _is;	///< location where the partial matrix _AA starts in global matrix.
-    LIS_INT _ie;	///< location where the partial matrix _AA ends in global matrix.
+    IndexType _is;	///< location where the partial matrix _AA starts in global matrix.
+    IndexType _ie;	///< location where the partial matrix _AA ends in global matrix.
     bool _use_external_arrays;
 
     // friend function
@@ -150,17 +152,19 @@ private:
     friend struct SetMatrixSparsity;
 };
 
-template<class T_DENSE_MATRIX>
-void
-LisMatrix::add(std::vector<std::size_t> const& row_pos, std::vector<std::size_t> const& col_pos,
-        const T_DENSE_MATRIX &sub_matrix, double fkt)
+template <class T_DENSE_MATRIX>
+void LisMatrix::add(std::vector<IndexType> const& row_pos,
+                    std::vector<IndexType> const& col_pos,
+                    const T_DENSE_MATRIX& sub_matrix, double fkt)
 {
-    const std::size_t n_rows = row_pos.size();
-    const std::size_t n_cols = col_pos.size();
-    for (std::size_t i = 0; i < n_rows; i++) {
-        const std::size_t row = row_pos[i];
-        for (std::size_t j = 0; j < n_cols; j++) {
-            const std::size_t col = col_pos[j];
+    auto const n_rows = row_pos.size();
+    auto const n_cols = col_pos.size();
+    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
+    {
+        auto const row = row_pos[i];
+        for (auto j = decltype(n_cols){0}; j < n_cols; j++)
+        {
+            auto const col = col_pos[j];
             add(row, col, fkt * sub_matrix(i, j));
         }
     }
@@ -176,12 +180,12 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>
 
 void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 {
-    std::size_t n_rows = matrix.getNRows();
-    std::vector<int> row_sizes;
+    auto const n_rows = matrix.getNRows();
+    std::vector<LisMatrix::IndexType> row_sizes;
     row_sizes.reserve(n_rows);
 
     // LIS needs 1 more entry, otherewise it starts reallocating arrays.
-    for (std::size_t i = 0; i < n_rows; i++)
+    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
         row_sizes.push_back(sparsity_pattern.getNodeDegree(i) + 1);
 
     int ierr = lis_matrix_malloc(matrix._AA, 0, row_sizes.data());
@@ -193,4 +197,3 @@ void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 } // MathLib
 
 #endif //LISMATRIX_H_
-

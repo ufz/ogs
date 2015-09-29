@@ -15,21 +15,20 @@
 
 #include <gtest/gtest.h>
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#if defined(USE_LIS)
+#include "MathLib/LinAlg/Lis/LisMatrix.h"
+#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#elif defined(OGS_USE_EIGEN)
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#else
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+#endif
+
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 
-#ifdef OGS_USE_EIGEN
-#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
-#endif
-
-#ifdef USE_LIS
-#include "MathLib/LinAlg/Lis/LisMatrix.h"
-#endif
-
-#ifdef USE_PETSC
-#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
-#endif
+#include "ProcessLib/NumericsConfig.h"
 
 namespace
 {
@@ -47,7 +46,7 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     m.setZero();
 
     MathLib::DenseMatrix<double> local_m(2, 2, 1.0);
-    std::vector<std::size_t> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 1;
     vec_pos[1] = 3;
     m.add(vec_pos, vec_pos, local_m);
@@ -84,8 +83,8 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     loc_m(1, 0) = 3.;
     loc_m(1, 1) = 4.;
 
-    std::vector<int> row_pos(2);
-    std::vector<int> col_pos(2);
+    std::vector<GlobalIndexType> row_pos(2);
+    std::vector<GlobalIndexType> col_pos(2);
     row_pos[0] = 2 * mrank;
     row_pos[1] = 2 * mrank + 1;
     col_pos[0] = row_pos[0];
@@ -143,8 +142,8 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     loc_m(1, 1) = 2.;
     loc_m(1, 2) = 3.;
 
-    std::vector<int> row_pos(2);
-    std::vector<int> col_pos(3);
+    std::vector<GlobalIndexType> row_pos(2);
+    std::vector<GlobalIndexType> col_pos(3);
     row_pos[0] = 2 * mrank;
     row_pos[1] = 2 * mrank + 1;
     col_pos[0] = 3 * mrank;
@@ -167,29 +166,13 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
 } // end namespace
 
-TEST(Math, CheckInterface_GlobalDenseMatrix)
-{
-    MathLib::GlobalDenseMatrix<double> m(10, 10);
-    checkGlobalMatrixInterface(m);
-}
-
-#ifdef OGS_USE_EIGEN
-TEST(Math, CheckInterface_EigenMatrix)
-{
-    MathLib::EigenMatrix m(10);
-    checkGlobalMatrixInterface(m);
-}
-#endif
-
-#ifdef USE_LIS
+#if defined(USE_LIS)
 TEST(Math, CheckInterface_LisMatrix)
 {
     MathLib::LisMatrix m(10);
     checkGlobalMatrixInterface(m);
 }
-#endif
-
-#ifdef USE_PETSC // or MPI
+#elif defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
@@ -217,7 +200,6 @@ TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-// Test rectangular matrix
 TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
@@ -244,6 +226,16 @@ TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
-
-#endif // end of: ifdef USE_PETSC // or MPI
-
+#elif defined(OGS_USE_EIGEN)
+TEST(Math, CheckInterface_EigenMatrix)
+{
+    MathLib::EigenMatrix m(10);
+    checkGlobalMatrixInterface(m);
+}
+#else
+TEST(Math, CheckInterface_GlobalDenseMatrix)
+{
+    MathLib::GlobalDenseMatrix<double> m(10, 10);
+    checkGlobalMatrixInterface(m);
+}
+#endif

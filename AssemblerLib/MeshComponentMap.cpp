@@ -21,13 +21,14 @@ namespace AssemblerLib
 
 using namespace detail;
 
-std::size_t const MeshComponentMap::nop = std::numeric_limits<std::size_t>::max();
+GlobalIndexType const MeshComponentMap::nop =
+    std::numeric_limits<GlobalIndexType>::max();
 
 MeshComponentMap::MeshComponentMap(
     const std::vector<MeshLib::MeshSubsets*> &components, ComponentOrder order)
 {
     // construct dict (and here we number global_index by component type)
-    std::size_t global_index = 0;
+    GlobalIndexType global_index = 0;
     std::size_t comp_id = 0;
     for (auto c = components.cbegin(); c != components.cend(); ++c)
     {
@@ -81,9 +82,9 @@ MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components
     return MeshComponentMap(subset_dict);
 }
 
-void MeshComponentMap::renumberByLocation(std::size_t offset)
+void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 {
-    std::size_t global_index = offset;
+    GlobalIndexType global_index = offset;
 
     auto &m = _dict.get<ByLocation>(); // view as sorted by mesh item
     for (auto itr_mesh_item=m.begin(); itr_mesh_item!=m.end(); ++itr_mesh_item)
@@ -113,7 +114,7 @@ Line MeshComponentMap::getLine(Location const& l,
     return *itr;
 }
 
-std::size_t MeshComponentMap::getGlobalIndex(Location const& l,
+GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
     std::size_t const comp_id) const
 {
     auto const &m = _dict.get<ByLocationAndComponent>();
@@ -121,25 +122,25 @@ std::size_t MeshComponentMap::getGlobalIndex(Location const& l,
     return itr!=m.end() ? itr->global_index : nop;
 }
 
-std::vector<std::size_t> MeshComponentMap::getGlobalIndices(const Location &l) const
+std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(const Location &l) const
 {
     auto const &m = _dict.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
-    std::vector<std::size_t> global_indices;
+    std::vector<GlobalIndexType> global_indices;
     for (auto itr=p.first; itr!=p.second; ++itr)
         global_indices.push_back(itr->global_index);
     return global_indices;
 }
 
 template <>
-std::vector<std::size_t>
+std::vector<GlobalIndexType>
 MeshComponentMap::getGlobalIndices<ComponentOrder::BY_LOCATION>(
     std::vector<Location> const &ls) const
 {
     // Create vector of global indices sorted by location containing all
     // locations given in ls parameter.
 
-    std::vector<std::size_t> global_indices;
+    std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(ls.size());
 
     auto const &m = _dict.get<ByLocation>();
@@ -154,12 +155,12 @@ MeshComponentMap::getGlobalIndices<ComponentOrder::BY_LOCATION>(
 }
 
 template <>
-std::vector<std::size_t>
+std::vector<GlobalIndexType>
 MeshComponentMap::getGlobalIndices<ComponentOrder::BY_COMPONENT>(
     std::vector<Location> const &ls) const
 {
     // vector of (Component, global Index) pairs.
-    typedef std::pair<std::size_t, std::size_t> CIPair;
+    typedef std::pair<std::size_t, GlobalIndexType> CIPair;
     std::vector<CIPair> pairs;
     pairs.reserve(ls.size());
 
@@ -181,7 +182,7 @@ MeshComponentMap::getGlobalIndices<ComponentOrder::BY_COMPONENT>(
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
         std::stable_sort(pairs.begin(), pairs.end(), CIPairLess);
 
-    std::vector<std::size_t> global_indices;
+    std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(pairs.size());
     for (auto p = pairs.cbegin(); p != pairs.cend(); ++p)
         global_indices.push_back(p->second);

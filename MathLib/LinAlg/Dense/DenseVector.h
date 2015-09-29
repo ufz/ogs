@@ -31,6 +31,7 @@ class DenseVector : public std::valarray<T>
 {
 public:
 	typedef T FP_T;
+	using IndexType = std::size_t;  // The type of valarray indices.
 
 public:
 	using std::valarray<T>::operator=;

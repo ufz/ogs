@@ -70,7 +70,7 @@ public:
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
     /// | l        | comp_id     | gi          |
-    std::size_t getGlobalIndex(Location const &l, std::size_t const comp_id) const;
+    GlobalIndexType getGlobalIndex(Location const &l, std::size_t const comp_id) const;
 
     /// Global indices for all components at the given location \c l.
     ///
@@ -82,7 +82,7 @@ public:
     /// | l        | comp_id_1   | gi23        |
     /// | ...      |  ...        | ...         |
     /// | l        | comp_id_k   | gi45        |
-    std::vector<std::size_t> getGlobalIndices(const Location &l) const;
+    std::vector<GlobalIndexType> getGlobalIndices(const Location &l) const;
 
     /// Global indices for all components at all given locations \c ls ordered
     /// as required by the template parameter ORDER.
@@ -113,11 +113,11 @@ public:
     /// | ...      |  ...        | ...         |
     /// | l_n      | comp_id_n   | gi89        |
     template <ComponentOrder ORDER>
-    std::vector<std::size_t> getGlobalIndices(const std::vector<Location> &ls) const;
+    std::vector<GlobalIndexType> getGlobalIndices(const std::vector<Location> &ls) const;
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
-    static std::size_t const nop;
+    static GlobalIndexType const nop;
 
 #ifndef NDEBUG
     const detail::ComponentGlobalIndexDict& getDictionary() const
@@ -146,7 +146,7 @@ private:
     /// \return a copy of the line.
     detail::Line getLine(Location const& l, std::size_t const component_id) const;
 
-    void renumberByLocation(std::size_t offset=0);
+    void renumberByLocation(GlobalIndexType offset=0);
 
 private:
     detail::ComponentGlobalIndexDict _dict;

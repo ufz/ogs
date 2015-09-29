@@ -34,6 +34,9 @@ namespace MathLib
 class PETScMatrix
 {
     public:
+        using IndexType = PetscInt;
+
+    public:
         /*!
           \brief        Constructor for a square matrix partitioning with more options
           \param nrows  The number of rows of the matrix or the local matrix.

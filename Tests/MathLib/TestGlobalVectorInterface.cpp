@@ -16,20 +16,18 @@
 #include <gtest/gtest.h>
 #include "../TestTools.h"
 
-#include "MathLib/LinAlg/Dense/DenseVector.h"
-#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
-
-#ifdef OGS_USE_EIGEN
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
-#endif
-
-#ifdef USE_LIS
+#if defined(USE_LIS)
 #include "MathLib/LinAlg/Lis/LisVector.h"
+#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
+#elif defined(OGS_USE_EIGEN)
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#else
+#include "MathLib/LinAlg/Dense/DenseVector.h"
 #endif
 
-#ifdef USE_PETSC
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
-#endif
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "ProcessLib/NumericsConfig.h"
 
 namespace
 {
@@ -66,7 +64,7 @@ void checkGlobalVectorInterface()
     ASSERT_EQ(2.0, y.get(0));
 
     std::vector<double> local_vec(2, 1.0);
-    std::vector<std::size_t> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 0;
     vec_pos[1] = 3;
     y.add(vec_pos, local_vec);
@@ -114,7 +112,7 @@ void checkGlobalVectorInterfaceMPI()
     ASSERT_EQ(40., y.getNorm());
 
     std::vector<double> local_vec(2, 10.0);
-    std::vector<int> vec_pos(2);
+    std::vector<GlobalIndexType> vec_pos(2);
 
     vec_pos[0] = r0;   // any index in [0,15]
     vec_pos[1] = r0+1; // any index in [0,15]
@@ -194,29 +192,25 @@ void checkGlobalVectorInterfaceMPI()
 
 } // end namespace
 
-TEST(Math, CheckInterface_DenseVector)
-{
-    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
-}
-
-#ifdef OGS_USE_EIGEN
-TEST(Math, CheckInterface_EigenVector)
-{
-    checkGlobalVectorInterface<MathLib::EigenVector >();
-}
-#endif
-
-#ifdef USE_LIS
+//--------------------------------------------
+#if defined(USE_LIS)
 TEST(Math, CheckInterface_LisVector)
 {
     checkGlobalVectorInterface<MathLib::LisVector >();
 }
-#endif
-
-//--------------------------------------------
-#ifdef USE_PETSC
+#elif defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
+}
+#elif defined(OGS_USE_EIGEN)
+TEST(Math, CheckInterface_EigenVector)
+{
+    checkGlobalVectorInterface<MathLib::EigenVector >();
+}
+#else
+TEST(Math, CheckInterface_DenseVector)
+{
+    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 #endif

@@ -22,97 +22,95 @@
 
 namespace MathLib
 {
-
 /**
  * \brief Lis vector wrapper class
  */
 class LisVector
 {
 public:
+	using IndexType = LIS_INT;
+public:
 	/**
 	 * Constructor for initialization of the number of rows
 	 * @param length number of rows
 	 */
-    explicit LisVector(std::size_t length);
+	explicit LisVector(std::size_t length);
 
-    /**
-     * Constructor using the given raw data
-     * @param length the length of the vector
-     * @param data   the raw data
-     */
-    LisVector(std::size_t length, double* data);
+	/**
+	 * Constructor using the given raw data
+	 * @param length the length of the vector
+	 * @param data   the raw data
+	 */
+	LisVector(std::size_t length, double* data);
 
-    /// copy constructor
-    LisVector(LisVector const &src);
+	/// copy constructor
+	LisVector(LisVector const& src);
 
-    /**
-     *
-     */
-    virtual ~LisVector();
+	/**
+	 *
+	 */
+	virtual ~LisVector();
 
-    /// return a vector length
-    std::size_t size() const;
+	/// return a vector length
+	std::size_t size() const;
 
-    /// return a start index of the active data range
-    std::size_t getRangeBegin() const { return 0;}
+	/// return a start index of the active data range
+	std::size_t getRangeBegin() const { return 0; }
+	/// return an end index of the active data range
+	std::size_t getRangeEnd() const { return this->size(); }
+	/// set all values in this vector
+	LisVector& operator=(double v);
 
-    /// return an end index of the active data range
-    std::size_t getRangeEnd() const { return this->size(); }
+	/// access entry
+	double operator[](IndexType rowId) const { return get(rowId); }
+	/// get entry
+	double get(IndexType rowId) const
+	{
+		double v = .0;
+		lis_vector_get_value(_vec, rowId, &v);
+		return v;
+	}
 
-    /// set all values in this vector
-    LisVector& operator= (double v);
+	/// set entry
+	void set(IndexType rowId, double v)
+	{
+		lis_vector_set_value(LIS_INS_VALUE, rowId, v, _vec);
+	}
 
-    /// access entry
-    double operator[] (std::size_t rowId) const { return get(rowId); }
+	/// add entry
+	void add(IndexType rowId, double v)
+	{
+		lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _vec);
+	}
 
-    /// get entry
-    double get(std::size_t rowId) const
-    {
-        double v = .0;
-        lis_vector_get_value(_vec, rowId, &v);
-        return v;
-    }
+	/// printout this equation for debugging
+	void write(const std::string& filename) const;
 
-    /// set entry
-    void set(std::size_t rowId, double v)
-    {
-        lis_vector_set_value(LIS_INS_VALUE, rowId, v, _vec);
-    }
+	/// return a raw Lis vector object
+	LIS_VECTOR& getRawVector() { return _vec; }
+	/// vector operation: set data
+	LisVector& operator=(const LisVector& src);
 
-    /// add entry
-    void add(std::size_t rowId, double v)
-    {
-        lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _vec);
-    }
+	/// vector operation: add
+	void operator+=(const LisVector& v);
 
-    /// printout this equation for debugging
-    void write (const std::string &filename) const;
+	/// vector operation: subtract
+	void operator-=(const LisVector& v);
 
-    /// return a raw Lis vector object
-    LIS_VECTOR& getRawVector() {return _vec; }
+	///
+	template <class T_SUBVEC>
+	void add(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
+	{
+		for (std::size_t i = 0; i < pos.size(); ++i)
+		{
+			this->add(pos[i], sub_vec[i]);
+		}
+	}
 
-    /// vector operation: set data
-    LisVector& operator= (const LisVector &src);
-
-    /// vector operation: add
-    void operator+= (const LisVector& v);
-
-    /// vector operation: subtract
-    void operator-= (const LisVector& v);
-
-    ///
-    template<class T_SUBVEC>
-    void add(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
-    {
-        for (std::size_t i=0; i<pos.size(); ++i) {
-            this->add(pos[i], sub_vec[i]);
-        }
-    }
 private:
-    LIS_VECTOR _vec;
+	LIS_VECTOR _vec;
 };
 
-} // MathLib
+}  // MathLib
 
-#endif //LISVECTOR_H_
-
+#endif  // LISVECTOR_H_

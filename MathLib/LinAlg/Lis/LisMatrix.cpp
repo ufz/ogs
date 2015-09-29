@@ -37,8 +37,12 @@ LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
     checkLisError(ierr);
 }
 
-LisMatrix::LisMatrix(std::size_t n_rows, int nnz, int* row_ptr, int* col_idx, double* data)
-: _n_rows(n_rows), _mat_type(LisOption::MatrixType::CRS), _is_assembled(false), _use_external_arrays(true)
+LisMatrix::LisMatrix(std::size_t n_rows, int nnz, IndexType *row_ptr,
+                     IndexType *col_idx, double *data)
+    : _n_rows(n_rows),
+      _mat_type(LisOption::MatrixType::CRS),
+      _is_assembled(false),
+      _use_external_arrays(true)
 {
     int ierr = lis_matrix_create(0, &_AA);
     checkLisError(ierr);
@@ -81,7 +85,7 @@ void LisMatrix::setZero()
     _is_assembled = false;
 }
 
-int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
+int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 {
     lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
     if (rowId==colId)
@@ -90,7 +94,7 @@ int LisMatrix::setValue(std::size_t rowId, std::size_t colId, double v)
     return 0;
 }
 
-int LisMatrix::add(std::size_t rowId, std::size_t colId, double v)
+int LisMatrix::add(IndexType rowId, IndexType colId, double v)
 {
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
     if (rowId==colId)

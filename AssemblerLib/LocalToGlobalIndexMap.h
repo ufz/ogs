@@ -35,7 +35,7 @@ namespace AssemblerLib
 class LocalToGlobalIndexMap
 {
 public:
-    typedef MathLib::RowColumnIndices<std::size_t> RowColumnIndices;
+    typedef MathLib::RowColumnIndices<GlobalIndexType> RowColumnIndices;
     typedef RowColumnIndices::LineIndex LineIndex;
 
 public:
@@ -78,7 +78,7 @@ public:
     LineIndex rowIndices(std::size_t const mesh_item_id) const;
     LineIndex columnIndices(std::size_t const mesh_item_id) const;
 
-    std::size_t getGlobalIndex(MeshLib::Location const& l,
+    GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                std::size_t const c) const
     {
         return _mesh_component_map.getGlobalIndex(l, c);

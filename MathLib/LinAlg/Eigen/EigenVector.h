@@ -17,6 +17,7 @@
 #endif
 
 #include <Eigen/Eigen>
+#include <Eigen/Sparse>
 
 namespace MathLib
 {
@@ -26,6 +27,11 @@ class EigenVector final
 {
 public:
     using RawVectorType = Eigen::VectorXd;
+
+    // The Index type of the Eigen::VectorXd class differs from the
+    // Eigen::SparseMatrix<double> index type. Maybe an Eigen::SparseVector is a
+    // more appropriate RawVectorType for the global vectors.
+    using IndexType = Eigen::SparseMatrix<double>::Index;
 
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
@@ -50,30 +56,30 @@ public:
     EigenVector& operator*= (double v) { _vec *= v; return *this; }
 
     /// access entry
-    double const & operator[] (std::size_t rowId) const { return _vec[rowId]; }
-    double& operator[] (std::size_t rowId) { return _vec[rowId]; }
+    double const & operator[] (IndexType rowId) const { return _vec[rowId]; }
+    double& operator[] (IndexType rowId) { return _vec[rowId]; }
 
     /// get entry
-    double get(std::size_t rowId) const
+    double get(IndexType rowId) const
     {
         return _vec[rowId];
     }
 
     /// set entry
-    void set(std::size_t rowId, double v)
+    void set(IndexType rowId, double v)
     {
         _vec[rowId] = v;
     }
 
     /// add entry
-    void add(std::size_t rowId, double v)
+    void add(IndexType rowId, double v)
     {
         _vec[rowId] += v;
     }
 
     /// add entries
     template<class T_SUBVEC>
-    void add(const std::vector<std::size_t> &pos, const T_SUBVEC &sub_vec)
+    void add(const std::vector<IndexType> &pos, const T_SUBVEC &sub_vec)
     {
         for (std::size_t i=0; i<pos.size(); ++i) {
             this->add(pos[i], sub_vec[i]);
