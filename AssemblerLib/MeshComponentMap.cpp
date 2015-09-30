@@ -132,10 +132,8 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(const Location &
     return global_indices;
 }
 
-template <>
-std::vector<GlobalIndexType>
-MeshComponentMap::getGlobalIndices<ComponentOrder::BY_LOCATION>(
-    std::vector<Location> const &ls) const
+std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
+    std::vector<Location> const& ls) const
 {
     // Create vector of global indices sorted by location containing all
     // locations given in ls parameter.
@@ -154,10 +152,8 @@ MeshComponentMap::getGlobalIndices<ComponentOrder::BY_LOCATION>(
     return global_indices;
 }
 
-template <>
-std::vector<GlobalIndexType>
-MeshComponentMap::getGlobalIndices<ComponentOrder::BY_COMPONENT>(
-    std::vector<Location> const &ls) const
+std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
+    std::vector<Location> const& ls) const
 {
     // vector of (Component, global Index) pairs.
     typedef std::pair<std::size_t, GlobalIndexType> CIPair;

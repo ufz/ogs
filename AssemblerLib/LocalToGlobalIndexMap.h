@@ -146,10 +146,12 @@ LocalToGlobalIndexMap::findGlobalIndices(ElementIterator first, ElementIterator 
         switch (order)
         {
             case AssemblerLib::ComponentOrder::BY_LOCATION:
-                _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_LOCATION>(vec_items));
+                _rows.push_back(
+                    _mesh_component_map.getGlobalIndicesByLocation(vec_items));
                 break;
             case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                _rows.push_back(_mesh_component_map.getGlobalIndices<AssemblerLib::ComponentOrder::BY_COMPONENT>(vec_items));
+                _rows.push_back(
+                    _mesh_component_map.getGlobalIndicesByComponent(vec_items));
                 break;
         }
     }
