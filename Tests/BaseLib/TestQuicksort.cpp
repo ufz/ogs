@@ -14,8 +14,10 @@
 
 #include <algorithm>
 #include <numeric>
+#include <random>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -213,4 +215,51 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
                                                    return xs.empty();
                                                }),
                                 gtest_reporter, cls);
+}
+
+template <typename T, typename Gen = ac::generator<T>>
+struct randomSortedPairGenerator
+{
+    Gen source;
+    using result_type = std::tuple<T, T>;
+
+    result_type operator()(std::size_t)
+    {
+        auto p = std::make_tuple(source(), source());
+        if (std::get<0>(p) > std::get<1>(p))
+            std::swap(std::get<0>(p), std::get<1>(p));
+
+        return p;
+    }
+};
+
+TEST_F(BaseLibQuicksort, SortsRangeAsSTLSort)
+{
+    auto quicksortSortsRangeAsSTLSort = [](std::vector<int>& xs,
+        std::tuple<std::size_t, std::size_t> const& range) -> bool
+    {
+        if (xs.empty())
+            return true;
+
+        std::vector<std::size_t> perm(xs.size());
+        std::iota(perm.begin(), perm.end(), 0);
+        BaseLib::quicksort(xs, std::get<0>(range), std::get<1>(range), perm);
+        return
+            std::is_sorted(
+                xs.begin() + std::get<0>(range), xs.begin() + std::get<1>(range))
+            && std::is_sorted(perm.begin(), perm.begin() + std::get<0>(range))
+            && std::is_sorted(perm.begin() + std::get<1>(range), perm.end());
+    };
+
+    ac::check<std::vector<int>, std::tuple<std::size_t, std::size_t>>(
+        quicksortSortsRangeAsSTLSort,
+        100,
+        ac::make_arbitrary(ac::generator<std::vector<int>>(),
+                           randomSortedPairGenerator<std::size_t>())
+            .discard_if([](std::vector<int> const& xs,
+                           std::tuple<std::size_t, std::size_t> const& range)
+                        {
+                            return std::get<1>(range) >= xs.size();
+                        }),
+        gtest_reporter);
 }
