@@ -27,19 +27,8 @@ find_package(cppcheck QUIET)
 
 find_package(PythonInterp QUIET)
 
-find_package(GitHub)
-
-find_program(GIT_TOOL_PATH git HINTS ${GITHUB_BIN_DIR} DOC "The git command line interface")
-if(NOT GIT_TOOL_PATH)
-	if(WIN32)
-		message(FATAL_ERROR "Git not found! Please install GitHub for Windows or Git!")
-	else()
-		message(FATAL_ERROR "Git not found but is required!")
-	endif()
-else()
-	set(GIT_EXECUTABLE ${GIT_TOOL_PATH} CACHE FILE_PATH "" FORCE)
-	set(GIT_FOUND TRUE CACHE BOOL "" FORCE)
-endif()
+find_package(Git REQUIRED)
+set(GIT_TOOL_PATH ${GIT_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
 
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash
