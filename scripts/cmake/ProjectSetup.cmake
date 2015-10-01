@@ -22,4 +22,31 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-site_name(HOSTNAME)
+include(GetGitRevisionDescription)
+GET_GIT_HEAD_REVISION(GIT_REFSPEC GIT_SHA1)
+string(SUBSTRING ${GIT_SHA1} 0 8 GIT_SHA1_SHORT)
+
+if($ENV{CI})
+	set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis) or subproject
+elseif(IS_SUBPROJECT)
+	set(OGS_VERSION x.x.x)
+else()
+	GIT_GET_TAG(GIT_DESCRIBE)
+	if(GIT_DESCRIBE)
+		string(REGEX MATCH ^[0-9|\\.]+ GIT_TAG ${GIT_DESCRIBE})
+		set(OGS_VERSION ${GIT_TAG})
+
+		if(GIT_DESCRIBE MATCHES ".*-.*-.*")
+			# Commit is not a tag
+			set(OGS_IS_RELEASE FALSE)
+			string(REGEX MATCH "-([0-9]+)-" GIT_COMMITS_AFTER_TAG ${GIT_DESCRIBE})
+			message(STATUS "OGS version: ${GIT_DESCRIBE}")
+		else()
+			set(OGS_VERSION_STATUS "")
+			set(OGS_IS_RELEASE TRUE)
+			message(STATUS "OGS version: ${OGS_VERSION}")
+		endif()
+	else()
+		message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
+	endif()
+endif()

@@ -28,7 +28,7 @@ find_package(cppcheck QUIET)
 find_package(PythonInterp QUIET)
 
 find_package(Git REQUIRED)
-set(GIT_TOOL_PATH ${GIT_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
+set(GIT_TOOL_PATH ${Git_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
 
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash

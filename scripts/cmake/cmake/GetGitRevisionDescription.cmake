@@ -81,11 +81,11 @@ function(get_git_head_revision _refspecvar _hashvar)
 endfunction()
 
 function(git_describe _var)
-	if(NOT GIT_FOUND)
+	if(NOT Git_FOUND)
 		find_package(Git QUIET)
 	endif()
 	get_git_head_revision(refspec hash)
-	if(NOT GIT_FOUND)
+	if(NOT Git_FOUND)
 		set(${_var} "GIT-NOTFOUND" PARENT_SCOPE)
 		return()
 	endif()
@@ -105,7 +105,7 @@ function(git_describe _var)
 	#message(STATUS "Arguments to execute_process: ${ARGN}")
 
 	execute_process(COMMAND
-		"${GIT_EXECUTABLE}"
+		${Git_EXECUTABLE}
 		describe
 		${hash}
 		${ARGN}
