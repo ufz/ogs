@@ -85,10 +85,8 @@ public:
     std::vector<GlobalIndexType> getGlobalIndices(const Location &l) const;
 
     /// Global indices for all components at all given locations \c ls ordered
-    /// as required by the template parameter ORDER.
+    /// by location. The return list is sorted first by location.
     ///
-    /// In case ORDER is ComponentOrder::BY_LOCATION the return list is sorted
-    /// first by location.
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
     /// | l_1      | comp_id_1   | gi23        |
@@ -99,9 +97,11 @@ public:
     /// | l_2      | comp_id_m   | gi67        |
     /// | ...      |  ...        | ...         |
     /// | l_n      | comp_id_n   | gi78        |
-    ///
-    /// In case ORDER is ComponentOrder::BY_COMPONENT the return list is sorted
-    /// first by component ids.
+    std::vector<GlobalIndexType> getGlobalIndicesByLocation(
+        const std::vector<Location>& ls) const;
+
+    /// Global indices for all components at all given locations \c ls ordered
+    /// by component ids. The return list is sorted first by component ids.
     /// | Location | ComponentID | GlobalIndex |
     /// | -------- | ----------- | ----------- |
     /// | l_1      | comp_id_1   | gi23        |
@@ -112,8 +112,8 @@ public:
     /// | l_m      | comp_id_2   | gi78        |
     /// | ...      |  ...        | ...         |
     /// | l_n      | comp_id_n   | gi89        |
-    template <ComponentOrder ORDER>
-    std::vector<GlobalIndexType> getGlobalIndices(const std::vector<Location> &ls) const;
+    std::vector<GlobalIndexType> getGlobalIndicesByComponent(
+        const std::vector<Location>& ls) const;
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
