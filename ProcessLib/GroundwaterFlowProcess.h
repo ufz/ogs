@@ -317,6 +317,14 @@ public:
         delete _mesh_subset_all_nodes;
     }
 
+    void releaseEquationMemory()
+    {
+        delete _A.release();
+        delete _rhs.release();
+        delete _x.release();
+        delete _linearSolver.release();
+    }
+
 private:
     ProcessVariable* _hydraulic_head = nullptr;
 
