@@ -1,9 +1,3 @@
-# Add custom library install prefixes
-list(APPEND CMAKE_PREFIX_PATH
-	$ENV{HOMEBREW_ROOT}             # Homebrew package manager on Mac OS
-	$ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
-	${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
-
 ######################
 ### Find tools     ###
 ######################
@@ -28,7 +22,7 @@ find_package(cppcheck QUIET)
 find_package(PythonInterp QUIET)
 
 find_package(Git REQUIRED)
-set(GIT_TOOL_PATH ${Git_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
+set(GIT_TOOL_PATH ${GIT_EXECUTABLE} CACHE FILEPATH "The git command line interface" FORCE)
 
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash

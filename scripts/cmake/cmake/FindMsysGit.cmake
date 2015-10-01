@@ -7,8 +7,8 @@
 #     message("msysGit tools found in: ${MSYSGIT_BIN_DIR}")
 #   endif()
 
-if(Git_EXECUTABLE)
-	execute_process(COMMAND ${Git_EXECUTABLE} --version
+if(GIT_EXECUTABLE)
+	execute_process(COMMAND ${GIT_EXECUTABLE} --version
 									OUTPUT_VARIABLE git_version
 									ERROR_QUIET
 									OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -24,7 +24,7 @@ if(Git_EXECUTABLE)
 endif()
 
 if(GIT_IS_MSYSGIT)
-	get_filename_component(MSYS_DIR ${Git_EXECUTABLE} PATH)
+	get_filename_component(MSYS_DIR ${GIT_EXECUTABLE} PATH)
 	find_path(MSYSGIT_BIN_DIR
 	NAMES date.exe grep.exe unzip.exe git.exe PATHS ${MSYS_DIR}/../bin NO_DEFAULT_PATH)
 else()
