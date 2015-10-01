@@ -9,6 +9,9 @@ target_link_libraries(AssemblerLib INTERFACE
 	MeshLib
 )
 
+if(TARGET Eigen)
+	add_dependencies(AssemblerLib Eigen)
+endif()
 if(TARGET Boost)
 	add_dependencies(AssemblerLib Boost)
 endif()
