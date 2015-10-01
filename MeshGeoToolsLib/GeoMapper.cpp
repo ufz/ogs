@@ -154,18 +154,30 @@ float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 	return static_cast<float>(elevation);
 }
 
-double GeoMapper::getMeshElevation(double x, double y, double min_val, double max_val) const
+double GeoMapper::getMeshElevation(
+	double x, double y, double min_val, double max_val) const
 {
-	const MeshLib::Node* pnt = _grid->getNearestPoint(MathLib::Point3d{{{x,y,0}}});
-	const std::vector<MeshLib::Element*> elements (_surface_mesh->getNode(pnt->getID())->getElements());
-	GeoLib::Point* intersection (nullptr);
+	const MeshLib::Node* pnt =
+	    _grid->getNearestPoint(MathLib::Point3d{{{x, y, 0}}});
+	const std::vector<MeshLib::Element*> elements(
+	    _surface_mesh->getNode(pnt->getID())->getElements());
+	GeoLib::Point* intersection(nullptr);
 
-	for (std::size_t i=0; i<elements.size(); ++i)
+	for (std::size_t i = 0; i < elements.size(); ++i)
 	{
-		if (intersection==nullptr && elements[i]->getGeomType() != MeshLib::MeshElemType::LINE)
-			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(1), *elements[i]->getNode(2), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
-		if (intersection==nullptr && elements[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
-			intersection=GeoLib::triangleLineIntersection(*elements[i]->getNode(0), *elements[i]->getNode(2), *elements[i]->getNode(3), GeoLib::Point(x,y,max_val), GeoLib::Point(x,y,min_val));
+		if (intersection == nullptr &&
+		    elements[i]->getGeomType() != MeshLib::MeshElemType::LINE)
+			intersection = GeoLib::triangleLineIntersection(
+			    *elements[i]->getNode(0), *elements[i]->getNode(1),
+			    *elements[i]->getNode(2), GeoLib::Point(x, y, max_val),
+			    GeoLib::Point(x, y, min_val));
+
+		if (intersection == nullptr &&
+		    elements[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
+			intersection = GeoLib::triangleLineIntersection(
+			    *elements[i]->getNode(0), *elements[i]->getNode(2),
+			    *elements[i]->getNode(3), GeoLib::Point(x, y, max_val),
+			    GeoLib::Point(x, y, min_val));
 	}
 	if (intersection)
 		return (*intersection)[2];
@@ -194,7 +206,8 @@ std::vector<GeoLib::Polyline*>* copyPolylinesVector(const std::vector<GeoLib::Po
 }
 
 
-void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name)
+void GeoMapper::advancedMapOnMesh(
+	MeshLib::Mesh const* mesh, std::string const& new_geo_name)
 {
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	const std::vector<GeoLib::Polyline*> *org_lines (this->_geo_objects.getPolylineVec(this->_geo_name));
@@ -212,11 +225,14 @@ void GeoMapper::advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &
 
 	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
 	double max_segment_length (this->getMaxSegmentLength(*new_lines));
-	max_segment_length *= max_segment_length; // squared so it can be compared to the squared distances calculated later
+	// squared so it can be compared to the squared distances calculated later
+	max_segment_length *= max_segment_length;
 
 	const unsigned nMeshNodes ( mesh->getNNodes() );
-	std::vector<int> closest_geo_point(nMeshNodes); // index of closest geo point for each mesh node in (x,y)-plane
-	std::vector<double> dist(nMeshNodes);  // distance between geo points and mesh nodes in (x,y)-plane
+	// index of closest geo point for each mesh node in (x,y)-plane
+	std::vector<int> closest_geo_point(nMeshNodes);
+	// distance between geo points and mesh nodes in (x,y)-plane
+	std::vector<double> dist(nMeshNodes);
 	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
 		auto const zero_coords = GeoLib::Point((*mesh->getNode(i))[0],
