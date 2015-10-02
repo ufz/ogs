@@ -295,10 +295,10 @@ void GeoMapper::advancedMapOnMesh(
 
 					const MeshLib::Element* line = elements[e]->getEdge(n);
 					unsigned index_offset(0); // default: add to first line segment
-					GeoLib::Point* intersection (NULL);
+					GeoLib::Point* intersection (nullptr);
 					if (node_index_in_ply>0) // test line segment before closest point
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply-1));
-					if (intersection == NULL && node_index_in_ply<(nLinePnts-1)) // test line segment after closest point
+					if (intersection == nullptr && node_index_in_ply<(nLinePnts-1)) // test line segment after closest point
 					{
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply+1));
 						index_offset = 1; // add to second segment
@@ -325,9 +325,9 @@ void GeoMapper::advancedMapOnMesh(
 
 	this->_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
 	std::vector<std::size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
-	for (std::size_t i=0; i<new_lines->size(); ++i)
-		(*new_lines)[i]->updatePointIDs(pnt_id_map);
-	_geo_objects.addPolylineVec(std::move(new_lines), new_geo_name);
+	for (auto & new_line : *new_lines)
+		new_line->updatePointIDs(pnt_id_map);
+	_geo_objects.addPolylineVec(new_lines, new_geo_name);
 
 	// map new geometry incl. additional point using the normal mapping method
 	this->_geo_name = new_geo_name;
@@ -340,7 +340,7 @@ GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, Math
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
 
 	const double det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	if (fabs(det) < std::numeric_limits<double>::epsilon()) return NULL;
+	if (fabs(det) < std::numeric_limits<double>::epsilon()) return nullptr;
 
 	const double pre  = (x1*y2 - y1*x2);
 	const double post = (x3*y4 - y3*x4);
@@ -350,7 +350,7 @@ GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, Math
 	// Check if the x and y coordinates are within both line segments
 	if (isPntInBoundingBox(x1,y1,x2,y2,x,y) && isPntInBoundingBox(x3,y3,x4,y4,x,y))
 		return new GeoLib::Point(x, y, 0);
-	return NULL;
+	return nullptr;
 }
 
 unsigned GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, unsigned start, unsigned end, GeoLib::Point const*const point, double eps) const
