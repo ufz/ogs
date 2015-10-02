@@ -50,12 +50,22 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	this->_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
+	_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
 	if (! _raster) {
 		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
 		return;
 	}
-	this->mapData();
+
+	std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
+	if (! pnts) {
+		ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+		return;
+	}
+	if (GeoLib::isStation((*pnts)[0])) {
+		mapStationData(*pnts);
+	} else {
+		mapPointDataToDEM(*pnts);
+	}
 }
 
 void GeoMapper::mapOnMesh(const std::string &file_name)
@@ -72,7 +82,6 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 		ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
 		return;
 	}
-	bool const is_station(GeoLib::isStation((*pnts)[0]));
 
 	if (mesh->getDimension()<3)
 		this->_surface_mesh = new MeshLib::Mesh(*mesh);
@@ -90,10 +99,10 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	std::vector<MeshLib::Node*> const& flat_nodes (flat_mesh->getNodes());
 	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
 
-	if (is_station) {
-		mapStationData();
+	if (GeoLib::isStation((*pnts)[0])) {
+		mapStationData(*pnts);
 	} else {
-		mapData();
+		mapPointDataToMeshSurface();
 	}
 
 	delete _grid;
@@ -111,7 +120,7 @@ void GeoMapper::mapToConstantValue(double value)
 	std::for_each(points->begin(), points->end(), [value](GeoLib::Point* pnt){ (*pnt)[2] = value; });
 }
 
-void GeoMapper::mapStationData()
+void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
 {
 	double min_val(0), max_val(0);
 	if (_surface_mesh)
@@ -122,11 +131,8 @@ void GeoMapper::mapStationData()
 		max_val = bounding_box.getMaxPoint()[2];
 	}
 
-	std::vector<GeoLib::Point*> const* points (_geo_objects.getPointVec(_geo_name));
-	std::size_t nPoints (points->size());
-	for (unsigned j=0; j<nPoints; ++j)
+	for (auto * pnt : points)
 	{
-		GeoLib::Point* pnt ((*points)[j]);
 		double offset =
 		    (_grid)
 		        ? (getMeshElevation((*pnt)[0], (*pnt)[1], min_val, max_val) -
@@ -146,15 +152,32 @@ void GeoMapper::mapStationData()
 	}
 }
 
-void GeoMapper::mapData()
+void GeoMapper::mapPointDataToDEM(std::vector<GeoLib::Point*> const& points)
 {
-	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
-
-	for (auto pnt : pnts)
+	for (auto * pnt : points)
 	{
-		GeoLib::Point* pnt ((*points)[j]);
-		(*pnt)[2] = (_grid) ? getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
-			                : getDemElevation(*pnt);
+		GeoLib::Point &p(*pnt);
+		p[2] = getDemElevation(p);
+	}
+}
+
+void GeoMapper::mapPointDataToMeshSurface()
+{
+	GeoLib::AABB const aabb(
+		_surface_mesh->getNodes().cbegin(), _surface_mesh->getNodes().cend());
+	double const min_val(aabb.getMinPoint()[2]);
+	double const max_val(aabb.getMaxPoint()[2]);
+
+	for (auto * pnt : pnts) {
+		// check if pnt is inside of the bounding box of the _surface_mesh
+		// projected onto the y-x plane
+		GeoLib::Point &p(*pnt);
+		if (p[0] < aabb.getMinPoint()[0] || aabb.getMaxPoint()[0] < p[0])
+			continue;
+		if (p[1] < aabb.getMinPoint()[1] || aabb.getMaxPoint()[1] < p[1])
+			continue;
+
+		p[2] = getMeshElevation(p[0], p[1], min_val, max_val);
 	}
 }
 
