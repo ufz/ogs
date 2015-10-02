@@ -292,4 +292,12 @@ void StationBorehole::addSoilLayer ( double x, double y, double z, const std::st
 	_profilePntVec.push_back (new Point (x, y, z));
 	_soilName.push_back(soil_name);
 }
+
+bool isBorehole(GeoLib::Point const* pnt)
+{
+	GeoLib::StationBorehole const* bh(
+		dynamic_cast<GeoLib::StationBorehole const*>(pnt));
+	return bh != nullptr;
+}
+
 } // namespace

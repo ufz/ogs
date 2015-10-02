@@ -103,6 +103,7 @@ private:
 
 };
 
+bool isStation(GeoLib::Point const* pnt);
 } // namespace
 
 #endif // GEO_STATION_H
