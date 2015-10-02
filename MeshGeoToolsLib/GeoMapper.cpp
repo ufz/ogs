@@ -163,20 +163,20 @@ double GeoMapper::getMeshElevation(
 	    _surface_mesh->getNode(pnt->getID())->getElements());
 	GeoLib::Point* intersection(nullptr);
 
-	for (std::size_t i = 0; i < elements.size(); ++i)
+	for (auto const & element : elements)
 	{
 		if (intersection == nullptr &&
-		    elements[i]->getGeomType() != MeshLib::MeshElemType::LINE)
+		    element->getGeomType() != MeshLib::MeshElemType::LINE)
 			intersection = GeoLib::triangleLineIntersection(
-			    *elements[i]->getNode(0), *elements[i]->getNode(1),
-			    *elements[i]->getNode(2), GeoLib::Point(x, y, max_val),
+			    *element->getNode(0), *element->getNode(1),
+			    *element->getNode(2), GeoLib::Point(x, y, max_val),
 			    GeoLib::Point(x, y, min_val));
 
 		if (intersection == nullptr &&
-		    elements[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
+		    element->getGeomType() == MeshLib::MeshElemType::QUAD)
 			intersection = GeoLib::triangleLineIntersection(
-			    *elements[i]->getNode(0), *elements[i]->getNode(2),
-			    *elements[i]->getNode(3), GeoLib::Point(x, y, max_val),
+			    *element->getNode(0), *element->getNode(2),
+			    *element->getNode(3), GeoLib::Point(x, y, max_val),
 			    GeoLib::Point(x, y, min_val));
 	}
 	if (intersection)
