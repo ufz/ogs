@@ -21,17 +21,14 @@
 #include <petsc.h>
 #endif
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 
+#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 
 #include "ProcessLib/NumericsConfig.h"
@@ -94,12 +91,6 @@ int main(int argc, char *argv[])
 	PetscInitialize(&argc, &argv, nullptr, help);
 #endif
 
-	// logog
-	LOGOG_INITIALIZE();
-	BaseLib::LogogSimpleFormatter *fmt(new BaseLib::LogogSimpleFormatter);
-	logog::Cout *logog_cout(new logog::Cout);
-	logog_cout->SetFormatter(*fmt);
-
 	// Parse CLI arguments.
 	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
 			"Copyright (c) 2012-2015, OpenGeoSys Community "
@@ -120,6 +111,8 @@ int main(int argc, char *argv[])
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
 
+	ApplicationsLib::LogogSetup logog_setup;
+	
 #ifdef USE_LIS
 	lis_initialize(&argc, &argv);
 #endif
@@ -155,14 +148,9 @@ int main(int argc, char *argv[])
 #ifdef USE_PETSC
 	PetscFinalize();
 #endif
-
 #ifdef USE_MPI
 	MPI_Finalize();
 #endif
-
-	delete fmt;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 #ifdef USE_LIS
 	lis_finalize();
