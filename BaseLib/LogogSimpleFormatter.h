@@ -15,23 +15,22 @@
 #ifndef LOGOGSIMPLEFORMATTER_H
 #define LOGOGSIMPLEFORMATTER_H
 
-// ** INCLUDES **
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-namespace BaseLib {
+namespace BaseLib
+{
 /**
- * \brief LogogSimpleFormatter strips file name and line number from logog output.
+ * \brief LogogSimpleFormatter strips file name and line number from logog
+ * output.
  * See http://johnwbyrd.github.com/logog/customformatting.html for details.
  **/
 class LogogSimpleFormatter : public logog::FormatterMSVC
 {
-
-	virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+	virtual TOPIC_FLAGS GetTopicFlags(const logog::Topic& topic)
 	{
-	return ( logog::Formatter::GetTopicFlags( topic ) &
-		~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
+		return (logog::Formatter::GetTopicFlags(topic) &
+		        ~(TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG));
 	}
-
 };
 
 }  // namespace BaseLib
