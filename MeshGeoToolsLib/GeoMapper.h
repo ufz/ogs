@@ -70,6 +70,8 @@ public:
 	void advancedMapOnMesh(const MeshLib::Mesh* mesh, const std::string &new_geo_name);
 
 private:
+	/// Mapping stations, boreholes on a raster or mesh.
+	void mapStationData();
 	/// Manages the mapping geometric data (points, stations, boreholes) on a raster or mesh.
 	void mapData();
 

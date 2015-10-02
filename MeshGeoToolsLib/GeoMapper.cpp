@@ -67,6 +67,13 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
+	std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
+	if (! pnts) {
+		ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+		return;
+	}
+	bool const is_station(GeoLib::isStation((*pnts)[0]));
+
 	if (mesh->getDimension()<3)
 		this->_surface_mesh = new MeshLib::Mesh(*mesh);
 	else
@@ -82,7 +89,12 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 		MeshLib::projectMeshOntoPlane(*_surface_mesh, origin, normal);
 	std::vector<MeshLib::Node*> const& flat_nodes (flat_mesh->getNodes());
 	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
-	this->mapData();
+
+	if (is_station) {
+		mapStationData();
+	} else {
+		mapData();
+	}
 
 	delete _grid;
 	delete flat_mesh;
@@ -99,14 +111,8 @@ void GeoMapper::mapToConstantValue(double value)
 	std::for_each(points->begin(), points->end(), [value](GeoLib::Point* pnt){ (*pnt)[2] = value; });
 }
 
-void GeoMapper::mapData()
+void GeoMapper::mapStationData()
 {
-	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
-	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
-	bool is_borehole(false);
-	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
-		is_borehole = true;
-
 	double min_val(0), max_val(0);
 	if (_surface_mesh)
 	{
@@ -115,34 +121,40 @@ void GeoMapper::mapData()
 		min_val = bounding_box.getMinPoint()[2];
 		max_val = bounding_box.getMaxPoint()[2];
 	}
-	std::size_t nPoints (points->size());
 
-	if (!is_borehole)
+	std::vector<GeoLib::Point*> const* points (_geo_objects.getPointVec(_geo_name));
+	std::size_t nPoints (points->size());
+	for (unsigned j=0; j<nPoints; ++j)
 	{
-		for (unsigned j=0; j<nPoints; ++j)
+		GeoLib::Point* pnt ((*points)[j]);
+		double offset =
+		    (_grid)
+		        ? (getMeshElevation((*pnt)[0], (*pnt)[1], min_val, max_val) -
+		           (*pnt)[2])
+		        : getDemElevation(*pnt);
+
+		if (!GeoLib::isBorehole(pnt))
+			continue;
+		GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
+		const std::vector<GeoLib::Point*> layers = borehole->getProfile();
+		std::size_t nLayers = layers.size();
+		for (unsigned k=0; k<nLayers; ++k)
 		{
-			GeoLib::Point* pnt ((*points)[j]);
-			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
-				                : this->getDemElevation(*pnt);
+			GeoLib::Point* layer_pnt = layers[k];
+			(*layer_pnt)[2] = (*layer_pnt)[2] + offset;
 		}
 	}
-	else
-	{
-		for (unsigned j=0; j<nPoints; ++j)
-		{
-			GeoLib::Point* pnt ((*points)[j]);
-			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val) - (*pnt)[2])
-				                    :  this->getDemElevation(*pnt);
+}
 
-			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
-			const std::vector<GeoLib::Point*> layers = borehole->getProfile();
-			std::size_t nLayers = layers.size();
-			for (unsigned k=0; k<nLayers; ++k)
-			{
-				GeoLib::Point* layer_pnt = layers[k];
-				(*layer_pnt)[2] = (*layer_pnt)[2] + offset;
-			}
-		}
+void GeoMapper::mapData()
+{
+	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
+
+	for (auto pnt : pnts)
+	{
+		GeoLib::Point* pnt ((*points)[j]);
+		(*pnt)[2] = (_grid) ? getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
+			                : getDemElevation(*pnt);
 	}
 }
 
