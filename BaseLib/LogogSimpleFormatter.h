@@ -34,6 +34,6 @@ class LogogSimpleFormatter : public logog::FormatterMSVC
 
 };
 
-#endif // LOGOGSIMPLEFORMATTER_H
+}  // namespace BaseLib
 
-} // namespace BaseLib
+#endif  // LOGOGSIMPLEFORMATTER_H
