@@ -83,12 +83,17 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 		return;
 	}
 
+	// the variable _surface_mesh is reused below, so first the existing
+	// _surface_mesh has to be cleaned up
+	if (_surface_mesh)
+		delete _surface_mesh;
+
 	if (mesh->getDimension()<3)
-		this->_surface_mesh = new MeshLib::Mesh(*mesh);
+		_surface_mesh = new MeshLib::Mesh(*mesh);
 	else
 	{
 		const MathLib::Vector3 dir(0,0,-1);
-		this->_surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
+		_surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
 	}
 
 	// init grid
