@@ -18,12 +18,18 @@
 #define PETSCTOOLS_H_
 
 #include <vector>
+#include <petscsys.h>
 
-#include "PETScMatrix.h"
-#include "PETScVector.h"
+namespace MeshLib
+{
+    class Mesh;
+    class NodeAdjacencyTable;
+}
 
 namespace MathLib
 {
+    class PETScMatrix;
+    class PETScVector;
 /*!
    \brief apply known solutions to a system of linear equations
 
@@ -37,6 +43,14 @@ namespace MathLib
 void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
                         const std::vector<PetscInt> &vec_knownX_id,
                         const std::vector<PetscScalar> &vec_knownX_x);
+
+struct PETscMatrixAndNodeAdjacencyTableBuilder
+{
+    static PETScMatrix* createMatrixAndNodeAdjacencyTable
+                         (const PetscInt dim, const MeshLib::Mesh& mesh,
+                          MeshLib::NodeAdjacencyTable& node_adjacency_table);
+};
+
 } // end of namespace MathLib
 
 #endif //end  of PETSCTOOLS_H_

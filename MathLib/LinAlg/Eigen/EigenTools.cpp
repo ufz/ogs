@@ -11,8 +11,13 @@
 
 #include <logog/include/logog.hpp>
 
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
+
 #include "EigenMatrix.h"
 #include "EigenVector.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/NodeAdjacencyTable.h"
 
 namespace MathLib
 {
@@ -52,6 +57,13 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
     }
 }
 
+EigenMatrix* EigenMatrixAndNodeAdjacencyTableBuilder
+::createMatrixAndNodeAdjacencyTable(const std::size_t dim, const MeshLib::Mesh& mesh,
+                               MeshLib::NodeAdjacencyTable& node_adjacency_table)
+{
+    node_adjacency_table.createTable(mesh.getNodes());
+    return new EigenMatrix(dim);
+}
 } // MathLib
 
 

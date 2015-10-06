@@ -41,6 +41,13 @@ struct GlobalSetup
 
     template <typename... Args>
     static
+    MatrixType* createMatrixAndNodeAdjacencyTable(Args&& ... args)
+    {
+        return VectorMatrixBuilder::createMatrixAndNodeAdjacencyTable(std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    static
     void execute(Args&& ... args)
     {
         return Executor::execute(std::forward<Args>(args)...);

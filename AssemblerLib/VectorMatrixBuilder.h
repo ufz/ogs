@@ -16,7 +16,10 @@
 namespace AssemblerLib
 {
 
-template <typename MatrixType_, typename VectorType_>
+template <typename MatrixType_,
+          typename MatrixAndNodeAdjacencyTableBuilder_,
+          typename VectorType_
+          >
 class VectorMatrixBuilder
 {
 public:
@@ -40,6 +43,18 @@ public:
     MatrixType* createMatrix(std::size_t const size, Args_&&... args)
     {
         return new MatrixType(size, std::forward<Args_>(args)...);
+    }
+
+    /// Create a matrix of given size, and a node adjacency table.
+    /// Any additional arguments are directly passed to the matrix constructor.
+    template <typename ...Args_>
+    static
+    MatrixType* createMatrixAndNodeAdjacencyTable(std::size_t const size,
+                                                  Args_&&... args)
+    {
+        return MatrixAndNodeAdjacencyTableBuilder_
+               ::createMatrixAndNodeAdjacencyTable
+                     (size, std::forward<Args_>(args)...);
     }
 
 };

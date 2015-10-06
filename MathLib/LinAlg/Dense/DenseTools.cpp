@@ -14,6 +14,9 @@
 
 #include "DenseTools.h"
 
+#include "MeshLib/Mesh.h"
+#include "MeshLib/NodeAdjacencyTable.h"
+
 namespace MathLib
 {
 
@@ -56,6 +59,13 @@ void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b, const st
 	}
 }
 
+DenseMatrix<double>* DenseMatrixAndNodeAdjacencyTableBuilder
+::createMatrixAndNodeAdjacencyTable(const std::size_t dim, const MeshLib::Mesh& mesh,
+                               MeshLib::NodeAdjacencyTable& node_adjacency_table)
+{
+    node_adjacency_table.createTable(mesh.getNodes());
+    return new DenseMatrix<double>(dim);
+}
 
 } // MathLib
 
