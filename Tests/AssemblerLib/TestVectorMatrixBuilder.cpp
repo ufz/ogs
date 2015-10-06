@@ -91,36 +91,48 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+#include "MathLib/LinAlg/Dense/DenseTools.h"
 
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
+#include "MathLib/LinAlg/Lis/LisTools.h"
 #endif  // USE_LIS
 
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScTools.h"
 #endif  // USE_PETSC
 
 #ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenTools.h"
 #endif  // OGS_USE_EIGEN
 
 typedef ::testing::Types
     < AssemblerLib::VectorMatrixBuilder<
-        MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
+        MathLib::GlobalDenseMatrix<double>,
+        MathLib::DenseMatrixAndNodeAdjacencyTableBuilder,
+        MathLib::DenseVector<double>>
 #ifdef USE_LIS
     , AssemblerLib::VectorMatrixBuilder<
-        MathLib::LisMatrix, MathLib::LisVector>
+        MathLib::LisMatrix,
+        MathLib::LisMatrixAndNodeAdjacencyTableBuilder,
+        MathLib::LisVector>
 #endif  // USE_LIS
 #ifdef USE_PETSC
     , AssemblerLib::VectorMatrixBuilder<
-        MathLib::PETScMatrix, MathLib::PETScVector>
+        MathLib::PETScMatrix,
+        MathLib::PETscMatrixAndNodeAdjacencyTableBuilder,
+        MathLib::PETScVector>
 #endif  // USE_PETSC
 #ifdef OGS_USE_EIGEN
     , AssemblerLib::VectorMatrixBuilder<
-        MathLib::EigenMatrix, MathLib::EigenVector>
+        MathLib::EigenMatrix,
+        MathLib::EigenMatrixAndNodeAdjacencyTableBuilder,
+        MathLib::EigenVector>
 #endif  // OGS_USE_EIGEN
     > TestTypes;
 

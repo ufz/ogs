@@ -16,6 +16,12 @@
 
 #include "PETScTools.h"
 
+#include "PETScMatrix.h"
+#include "PETScVector.h"
+
+#include "MeshLib/NodePartitionedMesh.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
+
 namespace MathLib
 {
 
@@ -38,6 +44,19 @@ void applyKnownSolution(PETScMatrix &A, PETScVector &b, PETScVector &x,
 
     x.finalizeAssembly();
     b.finalizeAssembly();
+}
+
+PETScMatrix* PETscMatrixAndNodeAdjacencyTableBuilder
+::createMatrixAndNodeAdjacencyTable(const PetscInt dim, const MeshLib::Mesh& mesh,
+                               MeshLib::NodeAdjacencyTable& /*node_adjacency_table*/)
+{
+    MathLib::PETScMatrixOption mat_opt;
+    const MeshLib::NodePartitionedMesh &pmesh
+                = static_cast<const MeshLib::NodePartitionedMesh&>(mesh);
+    mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
+    mat_opt.o_nz = mat_opt.d_nz;
+
+    return new PETScMatrix(dim, mat_opt);
 }
 
 } // end of namespace MathLib

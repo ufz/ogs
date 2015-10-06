@@ -27,13 +27,15 @@
 
     #include "MathLib/LinAlg/Lis/LisMatrix.h"
     #include "MathLib/LinAlg/Lis/LisVector.h"
+    #include "MathLib/LinAlg/Lis/LisTools.h"
     #include "MathLib/LinAlg/Lis/LisLinearSolver.h"
 
 namespace detail
 {
     using GlobalVectorType = MathLib::LisVector;
     using GlobalMatrixType = MathLib::LisMatrix;
-
+    using GlobalMatrixAndNodeAdjacencyTableBuilder
+          = MathLib::LisMatrixAndNodeAdjacencyTableBuilder;
     using LinearSolverType = MathLib::LisLinearSolver;
 }
 
@@ -41,23 +43,27 @@ namespace detail
 #ifdef OGS_USE_EIGEN
     #include "MathLib/LinAlg/Eigen/EigenVector.h"
     #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+    #include "MathLib/LinAlg/Eigen/EigenTools.h"
     #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 namespace detail
 {
     using GlobalVectorType = MathLib::EigenVector;
     using GlobalMatrixType = MathLib::EigenMatrix;
-
+    using GlobalMatrixAndNodeAdjacencyTableBuilder
+          = MathLib::EigenMatrixAndNodeAdjacencyTableBuilder;
     using LinearSolverType = MathLib::EigenLinearSolver;
 }
 #else   // OGS_USE_EIGEN
     #include "MathLib/LinAlg/Dense/DenseVector.h"
     #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
+    #include "MathLib/LinAlg/Dense/DenseTools.h"
     #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 namespace detail
 {
     using GlobalVectorType = MathLib::DenseVector<double>;
     using GlobalMatrixType = MathLib::GlobalDenseMatrix<double>;
-
+    using GlobalMatrixAndNodeAdjacencyTableBuilder
+          = MathLib::DenseMatrixAndNodeAdjacencyTableBuilder;
     using LinearSolverType =
         MathLib::GaussAlgorithm<GlobalMatrixType, GlobalVectorType>;
 }
@@ -76,6 +82,7 @@ namespace detail
 using GlobalVectorMatrixBuilderType =
         AssemblerLib::VectorMatrixBuilder<
             GlobalMatrixType,
+            GlobalMatrixAndNodeAdjacencyTableBuilder,
             GlobalVectorType>;
 }
 

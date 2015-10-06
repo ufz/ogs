@@ -17,6 +17,12 @@
 
 #include <vector>
 
+namespace MeshLib
+{
+    class Mesh;
+    class NodeAdjacencyTable;
+}
+
 namespace MathLib
 {
 class LisMatrix;
@@ -37,6 +43,12 @@ class LisVector;
 void applyKnownSolution(LisMatrix &A, LisVector &b, const std::vector<std::size_t> &_vec_knownX_id,
 		const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10);
 
+struct LisMatrixAndNodeAdjacencyTableBuilder
+{
+	static LisMatrix* createMatrixAndNodeAdjacencyTable
+	                   (const std::size_t dim, const MeshLib::Mesh& mesh,
+	                    MeshLib::NodeAdjacencyTable& node_adjacency_table);
+}
 } // MathLib
 
 #endif //LISTOOLS_H_

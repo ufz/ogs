@@ -19,6 +19,9 @@
 #include "LisMatrix.h"
 #include "LisVector.h"
 
+#include "MeshLib/Mesh.h"
+#include "MeshLib/NodeAdjacencyTable.h"
+
 namespace MathLib
 {
 
@@ -39,6 +42,14 @@ void applyKnownSolution(LisMatrix &A, LisVector &b, const std::vector<std::size_
         //b(k) = x*penalty
         b.set(rowId, x*penalty);
     }
+}
+
+LisMatrix* LisMatrixAndNodeAdjacencyTableBuilder
+::createMatrixAndNodeAdjacencyTable(const std::size_t dim, const MeshLib::Mesh& mesh,
+                               MeshLib::NodeAdjacencyTable& node_adjacency_table)
+{
+    node_adjacency_table.createTable(mesh.getNodes());
+    return new LisMatrix(dim);
 }
 
 } // MathLib
