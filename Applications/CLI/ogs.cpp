@@ -21,17 +21,15 @@
 #include <petsc.h>
 #endif
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 
+#include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 
 #include "ProcessLib/NumericsConfig.h"
@@ -85,21 +83,6 @@ int main(int argc, char *argv[])
 {
 	using ConfigTree = boost::property_tree::ptree;
 
-#ifdef USE_MPI
-	MPI_Init(&argc, &argv);
-#endif
-
-#ifdef USE_PETSC
-	char help[] = "ogs6 with PETSc \n";
-	PetscInitialize(&argc, &argv, nullptr, help);
-#endif
-
-	// logog
-	LOGOG_INITIALIZE();
-	BaseLib::LogogSimpleFormatter *fmt(new BaseLib::LogogSimpleFormatter);
-	logog::Cout *logog_cout(new logog::Cout);
-	logog_cout->SetFormatter(*fmt);
-
 	// Parse CLI arguments.
 	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
 			"Copyright (c) 2012-2015, OpenGeoSys Community "
@@ -120,9 +103,9 @@ int main(int argc, char *argv[])
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
 
-#ifdef USE_LIS
-	lis_initialize(&argc, &argv);
-#endif
+	ApplicationsLib::LogogSetup logog_setup;
+	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
+	    argc, argv);
 
 	// Project's configuration
 	ConfigTree project_config;
@@ -151,22 +134,6 @@ int main(int argc, char *argv[])
 	std::string const output_file_name(project.getOutputFilePrefix() + ".vtu");
 
 	solveProcesses(project);
-
-#ifdef USE_PETSC
-	PetscFinalize();
-#endif
-
-#ifdef USE_MPI
-	MPI_Finalize();
-#endif
-
-	delete fmt;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-#ifdef USE_LIS
-	lis_finalize();
-#endif
 
 	return 0;
 }
