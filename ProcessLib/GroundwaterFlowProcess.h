@@ -211,10 +211,11 @@ public:
         DBUG("Compute sparsity pattern");
         _node_adjacency_table.createTable(_mesh.getNodes());
 
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
-        _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-        _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
+        DBUG("Allocate global matrix, node adjacency table, vectors, and linear solver.");
+        const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
+        _A.reset(_global_setup.createMatrixAndNodeAdjacencyTable(num_unknowns, _mesh, _node_adjacency_table));
+        _x.reset(_global_setup.createVector(num_unknowns));
+        _rhs.reset(_global_setup.createVector(num_unknowns));
         _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A));
 
 
