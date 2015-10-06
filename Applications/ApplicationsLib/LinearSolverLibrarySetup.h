@@ -10,9 +10,6 @@
 #ifndef APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_
 #define APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_
 
-namespace ApplicationsLib
-{
-
 /// The LinearSolverLibrarySetup takes care of proper initialization and
 /// shutting down of an external linear solver library. The concrete
 /// implementation is chosen by the build system.
@@ -25,6 +22,8 @@ namespace ApplicationsLib
 #if defined(USE_PETSC)
 #include <petsc.h>
 #include <mpi.h>
+namespace ApplicationsLib
+{
 struct LinearSolverLibrarySetup final
 {
 	LinearSolverLibrarySetup(int argc, char* argv[])
@@ -40,8 +39,11 @@ struct LinearSolverLibrarySetup final
 		MPI_Finalize();
 	}
 };
+}	// ApplicationsLib
 #elif defined(USE_LIS)
 #include <lis.h>
+namespace ApplicationsLib
+{
 struct LinearSolverLibrarySetup final
 {
 	LinearSolverLibrarySetup(int argc, char* argv[])
@@ -51,14 +53,17 @@ struct LinearSolverLibrarySetup final
 
 	~LinearSolverLibrarySetup() { lis_finalize(); }
 };
+}	// ApplicationsLib
 #else
+namespace ApplicationsLib
+{
 struct LinearSolverLibrarySetup final
 {
 	LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
 	~LinearSolverLibrarySetup() {}
 };
+}	// ApplicationsLib
 #endif
 
-}	// ApplicationsLib
 
 #endif  // APPLICATIONSLIB_LINEARSOLVERLIBRARYSETUP_H_
