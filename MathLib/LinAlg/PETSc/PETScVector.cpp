@@ -42,6 +42,8 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 
     VecGetLocalSize(_v, &_size_loc);
     VecGetSize(_v, &_size);
+
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
 }
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
@@ -57,6 +59,8 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     {
         VecCopy(existing_vec._v, _v);
     }
+
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],

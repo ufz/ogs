@@ -150,6 +150,11 @@ public:
         return new MeshSubset(_msh, active_nodes, true);
     }
 
+    Mesh const& getMesh() const
+    {
+        return _msh;
+    }
+
 private:
     Mesh const& _msh;
     std::vector<Node*> const* _nodes;
