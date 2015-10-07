@@ -1,9 +1,61 @@
 # 6.0.3 (in preparation)
 
 ### Features:
+ - Mesh properties are now used for:
+   - heterogeneous "initial conditions" (actually a start solution vector for the elliptic problem).
+   - spatially heterogeneous hydraulic conductivity values in the groundwater flow process.
+ - First steps towards time dependent problems: Time loop integration for processes is provided.
+ - Interpolation of nodal quantities on elements using shape functions.
+
+- Mesh generator can create surface meshes according to a given function
+
+ - Utilities:
+  - MoveGeometry
+
+ - The DOF table handles now all of the provided element types: Hex 8 and 20, Line 2 and 3, Prism 6 and 15, Pyramid 5 and 13, Quad 4, 8, and 9, Tet 4 and 10, Triangle 3 and 6.
+ - Eigen linear solver library can be used for solution of the linear systems of equations.
 
 - Implemented [OctTree](https://github.com/ufz/ogs/pull/714) for fast searching
   points and nodes
+ - Volumetric and surface grid
+ - ElementSearcher NodeSearcher improvements
+- Generalized the computation of rotation matrix to xy
+
+### Fixes
+ - FEFLOW interface supports element sets now.
+ - Reduce compilation times by using forward declarations and removing unnecessary includes and using explicit template instantiation for often required classes.
+ - GMSH2OGS: fixed bug in cases GMSH mesh does not contain line elements
+ - CreateBoundaryConditionsAlongPolylines: fixed bug concerning the GeoLib and point ids.
+ - PointVec corrected point id map
+ - Shape interface creates polylines in a consistent state
+
+
+### Infrastructure
+- Replace quickcheck with autocheck. See https://github.com/thejohnfreeman/autocheck.git
+for more details on autocheck
+- Added support for cross-compiling with [MXE](http://mxe.cc/): build native Windows binaries on Linux and Mac OS, see [Cross-Compiling help page](http://docs.opengeosys.org/docs/devguide/advanced/cross-compiling) and #767
+- Migrated to new Travis infrastructure (faster build times), see #775
+- Simplified CMake library linking, see #769
+
+
+## Test examples
+- Test case: groundwater flow in the Unstrut catchment (model consists approximately of 9e6 hexahedral cells)
+  - Simulations using homogeneous and heterogeneous hydraulic conductivity
+  - Integrated rivers as Dirichlet type boundary conditions
+  - Integrated groundwater recharge (spatialy homogeneous) as Neumann boundary condition
+
+![unstrut_heterogeneous_rivers_top_layer_diff_recharge-no_recharge](https://cloud.githubusercontent.com/assets/329493/10043383/f75b837a-61f2-11e5-952e-f75d5d5a195b.png)
+
+## Next steps
+ The next big step will be the implementation of a parallelization scheme using PETSc library
+
+### In development
+- OGS#PETSc interface for parallel computing
+- Solving of time dependent problems
+
+### Planned
+- Implementation of a linear parabolic pde solver
+- Extending the linear elliptic solver to non-linear problems
 
 # 6.0.2
 
