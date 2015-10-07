@@ -25,6 +25,12 @@ endif()
 # Set additional user-given compiler flags
 set(CMAKE_CXX_FLAGS ${OGS_CXX_FLAGS})
 
+if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
+	set(CPU_FLAGS "-mtune=generic")
+else()
+	set(CPU_FLAGS "-march=${OGS_CPU_ARCHITECTURE}")
+endif()
+
 ### GNU C/CXX compiler
 if(COMPILER_IS_GCC)
 	get_gcc_version(GCC_VERSION)
@@ -33,14 +39,14 @@ if(COMPILER_IS_GCC)
 	endif()
 	if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		message(STATUS "Set GCC release flags")
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=${OGS_CPU_ARCHITECTURE} -DNDEBUG")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG")
 	else()
 		# Enable assertions in STL in debug mode.
 		if (NOT STL_NO_DEBUG)
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT -D_GLIBCXX_DEBUG_VERIFY")
 		endif()
 	endif()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wno-deprecated -Wall -Wextra")
 endif() # COMPILER_IS_GCC
 
 ### Clang
@@ -48,7 +54,7 @@ if(COMPILER_IS_CLANG)
 	if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
 		message(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
 	endif()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic -march=${OGS_CPU_ARCHITECTURE}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
 	if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 		# Enable assertions in STL in debug mode.
 		if (NOT STL_NO_DEBUG)
