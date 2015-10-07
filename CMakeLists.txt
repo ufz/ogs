@@ -23,6 +23,7 @@ list(APPEND CMAKE_PREFIX_PATH
 option(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 	"Additional library installation path, e.g. /opt/local or C:/libs")
+set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
 
 ### CMake includes ###
 include(scripts/cmake/CheckTypeSizes.cmake)
