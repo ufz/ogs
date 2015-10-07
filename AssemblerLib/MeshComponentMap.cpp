@@ -26,6 +26,8 @@ GlobalIndexType const MeshComponentMap::nop =
 
 MeshComponentMap::MeshComponentMap(
     const std::vector<MeshLib::MeshSubsets*> &components, ComponentOrder order)
+    : _order(order),
+      _num_components(components.size())
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
@@ -79,7 +81,7 @@ MeshComponentMap::getSubset(std::vector<MeshLib::MeshSubsets*> const& components
         comp_id++;
     }
 
-    return MeshComponentMap(subset_dict);
+    return MeshComponentMap(subset_dict, _order, _num_components);
 }
 
 void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
@@ -185,5 +187,35 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
     return global_indices;
 }
+
+std::vector<std::size_t>
+MeshComponentMap::getIndicesForComponent(
+        const std::vector<std::size_t>& cnt,
+        const unsigned component_id) const
+{
+    std::vector<std::size_t> new_cnt;
+    auto const N = cnt.size() / _num_components;
+    new_cnt.reserve(N);
+    assert(N*_num_components == cnt.size());
+    assert(component_id < _num_components);
+
+    switch (_order)
+    {
+    case ComponentOrder::BY_COMPONENT:
+        for (std::remove_const<decltype(N)>::type i=0; i<N; ++i)
+        {
+            new_cnt.emplace_back(cnt[i+N*component_id]);
+        }
+        break;
+    case ComponentOrder::BY_LOCATION:
+        for (std::remove_const<decltype(N)>::type i{0}; i<N; ++i)
+        {
+            new_cnt.emplace_back(cnt[i*_num_components+component_id]);
+        }
+    }
+
+    return new_cnt;
+}
+
 
 }   // namespace AssemblerLib

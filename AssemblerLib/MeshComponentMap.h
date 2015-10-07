@@ -115,6 +115,21 @@ public:
     std::vector<GlobalIndexType> getGlobalIndicesByComponent(
         const std::vector<Location>& ls) const;
 
+    /// Get global indices for the given component
+    ///
+    /// Given the global indices for all compontents of a current mesh element,
+    /// and the index of a component, this method will return the global indices
+    /// of the component.
+    ///
+    /// \param cnt collection of global indices, e.g. for a mesh element
+    /// \param component_id the component of interest
+    std::vector<std::size_t>
+    getIndicesForComponent(const std::vector<std::size_t>& cnt,
+                           const unsigned component_id) const;
+
+
+    unsigned getNumComponents() const { return _num_components; }
+
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
     static GlobalIndexType const nop;
@@ -136,8 +151,10 @@ public:
 
 private:
     /// Private constructor used by internally created mesh component maps.
-    MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
-        : _dict(dict)
+    MeshComponentMap(detail::ComponentGlobalIndexDict& dict,
+                     ComponentOrder const order,
+                     unsigned const num_components)
+        : _dict(dict), _order(order), _num_components(num_components)
     { }
 
     /// Looks up if a line is already stored in the dictionary.
@@ -150,6 +167,8 @@ private:
 
 private:
     detail::ComponentGlobalIndexDict _dict;
+    ComponentOrder const _order;
+    unsigned const _num_components;
 };
 
 }   // namespace AssemblerLib
