@@ -33,6 +33,7 @@ namespace MeshLib {
  * Overlapping elements, collapsed nodes, and other issues are not handled by the method.
  * The normal vector need not be normalized.
  */
+inline
 MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
                                     MathLib::Point3d const& plane_origin,
                                     MathLib::Vector3 const& plane_normal)
