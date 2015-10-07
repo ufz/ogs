@@ -107,7 +107,7 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	if (GeoLib::isStation((*pnts)[0])) {
 		mapStationData(*pnts);
 	} else {
-		mapPointDataToMeshSurface();
+		mapPointDataToMeshSurface(*pnts);
 	}
 
 	delete _grid;
@@ -166,7 +166,7 @@ void GeoMapper::mapPointDataToDEM(std::vector<GeoLib::Point*> const& points)
 	}
 }
 
-void GeoMapper::mapPointDataToMeshSurface()
+void GeoMapper::mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& pnts)
 {
 	GeoLib::AABB const aabb(
 		_surface_mesh->getNodes().cbegin(), _surface_mesh->getNodes().cend());

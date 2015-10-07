@@ -77,7 +77,7 @@ private:
 	void mapPointDataToDEM(std::vector<GeoLib::Point*> const& points);
 
 	/// Mapping points on mesh.
-	void mapPointDataToMeshSurface();
+	void mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& points);
 
 	/// Returns the elevation at Point (x,y) based on a mesh. This uses collision detection for triangles and nearest neighbor for quads.
 	/// NOTE: This medhod only returns correct values if the node numbering of the elements is correct!
