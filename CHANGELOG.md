@@ -1,4 +1,11 @@
-# 6.0.3 (in preparation)
+# 6.0.4 (in preparation)
+
+### Infrastructure
+
+- Added CMake option `OGS_CPU_ARCHITECTURE`, #858, [donwloadable binaries](http://docs.opengeosys.org/download) build by Jenkins should now run on more CPUs
+
+
+# 6.0.3
 
 ### Features:
  - Mesh properties are now used for:
