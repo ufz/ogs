@@ -60,7 +60,8 @@ MeshComponentMap::MeshComponentMap(
                                 comp_id, signed_global_id) );
                 }
 
-                // Note: If the cells are really used (e.g. for the mixed FEM), the following global cell index must be reconsidered
+                // Note: If the cells are really used (e.g. for the mixed FEM),
+                // the following global cell index must be reconsidered
                 // according to the employed cell indexing method.
                 for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
@@ -79,13 +80,14 @@ MeshComponentMap::MeshComponentMap(
                                 comp_id, signed_global_id) );
                 }
 
-                // Note: If the cells are really used (e.g. for the mixed FEM), the following global cell index must be reconsidered
+                // Note: If the cells are really used (e.g. for the mixed FEM),
+                // the following global cell index must be reconsidered
                 // according to the employed cell indexing method.
                 for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
                                  comp_id, cell_index++));
-
-                global_index_offset += mesh.getNGlobalNodes(); // Include base nodes. Should be considered again for a general case.
+                // Include base nodes.
+                global_index_offset += mesh.getNGlobalNodes();
             }
 
             _num_global_dof += mesh.getNGlobalNodes();
