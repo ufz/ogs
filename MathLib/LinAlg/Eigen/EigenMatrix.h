@@ -18,6 +18,7 @@
 #include <Eigen/Sparse>
 
 #include "MathLib/LinAlg/RowColumnIndices.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "EigenVector.h"
 
 namespace MathLib
@@ -184,6 +185,24 @@ void EigenMatrix::add(std::vector<IndexType> const& row_pos,
     }
 };
 
+/// Sets the sparsity pattern of the underlying EigenMatrix.
+template <typename SPARSITY_PATTERN>
+struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
+{
+
+/// \note This operator relies on row-major storage order of the underlying
+/// eigen matrix i.e. of the RawMatrixType.
+void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
+{
+    auto const n_rows = matrix.getNRows();
+    Eigen::VectorXi row_sizes(n_rows);
+
+    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
+        row_sizes[i] = sparsity_pattern.getNodeDegree(i);
+
+    matrix.getRawMatrix().reserve(row_sizes);
+}
+};
 
 } // end namespace MathLib
 
