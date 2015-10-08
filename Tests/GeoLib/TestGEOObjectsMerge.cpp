@@ -21,7 +21,8 @@
 
 void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std::string &name, GeoLib::Point const& shift)
 {
-	std::vector<GeoLib::Point*> *pnts(new std::vector<GeoLib::Point*>);
+	auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* pnt_name_map(new std::map< std::string, std::size_t>);
 
 	const std::size_t pnts_per_edge(8);
@@ -41,7 +42,7 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects & geo_objs, std:
 		}
 	}
 
-	geo_objs.addPointVec(pnts, name, pnt_name_map);
+	geo_objs.addPointVec(std::move(pnts), name, pnt_name_map);
 }
 
 TEST(GeoLib, GEOObjectsMergePoints)
@@ -107,7 +108,8 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 	std::vector<std::string> names;
 
 	// *** insert points to vector
-	std::vector<GeoLib::Point*> *pnts(new std::vector<GeoLib::Point*>);
+	auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	pnts->reserve(4);
 	pnts->push_back(new GeoLib::Point(0.0,0.0,0.0));
 	pnts->push_back(new GeoLib::Point(1.0,0.0,0.0));
@@ -115,7 +117,7 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 	pnts->push_back(new GeoLib::Point(0.0,1.0,0.0));
 
 	std::string geometry_0("GeometryWithPntsAndPolyline");
-	geo_objs.addPointVec(pnts, geometry_0, nullptr, std::numeric_limits<double>::epsilon());
+	geo_objs.addPointVec(std::move(pnts), geometry_0, nullptr, std::numeric_limits<double>::epsilon());
 
 	// *** insert polyline
 	GeoLib::Polyline* ply(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0)));
@@ -124,9 +126,10 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 	ply->addPoint(2);
 	ply->addPoint(3);
 	ply->addPoint(0);
-	std::vector<GeoLib::Polyline*> *plys(new std::vector<GeoLib::Polyline*>);
+	auto plys = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 	plys->push_back(ply);
-	geo_objs.addPolylineVec(plys, geometry_0, nullptr);
+	geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
 	names.push_back(geometry_0);
 
 	// *** insert set of points number
@@ -151,7 +154,8 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 	std::vector<std::string> names;
 
 	// *** insert first set of points to vector (for first polyline)
-	std::vector<GeoLib::Point*> *pnts_0(new std::vector<GeoLib::Point*>);
+	auto pnts_0 = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	pnts_0->reserve(4);
 	pnts_0->push_back(new GeoLib::Point(0.0,0.0,0.0));
 	pnts_0->push_back(new GeoLib::Point(1.0,0.0,0.0));
@@ -159,7 +163,10 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 	pnts_0->push_back(new GeoLib::Point(0.0,1.0,0.0));
 
 	std::string geometry_0("Geometry0");
-	geo_objs.addPointVec(pnts_0, geometry_0, nullptr, std::numeric_limits<double>::epsilon());
+	geo_objs.addPointVec(std::move(pnts_0),
+	                     geometry_0,
+	                     nullptr,
+	                     std::numeric_limits<double>::epsilon());
 
 	// *** insert a named polyline into geometry
 	GeoLib::Polyline* ply_00(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0)));
@@ -168,14 +175,16 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 	ply_00->addPoint(2);
 	ply_00->addPoint(3);
 	ply_00->addPoint(0);
-	std::vector<GeoLib::Polyline*> *plys_0(new std::vector<GeoLib::Polyline*>);
+	auto plys_0 = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 	plys_0->push_back(ply_00);
 	std::map<std::string, std::size_t> *names_map_0(new std::map<std::string, std::size_t>);
 	names_map_0->insert(std::pair<std::string, std::size_t>("Polyline0FromGeometry0", 0));
-	geo_objs.addPolylineVec(plys_0, geometry_0, names_map_0);
+	geo_objs.addPolylineVec(std::move(plys_0), geometry_0, names_map_0);
 	names.push_back(geometry_0);
 
-	std::vector<GeoLib::Point*> *pnts_1(new std::vector<GeoLib::Point*>);
+	auto pnts_1 = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	pnts_1->reserve(4);
 	pnts_1->push_back(new GeoLib::Point(0.0,0.0,0.0));
 	pnts_1->push_back(new GeoLib::Point(1.0,0.0,0.0));
@@ -183,7 +192,10 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 	pnts_1->push_back(new GeoLib::Point(0.0,1.0,0.0));
 
 	std::string geometry_1("Geometry1");
-	geo_objs.addPointVec(pnts_1, geometry_1, nullptr, std::numeric_limits<double>::epsilon());
+	geo_objs.addPointVec(std::move(pnts_1),
+	                     geometry_1,
+	                     nullptr,
+	                     std::numeric_limits<double>::epsilon());
 
 	// *** insert a named polyline into geometry
 	GeoLib::Polyline* ply_10(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_1)));
@@ -192,13 +204,14 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 	GeoLib::Polyline* ply_11(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_1)));
 	ply_11->addPoint(2);
 	ply_11->addPoint(3);
-	std::vector<GeoLib::Polyline*> *plys_1(new std::vector<GeoLib::Polyline*>);
+	auto plys_1 = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 	plys_1->push_back(ply_10);
 	plys_1->push_back(ply_11);
 	std::map<std::string, std::size_t> *names_map_1(new std::map<std::string, std::size_t>);
 	names_map_1->insert(std::pair<std::string, std::size_t>("Polyline0FromGeometry1", 0));
 	names_map_1->insert(std::pair<std::string, std::size_t>("Polyline1FromGeometry1", 1));
-	geo_objs.addPolylineVec(plys_1, geometry_1, names_map_1);
+	geo_objs.addPolylineVec(std::move(plys_1), geometry_1, names_map_1);
 	names.push_back(geometry_1);
 
 	// *** merge geometries

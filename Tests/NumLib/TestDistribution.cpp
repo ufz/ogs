@@ -37,13 +37,15 @@ public:
 		_ply0(nullptr)
 	{
 		// create geometry
-		std::vector<GeoLib::Point*>* pnts (new std::vector<GeoLib::Point*>);
+		auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 		pnts->push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
 		pnts->push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
 		pnts->push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
 
-		std::vector<GeoLib::Polyline*>* plys (new std::vector<GeoLib::Polyline*>);
+		auto plys = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+		    new std::vector<GeoLib::Polyline*>);
 		_ply0 = new GeoLib::Polyline(*pnts);
 		_ply0->addPoint(0);
 		_ply0->addPoint(1);
@@ -57,13 +59,14 @@ public:
 		ply1->addPoint(0);
 		plys->push_back(ply1);
 
-		std::vector<GeoLib::Surface*>* sfcs (new std::vector<GeoLib::Surface*>);
+		auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+		    new std::vector<GeoLib::Surface*>);
 		_sfc1 = GeoLib::Surface::createSurface(*ply1);
 		sfcs->push_back(_sfc1);
 
-		_geo_objs.addPointVec(pnts,_project_name);
-		_geo_objs.addPolylineVec(plys, _project_name);
-		_geo_objs.addSurfaceVec(sfcs, _project_name);
+		_geo_objs.addPointVec(std::move(pnts), _project_name);
+		_geo_objs.addPolylineVec(std::move(plys), _project_name);
+		_geo_objs.addSurfaceVec(std::move(sfcs), _project_name);
 	}
 
 protected:
@@ -88,7 +91,8 @@ public:
 		_ply0(nullptr)
 	{
 		// create geometry
-		std::vector<GeoLib::Point*>* pnts (new std::vector<GeoLib::Point*>);
+		auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 		pnts->push_back(new GeoLib::Point(_geometric_size, 0.0, 0.0));
 		pnts->push_back(new GeoLib::Point(_geometric_size, _geometric_size, 0.0));
@@ -98,7 +102,8 @@ public:
 		pnts->push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
 		pnts->push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
 
-		std::vector<GeoLib::Polyline*>* plys (new std::vector<GeoLib::Polyline*>);
+		auto plys = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+		    new std::vector<GeoLib::Polyline*>);
 		_ply0 = new GeoLib::Polyline(*pnts); // vertical polyline
 		_ply0->addPoint(0);
 		_ply0->addPoint(4);
@@ -111,13 +116,14 @@ public:
 		ply1->addPoint(0);
 		plys->push_back(ply1);
 
-		std::vector<GeoLib::Surface*>* sfcs (new std::vector<GeoLib::Surface*>);
+		auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+		    new std::vector<GeoLib::Surface*>);
 		_sfc1 = GeoLib::Surface::createSurface(*ply1);
 		sfcs->push_back(_sfc1);
 
-		_geo_objs.addPointVec(pnts,_project_name);
-		_geo_objs.addPolylineVec(plys, _project_name);
-		_geo_objs.addSurfaceVec(sfcs, _project_name);
+		_geo_objs.addPointVec(std::move(pnts) ,_project_name);
+		_geo_objs.addPolylineVec(std::move(plys), _project_name);
+		_geo_objs.addSurfaceVec(std::move(sfcs), _project_name);
 	}
 
 protected:

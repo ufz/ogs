@@ -32,9 +32,12 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 
 	//setup test data
 	std::string geo_name("TestData");
-	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>(10);
-	std::vector<GeoLib::Polyline*> *lines = new std::vector<GeoLib::Polyline*>(5);
-	std::vector<GeoLib::Surface*> *sfcs = new std::vector<GeoLib::Surface*>(2);
+	auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>(10));
+	auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>(5));
+	auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>(2));
 	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
 
 	(*points)[0] = new GeoLib::Point(1,1,0);
@@ -47,7 +50,7 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	(*points)[7] = new GeoLib::Point(3,1,0);
 	(*points)[8] = new GeoLib::Point(3,2,0);
 	(*points)[9] = new GeoLib::Point(3,3,0);
-	geo_objects.addPointVec(points, geo_name);
+	geo_objects.addPointVec(std::move(points), geo_name);
 	const std::vector<std::size_t> pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
 
 	(*lines)[0] = new GeoLib::Polyline(*points);
@@ -63,7 +66,7 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	(*lines)[4] = new GeoLib::Polyline(*points);
 	(*lines)[4]->addPoint(pnt_id_map[7]); (*lines)[4]->addPoint(pnt_id_map[8]); (*lines)[4]->addPoint(pnt_id_map[9]);
 	ply_names->insert(std::pair<std::string, std::size_t>("right", 4));
-	geo_objects.addPolylineVec(lines, geo_name, ply_names);
+	geo_objects.addPolylineVec(std::move(lines), geo_name, ply_names);
 
 	(*sfcs)[0] = new GeoLib::Surface(*points);
 	(*sfcs)[0]->addTriangle(pnt_id_map[1],pnt_id_map[4],pnt_id_map[2]);
@@ -73,7 +76,7 @@ TEST(FileIO, XmlGmlWriterReaderTest)
 	(*sfcs)[1] = new GeoLib::Surface(*points);
 	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[7],pnt_id_map[9]);
 	(*sfcs)[1]->addTriangle(pnt_id_map[4],pnt_id_map[9],pnt_id_map[6]);
-	geo_objects.addSurfaceVec(sfcs, geo_name);
+	geo_objects.addSurfaceVec(std::move(sfcs), geo_name);
 
 	FileIO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);

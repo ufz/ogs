@@ -21,35 +21,39 @@
 
 TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 {
-	// *** insert points in vector
-	std::vector<GeoLib::Point*> *pnts(new std::vector<GeoLib::Point*>);
-	pnts->push_back(new GeoLib::Point(0.0,0.0,0.0,0));
-	pnts->push_back(new GeoLib::Point(11.0,0.0,0.0,1));
-
-	pnts->push_back(new GeoLib::Point(0.0,1.0,0.0,2));
-	pnts->push_back(new GeoLib::Point(1.0,-1.0,0.0,3));
-	pnts->push_back(new GeoLib::Point(2.0, 1.0,0.0,4));
-	pnts->push_back(new GeoLib::Point(3.0,-1.0,0.0,5));
-	pnts->push_back(new GeoLib::Point(4.0, 1.0,0.0,6));
-	pnts->push_back(new GeoLib::Point(5.0,-1.0,0.0,7));
-	pnts->push_back(new GeoLib::Point(6.0, 1.0,0.0,8));
-	pnts->push_back(new GeoLib::Point(7.0,-1.0,0.0,9));
-	pnts->push_back(new GeoLib::Point(8.0, 1.0,0.0,10));
-	pnts->push_back(new GeoLib::Point(9.0,-1.0,0.0,11));
-	pnts->push_back(new GeoLib::Point(10.0, 1.0,0.0,12));
-	pnts->push_back(new GeoLib::Point(11.0,-1.0,0.0,13));
-
-
 	GeoLib::GEOObjects geo_objs;
 	std::string geo_name("TestGeometry");
-	geo_objs.addPointVec(pnts, geo_name);
+
+	{
+		// *** insert points in vector
+		auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
+		pnts->push_back(new GeoLib::Point(0.0,0.0,0.0,0));
+		pnts->push_back(new GeoLib::Point(11.0,0.0,0.0,1));
+
+		pnts->push_back(new GeoLib::Point(0.0,1.0,0.0,2));
+		pnts->push_back(new GeoLib::Point(1.0,-1.0,0.0,3));
+		pnts->push_back(new GeoLib::Point(2.0, 1.0,0.0,4));
+		pnts->push_back(new GeoLib::Point(3.0,-1.0,0.0,5));
+		pnts->push_back(new GeoLib::Point(4.0, 1.0,0.0,6));
+		pnts->push_back(new GeoLib::Point(5.0,-1.0,0.0,7));
+		pnts->push_back(new GeoLib::Point(6.0, 1.0,0.0,8));
+		pnts->push_back(new GeoLib::Point(7.0,-1.0,0.0,9));
+		pnts->push_back(new GeoLib::Point(8.0, 1.0,0.0,10));
+		pnts->push_back(new GeoLib::Point(9.0,-1.0,0.0,11));
+		pnts->push_back(new GeoLib::Point(10.0, 1.0,0.0,12));
+		pnts->push_back(new GeoLib::Point(11.0,-1.0,0.0,13));
+
+		geo_objs.addPointVec(std::move(pnts), geo_name);
+	}
 
 	// *** create polylines
-	GeoLib::Polyline* ply0(new GeoLib::Polyline(*pnts));
+	auto& pnts = *geo_objs.getPointVec(geo_name);
+	GeoLib::Polyline* ply0(new GeoLib::Polyline(pnts));
 	ply0->addPoint(0);
 	ply0->addPoint(1);
-	GeoLib::Polyline* ply1(new GeoLib::Polyline(*pnts));
-	for (std::size_t k(2); k<pnts->size(); ++k)
+	GeoLib::Polyline* ply1(new GeoLib::Polyline(pnts));
+	for (std::size_t k(2); k<pnts.size(); ++k)
 		ply1->addPoint(k);
 	std::vector<GeoLib::Polyline*>* plys(new std::vector<GeoLib::Polyline*>);
 	plys->push_back(ply0);
