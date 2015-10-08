@@ -56,8 +56,9 @@ int main (int argc, char* argv[])
 
 	INFO("reading the TIN file...");
 	const std::string tinFileName(inArg.getValue());
-	std::vector<GeoLib::Point*> *pnt_vec(new std::vector<GeoLib::Point*>);
-	GeoLib::PointVec point_vec("SurfacePoints", pnt_vec);
+	auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
+	GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
 	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
 		return 1;

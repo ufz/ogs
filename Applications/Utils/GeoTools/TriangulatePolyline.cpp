@@ -100,13 +100,14 @@ int main(int argc, char *argv[])
 
 	// create surface
 	INFO ("Triangulating surface...");
-	std::vector<GeoLib::Surface*> *new_sfc = new std::vector<GeoLib::Surface*>;
+	auto new_sfc = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>);
 	new_sfc->push_back(GeoLib::Surface::createSurface(*line));
 
 	GeoLib::SurfaceVec* sfc_vec (geo_objects.getSurfaceVecObj(geo_names[0]));
 	if (sfc_vec == nullptr)
 	{
-		geo_objects.addSurfaceVec(new_sfc, geo_names[0]);
+		geo_objects.addSurfaceVec(std::move(new_sfc), geo_names[0]);
 		sfc_vec = geo_objects.getSurfaceVecObj(geo_names[0]);
 	}
 	else
