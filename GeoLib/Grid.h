@@ -304,52 +304,56 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 				name += std::to_string (k);
 				grid_names.push_back(name);
 
-				std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
-				points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+j*dy, llf[2]+k*dz));
-				points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+(j+1)*dy, llf[2]+k*dz));
-				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+(j+1)*dy, llf[2]+k*dz));
-				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+k*dz));
-				points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
-				points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
-				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
-				points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
-				geo_obj->addPointVec(points, grid_names[grid_names.size()-1], nullptr);
+				{
+					std::vector<GeoLib::Point*>* points (new std::vector<GeoLib::Point*>);
+					points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+j*dy, llf[2]+k*dz));
+					points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+(j+1)*dy, llf[2]+k*dz));
+					points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+(j+1)*dy, llf[2]+k*dz));
+					points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+k*dz));
+					points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
+					points->push_back(new GeoLib::Point(llf[0]+i*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
+					points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+(j+1)*dy, llf[2]+(k+1)*dz));
+					points->push_back(new GeoLib::Point(llf[0]+(i+1)*dx, llf[1]+j*dy, llf[2]+(k+1)*dz));
+					geo_obj->addPointVec(points, grid_names.back(), nullptr);
+				}
 
 				std::vector<GeoLib::Polyline*>* plys (
 				        new std::vector<GeoLib::Polyline*>);
-				GeoLib::Polyline* ply0 (new GeoLib::Polyline(*points));
+				auto const& points = *geo_obj->getPointVec(grid_names.back());
+				GeoLib::Polyline* ply0 (new GeoLib::Polyline(points));
+
 				for (std::size_t l(0); l < 4; l++)
 					ply0->addPoint(l);
 				ply0->addPoint(0);
 				plys->push_back(ply0);
 
-				GeoLib::Polyline* ply1 (new GeoLib::Polyline(*points));
+				GeoLib::Polyline* ply1 (new GeoLib::Polyline(points));
 				for (std::size_t l(4); l < 8; l++)
 					ply1->addPoint(l);
 				ply1->addPoint(4);
 				plys->push_back(ply1);
 
-				GeoLib::Polyline* ply2 (new GeoLib::Polyline(*points));
+				GeoLib::Polyline* ply2 (new GeoLib::Polyline(points));
 				ply2->addPoint(0);
 				ply2->addPoint(4);
 				plys->push_back(ply2);
 
-				GeoLib::Polyline* ply3 (new GeoLib::Polyline(*points));
+				GeoLib::Polyline* ply3 (new GeoLib::Polyline(points));
 				ply3->addPoint(1);
 				ply3->addPoint(5);
 				plys->push_back(ply3);
 
-				GeoLib::Polyline* ply4 (new GeoLib::Polyline(*points));
+				GeoLib::Polyline* ply4 (new GeoLib::Polyline(points));
 				ply4->addPoint(2);
 				ply4->addPoint(6);
 				plys->push_back(ply4);
 
-				GeoLib::Polyline* ply5 (new GeoLib::Polyline(*points));
+				GeoLib::Polyline* ply5 (new GeoLib::Polyline(points));
 				ply5->addPoint(3);
 				ply5->addPoint(7);
 				plys->push_back(ply5);
 
-				geo_obj->addPolylineVec(plys, grid_names[grid_names.size() - 1],
+				geo_obj->addPolylineVec(plys, grid_names.back(),
 					nullptr);
 			}
 		}
