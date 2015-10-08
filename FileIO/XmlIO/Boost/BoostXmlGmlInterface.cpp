@@ -51,9 +51,12 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 
 	std::string geo_name("[NN]");
 
-	std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
-	std::vector<GeoLib::Polyline*>* polylines = new std::vector<GeoLib::Polyline*>;
-	std::vector<GeoLib::Surface*>* surfaces = new std::vector<GeoLib::Surface*>;
+	auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
+	auto polylines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
+	auto surfaces = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>);
 
 	std::map<std::string, std::size_t>* pnt_names = new std::map<std::string, std::size_t>;
 	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
@@ -82,32 +85,38 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 		}
 		else if (node.first.compare("points") == 0)
 		{
-			readPoints(node.second, points, pnt_names);
-			geo_objects->addPointVec(points, geo_name, pnt_names);
+			readPoints(node.second, points.get(), pnt_names);
+			geo_objects->addPointVec(std::move(points), geo_name, pnt_names);
 		}
 		else if (node.first.compare("polylines") == 0)
-			readPolylines(node.second, polylines, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), ply_names);
+			readPolylines(node.second,
+			              polylines.get(),
+			              geo_objects->getPointVec(geo_name),
+			              geo_objects->getPointVecObj(geo_name)->getIDMap(),
+			              ply_names);
 		else if (node.first.compare("surfaces") == 0)
-			readSurfaces(node.second, surfaces, points, geo_objects->getPointVecObj(geo_name)->getIDMap(), sfc_names);
+			readSurfaces(node.second,
+			             surfaces.get(),
+			             geo_objects->getPointVec(geo_name),
+			             geo_objects->getPointVecObj(geo_name)->getIDMap(),
+			             sfc_names);
 	}
 
 	if (!polylines->empty())
 	{
-		geo_objects->addPolylineVec(polylines, geo_name, ply_names);
+		geo_objects->addPolylineVec(std::move(polylines), geo_name, ply_names);
 	}
 	else
 	{
-		delete polylines;
 		delete ply_names;
 	}
 
 	if (!surfaces->empty())
 	{
-		geo_objects->addSurfaceVec(surfaces, geo_name, sfc_names);
+		geo_objects->addSurfaceVec(std::move(surfaces), geo_name, sfc_names);
 	}
 	else
 	{
-		delete surfaces;
 		delete sfc_names;
 	}
 

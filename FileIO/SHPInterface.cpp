@@ -72,7 +72,8 @@ void SHPInterface::readSHPFile(const std::string &filename, OGSType choice, cons
 void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
 	if (numberOfElements > 0) {
-		std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>();
+		auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		SHPObject* hSHPObject;
 
 		for (int i = 0; i < numberOfElements; i++) {
@@ -84,7 +85,7 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
 			points->push_back(pnt);
 		}
 
-		_geoObjects->addPointVec(points, listName);
+		_geoObjects->addPointVec(std::move(points), listName);
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 }
@@ -92,7 +93,8 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
 void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std::string listName)
 {
 	if (numberOfElements > 0) {
-		std::vector<GeoLib::Point*>* stations(new std::vector<GeoLib::Point*>);
+		auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		stations->reserve(numberOfElements);
 		SHPObject* hSHPObject;
 
@@ -105,7 +107,7 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 			stations->push_back(stn);
 		}
 
-		_geoObjects->addStationVec(stations, listName);
+		_geoObjects->addStationVec(std::move(stations), listName);
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 }
@@ -114,8 +116,10 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 {
 	if (numberOfElements <= 0)
 		return;
-	std::vector<GeoLib::Point*>* pnts = new std::vector<GeoLib::Point*>();
-	std::vector<GeoLib::Polyline*>* lines = new std::vector<GeoLib::Polyline*>();
+	auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
+	auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 
 	std::size_t pnt_id(0);
 	// for each polyline
@@ -139,7 +143,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 
-	_geoObjects->addPointVec(pnts, listName);
+	_geoObjects->addPointVec(std::move(pnts), listName);
 	GeoLib::PointVec const& points(*(_geoObjects->getPointVecObj(listName)));
 	std::vector<std::size_t> const& pnt_id_map(points.getIDMap());
 
@@ -166,7 +170,7 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 		}
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
-	_geoObjects->addPolylineVec(lines, listName);
+	_geoObjects->addPolylineVec(std::move(lines), listName);
 }
 
 void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
@@ -174,7 +178,8 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
 	this->readPolylines(hSHP, numberOfElements, listName);
 
 	const std::vector<GeoLib::Polyline*>* polylines(_geoObjects->getPolylineVec(listName));
-	std::vector<GeoLib::Surface*>* sfc_vec(new std::vector<GeoLib::Surface*>);
+	auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>);
 
 	for (std::vector<GeoLib::Polyline*>::const_iterator poly_it(polylines->begin()); poly_it
 	                != polylines->end(); ++poly_it) {
@@ -187,7 +192,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
 	}
 
 	if (!sfc_vec->empty())
-		_geoObjects->addSurfaceVec(sfc_vec, listName);
+		_geoObjects->addSurfaceVec(std::move(sfc_vec), listName);
 }
 
 bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)

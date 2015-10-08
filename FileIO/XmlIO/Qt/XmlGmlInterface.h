@@ -52,31 +52,33 @@ private:
 	/// Reads GeoLib::Polyline-objects from an xml-file
 	void readPolylines ( const QDomNode &polylinesRoot,
 	                     std::vector<GeoLib::Polyline*>* polylines,
-	                     std::vector<GeoLib::Point*>* points,
+	                     std::vector<GeoLib::Point*> const& points,
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* &ply_names );
 
 	/// Reads GeoLib::Surface-objects from an xml-file
 	void readSurfaces  ( const QDomNode &surfacesRoot,
 	                     std::vector<GeoLib::Surface*>* surfaces,
-	                     std::vector<GeoLib::Point*>* points,
+	                     std::vector<GeoLib::Point*> const& points,
 	                     const std::vector<std::size_t> &pnt_id_map,
 	                     std::map<std::string, std::size_t>* &sfc_names );
 
 	/// Deletes all geometry data structures
-	void deleteGeometry(std::vector<GeoLib::Point*>* points,
-	                    std::vector<GeoLib::Polyline*>* polylines,
-	                    std::vector<GeoLib::Surface*>* surfaces,
-	                    std::map<std::string, std::size_t>* pnt_names,
-	                    std::map<std::string, std::size_t>* ply_names,
-	                    std::map<std::string, std::size_t>* sfc_names) const;
+	void deleteGeometry(
+	    std::unique_ptr<std::vector<GeoLib::Point*>> points,
+	    std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines,
+	    std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces,
+	    std::map<std::string, std::size_t>* pnt_names,
+	    std::map<std::string, std::size_t>* ply_names,
+	    std::map<std::string, std::size_t>* sfc_names) const;
 
 	/// Cleans up polylines-vector as well as its content if necessary
-	void deletePolylines(std::vector<GeoLib::Polyline*>* polylines,
-	                     std::map<std::string, std::size_t>* ply_names) const;
+	void deletePolylines(
+	    std::unique_ptr<std::vector<GeoLib::Polyline*>> polylines,
+	    std::map<std::string, std::size_t>* ply_names) const;
 
 	/// Cleans up surfaces-vector as well as its content if necessary
-	void deleteSurfaces(std::vector<GeoLib::Surface*>* surfaces,
+	void deleteSurfaces(std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces,
 	                    std::map<std::string, std::size_t>* sfc_names) const;
 
 	GeoLib::GEOObjects& _geo_objs;

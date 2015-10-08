@@ -54,7 +54,8 @@ int XmlStnInterface::readFile(const QString &fileName)
 	{
 		// read all the station lists
 		QDomNodeList stationList = lists.at(i).childNodes();
-		std::vector<GeoLib::Point*>* stations = new std::vector<GeoLib::Point*>;
+		auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		std::string stnName("[NN]");
 
 		for (int j = 0; j < stationList.count(); j++)
@@ -64,15 +65,13 @@ int XmlStnInterface::readFile(const QString &fileName)
 			if (station_type.compare("name") == 0)
 				stnName = station_node.toElement().text().toStdString();
 			else if (station_type.compare("stations") == 0)
-				readStations(station_node, stations, fileName.toStdString());
+				readStations(station_node, stations.get(), fileName.toStdString());
 			else if (station_type.compare("boreholes") == 0)
-				readStations(station_node, stations, fileName.toStdString());
+				readStations(station_node, stations.get(), fileName.toStdString());
 		}
 
 		if (!stations->empty())
-			_geo_objs.addStationVec(stations, stnName);
-		else
-			delete stations;
+			_geo_objs.addStationVec(std::move(stations), stnName);
 	}
 
 	return 1;
@@ -349,7 +348,8 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 	for (rapidxml::xml_node<>* station_list = doc.first_node()->first_node(); station_list;
 	     station_list = station_list->next_sibling())
 	{
-		std::vector<GeoLib::Point*>* stations = new std::vector<GeoLib::Point*>;
+		auto stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
+		    new std::vector<GeoLib::Point*>);
 		std::string stnName("[NN]");
 
 		stnName = station_list->first_node("name")->value();
@@ -358,15 +358,13 @@ int XmlStnInterface::rapidReadFile(const std::string &fileName)
 		{
 			std::string b(list_item->name());
 			if (b.compare("stations") == 0)
-				this->rapidReadStations(list_item, stations, fileName);
+				this->rapidReadStations(list_item, stations.get(), fileName);
 			if (b.compare("boreholes") == 0)
-				this->rapidReadStations(list_item, stations, fileName);
+				this->rapidReadStations(list_item, stations.get(), fileName);
 		}
 
 		if (!stations->empty())
-			_geo_objs.addStationVec(stations, stnName);
-		else
-			delete stations;
+			_geo_objs.addStationVec(std::move(stations), stnName);
 	}
 
 	doc.clear();

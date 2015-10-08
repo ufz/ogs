@@ -450,22 +450,24 @@ bool readGLIFileV4(const std::string& fname,
 	// read names of points into vector of strings
 	std::map<std::string,std::size_t>* pnt_id_names_map (new std::map<std::string,std::size_t>);
 	bool zero_based_idx(true);
-	std::vector<GeoLib::Point*>* pnt_vec(new std::vector<GeoLib::Point*>);
+	auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	INFO("GeoLib::readGLIFile(): read points from stream.");
-	tag = readPoints(in, pnt_vec, zero_based_idx, pnt_id_names_map);
+	tag = readPoints(in, pnt_vec.get(), zero_based_idx, pnt_id_names_map);
 	INFO("GeoLib::readGLIFile(): \t ok, %d points read.", pnt_vec->size());
 
 	unique_name = BaseLib::extractBaseName(fname);
 	if (!pnt_vec->empty())
 		// KR: insert into GEOObjects if not empty
-		geo->addPointVec(pnt_vec, unique_name, pnt_id_names_map, 1e-6);
+		geo->addPointVec(std::move(pnt_vec), unique_name, pnt_id_names_map, 1e-6);
 
 	// extract path for reading external files
 	const std::string path = BaseLib::extractPath(fname);
 
 	// read names of plys into temporary string-vec
 	std::map<std::string,std::size_t>* ply_names (new std::map<std::string,std::size_t>);
-	std::vector<GeoLib::Polyline*>* ply_vec(new std::vector<GeoLib::Polyline*>);
+	auto ply_vec = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 	GeoLib::PointVec & point_vec(
 		*const_cast<GeoLib::PointVec*>(geo->getPointVecObj(unique_name)));
 	std::vector<GeoLib::Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
@@ -473,7 +475,7 @@ bool readGLIFileV4(const std::string& fname,
 	if (tag.find("#POLYLINE") != std::string::npos && in)
 	{
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
-		tag = readPolylines(in, ply_vec, *ply_names, *geo_pnt_vec,
+		tag = readPolylines(in, ply_vec.get(), *ply_names, *geo_pnt_vec,
 		                    zero_based_idx,
 		                    geo->getPointVecObj(unique_name)->getIDMap(), path, errors);
 		INFO("GeoLib::readGLIFile(): \t ok, %d polylines read.", ply_vec->size());
@@ -481,7 +483,8 @@ bool readGLIFileV4(const std::string& fname,
 	else
 		INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
 
-	std::vector<GeoLib::Surface*>* sfc_vec(new std::vector<GeoLib::Surface*>);
+	auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>);
 	std::map<std::string,std::size_t>* sfc_names (new std::map<std::string,std::size_t>);
 	if (tag.find("#SURFACE") != std::string::npos && in)
 	{
@@ -502,16 +505,14 @@ bool readGLIFileV4(const std::string& fname,
 	in.close();
 
 	if (!ply_vec->empty())
-		geo->addPolylineVec(ply_vec, unique_name, ply_names);  // KR: insert into GEOObjects if not empty
+		geo->addPolylineVec(std::move(ply_vec), unique_name, ply_names);  // KR: insert into GEOObjects if not empty
 	else {
-		delete ply_vec;
 		delete ply_names;
 	}
 
 	if (!sfc_vec->empty())
-		geo->addSurfaceVec(sfc_vec, unique_name, sfc_names);  // KR: insert into GEOObjects if not empty
+		geo->addSurfaceVec(std::move(sfc_vec), unique_name, sfc_names);  // KR: insert into GEOObjects if not empty
 	else {
-		delete sfc_vec;
 		delete sfc_names;
 	}
 

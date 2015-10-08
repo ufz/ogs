@@ -68,7 +68,8 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		return false;
 	}
 	const std::size_t nNodes (nodes.size());
-	std::vector<GeoLib::Point*> *points = new std::vector<GeoLib::Point*>;
+	auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	points->reserve(nNodes);
 	for (std::size_t k(0); k<nNodes; ++k)
 	{
@@ -76,21 +77,20 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 		delete nodes[k];
 	}
 	std::string geo_name (BaseLib::extractBaseNameWithoutExtension(geo_fname));
-	geo_objects.addPointVec(points, geo_name);
+	geo_objects.addPointVec(std::move(points), geo_name);
 	const std::vector<std::size_t> &id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
 
-	std::vector<GeoLib::Surface*> *surfaces = new std::vector<GeoLib::Surface*>;
-	if (!parseSmeshFacets(poly_stream, *surfaces, *points, id_map))
 	{
-		// remove surfaces read until now but keep the points
-		for (std::size_t k=0; k<surfaces->size(); k++)
-			delete (*surfaces)[k];
-		delete surfaces;
-		surfaces = nullptr;
+		auto surfaces = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+		    new std::vector<GeoLib::Surface*>);
+		if (!parseSmeshFacets(poly_stream, *surfaces, *points, id_map))
+		{
+			// remove surfaces read until now but keep the points
+			for (std::size_t k=0; k<surfaces->size(); k++)
+				delete (*surfaces)[k];
+		}
 	}
 
-	if (surfaces)
-		geo_objects.addSurfaceVec(surfaces, geo_name);
 	return true;
 }
 
