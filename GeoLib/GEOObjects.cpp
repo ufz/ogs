@@ -41,10 +41,11 @@ GEOObjects::~GEOObjects()
 		delete _pnt_vecs[k];
 }
 
-void GEOObjects::addPointVec(std::vector<Point*>* points,
-                             std::string &name,
-                             std::map<std::string, std::size_t>* pnt_id_name_map,
-                             double eps)
+void GEOObjects::addPointVec(
+    std::unique_ptr<std::vector<Point*>> points,
+    std::string& name,
+    std::map<std::string, std::size_t>* pnt_id_name_map,
+    double eps)
 {
 	isUniquePointVecName(name);
 	if (!points || points->empty()) {
@@ -52,7 +53,7 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
 			"there aren't any points in the given vector.");
 		return;
 	}
-	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::PointType::POINT, eps));
+	_pnt_vecs.push_back(new PointVec(name, std::move(points), pnt_id_name_map, PointVec::PointType::POINT, eps));
 	_callbacks->addPointVec(name);
 }
 
@@ -97,10 +98,11 @@ bool GEOObjects::removePointVec(std::string const& name)
 	return false;
 }
 
-void GEOObjects::addStationVec(std::vector<Point*>* stations, std::string &name)
+void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
+                               std::string& name)
 {
 	isUniquePointVecName(name);
-	_pnt_vecs.push_back(new PointVec(name, stations, nullptr, PointVec::PointType::STATION));
+	_pnt_vecs.push_back(new PointVec(name, std::move(stations), nullptr, PointVec::PointType::STATION));
 	_callbacks->addStationVec(name);
 }
 
@@ -117,8 +119,9 @@ const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
 	return nullptr;
 }
 
-void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
-                                const std::string &name, std::map<std::string, std::size_t>* ply_names)
+void GEOObjects::addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
+                                const std::string& name,
+                                std::map<std::string, std::size_t>* ply_names)
 {
 	assert(lines);
 	for (std::vector<Polyline*>::iterator it (lines->begin());
@@ -136,7 +139,7 @@ void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
 	if (lines->empty())
 		return;
 
-	_ply_vecs.push_back(new PolylineVec(name, lines, ply_names));
+	_ply_vecs.push_back(new PolylineVec(name, std::move(lines), ply_names));
 	_callbacks->addPolylineVec(name);
 }
 
@@ -202,10 +205,11 @@ bool GEOObjects::removePolylineVec(std::string const& name)
 	return false;
 }
 
-void GEOObjects::addSurfaceVec(std::vector<Surface*>* sfc, const std::string &name,
+void GEOObjects::addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
+                               const std::string& name,
                                std::map<std::string, std::size_t>* sfc_names)
 {
-	_sfc_vecs.push_back(new SurfaceVec(name, sfc, sfc_names));
+	_sfc_vecs.push_back(new SurfaceVec(name, std::move(sfc), sfc_names));
 	if (!sfc || !sfc->empty()) _callbacks->addSurfaceVec(name);
 }
 
@@ -233,10 +237,11 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 	{
 		// the copy is needed because addSurfaceVec is passing it to SurfaceVec
 		// ctor, which needs write access to the surface vector.
-		std::vector<GeoLib::Surface*>* sfc = new std::vector<GeoLib::Surface*>;
+		auto sfc = std::unique_ptr<std::vector<GeoLib::Surface*>>{
+		    new std::vector<GeoLib::Surface*>};
 		for (std::size_t i = 0; i < surfaces.size(); i++)
 			sfc->push_back(surfaces[i]);
-		addSurfaceVec(sfc, name);
+		addSurfaceVec(std::move(sfc), name);
 		return false;
 	}
 }
@@ -395,7 +400,8 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 {
 	const std::size_t n_geo_names(geo_names.size());
 
-	std::vector<GeoLib::Point*>* merged_points (new std::vector<GeoLib::Point*>);
+	auto merged_points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* merged_pnt_names(new std::map<std::string, std::size_t>);
 
 	for (std::size_t j(0); j < n_geo_names; ++j) {
@@ -427,7 +433,7 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
 		}
 	}
 
-	addPointVec (merged_points, merged_geo_name, merged_pnt_names, 1e-6);
+	addPointVec (std::move(merged_points), merged_geo_name, merged_pnt_names, 1e-6);
 	return true;
 }
 
@@ -437,7 +443,8 @@ void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
 	const std::size_t n_geo_names(geo_names.size());
 	std::vector<std::size_t> ply_offsets(n_geo_names, 0);
 
-	std::vector<GeoLib::Polyline*>* merged_polylines (new std::vector<GeoLib::Polyline*>);
+	auto merged_polylines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>);
 	std::map<std::string, std::size_t>* merged_ply_names(new std::map<std::string, std::size_t>);
 
 	std::vector<GeoLib::Point*> const* merged_points(this->getPointVecObj(merged_geo_name)->getVector());
@@ -468,9 +475,8 @@ void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
 	}
 
 	if (! merged_polylines->empty()) {
-		this->addPolylineVec (merged_polylines, merged_geo_name, merged_ply_names);
+		this->addPolylineVec (std::move(merged_polylines), merged_geo_name, merged_ply_names);
 	} else {
-		delete merged_polylines;
 		delete merged_ply_names;
 	}
 }
@@ -483,7 +489,8 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
 
 	const std::size_t n_geo_names(geo_names.size());
 	std::vector<std::size_t> sfc_offsets(n_geo_names, 0);
-	std::vector<GeoLib::Surface*>* merged_sfcs (new std::vector<GeoLib::Surface*>);
+	auto merged_sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(
+	    new std::vector<GeoLib::Surface*>);
 	std::map<std::string, std::size_t>* merged_sfc_names(new std::map<std::string, std::size_t>);
 	for (std::size_t j(0); j < n_geo_names; j++) {
 		const std::vector<GeoLib::Surface*>* sfcs (this->getSurfaceVec(geo_names[j]));
@@ -513,9 +520,8 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
 		}
 	}
 	if (! merged_sfcs->empty()) {
-		this->addSurfaceVec (merged_sfcs, merged_geo_name, merged_sfc_names);
+		this->addSurfaceVec (std::move(merged_sfcs), merged_geo_name, merged_sfc_names);
 	} else {
-		delete merged_sfcs;
 		delete merged_sfc_names;
 	}
 }
