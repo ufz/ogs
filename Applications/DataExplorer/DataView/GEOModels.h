@@ -34,7 +34,7 @@ class TreeModel;
  * data objects are modified. The GUI connects to these signals. Model instances
  * are created for every data object.
  */
-class GEOModels : public QObject, public GeoLib::GEOObjects
+class GEOModels : public QObject
 {
 	Q_OBJECT
 
