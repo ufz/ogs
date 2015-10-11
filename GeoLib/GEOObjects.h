@@ -242,7 +242,6 @@ public:
 	/** destructor */
 	virtual ~GEOObjects();
 
-protected:
 	/// Returns std::numeric_limits<std::size_t>::max() if no geometry of the
 	/// given name exists or the index of the geometry in _pnt_vecs otherwise
 	std::size_t exists(const std::string &geometry_name) const;
