@@ -24,6 +24,7 @@
 
 class GEOModels;
 class MshModel;
+class TreeModel;
 class ElementTreeModel;
 class StationTreeModel;
 class ProcessModel;
