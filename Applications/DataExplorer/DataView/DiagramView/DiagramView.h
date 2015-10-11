@@ -17,7 +17,7 @@
 
 #include "DiagramScene.h"
 #include <QGraphicsView>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 /**
  * \brief A view in which to display a DiagramScene.
