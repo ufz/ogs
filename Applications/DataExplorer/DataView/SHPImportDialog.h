@@ -21,7 +21,9 @@ namespace FileIO {
 	class SHPInterface;
 }
 
-class GEOModels;
+namespace GeoLib {
+	class GEOObjects;
+}
 
 class QDialogButtonBox;
 class QFileInfo;
@@ -40,7 +42,8 @@ class SHPImportDialog : public QDialog
 
 public:
 	/// Constructor
-	SHPImportDialog(std::string filename, GEOModels* geoModels, QDialog* parent = 0);
+	SHPImportDialog(std::string filename, GeoLib::GEOObjects* geo_objects,
+	                QDialog* parent = 0);
 	~SHPImportDialog();
 
 	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.

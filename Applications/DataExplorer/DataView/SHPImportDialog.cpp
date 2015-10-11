@@ -12,7 +12,7 @@
  *
  */
 
-#include "GEOModels.h"
+#include "GeoLib/GEOObjects.h"
 #include "OGSError.h"
 #include "SHPImportDialog.h"
 #include "SHPInterface.h"
@@ -24,11 +24,20 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
-SHPImportDialog::SHPImportDialog(std::string filename, GEOModels* geoModels, QDialog* parent)
-	: QDialog(parent), _buttonBox(NULL), _layout(NULL), _shpContentLabel(NULL), _nameLabel(NULL),
-	  _listName(new QLineEdit()), _choice1(NULL), _choice2(NULL), _filename(filename),
-	  _fileType(0),
-	  _shpInterface(new FileIO::SHPInterface(geoModels))
+SHPImportDialog::SHPImportDialog(std::string filename,
+                                 GeoLib::GEOObjects* geo_objects,
+                                 QDialog* parent)
+    : QDialog(parent),
+      _buttonBox(NULL),
+      _layout(NULL),
+      _shpContentLabel(NULL),
+      _nameLabel(NULL),
+      _listName(new QLineEdit()),
+      _choice1(NULL),
+      _choice2(NULL),
+      _filename(filename),
+      _fileType(0),
+      _shpInterface(new FileIO::SHPInterface(geo_objects))
 {
 	setupDialog();
 	show();
