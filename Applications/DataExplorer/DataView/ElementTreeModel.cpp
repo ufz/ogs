@@ -43,6 +43,8 @@ ElementTreeModel::~ElementTreeModel()
 
 void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index)
 {
+	beginResetModel();
+
 	_mesh_source = grid;
 	this->clearView();
 
@@ -95,17 +97,20 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 		TreeItem* nodeItem = new TreeItem(nodeData, nodeListItem);
 		nodeListItem->appendChild(nodeItem);
 	}
-	reset();
+	endResetModel();
 }
 
 void ElementTreeModel::clearView()
 {
+	beginResetModel();
 	_rootItem->removeChildren(0, _rootItem->childCount());
-	reset();
+	endResetModel();
 }
 
 void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 {
+	endResetModel();
+
 	this->clearView();
 
 	if (!mesh)
@@ -172,7 +177,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 		_rootItem->appendChild(mat_item);
 	}
 
-	reset();
+	endResetModel();
 
 }
 
