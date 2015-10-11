@@ -14,10 +14,6 @@ target_link_libraries(ApplicationsLib INTERFACE
 )
 ADD_CATALYST_DEPENDENCY(ApplicationsLib)
 
-if(OGS_BUILD_GUI)
-	target_link_libraries(ApplicationsLib PUBLIC Qt4::QtCore)
-endif()
-
 if(TARGET Eigen)
 	add_dependencies(ApplicationsLib Eigen)
 endif()
