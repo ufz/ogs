@@ -119,6 +119,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_processModel = new TreeModel();
 
 	GEOModels* geo_models(dynamic_cast<GEOModels*>(_project.getGEOObjects()));
+	geo_models->setGEOObjects(_project.getGEOObjects());
 	geoTabWidget->treeView->setModel(geo_models->getGeoModel());
 	stationTabWidget->treeView->setModel(geo_models->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
