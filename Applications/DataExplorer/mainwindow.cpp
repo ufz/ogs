@@ -118,10 +118,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_elementModel = new ElementTreeModel();
 	_processModel = new TreeModel();
 
-	GEOModels* geo_models(dynamic_cast<GEOModels*>(_project.getGEOObjects()));
-	geo_models->setGEOObjects(_project.getGEOObjects());
-	geoTabWidget->treeView->setModel(geo_models->getGeoModel());
-	stationTabWidget->treeView->setModel(geo_models->getStationModel());
+	_geo_models.reset(new GEOModels{});
+	geoTabWidget->treeView->setModel(_geo_models->getGeoModel());
+	stationTabWidget->treeView->setModel(_geo_models->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
 	mshTabWidget->elementView->setModel(_elementModel);
 	modellingTabWidget->treeView->setModel(_processModel);
@@ -134,11 +133,11 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(open(int)));
 	connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
 	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
-	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), geo_models,
+	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geo_models.get(),
 	        SLOT(removeStationVec(std::string))); // update model when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(stationListSaved(QString, QString)), this,
 	        SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
-	connect(geo_models, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(_geo_models.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        this, SLOT(updateDataViews())); // update data view when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
 	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
@@ -147,7 +146,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)),
         this, SLOT(open(int)));
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)),
-	        geo_models, SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
+	        _geo_models.get(), SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
 	connect(geoTabWidget->treeView, SIGNAL(geometryMappingRequested(const std::string&)),
 	        this, SLOT(mapGeometry(const std::string&)));
 	connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
@@ -156,9 +155,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
 	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)),
 			this, SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)));
-	connect(geo_models, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_models.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
-	connect(geo_models, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_models.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(geoTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
 		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
@@ -204,14 +203,14 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
 
 	// VisPipeline Connects
-	connect(geo_models, SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_models.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
-	connect(geo_models, SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_models.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
 
-	connect(geo_models, SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
+	connect(_geo_models.get(), SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
-	connect(geo_models, SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(_geo_models.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        _vtkVisPipeline, SLOT(removeSourceItem(StationTreeModel *, std::string)));
 
 	connect(_meshModels, SIGNAL(meshAdded(MshModel *, QModelIndex)),
@@ -614,7 +613,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	}
 	else if (t == ImportFileType::SHAPE)
 	{
-		SHPImportDialog dlg(fileName.toStdString(), dynamic_cast<GEOModels*>(_project.getGEOObjects()));
+		SHPImportDialog dlg(fileName.toStdString(), _project.getGEOObjects());
 		dlg.exec();
 		QDir dir = QDir(fileName);
 		settings.setValue("lastOpenedShapeFileDirectory", dir.absolutePath());
@@ -996,7 +995,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
-	static_cast<GEOModels*>(_project.getGEOObjects())->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
+	_geo_models->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
 		id, this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
 }
@@ -1020,6 +1019,9 @@ void MainWindow::showLineEditDialog(const std::string &geoName)
 	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<std::size_t>, double, std::string, bool, bool)),
 			dynamic_cast<GEOModels*>(_project.getGEOObjects()),
 			SLOT(connectPolylineSegments(const std::string &, std::vector<std::size_t>, double, std::string, bool, bool)));
+	        _geo_models.get(), SLOT(connectPolylineSegments(
+	                         const std::string&, std::vector<std::size_t>,
+	                         double, std::string, bool, bool)));
 	lineEdit.exec();
 }
 
