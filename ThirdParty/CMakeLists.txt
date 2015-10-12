@@ -14,8 +14,6 @@ set_property(TARGET logog PROPERTY FOLDER "logog")
 set_property(TARGET test-logog PROPERTY FOLDER "logog")
 set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-add_subdirectory(zlib)
-
 add_subdirectory(gtest)
 
 add_subdirectory(shape)

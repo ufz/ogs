@@ -16,7 +16,6 @@ target_link_libraries(MeshRead
 	BaseLib
 	GeoLib
 	logog
-	zlib
 	${ADDITIONAL_LIBS}
 	${BOOST_LIBRARIES}
 )

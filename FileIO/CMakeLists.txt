@@ -54,7 +54,6 @@ target_link_libraries(FileIO INTERFACE
 	MeshLib
 	logog
 	shp
-	zlib
 )
 if(QT4_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
