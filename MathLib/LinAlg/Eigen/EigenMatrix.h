@@ -194,6 +194,9 @@ struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
 /// eigen matrix i.e. of the RawMatrixType.
 void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 {
+    static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
+                  "Set matrix sparsity relies on the EigenMatrix to be in "
+                  "row-major storage order.");
     auto const n_rows = matrix.getNRows();
     Eigen::VectorXi row_sizes(n_rows);
 
