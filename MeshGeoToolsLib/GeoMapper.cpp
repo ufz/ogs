@@ -279,10 +279,11 @@ void GeoMapper::advancedMapOnMesh(
 	std::vector<int> closest_geo_point(nMeshNodes);
 	// distance between geo points and mesh nodes in (x,y)-plane
 	std::vector<double> dist(nMeshNodes);
+	auto zero_coords = GeoLib::Point{};  // All coordinates zero.
 	for (std::size_t i=0; i<nMeshNodes; ++i)
 	{
-		auto const zero_coords = GeoLib::Point((*mesh->getNode(i))[0],
-			(*mesh->getNode(i))[1], 0.0, mesh->getNode(i)->getID());
+		zero_coords[0] = (*mesh->getNode(i))[0];
+		zero_coords[1] = (*mesh->getNode(i))[1];
 		GeoLib::Point* pnt = grid.getNearestPoint(zero_coords);
 		dist[i] = MathLib::sqrDist(*pnt, zero_coords);
 		closest_geo_point[i] = (dist[i]<=max_segment_length) ? pnt->getID() : -1;
