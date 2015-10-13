@@ -268,7 +268,6 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 
 	// Remove type identifier
 	_activeArrayName = QString(name).remove(0, 2).toStdString();
-	const char* arrayName = _activeArrayName.c_str();
 
 	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
 	if (!dataSet)
@@ -282,7 +281,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		if(pointData)
 		{
 			_algorithm->SetInputArrayToProcess(0, 0, 0,
-				vtkDataObject::FIELD_ASSOCIATION_POINTS, arrayName);
+				vtkDataObject::FIELD_ASSOCIATION_POINTS, _activeArrayName.c_str());
 			_mapper->SetScalarModeToUsePointFieldData();
 		}
 	}
@@ -292,7 +291,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		if(cellData)
 		{
 			_algorithm->SetInputArrayToProcess(0, 0, 0,
-				vtkDataObject::FIELD_ASSOCIATION_CELLS, arrayName);
+				vtkDataObject::FIELD_ASSOCIATION_CELLS, _activeArrayName.c_str());
 			_mapper->SetScalarModeToUseCellFieldData();
 		}
 	}
@@ -316,7 +315,7 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 		}
 		_mapper->SetLookupTable(lut);
 	}
-	_mapper->SelectColorArray(arrayName);
+	_mapper->SelectColorArray( _activeArrayName.c_str());
 }
 
 bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::string& name)
