@@ -31,6 +31,7 @@
 #include "VtkCompositeFilter.h"
 #include "VtkCompositeContourFilter.h"
 #include "VtkCompositeThresholdFilter.h"
+#include "InSituLib/VtkMappedMeshSource.h"
 
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
@@ -170,7 +171,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 	this->setBackfaceCulling(backfaceCulling);
 
 	// Set the correct threshold range
-	if ( dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) )
+	if (dynamic_cast<VtkCompositeThresholdFilter*>(this->_compositeFilter) )
 	{
 		double range[2];
 		this->GetRangeForActiveAttribute(range);
@@ -180,6 +181,10 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 		dynamic_cast<VtkCompositeFilter*>(this->_compositeFilter)
 			->SetUserVectorProperty("Range", thresholdRangeList);
 	}
+
+	// Show edges on meshes
+	if (dynamic_cast<InSituLib::VtkMappedMeshSource*>(this->_algorithm))
+		_vtkProps->GetProperties()->SetEdgeVisibility(1);
 }
 
 void VtkVisPointSetItem::SetScalarVisibility( bool on )
@@ -261,76 +266,55 @@ void VtkVisPointSetItem::SetActiveAttribute( const QString& name )
 
 	// Remove type identifier
 	_activeArrayName = QString(name).remove(0, 2).toStdString();
-	const char* charName = _activeArrayName.c_str();
+	const char* arrayName = _activeArrayName.c_str();
+
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
+	if (!dataSet)
+		return;
 
 	double range[2];
-	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->_algorithm->GetOutputDataObject(0));
-	if (dataSet)
+	GetRangeForActiveAttribute(range);
+	if (_onPointData)
 	{
-		if (_onPointData)
+		vtkPointData* pointData = dataSet->GetPointData();
+		if(pointData)
 		{
-			vtkPointData* pointData = dataSet->GetPointData();
-			if(pointData)
-			{
-				if(activeAttributeExists(pointData, _activeArrayName))
-				{
-					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, charName);
-					_mapper->SetScalarModeToUsePointFieldData();
-					pointData->GetArray(charName)->GetRange(range);
-				}
-				else
-				{
-					_activeArrayName = "";
-					_vtkProps->SetActiveAttribute("Solid Color");
-					_mapper->ScalarVisibilityOff();
-					return;
-				}
-			}
+			_algorithm->SetInputArrayToProcess(0, 0, 0,
+				vtkDataObject::FIELD_ASSOCIATION_POINTS, arrayName);
+			_mapper->SetScalarModeToUsePointFieldData();
 		}
-		else
-		{
-			vtkCellData* cellData = dataSet->GetCellData();
-			if(cellData)
-			{
-				if(activeAttributeExists(cellData, _activeArrayName))
-				{
-					_algorithm->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, charName);
-					_mapper->SetScalarModeToUseCellFieldData();
-					cellData->GetArray(charName)->GetRange(range);
-				}
-				else
-				{
-					_activeArrayName = "";
-					_vtkProps->SetActiveAttribute("Solid Color");
-					_mapper->ScalarVisibilityOff();
-					return;
-				}
-			}
-		}
-
-		_vtkProps->SetActiveAttribute(name);
-
-		QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
-		if (mapper)
-		{
-			// Create a default color table when there is no lookup table for this attribute
-			vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
-			if (lut == nullptr)
-			{
-				//std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
-				lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
-				lut->SetTableRange(range);
-				_vtkProps->SetLookUpTable(name, lut);
-			}
-
-			_mapper->SetLookupTable(lut);
-			_mapper->UseLookupTableScalarRangeOn();
-		}
-
-		_mapper->SelectColorArray(charName);
-		_mapper->ScalarVisibilityOn();
-		_mapper->Update();
 	}
+	else
+	{
+		vtkCellData* cellData = dataSet->GetCellData();
+		if(cellData)
+		{
+			_algorithm->SetInputArrayToProcess(0, 0, 0,
+				vtkDataObject::FIELD_ASSOCIATION_CELLS, arrayName);
+			_mapper->SetScalarModeToUseCellFieldData();
+		}
+	}
+
+	_vtkProps->SetActiveAttribute(name);
+
+	_mapper->ScalarVisibilityOn();
+	_mapper->UseLookupTableScalarRangeOn();
+
+	QVtkDataSetMapper* mapper = dynamic_cast<QVtkDataSetMapper*>(_mapper);
+	if (mapper)
+	{
+		// Create a default color table when there is no lookup table for this attribute
+		vtkLookupTable* lut = _vtkProps->GetLookupTable(name);
+		if (lut == nullptr)
+		{
+			//std::cout << "Creating new lookup table for: " << name.toStdString() << std::endl;
+			lut = vtkLookupTable::New(); // is not a memory leak, gets deleted in VtkAlgorithmProperties
+			lut->SetTableRange(range);
+			_vtkProps->SetLookUpTable(name, lut);
+		}
+		_mapper->SetLookupTable(lut);
+	}
+	_mapper->SelectColorArray(arrayName);
 }
 
 bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::string& name)
@@ -344,13 +328,9 @@ bool VtkVisPointSetItem::activeAttributeExists(vtkDataSetAttributes* data, std::
 	}
 	if(arrayFound)
 	{
+		// TODO Necessary? Currently this function is not called
 		data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
 		return true;
-		int i = data->SetActiveAttribute(name.c_str(), vtkDataSetAttributes::SCALARS);
-		if (i < 0)
-			return false;
-		else
-			return true;
 	}
 	else
 		return false;
