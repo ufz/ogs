@@ -194,19 +194,7 @@ template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 {
 	const vtkIdType tuple = idx / this->NumberOfComponents;
 	const vtkIdType comp = idx % this->NumberOfComponents;
-	switch (comp)
-	{
-		case 0:
-			return (*(*this->_nodes)[tuple])[0];
-		case 1:
-			return (*(*this->_nodes)[tuple])[1];
-		case 2:
-			return (*(*this->_nodes)[tuple])[2];
-		default:
-			vtkErrorMacro(<<"Invalid number of components.");
-			static Scalar dummy(0);
-			return dummy;
-	}
+	return (*(*this->_nodes)[tuple])[comp];
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>

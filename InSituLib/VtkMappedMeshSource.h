@@ -38,6 +38,7 @@
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
+class vtkCellData;
 class vtkDataArrayCollection;
 class vtkPointData;
 class vtkPoints;
@@ -87,9 +88,9 @@ private:
 		dataArray->SetName(prop_name.c_str());
 
 		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-			output.GetPointData()->AddArray(dataArray.GetPointer());
+			this->PointData->AddArray(dataArray.GetPointer());
 		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-			output.GetCellData()->AddArray(dataArray.GetPointer());
+			this->CellData->AddArray(dataArray.GetPointer());
 
 		return true;
 	}
@@ -103,6 +104,7 @@ private:
 
 	vtkNew<vtkPoints> Points;
 	vtkNew<vtkPointData> PointData;
+	vtkNew<vtkCellData> CellData;
 };
 
 } // Namespace InSituLib

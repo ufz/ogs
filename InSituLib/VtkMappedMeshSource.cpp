@@ -68,12 +68,15 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
 		return 1;
 
+	// Points
 	this->Points->Reset();
 
 	vtkNew<VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
 	nodeCoords->SetNodes(_mesh->getNodes());
 	this->Points->SetData(nodeCoords.GetPointer());
+	// output->SetPoints(this->Points.GetPointer()); // TODO: not necessary?
 
+	// Elements
 	vtkNew<VtkMappedMesh> elems;
 	elems->GetImplementation()->SetNodes(_mesh->getNodes());
 	elems->GetImplementation()->SetElements(_mesh->getElements());
@@ -84,6 +87,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 	output->Allocate(elems->GetNumberOfCells());
 	output->ShallowCopy(elems.GetPointer());
 
+	// Arrays
 	MeshLib::Properties const & properties = _mesh->getProperties();
 	std::vector<std::string> const& propertyNames = properties.getPropertyVectorNames();
 
@@ -100,6 +104,9 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
 		DBUG ("Mesh property \"%s\" with unknown data type.", *name->c_str());
 	}
+
+	output->GetPointData()->ShallowCopy(this->PointData.GetPointer());
+	output->GetCellData()->ShallowCopy(this->CellData.GetPointer());
 	return 1;
 }
 
