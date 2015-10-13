@@ -47,6 +47,11 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
                              double eps)
 {
 	isUniquePointVecName(name);
+	if (!points || points->empty()) {
+		DBUG("GEOObjects::addPointVec(): Failed to create PointVec, because "
+			"there aren't any points in the given vector.");
+		return;
+	}
 	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::PointType::POINT, eps));
 }
 

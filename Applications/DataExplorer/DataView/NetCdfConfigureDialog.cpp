@@ -277,7 +277,7 @@ int NetCdfConfigureDialog::getTimeStep()
 	return currentTime;
 }
 
-int NetCdfConfigureDialog::getDim4()
+int NetCdfConfigureDialog::getDim4() const
 {
 	NcVar* dim3Var = _currentFile->get_var(comboBoxDim4->currentIndex());
 	double timeArray[1] = {static_cast<double>(spinBoxDim4->value())};
@@ -339,7 +339,7 @@ void NetCdfConfigureDialog::createDataObject()
 		_currentVar->set_cur(newOrigin);
 		//Dimension 4:
 		if (_currentVar->num_dims() > 3) newOrigin[comboBoxDim4->currentIndex()] = getDim4(); //if there are is a 4th dimension
-		delete newOrigin;
+		delete [] newOrigin;
 	}
 
 	_currentVar->get(data_array,length); //create Array of Values

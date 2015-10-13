@@ -371,7 +371,7 @@ MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
 	std::function<double(double,double)> f)
 {
 	std::array<double, 2> step_size{{
-		(ur[0]-ll[0])/n_steps[0], (ur[1]-ll[1])/n_steps[1]}};
+		(ur[0]-ll[0])/(n_steps[0]-1), (ur[1]-ll[1])/(n_steps[1]-1)}};
 
 	std::vector<MeshLib::Node*> nodes;
 	for (std::size_t j(0); j<n_steps[1]; ++j) {
