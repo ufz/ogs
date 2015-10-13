@@ -19,17 +19,16 @@
 #include <QTreeView>
 
 class MshModel;
-class VtkMeshSource;
 class vtkUnstructuredGridAlgorithm;
 
 namespace MeshLib {
 	class Mesh;
 }
-/*
-   namespace GeoLib {
-    class Point;
-   }
- */
+
+namespace InSituLib {
+	class VtkMappedMeshSource;
+}
+
 /**
  *	The DataView is table view which acts as a base class for displaying
  *  several OSG data formats.
@@ -89,7 +88,7 @@ signals:
 	void enableRemoveButton(bool);
 	void meshSelected(MeshLib::Mesh const*const);
 	void openMeshFile(int);
-	void qualityCheckRequested(VtkMeshSource*);
+	void qualityCheckRequested(InSituLib::VtkMappedMeshSource*);
 	void removeSelectedMeshComponent();
 	void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
 	void requestMeshRemoval(const QModelIndex&);

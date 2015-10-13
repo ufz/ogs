@@ -13,7 +13,7 @@
  */
 
 #include "MshItem.h"
-#include "VtkMeshSource.h"
+#include "InSituLib/VtkMappedMeshSource.h"
 
 /**
  * Constructor.
@@ -24,11 +24,11 @@
 MshItem::MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* mesh)
 	: TreeItem(data, parent)
 {
-	_meshSource = VtkMeshSource::New();
-	_meshSource->SetMesh(mesh);
+	_mesh_source = InSituLib::VtkMappedMeshSource::New();
+	static_cast<InSituLib::VtkMappedMeshSource*>(_mesh_source)->SetMesh(mesh);
 }
 
 MshItem::~MshItem()
 {
-	_meshSource->Delete();
+	_mesh_source->Delete();
 }

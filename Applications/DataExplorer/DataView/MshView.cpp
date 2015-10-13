@@ -34,7 +34,6 @@
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"
 #include "SaveMeshDialog.h"
-#include "VtkMeshSource.h"
 
 #include "SHPInterface.h"
 #include "TetGenInterface.h"

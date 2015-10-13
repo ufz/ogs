@@ -30,6 +30,11 @@ class ProcessModel;
 class VtkVisPipeline;
 class VisPrefsDialog;
 
+namespace InSituLib
+{
+	class VtkMappedMeshSource;
+}
+
 class QSignalMapper;
 
 /**
@@ -95,7 +100,7 @@ protected slots:
 	void showGMSHPrefsDialog();
 	void showMergeGeometriesDialog();
 	void showMeshAnalysisDialog();
-	void showMshQualitySelectionDialog(VtkMeshSource* mshSource);
+	void showMshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource);
 	void showVisalizationPrefsDialog();
 	void updateDataViews();
 	void writeGeometryToFile(QString listName, QString fileName);
