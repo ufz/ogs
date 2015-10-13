@@ -48,7 +48,7 @@ private:
 	void createDataObject();
 	int valueWithMaxDim();
 	int getTimeStep();
-	int getDim4();
+	int getDim4() const;
 	double getResolution();
 	QString setName();
 	void reverseNorthSouth(double* data, std::size_t width, std::size_t height);

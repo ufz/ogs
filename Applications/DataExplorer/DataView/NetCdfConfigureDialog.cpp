@@ -277,7 +277,7 @@ int NetCdfConfigureDialog::getTimeStep()
 	return currentTime;
 }
 
-int NetCdfConfigureDialog::getDim4()
+int NetCdfConfigureDialog::getDim4() const
 {
 	NcVar* dim3Var = _currentFile->get_var(comboBoxDim4->currentIndex());
 	double timeArray[1] = {static_cast<double>(spinBoxDim4->value())};
