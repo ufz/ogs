@@ -99,6 +99,8 @@ const QString VtkVisPointSetItem::GetActiveAttribute() const
 
 void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
 {
+	// TODO vtkTransformFilter creates a new copy of the point coordinates which
+	// conflicts with VtkMappedMeshSource. Find a workaround!
 	_transformFilter = vtkTransformFilter::New();
 	vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
 	transform->Identity();

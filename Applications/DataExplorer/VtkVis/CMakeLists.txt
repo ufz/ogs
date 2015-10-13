@@ -41,6 +41,7 @@ set(SOURCES
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
 	VtkAlgorithmProperties.cpp
+	VtkConsoleOutputWindow.cpp
 )
 
 # Header files
@@ -86,6 +87,7 @@ set(HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
+	VtkConsoleOutputWindow.h
 )
 
 # Put moc files in a project folder

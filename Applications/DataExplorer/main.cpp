@@ -13,6 +13,9 @@ FbxScene* lScene = NULL;
 #endif
 
 #include "BaseLib/BuildInfo.h"
+#include "VtkVis/VtkConsoleOutputWindow.h"
+
+#include <vtkSmartPointer.h>
 
 int main(int argc, char* argv[])
 {
@@ -22,6 +25,10 @@ int main(int argc, char* argv[])
 #ifdef VTKFBXCONVERTER_FOUND
 	InitializeSdkObjects(lSdkManager, lScene);
 #endif
+
+	auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
+	vtkOutputWindow::SetInstance(myOutputWindow);
+
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
