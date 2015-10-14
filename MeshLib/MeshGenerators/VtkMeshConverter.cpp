@@ -22,6 +22,8 @@
 #include <vtkImageData.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
+#include <vtkBitArray.h>
+#include <vtkCharArray.h>
 #include <vtkUnsignedCharArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
@@ -439,6 +441,18 @@ void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &pr
 	if (vtkIntArray::SafeDownCast(&array))
 	{
 		VtkMeshConverter::convertTypedArray<int>(array, properties, type);
+		return;
+	}
+
+	if (vtkBitArray::SafeDownCast(&array))
+	{
+		VtkMeshConverter::convertTypedArray<bool>(array, properties, type);
+		return;
+	}
+
+	if (vtkCharArray::SafeDownCast(&array))
+	{
+		VtkMeshConverter::convertTypedArray<char>(array, properties, type);
 		return;
 	}
 
