@@ -55,6 +55,18 @@ public:
 		{
 			this->removePointVec(name);
 		};
+
+		_geo_objects->addStationVecCallback = [this](
+		    std::vector<GeoLib::Point*>* stations, std::string const& name)
+		{
+			this->addStationVec(stations, name);
+		};
+
+		_geo_objects->removeStationVecCallback = [this](std::string const& name)
+		{
+			this->removeStationVec(name);
+		};
+
 	}
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
@@ -75,9 +87,9 @@ public slots:
 
 	void removePointVec(std::string const& name);
 
-	virtual void addStationVec(std::vector<GeoLib::Point*>* stations,
-	                           std::string &name);
-	virtual bool removeStationVec(const std::string &name);
+	void addStationVec(std::vector<GeoLib::Point*>* stations,
+	                           std::string const& name);
+	void removeStationVec(std::string const& name);
 
 	virtual void addPolylineVec(std::vector<GeoLib::Polyline*>* lines,
 	                            const std::string &name,

@@ -96,20 +96,17 @@ void GEOModels::removePointVec(std::string const& name)
 	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POINT);
 }
 
-void GEOModels::addStationVec( std::vector<GeoLib::Point*>* stations,
-                               std::string &name)
+void GEOModels::addStationVec(std::vector<GeoLib::Point*>* stations,
+                              std::string const& name)
 {
-	_geo_objects->addStationVec(stations, name);
-
 	_stationModel->addStationList(QString::fromStdString(name), stations);
 	emit stationVectorAdded(_stationModel, name);
 }
 
-bool GEOModels::removeStationVec( const std::string &name )
+void GEOModels::removeStationVec(std::string const& name)
 {
 	emit stationVectorRemoved(_stationModel, name);
 	_stationModel->removeStationList(name);
-	return _geo_objects->removeStationVec(name);
 }
 
 void GEOModels::addPolylineVec( std::vector<GeoLib::Polyline*>* lines,
