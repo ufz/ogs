@@ -45,6 +45,16 @@ public:
 	void setGEOObjects(GeoLib::GEOObjects* geo_objects)
 	{
 		_geo_objects = geo_objects;
+
+		_geo_objects->addPointVecCallback = [this](std::string const& name)
+		{
+			this->addPointVec(name);
+		};
+
+		_geo_objects->removePointVecCallback = [this](std::string const& name)
+		{
+			this->removePointVec(name);
+		};
 	}
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
@@ -61,12 +71,9 @@ public slots:
 	/// Removes all parts (points, lines, surfaces) of the geometry with the given name.
 	virtual void removeGeometry(std::string geo_name, GeoLib::GEOTYPE type);
 
-	virtual void addPointVec(std::vector<GeoLib::Point*>* points,
-	                         std::string &name,
-	                         std::map<std::string, std::size_t>* name_pnt_id_map = NULL,
-	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
+	void addPointVec(std::string const& name);
 
-	virtual bool removePointVec(const std::string &name);
+	void removePointVec(std::string const& name);
 
 	virtual void addStationVec(std::vector<GeoLib::Point*>* stations,
 	                           std::string &name);

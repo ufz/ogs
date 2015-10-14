@@ -15,6 +15,7 @@
 #define GEOOBJECTS_H_
 
 #include <map>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -260,6 +261,17 @@ public:
 	std::vector<SurfaceVec*> _sfc_vecs;
 
 	GeoDomain _geo_domain;
+
+	std::function<void(std::string const& name)> addPointVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const& name)> removePointVecCallback =
+	    [](std::string const&)
+	{
+	};
+
 private:
 	/**
 	 * Method merges points from different geometries into one geometry. This

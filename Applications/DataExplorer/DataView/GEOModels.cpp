@@ -81,27 +81,19 @@ void GEOModels::removeGeometry(std::string geo_name, GeoLib::GEOTYPE type)
 		_geo_objects->removePointVec(geo_name);
 }
 
-void GEOModels::addPointVec( std::vector<GeoLib::Point*>* points,
-                             std::string &name,
-                             std::map<std::string, std::size_t>* name_pnt_id_map,
-                             double eps)
+void GEOModels::addPointVec(std::string const& name)
 {
-	_geo_objects->addPointVec(points, name, name_pnt_id_map, eps);
 	_geoModel->addPointList(QString::fromStdString(name),
 	                        *_geo_objects->getPointVecObj(name));
 	emit geoDataAdded(_geoModel, name, GeoLib::GEOTYPE::POINT);
 }
 
-bool GEOModels::removePointVec( const std::string &name )
+void GEOModels::removePointVec(std::string const& name)
 {
-	if (!_geo_objects->isPntVecUsed(name))
-	{
-		emit geoDataRemoved(_geoModel, name, GeoLib::GEOTYPE::POINT);
-		this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POINT);
-		return _geo_objects->removePointVec(name);
-	}
-	INFO("GEOModels::removePointVec() - There are still Polylines or Surfaces depending on these points.");
-	return false;
+	assert(!_geo_objects->isPntVecUsed(name));
+
+	emit geoDataRemoved(_geoModel, name, GeoLib::GEOTYPE::POINT);
+	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POINT);
 }
 
 void GEOModels::addStationVec( std::vector<GeoLib::Point*>* stations,

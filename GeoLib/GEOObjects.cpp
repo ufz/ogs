@@ -53,6 +53,7 @@ void GEOObjects::addPointVec(std::vector<Point*>* points,
 		return;
 	}
 	_pnt_vecs.push_back(new PointVec(name, points, pnt_id_name_map, PointVec::PointType::POINT, eps));
+	addPointVecCallback(name);
 }
 
 const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) const
@@ -75,7 +76,7 @@ const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 	return nullptr;
 }
 
-bool GEOObjects::removePointVec(const std::string &name)
+bool GEOObjects::removePointVec(std::string const& name)
 {
 	if (isPntVecUsed (name))
 	{
@@ -87,6 +88,7 @@ bool GEOObjects::removePointVec(const std::string &name)
 	     it != _pnt_vecs.end(); ++it)
 		if ((*it)->getName().compare(name) == 0)
 		{
+			removePointVecCallback(name);
 			delete *it;
 			_pnt_vecs.erase(it);
 			return true;
