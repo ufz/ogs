@@ -295,6 +295,22 @@ public:
 	    [](std::string const&)
 	{
 	};
+
+	std::function<void(std::string const&)> addSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> appendSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> removeSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
+
 private:
 	/**
 	 * Method merges points from different geometries into one geometry. This
