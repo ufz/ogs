@@ -100,7 +100,7 @@ protected slots:
 	void showGMSHPrefsDialog();
 	void showMergeGeometriesDialog();
 	void showMeshAnalysisDialog();
-	void showMshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource);
+	void showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource);
 	void showVisalizationPrefsDialog();
 	void updateDataViews();
 	void writeGeometryToFile(QString listName, QString fileName);
