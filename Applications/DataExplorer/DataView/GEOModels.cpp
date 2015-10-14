@@ -128,41 +128,33 @@ void GEOModels::removePolylineVec(std::string const& name)
 	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POLYLINE);
 }
 
-void GEOModels::addSurfaceVec( std::vector<GeoLib::Surface*>* surfaces,
-                               const std::string &name,
-                               std::map<std::string,std::size_t>* sfc_names )
+void GEOModels::addSurfaceVec(std::string const& name)
 {
-	_geo_objects->addSurfaceVec(surfaces, name, sfc_names);
-	if (surfaces->empty())
-		return;
-
-	_geoModel->addSurfaceList(QString::fromStdString(name), *_geo_objects->getSurfaceVecObj(name));
+	_geoModel->addSurfaceList(QString::fromStdString(name),
+	                          *_geo_objects->getSurfaceVecObj(name));
 	emit geoDataAdded(_geoModel, name, GeoLib::GEOTYPE::SURFACE);
 }
 
-bool GEOModels::appendSurfaceVec(const std::vector<GeoLib::Surface*> &surfaces,
-                                 const std::string &name)
+void GEOModels::appendSurfaceVec(std::string const& name)
 {
-	bool ret = _geo_objects->appendSurfaceVec (surfaces, name);
-
-	if (ret)
-		this->_geoModel->appendSurfaces(name, *_geo_objects->getSurfaceVecObj(name));
-	else
+	_geoModel->appendSurfaces(name, *_geo_objects->getSurfaceVecObj(name));
+	/*
+	 * Before separation of GEOObjects from GEOModels if the
+	 * GEOObjects::appendSurfaceVec returned false the following code was
+	 * called:
 	{
-		std::vector<GeoLib::Surface*>* sfc = new std::vector<GeoLib::Surface*>;
-		for (std::size_t i = 0; i < surfaces.size(); i++)
-			sfc->push_back(surfaces[i]);
-		_geo_objects->addSurfaceVec(sfc, name);
+	    std::vector<GeoLib::Surface*>* sfc = new std::vector<GeoLib::Surface*>;
+	    for (std::size_t i = 0; i < surfaces.size(); i++)
+	        sfc->push_back(surfaces[i]);
+	    _geo_objects->addSurfaceVec(sfc, name);
 	}
-
-	return ret;
+	*/
 }
 
-bool GEOModels::removeSurfaceVec( const std::string &name )
+void GEOModels::removeSurfaceVec(std::string const& name)
 {
 	emit geoDataRemoved(_geoModel, name, GeoLib::GEOTYPE::SURFACE);
-	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::SURFACE);
-	return _geo_objects->removeSurfaceVec (name);
+	_geoModel->removeGeoList(name, GeoLib::GEOTYPE::SURFACE);
 }
 
 void GEOModels::connectPolylineSegments(const std::string &geoName,

@@ -204,9 +204,11 @@ void GEOObjects::addSurfaceVec(std::vector<Surface*>* sfc, const std::string &na
                                std::map<std::string, std::size_t>* sfc_names)
 {
 	_sfc_vecs.push_back(new SurfaceVec(name, sfc, sfc_names));
+	if (!sfc->empty()) addSurfaceVecCallback(name);
 }
 
-bool GEOObjects::appendSurfaceVec(const std::vector<Surface*> &surfaces, const std::string &name)
+bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
+                                  const std::string& name)
 {
 	// search vector
 	std::size_t idx (0);
@@ -222,6 +224,7 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*> &surfaces, const s
 		// append surfaces
 		for (std::size_t k(0); k < n_sfcs; k++)
 			_sfc_vecs[idx]->push_back (surfaces[k]);
+		appendSurfaceVecCallback(name);
 		return true;
 	}
 	else
@@ -240,6 +243,7 @@ const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) 
 
 bool GEOObjects::removeSurfaceVec(const std::string &name)
 {
+	removePointVecCallback(name);
 	for (std::vector<SurfaceVec*>::iterator it (_sfc_vecs.begin());
 	     it != _sfc_vecs.end(); ++it)
 		if ((*it)->getName().compare (name) == 0)

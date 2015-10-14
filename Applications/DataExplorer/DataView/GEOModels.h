@@ -81,6 +81,21 @@ public:
 		{
 			this->removePolylineVec(name);
 		};
+
+		_geo_objects->addSurfaceVecCallback = [this](std::string const& name)
+		{
+			this->addSurfaceVec(name);
+		};
+
+		_geo_objects->appendSurfaceVecCallback = [this](std::string const& name)
+		{
+			this->appendSurfaceVec(name);
+		};
+
+		_geo_objects->removeSurfaceVecCallback = [this](std::string const& name)
+		{
+			this->removeSurfaceVec(name);
+		};
 	}
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
@@ -111,15 +126,12 @@ public slots:
 
 	void removePolylineVec(std::string const& name);
 
-	virtual void addSurfaceVec(std::vector<GeoLib::Surface*>* surfaces,
-	                           const std::string &name,
-	                           std::map<std::string,std::size_t>* sfc_names = NULL);
+	void addSurfaceVec(std::string const& name);
 
 	/// @brief
 	/// @param surfaces The surface vector.
-	virtual bool appendSurfaceVec(const std::vector<GeoLib::Surface*> &surfaces,
-	                              const std::string &name);
-	virtual bool removeSurfaceVec(const std::string &name);
+	void appendSurfaceVec(std::string const& name);
+	void removeSurfaceVec(std::string const& name);
 
 	/// Adds the name 'new_name' for the geo-object specified by the parameters
 	void addNameForElement(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, std::string new_name);
