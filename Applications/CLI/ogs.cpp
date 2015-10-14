@@ -13,14 +13,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#ifdef USE_MPI
-#include <mpi.h>
-#endif
-
-#ifdef USE_PETSC
-#include <petsc.h>
-#endif
-
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
 
