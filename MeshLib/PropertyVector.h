@@ -217,6 +217,8 @@ protected:
 
 private:
 	std::vector<T*> _values;
+	// hide method
+	T* at(std::size_t);
 };
 
 } // end namespace MeshLib
