@@ -5,6 +5,7 @@ set(SOURCES
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
+	VtkAlgorithmProperties.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
@@ -24,6 +25,7 @@ set(SOURCES
 	VtkCompositePointToGlyphFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConsoleOutputWindow.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
@@ -40,8 +42,6 @@ set(SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
-	VtkAlgorithmProperties.cpp
-	VtkConsoleOutputWindow.cpp
 )
 
 # Header files
