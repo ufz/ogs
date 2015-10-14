@@ -281,6 +281,20 @@ public:
 
 	std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 
+	std::function<void(std::string const&)> addPolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> appendPolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> removePolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
 private:
 	/**
 	 * Method merges points from different geometries into one geometry. This
