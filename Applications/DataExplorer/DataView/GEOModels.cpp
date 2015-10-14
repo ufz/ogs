@@ -109,32 +109,23 @@ void GEOModels::removeStationVec(std::string const& name)
 	_stationModel->removeStationList(name);
 }
 
-void GEOModels::addPolylineVec( std::vector<GeoLib::Polyline*>* lines,
-                                const std::string &name,
-                                std::map<std::string,std::size_t>* ply_names )
+void GEOModels::addPolylineVec(const std::string& name)
 {
-	_geo_objects->addPolylineVec(lines, name, ply_names);
-	if (lines->empty())
-		return;
-
-	_geoModel->addPolylineList(QString::fromStdString(name), *_geo_objects->getPolylineVecObj(name));
+	_geoModel->addPolylineList(QString::fromStdString(name),
+	                           *_geo_objects->getPolylineVecObj(name));
 	emit geoDataAdded(_geoModel, name, GeoLib::GEOTYPE::POLYLINE);
 }
 
-bool GEOModels::appendPolylineVec(const std::vector<GeoLib::Polyline*> &polylines,
-                                  const std::string &name)
+void GEOModels::appendPolylineVec(std::string const& name)
 {
-	bool ret = _geo_objects->appendPolylineVec (polylines, name);
-
-	this->_geoModel->appendPolylines(name, *_geo_objects->getPolylineVecObj(name));
-	return ret;
+	this->_geoModel->appendPolylines(name,
+	                                 *_geo_objects->getPolylineVecObj(name));
 }
 
-bool GEOModels::removePolylineVec( const std::string &name )
+void GEOModels::removePolylineVec(std::string const& name)
 {
 	emit geoDataRemoved(_geoModel, name, GeoLib::GEOTYPE::POLYLINE);
 	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POLYLINE);
-	return _geo_objects->removePolylineVec (name);
 }
 
 void GEOModels::addSurfaceVec( std::vector<GeoLib::Surface*>* surfaces,

@@ -135,9 +135,11 @@ void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
 		return;
 
 	_ply_vecs.push_back(new PolylineVec(name, lines, ply_names));
+	addPolylineVecCallback(name);
 }
 
-bool GEOObjects::appendPolylineVec(const std::vector<Polyline*> &polylines, const std::string &name)
+bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
+                                   const std::string& name)
 {
 	// search vector
 	std::size_t idx (0);
@@ -153,6 +155,7 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*> &polylines, cons
 		// append lines
 		for (std::size_t k(0); k < n_plys; k++)
 			_ply_vecs[idx]->push_back (polylines[k]);
+		appendPolylineVecCallback(name);
 		return true;
 	}
 	else
@@ -181,8 +184,9 @@ const PolylineVec* GEOObjects::getPolylineVecObj(const std::string &name) const
 	return nullptr;
 }
 
-bool GEOObjects::removePolylineVec(const std::string &name)
+bool GEOObjects::removePolylineVec(std::string const& name)
 {
+	removePolylineVecCallback(name);
 	for (std::vector<PolylineVec*>::iterator it = _ply_vecs.begin();
 	     it != _ply_vecs.end(); ++it)
 		if ((*it)->getName().compare(name) == 0)

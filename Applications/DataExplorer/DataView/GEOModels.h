@@ -67,6 +67,20 @@ public:
 			this->removeStationVec(name);
 		};
 
+		_geo_objects->addPolylineVecCallback = [this](std::string const& name)
+		{
+			this->addPolylineVec(name);
+		};
+
+		_geo_objects->appendPolylineVecCallback = [this](std::string const& name)
+		{
+			this->appendPolylineVec(name);
+		};
+
+		_geo_objects->removePolylineVecCallback = [this](std::string const& name)
+		{
+			this->removePolylineVec(name);
+		};
 	}
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
@@ -91,12 +105,11 @@ public slots:
 	                           std::string const& name);
 	void removeStationVec(std::string const& name);
 
-	virtual void addPolylineVec(std::vector<GeoLib::Polyline*>* lines,
-	                            const std::string &name,
-	                            std::map<std::string,std::size_t>* ply_names = NULL);
-	virtual bool appendPolylineVec(const std::vector<GeoLib::Polyline*> &polylines,
-	                               const std::string &name);
-	virtual bool removePolylineVec(const std::string &name);
+	void addPolylineVec(std::string const& name);
+
+	void appendPolylineVec(std::string const& name);
+
+	void removePolylineVec(std::string const& name);
 
 	virtual void addSurfaceVec(std::vector<GeoLib::Surface*>* surfaces,
 	                           const std::string &name,
