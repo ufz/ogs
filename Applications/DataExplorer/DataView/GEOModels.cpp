@@ -38,6 +38,13 @@ GEOModels::~GEOModels()
 	delete _geoModel;
 }
 
+void GEOModels::setGEOObjects(GeoLib::GEOObjects* geo_objects)
+{
+	_geo_objects = geo_objects;
+	_geo_objects->_callbacks.reset(new GEOModelsCallbacks{*this});
+
+}
+
 void GEOModels::updateGeometry(const std::string &geo_name)
 {
 	GeoLib::PointVec* points (_geo_objects->getPointVecObj(geo_name));

@@ -126,7 +126,7 @@ public:
 	/// Removes the station vector with the given name from GEOObjects
 	bool removeStationVec(const std::string &name)
 	{
-		removeStationVecCallback(name);
+		_callbacks->removeStationVec(name);
 		return removePointVec(name);
 	}
 
@@ -279,55 +279,7 @@ public:
 
 	GeoDomain _geo_domain;
 
-	std::function<void(std::string const& name)> addPointVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const& name)> removePointVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> addStationVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> removeStationVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> addPolylineVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> appendPolylineVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> removePolylineVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> addSurfaceVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> appendSurfaceVecCallback =
-	    [](std::string const&)
-	{
-	};
-
-	std::function<void(std::string const&)> removeSurfaceVecCallback =
-	    [](std::string const&)
-	{
-	};
+	std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 
 private:
 	/**

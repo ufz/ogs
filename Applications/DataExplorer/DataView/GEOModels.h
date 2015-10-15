@@ -42,60 +42,7 @@ public:
 	GEOModels(QObject* parent = 0);
 	~GEOModels();
 
-	void setGEOObjects(GeoLib::GEOObjects* geo_objects)
-	{
-		_geo_objects = geo_objects;
-
-		_geo_objects->addPointVecCallback = [this](std::string const& name)
-		{
-			this->addPointVec(name);
-		};
-
-		_geo_objects->removePointVecCallback = [this](std::string const& name)
-		{
-			this->removePointVec(name);
-		};
-
-		_geo_objects->addStationVecCallback = [this](std::string const& name)
-		{
-			this->addStationVec(name);
-		};
-
-		_geo_objects->removeStationVecCallback = [this](std::string const& name)
-		{
-			this->removeStationVec(name);
-		};
-
-		_geo_objects->addPolylineVecCallback = [this](std::string const& name)
-		{
-			this->addPolylineVec(name);
-		};
-
-		_geo_objects->appendPolylineVecCallback = [this](std::string const& name)
-		{
-			this->appendPolylineVec(name);
-		};
-
-		_geo_objects->removePolylineVecCallback = [this](std::string const& name)
-		{
-			this->removePolylineVec(name);
-		};
-
-		_geo_objects->addSurfaceVecCallback = [this](std::string const& name)
-		{
-			this->addSurfaceVec(name);
-		};
-
-		_geo_objects->appendSurfaceVecCallback = [this](std::string const& name)
-		{
-			this->appendSurfaceVec(name);
-		};
-
-		_geo_objects->removeSurfaceVecCallback = [this](std::string const& name)
-		{
-			this->removeSurfaceVec(name);
-		};
-	}
+	void setGEOObjects(GeoLib::GEOObjects* geo_objects);
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
 	StationTreeModel* getStationModel() { return _stationModel; }
