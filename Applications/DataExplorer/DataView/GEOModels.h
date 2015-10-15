@@ -161,4 +161,66 @@ signals:
 	void stationVectorRemoved(StationTreeModel* model, std::string name);
 };
 
+class GEOModelsCallbacks final : public GeoLib::GEOObjects::Callbacks
+{
+public:
+	explicit GEOModelsCallbacks(GEOModels& geo_models) : _geo_models(geo_models)
+	{
+	}
+
+	void addPointVec(std::string const& name) override
+	{
+		_geo_models.addPointVec(name);
+	}
+
+	void removePointVec(std::string const& name) override
+	{
+		_geo_models.removePointVec(name);
+	}
+
+	void addStationVec(std::string const& name) override
+	{
+		_geo_models.addStationVec(name);
+	};
+
+	void removeStationVec(std::string const& name) override
+	{
+		_geo_models.removeStationVec(name);
+	};
+
+	void addPolylineVec(std::string const& name) override
+	{
+		_geo_models.addPolylineVec(name);
+	};
+
+	void appendPolylineVec(std::string const& name) override
+	{
+		_geo_models.appendPolylineVec(name);
+	};
+
+	void removePolylineVec(std::string const& name) override
+	{
+		_geo_models.removePolylineVec(name);
+	};
+
+	void addSurfaceVec(std::string const& name) override
+	{
+		_geo_models.addSurfaceVec(name);
+	};
+
+	void appendSurfaceVec(std::string const& name) override
+	{
+		_geo_models.appendSurfaceVec(name);
+	};
+
+	void removeSurfaceVec(std::string const& name) override
+	{
+		_geo_models.removeSurfaceVec(name);
+	};
+
+private:
+	GEOModels& _geo_models;
+};
+
+
 #endif // GEOMODELS_H
