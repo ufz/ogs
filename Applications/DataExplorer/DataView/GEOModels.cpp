@@ -96,10 +96,10 @@ void GEOModels::removePointVec(std::string const& name)
 	this->_geoModel->removeGeoList(name, GeoLib::GEOTYPE::POINT);
 }
 
-void GEOModels::addStationVec(std::vector<GeoLib::Point*>* stations,
-                              std::string const& name)
+void GEOModels::addStationVec(std::string const& name)
 {
-	_stationModel->addStationList(QString::fromStdString(name), stations);
+	_stationModel->addStationList(QString::fromStdString(name),
+	                              _geo_objects->getStationVec(name));
 	emit stationVectorAdded(_stationModel, name);
 }
 

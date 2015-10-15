@@ -101,10 +101,11 @@ void GEOObjects::addStationVec(std::vector<Point*>* stations, std::string &name)
 {
 	isUniquePointVecName(name);
 	_pnt_vecs.push_back(new PointVec(name, stations, nullptr, PointVec::PointType::STATION));
-	addStationVecCallback(stations, name);
+	addStationVecCallback(name);
 }
 
-const std::vector<Point*>* GEOObjects::getStationVec(const std::string &name) const
+const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
+    const std::string& name) const
 {
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin());
 	     it != _pnt_vecs.end(); ++it) {

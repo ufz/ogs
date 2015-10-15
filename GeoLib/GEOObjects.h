@@ -105,7 +105,8 @@ public:
 	virtual void addStationVec(std::vector<Point*>* stations, std::string &name);
 
 	/// Returns the station vector with the given name.
-	const std::vector<Point*>* getStationVec(const std::string &name) const;
+	const std::vector<GeoLib::Point*>* getStationVec(
+	    const std::string& name) const;
 
 	/// Removes the station vector with the given name from GEOObjects
 	virtual bool removeStationVec(const std::string &name)
@@ -273,9 +274,8 @@ public:
 	{
 	};
 
-	std::function<void(std::vector<GeoLib::Point*>*, std::string const&)>
-	    addStationVecCallback = [](std::vector<GeoLib::Point*>*,
-	                               std::string const&)
+	std::function<void(std::string const&)> addStationVecCallback =
+	    [](std::string const&)
 	{
 	};
 
