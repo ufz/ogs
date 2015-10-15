@@ -62,6 +62,12 @@ void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 	QList<QVariant> meshData;
 	meshData << display_name << "";
 	MshItem* newMesh = new MshItem(meshData, _rootItem, mesh);
+	// Before InSituLib::VtkMappedMeshSource was introduced the
+	// MshItem::vtkSource returned an object of class VtkMeshSource
+	// which was derived from VtkAlgorithmProperties that offers a method
+	// SetName(). Now the MshItem::vtkSource() returns the VtkMappedMeshSource
+	// that does not offer the SetName() method. For this reason the following
+	// two lines are commented.
 	//if (newMesh->vtkSource())
 	//	newMesh->vtkSource()->SetName(display_name);
 	_rootItem->appendChild(newMesh);
