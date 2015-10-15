@@ -101,7 +101,7 @@ private:
 			(properties.createNewPropertyVector<T>(array_name, type, nComponents));
 		if (!vec)
 		{
-			WARN("vtkFloatArray %s could not be converted to PropertyVector.", array_name);
+			WARN("Array %s could not be converted to PropertyVector.", array_name);
 			return;
 		}
 		vec->reserve(nTuples*nComponents);
