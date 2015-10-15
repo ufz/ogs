@@ -829,7 +829,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
 		{
 			geo_mapper.mapOnDEM(file_name.toStdString());
-			dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
+			_geo_models->updateGeometry(geo_name);
 		}
 		else
 			OGSError::box("The selected file is no supported raster file.");
@@ -855,12 +855,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (new_geo_name.empty())
 	{
 		geo_mapper.mapOnMesh(mesh);
-		dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(geo_name);
+		_geo_models->updateGeometry(geo_name);
 	}
 	else
 	{
 		geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
-		dynamic_cast<GEOModels*>(_project.getGEOObjects())->updateGeometry(new_geo_name);
+		_geo_models->updateGeometry(new_geo_name);
 	}
 }
 
@@ -960,8 +960,8 @@ void MainWindow::showFileConverter() const
 void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
-	GeoLib::Station* stn = dynamic_cast<GEOModels*>(_project.getGEOObjects())->getStationModel()->stationFromIndex(
-	        index, listName);
+	GeoLib::Station* stn =
+	    _geo_models->getStationModel()->stationFromIndex(index, listName);
 
 	if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
 	{
@@ -1016,10 +1016,11 @@ void MainWindow::showMeshAnalysisDialog()
 
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
-	LineEditDialog lineEdit(*(_project.getGEOObjects()->getPolylineVecObj(geoName)));
-	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&, std::vector<std::size_t>, double, std::string, bool, bool)),
-			dynamic_cast<GEOModels*>(_project.getGEOObjects()),
-			SLOT(connectPolylineSegments(const std::string &, std::vector<std::size_t>, double, std::string, bool, bool)));
+	LineEditDialog lineEdit(
+	    *(_project.getGEOObjects()->getPolylineVecObj(geoName)));
+	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&,
+	                                           std::vector<std::size_t>, double,
+	                                           std::string, bool, bool)),
 	        _geo_models.get(), SLOT(connectPolylineSegments(
 	                         const std::string&, std::vector<std::size_t>,
 	                         double, std::string, bool, bool)));
