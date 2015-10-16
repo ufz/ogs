@@ -120,6 +120,7 @@ const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
 void GEOObjects::addPolylineVec(std::vector<Polyline*>* lines,
                                 const std::string &name, std::map<std::string, std::size_t>* ply_names)
 {
+	assert(lines);
 	for (std::vector<Polyline*>::iterator it (lines->begin());
 	     it != lines->end(); )
 	{
@@ -205,7 +206,7 @@ void GEOObjects::addSurfaceVec(std::vector<Surface*>* sfc, const std::string &na
                                std::map<std::string, std::size_t>* sfc_names)
 {
 	_sfc_vecs.push_back(new SurfaceVec(name, sfc, sfc_names));
-	if (!sfc->empty()) _callbacks->addSurfaceVec(name);
+	if (!sfc || !sfc->empty()) _callbacks->addSurfaceVec(name);
 }
 
 bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
