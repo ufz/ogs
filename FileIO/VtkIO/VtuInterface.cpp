@@ -21,6 +21,12 @@
 
 #include <logog/include/logog.hpp>
 
+#include <boost/algorithm/string/erase.hpp>
+
+#ifdef USE_PETSC
+#include <petsc.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "InSituLib/VtkMappedMeshSource.h"
 #include "MeshLib/Mesh.h"
@@ -61,6 +67,38 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 
 bool VtuInterface::writeToFile(std::string const &file_name)
 {
+#ifdef USE_PETSC
+	// Also for other approach with DDC.
+	// In such case, a MPI_Comm argument is need to this member,
+	// and PETSC_COMM_WORLD shoud be replaced with the argument.  
+	int mpi_rank;
+	MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+	const std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
+
+	const std::string file_name_rank = file_name_base + "_"
+	                                   + std::to_string(mpi_rank) + ".vtu";
+	const bool vtu_status_i = writeVTU(file_name_rank);
+	bool vtu_status = false;
+    MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
+
+	int mpi_size;
+	MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
+	bool pvtu_status = false;
+	if (mpi_rank == 0)
+	{
+		pvtu_status = writeVTU(file_name_base + ".pvtu", mpi_size);
+	}
+	MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
+
+	return vtu_status && pvtu_status;
+
+#else
+	return writeVTU(file_name);
+#endif
+}
+
+bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitions)
+{
 	if(!_mesh)
 	{
 		ERR("VtuInterface::write(): No mesh specified.");
@@ -76,6 +114,7 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 
 	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
 		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+
 	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
 	if(_use_compressor)
 		vtuWriter->SetCompressorTypeToZLib();
@@ -97,6 +136,9 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 	}
 
 	vtuWriter->SetFileName(file_name.c_str());
+	if (num_partitions > 0)
+		vtuWriter->SetNumberOfPieces(num_partitions);
+
 	return (vtuWriter->Write() > 0);
 }
 

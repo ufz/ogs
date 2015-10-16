@@ -269,9 +269,8 @@ public:
         {
             MeshLib::Location const l(_mesh.getID(),
                                       MeshLib::MeshItemType::Node, i);
-            auto const global_index =
-                _local_to_global_index_map->getGlobalIndex(
-                    l, 0);  // 0 is the component id.
+            auto const global_index = // 0 is the component id.
+              std::abs( _local_to_global_index_map->getGlobalIndex(l, 0) );
             _x->set(global_index,
                    variable.getInitialConditionValue(*_mesh.getNode(i)));
         }
@@ -324,26 +323,6 @@ public:
     {
         DBUG("Postprocessing GroundwaterFlowProcess.");
 
-#ifdef USE_PETSC // Note: this is only a test
-
-        std::vector<PetscScalar>  u(_x->size());
-        _x->getGlobalVector(&u[0]);
-
-        int rank;
-        MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
-        if(rank == 0)
-        {
-            std::string output_file_name = file_name;
-            boost::erase_last(output_file_name, ".vtu");
-            output_file_name.append(".dat");
-            std::ofstream os(output_file_name);
-            os << "SCALARS HEAD double 1"<<endl;
-            os << "LOOKUP_TABLE default"<< endl;
-            for (std::size_t i = 0; i < u.size(); ++i)
-                 os << u[i] << "\n";
-            os.close();
-        }
-#else
         std::string const property_name = "Result";
 
         // Get or create a property vector for results.
@@ -362,14 +341,32 @@ public:
         }
         assert(result && result->size() == _x->size());
 
-        // Copy result
-        for (std::size_t i = 0; i < _x->size(); ++i)
-            (*result)[i] = (*_x)[i];
+        // If in the case of DDC under parallel computation
+        if ( (_x->getRangeEnd() - _x->getRangeBegin()) != _x->size())
+        {
+            std::unique_ptr<double[]>  u( new double[_x->size()]);
+            _x->getValues(u.get()); // get the global solution
+
+            std::size_t const n = _mesh.getNNodes();
+            result->resize(n);
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                MeshLib::Location const l(_mesh.getID(),
+                                      MeshLib::MeshItemType::Node, i);
+                auto const global_index = std::abs(// 0 is the component id.
+                       _local_to_global_index_map->getGlobalIndex(l, 0) );
+                (*result)[i] = u[global_index];
+            }
+        }
+        else // serial computation
+        {
+            // Copy result
+            _x->getValues(&(*result)[0]);
+        }
 
         // Write output file
         FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
         vtu_interface.writeToFile(file_name);
-#endif
     }
 
     void postTimestep(std::string const& file_name, const unsigned /*timestep*/) override

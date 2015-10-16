@@ -38,12 +38,19 @@ public:
 	~VtuInterface();
 
 	/// Read an unstructured grid from a VTU file
-	/// \returns The converted mesh or a nullptr if reading failed
+	/// \return The converted mesh or a nullptr if reading failed
 	static MeshLib::Mesh* readVTUFile(std::string const &file_name);
 
 	/// Writes the given mesh to file.
-	/// \returns True on success, false on error
+	/// Note: a MPI_Comm type argument is needed.
+	/// \return True on success, false on error
 	bool writeToFile(std::string const &file_name);
+
+	/// Writes the given mesh to vtu file.
+	/// \param file_name      File name.
+	/// \param num_partitions Number of partiions to be merged.
+	/// \return True on success, false on error
+	bool writeVTU(std::string const &file_name, const int num_partitions = 0);
 
 private:
 	const MeshLib::Mesh* _mesh;
