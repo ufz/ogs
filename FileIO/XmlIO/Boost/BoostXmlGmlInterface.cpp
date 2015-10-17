@@ -151,12 +151,12 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 	}
 }
 
-
-void BoostXmlGmlInterface::readPolylines(BaseLib::ConfigTree const&  polylinesRoot,
-	                                     std::vector<GeoLib::Polyline*>* polylines,
-	                                     std::vector<GeoLib::Point*>* points,
-	                                     const std::vector<std::size_t> &pnt_id_map,
-	                                     std::map<std::string, std::size_t>* &ply_names )
+void BoostXmlGmlInterface::readPolylines(
+    BaseLib::ConfigTree const& polylinesRoot,
+    std::vector<GeoLib::Polyline*>* polylines,
+    std::vector<GeoLib::Point*> const* points,
+    const std::vector<std::size_t>& pnt_id_map,
+    std::map<std::string, std::size_t>*& ply_names)
 {
 	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & polyline, polylinesRoot )
 	{
@@ -203,11 +203,12 @@ void BoostXmlGmlInterface::readPolylines(BaseLib::ConfigTree const&  polylinesRo
 	}
 }
 
-void BoostXmlGmlInterface::readSurfaces(BaseLib::ConfigTree const&  surfacesRoot,
-	                                    std::vector<GeoLib::Surface*>* surfaces,
-	                                    std::vector<GeoLib::Point*>* points,
-	                                    const std::vector<std::size_t> &pnt_id_map,
-	                                    std::map<std::string, std::size_t>* &sfc_names )
+void BoostXmlGmlInterface::readSurfaces(
+    BaseLib::ConfigTree const&  surfacesRoot,
+    std::vector<GeoLib::Surface*>* surfaces,
+    std::vector<GeoLib::Point*> const* points,
+    const std::vector<std::size_t>& pnt_id_map,
+    std::map<std::string, std::size_t>*& sfc_names)
 {
 	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & surface, surfacesRoot )
 	{

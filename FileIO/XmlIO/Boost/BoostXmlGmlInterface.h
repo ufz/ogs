@@ -56,17 +56,17 @@ private:
 
 	/// Reads GeoLib::Polyline-objects from an xml-file
 	void readPolylines ( BaseLib::ConfigTree const& polylinesRoot,
-	                     std::vector<GeoLib::Polyline*>* polylines,
-	                     std::vector<GeoLib::Point*>* points,
-	                     const std::vector<std::size_t> &pnt_id_map,
-	                     std::map<std::string, std::size_t>* &ply_names );
+	                   std::vector<GeoLib::Polyline*>* polylines,
+	                   std::vector<GeoLib::Point*> const* points,
+	                   const std::vector<std::size_t>& pnt_id_map,
+	                   std::map<std::string, std::size_t>*& ply_names);
 
 	/// Reads GeoLib::Surface-objects from an xml-file
 	void readSurfaces  ( BaseLib::ConfigTree const& surfacesRoot,
-	                     std::vector<GeoLib::Surface*>* surfaces,
-	                     std::vector<GeoLib::Point*>* points,
-	                     const std::vector<std::size_t> &pnt_id_map,
-	                     std::map<std::string, std::size_t>* &sfc_names );
+	                  std::vector<GeoLib::Surface*>* surfaces,
+	                  std::vector<GeoLib::Point*> const* points,
+	                  const std::vector<std::size_t>& pnt_id_map,
+	                  std::map<std::string, std::size_t>*& sfc_names);
 
 	/// Check if the root node really specifies an GML file
 	bool isGmlFile( BaseLib::ConfigTree const& root) const;
