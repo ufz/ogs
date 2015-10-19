@@ -78,7 +78,8 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 		ERR("GEOModels::updateGeometry() - Geometry \"%s\" not found.", geo_name.c_str());
 }
 
-void GEOModels::removeGeometry(std::string geo_name, GeoLib::GEOTYPE type)
+void GEOModels::removeGeometry(std::string const& geo_name,
+                               GeoLib::GEOTYPE const type)
 {
 	if (type == GeoLib::GEOTYPE::INVALID || type == GeoLib::GEOTYPE::SURFACE)
 		_geo_objects->removeSurfaceVec(geo_name);
@@ -116,7 +117,7 @@ void GEOModels::removeStationVec(std::string const& name)
 	_stationModel->removeStationList(name);
 }
 
-void GEOModels::addPolylineVec(const std::string& name)
+void GEOModels::addPolylineVec(std::string const& name)
 {
 	_geoModel->addPolylineList(QString::fromStdString(name),
 	                           *_geo_objects->getPolylineVecObj(name));
@@ -164,12 +165,13 @@ void GEOModels::removeSurfaceVec(std::string const& name)
 	_geoModel->removeGeoList(name, GeoLib::GEOTYPE::SURFACE);
 }
 
-void GEOModels::connectPolylineSegments(const std::string &geoName,
-                                        std::vector<std::size_t> indexlist,
-                                        double proximity,
-                                        std::string ply_name,
-                                        bool closePly,
-                                        bool triangulatePly)
+void GEOModels::connectPolylineSegments(
+    const std::string& geoName,
+    std::vector<std::size_t> const& indexlist,
+    double const proximity,
+    std::string const& ply_name,
+    bool const closePly,
+    bool const triangulatePly)
 {
 	GeoLib::PolylineVec* plyVec = _geo_objects->getPolylineVecObj(geoName);
 
@@ -214,10 +216,10 @@ void GEOModels::connectPolylineSegments(const std::string &geoName,
 		OGSError::box("Corresponding geometry not found.");
 }
 
-void GEOModels::addNameForElement(const std::string &geometry_name,
-                                  const GeoLib::GEOTYPE object_type,
-                                  std::size_t id,
-                                  std::string new_name)
+void GEOModels::addNameForElement(std::string const& geometry_name,
+                                  GeoLib::GEOTYPE const object_type,
+                                  std::size_t const id,
+                                  std::string const& new_name)
 {
 	if (object_type == GeoLib::GEOTYPE::POINT)
 		_geo_objects->getPointVecObj(geometry_name)->setNameForElement(id, new_name);

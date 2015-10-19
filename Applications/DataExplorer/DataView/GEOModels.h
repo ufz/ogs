@@ -55,8 +55,10 @@ public slots:
 	 */
 	void updateGeometry(const std::string &geo_name);
 
-	/// Removes all parts (points, lines, surfaces) of the geometry with the given name.
-	virtual void removeGeometry(std::string geo_name, GeoLib::GEOTYPE type);
+	/// Removes all parts (points, lines, surfaces) of the geometry with the
+	/// given name.
+	virtual void removeGeometry(std::string const& geo_name,
+	                            GeoLib::GEOTYPE const type);
 
 	void addPointVec(std::string const& name);
 
@@ -80,18 +82,22 @@ public slots:
 	void removeSurfaceVec(std::string const& name);
 
 	/// Adds the name 'new_name' for the geo-object specified by the parameters
-	void addNameForElement(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, std::string new_name);
+	void addNameForElement(std::string const& geometry_name,
+	                       GeoLib::GEOTYPE const object_type,
+	                       std::size_t const id,
+	                       std::string const& new_name);
 
 	/// Adds a generic name to all points that are part of the specified geo-object
 	void addNameForObjectPoints(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, const std::string &geo_object_name, const std::string &new_name);
 
-	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
-	void connectPolylineSegments(const std::string &geoName,
-	                             std::vector<std::size_t> indexlist,
-	                             double proximity,
-	                             std::string ply_name,
-	                             bool closePly,
-	                             bool triangulatePly);
+	/// Calls all necessary functions to connect polyline-segments and update
+	/// all views and windows.
+	void connectPolylineSegments(const std::string& geoName,
+	                             std::vector<std::size_t> const& indexlist,
+	                             double const proximity,
+	                             std::string const& ply_name,
+	                             bool const closePly,
+	                             bool const triangulatePly);
 
 protected:
 	GeoTreeModel* _geoModel;
