@@ -278,6 +278,18 @@ bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
                             std::size_t &idx1,
                             GeoLib::Point& intersection_pnt);
 
+/// Check if two vectors are in parallel.
+/// The vectors \f$v, w \in R^3\f$ are in parallel iff the norm of the resulting
+/// vector of the cross product equals zero. Because of numerical issues the
+/// value is not always exactly zero. For this reason the user can give a
+/// tolerance value \f$\varepsilon\f$ for the zero check.
+/// @param v first vector
+/// @param w second vector
+/// @param eps tolerance value for the zero check
+/// @return true if \f$ \| v \times w \| \le \varepsilon\f$, else false
+bool isParallel(MathLib::Vector3 const& v, MathLib::Vector3 const& w,
+	double eps = std::numeric_limits<double>::epsilon());
+
 /**
  * Check if the two vectors \f$v, w \in R^3\f$ are in parallel
  * @param v first vector

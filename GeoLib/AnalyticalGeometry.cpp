@@ -48,6 +48,11 @@ Orientation getOrientation(const GeoLib::Point* p0, const GeoLib::Point* p1,
 	return getOrientation((*p0)[0], (*p0)[1], (*p1)[0], (*p1)[1], (*p2)[0], (*p2)[1]);
 }
 
+bool isParallel(MathLib::Vector3 const& v, MathLib::Vector3 const& w, double eps)
+{
+	return MathLib::crossProduct(v,w).getSqrLength() <= eps*eps;
+}
+
 bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 {
 	const double eps(std::numeric_limits<double>::epsilon());
