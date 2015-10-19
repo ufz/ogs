@@ -50,7 +50,7 @@ public:
 	/// \param file_name      File name.
 	/// \param num_partitions Number of partiions to be merged.
 	/// \return True on success, false on error
-	bool writeVTU(std::string const &file_name, const int num_partitions = 0);
+	template<typename UnstructuredGridWriter> bool writeVTU(std::string const &file_name, const int num_partitions = 1);
 
 private:
 	const MeshLib::Mesh* _mesh;
@@ -59,5 +59,7 @@ private:
 };
 
 }
+
+#include "VtuInterface-impl.h"
 
 #endif /* VTUINTERFACE_H_ */

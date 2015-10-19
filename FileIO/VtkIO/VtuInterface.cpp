@@ -16,6 +16,9 @@
 #include <vtkNew.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
+#if defined(USE_PETSC) || defined(USE_MPI)
+#include <vtkXMLPUnstructuredGridWriter.h>
+#endif
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
@@ -77,69 +80,24 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 
 	const std::string file_name_rank = file_name_base + "_"
 	                                   + std::to_string(mpi_rank) + ".vtu";
-	const bool vtu_status_i = writeVTU(file_name_rank);
+	const bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
 	bool vtu_status = false;
-    MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
+	MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
 
 	int mpi_size;
 	MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
 	bool pvtu_status = false;
 	if (mpi_rank == 0)
 	{
-		pvtu_status = writeVTU(file_name_base + ".pvtu", mpi_size);
+		pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(file_name_base + ".pvtu", mpi_size);
 	}
 	MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
 
 	return vtu_status && pvtu_status;
 
 #else
-	return writeVTU(file_name);
+	return writeVTU<vtkXMLUnstructuredGridWriter>(file_name);
 #endif
-}
-
-bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitions)
-{
-	if(!_mesh)
-	{
-		ERR("VtuInterface::write(): No mesh specified.");
-		return false;
-	}
-
-	// See http://www.paraview.org/Bug/view.php?id=13382
-	if(_data_mode == vtkXMLWriter::Appended)
-		WARN("Appended data mode is currently not supported, written file is not valid!");
-
-	vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
-	vtkSource->SetMesh(_mesh);
-
-	vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtuWriter =
-		vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-
-	vtuWriter->SetInputConnection(vtkSource->GetOutputPort());
-	if(_use_compressor)
-		vtuWriter->SetCompressorTypeToZLib();
-
-	vtuWriter->SetDataMode(_data_mode);
-	if (_data_mode == vtkXMLWriter::Appended)
-		vtuWriter->SetEncodeAppendedData(1);
-	if (_data_mode == vtkXMLWriter::Ascii)
-	{
-		// Mapped data structures for OGS to VTK mesh conversion are not fully
-		// implemented and doing so is not trivial. Therefore for ascii output
-		// the mapped unstructured grid is copied to a regular VTK grid.
-		// See http://www.vtk.org/pipermail/vtkusers/2014-October/089400.html
-		vtkSource->Update();
-		vtkSmartPointer<vtkUnstructuredGrid> tempGrid =
-			vtkSmartPointer<vtkUnstructuredGrid>::New();
-		tempGrid->DeepCopy(vtkSource->GetOutput());
-		vtuWriter->SetInputDataObject(tempGrid);
-	}
-
-	vtuWriter->SetFileName(file_name.c_str());
-	if (num_partitions > 0)
-		vtuWriter->SetNumberOfPieces(num_partitions);
-
-	return (vtuWriter->Write() > 0);
 }
 
 }
