@@ -5,7 +5,7 @@
  * This page only describes the source code itself. See the following links for additional information:
  *
  * - Wiki: https://svn.ufz.de/ogs
- * - Developer guide: http://ufz.github.com/devguide
+ * - Developer guide: http://docs.opengeosys.org/docs/devguide
  * - Data Explorer (Gui) manual: https://svn.ufz.de/ogs/attachment/wiki/WikiStart/DataExplorer-Manual.pdf?format=raw
  * - Mailing list: https://groups.google.com/forum/#!forum/ogs-users
  * - Jenkins build server: https://svn.ufz.de/hudson
