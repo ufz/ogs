@@ -119,16 +119,13 @@ public:
 
     /// Get global indices for the given component
     ///
-    /// Given the global indices for all compontents of a current mesh element,
-    /// and the index of a component, this method will return the global indices
-    /// of the component.
-    ///
     /// \param cnt collection of global indices, e.g. for a mesh element
     /// \param component_id the component of interest
+    ///
+    /// \return the global indices from \c cnt that belong to the given component
     std::vector<std::size_t>
     getIndicesForComponent(const std::vector<std::size_t>& cnt,
                            const unsigned component_id) const;
-
 
     unsigned getNumComponents() const { return _num_components; }
 
