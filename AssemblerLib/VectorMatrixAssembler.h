@@ -40,7 +40,7 @@ public:
 
     void setX(GLOBAL_VECTOR_ const * x, GLOBAL_VECTOR_ const * x_prev_ts)
     {
-        assert(x->size() == x_prev_ts->size());
+        assert((!x && !x_prev_ts) || x->size() == x_prev_ts->size());
         _x = x;
         _x_prev_ts = x_prev_ts;
     }
@@ -65,8 +65,7 @@ public:
         auto const& x = *_x;
         auto const& x_pts = *_x_prev_ts;
 
-        auto& mcmap = _data_pos.getMeshComponentMap();
-        const unsigned num_comp = mcmap.getNumComponents();
+        const unsigned num_comp = _data_pos.getNumComponents();
 
         if (_x)         localX.reserve(element_dof);
         if (_x_prev_ts) localX_pts.reserve(element_dof);
@@ -76,7 +75,7 @@ public:
         // no matter what the order of the global matrix is.
         for (unsigned c=0; c<num_comp; ++c)
         {
-            auto const idcs = mcmap.getIndicesForComponent(indices.rows, c);
+            auto const idcs = _data_pos.getIndicesForComponent(indices.rows, c);
             for (auto ip : idcs)
             {
                 if (_x)         localX.emplace_back(x[ip]);
