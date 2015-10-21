@@ -141,17 +141,6 @@ void GEOModels::addSurfaceVec(std::string const& name)
 void GEOModels::appendSurfaceVec(std::string const& name)
 {
 	_geoModel->appendSurfaces(name, *_geo_objects.getSurfaceVecObj(name));
-	/*
-	 * Before separation of GEOObjects from GEOModels if the
-	 * GEOObjects::appendSurfaceVec returned false the following code was
-	 * called:
-	{
-	    std::vector<GeoLib::Surface*>* sfc = new std::vector<GeoLib::Surface*>;
-	    for (std::size_t i = 0; i < surfaces.size(); i++)
-	        sfc->push_back(surfaces[i]);
-	    _geo_objects.addSurfaceVec(sfc, name);
-	}
-	*/
 }
 
 void GEOModels::removeSurfaceVec(std::string const& name)

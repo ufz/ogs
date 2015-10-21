@@ -187,7 +187,7 @@ public:
 	 * \param surfaces the vector with surfaces
 	 * \param name the name of the internal PolylineVec
 	 * \return true if the surfaces are appended, false if the SurfaceVec with the
-	 * corresponding name does not exist
+	 * corresponding name does not exist and the surfaces are added.
 	 * */
 	bool appendSurfaceVec(const std::vector<Surface*> &surfaces,
 	                              const std::string &name);
