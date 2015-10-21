@@ -32,9 +32,9 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/BuildInfo.h"
 
-#include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
-#include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
-#include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
 
 int main(int argc, char *argv[])
 {
