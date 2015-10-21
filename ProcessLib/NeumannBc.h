@@ -71,6 +71,8 @@ public:
         _mesh_subset_all_nodes =
             mesh_subset_all_nodes.getIntersectionByNodes(nodes);
 
+        // a mesh subset will be added only for the given component
+        // this is crucial!
         assert(component_index<num_components);
         _all_mesh_subsets[component_index] = new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
 
