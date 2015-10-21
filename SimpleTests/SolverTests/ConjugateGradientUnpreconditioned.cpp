@@ -7,7 +7,6 @@
 
 #include "MathLib/LinAlg/Solvers/CG.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrix.h"
-#include "MathLib/sparse.h"
 #include "MathLib/vector_io.h"
 
 int main(int argc, char *argv[])

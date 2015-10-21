@@ -12,7 +12,6 @@
 
 #include "MathLib/LinAlg/Solvers/BiCGStab.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixDiagPrecond.h"
-#include "MathLib/sparse.h"
 #include "MathLib/vector_io.h"
 
 int main(int argc, char *argv[])

@@ -19,7 +19,6 @@
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/Solvers/GMRes.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixDiagPrecond.h"
-#include "MathLib/sparse.h"
 #include "MathLib/vector_io.h"
 
 int main(int argc, char *argv[])
