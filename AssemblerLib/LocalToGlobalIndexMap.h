@@ -81,7 +81,19 @@ public:
         return _mesh_component_map.getGlobalIndex(l, c);
     }
 
-    AssemblerLib::MeshComponentMap const& getMeshComponentMap() const { return _mesh_component_map; }
+    // TODO: global index type
+    std::vector<std::size_t> getIndicesForComponent(
+            const std::vector<std::size_t>& cnt,
+            const unsigned component_id) const
+    {
+        return _mesh_component_map.getIndicesForComponent(cnt, component_id);
+    }
+
+    std::size_t getNumComponents() const
+    {
+        assert(_mesh_subsets.size() == _mesh_component_map.getNumComponents());
+        return _mesh_component_map.getNumComponents();
+    }
 
 private:
     /// Private constructor used by internally created local-to-global index
