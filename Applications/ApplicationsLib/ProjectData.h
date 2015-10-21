@@ -16,11 +16,7 @@
 #include <memory>
 #include <boost/property_tree/ptree.hpp>
 
-#ifdef OGS_BUILD_GUI
-#include "Applications/DataExplorer/DataView/GEOModels.h"
-#else
 #include "GeoLib/GEOObjects.h"
-#endif
 
 #include "NumLib/TimeStepping/Algorithms/ITimeStepAlgorithm.h"
 
@@ -188,11 +184,7 @@ private:
 	void parseTimeStepping(ConfigTree const& timestepping_config);
 
 private:
-#ifdef OGS_BUILD_GUI
-	GEOModels *_geoObjects = new GEOModels();
-#else
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
-#endif
 	std::vector<MeshLib::Mesh*> _mesh_vec;
 	std::vector<ProcessLib::Process*> _processes;
 	std::vector<ProcessLib::ProcessVariable> _process_variables;

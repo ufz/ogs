@@ -34,12 +34,12 @@ class TreeModel;
  * data objects are modified. The GUI connects to these signals. Model instances
  * are created for every data object.
  */
-class GEOModels : public QObject, public GeoLib::GEOObjects
+class GEOModels : public QObject
 {
 	Q_OBJECT
 
 public:
-	GEOModels(QObject* parent = 0);
+	GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent = nullptr);
 	~GEOModels();
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
@@ -53,56 +53,56 @@ public slots:
 	 */
 	void updateGeometry(const std::string &geo_name);
 
-	/// Removes all parts (points, lines, surfaces) of the geometry with the given name.
-	virtual void removeGeometry(std::string geo_name, GeoLib::GEOTYPE type);
+	/// Removes all parts (points, lines, surfaces) of the geometry with the
+	/// given name.
+	virtual void removeGeometry(std::string const& geo_name,
+	                            GeoLib::GEOTYPE const type);
 
-	virtual void addPointVec(std::vector<GeoLib::Point*>* points,
-	                         std::string &name,
-	                         std::map<std::string, std::size_t>* name_pnt_id_map = NULL,
-	                         double eps = sqrt(std::numeric_limits<double>::epsilon()));
+	void addPointVec(std::string const& name);
 
-	virtual bool removePointVec(const std::string &name);
+	void removePointVec(std::string const& name);
 
-	virtual void addStationVec(std::vector<GeoLib::Point*>* stations,
-	                           std::string &name);
-	virtual bool removeStationVec(const std::string &name);
+	void addStationVec(std::string const& name);
 
-	virtual void addPolylineVec(std::vector<GeoLib::Polyline*>* lines,
-	                            const std::string &name,
-	                            std::map<std::string,std::size_t>* ply_names = NULL);
-	virtual bool appendPolylineVec(const std::vector<GeoLib::Polyline*> &polylines,
-	                               const std::string &name);
-	virtual bool removePolylineVec(const std::string &name);
+	void removeStationVec(std::string const& name);
 
-	virtual void addSurfaceVec(std::vector<GeoLib::Surface*>* surfaces,
-	                           const std::string &name,
-	                           std::map<std::string,std::size_t>* sfc_names = NULL);
+	void addPolylineVec(std::string const& name);
+
+	void appendPolylineVec(std::string const& name);
+
+	void removePolylineVec(std::string const& name);
+
+	void addSurfaceVec(std::string const& name);
 
 	/// @brief
 	/// @param surfaces The surface vector.
-	virtual bool appendSurfaceVec(const std::vector<GeoLib::Surface*> &surfaces,
-	                              const std::string &name);
-	virtual bool removeSurfaceVec(const std::string &name);
+	void appendSurfaceVec(std::string const& name);
+	void removeSurfaceVec(std::string const& name);
 
 	/// Adds the name 'new_name' for the geo-object specified by the parameters
-	void addNameForElement(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id, std::string new_name);
+	void addNameForElement(std::string const& geometry_name,
+	                       GeoLib::GEOTYPE const object_type,
+	                       std::size_t const id,
+	                       std::string const& new_name);
 
 	/// Adds a generic name to all points that are part of the specified geo-object
 	void addNameForObjectPoints(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, const std::string &geo_object_name, const std::string &new_name);
 
-	/// Calls all necessary functions to connect polyline-segments and update all views and windows.
-	void connectPolylineSegments(const std::string &geoName,
-	                             std::vector<std::size_t> indexlist,
-	                             double proximity,
-	                             std::string ply_name,
-	                             bool closePly,
-	                             bool triangulatePly);
+	/// Calls all necessary functions to connect polyline-segments and update
+	/// all views and windows.
+	void connectPolylineSegments(const std::string& geoName,
+	                             std::vector<std::size_t> const& indexlist,
+	                             double const proximity,
+	                             std::string const& ply_name,
+	                             bool const closePly,
+	                             bool const triangulatePly);
 
 protected:
 	GeoTreeModel* _geoModel;
 	StationTreeModel* _stationModel;
 
 private:
+	GeoLib::GEOObjects& _geo_objects;
 
 signals:
 	void geoDataAdded(GeoTreeModel*, std::string, GeoLib::GEOTYPE);
@@ -111,5 +111,67 @@ signals:
 	void stationVectorAdded(StationTreeModel* model, std::string name);
 	void stationVectorRemoved(StationTreeModel* model, std::string name);
 };
+
+class GEOModelsCallbacks final : public GeoLib::GEOObjects::Callbacks
+{
+public:
+	explicit GEOModelsCallbacks(GEOModels& geo_models) : _geo_models(geo_models)
+	{
+	}
+
+	void addPointVec(std::string const& name) override
+	{
+		_geo_models.addPointVec(name);
+	}
+
+	void removePointVec(std::string const& name) override
+	{
+		_geo_models.removePointVec(name);
+	}
+
+	void addStationVec(std::string const& name) override
+	{
+		_geo_models.addStationVec(name);
+	};
+
+	void removeStationVec(std::string const& name) override
+	{
+		_geo_models.removeStationVec(name);
+	};
+
+	void addPolylineVec(std::string const& name) override
+	{
+		_geo_models.addPolylineVec(name);
+	};
+
+	void appendPolylineVec(std::string const& name) override
+	{
+		_geo_models.appendPolylineVec(name);
+	};
+
+	void removePolylineVec(std::string const& name) override
+	{
+		_geo_models.removePolylineVec(name);
+	};
+
+	void addSurfaceVec(std::string const& name) override
+	{
+		_geo_models.addSurfaceVec(name);
+	};
+
+	void appendSurfaceVec(std::string const& name) override
+	{
+		_geo_models.appendSurfaceVec(name);
+	};
+
+	void removeSurfaceVec(std::string const& name) override
+	{
+		_geo_models.removeSurfaceVec(name);
+	};
+
+private:
+	GEOModels& _geo_models;
+};
+
 
 #endif // GEOMODELS_H

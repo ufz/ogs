@@ -24,6 +24,7 @@
 
 class GEOModels;
 class MshModel;
+class TreeModel;
 class ElementTreeModel;
 class StationTreeModel;
 class ProcessModel;
@@ -132,6 +133,8 @@ private:
 	QSignalMapper* _signal_mapper;
 
 	VisPrefsDialog* _visPrefsDialog;
+
+	std::unique_ptr<GEOModels> _geo_models;
 
 signals:
 	void fileUsed( QString filename );
