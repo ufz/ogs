@@ -29,23 +29,12 @@
 
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/RunTime.h"
-
+#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/BuildInfo.h"
+
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
-
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
 
 int main(int argc, char *argv[])
 {
@@ -85,7 +74,7 @@ int main(int argc, char *argv[])
 	std::string fname_mat (matrix_arg.getValue());
 	bool verbose (verbosity_arg.getValue());
 
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 

@@ -34,18 +34,7 @@
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/RunTime.h"
-
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
+#include "BaseLib/LogogSimpleFormatter.h"
 
 int main(int argc, char *argv[])
 {
@@ -78,11 +67,11 @@ int main(int argc, char *argv[])
 
 	std::string fname_mat (matrix_arg.getValue());
 
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
-	logog::LogFile *logog_file(NULL);
+	logog::LogFile *logog_file(nullptr);
 	if (! output_arg.getValue().empty()) {
 		logog_file = new logog::LogFile(output_arg.getValue().c_str());
 		logog_file->SetFormatter( *custom_format );
