@@ -174,8 +174,8 @@ void GEOModels::connectPolylineSegments(
 	{
 		const std::vector<GeoLib::Polyline*>* polylines = plyVec->getVector();
 		std::vector<GeoLib::Polyline*> ply_list;
-		for (std::size_t i = 0; i < indexlist.size(); i++)
-			ply_list.push_back( (*polylines)[indexlist[i]] );
+		for (auto & elem : indexlist)
+			ply_list.push_back( (*polylines)[elem] );
 
 		// connect polylines
 		GeoLib::Polyline* new_line = GeoLib::Polyline::constructPolylineFromSegments(

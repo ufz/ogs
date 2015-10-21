@@ -43,7 +43,7 @@ class SHPImportDialog : public QDialog
 public:
 	/// Constructor
 	SHPImportDialog(std::string filename, GeoLib::GEOObjects* geo_objects,
-	                QDialog* parent = 0);
+	                QDialog* parent = nullptr);
 	~SHPImportDialog();
 
 	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
