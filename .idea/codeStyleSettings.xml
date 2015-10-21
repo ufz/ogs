@@ -45,10 +45,19 @@
             <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="InstanceMethod" />
             <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="DeallocMethod" />
           </class>
+          <extensions>
+            <pair source="cpp" header="h" />
+            <pair source="c" header="h" />
+          </extensions>
         </Objective-C-extensions>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
+        <codeStyleSettings language="CMake">
+          <indentOptions>
+            <option name="USE_TAB_CHARACTER" value="true" />
+          </indentOptions>
+        </codeStyleSettings>
         <codeStyleSettings language="ObjectiveC">
           <option name="CLASS_BRACE_STYLE" value="2" />
           <indentOptions>

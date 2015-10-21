@@ -32,10 +32,11 @@
 #include "VtkCompositeElementSelectionFilter.h"
 #include "VtkCompositeGeoObjectFilter.h"
 #include "VtkFilterFactory.h"
-#include "VtkMeshSource.h"
 #include "VtkVisImageItem.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
+
+#include "InSituLib/VtkMappedMeshSource.h"
 
 #include <vtkAlgorithm.h>
 #include <vtkCamera.h>
@@ -431,7 +432,9 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 		ERR("VtkVisPipeline::listArrays(): not a valid vtkDataSet.");
 }
 
-void VtkVisPipeline::showMeshElementQuality(VtkMeshSource* source, MeshLib::MeshQualityType t, std::vector<double> const& quality)
+void VtkVisPipeline::showMeshElementQuality(
+	InSituLib::VtkMappedMeshSource* source,
+	MeshLib::MeshQualityType t, std::vector<double> const& quality)
 {
 	if (!source || quality.empty())
 		return;

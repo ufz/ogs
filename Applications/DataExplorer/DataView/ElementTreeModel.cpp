@@ -13,15 +13,17 @@
  */
 
 #include "ElementTreeModel.h"
-#include "OGSError.h"
-#include "TreeItem.h"
-#include "Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshInformation.h"
-#include "Elements/Element.h"
-#include "AABB.h"
 
-#include "VtkMeshSource.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/MeshInformation.h"
+#include "MeshLib/Elements/Element.h"
+
+#include "GeoLib/AABB.h"
+
+#include "InSituLib/VtkMappedMeshSource.h"
+
+#include "TreeItem.h"
 
 /**
  * Constructor.
@@ -44,7 +46,8 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
 	_mesh_source = grid;
 	this->clearView();
 
-	VtkMeshSource const*const source = dynamic_cast<VtkMeshSource const*const>(grid);
+	InSituLib::VtkMappedMeshSource const*const source =
+		dynamic_cast<InSituLib::VtkMappedMeshSource const*const>(grid);
 
 	if (!source)
 		return;

@@ -5,6 +5,7 @@ set(SOURCES
 	VisPrefsDialog.cpp
 	VisualizationWidget.cpp
 	VtkAddFilterDialog.cpp
+	VtkAlgorithmProperties.cpp
 	VtkAlgorithmPropertyCheckbox.cpp
 	VtkAlgorithmPropertyLineEdit.cpp
 	VtkAlgorithmPropertyVectorEdit.cpp
@@ -24,10 +25,10 @@ set(SOURCES
 	VtkCompositePointToGlyphFilter.cpp
 	VtkCompositeTextureOnSurfaceFilter.cpp
 	VtkCompositeThresholdFilter.cpp
+	VtkConsoleOutputWindow.cpp
 	VtkFilterFactory.cpp
 	VtkGeoImageSource.cpp
 	VtkImageDataToLinePolyDataFilter.cpp
-	VtkMeshSource.cpp
 	VtkPolylinesSource.cpp
 	VtkPointsSource.cpp
 	VtkRaster.cpp
@@ -41,7 +42,6 @@ set(SOURCES
 	VtkVisPipelineView.cpp
 	VtkVisPointSetItem.cpp
 	VtkVisTabWidget.cpp
-	VtkAlgorithmProperties.cpp
 )
 
 # Header files
@@ -65,7 +65,6 @@ set(HEADERS
 	VtkFilterFactory.h
 	VtkGeoImageSource.h
 	VtkImageDataToLinePolyDataFilter.h
-	VtkMeshSource.h
 	VtkPolylinesSource.h
 	VtkPointsSource.h
 	VtkRaster.h
@@ -88,6 +87,7 @@ set(HEADERS
 	VtkVisPipeline.h
 	VtkVisPipelineView.h
 	VtkVisTabWidget.h
+	VtkConsoleOutputWindow.h
 )
 
 # Put moc files in a project folder
