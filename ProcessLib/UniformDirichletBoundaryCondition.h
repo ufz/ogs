@@ -16,7 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
-#include "AssemblerLib/MeshComponentMap.h"
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
@@ -55,7 +55,7 @@ public:
     /// the constant _value.
     void initialize(
             MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            AssemblerLib::MeshComponentMap const& mcmap,
+            AssemblerLib::LocalToGlobalIndexMap const& local2global,
             std::size_t component_id,
             std::vector<std::size_t>& global_ids,
             std::vector<double>& values)
@@ -67,7 +67,7 @@ public:
         // convert mesh node ids to global index for the given component
         for (auto& id : ids)
         {
-            id = mcmap.getGlobalIndex(
+            id = local2global.getGlobalIndex(
                      MeshLib::Location(searcher.getMesh().getID(),
                                        MeshLib::MeshItemType::Node,
                                        id),

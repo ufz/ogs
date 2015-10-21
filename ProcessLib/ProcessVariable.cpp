@@ -116,12 +116,12 @@ MeshLib::Mesh const& ProcessVariable::getMesh() const
 
 void ProcessVariable::initializeDirichletBCs(
     MeshGeoToolsLib::MeshNodeSearcher& searcher,
-    AssemblerLib::MeshComponentMap const& mcmap,
+    AssemblerLib::LocalToGlobalIndexMap const& local2global,
     const unsigned nodal_dof_idx,
     std::vector<std::size_t>& global_ids, std::vector<double>& values)
 {
     for (auto& bc : _dirichlet_bcs)
-        bc->initialize(searcher, mcmap, nodal_dof_idx,
+        bc->initialize(searcher, local2global, nodal_dof_idx,
                        global_ids, values);
 }
 

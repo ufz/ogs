@@ -59,9 +59,8 @@ public:
 	/// Returns a mesh on which the process variable is defined.
 	MeshLib::Mesh const& getMesh() const;
 
-	void initializeDirichletBCs(
-	        MeshGeoToolsLib::MeshNodeSearcher& searcher,
-	        AssemblerLib::MeshComponentMap const& mcmap,
+	void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
+	        const AssemblerLib::LocalToGlobalIndexMap& local2global,
 	        const unsigned nodal_dof_idx,
 	        std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
