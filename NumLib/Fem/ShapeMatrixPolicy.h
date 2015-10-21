@@ -26,6 +26,12 @@ namespace detail
         using type = Eigen::Matrix<double, N, M, Eigen::RowMajor>;
     };
 
+    template <int M>
+    struct EigenMatrixType<0, M>
+    {
+        using type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    };
+
     /// Specialisation for Nx1 matrices which can be stored only in column major
     /// form in Eigen-3.2.5.
     template <int N>
@@ -34,6 +40,11 @@ namespace detail
         using type = Eigen::Matrix<double, N, 1, Eigen::ColMajor>;
     };
 
+    template <>
+    struct EigenMatrixType<0, 1>
+    {
+        using type = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>;
+    };
 
 }   // detail
 
