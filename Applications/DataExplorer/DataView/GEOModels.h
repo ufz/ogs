@@ -39,10 +39,8 @@ class GEOModels : public QObject
 	Q_OBJECT
 
 public:
-	GEOModels(QObject* parent = 0);
+	GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent = 0);
 	~GEOModels();
-
-	void setGEOObjects(GeoLib::GEOObjects* geo_objects);
 
 	GeoTreeModel* getGeoModel() { return _geoModel; }
 	StationTreeModel* getStationModel() { return _stationModel; }
@@ -104,7 +102,7 @@ protected:
 	StationTreeModel* _stationModel;
 
 private:
-	GeoLib::GEOObjects* _geo_objects;
+	GeoLib::GEOObjects& _geo_objects;
 
 signals:
 	void geoDataAdded(GeoTreeModel*, std::string, GeoLib::GEOTYPE);

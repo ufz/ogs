@@ -118,8 +118,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_elementModel = new ElementTreeModel();
 	_processModel = new TreeModel();
 
-	_geo_models.reset(new GEOModels{});
-	_geo_models->setGEOObjects(_project.getGEOObjects());
+	_geo_models.reset(new GEOModels{*_project.getGEOObjects()});
 	geoTabWidget->treeView->setModel(_geo_models->getGeoModel());
 	stationTabWidget->treeView->setModel(_geo_models->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModels);
