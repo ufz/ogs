@@ -12,9 +12,9 @@
  *
  */
 
-#include "sparse.h"
 #include <limits>
 #include <cmath>
+#include <iostream>
 
 namespace MathLib {
 

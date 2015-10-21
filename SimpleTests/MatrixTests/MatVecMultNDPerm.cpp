@@ -26,11 +26,10 @@
 #include "BaseLib/RunTime.h"
 #include "BaseLib/CPUTime.h"
 
-#include "MathLib/sparse.h"
+#include "MathLib/LinAlg/Sparse/sparse.h"
 #include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
 #include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReordered.h"
 #include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
-#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 
 /**
  * new formatter for logog

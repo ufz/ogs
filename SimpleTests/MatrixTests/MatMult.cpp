@@ -37,7 +37,6 @@
 #include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixOpenMP.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixPThreads.h"
-#include "MathLib/sparse.h"
 
 /**
  * new formatter for logog

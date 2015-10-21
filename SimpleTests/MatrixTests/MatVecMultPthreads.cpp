@@ -30,7 +30,6 @@
 #include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixOpenMP.h"
 #include "MathLib/LinAlg/Sparse/CRSMatrixPThreads.h"
-#include "MathLib/sparse.h"
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/CPUTime.h"

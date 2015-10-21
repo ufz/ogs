@@ -34,7 +34,6 @@
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
 #include "BaseLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
-#include "BaseLib/sparse.h"
 
 /**
  * new formatter for logog

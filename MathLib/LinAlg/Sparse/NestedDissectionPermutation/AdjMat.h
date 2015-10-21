@@ -15,7 +15,7 @@
 #ifndef ADJMAT_H_
 #define ADJMAT_H_
 
-#include "LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 
 namespace MathLib {
 
