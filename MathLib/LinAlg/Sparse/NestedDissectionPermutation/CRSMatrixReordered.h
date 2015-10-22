@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 
 namespace MathLib {
 

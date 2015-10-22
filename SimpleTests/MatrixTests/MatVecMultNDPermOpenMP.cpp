@@ -14,43 +14,27 @@
 
 #include <cstdlib>
 
-// BaseLib
-#include "RunTime.h"
-#include "CPUTime.h"
-// BaseLib/tclap
-#include "tclap/CmdLine.h"
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
-
-// MathLib
-#include "sparse.h"
-
-#include "LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
-#include "LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
-#include "LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
-
 #ifdef UNIX
 #include <sys/unistd.h>
 #endif
 
-#include "BaseLib/BuildInfo.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
+#include <logog/include/formatter.hpp>
+
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
+#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/BuildInfo.h"
+
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/AdjMat.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReorderedOpenMP.h"
+#include "MathLib/LinAlg/Sparse/NestedDissectionPermutation/Cluster.h"
 
 int main(int argc, char *argv[])
 {
@@ -90,7 +74,7 @@ int main(int argc, char *argv[])
 	std::string fname_mat (matrix_arg.getValue());
 	bool verbose (verbosity_arg.getValue());
 
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 

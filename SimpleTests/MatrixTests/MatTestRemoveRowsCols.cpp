@@ -14,12 +14,10 @@
 #include <fstream>
 #include <iostream>
 
-// BaseLib
-#include "RunTime.h"
-#include "CPUTime.h"
+#include "BaseLib/RunTime.h"
+#include "BaseLib/CPUTime.h"
 
-// MathLib
-#include "LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
 
 int main(int argc, char *argv[])
 {

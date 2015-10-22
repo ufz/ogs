@@ -16,7 +16,7 @@
 #define CRSMATRIXREORDEREDOPENMP_H_
 
 #ifdef _OPENMP
-#include "LinAlg/Sparse/NestedDissectionPermutation/CRSMatrixReordered.h"
+#include "CRSMatrixReordered.h"
 
 namespace MathLib {
 

@@ -26,7 +26,7 @@ template<class T> void CS_write(std::ostream &os, unsigned n, unsigned const* iA
 	os.write(reinterpret_cast<char*>(&n), sizeof(unsigned));
 	os.write(reinterpret_cast<char*>(const_cast<unsigned*>(iA)), (n + 1) * sizeof(unsigned));
 	os.write(reinterpret_cast<char*>(const_cast<unsigned*>(jA)), iA[n] * sizeof(unsigned));
-	os.write(reinterpret_cast<char*>(A), iA[n] * sizeof(T));
+	os.write(reinterpret_cast<char const*>(A), iA[n] * sizeof(T));
 }
 
 template<class T> void CS_read(std::istream &is, unsigned &n, unsigned* &iA, unsigned* &jA, T* &A)

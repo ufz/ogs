@@ -14,41 +14,27 @@
 #include <cmath>
 #include <limits>
 #include <cstdlib>
-#include "sparse.h"
-#include "LinAlg/Sparse/CRSMatrix.h"
-#include "LinAlg/Sparse/CRSMatrixOpenMP.h"
-#include "LinAlg/Sparse/CRSMatrixPThreads.h"
-
-// BaseLib
-#include "RunTime.h"
-#include "CPUTime.h"
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
-// BaseLib/tclap
-#include "tclap/CmdLine.h"
 
 #ifdef UNIX
 #include <sys/unistd.h>
 #endif
 
-#include "BaseLib/BuildInfo.h"
-
 #ifdef HAVE_PTHREADS
 #include <pthread.h>
 #endif
 
-/**
- * new formatter for logog
- */
-class FormatterCustom : public logog::FormatterGCC
-{
-    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-    {
-        return ( Formatter::GetTopicFlags( topic ) &
-                 ~( TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG ));
-    }
-};
+#include <logog/include/logog.hpp>
+#include <logog/include/formatter.hpp>
+#include <tclap/CmdLine.h>
+
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixOpenMP.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixPThreads.h"
+
+#include "BaseLib/BuildInfo.h"
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
+#include "BaseLib/LogogSimpleFormatter.h"
 
 int main(int argc, char *argv[])
 {
@@ -81,11 +67,11 @@ int main(int argc, char *argv[])
 
 	std::string fname_mat (matrix_arg.getValue());
 
-	FormatterCustom *custom_format (new FormatterCustom);
+	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog::Cout *logogCout(new logog::Cout);
 	logogCout->SetFormatter(*custom_format);
 
-	logog::LogFile *logog_file(NULL);
+	logog::LogFile *logog_file(nullptr);
 	if (! output_arg.getValue().empty()) {
 		logog_file = new logog::LogFile(output_arg.getValue().c_str());
 		logog_file->SetFormatter( *custom_format );

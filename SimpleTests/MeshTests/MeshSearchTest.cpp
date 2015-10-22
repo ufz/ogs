@@ -9,23 +9,20 @@
  *  Created on  Aug 30, 2012 by Thomas Fischer
  */
 
-// BaseLib
-#include "MemWatch.h"
-#include "RunTime.h"
-#include "tclap/CmdLine.h"
-#include "LogogSimpleFormatter.h"
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/MemWatch.h"
+#include "BaseLib/RunTime.h"
 
-// GeoLib
-#include "Grid.h"
+#include "FileIO/Legacy/MeshIO.h"
 
-// MeshLib
+#include "GeoLib/Grid.h"
+
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "Mesh.h"
-#include "Legacy/MeshIO.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 
 void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 				std::vector<GeoLib::Point*>& pnts_for_search,
@@ -59,7 +56,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
 		for (std::size_t k(0); k<n_pnts_for_search; k++) {
-			MeshLib::Node const* node(mesh_grid.getNearestPoint(*pnts_for_search[k]));
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(*(pnts_for_search[k])));
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
@@ -83,7 +80,7 @@ void testMeshGridAlgorithm(MeshLib::Mesh const*const mesh,
 		INFO ("[MeshGridAlgorithm] searching %d points ...", pnts_for_search.size());
 		clock_t start = clock();
 		for (std::size_t k(0); k<n_pnts_for_search; k++) {
-			MeshLib::Node const* node(mesh_grid.getNearestPoint(pnts_for_search[k]));
+			MeshLib::Node const* node(mesh_grid.getNearestPoint(*(pnts_for_search[k])));
 			idx_found_nodes.push_back(node->getID());
 		}
 		clock_t stop = clock();
@@ -138,7 +135,7 @@ int main(int argc, char *argv[])
 	std::vector<GeoLib::Point*> pnts_for_search;
 	unsigned n(std::min(static_cast<unsigned>(nodes.size()), number_arg.getValue()));
 	for (std::size_t k(0); k<n; k++) {
-		pnts_for_search.push_back(new GeoLib::Point(nodes[k]));
+		pnts_for_search.push_back(new GeoLib::Point(*(nodes[k]), k));
 	}
 
 	std::vector<std::size_t> idx_found_nodes;

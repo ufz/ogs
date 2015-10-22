@@ -12,24 +12,20 @@
  *
  */
 
-// BaseLib
-#include "MemWatch.h"
-#include "RunTime.h"
-#include "StringTools.h"
-#include "FileTools.h"
-#include "tclap/CmdLine.h"
-#include "LogogSimpleFormatter.h"
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "BaseLib/LogogSimpleFormatter.h"
+#include "BaseLib/MemWatch.h"
+#include "BaseLib/RunTime.h"
+#include "BaseLib/StringTools.h"
+#include "BaseLib/FileTools.h"
 
-// FileIO
-#include "readMeshFromFile.h"
+#include "FileIO/readMeshFromFile.h"
 
-// MeshLib
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 
 
 int main(int argc, char *argv[])

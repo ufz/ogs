@@ -2,16 +2,17 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-#include "LinAlg/Solvers/CG.h"
-#include "LinAlg/Sparse/CRSMatrixDiagPrecond.h"
-#include "sparse.h"
-#include "vector_io.h"
-#include "RunTime.h"
-#include "CPUTime.h"
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include "BaseLib/RunTime.h"
+#include "BaseLib/CPUTime.h"
+
+#include "MathLib/LinAlg/Solvers/CG.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrixDiagPrecond.h"
+#include "MathLib/vector_io.h"
 
 int main(int argc, char *argv[])
 {

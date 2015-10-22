@@ -13,18 +13,13 @@
 #include <fstream>
 #include <sstream>
 
-// BaseLib/tclap
-#include "tclap/CmdLine.h"
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-#include "logog/include/formatter.hpp"
+#include <tclap/CmdLine.h>
+#include <logog/include/logog.hpp>
+#include <logog/include/formatter.hpp>
 
-// BaseLib
-#include "LogogSimpleFormatter.h"
-
-// MathLib
-#include "LinAlg/Dense/DenseMatrix.h"
-#include "LinAlg/Solvers/GaussAlgorithm.h"
+#include "BaseLib/LogogSimpleFormatter.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 int main(int argc, char *argv[])
 {
