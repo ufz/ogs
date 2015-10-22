@@ -18,6 +18,8 @@ namespace MeshLib {
 
 const std::string MeshElemType2String(const MeshElemType t)
 {
+	if (t == MeshElemType::POINT)
+		return "Point";
 	if (t == MeshElemType::LINE)
 		return "Line";
 	if (t == MeshElemType::QUAD)
@@ -37,6 +39,8 @@ const std::string MeshElemType2String(const MeshElemType t)
 
 const std::string MeshElemType2StringShort(const MeshElemType t)
 {
+	if (t == MeshElemType::POINT)
+		return "point";
 	if (t == MeshElemType::LINE)
 		return "line";
 	if (t == MeshElemType::QUAD)
@@ -56,6 +60,8 @@ const std::string MeshElemType2StringShort(const MeshElemType t)
 
 MeshElemType String2MeshElemType(const std::string &s)
 {
+	if ((s.compare("point") == 0) || (s.compare("Point") == 0))
+		return MeshElemType::POINT;
 	if ((s.compare("line") == 0) || (s.compare("Line") == 0))
 		return MeshElemType::LINE;
 	if ((s.compare("quad") == 0) || (s.compare("Quadrilateral") == 0))
@@ -76,6 +82,7 @@ MeshElemType String2MeshElemType(const std::string &s)
 std::vector<MeshElemType> getMeshElemTypes()
 {
 	std::vector<MeshElemType> vec;
+	vec.push_back(MeshElemType::POINT);
 	vec.push_back(MeshElemType::LINE);
 	vec.push_back(MeshElemType::QUAD);
 	vec.push_back(MeshElemType::HEXAHEDRON);
@@ -100,6 +107,7 @@ const std::string CellType2String(const CellType t)
 	if (t == CellType::type)\
 		return #type;
 
+	RETURN_CELL_TYPE_STR(t, POINT1);
 	RETURN_CELL_TYPE_STR(t, LINE2);
 	RETURN_CELL_TYPE_STR(t, LINE3);
 	RETURN_CELL_TYPE_STR(t, QUAD4);

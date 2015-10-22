@@ -40,7 +40,7 @@ ProcessVariable::ProcessVariable(ConfigTree const& config,
 			_initial_condition =
 			    createUniformInitialCondition(ic_config->second);
 		}
-		if (type == "MeshProperty")
+		else if (type == "MeshProperty")
 		{
 			_initial_condition =
 			    createMeshPropertyInitialCondition(ic_config->second, _mesh);
