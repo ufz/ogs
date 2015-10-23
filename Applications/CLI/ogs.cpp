@@ -13,20 +13,14 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#ifdef USE_MPI
-#include <mpi.h>
-#endif
-
-#ifdef USE_PETSC
-#include <petsc.h>
-#endif
-
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/CPUTime.h"
+#include "BaseLib/RunTime.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -103,6 +97,11 @@ int main(int argc, char *argv[])
 	cmd.add(project_arg);
 	cmd.parse(argc, argv);
 
+	BaseLib::RunTime run_timer;
+	run_timer.start();
+	BaseLib::CPUTime CPU_timer;
+	CPU_timer.start();
+
 	ApplicationsLib::LogogSetup logog_setup;
 	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
 	    argc, argv);
@@ -134,6 +133,9 @@ int main(int argc, char *argv[])
 	std::string const output_file_name(project.getOutputFilePrefix() + ".vtu");
 
 	solveProcesses(project);
+
+	INFO( "Total runtime: %g s.\n", run_timer.elapsed() );
+	INFO( "Total CPU time: %g s.\n", CPU_timer.elapsed() );
 
 	return 0;
 }

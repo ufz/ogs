@@ -19,6 +19,8 @@
 
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/RunTime.h"
+
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
@@ -270,6 +272,9 @@ public:
     {
         DBUG("Solve GroundwaterFlowProcess.");
 
+        BaseLib::RunTime assembly_wtimer;
+        assembly_wtimer.start();
+
         _A->setZero();
         MathLib::setMatrixSparsity(*_A, _node_adjacency_table);
         *_rhs = 0;   // This resets the whole vector.
@@ -304,6 +309,9 @@ public:
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
 #endif
+
+        _elapsed_assembly_runtime += assembly_wtimer.elapsed();
+
         _linearSolver->solve(*_rhs, *_x);
 
         return true;
@@ -368,6 +376,9 @@ public:
 
     ~GroundwaterFlowProcess()
     {
+        INFO("Total runtime elapsed in the assembly of the groundwater equations: %g s.\n",
+            _elapsed_assembly_runtime);
+
         for (auto p : _neumann_bcs)
             delete p;
 
@@ -382,6 +393,8 @@ public:
 
 private:
     ProcessVariable* _hydraulic_head = nullptr;
+
+    double _elapsed_assembly_runtime = 0.;
 
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
 
