@@ -99,3 +99,28 @@ foreach(mesh_size 1e5 1e6)
 		DATA square_${mesh_size}_neumann.prj square_1x1_quad_${mesh_size}.vtu square_1x1.gml
 	)
 endforeach()
+
+# LINE 1 GROUNDWATER FLOW TESTS
+foreach(mesh_size 1e1)
+	AddTest(
+		NAME GroundWaterFlowProcess_line_1_${mesh_size}
+		PATH Elliptic/line_1_GroundWaterFlow
+		EXECUTABLE ogs
+		EXECUTABLE_ARGS line_${mesh_size}.prj
+		WRAPPER time
+		TESTER vtkdiff
+		DIFF_DATA line_${mesh_size}_pcs_0_ts_1.vtu Linear_1_to_minus1 Result
+		DATA line_${mesh_size}.prj line_1_line_${mesh_size}.vtu line_1.gml
+	)
+
+	AddTest(
+        NAME GroundWaterFlowProcess_line_1_Neumann_${mesh_size}
+		PATH Elliptic/line_1_GroundWaterFlow
+		EXECUTABLE ogs
+		EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
+		WRAPPER time
+		TESTER vtkdiff
+		DIFF_DATA line_${mesh_size}_neumann_pcs_0_ts_1.vtu D1_left_N1_right Result
+		DATA line_${mesh_size}_neumann.prj line_1_line_${mesh_size}.vtu line_1.gml
+	)
+endforeach()
