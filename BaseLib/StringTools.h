@@ -15,7 +15,6 @@
 #ifndef STRINGTOOLS_H
 #define STRINGTOOLS_H
 
-#include <boost/property_tree/ptree.hpp>
 
 #include <string>
 #include <list>
@@ -70,11 +69,6 @@ void simplify(std::string &str);
  * Returns the string which is right aligned with padding on the left.
  */
 std::string padLeft(std::string const& str, int maxlen, char ch=' ');
-
-/**
- * Returns the JSON-representation of the given boost::property_tree.
- */
-std::string propertyTreeToString(boost::property_tree::ptree const& tree);
 
 } // end namespace BaseLib
 

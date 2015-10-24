@@ -18,6 +18,9 @@ namespace BaseLib
 
 boost::property_tree::ptree read_xml_config(
     boost::filesystem::path const& path);
+
+/// Returns the JSON-representation of the given boost::property_tree.
+std::string propertyTreeToString(boost::property_tree::ptree const& tree);
 }
 
 #endif  // BASELIB_CONFIGTREE_H_

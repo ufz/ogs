@@ -11,11 +11,13 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <logog/include/logog.hpp>
 
 namespace BaseLib
 {
+
 boost::property_tree::ptree read_xml_config(boost::filesystem::path const& path)
 {
 	boost::property_tree::ptree ptree;
@@ -28,4 +30,12 @@ boost::property_tree::ptree read_xml_config(boost::filesystem::path const& path)
 
 	return ptree;
 }
+
+std::string propertyTreeToString(boost::property_tree::ptree const& tree)
+{
+	std::ostringstream ss;
+	boost::property_tree::write_json(ss, tree);
+	return ss.str();
+}
+
 }
