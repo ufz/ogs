@@ -10,7 +10,6 @@
 #ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
 #define PROCESS_LIB_PROCESS_VARIABLE_H_
 
-#include <boost/property_tree/ptree.hpp>
 
 #include "InitialCondition.h"
 #include "UniformDirichletBoundaryCondition.h"
@@ -46,10 +45,8 @@ namespace ProcessLib
 /// and boundary conditions.
 class ProcessVariable
 {
-	using ConfigTree = boost::property_tree::ptree;
-
 public:
-	ProcessVariable(ConfigTree const& config, MeshLib::Mesh const& mesh,
+	ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
 	                GeoLib::GEOObjects const& geometries);
 
 	ProcessVariable(ProcessVariable&&);

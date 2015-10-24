@@ -26,20 +26,19 @@
 namespace MathLib
 {
 
-using boost::property_tree::ptree;
-
 LisLinearSolver::LisLinearSolver(LisMatrix &A,
                     const std::string /*solver_name*/,
-                    ptree const*const option)
+                    BaseLib::ConfigTree const*const option)
 : _A(A)
 {
     if (option)
         setOption(*option);
 }
 
-void LisLinearSolver::setOption(const ptree &option)
+void LisLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
-    boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
+    boost::optional<BaseLib::ConfigTree> ptSolver =
+        option.get_child("LinearSolver");
     if (!ptSolver)
         return;
 

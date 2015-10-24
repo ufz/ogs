@@ -10,7 +10,6 @@
  *
  */
 
-#include <boost/property_tree/ptree.hpp>
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -25,8 +24,8 @@
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/FileTools.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/FileTools.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -81,8 +80,6 @@ void solveProcesses(ProjectData &project)
 
 int main(int argc, char *argv[])
 {
-	using ConfigTree = boost::property_tree::ptree;
-
 	// Parse CLI arguments.
 	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
 			"Copyright (c) 2012-2015, OpenGeoSys Community "
@@ -108,9 +105,8 @@ int main(int argc, char *argv[])
 	    argc, argv);
 
 	// Project's configuration
-	ConfigTree project_config =
+	BaseLib::ConfigTree project_config =
 	    BaseLib::read_xml_config(project_arg.getValue());
-
 
 	project_config = project_config.get_child("OpenGeoSysProject");
 

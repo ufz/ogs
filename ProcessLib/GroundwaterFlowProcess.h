@@ -14,10 +14,10 @@
 #include <memory>
 
 #include <boost/optional.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/string/erase.hpp>
 
 #include "logog/include/logog.hpp"
+#include "BaseLib/ConfigTree.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
@@ -61,15 +61,13 @@ namespace ProcessLib
 template<typename GlobalSetup>
 class GroundwaterFlowProcess : public Process
 {
-    using ConfigTree = boost::property_tree::ptree;
-
     unsigned const _integration_order = 2;
 
 public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-            ConfigTree const& config)
+            BaseLib::ConfigTree const& config)
         : Process(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");

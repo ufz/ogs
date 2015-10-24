@@ -9,17 +9,15 @@
 
 #include "EigenLinearSolver.h"
 
-#include <boost/property_tree/ptree.hpp>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/ConfigTree.h"
 #include "EigenVector.h"
 #include "EigenMatrix.h"
 #include "EigenTools.h"
 
 namespace MathLib
 {
-
-using boost::property_tree::ptree;
 
 namespace details
 {
@@ -97,7 +95,7 @@ private:
 
 EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
                             const std::string /*solver_name*/,
-                            ptree const*const option)
+                            BaseLib::ConfigTree const*const option)
 {
     if (option)
         setOption(*option);
@@ -116,9 +114,10 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
     }
 }
 
-void EigenLinearSolver::setOption(const ptree &option)
+void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
-    boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
+    boost::optional<BaseLib::ConfigTree> ptSolver =
+        option.get_child("LinearSolver");
     if (!ptSolver)
         return;
 

@@ -17,9 +17,9 @@
 
 #include <vector>
 #include <string>
-#include <boost/property_tree/ptree.hpp>
 
 #include "lis.h"
+#include "BaseLib/ConfigTree.h"
 
 #include "LisOption.h"
 #include "LisVector.h"
@@ -45,7 +45,7 @@ public:
      *                    LisOption struct.
      */
     LisLinearSolver(LisMatrix &A, const std::string solver_name = "",
-                    boost::property_tree::ptree const*const option = nullptr);
+                    BaseLib::ConfigTree const*const option = nullptr);
 
     virtual ~LisLinearSolver() {}
 
@@ -53,7 +53,7 @@ public:
      * configure linear solvers
      * @param option
      */
-    void setOption(const boost::property_tree::ptree &option);
+    void setOption(BaseLib::ConfigTree const& option);
 
     /**
      * configure linear solvers

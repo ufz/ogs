@@ -10,7 +10,7 @@
 #ifndef BASELIB_CONFIGTREE_H_
 #define BASELIB_CONFIGTREE_H_
 
-#include <boost/property_tree/ptree_fwd.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem.hpp>
 
 namespace BaseLib

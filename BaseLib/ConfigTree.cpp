@@ -9,7 +9,6 @@
 
 #include "ConfigTree.h"
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
@@ -18,9 +17,9 @@
 namespace BaseLib
 {
 
-boost::property_tree::ptree read_xml_config(boost::filesystem::path const& path)
+ConfigTree read_xml_config(boost::filesystem::path const& path)
 {
-	boost::property_tree::ptree ptree;
+	ConfigTree ptree;
 	read_xml(path.string(), ptree,
 	         boost::property_tree::xml_parser::no_comments |
 	             boost::property_tree::xml_parser::trim_whitespace);
@@ -31,7 +30,7 @@ boost::property_tree::ptree read_xml_config(boost::filesystem::path const& path)
 	return ptree;
 }
 
-std::string propertyTreeToString(boost::property_tree::ptree const& tree)
+std::string propertyTreeToString(ConfigTree const& tree)
 {
 	std::ostringstream ss;
 	boost::property_tree::write_json(ss, tree);

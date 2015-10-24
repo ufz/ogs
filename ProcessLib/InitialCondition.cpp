@@ -9,7 +9,6 @@
 
 #include "InitialCondition.h"
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
 
@@ -19,10 +18,8 @@
 
 namespace ProcessLib
 {
-using ConfigTree = boost::property_tree::ptree;
-
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    ConfigTree const& config)
+    BaseLib::ConfigTree const& config)
 {
 	auto value = config.get_optional<double>("value");
 	if (!value)
@@ -37,7 +34,7 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
 }
 
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    ConfigTree const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
 	auto field_name = config.get_optional<std::string>("field_name");
 	if (!field_name)

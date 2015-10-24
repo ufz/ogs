@@ -40,7 +40,7 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 
 }
 
-ProjectData::ProjectData(ConfigTree const& project_config,
+ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	std::string const& path)
 {
 	// geometry
@@ -174,7 +174,7 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
 }
 
 void ProjectData::parseProcessVariables(
-	ConfigTree const& process_variables_config)
+	BaseLib::ConfigTree const& process_variables_config)
 {
 	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
@@ -194,13 +194,13 @@ void ProjectData::parseProcessVariables(
 	_process_variables.reserve(process_variables_config.size());
 
 	for (auto it : process_variables_config) {
-		ConfigTree const& var_config = it.second;
+		BaseLib::ConfigTree const& var_config = it.second;
 		// TODO Extend to referenced meshes.
 		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
 	}
 }
 
-void ProjectData::parseParameters(ConfigTree const& parameters_config)
+void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 {
 	using namespace ProcessLib;
 
@@ -210,7 +210,7 @@ void ProjectData::parseParameters(ConfigTree const& parameters_config)
 		// Skip non-parameter section.
 		if (pc_it.first != "parameter")
 			continue;
-		ConfigTree const& parameter_config = pc_it.second;
+		BaseLib::ConfigTree const& parameter_config = pc_it.second;
 
 		auto name = parameter_config.get_optional<std::string>("name");
 		if (!name)
@@ -249,11 +249,11 @@ void ProjectData::parseParameters(ConfigTree const& parameters_config)
 	}
 }
 
-void ProjectData::parseProcesses(ConfigTree const& processes_config)
+void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 {
 	DBUG("Reading processes:");
 	for (auto pc_it : processes_config) {
-		ConfigTree const& process_config = pc_it.second;
+		BaseLib::ConfigTree const& process_config = pc_it.second;
 
 		// Check if the process type is specified.
 		if (!process_config.get_optional<std::string>("type")) {
@@ -265,7 +265,7 @@ void ProjectData::parseProcesses(ConfigTree const& processes_config)
 	}
 }
 
-void ProjectData::parseOutput(ConfigTree const& output_config,
+void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
 	std::string const& path)
 {
 	DBUG("Parse output configuration:");
@@ -280,7 +280,7 @@ void ProjectData::parseOutput(ConfigTree const& output_config,
 	_output_file_prefix = path + *file;
 }
 
-void ProjectData::parseTimeStepping(ConfigTree const& timestepping_config)
+void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
 {
 	using namespace ProcessLib;
 

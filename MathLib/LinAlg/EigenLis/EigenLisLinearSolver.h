@@ -12,9 +12,9 @@
 
 #include <vector>
 
-#include <boost/property_tree/ptree_fwd.hpp>
 #include <lis.h>
 
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/Lis/LisOption.h"
 
 namespace MathLib
@@ -38,12 +38,12 @@ public:
      *                    LisOption struct.
      */
     EigenLisLinearSolver(EigenMatrix &A, const std::string solver_name = "",
-                         boost::property_tree::ptree const*const option = nullptr);
+                         BaseLib::ConfigTree const*const option = nullptr);
 
     /**
      * parse linear solvers configuration
      */
-    void setOption(const boost::property_tree::ptree &option);
+    void setOption(BaseLib::ConfigTree const& option);
 
     /**
      * copy linear solvers options

@@ -9,7 +9,6 @@
 
 #include "ProcessVariable.h"
 
-#include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/GEOObjects.h"
@@ -20,7 +19,7 @@
 
 namespace ProcessLib
 {
-ProcessVariable::ProcessVariable(ConfigTree const& config,
+ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                                  MeshLib::Mesh const& mesh,
                                  GeoLib::GEOObjects const& geometries)
     : _name(config.get<std::string>("name")), _mesh(mesh)
@@ -59,7 +58,7 @@ ProcessVariable::ProcessVariable(ConfigTree const& config,
 
 		for (auto const& bc_iterator : bcs_config->second)
 		{
-			ConfigTree const& bc_config = bc_iterator.second;
+			BaseLib::ConfigTree const& bc_config = bc_iterator.second;
 
 			// Find corresponding GeoObject
 			std::string const geometrical_set_name =

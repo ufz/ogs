@@ -14,7 +14,8 @@
 #define PROJECTDATA_H_
 
 #include <memory>
-#include <boost/property_tree/ptree.hpp>
+
+#include "BaseLib/ConfigTree.h"
 
 #include "GeoLib/GEOObjects.h"
 
@@ -36,7 +37,6 @@ namespace MeshLib {
  */
 class ProjectData
 {
-using ConfigTree = boost::property_tree::ptree;
 public:
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
@@ -45,7 +45,8 @@ public:
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
 	/// configuration.
-	ProjectData(ConfigTree const& config_tree, std::string const& path);
+	ProjectData(BaseLib::ConfigTree const& config_tree,
+	            std::string const& path);
 
 	ProjectData(ProjectData&) = delete;
 	virtual ~ProjectData();
@@ -166,22 +167,22 @@ private:
 	/// Parses the process variables configuration and creates new variables for
 	/// each variable entry passing the corresponding subtree to the process
 	/// variable constructor.
-	void parseProcessVariables(ConfigTree const& process_variables_config);
+	void parseProcessVariables(BaseLib::ConfigTree const& process_variables_config);
 
 	/// Parses the parameters configuration and saves them in a list.
 	/// Checks if a parameter has name tag.
-	void parseParameters(ConfigTree const& parameters_config);
+	void parseParameters(BaseLib::ConfigTree const& parameters_config);
 
 	/// Parses the processes configuration and creates new processes for each
 	/// process entry passing the corresponding subtree to the process
 	/// constructor.
-	void parseProcesses(ConfigTree const& process_config);
+	void parseProcesses(BaseLib::ConfigTree const& process_config);
 
 	/// Parses the output configuration.
 	/// Parses the file tag and sets output file prefix.
-	void parseOutput(ConfigTree const& output_config, std::string const& path);
+	void parseOutput(BaseLib::ConfigTree const& output_config, std::string const& path);
 
-	void parseTimeStepping(ConfigTree const& timestepping_config);
+	void parseTimeStepping(BaseLib::ConfigTree const& timestepping_config);
 
 private:
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
@@ -190,7 +191,7 @@ private:
 	std::vector<ProcessLib::ProcessVariable> _process_variables;
 
 	/// Buffer for each process' config used in the process building function.
-	std::vector<ConfigTree> _process_configs;
+	std::vector<BaseLib::ConfigTree> _process_configs;
 
 	/// Buffer for each parameter config passed to the process.
 	std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;

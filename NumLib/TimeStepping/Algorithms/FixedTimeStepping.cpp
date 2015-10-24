@@ -17,6 +17,7 @@
 #include <limits>
 #include <cassert>
 
+#include "BaseLib/ConfigTree.h"
 #include "logog/include/logog.hpp"
 
 namespace NumLib
@@ -31,7 +32,7 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 {}
 
 FixedTimeStepping*
-FixedTimeStepping::newInstance(const ConfigTree &config)
+FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 {
     assert(config.get<std::string>("type") == "FixedTimeStepping");
 
