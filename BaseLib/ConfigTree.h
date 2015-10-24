@@ -15,6 +15,7 @@
 
 namespace BaseLib
 {
+using ConfigTree = boost::property_tree::ptree;
 
 boost::property_tree::ptree read_xml_config(
     boost::filesystem::path const& path);
