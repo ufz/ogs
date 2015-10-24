@@ -14,6 +14,11 @@
 
 #include <logog/include/logog.hpp>
 
+// Explicitly instantiate the boost::property_tree::ptree which is a typedef to
+// the following basic_ptree.
+template class boost::property_tree::basic_ptree<std::string, std::string,
+                                                 std::less<std::string>>;
+
 namespace BaseLib
 {
 

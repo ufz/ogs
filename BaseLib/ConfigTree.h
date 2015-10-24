@@ -10,8 +10,12 @@
 #ifndef BASELIB_CONFIGTREE_H_
 #define BASELIB_CONFIGTREE_H_
 
+#include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/filesystem.hpp>
+
+extern template class boost::property_tree::basic_ptree<
+    std::string, std::string, std::less<std::string>>;
 
 namespace BaseLib
 {
