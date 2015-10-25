@@ -115,131 +115,166 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 
 TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
 {
-	auto checkPlanePlaneIntersection =
-		[this](std::vector<MathLib::Point3d> & pnts) -> bool
+	auto checkPlanePlaneIntersection = [this](
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	    -> bool
 	{
-		// given intersection line
-		MathLib::Vector3 const d0(pnts[0]);
-		MathLib::Vector3 const p0(pnts[1]);
-
 		// Both planes go through p0
-		return this->check(d0, p0, pnts[2], pnts[3]);
+		return this->check(d0, p0, u, v);
 	};
 
-	ac::check<std::vector<MathLib::Point3d>>(
-		checkPlanePlaneIntersection,
-		1000,
-		ac::make_arbitrary(ac::fix(4,list_of(points_gen))),
-		gtest_reporter);
+	ac::check<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d>(
+	    checkPlanePlaneIntersection,
+	    1000,
+	    ac::make_arbitrary(points_gen, points_gen, points_gen, points_gen)
+	        .discard_if([](MathLib::Vector3 const& d0,
+	                       MathLib::Vector3 const&,
+	                       MathLib::Vector3 const& u,
+	                       MathLib::Vector3 const& v)
+	                    {
+		                    MathLib::Vector3 const zero{0, 0, 0};
+		                    return (d0 == zero || u == zero || v == zero);
+		                }),
+	    gtest_reporter);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
 	TestPlaneVerticalPlaneIntersection)
 {
-	auto checkPlanePlaneIntersection =
-		[this](std::vector<MathLib::Point3d> & pnts) -> bool
+	auto checkPlanePlaneIntersection = [this](
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	    -> bool
 	{
-		// given intersection line
-		MathLib::Vector3 const d0(pnts[0]);
-		MathLib::Vector3 const p0(pnts[1]);
-
 		// Both planes go through p0; First plane is vertical.
-		return this->check(d0, p0, {0.0, 0.0, 1.0}, pnts[2]);
+		return this->check(d0, p0, {0.0, 0.0, 1.0}, v);
 	};
 
-	ac::check<std::vector<MathLib::Point3d>>(
-		checkPlanePlaneIntersection,
-		1000,
-		ac::make_arbitrary(ac::fix(3,list_of(points_gen))),
-		gtest_reporter);
+	ac::check<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d>(
+	    checkPlanePlaneIntersection,
+	    1000,
+	    ac::make_arbitrary(points_gen, points_gen, points_gen, points_gen)
+	        .discard_if([](MathLib::Vector3 const& d0,
+	                       MathLib::Vector3 const&,
+	                       MathLib::Vector3 const& u,
+	                       MathLib::Vector3 const& v)
+	                    {
+		                    MathLib::Vector3 const zero{0, 0, 0};
+		                    return (d0 == zero || u == zero || v == zero);
+		                }),
+	    gtest_reporter);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
 	TestHorizontalPlaneVerticalPlaneIntersection)
 {
-	auto checkPlanePlaneIntersection =
-		[this](std::vector<MathLib::Point3d> & pnts) -> bool
+	auto checkPlanePlaneIntersection = [this](
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	    -> bool
 	{
-		// given intersection line
-		MathLib::Vector3 d0(pnts[0]);
-		// remove z component to obtain a horizontal line
-		d0[2] = 0.0;
-		MathLib::Vector3 const p0(pnts[1]);
-
-		// construct arbitrary horizontal plane in Hessian normal form going through p0
-		MathLib::Vector3 second_vector(pnts[2]);
-		// again, as in d0, set z component to zero to obtain a horizontal plane
-		second_vector[2] = 0.0;
-
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
+		return this->check(
+		    {d0[0], d0[1], 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
 	};
 
-	ac::check<std::vector<MathLib::Point3d>>(
-		checkPlanePlaneIntersection,
-		1000,
-		ac::make_arbitrary(ac::fix(3,list_of(points_gen))),
-		gtest_reporter);
+	ac::check<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d>(
+	    checkPlanePlaneIntersection,
+	    1000,
+	    ac::make_arbitrary(points_gen, points_gen, points_gen, points_gen)
+	        .discard_if([](MathLib::Vector3 const& d0,
+	                       MathLib::Vector3 const& p0,
+	                       MathLib::Vector3 const& u,
+	                       MathLib::Vector3 const& v)
+	                    {
+		                    MathLib::Vector3 const zero{0, 0, 0};
+		                    return (d0 == zero || u == zero || v == zero);
+		                }),
+	    gtest_reporter);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
 	TestHorizontalPlaneXZPlaneIntersection)
 {
-	auto checkPlanePlaneIntersection =
-		[this](std::vector<MathLib::Point3d> & pnts) -> bool
+	auto checkPlanePlaneIntersection = [this](
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	    -> bool
 	{
-		// create intersection line as a starting point for the test
-		MathLib::Vector3 d0(pnts[0]);
-		// remove y and z components -> line in parallel to the x axis
-		d0[1] = 0.0;
-		d0[2] = 0.0;
-		MathLib::Vector3 const p0(pnts[1]);
-
-		// construct arbitrary horizontal plane in Hessian normal form going through p0
-		MathLib::Vector3 second_vector(pnts[2]);
-		// set z component to zero to obtain a horizontal plane
-		second_vector[2] = 0.0;
-
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
+		return this->check(
+		    {d0[0], 0.0, 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
 	};
 
-	ac::check<std::vector<MathLib::Point3d>>(
-		checkPlanePlaneIntersection,
-		1000,
-		ac::make_arbitrary(ac::fix(3,list_of(points_gen))),
-		gtest_reporter);
+	ac::check<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d>(
+	    checkPlanePlaneIntersection,
+	    1000,
+	    ac::make_arbitrary(points_gen, points_gen, points_gen, points_gen)
+	        .discard_if([](MathLib::Vector3 const& d0,
+	                       MathLib::Vector3 const&,
+	                       MathLib::Vector3 const& u,
+	                       MathLib::Vector3 const& v)
+	                    {
+		                    MathLib::Vector3 const zero{0, 0, 0};
+		                    return (d0 == zero || u == zero || v == zero);
+		                }),
+	    gtest_reporter);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
 	TestHorizontalPlaneYZPlaneIntersection)
 {
-	auto checkPlanePlaneIntersection =
-		[this](std::vector<MathLib::Point3d> & pnts) -> bool
+	auto checkPlanePlaneIntersection = [this](
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	    -> bool
 	{
-		// create intersection line as a starting point for the test
-		MathLib::Vector3 d0(pnts[0]);
-		// remove x and z components -> line in parallel to the y axis
-		d0[0] = 0.0;
-		d0[2] = 0.0;
-		MathLib::Vector3 const p0(pnts[1]);
-
-		// construct horizontal plane in Hessian normal form going through p0
-		MathLib::Vector3 second_vector(pnts[2]);
-		// set z component to zero to obtain a horizontal plane
-		second_vector[2] = 0.0;
-
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
+		return this->check(
+		    {0.0, d0[1], 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
 	};
 
-	ac::check<std::vector<MathLib::Point3d>>(
-		checkPlanePlaneIntersection,
-		1000,
-		ac::make_arbitrary(ac::fix(3,list_of(points_gen))),
-		gtest_reporter);
+	ac::check<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d>(
+	    checkPlanePlaneIntersection,
+	    1000,
+	    ac::make_arbitrary(points_gen, points_gen, points_gen, points_gen)
+	        .discard_if([](MathLib::Vector3 const& d0,
+	                       MathLib::Vector3 const&,
+	                       MathLib::Vector3 const& u,
+	                       MathLib::Vector3 const& v)
+	                    {
+		                    MathLib::Vector3 const zero{0, 0, 0};
+		                    return (d0 == zero || u == zero || v == zero);
+		                }),
+	    gtest_reporter);
 }
 
