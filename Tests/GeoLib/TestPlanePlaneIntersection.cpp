@@ -31,11 +31,60 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 
 	ac::gtest_reporter gtest_reporter;
 
-	// First spanning vector of the planes must be coincident with d0.
-	bool check(GeoLib::Plane plane1,
-	           GeoLib::Plane plane2,
-	           MathLib::Vector3 const& d0)
+	constexpr static double eps = std::numeric_limits<double>::epsilon();
+	bool inXY(MathLib::Vector3 const& v) const { return std::abs(v[2]) < eps;}
+	bool inYZ(MathLib::Vector3 const& v) const { return std::abs(v[0]) < eps; }
+	bool inZX(MathLib::Vector3 const& v) const { return std::abs(v[1]) < eps; }
+	bool inX(MathLib::Vector3 const& v) const { return inXY(v) && inZX(v); }
+	bool inY(MathLib::Vector3 const& v) const { return inXY(v) && inYZ(v); }
+	bool inZ(MathLib::Vector3 const& v) const { return inYZ(v) && inZX(v); }
+	bool in0(MathLib::Vector3 const& v) const { return inX(v) && inYZ(v); }
+
+	std::string classifyVector(MathLib::Vector3 const& v) const
 	{
+		if (in0(v)) return "0 ";
+		if (inX(v)) return "x ";
+		if (inY(v)) return "y ";
+		if (inZ(v)) return "z ";
+		if (inXY(v)) return "xy";
+		if (inYZ(v)) return "yz";
+		if (inZX(v)) return "zx";
+		return "  ";	// not on any of the cartesian axes or planes.
+	}
+
+	void SetUp()
+	{
+		cls.collect([this](
+		    MathLib::Vector3 const& d0,  // First spanning vector
+		    MathLib::Vector3 const&,     // Common plane point
+		    MathLib::Vector3 const& u,   // First plane's second spanning vector
+		    MathLib::Vector3 const& v)  // Second plane's second spanning vector
+		            {
+			            // triple with entries, " ", "xy", "yz", "zx"
+			            return "[" + classifyVector(d0) + ", " +
+			                   classifyVector(u) + ", " + classifyVector(v) +
+			                   "]";
+
+			        });
+	}
+	ac::classifier<MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d,
+	          MathLib::Point3d> cls;
+
+	// Check correctness of the computePlanePlaneIntersection algorithm by
+	// construction of two planes intersecting a line through point p0 in
+	// direction d0 and comparing the result of the algorithm. The direction
+	// vector must be parallel and the point p on the computed intersection line
+	// must lie in both planes.
+	static bool check(
+	    MathLib::Vector3 const& d0,  // First spanning vector
+	    MathLib::Vector3 const& p0,  // Common plane point
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
+	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
+	{
+		GeoLib::Plane const plane1{d0, u, p0};
+		GeoLib::Plane const plane2{d0, v, p0};
 		// reconstructed intersection line
 		MathLib::Vector3 d;
 		MathLib::Point3d p;
