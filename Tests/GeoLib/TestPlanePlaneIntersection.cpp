@@ -13,6 +13,9 @@
 #include <gtest/gtest.h>
 #include <autocheck/autocheck.hpp>
 
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/at.hpp>
+
 #include "Tests/MathLib/AutoCheckTools.h"
 
 #include "MathLib/MathTools.h"
@@ -22,31 +25,27 @@
 
 namespace ac = autocheck;
 
-struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
+// Parametrize over the generator type for the d0, u, and v vectors.
+template <typename GeneratorTypes>
+struct ConstructedLine : public ::testing::Test
 {
-	// to generate arbitrary straight line segments
+	// Select vector generator from the GeneratorTypes vector.
+	ac::cons_generator<
+	    MathLib::Vector3,
+	    typename boost::mpl::at<GeneratorTypes, boost::mpl::int_<0>>::type>
+	    d0_generator;
+	ac::cons_generator<
+	    MathLib::Vector3,
+	    typename boost::mpl::at<GeneratorTypes, boost::mpl::int_<1>>::type>
+	    u_generator;
+	ac::cons_generator<
+	    MathLib::Vector3,
+	    typename boost::mpl::at<GeneratorTypes, boost::mpl::int_<2>>::type>
+	    v_generator;
+
 	ac::randomTupleGenerator<double, 3> tuple_generator;
 	ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
 	    points_gen{tuple_generator};
-
-	ac::cons_generator<MathLib::Vector3, ac::randomTupleGenerator<double, 3>>
-	    vector_gen{tuple_generator};
-
-	ac::cons_generator<MathLib::Vector3,
-	                   ac::tripleInPlaneGenerator<ac::CartesianPlane::XY, double>>
-	    xy_vector_gen;
-
-	ac::cons_generator<MathLib::Vector3,
-	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::X, double>>
-	    x_vector_gen;
-
-	ac::cons_generator<MathLib::Vector3,
-	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::Y, double>>
-	    y_vector_gen;
-
-	ac::cons_generator<MathLib::Vector3,
-	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::Z, double>>
-	    z_vector_gen;
 
 	ac::gtest_reporter gtest_reporter;
 
@@ -132,13 +131,15 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 	}
 };
 
-// Both planes go through p0
-TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
+TYPED_TEST_CASE_P(ConstructedLine);
+
+TYPED_TEST_P(ConstructedLine, TestPlanePlaneIntersection)
 {
 	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
 	          MathLib::Vector3>(
-	    check, 1000,
-	    ac::make_arbitrary(vector_gen, points_gen, vector_gen, vector_gen)
+	    this->check, 1000,
+	    ac::make_arbitrary(this->d0_generator, this->points_gen,
+	                       this->u_generator, this->v_generator)
 	        .discard_if([](MathLib::Vector3 const& d0,
 	                       MathLib::Point3d const&,
 	                       MathLib::Vector3 const& u,
@@ -147,88 +148,26 @@ TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter, cls);
+	    this->gtest_reporter, this->cls);
 }
 
-// Both planes go through p0; First plane is vertical.
-TEST_F(GeoLibComputePlanePlaneIntersection,
-	TestPlaneVerticalPlaneIntersection)
-{
-	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
-	          MathLib::Vector3>(
-	    check, 1000,
-	    ac::make_arbitrary(vector_gen, points_gen, z_vector_gen, vector_gen)
-	        .discard_if([](MathLib::Vector3 const& d0,
-	                       MathLib::Point3d const&,
-	                       MathLib::Vector3 const& u,
-	                       MathLib::Vector3 const& v)
-	                    {
-		                    MathLib::Vector3 const zero{0, 0, 0};
-		                    return (d0 == zero || u == zero || v == zero);
-		                }),
-	    gtest_reporter, cls);
-}
+REGISTER_TYPED_TEST_CASE_P(ConstructedLine, TestPlanePlaneIntersection);
 
-// Both planes go through p0; First plane is vertical. Second plane's
-// second spanning vector lies in horizontal plane.
-TEST_F(GeoLibComputePlanePlaneIntersection,
-	TestHorizontalPlaneVerticalPlaneIntersection)
-{
-	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
-	          MathLib::Vector3>(
-	    check, 1000,
-	    ac::make_arbitrary(xy_vector_gen, points_gen, z_vector_gen,
-	                       xy_vector_gen)
-	        .discard_if([](MathLib::Vector3 const& d0,
-	                       MathLib::Point3d const& p0,
-	                       MathLib::Vector3 const& u,
-	                       MathLib::Vector3 const& v)
-	                    {
-			                MathLib::Vector3 const zero{0, 0, 0};
-		                    return (d0 == zero || u == zero || v == zero);
-		                }),
-	    gtest_reporter, cls);
-}
+using R = ac::randomTupleGenerator<double, 3>;
+using XY = ac::tripleInPlaneGenerator<ac::CartesianPlane::XY, double>;
+using YZ = ac::tripleInPlaneGenerator<ac::CartesianPlane::YZ, double>;
+using ZX = ac::tripleInPlaneGenerator<ac::CartesianPlane::ZX, double>;
+using X = ac::tripleOnAxisGenerator<ac::CartesianAxes::X, double>;
+using Y = ac::tripleOnAxisGenerator<ac::CartesianAxes::Y, double>;
+using Z = ac::tripleOnAxisGenerator<ac::CartesianAxes::Z, double>;
 
-// Both planes go through p0; First plane is vertical. Second plane's
-// second spanning vector lies in horizontal plane.
-TEST_F(GeoLibComputePlanePlaneIntersection,
-	TestHorizontalPlaneXZPlaneIntersection)
-{
-	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
-	          MathLib::Vector3>(
-	    check, 1000,
-	    ac::make_arbitrary(x_vector_gen, points_gen, z_vector_gen,
-	                       xy_vector_gen)
-	        .discard_if([](MathLib::Vector3 const& d0,
-	                       MathLib::Point3d const&,
-	                       MathLib::Vector3 const& u,
-	                       MathLib::Vector3 const& v)
-	                    {
-		                    MathLib::Vector3 const zero{0, 0, 0};
-		                    return (d0 == zero || u == zero || v == zero);
-		                }),
-	    gtest_reporter, cls);
-}
+typedef ::testing::Types<
+    boost::mpl::vector<R , R , R >,
+    boost::mpl::vector<R , Z , R >,
+    boost::mpl::vector<XY, Z , XY>,
+    boost::mpl::vector<X , Z , XY>,
+    boost::mpl::vector<Y , Z , XY>
+> GeneratorTypes;
 
-// Both planes go through p0; First plane is vertical. Second plane's
-// second spanning vector lies in horizontal plane.
-TEST_F(GeoLibComputePlanePlaneIntersection,
-	TestHorizontalPlaneYZPlaneIntersection)
-{
-	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
-	          MathLib::Vector3>(
-	    check, 1000,
-	    ac::make_arbitrary(y_vector_gen, points_gen, z_vector_gen,
-	                       xy_vector_gen)
-	        .discard_if([](MathLib::Vector3 const& d0,
-	                       MathLib::Point3d const&,
-	                       MathLib::Vector3 const& u,
-	                       MathLib::Vector3 const& v)
-	                    {
-		                    MathLib::Vector3 const zero{0, 0, 0};
-		                    return (d0 == zero || u == zero || v == zero);
-		                }),
-	    gtest_reporter, cls);
-}
-
+INSTANTIATE_TYPED_TEST_CASE_P(GeoLibComputePlanePlaneIntersection,
+                              ConstructedLine, GeneratorTypes);
