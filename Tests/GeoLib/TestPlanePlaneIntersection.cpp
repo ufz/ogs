@@ -32,6 +32,22 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 	ac::cons_generator<MathLib::Vector3, ac::randomTupleGenerator<double, 3>>
 	    vector_gen{tuple_generator};
 
+	ac::cons_generator<MathLib::Vector3,
+	                   ac::tripleInPlaneGenerator<ac::CartesianPlane::XY, double>>
+	    xy_vector_gen;
+
+	ac::cons_generator<MathLib::Vector3,
+	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::X, double>>
+	    x_vector_gen;
+
+	ac::cons_generator<MathLib::Vector3,
+	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::Y, double>>
+	    y_vector_gen;
+
+	ac::cons_generator<MathLib::Vector3,
+	                   ac::tripleOnAxisGenerator<ac::CartesianAxes::Z, double>>
+	    z_vector_gen;
+
 	ac::gtest_reporter gtest_reporter;
 
 	constexpr static double eps = std::numeric_limits<double>::epsilon();
@@ -153,12 +169,12 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	auto checkPlanePlaneIntersection = [this](
 	    MathLib::Vector3 const& d0,  // First spanning vector
 	    MathLib::Point3d const& p0,  // Common plane point
-	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
 	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
 	    -> bool
 	{
 		// Both planes go through p0; First plane is vertical.
-		return this->check(d0, p0, {0.0, 0.0, 1.0}, v);
+		return this->check(d0, p0, u, v);
 	};
 
 	ac::check<MathLib::Vector3,
@@ -167,7 +183,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	          MathLib::Vector3>(
 	    checkPlanePlaneIntersection,
 	    1000,
-	    ac::make_arbitrary(vector_gen, points_gen, vector_gen, vector_gen)
+	    ac::make_arbitrary(vector_gen, points_gen, z_vector_gen, vector_gen)
 	        .discard_if([](MathLib::Vector3 const& d0,
 	                       MathLib::Point3d const&,
 	                       MathLib::Vector3 const& u,
@@ -185,14 +201,13 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	auto checkPlanePlaneIntersection = [this](
 	    MathLib::Vector3 const& d0,  // First spanning vector
 	    MathLib::Point3d const& p0,  // Common plane point
-	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
 	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
 	    -> bool
 	{
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {d0[0], d0[1], 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
+		return this->check(d0, p0, u, v);
 	};
 
 	ac::check<MathLib::Vector3,
@@ -201,13 +216,13 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	          MathLib::Vector3>(
 	    checkPlanePlaneIntersection,
 	    1000,
-	    ac::make_arbitrary(vector_gen, points_gen, vector_gen, vector_gen)
+	    ac::make_arbitrary(xy_vector_gen, points_gen, z_vector_gen, xy_vector_gen)
 	        .discard_if([](MathLib::Vector3 const& d0,
 	                       MathLib::Point3d const& p0,
 	                       MathLib::Vector3 const& u,
 	                       MathLib::Vector3 const& v)
 	                    {
-		                    MathLib::Vector3 const zero{0, 0, 0};
+			                MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
 	    gtest_reporter, cls);
@@ -219,14 +234,13 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	auto checkPlanePlaneIntersection = [this](
 	    MathLib::Vector3 const& d0,  // First spanning vector
 	    MathLib::Point3d const& p0,  // Common plane point
-	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
 	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
 	    -> bool
 	{
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {d0[0], 0.0, 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
+		return this->check(d0, p0, u, v);
 	};
 
 	ac::check<MathLib::Vector3,
@@ -235,7 +249,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	          MathLib::Vector3>(
 	    checkPlanePlaneIntersection,
 	    1000,
-	    ac::make_arbitrary(vector_gen, points_gen, vector_gen, vector_gen)
+	    ac::make_arbitrary(x_vector_gen, points_gen, z_vector_gen, xy_vector_gen)
 	        .discard_if([](MathLib::Vector3 const& d0,
 	                       MathLib::Point3d const&,
 	                       MathLib::Vector3 const& u,
@@ -253,14 +267,13 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	auto checkPlanePlaneIntersection = [this](
 	    MathLib::Vector3 const& d0,  // First spanning vector
 	    MathLib::Point3d const& p0,  // Common plane point
-	    MathLib::Vector3 const&,     // First plane's second spanning vector
+	    MathLib::Vector3 const& u,   // First plane's second spanning vector
 	    MathLib::Vector3 const& v)   // Second plane's second spanning vector
 	    -> bool
 	{
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {0.0, d0[1], 0.0}, p0, {0.0, 0.0, 1.0}, {v[0], v[1], 0.0});
+		return this->check(d0, p0, u, v);
 	};
 
 	ac::check<MathLib::Vector3,
@@ -269,7 +282,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 	          MathLib::Vector3>(
 	    checkPlanePlaneIntersection,
 	    1000,
-	    ac::make_arbitrary(vector_gen, points_gen, vector_gen, vector_gen)
+	    ac::make_arbitrary(y_vector_gen, points_gen, z_vector_gen, xy_vector_gen)
 	        .discard_if([](MathLib::Vector3 const& d0,
 	                       MathLib::Point3d const&,
 	                       MathLib::Vector3 const& u,
