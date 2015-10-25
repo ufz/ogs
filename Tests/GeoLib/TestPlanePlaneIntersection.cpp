@@ -161,12 +161,34 @@ using X = ac::tripleOnAxisGenerator<ac::CartesianAxes::X, double>;
 using Y = ac::tripleOnAxisGenerator<ac::CartesianAxes::Y, double>;
 using Z = ac::tripleOnAxisGenerator<ac::CartesianAxes::Z, double>;
 
+// There are 7*7*7 possible cases, let's try few of the combinations.
 typedef ::testing::Types<
-    boost::mpl::vector<R , R , R >,
-    boost::mpl::vector<R , Z , R >,
-    boost::mpl::vector<XY, Z , XY>,
-    boost::mpl::vector<X , Z , XY>,
-    boost::mpl::vector<Y , Z , XY>
+    boost::mpl::vector<R ,R ,R >,
+    boost::mpl::vector<R ,Z ,R >,
+    boost::mpl::vector<XY,Z ,XY>,
+    boost::mpl::vector<X ,Z ,XY>,
+    boost::mpl::vector<Y ,Z ,XY>,
+
+    boost::mpl::vector<X ,R ,R >,
+    boost::mpl::vector<Y ,R ,R >,
+    boost::mpl::vector<Z ,R ,R >,
+    boost::mpl::vector<XY,R ,R >,
+    boost::mpl::vector<YZ,R ,R >,
+    boost::mpl::vector<ZX,R ,R >,
+
+    boost::mpl::vector<R ,X ,R >,
+    boost::mpl::vector<R ,Y ,R >,
+    boost::mpl::vector<R ,Z ,R >,
+    boost::mpl::vector<R ,XY,R >,
+    boost::mpl::vector<R ,YZ,R >,
+    boost::mpl::vector<R ,ZX,R >,
+
+    boost::mpl::vector<R ,R ,X  >,
+    boost::mpl::vector<R ,R ,Y  >,
+    boost::mpl::vector<R ,R ,Z  >,
+    boost::mpl::vector<R ,R ,XY >,
+    boost::mpl::vector<R ,R ,YZ >,
+    boost::mpl::vector<R ,R ,ZX >
 > GeneratorTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(GeoLibComputePlanePlaneIntersection,
