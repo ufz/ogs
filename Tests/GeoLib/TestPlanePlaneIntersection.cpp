@@ -123,7 +123,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
 		MathLib::Vector3 const p0(pnts[1]);
 
 		// Both planes go through p0
-		return this->check({d0, pnts[2], p0}, {d0, pnts[3], p0}, d0);
+		return this->check(d0, p0, pnts[2], pnts[3]);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -144,7 +144,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		MathLib::Vector3 const p0(pnts[1]);
 
 		// Both planes go through p0; First plane is vertical.
-		return this->check({d0, {0.0, 0.0, 1.0}, p0}, {d0, pnts[2], p0}, d0);
+		return this->check(d0, p0, {0.0, 0.0, 1.0}, pnts[2]);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -173,8 +173,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
+		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -204,8 +203,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
+		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -235,8 +233,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 
 		// Both planes go through p0; First plane is vertical. Second plane's
 		// second spanning vector lies in horizontal plane.
-		return this->check(
-		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
+		return this->check(d0, p0, {0.0, 0.0, 1.0}, second_vector);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
