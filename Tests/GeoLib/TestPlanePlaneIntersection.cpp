@@ -141,7 +141,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter);
+	    gtest_reporter, cls);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
@@ -173,7 +173,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter);
+	    gtest_reporter, cls);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
@@ -207,7 +207,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter);
+	    gtest_reporter, cls);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
@@ -241,7 +241,7 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter);
+	    gtest_reporter, cls);
 }
 
 TEST_F(GeoLibComputePlanePlaneIntersection,
@@ -275,6 +275,6 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		                    MathLib::Vector3 const zero{0, 0, 0};
 		                    return (d0 == zero || u == zero || v == zero);
 		                }),
-	    gtest_reporter);
+	    gtest_reporter, cls);
 }
 
