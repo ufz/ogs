@@ -37,6 +37,8 @@ public:
 	 */
 	TemplateVector3() : TemplatePoint<T>() {}
 
+	TemplateVector3(std::array<T, 3> const& x) : TemplatePoint<T>(x) {}
+
 	TemplateVector3(T x0, T x1, T x2)
 	{
 		this->_x[0] = x0;
