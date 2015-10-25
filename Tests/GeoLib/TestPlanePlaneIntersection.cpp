@@ -43,11 +43,24 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
 
 		// check if the given vector d0 and the computed vector are parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
+		if (!GeoLib::isParallel(d, d0))
+		{
+			std::cerr << "Expected d and d0 to be parallel.\n";
+			return false;
+		}
 
-		return false;
+		// the point of the intersection line must lie inside both planes
+		if (!plane1.isPointInPlane(p))
+		{
+			std::cerr << "Expected p to lie in plane1.\n";
+			return false;
+		}
+		if (!plane2.isPointInPlane(p))
+		{
+			std::cerr << "Expected p to lie in plane1.\n";
+			return false;
+		}
+		return true;
 	}
 };
 
