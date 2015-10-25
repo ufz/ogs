@@ -30,6 +30,25 @@ struct GeoLibComputePlanePlaneIntersection : public ::testing::Test
 	    points_gen{tuple_generator};
 
 	ac::gtest_reporter gtest_reporter;
+
+	// First spanning vector of the planes must be coincident with d0.
+	bool check(GeoLib::Plane plane1,
+	           GeoLib::Plane plane2,
+	           MathLib::Vector3 const& d0)
+	{
+		// reconstructed intersection line
+		MathLib::Vector3 d;
+		MathLib::Point3d p;
+
+		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
+
+		// check if the given vector d0 and the computed vector are parallel
+		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
+			&& plane2.isPointInPlane(p))
+			return true;
+
+		return false;
+	}
 };
 
 TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
@@ -41,24 +60,8 @@ TEST_F(GeoLibComputePlanePlaneIntersection, TestPlanePlaneIntersection)
 		MathLib::Vector3 const d0(pnts[0]);
 		MathLib::Vector3 const p0(pnts[1]);
 
-		// construct arbitrary plane in Hessian normal form going through p0
-		GeoLib::Plane plane1(d0, pnts[2], p0);
-
-		// construct arbitrary plane in Hessian normal form going through p0
-		GeoLib::Plane plane2(d0, pnts[3], p0);
-
-		// reconstructed intersection line
-		MathLib::Vector3 d;
-		MathLib::Point3d p;
-
-		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
-
-		// check if the given vector d0 and the computed vector are in parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
-
-		return false;
+		// Both planes go through p0
+		return this->check({d0, pnts[2], p0}, {d0, pnts[3], p0}, d0);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -78,24 +81,8 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		MathLib::Vector3 const d0(pnts[0]);
 		MathLib::Vector3 const p0(pnts[1]);
 
-		// construct vertical plane in Hessian normal form going through p0
-		GeoLib::Plane plane1(d0, MathLib::Vector3(0.0, 0.0, 1.0), p0);
-
-		// construct arbitrary plane in Hessian normal form going through p0
-		GeoLib::Plane plane2(d0, pnts[2], p0);
-
-		// reconstructed intersection line
-		MathLib::Vector3 d;
-		MathLib::Point3d p;
-
-		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
-
-		// check if the given vector d0 and the computed vector are in parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
-
-		return false;
+		// Both planes go through p0; First plane is vertical.
+		return this->check({d0, {0.0, 0.0, 1.0}, p0}, {d0, pnts[2], p0}, d0);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -117,27 +104,15 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		d0[2] = 0.0;
 		MathLib::Vector3 const p0(pnts[1]);
 
-		// construct vertical plane in Hessian normal form going through p0
-		GeoLib::Plane plane1(d0, MathLib::Vector3(0.0, 0.0, 1.0), p0);
-
 		// construct arbitrary horizontal plane in Hessian normal form going through p0
 		MathLib::Vector3 second_vector(pnts[2]);
 		// again, as in d0, set z component to zero to obtain a horizontal plane
 		second_vector[2] = 0.0;
-		GeoLib::Plane plane2(d0, second_vector, p0);
 
-		// reconstructed intersection line
-		MathLib::Vector3 d;
-		MathLib::Point3d p;
-
-		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
-
-		// check if the given vector d0 and the computed vector are in parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
-
-		return false;
+		// Both planes go through p0; First plane is vertical. Second plane's
+		// second spanning vector lies in horizontal plane.
+		return this->check(
+		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -160,27 +135,15 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		d0[2] = 0.0;
 		MathLib::Vector3 const p0(pnts[1]);
 
-		// construct vertical plane in Hessian normal form going through p0
-		GeoLib::Plane plane1(d0, MathLib::Vector3(0.0, 0.0, 1.0), p0);
-
 		// construct arbitrary horizontal plane in Hessian normal form going through p0
 		MathLib::Vector3 second_vector(pnts[2]);
 		// set z component to zero to obtain a horizontal plane
 		second_vector[2] = 0.0;
-		GeoLib::Plane plane2(d0, second_vector, p0);
 
-		// reconstructed intersection line
-		MathLib::Vector3 d;
-		MathLib::Point3d p;
-
-		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
-
-		// check if the given vector d0 and the computed vector are in parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
-
-		return false;
+		// Both planes go through p0; First plane is vertical. Second plane's
+		// second spanning vector lies in horizontal plane.
+		return this->check(
+		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
@@ -203,27 +166,15 @@ TEST_F(GeoLibComputePlanePlaneIntersection,
 		d0[2] = 0.0;
 		MathLib::Vector3 const p0(pnts[1]);
 
-		// construct vertical plane in Hessian normal form going through p0
-		GeoLib::Plane plane1(d0, MathLib::Vector3(0.0, 0.0, 1.0), p0);
-
 		// construct horizontal plane in Hessian normal form going through p0
 		MathLib::Vector3 second_vector(pnts[2]);
 		// set z component to zero to obtain a horizontal plane
 		second_vector[2] = 0.0;
-		GeoLib::Plane plane2(d0, second_vector, p0);
 
-		// reconstructed intersection line
-		MathLib::Vector3 d;
-		MathLib::Point3d p;
-
-		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
-
-		// check if the given vector d0 and the computed vector are in parallel
-		if (GeoLib::isParallel(d, d0) && plane1.isPointInPlane(p)
-			&& plane2.isPointInPlane(p))
-			return true;
-
-		return false;
+		// Both planes go through p0; First plane is vertical. Second plane's
+		// second spanning vector lies in horizontal plane.
+		return this->check(
+		    {d0, {0.0, 0.0, 1.0}, p0}, {d0, second_vector, p0}, d0);
 	};
 
 	ac::check<std::vector<MathLib::Point3d>>(
