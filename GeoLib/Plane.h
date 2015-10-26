@@ -92,10 +92,18 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 		// set p[2] zero
 		p[2] = 0.0;
 		// solve the 2x3 system of linear equations manually
-		double const l10(n2[0]/n1[0]);
-		double const s(n2[1] - n1[1] * l10);
-		p[1] = 1.0/s * (-d2 + d1*l10);
-		p[0] = (-d1 - n1[1] * p[1])/n1[0];
+		// search pivot
+		if (std::abs(n1[0]) >= std::abs(n2[0])) {
+			double const l10(n2[0]/n1[0]);
+			double const s(n2[1] - n1[1] * l10);
+			p[1] = 1.0/s * (-d2 + d1*l10);
+			p[0] = (-d1 - n1[1] * p[1])/n1[0];
+		} else {
+			double const l10(n1[0]/n2[0]);
+			double const s(n1[1] - n2[1] * l10);
+			p[1] = 1.0/s * (-d1 + d2*l10);
+			p[0] = (-d2 - n2[1] * p[1])/n2[0];
+		}
 	} else if (std::abs(direction[1]) >= eps){
 		// Direction vector is in parallel with xy plane and the y component is
 		// not zero. Consequently, it is save to set p[1] to zero.
