@@ -82,8 +82,19 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	MathLib::Vector3 const& n2(p1.getNormal());
 	MathLib::Vector3 direction(MathLib::crossProduct(n1, n2));
 
+	// If the two planes p1 and p2 are in parallel the direction vector will be
+	// zero. Either the planes have not any point in common or the planes are
+	// identical.
+	if (direction.getSqrLength() < eps*eps)
+		return std::make_pair(direction, MathLib::Point3d());
+
 	double d1(p0.getDistance());
 	double d2(p1.getDistance());
+
+	// full pivot search
+	std::size_t i(0), j(0);
+	double temp_pivot(0.0);
+
 	// determine a point p that fulfills both plane equations in Hessian normal
 	// form (n1,p) - d1 = 0 and (n2,p) - d2 = 0
 	MathLib::Point3d p;
