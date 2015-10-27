@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include <Eigen/Dense>
+
 #include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MeshLib/MeshSubsets.h"
@@ -43,19 +45,25 @@ public:
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT);
+        AssemblerLib::ComponentOrder const order);
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
     /// mesh_subsets.
     ///
-    /// \note The elements are not necessary those used in the mesh_subsets.
+    /// \param mesh_subsets the subsets to which this map will be constrained.
+    ///        It must hold that: mesh_subsets.size() == _mesh_subsets.size()
+    ///        If a component shall not be present in the derived map, put a nullptr
+    ///        to the respective position in mesh_subsets.
+    ///
+    /// \note The elements are not necessarily those used in the mesh_subsets.
+    ///
+    /// \note It is possible to use this method on the returned map only
+    ///       if \c mesh_subsets contains no nullptr!
+    ///
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
         std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
-        std::vector<MeshLib::Element*> const& elements,
-        AssemblerLib::ComponentOrder const order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT) const;
+        std::vector<MeshLib::Element*> const& elements) const;
 
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
@@ -68,10 +76,11 @@ public:
 
     std::size_t size() const;
 
-    RowColumnIndices operator[](std::size_t const mesh_item_id) const;
+    std::size_t getNumComponents() const { return _mesh_subsets.size(); }
 
-    LineIndex rowIndices(std::size_t const mesh_item_id) const;
-    LineIndex columnIndices(std::size_t const mesh_item_id) const;
+    RowColumnIndices operator()(std::size_t const mesh_item_id, const unsigned component_id) const;
+
+    std::size_t getNumElementDOF(std::size_t const mesh_item_id) const;
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                std::size_t const c) const
@@ -86,27 +95,30 @@ private:
     /// \attention The passed mesh_component_map is in undefined state after
     /// this construtor.
     explicit LocalToGlobalIndexMap(
-        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<MeshLib::MeshSubsets*>&& mesh_subsets,
+        std::vector<std::size_t> const& original_indices,
         std::vector<MeshLib::Element*> const& elements,
-        AssemblerLib::MeshComponentMap&& mesh_component_map,
-        AssemblerLib::ComponentOrder const order);
+        AssemblerLib::MeshComponentMap&& mesh_component_map);
 
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,
-        std::size_t const mesh_id, AssemblerLib::ComponentOrder const order);
+        std::size_t const mesh_id,
+        const unsigned component_id, const unsigned comp_id_write);
 
 private:
-    std::vector<MeshLib::MeshSubsets*> const& _mesh_subsets;
+    std::vector<MeshLib::MeshSubsets*> const _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
-    /// Vector contains for each element a vector of global row/or entry indices
-    /// in the global stiffness matrix or vector
-    std::vector<LineIndex> _rows;
+    using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+    /// Table contains for each element (first index) and each component (second index)
+    /// a vector (\c LineIndex) of indices in the global stiffness matrix or vector
+    Table _rows;
 
     /// Vector alias to that contains for each element a vector of global column
     /// indices in the global stiffness matrix
-    std::vector<LineIndex> const& _columns = _rows;
+    Table const& _columns = _rows;
 
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
@@ -114,43 +126,6 @@ private:
 #endif  // NDEBUG
 
 };
-
-
-template <typename ElementIterator>
-void
-LocalToGlobalIndexMap::findGlobalIndices(ElementIterator first, ElementIterator last,
-    std::size_t const mesh_id, AssemblerLib::ComponentOrder const order)
-{
-    // For each element find the global indices for node/element
-    // components.
-    for (ElementIterator e = first; e != last; ++e)
-    {
-        std::vector<MeshLib::Location> vec_items;
-        std::size_t const nnodes = (*e)->getNNodes();
-        vec_items.reserve(nnodes);
-
-        for (unsigned n = 0; n < nnodes; n++)
-        {
-            vec_items.emplace_back(
-                mesh_id,
-                MeshLib::MeshItemType::Node,
-                (*e)->getNode(n)->getID());
-        }
-
-        // Save a line of indices for the current element.
-        switch (order)
-        {
-            case AssemblerLib::ComponentOrder::BY_LOCATION:
-                _rows.push_back(
-                    _mesh_component_map.getGlobalIndicesByLocation(vec_items));
-                break;
-            case AssemblerLib::ComponentOrder::BY_COMPONENT:
-                _rows.push_back(
-                    _mesh_component_map.getGlobalIndicesByComponent(vec_items));
-                break;
-        }
-    }
-}
 
 }   // namespace AssemblerLib
 
