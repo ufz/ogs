@@ -46,7 +46,18 @@ public:
         ComponentOrder order);
 
     /// Creates a subset of the current mesh component map.
-    /// The order of components is the same as of the current map.
+    /// The components are those from \c components which are not nullptrs.
+    /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the current map.
+    ///
+    /// \param components components that should remain in the created subset
+    ///
+    /// The size of parameter \c components must be equal to the number of components in this map,
+    /// if an element of \c components is \c nullptr, this component will not be included
+    /// in the subset.
+    ///
+    /// The number of components of the subset will equal the number of non-null pointers in
+    /// \c components.
+    ///
     MeshComponentMap getSubset(
         std::vector<MeshLib::MeshSubsets*> const& components) const;
 
@@ -142,8 +153,9 @@ public:
 
 private:
     /// Private constructor used by internally created mesh component maps.
-    MeshComponentMap(detail::ComponentGlobalIndexDict& dict)
-        : _dict(dict)
+    MeshComponentMap(detail::ComponentGlobalIndexDict& dict,
+                     unsigned const num_components)
+        : _dict(dict), _num_components(num_components)
     { }
 
     /// Looks up if a line is already stored in the dictionary.
@@ -159,6 +171,10 @@ private:
 
     /// Number of global unknowns.
     std::size_t _num_global_dof = 0;
+
+    /// Number of components
+    /// introduced mainly for error checking
+    unsigned const _num_components;
 };
 
 }   // namespace AssemblerLib
