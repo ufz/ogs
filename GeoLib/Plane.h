@@ -128,7 +128,6 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	if (j != 0) { // if necessary exchange columns
 		std::swap(mat(0,0), mat(0,j));
 		std::swap(mat(1,0), mat(1,j));
-		std::swap(mat(2,0), mat(2,j));
 		std::swap(n1[0], n1[j]);
 		std::swap(n2[0], n2[j]);
 	}
@@ -141,22 +140,31 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	mat(1,2) -= l*mat(0,2);
 	rhs[1] -= l*rhs[0];
 
+	MathLib::Vector3 pivoted_direction(MathLib::crossProduct(n1, n2));
 	MathLib::Point3d p;
-	if (j != 2 && std::abs(direction[2]) >= eps) {
-		// direction vector is not in parallel with xy plane and it is save to
-		// set p[2] zero
+	if (std::abs(pivoted_direction[2]) >= eps) {
+		// it is save to set p[2] to zero
 		p[2] = 0.0;
 		// solve
 		p[1] = rhs[1] / mat(1,1);
 		p[0] = (rhs[0] - mat(0,1) * p[1])/ mat(0,0);
-		// apply pivot exchanging to the components of the point
+		// revert pivot exchanging to the components of the point
 		std::swap(p[0], p[j]);
-	} else if (j != 1 && std::abs(direction[1]) >= eps){
-		// Direction vector is in parallel with xy plane and the y component is
-		// not zero. Consequently, it is save to set p[1] to zero.
+	} else if (std::abs(pivoted_direction[1]) >= eps){
 		p[1] = 0.0;
-	} else {
+		// solve
+		p[2] = rhs[1] / mat(1,2);
+		p[0] = (rhs[0] - mat(0,2) * p[2])/ mat(0,1);
+		// revert pivot exchanging to the components of the point
+		std::swap(p[0], p[j]);
+	} else { // std::abs(pivoted_direction[0]) >= eps
 		p[0] = 0.0;
+		// the 2x3 system of linear equations can be reduced to a 2x2 system
+		long double const l1(mat(1,1) / mat(0,1));
+		p[2] = (rhs[1] - rhs[0]*l1) / (mat(1,2) - mat(0,2)*l1);
+		p[1] = (rhs[0] - mat(0,2)*p[2]) / mat(0,1);
+		// revert pivot exchanging to the components of the point
+		std::swap(p[0], p[j]);
 	}
 
 	return std::make_pair(direction, p);
