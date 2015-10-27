@@ -115,10 +115,13 @@ MeshLib::Mesh const& ProcessVariable::getMesh() const
 
 void ProcessVariable::initializeDirichletBCs(
     MeshGeoToolsLib::MeshNodeSearcher& searcher,
+    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    const unsigned nodal_dof_idx,
     std::vector<std::size_t>& global_ids, std::vector<double>& values)
 {
-	for (auto& bc : _dirichlet_bcs)
-		bc->initialize(searcher, global_ids, values);
+    for (auto& bc : _dirichlet_bcs)
+        bc->initialize(searcher, dof_table, nodal_dof_idx,
+                       global_ids, values);
 }
 
 }  // namespace ProcessLib

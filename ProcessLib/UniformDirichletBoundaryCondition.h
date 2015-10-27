@@ -16,6 +16,7 @@
 #include "logog/include/logog.hpp"
 
 #include "BaseLib/ConfigTree.h"
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace GeoLib
@@ -48,12 +49,26 @@ public:
     /// and the corresponding values.
     /// The ids are appended to the global_ids and the values are filled with
     /// the constant _value.
-    void initialize(MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            std::vector<std::size_t>& global_ids, std::vector<double>& values)
+    void initialize(
+            MeshGeoToolsLib::MeshNodeSearcher& searcher,
+            AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            std::size_t component_id,
+            std::vector<std::size_t>& global_ids,
+            std::vector<double>& values)
     {
         // Find nodes' ids on the given mesh on which this boundary condition
         // is defined.
         std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
+
+        // convert mesh node ids to global index for the given component
+        for (auto& id : ids)
+        {
+            MeshLib::Location l(searcher.getMeshId(),
+                                MeshLib::MeshItemType::Node,
+                                id);
+            // TODO: that might be slow, but only done once
+            id = dof_table.getGlobalIndex(l, component_id);
+        }
 
         // Append node ids.
         global_ids.reserve(global_ids.size() + ids.size());
