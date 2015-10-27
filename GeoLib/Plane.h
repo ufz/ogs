@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "MathLib/Vector3.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 namespace GeoLib
 {
@@ -78,8 +79,8 @@ std::pair<MathLib::Vector3, MathLib::Point3d>
 computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	double eps = std::numeric_limits<double>::epsilon())
 {
-	MathLib::Vector3 const& n1(p0.getNormal());
-	MathLib::Vector3 const& n2(p1.getNormal());
+	MathLib::Vector3 n1(p0.getNormal());
+	MathLib::Vector3 n2(p1.getNormal());
 	MathLib::Vector3 direction(MathLib::crossProduct(n1, n2));
 
 	// If the two planes p1 and p2 are in parallel the direction vector will be
@@ -88,52 +89,74 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	if (direction.getSqrLength() < eps*eps)
 		return std::make_pair(direction, MathLib::Point3d());
 
-	double d1(p0.getDistance());
-	double d2(p1.getDistance());
+	// determine a point p that fulfills both plane equations in Hessian normal
+	// form (n1,p) - d1 = 0 and (n2,p) - d2 = 0
+
+	// create right hand side of the system of linear equations
+	std::array<double, 2> rhs{{p0.getDistance(), p1.getDistance()}};
+
+	// copy vector components into the matrix of the system of linear equations
+	MathLib::DenseMatrix<double, std::size_t> mat(2,3);
+	mat(0,0) = n1[0];
+	mat(0,1) = n1[1];
+	mat(0,2) = n1[2];
+	mat(1,0) = n2[0];
+	mat(1,1) = n2[1];
+	mat(1,2) = n2[2];
 
 	// full pivot search
 	std::size_t i(0), j(0);
 	double temp_pivot(0.0);
+	for (std::size_t r(0); r<mat.getNRows(); ++r) {
+		for (std::size_t c(0); c<mat.getNCols(); ++c) {
+			if (std::abs(mat(r,c)) > temp_pivot) {
+				i = r;
+				j = c;
+				temp_pivot = std::abs(mat(i,j));
+			}
+		}
+	}
 
-	// determine a point p that fulfills both plane equations in Hessian normal
-	// form (n1,p) - d1 = 0 and (n2,p) - d2 = 0
+	// exchange rows and cols to get the according to the absolute value biggest
+	// entry to position (0,0)
+	if (i != 0) { // if necessary exchange rows
+		std::swap(mat(0,0), mat(i,0));
+		std::swap(mat(0,1), mat(i,1));
+		std::swap(mat(0,2), mat(i,2));
+		std::swap(rhs[0], rhs[i]);
+	}
+	if (j != 0) { // if necessary exchange columns
+		std::swap(mat(0,0), mat(0,j));
+		std::swap(mat(1,0), mat(1,j));
+		std::swap(mat(2,0), mat(2,j));
+		std::swap(n1[0], n1[j]);
+		std::swap(n2[0], n2[j]);
+	}
+
+	// eliminate the entry (1,0) and apply changes to the other entries of the
+	// column and the right hand side
+	long double const l(mat(1,0) / mat(0,0));
+	mat(1,0) = 0.0;
+	mat(1,1) -= l*mat(0,1);
+	mat(1,2) -= l*mat(0,2);
+	rhs[1] -= l*rhs[0];
+
 	MathLib::Point3d p;
-	if (std::abs(direction[2]) >= eps) {
+	if (j != 2 && std::abs(direction[2]) >= eps) {
 		// direction vector is not in parallel with xy plane and it is save to
 		// set p[2] zero
 		p[2] = 0.0;
-		// solve the 2x3 system of linear equations manually
-		// search pivot
-		if (std::abs(n1[0]) >= std::abs(n2[0])) {
-			double const l10(n2[0]/n1[0]);
-			double const s(n2[1] - n1[1] * l10);
-			p[1] = 1.0/s * (-d2 + d1*l10);
-			p[0] = (-d1 - n1[1] * p[1])/n1[0];
-		} else {
-			double const l10(n1[0]/n2[0]);
-			double const s(n1[1] - n2[1] * l10);
-			p[1] = 1.0/s * (-d1 + d2*l10);
-			p[0] = (-d2 - n2[1] * p[1])/n2[0];
-		}
-	} else if (std::abs(direction[1]) >= eps){
+		// solve
+		p[1] = rhs[1] / mat(1,1);
+		p[0] = (rhs[0] - mat(0,1) * p[1])/ mat(0,0);
+		// apply pivot exchanging to the components of the point
+		std::swap(p[0], p[j]);
+	} else if (j != 1 && std::abs(direction[1]) >= eps){
 		// Direction vector is in parallel with xy plane and the y component is
 		// not zero. Consequently, it is save to set p[1] to zero.
 		p[1] = 0.0;
-		// solve the 2x3 system of linear equations manually
-		double const l10(n2[0]/n1[0]);
-		double const s(n2[2] - n1[2] * l10);
-		p[2] = 1.0/s * (-d2 + d1*l10);
-		p[0] = (-d1 - n1[2]*p[2])/n1[0];
 	} else {
-		// direction vector is parallel to e_x = (1,0,0)
-		// => either (n1 = e_y and n2 = e_z) or (n1 = e_z and n2 = e_y)
-		if (std::abs(n1[1]) >= eps) { // n1 = e_y and n2 = e_z
-			p[1] = -d1 / n1[1];
-			p[2] = -d2 / n2[2];
-		} else { // n1 = e_z and n2 = e_y
-			p[1] = -d2 / n2[1];
-			p[2] = -d1 / n1[2];
-		}
+		p[0] = 0.0;
 	}
 
 	return std::make_pair(direction, p);
