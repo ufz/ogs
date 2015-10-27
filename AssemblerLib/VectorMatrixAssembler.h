@@ -38,6 +38,14 @@ public:
 
     ~VectorMatrixAssembler() {}
 
+    void setX(GLOBAL_VECTOR_ const * x, GLOBAL_VECTOR_ const * x_prev_ts)
+    {
+        assert((!x == !x_prev_ts) && "either no or both inputs have to be set");
+        assert((!x) || x->size() == x_prev_ts->size());
+        _x = x;
+        _x_prev_ts = x_prev_ts;
+    }
+
     /// Executes local assembler for the given mesh item and adds the result
     /// into the global matrix and vector.
     /// The positions in the global matrix/vector are taken from
@@ -49,15 +57,41 @@ public:
     {
         assert(_data_pos.size() > id);
 
-        LocalToGlobalIndexMap::RowColumnIndices const& indices = _data_pos[id];
+        std::vector<GlobalIndexType> indices;
 
-        local_assembler->assemble();
-        local_assembler->addToGlobal(_A, _rhs, indices);
+        // Local matrices and vectors will always be ordered by component,
+        // no matter what the order of the global matrix is.
+        for (unsigned c=0; c<_data_pos.getNumComponents(); ++c)
+        {
+            auto const& idcs = _data_pos(id, c).rows;
+            indices.reserve(indices.size() + idcs.size());
+            indices.insert(indices.end(), idcs.begin(), idcs.end());
+        }
+
+        std::vector<double> localX;
+        std::vector<double> localX_pts;
+
+        if (_x)         localX.reserve(indices.size());
+        if (_x_prev_ts) localX_pts.reserve(indices.size());
+
+        for (auto i : indices)
+        {
+            if (_x)         localX.emplace_back((*_x)[i]);
+            if (_x_prev_ts) localX_pts.emplace_back((*_x_prev_ts)[i]);
+        }
+
+        LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
+                    indices, indices);
+
+        local_assembler->assemble(localX, localX_pts);
+        local_assembler->addToGlobal(_A, _rhs, r_c_indices);
     }
 
 protected:
     GLOBAL_MATRIX_ &_A;
     GLOBAL_VECTOR_ &_rhs;
+    GLOBAL_VECTOR_ const *_x = nullptr;
+    GLOBAL_VECTOR_ const *_x_prev_ts = nullptr;
     LocalToGlobalIndexMap const& _data_pos;
 };
 
