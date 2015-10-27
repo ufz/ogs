@@ -58,11 +58,9 @@ public:
     {
         assert(_local_to_global_index_map.size() > id);
 
-        LocalToGlobalIndexMap::RowColumnIndices const& indices =
-            _local_to_global_index_map[id];
+        auto const num_local_dof = _local_to_global_index_map.getNumElementDOF(id);
 
-        assert(indices.rows.size() >= indices.columns.size());
-        _builder(*item, item_data, indices.rows.size(),
+        _builder(*item, item_data, num_local_dof,
             std::forward<Args>(args)...);
     }
 
