@@ -19,7 +19,7 @@ const unsigned PointRule1::edge_nodes[1][1] =
 	{0}
 };
 
-double PointRule1::computeVolume(Node const* const* _nodes)
+double PointRule1::computeVolume(Node const* const* /*_nodes*/)
 {
 	return 0;
 }
