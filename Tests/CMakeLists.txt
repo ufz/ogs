@@ -75,7 +75,7 @@ if(DEFINED ENV{CI})
 	set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_shuffle --gtest_repeat=3)
 endif()
 if(OGS_USE_PETSC)
-	set(TEST_FILTER_MPI --gtest_filter=-MPITest*:*Assembler*:*MeshSubsets*:*PointVec*:*InsertZeroPointsInGrid*)
+	set(TEST_FILTER_MPI --gtest_filter=-MPITest*:*Assembler*:*MeshSubsets*:*PointVec*:*InsertZeroPointsInGrid*:InSituMesh.MappedMeshSourceRoundtrip)
 	add_custom_target(tests
 		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
 		DEPENDS testrunner
