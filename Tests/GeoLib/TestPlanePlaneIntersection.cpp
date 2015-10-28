@@ -110,9 +110,13 @@ struct ConstructedLine : public ::testing::Test
 		std::tie(d, p) = GeoLib::computePlanePlaneIntersection(plane1, plane2);
 
 		// check if the given vector d0 and the computed vector are parallel
-		if (!GeoLib::isParallel(d, d0))
+		if (!GeoLib::isParallel(d, d0, std::numeric_limits<float>::epsilon()))
 		{
 			std::cerr << "Expected d and d0 to be parallel.\n";
+			std::cerr << std::setprecision(20)
+				<< "d = (" << d << "), d0 = (" << d0 << ")" << std::endl;
+			std::cerr << std::setprecision(20) << MathLib::crossProduct(d, d0)
+				<< std::endl;
 			return false;
 		}
 
@@ -138,7 +142,8 @@ TYPED_TEST_P(ConstructedLine, TestPlanePlaneIntersection)
 	ac::check<MathLib::Vector3, MathLib::Point3d, MathLib::Vector3,
 	          MathLib::Vector3>(
 	    this->check, 1000,
-	    ac::make_arbitrary(ac::fix(2, this->d0_generator), this->points_gen,
+	    ac::make_arbitrary(ac::fix(2, this->d0_generator),
+						   ac::fix(2, this->points_gen),
 	                       ac::fix(2, this->u_generator),
 	                       ac::fix(2, this->v_generator))
 	        .discard_if([](MathLib::Vector3 const& d0,
