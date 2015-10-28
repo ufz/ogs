@@ -11,7 +11,7 @@
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
 #include <cassert>
-#include <boost/property_tree/ptree_fwd.hpp>
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
@@ -52,7 +52,7 @@ private:
 
 /// Construct a UniformInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    boost::property_tree::ptree const& config);
+    BaseLib::ConfigTree const& config);
 
 /// Distribution of values given by a mesh property defined on nodes.
 class MeshPropertyInitialCondition : public InitialCondition
@@ -76,7 +76,7 @@ private:
 
 /// Construct a MeshPropertyInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    boost::property_tree::ptree const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 

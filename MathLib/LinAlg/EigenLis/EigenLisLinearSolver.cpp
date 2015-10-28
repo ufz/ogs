@@ -9,12 +9,12 @@
 
 #include "EigenLisLinearSolver.h"
 
-#include <boost/property_tree/ptree.hpp>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
@@ -24,20 +24,19 @@
 namespace MathLib
 {
 
-using boost::property_tree::ptree;
-
 EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A,
                       const std::string /*solver_name*/,
-                      ptree const*const option)
+                      BaseLib::ConfigTree const*const option)
 : _A(A)
 {
     if (option)
         setOption(*option);
 }
 
-void EigenLisLinearSolver::setOption(const ptree &option)
+void EigenLisLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
-    boost::optional<ptree> ptSolver = option.get_child("LinearSolver");
+    boost::optional<BaseLib::ConfigTree> ptSolver =
+        option.get_child("LinearSolver");
     if (!ptSolver)
         return;
 

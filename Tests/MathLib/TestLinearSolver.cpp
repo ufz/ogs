@@ -14,7 +14,6 @@
  */
 
 #include <gtest/gtest.h>
-#include <boost/property_tree/ptree.hpp>
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
@@ -100,7 +99,7 @@ struct Example1
 };
 
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
-void checkLinearSolverInterface(T_MATRIX &A, boost::property_tree::ptree &ls_option)
+void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree& ls_option)
 {
     Example1 ex1;
 

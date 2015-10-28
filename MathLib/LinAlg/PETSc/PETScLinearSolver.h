@@ -18,11 +18,12 @@
 #define PETSCLINEARSOLVER_H_
 
 #include<string>
-#include <boost/property_tree/ptree_fwd.hpp>
 
 #include <petscksp.h>
 
 #include "logog/include/logog.hpp"
+
+#include "BaseLib/ConfigTree.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -49,7 +50,7 @@ class PETScLinearSolver
                            the linear solver interface.
         */
         PETScLinearSolver(PETScMatrix &A, const std::string prefix="",
-                          boost::property_tree::ptree const*const option = nullptr);
+                          BaseLib::ConfigTree const*const option = nullptr);
 
         ~PETScLinearSolver()
         {

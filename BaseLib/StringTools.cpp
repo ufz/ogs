@@ -20,7 +20,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 namespace BaseLib
@@ -70,13 +69,6 @@ std::string padLeft(std::string const& str, int maxlen, char ch)
 {
 	std::stringstream ss(str);
 	ss << std::right << std::setw(maxlen) << std::setfill(ch) << str;
-	return ss.str();
-}
-
-std::string propertyTreeToString(boost::property_tree::ptree const& tree)
-{
-	std::ostringstream ss;
-	boost::property_tree::write_json(ss, tree);
 	return ss.str();
 }
 

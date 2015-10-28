@@ -62,15 +62,14 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	GeoLib::GEOObjects* geo_objects (&_geo_objects);
 
 	// build DOM tree
-	using boost::property_tree::ptree;
-	ptree doc;
+    BaseLib::ConfigTree doc;
 	read_xml(in, doc, boost::property_tree::xml_parser::no_comments);
 
 	if (!isGmlFile(doc))
 		return false;
 
-	ptree const & root_node = doc.get_child("OpenGeoSysGLI");
-	BOOST_FOREACH( ptree::value_type const & node, root_node )
+    BaseLib::ConfigTree const & root_node = doc.get_child("OpenGeoSysGLI");
+	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & node, root_node )
 	{
 		if (node.first.compare("name") == 0)
 		{
@@ -115,12 +114,11 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	return true;
 }
 
-void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & pointsRoot,
+void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 	                                  std::vector<GeoLib::Point*>* points,
 	                                  std::map<std::string, std::size_t>* &pnt_names )
 {
-	using boost::property_tree::ptree;
-	BOOST_FOREACH( ptree::value_type const & point, pointsRoot )
+	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & point, pointsRoot )
 	{
 		if (point.first.compare("point") != 0)
 			continue;
@@ -154,14 +152,13 @@ void BoostXmlGmlInterface::readPoints(boost::property_tree::ptree const & points
 }
 
 
-void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& polylinesRoot,
+void BoostXmlGmlInterface::readPolylines(BaseLib::ConfigTree const&  polylinesRoot,
 	                                     std::vector<GeoLib::Polyline*>* polylines,
 	                                     std::vector<GeoLib::Point*>* points,
 	                                     const std::vector<std::size_t> &pnt_id_map,
 	                                     std::map<std::string, std::size_t>* &ply_names )
 {
-	using boost::property_tree::ptree;
-	BOOST_FOREACH( ptree::value_type const & polyline, polylinesRoot )
+	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & polyline, polylinesRoot )
 	{
 		if (polyline.first.compare("polyline") != 0)
 			continue;
@@ -190,7 +187,7 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 				}
 			}
 
-			BOOST_FOREACH( ptree::value_type const & pnt, polyline.second )
+			BOOST_FOREACH( BaseLib::ConfigTree::value_type const & pnt, polyline.second )
 			{
 				if (pnt.first.compare("pnt") == 0)
 					polylines->back()->addPoint(pnt_id_map[_idx_map[std::atoi(pnt.second.data().c_str())]]);
@@ -206,14 +203,13 @@ void BoostXmlGmlInterface::readPolylines(boost::property_tree::ptree const& poly
 	}
 }
 
-void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfacesRoot,
+void BoostXmlGmlInterface::readSurfaces(BaseLib::ConfigTree const&  surfacesRoot,
 	                                    std::vector<GeoLib::Surface*>* surfaces,
 	                                    std::vector<GeoLib::Point*>* points,
 	                                    const std::vector<std::size_t> &pnt_id_map,
 	                                    std::map<std::string, std::size_t>* &sfc_names )
 {
-	using boost::property_tree::ptree;
-	BOOST_FOREACH( ptree::value_type const & surface, surfacesRoot )
+	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & surface, surfacesRoot )
 	{
 		if (surface.first.compare("surface") != 0)
 			continue;
@@ -231,7 +227,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 		if (!s_name.empty())
 			sfc_names->insert(std::pair<std::string, std::size_t>(s_name, surfaces->size()-1));
 
-		BOOST_FOREACH( ptree::value_type const & element, surface.second )
+		BOOST_FOREACH( BaseLib::ConfigTree::value_type const & element, surface.second )
 		{
 			if (element.first.compare("element") != 0)
 				continue;
@@ -260,7 +256,7 @@ void BoostXmlGmlInterface::readSurfaces(boost::property_tree::ptree const& surfa
 	}
 }
 
-bool BoostXmlGmlInterface::isGmlFile(const boost::property_tree::ptree &root) const
+bool BoostXmlGmlInterface::isGmlFile(BaseLib::ConfigTree const& root) const
 {
 	if (!root.get_child_optional("OpenGeoSysGLI"))
 	{
@@ -297,20 +293,19 @@ bool BoostXmlGmlInterface::write()
 	}
 
 	// create a property tree for writing it to file
-	using boost::property_tree::ptree;
-	ptree pt;
+    BaseLib::ConfigTree pt;
 
 	// put header in property tree
 	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation",
 		"http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd");
 	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
-	ptree &geometry_set = pt.add("OpenGeoSysGLI", "");
+    BaseLib::ConfigTree &geometry_set = pt.add("OpenGeoSysGLI", "");
 
 	geometry_set.add("name", _exportName);
-	ptree & pnts_tag = geometry_set.add("points", "");
+    BaseLib::ConfigTree & pnts_tag = geometry_set.add("points", "");
 	for (std::size_t k(0); k<pnts->size(); k++) {
-		ptree &pnt_tag = pnts_tag.add("point", "");
+        BaseLib::ConfigTree &pnt_tag = pnts_tag.add("point", "");
 		pnt_tag.put("<xmlattr>.id", k);
 		pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
 		pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);

@@ -13,9 +13,9 @@
 #include <algorithm>
 #include <vector>
 
-#include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/ConfigTree.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace GeoLib
@@ -32,10 +32,9 @@ namespace ProcessLib
 /// not present defaults to zero.
 class UniformDirichletBoundaryCondition
 {
-    using ConfigTree = boost::property_tree::ptree;
 public:
     UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
-            ConfigTree const& config)
+                                      BaseLib::ConfigTree const& config)
         : _geometry(geometry)
     {
         DBUG("Constructing UniformDirichletBoundaryCondition from config.");

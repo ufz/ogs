@@ -13,9 +13,9 @@
 #include <memory>
 
 #include <logog/include/logog.hpp>
-#include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/optional.hpp>
 
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Elements/Element.h"
 
 namespace MeshLib
@@ -66,8 +66,8 @@ private:
 	ReturnType _value;
 };
 
-using ConfigTree = boost::property_tree::ptree;
-std::unique_ptr<ParameterBase> createConstParameter(ConfigTree const config);
+std::unique_ptr<ParameterBase> createConstParameter(
+    BaseLib::ConfigTree const config);
 
 /// A parameter represented by a mesh property vector.
 template <typename ReturnType>
@@ -89,7 +89,7 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(
-    ConfigTree const config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 

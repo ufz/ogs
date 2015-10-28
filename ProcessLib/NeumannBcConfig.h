@@ -10,9 +10,9 @@
 #ifndef PROCESS_LIB_NEUMANN_BC_CONFIG_H_
 #define PROCESS_LIB_NEUMANN_BC_CONFIG_H_
 
-#include <boost/property_tree/ptree.hpp>
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/ConstantFunction.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshLib/Elements/Element.h"
@@ -42,10 +42,9 @@ protected:
 /// Configuration of a Neumann type boundary condition read from input file.
 class NeumannBcConfig : public BoundaryConditionConfig
 {
-    using ConfigTree = boost::property_tree::ptree;
 public:
     NeumannBcConfig(GeoLib::GeoObject const* const geometry,
-            ConfigTree const& config)
+            BaseLib::ConfigTree const& config)
         : BoundaryConditionConfig(geometry)
     {
         DBUG("Constructing NeumannBcConfig from config.");

@@ -10,14 +10,13 @@
  *
  */
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
 
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
@@ -73,8 +72,6 @@ void solveProcesses(ProjectData &project)
 
 int main(int argc, char *argv[])
 {
-	using ConfigTree = boost::property_tree::ptree;
-
 	// Parse CLI arguments.
 	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
 			"Copyright (c) 2012-2015, OpenGeoSys Community "
@@ -100,14 +97,8 @@ int main(int argc, char *argv[])
 	    argc, argv);
 
 	// Project's configuration
-	ConfigTree project_config;
-
-	read_xml(project_arg.getValue(), project_config,
-			boost::property_tree::xml_parser::no_comments
-			 | boost::property_tree::xml_parser::trim_whitespace);
-	DBUG("Project configuration from file \'%s\' read.",
-		project_arg.getValue().c_str());
-
+	BaseLib::ConfigTree project_config =
+	    BaseLib::read_xml_config(project_arg.getValue());
 
 	project_config = project_config.get_child("OpenGeoSysProject");
 
