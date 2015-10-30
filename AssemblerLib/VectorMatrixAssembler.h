@@ -76,8 +76,8 @@ public:
 
         for (auto i : indices)
         {
-            if (_x)         localX.emplace_back((*_x)[i]);
-            if (_x_prev_ts) localX_pts.emplace_back((*_x_prev_ts)[i]);
+            if (_x)         localX.emplace_back(_x->get(i));
+            if (_x_prev_ts) localX_pts.emplace_back(_x_prev_ts->get(i));
         }
 
         LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
