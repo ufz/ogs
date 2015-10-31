@@ -181,23 +181,18 @@ void AssemblerLibLocalToGlobalIndexMapMultiDOFTest::test(
 	// check mesh elements
 	for (unsigned e=0; e<dof_map->size(); ++e)
 	{
+		auto const element_nodes_size = mesh->getElement(e)->getNNodes();
+		auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
+
 		for (unsigned c=0; c<dof_map->getNumComponents(); ++c)
 		{
 			auto const& global_idcs = (*dof_map)(e, c).rows;
+			ASSERT_EQ(element_nodes_size, global_idcs.size());
 
-			ASSERT_EQ(4, global_idcs.size()); // quad element with four nodes
-
-			for (unsigned n=0; n<4; ++n) // boundary of quad is line with two nodes
+			for (unsigned n = 0; n < element_nodes_size; ++n)
 			{
-				unsigned node = e/4*(mesh_subdivs+1) + e%4; // first node of the quad
-				switch (n)
-				{
-				case 0: break;
-				case 1: node += 1; break;
-				case 2: node += 1 + (mesh_subdivs+1); break;
-				case 3: node +=     (mesh_subdivs+1); break;
-				}
-				auto const glob_idx = compute_global_index(node, c);
+				auto const node_id = ptr_element_nodes[n]->getID();
+				auto const glob_idx = compute_global_index(node_id, c);
 				EXPECT_EQ(glob_idx, global_idcs[n]);
 			}
 		}
