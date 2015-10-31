@@ -172,11 +172,11 @@ void AssemblerLibLocalToGlobalIndexMapMultiDOFTest::test(
 {
 	initComponents(num_components, selected_component, ComponentOrder);
 
-	ASSERT_TRUE(dof_map->getNumComponents() == num_components);
-	ASSERT_TRUE(dof_map->size() == mesh->getNElements());
+	ASSERT_EQ(dof_map->getNumComponents(), num_components);
+	ASSERT_EQ(dof_map->size(), mesh->getNElements());
 
-	ASSERT_TRUE(dof_map_boundary->getNumComponents() == 1);
-	ASSERT_TRUE(dof_map_boundary->size() == boundary_elements.size());
+	ASSERT_EQ(dof_map_boundary->getNumComponents(), 1);
+	ASSERT_EQ(dof_map_boundary->size(), boundary_elements.size());
 
 	// check mesh elements
 	for (unsigned e=0; e<dof_map->size(); ++e)
@@ -225,15 +225,15 @@ void AssemblerLibLocalToGlobalIndexMapMultiDOFTest::test(
 
 void assert_equal(AL::LocalToGlobalIndexMap const& dof1, AL::LocalToGlobalIndexMap const& dof2)
 {
-	ASSERT_TRUE(dof1.size() == dof2.size());
-	ASSERT_TRUE(dof1.getNumComponents() == dof2.getNumComponents());
+	ASSERT_EQ(dof1.size(), dof2.size());
+	ASSERT_EQ(dof1.getNumComponents(), dof2.getNumComponents());
 
 	for (unsigned e=0; e<dof1.size(); ++e)
 	{
 		for (unsigned c=0; c<dof1.getNumComponents(); ++c)
 		{
-			EXPECT_TRUE(dof1(e, c).rows == dof2(e, c).rows);
-			EXPECT_TRUE(dof1(e, c).columns == dof2(e, c).columns);
+			EXPECT_EQ(dof1(e, c).rows, dof2(e, c).rows);
+			EXPECT_EQ(dof1(e, c).columns, dof2(e, c).columns);
 		}
 	}
 }
