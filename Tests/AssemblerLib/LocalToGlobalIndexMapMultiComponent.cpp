@@ -257,29 +257,19 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
 	assert_equal(*dof_map_boundary, *dof_map_boundary_bc);
 }
 
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test_2Comp_0thSel_ByComp)
+TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 {
-	test<AL::ComponentOrder::BY_COMPONENT>(
-	    2, 0,
-	    ComputeGlobalIndexByComponent{(mesh_subdivs + 1) * (mesh_subdivs + 1)});
+	unsigned const num_components = 5;
+	for (auto c = 0; c < num_components; ++c)
+		test<AL::ComponentOrder::BY_COMPONENT>(
+		    num_components, c, ComputeGlobalIndexByComponent{
+		                           (mesh_subdivs + 1) * (mesh_subdivs + 1)});
 }
 
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test_2Comp_0thSel_ByLoc)
+TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
 {
-	test<AL::ComponentOrder::BY_LOCATION>(2, 0,
-	                                      ComputeGlobalIndexByLocation{2});
+	unsigned const num_components = 5;
+	for (auto c = 0; c < num_components; ++c)
+		test<AL::ComponentOrder::BY_LOCATION>(
+		    num_components, c, ComputeGlobalIndexByLocation{num_components});
 }
-
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test_2Comp_1stSel_ByComp)
-{
-	test<AL::ComponentOrder::BY_COMPONENT>(
-	    2, 1,
-	    ComputeGlobalIndexByComponent{(mesh_subdivs + 1) * (mesh_subdivs + 1)});
-}
-
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test_2Comp_1stSel_ByLoc)
-{
-	test<AL::ComponentOrder::BY_LOCATION>(2, 1,
-	                                      ComputeGlobalIndexByLocation{2});
-}
-
