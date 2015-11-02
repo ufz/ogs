@@ -89,9 +89,6 @@ template <typename PT>
 void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
 	std::string const& property_name, PT new_property_value)
 {
-	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
-		polygon));
-
 	boost::optional<MeshLib::PropertyVector<PT> &> opt_pv(
 		mesh.getProperties().getPropertyVector<PT>(property_name)
 	);
@@ -105,6 +102,9 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
 		ERR("Values of the PropertyVector are not assigned to cells.");
 		return;
 	}
+
+	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
+		polygon));
 
 	for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
 		bool elem_out(true);
