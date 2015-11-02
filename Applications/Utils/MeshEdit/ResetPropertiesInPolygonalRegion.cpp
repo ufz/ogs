@@ -205,6 +205,12 @@ int main (int argc, char* argv[])
 
 	// *** read mesh
 	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::vector<std::string> property_names(
+		mesh->getProperties().getPropertyVectorNames());
+	INFO("Mesh contains %d property vectors:", property_names.size());
+	for (auto name : property_names) {
+		INFO("- %s", name.c_str());
+	}
 	std::string const& property_name(property_name_arg.getValue());
 
 	resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
