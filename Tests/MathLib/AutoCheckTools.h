@@ -30,6 +30,68 @@ struct randomTupleGenerator
     }
 };
 
+enum class CartesianPlane
+{
+	XY = 2,  // The values are used for indexing.
+	YZ = 0,
+	ZX = 1
+};
+
+enum class CartesianAxes
+{
+	X = 0,  // The values are used for indexing.
+	Y = 1,
+	Z = 2
+};
+
+template <enum CartesianPlane P, typename T,
+          typename Gen = randomTupleGenerator<T, 2>>
+struct tripleInPlaneGenerator
+{
+	Gen source;
+
+	using result_type = std::array<T, 3>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		typename Gen::result_type const tuple = fix(size, source)();
+		result_type rv;
+		rv.fill(T());	// fill with default value for type T.
+		int j = 0;	// running over the tuple elements
+		for (int i = 0; i < 3; ++i) // i is running over the rv elems.
+		{
+			if (i == static_cast<int>(P))
+				continue;
+			rv[i] = tuple[j++];
+		}
+
+		return rv;
+    }
+};
+
+template <enum CartesianAxes A, typename T,
+          typename Gen = randomTupleGenerator<T, 1>>
+struct tripleOnAxisGenerator
+{
+	Gen source;
+
+	using result_type = std::array<T, 3>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		typename Gen::result_type const tuple = fix(size, source)();
+		result_type rv;
+		rv.fill(T());	// fill with default value for type T.
+		int j = 0;	// running over the tuple elements
+		for (int i = 0; i < 3; ++i) // i is running over the rv elems.
+		{
+			if (i == static_cast<int>(A))
+				rv[i] = tuple[j++];
+		}
+
+		return rv;
+    }
+};
 /// Generates non-negative integers from 0 to given maximum dimension DIM
 /// independent of size.
 template <typename T, T DIM, typename Gen = generator<T>>
