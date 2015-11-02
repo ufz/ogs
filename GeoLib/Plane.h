@@ -136,6 +136,8 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	// column and the right hand side
 	long double const l(mat(1,0) / mat(0,0));
 	mat(1,0) = 0.0;
+	if (std::abs(mat(1,1) - l * mat(0,1)) / std::abs(mat(1,1)) < eps*eps)
+		WARN("Point in plane-plane intersection is propably wrong due to numerical cancellation.")
 	mat(1,1) -= l*mat(0,1);
 	mat(1,2) -= l*mat(0,2);
 	rhs[1] -= l*rhs[0];
