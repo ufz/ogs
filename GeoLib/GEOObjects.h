@@ -86,7 +86,7 @@ public:
 	 * @param pnt_names vector of the names corresponding to the points
 	 * @param eps relative tolerance value for testing of point uniqueness
 	 */
-	void addPointVec(std::vector<Point*>* points,
+	void addPointVec(std::unique_ptr<std::vector<Point*>> points,
 	                 std::string& name,
 	                 std::map<std::string, std::size_t>* pnt_names = nullptr,
 	                 double eps = sqrt(std::numeric_limits<double>::epsilon()));
@@ -117,7 +117,8 @@ public:
 	bool removePointVec(const std::string &name);
 
 	/// Adds a vector of stations with the given name and colour to GEOObjects.
-	void addStationVec(std::vector<Point*>* stations, std::string &name);
+	void addStationVec(
+	    std::unique_ptr<std::vector<Point *>> stations, std::string &name);
 
 	/// Returns the station vector with the given name.
 	const std::vector<GeoLib::Point*>* getStationVec(
@@ -136,7 +137,7 @@ public:
 	 * @param name The geometry to which the given Polyline objects should be added.
 	 * @param ply_names map of names and ids that are corresponding to the polylines
 	 */
-	void addPolylineVec(std::vector<Polyline*>* lines,
+	void addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
 	                            const std::string &name,
 	                            std::map<std::string,std::size_t>* ply_names = nullptr);
 
@@ -178,7 +179,7 @@ public:
 	bool removePolylineVec(const std::string &name);
 
 	/** Adds a vector of surfaces with the given name to GEOObjects. */
-	void addSurfaceVec(std::vector<Surface*>* surfaces,
+	void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> surfaces,
 	                           const std::string &name,
 	                           std::map<std::string, std::size_t>* sfc_names = nullptr);
 
@@ -280,6 +281,36 @@ public:
 	GeoDomain _geo_domain;
 
 	std::unique_ptr<Callbacks> _callbacks{new Callbacks};
+
+	std::function<void(std::string const&)> addPolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> appendPolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> removePolylineVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> addSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> appendSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
+
+	std::function<void(std::string const&)> removeSurfaceVecCallback =
+	    [](std::string const&)
+	{
+	};
 
 private:
 	/**

@@ -185,22 +185,27 @@ double GeoMapper::getMeshElevation(
 	return (*(_surface_mesh->getNode(pnt->getID())))[2];
 }
 
-unsigned getIndexInPntVec(GeoLib::Point const*const pnt, std::vector<GeoLib::Point*> const*const points)
+unsigned getIndexInPntVec(GeoLib::Point const* const pnt,
+                          std::vector<GeoLib::Point*> const& points)
 {
-	auto it (std::find(points->begin(), points->end(), pnt));
-	return static_cast<unsigned>(std::distance(points->begin(), it));
+	auto it (std::find(points.begin(), points.end(), pnt));
+	return static_cast<unsigned>(std::distance(points.begin(), it));
 }
 
-std::vector<GeoLib::Polyline*>* copyPolylinesVector(const std::vector<GeoLib::Polyline*> *polylines, std::vector<GeoLib::Point*> *points)
+std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
+    std::vector<GeoLib::Polyline*> const& polylines,
+    std::vector<GeoLib::Point*> const& points)
 {
-	std::size_t nLines = polylines->size();
-	std::vector<GeoLib::Polyline*> *new_lines = new std::vector<GeoLib::Polyline*>(nLines);
+	std::size_t nLines = polylines.size();
+	auto new_lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
+	    new std::vector<GeoLib::Polyline*>(nLines));
+
 	for (std::size_t i=0; i<nLines; ++i)
 	{
-		(*new_lines)[i] = new GeoLib::Polyline(*points);
-		std::size_t nLinePnts ((*polylines)[i]->getNumberOfPoints());
+		(*new_lines)[i] = new GeoLib::Polyline(points);
+		std::size_t nLinePnts (polylines[i]->getNumberOfPoints());
 		for (std::size_t j=0; j<nLinePnts; ++j)
-			(*new_lines)[i]->addPoint((*polylines)[i]->getPointID(j));
+			(*new_lines)[i]->addPoint(polylines[i]->getPointID(j));
 	}
 	return new_lines;
 }
@@ -218,10 +223,12 @@ void GeoMapper::advancedMapOnMesh(
 
 	// copy geometry (and set z=0 for all points)
 	unsigned nGeoPoints ( points->size() );
-	std::vector<GeoLib::Point*> *new_points = new std::vector<GeoLib::Point*>(nGeoPoints);
+	auto new_points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	for (std::size_t i=0; i<nGeoPoints; ++i)
 		(*new_points)[i] = new GeoLib::Point((*(*points)[i])[0],(*(*points)[i])[1],0.0);
-	std::vector<GeoLib::Polyline*> *new_lines (copyPolylinesVector(this->_geo_objects.getPolylineVec(this->_geo_name), new_points));
+	auto new_lines = copyPolylinesVector(
+	    *_geo_objects.getPolylineVec(this->_geo_name), *new_points);
 
 	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
 	double max_segment_length (this->getMaxSegmentLength(*new_lines));
@@ -239,7 +246,9 @@ void GeoMapper::advancedMapOnMesh(
 			(*mesh->getNode(i))[1], 0.0, mesh->getNode(i)->getID());
 		GeoLib::Point* pnt = grid.getNearestPoint(zero_coords);
 		dist[i] = MathLib::sqrDist(*pnt, zero_coords);
-		closest_geo_point[i] = (dist[i]<=max_segment_length) ? getIndexInPntVec(pnt, new_points) : -1;
+		closest_geo_point[i] = (dist[i] <= max_segment_length)
+		                           ? getIndexInPntVec(pnt, *new_points)
+		                           : -1;
 	}
 
 	// store for each point the line segment to which it was added.
@@ -313,11 +322,11 @@ void GeoMapper::advancedMapOnMesh(
 		}
 	}
 
-	this->_geo_objects.addPointVec(new_points, const_cast<std::string&>(new_geo_name));
+	this->_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
 	std::vector<std::size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
 	for (std::size_t i=0; i<new_lines->size(); ++i)
 		(*new_lines)[i]->updatePointIDs(pnt_id_map);
-	this->_geo_objects.addPolylineVec(new_lines, new_geo_name);
+	_geo_objects.addPolylineVec(std::move(new_lines), new_geo_name);
 
 	// map new geometry incl. additional point using the normal mapping method
 	this->_geo_name = new_geo_name;

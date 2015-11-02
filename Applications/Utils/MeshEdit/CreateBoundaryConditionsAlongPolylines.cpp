@@ -47,7 +47,8 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	GeoLib::GEOObjects & geometry_sets)
 {
 	// copy data
-	std::vector<GeoLib::Point*> * pnts(new std::vector<GeoLib::Point*>);
+	auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t>* pnt_names(
 		new std::map<std::string, std::size_t>);
 	std::size_t cnt(0);
@@ -59,7 +60,7 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	}
 
 	// create data structures for geometry
-	geometry_sets.addPointVec(pnts, geo_name, pnt_names);
+	geometry_sets.addPointVec(std::move(pnts), geo_name, pnt_names);
 }
 
 void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
@@ -230,7 +231,8 @@ int main (int argc, char* argv[])
 	);
 
 	double const eps (std::numeric_limits<double>::epsilon());
-	std::vector<GeoLib::Point*> *surface_pnts (new std::vector<GeoLib::Point*>);
+	auto surface_pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
 	std::map<std::string, std::size_t> *name_id_map(
 		new std::map<std::string, std::size_t>
 	);
@@ -259,7 +261,7 @@ int main (int argc, char* argv[])
 	}
 
 	std::string surface_name(BaseLib::dropFileExtension(mesh_arg.getValue())+"-MeshNodesAlongPolylines");
-	geometry_sets.addPointVec(surface_pnts, surface_name, name_id_map, 1e-6);
+	geometry_sets.addPointVec(std::move(surface_pnts), surface_name, name_id_map, 1e-6);
 
 	// write the BCs and the merged geometry set to file
 	writeBCsAndGML(geometry_sets, surface_name, vis_arg.getValue());

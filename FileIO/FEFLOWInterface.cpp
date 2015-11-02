@@ -176,11 +176,15 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 		}
 	}
 
-	std::string project_name(BaseLib::extractBaseNameWithoutExtension(filename));
+	std::string project_name(
+	    BaseLib::extractBaseNameWithoutExtension(filename));
 	if (_geoObjects && points)
-		_geoObjects->addPointVec(points, project_name);
+		_geoObjects->addPointVec(
+		    std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
 	if (_geoObjects && lines)
-		_geoObjects->addPolylineVec(lines, project_name);
+		_geoObjects->addPolylineVec(
+		    std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
+		    project_name);
 
 	auto mesh = new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
 	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(

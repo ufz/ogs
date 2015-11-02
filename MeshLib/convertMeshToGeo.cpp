@@ -39,20 +39,21 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	// nodes to points conversion
 	std::string mesh_name(mesh.getName());
 	{
-		std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
+		auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+			new std::vector<GeoLib::Point*>);
 		points->reserve(mesh.getNNodes());
 
 		for (auto node_ptr : mesh.getNodes())
 			points->push_back(new GeoLib::Point(*node_ptr, node_ptr->getID()));
 
-		geo_objects.addPointVec(points, mesh_name, nullptr, eps);
+		geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
 	}
 	const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
 	// elements to surface triangles conversion
 	const std::pair<unsigned, unsigned> bounds (MeshInformation::getValueBounds(mesh));
 	const unsigned nMatGroups(bounds.second-bounds.first+1);
-	std::vector<GeoLib::Surface*> *sfcs = new std::vector<GeoLib::Surface*>;
+	auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(new std::vector<GeoLib::Surface*>);
 	sfcs->reserve(nMatGroups);
 	auto const& points = *geo_objects.getPointVec(mesh_name);
 	for (unsigned i=0; i<nMatGroups; ++i)
@@ -78,7 +79,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
 	sfcs->erase(sfcs_end, sfcs->end());
 
-	geo_objects.addSurfaceVec(sfcs, mesh_name);
+	geo_objects.addSurfaceVec(std::move(sfcs), mesh_name);
 	return true;
 }
 
