@@ -123,12 +123,19 @@ struct ConstructedLine : public ::testing::Test
 		// the point of the intersection line must lie inside both planes
 		if (!plane1.isPointInPlane(p))
 		{
-			std::cerr << "Expected p to lie in plane1.\n";
+			std::cerr << "Expected p (" << p << ") to lie in plane1 ("
+				<< plane1.getNormal() << ", " << plane1.getDistance() << ").\n";
+			std::cerr << "plane2 is: ("
+				<< plane2.getNormal() << ", " << plane2.getDistance() << ").\n";
+			std::cerr << "Distance p (" << p << ") to plane1 ("
+				<< plane1.getNormal() << ", " << plane1.getDistance() << "): "
+				<< plane1.getDistance(p) << ".\n";
 			return false;
 		}
 		if (!plane2.isPointInPlane(p))
 		{
-			std::cerr << "Expected p to lie in plane1.\n";
+			std::cerr << "Expected p (" << p << ") to lie in plane2 ("
+				<< plane2.getNormal() << ", " << plane2.getDistance() << ").\n";
 			return false;
 		}
 		return true;
