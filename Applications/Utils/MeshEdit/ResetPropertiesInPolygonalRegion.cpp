@@ -213,6 +213,17 @@ int main (int argc, char* argv[])
 
 	{
 		char new_property_val(static_cast<char>(new_property_arg.getValue()));
+
+		// check if PropertyVector exists
+		boost::optional<MeshLib::PropertyVector<char> &> opt_pv(
+			mesh->getProperties().getPropertyVector<char>(property_name)
+		);
+		if (!opt_pv) {
+			opt_pv = mesh->getProperties().createNewPropertyVector<char>(
+				property_name, MeshLib::MeshItemType::Cell, 1);
+			opt_pv.get().resize(mesh->getElements().size());
+			INFO("Created PropertyVector with name \"%s\".", property_name.c_str());
+		}
 		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
 	}
 
