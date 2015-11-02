@@ -104,10 +104,6 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	mat(1,1) = n2[1];
 	mat(1,2) = n2[2];
 
-	std::cerr << "########" << std::endl;
-	std::cerr << "n1: " << p0.getNormal() << ", d1: " << p0.getDistance() << std::endl;
-	std::cerr << "n2: " << p1.getNormal() << ", d2: " << p1.getDistance() << std::endl;
-
 	// full pivot search
 	std::size_t i(0), j(0);
 	double temp_pivot(0.0);
@@ -136,8 +132,6 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 		std::swap(n2[0], n2[j]);
 	}
 
-	std::cerr << "pivoted: " << mat << std::endl;
-
 	// eliminate the entry (1,0) and apply changes to the other entries of the
 	// column and the right hand side
 	long double const l(mat(1,0) / mat(0,0));
@@ -146,11 +140,7 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	mat(1,2) -= l*mat(0,2);
 	rhs[1] -= l*rhs[0];
 
-	std::cerr << "after first elimination step: " << mat;
-	std::cerr << "rhs: " << rhs[0] << " " << rhs[1] << std::endl;
-
 	MathLib::Vector3 pivoted_direction(MathLib::crossProduct(n1, n2));
-	std::cerr << "pivoted direction " << pivoted_direction << std::endl;
 	MathLib::Point3d p;
 	if (std::abs(pivoted_direction[2]) >= eps) {
 		// solve
@@ -159,7 +149,6 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 		p[0] = (rhs[0] - mat(0,1) * p[1] - mat(0,2) * p[2]) / mat(0,0);
 		// revert pivot exchanging to the components of the point
 		std::swap(p[0], p[j]);
-		std::cerr << "(1) p " << p << std::endl;
 	} else if (std::abs(pivoted_direction[1]) >= eps){
 		p[1] = 0.0;
 		// solve
@@ -167,7 +156,6 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 		p[0] = (rhs[0] - mat(0,2) * p[2]) / mat(0,0);
 		// revert pivot exchanging to the components of the point
 		std::swap(p[0], p[j]);
-		std::cerr << "(2) p " << p << std::endl;
 	} else { // std::abs(pivoted_direction[0]) >= eps
 		p[0] = 0.0;
 		// the 2x3 system of linear equations can be reduced to a 2x2 system
@@ -176,16 +164,7 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 		p[1] = (rhs[0] - mat(0,2)*p[2]) / mat(0,1);
 		// revert pivot exchanging to the components of the point
 		std::swap(p[0], p[j]);
-		std::cerr << "(3) p " << p << std::endl;
 	}
-
-	MathLib::Vector3 op(p);
-	std::cerr << "distance p to plane 0: "
-		<< MathLib::scalarProduct(p0.getNormal(),op) + p0.getDistance()
-		<< std::endl;
-	std::cerr << "distance p to plane 1: "
-		<< MathLib::scalarProduct(p1.getNormal(),op) + p1.getDistance()
-		<< std::endl;
 	return std::make_pair(direction, p);
 }
 
