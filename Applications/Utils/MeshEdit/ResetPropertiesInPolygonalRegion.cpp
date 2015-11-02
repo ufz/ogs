@@ -199,8 +199,6 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	unsigned new_property_val(new_property_arg.getValue());
-
 	GeoLib::Polygon polygon(*(ply));
 
 	// *** read mesh
@@ -213,7 +211,20 @@ int main (int argc, char* argv[])
 	}
 	std::string const& property_name(property_name_arg.getValue());
 
-	resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	{
+		char new_property_val(static_cast<char>(new_property_arg.getValue()));
+		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	}
+
+	{
+		unsigned new_property_val(new_property_arg.getValue());
+		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	}
+
+	{
+		bool new_property_val(static_cast<bool>(new_property_arg.getValue()));
+		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	}
 
 	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
