@@ -93,10 +93,10 @@ computePlanePlaneIntersection(GeoLib::Plane const& p0, GeoLib::Plane const& p1,
 	// form (n1,p) - d1 = 0 and (n2,p) - d2 = 0
 
 	// create right hand side of the system of linear equations
-	std::array<double, 2> rhs{{-p0.getDistance(), -p1.getDistance()}};
+	std::array<long double, 2> rhs{{-p0.getDistance(), -p1.getDistance()}};
 
 	// copy vector components into the matrix of the system of linear equations
-	MathLib::DenseMatrix<double, std::size_t> mat(2,3);
+	MathLib::DenseMatrix<long double, std::size_t> mat(2,3);
 	mat(0,0) = n1[0];
 	mat(0,1) = n1[1];
 	mat(0,2) = n1[2];
