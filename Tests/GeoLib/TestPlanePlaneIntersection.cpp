@@ -150,7 +150,7 @@ TYPED_TEST_P(ConstructedLine, TestPlanePlaneIntersection)
 	          MathLib::Vector3>(
 	    this->check, 1000,
 	    ac::make_arbitrary(ac::fix(2, this->d0_generator),
-						   ac::fix(2, this->points_gen),
+	                       this->points_gen,
 	                       ac::fix(2, this->u_generator),
 	                       ac::fix(2, this->v_generator))
 	        .discard_if([](MathLib::Vector3 const& d0,
