@@ -53,21 +53,6 @@ if(ParaView_FOUND AND VTKIO_LIB_FOUND)
 	message(STATUS "Using ParaView in ${ParaView_DIR}")
 	return()
 elseif(NOT ParaView_DIR)
-	# If ParaView was not found check for VTK
-	find_package(VTK 6.1 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
-	if(VTK_FOUND)
-		include( ${VTK_USE_FILE} )
-		foreach(DIR ${VTK_INCLUDE_DIRS})
-			if("${DIR}" MATCHES ".*vtknetcdf.*")
-				include_directories(SYSTEM ${DIR}/../cxx ${DIR}/include)
-			elseif("${DIR}" MATCHES ".*vtk.*")
-				include_directories(SYSTEM ${DIR}/vtknetcdf/include)
-			endif()
-		endforeach()
-		include_directories(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
-		message(STATUS "Using VTK in ${VTK_DIR}")
-		return()
-	else()
 		# If nothing was found build ParaView as an external project
 		set(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
 	endif()
@@ -96,9 +81,7 @@ else()
 endif()
 
 message(STATUS "Building ParaView as an external project in the build directory")
-if(CMAKE_VERSION VERSION_LESS 3.0.0)
-	message(FATAL_ERROR "CMake 3.0.0 or higher is required for building VTK / ParaView!")
-endif()
+
 ExternalProject_Add(Catalyst
 	PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}

@@ -4,6 +4,8 @@ macro(ADD_CATALYST_DEPENDENCY target)
 
 		# see http://stackoverflow.com/questions/18642155
 		set_property(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
+	elseif(VTK_FOUND)
+		include( ${VTK_USE_FILE} )
 	endif()
 
 	if(TARGET VtkRescan)
