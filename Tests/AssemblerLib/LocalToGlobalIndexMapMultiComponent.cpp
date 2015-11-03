@@ -39,22 +39,24 @@ public:
 		mesh.reset(MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
 		mesh_items_all_nodes.reset(new MeL::MeshSubset(*mesh, &mesh->getNodes()));
 
-		std::vector<GeoLib::Point*>* ply_pnts = new std::vector<GeoLib::Point*>;
+		std::unique_ptr<std::vector<GeoLib::Point*>> ply_pnts(
+					new std::vector<GeoLib::Point*>);
 		ply_pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 		ply_pnts->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 
 		std::string geometry_0("GeometryWithPntsAndPolyline");
-		geo_objs.addPointVec(ply_pnts, geometry_0, nullptr);
+		geo_objs.addPointVec(std::move(ply_pnts), geometry_0, nullptr);
 
 		auto ply = new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0));
 
 		ply->addPoint(0);
 		ply->addPoint(1);
 
-		std::vector<GeoLib::Polyline*>* plys = new std::vector<GeoLib::Polyline*>;
+		std::unique_ptr<std::vector<GeoLib::Polyline*>> plys(
+					new std::vector<GeoLib::Polyline*>);
 		plys->push_back(ply);
 
-		geo_objs.addPolylineVec(plys, geometry_0, nullptr);
+		geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
 
 		MGTL::MeshNodeSearcher& searcher_nodes = MGTL::MeshNodeSearcher::getMeshNodeSearcher(*mesh);
 		MGTL::BoundaryElementsSearcher searcher_elements(*mesh, searcher_nodes);
