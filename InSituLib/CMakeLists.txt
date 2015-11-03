@@ -9,6 +9,6 @@ add_library(InSituLib
 	VtkMeshNodalCoordinatesTemplate-impl.h
 )
 
-target_link_libraries(InSituLib INTERFACE MeshLib ${CATALYST_LIBRARIES})
+target_link_libraries(InSituLib INTERFACE MeshLib ${VTK_LIBRARIES})
 
 ADD_VTK_DEPENDENCY(InSituLib)

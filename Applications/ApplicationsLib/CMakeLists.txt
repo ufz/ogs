@@ -9,7 +9,7 @@ target_link_libraries(ApplicationsLib INTERFACE
 	MeshGeoToolsLib
 	NumLib
 	ProcessLib
-	${CATALYST_LIBRARIES}
+	${VTK_LIBRARIES}
 	logog
 )
 ADD_VTK_DEPENDENCY(ApplicationsLib)

@@ -7,7 +7,7 @@ target_link_libraries(ProcessLib INTERFACE
     AssemblerLib
     MeshLib
     MeshGeoToolsLib
-    ${CATALYST_LIBRARIES}
+    ${VTK_LIBRARIES}
     logog
 )
 
