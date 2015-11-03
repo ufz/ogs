@@ -116,8 +116,7 @@ private:
     /// a vector (\c LineIndex) of indices in the global stiffness matrix or vector
     Table _rows;
 
-    /// Vector alias to that contains for each element a vector of global column
-    /// indices in the global stiffness matrix
+    /// \see _rows
     Table const& _columns = _rows;
 
 #ifndef NDEBUG
