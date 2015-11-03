@@ -7,45 +7,14 @@ if(NOT DEFINED ParaView_DIR AND DEFINED ENV{ParaView_DIR})
 	set(ParaView_DIR $ENV{ParaView_DIR})
 endif()
 
-# CLI modules
-set(PARAVIEW_MODULES vtkIOXML)
-set(VTK_MODULES vtkIOXML)
-if(OGS_USE_MPI)
-	set(PARAVIEW_MODULES ${PARAVIEW_MODULES} vtkIOParallelXML)
-endif()
-
-# GUI modules
-if(OGS_BUILD_GUI)
-	set(PARAVIEW_MODULES ${PARAVIEW_MODULES}
-		vtkRenderingCore
-		vtkRenderingOpenGL
-		vtknetcdf
-		vtkIOLegacy
-		vtkIOImage
-		vtkGUISupportQt
-		vtkRenderingAnnotation
-		vtkFiltersExtraction
-		vtkFiltersGeometry
-		vtkFiltersTexture
-		vtkFiltersModeling
-		vtkFiltersSources
-		vtkImagingCore
-		vtkInteractionWidgets
-		vtkInteractionStyle
-		vtkIOExport
-		vtkRenderingFreeType
-	)
-	set(CATALYST_GIT_URL https://github.com/ufz/catalyst-gui.git)
-endif()
-
-set(VTK_LIBRARIES ${PARAVIEW_MODULES} CACHE STRING "" FORCE)
+set(VTK_LIBRARIES ${VTK_MODULES} CACHE STRING "" FORCE)
 if(OGS_BUILD_GUI)
 	# Replace vtknetcdf with vtkNetCDF vtkNetCDF_cxx
 	list(REMOVE_ITEM VTK_LIBRARIES vtknetcdf)
 	list(APPEND VTK_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 endif()
 
-find_package(ParaView 4.2 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
+find_package(ParaView 4.2 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
 
 find_library(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
 if(ParaView_FOUND AND VTKIO_LIB_FOUND)
