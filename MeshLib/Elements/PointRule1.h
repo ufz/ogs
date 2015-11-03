@@ -44,8 +44,12 @@ public:
 	typedef NoEdgeReturn EdgeReturn;
 
 	/// Checks if a point is inside the element.
+	///
+	/// Specifically this function tests if the squared euclidean distance
+	/// between the points \c _nodes and \c pnt is less then \c eps.
+	///
 	/// \param pnt a 3D MathLib::Point3d object
-	/// \param eps tolerance for numerical algorithm used or computing the
+	/// \param eps tolerance for numerical algorithm used for computing the
 	/// property
 	/// \return true if the point is not outside the element, false otherwise
 	static bool isPntInElement(Node const* const* _nodes,
