@@ -9,6 +9,10 @@ endif()
 
 # CLI modules
 set(PARAVIEW_MODULES vtkIOXML)
+set(VTK_MODULES vtkIOXML)
+if(OGS_USE_MPI)
+	set(PARAVIEW_MODULES ${PARAVIEW_MODULES} vtkIOParallelXML)
+endif()
 
 # GUI modules
 if(OGS_BUILD_GUI)

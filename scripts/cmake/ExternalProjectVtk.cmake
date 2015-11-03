@@ -6,7 +6,10 @@ if(NOT DEFINED VTK_DIR AND DEFINED ENV{VTK_DIR})
 endif()
 
 # CLI modules
-set(VTK_MODULES vtkIOXML vtkIOParallelXML)
+set(VTK_MODULES vtkIOXML)
+if(OGS_USE_MPI)
+	set(VTK_MODULES ${VTK_MODULES} vtkIOParallelXML)
+endif()
 
 # GUI modules
 if(OGS_BUILD_GUI)
