@@ -124,8 +124,7 @@ add_library(VtkVis STATIC
 	${HEADERS}
 )
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(VtkVis)
+ADD_VTK_DEPENDENCY(VtkVis)
 
 if(GEOTIFF_FOUND)
 	include_directories(${GEOTIFF_INCLUDE_DIRS})

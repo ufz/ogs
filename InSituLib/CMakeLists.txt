@@ -11,5 +11,4 @@ add_library(InSituLib
 
 target_link_libraries(InSituLib INTERFACE MeshLib ${CATALYST_LIBRARIES})
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(InSituLib)
+ADD_VTK_DEPENDENCY(InSituLib)

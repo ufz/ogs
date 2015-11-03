@@ -61,7 +61,7 @@ add_executable(OGSFileConverter
 )
 
 target_link_libraries(OGSFileConverter FileIO QtBase)
-ADD_CATALYST_DEPENDENCY(OGSFileConverter)
+ADD_VTK_DEPENDENCY(OGSFileConverter)
 
 # Adds useful macros and variables
 # this is needed to correctly link the qt and vtk libraries through target_link_libraries

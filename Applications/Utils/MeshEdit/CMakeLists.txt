@@ -13,50 +13,50 @@ if(QT4_FOUND)
 
 	add_executable(moveMeshNodes moveMeshNodes.cpp)
 	target_link_libraries(moveMeshNodes FileIO)
-	ADD_CATALYST_DEPENDENCY(moveMeshNodes)
+	ADD_VTK_DEPENDENCY(moveMeshNodes)
 	set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 	add_executable(MapGeometryToMeshSurface
 		MapGeometryToMeshSurface.cpp )
 	target_link_libraries(MapGeometryToMeshSurface FileIO MeshGeoToolsLib)
-	ADD_CATALYST_DEPENDENCY(MapGeometryToMeshSurface)
+	ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 	set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
 endif() # QT4_FOUND
 
 add_executable(removeMeshElements removeMeshElements.cpp)
 target_link_libraries(removeMeshElements FileIO)
-ADD_CATALYST_DEPENDENCY(removeMeshElements)
+ADD_VTK_DEPENDENCY(removeMeshElements)
 set_target_properties(removeMeshElements PROPERTIES FOLDER Utilities)
 
 add_executable(NodeReordering NodeReordering.cpp)
 target_link_libraries(NodeReordering FileIO)
-ADD_CATALYST_DEPENDENCY(NodeReordering)
+ADD_VTK_DEPENDENCY(NodeReordering)
 set_target_properties(NodeReordering PROPERTIES FOLDER Utilities)
 
 add_executable(MoveMesh MoveMesh.cpp)
 target_link_libraries(MoveMesh FileIO)
-ADD_CATALYST_DEPENDENCY(MoveMesh)
+ADD_VTK_DEPENDENCY(MoveMesh)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
 target_link_libraries(appendLinesAlongPolyline FileIO MeshGeoToolsLib)
-ADD_CATALYST_DEPENDENCY(appendLinesAlongPolyline)
+ADD_VTK_DEPENDENCY(appendLinesAlongPolyline)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
 add_executable(editMaterialID editMaterialID.cpp)
 target_link_libraries(editMaterialID FileIO)
-ADD_CATALYST_DEPENDENCY(editMaterialID)
+ADD_VTK_DEPENDENCY(editMaterialID)
 set_target_properties(editMaterialID PROPERTIES FOLDER Utilities)
 
 add_executable(checkMesh checkMesh.cpp)
 target_link_libraries(checkMesh FileIO)
-ADD_CATALYST_DEPENDENCY(checkMesh)
+ADD_VTK_DEPENDENCY(checkMesh)
 set_target_properties(checkMesh PROPERTIES FOLDER Utilities)
 
 add_executable(reviseMesh reviseMesh.cpp)
 target_link_libraries (reviseMesh FileIO)
-ADD_CATALYST_DEPENDENCY(reviseMesh)
+ADD_VTK_DEPENDENCY(reviseMesh)
 set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
@@ -72,7 +72,7 @@ set_target_properties(AddTopLayer PROPERTIES FOLDER Utilities)
 add_executable(CreateBoundaryConditionsAlongPolylines
 	CreateBoundaryConditionsAlongPolylines.cpp )
 target_link_libraries(CreateBoundaryConditionsAlongPolylines FileIO MeshGeoToolsLib)
-ADD_CATALYST_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
+ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
 	PROPERTIES FOLDER Utilities)
 

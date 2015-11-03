@@ -8,7 +8,7 @@ target_link_libraries(ogs
     FileIO
 )
 
-ADD_CATALYST_DEPENDENCY(ogs)
+ADD_VTK_DEPENDENCY(ogs)
 
 if(OGS_USE_PETSC)
     target_link_libraries(ogs ${PETSC_LIBRARIES})

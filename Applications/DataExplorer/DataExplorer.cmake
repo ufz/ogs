@@ -98,8 +98,7 @@ if(VTKFBXCONVERTER_FOUND)
 	target_link_libraries(DataExplorer ${VTKFBXCONVERTER_LIBRARIES})
 endif()
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(DataExplorer)
+ADD_VTK_DEPENDENCY(DataExplorer)
 
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 

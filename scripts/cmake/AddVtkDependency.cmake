@@ -1,4 +1,4 @@
-macro(ADD_CATALYST_DEPENDENCY target)
+macro(ADD_VTK_DEPENDENCY target)
 	if(ParaView_FOUND)
 		include("${PARAVIEW_USE_FILE}")
 

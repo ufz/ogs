@@ -12,7 +12,7 @@ target_link_libraries(ApplicationsLib INTERFACE
 	${CATALYST_LIBRARIES}
 	logog
 )
-ADD_CATALYST_DEPENDENCY(ApplicationsLib)
+ADD_VTK_DEPENDENCY(ApplicationsLib)
 
 if(TARGET Eigen)
 	add_dependencies(ApplicationsLib Eigen)

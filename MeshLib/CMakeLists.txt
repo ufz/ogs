@@ -25,8 +25,7 @@ target_link_libraries(MeshLib INTERFACE
 	logog
 )
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(MeshLib)
+ADD_VTK_DEPENDENCY(MeshLib)
 
 if(TARGET Eigen)
     add_dependencies(MeshLib Eigen)
