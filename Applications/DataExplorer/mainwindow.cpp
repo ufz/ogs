@@ -181,7 +181,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(mshTabWidget->treeView,
 		SIGNAL(qualityCheckRequested(InSituLib::VtkMappedMeshSource*)),
 	        this,
-			SLOT(showMshQualitySelectionDialog(InSituLib::VtkMappedMeshSource*)));
+			SLOT(showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource*)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
 			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
