@@ -1,5 +1,6 @@
 add_subdirectory(FileConverter)
 add_subdirectory(GeoTools)
+add_subdirectory(MeshGeoTools)
 add_subdirectory(MeshEdit)
 add_subdirectory(SimpleMeshCreation)
 
