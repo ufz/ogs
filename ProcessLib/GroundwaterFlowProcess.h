@@ -174,6 +174,7 @@ public:
 
         _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
+                *_local_to_global_index_map, 0,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
         //
@@ -192,6 +193,7 @@ public:
                     _global_setup,
                     _integration_order,
                     *_local_to_global_index_map,
+                    0,
                     *_mesh_subset_all_nodes);
         }
 
@@ -212,7 +214,7 @@ public:
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
 
         _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets));
+            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
 #ifdef USE_PETSC
         DBUG("Allocate global matrix, vectors, and linear solver.");

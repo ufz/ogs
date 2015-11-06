@@ -57,8 +57,9 @@ public:
 	MeshLib::Mesh const& getMesh() const;
 
 	void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
-	                            std::vector<std::size_t>& global_ids,
-	                            std::vector<double>& values);
+	        const AssemblerLib::LocalToGlobalIndexMap& dof_table,
+	        const unsigned nodal_dof_idx,
+	        std::vector<std::size_t>& global_ids, std::vector<double>& values);
 
 	template <typename OutputIterator, typename GlobalSetup, typename... Args>
 	void createNeumannBcs(OutputIterator bcs,

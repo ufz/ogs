@@ -62,7 +62,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     vec_comp_dis.push_back(
         new MeshLib::MeshSubsets(&mesh_items_all_nodes));
     AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
-            vec_comp_dis);
+            vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
 
     //--------------------------------------------------------------------------
     // Construct a linear system
