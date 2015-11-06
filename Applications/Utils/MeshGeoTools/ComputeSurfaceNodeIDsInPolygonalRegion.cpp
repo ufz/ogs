@@ -10,6 +10,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -23,8 +24,7 @@
 #include "BaseLib/FileTools.h"
 
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/Legacy/OGSIOVer4.h"
+#include "FileIO/readGeometryFromFile.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
@@ -76,35 +76,25 @@ int main (int argc, char* argv[])
 		"be given in a gml- or gli-file. The found mesh nodes and the associated"
 		" area are written as txt and csv data.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
-	                                     "the name of the file containing the input mesh", true,
-	                                     "", "file name of input mesh");
+		"the name of the file containing the input mesh", true,
+		"", "file name of input mesh");
 	cmd.add(mesh_in);
 	TCLAP::ValueArg<std::string> geo_in("g", "geo-file",
-	                                     "the name of the gml file containing the polygons", true,
-	                                     "", "file name of input geometry");
+		"the name of the gml file containing the polygons", true,
+		"", "file name of input geometry");
 	cmd.add(geo_in);
 
 	cmd.parse(argc, argv);
 
-
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
-	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+	std::unique_ptr<MeshLib::Mesh const> mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	INFO("Mesh read: %ul nodes, %ul elements.", mesh->getNNodes(), mesh->getNElements());
 
 	GeoLib::GEOObjects geo_objs;
-	{
-		if (BaseLib::getFileExtension(geo_in.getValue()).compare("gml") == 0) {
-			FileIO::BoostXmlGmlInterface xml(geo_objs);
-			xml.readFile(geo_in.getValue());
-		} else {
-			std::vector<std::string> errors;
-			std::string geo_name(
-				BaseLib::extractBaseNameWithoutExtension(geo_in.getValue()));
-			FileIO::Legacy::readGLIFileV4(geo_in.getValue(), &geo_objs, geo_name, errors);
-		}
-	}
+	FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
 	std::vector<std::string> geo_names;
 	geo_objs.getGeometryNames(geo_names);
-	INFO("Geometry read: %d points, %d polylines.",
+	INFO("Geometry \"%s\" read: %ul points, %ul polylines.",
+		geo_names[0].c_str(),
 		geo_objs.getPointVec(geo_names[0])->size(),
 		geo_objs.getPolylineVec(geo_names[0])->size());
 
