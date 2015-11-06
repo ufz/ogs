@@ -9,6 +9,8 @@ set(SOURCES
 	GMSHInterface.cpp
 	PetrelInterface.h
 	PetrelInterface.cpp
+	readGeometryFromFile.h
+	readGeometryFromFile.cpp
 	readMeshFromFile.h
 	readMeshFromFile.cpp
 	writeGeometryToFile.h
