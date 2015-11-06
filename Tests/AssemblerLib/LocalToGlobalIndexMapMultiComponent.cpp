@@ -129,8 +129,8 @@ public:
 
 	std::unique_ptr<const MeshLib::Mesh> mesh;
 	std::unique_ptr<const MeL::MeshSubset> mesh_items_all_nodes;
-    std::vector<MeL::MeshSubsets*> components_boundary;
-    std::vector<MeL::MeshSubsets*> components;
+	std::vector<MeL::MeshSubsets*> components_boundary;
+	std::vector<MeL::MeshSubsets*> components;
 
 	GeoLib::GEOObjects geo_objs;
 
