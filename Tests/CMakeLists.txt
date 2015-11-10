@@ -38,7 +38,7 @@ target_link_libraries(testrunner
 	GTest
 	Threads::Threads
 )
-ADD_CATALYST_DEPENDENCY(testrunner)
+ADD_VTK_DEPENDENCY(testrunner)
 
 if(OGS_USE_PETSC)
 	target_link_libraries(testrunner ${PETSC_LIBRARIES})
@@ -67,8 +67,7 @@ if(QT4_FOUND)
 	endif()
 endif()
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(testrunner)
+ADD_VTK_DEPENDENCY(testrunner)
 
 # Add make-target test which runs the testrunner
 # This should override CTest's predefined test-target but it does not

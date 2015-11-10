@@ -37,7 +37,7 @@ cache:
 
 env:
   global:
-    - VTK_DIR=VTK-Install/lib/cmake/vtk-6.1
+    - VTK_DIR=VTK-Install/lib/cmake/vtk-6.3
   matrix:
     - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON -DVTK_DIR=$HOME/$VTK_DIR"
     # - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"

@@ -59,7 +59,7 @@ if(QT4_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
 endif()
 
-ADD_CATALYST_DEPENDENCY(FileIO)
+ADD_VTK_DEPENDENCY(FileIO)
 if(TARGET Eigen)
 	add_dependencies(FileIO Eigen)
 endif()

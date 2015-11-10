@@ -7,11 +7,11 @@ target_link_libraries(ProcessLib INTERFACE
     AssemblerLib
     MeshLib
     MeshGeoToolsLib
-    ${CATALYST_LIBRARIES}
+    ${VTK_LIBRARIES}
     logog
 )
 
-ADD_CATALYST_DEPENDENCY(ProcessLib)
+ADD_VTK_DEPENDENCY(ProcessLib)
 
 if(TARGET Eigen)
 	add_dependencies(ProcessLib Eigen)

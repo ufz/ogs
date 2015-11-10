@@ -21,12 +21,11 @@ target_link_libraries(MeshLib INTERFACE
 	BaseLib
 	GeoLib
 	MathLib
-	${CATALYST_LIBRARIES}
+	${VTK_LIBRARIES}
 	logog
 )
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(MeshLib)
+ADD_VTK_DEPENDENCY(MeshLib)
 
 if(TARGET Eigen)
     add_dependencies(MeshLib Eigen)

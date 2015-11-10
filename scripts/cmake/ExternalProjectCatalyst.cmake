@@ -7,41 +7,14 @@ if(NOT DEFINED ParaView_DIR AND DEFINED ENV{ParaView_DIR})
 	set(ParaView_DIR $ENV{ParaView_DIR})
 endif()
 
-# CLI modules
-set(PARAVIEW_MODULES vtkIOXML)
-
-# GUI modules
-if(OGS_BUILD_GUI)
-	set(PARAVIEW_MODULES ${PARAVIEW_MODULES}
-		vtkRenderingCore
-		vtkRenderingOpenGL
-		vtknetcdf
-		vtkIOLegacy
-		vtkIOImage
-		vtkGUISupportQt
-		vtkRenderingAnnotation
-		vtkFiltersExtraction
-		vtkFiltersGeometry
-		vtkFiltersTexture
-		vtkFiltersModeling
-		vtkFiltersSources
-		vtkImagingCore
-		vtkInteractionWidgets
-		vtkInteractionStyle
-		vtkIOExport
-		vtkRenderingFreeType
-	)
-	set(CATALYST_GIT_URL https://github.com/ufz/catalyst-gui.git)
-endif()
-
-set(CATALYST_LIBRARIES ${PARAVIEW_MODULES} CACHE STRING "" FORCE)
+set(VTK_LIBRARIES ${VTK_MODULES} CACHE STRING "" FORCE)
 if(OGS_BUILD_GUI)
 	# Replace vtknetcdf with vtkNetCDF vtkNetCDF_cxx
-	list(REMOVE_ITEM CATALYST_LIBRARIES vtknetcdf)
-	list(APPEND CATALYST_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
+	list(REMOVE_ITEM VTK_LIBRARIES vtknetcdf)
+	list(APPEND VTK_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 endif()
 
-find_package(ParaView 4.2 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
+find_package(ParaView 4.2 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
 
 find_library(VTKIO_LIB_FOUND vtkIOXML-pv4.2 HINTS ${ParaView_DIR}/lib PATH_SUFFIXES Release Debug)
 if(ParaView_FOUND AND VTKIO_LIB_FOUND)
@@ -53,21 +26,6 @@ if(ParaView_FOUND AND VTKIO_LIB_FOUND)
 	message(STATUS "Using ParaView in ${ParaView_DIR}")
 	return()
 elseif(NOT ParaView_DIR)
-	# If ParaView was not found check for VTK
-	find_package(VTK 6.1 COMPONENTS ${PARAVIEW_MODULES} NO_MODULE QUIET)
-	if(VTK_FOUND)
-		include( ${VTK_USE_FILE} )
-		foreach(DIR ${VTK_INCLUDE_DIRS})
-			if("${DIR}" MATCHES ".*vtknetcdf.*")
-				include_directories(SYSTEM ${DIR}/../cxx ${DIR}/include)
-			elseif("${DIR}" MATCHES ".*vtk.*")
-				include_directories(SYSTEM ${DIR}/vtknetcdf/include)
-			endif()
-		endforeach()
-		include_directories(SYSTEM ${VTK_DIR}/../ThirdParty/netcdf/vtknetcdf/cxx)
-		message(STATUS "Using VTK in ${VTK_DIR}")
-		return()
-	else()
 		# If nothing was found build ParaView as an external project
 		set(ParaView_DIR ${CMAKE_BINARY_DIR}/External/catalyst/src/Catalyst-build CACHE PATH "" FORCE)
 	endif()
@@ -79,7 +37,7 @@ if(WIN32)
 	# find_program(NINJA_TOOL_PATH ninja DOC "Ninja build tool")
 	if(NINJA_TOOL_PATH)
 		set(CATALYST_CMAKE_GENERATOR Ninja)
-		set(CATALYST_MAKE_COMMAND ninja ${CATALYST_LIBRARIES})
+		set(CATALYST_MAKE_COMMAND ninja ${VTK_LIBRARIES})
 	else()
 		set(CATALYST_MAKE_COMMAND
 			msbuild /p:Configuration=Release /m:${NUM_PROCESSORS} ParaView.sln &&
@@ -88,17 +46,15 @@ if(WIN32)
 	set(CATALYST_CONFIGURE_COMMAND cmake.bat)
 else()
 	if($ENV{CI})
-		set(CATALYST_MAKE_COMMAND make ${CATALYST_LIBRARIES})
+		set(CATALYST_MAKE_COMMAND make ${VTK_LIBRARIES})
 	else()
-		set(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS} ${CATALYST_LIBRARIES})
+		set(CATALYST_MAKE_COMMAND make -j ${NUM_PROCESSORS} ${VTK_LIBRARIES})
 	endif()
 	set(CATALYST_CONFIGURE_COMMAND cmake.sh)
 endif()
 
 message(STATUS "Building ParaView as an external project in the build directory")
-if(CMAKE_VERSION VERSION_LESS 3.0.0)
-	message(FATAL_ERROR "CMake 3.0.0 or higher is required for building VTK / ParaView!")
-endif()
+
 ExternalProject_Add(Catalyst
 	PREFIX ${CMAKE_BINARY_DIR}/External/catalyst
 	GIT_REPOSITORY ${CATALYST_GIT_URL}

@@ -139,8 +139,7 @@ target_link_libraries(QtDataView INTERFACE
 )
 add_dependencies(QtDataView QtDiagramView QtStratView)
 
-include(AddCatalystDependency)
-ADD_CATALYST_DEPENDENCY(QtDataView)
+ADD_VTK_DEPENDENCY(QtDataView)
 
 if(GEOTIFF_FOUND)
 	target_link_libraries( QtDataView INTERFACE ${GEOTIFF_LIBRARIES} )

@@ -9,7 +9,7 @@ include(UseBackportedModules)
 include(OptionRequires)
 include(CppcheckTargets)
 include(GetCompilerInfoString)
-include(AddCatalystDependency)
+include(AddVtkDependency)
 
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)
