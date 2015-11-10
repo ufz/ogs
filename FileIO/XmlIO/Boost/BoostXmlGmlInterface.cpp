@@ -303,19 +303,19 @@ bool BoostXmlGmlInterface::write()
 	}
 
 	// create a property tree for writing it to file
-    BaseLib::ConfigTree pt;
+	BaseLib::ConfigTree pt;
 
 	// put header in property tree
 	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation",
 		"http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd");
 	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
-    BaseLib::ConfigTree &geometry_set = pt.add("OpenGeoSysGLI", "");
+	BaseLib::ConfigTree &geometry_set = pt.add("OpenGeoSysGLI", "");
 
 	geometry_set.add("name", _exportName);
-    BaseLib::ConfigTree & pnts_tag = geometry_set.add("points", "");
+	BaseLib::ConfigTree & pnts_tag = geometry_set.add("points", "");
 	for (std::size_t k(0); k<pnts->size(); k++) {
-        BaseLib::ConfigTree &pnt_tag = pnts_tag.add("point", "");
+		BaseLib::ConfigTree &pnt_tag = pnts_tag.add("point", "");
 		pnt_tag.put("<xmlattr>.id", k);
 		pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
 		pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);
@@ -325,6 +325,7 @@ bool BoostXmlGmlInterface::write()
 			pnt_tag.put("<xmlattr>.name", point_name);
 	}
 
+	addPolylinesToPropertyTree(geometry_set);
 	addSurfacesToPropertyTree(geometry_set);
 
 #if BOOST_VERSION <= 105500
@@ -335,8 +336,6 @@ bool BoostXmlGmlInterface::write()
 	write_xml(_out, pt, settings);
 	return true;
 }
-
-
 
 void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 	BaseLib::ConfigTree & geometry_set)
@@ -375,6 +374,38 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 			element_tag.put("<xmlattr>.p1", (*(*surface)[j])[0]);
 			element_tag.put("<xmlattr>.p2", (*(*surface)[j])[1]);
 			element_tag.put("<xmlattr>.p3", (*(*surface)[j])[2]);
+		}
+	}
+}
+
+void BoostXmlGmlInterface::addPolylinesToPropertyTree(
+	BaseLib::ConfigTree & geometry_set)
+{
+	GeoLib::PolylineVec const*const vec(_geo_objects.getPolylineVecObj(_exportName));
+	if (!vec) {
+		INFO("BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
+			"No polylines within the geometry \"%s\".", _exportName.c_str());
+		return;
+	}
+
+	std::vector<GeoLib::Polyline*> const*const polylines(vec->getVector());
+	if (! polylines) {
+		INFO("BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
+			"No polylines within the geometry \"%s\".", _exportName.c_str());
+		return;
+	}
+
+	BaseLib::ConfigTree & polylines_tag = geometry_set.add("polylines", "");
+	for (std::size_t i=0; i<polylines->size(); ++i) {
+		GeoLib::Polyline const*const polyline((*polylines)[i]);
+		std::string ply_name("");
+		vec->getNameOfElement(polyline, ply_name);
+		BaseLib::ConfigTree &polyline_tag = polylines_tag.add("polyline", "");
+		polyline_tag.put("<xmlattr>.id", i);
+		if (!ply_name.empty())
+			polyline_tag.put("<xmlattr>.name", ply_name);
+		for (std::size_t j=0; j<polyline->getNumberOfPoints(); ++j) {
+			polyline_tag.add("pnt", polyline->getPointID(j));
 		}
 	}
 }
