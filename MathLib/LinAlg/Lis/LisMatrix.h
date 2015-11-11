@@ -185,8 +185,7 @@ void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
     row_sizes.reserve(n_rows);
 
     // LIS needs 1 more entry, otherewise it starts reallocating arrays.
-    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
-        row_sizes.push_back(sparsity_pattern.getNodeDegree(i) + 1);
+    for (auto i : sparsity_pattern) row_sizes.push_back(i+1);
 
     int ierr = lis_matrix_malloc(matrix._AA, 0, row_sizes.data());
     checkLisError(ierr);
