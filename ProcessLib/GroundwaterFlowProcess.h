@@ -346,7 +346,6 @@ public:
         _x->getGlobalVector(u.get());  // get the global solution
 
         std::size_t const n = _mesh.getNNodes();
-        result->resize(n);
         for (std::size_t i = 0; i < n; ++i)
         {
             MeshLib::Location const l(_mesh.getID(),
