@@ -54,6 +54,11 @@ public:
         return _data[node_id].size();
     }
 
+    std::vector<std::size_t> const& getAdjacentNodes(std::size_t const node_id) const
+    {
+        return _data[node_id];
+    }
+
     void createTable(std::vector<Node*> const& nodes)
     {
         if (_data.size() != nodes.size())
