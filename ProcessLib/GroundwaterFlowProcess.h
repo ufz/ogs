@@ -341,28 +341,25 @@ public:
         }
         assert(result && result->size() == _x->size());
 
-        // If in the case of DDC under parallel computation
-        if ( (_x->getRangeEnd() - _x->getRangeBegin()) != _x->size())
-        {
-            std::unique_ptr<double[]>  u( new double[_x->size()]);
-            _x->getValues(u.get()); // get the global solution
+#ifdef USE_PETSC
+        std::unique_ptr<double[]> u(new double[_x->size()]);
+        _x->getGlobalVector(u.get());  // get the global solution
 
-            std::size_t const n = _mesh.getNNodes();
-            result->resize(n);
-            for (std::size_t i = 0; i < n; ++i)
-            {
-                MeshLib::Location const l(_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, i);
-                auto const global_index = std::abs(// 0 is the component id.
-                       _local_to_global_index_map->getGlobalIndex(l, 0) );
-                (*result)[i] = u[global_index];
-            }
-        }
-        else // serial computation
+        std::size_t const n = _mesh.getNNodes();
+        result->resize(n);
+        for (std::size_t i = 0; i < n; ++i)
         {
-            // Copy result
-            _x->getValues(&(*result)[0]);
+            MeshLib::Location const l(_mesh.getID(),
+                                      MeshLib::MeshItemType::Node, i);
+            auto const global_index = std::abs(  // 0 is the component id.
+                _local_to_global_index_map->getGlobalIndex(l, 0));
+            (*result)[i] = u[global_index];
         }
+#else
+        // Copy result
+        for (std::size_t i = 0; i < _x->size(); ++i)
+            (*result)[i] = (*_x)[i];
+#endif
 
         // Write output file
         FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
