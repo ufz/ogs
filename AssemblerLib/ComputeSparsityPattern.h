@@ -12,19 +12,18 @@
 
 #include <vector>
 
-#include "MeshLib/NodeAdjacencyTable.h"
-#include "LocalToGlobalIndexMap.h"
 #include "ProcessLib/NumericsConfig.h"
 
 namespace AssemblerLib
 {
+
+class LocalToGlobalIndexMap;
 
 using SparsityPattern = std::vector<GlobalIndexType>;
 
 /**
  * @brief Computes a sparsity pattern for the given inputs.
  *
- * @param node_adjacency_table describes the mesh topology
  * @param dof_table            maps mesh nodes to global indices
  * @param mesh                 mesh for which the two parameters above are defined
  *
@@ -32,7 +31,6 @@ using SparsityPattern = std::vector<GlobalIndexType>;
  */
 SparsityPattern
 computeSparsityPattern(
-        MeshLib::NodeAdjacencyTable const& node_adjacency_table,
         LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh
         );

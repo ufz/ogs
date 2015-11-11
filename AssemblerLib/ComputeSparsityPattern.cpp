@@ -7,18 +7,22 @@
  *
  */
 
+#include "MeshLib/NodeAdjacencyTable.h"
+#include "LocalToGlobalIndexMap.h"
+
 #include "ComputeSparsityPattern.h"
 
 namespace AssemblerLib
 {
 
 SparsityPattern
-computeSparsityPattern(
-        MeshLib::NodeAdjacencyTable const& node_adjacency_table,
-        LocalToGlobalIndexMap const& dof_table,
+computeSparsityPattern(LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh
         )
 {
+    MeshLib::NodeAdjacencyTable node_adjacency_table;
+    node_adjacency_table.createTable(mesh.getNodes());
+
     std::vector<std::vector<GlobalIndexType> > global_idcs;
     global_idcs.reserve(mesh.getNNodes());
     for (std::size_t n=0; n<mesh.getNNodes(); ++n)
