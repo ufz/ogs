@@ -41,19 +41,9 @@ public:
                          BaseLib::ConfigTree const*const option = nullptr);
 
     /**
-     * parse linear solvers configuration
-     */
-    void setOption(BaseLib::ConfigTree const& option);
-
-    /**
      * copy linear solvers options
      */
     void setOption(const LisOption &option) { _option = option; }
-
-    /**
-     * get linear solver options
-     */
-    LisOption &getOption() { return _option; }
 
     /**
      * solve a given linear equations
