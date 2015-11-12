@@ -14,89 +14,54 @@
 
 #include "LisOption.h"
 
+#include "logog/include/logog.hpp"
+
 namespace MathLib
 {
 
-LisOption::LisOption()
+void LisOption::addOptions(const BaseLib::ConfigTree & options)
 {
-    solver_type = SolverType::CG;
-    precon_type = PreconType::NONE;
-    matrix_type = MatrixType::CRS;
-    max_iterations = 1e6;
-    error_tolerance = 1.e-16;
+    auto const range = options.equal_range("lis_option");
+    for (auto it=range.first; it!=range.second; ++it)
+    {
+        auto key = it->second.get_optional<Key>("option");
+        auto val = it->second.get_optional<Value>("value");
+
+        if (key && val) {
+            settings[*key] = *val;
+        }
+    }
+
+    auto solver_type = options.get_optional<std::string>("solver_type");
+    if (solver_type) {
+        settings["-i"] = *solver_type;
+    }
+    auto precon_type = options.get_optional<std::string>("precon_type");
+    if (precon_type) {
+        settings["-p"] = *precon_type;
+    }
+    auto error_tolerance = options.get_optional<std::string>("error_tolerance");
+    if (error_tolerance) {
+        settings["-tol"] = *error_tolerance;
+    }
+    auto max_iteration_step = options.get_optional<std::string>("max_iteration_step");
+    if (max_iteration_step) {
+        settings["-maxiter"] = *max_iteration_step;
+    }
 }
 
-LisOption::SolverType LisOption::getSolverType(const std::string &solver_name)
+void LisOption::printInfo() const
 {
-#define RETURN_SOLVER_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==str) return SolverType::TypeName;
+    if (settings.empty()) {
+        INFO("Lis options: none set.");
+    } else {
+        INFO("Lis options:");
 
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CG);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCG);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CGS);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCGSTAB);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCGSTABl);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, GPBiCG);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, TFQMR);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, Orthomin);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, GMRES);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, Jacobi);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, GaussSeidel);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, SOR);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCGSafe);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CR);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCR);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CRS);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCRSTAB);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, GPBiCR);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCRSafe);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, FGMRESm);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, IDRs);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, MINRES);
-
-    return SolverType::INVALID;
-#undef RETURN_SOLVER_ENUM_IF_SAME_STRING
-}
-
-LisOption::PreconType LisOption::getPreconType(const std::string &precon_name)
-{
-#define RETURN_PRECOM_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==str) return PreconType::TypeName;
-
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, NONE);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, JACOBI);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, ILU);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, SSOR);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, Hybrid);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, IplusS);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, SAINV);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, SAAMG);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, CroutILU);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, ILUT);
-
-    return PreconType::NONE;
-#undef RETURN_PRECOM_ENUM_IF_SAME_STRING
-}
-
-LisOption::MatrixType LisOption::getMatrixType(const std::string &matrix_name)
-{
-#define RETURN_MATRIX_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==str) return MatrixType::TypeName;
-
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, CRS);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, CCS);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, MSR);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, DIA);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, ELL);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, JDS);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, BSR);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, BSC);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, VBR);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, COO);
-    RETURN_MATRIX_ENUM_IF_SAME_STRING(matrix_name, DNS);
-
-    return MatrixType::CRS;
-#undef RETURN_MATRIX_ENUM_IF_SAME_STRING
+        for (auto const& it : settings) {
+            INFO("-> %s %s ", it.first.c_str(), it.second.c_str());
+        }
+        INFO("");
+    }
 }
 
 } //MathLib
