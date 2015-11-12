@@ -92,36 +92,35 @@ public:
 
 	void createPolylines()
 	{
-		auto const points = geo_objects.getPointVec(geo_name);
-		const std::vector<std::size_t> pnt_id_map(
-			geo_objects.getPointVecObj(geo_name)->getIDMap());
+		auto createPolyline = [](GeoLib::PointVec const& pnt_vec,
+			std::vector<GeoLib::Polyline*> & lines, std::size_t line_id,
+			std::vector<std::size_t> pnt_ids,
+			std::map<std::string,std::size_t> & line_name_map,
+			std::string const& name)
+		{
+			auto const & pnt_id_map(pnt_vec.getIDMap());
+			lines[line_id] = new GeoLib::Polyline(*(pnt_vec.getVector()));
+			for (std::size_t k(0); k<pnt_ids.size(); ++k) {
+				lines[line_id]->addPoint(pnt_id_map[pnt_ids[k]]);
+			}
+
+			if (!name.empty())
+				line_name_map.insert(std::make_pair(name, line_id));
+		};
+
+		auto const& pnt_vec = *(geo_objects.getPointVecObj(geo_name));
 
 		auto lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
 			new std::vector<GeoLib::Polyline*>(5));
-		std::map<std::string, std::size_t>* ply_names =
+		std::map<std::string, std::size_t>* name_map =
 			new std::map<std::string, std::size_t>;
-		(*lines)[0] = new GeoLib::Polyline(*points);
-		(*lines)[0]->addPoint(pnt_id_map[0]);
-		(*lines)[0]->addPoint(pnt_id_map[1]);
-		(*lines)[0]->addPoint(pnt_id_map[2]);
-		ply_names->insert(std::pair<std::string, std::size_t>("left", 0));
-		(*lines)[1] = new GeoLib::Polyline(*points);
-		(*lines)[1]->addPoint(pnt_id_map[3]);
-		(*lines)[1]->addPoint(pnt_id_map[4]);
-		(*lines)[1]->addPoint(pnt_id_map[5]);
-		ply_names->insert(std::pair<std::string, std::size_t>("center", 1));
-		(*lines)[2] = new GeoLib::Polyline(*points);
-		(*lines)[2]->addPoint(pnt_id_map[0]);
-		(*lines)[2]->addPoint(pnt_id_map[3]);
-		(*lines)[3] = new GeoLib::Polyline(*points);
-		(*lines)[3]->addPoint(pnt_id_map[3]);
-		(*lines)[3]->addPoint(pnt_id_map[6]);
-		(*lines)[4] = new GeoLib::Polyline(*points);
-		(*lines)[4]->addPoint(pnt_id_map[6]);
-		(*lines)[4]->addPoint(pnt_id_map[7]);
-		(*lines)[4]->addPoint(pnt_id_map[8]);
-		ply_names->insert(std::pair<std::string, std::size_t>("right", 4));
-		geo_objects.addPolylineVec(std::move(lines), geo_name, ply_names);
+
+		createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
+		createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
+		createPolyline(pnt_vec, *(lines.get()), 2, {0, 3}, *name_map, "");
+		createPolyline(pnt_vec, *(lines.get()), 3, {3, 6}, *name_map, "");
+		createPolyline(pnt_vec, *(lines.get()), 4, {6, 7, 8}, *name_map, "right");
+		geo_objects.addPolylineVec(std::move(lines), geo_name, name_map);
 	}
 
 	void checkPolylineProperties()
