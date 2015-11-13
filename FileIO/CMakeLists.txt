@@ -11,6 +11,8 @@ set(SOURCES
 	PetrelInterface.cpp
 	readMeshFromFile.h
 	readMeshFromFile.cpp
+	writeGeometryToFile.h
+	writeGeometryToFile.cpp
 	SHPInterface.h
 	SHPInterface.cpp
 	TetGenInterface.h
