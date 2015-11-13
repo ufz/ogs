@@ -12,6 +12,10 @@
  *
  */
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "LisLinearSolver.h"
 
 #include "logog/include/logog.hpp"
@@ -58,6 +62,9 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
             checkLisError(ierr);
         }
     }
+#ifdef _OPENMP
+    INFO("-> number of threads: %i", (int) omp_get_max_threads());
+#endif
     {
         int precon;
         ierr = lis_solver_get_precon(solver, &precon);
