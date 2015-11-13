@@ -50,6 +50,14 @@ double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
 	return MathLib::scalarProduct<double,3>(v,v);
 }
 
+/// Computes the squared distance between the orthogonal projection of the two
+/// points \c p0 and \c p1 onto the \f$xy\f$-plane.
+inline
+double sqrDist2d(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
+{
+	return (p0[0]-p1[0])*(p0[0]-p1[0]) + (p0[1]-p1[1])*(p0[1]-p1[1]);
+}
+
 } // end namespace MathLib
 
 #endif /* POINT3D_H_ */
