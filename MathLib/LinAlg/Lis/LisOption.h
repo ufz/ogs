@@ -73,6 +73,10 @@ struct LisOption
      *
      * For possible values, please refer to the Lis User Guide:
      * http://www.ssisc.org/lis/lis-ug-en.pdf
+     *
+     * Note: Option -omp_num_threads cannot be used with this class since Lis
+     * currently (version 1.5.57) only sets the number of threads in
+     * \c lis_initialize(). Refer to the Lis source code for details.
      */
     void addOptions(BaseLib::ConfigTree const& options);
 
