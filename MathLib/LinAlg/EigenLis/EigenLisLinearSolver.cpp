@@ -30,32 +30,7 @@ EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A,
 : _A(A)
 {
     if (option)
-        setOption(*option);
-}
-
-void EigenLisLinearSolver::setOption(BaseLib::ConfigTree const& option)
-{
-    boost::optional<BaseLib::ConfigTree> ptSolver =
-        option.get_child("LinearSolver");
-    if (!ptSolver)
-        return;
-
-    boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
-    if (solver_type) {
-        _option.solver_type = _option.getSolverType(*solver_type);
-    }
-    boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
-    if (precon_type) {
-        _option.precon_type = _option.getPreconType(*precon_type);
-    }
-    boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
-    if (error_tolerance) {
-        _option.error_tolerance = *error_tolerance;
-    }
-    boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
-    if (max_iteration_step) {
-        _option.max_iterations = *max_iteration_step;
-    }
+        _option.addOptions(*option);
 }
 
 void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)

@@ -129,6 +129,16 @@ public:
                 std::abort();
             }
         }
+
+        // Linear solver options
+        {
+            auto const par = config.get_child_optional("linear_solver");
+
+            if (par)
+            {
+                _linear_solver_options.reset(new BaseLib::ConfigTree(*par));
+            }
+        }
     }
 
     template <unsigned GlobalDim>
@@ -237,7 +247,8 @@ public:
 
         _x.reset(_global_setup.createVector(num_unknowns));
         _rhs.reset(_global_setup.createVector(num_unknowns));
-        _linearSolver.reset(new typename GlobalSetup::LinearSolver(*_A, "gw_"));
+        _linear_solver.reset(new typename GlobalSetup::LinearSolver(
+            *_A, "gw_", _linear_solver_options.get()));
 
         setInitialConditions(*_hydraulic_head);
 
@@ -304,7 +315,7 @@ public:
         MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
 #endif
-        _linearSolver->solve(*_rhs, *_x);
+        _linear_solver->solve(*_rhs, *_x);
 
         return true;
     }
@@ -389,7 +400,8 @@ private:
     std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     GlobalSetup _global_setup;
-    std::unique_ptr<typename GlobalSetup::LinearSolver> _linearSolver;
+    std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
+    std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
     std::unique_ptr<typename GlobalSetup::MatrixType> _A;
     std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
     std::unique_ptr<typename GlobalSetup::VectorType> _x;
@@ -408,6 +420,7 @@ private:
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
+
 
     /// Global ids in the global matrix/vector where the dirichlet bc is
     /// imposed and their corresponding values.
