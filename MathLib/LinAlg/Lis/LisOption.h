@@ -16,6 +16,9 @@
 #define LIS_OPTION_H_
 
 #include <string>
+#include <map>
+
+#include "BaseLib/ConfigTree.h"
 
 namespace MathLib
 {
@@ -25,48 +28,60 @@ namespace MathLib
  */
 struct LisOption
 {
-    /// Solver type
-    enum class SolverType : int
-    {
-        INVALID = 0,
-        CG = 1,
-        BiCG = 2,
-        CGS = 3,
-        BiCGSTAB = 4,
-        BiCGSTABl = 5,
-        GPBiCG = 6,
-        TFQMR = 7,
-        Orthomin = 8,
-        GMRES = 9,
-        Jacobi = 10,
-        GaussSeidel = 11,
-        SOR = 12,
-        BiCGSafe = 13,
-        CR = 14,
-        BiCR = 15,
-        CRS = 16,
-        BiCRSTAB = 17,
-        GPBiCR = 18,
-        BiCRSafe = 19,
-        FGMRESm = 20,
-        IDRs = 21,
-        MINRES = 22
-    };
+    using Key = std::string;
+    using Value = std::string;
 
-    /// Preconditioner type
-    enum class PreconType : int
+    std::map<Key, Value> settings;
+
+    LisOption()
     {
-        NONE = 0,
-        JACOBI = 1,
-        ILU = 2,
-        SSOR = 3,
-        Hybrid = 4,
-        IplusS = 5,
-        SAINV = 6,
-        SAAMG = 7,
-        CroutILU = 8,
-        ILUT = 9
-    };
+        // by default do not zero out the solution vector
+        settings["-initxzeros"] = "0";
+    }
+
+    /**
+     * Adds options from a \c ConfigTree.
+     *
+     * Options are stored as strings as obtained from the ConfigTree.
+     * In particular it will not be checked by this method if options are valid.
+     *
+     * It is only guaranteed that each given option will be passed only once to Lis.
+     *
+     * The \c ConfigTree section must have the layout as shown in the
+     * following example:
+     *
+     * \code{.xml}
+     * <linear_solver>
+     *   <solver_type>         gmres </solver_type>
+     *   <precon_type>           ilu </precon_type>
+     *   <error_tolerance>   1.0e-10 </error_tolerance>
+     *   <max_iteration_step>    200 </max_iteration_step>
+     *
+     *   <lis_option><option> -ilu_fill </option><value>   3 </value></lis_option>
+     *   <lis_option><option>    -print </option><value> mem </value></lis_option>
+     * </linear_solver>
+     * \endcode
+     *
+     * The first four tags are special in the sense that those options
+     * will take precedence even if there is an equivalent Lis option specified.
+     *
+     * Any possible Lis option can be supplied by a line like
+     *
+     * \code{.xml}
+     *   <lis_option><option> -ilu_fill </option><value>   3 </value></lis_option>
+     * \endcode
+     *
+     * For possible values, please refer to the Lis User Guide:
+     * http://www.ssisc.org/lis/lis-ug-en.pdf
+     *
+     * Note: Option -omp_num_threads cannot be used with this class since Lis
+     * currently (version 1.5.57) only sets the number of threads in
+     * \c lis_initialize(). Refer to the Lis source code for details.
+     */
+    void addOptions(BaseLib::ConfigTree const& options);
+
+    void printInfo() const;
+
 
     /// Matrix type
     enum class MatrixType : int
@@ -83,62 +98,6 @@ struct LisOption
         COO = 10,
         DNS = 11
     };
-
-    /// Linear solver type
-    SolverType solver_type;
-    /// Preconditioner type
-    PreconType precon_type;
-    /// Matrix type
-    MatrixType matrix_type;
-    /// Maximum iteration count
-    long max_iterations;
-    /// Error tolerance
-    double error_tolerance;
-    /// Extra option
-    std::string extra_arg;
-    /// Arguments for solver and preconditioner. This variable is always preferred
-    /// to other variables.
-    std::string solver_precon_arg;
-
-    /**
-     * Constructor
-     *
-     * Default options are CG, no preconditioner, iteration count 500 and
-     * tolerance 1e-10. Default matrix storage type is CRS.
-     */
-    LisOption();
-
-    /// Destructor
-    ~LisOption() {}
-
-    /**
-     * return a linear solver type from the solver name
-     *
-     * @param solver_name
-     * @return a linear solver type
-     *      If there is no solver type matched with the given name, INVALID
-     *      is returned.
-     */
-    static SolverType getSolverType(const std::string &solver_name);
-
-    /**
-     * return a preconditioner type from the name
-     *
-     * @param precon_name
-     * @return a preconditioner type
-     *      If there is no preconditioner type matched with the given name, NONE
-     *      is returned.
-     */
-    static PreconType getPreconType(const std::string &precon_name);
-
-    /**
-     * return a matrix type
-     * @param matrix_name
-     * @return
-     *      If there is no matrix type matched with the given name, CRS
-     *      is returned.
-     */
-    static MatrixType getMatrixType(const std::string &matrix_name);
 };
 
 }

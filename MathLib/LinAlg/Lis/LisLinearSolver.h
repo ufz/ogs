@@ -18,7 +18,8 @@
 #include <vector>
 #include <string>
 
-#include "lis.h"
+#include <lis.h>
+
 #include "BaseLib/ConfigTree.h"
 
 #include "LisOption.h"
@@ -32,7 +33,7 @@ namespace MathLib
  * \brief Linear solver using Lis (http://www.ssisc.org/lis/)
  *
  */
-class LisLinearSolver
+class LisLinearSolver final
 {
 public:
     /**
@@ -47,25 +48,11 @@ public:
     LisLinearSolver(LisMatrix &A, const std::string solver_name = "",
                     BaseLib::ConfigTree const*const option = nullptr);
 
-    virtual ~LisLinearSolver() {}
-
-    /**
-     * configure linear solvers
-     * @param option
-     */
-    void setOption(BaseLib::ConfigTree const& option);
-
     /**
      * configure linear solvers
      * @param option
      */
     void setOption(const LisOption &option) { _option = option; }
-
-    /**
-     * get linear solver options
-     * @return
-     */
-    LisOption &getOption() { return _option; }
 
     /**
      * solve a given linear equations

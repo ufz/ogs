@@ -12,14 +12,13 @@
  *
  */
 
-#include "LisLinearSolver.h"
-
-#include <string>
-#include <sstream>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include "logog/include/logog.hpp"
+
+#include "LisLinearSolver.h"
+
+#include <logog/include/logog.hpp>
 
 #include "LisCheck.h"
 
@@ -32,35 +31,12 @@ LisLinearSolver::LisLinearSolver(LisMatrix &A,
 : _A(A)
 {
     if (option)
-        setOption(*option);
-}
+    {
+        _option.addOptions(*option);
 
-void LisLinearSolver::setOption(BaseLib::ConfigTree const& option)
-{
-    boost::optional<BaseLib::ConfigTree> ptSolver =
-        option.get_child("LinearSolver");
-    if (!ptSolver)
-        return;
-
-    boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
-    if (solver_type) {
-        _option.solver_type = _option.getSolverType(*solver_type);
-    }
-    boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
-    if (precon_type) {
-        _option.precon_type = _option.getPreconType(*precon_type);
-    }
-    boost::optional<std::string> matrix_type = ptSolver->get_optional<std::string>("matrix_type");
-    if (matrix_type) {
-        _option.matrix_type = _option.getMatrixType(*matrix_type);
-    }
-    boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
-    if (error_tolerance) {
-        _option.error_tolerance = *error_tolerance;
-    }
-    boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
-    if (max_iteration_step) {
-        _option.max_iterations = *max_iteration_step;
+#ifndef NDEBUG
+        _option.printInfo();
+#endif
     }
 }
 
@@ -70,62 +46,67 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
 
     INFO("------------------------------------------------------------------");
     INFO("*** LIS solver computation");
-#ifdef _OPENMP
-    INFO("-> max number of threads = %d", omp_get_num_procs());
-    INFO("-> number of threads = %d", omp_get_max_threads());
-#endif
-
-    // configure option
-    std::string solver_options;
-    if (_option.solver_precon_arg.empty()) {
-        std::stringstream ss;
-        ss << "-i " << static_cast<int>(_option.solver_type);
-        ss << " -p " << static_cast<int>(_option.precon_type);
-        if (!_option.extra_arg.empty())
-            ss << " " << _option.extra_arg;
-        solver_options = ss.str();
-    } else {
-        solver_options = _option.solver_precon_arg;
-    }
-    std::string tol_option;
-    {
-        std::stringstream ss;
-        ss << "-tol " << _option.error_tolerance;
-        ss << " -maxiter " << _option.max_iterations;
-        ss << " -initx_zeros 0"; //0: use given x as initial guess, 1: x0=0
-#ifdef _OPENMP
-        const int nthreads = omp_get_max_threads();
-        ss << " -omp_num_threads " << nthreads;
-#endif
-        tol_option = ss.str();
-    }
 
     // Create solver
     LIS_SOLVER solver;
     int ierr = lis_solver_create(&solver);
     checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>(solver_options.c_str()), solver);
-    checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>(tol_option.c_str()), solver);
-    checkLisError(ierr);
-    ierr = lis_solver_set_option(const_cast<char*>("-print mem"), solver);
-    checkLisError(ierr);
-    ierr = lis_solver_set_optionC(solver);
-    checkLisError(ierr);
+
+    {
+        std::string opt;
+        for (auto const& it : _option.settings)
+        {
+            opt = it.first + " " + it.second;
+
+            ierr = lis_solver_set_option(const_cast<char*>(opt.c_str()), solver);
+            checkLisError(ierr);
+        }
+    }
+#ifdef _OPENMP
+    INFO("-> number of threads: %i", (int) omp_get_max_threads());
+#endif
+    {
+        int precon;
+        ierr = lis_solver_get_precon(solver, &precon);
+        INFO("-> precon: %i", precon);
+    }
+    {
+        int slv;
+        ierr = lis_solver_get_solver(solver, &slv);
+        INFO("-> solver: %i", slv);
+    }
 
     // solve
     INFO("-> solve");
     ierr = lis_solve(_A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
     checkLisError(ierr);
 
-    int iter = 0;
-    double resid = 0.0;
-    ierr = lis_solver_get_iter(solver, &iter);
-    checkLisError(ierr);
-    ierr = lis_solver_get_residualnorm(solver, &resid);
-    checkLisError(ierr);
-    INFO("\t iteration: %d/%ld\n", iter, _option.max_iterations);
-    INFO("\t residual: %e\n", resid);
+    {
+        int iter = 0;
+        ierr = lis_solver_get_iter(solver, &iter);
+        checkLisError(ierr);
+
+        std::string max_iter = _option.settings["-maxiter"];
+        if (max_iter.empty()) max_iter = "--";
+        INFO("-> iteration: %d/%s", iter, max_iter.c_str());
+    }
+    {
+        double resid = 0.0;
+        ierr = lis_solver_get_residualnorm(solver, &resid);
+        checkLisError(ierr);
+        INFO("-> residual: %g", resid);
+    }
+    {
+        double time, itime, ptime, p_ctime, p_itime;
+        ierr = lis_solver_get_timeex(solver, &time, &itime,
+                                     &ptime, &p_ctime, &p_itime);
+        checkLisError(ierr);
+        INFO("-> time total           (s): %g", time);
+        INFO("-> time iterations      (s): %g", itime);
+        INFO("-> time preconditioning (s): %g", ptime);
+        INFO("-> time precond. create (s): %g", p_ctime);
+        INFO("-> time precond. iter   (s): %g", p_itime);
+    }
 
     // Clear solver
     ierr = lis_solver_destroy(solver);
