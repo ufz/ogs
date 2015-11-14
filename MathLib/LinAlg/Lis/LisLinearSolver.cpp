@@ -18,7 +18,7 @@
 
 #include "LisLinearSolver.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "LisCheck.h"
 

@@ -18,7 +18,8 @@
 #include <vector>
 #include <string>
 
-#include "lis.h"
+#include <lis.h>
+
 #include "BaseLib/ConfigTree.h"
 
 #include "LisOption.h"
