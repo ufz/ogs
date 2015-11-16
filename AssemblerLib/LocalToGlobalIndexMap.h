@@ -88,6 +88,12 @@ public:
         return _mesh_component_map.getGlobalIndex(l, c);
     }
 
+    /// Forwards the respective method from MeshComponentMap.
+    std::vector<GlobalIndexType> getGlobalIndices(const MeshLib::Location &l) const
+    {
+        return _mesh_component_map.getGlobalIndices(l);
+    }
+
 private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being

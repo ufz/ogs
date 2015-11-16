@@ -197,13 +197,10 @@ void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
     static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
                   "Set matrix sparsity relies on the EigenMatrix to be in "
                   "row-major storage order.");
-    auto const n_rows = matrix.getNRows();
-    Eigen::VectorXi row_sizes(n_rows);
 
-    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
-        row_sizes[i] = sparsity_pattern.getNodeDegree(i);
+    assert(matrix.getNRows() == sparsity_pattern.size());
 
-    matrix.getRawMatrix().reserve(row_sizes);
+    matrix.getRawMatrix().reserve(sparsity_pattern);
 }
 };
 

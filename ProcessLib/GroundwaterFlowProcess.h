@@ -28,6 +28,7 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "AssemblerLib/ComputeSparsityPattern.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
@@ -36,7 +37,6 @@
 
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
-#include "MeshLib/NodeAdjacencyTable.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
@@ -53,7 +53,7 @@ namespace MeshLib
     class Element;
     class Mesh;
     template <typename PROP_VAL_TYPE> class PropertyVector;
-};
+}
 
 namespace ProcessLib
 {
@@ -238,7 +238,9 @@ public:
         _A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
 #else
         DBUG("Compute sparsity pattern");
-        _node_adjacency_table.createTable(_mesh.getNodes());
+        _sparsity_pattern = std::move(
+            AssemblerLib::computeSparsityPattern(
+                *_local_to_global_index_map, _mesh));
 
         DBUG("Allocate global matrix, vectors, and linear solver.");
         const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
@@ -282,7 +284,7 @@ public:
         DBUG("Solve GroundwaterFlowProcess.");
 
         _A->setZero();
-        MathLib::setMatrixSparsity(*_A, _node_adjacency_table);
+        MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
         *_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
@@ -430,7 +432,7 @@ private:
 
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 
-    MeshLib::NodeAdjacencyTable _node_adjacency_table;
+    AssemblerLib::SparsityPattern _sparsity_pattern;
 };
 
 }   // namespace ProcessLib
