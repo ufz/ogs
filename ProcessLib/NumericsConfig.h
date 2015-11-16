@@ -23,7 +23,21 @@
 //
 // Global vector/matrix types and linear solver.
 //
-#if defined(USE_LIS)
+#if defined(OGS_USE_EIGENLIS)
+
+    #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+    #include "MathLib/LinAlg/Eigen/EigenVector.h"
+    #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+
+    namespace detail
+    {
+    using GlobalVectorType = MathLib::EigenVector;
+    using GlobalMatrixType = MathLib::EigenMatrix;
+
+    using LinearSolverType = MathLib::EigenLisLinearSolver;
+    }
+
+#elif defined(USE_LIS)
 
     #include "MathLib/LinAlg/Lis/LisMatrix.h"
     #include "MathLib/LinAlg/Lis/LisVector.h"
