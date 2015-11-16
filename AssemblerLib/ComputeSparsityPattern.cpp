@@ -23,7 +23,10 @@ computeSparsityPattern(LocalToGlobalIndexMap const& dof_table,
     MeshLib::NodeAdjacencyTable node_adjacency_table;
     node_adjacency_table.createTable(mesh.getNodes());
 
+    // A mapping   mesh node id -> global indices
+    // It acts as a cache for dof table queries.
     std::vector<std::vector<GlobalIndexType> > global_idcs;
+
     global_idcs.reserve(mesh.getNNodes());
     for (std::size_t n=0; n<mesh.getNNodes(); ++n)
     {
@@ -33,13 +36,17 @@ computeSparsityPattern(LocalToGlobalIndexMap const& dof_table,
 
     SparsityPattern sparsity_pattern(dof_table.dofSize());
 
+    // Map adjacent mesh nodes to "adjacent global indices".
     for (std::size_t n=0; n<mesh.getNNodes(); ++n)
     {
         auto const& node_ids = node_adjacency_table.getAdjacentNodes(n);
         for (auto an : node_ids) {
             auto const& row_ids = global_idcs[an];
+            auto const num_components = row_ids.size();
             for (auto r : row_ids) {
-                sparsity_pattern[r] += row_ids.size();
+                // Each component leads to an entry in the row.
+                // For the sparsity pattern only the number of entries are needed.
+                sparsity_pattern[r] += num_components;
             }
         }
     }

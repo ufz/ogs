@@ -19,6 +19,7 @@ namespace AssemblerLib
 
 class LocalToGlobalIndexMap;
 
+/// A vector telling how many nonzeros there are in each global matrix row.
 using SparsityPattern = std::vector<GlobalIndexType>;
 
 /**
@@ -27,7 +28,7 @@ using SparsityPattern = std::vector<GlobalIndexType>;
  * @param dof_table            maps mesh nodes to global indices
  * @param mesh                 mesh for which the two parameters above are defined
  *
- * @return a vector telling how many nonzeros there are in each global matrix row
+ * @return The computed sparsity pattern.
  */
 SparsityPattern
 computeSparsityPattern(
