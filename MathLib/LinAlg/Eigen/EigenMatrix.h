@@ -71,7 +71,8 @@ public:
     /// dynamically allocates it.
     int setValue(IndexType row, IndexType col, double val)
     {
-        _mat.coeffRef(row, col) = val;
+        assert(row < (IndexType) getNRows() && col < (IndexType) getNCols());
+        if (val != 0.0) _mat.coeffRef(row, col) = val;
         return 0;
     }
 
@@ -79,7 +80,7 @@ public:
     /// inserted.
     int add(IndexType row, IndexType col, double val)
     {
-        _mat.coeffRef(row, col) += val;
+        if (val != 0.0) _mat.coeffRef(row, col) += val;
         return 0;
     }
 
