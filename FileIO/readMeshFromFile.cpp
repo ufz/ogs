@@ -44,12 +44,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
 #ifdef USE_PETSC
 	NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
-
-	std::size_t pos = file_name.find_last_of(".");
-	std::string file_name_ext = file_name.substr(pos, file_name.size()-1);
-
-	std::string const file_name_base =
-	    boost::erase_last_copy(file_name, file_name_ext);
+	const std::string file_name_base = BaseLib::dropFileExtension(file_name);
 	return read_pmesh.read(file_name_base);
 #else
 	if (BaseLib::hasFileExtension("msh", file_name))

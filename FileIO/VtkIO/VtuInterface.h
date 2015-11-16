@@ -42,7 +42,6 @@ public:
 	static MeshLib::Mesh* readVTUFile(std::string const &file_name);
 
 	/// Writes the given mesh to file.
-	/// Note: a MPI_Comm type argument is needed.
 	/// \return True on success, false on error
 	bool writeToFile(std::string const &file_name);
 
