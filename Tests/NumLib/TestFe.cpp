@@ -114,7 +114,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
         mesh_element = this->createMeshElement();
 
         // set a conductivity tensor
-        setIdentityMatrix(dim, D);
+        setIdentityMatrix(TestFeType::global_dim, D);
         D *= conductivity;
         MeshLib::ElementCoordinatesMappingLocal ele_local_coord(*mesh_element, MeshLib::CoordinateSystem(*mesh_element));
         auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(TestFeType::global_dim, TestFeType::global_dim);
