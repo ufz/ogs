@@ -348,15 +348,12 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 	}
 
 	std::vector<GeoLib::Surface*> const*const surfaces(sfc_vec->getVector());
-	if (! surfaces) {
-		INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-			"No surfaces within the geometry \"%s\".", _exportName.c_str());
-		return;
-	}
-
-	if (surfaces->empty()) {
-		INFO("BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-			"No surfaces within the geometry \"%s\".", _exportName.c_str());
+	if (!surfaces || surfaces->empty())
+	{
+		INFO(
+		    "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
+		    "No surfaces within the geometry \"%s\".",
+		    _exportName.c_str());
 		return;
 	}
 
@@ -389,9 +386,12 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
 	}
 
 	std::vector<GeoLib::Polyline*> const*const polylines(vec->getVector());
-	if (! polylines) {
-		INFO("BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-			"No polylines within the geometry \"%s\".", _exportName.c_str());
+	if (!polylines || polylines->empty())
+	{
+		INFO(
+		    "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
+		    "No polylines within the geometry \"%s\".",
+		    _exportName.c_str());
 		return;
 	}
 
