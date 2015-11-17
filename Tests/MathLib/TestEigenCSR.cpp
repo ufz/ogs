@@ -70,15 +70,12 @@ TEST(MathLibEigen, Eigen2CSR)
     }
 
     // change matrix
-    for (int repeat=0; repeat < 2; ++repeat) {
-        for (int row=0; row<nrows; ++row) {
-            for (int col = -1; col<=1; ++col) {
-                int cidx = row + col;
-                if (cidx < 0 || cidx >= ncols) continue;
+    for (int row=0; row<nrows; ++row) {
+        for (int col = -1; col<=1; ++col) {
+            int cidx = row + col;
+            if (cidx < 0 || cidx >= ncols) continue;
 
-                // doubles matrix entry
-                mat.coeffRef(row, cidx) += mat.coeff(row, cidx);
-            }
+            mat.coeffRef(row, cidx) = 4.0 * mat.coeff(row, cidx);
         }
     }
     // adapt entries of CSR matrix
