@@ -84,10 +84,11 @@ TEST(MathLibEigen, Eigen2CSR)
     // adapt entries of CSR matrix
     for (auto& v : values) v *= 4.0;
 
-    ASSERT_EQ(nnz, mat.nonZeros());
-    ASSERT_EQ(nnz, ja.size());
-
     mat.makeCompressed();
+
+    ASSERT_EQ(nnz, mat.nonZeros());
+    ASSERT_EQ(nnz, values.size());
+    ASSERT_EQ(nnz, ja.size());
 
     int* ptr = mat.outerIndexPtr();
     int* col = mat.innerIndexPtr();
