@@ -73,7 +73,7 @@ option(OGS_USE_MPI "Use MPI" OFF)
 
 # Eigen
 option(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
-option(EIGEN_NO_DEBUG "Disables Eigen's assertions" ON)
+option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # Logging
 option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
