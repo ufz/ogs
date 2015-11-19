@@ -20,11 +20,18 @@
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(PETScMatrix &A,
-                      const std::string prefix,
-                      BaseLib::ConfigTree const*const /*option*/)
+PETScLinearSolver::PETScLinearSolver(PETScMatrix& A,
+                                     const std::string prefix,
+                                     BaseLib::ConfigTree const* const option)
     : _A(A), _elapsed_ctime(0.)
 {
+    // Insert options into petsc database if any.
+    if (option)
+    {
+        std::string const petsc_options = option->get<std::string>("petsc", "");
+        PetscOptionsInsertString(petsc_options.c_str());
+    }
+
     KSPCreate(PETSC_COMM_WORLD, &_solver);
 
     KSPGetPC(_solver, &_pc);
