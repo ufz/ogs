@@ -10,6 +10,8 @@ if(NOT EIGEN3_INCLUDE_DIR)
 		set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
 		set(EIGEN3_INCLUDE_DIR "${EIGEN3_INCLUDE_DIR}" CACHE STRING "Eigen include dir" FORCE)
 		return()
+	else()
+		set(EIGEN3_INCLUDE_DIR "")
 	endif()
 endif()
 
