@@ -35,6 +35,8 @@ EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A,
 
 void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
 {
+    static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
+                  "Sparse matrix is required to be in row major storage.");
     auto &A = _A.getRawMatrix();
     auto &b = b_.getRawVector();
     auto &x = x_.getRawVector();

@@ -87,6 +87,7 @@ void LisMatrix::setZero()
 
 int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 {
+    if (v == 0.0) return 0;
     lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
     if (rowId==colId)
         lis_vector_set_value(LIS_INS_VALUE, rowId, v, _diag);
@@ -96,6 +97,7 @@ int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 
 int LisMatrix::add(IndexType rowId, IndexType colId, double v)
 {
+    if (v == 0.0) return 0;
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
     if (rowId==colId)
         lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _diag);

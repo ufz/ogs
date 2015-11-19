@@ -64,6 +64,8 @@ option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Linear solvers
 option(OGS_USE_LIS "Use Lis" OFF)
 
+option(OGS_USE_EIGENLIS "Use Lis solver together with Eigen sparse matrices" OFF)
+
 # Parallel computing: vector and matrix algebraic caculation, solvers
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 
@@ -145,6 +147,15 @@ if(OGS_USE_EIGEN)
 		add_definitions(-DEIGEN_NO_DEBUG)
 	endif()
 	include_directories (SYSTEM ${EIGEN3_INCLUDE_DIR})
+endif()
+
+if (OGS_USE_EIGENLIS)
+	if (OGS_USE_EIGEN AND OGS_USE_LIS)
+		add_definitions(-DOGS_USE_EIGENLIS)
+	else()
+		message(WARNING "The setting OGS_USE_EIGENLIS needs both OGS_USE_EIGEN"
+		        " and OGS_USE_LIS set in order to have some effect.")
+	endif()
 endif()
 
 add_subdirectory( Applications )
