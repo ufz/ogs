@@ -12,7 +12,11 @@ if(OGS_BUILD_GUI)
 	list(APPEND VTK_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 endif()
 
-find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
+if(OGS_LIB_VTK STREQUAL "System")
+	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE REQUIRED)
+elseif(OGS_LIB_VTK STREQUAL "Default")
+	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
+endif()
 
 if(VTK_FOUND)
 	message(STATUS "Using VTK in ${VTK_DIR}")

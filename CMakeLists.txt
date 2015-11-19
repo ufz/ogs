@@ -20,7 +20,6 @@ list(APPEND CMAKE_PREFIX_PATH
 ###########################
 ### Preliminary Options ###
 ###########################
-option(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 	"Additional library installation path, e.g. /opt/local or C:/libs")
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
@@ -94,6 +93,17 @@ option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
+# Third-party libraries
+# Default checks for system first, then builds locally
+set(OGS_LIB_VTK "Default" CACHE STRING "Which VTK library should be used?")
+set(OGS_LIB_BOOST "Default" CACHE STRING "Which Boost library should be used?")
+set(OGS_LIB_EIGEN "Default" CACHE STRING "Which Eigen library should be used?")
+set_property(CACHE
+	OGS_LIB_VTK
+	OGS_LIB_BOOST
+	OGS_LIB_EIGEN
+	PROPERTY STRINGS "Default" "System" "Local")
+
 ######################
 ### Subdirectories ###
 ######################
@@ -101,7 +111,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 # External projects
 option(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 include(scripts/cmake/ExternalProjectBoost.cmake)
-option(OGS_SYSTEM_VTK_ONLY "If On VTK / ParaView will be searched if installed and will not be build locally." OFF)
 include(VtkModules)
 if(OGS_INSITU)
 	include(ExternalProjectCatalyst)
