@@ -128,7 +128,6 @@ if(OGS_USE_EIGEN)
 	if (EIGEN_NO_DEBUG)
 		add_definitions(-DEIGEN_NO_DEBUG)
 	endif()
-	include_directories (SYSTEM ${EIGEN3_INCLUDE_DIR})
 endif()
 
 ######################
@@ -148,6 +147,7 @@ endif()
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 if(OGS_USE_EIGEN)
 	include(scripts/cmake/ExternalProjectEigen.cmake)
+	include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 endif()
 
 # Add subdirectories with the projects
