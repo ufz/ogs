@@ -41,6 +41,7 @@
 
 #include "UniformDirichletBoundaryCondition.h"
 
+#include "GroundwaterFlowAssemblyParameters.h"
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
@@ -171,6 +172,7 @@ public:
                 _mesh.getElements(),
                 _local_assemblers,
                 *_hydraulic_conductivity,
+                _assembly_params,
                 _integration_order);
 
         DBUG("Create global assembler.");
@@ -278,9 +280,11 @@ public:
         }
     }
 
-    bool solve(const double /*delta_t*/) override
+    bool solve(const double delta_t) override
     {
         DBUG("Solve GroundwaterFlowProcess.");
+
+        _assembly_params.delta_t = delta_t;
 
         _A->setZero();
         MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
@@ -426,6 +430,9 @@ private:
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 
     AssemblerLib::SparsityPattern _sparsity_pattern;
+
+
+    AssemblyParameters _assembly_params;
 };
 
 }   // namespace ProcessLib
