@@ -104,6 +104,33 @@ set_property(CACHE
 	OGS_LIB_EIGEN
 	PROPERTY STRINGS "Default" "System" "Local")
 
+###################
+### Definitions ###
+###################
+if(OGS_USE_LIS)
+	add_definitions(-DUSE_LIS)
+	include_directories(SYSTEM ${LIS_INCLUDE_DIR})
+endif()
+
+if(OGS_USE_PETSC)
+	add_definitions(-DUSE_PETSC)
+	set(OGS_USE_MPI ON CACHE BOOL "Use MPI")
+endif()
+
+# Use MPI
+if(OGS_USE_MPI)
+	add_definitions(-DUSE_MPI)
+endif()
+
+if(OGS_USE_EIGEN)
+	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
+	add_definitions(-DOGS_USE_EIGEN)
+	if (EIGEN_NO_DEBUG)
+		add_definitions(-DEIGEN_NO_DEBUG)
+	endif()
+	include_directories (SYSTEM ${EIGEN3_INCLUDE_DIR})
+endif()
+
 ######################
 ### Subdirectories ###
 ######################
@@ -129,32 +156,6 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/gtest/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
-
-if(OGS_USE_LIS)
-    add_definitions(-DUSE_LIS)
-    include_directories(SYSTEM ${LIS_INCLUDE_DIR})
-endif()
-
-# Use PETSc package for global assembly and linear sover for parallel computing
-if(OGS_USE_PETSC)
-    add_definitions(-DUSE_PETSC)
-    set(OGS_USE_MPI ON)
-endif()
-
-# Use MPI
-if(OGS_USE_MPI)
-    add_definitions(-DUSE_MPI)
-endif()
-
-if(OGS_USE_EIGEN)
-#	add_definitions(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)
-	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
-	add_definitions(-DOGS_USE_EIGEN)
-	if (EIGEN_NO_DEBUG)
-		add_definitions(-DEIGEN_NO_DEBUG)
-	endif()
-	include_directories (SYSTEM ${EIGEN3_INCLUDE_DIR})
-endif()
 
 add_subdirectory( Applications )
 add_subdirectory( AssemblerLib )
