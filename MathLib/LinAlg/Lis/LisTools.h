@@ -23,19 +23,20 @@ class LisMatrix;
 class LisVector;
 
 /**
- * apply known solutions to a system of linear equations
+ * Integrate Dirichlet boundary conditions into a system of linear equations.
  *
- * This function introduces the constants into the system by the penalty method.
+ * This function introduces the constants into the system by setting
+ * appropriated row and column entries of the matrix to zero (except the
+ * diagonal entries) and modifying values within the right hand side vector.
  *
- * @param A                 Coefficient matrix
- * @param b                 RHS vector
- * @param _vec_knownX_id    a vector of known solution entry IDs
- * @param _vec_knownX_x     a vector of known solutions
- * @param penalty_scaling value for scaling some matrix and right hand side
- * entries to enforce some conditions
+ * @param eqsA                 Coefficient matrix
+ * @param eqsRHS                 RHS vector
+ * @param rows a vector of known solution entry IDs
+ * @param vals a vector of known solutions
  */
-void applyKnownSolution(LisMatrix &A, LisVector &b, const std::vector<std::size_t> &_vec_knownX_id,
-		const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10);
+void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS,
+	const std::vector<std::size_t> &rows,
+	const std::vector<double> &vals);
 
 } // MathLib
 
