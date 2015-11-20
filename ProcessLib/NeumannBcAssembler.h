@@ -72,7 +72,7 @@ public:
 
         _shape_matrices.resize(n_integration_points);
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
-            _shape_matrices[ip].resize(ShapeFunction::DIM, ShapeFunction::NPOINTS);
+            _shape_matrices[ip].resize(ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
             fe.computeShapeFunctions(
                     integration_method.getWeightedPoint(ip).getCoords(),
                     _shape_matrices[ip]);
