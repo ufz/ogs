@@ -14,7 +14,7 @@ endif()
 
 if(OGS_LIB_VTK STREQUAL "System")
 	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE REQUIRED)
-elseif(OGS_LIB_VTK STREQUAL "Default")
+elseif(OGS_LIB_VTK STREQUAL "Default" OR DEFINED VTK_DIR)
 	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
 endif()
 
@@ -61,7 +61,7 @@ ExternalProject_Add(vtk
 	INSTALL_COMMAND ""
 )
 
-if(NOT ${VTK_FOUND})
+if(NOT VTK_FOUND)
 	# Rerun cmake in initial build
 	add_custom_target(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS vtk)
 else()
