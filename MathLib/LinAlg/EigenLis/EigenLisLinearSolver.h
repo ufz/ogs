@@ -43,7 +43,7 @@ public:
     /**
      * copy linear solvers options
      */
-    void setOption(const LisOption &option) { _option = option; }
+    void setOption(const LisOption &option) { _lis_option = option; }
 
     /**
      * solve a given linear equations
@@ -55,7 +55,7 @@ public:
 
 private:
     EigenMatrix& _A;
-    LisOption _option;
+    LisOption _lis_option;
 };
 
 } // MathLib
