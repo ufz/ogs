@@ -29,7 +29,9 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
     // A(k, j) = 0.
     // set row to zero
     for (auto row_id : vec_knownX_id)
-        for (SpMat::InnerIterator it(A,row_id); it; ++it) it.valueRef() = 0.0;
+        for (SpMat::InnerIterator it(A,row_id); it; ++it) {
+            if (it.col() != decltype(it.col())(row_id)) it.valueRef() = 0.0;
+        }
 
     SpMat AT = A.transpose();
 
@@ -42,12 +44,19 @@ void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std:
         // set column to zero, subtract from rhs
         for (SpMat::InnerIterator it(AT, row_id); it; ++it)
         {
+            if (it.col() == row_id) continue;
+
             b[it.col()] -= it.value()*x;
             it.valueRef() = 0.0;
         }
 
-        b[row_id] = x;
-        AT.coeffRef(row_id, row_id) = 1.0;
+        auto& c = AT.coeffRef(row_id, row_id);
+        if (c != 0.0) {
+            b[row_id] = x * c;
+        } else {
+            b[row_id] = x;
+            c = 1.0;
+        }
     }
 
     A = AT.transpose();

@@ -63,6 +63,8 @@ option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Linear solvers
 option(OGS_USE_LIS "Use Lis" OFF)
 
+option(OGS_USE_EIGENLIS "Use Lis solver together with Eigen sparse matrices" OFF)
+
 # Parallel computing: vector and matrix algebraic caculation, solvers
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 
