@@ -83,21 +83,6 @@ struct LisOption
     void printInfo() const;
 
 
-    /// Matrix type
-    enum class MatrixType : int
-    {
-        CRS = 1,
-        CCS = 2,
-        MSR = 3,
-        DIA = 4,
-        ELL = 5,
-        JDS = 6,
-        BSR = 7,
-        BSC = 8,
-        VBR = 9,
-        COO = 10,
-        DNS = 11
-    };
 };
 
 }

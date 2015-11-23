@@ -45,6 +45,22 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>;
 class LisMatrix
 {
 public:
+    /// Matrix type
+    enum class MatrixType : int
+    {
+        CRS = 1,
+        CCS = 2,
+        MSR = 3,
+        DIA = 4,
+        ELL = 5,
+        JDS = 6,
+        BSR = 7,
+        BSC = 8,
+        VBR = 9,
+        COO = 10,
+        DNS = 11
+    };
+
     using IndexType = LIS_INT;
 public:
     /**
@@ -52,7 +68,7 @@ public:
      * @param n_rows the number of rows (that is equal to the number of columns)
      * @param mat_type default 1 CRS
      */
-    LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type = LisOption::MatrixType::CRS);
+    LisMatrix(std::size_t n_rows, MatrixType mat_type = MatrixType::CRS);
 
     /**
      * constructor using raw CRS data
@@ -130,14 +146,14 @@ public:
              const T_DENSE_MATRIX& sub_matrix, double fkt = 1.0);
 
     /// get this matrix type
-    LisOption::MatrixType getMatrixType() const { return _mat_type; }
+    MatrixType getMatrixType() const { return _mat_type; }
 
     /// return if this matrix is already assembled or not
     bool isAssembled() const { return _is_assembled; }
 
 private:
     std::size_t const _n_rows;
-    LisOption::MatrixType const _mat_type;
+    MatrixType const _mat_type;
     LIS_MATRIX _AA;
     LIS_VECTOR _diag;
     bool _is_assembled;

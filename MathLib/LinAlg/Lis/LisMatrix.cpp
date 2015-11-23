@@ -25,7 +25,7 @@
 namespace MathLib
 {
 
-LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
+LisMatrix::LisMatrix(std::size_t n_rows, MatrixType mat_type)
     : _n_rows(n_rows), _mat_type(mat_type), _is_assembled(false), _use_external_arrays(false)
 {
     int ierr = lis_matrix_create(0, &_AA);
@@ -40,7 +40,7 @@ LisMatrix::LisMatrix(std::size_t n_rows, LisOption::MatrixType mat_type)
 LisMatrix::LisMatrix(std::size_t n_rows, int nnz, IndexType *row_ptr,
                      IndexType *col_idx, double *data)
     : _n_rows(n_rows),
-      _mat_type(LisOption::MatrixType::CRS),
+      _mat_type(MatrixType::CRS),
       _is_assembled(false),
       _use_external_arrays(true)
 {
