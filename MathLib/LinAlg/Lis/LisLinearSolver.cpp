@@ -28,16 +28,8 @@ namespace MathLib
 LisLinearSolver::LisLinearSolver(LisMatrix &A,
                     const std::string /*solver_name*/,
                     BaseLib::ConfigTree const*const option)
-: _A(A)
+: _A(A), _lis_option(option)
 {
-    if (option)
-    {
-        _option.addOptions(*option);
-
-#ifndef NDEBUG
-        _option.printInfo();
-#endif
-    }
 }
 
 void LisLinearSolver::solve(LisVector &b, LisVector &x)
@@ -52,16 +44,8 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
     int ierr = lis_solver_create(&solver);
     checkLisError(ierr);
 
-    {
-        std::string opt;
-        for (auto const& it : _option.settings)
-        {
-            opt = it.first + " " + it.second;
-
-            ierr = lis_solver_set_option(const_cast<char*>(opt.c_str()), solver);
-            checkLisError(ierr);
-        }
-    }
+    lis_solver_set_option(
+        const_cast<char*>(_lis_option._option_string.c_str()), solver);
 #ifdef _OPENMP
     INFO("-> number of threads: %i", (int) omp_get_max_threads());
 #endif
@@ -82,13 +66,19 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
     checkLisError(ierr);
 
     {
+        LIS_INT status;
+        ierr = lis_solver_get_status(solver, &status);
+        checkLisError(ierr);
+
+        INFO("-> status: %d", status);
+    }
+
+    {
         int iter = 0;
         ierr = lis_solver_get_iter(solver, &iter);
         checkLisError(ierr);
 
-        std::string max_iter = _option.settings["-maxiter"];
-        if (max_iter.empty()) max_iter = "--";
-        INFO("-> iteration: %d/%s", iter, max_iter.c_str());
+        INFO("-> iteration: %d", iter);
     }
     {
         double resid = 0.0;
