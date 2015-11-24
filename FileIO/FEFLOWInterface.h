@@ -10,6 +10,7 @@
 #define FEFLOWINTERFACE_H_
 
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -150,8 +151,12 @@ private:
 	//// read point data in Supermesh
 	void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
 
-	/// set element material IDs
-	void setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, const std::vector<std::vector<std::size_t>> &vec_elementsets, std::vector<MeshLib::Element*> &vec_elements);
+	void setMaterialIDs(FEM_CLASS const& fem_class,
+		FEM_DIM const& fem_dim,
+		std::vector<GeoLib::Polyline*>* const& lines,
+		std::vector<std::vector<std::size_t>> const& vec_elementsets,
+		std::vector<MeshLib::Element*> const& vec_elements,
+		std::vector<int> & material_ids);
 
 	//// Geometric objects
 	GeoLib::GEOObjects* _geoObjects;
