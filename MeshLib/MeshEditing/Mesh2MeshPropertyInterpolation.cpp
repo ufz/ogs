@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <fstream>
+#include <boost/optional.hpp>
 
 #include "Mesh2MeshPropertyInterpolation.h"
 
@@ -73,9 +74,20 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 
 	GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
 
+	auto materialIds = dest_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+	if (!materialIds)
+		materialIds = dest_mesh->getProperties().createNewPropertyVector<int>(
+			"MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+	if (!materialIds)
+	{
+		ERR("Could not create PropertyVector for MaterialIDs in Mesh.");
+		return;
+	}
+
 	std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
 	const std::size_t n_dest_elements(dest_elements.size());
-	for (std::size_t k(0); k<n_dest_elements; k++) {
+	for (std::size_t k(0); k<n_dest_elements; k++)
+	{
 		// compute axis aligned bounding box around the current element
 		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
 
@@ -101,7 +113,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 		}
 
 		dest_properties[k] /= cnt;
-		dest_elements[k]->setValue(k);
+		materialIds->push_back(k);
 
 		if (cnt == 0) {
 			std::string base_name("DebugData/Element-");
@@ -138,17 +150,21 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 
 void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const
 {
+	auto materialIds = _src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+	if (!materialIds)
+		return;
+
 	std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
 	const std::size_t n_src_nodes(src_nodes.size());
-
 	for (std::size_t k(0); k<n_src_nodes; k++) {
 		const std::size_t n_con_elems (src_nodes[k]->getNElements());
-		interpolated_node_properties[k] = (*_src_properties)[(src_nodes[k]->getElement(0))->getValue()];
+		interpolated_node_properties[k] = (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(0)->getID()]];
 		for (std::size_t j(1); j<n_con_elems; j++) {
-			interpolated_node_properties[k] += (*_src_properties)[(src_nodes[k]->getElement(j))->getValue()];
+			interpolated_node_properties[k] += (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(j)->getID()]];
 		}
 		interpolated_node_properties[k] /= n_con_elems;
 	}
+
 }
 
 } // end namespace MeshLib

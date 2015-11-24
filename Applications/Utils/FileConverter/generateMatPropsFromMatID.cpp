@@ -52,6 +52,12 @@ int main (int argc, char* argv[])
 
 	// read mesh
 	MeshLib::Mesh* mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+	if (!materialIds)
+	{
+		ERR("Mesh contains no material ids.");
+		return -1;
+	}
 
 	std::vector<MeshLib::Element*> &elems = *(const_cast<std::vector<MeshLib::Element*>*>(&(mesh->getElements())));
 	std::size_t nElems(elems.size());
@@ -60,10 +66,11 @@ int main (int argc, char* argv[])
 	// create file
 	std::string new_matname(name + "_prop");
 	std::ofstream out_prop( new_matname.c_str(), std::ios::out );
+
 	if (out_prop.is_open())
 	{
 		for (std::size_t i=0; i<nElems; i++)
-			out_prop << i << "\t" << elems[i]->getValue() << "\n";
+			out_prop << i << "\t" << (*materialIds)[i] << "\n";
 		out_prop.close();
 	}
 	else
@@ -74,7 +81,7 @@ int main (int argc, char* argv[])
 
 	// set mat ids to 0 and write new msh file
 	for (std::size_t i=0; i<nElems; i++)
-		elems[i]->setValue(0);
+		(*materialIds)[i] = 0;
 
 	std::string new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());

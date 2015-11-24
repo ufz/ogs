@@ -67,7 +67,7 @@ MeshLib::Element* copyElement(MeshLib::Element const*const element, const std::v
 	MeshLib::Node** new_nodes = new MeshLib::Node*[element->getNBaseNodes()];
 	for (unsigned i=0; i<element->getNBaseNodes(); ++i)
 		new_nodes[i] = nodes[element->getNode(i)->getID()];
-	return new E(new_nodes, element->getValue());
+	return new E(new_nodes);
 }
 
 } // namespace MeshLib
