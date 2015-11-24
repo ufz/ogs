@@ -204,7 +204,7 @@ int main (int argc, char* argv[])
 	auto materialIds = src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (!materialIds)
 	{
-		materialIds = properties.createNewPropertyVector<int>
+		materialIds = src_mesh->getProperties().createNewPropertyVector<int>
 			("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 		materialIds->insert(materialIds->end(), n_mesh_elements, 0);
 	}
