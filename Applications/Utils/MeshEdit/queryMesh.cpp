@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
 	if (!mesh)
 		return 1;
 
+	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+
 	std::cout << std::scientific << std::setprecision(12);
 	for (auto ele_id : eleId_arg.getValue())
 	{
@@ -54,7 +56,8 @@ int main(int argc, char *argv[])
 		auto* ele = mesh->getElement(ele_id);
 		std::cout << "# Element " << ele->getID() << std::endl;
 		std::cout << "Type : " << CellType2String(ele->getCellType()) << std::endl;
-		std::cout << "Mat ID : " << ele->getValue() << std::endl;
+		if (materialIds)
+			std::cout << "Mat ID : " << (*materialIds)[ele_id] << std::endl;
 		std::cout << "Nodes: " << std::endl;
 		for (unsigned i=0; i<ele->getNNodes(); i++)
 			std::cout <<  ele->getNode(i)->getID() << " " << *ele->getNode(i) << std::endl;
