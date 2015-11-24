@@ -116,7 +116,7 @@ endif()
 
 if(OGS_USE_PETSC)
 	add_definitions(-DUSE_PETSC)
-	set(OGS_USE_MPI ON CACHE BOOL "Use MPI")
+	set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
 
 # Use MPI
