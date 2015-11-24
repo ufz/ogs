@@ -271,8 +271,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
     PetscOptionsSetValue("-ptest1_ksp_type", "bcgs");
 
@@ -295,8 +295,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
     PetscOptionsSetValue("-ptest2_ksp_type", "chebyshev");
 
@@ -319,8 +319,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
     PetscOptionsSetValue("-ptest3_ksp_type", "gmres");
     PetscOptionsSetValue("-ptest3_ksp_rtol", "1.e-8");
