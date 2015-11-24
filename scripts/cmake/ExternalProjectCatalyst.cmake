@@ -64,7 +64,7 @@ ExternalProject_Add(Catalyst
 	INSTALL_COMMAND ""
 )
 
-if(NOT ${ParaView_FOUND})
+if(NOT ParaView_FOUND)
 	# Rerun cmake in initial build
 	add_custom_target(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS Catalyst)
 else()

@@ -1,10 +1,11 @@
-if(EIGEN3_FOUND)
-	return()
+if(OGS_LIB_EIGEN STREQUAL "System")
+	find_package(Eigen3 3.2.5 REQUIRED)
+elseif(OGS_LIB_EIGEN STREQUAL "Default")
+	find_package(Eigen3 3.2.5)
 endif()
 
 # First check for system Eigen
 if(NOT EIGEN3_INCLUDE_DIR)
-	find_package(Eigen3 3.2.5)
 	if(EIGEN3_FOUND)
 		set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
 		set(EIGEN3_INCLUDE_DIR "${EIGEN3_INCLUDE_DIR}" CACHE STRING "Eigen include dir" FORCE)
@@ -34,7 +35,6 @@ ExternalProject_Add(Eigen
 ExternalProject_Get_Property( Eigen source_dir )
 
 if(NOT EIGEN3_INCLUDE_DIR)
-	#set(EIGEN3_FOUND TRUE CACHE BOOL "Was Eigen found?" FORCE)
 	set( EIGEN3_INCLUDE_DIR ${source_dir} CACHE INTERNAL "Eigen include dir" FORCE)
 	message(STATUS "Downloading Eigen automatically.")
 endif()

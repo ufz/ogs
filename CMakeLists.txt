@@ -20,7 +20,6 @@ list(APPEND CMAKE_PREFIX_PATH
 ###########################
 ### Preliminary Options ###
 ###########################
-option(OGS_NO_BOOST_DOWNLOAD "Always use the system installed Boost?" OFF)
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 	"Additional library installation path, e.g. /opt/local or C:/libs")
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
@@ -96,6 +95,43 @@ option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 option(OGS_DOWNLOAD_ADDITIONAL_CONTENT "Should addional content such as manuals be downloaded and packaged?" OFF)
 include(scripts/cmake/packaging/Pack.cmake)
 
+# Third-party libraries
+# Default checks for system first, then builds locally
+set(OGS_LIB_VTK "Default" CACHE STRING "Which VTK library should be used?")
+set(OGS_LIB_BOOST "Default" CACHE STRING "Which Boost library should be used?")
+set(OGS_LIB_EIGEN "Default" CACHE STRING "Which Eigen library should be used?")
+set_property(CACHE
+	OGS_LIB_VTK
+	OGS_LIB_BOOST
+	OGS_LIB_EIGEN
+	PROPERTY STRINGS "Default" "System" "Local")
+
+###################
+### Definitions ###
+###################
+if(OGS_USE_LIS)
+	add_definitions(-DUSE_LIS)
+	include_directories(SYSTEM ${LIS_INCLUDE_DIR})
+endif()
+
+if(OGS_USE_PETSC)
+	add_definitions(-DUSE_PETSC)
+	set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
+endif()
+
+# Use MPI
+if(OGS_USE_MPI)
+	add_definitions(-DUSE_MPI)
+endif()
+
+if(OGS_USE_EIGEN)
+	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
+	add_definitions(-DOGS_USE_EIGEN)
+	if (EIGEN_NO_DEBUG)
+		add_definitions(-DEIGEN_NO_DEBUG)
+	endif()
+endif()
+
 ######################
 ### Subdirectories ###
 ######################
@@ -103,7 +139,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 # External projects
 option(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 include(scripts/cmake/ExternalProjectBoost.cmake)
-option(OGS_SYSTEM_VTK_ONLY "If On VTK / ParaView will be searched if installed and will not be build locally." OFF)
 include(VtkModules)
 if(OGS_INSITU)
 	include(ExternalProjectCatalyst)
@@ -114,6 +149,7 @@ endif()
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 if(OGS_USE_EIGEN)
 	include(scripts/cmake/ExternalProjectEigen.cmake)
+	include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 endif()
 
 # Add subdirectories with the projects
@@ -122,41 +158,6 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/gtest/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
-
-if(OGS_USE_LIS)
-    add_definitions(-DUSE_LIS)
-    include_directories(SYSTEM ${LIS_INCLUDE_DIR})
-endif()
-
-# Use PETSc package for global assembly and linear sover for parallel computing
-if(OGS_USE_PETSC)
-    add_definitions(-DUSE_PETSC)
-    set(OGS_USE_MPI ON)
-endif()
-
-# Use MPI
-if(OGS_USE_MPI)
-    add_definitions(-DUSE_MPI)
-endif()
-
-if(OGS_USE_EIGEN)
-#	add_definitions(-DEIGEN_DEFAULT_DENSE_INDEX_TYPE=std::size_t)
-	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
-	add_definitions(-DOGS_USE_EIGEN)
-	if (EIGEN_NO_DEBUG)
-		add_definitions(-DEIGEN_NO_DEBUG)
-	endif()
-	include_directories (SYSTEM ${EIGEN3_INCLUDE_DIR})
-endif()
-
-if (OGS_USE_EIGENLIS)
-	if (OGS_USE_EIGEN AND OGS_USE_LIS)
-		add_definitions(-DOGS_USE_EIGENLIS)
-	else()
-		message(WARNING "The setting OGS_USE_EIGENLIS needs both OGS_USE_EIGEN"
-		        " and OGS_USE_LIS set in order to have some effect.")
-	endif()
-endif()
 
 add_subdirectory( Applications )
 add_subdirectory( AssemblerLib )

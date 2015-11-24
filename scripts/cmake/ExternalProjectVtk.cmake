@@ -12,7 +12,11 @@ if(OGS_BUILD_GUI)
 	list(APPEND VTK_LIBRARIES vtkNetCDF vtkNetCDF_cxx)
 endif()
 
-find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
+if(OGS_LIB_VTK STREQUAL "System")
+	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE REQUIRED)
+elseif(OGS_LIB_VTK STREQUAL "Default" OR DEFINED VTK_DIR)
+	find_package(VTK 6.1 COMPONENTS ${VTK_MODULES} NO_MODULE QUIET)
+endif()
 
 if(VTK_FOUND)
 	message(STATUS "Using VTK in ${VTK_DIR}")
@@ -57,7 +61,7 @@ ExternalProject_Add(vtk
 	INSTALL_COMMAND ""
 )
 
-if(NOT ${VTK_FOUND})
+if(NOT VTK_FOUND)
 	# Rerun cmake in initial build
 	add_custom_target(VtkRescan ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR} DEPENDS vtk)
 else()
