@@ -343,14 +343,18 @@ initReaction(const unsigned int int_pt)
 
 	const double y_new     = _ode_solver->getSolution()[0];
 	const double y_dot_new = _ode_solver->getYDot(t_end, { y_new })[0];
+#if 0
+	cvode_conversion_rate(,
+						  delta_t, pcs->m_conversion_rate /* TODO */, y_new, y_dot_new);
+#endif
 
 	double rho_react;
 
 	//cut off when limits are reached
-	if ( y_new < _react.rho_low )
-		rho_react = _react.rho_low;
-	else if ( y_new > _react.rho_up ) //{
-		rho_react = _react.rho_up;
+	if ( y_new < _react.lower_solid_density_limit )
+		rho_react = _react.lower_solid_density_limit;
+	else if ( y_new > _react.upper_solid_density_limit ) //{
+		rho_react = _react.upper_solid_density_limit;
 	else
 		rho_react = y_new;
 
