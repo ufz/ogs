@@ -97,9 +97,9 @@ class InSituMesh : public ::testing::Test
 		std::string const material_ids_name("MaterialIDs");
 		boost::optional<MeshLib::PropertyVector<int> &> material_id_properties(
 			mesh->getProperties().createNewPropertyVector<int>(material_ids_name,
-				MeshLib::MeshItemType::Node)
+				MeshLib::MeshItemType::Cell)
 		);
-		(*material_id_properties).resize(mesh->getNNodes());
+		(*material_id_properties).resize(mesh->getNElements());
 		std::iota((*material_id_properties).begin(), (*material_id_properties).end(), 1);
 	}
 
