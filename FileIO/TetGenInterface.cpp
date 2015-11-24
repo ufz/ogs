@@ -602,7 +602,7 @@ void TetGenInterface::write2dElements(std::ofstream &out,
 	const std::size_t nElements (elements.size());
 	unsigned element_count(0);
 	for (std::size_t i=0; i<nElements; ++i)
-		this->writeElementToFacets(out, *elements[i], element_count);
+		this->writeElementToFacets(out, *elements[i], element_count, mesh);
 }
 
 void TetGenInterface::write3dElements(std::ofstream &out,
@@ -618,7 +618,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 	const std::streamoff before_elems_pos (out.tellp());
 	const unsigned n_spaces (static_cast<unsigned>(std::floor(log(nElements*8))) + 1);
 	out << std::string(n_spaces, ' ') << "\n";
-
+	auto materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 	unsigned element_count(0);
 	for (std::size_t i=0; i<nElements; ++i)
 	{
@@ -632,21 +632,21 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 
 			if (neighbor)
 			{
-				if (elements[i]->getValue() > neighbor->getValue())
+				if ((*materialIds)[i] > (*materialIds)[neighbor->getID()])
 				{
 					MeshLib::Element const*const face (elements[i]->getFace(j));
-					this->writeElementToFacets(out, *face, element_count);
+					this->writeElementToFacets(out, *face, element_count, mesh);
 					delete face;
 				}
 			}
 			else
 			{
 				MeshLib::Element const*const face (elements[i]->getFace(j));
-				this->writeElementToFacets(out, *face, element_count);
+				this->writeElementToFacets(out, *face, element_count, mesh);
 				delete face;
 			}
 		}
-		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), elements[i]->getValue()));
+		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), (*materialIds)[i]));
 	}
 	// add number of facets at correct position and jump back
 	const std::streamoff after_elems_pos (out.tellp());
@@ -655,16 +655,17 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 	out.seekp(after_elems_pos);
 }
 
-void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const
+void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count, const MeshLib::Mesh &mesh) const
 {
+	auto materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 	element_count++;
 	if (element.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << (*materialIds)[element.getID()] << " # " << element_count << "\n";
 	else if (element.getGeomType() == MeshLib::MeshElemType::QUAD)
 	{
-		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << element.getValue() << " # " << element_count << "\n";
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " " << (*materialIds)[element.getID()] << " # " << element_count << "\n";
 		element_count++;
-		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(2) << " " << element.getNodeIndex(3) << " " << element.getValue() << " # " << element_count << "\n";
+		out << "3  " << element.getNodeIndex(0) << " " << element.getNodeIndex(2) << " " << element.getNodeIndex(3) << " " << (*materialIds)[element.getID()] << " # " << element_count << "\n";
 	}
 }
 

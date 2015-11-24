@@ -201,9 +201,15 @@ int main (int argc, char* argv[])
 
 	// reset materials in source mesh
 	const std::size_t n_mesh_elements(src_mesh->getNElements());
-	for (std::size_t k(0); k<n_mesh_elements; k++) {
-		const_cast<MeshLib::Element*>(src_mesh->getElement(src_perm[k]))->setValue(mat_map[k]);
+	auto materialIds = src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+	if (!materialIds)
+	{
+		materialIds = properties.createNewPropertyVector<int>
+			("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+		materialIds->insert(materialIds->end(), n_mesh_elements, 0);
 	}
+	for (std::size_t k(0); k<n_mesh_elements; k++)
+		(*materialIds)[src_mesh->getElement(src_perm[k])->getID()] = mat_map[k];
 
 	// do the interpolation
 	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh,
@@ -241,8 +247,9 @@ int main (int argc, char* argv[])
 		BaseLib::quicksort<double>(dest_properties, 0, n_dest_mesh_elements, dest_perm);
 
 		// reset materials in destination mesh
+		materialIds = dest_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 		for (std::size_t k(0); k<n_dest_mesh_elements; k++) {
-			const_cast<MeshLib::Element*>(dest_mesh->getElement(dest_perm[k]))->setValue(k);
+			(*materialIds)[dest_mesh->getElement(dest_perm[k])->getID()] = k;
 		}
 
 		FileIO::Legacy::MeshIO mesh_writer;

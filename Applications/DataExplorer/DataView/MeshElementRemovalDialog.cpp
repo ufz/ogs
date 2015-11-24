@@ -170,13 +170,13 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
 	{
 		this->materialListWidget->clear();
 		_matIDIndex = _currentIndex;
-		const std::vector<MeshLib::Element*> elements (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getElements());
-		auto it = std::max_element(elements.begin(), elements.end(),
-			[](MeshLib::Element const*const x, MeshLib::Element const*const y) { return x->getValue() < y->getValue(); }
-		);
-		unsigned max_material ((*it)->getValue());
+		auto mesh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
+		const std::vector<MeshLib::Element*> elements = mesh->getElements();
 
-		for (unsigned i=0; i<=max_material; ++i)
+		auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+		auto max_material = std::max_element(materialIds->cbegin(), materialIds->cend());
+
+		for (unsigned i=0; i <= static_cast<unsigned>(*max_material); ++i)
 			this->materialListWidget->addItem(QString::number(i));
 	}
 }
@@ -184,10 +184,20 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
 void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
 	Q_UNUSED(idx);
+
 	this->_currentIndex = this->meshNameComboBox->currentIndex();
 	this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
 	this->elementTypeListWidget->clearSelection();
 	this->materialListWidget->clearSelection();
 	if (this->boundingBoxCheckBox->isChecked()) this->on_boundingBoxCheckBox_toggled(true);
-	if (this->materialIDCheckBox->isChecked()) this->on_materialIDCheckBox_toggled(true);
+	auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
+	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+	if (materialIds)
+	{
+		materialIDCheckBox->setEnabled(true);
+		if (materialIDCheckBox->isChecked())
+			on_materialIDCheckBox_toggled(true);
+	}
+	else
+		materialIDCheckBox->setEnabled(false);
 }

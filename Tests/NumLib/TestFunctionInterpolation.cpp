@@ -60,7 +60,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
 
     auto const element = MeshLib::Line(std::array<MeshLib::Node*, 2>{
                                            &pt_a, &pt_b
-                                       }, 0u, 0u);
+                                       }, 0u);
 
     // set up shape function
     FemType finite_element(*static_cast<const ShapeFunction::MeshElement*>(&element));

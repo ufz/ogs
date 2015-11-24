@@ -200,7 +200,10 @@ private:
 	                     std::vector<MeshLib::Node> &attribute_points) const;
 
 	/// Writes facet information from a 2D element to the stream and increments the total element count accordingly
-	void writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const;
+	void writeElementToFacets(std::ofstream &out,
+	                          const MeshLib::Element &element,
+	                          unsigned &element_count,
+	                          const MeshLib::Mesh &mesh) const;
 
 	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;
