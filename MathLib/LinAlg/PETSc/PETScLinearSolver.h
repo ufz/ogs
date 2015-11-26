@@ -46,11 +46,11 @@ class PETScLinearSolver
             \param prefix  Name used to distinguish the options in the command
                            line for this solver. It can be the name of the PDE
                            that owns an instance of this class.
-            \param option  Not used here, just for the consistency of
-                           the linear solver interface.
+            \param option  Petsc options, which will be inserted into the global
+                           petsc options database.
         */
-        PETScLinearSolver(PETScMatrix &A, const std::string prefix="",
-                          BaseLib::ConfigTree const*const option = nullptr);
+        PETScLinearSolver(PETScMatrix& A, const std::string prefix = "",
+                          BaseLib::ConfigTree const* const option = nullptr);
 
         ~PETScLinearSolver()
         {

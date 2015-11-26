@@ -23,14 +23,12 @@
 
 namespace MathLib
 {
-
-EigenLisLinearSolver::EigenLisLinearSolver(EigenMatrix &A,
-                      const std::string /*solver_name*/,
-                      BaseLib::ConfigTree const*const option)
-: _A(A)
+EigenLisLinearSolver::EigenLisLinearSolver(
+    EigenMatrix& A,
+    const std::string /*solver_name*/,
+    BaseLib::ConfigTree const* const option)
+    : _A(A), _lis_option(option)
 {
-    if (option)
-        _option.addOptions(*option);
 }
 
 void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
@@ -52,7 +50,7 @@ void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
     LisVector lisx(x.rows(), x.data());
 
     LisLinearSolver lissol(lisA);
-    lissol.setOption(_option);
+    lissol.setOption(_lis_option);
     lissol.solve(lisb, lisx);
 
     for (std::size_t i=0; i<lisx.size(); i++)

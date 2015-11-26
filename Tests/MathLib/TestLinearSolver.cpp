@@ -134,7 +134,9 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree& ls_option)
 
 #ifdef USE_PETSC
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
-void checkLinearSolverInterface(T_MATRIX &A, T_VECTOR &b, const std::string &prefix_name)
+void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
+                                const std::string& prefix_name,
+                                BaseLib::ConfigTree& ls_option)
 {
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
@@ -203,11 +205,13 @@ TEST(MathLib, CheckInterface_GaussAlgorithm)
 {
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
-    t_root.put_child("LinearSolver", t_solver);
+    t_root.put_child("ogs", t_solver);
 
     typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
     MathLib::GlobalDenseMatrix<double> A(Example1::dim_eqs, Example1::dim_eqs);
-    checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>, LinearSolverType>(A, t_root);
+    checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>,
+                               MathLib::DenseVector<double>, LinearSolverType>(
+        A, t_root);
 }
 
 #ifdef OGS_USE_EIGEN
@@ -220,10 +224,11 @@ TEST(Math, CheckInterface_Eigen)
     t_solver.put("precon_type", "NONE");
     t_solver.put("error_tolerance", 1e-15);
     t_solver.put("max_iteration_step", 1000);
-    t_root.put_child("LinearSolver", t_solver);
+    t_root.put_child("eigen", t_solver);
 
     MathLib::EigenMatrix A(Example1::dim_eqs);
-    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector, MathLib::EigenLinearSolver>(A, t_root);
+    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
+                               MathLib::EigenLinearSolver>(A, t_root);
 }
 #endif
 
@@ -233,14 +238,11 @@ TEST(Math, CheckInterface_EigenLis)
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
-    t_solver.put("solver_type", "CG");
-    t_solver.put("precon_type", "NONE");
-    t_solver.put("error_tolerance", 1e-15);
-    t_solver.put("max_iteration_step", 1000);
-    t_root.put_child("LinearSolver", t_solver);
+    t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
 
     MathLib::EigenMatrix A(Example1::dim_eqs);
-    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector, MathLib::EigenLisLinearSolver>(A, t_root);
+    checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
+                               MathLib::EigenLisLinearSolver>(A, t_root);
 }
 #endif
 
@@ -250,11 +252,7 @@ TEST(Math, CheckInterface_Lis)
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
-    t_solver.put("solver_type", "CG");
-    t_solver.put("precon_type", "NONE");
-    t_solver.put("error_tolerance", 1e-15);
-    t_solver.put("max_iteration_step", 1000);
-    t_root.put_child("LinearSolver", t_solver);
+    t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
 
     MathLib::LisMatrix A(Example1::dim_eqs);
     checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector, MathLib::LisLinearSolver>(A, t_root);
@@ -271,19 +269,21 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
-    PetscOptionsSetValue("-ptest1_ksp_type", "bcgs");
+    boost::property_tree::ptree t_root;
+    t_root.put("petsc",
+                 "-ptest1_ksp_type bcgs "
+                 "-ptest1_ksp_rtol 1.e-8 "
+                 "-ptest1_ksp_atol 1.e-50 "
+                 "-ptest1_ksp_max_it 1000 "
+                 "-ptest1_pc_type bjacobi");
 
-    PetscOptionsSetValue("-ptest1_ksp_rtol", "1.e-8");
-    PetscOptionsSetValue("-ptest1_ksp_atol", "1.e-50");
-    PetscOptionsSetValue("-ptest1_ksp_max_it", "1000");
-
-    PetscOptionsSetValue("-ptest1_pc_type", "bjacobi");
-
-    checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
-                               MathLib::PETScLinearSolver>(A, b, "ptest1_");
+    checkLinearSolverInterface<MathLib::PETScMatrix,
+                               MathLib::PETScVector,
+                               MathLib::PETScLinearSolver>(
+        A, b, "ptest1_", t_root);
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
@@ -295,19 +295,21 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
-    PetscOptionsSetValue("-ptest2_ksp_type", "chebyshev");
+    boost::property_tree::ptree t_root;
+    t_root.put("petsc",
+                 "-ptest2_ksp_type chebyshev "
+                 "-ptest2_ksp_rtol 1.e-8 "
+                 "-ptest2_ksp_atol 1.e-50"
+                 "-ptest2_ksp_max_it 1000 "
+                 "-ptest2_pc_type sor");
 
-    PetscOptionsSetValue("-ptest2_ksp_rtol", "1.e-8");
-    PetscOptionsSetValue("-ptest2_ksp_atol", "1.e-50");
-    PetscOptionsSetValue("-ptest2_ksp_max_it", "1000");
-
-    PetscOptionsSetValue("-ptest2_pc_type", "sor");
-
-    checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
-                               MathLib::PETScLinearSolver>(A, b, "ptest2_");
+    checkLinearSolverInterface<MathLib::PETScMatrix,
+                               MathLib::PETScVector,
+                               MathLib::PETScLinearSolver>(
+        A, b, "ptest2_", t_root);
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
@@ -319,20 +321,23 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     opt.n_local_cols = 2;
     MathLib::PETScMatrix A(2, opt);
 
-    const bool is_gloabal_size = false;
-    MathLib::PETScVector b(2, is_gloabal_size);
+    const bool is_global_size = false;
+    MathLib::PETScVector b(2, is_global_size);
 
-    PetscOptionsSetValue("-ptest3_ksp_type", "gmres");
-    PetscOptionsSetValue("-ptest3_ksp_rtol", "1.e-8");
-    PetscOptionsSetValue("-ptest3_ksp_gmres_restart", "20");
-    PetscOptionsSetValue("-ptest3_ksp_gmres_classicalgramschmidt", "");
+    boost::property_tree::ptree t_root;
+    t_root.put("petsc",
+                 "-ptest3_ksp_type gmres "
+                 "-ptest3_ksp_rtol 1.e-8 "
+                 "-ptest3_ksp_gmres_restart 20 "
+                 "-ptest3_ksp_gmres_classicalgramschmidt "
+                 "-ptest3_pc_type gamg "
+                 "-ptest3_pc_gamg_type agg "
+                 "-ptest3_pc_gamg_agg_nsmooths 2");
 
-    PetscOptionsSetValue("-ptest3_pc_type", "gamg");
-    PetscOptionsSetValue("-ptest3_pc_gamg_type", "agg");
-    PetscOptionsSetValue("-ptest3_pc_gamg_agg_nsmooths", "2");
-
-    checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
-                               MathLib::PETScLinearSolver>(A, b, "ptest3_");
+    checkLinearSolverInterface<MathLib::PETScMatrix,
+                               MathLib::PETScVector,
+                               MathLib::PETScLinearSolver>(
+        A, b, "ptest3_", t_root);
 }
 
 #endif

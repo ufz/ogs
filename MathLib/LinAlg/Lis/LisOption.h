@@ -17,88 +17,43 @@
 
 #include <string>
 #include <map>
+#include <boost/algorithm/string.hpp>
+
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 
 namespace MathLib
 {
-
-/**
- * \brief Option for Lis solver
+/** Option for Lis solver.
+ *
+ * Options are stored as a string obtained from the lis-tag of the passed
+ * options.  The string will be passed as is to Lis.  In particular it will not
+ * be checked by this method if options are valid.
+ *
+ * For possible values, please refer to the Lis User Guide:
+ * http://www.ssisc.org/lis/lis-ug-en.pdf
+ *
+ * Note: Option -omp_num_threads cannot be used with this class since Lis
+ * currently (version 1.5.57) only sets the number of threads in
+ * \c lis_initialize(). Refer to the Lis source code for details.
  */
 struct LisOption
 {
-    using Key = std::string;
-    using Value = std::string;
+	LisOption(BaseLib::ConfigTree const* const options)
+	{
+		if (options)
+		{
+			_option_string += " " + options->get<std::string>("lis", "");
+			boost::algorithm::trim_right(_option_string);
+		}
+#ifndef NDEBUG
+		INFO("Lis options: \"%s\"", _option_string.c_str());
+#endif
+	}
 
-    std::map<Key, Value> settings;
+	std::string _option_string = "-initxzeros 0";
 
-    LisOption()
-    {
-        // by default do not zero out the solution vector
-        settings["-initxzeros"] = "0";
-    }
-
-    /**
-     * Adds options from a \c ConfigTree.
-     *
-     * Options are stored as strings as obtained from the ConfigTree.
-     * In particular it will not be checked by this method if options are valid.
-     *
-     * It is only guaranteed that each given option will be passed only once to Lis.
-     *
-     * The \c ConfigTree section must have the layout as shown in the
-     * following example:
-     *
-     * \code{.xml}
-     * <linear_solver>
-     *   <solver_type>         gmres </solver_type>
-     *   <precon_type>           ilu </precon_type>
-     *   <error_tolerance>   1.0e-10 </error_tolerance>
-     *   <max_iteration_step>    200 </max_iteration_step>
-     *
-     *   <lis_option><option> -ilu_fill </option><value>   3 </value></lis_option>
-     *   <lis_option><option>    -print </option><value> mem </value></lis_option>
-     * </linear_solver>
-     * \endcode
-     *
-     * The first four tags are special in the sense that those options
-     * will take precedence even if there is an equivalent Lis option specified.
-     *
-     * Any possible Lis option can be supplied by a line like
-     *
-     * \code{.xml}
-     *   <lis_option><option> -ilu_fill </option><value>   3 </value></lis_option>
-     * \endcode
-     *
-     * For possible values, please refer to the Lis User Guide:
-     * http://www.ssisc.org/lis/lis-ug-en.pdf
-     *
-     * Note: Option -omp_num_threads cannot be used with this class since Lis
-     * currently (version 1.5.57) only sets the number of threads in
-     * \c lis_initialize(). Refer to the Lis source code for details.
-     */
-    void addOptions(BaseLib::ConfigTree const& options);
-
-    void printInfo() const;
-
-
-    /// Matrix type
-    enum class MatrixType : int
-    {
-        CRS = 1,
-        CCS = 2,
-        MSR = 3,
-        DIA = 4,
-        ELL = 5,
-        JDS = 6,
-        BSR = 7,
-        BSC = 8,
-        VBR = 9,
-        COO = 10,
-        DNS = 11
-    };
 };
-
 }
-#endif //LIS_OPTION_H_
+#endif  // LIS_OPTION_H_

@@ -116,8 +116,7 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
 
 void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
-    boost::optional<BaseLib::ConfigTree> ptSolver =
-        option.get_child("LinearSolver");
+    auto const ptSolver = option.get_child_optional("eigen");
     if (!ptSolver)
         return;
 

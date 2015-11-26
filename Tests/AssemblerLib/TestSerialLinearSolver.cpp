@@ -126,7 +126,18 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // solve x=A^-1 rhs
     //--------------------------------------------------------------------------
-    GlobalSetup::LinearSolver ls(*A);
+    boost::property_tree::ptree t_root;
+    {
+        boost::property_tree::ptree t_solver;
+        t_solver.put("solver_type", "CG");
+        t_solver.put("precon_type", "NONE");
+        t_solver.put("error_tolerance", 1e-16);
+        t_solver.put("max_iteration_step", 1000);
+        t_root.put_child("eigen", t_solver);
+    }
+    t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
+
+    GlobalSetup::LinearSolver ls(*A, "solver_name", &t_root);
     ls.solve(*rhs, *x);
 
     // copy solution to double vector
