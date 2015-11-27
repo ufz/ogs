@@ -19,7 +19,8 @@ if(DOXYGEN_FOUND)
 
 	# Dash Docsets
 	if(DOCS_GENERATE_DOCSET)
-		find_program(DOCSETUTIL_TOOLPATH docsetutil)
+		find_program(DOCSETUTIL_TOOLPATH docsetutil
+			PATH /Applications/Xcode.app/Contents/Developer/usr/bin)
 		if(NOT DOCSETUTIL_TOOLPATH)
 			message(FATAL_ERROR "docsetutil required for Docset-generation!")
 		endif()
@@ -28,8 +29,11 @@ if(DOXYGEN_FOUND)
 		set(DOCS_GENERATE_DOCSET_STRING "YES" CACHE INTERNAL "")
 		set(DOCS_SEARCHENGINE_STRING "NO" CACHE INTERNAL "")
 		add_custom_command(TARGET doc POST_BUILD
-			COMMAND make WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
+			COMMAND make
+			COMMAND mv org.doxygen.Project.docset ogs6.docset
+			WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/docs
 			COMMENT "Generating docset ...")
+		configure_file(Documentation/DocsetFeed.xml.in ${PROJECT_BINARY_DIR}/docs/ogs6.xml)
 	endif()
 
 	configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
