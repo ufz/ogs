@@ -67,6 +67,26 @@ MathLib::CRSMatrix<double, typename LisMatrix::IndexType>* lis2crs(LisMatrix &a)
 
 	return new MathLib::CRSMatrix<double,IndexType>(A->n, iA, jA, entries);
 }
+
+// This function resets the the column indices and the entries, respectively.
+// The LIS_MATRIX must have reserved enough memory for each row already!
+void crs2lis(
+	MathLib::CRSMatrix<double, typename LisMatrix::IndexType> const& mat,
+	LIS_MATRIX &A)
+{
+	LisMatrix::IndexType const*const jA(mat.getColIdxArray());
+	double * entries(const_cast<double*>(mat.getEntryArray()));
+
+	// reset the entries in the lis matrix
+	LisMatrix::IndexType cnt(0);
+	for (LIS_INT row_i = 0; row_i < A->n; ++row_i) {
+		for (LIS_INT j = 0; j < A->w_row[row_i - A->is]; ++j) {
+			A->w_index[row_i-A->is][j] = jA[cnt];
+			A->w_value[row_i-A->is][j] = entries[cnt];
+			cnt++;
+		}
+	}
+}
 } // end namespace detail
 
 void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
@@ -84,19 +104,8 @@ void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
 	// The following function is defined in CRSTools-impl.h
 	applyKnownSolution(crs_mat, eqsRHS, input_rows, input_vals);
 
-	LisMatrix::IndexType const*const jA(crs_mat->getColIdxArray());
-	double * entries(const_cast<double*>(crs_mat->getEntryArray()));
+	detail::crs2lis(*crs_mat, eqsA.getRawMatrix());
 
-	LIS_MATRIX &A = eqsA.getRawMatrix();
-	// reset the entries in the lis matrix
-	LisMatrix::IndexType cnt(0);
-	for (LIS_INT row_i = 0; row_i < A->n; ++row_i) {
-		for (LIS_INT j = 0; j < A->w_row[row_i - A->is]; ++j) {
-			A->w_index[row_i-A->is][j] = jA[cnt];
-			A->w_value[row_i-A->is][j] = entries[cnt];
-			cnt++;
-		}
-	}
 	delete crs_mat;
 }
 
