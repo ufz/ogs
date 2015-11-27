@@ -14,7 +14,7 @@ node('docker')
 
 	// Multiple configurations are build in parallel
 	parallel linux: {
-		docker.image('ogs6/gcc-ogs-cli').inside
+		docker.image('ogs6/gcc-ogs-cli:latest').inside
 		{
 			build 'build', '', 'package'
 
@@ -26,13 +26,13 @@ node('docker')
 	},
 
 	linux_gui: {
-		docker.image('ogs6/gcc-ogs-gui').inside {
+		docker.image('ogs6/gcc-ogs-gui:latest').inside {
 			build 'build_gui', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_TESTS=OFF -DOGS_BUILD_CLI=OFF', 'package'
 		}
 	}
 
 //	windows: {
-//		docker.image('ogs6/mingw-ogs-gui').inside
+//		docker.image('ogs6/mingw-ogs-gui:latest').inside
 //		{
 //			build 'build_win', '-DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE', 'package'
 //
@@ -44,7 +44,7 @@ node('docker')
 //	},
 //
 //	windows_gui: {
-//		docker.image('ogs6/mingw-ogs-gui').inside
+//		docker.image('ogs6/mingw-ogs-gui:latest').inside
 //		{
 //			build 'build_win_gui',
 //						'-DCMAKE_TOOLCHAIN_FILE=$CMAKE_TOOLCHAIN_FILE -DOGS_BUILD_GUI=ON -DOGS_BUILD_TESTS=OFF -DOGS_BUILD_CLI=OFF',
