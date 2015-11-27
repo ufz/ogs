@@ -19,6 +19,10 @@ if(DOXYGEN_FOUND)
 
 	# Dash Docsets
 	if(DOCS_GENERATE_DOCSET)
+		find_program(DOCSETUTIL_TOOLPATH docsetutil)
+		if(NOT DOCSETUTIL_TOOLPATH)
+			message(FATAL_ERROR "docsetutil required for Docset-generation!")
+		endif()
 		set(DOCS_GENERATE_TREEVIEW_STRING "NO" CACHE INTERNAL "")
 		set(DOCS_DISABLE_INDEX_STRING "YES" CACHE INTERNAL "")
 		set(DOCS_GENERATE_DOCSET_STRING "YES" CACHE INTERNAL "")
