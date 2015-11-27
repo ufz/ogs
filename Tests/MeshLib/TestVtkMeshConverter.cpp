@@ -19,6 +19,7 @@
 #include <vtkUnsignedIntArray.h>
 #include <vtkUnstructuredGrid.h>
 
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
@@ -96,6 +97,7 @@ TEST_F(TestVtkMeshConverter, Conversion)
 		MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtu));
 	ASSERT_EQ(mesh->getNNodes(), vtu->GetNumberOfPoints());
 	ASSERT_EQ(mesh->getNElements(), vtu->GetNumberOfCells());
+	ASSERT_EQ(mesh->getElement(0)->getCellType(), MeshLib::CellType::HEX8);
 
 	auto meshProperties = mesh->getProperties();
 
