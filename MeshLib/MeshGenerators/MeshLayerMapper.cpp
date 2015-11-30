@@ -29,6 +29,7 @@
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Properties.h"
 
 namespace MeshLib
 {
@@ -60,6 +61,10 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 	std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
 	std::vector<MeshLib::Element*> new_elems;
 	new_elems.reserve(nElems * nLayers);
+	MeshLib::Properties properties;
+	boost::optional<PropertyVector<int> &> materials = 
+		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
+	materials->reserve(nElems * nLayers);
 	double z_offset (0.0);
 
 	for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
@@ -95,13 +100,14 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
 			}
 			// extrude triangles to prism
 			if (sfc_elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
-				new_elems.push_back (new MeshLib::Prism(e_nodes, mat_id));
+				new_elems.push_back (new MeshLib::Prism(e_nodes));
 			// extrude quads to hexes
 			else if (sfc_elem->getGeomType() == MeshLib::MeshElemType::QUAD)
-				new_elems.push_back (new MeshLib::Hex(e_nodes, mat_id));
+				new_elems.push_back (new MeshLib::Hex(e_nodes));
+			materials->push_back(mat_id);
 		}
 	}
-	return new MeshLib::Mesh(mesh_name, new_nodes, new_elems);
+	return new MeshLib::Mesh(mesh_name, new_nodes, new_elems, properties);
 }
 
 bool MeshLayerMapper::createRasterLayers(
@@ -137,6 +143,7 @@ bool MeshLayerMapper::createRasterLayers(
 		[](MeshLib::Element const* elem)
 			{ return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE);}));
 	_elements.reserve(nElems * (nLayers-1));
+	_materials.reserve(nElems *  (nLayers-1));
 
 	// add bottom layer
 	std::vector<MeshLib::Node*> const& nodes = bottom->getNodes();
@@ -192,7 +199,8 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         switch (node_counter)
         {
         case 6:
-            _elements.push_back(new MeshLib::Prism(new_elem_nodes, layer_id));
+            _elements.push_back(new MeshLib::Prism(new_elem_nodes));
+            _materials.push_back(layer_id);
             break;
         case 5:
             std::array<MeshLib::Node*, 5> pyramid_nodes;
@@ -201,12 +209,14 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             pyramid_nodes[2] = new_elem_nodes[pyramid_base[missing_idx][2]];
             pyramid_nodes[3] = new_elem_nodes[pyramid_base[missing_idx][3]];
             pyramid_nodes[4] = new_elem_nodes[missing_idx];
-            _elements.push_back(new MeshLib::Pyramid(pyramid_nodes, layer_id));
+            _elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
+            _materials.push_back(layer_id);
             break;
         case 4:
             std::array<MeshLib::Node*, 4> tet_nodes;
             std::copy(new_elem_nodes.begin(), new_elem_nodes.begin() + node_counter, tet_nodes.begin());
-            _elements.push_back(new MeshLib::Tet(tet_nodes, layer_id));
+            _elements.push_back(new MeshLib::Tet(tet_nodes));
+            _materials.push_back(layer_id);
             break;
         default:
             continue;
