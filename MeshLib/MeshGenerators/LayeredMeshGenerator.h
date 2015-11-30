@@ -97,7 +97,7 @@ protected:
 
 	double _elevation_epsilon;
 	double _minimum_thickness;
-	std::vector<std::size_t> _materials;
+	std::vector<int> _materials;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
 };
