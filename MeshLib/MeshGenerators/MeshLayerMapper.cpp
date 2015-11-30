@@ -152,8 +152,8 @@ bool MeshLayerMapper::createRasterLayers(
 	delete bottom;
 
 	// add the other layers
-	for (std::size_t i=1; i<nLayers; ++i)
-		addLayerToMesh(*top, i, *rasters[i]);
+	for (std::size_t i=0; i<nLayers-1; ++i)
+		addLayerToMesh(*top, i, *rasters[i+1]);
 
 	delete top;
 	return true;
@@ -170,7 +170,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
 
     std::size_t const nNodes = dem_mesh.getNNodes();
     std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
-    int const last_layer_node_offset = (layer_id-1) * nNodes;
+    int const last_layer_node_offset = layer_id * nNodes;
 
     // add nodes for new layer
     for (std::size_t i=0; i<nNodes; ++i)
