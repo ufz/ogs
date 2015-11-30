@@ -218,7 +218,8 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
 	}
 
 	std::vector<MeshLib::Element*> elements;
-	if (!readElementsFromStream (ins_ele, elements, nodes)) {
+	std::vector<int> materials;
+	if (!readElementsFromStream (ins_ele, elements, materials, nodes)) {
 		// remove elements read until now
 		for (std::size_t k(0); k<elements.size(); k++) {
 			delete elements[k];
@@ -230,8 +231,18 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
 		return nullptr;
 	}
 
+	MeshLib::Properties properties;
+	// remove material vector again if all mat-ids are "0"
+	if (*(std::max_element(materials.cbegin(), materials.cend())) > 0)
+	{
+		boost::optional<MeshLib::PropertyVector<int> &> mat_props = 
+			properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
+		mat_props->resize(elements.size());
+		std::copy(materials.cbegin(), materials.cend(), mat_props->begin());
+	}
+
 	const std::string mesh_name (BaseLib::extractBaseNameWithoutExtension(nodes_fname));
-	return new MeshLib::Mesh(mesh_name, nodes, elements);
+	return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
 }
 
 bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
@@ -354,6 +365,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 
 bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
                                              std::vector<MeshLib::Element*> &elements,
+                                             std::vector<int> &materials,
                                              const std::vector<MeshLib::Node*> &nodes) const
 {
 	std::string line;
@@ -375,7 +387,7 @@ bool TetGenInterface::readElementsFromStream(std::ifstream &ins,
 		bool header_okay = parseElementsFileHeader(line, n_tets, n_nodes_per_tet, region_attributes);
 		if (!header_okay)
 			return false;
-		if (!parseElements(ins, elements, nodes, n_tets, n_nodes_per_tet, region_attributes))
+		if (!parseElements(ins, elements, materials, nodes, n_tets, n_nodes_per_tet, region_attributes))
 			return false;
 		return true;
 	}
@@ -417,6 +429,7 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
 
 bool TetGenInterface::parseElements(std::ifstream& ins,
                                     std::vector<MeshLib::Element*> &elements,
+                                    std::vector<int> &materials,
                                     const std::vector<MeshLib::Node*> &nodes,
                                     std::size_t n_tets,
                                     std::size_t n_nodes_per_tet,
@@ -425,6 +438,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 	std::string line;
 	std::size_t* ids (static_cast<std::size_t*>(alloca (sizeof (std::size_t) * n_nodes_per_tet)));
 	elements.reserve(n_tets);
+	materials.reserve(n_tets);
 
 	const unsigned offset = (_zero_based_idx) ? 0 : 1;
 	for (std::size_t k(0); k < n_tets && !ins.fail(); k++)
@@ -486,8 +500,10 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 		for (unsigned k(0); k<4; k++) {
 			tet_nodes[k] = nodes[ids[k]];
 		}
-		elements.push_back (new MeshLib::Tet(tet_nodes, region));
+		elements.push_back (new MeshLib::Tet(tet_nodes));
+		materials.push_back(region);
 	}
+
 	return true;
 }
 
