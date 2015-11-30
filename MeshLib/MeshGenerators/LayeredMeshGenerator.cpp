@@ -17,6 +17,8 @@
 #include <vector>
 #include <fstream>
 
+#include "logog/include/logog.hpp"
+
 #include "FileIO/AsciiRasterInterface.h"
 
 #include "GeoLib/Raster.h"
@@ -24,9 +26,12 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/PropertyVector.h"
+#include "MeshLib/Properties.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+
 
 LayeredMeshGenerator::LayeredMeshGenerator()
 : _elevation_epsilon(0.0001), _minimum_thickness(std::numeric_limits<float>::epsilon())
@@ -56,7 +61,20 @@ MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
     if (_nodes.empty() || _elements.empty())
         return nullptr;
 
-    MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements));
+	MeshLib::Properties properties;
+	if (!_materials.empty())
+	{
+		if (_materials.size() == _elements.size())
+		{
+			boost::optional<MeshLib::PropertyVector<int> &> materials = 
+				properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
+			materials->resize(_materials.size());
+			std::copy(_materials.cbegin(), _materials.cend(), materials->begin());
+		}
+		else
+			ERR ("Skipping MaterialID information, number of entries does not match element number");
+	}
+    MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
     MeshLib::NodeSearch ns(*result);
     if (ns.searchUnused() > 0) {
         auto new_mesh = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), mesh_name);
