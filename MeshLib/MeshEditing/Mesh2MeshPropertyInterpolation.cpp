@@ -164,7 +164,6 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
 		}
 		interpolated_node_properties[k] /= n_con_elems;
 	}
-
 }
 
 } // end namespace MeshLib

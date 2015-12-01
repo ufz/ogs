@@ -160,7 +160,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 
 	QList<QVariant> edges;
 	edges << "Edge Length: " << "[" + QString::number(mesh->getMinEdgeLength(), 'f') + "," << QString::number(mesh->getMaxEdgeLength(), 'f') + "]" << "";
-	TreeItem* edge_item =  new TreeItem(edges, _rootItem);
+	TreeItem* edge_item = new TreeItem(edges, _rootItem);
 	_rootItem->appendChild(edge_item);
 
 	const auto mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
