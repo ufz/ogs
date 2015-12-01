@@ -23,7 +23,6 @@ const std::pair<int, int> MeshInformation::getValueBounds(const MeshLib::Mesh &m
 {
 	boost::optional<MeshLib::PropertyVector<int> const&> materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 	if (materialIds && !materialIds->empty()) {
-		MeshLib::PropertyVector<int> const& t = *materialIds;
 		auto mat_bounds = std::minmax_element(materialIds->cbegin(), materialIds->cend());
 		return std::make_pair(*(mat_bounds.first), *(mat_bounds.second));
 	}
