@@ -168,7 +168,6 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 
 	INFO("setting material IDs");
 	auto mesh = new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
-	// TODO: Use material id groups
 	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
 		mesh->getProperties().createNewPropertyVector<int>(
 			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
