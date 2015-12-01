@@ -321,14 +321,13 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	INFO("GMSInterface::readGMS3DMMesh(): \tfinished.");
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
-	MeshLib::Mesh* mesh(new MeshLib::Mesh(mesh_name, nodes, elements));
-	auto opt_pv = mesh->getProperties().createNewPropertyVector<int>(
+	MeshLib::Properties properties;
+	boost::optional<MeshLib::PropertyVector<int> &> opt_pv = properties.createNewPropertyVector<int>(
 		"MaterialIDs", MeshLib::MeshItemType::Cell);
-	if (opt_pv) {
-		auto pv = *opt_pv;
-		pv.resize(mat_ids.size());
-		std::copy(mat_ids.cbegin(), mat_ids.cend(), pv.begin());
-	}
+	opt_pv->resize(mat_ids.size());
+	std::copy(mat_ids.cbegin(), mat_ids.cend(), opt_pv->begin());
+	MeshLib::Mesh* mesh(new MeshLib::Mesh(mesh_name, nodes, elements, properties));
+
 	return mesh;
 }
 
