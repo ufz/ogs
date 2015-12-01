@@ -160,7 +160,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 	auto opt_pv = mesh->getProperties().createNewPropertyVector<int>(
 		"MaterialIDs", MeshLib::MeshItemType::Cell);
 	if (opt_pv) {
-		auto pv = *opt_pv;
+		auto & pv = *opt_pv;
 		pv.resize(mat_ids.size());
 		std::copy(mat_ids.cbegin(), mat_ids.cend(), pv.begin());
 	}

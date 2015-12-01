@@ -78,7 +78,7 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 	auto opt_mat_pv = new_mesh->getProperties().createNewPropertyVector<int>(
 		"MaterialIDs", MeshLib::MeshItemType::Cell);
 	if (opt_mat_pv) {
-		auto mat_pv = *opt_mat_pv;
+		auto & mat_pv = *opt_mat_pv;
 		mat_pv.resize(new_mat_ids.size());
 		std::copy(new_mat_ids.cbegin(), new_mat_ids.cend(), mat_pv.begin());
 	}
