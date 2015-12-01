@@ -20,14 +20,16 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
 // BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "FileIO/writeMeshToFile.h"
+#include "FileIO/readGeometryFromFile.h"
+#include "FileIO/writeGeometryToFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -63,28 +65,21 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	geometry_sets.addPointVec(std::move(pnts), geo_name, pnt_names);
 }
 
-void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
+void writeBCsAndGeometry(GeoLib::GEOObjects & geometry_sets,
 	std::string & geo_name, bool write_gml)
 {
-	INFO("write points to \"%s.gml\".", geo_name.c_str());
 	if (write_gml) {
-		FileIO::BoostXmlGmlInterface xml_io(geometry_sets);
-		xml_io.setNameForExport(geo_name);
-		xml_io.writeToFile(geo_name+".gml");
+		INFO("write points to \"%s.gml\".", geo_name.c_str());
+		FileIO::writeGeometryToFile(geo_name, geometry_sets, geo_name+".gml");
 	}
+	FileIO::writeGeometryToFile(geo_name, geometry_sets, geo_name+".gli");
 
 	GeoLib::PointVec const* pnt_vec_objs(geometry_sets.getPointVecObj(geo_name));
 	std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
-	std::string fname(geo_name+".gli");
-	std::ofstream out (fname.c_str());
-	out << "#POINTS\n";
-	out.precision(20);
 	std::ofstream bc_out (geo_name+".bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
-		out << k << " " << *(pnts[k]);
 		std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
 		if (!pnt_name.empty()) {
-			out << "$NAME " << pnt_name;
 			bc_out << "#BOUNDARY_CONDITION\n";
 			bc_out << "  $PCS_TYPE\n";
 			bc_out << "    LIQUID_FLOW\n";
@@ -95,20 +90,14 @@ void writeBCsAndGML(GeoLib::GEOObjects & geometry_sets,
 			bc_out << "  $DIS_TYPE\n";
 			bc_out << "    CONSTANT 0.0\n";
 		}
-		out << "\n";
 	}
-	out << "#STOP\n";
 	bc_out << "#STOP\n";
 	bc_out.close();
-	out.close();
 }
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
 		"Creates boundary conditions for mesh nodes along polylines.",
@@ -122,9 +111,9 @@ int main (int argc, char* argv[])
 		"the name of the file containing the input geometry", true,
 		"", "file name");
 	cmd.add(geometry_fname);
-	TCLAP::ValueArg<bool> vis_arg("v", "visualize",
-		"write gml file with found mesh nodes for visualization", false, 0, "bool");
-	cmd.add(vis_arg);
+	TCLAP::ValueArg<bool> gml_arg("", "gml",
+		"if switched on write found nodes to file in gml format", false, 0, "bool");
+	cmd.add(gml_arg);
 	TCLAP::ValueArg<double> search_length_arg("s", "search-length",
 		"The size of the search length. The default value is "
 		"std::numeric_limits<double>::epsilon()", false,
@@ -145,29 +134,13 @@ int main (int argc, char* argv[])
 			*subsurface_mesh, dir, angle, false
 		)
 	);
-	{
-		FileIO::VtuInterface mesh_io(surface_mesh.get(), vtkXMLWriter::Ascii);
-		std::string const surface_mesh_fname(
-			BaseLib::dropFileExtension(mesh_arg.getValue())+"-Surface.vtu");
-		mesh_io.writeToFile(surface_mesh_fname);
-	}
 	INFO("done.");
 	delete subsurface_mesh;
 	subsurface_mesh = nullptr;
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
-	{
-		FileIO::BoostXmlGmlInterface xml_io(geometries);
-		if (xml_io.readFile(geometry_fname.getValue())) {
-			INFO("Read geometry from file \"%s\".",
-				geometry_fname.getValue().c_str());
-		} else {
-			ERR("Problems to read geometry from file \"%s\".",
-				geometry_fname.getValue().c_str());
-			return -1;
-		}
-	}
+	FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
 	std::string geo_name;
 	{
@@ -264,6 +237,6 @@ int main (int argc, char* argv[])
 	geometry_sets.addPointVec(std::move(surface_pnts), surface_name, name_id_map, 1e-6);
 
 	// write the BCs and the merged geometry set to file
-	writeBCsAndGML(geometry_sets, surface_name, vis_arg.getValue());
+	writeBCsAndGeometry(geometry_sets, surface_name, gml_arg.getValue());
 	return 0;
 }
