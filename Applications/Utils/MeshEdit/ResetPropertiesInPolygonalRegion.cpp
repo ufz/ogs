@@ -19,8 +19,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
@@ -122,10 +121,7 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
 		"id iff at least one node of the element is within a polygonal region "
