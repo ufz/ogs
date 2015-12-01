@@ -123,12 +123,12 @@ int main (int argc, char* argv[])
 {
 	ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
-		"id iff at least one node of the element is within a polygonal region "
-		"that is given by a polygon read from a gml file.", ' ', "0.1");
+	TCLAP::CmdLine cmd("Sets the property value of a mesh element to a given new "
+		"value iff at least one node of the element is within a polygonal region "
+		"that is given by a polygon.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-		"the name of the file the mesh will be written to", true,
-		"", "file name");
+		"the name of the file the mesh will be written to, format depends on "
+		"the given file name extension", true, "", "file name");
 	cmd.add(mesh_out);
 	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
 		"name of polygon in the geometry", true, "", "string");
@@ -143,7 +143,7 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
 		"name of property in the mesh", false, "MaterialIDs", "string");
 	cmd.add(property_name_arg);
-	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
+	TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
 		"the name of the file containing the input mesh", true,
 		"", "file name");
 	cmd.add(mesh_in);
