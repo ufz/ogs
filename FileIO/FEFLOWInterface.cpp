@@ -213,8 +213,8 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 			{
 				MeshLib::Element* e = vec_elements[i];
 				unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
-				for (std::size_t i=0; i<e->getNBaseNodes(); i++)
-					e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(i));
+				for (std::size_t j=0; j<e->getNBaseNodes(); j++)
+					e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(j));
 				std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;
 				(*opt_material_ids)[i] = layer_id;
 			}
