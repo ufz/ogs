@@ -133,13 +133,19 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
 		"name of polygon in the geometry", true, "", "string");
 	cmd.add(polygon_name_arg);
-	TCLAP::ValueArg<std::string> geometry_fname("g", "geometry",
-		"the name of the file containing the input geometry", true,
+	TCLAP::ValueArg<std::string> geometry_fname("g", "geometry", "the name of "
+		"the file containing the input geometry (gli or gml format)", true,
 		"", "file name");
 	cmd.add(geometry_fname);
-	TCLAP::ValueArg<char> new_property_arg("v", "new-property-value",
-		"new property value", false, 'A', "number");
-	cmd.add(new_property_arg);
+	TCLAP::ValueArg<char> char_property_arg("c", "char-property-value",
+		"new property value (data type char)", false, 'A', "character");
+	cmd.add(char_property_arg);
+	TCLAP::ValueArg<int> int_property_arg("i", "int-property-value",
+		"new property value (data type int)", false, 0, "number");
+	cmd.add(int_property_arg);
+	TCLAP::ValueArg<bool> bool_property_arg("b", "bool-property-value",
+		"new property value (data type bool)", false, 0, "boolean value");
+	cmd.add(bool_property_arg);
 	TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
 		"name of property in the mesh", false, "MaterialIDs", "string");
 	cmd.add(property_name_arg);
@@ -199,8 +205,8 @@ int main (int argc, char* argv[])
 	}
 	std::string const& property_name(property_name_arg.getValue());
 
-	{
-		char new_property_val(static_cast<char>(new_property_arg.getValue()));
+	if (char_property_arg.isSet()) {
+		char new_property_val(char_property_arg.getValue());
 
 		// check if PropertyVector exists
 		boost::optional<MeshLib::PropertyVector<char> &> opt_pv(
@@ -215,14 +221,14 @@ int main (int argc, char* argv[])
 		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
 	}
 
-	{
-		unsigned new_property_val(new_property_arg.getValue());
-		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	if (int_property_arg.isSet()) {
+		int int_property_val(int_property_arg.getValue());
+		resetMeshElementProperty(*mesh, polygon, property_name, int_property_val);
 	}
 
-	{
-		bool new_property_val(static_cast<bool>(new_property_arg.getValue()));
-		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	if (bool_property_arg.isSet()) {
+		bool bool_property_val(bool_property_arg.getValue());
+		resetMeshElementProperty(*mesh, polygon, property_name, bool_property_val);
 	}
 
 	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
