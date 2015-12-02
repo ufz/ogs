@@ -48,6 +48,16 @@ class PETScVector
         PETScVector(const PetscInt vec_size, const bool is_global_size = true);
 
         /*!
+            \brief Constructor
+            \param vec_size       The size of the vector, either global or local
+            \param ghost_ids      The global indices of ghost entries
+            \param is_global_size The flag of the type of vec_size, i.e. whether it is a global size
+                                  or local size. The default is true.
+        */
+        PETScVector(const PetscInt vec_size, const std::vector<PetscInt>& ghost_ids,
+                    const bool is_global_size = true);
+
+        /*!
              \brief Copy constructor
              \param existing_vec The vector to be copied
              \param deep_copy    The flag for a deep copy, which means to copy the values as well,
@@ -61,11 +71,7 @@ class PETScVector
         }
 
         /// Perform MPI collection of assembled entries in buffer
-        void finalizeAssembly()
-        {
-            VecAssemblyBegin(_v);
-            VecAssemblyEnd(_v);
-        }
+        void finalizeAssembly();
 
         /// Get the global size of the vector
         PetscInt size() const
@@ -167,6 +173,15 @@ class PETScVector
         }
 
         /*!
+           Restore array after finish access local array
+           \param array  Pointer to the local array fetched by VecGetArray
+        */
+        void restoreArray(PetscScalar* array) const
+        {
+            VecRestoreArray(_v, &array);         
+        }
+
+        /*!
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
@@ -249,6 +264,9 @@ class PETScVector
         /// Size of local entries
         PetscInt _size_loc;
 
+        /// Flag to indicate whether the vector is created with ghost entry indices
+        bool has_ghost_id = false;
+
         /*!
               \brief  Collect local vectors
               \param  local_array Local array
@@ -256,6 +274,9 @@ class PETScVector
         */
         void gatherLocalVectors(PetscScalar local_array[],
                                 PetscScalar global_array[]);
+
+        /// A funtion called by constructors to configure members
+        void config();
 
         friend void finalizeVectorAssembly(PETScVector &vec);
 };
