@@ -56,6 +56,7 @@ PointVec::PointVec(const std::string& name,
 		GeoLib::Point* const pnt((*_data_vec)[k]);
 		if (!_oct_tree->addPoint(pnt, ret_pnt))
 		{
+			assert(ret_pnt != nullptr);
 			_pnt_id_map[pnt->getID()] = ret_pnt->getID();
 			rm_pos.push_back(k);
 			delete (*_data_vec)[k];
