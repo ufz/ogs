@@ -322,10 +322,10 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
 	MeshLib::Properties properties;
-	if (mat_ids.size() == elements.size())
-	{
-		boost::optional<MeshLib::PropertyVector<int> &> opt_pv = properties.createNewPropertyVector<int>(
-			"MaterialIDs", MeshLib::MeshItemType::Cell);
+	if (mat_ids.size() == elements.size()) {
+		boost::optional<MeshLib::PropertyVector<int> &> opt_pv
+			= properties.createNewPropertyVector<int>(
+				"MaterialIDs", MeshLib::MeshItemType::Cell);
 		opt_pv->resize(mat_ids.size());
 		std::copy(mat_ids.cbegin(), mat_ids.cend(), opt_pv->begin());
 	}
