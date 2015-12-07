@@ -165,6 +165,7 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 			if (count == nElemNodes)
 			{
 				delete _elements[upper_offset+j];
+				// mark element and material entries for deletion
 				_elements[upper_offset+j] = nullptr;
 				_materials[upper_offset+j] = -1;
 			}
@@ -175,6 +176,7 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 			}
 		}
 	}
+	// delete marked entries
 	auto elem_vec_end = std::remove(_elements.begin(), _elements.end(), nullptr);
 	_elements.erase(elem_vec_end, _elements.end());
 	auto mat_vec_end = std::remove(_materials.begin(), _materials.end(), -1);
