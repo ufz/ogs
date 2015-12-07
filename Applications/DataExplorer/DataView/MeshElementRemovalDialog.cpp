@@ -164,20 +164,30 @@ void MeshElementRemovalDialog::on_elementTypeCheckBox_toggled(bool is_checked)
 
 void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
 {
-	this->materialListWidget->setEnabled(is_checked);
+	materialListWidget->setEnabled(is_checked);
 
 	if (is_checked && (_currentIndex != _matIDIndex))
 	{
-		this->materialListWidget->clear();
+		materialListWidget->clear();
 		_matIDIndex = _currentIndex;
-		auto mesh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
-		const std::vector<MeshLib::Element*> elements = mesh->getElements();
-
-		auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-		auto max_material = std::max_element(materialIds->cbegin(), materialIds->cend());
+		auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
+		auto const opt_mat_ids = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+		if (!opt_mat_ids) {
+			INFO("Properties \"MaterialIDs\" not found in the mesh \"%s\".",
+				mesh->getName().c_str());
+			return;
+		}
+		auto const& mat_ids = opt_mat_ids.get();
+		if (mat_ids.size() != mesh->getNElements()) {
+			INFO("Size mismatch: Properties \"MaterialIDs\" contains %u values,"
+				" the mesh \"%s\" contains %u elements.", mat_ids.size(),
+				mesh->getName().c_str(), mesh->getNElements());
+			return;
+		}
+		auto max_material = std::max_element(mat_ids.cbegin(), mat_ids.cend());
 
 		for (unsigned i=0; i <= static_cast<unsigned>(*max_material); ++i)
-			this->materialListWidget->addItem(QString::number(i));
+			materialListWidget->addItem(QString::number(i));
 	}
 }
 
@@ -194,6 +204,13 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (materialIds)
 	{
+		if (materialIds->size() != mesh->getNElements())
+		{
+			ERR ("Incorrect mesh structure: Number of Material IDs does not match number of mesh elements.");
+			OGSError::box("Incorrect mesh structure detected.\n Number of Material IDs does not match number of mesh elements");
+			QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+		}
+
 		materialIDCheckBox->setEnabled(true);
 		if (materialIDCheckBox->isChecked())
 			on_materialIDCheckBox_toggled(true);
