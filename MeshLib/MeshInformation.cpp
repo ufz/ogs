@@ -28,7 +28,7 @@ const std::pair<int, int> MeshInformation::getValueBounds(const MeshLib::Mesh &m
 		return std::make_pair(*(mat_bounds.first), *(mat_bounds.second));
 	}
 	else
-		return std::make_pair(-1,-1);
+		return std::make_pair(std::numeric_limits<int>::max(),std::numeric_limits<int>::max());
 }
 
 const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)
