@@ -9,7 +9,7 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/Gui/OpenSG
 )
 
-if (QT4_FOUND)
+if (Qt5XmlPatterns_FOUND)
 	add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
 	set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
 
@@ -28,7 +28,7 @@ if (QT4_FOUND)
 	set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
 	target_link_libraries(FEFLOW2OGS FileIO)
 	ADD_VTK_DEPENDENCY(FEFLOW2OGS)
-endif () # QT4_FOUND
+endif ()
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
 target_link_libraries(generateMatPropsFromMatID FileIO)
@@ -67,7 +67,7 @@ ADD_VTK_DEPENDENCY(TIN2VTK)
 install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
 	RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	install(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
 		FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()

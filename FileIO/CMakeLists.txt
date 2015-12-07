@@ -37,7 +37,7 @@ GET_SOURCE_FILES(SOURCES_BASE_XML XmlIO)
 set(SOURCES ${SOURCES} ${SOURCES_BASE_XML})
 GET_SOURCE_FILES(SOURCES_BOOST_XML XmlIO/Boost)
 set(SOURCES ${SOURCES} ${SOURCES_BOOST_XML})
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	set(SOURCES ${SOURCES} FEFLOWInterface.h FEFLOWInterface.cpp)
 	GET_SOURCE_FILES(SOURCES_QT_XML XmlIO/Qt)
 	set(SOURCES ${SOURCES} ${SOURCES_QT_XML})
@@ -59,7 +59,7 @@ target_link_libraries(FileIO INTERFACE
 	logog
 	shp
 )
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt5::Xml Qt5::XmlPatterns)
 endif()
 

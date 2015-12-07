@@ -18,7 +18,7 @@ set(TEST_SOURCES ${TEST_SOURCES}
 	FileIO/TestGLIReader.cpp
 	FileIO/TestCsvReader.cpp
 )
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	set(TEST_SOURCES ${TEST_SOURCES} FileIO/TestXmlGmlReader.cpp)
 endif()
 
@@ -57,7 +57,7 @@ if(OGS_BUILD_GUI)
 	)
 endif()
 
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	target_link_libraries(testrunner Qt5::Core Qt5::Gui Qt5::Xml Qt5::Network)
 	if(CMAKE_CROSSCOMPILING)
 		target_link_libraries(testrunner
