@@ -156,15 +156,12 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 	delete [] node_idx_map;
 
 	// the name is only a temp-name, the name given in the dialog is set later
-	MeshLib::Mesh* mesh(new MeshLib::Mesh("RasterDataMesh", nodes, elements));
-	auto opt_pv = mesh->getProperties().createNewPropertyVector<int>(
-		"MaterialIDs", MeshLib::MeshItemType::Cell);
-	if (opt_pv) {
-		auto & pv = *opt_pv;
-		pv.resize(mat_ids.size());
-		std::copy(mat_ids.cbegin(), mat_ids.cend(), pv.begin());
-	}
-	return mesh;
+	MeshLib::Properties properties;
+	boost::optional< MeshLib::PropertyVector<int> &> materials = 
+		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
+	materials->resize(mat_ids.size());
+	std::copy(mat_ids.cbegin(), mat_ids.cend(), materials->begin());
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties);
 }
 
 
