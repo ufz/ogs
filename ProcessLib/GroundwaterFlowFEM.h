@@ -17,6 +17,9 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
+#include "GroundwaterFlowAssemblyParameters.h"
+#include "GroundwaterFlowProcess.h"
+
 namespace ProcessLib
 {
 
@@ -32,6 +35,7 @@ public:
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
             Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
+            AssemblyParameters const& assembly_params,
             unsigned const integration_order) = 0;
 
     virtual void assemble(std::vector<double> const& local_x,
@@ -61,6 +65,7 @@ public:
               std::size_t const local_matrix_size,
               Parameter<double, MeshLib::Element const&> const&
                   hydraulic_conductivity,
+              AssemblyParameters const& assembly_params,
               unsigned const integration_order) override
     {
         using FemType = NumLib::TemplateIsoparametric<
@@ -86,6 +91,8 @@ public:
             return hydraulic_conductivity(e);
         };
 
+        _assembly_params = &assembly_params;
+
         _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
@@ -98,6 +105,8 @@ public:
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
+
+        const double delta_t = _assembly_params->delta_t;
 
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
@@ -125,6 +134,8 @@ private:
     std::unique_ptr<NodalVectorType> _localRhs;
 
     unsigned _integration_order = 2;
+
+    AssemblyParameters const* _assembly_params;
 };
 
 
