@@ -34,12 +34,22 @@
 namespace GeoLib
 {
 /**
- *
- * \ingroup GeoLib
- *
  * \brief Class AABB is an axis aligned bounding box around a given
  * set of geometric points of (template) type PNT_TYPE.
- * */
+ *
+ * Let \f$P = \{p_k \in \mathbb{R}^3, \ k=1, \dotsc, n\}\f$ a set of 3d points.
+ * The bounding volume is described by its lower, left, front point \f$\ell\f$
+ * and the upper, right, back point \f$u\f$, i.e. the coordinates of \f$\ell\f$
+ * and \f$u\f$ are computed as follows \f$\ell_i = \min \limits_{p \in P}
+ * p_i\f$, \f$u_i = \max \limits_{p \in P} p_i\f$, respectively. The bounding
+ * box consists of half-open intervals \f$[\ell_x, u_x) \times [\ell_y, u_y)
+ * \times [\ell_z, u_z).\f$ The bounding box is enlarged up to the next
+ * available floating point number such that all input points are contained in
+ * the bounding box.
+ *
+ * @tparam PNT_TYPE a point type supporting accessing the coordinates via
+ * operator[]
+ */
 template <typename PNT_TYPE = GeoLib::Point>
 class AABB
 {
