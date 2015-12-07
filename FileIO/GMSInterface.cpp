@@ -266,7 +266,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	// read elements
 	in.open(filename.c_str());
 	getline(in, line); // "MESH3D"
-	unsigned node_idx[6], mat_id;
+	unsigned node_idx[6];
+	int mat_id(0);
 	while ( getline(in, line) )
 	{
 		std::string element_id(line.substr(0,3));
@@ -318,7 +319,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	}
 
 	in.close();
-	INFO("GMSInterface::readGMS3DMMesh(): \tfinished.");
+	INFO("GMSInterface::readGMS3DMMesh(): finished.");
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
 	MeshLib::Properties properties;
@@ -330,9 +331,9 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 		opt_pv->resize(mat_ids.size());
 		std::copy(mat_ids.cbegin(), mat_ids.cend(), opt_pv->begin());
 	}
-	MeshLib::Mesh* mesh(new MeshLib::Mesh(mesh_name, nodes, elements, properties));
-
-	return mesh;
+	else
+		ERR ("Ignoring Material IDs information (does not match number of elements).");
+	return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
 }
 
 }
