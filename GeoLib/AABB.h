@@ -108,9 +108,9 @@ public:
 	template <typename T>
 	bool containsPoint(T const & pnt) const
 	{
-		if (pnt[0] < _min_pnt[0] || _max_pnt[0] < pnt[0]) return false;
-		if (pnt[1] < _min_pnt[1] || _max_pnt[1] < pnt[1]) return false;
-		if (pnt[2] < _min_pnt[2] || _max_pnt[2] < pnt[2]) return false;
+		if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0]) return false;
+		if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1]) return false;
+		if (pnt[2] < _min_pnt[2] || _max_pnt[2] <= pnt[2]) return false;
 		return true;
 	}
 
