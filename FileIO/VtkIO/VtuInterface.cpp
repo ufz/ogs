@@ -52,8 +52,10 @@ VtuInterface::~VtuInterface()
 
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
-	if (!BaseLib::IsFileExisting(file_name))
+	if (!BaseLib::IsFileExisting(file_name)) {
+		ERR("File \"%s\" does not exist.", file_name.c_str());
 		return nullptr;
+	}
 
 	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
 		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
