@@ -52,9 +52,6 @@ int main (int argc, char* argv[])
     cmd.add(output_geometry_fname);
     cmd.parse(argc, argv);
 
-    // *** read mesh
-    MeshLib::Mesh * mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-
     // *** read geometry
     GeoLib::GEOObjects geometries;
     {
@@ -63,7 +60,6 @@ int main (int argc, char* argv[])
             INFO("Read geometry from file \"%s\".",
                 input_geometry_fname.getValue().c_str());
         } else {
-            delete mesh;
             return EXIT_FAILURE;
         }
     }
@@ -77,11 +73,16 @@ int main (int argc, char* argv[])
 
     std::string new_geo_name(geo_name);
     MeshGeoToolsLib::GeoMapper geo_mapper(geometries, geo_name);
+
+    // *** read mesh
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+
     if (additional_insert_mapping.getValue()) {
         new_geo_name += "-Mapped";
-        geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
+        geo_mapper.advancedMapOnMesh(mesh.get(), new_geo_name);
     } else {
-        geo_mapper.mapOnMesh(mesh);
+        geo_mapper.mapOnMesh(mesh.get());
     }
 
     {
