@@ -207,7 +207,7 @@ private:
 	void writeElementToFacets(std::ofstream &out,
 	                          const MeshLib::Element &element,
 	                          unsigned &element_count,
-	                          const MeshLib::Mesh &mesh) const;
+	                          std::string const& matId) const;
 
 	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;
