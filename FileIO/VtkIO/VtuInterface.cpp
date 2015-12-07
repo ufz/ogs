@@ -75,7 +75,7 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 #ifdef USE_PETSC
 	// Also for other approach with DDC.
 	// In such case, a MPI_Comm argument is need to this member,
-	// and PETSC_COMM_WORLD shoud be replaced with the argument.  
+	// and PETSC_COMM_WORLD should be replaced with the argument.
 	int mpi_rank;
 	MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
 	const std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
