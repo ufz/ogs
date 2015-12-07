@@ -116,8 +116,10 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
         // set a conductivity tensor
         setIdentityMatrix(dim, D);
         D *= conductivity;
-        MeshLib::ElementCoordinatesMappingLocal ele_local_coord(*mesh_element, MeshLib::CoordinateSystem(*mesh_element));
-        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(TestFeType::global_dim, TestFeType::global_dim);
+        MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
+            *mesh_element, MeshLib::CoordinateSystem(*mesh_element));
+        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
+            TestFeType::dim, TestFeType::global_dim);
         globalD.noalias() = R.transpose() * (D * R);
 
         // set expected matrices
@@ -191,7 +193,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
     // evaluate a mass matrix M = int{ N^T D N }dA_e
     NodalMatrix M(this->e_nnodes, this->e_nnodes);
     M.setZero();
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -215,7 +217,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
     NodalMatrix K(this->e_nnodes, this->e_nnodes);
     K.setZero();
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -241,7 +243,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
     M.setZero();
     NodalMatrix K(this->e_nnodes, this->e_nnodes);
     K.setZero();
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
@@ -268,7 +270,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckGaussIntegrationLevel)
     // evaluate a mass matrix
     NodalMatrix M(this->e_nnodes, this->e_nnodes);
     M.setZero();
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     ASSERT_EQ(TestFixture::n_sample_pt_order2, this->integration_method.getNPoints());
     for (std::size_t i=0; i < this->integration_method.getNPoints(); i++) {
         shape.setZero();

@@ -46,7 +46,7 @@ TEST(NumLib, FemShapeMatricesWithEigen)
                 shape.detJ = 1.0;
             };
 
-    ShapeMatricesType shape(dim, e_nnodes);
+    ShapeMatricesType shape(dim, dim, e_nnodes);
 
     // check dimension of shape matrices
     EXPECT_EQ(e_nnodes, shape.N.size());

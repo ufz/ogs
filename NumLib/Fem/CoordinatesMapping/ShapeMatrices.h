@@ -67,25 +67,20 @@ struct ShapeMatrices
     /**
      * Initialize matrices and vectors
      *
-     * @param dim       Spatial dimension
-     * @param n_nodes   The number of element nodes
+     * @param local_dim  Spatial dimension of the element e.g. 1 for line, 2 for
+     *                   quad, and 3 hex etc.
+     * @param global_dim Spatial dimension of the element's exterior space e.g.
+     *                   3 for a quad representing a boundary of a hex element.
+     * @param n_nodes    The number of element nodes
      */
-    ShapeMatrices(std::size_t dim, std::size_t n_nodes)
-    : N(n_nodes), dNdr(dim, n_nodes), J(dim, dim), detJ(.0),
-      invJ(dim, dim), dNdx(dim, n_nodes)
-    {
-        this->setZero();
-    }
-
-    /**
-     * Initialize matrices and vectors
-     *
-     * @param dim       Spatial dimension
-     * @param n_nodes   The number of element nodes
-     */
-    ShapeMatrices(std::size_t local_dim, std::size_t global_dim, std::size_t n_nodes)
-    : N(n_nodes), dNdr(local_dim, n_nodes), J(local_dim, local_dim), detJ(.0),
-    invJ(local_dim, local_dim), dNdx(global_dim, n_nodes)
+    ShapeMatrices(std::size_t local_dim, std::size_t global_dim,
+                  std::size_t n_nodes)
+        : N(n_nodes),
+          dNdr(local_dim, n_nodes),
+          J(local_dim, local_dim),
+          detJ(.0),
+          invJ(local_dim, local_dim),
+          dNdx(global_dim, n_nodes)
     {
         this->setZero();
     }
