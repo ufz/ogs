@@ -37,8 +37,9 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 	{
 		auto mat_ids = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 		if (mat_ids) {
-			new_mat_ids.resize((*mat_ids).size());
-			std::copy((*mat_ids).cbegin(), (*mat_ids).cend(), new_mat_ids.begin());
+			new_mat_ids.reserve((*mat_ids).size());
+			std::copy((*mat_ids).cbegin(), (*mat_ids).cend(),
+				std::back_inserter(new_mat_ids));
 		}
 	}
 	int max_matID(0);
@@ -74,15 +75,17 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 
 	// generate a mesh
 	const std::string name = mesh.getName() + "_with_lines";
-	MeshLib::Mesh* new_mesh(new MeshLib::Mesh(name, vec_new_nodes, vec_new_eles));
+	std::unique_ptr<MeshLib::Mesh> new_mesh(
+		new MeshLib::Mesh(name, vec_new_nodes, vec_new_eles));
 	auto opt_mat_pv = new_mesh->getProperties().createNewPropertyVector<int>(
 		"MaterialIDs", MeshLib::MeshItemType::Cell);
 	if (opt_mat_pv) {
 		auto & mat_pv = *opt_mat_pv;
-		mat_pv.resize(new_mat_ids.size());
-		std::copy(new_mat_ids.cbegin(), new_mat_ids.cend(), mat_pv.begin());
+		mat_pv.reserve(new_mat_ids.size());
+		std::copy(new_mat_ids.cbegin(), new_mat_ids.cend(),
+			std::back_inserter(mat_pv));
 	}
-	return new_mesh;
+	return new_mesh.release();
 }
 
 } // MeshGeoToolsLib
