@@ -56,7 +56,8 @@ bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh,
     return result;
 }
 
-MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
+std::unique_ptr<MeshLib::Mesh>
+LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 {
 	if (_nodes.empty() || _elements.empty())
 		return nullptr;
@@ -72,11 +73,11 @@ MeshLib::Mesh* LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 	else
 		WARN ("Skipping MaterialID information, number of entries does not match element number");
 
-	MeshLib::Mesh* result (new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
-	MeshLib::NodeSearch ns(*result);
+	std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
+	MeshLib::NodeSearch ns(*result.get());
 	if (ns.searchUnused() > 0) {
-		auto new_mesh = MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), mesh_name);
-		delete result;
+		std::unique_ptr<MeshLib::Mesh> new_mesh(MeshLib::removeNodes(
+			*result.get(), ns.getSearchedNodeIDs(), mesh_name));
 		return new_mesh;
 	}
 	return result;
