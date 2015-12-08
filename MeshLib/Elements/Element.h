@@ -89,7 +89,7 @@ public:
 	virtual const Element* getFace(unsigned i) const = 0;
 
 	/// Returns the ID of the element.
-	std::size_t getID() const { return _id; }
+	virtual std::size_t getID() const final { return _id; }
 
 	/// Get the number of edges for this element.
 	virtual unsigned getNEdges() const = 0;
@@ -203,7 +203,7 @@ protected:
 	Element(std::size_t id);
 
 	/// Sets the element ID.
-	void setID(std::size_t id) { _id = id; }
+	virtual void setID(std::size_t id) final { _id = id; }
 
 	Node** _nodes;
 	std::size_t _id;
