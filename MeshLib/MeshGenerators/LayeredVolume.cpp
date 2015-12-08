@@ -46,20 +46,29 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	if (top==nullptr)
 		top = new MeshLib::Mesh(mesh);
 
-	if (!MeshLib::MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue))
+	if (!MeshLib::MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue)) {
+		delete top;
 		return false;
+	}
 
 	MeshLib::Mesh* bottom (new MeshLib::Mesh(*top));
 	if (!MeshLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
 	{
 		delete top;
+		delete bottom;
 		return false;
 	}
 
 	this->_minimum_thickness = minimum_thickness;
 	_nodes = MeshLib::copyNodeVector(bottom->getNodes());
 	_elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
-	_materials.insert(_materials.begin(), _elements.size(), 0); 
+	if (!_materials.empty()) {
+		ERR("The materials vector is not empty.");
+		delete top;
+		delete bottom;
+		return false;
+	}
+	_materials.resize(_elements.size(), 0);
 	delete bottom;
 
 	// map each layer and attach to subsurface mesh
