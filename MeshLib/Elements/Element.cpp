@@ -23,8 +23,8 @@
 
 namespace MeshLib {
 
-Element::Element(unsigned value, std::size_t id)
-	: _nodes(nullptr), _id(id), _content(-1.0), _value(value), _neighbors(nullptr)
+Element::Element(std::size_t id)
+	: _nodes(nullptr), _id(id), _content(-1.0), _neighbors(nullptr)
 {
 }
 
@@ -190,7 +190,7 @@ bool Element::isBoundaryElement() const
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-	os << "Element #" << e._id << " value " << e._value << " @ " << &e
+	os << "Element #" << e._id << " @ " << &e
 		<< " with " << e.getNNeighbors() << " neighbours\n";
 
 	unsigned const nnodes = e.getNNodes();

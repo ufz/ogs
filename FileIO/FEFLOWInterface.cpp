@@ -156,8 +156,69 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 	}
 	in.close();
 
+	std::string project_name(
+		BaseLib::extractBaseNameWithoutExtension(filename));
+	if (_geoObjects && points)
+		_geoObjects->addPointVec(
+			std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
+	if (_geoObjects && lines)
+		_geoObjects->addPolylineVec(
+			std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
+			project_name);
+
 	INFO("setting material IDs");
-	setMaterialID(fem_class, fem_dim, lines, vec_elementsets, vec_elements);
+	auto mesh = new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
+	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+		mesh->getProperties().createNewPropertyVector<int>(
+			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
+	);
+	if (!opt_material_ids) {
+		WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+	}
+	else
+	{
+		opt_material_ids->resize(vec_elements.size());
+
+		if (!vec_elementsets.empty()) {
+			for (std::size_t matid =0; matid<vec_elementsets.size(); matid++) {
+				auto &eids = vec_elementsets[matid];
+				for (auto eid : eids)
+					(*opt_material_ids)[eid-1] = matid; // Element IDs given by FEFLOW starts from one!
+			}
+		} else if (lines && !lines->empty()) {
+			for (std::size_t i = 0; i < vec_elements.size(); i++)
+			{
+				MeshLib::Element* e = vec_elements[i];
+				const MeshLib::Node gpt = e->getCenterOfGravity();
+				std::size_t matId = 0;
+				for (std::size_t j = 0; j < lines->size(); j++)
+				{
+					GeoLib::Polyline* poly = (*lines)[j];
+					if (!poly->isClosed())
+						continue;
+
+					GeoLib::Polygon polygon(*poly, true);
+					if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
+					{
+						matId = j;
+						break;
+					}
+				}
+				(*opt_material_ids)[i] = matId;
+			}
+		} else if (fem_class.n_layers3d>0) {
+			const std::size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
+			for (std::size_t i = 0; i < vec_elements.size(); i++)
+			{
+				MeshLib::Element* e = vec_elements[i];
+				unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
+				for (std::size_t j=0; j<e->getNBaseNodes(); j++)
+					e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(j));
+				std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;
+				(*opt_material_ids)[i] = layer_id;
+			}
+		}
+	}
 
 	if (isXZplane)
 	{
@@ -174,29 +235,6 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 				(*pt)[1] = .0;
 			}
 		}
-	}
-
-	std::string project_name(
-	    BaseLib::extractBaseNameWithoutExtension(filename));
-	if (_geoObjects && points)
-		_geoObjects->addPointVec(
-		    std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
-	if (_geoObjects && lines)
-		_geoObjects->addPolylineVec(
-		    std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
-		    project_name);
-
-	auto mesh = new MeshLib::Mesh(project_name, vec_nodes, vec_elements);
-	boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
-		mesh->getProperties().createNewPropertyVector<int>(
-			"MaterialIDs", MeshLib::MeshItemType::Cell, 1)
-	);
-	if (!opt_material_ids) {
-		WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
-	} else {
-		MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
-		for (auto e : vec_elements)
-			material_ids.push_back(e->getValue());
 	}
 
 	return mesh;
@@ -558,49 +596,6 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
 			child = child.nextSibling();
 		}
 	}
-}
-
-void FEFLOWInterface::setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, const std::vector<std::vector<std::size_t>> &vec_elementsets, std::vector<MeshLib::Element*> &vec_elements)
-{
-	if (!vec_elementsets.empty()) {
-		for (std::size_t matid =0; matid<vec_elementsets.size(); matid++) {
-			auto &eids = vec_elementsets[matid];
-			for (auto eid : eids)
-				vec_elements[eid-1]->setValue(matid); // Element IDs given by FEFLOW starts from one!
-		}
-	} else if (lines && !lines->empty()) {
-		for (std::size_t i = 0; i < vec_elements.size(); i++)
-		{
-			MeshLib::Element* e = vec_elements[i];
-			const MeshLib::Node gpt = e->getCenterOfGravity();
-			std::size_t matId = 0;
-			for (std::size_t j = 0; j < lines->size(); j++)
-			{
-				GeoLib::Polyline* poly = (*lines)[j];
-				if (!poly->isClosed())
-					continue;
-
-				GeoLib::Polygon polygon(*poly, true);
-				if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
-				{
-					matId = j;
-					break;
-				}
-			}
-			e->setValue(matId);
-		}
-	} else if (fem_class.n_layers3d>0) {
-		const std::size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
-		for (auto* e : vec_elements)
-		{
-			unsigned e_min_nodeID = std::numeric_limits<unsigned>::max();
-			for (std::size_t i=0; i<e->getNBaseNodes(); i++)
-				e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(i));
-			std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;
-			e->setValue(layer_id);
-		}
-	}
-
 }
 
 } // end namespace FileIO

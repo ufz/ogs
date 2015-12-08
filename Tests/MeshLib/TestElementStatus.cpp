@@ -27,18 +27,25 @@ TEST(MeshLib, ElementStatus)
 	const unsigned width (100);
 	const unsigned elements_per_side (20);
 	auto const mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side)};
+		MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side)};
+
+	boost::optional<MeshLib::PropertyVector<int> &> material_id_properties(
+		mesh->getProperties().createNewPropertyVector<int>("MaterialIDs",
+		                                                   MeshLib::MeshItemType::Cell)
+	);
+	ASSERT_FALSE(!material_id_properties);
+	(*material_id_properties).resize(mesh->getNElements());
 
 	const std::vector<MeshLib::Element*> elements (mesh->getElements());
 
 	for (unsigned i=0; i<elements_per_side; ++i)
 	{
 		for (unsigned j=0; j<elements_per_side; ++j)
-			elements[i*elements_per_side + j]->setValue(i);
+			(*material_id_properties)[elements[i*elements_per_side + j]->getID()] = i;
 	}
 
 	{
-		// all elements and ndoes active
+		// all elements and nodes active
 		MeshLib::ElementStatus status(mesh.get());
 		ASSERT_EQ (elements.size(), status.getNActiveElements());
 		ASSERT_EQ (mesh->getNNodes(), status.getNActiveNodes());

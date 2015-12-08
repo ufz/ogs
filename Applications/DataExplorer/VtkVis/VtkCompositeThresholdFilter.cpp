@@ -15,13 +15,11 @@
 // ** INCLUDES **
 #include "VtkCompositeThresholdFilter.h"
 
+#include <logog/include/logog.hpp>
+
 #include <vtkCellData.h>
 #include <vtkThreshold.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkIntArray.h>
-#include <vtkSmartPointer.h>
-
-#include <limits>
 
 VtkCompositeThresholdFilter::VtkCompositeThresholdFilter( vtkAlgorithm* inputAlgorithm )
 	: VtkCompositeFilter(inputAlgorithm)
@@ -42,6 +40,25 @@ void VtkCompositeThresholdFilter::init()
 	// Because this is the only filter here we cannot use vtkSmartPointer
 	vtkThreshold* threshold = vtkThreshold::New();
 	threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
+
+	// Use first array of parent as input array
+	_inputAlgorithm->Update();
+	vtkDataSet* dataSet = vtkDataSet::SafeDownCast(
+		_inputAlgorithm->GetOutputDataObject(0));
+	vtkDataSetAttributes* pointAttributes =
+		dataSet->GetAttributes(vtkDataObject::AttributeTypes::POINT);
+	vtkDataSetAttributes* cellAttributes =
+		dataSet->GetAttributes(vtkDataObject::AttributeTypes::CELL);
+	if(pointAttributes->GetNumberOfArrays() > 0)
+		threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS,
+			pointAttributes->GetArray(0)->GetName());
+	else if(cellAttributes->GetNumberOfArrays() > 0)
+		threshold->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS,
+			cellAttributes->GetArray(0)->GetName());
+	else {
+		WARN("Threshold filter could not find an array on its input object!")
+		return;
+	}
 
 	// Sets a filter property which will be user editable
 	threshold->SetSelectedComponent(0);

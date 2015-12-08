@@ -19,15 +19,20 @@
 namespace MeshLib
 {
 
-const std::pair<unsigned, unsigned> MeshInformation::getValueBounds(const MeshLib::Mesh &mesh)
+const std::pair<int, int> MeshInformation::getValueBounds(const MeshLib::Mesh &mesh)
 {
-	const std::vector<MeshLib::Element*> &elements (mesh.getElements());
-	const auto minmax = std::minmax_element(elements.cbegin(), elements.cend(),
-        [](MeshLib::Element const*const a, MeshLib::Element const*const b)
-            {
-                return a->getValue() < b->getValue();
-        });
-	return std::make_pair<unsigned, unsigned>((*minmax.first)->getValue(), (*minmax.second)->getValue());
+	boost::optional<MeshLib::PropertyVector<int> const&> materialIds
+		= mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+	if (!materialIds) {
+		INFO("Mesh does not contain a property \"MaterialIDs\".");
+		return std::make_pair(std::numeric_limits<int>::max(),std::numeric_limits<int>::max());
+	}
+	if (materialIds->empty()) {
+		INFO("Mesh does not contain values for the property \"MaterialIDs\".");
+		return std::make_pair(std::numeric_limits<int>::max(),std::numeric_limits<int>::max());
+	}
+	auto mat_bounds = std::minmax_element(materialIds->cbegin(), materialIds->cend());
+	return std::make_pair(*(mat_bounds.first), *(mat_bounds.second));
 }
 
 const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)

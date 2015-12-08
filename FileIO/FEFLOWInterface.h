@@ -150,9 +150,6 @@ private:
 	//// read point data in Supermesh
 	void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
 
-	/// set element material IDs
-	void setMaterialID(const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, const std::vector<GeoLib::Polyline*>* lines, const std::vector<std::vector<std::size_t>> &vec_elementsets, std::vector<MeshLib::Element*> &vec_elements);
-
 	//// Geometric objects
 	GeoLib::GEOObjects* _geoObjects;
 };

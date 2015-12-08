@@ -240,6 +240,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	INFO("GMSInterface::readGMS3DMMesh(): Read GMS-3DM mesh.");
 	std::vector<MeshLib::Node*> nodes;
 	std::vector<MeshLib::Element*> elements;
+	std::vector<int> mat_ids;
 	std::map<unsigned, unsigned> id_map;
 
 	// elements are listed before nodes in 3dm-format, therefore
@@ -265,7 +266,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	// read elements
 	in.open(filename.c_str());
 	getline(in, line); // "MESH3D"
-	unsigned node_idx[6], mat_id;
+	unsigned node_idx[6];
+	int mat_id(0);
 	while ( getline(in, line) )
 	{
 		std::string element_id(line.substr(0,3));
@@ -280,7 +282,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 			for (unsigned k(0); k<6; k++) {
 				prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}
-			elements.push_back(new MeshLib::Prism(prism_nodes, mat_id));
+			elements.push_back(new MeshLib::Prism(prism_nodes));
+			mat_ids.push_back(mat_id);
 		}
 		else if (element_id.compare("E4T") == 0) // Tet
 		{
@@ -290,7 +293,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 			for (unsigned k(0); k<4; k++) {
 				tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}
-			elements.push_back(new MeshLib::Tet(tet_nodes, mat_id));
+			elements.push_back(new MeshLib::Tet(tet_nodes));
+			mat_ids.push_back(mat_id);
 		}
 		else if ((element_id.compare("E4P") == 0) || (element_id.compare("E5P") == 0)) // Pyramid (both do exist for some reason)
 		{
@@ -300,7 +304,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 			for (unsigned k(0); k<5; k++) {
 				pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
 			}
-			elements.push_back(new MeshLib::Pyramid(pyramid_nodes, mat_id));
+			elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
+			mat_ids.push_back(mat_id);
 		}
 		else if (element_id.compare("ND ") == 0) // Node
 
@@ -314,10 +319,20 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 	}
 
 	in.close();
-	INFO("GMSInterface::readGMS3DMMesh(): \tfinished.");
+	INFO("GMSInterface::readGMS3DMMesh(): finished.");
 
 	const std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
-	return new MeshLib::Mesh(mesh_name, nodes, elements);
+	MeshLib::Properties properties;
+	if (mat_ids.size() == elements.size()) {
+		boost::optional<MeshLib::PropertyVector<int> &> opt_pv
+			= properties.createNewPropertyVector<int>(
+				"MaterialIDs", MeshLib::MeshItemType::Cell);
+		opt_pv->resize(mat_ids.size());
+		std::copy(mat_ids.cbegin(), mat_ids.cend(), opt_pv->begin());
+	}
+	else
+		ERR ("Ignoring Material IDs information (does not match number of elements).");
+	return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
 }
 
 }

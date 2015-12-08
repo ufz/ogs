@@ -13,8 +13,8 @@ namespace MeshLib
 {
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], unsigned value, std::size_t id)
-: Element(value, id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::size_t id)
+: Element(id)
 {
 	this->_nodes = nodes;
 	this->_neighbors = new Element*[getNNeighbors()];
@@ -23,8 +23,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], unsigne
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> const& nodes, unsigned value, std::size_t id)
-: Element(value, id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
+: Element(id)
 {
 	this->_nodes = new Node*[n_all_nodes];
 	std::copy(nodes.begin(), nodes.end(), this->_nodes);
@@ -35,7 +35,7 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> co
 
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
-: Element(e.getValue(), e.getID())
+: Element(e.getID())
 {
 	this->_nodes = new Node*[n_all_nodes];
 	for (unsigned i=0; i<n_all_nodes; i++)

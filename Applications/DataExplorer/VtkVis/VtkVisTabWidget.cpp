@@ -12,31 +12,23 @@
  *
  */
 
-// ** INCLUDES **
-#include "VtkColorByHeightFilter.h"
-#include "VtkCompositeColorByHeightFilter.h"
-#include "VtkVisPipelineItem.h"
-#include "VtkVisImageItem.h"
 #include "VtkVisTabWidget.h"
 
-#include <vtkActor.h>
-#include <vtkImageChangeInformation.h>
-#include <vtkLookupTable.h>
-#include <vtkProperty.h>
-#include <vtkTransform.h>
-#include <vtkTransformFilter.h>
-
-#include "ColorTableModel.h"
-#include "ColorTableView.h"
-
-#include "VtkAlgorithmProperties.h"
 #include "VtkAlgorithmPropertyCheckbox.h"
 #include "VtkAlgorithmPropertyLineEdit.h"
 #include "VtkAlgorithmPropertyVectorEdit.h"
-#include "VtkCompositeFilter.h"
+#include "VtkColorByHeightFilter.h"
+#include "VtkCompositeColorByHeightFilter.h"
+#include "VtkVisImageItem.h"
+#include "VtkVisPipelineItem.h"
 
-#include <vtkCellData.h>
-#include <vtkPointData.h>
+#include <logog/include/logog.hpp>
+
+#include <vtkActor.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkProperty.h>
+#include <vtkTransform.h>
+#include <vtkTransformFilter.h>
 
 VtkVisTabWidget::VtkVisTabWidget( QWidget* parent /*= 0*/ )
 	: QWidget(parent), _item(nullptr)
@@ -243,18 +235,19 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 
 	QMap<QString, QVariant>* propMap = NULL;
 	QMap<QString, QList<QVariant> >* propVecMap = NULL;
-	VtkAlgorithmProperties* algProps = NULL;
+	VtkAlgorithmProperties* algProps = item->getVtkProperties();
+
+	if (algProps == nullptr)
+		WARN("VtkAlgorithmProperties null!")
 
 	// Retrieve algorithm properties
 	if (item->compositeFilter())
 	{
-		algProps = item->compositeFilter();
 		propMap = item->compositeFilter()->GetAlgorithmUserProperties();
 		propVecMap = item->compositeFilter()->GetAlgorithmUserVectorProperties();
 	}
 	else
 	{
-		algProps = dynamic_cast<VtkAlgorithmProperties*>(item->algorithm());
 		if (algProps)
 		{
 			propMap = algProps->GetAlgorithmUserProperties();
@@ -263,7 +256,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 	}
 
 	// Select appropriate GUI element and set connect for each property
-	if (propMap && algProps)
+	if (propMap)
 	{
 		QMapIterator<QString, QVariant> i(*propMap);
 		while (i.hasNext())
@@ -312,7 +305,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 		}
 	}
 
-	if (propVecMap && algProps)
+	if (propVecMap)
 	{
 		QMapIterator<QString, QList<QVariant> > i(*propVecMap);
 		while (i.hasNext())
