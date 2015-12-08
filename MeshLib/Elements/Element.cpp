@@ -190,7 +190,7 @@ bool Element::isBoundaryElement() const
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-	os << "Element #" << e._id << " value " << " @ " << &e
+	os << "Element #" << e._id << " @ " << &e
 		<< " with " << e.getNNeighbors() << " neighbours\n";
 
 	unsigned const nnodes = e.getNNodes();
