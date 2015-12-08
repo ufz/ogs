@@ -229,10 +229,10 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
 	}
 
 	MeshLib::Properties properties;
-	// remove material vector again if all mat-ids are "0"
+	// Transmit material values if there is any material value != 0
 	if (std::any_of(materials.cbegin(), materials.cend(), [](int m){ return m != 0; }))
 	{
-		boost::optional<MeshLib::PropertyVector<int> &> mat_props = 
+		boost::optional<MeshLib::PropertyVector<int> &> mat_props =
 			properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
 		mat_props->resize(elements.size());
 		std::copy(materials.cbegin(), materials.cend(), mat_props->begin());
