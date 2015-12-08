@@ -35,14 +35,18 @@ ElementStatus::ElementStatus(Mesh const* const mesh,
     : ElementStatus(mesh, !vec_inactive_matIDs.empty())
 {
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-	const std::size_t nElems (_mesh->getNElements());
-	for (auto material_id : vec_inactive_matIDs) {
-		for (auto e : _mesh->getElements())
-			if ((*materialIds)[e->getID()] == material_id)
-				this->setElementStatus(e->getID(), false);
+	if (materialIds) {
+		for (auto material_id : vec_inactive_matIDs) {
+			for (auto e : _mesh->getElements()) {
+				if ((*materialIds)[e->getID()] == material_id) {
+					setElementStatus(e->getID(), false);
+				}
+			}
+		}
 	}
 
-	_vec_active_eles.reserve(this->getNActiveElements());
+	_vec_active_eles.reserve(getNActiveElements());
+	const std::size_t nElems (_mesh->getNElements());
 	for (std::size_t i=0; i<nElems; ++i)
 		if (_element_status[i])
 			_vec_active_eles.push_back(const_cast<MeshLib::Element*>(_mesh->getElement(i)));
