@@ -1524,7 +1524,7 @@ MATHJAX_CODEFILE       =
 # The default value is: YES.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-SEARCHENGINE           = YES
+SEARCHENGINE           = ${DOCS_SEARCHENGINE_STRING}
 
 # When the SERVER_BASED_SEARCH tag is enabled the search engine will be
 # implemented using a web server instead of a web client using Javascript. There
@@ -1669,7 +1669,7 @@ EXTRA_PACKAGES         =
 # to HTML_HEADER.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = 
+LATEX_HEADER           =
 
 # The LATEX_FOOTER tag can be used to specify a personal LaTeX footer for the
 # generated LaTeX document. The footer should contain everything after the last
@@ -1680,7 +1680,7 @@ LATEX_HEADER           =
 # Note: Only use a user-defined footer if you know what you are doing!
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_FOOTER           = 
+LATEX_FOOTER           =
 
 # The LATEX_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # LaTeX style sheets that are included after the standard style sheets created
@@ -1691,7 +1691,7 @@ LATEX_FOOTER           =
 # list).
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_EXTRA_STYLESHEET = 
+LATEX_EXTRA_STYLESHEET =
 
 # The LATEX_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the LATEX_OUTPUT output
@@ -1699,7 +1699,7 @@ LATEX_EXTRA_STYLESHEET =
 # markers available.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_EXTRA_FILES      = 
+LATEX_EXTRA_FILES      =
 
 # If the PDF_HYPERLINKS tag is set to YES, the LaTeX that is generated is
 # prepared for conversion to PDF (using ps2pdf or pdflatex). The PDF file will
@@ -1799,14 +1799,14 @@ RTF_HYPERLINKS         = NO
 # default style sheet that doxygen normally uses.
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
-RTF_STYLESHEET_FILE    = 
+RTF_STYLESHEET_FILE    =
 
 # Set optional variables used in the generation of an RTF document. Syntax is
 # similar to doxygen's config file. A template extensions file can be generated
 # using doxygen -e rtf extensionFile.
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
-RTF_EXTENSIONS_FILE    = 
+RTF_EXTENSIONS_FILE    =
 
 # If the RTF_SOURCE_CODE tag is set to YES then doxygen will include source code
 # with syntax highlighting in the RTF output.
@@ -1851,7 +1851,7 @@ MAN_EXTENSION          = .3
 # MAN_EXTENSION with the initial . removed.
 # This tag requires that the tag GENERATE_MAN is set to YES.
 
-MAN_SUBDIR             = 
+MAN_SUBDIR             =
 
 # If the MAN_LINKS tag is set to YES and doxygen generates man output, then it
 # will generate one additional man file for each entity documented in the real
@@ -2005,7 +2005,7 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           = 
+INCLUDE_PATH           =
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
@@ -2343,12 +2343,12 @@ DIAFILE_DIRS           =
 # generate a warning when it encounters a \startuml command in this case and
 # will not generate output for the diagram.
 
-PLANTUML_JAR_PATH      = 
+PLANTUML_JAR_PATH      =
 
 # When using plantuml, the specified paths are searched for files specified by
 # the !include statement in a plantuml block.
 
-PLANTUML_INCLUDE_PATH  = 
+PLANTUML_INCLUDE_PATH  =
 
 # The DOT_GRAPH_MAX_NODES tag can be used to set the maximum number of nodes
 # that will be shown in the graph. If the number of nodes in a graph becomes
