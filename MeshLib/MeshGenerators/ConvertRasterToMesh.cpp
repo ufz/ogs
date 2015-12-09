@@ -112,6 +112,7 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 		}
 	}
 
+	std::vector<int> mat_ids;
 	// set mesh elements
 	for (std::size_t i = 0; i < _raster.getNRows(); i++) {
 		for (std::size_t j = 0; j < _raster.getNCols(); j++) {
@@ -133,8 +134,12 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 					tri2_nodes[1] = nodes[node_idx_map[index + width + 1]];
 					tri2_nodes[2] = nodes[node_idx_map[index + width]];
 
-					elements.push_back(new MeshLib::Tri(tri1_nodes, mat)); // upper left triangle
-					elements.push_back(new MeshLib::Tri(tri2_nodes, mat)); // lower right triangle
+					// upper left triangle
+					elements.push_back(new MeshLib::Tri(tri1_nodes));
+					mat_ids.push_back(mat);
+					// lower right triangle
+					elements.push_back(new MeshLib::Tri(tri2_nodes));
+					mat_ids.push_back(mat);
 				}
 				if (_elem_type == MeshElemType::QUAD) {
 					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
@@ -142,14 +147,21 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 					quad_nodes[1] = nodes[node_idx_map[index + 1]];
 					quad_nodes[2] = nodes[node_idx_map[index + width + 1]];
 					quad_nodes[3] = nodes[node_idx_map[index + width]];
-					elements.push_back(new MeshLib::Quad(quad_nodes, mat));
+					elements.push_back(new MeshLib::Quad(quad_nodes));
+					mat_ids.push_back(mat);
 				}
 			}
 		}
 	}
 	delete [] node_idx_map;
 
-	return new MeshLib::Mesh("RasterDataMesh", nodes, elements); // the name is only a temp-name, the name given in the dialog is set later
+	// the name is only a temp-name, the name given in the dialog is set later
+	MeshLib::Properties properties;
+	boost::optional< MeshLib::PropertyVector<int> &> materials =
+		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
+	materials->resize(mat_ids.size());
+	std::copy(mat_ids.cbegin(), mat_ids.cend(), materials->begin());
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties);
 }
 
 
