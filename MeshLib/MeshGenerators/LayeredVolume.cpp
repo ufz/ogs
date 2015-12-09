@@ -20,6 +20,7 @@
 
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Properties.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
@@ -45,19 +46,29 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	if (top==nullptr)
 		top = new MeshLib::Mesh(mesh);
 
-	if (!MeshLib::MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue))
+	if (!MeshLib::MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue)) {
+		delete top;
 		return false;
+	}
 
 	MeshLib::Mesh* bottom (new MeshLib::Mesh(*top));
 	if (!MeshLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
 	{
 		delete top;
+		delete bottom;
 		return false;
 	}
 
 	this->_minimum_thickness = minimum_thickness;
 	_nodes = MeshLib::copyNodeVector(bottom->getNodes());
 	_elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
+	if (!_materials.empty()) {
+		ERR("The materials vector is not empty.");
+		delete top;
+		delete bottom;
+		return false;
+	}
+	_materials.resize(_elements.size(), 0);
 	delete bottom;
 
 	// map each layer and attach to subsurface mesh
@@ -68,6 +79,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	// close boundaries between layers
 	this->addLayerBoundaries(*top, nRasters);
 	this->removeCongruentElements(nRasters, top->getNElements());
+
 	delete top;
 	return true;
 }
@@ -90,7 +102,8 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 			std::array<MeshLib::Node*,3> tri_nodes = {{ _nodes[node_id_offset+elem->getNodeIndex(0)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                            _nodes[node_id_offset+elem->getNodeIndex(2)] }};
-			_elements.push_back(new MeshLib::Tri(tri_nodes, layer_id));
+			_elements.push_back(new MeshLib::Tri(tri_nodes));
+			_materials.push_back(layer_id);
 		}
 		else if (elem->getGeomType() == MeshLib::MeshElemType::QUAD)
 		{
@@ -98,7 +111,8 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 			                                             _nodes[node_id_offset+elem->getNodeIndex(1)],
 			                                             _nodes[node_id_offset+elem->getNodeIndex(2)],
 			                                             _nodes[node_id_offset+elem->getNodeIndex(3)] }};
-			_elements.push_back(new MeshLib::Quad(quad_nodes, layer_id));
+			_elements.push_back(new MeshLib::Quad(quad_nodes));
+			_materials.push_back(layer_id);
 		}
 	}
 }
@@ -124,12 +138,14 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
 					if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
 					{
 						const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n2, n1 }};
-						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
+						_elements.push_back(new MeshLib::Tri(tri_nodes));
+						_materials.push_back(nLayers+j);
 					}
 					if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon())
 					{
 						const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n3, n2 }};
-						_elements.push_back(new MeshLib::Tri(tri_nodes, nLayers+1+j));
+						_elements.push_back(new MeshLib::Tri(tri_nodes));
+						_materials.push_back(nLayers+j);
 					}
 				}
 	}
@@ -158,15 +174,20 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
 			if (count == nElemNodes)
 			{
 				delete _elements[upper_offset+j];
+				// mark element and material entries for deletion
 				_elements[upper_offset+j] = nullptr;
+				_materials[upper_offset+j] = -1;
 			}
 			else
 			{
 				MeshLib::Node attr = high->getCenterOfGravity();
-				_attribute_points.push_back(MeshLib::Node(attr[0], attr[1], (attr[2] + low->getCenterOfGravity()[2])/2.0, low->getValue()));
+				_attribute_points.push_back(MeshLib::Node(attr[0], attr[1], (attr[2] + low->getCenterOfGravity()[2])/2.0, _materials[lower_offset+j]));
 			}
 		}
 	}
+	// delete marked entries
 	auto elem_vec_end = std::remove(_elements.begin(), _elements.end(), nullptr);
 	_elements.erase(elem_vec_end, _elements.end());
+	auto mat_vec_end = std::remove(_materials.begin(), _materials.end(), -1);
+	_materials.erase(mat_vec_end, _materials.end());
 }
