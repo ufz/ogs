@@ -206,7 +206,7 @@ int main (int argc, char* argv[])
 	{
 		materialIds = src_mesh->getProperties().createNewPropertyVector<int>
 			("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-		materialIds->insert(materialIds->end(), n_mesh_elements, 0);
+		materialIds->resize(n_mesh_elements, 0);	// default material id
 	}
 	for (std::size_t k(0); k<n_mesh_elements; k++)
 		(*materialIds)[src_mesh->getElement(src_perm[k])->getID()] = mat_map[k];
