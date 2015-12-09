@@ -25,8 +25,8 @@
 
 namespace MeshGeoToolsLib
 {
-
-MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib::PolylineVec &ply_vec)
+std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
+    const MeshLib::Mesh& mesh, const GeoLib::PolylineVec& ply_vec)
 {
 	// copy existing nodes and elements
 	std::vector<MeshLib::Node*> vec_new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
@@ -84,7 +84,7 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 		std::copy(new_mat_ids.cbegin(), new_mat_ids.cend(),
 			std::back_inserter(mat_pv));
 	}
-	return new_mesh.release();
+	return new_mesh;
 }
 
 } // MeshGeoToolsLib
