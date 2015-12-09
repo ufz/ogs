@@ -29,7 +29,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
 	std::array<MeshLib::Node*, 1> const nodes = {{
 	    const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
 
-	_boundary_elements.push_back(new MeshLib::Point{nodes, 0, node_ids[0]});
+	_boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
 }
 
 BoundaryElementsAtPoint::~BoundaryElementsAtPoint()
