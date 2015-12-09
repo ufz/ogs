@@ -42,34 +42,28 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	// remove line elements, only tri + quad remain
 	MeshLib::ElementSearch ex(mesh);
 	ex.searchByElementType(MeshLib::MeshElemType::LINE);
-	MeshLib::Mesh* top (removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
+	std::unique_ptr<MeshLib::Mesh> top(
+	    removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
 	if (top==nullptr)
-		top = new MeshLib::Mesh(mesh);
+		top.reset(new MeshLib::Mesh(mesh));
 
-	if (!MeshLib::MeshLayerMapper::layerMapping(*top, *rasters.back(), noDataReplacementValue)) {
-		delete top;
+	if (!MeshLib::MeshLayerMapper::layerMapping(
+	        *top, *rasters.back(), noDataReplacementValue))
 		return false;
-	}
 
-	MeshLib::Mesh* bottom (new MeshLib::Mesh(*top));
+	std::unique_ptr<MeshLib::Mesh> bottom(new MeshLib::Mesh(*top));
 	if (!MeshLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
-	{
-		delete top;
-		delete bottom;
 		return false;
-	}
 
 	this->_minimum_thickness = minimum_thickness;
 	_nodes = MeshLib::copyNodeVector(bottom->getNodes());
 	_elements = MeshLib::copyElementVector(bottom->getElements(), _nodes);
-	if (!_materials.empty()) {
+	if (!_materials.empty())
+	{
 		ERR("The materials vector is not empty.");
-		delete top;
-		delete bottom;
 		return false;
 	}
 	_materials.resize(_elements.size(), 0);
-	delete bottom;
 
 	// map each layer and attach to subsurface mesh
 	const std::size_t nRasters (rasters.size());
@@ -80,7 +74,6 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 	this->addLayerBoundaries(*top, nRasters);
 	this->removeCongruentElements(nRasters, top->getNElements());
 
-	delete top;
 	return true;
 }
 
