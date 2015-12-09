@@ -41,12 +41,12 @@ namespace detail
 {
 template <class T_ELEMENT>
 MeshLib::Element* createElementWithSameNodeOrder(const std::vector<MeshLib::Node*> &nodes,
-		vtkIdList* const node_ids, unsigned material)
+		vtkIdList* const node_ids)
 {
 	MeshLib::Node** ele_nodes = new MeshLib::Node*[T_ELEMENT::n_all_nodes];
 	for (unsigned k(0); k<T_ELEMENT::n_all_nodes; k++)
 		ele_nodes[k] = nodes[node_ids->GetId(k)];
-	return new T_ELEMENT(ele_nodes, material);
+	return new T_ELEMENT(ele_nodes);
 }
 }
 
@@ -267,9 +267,12 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 
 	boost::optional< MeshLib::PropertyVector<int>& > materials =
 		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-	materials->insert(materials->end(), elements.size(), 0);
+	if (materials) {
+		materials->insert(materials->end(), elements.size(), 0);
+	}
 
-	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties); // the name is only a temp-name, the name given in the dialog is set later
+	// the name is only a temp-name, the name given in the dialog is set later
+	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties);
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid, std::string const& mesh_name)
@@ -290,28 +293,25 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 	// set mesh elements
 	const std::size_t nElems = grid->GetNumberOfCells();
 	std::vector<MeshLib::Element*> elements(nElems);
-	vtkDataArray* scalars = grid->GetCellData()->GetScalars("MaterialIDs");
 	auto node_ids = vtkSmartPointer<vtkIdList>::New();
 	for (std::size_t i = 0; i < nElems; i++)
 	{
 		MeshLib::Element* elem;
 		grid->GetCellPoints(i, node_ids);
 
-		const unsigned material = (scalars) ? static_cast<int>(scalars->GetComponent(i,0)) : 0;
-
 		int cell_type = grid->GetCellType(i);
 		switch (cell_type)
 		{
 		case VTK_LINE: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Line>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Line>(nodes, node_ids);
 			break;
 		}
 		case VTK_TRIANGLE: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUAD: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad>(nodes, node_ids);
 			break;
 		}
 		case VTK_PIXEL: {
@@ -320,15 +320,15 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			quad_nodes[1] = nodes[node_ids->GetId(1)];
 			quad_nodes[2] = nodes[node_ids->GetId(3)];
 			quad_nodes[3] = nodes[node_ids->GetId(2)];
-			elem = new MeshLib::Quad(quad_nodes, material);
+			elem = new MeshLib::Quad(quad_nodes);
 			break;
 		}
 		case VTK_TETRA: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet>(nodes, node_ids);
 			break;
 		}
 		case VTK_HEXAHEDRON: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex>(nodes, node_ids);
 			break;
 		}
 		case VTK_VOXEL: {
@@ -341,11 +341,11 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			voxel_nodes[5] = nodes[node_ids->GetId(5)];
 			voxel_nodes[6] = nodes[node_ids->GetId(7)];
 			voxel_nodes[7] = nodes[node_ids->GetId(6)];
-			elem = new MeshLib::Hex(voxel_nodes, material);
+			elem = new MeshLib::Hex(voxel_nodes);
 			break;
 		}
 		case VTK_PYRAMID: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid>(nodes, node_ids);
 			break;
 		}
 		case VTK_WEDGE: {
@@ -355,35 +355,35 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 				prism_nodes[i] = nodes[node_ids->GetId(i+3)];
 				prism_nodes[i+3] = nodes[node_ids->GetId(i)];
 			}
-			elem = new MeshLib::Prism(prism_nodes, material);
+			elem = new MeshLib::Prism(prism_nodes);
 			break;
 		}
 		case VTK_QUADRATIC_EDGE: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Line3>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Line3>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_TRIANGLE: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri6>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tri6>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_QUAD: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad8>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad8>(nodes, node_ids);
 			break;
 		}
 		case VTK_BIQUADRATIC_QUAD: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad9>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Quad9>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_TETRA: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet10>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Tet10>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_HEXAHEDRON: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex20>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Hex20>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_PYRAMID: {
-			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid13>(nodes, node_ids, material);
+			elem = detail::createElementWithSameNodeOrder<MeshLib::Pyramid13>(nodes, node_ids);
 			break;
 		}
 		case VTK_QUADRATIC_WEDGE: {
@@ -400,7 +400,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* gr
 			prism_nodes[11] = nodes[node_ids->GetId(13)];
 			for (unsigned i=0; i<3; ++i)
 				prism_nodes[12+i] = nodes[node_ids->GetId(11-i)];
-			elem = new MeshLib::Prism15(prism_nodes, material);
+			elem = new MeshLib::Prism15(prism_nodes);
 			break;
 		}
 		default:
