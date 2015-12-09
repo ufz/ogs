@@ -64,10 +64,14 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 	MeshLib::Properties properties;
 	if (_materials.size() == _elements.size())
 	{
-		boost::optional<MeshLib::PropertyVector<int> &> materials =
-			properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell);
-		materials->resize(_materials.size());
-		std::copy(_materials.cbegin(), _materials.cend(), materials->begin());
+		boost::optional<MeshLib::PropertyVector<int>&> materials =
+		    properties.createNewPropertyVector<int>(
+		        "MaterialIDs", MeshLib::MeshItemType::Cell);
+		assert(materials != boost::none);
+		materials->reserve(_materials.size());
+		std::copy(_materials.cbegin(),
+		          _materials.cend(),
+		          std::back_inserter(*materials));
 	}
 	else
 		WARN ("Skipping MaterialID information, number of entries does not match element number");
