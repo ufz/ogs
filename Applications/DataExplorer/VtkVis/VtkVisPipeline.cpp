@@ -311,32 +311,33 @@ QModelIndex VtkVisPipeline::addPipelineItem(VtkVisPipelineItem* item, const QMod
 
 QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex parent /* = QModelindex() */)
 {
-	QString itemName("");
+	std::string itemName;
 
 	if (!parent.isValid()) // if source object
 	{
-		QFileInfo fi;
 		vtkGenericDataObjectReader* old_reader = dynamic_cast<vtkGenericDataObjectReader*>(source);
 		vtkXMLReader* new_reader = dynamic_cast<vtkXMLReader*>(source);
 		vtkImageReader2* image_reader = dynamic_cast<vtkImageReader2*>(source);
 		VtkAlgorithmProperties* props = dynamic_cast<VtkAlgorithmProperties*>(source);
+		InSituLib::VtkMappedMeshSource* meshSource =
+			dynamic_cast<InSituLib::VtkMappedMeshSource*>(source);
 		if (old_reader)
-			fi.setFile(QString(old_reader->GetFileName()));
+			itemName = old_reader->GetFileName();
 		else if (new_reader)
-			fi.setFile(QString(new_reader->GetFileName()));
+			itemName = new_reader->GetFileName();
 		else if (image_reader)
-			fi.setFile(QString(image_reader->GetFileName()));
+			itemName = image_reader->GetFileName();
 		else if (props)
-			fi.setFile(props->GetName());
-
-		itemName = fi.fileName();
+			itemName = props->GetName().toStdString();
+		else if (meshSource)
+			itemName = meshSource->GetMesh()->getName();
 	}
 
-	if (itemName.isEmpty())	// not sure if this may be true at any time
-		itemName = QString(source->GetClassName());
+	if (itemName.length() == 0)
+		itemName = source->GetClassName();
 
 	QList<QVariant> itemData;
-	itemData << itemName << true;
+	itemData << QString::fromStdString(itemName) << true;
 
 	VtkVisPipelineItem* item(NULL);
 	if (dynamic_cast<vtkImageAlgorithm*>(source))

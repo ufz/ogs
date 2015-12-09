@@ -265,8 +265,8 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
 	if (value_vec->empty())
 		properties.removePropertyVector("Colour");
 
-	boost::optional< MeshLib::PropertyVector<unsigned>& > materials =
-		properties.createNewPropertyVector<unsigned>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+	boost::optional< MeshLib::PropertyVector<int>& > materials =
+		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 	materials->insert(materials->end(), elements.size(), 0);
 
 	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties); // the name is only a temp-name, the name given in the dialog is set later
