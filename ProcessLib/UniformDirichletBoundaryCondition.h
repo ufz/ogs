@@ -15,6 +15,8 @@
 
 #include "logog/include/logog.hpp"
 
+#include "NumericsConfig.h" // for GlobalIndexType
+
 #include "BaseLib/ConfigTree.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -53,7 +55,7 @@ public:
             MeshGeoToolsLib::MeshNodeSearcher& searcher,
             AssemblerLib::LocalToGlobalIndexMap const& dof_table,
             std::size_t component_id,
-            std::vector<std::size_t>& global_ids,
+            std::vector<GlobalIndexType>& global_ids,
             std::vector<double>& values)
     {
         // Find nodes' ids on the given mesh on which this boundary condition
@@ -67,16 +69,13 @@ public:
                                 MeshLib::MeshItemType::Node,
                                 id);
             // TODO: that might be slow, but only done once
-            id = dof_table.getGlobalIndex(l, component_id);
+            const auto g_idx = dof_table.getGlobalIndex(l, component_id);
+            if (g_idx >= 0)
+            {
+                global_ids.emplace_back(g_idx);
+                values.emplace_back(_value);
+            }
         }
-
-        // Append node ids.
-        global_ids.reserve(global_ids.size() + ids.size());
-        std::copy(ids.cbegin(), ids.cend(), std::back_inserter(global_ids));
-
-        // Fill values.
-        values.reserve(values.size() + ids.size());
-        std::fill_n(std::back_inserter(values), ids.size(), _value);
     }
 
 private:

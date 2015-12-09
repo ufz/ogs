@@ -290,22 +290,8 @@ public:
         _global_setup.execute(*_global_assembler, _local_assemblers);
 
 #ifdef USE_PETSC
-        std::vector<PetscInt> dbc_pos;
-        std::vector<PetscScalar> dbc_value;
-        auto const& mesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
-
-        for (std::size_t i = 0; i < _dirichlet_bc.global_ids.size(); i++)
-        {
-            if (mesh.isGhostNode(_dirichlet_bc.global_ids[i]))
-                continue;
-
-            dbc_pos.push_back(static_cast<PetscInt>(
-                mesh.getGlobalNodeID(_dirichlet_bc.global_ids[i])));
-            dbc_value.push_back(
-                static_cast<PetscScalar>(_dirichlet_bc.values[i]));
-        }
-        MathLib::applyKnownSolution(*_A, *_rhs, *_x, dbc_pos, dbc_value);
+        MathLib::applyKnownSolution(*_A, *_rhs, *_x, _dirichlet_bc.global_ids,
+                                     _dirichlet_bc.values);
 #else
 
         // Call global assembler for each Neumann boundary local assembler.
@@ -419,7 +405,7 @@ private:
     /// Global ids in the global matrix/vector where the dirichlet bc is
     /// imposed and their corresponding values.
     struct DirichletBC {
-        std::vector<std::size_t> global_ids;
+        std::vector<GlobalIndexType> global_ids;
         std::vector<double> values;
     } _dirichlet_bc;
 
