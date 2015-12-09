@@ -1,6 +1,12 @@
 /*
- * \date 2014-09-25
  * \brief Reset material properties in meshes in a polygonal region.
+ *
+ * \copyright
+ * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
  */
 
 #include <algorithm>
@@ -13,13 +19,12 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/writeMeshToFile.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "FileIO/readGeometryFromFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -35,9 +40,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
-std::vector<bool> markNodesOutSideOfPolygon(
-	std::vector<MeshLib::Node*> const& nodes,
-	GeoLib::Polygon const& polygon)
+static std::vector<bool> markNodesOutSideOfPolygon(
+    std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
 {
 	// *** rotate polygon to xy_plane
 	MathLib::Vector3 normal;
@@ -79,80 +83,82 @@ std::vector<bool> markNodesOutSideOfPolygon(
 	return outside;
 }
 
-void resetProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
-	std::size_t new_property)
+template <typename PT>
+void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
+	std::string const& property_name, PT new_property_value)
 {
-	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
-		polygon));
-
-	boost::optional<MeshLib::PropertyVector<int> &> opt_pv(
-		mesh.getProperties().getPropertyVector<int>("MaterialIDs")
+	boost::optional<MeshLib::PropertyVector<PT> &> opt_pv(
+		mesh.getProperties().getPropertyVector<PT>(property_name)
 	);
 	if (!opt_pv) {
-		ERR("Did not find a PropertyVector with name MaterialIDs.");
+		WARN("Did not find a PropertyVector with name \"%s\".",
+			property_name.c_str());
 		return;
 	}
-	MeshLib::PropertyVector<int> & materials(opt_pv.get());
+	MeshLib::PropertyVector<PT> & pv(opt_pv.get());
+	if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
+		ERR("Values of the PropertyVector are not assigned to cells.");
+		return;
+	}
+
+	std::vector<bool> outside(markNodesOutSideOfPolygon(mesh.getNodes(),
+		polygon));
 
 	for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
 		bool elem_out(true);
 		MeshLib::Element const*const elem(mesh.getElements()[j]);
-		for(std::size_t k(0); k<elem->getNNodes() && elem_out; ++k) {
+		for (auto k = decltype(elem->getNNodes()){0};
+		     k < elem->getNNodes() && elem_out; ++k)
+		{
 			if (! outside[elem->getNode(k)->getID()]) {
 				elem_out = false;
 			}
 		}
 		if (elem_out) {
-			materials[j] = new_property;
+			pv[j] = new_property_value;
 		}
 	}
 }
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Sets the property id of an mesh element to a given new "
-		"id iff at least one node of the element is within a polygonal region "
-		"that is given by a polygon read from a gml file.", ' ', "0.1");
-	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
-		"the name of the file containing the input mesh", true,
-		"", "file name");
-	cmd.add(mesh_in);
+	TCLAP::CmdLine cmd("Sets the property value of a mesh element to a given new "
+		"value iff at least one node of the element is within a polygonal region "
+		"that is given by a polygon.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-		"the name of the file the mesh will be written to", true,
-		"", "file name");
+		"the name of the file the mesh will be written to, format depends on "
+		"the given file name extension", true, "", "file name");
 	cmd.add(mesh_out);
-	TCLAP::ValueArg<std::string> geometry_fname("g", "geometry",
-		"the name of the file containing the input geometry", true,
-		"", "file name");
-	cmd.add(geometry_fname);
 	TCLAP::ValueArg<std::string> polygon_name_arg("p", "polygon-name",
 		"name of polygon in the geometry", true, "", "string");
 	cmd.add(polygon_name_arg);
-	TCLAP::ValueArg<unsigned> new_material_id_arg("n", "new-material-id",
-		"new material id", false, 0, "number");
-	cmd.add(new_material_id_arg);
+	TCLAP::ValueArg<std::string> geometry_fname("g", "geometry", "the name of "
+		"the file containing the input geometry (gli or gml format)", true,
+		"", "file name");
+	cmd.add(geometry_fname);
+	TCLAP::ValueArg<char> char_property_arg("c", "char-property-value",
+		"new property value (data type char)", false, 'A', "character");
+	cmd.add(char_property_arg);
+	TCLAP::ValueArg<int> int_property_arg("i", "int-property-value",
+		"new property value (data type int)", false, 0, "number");
+	cmd.add(int_property_arg);
+	TCLAP::ValueArg<bool> bool_property_arg("b", "bool-property-value",
+		"new property value (data type bool)", false, 0, "boolean value");
+	cmd.add(bool_property_arg);
+	TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
+		"name of property in the mesh", false, "MaterialIDs", "string");
+	cmd.add(property_name_arg);
+	TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
+		"the name of the file containing the input mesh", true,
+		"", "file name");
+	cmd.add(mesh_in);
 	cmd.parse(argc, argv);
-
-	// *** read mesh
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
-	{
-		FileIO::BoostXmlGmlInterface xml_io(geometries);
-		if (xml_io.readFile(geometry_fname.getValue())) {
-			INFO("Read geometry from file \"%s\".",
-				geometry_fname.getValue().c_str());
-		} else {
-			delete mesh;
-			return EXIT_FAILURE;
-		}
-	}
+	FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
 	std::string geo_name;
 	{
@@ -167,7 +173,6 @@ int main (int argc, char* argv[])
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
@@ -177,7 +182,6 @@ int main (int argc, char* argv[])
 	);
 	if (! ply) {
 		ERR("Polyline \"%s\" not found.", polygon_name_arg.getValue().c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
@@ -187,15 +191,46 @@ int main (int argc, char* argv[])
 	{
 		ERR("Polyline \"%s\" is not closed, i.e. does not describe a\
 			region.", polygon_name_arg.getValue().c_str());
-		delete mesh;
 		return EXIT_FAILURE;
 	}
 
-	std::size_t new_property(new_material_id_arg.getValue());
-
 	GeoLib::Polygon polygon(*(ply));
 
-	resetProperty(*mesh, polygon, new_property);
+	// *** read mesh
+	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::vector<std::string> property_names(
+		mesh->getProperties().getPropertyVectorNames());
+	INFO("Mesh contains %d property vectors:", property_names.size());
+	for (auto name : property_names) {
+		INFO("- %s", name.c_str());
+	}
+	std::string const& property_name(property_name_arg.getValue());
+
+	if (char_property_arg.isSet()) {
+		char new_property_val(char_property_arg.getValue());
+
+		// check if PropertyVector exists
+		boost::optional<MeshLib::PropertyVector<char> &> opt_pv(
+			mesh->getProperties().getPropertyVector<char>(property_name)
+		);
+		if (!opt_pv) {
+			opt_pv = mesh->getProperties().createNewPropertyVector<char>(
+				property_name, MeshLib::MeshItemType::Cell, 1);
+			opt_pv.get().resize(mesh->getElements().size());
+			INFO("Created PropertyVector with name \"%s\".", property_name.c_str());
+		}
+		resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
+	}
+
+	if (int_property_arg.isSet()) {
+		int int_property_val(int_property_arg.getValue());
+		resetMeshElementProperty(*mesh, polygon, property_name, int_property_val);
+	}
+
+	if (bool_property_arg.isSet()) {
+		bool bool_property_val(bool_property_arg.getValue());
+		resetMeshElementProperty(*mesh, polygon, property_name, bool_property_val);
+	}
 
 	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
 
