@@ -55,7 +55,7 @@ int main (int argc, char* argv[])
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (!materialIds)
 	{
-		ERR("Mesh contains no material ids.");
+		ERR("Mesh contains no int-property vector named \"MaterialIds\".");
 		return -1;
 	}
 
