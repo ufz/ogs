@@ -289,19 +289,12 @@ public:
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
 
-#ifdef USE_PETSC
-        MathLib::applyKnownSolution(*_A, *_rhs, *_x, _dirichlet_bc.global_ids,
-                                     _dirichlet_bc.values);
-#else
-
         // Call global assembler for each Neumann boundary local assembler.
         for (auto bc : _neumann_bcs)
             bc->integrate(_global_setup);
 
-        // Apply known values from the Dirichlet boundary conditions.
-        MathLib::applyKnownSolution(*_A, *_rhs, _dirichlet_bc.global_ids, _dirichlet_bc.values);
-
-#endif
+        MathLib::applyKnownSolution(*_A, *_rhs, *_x, _dirichlet_bc.global_ids,
+                                     _dirichlet_bc.values);
         _linear_solver->solve(*_rhs, *_x);
 
         return true;

@@ -115,7 +115,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //rhs->write(std::cout);
 
     // apply Dirichlet BC
-    MathLib::applyKnownSolution(*A, *rhs, ex1.vec_DirichletBC_id,
+    MathLib::applyKnownSolution(*A, *rhs, *x, ex1.vec_DirichletBC_id,
                                 ex1.vec_DirichletBC_value);
     //std::cout << "A=\n";
     //A->write(std::cout);

@@ -17,8 +17,8 @@
 namespace MathLib
 {
 
-void applyKnownSolution(DenseMatrix<double> &eqsA, DenseVector<double> &eqsRHS, std::size_t k,
-		double val)
+void applyKnownSolution(DenseMatrix<double> &eqsA, DenseVector<double> &eqsRHS,
+		DenseMatrixIndexType k, double val)
 {
 	const std::size_t n_rows = eqsA.getNRows();
 	const std::size_t n_cols = eqsA.getNCols();
@@ -47,7 +47,10 @@ void applyKnownSolution(DenseMatrix<double> &eqsA, DenseVector<double> &eqsRHS, 
 	eqsRHS[k] = val;
 }
 
-void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b, const std::vector<std::size_t> &vec_knownX_id, const std::vector<double> &vec_knownX_x)
+void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
+	DenseVector<double> &/*x*/,
+	const std::vector<DenseMatrixIndexType> &vec_knownX_id,
+	const std::vector<double> &vec_knownX_x)
 {
 	const std::size_t n_bc = vec_knownX_id.size();
 	for (std::size_t i_bc = 0; i_bc < n_bc; i_bc++)

@@ -16,12 +16,11 @@
 #define DENSETOOLS_H_
 
 #include <vector>
-#include "DenseMatrix.h"
-#include "DenseVector.h"
+#include "GlobalDenseMatrix.h"
 
 namespace MathLib
 {
-
+using DenseMatrixIndexType = GlobalDenseMatrix<double>::IndexType;
 /**
  * Apply known solutions to a system of linear equations.
  *
@@ -34,7 +33,9 @@ namespace MathLib
  * @param vec_knownX_x     a vector of known solutions
  */
 void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
-		const std::vector<std::size_t> &vec_knownX_id, const std::vector<double> &vec_knownX_x);
+		DenseVector<double> &/*x*/,
+		const std::vector<DenseMatrixIndexType> &vec_knownX_id,
+		const std::vector<double> &vec_knownX_x);
 
 /**
  * Apply known solutions to a system of linear equations \f$A x = b\f$.
@@ -50,8 +51,8 @@ void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
  * @param row_id    a known solution entry ID
  * @param val       a known solution
  */
-void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b, std::size_t row_id,
-		double val);
+void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
+		DenseMatrixIndexType row_id, double val);
 
 } // MathLib
 

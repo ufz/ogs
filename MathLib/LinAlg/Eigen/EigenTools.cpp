@@ -17,7 +17,8 @@
 namespace MathLib
 {
 
-void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, const std::vector<std::size_t> &vec_knownX_id,
+void applyKnownSolution(EigenMatrix &A_, EigenVector &b_, EigenVector &/*x*/,
+		const std::vector<EigenMatrix::IndexType> &vec_knownX_id,
 		const std::vector<double> &vec_knownX_x, double /*penalty_scaling*/)
 {
     using SpMat = EigenMatrix::RawMatrixType;

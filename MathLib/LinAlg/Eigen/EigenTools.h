@@ -11,12 +11,14 @@
 #define EIGENTOOLS_H_
 
 #include <vector>
+#include <Eigen/Sparse> //for RawMatrixType::Index
 
 namespace MathLib
 {
 class EigenMatrix;
 class EigenVector;
 
+using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 /**
  * apply known solutions to a system of linear equations
  *
@@ -27,7 +29,8 @@ class EigenVector;
  * @param penalty_scaling value for scaling some matrix and right hand side
  * entries to enforce some conditions
  */
-void applyKnownSolution(EigenMatrix &A, EigenVector &b, const std::vector<std::size_t> &_vec_knownX_id,
+void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
+		const std::vector<RawMatrixType::Index> &_vec_knownX_id,
 		const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10);
 
 } // MathLib
