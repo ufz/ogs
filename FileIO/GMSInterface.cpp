@@ -329,8 +329,9 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 			= properties.createNewPropertyVector<int>(
 			"MaterialIDs", MeshLib::MeshItemType::Cell);
 		assert(opt_pv != boost::none);
-		opt_pv->resize(mat_ids.size());
-		std::copy(mat_ids.cbegin(), mat_ids.cend(), opt_pv->begin());
+		opt_pv->reserve(mat_ids.size());
+		std::copy(mat_ids.cbegin(), mat_ids.cend(),
+		          std::back_inserter(*opt_pv));
 	}
 	else
 		ERR ("Ignoring Material IDs information (does not match number of elements).");
