@@ -40,9 +40,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
-std::vector<bool> markNodesOutSideOfPolygon(
-	std::vector<MeshLib::Node*> const& nodes,
-	GeoLib::Polygon const& polygon)
+static std::vector<bool> markNodesOutSideOfPolygon(
+    std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
 {
 	// *** rotate polygon to xy_plane
 	MathLib::Vector3 normal;
@@ -108,7 +107,9 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
 	for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
 		bool elem_out(true);
 		MeshLib::Element const*const elem(mesh.getElements()[j]);
-		for(std::size_t k(0); k<elem->getNNodes() && elem_out; ++k) {
+		for (auto k = decltype(elem->getNNodes()){0};
+		     k < elem->getNNodes() && elem_out; ++k)
+		{
 			if (! outside[elem->getNode(k)->getID()]) {
 				elem_out = false;
 			}
