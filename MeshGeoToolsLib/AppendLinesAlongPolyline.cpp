@@ -33,8 +33,13 @@ MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib
 	std::vector<MeshLib::Node*> vec_new_nodes = MeshLib::copyNodeVector(mesh.getNodes());
 	std::vector<MeshLib::Element*> vec_new_eles = MeshLib::copyElementVector(mesh.getElements(), vec_new_nodes);
 	unsigned max_matID = 0;
-	for (auto e : vec_new_eles)
-		max_matID = std::max(max_matID, e->getValue());
+
+	auto materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+	if (materialIds)
+	{
+		for (auto e : vec_new_eles)
+			max_matID = std::max(max_matID, static_cast<unsigned>((*materialIds)[e->getID()]));
+	}
 
 	const std::size_t n_ply (ply_vec.size());
 	// for each polyline
