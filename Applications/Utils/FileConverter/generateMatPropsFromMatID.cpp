@@ -79,8 +79,7 @@ int main (int argc, char* argv[])
 	}
 
 	// set mat ids to 0 and write new msh file
-	for (std::size_t i=0; i<nElems; i++)
-		(*materialIds)[i] = 0;
+	std::fill(materialIds->begin(), materialIds->end(), 0);
 
 	std::string new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
