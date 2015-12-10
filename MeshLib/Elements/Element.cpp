@@ -28,6 +28,11 @@ Element::Element(unsigned value, std::size_t id)
 {
 }
 
+Element::Element(std::size_t id)
+	: _nodes(nullptr), _id(id), _content(-1.0), _neighbors(nullptr)
+{
+}
+
 Element::~Element()
 {
 	delete [] this->_nodes;
