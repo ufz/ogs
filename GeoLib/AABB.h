@@ -29,7 +29,6 @@
 
 #include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
-#include "Point.h"
 
 namespace GeoLib
 {
@@ -50,7 +49,7 @@ namespace GeoLib
  * @tparam PNT_TYPE a point type supporting accessing the coordinates via
  * operator[]
  */
-template <typename PNT_TYPE = GeoLib::Point>
+template <typename PNT_TYPE>
 class AABB
 {
 public:
