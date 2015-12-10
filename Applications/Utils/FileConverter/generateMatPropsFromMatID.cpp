@@ -55,16 +55,19 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	std::vector<MeshLib::Element*> &elems = *(const_cast<std::vector<MeshLib::Element*>*>(&(mesh->getElements())));
-	std::size_t nElems(elems.size());
-
-	std::string name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
+	std::size_t const n_properties(materialIds->size());
+	if (n_properties != mesh->getNElements()) {
+		ERR("Size mismatch: number of elements (%u) != number of material "
+			"properties (%u).", mesh->getNElements(), n_properties);
+		return -1;
+	}
+	std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
 	// create file
-	std::string new_matname(name + "_prop");
+	std::string const new_matname(name + "_prop");
 	std::ofstream out_prop( new_matname.c_str(), std::ios::out );
 	if (out_prop.is_open())
 	{
-		for (std::size_t i=0; i<nElems; i++)
+		for (std::size_t i=0; i<n_properties; ++i)
 			out_prop << i << "\t" << (*materialIds)[i] << "\n";
 		out_prop.close();
 	}
