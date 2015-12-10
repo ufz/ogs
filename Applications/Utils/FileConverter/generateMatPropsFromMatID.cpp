@@ -17,9 +17,9 @@
 
 // BaseLib
 #include "tclap/CmdLine.h"
-#include "LogogSimpleFormatter.h"
 #include "FileTools.h"
 
+#include "Applications/ApplicationsLib/LogogSetup.h"
 // FileIO
 #include "readMeshFromFile.h"
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -30,10 +30,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
 	        "Creates a new file for material properties and sets the material ids in the msh-file to 0",
