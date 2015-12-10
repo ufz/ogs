@@ -15,18 +15,17 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
 #include "tclap/CmdLine.h"
-#include "FileTools.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-// FileIO
-#include "readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
+#include "BaseLib/FileTools.h"
+
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 
 int main (int argc, char* argv[])
 {
@@ -78,10 +77,9 @@ int main (int argc, char* argv[])
 	// set mat ids to 0 and write new msh file
 	std::fill(materialIds->begin(), materialIds->end(), 0);
 
-	std::string new_mshname(name + "_new.vtu");
+	std::string const new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	FileIO::VtuInterface mesh_io(mesh);
-	mesh_io.writeToFile (new_mshname);
+	FileIO::writeMeshToFile(mesh, new_mshname);
 
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 	std::cout << "Conversion finished." << std::endl;
