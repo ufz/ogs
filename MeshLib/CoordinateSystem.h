@@ -86,11 +86,14 @@ unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB<T> &bbox)
 
     const MathLib::Vector3 pt_diff(bbox.getMinPoint(), bbox.getMaxPoint());
 
-    if (std::abs(pt_diff[0]) > .0)
+    // The axis aligned bounding box is a from the right half-open interval.
+    // Therefore, the difference between the particular coordinates of the
+    // points is modified by the unit in the last place towards zero.
+    if (std::nexttoward(std::abs(pt_diff[0]), 0.0) > .0)
         coords |= CoordinateSystemType::X;
-    if (std::abs(pt_diff[1]) > .0)
+    if (std::nexttoward(std::abs(pt_diff[1]), 0.0) > .0)
         coords |= CoordinateSystemType::Y;
-    if (std::abs(pt_diff[2]) > .0)
+    if (std::nexttoward(std::abs(pt_diff[2]), 0.0) > .0)
         coords |= CoordinateSystemType::Z;
 
     return coords;
