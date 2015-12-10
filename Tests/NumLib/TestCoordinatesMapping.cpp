@@ -106,7 +106,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     //only N
     NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N>(*this->naturalEle, this->r, shape);
@@ -122,7 +122,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr
     NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR>(*this->naturalEle, this->r, shape);
@@ -138,7 +138,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N_J)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // N_J
     shape.setZero();
@@ -155,7 +155,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR_
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr, J
     NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR_J>(*this->naturalEle, this->r, shape);
@@ -171,7 +171,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDX)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // DNDX
     shape.setZero();
@@ -188,7 +188,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_ALL)
 {
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // ALL
     shape.setZero();
@@ -207,7 +207,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
     // identical to natural coordinates
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape);
     double exp_J[TestFixture::dim*TestFixture::dim]= {0.0};
     for (unsigned i=0; i<this->dim; i++)
@@ -227,7 +227,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckIrregularShape)
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
     // irregular shape
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     NaturalCoordsMappingType::computeShapeMatrices(*this->irregularEle, this->r, shape);
     //std::cout <<  std::setprecision(16) << shape;
 
@@ -245,7 +245,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
     // clockwise node ordering, which is invalid)
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     NaturalCoordsMappingType::computeShapeMatrices(*this->clockwiseEle, this->r, shape);
     //std::cout <<  std::setprecision(16) << shape;
     // Inverse of the Jacobian matrix doesn't exist
@@ -265,7 +265,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     typedef typename TestFixture::ShapeMatricesType ShapeMatricesType;
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
-    ShapeMatricesType shape(this->dim, this->e_nnodes);
+    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     NaturalCoordsMappingType::computeShapeMatrices(*this->zeroVolumeEle, this->r, shape);
     //std::cout <<  std::setprecision(16) << shape;
     // Inverse of the Jacobian matrix doesn't exist
