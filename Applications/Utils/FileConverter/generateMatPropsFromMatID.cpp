@@ -12,6 +12,8 @@
  *
  */
 
+#include <memory>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
@@ -47,7 +49,11 @@ int main (int argc, char* argv[])
 	cmd.parse( argc, argv );
 
 	// read mesh
-	MeshLib::Mesh* mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	if (!mesh) {
+		INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
+		return -1;
+	}
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (!materialIds)
 	{
@@ -82,7 +88,7 @@ int main (int argc, char* argv[])
 
 	std::string const new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	FileIO::writeMeshToFile(mesh, new_mshname);
+	FileIO::writeMeshToFile(*mesh, new_mshname);
 
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 	std::cout << "Conversion finished." << std::endl;
