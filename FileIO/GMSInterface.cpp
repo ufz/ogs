@@ -328,7 +328,15 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
 		boost::optional<MeshLib::PropertyVector<int> &> opt_pv
 			= properties.createNewPropertyVector<int>(
 			"MaterialIDs", MeshLib::MeshItemType::Cell);
-		assert(opt_pv != boost::none);
+		if (!opt_pv)
+		{
+			ERR("Could not create PropertyVector for material ids.");
+			for (auto element : elements)
+				delete element;
+			for (auto node : nodes)
+				delete node;
+			return nullptr;
+		}
 		opt_pv->reserve(mat_ids.size());
 		std::copy(mat_ids.cbegin(), mat_ids.cend(),
 		          std::back_inserter(*opt_pv));
