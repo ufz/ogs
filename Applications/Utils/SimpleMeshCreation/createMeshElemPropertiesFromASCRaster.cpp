@@ -9,39 +9,31 @@
  *
  */
 
-// stl
 #include <algorithm>
 #include <numeric>
 
-// BaseLib
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 #include <logog/include/logog.hpp>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "LogogSimpleFormatter.h"
-#include "quicksort.h"
+#include "BaseLib/quicksort.h"
+#include "BaseLib/FileTools.h"
 
-// FileIO/Legacy
-#include "FileTools.h"
-#include "readMeshFromFile.h"
-#include "AsciiRasterInterface.h"
+#include "FileIO/readMeshFromFile.h"
 #include "FileIO/writeMeshToFile.h"
+#include "FileIO/AsciiRasterInterface.h"
 
-// GeoLib
-#include "Raster.h"
+#include "GeoLib/Raster.h"
 
-// MathLib
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 
-// MeshLib
-#include "MeshGenerators/VtkMeshConverter.h"
-#include "MeshGenerators/ConvertRasterToMesh.h"
-#include "Elements/Element.h"
-#include "Mesh.h"
-#include "MeshEditing/Mesh2MeshPropertyInterpolation.h"
-#include "MeshEnums.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/MeshGenerators/ConvertRasterToMesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
+#include "MeshLib/MeshEnums.h"
 
 // From wikipedia:
 // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance. The
