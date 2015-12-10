@@ -25,9 +25,9 @@
 
 // FileIO/Legacy
 #include "FileTools.h"
-#include "MeshIO.h"
 #include "readMeshFromFile.h"
 #include "AsciiRasterInterface.h"
+#include "FileIO/writeMeshToFile.h"
 
 // GeoLib
 #include "Raster.h"
@@ -249,10 +249,7 @@ int main (int argc, char* argv[])
 			(*materialIds)[dest_mesh->getElement(dest_perm[k])->getID()] = k;
 		}
 
-		FileIO::Legacy::MeshIO mesh_writer;
-		mesh_writer.setPrecision(12);
-		mesh_writer.setMesh(dest_mesh);
-		mesh_writer.writeToFile(out_mesh_arg.getValue());
+		FileIO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
 	}
 
 	delete raster;
