@@ -16,6 +16,7 @@
 #include <ctime>
 #include <list>
 #include <iostream>
+#include <random>
 
 #include "gtest/gtest.h"
 
@@ -218,5 +219,49 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
 	ASSERT_NEAR(-1.0, max_pnt[0], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[1], std::numeric_limits<double>::epsilon());
 	ASSERT_NEAR(-1.0, max_pnt[2], std::numeric_limits<double>::epsilon());
+}
+
+TEST(GeoLib, AABBSinglePoint)
+{
+	std::random_device rd;
+	std::mt19937 random_number_generator(rd());
+	std::uniform_real_distribution<double> rnd(-1000000.0, 10000000.0);
+	std::vector<GeoLib::Point> pnts;
+	GeoLib::Point p{{{rnd(random_number_generator),
+		rnd(random_number_generator),rnd(random_number_generator)}}};
+	pnts.push_back(p);
+
+	ASSERT_EQ(1u, pnts.size());
+
+	// construct from points of the vector a axis aligned bounding box
+	GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+
+	double const to_lowest(std::numeric_limits<double>::lowest());
+	double const to_max(std::numeric_limits<double>::max());
+
+	// Check the point within the aabb (i==j==k). The outer 26 (3 * 3 * 3 - 1)
+	// points around the aabb are also checked.
+	for (int i(-1); i<2; ++i) {
+		// Modify the first coordinate of p.
+		if (i==-1) p[0] = std::nextafter(pnts.front()[0], to_lowest);
+		else if (i==0) p[0] = pnts.front()[0];
+		else p[0] = std::nextafter(pnts.front()[0], to_max);
+		for (int j(-1); j<2; ++j) {
+			// Modify the second coordinate of p.
+			if (j==-1) p[1] = std::nextafter(pnts.front()[1], to_lowest);
+			else if (j==0) p[1] = pnts.front()[1];
+			else p[1] = std::nextafter(pnts.front()[1], to_max);
+			for (int k(-1); k<2; ++k) {
+				// Modify the third coordinate of p.
+				if (k==-1) p[2] = std::nextafter(pnts.front()[2], to_lowest);
+				else if (k==0) p[2] = pnts.front()[2];
+				else p[2] = std::nextafter(pnts.front()[2], to_max);
+				if (i == 0 && j == 0 && k == 0)
+					ASSERT_TRUE(aabb.containsPoint(p));
+				else
+					ASSERT_FALSE(aabb.containsPoint(p));
+			}
+		}
+	}
 }
 
