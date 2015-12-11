@@ -27,7 +27,7 @@
 TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 {
 	/* initialize random seed: */
-	 srand ( static_cast<unsigned>(time(NULL)) );
+	 srand ( static_cast<unsigned>(time(nullptr)) );
 	 int n (rand() % 100000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
@@ -60,7 +60,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 {
 	/* initialize random seed: */
-	 srand ( static_cast<unsigned>(time(NULL)) );
+	 srand ( static_cast<unsigned>(time(nullptr)) );
 	 int n (rand() % 1000000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
@@ -89,7 +89,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 {
 	/* initialize random seed: */
-	 srand ( static_cast<unsigned>(time(NULL)) );
+	 srand ( static_cast<unsigned>(time(nullptr)) );
 	 int n (rand() % 100000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
@@ -101,7 +101,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 		 pnts.push_back(new GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
 	 }
 
-	 // construct from list points a axis algined bounding box
+	 // construct from list points a axis aligned bounding box
 	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
@@ -122,7 +122,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 {
 	/* initialize random seed: */
-	 srand ( static_cast<unsigned>(time(NULL)) );
+	 srand ( static_cast<unsigned>(time(nullptr)) );
 	 int n (rand() % 1000000);
 	 int box_size (rand());
 	 int half_box_size(box_size/2);
@@ -151,7 +151,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 {
 	/* initialize random seed: */
-	 srand (static_cast<unsigned>(time(NULL)));
+	 srand (static_cast<unsigned>(time(nullptr)));
 	 int n (rand() % 1000000);
 	 int box_size_x (rand());
 	 int box_size_y (rand());
