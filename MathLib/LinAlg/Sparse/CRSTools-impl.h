@@ -20,7 +20,7 @@ namespace MathLib
 
 template <typename VEC_T, typename FP_TYPE>
 void applyKnownSolution(CRSMatrix<FP_TYPE, typename VEC_T::IndexType>*& mat,
-	VEC_T &rhs, std::vector<std::size_t> const& rows,
+	VEC_T &rhs, std::vector<typename VEC_T::IndexType> const& rows,
 	std::vector<FP_TYPE> const& vals)
 {
 	std::unique_ptr<MathLib::CRSMatrix<FP_TYPE, typename VEC_T::IndexType>> mat_t(mat->getTranspose());
