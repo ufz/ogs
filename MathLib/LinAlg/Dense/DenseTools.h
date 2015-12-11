@@ -16,11 +16,12 @@
 #define DENSETOOLS_H_
 
 #include <vector>
-#include "GlobalDenseMatrix.h"
+#include "DenseMatrix.h"
+#include "DenseVector.h"
 
 namespace MathLib
 {
-using DenseMatrixIndexType = GlobalDenseMatrix<double>::IndexType;
+typedef DenseMatrix<double>::IDX_T DenseMatrixIndexType;
 /**
  * Apply known solutions to a system of linear equations.
  *

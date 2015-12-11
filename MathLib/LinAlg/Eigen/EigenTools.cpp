@@ -11,7 +11,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "EigenMatrix.h"
 #include "EigenVector.h"
 
 namespace MathLib

@@ -63,6 +63,8 @@ public:
         std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
 
         // convert mesh node ids to global index for the given component
+        global_ids.reserve(global_ids.size() + ids.size());
+        values.reserve(values.size() + ids.size());
         for (auto& id : ids)
         {
             MeshLib::Location l(searcher.getMeshId(),
@@ -70,6 +72,12 @@ public:
                                 id);
             // TODO: that might be slow, but only done once
             const auto g_idx = dof_table.getGlobalIndex(l, component_id);
+            // For the DDC approach (e.g. with PETSc option), the negative
+            // index of g_idx means that the entry by that index is a ghost one,
+            // which should be dropped. Especially for PETSc routines MatZeroRows
+            // and MatZeroRowsColumns, which are called to apply the Dirichlet BC,
+            // the negative index is not accepted like other matrix or vector
+            // PETSc routines. Therefore, the following if-condition is applied.  
             if (g_idx >= 0)
             {
                 global_ids.emplace_back(g_idx);

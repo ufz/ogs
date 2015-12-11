@@ -189,7 +189,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     MathLib::finalizeMatrixAssembly(A);
 
     // solve
-    T_LINEAR_SOVLER ls(A, prefix_name);
+    T_LINEAR_SOVLER ls(A, prefix_name, &ls_option);
     EXPECT_TRUE(ls.solve(b, x));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);

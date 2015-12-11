@@ -16,11 +16,11 @@
 #define LISTOOLS_H_
 
 #include <vector>
-#include <lis.h> // For  LIS_INT
+
+#include "LisMatrix.h" // for LisMatrix::IndexType
 
 namespace MathLib
 {
-class LisMatrix;
 class LisVector;
 
 /**
@@ -36,7 +36,7 @@ class LisVector;
  * @param vals a vector of known solutions
  */
 void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
-	const std::vector< LIS_INT> &rows, //LIS_INT has an alias of LisMatrix::IndexType
+	const std::vector<LisMatrix::IndexType> &rows,
 	const std::vector<double> &vals);
 
 } // MathLib
