@@ -77,7 +77,7 @@ public:
             // which should be dropped. Especially for PETSc routines MatZeroRows
             // and MatZeroRowsColumns, which are called to apply the Dirichlet BC,
             // the negative index is not accepted like other matrix or vector
-            // PETSc routines. Therefore, the following if-condition is applied.  
+            // PETSc routines. Therefore, the following if-condition is applied.
             if (g_idx >= 0)
             {
                 global_ids.emplace_back(g_idx);

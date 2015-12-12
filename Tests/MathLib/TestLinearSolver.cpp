@@ -207,7 +207,7 @@ TEST(MathLib, CheckInterface_GaussAlgorithm)
     boost::property_tree::ptree t_solver;
     t_root.put_child("ogs", t_solver);
 
-    using Example = Example1<std::size_t>; 
+    using Example = Example1<std::size_t>;
 
     typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
     MathLib::GlobalDenseMatrix<double> A(Example::dim_eqs, Example::dim_eqs);
