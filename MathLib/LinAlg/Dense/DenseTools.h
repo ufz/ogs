@@ -21,7 +21,6 @@
 
 namespace MathLib
 {
-typedef DenseMatrix<double>::IDX_T DenseMatrixIndexType;
 /**
  * Apply known solutions to a system of linear equations.
  *
@@ -33,10 +32,10 @@ typedef DenseMatrix<double>::IDX_T DenseMatrixIndexType;
  * @param vec_knownX_id    a vector of known solution entry IDs
  * @param vec_knownX_x     a vector of known solutions
  */
-void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
-		DenseVector<double> &/*x*/,
-		const std::vector<DenseMatrixIndexType> &vec_knownX_id,
-		const std::vector<double> &vec_knownX_x);
+void applyKnownSolution(
+    DenseMatrix<double>& A, DenseVector<double>& b, DenseVector<double>& /*x*/,
+    const std::vector<DenseMatrix<double>::IDX_T>& vec_knownX_id,
+    const std::vector<double>& vec_knownX_x);
 
 /**
  * Apply known solutions to a system of linear equations \f$A x = b\f$.
@@ -52,8 +51,8 @@ void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
  * @param row_id    a known solution entry ID
  * @param val       a known solution
  */
-void applyKnownSolution(DenseMatrix<double> &A, DenseVector<double> &b,
-		DenseMatrixIndexType row_id, double val);
+void applyKnownSolution(DenseMatrix<double>& A, DenseVector<double>& b,
+                        DenseMatrix<double>::IDX_T row_id, double val);
 
 } // MathLib
 
