@@ -60,7 +60,7 @@ target_link_libraries(FileIO INTERFACE
 	shp
 )
 if(QT4_FOUND)
-	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
+	target_link_libraries(FileIO PUBLIC Qt5::Xml Qt5::XmlPatterns)
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)

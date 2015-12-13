@@ -44,6 +44,6 @@ add_library(QtDiagramView STATIC
 )
 
 # Link Qt library
-target_link_libraries(QtDiagramView PUBLIC Qt4::QtGui)
+target_link_libraries(QtDiagramView PUBLIC Qt5::Gui)
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")

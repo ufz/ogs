@@ -135,7 +135,7 @@ add_library(QtDataView STATIC
 )
 
 # Link Qt library
-target_link_libraries(QtDataView PUBLIC Qt4::QtCore Qt4::QtGui)
+target_link_libraries(QtDataView PUBLIC Qt5::Core Qt5::Gui)
 target_link_libraries(QtDataView INTERFACE
 	FileIO
 	QtBase
