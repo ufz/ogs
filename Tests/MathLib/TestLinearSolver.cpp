@@ -67,10 +67,10 @@ void setMatrix9x9(T_Mat &mat)
             mat.setValue(i, j, d_mat[i*9+j]);
 }
 
-struct Example1
+template<typename IntType> struct Example1
 {
     MathLib::GlobalDenseMatrix<double> mat;
-    std::vector<std::size_t> vec_dirichlet_bc_id;
+    std::vector<IntType> vec_dirichlet_bc_id;
     std::vector<double> vec_dirichlet_bc_value;
     static const std::size_t dim_eqs = 9;
     double* exH;
@@ -79,7 +79,7 @@ struct Example1
         : mat(dim_eqs, dim_eqs), exH(new double[dim_eqs])
     {
         setMatrix9x9(mat);
-        std::size_t int_dirichlet_bc_id[] = {2,5,8,0,3,6};
+        IntType int_dirichlet_bc_id[] = {2,5,8,0,3,6};
         vec_dirichlet_bc_id.assign(int_dirichlet_bc_id, int_dirichlet_bc_id+6);
         vec_dirichlet_bc_value.resize(6);
         std::fill(vec_dirichlet_bc_value.begin(), vec_dirichlet_bc_value.begin()+3, .0);
@@ -98,10 +98,10 @@ struct Example1
     }
 };
 
-template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
+template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER, typename IntType>
 void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree& ls_option)
 {
-    Example1 ex1;
+    Example1<IntType> ex1;
 
     // set a coefficient matrix
     A.setZero();
@@ -120,7 +120,7 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree& ls_option)
     T_VECTOR x(ex1.dim_eqs);
 
     // apply BC
-    MathLib::applyKnownSolution(A, rhs, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
+    MathLib::applyKnownSolution(A, rhs, x, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value);
 
     MathLib::finalizeMatrixAssembly(A);
 
@@ -189,7 +189,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     MathLib::finalizeMatrixAssembly(A);
 
     // solve
-    T_LINEAR_SOVLER ls(A, prefix_name);
+    T_LINEAR_SOVLER ls(A, prefix_name, &ls_option);
     EXPECT_TRUE(ls.solve(b, x));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
@@ -207,10 +207,12 @@ TEST(MathLib, CheckInterface_GaussAlgorithm)
     boost::property_tree::ptree t_solver;
     t_root.put_child("ogs", t_solver);
 
+    using Example = Example1<std::size_t>; 
+
     typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
-    MathLib::GlobalDenseMatrix<double> A(Example1::dim_eqs, Example1::dim_eqs);
+    MathLib::GlobalDenseMatrix<double> A(Example::dim_eqs, Example::dim_eqs);
     checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>,
-                               MathLib::DenseVector<double>, LinearSolverType>(
+                               MathLib::DenseVector<double>, LinearSolverType, std::size_t>(
         A, t_root);
 }
 
@@ -226,9 +228,11 @@ TEST(Math, CheckInterface_Eigen)
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("eigen", t_solver);
 
-    MathLib::EigenMatrix A(Example1::dim_eqs);
+    using IntType = MathLib::EigenMatrix::IndexType;
+
+    MathLib::EigenMatrix A(Example1<IntType>::dim_eqs);
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
-                               MathLib::EigenLinearSolver>(A, t_root);
+                               MathLib::EigenLinearSolver, IntType>(A, t_root);
 }
 #endif
 
@@ -240,9 +244,11 @@ TEST(Math, CheckInterface_EigenLis)
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
 
-    MathLib::EigenMatrix A(Example1::dim_eqs);
+    using IntType = MathLib::LisMatrix::IndexType;
+
+    MathLib::EigenMatrix A(Example1<IntType>::dim_eqs);
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
-                               MathLib::EigenLisLinearSolver>(A, t_root);
+                               MathLib::EigenLisLinearSolver, IntType>(A, t_root);
 }
 #endif
 
@@ -254,8 +260,11 @@ TEST(Math, CheckInterface_Lis)
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
 
-    MathLib::LisMatrix A(Example1::dim_eqs);
-    checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector, MathLib::LisLinearSolver>(A, t_root);
+    using IntType = MathLib::LisMatrix::IndexType;
+
+    MathLib::LisMatrix A(Example1<IntType>::dim_eqs);
+    checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector,
+                               MathLib::LisLinearSolver, IntType>(A, t_root);
 }
 #endif
 

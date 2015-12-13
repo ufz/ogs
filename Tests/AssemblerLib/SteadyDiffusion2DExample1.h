@@ -24,7 +24,7 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 
-struct SteadyDiffusion2DExample1
+template<typename IndexType>struct SteadyDiffusion2DExample1
 {
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
 	using LocalVectorType = MathLib::DenseVector<double>;
@@ -140,7 +140,7 @@ struct SteadyDiffusion2DExample1
 	static const std::size_t mesh_stride = mesh_subdivs + 1;
 	static const std::size_t dim_eqs = mesh_stride * mesh_stride;
 	MeshLib::Mesh* msh;
-	std::vector<std::size_t> vec_DirichletBC_id;
+	std::vector<IndexType> vec_DirichletBC_id;
 	std::vector<double> vec_DirichletBC_value;
 	std::vector<double> exact_solutions;
 	std::vector<std::size_t> vec_nodeIDs;

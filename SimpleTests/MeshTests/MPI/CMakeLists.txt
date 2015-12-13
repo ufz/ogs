@@ -35,6 +35,7 @@ ExternalData_Add_Test(
 	COMMAND  "mpirun" ${MPITestParameters}
 )
 
+## FEM#PETSc solver tests
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/EllipticPETSc/,REGEX:.*}")
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/quad_20x10_GroundWaterFlow.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
 ExternalData_Add_Test(
@@ -43,10 +44,16 @@ ExternalData_Add_Test(
     COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
 )
 
-set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/EllipticPETSc/,REGEX:.*}")
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
 ExternalData_Add_Test(
     data
-    NAME ParallelFEM_GroundWaterFlow3D
+    NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
+    COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
+)
+
+set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3_neumann.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
+ExternalData_Add_Test(
+    data
+    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC
     COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
 )

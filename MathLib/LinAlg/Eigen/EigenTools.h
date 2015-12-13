@@ -12,9 +12,10 @@
 
 #include <vector>
 
+#include "EigenMatrix.h" // for EigenMatrix::IndexType
+
 namespace MathLib
 {
-class EigenMatrix;
 class EigenVector;
 
 /**
@@ -27,7 +28,8 @@ class EigenVector;
  * @param penalty_scaling value for scaling some matrix and right hand side
  * entries to enforce some conditions
  */
-void applyKnownSolution(EigenMatrix &A, EigenVector &b, const std::vector<std::size_t> &_vec_knownX_id,
+void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
+		const std::vector<EigenMatrix::IndexType> &_vec_knownX_id,
 		const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10);
 
 } // MathLib

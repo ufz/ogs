@@ -14,9 +14,6 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
-#include "UniformDirichletBoundaryCondition.h"
-#include "InitialCondition.h"
-
 namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
@@ -117,7 +114,7 @@ void ProcessVariable::initializeDirichletBCs(
     MeshGeoToolsLib::MeshNodeSearcher& searcher,
     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
     const unsigned nodal_dof_idx,
-    std::vector<std::size_t>& global_ids, std::vector<double>& values)
+    std::vector<GlobalIndexType>& global_ids, std::vector<double>& values)
 {
     for (auto& bc : _dirichlet_bcs)
         bc->initialize(searcher, dof_table, nodal_dof_idx,

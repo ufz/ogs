@@ -69,18 +69,19 @@ MathLib::CRSMatrix<double, typename LisMatrix::IndexType>* lis2crs(LisMatrix &a)
 }
 } // end namespace detail
 
-void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS,
-	const std::vector<std::size_t> &input_rows,
+void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
+	const std::vector<LisMatrix::IndexType> &input_rows,
 	const std::vector<double> &input_vals)
 {
 	// unfortunatly the input is not sorted => copy and sort
-	std::vector<std::size_t> rows(input_rows);
+	std::vector<LisMatrix::IndexType> rows(input_rows);
 	std::vector<double> vals(input_vals);
 	BaseLib::quicksort(rows, 0, rows.size(), vals);
 
 	MathLib::CRSMatrix<double, typename LisMatrix::IndexType> *crs_mat(
 		MathLib::detail::lis2crs(eqsA));
 
+	// The following function is defined in CRSTools-impl.h
 	applyKnownSolution(crs_mat, eqsRHS, input_rows, input_vals);
 
 	LisMatrix::IndexType const*const jA(crs_mat->getColIdxArray());

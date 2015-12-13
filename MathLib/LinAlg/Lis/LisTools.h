@@ -17,9 +17,10 @@
 
 #include <vector>
 
+#include "LisMatrix.h" // for LisMatrix::IndexType
+
 namespace MathLib
 {
-class LisMatrix;
 class LisVector;
 
 /**
@@ -34,8 +35,8 @@ class LisVector;
  * @param rows a vector of known solution entry IDs
  * @param vals a vector of known solutions
  */
-void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS,
-	const std::vector<std::size_t> &rows,
+void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
+	const std::vector<LisMatrix::IndexType> &rows,
 	const std::vector<double> &vals);
 
 } // MathLib

@@ -40,7 +40,8 @@
 TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 {
     // example
-    SteadyDiffusion2DExample1 ex1;
+    using Example = SteadyDiffusion2DExample1<GlobalIndexType>;
+    Example ex1;
 
     //--------------------------------------------------------------------------
     // Choose implementation type
@@ -76,21 +77,21 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     std::unique_ptr<GlobalVector> x(globalSetup.createVector(local_to_global_index_map.dofSize()));
 
     // Initializer of the local assembler data.
-    std::vector<SteadyDiffusion2DExample1::LocalAssemblerData<
+    std::vector<Example::LocalAssemblerData<
         GlobalMatrix, GlobalVector>*> local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
     typedef AssemblerLib::LocalAssemblerBuilder<
             MeshLib::Element,
             void (const MeshLib::Element &,
-                    SteadyDiffusion2DExample1::LocalAssemblerData<
+                    Example::LocalAssemblerData<
                         GlobalMatrix, GlobalVector> *&,
                     std::size_t const local_matrix_size,
-                    SteadyDiffusion2DExample1 const&)
+                    Example const&)
                 > LocalAssemblerBuilder;
 
     LocalAssemblerBuilder local_asm_builder(
-        SteadyDiffusion2DExample1::initializeLocalData<GlobalMatrix, GlobalVector>,
+        Example::initializeLocalData<GlobalMatrix, GlobalVector>,
         local_to_global_index_map);
 
     // Call global initializer for each mesh element.
@@ -115,7 +116,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //rhs->write(std::cout);
 
     // apply Dirichlet BC
-    MathLib::applyKnownSolution(*A, *rhs, ex1.vec_DirichletBC_id,
+    MathLib::applyKnownSolution(*A, *rhs, *x, ex1.vec_DirichletBC_id,
                                 ex1.vec_DirichletBC_value);
     //std::cout << "A=\n";
     //A->write(std::cout);
