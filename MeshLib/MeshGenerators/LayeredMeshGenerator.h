@@ -15,9 +15,10 @@
 #ifndef LAYEREDMESHGENERATOR_H
 #define LAYEREDMESHGENERATOR_H
 
+#include <memory>
+#include <limits>
 #include <string>
 #include <vector>
-#include <limits>
 
 namespace GeoLib {
     class Raster;
@@ -62,7 +63,7 @@ public:
 	                                double noDataReplacementValue) = 0;
 
 	/// Returns a mesh of the subsurface representation
-	MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
+	std::unique_ptr<MeshLib::Mesh> getMesh(std::string const& mesh_name) const;
 
 protected:
 	LayeredMeshGenerator();
@@ -97,6 +98,7 @@ protected:
 
 	double _elevation_epsilon;
 	double _minimum_thickness;
+	std::vector<int> _materials;
 	std::vector<MeshLib::Node*> _nodes;
 	std::vector<MeshLib::Element*> _elements;
 };

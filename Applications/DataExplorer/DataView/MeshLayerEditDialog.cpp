@@ -195,7 +195,6 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 	const unsigned nLayers = _layerEdit->text().toInt();
 
 	MeshLib::MeshLayerMapper mapper;
-	MeshLib::Mesh* new_mesh (nullptr);
 
 	QTime myTimer0;
 	myTimer0.start();
@@ -207,18 +206,20 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		for (int i=nLayers; i>=0; --i)
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		if (mapper.createLayers(*_msh, raster_paths, minimum_thickness))
-			new_mesh= mapper.getMesh("SubsurfaceMesh");
+		{
+			INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+			return mapper.getMesh("SubsurfaceMesh").release();
+		}
+		return nullptr;
 	}
 	else
 	{
 		std::vector<float> layer_thickness;
 		for (unsigned i=0; i<nLayers; ++i)
 			layer_thickness.push_back(this->_edits[i]->text().toFloat());
-		new_mesh = mapper.createStaticLayers(*_msh, layer_thickness);
+		INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
+		return mapper.createStaticLayers(*_msh, layer_thickness);
 	}
-	INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
-
-	return new_mesh;
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
@@ -231,7 +232,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		return nullptr;
 
 	const unsigned nLayers = _layerEdit->text().toInt();
-	MeshLib::Mesh* tg_mesh (nullptr);
+	MeshLib::Mesh* tg_mesh(nullptr);
 	QTime myTimer0;
 	myTimer0.start();
 
@@ -244,7 +245,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
 		if (lv.createLayers(*_msh, raster_paths, minimum_thickness))
-			tg_mesh = lv.getMesh("SubsurfaceMesh");
+			tg_mesh = lv.getMesh("SubsurfaceMesh").release();
 
 		if (tg_mesh)
 		{

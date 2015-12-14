@@ -9,6 +9,8 @@
 #ifndef APPENDLINESALONGPOLYLINES_H_
 #define APPENDLINESALONGPOLYLINES_H_
 
+#include <memory>
+
 namespace GeoLib
 {
 class Polyline;
@@ -37,8 +39,8 @@ namespace MeshGeoToolsLib
  * @param ply_vec   polyline vector whose nodes are used to create line elements
  * @return a new mesh which is copied from a given mesh and additionally includes line elements
  */
-MeshLib::Mesh* appendLinesAlongPolylines(const MeshLib::Mesh &mesh, const GeoLib::PolylineVec &ply_vec);
-
+std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
+    const MeshLib::Mesh& mesh, const GeoLib::PolylineVec& ply_vec);
 }
 
 #endif

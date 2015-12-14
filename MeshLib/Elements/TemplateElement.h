@@ -48,7 +48,15 @@ public:
 	 * @param value  element value, e.g. material ID
 	 * @param id     element id
 	 */
-	TemplateElement(Node* nodes[n_all_nodes], unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateElement(Node* nodes[n_all_nodes], unsigned value, std::size_t id);
+
+	/**
+	 * Constructor with an array of mesh nodes.
+	 *
+	 * @param nodes  an array of pointers of mesh nodes which form this element
+	 * @param id     element id
+	 */
+	TemplateElement(Node* nodes[n_all_nodes], std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/**
 	 * Constructor with an array of mesh nodes
@@ -57,7 +65,15 @@ public:
 	 * @param value  element value, e.g. material ID
 	 * @param id     element id
 	 */
-	TemplateElement(std::array<Node*, n_all_nodes> const& nodes, unsigned value = 0, std::size_t id = std::numeric_limits<std::size_t>::max());
+	TemplateElement(std::array<Node*, n_all_nodes> const& nodes, unsigned value, std::size_t id);
+
+	/**
+	 * Constructor with an array of mesh nodes
+	 *
+	 * @param nodes  an array of pointers of mesh nodes which form this element
+	 * @param id     element id
+	 */
+	TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id = std::numeric_limits<std::size_t>::max());
 
 	/// Copy constructor
 	TemplateElement(const TemplateElement &e);

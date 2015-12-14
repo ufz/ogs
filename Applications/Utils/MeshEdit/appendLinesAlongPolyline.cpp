@@ -84,15 +84,14 @@ int main (int argc, char* argv[])
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	// add line elements
-	MeshLib::Mesh* new_mesh = MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
+	std::unique_ptr<MeshLib::Mesh> new_mesh =
+	    MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
 	INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 
 	// write into a file
 	FileIO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(new_mesh);
+	meshIO.setMesh(new_mesh.get());
 	meshIO.writeToFile(mesh_out.getValue());
-
-	delete new_mesh;
 
 	delete custom_format;
 	delete logog_cout;
