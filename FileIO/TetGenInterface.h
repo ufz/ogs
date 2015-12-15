@@ -144,11 +144,13 @@ private:
 	 * For this purpose it uses methods parseElementsFileHeader() and parseElements().
 	 * @param input     the input stream
 	 * @param elements  the elements vector to be filled
+	 * @param materials the vector containing material ids to be filled
 	 * @param nodes     the node information needed for creating elements
 	 * @return true, if all information is read, false if the method detects an error
 	 */
 	bool readElementsFromStream(std::ifstream &input,
 	                            std::vector<MeshLib::Element*> &elements,
+	                            std::vector<int> &materials,
 	                            const std::vector<MeshLib::Node*> &nodes) const;
 	/**
 	 * Method parses the header of the elements file created by TetGen
@@ -166,6 +168,7 @@ private:
 	 * Method parses the tetrahedras and put them in the element vector of the mesh class.
 	 * @param ins the input stream
 	 * @param elements          the elements vector to be filled
+	 * @param materials         the vector containing material ids to be filled
 	 * @param nodes             the node information needed for creating elements
 	 * @param n_tets            the number of tetrahedras that should be read
 	 * @param n_nodes_per_tet   the number of nodes per tetrahedron
@@ -174,6 +177,7 @@ private:
 	 */
 	bool parseElements(std::ifstream& ins,
 	                   std::vector<MeshLib::Element*> &elements,
+	                   std::vector<int> &materials,
 	                   const std::vector<MeshLib::Node*> &nodes,
 	                   std::size_t n_tets,
 	                   std::size_t n_nodes_per_tet,
@@ -200,7 +204,10 @@ private:
 	                     std::vector<MeshLib::Node> &attribute_points) const;
 
 	/// Writes facet information from a 2D element to the stream and increments the total element count accordingly
-	void writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count) const;
+	void writeElementToFacets(std::ofstream &out,
+	                          const MeshLib::Element &element,
+	                          unsigned &element_count,
+	                          std::string const& matId) const;
 
 	/// the value is true if the indexing is zero based, else false
 	bool _zero_based_idx;
