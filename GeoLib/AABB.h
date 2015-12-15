@@ -46,16 +46,16 @@ namespace GeoLib
  * available floating point number such that all input points are contained in
  * the bounding box.
  *
- * @tparam PNT_TYPE a point type supporting accessing the coordinates via
- * operator[]
  */
-template <typename PNT_TYPE>
 class AABB
 {
 public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
+	 * @tparam PNT_TYPE a point type supporting accessing the coordinates via
+	 * operator[]
 	 * */
+	template <typename PNT_TYPE>
 	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids)
 	{
 		assert(! ids.empty());
@@ -69,8 +69,8 @@ public:
 	/**
 	 * copy constructor.
 	 * @param src an axis aligned bounding box
-	 */
-	AABB(AABB<PNT_TYPE> const& src) :
+	 * */
+	AABB(AABB const& src) :
 		_min_pnt(src._min_pnt), _max_pnt(src._max_pnt)
 	{}
 
@@ -102,6 +102,7 @@ public:
 
 	/// Checks if the bounding box has to be updated.
 	/// @return true if AABB is updated.
+	template <typename PNT_TYPE>
 	bool update(PNT_TYPE const & p)
 	{
 		// First component of the pair signals if the minimum point is changed
@@ -164,7 +165,7 @@ public:
 	 * @return true if the other AABB is contained in the AABB
 	 * represented by this object
 	 */
-	bool containsAABB(AABB<PNT_TYPE> const& other_aabb) const
+	bool containsAABB(AABB const& other_aabb) const
 	{
 		return containsPoint(other_aabb.getMinPoint()) && containsPoint(other_aabb.getMaxPoint());
 	}
@@ -192,13 +193,16 @@ private:
 		}
 	}
 
+	template <typename PNT_TYPE>
 	void init(PNT_TYPE const & pnt)
 	{
 		_min_pnt[0] = _max_pnt[0] = pnt[0];
 		_min_pnt[1] = _max_pnt[1] = pnt[1];
 		_min_pnt[2] = _max_pnt[2] = pnt[2];
 	}
-	void init(PNT_TYPE const * pnt)
+
+	template <typename PNT_TYPE>
+	void init(PNT_TYPE * const & pnt)
 	{
 		init(*pnt);
 	}
@@ -208,6 +212,7 @@ private:
 	/// box. Using this method the bounding box of the initial point set is
 	/// enlarged only once.
 	/// @param p point that will possibly change the bounding box points
+	template <typename PNT_TYPE>
 	void  updateWithoutEnlarge(PNT_TYPE const & p)
 	{
 		for (std::size_t k(0); k<3; k++) {
@@ -220,11 +225,13 @@ private:
 		}
 	}
 
-	void updateWithoutEnlarge(PNT_TYPE const * pnt)
+	template <typename PNT_TYPE>
+	void updateWithoutEnlarge(PNT_TYPE * const & pnt)
 	{
 		updateWithoutEnlarge(*pnt);
 	}
 
+	template <typename PNT_TYPE>
 	void update(PNT_TYPE const * pnt)
 	{
 		update(*pnt);
