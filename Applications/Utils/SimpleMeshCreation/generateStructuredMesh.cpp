@@ -192,20 +192,20 @@ int main (int argc, char* argv[])
 	}
 
 	// generate a mesh
-	MeshLib::Mesh* mesh = nullptr;
+	std::unique_ptr<MeshLib::Mesh> mesh;
 	switch (eleType)
 	{
 	case MeshLib::MeshElemType::LINE:
-		mesh = MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]);
+		mesh.reset(MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]));
 		break;
 	case MeshLib::MeshElemType::TRIANGLE:
-		mesh = MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]));
 		break;
 	case MeshLib::MeshElemType::QUAD:
-		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]));
 		break;
 	case MeshLib::MeshElemType::HEXAHEDRON:
-		mesh = MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
 		break;
 	default:
 		ERR("Given element type is not supported.");
@@ -217,9 +217,7 @@ int main (int argc, char* argv[])
 		INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 		// write into a file
-		FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
-
-		delete mesh;
+		FileIO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
 	}
 
 	for (auto p : vec_div)
