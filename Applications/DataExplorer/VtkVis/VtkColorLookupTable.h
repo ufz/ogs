@@ -76,7 +76,7 @@ public:
 	void writeToFile(const std::string &filename);
 
 	/// Set a value within the LUT
-	void SetTableValue(vtkIdType idx, unsigned char rgba[4]);
+	void SetTableValueRGBA(vtkIdType idx, unsigned char rgba[4]);
 
 	/// Get a value from the LUT
 	void GetTableValue(vtkIdType idx, unsigned char rgba[4]);

@@ -71,7 +71,7 @@ void VtkColorLookupTable::Build()
 			double val = (it->first < range[0]) ? range[0] : ((it->first > range[1]) ? range[1] : it->first);
 			nextIndex = static_cast<std::size_t>( std::floor(val-range[0]) );
 
-			this->SetTableValue(nextIndex, it->second);
+			this->SetTableValueRGBA(nextIndex, it->second);
 
 			if ( nextIndex - lastValue.first > 0 )
 				for (std::size_t i = lastValue.first + 1; i < nextIndex; i++)
@@ -89,7 +89,7 @@ void VtkColorLookupTable::Build()
 						for (std::size_t j = 0; j < 4; j++)
 							int_rgba[j] = (lastValue.second)[j];
 
-					this->SetTableValue(i, int_rgba);
+					this->SetTableValueRGBA(i, int_rgba);
 				}
 
 			lastValue.first = nextIndex;
@@ -119,7 +119,7 @@ void VtkColorLookupTable::writeToFile(const std::string &filename)
 	out.close();
 }
 
-void VtkColorLookupTable::SetTableValue(vtkIdType idx, unsigned char rgba[4])
+void VtkColorLookupTable::SetTableValueRGBA(vtkIdType idx, unsigned char rgba[4])
 {
 	double value[4];
 
