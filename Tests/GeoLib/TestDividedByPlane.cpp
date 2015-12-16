@@ -26,24 +26,24 @@ TEST(GeoLib, TestDividedByPlane)
 	GeoLib::Point d(1,1,0);
 
 	bool result = GeoLib::dividedByPlane(a, d, b, c);
-	ASSERT_EQ(result, true);
+	ASSERT_TRUE(result);
 
 	result = GeoLib::dividedByPlane(b, c, a, d);
-	ASSERT_EQ(result, true);
+	ASSERT_TRUE(result);
 
 	d = GeoLib::Point(0.1, 0.1, 0);
 	result = GeoLib::dividedByPlane(b, c, a, d);
-	ASSERT_EQ(result, false);
+	ASSERT_FALSE(result);
 
 	// xz plane
 	c = GeoLib::Point(0, 0, 1);
 	d = GeoLib::Point(1, 0, 1);
 	result = GeoLib::dividedByPlane(a, d, b, c);
-	ASSERT_EQ(result, true);
+	ASSERT_TRUE(result);
 
 	// yz plane
 	b = GeoLib::Point(0, 1, 0);
 	d = GeoLib::Point(0, 1, 1);
 	result = GeoLib::dividedByPlane(a, d, b, c);
-	ASSERT_EQ(result, true);
+	ASSERT_TRUE(result);
 }
