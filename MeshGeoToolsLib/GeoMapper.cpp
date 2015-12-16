@@ -110,7 +110,7 @@ void GeoMapper::mapData()
 	double min_val(0), max_val(0);
 	if (_surface_mesh)
 	{
-		GeoLib::AABB<MeshLib::Node> bounding_box(
+		GeoLib::AABB bounding_box(
 			_surface_mesh->getNodes().begin(), _surface_mesh->getNodes().end());
 		min_val = bounding_box.getMinPoint()[2];
 		max_val = bounding_box.getMaxPoint()[2];
@@ -217,7 +217,7 @@ void GeoMapper::advancedMapOnMesh(
 	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
 	const std::vector<GeoLib::Polyline*> *org_lines (this->_geo_objects.getPolylineVec(this->_geo_name));
 
-	const GeoLib::AABB<GeoLib::Point> aabb(points->begin(), points->end());
+	const GeoLib::AABB aabb(points->begin(), points->end());
 	const double eps = sqrt(std::numeric_limits<float>::epsilon()) *
 		               sqrt( MathLib::sqrDist(aabb.getMinPoint(),aabb.getMaxPoint())) ;
 

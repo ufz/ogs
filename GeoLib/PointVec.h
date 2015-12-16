@@ -100,7 +100,7 @@ public:
 
 	const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
 
-	const GeoLib::AABB<GeoLib::Point>& getAABB () const;
+	const GeoLib::AABB& getAABB () const;
 
 	std::string const& getItemNameByID(std::size_t id) const;
 
@@ -136,7 +136,7 @@ private:
 	/// given point id.
 	std::vector<std::string> _id_to_name_map;
 
-	AABB<GeoLib::Point> _aabb;
+	AABB _aabb;
 	double _rel_eps;
 	std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 16>> _oct_tree;
 };

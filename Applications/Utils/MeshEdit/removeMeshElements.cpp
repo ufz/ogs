@@ -138,7 +138,7 @@ int main (int argc, char* argv[])
 			MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
 				yLargeArg.getValue(), zLargeArg.getValue()}})}});
 		const std::size_t n_removed_elements = ex.searchByBoundingBox(
-			GeoLib::AABB<MathLib::Point3d>(extent.begin(), extent.end()));
+			GeoLib::AABB(extent.begin(), extent.end()));
 		INFO("%d elements found.", n_removed_elements);
 	}
 

@@ -48,8 +48,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::
 		return false;
 	}
 
-	GeoLib::AABB<MeshLib::Node> src_aabb(_src_mesh->getNodes().begin(), _src_mesh->getNodes().end());
-	GeoLib::AABB<MeshLib::Node> dest_aabb(dest_mesh->getNodes().begin(), dest_mesh->getNodes().end());
+	GeoLib::AABB src_aabb(_src_mesh->getNodes().begin(), _src_mesh->getNodes().end());
+	GeoLib::AABB dest_aabb(dest_mesh->getNodes().begin(), dest_mesh->getNodes().end());
 	if (!src_aabb.containsAABB(dest_aabb)) {
 		ERR("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() source mesh to small.");
 		ERR("src_aabb: %f, %f, %f | %f, %f, %f", src_aabb.getMinPoint()[0], src_aabb.getMinPoint()[1], src_aabb.getMinPoint()[2], src_aabb.getMaxPoint()[0], src_aabb.getMaxPoint()[1], src_aabb.getMaxPoint()[2]);
@@ -89,7 +89,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 	for (std::size_t k(0); k<n_dest_elements; k++)
 	{
 		// compute axis aligned bounding box around the current element
-		const GeoLib::AABB<MeshLib::Node> elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
+		const GeoLib::AABB elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
 
 		// request "interesting" nodes from grid
 		std::vector<std::vector<MeshLib::Node*> const*> nodes;

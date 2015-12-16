@@ -41,7 +41,7 @@ public:
 	std::size_t searchByContent(double eps = std::numeric_limits<double>::epsilon());
 
 	/// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
-	std::size_t searchByBoundingBox(GeoLib::AABB<MathLib::Point3d> const& aabb);
+	std::size_t searchByBoundingBox(GeoLib::AABB const& aabb);
 
 	/// Marks all elements connecting to any of the given nodes
 	std::size_t searchByNodeIDs(const std::vector<std::size_t> &node_ids);

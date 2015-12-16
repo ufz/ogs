@@ -40,7 +40,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 	 }
 
 	 // construct from list points a axis algined bounding box
-	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
+	 GeoLib::AABB aabb(pnts_list.begin(), pnts_list.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
 	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
@@ -76,7 +76,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
 	 }
 
 	 // construct from list points a axis algined bounding box
-	 GeoLib::AABB<GeoLib::Point> aabb(pnts_list.begin(), pnts_list.end());
+	 GeoLib::AABB aabb(pnts_list.begin(), pnts_list.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
 	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
@@ -108,7 +108,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPointsInAVector)
 	 }
 
 	 // construct from list points a axis aligned bounding box
-	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+	 GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
 	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
@@ -144,7 +144,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
 	 }
 
 	 // construct from list points a axis algined bounding box
-	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+	 GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
 	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
@@ -182,7 +182,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomBox)
 	 }
 
 	 // construct from list points a axis aligned bounding box
-	 GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+	 GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
 	 MathLib::Point3d const& min_pnt(aabb.getMinPoint());
 	 MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
@@ -209,7 +209,7 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesI)
 	std::vector<std::size_t> ids;
 	ids.push_back(0);
 	ids.push_back(1);
-	GeoLib::AABB<GeoLib::Point> aabb(pnts, ids);
+	GeoLib::AABB aabb(pnts, ids);
 
 	MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
@@ -229,7 +229,7 @@ TEST(GeoLib, AABBAllPointsWithNegativeCoordinatesII)
 	pnts.push_back(GeoLib::Point(-10, -10, -10));
 
 	// construct from points of the vector a axis aligned bounding box
-	GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+	GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
 	MathLib::Point3d const& max_pnt(aabb.getMaxPoint());
 
@@ -254,7 +254,7 @@ TEST(GeoLib, AABBSinglePoint)
 	ASSERT_EQ(1u, pnts.size());
 
 	// construct from points of the vector a axis aligned bounding box
-	GeoLib::AABB<GeoLib::Point> aabb(pnts.begin(), pnts.end());
+	GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
 	double const to_lowest(std::numeric_limits<double>::lowest());
 	double const to_max(std::numeric_limits<double>::max());

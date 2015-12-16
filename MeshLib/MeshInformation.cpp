@@ -37,10 +37,10 @@ const std::pair<int, int> MeshInformation::getValueBounds(const MeshLib::Mesh &m
 	return {*(mat_bounds.first), *(mat_bounds.second)};
 }
 
-const GeoLib::AABB<MeshLib::Node> MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)
+const GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)
 {
 	const std::vector<MeshLib::Node*> &nodes (mesh.getNodes());
-	return GeoLib::AABB<MeshLib::Node>(nodes.begin(), nodes.end());
+	return GeoLib::AABB(nodes.begin(), nodes.end());
 }
 
 const std::array<unsigned, 7> MeshInformation::getNumberOfElementTypes(const MeshLib::Mesh &mesh)
