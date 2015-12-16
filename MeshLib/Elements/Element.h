@@ -89,7 +89,7 @@ public:
 	virtual const Element* getFace(unsigned i) const = 0;
 
 	/// Returns the ID of the element.
-	virtual std::size_t getID() const { return this->_id; }
+	virtual std::size_t getID() const final { return _id; }
 
 	/// Get the number of edges for this element.
 	virtual unsigned getNEdges() const = 0;
@@ -138,16 +138,6 @@ public:
 	 */
 	virtual CellType getCellType() const = 0;
 
-	/**
-	 * Get the value for this element. The value can be used to store a link
-	 * to external information (for instance an index of a field) like material groups.
-	 */
-	unsigned getValue() const { return _value; }
-
-	/**
-	 * Get the value for this element as a const reference.
-	 */
-	unsigned const& getValueReference() const { return _value; }
 
 	/**
 	 * Returns true if the element has zero length/area/volume.
@@ -172,12 +162,6 @@ public:
 	 * Tests if the element is geometrically valid.
 	 */
 	virtual ElementErrorCode validate() const = 0;
-
-	/**
-	 * Set the index value for external information.
-	 * @param value an unsigned value for linking with external information
-	 */
-	void setValue(unsigned value) { _value = value; }
 
 	/// Returns true if elem is a neighbour of this element and false otherwise.
 	bool hasNeighbor(Element* elem) const;
@@ -215,25 +199,17 @@ public:
 
 protected:
 	/// Constructor for a generic mesh element without an array of mesh nodes.
-	/// @param value  element value
-	/// @param id     element id
-	Element(unsigned value, std::size_t id);
-
-	/// Constructor for a generic mesh element without an array of mesh nodes.
 	/// @param id     element id
 	explicit Element(std::size_t id);
 
 	/// Sets the element ID.
-	virtual void setID(std::size_t id) { this->_id = id; }
+	virtual void setID(std::size_t id) final { _id = id; }
 
 	Node** _nodes;
 	std::size_t _id;
 	/// Content corresponds to length for 1D, area for 2D, and volume for 3D elements
 	double _content;
-	/**
-	 * this is an index for external additional information like materials
-	 */
-	unsigned _value;
+
 	Element** _neighbors;
 	/// Sets the neighbor over the face with \c face_id to the given \c
 	/// neighbor.

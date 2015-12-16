@@ -163,11 +163,14 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* edge_item = new TreeItem(edges, _rootItem);
 	_rootItem->appendChild(edge_item);
 
-	const auto mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
-	QList<QVariant> materials;
-	materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
-	TreeItem* mat_item = new TreeItem(materials, _rootItem);
-	_rootItem->appendChild(mat_item);
+	std::pair<int, int> const mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
+	if (mat_bounds.second != std::numeric_limits<int>::max())
+	{
+		QList<QVariant> materials;
+		materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
+		TreeItem* mat_item = new TreeItem(materials, _rootItem);
+		_rootItem->appendChild(mat_item);
+	}
 
 	reset();
 
