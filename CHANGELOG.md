@@ -10,6 +10,9 @@
 
 - Added CMake option `OGS_CPU_ARCHITECTURE`, #858, [downloadable binaries](http://docs.opengeosys.org/download) build by Jenkins should now run on more CPUs
 - Added CMake options for Boost, VTK and Eigen (`OGS_LIB_BOOST`, ...) to specify if libs are searched on the system first, then build them locally (`Default`), or you can specify to just use system libs (`System`) or force a local build (`Local`)
+- Added CMake options for enabling Clang sanitizer:
+  - `OGS_ADDRESS_SANITIZER`
+  - `OGS_UNDEFINED_BEHAVIOR_SANITIZER`
 
 ### Documentation
 
