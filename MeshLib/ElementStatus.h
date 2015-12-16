@@ -31,7 +31,8 @@ public:
 	                       bool hasAnyInactive = false);
 
 	/// Constructor taking a vector of inactive material IDs
-	ElementStatus(MeshLib::Mesh const*const mesh, std::vector<unsigned> const& vec_inactive_matIDs);
+	ElementStatus(MeshLib::Mesh const* const mesh,
+	              std::vector<int> const& vec_inactive_matIDs);
 
 	/// Returns a vector of active element IDs
 	std::vector<MeshLib::Element*> const& getActiveElements() const;
