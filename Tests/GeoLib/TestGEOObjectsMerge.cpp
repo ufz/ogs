@@ -66,12 +66,12 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	GeoLib::PointVec const* merged_point_vec (geo_objs.getPointVecObj(merged_geometries_name));
 
 	ASSERT_TRUE(merged_point_vec != nullptr);
-	ASSERT_EQ(merged_point_vec->size(), 512u);
+	ASSERT_EQ(512u, merged_point_vec->size());
 	std::string test_name;
 	merged_point_vec->getNameOfElementByID(0, test_name);
-	ASSERT_EQ(test_name, "PointSet0-0-0-0");
+	ASSERT_EQ("PointSet0-0-0-0", test_name);
 	merged_point_vec->getNameOfElementByID(511, test_name);
-	ASSERT_EQ(test_name, "PointSet0-7-7-7");
+	ASSERT_EQ("PointSet0-7-7-7", test_name);
 
 	// *** insert "shifted" set of points
 	shift[0] += 1e-4;
@@ -84,19 +84,19 @@ TEST(GeoLib, GEOObjectsMergePoints)
 	merged_point_vec = geo_objs.getPointVecObj(merged_geometries_name);
 
 	ASSERT_TRUE(merged_point_vec != nullptr);
-	ASSERT_EQ(merged_point_vec->size(), 1024u);
+	ASSERT_EQ(1024u, merged_point_vec->size());
 	merged_point_vec->getNameOfElementByID(0, test_name);
-	ASSERT_EQ(test_name, "PointSet0-0-0-0");
+	ASSERT_EQ("PointSet0-0-0-0", test_name);
 	merged_point_vec->getNameOfElementByID(511, test_name);
-	ASSERT_EQ(test_name, "PointSet0-7-7-7");
+	ASSERT_EQ("PointSet0-7-7-7", test_name);
 	merged_point_vec->getNameOfElementByID(512, test_name);
-	ASSERT_EQ(test_name, "ShiftedPointSet-0-0-0");
+	ASSERT_EQ("ShiftedPointSet-0-0-0", test_name);
 	merged_point_vec->getNameOfElementByID(1023, test_name);
-	ASSERT_EQ(test_name, "ShiftedPointSet-7-7-7");
+	ASSERT_EQ("ShiftedPointSet-7-7-7", test_name);
 
 	std::size_t id;
 	ASSERT_TRUE(merged_point_vec->getElementIDByName (test_name, id));
-	ASSERT_EQ(id,1023u);
+	ASSERT_EQ(1023u, id);
 
 	test_name = "PointSet1-0-0-0";
 	ASSERT_FALSE(merged_point_vec->getElementIDByName (test_name, id));
@@ -145,7 +145,7 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
 		geo_objs.getPolylineVec(merged_geometries_name);
 
 	ASSERT_TRUE(polylines != nullptr);
-	ASSERT_EQ(polylines->size(), 1u);
+	ASSERT_EQ(1u, polylines->size());
 }
 
 TEST(GeoLib, GEOObjectsMergePolylinesWithNames)

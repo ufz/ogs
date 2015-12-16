@@ -25,7 +25,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(std::size_t(0), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_FALSE(ply.isPointIDInPolyline(0));
-	ASSERT_EQ(ply.getLength(0), 0.0);
+	ASSERT_EQ(0.0, ply.getLength(0));
 
 	ply_pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
 	ply.addPoint(0);
@@ -33,7 +33,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(std::size_t(1), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_TRUE(ply.isPointIDInPolyline(0));
-	ASSERT_EQ(ply.getLength(0), 0.0);
+	ASSERT_EQ(0.0, ply.getLength(0));
 
 	ply_pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 	ply.addPoint(1);
@@ -41,7 +41,7 @@ TEST(GeoLib, PolylineTest)
 	ASSERT_EQ(std::size_t(2), ply.getNumberOfPoints());
 	ASSERT_FALSE(ply.isClosed());
 	ASSERT_TRUE(ply.isPointIDInPolyline(1));
-	ASSERT_EQ(ply.getLength(1), 1);
+	ASSERT_EQ(1.0, ply.getLength(1));
 
 	// checking properties of polyline with two points
 	ply_pnts.push_back(new GeoLib::Point(0.5, 0.5, 0.0));
