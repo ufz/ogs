@@ -3,6 +3,8 @@
  - Parallel computing framework for FEM by using PETSc, which also includes
    - Parallel input of partitioned mesh data.
    - Parallel output of solutions by using pvtu data format.
+ - New data structures for mesh properties are used everywhere.
+ - The penalty method to impose first-type boundary conditions was substituted.
 
 ### Infrastructure
 
