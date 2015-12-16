@@ -258,7 +258,7 @@ const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) 
 
 bool GEOObjects::removeSurfaceVec(const std::string &name)
 {
-	_callbacks->removePointVec(name);
+	_callbacks->removeSurfaceVec(name);
 	for (std::vector<SurfaceVec*>::iterator it (_sfc_vecs.begin());
 	     it != _sfc_vecs.end(); ++it)
 		if ((*it)->getName().compare (name) == 0)
