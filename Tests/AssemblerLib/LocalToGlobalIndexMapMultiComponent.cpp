@@ -262,7 +262,7 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
 TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 {
 	unsigned const num_components = 5;
-	for (auto c = 0; c < num_components; ++c)
+	for (unsigned c = 0; c < num_components; ++c)
 		test<AL::ComponentOrder::BY_COMPONENT>(
 		    num_components, c, ComputeGlobalIndexByComponent{
 		                           (mesh_subdivs + 1) * (mesh_subdivs + 1)});
@@ -271,7 +271,7 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
 {
 	unsigned const num_components = 5;
-	for (auto c = 0; c < num_components; ++c)
+	for (unsigned c = 0; c < num_components; ++c)
 		test<AL::ComponentOrder::BY_LOCATION>(
 		    num_components, c, ComputeGlobalIndexByLocation{num_components});
 }
