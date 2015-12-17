@@ -52,20 +52,20 @@ int main (int argc, char* argv[])
 	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 	if (!mesh) {
 		INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (!materialIds)
 	{
 		ERR("Mesh contains no int-property vector named \"MaterialIds\".");
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	std::size_t const n_properties(materialIds->size());
 	if (n_properties != mesh->getNElements()) {
 		ERR("Size mismatch: number of elements (%u) != number of material "
 			"properties (%u).", mesh->getNElements(), n_properties);
-		return -1;
+		return EXIT_FAILURE;
 	}
 	std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
 	// create file
@@ -80,7 +80,7 @@ int main (int argc, char* argv[])
 	else
 	{
 		ERR("Could not create property \"%s\" file.", new_matname.c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	// set mat ids to 0 and write new msh file
@@ -93,5 +93,5 @@ int main (int argc, char* argv[])
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 	std::cout << "Conversion finished." << std::endl;
 
-	return 1;
+	return EXIT_SUCCESS;
 }
