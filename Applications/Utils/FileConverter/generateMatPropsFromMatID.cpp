@@ -83,8 +83,7 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	// set mat ids to 0 and write new msh file
-	std::fill(materialIds->begin(), materialIds->end(), 0);
+	mesh->getProperties().removePropertyVector("MaterialIDs");
 
 	std::string const new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
