@@ -123,11 +123,11 @@ int main (int argc, char* argv[])
 	cmd.parse( argc, argv );
 
 	// read mesh
-	MeshLib::Mesh* dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
-	GeoLib::Raster* raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(
-		raster_arg.getValue()));
+	auto raster = std::unique_ptr<GeoLib::Raster>(
+		FileIO::AsciiRasterInterface::getRasterFromASCFile(raster_arg.getValue()));
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
@@ -159,8 +159,9 @@ int main (int argc, char* argv[])
 		INFO("Variance of source: %f.", var);
 	}
 
-	MeshLib::Mesh* src_mesh(MeshLib::ConvertRasterToMesh(*raster, MeshLib::MeshElemType::QUAD,
-					MeshLib::UseIntensityAs::DATAVECTOR).execute());
+	std::unique_ptr<MeshLib::Mesh> src_mesh(MeshLib::ConvertRasterToMesh(
+		*raster, MeshLib::MeshElemType::QUAD,
+		MeshLib::UseIntensityAs::DATAVECTOR).execute());
 
 	std::vector<std::size_t> src_perm(size);
 	std::iota(src_perm.begin(), src_perm.end(), 0);
@@ -201,10 +202,10 @@ int main (int argc, char* argv[])
 		(*materialIds)[src_mesh->getElement(src_perm[k])->getID()] = mat_map[k];
 
 	// do the interpolation
-	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh,
+	MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh.get(),
 	                                                           &compressed_src_properties);
 	std::vector<double> dest_properties(dest_mesh->getNElements());
-	mesh_interpolation.setPropertiesForMesh(const_cast<MeshLib::Mesh*>(dest_mesh),
+	mesh_interpolation.setPropertiesForMesh(dest_mesh.get(),
 	                                        dest_properties);
 
 	const std::size_t n_dest_mesh_elements(dest_mesh->getNElements());
@@ -243,10 +244,6 @@ int main (int argc, char* argv[])
 
 		FileIO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
 	}
-
-	delete raster;
-	delete src_mesh;
-	delete dest_mesh;
 
 	return 0;
 }
