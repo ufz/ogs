@@ -7,6 +7,7 @@
  */
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include "logog/include/logog.hpp"
