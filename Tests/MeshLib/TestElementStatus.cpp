@@ -53,14 +53,14 @@ TEST(MeshLib, ElementStatus)
 
 	{
 		// set material 1 to false
-		std::vector<unsigned> inactiveMat{1};
+		std::vector<int> inactiveMat{1};
 		MeshLib::ElementStatus status(mesh.get(), inactiveMat);
 		ASSERT_EQ (elements.size()-elements_per_side, status.getNActiveElements());
 	}
 
 	{
 		// set material 0 and 1 to false
-		std::vector<unsigned> inactiveMat{0, 1};
+		std::vector<int> inactiveMat{0, 1};
 		MeshLib::ElementStatus status(mesh.get(), inactiveMat);
 		ASSERT_EQ (elements.size()-(2*elements_per_side), status.getNActiveElements());
 

@@ -55,7 +55,8 @@ void applyKnownSolution(CRSMatrix<FP_TYPE, typename VEC_T::IndexType>*& mat,
 	// set row entries, except the diagonal entry, to zero
 	for (std::size_t r(0); r<rows.size(); ++r) {
 		auto const row = rows[r];
-		for (unsigned j(iA[row]); j<iA[row+1]; ++j) {
+		for (typename VEC_T::IndexType j = iA[row]; j < iA[row + 1]; ++j)
+		{
 			if (jA[j] == row) {
 				entries[j] = 1.0; // A(row,row) = 1.0
 				// rhs[row] = A(row,row) * vals[r]

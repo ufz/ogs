@@ -98,7 +98,9 @@ public:
 		delete [] _data;
 	}
 
-	virtual void amux(FP_TYPE d, FP_TYPE const * const __restrict__ x, FP_TYPE * __restrict__ y) const
+	virtual void amux(FP_TYPE const d,
+	                  FP_TYPE const* const __restrict__ x,
+	                  FP_TYPE* __restrict__ y) const
 	{
 		amuxCRS<FP_TYPE, IDX_TYPE>(d, this->getNRows(), _row_ptr, _col_idx, _data, x, y);
 	}

@@ -31,7 +31,7 @@ ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
 }
 
 ElementStatus::ElementStatus(Mesh const* const mesh,
-                             std::vector<unsigned> const& vec_inactive_matIDs)
+                             std::vector<int> const& vec_inactive_matIDs)
     : ElementStatus(mesh, !vec_inactive_matIDs.empty())
 {
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");

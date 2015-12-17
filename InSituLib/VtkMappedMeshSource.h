@@ -84,9 +84,9 @@ private:
 	/// \param properties MeshLib::Properties object
 	/// \param prop_name The name of the property vector to be mapped from
 	/// vtk-mesh to ogs-mesh
-	template<typename T> bool addProperty(vtkUnstructuredGrid &output,
-	                                      MeshLib::Properties const& properties,
-	                                      std::string const& prop_name) const
+	template <typename T>
+	bool addProperty(MeshLib::Properties const& properties,
+	                 std::string const& prop_name) const
 	{
 		boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(
 			properties.getPropertyVector<T>(prop_name));

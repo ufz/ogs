@@ -93,17 +93,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation *,
 
 	for(std::vector<std::string>::const_iterator name = propertyNames.cbegin(); name != propertyNames.cend(); ++name)
 	{
-		if (addProperty<double>(*output, properties, *name))
-			continue;
-
-		if (addProperty<int>(*output, properties, *name))
-			continue;
-
-		if (addProperty<unsigned>(*output, properties, *name))
-			continue;
-
-		if (addProperty<char>(*output, properties, *name))
-			continue;
+		if (addProperty<double>(properties, *name)) continue;
+		if (addProperty<int>(properties, *name)) continue;
+		if (addProperty<unsigned>(properties, *name)) continue;
+		if (addProperty<char>(properties, *name)) continue;
 
 		DBUG ("Mesh property \"%s\" with unknown data type.", *name->c_str());
 	}
