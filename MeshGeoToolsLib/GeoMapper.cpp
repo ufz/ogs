@@ -222,11 +222,12 @@ void GeoMapper::advancedMapOnMesh(
 		               sqrt( MathLib::sqrDist(aabb.getMinPoint(),aabb.getMaxPoint())) ;
 
 	// copy geometry (and set z=0 for all points)
-	unsigned nGeoPoints ( points->size() );
 	auto new_points = std::unique_ptr<std::vector<GeoLib::Point*>>(
 	    new std::vector<GeoLib::Point*>);
-	for (std::size_t i=0; i<nGeoPoints; ++i)
-		(*new_points)[i] = new GeoLib::Point((*(*points)[i])[0],(*(*points)[i])[1],0.0);
+	new_points->reserve(points->size());
+	std::transform(points->cbegin(), points->cend(), std::back_inserter(*new_points),
+		[](GeoLib::Point* p) { return new GeoLib::Point((*p)[0],(*p)[1],0.0); });
+
 	auto new_lines = copyPolylinesVector(
 	    *_geo_objects.getPolylineVec(this->_geo_name), *new_points);
 
