@@ -17,21 +17,19 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/Subdivision.h"
 #include "BaseLib/TCLAPCustomOutput.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-// FileIO
-#include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/writeMeshToFile.h"
 
 namespace
 {
@@ -63,10 +61,7 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Structured mesh generator.\n"
 			"OpenGeoSys-6 software.\n"
@@ -181,31 +176,38 @@ int main (int argc, char* argv[])
 		vec_dx[i] = length[i] / n_subdivision[i];
 	}
 
-	std::vector<BaseLib::ISubdivision*> vec_div;
+	std::vector<std::unique_ptr<BaseLib::ISubdivision>> vec_div;
+	vec_div.reserve(dim);
 	for (unsigned i=0; i<dim; i++)
 	{
-		if (vec_ndivArg[i]->isSet()) {
-			vec_div.push_back(new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
-		} else {
-			vec_div.push_back(new BaseLib::GradualSubdivision(length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(), vec_multiArg[i]->getValue()));
+		if (vec_ndivArg[i]->isSet())
+		{
+			vec_div.emplace_back(
+			    new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
+		}
+		else
+		{
+			vec_div.emplace_back(new BaseLib::GradualSubdivision(
+			    length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(),
+			    vec_multiArg[i]->getValue()));
 		}
 	}
 
 	// generate a mesh
-	MeshLib::Mesh* mesh = nullptr;
+	std::unique_ptr<MeshLib::Mesh> mesh;
 	switch (eleType)
 	{
 	case MeshLib::MeshElemType::LINE:
-		mesh = MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]);
+		mesh.reset(MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]));
 		break;
 	case MeshLib::MeshElemType::TRIANGLE:
-		mesh = MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]));
 		break;
 	case MeshLib::MeshElemType::QUAD:
-		mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]));
 		break;
 	case MeshLib::MeshElemType::HEXAHEDRON:
-		mesh = MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]);
+		mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
 		break;
 	default:
 		ERR("Given element type is not supported.");
@@ -217,19 +219,8 @@ int main (int argc, char* argv[])
 		INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 		// write into a file
-		FileIO::Legacy::MeshIO meshIO;
-		meshIO.setMesh(mesh);
-		meshIO.writeToFile(mesh_out.getValue());
-
-		delete mesh;
+		FileIO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
 	}
-
-	for (auto p : vec_div)
-		delete p;
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }

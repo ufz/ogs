@@ -12,28 +12,26 @@
  *
  */
 
+#include <memory>
+
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
 #include "tclap/CmdLine.h"
-#include "LogogSimpleFormatter.h"
-#include "FileTools.h"
 
-// FileIO
-#include "readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
+#include "BaseLib/FileTools.h"
+
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
 	        "Creates a new file for material properties and sets the material ids in the msh-file to 0",
@@ -51,43 +49,48 @@ int main (int argc, char* argv[])
 	cmd.parse( argc, argv );
 
 	// read mesh
-	MeshLib::Mesh* mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	if (!mesh) {
+		INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
+		return EXIT_FAILURE;
+	}
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 	if (!materialIds)
 	{
 		ERR("Mesh contains no int-property vector named \"MaterialIds\".");
-		return -1;
+		return EXIT_FAILURE;
 	}
 
-	std::vector<MeshLib::Element*> &elems = *(const_cast<std::vector<MeshLib::Element*>*>(&(mesh->getElements())));
-	std::size_t nElems(elems.size());
-
-	std::string name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
+	std::size_t const n_properties(materialIds->size());
+	if (n_properties != mesh->getNElements()) {
+		ERR("Size mismatch: number of elements (%u) != number of material "
+			"properties (%u).", mesh->getNElements(), n_properties);
+		return EXIT_FAILURE;
+	}
+	std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
 	// create file
-	std::string new_matname(name + "_prop");
+	std::string const new_matname(name + "_prop");
 	std::ofstream out_prop( new_matname.c_str(), std::ios::out );
 	if (out_prop.is_open())
 	{
-		for (std::size_t i=0; i<nElems; i++)
+		for (std::size_t i=0; i<n_properties; ++i)
 			out_prop << i << "\t" << (*materialIds)[i] << "\n";
 		out_prop.close();
 	}
 	else
 	{
 		ERR("Could not create property \"%s\" file.", new_matname.c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 
-	// set mat ids to 0 and write new msh file
-	std::fill(materialIds->begin(), materialIds->end(), 0);
+	mesh->getProperties().removePropertyVector("MaterialIDs");
 
-	std::string new_mshname(name + "_new.vtu");
+	std::string const new_mshname(name + "_new.vtu");
 	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	FileIO::VtuInterface mesh_io(mesh);
-	mesh_io.writeToFile (new_mshname);
+	FileIO::writeMeshToFile(*mesh, new_mshname);
 
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 	std::cout << "Conversion finished." << std::endl;
 
-	return 1;
+	return EXIT_SUCCESS;
 }

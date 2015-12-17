@@ -7,14 +7,16 @@
  */
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include "logog/include/logog.hpp"
 #include "tclap/CmdLine.h"
 
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/StringTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/Node.h"
@@ -25,10 +27,7 @@
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Query mesh information", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
@@ -43,9 +42,10 @@ int main(int argc, char *argv[])
 	const std::string filename(mesh_arg.getValue());
 
 	// read the mesh file
-	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename);
+	auto const mesh = std::unique_ptr<MeshLib::Mesh>(
+		FileIO::readMeshFromFile(filename));
 	if (!mesh)
-		return 1;
+		return EXIT_FAILURE;
 
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 
@@ -84,9 +84,4 @@ int main(int argc, char *argv[])
 			std::cout << node->getElement(i)->getID() << " ";
 		std::cout << std::endl;
 	}
-
-	delete mesh;
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 }
