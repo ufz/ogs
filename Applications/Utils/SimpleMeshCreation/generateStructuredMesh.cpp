@@ -176,13 +176,20 @@ int main (int argc, char* argv[])
 		vec_dx[i] = length[i] / n_subdivision[i];
 	}
 
-	std::vector<BaseLib::ISubdivision*> vec_div;
+	std::vector<std::unique_ptr<BaseLib::ISubdivision>> vec_div;
+	vec_div.reserve(dim);
 	for (unsigned i=0; i<dim; i++)
 	{
-		if (vec_ndivArg[i]->isSet()) {
-			vec_div.push_back(new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
-		} else {
-			vec_div.push_back(new BaseLib::GradualSubdivision(length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(), vec_multiArg[i]->getValue()));
+		if (vec_ndivArg[i]->isSet())
+		{
+			vec_div.emplace_back(
+			    new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
+		}
+		else
+		{
+			vec_div.emplace_back(new BaseLib::GradualSubdivision(
+			    length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(),
+			    vec_multiArg[i]->getValue()));
 		}
 	}
 
@@ -214,9 +221,6 @@ int main (int argc, char* argv[])
 		// write into a file
 		FileIO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
 	}
-
-	for (auto p : vec_div)
-		delete p;
 
 	return 0;
 }
