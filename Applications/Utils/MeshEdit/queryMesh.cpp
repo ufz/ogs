@@ -41,7 +41,8 @@ int main(int argc, char *argv[])
 	const std::string filename(mesh_arg.getValue());
 
 	// read the mesh file
-	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename);
+	auto const mesh = std::unique_ptr<MeshLib::Mesh>(
+		FileIO::readMeshFromFile(filename));
 	if (!mesh)
 		return EXIT_FAILURE;
 
@@ -82,6 +83,4 @@ int main(int argc, char *argv[])
 			std::cout << node->getElement(i)->getID() << " ";
 		std::cout << std::endl;
 	}
-
-	delete mesh;
 }
