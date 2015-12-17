@@ -17,20 +17,18 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-// BaseLib
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/Subdivision.h"
 #include "BaseLib/TCLAPCustomOutput.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-// FileIO
 #include "FileIO/writeMeshToFile.h"
 
 namespace
@@ -63,10 +61,7 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Structured mesh generator.\n"
 			"OpenGeoSys-6 software.\n"
@@ -222,10 +217,6 @@ int main (int argc, char* argv[])
 
 	for (auto p : vec_div)
 		delete p;
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }
