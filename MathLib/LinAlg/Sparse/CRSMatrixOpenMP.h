@@ -39,8 +39,8 @@ public:
 
 	virtual ~CRSMatrixOpenMP()
 	{}
-
-	virtual void amux(FP_TYPE const d, FP_TYPE const * const x, FP_TYPE *y) const
+	virtual void amux(FP_TYPE const d, FP_TYPE const* const __restrict__ x,
+	                  FP_TYPE* __restrict__ y) const
 	{
 		amuxCRSParallelOpenMP(d, this->_n_rows, this->_row_ptr, this->_col_idx, this->_data, x, y);
 	}

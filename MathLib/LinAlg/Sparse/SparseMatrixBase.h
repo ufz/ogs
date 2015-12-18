@@ -18,7 +18,8 @@ public:
 	 * @param x vector to multiply with
 	 * @param y result vector
 	 */
-	virtual void amux(FP_TYPE d, FP_TYPE const * const __restrict__ x, FP_TYPE * __restrict__ y) const = 0;
+	virtual void amux(FP_TYPE const d, FP_TYPE const* const __restrict__ x,
+	                  FP_TYPE* __restrict__ y) const = 0;
 	virtual ~SparseMatrixBase() {}
 	/**
 	 * get the number of rows
