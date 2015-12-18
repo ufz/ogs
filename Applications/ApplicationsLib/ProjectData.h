@@ -167,7 +167,7 @@ private:
 	/// Parses the process variables configuration and creates new variables for
 	/// each variable entry passing the corresponding subtree to the process
 	/// variable constructor.
-	void parseProcessVariables(BaseLib::ConfigTree const& process_variables_config);
+	void parseProcessVariables(BaseLib::ConfigTreeNew& process_variables_config);
 
 	/// Parses the parameters configuration and saves them in a list.
 	/// Checks if a parameter has name tag.

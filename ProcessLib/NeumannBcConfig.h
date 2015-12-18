@@ -12,7 +12,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "MathLib/ConstantFunction.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshLib/Elements/Element.h"
@@ -44,12 +44,13 @@ class NeumannBcConfig : public BoundaryConditionConfig
 {
 public:
     NeumannBcConfig(GeoLib::GeoObject const* const geometry,
-            BaseLib::ConfigTree const& config)
+            BaseLib::ConfigTreeNew& config)
         : BoundaryConditionConfig(geometry)
     {
         DBUG("Constructing NeumannBcConfig from config.");
+        config.checkConfParam("type", "UniformNeumann");
 
-        double const value = config.get<double>("value", 0);
+        double const value = config.getConfParam<double>("value");
         DBUG("Using value %g", value);
 
         _function = new MathLib::ConstantFunction<double>(value);

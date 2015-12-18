@@ -28,6 +28,8 @@
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
+#include "BaseLib/ConfigTreeNew.h"
+
 namespace detail
 {
 static
@@ -61,7 +63,9 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	_mesh_vec.push_back(mesh);
 
 	// process variables
-	parseProcessVariables(project_config.get_child("process_variables"));
+
+	BaseLib::ConfigTreeNew var_conf(project_config.get_child("process_variables"));
+	parseProcessVariables(var_conf);
 
 	// parameters
 	parseParameters(project_config.get_child("parameters"));
@@ -174,7 +178,7 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
 }
 
 void ProjectData::parseProcessVariables(
-	BaseLib::ConfigTree const& process_variables_config)
+	BaseLib::ConfigTreeNew& process_variables_config)
 {
 	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
@@ -191,12 +195,12 @@ void ProjectData::parseProcessVariables(
 		return;
 	}
 
-	_process_variables.reserve(process_variables_config.size());
+	// _process_variables.reserve(process_variables_config.size());
 
-	for (auto it : process_variables_config) {
-		BaseLib::ConfigTree const& var_config = it.second;
+	for (auto var_config
+		 : process_variables_config.getConfSubtreeList("process_variable")) {
 		// TODO Extend to referenced meshes.
-		_process_variables.emplace_back(var_config,*_mesh_vec[0],*_geoObjects);
+		_process_variables.emplace_back(var_config, *_mesh_vec[0], *_geoObjects);
 	}
 }
 
