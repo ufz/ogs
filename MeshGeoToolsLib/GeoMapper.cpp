@@ -266,8 +266,8 @@ void GeoMapper::advancedMapOnMesh(
 	std::transform(points->cbegin(), points->cend(), std::back_inserter(*new_points),
 		[](GeoLib::Point* p) { return new GeoLib::Point((*p)[0],(*p)[1],0.0); });
 
-	auto new_lines = copyPolylinesVector(
-	    *_geo_objects.getPolylineVec(this->_geo_name), *new_points);
+	auto new_lines = copyPolylinesVector(*_geo_objects.getPolylineVec(_geo_name),
+	                                     *new_points);
 
 	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
 	double max_segment_length(getMaxSegmentLength(*new_lines));
@@ -359,11 +359,11 @@ void GeoMapper::advancedMapOnMesh(
 		}
 	}
 
-	this->_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
+	_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
 	std::vector<std::size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
 	for (auto & new_line : *new_lines)
 		new_line->updatePointIDs(pnt_id_map);
-	_geo_objects.addPolylineVec(new_lines, new_geo_name);
+	_geo_objects.addPolylineVec(std::move(new_lines), new_geo_name);
 
 	// map new geometry incl. additional point using the normal mapping method
 	this->_geo_name = new_geo_name;
