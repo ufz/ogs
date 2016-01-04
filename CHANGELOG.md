@@ -3,8 +3,15 @@
  - Parallel computing framework for FEM by using PETSc, which also includes
    - Parallel input of partitioned mesh data.
    - Parallel output of solutions by using pvtu data format.
- - New data structures for mesh properties are used everywhere.
- - The penalty method to impose first-type boundary conditions was substituted.
+ - New data structures for mesh properties are used everywhere replacing
+   Element's value member.
+ - The penalty method to impose first-type boundary conditions was substituted
+   with a non-penalty method for LIS and Eigen linear solvers.
+ - Support for multiple nodal variables is extended to the boundary conditions,
+   the sparsity pattern.
+ - Passing of linear solver options from the project files is now possible.
+ - The global matrix and global vector type of indices is consistent with the
+   linear solver library being used.
 
 ### Infrastructure
 
@@ -13,11 +20,17 @@
 - Added CMake options for enabling Clang sanitizer:
   - `OGS_ADDRESS_SANITIZER`
   - `OGS_UNDEFINED_BEHAVIOR_SANITIZER`
+- The zlib library is removed from ThirdParty directory.
+- A LIS solver interface using Eigen's sparse matrices is now available through
+  CMake option `OGS_USE_EIGENLIS`.
 
 ### Documentation
 
 - Added [offline viewable Doxygen documentation](http://docs.opengeosys.org/docs/devguide/documentation/offline-documentation-viewer)
 
+### Fixes
+ - Fix all ogs-internal warnings on all OS.
+ - Move eigen solver compute call to solve(); different fix for 0237275
 
 # 6.0.3
 
