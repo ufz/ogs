@@ -8,13 +8,13 @@ set(CMAKE_OSX_ARCHITECTURES "x86_64")
 # Set compiler helper variables
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-    set(COMPILER_IS_CLANG TRUE)
+    set(COMPILER_IS_CLANG TRUE CACHE BOOL "" INTERNAL)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set(COMPILER_IS_GCC TRUE)
+    set(COMPILER_IS_GCC TRUE CACHE BOOL "" INTERNAL)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-    set(COMPILER_IS_INTEL TRUE)
+    set(COMPILER_IS_INTEL TRUE CACHE BOOL "" INTERNAL)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
-    set(COMPILER_IS_MSVC TRUE)
+    set(COMPILER_IS_MSVC TRUE CACHE BOOL "" INTERNAL)
 endif() # CMAKE_CXX_COMPILER_ID
 
 # Better Clang warning suppression, see http://www.openwalnut.org/issues/230
@@ -63,11 +63,6 @@ if(COMPILER_IS_CLANG)
 	endif()
 
 	include(ClangSanitizer)
-
-	if(CCACHE_FOUND AND APPLE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
-	endif()
-
 endif() # COMPILER_IS_CLANG
 
 ### Intel compiler
