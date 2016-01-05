@@ -44,5 +44,3 @@ if(NOT Boost_INCLUDE_DIRS)
 	# On Visual Studio Boost libs get automatically linked
 	message(STATUS "Downloading Boost automatically.")
 endif()
-
-link_directories( ${source_dir}/stage/lib/ )

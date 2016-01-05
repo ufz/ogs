@@ -5,7 +5,6 @@ TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
 	FileIO
 	GeoLib
 	MathLib
-	${Boost_LIBRARIES}
 	${OGS_VTK_REQUIRED_LIBS}
 )
 

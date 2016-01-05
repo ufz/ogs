@@ -9,7 +9,6 @@ set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(BaseLib INTERFACE
 	logog
-	${Boost_LIBRARIES}
 )
 
 if(MSVC)
