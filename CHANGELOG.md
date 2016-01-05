@@ -1,7 +1,10 @@
 ## Release notes
-# 6.0.5
+# 6.0.5 (in preparation)
 
 ### Features:
+ - Axis aligned bounding box:
+   - Is now a from the right half-open interval.
+   - Removed template from class declaration.
 
 ### Infrastructure
 
@@ -10,7 +13,6 @@
 
 
 ### Fixes
-
 
 # 6.0.4
 
