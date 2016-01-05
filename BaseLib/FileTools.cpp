@@ -16,7 +16,6 @@
 #include "StringTools.h"
 
 #include <sys/stat.h>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace BaseLib
@@ -26,10 +25,8 @@ namespace BaseLib
  */
 bool IsFileExisting(const std::string &strFilename)
 {
-	if(boost::filesystem::exists(strFilename))
-		return true;
-	else
-		return false;
+	struct stat buffer;
+	return (stat (strFilename.c_str(), &buffer) == 0);
 }
 
 double swapEndianness(double const& v)
