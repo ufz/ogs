@@ -23,6 +23,7 @@
 - The zlib library is removed from ThirdParty directory.
 - A LIS solver interface using Eigen's sparse matrices is now available through
   CMake option `OGS_USE_EIGENLIS`.
+- CMake configuration uses [ccache](https://ccache.samba.org/) if available.
 
 ### Documentation
 
