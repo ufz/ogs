@@ -1,4 +1,19 @@
+## Release notes
+# 6.0.5
+
+### Features:
+
+### Infrastructure
+
+
+### Documentation
+
+
+### Fixes
+
+
 # 6.0.4
+
 ### Features:
  - Parallel computing framework for FEM by using PETSc, which also includes
    - Parallel input of partitioned mesh data.
