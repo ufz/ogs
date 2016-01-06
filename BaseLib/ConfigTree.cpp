@@ -22,15 +22,15 @@ template class boost::property_tree::basic_ptree<std::string, std::string,
 namespace BaseLib
 {
 
-ConfigTree read_xml_config(boost::filesystem::path const& path)
+ConfigTree read_xml_config(std::string const& path)
 {
 	ConfigTree ptree;
-	read_xml(path.string(), ptree,
+	read_xml(path, ptree,
 	         boost::property_tree::xml_parser::no_comments |
 	             boost::property_tree::xml_parser::trim_whitespace);
 
 	DBUG("Project configuration from file \'%s\' read.",
-	     path.string().c_str());
+	     path.c_str());
 
 	return ptree;
 }

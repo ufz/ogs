@@ -12,16 +12,12 @@
  *
  */
 
-#include <boost/filesystem.hpp>
+#include <cstdio>
 
 #include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-
-// FileIO
 #include "FileIO/CsvInterface.h"
-
-// GeoLib
 #include "GeoLib/Point.h"
 
 class CsvInterfaceTest : public ::testing::Test
@@ -47,7 +43,7 @@ public:
 
 	~CsvInterfaceTest()
 	{
-		boost::filesystem::remove(_file_name);
+		std::remove(_file_name.c_str());
 	}
 
 protected:

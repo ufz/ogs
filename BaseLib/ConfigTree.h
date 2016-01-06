@@ -12,7 +12,6 @@
 
 #include <string>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/filesystem.hpp>
 
 extern template class boost::property_tree::basic_ptree<
     std::string, std::string, std::less<std::string>>;
@@ -21,8 +20,7 @@ namespace BaseLib
 {
 using ConfigTree = boost::property_tree::ptree;
 
-boost::property_tree::ptree read_xml_config(
-    boost::filesystem::path const& path);
+boost::property_tree::ptree read_xml_config(std::string const& path);
 
 /// Returns the JSON-representation of the given boost::property_tree.
 std::string propertyTreeToString(boost::property_tree::ptree const& tree);

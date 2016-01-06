@@ -12,7 +12,7 @@
  *
  */
 
-#include <boost/filesystem.hpp>
+#include <cstdio>
 
 #include "gtest/gtest.h"
 
@@ -209,7 +209,7 @@ TEST_F(FileIOXmlGml, QtXmlGmlWriterReaderTest)
 {
 	// Writer test
 	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
-		+ boost::filesystem::unique_path().string() + ".gml");
+		+ "TestXmlGmlReader.gml");
 
 	FileIO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
@@ -225,9 +225,9 @@ TEST_F(FileIOXmlGml, QtXmlGmlWriterReaderTest)
 	result = xml.readFile(QString::fromStdString(test_data_file));
 	EXPECT_EQ(1, result);
 
-	boost::filesystem::remove(test_data_file);
+	std::remove(test_data_file.c_str());
 	test_data_file += ".md5";
-	boost::filesystem::remove(test_data_file);
+	std::remove(test_data_file.c_str());
 
 	checkPointProperties();
 	checkPolylineProperties();
@@ -238,7 +238,7 @@ TEST_F(FileIOXmlGml, BoostXmlGmlWriterReaderTest)
 {
 	// Writer test
 	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
-		+ boost::filesystem::unique_path().string() + ".gml");
+		+ "TestXmlGmlReader.gml");
 
 	FileIO::BoostXmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
@@ -254,9 +254,9 @@ TEST_F(FileIOXmlGml, BoostXmlGmlWriterReaderTest)
 	result = xml.readFile(test_data_file);
 	EXPECT_EQ(1, result);
 
-	boost::filesystem::remove(test_data_file);
+	std::remove(test_data_file.c_str());
 	test_data_file += ".md5";
-	boost::filesystem::remove(test_data_file);
+	std::remove(test_data_file.c_str());
 
 	checkPointProperties();
 	checkPolylineProperties();

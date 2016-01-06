@@ -11,17 +11,12 @@
  */
 
 #include <fstream>
-
-#include <boost/filesystem.hpp>
+#include <cstdio>
 
 #include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-
-// FileIO
 #include "FileIO/Legacy/OGSIOVer4.h"
-
-// GeoLib
 #include "GeoLib/GEOObjects.h"
 
 class OGSIOVer4InterfaceTest : public ::testing::Test
@@ -44,7 +39,7 @@ public:
 
 	~OGSIOVer4InterfaceTest()
 	{
-		boost::filesystem::remove(_gli_fname);
+		std::remove(_gli_fname.c_str());
 	}
 
 protected:
@@ -71,7 +66,7 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
 	ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
 	ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
@@ -94,7 +89,7 @@ TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
 	ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
 	ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
@@ -114,7 +109,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
 		sfcs(geometries.getSurfaceVec(geometry_name));
 	ASSERT_TRUE(sfcs == nullptr);
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 
@@ -137,7 +132,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
 		sfcs(geometries.getSurfaceVec(geometry_name));
 	ASSERT_TRUE(sfcs == nullptr);
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 
@@ -159,7 +154,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
 		sfcs(geometries.getSurfaceVec(geometry_name));
 	ASSERT_TRUE(sfcs == nullptr);
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
@@ -180,7 +175,7 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
 		sfcs(geometries.getSurfaceVec(geometry_name));
 	ASSERT_TRUE(sfcs == nullptr);
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
@@ -203,6 +198,6 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
 	ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
 	ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
 
-	boost::filesystem::remove(tin_fname);
+	std::remove(tin_fname.c_str());
 }
 

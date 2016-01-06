@@ -137,7 +137,6 @@ endif()
 ######################
 
 # External projects
-option(Boost_USE_STATIC_LIBS "This option has to be set from the command line (before boost gets found)!" OFF)
 include(scripts/cmake/ExternalProjectBoost.cmake)
 include(VtkModules)
 if(OGS_INSITU)
