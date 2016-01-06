@@ -71,7 +71,6 @@ int main (int argc, char* argv[])
         geo_name = geo_names[0];
     }
 
-    std::string new_geo_name(geo_name);
     MeshGeoToolsLib::GeoMapper geo_mapper(geometries, geo_name);
 
     // *** read mesh
@@ -79,15 +78,14 @@ int main (int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 
     if (additional_insert_mapping.getValue()) {
-        new_geo_name += "-Mapped";
-        geo_mapper.advancedMapOnMesh(mesh.get(), new_geo_name);
+        geo_mapper.advancedMapOnMesh(*mesh.get());
     } else {
         geo_mapper.mapOnMesh(mesh.get());
     }
 
     {
         GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
-        xml_io.setNameForExport(new_geo_name);
+        xml_io.setNameForExport(geo_name);
         xml_io.writeToFile(output_geometry_fname.getValue());
     }
     return EXIT_SUCCESS;
