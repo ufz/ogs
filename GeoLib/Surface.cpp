@@ -58,7 +58,7 @@ void Surface::addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_
 		ids[0] = pnt_a;
 		ids[1] = pnt_b;
 		ids[2] = pnt_c;
-		_bounding_volume = new AABB<Point>(_sfc_pnts, ids);
+		_bounding_volume = new AABB(_sfc_pnts, ids);
 		if (_surface_grid == nullptr) {
 			_surface_grid = new SurfaceGrid(this);
 		}

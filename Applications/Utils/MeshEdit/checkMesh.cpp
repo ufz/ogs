@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	INFO ("Time for reading: %g s", run_time.elapsed());
 
 	// Geometric information
-	const GeoLib::AABB<MeshLib::Node> aabb(MeshLib::MeshInformation::getBoundingBox(*mesh));
+	const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(*mesh));
 	auto minPt(aabb.getMinPoint());
 	auto maxPt(aabb.getMaxPoint());
 	INFO("Node coordinates:");

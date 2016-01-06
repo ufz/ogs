@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
 		&& fabs(y_arg.getValue()) < std::numeric_limits<double>::epsilon()
 		&& fabs(z_arg.getValue()) < std::numeric_limits<double>::epsilon()) {
-		GeoLib::AABB<MeshLib::Node> aabb(mesh->getNodes().begin(), mesh->getNodes().end());
+		GeoLib::AABB aabb(mesh->getNodes().begin(), mesh->getNodes().end());
 		displacement[0] = -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0])/2.0;
 		displacement[1] = -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1])/2.0;
 		displacement[2] = -(aabb.getMaxPoint()[2] + aabb.getMinPoint()[2])/2.0;

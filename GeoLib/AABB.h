@@ -15,49 +15,62 @@
 #ifndef AABB_H_
 #define AABB_H_
 
-#include <limits>
+#include <bitset>
+#include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <iterator>
-#include <cassert>
+#include <limits>
+#include <tuple>
 #include <vector>
 
 #include <logog/include/logog.hpp>
 
 #include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
-#include "Point.h"
 
 namespace GeoLib
 {
 /**
- *
- * \ingroup GeoLib
- *
  * \brief Class AABB is an axis aligned bounding box around a given
  * set of geometric points of (template) type PNT_TYPE.
- * */
-template <typename PNT_TYPE = GeoLib::Point>
+ *
+ * Let \f$P = \{p_k \in \mathbb{R}^3, \ k=1, \dotsc, n\}\f$ a set of 3d points.
+ * The bounding volume is described by its lower, left, front point \f$\ell\f$
+ * and the upper, right, back point \f$u\f$, i.e. the coordinates of \f$\ell\f$
+ * and \f$u\f$ are computed as follows \f$\ell_i = \min \limits_{p \in P}
+ * p_i\f$, \f$u_i = \max \limits_{p \in P} p_i\f$, respectively. The bounding
+ * box consists of half-open intervals \f$[\ell_x, u_x) \times [\ell_y, u_y)
+ * \times [\ell_z, u_z).\f$ The bounding box is enlarged up to the next
+ * available floating point number such that all input points are contained in
+ * the bounding box.
+ *
+ */
 class AABB
 {
 public:
 	/**
 	 * construction of object, initialization the axis aligned bounding box
+	 * @tparam PNT_TYPE a point type supporting accessing the coordinates via
+	 * operator[]
 	 * */
+	template <typename PNT_TYPE>
 	AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids)
 	{
 		assert(! ids.empty());
 		init(pnts[ids[0]]);
 		for (std::size_t i=1; i<ids.size(); ++i) {
-			update(*(pnts[ids[i]]));
+			updateWithoutEnlarge(*(pnts[ids[i]]));
 		}
+		enlarge();
 	}
 
 	/**
 	 * copy constructor.
 	 * @param src an axis aligned bounding box
-	 */
-	AABB(AABB<PNT_TYPE> const& src) :
+	 * */
+	AABB(AABB const& src) :
 		_min_pnt(src._min_pnt), _max_pnt(src._max_pnt)
 	{}
 
@@ -81,25 +94,42 @@ public:
 		init(*first);
 		InputIterator it(first);
 		while (it != last) {
-			update(*it);
+			updateWithoutEnlarge(*it);
 			it++;
 		}
+		enlarge();
 	}
 
-	bool update(PNT_TYPE const & pnt)
+	/// Checks if the bounding box has to be updated.
+	/// @return true if AABB is updated.
+	template <typename PNT_TYPE>
+	bool update(PNT_TYPE const & p)
 	{
-		bool updated(false);
+		// First component of the pair signals if the minimum point is changed
+		// Second component signals not only if the max point is changed.
+		// Furthermore it is signaled what coordinate (0,1,2) is changed.
+		std::pair<bool,std::bitset<3>> updated(0,0);
 		for (std::size_t k(0); k<3; k++) {
-			if (pnt[k] < _min_pnt[k]) {
-				_min_pnt[k] = pnt[k];
-				updated = true;
+			// if the minimum point is updated pair.first==true
+			if (p[k] < _min_pnt[k]) {
+				_min_pnt[k] = p[k];
+				updated.first = true;
 			}
-			if (_max_pnt[k] < pnt[k]) {
-				_max_pnt[k] = pnt[k];
-				updated = true;
+			// if the kth coordinate of the maximum point is updated
+			// pair.second[k]==true
+			if (p[k] >= _max_pnt[k]) {
+				_max_pnt[k] = p[k];
+				updated.second[k] = true;
 			}
 		}
-		return updated;
+
+		if (updated.second.any()) {
+			enlarge(updated.second);
+			return true;
+		} else if (updated.first) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -108,9 +138,9 @@ public:
 	template <typename T>
 	bool containsPoint(T const & pnt) const
 	{
-		if (pnt[0] < _min_pnt[0] || _max_pnt[0] < pnt[0]) return false;
-		if (pnt[1] < _min_pnt[1] || _max_pnt[1] < pnt[1]) return false;
-		if (pnt[2] < _min_pnt[2] || _max_pnt[2] < pnt[2]) return false;
+		if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0]) return false;
+		if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1]) return false;
+		if (pnt[2] < _min_pnt[2] || _max_pnt[2] <= pnt[2]) return false;
 		return true;
 	}
 
@@ -135,7 +165,7 @@ public:
 	 * @return true if the other AABB is contained in the AABB
 	 * represented by this object
 	 */
-	bool containsAABB(AABB<PNT_TYPE> const& other_aabb) const
+	bool containsAABB(AABB const& other_aabb) const
 	{
 		return containsPoint(other_aabb.getMinPoint()) && containsPoint(other_aabb.getMaxPoint());
 	}
@@ -150,19 +180,61 @@ protected:
 		std::numeric_limits<double>::lowest(),
 		std::numeric_limits<double>::lowest()}}};
 private:
+	/// Enlarge the bounding box the smallest possible amount (modifying the
+	/// unit in the last place). Only the coordinates of the maximum point are
+	/// changed such that the half-open property will be preserved.
+	void enlarge(std::bitset<3> to_update = 7)
+	{
+		for (std::size_t k=0; k<3; ++k) {
+			if (to_update[k]) {
+				_max_pnt[k] = std::nextafter(_max_pnt[k],
+					std::numeric_limits<double>::max());
+			}
+		}
+	}
+
+	template <typename PNT_TYPE>
 	void init(PNT_TYPE const & pnt)
 	{
 		_min_pnt[0] = _max_pnt[0] = pnt[0];
 		_min_pnt[1] = _max_pnt[1] = pnt[1];
 		_min_pnt[2] = _max_pnt[2] = pnt[2];
 	}
-	void init(PNT_TYPE const * pnt)
+
+	template <typename PNT_TYPE>
+	void init(PNT_TYPE * const & pnt)
 	{
 		init(*pnt);
 	}
+
+	/// Private method that is used internally to update the min and max point
+	/// of the bounding box using point \f$p\f$ without enlarging the bounding
+	/// box. Using this method the bounding box of the initial point set is
+	/// enlarged only once.
+	/// @param p point that will possibly change the bounding box points
+	template <typename PNT_TYPE>
+	void  updateWithoutEnlarge(PNT_TYPE const & p)
+	{
+		for (std::size_t k(0); k<3; k++) {
+			if (p[k] < _min_pnt[k]) {
+				_min_pnt[k] = p[k];
+			}
+			if (p[k] >= _max_pnt[k]) {
+				_max_pnt[k] = p[k];
+			}
+		}
+	}
+
+	template <typename PNT_TYPE>
+	void updateWithoutEnlarge(PNT_TYPE * const & pnt)
+	{
+		updateWithoutEnlarge(*pnt);
+	}
+
+	template <typename PNT_TYPE>
 	void update(PNT_TYPE const * pnt)
 	{
-		update (*pnt);
+		update(*pnt);
 	}
 };
 } // end namespace

@@ -32,7 +32,7 @@
 namespace GeoLib
 {
 template <typename POINT>
-class Grid : public GeoLib::AABB<POINT>
+class Grid : public GeoLib::AABB
 {
 public:
 	/**
@@ -179,7 +179,7 @@ template <typename POINT>
 template <typename InputIterator>
 Grid<POINT>::Grid(InputIterator first, InputIterator last,
 	std::size_t max_num_per_grid_cell)
-	: GeoLib::AABB<POINT>(first, last), _n_steps({{1,1,1}}),
+	: GeoLib::AABB(first, last), _n_steps({{1,1,1}}),
 		_step_sizes({{0.0,0.0,0.0}}), _inverse_step_sizes({{0.0,0.0,0.0}}),
 		_grid_cell_nodes_map(nullptr)
 {

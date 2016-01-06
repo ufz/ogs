@@ -138,7 +138,7 @@ private:
 	void splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_it);
 	void splitPolygonAtPoint (std::list<Polygon*>::iterator polygon_it);
 	std::list<Polygon*> _simple_polygon_list;
-	AABB<GeoLib::Point> _aabb;
+	AABB _aabb;
 };
 
 /**

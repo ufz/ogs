@@ -47,8 +47,7 @@ public:
     explicit CoordinateSystem(const Element &ele);
 
     /// Decides a coordinate system from a bounding box
-    template <class T>
-    explicit CoordinateSystem(const GeoLib::AABB<T> &bbox) : _type(getCoordinateSystem(bbox)) {}
+    explicit CoordinateSystem(const GeoLib::AABB &bbox) : _type(getCoordinateSystem(bbox)) {}
 
     /// get this coordinate type
     unsigned char getType() const { return _type; }
@@ -73,28 +72,10 @@ public:
     bool hasZ() const { return (_type & CoordinateSystemType::type::Z) != 0; }
 
 private:
-    template <class T>
-    unsigned char getCoordinateSystem(const GeoLib::AABB<T> &bbox) const;
+    unsigned char getCoordinateSystem(const GeoLib::AABB &bbox) const;
 
     unsigned char _type;
 };
-
-template <class T>
-unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB<T> &bbox) const
-{
-    unsigned char coords = 0;
-
-    const MathLib::Vector3 pt_diff(bbox.getMinPoint(), bbox.getMaxPoint());
-
-    if (std::abs(pt_diff[0]) > .0)
-        coords |= CoordinateSystemType::X;
-    if (std::abs(pt_diff[1]) > .0)
-        coords |= CoordinateSystemType::Y;
-    if (std::abs(pt_diff[2]) > .0)
-        coords |= CoordinateSystemType::Z;
-
-    return coords;
-}
 
 } // MeshLib
 

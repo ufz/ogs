@@ -74,7 +74,7 @@ std::size_t ElementSearch::searchByContent(double eps)
 }
 
 std::size_t ElementSearch::searchByBoundingBox(
-	GeoLib::AABB<MathLib::Point3d> const& aabb)
+	GeoLib::AABB const& aabb)
 {
 	auto matchedIDs = filter(_mesh.getElements(),
 		[&aabb](MeshLib::Element* e) {

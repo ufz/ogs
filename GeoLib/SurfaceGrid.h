@@ -27,7 +27,7 @@ namespace GeoLib {
 class Triangle;
 class Surface;
 
-class SurfaceGrid : public AABB<GeoLib::Point> {
+class SurfaceGrid : public AABB {
 public:
 	explicit SurfaceGrid(GeoLib::Surface const*const sfc);
 	bool isPointInSurface(MathLib::Point3d const & pnt,

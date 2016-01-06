@@ -87,7 +87,7 @@ public:
 	 * method allows access to the internal axis aligned bounding box
 	 * @return axis aligned bounding box
 	 */
-	AABB<GeoLib::Point> const& getAABB () const { return *_bounding_volume; }
+	AABB const& getAABB () const { return *_bounding_volume; }
 
 protected:
 	/** a vector of pointers to Points */
@@ -95,7 +95,7 @@ protected:
 	/** position of pointers to the geometric points */
 	std::vector<Triangle*> _sfc_triangles;
 	/** bounding volume is an axis aligned bounding box */
-	AABB<GeoLib::Point> *_bounding_volume;
+	AABB *_bounding_volume;
 	/** a helper structure to accelerate the search */
 	SurfaceGrid * _surface_grid;
 };

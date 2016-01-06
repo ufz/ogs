@@ -140,7 +140,7 @@ int main (int argc, char* argv[])
 		double offset (0.0); // additional offset for elevation (should be 0)
 		MeshLib::Mesh* ground_truth (FileIO::readMeshFromFile(value));
 		const std::vector<MeshLib::Node*> ground_truth_nodes (ground_truth->getNodes());
-		GeoLib::AABB<MeshLib::Node> bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
+		GeoLib::AABB bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
 		MathLib::Point3d const& min(bounding_box.getMinPoint());
 		MathLib::Point3d const& max(bounding_box.getMaxPoint());
 

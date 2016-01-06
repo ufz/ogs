@@ -144,7 +144,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* aabb_item = new TreeItem(bounding_box, _rootItem);
 	_rootItem->appendChild(aabb_item);
 
-	const GeoLib::AABB<MeshLib::Node> aabb (MeshLib::MeshInformation::getBoundingBox(*mesh));
+	const GeoLib::AABB aabb (MeshLib::MeshInformation::getBoundingBox(*mesh));
 	auto const& min = aabb.getMinPoint();
 	auto const& max = aabb.getMaxPoint();
 

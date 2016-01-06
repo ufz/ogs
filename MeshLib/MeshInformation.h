@@ -33,7 +33,7 @@ public:
 	static const std::pair<int, int> getValueBounds(const MeshLib::Mesh &mesh);
 
 	/// Returns the bounding box of the mesh.
-	static const GeoLib::AABB<MeshLib::Node> getBoundingBox(const MeshLib::Mesh &mesh);
+	static const GeoLib::AABB getBoundingBox(const MeshLib::Mesh &mesh);
 
 	/**
 	 * Returns an array with the number of elements of each type in the given mesh.
