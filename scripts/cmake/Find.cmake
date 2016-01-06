@@ -45,6 +45,16 @@ find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 
 find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
 
+## CCache
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+	if(COMPILER_IS_CLANG)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Qunused-arguments")
+	endif()
+endif(CCACHE_FOUND)
+
 ######################
 ### Find libraries ###
 ######################
@@ -128,10 +138,3 @@ if(OGS_USE_MPI)
 	find_package(MPI REQUIRED)
 	include_directories(SYSTEM ${MPI_CXX_INCLUDE_PATH})
 endif()
-
-## CCache
-find_program(CCACHE_FOUND ccache)
-if(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-endif(CCACHE_FOUND)
