@@ -5,6 +5,10 @@ if(Boost_FOUND)
 	return()
 endif()
 
+if(NOT DEFINED BOOST_ROOT AND DEFINED ENV{BOOST_ROOT})
+	set(BOOST_ROOT $ENV{BOOST_ROOT} TRUE CACHE PATH "")
+endif()
+
 # First check for system boost
 if(NOT Boost_INCLUDE_DIRS)
 	if(APPLE)
@@ -41,6 +45,5 @@ ExternalProject_Get_Property( Boost source_dir )
 
 if(NOT Boost_INCLUDE_DIRS)
 	set( Boost_INCLUDE_DIRS ${source_dir} CACHE INTERNAL "Boost include directories")
-	# On Visual Studio Boost libs get automatically linked
 	message(STATUS "Downloading Boost ${OGS_BOOST_VERSION} automatically.")
 endif()

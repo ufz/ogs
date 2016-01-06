@@ -8,16 +8,10 @@ compiler:
 addons:
   apt:
     sources:
-      - boost-latest
       - ubuntu-toolchain-r-test
       # TODO: feelpp/petsc
     packages:
       - g++-4.8
-      - libboost1.55-dev
-      - libboost-date-time1.55-dev
-      - libboost-filesystem1.55-dev
-      - libboost-program-options1.55-dev
-      - libboost-system1.55-dev
       - qt4-dev-tools
       - libxt-dev
       # TODO
@@ -33,18 +27,21 @@ cache:
   directories:
     - $HOME/cmake-3.1.1-Linux-x86_64
     - $HOME/VTK-Install
+    - $HOME/boost_1_56_0
 
 env:
   global:
-    - VTK_DIR=VTK-Install/lib/cmake/vtk-6.3
+    - VTK_DIR=$HOME/VTK-Install/lib/cmake/vtk-6.3
+    - BOOST_ROOT=$HOME/boost_1_56_0
   matrix:
-    - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON -DVTK_DIR=$HOME/$VTK_DIR"
+    - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
     # - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
-    - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF -DVTK_DIR=$HOME/$VTK_DIR"
+    - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
 
 before_install:
   - bash scripts/travis/cmake.sh
   - bash scripts/travis/vtk.sh
+  - bash scripts/travis/boost.sh
 
 before_script:
   - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
