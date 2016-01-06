@@ -8,6 +8,9 @@
 
 ### Infrastructure
 
+- Minimum Boost version: 1.56.0, #943
+- Boost requirement is now header-only, #940
+
 
 ### Documentation
 

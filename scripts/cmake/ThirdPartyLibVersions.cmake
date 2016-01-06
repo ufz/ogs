@@ -1,5 +1,7 @@
-set(OGS_BOOST_URL "http://sourceforge.net/projects/boost/files/boost/1.58.0/boost_1_58_0.tar.bz2/download")
-set(OGS_BOOST_MD5 "b8839650e61e9c1c0a89f371dd475546")
+set(OGS_BOOST_VERSION 1.56.0)
+string(REPLACE "." "_" OGS_BOOST_VERSION_UNDERLINE ${OGS_BOOST_VERSION})
+set(OGS_BOOST_URL "http://sourceforge.net/projects/boost/files/boost/${OGS_BOOST_VERSION}/boost_${OGS_BOOST_VERSION_UNDERLINE}.tar.bz2/download")
+set(OGS_BOOST_MD5 "a744cf167b05d72335f27c88115f211d")
 
 set(OGS_EIGEN_URL "http://opengeosys.s3.amazonaws.com/ogs6-lib-sources/eigen-3.2.5.tar.gz")
 set(OGS_EIGEN_MD5 "8cc513ac6ec687117acadddfcacf551b")
