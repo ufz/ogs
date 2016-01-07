@@ -170,8 +170,8 @@ public:
     /*! Creates a new instance wrapping the given Boost Property Tree.
      *
      * \param tree the Boost Property Tree to be wrapped
-     * \param onerror callback function to be called on error.
-     * \param onwarning callback function to be called on warning.
+     * \param error_cb callback function to be called on error.
+     * \param warning_cb callback function to be called on warning.
      *
      * The callback functions must be valid callable functions, i.e. not nullptr's.
      * They are configurable in order to make unit tests of this class easier.
@@ -184,9 +184,6 @@ public:
     explicit ConfigTreeNew(PTree const& tree,
                            Callback const& error_cb = onerror,
                            Callback const& warning_cb = onwarning);
-
-    //! Used for wrapping a subtree
-    explicit ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent, std::string const& root);
 
     //! copying is not compatible with the semantics of this class
     ConfigTreeNew(ConfigTreeNew const&) = delete;
@@ -313,6 +310,9 @@ private:
         int count;
         std::type_index type;
     };
+
+    //! Used for wrapping a subtree
+    explicit ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent, std::string const& root);
 
     //! Called if an error occurs. Will call the error callback.
     //! This method only acts as a helper method.
