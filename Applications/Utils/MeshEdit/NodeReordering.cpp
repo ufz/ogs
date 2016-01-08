@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 
-// TCLAP
 #include "tclap/CmdLine.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -22,9 +21,8 @@
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/writeMeshToFile.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
@@ -119,14 +117,14 @@ int main (int argc, char* argv[])
 	else
 	{
 		ERR ("Unknown re-ordering method. Exit program...");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	FileIO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
