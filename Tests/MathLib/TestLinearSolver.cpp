@@ -204,8 +204,6 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 TEST(MathLib, CheckInterface_GaussAlgorithm)
 {
     boost::property_tree::ptree t_root;
-    boost::property_tree::ptree t_solver;
-    t_root.put_child("ogs", t_solver);
     BaseLib::ConfigTreeNew conf(t_root);
 
     using Example = Example1<std::size_t>;
