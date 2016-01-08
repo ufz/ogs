@@ -17,6 +17,7 @@
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "BaseLib/FileTools.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
@@ -100,10 +101,8 @@ int main(int argc, char *argv[])
 	BaseLib::ConfigTree project_config =
 	    BaseLib::read_xml_config(project_arg.getValue());
 
-	project_config = project_config.get_child("OpenGeoSysProject");
-
-	ProjectData project(project_config,
-			BaseLib::extractPath(project_arg.getValue()));
+	BaseLib::ConfigTreeNew conf(project_config.get_child("OpenGeoSysProject"));
+	ProjectData project(conf, BaseLib::extractPath(project_arg.getValue()));
 
 	// Create processes.
 	project.buildProcesses<GlobalSetupType>();
