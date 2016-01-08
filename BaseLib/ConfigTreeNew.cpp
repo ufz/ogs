@@ -43,50 +43,50 @@ ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
 
 ConfigTreeNew::
 ConfigTreeNew(ConfigTreeNew && other)
-	: _tree(other._tree)
-	, _path(other._path)
-	, _visited_params(std::move(other._visited_params))
-	, _onerror(other._onerror)
-	, _onwarning(other._onwarning)
+    : _tree(other._tree)
+    , _path(other._path)
+    , _visited_params(std::move(other._visited_params))
+    , _onerror(other._onerror)
+    , _onwarning(other._onwarning)
 {
-	other._tree = nullptr;
+    other._tree = nullptr;
 }
 
 ConfigTreeNew::~ConfigTreeNew()
 {
-	if (!_tree) return;
+    if (!_tree) return;
 
-	for (auto const& p : *_tree)
-	{
-		markVisitedDecrement(p.first);
-	}
+    for (auto const& p : *_tree)
+    {
+        markVisitedDecrement(p.first);
+    }
 
-	for (auto const& p : _visited_params)
-	{
-		if (p.second.count > 0) {
-			warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
-					+ " time(s) more than it was present in the configuration tree.");
-		} else if (p.second.count < 0) {
-			warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
-					+ " time(s) less than it was present in the configuration tree.");
-		}
-	}
+    for (auto const& p : _visited_params)
+    {
+        if (p.second.count > 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
+                    + " time(s) more than it was present in the configuration tree.");
+        } else if (p.second.count < 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
+                    + " time(s) less than it was present in the configuration tree.");
+        }
+    }
 }
 
 ConfigTreeNew&
 ConfigTreeNew::
 operator=(ConfigTreeNew&& other)
 {
-	_tree = other._tree;
-	other._tree = nullptr;
-	_path = other._path;
-	_visited_params = std::move(other._visited_params);
+    _tree = other._tree;
+    other._tree = nullptr;
+    _path = other._path;
+    _visited_params = std::move(other._visited_params);
 
-	// TODO Caution: That might be a very nontrivial operation (copying a std::function).
-	_onerror = other._onerror;
-	_onwarning = other._onwarning;
+    // TODO Caution: That might be a very nontrivial operation (copying a std::function).
+    _onerror = other._onerror;
+    _onwarning = other._onwarning;
 
-	return *this;
+    return *this;
 }
 
 ConfigTreeNew
@@ -154,12 +154,12 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 
 void ConfigTreeNew::error(const std::string& message) const
 {
-	_onerror(_path, message);
+    _onerror(_path, message);
 }
 
 void ConfigTreeNew::warning(const std::string& message) const
 {
-	_onwarning(_path, message);
+    _onwarning(_path, message);
 }
 
 
@@ -186,34 +186,34 @@ std::string ConfigTreeNew::shortString(const std::string &s)
 
 void ConfigTreeNew::checkKeyname(std::string const& key) const
 {
-	if (key.empty()) {
-		error("Search for empty key.");
-	} else if (key_chars_start.find(key.front()) == std::string::npos) {
-		error("Key <" + key + "> starts with an illegal character.");
-	} else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
-		error("Key <" + key + "> contains illegal characters.");
-	}
+    if (key.empty()) {
+        error("Search for empty key.");
+    } else if (key_chars_start.find(key.front()) == std::string::npos) {
+        error("Key <" + key + "> starts with an illegal character.");
+    } else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
+        error("Key <" + key + "> contains illegal characters.");
+    }
 }
 
 std::string ConfigTreeNew::
 joinPaths( const std::string &p1, const std::string &p2) const
 {
-	if (p2.empty()) {
-		error("Second path to be joined is empty.");
-	}
+    if (p2.empty()) {
+        error("Second path to be joined is empty.");
+    }
 
-	if (p1.empty()) return p2;
+    if (p1.empty()) return p2;
 
-	return p1 + pathseparator + p2;
+    return p1 + pathseparator + p2;
 }
 
 void ConfigTreeNew::checkUnique(const std::string &key) const
 {
-	checkKeyname(key);
+    checkKeyname(key);
 
-	if (_visited_params.find(key) != _visited_params.end()) {
-		error("Key <" + key + "> has already been processed.");
-	}
+    if (_visited_params.find(key) != _visited_params.end()) {
+        error("Key <" + key + "> has already been processed.");
+    }
 }
 
 ConfigTreeNew::CountType&
