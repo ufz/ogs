@@ -13,12 +13,10 @@
 #include <algorithm>
 #include <vector>
 
-#include "logog/include/logog.hpp"
-#include "LogogSimpleFormatter.h"
-
 // TCLAP
 #include "tclap/CmdLine.h"
 
+#include "Applications/ApplicationsLib/LogogSetup.h"
 // FileIO
 #include "readMeshFromFile.h"
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -91,10 +89,7 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
+	ApplicationsLib::LogogSetup logo_setup;
 
 	TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.\n" \
 	                   "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 meshes,\n" \
@@ -130,10 +125,6 @@ int main (int argc, char* argv[])
 	writer.writeToFile(output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");
-
-	delete formatter;
-	delete logogCout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }
