@@ -180,10 +180,13 @@ public:
      * If a custom error callback is provided, this function should break out of
      * the normal execution order, e.g., by throwing or by calling std::abort(),
      * because otherwise this class will effectively treat errors as no-errors.
+     *
+     * Defaults are strict: By default, both callbacks are set to the same function,
+     * i.e., warnings will also result in program abortion!
      */
     explicit ConfigTreeNew(PTree const& tree,
                            Callback const& error_cb = onerror,
-                           Callback const& warning_cb = onwarning);
+                           Callback const& warning_cb = onerror);
 
     //! copying is not compatible with the semantics of this class
     ConfigTreeNew(ConfigTreeNew const&) = delete;
@@ -302,6 +305,13 @@ public:
      */
     void ignoreConfParamAll(std::string const& param) const;
 
+    /*! Checks if the top level of this tree has been read entirely (and not too often).
+     *
+     * Caution: This method also invalidates the instance, i.e., afterwards it can not
+     *          be read from the tree anymore!
+     */
+    void checkAndInvalidate();
+
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
     ~ConfigTreeNew();
@@ -361,10 +371,6 @@ private:
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
     void markVisitedDecrement(std::string const& key) const;
-
-    //! Helper method that checks if the top level of this tree has
-    //! been red entirely (and not too often).
-    void checkFullyRead() const;
 
     //! returns a short string at suitable for error/warning messages
     static std::string shortString(std::string const& s);

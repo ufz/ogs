@@ -54,14 +54,14 @@ ConfigTreeNew(ConfigTreeNew && other)
 
 ConfigTreeNew::~ConfigTreeNew()
 {
-    checkFullyRead();
+    checkAndInvalidate();
 }
 
 ConfigTreeNew&
 ConfigTreeNew::
 operator=(ConfigTreeNew&& other)
 {
-    checkFullyRead();
+    checkAndInvalidate();
 
     _tree           = other._tree;
     other._tree     = nullptr;
@@ -221,7 +221,7 @@ markVisitedDecrement(std::string const& key) const
 }
 
 void
-ConfigTreeNew::checkFullyRead() const
+ConfigTreeNew::checkAndInvalidate()
 {
     if (!_tree) return;
 
@@ -240,6 +240,10 @@ ConfigTreeNew::checkFullyRead() const
                     + " time(s) less than it was present in the configuration tree.");
         }
     }
+
+    // The following invalidates this instance, s.t. it can not be read from it anymore,
+    // but it also prevents double-checking.
+    _tree = nullptr;
 }
 
 }
