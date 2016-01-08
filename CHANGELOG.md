@@ -5,6 +5,9 @@
  - Axis aligned bounding box:
    - Is now a from the right half-open interval.
    - Removed template from class declaration.
+ - New configuration tree parser
+   - Checks configuration parameters more strictly, automatically prints error/warning messages.
+   - Requires Boost >= 1.56 because of boost::optional with move semantics.
 
 ### Infrastructure
 

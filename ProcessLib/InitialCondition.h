@@ -15,6 +15,11 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
+namespace BaseLib
+{
+class ConfigTreeNew;
+}
+
 namespace MeshLib
 {
 template <typename>
@@ -52,7 +57,7 @@ private:
 
 /// Construct a UniformInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTreeNew& config);
 
 /// Distribution of values given by a mesh property defined on nodes.
 class MeshPropertyInitialCondition : public InitialCondition
@@ -76,7 +81,7 @@ private:
 
 /// Construct a MeshPropertyInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTreeNew& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 

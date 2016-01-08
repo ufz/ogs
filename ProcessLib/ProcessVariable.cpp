@@ -14,54 +14,52 @@
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 
+#include "BaseLib/ConfigTreeNew.h"
+
 namespace ProcessLib
 {
-ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
+ProcessVariable::ProcessVariable(BaseLib::ConfigTreeNew& config,
                                  MeshLib::Mesh const& mesh,
                                  GeoLib::GEOObjects const& geometries)
-    : _name(config.get<std::string>("name")), _mesh(mesh)
+    : _name(config.getConfParam<std::string>("name"))
+    , _mesh(mesh)
 {
 	DBUG("Constructing process variable %s", this->_name.c_str());
 
 	// Initial condition
+	if (auto ic_config = config.getConfSubtreeOptional("initial_condition"))
 	{
-		auto const& ic_config = config.find("initial_condition");
-		if (ic_config == config.not_found())
-			INFO("No initial condition found.");
-
-		std::string const type =
-		    config.get<std::string>("initial_condition.type");
+		auto const type = ic_config->peekConfParam<std::string>("type");
 		if (type == "Uniform")
 		{
 			_initial_condition =
-			    createUniformInitialCondition(ic_config->second);
+			    createUniformInitialCondition(*ic_config);
 		}
 		else if (type == "MeshProperty")
 		{
 			_initial_condition =
-			    createMeshPropertyInitialCondition(ic_config->second, _mesh);
+			    createMeshPropertyInitialCondition(*ic_config, _mesh);
 		}
 		else
 		{
 			ERR("Unknown type of the initial condition.");
 		}
 	}
+	else
+	{
+		INFO("No initial condition found.");
+	}
 
 	// Boundary conditions
+	if (auto bcs_config = config.getConfSubtreeOptional("boundary_conditions"))
 	{
-		auto const& bcs_config = config.find("boundary_conditions");
-		if (bcs_config == config.not_found())
-			INFO("No boundary conditions found.");
-
-		for (auto const& bc_iterator : bcs_config->second)
+		for (auto bc_config
+			 : bcs_config->getConfSubtreeList("boundary_condition"))
 		{
-			BaseLib::ConfigTree const& bc_config = bc_iterator.second;
-
-			// Find corresponding GeoObject
-			std::string const geometrical_set_name =
-			    bc_config.get<std::string>("geometrical_set");
-			std::string const geometry_name =
-			    bc_config.get<std::string>("geometry");
+			auto const geometrical_set_name =
+					bc_config.getConfParam<std::string>("geometrical_set");
+			auto const geometry_name =
+					bc_config.getConfParam<std::string>("geometry");
 
 			GeoLib::GeoObject const* const geometry =
 			    geometries.getGeoObject(geometrical_set_name, geometry_name);
@@ -70,7 +68,7 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 			    GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
 			// Construct type dependent boundary condition
-			std::string const type = bc_config.get<std::string>("type");
+			auto const type = bc_config.peekConfParam<std::string>("type");
 
 			if (type == "UniformDirichlet")
 			{
@@ -88,7 +86,12 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 				    type.c_str());
 			}
 		}
+	} else {
+		INFO("No boundary conditions found.");
 	}
+
+	// Source Terms
+	config.ignoreConfParam("source_terms");
 }
 
 ProcessVariable::ProcessVariable(ProcessVariable&& other)

@@ -17,7 +17,7 @@
 
 #include "NumericsConfig.h" // for GlobalIndexType
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
@@ -37,12 +37,13 @@ class UniformDirichletBoundaryCondition
 {
 public:
     UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
-                                      BaseLib::ConfigTree const& config)
+                                      BaseLib::ConfigTreeNew& config)
         : _geometry(geometry)
     {
         DBUG("Constructing UniformDirichletBoundaryCondition from config.");
+        config.checkConfParam("type", "UniformDirichlet");
 
-        _value = config.get<double>("value", 0);
+        _value = config.getConfParam<double>("value");
         DBUG("Using value %g", _value);
     }
 
