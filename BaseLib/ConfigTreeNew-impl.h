@@ -33,7 +33,7 @@ private:
 template<typename T>
 T
 ConfigTreeNew::
-getConfParam(std::string const& param)
+getConfParam(std::string const& param) const
 {
     auto p = getConfParamOptional<T>(param);
     if (p) return *p;
@@ -45,7 +45,7 @@ getConfParam(std::string const& param)
 template<typename T>
 T
 ConfigTreeNew::
-getConfParam(std::string const& param, T const& default_value)
+getConfParam(std::string const& param, T const& default_value) const
 {
     auto p = getConfParamOptional<T>(param);
     if (p) return *p;
@@ -55,7 +55,7 @@ getConfParam(std::string const& param, T const& default_value)
 template<typename T>
 boost::optional<T>
 ConfigTreeNew::
-getConfParamOptional(std::string const& param)
+getConfParamOptional(std::string const& param) const
 {
     checkUnique(param);
     auto p = _tree->get_child_optional(param);
@@ -79,7 +79,7 @@ getConfParamOptional(std::string const& param)
 template<typename T>
 Range<ConfigTreeNew::ValueIterator<T> >
 ConfigTreeNew::
-getConfParamList(std::string const& param)
+getConfParamList(std::string const& param) const
 {
     checkUnique(param);
     markVisited<T>(param, true);
@@ -93,7 +93,7 @@ getConfParamList(std::string const& param)
 template<typename T>
 T
 ConfigTreeNew::
-peekConfParam(std::string const& param)
+peekConfParam(std::string const& param) const
 {
     checkKeyname(param);
 
@@ -116,7 +116,7 @@ peekConfParam(std::string const& param)
 template<typename T>
 void
 ConfigTreeNew::
-checkConfParam(std::string const& param, T const& value)
+checkConfParam(std::string const& param, T const& value) const
 {
     if (getConfParam<T>(param) != value) {
         error("The value of key <" + param + "> is not the expected one.");
@@ -126,7 +126,7 @@ checkConfParam(std::string const& param, T const& value)
 template<typename Ch>
 void
 ConfigTreeNew::
-checkConfParam(std::string const& param, Ch const* value)
+checkConfParam(std::string const& param, Ch const* value) const
 {
     if (getConfParam<std::string>(param) != value) {
         error("The value of key <" + param + "> is not the expected one.");
@@ -137,7 +137,7 @@ checkConfParam(std::string const& param, Ch const* value)
 template<typename T>
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only)
+markVisited(std::string const& key, bool peek_only) const
 {
     auto const type = std::type_index(typeid(T));
 

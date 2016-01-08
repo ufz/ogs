@@ -62,7 +62,7 @@ public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit SubtreeIterator(Iterator it, std::string const& root,
-                                 ConfigTreeNew& parent)
+                                 ConfigTreeNew const& parent)
             : _it(it), _root(root), _parent(parent)
         {}
 
@@ -94,7 +94,7 @@ public:
         bool _has_incremented = true;
         Iterator _it;
         std::string const _root;
-        ConfigTreeNew& _parent;
+        ConfigTreeNew const& _parent;
     };
 
 
@@ -112,7 +112,7 @@ public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit ValueIterator(Iterator it, std::string const& root,
-                               ConfigTreeNew& parent)
+                               ConfigTreeNew const& parent)
             : _it(it), _root(root), _parent(parent)
         {}
 
@@ -156,7 +156,7 @@ public:
         bool _has_incremented = true;
         Iterator _it;
         std::string const _root;
-        ConfigTreeNew& _parent;
+        ConfigTreeNew const& _parent;
     };
 
     using PTree = boost::property_tree::ptree;
@@ -194,8 +194,12 @@ public:
 
     ConfigTreeNew() = delete;
 
-    void operator=(ConfigTreeNew const&) = delete;
-    void operator=(ConfigTreeNew &&) = delete;
+    //! copying is not compatible with the semantics of this class
+    ConfigTreeNew& operator=(ConfigTreeNew const&) = delete;
+
+    //! After being moved from, \c other is in an undefined state and must not be
+    //! used anymore!
+    ConfigTreeNew& operator=(ConfigTreeNew &&);
 
     /*! Get parameter \c param of type \c T from the configuration tree.
      *
@@ -206,7 +210,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> T
-    getConfParam(std::string const& param);
+    getConfParam(std::string const& param) const;
 
     /*! Get parameter \c param of type \c T from the configuration tree or the \c default_value.
      *
@@ -216,7 +220,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> T
-    getConfParam(std::string const& param, T const& default_value);
+    getConfParam(std::string const& param, T const& default_value) const;
 
     /*! Get parameter \c param of type \c T from the configuration tree if present
      *
@@ -227,7 +231,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> boost::optional<T>
-    getConfParamOptional(std::string const& param);
+    getConfParamOptional(std::string const& param) const;
 
     /*! Returns all parameters with the name \c param from the current level of the tree.
      *
@@ -236,7 +240,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> Range<ValueIterator<T> >
-    getConfParamList(std::string const& param);
+    getConfParamList(std::string const& param) const;
 
     /*! Peek at a parameter \c param of type \c T from the configuration tree.
      *
@@ -246,18 +250,18 @@ public:
      * Return value and error behaviour are the same as for getConfParam(std::string const&).
      */
     template<typename T> T
-    peekConfParam(std::string const& param);
+    peekConfParam(std::string const& param) const;
 
     /*! Assert that \c param has the given \c value.
      *
      * Convenience method combining getConfParam(std::string const&) with a check.
      */
     template<typename T> void
-    checkConfParam(std::string const& param, T const& value);
+    checkConfParam(std::string const& param, T const& value) const;
 
     //! Make checkConfParam() work for string literals.
     template<typename Ch> void
-    checkConfParam(std::string const& param, Ch const* value);
+    checkConfParam(std::string const& param, Ch const* value) const;
 
     /*! Get the subtree rooted at \c root
      *
@@ -266,14 +270,14 @@ public:
      * \pre \c root must not have been read before from this ConfigTree.
      */
     ConfigTreeNew
-    getConfSubtree(std::string const& root);
+    getConfSubtree(std::string const& root) const;
 
     /*! Get the subtree rooted at \c root if present
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
     boost::optional<ConfigTreeNew>
-    getConfSubtreeOptional(std::string const& root);
+    getConfSubtreeOptional(std::string const& root) const;
 
     /*! Get all subtrees that have a root \c root from the current level of the tree.
      *
@@ -282,7 +286,7 @@ public:
      * \pre \c root must not have been read before from this ConfigTree.
      */
     Range<SubtreeIterator>
-    getConfSubtreeList(std::string const& root);
+    getConfSubtreeList(std::string const& root) const;
 
     /*! Tell this instance to ignore parameter \c param.
      *
@@ -290,7 +294,7 @@ public:
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
-    void ignoreConfParam(std::string const& param);
+    void ignoreConfParam(std::string const& param) const;
 
     /*! Tell this instance to ignore all parameters \c param on the current level of the tree.
      *
@@ -298,11 +302,19 @@ public:
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
-    void ignoreConfParamAll(std::string const& param);
+    void ignoreConfParamAll(std::string const& param) const;
 
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
     ~ConfigTreeNew();
+
+    //! Default error callback function
+    //! Will print an error message and call std::abort()
+    static void onerror(std::string const& path, std::string const& message);
+
+    //! Default warning callback function
+    //! Will print a warning message
+    static void onwarning(std::string const& path, std::string const& message);
 
 private:
     struct CountType
@@ -316,20 +328,20 @@ private:
 
     //! Called if an error occurs. Will call the error callback.
     //! This method only acts as a helper method.
-    void error(std::string const& message);
+    void error(std::string const& message) const;
 
     //! Called for printing warning messages. Will call the warning callback.
     //! This method only acts as a helper method.
-    void warning(std::string const& message);
+    void warning(std::string const& message) const;
 
     //! Checks if \c key complies with the rules [a-z0-9_].
-    void checkKeyname(std::string const& key);
+    void checkKeyname(std::string const& key) const;
 
     //! Used to generate the path of a subtree.
-    std::string joinPaths(std::string const& p1, std::string const& p2);
+    std::string joinPaths(std::string const& p1, std::string const& p2) const;
 
     //! Asserts that the \c key has not been read yet.
-    void checkUnique(std::string const& key);
+    void checkUnique(std::string const& key) const;
 
     /*! Keeps track of the key \c key and its value type \c T.
      *
@@ -338,7 +350,7 @@ private:
      * \c param peek_only if true, do not change the read-count of the given key.
      */
     template<typename T>
-    CountType& markVisited(std::string const& key, bool peek_only = false);
+    CountType& markVisited(std::string const& key, bool peek_only = false) const;
 
     /*! Keeps track of the key \c key and its value type ConfigTree.
      *
@@ -346,19 +358,11 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool peek_only = false);
+    CountType& markVisited(std::string const& key, bool peek_only = false) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
-    void markVisitedDecrement(std::string const& key);
-
-    //! Default error callback function
-    //! Will print an error message and call std::abort()
-    static void onerror(std::string const& path, std::string const& message);
-
-    //! Default warning callback function
-    //! Will print a warning message
-    static void onwarning(std::string const& path, std::string const& message);
+    void markVisitedDecrement(std::string const& key) const;
 
     //! returns a short string at suitable for error/warning messages
     static std::string shortString(std::string const& s);
@@ -367,14 +371,14 @@ private:
     boost::property_tree::ptree const* _tree;
 
     //! A path printed in error/warning messages.
-    std::string const _path;
+    std::string _path;
 
     //! A map key -> (count, type) keeping track which parameters have been read how often
     //! and which datatype they have.
-    std::map<std::string, CountType> _visited_params;
+    mutable std::map<std::string, CountType> _visited_params;
 
-    const Callback _onerror;
-    const Callback _onwarning;
+    Callback _onerror;
+    Callback _onwarning;
 
     //! Character separating two path components.
     static const char pathseparator;

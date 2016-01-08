@@ -73,9 +73,25 @@ ConfigTreeNew::~ConfigTreeNew()
 	}
 }
 
+ConfigTreeNew&
+ConfigTreeNew::
+operator=(ConfigTreeNew&& other)
+{
+	_tree = other._tree;
+	other._tree = nullptr;
+	_path = other._path;
+	_visited_params = std::move(other._visited_params);
+
+	// TODO Caution: That might be a very nontrivial operation (copying a std::function).
+	_onerror = other._onerror;
+	_onwarning = other._onwarning;
+
+	return *this;
+}
+
 ConfigTreeNew
 ConfigTreeNew::
-getConfSubtree(std::string const& root)
+getConfSubtree(std::string const& root) const
 {
     if (auto t = getConfSubtreeOptional(root)) {
         return std::move(*t);
@@ -87,7 +103,7 @@ getConfSubtree(std::string const& root)
 
 boost::optional<ConfigTreeNew>
 ConfigTreeNew::
-getConfSubtreeOptional(std::string const& root)
+getConfSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
     auto subtree = _tree->get_child_optional(root);
@@ -104,7 +120,7 @@ getConfSubtreeOptional(std::string const& root)
 
 Range<ConfigTreeNew::SubtreeIterator>
 ConfigTreeNew::
-getConfSubtreeList(std::string const& root)
+getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
     markVisited(root, true);
@@ -116,7 +132,7 @@ getConfSubtreeList(std::string const& root)
                 SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTreeNew::ignoreConfParam(const std::string &param)
+void ConfigTreeNew::ignoreConfParam(const std::string &param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -124,7 +140,7 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param)
     markVisited(param, peek_only);
 }
 
-void ConfigTreeNew::ignoreConfParamAll(const std::string &param)
+void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, true);
@@ -136,12 +152,12 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param)
 }
 
 
-void ConfigTreeNew::error(const std::string& message)
+void ConfigTreeNew::error(const std::string& message) const
 {
 	_onerror(_path, message);
 }
 
-void ConfigTreeNew::warning(const std::string& message)
+void ConfigTreeNew::warning(const std::string& message) const
 {
 	_onwarning(_path, message);
 }
@@ -168,7 +184,7 @@ std::string ConfigTreeNew::shortString(const std::string &s)
 }
 
 
-void ConfigTreeNew::checkKeyname(std::string const& key)
+void ConfigTreeNew::checkKeyname(std::string const& key) const
 {
 	if (key.empty()) {
 		error("Search for empty key.");
@@ -180,7 +196,7 @@ void ConfigTreeNew::checkKeyname(std::string const& key)
 }
 
 std::string ConfigTreeNew::
-joinPaths( const std::string &p1, const std::string &p2)
+joinPaths( const std::string &p1, const std::string &p2) const
 {
 	if (p2.empty()) {
 		error("Second path to be joined is empty.");
@@ -191,7 +207,7 @@ joinPaths( const std::string &p1, const std::string &p2)
 	return p1 + pathseparator + p2;
 }
 
-void ConfigTreeNew::checkUnique(const std::string &key)
+void ConfigTreeNew::checkUnique(const std::string &key) const
 {
 	checkKeyname(key);
 
@@ -202,14 +218,14 @@ void ConfigTreeNew::checkUnique(const std::string &key)
 
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only)
+markVisited(std::string const& key, bool peek_only) const
 {
     return markVisited<ConfigTreeNew>(key, peek_only);
 }
 
 void
 ConfigTreeNew::
-markVisitedDecrement(std::string const& key)
+markVisitedDecrement(std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
