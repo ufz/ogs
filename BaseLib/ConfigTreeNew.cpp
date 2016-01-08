@@ -110,8 +110,7 @@ getConfSubtreeOptional(std::string const& root) const
 
     if (subtree) {
         markVisited(root);
-        return boost::optional<ConfigTreeNew>(std::move(
-                ConfigTreeNew(*subtree, *this, root)));
+        return ConfigTreeNew(*subtree, *this, root);
     } else {
         markVisited(root, true);
         return boost::optional<ConfigTreeNew>();
