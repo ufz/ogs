@@ -46,7 +46,7 @@ namespace ProcessLib
 class ProcessVariable
 {
 public:
-	ProcessVariable(BaseLib::ConfigTreeNew& config, MeshLib::Mesh const& mesh,
+	ProcessVariable(BaseLib::ConfigTreeNew const& config, MeshLib::Mesh const& mesh,
 	                GeoLib::GEOObjects const& geometries);
 
 	ProcessVariable(ProcessVariable&&);

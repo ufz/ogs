@@ -18,7 +18,7 @@
 
 namespace ProcessLib
 {
-ProcessVariable::ProcessVariable(BaseLib::ConfigTreeNew& config,
+ProcessVariable::ProcessVariable(BaseLib::ConfigTreeNew const& config,
                                  MeshLib::Mesh const& mesh,
                                  GeoLib::GEOObjects const& geometries)
     : _name(config.getConfParam<std::string>("name"))

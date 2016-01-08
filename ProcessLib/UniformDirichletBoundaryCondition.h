@@ -37,7 +37,7 @@ class UniformDirichletBoundaryCondition
 {
 public:
     UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
-                                      BaseLib::ConfigTreeNew& config)
+                                      BaseLib::ConfigTreeNew const& config)
         : _geometry(geometry)
     {
         DBUG("Constructing UniformDirichletBoundaryCondition from config.");

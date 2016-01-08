@@ -15,7 +15,7 @@
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshLib/MeshSubsets.h"
 
@@ -105,9 +105,10 @@ public:
 protected:
 	/// Set linear solver options; called by the derived process which is
 	/// parsing the configuration.
-	void setLinearSolverOptions(const BaseLib::ConfigTree& config)
+	void setLinearSolverOptions(BaseLib::ConfigTreeNew&& config)
 	{
-		_linear_solver_options.reset(new BaseLib::ConfigTree(config));
+		_linear_solver_options.reset(new BaseLib::ConfigTreeNew(
+			std::move(config)));
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given
@@ -174,7 +175,7 @@ protected:
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
 
-	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
+	std::unique_ptr<BaseLib::ConfigTreeNew> _linear_solver_options;
 	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 
 	std::unique_ptr<typename GlobalSetup::MatrixType> _A;
