@@ -89,8 +89,13 @@ int main(int argc, char *argv[])
 		true,
 		"",
 		"PROJECT FILE");
-
 	cmd.add(project_arg);
+
+	TCLAP::SwitchArg nonfatal_arg("",
+		"config-warnings-nonfatal",
+		"warnings from parsing the configuration file will not trigger program abortion");
+	cmd.add(nonfatal_arg);
+
 	cmd.parse(argc, argv);
 
 	ApplicationsLib::LogogSetup logog_setup;
@@ -101,7 +106,11 @@ int main(int argc, char *argv[])
 	BaseLib::ConfigTree project_config =
 	    BaseLib::read_xml_config(project_arg.getValue());
 
-	BaseLib::ConfigTreeNew conf(project_config.get_child("OpenGeoSysProject"));
+	using Conf = BaseLib::ConfigTreeNew;
+	Conf conf(project_config.get_child("OpenGeoSysProject"),
+	          Conf::onerror,
+	          nonfatal_arg.getValue() ? Conf::onwarning : Conf::onerror);
+
 	ProjectData project(conf, BaseLib::extractPath(project_arg.getValue()));
 
 	// Create processes.
