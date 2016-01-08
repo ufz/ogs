@@ -11,15 +11,16 @@
 
 #include <array>
 #include <algorithm>
+#include <memory>
 #include <vector>
 
 // TCLAP
 #include "tclap/CmdLine.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
-// FileIO
-#include "readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -108,7 +109,7 @@ int main (int argc, char* argv[])
 	cmd.add(method_arg);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
+	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
 	INFO("Reordering nodes... ");
 	if (!method_arg.isSet() || method_arg.getValue() == 1)
@@ -121,8 +122,7 @@ int main (int argc, char* argv[])
 		return 1;
 	}
 
-	FileIO::VtuInterface writer(mesh);
-	writer.writeToFile(output_mesh_arg.getValue().c_str());
+	FileIO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");
 
