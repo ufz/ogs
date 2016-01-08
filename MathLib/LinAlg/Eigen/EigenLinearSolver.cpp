@@ -11,10 +11,12 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "EigenVector.h"
 #include "EigenMatrix.h"
 #include "EigenTools.h"
+
+#include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
 {
@@ -95,7 +97,7 @@ private:
 
 EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
                             const std::string /*solver_name*/,
-                            BaseLib::ConfigTree const*const option)
+                            const BaseLib::ConfigTreeNew* const option)
 {
     if (option)
         setOption(*option);
@@ -114,26 +116,23 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
     }
 }
 
-void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
+void EigenLinearSolver::setOption(BaseLib::ConfigTreeNew const& option)
 {
-    auto const ptSolver = option.get_child_optional("eigen");
+    ignoreOtherLinearSolvers(option, "eigen");
+    auto const ptSolver = option.getConfSubtreeOptional("eigen");
     if (!ptSolver)
         return;
 
-    boost::optional<std::string> solver_type = ptSolver->get_optional<std::string>("solver_type");
-    if (solver_type) {
+    if (auto solver_type = ptSolver->getConfParamOptional<std::string>("solver_type")) {
         _option.solver_type = _option.getSolverType(*solver_type);
     }
-    boost::optional<std::string> precon_type = ptSolver->get_optional<std::string>("precon_type");
-    if (precon_type) {
+    if (auto precon_type = ptSolver->getConfParamOptional<std::string>("precon_type")) {
         _option.precon_type = _option.getPreconType(*precon_type);
     }
-    boost::optional<double> error_tolerance = ptSolver->get_optional<double>("error_tolerance");
-    if (error_tolerance) {
+    if (auto error_tolerance = ptSolver->getConfParamOptional<double>("error_tolerance")) {
         _option.error_tolerance = *error_tolerance;
     }
-    boost::optional<int> max_iteration_step = ptSolver->get_optional<int>("max_iteration_step");
-    if (max_iteration_step) {
+    if (auto max_iteration_step = ptSolver->getConfParamOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
 }

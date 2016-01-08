@@ -17,18 +17,20 @@
 
 #include "PETScLinearSolver.h"
 #include "BaseLib/RunTime.h"
+#include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
 {
 PETScLinearSolver::PETScLinearSolver(PETScMatrix& A,
                                      const std::string prefix,
-                                     BaseLib::ConfigTree const* const option)
+                                     BaseLib::ConfigTreeNew const* const option)
     : _A(A), _elapsed_ctime(0.)
 {
     // Insert options into petsc database if any.
     if (option)
     {
-        std::string const petsc_options = option->get<std::string>("petsc", "");
+        ignoreOtherLinearSolvers(*option, "petsc");
+        std::string const petsc_options = option->getConfParam<std::string>("petsc", "");
         PetscOptionsInsertString(petsc_options.c_str());
     }
 

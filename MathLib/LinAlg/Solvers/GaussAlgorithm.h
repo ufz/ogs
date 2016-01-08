@@ -18,7 +18,7 @@
 #include <cstddef>
 
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "../Dense/DenseMatrix.h"
 #include "TriangularSolve.h"
 
@@ -55,7 +55,7 @@ public:
 	 * second argument was introduced.
 	 */
 	GaussAlgorithm(MAT_T &A, const std::string solver_name = "",
-                   BaseLib::ConfigTree const*const option = nullptr);
+                   BaseLib::ConfigTreeNew const*const option = nullptr);
 	/**
 	 * destructor, deletes the permutation
 	 */

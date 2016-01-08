@@ -13,7 +13,7 @@
 #include <vector>
 
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "EigenVector.h"
 #include "EigenOption.h"
 
@@ -35,7 +35,7 @@ public:
      *                    LisOption struct.
      */
     EigenLinearSolver(EigenMatrix &A, const std::string solver_name = "",
-                      BaseLib::ConfigTree const*const option = nullptr);
+                      BaseLib::ConfigTreeNew const*const option = nullptr);
 
     ~EigenLinearSolver()
     {
@@ -45,7 +45,7 @@ public:
     /**
      * parse linear solvers configuration
      */
-    void setOption(BaseLib::ConfigTree const& option);
+    void setOption(const BaseLib::ConfigTreeNew& option);
 
     /**
      * copy linear solvers options
