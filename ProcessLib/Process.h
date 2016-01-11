@@ -35,13 +35,21 @@ public:
 	virtual ~Process() = default;
 
 	virtual void initialize() = 0;
-	virtual bool solve(const double delta_t) = 0;
+	virtual bool assemble(const double delta_t) = 0;
 
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
 	virtual void post(std::string const& file_name) = 0;
 	virtual void postTimestep(std::string const& file_name,
 	                          const unsigned timestep) = 0;
+
+	bool solve(const double delta_t)
+	{
+		bool const result = assemble(delta_t);
+
+		_linear_solver->solve(*_rhs, *_x);
+		return result;
+	}
 
 protected:
 	/// Set linear solver options; called by the derived process which is

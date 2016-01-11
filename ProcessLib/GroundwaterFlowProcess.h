@@ -254,9 +254,9 @@ public:
         }
     }
 
-    bool solve(const double /*delta_t*/) override
+    bool assemble(const double /*delta_t*/) override
     {
-        DBUG("Solve GroundwaterFlowProcess.");
+        DBUG("Assemble GroundwaterFlowProcess.");
 
         this->_A->setZero();
         MathLib::setMatrixSparsity(*this->_A, _sparsity_pattern);
@@ -272,8 +272,6 @@ public:
         MathLib::applyKnownSolution(*this->_A, *this->_rhs, *this->_x,
                                     _dirichlet_bc.global_ids,
                                     _dirichlet_bc.values);
-
-        this->_linear_solver->solve(*this->_rhs, *this->_x);
 
         return true;
     }
