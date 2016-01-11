@@ -9,12 +9,9 @@ set(REQUIRED_SUBMODULES
 	ThirdParty/cmake-modules
 	ThirdParty/vtkdiff
 	ThirdParty/tclap
+	ThirdParty/tetgen
 	${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
-
-if(OGS_BUILD_GUI)
-	set(REQUIRED_SUBMODULES ${REQUIRED_SUBMODULES} ThirdParty/tetgen)
-endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
 	if(WIN32)
