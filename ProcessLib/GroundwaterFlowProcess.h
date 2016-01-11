@@ -19,15 +19,9 @@
 
 #include "logog/include/logog.hpp"
 
-#ifdef USE_PETSC
-#include "MeshLib/NodePartitionedMesh.h"
-#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
-#endif
-
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/ComputeSparsityPattern.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -223,31 +217,15 @@ public:
         _local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
-#ifdef USE_PETSC
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        MathLib::PETScMatrixOption mat_opt;
-        const MeshLib::NodePartitionedMesh& pmesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(this->_mesh);
-        mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
-        mat_opt.o_nz = mat_opt.d_nz;
-        const std::size_t num_unknowns =
-            _local_to_global_index_map->dofSizeGlobal();
-        _A.reset(this->_global_setup.createMatrix(num_unknowns, mat_opt));
-#else
         DBUG("Compute sparsity pattern");
         _sparsity_pattern = std::move(
             AssemblerLib::computeSparsityPattern(
                 *_local_to_global_index_map, this->_mesh));
 
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
-        this->_A.reset(this->_global_setup.createMatrix(num_unknowns));
-#endif
 
-        this->_x.reset(this->_global_setup.createVector(num_unknowns));
-        this->_rhs.reset(this->_global_setup.createVector(num_unknowns));
-        this->_linear_solver.reset(new typename GlobalSetup::LinearSolver(
-            *(this->_A), "gw_", this->_linear_solver_options.get()));
+        // create global vectors and linear solver
+        Process<GlobalSetup>::createLinearSolver(*_local_to_global_index_map,
+                                                 "gw_");
 
         setInitialConditions(*_hydraulic_head);
 
