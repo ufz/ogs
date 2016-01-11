@@ -25,6 +25,19 @@
 
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
+extern double orient2d(double *, double *, double *);
+
+namespace ExactPredicates
+{
+double getOrientation2d(MathLib::Point3d const& a,
+	MathLib::Point3d const& b, MathLib::Point3d const& c)
+{
+	return orient2d(const_cast<double*>(a.getCoords()),
+		const_cast<double*>(b.getCoords()),
+		const_cast<double*>(c.getCoords()));
+}
+}
+
 namespace GeoLib
 {
 Orientation getOrientation(const double& p0_x, const double& p0_y, const double& p1_x,
@@ -513,6 +526,79 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 		rot_polyline.addPoint(k);
 	rot_polyline.addPoint(0);
 	return GeoLib::Polygon(rot_polyline);
+}
+
+std::vector<MathLib::Point3d>
+lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
+	MathLib::Point3d const& c, MathLib::Point3d const& d)
+{
+	double const orient_abc(ExactPredicates::getOrientation2d(a, b, c));
+	double const orient_abd(ExactPredicates::getOrientation2d(a, b, d));
+
+	// check if the segment (cd) lies on the left or on the right of (ab)
+	if ((orient_abc > 0 && orient_abd > 0) || (orient_abc < 0 && orient_abd < 0)) {
+		return std::vector<MathLib::Point3d>();
+	}
+
+	// check: (cd) and (ab) are on the same line
+	if (orient_abc == 0.0 && orient_abd == 0.0) {
+		double const eps(std::numeric_limits<double>::epsilon());
+		if (MathLib::sqrDist(a,c) < eps && MathLib::sqrDist(b,d) < eps)
+			return {{ a, b }};
+		if (MathLib::sqrDist(a,d) < eps && MathLib::sqrDist(b,c) < eps)
+			return {{ a, b }};
+		ERR("This case of collinear points is not handled yet. Aborting.");
+		std::abort();
+	}
+
+	auto isCollinearPointOntoLineSegment = [](MathLib::Point3d const& a,
+		MathLib::Point3d const& b, MathLib::Point3d const& c)
+		{
+			double const t((c[0]-a[0])/(b[0]-a[0]));
+			if (0.0 <= t && t <= 1.0)
+				return true;
+			return false;
+		};
+
+	if (orient_abc == 0.0) {
+		if (isCollinearPointOntoLineSegment(a,b,c))
+			return {{c}};
+		return std::vector<MathLib::Point3d>();
+	}
+
+	if (orient_abd == 0.0) {
+		if (isCollinearPointOntoLineSegment(a,b,d))
+			return {{d}};
+		return std::vector<MathLib::Point3d>();
+	}
+
+	// check if the segment (ab) lies on the left or on the right of (cd)
+	double const orient_cda(ExactPredicates::getOrientation2d(c, d, a));
+	double const orient_cdb(ExactPredicates::getOrientation2d(c, d, b));
+	if ((orient_cda > 0 && orient_cdb > 0) || (orient_cda < 0 && orient_cdb < 0)) {
+		return std::vector<MathLib::Point3d>();
+	}
+
+	// at this point it is sure that there is an intersection and the system of
+	// linear equations will be invertible
+	// solve the two linear equations (b-a, c-d) (t, s)^T = (c-a) simultaneously
+	MathLib::DenseMatrix<double, std::size_t> mat(2,2);
+	mat(0,0) = b[0]-a[0];
+	mat(0,1) = c[0]-d[0];
+	mat(1,0) = b[1]-a[1];
+	mat(1,1) = c[1]-d[1];
+	std::vector<double> rhs = {{c[0]-a[0], c[1]-a[1]}};
+
+	MathLib::GaussAlgorithm<
+		MathLib::DenseMatrix<double, std::size_t>, std::vector<double>> solver(mat);
+	solver.solve(rhs);
+	if (0 <= rhs[1] && rhs[1] <= 1.0) {
+		return { MathLib::Point3d{std::array<double,3>{{
+				c[0]+rhs[1]*(d[0]-c[0]), c[1]+rhs[1]*(d[1]-c[1]),
+				c[2]+rhs[1]*(d[2]-c[2])}} } };
+	} else {
+		return std::vector<MathLib::Point3d>(); // parameter s not in the valid range
+	}
 }
 
 } // end namespace GeoLib
