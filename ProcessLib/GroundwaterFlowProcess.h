@@ -13,8 +13,9 @@
 #include <cassert>
 #include <memory>
 
-#include <boost/optional.hpp>
 #include <boost/algorithm/string/erase.hpp>
+#include <boost/optional.hpp>
+
 
 #include "logog/include/logog.hpp"
 
@@ -130,14 +131,10 @@ public:
         }
 
         // Linear solver options
-        {
-            auto const par = config.get_child_optional("linear_solver");
-
-            if (par)
-            {
-                this->_linear_solver_options.reset(new BaseLib::ConfigTree(*par));
-            }
-        }
+        if (auto const& linear_solver_options =
+                config.get_child_optional("linear_solver"))
+            Process<GlobalSetup>::setLinearSolverOptions(
+                *linear_solver_options);
     }
 
     template <unsigned GlobalDim>

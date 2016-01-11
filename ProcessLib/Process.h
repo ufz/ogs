@@ -38,6 +38,14 @@ public:
 	                          const unsigned timestep) = 0;
 
 protected:
+	/// Set linear solver options; called by the derived process which is
+	/// parsing the configuration.
+	void setLinearSolverOptions(const BaseLib::ConfigTree& config)
+	{
+		_linear_solver_options.reset(new BaseLib::ConfigTree(config));
+	}
+
+protected:
 	MeshLib::Mesh& _mesh;
 
 	GlobalSetup _global_setup;
