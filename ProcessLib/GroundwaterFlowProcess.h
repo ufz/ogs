@@ -193,9 +193,7 @@ public:
                     *_mesh_subset_all_nodes);
         }
 
-        for (auto bc : _neumann_bcs)
-            bc->initialize(this->_global_setup, *(this->_A), *(this->_rhs),
-                           this->_mesh.getDimension());
+        Process<GlobalSetup>::initializeNeumannBcs(_neumann_bcs);
     }
 
     void initializeMeshSubsets(MeshLib::Mesh const& mesh) override

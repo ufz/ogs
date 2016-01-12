@@ -80,6 +80,12 @@ public:
 		init();  // Execute proces specific initialization.
 	}
 
+	void initializeNeumannBcs(std::vector<NeumannBc<GlobalSetup>*> const& bcs)
+	{
+		for (auto bc : bcs)
+			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
+	}
+
 	bool solve(const double delta_t)
 	{
 		_A->setZero();
