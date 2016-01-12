@@ -22,12 +22,10 @@
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
-#include "AssemblerLib/ComputeSparsityPattern.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -218,10 +216,8 @@ public:
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
         DBUG("Compute sparsity pattern");
-        _sparsity_pattern = std::move(
-            AssemblerLib::computeSparsityPattern(
-                *_local_to_global_index_map, this->_mesh));
-
+        Process<GlobalSetup>::computeSparsityPattern(
+            *_local_to_global_index_map);
 
         // create global vectors and linear solver
         Process<GlobalSetup>::createLinearSolver(*_local_to_global_index_map,
@@ -258,8 +254,6 @@ public:
     {
         DBUG("Assemble GroundwaterFlowProcess.");
 
-        this->_A->setZero();
-        MathLib::setMatrixSparsity(*this->_A, _sparsity_pattern);
         *this->_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
@@ -372,8 +366,6 @@ private:
     } _dirichlet_bc;
 
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
-
-    AssemblerLib::SparsityPattern _sparsity_pattern;
 };
 
 }   // namespace ProcessLib

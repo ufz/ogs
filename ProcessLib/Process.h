@@ -12,8 +12,10 @@
 
 #include <string>
 
+#include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "BaseLib/ConfigTree.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
@@ -45,6 +47,9 @@ public:
 
 	bool solve(const double delta_t)
 	{
+		_A->setZero();
+		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
+
 		bool const result = assemble(delta_t);
 
 		_linear_solver->solve(*_rhs, *_x);
@@ -84,6 +89,14 @@ protected:
 		    *_A, solver_name, _linear_solver_options.get()));
 	}
 
+	/// Computes and stores global matrix' sparsity pattern from given
+	/// DOF-table.
+	void computeSparsityPattern(
+	    AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map)
+	{
+		_sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
+		    local_to_global_index_map, _mesh));
+	}
 
 protected:
 	MeshLib::Mesh& _mesh;
@@ -96,6 +109,8 @@ protected:
 	std::unique_ptr<typename GlobalSetup::MatrixType> _A;
 	std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
 	std::unique_ptr<typename GlobalSetup::VectorType> _x;
+
+	AssemblerLib::SparsityPattern _sparsity_pattern;
 };
 
 }  // namespace ProcessLib
