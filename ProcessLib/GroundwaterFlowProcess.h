@@ -210,6 +210,11 @@ public:
         _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
     }
 
+    std::string getLinearSolverName() const override
+    {
+        return "gw_";
+    }
+
     void initialize() override
     {
         DBUG("Initialize GroundwaterFlowProcess.");
@@ -226,7 +231,7 @@ public:
 
         // create global vectors and linear solver
         Process<GlobalSetup>::createLinearSolver(*_local_to_global_index_map,
-                                                 "gw_");
+                                                 getLinearSolverName());
 
         setInitialConditions(*_hydraulic_head);
 

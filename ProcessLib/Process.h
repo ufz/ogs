@@ -39,6 +39,8 @@ public:
 	virtual void initialize() = 0;
 	virtual bool assemble(const double delta_t) = 0;
 
+	virtual std::string getLinearSolverName() const = 0;
+
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
 	virtual void post(std::string const& file_name) = 0;
