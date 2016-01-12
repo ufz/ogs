@@ -31,3 +31,6 @@ if(TARGET Eigen)
     add_dependencies(MeshLib Eigen)
 endif()
 
+if(TARGET Boost)
+    add_dependencies(MeshLib Boost)
+endif()

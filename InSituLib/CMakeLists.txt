@@ -12,3 +12,7 @@ add_library(InSituLib
 target_link_libraries(InSituLib INTERFACE MeshLib ${VTK_LIBRARIES})
 
 ADD_VTK_DEPENDENCY(InSituLib)
+
+if(TARGET Boost)
+    add_dependencies(InSituLib Boost)
+endif()
