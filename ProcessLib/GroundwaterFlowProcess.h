@@ -200,17 +200,22 @@ public:
                            this->_mesh.getDimension());
     }
 
+    void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
+    {
+        // Create single component dof in every of the mesh's nodes.
+        _mesh_subset_all_nodes =
+            new MeshLib::MeshSubset(mesh, &mesh.getNodes());
+
+        // Collect the mesh subsets in a vector.
+        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+    }
+
     void initialize() override
     {
         DBUG("Initialize GroundwaterFlowProcess.");
 
         DBUG("Construct dof mappings.");
-        // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes =
-            new MeshLib::MeshSubset(this->_mesh, &this->_mesh.getNodes());
-
-        // Collect the mesh subsets in a vector.
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+        initializeMeshSubsets(this->_mesh);
 
         _local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));

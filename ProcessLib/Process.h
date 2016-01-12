@@ -45,6 +45,9 @@ public:
 	virtual void postTimestep(std::string const& file_name,
 	                          const unsigned timestep) = 0;
 
+	/// Creates mesh subsets, i.e. components, for given mesh.
+	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
+
 	bool solve(const double delta_t)
 	{
 		_A->setZero();
