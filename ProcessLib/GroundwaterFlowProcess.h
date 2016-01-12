@@ -20,7 +20,6 @@
 #include "logog/include/logog.hpp"
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
@@ -159,10 +158,6 @@ public:
                 *_hydraulic_conductivity,
                 _integration_order);
 
-        DBUG("Create global assembler.");
-        _global_assembler.reset(new GlobalAssembler(
-            *(this->_A), *(this->_rhs), *this->_local_to_global_index_map));
-
         DBUG("Initialize boundary conditions.");
         MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
@@ -235,7 +230,8 @@ public:
         *this->_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*_global_assembler, _local_assemblers);
+        this->_global_setup.execute(*this->_global_assembler,
+                                    _local_assemblers);
 
         // Call global assembler for each Neumann boundary local assembler.
         for (auto bc : _neumann_bcs)
@@ -321,14 +317,6 @@ private:
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
     std::vector<LocalAssembler*> _local_assemblers;
-
-    using GlobalAssembler =
-        AssemblerLib::VectorMatrixAssembler<
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType>;
-
-
-    std::unique_ptr<GlobalAssembler> _global_assembler;
 
     /// Global ids in the global matrix/vector where the dirichlet bc is
     /// imposed and their corresponding values.

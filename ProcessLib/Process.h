@@ -13,6 +13,7 @@
 #include <string>
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
@@ -76,6 +77,10 @@ public:
 
 		// create global vectors and linear solver
 		createLinearSolver(getLinearSolverName());
+
+		DBUG("Create global assembler.");
+		_global_assembler.reset(
+		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
 		init();  // Execute proces specific initialization.
 	}
@@ -159,6 +164,12 @@ protected:
 	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
 	GlobalSetup _global_setup;
+
+	using GlobalAssembler =
+	    AssemblerLib::VectorMatrixAssembler<typename GlobalSetup::MatrixType,
+	                                        typename GlobalSetup::VectorType>;
+
+	std::unique_ptr<GlobalAssembler> _global_assembler;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
