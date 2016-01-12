@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include "BaseLib/ConfigTree.h"
+
 namespace MeshLib
 {
     class Mesh;
@@ -20,6 +22,7 @@ namespace MeshLib
 namespace ProcessLib
 {
 
+template<typename GlobalSetup>
 class Process
 {
 public:
@@ -39,6 +42,15 @@ public:
 
 protected:
     MeshLib::Mesh& _mesh;
+
+    GlobalSetup _global_setup;
+
+    std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
+    std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
+
+    std::unique_ptr<typename GlobalSetup::MatrixType> _A;
+    std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
+    std::unique_ptr<typename GlobalSetup::VectorType> _x;
 };
 
 }   // namespace ProcessLib
