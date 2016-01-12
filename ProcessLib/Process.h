@@ -16,6 +16,7 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
+#include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
@@ -34,7 +35,11 @@ class Process
 {
 public:
 	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}
-	virtual ~Process() = default;
+	virtual ~Process()
+	{
+		for (auto p : _all_mesh_subsets)
+			delete p;
+	}
 
 	virtual void initialize() = 0;
 	virtual bool assemble(const double delta_t) = 0;
@@ -105,6 +110,7 @@ protected:
 
 protected:
 	MeshLib::Mesh& _mesh;
+	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
 	GlobalSetup _global_setup;
 

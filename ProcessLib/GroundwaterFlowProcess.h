@@ -28,7 +28,6 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 
 #include "MeshLib/MeshSubset.h"
-#include "MeshLib/MeshSubsets.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
@@ -207,7 +206,8 @@ public:
             new MeshLib::MeshSubset(mesh, &mesh.getNodes());
 
         // Collect the mesh subsets in a vector.
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+        this->_all_mesh_subsets.push_back(
+            new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
     }
 
     std::string getLinearSolverName() const override
@@ -223,7 +223,7 @@ public:
         initializeMeshSubsets(this->_mesh);
 
         _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
+            new AssemblerLib::LocalToGlobalIndexMap(this->_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
         DBUG("Compute sparsity pattern");
         Process<GlobalSetup>::computeSparsityPattern(
@@ -339,9 +339,6 @@ public:
         for (auto p : _local_assemblers)
             delete p;
 
-        for (auto p : _all_mesh_subsets)
-            delete p;
-
         delete _mesh_subset_all_nodes;
     }
 
@@ -351,7 +348,6 @@ private:
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
