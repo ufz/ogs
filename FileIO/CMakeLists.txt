@@ -64,8 +64,13 @@ if(QT4_FOUND)
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)
+
 if(TARGET Eigen)
 	add_dependencies(FileIO Eigen)
+endif()
+
+if(TARGET Boost)
+    add_dependencies(FileIO Boost)
 endif()
 
 file(GLOB XSD_FILES . *.xsd)
