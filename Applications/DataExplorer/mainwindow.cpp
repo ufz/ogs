@@ -317,8 +317,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	QAction* showModellingDockAction = modellingDock->toggleViewAction();
 	showModellingDockAction->setStatusTip(tr("Shows / hides the Process view"));
 	connect(showModellingDockAction, SIGNAL(triggered(bool)), this,
-	        SLOT(showMshDockWidget(bool)));
-	menuWindows->addAction(showMshDockAction);
+	        SLOT(showConditionDockWidget(bool)));
+	menuWindows->addAction(showModellingDockAction);
 
 	QAction* showVisDockAction = vtkVisDock->toggleViewAction();
 	showVisDockAction->setStatusTip(tr("Shows / hides the VTK Pipeline view"));
