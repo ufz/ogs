@@ -23,6 +23,8 @@
 #include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
 #endif
 
+#include "ProcessVariable.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -126,6 +128,24 @@ protected:
 	{
 		_sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
 		    *_local_to_global_index_map, _mesh));
+	}
+
+
+	/// Sets the initial condition values in the solution vector x for a given
+	/// process variable and component.
+	void setInitialConditions(ProcessVariable const& variable,
+	                          int const component_id)
+	{
+		std::size_t const n = _mesh.getNNodes();
+		for (std::size_t i = 0; i < n; ++i)
+		{
+			MeshLib::Location const l(_mesh.getID(),
+			                          MeshLib::MeshItemType::Node, i);
+			auto const global_index = std::abs(
+			    _local_to_global_index_map->getGlobalIndex(l, component_id));
+			_x->set(global_index,
+			        variable.getInitialConditionValue(*_mesh.getNode(i)));
+		}
 	}
 
 protected:

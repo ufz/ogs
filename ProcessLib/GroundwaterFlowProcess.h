@@ -37,7 +37,6 @@
 #include "NeumannBc.h"
 #include "Parameter.h"
 #include "Process.h"
-#include "ProcessVariable.h"
 
 namespace MeshLib
 {
@@ -219,7 +218,7 @@ public:
     {
         DBUG("Initialize GroundwaterFlowProcess.");
 
-        setInitialConditions(*_hydraulic_head, 0);
+        Process<GlobalSetup>::setInitialConditions(*_hydraulic_head, 0);
 
         if (this->_mesh.getDimension()==1)
             createLocalAssemblers<1>();
@@ -229,23 +228,6 @@ public:
             createLocalAssemblers<3>();
         else
             assert(false);
-    }
-
-    void setInitialConditions(ProcessVariable const& variable,
-                              int const component_id)
-    {
-        std::size_t const n = this->_mesh.getNNodes();
-        for (std::size_t i = 0; i < n; ++i)
-        {
-            MeshLib::Location const l(this->_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, i);
-            auto const global_index =  // 0 is the component id.
-                std::abs(this->_local_to_global_index_map->getGlobalIndex(
-                    l, component_id));
-            this->_x->set(
-                global_index,
-                variable.getInitialConditionValue(*this->_mesh.getNode(i)));
-        }
     }
 
     bool assemble(const double /*delta_t*/) override
