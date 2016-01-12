@@ -11,21 +11,18 @@
 
 #include <array>
 #include <algorithm>
+#include <memory>
 #include <vector>
 
-#include "logog/include/logog.hpp"
-#include "LogogSimpleFormatter.h"
-
-// TCLAP
 #include "tclap/CmdLine.h"
 
-// FileIO
-#include "readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// MeshLib
-#include "Mesh.h"
-#include "Elements/Element.h"
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
+
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Elements/Element.h"
 
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
@@ -91,10 +88,7 @@ void reorderNodes2(std::vector<MeshLib::Element*> &elements)
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
+	ApplicationsLib::LogogSetup logo_setup;
 
 	TCLAP::CmdLine cmd("Reordering of mesh nodes to make OGS Data Explorer 5 meshes compatible with OGS6.\n" \
 	                   "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 meshes,\n" \
@@ -113,7 +107,7 @@ int main (int argc, char* argv[])
 	cmd.add(method_arg);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
+	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
 	INFO("Reordering nodes... ");
 	if (!method_arg.isSet() || method_arg.getValue() == 1)
@@ -123,19 +117,14 @@ int main (int argc, char* argv[])
 	else
 	{
 		ERR ("Unknown re-ordering method. Exit program...");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
-	FileIO::VtuInterface writer(mesh);
-	writer.writeToFile(output_mesh_arg.getValue().c_str());
+	FileIO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");
 
-	delete formatter;
-	delete logogCout;
-	LOGOG_SHUTDOWN();
-
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
