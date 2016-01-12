@@ -114,6 +114,9 @@ protected:
 
 	GlobalSetup _global_setup;
 
+	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+	    _local_to_global_index_map;
+
 	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
 	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 

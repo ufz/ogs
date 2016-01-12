@@ -150,7 +150,7 @@ public:
                 LocalDataInitializer>;
 
         LocalAssemblerBuilder local_asm_builder(
-            initializer, *_local_to_global_index_map);
+            initializer, *this->_local_to_global_index_map);
 
         DBUG("Calling local assembler builder for all mesh elements.");
         this->_global_setup.execute(
@@ -162,7 +162,7 @@ public:
 
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(
-            *(this->_A), *(this->_rhs), *_local_to_global_index_map));
+            *(this->_A), *(this->_rhs), *this->_local_to_global_index_map));
 
         DBUG("Initialize boundary conditions.");
         MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
@@ -171,7 +171,7 @@ public:
 
         _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
-                *_local_to_global_index_map, 0,
+                *this->_local_to_global_index_map, 0,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
         //
@@ -189,7 +189,7 @@ public:
                     hydraulic_head_mesh_element_searcher,
                     this->_global_setup,
                     _integration_order,
-                    *_local_to_global_index_map,
+                    *this->_local_to_global_index_map,
                     0,
                     *_mesh_subset_all_nodes);
         }
@@ -222,15 +222,15 @@ public:
         DBUG("Construct dof mappings.");
         initializeMeshSubsets(this->_mesh);
 
-        _local_to_global_index_map.reset(
+        this->_local_to_global_index_map.reset(
             new AssemblerLib::LocalToGlobalIndexMap(this->_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
 
         DBUG("Compute sparsity pattern");
         Process<GlobalSetup>::computeSparsityPattern(
-            *_local_to_global_index_map);
+            *this->_local_to_global_index_map);
 
         // create global vectors and linear solver
-        Process<GlobalSetup>::createLinearSolver(*_local_to_global_index_map,
+        Process<GlobalSetup>::createLinearSolver(*this->_local_to_global_index_map,
                                                  getLinearSolverName());
 
         setInitialConditions(*_hydraulic_head);
@@ -253,7 +253,7 @@ public:
             MeshLib::Location const l(this->_mesh.getID(),
                                       MeshLib::MeshItemType::Node, i);
             auto const global_index = // 0 is the component id.
-              std::abs( _local_to_global_index_map->getGlobalIndex(l, 0) );
+              std::abs(this->_local_to_global_index_map->getGlobalIndex(l, 0) );
             this->_x->set(
                 global_index,
                 variable.getInitialConditionValue(*this->_mesh.getNode(i)));
@@ -312,7 +312,7 @@ public:
             MeshLib::Location const l(this->_mesh.getID(),
                                       MeshLib::MeshItemType::Node, i);
             auto const global_index = std::abs(  // 0 is the component id.
-                _local_to_global_index_map->getGlobalIndex(l, 0));
+                this->_local_to_global_index_map->getGlobalIndex(l, 0));
             (*result)[i] = u[global_index];
         }
 #else
@@ -359,8 +359,6 @@ private:
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType>;
 
-
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
