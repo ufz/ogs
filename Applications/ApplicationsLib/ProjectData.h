@@ -110,24 +110,24 @@ public:
 
 	/// Iterator access for processes.
 	/// Provides read access to the process container.
-	std::vector<ProcessLib::Process*>::const_iterator
+	std::vector<ProcessLib::Process<GlobalSetupType>*>::const_iterator
 	processesBegin() const
 	{
 		return _processes.begin();
 	}
-	std::vector<ProcessLib::Process*>::iterator
+	std::vector<ProcessLib::Process<GlobalSetupType>*>::iterator
 	processesBegin()
 	{
 		return _processes.begin();
 	}
 
 	/// Iterator access for processes as in processesBegin().
-	std::vector<ProcessLib::Process*>::const_iterator
+	std::vector<ProcessLib::Process<GlobalSetupType>*>::const_iterator
 	processesEnd() const
 	{
 		return _processes.end();
 	}
-	std::vector<ProcessLib::Process*>::iterator
+	std::vector<ProcessLib::Process<GlobalSetupType>*>::iterator
 	processesEnd()
 	{
 		return _processes.end();
@@ -187,7 +187,7 @@ private:
 private:
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
 	std::vector<MeshLib::Mesh*> _mesh_vec;
-	std::vector<ProcessLib::Process*> _processes;
+	std::vector<ProcessLib::Process<GlobalSetupType>*> _processes;
 	std::vector<ProcessLib::ProcessVariable> _process_variables;
 
 	/// Buffer for each process' config used in the process building function.

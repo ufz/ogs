@@ -84,7 +84,7 @@ ProjectData::~ProjectData()
 {
 	delete _geoObjects;
 
-	for(ProcessLib::Process* p : _processes)
+	for(ProcessLib::Process<GlobalSetupType>* p : _processes)
 		delete p;
 
 	for (MeshLib::Mesh* m : _mesh_vec)
