@@ -41,7 +41,8 @@ public:
 			delete p;
 	}
 
-	virtual void initialize() = 0;
+	/// Process specific initialization called by initialize().
+	virtual void init() = 0;
 	virtual bool assemble(const double delta_t) = 0;
 
 	virtual std::string getLinearSolverName() const = 0;
@@ -54,6 +55,28 @@ public:
 
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
+
+	void initialize()
+	{
+		DBUG("Initialize process.");
+
+		DBUG("Construct dof mappings.");
+		initializeMeshSubsets(_mesh);
+
+		_local_to_global_index_map.reset(
+		    new AssemblerLib::LocalToGlobalIndexMap(
+		        _all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
+
+#ifndef USE_PETSC
+		DBUG("Compute sparsity pattern");
+		computeSparsityPattern();
+#endif
+
+		// create global vectors and linear solver
+		createLinearSolver(getLinearSolverName());
+
+		init();  // Execute proces specific initialization.
+	}
 
 	bool solve(const double delta_t)
 	{
@@ -75,9 +98,7 @@ protected:
 	}
 
 	/// Creates global matrix, rhs and solution vectors, and the linear solver.
-	void createLinearSolver(
-	    AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-	    std::string const solver_name)
+	void createLinearSolver(std::string const& solver_name)
 	{
 		DBUG("Allocate global matrix, vectors, and linear solver.");
 #ifdef USE_PETSC
@@ -87,10 +108,10 @@ protected:
 		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
 		mat_opt.o_nz = mat_opt.d_nz;
 		const std::size_t num_unknowns =
-		    local_to_global_index_map.dofSizeGlobal();
+		    _local_to_global_index_map->dofSizeGlobal();
 		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
 #else
-		const std::size_t num_unknowns = local_to_global_index_map.dofSize();
+		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
 		_A.reset(_global_setup.createMatrix(num_unknowns));
 #endif
 		_x.reset(_global_setup.createVector(num_unknowns));
@@ -101,11 +122,10 @@ protected:
 
 	/// Computes and stores global matrix' sparsity pattern from given
 	/// DOF-table.
-	void computeSparsityPattern(
-	    AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map)
+	void computeSparsityPattern()
 	{
 		_sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
-		    local_to_global_index_map, _mesh));
+		    *_local_to_global_index_map, _mesh));
 	}
 
 protected:

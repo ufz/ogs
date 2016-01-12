@@ -215,23 +215,9 @@ public:
         return "gw_";
     }
 
-    void initialize() override
+    void init() override
     {
         DBUG("Initialize GroundwaterFlowProcess.");
-
-        DBUG("Construct dof mappings.");
-        initializeMeshSubsets(this->_mesh);
-
-        this->_local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(this->_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
-
-        DBUG("Compute sparsity pattern");
-        Process<GlobalSetup>::computeSparsityPattern(
-            *this->_local_to_global_index_map);
-
-        // create global vectors and linear solver
-        Process<GlobalSetup>::createLinearSolver(*this->_local_to_global_index_map,
-                                                 getLinearSolverName());
 
         setInitialConditions(*_hydraulic_head);
 
