@@ -27,19 +27,28 @@ enum class FileType {
 	MSH,	// ascii-meshes
 };
 
+/**
+ * A list of selected files selected for conversion incl. an output directory.
+ */
 class FileListDialog : public QDialog, private Ui_FileList
 {
 	Q_OBJECT
 
 public:
-	FileListDialog(FileType input, FileType output, QWidget* parent = NULL);
+	/// Constructor
+	FileListDialog(FileType input, FileType output, QWidget* parent = nullptr);
+	/// Destructor
 	~FileListDialog(void);
 
+	/// Returns list of all selected files
 	const QStringList getInputFileList() const { return _allFiles.stringList(); };
+	/// Returns selected output directory
 	const QString getOutputDir() const { return _output_dir; };
 
 private:
+	/// Returns a string for the given file type enum
 	const QString getFileTypeString(FileType file_type) const;
+	/// Display a warning for vtu- to msh-conversion
 	void displayWarningLabel() const;
 
 	QStringListModel _allFiles;

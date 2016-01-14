@@ -18,15 +18,21 @@
 #include "ui_OGSFileConverter.h"
 #include <QDialog>
 
+/**
+ * A conversion tool for ogs5 and ogs6 files
+ */
 class OGSFileConverter : public QDialog, private Ui_OGSFileConverter
 {
 	Q_OBJECT
 
 public:
-	OGSFileConverter(QWidget* parent = 0);
+	/// Constructor
+	OGSFileConverter(QWidget* parent = nullptr);
+	/// Destructor
 	~OGSFileConverter(void);
 
 private:
+	/// Checks if a given file already exists
 	bool fileExists(const std::string &file_name) const;
 
 private slots:
