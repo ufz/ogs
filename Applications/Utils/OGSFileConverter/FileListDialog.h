@@ -40,6 +40,7 @@ public:
 
 private:
 	const QString getFileTypeString(FileType file_type) const;
+	void displayWarningLabel() const;
 
 	QStringListModel _allFiles;
 	QString _output_dir;
