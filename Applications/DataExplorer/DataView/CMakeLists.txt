@@ -97,6 +97,7 @@ source_group("Data Model Source Files" REGULAR_EXPRESSION "[.]*Item.cpp|[.]*Mode
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(
+	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_BINARY_DIR}/../Base
 	${CMAKE_CURRENT_BINARY_DIR}/DiagramView
 	${CMAKE_CURRENT_BINARY_DIR}/StratView
