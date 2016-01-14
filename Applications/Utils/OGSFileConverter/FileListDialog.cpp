@@ -18,12 +18,17 @@
 #include "StringTools.h"
 #include <QSettings>
 #include <QFileInfo>
+#include <QFont>
 #include <QLineEdit>
 
 FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
 : QDialog(parent), _output_dir(""), _input_file_type(input), _output_file_type(output)
 {
 	setupUi(this);
+
+	if (_input_file_type == FileType::VTU && _output_file_type == FileType::MSH)
+		displayWarningLabel();
+
 	this->listView->setModel(&_allFiles);
 }
 
@@ -97,3 +102,16 @@ const QString FileListDialog::getFileTypeString(FileType file_type) const
 	else if (file_type==FileType::MSH) return "GeoSys mesh files (*.msh)";
 	else return "All files (*.*)";
 }
+
+void FileListDialog::displayWarningLabel() const
+{
+	this->warningLabel->setFixedWidth(300);
+	this->warningLabel->setFixedHeight(40);
+	QFont font = this->warningLabel->font();
+	font.setPointSize(9);
+	font.setBold(true);
+	warningLabel->setFont(font);
+	this->warningLabel->setStyleSheet("QLabel { color : red; }");
+	this->warningLabel->setText("Warning: all scalar information except<br />MaterialIDs will be lost!");
+}
+
