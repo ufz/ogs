@@ -107,6 +107,10 @@ public:
 				ERR("Unknown process type: %s\n", type.c_str());
 			}
 		}
+
+		// process configs are not needed anymore, so clear the storage
+		// in order to trigger config tree checks
+		_process_configs.clear();
 	}
 
 	/// Iterator access for processes.
