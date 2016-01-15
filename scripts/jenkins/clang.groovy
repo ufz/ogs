@@ -27,6 +27,8 @@ node('docker')
 			sh '''cd build
 			      make ctest'''
 		}
+		step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
+			projectRulePath: 'ogs/scripts/jenkins/clang-log-parser.rules', useProjectRule: true])
 	}
 
 	//linux_gui: {
