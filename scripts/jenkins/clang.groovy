@@ -17,7 +17,7 @@ node('docker')
 		docker.image('ogs6/clang-ogs-base:latest').inside
 		{
 			catchError {
-				build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DBOOST_ROOT=/usr/src/boost_1_56_0', ''
+				build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
 
 				stage 'Unit tests'
 				sh '''cd build
