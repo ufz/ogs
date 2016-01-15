@@ -16,7 +16,7 @@ node('docker')
 	parallel linux: {
 		docker.image('ogs6/clang-ogs-base:latest').inside
 		{
-			build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
+			build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DBOOST_ROOT=$BOOST_ROOT', ''
 
 			stage 'Unit tests'
 			sh '''cd build
