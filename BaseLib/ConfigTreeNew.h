@@ -192,8 +192,6 @@ public:
     //! used anymore!
     ConfigTreeNew(ConfigTreeNew && other);
 
-    ConfigTreeNew() = delete;
-
     //! copying is not compatible with the semantics of this class
     ConfigTreeNew& operator=(ConfigTreeNew const&) = delete;
 
@@ -364,6 +362,10 @@ private:
     //! and the number of times it exists in the ConfigTree
     void markVisitedDecrement(std::string const& key) const;
 
+    //! Helper method that checks if the top level of this tree has
+    //! been red entirely (and not too often).
+    void checkFullyRead() const;
+
     //! returns a short string at suitable for error/warning messages
     static std::string shortString(std::string const& s);
 
@@ -375,6 +377,11 @@ private:
 
     //! A map key -> (count, type) keeping track which parameters have been read how often
     //! and which datatype they have.
+    //!
+    //! This member will be written to when reading from the config tree.
+    //! Therefore it has to be mutable in order to be able to read from
+    //! constant instances, e.g., those passed as constant references to
+    //! temporaries.
     mutable std::map<std::string, CountType> _visited_params;
 
     Callback _onerror;

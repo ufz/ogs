@@ -54,37 +54,21 @@ ConfigTreeNew(ConfigTreeNew && other)
 
 ConfigTreeNew::~ConfigTreeNew()
 {
-    if (!_tree) return;
-
-    for (auto const& p : *_tree)
-    {
-        markVisitedDecrement(p.first);
-    }
-
-    for (auto const& p : _visited_params)
-    {
-        if (p.second.count > 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
-                    + " time(s) more than it was present in the configuration tree.");
-        } else if (p.second.count < 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
-                    + " time(s) less than it was present in the configuration tree.");
-        }
-    }
+    checkFullyRead();
 }
 
 ConfigTreeNew&
 ConfigTreeNew::
 operator=(ConfigTreeNew&& other)
 {
-    _tree = other._tree;
-    other._tree = nullptr;
-    _path = other._path;
-    _visited_params = std::move(other._visited_params);
+    checkFullyRead();
 
-    // TODO Caution: That might be a very nontrivial operation (copying a std::function).
-    _onerror = other._onerror;
-    _onwarning = other._onwarning;
+    _tree           = other._tree;
+    other._tree     = nullptr;
+    _path           = std::move(other._path);
+    _visited_params = std::move(other._visited_params);
+    _onerror        = std::move(other._onerror);
+    _onwarning      = std::move(other._onwarning);
 
     return *this;
 }
@@ -233,6 +217,28 @@ markVisitedDecrement(std::string const& key) const
     if (!p.second) { // no insertion happened
         auto& v = p.first->second;
         --v.count;
+    }
+}
+
+void
+ConfigTreeNew::checkFullyRead() const
+{
+    if (!_tree) return;
+
+    for (auto const& p : *_tree)
+    {
+        markVisitedDecrement(p.first);
+    }
+
+    for (auto const& p : _visited_params)
+    {
+        if (p.second.count > 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
+                    + " time(s) more than it was present in the configuration tree.");
+        } else if (p.second.count < 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
+                    + " time(s) less than it was present in the configuration tree.");
+        }
     }
 }
 
