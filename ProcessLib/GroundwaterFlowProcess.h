@@ -34,6 +34,7 @@
 #include "GroundwaterFlowFEM.h"
 #include "NeumannBcAssembler.h"
 #include "NeumannBc.h"
+#include "DirichletBc.h"
 #include "Parameter.h"
 #include "Process.h"
 
@@ -159,9 +160,10 @@ public:
                 _hydraulic_head->getMesh());
 
         _hydraulic_head->initializeDirichletBCs(
-                hydraulic_head_mesh_node_searcher,
-                *this->_local_to_global_index_map, 0,
-                _dirichlet_bc.global_ids, _dirichlet_bc.values);
+            std::back_inserter(_dirichlet_bcs),
+            hydraulic_head_mesh_node_searcher,
+            *this->_local_to_global_index_map,
+            0);
 
         //
         // Neumann boundary conditions.
@@ -232,9 +234,9 @@ public:
         for (auto bc : _neumann_bcs)
             bc->integrate(this->_global_setup);
 
-        MathLib::applyKnownSolution(*this->_A, *this->_rhs, *this->_x,
-                                    _dirichlet_bc.global_ids,
-                                    _dirichlet_bc.values);
+        for (auto const& bc : _dirichlet_bcs)
+            MathLib::applyKnownSolution(*this->_A, *this->_rhs, *this->_x,
+                                        bc.global_ids, bc.values);
 
         return true;
     }
@@ -313,13 +315,7 @@ private:
 
     std::vector<LocalAssembler*> _local_assemblers;
 
-    /// Global ids in the global matrix/vector where the dirichlet bc is
-    /// imposed and their corresponding values.
-    struct DirichletBC {
-        std::vector<GlobalIndexType> global_ids;
-        std::vector<double> values;
-    } _dirichlet_bc;
-
+    std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 };
 
