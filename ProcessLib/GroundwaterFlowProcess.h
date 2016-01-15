@@ -13,30 +13,20 @@
 #include <cassert>
 #include <memory>
 
-#include <boost/optional.hpp>
 #include <boost/algorithm/string/erase.hpp>
+#include <boost/optional.hpp>
+
 
 #include "logog/include/logog.hpp"
-#include "BaseLib/ConfigTree.h"
-
-#ifdef USE_PETSC
-#include "MeshLib/NodePartitionedMesh.h"
-#include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
-#endif
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalDataInitializer.h"
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "AssemblerLib/ComputeSparsityPattern.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/SetMatrixSparsity.h"
 
 #include "MeshLib/MeshSubset.h"
-#include "MeshLib/MeshSubsets.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
@@ -46,7 +36,6 @@
 #include "NeumannBc.h"
 #include "Parameter.h"
 #include "Process.h"
-#include "ProcessVariable.h"
 
 namespace MeshLib
 {
@@ -59,7 +48,7 @@ namespace ProcessLib
 {
 
 template<typename GlobalSetup>
-class GroundwaterFlowProcess : public Process
+class GroundwaterFlowProcess : public Process<GlobalSetup>
 {
     unsigned const _integration_order = 2;
 
@@ -68,7 +57,7 @@ public:
             std::vector<ProcessVariable> const& variables,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
             BaseLib::ConfigTree const& config)
-        : Process(mesh)
+        : Process<GlobalSetup>(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");
 
@@ -131,14 +120,10 @@ public:
         }
 
         // Linear solver options
-        {
-            auto const par = config.get_child_optional("linear_solver");
-
-            if (par)
-            {
-                _linear_solver_options.reset(new BaseLib::ConfigTree(*par));
-            }
-        }
+        if (auto const& linear_solver_options =
+                config.get_child_optional("linear_solver"))
+            Process<GlobalSetup>::setLinearSolverOptions(
+                *linear_solver_options);
     }
 
     template <unsigned GlobalDim>
@@ -146,7 +131,7 @@ public:
     {
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.
-        _local_assemblers.resize(_mesh.getNElements());
+        _local_assemblers.resize(this->_mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
             GroundwaterFlow::LocalAssemblerDataInterface,
@@ -163,19 +148,15 @@ public:
                 LocalDataInitializer>;
 
         LocalAssemblerBuilder local_asm_builder(
-            initializer, *_local_to_global_index_map);
+            initializer, *this->_local_to_global_index_map);
 
         DBUG("Calling local assembler builder for all mesh elements.");
-        _global_setup.execute(
+        this->_global_setup.execute(
                 local_asm_builder,
-                _mesh.getElements(),
+                this->_mesh.getElements(),
                 _local_assemblers,
                 *_hydraulic_conductivity,
                 _integration_order);
-
-        DBUG("Create global assembler.");
-        _global_assembler.reset(
-            new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
         DBUG("Initialize boundary conditions.");
         MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
@@ -184,7 +165,7 @@ public:
 
         _hydraulic_head->initializeDirichletBCs(
                 hydraulic_head_mesh_node_searcher,
-                *_local_to_global_index_map, 0,
+                *this->_local_to_global_index_map, 0,
                 _dirichlet_bc.global_ids, _dirichlet_bc.values);
 
         //
@@ -200,102 +181,65 @@ public:
             _hydraulic_head->createNeumannBcs(
                     std::back_inserter(_neumann_bcs),
                     hydraulic_head_mesh_element_searcher,
-                    _global_setup,
+                    this->_global_setup,
                     _integration_order,
-                    *_local_to_global_index_map,
+                    *this->_local_to_global_index_map,
                     0,
                     *_mesh_subset_all_nodes);
         }
 
-        for (auto bc : _neumann_bcs)
-            bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
-
+        Process<GlobalSetup>::initializeNeumannBcs(_neumann_bcs);
     }
 
-    void initialize() override
+    void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
+    {
+        // Create single component dof in every of the mesh's nodes.
+        _mesh_subset_all_nodes =
+            new MeshLib::MeshSubset(mesh, &mesh.getNodes());
+
+        // Collect the mesh subsets in a vector.
+        this->_all_mesh_subsets.push_back(
+            new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+    }
+
+    std::string getLinearSolverName() const override
+    {
+        return "gw_";
+    }
+
+    void init() override
     {
         DBUG("Initialize GroundwaterFlowProcess.");
 
-        DBUG("Construct dof mappings.");
-        // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes = new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+        Process<GlobalSetup>::setInitialConditions(*_hydraulic_head, 0);
 
-        // Collect the mesh subsets in a vector.
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-
-        _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
-
-#ifdef USE_PETSC
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        MathLib::PETScMatrixOption mat_opt;
-        const MeshLib::NodePartitionedMesh& pmesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
-        mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
-        mat_opt.o_nz = mat_opt.d_nz;
-        const std::size_t num_unknowns =
-            _local_to_global_index_map->dofSizeGlobal();
-        _A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
-#else
-        DBUG("Compute sparsity pattern");
-        _sparsity_pattern = std::move(
-            AssemblerLib::computeSparsityPattern(
-                *_local_to_global_index_map, _mesh));
-
-        DBUG("Allocate global matrix, vectors, and linear solver.");
-        const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
-        _A.reset(_global_setup.createMatrix(num_unknowns));
-#endif
-
-        _x.reset(_global_setup.createVector(num_unknowns));
-        _rhs.reset(_global_setup.createVector(num_unknowns));
-        _linear_solver.reset(new typename GlobalSetup::LinearSolver(
-            *_A, "gw_", _linear_solver_options.get()));
-
-        setInitialConditions(*_hydraulic_head);
-
-        if (_mesh.getDimension()==1)
+        if (this->_mesh.getDimension()==1)
             createLocalAssemblers<1>();
-        else if (_mesh.getDimension()==2)
+        else if (this->_mesh.getDimension()==2)
             createLocalAssemblers<2>();
-        else if (_mesh.getDimension()==3)
+        else if (this->_mesh.getDimension()==3)
             createLocalAssemblers<3>();
         else
             assert(false);
     }
 
-    void setInitialConditions(ProcessVariable const& variable)
+    bool assemble(const double /*delta_t*/) override
     {
-        std::size_t const n = _mesh.getNNodes();
-        for (std::size_t i = 0; i < n; ++i)
-        {
-            MeshLib::Location const l(_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, i);
-            auto const global_index = // 0 is the component id.
-              std::abs( _local_to_global_index_map->getGlobalIndex(l, 0) );
-            _x->set(global_index,
-                   variable.getInitialConditionValue(*_mesh.getNode(i)));
-        }
-    }
+        DBUG("Assemble GroundwaterFlowProcess.");
 
-    bool solve(const double /*delta_t*/) override
-    {
-        DBUG("Solve GroundwaterFlowProcess.");
-
-        _A->setZero();
-        MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
-        *_rhs = 0;   // This resets the whole vector.
+        *this->_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
-        _global_setup.execute(*_global_assembler, _local_assemblers);
+        this->_global_setup.execute(*this->_global_assembler,
+                                    _local_assemblers);
 
         // Call global assembler for each Neumann boundary local assembler.
         for (auto bc : _neumann_bcs)
-            bc->integrate(_global_setup);
+            bc->integrate(this->_global_setup);
 
-        MathLib::applyKnownSolution(*_A, *_rhs, *_x, _dirichlet_bc.global_ids,
-                                     _dirichlet_bc.values);
-        _linear_solver->solve(*_rhs, *_x);
+        MathLib::applyKnownSolution(*this->_A, *this->_rhs, *this->_x,
+                                    _dirichlet_bc.global_ids,
+                                    _dirichlet_bc.values);
 
         return true;
     }
@@ -308,41 +252,41 @@ public:
 
         // Get or create a property vector for results.
         boost::optional<MeshLib::PropertyVector<double>&> result;
-        if (_mesh.getProperties().hasPropertyVector(property_name))
+        if (this->_mesh.getProperties().hasPropertyVector(property_name))
         {
-            result = _mesh.getProperties().template
+            result = this->_mesh.getProperties().template
                 getPropertyVector<double>(property_name);
         }
         else
         {
-            result = _mesh.getProperties().template
+            result = this->_mesh.getProperties().template
                 createNewPropertyVector<double>(property_name,
                     MeshLib::MeshItemType::Node);
-            result->resize(_x->size());
+            result->resize(this->_x->size());
         }
-        assert(result && result->size() == _x->size());
+        assert(result && result->size() == this->_x->size());
 
 #ifdef USE_PETSC
-        std::unique_ptr<double[]> u(new double[_x->size()]);
-        _x->getGlobalVector(u.get());  // get the global solution
+        std::unique_ptr<double[]> u(new double[this->_x->size()]);
+        this->_x->getGlobalVector(u.get());  // get the global solution
 
-        std::size_t const n = _mesh.getNNodes();
+        std::size_t const n = this->_mesh.getNNodes();
         for (std::size_t i = 0; i < n; ++i)
         {
-            MeshLib::Location const l(_mesh.getID(),
+            MeshLib::Location const l(this->_mesh.getID(),
                                       MeshLib::MeshItemType::Node, i);
             auto const global_index = std::abs(  // 0 is the component id.
-                _local_to_global_index_map->getGlobalIndex(l, 0));
+                this->_local_to_global_index_map->getGlobalIndex(l, 0));
             (*result)[i] = u[global_index];
         }
 #else
         // Copy result
-        for (std::size_t i = 0; i < _x->size(); ++i)
-            (*result)[i] = (*_x)[i];
+        for (std::size_t i = 0; i < this->_x->size(); ++i)
+            (*result)[i] = (*this->_x)[i];
 #endif
 
         // Write output file
-        FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+        FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
         vtu_interface.writeToFile(file_name);
     }
 
@@ -359,9 +303,6 @@ public:
         for (auto p : _local_assemblers)
             delete p;
 
-        for (auto p : _all_mesh_subsets)
-            delete p;
-
         delete _mesh_subset_all_nodes;
     }
 
@@ -371,29 +312,11 @@ private:
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
-
-    GlobalSetup _global_setup;
-    std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
-    std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
-    std::unique_ptr<typename GlobalSetup::MatrixType> _A;
-    std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
-    std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
     std::vector<LocalAssembler*> _local_assemblers;
-
-    using GlobalAssembler =
-        AssemblerLib::VectorMatrixAssembler<
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType>;
-
-
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
-
-    std::unique_ptr<GlobalAssembler> _global_assembler;
 
     /// Global ids in the global matrix/vector where the dirichlet bc is
     /// imposed and their corresponding values.
@@ -403,8 +326,6 @@ private:
     } _dirichlet_bc;
 
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
-
-    AssemblerLib::SparsityPattern _sparsity_pattern;
 };
 
 }   // namespace ProcessLib

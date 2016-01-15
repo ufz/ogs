@@ -97,7 +97,7 @@ public:
 				// TODO at the moment we have only one mesh, later there can be
 				// several meshes. Then we have to assign the referenced mesh
 				// here.
-				_processes.push_back(
+				_processes.emplace_back(
 					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
 						*_mesh_vec[0], _process_variables, _parameters, pc));
 			}
@@ -110,24 +110,26 @@ public:
 
 	/// Iterator access for processes.
 	/// Provides read access to the process container.
-	std::vector<ProcessLib::Process*>::const_iterator
+	std::vector<
+	    std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::const_iterator
 	processesBegin() const
 	{
 		return _processes.begin();
 	}
-	std::vector<ProcessLib::Process*>::iterator
+	std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::iterator
 	processesBegin()
 	{
 		return _processes.begin();
 	}
 
 	/// Iterator access for processes as in processesBegin().
-	std::vector<ProcessLib::Process*>::const_iterator
+	std::vector<
+	    std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::const_iterator
 	processesEnd() const
 	{
 		return _processes.end();
 	}
-	std::vector<ProcessLib::Process*>::iterator
+	std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::iterator
 	processesEnd()
 	{
 		return _processes.end();
@@ -187,7 +189,8 @@ private:
 private:
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
 	std::vector<MeshLib::Mesh*> _mesh_vec;
-	std::vector<ProcessLib::Process*> _processes;
+	std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>
+	    _processes;
 	std::vector<ProcessLib::ProcessVariable> _process_variables;
 
 	/// Buffer for each process' config used in the process building function.
