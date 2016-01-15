@@ -1,0 +1,15 @@
+# Workflow stages used for grouping
+start /stage:/
+
+# CMake
+warning /CMake Warning/
+error /CMake Error/
+
+# CTest
+error \[*][*][*]Failed\
+
+# Clang
+
+# Clang sanitizer
+error /: runtime error:/
+error /==ERROR:/
