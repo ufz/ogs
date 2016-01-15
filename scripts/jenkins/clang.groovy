@@ -2,14 +2,9 @@ node('docker')
 {
 	// Checks out into subdirectory ogs
 	stage 'Checkout'
-	checkout([$class: 'GitSCM',
-		branches: [[name: '*/master']],
-		doGenerateSubmoduleConfigurations: false,
-		extensions:
-			[[$class: 'RelativeTargetDirectory', relativeTargetDir: 'ogs']],
-		submoduleCfg: [],
-		userRemoteConfigs:
-			[[url: 'https://github.com/ufz/ogs']]])
+	dir('ogs') {
+ 		checkout scm
+ 	}
 
 
 	// Multiple configurations are build in parallel
