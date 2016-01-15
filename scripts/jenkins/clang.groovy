@@ -16,28 +16,22 @@ node('docker')
 	parallel linux: {
 		docker.image('ogs6/clang-ogs-base:latest').inside
 		{
-			build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DBOOST_ROOT=$BOOST_ROOT', ''
+			catchError {
+				build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DBOOST_ROOT=/usr/src/boost_1_56_0', ''
 
-			stage 'Unit tests'
-			sh '''cd build
-			      rm -rf tests/testrunner.xml
-			      bin/testrunner --gtest_output=xml:./tests/testrunner.xml'''
+				stage 'Unit tests'
+				sh '''cd build
+			          rm -rf tests/testrunner.xml
+			          bin/testrunner --gtest_output=xml:./tests/testrunner.xml'''
 
-			stage 'End-to-end tests'
-			sh '''cd build
-			      make ctest'''
+				stage 'End-to-end tests'
+				sh '''cd build
+			          make ctest'''
+			}
 		}
 		step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
 			projectRulePath: 'ogs/scripts/jenkins/clang-log-parser.rules', useProjectRule: true])
 	}
-
-	//linux_gui: {
-	//	docker.image('ogs6/gcc-ogs-gui:latest').inside {
-	//		build 'build_gui', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_TESTS=OFF -DOGS_BUILD_CLI=OFF', 'package'
-	//	}
-	//}
-
-	// end parallel
 
 	step([$class: 'JUnitResultArchiver',
 		testResults: 'build/tests/testrunner.xml,build_win/tests/testrunner.xml'])
