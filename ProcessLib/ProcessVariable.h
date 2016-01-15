@@ -14,6 +14,7 @@
 #include "InitialCondition.h"
 #include "UniformDirichletBoundaryCondition.h"
 #include "NeumannBc.h"
+#include "DirichletBc.h"
 
 namespace MeshGeoToolsLib
 {
@@ -56,10 +57,21 @@ public:
 	/// Returns a mesh on which the process variable is defined.
 	MeshLib::Mesh const& getMesh() const;
 
-	void initializeDirichletBCs(MeshGeoToolsLib::MeshNodeSearcher& searcher,
-	        const AssemblerLib::LocalToGlobalIndexMap& dof_table,
-	        const unsigned nodal_dof_idx,
-	        std::vector<GlobalIndexType>& global_ids, std::vector<double>& values);
+	template <typename OutputIterator>
+	void initializeDirichletBCs(
+	    OutputIterator output_bcs,
+	    MeshGeoToolsLib::MeshNodeSearcher& searcher,
+	    const AssemblerLib::LocalToGlobalIndexMap& dof_table,
+	    const unsigned nodal_dof_idx)
+	{
+		for (auto& bc_config : _dirichlet_bc_configs)
+		{
+			DirichletBc<GlobalIndexType> bc;
+			bc_config->initialize(searcher, dof_table, nodal_dof_idx,
+			                      bc.global_ids, bc.values);
+			output_bcs++ = bc;
+		}
+	}
 
 	template <typename OutputIterator, typename GlobalSetup, typename... Args>
 	void createNeumannBcs(OutputIterator bcs,
@@ -85,7 +97,7 @@ private:
 	MeshLib::Mesh const& _mesh;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
-	    _dirichlet_bcs;
+	    _dirichlet_bc_configs;
 	std::vector<std::unique_ptr<NeumannBcConfig>> _neumann_bc_configs;
 };
 
