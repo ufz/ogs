@@ -59,6 +59,8 @@ public:
             BaseLib::ConfigTreeNew const& config)
         : Process<GlobalSetup>(mesh)
     {
+        config.checkConfParam("type", "GROUNDWATER_FLOW");
+
         DBUG("Create GroundwaterFlowProcess.");
 
         // Process variable.
