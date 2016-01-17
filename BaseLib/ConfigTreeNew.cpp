@@ -43,39 +43,39 @@ ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
 
 ConfigTreeNew::
 ConfigTreeNew(ConfigTreeNew && other)
-	: _tree(other._tree)
-	, _path(other._path)
-	, _visited_params(std::move(other._visited_params))
-	, _onerror(other._onerror)
-	, _onwarning(other._onwarning)
+    : _tree(other._tree)
+    , _path(other._path)
+    , _visited_params(std::move(other._visited_params))
+    , _onerror(other._onerror)
+    , _onwarning(other._onwarning)
 {
-	other._tree = nullptr;
+    other._tree = nullptr;
 }
 
 ConfigTreeNew::~ConfigTreeNew()
 {
-	if (!_tree) return;
+    checkFullyRead();
+}
 
-	for (auto const& p : *_tree)
-	{
-		markVisitedDecrement(p.first);
-	}
+ConfigTreeNew&
+ConfigTreeNew::
+operator=(ConfigTreeNew&& other)
+{
+    checkFullyRead();
 
-	for (auto const& p : _visited_params)
-	{
-		if (p.second.count > 0) {
-			warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
-					+ " time(s) more than it was present in the configuration tree.");
-		} else if (p.second.count < 0) {
-			warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
-					+ " time(s) less than it was present in the configuration tree.");
-		}
-	}
+    _tree           = other._tree;
+    other._tree     = nullptr;
+    _path           = std::move(other._path);
+    _visited_params = std::move(other._visited_params);
+    _onerror        = std::move(other._onerror);
+    _onwarning      = std::move(other._onwarning);
+
+    return *this;
 }
 
 ConfigTreeNew
 ConfigTreeNew::
-getConfSubtree(std::string const& root)
+getConfSubtree(std::string const& root) const
 {
     if (auto t = getConfSubtreeOptional(root)) {
         return std::move(*t);
@@ -87,15 +87,14 @@ getConfSubtree(std::string const& root)
 
 boost::optional<ConfigTreeNew>
 ConfigTreeNew::
-getConfSubtreeOptional(std::string const& root)
+getConfSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
     auto subtree = _tree->get_child_optional(root);
 
     if (subtree) {
         markVisited(root);
-        return boost::optional<ConfigTreeNew>(std::move(
-                ConfigTreeNew(*subtree, *this, root)));
+        return ConfigTreeNew(*subtree, *this, root);
     } else {
         markVisited(root, true);
         return boost::optional<ConfigTreeNew>();
@@ -104,7 +103,7 @@ getConfSubtreeOptional(std::string const& root)
 
 Range<ConfigTreeNew::SubtreeIterator>
 ConfigTreeNew::
-getConfSubtreeList(std::string const& root)
+getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
     markVisited(root, true);
@@ -116,7 +115,7 @@ getConfSubtreeList(std::string const& root)
                 SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTreeNew::ignoreConfParam(const std::string &param)
+void ConfigTreeNew::ignoreConfParam(const std::string &param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -124,7 +123,7 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param)
     markVisited(param, peek_only);
 }
 
-void ConfigTreeNew::ignoreConfParamAll(const std::string &param)
+void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, true);
@@ -136,14 +135,14 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param)
 }
 
 
-void ConfigTreeNew::error(const std::string& message)
+void ConfigTreeNew::error(const std::string& message) const
 {
-	_onerror(_path, message);
+    _onerror(_path, message);
 }
 
-void ConfigTreeNew::warning(const std::string& message)
+void ConfigTreeNew::warning(const std::string& message) const
 {
-	_onwarning(_path, message);
+    _onwarning(_path, message);
 }
 
 
@@ -168,48 +167,48 @@ std::string ConfigTreeNew::shortString(const std::string &s)
 }
 
 
-void ConfigTreeNew::checkKeyname(std::string const& key)
+void ConfigTreeNew::checkKeyname(std::string const& key) const
 {
-	if (key.empty()) {
-		error("Search for empty key.");
-	} else if (key_chars_start.find(key.front()) == std::string::npos) {
-		error("Key <" + key + "> starts with an illegal character.");
-	} else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
-		error("Key <" + key + "> contains illegal characters.");
-	}
+    if (key.empty()) {
+        error("Search for empty key.");
+    } else if (key_chars_start.find(key.front()) == std::string::npos) {
+        error("Key <" + key + "> starts with an illegal character.");
+    } else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
+        error("Key <" + key + "> contains illegal characters.");
+    }
 }
 
 std::string ConfigTreeNew::
-joinPaths( const std::string &p1, const std::string &p2)
+joinPaths( const std::string &p1, const std::string &p2) const
 {
-	if (p2.empty()) {
-		error("Second path to be joined is empty.");
-	}
+    if (p2.empty()) {
+        error("Second path to be joined is empty.");
+    }
 
-	if (p1.empty()) return p2;
+    if (p1.empty()) return p2;
 
-	return p1 + pathseparator + p2;
+    return p1 + pathseparator + p2;
 }
 
-void ConfigTreeNew::checkUnique(const std::string &key)
+void ConfigTreeNew::checkUnique(const std::string &key) const
 {
-	checkKeyname(key);
+    checkKeyname(key);
 
-	if (_visited_params.find(key) != _visited_params.end()) {
-		error("Key <" + key + "> has already been processed.");
-	}
+    if (_visited_params.find(key) != _visited_params.end()) {
+        error("Key <" + key + "> has already been processed.");
+    }
 }
 
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only)
+markVisited(std::string const& key, bool peek_only) const
 {
     return markVisited<ConfigTreeNew>(key, peek_only);
 }
 
 void
 ConfigTreeNew::
-markVisitedDecrement(std::string const& key)
+markVisitedDecrement(std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
@@ -218,6 +217,28 @@ markVisitedDecrement(std::string const& key)
     if (!p.second) { // no insertion happened
         auto& v = p.first->second;
         --v.count;
+    }
+}
+
+void
+ConfigTreeNew::checkFullyRead() const
+{
+    if (!_tree) return;
+
+    for (auto const& p : *_tree)
+    {
+        markVisitedDecrement(p.first);
+    }
+
+    for (auto const& p : _visited_params)
+    {
+        if (p.second.count > 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
+                    + " time(s) more than it was present in the configuration tree.");
+        } else if (p.second.count < 0) {
+            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
+                    + " time(s) less than it was present in the configuration tree.");
+        }
     }
 }
 

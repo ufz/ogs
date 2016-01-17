@@ -14,7 +14,7 @@
 #endif
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
@@ -26,7 +26,7 @@ namespace MathLib
 EigenLisLinearSolver::EigenLisLinearSolver(
     EigenMatrix& A,
     const std::string /*solver_name*/,
-    BaseLib::ConfigTree const* const option)
+    BaseLib::ConfigTreeNew const* const option)
     : _A(A), _lis_option(option)
 {
 }

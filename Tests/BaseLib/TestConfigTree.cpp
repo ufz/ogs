@@ -400,7 +400,7 @@ TEST(BaseLibConfigTree, ConfigTreeStringLiterals)
 }
 
 // String literals are somewhat special for template classes
-TEST(BaseLibConfigTree, ConfigTreeMove)
+TEST(BaseLibConfigTree, ConfigTreeMoveConstruct)
 {
     const char xml[] =
             "<s>test</s>"
@@ -418,6 +418,39 @@ TEST(BaseLibConfigTree, ConfigTreeMove)
         DO_EXPECT(cbs, false, false);
 
         BaseLib::ConfigTreeNew conf2(std::move(conf));
+
+        EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
+        DO_EXPECT(cbs, false, false);
+
+        conf2.checkConfParam("t", "Test");
+        DO_EXPECT(cbs, false, false);
+    } // ConfigTree destroyed here
+    DO_EXPECT(cbs, false, false);
+}
+
+// String literals are somewhat special for template classes
+TEST(BaseLibConfigTree, ConfigTreeMoveAssign)
+{
+    const char xml[] =
+            "<s>test</s>"
+            "<t>Test</t>";
+
+    boost::property_tree::ptree ptree;
+    std::istringstream xml_str(xml);
+    read_xml(xml_str, ptree);
+
+    Callbacks cbs;
+    {
+        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+
+        EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
+        DO_EXPECT(cbs, false, false);
+
+        BaseLib::ConfigTreeNew conf2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        conf2 = std::move(conf);
+        // Expect warning because config tree has not been traversed
+        // entirely before.
+        DO_EXPECT(cbs, false, true);
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
         DO_EXPECT(cbs, false, false);

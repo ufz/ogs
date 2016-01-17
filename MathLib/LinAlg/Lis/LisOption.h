@@ -17,11 +17,11 @@
 
 #include <string>
 #include <map>
-#include <boost/algorithm/string.hpp>
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
+#include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
 {
@@ -40,12 +40,14 @@ namespace MathLib
  */
 struct LisOption
 {
-	LisOption(BaseLib::ConfigTree const* const options)
+	LisOption(BaseLib::ConfigTreeNew const* const options)
 	{
 		if (options)
 		{
-			_option_string += " " + options->get<std::string>("lis", "");
-			boost::algorithm::trim_right(_option_string);
+			ignoreOtherLinearSolvers(*options, "lis");
+			if (auto s = options->getConfParamOptional<std::string>("lis")) {
+				if (!s->empty()) _option_string += " " + *s;
+			}
 		}
 #ifndef NDEBUG
 		INFO("Lis options: \"%s\"", _option_string.c_str());

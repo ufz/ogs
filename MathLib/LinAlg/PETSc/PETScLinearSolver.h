@@ -23,7 +23,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -50,7 +50,7 @@ class PETScLinearSolver
                            petsc options database.
         */
         PETScLinearSolver(PETScMatrix& A, const std::string prefix = "",
-                          BaseLib::ConfigTree const* const option = nullptr);
+                          BaseLib::ConfigTreeNew const* const option = nullptr);
 
         ~PETScLinearSolver()
         {

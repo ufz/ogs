@@ -14,7 +14,7 @@
 
 #include <lis.h>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "MathLib/LinAlg/Lis/LisOption.h"
 
 namespace MathLib
@@ -38,7 +38,7 @@ public:
      *                    LisOption struct.
      */
     EigenLisLinearSolver(EigenMatrix &A, const std::string solver_name = "",
-                         BaseLib::ConfigTree const*const option = nullptr);
+                         BaseLib::ConfigTreeNew const*const option = nullptr);
 
     /**
      * copy linear solvers options

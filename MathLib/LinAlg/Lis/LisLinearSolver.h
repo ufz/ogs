@@ -20,7 +20,7 @@
 
 #include <lis.h>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 
 #include "LisOption.h"
 #include "LisVector.h"
@@ -46,7 +46,7 @@ public:
      *                    LisOption struct.
      */
     LisLinearSolver(LisMatrix &A, const std::string solver_name = "",
-                    BaseLib::ConfigTree const*const option = nullptr);
+                    BaseLib::ConfigTreeNew const*const option = nullptr);
 
     /**
      * configure linear solvers

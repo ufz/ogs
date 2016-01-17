@@ -17,7 +17,7 @@
 #include <limits>
 #include <cassert>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 #include "logog/include/logog.hpp"
 
 namespace NumLib
@@ -32,31 +32,15 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 {}
 
 FixedTimeStepping*
-FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
+FixedTimeStepping::newInstance(BaseLib::ConfigTreeNew const& config)
 {
-    assert(config.get<std::string>("type") == "FixedTimeStepping");
+    config.checkConfParam("type", "FixedTimeStepping");
 
-    auto const t_initial = config.get_optional<double>("t_initial");
-    auto const t_end     = config.get_optional<double>("t_end");
-    auto const dt        = config.get_optional<double>("dt");
+    auto const t_initial = config.getConfParam<double>("t_initial");
+    auto const t_end     = config.getConfParam<double>("t_end");
+    auto const dt        = config.getConfParam<double>("dt");
 
-    if (!t_initial)
-    {
-        ERR("could not find required parameter t_initial.");
-        return nullptr;
-    }
-    if (!t_end)
-    {
-        ERR("could not find required parameter t_end.");
-        return nullptr;
-    }
-    if (!dt)
-    {
-        ERR("could not find required parameter dt.");
-        return nullptr;
-    }
-
-    return new FixedTimeStepping(*t_initial, *t_end, *dt);
+    return new FixedTimeStepping(t_initial, t_end, dt);
 }
 
 const TimeStep FixedTimeStepping::getTimeStep() const

@@ -19,7 +19,6 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 
-
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
@@ -137,8 +136,9 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         t_root.put_child("eigen", t_solver);
     }
     t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
+    BaseLib::ConfigTreeNew conf(t_root);
 
-    GlobalSetup::LinearSolver ls(*A, "solver_name", &t_root);
+    GlobalSetup::LinearSolver ls(*A, "solver_name", &conf);
     ls.solve(*rhs, *x);
 
     // copy solution to double vector

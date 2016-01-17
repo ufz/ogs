@@ -56,7 +56,7 @@ public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-            BaseLib::ConfigTree const& config)
+            BaseLib::ConfigTreeNew const& config)
         : Process<GlobalSetup>(mesh)
     {
         DBUG("Create GroundwaterFlowProcess.");
@@ -64,7 +64,7 @@ public:
         // Process variable.
         {
             // Find the corresponding process variable.
-            std::string const name = config.get<std::string>("process_variable");
+            std::string const name = config.getConfParam<std::string>("process_variable");
 
             auto variable = std::find_if(variables.cbegin(), variables.cend(),
                     [&name](ProcessVariable const& v) {
@@ -83,14 +83,7 @@ public:
         // Hydraulic conductivity parameter.
         {
             // find hydraulic_conductivity in process config
-            boost::optional<std::string> const name =
-                config.get_optional<std::string>("hydraulic_conductivity");
-            if (!name)
-            {
-                ERR("Could not find required tag hydraulic_conductivity in "
-                    "the process config.");
-                std::abort();
-            }
+            auto const name = config.getConfParam<std::string>("hydraulic_conductivity");
 
             // find corresponding parameter by name
             auto const parameter =
@@ -104,7 +97,7 @@ public:
             {
                 ERR("Could not find required parameter config for \'%s\' "
                     "among read parameters.",
-                    name->c_str());
+                    name.c_str());
                 std::abort();
             }
 
@@ -120,10 +113,10 @@ public:
         }
 
         // Linear solver options
-        if (auto const& linear_solver_options =
-                config.get_child_optional("linear_solver"))
+        if (auto linear_solver_options =
+                config.getConfSubtreeOptional("linear_solver"))
             Process<GlobalSetup>::setLinearSolverOptions(
-                *linear_solver_options);
+                std::move(*linear_solver_options));
     }
 
     template <unsigned GlobalDim>

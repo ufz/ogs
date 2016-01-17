@@ -15,7 +15,7 @@
 
 #include <memory>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTreeNew.h"
 
 #include "GeoLib/GEOObjects.h"
 
@@ -45,7 +45,7 @@ public:
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
 	/// configuration.
-	ProjectData(BaseLib::ConfigTree const& config_tree,
+	ProjectData(BaseLib::ConfigTreeNew const& config_tree,
 	            std::string const& path);
 
 	ProjectData(ProjectData&) = delete;
@@ -89,9 +89,10 @@ public:
 	template <typename GlobalSetupType>
 	void buildProcesses()
 	{
-		for (auto pc : _process_configs)
+		for (auto const& pc : _process_configs)
 		{
-			if (pc.get<std::string>("type") == "GROUNDWATER_FLOW") {
+			auto const type = pc.peekConfParam<std::string>("type");
+			if (type == "GROUNDWATER_FLOW") {
 				// The existence check of the in the configuration referenced
 				// process variables is checked in the physical process.
 				// TODO at the moment we have only one mesh, later there can be
@@ -103,9 +104,13 @@ public:
 			}
 			else
 			{
-				WARN("Unknown process type: %s\n", pc.get<std::string>("type").c_str());
+				ERR("Unknown process type: %s\n", type.c_str());
 			}
 		}
+
+		// process configs are not needed anymore, so clear the storage
+		// in order to trigger config tree checks
+		_process_configs.clear();
 	}
 
 	/// Iterator access for processes.
@@ -169,22 +174,22 @@ private:
 	/// Parses the process variables configuration and creates new variables for
 	/// each variable entry passing the corresponding subtree to the process
 	/// variable constructor.
-	void parseProcessVariables(BaseLib::ConfigTreeNew& process_variables_config);
+	void parseProcessVariables(BaseLib::ConfigTreeNew const& process_variables_config);
 
 	/// Parses the parameters configuration and saves them in a list.
 	/// Checks if a parameter has name tag.
-	void parseParameters(BaseLib::ConfigTree const& parameters_config);
+	void parseParameters(BaseLib::ConfigTreeNew const& parameters_config);
 
 	/// Parses the processes configuration and creates new processes for each
 	/// process entry passing the corresponding subtree to the process
 	/// constructor.
-	void parseProcesses(BaseLib::ConfigTree const& process_config);
+	void parseProcesses(BaseLib::ConfigTreeNew const& process_config);
 
 	/// Parses the output configuration.
 	/// Parses the file tag and sets output file prefix.
-	void parseOutput(BaseLib::ConfigTree const& output_config, std::string const& path);
+	void parseOutput(BaseLib::ConfigTreeNew const& output_config, std::string const& path);
 
-	void parseTimeStepping(BaseLib::ConfigTree const& timestepping_config);
+	void parseTimeStepping(BaseLib::ConfigTreeNew const& timestepping_config);
 
 private:
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
@@ -194,7 +199,7 @@ private:
 	std::vector<ProcessLib::ProcessVariable> _process_variables;
 
 	/// Buffer for each process' config used in the process building function.
-	std::vector<BaseLib::ConfigTree> _process_configs;
+	std::vector<BaseLib::ConfigTreeNew> _process_configs;
 
 	/// Buffer for each parameter config passed to the process.
 	std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;

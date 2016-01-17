@@ -42,18 +42,18 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 
 }
 
-ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
+ProjectData::ProjectData(BaseLib::ConfigTreeNew const& project_config,
 	std::string const& path)
 {
 	// geometry
 	std::string const geometry_file = BaseLib::copyPathToFileName(
-			project_config.get<std::string>("geometry"), path
+			project_config.getConfParam<std::string>("geometry"), path
 		);
 	detail::readGeometry(geometry_file, *_geoObjects);
 
 	// mesh
 	std::string const mesh_file = BaseLib::copyPathToFileName(
-			project_config.get<std::string>("mesh"), path
+			project_config.getConfParam<std::string>("mesh"), path
 		);
 
 	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
@@ -64,20 +64,19 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
 	// process variables
 
-	BaseLib::ConfigTreeNew var_conf(project_config.get_child("process_variables"));
-	parseProcessVariables(var_conf);
+	parseProcessVariables(project_config.getConfSubtree("process_variables"));
 
 	// parameters
-	parseParameters(project_config.get_child("parameters"));
+	parseParameters(project_config.getConfSubtree("parameters"));
 
 	// processes
-	parseProcesses(project_config.get_child("processes"));
+	parseProcesses(project_config.getConfSubtree("processes"));
 
 	// output
-	parseOutput(project_config.get_child("output"), path);
+	parseOutput(project_config.getConfSubtree("output"), path);
 
 	// timestepping
-	parseTimeStepping(project_config.get_child("time_stepping"));
+	parseTimeStepping(project_config.getConfSubtree("time_stepping"));
 }
 
 ProjectData::~ProjectData()
@@ -175,7 +174,7 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
 }
 
 void ProjectData::parseProcessVariables(
-	BaseLib::ConfigTreeNew& process_variables_config)
+	BaseLib::ConfigTreeNew const& process_variables_config)
 {
 	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
@@ -201,110 +200,81 @@ void ProjectData::parseProcessVariables(
 	}
 }
 
-void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
+void ProjectData::parseParameters(BaseLib::ConfigTreeNew const& parameters_config)
 {
 	using namespace ProcessLib;
 
 	DBUG("Reading parameters:");
-	for (auto pc_it : parameters_config)
+	for (auto parameter_config : parameters_config.getConfSubtreeList("parameter"))
 	{
-		// Skip non-parameter section.
-		if (pc_it.first != "parameter")
-			continue;
-		BaseLib::ConfigTree const& parameter_config = pc_it.second;
-
-		auto name = parameter_config.get_optional<std::string>("name");
-		if (!name)
-		{
-			ERR("The parameter config does not provide a name tag.");
-			std::abort();
-		}
-
-		auto type = parameter_config.get_optional<std::string>("type");
-		if (!type)
-		{
-			ERR("Could not find required parameter type.");
-			std::abort();
-		}
+		auto name = parameter_config.getConfParam<std::string>("name");
+		auto type = parameter_config.peekConfParam<std::string>("type");
 
 		// Create parameter based on the provided type.
-		if (*type == "Constant")
+		if (type == "Constant")
 		{
-			INFO("ConstantParameter: %s.", name->c_str());
+			INFO("ConstantParameter: %s.", name.c_str());
 			_parameters.push_back(createConstParameter(parameter_config));
-			_parameters.back()->name = *name;
+			_parameters.back()->name = name;
 		}
-		else if (*type == "MeshProperty")
+		else if (type == "MeshProperty")
 		{
-			INFO("MeshPropertyParameter: %s", name->c_str());
+			INFO("MeshPropertyParameter: %s", name.c_str());
 			_parameters.push_back(
 			    createMeshPropertyParameter(parameter_config, *_mesh_vec[0]));
-			_parameters.back()->name = *name;
+			_parameters.back()->name = name;
 		}
 		else
 		{
 			ERR("Cannot construct property of given type \'%s\'.",
-			    type->c_str());
+			    type.c_str());
 			std::abort();
 		}
 	}
 }
 
-void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
+void ProjectData::parseProcesses(BaseLib::ConfigTreeNew const& processes_config)
 {
 	DBUG("Reading processes:");
-	for (auto pc_it : processes_config) {
-		BaseLib::ConfigTree const& process_config = pc_it.second;
-
-		// Check if the process type is specified.
-		if (!process_config.get_optional<std::string>("type")) {
-			ERR("The process config does not provide a type tag.");
-			ERR("   Ignoring this process config.");
-			continue;
-		}
-		_process_configs.push_back(process_config);
+	for (auto process_config : processes_config.getConfSubtreeList("process")) {
+		// process type must be specified.
+		process_config.peekConfParam<std::string>("type");
+		process_config.ignoreConfParam("name");
+		_process_configs.push_back(std::move(process_config));
 	}
 }
 
-void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
+void ProjectData::parseOutput(BaseLib::ConfigTreeNew const& output_config,
 	std::string const& path)
 {
+	output_config.checkConfParam("type", "VTK");
 	DBUG("Parse output configuration:");
 
-	auto const file = output_config.get_optional<std::string>("file");
-	if (!file) {
-		ERR("The output config does not provide a file tag.");
-		ERR("    Output file not set.");
-		return;
-	}
+	auto const file = output_config.getConfParam<std::string>("file");
 
-	_output_file_prefix = path + *file;
+	_output_file_prefix = path + file;
 }
 
-void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
+void ProjectData::parseTimeStepping(BaseLib::ConfigTreeNew const& timestepping_config)
 {
 	using namespace ProcessLib;
 
 	DBUG("Reading timestepping configuration.");
 
-	auto const type = timestepping_config.get_optional<std::string>("type");
-	if (!type)
-	{
-		ERR("Could not find required timestepper type.");
-		std::abort();
-	}
+	auto const type = timestepping_config.peekConfParam<std::string>("type");
 
-	if (*type == "FixedTimeStepping")
+	if (type == "FixedTimeStepping")
 	{
 		_time_stepper.reset(NumLib::FixedTimeStepping::newInstance(timestepping_config));
 	}
-	else if (*type == "SingleStep")
+	else if (type == "SingleStep")
 	{
+		timestepping_config.ignoreConfParam("type");
 		_time_stepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
 	}
 	else
 	{
-		ERR("Unknown timestepper type: `%s'.", type->c_str());
+		ERR("Unknown timestepper type: `%s'.", type.c_str());
 		std::abort();
 	}
 
