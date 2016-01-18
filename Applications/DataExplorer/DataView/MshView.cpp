@@ -21,22 +21,26 @@
 #include <QObject>
 #include <QSettings>
 
-#include "Mesh.h"
+#include "FileIO/SHPInterface.h"
+#include "FileIO/TetGenInterface.h"
+
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/MeshEditing/AddLayerToMesh.h"
+
+#include "OGSError.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "SurfaceExtractionDialog.h"
+#include "AddLayerToMeshDialog.h"
 #include "MshItem.h"
 #include "MshModel.h"
-#include "OGSError.h"
-#include "MeshSurfaceExtraction.h"
 
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"
 #include "SaveMeshDialog.h"
 
-#include "SHPInterface.h"
-#include "TetGenInterface.h"
 
 MshView::MshView( QWidget* parent /*= 0*/ )
 	: QTreeView(parent)
@@ -115,6 +119,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu direct_cond_menu("DIRECT Conditions");
 		QAction*    editMeshAction = menu.addAction("Edit mesh...");
 		QAction*  editValuesAction = menu.addAction("Edit material groups...");
+		QAction*    addLayerAction = menu.addAction("Add top layer...");
 		QAction* meshQualityAction = menu.addAction("Calculate element quality...");
 		QAction* surfaceMeshAction (nullptr);
 		QAction* tetgenExportAction (nullptr);
@@ -138,6 +143,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		//menu.addSeparator();
 		connect(editMeshAction,         SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
 		connect(editValuesAction,       SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
+		connect(addLayerAction,         SIGNAL(triggered()), this, SLOT(openAddLayerDialog()));
 		connect(meshQualityAction,      SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
 		if (mesh_dim==3)
 		{
@@ -157,8 +163,8 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 
 void MshView::openMeshEditDialog()
 {
-	MshModel* model = static_cast<MshModel*>(this->model());
-	QModelIndex index = this->selectionModel()->currentIndex();
+	MshModel const*const model = static_cast<MshModel*>(this->model());
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	const MeshLib::Mesh* mesh =
 	        static_cast<MshModel*>(this->model())->getMesh(index);
 
@@ -170,8 +176,8 @@ void MshView::openMeshEditDialog()
 
 void MshView::openValuesEditDialog()
 {
-	MshModel* model = static_cast<MshModel*>(this->model());
-	QModelIndex index = this->selectionModel()->currentIndex();
+	MshModel const*const model = static_cast<MshModel*>(this->model());
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(static_cast<MshModel*>(this->model())->getMesh(index));
 
 	MeshValueEditDialog valueEdit(mesh);
@@ -180,13 +186,36 @@ void MshView::openValuesEditDialog()
 	valueEdit.exec();
 }
 
-void MshView::extractSurfaceMesh()
+void MshView::openAddLayerDialog()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	if (!index.isValid())
 		return;
 
-	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	if (mesh == nullptr)
+		return;
+
+	AddLayerToMeshDialog dlg;
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+
+	double const thickness (dlg.getThickness());
+	MeshLib::Mesh* result = MeshLib::addTopLayerToMesh(*mesh, thickness);
+
+	if (result != nullptr)
+		static_cast<MshModel*>(this->model())->addMesh(result);
+	else
+		OGSError::box("Error adding layer to mesh.");
+}
+
+void MshView::extractSurfaceMesh()
+{
+	QModelIndex const index = this->selectionModel()->currentIndex();
+	if (!index.isValid())
+		return;
+
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	SurfaceExtractionDialog dlg;
 	if (dlg.exec() != QDialog::Accepted)
 		return;
@@ -202,23 +231,23 @@ void MshView::extractSurfaceMesh()
 
 void MshView::convertMeshToGeometry()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	QModelIndex const index = this->selectionModel()->currentIndex();
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	emit requestMeshToGeometryConversion(mesh);
 }
 
 void MshView::exportToShapefile() const
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	if (!index.isValid())
 		return;
 
-	QSettings settings;
-	QFileInfo fi (settings.value("lastOpenedMeshFileDirectory").toString());
-	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-	QString fileName = QFileDialog::getSaveFileName(NULL, "Convert mesh to shapefile...",
-		                                    LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
-											"ESRI Shapefile (*.shp)");
+	QSettings const settings;
+	QFileInfo const fi (settings.value("lastOpenedMeshFileDirectory").toString());
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	QString const fileName = QFileDialog::getSaveFileName(NULL, "Convert mesh to shapefile...",
+		LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
+		"ESRI Shapefile (*.shp)");
 	if (!fileName.isEmpty())
 	{
 		LastSavedFileDirectory::setDir(fileName);
@@ -229,16 +258,15 @@ void MshView::exportToShapefile() const
 
 void MshView::exportToTetGen()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	if (!index.isValid())
 		return;
 
-	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-	QSettings settings;
-	QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
-													settings.value("lastOpenedTetgenFileDirectory").toString(),
-													"TetGen Geometry (*.smesh)");
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
+	QSettings const settings;
+	QString const filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
+		settings.value("lastOpenedTetgenFileDirectory").toString(),
+		"TetGen Geometry (*.smesh)");
 	if (!filename.isEmpty())
 	{
 		FileIO::TetGenInterface tg;
@@ -249,16 +277,14 @@ void MshView::exportToTetGen()
 
 void MshView::writeToFile() const
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	if (!index.isValid())
 	{
 		OGSError::box("No mesh selected.");
 		return;
 	}
 
-	const MeshLib::Mesh* mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-
+	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
 	if (mesh == nullptr)
 	{
 		OGSError::box("No mesh selected.");
@@ -271,21 +297,21 @@ void MshView::writeToFile() const
 
 void MshView::addDIRECTSourceTerms()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-	const MeshLib::Mesh* grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	QModelIndex const index = this->selectionModel()->currentIndex();
+	MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
 	emit requestCondSetupDialog(grid->getName(), GeoLib::GEOTYPE::INVALID, 0, false);
 }
 
 void MshView::loadDIRECTSourceTerms()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
+	QModelIndex const index = this->selectionModel()->currentIndex();
 	emit loadFEMCondFileRequested(index.data(0).toString().toStdString());
 }
 
 void MshView::checkMeshQuality ()
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-	MshItem* item = static_cast<MshItem*>(static_cast<MshModel*>(this->model())->getItem(index));
+	QModelIndex const index = this->selectionModel()->currentIndex();
+	MshItem const*const item = static_cast<MshItem*>(static_cast<MshModel*>(this->model())->getItem(index));
 	emit qualityCheckRequested(item->vtkSource());
 }
 
