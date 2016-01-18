@@ -1,8 +1,6 @@
 # Source files
 set(SOURCES
 	mainwindow.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/OGSFileConverter.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/../Utils/OGSFileConverter/FileListDialog.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Img/icons.qrc
 )
 
@@ -10,19 +8,21 @@ set(SOURCES
 # and include additional header
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 include_directories(
+	${SOURCE_DIR_REL}/Applications/Utils/OGSFileConverter
 	${SOURCE_DIR_REL}/BaseLib
 	${SOURCE_DIR_REL}/MathLib
 	${SOURCE_DIR_REL}/GeoLib
 	${SOURCE_DIR_REL}/FileIO
 	${SOURCE_DIR_REL}/MeshLib
 	${SOURCE_DIR_REL}/MeshLibGEOTOOLS
+	${CMAKE_CURRENT_BINARY_DIR}/../Utils/OGSFileConverter
 	${CMAKE_CURRENT_BINARY_DIR}/Base
 	${CMAKE_CURRENT_BINARY_DIR}/DataView
 	${CMAKE_CURRENT_BINARY_DIR}/DataView/StratView
 	${CMAKE_CURRENT_BINARY_DIR}/DataView/DiagramView
 	${CMAKE_CURRENT_BINARY_DIR}/VtkVis
 	${CMAKE_CURRENT_BINARY_DIR}/VtkAct
-	${CMAKE_CURRENT_BINARY_DIR}/Applications/Utils/OGSFileConverter
+	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/Base
 	${CMAKE_CURRENT_SOURCE_DIR}/DataView
 	${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView
@@ -59,6 +59,7 @@ target_link_libraries(DataExplorer
 	VtkVis
 	VtkAct
 	Threads::Threads
+	OGSFileConverterLib
 )
 
 if(CMAKE_CROSSCOMPILING)
