@@ -65,6 +65,20 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	geometry_sets.addPointVec(std::move(pnts), geo_name, pnt_names);
 }
 
+void writeGroundwaterFlowPointBC(std::ostream& bc_out,
+                                 std::string const& pnt_name, double head_value)
+{
+	bc_out << "#BOUNDARY_CONDITION\n";
+	bc_out << "  $PCS_TYPE\n";
+	bc_out << "    GROUNDWATER_FLOW\n";
+	bc_out << "  $PRIMARY_VARIABLE\n";
+	bc_out << "    HEAD\n";
+	bc_out << "  $GEO_TYPE\n";
+	bc_out << "    POINT " << pnt_name << "\n";
+	bc_out << "  $DIS_TYPE\n";
+	bc_out << "    CONSTANT " << head_value << "\n";
+}
+
 void writeLiquidFlowPointBC(std::ostream & bc_out, std::string const& pnt_name)
 {
 	bc_out << "#BOUNDARY_CONDITION\n";
@@ -81,8 +95,9 @@ void writeLiquidFlowPointBC(std::ostream & bc_out, std::string const& pnt_name)
 // geometry_sets contains the geometric points the boundary conditions will be
 // set on, geo_name is the name the geometry can be accessed with, out_fname is
 // the base file name the gli and bc as well as the gml file will be written to.
-void writeBCsAndGeometry(GeoLib::GEOObjects & geometry_sets,
-	std::string & geo_name, std::string const& out_fname, bool write_gml)
+void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
+                         std::string& geo_name, std::string const& out_fname,
+                         std::string const& bc_type, bool write_gml)
 {
 	if (write_gml) {
 		INFO("write points to \"%s.gml\".", geo_name.c_str());
@@ -90,13 +105,21 @@ void writeBCsAndGeometry(GeoLib::GEOObjects & geometry_sets,
 	}
 	FileIO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gli");
 
+	bool liquid_flow(false);
+	if (bc_type == "LIQUID_FLOW")
+		liquid_flow = true;
+
+
 	GeoLib::PointVec const* pnt_vec_objs(geometry_sets.getPointVecObj(geo_name));
 	std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
 	std::ofstream bc_out (out_fname+".bc");
 	for (std::size_t k(0); k<pnts.size(); k++) {
 		std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
 		if (!pnt_name.empty()) {
-			writeLiquidFlowPointBC(bc_out, pnt_name);
+			if (liquid_flow)
+				writeLiquidFlowPointBC(bc_out, pnt_name);
+			else
+				writeGroundwaterFlowPointBC(bc_out, pnt_name, (*pnts[k])[2]);
 		}
 	}
 	bc_out << "#STOP\n";
@@ -127,6 +150,14 @@ int main (int argc, char* argv[])
 	TCLAP::ValueArg<bool> gml_arg("", "gml",
 		"if switched on write found nodes to file in gml format", false, 0, "bool");
 	cmd.add(gml_arg);
+
+	TCLAP::ValueArg<std::string> bc_type("t", "type",
+		"the process type the boundary condition will be written for "\
+		"currently LIQUID_FLOW (primary variable PRESSURE1) and "\
+		"GROUNDWATER_FLOW (primary variable HEAD) are supported", true,
+		"", "process type as string (either LIQUID_FLOW or GROUNDWATER_FLOW)");
+	cmd.add(bc_type);
+
 	TCLAP::ValueArg<double> search_length_arg("s", "search-length",
 		"The size of the search length. The default value is "
 		"std::numeric_limits<double>::epsilon()", false,
@@ -252,7 +283,7 @@ int main (int argc, char* argv[])
 	// write the BCs and the merged geometry set to file
 	std::string const base_fname(
 	    BaseLib::dropFileExtension(output_base_fname.getValue()));
-	writeBCsAndGeometry(geometry_sets, surface_name,
-	                    base_fname, gml_arg.getValue());
+	writeBCsAndGeometry(geometry_sets, surface_name, base_fname,
+	                    bc_type.getValue(), gml_arg.getValue());
 	return 0;
 }
