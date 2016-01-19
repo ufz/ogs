@@ -134,28 +134,22 @@ int main (int argc, char* argv[])
 		"Creates boundary conditions for mesh nodes along polylines.",
 		' ',
 		"0.1");
-	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh-file",
-		"the name of the file containing the mesh", true,
-		"", "file name");
-	cmd.add(mesh_arg);
-	TCLAP::ValueArg<std::string> geometry_fname("i", "input-geometry",
-		"the name of the file containing the input geometry", true,
-		"", "file name");
-	cmd.add(geometry_fname);
+	TCLAP::ValueArg<bool> gml_arg("", "gml",
+		"if switched on write found nodes to file in gml format", false, 0, "bool");
+	cmd.add(gml_arg);
+
 	TCLAP::ValueArg<std::string> output_base_fname("o", "output-base-file-name",
 		"the base name of the file the output (geometry (gli) and boundary"\
 		"condition (bc)) will be written to", true,
 		"", "file name");
 	cmd.add(output_base_fname);
-	TCLAP::ValueArg<bool> gml_arg("", "gml",
-		"if switched on write found nodes to file in gml format", false, 0, "bool");
-	cmd.add(gml_arg);
 
 	TCLAP::ValueArg<std::string> bc_type("t", "type",
 		"the process type the boundary condition will be written for "\
 		"currently LIQUID_FLOW (primary variable PRESSURE1) and "\
-		"GROUNDWATER_FLOW (primary variable HEAD) are supported", true,
-		"", "process type as string (either LIQUID_FLOW or GROUNDWATER_FLOW)");
+		"GROUNDWATER_FLOW (primary variable HEAD, default) are supported", true,
+		"",
+		"process type as string (LIQUID_FLOW or GROUNDWATER_FLOW (default))");
 	cmd.add(bc_type);
 
 	TCLAP::ValueArg<double> search_length_arg("s", "search-length",
@@ -163,6 +157,17 @@ int main (int argc, char* argv[])
 		"std::numeric_limits<double>::epsilon()", false,
 		std::numeric_limits<double>::epsilon(), "floating point number");
 	cmd.add(search_length_arg);
+
+	TCLAP::ValueArg<std::string> geometry_fname("i", "input-geometry",
+		"the name of the file containing the input geometry", true,
+		"", "file name");
+	cmd.add(geometry_fname);
+
+	TCLAP::ValueArg<std::string> mesh_arg("m", "mesh-file",
+		"the name of the file containing the mesh", true,
+		"", "file name");
+	cmd.add(mesh_arg);
+
 	cmd.parse(argc, argv);
 
 	// *** read mesh
