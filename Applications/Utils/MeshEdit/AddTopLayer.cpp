@@ -62,7 +62,9 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh * subsfc_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
 	INFO("done.");
 
-	MeshLib::Mesh* result (MeshLib::addTopLayerToMesh(*subsfc_mesh, layer_thickness_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> result (MeshLib::addTopLayerToMesh(
+		*subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()
+	));
 
 	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
 	FileIO::VtuInterface mesh_io(result.get(), vtkXMLWriter::Binary);

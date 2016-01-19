@@ -119,7 +119,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 		QMenu direct_cond_menu("DIRECT Conditions");
 		QAction*    editMeshAction = menu.addAction("Edit mesh...");
 		QAction*  editValuesAction = menu.addAction("Edit material groups...");
-		QAction*    addLayerAction = menu.addAction("Add top layer...");
+		QAction*    addLayerAction = menu.addAction("Add layer...");
 		QAction* meshQualityAction = menu.addAction("Calculate element quality...");
 		QAction* surfaceMeshAction (nullptr);
 		QAction* tetgenExportAction (nullptr);
@@ -201,7 +201,8 @@ void MshView::openAddLayerDialog()
 		return;
 
 	double const thickness (dlg.getThickness());
-	MeshLib::Mesh* result = MeshLib::addLayerToMesh(*mesh, thickness, dlg.isTopLayer());
+	MeshLib::Mesh* result = 
+		MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(), dlg.isTopLayer());
 
 	if (result != nullptr)
 		static_cast<MshModel*>(this->model())->addMesh(result);

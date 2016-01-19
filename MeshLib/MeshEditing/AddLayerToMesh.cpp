@@ -55,67 +55,23 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
 	return nullptr;
 }
 
-/*
-	std::array<MeshLib::Node*, 6> prism_nodes;
-	prism_nodes[0] = subsfc_nodes[sfc_elem->getNode(0)->getID()];
-	prism_nodes[1] = subsfc_nodes[sfc_elem->getNode(1)->getID()];
-	prism_nodes[2] = subsfc_nodes[sfc_elem->getNode(2)->getID()];
-	prism_nodes[3] = subsfc_nodes[
-			subsfc_sfc_id_map.at(sfc_elem->getNode(0)->getID())];
-	prism_nodes[4] = subsfc_nodes[
-			subsfc_sfc_id_map.at(sfc_elem->getNode(1)->getID())];
-	prism_nodes[5] = subsfc_nodes[
-				subsfc_sfc_id_map.at(sfc_elem->getNode(2)->getID())];
-	return new MeshLib::Prism(prism_nodes);
-}
-
-MeshLib::Hex* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
-	MeshLib::Quad const*const sfc_elem,
-	std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
+MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh,
+	double thickness,
+	std::string const& name)
 {
-	std::array<MeshLib::Node*, 8> hex_nodes;
-	hex_nodes[0] = subsfc_nodes[sfc_elem->getNode(0)->getID()];
-	hex_nodes[1] = subsfc_nodes[sfc_elem->getNode(1)->getID()];
-	hex_nodes[2] = subsfc_nodes[sfc_elem->getNode(2)->getID()];
-	hex_nodes[3] = subsfc_nodes[sfc_elem->getNode(3)->getID()];
-	hex_nodes[4] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(0)->getID())];
-	hex_nodes[5] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(1)->getID())];
-	hex_nodes[6] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(2)->getID())];
-	hex_nodes[7] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(3)->getID())];
-	return new MeshLib::Hex(hex_nodes);
-	
+	return addLayerToMesh(mesh, thickness, name, true);
 }
 
-MeshLib::Quad* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
-	MeshLib::Line const*const sfc_elem,
-	std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
+MeshLib::Mesh* addBottomLayerToMesh(MeshLib::Mesh const& mesh,
+	double thickness,
+	std::string const& name)
 {
-	std::array<MeshLib::Node*, 4> quad_nodes;
-	quad_nodes[0] = subsfc_nodes[sfc_elem->getNode(1)->getID()];
-	quad_nodes[1] = subsfc_nodes[sfc_elem->getNode(0)->getID()];
-	quad_nodes[2] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(0)->getID())];
-	quad_nodes[3] = subsfc_nodes[
-		subsfc_sfc_id_map.at(sfc_elem->getNode(1)->getID())];
-	return new MeshLib::Quad(quad_nodes);
-}
-*/
-
-MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh, double thickness)
-{
-	return addLayerToMesh(mesh, thickness, true);
+	return addLayerToMesh(mesh, thickness, name, false);
 }
 
-MeshLib::Mesh* addBottomLayerToMesh(MeshLib::Mesh const& mesh, double thickness)
-{
-	return addLayerToMesh(mesh, thickness, false);
-}
-
-MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness, bool on_top)
+MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
+	std::string const& name,
+	bool on_top)
 {
 	INFO("Extracting top surface of mesh \"%s\" ... ", mesh.getName().c_str());
 	int const flag = (on_top) ? -1 : 1;
@@ -174,7 +130,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness, bool 
 		}
 	}
 
-	return new MeshLib::Mesh("Result", subsfc_nodes, subsfc_elements, subsfc_props);
+	return new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements, subsfc_props);
 }
 
 } // namespace MeshLib
