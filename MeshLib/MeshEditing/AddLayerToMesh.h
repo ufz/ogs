@@ -16,6 +16,7 @@
 #define ADDLAYERTOMESH_H
 
 #include <vector>
+#include <string>
 
 namespace MeshLib
 {
