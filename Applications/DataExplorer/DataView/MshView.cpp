@@ -201,7 +201,7 @@ void MshView::openAddLayerDialog()
 		return;
 
 	double const thickness (dlg.getThickness());
-	MeshLib::Mesh* result = MeshLib::addTopLayerToMesh(*mesh, thickness);
+	MeshLib::Mesh* result = MeshLib::addLayerToMesh(*mesh, thickness, dlg.isTopLayer());
 
 	if (result != nullptr)
 		static_cast<MshModel*>(this->model())->addMesh(result);

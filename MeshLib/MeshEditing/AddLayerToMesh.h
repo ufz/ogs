@@ -26,6 +26,9 @@ class Element;
 
 MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh, double thickness);
 
+MeshLib::Mesh* addBottomLayerToMesh(MeshLib::Mesh const& mesh, double thickness);
+
+MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness, bool on_top);
 
 } // end namespace MeshLib
 

@@ -79,10 +79,21 @@ MeshLib::Quad* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
 	return new MeshLib::Quad(quad_nodes);
 }
 
-MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh, double thickness)
+MeshLib::Mesh* addTopLayerMesh(MeshLib::Mesh const& mesh, double thickness)
+{
+	return addLayerToMesh(mesh, thickness, true);
+}
+
+MeshLib::Mesh* addBottomLayerMesh(MeshLib::Mesh const& mesh, double thickness)
+{
+	return addLayerToMesh(mesh, thickness, false);
+}
+
+MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness, bool on_top)
 {
 	INFO("Extracting top surface of mesh \"%s\" ... ", mesh.getName().c_str());
-	const MathLib::Vector3 dir(0,0,-1);
+	int const flag = (on_top) ? -1 : 1;
+	const MathLib::Vector3 dir(0, 0, flag);
 	double const angle(90);
 	std::unique_ptr<MeshLib::Mesh> sfc_mesh(
 		MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true)
@@ -91,7 +102,7 @@ MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh, double thickness)
 
 	MeshLib::Mesh* subsfc_mesh = new MeshLib::Mesh (mesh);
 
-	// *** add new top surface nodes
+	// *** add new surface nodes
 	std::vector<MeshLib::Node*> & subsfc_nodes(
 		const_cast<std::vector<MeshLib::Node*> &>(subsfc_mesh->getNodes())
 	);
@@ -107,7 +118,7 @@ MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh, double thickness)
 		std::size_t const subsfc_id(sfc_nodes[k]->getID());
 		std::size_t const sfc_id(k+n_subsfc_nodes);
 		subsfc_sfc_id_map.insert(std::make_pair(subsfc_id, sfc_id));
-		(*(subsfc_nodes.back()))[2] += thickness;
+		(*(subsfc_nodes.back()))[2] -= (flag * thickness);
 	}
 	subsfc_mesh->resetNodeIDs();
 
