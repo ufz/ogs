@@ -65,6 +65,19 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 	geometry_sets.addPointVec(std::move(pnts), geo_name, pnt_names);
 }
 
+void writeLiquidFlowPointBC(std::ostream & bc_out, std::string const& pnt_name)
+{
+	bc_out << "#BOUNDARY_CONDITION\n";
+	bc_out << "  $PCS_TYPE\n";
+	bc_out << "    LIQUID_FLOW\n";
+	bc_out << "  $PRIMARY_VARIABLE\n";
+	bc_out << "    PRESSURE1\n";
+	bc_out << "  $GEO_TYPE\n";
+	bc_out << "    POINT " << pnt_name << "\n";
+	bc_out << "  $DIS_TYPE\n";
+	bc_out << "    CONSTANT 0.0\n";
+}
+
 void writeBCsAndGeometry(GeoLib::GEOObjects & geometry_sets,
 	std::string & geo_name, bool write_gml)
 {
@@ -80,15 +93,7 @@ void writeBCsAndGeometry(GeoLib::GEOObjects & geometry_sets,
 	for (std::size_t k(0); k<pnts.size(); k++) {
 		std::string const& pnt_name(pnt_vec_objs->getItemNameByID(k));
 		if (!pnt_name.empty()) {
-			bc_out << "#BOUNDARY_CONDITION\n";
-			bc_out << "  $PCS_TYPE\n";
-			bc_out << "    LIQUID_FLOW\n";
-			bc_out << "  $PRIMARY_VARIABLE\n";
-			bc_out << "    PRESSURE1\n";
-			bc_out << "  $GEO_TYPE\n";
-			bc_out << "    POINT " << pnt_name << "\n";
-			bc_out << "  $DIS_TYPE\n";
-			bc_out << "    CONSTANT 0.0\n";
+			writeLiquidFlowPointBC(bc_out, pnt_name);
 		}
 	}
 	bc_out << "#STOP\n";
