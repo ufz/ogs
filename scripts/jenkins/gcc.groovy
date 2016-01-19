@@ -20,8 +20,7 @@ node('docker')
 
 			stage 'Test'
 			sh '''cd build
-			      rm -rf tests/testrunner.xml
-			      bin/testrunner --gtest_output=xml:./tests/testrunner.xml'''
+			      make tests'''
 		}
 	},
 

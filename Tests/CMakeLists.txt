@@ -69,16 +69,21 @@ endif()
 
 ADD_VTK_DEPENDENCY(testrunner)
 
-# Add make-target test which runs the testrunner
-# This should override CTest's predefined test-target but it does not
+# Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI})
-	set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS} --gtest_shuffle --gtest_repeat=3)
+	set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
+		--gtest_shuffle --gtest_repeat=3)
 endif()
+set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
+	--gtest_output=xml:./testrunner.xml)
+
+add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
+
 if(OGS_USE_PETSC)
 	set(TEST_FILTER_MPI --gtest_filter=-MPITest*:*Assembler*:*MeshSubsets*:*PointVec*:*InsertZeroPointsInGrid*:InSituMesh.MappedMeshSourceRoundtrip)
 	add_custom_target(tests
 		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
-		DEPENDS testrunner
+		DEPENDS testrunner tests-cleanup
 	)
 	add_custom_target(tests_mpi
 		mpirun -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
@@ -87,7 +92,7 @@ if(OGS_USE_PETSC)
 else()
 	add_custom_target(tests
 		$<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
-		DEPENDS testrunner
+		DEPENDS testrunner tests-cleanup
 	)
 endif()
 
