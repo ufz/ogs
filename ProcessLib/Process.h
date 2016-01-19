@@ -13,9 +13,10 @@
 #include <string>
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTreeNew.h"
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshLib/MeshSubsets.h"
 
@@ -59,6 +60,8 @@ public:
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
 
+	virtual void initializeBoundaryConditions() = 0;
+
 	void initialize()
 	{
 		DBUG("Initialize process.");
@@ -83,11 +86,10 @@ public:
 		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
 		init();  // Execute proces specific initialization.
-	}
 
-	void initializeNeumannBcs(std::vector<NeumannBc<GlobalSetup>*> const& bcs)
-	{
-		for (auto bc : bcs)
+		initializeBoundaryConditions();
+
+		for (auto& bc : _neumann_bcs)
 			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
 	}
 
@@ -97,6 +99,14 @@ public:
 		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
 
 		bool const result = assemble(delta_t);
+
+		// Call global assembler for each Neumann boundary local assembler.
+		for (auto const& bc : _neumann_bcs)
+			bc->integrate(_global_setup);
+
+		for (auto const& bc : _dirichlet_bcs)
+			MathLib::applyKnownSolution(*_A, *_rhs, *_x,
+			                            bc.global_ids, bc.values);
 
 		_linear_solver->solve(*_rhs, *_x);
 		return result;
@@ -184,6 +194,9 @@ protected:
 	std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
+
+	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
+	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 };
 
 }  // namespace ProcessLib
