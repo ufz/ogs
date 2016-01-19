@@ -12,7 +12,8 @@ node('docker')
 		build 'build', '', 'package tests ctest'
 	}
 
-	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml'
+	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+		'ogs/scripts/jenkins/clang-log-parser.rules'
 
 	// archive 'build*/*.tar.gz'
 }
@@ -28,7 +29,7 @@ def build(buildDir, cmakeOptions, target) {
 	sh "cd ${buildDir} && make -j 4 ${target}"
 }
 
-def publishTestReports(ctestPattern, gtestPattern) {
+def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 	step([$class: 'XUnitPublisher', testTimeMargin: '3000', thresholdMode: 1,
 		thresholds: [
 			[$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: ''],
@@ -37,4 +38,7 @@ def publishTestReports(ctestPattern, gtestPattern) {
 			[$class: 'CTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${ctestPattern}", skipNoTestFiles: false, stopProcessingIfError: true],
 			[$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
 	])
+
+	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
+			projectRulePath: "${parseRulefile}", useProjectRule: true])
 }
