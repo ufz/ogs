@@ -72,7 +72,7 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTreeNew const& config,
 
 			if (type == "UniformDirichlet")
 			{
-				_dirichlet_bcs.emplace_back(
+				_dirichlet_bc_configs.emplace_back(
 				    new UniformDirichletBoundaryCondition(geometry, bc_config));
 			}
 			else if (type == "UniformNeumann")
@@ -98,7 +98,7 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
     : _name(std::move(other._name)),
       _mesh(other._mesh),
       _initial_condition(std::move(other._initial_condition)),
-      _dirichlet_bcs(std::move(other._dirichlet_bcs)),
+      _dirichlet_bc_configs(std::move(other._dirichlet_bc_configs)),
       _neumann_bc_configs(std::move(other._neumann_bc_configs))
 {
 }
@@ -111,17 +111,6 @@ std::string const& ProcessVariable::getName() const
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
 	return _mesh;
-}
-
-void ProcessVariable::initializeDirichletBCs(
-    MeshGeoToolsLib::MeshNodeSearcher& searcher,
-    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-    const unsigned nodal_dof_idx,
-    std::vector<GlobalIndexType>& global_ids, std::vector<double>& values)
-{
-    for (auto& bc : _dirichlet_bcs)
-        bc->initialize(searcher, dof_table, nodal_dof_idx,
-                       global_ids, values);
 }
 
 }  // namespace ProcessLib

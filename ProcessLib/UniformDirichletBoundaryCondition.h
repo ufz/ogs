@@ -21,6 +21,8 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+#include "DirichletBc.h"
+
 namespace GeoLib
 {
     class GeoObject;
@@ -50,22 +52,21 @@ public:
     /// Initialize Dirichlet type boundary conditions.
     /// Fills in global_ids of the particular geometry of the boundary condition
     /// and the corresponding values.
-    /// The ids are appended to the global_ids and the values are filled with
-    /// the constant _value.
+    /// The ids and the constant values are then used to construct DirichletBc
+    /// object.
     void initialize(
             MeshGeoToolsLib::MeshNodeSearcher& searcher,
             AssemblerLib::LocalToGlobalIndexMap const& dof_table,
             std::size_t component_id,
-            std::vector<GlobalIndexType>& global_ids,
-            std::vector<double>& values)
+            DirichletBc<GlobalIndexType>& bc)
     {
         // Find nodes' ids on the given mesh on which this boundary condition
         // is defined.
         std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
 
         // convert mesh node ids to global index for the given component
-        global_ids.reserve(global_ids.size() + ids.size());
-        values.reserve(values.size() + ids.size());
+        bc.global_ids.reserve(bc.global_ids.size() + ids.size());
+        bc.values.reserve(bc.values.size() + ids.size());
         for (auto& id : ids)
         {
             MeshLib::Location l(searcher.getMeshId(),
@@ -81,8 +82,8 @@ public:
             // PETSc routines. Therefore, the following if-condition is applied.
             if (g_idx >= 0)
             {
-                global_ids.emplace_back(g_idx);
-                values.emplace_back(_value);
+                bc.global_ids.emplace_back(g_idx);
+                bc.values.emplace_back(_value);
             }
         }
     }
