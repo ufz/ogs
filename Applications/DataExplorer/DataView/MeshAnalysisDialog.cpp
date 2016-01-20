@@ -77,7 +77,7 @@ void MeshAnalysisDialog::nodesMsgOutput(std::vector<std::size_t> const& node_ids
 		nodes_output += "No unused nodes found.";
 	else
 	{
-		(QString::number(nNodeIds) + " nodes are not part of any element:\n");
+		nodes_output += (QString::number(nNodeIds) + " nodes are not part of any element:\n");
 		for (std::size_t i=0; i<nNodeIds; ++i)
 			nodes_output += (QString::number(node_ids[i]) + ", ");
 	}
