@@ -15,7 +15,8 @@ node('docker')
 	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
 		'ogs/scripts/jenkins/clang-log-parser.rules'
 
-	// archive 'build*/*.tar.gz'
+	if (env.BRANCH_NAME == 'master')
+		archive 'build*/*.tar.gz'
 }
 
 
