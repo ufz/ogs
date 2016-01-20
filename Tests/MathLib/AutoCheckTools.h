@@ -49,6 +49,24 @@ struct IntervalGenerator
 		return intervalMap(fix(1.0, generator)());
 	}
 };
+
+template <typename T, typename Gen = IntervalGenerator<T>>
+struct IntervalTupleGenerator
+{
+	IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
+	    : x_gen(ig0), y_gen(ig1), z_gen(ig2)
+	{}
+
+	Gen x_gen, y_gen, z_gen;
+
+	using result_type = std::array<T, 3>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		return {{ x_gen(), y_gen(), z_gen() }};
+	}
+};
+
 template <typename T, std::size_t N, typename Gen = generator<T>>
 struct randomTupleGenerator
 {
