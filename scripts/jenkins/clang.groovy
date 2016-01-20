@@ -16,8 +16,7 @@ node('docker')
 
 				stage 'Unit tests'
 				sh '''cd build
-			          rm -rf tests/testrunner.xml
-			          bin/testrunner --gtest_output=xml:./tests/testrunner.xml'''
+			          make tests'''
 
 				stage 'End-to-end tests'
 				sh '''cd build
