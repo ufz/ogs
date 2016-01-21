@@ -19,6 +19,7 @@
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
@@ -44,6 +45,7 @@ public:
 	{
 		for (auto p : _all_mesh_subsets)
 			delete p;
+		delete _mesh_subset_all_nodes;
 	}
 
 	/// Process specific initialization called by initialize().
@@ -196,6 +198,7 @@ protected:
 	unsigned const _integration_order = 2;
 
 	MeshLib::Mesh& _mesh;
+	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
 	GlobalSetup _global_setup;

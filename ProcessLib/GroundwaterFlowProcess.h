@@ -24,8 +24,6 @@
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
-#include "MeshLib/MeshSubset.h"
-
 #include "UniformDirichletBoundaryCondition.h"
 
 #include "GroundwaterFlowFEM.h"
@@ -175,19 +173,19 @@ public:
                     this->_integration_order,
                     *this->_local_to_global_index_map,
                     0,
-                    *_mesh_subset_all_nodes);
+                    *this->_mesh_subset_all_nodes);
         }
     }
 
     void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
     {
         // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes =
+        this->_mesh_subset_all_nodes =
             new MeshLib::MeshSubset(mesh, &mesh.getNodes());
 
         // Collect the mesh subsets in a vector.
         this->_all_mesh_subsets.push_back(
-            new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+            new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes));
     }
 
     std::string getLinearSolverName() const override
@@ -285,8 +283,6 @@ private:
     ProcessVariable* _hydraulic_head = nullptr;
 
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
-
-    MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
