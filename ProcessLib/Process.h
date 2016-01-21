@@ -60,15 +60,12 @@ public:
 	virtual void postTimestep(std::string const& file_name,
 	                          const unsigned timestep) = 0;
 
-	/// Creates mesh subsets, i.e. components, for given mesh.
-	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
-
 	void initialize()
 	{
 		DBUG("Initialize process.");
 
 		DBUG("Construct dof mappings.");
-		initializeMeshSubsets(_mesh);
+		initializeMeshSubsets();
 
 		_local_to_global_index_map.reset(
 		    new AssemblerLib::LocalToGlobalIndexMap(
@@ -132,6 +129,18 @@ protected:
 	}
 
 private:
+	/// Creates mesh subsets, i.e. components, for given mesh.
+	void initializeMeshSubsets()
+	{
+		// Create single component dof in every of the mesh's nodes.
+		_mesh_subset_all_nodes =
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+
+		// Collect the mesh subsets in a vector.
+		_all_mesh_subsets.push_back(
+		    new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+	}
+
 	/// Sets the initial condition values in the solution vector x for a given
 	/// process variable and component.
 	void setInitialConditions(ProcessVariable const& variable,

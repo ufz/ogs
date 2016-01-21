@@ -149,17 +149,6 @@ public:
                 this->_integration_order);
     }
 
-    void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
-    {
-        // Create single component dof in every of the mesh's nodes.
-        this->_mesh_subset_all_nodes =
-            new MeshLib::MeshSubset(mesh, &mesh.getNodes());
-
-        // Collect the mesh subsets in a vector.
-        this->_all_mesh_subsets.push_back(
-            new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes));
-    }
-
     std::string getLinearSolverName() const override
     {
         return "gw_";
