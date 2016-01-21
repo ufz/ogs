@@ -15,9 +15,13 @@
 #include "GeoMapper.h"
 
 #include <algorithm>
+#include <sstream>
 #include <numeric>
 
 #include <logog/include/logog.hpp>
+
+#include "BaseLib/makeVectorUnique.h"
+#include "BaseLib/Error.h"
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
@@ -27,10 +31,11 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/MeshEditing/projectMeshOntoPlane.h"
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
 
 namespace MeshGeoToolsLib {
 
@@ -352,6 +357,354 @@ void GeoMapper::advancedMapOnMesh(
     this->mapOnMesh(mesh);
 }
 
+/// Find the 2d-element within the \c elements that contains the given point \c p.
+///
+/// The algorithm projects every element of the elements vector and the point
+/// \c p orthogonal to the \f$x\f$-\f$y\f$ plane. In the \f$x\f$-\f$y\f$ plane
+/// it is checked if the projected point is in the projected element.
+static MeshLib::Element const* findElementContainingPointXY(
+    std::vector<MeshLib::Element const*> const& elements,
+    MathLib::Point3d const& p)
+{
+    for (auto const elem : elements) {
+        std::unique_ptr<MeshLib::Element> elem_2d(elem->clone());
+        // reset/copy the nodes
+        for (std::size_t k(0); k<elem_2d->getNumberOfNodes(); ++k) {
+            elem_2d->setNode(k, new MeshLib::Node(*elem_2d->getNode(k)));
+        }
+        // project to xy
+        for (std::size_t k(0); k<elem_2d->getNumberOfNodes(); ++k) {
+            (*const_cast<MeshLib::Node*>(elem_2d->getNode(k)))[2] = 0.0;
+        }
+        if (elem_2d->isPntInElement(MathLib::Point3d{ {{p[0], p[1], 0.0}} })) {
+            // clean up the copied nodes
+            for (std::size_t k(0); k<elem_2d->getNumberOfNodes(); ++k) {
+                delete elem_2d->getNode(k);
+            }
+            return elem;
+        } else {
+            // clean up the copied nodes
+            for (std::size_t k(0); k<elem_2d->getNumberOfNodes(); ++k) {
+                delete elem_2d->getNode(k);
+            }
+        }
+    }
+    return nullptr;
+}
+
+static std::vector<MathLib::Point3d> computeElementSegmentIntersections(
+    MeshLib::Element const& elem, GeoLib::LineSegment const& segment)
+{
+    std::vector<MathLib::Point3d> element_intersections;
+    for (std::size_t k(0); k < elem.getNumberOfEdges(); ++k)
+    {
+        auto const edge =
+            std::unique_ptr<MeshLib::Element const>(elem.getEdge(k));
+        GeoLib::LineSegment elem_segment{
+            new GeoLib::Point(*dynamic_cast<MathLib::Point3d*>(
+                const_cast<MeshLib::Node*>(edge->getNode(0))), 0),
+            new GeoLib::Point(*dynamic_cast<MathLib::Point3d*>(
+                const_cast<MeshLib::Node*>(edge->getNode(1))), 0),
+            false};
+        std::vector<MathLib::Point3d> const intersections(
+            GeoLib::lineSegmentIntersect2d(segment, elem_segment));
+        for (auto const& p : intersections)
+            element_intersections.push_back(std::move(p));
+    }
+    return element_intersections;
+}
+
+static std::vector<GeoLib::LineSegment> createSubSegmentsForElement(
+    std::vector<MathLib::Point3d> const& intersections,
+    MeshLib::Element const* const beg_elem,
+    MeshLib::Element const* const end_elem, MathLib::Point3d const& beg_pnt,
+    MathLib::Point3d const& end_pnt, MeshLib::Element const* const elem)
+{
+    std::vector<GeoLib::LineSegment> sub_segments;
+    if (intersections.size() > 2) {
+        std::stringstream out;
+        out << "element with id " << elem->getID() << " and seg "
+                  << " intersecting at more than two edges\n";
+        for (std::size_t k(0); k<intersections.size(); ++k)
+            out << k << " " << intersections[k]
+                      << "\n";
+        out << "Could not map segment on element. Aborting.\n";
+        OGS_FATAL("%s", out.str().c_str());
+    }
+
+    if (intersections.size() == 1 && elem == beg_elem)
+    {
+        // The line segment intersects the element that contains the begin
+        // point of the line segment. Here the first sub line segment is
+        // added.
+        if (MathLib::sqrDist(beg_pnt, intersections[0]) >
+            std::numeric_limits<double>::epsilon())
+            sub_segments.emplace_back(GeoLib::LineSegment{
+                new GeoLib::Point{beg_pnt, 0},
+                new GeoLib::Point{intersections[0], 0}, true});
+    }
+
+    if (intersections.size() == 1 && elem == end_elem)
+    {
+        // The line segment intersects the element that contains the end
+        // point of the line segment. Here the last sub line segment is
+        // added.
+        if (MathLib::sqrDist(end_pnt, intersections[0]) >
+            std::numeric_limits<double>::epsilon())
+            sub_segments.emplace_back(
+                GeoLib::LineSegment{new GeoLib::Point{intersections[0], 0},
+                                    new GeoLib::Point{end_pnt, 0}, true});
+    }
+
+    if (intersections.size() == 1 && (elem != beg_elem && elem != end_elem))
+    {
+        // Since the line segment enters and leaves the element in the same
+        // point there isn't any need to insert a new sub line segment.
+        return sub_segments;
+    }
+
+    // create sub segment for the current element
+    if (intersections.size() == 2)
+    {
+        sub_segments.emplace_back(
+            GeoLib::LineSegment{new GeoLib::Point{intersections[0], 0},
+                                new GeoLib::Point{intersections[1], 0}, true});
+    }
+    return sub_segments;
+}
+
+static std::vector<GeoLib::LineSegment> mapLineSegment(
+    GeoLib::LineSegment const& segment,
+    std::vector<MeshLib::Element const*> const& surface_elements,
+    MeshLib::Element const* const beg_elem,
+    MeshLib::Element const* const end_elem)
+{
+    std::vector<GeoLib::LineSegment> sub_segments;
+    MathLib::Point3d const& beg_pnt(segment.getBeginPoint());
+    MathLib::Point3d const& end_pnt(segment.getEndPoint());
+
+    for (auto const elem : surface_elements) {
+        // compute element-segment-intersections (2d in x-y-plane)
+        std::vector<MathLib::Point3d> element_intersections(
+            computeElementSegmentIntersections(*elem, segment));
+        if (element_intersections.empty())
+            continue;
+
+        BaseLib::makeVectorUnique(element_intersections);
+
+        std::vector<GeoLib::LineSegment> sub_seg_elem(
+            createSubSegmentsForElement(element_intersections, beg_elem,
+                                        end_elem, beg_pnt, end_pnt, elem));
+        sub_segments.insert(sub_segments.end(), sub_seg_elem.begin(),
+                            sub_seg_elem.end());
+    }
+
+    // beg_elem == nullptr means there isn't any element corresponding to the
+    // beg_pnt and as a consequence the above algorithm doesn't insert a sub
+    // segment
+    if (beg_elem == nullptr)
+    {
+        auto min_dist_segment = std::min_element(
+            sub_segments.begin(), sub_segments.end(),
+            [&beg_pnt](GeoLib::LineSegment const& seg0,
+                       GeoLib::LineSegment const& seg1)
+            {
+                // min dist for segment 0
+                const double d0(
+                    std::min(MathLib::sqrDist(beg_pnt, seg0.getBeginPoint()),
+                             MathLib::sqrDist(beg_pnt, seg0.getEndPoint())));
+                // min dist for segment 1
+                const double d1(
+                    std::min(MathLib::sqrDist(beg_pnt, seg1.getBeginPoint()),
+                             MathLib::sqrDist(beg_pnt, seg1.getEndPoint())));
+                return d0 < d1;
+            });
+        GeoLib::Point * pnt{
+            MathLib::sqrDist(beg_pnt, min_dist_segment->getBeginPoint()) <
+                    MathLib::sqrDist(beg_pnt, min_dist_segment->getEndPoint())
+                ? new GeoLib::Point{min_dist_segment->getBeginPoint()}
+                : new GeoLib::Point{min_dist_segment->getEndPoint()}};
+        sub_segments.emplace_back(
+            GeoLib::LineSegment{new GeoLib::Point{beg_pnt, 0}, pnt, true});
+    }
+    // sort all sub segments for the given segment (beg_pnt, end_pnt)
+    GeoLib::sortSegments(beg_pnt, sub_segments);
+
+    sub_segments.erase(std::unique(sub_segments.begin(), sub_segments.end()),
+                       sub_segments.end());
+
+    return sub_segments;
+}
+
+static void mapPointOnSurfaceElement(MeshLib::Element const& elem,
+                                     MathLib::Point3d& q)
+{
+    // create plane equation: n*p = d
+    MathLib::Vector3 const& p(*(elem.getNode(0)));
+    MathLib::Vector3 const n(MeshLib::FaceRule::getSurfaceNormal(&elem));
+    if (n[2] == 0.0) { // vertical plane, z coordinate is arbitrary
+        q[2] = p[2];
+    } else {
+        double const d(MathLib::scalarProduct(n, p));
+        q[2] = (d - n[0]*q[0] - n[1]*q[1])/n[2];
+    }
+}
+
+static std::vector<MeshLib::Element const*>
+getCandidateElementsForLineSegmentIntersection(
+    MeshLib::MeshElementGrid const& mesh_element_grid,
+    GeoLib::LineSegment segment)
+{
+    // modify z coordinates such that all surface elements around the line
+    // segment are found
+    segment.getBeginPoint()[2] = mesh_element_grid.getMinPoint()[2];
+    segment.getEndPoint()[2] = mesh_element_grid.getMaxPoint()[2];
+    std::array<MathLib::Point3d, 2> const pnts{
+        {segment.getBeginPoint(), segment.getEndPoint()}};
+    GeoLib::AABB aabb(pnts.cbegin(), pnts.cend());
+
+    auto candidate_elements = mesh_element_grid.getElementsInVolume(
+        aabb.getMinPoint(), aabb.getMaxPoint());
+
+    // make candidate elements unique
+    BaseLib::makeVectorUnique(candidate_elements);
+
+    return candidate_elements;
+}
+
+static bool snapPointToElementNode(MathLib::Point3d& p,
+                                   MeshLib::Element const& elem, double rel_eps)
+{
+    // values will be initialized within computeSqrNodeDistanceRange
+    double sqr_min, sqr_max;
+    elem.computeSqrNodeDistanceRange(sqr_min, sqr_max);
+
+    double const sqr_eps(rel_eps*rel_eps * sqr_min);
+    for (std::size_t k(0); k<elem.getNumberOfNodes(); ++k) {
+        auto const& node(*elem.getNode(k));
+        double const sqr_dist_2d(MathLib::sqrDist2d(p, node));
+        if (sqr_dist_2d < sqr_eps) {
+#ifdef DEBUG_GEOMAPPER
+            std::stringstream out;
+            out.precision(std::numeric_limits<double>::digits10);
+            out << "Segment point snapped from " << p;
+#endif
+            p = node;
+#ifdef DEBUG_GEOMAPPER
+            out << "to " << p;
+            DBUG("%s", out.str().c_str());
+#endif
+            return true;
+        }
+    }
+    return false;
+}
+
+static void insertSubSegments(
+    GeoLib::Polyline& ply, GeoLib::PointVec& points,
+    GeoLib::Polyline::SegmentIterator& segment_it,
+    std::vector<GeoLib::LineSegment> const& sub_segments)
+{
+    std::size_t const j(segment_it.getSegmentNumber());
+    std::size_t new_pnts_cnt(0);
+    for (auto const& segment : sub_segments)
+    {
+        auto const begin_id(points.push_back(
+            new GeoLib::Point(segment.getBeginPoint(), points.size())));
+        if (ply.insertPoint(j + new_pnts_cnt + 1, begin_id))
+            new_pnts_cnt++;
+        auto const end_id(points.push_back(
+            new GeoLib::Point(segment.getEndPoint(), points.size())));
+        if (ply.insertPoint(j + new_pnts_cnt + 1, end_id))
+            new_pnts_cnt++;
+    }
+    segment_it += new_pnts_cnt;
+}
+
+static void mapPolylineOnSurfaceMesh(
+    GeoLib::Polyline& ply,
+    GeoLib::PointVec& orig_points,
+    MeshLib::MeshElementGrid const& mesh_element_grid)
+{
+    // for each segment ...
+    for (auto segment_it(ply.begin()); segment_it != ply.end(); ++segment_it)
+    {
+        auto candidate_elements(getCandidateElementsForLineSegmentIntersection(
+            mesh_element_grid, *segment_it));
+
+        auto mapPoint = [&candidate_elements](MathLib::Point3d& p) {
+            auto const* elem(
+                findElementContainingPointXY(candidate_elements, p));
+            if (elem)
+            {
+                if (!snapPointToElementNode(p, *elem, 1e-3))
+                    mapPointOnSurfaceElement(*elem, p);
+            }
+            return elem;
+        };
+
+        // map segment begin and end point
+        auto const* beg_elem(mapPoint((*segment_it).getBeginPoint()));
+        auto const* end_elem(mapPoint((*segment_it).getEndPoint()));
+
+        // Since the mapping of the segment begin and end points the coordinates
+        // changed. The internal data structures of PointVec are possibly
+        // invalid and hence it is necessary to re-create them.
+        orig_points.resetInternalDataStructures();
+
+        if (beg_elem == end_elem) {
+            // TODO: handle cases: beg_elem == end_elem == nullptr
+            // There are further checks necessary to determine which case we are
+            // in:
+            // 1. beg_elem == end_elem and the segment intersects elements
+            // 2. beg_elem == end_elem and the segment does not intersect any
+            // element, i.e., the segment is located outside of the mesh area
+            //
+            // Case 1 needs additional work.
+            continue;
+        }
+
+        // map the line segment (and if necessary for the mapping partition it)
+        std::vector<GeoLib::LineSegment> sub_segments(mapLineSegment(
+            *segment_it, candidate_elements, beg_elem, end_elem));
+
+        if (sub_segments.empty())
+            continue;
+
+        // The case sub_segment.size() == 1 is already handled above.
+
+        if (sub_segments.size() > 1)
+        {
+            insertSubSegments(ply, orig_points, segment_it, sub_segments);
+        }
+    }
+}
+
+void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
+{
+    // 1. extract surface
+    if (_surface_mesh)
+        delete _surface_mesh;
+    if (mesh.getDimension()<3) {
+        _surface_mesh = new MeshLib::Mesh(mesh);
+    } else {
+        const MathLib::Vector3 dir(0,0,-1);
+        _surface_mesh =
+            MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, 90+1e-6);
+    }
+
+    // 2. compute mesh grid for surface
+    MeshLib::MeshElementGrid const mesh_element_grid(*_surface_mesh);
+
+    // 3. map each polyline
+    auto org_lines(_geo_objects.getPolylineVec(_geo_name));
+    auto org_points(_geo_objects.getPointVecObj(_geo_name));
+    for (std::size_t k(0); k<org_lines->size(); ++k) {
+        mapPolylineOnSurfaceMesh(*((*org_lines)[k]), *org_points,
+                                 mesh_element_grid);
+    }
+}
+
 GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, MathLib::Point3d const*const p2, GeoLib::Point const*const q1, GeoLib::Point const*const q2) const
 {
     const double x1 = (*p1)[0], x2 = (*p2)[0], x3 = (*q1)[0], x4 = (*q2)[0];
@@ -414,6 +767,4 @@ double GeoMapper::getMaxSegmentLength(const std::vector<GeoLib::Polyline*> &line
     }
     return max_segment_length;
 }
-
 } // end namespace MeshGeoToolsLib
-
