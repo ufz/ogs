@@ -75,7 +75,6 @@ public:
                 name.c_str());
             this->_process_variables.emplace_back(
                 const_cast<ProcessVariable*>(&*variable));
-            _hydraulic_head = this->_process_variables.back();
         }
 
         // Hydraulic conductivity parameter.
@@ -249,8 +248,6 @@ public:
     }
 
 private:
-    ProcessVariable* _hydraulic_head = nullptr;
-
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
