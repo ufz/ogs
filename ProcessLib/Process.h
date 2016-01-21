@@ -90,6 +90,9 @@ public:
 
 		for (auto const& pv : _process_variables)
 		{
+			DBUG("Set initial conditions.");
+			setInitialConditions(*pv, 0);  // 0 is the component id
+
 			DBUG("Initialize boundary conditions.");
 			createDirichletBcs(*pv, 0);  // 0 is the component id
 

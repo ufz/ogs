@@ -170,8 +170,6 @@ public:
     {
         DBUG("Initialize GroundwaterFlowProcess.");
 
-        Process<GlobalSetup>::setInitialConditions(*_hydraulic_head, 0);
-
         if (this->_mesh.getDimension()==1)
             createLocalAssemblers<1>();
         else if (this->_mesh.getDimension()==2)
