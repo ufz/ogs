@@ -165,8 +165,7 @@ void MshView::openMeshEditDialog()
 {
 	MshModel const*const model = static_cast<MshModel*>(this->model());
 	QModelIndex const index = this->selectionModel()->currentIndex();
-	const MeshLib::Mesh* mesh =
-	        static_cast<MshModel*>(this->model())->getMesh(index);
+	MeshLib::Mesh const*const mesh = model->getMesh(index);
 
 	MeshLayerEditDialog meshLayerEdit(mesh);
 	connect(&meshLayerEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
@@ -178,7 +177,7 @@ void MshView::openValuesEditDialog()
 {
 	MshModel const*const model = static_cast<MshModel*>(this->model());
 	QModelIndex const index = this->selectionModel()->currentIndex();
-	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(static_cast<MshModel*>(this->model())->getMesh(index));
+	MeshLib::Mesh* mesh = const_cast<MeshLib::Mesh*>(model->getMesh(index));
 
 	MeshValueEditDialog valueEdit(mesh);
 	connect(&valueEdit, SIGNAL(valueEditFinished(MeshLib::Mesh*)),
