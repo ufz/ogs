@@ -166,10 +166,8 @@ public:
         return "gw_";
     }
 
-    void init() override
+    void createLocalAssemblers() override
     {
-        DBUG("Initialize GroundwaterFlowProcess.");
-
         if (this->_mesh.getDimension()==1)
             createLocalAssemblers<1>();
         else if (this->_mesh.getDimension()==2)

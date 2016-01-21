@@ -49,7 +49,7 @@ public:
 	}
 
 	/// Process specific initialization called by initialize().
-	virtual void init() = 0;
+	virtual void createLocalAssemblers() = 0;
 	virtual bool assemble(const double delta_t) = 0;
 
 	virtual std::string getLinearSolverName() const = 0;
@@ -86,7 +86,7 @@ public:
 		_global_assembler.reset(
 		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
-		init();  // Execute proces specific initialization.
+		createLocalAssemblers();
 
 		for (auto const& pv : _process_variables)
 		{
