@@ -18,6 +18,7 @@
 #include "BaseLib/ConfigTreeNew.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
@@ -87,6 +88,13 @@ public:
 
 		init();  // Execute proces specific initialization.
 
+		for (auto const& pv : _process_variables)
+		{
+			DBUG("Initialize boundary conditions.");
+			createDirichletBcs(*pv, 0);  // 0 is the component id
+
+		}
+
 		initializeBoundaryConditions();
 
 		for (auto& bc : _neumann_bcs)
@@ -136,6 +144,19 @@ protected:
 			_x->set(global_index,
 			        variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}
+	}
+
+	void createDirichletBcs(ProcessVariable& variable,
+	                        int const component_id)
+	{
+		MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
+		    MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+		        variable.getMesh());
+
+		variable.initializeDirichletBCs(std::back_inserter(_dirichlet_bcs),
+		                                 mesh_node_searcher,
+		                                 *_local_to_global_index_map,
+		                                 component_id);
 	}
 
 private:

@@ -25,7 +25,6 @@
 #include "FileIO/VtkIO/VtuInterface.h"
 
 #include "MeshLib/MeshSubset.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 #include "UniformDirichletBoundaryCondition.h"
 
@@ -157,16 +156,9 @@ public:
 
     void initializeBoundaryConditions() override
     {
-        DBUG("Initialize boundary conditions.");
         MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
                 _hydraulic_head->getMesh());
-
-        _hydraulic_head->initializeDirichletBCs(
-            std::back_inserter(this->_dirichlet_bcs),
-            hydraulic_head_mesh_node_searcher,
-            *this->_local_to_global_index_map,
-            0);
 
         //
         // Neumann boundary conditions.
