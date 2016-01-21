@@ -11,25 +11,15 @@
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
 #include <cassert>
-#include <memory>
 
-#include <boost/algorithm/string/erase.hpp>
 #include <boost/optional.hpp>
-
-
-#include "logog/include/logog.hpp"
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
-#include "UniformDirichletBoundaryCondition.h"
-
 #include "GroundwaterFlowFEM.h"
-#include "NeumannBcAssembler.h"
-#include "NeumannBc.h"
-#include "DirichletBc.h"
 #include "Parameter.h"
 #include "Process.h"
 

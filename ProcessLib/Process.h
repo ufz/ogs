@@ -10,7 +10,11 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
+#include <memory>
 #include <string>
+
+#include <logog/include/logog.hpp>
+
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
@@ -27,7 +31,11 @@
 #include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
 #endif
 
+#include "DirichletBc.h"
+#include "NeumannBc.h"
+#include "NeumannBcAssembler.h"
 #include "ProcessVariable.h"
+#include "UniformDirichletBoundaryCondition.h"
 
 namespace MeshLib
 {
