@@ -63,8 +63,6 @@ public:
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
 
-	virtual void initializeBoundaryConditions() = 0;
-
 	void initialize()
 	{
 		DBUG("Initialize process.");
@@ -95,9 +93,8 @@ public:
 			DBUG("Initialize boundary conditions.");
 			createDirichletBcs(*pv, 0);  // 0 is the component id
 
+			createNeumannBcs(*pv, 0);  // 0 is the component id
 		}
-
-		initializeBoundaryConditions();
 
 		for (auto& bc : _neumann_bcs)
 			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
@@ -159,6 +156,26 @@ protected:
 		                                 mesh_node_searcher,
 		                                 *_local_to_global_index_map,
 		                                 component_id);
+	}
+
+	void createNeumannBcs(ProcessVariable& variable, int const component_id)
+	{
+		// Find mesh nodes.
+		MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
+		    MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+		        variable.getMesh());
+		MeshGeoToolsLib::BoundaryElementsSearcher mesh_element_searcher(
+		    variable.getMesh(), mesh_node_searcher);
+
+		// Create a neumann BC for the process variable storing them in the
+		// _neumann_bcs vector.
+		variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
+		                          mesh_element_searcher,
+		                          _global_setup,
+		                          _integration_order,
+		                          *_local_to_global_index_map,
+		                          component_id,
+		                          *_mesh_subset_all_nodes);
 	}
 
 private:

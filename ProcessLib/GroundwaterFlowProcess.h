@@ -150,33 +150,6 @@ public:
                 this->_integration_order);
     }
 
-    void initializeBoundaryConditions() override
-    {
-        MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
-            MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-                _hydraulic_head->getMesh());
-
-        //
-        // Neumann boundary conditions.
-        //
-        {
-            // Find mesh nodes.
-            MeshGeoToolsLib::BoundaryElementsSearcher hydraulic_head_mesh_element_searcher(
-                _hydraulic_head->getMesh(), hydraulic_head_mesh_node_searcher);
-
-            // Create a neumann BC for the hydraulic head storing them in the
-            // _neumann_bcs vector.
-            _hydraulic_head->createNeumannBcs(
-                    std::back_inserter(this->_neumann_bcs),
-                    hydraulic_head_mesh_element_searcher,
-                    this->_global_setup,
-                    this->_integration_order,
-                    *this->_local_to_global_index_map,
-                    0,
-                    *this->_mesh_subset_all_nodes);
-        }
-    }
-
     void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
     {
         // Create single component dof in every of the mesh's nodes.
