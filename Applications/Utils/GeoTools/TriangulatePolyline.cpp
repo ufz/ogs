@@ -1,5 +1,5 @@
 /**
- * \file   TriangulatePolyline.h
+ * \file   TriangulatePolyline.cpp
  * \author Karsten Rink
  * \date   2015-02-02
  * \brief  Utility for triangulating polylines.

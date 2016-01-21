@@ -70,7 +70,7 @@ protected:
 	/// @brief The constructor taking meta information for the data.
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
 	/// @param tuple_size the number of elements of a tuple (default: 1)
 	explicit PropertyVector(std::string const& property_name,
@@ -85,7 +85,7 @@ protected:
 	/// with several entries)
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
 	/// @param tuple_size the number of elements of a tuple (default: 1)
 	PropertyVector(std::size_t n_property_values,
@@ -195,7 +195,7 @@ protected:
 	/// \f$[0, \text{n_prop_groups})\f$.
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration @MeshItemType) (default:
+	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
 	/// @param tuple_size the number of elements of a tuple (default: 1)
 	PropertyVector(std::size_t n_prop_groups,

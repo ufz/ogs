@@ -20,7 +20,7 @@ namespace MeshLib
 
 /**
  * This class represents a 3d prism element. The following sketch shows the node and edge numbering.
- * @anchor PrismNodeAndEdgeNumbering
+ * @anchor Prism6NodeAndEdgeNumbering
  * @code
  *            5
  *           / \

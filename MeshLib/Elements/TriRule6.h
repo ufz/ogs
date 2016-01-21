@@ -21,7 +21,7 @@ namespace MeshLib
  * This class represents a 2d triangle element with 6 nodes.
  *
  * The following sketch shows the node and edge numbering.
- * @anchor TriNodeAndEdgeNumbering
+ * @anchor Tri6NodeAndEdgeNumbering
  * @code
  *
  *          2

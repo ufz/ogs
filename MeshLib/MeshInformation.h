@@ -39,13 +39,13 @@ public:
 	 * Returns an array with the number of elements of each type in the given mesh.
 	 * On completion, n_element_types array contains the number of elements of each of the seven
 	 * supported types. The index to element type conversion is this:
-	 *		0: #lines
-	 *		1: #triangles
-	 *		2: #quads
-	 *		3: #tetrahedra
-	 *		4: #hexahedra
-	 *		5: #pyramids
-	 *		6: #prisms
+	 *		0: \#lines
+	 *		1: \#triangles
+	 *		2: \#quads
+	 *		3: \#tetrahedra
+	 *		4: \#hexahedra
+	 *		5: \#pyramids
+	 *		6: \#prisms
 	 */
 	static const std::array<unsigned, 7> getNumberOfElementTypes(const MeshLib::Mesh &mesh);
 

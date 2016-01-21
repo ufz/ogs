@@ -1,5 +1,5 @@
 /**
- * @file GlobalDenseMatrix.tpp
+ * @file GlobalDenseMatrix-impl.h
  * @author Thomas Fischer
  * @date Jun 10, 2013
  * @brief

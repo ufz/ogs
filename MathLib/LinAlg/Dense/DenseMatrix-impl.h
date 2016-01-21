@@ -1,5 +1,5 @@
 /**
- * @file DenseMatrix-imp.h
+ * @file DenseMatrix-impl.h
  * @author Thomas Fischer and Haibing Shao
  * @date Jun 10, 2013
  *

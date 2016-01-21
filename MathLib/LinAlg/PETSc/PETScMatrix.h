@@ -188,7 +188,7 @@ class PETScMatrix
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
-            \vw_format        File format listed as:
+            \param vw_format  File format listed as:
              PETSC_VIEWER_DEFAULT            Default format
              PETSC_VIEWER_ASCII_MATLAB       MATLAB format
              PETSC_VIEWER_ASCII_DENSE        Print matrix as dense
