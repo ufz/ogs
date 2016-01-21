@@ -114,6 +114,8 @@ public:
 	/// Returns a normalized version of this vector
 	TemplateVector3<double> getNormalizedVector() const
 	{
+		if (getSqrLength() == 0)
+			return TemplateVector3<double>(0,0,0);
 		TemplateVector3<double> norm_vec (this->_x[0], this->_x[1], this->_x[2]);
 		norm_vec.normalize();
 		return norm_vec;
