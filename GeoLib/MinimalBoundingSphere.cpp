@@ -1,8 +1,8 @@
 /**
- * \file   Calculation of a minimum bounding sphere for a vector of points
+ * \file   MinimalBoundingSphere.cpp
  * \author Karsten Rink
  * \date   2014-07-11
- * \brief  Implementation of the MinimalBoundingSphere class.
+ * \brief  Calculation of a minimum bounding sphere for a vector of points.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)

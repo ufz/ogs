@@ -1,5 +1,5 @@
 /**
- * \file DataExplorer5NodeReordering.cpp
+ * \file NodeReordering.cpp
  * 2013/13/06 KR Initial implementation
  *
  * @copyright

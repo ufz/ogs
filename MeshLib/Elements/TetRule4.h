@@ -20,7 +20,7 @@ namespace MeshLib
 
 /**
  * This class represents a 3d tetrahedron element. The following sketch shows the node and edge numbering.
- * @anchor TetrahedronNodeAndEdgeNumbering
+ * @anchor Tetrahedron4NodeAndEdgeNumbering
  * @code
  *          3
  *         /|\

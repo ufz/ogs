@@ -20,7 +20,7 @@ namespace MeshLib
 
 /**
  * This class represents a 3d pyramid element. The following sketch shows the node and edge numbering.
- * @anchor PyramidNodeAndEdgeNumbering
+ * @anchor Pyramid5NodeAndEdgeNumbering
  * @code
  *
  *               4

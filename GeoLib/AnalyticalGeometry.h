@@ -173,7 +173,7 @@ void rotatePointsToXY(
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
 /**
- * Calculates the area of the triangle defined by its edge nodes a, b and c..
+ * Calculates the area of the triangle defined by its edge nodes a, b and c.
  * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
  * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f$.
  */

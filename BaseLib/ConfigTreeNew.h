@@ -167,7 +167,8 @@ public:
     using Callback = std::function<void(const std::string& path,
                                         const std::string& message)>;
 
-    /*! Creates a new instance wrapping the given Boost Property Tree.
+    /*!
+     * Creates a new instance wrapping the given Boost Property Tree.
      *
      * \param tree the Boost Property Tree to be wrapped
      * \param error_cb callback function to be called on error.

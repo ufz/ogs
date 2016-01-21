@@ -27,6 +27,7 @@ struct SerialExecutor
     /// \param f    a function that accepts a pointer to container's elements and
     ///             an index as arguments.
     /// \param c    a container supporting access over operator[].
+    /// \param args additional arguments passed to \c f
     template <typename F, typename C, typename ...Args_>
     static
     void
@@ -52,6 +53,7 @@ struct SerialExecutor
     ///              is modified.
     /// \param c     a container supporting const access over operator[] and size().
     /// \param data  a container supporting non-const access over operator[] and size().
+    /// \param args additional arguments passed to \c f
     template <typename F, typename C, typename Data, typename ...Args_>
     static
     void
