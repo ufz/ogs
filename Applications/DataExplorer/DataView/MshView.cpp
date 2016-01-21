@@ -58,7 +58,7 @@ void MshView::updateView()
 {
 	setAlternatingRowColors(true);
 	setColumnWidth(0,125);
-	std::size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
+	std::size_t nColumns = (this->model() != nullptr) ? this->model()->columnCount() : 0;
 	for (std::size_t i = 1; i < nColumns; i++)
 		resizeColumnToContents(i);
 }
@@ -246,7 +246,7 @@ void MshView::exportToShapefile() const
 	QSettings const settings;
 	QFileInfo const fi (settings.value("lastOpenedMeshFileDirectory").toString());
 	MeshLib::Mesh const*const mesh = static_cast<MshModel*>(this->model())->getMesh(index);
-	QString const fileName = QFileDialog::getSaveFileName(NULL, "Convert mesh to shapefile...",
+	QString const fileName = QFileDialog::getSaveFileName(nullptr, "Convert mesh to shapefile...",
 		LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
 		"ESRI Shapefile (*.shp)");
 	if (!fileName.isEmpty())
