@@ -131,6 +131,7 @@ protected:
 			std::move(config)));
 	}
 
+private:
 	/// Sets the initial condition values in the solution vector x for a given
 	/// process variable and component.
 	void setInitialConditions(ProcessVariable const& variable,
@@ -181,7 +182,6 @@ protected:
 		                          *_mesh_subset_all_nodes);
 	}
 
-private:
 	/// Creates global matrix, rhs and solution vectors, and the linear solver.
 	void createLinearSolver(std::string const& solver_name)
 	{
