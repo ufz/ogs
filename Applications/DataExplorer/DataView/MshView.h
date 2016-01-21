@@ -58,6 +58,9 @@ private slots:
 	/// Opens a dialog for editing material groups.
 	void openValuesEditDialog();
 
+	/// Opens a dialog for adding a layer to the mesh.
+	void openAddLayerDialog();
+
 	/// Adds a new mesh.
 	void addMesh();
 

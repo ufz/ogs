@@ -1,5 +1,6 @@
 # Source files
 set(SOURCES
+	AddLayerToMeshDialog.cpp
 	ColorTableModel.cpp
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
@@ -41,6 +42,7 @@ set(SOURCES
 
 # Header files
 set(HEADERS
+	AddLayerToMeshDialog.h
 	BaseItem.h
 	CondItem.h
 	DirectConditionGenerator.h
