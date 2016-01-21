@@ -126,6 +126,9 @@ MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &erro
 
 unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
 {
+	if (mesh.getDimension() == 1)
+		return 0;
+
 	MeshLib::Mesh* boundary_mesh (MeshSurfaceExtraction::getMeshBoundary(mesh));
 	std::vector<MeshLib::Element*> const& elements (boundary_mesh->getElements());
 

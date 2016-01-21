@@ -57,7 +57,7 @@ public:
 	 * Tests if holes are located within the mesh.
 	 * In this context, a hole is a boundary of an element with no neighbor that cannot be reached from
 	 * the actual boundary of the mesh. Examples include a missing triangle in a 2D mesh or a missing
-	 * Tetrahedron in a 3D mesh.
+	 * Tetrahedron in a 3D mesh. The method does not work for 1d-meshes.
 	 * Note, that this method does not work when complex 3D structures are build from 2D mesh elements,
 	 * e.g. using the LayeredVolume-class, where more than two 2D elements may share an edge.
 	 * @param mesh The mesh that is tested
