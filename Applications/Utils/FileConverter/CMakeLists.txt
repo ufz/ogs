@@ -18,9 +18,6 @@ if (QT4_FOUND)
 	add_executable(generateBCandGLI generateBCandGLI.cpp )
 	target_link_libraries(generateBCandGLI FileIO)
 
-	add_executable(generateBCFromPolyline generateBCFromPolyline.cpp )
-	target_link_libraries(generateBCFromPolyline FileIO)
-
 	set_target_properties(generateBCandGLI generateBCFromPolyline
 		PROPERTIES FOLDER Utilities)
 
@@ -68,7 +65,7 @@ install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
 	RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(QT4_FOUND)
-	install(TARGETS ConvertSHPToGLI generateBCandGLI generateBCFromPolyline generateBCandGLI
+	install(TARGETS ConvertSHPToGLI generateBCandGLI generateBCandGLI
 		FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()
 
