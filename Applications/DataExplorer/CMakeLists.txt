@@ -8,6 +8,8 @@ if(VTKOSGCONVERTER_FOUND)
 	include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
 endif()
 
+include_directories(SYSTEM ${Qt5Widgets_INCLUDE_DIRS})
+
 set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_AUTOUIC TRUE)
 set(CMAKE_AUTORCC TRUE)

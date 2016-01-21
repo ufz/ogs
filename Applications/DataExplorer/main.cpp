@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include <QtGui/QApplication>
+#include <QApplication>
 #ifdef VTKOSGCONVERTER_FOUND
 #include <OpenSG/OSGBaseFunctions.h>
 #endif

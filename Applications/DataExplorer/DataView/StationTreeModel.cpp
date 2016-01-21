@@ -109,6 +109,7 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
  */
 void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib::Point*>* stations)
 {
+	beginResetModel();
 	QList<QVariant> grpName;
 	if (listName.compare("") == 0) // if no name is given a default name is assigned
 	{
@@ -136,7 +137,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
 
 	qDebug() << "List" << listName << "loaded, " << stations->size() << "items added.";
 
-	reset();
+	endResetModel();
 }
 
 /**

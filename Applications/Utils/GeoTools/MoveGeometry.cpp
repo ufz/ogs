@@ -21,7 +21,7 @@
 #include "MathLib/Vector3.h"
 #include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
-#include <QtGui/QApplication>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {

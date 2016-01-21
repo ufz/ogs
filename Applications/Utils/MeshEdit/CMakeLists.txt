@@ -9,7 +9,7 @@ include_directories(
 )
 
 # Create executables
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 
 	add_executable(moveMeshNodes moveMeshNodes.cpp)
 	target_link_libraries(moveMeshNodes FileIO)
@@ -22,7 +22,7 @@ if(QT4_FOUND)
 	ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 	set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
-endif() # QT4_FOUND
+endif()
 
 add_executable(removeMeshElements removeMeshElements.cpp)
 target_link_libraries(removeMeshElements FileIO)
@@ -97,7 +97,7 @@ install(TARGETS
 	queryMesh
 	RUNTIME DESTINATION bin COMPONENT Utilities
 )
-if(QT4_FOUND)
+if(Qt5XmlPatterns_FOUND)
 	install(TARGETS
 		moveMeshNodes
 		MapGeometryToMeshSurface
