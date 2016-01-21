@@ -150,7 +150,7 @@ private:
 		_rhs.reset(_global_setup.createVector(num_unknowns));
 		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
 		    *_A, solver_name, _linear_solver_options.get()));
-		_linear_solver_options->checkAndInvalidate();
+		checkAndInvalidate(_linear_solver_options);
 	}
 
 	/// Computes and stores global matrix' sparsity pattern from given
