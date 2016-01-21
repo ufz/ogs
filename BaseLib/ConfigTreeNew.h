@@ -15,9 +15,26 @@
 #include <map>
 
 #include <functional>
+#include <memory>
 
 namespace BaseLib
 {
+
+class ConfigTreeNew;
+
+/*! Check if \c conf has been read entirely and invalidate it.
+ *
+ * This method can savely be called on \c nullptr's.
+ *
+ * \see ConfigTreeNew::checkAndInvalidate()
+ */
+void checkAndInvalidate(ConfigTreeNew* const conf);
+
+//! \overload
+void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf);
+
+//! \overload
+void checkAndInvalidate(ConfigTreeNew& conf);
 
 template<typename Iterator> class Range;
 
@@ -306,13 +323,6 @@ public:
      */
     void ignoreConfParamAll(std::string const& param) const;
 
-    /*! Checks if the top level of this tree has been read entirely (and not too often).
-     *
-     * Caution: This method also invalidates the instance, i.e., afterwards it can not
-     *          be read from the tree anymore!
-     */
-    void checkAndInvalidate();
-
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
     ~ConfigTreeNew();
@@ -373,6 +383,13 @@ private:
     //! and the number of times it exists in the ConfigTree
     void markVisitedDecrement(std::string const& key) const;
 
+    /*! Checks if the top level of this tree has been read entirely (and not too often).
+     *
+     * Caution: This method also invalidates the instance, i.e., afterwards it can not
+     *          be read from the tree anymore!
+     */
+    void checkAndInvalidate();
+
     //! returns a short string at suitable for error/warning messages
     static std::string shortString(std::string const& s);
 
@@ -402,6 +419,10 @@ private:
 
     //! Set of allowed characters in a key name.
     static const std::string key_chars;
+
+    friend void checkAndInvalidate(ConfigTreeNew* const conf);
+    friend void checkAndInvalidate(ConfigTreeNew& conf);
+    friend void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf);
 };
 
 }

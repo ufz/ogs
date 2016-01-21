@@ -246,4 +246,20 @@ ConfigTreeNew::checkAndInvalidate()
     _tree = nullptr;
 }
 
+
+void checkAndInvalidate(ConfigTreeNew &conf)
+{
+    conf.checkAndInvalidate();
+}
+
+void checkAndInvalidate(ConfigTreeNew* const conf)
+{
+    if (conf) conf->checkAndInvalidate();
+}
+
+void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf)
+{
+    if (conf) conf->checkAndInvalidate();
+}
+
 }
