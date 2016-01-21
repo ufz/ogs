@@ -193,6 +193,8 @@ private:
 	}
 
 protected:
+	unsigned const _integration_order = 2;
+
 	MeshLib::Mesh& _mesh;
 	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 

@@ -48,8 +48,6 @@ namespace ProcessLib
 template<typename GlobalSetup>
 class GroundwaterFlowProcess : public Process<GlobalSetup>
 {
-    unsigned const _integration_order = 2;
-
 public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
@@ -151,7 +149,7 @@ public:
                 this->_mesh.getElements(),
                 _local_assemblers,
                 *_hydraulic_conductivity,
-                _integration_order);
+                this->_integration_order);
     }
 
     void initializeBoundaryConditions() override
@@ -174,7 +172,7 @@ public:
                     std::back_inserter(this->_neumann_bcs),
                     hydraulic_head_mesh_element_searcher,
                     this->_global_setup,
-                    _integration_order,
+                    this->_integration_order,
                     *this->_local_to_global_index_map,
                     0,
                     *_mesh_subset_all_nodes);
