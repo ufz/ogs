@@ -78,7 +78,9 @@ public:
 
             DBUG("Associate hydraulic_head with process variable \'%s\'.",
                 name.c_str());
-            _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+            this->_process_variables.emplace_back(
+                const_cast<ProcessVariable*>(&*variable));
+            _hydraulic_head = this->_process_variables.back();
         }
 
         // Hydraulic conductivity parameter.

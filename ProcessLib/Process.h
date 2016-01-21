@@ -197,6 +197,9 @@ protected:
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
+
+    /// Variables used by this process.
+	std::vector<ProcessVariable*> _process_variables;
 };
 
 }  // namespace ProcessLib
