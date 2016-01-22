@@ -14,11 +14,8 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 // FileIO
@@ -32,10 +29,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
 		"Adds a top layer to an existing mesh",
