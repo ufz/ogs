@@ -42,7 +42,8 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 
 PETScVector::PETScVector(const PetscInt vec_size,
                          const std::vector<PetscInt>& ghost_ids,
-                         const bool is_global_size) : has_ghost_id(true)
+                         const bool is_global_size) :
+                         _size_ghosts(ghost_ids.size()), has_ghost_id(true)
 {
     PetscInt nghosts = static_cast<PetscInt>( ghost_ids.size() );
     if ( is_global_size )
@@ -52,8 +53,10 @@ PETScVector::PETScVector(const PetscInt vec_size,
     }
     else
     {
-        VecCreateGhost(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, nghosts,
-                       &ghost_ids[0], &_v);
+        VecCreate(PETSC_COMM_WORLD, &_v);
+        VecSetType(_v, VECMPI);
+        VecSetSizes(_v, vec_size, PETSC_DECIDE);
+        VecMPISetGhost(_v, nghosts, &ghost_ids[0]);
     }
 
     config();
@@ -73,7 +76,7 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
         VecCopy(existing_vec._v, _v);
     }
 
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
 void PETScVector::config()
@@ -85,19 +88,13 @@ void PETScVector::config()
     VecGetLocalSize(_v, &_size_loc);
     VecGetSize(_v, &_size);
 
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
 void PETScVector::finalizeAssembly()
 {
     VecAssemblyBegin(_v);
     VecAssemblyEnd(_v);
-
-    if (has_ghost_id)
-    {
-        VecGhostUpdateBegin(_v,INSERT_VALUES,SCATTER_FORWARD);
-        VecGhostUpdateEnd(_v,INSERT_VALUES,SCATTER_FORWARD);
-    }
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
