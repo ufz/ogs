@@ -1,8 +1,3 @@
-## pthread ##
-if(WIN32)
-	set(ADDITIONAL_LIBS Winmm.lib)
-endif()
-
 if(CMAKE_USE_PTHREADS_INIT)
 	set(HAVE_PTHREADS TRUE)
 endif()
@@ -36,7 +31,6 @@ target_link_libraries(MatMult
 	logog
 	BaseLib
 	MathLib
-	${ADDITIONAL_LIBS}
 )
 
 add_executable(MatTestRemoveRowsCols
@@ -48,7 +42,6 @@ set_target_properties(MatTestRemoveRowsCols PROPERTIES FOLDER SimpleTests)
 target_link_libraries(MatTestRemoveRowsCols
 	BaseLib
 	MathLib
-	${ADDITIONAL_LIBS}
 )
 
 if(METIS_FOUND)
@@ -64,7 +57,6 @@ if(METIS_FOUND)
 		MathLib
 		logog
 		${METIS_LIBRARIES}
-		${ADDITIONAL_LIBS}
 	)
 
 	if(OPENMP_FOUND)
@@ -80,7 +72,6 @@ if(METIS_FOUND)
 			MathLib
 			logog
 			${METIS_LIBRARIES}
-			${ADDITIONAL_LIBS}
 		)
 	endif()
 endif()

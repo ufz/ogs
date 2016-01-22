@@ -1,7 +1,3 @@
-if(WIN32)
-	set(ADDITIONAL_LIBS Winmm.lib)
-endif()
-
 add_executable(ConjugateGradientUnpreconditioned
 	ConjugateGradientUnpreconditioned.cpp
 	${SOURCES}

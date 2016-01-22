@@ -1,7 +1,3 @@
-if(WIN32)
-	set(ADDITIONAL_LIBS Winmm.lib)
-endif()
-
 # Create the executable
 add_executable(MeshRead
 	MeshRead.cpp
@@ -16,7 +12,6 @@ target_link_libraries(MeshRead
 	BaseLib
 	GeoLib
 	logog
-	${ADDITIONAL_LIBS}
 	${BOOST_LIBRARIES}
 )
 
@@ -34,6 +29,5 @@ target_link_libraries(MeshSearchTest
 	BaseLib
 	GeoLib
 	logog
-	${ADDITIONAL_LIBS}
 	${BOOST_LIBRARIES}
 )
