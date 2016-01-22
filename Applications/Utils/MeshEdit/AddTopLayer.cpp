@@ -18,14 +18,11 @@
 
 #include "BaseLib/FileTools.h"
 
-// FileIO
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "FileIO/writeMeshToFile.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
-
 
 int main (int argc, char* argv[])
 {
@@ -69,8 +66,7 @@ int main (int argc, char* argv[])
 	}
 
 	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
-	FileIO::VtuInterface mesh_io(result.get(), vtkXMLWriter::Binary);
-	mesh_io.writeToFile(mesh_out_arg.getValue());
+	FileIO::writeMeshToFile(*result, mesh_out_arg.getValue());
 	INFO("done.");
 
 	return EXIT_SUCCESS;
