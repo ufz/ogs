@@ -107,7 +107,6 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	}
 
 	// *** insert new top layer elements into subsfc_mesh
-	std::size_t orig_size(subsfc_elements.size());
 	std::vector<MeshLib::Element*> const& sfc_elements(sfc_mesh->getElements());
 	std::size_t const n_sfc_elements(sfc_elements.size());
 	for (std::size_t k(0); k<n_sfc_elements; ++k)
@@ -115,23 +114,33 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 			extrudeElement(subsfc_nodes, *sfc_elements[k], subsfc_sfc_id_map)
 		);
 
-	MeshLib::Properties subsfc_props (mesh.getProperties());
-	boost::optional<MeshLib::PropertyVector<int> &> opt_materials(
-		subsfc_props.getPropertyVector<int>("MaterialIDs")
+	auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements);
+
+	boost::optional<MeshLib::PropertyVector<int> const&> opt_materials(
+		mesh.getProperties().getPropertyVector<int>("MaterialIDs")
 	);
-	if (!opt_materials) {
-		ERR("Can not set material properties for new layer");
-	} else {
-		MeshLib::PropertyVector<int> & materials(opt_materials.get());
-		unsigned layer_id(*(std::max_element(
-			materials.cbegin(), materials.cend()))+1);
-		while (orig_size<subsfc_elements.size()) {
-			materials.push_back(layer_id);
-			orig_size++;
+
+	if (opt_materials) {
+		boost::optional<PropertyVector<int> &> new_opt_materials(
+		new_mesh->getProperties().createNewPropertyVector<int>("MaterialIDs",
+			MeshLib::MeshItemType::Cell, 1));
+		if (!new_opt_materials) {
+			ERR("Can not set material properties for new layer");
+		} else {
+			unsigned new_layer_id(*(std::max_element(
+				opt_materials->cbegin(), opt_materials->cend()))+1);
+			std::copy(opt_materials->cbegin(), opt_materials->cend(),
+			          new_opt_materials->begin());
+			auto const n_new_props(subsfc_elements.size()-mesh.getNElements());
+			std::fill_n(new_opt_materials->end(), n_new_props, new_layer_id);
 		}
+	} else {
+		ERR(
+		    "Could not copy the property \"MaterialIDs\" since the original "
+		    "mesh does not contain such a property.");
 	}
 
-	return new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements, subsfc_props);
+	return new_mesh;
 }
 
 } // namespace MeshLib
