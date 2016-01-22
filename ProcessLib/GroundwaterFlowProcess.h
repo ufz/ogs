@@ -191,21 +191,15 @@ public:
         }
         assert(result && result->size() == this->_x->size());
 
-#ifdef USE_PETSC
-        std::unique_ptr<double[]> u(new double[this->_x->size()]);
-        this->_x->getGlobalVector(u.get());  // get the global solution
-
-        std::size_t const n = this->_mesh.getNNodes();
-        for (std::size_t i = 0; i < n; ++i)
-        {
-            MeshLib::Location const l(this->_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, i);
-            auto const global_index = std::abs(  // 0 is the component id.
-                this->_local_to_global_index_map->getGlobalIndex(l, 0));
-            (*result)[i] = u[global_index];
-        }
-#else
         // Copy result
+#ifdef USE_PETSC
+        double* loc_x = _x->getLocalVector();
+        for (std::size_t i=0; i<_x->getLocalSize() + _x->getGhostSize(); i++)
+        {
+            (*result)[i] = loc_x[i];
+        }
+        _x->restoreArray(loc_x);
+#else
         for (std::size_t i = 0; i < this->_x->size(); ++i)
             (*result)[i] = (*this->_x)[i];
 #endif

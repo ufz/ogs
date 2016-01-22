@@ -85,6 +85,12 @@ class PETScVector
             return _size_loc;
         }
 
+        /// Get the number of ghost entries in the same rank
+        PetscInt getGhostSize() const
+        {
+            return _size_ghosts;
+        }
+
         /// Get the start index of the local vector
         PetscInt getRangeBegin() const
         {
@@ -167,9 +173,17 @@ class PETScVector
         */
         PetscScalar *getLocalVector() const
         {
-            PetscScalar *loc_vec;
-            VecGetArray(_v, &loc_vec);
-            return loc_vec;
+            PetscScalar *loc_array;
+            if (has_ghost_id)
+            {
+                VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
+                VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
+                VecGhostGetLocalForm(_v, &_v_loc);
+                VecGetArray(_v_loc, &loc_array);
+            }
+            else
+               VecGetArray(_v, &loc_array);
+            return loc_array;
         }
 
         /*!
@@ -178,7 +192,13 @@ class PETScVector
         */
         void restoreArray(PetscScalar* array) const
         {
-            VecRestoreArray(_v, &array);         
+            if (has_ghost_id)
+            {
+                VecRestoreArray(_v_loc, &array);
+             //   VecGhostRestoreLocalForm(_v, &_v_loc);
+            }
+            else
+                VecRestoreArray(_v, &array);
         }
 
         /*!
@@ -253,6 +273,9 @@ class PETScVector
 
     private:
         PETSc_Vec _v;
+        /// Local vector, which is only for the case that  _v is created
+        /// with ghost entries. 
+        mutable PETSc_Vec _v_loc;
 
         /// Starting index in a rank
         PetscInt _start_rank;
@@ -263,6 +286,8 @@ class PETScVector
         PetscInt _size;
         /// Size of local entries
         PetscInt _size_loc;
+        /// Size of local ghost entries
+        PetscInt _size_ghosts = 0;
 
         /// Flag to indicate whether the vector is created with ghost entry indices
         bool has_ghost_id = false;
