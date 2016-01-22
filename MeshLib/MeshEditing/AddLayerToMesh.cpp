@@ -42,7 +42,8 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
 	{
 		new_nodes[j] = subsfc_nodes[sfc_elem.getNode(j)->getID()];
 		std::size_t new_idx = (nElemNodes==2) ? (3-j) : (nElemNodes+j);
-		new_nodes[new_idx] = subsfc_nodes[subsfc_sfc_id_map.at(sfc_elem.getNode(j)->getID())];
+		new_nodes[new_idx] =
+		    subsfc_nodes[subsfc_sfc_id_map.at(sfc_elem.getNode(j)->getID())];
 	}
 	
 	if (sfc_elem.getGeomType() == MeshLib::MeshElemType::LINE)
@@ -84,7 +85,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	INFO("done.");
 
 	// *** add new surface nodes
-	std::vector<MeshLib::Node*> subsfc_nodes = MeshLib::copyNodeVector(mesh.getNodes());
+	std::vector<MeshLib::Node*> subsfc_nodes =
+	    MeshLib::copyNodeVector(mesh.getNodes());
 	std::vector<MeshLib::Element*> subsfc_elements =
 		MeshLib::copyElementVector(mesh.getElements(), subsfc_nodes);
 
@@ -100,9 +102,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 		std::size_t const sfc_id(k+n_subsfc_nodes);
 		subsfc_sfc_id_map.insert(std::make_pair(subsfc_id, sfc_id));
 		MeshLib::Node const& node (*sfc_nodes[k]);
-		subsfc_nodes.push_back(
-			new MeshLib::Node(node[0], node[1], node[2] - (flag * thickness), sfc_id)
-		);
+		subsfc_nodes.push_back(new MeshLib::Node(
+		    node[0], node[1], node[2] - (flag * thickness), sfc_id));
 	}
 
 	// *** insert new top layer elements into subsfc_mesh
