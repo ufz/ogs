@@ -53,17 +53,25 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * subsfc_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
+	    FileIO::readMeshFromFile(mesh_arg.getValue()));
+	if (!subsfc_mesh) {
+		ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
+		return EXIT_FAILURE;
+	}
 	INFO("done.");
 
-	std::unique_ptr<MeshLib::Mesh> result (MeshLib::addTopLayerToMesh(
-		*subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()
-	));
+	std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
+	    *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()));
+	if (!result) {
+		ERR("Failure while adding top layer.")
+		return EXIT_FAILURE;
+	}
 
 	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
 	FileIO::VtuInterface mesh_io(result.get(), vtkXMLWriter::Binary);
 	mesh_io.writeToFile(mesh_out_arg.getValue());
 	INFO("done.");
 
-	return 0;
+	return EXIT_SUCCESS;
 }
