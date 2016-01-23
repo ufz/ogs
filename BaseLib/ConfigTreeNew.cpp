@@ -275,18 +275,14 @@ ConfigTreeNew::checkAndInvalidate()
 
     // iterate over children
     for (auto const& p : *_tree) {
-        DBUG("-- %s <%s> ", _path.c_str(), p.first.c_str());
         if (p.first != "<xmlattr>") // attributes are handled below
             markVisitedDecrement(false, p.first);
-        DBUG("tag %s", p.first.c_str());
     }
 
     // iterate over attributes
     if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
-        DBUG("has attributes");
         for (auto const& p : *attrs) {
             markVisitedDecrement(true, p.first);
-            DBUG("attr %s", p.first.c_str());
         }
     }
 

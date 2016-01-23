@@ -141,7 +141,7 @@ getValue() const
 template<typename T>
 T
 ConfigTreeNew::
-getAttribute(std::string const& attr) const
+getConfAttribute(std::string const& attr) const
 {
     checkUniqueAttr(attr);
     markVisited<T>(attr, true);

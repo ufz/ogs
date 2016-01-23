@@ -283,7 +283,7 @@ public:
 
     //! TODO doc
     template<typename T> T
-    getAttribute(std::string const& attr) const;
+    getConfAttribute(std::string const& attr) const;
 
     /*! Peek at a parameter \c param of type \c T from the configuration tree.
      *
