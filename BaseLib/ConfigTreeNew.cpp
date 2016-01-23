@@ -211,7 +211,7 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
 {
     checkKeyname(key);
 
-    if (_visited_params.find(key) != _visited_params.end()) {
+    if (_visited_params.find({false, key}) != _visited_params.end()) {
         error("Key <" + key + "> has already been processed.");
     }
 }
@@ -220,7 +220,7 @@ void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
 {
     checkKeyname(attr);
 
-    if (_visited_params.find("<xmlattr>." + attr) != _visited_params.end()) {
+    if (_visited_params.find({true, attr}) != _visited_params.end()) {
         error("Attribute \"" + attr + "\" has already been processed.");
     }
 }
@@ -229,16 +229,17 @@ ConfigTreeNew::CountType&
 ConfigTreeNew::
 markVisited(std::string const& key, bool const peek_only) const
 {
-    return markVisited<ConfigTreeNew>(key, peek_only);
+    return markVisited<ConfigTreeNew>(key, false, peek_only);
 }
 
 void
 ConfigTreeNew::
-markVisitedDecrement(std::string const& key) const
+markVisitedDecrement(bool const is_attr, std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
-    auto p = _visited_params.emplace(key, CountType{-1, type});
+    auto p = _visited_params.emplace(std::make_pair(is_attr, key),
+                                     CountType{-1, type});
 
     if (!p.second) { // no insertion happened
         auto& v = p.first->second;
@@ -276,24 +277,40 @@ ConfigTreeNew::checkAndInvalidate()
     for (auto const& p : *_tree) {
         DBUG("-- %s <%s> ", _path.c_str(), p.first.c_str());
         if (p.first != "<xmlattr>") // attributes are handled below
-            markVisitedDecrement(p.first);
+            markVisitedDecrement(false, p.first);
+        DBUG("tag %s", p.first.c_str());
     }
 
     // iterate over attributes
     if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
+        DBUG("has attributes");
         for (auto const& p : *attrs) {
-            markVisitedDecrement("<xmlattr>." + p.first);
-            // markVisitedDecrement("<xmlattr>");
+            markVisitedDecrement(true, p.first);
+            DBUG("attr %s", p.first.c_str());
         }
     }
 
-    for (auto const& p : _visited_params) {
-        if (p.second.count > 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
-                    + " time(s) more than it was present in the configuration tree.");
-        } else if (p.second.count < 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
-                    + " time(s) less than it was present in the configuration tree.");
+    for (auto const& p : _visited_params)
+    {
+        auto const& tag   = std::get<1>(p.first);
+        auto const& count = p.second.count;
+
+        if (std::get<0>(p.first)) { // tag
+            if (count > 0) {
+                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
+                        + " time(s) more than it was present in the configuration tree.");
+            } else if (count < 0) {
+                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(-count)
+                        + " time(s) less than it was present in the configuration tree.");
+            }
+        } else { // XML attribute
+            if (count > 0) {
+                warning("Key <" + tag + "> has been read " + std::to_string(count)
+                        + " time(s) more than it was present in the configuration tree.");
+            } else if (count < 0) {
+                warning("Key <" + tag + "> has been read " + std::to_string(-count)
+                        + " time(s) less than it was present in the configuration tree.");
+            }
         }
     }
 

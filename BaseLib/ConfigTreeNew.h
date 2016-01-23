@@ -396,7 +396,8 @@ private:
      * \c param peek_only if true, do not change the read-count of the given key.
      */
     template<typename T>
-    CountType& markVisited(std::string const& key, bool peek_only = false) const;
+    CountType& markVisited(std::string const& key, bool const is_attr,
+                           bool peek_only = false) const;
 
     /*! Keeps track of the key \c key and its value type ConfigTree.
      *
@@ -408,7 +409,7 @@ private:
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
-    void markVisitedDecrement(std::string const& key) const;
+    void markVisitedDecrement(bool const is_attr, std::string const& key) const;
 
     //! TODO doc
     bool hasChildren(ConfigTreeNew const& ct) const;
@@ -431,6 +432,8 @@ private:
 
     //! \todo add file name
 
+    using KeyType = std::pair<bool, std::string>;
+
     //! A map key -> (count, type) keeping track which parameters have been read how often
     //! and which datatype they have.
     //!
@@ -438,7 +441,7 @@ private:
     //! Therefore it has to be mutable in order to be able to read from
     //! constant instances, e.g., those passed as constant references to
     //! temporaries.
-    mutable std::map<std::string, CountType> _visited_params;
+    mutable std::map<KeyType, CountType> _visited_params;
 
     //! \todo doc
     mutable bool _have_read_data = false;
