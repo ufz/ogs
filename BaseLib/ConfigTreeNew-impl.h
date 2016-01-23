@@ -35,11 +35,10 @@ T
 ConfigTreeNew::
 getConfParam(std::string const& param) const
 {
-    auto p = getConfParamOptional<T>(param);
-    if (p) return *p;
+    if (auto p = getConfParamOptional<T>(param))
+        return *p;
 
     error("Key <" + param + "> has not been found");
-    return T();
 }
 
 template<typename T>
@@ -47,8 +46,9 @@ T
 ConfigTreeNew::
 getConfParam(std::string const& param, T const& default_value) const
 {
-    auto p = getConfParamOptional<T>(param);
-    if (p) return *p;
+    if (auto p = getConfParamOptional<T>(param))
+        return *p;
+
     return default_value;
 }
 
@@ -58,20 +58,9 @@ ConfigTreeNew::
 getConfParamOptional(std::string const& param) const
 {
     checkUnique(param);
-    auto p = _tree->get_child_optional(param);
 
-    bool peek_only = p == boost::none;
-    markVisited<T>(param, peek_only);
-
-    if (p) {
-        auto v = p->get_value_optional<T>();
-        if (v) {
-            return v;
-        } else {
-            error("Value for key <" + param + "> `" + shortString(p->data())
-                  + "' not convertible to the desired type.");
-        }
-    }
+    if (auto p = getConfSubtreeOptional(param))
+        return p->getValue<T>();
 
     return boost::none;
 }
@@ -97,20 +86,16 @@ peekConfParam(std::string const& param) const
 {
     checkKeyname(param);
 
-    auto p =_tree->get_child_optional(param);
-
-    if (!p) {
-        error("Key <" + param + "> has not been found");
-    } else {
+    if (auto p =_tree->get_child_optional(param)) {
         try {
             return p->get_value<T>();
         } catch (boost::property_tree::ptree_bad_data) {
             error("Value for key <" + param + "> `" + shortString(p->data())
                   + "' not convertible to the desired type.");
         }
+    } else {
+        error("Key <" + param + "> has not been found");
     }
-
-    return T();
 }
 
 template<typename T>
@@ -133,11 +118,55 @@ checkConfParam(std::string const& param, Ch const* value) const
     }
 }
 
+template<typename T>
+T
+ConfigTreeNew::
+getValue() const
+{
+    // TODO test this
+    if (_have_read_data) {
+        error("The data of this subtree has already been read.");
+    }
+
+    _have_read_data = true;
+
+    if (auto v = _tree->get_value_optional<T>()) {
+        return *v;
+    } else {
+        error("Value `" + shortString(_tree->data())
+              + "' is not convertible to the desired type.");
+    }
+}
+
+template<typename T>
+T
+ConfigTreeNew::
+getAttribute(std::string const& attr) const
+{
+    checkUniqueAttr(attr);
+    markVisited(attr, true);
+
+    if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
+        if (auto a = attrs->get_child_optional(attr)) {
+            if (auto v = a->get_value_optional<T>()) {
+                return *v;
+            } else {
+                error("Value for XML attribute \"" + attr + "\" `"
+                      + shortString(a->data())
+                      + "' not convertible to the desired type.");
+            }
+        } else {
+            error("No XML attribute named \"" + attr + "\"");
+        }
+    } else {
+        error("This parameter has no XML attributes");
+    }
+}
 
 template<typename T>
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only) const
+markVisited(std::string const& key, bool const peek_only) const
 {
     auto const type = std::type_index(typeid(T));
 

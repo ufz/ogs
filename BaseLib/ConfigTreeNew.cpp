@@ -43,11 +43,12 @@ ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
 
 ConfigTreeNew::
 ConfigTreeNew(ConfigTreeNew && other)
-    : _tree(other._tree)
-    , _path(other._path)
+    : _tree                    (other._tree)
+    , _path          (std::move(other._path))
     , _visited_params(std::move(other._visited_params))
-    , _onerror(other._onerror)
-    , _onwarning(other._onwarning)
+    , _have_read_data          (other._have_read_data)
+    , _onerror       (std::move(other._onerror))
+    , _onwarning     (std::move(other._onwarning))
 {
     other._tree = nullptr;
 }
@@ -67,10 +68,21 @@ operator=(ConfigTreeNew&& other)
     other._tree     = nullptr;
     _path           = std::move(other._path);
     _visited_params = std::move(other._visited_params);
+    _have_read_data = other._have_read_data;
     _onerror        = std::move(other._onerror);
     _onwarning      = std::move(other._onwarning);
 
     return *this;
+}
+
+ConfigTreeNew
+ConfigTreeNew::
+getConfParam(std::string const& root) const
+{
+    auto ct = getConfSubtree(root);
+    if (hasChildren(ct))
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
 }
 
 ConfigTreeNew
@@ -81,7 +93,6 @@ getConfSubtree(std::string const& root) const
         return std::move(*t);
     } else {
         error("Key <" + root + "> has not been found.");
-        return ConfigTreeNew(PTree(), *this, ""); // TODO that will crash
     }
 }
 
@@ -90,14 +101,13 @@ ConfigTreeNew::
 getConfSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
-    auto subtree = _tree->get_child_optional(root);
 
-    if (subtree) {
-        markVisited(root);
+    if (auto subtree = _tree->get_child_optional(root)) {
+        markVisited(root, false);
         return ConfigTreeNew(*subtree, *this, root);
     } else {
         markVisited(root, true);
-        return boost::optional<ConfigTreeNew>();
+        return boost::none;
     }
 }
 
@@ -138,6 +148,7 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 void ConfigTreeNew::error(const std::string& message) const
 {
     _onerror(_path, message);
+    std::abort();
 }
 
 void ConfigTreeNew::warning(const std::string& message) const
@@ -175,6 +186,12 @@ void ConfigTreeNew::checkKeyname(std::string const& key) const
         error("Key <" + key + "> starts with an illegal character.");
     } else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
         error("Key <" + key + "> contains illegal characters.");
+    } else if (key.find("__") != std::string::npos) {
+        // This is illegal because we use parameter names to generate doxygen
+        // page names. Thereby "__" acts as a separator character. Choosing
+        // other separators is not possible because of observed limitations
+        // for valid doxygen page names.
+        error("Key <" + key + "> contains double underscore.");
     }
 }
 
@@ -199,9 +216,18 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
     }
 }
 
+void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
+{
+    checkKeyname(attr);
+
+    if (_visited_params.find("<xmlattr>." + attr) != _visited_params.end()) {
+        error("Attribute \"" + attr + "\" has already been processed.");
+    }
+}
+
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only) const
+markVisited(std::string const& key, bool const peek_only) const
 {
     return markVisited<ConfigTreeNew>(key, peek_only);
 }
@@ -220,18 +246,48 @@ markVisitedDecrement(std::string const& key) const
     }
 }
 
+bool
+ConfigTreeNew::hasChildren(ConfigTreeNew const& ct) const
+{
+    auto const& tree = *ct._tree;
+    if (tree.begin() == tree.end())
+        return false; // no children
+    if (tree.front().first == "<xmlattr>"
+        && (++tree.begin()) == tree.end())
+        return false; // only attributes
+
+    return true;
+}
+
 void
 ConfigTreeNew::checkAndInvalidate()
 {
     if (!_tree) return;
 
-    for (auto const& p : *_tree)
-    {
-        markVisitedDecrement(p.first);
+    // Note: due to a limitation in boost::property_tree it is not possible
+    // to discriminate between <tag></tag> and <tag/> in the input file.
+    // In both cases data() will be empty.
+    if ((!_have_read_data) && !_tree->data().empty()) {
+        warning("The immediate data `" + shortString(_tree->data())
+                +"' of this tag has not been read.");
     }
 
-    for (auto const& p : _visited_params)
-    {
+    // iterate over children
+    for (auto const& p : *_tree) {
+        DBUG("-- %s <%s> ", _path.c_str(), p.first.c_str());
+        if (p.first != "<xmlattr>") // attributes are handled below
+            markVisitedDecrement(p.first);
+    }
+
+    // iterate over attributes
+    if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
+        for (auto const& p : *attrs) {
+            markVisitedDecrement("<xmlattr>." + p.first);
+            // markVisitedDecrement("<xmlattr>");
+        }
+    }
+
+    for (auto const& p : _visited_params) {
         if (p.second.count > 0) {
             warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
                     + " time(s) more than it was present in the configuration tree.");

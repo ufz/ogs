@@ -62,6 +62,9 @@ template<typename Iterator> class Range;
  * possible to read from this class, which configuration parameters are present in the tree.
  * This restriction, however, is intended, because it provides the possibility to get all
  * existing configuration parameters from the source code.
+ *
+ * \todo add usage description
+ *
  */
 class ConfigTreeNew final
 {
@@ -80,7 +83,7 @@ public:
 
         explicit SubtreeIterator(Iterator it, std::string const& root,
                                  ConfigTreeNew const& parent)
-            : _it(it), _root(root), _parent(parent)
+            : _it(it), _tagname(root), _parent(parent)
         {}
 
         SubtreeIterator& operator++() {
@@ -94,9 +97,9 @@ public:
             // tell the _parent instance that a subtree now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited(_root);
+                _parent.markVisited(_tagname, false);
             }
-            return ConfigTreeNew(_it->second, _parent, _root);
+            return ConfigTreeNew(_it->second, _parent, _tagname);
         }
 
         bool operator==(SubtreeIterator const& other) const {
@@ -110,7 +113,7 @@ public:
     private:
         bool _has_incremented = true;
         Iterator _it;
-        std::string const _root;
+        std::string const _tagname;
         ConfigTreeNew const& _parent;
     };
 
@@ -130,7 +133,7 @@ public:
 
         explicit ValueIterator(Iterator it, std::string const& root,
                                ConfigTreeNew const& parent)
-            : _it(it), _root(root), _parent(parent)
+            : _it(it), _tagname(root), _parent(parent)
         {}
 
         ValueIterator<ValueType>& operator++() {
@@ -144,21 +147,22 @@ public:
             // tell the _parent instance that a setting now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited<ValueType>(_root);
+                _parent.markVisited<ValueType>(_tagname, false);
             }
 
             if (_it->second.begin() != _it->second.end()) {
-                _parent.error("Configuration at key " + _root + " has subitems.");
-                return ValueType();
+                // TODO test
+                _parent.error("Configuration at key " + _tagname + " has subitems.");
+                // TODO what about attributes?
             }
 
-            auto v = _it->second.get_value_optional<ValueType>();
-
-            if (v) return *v;
+            // TODO maybe better make complete ConfigTree
+            if (auto v = _it->second.get_value_optional<ValueType>())
+                return *v;
 
             // TODO: change error method
-            _parent.error("Could not get value out of key " + _root + ".");
-            return ValueType();
+            // TODO test
+            _parent.error("Could not get value out of key " + _tagname + ".");
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
@@ -172,7 +176,7 @@ public:
     private:
         bool _has_incremented = true;
         Iterator _it;
-        std::string const _root;
+        std::string const _tagname;
         ConfigTreeNew const& _parent;
     };
 
@@ -261,6 +265,26 @@ public:
     template<typename T> Range<ValueIterator<T> >
     getConfParamList(std::string const& param) const;
 
+    //! TODO doc
+    ConfigTreeNew
+    getConfParam(std::string const& param) const;
+
+    //! TODO doc
+    boost::optional<ConfigTreeNew>
+    getConfParamOptional(std::string const& param) const;
+
+    //! TODO doc
+    Range<SubtreeIterator>
+    getConfParamList(std::string const& param) const;
+
+    //! TODO doc
+    template<typename T> T
+    getValue() const;
+
+    //! TODO doc
+    template<typename T> T
+    getAttribute(std::string const& attr) const;
+
     /*! Peek at a parameter \c param of type \c T from the configuration tree.
      *
      * This method is an exception to the single-read rule. It is meant to be used to
@@ -347,7 +371,7 @@ private:
 
     //! Called if an error occurs. Will call the error callback.
     //! This method only acts as a helper method.
-    void error(std::string const& message) const;
+    [[noreturn]] void error(std::string const& message) const;
 
     //! Called for printing warning messages. Will call the warning callback.
     //! This method only acts as a helper method.
@@ -361,6 +385,9 @@ private:
 
     //! Asserts that the \c key has not been read yet.
     void checkUnique(std::string const& key) const;
+
+    //! TODO doc
+    void checkUniqueAttr(std::string const& attr) const;
 
     /*! Keeps track of the key \c key and its value type \c T.
      *
@@ -377,11 +404,14 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool peek_only = false) const;
+    CountType& markVisited(std::string const& key, bool const peek_only = false) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
     void markVisitedDecrement(std::string const& key) const;
+
+    //! TODO doc
+    bool hasChildren(ConfigTreeNew const& ct) const;
 
     /*! Checks if the top level of this tree has been read entirely (and not too often).
      *
@@ -399,6 +429,8 @@ private:
     //! A path printed in error/warning messages.
     std::string _path;
 
+    //! \todo add file name
+
     //! A map key -> (count, type) keeping track which parameters have been read how often
     //! and which datatype they have.
     //!
@@ -407,6 +439,9 @@ private:
     //! constant instances, e.g., those passed as constant references to
     //! temporaries.
     mutable std::map<std::string, CountType> _visited_params;
+
+    //! \todo doc
+    mutable bool _have_read_data = false;
 
     Callback _onerror;
     Callback _onwarning;
