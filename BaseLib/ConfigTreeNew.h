@@ -149,20 +149,7 @@ public:
                 _has_incremented = false;
                 _parent.markVisited<ValueType>(_tagname, false);
             }
-
-            if (_it->second.begin() != _it->second.end()) {
-                // TODO test
-                _parent.error("Configuration at key " + _tagname + " has subitems.");
-                // TODO what about attributes?
-            }
-
-            // TODO ____ maybe better make complete ConfigTree _____
-            if (auto v = _it->second.get_value_optional<ValueType>())
-                return *v;
-
-            // TODO: change error method
-            // TODO test, message: not convertible
-            _parent.error("Could not get value out of key " + _tagname + ".");
+            return ConfigTreeNew(_it->second, _parent, _tagname).getValue<ValueType>();
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
