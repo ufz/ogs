@@ -561,28 +561,3 @@ TEST(BaseLibConfigTree, ConfigTreeMoveAssign)
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
 }
-
-
-TEST(BLT, TEST)
-{
-    const char xml[] =
-            "<s>test</s>"
-            "<t>Test</t>"
-            "<z/>";
-
-    // boost::property_tree::basic_ptree<std::string, char*, std::less<std::string>> ptree;
-    // boost::property_tree::basic_ptree<std::string, boost::optional<std::string>, std::less<std::string>> ptree;
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
-    WARN("value: <%s>", ptree.get_child("z").get_value<std::string>().c_str());
-
-    auto opt = ptree.get_child("z").get_value_optional<std::string>();
-    WARN("has value? -> %s", opt ? "true" : "false");
-
-    auto dat = ptree.get_child("z").data();
-    WARN("value: <%s>", dat.c_str());
-}
-
