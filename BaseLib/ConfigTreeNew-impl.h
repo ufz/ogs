@@ -144,10 +144,11 @@ ConfigTreeNew::
 getConfAttribute(std::string const& attr) const
 {
     checkUniqueAttr(attr);
-    markVisited<T>(attr, true);
+    auto& ct = markVisited<T>(attr, true, true);
 
     if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
         if (auto a = attrs->get_child_optional(attr)) {
+            ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {
                 return *v;
             } else {
@@ -156,7 +157,7 @@ getConfAttribute(std::string const& attr) const
                       + "' not convertible to the desired type.");
             }
         } else {
-            error("No XML attribute named \"" + attr + "\"");
+            error("Did not find XML attribute with name \"" + attr + "\"");
         }
     } else {
         error("This parameter has no XML attributes");

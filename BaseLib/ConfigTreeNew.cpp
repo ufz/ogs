@@ -85,6 +85,16 @@ getConfParam(std::string const& root) const
     return ct;
 }
 
+boost::optional<ConfigTreeNew>
+ConfigTreeNew::
+getConfParamOptional(std::string const& root) const
+{
+    auto ct = getConfSubtreeOptional(root);
+    if (ct && hasChildren(*ct))
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
+}
+
 ConfigTreeNew
 ConfigTreeNew::
 getConfSubtree(std::string const& root) const
