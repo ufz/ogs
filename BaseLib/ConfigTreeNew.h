@@ -156,12 +156,12 @@ public:
                 // TODO what about attributes?
             }
 
-            // TODO maybe better make complete ConfigTree
+            // TODO ____ maybe better make complete ConfigTree _____
             if (auto v = _it->second.get_value_optional<ValueType>())
                 return *v;
 
             // TODO: change error method
-            // TODO test
+            // TODO test, message: not convertible
             _parent.error("Could not get value out of key " + _tagname + ".");
         }
 
