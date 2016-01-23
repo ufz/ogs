@@ -298,10 +298,10 @@ ConfigTreeNew::checkAndInvalidate()
 
     for (auto const& p : _visited_params)
     {
-        auto const& tag   = std::get<1>(p.first);
+        auto const& tag   = p.first.second;
         auto const& count = p.second.count;
 
-        if (std::get<0>(p.first)) { // tag
+        if (p.first.first) { // tag
             if (count > 0) {
                 warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
                         + " time(s) more than it was present in the configuration tree.");

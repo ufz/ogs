@@ -147,7 +147,7 @@ public:
             // tell the _parent instance that a setting now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited<ValueType>(_tagname, false);
+                _parent.markVisited<ValueType>(_tagname, false, false);
             }
             return ConfigTreeNew(_it->second, _parent, _tagname).getValue<ValueType>();
         }
@@ -384,7 +384,7 @@ private:
      */
     template<typename T>
     CountType& markVisited(std::string const& key, bool const is_attr,
-                           bool peek_only = false) const;
+                           bool peek_only) const;
 
     /*! Keeps track of the key \c key and its value type ConfigTree.
      *
@@ -392,7 +392,7 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool const peek_only = false) const;
+    CountType& markVisited(std::string const& key, bool const peek_only) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
