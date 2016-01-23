@@ -15,7 +15,7 @@
 
 #include "BaseLib/ConfigTreeNew.h"
 
-#define DO_EXPECT(cbs, error, warning) do  { \
+#define EXPECT_ERR_WARN(cbs, error, warning) do  { \
         if (error)   EXPECT_TRUE((cbs).get_error());   else EXPECT_FALSE((cbs).get_error()); \
         if (warning) EXPECT_TRUE((cbs).get_warning()); else EXPECT_FALSE((cbs).get_warning()); \
         (cbs).reset(); \
@@ -33,7 +33,8 @@ class Callbacks
 {
 public:
     BaseLib::ConfigTreeNew::Callback
-    get_error_cb() {
+    get_error_cb()
+    {
         return [this](std::string const& path, std::string const& message)
         {
             (void) path; (void) message;
@@ -44,7 +45,8 @@ public:
     }
 
     BaseLib::ConfigTreeNew::Callback
-    get_warning_cb() {
+    get_warning_cb()
+    {
         return [this](std::string const& path, std::string const& message)
         {
             (void) path; (void) message;
@@ -73,7 +75,7 @@ TEST(BaseLibConfigTree, ConfigTreeEmpty)
         (void) conf;
     } // ConfigTree destroyed here
 
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 
@@ -86,89 +88,163 @@ TEST(BaseLibConfigTree, ConfigTreeGet)
             "<sub>"
             "  <float>6.1</float>"
             "  <float2>0.1</float2>"
+            "  <bool1>false</bool1>"
+            "  <bool2>false</bool2>"
+            "  <bool3/>"
             "  <ignored/>"
             "  <ignored2/>"
             "  <ignored2/>"
             "</sub>"
-            "<x>Y</x>";
+            "<x>Y</x>"
+            "<z attr=\"0.5\">32.0</z>";
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         EXPECT_EQ(5.6e-4, conf.getConfParam<double>("double")); // read certain types
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
         EXPECT_TRUE(conf.getConfParam<bool>("bool"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
         EXPECT_EQ(5, conf.getConfParam<int>("int"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         EXPECT_EQ(8, conf.getConfParam<int>("intx", 8)); // reading with default value
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
+
+        // Testing subtree
         {
             auto sub = conf.getConfSubtree("sub");
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
 
             EXPECT_EQ(6.1f, sub.getConfParam<float>("float"));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
 
             if (auto f2 = sub.getConfParamOptional<float>("float2")) { // read optional value
                 EXPECT_EQ(0.1f, *f2);
-                DO_EXPECT(cbs, false, false);
             }
+            EXPECT_ERR_WARN(cbs, false, false);
 
             auto f3 = sub.getConfParamOptional<float>("float3"); // optional value not existent
             ASSERT_FALSE(f3);
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
+
+
+            // Testing the getConfParam...() (non-template) / getValue() combination
+
+            auto bool1 = sub.getConfParam("bool1");
+            EXPECT_ERR_WARN(cbs, false, false);
+            EXPECT_FALSE(bool1.getValue<bool>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            RUN_SAFE(bool1.getValue<bool>()); // getting data twice
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            if (auto bool2 = sub.getConfParamOptional("bool2")) {
+                EXPECT_ERR_WARN(cbs, false, false);
+                EXPECT_FALSE(bool2->getValue<bool>());
+            }
+            EXPECT_ERR_WARN(cbs, false, false);
+
+            if (auto bool3 = sub.getConfParamOptional("bool3")) {
+                EXPECT_ERR_WARN(cbs, false, false);
+                RUN_SAFE(bool3->getValue<bool>());
+                EXPECT_ERR_WARN(cbs, true, false); // error because of no data
+            }
+            EXPECT_ERR_WARN(cbs, false, false);
+
+            EXPECT_FALSE(sub.getConfParamOptional("bool4")); // optional value not existent
+            EXPECT_ERR_WARN(cbs, false, false);
+
+
+            // Testing ignore
 
             sub.ignoreConfParam("ignored");
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             sub.ignoreConfParamAll("ignored2");
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             sub.ignoreConfParamAll("ignored4"); // I can ignore nonexistent stuff
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
 
             // I can not ignore stuff that I already read
             // this also makes sure that the subtree inherits the callbacks properly
             RUN_SAFE(sub.ignoreConfParam("float"));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
         }
         for (int i : {0, 1, 2}) {
             (void) i;
             EXPECT_EQ("Y", conf.peekConfParam<std::string>("x"));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
         }
         conf.checkConfParam<std::string>("x", "Y");
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
+
+
+        // Testing attributes
+        {
+            auto z = conf.getConfParam("z");
+            EXPECT_ERR_WARN(cbs, false, false);
+            EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
+            EXPECT_ERR_WARN(cbs, false, false);
+            RUN_SAFE(z.getConfAttribute<double>("attr")); // getting attr twice
+            EXPECT_ERR_WARN(cbs, true, false);
+            RUN_SAFE(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_EQ(32.0, z.getValue<double>());
+            EXPECT_ERR_WARN(cbs, false, false);
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeIncompleteParse)
+TEST(BaseLibConfigTree, IncompleteParse)
 {
     const char xml[] =
             "<double>5.6</double>"
-            "<bool>true</bool>"
+            "<not_read>true</not_read>"
+            "<tag>this data won't be read</tag>"
+            "<pt x=\"0.5\">1</pt>"
+            "<pt2 x=\"0.5\" y=\"1.0\" z=\"2.0\" />"
             ;
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+                 boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
-        EXPECT_EQ(5.6, conf.getConfParam<double>("double")); // read certain types
-        DO_EXPECT(cbs, false, false);
+        EXPECT_EQ(5.6, conf.getConfParam<double>("double"));
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        conf.getConfSubtree("tag");
+        EXPECT_ERR_WARN(cbs, false, true); // data of <tag> has not been read
+
+        EXPECT_EQ(1, conf.getConfParam<int>("pt"));
+        EXPECT_ERR_WARN(cbs, false, true); // attribute "x" has not been read
+
+        {
+            auto pt2 = conf.getConfParam("pt2");
+            EXPECT_EQ(0.5, pt2.getConfAttribute<double>("x"));
+            EXPECT_ERR_WARN(cbs, false, false);
+            EXPECT_EQ(1.0, pt2.getConfAttribute<double>("y"));
+            EXPECT_ERR_WARN(cbs, false, false);
+        }
+        EXPECT_ERR_WARN(cbs, false, true); // attribute "z" not read
+
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, true); // expect warning because I didn't read everything
+    EXPECT_ERR_WARN(cbs, false, true); // expect warning because I didn't read everything
 }
 
 
@@ -184,34 +260,38 @@ TEST(BaseLibConfigTree, ConfigTreeCheckRange)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         {
+            // check that std::distance can be computed twice in a row
             auto list = conf.getConfSubtreeList("val");
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
         }
 
         {
+            // check that std::distance can be computed twice in a row
             auto list = conf.getConfParamList<int>("int");
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
         }
 
     } // ConfigTree destroyed here
 
     // there will be warnings because I don't process the list entries
-    DO_EXPECT(cbs, false, true);
+    EXPECT_ERR_WARN(cbs, false, true);
 }
 
 
@@ -224,7 +304,9 @@ TEST(BaseLibConfigTree, ConfigTreeGetSubtreeList)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
@@ -234,11 +316,11 @@ TEST(BaseLibConfigTree, ConfigTreeGetSubtreeList)
         for (auto ct : conf.getConfSubtreeList("val"))
         {
             EXPECT_EQ(i, ct.getConfParam<int>("int"));
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             ++i;
         }
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 
@@ -261,11 +343,11 @@ TEST(BaseLibConfigTree, ConfigTreeGetValueList)
         for (auto i : conf.getConfParamList<int>("int"))
         {
             EXPECT_EQ(n, i);
-            DO_EXPECT(cbs, false, false);
+            EXPECT_ERR_WARN(cbs, false, false);
             ++n;
         }
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 
@@ -282,52 +364,54 @@ TEST(BaseLibConfigTree, ConfigTreeNoConversion)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         RUN_SAFE(conf.getConfParam<int>("int"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
         RUN_SAFE(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
         RUN_SAFE(conf.getConfParam<double>("double"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
         // peek value existent but not convertible
         RUN_SAFE(conf.peekConfParam<double>("non_double"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
         // optional value existent but not convertible
         RUN_SAFE(
             auto d = conf.getConfParamOptional<double>("non_double");
             ASSERT_FALSE(d);
         );
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I can only ignore something once
         RUN_SAFE(conf.ignoreConfParam("ign"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
         RUN_SAFE(conf.ignoreConfParam("ign"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
         RUN_SAFE(conf.ignoreConfParamAll("ign2"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
         RUN_SAFE(conf.ignoreConfParamAll("ign2"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I cannot read a parameter twice
         RUN_SAFE(conf.getConfParam<bool>("bool"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
         RUN_SAFE(conf.getConfParam<bool>("bool"));
-        DO_EXPECT(cbs, true, false);
+        EXPECT_ERR_WARN(cbs, true, false);
 
     } // ConfigTree destroyed here
 
     // There will bewarnings because I don't succeed in reading every setting,
     // and furthermore I read some setting too often.
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 
@@ -337,39 +421,49 @@ TEST(BaseLibConfigTree, BadKeynames)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
-        for (std::string tag : { "<", "Z", ".", "$", "0", "", "/" })
+        for (auto tag : { "<", "Z", ".", "$", "0", "", "/", "_", "a__" })
         {
             RUN_SAFE(conf.getConfParam<int>(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.getConfParam<int>(tag, 500));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.getConfParamOptional<int>(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.getConfParamList<int>(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
 
-            DO_EXPECT(cbs, true, false);
+            RUN_SAFE(conf.getConfParam(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            RUN_SAFE(conf.getConfParamOptional(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+
             RUN_SAFE(conf.peekConfParam<int>(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.checkConfParam<int>(tag, 500));
+            EXPECT_ERR_WARN(cbs, true, false);
 
-            DO_EXPECT(cbs, true, false);
             RUN_SAFE(conf.getConfSubtree(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.getConfSubtreeOptional(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(conf.getConfSubtreeList(tag));
-            DO_EXPECT(cbs, true, false);
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            RUN_SAFE(conf.getConfAttribute<int>(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
         }
 
     } // ConfigTree destroyed here
 
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 // String literals are somewhat special for template classes
@@ -381,22 +475,25 @@ TEST(BaseLibConfigTree, ConfigTreeStringLiterals)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
+        // <n> not present in the XML, so return the default value
         EXPECT_EQ("XX",   conf.getConfParam<std::string>("n", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         conf.checkConfParam("t", "Test");
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 // String literals are somewhat special for template classes
@@ -408,24 +505,26 @@ TEST(BaseLibConfigTree, ConfigTreeMoveConstruct)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         BaseLib::ConfigTreeNew conf2(std::move(conf));
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         conf2.checkConfParam("t", "Test");
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
 }
 
 // String literals are somewhat special for template classes
@@ -437,27 +536,53 @@ TEST(BaseLibConfigTree, ConfigTreeMoveAssign)
 
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
 
     Callbacks cbs;
     {
         BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         BaseLib::ConfigTreeNew conf2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
         conf2 = std::move(conf);
         // Expect warning because config tree has not been traversed
         // entirely before.
-        DO_EXPECT(cbs, false, true);
+        EXPECT_ERR_WARN(cbs, false, true);
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
 
         conf2.checkConfParam("t", "Test");
-        DO_EXPECT(cbs, false, false);
+        EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
-    DO_EXPECT(cbs, false, false);
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+
+TEST(BLT, TEST)
+{
+    const char xml[] =
+            "<s>test</s>"
+            "<t>Test</t>"
+            "<z/>";
+
+    // boost::property_tree::basic_ptree<std::string, char*, std::less<std::string>> ptree;
+    // boost::property_tree::basic_ptree<std::string, boost::optional<std::string>, std::less<std::string>> ptree;
+    boost::property_tree::ptree ptree;
+    std::istringstream xml_str(xml);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+	             boost::property_tree::xml_parser::trim_whitespace);
+    WARN("value: <%s>", ptree.get_child("z").get_value<std::string>().c_str());
+
+    auto opt = ptree.get_child("z").get_value_optional<std::string>();
+    WARN("has value? -> %s", opt ? "true" : "false");
+
+    auto dat = ptree.get_child("z").data();
+    WARN("value: <%s>", dat.c_str());
 }
 
