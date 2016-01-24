@@ -37,9 +37,15 @@ public:
     BaseLib::ConfigTreeNew::Callback
     get_error_cb()
     {
-        return [this](std::string const& path, std::string const& message)
+        return [this](std::string const& filename, std::string const& path,
+                      std::string const& message)
         {
             (void) path; (void) message;
+
+            // check that filename is passed around properly, especially with
+            // move construction/assignment
+            EXPECT_EQ("FILENAME", filename);
+
             DBUG("error <%s> : %s", path.c_str(), message.c_str());
             _error = true;
             throw Exc(); // throw in order to stop normal execution
@@ -49,9 +55,15 @@ public:
     BaseLib::ConfigTreeNew::Callback
     get_warning_cb()
     {
-        return [this](std::string const& path, std::string const& message)
+        return [this](std::string const& filename, std::string const& path,
+                      std::string const& message)
         {
             (void) path; (void) message;
+
+            // check that filename is passed around properly, especially with
+            // move construction/assignment
+            EXPECT_EQ("FILENAME", filename);
+
             DBUG("warning <%s> : %s", path.c_str(), message.c_str());
             _warning = true;
         };
@@ -78,6 +90,13 @@ readXml(const char xml[])
     return ptree;
 }
 
+BaseLib::ConfigTreeNew
+makeConfigTree(boost::property_tree::ptree const& ptree, Callbacks& cbs)
+{
+    return BaseLib::ConfigTreeNew(ptree, "FILENAME",
+                                  cbs.get_error_cb(), cbs.get_warning_cb());
+}
+
 
 TEST(BaseLibConfigTree, Empty)
 {
@@ -85,7 +104,7 @@ TEST(BaseLibConfigTree, Empty)
     Callbacks cbs;
 
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
         (void) conf;
     } // ConfigTree destroyed here
 
@@ -115,7 +134,7 @@ TEST(BaseLibConfigTree, Get)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         EXPECT_EQ(5.6e-4, conf.getConfParam<double>("double")); // read certain types
         EXPECT_ERR_WARN(cbs, false, false);
@@ -227,7 +246,7 @@ TEST(BaseLibConfigTree, IncompleteParse)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         EXPECT_EQ(5.6, conf.getConfParam<double>("double"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -268,7 +287,7 @@ TEST(BaseLibConfigTree, CheckRange)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         {
             // check that std::distance can be computed twice in a row
@@ -307,7 +326,7 @@ TEST(BaseLibConfigTree, GetSubtreeList)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         int i = 0;
         for (auto ct : conf.getConfSubtreeList("val"))
@@ -331,7 +350,7 @@ TEST(BaseLibConfigTree, GetValueList)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         int n = 0;
         for (auto i : conf.getConfParamList<int>("int"))
@@ -359,7 +378,7 @@ TEST(BaseLibConfigTree, NoConversion)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         RUN_SAFE(conf.getConfParam<int>("int"));
         EXPECT_ERR_WARN(cbs, true, false);
@@ -411,7 +430,7 @@ TEST(BaseLibConfigTree, BadKeynames)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         for (auto tag : { "<", "Z", ".", "$", "0", "", "/", "_", "a__" })
         {
@@ -460,7 +479,7 @@ TEST(BaseLibConfigTree, StringLiterals)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto const conf = makeConfigTree(ptree, cbs);
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -486,7 +505,7 @@ TEST(BaseLibConfigTree, MoveConstruct)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto conf = makeConfigTree(ptree, cbs);
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -499,7 +518,7 @@ TEST(BaseLibConfigTree, MoveConstruct)
 
         // test that read status of data is transferred in move construction
         {
-            BaseLib::ConfigTreeNew u2(std::move(u));
+            BaseLib::ConfigTreeNew const u2(std::move(u));
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
@@ -530,7 +549,7 @@ TEST(BaseLibConfigTree, MoveAssign)
 
     Callbacks cbs;
     {
-        BaseLib::ConfigTreeNew conf(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+        auto conf = makeConfigTree(ptree, cbs);
 
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -543,7 +562,7 @@ TEST(BaseLibConfigTree, MoveAssign)
 
         // test that read status of data is transferred in move assignment
         {
-            BaseLib::ConfigTreeNew u2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+            auto u2 = makeConfigTree(ptree, cbs);
             u2 = std::move(u);
             // Expect warning because u2 has not been traversed
             // entirely before assignment.
@@ -553,7 +572,7 @@ TEST(BaseLibConfigTree, MoveAssign)
 
         // test that read status of children is transferred in move construction
         {
-            BaseLib::ConfigTreeNew conf2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+            auto conf2 = makeConfigTree(ptree, cbs);
             conf2 = std::move(conf);
             // Expect warning because conf2 has not been traversed
             // entirely before assignment.
