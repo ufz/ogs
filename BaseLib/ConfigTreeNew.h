@@ -213,6 +213,11 @@ public:
     //! used anymore!
     ConfigTreeNew& operator=(ConfigTreeNew &&);
 
+    /*! \name Methods for directly accessing parameter values
+     *
+     */
+    //!\{
+
     /*! Get parameter \c param of type \c T from the configuration tree.
      *
      * \return the value looked for or a default constructed value \c T() in the case of
@@ -254,6 +259,13 @@ public:
     template<typename T> Range<ValueIterator<T> >
     getConfParamList(std::string const& param) const;
 
+    //!\}
+
+    /*! \name Methods for accessing parameters that have attributes
+     *
+     */
+    //!\{
+
     //! TODO doc
     ConfigTreeNew
     getConfParam(std::string const& param) const;
@@ -273,6 +285,14 @@ public:
     //! TODO doc
     template<typename T> T
     getConfAttribute(std::string const& attr) const;
+
+    //!\}
+
+    /*! \name Methods for peeking and checking parameters
+     *
+     * To be used in builder/factory functions
+     */
+    //!\{
 
     /*! Peek at a parameter \c param of type \c T from the configuration tree.
      *
@@ -294,6 +314,13 @@ public:
     //! Make checkConfParam() work for string literals.
     template<typename Ch> void
     checkConfParam(std::string const& param, Ch const* value) const;
+
+    //!\}
+
+    /*! \name Methods for accessing subtrees
+     *
+     */
+    //!\{
 
     /*! Get the subtree rooted at \c root
      *
@@ -320,6 +347,13 @@ public:
     Range<SubtreeIterator>
     getConfSubtreeList(std::string const& root) const;
 
+    //!\}
+
+    /*! \name Methods for ignoring parameters
+     *
+     */
+    //!\{
+
     /*! Tell this instance to ignore parameter \c param.
      *
      * This method is used to avoid warning messages.
@@ -335,6 +369,8 @@ public:
      * \pre \c root must not have been read before from this ConfigTree.
      */
     void ignoreConfParamAll(std::string const& param) const;
+
+    //!\}
 
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
