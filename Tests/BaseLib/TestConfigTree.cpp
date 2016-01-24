@@ -244,8 +244,11 @@ TEST(BaseLibConfigTree, IncompleteParse)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(1.0, pt2.getConfAttribute<double>("y"));
             EXPECT_ERR_WARN(cbs, false, false);
+
+            BaseLib::checkAndInvalidate(pt2);
+            EXPECT_ERR_WARN(cbs, false, true); // attribute "z" not read
         }
-        EXPECT_ERR_WARN(cbs, false, true); // attribute "z" not read
+        EXPECT_ERR_WARN(cbs, false, false);
 
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, true); // expect warning because I didn't read everything
@@ -477,7 +480,8 @@ TEST(BaseLibConfigTree, MoveConstruct)
 {
     const char xml[] =
             "<s>test</s>"
-            "<t>Test</t>";
+            "<t>Test</t>"
+            "<u>data</u>";
     auto const ptree = readXml(xml);
 
     Callbacks cbs;
@@ -487,12 +491,29 @@ TEST(BaseLibConfigTree, MoveConstruct)
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
+        auto u = conf.getConfSubtree("u");
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        EXPECT_EQ("data", u.getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        // test that read status of data is transferred in move construction
+        {
+            BaseLib::ConfigTreeNew u2(std::move(u));
+            EXPECT_ERR_WARN(cbs, false, false);
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        // test that read status of children is transferred in move construction
         BaseLib::ConfigTreeNew conf2(std::move(conf));
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
         conf2.checkConfParam("t", "Test");
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        BaseLib::checkAndInvalidate(conf2);
         EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
@@ -503,7 +524,8 @@ TEST(BaseLibConfigTree, MoveAssign)
 {
     const char xml[] =
             "<s>test</s>"
-            "<t>Test</t>";
+            "<t>Test</t>"
+            "<u>data</u>";
     auto const ptree = readXml(xml);
 
     Callbacks cbs;
@@ -513,16 +535,36 @@ TEST(BaseLibConfigTree, MoveAssign)
         EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        BaseLib::ConfigTreeNew conf2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
-        conf2 = std::move(conf);
-        // Expect warning because config tree has not been traversed
-        // entirely before.
-        EXPECT_ERR_WARN(cbs, false, true);
-
-        EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
+        auto u = conf.getConfSubtree("u");
         EXPECT_ERR_WARN(cbs, false, false);
 
-        conf2.checkConfParam("t", "Test");
+        EXPECT_EQ("data", u.getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        // test that read status of data is transferred in move assignment
+        {
+            BaseLib::ConfigTreeNew u2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+            u2 = std::move(u);
+            // Expect warning because u2 has not been traversed
+            // entirely before assignment.
+            EXPECT_ERR_WARN(cbs, false, true);
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        // test that read status of children is transferred in move construction
+        {
+            BaseLib::ConfigTreeNew conf2(ptree, cbs.get_error_cb(), cbs.get_warning_cb());
+            conf2 = std::move(conf);
+            // Expect warning because conf2 has not been traversed
+            // entirely before assignment.
+            EXPECT_ERR_WARN(cbs, false, true);
+
+            EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
+            EXPECT_ERR_WARN(cbs, false, false);
+
+            conf2.checkConfParam("t", "Test");
+            EXPECT_ERR_WARN(cbs, false, false);
+        }
         EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
