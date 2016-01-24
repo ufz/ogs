@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
 		//          created inside this same scope!
 		using Conf = BaseLib::ConfigTreeNew;
 		Conf conf(project_config.get_child("OpenGeoSysProject"),
+				  project_arg.getValue(),
 		          Conf::onerror,
 		          nonfatal_arg.getValue() ? Conf::onwarning : Conf::onerror);
 
