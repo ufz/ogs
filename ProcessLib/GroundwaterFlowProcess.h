@@ -17,8 +17,6 @@
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 
-#include "FileIO/VtkIO/VtuInterface.h"
-
 #include "GroundwaterFlowFEM.h"
 #include "Parameter.h"
 #include "Process.h"
@@ -167,57 +165,6 @@ public:
                                     _local_assemblers);
 
         return true;
-    }
-
-    void post(std::string const& file_name) override
-    {
-        DBUG("Postprocessing GroundwaterFlowProcess.");
-
-        std::string const property_name = "Result";
-
-        // Get or create a property vector for results.
-        boost::optional<MeshLib::PropertyVector<double>&> result;
-        if (this->_mesh.getProperties().hasPropertyVector(property_name))
-        {
-            result = this->_mesh.getProperties().template
-                getPropertyVector<double>(property_name);
-        }
-        else
-        {
-            result = this->_mesh.getProperties().template
-                createNewPropertyVector<double>(property_name,
-                    MeshLib::MeshItemType::Node);
-            result->resize(this->_x->size());
-        }
-        assert(result && result->size() == this->_x->size());
-
-#ifdef USE_PETSC
-        std::unique_ptr<double[]> u(new double[this->_x->size()]);
-        this->_x->getGlobalVector(u.get());  // get the global solution
-
-        std::size_t const n = this->_mesh.getNNodes();
-        for (std::size_t i = 0; i < n; ++i)
-        {
-            MeshLib::Location const l(this->_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, i);
-            auto const global_index = std::abs(  // 0 is the component id.
-                this->_local_to_global_index_map->getGlobalIndex(l, 0));
-            (*result)[i] = u[global_index];
-        }
-#else
-        // Copy result
-        for (std::size_t i = 0; i < this->_x->size(); ++i)
-            (*result)[i] = (*this->_x)[i];
-#endif
-
-        // Write output file
-        FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
-        vtu_interface.writeToFile(file_name);
-    }
-
-    void postTimestep(std::string const& file_name, const unsigned /*timestep*/) override
-    {
-        post(file_name);
     }
 
     ~GroundwaterFlowProcess()
