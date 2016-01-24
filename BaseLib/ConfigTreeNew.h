@@ -172,7 +172,8 @@ public:
     //! Type of the function objects used as callbacks.
     //! The first argument denotes the path in the tree at which an event (warning/error)
     //! occured, the second argument is the associated message
-    using Callback = std::function<void(const std::string& path,
+    using Callback = std::function<void(const std::string& filename,
+                                        const std::string& path,
                                         const std::string& message)>;
 
     /*!
@@ -194,6 +195,7 @@ public:
      * i.e., warnings will also result in program abortion!
      */
     explicit ConfigTreeNew(PTree const& tree,
+                           std::string const& filename,
                            Callback const& error_cb = onerror,
                            Callback const& warning_cb = onerror);
 
@@ -340,11 +342,13 @@ public:
 
     //! Default error callback function
     //! Will print an error message and call std::abort()
-    static void onerror(std::string const& path, std::string const& message);
+    static void onerror(std::string const& filename, std::string const& path,
+                        std::string const& message);
 
     //! Default warning callback function
     //! Will print a warning message
-    static void onwarning(std::string const& path, std::string const& message);
+    static void onwarning(std::string const& filename, std::string const& path,
+                          std::string const& message);
 
 private:
     struct CountType
@@ -417,7 +421,8 @@ private:
     //! A path printed in error/warning messages.
     std::string _path;
 
-    //! \todo add file name
+    //! TODO doc
+    std::string _filename;
 
     using KeyType = std::pair<bool, std::string>;
 

@@ -18,9 +18,10 @@ const std::string ConfigTreeNew::key_chars = key_chars_start + "_0123456789";
 
 ConfigTreeNew::
 ConfigTreeNew(PTree const& tree,
+              std::string const& filename,
               Callback const& error_cb,
               Callback const& warning_cb)
-    : _tree(&tree), _onerror(error_cb), _onwarning(warning_cb)
+    : _tree(&tree), _filename(filename), _onerror(error_cb), _onwarning(warning_cb)
 {
     if (!_onerror) {
         ERR("ConfigTree: No valid error handler provided.");
@@ -36,6 +37,7 @@ ConfigTreeNew::
 ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
               std::string const& root)
     : _tree(&tree), _path(joinPaths(parent._path, root)),
+      _filename(parent._filename),
       _onerror(parent._onerror), _onwarning(parent._onwarning)
 {
     checkKeyname(root);
@@ -45,6 +47,7 @@ ConfigTreeNew::
 ConfigTreeNew(ConfigTreeNew && other)
     : _tree                    (other._tree)
     , _path          (std::move(other._path))
+    , _filename      (std::move(other._filename))
     , _visited_params(std::move(other._visited_params))
     , _have_read_data          (other._have_read_data)
     , _onerror       (std::move(other._onerror))
@@ -67,6 +70,7 @@ operator=(ConfigTreeNew&& other)
     _tree           = other._tree;
     other._tree     = nullptr;
     _path           = std::move(other._path);
+    _filename       = std::move(other._filename);
     _visited_params = std::move(other._visited_params);
     _have_read_data = other._have_read_data;
     _onerror        = std::move(other._onerror);
@@ -157,25 +161,29 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 
 void ConfigTreeNew::error(const std::string& message) const
 {
-    _onerror(_path, message);
+    _onerror(_filename, _path, message);
     std::abort();
 }
 
 void ConfigTreeNew::warning(const std::string& message) const
 {
-    _onwarning(_path, message);
+    _onwarning(_filename, _path, message);
 }
 
 
-void ConfigTreeNew::onerror(const std::string& path, const std::string& message)
+void ConfigTreeNew::onerror(const std::string& filename, const std::string& path,
+                            const std::string& message)
 {
-    ERR("ConfigTree: At path <%s>: %s", path.c_str(), message.c_str());
+    ERR("ConfigTree: In file `%s' at path <%s>: %s",
+        filename.c_str(), path.c_str(), message.c_str());
     std::abort();
 }
 
-void ConfigTreeNew::onwarning(const std::string& path, const std::string& message)
+void ConfigTreeNew::onwarning(const std::string& filename, const std::string& path,
+                              const std::string& message)
 {
-    WARN("ConfigTree: At path <%s>: %s", path.c_str(), message.c_str());
+    WARN("ConfigTree: In file `%s' at path <%s>: %s",
+         filename.c_str(), path.c_str(), message.c_str());
 }
 
 std::string ConfigTreeNew::shortString(const std::string &s)
