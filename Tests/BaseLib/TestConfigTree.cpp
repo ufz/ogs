@@ -15,12 +15,14 @@
 
 #include "BaseLib/ConfigTreeNew.h"
 
+// make useful line numbers appear in the output of gtest
 #define EXPECT_ERR_WARN(cbs, error, warning) do  { \
         if (error)   EXPECT_TRUE((cbs).get_error());   else EXPECT_FALSE((cbs).get_error()); \
         if (warning) EXPECT_TRUE((cbs).get_warning()); else EXPECT_FALSE((cbs).get_warning()); \
         (cbs).reset(); \
     } while(false)
 
+// catch exception thrown by the error callback
 #define RUN_SAFE(expr) do { \
         try { expr; } catch(Exc) {} \
     } while (false)
@@ -65,7 +67,19 @@ private:
 };
 
 
-TEST(BaseLibConfigTree, ConfigTreeEmpty)
+boost::property_tree::ptree
+readXml(const char xml[])
+{
+    boost::property_tree::ptree ptree;
+    std::istringstream xml_str(xml);
+    read_xml(xml_str, ptree,
+             boost::property_tree::xml_parser::no_comments |
+             boost::property_tree::xml_parser::trim_whitespace);
+    return ptree;
+}
+
+
+TEST(BaseLibConfigTree, Empty)
 {
     boost::property_tree::ptree ptree;
     Callbacks cbs;
@@ -79,7 +93,7 @@ TEST(BaseLibConfigTree, ConfigTreeEmpty)
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeGet)
+TEST(BaseLibConfigTree, Get)
 {
     const char xml[] =
             "<double>5.6e-4</double>"
@@ -97,12 +111,7 @@ TEST(BaseLibConfigTree, ConfigTreeGet)
             "</sub>"
             "<x>Y</x>"
             "<z attr=\"0.5\">32.0</z>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -214,12 +223,7 @@ TEST(BaseLibConfigTree, IncompleteParse)
             "<pt x=\"0.5\">1</pt>"
             "<pt2 x=\"0.5\" y=\"1.0\" z=\"2.0\" />"
             ;
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-                 boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -248,7 +252,7 @@ TEST(BaseLibConfigTree, IncompleteParse)
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeCheckRange)
+TEST(BaseLibConfigTree, CheckRange)
 {
     const char xml[] =
             "<val><int>0</int></val>"
@@ -257,12 +261,7 @@ TEST(BaseLibConfigTree, ConfigTreeCheckRange)
             "<int>0</int>"
             "<int>1</int>"
             "<int>2</int>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -295,18 +294,13 @@ TEST(BaseLibConfigTree, ConfigTreeCheckRange)
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeGetSubtreeList)
+TEST(BaseLibConfigTree, GetSubtreeList)
 {
     const char xml[] =
             "<val><int>0</int></val>"
             "<val><int>1</int></val>"
             "<val><int>2</int></val>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -324,16 +318,13 @@ TEST(BaseLibConfigTree, ConfigTreeGetSubtreeList)
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeGetValueList)
+TEST(BaseLibConfigTree, GetValueList)
 {
     const char xml[] =
             "<int>0</int>"
             "<int>1</int>"
             "<int>2</int>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -351,7 +342,7 @@ TEST(BaseLibConfigTree, ConfigTreeGetValueList)
 }
 
 
-TEST(BaseLibConfigTree, ConfigTreeNoConversion)
+TEST(BaseLibConfigTree, NoConversion)
 {
     const char xml[] =
             "<int>5.6</int>"         // not convertible to int
@@ -361,12 +352,7 @@ TEST(BaseLibConfigTree, ConfigTreeNoConversion)
             "<ign/>"
             "<ign2/><ign2/><ign2/>"
             ;
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -418,12 +404,7 @@ TEST(BaseLibConfigTree, ConfigTreeNoConversion)
 TEST(BaseLibConfigTree, BadKeynames)
 {
     const char xml[] = "";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -467,17 +448,12 @@ TEST(BaseLibConfigTree, BadKeynames)
 }
 
 // String literals are somewhat special for template classes
-TEST(BaseLibConfigTree, ConfigTreeStringLiterals)
+TEST(BaseLibConfigTree, StringLiterals)
 {
     const char xml[] =
             "<s>test</s>"
             "<t>Test</t>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -497,17 +473,12 @@ TEST(BaseLibConfigTree, ConfigTreeStringLiterals)
 }
 
 // String literals are somewhat special for template classes
-TEST(BaseLibConfigTree, ConfigTreeMoveConstruct)
+TEST(BaseLibConfigTree, MoveConstruct)
 {
     const char xml[] =
             "<s>test</s>"
             "<t>Test</t>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
@@ -528,17 +499,12 @@ TEST(BaseLibConfigTree, ConfigTreeMoveConstruct)
 }
 
 // String literals are somewhat special for template classes
-TEST(BaseLibConfigTree, ConfigTreeMoveAssign)
+TEST(BaseLibConfigTree, MoveAssign)
 {
     const char xml[] =
             "<s>test</s>"
             "<t>Test</t>";
-
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-	             boost::property_tree::xml_parser::trim_whitespace);
+    auto const ptree = readXml(xml);
 
     Callbacks cbs;
     {
