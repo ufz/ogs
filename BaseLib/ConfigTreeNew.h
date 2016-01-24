@@ -200,6 +200,7 @@ public:
      * Creates a new instance wrapping the given Boost Property Tree.
      *
      * \param tree the Boost Property Tree to be wrapped
+     * \param filename the file from which the \c tree has been read
      * \param error_cb callback function to be called on error.
      * \param warning_cb callback function to be called on warning.
      *
@@ -278,8 +279,12 @@ public:
     /*! \name Methods for accessing parameters that have attributes
      *
      * The <tt>getConfParam...()</tt> methods in this group---note: they do not have template
-     * parameters---check that the queried parameters do not have any children (apart from XML attributes).
-     * If they do, error() is called.
+     * parameters---check that the queried parameters do not have any children (apart from XML
+     * attributes); if they do, error() is called.
+     *
+     * The support for parameters with attributes is limited in the sense that there are no
+     * <tt>get...List()</tt> methods in this group and that it is not possible to explicitly
+     * ignore attibutes. However, such functionality can easily be added on demand.
      */
     //!\{
 
