@@ -7,6 +7,7 @@
  *
  */
 
+#include <logog/include/logog.hpp>
 #include "ConfigTreeNew.h"
 
 namespace BaseLib

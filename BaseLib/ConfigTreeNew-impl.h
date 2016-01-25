@@ -9,8 +9,6 @@
 
 #include "ConfigTreeNew.h"
 
-#include <logog/include/logog.hpp>
-
 namespace BaseLib
 {
 
@@ -123,7 +121,6 @@ T
 ConfigTreeNew::
 getValue() const
 {
-    // TODO test this
     if (_have_read_data) {
         error("The data of this subtree has already been read.");
     }

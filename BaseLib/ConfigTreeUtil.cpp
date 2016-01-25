@@ -8,6 +8,7 @@
  */
 
 #include <boost/property_tree/xml_parser.hpp>
+#include <logog/include/logog.hpp>
 
 #include "ConfigTreeUtil.h"
 
