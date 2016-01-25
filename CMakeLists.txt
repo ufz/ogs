@@ -73,6 +73,7 @@ option(OGS_USE_MPI "Use MPI" OFF)
 
 # Eigen
 option(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
+option(OGS_EIGEN_DYNAMIC "Use dynamically allocated shape matrices" OFF)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # Logging
@@ -129,6 +130,9 @@ if(OGS_USE_EIGEN)
 	add_definitions(-DOGS_USE_EIGEN)
 	if (EIGEN_NO_DEBUG)
 		add_definitions(-DEIGEN_NO_DEBUG)
+	endif()
+	if(OGS_EIGEN_DYNAMIC)
+		add_definitions(-DEIGEN_DYNAMIC_MATRICES)
 	endif()
 endif()
 
