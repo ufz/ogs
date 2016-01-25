@@ -150,12 +150,8 @@ void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
 
 		if (!GeoLib::isBorehole(pnt))
 			continue;
-		GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
-		const std::vector<GeoLib::Point*> layers = borehole->getProfile();
-		std::size_t nLayers = layers.size();
-		for (unsigned k=0; k<nLayers; ++k)
-		{
-			GeoLib::Point* layer_pnt = layers[k];
+		auto const& layers = static_cast<GeoLib::StationBorehole*>(pnt)->getProfile();
+		for (auto * layer_pnt : layers) {
 			(*layer_pnt)[2] = (*layer_pnt)[2] + offset;
 		}
 	}
