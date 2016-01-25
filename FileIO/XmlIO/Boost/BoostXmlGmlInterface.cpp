@@ -25,6 +25,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
@@ -42,14 +43,10 @@ BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 
 bool BoostXmlGmlInterface::readFile(const std::string &fname)
 {
-	std::ifstream in(fname.c_str());
-	if (!in)
-	{
-		ERR("BoostXmlGmlInterface::readFile(): Can't open xml-file %s.", fname.c_str());
-		return false;
-	}
-
-	std::string geo_name("[NN]");
+	auto doc = BaseLib::makeConfigTree(fname, true, "OpenGeoSysGLI");
+	doc->ignoreConfAttribute("xmlns:xsi");
+	doc->ignoreConfAttribute("xsi:noNamespaceSchemaLocation");
+	doc->ignoreConfAttribute("xmlns:ogs");
 
 	auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
 	    new std::vector<GeoLib::Point*>);
@@ -60,51 +57,42 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 
 	std::map<std::string, std::size_t>* pnt_names = new std::map<std::string, std::size_t>;
 	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
-	std::map<std::string, std::size_t>* sfc_names  = new std::map<std::string, std::size_t>;
+	std::map<std::string, std::size_t>* sfc_names = new std::map<std::string, std::size_t>;
 
-	GeoLib::GEOObjects* geo_objects (&_geo_objects);
+	// GeoLib::GEOObjects* geo_objects (&_geo_objects);
 
-	// build DOM tree
-    BaseLib::ConfigTree doc;
-	read_xml(in, doc, boost::property_tree::xml_parser::no_comments);
+    auto geo_name = doc->getConfParam<std::string>("name");
+    if (geo_name.empty())
+    {
+        ERR("BoostXmlGmlInterface::readFile(): <name> tag is empty.")
+        std::abort();
+    }
 
-	if (!isGmlFile(doc))
-		return false;
-
-    BaseLib::ConfigTree const & root_node = doc.get_child("OpenGeoSysGLI");
-	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & node, root_node )
-	{
-		if (node.first.compare("name") == 0)
-		{
-			if (node.second.data().empty())
-			{
-				ERR("BoostXmlGmlInterface::readFile(): <name>-tag is empty.")
-				return false;
-			}
-			geo_name = node.second.data();
-		}
-		else if (node.first.compare("points") == 0)
-		{
-			readPoints(node.second, points.get(), pnt_names);
-			geo_objects->addPointVec(std::move(points), geo_name, pnt_names);
-		}
-		else if (node.first.compare("polylines") == 0)
-			readPolylines(node.second,
-			              polylines.get(),
-			              geo_objects->getPointVec(geo_name),
-			              geo_objects->getPointVecObj(geo_name)->getIDMap(),
-			              ply_names);
-		else if (node.first.compare("surfaces") == 0)
-			readSurfaces(node.second,
-			             surfaces.get(),
-			             geo_objects->getPointVec(geo_name),
-			             geo_objects->getPointVecObj(geo_name)->getIDMap(),
-			             sfc_names);
-	}
+    for (auto st : doc->getConfSubtreeList("points"))
+    {
+        readPoints(st, points.get(), pnt_names);
+        _geo_objects.addPointVec(std::move(points), geo_name, pnt_names);
+    }
+    for (auto st : doc->getConfSubtreeList("polylines"))
+    {
+        readPolylines(st,
+                      polylines.get(),
+                      _geo_objects.getPointVec(geo_name),
+                      _geo_objects.getPointVecObj(geo_name)->getIDMap(),
+                      ply_names);
+    }
+    for (auto st : doc->getConfSubtreeList("surfaces"))
+    {
+        readSurfaces(st,
+                     surfaces.get(),
+                     _geo_objects.getPointVec(geo_name),
+                     _geo_objects.getPointVecObj(geo_name)->getIDMap(),
+                     sfc_names);
+    }
 
 	if (!polylines->empty())
 	{
-		geo_objects->addPolylineVec(std::move(polylines), geo_name, ply_names);
+		_geo_objects.addPolylineVec(std::move(polylines), geo_name, ply_names);
 	}
 	else
 	{
@@ -113,7 +101,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 
 	if (!surfaces->empty())
 	{
-		geo_objects->addSurfaceVec(std::move(surfaces), geo_name, sfc_names);
+		_geo_objects.addSurfaceVec(std::move(surfaces), geo_name, sfc_names);
 	}
 	else
 	{
@@ -123,32 +111,29 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	return true;
 }
 
-void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
+void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTreeNew const& pointsRoot,
 	                                  std::vector<GeoLib::Point*>* points,
 	                                  std::map<std::string, std::size_t>* &pnt_names )
 {
-	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & point, pointsRoot )
+	for (auto const pt : pointsRoot.getConfParamList("point"))
 	{
-		if (point.first.compare("point") != 0)
-			continue;
+		auto const p_id = pt.getConfAttribute<std::size_t>("id");
+		auto const p_x  = pt.getConfAttribute<double>("x");
+		auto const p_y  = pt.getConfAttribute<double>("y");
+		auto const p_z  = pt.getConfAttribute<double>("z");
 
-		unsigned p_id = static_cast<unsigned>(point.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()));
-		double   p_x  = static_cast<double>  (point.second.get("<xmlattr>.x",  std::numeric_limits<double>::max()));
-		double   p_y  = static_cast<double>  (point.second.get("<xmlattr>.y",  std::numeric_limits<double>::max()));
-		double   p_z  = static_cast<double>  (point.second.get("<xmlattr>.z",  std::numeric_limits<double>::max()));
-		std::string p_name = point.second.get("<xmlattr>.name", "");
+		auto const p_name = pt.getConfAttributeOptional<std::string>("name");
 
-		if ( p_id == std::numeric_limits<unsigned>::max() || p_x == std::numeric_limits<double>::max() ||
-		     p_y  == std::numeric_limits<double>::max()   || p_z == std::numeric_limits<double>::max() )
-			WARN("BoostXmlGmlInterface::readPoints(): Skipping point, attribute missing in <point> tag:\n%s",
-				BaseLib::propertyTreeToString(point.second).c_str())
-		else
-		{
-			_idx_map.insert (std::pair<std::size_t, std::size_t>(p_id, points->size()));
-			GeoLib::Point* p = new GeoLib::Point(p_x, p_y, p_z, p_id);
-			if (!p_name.empty())
-				pnt_names->insert( std::pair<std::string, std::size_t>(p_name, points->size()) );
-			points->push_back(p);
+		auto const p_size = points->size();
+		_idx_map[p_id] = p_size; // TODO: unique ids?
+		points->push_back(new GeoLib::Point(p_x, p_y, p_z, p_id));
+
+		if (p_name) {
+			if (p_name->empty()) {
+				ERR("Empty point name found in geometry file.");
+				std::abort();
+			}
+			(*pnt_names)[*p_name] = p_size; // TODO: unique names?
 		}
 	}
 
@@ -161,45 +146,43 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 }
 
 void BoostXmlGmlInterface::readPolylines(
-    BaseLib::ConfigTree const& polylinesRoot,
+    BaseLib::ConfigTreeNew const& polylinesRoot,
     std::vector<GeoLib::Polyline*>* polylines,
     std::vector<GeoLib::Point*> const* points,
     const std::vector<std::size_t>& pnt_id_map,
     std::map<std::string, std::size_t>*& ply_names)
 {
-	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & polyline, polylinesRoot )
+	for (auto const pl : polylinesRoot.getConfSubtreeList("polyline"))
 	{
-		if (polyline.first.compare("polyline") != 0)
-			continue;
+		auto const id = pl.getConfAttribute<std::size_t>("id");
+		(void) id; // id not used
 
-		if (static_cast<unsigned>(polyline.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-			WARN("BoostXmlGmlInterface::readPolylines(): Skipping polyline, attribute \"id\" missing in <polyline> tag:\n%s",
-				BaseLib::propertyTreeToString(polyline.second).c_str())
-		else
-		{
-			polylines->push_back(new GeoLib::Polyline(*points));
+		polylines->push_back(new GeoLib::Polyline(*points));
 
-			std::string const p_name = polyline.second.get("<xmlattr>.name", "");
-			if (!p_name.empty()) {
-				std::map<std::string, std::size_t>::const_iterator it(
-					ply_names->find(p_name)
-				);
-				if (it == ply_names->end()) {
-					ply_names->insert(std::pair<std::string,std::size_t>(
-						p_name, polylines->size()-1)
-					);
-				} else {
-					WARN("Polyline \"%s\" exists already. The polyline will "
-						"be inserted without a name.\n%s",
-						p_name.c_str(),
-						BaseLib::propertyTreeToString(polyline.second).c_str());
-				}
+		auto const p_name = pl.getConfAttributeOptional<std::string>("name");
+		if (p_name) {
+			if (p_name->empty()) {
+				ERR("Empty polyline name found in geometry file.");
+				std::abort();
 			}
 
-			BOOST_FOREACH( BaseLib::ConfigTree::value_type const & pnt, polyline.second )
-			{
-				if (pnt.first.compare("pnt") == 0)
-					polylines->back()->addPoint(pnt_id_map[_idx_map[std::atoi(pnt.second.data().c_str())]]);
+			// TODO change
+			// auto const inserted = ply_names->insert(std::make_pair(p_name, polylines->size()-1));
+			auto const it = ply_names->find(*p_name);
+			if (it == ply_names->end()) {
+				ply_names->insert(std::pair<std::string,std::size_t>(
+					*p_name, polylines->size()-1)
+				);
+
+			} else {
+				WARN("Polyline \"%s\" exists already. The polyline will "
+					"be inserted without a name.\n%s",
+					p_name->c_str(), ""
+					/*BaseLib::propertyTreeToString(polyline.second).c_str()*/);
+			}
+
+			for (auto const pt : pl.getConfParamList<std::size_t>("pnt")) {
+				polylines->back()->addPoint(pnt_id_map[_idx_map[pt]]);
 			}
 		}
 	}
@@ -213,46 +196,35 @@ void BoostXmlGmlInterface::readPolylines(
 }
 
 void BoostXmlGmlInterface::readSurfaces(
-    BaseLib::ConfigTree const&  surfacesRoot,
+    BaseLib::ConfigTreeNew const&  surfacesRoot,
     std::vector<GeoLib::Surface*>* surfaces,
     std::vector<GeoLib::Point*> const* points,
     const std::vector<std::size_t>& pnt_id_map,
     std::map<std::string, std::size_t>*& sfc_names)
 {
-	BOOST_FOREACH( BaseLib::ConfigTree::value_type const & surface, surfacesRoot )
+	for (auto const& sfc : surfacesRoot.getConfSubtreeList("surface"))
 	{
-		if (surface.first.compare("surface") != 0)
-			continue;
-
-		if (static_cast<unsigned>(surface.second.get("<xmlattr>.id", std::numeric_limits<unsigned>::max()) == std::numeric_limits<unsigned>::max()))
-		{
-			WARN("BoostXmlGmlInterface::readSurfaces(): Skipping surface, attribute \"id\" missing in <surface> tag:\n%s",
-				BaseLib::propertyTreeToString(surface.second).c_str())
-			continue;
-		}
-
+		auto const id = sfc.getConfAttribute<std::size_t>("id");
+		(void) id; // id not used
 		surfaces->push_back(new GeoLib::Surface(*points));
 
-		std::string s_name = surface.second.get("<xmlattr>.name", "");
-		if (!s_name.empty())
-			sfc_names->insert(std::pair<std::string, std::size_t>(s_name, surfaces->size()-1));
+		auto const s_name = sfc.getConfAttributeOptional<std::string>("name");
+		if (s_name) {
+			if (s_name->empty()) {
+				ERR("Empty surface name found in geometry file.");
+				std::abort();
+			}
 
-		BOOST_FOREACH( BaseLib::ConfigTree::value_type const & element, surface.second )
-		{
-			if (element.first.compare("element") != 0)
-				continue;
+			(*sfc_names)[*s_name] = surfaces->size()-1; // TODO unique names
 
-			unsigned p1_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p1", std::numeric_limits<unsigned>::max()));
-			unsigned p2_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p2", std::numeric_limits<unsigned>::max()));
-			unsigned p3_attr = static_cast<unsigned>(element.second.get("<xmlattr>.p3", std::numeric_limits<unsigned>::max()));
+			for (auto const& element : sfc.getConfParamList("element")) {
+				auto const p1_attr = element.getConfAttribute<std::size_t>("p1");
+				auto const p2_attr = element.getConfAttribute<std::size_t>("p2");
+				auto const p3_attr = element.getConfAttribute<std::size_t>("p3");
 
-			if (p1_attr == std::numeric_limits<unsigned>::max() || p2_attr == std::numeric_limits<unsigned>::max() || p3_attr == std::numeric_limits<unsigned>::max())
-				WARN("BoostXmlGmlInterface::readSurfaces(): Skipping triangle, attribute missing in <element> tag:\n%s",
-					BaseLib::propertyTreeToString(element.second).c_str())
-			{
-				std::size_t p1 = pnt_id_map[_idx_map[p1_attr]];
-				std::size_t p2 = pnt_id_map[_idx_map[p2_attr]];
-				std::size_t p3 = pnt_id_map[_idx_map[p3_attr]];
+				auto const p1 = pnt_id_map[_idx_map[p1_attr]];
+				auto const p2 = pnt_id_map[_idx_map[p2_attr]];
+				auto const p3 = pnt_id_map[_idx_map[p3_attr]];
 				surfaces->back()->addTriangle(p1,p2,p3);
 			}
 		}
@@ -264,16 +236,6 @@ void BoostXmlGmlInterface::readSurfaces(
 		delete sfc_names;
 		sfc_names = nullptr;
 	}
-}
-
-bool BoostXmlGmlInterface::isGmlFile(BaseLib::ConfigTree const& root) const
-{
-	if (!root.get_child_optional("OpenGeoSysGLI"))
-	{
-		ERR("BoostXmlGmlInterface::isGmlFile(): Not a GML file.");
-		return false;
-	}
-	return true;
 }
 
 bool BoostXmlGmlInterface::write()
@@ -303,19 +265,19 @@ bool BoostXmlGmlInterface::write()
 	}
 
 	// create a property tree for writing it to file
-	BaseLib::ConfigTree pt;
+	boost::property_tree::ptree pt;
 
 	// put header in property tree
 	pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	pt.put("<xmlattr>.xsi:noNamespaceSchemaLocation",
 		"http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd");
 	pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
-	BaseLib::ConfigTree &geometry_set = pt.add("OpenGeoSysGLI", "");
+	auto& geometry_set = pt.add("OpenGeoSysGLI", "");
 
 	geometry_set.add("name", _exportName);
-	BaseLib::ConfigTree & pnts_tag = geometry_set.add("points", "");
+	auto& pnts_tag = geometry_set.add("points", "");
 	for (std::size_t k(0); k<pnts->size(); k++) {
-		BaseLib::ConfigTree &pnt_tag = pnts_tag.add("point", "");
+		auto& pnt_tag = pnts_tag.add("point", "");
 		pnt_tag.put("<xmlattr>.id", k);
 		pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
 		pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);
@@ -338,7 +300,7 @@ bool BoostXmlGmlInterface::write()
 }
 
 void BoostXmlGmlInterface::addSurfacesToPropertyTree(
-	BaseLib::ConfigTree & geometry_set)
+	boost::property_tree::ptree & geometry_set)
 {
 	GeoLib::SurfaceVec const*const sfc_vec(_geo_objects.getSurfaceVecObj(_exportName));
 	if (!sfc_vec) {
@@ -357,17 +319,17 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 		return;
 	}
 
-	BaseLib::ConfigTree & surfaces_tag = geometry_set.add("surfaces", "");
+	auto& surfaces_tag = geometry_set.add("surfaces", "");
 	for (std::size_t i=0; i<surfaces->size(); ++i) {
 		GeoLib::Surface const*const surface((*surfaces)[i]);
 		std::string sfc_name("");
 		sfc_vec->getNameOfElement(surface, sfc_name);
-		BaseLib::ConfigTree &surface_tag = surfaces_tag.add("surface", "");
+		auto& surface_tag = surfaces_tag.add("surface", "");
 		surface_tag.put("<xmlattr>.id", i);
 		if (!sfc_name.empty())
 			surface_tag.put("<xmlattr>.name", sfc_name);
 		for (std::size_t j=0; j<surface->getNTriangles(); ++j) {
-			BaseLib::ConfigTree &element_tag = surface_tag.add("element", "");
+			auto& element_tag = surface_tag.add("element", "");
 			element_tag.put("<xmlattr>.p1", (*(*surface)[j])[0]);
 			element_tag.put("<xmlattr>.p2", (*(*surface)[j])[1]);
 			element_tag.put("<xmlattr>.p3", (*(*surface)[j])[2]);
@@ -376,7 +338,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
 }
 
 void BoostXmlGmlInterface::addPolylinesToPropertyTree(
-	BaseLib::ConfigTree & geometry_set)
+	boost::property_tree::ptree & geometry_set)
 {
 	GeoLib::PolylineVec const*const vec(_geo_objects.getPolylineVecObj(_exportName));
 	if (!vec) {
@@ -395,12 +357,12 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
 		return;
 	}
 
-	BaseLib::ConfigTree & polylines_tag = geometry_set.add("polylines", "");
+	auto& polylines_tag = geometry_set.add("polylines", "");
 	for (std::size_t i=0; i<polylines->size(); ++i) {
 		GeoLib::Polyline const*const polyline((*polylines)[i]);
 		std::string ply_name("");
 		vec->getNameOfElement(polyline, ply_name);
-		BaseLib::ConfigTree &polyline_tag = polylines_tag.add("polyline", "");
+		auto& polyline_tag = polylines_tag.add("polyline", "");
 		polyline_tag.put("<xmlattr>.id", i);
 		if (!ply_name.empty())
 			polyline_tag.put("<xmlattr>.name", ply_name);
