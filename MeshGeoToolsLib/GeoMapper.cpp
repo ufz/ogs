@@ -376,7 +376,7 @@ GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, Math
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
 
 	const double det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	if (fabs(det) < std::numeric_limits<double>::epsilon()) return nullptr;
+	if (std::abs(det) < std::numeric_limits<double>::epsilon()) return nullptr;
 
 	const double pre  = (x1*y2 - y1*x2);
 	const double post = (x3*y4 - y3*x4);
