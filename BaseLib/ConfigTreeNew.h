@@ -89,8 +89,7 @@ template<typename Iterator> class Range;
 class ConfigTreeNew final
 {
 public:
-    /*!
-     * A wrapper around a Boost Iterator for iterating over ranges of subtrees.
+    /*! A wrapper around a Boost Iterator for iterating over ranges of subtrees.
      *
      * The methods of this class tell the associated (parent) \c ConfigTree object when
      * a setting has been parsed.
@@ -117,7 +116,7 @@ public:
             // tell the _parent instance that a subtree now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited(_tagname, false);
+                _parent.markVisited(_tagname, false, false);
             }
             return ConfigTreeNew(_it->second, _parent, _tagname);
         }
@@ -133,8 +132,30 @@ public:
     private:
         bool _has_incremented = true;
         Iterator _it;
+
+    protected:
         std::string const _tagname;
         ConfigTreeNew const& _parent;
+    };
+
+    /*! A wrapper around a Boost Iterator for iterating over ranges of parameters.
+     *
+     * The methods of this class tell the associated (parent) \c ConfigTree object when
+     * a setting has been parsed.
+     */
+    class ParameterIterator : public SubtreeIterator
+    {
+    public:
+        // Inherit the constructor
+        using SubtreeIterator::SubtreeIterator;
+
+        ConfigTreeNew operator*() {
+            auto st = SubtreeIterator::operator*();
+            if (st.hasChildren())
+                _parent.error("The requested parameter <" + _tagname + ">"
+                              " has child elements.");
+            return st;
+        }
     };
 
 
@@ -265,7 +286,7 @@ public:
     template<typename T> boost::optional<T>
     getConfParamOptional(std::string const& param) const;
 
-    /*! Returns all parameters with the name \c param from the current level of the tree.
+    /*! Fetches all parameters with name \c param from the current level of the tree.
      *
      * The return value is suitable to be used with range-base for-loops.
      *
@@ -282,9 +303,8 @@ public:
      * parameters---check that the queried parameters do not have any children (apart from XML
      * attributes); if they do, error() is called.
      *
-     * The support for parameters with attributes is limited in the sense that there are no
-     * <tt>get...List()</tt> methods in this group and that it is not possible to explicitly
-     * ignore attibutes. However, such functionality can easily be added on demand.
+     * The support for parameters with attributes is limited in the sense that it is not
+     * possible to peek/check them. However, such functionality can easily be added on demand.
      */
     //!\{
 
@@ -306,6 +326,17 @@ public:
     boost::optional<ConfigTreeNew>
     getConfParamOptional(std::string const& param) const;
 
+    /*! Fetches all parameters with name \c param from the current level of the tree.
+     *
+     * The return value is suitable to be used with range-base for-loops.
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     *
+     * \todo write tests
+     */
+    Range<ParameterIterator>
+    getConfParamList(std::string const& param) const;
+
     /*! Get the plain data contained in the current level of the tree.
      *
      * \return the data converted to the type \c T
@@ -323,6 +354,17 @@ public:
      */
     template<typename T> T
     getConfAttribute(std::string const& attr) const;
+
+    /*! Get XML attribute \c attr of type \c T for the current parameter if present.
+     *
+     * \return the requested attribute
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     *
+     * \todo write tests
+     */
+    template<typename T> boost::optional<T>
+    getConfAttributeOptional(std::string const& attr) const;
 
     //!\}
 
@@ -401,7 +443,7 @@ public:
      *
      * This method is used to avoid warning messages.
      *
-     * \pre \c root must not have been read before from this ConfigTree.
+     * \pre \c param must not have been read before from this ConfigTree.
      */
     void ignoreConfParam(std::string const& param) const;
 
@@ -409,9 +451,17 @@ public:
      *
      * This method is used to avoid warning messages.
      *
-     * \pre \c root must not have been read before from this ConfigTree.
+     * \pre \c param must not have been read before from this ConfigTree.
      */
     void ignoreConfParamAll(std::string const& param) const;
+
+    /*! Tell this instance to ignore the XML attribute \c attr.
+     *
+     * This method is used to avoid warning messages.
+     *
+     * \pre \c attr must not have been read before from this ConfigTree.
+     */
+    void ignoreConfAttribute(std::string const& attr) const;
 
     //!\}
 
@@ -481,14 +531,15 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool const peek_only) const;
+    CountType& markVisited(std::string const& key, bool const is_attr,
+                           bool const peek_only) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
     void markVisitedDecrement(bool const is_attr, std::string const& key) const;
 
-    //! Checks if the tree \c ct has any children.
-    bool hasChildren(ConfigTreeNew const& ct) const;
+    //! Checks if this tree has any children.
+    bool hasChildren() const;
 
     /*! Checks if the top level of this tree has been read entirely (and not too often).
      *

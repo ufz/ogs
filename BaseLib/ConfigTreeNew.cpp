@@ -84,7 +84,7 @@ ConfigTreeNew::
 getConfParam(std::string const& root) const
 {
     auto ct = getConfSubtree(root);
-    if (hasChildren(ct))
+    if (ct.hasChildren())
         error("Requested parameter <" + root + "> actually is a subtree.");
     return ct;
 }
@@ -94,9 +94,23 @@ ConfigTreeNew::
 getConfParamOptional(std::string const& root) const
 {
     auto ct = getConfSubtreeOptional(root);
-    if (ct && hasChildren(*ct))
+    if (ct && ct->hasChildren())
         error("Requested parameter <" + root + "> actually is a subtree.");
     return ct;
+}
+
+Range<ConfigTreeNew::ParameterIterator>
+ConfigTreeNew::
+getConfParamList(const std::string &param) const
+{
+    checkUnique(param);
+    markVisited(param, false, true);
+
+    auto p = _tree->equal_range(param);
+
+    return Range<ParameterIterator>(
+                ParameterIterator(p.first,  param, *this),
+                ParameterIterator(p.second, param, *this));
 }
 
 ConfigTreeNew
@@ -117,10 +131,10 @@ getConfSubtreeOptional(std::string const& root) const
     checkUnique(root);
 
     if (auto subtree = _tree->get_child_optional(root)) {
-        markVisited(root, false);
+        markVisited(root, false, false);
         return ConfigTreeNew(*subtree, *this, root);
     } else {
-        markVisited(root, true);
+        markVisited(root, false, true);
         return boost::none;
     }
 }
@@ -130,7 +144,7 @@ ConfigTreeNew::
 getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
-    markVisited(root, true);
+    markVisited(root, false, true);
 
     auto p = _tree->equal_range(root);
 
@@ -144,13 +158,24 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param) const
     checkUnique(param);
     // if not found, peek only
     bool peek_only = _tree->find(param) == _tree->not_found();
-    markVisited(param, peek_only);
+    markVisited(param, false, peek_only);
+}
+
+void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
+{
+    checkUniqueAttr(attr);
+
+    // Exercise: Guess what not! (hint: if not found, peek only)
+    // Btw. (not a hint) _tree->find() does not seem to work here.
+    bool peek_only = !_tree->get_child_optional("<xmlattr>." + attr);
+
+    markVisited(attr, true, peek_only);
 }
 
 void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
-    auto& ct = markVisited(param, true);
+    auto& ct = markVisited(param, false, true);
 
     auto p = _tree->equal_range(param);
     for (auto it = p.first; it != p.second; ++it) {
@@ -236,7 +261,23 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
 
 void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
 {
-    checkKeyname(attr);
+    // Workaround for handling attributes with xml namespaces and uppercase letters.
+    if (attr.find(':') != attr.npos) {
+        auto pos = decltype(attr.npos){0};
+
+        // Replace colon and uppercase letters with an allowed character 'a'.
+        // That means, attributes containing a colon are also allowed to contain
+        // uppercase letters.
+        auto attr2 = attr;
+        do {
+            pos = attr2.find_first_of(":ABCDEFGHIJKLMNOPQRSTUVWXYZ", pos);
+            if (pos != attr.npos) attr2[pos] = 'a';
+        } while (pos != attr.npos);
+
+        checkKeyname(attr2);
+    } else {
+        checkKeyname(attr);
+    }
 
     if (_visited_params.find({true, attr}) != _visited_params.end()) {
         error("Attribute \"" + attr + "\" has already been processed.");
@@ -245,9 +286,9 @@ void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
 
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool const peek_only) const
+markVisited(std::string const& key, bool const is_attr, bool const peek_only) const
 {
-    return markVisited<ConfigTreeNew>(key, false, peek_only);
+    return markVisited<ConfigTreeNew>(key, is_attr, peek_only);
 }
 
 void
@@ -266,9 +307,9 @@ markVisitedDecrement(bool const is_attr, std::string const& key) const
 }
 
 bool
-ConfigTreeNew::hasChildren(ConfigTreeNew const& ct) const
+ConfigTreeNew::hasChildren() const
 {
-    auto const& tree = *ct._tree;
+    auto const& tree = *_tree;
     if (tree.begin() == tree.end())
         return false; // no children
     if (tree.front().first == "<xmlattr>"
