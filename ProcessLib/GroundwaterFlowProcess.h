@@ -11,30 +11,15 @@
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
 #include <cassert>
-#include <memory>
 
-#include <boost/algorithm/string/erase.hpp>
 #include <boost/optional.hpp>
-
-
-#include "logog/include/logog.hpp"
 
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
-
-#include "MeshLib/MeshSubset.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-
-#include "UniformDirichletBoundaryCondition.h"
-
 #include "GroundwaterFlowFEM.h"
-#include "NeumannBcAssembler.h"
-#include "NeumannBc.h"
-#include "DirichletBc.h"
 #include "Parameter.h"
 #include "Process.h"
 
@@ -51,8 +36,6 @@ namespace ProcessLib
 template<typename GlobalSetup>
 class GroundwaterFlowProcess : public Process<GlobalSetup>
 {
-    unsigned const _integration_order = 2;
-
 public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
@@ -80,7 +63,8 @@ public:
 
             DBUG("Associate hydraulic_head with process variable \'%s\'.",
                 name.c_str());
-            _hydraulic_head = const_cast<ProcessVariable*>(&*variable);
+            this->_process_variables.emplace_back(
+                const_cast<ProcessVariable*>(&*variable));
         }
 
         // Hydraulic conductivity parameter.
@@ -152,51 +136,7 @@ public:
                 this->_mesh.getElements(),
                 _local_assemblers,
                 *_hydraulic_conductivity,
-                _integration_order);
-
-        DBUG("Initialize boundary conditions.");
-        MeshGeoToolsLib::MeshNodeSearcher& hydraulic_head_mesh_node_searcher =
-            MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-                _hydraulic_head->getMesh());
-
-        _hydraulic_head->initializeDirichletBCs(
-            std::back_inserter(_dirichlet_bcs),
-            hydraulic_head_mesh_node_searcher,
-            *this->_local_to_global_index_map,
-            0);
-
-        //
-        // Neumann boundary conditions.
-        //
-        {
-            // Find mesh nodes.
-            MeshGeoToolsLib::BoundaryElementsSearcher hydraulic_head_mesh_element_searcher(
-                _hydraulic_head->getMesh(), hydraulic_head_mesh_node_searcher);
-
-            // Create a neumann BC for the hydraulic head storing them in the
-            // _neumann_bcs vector.
-            _hydraulic_head->createNeumannBcs(
-                    std::back_inserter(_neumann_bcs),
-                    hydraulic_head_mesh_element_searcher,
-                    this->_global_setup,
-                    _integration_order,
-                    *this->_local_to_global_index_map,
-                    0,
-                    *_mesh_subset_all_nodes);
-        }
-
-        Process<GlobalSetup>::initializeNeumannBcs(_neumann_bcs);
-    }
-
-    void initializeMeshSubsets(MeshLib::Mesh const& mesh) override
-    {
-        // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes =
-            new MeshLib::MeshSubset(mesh, &mesh.getNodes());
-
-        // Collect the mesh subsets in a vector.
-        this->_all_mesh_subsets.push_back(
-            new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+                this->_integration_order);
     }
 
     std::string getLinearSolverName() const override
@@ -204,12 +144,8 @@ public:
         return "gw_";
     }
 
-    void init() override
+    void createLocalAssemblers() override
     {
-        DBUG("Initialize GroundwaterFlowProcess.");
-
-        Process<GlobalSetup>::setInitialConditions(*_hydraulic_head, 0);
-
         if (this->_mesh.getDimension()==1)
             createLocalAssemblers<1>();
         else if (this->_mesh.getDimension()==2)
@@ -229,14 +165,6 @@ public:
         // Call global assembler for each local assembly item.
         this->_global_setup.execute(*this->_global_assembler,
                                     _local_assemblers);
-
-        // Call global assembler for each Neumann boundary local assembler.
-        for (auto bc : _neumann_bcs)
-            bc->integrate(this->_global_setup);
-
-        for (auto const& bc : _dirichlet_bcs)
-            MathLib::applyKnownSolution(*this->_A, *this->_rhs, *this->_x,
-                                        bc.global_ids, bc.values);
 
         return true;
     }
@@ -294,29 +222,17 @@ public:
 
     ~GroundwaterFlowProcess()
     {
-        for (auto p : _neumann_bcs)
-            delete p;
-
         for (auto p : _local_assemblers)
             delete p;
-
-        delete _mesh_subset_all_nodes;
     }
 
 private:
-    ProcessVariable* _hydraulic_head = nullptr;
-
     Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
-
-    MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
     std::vector<LocalAssembler*> _local_assemblers;
-
-    std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
-    std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 };
 
 }   // namespace ProcessLib

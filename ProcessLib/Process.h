@@ -10,13 +10,20 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
+#include <memory>
 #include <string>
 
+#include <logog/include/logog.hpp>
+
+
 #include "AssemblerLib/ComputeSparsityPattern.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTreeNew.h"
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
@@ -24,7 +31,11 @@
 #include "MathLib/LinAlg/PETSc/PETScMatrixOption.h"
 #endif
 
+#include "DirichletBc.h"
+#include "NeumannBc.h"
+#include "NeumannBcAssembler.h"
 #include "ProcessVariable.h"
+#include "UniformDirichletBoundaryCondition.h"
 
 namespace MeshLib
 {
@@ -42,10 +53,11 @@ public:
 	{
 		for (auto p : _all_mesh_subsets)
 			delete p;
+		delete _mesh_subset_all_nodes;
 	}
 
 	/// Process specific initialization called by initialize().
-	virtual void init() = 0;
+	virtual void createLocalAssemblers() = 0;
 	virtual bool assemble(const double delta_t) = 0;
 
 	virtual std::string getLinearSolverName() const = 0;
@@ -56,15 +68,12 @@ public:
 	virtual void postTimestep(std::string const& file_name,
 	                          const unsigned timestep) = 0;
 
-	/// Creates mesh subsets, i.e. components, for given mesh.
-	virtual void initializeMeshSubsets(MeshLib::Mesh const& mesh) = 0;
-
 	void initialize()
 	{
 		DBUG("Initialize process.");
 
 		DBUG("Construct dof mappings.");
-		initializeMeshSubsets(_mesh);
+		initializeMeshSubsets();
 
 		_local_to_global_index_map.reset(
 		    new AssemblerLib::LocalToGlobalIndexMap(
@@ -82,12 +91,20 @@ public:
 		_global_assembler.reset(
 		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
 
-		init();  // Execute proces specific initialization.
-	}
+		createLocalAssemblers();
 
-	void initializeNeumannBcs(std::vector<NeumannBc<GlobalSetup>*> const& bcs)
-	{
-		for (auto bc : bcs)
+		for (auto const& pv : _process_variables)
+		{
+			DBUG("Set initial conditions.");
+			setInitialConditions(*pv, 0);  // 0 is the component id
+
+			DBUG("Initialize boundary conditions.");
+			createDirichletBcs(*pv, 0);  // 0 is the component id
+
+			createNeumannBcs(*pv, 0);  // 0 is the component id
+		}
+
+		for (auto& bc : _neumann_bcs)
 			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
 	}
 
@@ -97,6 +114,14 @@ public:
 		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
 
 		bool const result = assemble(delta_t);
+
+		// Call global assembler for each Neumann boundary local assembler.
+		for (auto const& bc : _neumann_bcs)
+			bc->integrate(_global_setup);
+
+		for (auto const& bc : _dirichlet_bcs)
+			MathLib::applyKnownSolution(*_A, *_rhs, *_x,
+			                            bc.global_ids, bc.values);
 
 		_linear_solver->solve(*_rhs, *_x);
 		return result;
@@ -109,6 +134,19 @@ protected:
 	{
 		_linear_solver_options.reset(new BaseLib::ConfigTreeNew(
 			std::move(config)));
+	}
+
+private:
+	/// Creates mesh subsets, i.e. components, for given mesh.
+	void initializeMeshSubsets()
+	{
+		// Create single component dof in every of the mesh's nodes.
+		_mesh_subset_all_nodes =
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+
+		// Collect the mesh subsets in a vector.
+		_all_mesh_subsets.push_back(
+		    new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given
@@ -128,7 +166,39 @@ protected:
 		}
 	}
 
-private:
+	void createDirichletBcs(ProcessVariable& variable,
+	                        int const component_id)
+	{
+		MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
+		    MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+		        variable.getMesh());
+
+		variable.initializeDirichletBCs(std::back_inserter(_dirichlet_bcs),
+		                                 mesh_node_searcher,
+		                                 *_local_to_global_index_map,
+		                                 component_id);
+	}
+
+	void createNeumannBcs(ProcessVariable& variable, int const component_id)
+	{
+		// Find mesh nodes.
+		MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
+		    MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
+		        variable.getMesh());
+		MeshGeoToolsLib::BoundaryElementsSearcher mesh_element_searcher(
+		    variable.getMesh(), mesh_node_searcher);
+
+		// Create a neumann BC for the process variable storing them in the
+		// _neumann_bcs vector.
+		variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
+		                          mesh_element_searcher,
+		                          _global_setup,
+		                          _integration_order,
+		                          *_local_to_global_index_map,
+		                          component_id,
+		                          *_mesh_subset_all_nodes);
+	}
+
 	/// Creates global matrix, rhs and solution vectors, and the linear solver.
 	void createLinearSolver(std::string const& solver_name)
 	{
@@ -162,7 +232,10 @@ private:
 	}
 
 protected:
+	unsigned const _integration_order = 2;
+
 	MeshLib::Mesh& _mesh;
+	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
 	GlobalSetup _global_setup;
@@ -184,6 +257,12 @@ protected:
 	std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
+
+	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
+	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
+
+    /// Variables used by this process.
+	std::vector<ProcessVariable*> _process_variables;
 };
 
 }  // namespace ProcessLib
