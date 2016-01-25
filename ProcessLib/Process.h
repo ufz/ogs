@@ -179,7 +179,8 @@ private:
 			    global_index = 0;
 #endif
 			_x->set(global_index,
-			        variable.getInitialConditionValue(*_mesh.getNode(i)));
+			        variable.getInitialConditionValue(*_mesh.getNode(i),
+			                                          component_id));
 		}
 	}
 

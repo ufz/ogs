@@ -21,8 +21,9 @@ namespace ProcessLib
 ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                                  MeshLib::Mesh const& mesh,
                                  GeoLib::GEOObjects const& geometries)
-    : _name(config.getConfParam<std::string>("name"))
-    , _mesh(mesh)
+    : _name(config.getConfParam<std::string>("name")),
+      _mesh(mesh),
+      _tuple_size(config.getConfParam<int>("components"))
 {
 	DBUG("Constructing process variable %s", this->_name.c_str());
 
@@ -33,12 +34,12 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 		if (type == "Uniform")
 		{
 			_initial_condition =
-			    createUniformInitialCondition(*ic_config);
+			    createUniformInitialCondition(*ic_config, _tuple_size);
 		}
 		else if (type == "MeshProperty")
 		{
 			_initial_condition =
-			    createMeshPropertyInitialCondition(*ic_config, _mesh);
+			    createMeshPropertyInitialCondition(*ic_config, _mesh, _tuple_size);
 		}
 		else
 		{

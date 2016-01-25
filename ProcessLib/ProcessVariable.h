@@ -57,6 +57,9 @@ public:
 	/// Returns a mesh on which the process variable is defined.
 	MeshLib::Mesh const& getMesh() const;
 
+	/// Returns the tuple size of the process variable.
+	int getTupleSize() const { return _tuple_size; }
+
 	template <typename OutputIterator>
 	void initializeDirichletBCs(
 	    OutputIterator output_bcs,
@@ -87,14 +90,16 @@ public:
 		}
 	}
 
-	double getInitialConditionValue(MeshLib::Node const& n) const
+	double getInitialConditionValue(MeshLib::Node const& n,
+	                                int const component_id) const
 	{
-		return _initial_condition->getValue(n);
+		return _initial_condition->getValue(n, component_id);
 	}
 
 private:
 	std::string const _name;
 	MeshLib::Mesh const& _mesh;
+	int _tuple_size;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
 	    _dirichlet_bc_configs;

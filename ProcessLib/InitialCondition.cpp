@@ -21,7 +21,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config, int const tuple_size)
 {
 	config.checkConfParam("type", "Uniform");
 
@@ -33,7 +33,9 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
 }
 
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh,
+    int const tuple_size)
 {
 	auto field_name = config.getConfParam<std::string>("field_name");
 	DBUG("Using field_name %s", field_name.c_str());
@@ -53,6 +55,13 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
 		std::abort();
 	}
 
+	if (property->getTupleSize() != tuple_size)
+	{
+		ERR("The required property %s has different tuples size %d, "
+		    "expected %d.",
+		    field_name.c_str(), property->getTupleSize(), tuple_size);
+		std::abort();
+	}
 	return std::unique_ptr<InitialCondition>(
 	    new MeshPropertyInitialCondition(*property));
 }
