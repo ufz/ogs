@@ -15,6 +15,58 @@
 
 namespace autocheck
 {
+
+/// The autocheck standard generator for floating point values returns uniform
+/// distributed values. Autocheck uses the size argument of the operator() to
+/// determine the interval for the uniform distribution. This class template
+/// fixes the size to one and transforms a generated random value (within the
+/// interval [-1,1]) linearly to a value in the interval [a,b].
+template <typename T, typename Gen = generator<T>>
+struct IntervalGenerator
+{
+	/// Construtor initializing the slope and the \f$y\f$-intercept deploying
+	/// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
+	IntervalGenerator(T a, T b)
+	    : _m((b-a)/2), _n((b+a)/2)
+	{}
+
+	// parameters for the interval mapping [-1,1] -> [a,b],
+	// y = _m * x + _n
+	T _m{1};
+	T _n{0};
+
+	Gen generator;
+
+	using result_type = T;
+
+	result_type intervalMap(T val) const
+	{
+		return _m * val + _n;
+	}
+
+	result_type operator()(std::size_t size = 0)
+	{
+		return intervalMap(fix(1.0, generator)());
+	}
+};
+
+template <typename T, typename Gen = IntervalGenerator<T>>
+struct IntervalTupleGenerator
+{
+	IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
+	    : x_gen(ig0), y_gen(ig1), z_gen(ig2)
+	{}
+
+	Gen x_gen, y_gen, z_gen;
+
+	using result_type = std::array<T, 3>;
+
+	result_type operator()(std::size_t size = 0)
+	{
+		return {{ x_gen(), y_gen(), z_gen() }};
+	}
+};
+
 template <typename T, std::size_t N, typename Gen = generator<T>>
 struct randomTupleGenerator
 {
