@@ -12,19 +12,12 @@
  *
  */
 
-#include "BoostXmlGmlInterface.h"
-
-#include <limits>
-#include <utility>
-#include <cstdlib>
-
-#include <boost/version.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
 #include <logog/include/logog.hpp>
 
+#include "BoostXmlGmlInterface.h"
+
 #include "BaseLib/ConfigTreeUtil.h"
-#include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/PointVec.h"
@@ -36,7 +29,7 @@
 namespace
 {
 
-//! Method for handling conversion to string uniformly
+//! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
 template<typename T> std::string tostring(T const& value)
 {
 	return std::to_string(value);
@@ -73,6 +66,7 @@ BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 
 bool BoostXmlGmlInterface::readFile(const std::string &fname)
 {
+	//! \todo Reading geometries is always strict.
 	auto doc = BaseLib::makeConfigTree(fname, true, "OpenGeoSysGLI");
 
 	// ignore attributes related to XML schema
@@ -173,7 +167,9 @@ void BoostXmlGmlInterface::readPolylines(
 	for (auto const pl : polylinesRoot.getConfSubtreeList("polyline"))
 	{
 		auto const id = pl.getConfAttribute<std::size_t>("id");
-		(void) id; // id not used
+		// The id is not used but must be present in the GML file.
+		// That's why pl.ignore...() cannot be used.
+		(void) id;
 
 		polylines.push_back(new GeoLib::Polyline(points));
 
@@ -204,7 +200,9 @@ void BoostXmlGmlInterface::readSurfaces(
 	for (auto const& sfc : surfacesRoot.getConfSubtreeList("surface"))
 	{
 		auto const id = sfc.getConfAttribute<std::size_t>("id");
-		(void) id; // id not used
+		// The id is not used but must be present in the GML file.
+		// That's why sfc.ignore...() cannot be used.
+		(void) id;
 		surfaces.push_back(new GeoLib::Surface(points));
 
 		if (auto const s_name = sfc.getConfAttributeOptional<std::string>("name"))
@@ -283,12 +281,7 @@ bool BoostXmlGmlInterface::write()
 	addPolylinesToPropertyTree(geometry_set);
 	addSurfacesToPropertyTree(geometry_set);
 
-	// TODO remove ifdef
-#if BOOST_VERSION <= 105500
-	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
-#else
 	boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
-#endif  // BOOST_VERSION
 	write_xml(_out, pt, settings);
 	return true;
 }

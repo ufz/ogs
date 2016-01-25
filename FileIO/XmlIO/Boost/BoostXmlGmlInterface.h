@@ -21,7 +21,7 @@
 
 
 #include "BaseLib/ConfigTreeNew.h"
-#include "../XMLInterface.h"
+#include "FileIO/XmlIO/XMLInterface.h"
 
 namespace GeoLib
 {
