@@ -99,12 +99,13 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	// init grid
 	MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
 	MathLib::Vector3 normal(0,0,-1);
-	std::vector<MeshLib::Node*> flat_nodes;
+	std::vector<MeshLib::Node> flat_nodes;
+	flat_nodes.reserve(_surface_mesh->getNNodes());
 	// copy nodes and project the copied nodes to the x-y-plane, i.e. set
 	// z-coordinate to zero
 	for (auto n_ptr : _surface_mesh->getNodes()) {
-		flat_nodes.push_back(new MeshLib::Node(*n_ptr));
-		(*flat_nodes.back())[2] = 0.0;
+		flat_nodes.emplace_back(*n_ptr);
+		flat_nodes.back()[2] = 0.0;
 	}
 	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
 
@@ -115,8 +116,6 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 	}
 
 	delete _grid;
-	for (auto n_ptr : flat_nodes)
-		delete n_ptr;
 }
 
 void GeoMapper::mapToConstantValue(double value)
