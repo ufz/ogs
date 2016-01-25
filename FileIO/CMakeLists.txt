@@ -61,6 +61,12 @@ target_link_libraries(FileIO INTERFACE
 )
 if(QT4_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
+	if(WIN32 AND CMAKE_CROSSCOMPILING)
+		find_package(OpenSSL)
+		if(OPENSSL_FOUND)
+			target_link_libraries(FileIO PUBLIC Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+		endif()
+	endif()
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)

@@ -131,7 +131,7 @@ if(GEOTIFF_FOUND)
 	target_link_libraries(VtkVis INTERFACE ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis PUBLIC Qt4::QtGui)
+target_link_libraries(VtkVis PUBLIC Qt4::QtGui QtDataView)
 target_link_libraries(VtkVis INTERFACE VtkAct)
 
 if(VTKOSGCONVERTER_FOUND)

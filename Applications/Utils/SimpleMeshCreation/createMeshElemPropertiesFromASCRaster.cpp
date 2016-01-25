@@ -10,6 +10,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <numeric>
 
 #include <tclap/CmdLine.h>
