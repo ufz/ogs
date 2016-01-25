@@ -14,13 +14,11 @@
 
 #include "BoostXmlGmlInterface.h"
 
-#include <fstream>
 #include <limits>
 #include <utility>
 #include <cstdlib>
 
 #include <boost/version.hpp>
-#include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <logog/include/logog.hpp>
@@ -34,6 +32,38 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 
+
+namespace
+{
+
+//! Method for handling conversion to string uniformly
+template<typename T> std::string tostring(T const& value)
+{
+	return std::to_string(value);
+}
+//! \overload
+template<> std::string tostring(std::string const& value)
+{
+	return value;
+}
+
+//! Inserts the given \c key with the given \c value into the \c map if an entry with the
+//! given \c key does not yet exist; otherwise an \c error_message is printed and the
+//! program is aborted.
+template<typename Map, typename Key, typename Value>
+void insert_if_key_unique_else_error(
+	Map& map, Key const& key, Value const& value,
+	std::string const& error_message)
+{
+	auto const inserted = map.emplace(key, value);
+	if (!inserted.second) { // insertion failed, i.e., key already exists
+		ERR("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
+		std::abort();
+	}
+}
+
+}
+
 namespace FileIO
 {
 
@@ -44,6 +74,8 @@ BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 bool BoostXmlGmlInterface::readFile(const std::string &fname)
 {
 	auto doc = BaseLib::makeConfigTree(fname, true, "OpenGeoSysGLI");
+
+	// ignore attributes related to XML schema
 	doc->ignoreConfAttribute("xmlns:xsi");
 	doc->ignoreConfAttribute("xsi:noNamespaceSchemaLocation");
 	doc->ignoreConfAttribute("xmlns:ogs");
@@ -55,65 +87,56 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	auto surfaces = std::unique_ptr<std::vector<GeoLib::Surface*>>(
 	    new std::vector<GeoLib::Surface*>);
 
-	std::map<std::string, std::size_t>* pnt_names = new std::map<std::string, std::size_t>;
-	std::map<std::string, std::size_t>* ply_names = new std::map<std::string, std::size_t>;
-	std::map<std::string, std::size_t>* sfc_names = new std::map<std::string, std::size_t>;
+	using MapNameId = std::map<std::string, std::size_t>;
+	std::unique_ptr<MapNameId> pnt_names{new MapNameId};
+	std::unique_ptr<MapNameId> ply_names{new MapNameId};
+	std::unique_ptr<MapNameId> sfc_names{new MapNameId};
 
-	// GeoLib::GEOObjects* geo_objects (&_geo_objects);
-
-    auto geo_name = doc->getConfParam<std::string>("name");
-    if (geo_name.empty())
-    {
-        ERR("BoostXmlGmlInterface::readFile(): <name> tag is empty.")
-        std::abort();
-    }
-
-    for (auto st : doc->getConfSubtreeList("points"))
-    {
-        readPoints(st, points.get(), pnt_names);
-        _geo_objects.addPointVec(std::move(points), geo_name, pnt_names);
-    }
-    for (auto st : doc->getConfSubtreeList("polylines"))
-    {
-        readPolylines(st,
-                      polylines.get(),
-                      _geo_objects.getPointVec(geo_name),
-                      _geo_objects.getPointVecObj(geo_name)->getIDMap(),
-                      ply_names);
-    }
-    for (auto st : doc->getConfSubtreeList("surfaces"))
-    {
-        readSurfaces(st,
-                     surfaces.get(),
-                     _geo_objects.getPointVec(geo_name),
-                     _geo_objects.getPointVecObj(geo_name)->getIDMap(),
-                     sfc_names);
-    }
-
-	if (!polylines->empty())
+	auto geo_name = doc->getConfParam<std::string>("name");
+	if (geo_name.empty())
 	{
-		_geo_objects.addPolylineVec(std::move(polylines), geo_name, ply_names);
-	}
-	else
-	{
-		delete ply_names;
+		ERR("BoostXmlGmlInterface::readFile(): <name> tag is empty.");
+		std::abort();
 	}
 
-	if (!surfaces->empty())
+	for (auto st : doc->getConfSubtreeList("points"))
 	{
-		_geo_objects.addSurfaceVec(std::move(surfaces), geo_name, sfc_names);
+		readPoints(st, *points, *pnt_names);
+		_geo_objects.addPointVec(std::move(points), geo_name, pnt_names.release());
 	}
-	else
+
+	for (auto st : doc->getConfSubtreeList("polylines"))
 	{
-		delete sfc_names;
+		readPolylines(st,
+		              *polylines,
+		              *_geo_objects.getPointVec(geo_name),
+		              _geo_objects.getPointVecObj(geo_name)->getIDMap(),
+		              *ply_names);
+	}
+
+	for (auto st : doc->getConfSubtreeList("surfaces"))
+	{
+		readSurfaces(st,
+		             *surfaces,
+		             *_geo_objects.getPointVec(geo_name),
+		             _geo_objects.getPointVecObj(geo_name)->getIDMap(),
+		             *sfc_names);
+	}
+
+	if (!polylines->empty()) {
+		_geo_objects.addPolylineVec(std::move(polylines), geo_name, ply_names.release());
+	}
+
+	if (!surfaces->empty()) {
+		_geo_objects.addSurfaceVec(std::move(surfaces), geo_name, sfc_names.release());
 	}
 
 	return true;
 }
 
 void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTreeNew const& pointsRoot,
-	                                  std::vector<GeoLib::Point*>* points,
-	                                  std::map<std::string, std::size_t>* &pnt_names )
+	                                  std::vector<GeoLib::Point*>& points,
+	                                  std::map<std::string, std::size_t>& pnt_names )
 {
 	for (auto const pt : pointsRoot.getConfParamList("point"))
 	{
@@ -122,100 +145,77 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTreeNew const& pointsRoot,
 		auto const p_y  = pt.getConfAttribute<double>("y");
 		auto const p_z  = pt.getConfAttribute<double>("z");
 
-		auto const p_name = pt.getConfAttributeOptional<std::string>("name");
+		auto const p_size = points.size();
+		insert_if_key_unique_else_error(_idx_map, p_id, p_size,
+		    "The point id is not unique.");
+		points.push_back(new GeoLib::Point(p_x, p_y, p_z, p_id));
 
-		auto const p_size = points->size();
-		_idx_map[p_id] = p_size; // TODO: unique ids?
-		points->push_back(new GeoLib::Point(p_x, p_y, p_z, p_id));
-
-		if (p_name) {
+		if (auto const p_name = pt.getConfAttributeOptional<std::string>("name"))
+		{
 			if (p_name->empty()) {
 				ERR("Empty point name found in geometry file.");
 				std::abort();
 			}
-			(*pnt_names)[*p_name] = p_size; // TODO: unique names?
-		}
-	}
 
-	// if names-map is empty, set it to nullptr because it is not needed
-	if (pnt_names->empty())
-	{
-		delete pnt_names;
-		pnt_names = nullptr;
+			insert_if_key_unique_else_error(pnt_names, *p_name, p_size,
+			    "The point name is not unique.");
+		}
 	}
 }
 
 void BoostXmlGmlInterface::readPolylines(
     BaseLib::ConfigTreeNew const& polylinesRoot,
-    std::vector<GeoLib::Polyline*>* polylines,
-    std::vector<GeoLib::Point*> const* points,
-    const std::vector<std::size_t>& pnt_id_map,
-    std::map<std::string, std::size_t>*& ply_names)
+    std::vector<GeoLib::Polyline*>& polylines,
+    std::vector<GeoLib::Point*> const& points,
+    std::vector<std::size_t> const& pnt_id_map,
+    std::map<std::string, std::size_t>& ply_names)
 {
 	for (auto const pl : polylinesRoot.getConfSubtreeList("polyline"))
 	{
 		auto const id = pl.getConfAttribute<std::size_t>("id");
 		(void) id; // id not used
 
-		polylines->push_back(new GeoLib::Polyline(*points));
+		polylines.push_back(new GeoLib::Polyline(points));
 
-		auto const p_name = pl.getConfAttributeOptional<std::string>("name");
-		if (p_name) {
+		if (auto const p_name = pl.getConfAttributeOptional<std::string>("name"))
+		{
 			if (p_name->empty()) {
 				ERR("Empty polyline name found in geometry file.");
 				std::abort();
 			}
 
-			// TODO change
-			// auto const inserted = ply_names->insert(std::make_pair(p_name, polylines->size()-1));
-			auto const it = ply_names->find(*p_name);
-			if (it == ply_names->end()) {
-				ply_names->insert(std::pair<std::string,std::size_t>(
-					*p_name, polylines->size()-1)
-				);
-
-			} else {
-				WARN("Polyline \"%s\" exists already. The polyline will "
-					"be inserted without a name.\n%s",
-					p_name->c_str(), ""
-					/*BaseLib::propertyTreeToString(polyline.second).c_str()*/);
-			}
+			insert_if_key_unique_else_error(ply_names, *p_name, polylines.size()-1,
+			    "The polyline name is not unique.");
 
 			for (auto const pt : pl.getConfParamList<std::size_t>("pnt")) {
-				polylines->back()->addPoint(pnt_id_map[_idx_map[pt]]);
+				polylines.back()->addPoint(pnt_id_map[_idx_map[pt]]);
 			}
 		}
-	}
-
-	// if names-map is empty, set it to nullptr because it is not needed
-	if (ply_names->empty())
-	{
-		delete ply_names;
-		ply_names = nullptr;
 	}
 }
 
 void BoostXmlGmlInterface::readSurfaces(
     BaseLib::ConfigTreeNew const&  surfacesRoot,
-    std::vector<GeoLib::Surface*>* surfaces,
-    std::vector<GeoLib::Point*> const* points,
+    std::vector<GeoLib::Surface*>& surfaces,
+    std::vector<GeoLib::Point*> const& points,
     const std::vector<std::size_t>& pnt_id_map,
-    std::map<std::string, std::size_t>*& sfc_names)
+    std::map<std::string, std::size_t>& sfc_names)
 {
 	for (auto const& sfc : surfacesRoot.getConfSubtreeList("surface"))
 	{
 		auto const id = sfc.getConfAttribute<std::size_t>("id");
 		(void) id; // id not used
-		surfaces->push_back(new GeoLib::Surface(*points));
+		surfaces.push_back(new GeoLib::Surface(points));
 
-		auto const s_name = sfc.getConfAttributeOptional<std::string>("name");
-		if (s_name) {
+		if (auto const s_name = sfc.getConfAttributeOptional<std::string>("name"))
+		{
 			if (s_name->empty()) {
 				ERR("Empty surface name found in geometry file.");
 				std::abort();
 			}
 
-			(*sfc_names)[*s_name] = surfaces->size()-1; // TODO unique names
+			insert_if_key_unique_else_error(sfc_names, *s_name, surfaces.size()-1,
+			    "The surface name is not unique.");
 
 			for (auto const& element : sfc.getConfParamList("element")) {
 				auto const p1_attr = element.getConfAttribute<std::size_t>("p1");
@@ -225,16 +225,9 @@ void BoostXmlGmlInterface::readSurfaces(
 				auto const p1 = pnt_id_map[_idx_map[p1_attr]];
 				auto const p2 = pnt_id_map[_idx_map[p2_attr]];
 				auto const p3 = pnt_id_map[_idx_map[p3_attr]];
-				surfaces->back()->addTriangle(p1,p2,p3);
+				surfaces.back()->addTriangle(p1,p2,p3);
 			}
 		}
-	}
-
-	// if names-map is empty, set it to nullptr because it is not needed
-	if (sfc_names->empty())
-	{
-		delete sfc_names;
-		sfc_names = nullptr;
 	}
 }
 
@@ -290,6 +283,7 @@ bool BoostXmlGmlInterface::write()
 	addPolylinesToPropertyTree(geometry_set);
 	addSurfacesToPropertyTree(geometry_set);
 
+	// TODO remove ifdef
 #if BOOST_VERSION <= 105500
 	boost::property_tree::xml_writer_settings<char> settings('\t', 1);
 #else

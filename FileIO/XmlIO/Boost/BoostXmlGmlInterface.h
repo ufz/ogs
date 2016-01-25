@@ -51,22 +51,22 @@ protected:
 private:
 	/// Reads GeoLib::Point-objects from an xml-file
 	void readPoints    ( BaseLib::ConfigTreeNew const& pointsRoot,
-	                     std::vector<GeoLib::Point*>* points,
-	                     std::map<std::string, std::size_t>* &pnt_names );
+	                     std::vector<GeoLib::Point*>& points,
+	                     std::map<std::string, std::size_t>& pnt_names);
 
 	/// Reads GeoLib::Polyline-objects from an xml-file
 	void readPolylines ( BaseLib::ConfigTreeNew const& polylinesRoot,
-	                   std::vector<GeoLib::Polyline*>* polylines,
-	                   std::vector<GeoLib::Point*> const* points,
+	                   std::vector<GeoLib::Polyline*>& polylines,
+	                   std::vector<GeoLib::Point*> const& points,
 	                   const std::vector<std::size_t>& pnt_id_map,
-	                   std::map<std::string, std::size_t>*& ply_names);
+	                   std::map<std::string, std::size_t>& ply_names);
 
 	/// Reads GeoLib::Surface-objects from an xml-file
 	void readSurfaces  ( BaseLib::ConfigTreeNew const& surfacesRoot,
-	                  std::vector<GeoLib::Surface*>* surfaces,
-	                  std::vector<GeoLib::Point*> const* points,
+	                  std::vector<GeoLib::Surface*>& surfaces,
+	                  std::vector<GeoLib::Point*> const& points,
 	                  const std::vector<std::size_t>& pnt_id_map,
-	                  std::map<std::string, std::size_t>*& sfc_names);
+	                  std::map<std::string, std::size_t>& sfc_names);
 
 	void addSurfacesToPropertyTree(BaseLib::ConfigTreeNew::PTree & pt);
 	void addPolylinesToPropertyTree(BaseLib::ConfigTreeNew::PTree & geometry_set);
