@@ -1,18 +1,12 @@
-# Source files
 set(SOURCES
 	VtkPickCallback.cpp
 	VtkCustomInteractorStyle.cpp
 )
 
-# Headers
 set(HEADERS
 	VtkPickCallback.h
 	VtkCustomInteractorStyle.h
 )
-
-# Put moc files in a project folder
-source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
-
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
@@ -24,7 +18,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../VtkVis
 )
 
-# Create the library
 add_library( VtkAct STATIC
 	${SOURCES}
 	${HEADERS}

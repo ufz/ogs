@@ -1,4 +1,3 @@
-# Source files
 set(SOURCES
 	MeshFromRasterDialog.cpp
 	QVtkDataSetMapper.cpp
@@ -44,7 +43,6 @@ set(SOURCES
 	VtkVisTabWidget.cpp
 )
 
-# Header files
 set(HEADERS
 	VtkAppendArrayFilter.h
 	VtkBGImageSource.h
@@ -90,17 +88,13 @@ set(HEADERS
 	VtkConsoleOutputWindow.h
 )
 
-# Put moc files in a project folder
-source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
-source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
-
-# Put filter in a folder
+# Visual Studio folder
 source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
 source_group("Filter Source Files" REGULAR_EXPRESSION "[.]*Filter.cpp")
-
-# Put vtk source files in a folder
 source_group("Source Header Files" REGULAR_EXPRESSION "[.]*Source.h")
 source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
+file(GLOB_RECURSE UIS *.ui)
+source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -118,10 +112,10 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/../DataView
 )
 
-# Create the library
 add_library(VtkVis STATIC
 	${SOURCES}
 	${HEADERS}
+	${UIS}
 )
 
 ADD_VTK_DEPENDENCY(VtkVis)
