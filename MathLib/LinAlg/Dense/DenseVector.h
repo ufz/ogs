@@ -75,6 +75,14 @@ public:
 		}
 	}
 
+	/// get entry values to an array
+	void getValues(T u[])
+	{
+		for (std::size_t i=0; i<this->size(); ++i) {
+			u[i] = (*this)[i];
+		}
+	}
+
 	/**
 	 * writes the matrix entries into a file
 	 * @param filename output file name

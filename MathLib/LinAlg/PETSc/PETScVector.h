@@ -167,45 +167,16 @@ class PETScVector
         }
 
         /*!
-           Get local vector, i.e. entries in the same rank
-           \param loc_vec  Pointer to array where stores the local vector,
-                           memory allocation is not needed
-        */
-        PetscScalar *getLocalVector() const
-        {
-            PetscScalar *loc_array;
-            if (has_ghost_id)
-            {
-                VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
-                VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
-                VecGhostGetLocalForm(_v, &_v_loc);
-                VecGetArray(_v_loc, &loc_array);
-            }
-            else
-               VecGetArray(_v, &loc_array);
-            return loc_array;
-        }
-
-        /*!
-           Restore array after finish access local array
-           \param array  Pointer to the local array fetched by VecGetArray
-        */
-        void restoreArray(PetscScalar* array) const
-        {
-            if (has_ghost_id)
-            {
-                VecRestoreArray(_v_loc, &array);
-             //   VecGhostRestoreLocalForm(_v, &_v_loc);
-            }
-            else
-                VecRestoreArray(_v, &array);
-        }
-
-        /*!
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
         void getGlobalVector(PetscScalar u[]);
+
+         /*!
+           Get local entries including ghost ones to an array
+           \param u Array for the values of local entries.
+        */
+        void getValues(PetscScalar u[]);
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
@@ -299,6 +270,19 @@ class PETScVector
         */
         void gatherLocalVectors(PetscScalar local_array[],
                                 PetscScalar global_array[]);
+
+        /*!
+           Get local vector, i.e. entries in the same rank
+           \param loc_vec  Pointer to array where stores the local vector,
+                           memory allocation is not needed
+        */
+        PetscScalar* getLocalVector() const;
+
+        /*!
+           Restore array after finish access local array
+           \param array  Pointer to the local array fetched by VecGetArray
+        */
+        inline void restoreArray(PetscScalar* array) const;
 
         /// A funtion called by constructors to configure members
         void config();
