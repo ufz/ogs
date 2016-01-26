@@ -73,16 +73,16 @@ void checkGlobalVectorInterface()
     ASSERT_EQ(1.0, y.get(3));
 }
 
-#ifdef USE_PETSC // or MPI
+#ifdef USE_PETSC
 template <class T_VECTOR>
-void checkGlobalVectorInterfaceMPI()
+void checkGlobalVectorInterfacePETSc()
 {
     int msize;
     MPI_Comm_size(PETSC_COMM_WORLD, &msize);
 
     ASSERT_EQ(3u, msize);
 
-    // -------------------------------------------------------------------
+    // -----------------------------------------------------------------
     // PETSc determined partitioning
     T_VECTOR x(16);
 
@@ -148,7 +148,7 @@ void checkGlobalVectorInterfaceMPI()
 
     ASSERT_ARRAY_NEAR(z, x0, 16, 1e-10);
 
-    // -------------------------------------------------------------------
+    // -----------------------------------------------------------------
     // User determined partitioning
     const bool is_global_size = false;
     T_VECTOR x_fixed_p(2, is_global_size);
@@ -177,7 +177,9 @@ void checkGlobalVectorInterfaceMPI()
     ASSERT_ARRAY_NEAR(z, x0, 6, 1e-10);
 
     // check local array
-    double *loc_v = x_fixed_p.getLocalVector();
+    std::vector<double> loc_v(  x_fixed_p.getLocalSize()
+                              + x_fixed_p.getGhostSize() );
+    x_fixed_p.getValues(&loc_v[0]);
     z[0] = 1.0;
     z[1] = 2.0;
 
@@ -187,6 +189,75 @@ void checkGlobalVectorInterfaceMPI()
     MathLib::finalizeVectorAssembly(x_fixed_p);
     T_VECTOR x_deep_copied(x_fixed_p);
     ASSERT_NEAR(sqrt(3.0*5), x_deep_copied.getNorm(), 1.e-10);
+
+    // -----------------------------------------------------------------
+    // Vector with ghost entries
+    /*
+         Assume there is a vector distributed over three processes as
+          -- rank0 --    --- rank1 ---   -- rank2 --
+           0  1  2  3    4  5  6  7  8   9   10   11 
+         where the numbers are the global entry indices.
+         In each trunk of entries of a rank, there are ghost entries in
+         other ranks attached and their global entry indices are:
+         rank0: 6 8 10
+         rank1: 0 9
+         rank2: 3 5
+
+         Assuming the values of the entries are just their global indices,
+         we have local arrays as:
+         rank0: 0 1 2 3     6 8 10
+         rank1: 4 5 6 7 8   0 9
+         rank2: 9 10 11     3 5
+
+         The above ghost entry embeded vector is realized by the following
+         test.
+    */    
+    std::size_t local_vec_size = 4;
+    if (mrank == 1)
+        local_vec_size = 5;
+    else if (mrank == 2)
+        local_vec_size = 3;
+    std::vector<GlobalIndexType> non_ghost_ids(local_vec_size);
+    std::vector<double> non_ghost_vals(local_vec_size);
+    std::size_t nghosts = 3;
+    if (mrank)
+        nghosts = 2;    
+    std::vector<GlobalIndexType> ghost_ids(nghosts);
+    std::vector<double> expected;
+    switch (mrank)
+    {
+        case 0:
+            non_ghost_ids  = {0, 1, 2, 3};
+            non_ghost_vals = {0., 1., 2., 3.};
+            ghost_ids      = {6, 8, 10};
+            expected       = {0., 1., 2., 3., 6., 8., 10.};
+            break;
+        case 1:
+            non_ghost_ids  = {4, 5, 6, 7, 8};
+            non_ghost_vals = {4., 5., 6., 7., 8.};
+            ghost_ids      = {0, 9};
+            expected       = {4., 5., 6., 7., 8., 0., 9.};
+            break;
+        case 2:
+            non_ghost_ids  = {9, 10, 11};
+            non_ghost_vals = {9., 10., 11.};
+            ghost_ids      = {3, 5};
+            expected       = {9., 10., 11., 3., 5.};
+            break;
+    }
+    T_VECTOR x_with_ghosts(local_vec_size, ghost_ids, is_global_size);
+    x_with_ghosts.set(non_ghost_ids, non_ghost_vals);
+    MathLib::finalizeVectorAssembly(x_with_ghosts);
+
+    ASSERT_EQ(12u, x_with_ghosts.size());
+
+    std::vector<double> loc_v1(  x_with_ghosts.getLocalSize()
+                               + x_with_ghosts.getGhostSize() );
+    x_with_ghosts.getValues(&loc_v1[0]);                          
+    for (std::size_t i=0; i<expected.size(); i++)
+    {
+         ASSERT_NEAR(expected[i], loc_v1[i], 1.e-10);
+    }
 }
 #endif
 
@@ -201,7 +272,7 @@ TEST(Math, CheckInterface_LisVector)
 #elif defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScVector)
 {
-    checkGlobalVectorInterfaceMPI<MathLib::PETScVector >();
+    checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
 }
 #elif defined(OGS_USE_EIGEN)
 TEST(Math, CheckInterface_EigenVector)

@@ -40,6 +40,7 @@ MeshComponentMap::MeshComponentMap(
     std::size_t comp_id = 0;
 
     _num_global_dof = 0;
+    _num_local_dof = 0;
     for (auto c = components.cbegin(); c != components.cend(); ++c)
     {
         assert (*c != nullptr);
@@ -57,8 +58,18 @@ MeshComponentMap::MeshComponentMap(
                 {
                     const GlobalIndexType global_id = static_cast<GlobalIndexType>(components.size()
                                                * mesh.getGlobalNodeID(j) + comp_id);
-                    const GlobalIndexType signed_global_id = mesh.isGhostNode( mesh.getNode(j)->getID() )
-                                                    ? -global_id : global_id;
+                    const bool is_ghost = mesh.isGhostNode( mesh.getNode(j)->getID() );
+                    GlobalIndexType signed_global_id
+                                          = is_ghost ? -global_id : global_id;
+                    if (is_ghost)
+                    {
+                        _ghosts_indices.push_back(-signed_global_id);
+                        if (signed_global_id == 0)
+                             signed_global_id = -9999;
+                    }
+                    else
+                        _num_local_dof++;
+                       
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
                                 comp_id, signed_global_id) );
                 }
@@ -77,8 +88,18 @@ MeshComponentMap::MeshComponentMap(
                 {
                     const GlobalIndexType global_id = static_cast<GlobalIndexType>(global_index_offset
                                                           + mesh.getGlobalNodeID(j) );
-                    const GlobalIndexType signed_global_id = mesh.isGhostNode( mesh.getNode(j)->getID() )
-                                                    ? -global_id : global_id;
+                    const bool is_ghost = mesh.isGhostNode( mesh.getNode(j)->getID() );
+                    GlobalIndexType signed_global_id
+                                        = is_ghost ? -global_id : global_id;
+                    if (is_ghost)
+                    {
+                        _ghosts_indices.push_back(-signed_global_id);
+                        if (signed_global_id == 0)
+                             signed_global_id = -9999;
+                    }
+                    else
+                        _num_local_dof++;
+
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
                                 comp_id, signed_global_id) );
                 }

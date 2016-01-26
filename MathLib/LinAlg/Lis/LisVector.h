@@ -107,6 +107,12 @@ public:
 		}
 	}
 
+	/// get entry values to an array
+	void getValues(LIS_SCALAR u[])
+	{
+		lis_vector_get_values(_vec, 0, size(), u);
+	}
+
 private:
 	LIS_VECTOR _vec;
 };
