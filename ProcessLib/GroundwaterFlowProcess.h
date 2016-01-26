@@ -193,12 +193,13 @@ public:
 
         // Copy result
 #ifdef USE_PETSC
-        double* loc_x = _x->getLocalVector();
-        for (std::size_t i=0; i<_x->getLocalSize() + _x->getGhostSize(); i++)
+        double* loc_x = this->_x->getLocalVector();
+        for (std::size_t i=0; i < this->_x->getLocalSize()
+                                + this->_x->getGhostSize(); i++)
         {
             (*result)[i] = loc_x[i];
         }
-        _x->restoreArray(loc_x);
+        this->_x->restoreArray(loc_x);
 #else
         for (std::size_t i = 0; i < this->_x->size(); ++i)
             (*result)[i] = (*this->_x)[i];
