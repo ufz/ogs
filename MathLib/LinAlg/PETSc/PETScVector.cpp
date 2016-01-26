@@ -150,6 +150,42 @@ void PETScVector::getGlobalVector(PetscScalar u[])
 #endif
 }
 
+void PETScVector::getValues(PetscScalar u[])
+{
+    double* loc_x = getLocalVector();
+    for (PetscInt i=0; i < getLocalSize() + getGhostSize(); i++)
+    {
+        u[i] = loc_x[i];
+    }
+    restoreArray(loc_x);
+}
+
+PetscScalar* PETScVector::getLocalVector() const
+{
+    PetscScalar *loc_array;
+    if (has_ghost_id)
+    {
+        VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostGetLocalForm(_v, &_v_loc);
+        VecGetArray(_v_loc, &loc_array);
+    }
+    else
+       VecGetArray(_v, &loc_array);
+    return loc_array;
+}
+
+void PETScVector::restoreArray(PetscScalar* array) const
+{
+    if (has_ghost_id)
+    {
+        VecRestoreArray(_v_loc, &array);
+        //   VecGhostRestoreLocalForm(_v, &_v_loc);
+    }
+    else
+        VecRestoreArray(_v, &array);
+}
+
 PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const
 {
     NormType petsc_norm = NORM_1;

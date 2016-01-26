@@ -86,6 +86,13 @@ public:
         }
     }
 
+    /// get entry values to an array
+    void getValues(double u[])
+    {
+        for (IndexType i=0; i<_vec.size(); i++)
+            u[i] = _vec[i];
+    }
+
 #ifndef NDEBUG
     /// printout this equation for debugging
     void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
