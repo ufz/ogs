@@ -213,15 +213,23 @@ private:
 		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
 		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
 		mat_opt.o_nz = mat_opt.d_nz;
+		mat_opt.is_global_size = false;
 		const std::size_t num_unknowns =
-		    _local_to_global_index_map->dofSizeGlobal();
+		    _local_to_global_index_map->dofSizeLocal();
 		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+		// In the following two lines, false is assigned to
+		// the argument of is_global_size, which indicates num_unknowns
+		// is local.
+		_x.reset( _global_setup.createVector(num_unknowns,
+		          _local_to_global_index_map->getGhostIndices(), false) );
+		_rhs.reset( _global_setup.createVector(num_unknowns,
+		            _local_to_global_index_map->getGhostIndices(), false) );
 #else
 		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
 		_A.reset(_global_setup.createMatrix(num_unknowns));
-#endif
 		_x.reset(_global_setup.createVector(num_unknowns));
 		_rhs.reset(_global_setup.createVector(num_unknowns));
+#endif
 		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
 		    *_A, solver_name, _linear_solver_options.get()));
 		checkAndInvalidate(_linear_solver_options);
