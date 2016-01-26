@@ -82,11 +82,10 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
 	
 	if (mesh.getDimension() == 3)
-		sfc_mesh = std::unique_ptr<MeshLib::Mesh>(
-			MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true));
+		sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true));
 	else
 		sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
-		                      std::unique_ptr<MeshLib::Mesh>(MeshLib::flipMeshElements(mesh));
+		                      std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
 	INFO("done.");
 
 	// *** add new surface nodes

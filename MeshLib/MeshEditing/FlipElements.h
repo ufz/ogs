@@ -10,6 +10,7 @@
 #ifndef FLIPELEMENTS_H_
 #define FLIPELEMENTS_H_
 
+#include <memory>
 #include <vector>
 #include "MeshLib/Elements/Element.h"
 
@@ -19,17 +20,23 @@ class Mesh;
 class Node;
 
 /**
- * Reverses the node order of a 1D / 2D element such that the direction 
- * of a line changes and normals of 2D elements changes its sign.
+ * Creates a copy of an 1d / 2d element where the node order is reversed,
+ * such that the direction of a line changes and normals of 2D elements 
+ * changes its sign.
+ * @param elem original element
+ * @param nodes node vector used for the copy of the element
+ * @return a flipped copy of the element
  */
-MeshLib::Element* flipElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes);
+std::unique_ptr<MeshLib::Element> flipElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes);
 
 /**
- * Reverses the node order of all elements in a 1D / 2D mesh such that 
- * the direction of lines changes and normals of 2D elements changes 
- * their sign.
+ * Creates a copy of a 1d / 2d mesh where the node order of all elements 
+ * is reversed such that the direction of lines changes and normals of 
+ * 2D elements changes their sign.
+ * @param mesh input mesh
+ * @return a flipped copy of the input mesh
  */
-MeshLib::Mesh* flipMeshElements(MeshLib::Mesh const& mesh);
+std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh);
 
 }
 

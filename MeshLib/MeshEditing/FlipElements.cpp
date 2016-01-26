@@ -19,35 +19,30 @@
 namespace MeshLib
 {
 
-MeshLib::Element* flipElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes)
+std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes)
 {
 	if (elem.getDimension()>2)
 		return nullptr;
 
-	std::size_t const n_nodes (elem.getNNodes());
+	unsigned const n_nodes (elem.getNNodes());
 	MeshLib::Node** elem_nodes = new MeshLib::Node*[n_nodes];
 	for (unsigned i=0; i<n_nodes; ++i)
 		elem_nodes[i] = nodes[elem.getNode(i)->getID()];
-	MeshLib::Node* tmp (elem_nodes[0]);
-	elem_nodes[0] = elem_nodes[1];
-	elem_nodes[1] = tmp;
-
+	std::swap(elem_nodes[0], elem_nodes[1]);
+	
 	if (elem.getGeomType() == MeshElemType::LINE)
-		return new MeshLib::Line(elem_nodes, elem.getID());
+		return std::make_unique<MeshLib::Line>(MeshLib::Line(elem_nodes, elem.getID()));
 	else if (elem.getGeomType() == MeshElemType::TRIANGLE)
-		return new MeshLib::Tri(elem_nodes, elem.getID());
+		return std::make_unique<MeshLib::Tri>(MeshLib::Tri(elem_nodes, elem.getID()));
 	else if (elem.getGeomType() == MeshElemType::QUAD)
 	{
-		tmp = elem_nodes[2];
-		elem_nodes[2] = elem_nodes[3];
-		elem_nodes[3] = tmp;
-		return new MeshLib::Quad(elem_nodes, elem.getID());
+		std::swap(elem_nodes[2], elem_nodes[3]);
+		return std::make_unique<MeshLib::Quad>(MeshLib::Quad(elem_nodes, elem.getID()));
 	}
-
 	return nullptr;
 }
 
-MeshLib::Mesh* flipMeshElements(MeshLib::Mesh const& mesh)
+std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
 {
 	if (mesh.getDimension() > 2)
 		return nullptr;
@@ -59,10 +54,10 @@ MeshLib::Mesh* flipMeshElements(MeshLib::Mesh const& mesh)
 	new_elems.reserve(n_elems);
 	
 	for (std::size_t i=0; i<n_elems; ++i)
-		new_elems.push_back(flipElement(*elems[i], new_nodes));
+		new_elems.push_back(createFlippedElement(*elems[i], new_nodes).release());
 
 	MeshLib::Properties new_props (mesh.getProperties());
-	return new MeshLib::Mesh("FlippedElementMesh", new_nodes, new_elems, new_props);
+	return std::make_unique<MeshLib::Mesh>(MeshLib::Mesh("FlippedElementMesh", new_nodes, new_elems, new_props));
 }
 
 } // end namespace MeshLib
