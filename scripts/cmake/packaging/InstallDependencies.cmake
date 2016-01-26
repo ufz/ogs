@@ -9,7 +9,7 @@ macro(InstallDependencies TARGET INSTALL_COMPONENT)
 	if(EXISTS ${TARGET_EXE})
 		include(GetPrerequisites)
 		# arg3: exclude system, arg4: recursive
-		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 0 "" "")
+		get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 1 "" "")
 		message(STATUS "${TARGET_EXE} dependencies:")
 		foreach(DEPENDENCY ${TARGET_DEPENDENCIES})
 			if(NOT ${DEPENDENCY} MATCHES "@loader_path")
