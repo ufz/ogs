@@ -50,12 +50,22 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	this->_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
+	_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
 	if (! _raster) {
 		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
 		return;
 	}
-	this->mapData();
+
+	std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
+	if (! pnts) {
+		ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+		return;
+	}
+	if (GeoLib::isStation((*pnts)[0])) {
+		mapStationData(*pnts);
+	} else {
+		mapPointDataToDEM(*pnts);
+	}
 }
 
 void GeoMapper::mapOnMesh(const std::string &file_name)
@@ -67,25 +77,45 @@ void GeoMapper::mapOnMesh(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
 {
+	std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
+	if (! pnts) {
+		ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
+		return;
+	}
+
+	// the variable _surface_mesh is reused below, so first the existing
+	// _surface_mesh has to be cleaned up
+	if (_surface_mesh)
+		delete _surface_mesh;
+
 	if (mesh->getDimension()<3)
-		this->_surface_mesh = new MeshLib::Mesh(*mesh);
+		_surface_mesh = new MeshLib::Mesh(*mesh);
 	else
 	{
 		const MathLib::Vector3 dir(0,0,-1);
-		this->_surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
+		_surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
 	}
 
 	// init grid
 	MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
 	MathLib::Vector3 normal(0,0,-1);
-	MeshLib::Mesh const*const flat_mesh =
-		MeshLib::projectMeshOntoPlane(*_surface_mesh, origin, normal);
-	std::vector<MeshLib::Node*> const& flat_nodes (flat_mesh->getNodes());
+	std::vector<MeshLib::Node> flat_nodes;
+	flat_nodes.reserve(_surface_mesh->getNNodes());
+	// copy nodes and project the copied nodes to the x-y-plane, i.e. set
+	// z-coordinate to zero
+	for (auto n_ptr : _surface_mesh->getNodes()) {
+		flat_nodes.emplace_back(*n_ptr);
+		flat_nodes.back()[2] = 0.0;
+	}
 	_grid = new GeoLib::Grid<MeshLib::Node>(flat_nodes.cbegin(), flat_nodes.cend());
-	this->mapData();
+
+	if (GeoLib::isStation((*pnts)[0])) {
+		mapStationData(*pnts);
+	} else {
+		mapPointDataToMeshSurface(*pnts);
+	}
 
 	delete _grid;
-	delete flat_mesh;
 }
 
 void GeoMapper::mapToConstantValue(double value)
@@ -99,14 +129,8 @@ void GeoMapper::mapToConstantValue(double value)
 	std::for_each(points->begin(), points->end(), [value](GeoLib::Point* pnt){ (*pnt)[2] = value; });
 }
 
-void GeoMapper::mapData()
+void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
 {
-	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
-	GeoLib::Station* stn_test = dynamic_cast<GeoLib::Station*>((*points)[0]);
-	bool is_borehole(false);
-	if (stn_test != nullptr && static_cast<GeoLib::StationBorehole*>((*points)[0])->type() == GeoLib::Station::StationType::BOREHOLE)
-		is_borehole = true;
-
 	double min_val(0), max_val(0);
 	if (_surface_mesh)
 	{
@@ -115,34 +139,50 @@ void GeoMapper::mapData()
 		min_val = bounding_box.getMinPoint()[2];
 		max_val = bounding_box.getMaxPoint()[2];
 	}
-	std::size_t nPoints (points->size());
 
-	if (!is_borehole)
+	for (auto * pnt : points)
 	{
-		for (unsigned j=0; j<nPoints; ++j)
-		{
-			GeoLib::Point* pnt ((*points)[j]);
-			(*pnt)[2] = (_grid) ? this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val)
-				                : this->getDemElevation(*pnt);
+		double offset =
+		    (_grid)
+		        ? (getMeshElevation((*pnt)[0], (*pnt)[1], min_val, max_val) -
+		           (*pnt)[2])
+		        : getDemElevation(*pnt);
+
+		if (!GeoLib::isBorehole(pnt))
+			continue;
+		auto const& layers = static_cast<GeoLib::StationBorehole*>(pnt)->getProfile();
+		for (auto * layer_pnt : layers) {
+			(*layer_pnt)[2] = (*layer_pnt)[2] + offset;
 		}
 	}
-	else
-	{
-		for (unsigned j=0; j<nPoints; ++j)
-		{
-			GeoLib::Point* pnt ((*points)[j]);
-			double offset = (_grid) ? (this->getMeshElevation((*pnt)[0],(*pnt)[1], min_val, max_val) - (*pnt)[2])
-				                    :  this->getDemElevation(*pnt);
+}
 
-			GeoLib::StationBorehole* borehole = static_cast<GeoLib::StationBorehole*>(pnt);
-			const std::vector<GeoLib::Point*> layers = borehole->getProfile();
-			std::size_t nLayers = layers.size();
-			for (unsigned k=0; k<nLayers; ++k)
-			{
-				GeoLib::Point* layer_pnt = layers[k];
-				(*layer_pnt)[2] = (*layer_pnt)[2] + offset;
-			}
-		}
+void GeoMapper::mapPointDataToDEM(std::vector<GeoLib::Point*> const& points)
+{
+	for (auto * pnt : points)
+	{
+		GeoLib::Point &p(*pnt);
+		p[2] = getDemElevation(p);
+	}
+}
+
+void GeoMapper::mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& pnts)
+{
+	GeoLib::AABB const aabb(
+		_surface_mesh->getNodes().cbegin(), _surface_mesh->getNodes().cend());
+	double const min_val(aabb.getMinPoint()[2]);
+	double const max_val(aabb.getMaxPoint()[2]);
+
+	for (auto * pnt : pnts) {
+		// check if pnt is inside of the bounding box of the _surface_mesh
+		// projected onto the y-x plane
+		GeoLib::Point &p(*pnt);
+		if (p[0] < aabb.getMinPoint()[0] || aabb.getMaxPoint()[0] < p[0])
+			continue;
+		if (p[1] < aabb.getMinPoint()[1] || aabb.getMaxPoint()[1] < p[1])
+			continue;
+
+		p[2] = getMeshElevation(p[0], p[1], min_val, max_val);
 	}
 }
 
@@ -163,20 +203,20 @@ double GeoMapper::getMeshElevation(
 	    _surface_mesh->getNode(pnt->getID())->getElements());
 	GeoLib::Point* intersection(nullptr);
 
-	for (std::size_t i = 0; i < elements.size(); ++i)
+	for (auto const & element : elements)
 	{
 		if (intersection == nullptr &&
-		    elements[i]->getGeomType() != MeshLib::MeshElemType::LINE)
+		    element->getGeomType() != MeshLib::MeshElemType::LINE)
 			intersection = GeoLib::triangleLineIntersection(
-			    *elements[i]->getNode(0), *elements[i]->getNode(1),
-			    *elements[i]->getNode(2), GeoLib::Point(x, y, max_val),
+			    *element->getNode(0), *element->getNode(1),
+			    *element->getNode(2), GeoLib::Point(x, y, max_val),
 			    GeoLib::Point(x, y, min_val));
 
 		if (intersection == nullptr &&
-		    elements[i]->getGeomType() == MeshLib::MeshElemType::QUAD)
+		    element->getGeomType() == MeshLib::MeshElemType::QUAD)
 			intersection = GeoLib::triangleLineIntersection(
-			    *elements[i]->getNode(0), *elements[i]->getNode(2),
-			    *elements[i]->getNode(3), GeoLib::Point(x, y, max_val),
+			    *element->getNode(0), *element->getNode(2),
+			    *element->getNode(3), GeoLib::Point(x, y, max_val),
 			    GeoLib::Point(x, y, min_val));
 	}
 	if (intersection)
@@ -185,20 +225,13 @@ double GeoMapper::getMeshElevation(
 	return (*(_surface_mesh->getNode(pnt->getID())))[2];
 }
 
-unsigned getIndexInPntVec(GeoLib::Point const* const pnt,
-                          std::vector<GeoLib::Point*> const& points)
-{
-	auto it (std::find(points.begin(), points.end(), pnt));
-	return static_cast<unsigned>(std::distance(points.begin(), it));
-}
-
 std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
-    std::vector<GeoLib::Polyline*> const& polylines,
-    std::vector<GeoLib::Point*> const& points)
+	std::vector<GeoLib::Polyline*> const& polylines,
+	std::vector<GeoLib::Point*> const& points)
 {
 	std::size_t nLines = polylines.size();
 	auto new_lines = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
-	    new std::vector<GeoLib::Polyline*>(nLines));
+		new std::vector<GeoLib::Polyline*>(nLines));
 
 	for (std::size_t i=0; i<nLines; ++i)
 	{
@@ -214,12 +247,12 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
 void GeoMapper::advancedMapOnMesh(
 	MeshLib::Mesh const* mesh, std::string const& new_geo_name)
 {
-	const std::vector<GeoLib::Point*> *points (this->_geo_objects.getPointVec(this->_geo_name));
-	const std::vector<GeoLib::Polyline*> *org_lines (this->_geo_objects.getPolylineVec(this->_geo_name));
+	const std::vector<GeoLib::Point*> *points(_geo_objects.getPointVec(_geo_name));
+	const std::vector<GeoLib::Polyline*> *org_lines(_geo_objects.getPolylineVec(_geo_name));
 
 	const GeoLib::AABB aabb(points->begin(), points->end());
 	const double eps = sqrt(std::numeric_limits<float>::epsilon()) *
-		               sqrt( MathLib::sqrDist(aabb.getMinPoint(),aabb.getMaxPoint())) ;
+		               sqrt(MathLib::sqrDist(aabb.getMinPoint(),aabb.getMaxPoint())) ;
 
 	// copy geometry (and set z=0 for all points)
 	auto new_points = std::unique_ptr<std::vector<GeoLib::Point*>>(
@@ -228,32 +261,30 @@ void GeoMapper::advancedMapOnMesh(
 	std::transform(points->cbegin(), points->cend(), std::back_inserter(*new_points),
 		[](GeoLib::Point* p) { return new GeoLib::Point((*p)[0],(*p)[1],0.0); });
 
-	auto new_lines = copyPolylinesVector(
-	    *_geo_objects.getPolylineVec(this->_geo_name), *new_points);
+	auto new_lines = copyPolylinesVector(*_geo_objects.getPolylineVec(_geo_name),
+	                                     *new_points);
 
 	GeoLib::Grid<GeoLib::Point> grid(new_points->begin(), new_points->end());
-	double max_segment_length (this->getMaxSegmentLength(*new_lines));
+	double max_segment_length(getMaxSegmentLength(*new_lines));
 	// squared so it can be compared to the squared distances calculated later
 	max_segment_length *= max_segment_length;
 
 	const unsigned nMeshNodes ( mesh->getNNodes() );
 	// index of closest geo point for each mesh node in (x,y)-plane
-	std::vector<int> closest_geo_point(nMeshNodes);
+	std::vector<int> closest_geo_point(nMeshNodes, -1);
 	// distance between geo points and mesh nodes in (x,y)-plane
 	std::vector<double> dist(nMeshNodes);
-	for (std::size_t i=0; i<nMeshNodes; ++i)
-	{
-		auto const zero_coords = GeoLib::Point((*mesh->getNode(i))[0],
-			(*mesh->getNode(i))[1], 0.0, mesh->getNode(i)->getID());
+	auto zero_coords = GeoLib::Point{};  // All coordinates zero.
+	for (std::size_t i=0; i<nMeshNodes; ++i) {
+		zero_coords[0] = (*mesh->getNode(i))[0];
+		zero_coords[1] = (*mesh->getNode(i))[1];
 		GeoLib::Point* pnt = grid.getNearestPoint(zero_coords);
 		dist[i] = MathLib::sqrDist(*pnt, zero_coords);
-		closest_geo_point[i] = (dist[i] <= max_segment_length)
-		                           ? getIndexInPntVec(pnt, *new_points)
-		                           : -1;
+		closest_geo_point[i] = (dist[i]<=max_segment_length) ? pnt->getID() : -1;
 	}
 
 	// store for each point the line segment to which it was added.
-	const std::size_t nLines (new_lines->size());
+	const std::size_t nLines(new_lines->size());
 	std::vector< std::vector<unsigned> > line_segment_map(nLines);
 	for (std::size_t i=0; i<nLines; ++i)
 	{
@@ -295,10 +326,10 @@ void GeoMapper::advancedMapOnMesh(
 
 					const MeshLib::Element* line = elements[e]->getEdge(n);
 					unsigned index_offset(0); // default: add to first line segment
-					GeoLib::Point* intersection (NULL);
+					GeoLib::Point* intersection (nullptr);
 					if (node_index_in_ply>0) // test line segment before closest point
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply-1));
-					if (intersection == NULL && node_index_in_ply<(nLinePnts-1)) // test line segment after closest point
+					if (intersection == nullptr && node_index_in_ply<(nLinePnts-1)) // test line segment after closest point
 					{
 						intersection = calcIntersection(line->getNode(0), line->getNode(1), geo_point, ply->getPoint(node_index_in_ply+1));
 						index_offset = 1; // add to second segment
@@ -323,10 +354,10 @@ void GeoMapper::advancedMapOnMesh(
 		}
 	}
 
-	this->_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
+	_geo_objects.addPointVec(std::move(new_points), const_cast<std::string&>(new_geo_name));
 	std::vector<std::size_t> pnt_id_map = this->_geo_objects.getPointVecObj(new_geo_name)->getIDMap();
-	for (std::size_t i=0; i<new_lines->size(); ++i)
-		(*new_lines)[i]->updatePointIDs(pnt_id_map);
+	for (auto & new_line : *new_lines)
+		new_line->updatePointIDs(pnt_id_map);
 	_geo_objects.addPolylineVec(std::move(new_lines), new_geo_name);
 
 	// map new geometry incl. additional point using the normal mapping method
@@ -340,7 +371,7 @@ GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, Math
 	const double y1 = (*p1)[1], y2 = (*p2)[1], y3 = (*q1)[1], y4 = (*q2)[1];
 
 	const double det = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	if (fabs(det) < std::numeric_limits<double>::epsilon()) return NULL;
+	if (std::abs(det) < std::numeric_limits<double>::epsilon()) return nullptr;
 
 	const double pre  = (x1*y2 - y1*x2);
 	const double post = (x3*y4 - y3*x4);
@@ -350,7 +381,7 @@ GeoLib::Point* GeoMapper::calcIntersection(MathLib::Point3d const*const p1, Math
 	// Check if the x and y coordinates are within both line segments
 	if (isPntInBoundingBox(x1,y1,x2,y2,x,y) && isPntInBoundingBox(x3,y3,x4,y4,x,y))
 		return new GeoLib::Point(x, y, 0);
-	return NULL;
+	return nullptr;
 }
 
 unsigned GeoMapper::getPointPosInLine(GeoLib::Polyline const*const line, unsigned start, unsigned end, GeoLib::Point const*const point, double eps) const

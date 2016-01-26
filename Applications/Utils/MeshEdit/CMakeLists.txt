@@ -16,13 +16,13 @@ if(QT4_FOUND)
 	ADD_VTK_DEPENDENCY(moveMeshNodes)
 	set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
-	add_executable(MapGeometryToMeshSurface
-		MapGeometryToMeshSurface.cpp )
-	target_link_libraries(MapGeometryToMeshSurface FileIO MeshGeoToolsLib)
-	ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
-	set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
-
 endif() # QT4_FOUND
+
+add_executable(MapGeometryToMeshSurface
+	MapGeometryToMeshSurface.cpp )
+target_link_libraries(MapGeometryToMeshSurface FileIO MeshGeoToolsLib)
+ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
+set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
 add_executable(removeMeshElements removeMeshElements.cpp)
 target_link_libraries(removeMeshElements FileIO)

@@ -116,6 +116,9 @@ private:
 	/// Contains the points for the lower boundaries of all layers
 	std::vector<Point*> _profilePntVec;
 };
+
+bool isBorehole(GeoLib::Point const* pnt);
+
 } // namespace
 
 #endif // GEO_STATIONBOREHOLE_H

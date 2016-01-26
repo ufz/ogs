@@ -75,5 +75,11 @@ Station* Station::createStation(const std::string &name, double x, double y, dou
 	return station;
 }
 
+bool isStation(GeoLib::Point const* pnt)
+{
+	GeoLib::Station const* bh(dynamic_cast<GeoLib::Station const*>(pnt));
+	return bh != nullptr;
+}
+
 } // namespace
 
