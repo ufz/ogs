@@ -27,7 +27,7 @@ class Node;
  * @param nodes node vector used for the copy of the element
  * @return a flipped copy of the element
  */
-std::unique_ptr<MeshLib::Element> flipElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes);
+std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes);
 
 /**
  * Creates a copy of a 1d / 2d mesh where the node order of all elements 
