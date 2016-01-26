@@ -192,18 +192,7 @@ public:
         assert(result && result->size() == this->_x->size());
 
         // Copy result
-#ifdef USE_PETSC
-        double* loc_x = this->_x->getLocalVector();
-        for (std::size_t i=0; i < this->_x->getLocalSize()
-                                + this->_x->getGhostSize(); i++)
-        {
-            (*result)[i] = loc_x[i];
-        }
-        this->_x->restoreArray(loc_x);
-#else
-        for (std::size_t i = 0; i < this->_x->size(); ++i)
-            (*result)[i] = (*this->_x)[i];
-#endif
+        this->_x->getValues(&(*result)[0]);
 
         // Write output file
         FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
