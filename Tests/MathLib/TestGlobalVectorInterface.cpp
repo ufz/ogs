@@ -177,12 +177,13 @@ void checkGlobalVectorInterfacePETSc()
     ASSERT_ARRAY_NEAR(z, x0, 6, 1e-10);
 
     // check local array
-    double *loc_v = x_fixed_p.getLocalVector();
+    std::vector<double> loc_v(  x_fixed_p.getLocalSize()
+                              + x_fixed_p.getGhostSize() );
+    x_fixed_p.getValues(&loc_v[0]);
     z[0] = 1.0;
     z[1] = 2.0;
 
     ASSERT_ARRAY_NEAR(z, loc_v, 2, 1e-10);
-    x_fixed_p.restoreArray(loc_v);
 
     // Deep copy
     MathLib::finalizeVectorAssembly(x_fixed_p);
@@ -249,12 +250,14 @@ void checkGlobalVectorInterfacePETSc()
     MathLib::finalizeVectorAssembly(x_with_ghosts);
 
     ASSERT_EQ(12u, x_with_ghosts.size());
-    loc_v = x_with_ghosts.getLocalVector();
+
+    std::vector<double> loc_v1(  x_with_ghosts.getLocalSize()
+                               + x_with_ghosts.getGhostSize() );
+    x_with_ghosts.getValues(&loc_v1[0]);                          
     for (std::size_t i=0; i<expected.size(); i++)
     {
-         ASSERT_NEAR(expected[i], loc_v[i], 1.e-10);
+         ASSERT_NEAR(expected[i], loc_v1[i], 1.e-10);
     }
-    x_with_ghosts.restoreArray(loc_v);
 }
 #endif
 
