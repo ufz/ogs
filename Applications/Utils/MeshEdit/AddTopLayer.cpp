@@ -14,28 +14,19 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
-// FileIO
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "FileIO/writeMeshToFile.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
 
-
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
 		"Adds a top layer to an existing mesh",
@@ -59,17 +50,24 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * subsfc_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
+	    FileIO::readMeshFromFile(mesh_arg.getValue()));
+	if (!subsfc_mesh) {
+		ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
+		return EXIT_FAILURE;
+	}
 	INFO("done.");
 
-	std::unique_ptr<MeshLib::Mesh> result (MeshLib::addTopLayerToMesh(
-		*subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()
-	));
+	std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
+	    *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()));
+	if (!result) {
+		ERR("Failure while adding top layer.")
+		return EXIT_FAILURE;
+	}
 
 	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
-	FileIO::VtuInterface mesh_io(result.get(), vtkXMLWriter::Binary);
-	mesh_io.writeToFile(mesh_out_arg.getValue());
+	FileIO::writeMeshToFile(*result, mesh_out_arg.getValue());
 	INFO("done.");
 
-	return 0;
+	return EXIT_SUCCESS;
 }
