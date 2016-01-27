@@ -45,12 +45,21 @@ public:
 	/**
 	 * Returns the 2d-element mesh representing the surface of the given mesh.
 	 * \param mesh                The original mesh
-	 * \param dir                 The direction in which face normals have to point to be considered surface elements
-	 * \param angle               The angle of the allowed deviation from the given direction (0 <= angle <= 90 degrees)
-	 * \param keepOriginalNodeIds If true, ids of mesh nodes are set to ids in original mesh, otherwise node ids are reset (as usual when creating a mesh)
-	 * \return                    A 2D mesh representing the surface in direction dir
+	 * \param dir                 The direction in which face normals have to
+	 * point to be considered surface elements
+	 * \param angle               The angle of the allowed deviation from the
+	 * given direction (0 <= angle <= 90 degrees)
+	 * \param subsfc_node_id_backup_prop_name Name of the property in the
+	 * surface mesh the subsurface node ids are stored to. This is a mapping
+	 * surface node -> subsurface node which is needed from some applications.
+	 * If the string is empty, there isn't a backup created.
+	 * \return A 2D mesh representing the surface in direction dir
 	 */
-	static MeshLib::Mesh* getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds = false);
+	static MeshLib::Mesh* getMeshSurface(
+	    const MeshLib::Mesh& mesh,
+	    const MathLib::Vector3& dir,
+	    double angle,
+	    std::string const& subsfc_node_id_backup_prop_name = "");
 
 	/**
 	 * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for 3D meshes.

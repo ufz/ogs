@@ -33,7 +33,6 @@ class Node : public MathLib::Point3dWithID
 {
 	/* friend classes: */
 	friend class Mesh;
-	friend class MeshSurfaceExtraction;
 	friend class MeshRevision;
 	friend class MeshLayerMapper;
 
