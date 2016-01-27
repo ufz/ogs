@@ -80,6 +80,10 @@ add_executable(queryMesh queryMesh.cpp)
 target_link_libraries(queryMesh FileIO)
 set_target_properties(queryMesh PROPERTIES FOLDER Utilities)
 
+add_executable(ExtractSurface ExtractSurface.cpp)
+target_link_libraries(ExtractSurface FileIO MeshLib)
+set_target_properties(ExtractSurface PROPERTIES FOLDER Utilities)
+
 ####################
 ### Installation ###
 ####################
@@ -95,6 +99,7 @@ install(TARGETS
 	AddTopLayer
 	CreateBoundaryConditionsAlongPolylines
 	queryMesh
+	ExtractSurface
 	RUNTIME DESTINATION bin COMPONENT Utilities
 )
 if(QT4_FOUND)
