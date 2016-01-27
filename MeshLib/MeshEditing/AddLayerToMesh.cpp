@@ -24,6 +24,7 @@
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshEditing/FlipElements.h"
 
 namespace MeshLib
 {
@@ -78,10 +79,13 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	int const flag = (on_top) ? -1 : 1;
 	const MathLib::Vector3 dir(0, 0, flag);
 	double const angle(90);
-	std::unique_ptr<MeshLib::Mesh> sfc_mesh = (mesh.getDimension() == 3) ?
-		std::unique_ptr<MeshLib::Mesh>(
-			MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true)) :
-		std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh));
+	std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
+	
+	if (mesh.getDimension() == 3)
+		sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true));
+	else
+		sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
+		                      std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
 	INFO("done.");
 
 	// *** add new surface nodes
