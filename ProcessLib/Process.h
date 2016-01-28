@@ -20,6 +20,7 @@
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTreeNew.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -64,9 +65,11 @@ public:
 
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
-	virtual void post(std::string const& file_name) = 0;
-	virtual void postTimestep(std::string const& file_name,
-	                          const unsigned timestep) = 0;
+	void postTimestep(std::string const& file_name, const unsigned /*timestep*/)
+	{
+		post();
+		output(file_name);
+	}
 
 	void initialize()
 	{
@@ -128,6 +131,8 @@ public:
 	}
 
 protected:
+	virtual void post() { };
+
 	/// Set linear solver options; called by the derived process which is
 	/// parsing the configuration.
 	void setLinearSolverOptions(BaseLib::ConfigTreeNew&& config)
@@ -229,6 +234,52 @@ private:
 	{
 		_sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
 		    *_local_to_global_index_map, _mesh));
+	}
+
+	void output(std::string const& file_name)
+	{
+		DBUG("Process output.");
+
+		std::string const property_name = "Result";
+
+		// Get or create a property vector for results.
+		boost::optional<MeshLib::PropertyVector<double>&> result;
+		if (_mesh.getProperties().hasPropertyVector(property_name))
+		{
+			result = _mesh.getProperties().template getPropertyVector<double>(
+			    property_name);
+		}
+		else
+		{
+			result =
+			    _mesh.getProperties().template createNewPropertyVector<double>(
+			        property_name, MeshLib::MeshItemType::Node);
+			result->resize(_x->size());
+		}
+		assert(result && result->size() == _x->size());
+
+#ifdef USE_PETSC
+		std::unique_ptr<double[]> u(new double[_x->size()]);
+		_x->getGlobalVector(u.get());  // get the global solution
+
+		std::size_t const n = _mesh.getNNodes();
+		for (std::size_t i = 0; i < n; ++i)
+		{
+			MeshLib::Location const l(_mesh.getID(),
+			                          MeshLib::MeshItemType::Node, i);
+			auto const global_index = std::abs(  // 0 is the component id.
+			    _local_to_global_index_map->getGlobalIndex(l, 0));
+			(*result)[i] = u[global_index];
+		}
+#else
+		// Copy result
+		for (std::size_t i = 0; i < _x->size(); ++i)
+			(*result)[i] = (*_x)[i];
+#endif
+
+		// Write output file
+		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+		vtu_interface.writeToFile(file_name);
 	}
 
 protected:
