@@ -44,7 +44,7 @@ struct IntervalGenerator
 		return _m * val + _n;
 	}
 
-	result_type operator()(std::size_t size = 0)
+	result_type operator()(std::size_t /*size*/ = 0)
 	{
 		return intervalMap(fix(1.0, generator)());
 	}
@@ -61,7 +61,7 @@ struct IntervalTupleGenerator
 
 	using result_type = std::array<T, 3>;
 
-	result_type operator()(std::size_t size = 0)
+	result_type operator()(std::size_t /*size*/ = 0)
 	{
 		return {{ x_gen(), y_gen(), z_gen() }};
 	}
