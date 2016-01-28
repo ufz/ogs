@@ -31,9 +31,6 @@
 
 function (AddTest)
 
-	set(ExternalData_SOURCE_ROOT ${CMAKE_SOURCE_DIR}/../data)
-	set(ExternalData_BINARY_ROOT ${CMAKE_BINARY_DIR}/Tests/Data)
-
 	# parse arguments
 	set(options NONE)
 	set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
@@ -41,7 +38,7 @@ function (AddTest)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	# TODO set to submodule
-	set(AddTest_SOURCE_PATH "${CMAKE_SOURCE_DIR}/../data/${AddTest_PATH}")
+	set(AddTest_SOURCE_PATH "${CMAKE_SOURCE_DIR}/Tests/Data/${AddTest_PATH}")
 	set(AddTest_BINARY_PATH "${CMAKE_BINARY_DIR}/Tests/Data/${AddTest_PATH}")
 	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
 	file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
