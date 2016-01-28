@@ -56,6 +56,13 @@ private:
 	/// Creates a menu on right-clicking on an item.
 	void contextMenuEvent(QContextMenuEvent* event);
 
+	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
+	void constructMeshFromImage(
+		std::string msh_name,
+		MeshLib::MeshElemType element_type,
+		MeshLib::UseIntensityAs intensity_type);
+
+
 private slots:
 	/// Adds a color lookup table to the current scalar array of the selected pipeline item.
 	void addColorTable();
@@ -75,9 +82,6 @@ private slots:
 
 	/// Sends a requestAddPipelineFilterItem() signal to add a filter.
 	void addPipelineFilterItem();
-
-	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
-	void constructMeshFromImage(QString msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type);
 
 	/// Calls the dialog to
 	void showImageToMeshConversionDialog();

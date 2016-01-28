@@ -34,15 +34,22 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 
 void MeshFromRasterDialog::accept()
 {
-	MeshLib::UseIntensityAs i_type(MeshLib::UseIntensityAs::ELEVATION);
-	if (this->materialButton->isChecked()) i_type = MeshLib::UseIntensityAs::DATAVECTOR;
-	else if (this->ignoreButton->isChecked()) i_type = MeshLib::UseIntensityAs::NONE;
+	if (this->mshNameEdit->text().isEmpty())
+	{
+		OGSError::box("Please specify a name for the resulting mesh.");
+		return;
+	}
 
-	MeshLib::MeshElemType e_type(MeshLib::MeshElemType::TRIANGLE);
-	if (this->quadButton->isChecked()) e_type = MeshLib::MeshElemType::QUAD;
-	else if (this->hexButton->isChecked()) e_type = MeshLib::MeshElemType::HEXAHEDRON;
+	_new_mesh_name = this->mshNameEdit->text().toStdString();
 
-	emit setMeshParameters(this->mshNameEdit->text(), e_type, i_type);
+	_intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
+	if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
+	else if (this->ignoreButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::NONE;
+
+	_element_selection = MeshLib::MeshElemType::TRIANGLE;
+	if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
+	else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
+
 	this->done(QDialog::Accepted);
 }
 
