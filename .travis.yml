@@ -40,7 +40,7 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON ..
+  - cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ..
   - make -j 2
   - if [[ "$CASE" == "CLI" ]]; then make tests; fi
 
