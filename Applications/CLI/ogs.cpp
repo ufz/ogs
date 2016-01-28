@@ -25,7 +25,7 @@
 
 #include "ProcessLib/NumericsConfig.h"
 
-void solveProcesses(ProjectData &project)
+void solveProcesses(ProjectData &project, const std::string &outdir)
 {
 	INFO("Solve processes.");
 
@@ -58,8 +58,9 @@ void solveProcesses(ProjectData &project)
 			}
 
 			std::string const output_file_name =
-			    out_pref + "_pcs_" + std::to_string(i) + "_ts_" +
-			    std::to_string(timestep) + ".vtu";
+				BaseLib::joinPaths(outdir, out_pref) +
+				"_pcs_" + std::to_string(i) + "_ts_" +
+				std::to_string(timestep) + ".vtu";
 			(*p)->postTimestep(output_file_name, timestep);
 
 			++i;
@@ -90,6 +91,14 @@ int main(int argc, char *argv[])
 		"PROJECT FILE");
 	cmd.add(project_arg);
 
+	TCLAP::ValueArg<std::string> outdir_arg(
+		"o", "output-directory",
+		"the output directory to write to",
+		false,
+		"",
+		"output directory");
+	cmd.add(outdir_arg);
+
 	TCLAP::SwitchArg nonfatal_arg("",
 		"config-warnings-nonfatal",
 		"warnings from parsing the configuration file will not trigger program abortion");
@@ -117,9 +126,8 @@ int main(int argc, char *argv[])
 		(*p_it)->initialize();
 	}
 
-	std::string const output_file_name(project.getOutputFilePrefix() + ".vtu");
 
-	solveProcesses(project);
+	solveProcesses(project, outdir_arg.getValue());
 
 	return 0;
 }

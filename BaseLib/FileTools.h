@@ -152,6 +152,17 @@ std::string copyPathToFileName(const std::string &file_name,
  * Returns a string up to the last path separator not including it.
  */
 std::string extractPath(std::string const& pathname);
+
+/**
+ * Appends a platform-dependent path separator (/ or \) if missing
+ */
+std::string appendPathSeparator(std::string const& path);
+
+/**
+ * Concat two paths. Does not check for validity.
+ */
+std::string joinPaths(std::string const& pathA, std::string const& pathB);
+
 } // end namespace BaseLib
 
 #endif // FILETOOLS_H

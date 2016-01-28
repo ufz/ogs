@@ -278,6 +278,7 @@ private:
 #endif
 
 		// Write output file
+		DBUG("Writing output to \'%s\'.", file_name.c_str());
 		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
 		vtu_interface.writeToFile(file_name);
 	}
