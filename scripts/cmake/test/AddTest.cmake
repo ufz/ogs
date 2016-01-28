@@ -38,8 +38,8 @@ function (AddTest)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	# TODO set to submodule
-	set(AddTest_SOURCE_PATH "${CMAKE_SOURCE_DIR}/Tests/Data/${AddTest_PATH}")
-	set(AddTest_BINARY_PATH "${CMAKE_BINARY_DIR}/Tests/Data/${AddTest_PATH}")
+	set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
+	set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
 	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
 	file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
 
