@@ -21,16 +21,14 @@ endif()
 
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/,REGEX:.*}")
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
-ExternalData_Add_Test(
-	data
+Add_Test(
 	NAME NodePartitionedMeshTestASCII
 	COMMAND "mpirun" ${MPITestParameters}
 )
 
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/Binary/,REGEX:.*}")
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
-ExternalData_Add_Test(
-	data
+Add_Test(
 	NAME NodePartitionedMeshTestBinary
 	COMMAND  "mpirun" ${MPITestParameters}
 )
@@ -38,22 +36,19 @@ ExternalData_Add_Test(
 ## FEM#PETSc solver tests
 set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/EllipticPETSc/,REGEX:.*}")
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/quad_20x10_GroundWaterFlow.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
+Add_Test(
     NAME ParallelFEM_GroundWaterFlow2D
     COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
 )
 
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
+Add_Test(
     NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
     COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
 )
 
 set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3_neumann.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
+Add_Test(
     NAME ParallelFEM_GroundWaterFlow3D_NeumannBC
     COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
 )

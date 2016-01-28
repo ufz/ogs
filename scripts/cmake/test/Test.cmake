@@ -40,7 +40,6 @@ configure_file(
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/Data.cmake)
 
 if(CMAKE_CONFIGURATION_TYPES)
 	set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
@@ -53,7 +52,7 @@ add_custom_target(
 	--output-on-failure --output-log Tests/ctest.log
 	--exclude-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
-	DEPENDS data ogs vtkdiff ctest-cleanup
+	DEPENDS ogs vtkdiff ctest-cleanup
 )
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest-large.log)
 add_custom_target(
