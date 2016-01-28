@@ -15,11 +15,9 @@
 #include <vector>
 
 #include "tclap/CmdLine.h"
-#include "logog/include/logog.hpp"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
 
@@ -87,13 +85,13 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	std::unique_ptr<MeshLib::Mesh const> mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
-	INFO("Mesh read: %ul nodes, %ul elements.", mesh->getNNodes(), mesh->getNElements());
+	INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
 
 	GeoLib::GEOObjects geo_objs;
 	FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
 	std::vector<std::string> geo_names;
 	geo_objs.getGeometryNames(geo_names);
-	INFO("Geometry \"%s\" read: %ul points, %ul polylines.",
+	INFO("Geometry \"%s\" read: %u points, %u polylines.",
 		geo_names[0].c_str(),
 		geo_objs.getPointVec(geo_names[0])->size(),
 		geo_objs.getPolylineVec(geo_names[0])->size());

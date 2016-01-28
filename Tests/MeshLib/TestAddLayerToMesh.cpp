@@ -28,7 +28,7 @@ namespace AddLayerValidation
 		int const reduce_tests = (testNodeOrder) ? 0 : 1;
 
 		std::size_t const nErrorFlags (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
-		ElementErrorFlag const flags[nErrorFlags] = {ElementErrorFlag::ZeroVolume, 
+		ElementErrorFlag const flags[nErrorFlags] = {ElementErrorFlag::ZeroVolume,
 		ElementErrorFlag::NonCoplanar, ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder};
 		std::vector<ElementErrorCode> const codes (MeshLib::MeshValidation::testElementGeometry(mesh));
 		for (std::size_t i=0; i<codes.size(); ++i)
@@ -175,7 +175,6 @@ TEST(MeshLib, AddTopLayerToHexMesh)
 		MeshLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
 	AddLayerValidation::testZCoords3D(*test_input, *test_output, height);
 	AddLayerValidation::validate(*result, true);
-
 }
 
 TEST(MeshLib, AddBottomLayerToHexMesh)
