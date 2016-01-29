@@ -82,6 +82,7 @@ enum class MeshQualityType
 enum class UseIntensityAs
 {
 	ELEVATION,
+	MATERIALS,
 	DATAVECTOR,
 	NONE
 };

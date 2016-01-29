@@ -43,7 +43,8 @@ void MeshFromRasterDialog::accept()
 	_new_mesh_name = this->mshNameEdit->text().toStdString();
 
 	_intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
-	if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
+	if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::MATERIALS;
+	else if (this->otherButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
 	else if (this->ignoreButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::NONE;
 
 	_element_selection = MeshLib::MeshElemType::TRIANGLE;
