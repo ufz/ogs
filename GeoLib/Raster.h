@@ -18,6 +18,16 @@
 
 namespace GeoLib {
 
+/// Contains the relevant information when handling with geoscientific raster data
+struct RasterHeader
+{
+	std::size_t n_cols; // width
+	std::size_t n_rows; // height
+	MathLib::Point3d origin; // lower left corner
+	double cell_size; // edge length of each pixel
+	double no_data; // no data value
+};
+
 /**
  * @brief Class Raster is used for managing raster data.
  *
@@ -36,20 +46,13 @@ public:
 	 * to be handed over via input iterators. Deploying iterators has the
 	 * advantage that the use of the class is independent from the input
 	 * container.
-	 * @param n_cols number of columns
-	 * @param n_rows number of rows
-	 * @param xllcorner the \f$x\f$ coordinate of lower left point
-	 * @param yllcorner the \f$y\f$ coordinate of lower left point
-	 * @param cell_size the size of a raster pixel
+	 * @param header meta-information about the raster (height, width, etc.)
 	 * @param begin input iterator pointing to the first element of the data
 	 * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
-	 * @param no_data_val value for raster pixels that have not valid values
 	 */
 	template<typename InputIterator>
-	Raster(std::size_t n_cols, std::size_t n_rows, double xllcorner, double yllcorner,
-					double cell_size, InputIterator begin, InputIterator end, double no_data_val = -9999) :
-		_n_cols(n_cols), _n_rows(n_rows), _ll_pnt(xllcorner, yllcorner, 0.0), _cell_size(cell_size),
-		_no_data_val(no_data_val), _raster_data(new double[n_cols*n_rows])
+	Raster(RasterHeader header, InputIterator begin, InputIterator end) :
+		_header(header), _raster_data(new double[_header.n_cols*_header.n_rows])
 	{
 		iterator raster_it(_raster_data);
 		for (InputIterator it(begin); it != end; ++it) {
@@ -58,32 +61,35 @@ public:
 		}
 	}
 
+	/// Returns the complete header information
+	RasterHeader const& getHeader() const { return _header; }
+
 	/**
 	 * get the number of columns for the raster
 	 */
-	std::size_t getNCols() const { return _n_cols; }
+	std::size_t getNCols() const { return _header.n_cols; }
 	/**
 	 * get the number of rows for the raster
 	 */
-	std::size_t getNRows() const { return _n_rows; }
+	std::size_t getNRows() const { return _header.n_rows; }
 
 	/**
 	 * get the distance between raster pixels
 	 */
-	double getRasterPixelSize() const { return _cell_size; }
+	double getRasterPixelSize() const { return _header.cell_size; }
 
 	/**
 	 * get the origin of lower left raster cell
 	 * @return the origin of the raster
 	 */
-	GeoLib::Point const& getOrigin() const;
+	GeoLib::Point const getOrigin() const;
 
 	/**
 	 * Refine the raster using scaling as a refinement parameter.
 	 */
 	void refineRaster(std::size_t scaling);
 
-	double getNoDataValue() const { return _no_data_val; }
+	double getNoDataValue() const { return _header.no_data; }
 
 	/**
 	 * Constant iterator that is pointing to the first raster pixel value.
@@ -94,7 +100,7 @@ public:
 	 * Constant iterator that is pointing to the last raster pixel value.
 	 * @return constant iterator
 	 */
-	const_iterator end() const { return _raster_data + _n_rows*_n_cols; }
+	const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
 
 	/**
 	 * Returns the raster value at the position of the given point.
@@ -116,29 +122,7 @@ private:
 	void setCellSize(double cell_size);
 	void setNoDataVal (double no_data_val);
 
-	/**
-	 * number of columns of the raster
-	 */
-	std::size_t _n_cols;
-	/**
-	 * number of rows of the raster
-	 */
-	std::size_t _n_rows;
-	/**
-	 * lower left point of the raster
-	 */
-	GeoLib::Point _ll_pnt;
-	/**
-	 * cell size - each cell is quadratic
-	 */
-	double _cell_size;
-	/**
-	 * value for cells there is no data for
-	 */
-	double _no_data_val;
-	/**
-	 * raw raster data
-	 */
+	GeoLib::RasterHeader _header;
 	double* _raster_data;
 };
 

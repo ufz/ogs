@@ -22,6 +22,7 @@
 
 #include "logog/include/logog.hpp"
 
+#include "GeoLib/Raster.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
@@ -61,10 +62,7 @@ public:
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
 	static MeshLib::Mesh* convertImgToMesh(const double* img,
-	                                      const double origin[3],
-	                                      const std::size_t imgHeight,
-	                                      const std::size_t imgWidth,
-	                                      const double &scalingFactor,
+	                                      GeoLib::RasterHeader const& header,
 	                                      MeshElemType elem_type,
 	                                      UseIntensityAs intensity_type);
 
@@ -73,27 +71,19 @@ public:
 	                                              std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:
-	/// Constructs mesh components based on image data.
 	static MeshLib::Mesh* constructMesh(
 		std::vector<double> const& pix_val,
 		std::vector<bool> const& pix_vis,
-		double const origin[3],
-		std::size_t const imgHeight,
-		std::size_t const imgWidth,
-		double const scalingFactor,
+		GeoLib::RasterHeader const& header,
 		MeshLib::MeshElemType elem_type,
 		MeshLib::UseIntensityAs intensity_type);
 
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
 
-	/// Creates a mesh node vector based on image data
-	static std::vector<MeshLib::Node*> createNodeVector(
+	static std::vector<MeshLib::Node*> VtkMeshConverter::createNodeVector(
 		std::vector<double> const& elevation,
 		std::vector<int> &node_idx_map,
-		std::size_t const incHeight,
-		std::size_t const incWidth,
-		double const origin[3],
-		double const scalingFactor,
+		GeoLib::RasterHeader const& header,
 		bool use_elevation);
 
 	/// Creates a mesh element vector based on image data

@@ -43,24 +43,21 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 	}
 
 	// header information
-	std::size_t n_cols(0), n_rows(0);
-	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), no_data_val(-9999);
-
-	if (readASCHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, no_data_val)) {
-		double* values = new double[n_cols*n_rows];
+	GeoLib::RasterHeader header;
+	if (readASCHeader(in, header)) {
+		double* values = new double[header.n_cols*header.n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (std::size_t j(0); j < n_rows; ++j) {
-			const std::size_t idx ((n_rows - j - 1) * n_cols);
-			for (std::size_t i(0); i < n_cols; ++i) {
+		for (std::size_t j(0); j < header.n_rows; ++j) {
+			const std::size_t idx ((header.n_rows - j - 1) * header.n_cols);
+			for (std::size_t i(0); i < header.n_cols; ++i) {
 				in >> s;
 				values[idx+i] = strtod(BaseLib::replaceString(",", ".", s).c_str(),0);
 
 			}
 		}
 		in.close();
-		GeoLib::Raster *raster(new GeoLib::Raster(n_cols, n_rows, xllcorner, yllcorner,
-						cell_size, values, values+n_cols*n_rows, no_data_val));
+		GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
 		delete [] values;
 		return raster;
 	} else {
@@ -69,45 +66,45 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 	}
 }
 
-bool AsciiRasterInterface::readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-				double &xllcorner, double &yllcorner, double &cell_size, double &no_data_val)
+bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header)
 {
 	std::string tag, value;
 
 	in >> tag;
 	if (tag.compare("ncols") == 0) {
 		in >> value;
-		n_cols = atoi(value.c_str());
+		header.n_cols = atoi(value.c_str());
 	} else return false;
 
 	in >> tag;
 	if (tag.compare("nrows") == 0) {
 		in >> value;
-		n_rows = atoi(value.c_str());
+		header.n_rows = atoi(value.c_str());
 	} else return false;
 
 	in >> tag;
 	if (tag.compare("xllcorner") == 0 || tag.compare("xllcenter") == 0) {
 		in >> value;
-		xllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+		header.origin[0] = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
 
 	in >> tag;
 	if (tag.compare("yllcorner") == 0 || tag.compare("yllcenter") == 0) {
 		in >> value;
-		yllcorner = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+		header.origin[1] = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
+	header.origin[2] = 0;
 
 	in >> tag;
 	if (tag.compare("cellsize") == 0) {
 		in >> value;
-		cell_size = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+		header.cell_size = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
 
 	in >> tag;
 	if (tag.compare("NODATA_value") == 0 || tag.compare("nodata_value") == 0) {
 		in >> value;
-		no_data_val = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
+		header.no_data = strtod(BaseLib::replaceString(",", ".", value).c_str(), 0);
 	} else return false;
 
 	return true;
@@ -123,19 +120,19 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	}
 
 	// header information
-	std::size_t n_cols(0), n_rows(0);
-	double xllcorner(0.0), yllcorner(0.0), cell_size(0.0), min(0.0), max(0.0);
+	GeoLib::RasterHeader header;
+	double min(0.0), max(0.0);
 
-	if (readSurferHeader(in, n_cols, n_rows, xllcorner, yllcorner, cell_size, min, max))
+	if (readSurferHeader(in, header, min, max))
 	{
 		const double no_data_val (min-1);
-		double* values = new double[n_cols*n_rows];
+		double* values = new double[header.n_cols*header.n_rows];
 		std::string s;
 		// read the data into the double-array
-		for (std::size_t j(0); j < n_rows; ++j)
+		for (std::size_t j(0); j < header.n_rows; ++j)
 		{
-			const std::size_t idx (j * n_cols);
-			for (std::size_t i(0); i < n_cols; ++i)
+			const std::size_t idx (j * header.n_cols);
+			for (std::size_t i(0); i < header.n_cols; ++i)
 			{
 				in >> s;
 				const double val (strtod(BaseLib::replaceString(",", ".", s).c_str(),0));
@@ -143,8 +140,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 			}
 		}
 		in.close();
-		GeoLib::Raster *raster(new GeoLib::Raster(n_cols, n_rows, xllcorner, yllcorner, cell_size,
-						                          values, values+n_cols*n_rows, no_data_val));
+		GeoLib::Raster *raster(new GeoLib::Raster(header, values, values+header.n_cols*header.n_rows));
 		delete [] values;
 		return raster;
 	} else {
@@ -153,8 +149,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	}
 }
 
-bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-				double &xllcorner, double &yllcorner, double &cell_size, double &min, double &max)
+bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header, 
+                                            double &min, double &max)
 {
 	std::string tag;
 
@@ -167,21 +163,23 @@ bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, std::size_t &n_co
 	}
 	else
 	{
-		in >> n_cols >> n_rows;
+		in >> header.n_cols >> header.n_rows;
 		in >> min >> max;
-		xllcorner = min;
-		cell_size = (max-min)/static_cast<double>(n_cols);
+		header.origin[0] = min;
+		header.cell_size = (max-min)/static_cast<double>(header.n_cols);
 
 		in >> min >> max;
-		yllcorner = min;
+		header.origin[1] = min;
+		header.origin[2] = 0;
 
-		if (ceil((max-min)/static_cast<double>(n_rows)) == ceil(cell_size))
-			cell_size = ceil(cell_size);
+		if (ceil((max-min)/static_cast<double>(header.n_rows)) == ceil(header.cell_size))
+			header.cell_size = ceil(header.cell_size);
 		else
 		{
 			ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
 			return 0;
 		}
+		header.no_data = min-1;
 		in >> min >> max;
 	}
 

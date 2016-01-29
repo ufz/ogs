@@ -3,6 +3,8 @@
 
 #include "NetCdfConfigureDialog.h"
 
+#include "MathLib/Point3d.h"
+#include "GeoLib/Raster.h"
 #include "MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/MeshEnums.h"
 #include "VtkGeoImageSource.h"
@@ -352,13 +354,14 @@ void NetCdfConfigureDialog::createDataObject()
 
 	double origin_x = (originLon < lastLon) ? originLon : lastLon;
 	double origin_y = (originLat < lastLat) ? originLat : lastLat;
-	double originNetCdf[3] = {origin_x, origin_y, 0};
+	MathLib::Point3d origin({{origin_x, origin_y, 0}});
 
 	double resolution = (doubleSpinBoxResolution->value());
 
 	if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
 		this->reverseNorthSouth(data_array, sizeLon, sizeLat);
 
+	GeoLib::RasterHeader header = {sizeLon,sizeLat,origin,resolution,-9999};
 	if (this->radioMesh->isChecked())
 	{
 		MeshLib::MeshElemType meshElemType = MeshLib::MeshElemType::QUAD;
@@ -375,14 +378,13 @@ void NetCdfConfigureDialog::createDataObject()
 		}else{
 			useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
 		}
-
-		_currentMesh = MeshLib::VtkMeshConverter::convertImgToMesh(data_array,originNetCdf,sizeLon,sizeLat,resolution,meshElemType,useIntensity);
+		_currentMesh = MeshLib::VtkMeshConverter::convertImgToMesh(data_array, header, meshElemType, useIntensity);
 	}
 	else
 	{
-		vtkImageImport* image = VtkRaster::loadImageFromArray(data_array, originNetCdf[0], originNetCdf[1], sizeLon, sizeLat, resolution, -9999.0);
+		vtkImageImport* image = VtkRaster::loadImageFromArray(data_array, header);
 		_currentRaster = VtkGeoImageSource::New();
-		_currentRaster->setImage(image, QString::fromStdString(this->getName()), originNetCdf[0], originNetCdf[1], resolution);
+		_currentRaster->setImage(image, QString::fromStdString(this->getName()), origin[0], origin[1], resolution);
 	}
 
 	delete[] length;

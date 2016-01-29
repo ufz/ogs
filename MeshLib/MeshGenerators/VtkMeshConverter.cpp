@@ -71,18 +71,17 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		return nullptr;
 	}
 
-	const std::size_t imgHeight = dims[0];
-	const std::size_t imgWidth  = dims[1];
-	const std::size_t incHeight = imgHeight+1;
-	const std::size_t incWidth  = imgWidth+1;
+	MathLib::Point3d orig ({{origin[0], origin[1], origin[2]}});
+	GeoLib::RasterHeader header = {dims[1], dims[0], orig, scalingFactor, -9999};
+	const std::size_t incHeight = header.n_rows+1;
+	const std::size_t incWidth  = header.n_cols+1;
 	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
-	std::vector<bool> pix_vis (imgHeight * imgWidth, false);
+	std::vector<bool> pix_vis (header.n_rows * header.n_cols, false);
 
-	for (std::size_t i = 0; i < imgWidth; i++)
-	{
-		for (std::size_t j = 0; j < imgHeight; j++)
+	for (std::size_t i = 0; i < header.n_cols; i++)
+		for (std::size_t j = 0; j < header.n_rows; j++)
 		{
-			std::size_t const img_idx = i*imgHeight + j;
+			std::size_t const img_idx = i*header.n_rows + j;
 			std::size_t const fld_idx = i*incHeight + j;
 
 			// colour of current pixel
@@ -92,7 +91,7 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			if (!visible)
 				continue;
 
-			double const value = (nTuple < 3) ? 
+			double const value = (nTuple < 3) ?
 				colour[0] : // grey (+ alpha)
 				(0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2]); // rgb(a)
 			pix_vis[img_idx] = true;
@@ -101,17 +100,13 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			pix_val[fld_idx+incHeight] = value;
 			pix_val[fld_idx+incHeight+1] = value;
 		}
-	}
-	
-	return constructMesh(pix_val, pix_vis, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
+
+	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(
 	const double* img,
-	const double origin[3],
-	const std::size_t imgHeight,
-	const std::size_t imgWidth,
-	const double &scalingFactor,
+	GeoLib::RasterHeader const& header,
 	MeshElemType elem_type,
 	UseIntensityAs intensity_type)
 {
@@ -121,15 +116,15 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(
 		return nullptr;
 	}
 
-	std::size_t const incHeight (imgHeight+1);
-	std::size_t const incWidth (imgWidth+1);
+	std::size_t const incHeight (header.n_rows+1);
+	std::size_t const incWidth (header.n_cols+1);
 	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
 	std::vector<bool> pix_vis (incHeight * incWidth, false);
 
-	for (std::size_t i = 0; i < imgWidth; i++)
-		for (std::size_t j = 0; j < imgHeight; j++)
+	for (std::size_t i = 0; i < header.n_cols; i++)
+		for (std::size_t j = 0; j < header.n_rows; j++)
 		{
-			std::size_t const img_idx = i*imgHeight + j;
+			std::size_t const img_idx = i*header.n_rows + j;
 			std::size_t const fld_idx = i*incHeight + j;
 			if (img[img_idx] == -9999)
 				continue;
@@ -141,26 +136,23 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(
 			pix_val[fld_idx+incHeight+1] = img[img_idx];
 		}
 
-	return constructMesh(pix_val, pix_vis, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
+	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
 }
 
 MeshLib::Mesh* VtkMeshConverter::constructMesh(
 	std::vector<double> const& pix_val,
 	std::vector<bool> const& pix_vis,
-	double const origin[3],
-	std::size_t const imgHeight,
-	std::size_t const imgWidth,
-	double const scalingFactor,
+	GeoLib::RasterHeader const& header,
 	MeshLib::MeshElemType elem_type,
 	MeshLib::UseIntensityAs intensity_type)
 {
-	std::vector<int> node_idx_map ((imgHeight+1) * (imgWidth+1), -1);
+	std::vector<int> node_idx_map ((header.n_rows+1) * (header.n_cols+1), -1);
 	bool const use_elevation (intensity_type == MeshLib::UseIntensityAs::ELEVATION);
-	std::vector<MeshLib::Node*> nodes (createNodeVector(pix_val, node_idx_map, imgHeight, imgWidth, origin, scalingFactor, use_elevation));
+	std::vector<MeshLib::Node*> nodes (createNodeVector(pix_val, node_idx_map, header, use_elevation));
 	if (nodes.empty())
 		return nullptr;
 
-	std::vector<MeshLib::Element*> elements (createElementVector(pix_val, pix_vis, nodes, node_idx_map, imgHeight, imgWidth, elem_type));
+	std::vector<MeshLib::Element*> elements (createElementVector(pix_val, pix_vis, nodes, node_idx_map, header.n_rows, header.n_cols, elem_type));
 	if (elements.empty())
 		return nullptr;
 
@@ -169,13 +161,13 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(
 	{
 		boost::optional< MeshLib::PropertyVector<int>& > prop_vec =
 			properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-		fillPropertyVector<int>(*prop_vec, pix_val, pix_vis, imgHeight, imgWidth, elem_type); 
-	}	
+		fillPropertyVector<int>(*prop_vec, pix_val, pix_vis, header.n_rows, header.n_cols, elem_type);
+	}
 	else if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR)
 	{
 		boost::optional< MeshLib::PropertyVector<double>& > prop_vec =
 			properties.createNewPropertyVector<double>("Colour", MeshLib::MeshItemType::Cell, 1);
-		fillPropertyVector<double>(*prop_vec, pix_val, pix_vis, imgHeight, imgWidth, elem_type); 
+		fillPropertyVector<double>(*prop_vec, pix_val, pix_vis, header.n_rows, header.n_cols, elem_type);
 	}
 
 	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties);
@@ -184,25 +176,22 @@ MeshLib::Mesh* VtkMeshConverter::constructMesh(
 std::vector<MeshLib::Node*> VtkMeshConverter::createNodeVector(
 	std::vector<double> const&  elevation,
 	std::vector<int> & node_idx_map,
-	std::size_t const imgHeight,
-	std::size_t const imgWidth,
-	double const origin[3],
-	double const scalingFactor,
+	GeoLib::RasterHeader const& header,
 	bool use_elevation)
 {
 	std::size_t node_idx_count(0);
-	double const x_offset(origin[0] - scalingFactor/2.0);
-	double const y_offset(origin[1] - scalingFactor/2.0);
+	double const x_offset(header.origin[0] - header.cell_size/2.0);
+	double const y_offset(header.origin[1] - header.cell_size/2.0);
 	std::vector<MeshLib::Node*> nodes;
-	for (std::size_t i = 0; i < (imgWidth+1); i++)
-		for (std::size_t j = 0; j < (imgHeight+1); j++)
+	for (std::size_t i = 0; i < (header.n_cols+1); i++)
+		for (std::size_t j = 0; j < (header.n_rows+1); j++)
 		{
-			std::size_t const index = i * (imgHeight+1) + j;
+			std::size_t const index = i * (header.n_rows+1) + j;
 			if (elevation[index] == std::numeric_limits<double>::max())
 				continue;
 
 			double const zValue = (use_elevation) ? elevation[index] : 0;
-			MeshLib::Node* node (new MeshLib::Node(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
+			MeshLib::Node* node (new MeshLib::Node(x_offset + (header.cell_size * j), y_offset + (header.cell_size * i), zValue));
 			nodes.push_back(node);
 			node_idx_map[index] = node_idx_count;
 			node_idx_count++;

@@ -54,15 +54,8 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 	{
 		raster = FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName);
 	}
-	if (raster) {
-		x0 = raster->getOrigin()[0];
-		y0 = raster->getOrigin()[1];
-		delta = raster->getRasterPixelSize();
-		double const*const data (raster->begin());
-		return VtkRaster::loadImageFromArray(data, x0, y0,
-						raster->getNCols(), raster->getNRows(), delta,
-						raster->getNoDataValue());
-	}
+	if (raster)
+		return VtkRaster::loadImageFromArray(raster->begin(), raster->getHeader());
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
 	{
 #ifdef GEOTIFF_FOUND
@@ -75,16 +68,15 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 	else
 		return loadImageFromFile(fileName);
 }
-
-vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, double x0, double y0, std::size_t width, std::size_t height, double delta, double noData)
+vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, GeoLib::RasterHeader header)
 {
-	const unsigned length = height*width;
+	const unsigned length = header.n_rows*header.n_cols;
 	float* data = new float[length*2];
 	float max_val = *std::max_element(data_array, data_array+length);
 	for (unsigned j=0; j<length; ++j)
 	{
 		data[j*2] = static_cast<float>(data_array[j]);
-		if (fabs(data[j*2]-noData) < std::numeric_limits<double>::epsilon())
+		if (fabs(data[j*2]-header.no_data) < std::numeric_limits<double>::epsilon())
 		{
 			data[j*2] = max_val;
 			data[j*2+1] = 0;
@@ -94,10 +86,10 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 	}
 
 	vtkImageImport* image = vtkImageImport::New();
-		image->SetDataSpacing(delta, delta, delta);
-		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
-		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
-		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
+		image->SetDataSpacing(header.cell_size, header.cell_size, header.cell_size);
+		image->SetDataOrigin(header.origin[0]+(header.cell_size/2.0), header.origin[1]+(header.cell_size/2.0), 0);	// translate whole mesh by half a pixel in x and y
+		image->SetWholeExtent(0, header.n_rows-1, 0, header.n_cols-1, 0, 0);
+		image->SetDataExtent(0, header.n_rows-1, 0, header.n_cols-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
 		image->SetDataScalarTypeToFloat();
 		image->SetNumberOfScalarComponents(2);
