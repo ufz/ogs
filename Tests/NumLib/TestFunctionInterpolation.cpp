@@ -67,7 +67,8 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
     const unsigned integration_order = 2;
     IntegrationMethod integration_method(integration_order);
 
-    ShapeMatricesType::ShapeMatrices shape_matrix;
+    ShapeMatricesType::ShapeMatrices shape_matrix(
+        ShapeFunction::DIM, ShapeFunction::DIM, ShapeFunction::NPOINTS);
 
     finite_element.computeShapeFunctions(
             integration_method.getWeightedPoint(0).getCoords(),
