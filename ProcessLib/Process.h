@@ -268,24 +268,8 @@ private:
 		}
 		assert(result && result->size() == _x->size());
 
-#ifdef USE_PETSC
-		std::unique_ptr<double[]> u(new double[_x->size()]);
-		_x->getGlobalVector(u.get());  // get the global solution
-
-		std::size_t const n = _mesh.getNNodes();
-		for (std::size_t i = 0; i < n; ++i)
-		{
-			MeshLib::Location const l(_mesh.getID(),
-			                          MeshLib::MeshItemType::Node, i);
-			auto const global_index = std::abs(  // 0 is the component id.
-			    _local_to_global_index_map->getGlobalIndex(l, 0));
-			(*result)[i] = u[global_index];
-		}
-#else
 		// Copy result
-		for (std::size_t i = 0; i < _x->size(); ++i)
-			(*result)[i] = (*_x)[i];
-#endif
+		_x->getValues(&(*result)[0]);
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
