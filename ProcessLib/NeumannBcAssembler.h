@@ -70,9 +70,10 @@ public:
         IntegrationMethod_ integration_method(_integration_order);
         std::size_t const n_integration_points = integration_method.getNPoints();
 
-        _shape_matrices.resize(n_integration_points);
+        _shape_matrices.reserve(n_integration_points);
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
-            _shape_matrices[ip].resize(ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
+            _shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
+                                         ShapeFunction::NPOINTS);
             fe.computeShapeFunctions(
                     integration_method.getWeightedPoint(ip).getCoords(),
                     _shape_matrices[ip]);
