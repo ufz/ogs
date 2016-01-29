@@ -30,6 +30,19 @@
 namespace MeshLib
 {
 
+/** Extrudes point, line, triangle or quad elements to its higher dimensional
+ * versions, i.e. line, quad, prism, hexahedron.
+ *
+ * @param subsfc_nodes the nodes the elements are based on
+ * @param sfc_elem the element of the surface that will be extruded
+ * @param sfc_to_subsfc_id_map relation between the surface nodes of the surface
+ * element and the ids of the nodes of the subsurface mesh
+ * @param subsfc_sfc_id_map mapping of the surface nodes of the current mesh
+ * to the surface nodes of the extruded mesh
+ *
+ * @return extruded element (point -> line, line -> quad, tri -> prism, quad ->
+ * hexahedron)
+*/
 MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
 	MeshLib::Element const& sfc_elem,
 	MeshLib::PropertyVector<std::size_t> const& sfc_to_subsfc_id_map,
