@@ -152,8 +152,8 @@ public:
         // This table: http://en.cppreference.com/w/cpp/compiler_support
         // says that since MSVC 14.0 inheriting of constructors is supported.
         //! Inherit the constructor
-        ParameterIterator(Iterator it, std::string const& root,
-                          ConfigTreeNew const& parent)
+        explicit ParameterIterator(Iterator it, std::string const& root,
+                                   ConfigTreeNew const& parent)
             : SubtreeIterator(it, root, parent)
         {}
 #else
