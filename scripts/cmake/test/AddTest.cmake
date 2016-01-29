@@ -78,7 +78,7 @@ function (AddTest)
 		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
 		unset(tester)
 	elseif(AddTest_WRAPPER STREQUAL "mpirun")
-		set(WRAPPER_COMMAND "${MPIRUN_TOOL_PATH} ${AddTest_WRAPPER_ARGS}")
+		set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
 	endif()
 
 	# --- Implement testers ---
@@ -160,6 +160,7 @@ function (AddTest)
 		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}
 		-Dcase_path=${AddTest_SOURCE_PATH}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
+		-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
 	)
 
