@@ -220,11 +220,16 @@ public:
         ConfigTreeNew const& _parent;
     };
 
+    //! The tree being wrapped by this class.
     using PTree = boost::property_tree::ptree;
 
-    //! Type of the function objects used as callbacks.
-    //! The first argument denotes the path in the tree at which an event (warning/error)
-    //! occured, the second argument is the associated message
+    /*! Type of the function objects used as callbacks.
+     *
+     * Arguments of the callback:
+     * \arg \c filename the file being from which this ConfigTree has been read.
+     * \arg \c path     the path in the tree where the message was generated.
+     * \arg \c message  the message to be printed.
+     */
     using Callback = std::function<void(const std::string& filename,
                                         const std::string& path,
                                         const std::string& message)>;
@@ -581,7 +586,8 @@ private:
     //! The path of the file from which this tree has been read.
     std::string _filename;
 
-    //! A pair (is attribute, tag/attribute name)
+    //! A pair (is attribute, tag/attribute name).
+    //! The first entry is true for an XML attribute and false for a tag.
     using KeyType = std::pair<bool, std::string>;
 
     //! A map KeyType -> (count, type) keeping track which parameters have been read

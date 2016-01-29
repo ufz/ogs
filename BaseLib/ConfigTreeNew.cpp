@@ -350,7 +350,7 @@ ConfigTreeNew::checkAndInvalidate()
         auto const& tag   = p.first.second;
         auto const& count = p.second.count;
 
-        if (p.first.first) { // tag
+        if (p.first.first) { // XML attribute
             if (count > 0) {
                 warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
                         + " time(s) more than it was present in the configuration tree.");
@@ -358,7 +358,7 @@ ConfigTreeNew::checkAndInvalidate()
                 warning("XML attribute \"" + tag + "\" has been read " + std::to_string(-count)
                         + " time(s) less than it was present in the configuration tree.");
             }
-        } else { // XML attribute
+        } else { // tag
             if (count > 0) {
                 warning("Key <" + tag + "> has been read " + std::to_string(count)
                         + " time(s) more than it was present in the configuration tree.");
