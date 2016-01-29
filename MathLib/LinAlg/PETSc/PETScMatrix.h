@@ -170,7 +170,13 @@ class PETScMatrix
             std::vector<PetscInt> cols;
             cols.reserve(indices.columns.size());
             for (auto col : indices.columns)
-                cols.push_back(std::abs(col));
+            {
+                // Ghost entries, and its original index is 0.
+                if (col == -_ncols)
+                    cols.push_back(0);
+                else
+                    cols.push_back(std::abs(col));
+            }
 
             add(indices.rows, cols, sub_matrix);
         }

@@ -34,11 +34,24 @@ MeshComponentMap::MeshComponentMap(
     : _num_components(components.size())
 
 {
+    // get number of unknows
+    GlobalIndexType num_unknows = 0;
+    for (auto c = components.cbegin(); c != components.cend(); ++c)
+    {
+        assert (*c != nullptr);
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        {
+            MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
+           const MeshLib::NodePartitionedMesh &mesh
+                   = static_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
+            num_unknows += mesh.getNGlobalNodes();
+        }
+    }
+
     // construct dict (and here we number global_index by component type)
     std::size_t global_index_offset = 0;
     std::size_t cell_index = 0;
     std::size_t comp_id = 0;
-
     _num_global_dof = 0;
     _num_local_dof = 0;
     for (auto c = components.cbegin(); c != components.cend(); ++c)
@@ -56,22 +69,23 @@ MeshComponentMap::MeshComponentMap(
                 // mesh items are ordered first by node, cell, ....
                 for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
                 {
-                    const GlobalIndexType global_id = static_cast<GlobalIndexType>(components.size()
+                    GlobalIndexType global_id = static_cast<GlobalIndexType>(components.size()
                                                * mesh.getGlobalNodeID(j) + comp_id);
                     const bool is_ghost = mesh.isGhostNode( mesh.getNode(j)->getID() );
-                    GlobalIndexType signed_global_id
-                                          = is_ghost ? -global_id : global_id;
                     if (is_ghost)
                     {
-                        _ghosts_indices.push_back(-signed_global_id);
-                        if (signed_global_id == 0)
-                             signed_global_id = -9999;
+                        _ghosts_indices.push_back(global_id);
+                        global_id = -global_id;
+                        // If the ghost entry has an index of 0,
+                        // its index is set to the negative value of unknowns.
+                        if (global_id == 0)
+                             global_id = -num_unknows;
                     }
                     else
                         _num_local_dof++;
                        
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
-                                comp_id, signed_global_id) );
+                                comp_id, global_id) );
                 }
 
                 // Note: If the cells are really used (e.g. for the mixed FEM),
@@ -86,22 +100,23 @@ MeshComponentMap::MeshComponentMap(
                 // mesh items are ordered first by node, cell, ....
                 for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
                 {
-                    const GlobalIndexType global_id = static_cast<GlobalIndexType>(global_index_offset
+                    GlobalIndexType global_id = static_cast<GlobalIndexType>(global_index_offset
                                                           + mesh.getGlobalNodeID(j) );
                     const bool is_ghost = mesh.isGhostNode( mesh.getNode(j)->getID() );
-                    GlobalIndexType signed_global_id
-                                        = is_ghost ? -global_id : global_id;
                     if (is_ghost)
                     {
-                        _ghosts_indices.push_back(-signed_global_id);
-                        if (signed_global_id == 0)
-                             signed_global_id = -9999;
+                        _ghosts_indices.push_back(global_id);
+                        global_id = -global_id;
+                        // If the ghost entry has an index of 0,
+                        // its index is set to the negative value of unknowns.
+                        if (global_id == 0)
+                             global_id = -num_unknows;
                     }
                     else
                         _num_local_dof++;
 
                     _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
-                                comp_id, signed_global_id) );
+                                comp_id, global_id) );
                 }
 
                 // Note: If the cells are really used (e.g. for the mixed FEM),

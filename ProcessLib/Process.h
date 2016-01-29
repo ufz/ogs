@@ -164,8 +164,11 @@ private:
 		{
 			MeshLib::Location const l(_mesh.getID(),
 			                          MeshLib::MeshItemType::Node, i);
-			auto const global_index = std::abs(
+			auto global_index = std::abs(
 			    _local_to_global_index_map->getGlobalIndex(l, component_id));
+			// Ghost entry and its original index is 0
+			if ( global_index == _x->size() )
+			    global_index = 0;
 			_x->set(global_index,
 			        variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}
