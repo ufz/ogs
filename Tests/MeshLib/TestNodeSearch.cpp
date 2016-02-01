@@ -22,7 +22,9 @@
 TEST(NodeSearch, UnusedNodes)
 {
 	std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
-	GeoLib::Raster raster(4,3,0,0,1,pix.begin(), pix.end());
+	GeoLib::RasterHeader const header = 
+		{4,3,MathLib::Point3d(std::array<double,3>{{0,0,0}}),1,-9999};
+	GeoLib::Raster const raster(header,pix.begin(), pix.end());
 	MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
 	MeshLib::Mesh* mesh = conv.execute();
 	MeshLib::NodeSearch ns(*mesh);
