@@ -58,11 +58,14 @@ struct ShapeMatrices
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
     DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
 
-    /** The default constructor is used by fixed-size (at compile-time)
-     * matrix/vector types where no resizing of the matrices/vectors is required
-     * in this constructor.
+    /** Not default constructible, dimensions always must be given.
+     *
+     * The default constructor has been deleted explicitly, because with
+     * dynamically allocated matrices it is rather easy to forget the
+     * required <tt>resize()</tt> call. Note: the <tt>resize()</tt> member
+     * is also deleted now.
      */
-    ShapeMatrices() = default;
+    ShapeMatrices() = delete;
 
     /**
      * Initialize matrices and vectors
@@ -82,20 +85,8 @@ struct ShapeMatrices
           invJ(local_dim, local_dim),
           dNdx(global_dim, n_nodes)
     {
-        this->setZero();
+        setZero();
     }
-
-    ~ShapeMatrices() {}
-
-    /// Reinitialize the matrices and vectors. When using dynamic size matrices
-    /// and the default constructor of this class memory allocation must be
-    /// performed calling this function.
-    /// For fixed size matrices no memory reallocation happens and the
-    /// matrix/vector sizes must be the same as at construction (given by the
-    /// template parameters).
-    void resize(std::size_t const dim, std::size_t n_nodes);
-
-    void resize(std::size_t const local_dim, std::size_t const global_dim, std::size_t n_nodes);
 
     /// reset all data with zero
     void setZero();
