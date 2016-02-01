@@ -8,8 +8,9 @@
 #   NAME <name of the the test>
 #   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
-#   EXECUTABLE_ARGS <arguments> # files referenced in the DATA argument can be used here
+#   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
+#   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|memcheck> # optional
 #   DATA <list of all required data files, white-space separated, have to be in PATH>
 # )
@@ -37,7 +38,6 @@ function (AddTest)
 	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-	# TODO set to submodule
 	set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
 	set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
 	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})

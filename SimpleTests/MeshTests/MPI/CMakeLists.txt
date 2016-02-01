@@ -23,7 +23,7 @@ AddTest(
 	NAME NodePartitionedMeshTestASCII
 	PATH NodePartitionedMesh/ASCII
 	EXECUTABLE test_node_partitioned_mesh
-	EXECUTABLE_ARGS mesh_3d
+	EXECUTABLE_ARGS "mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/ASCII"
 	WRAPPER mpirun
 	WRAPPER_ARGS "-np 3"
 	TESTER diff
@@ -34,7 +34,7 @@ AddTest(
 	NAME NodePartitionedMeshTestBinary
 	PATH NodePartitionedMesh/Binary
 	EXECUTABLE test_node_partitioned_mesh
-	EXECUTABLE_ARGS mesh_3d
+	EXECUTABLE_ARGS "mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/Binary"
 	WRAPPER mpirun
 	WRAPPER_ARGS "-np 3"
 	TESTER diff
@@ -80,4 +80,3 @@ AddTest(
 		cube_1e3_neumann_result_pcs_0_ts_1_1.vtu
 		cube_1e3_neumann_result_pcs_0_ts_1_2.vtu
 )
-
