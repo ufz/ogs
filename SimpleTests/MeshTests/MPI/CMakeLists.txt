@@ -23,9 +23,9 @@ AddTest(
 	NAME NodePartitionedMeshTestASCII
 	PATH NodePartitionedMesh/ASCII
 	EXECUTABLE test_node_partitioned_mesh
-	EXECUTABLE_ARGS "mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/ASCII"
+	EXECUTABLE_ARGS mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/ASCII
 	WRAPPER mpirun
-	WRAPPER_ARGS "-np 3"
+	WRAPPER_ARGS -np 3
 	TESTER diff
 	DIFF_DATA mesh_3d_partition_0.msh mesh_3d_partition_1.msh mesh_3d_partition_2.msh
 )
@@ -34,9 +34,9 @@ AddTest(
 	NAME NodePartitionedMeshTestBinary
 	PATH NodePartitionedMesh/Binary
 	EXECUTABLE test_node_partitioned_mesh
-	EXECUTABLE_ARGS "mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/Binary"
+	EXECUTABLE_ARGS mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/Binary
 	WRAPPER mpirun
-	WRAPPER_ARGS "-np 3"
+	WRAPPER_ARGS -np 3
 	TESTER diff
 	DIFF_DATA mesh_3d_partition_0.msh mesh_3d_partition_1.msh mesh_3d_partition_2.msh
 )

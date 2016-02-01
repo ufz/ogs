@@ -43,7 +43,7 @@ function (AddTest)
 	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
 	file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
 
-	set(AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS} -o ${AddTest_BINARY_PATH_NATIVE}")
+	set(AddTest_EXECUTABLE_ARGS ${AddTest_EXECUTABLE_ARGS} -o ${AddTest_BINARY_PATH_NATIVE})
 
 	# set defaults
 	if(NOT AddTest_EXECUTABLE)
@@ -157,10 +157,10 @@ function (AddTest)
 		NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
 		COMMAND ${CMAKE_COMMAND}
 		-DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}
+		"-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
 		-Dcase_path=${AddTest_SOURCE_PATH}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
-		-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}
+		"-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
 	)
 
@@ -199,3 +199,4 @@ function (AddTest)
 		PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
 
 endfunction()
+
