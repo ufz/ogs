@@ -83,7 +83,7 @@ public:
 					std::size_t idx(i+j*_n_steps[0]+k*n_plane);
 					std::copy(_elements_in_grid_box[idx].begin(),
 					          _elements_in_grid_box[idx].end(),
-					          elements_vec.end());
+					          std::back_inserter(elements_vec));
 				}
 			}
 		}
