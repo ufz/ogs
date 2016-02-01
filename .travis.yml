@@ -9,19 +9,10 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      # TODO: feelpp/petsc
     packages:
       - g++-4.8
       - qt4-dev-tools
       - libxt-dev
-      # TODO
-      # - libpetsc3.4.2-dev
-      # Not allowed yet:
-      # - numdiff
-      # - libshp-dev
-      # - libgeotiff-dev
-
-
 
 cache:
   directories:
@@ -35,7 +26,6 @@ env:
     - BOOST_ROOT=$HOME/boost_1_56_0
   matrix:
     - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-    # - CASE=CLI_PETSC CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_USE_PETSC=ON -DPETSC_DIR=/usr/lib/petscdir/3.4.2/"
     - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
 
 before_install:
@@ -50,11 +40,9 @@ before_script:
 script:
   - mkdir build
   - cd build
-  - cmake $CMAKE_ARGS ..
+  - cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ..
   - make -j 2
   - if [[ "$CASE" == "CLI" ]]; then make tests; fi
-  # PetSc
-  #- if [[ "$CASE" == "CLI_PETSC" ]]; then make tests_mpi; fi
 
 notifications:
   hipchat:
