@@ -43,11 +43,13 @@ function (AddTest)
 	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
 	file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
 
-	set(AddTest_EXECUTABLE_ARGS ${AddTest_EXECUTABLE_ARGS} -o ${AddTest_BINARY_PATH_NATIVE})
-
 	# set defaults
 	if(NOT AddTest_EXECUTABLE)
 		set(AddTest_EXECUTABLE ogs)
+	endif()
+
+	if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
+		set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
 	endif()
 
 	if(NOT AddTest_WRAPPER)

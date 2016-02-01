@@ -129,10 +129,10 @@ else()
 	# MPI groundwater flow tests
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow2D
-		PATH EllipticPETSc/
-		EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		PATH EllipticPETSc
+		EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
 		WRAPPER mpirun
-		WRAPPER_ARGS "-np 3"
+		WRAPPER_ARGS -np 3
 		TESTER diff
 		DIFF_DATA
 			quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_0.vtu
@@ -142,27 +142,27 @@ else()
 
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
-		PATH EllipticPETSc/
-		EXECUTABLE_ARGS cube_1e3.prj -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		PATH EllipticPETSc
+		EXECUTABLE_ARGS cube_1e3.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
 		WRAPPER mpirun
-		WRAPPER_ARGS "-np 3"
+		WRAPPER_ARGS -np 3
 		TESTER diff
 		DIFF_DATA
-			cube_1e3_result_pcs_0_ts_1_0.vtu
-			cube_1e3_result_pcs_0_ts_1_1.vtu
-			cube_1e3_result_pcs_0_ts_1_2.vtu
+			cube_1e3_pcs_0_ts_1_0.vtu
+			cube_1e3_pcs_0_ts_1_1.vtu
+			cube_1e3_pcs_0_ts_1_2.vtu
 	)
 
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow3D_NeumannBC
-		PATH EllipticPETSc/
-		EXECUTABLE_ARGS cube_1e3_neumann.prj -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		PATH EllipticPETSc
+		EXECUTABLE_ARGS cube_1e3_neumann.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
 		WRAPPER mpirun
-		WRAPPER_ARGS "-np 3"
+		WRAPPER_ARGS -np 3
 		TESTER diff
 		DIFF_DATA
-			cube_1e3_neumann_result_pcs_0_ts_1_0.vtu
-			cube_1e3_neumann_result_pcs_0_ts_1_1.vtu
-			cube_1e3_neumann_result_pcs_0_ts_1_2.vtu
+			cube_1e3_neumann_pcs_0_ts_1_0.vtu
+			cube_1e3_neumann_pcs_0_ts_1_1.vtu
+			cube_1e3_neumann_pcs_0_ts_1_2.vtu
 	)
 endif()
