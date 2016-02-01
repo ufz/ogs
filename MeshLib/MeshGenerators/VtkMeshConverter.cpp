@@ -71,18 +71,19 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 		return nullptr;
 	}
 
-	MathLib::Point3d orig ({{origin[0], origin[1], origin[2]}});
-	GeoLib::RasterHeader header = {dims[1], dims[0], orig, scalingFactor, -9999};
+	MathLib::Point3d const orig (std::array<double,3>{{origin[0], origin[1], origin[2]}});
+	GeoLib::RasterHeader const header = 
+		{static_cast<std::size_t>(dims[0]), static_cast<std::size_t>(dims[1]), orig, scalingFactor, -9999};
 	const std::size_t incHeight = header.n_rows+1;
 	const std::size_t incWidth  = header.n_cols+1;
 	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
 	std::vector<bool> pix_vis (header.n_rows * header.n_cols, false);
 
-	for (std::size_t i = 0; i < header.n_cols; i++)
-		for (std::size_t j = 0; j < header.n_rows; j++)
+	for (std::size_t i = 0; i < header.n_rows; i++)
+		for (std::size_t j = 0; j < header.n_cols; j++)
 		{
-			std::size_t const img_idx = i*header.n_rows + j;
-			std::size_t const fld_idx = i*incHeight + j;
+			std::size_t const img_idx = i*header.n_cols + j;
+			std::size_t const fld_idx = i*incWidth + j;
 
 			// colour of current pixel
 			double* colour = pixelData->GetTuple(img_idx);
@@ -97,8 +98,8 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 			pix_vis[img_idx] = true;
 			pix_val[fld_idx] = value;
 			pix_val[fld_idx+1] = value;
-			pix_val[fld_idx+incHeight] = value;
-			pix_val[fld_idx+incHeight+1] = value;
+			pix_val[fld_idx+incWidth] = value;
+			pix_val[fld_idx+incWidth+1] = value;
 		}
 
 	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
@@ -121,19 +122,19 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(
 	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
 	std::vector<bool> pix_vis (incHeight * incWidth, false);
 
-	for (std::size_t i = 0; i < header.n_cols; i++)
-		for (std::size_t j = 0; j < header.n_rows; j++)
+	for (std::size_t i = 0; i < header.n_rows; i++)
+		for (std::size_t j = 0; j < header.n_cols; j++)
 		{
-			std::size_t const img_idx = i*header.n_rows + j;
-			std::size_t const fld_idx = i*incHeight + j;
+			std::size_t const img_idx = i*header.n_cols + j;
+			std::size_t const fld_idx = i*incWidth + j;
 			if (img[img_idx] == -9999)
 				continue;
 
 			pix_vis[img_idx] = true;
 			pix_val[fld_idx] = img[img_idx];
 			pix_val[fld_idx+1] = img[img_idx];
-			pix_val[fld_idx+incHeight] = img[img_idx];
-			pix_val[fld_idx+incHeight+1] = img[img_idx];
+			pix_val[fld_idx+incWidth] = img[img_idx];
+			pix_val[fld_idx+incWidth+1] = img[img_idx];
 		}
 
 	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
@@ -183,10 +184,10 @@ std::vector<MeshLib::Node*> VtkMeshConverter::createNodeVector(
 	double const x_offset(header.origin[0] - header.cell_size/2.0);
 	double const y_offset(header.origin[1] - header.cell_size/2.0);
 	std::vector<MeshLib::Node*> nodes;
-	for (std::size_t i = 0; i < (header.n_cols+1); i++)
-		for (std::size_t j = 0; j < (header.n_rows+1); j++)
+	for (std::size_t i = 0; i < (header.n_rows+1); i++)
+		for (std::size_t j = 0; j < (header.n_cols+1); j++)
 		{
-			std::size_t const index = i * (header.n_rows+1) + j;
+			std::size_t const index = i * (header.n_cols+1) + j;
 			if (elevation[index] == std::numeric_limits<double>::max())
 				continue;
 
@@ -209,26 +210,25 @@ std::vector<MeshLib::Element*> VtkMeshConverter::createElementVector(
 	MeshElemType elem_type)
 {
 	std::vector<MeshLib::Element*> elements;
-	std::size_t const incHeight (imgHeight+1);
 	std::size_t const incWidth (imgWidth+1);
-	for (std::size_t i = 0; i < imgWidth; i++)
-		for (std::size_t j = 0; j < imgHeight; j++)
+	for (std::size_t i = 0; i < imgHeight; i++)
+		for (std::size_t j = 0; j < imgWidth; j++)
 		{
-			if (!pix_vis[i*imgHeight+j])
+			if (!pix_vis[i*imgWidth+j])
 				continue;
 
-			int const idx = i * incHeight + j;
+			int const idx = i * incWidth + j;
 			if (elem_type == MeshElemType::TRIANGLE)
 			{
 				MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
 				tri1_nodes[0] = nodes[node_idx_map[idx]];
 				tri1_nodes[1] = nodes[node_idx_map[idx+1]];
-				tri1_nodes[2] = nodes[node_idx_map[idx+incHeight]];
+				tri1_nodes[2] = nodes[node_idx_map[idx+incWidth]];
 
 				MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
 				tri2_nodes[0] = nodes[node_idx_map[idx+1]];
-				tri2_nodes[1] = nodes[node_idx_map[idx+incHeight+1]];
-				tri2_nodes[2] = nodes[node_idx_map[idx+incHeight]];
+				tri2_nodes[1] = nodes[node_idx_map[idx+incWidth+1]];
+				tri2_nodes[2] = nodes[node_idx_map[idx+incWidth]];
 
 				elements.push_back(new MeshLib::Tri(tri1_nodes)); // upper left triangle
 				elements.push_back(new MeshLib::Tri(tri2_nodes)); // lower right triangle
@@ -238,8 +238,8 @@ std::vector<MeshLib::Element*> VtkMeshConverter::createElementVector(
 				MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
 				quad_nodes[0] = nodes[node_idx_map[idx]];
 				quad_nodes[1] = nodes[node_idx_map[idx + 1]];
-				quad_nodes[2] = nodes[node_idx_map[idx + incHeight + 1]];
-				quad_nodes[3] = nodes[node_idx_map[idx + incHeight]];
+				quad_nodes[2] = nodes[node_idx_map[idx + incWidth + 1]];
+				quad_nodes[3] = nodes[node_idx_map[idx + incWidth]];
 				elements.push_back(new MeshLib::Quad(quad_nodes));
 			}
 		}

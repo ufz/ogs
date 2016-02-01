@@ -88,8 +88,8 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, Geo
 	vtkImageImport* image = vtkImageImport::New();
 		image->SetDataSpacing(header.cell_size, header.cell_size, header.cell_size);
 		image->SetDataOrigin(header.origin[0]+(header.cell_size/2.0), header.origin[1]+(header.cell_size/2.0), 0);	// translate whole mesh by half a pixel in x and y
-		image->SetWholeExtent(0, header.n_rows-1, 0, header.n_cols-1, 0, 0);
-		image->SetDataExtent(0, header.n_rows-1, 0, header.n_cols-1, 0, 0);
+		image->SetWholeExtent(0, header.n_cols-1, 0, header.n_rows-1, 0, 0);
+		image->SetDataExtent(0, header.n_cols-1, 0, header.n_rows-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
 		image->SetDataScalarTypeToFloat();
 		image->SetNumberOfScalarComponents(2);

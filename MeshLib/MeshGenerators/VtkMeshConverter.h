@@ -106,13 +106,13 @@ private:
 		const std::size_t &imgWidth,
 		MeshElemType elem_type)
 	{
-		for (std::size_t i = 0; i < imgWidth; i++)
-			for (std::size_t j = 0; j < imgHeight; j++)
+		for (std::size_t i = 0; i < imgHeight; i++)
+			for (std::size_t j = 0; j < imgWidth; j++)
 			{
-				std::size_t const idx (i*imgHeight+j);
-				if (!pix_vis[i*imgHeight+j])
+				std::size_t const idx (i*imgWidth+j);
+				if (!pix_vis[i*imgWidth+j])
 					continue;
-				T val (static_cast<T>(pix_val[i*(imgHeight+1)+j]));
+				T val (static_cast<T>(pix_val[i*(imgWidth+1)+j]));
 				if (elem_type == MeshElemType::TRIANGLE)
 				{
 					prop_vec.push_back(val);

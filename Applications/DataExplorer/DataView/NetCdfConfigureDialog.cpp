@@ -354,7 +354,7 @@ void NetCdfConfigureDialog::createDataObject()
 
 	double origin_x = (originLon < lastLon) ? originLon : lastLon;
 	double origin_y = (originLat < lastLat) ? originLat : lastLat;
-	MathLib::Point3d origin({{origin_x, origin_y, 0}});
+	MathLib::Point3d origin(std::array<double,3>{{origin_x, origin_y, 0}});
 
 	double resolution = (doubleSpinBoxResolution->value());
 
