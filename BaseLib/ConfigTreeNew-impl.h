@@ -71,7 +71,7 @@ ConfigTreeNew::
 getConfParamList(std::string const& param) const
 {
     checkUnique(param);
-    markVisited<T>(param, false, true);
+    markVisited<T>(param, Attr::TAG, true);
 
     auto p = _tree->equal_range(param);
     return Range<ValueIterator<T> >(
@@ -155,7 +155,7 @@ ConfigTreeNew::
 getConfAttributeOptional(std::string const& attr) const
 {
     checkUniqueAttr(attr);
-    auto& ct = markVisited<T>(attr, true, true);
+    auto& ct = markVisited<T>(attr, Attr::ATTR, true);
 
     if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
         if (auto a = attrs->get_child_optional(attr)) {
@@ -176,7 +176,7 @@ getConfAttributeOptional(std::string const& attr) const
 template<typename T>
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool const is_attr,
+markVisited(std::string const& key, Attr const is_attr,
             bool const peek_only) const
 {
     auto const type = std::type_index(typeid(T));

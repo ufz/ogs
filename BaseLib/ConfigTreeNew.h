@@ -116,7 +116,7 @@ public:
             // tell the _parent instance that a subtree now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited(_tagname, false, false);
+                _parent.markVisited(_tagname, Attr::TAG, false);
             }
             return ConfigTreeNew(_it->second, _parent, _tagname);
         }
@@ -200,7 +200,7 @@ public:
             // tell the _parent instance that a setting now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited<ValueType>(_tagname, false, false);
+                _parent.markVisited<ValueType>(_tagname, Attr::TAG, false);
             }
             return ConfigTreeNew(_it->second, _parent, _tagname).getValue<ValueType>();
         }
@@ -503,6 +503,12 @@ private:
         std::type_index type;
     };
 
+    //! Used to indicate if dealing with XML tags or XML attributes
+    enum class Attr : bool
+    {
+        TAG = false, ATTR = true
+    };
+
     //! Used for wrapping a subtree
     explicit ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent, std::string const& root);
 
@@ -548,7 +554,7 @@ private:
      * \c param peek_only if true, do not change the read-count of the given key.
      */
     template<typename T>
-    CountType& markVisited(std::string const& key, bool const is_attr,
+    CountType& markVisited(std::string const& key, Attr const is_attr,
                            bool peek_only) const;
 
     /*! Keeps track of the key \c key and its value type ConfigTree.
@@ -557,12 +563,12 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool const is_attr,
+    CountType& markVisited(std::string const& key, Attr const is_attr,
                            bool const peek_only) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
-    void markVisitedDecrement(bool const is_attr, std::string const& key) const;
+    void markVisitedDecrement(Attr const is_attr, std::string const& key) const;
 
     //! Checks if this tree has any children.
     bool hasChildren() const;
@@ -587,8 +593,7 @@ private:
     std::string _filename;
 
     //! A pair (is attribute, tag/attribute name).
-    //! The first entry is true for an XML attribute and false for a tag.
-    using KeyType = std::pair<bool, std::string>;
+    using KeyType = std::pair<Attr, std::string>;
 
     //! A map KeyType -> (count, type) keeping track which parameters have been read
     //! how often and which datatype they have.

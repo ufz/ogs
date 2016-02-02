@@ -104,7 +104,7 @@ ConfigTreeNew::
 getConfParamList(const std::string &param) const
 {
     checkUnique(param);
-    markVisited(param, false, true);
+    markVisited(param, Attr::TAG, true);
 
     auto p = _tree->equal_range(param);
 
@@ -131,10 +131,10 @@ getConfSubtreeOptional(std::string const& root) const
     checkUnique(root);
 
     if (auto subtree = _tree->get_child_optional(root)) {
-        markVisited(root, false, false);
+        markVisited(root, Attr::TAG, false);
         return ConfigTreeNew(*subtree, *this, root);
     } else {
-        markVisited(root, false, true);
+        markVisited(root, Attr::TAG, true);
         return boost::none;
     }
 }
@@ -144,7 +144,7 @@ ConfigTreeNew::
 getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
-    markVisited(root, false, true);
+    markVisited(root, Attr::TAG, true);
 
     auto p = _tree->equal_range(root);
 
@@ -158,7 +158,7 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param) const
     checkUnique(param);
     // if not found, peek only
     bool peek_only = _tree->find(param) == _tree->not_found();
-    markVisited(param, false, peek_only);
+    markVisited(param, Attr::TAG, peek_only);
 }
 
 void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
@@ -169,13 +169,13 @@ void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
     // Btw. (not a hint) _tree->find() does not seem to work here.
     bool peek_only = !_tree->get_child_optional("<xmlattr>." + attr);
 
-    markVisited(attr, true, peek_only);
+    markVisited(attr, Attr::ATTR, peek_only);
 }
 
 void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
-    auto& ct = markVisited(param, false, true);
+    auto& ct = markVisited(param, Attr::TAG, true);
 
     auto p = _tree->equal_range(param);
     for (auto it = p.first; it != p.second; ++it) {
@@ -254,7 +254,7 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
 {
     checkKeyname(key);
 
-    if (_visited_params.find({false, key}) != _visited_params.end()) {
+    if (_visited_params.find({Attr::TAG, key}) != _visited_params.end()) {
         error("Key <" + key + "> has already been processed.");
     }
 }
@@ -279,21 +279,21 @@ void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
         checkKeyname(attr);
     }
 
-    if (_visited_params.find({true, attr}) != _visited_params.end()) {
+    if (_visited_params.find({Attr::ATTR, attr}) != _visited_params.end()) {
         error("Attribute \"" + attr + "\" has already been processed.");
     }
 }
 
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool const is_attr, bool const peek_only) const
+markVisited(std::string const& key, Attr const is_attr, bool const peek_only) const
 {
     return markVisited<ConfigTreeNew>(key, is_attr, peek_only);
 }
 
 void
 ConfigTreeNew::
-markVisitedDecrement(bool const is_attr, std::string const& key) const
+markVisitedDecrement(Attr const is_attr, std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
@@ -335,13 +335,13 @@ ConfigTreeNew::checkAndInvalidate()
     // iterate over children
     for (auto const& p : *_tree) {
         if (p.first != "<xmlattr>") // attributes are handled below
-            markVisitedDecrement(false, p.first);
+            markVisitedDecrement(Attr::TAG, p.first);
     }
 
     // iterate over attributes
     if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
         for (auto const& p : *attrs) {
-            markVisitedDecrement(true, p.first);
+            markVisitedDecrement(Attr::ATTR, p.first);
         }
     }
 
@@ -350,7 +350,8 @@ ConfigTreeNew::checkAndInvalidate()
         auto const& tag   = p.first.second;
         auto const& count = p.second.count;
 
-        if (p.first.first) { // XML attribute
+        switch (p.first.first) {
+        case Attr::ATTR:
             if (count > 0) {
                 warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
                         + " time(s) more than it was present in the configuration tree.");
@@ -358,7 +359,8 @@ ConfigTreeNew::checkAndInvalidate()
                 warning("XML attribute \"" + tag + "\" has been read " + std::to_string(-count)
                         + " time(s) less than it was present in the configuration tree.");
             }
-        } else { // tag
+            break;
+        case Attr::TAG:
             if (count > 0) {
                 warning("Key <" + tag + "> has been read " + std::to_string(count)
                         + " time(s) more than it was present in the configuration tree.");
