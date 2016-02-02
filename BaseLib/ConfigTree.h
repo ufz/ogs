@@ -631,7 +631,7 @@ private:
 
 }
 
-#include "ConfigTreeNew-impl.h"
+#include "ConfigTree-impl.h"
 
 
 #endif // BASELIB_CONFIGTREE_H_

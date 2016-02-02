@@ -12,7 +12,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/ConstantFunction.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshLib/Elements/Element.h"

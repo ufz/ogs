@@ -16,7 +16,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace ProcessLib
 {

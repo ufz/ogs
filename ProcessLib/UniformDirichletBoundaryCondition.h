@@ -17,7 +17,7 @@
 
 #include "NumericsConfig.h" // for GlobalIndexType
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 

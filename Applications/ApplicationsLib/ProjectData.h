@@ -15,7 +15,7 @@
 
 #include <memory>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 #include "GeoLib/GEOObjects.h"
 

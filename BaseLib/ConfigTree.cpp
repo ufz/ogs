@@ -8,7 +8,7 @@
  */
 
 #include <logog/include/logog.hpp>
-#include "ConfigTreeNew.h"
+#include "ConfigTree.h"
 
 // Explicitly instantiate the boost::property_tree::ptree which is a typedef to
 // the following basic_ptree.

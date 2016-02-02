@@ -7,7 +7,7 @@
  *
  */
 
-#include "ConfigTreeNew.h"
+#include "ConfigTree.h"
 
 namespace BaseLib
 {

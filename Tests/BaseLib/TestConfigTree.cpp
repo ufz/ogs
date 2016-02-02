@@ -13,7 +13,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <sstream>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 // make useful line numbers appear in the output of gtest
 #define EXPECT_ERR_WARN(cbs, error, warning) do  { \

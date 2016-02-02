@@ -28,7 +28,7 @@
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace detail
 {

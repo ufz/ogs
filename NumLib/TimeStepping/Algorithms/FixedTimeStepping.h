@@ -14,7 +14,7 @@
 
 #include <vector>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "ITimeStepAlgorithm.h"
 
 namespace NumLib

@@ -14,7 +14,7 @@
 #endif
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"

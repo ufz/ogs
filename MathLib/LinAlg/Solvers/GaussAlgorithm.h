@@ -18,7 +18,7 @@
 #include <cstddef>
 
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "../Dense/DenseMatrix.h"
 #include "TriangularSolve.h"
 

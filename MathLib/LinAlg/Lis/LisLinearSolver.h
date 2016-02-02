@@ -20,7 +20,7 @@
 
 #include <lis.h>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 #include "LisOption.h"
 #include "LisVector.h"

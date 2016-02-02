@@ -23,7 +23,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"

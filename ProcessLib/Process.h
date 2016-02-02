@@ -19,7 +19,7 @@
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"

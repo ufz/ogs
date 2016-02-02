@@ -15,7 +15,7 @@
 #include <logog/include/logog.hpp>
 #include <boost/optional.hpp>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Elements/Element.h"
 
 namespace MeshLib

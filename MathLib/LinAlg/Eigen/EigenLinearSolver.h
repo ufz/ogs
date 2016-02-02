@@ -13,7 +13,7 @@
 #include <vector>
 
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "EigenVector.h"
 #include "EigenOption.h"
 

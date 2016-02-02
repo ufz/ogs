@@ -17,7 +17,7 @@
 #include <limits>
 #include <cassert>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "logog/include/logog.hpp"
 
 namespace NumLib

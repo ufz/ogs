@@ -10,7 +10,7 @@
 #ifndef BASELIB_CONFIGTREEUTIL
 #define BASELIB_CONFIGTREEUTIL
 
-#include "ConfigTreeNew.h"
+#include "ConfigTree.h"
 
 namespace BaseLib
 {

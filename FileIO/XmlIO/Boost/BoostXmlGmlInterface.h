@@ -20,7 +20,7 @@
 #include <vector>
 
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "FileIO/XmlIO/XMLInterface.h"
 
 namespace GeoLib

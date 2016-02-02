@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace MathLib
 {

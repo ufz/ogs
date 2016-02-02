@@ -11,7 +11,7 @@
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
 #include <cassert>
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
