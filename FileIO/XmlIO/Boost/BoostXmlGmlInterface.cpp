@@ -128,7 +128,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
 	return true;
 }
 
-void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTreeNew const& pointsRoot,
+void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 	                                  std::vector<GeoLib::Point*>& points,
 	                                  std::map<std::string, std::size_t>& pnt_names )
 {
@@ -158,7 +158,7 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTreeNew const& pointsRoot,
 }
 
 void BoostXmlGmlInterface::readPolylines(
-    BaseLib::ConfigTreeNew const& polylinesRoot,
+    BaseLib::ConfigTree const& polylinesRoot,
     std::vector<GeoLib::Polyline*>& polylines,
     std::vector<GeoLib::Point*> const& points,
     std::vector<std::size_t> const& pnt_id_map,
@@ -191,7 +191,7 @@ void BoostXmlGmlInterface::readPolylines(
 }
 
 void BoostXmlGmlInterface::readSurfaces(
-    BaseLib::ConfigTreeNew const&  surfacesRoot,
+    BaseLib::ConfigTree const&  surfacesRoot,
     std::vector<GeoLib::Surface*>& surfaces,
     std::vector<GeoLib::Point*> const& points,
     const std::vector<std::size_t>& pnt_id_map,

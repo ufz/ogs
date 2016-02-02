@@ -7,9 +7,8 @@
  *
  */
 
-#pragma once
-
-#include "ConfigTree.h"
+#ifndef BASELIB_CONFIGTREE_H_
+#define BASELIB_CONFIGTREE_H_
 
 #include <typeindex>
 #include <map>
@@ -17,24 +16,30 @@
 #include <functional>
 #include <memory>
 
+#include <boost/property_tree/ptree.hpp>
+
+extern template class boost::property_tree::basic_ptree<
+    std::string, std::string, std::less<std::string>>;
+
+
 namespace BaseLib
 {
 
-class ConfigTreeNew;
+class ConfigTree;
 
 /*! Check if \c conf has been read entirely and invalidate it.
  *
  * This method can savely be called on \c nullptr's.
  *
- * \see ConfigTreeNew::checkAndInvalidate()
+ * \see ConfigTree::checkAndInvalidate()
  */
-void checkAndInvalidate(ConfigTreeNew* const conf);
+void checkAndInvalidate(ConfigTree* const conf);
 
 //! \overload
-void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf);
+void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf);
 
 //! \overload
-void checkAndInvalidate(ConfigTreeNew& conf);
+void checkAndInvalidate(ConfigTree& conf);
 
 template<typename Iterator> class Range;
 
@@ -86,7 +91,7 @@ template<typename Iterator> class Range;
  * function BaseLib::makeConfigTree(), which performs many error checks. For limitations
  * of the used XML parser, please have a look at that function's documentation.
  */
-class ConfigTreeNew final
+class ConfigTree final
 {
 public:
     /*! A wrapper around a Boost Iterator for iterating over ranges of subtrees.
@@ -95,13 +100,13 @@ public:
      * a setting has been parsed.
      */
     class SubtreeIterator
-            : public std::iterator<std::input_iterator_tag, ConfigTreeNew>
+            : public std::iterator<std::input_iterator_tag, ConfigTree>
     {
     public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit SubtreeIterator(Iterator it, std::string const& root,
-                                 ConfigTreeNew const& parent)
+                                 ConfigTree const& parent)
             : _it(it), _tagname(root), _parent(parent)
         {}
 
@@ -111,14 +116,14 @@ public:
             return *this;
         }
 
-        ConfigTreeNew operator*() {
+        ConfigTree operator*() {
             // if this iterator has been incremented since the last dereference,
             // tell the _parent instance that a subtree now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
                 _parent.markVisited(_tagname, Attr::TAG, false);
             }
-            return ConfigTreeNew(_it->second, _parent, _tagname);
+            return ConfigTree(_it->second, _parent, _tagname);
         }
 
         bool operator==(SubtreeIterator const& other) const {
@@ -135,7 +140,7 @@ public:
 
     protected:
         std::string const _tagname;
-        ConfigTreeNew const& _parent;
+        ConfigTree const& _parent;
     };
 
     /*! A wrapper around a Boost Iterator for iterating over ranges of parameters.
@@ -153,7 +158,7 @@ public:
         // says that since MSVC 14.0 inheriting of constructors is supported.
         //! Inherit the constructor
         explicit ParameterIterator(Iterator it, std::string const& root,
-                                   ConfigTreeNew const& parent)
+                                   ConfigTree const& parent)
             : SubtreeIterator(it, root, parent)
         {}
 #else
@@ -161,7 +166,7 @@ public:
         using SubtreeIterator::SubtreeIterator;
 #endif
 
-        ConfigTreeNew operator*() {
+        ConfigTree operator*() {
             auto st = SubtreeIterator::operator*();
             if (st.hasChildren())
                 _parent.error("The requested parameter <" + _tagname + ">"
@@ -185,7 +190,7 @@ public:
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit ValueIterator(Iterator it, std::string const& root,
-                               ConfigTreeNew const& parent)
+                               ConfigTree const& parent)
             : _it(it), _tagname(root), _parent(parent)
         {}
 
@@ -202,7 +207,7 @@ public:
                 _has_incremented = false;
                 _parent.markVisited<ValueType>(_tagname, Attr::TAG, false);
             }
-            return ConfigTreeNew(_it->second, _parent, _tagname).getValue<ValueType>();
+            return ConfigTree(_it->second, _parent, _tagname).getValue<ValueType>();
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
@@ -217,7 +222,7 @@ public:
         bool _has_incremented = true;
         Iterator _it;
         std::string const _tagname;
-        ConfigTreeNew const& _parent;
+        ConfigTree const& _parent;
     };
 
     //! The tree being wrapped by this class.
@@ -249,24 +254,24 @@ public:
      * Defaults are strict: By default, both callbacks are set to the same function,
      * i.e., warnings will also result in program abortion!
      */
-    explicit ConfigTreeNew(PTree const& tree,
+    explicit ConfigTree(PTree const& tree,
                            std::string const& filename,
                            Callback const& error_cb = onerror,
                            Callback const& warning_cb = onerror);
 
     //! copying is not compatible with the semantics of this class
-    ConfigTreeNew(ConfigTreeNew const&) = delete;
+    ConfigTree(ConfigTree const&) = delete;
 
     //! After being moved from, \c other is in an undefined state and must not be
     //! used anymore!
-    ConfigTreeNew(ConfigTreeNew && other);
+    ConfigTree(ConfigTree && other);
 
     //! copying is not compatible with the semantics of this class
-    ConfigTreeNew& operator=(ConfigTreeNew const&) = delete;
+    ConfigTree& operator=(ConfigTree const&) = delete;
 
     //! After being moved from, \c other is in an undefined state and must not be
     //! used anymore!
-    ConfigTreeNew& operator=(ConfigTreeNew &&);
+    ConfigTree& operator=(ConfigTree &&);
 
     /*! \name Methods for directly accessing parameter values
      *
@@ -331,7 +336,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    ConfigTreeNew
+    ConfigTree
     getConfParam(std::string const& param) const;
 
     /*! Get parameter \c param from the configuration tree if present.
@@ -340,7 +345,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    boost::optional<ConfigTreeNew>
+    boost::optional<ConfigTree>
     getConfParamOptional(std::string const& param) const;
 
     /*! Fetches all parameters with name \c param from the current level of the tree.
@@ -430,14 +435,14 @@ public:
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
-    ConfigTreeNew
+    ConfigTree
     getConfSubtree(std::string const& root) const;
 
     /*! Get the subtree rooted at \c root if present
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
-    boost::optional<ConfigTreeNew>
+    boost::optional<ConfigTree>
     getConfSubtreeOptional(std::string const& root) const;
 
     /*! Get all subtrees that have a root \c root from the current level of the tree.
@@ -484,7 +489,7 @@ public:
 
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
-    ~ConfigTreeNew();
+    ~ConfigTree();
 
     //! Default error callback function
     //! Will print an error message and call std::abort()
@@ -510,7 +515,7 @@ private:
     };
 
     //! Used for wrapping a subtree
-    explicit ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent, std::string const& root);
+    explicit ConfigTree(PTree const& tree, ConfigTree const& parent, std::string const& root);
 
     /*! Called if an error occurs. Will call the error callback.
      *
@@ -619,12 +624,15 @@ private:
     //! Set of allowed characters in a key name.
     static const std::string key_chars;
 
-    friend void checkAndInvalidate(ConfigTreeNew* const conf);
-    friend void checkAndInvalidate(ConfigTreeNew& conf);
-    friend void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf);
+    friend void checkAndInvalidate(ConfigTree* const conf);
+    friend void checkAndInvalidate(ConfigTree& conf);
+    friend void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf);
 };
 
 }
 
 #include "ConfigTreeNew-impl.h"
+
+
+#endif // BASELIB_CONFIGTREE_H_
 

@@ -23,7 +23,7 @@ namespace MathLib
  * This function is currently used in the option parsing code of our
  * \c EigenLinearSolver, \c LisOption and \c PETScLinearSolver
  */
-void ignoreOtherLinearSolvers(BaseLib::ConfigTreeNew const& config,
+void ignoreOtherLinearSolvers(BaseLib::ConfigTree const& config,
                               std::string const& solver_name);
 
 }

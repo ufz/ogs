@@ -31,7 +31,7 @@ public:
      */
     explicit ConfigTreeTopLevel(std::string const& filepath,
                                 bool const be_ruthless,
-                                ConfigTreeNew::PTree&& ptree);
+                                ConfigTree::PTree&& ptree);
 
     /*! Access the contained ConfigTree.
      *
@@ -39,7 +39,7 @@ public:
      * the \c _ctree when it is passed around. In order to check and invalidate \c _ctree use the provided
      * member function.
      */
-    ConfigTreeNew const& operator*() const;
+    ConfigTree const& operator*() const;
 
     /*! Access the contained ConfigTree.
      *
@@ -47,7 +47,7 @@ public:
      * the \c _ctree when it is passed around. In order to check and invalidate \c _ctree use the provided
      * member function.
      */
-    ConfigTreeNew const* operator->() const;
+    ConfigTree const* operator->() const;
 
     /*! Check if the contained ConfigTree has been processed entirely.
      *
@@ -58,8 +58,8 @@ public:
     void checkAndInvalidate();
 
 private:
-    ConfigTreeNew::PTree const _ptree; //!< <tt>boost::property_tree</tt> that underlies \c _ctree
-    ConfigTreeNew              _ctree; //!< ConfigTree depending on \c _ptree
+    ConfigTree::PTree const _ptree; //!< <tt>boost::property_tree</tt> that underlies \c _ctree
+    ConfigTree              _ctree; //!< ConfigTree depending on \c _ptree
 };
 
 /*! Create a ConfigTree from an XML file.

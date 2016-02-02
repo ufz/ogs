@@ -46,7 +46,7 @@ public:
      *                    LisOption struct.
      */
     LisLinearSolver(LisMatrix &A, const std::string solver_name = "",
-                    BaseLib::ConfigTreeNew const*const option = nullptr);
+                    BaseLib::ConfigTree const*const option = nullptr);
 
     /**
      * configure linear solvers

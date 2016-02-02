@@ -32,7 +32,7 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 {}
 
 FixedTimeStepping*
-FixedTimeStepping::newInstance(BaseLib::ConfigTreeNew const& config)
+FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "FixedTimeStepping");
 

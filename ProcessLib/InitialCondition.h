@@ -17,7 +17,7 @@
 
 namespace BaseLib
 {
-class ConfigTreeNew;
+class ConfigTree;
 }
 
 namespace MeshLib
@@ -57,7 +57,7 @@ private:
 
 /// Construct a UniformInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTreeNew const& config);
+    BaseLib::ConfigTree const& config);
 
 /// Distribution of values given by a mesh property defined on nodes.
 class MeshPropertyInitialCondition : public InitialCondition
@@ -81,7 +81,7 @@ private:
 
 /// Construct a MeshPropertyInitialCondition from configuration.
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    BaseLib::ConfigTreeNew const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 

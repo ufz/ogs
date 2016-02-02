@@ -30,11 +30,11 @@
 // Exception thrown by the error callback of the class below
 class Exc {};
 
-// class that provides callback functions used with ConfigTreeNew
+// class that provides callback functions used with ConfigTree
 class Callbacks
 {
 public:
-    BaseLib::ConfigTreeNew::Callback
+    BaseLib::ConfigTree::Callback
     get_error_cb()
     {
         return [this](std::string const& filename, std::string const& path,
@@ -52,7 +52,7 @@ public:
         };
     }
 
-    BaseLib::ConfigTreeNew::Callback
+    BaseLib::ConfigTree::Callback
     get_warning_cb()
     {
         return [this](std::string const& filename, std::string const& path,
@@ -90,10 +90,10 @@ readXml(const char xml[])
     return ptree;
 }
 
-BaseLib::ConfigTreeNew
+BaseLib::ConfigTree
 makeConfigTree(boost::property_tree::ptree const& ptree, Callbacks& cbs)
 {
-    return BaseLib::ConfigTreeNew(ptree, "FILENAME",
+    return BaseLib::ConfigTree(ptree, "FILENAME",
                                   cbs.get_error_cb(), cbs.get_warning_cb());
 }
 
@@ -518,13 +518,13 @@ TEST(BaseLibConfigTree, MoveConstruct)
 
         // test that read status of data is transferred in move construction
         {
-            BaseLib::ConfigTreeNew const u2(std::move(u));
+            BaseLib::ConfigTree const u2(std::move(u));
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
 
         // test that read status of children is transferred in move construction
-        BaseLib::ConfigTreeNew conf2(std::move(conf));
+        BaseLib::ConfigTree conf2(std::move(conf));
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);

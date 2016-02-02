@@ -44,7 +44,7 @@ class NeumannBcConfig : public BoundaryConditionConfig
 {
 public:
     NeumannBcConfig(GeoLib::GeoObject const* const geometry,
-            BaseLib::ConfigTreeNew const& config)
+            BaseLib::ConfigTree const& config)
         : BoundaryConditionConfig(geometry)
     {
         DBUG("Constructing NeumannBcConfig from config.");

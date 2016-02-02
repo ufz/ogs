@@ -26,7 +26,7 @@ namespace MathLib
 EigenLisLinearSolver::EigenLisLinearSolver(
     EigenMatrix& A,
     const std::string /*solver_name*/,
-    BaseLib::ConfigTreeNew const* const option)
+    BaseLib::ConfigTree const* const option)
     : _A(A), _lis_option(option)
 {
 }

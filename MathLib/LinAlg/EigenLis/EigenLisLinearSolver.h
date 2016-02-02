@@ -38,7 +38,7 @@ public:
      *                    LisOption struct.
      */
     EigenLisLinearSolver(EigenMatrix &A, const std::string solver_name = "",
-                         BaseLib::ConfigTreeNew const*const option = nullptr);
+                         BaseLib::ConfigTree const*const option = nullptr);
 
     /**
      * copy linear solvers options

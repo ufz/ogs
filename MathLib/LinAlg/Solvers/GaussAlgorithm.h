@@ -55,7 +55,7 @@ public:
 	 * second argument was introduced.
 	 */
 	GaussAlgorithm(MAT_T &A, const std::string solver_name = "",
-                   BaseLib::ConfigTreeNew const*const option = nullptr);
+                   BaseLib::ConfigTree const*const option = nullptr);
 	/**
 	 * destructor, deletes the permutation
 	 */

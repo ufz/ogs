@@ -40,7 +40,7 @@ namespace MathLib
  */
 struct LisOption
 {
-	LisOption(BaseLib::ConfigTreeNew const* const options)
+	LisOption(BaseLib::ConfigTree const* const options)
 	{
 		if (options)
 		{

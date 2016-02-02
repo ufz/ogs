@@ -97,7 +97,7 @@ private:
 
 EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
                             const std::string /*solver_name*/,
-                            const BaseLib::ConfigTreeNew* const option)
+                            const BaseLib::ConfigTree* const option)
 {
     if (option)
         setOption(*option);
@@ -116,7 +116,7 @@ EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
     }
 }
 
-void EigenLinearSolver::setOption(BaseLib::ConfigTreeNew const& option)
+void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
     ignoreOtherLinearSolvers(option, "eigen");
     auto const ptSolver = option.getConfSubtreeOptional("eigen");

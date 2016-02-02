@@ -10,15 +10,20 @@
 #include <logog/include/logog.hpp>
 #include "ConfigTreeNew.h"
 
+// Explicitly instantiate the boost::property_tree::ptree which is a typedef to
+// the following basic_ptree.
+template class boost::property_tree::basic_ptree<std::string, std::string,
+                                                 std::less<std::string>>;
+
 namespace BaseLib
 {
 
-const char ConfigTreeNew::pathseparator = '/';
-const std::string ConfigTreeNew::key_chars_start = "abcdefghijklmnopqrstuvwxyz";
-const std::string ConfigTreeNew::key_chars = key_chars_start + "_0123456789";
+const char ConfigTree::pathseparator = '/';
+const std::string ConfigTree::key_chars_start = "abcdefghijklmnopqrstuvwxyz";
+const std::string ConfigTree::key_chars = key_chars_start + "_0123456789";
 
-ConfigTreeNew::
-ConfigTreeNew(PTree const& tree,
+ConfigTree::
+ConfigTree(PTree const& tree,
               std::string const& filename,
               Callback const& error_cb,
               Callback const& warning_cb)
@@ -34,8 +39,8 @@ ConfigTreeNew(PTree const& tree,
     }
 }
 
-ConfigTreeNew::
-ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
+ConfigTree::
+ConfigTree(PTree const& tree, ConfigTree const& parent,
               std::string const& root)
     : _tree(&tree), _path(joinPaths(parent._path, root)),
       _filename(parent._filename),
@@ -44,8 +49,8 @@ ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
     checkKeyname(root);
 }
 
-ConfigTreeNew::
-ConfigTreeNew(ConfigTreeNew && other)
+ConfigTree::
+ConfigTree(ConfigTree && other)
     : _tree                    (other._tree)
     , _path          (std::move(other._path))
     , _filename      (std::move(other._filename))
@@ -57,14 +62,14 @@ ConfigTreeNew(ConfigTreeNew && other)
     other._tree = nullptr;
 }
 
-ConfigTreeNew::~ConfigTreeNew()
+ConfigTree::~ConfigTree()
 {
     checkAndInvalidate();
 }
 
-ConfigTreeNew&
-ConfigTreeNew::
-operator=(ConfigTreeNew&& other)
+ConfigTree&
+ConfigTree::
+operator=(ConfigTree&& other)
 {
     checkAndInvalidate();
 
@@ -80,8 +85,8 @@ operator=(ConfigTreeNew&& other)
     return *this;
 }
 
-ConfigTreeNew
-ConfigTreeNew::
+ConfigTree
+ConfigTree::
 getConfParam(std::string const& root) const
 {
     auto ct = getConfSubtree(root);
@@ -90,8 +95,8 @@ getConfParam(std::string const& root) const
     return ct;
 }
 
-boost::optional<ConfigTreeNew>
-ConfigTreeNew::
+boost::optional<ConfigTree>
+ConfigTree::
 getConfParamOptional(std::string const& root) const
 {
     auto ct = getConfSubtreeOptional(root);
@@ -100,8 +105,8 @@ getConfParamOptional(std::string const& root) const
     return ct;
 }
 
-Range<ConfigTreeNew::ParameterIterator>
-ConfigTreeNew::
+Range<ConfigTree::ParameterIterator>
+ConfigTree::
 getConfParamList(const std::string &param) const
 {
     checkUnique(param);
@@ -114,8 +119,8 @@ getConfParamList(const std::string &param) const
                 ParameterIterator(p.second, param, *this));
 }
 
-ConfigTreeNew
-ConfigTreeNew::
+ConfigTree
+ConfigTree::
 getConfSubtree(std::string const& root) const
 {
     if (auto t = getConfSubtreeOptional(root)) {
@@ -125,23 +130,23 @@ getConfSubtree(std::string const& root) const
     }
 }
 
-boost::optional<ConfigTreeNew>
-ConfigTreeNew::
+boost::optional<ConfigTree>
+ConfigTree::
 getConfSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
 
     if (auto subtree = _tree->get_child_optional(root)) {
         markVisited(root, Attr::TAG, false);
-        return ConfigTreeNew(*subtree, *this, root);
+        return ConfigTree(*subtree, *this, root);
     } else {
         markVisited(root, Attr::TAG, true);
         return boost::none;
     }
 }
 
-Range<ConfigTreeNew::SubtreeIterator>
-ConfigTreeNew::
+Range<ConfigTree::SubtreeIterator>
+ConfigTree::
 getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
@@ -154,7 +159,7 @@ getConfSubtreeList(std::string const& root) const
                 SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTreeNew::ignoreConfParam(const std::string &param) const
+void ConfigTree::ignoreConfParam(const std::string &param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -162,7 +167,7 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param) const
     markVisited(param, Attr::TAG, peek_only);
 }
 
-void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
+void ConfigTree::ignoreConfAttribute(const std::string &attr) const
 {
     checkUniqueAttr(attr);
 
@@ -173,7 +178,7 @@ void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
     markVisited(attr, Attr::ATTR, peek_only);
 }
 
-void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
+void ConfigTree::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, Attr::TAG, true);
@@ -185,19 +190,19 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 }
 
 
-void ConfigTreeNew::error(const std::string& message) const
+void ConfigTree::error(const std::string& message) const
 {
     _onerror(_filename, _path, message);
     std::abort();
 }
 
-void ConfigTreeNew::warning(const std::string& message) const
+void ConfigTree::warning(const std::string& message) const
 {
     _onwarning(_filename, _path, message);
 }
 
 
-void ConfigTreeNew::onerror(const std::string& filename, const std::string& path,
+void ConfigTree::onerror(const std::string& filename, const std::string& path,
                             const std::string& message)
 {
     ERR("ConfigTree: In file `%s' at path <%s>: %s",
@@ -205,14 +210,14 @@ void ConfigTreeNew::onerror(const std::string& filename, const std::string& path
     std::abort();
 }
 
-void ConfigTreeNew::onwarning(const std::string& filename, const std::string& path,
+void ConfigTree::onwarning(const std::string& filename, const std::string& path,
                               const std::string& message)
 {
     WARN("ConfigTree: In file `%s' at path <%s>: %s",
          filename.c_str(), path.c_str(), message.c_str());
 }
 
-std::string ConfigTreeNew::shortString(const std::string &s)
+std::string ConfigTree::shortString(const std::string &s)
 {
     const std::size_t maxlen = 100;
 
@@ -222,7 +227,7 @@ std::string ConfigTreeNew::shortString(const std::string &s)
 }
 
 
-void ConfigTreeNew::checkKeyname(std::string const& key) const
+void ConfigTree::checkKeyname(std::string const& key) const
 {
     if (key.empty()) {
         error("Search for empty key.");
@@ -239,7 +244,7 @@ void ConfigTreeNew::checkKeyname(std::string const& key) const
     }
 }
 
-std::string ConfigTreeNew::
+std::string ConfigTree::
 joinPaths( const std::string &p1, const std::string &p2) const
 {
     if (p2.empty()) {
@@ -251,7 +256,7 @@ joinPaths( const std::string &p1, const std::string &p2) const
     return p1 + pathseparator + p2;
 }
 
-void ConfigTreeNew::checkUnique(const std::string &key) const
+void ConfigTree::checkUnique(const std::string &key) const
 {
     checkKeyname(key);
 
@@ -260,7 +265,7 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
     }
 }
 
-void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
+void ConfigTree::checkUniqueAttr(const std::string &attr) const
 {
     // Workaround for handling attributes with xml namespaces and uppercase letters.
     if (attr.find(':') != attr.npos) {
@@ -285,15 +290,15 @@ void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
     }
 }
 
-ConfigTreeNew::CountType&
-ConfigTreeNew::
+ConfigTree::CountType&
+ConfigTree::
 markVisited(std::string const& key, Attr const is_attr, bool const peek_only) const
 {
-    return markVisited<ConfigTreeNew>(key, is_attr, peek_only);
+    return markVisited<ConfigTree>(key, is_attr, peek_only);
 }
 
 void
-ConfigTreeNew::
+ConfigTree::
 markVisitedDecrement(Attr const is_attr, std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
@@ -308,7 +313,7 @@ markVisitedDecrement(Attr const is_attr, std::string const& key) const
 }
 
 bool
-ConfigTreeNew::hasChildren() const
+ConfigTree::hasChildren() const
 {
     auto const& tree = *_tree;
     if (tree.begin() == tree.end())
@@ -321,7 +326,7 @@ ConfigTreeNew::hasChildren() const
 }
 
 void
-ConfigTreeNew::checkAndInvalidate()
+ConfigTree::checkAndInvalidate()
 {
     if (!_tree) return;
 
@@ -378,17 +383,17 @@ ConfigTreeNew::checkAndInvalidate()
 }
 
 
-void checkAndInvalidate(ConfigTreeNew &conf)
+void checkAndInvalidate(ConfigTree &conf)
 {
     conf.checkAndInvalidate();
 }
 
-void checkAndInvalidate(ConfigTreeNew* const conf)
+void checkAndInvalidate(ConfigTree* const conf)
 {
     if (conf) conf->checkAndInvalidate();
 }
 
-void checkAndInvalidate(std::unique_ptr<ConfigTreeNew> const& conf)
+void checkAndInvalidate(std::unique_ptr<ConfigTree> const& conf)
 {
     if (conf) conf->checkAndInvalidate();
 }

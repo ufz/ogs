@@ -23,7 +23,7 @@ namespace MathLib
 {
 PETScLinearSolver::PETScLinearSolver(PETScMatrix& A,
                                      const std::string prefix,
-                                     BaseLib::ConfigTreeNew const* const option)
+                                     BaseLib::ConfigTree const* const option)
     : _A(A), _elapsed_ctime(0.)
 {
     // Insert options into petsc database if any.

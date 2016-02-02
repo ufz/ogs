@@ -14,7 +14,7 @@ namespace MathLib
 
 
 void
-ignoreOtherLinearSolvers(const BaseLib::ConfigTreeNew &config,
+ignoreOtherLinearSolvers(const BaseLib::ConfigTree &config,
                          const std::string &solver_name)
 {
     for (auto const& s : known_linear_solvers) {

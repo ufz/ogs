@@ -38,7 +38,7 @@ public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-            BaseLib::ConfigTreeNew const& config)
+            BaseLib::ConfigTree const& config)
         : Process<GlobalSetup>(mesh)
     {
         config.checkConfParam("type", "GROUNDWATER_FLOW");

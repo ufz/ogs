@@ -66,7 +66,7 @@ private:
 	ReturnType _value;
 };
 
-std::unique_ptr<ParameterBase> createConstParameter(BaseLib::ConfigTreeNew const& config);
+std::unique_ptr<ParameterBase> createConstParameter(BaseLib::ConfigTree const& config);
 
 /// A parameter represented by a mesh property vector.
 template <typename ReturnType>
@@ -87,7 +87,7 @@ private:
 	MeshLib::PropertyVector<ReturnType> const& _property;
 };
 
-std::unique_ptr<ParameterBase> createMeshPropertyParameter(BaseLib::ConfigTreeNew const& config, MeshLib::Mesh const& mesh);
+std::unique_ptr<ParameterBase> createMeshPropertyParameter(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 
