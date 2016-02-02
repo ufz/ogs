@@ -65,31 +65,9 @@ public:
 	RasterHeader const& getHeader() const { return _header; }
 
 	/**
-	 * get the number of columns for the raster
-	 */
-	std::size_t getNCols() const { return _header.n_cols; }
-	/**
-	 * get the number of rows for the raster
-	 */
-	std::size_t getNRows() const { return _header.n_rows; }
-
-	/**
-	 * get the distance between raster pixels
-	 */
-	double getRasterPixelSize() const { return _header.cell_size; }
-
-	/**
-	 * get the origin of lower left raster cell
-	 * @return the origin of the raster
-	 */
-	GeoLib::Point const getOrigin() const;
-
-	/**
 	 * Refine the raster using scaling as a refinement parameter.
 	 */
 	void refineRaster(std::size_t scaling);
-
-	double getNoDataValue() const { return _header.no_data; }
 
 	/**
 	 * Constant iterator that is pointing to the first raster pixel value.

@@ -29,26 +29,26 @@ ConvertRasterToMesh::~ConvertRasterToMesh()
 
 MeshLib::Mesh* ConvertRasterToMesh::execute() const
 {
-	const std::size_t height(_raster.getNRows()+1);
-	const std::size_t width(_raster.getNCols()+1);
-	const std::size_t size(height*width);
-	double* pix_vals(new double[size]);
-	bool* vis_nodes(new bool[size]);
+	GeoLib::RasterHeader const& header (_raster.getHeader());
+	const std::size_t height(header.n_rows+1);
+	const std::size_t width(header.n_cols+1);
+	double* pix_vals(new double[height*width]);
+	bool* vis_nodes(new bool[height*width]);
 
 	// determine a valid value for substitution of no data values
 	double substitution(getExistingValue(_raster.begin(), _raster.end()));
 
 	// fill first row with non visual nodes
-	for (std::size_t j = 0; j < _raster.getNCols(); j++) {
+	for (std::size_t j = 0; j < width; j++) {
 		pix_vals[j] = 0;
 		vis_nodes[j] = false;
 	}
 
 	GeoLib::Raster::const_iterator raster_it(_raster.begin());
-	for (std::size_t i = 0; i < _raster.getNRows(); ++i) {
-		for (std::size_t j = 0; j < _raster.getNCols(); ++j) {
+	for (std::size_t i = 0; i < height; ++i) {
+		for (std::size_t j = 0; j < width; ++j) {
 			const std::size_t index = (i+1) * width + j;
-			if (*raster_it == _raster.getNoDataValue()) {
+			if (*raster_it == header.no_data) {
 				pix_vals[index] = substitution;
 				vis_nodes[index] = false;
 			} else {
@@ -72,12 +72,11 @@ MeshLib::Mesh* ConvertRasterToMesh::execute() const
 
 MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const bool* vis_nodes) const
 {
-	const std::size_t height = _raster.getNRows()+1;
-	const std::size_t width = _raster.getNCols()+1;
+	GeoLib::RasterHeader const& header (_raster.getHeader());
+	const std::size_t height (header.n_rows+1);
+	const std::size_t width (header.n_cols+1);
 	std::size_t node_idx_count(0);
-	const double distance(_raster.getRasterPixelSize());
-	const double x_offset(_raster.getOrigin()[0]); // - distance / 2.0);
-	const double y_offset(_raster.getOrigin()[1]); // - distance / 2.0);
+	const double distance(header.cell_size);
 
 	const std::size_t size(height*width);
 	int* node_idx_map(new int[size]);
@@ -89,33 +88,20 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 	for (std::size_t i = 0; i < height; i++) {
 		for (std::size_t j = 0; j < width; j++) {
 			const std::size_t index = i * width + j;
-
-//			bool set_node(true);
-//			bool set_node(false);
-//			if (j == 0 && i == height)
-//				set_node = vis_nodes[index];
-//			else if (j == 0)
-//				set_node = (vis_nodes[index] || vis_nodes[index + height]);
-//			else if (i == width)
-//				set_node = (vis_nodes[index] || vis_nodes[index - 1]);
-//			else set_node = (vis_nodes[index] || vis_nodes[index - 1] || vis_nodes[index + height]
-//							|| vis_nodes[index + height - 1]);
-//			if (set_node) {
-				double zValue = (_intensity_type == UseIntensityAs::ELEVATION) ? pix_vals[index]
-								: _raster.getOrigin()[2];
-				MeshLib::Node* node(new MeshLib::Node(x_offset + (distance * j), y_offset
-								+ (distance * i), zValue));
-				nodes.push_back(node);
-				node_idx_map[index] = node_idx_count;
-				node_idx_count++;
-//			}
+			double zValue = (_intensity_type == UseIntensityAs::ELEVATION) ? 
+				pix_vals[index] : header.origin[2];
+			MeshLib::Node* node(new MeshLib::Node(header.origin[0] + (distance * j), 
+			                                      header.origin[1] + (distance * i), zValue));
+			nodes.push_back(node);
+			node_idx_map[index] = node_idx_count;
+			node_idx_count++;
 		}
 	}
 
 	std::vector<int> mat_ids;
 	// set mesh elements
-	for (std::size_t i = 0; i < _raster.getNRows(); i++) {
-		for (std::size_t j = 0; j < _raster.getNCols(); j++) {
+	for (std::size_t i = 0; i < height; i++) {
+		for (std::size_t j = 0; j < width; j++) {
 			const int index = i * width + j;
 			if ((node_idx_map[index] != -1) && (node_idx_map[index + 1] != -1)
 					&& (node_idx_map[index + width] != -1)
@@ -169,10 +155,11 @@ MeshLib::Mesh* ConvertRasterToMesh::constructMesh(const double* pix_vals, const 
 
 double ConvertRasterToMesh::getExistingValue(GeoLib::Raster::const_iterator first, GeoLib::Raster::const_iterator last) const
 {
+	double const no_data (_raster.getHeader().no_data);
 	for (GeoLib::Raster::const_iterator it(first); it != last; ++it) {
-		if (*it != _raster.getNoDataValue())
+		if (*it != no_data)
 			return *it;
 	}
-	return _raster.getNoDataValue();
+	return no_data;
 }
 } // end namespace MeshLib

@@ -188,9 +188,10 @@ bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, GeoLib::RasterHea
 
 void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name)
 {
-    GeoLib::Point const& origin (raster.getOrigin());
-    unsigned const nCols (raster.getNCols());
-    unsigned const nRows (raster.getNRows());
+	GeoLib::RasterHeader header (raster.getHeader());
+    MathLib::Point3d const& origin (header.origin);
+    unsigned const nCols (header.n_cols);
+    unsigned const nRows (header.n_rows);
 
     // write header
     std::ofstream out(file_name);
@@ -198,8 +199,8 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     out << "nrows " << nRows << "\n";
     out << "xllcorner " << origin[0] << "\n";
     out << "yllcorner " << origin[1] << "\n";
-    out << "cellsize " <<  raster.getRasterPixelSize() << "\n";
-    out << "NODATA_value " << raster.getNoDataValue() << "\n";
+    out << "cellsize " <<  header.cell_size << "\n";
+    out << "NODATA_value " << header.no_data << "\n";
 
     // write data
     double const*const elevation(raster.begin());

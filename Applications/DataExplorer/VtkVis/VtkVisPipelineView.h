@@ -58,7 +58,7 @@ private:
 
 	/// Calls the conversion method for creating an OGS Mesh from a vtkImageData object.
 	void constructMeshFromImage(
-		std::string msh_name,
+		std::string const& msh_name,
 		MeshLib::MeshElemType element_type,
 		MeshLib::UseIntensityAs intensity_type);
 

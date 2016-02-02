@@ -251,13 +251,13 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 		return false;
 	}
 
-	const double x0(raster.getOrigin()[0]);
-	const double y0(raster.getOrigin()[1]);
-	const double delta(raster.getRasterPixelSize());
-	const double no_data(raster.getNoDataValue());
+	GeoLib::RasterHeader const& header (raster.getHeader());
+	const double x0(header.origin[0]);
+	const double y0(header.origin[1]);
+	const double delta(header.cell_size);
 
-	const std::pair<double, double> xDim(x0, x0 + raster.getNCols() * delta); // extension in x-dimension
-	const std::pair<double, double> yDim(y0, y0 + raster.getNRows() * delta); // extension in y-dimension
+	const std::pair<double, double> xDim(x0, x0 + header.n_cols * delta); // extension in x-dimension
+	const std::pair<double, double> yDim(y0, y0 + header.n_rows * delta); // extension in y-dimension
 
 	const std::size_t nNodes (new_mesh.getNNodes());
 	const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
@@ -271,7 +271,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 		}
 
 		double elevation (raster.interpolateValueAtPoint(*nodes[i]));
-		if (std::abs(elevation - no_data) < std::numeric_limits<double>::epsilon())
+		if (std::abs(elevation - header.no_data) < std::numeric_limits<double>::epsilon())
 			elevation = noDataReplacementValue;
 		nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], elevation);
 	}

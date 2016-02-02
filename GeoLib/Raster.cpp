@@ -55,21 +55,6 @@ Raster::~Raster()
 	delete [] _raster_data;
 }
 
-void Raster::setCellSize(double cell_size)
-{
-	_header.cell_size = cell_size;
-}
-
-void Raster::setNoDataVal (double no_data_val)
-{
-	_header.no_data = no_data_val;
-}
-
-GeoLib::Point const Raster::getOrigin() const
-{
-	return GeoLib::Point(_header.origin,0);
-}
-
 Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val)
 {
 	MathLib::Point3d const& ll(sfc.getAABB().getMinPoint());
