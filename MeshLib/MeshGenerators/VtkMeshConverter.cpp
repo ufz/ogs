@@ -75,203 +75,186 @@ MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
 	const std::size_t imgWidth  = dims[1];
 	const std::size_t incHeight = imgHeight+1;
 	const std::size_t incWidth  = imgWidth+1;
-	double* pixVal (new double[incHeight * incWidth]);
-	bool* visNodes(new bool[incWidth * incHeight]);
-	int* node_idx_map(new int[incWidth * incHeight]);
+	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
+	std::vector<bool> pix_vis (imgHeight * imgWidth, false);
 
-	for (std::size_t j = 0; j < incHeight; j++)
-	{
-		pixVal[j]=0;
-		visNodes[j]=false;
-		node_idx_map[j]=-1;
-	}
 	for (std::size_t i = 0; i < imgWidth; i++)
 	{
 		for (std::size_t j = 0; j < imgHeight; j++)
 		{
-			const std::size_t img_idx = i * imgHeight + j;
-			const std::size_t index = (i+1) * incHeight + j;
+			std::size_t const img_idx = i*imgHeight + j;
+			std::size_t const fld_idx = i*incHeight + j;
+
+			// colour of current pixel
 			double* colour = pixelData->GetTuple(img_idx);
-			if (nTuple < 3)	// Grey (+ Alpha)
-				pixVal[index] = colour[0];
-			else			// RGB(A)
-				pixVal[index] = 0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2];
+			// is current pixel visible?
+			bool const visible = (nTuple == 2 || nTuple == 4) ? (colour[nTuple-1] != 0) : true;
+			if (!visible)
+				continue;
 
-			// is current pixel visible
-			if (nTuple == 2 || nTuple == 4)
-				visNodes[index] = (colour[nTuple-1] != 0);
-			else
-				visNodes[index] = true;
-
-			node_idx_map[index]=-1;
+			double const value = (nTuple < 3) ? 
+				colour[0] : // grey (+ alpha)
+				(0.3 * colour[0] + 0.6 * colour[1] + 0.1 * colour[2]); // rgb(a)
+			pix_vis[img_idx] = true;
+			pix_val[fld_idx] = value;
+			pix_val[fld_idx+1] = value;
+			pix_val[fld_idx+incHeight] = value;
+			pix_val[fld_idx+incHeight+1] = value;
 		}
-		pixVal[(i+2)*incHeight-1]=0;
-		visNodes[(i+2)*incHeight-1]=false;
-		node_idx_map[(i+2)*incHeight-1]=-1;
 	}
-
-	MeshLib::Mesh* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
-
-	delete [] pixVal;
-	delete [] visNodes;
-	delete [] node_idx_map;
-
-	return mesh;
+	
+	return constructMesh(pix_val, pix_vis, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
 }
 
-MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(const double* img,
-                                                  const double origin[3],
-                                                  const std::size_t imgHeight,
-                                                  const std::size_t imgWidth,
-                                                  const double &scalingFactor,
-                                                  MeshElemType elem_type,
-                                                  UseIntensityAs intensity_type)
+MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(
+	const double* img,
+	const double origin[3],
+	const std::size_t imgHeight,
+	const std::size_t imgWidth,
+	const double &scalingFactor,
+	MeshElemType elem_type,
+	UseIntensityAs intensity_type)
 {
-	const std::size_t incHeight = imgHeight+1;
-	const std::size_t incWidth  = imgWidth+1;
-	double* pixVal (new double[incHeight * incWidth]);
-	bool* visNodes(new bool[incWidth * incHeight]);
-	int* node_idx_map(new int[incWidth * incHeight]);
-
-	double noDataValue = getExistingValue(img, imgWidth*imgHeight);
-
-	for (std::size_t j = 0; j < imgHeight; j++)
+	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
-		pixVal[j]=0;
-		visNodes[j]=false;
-		node_idx_map[j]=-1;
+		ERR("Invalid Mesh Element Type.");
+		return nullptr;
 	}
+
+	std::size_t const incHeight (imgHeight+1);
+	std::size_t const incWidth (imgWidth+1);
+	std::vector<double> pix_val (incHeight * incWidth, std::numeric_limits<double>::max());
+	std::vector<bool> pix_vis (incHeight * incWidth, false);
+
 	for (std::size_t i = 0; i < imgWidth; i++)
-	{
 		for (std::size_t j = 0; j < imgHeight; j++)
 		{
-			const std::size_t img_idx = i * imgHeight + j;
-			const std::size_t index = (i+1) * incHeight + j;
+			std::size_t const img_idx = i*imgHeight + j;
+			std::size_t const fld_idx = i*incHeight + j;
 			if (img[img_idx] == -9999)
-			{
-				visNodes[index] = false;
-				pixVal[index] = noDataValue;
-			}
-			else
-			{
-				pixVal[index] = img[img_idx];
-				visNodes[index] = true;
-			}
+				continue;
 
-			node_idx_map[index]=-1;
+			pix_vis[img_idx] = true;
+			pix_val[fld_idx] = img[img_idx];
+			pix_val[fld_idx+1] = img[img_idx];
+			pix_val[fld_idx+incHeight] = img[img_idx];
+			pix_val[fld_idx+incHeight+1] = img[img_idx];
 		}
-		pixVal[(i+2)*incHeight-1]=0;
-		visNodes[(i+2)*incHeight-1]=false;
-		node_idx_map[(i+2)*incHeight-1]=-1;
-	}
 
-	MeshLib::Mesh* mesh = constructMesh(pixVal, node_idx_map, visNodes, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
-
-	delete [] pixVal;
-	delete [] visNodes;
-	delete [] node_idx_map;
-
-	return mesh;
+	return constructMesh(pix_val, pix_vis, origin, imgHeight, imgWidth, scalingFactor, elem_type, intensity_type);
 }
 
-MeshLib::Mesh* VtkMeshConverter::constructMesh(const double* pixVal,
-                                               int* node_idx_map,
-                                               const bool* visNodes,
-                                               const double origin[3],
-                                               const std::size_t &imgHeight,
-                                               const std::size_t &imgWidth,
-                                               const double &scalingFactor,
-                                               MeshElemType elem_type,
-                                               UseIntensityAs intensity_type)
+MeshLib::Mesh* VtkMeshConverter::constructMesh(
+	std::vector<double> const& pix_val,
+	std::vector<bool> const& pix_vis,
+	double const origin[3],
+	std::size_t const imgHeight,
+	std::size_t const imgWidth,
+	double const scalingFactor,
+	MeshLib::MeshElemType elem_type,
+	MeshLib::UseIntensityAs intensity_type)
 {
-	const std::size_t incHeight = imgHeight+1;
-	const std::size_t incWidth  = imgWidth+1;
-	std::size_t node_idx_count(0);
-	const double x_offset(origin[0] - scalingFactor/2.0);
-	const double y_offset(origin[1] - scalingFactor/2.0);
+	std::vector<int> node_idx_map ((imgHeight+1) * (imgWidth+1), -1);
+	bool const use_elevation (intensity_type == MeshLib::UseIntensityAs::ELEVATION);
+	std::vector<MeshLib::Node*> nodes (createNodeVector(pix_val, node_idx_map, imgHeight, imgWidth, origin, scalingFactor, use_elevation));
+	if (nodes.empty())
+		return nullptr;
 
-	std::vector<MeshLib::Node*> nodes;
-	std::vector<MeshLib::Element*> elements;
-
-	for (std::size_t i = 0; i < incWidth; i++)
-		for (std::size_t j = 0; j < incHeight; j++)
-		{
-			const std::size_t index = i * incHeight + j;
-
-			bool set_node (false);
-			if (j==0 && i==imgWidth) set_node = visNodes[index];
-			else if (j==0)			 set_node = (visNodes[index] || visNodes[index+incHeight]);
-			else if (i==imgWidth)	 set_node = (visNodes[index] || visNodes[index-1]);
-			else					 set_node = (visNodes[index] || visNodes[index-1] || visNodes[index+incHeight] || visNodes[index+incHeight-1]);
-
-			if (set_node)
-			{
-				double zValue = (intensity_type == UseIntensityAs::ELEVATION) ? pixVal[index] : 0;
-				MeshLib::Node* node (new MeshLib::Node(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
-				nodes.push_back(node);
-				node_idx_map[index] = node_idx_count;
-				node_idx_count++;
-			}
-		}
-
-	MeshLib::Properties properties;
-	boost::optional< MeshLib::PropertyVector<double>& > value_vec =
-		properties.createNewPropertyVector<double>("Colour", MeshLib::MeshItemType::Cell, 1);
-
-	// set mesh elements
-	for (std::size_t i = 0; i < imgWidth; i++)
-		for (std::size_t j = 0; j < imgHeight; j++)
-		{
-			int const index = i * incHeight + j;
-			if ((node_idx_map[index]!=-1) && (node_idx_map[index+1]!=-1) && (node_idx_map[index+incHeight]!=-1) && (node_idx_map[index+incHeight+1]!=-1) && (visNodes[index+incHeight]))
-			{
-				if (elem_type == MeshElemType::TRIANGLE)
-				{
-					MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
-					tri1_nodes[0] = nodes[node_idx_map[index]];
-					tri1_nodes[1] = nodes[node_idx_map[index+1]];
-					tri1_nodes[2] = nodes[node_idx_map[index+incHeight]];
-
-					MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
-					tri2_nodes[0] = nodes[node_idx_map[index+1]];
-					tri2_nodes[1] = nodes[node_idx_map[index+incHeight+1]];
-					tri2_nodes[2] = nodes[node_idx_map[index+incHeight]];
-
-					elements.push_back(new MeshLib::Tri(tri1_nodes)); // upper left triangle
-					elements.push_back(new MeshLib::Tri(tri2_nodes)); // lower right triangle
-					if (intensity_type == UseIntensityAs::DATAVECTOR)
-					{
-						value_vec->push_back(pixVal[index+incHeight]);
-						value_vec->push_back(pixVal[index+incHeight]);
-					}
-				}
-				if (elem_type == MeshElemType::QUAD)
-				{
-					MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
-					quad_nodes[0] = nodes[node_idx_map[index]];
-					quad_nodes[1] = nodes[node_idx_map[index + 1]];
-					quad_nodes[2] = nodes[node_idx_map[index + incHeight + 1]];
-					quad_nodes[3] = nodes[node_idx_map[index + incHeight]];
-					elements.push_back(new MeshLib::Quad(quad_nodes));
-					if (intensity_type == UseIntensityAs::DATAVECTOR)
-						value_vec->push_back(pixVal[index+incHeight]);
-				}
-			}
-		}
-
+	std::vector<MeshLib::Element*> elements (createElementVector(pix_val, pix_vis, nodes, node_idx_map, imgHeight, imgWidth, elem_type));
 	if (elements.empty())
 		return nullptr;
 
-	if (value_vec->empty())
-		properties.removePropertyVector("Colour");
+	MeshLib::Properties properties;
+	if (intensity_type == MeshLib::UseIntensityAs::MATERIALS)
+	{
+		boost::optional< MeshLib::PropertyVector<int>& > prop_vec =
+			properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+		fillPropertyVector<int>(*prop_vec, pix_val, pix_vis, imgHeight, imgWidth, elem_type); 
+	}	
+	else if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR)
+	{
+		boost::optional< MeshLib::PropertyVector<double>& > prop_vec =
+			properties.createNewPropertyVector<double>("Colour", MeshLib::MeshItemType::Cell, 1);
+		fillPropertyVector<double>(*prop_vec, pix_val, pix_vis, imgHeight, imgWidth, elem_type); 
+	}
 
-	boost::optional< MeshLib::PropertyVector<int>& > materials =
-		properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-	assert(materials != boost::none);
-	materials->resize(elements.size(), 0);
-
-	// the name is only a temp-name, the name given in the dialog is set later
 	return new MeshLib::Mesh("RasterDataMesh", nodes, elements, properties);
+}
+
+std::vector<MeshLib::Node*> VtkMeshConverter::createNodeVector(
+	std::vector<double> const&  elevation,
+	std::vector<int> & node_idx_map,
+	std::size_t const imgHeight,
+	std::size_t const imgWidth,
+	double const origin[3],
+	double const scalingFactor,
+	bool use_elevation)
+{
+	std::size_t node_idx_count(0);
+	double const x_offset(origin[0] - scalingFactor/2.0);
+	double const y_offset(origin[1] - scalingFactor/2.0);
+	std::vector<MeshLib::Node*> nodes;
+	for (std::size_t i = 0; i < (imgWidth+1); i++)
+		for (std::size_t j = 0; j < (imgHeight+1); j++)
+		{
+			std::size_t const index = i * (imgHeight+1) + j;
+			if (elevation[index] == std::numeric_limits<double>::max())
+				continue;
+
+			double const zValue = (use_elevation) ? elevation[index] : 0;
+			MeshLib::Node* node (new MeshLib::Node(x_offset + (scalingFactor * j), y_offset + (scalingFactor * i), zValue));
+			nodes.push_back(node);
+			node_idx_map[index] = node_idx_count;
+			node_idx_count++;
+		}
+	return nodes;
+}
+
+std::vector<MeshLib::Element*> VtkMeshConverter::createElementVector(
+	std::vector<double> const&  pix_val,
+	std::vector<bool> const& pix_vis,
+	std::vector<MeshLib::Node*> const& nodes,
+	std::vector<int> const&node_idx_map,
+	std::size_t const imgHeight,
+	std::size_t const imgWidth,
+	MeshElemType elem_type)
+{
+	std::vector<MeshLib::Element*> elements;
+	std::size_t const incHeight (imgHeight+1);
+	std::size_t const incWidth (imgWidth+1);
+	for (std::size_t i = 0; i < imgWidth; i++)
+		for (std::size_t j = 0; j < imgHeight; j++)
+		{
+			if (!pix_vis[i*imgHeight+j])
+				continue;
+
+			int const idx = i * incHeight + j;
+			if (elem_type == MeshElemType::TRIANGLE)
+			{
+				MeshLib::Node** tri1_nodes = new MeshLib::Node*[3];
+				tri1_nodes[0] = nodes[node_idx_map[idx]];
+				tri1_nodes[1] = nodes[node_idx_map[idx+1]];
+				tri1_nodes[2] = nodes[node_idx_map[idx+incHeight]];
+
+				MeshLib::Node** tri2_nodes = new MeshLib::Node*[3];
+				tri2_nodes[0] = nodes[node_idx_map[idx+1]];
+				tri2_nodes[1] = nodes[node_idx_map[idx+incHeight+1]];
+				tri2_nodes[2] = nodes[node_idx_map[idx+incHeight]];
+
+				elements.push_back(new MeshLib::Tri(tri1_nodes)); // upper left triangle
+				elements.push_back(new MeshLib::Tri(tri2_nodes)); // lower right triangle
+			}
+			else if (elem_type == MeshElemType::QUAD)
+			{
+				MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+				quad_nodes[0] = nodes[node_idx_map[idx]];
+				quad_nodes[1] = nodes[node_idx_map[idx + 1]];
+				quad_nodes[2] = nodes[node_idx_map[idx + incHeight + 1]];
+				quad_nodes[3] = nodes[node_idx_map[idx + incHeight]];
+				elements.push_back(new MeshLib::Quad(quad_nodes));
+			}
+		}
+	return elements;
 }
 
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(vtkUnstructuredGrid* grid, std::string const& mesh_name)

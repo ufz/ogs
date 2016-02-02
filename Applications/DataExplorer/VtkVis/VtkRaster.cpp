@@ -97,7 +97,7 @@ vtkImageImport* VtkRaster::loadImageFromArray(double const*const data_array, dou
 		image->SetDataSpacing(delta, delta, delta);
 		image->SetDataOrigin(x0+(delta/2.0), y0+(delta/2.0), 0);	// translate whole mesh by half a pixel in x and y
 		image->SetWholeExtent(0, width-1, 0, height-1, 0, 0);
-		image->SetDataExtent(0, width-1, 0, height-1-1, 0, 0);
+		image->SetDataExtent(0, width-1, 0, height-1, 0, 0);
 		image->SetDataExtentToWholeExtent();
 		image->SetDataScalarTypeToFloat();
 		image->SetNumberOfScalarComponents(2);

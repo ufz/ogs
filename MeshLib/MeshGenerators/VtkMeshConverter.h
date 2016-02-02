@@ -22,6 +22,7 @@
 
 #include "logog/include/logog.hpp"
 
+#include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
@@ -72,18 +73,65 @@ public:
 	                                              std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:
-	/// Does the actual mesh generation based on the data given to the public methods.
-	static MeshLib::Mesh* constructMesh(const double* pixVal,
-	                                    int* node_idx_map,
-	                                    const bool* visNodes,
-	                                    const double origin[3],
-	                                    const std::size_t &imgHeight,
-	                                    const std::size_t &imgWidth,
-	                                    const double &scalingFactor,
-	                                    MeshElemType elem_type,
-	                                    UseIntensityAs intensity_type);
+	/// Constructs mesh components based on image data.
+	static MeshLib::Mesh* constructMesh(
+		std::vector<double> const& pix_val,
+		std::vector<bool> const& pix_vis,
+		double const origin[3],
+		std::size_t const imgHeight,
+		std::size_t const imgWidth,
+		double const scalingFactor,
+		MeshLib::MeshElemType elem_type,
+		MeshLib::UseIntensityAs intensity_type);
 
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
+
+	/// Creates a mesh node vector based on image data
+	static std::vector<MeshLib::Node*> createNodeVector(
+		std::vector<double> const& elevation,
+		std::vector<int> &node_idx_map,
+		std::size_t const incHeight,
+		std::size_t const incWidth,
+		double const origin[3],
+		double const scalingFactor,
+		bool use_elevation);
+
+	/// Creates a mesh element vector based on image data
+	static std::vector<MeshLib::Element*> createElementVector(
+		std::vector<double> const&  pix_val,
+		std::vector<bool> const& pix_vis,
+		std::vector<MeshLib::Node*> const& nodes,
+		std::vector<int> const& node_idx_map,
+		std::size_t const imgHeight,
+		std::size_t const imgWidth,
+		MeshElemType elem_type);
+
+	/// Creates a scalar array/mesh property based on pixel values
+	template<typename T>
+	static void fillPropertyVector(
+		MeshLib::PropertyVector<T> &prop_vec,
+		std::vector<double> const& pix_val,
+		std::vector<bool> const& pix_vis,
+		const std::size_t &imgHeight,
+		const std::size_t &imgWidth,
+		MeshElemType elem_type)
+	{
+		for (std::size_t i = 0; i < imgWidth; i++)
+			for (std::size_t j = 0; j < imgHeight; j++)
+			{
+				std::size_t const idx (i*imgHeight+j);
+				if (!pix_vis[i*imgHeight+j])
+					continue;
+				T val (static_cast<T>(pix_val[i*(imgHeight+1)+j]));
+				if (elem_type == MeshElemType::TRIANGLE)
+				{
+					prop_vec.push_back(val);
+					prop_vec.push_back(val);
+				}
+				else if (elem_type == MeshElemType::QUAD)
+					prop_vec.push_back(val);
+			}
+	}
 
 	static void convertArray(vtkDataArray &array,
 	                         MeshLib::Properties &properties,
