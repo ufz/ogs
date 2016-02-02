@@ -22,11 +22,6 @@
         (cbs).reset(); \
     } while(false)
 
-// catch exception thrown by the error callback
-#define RUN_SAFE(expr) do { \
-        try { expr; } catch(Exc) {} \
-    } while (false)
-
 // Exception thrown by the error callback of the class below
 class Exc {};
 
@@ -172,7 +167,7 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_FALSE(bool1.getValue<bool>());
             EXPECT_ERR_WARN(cbs, false, false);
-            RUN_SAFE(bool1.getValue<bool>()); // getting data twice
+            EXPECT_ANY_THROW(bool1.getValue<bool>()); // getting data twice
             EXPECT_ERR_WARN(cbs, true, false);
 
             if (auto bool2 = sub.getConfParamOptional("bool2")) {
@@ -183,7 +178,7 @@ TEST(BaseLibConfigTree, Get)
 
             if (auto bool3 = sub.getConfParamOptional("bool3")) {
                 EXPECT_ERR_WARN(cbs, false, false);
-                RUN_SAFE(bool3->getValue<bool>());
+                EXPECT_ANY_THROW(bool3->getValue<bool>());
                 EXPECT_ERR_WARN(cbs, true, false); // error because of no data
             }
             EXPECT_ERR_WARN(cbs, false, false);
@@ -203,7 +198,7 @@ TEST(BaseLibConfigTree, Get)
 
             // I can not ignore stuff that I already read
             // this also makes sure that the subtree inherits the callbacks properly
-            RUN_SAFE(sub.ignoreConfParam("float"));
+            EXPECT_ANY_THROW(sub.ignoreConfParam("float"));
             EXPECT_ERR_WARN(cbs, true, false);
         }
         for (int i : {0, 1, 2}) {
@@ -221,16 +216,16 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
             EXPECT_ERR_WARN(cbs, false, false);
-            RUN_SAFE(z.getConfAttribute<double>("attr")); // getting attribute twice
+            EXPECT_ANY_THROW(z.getConfAttribute<double>("attr")); // getting attribute twice
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
+            EXPECT_ANY_THROW(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_EQ(32.0, z.getValue<double>());
             EXPECT_ERR_WARN(cbs, false, false);
             auto const opt = z.getConfAttributeOptional<bool>("optattr");
             EXPECT_TRUE(!!opt); EXPECT_FALSE(*opt);
             EXPECT_ERR_WARN(cbs, false, false);
-            //RUN_SAFE(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
+            //EXPECT_ANY_THROW(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
             //EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
@@ -395,7 +390,7 @@ TEST(BaseLibConfigTree, GetParamList)
             auto range = conf.getConfParamList("int3");
             EXPECT_ERR_WARN(cbs, false, false);
 
-            RUN_SAFE(*range.begin());
+            EXPECT_ANY_THROW(*range.begin());
             // Error because of child tag, raises exception, thus
             // a temporary ConfigTree gets destroyed producing a warning.
             EXPECT_ERR_WARN(cbs, true, true);
@@ -454,39 +449,39 @@ TEST(BaseLibConfigTree, NoConversion)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        RUN_SAFE(conf.getConfParam<int>("int"));
+        EXPECT_ANY_THROW(conf.getConfParam<int>("int"));
         EXPECT_ERR_WARN(cbs, true, false);
-        RUN_SAFE(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
+        EXPECT_ANY_THROW(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
         EXPECT_ERR_WARN(cbs, true, false);
 
-        RUN_SAFE(conf.getConfParam<double>("double"));
+        EXPECT_ANY_THROW(conf.getConfParam<double>("double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // peek value existent but not convertible
-        RUN_SAFE(conf.peekConfParam<double>("non_double"));
+        EXPECT_ANY_THROW(conf.peekConfParam<double>("non_double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // optional value existent but not convertible
-        RUN_SAFE(
+        EXPECT_ANY_THROW(
             auto d = conf.getConfParamOptional<double>("non_double");
             ASSERT_FALSE(d);
         );
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I can only ignore something once
-        RUN_SAFE(conf.ignoreConfParam("ign"));
+        conf.ignoreConfParam("ign");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.ignoreConfParam("ign"));
+        EXPECT_ANY_THROW(conf.ignoreConfParam("ign"));
         EXPECT_ERR_WARN(cbs, true, false);
-        RUN_SAFE(conf.ignoreConfParamAll("ign2"));
+        conf.ignoreConfParamAll("ign2");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.ignoreConfParamAll("ign2"));
+        EXPECT_ANY_THROW(conf.ignoreConfParamAll("ign2"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I cannot read a parameter twice
-        RUN_SAFE(conf.getConfParam<bool>("bool"));
+        conf.getConfParam<bool>("bool");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.getConfParam<bool>("bool"));
+        EXPECT_ANY_THROW(conf.getConfParam<bool>("bool"));
         EXPECT_ERR_WARN(cbs, true, false);
 
     } // ConfigTree destroyed here
@@ -508,33 +503,33 @@ TEST(BaseLibConfigTree, BadKeynames)
 
         for (auto tag : { "<", "Z", ".", "$", "0", "", "/", "_", "a__" })
         {
-            RUN_SAFE(conf.getConfParam<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParam<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParam<int>(tag, 500));
+            EXPECT_ANY_THROW(conf.getConfParam<int>(tag, 500));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamOptional<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParamOptional<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamList<int>(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            RUN_SAFE(conf.getConfParam(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamOptional(tag));
+            EXPECT_ANY_THROW(conf.getConfParamList<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            RUN_SAFE(conf.peekConfParam<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParam(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.checkConfParam<int>(tag, 500));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            RUN_SAFE(conf.getConfSubtree(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfSubtreeOptional(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfSubtreeList(tag));
+            EXPECT_ANY_THROW(conf.getConfParamOptional(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            RUN_SAFE(conf.getConfAttribute<int>(tag));
+            EXPECT_ANY_THROW(conf.peekConfParam<int>(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.checkConfParam<int>(tag, 500));
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            EXPECT_ANY_THROW(conf.getConfSubtree(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getConfSubtreeOptional(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getConfSubtreeList(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            EXPECT_ANY_THROW(conf.getConfAttribute<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
         }
 
