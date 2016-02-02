@@ -29,7 +29,6 @@
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
-class vtkImageData; // For conversion from Image to QuadMesh
 class vtkUnstructuredGrid; // For conversion vom vtk to ogs mesh
 class vtkDataArray; // For node/cell properties
 
@@ -40,56 +39,19 @@ class Properties;
 
 
 /**
- * \brief Adapter class to convert FEM Mesh to a representation more suited for visualisation purposes
+ * \brief Converter for VtkUnstructured Grids to OGS meshes
  */
 class VtkMeshConverter
 {
 public:
-	/**
-	 * Converts greyscale image to a mesh
-	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-	 * \param intensity_type defines how image intensities are interpreted
-	 */
-	static MeshLib::Mesh* convertRasterToMesh(GeoLib::Raster const& raster,
-	                                          MeshElemType elem_type,
-	                                          UseIntensityAs intensity_type);
-
-	/**
-	 * Converts greyscale image to a mesh
-	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-	 * \param intensity_type defines how image intensities are interpreted
-	 */
-	static MeshLib::Mesh* convertImgToMesh(vtkImageData* img,
-	                                       const double origin[3],
-	                                       const double scalingFactor,
-	                                       MeshElemType elem_type,
-	                                       UseIntensityAs intensity_type);
-
-	/**
-	 * Converts double array with raster values to a mesh
-	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
-	 * \param intensity_type defines how image intensities are interpreted
-	 */
-	static MeshLib::Mesh* convertImgToMesh(const double* img,
-	                                      GeoLib::RasterHeader const& header,
-	                                      MeshElemType elem_type,
-	                                      UseIntensityAs intensity_type);
-
 	/// Converts a vtkUnstructuredGrid object to a Mesh
 	static MeshLib::Mesh* convertUnstructuredGrid(vtkUnstructuredGrid* grid,
 	                                              std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:
-	static MeshLib::Mesh* constructMesh(
-		std::vector<double> const& pix_val,
-		std::vector<bool> const& pix_vis,
-		GeoLib::RasterHeader const& header,
-		MeshLib::MeshElemType elem_type,
-		MeshLib::UseIntensityAs intensity_type);
-
 	static void convertScalarArrays(vtkUnstructuredGrid &grid, MeshLib::Mesh &mesh);
 
-	static std::vector<MeshLib::Node*> VtkMeshConverter::createNodeVector(
+	static std::vector<MeshLib::Node*> createNodeVector(
 		std::vector<double> const& elevation,
 		std::vector<int> &node_idx_map,
 		GeoLib::RasterHeader const& header,
@@ -156,8 +118,6 @@ private:
 		std::copy(&data_array[0], &data_array[nTuples*nComponents], std::back_inserter(*vec));
 		return;
 	}
-
-	static double getExistingValue(const double* img, std::size_t length);
 };
 
 } // end namespace MeshLib

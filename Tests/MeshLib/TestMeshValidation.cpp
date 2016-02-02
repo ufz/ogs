@@ -19,8 +19,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-//#include "MeshLib/MeshGenerators/ConvertRasterToMesh.h"
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Elements/Element.h"
 
@@ -48,9 +47,8 @@ TEST(MeshValidation, DetectHolesTri)
 	GeoLib::RasterHeader const header = 
 		{4,3,MathLib::Point3d(std::array<double,3>{{0,0,0}}),1,-9999};
 	GeoLib::Raster const raster(header ,pix.begin(), pix.end());
-	//MeshLib::ConvertRasterToMesh conv(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION);
-	//auto mesh = std::unique_ptr<MeshLib::Mesh>{conv.execute()};
-	auto mesh = std::unique_ptr<MeshLib::Mesh>{MeshLib::VtkMeshConverter::convertRasterToMesh(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION)};
+	std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::RasterToMesh::convert(
+		raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION));
 	ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
 	detectHoles(*mesh, {12}, 1);

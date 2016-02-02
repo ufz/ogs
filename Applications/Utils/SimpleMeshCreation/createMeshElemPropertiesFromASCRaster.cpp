@@ -29,8 +29,7 @@
 
 #include "MathLib/MathTools.h"
 
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-//#include "MeshLib/MeshGenerators/ConvertRasterToMesh.h"
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -161,12 +160,9 @@ int main (int argc, char* argv[])
 		INFO("Variance of source: %f.", var);
 	}
 
-	std::unique_ptr<MeshLib::Mesh> src_mesh (MeshLib::VtkMeshConverter::convertRasterToMesh(*raster, MeshLib::MeshElemType::QUAD, MeshLib::UseIntensityAs::DATAVECTOR));
-/*
-	std::unique_ptr<MeshLib::Mesh> src_mesh(MeshLib::ConvertRasterToMesh(
-		*raster, MeshLib::MeshElemType::QUAD,
-		MeshLib::UseIntensityAs::DATAVECTOR).execute());
-*/
+	std::unique_ptr<MeshLib::Mesh> src_mesh(MeshLib::RasterToMesh::convert(
+		*raster, MeshLib::MeshElemType::QUAD,MeshLib::UseIntensityAs::DATAVECTOR));
+
 	std::vector<std::size_t> src_perm(size);
 	std::iota(src_perm.begin(), src_perm.end(), 0);
 	BaseLib::quicksort<double>(src_properties, 0, size, src_perm);
