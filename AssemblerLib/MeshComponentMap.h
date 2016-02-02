@@ -132,7 +132,8 @@ public:
         return _num_global_dof;
     }
 
-    /// Get the number of local unknowns (for DDC).
+    /// Get the number of local unknowns excluding those associated
+    /// with ghost nodes (for DDC with node-wise mesh partitioning).
     std::size_t getNLocalUnknowns() const
     {
         return _num_local_dof;
@@ -183,7 +184,8 @@ private:
     /// Number of global unknowns.
     std::size_t _num_global_dof = 0;
 
-    /// Number of local unknowns.
+    /// Number of local unknowns excluding those associated
+    /// with ghost nodes (for domain decomposition).
     std::size_t _num_local_dof  = 0;
 
     /// Number of components

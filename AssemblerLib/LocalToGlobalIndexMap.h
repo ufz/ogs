@@ -68,7 +68,9 @@ public:
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
 
-    /// Returns total number of local degrees of freedom for DDC.
+    /// Returns total number of local degrees of freedom
+    /// of the present rank, which does not count the unknowns
+    /// associated with ghost nodes (for DDC with node-wise mesh partitioning).
     std::size_t dofSizeLocal() const
     {
         return _mesh_component_map.getNLocalUnknowns();

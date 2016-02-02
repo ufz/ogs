@@ -35,16 +35,16 @@ MeshComponentMap::MeshComponentMap(
 
 {
     // get number of unknows
-    GlobalIndexType num_unknows = 0;
-    for (auto c = components.cbegin(); c != components.cend(); ++c)
+    GlobalIndexType num_unknowns = 0;
+    for (auto const c : components)
     {
-        assert (*c != nullptr);
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        assert (c != nullptr);
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
         {
-            MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
+            MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
            const MeshLib::NodePartitionedMesh &mesh
                    = static_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
-            num_unknows += mesh.getNGlobalNodes();
+            num_unknowns += mesh.getNGlobalNodes();
         }
     }
 
@@ -54,12 +54,12 @@ MeshComponentMap::MeshComponentMap(
     std::size_t comp_id = 0;
     _num_global_dof = 0;
     _num_local_dof = 0;
-    for (auto c = components.cbegin(); c != components.cend(); ++c)
+    for (auto const c : components)
     {
-        assert (*c != nullptr);
-        for (unsigned mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        assert (c != nullptr);
+        for (unsigned mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
         {
-            MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
+            MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
             const MeshLib::NodePartitionedMesh &mesh
                    = static_cast<const MeshLib::NodePartitionedMesh&>(mesh_subset.getMesh());
@@ -79,7 +79,7 @@ MeshComponentMap::MeshComponentMap(
                         // If the ghost entry has an index of 0,
                         // its index is set to the negative value of unknowns.
                         if (global_id == 0)
-                             global_id = -num_unknows;
+                             global_id = -num_unknowns;
                     }
                     else
                         _num_local_dof++;
@@ -110,7 +110,7 @@ MeshComponentMap::MeshComponentMap(
                         // If the ghost entry has an index of 0,
                         // its index is set to the negative value of unknowns.
                         if (global_id == 0)
-                             global_id = -num_unknows;
+                             global_id = -num_unknowns;
                     }
                     else
                         _num_local_dof++;
@@ -142,12 +142,12 @@ MeshComponentMap::MeshComponentMap(
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
     std::size_t comp_id = 0;
-    for (auto c = components.cbegin(); c != components.cend(); ++c)
+    for (auto const c : components)
     {
-        assert (*c != nullptr);
-        for (std::size_t mesh_subset_index = 0; mesh_subset_index < (*c)->size(); mesh_subset_index++)
+        assert (c != nullptr);
+        for (std::size_t mesh_subset_index = 0; mesh_subset_index < c->size(); mesh_subset_index++)
         {
-            MeshLib::MeshSubset const& mesh_subset = (*c)->getMeshSubset(mesh_subset_index);
+            MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
             // mesh items are ordered first by node, cell, ....
             for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
