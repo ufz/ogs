@@ -50,6 +50,13 @@ MeshLib::Element* createElementWithSameNodeOrder(const std::vector<MeshLib::Node
 }
 }
 
+MeshLib::Mesh* VtkMeshConverter::convertRasterToMesh(GeoLib::Raster const& raster,
+                                                     MeshElemType elem_type,
+                                                     UseIntensityAs intensity_type)
+{
+	return convertImgToMesh(raster.begin(), raster.getHeader(), elem_type, intensity_type);
+}
+
 MeshLib::Mesh* VtkMeshConverter::convertImgToMesh(vtkImageData* img,
                                                   const double origin[3],
                                                   const double scalingFactor,

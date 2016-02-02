@@ -50,6 +50,15 @@ public:
 	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
 	 * \param intensity_type defines how image intensities are interpreted
 	 */
+	static MeshLib::Mesh* convertRasterToMesh(GeoLib::Raster const& raster,
+	                                          MeshElemType elem_type,
+	                                          UseIntensityAs intensity_type);
+
+	/**
+	 * Converts greyscale image to a mesh
+	 * \param elem_type defines if elements of the new mesh should be triangles or quads (or hexes for 3D)
+	 * \param intensity_type defines how image intensities are interpreted
+	 */
 	static MeshLib::Mesh* convertImgToMesh(vtkImageData* img,
 	                                       const double origin[3],
 	                                       const double scalingFactor,
