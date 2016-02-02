@@ -353,8 +353,6 @@ public:
      * The return value is suitable to be used with range-base for-loops.
      *
      * \pre \c param must not have been read before from this ConfigTree.
-     *
-     * \todo write tests
      */
     Range<ParameterIterator>
     getConfParamList(std::string const& param) const;
@@ -382,8 +380,6 @@ public:
      * \return the requested attribute
      *
      * \pre \c param must not have been read before from this ConfigTree.
-     *
-     * \todo write tests
      */
     template<typename T> boost::optional<T>
     getConfAttributeOptional(std::string const& attr) const;

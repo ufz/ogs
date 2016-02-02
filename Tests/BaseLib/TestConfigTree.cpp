@@ -129,7 +129,8 @@ TEST(BaseLibConfigTree, Get)
             "  <ignored2/>"
             "</sub>"
             "<x>Y</x>"
-            "<z attr=\"0.5\">32.0</z>";
+            "<z attr=\"0.5\" optattr=\"false\">32.0</z>"
+            ;
     auto const ptree = readXml(xml);
 
     Callbacks cbs;
@@ -220,11 +221,18 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
             EXPECT_ERR_WARN(cbs, false, false);
-            RUN_SAFE(z.getConfAttribute<double>("attr")); // getting attr twice
+            RUN_SAFE(z.getConfAttribute<double>("attr")); // getting attribute twice
             EXPECT_ERR_WARN(cbs, true, false);
             RUN_SAFE(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_EQ(32.0, z.getValue<double>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            auto const opt = z.getConfAttributeOptional<bool>("optattr");
+            EXPECT_TRUE(!!opt); EXPECT_FALSE(*opt);
+            EXPECT_ERR_WARN(cbs, false, false);
+            //RUN_SAFE(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
+            //EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
@@ -328,6 +336,13 @@ TEST(BaseLibConfigTree, GetSubtreeList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
+        for (auto p : conf.getConfSubtreeList("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
         int i = 0;
         for (auto ct : conf.getConfSubtreeList("val"))
         {
@@ -335,6 +350,58 @@ TEST(BaseLibConfigTree, GetSubtreeList)
             EXPECT_ERR_WARN(cbs, false, false);
             ++i;
         }
+    } // ConfigTree destroyed here
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+TEST(BaseLibConfigTree, GetParamList)
+{
+    const char xml[] =
+            "<int>0</int>"
+            "<int>1</int>"
+            "<int>2</int>"
+            "<int2 a=\"b\">3</int2>"
+            "<int3>4<error/></int3>";
+    auto const ptree = readXml(xml);
+
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(ptree, cbs);
+
+        for (auto p : conf.getConfParamList("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        int i = 0;
+        for (auto p : conf.getConfParamList("int"))
+        {
+            EXPECT_EQ(i, p.getValue<int>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            ++i;
+        }
+
+        for (auto p : conf.getConfParamList("int2"))
+        {
+            EXPECT_EQ(i, p.getValue<int>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            ++i;
+        }
+        EXPECT_ERR_WARN(cbs, false, true); // attribute "a" not read
+
+        {
+            auto range = conf.getConfParamList("int3");
+            EXPECT_ERR_WARN(cbs, false, false);
+
+            RUN_SAFE(*range.begin());
+            // Error because of child tag, raises exception, thus
+            // a temporary ConfigTree gets destroyed producing a warning.
+            EXPECT_ERR_WARN(cbs, true, true);
+        } // range destroyed here
+        EXPECT_ERR_WARN(cbs, false, false);
+
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
 }
@@ -351,6 +418,13 @@ TEST(BaseLibConfigTree, GetValueList)
     Callbacks cbs;
     {
         auto const conf = makeConfigTree(ptree, cbs);
+
+        for (auto p : conf.getConfParamList<int>("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
 
         int n = 0;
         for (auto i : conf.getConfParamList<int>("int"))
