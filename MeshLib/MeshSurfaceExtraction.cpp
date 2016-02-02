@@ -69,7 +69,9 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib:
 	return node_area_vec;
 }
 
-MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle, bool keepOriginalNodeIds)
+MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
+    const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle,
+    std::string const& subsfc_node_id_backup_prop_name)
 {
 	if (angle < 0 || angle > 90)
 	{
@@ -107,17 +109,23 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(const MeshLib::Mesh &mesh, 
 	}
 
 	std::vector<std::size_t> id_map;
-	if (keepOriginalNodeIds)
+	if (!subsfc_node_id_backup_prop_name.empty())
 	{
 		id_map.reserve(sfc_nodes.size());
 		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
 			id_map.push_back((*node)->getID());
 	}
 	MeshLib::Mesh* result (new Mesh(mesh.getName()+"-Surface", sfc_nodes, new_elements));
-	if (keepOriginalNodeIds)
-		for (auto node = sfc_nodes.cbegin(); node != sfc_nodes.cend(); ++node)
-			(*node)->setID(id_map[(*node)->getID()]);
-
+	// transmit the original node ids of the subsurface mesh as a property
+	if (!subsfc_node_id_backup_prop_name.empty()) {
+		boost::optional<MeshLib::PropertyVector<std::size_t>&> orig_node_ids(
+		    result->getProperties().createNewPropertyVector<std::size_t>(
+		        subsfc_node_id_backup_prop_name , MeshLib::MeshItemType::Node, 1));
+		if (orig_node_ids) {
+			orig_node_ids->resize(id_map.size());
+			std::copy(id_map.cbegin(), id_map.cend(), orig_node_ids->begin());
+		}
+	}
 	return result;
 }
 

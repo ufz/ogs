@@ -13,9 +13,10 @@
 
 #include "AddLayerToMesh.h"
 
-#include <vector>
 #include <map>
 #include <memory>
+#include <numeric>
+#include <vector>
 
 #include "logog/include/logog.hpp"
 
@@ -29,8 +30,22 @@
 namespace MeshLib
 {
 
+/** Extrudes point, line, triangle or quad elements to its higher dimensional
+ * versions, i.e. line, quad, prism, hexahedron.
+ *
+ * @param subsfc_nodes the nodes the elements are based on
+ * @param sfc_elem the element of the surface that will be extruded
+ * @param sfc_to_subsfc_id_map relation between the surface nodes of the surface
+ * element and the ids of the nodes of the subsurface mesh
+ * @param subsfc_sfc_id_map mapping of the surface nodes of the current mesh
+ * to the surface nodes of the extruded mesh
+ *
+ * @return extruded element (point -> line, line -> quad, tri -> prism, quad ->
+ * hexahedron)
+*/
 MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
 	MeshLib::Element const& sfc_elem,
+	MeshLib::PropertyVector<std::size_t> const& sfc_to_subsfc_id_map,
 	std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
 {
 	if (sfc_elem.getDimension() > 2)
@@ -41,10 +56,11 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
 
 	for (unsigned j=0; j<nElemNodes; ++j)
 	{
-		new_nodes[j] = subsfc_nodes[sfc_elem.getNode(j)->getID()];
+		std::size_t const subsfc_id(
+		    sfc_to_subsfc_id_map[sfc_elem.getNode(j)->getID()]);
+		new_nodes[j] = subsfc_nodes[subsfc_id];
 		std::size_t new_idx = (nElemNodes==2) ? (3-j) : (nElemNodes+j);
-		new_nodes[new_idx] =
-		    subsfc_nodes[subsfc_sfc_id_map.at(sfc_elem.getNode(j)->getID())];
+		new_nodes[new_idx] = subsfc_nodes[subsfc_sfc_id_map.at(subsfc_id)];
 	}
 	
 	if (sfc_elem.getGeomType() == MeshLib::MeshElemType::LINE)
@@ -80,12 +96,27 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	const MathLib::Vector3 dir(0, 0, flag);
 	double const angle(90);
 	std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
-	
+
+	std::string const prop_name("OriginalSubsurfaceNodeIDs");
+
 	if (mesh.getDimension() == 3)
-		sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle, true));
-	else
+		sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(
+		    mesh, dir, angle, prop_name));
+	else {
 		sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
 		                      std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
+		// add property storing node ids
+		boost::optional<MeshLib::PropertyVector<std::size_t>&> pv(
+		    sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
+		        prop_name, MeshLib::MeshItemType::Node, 1));
+		if (pv) {
+			pv->resize(sfc_mesh->getNNodes());
+			std::iota(pv->begin(), pv->end(), 0);
+		} else {
+			ERR("Could not create and initialize property.");
+			return nullptr;
+		}
+	}
 	INFO("done.");
 
 	// *** add new surface nodes
@@ -99,24 +130,36 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	std::vector<MeshLib::Node*> const& sfc_nodes(sfc_mesh->getNodes());
 	std::size_t const n_sfc_nodes(sfc_nodes.size());
 
+	// fetch subsurface node ids PropertyVector
+	boost::optional<MeshLib::PropertyVector<std::size_t> const&> opt_node_id_pv(
+	    sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name));
+	if (!opt_node_id_pv) {
+		ERR(
+		    "Need subsurface node ids, but the property \"%s\" is not "
+		    "available.",
+		    prop_name.c_str());
+		return nullptr;
+	}
+
+	MeshLib::PropertyVector<std::size_t> const& node_id_pv(*opt_node_id_pv);
 	// *** copy sfc nodes to subsfc mesh node
 	std::map<std::size_t, std::size_t> subsfc_sfc_id_map;
 	for (std::size_t k(0); k<n_sfc_nodes; ++k) {
-		std::size_t const subsfc_id(sfc_nodes[k]->getID());
+		std::size_t const subsfc_id(node_id_pv[k]);
 		std::size_t const sfc_id(k+n_subsfc_nodes);
 		subsfc_sfc_id_map.insert(std::make_pair(subsfc_id, sfc_id));
-		MeshLib::Node const& node (*sfc_nodes[k]);
+		MeshLib::Node const& node(*sfc_nodes[k]);
 		subsfc_nodes.push_back(new MeshLib::Node(
 		    node[0], node[1], node[2] - (flag * thickness), sfc_id));
 	}
 
-	// *** insert new top layer elements into subsfc_mesh
+	// *** insert new layer elements into subsfc_mesh
 	std::vector<MeshLib::Element*> const& sfc_elements(sfc_mesh->getElements());
 	std::size_t const n_sfc_elements(sfc_elements.size());
 	for (std::size_t k(0); k<n_sfc_elements; ++k)
-		subsfc_elements.push_back(
-			extrudeElement(subsfc_nodes, *sfc_elements[k], subsfc_sfc_id_map)
-		);
+		subsfc_elements.push_back(extrudeElement(subsfc_nodes, *sfc_elements[k],
+		                                         node_id_pv,
+		                                         subsfc_sfc_id_map));
 
 	auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements);
 

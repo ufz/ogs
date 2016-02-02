@@ -13,6 +13,7 @@
  */
 
 #include <fstream>
+#include <memory>
 
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
@@ -61,33 +62,53 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 
 const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
-	if (_direct_values.empty())
-	{
-		GeoLib::Raster* raster (FileIO::AsciiRasterInterface::readRaster(filename));
-		if (!raster) {
-			ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration() - could not load raster file.");
-			return _direct_values;
-		}
-
-		const MathLib::Vector3 dir(0,0,-1);
-		MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, true));
-		std::vector<double> node_area_vec =
-			MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*sfc_mesh);
-		const std::vector<MeshLib::Node*> &surface_nodes (sfc_mesh->getNodes());
-		const std::size_t nNodes(sfc_mesh->getNNodes());
-		const double no_data (raster->getNoDataValue());
-		_direct_values.reserve(nNodes);
-		for (std::size_t i=0; i<nNodes; ++i)
-		{
-			double val (raster->getValueAtPoint(*surface_nodes[i]));
-			val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
-			_direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
-		}
-
-		delete raster;
+	if (!_direct_values.empty()) {
+		ERR(
+		    "Error in DirectConditionGenerator::directWithSurfaceIntegration()"
+		    "- Data vector contains outdated values...");
+		return _direct_values;
 	}
-	else
-		std::cout << "Error in DirectConditionGenerator::directWithSurfaceIntegration() - Data vector contains outdated values..." << std::endl;
+
+	std::unique_ptr<GeoLib::Raster> raster(
+	    FileIO::AsciiRasterInterface::readRaster(filename));
+	if (!raster) {
+		ERR(
+		    "Error in DirectConditionGenerator::directWithSurfaceIntegration()"
+		    "- could not load raster file.");
+		return _direct_values;
+	}
+
+	MathLib::Vector3 const dir(0.0, 0.0, -1.0);
+	double const angle(90);
+	std::string const prop_name("OriginalSubsurfaceNodeIDs");
+	std::unique_ptr<MeshLib::Mesh> surface_mesh(
+	    MeshLib::MeshSurfaceExtraction::getMeshSurface(
+	        mesh, dir, angle, prop_name));
+
+	std::vector<double> node_area_vec =
+		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
+	const std::vector<MeshLib::Node*> &surface_nodes(surface_mesh->getNodes());
+	const std::size_t nNodes(surface_mesh->getNNodes());
+	const double no_data(raster->getNoDataValue());
+
+	boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(
+	    surface_mesh->getProperties().getPropertyVector<int>(prop_name));
+	if (!opt_node_id_pv) {
+		ERR(
+		    "Need subsurface node ids, but the property \"%s\" is not "
+		    "available.",
+		    prop_name.c_str());
+		return _direct_values;
+	}
+
+	MeshLib::PropertyVector<int> const& node_id_pv(*opt_node_id_pv);
+	_direct_values.reserve(nNodes);
+	for (std::size_t i=0; i<nNodes; ++i)
+	{
+		double val(raster->getValueAtPoint(*surface_nodes[i]));
+		val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
+		_direct_values.push_back(std::pair<std::size_t, double>(node_id_pv[i], val));
+	}
 
 	return _direct_values;
 }
