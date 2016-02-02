@@ -78,13 +78,18 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 		return _direct_values;
 	}
 
-	const MathLib::Vector3 dir(0,0,-1);
-	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, true));
+	MathLib::Vector3 const dir(0.0, 0.0, -1.0);
+	double const angle(90);
+	std::string const prop_name("OriginalSubsurfaceNodeIDs");
+	std::unique_ptr<MeshLib::Mesh> surface_mesh(
+	    MeshLib::MeshSurfaceExtraction::getMeshSurface(
+	        mesh, dir, angle, prop_name));
+
 	std::vector<double> node_area_vec =
-		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*sfc_mesh);
-	const std::vector<MeshLib::Node*> &surface_nodes (sfc_mesh->getNodes());
-	const std::size_t nNodes(sfc_mesh->getNNodes());
-	const double no_data (raster->getHeader().no_data);
+		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
+	const std::vector<MeshLib::Node*> &surface_nodes(surface_mesh->getNodes());
+	const std::size_t nNodes(surface_mesh->getNNodes());
+	const double no_data(raster->getHeader().no_data);
 
 	boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(
 	    surface_mesh->getProperties().getPropertyVector<int>(prop_name));
@@ -100,9 +105,9 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 	_direct_values.reserve(nNodes);
 	for (std::size_t i=0; i<nNodes; ++i)
 	{
-		double val (raster->getValueAtPoint(*surface_nodes[i]));
+		double val(raster->getValueAtPoint(*surface_nodes[i]));
 		val = (val == no_data) ? 0 : ((val*node_area_vec[i])/scaling);
-		_direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
+		_direct_values.push_back(std::pair<std::size_t, double>(node_id_pv[i], val));
 	}
 
 	return _direct_values;

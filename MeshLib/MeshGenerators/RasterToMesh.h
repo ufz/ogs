@@ -104,7 +104,6 @@ private:
 		for (std::size_t i = 0; i < imgHeight; i++)
 			for (std::size_t j = 0; j < imgWidth; j++)
 			{
-				std::size_t const idx (i*imgWidth+j);
 				if (!pix_vis[i*imgWidth+j])
 					continue;
 				T val (static_cast<T>(pix_val[i*(imgWidth+1)+j]));
