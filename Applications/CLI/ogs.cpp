@@ -16,8 +16,7 @@
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/FileTools.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
@@ -102,37 +101,25 @@ int main(int argc, char *argv[])
 	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
 	    argc, argv);
 
-	// Project's configuration
-	BaseLib::ConfigTree project_config =
-	    BaseLib::read_xml_config(project_arg.getValue());
+	auto project_config = BaseLib::makeConfigTree(
+	    project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
 
-	std::unique_ptr<ProjectData> project;
-	{
-		// Nested scope in order to trigger config tree checks early.
-		// Caution: The top level config tree must not be saved inside
-		//          ProjectData and the boost::property_tree must not be
-		//          created inside this same scope!
-		using Conf = BaseLib::ConfigTreeNew;
-		Conf conf(project_config.get_child("OpenGeoSysProject"),
-		          Conf::onerror,
-		          nonfatal_arg.getValue() ? Conf::onwarning : Conf::onerror);
+	ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()));
 
-		project.reset(new ProjectData(
-		              conf, BaseLib::extractPath(project_arg.getValue())));
-	}
+	project_config.checkAndInvalidate();
 
 	// Create processes.
-	project->buildProcesses<GlobalSetupType>();
+	project.buildProcesses<GlobalSetupType>();
 
 	INFO("Initialize processes.");
-	for (auto p_it = project->processesBegin(); p_it != project->processesEnd(); ++p_it)
+	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
 	{
 		(*p_it)->initialize();
 	}
 
-	std::string const output_file_name(project->getOutputFilePrefix() + ".vtu");
+	std::string const output_file_name(project.getOutputFilePrefix() + ".vtu");
 
-	solveProcesses(*project);
+	solveProcesses(project);
 
 	return 0;
 }

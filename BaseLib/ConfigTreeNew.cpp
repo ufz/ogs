@@ -7,6 +7,7 @@
  *
  */
 
+#include <logog/include/logog.hpp>
 #include "ConfigTreeNew.h"
 
 namespace BaseLib
@@ -18,9 +19,10 @@ const std::string ConfigTreeNew::key_chars = key_chars_start + "_0123456789";
 
 ConfigTreeNew::
 ConfigTreeNew(PTree const& tree,
+              std::string const& filename,
               Callback const& error_cb,
               Callback const& warning_cb)
-    : _tree(&tree), _onerror(error_cb), _onwarning(warning_cb)
+    : _tree(&tree), _filename(filename), _onerror(error_cb), _onwarning(warning_cb)
 {
     if (!_onerror) {
         ERR("ConfigTree: No valid error handler provided.");
@@ -36,6 +38,7 @@ ConfigTreeNew::
 ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
               std::string const& root)
     : _tree(&tree), _path(joinPaths(parent._path, root)),
+      _filename(parent._filename),
       _onerror(parent._onerror), _onwarning(parent._onwarning)
 {
     checkKeyname(root);
@@ -43,11 +46,13 @@ ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent,
 
 ConfigTreeNew::
 ConfigTreeNew(ConfigTreeNew && other)
-    : _tree(other._tree)
-    , _path(other._path)
+    : _tree                    (other._tree)
+    , _path          (std::move(other._path))
+    , _filename      (std::move(other._filename))
     , _visited_params(std::move(other._visited_params))
-    , _onerror(other._onerror)
-    , _onwarning(other._onwarning)
+    , _have_read_data          (other._have_read_data)
+    , _onerror       (std::move(other._onerror))
+    , _onwarning     (std::move(other._onwarning))
 {
     other._tree = nullptr;
 }
@@ -66,11 +71,47 @@ operator=(ConfigTreeNew&& other)
     _tree           = other._tree;
     other._tree     = nullptr;
     _path           = std::move(other._path);
+    _filename       = std::move(other._filename);
     _visited_params = std::move(other._visited_params);
+    _have_read_data = other._have_read_data;
     _onerror        = std::move(other._onerror);
     _onwarning      = std::move(other._onwarning);
 
     return *this;
+}
+
+ConfigTreeNew
+ConfigTreeNew::
+getConfParam(std::string const& root) const
+{
+    auto ct = getConfSubtree(root);
+    if (ct.hasChildren())
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
+}
+
+boost::optional<ConfigTreeNew>
+ConfigTreeNew::
+getConfParamOptional(std::string const& root) const
+{
+    auto ct = getConfSubtreeOptional(root);
+    if (ct && ct->hasChildren())
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
+}
+
+Range<ConfigTreeNew::ParameterIterator>
+ConfigTreeNew::
+getConfParamList(const std::string &param) const
+{
+    checkUnique(param);
+    markVisited(param, Attr::TAG, true);
+
+    auto p = _tree->equal_range(param);
+
+    return Range<ParameterIterator>(
+                ParameterIterator(p.first,  param, *this),
+                ParameterIterator(p.second, param, *this));
 }
 
 ConfigTreeNew
@@ -81,7 +122,6 @@ getConfSubtree(std::string const& root) const
         return std::move(*t);
     } else {
         error("Key <" + root + "> has not been found.");
-        return ConfigTreeNew(PTree(), *this, ""); // TODO that will crash
     }
 }
 
@@ -90,14 +130,13 @@ ConfigTreeNew::
 getConfSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
-    auto subtree = _tree->get_child_optional(root);
 
-    if (subtree) {
-        markVisited(root);
+    if (auto subtree = _tree->get_child_optional(root)) {
+        markVisited(root, Attr::TAG, false);
         return ConfigTreeNew(*subtree, *this, root);
     } else {
-        markVisited(root, true);
-        return boost::optional<ConfigTreeNew>();
+        markVisited(root, Attr::TAG, true);
+        return boost::none;
     }
 }
 
@@ -106,7 +145,7 @@ ConfigTreeNew::
 getConfSubtreeList(std::string const& root) const
 {
     checkUnique(root);
-    markVisited(root, true);
+    markVisited(root, Attr::TAG, true);
 
     auto p = _tree->equal_range(root);
 
@@ -120,13 +159,24 @@ void ConfigTreeNew::ignoreConfParam(const std::string &param) const
     checkUnique(param);
     // if not found, peek only
     bool peek_only = _tree->find(param) == _tree->not_found();
-    markVisited(param, peek_only);
+    markVisited(param, Attr::TAG, peek_only);
+}
+
+void ConfigTreeNew::ignoreConfAttribute(const std::string &attr) const
+{
+    checkUniqueAttr(attr);
+
+    // Exercise: Guess what not! (hint: if not found, peek only)
+    // Btw. (not a hint) _tree->find() does not seem to work here.
+    bool peek_only = !_tree->get_child_optional("<xmlattr>." + attr);
+
+    markVisited(attr, Attr::ATTR, peek_only);
 }
 
 void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 {
     checkUnique(param);
-    auto& ct = markVisited(param, true);
+    auto& ct = markVisited(param, Attr::TAG, true);
 
     auto p = _tree->equal_range(param);
     for (auto it = p.first; it != p.second; ++it) {
@@ -137,24 +187,29 @@ void ConfigTreeNew::ignoreConfParamAll(const std::string &param) const
 
 void ConfigTreeNew::error(const std::string& message) const
 {
-    _onerror(_path, message);
+    _onerror(_filename, _path, message);
+    std::abort();
 }
 
 void ConfigTreeNew::warning(const std::string& message) const
 {
-    _onwarning(_path, message);
+    _onwarning(_filename, _path, message);
 }
 
 
-void ConfigTreeNew::onerror(const std::string& path, const std::string& message)
+void ConfigTreeNew::onerror(const std::string& filename, const std::string& path,
+                            const std::string& message)
 {
-    ERR("ConfigTree: At path <%s>: %s", path.c_str(), message.c_str());
+    ERR("ConfigTree: In file `%s' at path <%s>: %s",
+        filename.c_str(), path.c_str(), message.c_str());
     std::abort();
 }
 
-void ConfigTreeNew::onwarning(const std::string& path, const std::string& message)
+void ConfigTreeNew::onwarning(const std::string& filename, const std::string& path,
+                              const std::string& message)
 {
-    WARN("ConfigTree: At path <%s>: %s", path.c_str(), message.c_str());
+    WARN("ConfigTree: In file `%s' at path <%s>: %s",
+         filename.c_str(), path.c_str(), message.c_str());
 }
 
 std::string ConfigTreeNew::shortString(const std::string &s)
@@ -175,6 +230,12 @@ void ConfigTreeNew::checkKeyname(std::string const& key) const
         error("Key <" + key + "> starts with an illegal character.");
     } else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
         error("Key <" + key + "> contains illegal characters.");
+    } else if (key.find("__") != std::string::npos) {
+        // This is illegal because we use parameter names to generate doxygen
+        // page names. Thereby "__" acts as a separator character. Choosing
+        // other separators is not possible because of observed limitations
+        // for valid doxygen page names.
+        error("Key <" + key + "> contains double underscore.");
     }
 }
 
@@ -194,25 +255,51 @@ void ConfigTreeNew::checkUnique(const std::string &key) const
 {
     checkKeyname(key);
 
-    if (_visited_params.find(key) != _visited_params.end()) {
+    if (_visited_params.find({Attr::TAG, key}) != _visited_params.end()) {
         error("Key <" + key + "> has already been processed.");
+    }
+}
+
+void ConfigTreeNew::checkUniqueAttr(const std::string &attr) const
+{
+    // Workaround for handling attributes with xml namespaces and uppercase letters.
+    if (attr.find(':') != attr.npos) {
+        auto pos = decltype(attr.npos){0};
+
+        // Replace colon and uppercase letters with an allowed character 'a'.
+        // That means, attributes containing a colon are also allowed to contain
+        // uppercase letters.
+        auto attr2 = attr;
+        do {
+            pos = attr2.find_first_of(":ABCDEFGHIJKLMNOPQRSTUVWXYZ", pos);
+            if (pos != attr.npos) attr2[pos] = 'a';
+        } while (pos != attr.npos);
+
+        checkKeyname(attr2);
+    } else {
+        checkKeyname(attr);
+    }
+
+    if (_visited_params.find({Attr::ATTR, attr}) != _visited_params.end()) {
+        error("Attribute \"" + attr + "\" has already been processed.");
     }
 }
 
 ConfigTreeNew::CountType&
 ConfigTreeNew::
-markVisited(std::string const& key, bool peek_only) const
+markVisited(std::string const& key, Attr const is_attr, bool const peek_only) const
 {
-    return markVisited<ConfigTreeNew>(key, peek_only);
+    return markVisited<ConfigTreeNew>(key, is_attr, peek_only);
 }
 
 void
 ConfigTreeNew::
-markVisitedDecrement(std::string const& key) const
+markVisitedDecrement(Attr const is_attr, std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
-    auto p = _visited_params.emplace(key, CountType{-1, type});
+    auto p = _visited_params.emplace(std::make_pair(is_attr, key),
+                                     CountType{-1, type});
 
     if (!p.second) { // no insertion happened
         auto& v = p.first->second;
@@ -220,24 +307,68 @@ markVisitedDecrement(std::string const& key) const
     }
 }
 
+bool
+ConfigTreeNew::hasChildren() const
+{
+    auto const& tree = *_tree;
+    if (tree.begin() == tree.end())
+        return false; // no children
+    if (tree.front().first == "<xmlattr>"
+        && (++tree.begin()) == tree.end())
+        return false; // only attributes
+
+    return true;
+}
+
 void
 ConfigTreeNew::checkAndInvalidate()
 {
     if (!_tree) return;
 
-    for (auto const& p : *_tree)
-    {
-        markVisitedDecrement(p.first);
+    // Note: due to a limitation in boost::property_tree it is not possible
+    // to discriminate between <tag></tag> and <tag/> in the input file.
+    // In both cases data() will be empty.
+    if ((!_have_read_data) && !_tree->data().empty()) {
+        warning("The immediate data `" + shortString(_tree->data())
+                +"' of this tag has not been read.");
+    }
+
+    // iterate over children
+    for (auto const& p : *_tree) {
+        if (p.first != "<xmlattr>") // attributes are handled below
+            markVisitedDecrement(Attr::TAG, p.first);
+    }
+
+    // iterate over attributes
+    if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
+        for (auto const& p : *attrs) {
+            markVisitedDecrement(Attr::ATTR, p.first);
+        }
     }
 
     for (auto const& p : _visited_params)
     {
-        if (p.second.count > 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(p.second.count)
-                    + " time(s) more than it was present in the configuration tree.");
-        } else if (p.second.count < 0) {
-            warning("Key <" + p.first + "> has been read " + std::to_string(-p.second.count)
-                    + " time(s) less than it was present in the configuration tree.");
+        auto const& tag   = p.first.second;
+        auto const& count = p.second.count;
+
+        switch (p.first.first) {
+        case Attr::ATTR:
+            if (count > 0) {
+                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(count)
+                        + " time(s) more than it was present in the configuration tree.");
+            } else if (count < 0) {
+                warning("XML attribute \"" + tag + "\" has been read " + std::to_string(-count)
+                        + " time(s) less than it was present in the configuration tree.");
+            }
+            break;
+        case Attr::TAG:
+            if (count > 0) {
+                warning("Key <" + tag + "> has been read " + std::to_string(count)
+                        + " time(s) more than it was present in the configuration tree.");
+            } else if (count < 0) {
+                warning("Key <" + tag + "> has been read " + std::to_string(-count)
+                        + " time(s) less than it was present in the configuration tree.");
+            }
         }
     }
 

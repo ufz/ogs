@@ -62,12 +62,34 @@ template<typename Iterator> class Range;
  * possible to read from this class, which configuration parameters are present in the tree.
  * This restriction, however, is intended, because it provides the possibility to get all
  * existing configuration parameters from the source code.
+ *
+ * This class maintains a read counter for each parameter accessed through any of its methods.
+ * Read counters are increased with every read (the only exception being the peekConfParam() method).
+ * The destructor finally decreases the read counter for every tag/attribute it find on the
+ * current level of the XML tree. If the increases/decreases don't cancel each other, warning
+ * messages are generated. This check can also be enforced before destruction by using the
+ * BaseLib::checkAndInvalidate() functions.
+ *
+ * The design of this class entails some limitations compared to traversing a plain tree,
+ * e.g., it is not possible to obtain a list of tags or attributes from the tree,
+ * but one has to explicitly query the specific tags/attributes one is interested in.
+ * That way it is possible to get all used configuration parameters directly from the source
+ * code where this class is used, and to maintain the quality of the configuration parameter
+ * documentation.
+ *
+ * Instances of this class only keep a reference to the underlying <tt>boost::property_tree</tt>.
+ * Therefore it is necessary that the underlying property tree stays intact as long as any
+ * instance---i.e. the top level ConfigTree and any of its children---reference it.
+ * In order to simplify the handling of this dependence, the class ConfigTreeTopLevel can be used.
+ *
+ * The construction of a ConfigTree from the content of an XML file can be done with the
+ * function BaseLib::makeConfigTree(), which performs many error checks. For limitations
+ * of the used XML parser, please have a look at that function's documentation.
  */
 class ConfigTreeNew final
 {
 public:
-    /*!
-     * A wrapper around a Boost Iterator for iterating over ranges of subtrees.
+    /*! A wrapper around a Boost Iterator for iterating over ranges of subtrees.
      *
      * The methods of this class tell the associated (parent) \c ConfigTree object when
      * a setting has been parsed.
@@ -80,7 +102,7 @@ public:
 
         explicit SubtreeIterator(Iterator it, std::string const& root,
                                  ConfigTreeNew const& parent)
-            : _it(it), _root(root), _parent(parent)
+            : _it(it), _tagname(root), _parent(parent)
         {}
 
         SubtreeIterator& operator++() {
@@ -94,9 +116,9 @@ public:
             // tell the _parent instance that a subtree now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited(_root);
+                _parent.markVisited(_tagname, Attr::TAG, false);
             }
-            return ConfigTreeNew(_it->second, _parent, _root);
+            return ConfigTreeNew(_it->second, _parent, _tagname);
         }
 
         bool operator==(SubtreeIterator const& other) const {
@@ -110,8 +132,42 @@ public:
     private:
         bool _has_incremented = true;
         Iterator _it;
-        std::string const _root;
+
+    protected:
+        std::string const _tagname;
         ConfigTreeNew const& _parent;
+    };
+
+    /*! A wrapper around a Boost Iterator for iterating over ranges of parameters.
+     *
+     * The methods of this class tell the associated (parent) \c ConfigTree object when
+     * a setting has been parsed.
+     */
+    class ParameterIterator : public SubtreeIterator
+    {
+    public:
+#if defined(_MSC_VER) && _MSC_VER < 1900
+        // 1900 == MSCV 14.0 == Visual Studio 2015
+        // according to this post: http://stackoverflow.com/a/70630
+        // This table: http://en.cppreference.com/w/cpp/compiler_support
+        // says that since MSVC 14.0 inheriting of constructors is supported.
+        //! Inherit the constructor
+        explicit ParameterIterator(Iterator it, std::string const& root,
+                                   ConfigTreeNew const& parent)
+            : SubtreeIterator(it, root, parent)
+        {}
+#else
+        //! Inherit the constructor
+        using SubtreeIterator::SubtreeIterator;
+#endif
+
+        ConfigTreeNew operator*() {
+            auto st = SubtreeIterator::operator*();
+            if (st.hasChildren())
+                _parent.error("The requested parameter <" + _tagname + ">"
+                              " has child elements.");
+            return st;
+        }
     };
 
 
@@ -130,7 +186,7 @@ public:
 
         explicit ValueIterator(Iterator it, std::string const& root,
                                ConfigTreeNew const& parent)
-            : _it(it), _root(root), _parent(parent)
+            : _it(it), _tagname(root), _parent(parent)
         {}
 
         ValueIterator<ValueType>& operator++() {
@@ -144,21 +200,9 @@ public:
             // tell the _parent instance that a setting now has been parsed.
             if (_has_incremented) {
                 _has_incremented = false;
-                _parent.markVisited<ValueType>(_root);
+                _parent.markVisited<ValueType>(_tagname, Attr::TAG, false);
             }
-
-            if (_it->second.begin() != _it->second.end()) {
-                _parent.error("Configuration at key " + _root + " has subitems.");
-                return ValueType();
-            }
-
-            auto v = _it->second.get_value_optional<ValueType>();
-
-            if (v) return *v;
-
-            // TODO: change error method
-            _parent.error("Could not get value out of key " + _root + ".");
-            return ValueType();
+            return ConfigTreeNew(_it->second, _parent, _tagname).getValue<ValueType>();
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
@@ -172,22 +216,29 @@ public:
     private:
         bool _has_incremented = true;
         Iterator _it;
-        std::string const _root;
+        std::string const _tagname;
         ConfigTreeNew const& _parent;
     };
 
+    //! The tree being wrapped by this class.
     using PTree = boost::property_tree::ptree;
 
-    //! Type of the function objects used as callbacks.
-    //! The first argument denotes the path in the tree at which an event (warning/error)
-    //! occured, the second argument is the associated message
-    using Callback = std::function<void(const std::string& path,
+    /*! Type of the function objects used as callbacks.
+     *
+     * Arguments of the callback:
+     * \arg \c filename the file being from which this ConfigTree has been read.
+     * \arg \c path     the path in the tree where the message was generated.
+     * \arg \c message  the message to be printed.
+     */
+    using Callback = std::function<void(const std::string& filename,
+                                        const std::string& path,
                                         const std::string& message)>;
 
     /*!
      * Creates a new instance wrapping the given Boost Property Tree.
      *
      * \param tree the Boost Property Tree to be wrapped
+     * \param filename the file from which the \c tree has been read
      * \param error_cb callback function to be called on error.
      * \param warning_cb callback function to be called on warning.
      *
@@ -195,14 +246,11 @@ public:
      * They are configurable in order to make unit tests of this class easier.
      * They should not be provided in production code!
      *
-     * If a custom error callback is provided, this function should break out of
-     * the normal execution order, e.g., by throwing or by calling std::abort(),
-     * because otherwise this class will effectively treat errors as no-errors.
-     *
      * Defaults are strict: By default, both callbacks are set to the same function,
      * i.e., warnings will also result in program abortion!
      */
     explicit ConfigTreeNew(PTree const& tree,
+                           std::string const& filename,
                            Callback const& error_cb = onerror,
                            Callback const& warning_cb = onerror);
 
@@ -220,11 +268,14 @@ public:
     //! used anymore!
     ConfigTreeNew& operator=(ConfigTreeNew &&);
 
+    /*! \name Methods for directly accessing parameter values
+     *
+     */
+    //!\{
+
     /*! Get parameter \c param of type \c T from the configuration tree.
      *
-     * \return the value looked for or a default constructed value \c T() in the case of
-     *         an error. For the behaviour in case of an error, see also the documentation
-     *         of the method error().
+     * \return the value looked for.
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
@@ -252,7 +303,7 @@ public:
     template<typename T> boost::optional<T>
     getConfParamOptional(std::string const& param) const;
 
-    /*! Returns all parameters with the name \c param from the current level of the tree.
+    /*! Fetches all parameters with name \c param from the current level of the tree.
      *
      * The return value is suitable to be used with range-base for-loops.
      *
@@ -261,12 +312,96 @@ public:
     template<typename T> Range<ValueIterator<T> >
     getConfParamList(std::string const& param) const;
 
+    //!\}
+
+    /*! \name Methods for accessing parameters that have attributes
+     *
+     * The <tt>getConfParam...()</tt> methods in this group---note: they do not have template
+     * parameters---check that the queried parameters do not have any children (apart from XML
+     * attributes); if they do, error() is called.
+     *
+     * The support for parameters with attributes is limited in the sense that it is not
+     * possible to peek/check them. However, such functionality can easily be added on demand.
+     */
+    //!\{
+
+    /*! Get parameter \c param from the configuration tree.
+     *
+     * \return the subtree representing the requested parameter
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     */
+    ConfigTreeNew
+    getConfParam(std::string const& param) const;
+
+    /*! Get parameter \c param from the configuration tree if present.
+     *
+     * \return the subtree representing the requested parameter
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     */
+    boost::optional<ConfigTreeNew>
+    getConfParamOptional(std::string const& param) const;
+
+    /*! Fetches all parameters with name \c param from the current level of the tree.
+     *
+     * The return value is suitable to be used with range-base for-loops.
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     *
+     * \todo write tests
+     */
+    Range<ParameterIterator>
+    getConfParamList(std::string const& param) const;
+
+    /*! Get the plain data contained in the current level of the tree.
+     *
+     * \return the data converted to the type \c T
+     *
+     * \pre The data must not have been read before.
+     */
+    template<typename T> T
+    getValue() const;
+
+    /*! Get XML attribute \c attr of type \c T for the current parameter.
+     *
+     * \return the requested attribute
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     */
+    template<typename T> T
+    getConfAttribute(std::string const& attr) const;
+
+    /*! Get XML attribute \c attr of type \c T for the current parameter if present.
+     *
+     * \return the requested attribute
+     *
+     * \pre \c param must not have been read before from this ConfigTree.
+     *
+     * \todo write tests
+     */
+    template<typename T> boost::optional<T>
+    getConfAttributeOptional(std::string const& attr) const;
+
+    //!\}
+
+    /*! \name Methods for peeking and checking parameters
+     *
+     * To be used in builder/factory functions: E.g., one can peek a parameter denoting
+     * the type of an object to generate in the builder, and check the type parameter in
+     * the constructor of the generated object.
+     */
+    //!\{
+
     /*! Peek at a parameter \c param of type \c T from the configuration tree.
      *
      * This method is an exception to the single-read rule. It is meant to be used to
      * tell from a ConfigTree instance where to pass that instance on for further processing.
      *
-     * Return value and error behaviour are the same as for getConfParam(std::string const&).
+     * But in order that the requested parameter counts as "completely parsed", it has to be
+     * read through some other method, too.
+     *
+     * Return value and error behaviour are the same as for getConfParam<T>(std::string const&).
      */
     template<typename T> T
     peekConfParam(std::string const& param) const;
@@ -281,6 +416,13 @@ public:
     //! Make checkConfParam() work for string literals.
     template<typename Ch> void
     checkConfParam(std::string const& param, Ch const* value) const;
+
+    //!\}
+
+    /*! \name Methods for accessing subtrees
+     *
+     */
+    //!\{
 
     /*! Get the subtree rooted at \c root
      *
@@ -307,11 +449,18 @@ public:
     Range<SubtreeIterator>
     getConfSubtreeList(std::string const& root) const;
 
+    //!\}
+
+    /*! \name Methods for ignoring parameters
+     *
+     */
+    //!\{
+
     /*! Tell this instance to ignore parameter \c param.
      *
      * This method is used to avoid warning messages.
      *
-     * \pre \c root must not have been read before from this ConfigTree.
+     * \pre \c param must not have been read before from this ConfigTree.
      */
     void ignoreConfParam(std::string const& param) const;
 
@@ -319,9 +468,19 @@ public:
      *
      * This method is used to avoid warning messages.
      *
-     * \pre \c root must not have been read before from this ConfigTree.
+     * \pre \c param must not have been read before from this ConfigTree.
      */
     void ignoreConfParamAll(std::string const& param) const;
+
+    /*! Tell this instance to ignore the XML attribute \c attr.
+     *
+     * This method is used to avoid warning messages.
+     *
+     * \pre \c attr must not have been read before from this ConfigTree.
+     */
+    void ignoreConfAttribute(std::string const& attr) const;
+
+    //!\}
 
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
@@ -329,11 +488,13 @@ public:
 
     //! Default error callback function
     //! Will print an error message and call std::abort()
-    static void onerror(std::string const& path, std::string const& message);
+    static void onerror(std::string const& filename, std::string const& path,
+                        std::string const& message);
 
     //! Default warning callback function
     //! Will print a warning message
-    static void onwarning(std::string const& path, std::string const& message);
+    static void onwarning(std::string const& filename, std::string const& path,
+                          std::string const& message);
 
 private:
     struct CountType
@@ -342,11 +503,32 @@ private:
         std::type_index type;
     };
 
+    //! Used to indicate if dealing with XML tags or XML attributes
+    enum class Attr : bool
+    {
+        TAG = false, ATTR = true
+    };
+
     //! Used for wrapping a subtree
     explicit ConfigTreeNew(PTree const& tree, ConfigTreeNew const& parent, std::string const& root);
 
-    //! Called if an error occurs. Will call the error callback.
-    //! This method only acts as a helper method.
+    /*! Called if an error occurs. Will call the error callback.
+     *
+     * This method only acts as a helper method.
+     *
+     * This method finally calls <tt>std::abort()</tt>. In order to prevent that,
+     * a custom error callback that breaks out of the normal control flow---e.g., by throwing
+     * an exception---must be provided.
+     */
+#if defined(_MSC_VER) && _MSC_VER < 1900
+    // 1900 == MSCV 14.0 == Visual Studio 2015
+    // according to this post: http://stackoverflow.com/a/70630
+    // This table: http://en.cppreference.com/w/cpp/compiler_support
+    // says that since MSVC 14.0 attributes are supported.
+    __declspec(noreturn)
+#else
+    [[noreturn]]
+#endif
     void error(std::string const& message) const;
 
     //! Called for printing warning messages. Will call the warning callback.
@@ -362,6 +544,9 @@ private:
     //! Asserts that the \c key has not been read yet.
     void checkUnique(std::string const& key) const;
 
+    //! Asserts that the attribute \c attr has not been read yet.
+    void checkUniqueAttr(std::string const& attr) const;
+
     /*! Keeps track of the key \c key and its value type \c T.
      *
      * This method asserts that a key is read always with the same type.
@@ -369,7 +554,8 @@ private:
      * \c param peek_only if true, do not change the read-count of the given key.
      */
     template<typename T>
-    CountType& markVisited(std::string const& key, bool peek_only = false) const;
+    CountType& markVisited(std::string const& key, Attr const is_attr,
+                           bool peek_only) const;
 
     /*! Keeps track of the key \c key and its value type ConfigTree.
      *
@@ -377,16 +563,20 @@ private:
      *
      * \c param peek_only if true, do not change the read-count of the given key.
      */
-    CountType& markVisited(std::string const& key, bool peek_only = false) const;
+    CountType& markVisited(std::string const& key, Attr const is_attr,
+                           bool const peek_only) const;
 
     //! Used in the destructor to compute the difference between number of reads of a parameter
     //! and the number of times it exists in the ConfigTree
-    void markVisitedDecrement(std::string const& key) const;
+    void markVisitedDecrement(Attr const is_attr, std::string const& key) const;
+
+    //! Checks if this tree has any children.
+    bool hasChildren() const;
 
     /*! Checks if the top level of this tree has been read entirely (and not too often).
      *
-     * Caution: This method also invalidates the instance, i.e., afterwards it can not
-     *          be read from the tree anymore!
+     * \post This method also invalidates the instance, i.e., afterwards it must not
+     *       be used anymore!
      */
     void checkAndInvalidate();
 
@@ -399,17 +589,26 @@ private:
     //! A path printed in error/warning messages.
     std::string _path;
 
-    //! A map key -> (count, type) keeping track which parameters have been read how often
-    //! and which datatype they have.
+    //! The path of the file from which this tree has been read.
+    std::string _filename;
+
+    //! A pair (is attribute, tag/attribute name).
+    using KeyType = std::pair<Attr, std::string>;
+
+    //! A map KeyType -> (count, type) keeping track which parameters have been read
+    //! how often and which datatype they have.
     //!
     //! This member will be written to when reading from the config tree.
     //! Therefore it has to be mutable in order to be able to read from
     //! constant instances, e.g., those passed as constant references to
     //! temporaries.
-    mutable std::map<std::string, CountType> _visited_params;
+    mutable std::map<KeyType, CountType> _visited_params;
 
-    Callback _onerror;
-    Callback _onwarning;
+    //! Indicates if the plain data contained in this tree has already been read.
+    mutable bool _have_read_data = false;
+
+    Callback _onerror;   //!< Custom error callback.
+    Callback _onwarning; //!< Custom warning callback.
 
     //! Character separating two path components.
     static const char pathseparator;
