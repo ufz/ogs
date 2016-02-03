@@ -29,8 +29,8 @@
 
 #include "MathLib/MathTools.h"
 
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
-#include "MeshLib/MeshGenerators/ConvertRasterToMesh.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
@@ -129,26 +129,26 @@ int main (int argc, char* argv[])
 	// read raster and if required manipulate it
 	auto raster = std::unique_ptr<GeoLib::Raster>(
 		FileIO::AsciiRasterInterface::getRasterFromASCFile(raster_arg.getValue()));
+	GeoLib::RasterHeader header (raster->getHeader());
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
 		if (refinement_raster_output_arg.getValue()) {
 			// write new asc file
 			std::string new_raster_fname (BaseLib::dropFileExtension(
 			                                      raster_arg.getValue()));
-			new_raster_fname += "-" + std::to_string(raster->getNRows()) + "x" +
-			                    std::to_string(raster->getNCols()) + ".asc";
+			new_raster_fname += "-" + std::to_string(header.n_rows) + "x" +
+			                    std::to_string(header.n_cols) + ".asc";
 			FileIO::AsciiRasterInterface::writeRasterAsASC(*raster, new_raster_fname);
 		}
 	}
 
 	// put raster data in a std::vector
 	GeoLib::Raster::const_iterator raster_it(raster->begin());
-	std::size_t n_cols(raster->getNCols()), n_rows(raster->getNRows());
-	std::size_t size(n_cols * n_rows);
+	std::size_t size(header.n_cols * header.n_rows);
 	std::vector<double> src_properties(size);
-	for (unsigned row(0); row<n_rows; row++) {
-		for (unsigned col(0); col<n_cols; col++) {
-			src_properties[row * n_cols + col] = *raster_it;
+	for (unsigned row(0); row<header.n_rows; row++) {
+		for (unsigned col(0); col<header.n_cols; col++) {
+			src_properties[row * header.n_cols + col] = *raster_it;
 			++raster_it;
 		}
 	}
@@ -160,9 +160,8 @@ int main (int argc, char* argv[])
 		INFO("Variance of source: %f.", var);
 	}
 
-	std::unique_ptr<MeshLib::Mesh> src_mesh(MeshLib::ConvertRasterToMesh(
-		*raster, MeshLib::MeshElemType::QUAD,
-		MeshLib::UseIntensityAs::DATAVECTOR).execute());
+	std::unique_ptr<MeshLib::Mesh> src_mesh(MeshLib::RasterToMesh::convert(
+		*raster, MeshLib::MeshElemType::QUAD,MeshLib::UseIntensityAs::DATAVECTOR));
 
 	std::vector<std::size_t> src_perm(size);
 	std::iota(src_perm.begin(), src_perm.end(), 0);

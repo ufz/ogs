@@ -16,6 +16,7 @@
 #include "VtkVisPipelineView.h"
 
 #include "Mesh.h"
+#include "MeshGenerators/RasterToMesh.h"
 #include "MeshGenerators/VtkMeshConverter.h"
 
 #include "OGSError.h"
@@ -204,7 +205,7 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 	constructMeshFromImage(dlg.getNewMeshName(), dlg.getElementSelection(), dlg.getIntensitySelection());
 }
 
-void VtkVisPipelineView::constructMeshFromImage(std::string msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
+void VtkVisPipelineView::constructMeshFromImage(std::string const& msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
 {
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
@@ -216,7 +217,7 @@ void VtkVisPipelineView::constructMeshFromImage(std::string msh_name, MeshLib::M
 	double spacing[3];
 	imageSource->GetOutput()->GetSpacing(spacing);
 
-	MeshLib::Mesh* mesh = MeshLib::VtkMeshConverter::convertImgToMesh(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
+	MeshLib::Mesh* mesh = MeshLib::RasterToMesh::convert(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
 	if (mesh)
 	{
 		mesh->setName(msh_name);

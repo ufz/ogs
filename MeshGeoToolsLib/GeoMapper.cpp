@@ -189,7 +189,7 @@ void GeoMapper::mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& pnt
 float GeoMapper::getDemElevation(GeoLib::Point const& pnt) const
 {
 	double const elevation (_raster->getValueAtPoint(pnt));
-	if (std::abs(elevation-_raster->getNoDataValue()) < std::numeric_limits<double>::epsilon())
+	if (std::abs(elevation-_raster->getHeader().no_data) < std::numeric_limits<double>::epsilon())
 		return 0.0;
 	return static_cast<float>(elevation);
 }

@@ -200,7 +200,7 @@ void MshView::openAddLayerDialog()
 		return;
 
 	double const thickness (dlg.getThickness());
-	MeshLib::Mesh* result = 
+	MeshLib::Mesh* result =
 		MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(), dlg.isTopLayer());
 
 	if (result != nullptr)

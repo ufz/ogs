@@ -43,7 +43,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 		const MathLib::Vector3 dir(0,0,-1);
 		const std::vector<GeoLib::Point*> surface_nodes(MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90) );
 		const std::size_t nNodes(surface_nodes.size());
-		const double no_data (raster->getNoDataValue());
+		const double no_data (raster->getHeader().no_data);
 		_direct_values.reserve(nNodes);
 		for (std::size_t i=0; i<nNodes; i++)
 		{
@@ -89,7 +89,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 		MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
 	const std::vector<MeshLib::Node*> &surface_nodes(surface_mesh->getNodes());
 	const std::size_t nNodes(surface_mesh->getNNodes());
-	const double no_data(raster->getNoDataValue());
+	const double no_data(raster->getHeader().no_data);
 
 	boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(
 	    surface_mesh->getProperties().getPropertyVector<int>(prop_name));

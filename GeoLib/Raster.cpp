@@ -28,13 +28,13 @@ namespace GeoLib {
 
 void Raster::refineRaster(std::size_t scaling)
 {
-	double *new_raster_data(new double[_n_rows*_n_cols*scaling*scaling]);
+	double *new_raster_data(new double[_header.n_rows*_header.n_cols*scaling*scaling]);
 
-	for (std::size_t row(0); row<_n_rows; row++) {
-		for (std::size_t col(0); col<_n_cols; col++) {
-			const std::size_t idx(row*_n_cols+col);
+	for (std::size_t row(0); row<_header.n_rows; row++) {
+		for (std::size_t col(0); col<_header.n_cols; col++) {
+			const std::size_t idx(row*_header.n_cols+col);
 			for (std::size_t new_row(row*scaling); new_row<(row+1)*scaling; new_row++) {
-				const std::size_t idx0(new_row*_n_cols*scaling);
+				const std::size_t idx0(new_row*_header.n_cols*scaling);
 				for (std::size_t new_col(col*scaling); new_col<(col+1)*scaling; new_col++) {
 					new_raster_data[idx0+new_col] = _raster_data[idx];
 				}
@@ -43,9 +43,9 @@ void Raster::refineRaster(std::size_t scaling)
 	}
 
 	std::swap(_raster_data, new_raster_data);
-	_cell_size /= scaling;
-	_n_cols *= scaling;
-	_n_rows *= scaling;
+	_header.cell_size /= scaling;
+	_header.n_cols *= scaling;
+	_header.n_rows *= scaling;
 
 	delete [] new_raster_data;
 }
@@ -53,21 +53,6 @@ void Raster::refineRaster(std::size_t scaling)
 Raster::~Raster()
 {
 	delete [] _raster_data;
-}
-
-void Raster::setCellSize(double cell_size)
-{
-	_cell_size = cell_size;
-}
-
-void Raster::setNoDataVal (double no_data_val)
-{
-	_no_data_val = no_data_val;
-}
-
-GeoLib::Point const& Raster::getOrigin() const
-{
-	return _ll_pnt;
 }
 
 Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val)
@@ -100,42 +85,43 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 		}
 	}
 
-	return new Raster(n_cols, n_rows, ll[0], ll[1], cell_size, z_vals, z_vals+n_cols*n_rows ,-9999);
+	RasterHeader header = {std::size_t(n_cols), std::size_t(n_rows), MathLib::Point3d(ll), cell_size, static_cast<double>(-9999)};
+	return new Raster(header, z_vals, z_vals+n_cols*n_rows);
 }
 
 double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 {
-	if (pnt[0]>=_ll_pnt[0] && pnt[0]<(_ll_pnt[0]+(_cell_size*_n_cols)) &&
-		pnt[1]>=_ll_pnt[1] && pnt[1]<(_ll_pnt[1]+(_cell_size*_n_rows)))
+	if (pnt[0]>=_header.origin[0] && pnt[0]<(_header.origin[0]+(_header.cell_size*_header.n_cols)) &&
+		pnt[1]>=_header.origin[1] && pnt[1]<(_header.origin[1]+(_header.cell_size*_header.n_rows)))
 	{
-		int cell_x = static_cast<int>(std::floor((pnt[0] - _ll_pnt[0])/_cell_size));
-		int cell_y = static_cast<int>(std::floor((pnt[1] - _ll_pnt[1])/_cell_size));
+		int cell_x = static_cast<int>(std::floor((pnt[0] - _header.origin[0])/_header.cell_size));
+		int cell_y = static_cast<int>(std::floor((pnt[1] - _header.origin[1])/_header.cell_size));
 
 		// use raster boundary values if node is outside raster due to rounding errors or floating point arithmetic
-		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_n_cols)) ?
-			static_cast<int>(_n_cols-1) : cell_x);
-		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_n_rows)) ?
-			static_cast<int>(_n_rows-1) : cell_y);
+		cell_x = (cell_x < 0) ?  0 : ((cell_x > static_cast<int>(_header.n_cols)) ?
+			static_cast<int>(_header.n_cols-1) : cell_x);
+		cell_y = (cell_y < 0) ?  0 : ((cell_y > static_cast<int>(_header.n_rows)) ?
+			static_cast<int>(_header.n_rows-1) : cell_y);
 
-		const std::size_t index = cell_y*_n_cols+cell_x;
+		const std::size_t index = cell_y*_header.n_cols+cell_x;
 		return _raster_data[index];
 	}
-	return _no_data_val;
+	return _header.no_data;
 }
 
 double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 {
 	// position in raster
-	double const xPos ((pnt[0] - _ll_pnt[0]) / _cell_size);
-	double const yPos ((pnt[1] - _ll_pnt[1]) / _cell_size);
+	double const xPos ((pnt[0] - _header.origin[0]) / _header.cell_size);
+	double const yPos ((pnt[1] - _header.origin[1]) / _header.cell_size);
 	// raster cell index
 	double const xIdx (std::floor(xPos));    //carry out computions in double
 	double const yIdx (std::floor(yPos));    //  so not to over- or underflow.
 
 	// weights for bilinear interpolation
-	double const half_delta = 0.5*_cell_size;
-	double const xShift = std::fabs(xPos-(xIdx+half_delta)) / _cell_size;
-	double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _cell_size;
+	double const half_delta = 0.5*_header.cell_size;
+	double const xShift = std::fabs(xPos-(xIdx+half_delta)) / _header.cell_size;
+	double const yShift = std::fabs(yPos-(yIdx+half_delta)) / _header.cell_size;
 	std::array<double,4> weight = {{ (1-xShift)*(1-yShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
 	// neighbors to include in interpolation
@@ -153,16 +139,16 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 		// a no data value. This also allows the cast to unsigned type.
 		if ( (xIdx + x_nb[j]) < 0 ||
 		     (yIdx + y_nb[j]) < 0 ||
-		     (xIdx + x_nb[j]) > (_n_cols-1) ||
-		     (yIdx + y_nb[j]) > (_n_rows-1) )
-			pix_val[j] = _no_data_val;
+		     (xIdx + x_nb[j]) > (_header.n_cols-1) ||
+		     (yIdx + y_nb[j]) > (_header.n_rows-1) )
+			pix_val[j] = _header.no_data;
 		else
 			pix_val[j] = _raster_data[
-				static_cast<std::size_t>(yIdx + y_nb[j]) * _n_cols +
+				static_cast<std::size_t>(yIdx + y_nb[j]) * _header.n_cols +
 				static_cast<std::size_t>(xIdx + x_nb[j])];
 
 		// remove no data values
-		if (std::fabs(pix_val[j] - _no_data_val) < std::numeric_limits<double>::epsilon())
+		if (std::fabs(pix_val[j] - _header.no_data) < std::numeric_limits<double>::epsilon())
 		{
 			weight[j] = 0;
 			no_data_count++;
@@ -173,7 +159,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 	if (no_data_count > 0)
 	{
 		if (no_data_count == 4) // if there is absolutely no data just use the default value
-			return _no_data_val;
+			return _header.no_data;
 
 		const double norm = 1.0 / (weight[0]+weight[1]+weight[2]+weight[3]);
 		std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
@@ -185,8 +171,8 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 
 bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
 {
-	if ((pnt[0]<_ll_pnt[0]) || (pnt[0]>_ll_pnt[0]+(_n_cols*_cell_size)) ||
-	    (pnt[1]<_ll_pnt[1]) || (pnt[1]>_ll_pnt[1]+(_n_rows*_cell_size)))
+	if ((pnt[0]<_header.origin[0]) || (pnt[0]>_header.origin[0]+(_header.n_cols*_header.cell_size)) ||
+	    (pnt[1]<_header.origin[1]) || (pnt[1]>_header.origin[1]+(_header.n_rows*_header.cell_size)))
 		return false;
 	return true;
 }

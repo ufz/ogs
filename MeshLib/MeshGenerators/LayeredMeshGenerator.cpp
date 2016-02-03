@@ -100,7 +100,7 @@ MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_no
 {
     double const elevation = std::min(raster.interpolateValueAtPoint(dem_node), dem_node[2]);
 
-    if ((std::abs(elevation - raster.getNoDataValue()) < std::numeric_limits<double>::epsilon()) ||
+    if ((std::abs(elevation - raster.getHeader().no_data) < std::numeric_limits<double>::epsilon()) ||
         (elevation - last_layer_node[2] < _minimum_thickness))
         return new MeshLib::Node(last_layer_node);
     else

@@ -16,9 +16,7 @@
 
 #include <fstream>
 
-namespace GeoLib {
-    class Raster;
-}
+#include "GeoLib/Raster.h"
 
 namespace FileIO {
 
@@ -44,13 +42,10 @@ public:
 
 private:
     /// Reads the header of a Esri asc-file.
-    static bool readASCHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-                              double &xllcorner, double &yllcorner, double &cell_size,
-                              double &no_data_val);
+    static bool readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header);
 
     /// Reads the header of a Surfer grd-file.
-    static bool readSurferHeader(std::ifstream &in, std::size_t &n_cols, std::size_t &n_rows,
-                                 double &xllcorner, double &yllcorner, double &cell_size,
+    static bool readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header,
                                  double &min, double &max);
 };
 

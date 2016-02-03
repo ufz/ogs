@@ -22,7 +22,7 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 endif()
 include_directories( include )
 add_library( logog
-	src/api.cpp 
+	src/api.cpp
 	src/checkpoint.cpp
 	src/formatter.cpp
 	src/lobject.cpp

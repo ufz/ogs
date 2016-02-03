@@ -15,6 +15,7 @@
 #define VTKRASTER_H
 
 #include <string>
+#include "GeoLib/Raster.h"
 
 class vtkImageAlgorithm;
 class vtkImageImport;
@@ -32,13 +33,7 @@ public:
 	/**
 	 * \brief Returns a VtkImageAlgorithm from an array of pixel values and some image meta data.
 	 */
-    static vtkImageImport* loadImageFromArray(double const*const data_array,
-											  double x0,
-											  double y0,
-											  std::size_t width,
-											  std::size_t height,
-											  double delta,
-											  double no_data = -9999);
+    static vtkImageImport* loadImageFromArray(double const*const data_array, GeoLib::RasterHeader header);
 	/**
 	 * \brief Loads an image- or raster-file into an vtkImageAlgorithm-Object.
 	 *
