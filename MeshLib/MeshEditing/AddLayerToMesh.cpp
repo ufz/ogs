@@ -13,6 +13,7 @@
 
 #include "AddLayerToMesh.h"
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <numeric>
@@ -168,18 +169,17 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 	);
 
 	if (opt_materials) {
-		boost::optional<PropertyVector<int> &> new_opt_materials(
+		boost::optional<PropertyVector<int> &> new_materials(
 		new_mesh->getProperties().createNewPropertyVector<int>("MaterialIDs",
 			MeshLib::MeshItemType::Cell, 1));
-		if (!new_opt_materials) {
+		if (!new_materials) {
 			ERR("Can not set material properties for new layer");
 		} else {
-			unsigned new_layer_id(*(std::max_element(
-				opt_materials->cbegin(), opt_materials->cend()))+1);
-			std::copy(opt_materials->cbegin(), opt_materials->cend(),
-			          new_opt_materials->begin());
+			new_materials->reserve(subsfc_elements.size());
+			int new_layer_id (*(std::max_element(opt_materials->cbegin(), opt_materials->cend()))+1);
+			std::copy(opt_materials->cbegin(), opt_materials->cend(), std::back_inserter(*new_materials));
 			auto const n_new_props(subsfc_elements.size()-mesh.getNElements());
-			std::fill_n(new_opt_materials->end(), n_new_props, new_layer_id);
+			std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);
 		}
 	} else {
 		ERR(
