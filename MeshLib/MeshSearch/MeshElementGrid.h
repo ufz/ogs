@@ -56,24 +56,6 @@ public:
         auto const min_coords(getGridCellCoordinates(min));
         auto const max_coords(getGridCellCoordinates(max));
 
-        if (!min_coords.first) {
-            WARN(
-                "MeshElementGrid::getElementsInVolume: Min point (%f,%f,%f) "
-                "outside of MeshElementGrid [%f,%f) x [%f,%f) x [%f,%f).",
-                min[0], min[1], min[2], _aabb.getMinPoint()[0],
-                _aabb.getMaxPoint()[0], _aabb.getMinPoint()[1],
-                _aabb.getMaxPoint()[1], _aabb.getMinPoint()[2],
-                _aabb.getMaxPoint()[2]);
-        }
-        if (!max_coords.first) {
-            WARN(
-                "MeshElementGrid::getElementsInVolume: Max point (%f,%f,%f) "
-                "outside of MeshElementGrid [%f,%f) x [%f,%f) x [%f,%f).",
-                max[0], max[1], max[2], _aabb.getMinPoint()[0],
-                _aabb.getMaxPoint()[0], _aabb.getMinPoint()[1],
-                _aabb.getMaxPoint()[1], _aabb.getMinPoint()[2],
-                _aabb.getMaxPoint()[2]);
-        }
         std::vector<MeshLib::Element const*> elements_vec;
 
         const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
@@ -89,6 +71,7 @@ public:
         }
         return elements_vec;
     }
+
 
 private:
     void sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh);
