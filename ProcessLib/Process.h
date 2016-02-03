@@ -19,7 +19,7 @@
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
@@ -135,9 +135,9 @@ protected:
 
 	/// Set linear solver options; called by the derived process which is
 	/// parsing the configuration.
-	void setLinearSolverOptions(BaseLib::ConfigTreeNew&& config)
+	void setLinearSolverOptions(BaseLib::ConfigTree&& config)
 	{
-		_linear_solver_options.reset(new BaseLib::ConfigTreeNew(
+		_linear_solver_options.reset(new BaseLib::ConfigTree(
 			std::move(config)));
 	}
 
@@ -300,7 +300,7 @@ protected:
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
 
-	std::unique_ptr<BaseLib::ConfigTreeNew> _linear_solver_options;
+	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
 	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 
 	std::unique_ptr<typename GlobalSetup::MatrixType> _A;

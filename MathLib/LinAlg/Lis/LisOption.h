@@ -20,7 +20,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
@@ -40,7 +40,7 @@ namespace MathLib
  */
 struct LisOption
 {
-	LisOption(BaseLib::ConfigTreeNew const* const options)
+	LisOption(BaseLib::ConfigTree const* const options)
 	{
 		if (options)
 		{

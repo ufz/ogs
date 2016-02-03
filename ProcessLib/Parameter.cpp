@@ -17,7 +17,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createConstParameter(
-    BaseLib::ConfigTreeNew const& config)
+    BaseLib::ConfigTree const& config)
 {
 	config.checkConfParam("type", "Constant");
 	auto value = config.getConfParam<double>("value");
@@ -27,7 +27,7 @@ std::unique_ptr<ParameterBase> createConstParameter(
 }
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(
-    BaseLib::ConfigTreeNew const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
 	config.checkConfParam("type", "MeshProperty");
 	auto field_name = config.getConfParam<std::string>("field_name");

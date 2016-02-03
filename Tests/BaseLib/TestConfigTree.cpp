@@ -13,7 +13,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <sstream>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 // make useful line numbers appear in the output of gtest
 #define EXPECT_ERR_WARN(cbs, error, warning) do  { \
@@ -22,19 +22,14 @@
         (cbs).reset(); \
     } while(false)
 
-// catch exception thrown by the error callback
-#define RUN_SAFE(expr) do { \
-        try { expr; } catch(Exc) {} \
-    } while (false)
-
 // Exception thrown by the error callback of the class below
 class Exc {};
 
-// class that provides callback functions used with ConfigTreeNew
+// class that provides callback functions used with ConfigTree
 class Callbacks
 {
 public:
-    BaseLib::ConfigTreeNew::Callback
+    BaseLib::ConfigTree::Callback
     get_error_cb()
     {
         return [this](std::string const& filename, std::string const& path,
@@ -52,7 +47,7 @@ public:
         };
     }
 
-    BaseLib::ConfigTreeNew::Callback
+    BaseLib::ConfigTree::Callback
     get_warning_cb()
     {
         return [this](std::string const& filename, std::string const& path,
@@ -90,10 +85,10 @@ readXml(const char xml[])
     return ptree;
 }
 
-BaseLib::ConfigTreeNew
+BaseLib::ConfigTree
 makeConfigTree(boost::property_tree::ptree const& ptree, Callbacks& cbs)
 {
-    return BaseLib::ConfigTreeNew(ptree, "FILENAME",
+    return BaseLib::ConfigTree(ptree, "FILENAME",
                                   cbs.get_error_cb(), cbs.get_warning_cb());
 }
 
@@ -129,7 +124,8 @@ TEST(BaseLibConfigTree, Get)
             "  <ignored2/>"
             "</sub>"
             "<x>Y</x>"
-            "<z attr=\"0.5\">32.0</z>";
+            "<z attr=\"0.5\" optattr=\"false\">32.0</z>"
+            ;
     auto const ptree = readXml(xml);
 
     Callbacks cbs;
@@ -171,7 +167,7 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_FALSE(bool1.getValue<bool>());
             EXPECT_ERR_WARN(cbs, false, false);
-            RUN_SAFE(bool1.getValue<bool>()); // getting data twice
+            EXPECT_ANY_THROW(bool1.getValue<bool>()); // getting data twice
             EXPECT_ERR_WARN(cbs, true, false);
 
             if (auto bool2 = sub.getConfParamOptional("bool2")) {
@@ -182,7 +178,7 @@ TEST(BaseLibConfigTree, Get)
 
             if (auto bool3 = sub.getConfParamOptional("bool3")) {
                 EXPECT_ERR_WARN(cbs, false, false);
-                RUN_SAFE(bool3->getValue<bool>());
+                EXPECT_ANY_THROW(bool3->getValue<bool>());
                 EXPECT_ERR_WARN(cbs, true, false); // error because of no data
             }
             EXPECT_ERR_WARN(cbs, false, false);
@@ -202,7 +198,7 @@ TEST(BaseLibConfigTree, Get)
 
             // I can not ignore stuff that I already read
             // this also makes sure that the subtree inherits the callbacks properly
-            RUN_SAFE(sub.ignoreConfParam("float"));
+            EXPECT_ANY_THROW(sub.ignoreConfParam("float"));
             EXPECT_ERR_WARN(cbs, true, false);
         }
         for (int i : {0, 1, 2}) {
@@ -220,11 +216,18 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
             EXPECT_ERR_WARN(cbs, false, false);
-            RUN_SAFE(z.getConfAttribute<double>("attr")); // getting attr twice
+            EXPECT_ANY_THROW(z.getConfAttribute<double>("attr")); // getting attribute twice
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
+            EXPECT_ANY_THROW(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_EQ(32.0, z.getValue<double>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            auto const opt = z.getConfAttributeOptional<bool>("optattr");
+            EXPECT_TRUE(!!opt); EXPECT_FALSE(*opt);
+            EXPECT_ERR_WARN(cbs, false, false);
+            EXPECT_ANY_THROW(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
@@ -328,6 +331,13 @@ TEST(BaseLibConfigTree, GetSubtreeList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
+        for (auto p : conf.getConfSubtreeList("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
         int i = 0;
         for (auto ct : conf.getConfSubtreeList("val"))
         {
@@ -335,6 +345,58 @@ TEST(BaseLibConfigTree, GetSubtreeList)
             EXPECT_ERR_WARN(cbs, false, false);
             ++i;
         }
+    } // ConfigTree destroyed here
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+TEST(BaseLibConfigTree, GetParamList)
+{
+    const char xml[] =
+            "<int>0</int>"
+            "<int>1</int>"
+            "<int>2</int>"
+            "<int2 a=\"b\">3</int2>"
+            "<int3>4<error/></int3>";
+    auto const ptree = readXml(xml);
+
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(ptree, cbs);
+
+        for (auto p : conf.getConfParamList("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        int i = 0;
+        for (auto p : conf.getConfParamList("int"))
+        {
+            EXPECT_EQ(i, p.getValue<int>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            ++i;
+        }
+
+        for (auto p : conf.getConfParamList("int2"))
+        {
+            EXPECT_EQ(i, p.getValue<int>());
+            EXPECT_ERR_WARN(cbs, false, false);
+            ++i;
+        }
+        EXPECT_ERR_WARN(cbs, false, true); // attribute "a" not read
+
+        {
+            auto range = conf.getConfParamList("int3");
+            EXPECT_ERR_WARN(cbs, false, false);
+
+            EXPECT_ANY_THROW(*range.begin());
+            // Error because of child tag, raises exception, thus
+            // a temporary ConfigTree gets destroyed producing a warning.
+            EXPECT_ERR_WARN(cbs, true, true);
+        } // range destroyed here
+        EXPECT_ERR_WARN(cbs, false, false);
+
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
 }
@@ -351,6 +413,13 @@ TEST(BaseLibConfigTree, GetValueList)
     Callbacks cbs;
     {
         auto const conf = makeConfigTree(ptree, cbs);
+
+        for (auto p : conf.getConfParamList<int>("nonexistent_list"))
+        {
+            (void) p;
+            FAIL() << "Expected empty list";
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
 
         int n = 0;
         for (auto i : conf.getConfParamList<int>("int"))
@@ -380,39 +449,39 @@ TEST(BaseLibConfigTree, NoConversion)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        RUN_SAFE(conf.getConfParam<int>("int"));
+        EXPECT_ANY_THROW(conf.getConfParam<int>("int"));
         EXPECT_ERR_WARN(cbs, true, false);
-        RUN_SAFE(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
+        EXPECT_ANY_THROW(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
         EXPECT_ERR_WARN(cbs, true, false);
 
-        RUN_SAFE(conf.getConfParam<double>("double"));
+        EXPECT_ANY_THROW(conf.getConfParam<double>("double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // peek value existent but not convertible
-        RUN_SAFE(conf.peekConfParam<double>("non_double"));
+        EXPECT_ANY_THROW(conf.peekConfParam<double>("non_double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // optional value existent but not convertible
-        RUN_SAFE(
+        EXPECT_ANY_THROW(
             auto d = conf.getConfParamOptional<double>("non_double");
             ASSERT_FALSE(d);
         );
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I can only ignore something once
-        RUN_SAFE(conf.ignoreConfParam("ign"));
+        conf.ignoreConfParam("ign");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.ignoreConfParam("ign"));
+        EXPECT_ANY_THROW(conf.ignoreConfParam("ign"));
         EXPECT_ERR_WARN(cbs, true, false);
-        RUN_SAFE(conf.ignoreConfParamAll("ign2"));
+        conf.ignoreConfParamAll("ign2");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.ignoreConfParamAll("ign2"));
+        EXPECT_ANY_THROW(conf.ignoreConfParamAll("ign2"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I cannot read a parameter twice
-        RUN_SAFE(conf.getConfParam<bool>("bool"));
+        conf.getConfParam<bool>("bool");
         EXPECT_ERR_WARN(cbs, false, false);
-        RUN_SAFE(conf.getConfParam<bool>("bool"));
+        EXPECT_ANY_THROW(conf.getConfParam<bool>("bool"));
         EXPECT_ERR_WARN(cbs, true, false);
 
     } // ConfigTree destroyed here
@@ -434,33 +503,33 @@ TEST(BaseLibConfigTree, BadKeynames)
 
         for (auto tag : { "<", "Z", ".", "$", "0", "", "/", "_", "a__" })
         {
-            RUN_SAFE(conf.getConfParam<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParam<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParam<int>(tag, 500));
+            EXPECT_ANY_THROW(conf.getConfParam<int>(tag, 500));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamOptional<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParamOptional<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamList<int>(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            RUN_SAFE(conf.getConfParam(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfParamOptional(tag));
+            EXPECT_ANY_THROW(conf.getConfParamList<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            RUN_SAFE(conf.peekConfParam<int>(tag));
+            EXPECT_ANY_THROW(conf.getConfParam(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.checkConfParam<int>(tag, 500));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            RUN_SAFE(conf.getConfSubtree(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfSubtreeOptional(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            RUN_SAFE(conf.getConfSubtreeList(tag));
+            EXPECT_ANY_THROW(conf.getConfParamOptional(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            RUN_SAFE(conf.getConfAttribute<int>(tag));
+            EXPECT_ANY_THROW(conf.peekConfParam<int>(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.checkConfParam<int>(tag, 500));
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            EXPECT_ANY_THROW(conf.getConfSubtree(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getConfSubtreeOptional(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getConfSubtreeList(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            EXPECT_ANY_THROW(conf.getConfAttribute<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
         }
 
@@ -518,13 +587,13 @@ TEST(BaseLibConfigTree, MoveConstruct)
 
         // test that read status of data is transferred in move construction
         {
-            BaseLib::ConfigTreeNew const u2(std::move(u));
+            BaseLib::ConfigTree const u2(std::move(u));
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
 
         // test that read status of children is transferred in move construction
-        BaseLib::ConfigTreeNew conf2(std::move(conf));
+        BaseLib::ConfigTree conf2(std::move(conf));
 
         EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);

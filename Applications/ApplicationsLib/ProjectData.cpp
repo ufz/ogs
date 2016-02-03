@@ -28,7 +28,7 @@
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace detail
 {
@@ -42,7 +42,7 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 
 }
 
-ProjectData::ProjectData(BaseLib::ConfigTreeNew const& project_config,
+ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	std::string const& path)
 {
 	// geometry
@@ -174,7 +174,7 @@ bool ProjectData::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
 }
 
 void ProjectData::parseProcessVariables(
-	BaseLib::ConfigTreeNew const& process_variables_config)
+	BaseLib::ConfigTree const& process_variables_config)
 {
 	DBUG("Parse process variables:")
 	if (_geoObjects == nullptr) {
@@ -200,7 +200,7 @@ void ProjectData::parseProcessVariables(
 	}
 }
 
-void ProjectData::parseParameters(BaseLib::ConfigTreeNew const& parameters_config)
+void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 {
 	using namespace ProcessLib;
 
@@ -233,7 +233,7 @@ void ProjectData::parseParameters(BaseLib::ConfigTreeNew const& parameters_confi
 	}
 }
 
-void ProjectData::parseProcesses(BaseLib::ConfigTreeNew const& processes_config)
+void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 {
 	DBUG("Reading processes:");
 	for (auto process_config : processes_config.getConfSubtreeList("process")) {
@@ -244,7 +244,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTreeNew const& processes_config)
 	}
 }
 
-void ProjectData::parseOutput(BaseLib::ConfigTreeNew const& output_config,
+void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
 	std::string const& path)
 {
 	output_config.checkConfParam("type", "VTK");
@@ -255,7 +255,7 @@ void ProjectData::parseOutput(BaseLib::ConfigTreeNew const& output_config,
 	_output_file_prefix = path + file;
 }
 
-void ProjectData::parseTimeStepping(BaseLib::ConfigTreeNew const& timestepping_config)
+void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
 {
 	using namespace ProcessLib;
 

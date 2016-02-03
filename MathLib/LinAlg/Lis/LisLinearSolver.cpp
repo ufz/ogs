@@ -27,7 +27,7 @@ namespace MathLib
 
 LisLinearSolver::LisLinearSolver(LisMatrix &A,
                     const std::string /*solver_name*/,
-                    const BaseLib::ConfigTreeNew* const option)
+                    const BaseLib::ConfigTree* const option)
 : _A(A), _lis_option(option)
 {
 }

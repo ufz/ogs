@@ -21,7 +21,7 @@ namespace MathLib {
 template <typename MAT_T, typename VEC_T>
 GaussAlgorithm<MAT_T, VEC_T>::GaussAlgorithm(MAT_T &A,
 		const std::string /*solver_name*/,
-		BaseLib::ConfigTreeNew const* const) :
+		BaseLib::ConfigTree const* const) :
 		_mat(A), _n(_mat.getNRows()), _perm(new IDX_T[_n])
 {}
 

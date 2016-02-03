@@ -14,7 +14,7 @@
 
 #include <vector>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 #include "ITimeStepAlgorithm.h"
 
 namespace NumLib
@@ -64,7 +64,7 @@ public:
      *
      * Currently this function only covers uniform timestep size.
      */
-    static FixedTimeStepping* newInstance(BaseLib::ConfigTreeNew const& config);
+    static FixedTimeStepping* newInstance(BaseLib::ConfigTree const& config);
 
     virtual ~FixedTimeStepping() {}
 

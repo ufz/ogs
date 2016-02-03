@@ -99,7 +99,7 @@ template<typename IntType> struct Example1
 };
 
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER, typename IntType>
-void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTreeNew const& ls_option)
+void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree const& ls_option)
 {
     Example1<IntType> ex1;
 
@@ -136,7 +136,7 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTreeNew const& ls_op
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
 void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
                                 const std::string& prefix_name,
-                                BaseLib::ConfigTreeNew const& ls_option)
+                                BaseLib::ConfigTree const& ls_option)
 {
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
@@ -204,7 +204,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 TEST(MathLib, CheckInterface_GaussAlgorithm)
 {
     boost::property_tree::ptree t_root;
-    BaseLib::ConfigTreeNew conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "");
 
     using Example = Example1<std::size_t>;
 
@@ -226,7 +226,7 @@ TEST(Math, CheckInterface_Eigen)
     t_solver.put("error_tolerance", 1e-15);
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("eigen", t_solver);
-    BaseLib::ConfigTreeNew conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "");
 
     using IntType = MathLib::EigenMatrix::IndexType;
 
@@ -243,7 +243,7 @@ TEST(Math, CheckInterface_EigenLis)
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTreeNew conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "");
 
     using IntType = MathLib::LisMatrix::IndexType;
 
@@ -260,7 +260,7 @@ TEST(Math, CheckInterface_Lis)
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTreeNew conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "");
 
     using IntType = MathLib::LisMatrix::IndexType;
 
@@ -294,7 +294,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest1_", BaseLib::ConfigTreeNew(t_root, ""));
+        A, b, "ptest1_", BaseLib::ConfigTree(t_root, ""));
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
@@ -320,7 +320,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest2_", BaseLib::ConfigTreeNew(t_root, ""));
+        A, b, "ptest2_", BaseLib::ConfigTree(t_root, ""));
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
@@ -348,7 +348,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest3_", BaseLib::ConfigTreeNew(t_root, ""));
+        A, b, "ptest3_", BaseLib::ConfigTree(t_root, ""));
 }
 
 #endif

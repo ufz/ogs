@@ -18,20 +18,20 @@ namespace BaseLib
 ConfigTreeTopLevel::ConfigTreeTopLevel(
         const std::string& filepath,
         const bool be_ruthless,
-        ConfigTreeNew::PTree&& ptree)
+        ConfigTree::PTree&& ptree)
     : _ptree(std::move(ptree))
     , _ctree(_ptree, filepath,
-             be_ruthless ? ConfigTreeNew::onerror : ConfigTreeNew::onwarning)
+             be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning)
 {
 }
 
-ConfigTreeNew const&
+ConfigTree const&
 ConfigTreeTopLevel::operator*() const
 {
     return _ctree;
 }
 
-ConfigTreeNew const*
+ConfigTree const*
 ConfigTreeTopLevel::operator->() const
 {
     return &_ctree;
@@ -47,7 +47,7 @@ ConfigTreeTopLevel
 makeConfigTree(const std::string& filepath, const bool be_ruthless,
                const std::string& toplevel_tag)
 {
-    ConfigTreeNew::PTree ptree;
+    ConfigTree::PTree ptree;
 
     // note: Trimming whitespace and ignoring comments is crucial in order
     //       for our configuration tree implementation to work!

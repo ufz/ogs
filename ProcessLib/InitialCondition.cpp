@@ -16,12 +16,12 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace ProcessLib
 {
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTreeNew const& config)
+    BaseLib::ConfigTree const& config)
 {
 	config.checkConfParam("type", "Uniform");
 
@@ -33,7 +33,7 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
 }
 
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    BaseLib::ConfigTreeNew const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
 	auto field_name = config.getConfParam<std::string>("field_name");
 	DBUG("Using field_name %s", field_name.c_str());

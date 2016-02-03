@@ -7,7 +7,7 @@
  *
  */
 
-#include "ConfigTreeNew.h"
+#include "ConfigTree.h"
 
 namespace BaseLib
 {
@@ -30,7 +30,7 @@ private:
 
 template<typename T>
 T
-ConfigTreeNew::
+ConfigTree::
 getConfParam(std::string const& param) const
 {
     if (auto p = getConfParamOptional<T>(param))
@@ -41,7 +41,7 @@ getConfParam(std::string const& param) const
 
 template<typename T>
 T
-ConfigTreeNew::
+ConfigTree::
 getConfParam(std::string const& param, T const& default_value) const
 {
     if (auto p = getConfParamOptional<T>(param))
@@ -52,7 +52,7 @@ getConfParam(std::string const& param, T const& default_value) const
 
 template<typename T>
 boost::optional<T>
-ConfigTreeNew::
+ConfigTree::
 getConfParamOptional(std::string const& param) const
 {
     checkUnique(param);
@@ -64,8 +64,8 @@ getConfParamOptional(std::string const& param) const
 }
 
 template<typename T>
-Range<ConfigTreeNew::ValueIterator<T> >
-ConfigTreeNew::
+Range<ConfigTree::ValueIterator<T> >
+ConfigTree::
 getConfParamList(std::string const& param) const
 {
     checkUnique(param);
@@ -79,7 +79,7 @@ getConfParamList(std::string const& param) const
 
 template<typename T>
 T
-ConfigTreeNew::
+ConfigTree::
 peekConfParam(std::string const& param) const
 {
     checkKeyname(param);
@@ -98,7 +98,7 @@ peekConfParam(std::string const& param) const
 
 template<typename T>
 void
-ConfigTreeNew::
+ConfigTree::
 checkConfParam(std::string const& param, T const& value) const
 {
     if (getConfParam<T>(param) != value) {
@@ -108,7 +108,7 @@ checkConfParam(std::string const& param, T const& value) const
 
 template<typename Ch>
 void
-ConfigTreeNew::
+ConfigTree::
 checkConfParam(std::string const& param, Ch const* value) const
 {
     if (getConfParam<std::string>(param) != value) {
@@ -118,7 +118,7 @@ checkConfParam(std::string const& param, Ch const* value) const
 
 template<typename T>
 T
-ConfigTreeNew::
+ConfigTree::
 getValue() const
 {
     if (_have_read_data) {
@@ -137,7 +137,7 @@ getValue() const
 
 template<typename T>
 T
-ConfigTreeNew::
+ConfigTree::
 getConfAttribute(std::string const& attr) const
 {
     if (auto a = getConfAttributeOptional<T>(attr))
@@ -148,7 +148,7 @@ getConfAttribute(std::string const& attr) const
 
 template<typename T>
 boost::optional<T>
-ConfigTreeNew::
+ConfigTree::
 getConfAttributeOptional(std::string const& attr) const
 {
     checkUniqueAttr(attr);
@@ -171,8 +171,8 @@ getConfAttributeOptional(std::string const& attr) const
 }
 
 template<typename T>
-ConfigTreeNew::CountType&
-ConfigTreeNew::
+ConfigTree::CountType&
+ConfigTree::
 markVisited(std::string const& key, Attr const is_attr,
             bool const peek_only) const
 {
