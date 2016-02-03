@@ -1,3 +1,4 @@
+defaultDockerArgs = '-v /home/core/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
 node('docker')
@@ -5,14 +6,13 @@ node('docker')
 	step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
 
 	stage 'Checkout'
- 	dir('ogs') {
-  		checkout scm
-  	}
+	dir('ogs') { checkout scm }
 
 	stage 'Build'
-	docker.image('ogs6/gcc-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache') {
-		build 'build', '', 'package tests ctest'
-	}
+	docker.image('ogs6/gcc-base:latest')
+		.inside(defaultDockerArgs) {
+			build 'build', '', 'package tests ctest'
+		}
 
 	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
 		'ogs/scripts/jenkins/clang-log-parser.rules'

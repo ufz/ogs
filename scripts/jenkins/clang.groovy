@@ -1,26 +1,25 @@
+defaultDockerArgs = '-v /home/core/.ccache:/usr/src/.ccache'
+
 node('docker')
 {
-	// Checks out into subdirectory ogs
 	stage 'Checkout'
-	dir('ogs') {
- 		checkout scm
- 	}
-
+	dir('ogs') { checkout scm }
 
 	// Multiple configurations are build in parallel
 	parallel linux: {
-		docker.image('ogs6/clang-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache')
+		docker.image('ogs6/clang-base:latest')
+			.inside(defaultDockerArgs)
 		{
 			catchError {
 				build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
 
 				stage 'Unit tests'
 				sh '''cd build
-			          make tests'''
+				      make tests'''
 
 				stage 'End-to-end tests'
 				sh '''cd build
-			          make ctest'''
+				      make ctest'''
 			}
 		}
 		step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
