@@ -59,7 +59,8 @@ if(NOT GCOV_PATH)
 	message(FATAL_ERROR "gcov not found! Aborting...")
 endif() # NOT GCOV_PATH
 
-if(NOT COMPILERS_IS_GCC AND NOT COMPILER_IS_CLANG)
+if(NOT (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR
+	${CMAKE_CXX_COMPILER_ID} MATCHES "Clang"))
 	message(FATAL_ERROR "Compiler is not gcc or clang! Aborting...")
 endif()
 
