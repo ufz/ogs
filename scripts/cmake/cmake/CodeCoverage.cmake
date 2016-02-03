@@ -162,38 +162,18 @@ function(SETUP_TARGET_FOR_COVERAGE_COBERTURA)
 		set(COBERTURA_EXCLUDES "-e ${EXCLUDE} ${COBERTURA_EXCLUDES}")
 	endforeach()
 
-	if(DEFINED ENV{JENKINS_URL})
-		# Get relative paths
-		string(REPLACE "$ENV{WORKSPACE}/" "" CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-		string(REPLACE "/gpfs0" "" CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_RELATIVE_SOURCE_DIR})
-		string(REPLACE "/gpfs1" "" CMAKE_RELATIVE_SOURCE_DIR ${CMAKE_RELATIVE_SOURCE_DIR})
+	add_custom_target(${Coverage_NAME}
 
-		add_custom_target(${Coverage_NAME}
+		# Run tests
+		${Coverage_EXECUTABLE}
 
-			# Run tests
-			${Coverage_EXECUTABLE}
-
-			# Running gcovr
-			COMMAND ${GCOVR_PATH} -x -d -r ${CMAKE_RELATIVE_SOURCE_DIR} ${COBERTURA_EXCLUDES}
-				-o ${CMAKE_BINARY_DIR}/${Coverage_NAME}.xml
-			WORKING_DIRECTORY $ENV{WORKSPACE}
-			DEPENDS ${Coverage_DEPENDENCIES}
-			COMMENT "Running gcovr to produce Cobertura code coverage report for Jenkins."
-		)
-	else()
-		add_custom_target(${Coverage_NAME}
-
-			# Run tests
-			${Coverage_EXECUTABLE}
-
-			# Running gcovr
-			COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} ${COBERTURA_EXCLUDES}
-				-o ${Coverage_NAME}.xml
-			WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-			DEPENDS ${Coverage_DEPENDENCIES}
-			COMMENT "Running gcovr to produce Cobertura code coverage report."
-		)
-	endif()
+		# Running gcovr
+		COMMAND ${GCOVR_PATH} -x -r ${CMAKE_SOURCE_DIR} ${COBERTURA_EXCLUDES}
+			-o ${Coverage_NAME}.xml
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		DEPENDS ${Coverage_DEPENDENCIES}
+		COMMENT "Running gcovr to produce Cobertura code coverage report."
+	)
 
 	# Show info where to find the report
 	add_custom_command(TARGET ${Coverage_NAME} POST_BUILD
