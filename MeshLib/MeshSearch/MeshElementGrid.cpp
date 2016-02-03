@@ -159,7 +159,7 @@ MeshElementGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
 {
 	bool valid(true);
 	std::array<std::size_t, 3> coords;
-	
+
 	for (std::size_t k(0); k<3; ++k) {
 		const double d(p[k]-_aabb.getMinPoint()[k]);
 		if (d < 0.0) {
@@ -216,13 +216,13 @@ void getGridGeometry(MeshElementGrid const& grid,
 				auto plys = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
 				    new std::vector<GeoLib::Polyline*>);
 				auto & points = *geometries.getPointVec(cell_names.back());
-				
+
 				GeoLib::Polyline* ply_bottom(new GeoLib::Polyline(points));
 				for (std::size_t l(0); l < 4; ++l)
 					ply_bottom->addPoint(l);
 				ply_bottom->addPoint(0); // close to bottom surface
 				plys->push_back(ply_bottom);
-				
+
 				GeoLib::Polyline* ply_top(new GeoLib::Polyline(points));
 				for (std::size_t l(4); l<8; ++l)
 					ply_top->addPoint(l);

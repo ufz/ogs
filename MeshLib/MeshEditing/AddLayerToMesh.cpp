@@ -62,7 +62,7 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
 		std::size_t new_idx = (nElemNodes==2) ? (3-j) : (nElemNodes+j);
 		new_nodes[new_idx] = subsfc_nodes[subsfc_sfc_id_map.at(subsfc_id)];
 	}
-	
+
 	if (sfc_elem.getGeomType() == MeshLib::MeshElemType::LINE)
 		return new MeshLib::Quad(new_nodes);
 	if (sfc_elem.getGeomType() == MeshLib::MeshElemType::TRIANGLE)

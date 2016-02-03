@@ -149,8 +149,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 	}
 }
 
-bool AsciiRasterInterface::readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header, 
-                                            double &min, double &max)
+bool AsciiRasterInterface::readSurferHeader(
+	std::ifstream &in, GeoLib::RasterHeader &header, double &min, double &max)
 {
 	std::string tag;
 

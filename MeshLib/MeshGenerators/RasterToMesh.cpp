@@ -59,7 +59,7 @@ MeshLib::Mesh* RasterToMesh::convert(
 	}
 
 	MathLib::Point3d const orig (std::array<double,3>{{origin[0], origin[1], origin[2]}});
-	GeoLib::RasterHeader const header = 
+	GeoLib::RasterHeader const header =
 		{static_cast<std::size_t>(dims[0]), static_cast<std::size_t>(dims[1]), orig, scalingFactor, -9999};
 	const std::size_t incHeight = header.n_rows+1;
 	const std::size_t incWidth  = header.n_cols+1;
