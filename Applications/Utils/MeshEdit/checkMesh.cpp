@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
 	auto minPt(aabb.getMinPoint());
 	auto maxPt(aabb.getMaxPoint());
 	INFO("Node coordinates:");
-	INFO("\tx [%g, %g] range %g", minPt[0], maxPt[0], maxPt[0]-minPt[0]);
-	INFO("\ty [%g, %g] range %g", minPt[1], maxPt[1], maxPt[1]-minPt[1]);
-	INFO("\tz [%g, %g] range %g", minPt[2], maxPt[2], maxPt[2]-minPt[2]);
+	INFO("\tx [%g, %g] (extent %g)", minPt[0], maxPt[0], maxPt[0]-minPt[0]);
+	INFO("\ty [%g, %g] (extent %g)", minPt[1], maxPt[1], maxPt[1]-minPt[1]);
+	INFO("\tz [%g, %g] (extent %g)", minPt[2], maxPt[2], maxPt[2]-minPt[2]);
 
 	INFO("Edge length: [%g, %g]", mesh->getMinEdgeLength(), mesh->getMaxEdgeLength());
 
@@ -86,15 +86,21 @@ int main(int argc, char *argv[])
 	if (nr_ele_types[++etype]>0) INFO("\t%d pyramids", nr_ele_types[etype]);
 	if (nr_ele_types[++etype]>0) INFO("\t%d prisms", nr_ele_types[etype]);
 
-	const std::pair<unsigned, unsigned> minmax_values(MeshLib::MeshInformation::getValueBounds(*mesh));
-	INFO("Material IDs: [%d, %d]", minmax_values.first, minmax_values.second);
-
-	if (print_properties_arg.isSet()) {
-		MeshLib::Properties const& properties = mesh->getProperties();
-		std::vector<std::string> const& names = properties.getPropertyVectorNames();
-		INFO("There are %d properties in the mesh", names.size());
-		for (std::size_t i = 0; i < names.size(); ++i)
-			INFO("\t%d: %s", i, names[i].c_str());
+	std::vector<std::string> const& vec_names (mesh->getProperties().getPropertyVectorNames());
+	INFO("There are %d properties in the mesh:", vec_names.size());
+	for (std::size_t i=0; i<vec_names.size(); ++i)
+	{
+		auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_names[i]));
+		if (vec_bounds.second != std::numeric_limits<int>::max())
+			INFO("\t%s: [%d, %d]", vec_names[i].c_str(), vec_bounds.first, vec_bounds.second)
+		else
+		{
+			auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(*mesh, vec_names[i]));
+			if (vec_bounds.second != std::numeric_limits<double>::max())
+				INFO("\t%s: [%g, %g]", vec_names[i].c_str(), vec_bounds.first, vec_bounds.second)
+			else
+				INFO("\t%s: Unknown properties", vec_names[i].c_str())
+		}
 	}
 
 	if (valid_arg.isSet()) {
