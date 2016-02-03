@@ -63,7 +63,7 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
 
     DBUG("Project configuration from file \'%s\' read.", filepath.c_str());
 
-    if (auto child = std::move(ptree.get_child_optional(toplevel_tag))) {
+    if (auto child = ptree.get_child_optional(toplevel_tag)) {
         return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
     } else {
         ERR("Tag <%s> has not been found in file `%s'.",
