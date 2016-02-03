@@ -38,71 +38,7 @@ public:
     GroundwaterFlowProcess(MeshLib::Mesh& mesh,
             std::vector<ProcessVariable> const& variables,
             std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-            BaseLib::ConfigTree const& config)
-        : Process<GlobalSetup>(mesh)
-    {
-        config.checkConfParam("type", "GROUNDWATER_FLOW");
-
-        DBUG("Create GroundwaterFlowProcess.");
-
-        // Process variable.
-        {
-            // Find the corresponding process variable.
-            std::string const name = config.getConfParam<std::string>("process_variable");
-
-            auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                    [&name](ProcessVariable const& v) {
-                        return v.getName() == name;
-                    });
-
-            if (variable == variables.end())
-                ERR("Expected process variable \'%s\' not found in provided variables list.",
-                    name.c_str());
-
-            DBUG("Associate hydraulic_head with process variable \'%s\'.",
-                name.c_str());
-            this->_process_variables.emplace_back(
-                const_cast<ProcessVariable*>(&*variable));
-        }
-
-        // Hydraulic conductivity parameter.
-        {
-            // find hydraulic_conductivity in process config
-            auto const name = config.getConfParam<std::string>("hydraulic_conductivity");
-
-            // find corresponding parameter by name
-            auto const parameter =
-                std::find_if(parameters.cbegin(), parameters.cend(),
-                             [&name](std::unique_ptr<ParameterBase> const& p)
-                             {
-                                 return p->name == name;
-                             });
-
-            if (parameter == parameters.end())
-            {
-                ERR("Could not find required parameter config for \'%s\' "
-                    "among read parameters.",
-                    name.c_str());
-                std::abort();
-            }
-
-            _hydraulic_conductivity =
-                dynamic_cast<const Parameter<double, const MeshLib::Element&>*>(
-                    parameter->get());
-            if (!_hydraulic_conductivity)
-            {
-                ERR("The hydraulic conductivity parameter is of incompatible "
-                    "type.");
-                std::abort();
-            }
-        }
-
-        // Linear solver options
-        if (auto linear_solver_options =
-                config.getConfSubtreeOptional("linear_solver"))
-            Process<GlobalSetup>::setLinearSolverOptions(
-                std::move(*linear_solver_options));
-    }
+            BaseLib::ConfigTree const& config);
 
     template <unsigned GlobalDim>
     void createLocalAssemblers()
@@ -182,6 +118,83 @@ private:
     std::vector<LocalAssembler*> _local_assemblers;
 };
 
+template <typename GlobalSetup>
+GroundwaterFlowProcess<GlobalSetup>::GroundwaterFlowProcess(
+    MeshLib::Mesh& mesh,
+    std::vector<ProcessVariable> const& variables,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+    : Process<GlobalSetup>(mesh)
+{
+    config.checkConfParam("type", "GROUNDWATER_FLOW");
+
+    DBUG("Create GroundwaterFlowProcess.");
+
+    // Process variable.
+    {
+        // Find the corresponding process variable.
+        std::string const name =
+            config.getConfParam<std::string>("process_variable");
+
+        auto variable = std::find_if(variables.cbegin(), variables.cend(),
+                                     [&name](ProcessVariable const& v)
+                                     {
+                                         return v.getName() == name;
+                                     });
+
+        if (variable == variables.end())
+            ERR(
+                "Expected process variable \'%s\' not found in provided "
+                "variables list.",
+                name.c_str());
+
+        DBUG("Associate hydraulic_head with process variable \'%s\'.",
+             name.c_str());
+        this->_process_variables.emplace_back(
+            const_cast<ProcessVariable*>(&*variable));
+    }
+
+    // Hydraulic conductivity parameter.
+    {
+        // find hydraulic_conductivity in process config
+        auto const name =
+            config.getConfParam<std::string>("hydraulic_conductivity");
+
+        // find corresponding parameter by name
+        auto const parameter =
+            std::find_if(parameters.cbegin(), parameters.cend(),
+                         [&name](std::unique_ptr<ParameterBase> const& p)
+                         {
+                             return p->name == name;
+                         });
+
+        if (parameter == parameters.end())
+        {
+            ERR(
+                "Could not find required parameter config for \'%s\' "
+                "among read parameters.",
+                name.c_str());
+            std::abort();
+        }
+
+        _hydraulic_conductivity =
+            dynamic_cast<const Parameter<double, const MeshLib::Element&>*>(
+                parameter->get());
+        if (!_hydraulic_conductivity)
+        {
+            ERR(
+                "The hydraulic conductivity parameter is of incompatible "
+                "type.");
+            std::abort();
+        }
+    }
+
+    // Linear solver options
+    if (auto linear_solver_options =
+            config.getConfSubtreeOptional("linear_solver"))
+        Process<GlobalSetup>::setLinearSolverOptions(
+            std::move(*linear_solver_options));
+}
 }   // namespace ProcessLib
 
 #endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
