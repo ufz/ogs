@@ -260,31 +260,61 @@ private:
 	{
 		DBUG("Process output.");
 
-		std::string const property_name = "Result";
-
-		// Get or create a property vector for results.
-		boost::optional<MeshLib::PropertyVector<double>&> result;
-		if (_mesh.getProperties().hasPropertyVector(property_name))
-		{
-			result = _mesh.getProperties().template getPropertyVector<double>(
-			    property_name);
-		}
-		else
-		{
-			result =
-			    _mesh.getProperties().template createNewPropertyVector<double>(
-			        property_name, MeshLib::MeshItemType::Node);
-#ifdef USE_PETSC
-			result->resize(_x->getLocalSize() + _x->getGhostSize());
-#else
-			result->resize(_x->size());
-#endif
-		}
-
-		assert(result);
-
 		// Copy result
-		_x->copyValues(*result);
+#ifdef USE_PETSC
+		// TODO It is also possible directly to copy the data for single process
+		// variable to a mesh property. It needs a vector of global indices and
+		// some PETSc magic to do so.
+		std::vector<double> x_copy(_x->getLocalSize() + _x->getGhostSize());
+#else
+		std::vector<double> x_copy(_x->size());
+#endif
+		_x->copyValues(x_copy);
+
+		std::size_t const n = _mesh.getNNodes();
+		for (ProcessVariable const& pv : _process_variables)
+		{
+			std::string const property_name = pv.getName();
+			// Get or create a property vector for results.
+			boost::optional<MeshLib::PropertyVector<double>&> result;
+			if (_mesh.getProperties().hasPropertyVector(property_name))
+			{
+				result =
+				    _mesh.getProperties().template getPropertyVector<double>(
+				        property_name);
+			}
+			else
+			{
+				result = _mesh.getProperties()
+				             .template createNewPropertyVector<double>(
+				                 property_name, MeshLib::MeshItemType::Node);
+			}
+
+			assert(result);
+
+			int const n_components = pv.getTupleSize();
+			// result's resize function is from std::vector not accounting the
+			// tuple size.
+			result->resize(x_copy.size() * n_components);
+
+			for (std::size_t i = 0; i < n; ++i)
+			{
+				MeshLib::Location const l(_mesh.getID(),
+				                          MeshLib::MeshItemType::Node, i);
+				// TODO extend component ids to multiple process variables.
+				for (int component_id = 0; component_id < n_components;
+				     ++component_id)
+				{
+					auto const index =
+					    _local_to_global_index_map->getLocalIndex(
+					        l, component_id, _x->getRangeBegin(),
+					        _x->getRangeEnd());
+
+					output_data[node_id * n_components + component_id] =
+					    x_copy[index];
+				}
+			}
+		}
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
