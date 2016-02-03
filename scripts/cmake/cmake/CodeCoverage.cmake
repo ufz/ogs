@@ -48,6 +48,8 @@
 #    which runs your test executable and produces a lcov code coverage report.
 #
 
+include(CMakeParseArguments)
+
 # Check prereqs
 find_program( GCOV_PATH gcov )
 find_program( LCOV_PATH lcov )

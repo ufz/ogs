@@ -175,7 +175,7 @@ function (AddTest)
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
 	)
 
-	if(NOT AddTest_TESTER)
+	if(NOT AddTest_TESTER OR OGS_COVERAGE)
 		return()
 	endif()
 
