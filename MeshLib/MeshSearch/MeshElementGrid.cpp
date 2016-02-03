@@ -100,6 +100,16 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     sortElementsInGridCells(sfc_mesh);
 }
 
+MathLib::Point3d const& MeshElementGrid::getMinPoint() const
+{
+    return _aabb.getMinPoint();
+}
+
+MathLib::Point3d const& MeshElementGrid::getMaxPoint() const
+{
+    return _aabb.getMaxPoint();
+}
+
 void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
 {
     for (auto const element : sfc_mesh.getElements()) {
