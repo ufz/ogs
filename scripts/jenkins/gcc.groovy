@@ -8,7 +8,7 @@ node('docker')
   	}
 
 	stage 'Build'
-	docker.image('ogs6/gcc-ogs-base:latest').inside {
+	docker.image('ogs6/gcc-ogs-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache') {
 		build 'build', '', 'package tests ctest'
 	}
 

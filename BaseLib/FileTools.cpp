@@ -133,4 +133,28 @@ std::string extractPath(std::string const& pathname)
 	const std::size_t pos = findLastPathSeparator(pathname);
 	return pathname.substr(0, pos + 1);
 }
+const char * pathSeparator =
+#ifdef _WIN32
+                            "\\";
+#else
+                            "/";
+#endif
+
+std::string appendPathSeparator(std::string const& path)
+{
+	if(findLastPathSeparator(path) == path.length() - 1)
+		return path;
+	return path + pathSeparator;
+}
+
+std::string joinPaths(std::string const& pathA, std::string const& pathB)
+{
+	std::string tmpB(pathB);
+	if(tmpB.substr(0, 1) == ".")
+		tmpB = tmpB.substr(1);
+	if(tmpB.substr(0, 1) == pathSeparator)
+		tmpB = tmpB.substr(1);
+	return appendPathSeparator(pathA) + tmpB;
+}
+
 } // end namespace BaseLib

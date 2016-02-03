@@ -8,8 +8,9 @@
 #   NAME <name of the the test>
 #   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
-#   EXECUTABLE_ARGS <arguments> # files referenced in the DATA argument can be used here
+#   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
+#   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|memcheck> # optional
 #   DATA <list of all required data files, white-space separated, have to be in PATH>
 # )
@@ -36,31 +37,24 @@ function (AddTest)
 	set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
 	set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
 	cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-	set(AddTest_SOURCE_PATH "${ExternalData_SOURCE_ROOT}/${AddTest_PATH}")
-	set(AddTest_BINARY_PATH "${ExternalData_BINARY_ROOT}/${AddTest_PATH}")
+
+	set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
+	set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
+	file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
+	file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
 
 	# set defaults
 	if(NOT AddTest_EXECUTABLE)
 		set(AddTest_EXECUTABLE ogs)
 	endif()
 
+	if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
+		set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
+	endif()
+
 	if(NOT AddTest_WRAPPER)
 		set(AddTest_WRAPPER time)
 	endif()
-
-	# replace arguments which reference test data files with the correct DATA{}-path
-	foreach(ARG ${AddTest_EXECUTABLE_ARGS})
-		string(REGEX MATCH ".*${ARG}.*" ARG_FOUND ${AddTest_DATA} )
-		if(ARG_FOUND)
-			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} DATA{${AddTest_SOURCE_PATH}/${ARG}})
-		else()
-			set(AddTest_EXECUTABLE_ARGS_PARSED ${AddTest_EXECUTABLE_ARGS_PARSED} ${ARG}})
-		endif()
-	endforeach()
-
-	string(REPLACE ";" "," AddTest_DATA "${AddTest_DATA}")
-	set(AddTest_DATA "${AddTest_SOURCE_PATH}/${AddTest_DATA}")
-
 
 	# --- Implement wrappers ---
 	# check requirements, disable if not met
@@ -86,7 +80,7 @@ function (AddTest)
 		set(WRAPPER_COMMAND "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes")
 		unset(tester)
 	elseif(AddTest_WRAPPER STREQUAL "mpirun")
-		set(WRAPPER_COMMAND "${MPIRUN_TOOL_PATH} ${AddTest_WRAPPER_ARGS}")
+		set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
 	endif()
 
 	# --- Implement testers ---
@@ -124,7 +118,9 @@ function (AddTest)
 			get_filename_component(FILE_NAME ${FILE} NAME_WE)
 			get_filename_component(FILE_EXT ${FILE} EXT)
 			set(FILE_EXPECTED ${FILE_NAME}_expected${FILE_EXT})
-			set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} ${TESTER_ARGS} DATA{${AddTest_SOURCE_PATH}/${FILE_EXPECTED}} ${AddTest_BINARY_PATH}/${FILE}")
+			set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
+				${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+				${AddTest_BINARY_PATH}/${FILE}")
 			if(AddTest_DIFF_DATA_PARSED)
 				set(AddTest_DIFF_DATA_PARSED "${AddTest_DIFF_DATA_PARSED},${FILE_EXPECTED}")
 			else()
@@ -143,7 +139,8 @@ function (AddTest)
 		list(GET AddTest_DIFF_DATA 2 NAME_B)
 
 		set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
-			${AddTest_BINARY_PATH}/${VTK_FILE} -a ${NAME_A} -b ${NAME_B} \
+			${AddTest_BINARY_PATH}/${VTK_FILE} \
+			-a ${NAME_A} -b ${NAME_B} \
 			${TESTER_ARGS}")
 		string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
 	elseif(tester STREQUAL "memcheck")
@@ -158,17 +155,15 @@ function (AddTest)
 	endif()
 
 	# Run the wrapper
-	ExternalData_Add_Test(data
+	Add_Test(
 		NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
 		COMMAND ${CMAKE_COMMAND}
 		-DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-		-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS_PARSED}
+		"-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
 		-Dcase_path=${AddTest_SOURCE_PATH}
-		-Dcase_name=${AddTest_NAME}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
-		-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
+		"-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
-		DATA{${AddTest_DATA}}
 	)
 
 	if(NOT AddTest_TESTER)
@@ -177,13 +172,11 @@ function (AddTest)
 
 	# Run the tester
 	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
-		ExternalData_Add_Test(data
+		Add_Test(
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
 			-Dcase_path=${AddTest_SOURCE_PATH}
-			-Dcase_name=${AddTest_NAME}
 			-DTESTER_COMMAND=${TESTER_COMMAND}
-			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 			DATA{${AddTest_DIFF_DATA_PARSED}}
 		)
@@ -192,9 +185,7 @@ function (AddTest)
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
 			-Dcase_path=${AddTest_SOURCE_PATH}
-			-Dcase_name=${AddTest_NAME}
 			-DTESTER_COMMAND=${TESTER_COMMAND}
-			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 		)
 	else()
@@ -202,9 +193,7 @@ function (AddTest)
 			NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
 			COMMAND ${CMAKE_COMMAND}
 			-Dcase_path=${AddTest_SOURCE_PATH}
-			-Dcase_name=${AddTest_NAME}
 			-DTESTER_COMMAND=${TESTER_COMMAND}
-			-DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
 			-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
 		)
 	endif()
@@ -212,3 +201,4 @@ function (AddTest)
 		PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
 
 endfunction()
+

@@ -19,41 +19,24 @@ if(OGS_USE_MPI)
 	target_link_libraries(test_node_partitioned_mesh ${MPI_CXX_LIBRARIES})
 endif()
 
-set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/ASCII/,REGEX:.*}")
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
-ExternalData_Add_Test(
-	data
+AddTest(
 	NAME NodePartitionedMeshTestASCII
-	COMMAND "mpirun" ${MPITestParameters}
+	PATH NodePartitionedMesh/ASCII
+	EXECUTABLE test_node_partitioned_mesh
+	EXECUTABLE_ARGS mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/ASCII
+	WRAPPER mpirun
+	WRAPPER_ARGS -np 3
+	TESTER diff
+	DIFF_DATA mesh_3d_partition_0.msh mesh_3d_partition_1.msh mesh_3d_partition_2.msh
 )
 
-set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/NodePartitionedMesh/Binary/,REGEX:.*}")
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/test_node_partitioned_mesh" "${FilePath}/mesh_3d")
-ExternalData_Add_Test(
-	data
+AddTest(
 	NAME NodePartitionedMeshTestBinary
-	COMMAND  "mpirun" ${MPITestParameters}
-)
-
-## FEM#PETSc solver tests
-set(FilePath "DATA{${ExternalData_SOURCE_ROOT}/EllipticPETSc/,REGEX:.*}")
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/quad_20x10_GroundWaterFlow.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
-    NAME ParallelFEM_GroundWaterFlow2D
-    COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
-)
-
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
-    NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
-    COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
-)
-
-set(MPITestParameters -np 3 "${PROJECT_BINARY_DIR}/bin/ogs" "${FilePath}/cube_1e3_neumann.prj" --  -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10)
-ExternalData_Add_Test(
-    data
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC
-    COMMAND  "mpirun" ${MPITestParameters} ${SolverType}
+	PATH NodePartitionedMesh/Binary
+	EXECUTABLE test_node_partitioned_mesh
+	EXECUTABLE_ARGS mesh_3d ${Data_BINARY_DIR}/NodePartitionedMesh/Binary
+	WRAPPER mpirun
+	WRAPPER_ARGS -np 3
+	TESTER diff
+	DIFF_DATA mesh_3d_partition_0.msh mesh_3d_partition_1.msh mesh_3d_partition_2.msh
 )

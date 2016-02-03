@@ -19,3 +19,6 @@
 [submodule "ThirdParty/cmake-modules"]
 	path = ThirdParty/cmake-modules
 	url = https://github.com/ufz/cmake-modules.git
+[submodule "Tests/Data"]
+	path = Tests/Data
+	url = https://github.com/ufz/ogs-data

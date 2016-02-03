@@ -136,6 +136,11 @@ if(OGS_USE_EIGEN)
 	endif()
 endif()
 
+if(OGS_BUILD_TESTS)
+	set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
+	set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
+endif()
+
 ######################
 ### Subdirectories ###
 ######################
@@ -189,12 +194,6 @@ if( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
 			add_subdirectory( SimpleTests/SolverTests )
 		endif()
 	endif()
-
-	# Create a target 'data', which downloads all referenced data sets into the build tree
-	# This has to be defined after all tests are defined
-	ExternalData_Add_Target(data)
-	set_target_properties(data PROPERTIES EXCLUDE_FROM_ALL 1)
-	add_dependencies(ctest data)
 endif() # OGS_BUILD_TESTS
 
 # The configuration must be called from the source dir and not BaseLib/.

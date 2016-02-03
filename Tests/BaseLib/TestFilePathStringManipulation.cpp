@@ -387,3 +387,16 @@ TEST(BaseLib, ExtractPathUnix)
 	ASSERT_EQ ( BaseLib::extractPath("/path/path/file.ext"), "/path/path/" );
 	ASSERT_EQ ( BaseLib::extractPath("/path/path/path.ext/"), "/path/path/path.ext/" );
 }
+
+TEST(BaseLib, JoinPaths)
+{
+#if _WIN32
+	ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", "path") );
+	ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", "\\path") );
+	ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", ".\\path") );
+#else
+	ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "path") );
+	ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "/path") );
+	ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "./path") );
+#endif
+}

@@ -23,6 +23,7 @@
 
 #include "logog/include/logog.hpp"
 
+#include "BaseLib/FileTools.h"
 #include "BaseLib/LogogCustomCout.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
@@ -53,6 +54,9 @@ int main(int argc, char *argv[])
     out->SetFormatter(*fmt);
 
     const std::string file_name = argv[1];
+    std::string output_dir = "";
+    if (argc > 2)
+      output_dir = argv[2];
 
     NodePartitionedMesh *mesh = nullptr;
     {
@@ -69,7 +73,7 @@ int main(int argc, char *argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     const std::string rank_str = std::to_string(rank);
     const std::string ofile_name = file_name + "_partition_" + rank_str + ".msh";
-    std::ofstream os(ofile_name.data(), std::ios::trunc);
+    std::ofstream os(BaseLib::joinPaths(output_dir, ofile_name), std::ios::trunc);
 
     // Output nodes
     os.setf(std::ios::scientific, std::ios::floatfield);
@@ -111,4 +115,3 @@ int main(int argc, char *argv[])
 
     LOGOG_SHUTDOWN();
 }
-
