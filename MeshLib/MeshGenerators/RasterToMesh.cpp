@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2011-08-23
- * \brief  Implementation of the VtkMeshConverter class.
- *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

@@ -33,6 +33,7 @@
 #include "xtiffio.h"
 #endif
 
+#include <memory>
 #include <logog/include/logog.hpp>
 
 #include "AsciiRasterInterface.h"
@@ -46,14 +47,11 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 	QFileInfo fileInfo(QString::fromStdString(fileName));
 
 
-	GeoLib::Raster *raster(nullptr);
-	if (fileInfo.suffix().toLower() == "asc") {
-		raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(fileName);
-	}
+	std::unique_ptr<GeoLib::Raster> raster(nullptr);
+	if (fileInfo.suffix().toLower() == "asc")
+		raster.reset(FileIO::AsciiRasterInterface::getRasterFromASCFile(fileName));
 	else if (fileInfo.suffix().toLower() == "grd")
-	{
-		raster = FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName);
-	}
+		raster.reset(FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
 	if (raster)
 		return VtkRaster::loadImageFromArray(raster->begin(), raster->getHeader());
 	else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))
