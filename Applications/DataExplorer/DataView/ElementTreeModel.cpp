@@ -163,13 +163,24 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* edge_item = new TreeItem(edges, _rootItem);
 	_rootItem->appendChild(edge_item);
 
-	std::pair<int, int> const mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
-	if (mat_bounds.second != std::numeric_limits<int>::max())
+	std::vector<std::string> const& vec_names (mesh->getProperties().getPropertyVectorNames());
+	for (std::size_t i=0; i<vec_names.size(); ++i)
 	{
-		QList<QVariant> materials;
-		materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
-		TreeItem* mat_item = new TreeItem(materials, _rootItem);
-		_rootItem->appendChild(mat_item);
+		QList<QVariant> array_info;
+		array_info << QString::fromStdString(vec_names[i]) + ": ";
+		auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, vec_names[i]));
+		if (vec_bounds.second != std::numeric_limits<int>::max())
+			array_info << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+		else
+		{
+			auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(*mesh, vec_names[i]));
+			if (vec_bounds.second != std::numeric_limits<double>::max())
+				array_info  << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+		}
+		if (array_info.size() == 1)
+			array_info << "[ ?" << "? ]" << "";
+		TreeItem* vec_item = new TreeItem(array_info, _rootItem);
+		_rootItem->appendChild(vec_item);
 	}
 
 	reset();

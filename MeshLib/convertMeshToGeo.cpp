@@ -51,7 +51,8 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
 	// elements to surface triangles conversion
-	const auto bounds (MeshInformation::getValueBounds(mesh));
+	std::string const mat_name ("MaterialIDs");
+	auto bounds (MeshInformation::getValueBounds<int>(mesh, mat_name));
 	const unsigned nMatGroups(bounds.second-bounds.first+1);
 	auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(new std::vector<GeoLib::Surface*>);
 	sfcs->reserve(nMatGroups);
@@ -62,7 +63,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
 	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
 	const std::size_t nElems (mesh.getNElements());
 
-	auto materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+	auto materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
 	auto const materialIdExist = bool(materialIds);
 
 	for (unsigned i=0; i<nElems; ++i)
