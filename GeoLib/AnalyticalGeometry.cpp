@@ -583,12 +583,77 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
     // check: (cd) and (ab) are on the same line
     if (orient_abc == 0.0 && orient_abd == 0.0) {
         double const eps(std::numeric_limits<double>::epsilon());
-        if (MathLib::sqrDist(a,c) < eps && MathLib::sqrDist(b,d) < eps)
+        if (MathLib::sqrDist2d(a,c) < eps && MathLib::sqrDist2d(b,d) < eps)
             return {{ a, b }};
-        if (MathLib::sqrDist(a,d) < eps && MathLib::sqrDist(b,c) < eps)
+        if (MathLib::sqrDist2d(a,d) < eps && MathLib::sqrDist2d(b,c) < eps)
             return {{ a, b }};
-        ERR("This case of collinear points is not handled yet. Aborting.");
-        std::abort();
+
+        // Since orient_ab and orient_abd vanish, a, b, c, d are on the same
+        // line and for this reason it is enough to check the x-component.
+        auto isPointOnSegment = [](double q, double p0, double p1)
+        {
+            double const t((q - p0) / (p1 - p0));
+            if (0 <= t && t <= 1) return true;
+            return false;
+        };
+
+        // check if c in (ab)
+        if (isPointOnSegment(c[0], a[0], b[0])) {
+            // check if a in (cd)
+            if (isPointOnSegment(a[0], c[0], d[0])) {
+                return {{a, c}};
+            }
+            // check b == c
+            if (MathLib::sqrDist2d(b,c) < eps) {
+                return {{b}};
+            }
+            // check if b in (cd)
+            if (isPointOnSegment(b[0], c[0], d[0])) {
+                return {{b, c}};
+            }
+            // check d in (ab)
+            if (isPointOnSegment(d[0], a[0], b[0])) {
+                return {{c, d}};
+            }
+            std::stringstream err;
+            err.precision(std::numeric_limits<double>::digits10);
+            err << ab << " x " << cd;
+            ERR(
+                "The case of parallel line segments (%s) is not handled yet. "
+                "Aborting.",
+                err.str().c_str());
+            std::abort();
+        }
+
+        // check if d in (ab)
+        if (isPointOnSegment(d[0], a[0], b[0])) {
+            // check if a in (cd)
+            if (isPointOnSegment(a[0], c[0], d[0])) {
+                return {{a, d}};
+            }
+            // check if b==d
+            if (MathLib::sqrDist2d(b, d) < eps) {
+                return {{b}};
+            }
+            // check if b in (cd)
+            if (isPointOnSegment(b[0], c[0], d[0])) {
+                return {{b, d}};
+            }
+            // d in (ab), b not in (cd): check c in (ab)
+            if (isPointOnSegment(c[0], a[0], b[0])) {
+                return {{c, d}};
+            }
+
+            std::stringstream err;
+            err.precision(std::numeric_limits<double>::digits10);
+            err << ab << " x " << cd;
+            ERR(
+                "The case of parallel line segments (%s) "
+                "is not handled yet. Aborting.",
+                err.str().c_str());
+            std::abort();
+        }
+        return std::vector<MathLib::Point3d>();
     }
 
     auto isCollinearPointOntoLineSegment = [](MathLib::Point3d const& a,
