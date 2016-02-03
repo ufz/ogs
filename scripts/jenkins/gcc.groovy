@@ -2,13 +2,15 @@ defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
 node('docker')
 {
+	step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
+
 	stage 'Checkout'
  	dir('ogs') {
   		checkout scm
   	}
 
 	stage 'Build'
-	docker.image('ogs6/gcc-ogs-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache') {
+	docker.image('ogs6/gcc-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache') {
 		build 'build', '', 'package tests ctest'
 	}
 
@@ -42,4 +44,7 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 
 	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
 			projectRulePath: "${parseRulefile}", useProjectRule: true])
+
+	step([$class: 'GitHubCommitNotifier', resultOnFailure: 'FAILURE', statusMessage: [content: 'Finished Jenkins gcc build']])
+
 }

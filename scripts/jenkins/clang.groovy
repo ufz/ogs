@@ -9,7 +9,7 @@ node('docker')
 
 	// Multiple configurations are build in parallel
 	parallel linux: {
-		docker.image('ogs6/clang-ogs-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache')
+		docker.image('ogs6/clang-base:latest').inside('-v /home/core/.ccache:/usr/src/.ccache')
 		{
 			catchError {
 				build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
