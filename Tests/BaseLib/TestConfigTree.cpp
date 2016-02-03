@@ -225,8 +225,8 @@ TEST(BaseLibConfigTree, Get)
             auto const opt = z.getConfAttributeOptional<bool>("optattr");
             EXPECT_TRUE(!!opt); EXPECT_FALSE(*opt);
             EXPECT_ERR_WARN(cbs, false, false);
-            //EXPECT_ANY_THROW(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
-            //EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
+            EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
         }
