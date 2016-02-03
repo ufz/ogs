@@ -46,7 +46,7 @@ public slots:
 	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
 	/// Displays information of the given mesh.
-	void setMesh(MeshLib::Mesh const*const mesh);
+	void setMesh(MeshLib::Mesh const& mesh);
 
 private:
 	vtkUnstructuredGridAlgorithm const* _mesh_source;

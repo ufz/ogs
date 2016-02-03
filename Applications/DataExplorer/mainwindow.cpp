@@ -186,9 +186,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
-	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const*const)),
-		    this->_elementModel, SLOT(setMesh(MeshLib::Mesh const*const)));
-	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const*const)),
+	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
+		    this->_elementModel, SLOT(setMesh(MeshLib::Mesh const&)));
+	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
 		    mshTabWidget->elementView, SLOT(updateView()));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 		    this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));

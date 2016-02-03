@@ -13,7 +13,6 @@
  */
 
 #include "MeshInformation.h"
-#include "Mesh.h"
 #include "Elements/Element.h"
 
 namespace MeshLib

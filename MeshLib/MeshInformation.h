@@ -20,12 +20,12 @@
 #include <limits>
 
 #include "GeoLib/AABB.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 
 namespace MeshLib
 {
-class Mesh;
 
 /**
  * \brief A set of tools for extracting information from a mesh
