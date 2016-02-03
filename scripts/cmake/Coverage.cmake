@@ -9,17 +9,31 @@ set(COVERAGE_EXCLUDES
 )
 
 if(LCOV_PATH AND GENHTML_PATH)
-	SETUP_TARGET_FOR_COVERAGE(testrunner_coverage testrunner "testrunner_coverage_results" "-j;${PROCESSOR_COUNT}")
-	if(OGS_BUILD_GUI)
-		SETUP_TARGET_FOR_COVERAGE(DataExplorer_coverage DataExplorer "DataExplorer_coverage_results")
-	endif()
+	SETUP_TARGET_FOR_COVERAGE(
+		NAME testrunner_coverage
+		EXECUTABLE testrunner -j ${PROCESSOR_COUNT}
+		DEPENDENCIES testrunner
+	)
+	SETUP_TARGET_FOR_COVERAGE(
+		NAME ctest_coverage
+		EXECUTABLE ctest -E LARGE -j ${PROCESSOR_COUNT}
+		DEPENDENCIES ogs
+	)
 else()
 	message(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
 endif()
 
 if(PYTHON_EXECUTABLE)
-	SETUP_TARGET_FOR_COVERAGE_COBERTURA(testrunner_coverage_cobertura testrunner "testrunner_coverage_cobertura_results" "-j;${PROCESSOR_COUNT}")
-	SETUP_TARGET_FOR_COVERAGE_COBERTURA(ctest_coverage_cobertura ctest "ctest_coverage_cobertura_results" "-j;${PROCESSOR_COUNT}")
+	SETUP_TARGET_FOR_COVERAGE_COBERTURA(
+		NAME testrunner_coverage_cobertura
+		EXECUTABLE testrunner -j ${PROCESSOR_COUNT}
+		DEPENDENCIES testrunner
+	)
+	SETUP_TARGET_FOR_COVERAGE_COBERTURA(
+		NAME ctest_coverage_cobertura
+		EXECUTABLE ctest -E LARGE -j ${PROCESSOR_COUNT}
+		DEPENDENCIES ogs
+	)
 else()
 	message(STATUS "No cobertura coverage report generated because Python executable was not found.")
 endif()
