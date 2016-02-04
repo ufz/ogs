@@ -11,11 +11,6 @@ include_directories(
 
 if(OGS_BUILD_GUI)
 
-	add_executable(generateStructuredQuadMesh generateStructuredQuadMesh.cpp)
-	set_target_properties(generateStructuredQuadMesh PROPERTIES FOLDER Utils)
-	target_link_libraries(generateStructuredQuadMesh FileIO)
-	ADD_VTK_DEPENDENCY(generateStructuredQuadMesh)
-
 	add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
 	set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utils)
 	target_link_libraries(createMeshElemPropertiesFromASCRaster FileIO)
@@ -38,7 +33,6 @@ install(TARGETS
 )
 if(TARGET VtkVis)
 	install(TARGETS
-		generateStructuredQuadMesh
 		createMeshElemPropertiesFromASCRaster
 		RUNTIME DESTINATION bin
 		COMPONENT Utilities
