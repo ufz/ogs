@@ -15,7 +15,6 @@
 
 #include <logog/include/logog.hpp>
 
-
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
@@ -123,22 +122,22 @@ public:
 			bc->integrate(_global_setup);
 
 		for (auto const& bc : _dirichlet_bcs)
-			MathLib::applyKnownSolution(*_A, *_rhs, *_x,
-			                            bc.global_ids, bc.values);
+			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
+			                            bc.values);
 
 		_linear_solver->solve(*_rhs, *_x);
 		return result;
 	}
 
 protected:
-	virtual void post() { };
+	virtual void post(){};
 
 	/// Set linear solver options; called by the derived process which is
 	/// parsing the configuration.
 	void setLinearSolverOptions(BaseLib::ConfigTree&& config)
 	{
-		_linear_solver_options.reset(new BaseLib::ConfigTree(
-			std::move(config)));
+		_linear_solver_options.reset(
+		    new BaseLib::ConfigTree(std::move(config)));
 	}
 
 private:
@@ -171,17 +170,16 @@ private:
 		}
 	}
 
-	void createDirichletBcs(ProcessVariable& variable,
-	                        int const component_id)
+	void createDirichletBcs(ProcessVariable& variable, int const component_id)
 	{
 		MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
 		    MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
 		        variable.getMesh());
 
 		variable.initializeDirichletBCs(std::back_inserter(_dirichlet_bcs),
-		                                 mesh_node_searcher,
-		                                 *_local_to_global_index_map,
-		                                 component_id);
+		                                mesh_node_searcher,
+		                                *_local_to_global_index_map,
+		                                component_id);
 	}
 
 	void createNeumannBcs(ProcessVariable& variable, int const component_id)
@@ -313,7 +311,7 @@ protected:
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
-    /// Variables used by this process.
+	/// Variables used by this process.
 	std::vector<ProcessVariable*> _process_variables;
 };
 
