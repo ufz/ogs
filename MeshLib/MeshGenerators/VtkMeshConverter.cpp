@@ -25,6 +25,7 @@
 #include <vtkBitArray.h>
 #include <vtkCharArray.h>
 #include <vtkUnsignedCharArray.h>
+#include <vtkUnsignedLongArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 
@@ -228,6 +229,12 @@ void VtkMeshConverter::convertArray(vtkDataArray &array, MeshLib::Properties &pr
 	if (vtkCharArray::SafeDownCast(&array))
 	{
 		VtkMeshConverter::convertTypedArray<char>(array, properties, type);
+		return;
+	}
+
+	if (vtkUnsignedLongArray::SafeDownCast(&array))
+	{
+		VtkMeshConverter::convertTypedArray<unsigned long>(array, properties, type);
 		return;
 	}
 
