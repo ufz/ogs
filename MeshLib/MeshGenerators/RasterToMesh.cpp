@@ -135,7 +135,8 @@ MeshLib::Mesh* RasterToMesh::constructMesh(
 	if (nodes.empty())
 		return nullptr;
 
-	std::vector<MeshLib::Element*> elements (createElementVector(pix_val, pix_vis, nodes, node_idx_map, header.n_rows, header.n_cols, elem_type));
+	std::vector<MeshLib::Element*> elements(createElementVector(
+	    pix_vis, nodes, node_idx_map, header.n_rows, header.n_cols, elem_type));
 	if (elements.empty())
 		return nullptr;
 
@@ -183,7 +184,6 @@ std::vector<MeshLib::Node*> RasterToMesh::createNodeVector(
 }
 
 std::vector<MeshLib::Element*> RasterToMesh::createElementVector(
-	std::vector<double> const&  pix_val,
 	std::vector<bool> const& pix_vis,
 	std::vector<MeshLib::Node*> const& nodes,
 	std::vector<int> const&node_idx_map,
