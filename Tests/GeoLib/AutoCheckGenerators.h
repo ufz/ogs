@@ -32,7 +32,7 @@ struct RandomCirclePointGeneratorXY
 
 	using result_type = MathLib::Point3d;
 
-	result_type operator()(std::size_t size = 0)
+	result_type operator()(std::size_t /*size*/ = 0)
 	{
 		// generates uniformly distributed values in the interval [-4, 4]
 		auto const angle(generator(4));
@@ -66,7 +66,7 @@ struct SymmSegmentGeneratorXY
 
 	using result_type = GeoLib::LineSegment;
 
-	result_type operator()(std::size_t size = 0)
+	result_type operator()(std::size_t /*size*/ = 0)
 	{
 		result_type rv;
 		rv.a = GeoLib::Point(source(), 0);
@@ -103,7 +103,7 @@ struct PairSegmentGeneratorXY
 
 	using result_type = std::pair<GeoLib::LineSegment, GeoLib::LineSegment>;
 
-	result_type operator()(std::size_t size = 0)
+	result_type operator()(std::size_t /*size*/ = 0)
 	{
 		result_type rv;
 		rv.first = segment_generator();

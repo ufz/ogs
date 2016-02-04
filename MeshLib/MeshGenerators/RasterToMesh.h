@@ -79,7 +79,6 @@ private:
 		bool use_elevation);
 
 	static std::vector<MeshLib::Element*> createElementVector(
-		std::vector<double> const&  pix_val,
 		std::vector<bool> const& pix_vis,
 		std::vector<MeshLib::Node*> const& nodes,
 		std::vector<int> const& node_idx_map,

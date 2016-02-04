@@ -201,7 +201,6 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
-	MeshLib::MeshElemType t (dlg.getElementSelection());
 	constructMeshFromImage(dlg.getNewMeshName(), dlg.getElementSelection(), dlg.getIntensitySelection());
 }
 
