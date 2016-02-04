@@ -35,10 +35,20 @@ template<typename GlobalSetup>
 class GroundwaterFlowProcess : public Process<GlobalSetup>
 {
 public:
-    GroundwaterFlowProcess(MeshLib::Mesh& mesh,
-            std::vector<ProcessVariable> const& variables,
-            std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-            BaseLib::ConfigTree const& config);
+    GroundwaterFlowProcess(
+        MeshLib::Mesh& mesh,
+        ProcessVariable* variable,
+        Parameter<double, MeshLib::Element const&> const* const
+            hydraulic_conductivity,
+        boost::optional<BaseLib::ConfigTree>&& linear_solver_options)
+        : Process<GlobalSetup>(mesh),
+          _hydraulic_conductivity(hydraulic_conductivity)
+    {
+        this->_process_variables.emplace_back(variable);
+        if (linear_solver_options)
+            Process<GlobalSetup>::setLinearSolverOptions(
+                std::move(*linear_solver_options));
+    }
 
     template <unsigned GlobalDim>
     void createLocalAssemblers()
@@ -119,17 +129,18 @@ private:
 };
 
 template <typename GlobalSetup>
-GroundwaterFlowProcess<GlobalSetup>::GroundwaterFlowProcess(
+std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>
+createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
-    : Process<GlobalSetup>(mesh)
 {
     config.checkConfParam("type", "GROUNDWATER_FLOW");
 
     DBUG("Create GroundwaterFlowProcess.");
 
+    ProcessVariable* process_variable;
     // Process variable.
     {
         // Find the corresponding process variable.
@@ -150,11 +161,11 @@ GroundwaterFlowProcess<GlobalSetup>::GroundwaterFlowProcess(
 
         DBUG("Associate hydraulic_head with process variable \'%s\'.",
              name.c_str());
-        this->_process_variables.emplace_back(
-            const_cast<ProcessVariable*>(&*variable));
+        process_variable = const_cast<ProcessVariable*>(&*variable);
     }
 
     // Hydraulic conductivity parameter.
+    Parameter<double, MeshLib::Element const&> const* hydraulic_conductivity;
     {
         // find hydraulic_conductivity in process config
         auto const name =
@@ -177,10 +188,10 @@ GroundwaterFlowProcess<GlobalSetup>::GroundwaterFlowProcess(
             std::abort();
         }
 
-        _hydraulic_conductivity =
+        hydraulic_conductivity =
             dynamic_cast<const Parameter<double, const MeshLib::Element&>*>(
                 parameter->get());
-        if (!_hydraulic_conductivity)
+        if (!hydraulic_conductivity)
         {
             ERR(
                 "The hydraulic conductivity parameter is of incompatible "
@@ -190,10 +201,12 @@ GroundwaterFlowProcess<GlobalSetup>::GroundwaterFlowProcess(
     }
 
     // Linear solver options
-    if (auto linear_solver_options =
-            config.getConfSubtreeOptional("linear_solver"))
-        Process<GlobalSetup>::setLinearSolverOptions(
-            std::move(*linear_solver_options));
+    auto linear_solver_options = config.getConfSubtreeOptional("linear_solver");
+
+    return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
+        new GroundwaterFlowProcess<GlobalSetup>{mesh, process_variable,
+                                                hydraulic_conductivity,
+                                                std::move(linear_solver_options)}};
 }
 }   // namespace ProcessLib
 
