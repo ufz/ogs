@@ -62,5 +62,5 @@ add_custom_target(
 	--output-on-failure --output-log Tests/ctest-large.log
 	--tests-regex LARGE
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
-	DEPENDS data ogs vtkdiff ctest-large-cleanup
+	DEPENDS ogs vtkdiff ctest-large-cleanup
 )
