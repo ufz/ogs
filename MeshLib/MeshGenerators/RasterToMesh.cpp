@@ -26,9 +26,10 @@ namespace MeshLib
 MeshLib::Mesh* RasterToMesh::convert(
 	GeoLib::Raster const& raster,
 	MeshElemType elem_type,
-	UseIntensityAs intensity_type)
+	UseIntensityAs intensity_type,
+	std::string const& array_name)
 {
-	return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type);
+	return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type, array_name);
 }
 
 MeshLib::Mesh* RasterToMesh::convert(
@@ -36,7 +37,8 @@ MeshLib::Mesh* RasterToMesh::convert(
 	const double origin[3],
 	const double scalingFactor,
 	MeshElemType elem_type,
-	UseIntensityAs intensity_type)
+	UseIntensityAs intensity_type,
+	std::string const& array_name)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -84,14 +86,15 @@ MeshLib::Mesh* RasterToMesh::convert(
 			pix_val[fld_idx+incWidth+1] = value;
 		}
 
-	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
+	return constructMesh(pix_val, array_name, pix_vis, header, elem_type, intensity_type);
 }
 
 MeshLib::Mesh* RasterToMesh::convert(
-	const double* img,
+	double const* img,
 	GeoLib::RasterHeader const& header,
 	MeshElemType elem_type,
-	UseIntensityAs intensity_type)
+	UseIntensityAs intensity_type,
+	std::string const& array_name)
 {
 	if ((elem_type != MeshElemType::TRIANGLE) && (elem_type != MeshElemType::QUAD))
 	{
@@ -119,11 +122,12 @@ MeshLib::Mesh* RasterToMesh::convert(
 			pix_val[fld_idx+incWidth+1] = img[img_idx];
 		}
 
-	return constructMesh(pix_val, pix_vis, header, elem_type, intensity_type);
+	return constructMesh(pix_val, array_name, pix_vis, header, elem_type, intensity_type);
 }
 
 MeshLib::Mesh* RasterToMesh::constructMesh(
 	std::vector<double> const& pix_val,
+	std::string const& array_name,
 	std::vector<bool> const& pix_vis,
 	GeoLib::RasterHeader const& header,
 	MeshLib::MeshElemType elem_type,
@@ -150,7 +154,7 @@ MeshLib::Mesh* RasterToMesh::constructMesh(
 	else if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR)
 	{
 		boost::optional< MeshLib::PropertyVector<double>& > prop_vec =
-			properties.createNewPropertyVector<double>("Colour", MeshLib::MeshItemType::Cell, 1);
+			properties.createNewPropertyVector<double>(array_name, MeshLib::MeshItemType::Cell, 1);
 		fillPropertyVector<double>(*prop_vec, pix_val, pix_vis, header.n_rows, header.n_cols, elem_type);
 	}
 
