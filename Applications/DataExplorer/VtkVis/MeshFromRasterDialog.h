@@ -38,7 +38,8 @@ public:
 	MeshFromRasterDialog(QDialog* parent = 0);
 	~MeshFromRasterDialog(void);
 
-	std::string getNewMeshName() const { return _new_mesh_name; }
+	std::string getMeshName() const { return _mesh_name; }
+	std::string getArrayName() const { return _array_name; }
 	MeshLib::MeshElemType getElementSelection() const { return _element_selection; }
 	MeshLib::UseIntensityAs getIntensitySelection() const { return _intensity_selection; }
 
@@ -50,7 +51,8 @@ private slots:
 	void reject();
 
 private:
-	std::string _new_mesh_name;
+	std::string _mesh_name;
+	std::string _array_name;
 	MeshLib::MeshElemType _element_selection;
 	MeshLib::UseIntensityAs _intensity_selection;
 

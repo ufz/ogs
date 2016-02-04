@@ -201,11 +201,6 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
-	constructMeshFromImage(dlg.getNewMeshName(), dlg.getElementSelection(), dlg.getIntensitySelection());
-}
-
-void VtkVisPipelineView::constructMeshFromImage(std::string const& msh_name, MeshLib::MeshElemType element_type, MeshLib::UseIntensityAs intensity_type)
-{
 	vtkSmartPointer<vtkAlgorithm> algorithm =
 		static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
 			getItem(this->selectionModel()->currentIndex()))->algorithm();
@@ -216,10 +211,11 @@ void VtkVisPipelineView::constructMeshFromImage(std::string const& msh_name, Mes
 	double spacing[3];
 	imageSource->GetOutput()->GetSpacing(spacing);
 
-	MeshLib::Mesh* mesh = MeshLib::RasterToMesh::convert(imageSource->GetOutput(), origin, spacing[0], element_type, intensity_type);
+	MeshLib::Mesh* mesh = MeshLib::RasterToMesh::convert(imageSource->GetOutput(), origin,
+		spacing[0], dlg.getElementSelection(), dlg.getIntensitySelection(), dlg.getArrayName());
 	if (mesh)
 	{
-		mesh->setName(msh_name);
+		mesh->setName(dlg.getMeshName());
 		emit meshAdded(mesh);
 	}
 	else
