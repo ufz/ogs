@@ -24,5 +24,5 @@ def build(buildDir, cmakeOptions, target) {
 	sh "cd ${buildDir} && cmake ../ogs ${defaultCMakeOptions} ${cmakeOptions}"
 
 	stage 'Build'
-	sh "cd ${buildDir} && make -j 4 ${target}"
+	sh "cd ${buildDir} && make -j \$(nproc) ${target}"
 }
