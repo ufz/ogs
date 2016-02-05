@@ -6,6 +6,9 @@ using Matrix = Eigen::SparseMatrix<double>;
 using Vector = Eigen::VectorXd;
 
 
+enum class NonlinearSolverTag : bool { Picard, Newton };
+
+
 class INonlinearSystemNewton
 {
 public:
@@ -80,8 +83,11 @@ public:
 };
 
 
+template<NonlinearSolverTag NonlinearSolver>
+class IFirstOrderImplicitOde;
 
-class IFirstOrderImplicitOde
+template<>
+class IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
 {
 public:
     virtual void assemble(const double t, Vector const& x,
@@ -91,7 +97,9 @@ public:
     virtual ~IFirstOrderImplicitOde() = default;
 };
 
-class IFirstOrderImplicitOdeNewton : public IFirstOrderImplicitOde
+template<>
+class IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
+        : public IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
 {
 public:
     // TODO: \dot x contribution
@@ -101,8 +109,6 @@ public:
 };
 
 
-
-enum class NonlinearSolverTag : bool { Picard, Newton };
 
 
 template<NonlinearSolverTag NonlinearSolver, typename TimeDisc>
@@ -114,7 +120,7 @@ class TimeDiscretizedODESystem<NonlinearSolverTag::Newton, TimeDisc> final
         , public INonlinearSystemNewton
 {
 public:
-    TimeDiscretizedODESystem(IFirstOrderImplicitOdeNewton& ode)
+    TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& ode)
         : _ode(ode)
     {}
 
@@ -143,7 +149,7 @@ public:
     }
 
 private:
-    IFirstOrderImplicitOdeNewton& _ode;
+    IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& _ode;
 
     Matrix _Jac;
     Matrix _M;
@@ -157,7 +163,7 @@ class TimeDiscretizedODESystem<NonlinearSolverTag::Picard, TimeDisc> final
         , public INonlinearSystemPicard
 {
 public:
-    TimeDiscretizedODESystem(IFirstOrderImplicitOde& ode)
+    TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& ode)
         : _ode(ode)
     {}
 
@@ -176,12 +182,33 @@ public:
     }
 
 private:
-    IFirstOrderImplicitOde& _ode;
+    IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& _ode;
 
     Matrix _M;
     Matrix _K;
     Vector _b;
 };
+
+
+template<typename TDiscODESys>
+class TimeLoop
+{
+public:
+    TimeLoop(TDiscODESys& ode_sys) : _ode_sys(ode_sys) {}
+
+    void loop();
+
+private:
+    TDiscODESys& _ode_sys;
+};
+
+
+template<typename Stepper>
+void TimeLoop<Stepper>::loop()
+{
+}
+
+
 
 //
 
