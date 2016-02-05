@@ -131,7 +131,8 @@ int main (int argc, char* argv[])
 	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
-		"Creates boundary conditions for mesh nodes along polylines.",
+		"Creates boundary conditions for mesh nodes along polylines."
+		"The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/create-boundary-conditions-along-a-polyline",
 		' ',
 		"0.1");
 	TCLAP::ValueArg<bool> gml_arg("", "gml",

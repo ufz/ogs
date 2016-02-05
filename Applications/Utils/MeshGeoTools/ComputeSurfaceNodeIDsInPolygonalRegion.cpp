@@ -72,7 +72,10 @@ int main (int argc, char* argv[])
 	TCLAP::CmdLine cmd("Computes ids of mesh nodes that are in polygonal "
 		"regions and resides on the top surface. The polygonal regions have to "
 		"be given in a gml- or gli-file. The found mesh nodes and the associated"
-		" area are written as txt and csv data.", ' ', "0.1");
+		" area are written as txt and csv data."
+		"The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/computesurfacenodeidsinpolygonalregion",
+		' ',
+		"0.1");
 	TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
 		"the name of the file containing the input mesh", true,
 		"", "file name of input mesh");

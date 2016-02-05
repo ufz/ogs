@@ -126,7 +126,10 @@ int main (int argc, char* argv[])
 
 	TCLAP::CmdLine cmd("Sets the property value of a mesh element to a given new "
 		"value iff at least one node of the element is within a polygonal region "
-		"that is given by a polygon.", ' ', "0.1");
+		"that is given by a polygon."
+		"The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/set-properties-in-polygonal-region", 
+		' ', 
+		"0.1");
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
 		"the name of the file the mesh will be written to, format depends on "
 		"the given file name extension", true, "", "file name");
