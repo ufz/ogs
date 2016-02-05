@@ -33,6 +33,11 @@ solve(INonlinearSystemPicard &sys, Vector &x)
         if (error < _tol) {
             break;
         }
+
+        if (sys.isLinear()) {
+            INFO("  picard linear system. not looping");
+            break;
+        }
     }
 }
 
@@ -65,6 +70,11 @@ solve(INonlinearSystemNewton &sys, Vector &x)
         INFO("  newton iteration %u error: %e", iteration, error);
 
         x -= _minus_delta_x;
+
+        if (sys.isLinear()) {
+            INFO("  newton linear system. not looping");
+            break;
+        }
     }
 }
 

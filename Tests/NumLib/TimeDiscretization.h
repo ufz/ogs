@@ -11,6 +11,9 @@ public:
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
     virtual double getCurrentTime() const = 0; // get time used for assembly
 
+    // Forward Euler is linear, other schemes not.
+    virtual bool isLinearTimeDisc() const = 0;
+
     // \dot x === alpha * x - x_old
     virtual double getCurrentXWeight() = 0; // = alpha
     virtual Vector getWeightedOldX() = 0; // = x_old
@@ -49,6 +52,10 @@ public:
 
     Vector getWeightedOldX() override {
         return _x_old / _delta_t;
+    }
+
+    bool isLinearTimeDisc() const override {
+        return false;
     }
 
 private:
@@ -90,6 +97,10 @@ public:
 
     Vector getWeightedOldX() override {
         return _x_old / _delta_t;
+    }
+
+    bool isLinearTimeDisc() const override {
+        return true;
     }
 
 private:

@@ -44,6 +44,11 @@ public:
 
         Jac = (m*dxdot_dx + k).sparseView();
     }
+
+    bool isLinear() const override
+    {
+        return true;
+    }
 };
 
 Eigen::Vector2d ode1_solution(const double t) {

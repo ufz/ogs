@@ -16,6 +16,9 @@ public:
     virtual void assembleJacobian(Vector const& x) = 0;
     virtual Vector getResidual(Vector const& x) = 0;
     virtual Matrix getJacobian() = 0;
+
+    virtual bool isLinear() const = 0;
+
     virtual ~INonlinearSystemNewton() = default;
 };
 
@@ -25,6 +28,9 @@ public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;
     virtual Matrix getA() = 0;
     virtual Vector getRhs() = 0;
+
+    virtual bool isLinear() const = 0;
+
     virtual ~INonlinearSystemPicard() = default;
 };
 
@@ -76,6 +82,8 @@ template<>
 class IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
 {
 public:
+    virtual bool isLinear() const = 0;
+
     virtual void assemble(const double t, Vector const& x,
                           Matrix& M, Matrix& K, Vector& b) = 0;
 
@@ -122,15 +130,21 @@ public:
         _ode.assembleJacobian(t, x, dxdot_dx, _Jac);
     }
 
-    Vector getResidual(Vector const& x)
+    Vector getResidual(Vector const& x) override
     {
         auto const alpha = TimeDisc::getCurrentXWeight();
         auto const x_old = TimeDisc::getWeightedOldX();
         return _M * (alpha*x - x_old) + _K*x - _b;
     }
 
-    Matrix getJacobian() {
+    Matrix getJacobian() override
+    {
         return _Jac;
+    }
+
+    bool isLinear() const override
+    {
+        return TimeDisc::isLinearTimeDisc() || _ode.isLinear();
     }
 
 private:
@@ -158,12 +172,19 @@ public:
         _ode.assemble(t, x, _M, _K, _b);
     }
 
-    Matrix getA() override {
+    Matrix getA() override
+    {
         return _M * TimeDisc::getCurrentXWeight() + _K;
     }
 
-    Vector getRhs() override {
+    Vector getRhs() override
+    {
         return _b + _M * TimeDisc::getWeightedOldX();
+    }
+
+    bool isLinear() const override
+    {
+        return TimeDisc::isLinearTimeDisc() || _ode.isLinear();
     }
 
 private:
