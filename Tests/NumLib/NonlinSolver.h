@@ -3,8 +3,7 @@
 #include <Eigen/SparseCore>
 #include <logog/include/logog.hpp>
 
-using Matrix = Eigen::SparseMatrix<double>;
-using Vector = Eigen::VectorXd;
+#include "TimeDiscretization.h"
 
 
 enum class NonlinearSolverTag : bool { Picard, Newton };
@@ -67,24 +66,6 @@ private:
     const unsigned _maxiter;
 
     Vector _x_new;
-};
-
-
-
-class ITimeDiscretization
-{
-public:
-    virtual void setInitialState(const double t0, Vector const& x) = 0;
-    virtual void pushState(const double t, Vector const& x) = 0;
-    virtual void pushMatrices() = 0;
-    virtual void setCurrentTime(const double t, const double delta_t) = 0;
-    virtual double getCurrentTime() const = 0; // get time used for assembly
-
-    // \dot x === alpha * x - x_old
-    virtual double getCurrentXWeight() = 0; // = alpha
-    virtual Vector getWeightedOldX() = 0; // = x_old
-
-    ~ITimeDiscretization() = default;
 };
 
 
