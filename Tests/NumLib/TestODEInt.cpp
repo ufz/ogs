@@ -90,7 +90,7 @@ private:
 TEST(NumLibODEInt, PicardBwdEuler)
 {
     Ode1 ode;
-    TimeDiscretizedODESystemPicard<BackwardEuler> ode_sys(ode);
+    TimeDiscretizedODESystem<NonlinearSolverTag::Picard, BackwardEuler> ode_sys(ode);
 
     const double tol = 1e-4;
     NonlinearSolverPicard picard(tol, 5);
@@ -127,7 +127,7 @@ TEST(NumLibODEInt, PicardBwdEuler)
 TEST(NumLibODEInt, NewtonBwdEuler)
 {
     Ode1 ode;
-    TimeDiscretizedODESystemNewton<BackwardEuler> ode_sys(ode);
+    TimeDiscretizedODESystem<NonlinearSolverTag::Newton, BackwardEuler> ode_sys(ode);
 
     const double tol = 1e-4;
     NonlinearSolverNewton newton(tol, 5);

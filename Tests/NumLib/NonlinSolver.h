@@ -101,13 +101,20 @@ public:
 };
 
 
+
+enum class NonlinearSolverTag : bool { Picard, Newton };
+
+
+template<NonlinearSolverTag NonlinearSolver, typename TimeDisc>
+struct TimeDiscretizedODESystem;
+
 template<typename TimeDisc>
-class TimeDiscretizedODESystemNewton
+class TimeDiscretizedODESystem<NonlinearSolverTag::Newton, TimeDisc> final
         : public TimeDisc
         , public INonlinearSystemNewton
 {
 public:
-    TimeDiscretizedODESystemNewton(IFirstOrderImplicitOdeNewton& ode)
+    TimeDiscretizedODESystem(IFirstOrderImplicitOdeNewton& ode)
         : _ode(ode)
     {}
 
@@ -145,12 +152,12 @@ private:
 };
 
 template<typename TimeDisc>
-class TimeDiscretizedODESystemPicard final
+class TimeDiscretizedODESystem<NonlinearSolverTag::Picard, TimeDisc> final
         : public TimeDisc
         , public INonlinearSystemPicard
 {
 public:
-    TimeDiscretizedODESystemPicard(IFirstOrderImplicitOde& ode)
+    TimeDiscretizedODESystem(IFirstOrderImplicitOde& ode)
         : _ode(ode)
     {}
 
@@ -175,9 +182,6 @@ private:
     Matrix _K;
     Vector _b;
 };
-
-
-
 
 //
 
