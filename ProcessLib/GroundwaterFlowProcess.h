@@ -18,7 +18,6 @@
 #include "AssemblerLib/LocalDataInitializer.h"
 
 #include "GroundwaterFlowFEM.h"
-#include "Parameter.h"
 #include "Process.h"
 
 namespace MeshLib
@@ -147,40 +146,12 @@ createGroundwaterFlowProcess(
          process_variable.getName().c_str());
 
     // Hydraulic conductivity parameter.
-    Parameter<double, MeshLib::Element const&> const* hydraulic_conductivity;
-    {
-        // find hydraulic_conductivity in process config
-        auto const name =
-            config.getConfParam<std::string>("hydraulic_conductivity");
+    auto& hydraulic_conductivity =
+        findParameter<double, MeshLib::Element const&>(
+            config, "hydraulic_conductivity", parameters);
 
-        // find corresponding parameter by name
-        auto const parameter =
-            std::find_if(parameters.cbegin(), parameters.cend(),
-                         [&name](std::unique_ptr<ParameterBase> const& p)
-                         {
-                             return p->name == name;
-                         });
-
-        if (parameter == parameters.end())
-        {
-            ERR(
-                "Could not find required parameter config for \'%s\' "
-                "among read parameters.",
-                name.c_str());
-            std::abort();
-        }
-
-        hydraulic_conductivity =
-            dynamic_cast<const Parameter<double, const MeshLib::Element&>*>(
-                parameter->get());
-        if (!hydraulic_conductivity)
-        {
-            ERR(
-                "The hydraulic conductivity parameter is of incompatible "
-                "type.");
-            std::abort();
-        }
-    }
+    DBUG("Use \'%s\' as hydraulic conductivity parameter.",
+         hydraulic_conductivity.name.c_str());
 
     // Linear solver options
     auto linear_solver_options = config.getConfSubtreeOptional("linear_solver");
