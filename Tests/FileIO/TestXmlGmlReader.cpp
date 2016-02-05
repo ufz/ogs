@@ -117,8 +117,8 @@ public:
 
 		createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
 		createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
-		createPolyline(pnt_vec, *(lines.get()), 2, {0, 3}, *name_map, "");
-		createPolyline(pnt_vec, *(lines.get()), 3, {3, 6}, *name_map, "");
+		createPolyline(pnt_vec, *(lines.get()), 2, {0, 3}, *name_map, "line1");
+		createPolyline(pnt_vec, *(lines.get()), 3, {3, 6}, *name_map, "line2");
 		createPolyline(pnt_vec, *(lines.get()), 4, {6, 7, 8}, *name_map, "right");
 		geo_objects.addPolylineVec(std::move(lines), geo_name, name_map);
 	}
@@ -145,8 +145,8 @@ public:
 
 		checkPolylineProperty(line_vec, 0, {0, 1, 2}, "left");
 		checkPolylineProperty(line_vec, 1, {3, 4, 5}, "center");
-		checkPolylineProperty(line_vec, 2, {0, 3}, "");
-		checkPolylineProperty(line_vec, 3, {3, 6}, "");
+		checkPolylineProperty(line_vec, 2, {0, 3}, "line1");
+		checkPolylineProperty(line_vec, 3, {3, 6}, "line2");
 		checkPolylineProperty(line_vec, 4, {6, 7, 8}, "right");
 	}
 
@@ -165,6 +165,7 @@ public:
 		(*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);
 		(*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[4], pnt_id_map[2]);
 		(*sfcs)[0]->addTriangle(pnt_id_map[2], pnt_id_map[4], pnt_id_map[5]);
+		(*sfc_names)["FirstSurface"] = 0;
 		(*sfcs)[1] = new GeoLib::Surface(*points);
 		(*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[6], pnt_id_map[8]);
 		(*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[8], pnt_id_map[5]);
@@ -200,7 +201,7 @@ public:
 		auto const read_sfcs = geo_objects.getSurfaceVecObj(geo_name);
 		EXPECT_EQ(2u, read_sfcs->size());
 		checkSurface(*read_sfcs, 0,
-			{{{0,3,1}}, {{1,3,4}}, {{1,4,2}}, {{2,4,5}}}, "");
+			{{{0,3,1}}, {{1,3,4}}, {{1,4,2}}, {{2,4,5}}}, "FirstSurface");
 		checkSurface(*read_sfcs, 1, {{{3,6,8}}, {{3,8,5}}}, "SecondSurface");
 	}
 };
