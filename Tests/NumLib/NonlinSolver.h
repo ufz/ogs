@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/SparseCore>
+#include <logog/include/logog.hpp>
 
 using Matrix = Eigen::SparseMatrix<double>;
 using Vector = Eigen::VectorXd;
@@ -29,11 +30,14 @@ public:
 };
 
 
+template<NonlinearSolverTag NLTag>
+class NonlinearSolver;
 
-class NonlinearSolverNewton final
+template<>
+class NonlinearSolver<NonlinearSolverTag::Newton> final
 {
 public:
-    NonlinearSolverNewton(double const tol, const unsigned maxiter)
+    NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
         , _maxiter(maxiter)
     {}
@@ -47,11 +51,11 @@ private:
     Vector _minus_delta_x;
 };
 
-
-class NonlinearSolverPicard final
+template<>
+class NonlinearSolver<NonlinearSolverTag::Picard> final
 {
 public:
-    NonlinearSolverPicard(double const tol, const unsigned maxiter)
+    NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
         , _maxiter(maxiter)
     {}
@@ -83,7 +87,7 @@ public:
 };
 
 
-template<NonlinearSolverTag NonlinearSolver>
+template<NonlinearSolverTag NLTag>
 class IFirstOrderImplicitOde;
 
 template<>
@@ -111,7 +115,7 @@ public:
 
 
 
-template<NonlinearSolverTag NonlinearSolver, typename TimeDisc>
+template<NonlinearSolverTag NLTag, typename TimeDisc>
 struct TimeDiscretizedODESystem;
 
 template<typename TimeDisc>
@@ -190,22 +194,49 @@ private:
 };
 
 
-template<typename TDiscODESys>
+template<NonlinearSolverTag NLTag, typename TimeDisc>
 class TimeLoop
 {
 public:
-    TimeLoop(TDiscODESys& ode_sys) : _ode_sys(ode_sys) {}
+    using TDiscODESys = TimeDiscretizedODESystem<NLTag, TimeDisc>;
+    using NLSolver = NonlinearSolver<NLTag>;
 
-    void loop();
+    TimeLoop(TDiscODESys& ode_sys, NLSolver nonlinear_solver)
+        : _ode_sys(ode_sys)
+        , _nonlinear_solver(nonlinear_solver)
+    {}
+
+    void loop(const double t0, const Vector x0, const double t_end, const double delta_t);
 
 private:
     TDiscODESys& _ode_sys;
+    NLSolver& _nonlinear_solver;
 };
 
 
-template<typename Stepper>
-void TimeLoop<Stepper>::loop()
+template<NonlinearSolverTag NLTag, typename TimeDisc>
+void
+TimeLoop<NLTag, TimeDisc>::
+loop(const double t0, const Vector x0, const double t_end, const double delta_t)
 {
+    Vector x(x0); // solution vector
+
+    _ode_sys.pushState(t0, x0); // push IC
+
+    for (double t=t0+delta_t; t<=t_end; t+=delta_t)
+    {
+        INFO("time: %e, delta_t: %e", t, delta_t);
+        _ode_sys.setCurrentTime(t, delta_t);
+
+        _nonlinear_solver.solve(_ode_sys, x);
+
+        _ode_sys.pushState(t, x);
+        _ode_sys.pushMatrices();
+
+        INFO("x[0] = %10g, x[1] = %10g", x[0], x[1]);
+        // auto const v = ode1_solution(t);
+        // INFO("x[0] = %10g, x[1] = %10g (analytical solution)", v[0], v[1]);
+    }
 }
 
 

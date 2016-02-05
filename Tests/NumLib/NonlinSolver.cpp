@@ -6,8 +6,10 @@
 
 #include <iostream>
 
+
 void
-NonlinearSolverPicard::solve(INonlinearSystemPicard &sys, Vector &x)
+NonlinearSolver<NonlinearSolverTag::Picard>::
+solve(INonlinearSystemPicard &sys, Vector &x)
 {
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
@@ -34,8 +36,9 @@ NonlinearSolverPicard::solve(INonlinearSystemPicard &sys, Vector &x)
     }
 }
 
-
-void NonlinearSolverNewton::solve(INonlinearSystemNewton &sys, Vector &x)
+void
+NonlinearSolver<NonlinearSolverTag::Newton>::
+solve(INonlinearSystemNewton &sys, Vector &x)
 {
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {

@@ -5,7 +5,7 @@
 
 
 class Ode1 final
-        : public IFirstOrderImplicitOdeNewton
+        : public IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double t, Vector const& x,
@@ -93,7 +93,7 @@ TEST(NumLibODEInt, PicardBwdEuler)
     TimeDiscretizedODESystem<NonlinearSolverTag::Picard, BackwardEuler> ode_sys(ode);
 
     const double tol = 1e-4;
-    NonlinearSolverPicard picard(tol, 5);
+    NonlinearSolver<NonlinearSolverTag::Picard> picard(tol, 5);
 
     const double t_end = 0.1;
     const double delta_t = t_end/10.0;
@@ -130,7 +130,7 @@ TEST(NumLibODEInt, NewtonBwdEuler)
     TimeDiscretizedODESystem<NonlinearSolverTag::Newton, BackwardEuler> ode_sys(ode);
 
     const double tol = 1e-4;
-    NonlinearSolverNewton newton(tol, 5);
+    NonlinearSolver<NonlinearSolverTag::Newton> newton(tol, 5);
 
     const double t_end = 0.1;
     const double delta_t = t_end/10.0;
@@ -158,5 +158,29 @@ TEST(NumLibODEInt, NewtonBwdEuler)
         auto const v = ode1_solution(t);
         INFO("x[0] = %10g, x[1] = %10g (analytical solution)", v[0], v[1]);
     }
+}
+
+
+TEST(NumLibODEInt, PicardNewtonBwdEuler)
+{
+    auto const NLTag = NonlinearSolverTag::Newton;
+
+    Ode1 ode;
+    TimeDiscretizedODESystem<NLTag, BackwardEuler> ode_sys(ode);
+
+    const double tol = 1e-4;
+    NonlinearSolver<NLTag> nonlinear_solver(tol, 5);
+
+    TimeLoop<NLTag, BackwardEuler> loop(ode_sys, nonlinear_solver);
+
+    const double t_end = 0.1;
+    const double delta_t = t_end/10.0;
+
+    // initial condition
+    const double t0 = 0.0;
+    Eigen::Vector2d x0;
+    x0 << 1.0, 0.0;
+
+    loop.loop(t0, x0, t_end, delta_t);
 }
 
