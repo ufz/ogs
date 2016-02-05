@@ -9,7 +9,15 @@
 enum class NonlinearSolverTag : bool { Picard, Newton };
 
 
-class INonlinearSystemNewton
+class INonlinearSystem
+{
+public:
+    virtual bool isLinear() const = 0;
+
+    virtual ~INonlinearSystem() = default;
+};
+
+class INonlinearSystemNewton : public INonlinearSystem
 {
 public:
     virtual void assembleResidualNewton(Vector const& x) = 0;
@@ -17,19 +25,15 @@ public:
     virtual Vector getResidual(Vector const& x) = 0;
     virtual Matrix getJacobian() = 0;
 
-    virtual bool isLinear() const = 0;
-
     virtual ~INonlinearSystemNewton() = default;
 };
 
-class INonlinearSystemPicard
+class INonlinearSystemPicard : public INonlinearSystem
 {
 public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;
     virtual Matrix getA() = 0;
     virtual Vector getRhs() = 0;
-
-    virtual bool isLinear() const = 0;
 
     virtual ~INonlinearSystemPicard() = default;
 };
@@ -42,6 +46,7 @@ template<>
 class NonlinearSolver<NonlinearSolverTag::Newton> final
 {
 public:
+    explicit
     NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
         , _maxiter(maxiter)
@@ -60,6 +65,7 @@ template<>
 class NonlinearSolver<NonlinearSolverTag::Picard> final
 {
 public:
+    explicit
     NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
         , _maxiter(maxiter)
@@ -83,6 +89,7 @@ class IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
 {
 public:
     virtual bool isLinear() const = 0;
+    virtual IndexType getMatrixSize() const = 0;
 
     virtual void assemble(const double t, Vector const& x,
                           Matrix& M, Matrix& K, Vector& b) = 0;
@@ -113,8 +120,13 @@ class TimeDiscretizedODESystem<NonlinearSolverTag::Newton, TimeDisc> final
         , public INonlinearSystemNewton
 {
 public:
+    explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& ode)
         : _ode(ode)
+        , _Jac(ode.getMatrixSize(), ode.getMatrixSize())
+        , _M(_Jac)
+        , _K(_Jac)
+        , _b(ode.getMatrixSize())
     {}
 
     void assembleResidualNewton(const Vector &x) override
@@ -162,8 +174,12 @@ class TimeDiscretizedODESystem<NonlinearSolverTag::Picard, TimeDisc> final
         , public INonlinearSystemPicard
 {
 public:
+    explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& ode)
         : _ode(ode)
+        , _M(ode.getMatrixSize(), ode.getMatrixSize())
+        , _K(_M)
+        , _b(ode.getMatrixSize())
     {}
 
     void assembleMatricesPicard(const Vector &x) override

@@ -45,6 +45,11 @@ public:
         Jac = (m*dxdot_dx + k).sparseView();
     }
 
+    IndexType getMatrixSize() const override
+    {
+        return 2;
+    }
+
     bool isLinear() const override
     {
         return true;
@@ -97,39 +102,22 @@ public:
     void assemble(const double t, Vector const& x,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        (void) t; (void) x;
-
-        Eigen::MatrixXd m(1, 1);
-        m << 1.0;
-        M = m.sparseView();
-
-        Eigen::MatrixXd k(1, 1);
-        k << 1.0 / x[0];
-        K = k.sparseView();
-
-        Eigen::VectorXd b_(1);
-        b_ << 0.0;
-        b = b_;
-
-        /*
+        (void) t;
         M.coeffRef(0, 0) = 1.0;
-        K.coeffRef(0, 0) = 1.0 / x[0];
+        K.coeffRef(0, 0) = x[0];
         b.coeffRef(0, 0) = 0.0;
-        */
     }
 
     void assembleJacobian(const double t, const Vector &x,
                           const double dxdot_dx, Matrix &Jac)
     {
-        (void) t; (void) x;
+        (void) t;
+        Jac.coeffRef(0, 0) = dxdot_dx + 2.0*x[0];
+    }
 
-        Eigen::MatrixXd m(1, 1);
-        m << 1.0;
-
-        Eigen::MatrixXd k(1, 1);
-        k << 1.0 / x[0];
-
-        Jac = (m*dxdot_dx + k).sparseView();
+    IndexType getMatrixSize() const override
+    {
+        return 1;
     }
 
     bool isLinear() const override
@@ -191,7 +179,7 @@ TEST(NumLibODEInt, Ode1PicardNewtonFwdEuler)
 }
 
 
-TEST(NumLibODEInt, Ode2PicardNewtonFwdEuler)
+TEST(NumLibODEInt, Ode2PicardNewtonBwdEuler)
 {
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = BackwardEuler;
