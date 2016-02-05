@@ -315,6 +315,22 @@ protected:
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 };
 
+/// Find a process variable for a name given in the process configuration under
+/// the tag.
+/// In the process config a process variable is referenced by a name. For
+/// example it will be looking for a variable named "H" in the list of process
+/// variables when the tag is "hydraulic_head":
+/// \code
+///     <process>
+///         ...
+///         <hydraulic_head>H</hydraulic_head>
+///     </process>
+/// \endcode
+/// and return a reference to that variable.
+ProcessVariable& findProcessVariable(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<ProcessVariable> const& variables);
+
 }  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_PROCESS_H_

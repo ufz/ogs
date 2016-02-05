@@ -140,29 +140,11 @@ createGroundwaterFlowProcess(
 
     DBUG("Create GroundwaterFlowProcess.");
 
-    ProcessVariable* process_variable;
     // Process variable.
-    {
-        // Find the corresponding process variable.
-        std::string const name =
-            config.getConfParam<std::string>("process_variable");
-
-        auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                                     [&name](ProcessVariable const& v)
-                                     {
-                                         return v.getName() == name;
-                                     });
-
-        if (variable == variables.end())
-            ERR(
-                "Expected process variable \'%s\' not found in provided "
-                "variables list.",
-                name.c_str());
-
-        DBUG("Associate hydraulic_head with process variable \'%s\'.",
-             name.c_str());
-        process_variable = const_cast<ProcessVariable*>(&*variable);
-    }
+    ProcessVariable& process_variable =
+        findProcessVariable(config, "process_variable", variables);
+    DBUG("Associate hydraulic_head with process variable \'%s\'.",
+         process_variable.getName().c_str());
 
     // Hydraulic conductivity parameter.
     Parameter<double, MeshLib::Element const&> const* hydraulic_conductivity;
