@@ -37,7 +37,7 @@ class GroundwaterFlowProcess : public Process<GlobalSetup>
 public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
-        ProcessVariable* variable,
+        ProcessVariable& variable,
         Parameter<double, MeshLib::Element const&> const* const
             hydraulic_conductivity,
         boost::optional<BaseLib::ConfigTree>&& linear_solver_options)

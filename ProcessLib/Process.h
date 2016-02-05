@@ -95,15 +95,15 @@ public:
 
 		createLocalAssemblers();
 
-		for (auto const& pv : _process_variables)
+		for (ProcessVariable& pv : _process_variables)
 		{
 			DBUG("Set initial conditions.");
-			setInitialConditions(*pv, 0);  // 0 is the component id
+			setInitialConditions(pv, 0);  // 0 is the component id
 
 			DBUG("Initialize boundary conditions.");
-			createDirichletBcs(*pv, 0);  // 0 is the component id
+			createDirichletBcs(pv, 0);  // 0 is the component id
 
-			createNeumannBcs(*pv, 0);  // 0 is the component id
+			createNeumannBcs(pv, 0);  // 0 is the component id
 		}
 
 		for (auto& bc : _neumann_bcs)
@@ -312,7 +312,7 @@ protected:
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
 	/// Variables used by this process.
-	std::vector<ProcessVariable*> _process_variables;
+	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 };
 
 }  // namespace ProcessLib
