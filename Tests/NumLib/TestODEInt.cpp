@@ -56,15 +56,21 @@ Eigen::Vector2d ode1_solution(const double t) {
 class BackwardEuler : ITimeDiscretization
 {
 public:
+    void setInitialState(const double t0, Vector const& x) override {
+        _t = t0;
+        _x_old = x;
+    }
+
     void pushState(const double t, Vector const& x) override {
         (void) t;
-        _x = x;
+        _x_old = x;
     }
 
     void pushMatrices() override {}
 
     void setCurrentTime(const double t, const double delta_t) override {
-        _t = t; _delta_t = delta_t;
+        _t = t;
+        _delta_t = delta_t;
     }
 
     double getCurrentTime() const override {
@@ -76,15 +82,80 @@ public:
     }
 
     Vector getWeightedOldX() override {
-        return _x / _delta_t;
+        return _x_old / _delta_t;
     }
 
 private:
     double _t = 9999.9999;
     double _delta_t = 8888.8888;
-    Vector _x;
+    Vector _x_old;
 };
 
+
+class ForwardEuler : ITimeDiscretization
+{
+public:
+    void setInitialState(const double t0, Vector const& x) override {
+        _t = t0;
+        _t_old = t0;
+        _x_old = x;
+    }
+
+    void pushState(const double t, Vector const& x) override {
+        (void) t;
+        _x_old = x;
+    }
+
+    void pushMatrices() override {}
+
+    void setCurrentTime(const double t, const double delta_t) override {
+        _t_old = _t;
+        _t = t;
+        _delta_t = delta_t;
+    }
+
+    double getCurrentTime() const override {
+        return _t_old; // forward Euler does assembly at the preceding timestep
+    }
+
+    double getCurrentXWeight() override {
+        return 1.0/_delta_t;
+    }
+
+    Vector getWeightedOldX() override {
+        return _x_old / _delta_t;
+    }
+
+private:
+    double _t = 9999.9999;
+    double _t_old = 7777.7777;
+    double _delta_t = 8888.8888;
+    Vector _x_old;
+};
+
+
+template<NonlinearSolverTag NLTag, typename TimeDisc>
+void test_Ode1()
+{
+    Ode1 ode;
+    TimeDiscretizedODESystem<NLTag, TimeDisc> ode_sys(ode);
+
+    const double tol = 1e-4;
+    const unsigned maxiter = 5;
+    NonlinearSolver<NLTag> nonlinear_solver(tol, maxiter);
+
+    TimeLoop<NLTag, TimeDisc> loop(ode_sys, nonlinear_solver);
+
+    const double t_end = 0.1;
+    const double delta_t = t_end/10.0;
+
+    // initial condition
+    const double t0 = 0.0;
+    Eigen::Vector2d x0;
+    x0 << 1.0, 0.0;
+
+    loop.loop(t0, x0, t_end, delta_t);
+}
 
 
 TEST(NumLibODEInt, PicardBwdEuler)
@@ -164,23 +235,16 @@ TEST(NumLibODEInt, NewtonBwdEuler)
 TEST(NumLibODEInt, PicardNewtonBwdEuler)
 {
     auto const NLTag = NonlinearSolverTag::Newton;
-
-    Ode1 ode;
-    TimeDiscretizedODESystem<NLTag, BackwardEuler> ode_sys(ode);
-
-    const double tol = 1e-4;
-    NonlinearSolver<NLTag> nonlinear_solver(tol, 5);
-
-    TimeLoop<NLTag, BackwardEuler> loop(ode_sys, nonlinear_solver);
-
-    const double t_end = 0.1;
-    const double delta_t = t_end/10.0;
-
-    // initial condition
-    const double t0 = 0.0;
-    Eigen::Vector2d x0;
-    x0 << 1.0, 0.0;
-
-    loop.loop(t0, x0, t_end, delta_t);
+    using TimeDisc = BackwardEuler;
+    test_Ode1<NLTag, TimeDisc>();
 }
+
+
+TEST(NumLibODEInt, PicardNewtonFwdEuler)
+{
+    auto const NLTag = NonlinearSolverTag::Newton;
+    using TimeDisc = ForwardEuler;
+    test_Ode1<NLTag, TimeDisc>();
+}
+
 

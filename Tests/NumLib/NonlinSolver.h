@@ -74,10 +74,11 @@ private:
 class ITimeDiscretization
 {
 public:
+    virtual void setInitialState(const double t0, Vector const& x) = 0;
     virtual void pushState(const double t, Vector const& x) = 0;
     virtual void pushMatrices() = 0;
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
-    virtual double getCurrentTime() const = 0;
+    virtual double getCurrentTime() const = 0; // get time used for assembly
 
     // \dot x === alpha * x - x_old
     virtual double getCurrentXWeight() = 0; // = alpha
@@ -106,7 +107,6 @@ class IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
         : public IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
 {
 public:
-    // TODO: \dot x contribution
     virtual void assembleJacobian(const double t, Vector const& x,
                                   const double dxdot_dx,
                                   Matrix& Jac) = 0;
@@ -221,7 +221,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t)
 {
     Vector x(x0); // solution vector
 
-    _ode_sys.pushState(t0, x0); // push IC
+    _ode_sys.setInitialState(t0, x0); // push IC
 
     for (double t=t0+delta_t; t<=t_end; t+=delta_t)
     {
