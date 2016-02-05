@@ -57,6 +57,12 @@ Eigen::Vector2d ode1_solution(const double t) {
     return v;
 }
 
+void print_result_Ode1(const double t, Vector const& x)
+{
+    INFO("x[0] = %10g, x[1] = %10g", x[0], x[1]);
+    auto const v = ode1_solution(t);
+    INFO("x[0] = %10g, x[1] = %10g (analytical solution)", v[0], v[1]);
+}
 
 template<NonlinearSolverTag NLTag, typename TimeDisc>
 void test_Ode1()
@@ -78,7 +84,7 @@ void test_Ode1()
     Eigen::Vector2d x0;
     x0 << 1.0, 0.0;
 
-    loop.loop(t0, x0, t_end, delta_t);
+    loop.loop(t0, x0, t_end, delta_t, print_result_Ode1);
 }
 
 

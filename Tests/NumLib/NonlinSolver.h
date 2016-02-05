@@ -208,7 +208,10 @@ public:
         , _nonlinear_solver(nonlinear_solver)
     {}
 
-    void loop(const double t0, const Vector x0, const double t_end, const double delta_t);
+    template<typename Callback>
+    void loop(const double t0, const Vector x0,
+              const double t_end, const double delta_t,
+              Callback& post_timestep);
 
 private:
     TDiscODESys& _ode_sys;
@@ -217,9 +220,11 @@ private:
 
 
 template<NonlinearSolverTag NLTag, typename TimeDisc>
+template<typename Callback>
 void
 TimeLoop<NLTag, TimeDisc>::
-loop(const double t0, const Vector x0, const double t_end, const double delta_t)
+loop(const double t0, const Vector x0, const double t_end, const double delta_t,
+     Callback& post_timestep)
 {
     Vector x(x0); // solution vector
 
@@ -235,9 +240,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t)
         _ode_sys.pushState(t, x);
         _ode_sys.pushMatrices();
 
-        INFO("x[0] = %10g, x[1] = %10g", x[0], x[1]);
-        // auto const v = ode1_solution(t);
-        // INFO("x[0] = %10g, x[1] = %10g (analytical solution)", v[0], v[1]);
+        post_timestep(t, x);
     }
 }
 
