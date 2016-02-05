@@ -29,7 +29,8 @@ int main (int argc, char* argv[])
 	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd(
-		"Adds a top layer to an existing mesh",
+		"Adds a top layer to an existing mesh"
+		"The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/addtoplayer ",
 		' ',
 		"0.1");
 

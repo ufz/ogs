@@ -42,8 +42,10 @@ int main (int argc, char* argv[])
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
 	logog_cout->SetFormatter(*custom_format);
 
-	TCLAP::CmdLine cmd("Maps geometric objects to the surface of a given mesh.",
-		' ', "0.1");
+	TCLAP::CmdLine cmd("Maps geometric objects to the surface of a given mesh."
+		"The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/map-geometric-object-to-the-surface-of-a-mesh",
+		' ',
+		"0.1");
 	TCLAP::ValueArg<std::string> mesh_in("m", "mesh-file",
 		"the name of the file containing the mesh", true,
 		"", "file name");

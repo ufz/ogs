@@ -69,7 +69,8 @@ int main (int argc, char* argv[])
 			"(http://www.opengeosys.org) "
 			"Distributed under a Modified BSD License. "
 			"See accompanying file LICENSE.txt or "
-			"http://www.opengeosys.org/project/license",
+			"http://www.opengeosys.org/project/license"
+			"The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/structured-mesh-generation",
 		' ',
 		BaseLib::BuildInfo::git_describe);
 
