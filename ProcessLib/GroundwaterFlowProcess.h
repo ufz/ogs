@@ -38,7 +38,7 @@ public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
         ProcessVariable& variable,
-        Parameter<double, MeshLib::Element const&> const* const
+        Parameter<double, MeshLib::Element const&> const&
             hydraulic_conductivity,
         boost::optional<BaseLib::ConfigTree>&& linear_solver_options)
         : Process<GlobalSetup>(mesh),
@@ -79,7 +79,7 @@ public:
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,
-                *_hydraulic_conductivity,
+                _hydraulic_conductivity,
                 this->_integration_order);
     }
 
@@ -120,7 +120,7 @@ public:
     }
 
 private:
-    Parameter<double, MeshLib::Element const&> const* _hydraulic_conductivity = nullptr;
+    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
