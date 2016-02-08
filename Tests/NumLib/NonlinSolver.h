@@ -140,13 +140,16 @@ public:
         auto const t = TimeDisc::getCurrentTime();
         auto const dxdot_dx = TimeDisc::getCurrentXWeight();
         _ode.assembleJacobian(t, x, dxdot_dx, _Jac);
+        TimeDisc::adjustMatrix(_Jac);
     }
 
     Vector getResidual(Vector const& x) override
     {
         auto const alpha = TimeDisc::getCurrentXWeight();
         auto const x_old = TimeDisc::getWeightedOldX();
-        return _M * (alpha*x - x_old) + _K*x - _b;
+        Vector res = _M * (alpha*x - x_old) + _K*x - _b;
+        TimeDisc::adjustResidual(x, res);
+        return res;
     }
 
     Matrix getJacobian() override
@@ -160,6 +163,16 @@ public:
     }
 
 private:
+    // from ITimeDiscretization
+    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
+                             Vector const*& b) const override
+    {
+        M = &_M;
+        K = &_K;
+        b = &_b;
+    }
+
+
     IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& _ode;
 
     Matrix _Jac;
@@ -190,12 +203,16 @@ public:
 
     Matrix getA() override
     {
-        return _M * TimeDisc::getCurrentXWeight() + _K;
+        Matrix A = _M * TimeDisc::getCurrentXWeight() + _K;
+        TimeDisc::adjustMatrix(A);
+        return A;
     }
 
     Vector getRhs() override
     {
-        return _b + _M * TimeDisc::getWeightedOldX();
+        Vector rhs = _b + _M * TimeDisc::getWeightedOldX();
+        TimeDisc::adjustRhs(rhs);
+        return rhs;
     }
 
     bool isLinear() const override
@@ -204,6 +221,16 @@ public:
     }
 
 private:
+    // from ITimeDiscretization
+    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
+                             Vector const*& b) const override
+    {
+        M = &_M;
+        K = &_K;
+        b = &_b;
+    }
+
+
     IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& _ode;
 
     Matrix _M;
