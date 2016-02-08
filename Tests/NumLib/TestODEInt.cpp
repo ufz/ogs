@@ -71,17 +71,17 @@ void print_result_Ode1(const double t, Vector const& x)
     INFO("x[0] = %10g, x[1] = %10g (analytical solution)", v[0], v[1]);
 }
 
-template<NonlinearSolverTag NLTag, typename TimeDisc>
-void test_Ode1(TimeDisc& timeDisc)
+template<NonlinearSolverTag NLTag>
+void test_Ode1(ITimeDiscretization& timeDisc)
 {
     Ode1 ode;
-    TimeDiscretizedODESystem<NLTag, TimeDisc> ode_sys(ode, timeDisc);
+    TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
 
     const double tol = 1e-4;
     const unsigned maxiter = 5;
     NonlinearSolver<NLTag> nonlinear_solver(tol, maxiter);
 
-    TimeLoop<NLTag, TimeDisc> loop(ode_sys, nonlinear_solver);
+    TimeLoop<NLTag> loop(ode_sys, nonlinear_solver);
 
     // initial condition
     const double t0 = 0.0;
@@ -139,17 +139,17 @@ void print_result_Ode2(const double t, Vector const& x)
     INFO("x[0] = %10g (analytical solution)", v);
 }
 
-template<NonlinearSolverTag NLTag, typename TimeDisc>
-void test_Ode2(TimeDisc& timeDisc)
+template<NonlinearSolverTag NLTag>
+void test_Ode2(ITimeDiscretization& timeDisc)
 {
     Ode2 ode;
-    TimeDiscretizedODESystem<NLTag, TimeDisc> ode_sys(ode, timeDisc);
+    TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
 
     const double tol = 1e-4;
     const unsigned maxiter = 5;
     NonlinearSolver<NLTag> nonlinear_solver(tol, maxiter);
 
-    TimeLoop<NLTag, TimeDisc> loop(ode_sys, nonlinear_solver);
+    TimeLoop<NLTag> loop(ode_sys, nonlinear_solver);
 
     // initial condition
     const double t0 = 1.0;
@@ -169,7 +169,7 @@ TEST(NumLibODEInt, Ode1PicardNewtonBwdEuler)
     auto const NLTag = NonlinearSolverTag::Picard;
     using TimeDisc = BackwardEuler;
     TimeDisc timeDisc;
-    test_Ode1<NLTag, TimeDisc>(timeDisc);
+    test_Ode1<NLTag>(timeDisc);
 }
 
 
@@ -178,7 +178,7 @@ TEST(NumLibODEInt, Ode1PicardNewtonFwdEuler)
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = ForwardEuler;
     TimeDisc timeDisc;
-    test_Ode1<NLTag, TimeDisc>(timeDisc);
+    test_Ode1<NLTag>(timeDisc);
 }
 
 
@@ -187,7 +187,7 @@ TEST(NumLibODEInt, Ode2PicardNewtonBwdEuler)
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = BackwardEuler;
     TimeDisc timeDisc;
-    test_Ode2<NLTag, TimeDisc>(timeDisc);
+    test_Ode2<NLTag>(timeDisc);
 }
 
 
@@ -196,7 +196,7 @@ TEST(NumLibODEInt, Ode2PicardNewtonCrankNicolson)
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = CrankNicolson;
     TimeDisc timeDisc;
-    test_Ode2<NLTag, TimeDisc>(timeDisc);
+    test_Ode2<NLTag>(timeDisc);
 }
 
 

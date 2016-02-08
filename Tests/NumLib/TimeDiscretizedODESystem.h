@@ -3,18 +3,18 @@
 #include "NonlinSolver.h"
 #include "TimeDiscretization.h"
 
-template<NonlinearSolverTag NLTag, typename TimeDisc>
+template<NonlinearSolverTag NLTag>
 struct TimeDiscretizedODESystem;
 
-template<typename TimeDisc>
-class TimeDiscretizedODESystem<NonlinearSolverTag::Newton, TimeDisc> final
+template<>
+class TimeDiscretizedODESystem<NonlinearSolverTag::Newton> final
         : public INonlinearSystemNewton
         , public IParabolicEquation
 {
 public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& ode,
-                             TimeDisc& time_discretization)
+                             ITimeDiscretization& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _Jac(ode.getMatrixSize(), ode.getMatrixSize())
@@ -60,12 +60,12 @@ public:
 
     /// end INonlinearSystemNewton
 
-    TimeDisc& getTimeDiscretization() {
+    ITimeDiscretization& getTimeDiscretization() {
         return _time_disc;
     }
 
 private:
-    // from ITimeDiscretization
+    // from IParabolicEquation
     virtual void getMatrices(Matrix const*& M, Matrix const*& K,
                              Vector const*& b) const override
     {
@@ -76,7 +76,7 @@ private:
 
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& _ode;
-    TimeDisc& _time_disc;
+    ITimeDiscretization& _time_disc;
 
     Matrix _Jac;
     Matrix _M;
@@ -84,15 +84,15 @@ private:
     Vector _b;
 };
 
-template<typename TimeDisc>
-class TimeDiscretizedODESystem<NonlinearSolverTag::Picard, TimeDisc> final
+template<>
+class TimeDiscretizedODESystem<NonlinearSolverTag::Picard> final
         : public INonlinearSystemPicard
         , public IParabolicEquation
 {
 public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& ode,
-                             TimeDisc& time_discretization)
+                             ITimeDiscretization& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _M(ode.getMatrixSize(), ode.getMatrixSize())
@@ -129,12 +129,12 @@ public:
 
     /// end INonlinearSystemPicard
 
-    TimeDisc& getTimeDiscretization() {
+    ITimeDiscretization& getTimeDiscretization() {
         return _time_disc;
     }
 
 private:
-    // from ITimeDiscretization
+    // from IParabolicEquation
     virtual void getMatrices(Matrix const*& M, Matrix const*& K,
                              Vector const*& b) const override
     {
@@ -145,7 +145,7 @@ private:
 
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& _ode;
-    TimeDisc& _time_disc;
+    ITimeDiscretization& _time_disc;
 
     Matrix _M;
     Matrix _K;

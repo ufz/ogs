@@ -2,11 +2,11 @@
 
 #include "TimeDiscretizedODESystem.h"
 
-template<NonlinearSolverTag NLTag, typename TimeDisc>
+template<NonlinearSolverTag NLTag>
 class TimeLoop
 {
 public:
-    using TDiscODESys = TimeDiscretizedODESystem<NLTag, TimeDisc>;
+    using TDiscODESys = TimeDiscretizedODESystem<NLTag>;
     using NLSolver = NonlinearSolver<NLTag>;
 
     explicit
@@ -26,10 +26,10 @@ private:
 };
 
 
-template<NonlinearSolverTag NLTag, typename TimeDisc>
+template<NonlinearSolverTag NLTag>
 template<typename Callback>
 void
-TimeLoop<NLTag, TimeDisc>::
+TimeLoop<NLTag>::
 loop(const double t0, const Vector x0, const double t_end, const double delta_t,
      Callback& post_timestep)
 {
