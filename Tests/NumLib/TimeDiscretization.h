@@ -12,7 +12,7 @@ public:
     virtual double getCurrentTime() const = 0; // get time used for assembly
 
     // Forward Euler is linear, other schemes not.
-    virtual bool isLinearTimeDisc() const = 0;
+    virtual bool isLinearTimeDisc() const { return false; }
 
     // for Crank-Nicolson
     virtual bool needsPreload() const { return false; }
@@ -25,6 +25,7 @@ public:
 
 protected:
     // for Crank-Nicolson
+    // intended to be implemented in TimeDiscretizedODESystem
     virtual void getMatrices(Matrix const*& M, Matrix const*& K,
                              Vector const*& b) const = 0;
 
@@ -69,10 +70,6 @@ public:
 
     Vector getWeightedOldX() const override {
         return _x_old / _delta_t;
-    }
-
-    bool isLinearTimeDisc() const override {
-        return false;
     }
 
 private:
@@ -162,10 +159,6 @@ public:
 
     Vector getWeightedOldX() const override {
         return _x_old / _delta_t;
-    }
-
-    bool isLinearTimeDisc() const override {
-        return false;
     }
 
     bool needsPreload() const override {

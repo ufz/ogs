@@ -38,7 +38,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 
     if (_ode_sys.needsPreload()) {
         _nonlinear_solver.assemble(_ode_sys, x);
-        _ode_sys.pushState(t0, x0);
+        _ode_sys.pushState(t0, x0); // TODO: that might do duplicate work
     }
 
     for (double t=t0+delta_t; t<=t_end; t+=delta_t)
