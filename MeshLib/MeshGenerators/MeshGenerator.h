@@ -144,7 +144,25 @@ Mesh* generateRegularQuadMesh(const BaseLib::ISubdivision &div_x,
  */
 Mesh* generateRegularQuadMesh(const double length,
                               const std::size_t subdivision,
-                              GeoLib::Point const& origin = GeoLib::ORIGIN);
+                              GeoLib::Point const& origin = GeoLib::ORIGIN,
+                              std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
+ * x-y-plane.
+ *
+ * \param x_length Mesh's dimensions in x-directions.
+ * \param y_length Mesh's dimensions in y-directions.
+ * \param x_subdivision Number of subdivisions in x-direction.
+ * \param y_subdivision Number of subdivisions in y-direction.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularQuadMesh(const double x_length,
+                              const double y_length,
+                              const std::size_t x_subdivision,
+                              const std::size_t y_subdivision,
+                              GeoLib::Point const& origin = GeoLib::ORIGIN,
+                              std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -205,7 +223,28 @@ Mesh* generateRegularHexMesh(const BaseLib::ISubdivision &div_x,
  */
 Mesh* generateRegularHexMesh(const double length,
                              const std::size_t subdivision,
-                             GeoLib::Point const& origin = GeoLib::ORIGIN);
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 3D Hex-Element mesh.
+ *
+ * \param x_length Mesh's dimensions in x-directions.
+ * \param y_length Mesh's dimensions in y-directions.
+ * \param z_length Mesh's dimensions in z-directions.
+ * \param x_subdivision Number of subdivisions in x-direction.
+ * \param y_subdivision Number of subdivisions in y-direction.
+ * \param z_subdivision Number of subdivisions in z-direction.
+ * \param origin Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularHexMesh(const double x_length,
+                             const double y_length,
+                             const double z_length,
+                             const std::size_t x_subdivision,
+                             const std::size_t y_subdivision,
+                             const std::size_t z_subdivision,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -258,7 +297,6 @@ Mesh* generateRegularTriMesh(const BaseLib::ISubdivision &div_x,
                              GeoLib::Point const& origin = GeoLib::ORIGIN,
                              std::string const& mesh_name = "mesh");
 
-
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
  * x-y-plane.
@@ -269,7 +307,25 @@ Mesh* generateRegularTriMesh(const BaseLib::ISubdivision &div_x,
  */
 Mesh* generateRegularTriMesh(const double length,
                               const std::size_t subdivision,
-                              GeoLib::Point const& origin = GeoLib::ORIGIN);
+                              GeoLib::Point const& origin = GeoLib::ORIGIN,
+                              std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
+ * x-y-plane.
+ *
+ * \param x_length Mesh's dimensions in x-directions.
+ * \param y_length Mesh's dimensions in y-directions.
+ * \param x_subdivision Number of subdivisions in x-direction.
+ * \param y_subdivision Number of subdivisions in y-direction.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularTriMesh(const double x_length,
+                             const double y_length,
+                             const std::size_t x_subdivision,
+                             const std::size_t y_subdivision,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -282,10 +338,10 @@ Mesh* generateRegularTriMesh(const double length,
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTriMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-	                          const double   cell_size,
-	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                          std::string   const& mesh_name = "mesh");
+                             const unsigned n_y_cells,
+                             const double   cell_size,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -299,11 +355,69 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTriMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-	                          const double   cell_size_x,
-	                          const double   cell_size_y,
-	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                          std::string   const& mesh_name = "mesh");
+                             const unsigned n_y_cells,
+                             const double   cell_size_x,
+                             const double   cell_size_y,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 3D Prism-Element mesh.
+ *
+ * \param x_length Mesh's dimensions in x-directions.
+ * \param y_length Mesh's dimensions in y-directions.
+ * \param z_length Mesh's dimensions in z-directions.
+ * \param x_subdivision Number of subdivisions in x-direction.
+ * \param y_subdivision Number of subdivisions in y-direction.
+ * \param z_subdivision Number of subdivisions in z-direction.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ */
+Mesh* generateRegularPrismMesh(const double x_length,
+                               const double y_length,
+                               const double z_length,
+                               const std::size_t x_subdivision,
+                               const std::size_t y_subdivision,
+                               const std::size_t z_subdivision,
+                               GeoLib::Point const& origin = GeoLib::ORIGIN,
+                               std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 2D Triangle-Element mesh.
+ *
+ * \param n_x_cells Number of cells in x-direction.
+ * \param n_y_cells Number of cells in y-direction.
+ * \param n_z_cells Number of cells in z-direction.
+ * \param cell_size Edge length of two equal sides of isosceles triangles + height of prism
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
+ */
+Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
+                               const unsigned n_y_cells,
+                               const unsigned n_z_cells,
+                               const double cell_size,
+                               GeoLib::Point const& origin = GeoLib::ORIGIN,
+                               std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 2D Triangle-Element mesh.
+ *
+ * \param n_x_cells    Number of cells in x-direction.
+ * \param n_y_cells    Number of cells in y-direction.
+ * \param n_z_cells    Number of cells in z-direction.
+ * \param cell_size_x  Edge length of triangles in x-direction.
+ * \param cell_size_y  Edge length of triangles in y-direction.
+ * \param cell_size_z  Edge length of triangles in z-direction.
+ * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
+ */
+Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
+                               const unsigned n_y_cells,
+                               const unsigned n_z_cells,
+                               const double   cell_size_x,
+                               const double   cell_size_y,
+                               const double   cell_size_z,
+                               GeoLib::Point const& origin = GeoLib::ORIGIN,
+                               std::string   const& mesh_name = "mesh");
 
 /// Constructs a surface mesh approximating a surface in the 3d space given by
 /// a function.
