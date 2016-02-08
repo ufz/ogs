@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NonlinSolver.h"
+#include "TimeDiscretization.h"
 
 template<NonlinearSolverTag NLTag, typename TimeDisc>
 struct TimeDiscretizedODESystem;
@@ -9,6 +10,7 @@ template<typename TimeDisc>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Newton, TimeDisc> final
         : public TimeDisc
         , public INonlinearSystemNewton
+        , public IParabolicEquation
 {
 public:
     explicit
@@ -76,6 +78,7 @@ template<typename TimeDisc>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Picard, TimeDisc> final
         : public TimeDisc
         , public INonlinearSystemPicard
+        , public IParabolicEquation
 {
 public:
     explicit

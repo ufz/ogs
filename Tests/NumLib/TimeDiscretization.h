@@ -4,11 +4,20 @@
 
 #include <iostream>
 
+class IParabolicEquation
+{
+public:
+    // needed for Crank-Nicolson
+    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
+                             Vector const*& b) const = 0;
+};
+
 class ITimeDiscretization
 {
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
-    virtual void pushState(const double t, Vector const& x) = 0;
+    virtual void pushState(const double t, Vector const& x,
+                           IParabolicEquation const& eq) = 0;
 
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
     virtual double getCurrentTime() const = 0; // get time used for assembly
@@ -26,10 +35,6 @@ public:
     ~ITimeDiscretization() = default;
 
 protected:
-    // for Crank-Nicolson
-    // intended to be implemented in TimeDiscretizedODESystem
-    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
-                             Vector const*& b) const = 0;
 
     // for Crank-Nicolson
     virtual void adjustMatrix(Matrix& A) const { (void) A; }
@@ -52,7 +57,8 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x) override {
+    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    {
         (void) t;
         _x_old = x;
     }
@@ -90,7 +96,8 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x) override {
+    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    {
         (void) t;
         _x_old = x;
     }
@@ -133,14 +140,15 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x) override {
+    void pushState(const double t, Vector const& x, IParabolicEquation const& eq) override
+    {
         (void) t;
         _x_old = x;
 
         Matrix const* M;
         Matrix const* K;
         Vector const* b;
-        getMatrices(M, K, b);
+        eq.getMatrices(M, K, b);
 
         _M_bar = (1-_theta) * (*M);
         _b_bar = (1-_theta) * ((*K)*_x_old - (*b));

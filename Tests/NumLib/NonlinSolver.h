@@ -3,8 +3,7 @@
 #include <Eigen/SparseCore>
 #include <logog/include/logog.hpp>
 
-#include "TimeDiscretization.h"
-
+#include "ODETypes.h"
 
 enum class NonlinearSolverTag : bool { Picard, Newton };
 
