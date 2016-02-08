@@ -112,3 +112,29 @@ TEST(MeshLib, MeshGeneratorRegularQuad)
 	ASSERT_DOUBLE_EQ(L, (*node)[0]);
 	ASSERT_DOUBLE_EQ(L, (*node)[1]);
 }
+
+TEST(MeshLib, MeshGeneratorRegularPrism)
+{
+	double const l_x(10);
+	double const l_y(10);
+	double const l_z(8);
+	unsigned n_x (10);
+	unsigned n_y (5);
+	unsigned n_z (4);
+	std::unique_ptr<Mesh> mesh (MeshGenerator::generateRegularPrismMesh(l_x, l_y, l_z, n_x, n_y, n_z));
+	ASSERT_EQ(2 * n_x * n_y * n_z, mesh->getNElements());
+	ASSERT_EQ((n_x+1) * (n_y+1) * (n_z+1), mesh->getNNodes());
+
+	std::size_t count (0);
+	for (std::size_t k=0; k<(n_z+1); ++k)
+		
+			for (std::size_t j=0; j<(n_y+1); ++j)
+		for (std::size_t i=0; i<(n_x+1); ++i)
+			{
+				std::cout << count << std::endl;
+				const MeshLib::Node* node (mesh->getNode(count++));
+				ASSERT_DOUBLE_EQ(static_cast<double>(i),   (*node)[0]);
+				ASSERT_DOUBLE_EQ(static_cast<double>(j*2), (*node)[1]);
+				ASSERT_DOUBLE_EQ(static_cast<double>(k*2), (*node)[2]);
+			}
+}
