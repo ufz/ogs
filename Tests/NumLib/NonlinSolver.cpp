@@ -9,6 +9,13 @@
 
 void
 NonlinearSolver<NonlinearSolverTag::Picard>::
+assemble(INonlinearSystemPicard &sys, Vector &x)
+{
+    sys.assembleMatricesPicard(x);
+}
+
+void
+NonlinearSolver<NonlinearSolverTag::Picard>::
 solve(INonlinearSystemPicard &sys, Vector &x)
 {
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
@@ -39,6 +46,14 @@ solve(INonlinearSystemPicard &sys, Vector &x)
             break;
         }
     }
+}
+
+
+void
+NonlinearSolver<NonlinearSolverTag::Newton>::
+assemble(INonlinearSystemNewton &sys, Vector &x)
+{
+    sys.assembleResidualNewton(x);
 }
 
 void

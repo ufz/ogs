@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NonlinSolver.h"
+#include "TimeDiscretizedODESystem.h"
 
 template<NonlinearSolverTag NLTag, typename TimeDisc>
 class TimeLoop
@@ -35,6 +35,11 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
     Vector x(x0); // solution vector
 
     _ode_sys.setInitialState(t0, x0); // push IC
+
+    if (_ode_sys.needsPreload()) {
+        _nonlinear_solver.assemble(_ode_sys, x);
+        _ode_sys.pushState(t0, x0);
+    }
 
     for (double t=t0+delta_t; t<=t_end; t+=delta_t)
     {

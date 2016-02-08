@@ -14,6 +14,9 @@ public:
     // Forward Euler is linear, other schemes not.
     virtual bool isLinearTimeDisc() const = 0;
 
+    // for Crank-Nicolson
+    virtual bool needsPreload() const { return false; }
+
     // \dot x === alpha * x - x_old
     virtual double getCurrentXWeight() const = 0; // = alpha
     virtual Vector getWeightedOldX() const = 0; // = x_old
@@ -163,6 +166,10 @@ public:
 
     bool isLinearTimeDisc() const override {
         return false;
+    }
+
+    bool needsPreload() const override {
+        return true;
     }
 
 protected:
