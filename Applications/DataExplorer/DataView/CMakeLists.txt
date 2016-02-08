@@ -3,6 +3,7 @@ set(SOURCES
 	ColorTableModel.cpp
 	ColorTableView.cpp
 	CondFromRasterDialog.cpp
+	CreateStructuredGridDialog.cpp
 	DataExplorerSettingsDialog.cpp
 	DirectConditionGenerator.cpp
 	ElementTreeModel.cpp
@@ -42,22 +43,21 @@ set(SOURCES
 set(HEADERS
 	AddLayerToMeshDialog.h
 	BaseItem.h
-	CondItem.h
-	DirectConditionGenerator.h
-	CondObjectListItem.h
-	GeoObjectListItem.h
-	GeoTreeItem.h
-	ModelTreeItem.h
-	MshItem.h
 	ColorTableModel.h
 	ColorTableView.h
 	CondFromRasterDialog.h
+	CondItem.h
+	CondObjectListItem.h
+	CreateStructuredGridDialog.h
 	DataExplorerSettingsDialog.h
+	DirectConditionGenerator.h
 	ElementTreeModel.h
 	ElementTreeView.h
 	GEOModels.h
+	GeoObjectListItem.h
 	GeoOnMeshMappingDialog.h
 	GeoTabWidget.h
+	GeoTreeItem.h
 	GeoTreeModel.h
 	GeoTreeView.h
 	GMSHPrefsDialog.h
@@ -70,7 +70,9 @@ set(HEADERS
 	MeshQualitySelectionDialog.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
+	ModelTreeItem.h
 	MeshLayerEditDialog.h
+	MshItem.h
 	MshModel.h
 	MshTabWidget.h
 	MshView.h
