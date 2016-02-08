@@ -188,3 +188,11 @@ TEST(NumLibODEInt, Ode2PicardNewtonBwdEuler)
 }
 
 
+TEST(NumLibODEInt, Ode2PicardNewtonCrankNicolson)
+{
+    auto const NLTag = NonlinearSolverTag::Newton;
+    using TimeDisc = CrankNicolson;
+    test_Ode2<NLTag, TimeDisc>();
+}
+
+

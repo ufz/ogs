@@ -2,6 +2,8 @@
 
 #include "ODETypes.h"
 
+#include <iostream>
+
 class ITimeDiscretization
 {
 public:
@@ -182,7 +184,7 @@ protected:
     void adjustResidual(Vector const& x, Vector& res) const override
     {
         auto const alpha = getCurrentXWeight();
-        auto const& xdot = alpha * x - getWeightedOldX();
+        Vector xdot = alpha * x - getWeightedOldX();
         res *= _theta;
         res += _M_bar * xdot + _b_bar;
     }
