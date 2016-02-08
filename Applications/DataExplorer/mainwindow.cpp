@@ -33,6 +33,7 @@
 #include "Raster.h"
 
 //dialogs
+#include "CreateStructuredGridDialog.h"
 #include "DataExplorerSettingsDialog.h"
 #include "DiagramPrefsDialog.h"
 #include "GeoOnMeshMappingDialog.h"
@@ -1004,6 +1005,13 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 	_geo_models->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
 		id, this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
+}
+
+void MainWindow::showCreateStructuredGridDialog()
+{
+	CreateStructuredGridDialog dlg;
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
+	dlg.exec();
 }
 
 void MainWindow::showMeshElementRemovalDialog()
