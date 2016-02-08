@@ -10,7 +10,7 @@ public:
     using NLSolver = NonlinearSolver<NLTag>;
 
     explicit
-    TimeLoop(TDiscODESys& ode_sys, NLSolver nonlinear_solver)
+    TimeLoop(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
         : _ode_sys(ode_sys)
         , _nonlinear_solver(nonlinear_solver)
     {}
