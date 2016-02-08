@@ -34,8 +34,6 @@ public:
 
     ~ITimeDiscretization() = default;
 
-protected:
-
     // for Crank-Nicolson
     virtual void adjustMatrix(Matrix& A) const { (void) A; }
 
@@ -175,7 +173,6 @@ public:
         return true;
     }
 
-protected:
     void adjustMatrix(Matrix& A) const override
     {
         auto const alpha = getCurrentXWeight();

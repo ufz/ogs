@@ -9,6 +9,7 @@ public:
     using TDiscODESys = TimeDiscretizedODESystem<NLTag, TimeDisc>;
     using NLSolver = NonlinearSolver<NLTag>;
 
+    explicit
     TimeLoop(TDiscODESys& ode_sys, NLSolver nonlinear_solver)
         : _ode_sys(ode_sys)
         , _nonlinear_solver(nonlinear_solver)
@@ -34,21 +35,23 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 {
     Vector x(x0); // solution vector
 
-    _ode_sys.setInitialState(t0, x0); // push IC
+    auto& time_disc = _ode_sys.getTimeDiscretization();
 
-    if (_ode_sys.needsPreload()) {
+    time_disc.setInitialState(t0, x0); // push IC
+
+    if (time_disc.needsPreload()) {
         _nonlinear_solver.assemble(_ode_sys, x);
-        _ode_sys.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
+        time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
 
     for (double t=t0+delta_t; t<=t_end; t+=delta_t)
     {
         INFO("time: %e, delta_t: %e", t, delta_t);
-        _ode_sys.setCurrentTime(t, delta_t);
+        time_disc.setCurrentTime(t, delta_t);
 
         _nonlinear_solver.solve(_ode_sys, x);
 
-        _ode_sys.pushState(t, x, _ode_sys);
+        time_disc.pushState(t, x, _ode_sys);
 
         post_timestep(t, x);
     }
