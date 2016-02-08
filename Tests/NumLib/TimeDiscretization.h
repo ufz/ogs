@@ -133,6 +133,11 @@ private:
 class CrankNicolson : public ITimeDiscretization
 {
 public:
+    explicit
+    CrankNicolson(const double theta)
+        : _theta(theta)
+    {}
+
     void setInitialState(const double t0, Vector const& x) override {
         _t = t0;
         _x_old = x;
@@ -195,7 +200,7 @@ public:
     }
 
 private:
-    const double _theta = 0.5;
+    const double _theta = 555.555;
     double _t = 9999.9999;
     double _delta_t = 8888.8888;
     Vector _x_old;
