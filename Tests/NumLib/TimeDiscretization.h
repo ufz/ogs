@@ -7,7 +7,7 @@ class ITimeDiscretization
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
     virtual void pushState(const double t, Vector const& x) = 0;
-    virtual void pushMatrices() = 0;
+
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
     virtual double getCurrentTime() const = 0; // get time used for assembly
 
@@ -34,8 +34,6 @@ public:
         (void) t;
         _x_old = x;
     }
-
-    void pushMatrices() override {}
 
     void setCurrentTime(const double t, const double delta_t) override {
         _t = t;
@@ -78,8 +76,6 @@ public:
         (void) t;
         _x_old = x;
     }
-
-    void pushMatrices() override {}
 
     void setCurrentTime(const double t, const double delta_t) override {
         _t_old = _t;

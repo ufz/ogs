@@ -44,7 +44,6 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         _nonlinear_solver.solve(_ode_sys, x);
 
         _ode_sys.pushState(t, x);
-        _ode_sys.pushMatrices();
 
         post_timestep(t, x);
     }
