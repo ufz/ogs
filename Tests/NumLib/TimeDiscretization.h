@@ -50,7 +50,7 @@ public:
 };
 
 
-class BackwardEuler : public ITimeDiscretization
+class BackwardEuler final : public ITimeDiscretization
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -88,7 +88,7 @@ private:
 };
 
 
-class ForwardEuler : public ITimeDiscretization
+class ForwardEuler final : public ITimeDiscretization
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -133,7 +133,7 @@ private:
 };
 
 
-class CrankNicolson : public ITimeDiscretization
+class CrankNicolson final : public ITimeDiscretization
 {
 public:
     explicit
@@ -232,7 +232,7 @@ const double BDF_Coeffs[6][7] = {
 }
 
 
-class BackwardDifferentiationFormula : public ITimeDiscretization
+class BackwardDifferentiationFormula final : public ITimeDiscretization
 {
 public:
     BackwardDifferentiationFormula(const unsigned num_steps)
