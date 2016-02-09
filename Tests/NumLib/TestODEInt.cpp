@@ -17,21 +17,20 @@ public:
     template<typename Ode>
     void run_test(Ode& ode, ITimeDiscretization& timeDisc)
     {
-        auto const t_end = OdeTraits<Ode>::t_end;
-        auto const t0    = OdeTraits<Ode>::t0;
-        run_test<Ode>(ode, timeDisc, (t_end-t0)/10.0); // by default make 10 timesteps
+        run_test<Ode>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
     template<typename Ode>
-    void run_test(Ode& ode, ITimeDiscretization& timeDisc, const double delta_t)
+    void run_test(Ode& ode, ITimeDiscretization& timeDisc, const unsigned num_timesteps)
     {
-        init_file(ode, timeDisc, delta_t);
-
         TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
-        const double t0    = OdeTraits<Ode>::t0;
-        const double t_end = OdeTraits<Ode>::t_end;
+        const double t0      = OdeTraits<Ode>::t0;
+        const double t_end   = OdeTraits<Ode>::t_end;
+        const double delta_t = (t_end-t0) / num_timesteps;
+
+        init_file(ode, timeDisc, delta_t);
 
         // initial condition
         Vector x0;
@@ -91,35 +90,35 @@ private:
 
 template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
-run_test_case()
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc;
 
     TestOutput<NLTag> test;
-    test.run_test(ode, timeDisc);
+    test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, CrankNicolson>::value>::type
-run_test_case()
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(0.5);
 
     TestOutput<NLTag> test;
-    test.run_test(ode, timeDisc);
+    test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, BackwardDifferentiationFormula>::value>::type
-run_test_case()
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(3);
 
     TestOutput<NLTag> test;
-    test.run_test(ode, timeDisc);
+    test.run_test(ode, timeDisc, num_timesteps);
 }
 
 
@@ -167,7 +166,9 @@ public:
 
     static void test()
     {
-        run_test_case<TimeDisc, ODE, NLTag>();
+        for (auto num_timesteps : { 10, 100, 1000 }) {
+            run_test_case<TimeDisc, ODE, NLTag>(num_timesteps);
+        }
     }
 };
 
