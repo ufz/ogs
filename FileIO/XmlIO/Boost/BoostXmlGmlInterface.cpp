@@ -187,6 +187,11 @@ void BoostXmlGmlInterface::readPolylines(
 				polylines.back()->addPoint(pnt_id_map[_idx_map[pt]]);
 			}
 		}
+		else
+		{
+			// polyline has no name, ignore it.
+			pl.ignoreConfParamAll("pnt");
+		}
 	}
 }
 
@@ -225,6 +230,11 @@ void BoostXmlGmlInterface::readSurfaces(
 				auto const p3 = pnt_id_map[_idx_map[p3_attr]];
 				surfaces.back()->addTriangle(p1,p2,p3);
 			}
+		}
+		else
+		{
+			// surface has no name, ignore it.
+			sfc.ignoreConfParamAll("element");
 		}
 	}
 }
