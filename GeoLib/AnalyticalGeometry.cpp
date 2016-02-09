@@ -398,7 +398,10 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
 		(*(pnts[k]))[1] = 0.0; // should be -= d but there are numerical errors
 }
 
-GeoLib::Point* triangleLineIntersection(MathLib::Point3d const& a, MathLib::Point3d const& b, MathLib::Point3d const& c, MathLib::Point3d const& p, MathLib::Point3d const& q)
+std::unique_ptr<GeoLib::Point> triangleLineIntersection(
+    MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c, MathLib::Point3d const& p,
+    MathLib::Point3d const& q)
 {
 	const MathLib::Vector3 pq(p, q);
 	const MathLib::Vector3 pa(p, a);
@@ -416,7 +419,10 @@ GeoLib::Point* triangleLineIntersection(MathLib::Point3d const& a, MathLib::Poin
 	u*=denom;
 	v*=denom;
 	w*=denom;
-	return new GeoLib::Point(u*a[0]+v*b[0]+w*c[0],u*a[1]+v*b[1]+w*c[1],u*a[2]+v*b[2]+w*c[2]);
+	return std::unique_ptr<GeoLib::Point>{
+	    new GeoLib::Point(u * a[0] + v * b[0] + w * c[0],
+	                      u * a[1] + v * b[1] + w * c[1],
+	                      u * a[2] + v * b[2] + w * c[2])};
 }
 
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w)

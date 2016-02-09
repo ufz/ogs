@@ -15,6 +15,8 @@
 #ifndef ANALYTICAL_GEOMETRY_H_
 #define ANALYTICAL_GEOMETRY_H_
 
+#include <memory>
+
 #include "MathLib/Vector3.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
@@ -319,7 +321,10 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
  * This method requires ABC to be counterclockwise and PQ to point downward.
  * @return Intersection point or nullptr if there is no intersection.
  */
-GeoLib::Point* triangleLineIntersection(MathLib::Point3d const& a, MathLib::Point3d const& b, MathLib::Point3d const& c, MathLib::Point3d const& p, MathLib::Point3d const& q);
+std::unique_ptr<GeoLib::Point> triangleLineIntersection(
+    MathLib::Point3d const& a, MathLib::Point3d const& b,
+    MathLib::Point3d const& c, MathLib::Point3d const& p,
+    MathLib::Point3d const& q);
 
 /// Calculates the scalar triple (u x v) . w
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
