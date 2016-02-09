@@ -355,7 +355,6 @@ void NetCdfConfigureDialog::createDataObject()
 	double origin_x = (originLon < lastLon) ? originLon : lastLon;
 	double origin_y = (originLat < lastLat) ? originLat : lastLat;
 	MathLib::Point3d origin(std::array<double,3>{{origin_x, origin_y, 0}});
-
 	double resolution = (doubleSpinBoxResolution->value());
 
 	if (originLat > lastLat) // reverse lines in vertical direction if the original file has its origin in the northwest corner
@@ -378,7 +377,8 @@ void NetCdfConfigureDialog::createDataObject()
 		}else{
 			useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
 		}
-		_currentMesh = MeshLib::RasterToMesh::convert(data_array, header, meshElemType, useIntensity);
+		_currentMesh = MeshLib::RasterToMesh::convert(
+			data_array, header, meshElemType, useIntensity, _currentVar->name());
 	}
 	else
 	{

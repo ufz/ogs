@@ -41,7 +41,8 @@ public:
 	 */
 	static MeshLib::Mesh* convert(GeoLib::Raster const& raster,
 	                              MeshElemType elem_type,
-	                              UseIntensityAs intensity_type);
+	                              UseIntensityAs intensity_type,
+	                              std::string const& array_name = "Colour");
 
 	/**
 	 * Converts a vtkImageData into a mesh.
@@ -52,7 +53,8 @@ public:
 	                              const double origin[3],
 	                              const double scalingFactor,
 	                              MeshElemType elem_type,
-	                              UseIntensityAs intensity_type);
+	                              UseIntensityAs intensity_type,
+	                              std::string const& array_name = "Colour");
 
 	/**
 	 * Converts double array with raster values into a mesh.
@@ -62,11 +64,13 @@ public:
 	static MeshLib::Mesh* convert(const double* img,
 	                              GeoLib::RasterHeader const& header,
 	                              MeshElemType elem_type,
-	                              UseIntensityAs intensity_type);
+	                              UseIntensityAs intensity_type,
+	                              std::string const& array_name = "Colour");
 
 private:
 	static MeshLib::Mesh* constructMesh(
 		std::vector<double> const& pix_val,
+		std::string const& array_name,
 		std::vector<bool> const& pix_vis,
 		GeoLib::RasterHeader const& header,
 		MeshLib::MeshElemType elem_type,
