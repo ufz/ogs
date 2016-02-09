@@ -2,6 +2,9 @@
 
 #include "ODETypes.h"
 
+#include <vector>
+
+// debugging
 #include <iostream>
 
 class IParabolicEquation
@@ -207,4 +210,94 @@ private:
 
     Matrix _M_bar;
     Vector _b_bar;
+};
+
+
+namespace detail
+{
+
+const double BDF_Coeffs[6][7] = {
+    // leftmost column: weight of the solution at the new timestep
+    // signs of columns > 1 are flipped compared to standard BDF tableaus
+    {   1.0,         1.0 },
+    {   1.5,         2.0, -0.5 },
+    {  11.0 /  6.0,  3.0, -1.5,  1.0 / 3.0 },
+    {  25.0 / 12.0,  4.0, -3.0,  4.0 / 3.0, -0.25 },
+    { 137.0 / 60.0,  5.0, -5.0, 10.0 / 3.0, -1.25,  0.2 },
+    { 147.0 / 60.0,  6.0, -7.5, 20.0 / 3.0, -3.75,  1.2, -1.0/6.0 }
+    // coefficient of (for BDF(6), the oldest state, x_n, is always rightmost)
+    //        x_+6, x_+5, x_+4,       x_+3,  x_+2, x_+1,     x_n
+};
+
+}
+
+
+class BackwardDifferentiationFormula : public ITimeDiscretization
+{
+public:
+    BackwardDifferentiationFormula(const unsigned num_steps)
+        : _num_steps(num_steps)
+    {
+        // TODO: assert 0 < num_steps <= 6
+        _xs_old.reserve(num_steps);
+    }
+
+    void setInitialState(const double t0, Vector const& x) override {
+        _t = t0;
+        _xs_old.push_back(x);
+    }
+
+    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    {
+        (void) t;
+
+        // until _xs_old is filled, lower-order BDF formulas are used.
+        if (_xs_old.size() < _num_steps) {
+            _xs_old.push_back(x);
+        } else {
+            _xs_old[_offset] = x;
+            _offset = (_offset+1) % _num_steps;
+        }
+    }
+
+    void setCurrentTime(const double t, const double delta_t) override {
+        _t = t;
+        _delta_t = delta_t;
+    }
+
+    double getCurrentTime() const override {
+        return _t;
+    }
+
+    double getCurrentXWeight() const override {
+        auto const k = eff_num_steps();
+        return detail::BDF_Coeffs[k-1][0] / _delta_t;
+    }
+
+    Vector getWeightedOldX() const override {
+        auto const k = eff_num_steps();
+        auto const*const BDFk = detail::BDF_Coeffs[k-1];
+
+        // compute linear combination \sum_{i=0}^{k-1} BDFk_{k-i} \cdot x_{n+i}
+        Vector y(BDFk[k]*_xs_old[_offset]); // _xs_old[offset] = x_n
+
+        for (unsigned i=1; i<k; ++i) {
+            auto const off = (_offset + i) % k;
+            y += BDFk[k-i] * _xs_old[off];
+        }
+
+        y /= _delta_t;
+
+        return y;
+    }
+
+private:
+    unsigned eff_num_steps() const { return _xs_old.size(); }
+
+    const unsigned _num_steps;
+    double _t = 9999.9999;
+    double _delta_t = 8888.8888;
+
+    std::vector<Vector> _xs_old;
+    unsigned _offset = 0;
 };

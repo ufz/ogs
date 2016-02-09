@@ -200,3 +200,12 @@ TEST(NumLibODEInt, Ode2PicardNewtonCrankNicolson)
 }
 
 
+TEST(NumLibODEInt, Ode2PicardNewtonBDF)
+{
+    auto const NLTag = NonlinearSolverTag::Newton;
+    using TimeDisc = BackwardDifferentiationFormula;
+    TimeDisc timeDisc(3);
+    test_Ode2<NLTag>(timeDisc);
+}
+
+
