@@ -14,9 +14,6 @@
 
 #include "CreateStructuredGridDialog.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include <QIntValidator>
 
 #include "GeoLib/Point.h"
@@ -108,7 +105,7 @@ void CreateStructuredGridDialog::on_elemExtentButton_toggled()
 
 bool CreateStructuredGridDialog::inputIsEmpty() const
 {
-	QString type_str = (this->meshExtentButton->isChecked()) ? "mesh" : "element";
+	QString const type_str = (this->meshExtentButton->isChecked()) ? "mesh" : "element";
 	if (this->xLengthEdit->text().isEmpty())
 	{
 		OGSError::box("Please specify " + type_str + "\nextent in x-direction.");
@@ -252,10 +249,9 @@ void CreateStructuredGridDialog::accept()
 
 	boost::optional<MeshLib::PropertyVector<int>&> mat_ids (
 		mesh->getProperties().createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell));
-	mat_ids->resize(mesh->getNElements());
-	std::fill_n(mat_ids->begin(), mesh->getNElements(), 0);
+	mat_ids->reserve(mesh->getNElements());
+	std::fill_n(std::back_inserter(*mat_ids), mesh->getNElements(), 0);
 	emit meshAdded(mesh);
 	this->done(QDialog::Accepted);
 }
-
 

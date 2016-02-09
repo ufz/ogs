@@ -151,8 +151,8 @@ Mesh* generateRegularQuadMesh(const double length,
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
  * x-y-plane.
  *
- * \param x_length Mesh's dimensions in x-directions.
- * \param y_length Mesh's dimensions in y-directions.
+ * \param x_length Mesh's dimension in x-direction.
+ * \param y_length Mesh's dimension in y-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
@@ -229,9 +229,9 @@ Mesh* generateRegularHexMesh(const double length,
 /**
  * Generate a regular 3D Hex-Element mesh.
  *
- * \param x_length Mesh's dimensions in x-directions.
- * \param y_length Mesh's dimensions in y-directions.
- * \param z_length Mesh's dimensions in z-directions.
+ * \param x_length Mesh's dimension in x-direction.
+ * \param y_length Mesh's dimension in y-direction.
+ * \param z_length Mesh's dimension in z-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param z_subdivision Number of subdivisions in z-direction.
@@ -314,8 +314,8 @@ Mesh* generateRegularTriMesh(const double length,
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
  * x-y-plane.
  *
- * \param x_length Mesh's dimensions in x-directions.
- * \param y_length Mesh's dimensions in y-directions.
+ * \param x_length Mesh's dimension in x-direction.
+ * \param y_length Mesh's dimension in y-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
@@ -364,9 +364,9 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
 /**
  * Generate a regular 3D Prism-Element mesh.
  *
- * \param x_length Mesh's dimensions in x-directions.
- * \param y_length Mesh's dimensions in y-directions.
- * \param z_length Mesh's dimensions in z-directions.
+ * \param x_length Mesh's dimension in x-direction.
+ * \param y_length Mesh's dimension in y-direction.
+ * \param z_length Mesh's dimension in z-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param z_subdivision Number of subdivisions in z-direction.

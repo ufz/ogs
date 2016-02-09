@@ -449,10 +449,8 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
 	GeoLib::Point const& origin,
 	std::string   const& mesh_name)
 {
-	MeshLib::Mesh* mesh (generateRegularTriMesh(
-		BaseLib::UniformSubdivision(n_x_cells*cell_size_x, n_x_cells),
-		BaseLib::UniformSubdivision(n_y_cells*cell_size_y, n_y_cells), 
-		origin, mesh_name));
+	MeshLib::Mesh* mesh (
+		generateRegularTriMesh(n_x_cells, n_y_cells, cell_size_x, cell_size_y, origin, mesh_name));
 	std::size_t const n_tris (mesh->getNElements());
 	for (std::size_t i=0; i<n_z_cells; ++i)
 		mesh = MeshLib::addTopLayerToMesh(*mesh, cell_size_z, mesh_name);
