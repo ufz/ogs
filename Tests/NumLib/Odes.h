@@ -75,7 +75,7 @@ public:
     }
 
     static constexpr double t0    = 0.0;
-    static constexpr double t_end = 1.0;
+    static constexpr double t_end = 30.0;
 };
 // ODE 1 end //////////////////////////////////////////////////////
 
