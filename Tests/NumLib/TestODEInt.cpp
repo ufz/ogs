@@ -116,40 +116,26 @@ public:
     }
 };
 
-double ode2_solution(const double t)
+template<>
+class OdeTraits<Ode2>
 {
-    return 1.0/t;
-}
+public:
+    static void setIC(double& t0, Vector& x0)
+    {
+        t0 = 1.0;
+        x0.resize(1);
+        x0[0] = 1.0;
+    }
 
-void print_result_Ode2(const double t, Vector const& x)
-{
-    INFO("x[0] = %10g", x[0]);
-    auto const v = ode2_solution(t);
-    INFO("x[0] = %10g (analytical solution)", v);
-}
+    static Vector solution(const double t)
+    {
+        Vector v(1);
+        v[0] = 1.0 / t;
+        return v;
+    }
 
-template<NonlinearSolverTag NLTag>
-void test_Ode2(ITimeDiscretization& timeDisc)
-{
-    Ode2 ode;
-    TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
-
-    const double tol = 1e-4;
-    const unsigned maxiter = 5;
-    NonlinearSolver<NLTag> nonlinear_solver(tol, maxiter);
-
-    TimeLoop<NLTag> loop(ode_sys, nonlinear_solver);
-
-    // initial condition
-    const double t0 = 1.0;
-    Eigen::VectorXd x0(1);
-    x0[0] = 1.0;
-
-    const double t_end = 2.0;
-    const double delta_t = (t_end-t0)/10.0;
-
-    loop.loop(t0, x0, t_end, delta_t, print_result_Ode2);
-}
+    static constexpr double t_end = 2.0;
+};
 // ODE 2 end //////////////////////////////////////////////////////
 
 
@@ -240,8 +226,12 @@ TEST(NumLibODEInt, Ode2_BwdEuler)
 {
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = BackwardEuler;
+
+    Ode2 ode;
     TimeDisc timeDisc;
-    test_Ode2<NLTag>(timeDisc);
+
+    TestOutput<NLTag> test("Ode2_BwdEuler");
+    test.run_test(ode, timeDisc);
 }
 
 
@@ -249,8 +239,12 @@ TEST(NumLibODEInt, Ode2_CrankNicolson)
 {
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = CrankNicolson;
+
+    Ode2 ode;
     TimeDisc timeDisc(0.5);
-    test_Ode2<NLTag>(timeDisc);
+
+    TestOutput<NLTag> test("Ode2_CrankNicolson");
+    test.run_test(ode, timeDisc);
 }
 
 
@@ -258,8 +252,12 @@ TEST(NumLibODEInt, Ode2_BDF)
 {
     auto const NLTag = NonlinearSolverTag::Newton;
     using TimeDisc = BackwardDifferentiationFormula;
+
+    Ode2 ode;
     TimeDisc timeDisc(3);
-    test_Ode2<NLTag>(timeDisc);
+
+    TestOutput<NLTag> test("Ode2_BDF");
+    test.run_test(ode, timeDisc);
 }
 
 
