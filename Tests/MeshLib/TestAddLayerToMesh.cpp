@@ -91,6 +91,22 @@ TEST(MeshLib, AddBottomLayerToLineMesh)
 TEST(MeshLib, AddTopLayerToTriMesh)
 {
 	std::unique_ptr<MeshLib::Mesh> const mesh (MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
+	std::string const& mat_name ("MaterialIDs");
+	boost::optional<MeshLib::PropertyVector<int>&> mats =
+		mesh->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
+	if (mats)
+	{
+		mats->resize(mesh->getNElements());
+		std::fill_n(mats->begin(), mesh->getNElements(), 0);
+	}
+	boost::optional<MeshLib::PropertyVector<double>&> test =
+		mesh->getProperties().createNewPropertyVector<double>("test", MeshLib::MeshItemType::Cell);
+	if (test)
+	{
+		test->resize(mesh->getNElements());
+		std::fill_n(mats->begin(), mesh->getNElements(), 0.1);
+	}
+	ASSERT_EQ(2, mesh->getProperties().getPropertyVectorNames().size());
 	double const height (1);
 	std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", true));
 
@@ -98,9 +114,15 @@ TEST(MeshLib, AddTopLayerToTriMesh)
 	ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
 
 	std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
-	ASSERT_EQ(50, n_elems[1]); // tests if 50 tris are present
-	ASSERT_EQ(50, n_elems[6]); // tests if 50 prisms are present
+	ASSERT_EQ(mesh->getNElements(), n_elems[1]); // tests if 50 tris are present
+	ASSERT_EQ(mesh->getNElements(), n_elems[6]); // tests if 50 prisms are present
 
+	ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
+	boost::optional<MeshLib::PropertyVector<int>&> new_mats =
+		result->getProperties().getPropertyVector<int>(mat_name);
+	ASSERT_EQ(result->getNElements(), new_mats->size());
+	ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
+	ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
 	AddLayerValidation::testZCoords2D(*mesh, *result, height);
 	AddLayerValidation::validate(*result, true);
 }
@@ -226,14 +248,28 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
 	std::unique_ptr<MeshLib::Mesh> const mesh (MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
 	std::unique_ptr<MeshLib::Mesh> const mesh2 (MeshLib::addLayerToMesh(*mesh, 5, "mesh", true));
 	double const height (1);
-	std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh2, height, "mesh", false));
+	std::string const& mat_name ("MaterialIDs");
+	boost::optional<MeshLib::PropertyVector<int>&> mats =
+		mesh2->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
+	if (mats)
+	{
+		mats->resize(mesh2->getNElements());
+		std::fill_n(mats->begin(), mesh2->getNElements(), 0);
+	}
 
+	std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh2, height, "mesh", false));
 	ASSERT_EQ(mesh2->getNNodes()/2.0 * 3, result->getNNodes());
 	ASSERT_EQ(mesh2->getNElements()/2.0 * 3, result->getNElements());
 
 	std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
-	ASSERT_EQ(50, n_elems[1]); // tests if 50 tris are present
-	ASSERT_EQ(100, n_elems[6]); // tests if 50 prisms are present
+	ASSERT_EQ(mesh->getNElements(), n_elems[1]); // tests if 50 tris are present
+	ASSERT_EQ(2 * mesh->getNElements(), n_elems[6]); // tests if 50 prisms are present
+	ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
+	boost::optional<MeshLib::PropertyVector<int>&> new_mats =
+		result->getProperties().getPropertyVector<int>(mat_name);
+	ASSERT_EQ(result->getNElements(), new_mats->size());
+	ASSERT_EQ(mesh2->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
+	ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
 
 	MathLib::Vector3 const dir(0, 0, 1);
 	std::unique_ptr<MeshLib::Mesh> test_input (
