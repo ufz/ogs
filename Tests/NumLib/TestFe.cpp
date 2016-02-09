@@ -54,22 +54,27 @@ struct TestCase
 
 typedef ::testing::Types<
 #ifdef OGS_USE_EIGEN
-        TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeLINE3, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
-        TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFeLINE2Y, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFePRISM6, EigenFixedShapeMatrixPolicy>,
-        TestCase<TestFePYRA5, EigenFixedShapeMatrixPolicy>
+    TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeLINE3, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFePRISM6, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFePYRA5, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeQUAD4, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeTET4, EigenDynamicShapeMatrixPolicy>,
+    TestCase<TestFeTRI3, EigenDynamicShapeMatrixPolicy>,
+
+    TestCase<TestFeHEX8, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeLINE2, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeLINE2Y, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeLINE3, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFePRISM6, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFePYRA5, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
+    TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>
 #endif
-        > TestTypes;
+    > TestTypes;
 }
 
 template <class T>
