@@ -16,12 +16,16 @@
 #define MESHINFORMATION_H
 
 #include <array>
+#include <string>
+#include <limits>
+
 #include "GeoLib/AABB.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Properties.h"
 
 namespace MeshLib
 {
-class Mesh;
 
 /**
  * \brief A set of tools for extracting information from a mesh
@@ -29,8 +33,22 @@ class Mesh;
 class MeshInformation
 {
 public:
-	/// Returns the smallest and largest MaterialID of the mesh.
-	static const std::pair<int, int> getValueBounds(const MeshLib::Mesh &mesh);
+	/// Returns the smallest and largest value of a scalar array with the given name.
+	template<typename T>
+	static std::pair<T, T> const
+		getValueBounds(MeshLib::Mesh const& mesh, std::string const& name)
+	{
+		boost::optional<MeshLib::PropertyVector<T> const&> 
+			data_vec (mesh.getProperties().getPropertyVector<T>(name));
+		if (!data_vec)
+			return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
+		if (data_vec->empty()) {
+			INFO("Mesh does not contain values for the property \"%s\".", name.c_str());
+			return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
+		}
+		auto vec_bounds = std::minmax_element(data_vec->cbegin(), data_vec->cend());
+		return {*(vec_bounds.first), *(vec_bounds.second)};
+	}
 
 	/// Returns the bounding box of the mesh.
 	static const GeoLib::AABB getBoundingBox(const MeshLib::Mesh &mesh);

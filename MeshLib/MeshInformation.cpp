@@ -13,29 +13,10 @@
  */
 
 #include "MeshInformation.h"
-#include "Mesh.h"
 #include "Elements/Element.h"
 
 namespace MeshLib
 {
-
-const std::pair<int, int> MeshInformation::getValueBounds(const MeshLib::Mesh &mesh)
-{
-	boost::optional<MeshLib::PropertyVector<int> const&> materialIds
-		= mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-	if (!materialIds) {
-		INFO("Mesh does not contain a property \"MaterialIDs\".");
-		return {std::numeric_limits<int>::max(),
-		        std::numeric_limits<int>::max()};
-	}
-	if (materialIds->empty()) {
-		INFO("Mesh does not contain values for the property \"MaterialIDs\".");
-		return {std::numeric_limits<int>::max(),
-		        std::numeric_limits<int>::max()};
-	}
-	auto mat_bounds = std::minmax_element(materialIds->cbegin(), materialIds->cend());
-	return {*(mat_bounds.first), *(mat_bounds.second)};
-}
 
 const GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh &mesh)
 {

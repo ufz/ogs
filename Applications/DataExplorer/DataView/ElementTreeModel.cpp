@@ -104,30 +104,27 @@ void ElementTreeModel::clearView()
 	reset();
 }
 
-void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
+void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 {
 	this->clearView();
 
-	if (!mesh)
-		return;
-
 	QList<QVariant> mesh_name;
-	mesh_name << "Name:" << QString::fromStdString(mesh->getName()) << "" << "" << "";
+	mesh_name << "Name:" << QString::fromStdString(mesh.getName()) << "" << "" << "";
 	TreeItem* name_item = new TreeItem(mesh_name, _rootItem);
 	_rootItem->appendChild(name_item);
 
 	QList<QVariant> nodes_number;
-	nodes_number << "#Nodes: " << QString::number(mesh->getNNodes()) << "" << "";
+	nodes_number << "#Nodes: " << QString::number(mesh.getNNodes()) << "" << "";
 	TreeItem* nodes_item = new TreeItem(nodes_number, _rootItem);
 	_rootItem->appendChild(nodes_item);
 
 	QList<QVariant> elements_number;
-	elements_number << "#Elements: " << QString::number(mesh->getNElements()) << "" << "";
+	elements_number << "#Elements: " << QString::number(mesh.getNElements()) << "" << "";
 	TreeItem* elements_item = new TreeItem(elements_number, _rootItem);
 	_rootItem->appendChild(elements_item);
 
 	const std::array<QString, 7> n_element_names = {{ "Lines:", "Triangles:", "Quads:", "Tetrahedra:", "Hexahedra:", "Pyramids:", "Prisms:" }};
-	const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(*mesh));
+	const std::array<unsigned, 7>& n_element_types (MeshLib::MeshInformation::getNumberOfElementTypes(mesh));
 	for (std::size_t i=0; i<n_element_types.size(); ++i)
 	{
 		if (n_element_types[i])
@@ -144,7 +141,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	TreeItem* aabb_item = new TreeItem(bounding_box, _rootItem);
 	_rootItem->appendChild(aabb_item);
 
-	const GeoLib::AABB aabb (MeshLib::MeshInformation::getBoundingBox(*mesh));
+	const GeoLib::AABB aabb (MeshLib::MeshInformation::getBoundingBox(mesh));
 	auto const& min = aabb.getMinPoint();
 	auto const& max = aabb.getMaxPoint();
 
@@ -159,17 +156,28 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const*const mesh)
 	aabb_item->appendChild(max_item);
 
 	QList<QVariant> edges;
-	edges << "Edge Length: " << "[" + QString::number(mesh->getMinEdgeLength(), 'f') + "," << QString::number(mesh->getMaxEdgeLength(), 'f') + "]" << "";
+	edges << "Edge Length: " << "[" + QString::number(mesh.getMinEdgeLength(), 'f') + "," << QString::number(mesh.getMaxEdgeLength(), 'f') + "]" << "";
 	TreeItem* edge_item = new TreeItem(edges, _rootItem);
 	_rootItem->appendChild(edge_item);
 
-	std::pair<int, int> const mat_bounds (MeshLib::MeshInformation::getValueBounds(*mesh));
-	if (mat_bounds.second != std::numeric_limits<int>::max())
+	std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
+	for (std::size_t i=0; i<vec_names.size(); ++i)
 	{
-		QList<QVariant> materials;
-		materials << "MaterialIDs: " << "[" + QString::number(mat_bounds.first) + "," << QString::number(mat_bounds.second) + "]" << "";
-		TreeItem* mat_item = new TreeItem(materials, _rootItem);
-		_rootItem->appendChild(mat_item);
+		QList<QVariant> array_info;
+		array_info << QString::fromStdString(vec_names[i]) + ": ";
+		auto vec_bounds (MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_names[i]));
+		if (vec_bounds.second != std::numeric_limits<int>::max())
+			array_info << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+		else
+		{
+			auto vec_bounds (MeshLib::MeshInformation::getValueBounds<double>(mesh, vec_names[i]));
+			if (vec_bounds.second != std::numeric_limits<double>::max())
+				array_info  << "[" + QString::number(vec_bounds.first) + "," << QString::number(vec_bounds.second) + "]" << "";
+		}
+		if (array_info.size() == 1)
+			array_info << "[ ?" << "? ]" << "";
+		TreeItem* vec_item = new TreeItem(array_info, _rootItem);
+		_rootItem->appendChild(vec_item);
 	}
 
 	reset();
