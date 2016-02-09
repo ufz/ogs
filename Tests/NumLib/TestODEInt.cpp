@@ -66,9 +66,8 @@ template<>
 class OdeTraits<Ode1>
 {
 public:
-    static void setIC(double& t0, Vector& x0)
+    static void setIC(Vector& x0)
     {
-        t0 = 0.0;
         x0.resize(2);
         x0 << 1.0, 0.0;
     }
@@ -80,6 +79,7 @@ public:
         return v;
     }
 
+    static constexpr double t0    = 0.0;
     static constexpr double t_end = 1.0;
 };
 // ODE 1 end //////////////////////////////////////////////////////
@@ -120,9 +120,8 @@ template<>
 class OdeTraits<Ode2>
 {
 public:
-    static void setIC(double& t0, Vector& x0)
+    static void setIC(Vector& x0)
     {
-        t0 = 1.0;
         x0.resize(1);
         x0[0] = 1.0;
     }
@@ -134,6 +133,7 @@ public:
         return v;
     }
 
+    static constexpr double t0    = 1.0;
     static constexpr double t_end = 2.0;
 };
 // ODE 2 end //////////////////////////////////////////////////////
@@ -153,18 +153,25 @@ public:
     template<typename Ode>
     void run_test(Ode& ode, ITimeDiscretization& timeDisc)
     {
+        auto const t_end = OdeTraits<Ode>::t_end;
+        auto const t0    = OdeTraits<Ode>::t0;
+        run_test<Ode>(ode, timeDisc, (t_end-t0)/10.0); // by default make 10 timesteps
+    }
+
+    template<typename Ode>
+    void run_test(Ode& ode, ITimeDiscretization& timeDisc, const double delta_t)
+    {
         TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
+        const double t0    = OdeTraits<Ode>::t0;
+        const double t_end = OdeTraits<Ode>::t_end;
+
         // initial condition
-        double t0;
         Vector x0;
-        OdeTraits<Ode>::setIC(t0, x0);
+        OdeTraits<Ode>::setIC(x0);
 
         write(t0, x0, x0);
-
-        const double t_end = OdeTraits<Ode>::t_end;
-        const double delta_t = (t_end-t0)/10.0;
 
         auto cb = [this](const double t, Vector const& x) {
             loopCallback<Ode>(t, x);
@@ -187,11 +194,10 @@ private:
         write(t, x, OdeTraits<Ode>::solution(t));
     }
 
-
     std::ofstream _file;
 
-    const double _tol = 1e-4;
-    const unsigned _maxiter = 5;
+    const double _tol = 1e-8;
+    const unsigned _maxiter = 10;
     NonlinearSolver<NLTag> _nonlinear_solver = NonlinearSolver<NLTag>(_tol, _maxiter);
 };
 
