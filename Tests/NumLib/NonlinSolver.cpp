@@ -33,7 +33,7 @@ solve(INonlinearSystemPicard &sys, Vector &x)
         _x_new = linear_solver.solve(rhs);
 
         auto const error = (_x_new - x).norm();
-        INFO("  picard iteration %u error: %e", iteration, error);
+        // INFO("  picard iteration %u error: %e", iteration, error);
 
         x = _x_new;
 
@@ -42,7 +42,7 @@ solve(INonlinearSystemPicard &sys, Vector &x)
         }
 
         if (sys.isLinear()) {
-            INFO("  picard linear system. not looping");
+            // INFO("  picard linear system. not looping");
             break;
         }
     }
@@ -81,13 +81,13 @@ solve(INonlinearSystemNewton &sys, Vector &x)
 
         _minus_delta_x = linear_solver.solve(res);
 
-        auto const dx_norm = _minus_delta_x.norm();
-        INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
+        // auto const dx_norm = _minus_delta_x.norm();
+        // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
 
         x -= _minus_delta_x;
 
         if (sys.isLinear()) {
-            INFO("  newton linear system. not looping");
+            // INFO("  newton linear system. not looping");
             break;
         }
     }
