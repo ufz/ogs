@@ -89,64 +89,33 @@ private:
 };
 
 
-TEST(NumLibODEInt, Ode1_BwdEuler)
+template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
+run_test_case()
 {
-    auto const NLTag = NonlinearSolverTag::Picard;
-    using TimeDisc = BackwardEuler;
-
-    Ode1 ode;
+    ODE ode;
     TimeDisc timeDisc;
 
     TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
-
-TEST(NumLibODEInt, Ode1_FwdEuler)
+template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+typename std::enable_if<std::is_same<TimeDisc, CrankNicolson>::value>::type
+run_test_case()
 {
-    auto const NLTag = NonlinearSolverTag::Newton;
-    using TimeDisc = ForwardEuler;
-
-    Ode1 ode;
-    TimeDisc timeDisc;
-
-    TestOutput<NLTag> test;
-    test.run_test(ode, timeDisc);
-}
-
-
-TEST(NumLibODEInt, Ode2_BwdEuler)
-{
-    auto const NLTag = NonlinearSolverTag::Newton;
-    using TimeDisc = BackwardEuler;
-
-    Ode2 ode;
-    TimeDisc timeDisc;
-
-    TestOutput<NLTag> test;
-    test.run_test(ode, timeDisc);
-}
-
-
-TEST(NumLibODEInt, Ode2_CrankNicolson)
-{
-    auto const NLTag = NonlinearSolverTag::Newton;
-    using TimeDisc = CrankNicolson;
-
-    Ode2 ode;
+    ODE ode;
     TimeDisc timeDisc(0.5);
 
     TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
-
-TEST(NumLibODEInt, Ode2_BDF)
+template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+typename std::enable_if<std::is_same<TimeDisc, BackwardDifferentiationFormula>::value>::type
+run_test_case()
 {
-    auto const NLTag = NonlinearSolverTag::Newton;
-    using TimeDisc = BackwardDifferentiationFormula;
-
-    Ode2 ode;
+    ODE ode;
     TimeDisc timeDisc(3);
 
     TestOutput<NLTag> test;
@@ -154,3 +123,57 @@ TEST(NumLibODEInt, Ode2_BDF)
 }
 
 
+
+template<typename ODE_, typename TimeDisc_, NonlinearSolverTag NLTag_>
+struct TestCase
+{
+    using ODE = ODE_;
+    using TimeDisc = TimeDisc_;
+    static constexpr NonlinearSolverTag NLTag = NLTag_;
+};
+
+
+typedef ::testing::Types<
+    TestCase<Ode1, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<Ode1, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<Ode1, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+
+    TestCase<Ode1, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<Ode1, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<Ode1, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
+
+    TestCase<Ode2, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<Ode2, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<Ode2, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+
+    TestCase<Ode2, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<Ode2, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<Ode2, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
+> TestCases;
+
+
+
+template<class TestParams>
+class NumLibODEIntTyped : public ::testing::Test
+{
+public:
+    using ODE      = typename TestParams::ODE;
+    using TimeDisc = typename TestParams::TimeDisc;
+    static constexpr NonlinearSolverTag NLTag = TestParams::NLTag;
+
+    static void test()
+    {
+        run_test_case<TimeDisc, ODE, NLTag>();
+    }
+};
+
+TYPED_TEST_CASE(NumLibODEIntTyped, TestCases);
+
+TYPED_TEST(NumLibODEIntTyped, T1)
+{
+    TestFixture::test();
+}
