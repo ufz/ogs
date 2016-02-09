@@ -54,6 +54,10 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     const PetscScalar one = 1.0;
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
 
+    // Each process will only zero its own rows.
+    // This avoids all reductions in the zero row routines
+    // and thus improves performance for very large process counts.
+    // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
     MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE); 
     if(nrows>0)
         MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);

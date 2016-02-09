@@ -103,7 +103,7 @@ public:
     }
 
     /// Get ghost indices, forwarded from MeshComponentMap.
-    std::vector<GlobalIndexType> getGhostIndices() const
+    std::vector<GlobalIndexType> const& getGhostIndices() const
     {
         return _mesh_component_map.getGhostIndices();
     }

@@ -140,7 +140,7 @@ public:
     }
 
     /// Get ghost indices (for DDC).
-    std::vector<GlobalIndexType> getGhostIndices() const
+    std::vector<GlobalIndexType> const& getGhostIndices() const
     {
         return _ghosts_indices;
     }

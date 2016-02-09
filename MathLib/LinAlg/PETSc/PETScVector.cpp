@@ -43,20 +43,20 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 PETScVector::PETScVector(const PetscInt vec_size,
                          const std::vector<PetscInt>& ghost_ids,
                          const bool is_global_size) :
-                         _size_ghosts(ghost_ids.size()), has_ghost_id(true)
+                         _size_ghosts(ghost_ids.size()), _has_ghost_id(true)
 {
     PetscInt nghosts = static_cast<PetscInt>( ghost_ids.size() );
     if ( is_global_size )
     {
         VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size, nghosts,
-                       &ghost_ids[0], &_v);
+                       ghost_ids.data(), &_v);
     }
     else
     {
         VecCreate(PETSC_COMM_WORLD, &_v);
         VecSetType(_v, VECMPI);
         VecSetSizes(_v, vec_size, PETSC_DECIDE);
-        VecMPISetGhost(_v, nghosts, &ghost_ids[0]);
+        VecMPISetGhost(_v, nghosts, ghost_ids.data());
     }
 
     config();
@@ -163,7 +163,7 @@ void PETScVector::getValues(PetscScalar u[])
 PetscScalar* PETScVector::getLocalVector() const
 {
     PetscScalar *loc_array;
-    if (has_ghost_id)
+    if (_has_ghost_id)
     {
         VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
         VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
@@ -177,10 +177,10 @@ PetscScalar* PETScVector::getLocalVector() const
 
 void PETScVector::restoreArray(PetscScalar* array) const
 {
-    if (has_ghost_id)
+    if (_has_ghost_id)
     {
         VecRestoreArray(_v_loc, &array);
-        //   VecGhostRestoreLocalForm(_v, &_v_loc);
+        VecGhostRestoreLocalForm(_v, &_v_loc);
     }
     else
         VecRestoreArray(_v, &array);

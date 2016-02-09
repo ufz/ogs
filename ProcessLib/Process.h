@@ -166,9 +166,18 @@ private:
 			                          MeshLib::MeshItemType::Node, i);
 			auto global_index = std::abs(
 			    _local_to_global_index_map->getGlobalIndex(l, component_id));
-			// Ghost entry and its original index is 0
+#ifdef USE_PETSC
+			// The global indices of the ghost entries of the global
+			// matrix or the global vectors need to be set as negative values
+			// for equation assembly, however the global indices start from zero.
+			// Therefore, any ghost entry with zero index is assigned an negative
+			// value of the vector size or the matrix dimension.
+			// To assign the initial value for the ghost entries,
+			// the negative indices of the ghost entries are restored to zero.
+			// checked hereby.
 			if ( global_index == _x->size() )
 			    global_index = 0;
+#endif
 			_x->set(global_index,
 			        variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}

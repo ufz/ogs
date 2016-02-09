@@ -209,7 +209,7 @@ void checkGlobalVectorInterfacePETSc()
          rank1: 4 5 6 7 8   0 9
          rank2: 9 10 11     3 5
 
-         The above ghost entry embeded vector is realized by the following
+         The above ghost entry embedded vector is realized by the following
          test.
     */    
     std::size_t local_vec_size = 4;
@@ -253,10 +253,10 @@ void checkGlobalVectorInterfacePETSc()
 
     std::vector<double> loc_v1(  x_with_ghosts.getLocalSize()
                                + x_with_ghosts.getGhostSize() );
-    x_with_ghosts.getValues(&loc_v1[0]);                          
+    x_with_ghosts.getValues(loc_v1.data());
     for (std::size_t i=0; i<expected.size(); i++)
     {
-         ASSERT_NEAR(expected[i], loc_v1[i], 1.e-10);
+         ASSERT_EQ(expected[i], loc_v1[i]);
     }
 }
 #endif
