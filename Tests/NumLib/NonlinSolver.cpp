@@ -81,8 +81,8 @@ solve(INonlinearSystemNewton &sys, Vector &x)
 
         _minus_delta_x = linear_solver.solve(res);
 
-        auto const error = _minus_delta_x.norm();
-        INFO("  newton iteration %u error: %e", iteration, error);
+        auto const dx_norm = _minus_delta_x.norm();
+        INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
 
         x -= _minus_delta_x;
 
