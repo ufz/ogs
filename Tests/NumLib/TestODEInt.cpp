@@ -69,8 +69,8 @@ private:
     void write(double const t, Vector const& x_num, Vector const& x_ana)
     {
         *_file << t;
-        for (IndexType i=0; i<x_ana.size(); ++i) *_file << '\t' << x_ana[i];
         for (IndexType i=0; i<x_num.size(); ++i) *_file << '\t' << x_num[i];
+        for (IndexType i=0; i<x_ana.size(); ++i) *_file << '\t' << x_ana[i];
         *_file << "\n";
     }
 
