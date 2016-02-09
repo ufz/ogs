@@ -99,8 +99,8 @@ public:
 				// several meshes. Then we have to assign the referenced mesh
 				// here.
 				_processes.emplace_back(
-					new ProcessLib::GroundwaterFlowProcess<GlobalSetupType>(
-						*_mesh_vec[0], _process_variables, _parameters, pc));
+				    ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
+				        *_mesh_vec[0], _process_variables, _parameters, pc));
 			}
 			else
 			{

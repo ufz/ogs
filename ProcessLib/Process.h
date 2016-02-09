@@ -34,6 +34,7 @@
 #include "DirichletBc.h"
 #include "NeumannBc.h"
 #include "NeumannBcAssembler.h"
+#include "Parameter.h"
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
@@ -95,15 +96,15 @@ public:
 
 		createLocalAssemblers();
 
-		for (auto const& pv : _process_variables)
+		for (ProcessVariable& pv : _process_variables)
 		{
 			DBUG("Set initial conditions.");
-			setInitialConditions(*pv, 0);  // 0 is the component id
+			setInitialConditions(pv, 0);  // 0 is the component id
 
 			DBUG("Initialize boundary conditions.");
-			createDirichletBcs(*pv, 0);  // 0 is the component id
+			createDirichletBcs(pv, 0);  // 0 is the component id
 
-			createNeumannBcs(*pv, 0);  // 0 is the component id
+			createNeumannBcs(pv, 0);  // 0 is the component id
 		}
 
 		for (auto& bc : _neumann_bcs)
@@ -312,8 +313,74 @@ protected:
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
 	/// Variables used by this process.
-	std::vector<ProcessVariable*> _process_variables;
+	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 };
+
+/// Find a process variable for a name given in the process configuration under
+/// the tag.
+/// In the process config a process variable is referenced by a name. For
+/// example it will be looking for a variable named "H" in the list of process
+/// variables when the tag is "hydraulic_head":
+/// \code
+///     <process>
+///         ...
+///         <hydraulic_head>H</hydraulic_head>
+///     </process>
+/// \endcode
+/// and return a reference to that variable.
+ProcessVariable& findProcessVariable(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<ProcessVariable> const& variables);
+
+/// Find a parameter of specific type for a name given in the process
+/// configuration under the tag.
+/// In the process config a parameter is referenced by a name. For example it
+/// will be looking for a parameter named "K" in the list of parameters
+/// when the tag is "hydraulic_conductivity":
+/// \code
+///     <process>
+///         ...
+///         <hydraulic_conductivity>K</hydraulic_conductivity>
+///     </process>
+/// \endcode
+/// and return a reference to that parameter. Additionally it checks for the
+/// type of the found parameter.
+template <typename... ParameterArgs>
+Parameter<ParameterArgs...>& findParameter(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+{
+	// Find parameter name in process config.
+	auto const name = process_config.getConfParam<std::string>(tag);
+
+	// Find corresponding parameter by name.
+	auto const parameter_it =
+	    std::find_if(parameters.cbegin(), parameters.cend(),
+	                 [&name](std::unique_ptr<ParameterBase> const& p)
+	                 {
+		                 return p->name == name;
+	                 });
+
+	if (parameter_it == parameters.end())
+	{
+		ERR(
+		    "Could not find parameter '%s' in the provided parameters list for "
+		    "config tag <%s>.",
+		    name.c_str(), tag.c_str());
+		std::abort();
+	}
+	DBUG("Found parameter \'%s\'.", (*parameter_it)->name.c_str());
+
+	// Check the type correctness of the found parameter.
+	auto* const parameter =
+	    dynamic_cast<Parameter<ParameterArgs...>*>(parameter_it->get());
+	if (!parameter)
+	{
+		ERR("The read parameter is of incompatible type.");
+		std::abort();
+	}
+	return *parameter;
+}
 
 }  // namespace ProcessLib
 

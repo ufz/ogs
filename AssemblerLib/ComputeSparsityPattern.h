@@ -14,9 +14,13 @@
 
 #include "ProcessLib/NumericsConfig.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace AssemblerLib
 {
-
 class LocalToGlobalIndexMap;
 
 /// A vector telling how many nonzeros there are in each global matrix row.
