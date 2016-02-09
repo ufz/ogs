@@ -87,10 +87,10 @@ public:
     }
 
     /// get entry values to an array
-    void getValues(double u[])
+    void getValues(std::vector<double>& u)
     {
-        for (IndexType i=0; i<_vec.size(); i++)
-            u[i] = _vec[i];
+        assert(u.size() == _vec.size());
+        copy_n(_vec.data(), _vec.size(), u.begin());
     }
 
 #ifndef NDEBUG

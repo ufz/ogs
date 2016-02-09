@@ -108,9 +108,10 @@ public:
 	}
 
 	/// get entry values to an array
-	void getValues(LIS_SCALAR u[])
+	void getValues(std::vector<double>& u)
 	{
-		lis_vector_get_values(_vec, 0, size(), u);
+		assert(u.size() == size());
+		lis_vector_get_values(_vec, 0, size(), u.data());
 	}
 
 private:

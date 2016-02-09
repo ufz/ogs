@@ -76,11 +76,10 @@ public:
 	}
 
 	/// get entry values to an array
-	void getValues(T u[])
+	void getValues(std::vector<double>& u)
 	{
-		for (std::size_t i=0; i<this->size(); ++i) {
-			u[i] = (*this)[i];
-		}
+		assert(u.size() == this->size());
+		std::copy(this->cbegin(), this->cend(), u.begin());
 	}
 
 	/**

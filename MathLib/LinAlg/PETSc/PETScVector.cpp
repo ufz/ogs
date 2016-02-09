@@ -21,6 +21,9 @@
 
 #include "PETScVector.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace MathLib
 {
 PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
@@ -150,13 +153,12 @@ void PETScVector::getGlobalVector(PetscScalar u[])
 #endif
 }
 
-void PETScVector::getValues(PetscScalar u[])
+void PETScVector::getValues(std::vector<double>& u)
 {
+    assert(u.size() == getLocalSize() + getGhostSize());
+
     double* loc_x = getLocalVector();
-    for (PetscInt i=0; i < getLocalSize() + getGhostSize(); i++)
-    {
-        u[i] = loc_x[i];
-    }
+    std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
     restoreArray(loc_x);
 }
 
