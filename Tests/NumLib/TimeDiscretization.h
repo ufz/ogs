@@ -235,6 +235,7 @@ const double BDF_Coeffs[6][7] = {
 class BackwardDifferentiationFormula final : public ITimeDiscretization
 {
 public:
+    explicit
     BackwardDifferentiationFormula(const unsigned num_steps)
         : _num_steps(num_steps)
     {
