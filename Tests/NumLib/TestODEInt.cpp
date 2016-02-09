@@ -2,6 +2,8 @@
 #include <logog/include/logog.hpp>
 
 #include <fstream>
+#include <memory>
+#include <typeinfo>
 
 #include "TimeLoop.h"
 #include "Odes.h"
@@ -12,12 +14,6 @@ template<NonlinearSolverTag NLTag>
 class TestOutput
 {
 public:
-    TestOutput(std::string const& filename)
-        : _file(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_" + filename + ".csv")
-    {
-        _file.precision(15);
-    }
-
     template<typename Ode>
     void run_test(Ode& ode, ITimeDiscretization& timeDisc)
     {
@@ -29,6 +25,8 @@ public:
     template<typename Ode>
     void run_test(Ode& ode, ITimeDiscretization& timeDisc, const double delta_t)
     {
+        init_file(ode, timeDisc, delta_t);
+
         TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
@@ -48,12 +46,33 @@ public:
     }
 
 private:
+    template<typename Ode, typename TimeDisc>
+    void init_file(Ode const& ode, TimeDisc const& timeDisc, const double delta_t)
+    {
+        std::string path(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_");
+        path += typeid(ode).name();
+        path += "_";
+        path += typeid(timeDisc).name();
+        path += "_";
+
+        switch (NLTag) {
+        case NonlinearSolverTag::Picard: path += "Picard"; break;
+        case NonlinearSolverTag::Newton: path += "Newton"; break;
+        }
+
+        path += "_" + std::to_string(delta_t);
+        path += ".csv";
+
+        _file.reset(new std::ofstream(path));
+        _file->precision(15);
+    }
+
     void write(double const t, Vector const& x_num, Vector const& x_ana)
     {
-        _file << t;
-        for (IndexType i=0; i<x_ana.size(); ++i) _file << '\t' << x_ana[i];
-        for (IndexType i=0; i<x_num.size(); ++i) _file << '\t' << x_num[i];
-        _file << "\n";
+        *_file << t;
+        for (IndexType i=0; i<x_ana.size(); ++i) *_file << '\t' << x_ana[i];
+        for (IndexType i=0; i<x_num.size(); ++i) *_file << '\t' << x_num[i];
+        *_file << "\n";
     }
 
     template<typename Ode>
@@ -62,7 +81,7 @@ private:
         write(t, x, OdeTraits<Ode>::solution(t));
     }
 
-    std::ofstream _file;
+    std::unique_ptr<std::ofstream> _file;
 
     const double _tol = 1e-8;
     const unsigned _maxiter = 10;
@@ -78,7 +97,7 @@ TEST(NumLibODEInt, Ode1_BwdEuler)
     Ode1 ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test("Ode1_BwdEuler");
+    TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
@@ -91,7 +110,7 @@ TEST(NumLibODEInt, Ode1_FwdEuler)
     Ode1 ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test("Ode1_FwdEuler");
+    TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
@@ -104,7 +123,7 @@ TEST(NumLibODEInt, Ode2_BwdEuler)
     Ode2 ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test("Ode2_BwdEuler");
+    TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
@@ -117,7 +136,7 @@ TEST(NumLibODEInt, Ode2_CrankNicolson)
     Ode2 ode;
     TimeDisc timeDisc(0.5);
 
-    TestOutput<NLTag> test("Ode2_CrankNicolson");
+    TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
@@ -130,7 +149,7 @@ TEST(NumLibODEInt, Ode2_BDF)
     Ode2 ode;
     TimeDisc timeDisc(3);
 
-    TestOutput<NLTag> test("Ode2_BDF");
+    TestOutput<NLTag> test;
     test.run_test(ode, timeDisc);
 }
 
