@@ -273,9 +273,14 @@ private:
 			result =
 			    _mesh.getProperties().template createNewPropertyVector<double>(
 			        property_name, MeshLib::MeshItemType::Node);
+#ifdef USE_PETSC
+			result->resize(_x->getLocalSize() + _x->getGhostSize());
+#else
 			result->resize(_x->size());
+#endif
 		}
-		assert(result && result->size() == _x->size());
+
+		assert(result);
 
 		// Copy result
 		_x->copyValues(*result);
