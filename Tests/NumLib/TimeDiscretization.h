@@ -15,7 +15,18 @@ public:
                              Vector const*& b) const = 0;
 };
 
-class ITimeDiscretization
+
+class IParabolicEquationNew
+{
+public:
+    virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
+    virtual Vector getRhs(Matrix const& M, Matrix const& K, Vector const& b) const = 0;
+    virtual Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                               const Vector &x_new_timestep) const = 0;
+    // virtual Matrix getJacobian(Matrix const& M, Matrix const& K, Vector const& b) const = 0;
+};
+
+class ITimeDiscretization : public IParabolicEquationNew
 {
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
@@ -55,6 +66,39 @@ public:
     virtual void adjustResidual(Vector const& x, Vector& res) const {
         (void) res; (void) x;
     }
+
+
+    /// IParabolicEquationNew
+
+    virtual Matrix getA(const Matrix &M, const Matrix &K) const override
+    {
+        Matrix A = M * getCurrentXWeight() + K;
+        adjustMatrix(A);
+        return A;
+    }
+
+    virtual Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
+    {
+        (void) K;
+        Vector rhs = b + M * getWeightedOldX();
+        adjustRhs(rhs);
+        return rhs;
+    }
+
+    virtual Vector getResidual(const Matrix &M, const Matrix &K, const Vector& b,
+                               const Vector &x_new_timestep) const override
+    {
+        auto const  alpha  = getCurrentXWeight();
+        auto const& x_curr = getCurrentX(x_new_timestep);
+        auto const  x_old  = getWeightedOldX();
+        auto const  x_dot  = alpha*x_new_timestep - x_old;
+
+        Vector res = M * x_dot + K*x_curr - b;
+        adjustResidual(x_new_timestep, res);
+        return res;
+    }
+
+    /// end IParabolicEquationNew
 };
 
 

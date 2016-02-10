@@ -45,15 +45,7 @@ public:
 
     Vector getResidual(Vector const& x_new_timestep) override
     {
-        auto const  alpha  = _time_disc.getCurrentXWeight();
-        auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
-        auto const  x_old  = _time_disc.getWeightedOldX();
-        auto const  x_dot  = alpha*x_new_timestep - x_old;
-
-        Vector res = _M * x_dot + _K*x_curr - _b;
-        _time_disc.adjustResidual(x_new_timestep, res);
-
-        return res;
+        return _time_disc.getResidual(_M, _K, _b, x_new_timestep);
     }
 
     Matrix getJacobian() override
@@ -120,16 +112,12 @@ public:
 
     Matrix getA() override
     {
-        Matrix A = _M * _time_disc.getCurrentXWeight() + _K;
-        _time_disc.adjustMatrix(A);
-        return A;
+        return _time_disc.getA(_M, _K);
     }
 
     Vector getRhs() override
     {
-        Vector rhs = _b + _M * _time_disc.getWeightedOldX();
-        _time_disc.adjustRhs(rhs);
-        return rhs;
+        return _time_disc.getRhs(_M, _K, _b);
     }
 
     bool isLinear() const override
