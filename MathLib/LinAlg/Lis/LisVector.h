@@ -107,8 +107,8 @@ public:
 		}
 	}
 
-	/// get entry values to an array
-	void getValues(std::vector<double>& u)
+	/// Copy vector values.
+	void copyValues(std::vector<double>& u)
 	{
 		assert(u.size() == size());
 		lis_vector_get_values(_vec, 0, size(), u.data());

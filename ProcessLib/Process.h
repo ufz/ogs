@@ -278,7 +278,7 @@ private:
 		assert(result && result->size() == _x->size());
 
 		// Copy result
-		_x->getValues(*result);
+		_x->copyValues(*result);
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());

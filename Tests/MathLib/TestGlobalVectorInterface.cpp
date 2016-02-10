@@ -179,7 +179,7 @@ void checkGlobalVectorInterfacePETSc()
     // check local array
     std::vector<double> loc_v(  x_fixed_p.getLocalSize()
                               + x_fixed_p.getGhostSize() );
-    x_fixed_p.getValues(loc_v);
+    x_fixed_p.copyValues(loc_v);
     z[0] = 1.0;
     z[1] = 2.0;
 
@@ -253,7 +253,7 @@ void checkGlobalVectorInterfacePETSc()
 
     std::vector<double> loc_v1(  x_with_ghosts.getLocalSize()
                                + x_with_ghosts.getGhostSize() );
-    x_with_ghosts.getValues(loc_v1);
+    x_with_ghosts.copyValues(loc_v1);
     for (std::size_t i=0; i<expected.size(); i++)
     {
          ASSERT_EQ(expected[i], loc_v1[i]);

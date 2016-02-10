@@ -153,7 +153,7 @@ void PETScVector::getGlobalVector(PetscScalar u[])
 #endif
 }
 
-void PETScVector::getValues(std::vector<double>& u)
+void PETScVector::copyValues(std::vector<double>& u)
 {
     assert(u.size() == getLocalSize() + getGhostSize());
 

@@ -86,8 +86,8 @@ public:
         }
     }
 
-    /// get entry values to an array
-    void getValues(std::vector<double>& u)
+    /// Copy vector values.
+    void copyValues(std::vector<double>& u)
     {
         assert(u.size() == _vec.size());
         copy_n(_vec.data(), _vec.size(), u.begin());

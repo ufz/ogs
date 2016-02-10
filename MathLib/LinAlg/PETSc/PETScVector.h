@@ -177,11 +177,11 @@ class PETScVector
         */
         void getGlobalVector(PetscScalar u[]);
 
-         /*!
-           Get local entries including ghost ones to an array
-           \param u Array for the values of local entries.
+        /*!
+           Copy local entries including ghost ones to an array
+           \param u Preallocated vector for the values of local entries.
         */
-        void getValues(std::vector<double>& u);
+        void copyValues(std::vector<double>& u);
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
