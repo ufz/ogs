@@ -50,7 +50,6 @@ MeshComponentMap::MeshComponentMap(
     }
 
     // construct dict (and here we number global_index by component type)
-    std::size_t global_index_offset = 0;
     std::size_t cell_index = 0;
     std::size_t comp_id = 0;
     _num_global_dof = 0;
@@ -79,7 +78,8 @@ MeshComponentMap::MeshComponentMap(
                  }
                  else
                  {
-                     global_id = static_cast<GlobalIndexType>(global_index_offset
+                     // _num_global_dof is used as the global index offset
+                     global_id = static_cast<GlobalIndexType>(_num_global_dof
                                              + mesh.getGlobalNodeID(j) );
                  }
                  const bool is_ghost = mesh.isGhostNode( mesh.getNode(j)->getID() );
@@ -105,12 +105,6 @@ MeshComponentMap::MeshComponentMap(
              for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
                  _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
                               comp_id, cell_index++));
-
-             if (order == ComponentOrder::BY_COMPONENT)
-             {
-                  // Include base nodes.
-                  global_index_offset += mesh.getNGlobalNodes();
-             }
 
              _num_global_dof += mesh.getNGlobalNodes();
         }
