@@ -25,26 +25,34 @@ public:
 
     /// begin INonlinearSystemNewton
 
-    void assembleResidualNewton(const Vector &x) override
+    void assembleResidualNewton(const Vector &x_new_timestep) override
     {
-        auto const t = _time_disc.getCurrentTime();
-        _ode.assemble(t, x, _M, _K, _b);
+        auto const  t      = _time_disc.getCurrentTime();
+        auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+
+        _ode.assemble(t, x_curr, _M, _K, _b);
     }
 
-    void assembleJacobian(const Vector &x) override
+    void assembleJacobian(const Vector &x_new_timestep) override
     {
-        auto const t = _time_disc.getCurrentTime();
-        auto const dxdot_dx = _time_disc.getCurrentXWeight();
-        _ode.assembleJacobian(t, x, dxdot_dx, _Jac);
+        auto const  t        = _time_disc.getCurrentTime();
+        auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
+        auto const  dxdot_dx = _time_disc.getCurrentXWeight();
+
+        _ode.assembleJacobian(t, x_curr, dxdot_dx, _Jac);
         _time_disc.adjustMatrix(_Jac);
     }
 
-    Vector getResidual(Vector const& x) override
+    Vector getResidual(Vector const& x_new_timestep) override
     {
-        auto const alpha = _time_disc.getCurrentXWeight();
-        auto const x_old = _time_disc.getWeightedOldX();
-        Vector res = _M * (alpha*x - x_old) + _K*x - _b;
-        _time_disc.adjustResidual(x, res);
+        auto const  alpha  = _time_disc.getCurrentXWeight();
+        auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+        auto const  x_old  = _time_disc.getWeightedOldX();
+        auto const  x_dot  = alpha*x_new_timestep - x_old;
+
+        Vector res = _M * x_dot + _K*x_curr - _b;
+        _time_disc.adjustResidual(x_new_timestep, res);
+
         return res;
     }
 
@@ -102,10 +110,12 @@ public:
 
     /// begin INonlinearSystemNewton
 
-    void assembleMatricesPicard(const Vector &x) override
+    void assembleMatricesPicard(const Vector &x_new_timestep) override
     {
-        auto const t = _time_disc.getCurrentTime();
-        _ode.assemble(t, x, _M, _K, _b);
+        auto const  t      = _time_disc.getCurrentTime();
+        auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+
+        _ode.assemble(t, x_curr, _M, _K, _b);
     }
 
     Matrix getA() override

@@ -25,17 +25,25 @@ public:
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
     virtual double getCurrentTime() const = 0; // get time used for assembly
 
-    // Forward Euler is linear, other schemes not.
-    virtual bool isLinearTimeDisc() const { return false; }
-
-    // for Crank-Nicolson
-    virtual bool needsPreload() const { return false; }
-
     // \dot x === alpha * x - x_old
     virtual double getCurrentXWeight() const = 0; // = alpha
     virtual Vector getWeightedOldX() const = 0; // = x_old
 
     ~ITimeDiscretization() = default;
+
+
+    // Forward Euler is linear, other schemes not.
+    virtual bool isLinearTimeDisc() const { return false; }
+
+    // Forward Euler overrides this.
+    // Caution: This is not the x with which you want to compute \dot x
+    virtual Vector const& getCurrentX(Vector const& x_at_new_timestep) const
+    {
+        return x_at_new_timestep;
+    }
+
+    // for Crank-Nicolson
+    virtual bool needsPreload() const { return false; }
 
     // for Crank-Nicolson
     virtual void adjustMatrix(Matrix& A) const { (void) A; }
@@ -111,6 +119,10 @@ public:
 
     double getCurrentTime() const override {
         return _t_old; // forward Euler does assembly at the preceding timestep
+    }
+
+    Vector const& getCurrentX(const Vector& /*x_at_new_timestep*/) const override {
+        return _x_old;
     }
 
     double getCurrentXWeight() const override {
