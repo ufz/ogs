@@ -46,6 +46,9 @@ public:
     // Forward Euler is linear, other schemes not.
     virtual bool isLinearTimeDisc() const { return false; }
 
+    // Forward Euler will override this
+    virtual double getDxDx() const { return 1.0; }
+
     // Forward Euler overrides this.
     // Caution: This is not the x with which you want to compute \dot x
     virtual Vector const& getCurrentX(Vector const& x_at_new_timestep) const
@@ -181,6 +184,10 @@ public:
         return true;
     }
 
+
+    double getDxDx() const override {
+        return 0.0;
+    }
 
     Matrix getA(const Matrix &M, const Matrix &K) const override
     {

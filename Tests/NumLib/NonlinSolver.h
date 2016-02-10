@@ -110,5 +110,6 @@ class IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
 public:
     virtual void assembleJacobian(const double t, Vector const& x,
                                   const double dxdot_dx,
+                                  const double dx_dx,
                                   Matrix& Jac) = 0;
 };

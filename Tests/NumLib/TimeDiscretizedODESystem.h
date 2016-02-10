@@ -39,7 +39,7 @@ public:
         auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
         auto const  dxdot_dx = _time_disc.getCurrentXWeight();
 
-        _ode.assembleJacobian(t, x_curr, dxdot_dx, _Jac);
+        _ode.assembleJacobian(t, x_curr, dxdot_dx, _time_disc.getDxDx(), _Jac);
         _time_disc.adjustMatrix(_Jac);
     }
 

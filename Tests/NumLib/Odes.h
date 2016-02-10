@@ -31,7 +31,8 @@ public:
     }
 
     void assembleJacobian(const double t, const Vector &x,
-                          const double dxdot_dx, Matrix &Jac)
+                          const double dxdot_dx,  const double dx_dx,
+                          Matrix &Jac)
     {
         (void) t; (void) x;
 
@@ -43,7 +44,7 @@ public:
         k << 0.0, 1.0,
             -1.0, 0.0;
 
-        Jac = (m*dxdot_dx + k).sparseView();
+        Jac = (m*dxdot_dx + dx_dx*k).sparseView();
     }
 
     IndexType getMatrixSize() const override
@@ -94,10 +95,11 @@ public:
     }
 
     void assembleJacobian(const double t, const Vector &x,
-                          const double dxdot_dx, Matrix &Jac)
+                          const double dxdot_dx, const double dx_dx,
+                          Matrix &Jac)
     {
         (void) t;
-        Jac.coeffRef(0, 0) = dxdot_dx + 2.0*x[0];
+        Jac.coeffRef(0, 0) = dxdot_dx + x[0] + x[0]*dx_dx;
     }
 
     IndexType getMatrixSize() const override
