@@ -181,6 +181,23 @@ public:
         return true;
     }
 
+
+    Matrix getA(const Matrix &M, const Matrix &K) const override
+    {
+        (void) K;
+        Matrix A = M * getCurrentXWeight();
+        adjustMatrix(A);
+        return A;
+    }
+
+    Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
+    {
+        (void) K;
+        Vector rhs = b + M * getWeightedOldX() - K * _x_old;
+        adjustRhs(rhs);
+        return rhs;
+    }
+
 private:
     double _t = 9999.9999;
     double _t_old = 7777.7777;
