@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>374</width>
-    <height>149</height>
+    <width>375</width>
+    <height>150</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>375</width>
+    <height>150</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>375</width>
+    <height>150</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Save Mesh...</string>

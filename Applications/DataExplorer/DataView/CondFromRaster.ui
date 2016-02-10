@@ -35,7 +35,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Mesh</string>
+      <string>Mesh:</string>
      </property>
     </widget>
    </item>
@@ -70,7 +70,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Raster</string>
+      <string>Raster:</string>
      </property>
     </widget>
    </item>

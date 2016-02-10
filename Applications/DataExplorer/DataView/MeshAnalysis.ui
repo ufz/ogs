@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>787</height>
+    <width>480</width>
+    <height>810</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>810</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>480</width>
+    <height>810</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Mesh Analysis</string>
@@ -147,7 +159,7 @@
       </size>
      </property>
      <property name="text">
-      <string>   Select Mesh:</string>
+      <string>   Select mesh:</string>
      </property>
     </widget>
    </item>

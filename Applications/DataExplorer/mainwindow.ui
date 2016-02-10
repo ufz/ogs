@@ -377,7 +377,7 @@
   </action>
   <action name="actionMesh_Generation">
    <property name="text">
-    <string>Mesh Generation...</string>
+    <string>Create Mesh From Input Data...</string>
    </property>
    <property name="toolTip">
     <string>Generates a mesh from a geometry.</string>

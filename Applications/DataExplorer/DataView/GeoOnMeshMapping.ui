@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>199</height>
+    <width>470</width>
+    <height>200</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>470</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>470</width>
+    <height>200</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Geometry Mapping Options</string>

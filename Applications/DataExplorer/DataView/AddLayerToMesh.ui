@@ -61,8 +61,14 @@
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="thicknessLabel">
+     <property name="minimumSize">
+      <size>
+       <width>140</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Thickness of new layer</string>
+      <string>Thickness of new layer:</string>
      </property>
     </widget>
    </item>
@@ -89,7 +95,7 @@
    <item row="5" column="0">
     <widget class="QLabel" name="nameLabel">
      <property name="text">
-      <string>Name of new mesh</string>
+      <string>Name of new mesh:</string>
      </property>
     </widget>
    </item>
