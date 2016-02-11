@@ -78,7 +78,7 @@ solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
 
-        x -= _minus_delta_x;
+        BLAS::axpy(x, -1.0, _minus_delta_x);
 
         if (sys.isLinear()) {
             // INFO("  newton linear system. not looping");

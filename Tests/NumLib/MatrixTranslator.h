@@ -77,7 +77,7 @@ public:
 
         // x_dot  = alpha*x_new_timestep - x_old
         Vector x_dot(x_new_timestep);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = M * x_dot + K * x_curr - b
         Vector res;
@@ -144,7 +144,7 @@ public:
 
         // x_dot  = alpha*x_new_timestep - x_old
         Vector x_dot(x_new_timestep);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = M * x_dot + K * x_curr - b
         Vector res;
@@ -218,7 +218,7 @@ public:
 
         // x_dot  = alpha*x_new_timestep - x_old
         Vector x_dot(x_new_timestep);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
         Vector res;
