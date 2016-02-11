@@ -42,10 +42,25 @@ class PETScVector
         /*!
             \brief Constructor
             \param vec_size       The size of the vector, either global or local
+            \param is_global_size The flag of the type of vec_size, i.e.
+                                  whether it is a global size
+                                  or local size. The default is true.
+                                  If is_global_size is true, the vector
+                                  is created by the global size, the local size
+                                  of the vector is determined by PETSc,
+                                  and vice versa is the same.
+        */
+        PETScVector(const PetscInt vec_size, const bool is_global_size = true);
+
+        /*!
+            \brief Constructor
+            \param vec_size       The size of the vector, either global or local
+            \param ghost_ids      The global indices of ghost entries
             \param is_global_size The flag of the type of vec_size, i.e. whether it is a global size
                                   or local size. The default is true.
         */
-        PETScVector(const PetscInt vec_size, const bool is_global_size = true);
+        PETScVector(const PetscInt vec_size, const std::vector<PetscInt>& ghost_ids,
+                    const bool is_global_size = true);
 
         /*!
              \brief Copy constructor
@@ -61,11 +76,7 @@ class PETScVector
         }
 
         /// Perform MPI collection of assembled entries in buffer
-        void finalizeAssembly()
-        {
-            VecAssemblyBegin(_v);
-            VecAssemblyEnd(_v);
-        }
+        void finalizeAssembly();
 
         /// Get the global size of the vector
         PetscInt size() const
@@ -77,6 +88,12 @@ class PETScVector
         PetscInt getLocalSize() const
         {
             return _size_loc;
+        }
+
+        /// Get the number of ghost entries in the same rank
+        PetscInt getGhostSize() const
+        {
+            return _size_ghosts;
         }
 
         /// Get the start index of the local vector
@@ -155,22 +172,16 @@ class PETScVector
         }
 
         /*!
-           Get local vector, i.e. entries in the same rank
-           \param loc_vec  Pointer to array where stores the local vector,
-                           memory allocation is not needed
-        */
-        PetscScalar *getLocalVector() const
-        {
-            PetscScalar *loc_vec;
-            VecGetArray(_v, &loc_vec);
-            return loc_vec;
-        }
-
-        /*!
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
         */
         void getGlobalVector(PetscScalar u[]);
+
+        /*!
+           Copy local entries including ghost ones to an array
+           \param u Preallocated vector for the values of local entries.
+        */
+        void copyValues(std::vector<double>& u);
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
@@ -238,6 +249,9 @@ class PETScVector
 
     private:
         PETSc_Vec _v;
+        /// Local vector, which is only for the case that  _v is created
+        /// with ghost entries. 
+        mutable PETSc_Vec _v_loc;
 
         /// Starting index in a rank
         PetscInt _start_rank;
@@ -248,6 +262,11 @@ class PETScVector
         PetscInt _size;
         /// Size of local entries
         PetscInt _size_loc;
+        /// Size of local ghost entries
+        PetscInt _size_ghosts = 0;
+
+        /// Flag to indicate whether the vector is created with ghost entry indices
+        bool _has_ghost_id = false;
 
         /*!
               \brief  Collect local vectors
@@ -256,6 +275,22 @@ class PETScVector
         */
         void gatherLocalVectors(PetscScalar local_array[],
                                 PetscScalar global_array[]);
+
+        /*!
+           Get local vector, i.e. entries in the same rank
+           \param loc_vec  Pointer to array where stores the local vector,
+                           memory allocation is not needed
+        */
+        PetscScalar* getLocalVector() const;
+
+        /*!
+           Restore array after finish access local array
+           \param array  Pointer to the local array fetched by VecGetArray
+        */
+        inline void restoreArray(PetscScalar* array) const;
+
+        /// A funtion called by constructors to configure members
+        void config();
 
         friend void finalizeVectorAssembly(PETScVector &vec);
 };

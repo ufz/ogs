@@ -75,6 +75,13 @@ public:
 		}
 	}
 
+	/// Copy vector values.
+	void copyValues(std::vector<double>& u)
+	{
+		assert(u.size() == this->size());
+		std::copy(this->cbegin(), this->cend(), u.begin());
+	}
+
 	/**
 	 * writes the matrix entries into a file
 	 * @param filename output file name

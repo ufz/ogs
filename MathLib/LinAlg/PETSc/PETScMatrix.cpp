@@ -24,13 +24,10 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PETScMatrixOption &mat_opt
 {
     if(!mat_opt.is_global_size)
     {
+        _n_loc_rows = nrows;
+        _n_loc_cols = nrows;
         _nrows = PETSC_DECIDE;
         _ncols = PETSC_DECIDE;
-        _n_loc_rows = nrows;
-
-        // Make the matrix be square.
-        MPI_Allreduce(&_n_loc_rows, &_nrows, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
-        _ncols = _nrows;
     }
 
     create(mat_opt.d_nz, mat_opt.o_nz);
@@ -57,6 +54,11 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     const PetscScalar one = 1.0;
     const PetscInt nrows = static_cast<PetscInt> (row_pos.size());
 
+    // Each process will only zero its own rows.
+    // This avoids all reductions in the zero row routines
+    // and thus improves performance for very large process counts.
+    // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
+    MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE); 
     if(nrows>0)
         MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else

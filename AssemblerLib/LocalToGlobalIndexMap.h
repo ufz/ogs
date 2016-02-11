@@ -68,6 +68,14 @@ public:
     /// Returns total number of degrees of freedom.
     std::size_t dofSize() const;
 
+    /// Returns total number of local degrees of freedom
+    /// of the present rank, which does not count the unknowns
+    /// associated with ghost nodes (for DDC with node-wise mesh partitioning).
+    std::size_t dofSizeLocal() const
+    {
+        return _mesh_component_map.getNLocalUnknowns();
+    }
+
     /// Returns total number of global degrees of freedom for DDC.
     std::size_t dofSizeGlobal() const
     {
@@ -92,6 +100,12 @@ public:
     std::vector<GlobalIndexType> getGlobalIndices(const MeshLib::Location &l) const
     {
         return _mesh_component_map.getGlobalIndices(l);
+    }
+
+    /// Get ghost indices, forwarded from MeshComponentMap.
+    std::vector<GlobalIndexType> const& getGhostIndices() const
+    {
+        return _mesh_component_map.getGhostIndices();
     }
 
 private:

@@ -21,6 +21,9 @@
 
 #include "PETScVector.h"
 
+#include <algorithm>
+#include <cassert>
+
 namespace MathLib
 {
 PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
@@ -36,14 +39,30 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
         // the size can be associated to specific memory allocation of a matrix
         VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, &_v);
     }
-    VecSetFromOptions(_v);
-    // VecSetUp(_v); // for petsc ver.>3.3
-    VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
 
-    VecGetLocalSize(_v, &_size_loc);
-    VecGetSize(_v, &_size);
+    config();
+}
 
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
+PETScVector::PETScVector(const PetscInt vec_size,
+                         const std::vector<PetscInt>& ghost_ids,
+                         const bool is_global_size) :
+                         _size_ghosts(ghost_ids.size()), _has_ghost_id(true)
+{
+    PetscInt nghosts = static_cast<PetscInt>( ghost_ids.size() );
+    if ( is_global_size )
+    {
+        VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size, nghosts,
+                       ghost_ids.data(), &_v);
+    }
+    else
+    {
+        VecCreate(PETSC_COMM_WORLD, &_v);
+        VecSetType(_v, VECMPI);
+        VecSetSizes(_v, vec_size, PETSC_DECIDE);
+        VecMPISetGhost(_v, nghosts, ghost_ids.data());
+    }
+
+    config();
 }
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
@@ -60,7 +79,25 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
         VecCopy(existing_vec._v, _v);
     }
 
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES,PETSC_TRUE);
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
+}
+
+void PETScVector::config()
+{
+    VecSetFromOptions(_v);
+    // VecSetUp(_v); // for petsc ver.>3.3
+    VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
+
+    VecGetLocalSize(_v, &_size_loc);
+    VecGetSize(_v, &_size);
+
+    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
+}
+
+void PETScVector::finalizeAssembly()
+{
+    VecAssemblyBegin(_v);
+    VecAssemblyEnd(_v);
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
@@ -114,6 +151,41 @@ void PETScVector::getGlobalVector(PetscScalar u[])
     PetscMemoryGetCurrentUsage(&mem2);
     PetscPrintf(PETSC_COMM_WORLD, "### Memory usage by Updating. Before :%f After:%f Increase:%d\n", mem1, mem2, (int)(mem2 - mem1));
 #endif
+}
+
+void PETScVector::copyValues(std::vector<double>& u)
+{
+    assert(u.size() == getLocalSize() + getGhostSize());
+
+    double* loc_x = getLocalVector();
+    std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
+    restoreArray(loc_x);
+}
+
+PetscScalar* PETScVector::getLocalVector() const
+{
+    PetscScalar *loc_array;
+    if (_has_ghost_id)
+    {
+        VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostGetLocalForm(_v, &_v_loc);
+        VecGetArray(_v_loc, &loc_array);
+    }
+    else
+       VecGetArray(_v, &loc_array);
+    return loc_array;
+}
+
+void PETScVector::restoreArray(PetscScalar* array) const
+{
+    if (_has_ghost_id)
+    {
+        VecRestoreArray(_v_loc, &array);
+        VecGhostRestoreLocalForm(_v, &_v_loc);
+    }
+    else
+        VecRestoreArray(_v, &array);
 }
 
 PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const

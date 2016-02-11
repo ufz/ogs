@@ -107,6 +107,13 @@ public:
 		}
 	}
 
+	/// Copy vector values.
+	void copyValues(std::vector<double>& u)
+	{
+		assert(u.size() == size());
+		lis_vector_get_values(_vec, 0, size(), u.data());
+	}
+
 private:
 	LIS_VECTOR _vec;
 };

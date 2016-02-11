@@ -164,8 +164,20 @@ private:
 		{
 			MeshLib::Location const l(_mesh.getID(),
 			                          MeshLib::MeshItemType::Node, i);
-			auto const global_index = std::abs(
+			auto global_index = std::abs(
 			    _local_to_global_index_map->getGlobalIndex(l, component_id));
+#ifdef USE_PETSC
+			// The global indices of the ghost entries of the global
+			// matrix or the global vectors need to be set as negative values
+			// for equation assembly, however the global indices start from zero.
+			// Therefore, any ghost entry with zero index is assigned an negative
+			// value of the vector size or the matrix dimension.
+			// To assign the initial value for the ghost entries,
+			// the negative indices of the ghost entries are restored to zero.
+			// checked hereby.
+			if ( global_index == _x->size() )
+			    global_index = 0;
+#endif
 			_x->set(global_index,
 			        variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}
@@ -213,15 +225,23 @@ private:
 		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
 		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
 		mat_opt.o_nz = mat_opt.d_nz;
+		mat_opt.is_global_size = false;
 		const std::size_t num_unknowns =
-		    _local_to_global_index_map->dofSizeGlobal();
+		    _local_to_global_index_map->dofSizeLocal();
 		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+		// In the following two lines, false is assigned to
+		// the argument of is_global_size, which indicates num_unknowns
+		// is local.
+		_x.reset( _global_setup.createVector(num_unknowns,
+		          _local_to_global_index_map->getGhostIndices(), false) );
+		_rhs.reset( _global_setup.createVector(num_unknowns,
+		            _local_to_global_index_map->getGhostIndices(), false) );
 #else
 		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
 		_A.reset(_global_setup.createMatrix(num_unknowns));
-#endif
 		_x.reset(_global_setup.createVector(num_unknowns));
 		_rhs.reset(_global_setup.createVector(num_unknowns));
+#endif
 		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
 		    *_A, solver_name, _linear_solver_options.get()));
 		checkAndInvalidate(_linear_solver_options);
@@ -253,28 +273,17 @@ private:
 			result =
 			    _mesh.getProperties().template createNewPropertyVector<double>(
 			        property_name, MeshLib::MeshItemType::Node);
-			result->resize(_x->size());
-		}
-		assert(result && result->size() == _x->size());
-
 #ifdef USE_PETSC
-		std::unique_ptr<double[]> u(new double[_x->size()]);
-		_x->getGlobalVector(u.get());  // get the global solution
-
-		std::size_t const n = _mesh.getNNodes();
-		for (std::size_t i = 0; i < n; ++i)
-		{
-			MeshLib::Location const l(_mesh.getID(),
-			                          MeshLib::MeshItemType::Node, i);
-			auto const global_index = std::abs(  // 0 is the component id.
-			    _local_to_global_index_map->getGlobalIndex(l, 0));
-			(*result)[i] = u[global_index];
-		}
+			result->resize(_x->getLocalSize() + _x->getGhostSize());
 #else
-		// Copy result
-		for (std::size_t i = 0; i < _x->size(); ++i)
-			(*result)[i] = (*_x)[i];
+			result->resize(_x->size());
 #endif
+		}
+
+		assert(result);
+
+		// Copy result
+		_x->copyValues(*result);
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());

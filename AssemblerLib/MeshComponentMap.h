@@ -126,10 +126,23 @@ public:
     std::vector<GlobalIndexType> getGlobalIndicesByComponent(
         const std::vector<Location>& ls) const;
 
-    /// Get the number of global unknowns.
+    /// Get the number of global unknowns (for DDC).
     std::size_t getNGlobalUnknowns() const
     {
         return _num_global_dof;
+    }
+
+    /// Get the number of local unknowns excluding those associated
+    /// with ghost nodes (for DDC with node-wise mesh partitioning).
+    std::size_t getNLocalUnknowns() const
+    {
+        return _num_local_dof;
+    }
+
+    /// Get ghost indices (for DDC).
+    std::vector<GlobalIndexType> const& getGhostIndices() const
+    {
+        return _ghosts_indices;
     }
 
     /// A value returned if no global index was found for the requested
@@ -166,15 +179,21 @@ private:
 
     void renumberByLocation(GlobalIndexType offset=0);
 
-private:
     detail::ComponentGlobalIndexDict _dict;
 
     /// Number of global unknowns.
     std::size_t _num_global_dof = 0;
 
+    /// Number of local unknowns excluding those associated
+    /// with ghost nodes (for domain decomposition).
+    std::size_t _num_local_dof  = 0;
+
     /// Number of components
     /// introduced mainly for error checking
     unsigned const _num_components;
+
+    /// Global ID for ghost entries
+    std::vector<GlobalIndexType> _ghosts_indices;
 };
 
 }   // namespace AssemblerLib

@@ -86,6 +86,13 @@ public:
         }
     }
 
+    /// Copy vector values.
+    void copyValues(std::vector<double>& u)
+    {
+        assert(u.size() == _vec.size());
+        copy_n(_vec.data(), _vec.size(), u.begin());
+    }
+
 #ifndef NDEBUG
     /// printout this equation for debugging
     void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
