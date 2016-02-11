@@ -14,40 +14,40 @@ template<NonlinearSolverTag NLTag>
 class TestOutput
 {
 public:
-    template<typename Ode>
-    void run_test(Ode& ode, TimeDiscretization& timeDisc)
+    template<typename ODE>
+    void run_test(ODE& ode, TimeDiscretization& timeDisc)
     {
-        run_test<Ode>(ode, timeDisc, 10); // by default make 10 timesteps
+        run_test<ODE>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
-    template<typename Ode>
-    void run_test(Ode& ode, TimeDiscretization& timeDisc, const unsigned num_timesteps)
+    template<typename ODE>
+    void run_test(ODE& ode, TimeDiscretization& timeDisc, const unsigned num_timesteps)
     {
-        auto mat_trans = createMatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>(timeDisc);
-        TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NLTag> ode_sys(ode, timeDisc, *mat_trans);
+        auto mat_trans = createMatrixTranslator<ODE::ODETag>(timeDisc);
+        TimeDiscretizedODESystem<ODE::ODETag, NLTag> ode_sys(ode, timeDisc, *mat_trans);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
-        const double t0      = OdeTraits<Ode>::t0;
-        const double t_end   = OdeTraits<Ode>::t_end;
+        const double t0      = OdeTraits<ODE>::t0;
+        const double t_end   = OdeTraits<ODE>::t_end;
         const double delta_t = (t_end-t0) / num_timesteps;
 
         init_file(ode, timeDisc, delta_t);
 
         // initial condition
         Vector x0;
-        OdeTraits<Ode>::setIC(x0);
+        OdeTraits<ODE>::setIC(x0);
 
         write(t0, x0, x0);
 
         auto cb = [this](const double t, Vector const& x) {
-            loopCallback<Ode>(t, x);
+            loopCallback<ODE>(t, x);
         };
         loop.loop(t0, x0, t_end, delta_t, cb);
     }
 
 private:
-    template<typename Ode, typename TimeDisc>
-    void init_file(Ode const& ode, TimeDisc const& timeDisc, const double delta_t)
+    template<typename ODE, typename TimeDisc>
+    void init_file(ODE const& ode, TimeDisc const& timeDisc, const double delta_t)
     {
         std::string path(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_");
         path += typeid(ode).name();

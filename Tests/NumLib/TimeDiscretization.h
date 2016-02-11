@@ -4,8 +4,6 @@
 
 #include <vector>
 
-// debugging
-#include <iostream>
 
 class InternalMatrixStorage
 {
