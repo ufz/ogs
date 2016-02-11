@@ -1,15 +1,14 @@
 #pragma once
 
-#include "NonlinSolver.h"
+#include "ODESystem.h"
+#include "NonlinearSystem.h"
 #include "TimeDiscretization.h"
 #include "MatrixTranslator.h"
-
-#include <memory>
 
 
 template<NonlinearSolverTag NLTag_>
 class TimeDiscretizedODESystemBase
-        : public INonlinearSystem<NLTag_>
+        : public NonlinearSystem<NLTag_>
         , public InternalMatrixStorage
 {
 public:

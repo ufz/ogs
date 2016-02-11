@@ -1,22 +1,22 @@
-#include "NonlinSolver.h"
-
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseLU>
 #include <logog/include/logog.hpp>
 
 #include <iostream>
 
+#include "NonlinearSolver.h"
+
 
 void
 NonlinearSolver<NonlinearSolverTag::Picard>::
-assemble(INonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
+assemble(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
 {
     sys.assembleMatricesPicard(x);
 }
 
 void
 NonlinearSolver<NonlinearSolverTag::Picard>::
-solve(INonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
+solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
 {
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
@@ -51,14 +51,14 @@ solve(INonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
 
 void
 NonlinearSolver<NonlinearSolverTag::Newton>::
-assemble(INonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
+assemble(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
 {
     sys.assembleResidualNewton(x);
 }
 
 void
 NonlinearSolver<NonlinearSolverTag::Newton>::
-solve(INonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
+solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
 {
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {

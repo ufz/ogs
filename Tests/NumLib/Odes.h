@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NonlinSolver.h"
+#include "ODESystem.h"
 
 template<typename Ode>
 class OdeTraits;

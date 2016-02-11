@@ -1,9 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "ODETypes.h"
 #include "TimeDiscretization.h"
-
-
 
 
 template<ODESystemTag ODETag>

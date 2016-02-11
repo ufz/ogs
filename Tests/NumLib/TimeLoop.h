@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TimeDiscretizedODESystem.h"
+#include "NonlinearSolver.h"
 
 template<NonlinearSolverTag NLTag>
 class TimeLoop
