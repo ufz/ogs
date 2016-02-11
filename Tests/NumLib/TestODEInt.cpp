@@ -34,7 +34,7 @@ public:
         init_file(ode, timeDisc, delta_t);
 
         // initial condition
-        Vector x0;
+        Vector x0(ode.getMatrixSize());
         OdeTraits<ODE>::setIC(x0);
 
         write(t0, x0, x0);
@@ -70,8 +70,8 @@ private:
     void write(double const t, Vector const& x_num, Vector const& x_ana)
     {
         *_file << t;
-        for (IndexType i=0; i<x_num.size(); ++i) *_file << '\t' << x_num[i];
-        for (IndexType i=0; i<x_ana.size(); ++i) *_file << '\t' << x_ana[i];
+        for (decltype(x_num.size()) i=0; i<x_num.size(); ++i) *_file << '\t' << x_num[i];
+        for (decltype(x_num.size()) i=0; i<x_ana.size(); ++i) *_file << '\t' << x_ana[i];
         *_file << "\n";
     }
 

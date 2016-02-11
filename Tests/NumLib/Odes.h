@@ -2,6 +2,7 @@
 
 #include "ODESystem.h"
 
+
 template<typename Ode>
 class OdeTraits;
 
@@ -11,32 +12,19 @@ class Ode1 final
                            NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double t, Vector const& x,
+    void assemble(const double /*t*/, Vector const& /*x*/,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        (void) t; (void) x;
+        setMatrix(M, 2, 2, { 1.0, 0.0,  0.0, 1.0 });
+        setMatrix(K, 2, 2, { 0.0, 1.0, -1.0, 0.0 });
 
-        Eigen::Matrix2d m;
-        m << 1.0, 0.0,
-             0.0, 1.0;
-        M = m.sparseView();
-
-        Eigen::Matrix2d k;
-        k << 0.0, 1.0,
-            -1.0, 0.0;
-        K = k.sparseView();
-
-        Eigen::Vector2d b_;
-        b_ << 0.0, 0.0;
-        b = b_;
+        b[0] = 0.0; b[1] = 0.0;
     }
 
-    void assembleJacobian(const double t, const Vector &x,
+    void assembleJacobian(const double /*t*/, const Vector &/*x*/,
                           const double dxdot_dx,  const double dx_dx,
                           Matrix &Jac)
     {
-        (void) t; (void) x;
-
         Eigen::Matrix2d m;
         m << 1.0, 0.0,
              0.0, 1.0;
@@ -45,7 +33,7 @@ public:
         k << 0.0, 1.0,
             -1.0, 0.0;
 
-        Jac = (m*dxdot_dx + dx_dx*k).sparseView();
+        setMatrix(Jac, m*dxdot_dx + dx_dx*k);
     }
 
     IndexType getMatrixSize() const override
@@ -65,14 +53,14 @@ class OdeTraits<Ode1>
 public:
     static void setIC(Vector& x0)
     {
-        x0.resize(2);
-        x0 << 1.0, 0.0;
+        x0[0] = 1.0; x0[1] = 0.0;
     }
 
     static Vector solution(const double t)
     {
-        Eigen::Vector2d v;
-        v << cos(t), sin(t);
+        Vector v(2);
+        v[0] = cos(t);
+        v[1] = sin(t);
         return v;
     }
 
@@ -87,21 +75,19 @@ class Ode2 final
                            NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double t, Vector const& x,
+    void assemble(const double /*t*/, Vector const& x,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        (void) t;
-        M.coeffRef(0, 0) = 1.0;
-        K.coeffRef(0, 0) = x[0];
-        b.coeffRef(0, 0) = 0.0;
+        setMatrix(M, 1, 1, { 1.0 });
+        setMatrix(K, 1, 1, { x[0] });
+        b[0] = 0.0;
     }
 
-    void assembleJacobian(const double t, const Vector &x,
+    void assembleJacobian(const double /*t*/, const Vector &x,
                           const double dxdot_dx, const double dx_dx,
                           Matrix &Jac)
     {
-        (void) t;
-        Jac.coeffRef(0, 0) = dxdot_dx + x[0] + x[0]*dx_dx;
+        setMatrix(Jac, 1, 1, { dxdot_dx + x[0] + x[0]*dx_dx });
     }
 
     IndexType getMatrixSize() const override
@@ -121,7 +107,6 @@ class OdeTraits<Ode2>
 public:
     static void setIC(Vector& x0)
     {
-        x0.resize(1);
         x0[0] = 1.0;
     }
 
