@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>382</height>
+    <width>500</width>
+    <height>380</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>380</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>380</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Merge geometries</string>
@@ -146,8 +158,8 @@
  <tabstops>
   <tabstop>allGeoView</tabstop>
   <tabstop>selectGeoButton</tabstop>
-  <tabstop>deselectGeoButton</tabstop>
   <tabstop>selectedGeoView</tabstop>
+  <tabstop>deselectGeoButton</tabstop>
   <tabstop>newGeoNameEdit</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>

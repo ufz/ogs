@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>424</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,6 +15,18 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>430</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>430</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -440,16 +452,16 @@
   <tabstop>tabWidget</tabstop>
   <tabstop>allGeoView</tabstop>
   <tabstop>selectGeoButton</tabstop>
-  <tabstop>deselectGeoButton</tabstop>
   <tabstop>selectedGeoView</tabstop>
+  <tabstop>deselectGeoButton</tabstop>
   <tabstop>buttonBox</tabstop>
   <tabstop>radioAdaptive</tabstop>
-  <tabstop>radioHomogeneous</tabstop>
-  <tabstop>geoFileDelete</tabstop>
-  <tabstop>param4</tabstop>
   <tabstop>param1</tabstop>
-  <tabstop>param3</tabstop>
   <tabstop>param2</tabstop>
+  <tabstop>param3</tabstop>
+  <tabstop>radioHomogeneous</tabstop>
+  <tabstop>param4</tabstop>
+  <tabstop>geoFileDelete</tabstop>
  </tabstops>
  <resources/>
  <connections>

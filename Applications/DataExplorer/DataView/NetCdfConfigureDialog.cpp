@@ -435,16 +435,16 @@ void NetCdfConfigureDialog::on_radioMesh_toggled(bool isTrue)
 	if (isTrue) // output set to "mesh"
 	{
 		this->label_2->setEnabled(true);
-		this->label_3->setEnabled(true);
+		this->label_3->setEnabled(false);
 		this->comboBoxMeshElemType->setEnabled(true);
-		this->comboBoxUseIntensity->setEnabled(true);
+		this->comboBoxUseIntensity->setEnabled(false);
 	}
 	else // output set to "raster"
 	{
 		this->label_2->setEnabled(false);
-		this->label_3->setEnabled(false);
+		this->label_3->setEnabled(true);
 		this->comboBoxMeshElemType->setEnabled(false);
-		this->comboBoxUseIntensity->setEnabled(false);
+		this->comboBoxUseIntensity->setEnabled(true);
 	}
 }
 

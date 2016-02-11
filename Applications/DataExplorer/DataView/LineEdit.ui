@@ -7,8 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>372</height>
+    <height>375</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>375</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>375</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -60,12 +72,12 @@
     <rect>
      <x>20</x>
      <y>290</y>
-     <width>141</width>
+     <width>351</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Close connected Polyline</string>
+    <string>Close connected polyline</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="createSfcCheckBox">
@@ -76,12 +88,12 @@
     <rect>
      <x>20</x>
      <y>310</y>
-     <width>161</width>
+     <width>351</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Create Surface from Polyline</string>
+    <string>Create surface from polyline</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -140,7 +152,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Maximum Distance between end points</string>
+    <string>Max. distance between end points:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="proximityEdit">
@@ -179,7 +191,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Name of new polyline (optional)</string>
+    <string>Name of new polyline (optional):</string>
    </property>
   </widget>
  </widget>

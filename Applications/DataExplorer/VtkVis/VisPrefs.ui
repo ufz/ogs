@@ -6,18 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>188</width>
-    <height>402</height>
+    <width>210</width>
+    <height>430</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>210</width>
+    <height>430</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>210</width>
+    <height>430</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Visualisation Settings</string>
+   <string>Vis-Settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <widget class="QGroupBox" name="LightBox">
      <property name="title">
-      <string>Additional Illumination</string>
+      <string>Additional illumination</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -56,7 +68,7 @@
    <item>
     <widget class="QGroupBox" name="SuperelevationBox">
      <property name="title">
-      <string>Superelevation</string>
+      <string>Global superelevation</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -91,7 +103,7 @@
    <item>
     <widget class="QGroupBox" name="ViewUpdateBox">
      <property name="title">
-      <string>View Update</string>
+      <string>View update</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>

@@ -7,8 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>214</height>
+    <height>210</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>210</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>400</width>
+    <height>210</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Extract surfaces...</string>
@@ -49,7 +61,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Surface Normal:</string>
+      <string>Surface normal:</string>
      </property>
     </widget>
    </item>
@@ -127,7 +139,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Degrees</string>
+      <string>degrees</string>
      </property>
     </widget>
    </item>
