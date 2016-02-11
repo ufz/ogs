@@ -7,7 +7,7 @@
 // debugging
 #include <iostream>
 
-class IParabolicEquation
+class InternalMatrixStorage
 {
 public:
     // needed for Crank-Nicolson
@@ -20,7 +20,7 @@ class ITimeDiscretization
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
     virtual void pushState(const double t, Vector const& x,
-                           IParabolicEquation const& eq) = 0;
+                           InternalMatrixStorage const& eq) = 0;
 
     virtual void setCurrentTime(const double t, const double delta_t) = 0;
     virtual double getCurrentTime() const = 0; // get time used for assembly
@@ -58,7 +58,7 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
     {
         (void) t;
         _x_old = x;
@@ -97,7 +97,7 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
     {
         (void) t;
         _x_old = x;
@@ -156,7 +156,7 @@ public:
         _x_old = x;
     }
 
-    void pushState(const double t, Vector const& x, IParabolicEquation const& eq) override
+    void pushState(const double t, Vector const& x, InternalMatrixStorage const& eq) override
     {
         (void) t;
         _x_old = x;
@@ -230,7 +230,7 @@ public:
         _xs_old.push_back(x);
     }
 
-    void pushState(const double t, Vector const& x, IParabolicEquation const&) override
+    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
     {
         (void) t;
 

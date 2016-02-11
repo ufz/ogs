@@ -10,7 +10,7 @@
 template<NonlinearSolverTag NLTag>
 class ITimeDiscretizedODESystem
         : public INonlinearSystem<NLTag>
-        , public IParabolicEquation
+        , public InternalMatrixStorage
 {
 public:
     virtual ITimeDiscretization& getTimeDiscretization() = 0;
