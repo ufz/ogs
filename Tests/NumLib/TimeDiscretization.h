@@ -11,22 +11,11 @@ class IParabolicEquation
 {
 public:
     // needed for Crank-Nicolson
-    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
-                             Vector const*& b) const = 0;
+    virtual void pushMatrices() const = 0;
 };
 
 
-class IParabolicEquationNew
-{
-public:
-    virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
-    virtual Vector getRhs(Matrix const& M, Matrix const& K, Vector const& b) const = 0;
-    virtual Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                               const Vector &x_new_timestep) const = 0;
-    // virtual Matrix getJacobian(Matrix const& M, Matrix const& K, Vector const& b) const = 0;
-};
-
-class ITimeDiscretization : public IParabolicEquationNew
+class ITimeDiscretization
 {
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
@@ -58,50 +47,6 @@ public:
 
     // for Crank-Nicolson
     virtual bool needsPreload() const { return false; }
-
-    // for Crank-Nicolson
-    virtual void adjustMatrix(Matrix& A) const { (void) A; }
-
-    // for Crank-Nicolson
-    virtual void adjustRhs(Vector& rhs) const { (void) rhs; }
-
-    // for Crank-Nicolson
-    virtual void adjustResidual(Vector const& x, Vector& res) const {
-        (void) res; (void) x;
-    }
-
-
-    /// IParabolicEquationNew
-
-    virtual Matrix getA(const Matrix &M, const Matrix &K) const override
-    {
-        Matrix A = M * getCurrentXWeight() + K;
-        adjustMatrix(A);
-        return A;
-    }
-
-    virtual Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
-    {
-        (void) K;
-        Vector rhs = b + M * getWeightedOldX();
-        adjustRhs(rhs);
-        return rhs;
-    }
-
-    virtual Vector getResidual(const Matrix &M, const Matrix &K, const Vector& b,
-                               const Vector &x_new_timestep) const override
-    {
-        auto const  alpha  = getCurrentXWeight();
-        auto const& x_curr = getCurrentX(x_new_timestep);
-        auto const  x_old  = getWeightedOldX();
-        auto const  x_dot  = alpha*x_new_timestep - x_old;
-
-        Vector res = M * x_dot + K*x_curr - b;
-        adjustResidual(x_new_timestep, res);
-        return res;
-    }
-
-    /// end IParabolicEquationNew
 };
 
 
@@ -184,25 +129,8 @@ public:
         return true;
     }
 
-
     double getDxDx() const override {
         return 0.0;
-    }
-
-    Matrix getA(const Matrix &M, const Matrix &K) const override
-    {
-        (void) K;
-        Matrix A = M * getCurrentXWeight();
-        adjustMatrix(A);
-        return A;
-    }
-
-    Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
-    {
-        (void) K;
-        Vector rhs = b + M * getWeightedOldX() - K * _x_old;
-        adjustRhs(rhs);
-        return rhs;
     }
 
     Vector const& getXOld() const { return _x_old; }
@@ -232,14 +160,7 @@ public:
     {
         (void) t;
         _x_old = x;
-
-        Matrix const* M;
-        Matrix const* K;
-        Vector const* b;
-        eq.getMatrices(M, K, b);
-
-        _M_bar = (1-_theta) * (*M);
-        _b_bar = (1-_theta) * ((*K)*_x_old - (*b));
+        eq.pushMatrices();
     }
 
     void setCurrentTime(const double t, const double delta_t) override {
@@ -263,37 +184,14 @@ public:
         return true;
     }
 
-    void adjustMatrix(Matrix& A) const override
-    {
-        auto const alpha = getCurrentXWeight();
-        A *= _theta;
-        A += alpha * _M_bar;
-    }
-
-    void adjustRhs(Vector& rhs) const override
-    {
-        rhs *= _theta;
-        rhs += _M_bar * getWeightedOldX() - _b_bar;
-    }
-
-    void adjustResidual(Vector const& x, Vector& res) const override
-    {
-        auto const alpha = getCurrentXWeight();
-        Vector xdot = alpha * x - getWeightedOldX();
-        res *= _theta;
-        res += _M_bar * xdot + _b_bar;
-    }
-
     double getTheta() const { return _theta; }
+    Vector const& getXOld() const { return _x_old; }
 
 private:
     const double _theta = 555.555;
     double _t = 9999.9999;
     double _delta_t = 8888.8888;
     Vector _x_old;
-
-    Matrix _M_bar;
-    Vector _b_bar;
 };
 
 

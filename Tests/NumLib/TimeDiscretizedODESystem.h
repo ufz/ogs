@@ -21,6 +21,11 @@ public:
 
     virtual Matrix getJacobian(Matrix Jac) const = 0;
 
+    virtual void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b)
+    {
+        (void) M; (void) K; (void) b;
+    }
+
     virtual ~MatrixTranslator() = default;
 };
 
@@ -168,6 +173,15 @@ public:
         return theta * Jac + dxdot_dx * _M_bar;
     }
 
+    void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b) override
+    {
+        auto const theta = _crank_nicolson.getTheta();
+        auto const x_old = _crank_nicolson.getXOld();
+
+        _M_bar = (1.0-theta) * M;
+        _b_bar = (1.0-theta) * (K * x_old - b);
+    }
+
 private:
     CrankNicolson const& _crank_nicolson;
 
@@ -232,7 +246,6 @@ public:
         auto const  dxdot_dx = _time_disc.getCurrentXWeight();
 
         _ode.assembleJacobian(t, x_curr, dxdot_dx, _time_disc.getDxDx(), _Jac);
-        _time_disc.adjustMatrix(_Jac);
     }
 
     Vector getResidual(Vector const& x_new_timestep) override
@@ -258,12 +271,9 @@ public:
 
 private:
     // from IParabolicEquation
-    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
-                             Vector const*& b) const override
+    virtual void pushMatrices() const override
     {
-        M = &_M;
-        K = &_K;
-        b = &_b;
+        _mat_trans.pushMatrices(_M, _K, _b);
     }
 
 
@@ -307,12 +317,12 @@ public:
 
     Matrix getA() override
     {
-        return _time_disc.getA(_M, _K);
+        return _mat_trans.getA(_M, _K);
     }
 
     Vector getRhs() override
     {
-        return _time_disc.getRhs(_M, _K, _b);
+        return _mat_trans.getRhs(_M, _K, _b);
     }
 
     bool isLinear() const override
@@ -328,12 +338,9 @@ public:
 
 private:
     // from IParabolicEquation
-    virtual void getMatrices(Matrix const*& M, Matrix const*& K,
-                             Vector const*& b) const override
+    virtual void pushMatrices() const override
     {
-        M = &_M;
-        K = &_K;
-        b = &_b;
+        _mat_trans.pushMatrices(_M, _K, _b);
     }
 
 
