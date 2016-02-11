@@ -8,11 +8,19 @@
 
 
 template<NonlinearSolverTag NLTag>
-struct TimeDiscretizedODESystem;
+class ITimeDiscretizedODESystem
+        : public INonlinearSystem<NLTag>
+{
+public:
+    virtual ITimeDiscretization& getTimeDiscretization() = 0;
+};
+
+template<NonlinearSolverTag NLTag>
+class TimeDiscretizedODESystem;
 
 template<>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Newton> final
-        : public INonlinearSystemNewton
+        : public ITimeDiscretizedODESystem<NonlinearSolverTag::Newton>
         , public IParabolicEquation
 {
 public:
@@ -65,7 +73,7 @@ public:
 
     /// end INonlinearSystemNewton
 
-    ITimeDiscretization& getTimeDiscretization() {
+    ITimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 
@@ -89,7 +97,7 @@ private:
 
 template<>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Picard> final
-        : public INonlinearSystemPicard
+        : public ITimeDiscretizedODESystem<NonlinearSolverTag::Picard>
         , public IParabolicEquation
 {
 public:
@@ -132,7 +140,7 @@ public:
 
     /// end INonlinearSystemPicard
 
-    ITimeDiscretization& getTimeDiscretization() {
+    ITimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 

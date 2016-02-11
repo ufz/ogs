@@ -7,16 +7,11 @@
 
 enum class NonlinearSolverTag : bool { Picard, Newton };
 
+template<NonlinearSolverTag NLTag>
+class INonlinearSystem;
 
-class INonlinearSystem
-{
-public:
-    virtual bool isLinear() const = 0;
-
-    virtual ~INonlinearSystem() = default;
-};
-
-class INonlinearSystemNewton : public INonlinearSystem
+template<>
+class INonlinearSystem<NonlinearSolverTag::Newton>
 {
 public:
     virtual void assembleResidualNewton(Vector const& x) = 0;
@@ -24,17 +19,22 @@ public:
     virtual Vector getResidual(Vector const& x) = 0;
     virtual Matrix getJacobian() = 0;
 
-    virtual ~INonlinearSystemNewton() = default;
+    virtual bool isLinear() const = 0;
+
+    virtual ~INonlinearSystem() = default;
 };
 
-class INonlinearSystemPicard : public INonlinearSystem
+template<>
+class INonlinearSystem<NonlinearSolverTag::Picard>
 {
 public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;
     virtual Matrix getA() = 0;
     virtual Vector getRhs() = 0;
 
-    virtual ~INonlinearSystemPicard() = default;
+    virtual bool isLinear() const = 0;
+
+    virtual ~INonlinearSystem() = default;
 };
 
 
@@ -52,9 +52,9 @@ public:
     {}
 
     // for Crank-Nicolson
-    void assemble(INonlinearSystemNewton& sys, Vector& x);
+    void assemble(INonlinearSystem<NonlinearSolverTag::Newton>& sys, Vector& x);
 
-    void solve(INonlinearSystemNewton& sys, Vector& x);
+    void solve(INonlinearSystem<NonlinearSolverTag::Newton>& sys, Vector& x);
 
 private:
     const double _tol;
@@ -74,9 +74,9 @@ public:
     {}
 
     // for Crank-Nicolson
-    void assemble(INonlinearSystemPicard& sys, Vector& x);
+    void assemble(INonlinearSystem<NonlinearSolverTag::Picard>& sys, Vector& x);
 
-    void solve(INonlinearSystemPicard& sys, Vector& x);
+    void solve(INonlinearSystem<NonlinearSolverTag::Picard>& sys, Vector& x);
 
 private:
     const double _tol;
