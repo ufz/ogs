@@ -19,10 +19,11 @@ public:
 
     virtual void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
 
-    virtual Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                               Vector const& x_new_timestep) const = 0;
+    virtual void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                             Vector const& x_new_timestep,
+                             Vector& res) const = 0;
 
-    virtual Matrix getJacobian(Matrix const& Jac) const = 0;
+    virtual void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const = 0;
 
     // needed for Crank-Nicolson
     virtual void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b)
@@ -63,8 +64,8 @@ public:
         BLAS::matMultAdd(M, weighted_old_x, b, rhs);
     }
 
-    Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                       Vector const& x_new_timestep) const override
+    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                     Vector const& x_new_timestep, Vector& res) const override
     {
         auto const  alpha  = _time_disc.getCurrentXWeight();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
@@ -75,17 +76,14 @@ public:
         BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = M * x_dot + K * x_curr - b
-        Vector res;
         BLAS::matMult(M, x_dot, res);
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
-
-        return res;
     }
 
-    Matrix getJacobian(Matrix const& Jac) const override
+    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
-        return Jac;
+        BLAS::copy(Jac_in, Jac_out);
     }
 
 private:
@@ -125,8 +123,9 @@ public:
         BLAS::matMultAdd(M, weighted_old_x, rhs, rhs); // rhs += M * weighted_old_x
     }
 
-    Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                       Vector const& x_new_timestep) const override
+    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                     Vector const& x_new_timestep,
+                     Vector& res) const override
     {
         auto const  alpha  = _fwd_euler.getCurrentXWeight();
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
@@ -137,17 +136,14 @@ public:
         BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = M * x_dot + K * x_curr - b
-        Vector res;
         BLAS::matMult(M, x_dot, res);
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
-
-        return res;
     }
 
-    Matrix getJacobian(Matrix const& Jac) const override
+    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
-        return Jac;
+        BLAS::copy(Jac_in, Jac_out);
     }
 
 private:
@@ -193,8 +189,9 @@ public:
         BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
     }
 
-    Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                       Vector const& x_new_timestep) const override
+    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                     Vector const& x_new_timestep,
+                     Vector& res) const override
     {
         auto const  alpha  = _crank_nicolson.getCurrentXWeight();
         auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
@@ -206,28 +203,23 @@ public:
         BLAS::axpby(x_dot, -1.0, alpha, x_old);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
-        Vector res;
         BLAS::matMult(M, x_dot, res); // res = M * x_dot
         BLAS::matMultAdd(K, x_curr, res, res); // res += K * x_curr
         BLAS::axpy(res, -1.0, b); // res = M * x_dot + K * x_curr - b
 
         BLAS::aypx(res, theta, _b_bar); // res = res * theta + _b_bar
         BLAS::matMultAdd(_M_bar, x_dot, res, res); // rs += _M_bar * x_dot
-
-        return res;
     }
 
-    Matrix getJacobian(Matrix const& Jac) const override
+    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
         // J = theta * Jac + dxdot_dx * _M_bar
-        Matrix J(Jac);
-        BLAS::scale(J, theta);
-        BLAS::axpy(J, dxdot_dx, _M_bar);
-
-        return J;
+        BLAS::copy(Jac_in, Jac_out);
+        BLAS::scale(Jac_out, theta);
+        BLAS::axpy(Jac_out, dxdot_dx, _M_bar);
     }
 
     void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b) override

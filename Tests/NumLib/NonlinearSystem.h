@@ -12,8 +12,8 @@ class NonlinearSystem<NonlinearSolverTag::Newton>
 public:
     virtual void assembleResidualNewton(Vector const& x) = 0;
     virtual void assembleJacobian(Vector const& x) = 0;
-    virtual Vector getResidual(Vector const& x) = 0;
-    virtual Matrix getJacobian() = 0;
+    virtual void getResidual(Vector const& x, Vector& res) = 0;
+    virtual void getJacobian(Matrix& Jac) = 0;
 
     virtual bool isLinear() const = 0;
 

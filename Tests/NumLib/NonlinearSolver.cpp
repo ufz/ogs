@@ -59,18 +59,19 @@ void
 NonlinearSolver<NonlinearSolverTag::Newton>::
 solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
 {
+    Matrix J; Vector res;
+
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleResidualNewton(x);
-
-        auto res = sys.getResidual(x);
+        sys.getResidual(x, res);
 
         // std::cout << "  res:\n" << res << std::endl;
 
         if (norm(res) < _tol) break;
 
         sys.assembleJacobian(x);
-        auto J = sys.getJacobian();
+        sys.getJacobian(J);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 

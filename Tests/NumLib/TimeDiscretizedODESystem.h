@@ -64,14 +64,14 @@ public:
         _ode.assembleJacobian(t, x_curr, dxdot_dx, _time_disc.getDxDx(), _Jac);
     }
 
-    Vector getResidual(Vector const& x_new_timestep) override
+    void getResidual(Vector const& x_new_timestep, Vector& res) override
     {
-        return _mat_trans.getResidual(_M, _K, _b, x_new_timestep);
+        _mat_trans.getResidual(_M, _K, _b, x_new_timestep, res);
     }
 
-    Matrix getJacobian() override
+    void getJacobian(Matrix& Jac) override
     {
-        return _mat_trans.getJacobian(_Jac);
+        _mat_trans.getJacobian(_Jac, Jac);
     }
 
     bool isLinear() const override
