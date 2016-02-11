@@ -7,7 +7,7 @@ class OdeTraits;
 
 // ODE 1 //////////////////////////////////////////////////////////
 class Ode1 final
-        : public IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
+        : public FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double t, Vector const& x,
@@ -82,7 +82,7 @@ public:
 
 // ODE 2 //////////////////////////////////////////////////////////
 class Ode2 final
-        : public IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
+        : public FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double t, Vector const& x,

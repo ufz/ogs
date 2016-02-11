@@ -5,7 +5,7 @@
 
 enum class EquationTag : char
 {
-    ParabolicEquation
+    FirstOrderImplicitQuasilinearODESystem
 };
 
 
@@ -13,7 +13,7 @@ template<EquationTag EqTag>
 class MatrixTranslator;
 
 template<>
-class MatrixTranslator<EquationTag::ParabolicEquation>
+class MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
 {
 public:
     virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
@@ -39,8 +39,8 @@ template<EquationTag EqTag>
 class MatrixTranslatorGeneral;
 
 template<>
-class MatrixTranslatorGeneral<EquationTag::ParabolicEquation>
-        : public MatrixTranslator<EquationTag::ParabolicEquation>
+class MatrixTranslatorGeneral<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
 {
 public:
     MatrixTranslatorGeneral(ITimeDiscretization const& timeDisc)
@@ -86,8 +86,8 @@ template<EquationTag EqTag>
 class MatrixTranslatorForwardEuler;
 
 template<>
-class MatrixTranslatorForwardEuler<EquationTag::ParabolicEquation>
-        : public MatrixTranslator<EquationTag::ParabolicEquation>
+class MatrixTranslatorForwardEuler<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
 {
 public:
     MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
@@ -134,8 +134,8 @@ template<EquationTag EqTag>
 class MatrixTranslatorCrankNicolson;
 
 template<>
-class MatrixTranslatorCrankNicolson<EquationTag::ParabolicEquation>
-        : public MatrixTranslator<EquationTag::ParabolicEquation>
+class MatrixTranslatorCrankNicolson<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
 {
 public:
     MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)

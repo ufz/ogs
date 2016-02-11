@@ -6,7 +6,7 @@ template<NonlinearSolverTag NLTag>
 class TimeLoop
 {
 public:
-    using TDiscODESys = ITimeDiscretizedODESystem<NLTag>;
+    using TDiscODESys = TimeDiscretizedODESystem<NLTag>;
     using NLSolver = NonlinearSolver<NLTag>;
 
     explicit

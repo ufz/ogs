@@ -87,10 +87,10 @@ private:
 
 
 template<NonlinearSolverTag NLTag>
-class IFirstOrderImplicitOde;
+class FirstOrderImplicitQuasilinearODESystem;
 
 template<>
-class IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
+class FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>
 {
 public:
     virtual bool isLinear() const = 0;
@@ -100,12 +100,12 @@ public:
                           Matrix& M, Matrix& K, Vector& b) = 0;
 
 
-    virtual ~IFirstOrderImplicitOde() = default;
+    virtual ~FirstOrderImplicitQuasilinearODESystem() = default;
 };
 
 template<>
-class IFirstOrderImplicitOde<NonlinearSolverTag::Newton>
-        : public IFirstOrderImplicitOde<NonlinearSolverTag::Picard>
+class FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>
+        : public FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>
 {
 public:
     virtual void assembleJacobian(const double t, Vector const& x,

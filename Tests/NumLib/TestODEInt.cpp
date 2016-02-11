@@ -23,8 +23,8 @@ public:
     template<typename Ode>
     void run_test(Ode& ode, ITimeDiscretization& timeDisc, const unsigned num_timesteps)
     {
-        auto mat_trans = createMatrixTranslator<EquationTag::ParabolicEquation>(timeDisc);
-        TimeDiscretizedODESystem<NLTag> ode_sys(ode, timeDisc, *mat_trans);
+        auto mat_trans = createMatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>(timeDisc);
+        TimeDiscretizedFirstOrderImplicitQuasilinearODESystem<NLTag> ode_sys(ode, timeDisc, *mat_trans);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
         const double t0      = OdeTraits<Ode>::t0;
