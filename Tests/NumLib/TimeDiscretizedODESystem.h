@@ -6,10 +6,10 @@
 #include <memory>
 
 template<typename Equation>
-class MatrixTranslatorBase;
+class MatrixTranslator;
 
 template<>
-class MatrixTranslatorBase<IParabolicEquation>
+class MatrixTranslator<IParabolicEquation>
 {
 public:
     virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
@@ -21,20 +21,19 @@ public:
 
     virtual Matrix getJacobian(Matrix Jac) const = 0;
 
-    virtual ~MatrixTranslatorBase() = default;
+    virtual ~MatrixTranslator() = default;
 };
 
 
-template<typename TimeDisc, typename Equation>
-class MatrixTranslator;
+template<typename Equation>
+class MatrixTranslatorGeneral;
 
-// TODO: don't need timedisc template param
-template<typename TimeDisc>
-class MatrixTranslator<TimeDisc, IParabolicEquation>
-        : public MatrixTranslatorBase<IParabolicEquation>
+template<>
+class MatrixTranslatorGeneral<IParabolicEquation>
+        : public MatrixTranslator<IParabolicEquation>
 {
 public:
-    MatrixTranslator(TimeDisc const& timeDisc)
+    MatrixTranslatorGeneral(ITimeDiscretization const& timeDisc)
         : _time_disc(timeDisc)
     {}
 
@@ -70,15 +69,15 @@ public:
     }
 
 private:
-    TimeDisc const& _time_disc;
+    ITimeDiscretization const& _time_disc;
 };
 
 template<typename Equation>
-std::unique_ptr<MatrixTranslatorBase<Equation>>
+std::unique_ptr<MatrixTranslator<Equation>>
 createMatrixTranslator(ITimeDiscretization const& timeDisc)
 {
-    return std::unique_ptr<MatrixTranslatorBase<Equation>>(
-            new MatrixTranslator<ITimeDiscretization, Equation>(timeDisc));
+    return std::unique_ptr<MatrixTranslator<Equation>>(
+            new MatrixTranslatorGeneral<Equation>(timeDisc));
 }
 
 
@@ -95,7 +94,7 @@ public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& ode,
                              ITimeDiscretization& time_discretization,
-                             MatrixTranslatorBase<IParabolicEquation>& mat_trans)
+                             MatrixTranslator<IParabolicEquation>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -159,7 +158,7 @@ private:
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslatorBase<IParabolicEquation>& _mat_trans;
+    MatrixTranslator<IParabolicEquation>& _mat_trans;
 
     Matrix _Jac;
     Matrix _M;
@@ -176,7 +175,7 @@ public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& ode,
                              ITimeDiscretization& time_discretization,
-                             MatrixTranslatorBase<IParabolicEquation>& mat_trans)
+                             MatrixTranslator<IParabolicEquation>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -229,7 +228,7 @@ private:
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslatorBase<IParabolicEquation>& _mat_trans;
+    MatrixTranslator<IParabolicEquation>& _mat_trans;
 
     Matrix _M;
     Matrix _K;
