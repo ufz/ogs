@@ -58,11 +58,10 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
-        Vector weighted_old_x;
-        _time_disc.getWeightedOldX(weighted_old_x);
+        _time_disc.getWeightedOldX(_tmp);
 
         // rhs = M * weighted_old_x + b
-        BLAS::matMultAdd(M, weighted_old_x, b, rhs);
+        BLAS::matMultAdd(M, _tmp, b, rhs);
     }
 
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -72,12 +71,11 @@ public:
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
         // x_dot  = alpha*x_new_timestep - x_old
-        Vector x_dot;
-        _time_disc.getWeightedOldX(x_dot);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        _time_disc.getWeightedOldX(_tmp);
+        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
 
         // res = M * x_dot + K * x_curr - b
-        BLAS::matMult(M, x_dot, res); // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
     }
@@ -89,6 +87,7 @@ public:
 
 private:
     TimeDiscretization const& _time_disc;
+    mutable Vector _tmp; // used to store intermediate calculation results
 };
 
 
@@ -115,15 +114,14 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
     {
-        Vector weighted_old_x;
-        _fwd_euler.getWeightedOldX(weighted_old_x);
+        _fwd_euler.getWeightedOldX(_tmp);
 
         auto const& x_old          = _fwd_euler.getXOld();
 
         // rhs = b + M * weighted_old_x - K * x_old
         BLAS::matMult(K, x_old, rhs); // rhs = K * x_old
         BLAS::aypx(rhs, -1.0, b);     // rhs = b - K * x_old
-        BLAS::matMultAdd(M, weighted_old_x, rhs, rhs); // rhs += M * weighted_old_x
+        BLAS::matMultAdd(M, _tmp, rhs, rhs); // rhs += M * weighted_old_x
     }
 
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -134,12 +132,11 @@ public:
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
 
         // x_dot  = alpha*x_new_timestep - x_old
-        Vector x_dot;
-        _fwd_euler.getWeightedOldX(x_dot);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        _fwd_euler.getWeightedOldX(_tmp);
+        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
 
         // res = M * x_dot + K * x_curr - b
-        BLAS::matMult(M, x_dot, res); // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
     }
@@ -151,6 +148,7 @@ public:
 
 private:
     ForwardEuler const& _fwd_euler;
+    mutable Vector _tmp; // used to store intermediate calculation results
 };
 
 
@@ -181,16 +179,15 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
-        Vector weighted_old_x;
-        _crank_nicolson.getWeightedOldX(weighted_old_x);
+        _crank_nicolson.getWeightedOldX(_tmp);
 
         auto const  theta          = _crank_nicolson.getTheta();
 
         // rhs = theta * (b + M * weighted_old_x) + _M_bar * weighted_old_x - _b_bar;
-        BLAS::matMultAdd(M, weighted_old_x, b, rhs); // rhs = b + M * weighted_old_x
+        BLAS::matMultAdd(M, _tmp, b, rhs); // rhs = b + M * weighted_old_x
 
         BLAS::scale(rhs, theta); // rhs *= theta
-        BLAS::matMultAdd(_M_bar, weighted_old_x, rhs, rhs); // rhs += _M_bar * weighted_old_x
+        BLAS::matMultAdd(_M_bar, _tmp, rhs, rhs); // rhs += _M_bar * weighted_old_x
         BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
     }
 
@@ -203,17 +200,16 @@ public:
         auto const  theta  = _crank_nicolson.getTheta();
 
         // x_dot  = alpha*x_new_timestep - x_old
-        Vector x_dot;
-        _crank_nicolson.getWeightedOldX(x_dot);
-        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
+        _crank_nicolson.getWeightedOldX(_tmp);
+        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
-        BLAS::matMult(M, x_dot, res); // res = M * x_dot; // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, _tmp, res); // res = M * x_dot; // the local vector x_dot seems to be necessary because of this multiplication
         BLAS::matMultAdd(K, x_curr, res, res); // res += K * x_curr
         BLAS::axpy(res, -1.0, b); // res = M * x_dot + K * x_curr - b
 
         BLAS::aypx(res, theta, _b_bar); // res = res * theta + _b_bar
-        BLAS::matMultAdd(_M_bar, x_dot, res, res); // rs += _M_bar * x_dot
+        BLAS::matMultAdd(_M_bar, _tmp, res, res); // rs += _M_bar * x_dot
     }
 
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
@@ -247,6 +243,7 @@ private:
 
     Matrix _M_bar;
     Vector _b_bar;
+    mutable Vector _tmp; // used to store intermediate calculation results
 };
 
 
