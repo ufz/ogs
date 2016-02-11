@@ -40,16 +40,13 @@ public:
     Matrix getA(Matrix const& M, Matrix const& K) const override
     {
         auto const dxdot_dx = _time_disc.getCurrentXWeight();
-        auto const dx_dx    = _time_disc.getDxDx();
-        return M * dxdot_dx + K * dx_dx;
+        return M * dxdot_dx + K;
     }
 
-    Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
+    Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
     {
         auto const& weighted_old_x = _time_disc.getWeightedOldX();
-        auto const& x_old = b; // TODO: fix
-        auto const  dx_dx = _time_disc.getDxDx();
-        return b + M * weighted_old_x - (1.0-dx_dx) * K * x_old;
+        return b + M * weighted_old_x;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -72,12 +69,63 @@ private:
     ITimeDiscretization const& _time_disc;
 };
 
+
+template<typename Equation>
+class MatrixTranslatorForwardEuler;
+
+template<>
+class MatrixTranslatorForwardEuler<IParabolicEquation>
+        : public MatrixTranslator<IParabolicEquation>
+{
+public:
+    MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
+        : _fwd_euler(timeDisc)
+    {}
+
+    Matrix getA(Matrix const& M, Matrix const& /*K*/) const override
+    {
+        auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
+        return M * dxdot_dx;
+    }
+
+    Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
+    {
+        auto const& weighted_old_x = _fwd_euler.getWeightedOldX();
+        auto const& x_old          = _fwd_euler.getXOld();
+        return b + M * weighted_old_x - K * x_old;
+    }
+
+    Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                       Vector const& x_new_timestep) const override
+    {
+        auto const  alpha  = _fwd_euler.getCurrentXWeight();
+        auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
+        auto const  x_old  = _fwd_euler.getWeightedOldX();
+        auto const  x_dot  = alpha*x_new_timestep - x_old;
+
+        return M * x_dot + K*x_curr - b;
+    }
+
+    Matrix getJacobian(Matrix Jac) const override
+    {
+        return Jac;
+    }
+
+private:
+    ForwardEuler const& _fwd_euler;
+};
+
 template<typename Equation>
 std::unique_ptr<MatrixTranslator<Equation>>
 createMatrixTranslator(ITimeDiscretization const& timeDisc)
 {
-    return std::unique_ptr<MatrixTranslator<Equation>>(
-            new MatrixTranslatorGeneral<Equation>(timeDisc));
+    if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc)) {
+        return std::unique_ptr<MatrixTranslator<Equation>>(
+                new MatrixTranslatorForwardEuler<Equation>(*fwd_euler));
+    } else {
+        return std::unique_ptr<MatrixTranslator<Equation>>(
+                new MatrixTranslatorGeneral<Equation>(timeDisc));
+    }
 }
 
 

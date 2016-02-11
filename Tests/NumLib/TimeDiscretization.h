@@ -205,6 +205,8 @@ public:
         return rhs;
     }
 
+    Vector const& getXOld() const { return _x_old; }
+
 private:
     double _t = 9999.9999;
     double _t_old = 7777.7777;
