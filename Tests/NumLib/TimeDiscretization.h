@@ -284,6 +284,8 @@ public:
         res += _M_bar * xdot + _b_bar;
     }
 
+    double getTheta() const { return _theta; }
+
 private:
     const double _theta = 555.555;
     double _t = 9999.9999;

@@ -40,12 +40,14 @@ public:
     Matrix getA(Matrix const& M, Matrix const& K) const override
     {
         auto const dxdot_dx = _time_disc.getCurrentXWeight();
+
         return M * dxdot_dx + K;
     }
 
     Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
     {
         auto const& weighted_old_x = _time_disc.getWeightedOldX();
+
         return b + M * weighted_old_x;
     }
 
@@ -85,6 +87,7 @@ public:
     Matrix getA(Matrix const& M, Matrix const& /*K*/) const override
     {
         auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
+
         return M * dxdot_dx;
     }
 
@@ -92,6 +95,7 @@ public:
     {
         auto const& weighted_old_x = _fwd_euler.getWeightedOldX();
         auto const& x_old          = _fwd_euler.getXOld();
+
         return b + M * weighted_old_x - K * x_old;
     }
 
@@ -115,6 +119,62 @@ private:
     ForwardEuler const& _fwd_euler;
 };
 
+
+template<typename Equation>
+class MatrixTranslatorCrankNicolson;
+
+template<>
+class MatrixTranslatorCrankNicolson<IParabolicEquation>
+        : public MatrixTranslator<IParabolicEquation>
+{
+public:
+    MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
+        : _crank_nicolson(timeDisc)
+    {}
+
+    Matrix getA(Matrix const& M, Matrix const& K) const override
+    {
+        auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
+        auto const theta    = _crank_nicolson.getTheta();
+
+        return theta * (M * dxdot_dx + K) + dxdot_dx * _M_bar;
+    }
+
+    Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
+    {
+        auto const& weighted_old_x = _crank_nicolson.getWeightedOldX();
+        auto const  theta          = _crank_nicolson.getTheta();
+
+        return theta * (b + M * weighted_old_x) + _M_bar * weighted_old_x - _b_bar;
+    }
+
+    Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                       Vector const& x_new_timestep) const override
+    {
+        auto const  alpha  = _crank_nicolson.getCurrentXWeight();
+        auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
+        auto const  x_old  = _crank_nicolson.getWeightedOldX();
+        auto const  x_dot  = alpha*x_new_timestep - x_old;
+        auto const  theta  = _crank_nicolson.getTheta();
+
+        return theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar;
+    }
+
+    Matrix getJacobian(Matrix Jac) const override
+    {
+        auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
+        auto const theta    = _crank_nicolson.getTheta();
+
+        return theta * Jac + dxdot_dx * _M_bar;
+    }
+
+private:
+    CrankNicolson const& _crank_nicolson;
+
+    Matrix _M_bar;
+    Vector _b_bar;
+};
+
 template<typename Equation>
 std::unique_ptr<MatrixTranslator<Equation>>
 createMatrixTranslator(ITimeDiscretization const& timeDisc)
@@ -122,6 +182,9 @@ createMatrixTranslator(ITimeDiscretization const& timeDisc)
     if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc)) {
         return std::unique_ptr<MatrixTranslator<Equation>>(
                 new MatrixTranslatorForwardEuler<Equation>(*fwd_euler));
+    } else if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc)) {
+        return std::unique_ptr<MatrixTranslator<Equation>>(
+                new MatrixTranslatorCrankNicolson<Equation>(*crank));
     } else {
         return std::unique_ptr<MatrixTranslator<Equation>>(
                 new MatrixTranslatorGeneral<Equation>(timeDisc));
