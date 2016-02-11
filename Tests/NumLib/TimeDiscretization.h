@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
+
+#include "BLAS.h"
 #include "ODETypes.h"
 
-#include <vector>
 
 
 class InternalMatrixStorage
@@ -75,8 +77,11 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override {
-        return _x_old / _delta_t;
+    Vector getWeightedOldX() const override
+    {
+        Vector x(_x_old);
+        BLAS::scale(x, 1.0/_delta_t);
+        return x;
     }
 
 private:
@@ -119,8 +124,11 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override {
-        return _x_old / _delta_t;
+    Vector getWeightedOldX() const override
+    {
+        Vector x(_x_old);
+        BLAS::scale(x, 1.0/_delta_t);
+        return x;
     }
 
     bool isLinearTimeDisc() const override {
@@ -174,8 +182,11 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override {
-        return _x_old / _delta_t;
+    Vector getWeightedOldX() const override
+    {
+        Vector x(_x_old);
+        BLAS::scale(x, 1.0/_delta_t);
+        return x;
     }
 
     bool needsPreload() const override {
@@ -260,14 +271,15 @@ public:
         auto const*const BDFk = detail::BDF_Coeffs[k-1];
 
         // compute linear combination \sum_{i=0}^{k-1} BDFk_{k-i} \cdot x_{n+i}
-        Vector y(BDFk[k]*_xs_old[_offset]); // _xs_old[offset] = x_n
+        Vector y(_xs_old[_offset]); // _xs_old[offset] = x_n
+        BLAS::scale(y, BDFk[k]);
 
         for (unsigned i=1; i<k; ++i) {
             auto const off = (_offset + i) % k;
-            y += BDFk[k-i] * _xs_old[off];
+            BLAS::axpy(y, BDFk[k-i], _xs_old[off]);
         }
 
-        y /= _delta_t;
+        BLAS::scale(y, 1.0/_delta_t);
 
         return y;
     }

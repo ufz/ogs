@@ -74,7 +74,10 @@ public:
         auto const  alpha  = _time_disc.getCurrentXWeight();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
         auto const  x_old  = _time_disc.getWeightedOldX();
-        auto const  x_dot  = alpha*x_new_timestep - x_old;
+
+        // x_dot  = alpha*x_new_timestep - x_old
+        Vector x_dot(x_new_timestep);
+        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
 
         // res = M * x_dot + K * x_curr - b
         Vector res;
@@ -138,7 +141,10 @@ public:
         auto const  alpha  = _fwd_euler.getCurrentXWeight();
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
         auto const  x_old  = _fwd_euler.getWeightedOldX();
-        auto const  x_dot  = alpha*x_new_timestep - x_old;
+
+        // x_dot  = alpha*x_new_timestep - x_old
+        Vector x_dot(x_new_timestep);
+        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
 
         // res = M * x_dot + K * x_curr - b
         Vector res;
@@ -208,8 +214,11 @@ public:
         auto const  alpha  = _crank_nicolson.getCurrentXWeight();
         auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
         auto const  x_old  = _crank_nicolson.getWeightedOldX();
-        auto const  x_dot  = alpha*x_new_timestep - x_old;
         auto const  theta  = _crank_nicolson.getTheta();
+
+        // x_dot  = alpha*x_new_timestep - x_old
+        Vector x_dot(x_new_timestep);
+        BLAS::axpby(x_dot, alpha, -1.0, x_new_timestep);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
         Vector res;

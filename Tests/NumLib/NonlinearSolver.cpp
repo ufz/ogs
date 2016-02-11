@@ -4,7 +4,11 @@
 
 #include <iostream>
 
+#include "BLAS.h"
+
 #include "NonlinearSolver.h"
+
+#include "MathLib/LinAlg/VectorNorms.h"
 
 
 void
@@ -22,17 +26,21 @@ solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
     {
         sys.assembleMatricesPicard(x);
 
-        auto const& A = sys.getA();
-        auto const& rhs = sys.getRhs();
+        auto A = sys.getA();
+        auto rhs = sys.getRhs();
 
-        //Eigen::BiCGSTAB<Matrix> linear_solver;
-        Eigen::SparseLU<Matrix> linear_solver;
-        linear_solver.compute(A);
+        // Eigen::BiCGSTAB<Matrix> linear_solver;
+        // Eigen::SparseLU<Matrix> linear_solver;
+        // linear_solver.compute(A);
+        LinearSolver linear_solver(A);
 
-        //_x_new = linear_solver.solveWithGuess(rhs, x);
-        _x_new = linear_solver.solve(rhs);
+        linear_solver.solve(rhs, _x_new);
 
-        auto const error = (_x_new - x).norm();
+        // _x_new = linear_solver.solveWithGuess(rhs, x);
+        // _x_new = linear_solver.solve(rhs);
+
+        BLAS::aypx(x, -1.0, _x_new); // x = _x_new - x
+        auto const error = norm(x);
         // INFO("  picard iteration %u error: %e", iteration, error);
 
         x = _x_new;
@@ -64,22 +72,23 @@ solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
     {
         sys.assembleResidualNewton(x);
 
-        auto const& res = sys.getResidual(x);
+        auto res = sys.getResidual(x);
 
         // std::cout << "  res:\n" << res << std::endl;
 
-        if (res.norm() < _tol) break;
+        if (norm(res) < _tol) break;
 
         sys.assembleJacobian(x);
-        auto const& J = sys.getJacobian();
+        auto J = sys.getJacobian();
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
         // Eigen::BiCGSTAB<Matrix> linear_solver;
-        Eigen::SparseLU<Matrix> linear_solver;
-        linear_solver.compute(J);
+        // Eigen::SparseLU<Matrix> linear_solver;
+        // linear_solver.compute(J);
+        LinearSolver linear_solver(J);
 
-        _minus_delta_x = linear_solver.solve(res);
+        linear_solver.solve(res, _minus_delta_x);
 
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
