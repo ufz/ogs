@@ -15,13 +15,13 @@ class TestOutput
 {
 public:
     template<typename Ode>
-    void run_test(Ode& ode, ITimeDiscretization& timeDisc)
+    void run_test(Ode& ode, TimeDiscretization& timeDisc)
     {
         run_test<Ode>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
     template<typename Ode>
-    void run_test(Ode& ode, ITimeDiscretization& timeDisc, const unsigned num_timesteps)
+    void run_test(Ode& ode, TimeDiscretization& timeDisc, const unsigned num_timesteps)
     {
         auto mat_trans = createMatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>(timeDisc);
         TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NLTag> ode_sys(ode, timeDisc, *mat_trans);

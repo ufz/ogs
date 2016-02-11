@@ -15,7 +15,7 @@ public:
 };
 
 
-class ITimeDiscretization
+class TimeDiscretization
 {
 public:
     virtual void setInitialState(const double t0, Vector const& x) = 0;
@@ -29,7 +29,7 @@ public:
     virtual double getCurrentXWeight() const = 0; // = alpha
     virtual Vector getWeightedOldX() const = 0; // = x_old
 
-    ~ITimeDiscretization() = default;
+    ~TimeDiscretization() = default;
 
 
     // Forward Euler is linear, other schemes not.
@@ -50,7 +50,7 @@ public:
 };
 
 
-class BackwardEuler final : public ITimeDiscretization
+class BackwardEuler final : public TimeDiscretization
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -88,7 +88,7 @@ private:
 };
 
 
-class ForwardEuler final : public ITimeDiscretization
+class ForwardEuler final : public TimeDiscretization
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -143,7 +143,7 @@ private:
 };
 
 
-class CrankNicolson final : public ITimeDiscretization
+class CrankNicolson final : public TimeDiscretization
 {
 public:
     explicit
@@ -214,7 +214,7 @@ const double BDF_Coeffs[6][7] = {
 }
 
 
-class BackwardDifferentiationFormula final : public ITimeDiscretization
+class BackwardDifferentiationFormula final : public TimeDiscretization
 {
 public:
     explicit

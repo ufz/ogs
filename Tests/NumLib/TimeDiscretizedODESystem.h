@@ -7,17 +7,21 @@
 #include <memory>
 
 
-template<NonlinearSolverTag NLTag>
+template<NonlinearSolverTag NLTag_>
 class TimeDiscretizedODESystemBase
-        : public INonlinearSystem<NLTag>
+        : public INonlinearSystem<NLTag_>
         , public InternalMatrixStorage
 {
 public:
-    virtual ITimeDiscretization& getTimeDiscretization() = 0;
+    static constexpr NonlinearSolverTag NLTag  = NLTag_;
+
+    virtual TimeDiscretization& getTimeDiscretization() = 0;
 };
+
 
 template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystem;
+
 
 template<>
 class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -25,11 +29,14 @@ class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Newton>
 {
 public:
+    static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+
+    using ODE = ODESystem<ODETag, NLTag>;
+    using MatTrans = MatrixTranslator<ODETag>;
+
+
     explicit
-    TimeDiscretizedODESystem(
-            ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& ode,
-            ITimeDiscretization& time_discretization,
-            MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDiscretization& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -75,21 +82,20 @@ public:
 
     /// end INonlinearSystemNewton
 
-    ITimeDiscretization& getTimeDiscretization() override {
+    TimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 
 private:
-    // from IParabolicEquation
     virtual void pushMatrices() const override
     {
         _mat_trans.pushMatrices(_M, _K, _b);
     }
 
 
-    ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& _ode;
-    ITimeDiscretization& _time_disc;
-    MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& _mat_trans;
+    ODE& _ode;
+    TimeDiscretization& _time_disc;
+    MatTrans& _mat_trans;
 
     Matrix _Jac;
     Matrix _M;
@@ -103,11 +109,14 @@ class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Picard>
 {
 public:
+    static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+
+    using ODE = ODESystem<ODETag, NLTag>;
+    using MatTrans = MatrixTranslator<ODETag>;
+
+
     explicit
-    TimeDiscretizedODESystem(
-            ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& ode,
-            ITimeDiscretization& time_discretization,
-            MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDiscretization& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -143,21 +152,20 @@ public:
 
     /// end INonlinearSystemPicard
 
-    ITimeDiscretization& getTimeDiscretization() override {
+    TimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 
 private:
-    // from IParabolicEquation
     virtual void pushMatrices() const override
     {
         _mat_trans.pushMatrices(_M, _K, _b);
     }
 
 
-    ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& _ode;
-    ITimeDiscretization& _time_disc;
-    MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& _mat_trans;
+    ODE& _ode;
+    TimeDiscretization& _time_disc;
+    MatTrans& _mat_trans;
 
     Matrix _M;
     Matrix _K;

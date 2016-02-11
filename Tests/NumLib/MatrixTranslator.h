@@ -40,7 +40,7 @@ class MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>
         : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    MatrixTranslatorGeneral(ITimeDiscretization const& timeDisc)
+    MatrixTranslatorGeneral(TimeDiscretization const& timeDisc)
         : _time_disc(timeDisc)
     {}
 
@@ -75,7 +75,7 @@ public:
     }
 
 private:
-    ITimeDiscretization const& _time_disc;
+    TimeDiscretization const& _time_disc;
 };
 
 
@@ -194,7 +194,7 @@ private:
 
 template<ODESystemTag ODETag>
 std::unique_ptr<MatrixTranslator<ODETag>>
-createMatrixTranslator(ITimeDiscretization const& timeDisc)
+createMatrixTranslator(TimeDiscretization const& timeDisc)
 {
     if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc)) {
         return std::unique_ptr<MatrixTranslator<ODETag>>(
