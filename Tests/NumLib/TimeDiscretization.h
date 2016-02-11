@@ -27,7 +27,7 @@ public:
 
     // \dot x === alpha * x - x_old
     virtual double getCurrentXWeight() const = 0; // = alpha
-    virtual Vector getWeightedOldX() const = 0; // = x_old
+    virtual void getWeightedOldX(Vector& y) const = 0; // = x_old
 
     ~TimeDiscretization() = default;
 
@@ -77,11 +77,10 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override
+    void getWeightedOldX(Vector& y) const override
     {
-        Vector x(_x_old);
-        BLAS::scale(x, 1.0/_delta_t);
-        return x;
+        BLAS::copy(_x_old, y);
+        BLAS::scale(y, 1.0/_delta_t);
     }
 
 private:
@@ -124,11 +123,10 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override
+    void getWeightedOldX(Vector& y) const override
     {
-        Vector x(_x_old);
-        BLAS::scale(x, 1.0/_delta_t);
-        return x;
+        BLAS::copy(_x_old, y);
+        BLAS::scale(y, 1.0/_delta_t);
     }
 
     bool isLinearTimeDisc() const override {
@@ -182,11 +180,10 @@ public:
         return 1.0/_delta_t;
     }
 
-    Vector getWeightedOldX() const override
+    void getWeightedOldX(Vector& y) const override
     {
-        Vector x(_x_old);
-        BLAS::scale(x, 1.0/_delta_t);
-        return x;
+        BLAS::copy(_x_old, y);
+        BLAS::scale(y, 1.0/_delta_t);
     }
 
     bool needsPreload() const override {
@@ -266,12 +263,12 @@ public:
         return detail::BDF_Coeffs[k-1][0] / _delta_t;
     }
 
-    Vector getWeightedOldX() const override {
+    void getWeightedOldX(Vector& y) const override {
         auto const k = eff_num_steps();
         auto const*const BDFk = detail::BDF_Coeffs[k-1];
 
         // compute linear combination \sum_{i=0}^{k-1} BDFk_{k-i} \cdot x_{n+i}
-        Vector y(_xs_old[_offset]); // _xs_old[offset] = x_n
+        BLAS::copy(_xs_old[_offset], y); // _xs_old[offset] = x_n
         BLAS::scale(y, BDFk[k]);
 
         for (unsigned i=1; i<k; ++i) {
@@ -280,8 +277,6 @@ public:
         }
 
         BLAS::scale(y, 1.0/_delta_t);
-
-        return y;
     }
 
 private:
