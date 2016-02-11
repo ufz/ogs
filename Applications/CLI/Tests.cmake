@@ -130,7 +130,7 @@ else()
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow2D
 		PATH EllipticPETSc
-		EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_rtol 1.e-10
 		WRAPPER mpirun
 		WRAPPER_ARGS -np 3
 		TESTER diff
@@ -143,7 +143,7 @@ else()
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
 		PATH EllipticPETSc
-		EXECUTABLE_ARGS cube_1e3.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		EXECUTABLE_ARGS cube_1e3.prj -- -gw_ksp_type bcgs -gw_pc_type mg -gw_ksp_rtol 1.e-10
 		WRAPPER mpirun
 		WRAPPER_ARGS -np 3
 		TESTER diff
@@ -156,7 +156,7 @@ else()
 	AddTest(
 		NAME ParallelFEM_GroundWaterFlow3D_NeumannBC
 		PATH EllipticPETSc
-		EXECUTABLE_ARGS cube_1e3_neumann.prj -- -gw_ksp_type bcgs -gw_pc_type bjacobi -gw_ksp_atol 1.e-10
+		EXECUTABLE_ARGS cube_1e3_neumann.prj -- -gw_ksp_type gmres -gw_pc_type bjacobi -gw_ksp_rtol 1.e-10
 		WRAPPER mpirun
 		WRAPPER_ARGS -np 3
 		TESTER diff
