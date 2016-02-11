@@ -23,8 +23,8 @@ public:
     template<typename ODE>
     void run_test(ODE& ode, TimeDiscretization& timeDisc, const unsigned num_timesteps)
     {
-        auto mat_trans = createMatrixTranslator<ODE::ODETag>(timeDisc);
-        TimeDiscretizedODESystem<ODE::ODETag, NLTag> ode_sys(ode, timeDisc, *mat_trans);
+        auto mat_trans = createMatrixTranslator<Matrix, Vector, ODE::ODETag>(timeDisc);
+        TimeDiscretizedODESystem<Matrix, Vector, ODE::ODETag, NLTag> ode_sys(ode, timeDisc, *mat_trans);
         TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
 
         const double t0      = OdeTraits<ODE>::t0;

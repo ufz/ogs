@@ -18,12 +18,13 @@ public:
 };
 
 
-template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystem;
 
 
-template<>
-class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+template<typename Matrix, typename Vector>
+class TimeDiscretizedODESystem<Matrix, Vector,
+                               ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Newton> final
         : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Newton>
 {
@@ -31,7 +32,7 @@ public:
     static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     using ODE = ODESystem<ODETag, NLTag>;
-    using MatTrans = MatrixTranslator<ODETag>;
+    using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
 
 
     explicit
@@ -99,8 +100,9 @@ private:
     Vector _b;
 };
 
-template<>
-class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+template<typename Matrix, typename Vector>
+class TimeDiscretizedODESystem<Matrix, Vector,
+                               ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Picard> final
         : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Picard>
 {
@@ -108,7 +110,7 @@ public:
     static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     using ODE = ODESystem<ODETag, NLTag>;
-    using MatTrans = MatrixTranslator<ODETag>;
+    using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
 
 
     explicit
