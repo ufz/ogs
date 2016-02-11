@@ -217,9 +217,10 @@ Mesh* generateRegularHexMesh(const BaseLib::ISubdivision &div_x,
 /**
  * Generate a regular 3D Hex-Element mesh.
  *
- * \param length Mesh's dimensions in x- and y- and z-directions.
+ * \param length      Mesh dimensions in x- and y- and z-directions.
  * \param subdivision Number of subdivisions.
- * \param origin Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
+ * \param origin      Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name   Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const double length,
                              const std::size_t subdivision,
@@ -229,14 +230,15 @@ Mesh* generateRegularHexMesh(const double length,
 /**
  * Generate a regular 3D Hex-Element mesh.
  *
- * \param x_length Mesh's dimension in x-direction.
- * \param y_length Mesh's dimension in y-direction.
- * \param z_length Mesh's dimension in z-direction.
+ * \param x_length      Mesh dimension in x-direction.
+ * \param y_length      Mesh dimension in y-direction.
+ * \param z_length      Mesh dimension in z-direction.
  * \param x_subdivision Number of subdivisions in x-direction.
  * \param y_subdivision Number of subdivisions in y-direction.
  * \param z_subdivision Number of subdivisions in z-direction.
- * \param origin Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
- */
+ * \param origin        Optional mesh's origin (the bottom lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name     Name of the new mesh.
+  */
 Mesh* generateRegularHexMesh(const double x_length,
                              const double y_length,
                              const double z_length,
@@ -253,7 +255,7 @@ Mesh* generateRegularHexMesh(const double x_length,
  * \param n_y_cells Number of cells in y-direction.
  * \param n_z_cells Number of cells in z-direction.
  * \param cell_size Edge length of Hex elements
- * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param origin    Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const unsigned n_x_cells,
@@ -272,8 +274,8 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
  * \param cell_size_x  Edge length of Hex elements in x-direction.
  * \param cell_size_y  Edge length of Hex elements in y s-direction.
  * \param cell_size_z  Edge length of Hex elements in z-direction
- * \param origin Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
- * \param mesh_name Name of the new mesh.
+ * \param origin       Optional mesh's origin (the lower left corner) with GeoLib::ORIGIN default.
+ * \param mesh_name    Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const unsigned n_x_cells,
 	                         const unsigned n_y_cells,
