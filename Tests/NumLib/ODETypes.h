@@ -12,17 +12,17 @@
 #include <Eigen/SparseLU>
 
 using IndexType = int;
-using Matrix = Eigen::SparseMatrix<double, Eigen::RowMajor, IndexType>;
-using Vector = Eigen::VectorXd;
+using ODEMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor, IndexType>;
+using ODEVector = Eigen::VectorXd;
 
-inline void oneShotLinearSolve(Matrix& A, Vector& rhs, Vector& x)
+inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
 {
-    Eigen::SparseLU<Matrix> slv;
+    Eigen::SparseLU<ODEMatrix> slv;
     slv.compute(A);
     x = slv.solve(rhs);
 }
 
-inline double norm(Vector const& x) { return x.norm(); }
+inline double norm(ODEVector const& x) { return x.norm(); }
 
 #else
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
@@ -30,10 +30,10 @@ inline double norm(Vector const& x) { return x.norm(); }
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
 using IndexType = int;
-using Matrix = MathLib::EigenMatrix;
-using Vector = MathLib::EigenVector;
+using ODEMatrix = MathLib::EigenMatrix;
+using ODEVector = MathLib::EigenVector;
 
-inline void oneShotLinearSolve(Matrix& A, Vector& rhs, Vector& x)
+inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
 {
     MathLib::EigenLinearSolver slv(A);
     slv.solve(rhs, x);
@@ -69,13 +69,13 @@ inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
 
 
 #ifndef USE_EIGEN_PLAIN
-inline void setMatrix(Matrix& m, IndexType const rows, IndexType const cols,
+inline void setMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols,
                       std::initializer_list<double> values)
 {
     setMatrix(m.getRawMatrix(), rows, cols, values);
 }
 
-inline void setMatrix(Matrix& m, Eigen::MatrixXd const& tmp)
+inline void setMatrix(ODEMatrix& m, Eigen::MatrixXd const& tmp)
 {
     m.getRawMatrix() = tmp.sparseView();
 }

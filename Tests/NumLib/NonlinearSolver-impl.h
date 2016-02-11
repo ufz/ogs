@@ -1,3 +1,5 @@
+#pragma once
+
 #include <logog/include/logog.hpp>
 
 #include <iostream>
@@ -9,16 +11,18 @@
 #include "MathLib/LinAlg/VectorNorms.h"
 
 
+template<typename Matrix, typename Vector>
 void
-NonlinearSolver<NonlinearSolverTag::Picard>::
-assemble(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
+NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
+assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
 {
     sys.assembleMatricesPicard(x);
 }
 
+template<typename Matrix, typename Vector>
 void
-NonlinearSolver<NonlinearSolverTag::Picard>::
-solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
+NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
+solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
 {
     Matrix A; Vector rhs;
 
@@ -48,16 +52,18 @@ solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
 }
 
 
+template<typename Matrix, typename Vector>
 void
-NonlinearSolver<NonlinearSolverTag::Newton>::
-assemble(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
+NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
+assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
 {
     sys.assembleResidualNewton(x);
 }
 
+template<typename Matrix, typename Vector>
 void
-NonlinearSolver<NonlinearSolverTag::Newton>::
-solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
+NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
+solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
 {
     Matrix J; Vector res;
 

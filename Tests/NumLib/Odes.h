@@ -3,12 +3,15 @@
 #include "ODESystem.h"
 
 
-template<typename Ode>
+template<typename Vector,
+         template<typename /*Matrix*/, typename /*Vector*/> typename Ode>
 class OdeTraits;
 
 // ODE 1 //////////////////////////////////////////////////////////
+template<typename Matrix, typename Vector>
 class Ode1 final
-        : public ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+        : public ODESystem<Matrix, Vector,
+                           ODESystemTag::FirstOrderImplicitQuasilinear,
                            NonlinearSolverTag::Newton>
 {
 public:
@@ -47,8 +50,8 @@ public:
     }
 };
 
-template<>
-class OdeTraits<Ode1>
+template<typename Vector>
+class OdeTraits<Vector, Ode1>
 {
 public:
     static void setIC(Vector& x0)
@@ -70,8 +73,10 @@ public:
 // ODE 1 end //////////////////////////////////////////////////////
 
 // ODE 2 //////////////////////////////////////////////////////////
+template<typename Matrix, typename Vector>
 class Ode2 final
-        : public ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+        : public ODESystem<Matrix, Vector,
+                           ODESystemTag::FirstOrderImplicitQuasilinear,
                            NonlinearSolverTag::Newton>
 {
 public:
@@ -101,8 +106,8 @@ public:
     }
 };
 
-template<>
-class OdeTraits<Ode2>
+template<typename Vector>
+class OdeTraits<Vector, Ode2>
 {
 public:
     static void setIC(Vector& x0)

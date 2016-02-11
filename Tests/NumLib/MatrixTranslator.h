@@ -43,7 +43,7 @@ class MatrixTranslatorGeneral<Matrix, Vector, ODESystemTag::FirstOrderImplicitQu
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    MatrixTranslatorGeneral(TimeDiscretization const& timeDisc)
+    MatrixTranslatorGeneral(TimeDiscretization<Vector> const& timeDisc)
         : _time_disc(timeDisc)
     {}
 
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    TimeDiscretization const& _time_disc;
+    TimeDiscretization<Vector> const& _time_disc;
     mutable Vector _tmp; // used to store intermediate calculation results
 };
 
@@ -99,7 +99,7 @@ class MatrixTranslatorForwardEuler<Matrix, Vector, ODESystemTag::FirstOrderImpli
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
+    MatrixTranslatorForwardEuler(ForwardEuler<Vector> const& timeDisc)
         : _fwd_euler(timeDisc)
     {}
 
@@ -147,7 +147,7 @@ public:
     }
 
 private:
-    ForwardEuler const& _fwd_euler;
+    ForwardEuler<Vector> const& _fwd_euler;
     mutable Vector _tmp; // used to store intermediate calculation results
 };
 
@@ -160,7 +160,7 @@ class MatrixTranslatorCrankNicolson<Matrix, Vector, ODESystemTag::FirstOrderImpl
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
+    MatrixTranslatorCrankNicolson(CrankNicolson<Vector> const& timeDisc)
         : _crank_nicolson(timeDisc)
     {}
 
@@ -239,7 +239,7 @@ public:
     }
 
 private:
-    CrankNicolson const& _crank_nicolson;
+    CrankNicolson<Vector> const& _crank_nicolson;
 
     Matrix _M_bar;
     Vector _b_bar;
@@ -249,14 +249,14 @@ private:
 
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>
-createMatrixTranslator(TimeDiscretization const& timeDisc)
+createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
 {
-    if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc))
+    if (auto* fwd_euler = dynamic_cast<ForwardEuler<Vector> const*>(&timeDisc))
     {
         return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
                 new MatrixTranslatorForwardEuler<Matrix, Vector, ODETag>(*fwd_euler));
     }
-    else if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc))
+    else if (auto* crank = dynamic_cast<CrankNicolson<Vector> const*>(&timeDisc))
     {
         return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
                 new MatrixTranslatorCrankNicolson<Matrix, Vector, ODETag>(*crank));

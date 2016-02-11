@@ -3,11 +3,11 @@
 #include "ODETypes.h"
 
 
-template<NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSystem;
 
-template<>
-class NonlinearSystem<NonlinearSolverTag::Newton>
+template<typename Matrix, typename Vector>
+class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>
 {
 public:
     virtual void assembleResidualNewton(Vector const& x) = 0;
@@ -20,8 +20,8 @@ public:
     virtual ~NonlinearSystem() = default;
 };
 
-template<>
-class NonlinearSystem<NonlinearSolverTag::Picard>
+template<typename Matrix, typename Vector>
+class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>
 {
 public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;

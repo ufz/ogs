@@ -3,12 +3,12 @@
 #include "TimeDiscretizedODESystem.h"
 #include "NonlinearSolver.h"
 
-template<NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeLoop
 {
 public:
-    using TDiscODESys = TimeDiscretizedODESystemBase<NLTag>;
-    using NLSolver = NonlinearSolver<NLTag>;
+    using TDiscODESys = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
+    using NLSolver = NonlinearSolver<Matrix, Vector, NLTag>;
 
     explicit
     TimeLoop(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
@@ -27,10 +27,10 @@ private:
 };
 
 
-template<NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
 void
-TimeLoop<NLTag>::
+TimeLoop<Matrix, Vector, NLTag>::
 loop(const double t0, const Vector x0, const double t_end, const double delta_t,
      Callback& post_timestep)
 {

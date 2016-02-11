@@ -6,15 +6,15 @@
 #include "MatrixTranslator.h"
 
 
-template<NonlinearSolverTag NLTag_>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag_>
 class TimeDiscretizedODESystemBase
-        : public NonlinearSystem<NLTag_>
+        : public NonlinearSystem<Matrix, Vector, NLTag_>
         , public InternalMatrixStorage
 {
 public:
-    static constexpr NonlinearSolverTag NLTag  = NLTag_;
+    // static constexpr NonlinearSolverTag NLTag  = NLTag_;
 
-    virtual TimeDiscretization& getTimeDiscretization() = 0;
+    virtual TimeDiscretization<Vector>& getTimeDiscretization() = 0;
 };
 
 
@@ -26,17 +26,18 @@ template<typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Newton> final
-        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Newton>
+        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Newton>
 {
 public:
     static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
-    using ODE = ODESystem<ODETag, NLTag>;
+    using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    using TimeDisc = TimeDiscretization<Vector>;
 
 
     explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDiscretization& time_discretization, MatTrans& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -80,7 +81,7 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    TimeDiscretization& getTimeDiscretization() override {
+    TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
@@ -91,7 +92,7 @@ public:
 
 private:
     ODE& _ode;
-    TimeDiscretization& _time_disc;
+    TimeDisc& _time_disc;
     MatTrans& _mat_trans;
 
     Matrix _Jac;
@@ -104,17 +105,18 @@ template<typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Picard> final
-        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Picard>
+        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Picard>
 {
 public:
     static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
-    using ODE = ODESystem<ODETag, NLTag>;
+    using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    using TimeDisc = TimeDiscretization<Vector>;
 
 
     explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDiscretization& time_discretization, MatTrans& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -146,7 +148,7 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    TimeDiscretization& getTimeDiscretization() override {
+    TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
@@ -157,7 +159,7 @@ public:
 
 private:
     ODE& _ode;
-    TimeDiscretization& _time_disc;
+    TimeDisc& _time_disc;
     MatTrans& _mat_trans;
 
     Matrix _M;

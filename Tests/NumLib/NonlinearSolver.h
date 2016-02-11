@@ -6,13 +6,15 @@
 #include "NonlinearSystem.h"
 
 
-template<NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSolver;
 
-template<>
-class NonlinearSolver<NonlinearSolverTag::Newton> final
+template<typename Matrix, typename Vector>
+class NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton> final
 {
 public:
+    using System = NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>;
+
     explicit
     NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
@@ -20,9 +22,9 @@ public:
     {}
 
     // for Crank-Nicolson
-    void assemble(NonlinearSystem<NonlinearSolverTag::Newton>& sys, Vector& x);
+    void assemble(System& sys, Vector& x);
 
-    void solve(NonlinearSystem<NonlinearSolverTag::Newton>& sys, Vector& x);
+    void solve(System& sys, Vector& x);
 
 private:
     const double _tol;
@@ -31,10 +33,12 @@ private:
     Vector _minus_delta_x;
 };
 
-template<>
-class NonlinearSolver<NonlinearSolverTag::Picard> final
+template<typename Matrix, typename Vector>
+class NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard> final
 {
 public:
+    using System = NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>;
+
     explicit
     NonlinearSolver(double const tol, const unsigned maxiter)
         : _tol(tol)
@@ -42,9 +46,9 @@ public:
     {}
 
     // for Crank-Nicolson
-    void assemble(NonlinearSystem<NonlinearSolverTag::Picard>& sys, Vector& x);
+    void assemble(System& sys, Vector& x);
 
-    void solve(NonlinearSystem<NonlinearSolverTag::Picard>& sys, Vector& x);
+    void solve(System& sys, Vector& x);
 
 private:
     const double _tol;
@@ -52,3 +56,6 @@ private:
 
     Vector _x_new;
 };
+
+
+#include "NonlinearSolver-impl.h"

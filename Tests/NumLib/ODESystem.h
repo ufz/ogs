@@ -2,11 +2,12 @@
 
 #include "ODETypes.h"
 
-template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class ODESystem;
 
-template<>
-class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+template<typename Matrix, typename Vector>
+class ODESystem<Matrix, Vector,
+                ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Picard>
 {
 public:
@@ -22,10 +23,12 @@ public:
     virtual ~ODESystem() = default;
 };
 
-template<>
-class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+template<typename Matrix, typename Vector>
+class ODESystem<Matrix, Vector,
+                ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Newton>
-        : public ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+        : public ODESystem<Matrix, Vector,
+                           ODESystemTag::FirstOrderImplicitQuasilinear,
                            NonlinearSolverTag::Picard>
 {
 public:

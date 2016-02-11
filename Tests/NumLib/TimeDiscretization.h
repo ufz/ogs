@@ -15,6 +15,7 @@ public:
 };
 
 
+template<typename Vector>
 class TimeDiscretization
 {
 public:
@@ -50,7 +51,8 @@ public:
 };
 
 
-class BackwardEuler final : public TimeDiscretization
+template<typename Vector>
+class BackwardEuler final : public TimeDiscretization<Vector>
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -90,7 +92,8 @@ private:
 };
 
 
-class ForwardEuler final : public TimeDiscretization
+template<typename Vector>
+class ForwardEuler final : public TimeDiscretization<Vector>
 {
 public:
     void setInitialState(const double t0, Vector const& x) override {
@@ -147,7 +150,8 @@ private:
 };
 
 
-class CrankNicolson final : public TimeDiscretization
+template<typename Vector>
+class CrankNicolson final : public TimeDiscretization<Vector>
 {
 public:
     explicit
@@ -220,7 +224,8 @@ const double BDF_Coeffs[6][7] = {
 }
 
 
-class BackwardDifferentiationFormula final : public TimeDiscretization
+template<typename Vector>
+class BackwardDifferentiationFormula final : public TimeDiscretization<Vector>
 {
 public:
     explicit

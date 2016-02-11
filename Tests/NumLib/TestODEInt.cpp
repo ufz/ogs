@@ -10,32 +10,36 @@
 #include "BaseLib/BuildInfo.h"
 
 
-template<NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TestOutput
 {
 public:
+    using TimeDisc = TimeDiscretization<Vector>;
+
     template<typename ODE>
-    void run_test(ODE& ode, TimeDiscretization& timeDisc)
+    void run_test(ODE& ode, TimeDisc& timeDisc)
     {
         run_test<ODE>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
-    template<typename ODE>
-    void run_test(ODE& ode, TimeDiscretization& timeDisc, const unsigned num_timesteps)
+    template<template<typename /*Matrix*/, typename /*Vector*/> typename ODE>
+    void run_test(ODE<Matrix, Vector>& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
     {
-        auto mat_trans = createMatrixTranslator<Matrix, Vector, ODE::ODETag>(timeDisc);
-        TimeDiscretizedODESystem<Matrix, Vector, ODE::ODETag, NLTag> ode_sys(ode, timeDisc, *mat_trans);
-        TimeLoop<NLTag> loop(ode_sys, _nonlinear_solver);
+        using ODE_ = ODE<Matrix, Vector>;
+        auto mat_trans = createMatrixTranslator<Matrix, Vector, ODE_::ODETag>(timeDisc);
+        TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
+                ode_sys(ode, timeDisc, *mat_trans);
+        TimeLoop<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
 
-        const double t0      = OdeTraits<ODE>::t0;
-        const double t_end   = OdeTraits<ODE>::t_end;
+        const double t0      = OdeTraits<Vector, ODE>::t0;
+        const double t_end   = OdeTraits<Vector, ODE>::t_end;
         const double delta_t = (t_end-t0) / num_timesteps;
 
         init_file(ode, timeDisc, delta_t);
 
         // initial condition
         Vector x0(ode.getMatrixSize());
-        OdeTraits<ODE>::setIC(x0);
+        OdeTraits<Vector, ODE>::setIC(x0);
 
         write(t0, x0, x0);
 
@@ -46,8 +50,8 @@ public:
     }
 
 private:
-    template<typename ODE, typename TimeDisc>
-    void init_file(ODE const& ode, TimeDisc const& timeDisc, const double delta_t)
+    template<typename ODE, typename TimeDisc_>
+    void init_file(ODE const& ode, TimeDisc_ const& timeDisc, const double delta_t)
     {
         std::string path(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_");
         path += typeid(ode).name();
@@ -75,84 +79,92 @@ private:
         *_file << "\n";
     }
 
-    template<typename Ode>
+    template<template<typename /*Matrix*/, typename /*Vector*/> typename Ode>
     void loopCallback(const double t, Vector const& x)
     {
-        write(t, x, OdeTraits<Ode>::solution(t));
+        write(t, x, OdeTraits<Vector, Ode>::solution(t));
     }
 
     std::unique_ptr<std::ofstream> _file;
 
     const double _tol = 1e-8;
     const unsigned _maxiter = 10;
-    NonlinearSolver<NLTag> _nonlinear_solver = NonlinearSolver<NLTag>(_tol, _maxiter);
+
+    using NLSolver = NonlinearSolver<Matrix, Vector, NLTag>;
+    NLSolver _nonlinear_solver = NLSolver(_tol, _maxiter);
 };
 
 
-template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
 run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test;
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
-template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, CrankNicolson>::value>::type
+template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+typename std::enable_if<std::is_same<TimeDisc, CrankNicolson<Vector> >::value>::type
 run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(0.5);
 
-    TestOutput<NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test;
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
-template<typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, BackwardDifferentiationFormula>::value>::type
+template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
+typename std::enable_if<
+    std::is_same<TimeDisc, BackwardDifferentiationFormula<Vector> >::value>::type
 run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(3);
 
-    TestOutput<NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test;
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
 
 
-template<typename ODE_, typename TimeDisc_, NonlinearSolverTag NLTag_>
+template<typename Matrix_, typename Vector_,
+         template<typename /*Matrix*/, typename /*Vector*/> typename ODE_,
+         template<typename /*Vector*/> typename TimeDisc_,
+         NonlinearSolverTag NLTag_>
 struct TestCase
 {
-    using ODE = ODE_;
-    using TimeDisc = TimeDisc_;
+    using Matrix = Matrix_;
+    using Vector = Vector_;
+    using ODE = ODE_<Matrix_, Vector_>;
+    using TimeDisc = TimeDisc_<Vector_>;
     static constexpr NonlinearSolverTag NLTag = NLTag_;
 };
 
 
 typedef ::testing::Types<
-    TestCase<Ode1, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<Ode1, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<Ode1, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode1, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode1, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode1, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
 
-    TestCase<Ode1, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<Ode1, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<Ode1, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode1, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode1, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode1, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
 
-    TestCase<Ode2, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<Ode2, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<Ode2, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode2, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode2, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode2, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
 
-    TestCase<Ode2, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<Ode2, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<Ode2, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
+    TestCase<ODEMatrix, ODEVector, Ode2, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode2, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode2, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
 > TestCases;
 
 
@@ -161,6 +173,8 @@ template<class TestParams>
 class NumLibODEIntTyped : public ::testing::Test
 {
 public:
+    using Matrix   = typename TestParams::Matrix;
+    using Vector   = typename TestParams::Vector;
     using ODE      = typename TestParams::ODE;
     using TimeDisc = typename TestParams::TimeDisc;
     static constexpr NonlinearSolverTag NLTag = TestParams::NLTag;
@@ -168,7 +182,7 @@ public:
     static void test()
     {
         for (auto num_timesteps : { 10, 100, 1000 }) {
-            run_test_case<TimeDisc, ODE, NLTag>(num_timesteps);
+            run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(num_timesteps);
         }
     }
 };
