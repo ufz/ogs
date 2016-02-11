@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <cassert>
 
-#define USE_EIGEN_PLAIN
+// #define USE_EIGEN_PLAIN
 
 
 

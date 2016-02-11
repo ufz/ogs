@@ -25,8 +25,8 @@ class NonlinearSystem<NonlinearSolverTag::Picard>
 {
 public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;
-    virtual Matrix getA() = 0;
-    virtual Vector getRhs() = 0;
+    virtual void getA(Matrix& A) = 0;
+    virtual void getRhs(Vector& rhs) = 0;
 
     virtual bool isLinear() const = 0;
 

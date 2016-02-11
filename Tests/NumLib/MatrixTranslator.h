@@ -15,9 +15,9 @@ template<>
 class MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
+    virtual void getA(Matrix const& M, Matrix const& K, Matrix& A) const = 0;
 
-    virtual Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const = 0;
+    virtual void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
 
     virtual Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                                Vector const& x_new_timestep) const = 0;
@@ -46,26 +46,21 @@ public:
         : _time_disc(timeDisc)
     {}
 
-    Matrix getA(Matrix const& M, Matrix const& K) const override
+    void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         auto const dxdot_dx = _time_disc.getCurrentXWeight();
 
         // A = M * dxdot_dx + K
-        Matrix A(M);
+        BLAS::copy(M, A);
         BLAS::aypx(A, dxdot_dx, K);
-
-        return A;
     }
 
-    Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
+    void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         auto const& weighted_old_x = _time_disc.getWeightedOldX();
 
         // rhs = M * weighted_old_x + b
-        Vector rhs;
         BLAS::matMultAdd(M, weighted_old_x, b, rhs);
-
-        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -110,29 +105,24 @@ public:
         : _fwd_euler(timeDisc)
     {}
 
-    Matrix getA(Matrix const& M, Matrix const& /*K*/) const override
+    void getA(Matrix const& M, Matrix const& /*K*/, Matrix& A) const override
     {
         auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
 
         // A = M * dxdot_dx
-        Matrix A(M);
+        BLAS::copy(M, A);
         BLAS::scale(A, dxdot_dx);
-
-        return A;
     }
 
-    Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
+    void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
     {
         auto const& weighted_old_x = _fwd_euler.getWeightedOldX();
         auto const& x_old          = _fwd_euler.getXOld();
 
         // rhs = b + M * weighted_old_x - K * x_old
-        Vector rhs;
         BLAS::matMult(K, x_old, rhs); // rhs = K * x_old
         BLAS::aypx(rhs, -1.0, b);     // rhs = b - K * x_old
         BLAS::matMultAdd(M, weighted_old_x, rhs, rhs); // rhs += M * weighted_old_x
-
-        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -177,35 +167,30 @@ public:
         : _crank_nicolson(timeDisc)
     {}
 
-    Matrix getA(Matrix const& M, Matrix const& K) const override
+    void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
         // A = theta * (M * dxdot_dx + K) + dxdot_dx * _M_bar
-        Matrix A(M);
+        BLAS::copy(M, A);
         BLAS::aypx(A, dxdot_dx, K); // A = M * dxdot_dx + K
 
         BLAS::scale(A, theta); // A *= theta
         BLAS::axpy(A, dxdot_dx, _M_bar); // A += dxdot_dx * _M_bar
-
-        return A;
     }
 
-    Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
+    void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         auto const& weighted_old_x = _crank_nicolson.getWeightedOldX();
         auto const  theta          = _crank_nicolson.getTheta();
 
         // rhs = theta * (b + M * weighted_old_x) + _M_bar * weighted_old_x - _b_bar;
-        Vector rhs;
         BLAS::matMultAdd(M, weighted_old_x, b, rhs); // rhs = b + M * weighted_old_x
 
         BLAS::scale(rhs, theta); // rhs *= theta
         BLAS::matMultAdd(_M_bar, weighted_old_x, rhs, rhs); // rhs += _M_bar * weighted_old_x
         BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
-
-        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,

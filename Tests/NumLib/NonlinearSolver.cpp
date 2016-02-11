@@ -20,12 +20,13 @@ void
 NonlinearSolver<NonlinearSolverTag::Picard>::
 solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
 {
+    Matrix A; Vector rhs;
+
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleMatricesPicard(x);
-
-        auto A = sys.getA();
-        auto rhs = sys.getRhs();
+        sys.getA(A);
+        sys.getRhs(rhs);
 
         oneShotLinearSolve(A, rhs, _x_new);
 

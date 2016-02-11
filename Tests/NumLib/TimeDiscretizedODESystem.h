@@ -79,19 +79,16 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    /// end INonlinearSystemNewton
-
     TimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 
-private:
     virtual void pushMatrices() const override
     {
         _mat_trans.pushMatrices(_M, _K, _b);
     }
 
-
+private:
     ODE& _ode;
     TimeDiscretization& _time_disc;
     MatTrans& _mat_trans;
@@ -124,8 +121,6 @@ public:
         , _b(ode.getMatrixSize())
     {}
 
-    /// begin INonlinearSystemNewton
-
     void assembleMatricesPicard(const Vector &x_new_timestep) override
     {
         auto const  t      = _time_disc.getCurrentTime();
@@ -134,14 +129,14 @@ public:
         _ode.assemble(t, x_curr, _M, _K, _b);
     }
 
-    Matrix getA() override
+    void getA(Matrix& A) override
     {
-        return _mat_trans.getA(_M, _K);
+        _mat_trans.getA(_M, _K, A);
     }
 
-    Vector getRhs() override
+    void getRhs(Vector& rhs) override
     {
-        return _mat_trans.getRhs(_M, _K, _b);
+        _mat_trans.getRhs(_M, _K, _b, rhs);
     }
 
     bool isLinear() const override
@@ -149,19 +144,16 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    /// end INonlinearSystemPicard
-
     TimeDiscretization& getTimeDiscretization() override {
         return _time_disc;
     }
 
-private:
     virtual void pushMatrices() const override
     {
         _mat_trans.pushMatrices(_M, _K, _b);
     }
 
-
+private:
     ODE& _ode;
     TimeDiscretization& _time_disc;
     MatTrans& _mat_trans;
