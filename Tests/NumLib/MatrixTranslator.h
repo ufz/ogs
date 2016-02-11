@@ -5,6 +5,8 @@
 #include "ODETypes.h"
 #include "TimeDiscretization.h"
 
+#include "BLAS.h"
+
 
 template<ODESystemTag ODETag>
 class MatrixTranslator;
@@ -20,7 +22,7 @@ public:
     virtual Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                                Vector const& x_new_timestep) const = 0;
 
-    virtual Matrix getJacobian(Matrix Jac) const = 0;
+    virtual Matrix getJacobian(Matrix const& Jac) const = 0;
 
     // needed for Crank-Nicolson
     virtual void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b)
@@ -48,14 +50,22 @@ public:
     {
         auto const dxdot_dx = _time_disc.getCurrentXWeight();
 
-        return M * dxdot_dx + K;
+        // A = M * dxdot_dx + K
+        Matrix A(M);
+        BLAS::aypx(A, dxdot_dx, K);
+
+        return A;
     }
 
     Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
     {
         auto const& weighted_old_x = _time_disc.getWeightedOldX();
 
-        return b + M * weighted_old_x;
+        // rhs = M * weighted_old_x + b
+        Vector rhs;
+        BLAS::matMultAdd(M, weighted_old_x, b, rhs);
+
+        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -66,10 +76,16 @@ public:
         auto const  x_old  = _time_disc.getWeightedOldX();
         auto const  x_dot  = alpha*x_new_timestep - x_old;
 
-        return M * x_dot + K*x_curr - b;
+        // res = M * x_dot + K * x_curr - b
+        Vector res;
+        BLAS::matMult(M, x_dot, res);
+        BLAS::matMultAdd(K, x_curr, res, res);
+        BLAS::axpy(res, -1.0, b);
+
+        return res;
     }
 
-    Matrix getJacobian(Matrix Jac) const override
+    Matrix getJacobian(Matrix const& Jac) const override
     {
         return Jac;
     }
@@ -95,7 +111,11 @@ public:
     {
         auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
 
-        return M * dxdot_dx;
+        // A = M * dxdot_dx
+        Matrix A(M);
+        BLAS::scale(A, dxdot_dx);
+
+        return A;
     }
 
     Vector getRhs(const Matrix &M, const Matrix &K, const Vector& b) const override
@@ -103,7 +123,13 @@ public:
         auto const& weighted_old_x = _fwd_euler.getWeightedOldX();
         auto const& x_old          = _fwd_euler.getXOld();
 
-        return b + M * weighted_old_x - K * x_old;
+        // rhs = b + M * weighted_old_x - K * x_old
+        Vector rhs;
+        BLAS::matMult(K, x_old, rhs); // rhs = K * x_old
+        BLAS::aypx(rhs, -1.0, b);     // rhs = b - K * x_old
+        BLAS::matMultAdd(M, weighted_old_x, rhs, rhs); // rhs += M * weighted_old_x
+
+        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -114,10 +140,16 @@ public:
         auto const  x_old  = _fwd_euler.getWeightedOldX();
         auto const  x_dot  = alpha*x_new_timestep - x_old;
 
-        return M * x_dot + K*x_curr - b;
+        // res = M * x_dot + K * x_curr - b
+        Vector res;
+        BLAS::matMult(M, x_dot, res);
+        BLAS::matMultAdd(K, x_curr, res, res);
+        BLAS::axpy(res, -1.0, b);
+
+        return res;
     }
 
-    Matrix getJacobian(Matrix Jac) const override
+    Matrix getJacobian(Matrix const& Jac) const override
     {
         return Jac;
     }
@@ -144,7 +176,14 @@ public:
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
-        return theta * (M * dxdot_dx + K) + dxdot_dx * _M_bar;
+        // A = theta * (M * dxdot_dx + K) + dxdot_dx * _M_bar
+        Matrix A(M);
+        BLAS::aypx(A, dxdot_dx, K); // A = M * dxdot_dx + K
+
+        BLAS::scale(A, theta); // A *= theta
+        BLAS::axpy(A, dxdot_dx, _M_bar); // A += dxdot_dx * _M_bar
+
+        return A;
     }
 
     Vector getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b) const override
@@ -152,7 +191,15 @@ public:
         auto const& weighted_old_x = _crank_nicolson.getWeightedOldX();
         auto const  theta          = _crank_nicolson.getTheta();
 
-        return theta * (b + M * weighted_old_x) + _M_bar * weighted_old_x - _b_bar;
+        // rhs = theta * (b + M * weighted_old_x) + _M_bar * weighted_old_x - _b_bar;
+        Vector rhs;
+        BLAS::matMultAdd(M, weighted_old_x, b, rhs); // rhs = b + M * weighted_old_x
+
+        BLAS::scale(rhs, theta); // rhs *= theta
+        BLAS::matMultAdd(_M_bar, weighted_old_x, rhs, rhs); // rhs += _M_bar * weighted_old_x
+        BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
+
+        return rhs;
     }
 
     Vector getResidual(Matrix const& M, Matrix const& K, Vector const& b,
@@ -164,15 +211,29 @@ public:
         auto const  x_dot  = alpha*x_new_timestep - x_old;
         auto const  theta  = _crank_nicolson.getTheta();
 
-        return theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar;
+        // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
+        Vector res;
+        BLAS::matMult(M, x_dot, res); // res = M * x_dot
+        BLAS::matMultAdd(K, x_curr, res, res); // res += K * x_curr
+        BLAS::axpy(res, -1.0, b); // res = M * x_dot + K * x_curr - b
+
+        BLAS::aypx(res, theta, _b_bar); // res = res * theta + _b_bar
+        BLAS::matMultAdd(_M_bar, x_dot, res, res); // rs += _M_bar * x_dot
+
+        return res;
     }
 
-    Matrix getJacobian(Matrix Jac) const override
+    Matrix getJacobian(Matrix const& Jac) const override
     {
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
-        return theta * Jac + dxdot_dx * _M_bar;
+        // J = theta * Jac + dxdot_dx * _M_bar
+        Matrix J(Jac);
+        BLAS::scale(J, theta);
+        BLAS::axpy(J, dxdot_dx, _M_bar);
+
+        return J;
     }
 
     void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b) override
@@ -180,8 +241,14 @@ public:
         auto const theta = _crank_nicolson.getTheta();
         auto const x_old = _crank_nicolson.getXOld();
 
-        _M_bar = (1.0-theta) * M;
-        _b_bar = (1.0-theta) * (K * x_old - b);
+        // _M_bar = (1.0-theta) * M;
+        BLAS::copy(M, _M_bar);
+        BLAS::scale(_M_bar, 1.0-theta);
+
+        // _b_bar = (1.0-theta) * (K * x_old - b)
+        BLAS::matMult(K, x_old, _b_bar);
+        BLAS::axpy(_b_bar, -1.0, b);
+        BLAS::scale(_b_bar, 1.0-theta);
     }
 
 private:
