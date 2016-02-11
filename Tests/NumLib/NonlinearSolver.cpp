@@ -1,5 +1,3 @@
-#include <Eigen/IterativeLinearSolvers>
-#include <Eigen/SparseLU>
 #include <logog/include/logog.hpp>
 
 #include <iostream>
@@ -29,15 +27,7 @@ solve(NonlinearSystem<NonlinearSolverTag::Picard> &sys, Vector &x)
         auto A = sys.getA();
         auto rhs = sys.getRhs();
 
-        // Eigen::BiCGSTAB<Matrix> linear_solver;
-        // Eigen::SparseLU<Matrix> linear_solver;
-        // linear_solver.compute(A);
-        LinearSolver linear_solver(A);
-
-        linear_solver.solve(rhs, _x_new);
-
-        // _x_new = linear_solver.solveWithGuess(rhs, x);
-        // _x_new = linear_solver.solve(rhs);
+        oneShotLinearSolve(A, rhs, _x_new);
 
         BLAS::aypx(x, -1.0, _x_new); // x = _x_new - x
         auto const error = norm(x);
@@ -83,12 +73,7 @@ solve(NonlinearSystem<NonlinearSolverTag::Newton> &sys, Vector &x)
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
-        // Eigen::BiCGSTAB<Matrix> linear_solver;
-        // Eigen::SparseLU<Matrix> linear_solver;
-        // linear_solver.compute(J);
-        LinearSolver linear_solver(J);
-
-        linear_solver.solve(res, _minus_delta_x);
+        oneShotLinearSolve(J, res, _minus_delta_x);
 
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);

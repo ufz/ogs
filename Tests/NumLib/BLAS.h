@@ -29,7 +29,7 @@ void matScale(Mat& A, double const a);
 
 
 
-using ESM = Eigen::SparseMatrix<double>;
+using ESM = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 using EV = Eigen::VectorXd;
 
 
