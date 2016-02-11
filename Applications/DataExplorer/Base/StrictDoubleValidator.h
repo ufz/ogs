@@ -23,8 +23,12 @@
 class StrictDoubleValidator : public QDoubleValidator
 {
 public:
-	StrictDoubleValidator ( double min, double max, std::size_t decimals, QObject* parent = 0) :
+	StrictDoubleValidator ( double min, double max, std::size_t decimals, QObject* parent = nullptr) :
 		QDoubleValidator( min, max, decimals, parent)
+	{}
+
+	StrictDoubleValidator ( QObject* parent = nullptr) :
+		QDoubleValidator( parent)
 	{}
 
 	QValidator::State validate(QString & input, int &pos) const

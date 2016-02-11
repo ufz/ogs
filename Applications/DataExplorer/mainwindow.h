@@ -87,6 +87,8 @@ protected slots:
 	void showDataExplorerSettingsDialog();
 	/// Allows setting the name for a geometric object
 	void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id);
+	/// Creates a structured grid with user-specified parameters.
+	void showCreateStructuredGridDialog();
 	/// Removal of mesh elements based on a number of criteria.
 	void showMeshElementRemovalDialog();
 	/// Calls the diagram prefs dialog from the Tools menu.

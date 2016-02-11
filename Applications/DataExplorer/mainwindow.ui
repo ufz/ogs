@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -125,6 +125,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionMesh_Generation"/>
+    <addaction name="actionCreate_Structured_Mesh"/>
     <addaction name="actionAnalyze_Mesh"/>
     <addaction name="actionRemove_Mesh_Elements"/>
     <addaction name="actionMerge_Geometries"/>
@@ -427,6 +428,11 @@
     <string>Analyze Mesh...</string>
    </property>
   </action>
+  <action name="actionCreate_Structured_Mesh">
+   <property name="text">
+    <string>Create Structured Mesh...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -693,6 +699,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCreate_Structured_Mesh</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showCreateStructuredGridDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>open()</slot>
@@ -709,5 +731,6 @@
   <slot>showFileConverter()</slot>
   <slot>showDataExplorerSettingsDialog()</slot>
   <slot>showMeshAnalysisDialog()</slot>
+  <slot>showCreateStructuredGridDialog()</slot>
  </slots>
 </ui>

@@ -60,7 +60,7 @@ TEST(MeshValidation, DetectHolesHex)
 {
 	auto mesh = std::unique_ptr<MeshLib::Mesh>{
 		MeshLib::MeshGenerator::generateRegularHexMesh(
-			5,4,4,1,1,1,GeoLib::ORIGIN, "mesh")};
+			5,4,4,1.0,1.0,1.0,GeoLib::ORIGIN, "mesh")};
 	ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
 	detectHoles(*mesh, {27}, 1);
