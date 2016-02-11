@@ -8,7 +8,7 @@
 
 
 template<NonlinearSolverTag NLTag>
-class TimeDiscretizedODESystem
+class TimeDiscretizedODESystemBase
         : public INonlinearSystem<NLTag>
         , public InternalMatrixStorage
 {
@@ -16,19 +16,20 @@ public:
     virtual ITimeDiscretization& getTimeDiscretization() = 0;
 };
 
-template<NonlinearSolverTag NLTag>
-class TimeDiscretizedFirstOrderImplicitQuasilinearODESystem;
+template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
+class TimeDiscretizedODESystem;
 
 template<>
-class TimeDiscretizedFirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton> final
-        : public TimeDiscretizedODESystem<NonlinearSolverTag::Newton>
+class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                               NonlinearSolverTag::Newton> final
+        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Newton>
 {
 public:
     explicit
-    TimeDiscretizedFirstOrderImplicitQuasilinearODESystem(
-            FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>& ode,
+    TimeDiscretizedODESystem(
+            ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& ode,
             ITimeDiscretization& time_discretization,
-            MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>& mat_trans)
+            MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -86,9 +87,9 @@ private:
     }
 
 
-    FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>& _ode;
+    ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>& _mat_trans;
+    MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& _mat_trans;
 
     Matrix _Jac;
     Matrix _M;
@@ -97,15 +98,16 @@ private:
 };
 
 template<>
-class TimeDiscretizedFirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard> final
-        : public TimeDiscretizedODESystem<NonlinearSolverTag::Picard>
+class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                               NonlinearSolverTag::Picard> final
+        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Picard>
 {
 public:
     explicit
-    TimeDiscretizedFirstOrderImplicitQuasilinearODESystem(
-            FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>& ode,
+    TimeDiscretizedODESystem(
+            ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& ode,
             ITimeDiscretization& time_discretization,
-            MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>& mat_trans)
+            MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -153,9 +155,9 @@ private:
     }
 
 
-    FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>& _ode;
+    ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear, NonlinearSolverTag::Newton>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>& _mat_trans;
+    MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>& _mat_trans;
 
     Matrix _M;
     Matrix _K;

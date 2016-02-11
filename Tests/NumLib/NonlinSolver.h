@@ -1,11 +1,9 @@
 #pragma once
 
-#include <Eigen/SparseCore>
 #include <logog/include/logog.hpp>
 
 #include "ODETypes.h"
 
-enum class NonlinearSolverTag : bool { Picard, Newton };
 
 template<NonlinearSolverTag NLTag>
 class INonlinearSystem;
@@ -86,11 +84,12 @@ private:
 };
 
 
-template<NonlinearSolverTag NLTag>
-class FirstOrderImplicitQuasilinearODESystem;
+template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
+class ODESystem;
 
 template<>
-class FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>
+class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                NonlinearSolverTag::Picard>
 {
 public:
     virtual bool isLinear() const = 0;
@@ -99,13 +98,14 @@ public:
     virtual void assemble(const double t, Vector const& x,
                           Matrix& M, Matrix& K, Vector& b) = 0;
 
-
-    virtual ~FirstOrderImplicitQuasilinearODESystem() = default;
+    virtual ~ODESystem() = default;
 };
 
 template<>
-class FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Newton>
-        : public FirstOrderImplicitQuasilinearODESystem<NonlinearSolverTag::Picard>
+class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                NonlinearSolverTag::Newton>
+        : public ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                           NonlinearSolverTag::Picard>
 {
 public:
     virtual void assembleJacobian(const double t, Vector const& x,

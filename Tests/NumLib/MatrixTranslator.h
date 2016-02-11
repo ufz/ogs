@@ -1,19 +1,16 @@
 #pragma once
 
+#include "ODETypes.h"
 #include "TimeDiscretization.h"
 
 
-enum class EquationTag : char
-{
-    FirstOrderImplicitQuasilinearODESystem
-};
 
 
-template<EquationTag EqTag>
+template<ODESystemTag ODETag>
 class MatrixTranslator;
 
 template<>
-class MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+class MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
@@ -35,12 +32,12 @@ public:
 };
 
 
-template<EquationTag EqTag>
+template<ODESystemTag ODETag>
 class MatrixTranslatorGeneral;
 
 template<>
-class MatrixTranslatorGeneral<EquationTag::FirstOrderImplicitQuasilinearODESystem>
-        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+class MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>
+        : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     MatrixTranslatorGeneral(ITimeDiscretization const& timeDisc)
@@ -82,12 +79,12 @@ private:
 };
 
 
-template<EquationTag EqTag>
+template<ODESystemTag ODETag>
 class MatrixTranslatorForwardEuler;
 
 template<>
-class MatrixTranslatorForwardEuler<EquationTag::FirstOrderImplicitQuasilinearODESystem>
-        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+class MatrixTranslatorForwardEuler<ODESystemTag::FirstOrderImplicitQuasilinear>
+        : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
@@ -130,12 +127,12 @@ private:
 };
 
 
-template<EquationTag EqTag>
+template<ODESystemTag ODETag>
 class MatrixTranslatorCrankNicolson;
 
 template<>
-class MatrixTranslatorCrankNicolson<EquationTag::FirstOrderImplicitQuasilinearODESystem>
-        : public MatrixTranslator<EquationTag::FirstOrderImplicitQuasilinearODESystem>
+class MatrixTranslatorCrankNicolson<ODESystemTag::FirstOrderImplicitQuasilinear>
+        : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
@@ -195,18 +192,18 @@ private:
 };
 
 
-template<EquationTag EqTag>
-std::unique_ptr<MatrixTranslator<EqTag>>
+template<ODESystemTag ODETag>
+std::unique_ptr<MatrixTranslator<ODETag>>
 createMatrixTranslator(ITimeDiscretization const& timeDisc)
 {
     if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc)) {
-        return std::unique_ptr<MatrixTranslator<EqTag>>(
-                new MatrixTranslatorForwardEuler<EqTag>(*fwd_euler));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+                new MatrixTranslatorForwardEuler<ODETag>(*fwd_euler));
     } else if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc)) {
-        return std::unique_ptr<MatrixTranslator<EqTag>>(
-                new MatrixTranslatorCrankNicolson<EqTag>(*crank));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+                new MatrixTranslatorCrankNicolson<ODETag>(*crank));
     } else {
-        return std::unique_ptr<MatrixTranslator<EqTag>>(
-                new MatrixTranslatorGeneral<EqTag>(timeDisc));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+                new MatrixTranslatorGeneral<ODETag>(timeDisc));
     }
 }
