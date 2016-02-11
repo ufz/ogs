@@ -3,11 +3,17 @@
 #include "TimeDiscretization.h"
 
 
-template<typename Equation>
+enum class EquationTag : char
+{
+    ParabolicEquation
+};
+
+
+template<EquationTag EqTag>
 class MatrixTranslator;
 
 template<>
-class MatrixTranslator<IParabolicEquation>
+class MatrixTranslator<EquationTag::ParabolicEquation>
 {
 public:
     virtual Matrix getA(Matrix const& M, Matrix const& K) const = 0;
@@ -29,12 +35,12 @@ public:
 };
 
 
-template<typename Equation>
+template<EquationTag EqTag>
 class MatrixTranslatorGeneral;
 
 template<>
-class MatrixTranslatorGeneral<IParabolicEquation>
-        : public MatrixTranslator<IParabolicEquation>
+class MatrixTranslatorGeneral<EquationTag::ParabolicEquation>
+        : public MatrixTranslator<EquationTag::ParabolicEquation>
 {
 public:
     MatrixTranslatorGeneral(ITimeDiscretization const& timeDisc)
@@ -76,12 +82,12 @@ private:
 };
 
 
-template<typename Equation>
+template<EquationTag EqTag>
 class MatrixTranslatorForwardEuler;
 
 template<>
-class MatrixTranslatorForwardEuler<IParabolicEquation>
-        : public MatrixTranslator<IParabolicEquation>
+class MatrixTranslatorForwardEuler<EquationTag::ParabolicEquation>
+        : public MatrixTranslator<EquationTag::ParabolicEquation>
 {
 public:
     MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
@@ -124,12 +130,12 @@ private:
 };
 
 
-template<typename Equation>
+template<EquationTag EqTag>
 class MatrixTranslatorCrankNicolson;
 
 template<>
-class MatrixTranslatorCrankNicolson<IParabolicEquation>
-        : public MatrixTranslator<IParabolicEquation>
+class MatrixTranslatorCrankNicolson<EquationTag::ParabolicEquation>
+        : public MatrixTranslator<EquationTag::ParabolicEquation>
 {
 public:
     MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
@@ -189,18 +195,18 @@ private:
 };
 
 
-template<typename Equation>
-std::unique_ptr<MatrixTranslator<Equation>>
+template<EquationTag EqTag>
+std::unique_ptr<MatrixTranslator<EqTag>>
 createMatrixTranslator(ITimeDiscretization const& timeDisc)
 {
     if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc)) {
-        return std::unique_ptr<MatrixTranslator<Equation>>(
-                new MatrixTranslatorForwardEuler<Equation>(*fwd_euler));
+        return std::unique_ptr<MatrixTranslator<EqTag>>(
+                new MatrixTranslatorForwardEuler<EqTag>(*fwd_euler));
     } else if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc)) {
-        return std::unique_ptr<MatrixTranslator<Equation>>(
-                new MatrixTranslatorCrankNicolson<Equation>(*crank));
+        return std::unique_ptr<MatrixTranslator<EqTag>>(
+                new MatrixTranslatorCrankNicolson<EqTag>(*crank));
     } else {
-        return std::unique_ptr<MatrixTranslator<Equation>>(
-                new MatrixTranslatorGeneral<Equation>(timeDisc));
+        return std::unique_ptr<MatrixTranslator<EqTag>>(
+                new MatrixTranslatorGeneral<EqTag>(timeDisc));
     }
 }

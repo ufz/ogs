@@ -10,6 +10,7 @@
 template<NonlinearSolverTag NLTag>
 class ITimeDiscretizedODESystem
         : public INonlinearSystem<NLTag>
+        , public IParabolicEquation
 {
 public:
     virtual ITimeDiscretization& getTimeDiscretization() = 0;
@@ -21,13 +22,12 @@ class TimeDiscretizedODESystem;
 template<>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Newton> final
         : public ITimeDiscretizedODESystem<NonlinearSolverTag::Newton>
-        , public IParabolicEquation
 {
 public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& ode,
                              ITimeDiscretization& time_discretization,
-                             MatrixTranslator<IParabolicEquation>& mat_trans)
+                             MatrixTranslator<EquationTag::ParabolicEquation>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -87,7 +87,7 @@ private:
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Newton>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslator<IParabolicEquation>& _mat_trans;
+    MatrixTranslator<EquationTag::ParabolicEquation>& _mat_trans;
 
     Matrix _Jac;
     Matrix _M;
@@ -98,13 +98,12 @@ private:
 template<>
 class TimeDiscretizedODESystem<NonlinearSolverTag::Picard> final
         : public ITimeDiscretizedODESystem<NonlinearSolverTag::Picard>
-        , public IParabolicEquation
 {
 public:
     explicit
     TimeDiscretizedODESystem(IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& ode,
                              ITimeDiscretization& time_discretization,
-                             MatrixTranslator<IParabolicEquation>& mat_trans)
+                             MatrixTranslator<EquationTag::ParabolicEquation>& mat_trans)
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
@@ -154,7 +153,7 @@ private:
 
     IFirstOrderImplicitOde<NonlinearSolverTag::Picard>& _ode;
     ITimeDiscretization& _time_disc;
-    MatrixTranslator<IParabolicEquation>& _mat_trans;
+    MatrixTranslator<EquationTag::ParabolicEquation>& _mat_trans;
 
     Matrix _M;
     Matrix _K;
