@@ -69,6 +69,10 @@ add_executable(AddTopLayer AddTopLayer.cpp)
 target_link_libraries(AddTopLayer FileIO)
 set_target_properties(AddTopLayer PROPERTIES FOLDER Utilities)
 
+add_executable(createLayeredMeshFromRasters createLayeredMeshFromRasters.cpp)
+target_link_libraries(createLayeredMeshFromRasters FileIO)
+set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
+
 add_executable(CreateBoundaryConditionsAlongPolylines
 	CreateBoundaryConditionsAlongPolylines.cpp )
 target_link_libraries(CreateBoundaryConditionsAlongPolylines FileIO MeshGeoToolsLib)
