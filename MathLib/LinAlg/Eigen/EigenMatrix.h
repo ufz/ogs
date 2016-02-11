@@ -35,6 +35,9 @@ public:
     using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     using IndexType = RawMatrixType::Index;
 
+    // TODO: preliminary
+    EigenMatrix() {}
+
     /**
      * constructor
      * @param n the number of rows (that is equal to the number of columns)
@@ -123,11 +126,13 @@ public:
         return _mat.coeff(row, col);
     }
 
+    /*
     /// get value. This function returns zero if the element doesn't exist.
     double operator() (IndexType row, IndexType col) const
     {
         return get(row, col);
     }
+    */
 
     /// get a maximum value in diagonal entries
     double getMaxDiagCoeff() const

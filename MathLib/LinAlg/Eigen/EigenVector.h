@@ -33,6 +33,9 @@ public:
     // more appropriate RawVectorType for the global vectors.
     using IndexType = Eigen::SparseMatrix<double>::Index;
 
+    // TODO: preliminary
+    EigenVector() {}
+
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
     explicit EigenVector(std::size_t length) : _vec(length) {}
