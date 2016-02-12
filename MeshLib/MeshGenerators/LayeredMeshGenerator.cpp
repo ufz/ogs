@@ -48,7 +48,7 @@ bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh,
     std::vector<GeoLib::Raster const*> rasters;
     rasters.reserve(raster_paths.size());
     for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
-        rasters.push_back(FileIO::AsciiRasterInterface::getRasterFromASCFile(*path));
+        rasters.push_back(FileIO::AsciiRasterInterface::readRaster(*path));
 
     bool result = createRasterLayers(mesh, rasters, minimum_thickness, noDataReplacementValue);
     std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });

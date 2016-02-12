@@ -19,6 +19,7 @@ add_library(MeshLib STATIC ${SOURCES})
 
 target_link_libraries(MeshLib INTERFACE
 	BaseLib
+	FileIO
 	GeoLib
 	MathLib
 	${VTK_LIBRARIES}

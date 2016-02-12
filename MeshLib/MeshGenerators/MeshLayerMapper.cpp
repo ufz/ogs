@@ -233,7 +233,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
 
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, std::string const& rasterfile, double noDataReplacementValue = 0.0)
 {
-	const GeoLib::Raster *raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(rasterfile));
+	const GeoLib::Raster *raster(FileIO::AsciiRasterInterface::readRaster(rasterfile));
 	if (! raster) {
 		ERR("MshLayerMapper::layerMapping - could not read raster file %s", rasterfile.c_str());
 		return false;
