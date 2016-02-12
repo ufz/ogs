@@ -104,7 +104,7 @@ TEST(MeshLib, AddTopLayerToTriMesh)
 	if (test)
 	{
 		test->resize(mesh->getNElements());
-		std::fill_n(mats->begin(), mesh->getNElements(), 0.1);
+		std::fill_n(test->begin(), mesh->getNElements(), 0.1);
 	}
 	ASSERT_EQ(2, mesh->getProperties().getPropertyVectorNames().size());
 	double const height (1);

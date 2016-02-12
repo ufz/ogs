@@ -46,7 +46,7 @@ struct IntervalGenerator
 
 	result_type operator()(std::size_t /*size*/ = 0)
 	{
-		return intervalMap(fix(1.0, generator)());
+		return intervalMap(fix(1, generator)());
 	}
 };
 

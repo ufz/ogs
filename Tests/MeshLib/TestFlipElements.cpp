@@ -84,6 +84,8 @@ TEST(MeshLib, FlipHexMesh)
 		nodes.push_back(new MeshLib::Node(*mesh->getNode(i)));
 	std::unique_ptr<MeshLib::Element> elem (MeshLib::createFlippedElement(*mesh->getElement(0), nodes));
 	ASSERT_EQ(nullptr, elem);
+	for (MeshLib::Node* n : nodes)
+		delete n;
 }
 
 TEST(MeshLib, DoubleFlipQuadMesh)
