@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ODESystem.h"
+#include "NumLib/ODESolver/ODESystem.h"
 
 // debug
 #include <iostream>

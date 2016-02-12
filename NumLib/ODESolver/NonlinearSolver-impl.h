@@ -5,7 +5,7 @@
 // for debugging
 // #include <iostream>
 
-#include "BLAS.h"
+#include "MathLib/LinAlg/BLAS.h"
 
 #include "NonlinearSolver.h"
 

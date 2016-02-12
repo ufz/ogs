@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "BLAS.h"
+#include "MathLib/LinAlg/BLAS.h"
 #include "ODETypes.h"
 
 

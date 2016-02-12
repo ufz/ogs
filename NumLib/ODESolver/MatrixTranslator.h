@@ -5,7 +5,7 @@
 #include "ODETypes.h"
 #include "TimeDiscretization.h"
 
-#include "BLAS.h"
+#include "MathLib/LinAlg/BLAS.h"
 
 
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
