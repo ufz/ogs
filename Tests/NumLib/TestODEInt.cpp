@@ -16,6 +16,10 @@ class TestOutput
 public:
     using TimeDisc = TimeDiscretization<Vector>;
 
+    TestOutput(const char* name)
+        : _file_name_part(name)
+    {}
+
     template<typename ODE>
     void run_test(ODE& ode, TimeDisc& timeDisc)
     {
@@ -37,7 +41,7 @@ public:
         const double t_end   = ODET::t_end;
         const double delta_t = (t_end-t0) / num_timesteps;
 
-        init_file(ode, timeDisc, delta_t);
+        init_file(delta_t);
 
         // initial condition
         Vector x0(ode.getMatrixSize());
@@ -52,20 +56,10 @@ public:
     }
 
 private:
-    template<typename ODE, typename TimeDisc_>
-    void init_file(ODE const& ode, TimeDisc_ const& timeDisc, const double delta_t)
+    void init_file(const double delta_t)
     {
         std::string path(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_");
-        path += typeid(ode).name();
-        path += "_";
-        path += typeid(timeDisc).name();
-        path += "_";
-
-        switch (NLTag) {
-        case NonlinearSolverTag::Picard: path += "Picard"; break;
-        case NonlinearSolverTag::Newton: path += "Newton"; break;
-        }
-
+        path += _file_name_part;
         path += "_" + std::to_string(delta_t);
         path += ".csv";
 
@@ -87,6 +81,7 @@ private:
         write(t, x, ODETraits<Matrix, Vector, Ode>::solution(t));
     }
 
+    const std::string _file_name_part;
     std::unique_ptr<std::ofstream> _file;
 
     const double _tol = 1e-8;
@@ -99,45 +94,46 @@ private:
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
-run_test_case(const unsigned num_timesteps)
+run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
     TimeDisc timeDisc;
 
-    TestOutput<Matrix, Vector, NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test(name);
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, CrankNicolson<Vector> >::value>::type
-run_test_case(const unsigned num_timesteps)
+run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
     TimeDisc timeDisc(0.5);
 
-    TestOutput<Matrix, Vector, NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test(name);
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE, NonlinearSolverTag NLTag>
 typename std::enable_if<
     std::is_same<TimeDisc, BackwardDifferentiationFormula<Vector> >::value>::type
-run_test_case(const unsigned num_timesteps)
+run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
     TimeDisc timeDisc(3);
 
-    TestOutput<Matrix, Vector, NLTag> test;
+    TestOutput<Matrix, Vector, NLTag> test(name);
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
 
-
+// This class is only here s.t. I don't have to put the members into
+// the definition of the macro TCLITEM below.
 template<typename Matrix_, typename Vector_,
          template<typename /*Matrix*/, typename /*Vector*/> typename ODE_,
          template<typename /*Vector*/> typename TimeDisc_,
          NonlinearSolverTag NLTag_>
-struct TestCase
+struct TestCaseBase
 {
     using Matrix = Matrix_;
     using Vector = Vector_;
@@ -147,40 +143,76 @@ struct TestCase
 };
 
 
-typedef ::testing::Types<
-    TestCase<ODEMatrix, ODEVector, ODE1, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE1, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE1, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+template<typename Matrix_, typename Vector_,
+         template<typename /*Matrix*/, typename /*Vector*/> typename ODE_,
+         template<typename /*Vector*/> typename TimeDisc_, NonlinearSolverTag NLTag_>
+struct TestCase;
 
-    TestCase<ODEMatrix, ODEVector, ODE1, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE1, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE1, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
 
-    TestCase<ODEMatrix, ODEVector, ODE2, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE2, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE2, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+// /////////////////////////////////////
+//
+//  Put new test cases to that list
+//
+// /////////////////////////////////////
+#define TESTCASESLIST \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
+    \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
+    \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardEuler,                  Newton) TCLSEP \
+    /* Not possible because of singular matrix */ \
+    /* TCLITEM(ODEMatrix, ODEVector, ODE3, ForwardEuler,                   Newton) TCLSEP */ \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardEuler,                  Picard) TCLSEP \
+    /* Not possible because of singular matrix */ \
+    /* TCLITEM(ODEMatrix, ODEVector, ODE3, ForwardEuler,                   Picard) TCLSEP */ \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, Picard)
 
-    TestCase<ODEMatrix, ODEVector, ODE2, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE2, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE2, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
 
-    TestCase<ODEMatrix, ODEVector, ODE3, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    // Not possible because of singular matrix
-    // TestCase<ODEMatrix, ODEVector, ODE3, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE3, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+#define TCLITEM(MAT, VEC, ODE, TIMEDISC, NLTAG) \
+    template<> \
+    struct TestCase<MAT, VEC, ODE, TIMEDISC, NonlinearSolverTag::NLTAG> \
+        : TestCaseBase<MAT, VEC, ODE, TIMEDISC, NonlinearSolverTag::NLTAG> \
+    { \
+        static const char name[]; \
+    }; \
+    const char TestCase<MAT, VEC, ODE, TIMEDISC, NonlinearSolverTag::NLTAG>::name[] \
+        = #MAT "_" #VEC "_" #ODE "_" #TIMEDISC "_" #NLTAG;
+#define TCLSEP
 
-    TestCase<ODEMatrix, ODEVector, ODE3, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    // Not possible because of singular matrix
-    // TestCase<ODEMatrix, ODEVector, ODE3, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE3, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
-> TestCases;
+TESTCASESLIST
 
+#undef TCLITEM
+#undef TCLSEP
+
+#define TCLITEM(MAT, VEC, ODE, TIMEDISC, NLTAG) \
+    TestCase<MAT, VEC, ODE, TIMEDISC, NonlinearSolverTag::NLTAG>
+#define TCLSEP ,
+
+typedef ::testing::Types<TESTCASESLIST> TestCases;
+
+#undef TESTCASESLIST
+#undef TCLSEP
+#undef TCLITEM
 
 
 template<class TestParams>
@@ -191,12 +223,13 @@ public:
     using Vector   = typename TestParams::Vector;
     using ODE      = typename TestParams::ODE;
     using TimeDisc = typename TestParams::TimeDisc;
+
     static constexpr NonlinearSolverTag NLTag = TestParams::NLTag;
 
     static void test()
     {
         for (auto num_timesteps : { 10, 100, 1000 }) {
-            run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(num_timesteps);
+            run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(num_timesteps, TestParams::name);
         }
     }
 };
