@@ -32,8 +32,7 @@ class ODESystem<Matrix, Vector,
                            NonlinearSolverTag::Picard>
 {
 public:
-    virtual void assembleJacobian(const double t, Vector const& x,
-                                  const double dxdot_dx,
-                                  const double dx_dx,
+    virtual void assembleJacobian(const double t, Vector const& x, Vector const& xdot,
+                                  const double dxdot_dx, const double dx_dx,
                                   Matrix& Jac) = 0;
 };
