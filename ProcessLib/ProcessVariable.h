@@ -96,6 +96,10 @@ public:
 		return _initial_condition->getValue(n, component_id);
 	}
 
+	// Get or create a property vector for results.
+	// The returned mesh property size is number of mesh nodes times tuple size.
+	MeshLib::PropertyVector<double>& getOrCreateMeshProperty();
+
 private:
 	std::string const _name;
 	MeshLib::Mesh& _mesh;
