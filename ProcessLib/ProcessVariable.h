@@ -47,7 +47,7 @@ namespace ProcessLib
 class ProcessVariable
 {
 public:
-	ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+	ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
 	                GeoLib::GEOObjects const& geometries);
 
 	ProcessVariable(ProcessVariable&&);
@@ -98,7 +98,7 @@ public:
 
 private:
 	std::string const _name;
-	MeshLib::Mesh const& _mesh;
+	MeshLib::Mesh& _mesh;
 	int _tuple_size;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
