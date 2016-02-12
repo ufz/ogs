@@ -1,6 +1,10 @@
 #pragma once
 
-#include "ODETypes.h"
+#include "Types.h"
+
+
+namespace NumLib
+{
 
 template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class ODESystem;
@@ -36,3 +40,5 @@ public:
                                   const double dxdot_dx, const double dx_dx,
                                   Matrix& Jac) = 0;
 };
+
+}

@@ -2,9 +2,12 @@
 
 #include <logog/include/logog.hpp>
 
-#include "ODETypes.h"
+#include "Types.h"
 #include "NonlinearSystem.h"
 
+
+namespace NumLib
+{
 
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSolver;
@@ -57,5 +60,6 @@ private:
     Vector _x_new;
 };
 
+}
 
 #include "NonlinearSolver-impl.h"

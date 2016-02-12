@@ -2,11 +2,13 @@
 
 #include <memory>
 
-#include "ODETypes.h"
+#include "Types.h"
 #include "TimeDiscretization.h"
 
 #include "MathLib/LinAlg/BLAS.h"
 
+namespace NumLib
+{
 
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslator;
@@ -266,4 +268,6 @@ createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
         return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
                 new MatrixTranslatorGeneral<Matrix, Vector, ODETag>(timeDisc));
     }
+}
+
 }

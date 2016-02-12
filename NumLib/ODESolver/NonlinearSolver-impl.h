@@ -11,6 +11,12 @@
 
 #include "MathLib/LinAlg/VectorNorms.h"
 
+// TODO: change
+#include "ODETypes.h" // for one shot linear solver
+
+
+namespace NumLib
+{
 
 template<typename Matrix, typename Vector>
 void
@@ -111,3 +117,4 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
     return success;
 }
 
+}

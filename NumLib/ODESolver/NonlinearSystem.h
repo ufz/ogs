@@ -1,7 +1,10 @@
 #pragma once
 
-#include "ODETypes.h"
+#include "Types.h"
 
+
+namespace NumLib
+{
 
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSystem;
@@ -32,3 +35,5 @@ public:
 
     virtual ~NonlinearSystem() = default;
 };
+
+}

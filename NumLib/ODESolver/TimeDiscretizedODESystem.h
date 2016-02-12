@@ -6,6 +6,9 @@
 #include "MatrixTranslator.h"
 
 
+namespace NumLib
+{
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag_>
 class TimeDiscretizedODESystemBase
         : public NonlinearSystem<Matrix, Vector, NLTag_>
@@ -170,3 +173,5 @@ private:
     Matrix _K;
     Vector _b;
 };
+
+}

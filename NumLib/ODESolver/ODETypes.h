@@ -1,3 +1,5 @@
+// TODO: move that file somewhere else
+
 #pragma once
 
 #include <initializer_list>
@@ -15,11 +17,14 @@ using IndexType = int;
 using ODEMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor, IndexType>;
 using ODEVector = Eigen::VectorXd;
 
+namespace NumLib
+{
 inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
 {
     Eigen::SparseLU<ODEMatrix> slv;
     slv.compute(A);
     x = slv.solve(rhs);
+}
 }
 
 inline double norm(ODEVector const& x) { return x.norm(); }
@@ -33,10 +38,13 @@ using IndexType = int;
 using ODEMatrix = MathLib::EigenMatrix;
 using ODEVector = MathLib::EigenVector;
 
+namespace NumLib
+{
 inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
 {
     MathLib::EigenLinearSolver slv(A);
     slv.solve(rhs, x);
+}
 }
 
 #endif
@@ -104,11 +112,3 @@ inline void addToMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols
 }
 
 #endif
-
-
-enum class NonlinearSolverTag : bool { Picard, Newton };
-
-enum class ODESystemTag : char
-{
-    FirstOrderImplicitQuasilinear
-};

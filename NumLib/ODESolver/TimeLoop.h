@@ -3,6 +3,10 @@
 #include "TimeDiscretizedODESystem.h"
 #include "NonlinearSolver.h"
 
+
+namespace NumLib
+{
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeLoop
 {
@@ -65,4 +69,6 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
     }
     return nl_slv_succeeded;
+}
+
 }

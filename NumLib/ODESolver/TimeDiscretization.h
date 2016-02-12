@@ -3,9 +3,11 @@
 #include <vector>
 
 #include "MathLib/LinAlg/BLAS.h"
-#include "ODETypes.h"
+#include "Types.h"
 
 
+namespace NumLib
+{
 
 class InternalMatrixStorage
 {
@@ -294,3 +296,5 @@ private:
     std::vector<Vector> _xs_old;
     unsigned _offset = 0;
 };
+
+}
