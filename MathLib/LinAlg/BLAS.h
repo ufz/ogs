@@ -6,6 +6,9 @@
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 
+namespace MathLib
+{
+
 namespace BLAS
 {
 
@@ -200,3 +203,5 @@ inline void matMultAdd(MEM const& A, MEV const& v1, MEV const& v2, MEV& v3)
 
 
 } // namespace BLAS
+
+} // namespace MathLib

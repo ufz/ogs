@@ -51,6 +51,8 @@ public:
 
     void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const dxdot_dx = _time_disc.getCurrentXWeight();
 
         // A = M * dxdot_dx + K
@@ -60,6 +62,8 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         _time_disc.getWeightedOldX(_tmp);
 
         // rhs = M * weighted_old_x + b
@@ -69,6 +73,8 @@ public:
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                      Vector const& x_new_timestep, Vector& res) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  alpha  = _time_disc.getCurrentXWeight();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
@@ -84,6 +90,8 @@ public:
 
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         BLAS::copy(Jac_in, Jac_out);
     }
 
@@ -107,6 +115,8 @@ public:
 
     void getA(Matrix const& M, Matrix const& /*K*/, Matrix& A) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
 
         // A = M * dxdot_dx
@@ -116,6 +126,8 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         _fwd_euler.getWeightedOldX(_tmp);
 
         auto const& x_old          = _fwd_euler.getXOld();
@@ -130,6 +142,8 @@ public:
                      Vector const& x_new_timestep,
                      Vector& res) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  alpha  = _fwd_euler.getCurrentXWeight();
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
 
@@ -145,6 +159,8 @@ public:
 
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         BLAS::copy(Jac_in, Jac_out);
     }
 
@@ -168,6 +184,8 @@ public:
 
     void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
@@ -181,6 +199,8 @@ public:
 
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         _crank_nicolson.getWeightedOldX(_tmp);
 
         auto const  theta          = _crank_nicolson.getTheta();
@@ -197,6 +217,8 @@ public:
                      Vector const& x_new_timestep,
                      Vector& res) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  alpha  = _crank_nicolson.getCurrentXWeight();
         auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
         auto const  theta  = _crank_nicolson.getTheta();
@@ -216,6 +238,8 @@ public:
 
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
@@ -227,6 +251,8 @@ public:
 
     void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b) override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const theta = _crank_nicolson.getTheta();
         auto const x_old = _crank_nicolson.getXOld();
 

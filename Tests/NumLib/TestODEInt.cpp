@@ -8,6 +8,10 @@
 #include "NumLib/ODESolver/TimeLoop.h"
 #include "ODEs.h"
 #include "BaseLib/BuildInfo.h"
+#include "NumLib/ODESolver/ODETypes.h"
+
+
+using namespace NumLib;
 
 
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>

@@ -62,6 +62,8 @@ public:
 
     void assembleJacobian(const Vector &x_new_timestep) override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  t        = _time_disc.getCurrentTime();
         auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
         auto const  dxdot_dx = _time_disc.getCurrentXWeight();

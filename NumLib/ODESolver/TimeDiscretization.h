@@ -83,6 +83,7 @@ public:
 
     void getWeightedOldX(Vector& y) const override
     {
+        namespace BLAS = MathLib::BLAS;
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -130,6 +131,7 @@ public:
 
     void getWeightedOldX(Vector& y) const override
     {
+        namespace BLAS = MathLib::BLAS;
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -188,6 +190,7 @@ public:
 
     void getWeightedOldX(Vector& y) const override
     {
+        namespace BLAS = MathLib::BLAS;
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -270,7 +273,10 @@ public:
         return detail::BDF_Coeffs[k-1][0] / _delta_t;
     }
 
-    void getWeightedOldX(Vector& y) const override {
+    void getWeightedOldX(Vector& y) const override
+    {
+        namespace BLAS = MathLib::BLAS;
+
         auto const k = eff_num_steps();
         auto const*const BDFk = detail::BDF_Coeffs[k-1];
 

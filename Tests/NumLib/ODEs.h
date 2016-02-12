@@ -13,9 +13,9 @@ class ODETraits;
 // ODE 1 //////////////////////////////////////////////////////////
 template<typename Matrix, typename Vector>
 class ODE1 final
-        : public ODESystem<Matrix, Vector,
-                           ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NonlinearSolverTag::Newton>
+        : public NumLib::ODESystem<Matrix, Vector,
+                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                           NumLib::NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double /*t*/, Vector const& /*x*/,
@@ -42,7 +42,7 @@ public:
         setMatrix(Jac, m*dxdot_dx + dx_dx*k);
     }
 
-    IndexType getMatrixSize() const override
+    NumLib::IndexType getMatrixSize() const override
     {
         return N;
     }
@@ -80,9 +80,9 @@ public:
 // ODE 2 //////////////////////////////////////////////////////////
 template<typename Matrix, typename Vector>
 class ODE2 final
-        : public ODESystem<Matrix, Vector,
-                           ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NonlinearSolverTag::Newton>
+        : public NumLib::ODESystem<Matrix, Vector,
+                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                           NumLib::NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double /*t*/, Vector const& x,
@@ -100,7 +100,7 @@ public:
         setMatrix(Jac, N, N, { dxdot_dx + x[0] + x[0]*dx_dx });
     }
 
-    IndexType getMatrixSize() const override
+    NumLib::IndexType getMatrixSize() const override
     {
         return N;
     }
@@ -137,9 +137,9 @@ public:
 // ODE 3 //////////////////////////////////////////////////////////
 template<typename Matrix, typename Vector>
 class ODE3 final
-        : public ODESystem<Matrix, Vector,
-                           ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NonlinearSolverTag::Newton>
+        : public NumLib::ODESystem<Matrix, Vector,
+                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                           NumLib::NonlinearSolverTag::Newton>
 {
 public:
     void assemble(const double t, Vector const& x_curr,
@@ -213,7 +213,7 @@ public:
         // INFO("Det J: %e <<<", J.determinant());
     }
 
-    IndexType getMatrixSize() const override
+    NumLib::IndexType getMatrixSize() const override
     {
         return N;
     }

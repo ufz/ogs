@@ -31,6 +31,8 @@ bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
 solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
 {
+    namespace BLAS = MathLib::BLAS;
+
     Matrix A; Vector rhs;
     bool success = false;
 
@@ -80,6 +82,8 @@ bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
 solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
 {
+    namespace BLAS = MathLib::BLAS;
+
     Matrix J; Vector res;
     bool success = false;
 
