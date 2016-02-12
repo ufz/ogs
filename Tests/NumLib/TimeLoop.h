@@ -17,7 +17,7 @@ public:
     {}
 
     template<typename Callback>
-    void loop(const double t0, const Vector x0,
+    bool loop(const double t0, const Vector x0,
               const double t_end, const double delta_t,
               Callback& post_timestep);
 
@@ -29,7 +29,7 @@ private:
 
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
-void
+bool
 TimeLoop<Matrix, Vector, NLTag>::
 loop(const double t0, const Vector x0, const double t_end, const double delta_t,
      Callback& post_timestep)
@@ -45,15 +45,24 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
 
-    for (double t=t0+delta_t; t<t_end+delta_t; t+=delta_t)
+    double t;
+    unsigned timestep = 0;
+    bool nl_slv_succeeded = true;
+    for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
     {
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.setCurrentTime(t, delta_t);
 
-        _nonlinear_solver.solve(_ode_sys, x);
+        nl_slv_succeeded = _nonlinear_solver.solve(_ode_sys, x);
+        if (!nl_slv_succeeded) break;
 
         time_disc.pushState(t, x, _ode_sys);
 
         post_timestep(t, x);
     }
+
+    if (!nl_slv_succeeded) {
+        ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
+    }
+    return nl_slv_succeeded;
 }
