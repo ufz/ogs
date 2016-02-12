@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <cassert>
 
-// #define USE_EIGEN_PLAIN
+#define USE_EIGEN_PLAIN
 
 
 
@@ -66,6 +66,23 @@ inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
     m = tmp.sparseView();
 }
 
+inline void addToMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
+                        IndexType const rows, IndexType const cols,
+                        std::initializer_list<double> values)
+{
+    assert((IndexType) values.size() == rows*cols);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
+
+    auto it = values.begin();
+    for (IndexType r=0; r<rows; ++r) {
+        for (IndexType c=0; c<cols; ++c) {
+            tmp(r, c) = *(it++);
+        }
+    }
+
+    m += tmp.sparseView();
+}
+
 
 
 #ifndef USE_EIGEN_PLAIN
@@ -78,6 +95,12 @@ inline void setMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols,
 inline void setMatrix(ODEMatrix& m, Eigen::MatrixXd const& tmp)
 {
     m.getRawMatrix() = tmp.sparseView();
+}
+
+inline void addToMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols,
+                        std::initializer_list<double> values)
+{
+    addToMatrix(m.getRawMatrix(), rows, cols, values);
 }
 
 #endif

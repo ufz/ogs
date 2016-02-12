@@ -26,20 +26,22 @@ public:
     void run_test(ODE<Matrix, Vector>& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
     {
         using ODE_ = ODE<Matrix, Vector>;
+        using ODET = ODETraits<Matrix, Vector, ODE>;
+
         auto mat_trans = createMatrixTranslator<Matrix, Vector, ODE_::ODETag>(timeDisc);
         TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc, *mat_trans);
         TimeLoop<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
 
-        const double t0      = OdeTraits<Vector, ODE>::t0;
-        const double t_end   = OdeTraits<Vector, ODE>::t_end;
+        const double t0      = ODET::t0;
+        const double t_end   = ODET::t_end;
         const double delta_t = (t_end-t0) / num_timesteps;
 
         init_file(ode, timeDisc, delta_t);
 
         // initial condition
         Vector x0(ode.getMatrixSize());
-        OdeTraits<Vector, ODE>::setIC(x0);
+        ODET::setIC(x0);
 
         write(t0, x0, x0);
 
@@ -82,7 +84,7 @@ private:
     template<template<typename /*Matrix*/, typename /*Vector*/> typename Ode>
     void loopCallback(const double t, Vector const& x)
     {
-        write(t, x, OdeTraits<Vector, Ode>::solution(t));
+        write(t, x, ODETraits<Matrix, Vector, Ode>::solution(t));
     }
 
     std::unique_ptr<std::ofstream> _file;
@@ -146,25 +148,37 @@ struct TestCase
 
 
 typedef ::testing::Types<
-    TestCase<ODEMatrix, ODEVector, Ode1, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode1, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode1, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE1, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE1, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE1, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
 
-    TestCase<ODEMatrix, ODEVector, Ode1, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode1, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode1, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE1, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE1, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE1, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
 
-    TestCase<ODEMatrix, ODEVector, Ode2, BackwardEuler,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode2, ForwardEuler,                   NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode2, CrankNicolson,                  NonlinearSolverTag::Newton>,
-    TestCase<ODEMatrix, ODEVector, Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE2, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE2, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE2, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
 
-    TestCase<ODEMatrix, ODEVector, Ode2, BackwardEuler,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode2, ForwardEuler,                   NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode2, CrankNicolson,                  NonlinearSolverTag::Picard>,
-    TestCase<ODEMatrix, ODEVector, Ode2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
+    TestCase<ODEMatrix, ODEVector, ODE2, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE2, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE2, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>,
+
+    TestCase<ODEMatrix, ODEVector, ODE3, BackwardEuler,                  NonlinearSolverTag::Newton>,
+    // Not possible because of singular matrix
+    // TestCase<ODEMatrix, ODEVector, ODE3, ForwardEuler,                   NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE3, CrankNicolson,                  NonlinearSolverTag::Newton>,
+    TestCase<ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, NonlinearSolverTag::Newton>,
+
+    TestCase<ODEMatrix, ODEVector, ODE3, BackwardEuler,                  NonlinearSolverTag::Picard>,
+    // Not possible because of singular matrix
+    // TestCase<ODEMatrix, ODEVector, ODE3, ForwardEuler,                   NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE3, CrankNicolson,                  NonlinearSolverTag::Picard>,
+    TestCase<ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, NonlinearSolverTag::Picard>
 > TestCases;
 
 
