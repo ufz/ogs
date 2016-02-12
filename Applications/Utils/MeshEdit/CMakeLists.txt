@@ -92,24 +92,25 @@ set_target_properties(ExtractSurface PROPERTIES FOLDER Utilities)
 ### Installation ###
 ####################
 install(TARGETS
-	removeMeshElements
-	NodeReordering
-	MoveMesh
-	appendLinesAlongPolyline
-	editMaterialID
-	checkMesh
-	reviseMesh
-	ResetPropertiesInPolygonalRegion
 	AddTopLayer
+	appendLinesAlongPolyline
+	checkMesh
 	CreateBoundaryConditionsAlongPolylines
-	queryMesh
+	createLayeredMeshFromRasters
+	editMaterialID
 	ExtractSurface
+	MoveMesh
+	NodeReordering
+	removeMeshElements
+	ResetPropertiesInPolygonalRegion
+	reviseMesh
+	queryMesh
 	RUNTIME DESTINATION bin COMPONENT Utilities
 )
 if(QT4_FOUND)
 	install(TARGETS
-		moveMeshNodes
 		MapGeometryToMeshSurface
+		moveMeshNodes
 		RUNTIME DESTINATION bin
 		COMPONENT Utilities
 	)
