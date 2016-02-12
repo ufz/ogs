@@ -24,7 +24,7 @@ public:
     // for Crank-Nicolson
     void assemble(System& sys, Vector& x);
 
-    void solve(System& sys, Vector& x);
+    bool solve(System& sys, Vector& x);
 
 private:
     const double _tol;
@@ -48,7 +48,7 @@ public:
     // for Crank-Nicolson
     void assemble(System& sys, Vector& x);
 
-    void solve(System& sys, Vector& x);
+    bool solve(System& sys, Vector& x);
 
 private:
     const double _tol;

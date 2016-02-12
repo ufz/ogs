@@ -2,7 +2,8 @@
 
 #include <logog/include/logog.hpp>
 
-#include <iostream>
+// for debugging
+// #include <iostream>
 
 #include "BLAS.h"
 
@@ -20,17 +21,21 @@ assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vecto
 }
 
 template<typename Matrix, typename Vector>
-void
+bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
 solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
 {
     Matrix A; Vector rhs;
+    bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleMatricesPicard(x);
         sys.getA(A);
         sys.getRhs(rhs);
+
+        // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
+        // std::cout << "rhs:\n" << rhs << "\n\n";
 
         oneShotLinearSolve(A, rhs, _x_new);
 
@@ -41,14 +46,18 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
         x = _x_new;
 
         if (error < _tol) {
+            success = true;
             break;
         }
 
         if (sys.isLinear()) {
             // INFO("  picard linear system. not looping");
+            success = true;
             break;
         }
     }
+
+    return success;
 }
 
 
@@ -61,11 +70,12 @@ assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vecto
 }
 
 template<typename Matrix, typename Vector>
-void
+bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
 solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
 {
     Matrix J; Vector res;
+    bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
@@ -74,7 +84,10 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         // std::cout << "  res:\n" << res << std::endl;
 
-        if (norm(res) < _tol) break;
+        if (norm(res) < _tol) {
+            success = true;
+            break;
+        }
 
         sys.assembleJacobian(x);
         sys.getJacobian(J);
@@ -90,8 +103,11 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         if (sys.isLinear()) {
             // INFO("  newton linear system. not looping");
+            success = true;
             break;
         }
     }
+
+    return success;
 }
 
