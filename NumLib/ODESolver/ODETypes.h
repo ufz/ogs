@@ -50,6 +50,13 @@ inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
 #endif
 
 
+inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
+{
+    assert((std::size_t) v.size() == values.size());
+    auto it = values.begin();
+    for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
+}
+
 
 inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
                       IndexType const rows, IndexType const cols,

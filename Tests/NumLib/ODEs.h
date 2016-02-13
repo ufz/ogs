@@ -24,7 +24,7 @@ public:
         setMatrix(M, N, N, { 1.0, 0.0,  0.0, 1.0 });
         setMatrix(K, N, N, { 0.0, 1.0, -1.0, 0.0 });
 
-        b[0] = 0.0; b[1] = 0.0;
+        setVector(b, { 0.0, 0.0 });
     }
 
     void assembleJacobian(const double /*t*/, const Vector &/*x*/, Vector const& /*xdot*/,
@@ -61,14 +61,13 @@ class ODETraits<Matrix, Vector, ODE1>
 public:
     static void setIC(Vector& x0)
     {
-        x0[0] = 1.0; x0[1] = 0.0;
+        setVector(x0, { 1.0, 0.0 });
     }
 
     static Vector solution(const double t)
     {
         Vector v(2);
-        v[0] = cos(t);
-        v[1] = sin(t);
+        setVector(v, { cos(t), sin(t) });
         return v;
     }
 
@@ -90,7 +89,7 @@ public:
     {
         setMatrix(M, N, N, { 1.0 });
         setMatrix(K, N, N, { x[0] });
-        b[0] = 0.0;
+        setVector(b, { 0.0 });
     }
 
     void assembleJacobian(const double /*t*/, const Vector &x, Vector const& /*xdot*/,
@@ -119,13 +118,13 @@ class ODETraits<Matrix, Vector, ODE2>
 public:
     static void setIC(Vector& x0)
     {
-        x0[0] = 1.0;
+        setVector(x0, { 1.0 });
     }
 
     static Vector solution(const double t)
     {
         Vector v(1);
-        v[0] = 1.0 / t;
+        setVector(v, { 1.0/t });
         return v;
     }
 
