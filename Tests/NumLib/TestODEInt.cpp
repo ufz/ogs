@@ -146,7 +146,7 @@ struct TestCaseBase
     using Vector = Vector_;
     using ODE = ODE_<Matrix_, Vector_>;
     using TimeDisc = TimeDisc_<Vector_>;
-    static constexpr NonlinearSolverTag NLTag = NLTag_;
+    static const NonlinearSolverTag NLTag = NLTag_;
 };
 
 
@@ -234,7 +234,7 @@ public:
     using ODE      = typename TestParams::ODE;
     using TimeDisc = typename TestParams::TimeDisc;
 
-    static constexpr NonlinearSolverTag NLTag = TestParams::NLTag;
+    static const NonlinearSolverTag NLTag = TestParams::NLTag;
 
     static void test()
     {

@@ -71,9 +71,15 @@ public:
         return v;
     }
 
-    static constexpr double t0    = 0.0;
-    static constexpr double t_end = 30.0;
+    static const double t0;
+    static const double t_end;
 };
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE1>::t0 = 0.0;
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE1>::t_end = 30.0;
 // ODE 1 end //////////////////////////////////////////////////////
 
 // ODE 2 //////////////////////////////////////////////////////////
@@ -128,9 +134,15 @@ public:
         return v;
     }
 
-    static constexpr double t0    = 1.0;
-    static constexpr double t_end = 2.0;
+    static const double t0;
+    static const double t_end;
 };
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE2>::t0 = 1.0;
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE2>::t_end = 2.0;
 // ODE 2 end //////////////////////////////////////////////////////
 
 // ODE 3 //////////////////////////////////////////////////////////
@@ -223,8 +235,12 @@ public:
     }
 
     const unsigned N = 3;
-    static constexpr double omega = 15.0;
+    static const double omega;
 };
+
+template<typename Matrix, typename Vector>
+const double ODE3<Matrix, Vector>::omega = 15.0;
+
 
 template<typename Matrix, typename Vector>
 class ODETraits<Matrix, Vector, ODE3>
@@ -252,7 +268,13 @@ public:
         return v;
     }
 
-    static constexpr double t0    = 1.0;
-    static constexpr double t_end = 3.0;
+    static const double t0;
+    static const double t_end;
 };
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE3>::t0 = 1.0;
+
+template<typename Matrix, typename Vector>
+const double ODETraits<Matrix, Vector, ODE3>::t_end = 3.0;
 // ODE 3 end //////////////////////////////////////////////////////

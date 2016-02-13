@@ -15,7 +15,7 @@ class ODESystem<Matrix, Vector,
                 NonlinearSolverTag::Picard>
 {
 public:
-    static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
 
     virtual bool isLinear() const = 0;

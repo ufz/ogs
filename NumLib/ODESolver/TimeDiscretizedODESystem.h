@@ -15,8 +15,6 @@ class TimeDiscretizedODESystemBase
         , public InternalMatrixStorage
 {
 public:
-    // static constexpr NonlinearSolverTag NLTag  = NLTag_;
-
     virtual TimeDiscretization<Vector>& getTimeDiscretization() = 0;
 };
 
@@ -32,7 +30,7 @@ class TimeDiscretizedODESystem<Matrix, Vector,
         : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Newton>
 {
 public:
-    static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
@@ -117,7 +115,7 @@ class TimeDiscretizedODESystem<Matrix, Vector,
         : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Picard>
 {
 public:
-    static constexpr ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
