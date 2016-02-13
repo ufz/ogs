@@ -30,7 +30,7 @@ public:
         run_test<ODE>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> typename ODE>
+    template<template<typename /*Matrix*/, typename /*Vector*/> class ODE>
     void run_test(ODE<Matrix, Vector>& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
     {
         using ODE_ = ODE<Matrix, Vector>;
@@ -82,7 +82,7 @@ private:
         *_file << "\n";
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> typename Ode>
+    template<template<typename /*Matrix*/, typename /*Vector*/> class Ode>
     void loopCallback(const double t, Vector const& x)
     {
         write(t, x, ODETraits<Matrix, Vector, Ode>::solution(t));
@@ -137,8 +137,8 @@ run_test_case(const unsigned num_timesteps, const char* name)
 // This class is only here s.t. I don't have to put the members into
 // the definition of the macro TCLITEM below.
 template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> typename ODE_,
-         template<typename /*Vector*/> typename TimeDisc_,
+         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
+         template<typename /*Vector*/> class TimeDisc_,
          NonlinearSolverTag NLTag_>
 struct TestCaseBase
 {
@@ -151,8 +151,9 @@ struct TestCaseBase
 
 
 template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> typename ODE_,
-         template<typename /*Vector*/> typename TimeDisc_, NonlinearSolverTag NLTag_>
+         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
+         template<typename /*Vector*/> class TimeDisc_,
+         NonlinearSolverTag NLTag_>
 struct TestCase;
 
 

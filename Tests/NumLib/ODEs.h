@@ -7,7 +7,7 @@
 
 
 template<typename Matrix, typename Vector,
-         template<typename /*Matrix*/, typename /*Vector*/> typename Ode>
+         template<typename /*Matrix*/, typename /*Vector*/> class Ode>
 class ODETraits;
 
 // ODE 1 //////////////////////////////////////////////////////////
