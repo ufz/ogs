@@ -70,14 +70,15 @@ protected:
 	/// @brief The constructor taking meta information for the data.
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration MeshItemType) (default:
-	/// MeshItemType::Cell)
-	/// @param n_components the number of elements of a tuple (default: 1)
+	/// nodes or cells (see enumeration MeshItemType)
+	/// @param n_components the number of components of a property
 	explicit PropertyVector(std::string const& property_name,
-		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t n_components = 1)
-		: std::vector<PROP_VAL_TYPE>(), _n_components(n_components),
-		_mesh_item_type(mesh_item_type), _property_name(property_name)
+	                        MeshItemType mesh_item_type,
+	                        std::size_t n_components)
+	    : std::vector<PROP_VAL_TYPE>(),
+	      _n_components(n_components),
+	      _mesh_item_type(mesh_item_type),
+	      _property_name(property_name)
 	{}
 
 	/// @brief The constructor taking meta information for the data.
@@ -85,15 +86,15 @@ protected:
 	/// with several entries)
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration MeshItemType) (default:
-	/// MeshItemType::Cell)
-	/// @param n_components the number of elements of a tuple (default: 1)
+	/// nodes or cells (see enumeration MeshItemType)
+	/// @param n_components the number of components of a property
 	PropertyVector(std::size_t n_property_values,
-		std::string const& property_name,
-		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t n_components = 1)
-		: std::vector<PROP_VAL_TYPE>(n_property_values*n_components),
-		_mesh_item_type(mesh_item_type), _property_name(property_name)
+	               std::string const& property_name,
+	               MeshItemType mesh_item_type,
+	               std::size_t n_components)
+	    : std::vector<PROP_VAL_TYPE>(n_property_values * n_components),
+	      _mesh_item_type(mesh_item_type),
+	      _property_name(property_name)
 	{}
 
 	std::size_t const _n_components;
@@ -195,19 +196,18 @@ protected:
 	/// \f$[0, \text{n_prop_groups})\f$.
 	/// @param property_name a string describing the property
 	/// @param mesh_item_type the values of the property are either assigned to
-	/// nodes or cells (see enumeration MeshItemType) (default:
-	/// MeshItemType::Cell)
-	/// @param n_components the number of elements of a tuple (default: 1)
+	/// nodes or cells (see enumeration MeshItemType)
+	/// @param n_components the number of elements of a tuple
 	PropertyVector(std::size_t n_prop_groups,
-		std::vector<std::size_t> const& item2group_mapping,
-		std::string const& property_name,
-		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t n_components = 1)
-		: std::vector<std::size_t>(item2group_mapping),
-		_n_components(n_components),
-		_mesh_item_type(mesh_item_type),
-		_property_name(property_name),
-		_values(n_prop_groups * n_components)
+	               std::vector<std::size_t> const& item2group_mapping,
+	               std::string const& property_name,
+	               MeshItemType mesh_item_type,
+	               std::size_t n_components)
+	    : std::vector<std::size_t>(item2group_mapping),
+	      _n_components(n_components),
+	      _mesh_item_type(mesh_item_type),
+	      _property_name(property_name),
+	      _values(n_prop_groups * n_components)
 	{}
 
 protected:
