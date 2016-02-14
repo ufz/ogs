@@ -31,6 +31,16 @@ public:
     virtual double getCurrentTime() const = 0; // get time used for assembly
 
     // \dot x === alpha * x - x_old
+    void getXdot(Vector const& x_at_new_timestep, Vector& xdot) const
+    {
+        namespace BLAS = MathLib::BLAS;
+
+        auto const dxdot_dx = getCurrentXWeight();
+
+        getWeightedOldX(xdot);
+        BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
+    }
+
     virtual double getCurrentXWeight() const = 0; // = alpha
     virtual void getWeightedOldX(Vector& y) const = 0; // = x_old
 

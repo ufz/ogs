@@ -66,11 +66,10 @@ public:
         auto const  t        = _time_disc.getCurrentTime();
         auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
         auto const  dxdot_dx = _time_disc.getCurrentXWeight();
+        auto const  dx_dx    = _time_disc.getDxDx();
+        _time_disc.getXdot(x_new_timestep, _xdot);
 
-        _time_disc.getWeightedOldX(_xdot);
-        BLAS::axpby(_xdot, dxdot_dx, -1.0, x_new_timestep);
-
-        _ode.assembleJacobian(t, x_curr, _xdot, dxdot_dx, _time_disc.getDxDx(), _Jac);
+        _ode.assembleJacobian(t, x_curr, _xdot, dxdot_dx, dx_dx, _Jac);
     }
 
     void getResidual(Vector const& x_new_timestep, Vector& res) override

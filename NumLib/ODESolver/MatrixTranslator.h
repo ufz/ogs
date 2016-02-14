@@ -78,12 +78,8 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  alpha  = _time_disc.getCurrentXWeight();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
-
-        // x_dot  = alpha*x_new_timestep - x_old
-        _time_disc.getWeightedOldX(_tmp);
-        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
+        _time_disc.getXdot(x_new_timestep, _tmp);
 
         // res = M * x_dot + K * x_curr - b
         BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
@@ -147,12 +143,8 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  alpha  = _fwd_euler.getCurrentXWeight();
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
-
-        // x_dot  = alpha*x_new_timestep - x_old
-        _fwd_euler.getWeightedOldX(_tmp);
-        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
+        _fwd_euler.getXdot(x_new_timestep, _tmp);
 
         // res = M * x_dot + K * x_curr - b
         BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
@@ -222,13 +214,9 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  alpha  = _crank_nicolson.getCurrentXWeight();
         auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
         auto const  theta  = _crank_nicolson.getTheta();
-
-        // x_dot  = alpha*x_new_timestep - x_old
-        _crank_nicolson.getWeightedOldX(_tmp);
-        BLAS::axpby(_tmp, alpha, -1.0, x_new_timestep);
+        _crank_nicolson.getXdot(x_new_timestep, _tmp);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
         BLAS::matMult(M, _tmp, res); // res = M * x_dot; // the local vector x_dot seems to be necessary because of this multiplication
