@@ -19,6 +19,71 @@ public:
     virtual void pushMatrices() const = 0;
 };
 
+/*! Interface of time discretization schemes.
+ *
+ * This interface can be used to describe time discretization schemes for
+ * first-order ODEs.
+ *
+ * The purpose of TimeDiscretization instances is to store the solution history of
+ * an ODE, i. e., to keep the solution at as many timestamps as is required by the
+ * respective time discretization scheme. Furthermore, TimeDiscretization instances
+ * compute the discretized approximation of the time derivative \f$ \partial x/\partial t \f$.
+ *
+ *
+ * Design Ideas
+ * ------------
+ *
+ * A first-order (implicit) ODE has the general form
+ *
+ * \f[ F(\dot x, x, t) \stackrel{!}{=} 0. \f]
+ *
+ * In order to solve it numerically a certain time discretization scheme,
+ * such as the forward or backward Euler methods, is used.
+ * The discretized ODE is then given by
+ *
+ * \f[ F(\hat x, x_C, t_C) \stackrel{!}{=} 0. \f]
+ *
+ * This interface has been designed with first-order implicit quasi-linear ODEs in mind.
+ * They can be expressed as follows and are given here only to serve as an example.
+ *
+ * \f[ M(x,t)\cdot \dot x + K(x,t) \cdot x - b(x,t)
+ *  =: r(\dot x, x, t) \stackrel{!}{=} 0. \f]
+ *
+ * After time discretization this formula becomes:
+ *
+ * \f[ M(x_C,t_C)\cdot \hat x + K(x_C,t_C) \cdot x_C - b(x_C,t_C)
+ *  =: r(\hat x, x_C, t_C) \stackrel{!}{=} 0. \f]
+ *
+ * The meaning of indices for \f$ x \f$ and \f$ t \f$ is as follows:
+ *   * \f$ C \f$ -- "Current": The values of \f$ x \f$ and \f$ t \f$ at which the discretized
+ *                             ODE is being assembled.
+ *   * \f$ N \f$ -- "New": The values of \f$ x \f$ and \f$ t \f$ at the new timestep that is
+ *                         being calculated right now by the ODE solver.
+ *   * \f$ O \f$ -- "Old": The results from the preceding time step (or a linear combination of
+ *                         results of the preceding time steps in the case of multistep methods)
+ *                         weighted by a scalar factor.
+ *   * \f$ n \f$ -- Numerical index indicating the timestep.
+ *
+ * \f$ \hat x \f$ is the discrete approximation of \f$ \dot x := \partial x/\partial t\f$.
+ * It is assumed that \f$ \hat x \f$ can be written in the following form:
+ * \f[ \hat x = \alpha \cdot x_C - x_O, \f]
+ * where \f$ \alpha := \partial \hat x / \partial x_C \f$ is a scalar.
+ *
+ * For different time discretization schemes \f$ x_C \f$, \f$ t_C \f$, \f$ x_N \f$,
+ * \f$ x_O \f$ and \f$ \alpha \f$ take different values.
+ * Those for the time implemented schemes are given in the table below.
+ *
+ * Scheme         | \f$ x_C \f$     | \f$ t_C \f$     | \f$ \alpha \f$        | \f$ x_N \f$     | \f$ x_O \f$
+ * -------------- | --------------- | --------------- | --------------------- | --------------- | ----------------------
+ * Forward Euler  | \f$ x_n \f$     | \f$ t_n \f$     | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
+ * Backward Euler | \f$ x_{n+1} \f$ | \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
+ * Crank-Nicolson | \f$ x_{n+1} \f$ | \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
+ * BDF(2)         | \f$ x_{n+2} \f$ | \f$ t_{n+1} \f$ | \f$ 3/(2\Delta t) \f$ | \f$ x_{n+2} \f$ | \f$ (2\cdot x_{n+1} - x_n/2)/\Delta t \f$
+ *
+ * The other backward differentiation formulas of orders 1 to 6 are also implemented, but only
+ * BDF(2) has bee given here for brevity.
+ *
+ */
 template<typename Vector>
 class TimeDiscretization
 {
@@ -46,6 +111,10 @@ public:
 
     ~TimeDiscretization() = default;
 
+    //! \name Extended Interface
+    //! These methods are provided primarily to make certain concrete time discretizations
+    //! with special demands, such as the forward Euler or Crank-Nicolson schemes, possible.
+    //! @{
 
     // Forward Euler is linear, other schemes not.
     virtual bool isLinearTimeDisc() const { return false; }
@@ -62,6 +131,8 @@ public:
 
     // for Crank-Nicolson
     virtual bool needsPreload() const { return false; }
+
+    //! @}
 };
 
 
