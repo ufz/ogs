@@ -57,8 +57,8 @@ public:
 	/// Returns a mesh on which the process variable is defined.
 	MeshLib::Mesh const& getMesh() const;
 
-	/// Returns the tuple size of the process variable.
-	int getTupleSize() const { return _tuple_size; }
+	/// Returns the number of components of the process variable.
+	int getNumberOfComponents() const { return _n_components; }
 
 	template <typename OutputIterator>
 	void initializeDirichletBCs(
@@ -97,13 +97,14 @@ public:
 	}
 
 	// Get or create a property vector for results.
-	// The returned mesh property size is number of mesh nodes times tuple size.
+	// The returned mesh property size is number of mesh nodes times number of
+	// components.
 	MeshLib::PropertyVector<double>& getOrCreateMeshProperty();
 
 private:
 	std::string const _name;
 	MeshLib::Mesh& _mesh;
-	int _tuple_size;
+	int _n_components;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
 	    _dirichlet_bc_configs;

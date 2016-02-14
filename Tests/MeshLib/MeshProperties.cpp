@@ -49,7 +49,7 @@ TEST_F(MeshLibProperties, PropertyVectorTestMetaData)
 
 	ASSERT_EQ(0u, (*p).getPropertyName().compare(prop_name));
 	ASSERT_EQ(MeshLib::MeshItemType::Cell, (*p).getMeshItemType());
-	ASSERT_EQ(1u, (*p).getTupleSize());
+	ASSERT_EQ(1u, (*p).getNumberOfComponents());
 	ASSERT_EQ(0u, (*p).size());
 }
 
@@ -476,7 +476,7 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 
 	ASSERT_EQ(0u, pv.getPropertyName().compare(prop_name));
 	ASSERT_EQ(MeshLib::MeshItemType::Cell, pv.getMeshItemType());
-	ASSERT_EQ(2u, pv.getTupleSize());
+	ASSERT_EQ(2u, pv.getNumberOfComponents());
 	ASSERT_EQ(0u, pv.getNumberOfTuples());
 	ASSERT_EQ(0u, pv.size());
 
@@ -487,7 +487,7 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
 	}
 	// check the number of tuples
 	ASSERT_EQ(number_of_tuples, pv.getNumberOfTuples());
-	ASSERT_EQ(pv.getNumberOfTuples()*pv.getTupleSize(), pv.size());
+	ASSERT_EQ(pv.getNumberOfTuples()*pv.getNumberOfComponents(), pv.size());
 	// check the values
 	for (std::size_t k(0); k<number_of_tuples; k++) {
 		ASSERT_EQ(static_cast<double>(k), pv[2*k]);

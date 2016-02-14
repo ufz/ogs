@@ -44,10 +44,10 @@ class PropertyVector : public std::vector<PROP_VAL_TYPE>,
 friend class Properties;
 
 public:
-	std::size_t getTupleSize() const { return _tuple_size; }
+	std::size_t getNumberOfComponents() const { return _n_components; }
 	std::size_t getNumberOfTuples() const
 	{
-		return std::vector<PROP_VAL_TYPE>::size() / _tuple_size;
+		return std::vector<PROP_VAL_TYPE>::size() / _n_components;
 	}
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
@@ -55,7 +55,7 @@ public:
 	PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
 	{
 		PropertyVector<PROP_VAL_TYPE> *t(new PropertyVector<PROP_VAL_TYPE>(_property_name,
-			_mesh_item_type, _tuple_size));
+			_mesh_item_type, _n_components));
 		BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
 		return t;
 	}
@@ -72,11 +72,11 @@ protected:
 	/// @param mesh_item_type the values of the property are either assigned to
 	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
-	/// @param tuple_size the number of elements of a tuple (default: 1)
+	/// @param n_components the number of elements of a tuple (default: 1)
 	explicit PropertyVector(std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t tuple_size = 1)
-		: std::vector<PROP_VAL_TYPE>(), _tuple_size(tuple_size),
+		std::size_t n_components = 1)
+		: std::vector<PROP_VAL_TYPE>(), _n_components(n_components),
 		_mesh_item_type(mesh_item_type), _property_name(property_name)
 	{}
 
@@ -87,16 +87,16 @@ protected:
 	/// @param mesh_item_type the values of the property are either assigned to
 	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
-	/// @param tuple_size the number of elements of a tuple (default: 1)
+	/// @param n_components the number of elements of a tuple (default: 1)
 	PropertyVector(std::size_t n_property_values,
 		std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t tuple_size = 1)
-		: std::vector<PROP_VAL_TYPE>(n_property_values*tuple_size),
+		std::size_t n_components = 1)
+		: std::vector<PROP_VAL_TYPE>(n_property_values*n_components),
 		_mesh_item_type(mesh_item_type), _property_name(property_name)
 	{}
 
-	std::size_t const _tuple_size;
+	std::size_t const _n_components;
 	MeshItemType const _mesh_item_type;
 	std::string const _property_name;
 };
@@ -140,7 +140,7 @@ public:
 		_values[group_id] = new T(value);
 	}
 
-	std::size_t getTupleSize() const { return _tuple_size; }
+	std::size_t getNumberOfComponents() const { return _n_components; }
 	std::size_t getNumberOfTuples() const
 	{
 		return std::vector<std::size_t>::size();
@@ -148,7 +148,7 @@ public:
 	/// Method returns the number of tuples times the number of tuple components.
 	std::size_t size() const
 	{
-		return _tuple_size * std::vector<std::size_t>::size();
+		return _n_components * std::vector<std::size_t>::size();
 	}
 	MeshItemType getMeshItemType() const { return _mesh_item_type; }
 	std::string const& getPropertyName() const { return _property_name; }
@@ -158,9 +158,9 @@ public:
 		// create new PropertyVector with modified mapping
 		PropertyVector<T*> *t(new PropertyVector<T*>
 			(
-				_values.size()/_tuple_size,
+				_values.size()/_n_components,
 				BaseLib::excludeObjectCopy(*this, exclude_positions),
-				_property_name, _mesh_item_type, _tuple_size
+				_property_name, _mesh_item_type, _n_components
 			)
 		);
 		// copy pointers to property values
@@ -197,21 +197,21 @@ protected:
 	/// @param mesh_item_type the values of the property are either assigned to
 	/// nodes or cells (see enumeration MeshItemType) (default:
 	/// MeshItemType::Cell)
-	/// @param tuple_size the number of elements of a tuple (default: 1)
+	/// @param n_components the number of elements of a tuple (default: 1)
 	PropertyVector(std::size_t n_prop_groups,
 		std::vector<std::size_t> const& item2group_mapping,
 		std::string const& property_name,
 		MeshItemType mesh_item_type = MeshItemType::Cell,
-		std::size_t tuple_size = 1)
+		std::size_t n_components = 1)
 		: std::vector<std::size_t>(item2group_mapping),
-		_tuple_size(tuple_size),
+		_n_components(n_components),
 		_mesh_item_type(mesh_item_type),
 		_property_name(property_name),
-		_values(n_prop_groups * tuple_size)
+		_values(n_prop_groups * n_components)
 	{}
 
 protected:
-	std::size_t const _tuple_size;
+	std::size_t const _n_components;
 	MeshItemType const _mesh_item_type;
 	std::string const _property_name;
 

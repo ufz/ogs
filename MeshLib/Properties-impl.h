@@ -15,7 +15,7 @@ template <typename T>
 boost::optional<PropertyVector<T> &>
 Properties::createNewPropertyVector(std::string const& name,
 	MeshItemType mesh_item_type,
-	std::size_t tuple_size)
+	std::size_t n_components)
 {
 	std::map<std::string, PropertyVectorBase*>::const_iterator it(
 		_properties.find(name)
@@ -28,7 +28,7 @@ Properties::createNewPropertyVector(std::string const& name,
 	auto entry_info(
 		_properties.insert(
 			std::make_pair(
-				name, new PropertyVector<T>(name, mesh_item_type, tuple_size)
+				name, new PropertyVector<T>(name, mesh_item_type, n_components)
 			)
 		)
 	);
@@ -44,7 +44,7 @@ Properties::createNewPropertyVector(std::string const& name,
 	std::size_t n_prop_groups,
 	std::vector<std::size_t> const& item2group_mapping,
 	MeshItemType mesh_item_type,
-	std::size_t tuple_size)
+	std::size_t n_components)
 {
 	// check if there is already a PropertyVector with the same name and
 	// mesh_item_type
@@ -71,7 +71,7 @@ Properties::createNewPropertyVector(std::string const& name,
 			std::pair<std::string, PropertyVectorBase*>(
 				name,
 				new PropertyVector<T>(n_prop_groups,
-					item2group_mapping, name, mesh_item_type, tuple_size)
+					item2group_mapping, name, mesh_item_type, n_components)
 			)
 		)
 	);

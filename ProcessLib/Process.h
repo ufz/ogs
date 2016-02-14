@@ -271,16 +271,16 @@ private:
 #endif
 		_x->copyValues(x_copy);
 
-		std::size_t const n = _mesh.getNNodes();
+		std::size_t const n_nodes = _mesh.getNNodes();
 		for (ProcessVariable& pv : _process_variables)
 		{
 			auto& output_data = pv.getOrCreateMeshProperty();
 
-			int const n_components = pv.getTupleSize();
-			for (std::size_t i = 0; i < n; ++i)
+			int const n_components = pv.getNumberOfComponents();
+			for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
 			{
 				MeshLib::Location const l(_mesh.getID(),
-				                          MeshLib::MeshItemType::Node, i);
+				                          MeshLib::MeshItemType::Node, node_id);
 				// TODO extend component ids to multiple process variables.
 				for (int component_id = 0; component_id < n_components;
 				     ++component_id)

@@ -23,7 +23,7 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                                  GeoLib::GEOObjects const& geometries)
     : _name(config.getConfParam<std::string>("name")),
       _mesh(mesh),
-      _tuple_size(config.getConfParam<int>("components"))
+      _n_components(config.getConfParam<int>("components"))
 {
 	DBUG("Constructing process variable %s", this->_name.c_str());
 
@@ -34,12 +34,12 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 		if (type == "Uniform")
 		{
 			_initial_condition =
-			    createUniformInitialCondition(*ic_config, _tuple_size);
+			    createUniformInitialCondition(*ic_config, _n_components);
 		}
 		else if (type == "MeshProperty")
 		{
 			_initial_condition =
-			    createMeshPropertyInitialCondition(*ic_config, _mesh, _tuple_size);
+			    createMeshPropertyInitialCondition(*ic_config, _mesh, _n_components);
 		}
 		else
 		{
@@ -122,14 +122,14 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
 		result =
 		    _mesh.getProperties().template getPropertyVector<double>(_name);
 		assert(result);
-		assert(result->size() == _mesh.getNNodes() * _tuple_size);
+		assert(result->size() == _mesh.getNNodes() * _n_components);
 	}
 	else
 	{
 		result = _mesh.getProperties().template createNewPropertyVector<double>(
 		    _name, MeshLib::MeshItemType::Node);
 		assert(result);
-		result->resize(_mesh.getNNodes() * _tuple_size);
+		result->resize(_mesh.getNNodes() * _n_components);
 	}
 	return *result;
 }

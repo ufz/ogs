@@ -42,7 +42,7 @@ template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 {
 	this->Initialize();
 	_propertyVector = &propertyVector;
-	this->NumberOfComponents = _propertyVector->getTupleSize();
+	this->NumberOfComponents = _propertyVector->getNumberOfComponents();
 	this->Size = this->NumberOfComponents *  _propertyVector->getNumberOfTuples();
 	this->MaxId = this->Size - 1;
 	this->Modified();
