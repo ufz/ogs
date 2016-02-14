@@ -9,6 +9,9 @@
 namespace NumLib
 {
 
+//! \addtogroup ODESolver
+//! @{
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSolver;
 
@@ -59,6 +62,8 @@ private:
 
     Vector _x_new;
 };
+
+//! @}
 
 }
 

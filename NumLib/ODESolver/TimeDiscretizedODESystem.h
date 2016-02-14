@@ -9,6 +9,9 @@
 namespace NumLib
 {
 
+//! \addtogroup ODESolver
+//! @{
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag_>
 class TimeDiscretizedODESystemBase
         : public NonlinearSystem<Matrix, Vector, NLTag_>
@@ -47,8 +50,6 @@ public:
         , _K(_Jac)
         , _b(ode.getMatrixSize())
     {}
-
-    /// begin INonlinearSystemNewton
 
     void assembleResidualNewton(const Vector &x_new_timestep) override
     {
@@ -173,5 +174,7 @@ private:
     Matrix _K;
     Vector _b;
 };
+
+//! @}
 
 }

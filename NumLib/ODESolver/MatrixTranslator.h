@@ -10,6 +10,9 @@
 namespace NumLib
 {
 
+//! \addtogroup ODESolver
+//! @{
+
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslator;
 
@@ -295,5 +298,7 @@ createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
                 new MatrixTranslatorGeneral<Matrix, Vector, ODETag>(timeDisc));
     }
 }
+
+//! @}
 
 }

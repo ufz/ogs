@@ -9,13 +9,15 @@
 namespace NumLib
 {
 
+//! \addtogroup ODESolver
+//! @{
+
 class InternalMatrixStorage
 {
 public:
     // needed for Crank-Nicolson
     virtual void pushMatrices() const = 0;
 };
-
 
 template<typename Vector>
 class TimeDiscretization
@@ -302,5 +304,7 @@ private:
     std::vector<Vector> _xs_old;
     unsigned _offset = 0;
 };
+
+//! @}
 
 }

@@ -6,6 +6,9 @@
 namespace NumLib
 {
 
+//! \addtogroup ODESolver
+//! @{
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSystem;
 
@@ -35,5 +38,7 @@ public:
 
     virtual ~NonlinearSystem() = default;
 };
+
+//! @}
 
 }
