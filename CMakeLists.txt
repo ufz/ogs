@@ -136,6 +136,11 @@ if(OGS_USE_EIGEN)
 	endif()
 endif()
 
+if (OGS_USE_EIGENLIS)
+	# TODO check if eigen and lis!
+	add_definitions(-DOGS_USE_EIGENLIS)
+endif()
+
 if(OGS_BUILD_TESTS)
 	set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
 	set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
