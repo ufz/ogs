@@ -56,6 +56,7 @@ private:
     NLSolver& _nonlinear_solver;
 };
 
+//! @}
 
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
@@ -98,7 +99,5 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
     }
     return nl_slv_succeeded;
 }
-
-//! @}
 
 }
