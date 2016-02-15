@@ -5,49 +5,104 @@
 #include <initializer_list>
 #include <cassert>
 
-#define USE_EIGEN_PLAIN
 
+// Eigen dense matrix ///////////////////////
+// always enabled
 
+inline void setMatrix(Eigen::MatrixXd& m,
+                      Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
+                      std::initializer_list<double> values)
+{
+    using IndexType = Eigen::MatrixXd::Index;
+    assert((IndexType) values.size() == rows*cols);
 
-#ifdef USE_EIGEN_PLAIN
-#include <Eigen/SparseCore>
-#include <Eigen/SparseLU>
+    auto it = values.begin();
+    for (IndexType r=0; r<rows; ++r) {
+        for (IndexType c=0; c<cols; ++c) {
+            m(r, c) = *(it++);
+        }
+    }
+}
 
-using IndexType = int;
-using ODEMatrix = Eigen::SparseMatrix<double, Eigen::RowMajor, IndexType>;
-using ODEVector = Eigen::VectorXd;
+inline void setMatrix(Eigen::MatrixXd& m, Eigen::MatrixXd const& tmp)
+{
+    m = tmp;
+}
+
+inline void addToMatrix(Eigen::MatrixXd& m,
+                        Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
+                        std::initializer_list<double> values)
+{
+    using IndexType = Eigen::MatrixXd::Index;
+    assert((IndexType) values.size() == rows*cols);
+
+    auto it = values.begin();
+    for (IndexType r=0; r<rows; ++r) {
+        for (IndexType c=0; c<cols; ++c) {
+            m(r, c) += *(it++);
+        }
+    }
+}
 
 namespace NumLib
 {
-inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
+inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::VectorXd& x)
 {
-    Eigen::SparseLU<ODEMatrix> slv;
+    // Eigen::SparseLU<Eigen::MatrixXd> slv;
+    Eigen::FullPivLU<Eigen::MatrixXd> slv;
+    slv.compute(A);
+    x = slv.solve(rhs);
+}
+
+inline double norm(Eigen::VectorXd const& x) { return x.norm(); }
+
+}
+
+
+
+
+
+
+
+
+/*
+#i fdef USE_EIGEN_PLAIN
+#include <Eigen/SparseCore>
+// #include <Eigen/SparseLU>
+#include <Eigen/LU>
+
+using IndexType = int;
+
+namespace NumLib
+{
+inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::VectorXd& x)
+{
+    // Eigen::SparseLU<Eigen::MatrixXd> slv;
+    Eigen::FullPivLU<Eigen::MatrixXd> slv;
     slv.compute(A);
     x = slv.solve(rhs);
 }
 }
 
-inline double norm(ODEVector const& x) { return x.norm(); }
+*/
 
-#else
+
+#ifdef OGS_USE_EIGEN
+
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
 using IndexType = int;
-using ODEMatrix = MathLib::EigenMatrix;
-using ODEVector = MathLib::EigenVector;
 
 namespace NumLib
 {
-inline void oneShotLinearSolve(ODEMatrix& A, ODEVector& rhs, ODEVector& x)
+inline void oneShotLinearSolve(MathLib::EigenMatrix& A, MathLib::EigenVector& rhs, MathLib::EigenVector& x)
 {
     MathLib::EigenLinearSolver slv(A);
     slv.solve(rhs, x);
 }
 }
-
-#endif
 
 
 inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
@@ -98,24 +153,23 @@ inline void addToMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
     m += tmp.sparseView();
 }
 
-
-
-#ifndef USE_EIGEN_PLAIN
-inline void setMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols,
+inline void setMatrix(MathLib::EigenMatrix& m, IndexType const rows, IndexType const cols,
                       std::initializer_list<double> values)
 {
     setMatrix(m.getRawMatrix(), rows, cols, values);
 }
 
-inline void setMatrix(ODEMatrix& m, Eigen::MatrixXd const& tmp)
+inline void setMatrix(MathLib::EigenMatrix& m, Eigen::MatrixXd const& tmp)
 {
     m.getRawMatrix() = tmp.sparseView();
 }
 
-inline void addToMatrix(ODEMatrix& m, IndexType const rows, IndexType const cols,
+inline void addToMatrix(MathLib::EigenMatrix& m, IndexType const rows, IndexType const cols,
                         std::initializer_list<double> values)
 {
     addToMatrix(m.getRawMatrix(), rows, cols, values);
 }
 
-#endif
+
+
+#endif // OGS_USE_EIGEN
