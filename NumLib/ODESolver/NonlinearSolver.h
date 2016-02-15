@@ -1,4 +1,14 @@
-#pragma once
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef NUMLIB_NONLINEARSOLVER_H
+#define NUMLIB_NONLINEARSOLVER_H
 
 #include <logog/include/logog.hpp>
 
@@ -131,3 +141,5 @@ private:
 }
 
 #include "NonlinearSolver-impl.h"
+
+#endif // NUMLIB_NONLINEARSOLVER_H

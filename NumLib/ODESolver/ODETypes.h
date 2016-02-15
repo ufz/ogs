@@ -1,6 +1,16 @@
-// TODO: move that file somewhere else
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 
-#pragma once
+#ifndef NUMLIB_ODETYPES_H
+#define NUMLIB_ODETYPES_H
+
+// TODO: move that file somewhere else
 
 #include <initializer_list>
 #include <cassert>
@@ -196,3 +206,5 @@ inline void addToMatrix(MathLib::EigenMatrix& m,
 }
 
 #endif // OGS_USE_EIGEN
+
+#endif // NUMLIB_ODETYPES_H
