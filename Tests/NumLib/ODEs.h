@@ -42,7 +42,7 @@ public:
         setMatrix(Jac, m*dxdot_dx + dx_dx*k);
     }
 
-    NumLib::IndexType getMatrixSize() const override
+    NumLib::IndexType getNumEquations() const override
     {
         return N;
     }
@@ -105,7 +105,7 @@ public:
         setMatrix(Jac, N, N, { dxdot_dx + x[0] + x[0]*dx_dx });
     }
 
-    NumLib::IndexType getMatrixSize() const override
+    NumLib::IndexType getNumEquations() const override
     {
         return N;
     }
@@ -224,7 +224,7 @@ public:
         // INFO("Det J: %e <<<", J.determinant());
     }
 
-    NumLib::IndexType getMatrixSize() const override
+    NumLib::IndexType getNumEquations() const override
     {
         return N;
     }

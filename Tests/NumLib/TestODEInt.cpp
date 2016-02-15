@@ -50,7 +50,7 @@ public:
         init_file(delta_t);
 
         // initial condition
-        Vector x0(ode.getMatrixSize());
+        Vector x0(ode.getNumEquations());
         ODET::setIC(x0);
 
         write(t0, x0, x0);
