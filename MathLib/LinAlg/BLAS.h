@@ -1,36 +1,15 @@
 #pragma once
 
 #include<cassert>
-#include<Eigen/SparseCore>
 
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 
-namespace MathLib
+#include <Eigen/Core>
+
+namespace MathLib { namespace BLAS
 {
 
-namespace BLAS
-{
-
-/*
-template<class Mat>
-void matScale(Mat& A, double const a);
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Dense Eigen matrix/vector //////////////////////////////////////////
+// TODO change t otemplates
 
 using EM = Eigen::MatrixXd;
 using EV = Eigen::VectorXd;
@@ -109,10 +88,113 @@ inline void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3)
     v3 = v2 + A*v1;
 }
 
+}} // namespaces
 
 
+#ifdef USE_PETSC
+
+// Global PETScMatrix/PETScVector //////////////////////////////////////////
+///
+///
+namespace MathLib { namespace BLAS
+{
+
+// Vector
+
+inline void copy(PETScVector const& x, PETScVector& y)
+{
+    y = x;
+}
+
+inline void scale(PETScVector& x, double const a)
+{
+    (void) x; (void) a;
+    // TODO implement
+}
+
+// y = a*y + X
+inline void aypx(PETScVector& y, double const a, PETScVector const& x)
+{
+    (void) y; (void) a; (void) x;
+    // TODO implement
+}
+
+// y = a*x + y
+inline void axpy(PETScVector& y, double const a, PETScVector const& x)
+{
+    (void) y; (void) a; (void) x;
+    // TODO implement
+}
+
+// y = a*x + y
+inline void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
+{
+    (void) y; (void) a; (void) b; (void) x;
+    // TODO implement
+}
 
 
+// Matrix
+
+inline void copy(PETScMatrix const& A, PETScMatrix& B)
+{
+    B = A;
+}
+
+// A = a*A
+inline void scale(PETScMatrix& A, double const a)
+{
+    (void) A; (void) a;
+    // TODO implement
+}
+
+// Y = a*Y + X
+inline void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
+{
+    (void) Y;(void) a; (void) X;
+    // TODO implement
+}
+
+// Y = a*X + Y
+inline void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
+{
+    (void) Y; (void) a; (void) X;
+    // TODO implement
+}
+
+
+// Matrix and Vector
+
+// v3 = A*v1 + v2
+inline void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
+{
+    (void) A; (void) x; (void) y;
+    assert(&x != &y);
+    // TODO implement
+}
+
+// v3 = A*v1 + v2
+inline void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
+                       PETScVector const& v2, PETScVector& v3)
+{
+    (void) A; (void) v1; (void) v2; (void) v3;
+    assert(&v1 != &v3);
+    // TODO implement
+}
+
+}} // namespaces
+
+
+#else
+
+// Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
+
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+
+
+namespace MathLib { namespace BLAS
+{
 
 using MEM = MathLib::EigenMatrix;
 using MEV = MathLib::EigenVector;
@@ -198,10 +280,8 @@ inline void matMultAdd(MEM const& A, MEV const& v1, MEV const& v2, MEV& v3)
     v3.getRawVector() = v2.getRawVector() + A.getRawMatrix()*v1.getRawVector();
 }
 
-
-
-
-
 } // namespace BLAS
 
 } // namespace MathLib
+
+#endif
