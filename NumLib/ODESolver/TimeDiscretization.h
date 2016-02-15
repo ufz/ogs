@@ -26,6 +26,8 @@ public:
  * respective time discretization scheme. Furthermore, TimeDiscretization instances
  * compute the discretized approximation of the time derivative \f$ \partial x/\partial t \f$.
  *
+ * \tparam Vector the type of the solution vector of the ODE.
+ *
  * \note The method documentation of this class uses quantities introduced in the
  *       following section.
  *

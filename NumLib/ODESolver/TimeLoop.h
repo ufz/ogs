@@ -10,6 +10,11 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
+/*! Integrate some first-order ODE system over time.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
+ * \tparam Vector the type of the solution vector of the ODE.
+ */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeLoop
 {
@@ -17,12 +22,30 @@ public:
     using TDiscODESys = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
     using NLSolver = NonlinearSolver<Matrix, Vector, NLTag>;
 
+    /*! Constructs an new instance.
+     * \param ode_sys The ODE system to be integrated
+     * \param nonlinear_solver The solver to be used to resolve nonlinearities.
+     */
     explicit
     TimeLoop(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
         : _ode_sys(ode_sys)
         , _nonlinear_solver(nonlinear_solver)
     {}
 
+    /*! Integrate the ODE from \c t0 to \c t_end with a timestep size of \c delta_t.
+     *
+     * The initial condition is \f$ x(\mathtt{t0}) = \mathtt{x0} \f$.
+     *
+     * After each timestep the callback \c post_timestep will be called,
+     *  i.e., it won't be called with the initial condition as parameters.
+     *
+     * \tparam Callback Any callable object which can be called with the arguments of type
+     *         \c double and <tt>Vector const&</tt> which contain the
+     *         time and solution at the current timestep.
+     *
+     * \retval true  if the ODE could be successfully integrated
+     * \retval false otherwise
+     */
     template<typename Callback>
     bool loop(const double t0, const Vector x0,
               const double t_end, const double delta_t,
@@ -65,7 +88,9 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 
         time_disc.pushState(t, x, _ode_sys);
 
-        post_timestep(t, x);
+        auto const  t_cb = t; // make sure the callback cannot overwrite anything.
+        auto const& x_cb = x; // ditto.
+        post_timestep(t_cb, x_cb);
     }
 
     if (!nl_slv_succeeded) {
