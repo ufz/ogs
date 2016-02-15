@@ -19,19 +19,23 @@ public:
     virtual void pushMatrices() const = 0;
 };
 
-/*! Interface of time discretization schemes.
- *
- * This interface can be used to describe time discretization schemes for
- * first-order ODEs.
+/*! Interface of time discretization schemes for first-order ODEs.
  *
  * The purpose of TimeDiscretization instances is to store the solution history of
  * an ODE, i. e., to keep the solution at as many timestamps as is required by the
  * respective time discretization scheme. Furthermore, TimeDiscretization instances
  * compute the discretized approximation of the time derivative \f$ \partial x/\partial t \f$.
  *
+ * \note The method documentation of this class uses quantities introduced in the
+ *       following section.
  *
- * Design Ideas
- * ------------
+ * \todo Currently this interface does not yet support adaptive timestepping.
+ *       While implementing that will lead to no changes for single-step methods,
+ *       for multi-step methods this interface will have to be extended.
+ *
+ *
+ * Discretizing first-order ODEs
+ * -----------------------------
  *
  * A first-order (implicit) ODE has the general form
  *
@@ -88,14 +92,34 @@ template<typename Vector>
 class TimeDiscretization
 {
 public:
-    virtual void setInitialState(const double t0, Vector const& x) = 0;
+    //! Sets the initial condition.
+    virtual void setInitialState(const double t0, Vector const& x0) = 0;
+
+    /*! Indicate that the current timestep is done and that you will proceed to the next one.
+     *
+     * \warning Do not use this method for setting the initial condition,
+     *          rather use setInitialState()!
+     *
+     * \param t    The current timestep.
+     * \param x    The solution at the current timestep.
+     * \param strg Trigger storing some internal state.
+     *             Currently only used by the CrankNicolson scheme.
+     */
     virtual void pushState(const double t, Vector const& x,
-                           InternalMatrixStorage const& eq) = 0;
+                           InternalMatrixStorage const& strg) = 0;
 
-    virtual void setCurrentTime(const double t, const double delta_t) = 0;
-    virtual double getCurrentTime() const = 0; // get time used for assembly
+    /*! Indicate that the computation of a new timestep is being started now.
+     *
+     * \warning Currently changing timestep sizes are not supported. Thus,
+     *          \p delta_t must not change throughout the entire time
+     *          integration process! This is not checked by this code!
+     */
+    virtual void nextTimestep(const double t, const double delta_t) = 0;
 
-    // \dot x === alpha * x - x_old
+    //! Returns \f$ t_C \f$, i.e., the time at which the equation will be assembled.
+    virtual double getCurrentTime() const = 0;
+
+    //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x \f$.
     void getXdot(Vector const& x_at_new_timestep, Vector& xdot) const
     {
         namespace BLAS = MathLib::BLAS;
@@ -106,7 +130,10 @@ public:
         BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
     }
 
-    virtual double getCurrentXWeight() const = 0; // = alpha
+    //! Returns \f$ \alpha = \partial \hat x / \partial x_C \f$.
+    virtual double getCurrentXWeight() const = 0;
+
+    //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(Vector& y) const = 0; // = x_old
 
     ~TimeDiscretization() = default;
@@ -116,20 +143,32 @@ public:
     //! with special demands, such as the forward Euler or Crank-Nicolson schemes, possible.
     //! @{
 
-    // Forward Euler is linear, other schemes not.
+    /*! Tell whether this scheme inherently requires a nonlinear solver or not.
+     *
+     * The ForwardEuler scheme is inherently linear in that sense, the others are not.
+     */
     virtual bool isLinearTimeDisc() const { return false; }
 
-    // Forward Euler will override this
+    /*! Returns \f$ \partial x_C / \partial x_N \f$.
+     *
+     * The ForwardEuler scheme overrides this.
+     */
     virtual double getDxDx() const { return 1.0; }
 
-    // Forward Euler overrides this.
-    // Caution: This is not the x with which you want to compute \dot x
+    /*! Returns \f$ x_C \f$, i.e., the state at which the equation will be assembled.
+     *
+     * This method is overridden in the ForwardEuler scheme.
+     */
     virtual Vector const& getCurrentX(Vector const& x_at_new_timestep) const
     {
         return x_at_new_timestep;
     }
 
-    // for Crank-Nicolson
+    /*! Indicate that this scheme needs some additional assembly before the first
+     *  timestep will be solved.
+     *
+     * The CrankNicolson scheme needs such preload.
+     */
     virtual bool needsPreload() const { return false; }
 
     //! @}
@@ -140,9 +179,9 @@ template<typename Vector>
 class BackwardEuler final : public TimeDiscretization<Vector>
 {
 public:
-    void setInitialState(const double t0, Vector const& x) override {
+    void setInitialState(const double t0, Vector const& x0) override {
         _t = t0;
-        _x_old = x;
+        _x_old = x0;
     }
 
     void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
@@ -151,7 +190,7 @@ public:
         _x_old = x;
     }
 
-    void setCurrentTime(const double t, const double delta_t) override {
+    void nextTimestep(const double t, const double delta_t) override {
         _t = t;
         _delta_t = delta_t;
     }
@@ -172,8 +211,8 @@ public:
     }
 
 private:
-    double _t = 9999.9999;
-    double _delta_t = 8888.8888;
+    double _t;
+    double _delta_t;
     Vector _x_old;
 };
 
@@ -182,10 +221,10 @@ template<typename Vector>
 class ForwardEuler final : public TimeDiscretization<Vector>
 {
 public:
-    void setInitialState(const double t0, Vector const& x) override {
+    void setInitialState(const double t0, Vector const& x0) override {
         _t = t0;
         _t_old = t0;
-        _x_old = x;
+        _x_old = x0;
     }
 
     void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
@@ -194,7 +233,7 @@ public:
         _x_old = x;
     }
 
-    void setCurrentTime(const double t, const double delta_t) override {
+    void nextTimestep(const double t, const double delta_t) override {
         _t_old = _t;
         _t = t;
         _delta_t = delta_t;
@@ -227,12 +266,13 @@ public:
         return 0.0;
     }
 
+    //! Returns the solution from the preceding timestep.
     Vector const& getXOld() const { return _x_old; }
 
 private:
-    double _t = 9999.9999;
-    double _t_old = 7777.7777;
-    double _delta_t = 8888.8888;
+    double _t;
+    double _t_old;
+    double _delta_t;
     Vector _x_old;
 };
 
@@ -241,24 +281,31 @@ template<typename Vector>
 class CrankNicolson final : public TimeDiscretization<Vector>
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param theta The implicitness parameter \f$ \theta \f$. Some special values are:
+     *              \arg 1.0 fully implicit (like BackwardEuler).
+     *              \arg 0.0 fully explicit (like ForwardEuler).
+     *              \arg 0.5 traditional Crank-Nicolson scheme.
+     */
     explicit
     CrankNicolson(const double theta)
         : _theta(theta)
     {}
 
-    void setInitialState(const double t0, Vector const& x) override {
+    void setInitialState(const double t0, Vector const& x0) override {
         _t = t0;
-        _x_old = x;
+        _x_old = x0;
     }
 
-    void pushState(const double t, Vector const& x, InternalMatrixStorage const& eq) override
+    void pushState(const double t, Vector const& x, InternalMatrixStorage const& strg) override
     {
         (void) t;
         _x_old = x;
-        eq.pushMatrices();
+        strg.pushMatrices();
     }
 
-    void setCurrentTime(const double t, const double delta_t) override {
+    void nextTimestep(const double t, const double delta_t) override {
         _t = t;
         _delta_t = delta_t;
     }
@@ -282,13 +329,16 @@ public:
         return true;
     }
 
+    //! Returns \f$ \theta \f$.
     double getTheta() const { return _theta; }
+
+    //! Returns the solution from the preceding timestep.
     Vector const& getXOld() const { return _x_old; }
 
 private:
-    const double _theta = 555.555;
-    double _t = 9999.9999;
-    double _delta_t = 8888.8888;
+    const double _theta;
+    double _t;
+    double _delta_t;
     Vector _x_old;
 };
 
@@ -296,6 +346,7 @@ private:
 namespace detail
 {
 
+//! Coefficients used in the backward differentiation formulas.
 const double BDF_Coeffs[6][7] = {
     // leftmost column: weight of the solution at the new timestep
     // signs of columns > 1 are flipped compared to standard BDF tableaus
@@ -320,13 +371,13 @@ public:
     BackwardDifferentiationFormula(const unsigned num_steps)
         : _num_steps(num_steps)
     {
-        // TODO: assert 0 < num_steps <= 6
+        assert(0 < num_steps && num_steps <= 6);
         _xs_old.reserve(num_steps);
     }
 
-    void setInitialState(const double t0, Vector const& x) override {
+    void setInitialState(const double t0, Vector const& x0) override {
         _t = t0;
-        _xs_old.push_back(x);
+        _xs_old.push_back(x0);
     }
 
     void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
@@ -342,7 +393,7 @@ public:
         }
     }
 
-    void setCurrentTime(const double t, const double delta_t) override {
+    void nextTimestep(const double t, const double delta_t) override {
         _t = t;
         _delta_t = delta_t;
     }
@@ -379,8 +430,8 @@ private:
     unsigned eff_num_steps() const { return _xs_old.size(); }
 
     const unsigned _num_steps;
-    double _t = 9999.9999;
-    double _delta_t = 8888.8888;
+    double _t;
+    double _delta_t;
 
     std::vector<Vector> _xs_old;
     unsigned _offset = 0;
