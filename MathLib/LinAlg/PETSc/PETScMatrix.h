@@ -37,6 +37,11 @@ class PETScMatrix
         using IndexType = PetscInt;
 
     public:
+        // TODO preliminary
+        PETScMatrix() {
+            // TODO implement
+        }
+
         /*!
           \brief        Constructor for a square matrix partitioning with more options
           \param nrows  The number of rows of the matrix or the local matrix.

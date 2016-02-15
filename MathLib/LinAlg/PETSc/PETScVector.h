@@ -38,6 +38,10 @@ class PETScVector
         using IndexType = PetscInt;
 
     public:
+        // TODO preliminary
+        PETScVector() {
+            // TODO implement
+        }
 
         /*!
             \brief Constructor
@@ -169,6 +173,14 @@ class PETScVector
                                           T_SUBVEC &sub_vec)
         {
             VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
+        }
+
+        // TODO preliminary
+        double operator[] (PetscInt idx) const
+        {
+            double value;
+            VecGetValues(_v, 1, &idx, &value);
+            return value;
         }
 
         /*!
