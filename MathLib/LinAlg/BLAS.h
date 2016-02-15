@@ -9,7 +9,7 @@ namespace MathLib { namespace BLAS
 {
 
 // Dense Eigen matrix/vector //////////////////////////////////////////
-// TODO change t otemplates
+// TODO change to templates
 
 using EM = Eigen::MatrixXd;
 using EV = Eigen::VectorXd;
@@ -94,8 +94,7 @@ inline void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3)
 #ifdef USE_PETSC
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
-///
-///
+
 namespace MathLib { namespace BLAS
 {
 
