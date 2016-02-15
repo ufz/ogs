@@ -71,7 +71,7 @@ private:
     const unsigned _maxiter; //!< maximum number of iterations
 
     Vector _minus_delta_x; //!< the Newton-Raphson method solves the linearized equation
-                           //!< \f$ J (-\Delta x) = r \f$ repeatedly.
+                           //!< \f$ J \cdot (-\Delta x) = r \f$ repeatedly.
 };
 
 
