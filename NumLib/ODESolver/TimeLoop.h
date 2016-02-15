@@ -58,7 +58,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
     for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
     {
         // INFO("time: %e, delta_t: %e", t, delta_t);
-        time_disc.setCurrentTime(t, delta_t);
+        time_disc.nextTimestep(t, delta_t);
 
         nl_slv_succeeded = _nonlinear_solver.solve(_ode_sys, x);
         if (!nl_slv_succeeded) break;
