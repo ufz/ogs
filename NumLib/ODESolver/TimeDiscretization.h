@@ -213,9 +213,9 @@ public:
     }
 
 private:
-    double _t;
-    double _delta_t;
-    Vector _x_old;
+    double _t;       //!< \f$ t_C \f$
+    double _delta_t; //!< the timestep size
+    Vector _x_old;   //!< the solution from the preceding timestep
 };
 
 
@@ -272,10 +272,10 @@ public:
     Vector const& getXOld() const { return _x_old; }
 
 private:
-    double _t;
-    double _t_old;
-    double _delta_t;
-    Vector _x_old;
+    double _t;       //!< \f$ t_C \f$
+    double _t_old;   //!< the time of the preceding timestep
+    double _delta_t; //!< the timestep size
+    Vector _x_old;   //!< the solution from the preceding timestep
 };
 
 
@@ -338,10 +338,10 @@ public:
     Vector const& getXOld() const { return _x_old; }
 
 private:
-    const double _theta;
-    double _t;
-    double _delta_t;
-    Vector _x_old;
+    const double _theta; //!< the implicitness parameter \f$ \theta \f$
+    double _t;       //!< \f$ t_C \f$
+    double _delta_t; //!< the timestep size
+    Vector _x_old;   //!< the solution from the preceding timestep
 };
 
 
@@ -369,11 +369,21 @@ template<typename Vector>
 class BackwardDifferentiationFormula final : public TimeDiscretization<Vector>
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param num_steps The order of the BDF to be used
+     *                  (= the number of timesteps kept in the internal history buffer).
+     *                  Valid range: 1 through 6.
+     *
+     * \note Until a sufficient number of timesteps has been computed to be able
+     *       to use the full \c num_steps order BDF, lower order BDFs are used in
+     *       the first timesteps.
+     */
     explicit
     BackwardDifferentiationFormula(const unsigned num_steps)
         : _num_steps(num_steps)
     {
-        assert(0 < num_steps && num_steps <= 6);
+        assert(1 <= num_steps && num_steps <= 6);
         _xs_old.reserve(num_steps);
     }
 
@@ -391,7 +401,7 @@ public:
             _xs_old.push_back(x);
         } else {
             _xs_old[_offset] = x;
-            _offset = (_offset+1) % _num_steps;
+            _offset = (_offset+1) % _num_steps; // treat _xs_old as a circular buffer
         }
     }
 
@@ -431,12 +441,12 @@ public:
 private:
     unsigned eff_num_steps() const { return _xs_old.size(); }
 
-    const unsigned _num_steps;
-    double _t;
-    double _delta_t;
+    const unsigned _num_steps; //!< The order of the BDF method
+    double _t;       //!< \f$ t_C \f$
+    double _delta_t; //!< the timestep size
 
-    std::vector<Vector> _xs_old;
-    unsigned _offset = 0;
+    std::vector<Vector> _xs_old; //!< solutions from the preceding timesteps
+    unsigned _offset = 0; //!< allows treating \c _xs_old as circular buffer
 };
 
 //! @}
