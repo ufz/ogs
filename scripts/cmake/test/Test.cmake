@@ -64,3 +64,6 @@ add_custom_target(
 	${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
 	DEPENDS ogs vtkdiff ctest-large-cleanup
 )
+set_directory_properties(PROPERTIES
+	ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
+)
