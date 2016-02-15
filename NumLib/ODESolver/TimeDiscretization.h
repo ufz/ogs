@@ -36,8 +36,8 @@ public:
  *       for multi-step methods this interface will have to be extended.
  *
  *
- * Discretizing first-order ODEs
- * -----------------------------
+ * Discretizing first-order ODEs {#concept_time_discretization}
+ * =============================
  *
  * A first-order (implicit) ODE has the general form
  *

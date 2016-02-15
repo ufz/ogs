@@ -13,7 +13,7 @@ namespace NumLib
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation.
- * \tparam NLTAG  a tag indicating the method used for solving the equation.
+ * \tparam NLTag  a tag indicating the method used for solving the equation.
  */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSystem;
@@ -54,10 +54,10 @@ public:
      */
     virtual void getJacobian(Matrix& Jac) = 0;
 
-    /*! Indicate that this is actually a linear eqution system.
+    /*! Check whether this is actually a linear equation system.
      *
      * \remark
-     * Depending on the parameters a generally nonlinear equation system
+     * Depending on its parameters an in general nonlinear equation system
      * can be linear in special cases. With this method it is possible to
      * detect that at runtime and thus save an assembly call.
      */
@@ -91,10 +91,10 @@ public:
     //! //! \todo make const
     virtual void getRhs(Vector& rhs) = 0;
 
-    /*! Indicate that this is actually a linear eqution system.
+    /*! Check whether this is actually a linear equation system.
      *
      * \remark
-     * Depending on the parameters a generally nonlinear equation system
+     * Depending on its parameters an in general nonlinear equation system
      * can be linear in special cases. With this method it is possible to
      * detect that at runtime and thus save an assembly call.
      */

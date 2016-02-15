@@ -16,7 +16,7 @@ namespace NumLib
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation.
- * \tparam NLTAG  a tag indicating the method used for solving the equation.
+ * \tparam NLTag  a tag indicating the method used for solving the equation.
  */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class NonlinearSolver;

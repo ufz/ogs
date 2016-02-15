@@ -22,7 +22,7 @@ enum class ODESystemTag : char
      *
      * This is an ODE of the form
      * \f$ M(x,t)\cdot \dot x + K(x,t) \cdot x - b(x,t)
-     *  =: r(\dot x, x, t) \stackrel{!}{=} 0. \f$
+     *  =: r(\dot x, x, t) \stackrel{!}{=} 0 \f$
      */
     FirstOrderImplicitQuasilinear
 };

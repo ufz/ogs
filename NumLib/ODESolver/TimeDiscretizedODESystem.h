@@ -45,10 +45,10 @@ public:
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
-        , _Jac(ode.getMatrixSize(), ode.getMatrixSize())
+        , _Jac(ode.getNumEquations(), ode.getNumEquations())
         , _M(_Jac)
         , _K(_Jac)
-        , _b(ode.getMatrixSize())
+        , _b(ode.getNumEquations())
     {}
 
     void assembleResidualNewton(const Vector &x_new_timestep) override
@@ -127,9 +127,9 @@ public:
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(mat_trans)
-        , _M(ode.getMatrixSize(), ode.getMatrixSize())
+        , _M(ode.getNumEquations(), ode.getNumEquations())
         , _K(_M)
-        , _b(ode.getMatrixSize())
+        , _b(ode.getNumEquations())
     {}
 
     void assembleMatricesPicard(const Vector &x_new_timestep) override
