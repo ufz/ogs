@@ -12,10 +12,17 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
+//! Interface that allows managing an additional internal state as required by
+//! certain time discretization schemes.
 class InternalMatrixStorage
 {
 public:
-    // needed for Crank-Nicolson
+    /*! Triggers a refresh of the internal matrix/vector storage.
+     *
+     * \remark
+     * This method is needed in particular to fully implement the
+     * interaction of the CrankNicolson scheme with other classes.
+     */
     virtual void pushMatrices() const = 0;
 };
 
@@ -177,6 +184,7 @@ public:
 };
 
 
+//! Backward Euler scheme.
 template<typename Vector>
 class BackwardEuler final : public TimeDiscretization<Vector>
 {
@@ -219,6 +227,7 @@ private:
 };
 
 
+//! Forward Euler scheme.
 template<typename Vector>
 class ForwardEuler final : public TimeDiscretization<Vector>
 {
@@ -279,6 +288,7 @@ private:
 };
 
 
+//! Generalized Crank-Nicolson scheme.
 template<typename Vector>
 class CrankNicolson final : public TimeDiscretization<Vector>
 {
@@ -365,6 +375,7 @@ const double BDF_Coeffs[6][7] = {
 }
 
 
+//! Backward differentiation formula.
 template<typename Vector>
 class BackwardDifferentiationFormula final : public TimeDiscretization<Vector>
 {
