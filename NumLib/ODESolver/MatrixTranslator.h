@@ -13,24 +13,53 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
+
+/*! Translates matrices assembled by a provided ODE (or other equation)
+ *  to some other matrices suitable to be passed on to nonlinear solvers.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslator;
 
+
+/*! Translates matrices assembled by a provided first order implicit quasi-linear ODE
+ *  to some other matrices suitable to be passed on to nonlinear solvers.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ */
 template<typename Matrix, typename Vector>
 class MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
+    //! Computes \c A from \c M and \c K.
     virtual void getA(Matrix const& M, Matrix const& K, Matrix& A) const = 0;
 
+    //! Computes \c rhs from \c M, \c K and \c b.
     virtual void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
 
+    /*! Computes \c res from \c M, \c K, \c b and \f$ x_N \f$.
+     * You might also want read the remarks on
+     * \ref concept_time_discretization "time discretization".
+     */
     virtual void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                              Vector const& x_new_timestep,
                              Vector& res) const = 0;
 
+    //! Computes the Jacobian of the residual and writes it to \c Jac_out.
     virtual void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const = 0;
 
-    // needed for Crank-Nicolson
+    /*! Allows to store the given matrices internally for later use.
+     *
+     * \remark
+     * This method has been provided in order to be able to implement the CrankNicolson
+     * scheme.
+     */
     virtual void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b)
     {
         (void) M; (void) K; (void) b;
@@ -40,18 +69,42 @@ public:
 };
 
 
+/*! General matrix translator used with time discretization schemes that have no special needs.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslatorGeneral;
 
+
+/*! General matrix translator for first order implicit quasi-linear ODEs, used with
+ *  time discretization schemes that have no special needs.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ * \remark
+ * You might also want read the remarks on
+ * \ref concept_time_discretization "time discretization".
+ */
 template<typename Matrix, typename Vector>
 class MatrixTranslatorGeneral<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param timeDisc the time discretization scheme to be used.
+     */
     MatrixTranslatorGeneral(TimeDiscretization<Vector> const& timeDisc)
         : _time_disc(timeDisc)
     {}
 
+    //! Computes \f$ A = M \cdot \alpha + K \f$.
     void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -63,6 +116,7 @@ public:
         BLAS::aypx(A, dxdot_dx, K);
     }
 
+    //! Computes \f$ \mathtt{rhs} = M \cdot x_O + b \f$.
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -73,6 +127,7 @@ public:
         BLAS::matMultAdd(M, _tmp, b, rhs);
     }
 
+    //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                      Vector const& x_new_timestep, Vector& res) const override
     {
@@ -87,6 +142,8 @@ public:
         BLAS::axpy(res, -1.0, b);
     }
 
+    //! Writes \c Jac_in to \c Jac_out.
+    //! \todo Do not copy.
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -95,23 +152,47 @@ public:
     }
 
 private:
-    TimeDiscretization<Vector> const& _time_disc;
-    mutable Vector _tmp; // used to store intermediate calculation results
+    TimeDiscretization<Vector> const& _time_disc; //!< the time discretization used.
+    mutable Vector _tmp; //!< used to store intermediate calculation results
 };
 
 
+/*! Matrix translator used with the ForwardEuler scheme.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslatorForwardEuler;
 
+
+/*! Matrix translator for first order implicit quasi-linear ODEs,
+ *  used with the ForwardEuler scheme.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ * \remark
+ * You might also want read the remarks on
+ * \ref concept_time_discretization "time discretization".
+ */
 template<typename Matrix, typename Vector>
 class MatrixTranslatorForwardEuler<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param timeDisc the time discretization scheme to be used.
+     */
     MatrixTranslatorForwardEuler(ForwardEuler<Vector> const& timeDisc)
         : _fwd_euler(timeDisc)
     {}
 
+    //! Computes \f$ A = M \cdot \alpha \f$.
     void getA(Matrix const& M, Matrix const& /*K*/, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -123,6 +204,7 @@ public:
         BLAS::scale(A, dxdot_dx);
     }
 
+    //! Computes \f$ \mathtt{rhs} = M \cdot x_O - K \cdot x_O + b \f$.
     void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -137,6 +219,7 @@ public:
         BLAS::matMultAdd(M, _tmp, rhs, rhs); // rhs += M * weighted_old_x
     }
 
+    //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                      Vector const& x_new_timestep,
                      Vector& res) const override
@@ -152,6 +235,8 @@ public:
         BLAS::axpy(res, -1.0, b);
     }
 
+    //! Writes \c Jac_in to \c Jac_out.
+    //! \todo Do not copy.
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -160,23 +245,46 @@ public:
     }
 
 private:
-    ForwardEuler<Vector> const& _fwd_euler;
-    mutable Vector _tmp; // used to store intermediate calculation results
+    ForwardEuler<Vector> const& _fwd_euler; //!< the time discretization used.
+    mutable Vector _tmp; //!< used to store intermediate calculation results
 };
 
 
+/*! Matrix translator used with the CrankNicolson scheme.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 class MatrixTranslatorCrankNicolson;
 
+/*! Matrix translator for first order implicit quasi-linear ODEs,
+ *  used with the CrankNicolson scheme.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the equation.
+ * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam ODETag a tag indicating the type of equation.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ * \remark
+ * You might also want read the remarks on
+ * \ref concept_time_discretization "time discretization".
+ */
 template<typename Matrix, typename Vector>
 class MatrixTranslatorCrankNicolson<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
         : public MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param timeDisc the time discretization scheme to be used.
+     */
     MatrixTranslatorCrankNicolson(CrankNicolson<Vector> const& timeDisc)
         : _crank_nicolson(timeDisc)
     {}
 
+    //! Computes \f$ A = \theta \cdot (M \cdot \alpha + K) + \bar M \cdot \alpha \f$.
     void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -192,6 +300,7 @@ public:
         BLAS::axpy(A, dxdot_dx, _M_bar); // A += dxdot_dx * _M_bar
     }
 
+    //! Computes \f$ \mathtt{rhs} = \theta \cdot (M \cdot x_O + b) + \bar M \cdot x_O - \bar b \f$.
     void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -207,7 +316,7 @@ public:
         BLAS::matMultAdd(_M_bar, _tmp, rhs, rhs); // rhs += _M_bar * weighted_old_x
         BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
     }
-
+    //! Computes \f$ r = \theta \cdot (M \cdot \hat x + K \cdot x_C - b) + \bar M \cdot \hat x + \bar b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
                      Vector const& x_new_timestep,
                      Vector& res) const override
@@ -227,6 +336,11 @@ public:
         BLAS::matMultAdd(_M_bar, _tmp, res, res); // rs += _M_bar * x_dot
     }
 
+    /*! Computes \f$ \mathtt{Jac\_out} = \theta \cdot \mathtt{Jac\_in} + \bar M \cdot \alpha \f$.
+     *
+     * Where \c Jac_in is the Jacobian as assembled by the ODE system, i.e. in the same
+     * fashion as for the BackwardEuler scheme.
+     */
     void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
@@ -240,11 +354,26 @@ public:
         BLAS::axpy(Jac_out, dxdot_dx, _M_bar);
     }
 
+    /*! Saves internal state for use in the successive timestep;
+     *  computes \f$ \bar M \f$ and \f$ \bar b \f$.
+     *
+     * \f$ \bar M \f$ and \f$ \bar b \f$ are computed as follows:
+     *  \f{align}{
+     *    \bar M &= (1-\theta) \cdot M \\
+     *    \bar b &= (1-\theta) \cdot ( K \cdot x_n - b )
+     *  \f}
+     *
+     * Where \f$ x_n \f$ is the solution at the timestep just finished.
+     */
     void pushMatrices(Matrix const& M, Matrix const& K, Vector const& b) override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto const theta = _crank_nicolson.getTheta();
+
+        // Note: using x_old here is correct, since this method is called from within
+        //       CrankNicolson::pushState() __after__ x_old has been updated to the result
+        //       from the timestep just finished.
         auto const x_old = _crank_nicolson.getXOld();
 
         // _M_bar = (1.0-theta) * M;
@@ -260,12 +389,16 @@ public:
 private:
     CrankNicolson<Vector> const& _crank_nicolson;
 
-    Matrix _M_bar;
-    Vector _b_bar;
-    mutable Vector _tmp; // used to store intermediate calculation results
+    Matrix _M_bar; //!< Used to adjust matrices and vectors assembled by the ODE.
+                   //!< \see pushMatrices()
+    Vector _b_bar; //!< Used to adjust vectors assembled by the ODE.
+                   //!< \see pushMatrices()
+    mutable Vector _tmp; //!< used to store intermediate calculation results
 };
 
 
+//! Creates a matrix translator suitable to work together with the given
+//! time discretization scheme.
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>
 createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
