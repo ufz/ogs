@@ -188,6 +188,7 @@ struct TestCase;
 //
 // /////////////////////////////////////
 #define TESTCASESLIST \
+    /* Eigen dense matrix */ \
     TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
     TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
     TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
@@ -208,6 +209,7 @@ struct TestCase;
     TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
     TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
     \
+    /* Global sparse matrix */ \
     TCLITEM(GMatrix,  GVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
     TCLITEM(GMatrix,  GVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
     TCLITEM(GMatrix,  GVector, ODE1, CrankNicolson,                  Newton) TCLSEP \

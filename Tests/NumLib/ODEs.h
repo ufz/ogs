@@ -168,9 +168,9 @@ public:
                              omega*omega/y,    -0.5,                      0.0,
                               -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
 
-        b[0] = 0.0;
-        b[1] = 0.5/t;
-        b[2] = 0.5*omega*x*z + omega/t;
+        setVector(b, { 0.0,
+                       0.5/t,
+                       0.5*omega*x*z + omega/t });
     }
 
     void assembleJacobian(const double t, const Vector& x_curr, Vector const& xdot,
@@ -182,7 +182,7 @@ public:
         auto const z = x_curr[2];
 
         auto const dx = xdot[0];
-        auto const dz = xdot[1];
+        auto const dz = xdot[2]; // TODO there was a bug
 
         auto const a = dxdot_dx;
 
@@ -250,9 +250,9 @@ public:
     {
         auto const omega = ODE3<Matrix, Vector>::omega;
 
-        x0[0] = sin(omega*t0)/omega/t0;
-        x0[1] = 1.0/t0;
-        x0[2] = cos(omega*t0);
+        setVector(x0, { sin(omega*t0)/omega/t0,
+                        1.0/t0,
+                        cos(omega*t0) });
 
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
     }
@@ -262,9 +262,9 @@ public:
         auto const omega = ODE3<Matrix, Vector>::omega;
 
         Vector v(3);
-        v[0] = sin(omega*t)/omega/t;
-        v[1] = 1.0/t;
-        v[2] = cos(omega*t);
+        setVector(v, { sin(omega*t)/omega/t,
+                       1.0/t,
+                       cos(omega*t) });
         return v;
     }
 
