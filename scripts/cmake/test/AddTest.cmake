@@ -131,7 +131,7 @@ function (AddTest)
 		set(AddTest_DIFF_DATA_PARSED "${AddTest_SOURCE_PATH}/${AddTest_DIFF_DATA_PARSED}")
 	elseif(AddTest_TESTER STREQUAL "vtkdiff")
 		list(LENGTH AddTest_DIFF_DATA DiffDataLength)
-        if (NOT ${DiffDataLength} EQUAL 3)
+		if (NOT ${DiffDataLength} EQUAL 3)
 			message(FATAL_ERROR "For vtkdiff tester 3 diff data arguments are required.")
 		endif()
 		list(GET AddTest_DIFF_DATA 0 VTK_FILE)
@@ -154,6 +154,13 @@ function (AddTest)
 		set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
 	endif()
 
+	set(FILES_TO_DELETE "")
+	foreach(ITEM ${AddTest_DIFF_DATA})
+		if(ITEM MATCHES "^.*\.(vtu|vtk)$")
+			list(APPEND FILES_TO_DELETE "${ITEM}")
+		endif()
+	endforeach()
+
 	# Run the wrapper
 	Add_Test(
 		NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
@@ -161,8 +168,10 @@ function (AddTest)
 		-DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
 		"-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
 		-Dcase_path=${AddTest_SOURCE_PATH}
+		-DBINARY_PATH=${AddTest_BINARY_PATH}
 		-DWRAPPER_COMMAND=${WRAPPER_COMMAND}
 		"-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
+		"-DFILES_TO_DELETE=${FILES_TO_DELETE}"
 		-P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
 	)
 
@@ -201,4 +210,3 @@ function (AddTest)
 		PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
 
 endfunction()
-
