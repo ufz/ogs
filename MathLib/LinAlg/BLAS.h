@@ -32,7 +32,7 @@ void matScale(Mat& A, double const a);
 
 
 
-using ESM = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+using EM = Eigen::MatrixXd;
 using EV = Eigen::VectorXd;
 
 
@@ -69,25 +69,25 @@ inline void axpby(EV& y, double const a, double const b, EV const& x)
 
 // Matrix
 
-inline void copy(ESM const& A, ESM& B)
+inline void copy(EM const& A, EM& B)
 {
     B = A;
 }
 
 // A = a*A
-inline void scale(ESM& A, double const a)
+inline void scale(EM& A, double const a)
 {
     A *= a;
 }
 
 // Y = a*Y + X
-inline void aypx(ESM& Y, double const a, ESM const& X)
+inline void aypx(EM& Y, double const a, EM const& X)
 {
     Y = a*Y + X;
 }
 
 // Y = a*X + Y
-inline void axpy(ESM& Y, double const a, ESM const& X)
+inline void axpy(EM& Y, double const a, EM const& X)
 {
     Y = a*X + Y;
 }
@@ -96,14 +96,14 @@ inline void axpy(ESM& Y, double const a, ESM const& X)
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-inline void matMult(ESM const& A, EV const& x, EV& y)
+inline void matMult(EM const& A, EV const& x, EV& y)
 {
     assert(&x != &y);
     y = A*x;
 }
 
 // v3 = A*v1 + v2
-inline void matMultAdd(ESM const& A, EV const& v1, EV const& v2, EV& v3)
+inline void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3)
 {
     assert(&v1 != &v3);
     v3 = v2 + A*v1;
