@@ -58,6 +58,13 @@ inline double norm(Eigen::VectorXd const& x) { return x.norm(); }
 
 }
 
+inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
+{
+    assert((std::size_t) v.size() == values.size());
+    auto it = values.begin();
+    for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
+}
+
 
 
 
@@ -105,15 +112,14 @@ inline void oneShotLinearSolve(MathLib::EigenMatrix& A, MathLib::EigenVector& rh
 }
 
 
-inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
+inline void setVector(MathLib::EigenVector& v,
+                      std::initializer_list<double> values)
 {
-    assert((std::size_t) v.size() == values.size());
-    auto it = values.begin();
-    for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
+    setVector(v.getRawVector(), values);
 }
 
 
-inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
+inline void setMatrix(MathLib::EigenMatrix& m,
                       IndexType const rows, IndexType const cols,
                       std::initializer_list<double> values)
 {
@@ -127,16 +133,15 @@ inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
         }
     }
 
-    m = tmp.sparseView();
+    m.getRawMatrix() = tmp.sparseView();
 }
 
-inline void setMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
-                      Eigen::MatrixXd const& tmp)
+inline void setMatrix(MathLib::EigenMatrix& m, Eigen::MatrixXd const& tmp)
 {
-    m = tmp.sparseView();
+    m.getRawMatrix() = tmp.sparseView();
 }
 
-inline void addToMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
+inline void addToMatrix(MathLib::EigenMatrix& m,
                         IndexType const rows, IndexType const cols,
                         std::initializer_list<double> values)
 {
@@ -150,24 +155,7 @@ inline void addToMatrix(Eigen::SparseMatrix<double, Eigen::RowMajor>& m,
         }
     }
 
-    m += tmp.sparseView();
-}
-
-inline void setMatrix(MathLib::EigenMatrix& m, IndexType const rows, IndexType const cols,
-                      std::initializer_list<double> values)
-{
-    setMatrix(m.getRawMatrix(), rows, cols, values);
-}
-
-inline void setMatrix(MathLib::EigenMatrix& m, Eigen::MatrixXd const& tmp)
-{
-    m.getRawMatrix() = tmp.sparseView();
-}
-
-inline void addToMatrix(MathLib::EigenMatrix& m, IndexType const rows, IndexType const cols,
-                        std::initializer_list<double> values)
-{
-    addToMatrix(m.getRawMatrix(), rows, cols, values);
+    m.getRawMatrix() += tmp.sparseView();
 }
 
 
