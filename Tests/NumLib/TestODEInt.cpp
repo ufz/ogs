@@ -11,6 +11,8 @@
 #include "NumLib/ODESolver/ODETypes.h"
 
 
+using ODEMatrix = Eigen::MatrixXd;
+using ODEVector = Eigen::VectorXd;
 
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
@@ -246,9 +248,22 @@ public:
     }
 };
 
+
 TYPED_TEST_CASE(NumLibODEIntTyped, TestCases);
 
 TYPED_TEST(NumLibODEIntTyped, T1)
 {
     TestFixture::test();
+}
+
+
+TEST(NumLibODEInt, ODE3)
+{
+    const char* name = "dummy";
+
+    // only make sure ODE3 compiles
+    run_test_case<ODEMatrix, ODEVector, NumLib::BackwardEuler<ODEVector>,
+                  ODE3<ODEMatrix, ODEVector>,
+                  NumLib::NonlinearSolverTag::Newton>
+            (0u, name);
 }
