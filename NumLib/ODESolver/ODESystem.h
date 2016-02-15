@@ -25,12 +25,10 @@ class ODESystem;
 
 /*! Interface for a first-order implicit quasi-linear ODE.
  *
- * Such ODEs take the form
- * \f$ M(x,t)\cdot \dot x + K(x,t) \cdot x - b(x,t)
- *  =: r(\dot x, x, t) \stackrel{!}{=} 0 \f$.
- *
  * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
  * \tparam Vector the type of the solution vector of the ODE.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
 template<typename Matrix, typename Vector>
 class ODESystem<Matrix, Vector,
