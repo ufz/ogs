@@ -12,9 +12,18 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
-template<typename Matrix, typename Vector, NonlinearSolverTag NLTag_>
+/*! A NonlinearSystem together with some TimeDiscretization scheme.
+ *
+ * This is the interface of an ODE towards the TimeLoop.
+ * This interface is abstract, it represents any type of first-order ODE.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
+ * \tparam Vector the type of the solution vector of the ODE.
+ * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
+ */
+template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystemBase
-        : public NonlinearSystem<Matrix, Vector, NLTag_>
+        : public NonlinearSystem<Matrix, Vector, NLTag>
         , public InternalMatrixStorage
 {
 public:
@@ -22,10 +31,28 @@ public:
 };
 
 
+/*! A NonlinearSystem together with some TimeDiscretization scheme.
+ *
+ * This class represents a specific type of first-order ODE, as indicated by
+ * \c ODETag.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
+ * \tparam Vector the type of the solution vector of the ODE.
+ * \tparam ODETag a tag indicating the type of ODE.
+ * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
+ */
 template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystem;
 
 
+/*! Time discretized first order implicit quasi-linear ODE;
+ *  to be solved using the Newton-Raphson method for resolving nonlinearities.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
+ * \tparam Vector the type of the solution vector of the ODE.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ */
 template<typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -33,13 +60,22 @@ class TimeDiscretizedODESystem<Matrix, Vector,
         : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Newton>
 {
 public:
+    //! A tag indicating the type of ODE.
     static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
+    //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
+    //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization<Vector>;
 
-
+    /*! Constructs a new instance.
+     *
+     * \param ode the ODE to be wrapped.
+     * \param time_discretization the time discretization to be used.
+     * \param mat_trans the object used to compute the matrix/vector for the nonlinear solver.
+     */
     explicit
     TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
@@ -97,17 +133,27 @@ public:
     }
 
 private:
-    ODE& _ode;
-    TimeDisc& _time_disc;
-    MatTrans& _mat_trans;
+    ODE& _ode;            //!< ode the ODE being wrapped
+    TimeDisc& _time_disc; //!< the time discretization to being used
+    MatTrans& _mat_trans; //!< the object used to compute the matrix/vector for the nonlinear solver
 
-    Matrix _Jac;
-    Matrix _M;
-    Matrix _K;
-    Vector _b;
-    Vector _xdot; // cache only
+    Matrix _Jac;  //!< the Jacobian of the residual
+    Matrix _M;    //!< Matrix \f$ M \f$.
+    Matrix _K;    //!< Matrix \f$ K \f$.
+    Vector _b;    //!< Matrix \f$ b \f$.
+
+    Vector _xdot; //!< Used to cache \f$ \dot x \f$. \todo Save some memory.
 };
 
+
+/*! Time discretized first order implicit quasi-linear ODE;
+ *  to be solved using the Picard fixpoint iteration method for resolving nonlinearities.
+ *
+ * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
+ * \tparam Vector the type of the solution vector of the ODE.
+ *
+ * \see ODESystemTag::FirstOrderImplicitQuasilinear
+ */
 template<typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -115,13 +161,22 @@ class TimeDiscretizedODESystem<Matrix, Vector,
         : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Picard>
 {
 public:
+    //! A tag indicating the type of ODE.
     static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
+    //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
+    //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization<Vector>;
 
-
+    /*! Constructs a new instance.
+     *
+     * \param ode the ODE to be wrapped.
+     * \param time_discretization the time discretization to be used.
+     * \param mat_trans the object used to compute the matrix/vector for the nonlinear solver.
+     */
     explicit
     TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
         : _ode(ode)
@@ -165,13 +220,13 @@ public:
     }
 
 private:
-    ODE& _ode;
-    TimeDisc& _time_disc;
-    MatTrans& _mat_trans;
+    ODE& _ode;            //!< ode the ODE being wrapped
+    TimeDisc& _time_disc; //!< the time discretization to being used
+    MatTrans& _mat_trans; //!< the object used to compute the matrix/vector for the nonlinear solver
 
-    Matrix _M;
-    Matrix _K;
-    Vector _b;
+    Matrix _M;    //!< Matrix \f$ M \f$.
+    Matrix _K;    //!< Matrix \f$ K \f$.
+    Vector _b;    //!< Matrix \f$ b \f$.
 };
 
 //! @}

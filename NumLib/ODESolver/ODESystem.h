@@ -11,10 +11,13 @@ namespace NumLib
 
 /*! ODE system interface.
  *
+ * This is the interface an ODE has to implement in order to be solved with this
+ * ODE solver library.
+ *
  * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
  * \tparam Vector the type of the solution vector of the ODE.
  * \tparam ODETag a tag indicating the type of ODE.
- * \tparam NLTag  a tag indicating the method used for solving the equation.
+ * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
 template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class ODESystem;
