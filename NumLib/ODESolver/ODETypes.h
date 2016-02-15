@@ -5,6 +5,8 @@
 #include <initializer_list>
 #include <cassert>
 
+#include <Eigen/LU>
+
 
 // Eigen dense matrix ///////////////////////
 // always enabled
@@ -48,7 +50,6 @@ namespace NumLib
 {
 inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::VectorXd& x)
 {
-    // Eigen::SparseLU<Eigen::MatrixXd> slv;
     Eigen::FullPivLU<Eigen::MatrixXd> slv;
     slv.compute(A);
     x = slv.solve(rhs);
@@ -66,41 +67,68 @@ inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 }
 
 
+#ifdef USE_PETSC
 
-
-
-
-
-
-/*
-#i fdef USE_EIGEN_PLAIN
-#include <Eigen/SparseCore>
-// #include <Eigen/SparseLU>
-#include <Eigen/LU>
-
-using IndexType = int;
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
 
 namespace NumLib
 {
-inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::VectorXd& x)
+inline void oneShotLinearSolve(MathLib::PETScMatrix& A, MathLib::PETScVector& rhs,
+                               MathLib::PETScVector& x)
 {
-    // Eigen::SparseLU<Eigen::MatrixXd> slv;
-    Eigen::FullPivLU<Eigen::MatrixXd> slv;
-    slv.compute(A);
-    x = slv.solve(rhs);
+    (void) A; (void) rhs; (void) x;
+    // TODO implement
+}
+
+inline double norm(MathLib::PETScVector const& x)
+{
+    return x.getNorm();
 }
 }
 
-*/
+
+inline void setVector(MathLib::PETScVector& v,
+                      std::initializer_list<double> values)
+{
+    (void) v; (void) values;
+    // TODO implement
+}
 
 
-#ifdef OGS_USE_EIGEN
+inline void setMatrix(MathLib::PETScMatrix& m,
+                      MathLib::PETScMatrix::IndexType const rows,
+                      MathLib::PETScMatrix::IndexType const cols,
+                      std::initializer_list<double> values)
+{
+    (void) m; (void) rows; (void) cols; (void) values;
+    // TODO implement
+}
+
+inline void setMatrix(MathLib::PETScMatrix& m, Eigen::MatrixXd const& tmp)
+{
+
+    (void) m; (void) tmp;
+    // TODO implement
+}
+
+inline void addToMatrix(MathLib::PETScMatrix& m,
+                        MathLib::PETScMatrix::IndexType const rows,
+                        MathLib::PETScMatrix::IndexType const cols,
+                        std::initializer_list<double> values)
+{
+    (void) m; (void) rows; (void) cols; (void) values;
+    // TODO implement
+}
+
+
+#elif defined(OGS_USE_EIGEN)
 
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
-using IndexType = int;
+using IndexType = int; // TODO remove
 
 namespace NumLib
 {
@@ -157,7 +185,5 @@ inline void addToMatrix(MathLib::EigenMatrix& m,
 
     m.getRawMatrix() += tmp.sparseView();
 }
-
-
 
 #endif // OGS_USE_EIGEN
