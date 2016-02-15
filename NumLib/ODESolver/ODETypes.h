@@ -5,11 +5,12 @@
 #include <initializer_list>
 #include <cassert>
 
+
+// Dense Eigen matrix/vector //////////////////////////////////////////
+// always enabled
+
 #include <Eigen/LU>
 
-
-// Eigen dense matrix ///////////////////////
-// always enabled
 
 inline void setMatrix(Eigen::MatrixXd& m,
                       Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
@@ -69,8 +70,11 @@ inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 
 #ifdef USE_PETSC
 
+// Global PETScMatrix/PETScVector //////////////////////////////////////////
+
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+
 
 namespace NumLib
 {
@@ -124,11 +128,12 @@ inline void addToMatrix(MathLib::PETScMatrix& m,
 
 #elif defined(OGS_USE_EIGEN)
 
+// Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
+
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
-using IndexType = int; // TODO remove
 
 namespace NumLib
 {
@@ -148,9 +153,11 @@ inline void setVector(MathLib::EigenVector& v,
 
 
 inline void setMatrix(MathLib::EigenMatrix& m,
-                      IndexType const rows, IndexType const cols,
+                      MathLib::EigenMatrix::IndexType const rows,
+                      MathLib::EigenMatrix::IndexType const cols,
                       std::initializer_list<double> values)
 {
+    using IndexType = MathLib::EigenMatrix::IndexType;
     assert((IndexType) values.size() == rows*cols);
     Eigen::MatrixXd tmp(rows, cols);
 
@@ -170,9 +177,11 @@ inline void setMatrix(MathLib::EigenMatrix& m, Eigen::MatrixXd const& tmp)
 }
 
 inline void addToMatrix(MathLib::EigenMatrix& m,
-                        IndexType const rows, IndexType const cols,
+                        MathLib::EigenMatrix::IndexType const rows,
+                        MathLib::EigenMatrix::IndexType const cols,
                         std::initializer_list<double> values)
 {
+    using IndexType = MathLib::EigenMatrix::IndexType;
     assert((IndexType) values.size() == rows*cols);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
 
