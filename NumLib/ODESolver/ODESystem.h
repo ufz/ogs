@@ -57,6 +57,11 @@ public:
     virtual ~ODESystem() = default;
 };
 
+
+/*! Interface for a first-order implicit quasi-linear ODE.
+ *
+ * ODEs using this interface also provide a Jacobian.
+ */
 template<typename Matrix, typename Vector>
 class ODESystem<Matrix, Vector,
                 ODESystemTag::FirstOrderImplicitQuasilinear,
