@@ -5,14 +5,18 @@
 #include <memory>
 #include <typeinfo>
 
+#include "ProcessLib/NumericsConfig.h"
 #include "NumLib/ODESolver/TimeLoop.h"
 #include "ODEs.h"
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/ODESolver/ODETypes.h"
 
 
-using ODEMatrix = Eigen::MatrixXd;
-using ODEVector = Eigen::VectorXd;
+using EDMatrix = Eigen::MatrixXd;
+using EVector = Eigen::VectorXd;
+
+using GMatrix = GlobalSetupType::MatrixType;
+using GVector = GlobalSetupType::VectorType;
 
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
@@ -99,6 +103,9 @@ private:
 };
 
 
+// TODO remove debugging macro
+#if 1
+
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
@@ -136,6 +143,21 @@ run_test_case(const unsigned num_timesteps, const char* name)
     test.run_test(ode, timeDisc, num_timesteps);
 }
 
+#else
+
+template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
+         NumLib::NonlinearSolverTag NLTag>
+void
+run_test_case(const unsigned num_timesteps, const char* name)
+{
+    ODE ode;
+    // TimeDisc timeDisc(3);
+
+    TestOutput<Matrix, Vector, NLTag> test(name);
+    // test.run_test(ode, timeDisc, num_timesteps);
+}
+#endif
+
 
 // This class is only here s.t. I don't have to put the members into
 // the definition of the macro TCLITEM below.
@@ -166,39 +188,59 @@ struct TestCase;
 //
 // /////////////////////////////////////
 #define TESTCASESLIST \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
     \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
     \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
     \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
-    TCLITEM(ODEMatrix, ODEVector, ODE2, BackwardDifferentiationFormula, Picard)
+    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE2, BackwardDifferentiationFormula, Picard)
 
 // ODE3 behaves too badly. Even with very tiny timesteps it cannot be solved.
 // Probably because then the singular M matrix has too much weight.
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardEuler,                  Newton) TCLSEP
+//  TCLITEM(EDMatrix, EVector, ODE3, BackwardEuler,                  Newton) TCLSEP
 //  /* Not possible because of singular matrix */
-//  /* TCLITEM(ODEMatrix, ODEVector, ODE3, ForwardEuler,                   Newton) TCLSEP */
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, CrankNicolson,                  Newton) TCLSEP
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, Newton) TCLSEP
+//  /* TCLITEM(EDMatrix, EVector, ODE3, ForwardEuler,                   Newton) TCLSEP */
+//  TCLITEM(EDMatrix, EVector, ODE3, CrankNicolson,                  Newton) TCLSEP
+//  TCLITEM(EDMatrix, EVector, ODE3, BackwardDifferentiationFormula, Newton) TCLSEP
 //
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardEuler,                  Picard) TCLSEP
+//  TCLITEM(EDMatrix, EVector, ODE3, BackwardEuler,                  Picard) TCLSEP
 //  /* Not possible because of singular matrix */
-//  /* TCLITEM(ODEMatrix, ODEVector, ODE3, ForwardEuler,                   Picard) TCLSEP */
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, CrankNicolson,                  Picard) TCLSEP
-//  TCLITEM(ODEMatrix, ODEVector, ODE3, BackwardDifferentiationFormula, Picard)
+//  /* TCLITEM(EDMatrix, EVector, ODE3, ForwardEuler,                   Picard) TCLSEP */
+//  TCLITEM(EDMatrix, EVector, ODE3, CrankNicolson,                  Picard) TCLSEP
+//  TCLITEM(EDMatrix, EVector, ODE3, BackwardDifferentiationFormula, Picard)
 
 
 #define TCLITEM(MAT, VEC, ODE, TIMEDISC, NLTAG) \
@@ -262,8 +304,13 @@ TEST(NumLibODEInt, ODE3)
     const char* name = "dummy";
 
     // only make sure ODE3 compiles
-    run_test_case<ODEMatrix, ODEVector, NumLib::BackwardEuler<ODEVector>,
-                  ODE3<ODEMatrix, ODEVector>,
+    run_test_case<EDMatrix, EVector, NumLib::BackwardEuler<EVector>,
+                  ODE3<EDMatrix, EVector>,
+                  NumLib::NonlinearSolverTag::Newton>
+            (0u, name);
+
+    run_test_case<GMatrix, GVector, NumLib::BackwardEuler<GVector>,
+                  ODE3<GMatrix, GVector>,
                   NumLib::NonlinearSolverTag::Newton>
             (0u, name);
 }
