@@ -1,4 +1,14 @@
-#pragma once
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef TESTS_NUMLIB_ODES_H
+#define TESTS_NUMLIB_ODES_H
 
 #include "NumLib/ODESolver/ODESystem.h"
 
@@ -278,3 +288,5 @@ const double ODETraits<Matrix, Vector, ODE3>::t0 = 1.0;
 template<typename Matrix, typename Vector>
 const double ODETraits<Matrix, Vector, ODE3>::t_end = 3.0;
 // ODE 3 end //////////////////////////////////////////////////////
+
+#endif // TESTS_NUMLIB_ODES_H
