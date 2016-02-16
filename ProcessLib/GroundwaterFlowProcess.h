@@ -35,8 +35,8 @@ class GroundwaterFlowProcess final
         : public Process<GlobalSetup>
 {
 public:
-    using Matrix = typename GlobalSetup::MatrixType;
-    using Vector = typename GlobalSetup::VectorType;
+    using GlobalMatrix = typename GlobalSetup::MatrixType;
+    using GlobalVector = typename GlobalSetup::VectorType;
 
 
     GroundwaterFlowProcess(
@@ -132,8 +132,8 @@ private:
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
 
-    void assembleConcreteProcess(const double t, Vector const& x,
-                                 Matrix& M, Matrix& K, Vector& b) override
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         // TODO It looks like, with little work this entire method can be moved to the Process class.
 
