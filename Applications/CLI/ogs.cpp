@@ -22,11 +22,19 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
+#include "Applications/ApplicationsLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/NumericsConfig.h"
 
 void solveProcesses(ProjectData &project, const std::string &outdir)
 {
+	auto& time_loop = project.getTimeLoop();
+
+	INFO("Solve processes.");
+
+	time_loop.loop(project);
+
+#if 0
 	INFO("Solve processes.");
 
 	std::string const out_pref = project.getOutputFilePrefix();
@@ -69,6 +77,7 @@ void solveProcesses(ProjectData &project, const std::string &outdir)
 		if (!accepted)
 			break;
 	}
+#endif
 }
 
 int main(int argc, char *argv[])

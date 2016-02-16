@@ -7,10 +7,15 @@
  *
  */
 
+// TODO
 #pragma once
+
+#include <memory>
 
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
+
+#include "ProjectData.h"
 
 #include "BaseLib/ConfigTree.h"
 
@@ -29,33 +34,16 @@ public:
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
      */
     explicit
-    UncoupledProcessesTimeLoop(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
-        : _ode_sys(ode_sys)
-        , _nonlinear_solver(nonlinear_solver)
+    UncoupledProcessesTimeLoop(
+            std::unique_ptr<NLSolver>&& nonlinear_solver
+            )
+        : _nonlinear_solver(std::move(nonlinear_solver))
     {}
 
-    /*! Integrate the ODE from \c t0 to \c t_end with a timestep size of \c delta_t.
-     *
-     * The initial condition is \f$ x(\mathtt{t0}) = \mathtt{x0} \f$.
-     *
-     * After each timestep the callback \c post_timestep will be called,
-     *  i.e., it won't be called with the initial condition as parameters.
-     *
-     * \tparam Callback Any callable object which can be called with the arguments of type
-     *         \c double and <tt>Vector const&</tt> which contain the
-     *         time and solution at the current timestep.
-     *
-     * \retval true  if the ODE could be successfully integrated
-     * \retval false otherwise
-     */
-    template<typename Callback>
-    bool loop(const double t0, const Vector x0,
-              const double t_end, const double delta_t,
-              Callback& post_timestep);
+    bool loop(ProjectData& project);
 
 private:
-    TDiscODESys& _ode_sys;
-    NLSolver& _nonlinear_solver;
+    std::unique_ptr<NLSolver> _nonlinear_solver;
 };
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
@@ -66,7 +54,15 @@ createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 
     if (type == "SingleStep")
     {
-        return nullptr;
+        using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector, NLTag>;
+        using NLSolver = typename TimeLoop::NLSolver;
+
+        auto const tol = 1e-6;
+        auto const max_iter = 10u;
+
+        std::unique_ptr<NLSolver> nl_solver(new NLSolver(tol, max_iter));
+
+        return std::unique_ptr<TimeLoop>(new TimeLoop(std::move(nl_solver)));
     }
     else
     {
@@ -79,14 +75,13 @@ createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
-template<typename Callback>
 bool
 UncoupledProcessesTimeLoop<Matrix, Vector, NLTag>::
-loop(const double t0, const Vector x0, const double t_end, const double delta_t,
-     Callback& post_timestep)
+loop(ProjectData& project)
 {
-    Vector x(x0); // solution vector
+    // Vector x(x0); // solution vector
 
+#if 0
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
     time_disc.setInitialState(t0, x0); // push IC
@@ -118,6 +113,9 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
     }
     return nl_slv_succeeded;
+#endif
+
+    return false;
 }
 
 }
