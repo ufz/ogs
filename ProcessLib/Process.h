@@ -38,6 +38,8 @@
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
+#include "NumLib/ODESolver/ODESystem.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -47,6 +49,11 @@ namespace ProcessLib
 {
 template <typename GlobalSetup>
 class Process
+		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
+		                           typename GlobalSetup::VectorType,
+		                           // TODO: later on use a simpler ODE system
+		                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+		                           NumLib::NonlinearSolverTag::Picard>
 {
 public:
 	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}

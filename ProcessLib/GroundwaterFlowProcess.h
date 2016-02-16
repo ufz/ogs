@@ -31,9 +31,14 @@ namespace ProcessLib
 {
 
 template<typename GlobalSetup>
-class GroundwaterFlowProcess : public Process<GlobalSetup>
+class GroundwaterFlowProcess final
+        : public Process<GlobalSetup>
 {
 public:
+    using Matrix = typename GlobalSetup::MatrixType;
+    using Vector = typename GlobalSetup::VectorType;
+
+
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
         ProcessVariable& variable,
@@ -117,6 +122,28 @@ public:
         for (auto p : _local_assemblers)
             delete p;
     }
+
+    //! \name ODESystem interface
+    //! @{
+
+    void assemble(const double t, Vector const& x,
+                  Matrix& M, Matrix& K, Vector& b) override
+    {
+        // TODO implement;
+    }
+
+    bool isLinear() const override
+    {
+        return true;
+    }
+
+    std::size_t getNumEquations() const override
+    {
+        // TODO implement
+        return 1;
+    }
+
+    //! @}
 
 private:
     Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
