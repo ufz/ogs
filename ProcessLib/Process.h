@@ -58,6 +58,8 @@ class Process
 public:
 	using GlobalVector = typename GlobalSetup::VectorType;
 	using GlobalMatrix = typename GlobalSetup::MatrixType;
+	using Index = typename GlobalMatrix::IndexType;
+
 
 	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 	virtual ~Process()
@@ -149,6 +151,19 @@ public:
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
 			bc->integrate(_global_setup); // TODO pass b
+	}
+
+	void getKnownSolution(std::vector<Index>  const*& global_ids,
+	                      std::vector<double> const*& values) override final
+	{
+		// TODO use all Dirichlet BCs
+
+		if (!_dirichlet_bcs.empty()) {
+			auto const& bc = _dirichlet_bcs.front();
+			global_ids = &bc.global_ids;
+			values     = &bc.values;
+		}
+
 	}
 
 protected:
