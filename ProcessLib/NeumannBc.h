@@ -156,12 +156,8 @@ public:
     /// matrix and the right-hand-side.
     template <typename GlobalSetup>
     void
-    integrate(GlobalSetup const& global_setup,
-              typename GlobalSetup::VectorType const * x_curr = nullptr,
-              typename GlobalSetup::VectorType const * x_prev_ts = nullptr
-              )
+    integrate(GlobalSetup const& global_setup)
     {
-        _global_assembler->setX(x_curr, x_prev_ts);
         global_setup.execute(*_global_assembler, _local_assemblers);
     }
 
@@ -191,7 +187,7 @@ private:
         AssemblerLib::VectorMatrixAssembler<
             typename GlobalSetup_::MatrixType,
             typename GlobalSetup_::VectorType,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
+            NumLib::ODESystemTag::DUMMY>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
