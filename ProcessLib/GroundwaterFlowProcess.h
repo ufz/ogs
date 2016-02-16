@@ -138,7 +138,7 @@ public:
 
         // Call global assembler for each local assembly item.
         this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers); // , t, x, M, K, b);
+                                    _local_assemblers, t, x, M, K, b);
     }
 
     bool isLinear() const override

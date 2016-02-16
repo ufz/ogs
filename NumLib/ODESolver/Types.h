@@ -31,7 +31,8 @@ enum class ODESystemTag : char
      * \f$ M(x,t)\cdot \dot x + K(x,t) \cdot x - b(x,t)
      *  =: r(\dot x, x, t) \stackrel{!}{=} 0 \f$
      */
-    FirstOrderImplicitQuasilinear
+    FirstOrderImplicitQuasilinear,
+    DUMMY // TODO document
 };
 
 //! @}

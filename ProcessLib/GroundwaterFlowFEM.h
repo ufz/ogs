@@ -38,8 +38,8 @@ public:
                           std::vector<double> const& local_x_prev_ts) = 0;
 
     // TODO: Don't we waste quite some time by having this as a virtual method?
-    virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-            AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
+    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& n) const = 0;
 };
 
 template <typename ShapeFunction_,
@@ -110,13 +110,12 @@ public:
         }
     }
 
-    void addToGlobal(
-        GlobalMatrix& A, GlobalVector& rhs,
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices)
+    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {
-        A.add(indices, *_localA);
-        rhs.add(indices.rows, *_localRhs);
+        K.add(indices, *_localA);
+        b.add(indices.rows, *_localRhs);
     }
 
 private:
