@@ -94,7 +94,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         local_to_global_index_map);
 
     // Call global initializer for each mesh element.
-    globalSetup.execute(
+    globalSetup.transform(
             local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data,
