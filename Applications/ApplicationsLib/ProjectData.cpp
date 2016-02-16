@@ -30,6 +30,8 @@
 
 #include "BaseLib/ConfigTree.h"
 
+#include "UncoupledProcessesTimeLoop.h"
+
 #include "ProcessLib/GroundwaterFlowProcess-fwd.h"
 
 
@@ -44,6 +46,8 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 }
 
 }
+
+ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	std::string const& path)
@@ -302,6 +306,3 @@ void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_conf
 		std::abort();
 	}
 }
-
-
-

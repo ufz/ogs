@@ -25,10 +25,16 @@
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
 
-#include "UncoupledProcessesTimeLoop.h"
+#include "NumLib/ODESolver/Types.h"
 
 namespace MeshLib {
 	class Mesh;
+}
+
+namespace ApplicationsLib
+{
+template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
+class UncoupledProcessesTimeLoop;
 }
 
 /**
@@ -36,7 +42,7 @@ namespace MeshLib {
  * geometric data (stored in a GEOObjects-object), all the meshes, processes,
  * and process variables.
  */
-class ProjectData
+class ProjectData final
 {
 	using GlobalMatrix = GlobalSetupType::MatrixType;
 	using GlobalVector = GlobalSetupType::VectorType;
@@ -47,7 +53,7 @@ public:
 
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
-	ProjectData() = default;
+	ProjectData(); // TODO delete this
 
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
@@ -56,7 +62,8 @@ public:
 	            std::string const& path);
 
 	ProjectData(ProjectData&) = delete;
-	virtual ~ProjectData();
+
+	~ProjectData();
 
 	/// Returns the GEOObjects containing all points, polylines and surfaces.
 	GeoLib::GEOObjects* getGEOObjects()
