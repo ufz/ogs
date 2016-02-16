@@ -80,6 +80,54 @@ private:
 };
 
 
+template<typename GlobalMatrix, typename GlobalVector>
+class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
+        NumLib::ODESystemTag::NeumannBC> final
+{
+public:
+    VectorMatrixAssembler(
+        LocalToGlobalIndexMap const& data_pos)
+    : _data_pos(data_pos)
+    {}
+
+    /// Executes local assembler for the given mesh item and adds the result
+    /// into the global matrix and vector.
+    /// The positions in the global matrix/vector are taken from
+    /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
+    /// \attention The index \c id is not necesserily the mesh item's id.
+    template <typename LocalAssembler_>
+    void operator()(std::size_t const id,
+        LocalAssembler_* const local_assembler,
+        const double t, GlobalVector& b) const
+    {
+        // TODO I hope the changes to the VectorMatrixAssembler don't break multi-components
+        assert(_data_pos.size() > id);
+
+        // TODO Refactor: GlobalMatrix and GlobalVector are always given as
+        // template params but GlobalIndexType is a global constant.
+        std::vector<GlobalIndexType> indices;
+
+        // Local matrices and vectors will always be ordered by component,
+        // no matter what the order of the global matrix is.
+        for (unsigned c=0; c<_data_pos.getNumComponents(); ++c)
+        {
+            auto const& idcs = _data_pos(id, c).rows;
+            indices.reserve(indices.size() + idcs.size());
+            indices.insert(indices.end(), idcs.begin(), idcs.end());
+        }
+
+        LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
+                    indices, indices);
+
+        local_assembler->assemble(t);
+        local_assembler->addToGlobal(r_c_indices, b);
+    }
+
+private:
+    LocalToGlobalIndexMap const& _data_pos;
+};
+
+
 // TODO remove the dummy
 template<typename GlobalMatrix, typename GlobalVector>
 class VectorMatrixAssembler<GlobalMatrix, GlobalVector,

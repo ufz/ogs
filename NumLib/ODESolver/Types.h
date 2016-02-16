@@ -37,7 +37,8 @@ enum class ODESystemTag : char
      *  =: r(\dot x, x, t) \stackrel{!}{=} 0 \f$
      */
     FirstOrderImplicitQuasilinear,
-    DUMMY // TODO document
+    DUMMY, // TODO document
+    NeumannBC // Sure, that's misuse of this enum, so sue me!
 };
 
 //! @}
