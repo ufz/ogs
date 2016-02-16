@@ -115,7 +115,9 @@ public:
         auto const  dx_dx    = _time_disc.getDxDx();
         _time_disc.getXdot(x_new_timestep, _xdot);
 
-        _ode.assembleJacobian(t, x_curr, _xdot, dxdot_dx, dx_dx, _Jac);
+        _ode.assembleJacobian(t, x_curr, _xdot,
+                              dxdot_dx, _M, dx_dx, _K,
+                              _Jac);
     }
 
     void getResidual(Vector const& x_new_timestep, Vector& res) override

@@ -86,9 +86,12 @@ public:
      *
      * For the meaning of the other parameters refer to the the introductory remarks on
      * \ref concept_time_discretization "time discretization".
+     *
+     * TODO document how to assemble the Jacobian!
      */
     virtual void assembleJacobian(const double t, Vector const& x, Vector const& xdot,
-                                  const double dxdot_dx, const double dx_dx,
+                                  const double dxdot_dx, Matrix const& M,
+                                  const double dx_dx, Matrix const& K,
                                   Matrix& Jac) = 0;
 };
 
