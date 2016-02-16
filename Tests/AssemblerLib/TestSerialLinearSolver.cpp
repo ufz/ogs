@@ -104,7 +104,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Local and global assemblers.
     typedef AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
+            NumLib::ODESystemTag::DUMMY> GlobalAssembler;
 
     GlobalAssembler assembler(local_to_global_index_map);
 
