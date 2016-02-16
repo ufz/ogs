@@ -29,7 +29,7 @@ class VectorMatrixAssembler;
 /// the LocalToGlobalIndexMap in the construction.
 template<typename GlobalMatrix, typename GlobalVector>
 class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
-        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>
+        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> final
 {
 public:
     VectorMatrixAssembler(
@@ -75,15 +75,15 @@ public:
         local_assembler->addToGlobal(r_c_indices, M, K, b);
     }
 
-protected:
+private:
     LocalToGlobalIndexMap const& _data_pos;
 };
 
 
-
+// TODO remove the dummy
 template<typename GlobalMatrix, typename GlobalVector>
 class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
-        NumLib::ODESystemTag::DUMMY>
+        NumLib::ODESystemTag::DUMMY> final
 {
 public:
     VectorMatrixAssembler(
@@ -91,52 +91,14 @@ public:
     : _data_pos(data_pos)
     {}
 
-    /// Executes local assembler for the given mesh item and adds the result
-    /// into the global matrix and vector.
-    /// The positions in the global matrix/vector are taken from
-    /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
-    /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler_>
     void operator()(std::size_t const id,
         LocalAssembler_* const local_assembler) const
     {
-        assert(_data_pos.size() > id);
-
-        std::vector<GlobalIndexType> indices;
-
-        // Local matrices and vectors will always be ordered by component,
-        // no matter what the order of the global matrix is.
-        for (unsigned c=0; c<_data_pos.getNumComponents(); ++c)
-        {
-            auto const& idcs = _data_pos(id, c).rows;
-            indices.reserve(indices.size() + idcs.size());
-            indices.insert(indices.end(), idcs.begin(), idcs.end());
-        }
-
-        std::vector<double> localX;
-        std::vector<double> localX_pts;
-
-        if (_x)         localX.reserve(indices.size());
-        if (_x_prev_ts) localX_pts.reserve(indices.size());
-
-        for (auto i : indices)
-        {
-            if (_x)         localX.emplace_back(_x->get(i));
-            if (_x_prev_ts) localX_pts.emplace_back(_x_prev_ts->get(i));
-        }
-
-        LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
-                    indices, indices);
-
-        /*
-        local_assembler->assemble(localX, localX_pts);
-        local_assembler->addToGlobal(_A, _rhs, r_c_indices);
-        */
+        (void) id; (void) local_assembler;
     }
 
-protected:
-    GlobalVector const *_x = nullptr;
-    GlobalVector const *_x_prev_ts = nullptr;
+private:
     LocalToGlobalIndexMap const& _data_pos;
 };
 
