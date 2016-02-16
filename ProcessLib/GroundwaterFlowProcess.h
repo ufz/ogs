@@ -112,16 +112,6 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    void assemble(const double t, Vector const& x,
-                  Matrix& M, Matrix& K, Vector& b) override
-    {
-        DBUG("Assemble GroundwaterFlowProcess.");
-
-        // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers, t, x, M, K, b);
-    }
-
     bool isLinear() const override
     {
         return true;
@@ -140,6 +130,20 @@ private:
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+
+    void assembleConcreteProcess(const double t, Vector const& x,
+                                 Matrix& M, Matrix& K, Vector& b) override
+    {
+        // TODO It looks like, with little work this entire method can be moved to the Process class.
+
+        DBUG("Assemble GroundwaterFlowProcess.");
+
+        // Call global assembler for each local assembly item.
+        this->_global_setup.execute(*this->_global_assembler,
+                                    _local_assemblers, t, x, M, K, b);
+    }
+
 
     std::vector<LocalAssembler*> _local_assemblers;
 };

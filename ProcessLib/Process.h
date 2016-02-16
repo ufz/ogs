@@ -127,19 +127,28 @@ public:
 	{
 		// TODO move the code somewhere
 		/*
-		_A->setZero();
-		MathLib::setMatrixSparsity(*_A, _sparsity_pattern); // TODO move that
+		DONE: _A->setZero();
+		DONE: MathLib::setMatrixSparsity(*_A, _sparsity_pattern); // TODO move that
 
-		// bool const result = assemble(delta_t);
-
-		// Call global assembler for each Neumann boundary local assembler.
-		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup);
+		DONE: bool const result = assemble(delta_t);
 
 		for (auto const& bc : _dirichlet_bcs)
 			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
 			                            bc.values);
 		*/
+	}
+
+	void assemble(const double t, GlobalVector const& x,
+	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
+	{
+		MathLib::setMatrixSparsity(M, _sparsity_pattern);
+		MathLib::setMatrixSparsity(K, _sparsity_pattern);
+
+		assembleConcreteProcess(t, x, M, K, b);
+
+		// Call global assembler for each Neumann boundary local assembler.
+		for (auto const& bc : _neumann_bcs)
+			bc->integrate(_global_setup); // TODO pass b
 	}
 
 protected:
@@ -149,6 +158,10 @@ protected:
 	}
 
 private:
+	virtual void assembleConcreteProcess(
+	    const double t, GlobalVector const& x,
+	    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	void initializeMeshSubsets()
 	{
