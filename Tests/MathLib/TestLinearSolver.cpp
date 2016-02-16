@@ -204,7 +204,8 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 TEST(MathLib, CheckInterface_GaussAlgorithm)
 {
     boost::property_tree::ptree t_root;
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
 
     using Example = Example1<std::size_t>;
 
@@ -226,7 +227,8 @@ TEST(Math, CheckInterface_Eigen)
     t_solver.put("error_tolerance", 1e-15);
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("eigen", t_solver);
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
 
     using IntType = MathLib::EigenMatrix::IndexType;
 
@@ -243,7 +245,8 @@ TEST(Math, CheckInterface_EigenLis)
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
 
     using IntType = MathLib::LisMatrix::IndexType;
 
@@ -260,7 +263,8 @@ TEST(Math, CheckInterface_Lis)
     boost::property_tree::ptree t_root;
     boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
 
     using IntType = MathLib::LisMatrix::IndexType;
 
@@ -294,7 +298,10 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest1_", BaseLib::ConfigTree(t_root, ""));
+        A, b, "ptest1_",
+        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+                            BaseLib::ConfigTree::onwarning)
+    );
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
@@ -320,7 +327,10 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest2_", BaseLib::ConfigTree(t_root, ""));
+        A, b, "ptest2_",
+        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+                            BaseLib::ConfigTree::onwarning)
+    );
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
@@ -348,7 +358,10 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest3_", BaseLib::ConfigTree(t_root, ""));
+        A, b, "ptest3_",
+        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+                            BaseLib::ConfigTree::onwarning)
+    );
 }
 
 #endif

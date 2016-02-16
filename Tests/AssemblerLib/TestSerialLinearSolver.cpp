@@ -138,7 +138,9 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         t_root.put_child("eigen", t_solver);
     }
     t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+                             BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
 
     GlobalSetup::LinearSolver ls(*A, "solver_name", &conf);
     ls.solve(*rhs, *x);
