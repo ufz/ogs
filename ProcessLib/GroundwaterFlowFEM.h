@@ -34,8 +34,7 @@ public:
             Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
             unsigned const integration_order) = 0;
 
-    virtual void assemble(std::vector<double> const& local_x,
-                          std::vector<double> const& local_x_prev_ts) = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
     // TODO: Don't we waste quite some time by having this as a virtual method?
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
@@ -92,8 +91,7 @@ public:
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void assemble(std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_x_prev_ts*/) override
+    void assemble(double const, std::vector<double> const&) override
     {
         _localA->setZero();
         _localRhs->setZero();
