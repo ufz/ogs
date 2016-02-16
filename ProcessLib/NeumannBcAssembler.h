@@ -81,7 +81,6 @@ public:
 
         _neumann_bc_value = value_lookup(e);
 
-        _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
@@ -89,7 +88,6 @@ public:
     assemble(std::vector<double> const& /*local_x*/,
              std::vector<double> const& /*local_x_prev_ts*/) override
     {
-        _localA->setZero();
         _localRhs->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
@@ -108,7 +106,7 @@ public:
         AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices)
         const override
     {
-        A.add(indices, *_localA);
+        (void) A;
         rhs.add(indices.rows, *_localRhs);
     }
 
@@ -116,7 +114,6 @@ private:
     std::vector<ShapeMatrices> _shape_matrices;
     double _neumann_bc_value;
 
-    std::unique_ptr<NodalMatrixType> _localA;
     std::unique_ptr<NodalVectorType> _localRhs;
 
     unsigned _integration_order = 2;
