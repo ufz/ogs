@@ -52,7 +52,7 @@ public:
             BLAS::axpy(Jac, dx_dx, K);
     }
 
-    NumLib::IndexType getNumEquations() const override
+    std::size_t getNumEquations() const override
     {
         return N;
     }
@@ -125,7 +125,7 @@ public:
             BLAS::axpy(Jac, dx_dx, K);
     }
 
-    NumLib::IndexType getNumEquations() const override
+    std::size_t getNumEquations() const override
     {
         return N;
     }
@@ -252,7 +252,7 @@ public:
         // INFO("Det J: %e <<<", J.determinant());
     }
 
-    NumLib::IndexType getNumEquations() const override
+    std::size_t getNumEquations() const override
     {
         return N;
     }
