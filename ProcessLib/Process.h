@@ -110,7 +110,7 @@ public:
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
+			bc->initialize(_global_setup, _mesh.getDimension());
 	}
 
 	void setInitialConditions(GlobalVector& x)

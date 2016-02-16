@@ -97,25 +97,21 @@ public:
     template <typename GlobalSetup>
     void
     initialize(GlobalSetup const& global_setup,
-        typename GlobalSetup::MatrixType& A,
-        typename GlobalSetup::VectorType& rhs,
         unsigned global_dim)
     {
         if (global_dim==1)
-            initialize<GlobalSetup, 1u>(global_setup, A, rhs);
+            initialize<GlobalSetup, 1u>(global_setup);
         else if (global_dim==2)
-            initialize<GlobalSetup, 2u>(global_setup, A, rhs);
+            initialize<GlobalSetup, 2u>(global_setup);
         else if (global_dim==3)
-            initialize<GlobalSetup, 3u>(global_setup, A, rhs);
+            initialize<GlobalSetup, 3u>(global_setup);
     }
 
     /// Allocates the local assemblers for each element and stores references to
     /// global matrix and the right-hand-side.
     template <typename GlobalSetup, unsigned GlobalDim>
     void
-    initialize(GlobalSetup const& global_setup,
-        typename GlobalSetup::MatrixType& A,
-        typename GlobalSetup::VectorType& rhs)
+    initialize(GlobalSetup const& global_setup)
     {
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
