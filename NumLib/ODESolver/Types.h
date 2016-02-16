@@ -10,6 +10,11 @@
 #ifndef NUMLIB_TYPES_H
 #define NUMLIB_TYPES_H
 
+#include<Eigen/Core>
+#include<MathLib/LinAlg/Eigen/EigenMatrix.h>
+// #include<Eigen/SparseCore>
+
+
 namespace NumLib
 {
 
@@ -36,6 +41,39 @@ enum class ODESystemTag : char
 };
 
 //! @}
+
+
+template<typename Matrix>
+struct MatrixTraits
+/*
+{
+    using Index = int;
+} // */
+;
+
+template<>
+struct MatrixTraits<Eigen::MatrixXd>
+{
+    using Index = Eigen::MatrixXd::Index;
+};
+
+template<>
+struct MatrixTraits<MathLib::EigenMatrix>
+{
+    using Index = MathLib::EigenMatrix::IndexType;
+};
+
+// TODO Lis, PETSc
+
+/*
+
+
+template<>
+struct MatrixTraits<Eigen::SparseMatrix<double, Eigen::RowMajor>>
+{
+    using Index = Eigen::SparseMatrix<double, Eigen::RowMajor>::Index;
+};
+*/
 
 }
 
