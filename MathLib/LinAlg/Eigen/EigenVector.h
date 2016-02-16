@@ -55,6 +55,9 @@ public:
     /// set all values in this vector
     EigenVector& operator= (double v) { _vec.setConstant(v); return *this; }
 
+    // TODO preliminary
+    void setZero() { _vec.setZero(); }
+
     /// set all values in this vector
     EigenVector& operator*= (double v) { _vec *= v; return *this; }
 

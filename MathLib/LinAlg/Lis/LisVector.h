@@ -61,6 +61,9 @@ public:
 	/// set all values in this vector
 	LisVector& operator=(double v);
 
+	// TODO preliminary
+	void setZero() { *this = 0.0; }
+
 	/// access entry
 	double operator[](IndexType rowId) const { return get(rowId); }
 	/// get entry
