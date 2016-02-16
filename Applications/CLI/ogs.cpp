@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 	project_config.checkAndInvalidate();
 
 	// Create processes.
-	project.buildProcesses<GlobalSetupType>();
+	project.buildProcesses();
 
 	INFO("Initialize processes.");
 	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)

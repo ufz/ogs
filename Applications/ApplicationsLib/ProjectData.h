@@ -24,7 +24,6 @@
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
-#include "ProcessLib/GroundwaterFlowProcess-fwd.h"
 
 #include "UncoupledProcessesTimeLoop.h"
 
@@ -91,35 +90,8 @@ public:
 	// Process interface
 	//
 
-	/// Builder for processes. The supplied template defines the types of global
-	/// vectors and matrices, and the global executor. These types are passed to
-	/// every of the constructed processes.
-	template <typename GlobalSetupType>
-	void buildProcesses()
-	{
-		for (auto const& pc : _process_configs)
-		{
-			auto const type = pc.peekConfParam<std::string>("type");
-			if (type == "GROUNDWATER_FLOW") {
-				// The existence check of the in the configuration referenced
-				// process variables is checked in the physical process.
-				// TODO at the moment we have only one mesh, later there can be
-				// several meshes. Then we have to assign the referenced mesh
-				// here.
-				_processes.emplace_back(
-				    ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
-				        *_mesh_vec[0], _process_variables, _parameters, pc));
-			}
-			else
-			{
-				ERR("Unknown process type: %s\n", type.c_str());
-			}
-		}
-
-		// process configs are not needed anymore, so clear the storage
-		// in order to trigger config tree checks
-		_process_configs.clear();
-	}
+	/// Builds processes.
+	void buildProcesses();
 
 	/// Iterator access for processes.
 	/// Provides read access to the process container.
