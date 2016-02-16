@@ -10,6 +10,7 @@
 #ifndef TESTS_NUMLIB_ODES_H
 #define TESTS_NUMLIB_ODES_H
 
+#include "MathLib/LinAlg/BLAS.h"
 #include "NumLib/ODESolver/ODESystem.h"
 
 // debug
@@ -38,18 +39,17 @@ public:
     }
 
     void assembleJacobian(const double /*t*/, const Vector &/*x*/, Vector const& /*xdot*/,
-                          const double dxdot_dx,  const double dx_dx,
+                          const double dxdot_dx,  const Matrix& M,
+                          const double dx_dx, const Matrix& K,
                           Matrix &Jac)
     {
-        Eigen::MatrixXd m(N, N);
-        m << 1.0, 0.0,
-             0.0, 1.0;
+        namespace BLAS = MathLib::BLAS;
 
-        Eigen::MatrixXd k(N, N);
-        k << 0.0, 1.0,
-            -1.0, 0.0;
-
-        setMatrix(Jac, m*dxdot_dx + dx_dx*k);
+        // compute Jac = M*dxdot_dx + dx_dx*K
+        BLAS::copy(M, Jac);
+        BLAS::scale(Jac, dxdot_dx);
+        if (dx_dx != 0.0)
+            BLAS::axpy(Jac, dx_dx, K);
     }
 
     NumLib::IndexType getNumEquations() const override
@@ -109,10 +109,20 @@ public:
     }
 
     void assembleJacobian(const double /*t*/, const Vector &x, Vector const& /*xdot*/,
-                          const double dxdot_dx, const double dx_dx,
+                          const double dxdot_dx, Matrix const& M,
+                          const double dx_dx, Matrix const& K,
                           Matrix &Jac)
     {
-        setMatrix(Jac, N, N, { dxdot_dx + x[0] + x[0]*dx_dx });
+        namespace BLAS = MathLib::BLAS;
+
+        // compute Jac = M*dxdot_dx + dK_dx + dx_dx*K
+        BLAS::copy(M, Jac);
+        BLAS::scale(Jac, dxdot_dx);
+
+        addToMatrix(Jac, N, N, { x[0] }); // add dK_dx
+
+        if (dx_dx != 0.0)
+            BLAS::axpy(Jac, dx_dx, K);
     }
 
     NumLib::IndexType getNumEquations() const override
@@ -184,7 +194,8 @@ public:
     }
 
     void assembleJacobian(const double t, const Vector& x_curr, Vector const& xdot,
-                          const double dxdot_dx,  const double dx_dx,
+                          const double dxdot_dx, Matrix const& M,
+                          const double dx_dx, Matrix const& K,
                           Matrix &Jac)
     {
         auto const x = x_curr[0];
@@ -192,26 +203,34 @@ public:
         auto const z = x_curr[2];
 
         auto const dx = xdot[0];
-        auto const dz = xdot[2]; // TODO there was a bug
+        auto const dz = xdot[2];
 
-        auto const a = dxdot_dx;
+        namespace BLAS = MathLib::BLAS;
 
-        // set J to M \cdot d\dot x/dx
-        setMatrix(Jac, N, N, { a*      t*y, a*1.0, a*    0.0,
-                               a*      0.0, a* -t, a*    t*y,
-                               a*omega*x*t, a*0.0, a*omega*x });
+        // Compute Jac = M dxdot/dx + dM/dx xdot + K dx/dx + dK/dx x - db/dx
 
+        BLAS::copy(M, Jac);
+        BLAS::scale(Jac, dxdot_dx); // Jac = M * dxdot_dx
+
+        /* dx_dx == 0 holds if and only if the ForwardEuler scheme is used.
+         *
+         * In that case M, K, and b are assembled at the preceding timestep.
+         * Thus their derivatices w.r.t. x of the current timestep vanishes
+         * and does not contribute to the Jacobian.
+         *
+         * TODO: Maybe if relaxation is applied, dx_dx takes values from the
+         *       interval [ 0.0, 1.0 ]
+         */
         if (dx_dx != 0.0)
         {
+            // in this block it is assumed that dx_dx == 1.0
+
             // add dM/dx \cdot \dot x
             addToMatrix(Jac, N, N, {                 0.0, t*dx, 0.0,
                                                      0.0, t*dz, 0.0,
                                      omega*t*dx+omega*dz,  0.0, 0.0 });
 
-            // add K \cdot dx/dx
-            addToMatrix(Jac, N, N, {             y,   1.0/t,                       -y,
-                                     omega*omega/y,    -0.5,                      0.0,
-                                      -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
+            BLAS::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x
             addToMatrix(Jac, N, N, { 0.0, x-z, 0.0,
@@ -219,12 +238,11 @@ public:
                                      0.0, y/omega-(1.0/omega/t+omega)*z*z, // -->
                                      /* --> */  -0.5*omega*x - (1.0/omega/t+omega)*y*z });
 
-            // add db/dx
+            // add -db/dx
             addToMatrix(Jac, N, N, {          0.0, 0.0,          0.0,
                                               0.0, 0.0,          0.0,
                                      -0.5*omega*z, 0.0, -0.5*omega*z });
         }
-
 
         // Eigen::MatrixXd J(Jac.getRawMatrix());
 
