@@ -41,7 +41,7 @@ public:
         : _nonlinear_solver(std::move(nonlinear_solver))
     {}
 
-    bool loop(ProjectData& project);
+    bool loop(ProjectData& project, std::string const& outdir);
 
 private:
     using TimeDisc = NumLib::TimeDiscretization<Vector>;
@@ -61,7 +61,7 @@ private:
             NumLib::ODESystem<Matrix, Vector, ODETag, NLTag>& ode_sys,
             std::unique_ptr<TimeDisc>&& time_disc)
     {
-        PerProcessData ppd{ std::move(time_disc) };
+        PerProcessData ppd{ std::move(time_disc), nullptr };
         ppd.tdisc_ode_sys.reset(
             new NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODETag, NLTag>(
                 ode_sys, *ppd.time_disc));
@@ -104,33 +104,8 @@ createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
 bool
 UncoupledProcessesTimeLoop<Matrix, Vector, NLTag>::
-loop(ProjectData& project)
+loop(ProjectData& project, std::string const& outdir)
 {
-
-#if 0
-    unsigned i = 0;  // process counter, used to distinguish output files
-    for (auto p = project.processesBegin(); p != project.processesEnd();
-         ++p)
-    {
-        accepted = accepted && (*p)->solve(dt);
-
-        if (!accepted)
-        {
-            ERR("Timestep has not been accepted. Aborting.");
-            break;
-        }
-
-        std::string const output_file_name =
-                BaseLib::joinPaths(outdir, out_pref) +
-                "_pcs_" + std::to_string(i) + "_ts_" +
-                std::to_string(timestep) + ".vtu";
-        (*p)->postTimestep(output_file_name, timestep);
-
-        ++i;
-    }
-
-#endif
-
     auto const num_processes = std::distance(project.processesBegin(),
                                              project.processesEnd());
 
@@ -196,14 +171,20 @@ loop(ProjectData& project)
 
             nl_slv_succeeded = _nonlinear_solver->solve(ode_sys, x);
 
-            // TODO error message
-            if (!nl_slv_succeeded) break;
-
             time_disc.pushState(t, x, ode_sys);
 
-            // TODO
-            auto const output_file_name = "out.vtk";
+            std::string const& outpref = project.getOutputFilePrefix();
+            std::string const  output_file_name =
+                    BaseLib::joinPaths(outdir, outpref)
+                    + "_pcs_" + std::to_string(pcs_idx)
+                    + "_ts_"  + std::to_string(timestep)
+                    // + "_t_"   + std::to_string(t) // TODO: add that later
+                    + ".vtu";
+
             (*p)->postTimestep(output_file_name, timestep, x);
+
+            // TODO error message
+            if (!nl_slv_succeeded) break;
         }
 
         break; // TODO only do a single timestep for now
