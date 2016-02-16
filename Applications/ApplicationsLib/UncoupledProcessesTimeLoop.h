@@ -150,20 +150,29 @@ loop(ProjectData& project)
     // init solution storage
     std::vector<Vector> process_solutions(num_processes); // TODO: waste of memory
 
+    auto const t0 = 0.0; // time of the IC
+
     // set ICs
-#if 0
-    auto& time_disc = _ode_sys.getTimeDiscretization();
+    {
+        unsigned pcs_idx = 0;
+        for (auto p = project.processesBegin(); p != project.processesEnd();
+             ++p, ++pcs_idx)
+        {
+            auto& x0 = process_solutions[pcs_idx];
+            (*p)->setInitialConditions(x0);
 
-    time_disc.setInitialState(t0, x0); // push IC
+            auto& time_disc = *time_disc_ode_syss[pcs_idx].time_disc;
+            auto& ode_sys   = *time_disc_ode_syss[pcs_idx].tdisc_ode_sys;
 
-    if (time_disc.needsPreload()) {
-        _nonlinear_solver.assemble(_ode_sys, x);
-        time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
+            time_disc.setInitialState(t0, x0); // push IC
+
+            if (time_disc.needsPreload()) {
+                _nonlinear_solver->assemble(ode_sys, x0);
+                time_disc.pushState(t0, x0, ode_sys); // TODO: that might do duplicate work
+            }
+        }
     }
-#endif
-    // Vector x(x0); // solution vector
 
-    auto const t0      = 0.0;
     auto const delta_t = 1.0;
 
     // Make sure there will be exactly one iteration of the loop below.
@@ -174,7 +183,6 @@ loop(ProjectData& project)
     bool nl_slv_succeeded = true;
     for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
     {
-
         unsigned pcs_idx = 0;
         for (auto p = project.processesBegin(); p != project.processesEnd();
              ++p, ++pcs_idx)
@@ -193,13 +201,10 @@ loop(ProjectData& project)
 
             time_disc.pushState(t, x, ode_sys);
 
-            auto const  t_cb = t; // make sure the callback cannot overwrite anything.
-            auto const& x_cb = x; // ditto.
-
             // TODO
-            // post_timestep(t_cb, x_cb);
+            auto const output_file_name = "out.vtk";
+            (*p)->postTimestep(output_file_name, timestep, x);
         }
-
 
         break; // TODO only do a single timestep for now
     }
