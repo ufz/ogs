@@ -19,6 +19,7 @@
 
 #include "BaseLib/ConfigTree.h"
 
+
 namespace ApplicationsLib
 {
 
@@ -43,6 +44,32 @@ public:
     bool loop(ProjectData& project);
 
 private:
+    using TimeDisc = NumLib::TimeDiscretization<Vector>;
+
+    //! \note both members of this struct are pointers to abstract types.
+    struct PerProcessData
+    {
+        std::unique_ptr<TimeDisc>    time_disc;
+        std::unique_ptr<TDiscODESys> tdisc_ode_sys;
+    };
+
+
+    template<NumLib::ODESystemTag ODETag>
+    static
+    PerProcessData
+    makePerProcessData(
+            NumLib::ODESystem<Matrix, Vector, ODETag, NLTag>& ode_sys,
+            std::unique_ptr<TimeDisc>&& time_disc)
+    {
+        PerProcessData ppd{ std::move(time_disc) };
+        ppd.tdisc_ode_sys.reset(
+            new NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODETag, NLTag>(
+                ode_sys, *ppd.time_disc));
+
+        return ppd;
+    }
+
+
     std::unique_ptr<NLSolver> _nonlinear_solver;
 };
 
@@ -79,8 +106,51 @@ bool
 UncoupledProcessesTimeLoop<Matrix, Vector, NLTag>::
 loop(ProjectData& project)
 {
-    // Vector x(x0); // solution vector
 
+#if 0
+    unsigned i = 0;  // process counter, used to distinguish output files
+    for (auto p = project.processesBegin(); p != project.processesEnd();
+         ++p)
+    {
+        accepted = accepted && (*p)->solve(dt);
+
+        if (!accepted)
+        {
+            ERR("Timestep has not been accepted. Aborting.");
+            break;
+        }
+
+        std::string const output_file_name =
+                BaseLib::joinPaths(outdir, out_pref) +
+                "_pcs_" + std::to_string(i) + "_ts_" +
+                std::to_string(timestep) + ".vtu";
+        (*p)->postTimestep(output_file_name, timestep);
+
+        ++i;
+    }
+
+#endif
+
+    auto const num_processes = std::distance(project.processesBegin(),
+                                             project.processesEnd());
+
+    std::vector<PerProcessData> time_disc_ode_syss;
+    time_disc_ode_syss.reserve(num_processes);
+
+    // create a time discretized ODE system for each process
+    for (auto p = project.processesBegin(); p != project.processesEnd();
+         ++p)
+    {
+        auto time_disc = std::unique_ptr<TimeDisc>(
+                            new NumLib::BackwardEuler<Vector>);
+        time_disc_ode_syss.emplace_back(
+                    makePerProcessData(**p, std::move(time_disc)));
+    }
+
+    // init solution storage
+    std::vector<Vector> process_solutions(num_processes); // TODO: waste of memory
+
+    // set ICs
 #if 0
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -90,32 +160,54 @@ loop(ProjectData& project)
         _nonlinear_solver.assemble(_ode_sys, x);
         time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
+#endif
+    // Vector x(x0); // solution vector
+
+    auto const t0      = 0.0;
+    auto const delta_t = 1.0;
+
+    // Make sure there will be exactly one iteration of the loop below.
+    auto const t_end   = 1.5;
 
     double t;
     unsigned timestep = 0;
     bool nl_slv_succeeded = true;
     for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
     {
-        // INFO("time: %e, delta_t: %e", t, delta_t);
-        time_disc.nextTimestep(t, delta_t);
 
-        nl_slv_succeeded = _nonlinear_solver.solve(_ode_sys, x);
-        if (!nl_slv_succeeded) break;
+        unsigned pcs_idx = 0;
+        for (auto p = project.processesBegin(); p != project.processesEnd();
+             ++p, ++pcs_idx)
+        {
+            auto& time_disc = *time_disc_ode_syss[pcs_idx].time_disc;
+            auto& ode_sys   = *time_disc_ode_syss[pcs_idx].tdisc_ode_sys;
+            auto& x = process_solutions[pcs_idx];
 
-        time_disc.pushState(t, x, _ode_sys);
+            // INFO("time: %e, delta_t: %e", t, delta_t);
+            time_disc.nextTimestep(t, delta_t);
 
-        auto const  t_cb = t; // make sure the callback cannot overwrite anything.
-        auto const& x_cb = x; // ditto.
-        post_timestep(t_cb, x_cb);
+            nl_slv_succeeded = _nonlinear_solver->solve(ode_sys, x);
+
+            // TODO error message
+            if (!nl_slv_succeeded) break;
+
+            time_disc.pushState(t, x, ode_sys);
+
+            auto const  t_cb = t; // make sure the callback cannot overwrite anything.
+            auto const& x_cb = x; // ditto.
+
+            // TODO
+            // post_timestep(t_cb, x_cb);
+        }
+
+
+        break; // TODO only do a single timestep for now
     }
 
     if (!nl_slv_succeeded) {
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);
     }
     return nl_slv_succeeded;
-#endif
-
-    return false;
 }
 
 }
