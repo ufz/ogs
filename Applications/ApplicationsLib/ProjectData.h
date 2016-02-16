@@ -26,6 +26,8 @@
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/GroundwaterFlowProcess-fwd.h"
 
+#include "UncoupledProcessesTimeLoop.h"
+
 namespace MeshLib {
 	class Mesh;
 }
@@ -37,7 +39,13 @@ namespace MeshLib {
  */
 class ProjectData
 {
+	using GlobalMatrix = GlobalSetupType::MatrixType;
+	using GlobalVector = GlobalSetupType::VectorType;
 public:
+	// TODO doc, currently use Picard scheme
+	using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
+	    GlobalMatrix, GlobalVector, NumLib::NonlinearSolverTag::Picard>;
+
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
 	ProjectData() = default;
@@ -155,6 +163,11 @@ public:
 		return *_time_stepper;
 	}
 
+	TimeLoop& getTimeLoop()
+	{
+		return *_time_loop;
+	}
+
 private:
 	/// Checks if a mesh with the same name exists and provides a unique name in
 	/// case of already existing mesh. Returns true if the mesh name is unique.
@@ -209,6 +222,9 @@ private:
 
 	/// Timestepper
 	std::unique_ptr<NumLib::ITimeStepAlgorithm> _time_stepper;
+
+	// TODO doc
+	std::unique_ptr<TimeLoop> _time_loop;
 };
 
 #endif //PROJECTDATA_H_
