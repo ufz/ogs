@@ -106,6 +106,7 @@ public:
 
     bool assemble(const double /*delta_t*/) override
     {
+#if 0
         DBUG("Assemble GroundwaterFlowProcess.");
 
         *this->_rhs = 0;   // This resets the whole vector.
@@ -113,7 +114,7 @@ public:
         // Call global assembler for each local assembly item.
         this->_global_setup.execute(*this->_global_assembler,
                                     _local_assemblers);
-
+#endif
         return true;
     }
 
@@ -137,7 +138,7 @@ public:
 
         // Call global assembler for each local assembly item.
         this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers);
+                                    _local_assemblers); // , t, x, M, K, b);
     }
 
     bool isLinear() const override

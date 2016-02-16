@@ -99,7 +99,7 @@ public:
 
 		DBUG("Create global assembler.");
 		_global_assembler.reset(
-		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+		    new GlobalAssembler(*_local_to_global_index_map));
 
 		createLocalAssemblers();
 

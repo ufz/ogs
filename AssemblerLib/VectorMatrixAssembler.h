@@ -32,18 +32,12 @@ class VectorMatrixAssembler<GLOBAL_MATRIX_, GLOBAL_VECTOR_,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
-    typedef GLOBAL_MATRIX_ GLOBAL_MATRIX;
-    typedef GLOBAL_VECTOR_ GLOBAL_VECTOR;
-
-public:
     VectorMatrixAssembler(
-        GLOBAL_MATRIX_ &A,
-        GLOBAL_VECTOR_ &rhs,
         LocalToGlobalIndexMap const& data_pos)
-    : _A(A), _rhs(rhs), _data_pos(data_pos) {}
+    : _data_pos(data_pos)
+    {}
 
-    ~VectorMatrixAssembler() {}
-
+    // TODO remove
     void setX(GLOBAL_VECTOR_ const * x, GLOBAL_VECTOR_ const * x_prev_ts)
     {
         assert((!x == !x_prev_ts) && "either no or both inputs have to be set");
@@ -89,13 +83,13 @@ public:
         LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
                     indices, indices);
 
+        /*
         local_assembler->assemble(localX, localX_pts);
         local_assembler->addToGlobal(_A, _rhs, r_c_indices);
+        */
     }
 
 protected:
-    GLOBAL_MATRIX_ &_A;
-    GLOBAL_VECTOR_ &_rhs;
     GLOBAL_VECTOR_ const *_x = nullptr;
     GLOBAL_VECTOR_ const *_x_prev_ts = nullptr;
     LocalToGlobalIndexMap const& _data_pos;

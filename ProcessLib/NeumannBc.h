@@ -150,9 +150,10 @@ public:
                 elementValueLookup,
                 _integration_order);
 
+        // TODO check
         DBUG("Create global assembler.");
         _global_assembler.reset(
-            new GlobalAssembler(A, rhs, *_local_to_global_index_map));
+            new GlobalAssembler(*_local_to_global_index_map));
     }
 
     /// Calls local assemblers which calculate their contributions to the global
