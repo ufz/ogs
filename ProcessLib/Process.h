@@ -123,8 +123,10 @@ public:
 	}
 
 	// TODO delete
-	void solve_TODO_DELETE(const double delta_t)
+	void solve_TODO_DELETE(const double)
 	{
+		// TODO move the code somewhere
+		/*
 		_A->setZero();
 		MathLib::setMatrixSparsity(*_A, _sparsity_pattern); // TODO move that
 
@@ -137,6 +139,7 @@ public:
 		for (auto const& bc : _dirichlet_bcs)
 			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
 			                            bc.values);
+		*/
 	}
 
 protected:
@@ -313,10 +316,6 @@ protected:
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
-
-	std::unique_ptr<GlobalMatrix> _A;
-	std::unique_ptr<GlobalVector> _rhs;
-	std::unique_ptr<GlobalVector> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
