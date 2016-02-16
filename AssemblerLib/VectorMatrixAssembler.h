@@ -27,8 +27,8 @@ class VectorMatrixAssembler;
 /// and adds the local vector and matrix entries into the global vector and
 /// the global matrix. The indices in global objects are provided by
 /// the LocalToGlobalIndexMap in the construction.
-template<typename GLOBAL_MATRIX_, typename GLOBAL_VECTOR_>
-class VectorMatrixAssembler<GLOBAL_MATRIX_, GLOBAL_VECTOR_,
+template<typename GlobalMatrix, typename GlobalVector>
+class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
@@ -38,7 +38,7 @@ public:
     {}
 
     // TODO remove
-    void setX(GLOBAL_VECTOR_ const * x, GLOBAL_VECTOR_ const * x_prev_ts)
+    void setX(GlobalVector const * x, GlobalVector const * x_prev_ts)
     {
         assert((!x == !x_prev_ts) && "either no or both inputs have to be set");
         assert((!x) || x->size() == x_prev_ts->size());
@@ -90,8 +90,8 @@ public:
     }
 
 protected:
-    GLOBAL_VECTOR_ const *_x = nullptr;
-    GLOBAL_VECTOR_ const *_x_prev_ts = nullptr;
+    GlobalVector const *_x = nullptr;
+    GlobalVector const *_x_prev_ts = nullptr;
     LocalToGlobalIndexMap const& _data_pos;
 };
 
