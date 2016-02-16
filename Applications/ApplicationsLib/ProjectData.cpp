@@ -60,9 +60,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 		);
 
 	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
-	if (!mesh)
+	if (!mesh) {
 		ERR("Could not read mesh from \'%s\' file. No mesh added.",
 			mesh_file.c_str());
+		std::abort();
+	}
 	_mesh_vec.push_back(mesh);
 
 	// process variables
@@ -286,30 +288,17 @@ void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
 
 void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
 {
-	using namespace ProcessLib;
+	DBUG("Reading time loop configuration.");
 
-	DBUG("Reading timestepping configuration.");
+	_time_loop = std::move(
+	    ApplicationsLib::createUncoupledProcessesTimeLoop<
+	           GlobalMatrix, GlobalVector, NumLib::NonlinearSolverTag::Picard
+	    >(timestepping_config)
+	);
 
-	auto const type = timestepping_config.peekConfParam<std::string>("type");
-
-	if (type == "FixedTimeStepping")
+	if (!_time_loop)
 	{
-		_time_stepper.reset(NumLib::FixedTimeStepping::newInstance(timestepping_config));
-	}
-	else if (type == "SingleStep")
-	{
-		timestepping_config.ignoreConfParam("type");
-		_time_stepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
-	}
-	else
-	{
-		ERR("Unknown timestepper type: `%s'.", type.c_str());
-		std::abort();
-	}
-
-	if (!_time_stepper)
-	{
-		ERR("Initialization of timestepper failed.");
+		ERR("Initialization of time loop failed.");
 		std::abort();
 	}
 }

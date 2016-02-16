@@ -12,18 +12,11 @@
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 
+#include "BaseLib/ConfigTree.h"
 
 namespace ApplicationsLib
 {
 
-//! \addtogroup ODESolver
-//! @{
-
-/*! Integrate some first-order ODE system over time.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
- */
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
 class UncoupledProcessesTimeLoop
 {
@@ -65,7 +58,25 @@ private:
     NLSolver& _nonlinear_solver;
 };
 
-//! @}
+template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
+std::unique_ptr<UncoupledProcessesTimeLoop<Matrix, Vector, NLTag> >
+createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
+{
+    auto const type = conf.getConfParam<std::string>("type");
+
+    if (type == "SingleStep")
+    {
+        return nullptr;
+    }
+    else
+    {
+            ERR("Unknown timestepper type: `%s'.", type.c_str());
+            std::abort();
+    }
+}
+
+
+
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
 template<typename Callback>

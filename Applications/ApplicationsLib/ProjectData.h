@@ -126,15 +126,6 @@ public:
 		return _output_file_prefix;
 	}
 
-	NumLib::ITimeStepAlgorithm const& getTimeStepper() const
-	{
-		return *_time_stepper;
-	}
-	NumLib::ITimeStepAlgorithm& getTimeStepper()
-	{
-		return *_time_stepper;
-	}
-
 	TimeLoop& getTimeLoop()
 	{
 		return *_time_loop;
@@ -191,9 +182,6 @@ private:
 
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
-
-	/// Timestepper
-	std::unique_ptr<NumLib::ITimeStepAlgorithm> _time_stepper;
 
 	// TODO doc
 	std::unique_ptr<TimeLoop> _time_loop;
