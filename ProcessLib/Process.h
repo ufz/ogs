@@ -56,6 +56,9 @@ class Process
 		                           NumLib::NonlinearSolverTag::Picard>
 {
 public:
+	using GlobalVector = typename GlobalSetup::VectorType;
+	using GlobalMatrix = typename GlobalSetup::MatrixType;
+
 	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 	virtual ~Process()
 	{
@@ -72,10 +75,12 @@ public:
 
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
-	void postTimestep(std::string const& file_name, const unsigned /*timestep*/)
+	void postTimestep(std::string const& file_name,
+	                  const unsigned /*timestep*/,
+	                  GlobalVector const& x)
 	{
-		post();
-		output(file_name);
+		post(x);
+		output(file_name, x);
 	}
 
 	void initialize()
@@ -118,7 +123,7 @@ public:
 			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
 	}
 
-	bool solve(const double delta_t)
+	bool solve_TODO_DELETE(const double delta_t)
 	{
 		_A->setZero();
 		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
@@ -138,7 +143,10 @@ public:
 	}
 
 protected:
-	virtual void post(){};
+	virtual void post(GlobalVector const& x)
+	{
+		(void) x; // by default do nothing
+	}
 
 	/// Set linear solver options; called by the derived process which is
 	/// parsing the configuration.
@@ -262,7 +270,7 @@ private:
 		    *_local_to_global_index_map, _mesh));
 	}
 
-	void output(std::string const& file_name)
+	void output(std::string const& file_name, GlobalVector const& x)
 	{
 		DBUG("Process output.");
 
@@ -281,16 +289,16 @@ private:
 			    _mesh.getProperties().template createNewPropertyVector<double>(
 			        property_name, MeshLib::MeshItemType::Node);
 #ifdef USE_PETSC
-			result->resize(_x->getLocalSize() + _x->getGhostSize());
+			result->resize(x.getLocalSize() + x.getGhostSize());
 #else
-			result->resize(_x->size());
+			result->resize(x.size());
 #endif
 		}
 
 		assert(result);
 
 		// Copy result
-		_x->copyValues(*result);
+		x.copyValues(*result);
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
@@ -308,8 +316,8 @@ protected:
 	GlobalSetup _global_setup;
 
 	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-	        typename GlobalSetup::MatrixType,
-	        typename GlobalSetup::VectorType,
+	        GlobalMatrix,
+	        GlobalVector,
 	        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
 	std::unique_ptr<GlobalAssembler> _global_assembler;
@@ -320,9 +328,9 @@ protected:
 	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
 	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 
-	std::unique_ptr<typename GlobalSetup::MatrixType> _A;
-	std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
-	std::unique_ptr<typename GlobalSetup::VectorType> _x;
+	std::unique_ptr<GlobalMatrix> _A;
+	std::unique_ptr<GlobalVector> _rhs;
+	std::unique_ptr<GlobalVector> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
