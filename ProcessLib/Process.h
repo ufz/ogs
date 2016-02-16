@@ -20,7 +20,6 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubset.h"
@@ -153,17 +152,10 @@ public:
 			bc->integrate(_global_setup); // TODO pass b
 	}
 
-	void getKnownSolution(std::vector<Index>  const*& global_ids,
-	                      std::vector<double> const*& values) override final
+	std::vector<DirichletBc<Index> > const* getKnownComponents()
+	const override final
 	{
-		// TODO use all Dirichlet BCs
-
-		if (!_dirichlet_bcs.empty()) {
-			auto const& bc = _dirichlet_bcs.front();
-			global_ids = &bc.global_ids;
-			values     = &bc.values;
-		}
-
+		return &_dirichlet_bcs;
 	}
 
 protected:
