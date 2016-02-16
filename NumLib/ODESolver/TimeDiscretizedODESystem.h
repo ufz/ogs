@@ -103,6 +103,10 @@ public:
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
+        _M.setZero();
+        _K.setZero();
+        _b.setZero();
+
         _ode.assemble(t, x_curr, _M, _K, _b);
     }
 
@@ -115,6 +119,8 @@ public:
         auto const  dxdot_dx = _time_disc.getCurrentXWeight();
         auto const  dx_dx    = _time_disc.getDxDx();
         _time_disc.getXdot(x_new_timestep, _xdot);
+
+        _Jac.setZero();
 
         _ode.assembleJacobian(t, x_curr, _xdot,
                               dxdot_dx, _M, dx_dx, _K,
@@ -205,6 +211,10 @@ public:
     {
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+
+        _M.setZero();
+        _K.setZero();
+        _b.setZero();
 
         _ode.assemble(t, x_curr, _M, _K, _b);
     }
