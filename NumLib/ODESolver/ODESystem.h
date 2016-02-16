@@ -65,6 +65,15 @@ public:
     virtual void assemble(const double t, Vector const& x,
                           Matrix& M, Matrix& K, Vector& b) = 0;
 
+    using Index = typename MatrixTraits<Matrix>::Index;
+
+    // TODO doc
+    virtual void getKnownSolution(std::vector<Index>  const*& global_ids,
+                                  std::vector<double> const*& values)
+    {
+        (void) global_ids; (void) values; // by default there are no known components
+    }
+
     virtual ~ODESystem() = default;
 };
 
