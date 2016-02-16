@@ -316,3 +316,14 @@ TEST(NumLibODEInt, ODE3)
                   NumLib::NonlinearSolverTag::Newton>
             (0u, name);
 }
+
+
+
+/* TODO Other possible test cases:
+ *
+ * * check that results are within a specified tolerance
+ * * check that results are equal for different matrix/vector types
+ * * check that resutls are very close for Picard/Newton
+ * * check that the order of time discretization scales correctly
+ *   with the timestep size
+ */
