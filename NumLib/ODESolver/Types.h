@@ -16,9 +16,6 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
-// TODO subject to change
-using IndexType = std::size_t;
-
 //! Tag used to specify which nonlinear solver will be used.
 enum class NonlinearSolverTag : bool {
     Picard /*!< Picard fixpoint iteration scheme */,

@@ -59,7 +59,7 @@ public:
     virtual bool isLinear() const = 0;
 
     //! Get the number of equations.
-    virtual IndexType getNumEquations() const = 0;
+    virtual std::size_t getNumEquations() const = 0;
 
     //! Assemble \c M, \c K and \c b at the state (\c t, \c x).
     virtual void assemble(const double t, Vector const& x,
