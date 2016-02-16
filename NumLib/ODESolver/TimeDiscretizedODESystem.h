@@ -10,6 +10,8 @@
 #ifndef NUMLIB_TIMEDISCRETIZEDODESYSTEM_H
 #define NUMLIB_TIMEDISCRETIZEDODESYSTEM_H
 
+#include <memory>
+
 #include "ODESystem.h"
 #include "NonlinearSystem.h"
 #include "TimeDiscretization.h"
@@ -84,13 +86,12 @@ public:
      *
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
-     * \param mat_trans the object used to compute the matrix/vector for the nonlinear solver.
      */
     explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
-        , _mat_trans(mat_trans)
+        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
         , _Jac(ode.getNumEquations(), ode.getNumEquations())
         , _M(_Jac)
         , _K(_Jac)
@@ -122,12 +123,12 @@ public:
 
     void getResidual(Vector const& x_new_timestep, Vector& res) override
     {
-        _mat_trans.getResidual(_M, _K, _b, x_new_timestep, res);
+        _mat_trans->getResidual(_M, _K, _b, x_new_timestep, res);
     }
 
     void getJacobian(Matrix& Jac) override
     {
-        _mat_trans.getJacobian(_Jac, Jac);
+        _mat_trans->getJacobian(_Jac, Jac);
     }
 
     bool isLinear() const override
@@ -141,13 +142,15 @@ public:
 
     virtual void pushMatrices() const override
     {
-        _mat_trans.pushMatrices(_M, _K, _b);
+        _mat_trans->pushMatrices(_M, _K, _b);
     }
 
 private:
     ODE& _ode;            //!< ode the ODE being wrapped
     TimeDisc& _time_disc; //!< the time discretization to being used
-    MatTrans& _mat_trans; //!< the object used to compute the matrix/vector for the nonlinear solver
+
+    //! the object used to compute the matrix/vector for the nonlinear solver
+    std::unique_ptr<MatTrans> _mat_trans;
 
     Matrix _Jac;  //!< the Jacobian of the residual
     Matrix _M;    //!< Matrix \f$ M \f$.
@@ -187,13 +190,12 @@ public:
      *
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
-     * \param mat_trans the object used to compute the matrix/vector for the nonlinear solver.
      */
     explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization, MatTrans& mat_trans)
+    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
-        , _mat_trans(mat_trans)
+        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
         , _M(ode.getNumEquations(), ode.getNumEquations())
         , _K(_M)
         , _b(ode.getNumEquations())
@@ -209,12 +211,12 @@ public:
 
     void getA(Matrix& A) override
     {
-        _mat_trans.getA(_M, _K, A);
+        _mat_trans->getA(_M, _K, A);
     }
 
     void getRhs(Vector& rhs) override
     {
-        _mat_trans.getRhs(_M, _K, _b, rhs);
+        _mat_trans->getRhs(_M, _K, _b, rhs);
     }
 
     bool isLinear() const override
@@ -228,13 +230,15 @@ public:
 
     virtual void pushMatrices() const override
     {
-        _mat_trans.pushMatrices(_M, _K, _b);
+        _mat_trans->pushMatrices(_M, _K, _b);
     }
 
 private:
     ODE& _ode;            //!< ode the ODE being wrapped
     TimeDisc& _time_disc; //!< the time discretization to being used
-    MatTrans& _mat_trans; //!< the object used to compute the matrix/vector for the nonlinear solver
+
+    //! the object used to compute the matrix/vector for the nonlinear solver
+    std::unique_ptr<MatTrans> _mat_trans;
 
     Matrix _M;    //!< Matrix \f$ M \f$.
     Matrix _K;    //!< Matrix \f$ K \f$.
