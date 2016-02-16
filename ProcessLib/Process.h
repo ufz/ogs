@@ -123,22 +123,6 @@ public:
 		}
 	}
 
-	// TODO delete
-	void solve_TODO_DELETE(const double)
-	{
-		// TODO move the code somewhere
-		/*
-		DONE: _A->setZero();
-		DONE: MathLib::setMatrixSparsity(*_A, _sparsity_pattern); // TODO move that
-
-		DONE: bool const result = assemble(delta_t);
-
-		for (auto const& bc : _dirichlet_bcs)
-			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
-			                            bc.values);
-		*/
-	}
-
 	void assemble(const double t, GlobalVector const& x,
 	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
 	{
@@ -149,7 +133,7 @@ public:
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup); // TODO pass b
+			bc->integrate(_global_setup, t, b);
 	}
 
 	std::vector<DirichletBc<Index> > const* getKnownComponents()

@@ -30,11 +30,10 @@ public:
             std::function<double (MeshLib::Element const&)> const& value_lookup,
             unsigned const integration_order) = 0;
 
-    virtual void assemble(std::vector<double> const& local_x,
-                          std::vector<double> const& local_x_prev_ts) = 0;
+    virtual void assemble(const double t) = 0;
 
-    virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-            AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
+    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+                             GlobalVector& b) const = 0;
 };
 
 template <typename ShapeFunction_,
@@ -65,7 +64,6 @@ public:
 
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
 
-
         _integration_order = integration_order;
         IntegrationMethod_ integration_method(_integration_order);
         std::size_t const n_integration_points = integration_method.getNPoints();
@@ -85,9 +83,10 @@ public:
     }
 
     void
-    assemble(std::vector<double> const& /*local_x*/,
-             std::vector<double> const& /*local_x_prev_ts*/) override
+    assemble(const double t) override
     {
+        (void) t; // TODO time-dependent Neumann BCs
+
         _localRhs->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
@@ -101,13 +100,10 @@ public:
         }
     }
 
-    void addToGlobal(
-        GlobalMatrix& A, GlobalVector& rhs,
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices)
-        const override
+    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+                     GlobalVector& b) const override
     {
-        (void) A;
-        rhs.add(indices.rows, *_localRhs);
+        b.add(indices.rows, *_localRhs);
     }
 
 private:

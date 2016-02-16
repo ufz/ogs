@@ -99,9 +99,10 @@ public:
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
-    void integrate(GlobalSetup const& global_setup)
+    void integrate(GlobalSetup const& global_setup,
+                   const double t, GlobalVector& b)
     {
-        global_setup.execute(*_global_assembler, _local_assemblers);
+        global_setup.execute(*_global_assembler, _local_assemblers, t, b);
     }
 
     void initialize(GlobalSetup const& global_setup,
@@ -185,7 +186,7 @@ private:
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector,
-            NumLib::ODESystemTag::DUMMY>;
+            NumLib::ODESystemTag::NeumannBC>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
