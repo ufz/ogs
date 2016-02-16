@@ -43,15 +43,11 @@ public:
         MeshLib::Mesh& mesh,
         ProcessVariable& variable,
         Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity,
-        boost::optional<BaseLib::ConfigTree>&& linear_solver_options)
+            hydraulic_conductivity)
         : Process<GlobalSetup>(mesh),
           _hydraulic_conductivity(hydraulic_conductivity)
     {
         this->_process_variables.emplace_back(variable);
-        if (linear_solver_options)
-            Process<GlobalSetup>::setLinearSolverOptions(
-                std::move(*linear_solver_options));
     }
 
     template <unsigned GlobalDim>
@@ -87,10 +83,13 @@ public:
                 this->_integration_order);
     }
 
+    // TODO remove, but put "gw_" somewhere
+    /*
     std::string getLinearSolverName() const override
     {
         return "gw_";
     }
+    */
 
     void createLocalAssemblers() override
     {
@@ -171,13 +170,9 @@ createGroundwaterFlowProcess(
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
 
-    // Linear solver options
-    auto linear_solver_options = config.getConfSubtreeOptional("linear_solver");
-
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{mesh, process_variable,
-                                                hydraulic_conductivity,
-                                                std::move(linear_solver_options)}};
+                                                hydraulic_conductivity}};
 }
 }   // namespace ProcessLib
 

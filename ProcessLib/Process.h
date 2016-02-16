@@ -70,8 +70,6 @@ public:
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
 
-	virtual std::string getLinearSolverName() const = 0;
-
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
 	void postTimestep(std::string const& file_name,
@@ -97,9 +95,6 @@ public:
 		DBUG("Compute sparsity pattern");
 		computeSparsityPattern();
 #endif
-
-		// create global vectors and linear solver
-		createLinearSolver(getLinearSolverName());
 
 		DBUG("Create global assembler.");
 		_global_assembler.reset(
@@ -142,22 +137,12 @@ public:
 		for (auto const& bc : _dirichlet_bcs)
 			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
 			                            bc.values);
-
-		_linear_solver->solve(*_rhs, *_x);
 	}
 
 protected:
 	virtual void post(GlobalVector const& x)
 	{
 		(void) x; // by default do nothing
-	}
-
-	/// Set linear solver options; called by the derived process which is
-	/// parsing the configuration.
-	void setLinearSolverOptions(BaseLib::ConfigTree&& config)
-	{
-		_linear_solver_options.reset(
-		    new BaseLib::ConfigTree(std::move(config)));
 	}
 
 private:
@@ -235,6 +220,7 @@ private:
 		                          *_mesh_subset_all_nodes);
 	}
 
+#if 0
 	/// Creates global matrix, rhs and solution vectors, and the linear solver.
 	void createLinearSolver(std::string const& solver_name)
 	{
@@ -262,10 +248,8 @@ private:
 		_x.reset(_global_setup.createVector(num_unknowns));
 		_rhs.reset(_global_setup.createVector(num_unknowns));
 #endif
-		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
-		    *_A, solver_name, _linear_solver_options.get()));
-		checkAndInvalidate(_linear_solver_options);
 	}
+#endif
 
 	/// Computes and stores global matrix' sparsity pattern from given
 	/// DOF-table.
@@ -329,9 +313,6 @@ protected:
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
-
-	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
-	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 
 	std::unique_ptr<GlobalMatrix> _A;
 	std::unique_ptr<GlobalVector> _rhs;
