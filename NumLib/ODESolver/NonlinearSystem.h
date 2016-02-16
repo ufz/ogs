@@ -64,6 +64,9 @@ public:
      */
     virtual void getJacobian(Matrix& Jac) = 0;
 
+    // TODO doc
+    virtual void applyKnownComponents(Matrix& Jac, Vector& res, Vector& x) = 0;
+
     /*! Check whether this is actually a linear equation system.
      *
      * \remark
@@ -100,6 +103,9 @@ public:
     //! Writes the linearized equation system right-hand side to \c rhs.
     //! //! \todo make const
     virtual void getRhs(Vector& rhs) = 0;
+
+    // TODO doc
+    virtual void applyKnownComponents(Matrix& A, Vector& rhs, Vector& x) = 0;
 
     /*! Check whether this is actually a linear equation system.
      *

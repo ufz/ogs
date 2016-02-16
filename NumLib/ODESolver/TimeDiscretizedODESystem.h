@@ -12,6 +12,9 @@
 
 #include <memory>
 
+#include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "ProcessLib/DirichletBc.h"
+
 #include "ODESystem.h"
 #include "NonlinearSystem.h"
 #include "TimeDiscretization.h"
@@ -137,6 +140,12 @@ public:
         _mat_trans->getJacobian(_Jac, Jac);
     }
 
+    void applyKnownComponents(Matrix& Jac, Vector& res, Vector& x) override
+    {
+        (void) Jac; (void) res; (void) x;
+        // TODO implement
+    }
+
     bool isLinear() const override
     {
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
@@ -227,6 +236,18 @@ public:
     void getRhs(Vector& rhs) override
     {
         _mat_trans->getRhs(_M, _K, _b, rhs);
+    }
+
+    void applyKnownComponents(Matrix& A, Vector& rhs, Vector& x) override
+    {
+        auto const* known_components = _ode.getKnownComponents();
+
+        if (known_components) {
+            for (auto const& bc : *known_components) {
+                // TODO maybe it would be faster to apply all at once
+                MathLib::applyKnownSolution(A, rhs, x, bc.global_ids, bc.values);
+            }
+        }
     }
 
     bool isLinear() const override

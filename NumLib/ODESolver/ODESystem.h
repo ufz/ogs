@@ -12,6 +12,12 @@
 
 #include "Types.h"
 
+// TODO move to other namespace
+namespace ProcessLib
+{
+template <typename IndexType>
+struct DirichletBc;
+}
 
 namespace NumLib
 {
@@ -68,10 +74,9 @@ public:
     using Index = typename MatrixTraits<Matrix>::Index;
 
     // TODO doc
-    virtual void getKnownSolution(std::vector<Index>  const*& global_ids,
-                                  std::vector<double> const*& values)
+    virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownComponents() const
     {
-        (void) global_ids; (void) values; // by default there are no known components
+        return nullptr; // by default there are no known components
     }
 
     virtual ~ODESystem() = default;
