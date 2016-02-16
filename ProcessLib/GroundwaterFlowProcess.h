@@ -79,7 +79,7 @@ public:
             initializer, *this->_local_to_global_index_map);
 
         DBUG("Calling local assembler builder for all mesh elements.");
-        this->_global_setup.execute(
+        this->_global_setup.transform(
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,

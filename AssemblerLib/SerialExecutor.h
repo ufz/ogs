@@ -58,9 +58,9 @@ struct SerialExecutor
     static
     void
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    execute(F& f, C const& c, Data& data, Args_&&... args)
+    transform(F& f, C const& c, Data& data, Args_&&... args)
 #else
-    execute(F const& f, C const& c, Data& data, Args_&&... args)
+    transform(F const& f, C const& c, Data& data, Args_&&... args)
 #endif
     {
         assert(c.size() == data.size());

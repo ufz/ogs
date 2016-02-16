@@ -143,7 +143,7 @@ public:
         };
 
         DBUG("Calling local Neumann assembler builder for Neumann boundary elements.");
-        global_setup.execute(
+        global_setup.transform(
                 local_asm_builder,
                 _elements,
                 _local_assemblers,
