@@ -193,7 +193,7 @@ class PETScVector
            Copy local entries including ghost ones to an array
            \param u Preallocated vector for the values of local entries.
         */
-        void copyValues(std::vector<double>& u);
+        void copyValues(std::vector<double>& u) const;
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose

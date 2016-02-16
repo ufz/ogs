@@ -108,7 +108,7 @@ public:
 	}
 
 	/// Copy vector values.
-	void copyValues(std::vector<double>& u)
+	void copyValues(std::vector<double>& u) const
 	{
 		assert(u.size() == size());
 		lis_vector_get_values(_vec, 0, size(), u.data());
