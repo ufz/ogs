@@ -106,7 +106,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
             GlobalMatrix, GlobalVector,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
-    GlobalAssembler assembler(*A.get(), *rhs.get(), local_to_global_index_map);
+    GlobalAssembler assembler(local_to_global_index_map);
 
     // Call global assembler for each mesh element.
     globalSetup.execute(assembler, local_assembler_data);
