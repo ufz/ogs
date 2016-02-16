@@ -41,9 +41,8 @@ public:
         using ODE_ = ODE<Matrix, Vector>;
         using ODET = ODETraits<Matrix, Vector, ODE>;
 
-        auto mat_trans = NumLib::createMatrixTranslator<Matrix, Vector, ODE_::ODETag>(timeDisc);
         NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
-                ode_sys(ode, timeDisc, *mat_trans);
+                ode_sys(ode, timeDisc);
         NumLib::TimeLoop<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
 
         const double t0      = ODET::t0;
