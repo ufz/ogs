@@ -307,9 +307,10 @@ protected:
 
 	GlobalSetup _global_setup;
 
-	using GlobalAssembler =
-	    AssemblerLib::VectorMatrixAssembler<typename GlobalSetup::MatrixType,
-	                                        typename GlobalSetup::VectorType>;
+	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+	        typename GlobalSetup::MatrixType,
+	        typename GlobalSetup::VectorType,
+	        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
 	std::unique_ptr<GlobalAssembler> _global_assembler;
 

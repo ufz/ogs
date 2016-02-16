@@ -12,18 +12,24 @@
 
 #include "LocalToGlobalIndexMap.h"
 
+#include "NumLib/ODESolver/Types.h"
+
 namespace AssemblerLib
 {
+
+// TODO doc
+template<typename GlobalMatrix, typename GlobalVector,
+         NumLib::ODESystemTag NLTag>
+class VectorMatrixAssembler;
 
 /// Adds result of local assembler into a global vector and a global matrix.
 /// The VectorMatrixAssembler executes the local assembler for a given mesh item
 /// and adds the local vector and matrix entries into the global vector and
 /// the global matrix. The indices in global objects are provided by
 /// the LocalToGlobalIndexMap in the construction.
-template<
-    typename GLOBAL_MATRIX_,
-    typename GLOBAL_VECTOR_>
-class VectorMatrixAssembler
+template<typename GLOBAL_MATRIX_, typename GLOBAL_VECTOR_>
+class VectorMatrixAssembler<GLOBAL_MATRIX_, GLOBAL_VECTOR_,
+        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     typedef GLOBAL_MATRIX_ GLOBAL_MATRIX;

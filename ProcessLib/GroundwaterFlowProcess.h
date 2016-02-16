@@ -130,6 +130,14 @@ public:
                   Matrix& M, Matrix& K, Vector& b) override
     {
         // TODO implement;
+
+        DBUG("Assemble GroundwaterFlowProcess.");
+
+        *this->_rhs = 0;   // This resets the whole vector.
+
+        // Call global assembler for each local assembly item.
+        this->_global_setup.execute(*this->_global_assembler,
+                                    _local_assemblers);
     }
 
     bool isLinear() const override

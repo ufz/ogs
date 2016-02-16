@@ -37,6 +37,7 @@ public:
     virtual void assemble(std::vector<double> const& local_x,
                           std::vector<double> const& local_x_prev_ts) = 0;
 
+    // TODO: Don't we waste quite some time by having this as a virtual method?
     virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
 };

@@ -189,10 +189,12 @@ private:
     /// the #_function.
     unsigned const _integration_order;
 
+    // TODO check
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
             typename GlobalSetup_::MatrixType,
-            typename GlobalSetup_::VectorType>;
+            typename GlobalSetup_::VectorType,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
