@@ -28,7 +28,8 @@ namespace NumLib
 template<typename Matrix, typename Vector>
 void
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
+assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys,
+         Vector const& x) const
 {
     sys.assembleMatricesPicard(x);
 }
@@ -40,7 +41,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 {
     namespace BLAS = MathLib::BLAS;
 
-    Matrix A; Vector rhs;
+    Matrix A; Vector rhs; // TODO: member variables?
     bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
@@ -79,7 +80,8 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 template<typename Matrix, typename Vector>
 void
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
+assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys,
+         Vector const& x) const
 {
     sys.assembleResidualNewton(x);
 }
@@ -91,7 +93,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 {
     namespace BLAS = MathLib::BLAS;
 
-    Matrix J; Vector res;
+    Matrix J; Vector res; // TODO: member variables?
     bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)

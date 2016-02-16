@@ -64,7 +64,7 @@ public:
      * \param sys the equation system to be assembled.
      * \param x   the state at which the equation system will be assembled.
      */
-    void assemble(System& sys, Vector& x);
+    void assemble(System& sys, Vector const& x) const;
 
     /*! Assemble and solve the equation system.
      *
@@ -117,7 +117,7 @@ public:
      * \param sys the equation system to be assembled.
      * \param x   the state at which the equation system will be assembled.
      */
-    void assemble(System& sys, Vector& x);
+    void assemble(System& sys, Vector const& x) const;
 
     /*! Assemble and solve the equation system.
      *
