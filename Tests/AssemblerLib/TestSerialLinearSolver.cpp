@@ -100,9 +100,11 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
             local_assembler_data,
             ex1);
 
+    // TODO check
     // Local and global assemblers.
     typedef AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector> GlobalAssembler;
+            GlobalMatrix, GlobalVector,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
     GlobalAssembler assembler(*A.get(), *rhs.get(), local_to_global_index_map);
 
