@@ -69,7 +69,6 @@ public:
 
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
-	virtual bool assemble(const double delta_t) = 0;
 
 	virtual std::string getLinearSolverName() const = 0;
 
@@ -128,12 +127,13 @@ public:
 		}
 	}
 
-	bool solve_TODO_DELETE(const double delta_t)
+	// TODO delete
+	void solve_TODO_DELETE(const double delta_t)
 	{
 		_A->setZero();
-		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
+		MathLib::setMatrixSparsity(*_A, _sparsity_pattern); // TODO move that
 
-		bool const result = assemble(delta_t);
+		// bool const result = assemble(delta_t);
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
@@ -144,7 +144,6 @@ public:
 			                            bc.values);
 
 		_linear_solver->solve(*_rhs, *_x);
-		return result;
 	}
 
 protected:

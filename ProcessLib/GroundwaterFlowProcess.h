@@ -104,20 +104,6 @@ public:
             assert(false);
     }
 
-    bool assemble(const double /*delta_t*/) override
-    {
-#if 0
-        DBUG("Assemble GroundwaterFlowProcess.");
-
-        *this->_rhs = 0;   // This resets the whole vector.
-
-        // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers);
-#endif
-        return true;
-    }
-
     ~GroundwaterFlowProcess()
     {
         for (auto p : _local_assemblers)
@@ -130,11 +116,7 @@ public:
     void assemble(const double t, Vector const& x,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        // TODO implement;
-
         DBUG("Assemble GroundwaterFlowProcess.");
-
-        *this->_rhs = 0;   // This resets the whole vector.
 
         // Call global assembler for each local assembly item.
         this->_global_setup.execute(*this->_global_assembler,
