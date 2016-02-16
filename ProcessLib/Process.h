@@ -108,19 +108,24 @@ public:
 
 		createLocalAssemblers();
 
+		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
 		{
-			DBUG("Set initial conditions.");
-			setInitialConditions(pv, 0);  // 0 is the component id
-
-			DBUG("Initialize boundary conditions.");
 			createDirichletBcs(pv, 0);  // 0 is the component id
-
-			createNeumannBcs(pv, 0);  // 0 is the component id
+			createNeumannBcs(pv, 0);    // 0 is the component id
 		}
 
 		for (auto& bc : _neumann_bcs)
 			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
+	}
+
+	void setInitialConditions(GlobalVector& x)
+	{
+		DBUG("Set initial conditions.");
+		for (ProcessVariable& pv : _process_variables)
+		{
+			setInitialConditions(pv, 0, x);  // 0 is the component id
+		}
 	}
 
 	bool solve_TODO_DELETE(const double delta_t)
@@ -172,7 +177,8 @@ private:
 	/// Sets the initial condition values in the solution vector x for a given
 	/// process variable and component.
 	void setInitialConditions(ProcessVariable const& variable,
-	                          int const component_id)
+	                          int const component_id,
+	                          GlobalVector& x)
 	{
 		std::size_t const n = _mesh.getNNodes();
 		for (std::size_t i = 0; i < n; ++i)
@@ -190,11 +196,11 @@ private:
 			// To assign the initial value for the ghost entries,
 			// the negative indices of the ghost entries are restored to zero.
 			// checked hereby.
-			if ( global_index == _x->size() )
+			if ( global_index == x.size() )
 			    global_index = 0;
 #endif
-			_x->set(global_index,
-			        variable.getInitialConditionValue(*_mesh.getNode(i)));
+			x.set(global_index,
+			      variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}
 	}
 
