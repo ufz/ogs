@@ -116,6 +116,13 @@ class PETScMatrix
         {
             return _A;
         }
+        // TODO preliminary
+        // this method is dangerous insofar you can do arbitrary things also
+        // with a const PETSc matrix.
+        PETSc_Mat const& getRawMatrix() const
+        {
+            return _A;
+        }
 
         /// Set all entries to zero.
         void setZero()
