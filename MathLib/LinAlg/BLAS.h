@@ -73,14 +73,15 @@ void matMultAdd(Matrix const& A, Vector const& v1, Vector const& v2, Vector& v3)
 }} // namespaces
 
 
+// Global PETScMatrix/PETScVector //////////////////////////////////////////
 #ifdef USE_PETSC
 
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
-#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+namespace MathLib {
 
-// Global PETScMatrix/PETScVector //////////////////////////////////////////
+class PETScMatrix;
+class PETScVector;
 
-namespace MathLib { namespace BLAS
+namespace BLAS
 {
 
 // Vector
@@ -125,58 +126,56 @@ void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
 }} // namespaces
 
 
-#elif defined(OGS_USE_EIGEN)
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
+#elif defined(OGS_USE_EIGEN)
 
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+namespace MathLib {
 
+class EigenMatrix;
+class EigenVector;
 
-namespace MathLib { namespace BLAS
+namespace BLAS
 {
-
-using MEM = MathLib::EigenMatrix;
-using MEV = MathLib::EigenVector;
-
 
 // Vector
 
-void copy(MEV const& x, MEV& y);
+void copy(EigenVector const& x, EigenVector& y);
 
-void scale(MEV& x, double const a);
+void scale(EigenVector& x, double const a);
 
 // y = a*y + X
-void aypx(MEV& y, double const a, MEV const& x);
+void aypx(EigenVector& y, double const a, EigenVector const& x);
 
 // y = a*x + y
-void axpy(MEV& y, double const a, MEV const& x);
+void axpy(EigenVector& y, double const a, EigenVector const& x);
 
 // y = a*x + y
-void axpby(MEV& y, double const a, double const b, MEV const& x);
+void axpby(EigenVector& y, double const a, double const b, EigenVector const& x);
 
 
 // Matrix
 
-void copy(MEM const& A, MEM& B);
+void copy(EigenMatrix const& A, EigenMatrix& B);
 
 // A = a*A
-void scale(MEM& A, double const a);
+void scale(EigenMatrix& A, double const a);
 
 // Y = a*Y + X
-void aypx(MEM& Y, double const a, MEM const& X);
+void aypx(EigenMatrix& Y, double const a, EigenMatrix const& X);
 
 // Y = a*X + Y
-void axpy(MEM& Y, double const a, MEM const& X);
+void axpy(EigenMatrix& Y, double const a, EigenMatrix const& X);
 
 
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-void matMult(MEM const& A, MEV const& x, MEV& y);
+void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y);
 
 // v3 = A*v1 + v2
-void matMultAdd(MEM const& A, MEV const& v1, MEV const& v2, MEV& v3);
+void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
+                EigenVector const& v2, EigenVector& v3);
 
 } // namespace BLAS
 
