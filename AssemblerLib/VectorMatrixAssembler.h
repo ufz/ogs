@@ -17,16 +17,21 @@
 namespace AssemblerLib
 {
 
-// TODO doc
+/*! Calls the local assemblers of FEM processes and assembles
+ *  \c GlobalMatrix'es and \c GlobalVector's.
+ *
+ * It optionally gets the local d.o.f. from a GlobalVector using
+ * a LocalToGlobalIndexMap and passes them on to the local assembler.
+ *
+ * Each type of equation as flagged by the \c NLTag will have a different
+ * VectorMatrixAssembler type.
+ */
 template<typename GlobalMatrix, typename GlobalVector,
          NumLib::ODESystemTag NLTag>
 class VectorMatrixAssembler;
 
-/// Adds result of local assembler into a global vector and a global matrix.
-/// The VectorMatrixAssembler executes the local assembler for a given mesh item
-/// and adds the local vector and matrix entries into the global vector and
-/// the global matrix. The indices in global objects are provided by
-/// the LocalToGlobalIndexMap in the construction.
+
+//! Specialization for first-order implicit quasi-linear systems.
 template<typename GlobalMatrix, typename GlobalVector>
 class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> final
@@ -80,6 +85,7 @@ private:
 };
 
 
+//! Specialization used to add Neumann boundary conditions.
 template<typename GlobalMatrix, typename GlobalVector>
 class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
         NumLib::ODESystemTag::NeumannBC> final
