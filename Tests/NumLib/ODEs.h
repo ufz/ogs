@@ -41,7 +41,7 @@ public:
     void assembleJacobian(const double /*t*/, const Vector &/*x*/, Vector const& /*xdot*/,
                           const double dxdot_dx,  const Matrix& M,
                           const double dx_dx, const Matrix& K,
-                          Matrix &Jac)
+                          Matrix &Jac) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -111,7 +111,7 @@ public:
     void assembleJacobian(const double /*t*/, const Vector &x, Vector const& /*xdot*/,
                           const double dxdot_dx, Matrix const& M,
                           const double dx_dx, Matrix const& K,
-                          Matrix &Jac)
+                          Matrix &Jac) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -196,7 +196,7 @@ public:
     void assembleJacobian(const double t, const Vector& x_curr, Vector const& xdot,
                           const double dxdot_dx, Matrix const& M,
                           const double dx_dx, Matrix const& K,
-                          Matrix &Jac)
+                          Matrix &Jac) override
     {
         auto const x = x_curr[0];
         auto const y = x_curr[1];
