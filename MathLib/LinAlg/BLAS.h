@@ -10,61 +10,67 @@
 #ifndef MATHLIB_BLAS_H
 #define MATHLIB_BLAS_H
 
-#ifdef OGS_USE_EIGEN
+#include<cassert>
 
-#include <Eigen/Core>
 
 namespace MathLib { namespace BLAS
 {
 
-// Dense Eigen matrix/vector //////////////////////////////////////////
-// TODO change to templates
+// Matrix or Vector
 
-using EM = Eigen::MatrixXd;
-using EV = Eigen::VectorXd;
+template<typename MatrixOrVector>
+void copy(MatrixOrVector const& x, MatrixOrVector& y)
+{
+    y = x;
+}
 
-
-// Vector
-
-void copy(EV const& x, EV& y);
-
-void scale(EV& x, double const a);
+template<typename MatrixOrVector>
+void scale(MatrixOrVector& x, double const a)
+{
+    x *= a;
+}
 
 // y = a*y + X
-void aypx(EV& y, double const a, EV const& x);
+template<typename MatrixOrVector>
+void aypx(MatrixOrVector& y, double const a, MatrixOrVector const& x)
+{
+    y = a*y + x;
+}
 
 // y = a*x + y
-void axpy(EV& y, double const a, EV const& x);
+template<typename MatrixOrVector>
+void axpy(MatrixOrVector& y, double const a, MatrixOrVector const& x)
+{
+    y += a*x;
+}
 
 // y = a*x + y
-void axpby(EV& y, double const a, double const b, EV const& x);
-
-
-// Matrix
-
-void copy(EM const& A, EM& B);
-
-// A = a*A
-void scale(EM& A, double const a);
-
-// Y = a*Y + X
-void aypx(EM& Y, double const a, EM const& X);
-
-// Y = a*X + Y
-void axpy(EM& Y, double const a, EM const& X);
+template<typename MatrixOrVector>
+void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector const& x)
+{
+    y = a*x + b*y;
+}
 
 
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-void matMult(EM const& A, EV const& x, EV& y);
+template<typename Matrix, typename Vector>
+void matMult(Matrix const& A, Vector const& x, Vector& y)
+{
+    assert(&x != &y);
+    y = A*x;
+}
 
 // v3 = A*v1 + v2
-void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3);
+template<typename Matrix, typename Vector>
+void matMultAdd(Matrix const& A, Vector const& v1, Vector const& v2, Vector& v3)
+{
+    assert(&v1 != &v3);
+    v3 = v2 + A*v1;
+}
 
 }} // namespaces
-
-#endif
 
 
 #ifdef USE_PETSC
