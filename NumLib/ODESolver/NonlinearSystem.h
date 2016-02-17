@@ -53,16 +53,14 @@ public:
      *      with the same argument \c x.
      *
      * \todo Remove argument \c x.
-     * \todo make const
      */
-    virtual void getResidual(Vector const& x, Vector& res) = 0;
+    virtual void getResidual(Vector const& x, Vector& res) const = 0;
 
     /*! Writes the Jacobian of the residual to \c Jac.
      *
      * \pre assembleJacobian() must have been called before.
-     * \todo make const
      */
-    virtual void getJacobian(Matrix& Jac) = 0;
+    virtual void getJacobian(Matrix& Jac) const = 0;
 
     //! Apply known solutions to the linearized equation system
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
@@ -99,12 +97,10 @@ public:
     virtual void assembleMatricesPicard(Vector const& x) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
-    //! \todo make const
-    virtual void getA(Matrix& A) = 0;
+    virtual void getA(Matrix& A) const = 0;
 
     //! Writes the linearized equation system right-hand side to \c rhs.
-    //! //! \todo make const
-    virtual void getRhs(Vector& rhs) = 0;
+    virtual void getRhs(Vector& rhs) const = 0;
 
     //! Apply known solutions to the linearized equation system
     //! \f$ A \cdot x = \mathit{rhs} \f$.

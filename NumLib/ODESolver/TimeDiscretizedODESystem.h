@@ -135,12 +135,12 @@ public:
                               _Jac);
     }
 
-    void getResidual(Vector const& x_new_timestep, Vector& res) override
+    void getResidual(Vector const& x_new_timestep, Vector& res) const override
     {
         _mat_trans->getResidual(_M, _K, _b, x_new_timestep, res);
     }
 
-    void getJacobian(Matrix& Jac) override
+    void getJacobian(Matrix& Jac) const override
     {
         _mat_trans->getJacobian(_Jac, Jac);
     }
@@ -238,12 +238,12 @@ public:
         _ode.assemble(t, x_curr, _M, _K, _b);
     }
 
-    void getA(Matrix& A) override
+    void getA(Matrix& A) const override
     {
         _mat_trans->getA(_M, _K, A);
     }
 
-    void getRhs(Vector& rhs) override
+    void getRhs(Vector& rhs) const override
     {
         _mat_trans->getRhs(_M, _K, _b, rhs);
     }
