@@ -117,12 +117,6 @@ public:
         return true;
     }
 
-    std::size_t getNumEquations() const override
-    {
-        // TODO implement
-        return 1;
-    }
-
     //! @}
 
 private:

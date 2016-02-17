@@ -123,6 +123,35 @@ public:
 		}
 	}
 
+	std::size_t getNumEquations() const override final
+	{
+		return _local_to_global_index_map->dofSize();
+
+#ifdef USE_PETSC
+#if 0
+		// TODO for PETSc the method and the interface maybe have to be extended
+		// this is the old code moved here from th deleted createLinearSolver() method.
+
+		MathLib::PETScMatrixOption mat_opt;
+		const MeshLib::NodePartitionedMesh& pmesh =
+		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
+		mat_opt.o_nz = mat_opt.d_nz;
+		mat_opt.is_global_size = false;
+		const std::size_t num_unknowns =
+		    _local_to_global_index_map->dofSizeLocal();
+		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+		// In the following two lines, false is assigned to
+		// the argument of is_global_size, which indicates num_unknowns
+		// is local.
+		_x.reset( _global_setup.createVector(num_unknowns,
+		          _local_to_global_index_map->getGhostIndices(), false) );
+		_rhs.reset( _global_setup.createVector(num_unknowns,
+		            _local_to_global_index_map->getGhostIndices(), false) );
+#endif
+#endif
+	}
+
 	void assemble(const double t, GlobalVector const& x,
 	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
 	{
@@ -226,37 +255,6 @@ private:
 		                          component_id,
 		                          *_mesh_subset_all_nodes);
 	}
-
-#if 0
-	/// Creates global matrix, rhs and solution vectors, and the linear solver.
-	void createLinearSolver(std::string const& solver_name)
-	{
-		DBUG("Allocate global matrix, vectors, and linear solver.");
-#ifdef USE_PETSC
-		MathLib::PETScMatrixOption mat_opt;
-		const MeshLib::NodePartitionedMesh& pmesh =
-		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
-		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
-		mat_opt.o_nz = mat_opt.d_nz;
-		mat_opt.is_global_size = false;
-		const std::size_t num_unknowns =
-		    _local_to_global_index_map->dofSizeLocal();
-		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
-		// In the following two lines, false is assigned to
-		// the argument of is_global_size, which indicates num_unknowns
-		// is local.
-		_x.reset( _global_setup.createVector(num_unknowns,
-		          _local_to_global_index_map->getGhostIndices(), false) );
-		_rhs.reset( _global_setup.createVector(num_unknowns,
-		            _local_to_global_index_map->getGhostIndices(), false) );
-#else
-		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
-		_A.reset(_global_setup.createMatrix(num_unknowns));
-		_x.reset(_global_setup.createVector(num_unknowns));
-		_rhs.reset(_global_setup.createVector(num_unknowns));
-#endif
-	}
-#endif
 
 	/// Computes and stores global matrix' sparsity pattern from given
 	/// DOF-table.
