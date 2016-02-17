@@ -68,6 +68,7 @@ private:
 
 //! @}
 
+// TODO rename class
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
 bool
@@ -86,6 +87,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
 
+    // TODO change n*delta_t
     double t;
     unsigned timestep = 0;
     bool nl_slv_succeeded = true;
@@ -99,6 +101,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 
         time_disc.pushState(t, x, _ode_sys);
 
+        // TODO check const ref
         auto const  t_cb = t; // make sure the callback cannot overwrite anything.
         auto const& x_cb = x; // ditto.
         post_timestep(t_cb, x_cb);

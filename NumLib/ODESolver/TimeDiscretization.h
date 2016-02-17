@@ -151,17 +151,18 @@ public:
 
         auto const dxdot_dx = getCurrentXWeight();
 
+        // xdot = dxdot_dx * x_at_new_timestep - x_old
         getWeightedOldX(xdot);
-        BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
+        BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep); // TODO consistent
     }
 
     //! Returns \f$ \alpha = \partial \hat x / \partial x_C \f$.
-    virtual double getCurrentXWeight() const = 0;
+    virtual double getCurrentXWeight() const = 0;  // TODO maybe getNewXWeight
 
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(Vector& y) const = 0; // = x_old
 
-    ~TimeDiscretization() = default;
+    virtual ~TimeDiscretization() = default; // TODO virtual needed?
 
     //! \name Extended Interface
     //! These methods are provided primarily to make certain concrete time discretizations
@@ -210,9 +211,8 @@ public:
         _x_old = x0;
     }
 
-    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
+    void pushState(const double /*t*/, Vector const& x, InternalMatrixStorage const&) override
     {
-        (void) t;
         _x_old = x;
     }
 
@@ -232,6 +232,8 @@ public:
     void getWeightedOldX(Vector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
+
+        // y = x_old / delta_t
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -254,9 +256,8 @@ public:
         _x_old = x0;
     }
 
-    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
+    void pushState(const double /*t*/, Vector const& x, InternalMatrixStorage const&) override
     {
-        (void) t;
         _x_old = x;
     }
 
@@ -281,6 +282,8 @@ public:
     void getWeightedOldX(Vector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
+
+        // y = x_old / delta_t
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -349,6 +352,8 @@ public:
     void getWeightedOldX(Vector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
+
+        // y = x_old / delta_t
         BLAS::copy(_x_old, y);
         BLAS::scale(y, 1.0/_delta_t);
     }
@@ -382,7 +387,7 @@ const double BDF_Coeffs[6][7] = {
     {   1.5,         2.0, -0.5 },
     {  11.0 /  6.0,  3.0, -1.5,  1.0 / 3.0 },
     {  25.0 / 12.0,  4.0, -3.0,  4.0 / 3.0, -0.25 },
-    { 137.0 / 60.0,  5.0, -5.0, 10.0 / 3.0, -1.25,  0.2 },
+    { 137.0 / 60.0,  5.0, -5.0, 10.0 / 3.0, -1.25,  0.2 }, // TODO change to rational numbers
     { 147.0 / 60.0,  6.0, -7.5, 20.0 / 3.0, -3.75,  1.2, -1.0/6.0 }
     // coefficient of (for BDF(6), the oldest state, x_n, is always rightmost)
     //        x_+6, x_+5, x_+4,       x_+3,  x_+2, x_+1,     x_n
@@ -422,6 +427,7 @@ public:
     void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
     {
         (void) t;
+        // TODO use boost cirular buffer?
 
         // until _xs_old is filled, lower-order BDF formulas are used.
         if (_xs_old.size() < _num_steps) {

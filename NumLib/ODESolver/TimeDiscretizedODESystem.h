@@ -101,9 +101,9 @@ public:
         , _time_disc(time_discretization)
         , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
         , _Jac(ode.getNumEquations(), ode.getNumEquations())
-        , _M(_Jac)
-        , _K(_Jac)
-        , _b(ode.getNumEquations())
+        , _M  (ode.getNumEquations(), ode.getNumEquations())
+        , _K  (ode.getNumEquations(), ode.getNumEquations())
+        , _b  (ode.getNumEquations())
     {}
 
     void assembleResidualNewton(const Vector &x_new_timestep) override
@@ -137,6 +137,7 @@ public:
 
     void getResidual(Vector const& x_new_timestep, Vector& res) const override
     {
+        // TODO change to calculate
         _mat_trans->getResidual(_M, _K, _b, x_new_timestep, _xdot, res);
     }
 
@@ -222,7 +223,7 @@ public:
         , _time_disc(time_discretization)
         , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
         , _M(ode.getNumEquations(), ode.getNumEquations())
-        , _K(_M)
+        , _K(ode.getNumEquations(), ode.getNumEquations())
         , _b(ode.getNumEquations())
     {}
 
