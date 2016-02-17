@@ -32,6 +32,12 @@ public:
      * \remark
      * This method is needed in particular to fully implement the
      * interaction of the CrankNicolson scheme with other classes.
+     *
+     * \attention
+     * This method must be called (if it is called) from within
+     * TimeDiscretization::pushState() \b after the internal state of
+     * the TimeDiscretization has been set to the new solution.
+     * Otherwise the pushMatrices() method of MatrixTranslator's will break!
      */
     virtual void pushMatrices() const = 0;
 };
