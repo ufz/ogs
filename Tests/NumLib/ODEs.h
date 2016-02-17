@@ -166,6 +166,11 @@ const double ODETraits<Matrix, Vector, ODE2>::t_end = 2.0;
 // ODE 2 end //////////////////////////////////////////////////////
 
 // ODE 3 //////////////////////////////////////////////////////////
+//
+// TODO Check that the ODE is really solved by the given solution,
+//      i.e., residual is zero.
+//      Check (by numerical differentiation that the Jacobian is correct.
+//
 template<typename Matrix, typename Vector>
 class ODE3 final
         : public NumLib::ODESystem<Matrix, Vector,
