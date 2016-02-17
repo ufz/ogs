@@ -13,7 +13,20 @@
 #include<cassert>
 
 
-namespace MathLib { namespace BLAS
+namespace MathLib
+{
+
+/*! \namespace MathLib::BLAS
+ * Some general linear algebra functionality.
+ *
+ * By using the provided functions linear algebra capabilities can be
+ * used for different matrix and vector types in a way that is agnostic
+ * towards the specific type used.
+ *
+ * For documentation, refer to that of the templated method. All specializations
+ * or overload must behave in the same way.
+ */
+namespace BLAS
 {
 
 // Matrix or Vector
@@ -56,7 +69,12 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
 
 // Matrix and Vector
 
-//! Computes \f$ y = A \cdot x \f$.
+/*! Computes \f$ y = A \cdot x \f$.
+ *
+ * \note \c x must not be the same object as \c y.
+ *       This restirction has been chosen in order to fulfill
+ *       the requirements of the respective PETSc function.
+ */
 template<typename Matrix, typename Vector>
 void matMult(Matrix const& A, Vector const& x, Vector& y)
 {
@@ -64,7 +82,12 @@ void matMult(Matrix const& A, Vector const& x, Vector& y)
     y = A*x;
 }
 
-//! Computes \f$ v_3 = A \cdot v_1 + v_2 \f$.
+/*! Computes \f$ v_3 = A \cdot v_1 + v_2 \f$.
+ *
+ * \note \c x must not be the same object as \c y.
+ *       This restirction has been chosen in order to fulfill
+ *       the requirements of the respective PETSc function.
+ */
 template<typename Matrix, typename Vector>
 void matMultAdd(Matrix const& A, Vector const& v1, Vector const& v2, Vector& v3)
 {
@@ -121,7 +144,7 @@ void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X);
 // v3 = A*v1 + v2
 void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y);
 
-// v3 = A*v1 + v2
+// y = A*x
 void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
                        PETScVector const& v2, PETScVector& v3);
 
@@ -172,7 +195,7 @@ void axpy(EigenMatrix& Y, double const a, EigenMatrix const& X);
 
 // Matrix and Vector
 
-// v3 = A*v1 + v2
+// y = A*x
 void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y);
 
 // v3 = A*v1 + v2
