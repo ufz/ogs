@@ -48,7 +48,7 @@ public:
     //       Otherwise we could also pass local matrices in with the assemble() call.
     //       Thereby we would not have to expose global matrices/vectors.
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& n) const = 0;
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 };
 
 template <typename ShapeFunction_,
