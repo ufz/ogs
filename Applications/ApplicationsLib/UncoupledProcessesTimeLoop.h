@@ -123,7 +123,8 @@ loop(ProjectData& project, std::string const& outdir)
     }
 
     // init solution storage
-    std::vector<Vector> process_solutions(num_processes); // TODO: waste of memory
+    std::vector<Vector> process_solutions; // TODO: waste of memory
+    process_solutions.reserve(num_processes);
 
     auto const t0 = 0.0; // time of the IC
 
@@ -133,11 +134,17 @@ loop(ProjectData& project, std::string const& outdir)
         for (auto p = project.processesBegin(); p != project.processesEnd();
              ++p, ++pcs_idx)
         {
-            auto& x0 = process_solutions[pcs_idx];
-            (*p)->setInitialConditions(x0);
-
             auto& time_disc = *time_disc_ode_syss[pcs_idx].time_disc;
             auto& ode_sys   = *time_disc_ode_syss[pcs_idx].tdisc_ode_sys;
+
+            auto const num_eqs = ode_sys.getNumEquations();
+
+            // TODO maybe more is required for PETSc
+            // append a solution vector of size num_eqs
+            process_solutions.emplace_back(num_eqs);
+
+            auto& x0 = process_solutions[pcs_idx];
+            (*p)->setInitialConditions(x0);
 
             time_disc.setInitialState(t0, x0); // push IC
 
