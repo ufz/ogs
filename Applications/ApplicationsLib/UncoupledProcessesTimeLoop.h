@@ -161,7 +161,7 @@ loop(ProjectData& project, std::string const& outdir)
     auto const t_end   = 1.5;
 
     double t;
-    unsigned timestep = 0;
+    unsigned timestep = 1; // the first timestep really is number one
     bool nl_slv_succeeded = true;
     for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
     {
