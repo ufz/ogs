@@ -18,33 +18,35 @@ namespace MathLib { namespace BLAS
 
 // Matrix or Vector
 
+//! Copies \c x to \c y.
 template<typename MatrixOrVector>
 void copy(MatrixOrVector const& x, MatrixOrVector& y)
 {
     y = x;
 }
 
+//! Scales \c x by \c a
 template<typename MatrixOrVector>
 void scale(MatrixOrVector& x, double const a)
 {
     x *= a;
 }
 
-// y = a*y + X
+//! Computes \f$ y = a \cdot y + x \f$.
 template<typename MatrixOrVector>
 void aypx(MatrixOrVector& y, double const a, MatrixOrVector const& x)
 {
     y = a*y + x;
 }
 
-// y = a*x + y
+//! Computes \f$ y = a \cdot x + y \f$.
 template<typename MatrixOrVector>
 void axpy(MatrixOrVector& y, double const a, MatrixOrVector const& x)
 {
     y += a*x;
 }
 
-// y = a*x + y
+//! Computes \f$ y = a \cdot x + b \cdot y \f$.
 template<typename MatrixOrVector>
 void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector const& x)
 {
@@ -54,7 +56,7 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
 
 // Matrix and Vector
 
-// v3 = A*v1 + v2
+//! Computes \f$ y = A \cdot x \f$.
 template<typename Matrix, typename Vector>
 void matMult(Matrix const& A, Vector const& x, Vector& y)
 {
@@ -62,7 +64,7 @@ void matMult(Matrix const& A, Vector const& x, Vector& y)
     y = A*x;
 }
 
-// v3 = A*v1 + v2
+//! Computes \f$ v_3 = A \cdot v_1 + v_2 \f$.
 template<typename Matrix, typename Vector>
 void matMultAdd(Matrix const& A, Vector const& v1, Vector const& v2, Vector& v3)
 {
