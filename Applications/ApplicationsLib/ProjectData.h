@@ -47,13 +47,14 @@ class ProjectData final
 	using GlobalMatrix = GlobalSetupType::MatrixType;
 	using GlobalVector = GlobalSetupType::VectorType;
 public:
-	// TODO doc, currently use Picard scheme
+	/// The time loop type used to solve this project's processes.
+	/// \todo Currently the Picard scheme is hard-coded.
 	using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
 	    GlobalMatrix, GlobalVector, NumLib::NonlinearSolverTag::Picard>;
 
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
-	ProjectData(); // TODO delete this
+	ProjectData(); // TODO is that still needed?
 
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
@@ -190,7 +191,7 @@ private:
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
 
-	// TODO doc
+	/// The time loop used to solve this project's processes.
 	std::unique_ptr<TimeLoop> _time_loop;
 };
 
