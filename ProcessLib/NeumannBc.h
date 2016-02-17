@@ -182,7 +182,6 @@ private:
     /// the #_function.
     unsigned const _integration_order;
 
-    // TODO check
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector,
