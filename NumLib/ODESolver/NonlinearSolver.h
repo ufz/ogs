@@ -80,7 +80,9 @@ private:
     const double _tol;       //!< tolerance of the solver
     const unsigned _maxiter; //!< maximum number of iterations
 
-    Vector _minus_delta_x; //!< the Newton-Raphson method solves the linearized equation
+    Vector _res;           //!< The residual.
+    Matrix _J;             //!< The Jacobian of the residual.
+    Vector _minus_delta_x; //!< The Newton-Raphson method solves the linearized equation
                            //!< \f$ J \cdot (-\Delta x) = r \f$ repeatedly.
 };
 
@@ -133,7 +135,9 @@ private:
     const double _tol;       //!< tolerance of the solver
     const unsigned _maxiter; //!< maximum number of iterations
 
-    Vector _x_new; //!< \c Vector to store intermediate solutions.
+    Matrix _A;     //!< \c Matrix describing the linearized system.
+    Vector _rhs;   //!< \c Vector describing the linearized system.
+    Vector _x_new; //!< \c Vector to store solutions of \f$ A \cdot x = \mathit{rhs} \f$.
 };
 
 //! @}

@@ -41,20 +41,19 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 {
     namespace BLAS = MathLib::BLAS;
 
-    Matrix A; Vector rhs; // TODO: member variables?
     bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleMatricesPicard(x);
-        sys.getA(A);
-        sys.getRhs(rhs);
-        sys.applyKnownComponents(A, rhs, x);
+        sys.getA(_A);
+        sys.getRhs(_rhs);
+        sys.applyKnownComponents(_A, _rhs, x);
 
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
 
-        oneShotLinearSolve(A, rhs, _x_new);
+        oneShotLinearSolve(_A, _rhs, _x_new);
 
         BLAS::aypx(x, -1.0, _x_new); // x = _x_new - x
         auto const error = norm(x);
@@ -94,28 +93,27 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 {
     namespace BLAS = MathLib::BLAS;
 
-    Matrix J; Vector res; // TODO: member variables?
     bool success = false;
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleResidualNewton(x);
-        sys.getResidual(x, res);
+        sys.getResidual(x, _res);
 
         // std::cout << "  res:\n" << res << std::endl;
 
-        if (norm(res) < _tol) {
+        if (norm(_res) < _tol) {
             success = true;
             break;
         }
 
         sys.assembleJacobian(x);
-        sys.getJacobian(J);
-        sys.applyKnownComponents(J, res, x);
+        sys.getJacobian(_J);
+        sys.applyKnownComponents(_J, _res, x);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
-        oneShotLinearSolve(J, res, _minus_delta_x);
+        oneShotLinearSolve(_J, _res, _minus_delta_x);
 
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
