@@ -42,6 +42,11 @@ class TimeDiscretizedODESystemBase
         , public InternalMatrixStorage
 {
 public:
+    // TODO better solution? Maybe move to nonlinear system
+    //! Get the number of equations.
+    virtual std::size_t getNumEquations() const = 0;
+
+    // TODO doc
     virtual TimeDiscretization<Vector>& getTimeDiscretization() = 0;
 };
 
@@ -151,13 +156,17 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
+    void pushMatrices() const override
+    {
+        _mat_trans->pushMatrices(_M, _K, _b);
+    }
+
     TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
-    virtual void pushMatrices() const override
-    {
-        _mat_trans->pushMatrices(_M, _K, _b);
+    std::size_t getNumEquations() const override {
+        return _ode.getNumEquations();
     }
 
 private:
@@ -255,13 +264,17 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
+    void pushMatrices() const override
+    {
+        _mat_trans->pushMatrices(_M, _K, _b);
+    }
+
     TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
-    virtual void pushMatrices() const override
-    {
-        _mat_trans->pushMatrices(_M, _K, _b);
+    std::size_t getNumEquations() const override {
+        return _ode.getNumEquations();
     }
 
 private:
