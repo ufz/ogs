@@ -127,29 +127,6 @@ private:
     LocalToGlobalIndexMap const& _data_pos;
 };
 
-
-// TODO remove the dummy
-template<typename GlobalMatrix, typename GlobalVector>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
-        NumLib::ODESystemTag::DUMMY> final
-{
-public:
-    VectorMatrixAssembler(
-        LocalToGlobalIndexMap const& data_pos)
-    : _data_pos(data_pos)
-    {}
-
-    template <typename LocalAssembler_>
-    void operator()(std::size_t const id,
-        LocalAssembler_* const local_assembler) const
-    {
-        (void) id; (void) local_assembler;
-    }
-
-private:
-    LocalToGlobalIndexMap const& _data_pos;
-};
-
 }   // namespace AssemblerLib
 
 #endif  // ASSEMBLERLIB_VECTORMATRIXASSEMBLER_H_
