@@ -23,6 +23,12 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
+// TODO
+// As far as I can see, this interface is necessary only, because we want to use fixed-size
+// Eigen matrices for the shape matrices. Sure, they improve performance. O nthe other side,
+// virtual calls degrade performance. Maybe somebody should make a measurement and if the
+// performance gain by fixed-size matrices is negligible, we should abandon them.
+// Additionally that would save compile time.
 template <typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerDataInterface
 {
@@ -37,6 +43,10 @@ public:
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
     // TODO: Don't we waste quite some time by having this as a virtual method?
+    //       If we put a callback arg to the assemble() call, this funcitonality can
+    //       be provided by a non-virtual method.
+    //       Otherwise we could also pass local matrices in with the assemble() call.
+    //       Thereby we would not have to expose global matrices/vectors.
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& n) const = 0;
 };
