@@ -1,7 +1,14 @@
-#pragma once
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 
-#include<cassert>
-
+#ifndef MATHLIB_BLAS_H
+#define MATHLIB_BLAS_H
 
 #ifdef OGS_USE_EIGEN
 
@@ -9,7 +16,6 @@
 
 namespace MathLib { namespace BLAS
 {
-
 
 // Dense Eigen matrix/vector //////////////////////////////////////////
 // TODO change to templates
@@ -20,76 +26,41 @@ using EV = Eigen::VectorXd;
 
 // Vector
 
-inline void copy(EV const& x, EV& y)
-{
-    y = x;
-}
+void copy(EV const& x, EV& y);
 
-inline void scale(EV& x, double const a)
-{
-    x *= a;
-}
+void scale(EV& x, double const a);
 
 // y = a*y + X
-inline void aypx(EV& y, double const a, EV const& x)
-{
-    y = a*y + x;
-}
+void aypx(EV& y, double const a, EV const& x);
 
 // y = a*x + y
-inline void axpy(EV& y, double const a, EV const& x)
-{
-    y += a*x;
-}
+void axpy(EV& y, double const a, EV const& x);
 
 // y = a*x + y
-inline void axpby(EV& y, double const a, double const b, EV const& x)
-{
-    y = a*x + b*y;
-}
+void axpby(EV& y, double const a, double const b, EV const& x);
 
 
 // Matrix
 
-inline void copy(EM const& A, EM& B)
-{
-    B = A;
-}
+void copy(EM const& A, EM& B);
 
 // A = a*A
-inline void scale(EM& A, double const a)
-{
-    A *= a;
-}
+void scale(EM& A, double const a);
 
 // Y = a*Y + X
-inline void aypx(EM& Y, double const a, EM const& X)
-{
-    Y = a*Y + X;
-}
+void aypx(EM& Y, double const a, EM const& X);
 
 // Y = a*X + Y
-inline void axpy(EM& Y, double const a, EM const& X)
-{
-    Y = a*X + Y;
-}
+void axpy(EM& Y, double const a, EM const& X);
 
 
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-inline void matMult(EM const& A, EV const& x, EV& y)
-{
-    assert(&x != &y);
-    y = A*x;
-}
+void matMult(EM const& A, EV const& x, EV& y);
 
 // v3 = A*v1 + v2
-inline void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3)
-{
-    assert(&v1 != &v3);
-    v3 = v2 + A*v1;
-}
+void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3);
 
 }} // namespaces
 
@@ -108,88 +79,42 @@ namespace MathLib { namespace BLAS
 
 // Vector
 
-inline void copy(PETScVector const& x, PETScVector& y)
-{
-    y = x;
-}
+void copy(PETScVector const& x, PETScVector& y);
 
-inline void scale(PETScVector& x, double const a)
-{
-    VecScale(x.getRawVector(), a);
-}
+void scale(PETScVector& x, double const a);
 
 // y = a*y + X
-inline void aypx(PETScVector& y, double const a, PETScVector const& x)
-{
-    // TODO check sizes
-    VecAYPX(y.getRawVector(), a, x.getRawVector());
-}
+void aypx(PETScVector& y, double const a, PETScVector const& x);
 
 // y = a*x + y
-inline void axpy(PETScVector& y, double const a, PETScVector const& x)
-{
-    // TODO check sizes
-    VecAXPY(y.getRawVector(), a, x.getRawVector());
-}
+void axpy(PETScVector& y, double const a, PETScVector const& x);
 
 // y = a*x + y
-inline void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
-{
-    // TODO check sizes
-    VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
-}
+void axpby(PETScVector& y, double const a, double const b, PETScVector const& x);
 
 
 // Matrix
 
-inline void copy(PETScMatrix const& A, PETScMatrix& B)
-{
-    B = A;
-}
+void copy(PETScMatrix const& A, PETScMatrix& B);
 
 // A = a*A
-inline void scale(PETScMatrix& A, double const a)
-{
-    MatScale(A.getRawMatrix(), a);
-}
+void scale(PETScMatrix& A, double const a);
 
 // Y = a*Y + X
-inline void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
-{
-    // TODO check sizes
-    // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(),
-            DIFFERENT_NONZERO_PATTERN);
-}
+void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X);
 
 // Y = a*X + Y
-inline void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
-{
-    // TODO check sizes
-    // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(),
-            DIFFERENT_NONZERO_PATTERN);
-}
+void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X);
 
 
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-inline void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
-{
-    // TODO check sizes
-    assert(&x != &y);
-    MatMult(A.getRawMatrix(), x.getRawVector(), y.getRawVector());
-}
+void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y);
 
 // v3 = A*v1 + v2
-inline void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
-                       PETScVector const& v2, PETScVector& v3)
-{
-    // TODO check sizes
-    assert(&v1 != &v3);
-    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(), v3.getRawVector());
-}
+void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
+                       PETScVector const& v2, PETScVector& v3);
 
 }} // namespaces
 
@@ -211,86 +136,46 @@ using MEV = MathLib::EigenVector;
 
 // Vector
 
-inline void copy(MEV const& x, MEV& y)
-{
-    y = x;
-}
+void copy(MEV const& x, MEV& y);
 
-inline void scale(MEV& x, double const a)
-{
-    x *= a;
-}
+void scale(MEV& x, double const a);
 
 // y = a*y + X
-inline void aypx(MEV& y, double const a, MEV const& x)
-{
-    // TODO: does that break anything?
-    y.getRawVector() = a*y.getRawVector() + x.getRawVector();
-}
+void aypx(MEV& y, double const a, MEV const& x);
 
 // y = a*x + y
-inline void axpy(MEV& y, double const a, MEV const& x)
-{
-    // TODO: does that break anything?
-    y.getRawVector() += a*x.getRawVector();
-}
+void axpy(MEV& y, double const a, MEV const& x);
 
 // y = a*x + y
-inline void axpby(MEV& y, double const a, double const b, MEV const& x)
-{
-    // TODO: does that break anything?
-    y.getRawVector() = a*x.getRawVector() + b*y.getRawVector();
-}
+void axpby(MEV& y, double const a, double const b, MEV const& x);
 
 
 // Matrix
 
-inline void copy(MEM const& A, MEM& B)
-{
-    B = A;
-}
+void copy(MEM const& A, MEM& B);
 
 // A = a*A
-inline void scale(MEM& A, double const a)
-{
-    // TODO: does that break anything?
-    A.getRawMatrix() *= a;
-}
+void scale(MEM& A, double const a);
 
 // Y = a*Y + X
-inline void aypx(MEM& Y, double const a, MEM const& X)
-{
-    // TODO: does that break anything?
-    Y.getRawMatrix() = a*Y.getRawMatrix() + X.getRawMatrix();
-}
+void aypx(MEM& Y, double const a, MEM const& X);
 
 // Y = a*X + Y
-inline void axpy(MEM& Y, double const a, MEM const& X)
-{
-    // TODO: does that break anything?
-    Y.getRawMatrix() = a*X.getRawMatrix() + Y.getRawMatrix();
-}
+void axpy(MEM& Y, double const a, MEM const& X);
 
 
 // Matrix and Vector
 
 // v3 = A*v1 + v2
-inline void matMult(MEM const& A, MEV const& x, MEV& y)
-{
-    assert(&x != &y);
-    A.multiply(x, y);
-}
+void matMult(MEM const& A, MEV const& x, MEV& y);
 
 // v3 = A*v1 + v2
-inline void matMultAdd(MEM const& A, MEV const& v1, MEV const& v2, MEV& v3)
-{
-    assert(&v1 != &v3);
-    // TODO: does that break anything?
-    v3.getRawVector() = v2.getRawVector() + A.getRawMatrix()*v1.getRawVector();
-}
+void matMultAdd(MEM const& A, MEV const& v1, MEV const& v2, MEV& v3);
 
 } // namespace BLAS
 
 } // namespace MathLib
 
 #endif
+
+#endif // MATHLIB_BLAS_H
