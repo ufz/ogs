@@ -53,12 +53,12 @@ public:
     //! Computes \c rhs from \c M, \c K and \c b.
     virtual void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
 
-    /*! Computes \c res from \c M, \c K, \c b and \f$ x_N \f$.
+    /*! Computes \c res from \c M, \c K, \c b, \f$ \hat x \f$ and \f$ x_N \f$.
      * You might also want read the remarks on
      * \ref concept_time_discretization "time discretization".
      */
     virtual void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                             Vector const& x_new_timestep,
+                             Vector const& x_new_timestep, Vector const& xdot,
                              Vector& res) const = 0;
 
     //! Computes the Jacobian of the residual and writes it to \c Jac_out.
@@ -139,15 +139,15 @@ public:
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep, Vector& res) const override
+                     Vector const& x_new_timestep,  Vector const& xdot,
+                     Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
-        _time_disc.getXdot(x_new_timestep, _tmp);
 
         // res = M * x_dot + K * x_curr - b
-        BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, xdot, res); // the local vector x_dot seems to be necessary because of this multiplication
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
     }
@@ -231,16 +231,15 @@ public:
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep,
+                     Vector const& x_new_timestep, Vector const& xdot,
                      Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto const& x_curr = _fwd_euler.getCurrentX(x_new_timestep);
-        _fwd_euler.getXdot(x_new_timestep, _tmp);
 
         // res = M * x_dot + K * x_curr - b
-        BLAS::matMult(M, _tmp, res); // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, xdot, res);
         BLAS::matMultAdd(K, x_curr, res, res);
         BLAS::axpy(res, -1.0, b);
     }
@@ -328,22 +327,21 @@ public:
     }
     //! Computes \f$ r = \theta \cdot (M \cdot \hat x + K \cdot x_C - b) + \bar M \cdot \hat x + \bar b \f$.
     void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep,
+                     Vector const& x_new_timestep, Vector const& xdot,
                      Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto const& x_curr = _crank_nicolson.getCurrentX(x_new_timestep);
         auto const  theta  = _crank_nicolson.getTheta();
-        _crank_nicolson.getXdot(x_new_timestep, _tmp);
 
         // res = theta * (M * x_dot + K*x_curr - b) + _M_bar * x_dot + _b_bar
-        BLAS::matMult(M, _tmp, res); // res = M * x_dot; // the local vector x_dot seems to be necessary because of this multiplication
+        BLAS::matMult(M, xdot, res); // res = M * x_dot
         BLAS::matMultAdd(K, x_curr, res, res); // res += K * x_curr
         BLAS::axpy(res, -1.0, b); // res = M * x_dot + K * x_curr - b
 
         BLAS::aypx(res, theta, _b_bar); // res = res * theta + _b_bar
-        BLAS::matMultAdd(_M_bar, _tmp, res, res); // rs += _M_bar * x_dot
+        BLAS::matMultAdd(_M_bar, xdot, res, res); // rs += _M_bar * x_dot
     }
 
     /*! Computes \f$ \mathtt{Jac\_out} = \theta \cdot \mathtt{Jac\_in} + \bar M \cdot \alpha \f$.

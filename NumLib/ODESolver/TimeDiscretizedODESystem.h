@@ -137,7 +137,7 @@ public:
 
     void getResidual(Vector const& x_new_timestep, Vector& res) const override
     {
-        _mat_trans->getResidual(_M, _K, _b, x_new_timestep, res);
+        _mat_trans->getResidual(_M, _K, _b, x_new_timestep, _xdot, res);
     }
 
     void getJacobian(Matrix& Jac) const override
