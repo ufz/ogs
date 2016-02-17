@@ -43,12 +43,15 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 
     bool success = false;
 
+    BLAS::copy(x, _x_new); // set initial guess, TODO save the copy
+
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
-        sys.assembleMatricesPicard(x);
+        sys.assembleMatricesPicard(_x_new);
         sys.getA(_A);
         sys.getRhs(_rhs);
-        // TODO _x_new might not have been initialized
+
+        // Here _x_new has to be used and it has to be equal to x!
         sys.applyKnownComponentsPicard(_A, _rhs, _x_new);
 
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
@@ -56,11 +59,10 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 
         oneShotLinearSolve(_A, _rhs, _x_new);
 
+        // x is used as delta_x in order to compute the error.
         BLAS::aypx(x, -1.0, _x_new); // x = _x_new - x
         auto const error = norm(x);
         // INFO("  picard iteration %u error: %e", iteration, error);
-
-        x = _x_new;
 
         if (error < _tol) {
             success = true;
@@ -73,6 +75,8 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
             break;
         }
     }
+
+    x = _x_new; // always set to what we computed last
 
     return success;
 }
@@ -96,6 +100,8 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
     bool success = false;
 
+    // TODO init _minus_delta_x to right size and 0.0
+
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
         sys.assembleResidualNewton(x);
@@ -103,6 +109,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         // std::cout << "  res:\n" << res << std::endl;
 
+        // TODO streamline the, make consistent with Picard.
         if (norm(_res) < _tol) {
             success = true;
             break;
@@ -120,7 +127,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
 
-        BLAS::axpy(x, -1.0, _minus_delta_x);
+        BLAS::axpy(x, -_alpha, _minus_delta_x);
 
         if (sys.isLinear()) {
             // INFO("  newton linear system. not looping");

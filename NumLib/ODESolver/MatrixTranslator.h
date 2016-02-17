@@ -64,6 +64,7 @@ public:
     //! Computes the Jacobian of the residual and writes it to \c Jac_out.
     virtual void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const = 0;
 
+    // TODO check (void)
     /*! Allows to store the given matrices internally for later use.
      *
      * \remark

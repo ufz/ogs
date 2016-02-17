@@ -73,7 +73,7 @@ public:
 
     using Index = typename MatrixTraits<Matrix>::Index;
 
-    // TODO doc
+    // TODO solutions
     virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownComponents() const
     {
         return nullptr; // by default there are no known components
@@ -85,7 +85,8 @@ public:
 
 /*! Interface for a first-order implicit quasi-linear ODE.
  *
- * ODEs using this interface also provide a Jacobian.
+ * ODEs using this interface also provide a Jacobian in addition
+ * to the functionality of the Picard-related interface.
  */
 template<typename Matrix, typename Vector>
 class ODESystem<Matrix, Vector,

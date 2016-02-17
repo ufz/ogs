@@ -62,6 +62,7 @@ public:
      */
     virtual void getJacobian(Matrix& Jac) const = 0;
 
+    // TODO solutions
     //! Apply known solutions to the linearized equation system
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
     virtual void applyKnownComponentsNewton(
@@ -76,10 +77,12 @@ public:
      */
     virtual bool isLinear() const = 0;
 
+    // TODO add getNumEquations()
+
     virtual ~NonlinearSystem() = default;
 };
 
-
+// TODO common base class
 /*! A System of nonlinear equations to be solved with the Picard fixpoint
  *  iteration method.
  *
@@ -102,6 +105,7 @@ public:
     //! Writes the linearized equation system right-hand side to \c rhs.
     virtual void getRhs(Vector& rhs) const = 0;
 
+    // TODO components
     //! Apply known solutions to the linearized equation system
     //! \f$ A \cdot x = \mathit{rhs} \f$.
     virtual void applyKnownComponentsPicard(
@@ -115,6 +119,8 @@ public:
      * detect that at runtime and thus save an assembly call.
      */
     virtual bool isLinear() const = 0;
+
+    // TODO add getNumEquations()
 
     virtual ~NonlinearSystem() = default;
 };
