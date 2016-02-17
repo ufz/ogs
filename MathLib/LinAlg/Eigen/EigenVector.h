@@ -33,6 +33,9 @@ public:
     // more appropriate RawVectorType for the global vectors.
     using IndexType = Eigen::SparseMatrix<double>::Index;
 
+    // TODO: preliminary
+    EigenVector() {}
+
     /// Constructor for initialization of the number of rows
     /// @param length number of rows
     explicit EigenVector(std::size_t length) : _vec(length) {}
@@ -51,6 +54,9 @@ public:
 
     /// set all values in this vector
     EigenVector& operator= (double v) { _vec.setConstant(v); return *this; }
+
+    // TODO preliminary
+    void setZero() { _vec.setZero(); }
 
     /// set all values in this vector
     EigenVector& operator*= (double v) { _vec *= v; return *this; }
@@ -87,9 +93,9 @@ public:
     }
 
     /// Copy vector values.
-    void copyValues(std::vector<double>& u)
+    void copyValues(std::vector<double>& u) const
     {
-        assert(u.size() == _vec.size());
+        assert(u.size() == (std::size_t) _vec.size());
         copy_n(_vec.data(), _vec.size(), u.begin());
     }
 

@@ -20,7 +20,6 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubset.h"
@@ -38,6 +37,8 @@
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
+#include "NumLib/ODESolver/ODESystem.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -47,8 +48,18 @@ namespace ProcessLib
 {
 template <typename GlobalSetup>
 class Process
+		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
+		                           typename GlobalSetup::VectorType,
+		                           // TODO: later on use a simpler ODE system
+		                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+		                           NumLib::NonlinearSolverTag::Picard>
 {
 public:
+	using GlobalVector = typename GlobalSetup::VectorType;
+	using GlobalMatrix = typename GlobalSetup::MatrixType;
+	using Index = typename GlobalMatrix::IndexType;
+
+
 	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 	virtual ~Process()
 	{
@@ -59,16 +70,15 @@ public:
 
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
-	virtual bool assemble(const double delta_t) = 0;
-
-	virtual std::string getLinearSolverName() const = 0;
 
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
-	void postTimestep(std::string const& file_name, const unsigned /*timestep*/)
+	void postTimestep(std::string const& file_name,
+	                  const unsigned /*timestep*/,
+	                  GlobalVector const& x)
 	{
-		post();
-		output(file_name);
+		post(x);
+		output(file_name, x);
 	}
 
 	void initialize()
@@ -87,61 +97,91 @@ public:
 		computeSparsityPattern();
 #endif
 
-		// create global vectors and linear solver
-		createLinearSolver(getLinearSolverName());
-
 		DBUG("Create global assembler.");
 		_global_assembler.reset(
-		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+		    new GlobalAssembler(*_local_to_global_index_map));
 
 		createLocalAssemblers();
 
+		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
 		{
-			DBUG("Set initial conditions.");
-			setInitialConditions(pv, 0);  // 0 is the component id
-
-			DBUG("Initialize boundary conditions.");
 			createDirichletBcs(pv, 0);  // 0 is the component id
-
-			createNeumannBcs(pv, 0);  // 0 is the component id
+			createNeumannBcs(pv, 0);    // 0 is the component id
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
+			bc->initialize(_global_setup, _mesh.getDimension());
 	}
 
-	bool solve(const double delta_t)
+	void setInitialConditions(GlobalVector& x)
 	{
-		_A->setZero();
-		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
+		DBUG("Set initial conditions.");
+		for (ProcessVariable& pv : _process_variables)
+		{
+			setInitialConditions(pv, 0, x);  // 0 is the component id
+		}
+	}
 
-		bool const result = assemble(delta_t);
+	std::size_t getNumEquations() const override final
+	{
+		return _local_to_global_index_map->dofSize();
+
+#ifdef USE_PETSC
+#if 0
+		// TODO for PETSc the method and the interface maybe have to be extended
+		// this is the old code moved here from th deleted createLinearSolver() method.
+
+		MathLib::PETScMatrixOption mat_opt;
+		const MeshLib::NodePartitionedMesh& pmesh =
+		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
+		mat_opt.o_nz = mat_opt.d_nz;
+		mat_opt.is_global_size = false;
+		const std::size_t num_unknowns =
+		    _local_to_global_index_map->dofSizeLocal();
+		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+		// In the following two lines, false is assigned to
+		// the argument of is_global_size, which indicates num_unknowns
+		// is local.
+		_x.reset( _global_setup.createVector(num_unknowns,
+		          _local_to_global_index_map->getGhostIndices(), false) );
+		_rhs.reset( _global_setup.createVector(num_unknowns,
+		            _local_to_global_index_map->getGhostIndices(), false) );
+#endif
+#endif
+	}
+
+	void assemble(const double t, GlobalVector const& x,
+	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
+	{
+		MathLib::setMatrixSparsity(M, _sparsity_pattern);
+		MathLib::setMatrixSparsity(K, _sparsity_pattern);
+
+		assembleConcreteProcess(t, x, M, K, b);
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup);
+			bc->integrate(_global_setup, t, b);
+	}
 
-		for (auto const& bc : _dirichlet_bcs)
-			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
-			                            bc.values);
-
-		_linear_solver->solve(*_rhs, *_x);
-		return result;
+	std::vector<DirichletBc<Index> > const* getKnownComponents()
+	const override final
+	{
+		return &_dirichlet_bcs;
 	}
 
 protected:
-	virtual void post(){};
-
-	/// Set linear solver options; called by the derived process which is
-	/// parsing the configuration.
-	void setLinearSolverOptions(BaseLib::ConfigTree&& config)
+	virtual void post(GlobalVector const& x)
 	{
-		_linear_solver_options.reset(
-		    new BaseLib::ConfigTree(std::move(config)));
+		(void) x; // by default do nothing
 	}
 
 private:
+	virtual void assembleConcreteProcess(
+	    const double t, GlobalVector const& x,
+	    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	void initializeMeshSubsets()
 	{
@@ -157,7 +197,8 @@ private:
 	/// Sets the initial condition values in the solution vector x for a given
 	/// process variable and component.
 	void setInitialConditions(ProcessVariable const& variable,
-	                          int const component_id)
+	                          int const component_id,
+	                          GlobalVector& x)
 	{
 		std::size_t const n = _mesh.getNNodes();
 		for (std::size_t i = 0; i < n; ++i)
@@ -175,11 +216,11 @@ private:
 			// To assign the initial value for the ghost entries,
 			// the negative indices of the ghost entries are restored to zero.
 			// checked hereby.
-			if ( global_index == _x->size() )
+			if ( global_index == x.size() )
 			    global_index = 0;
 #endif
-			_x->set(global_index,
-			        variable.getInitialConditionValue(*_mesh.getNode(i)));
+			x.set(global_index,
+			      variable.getInitialConditionValue(*_mesh.getNode(i)));
 		}
 	}
 
@@ -215,38 +256,6 @@ private:
 		                          *_mesh_subset_all_nodes);
 	}
 
-	/// Creates global matrix, rhs and solution vectors, and the linear solver.
-	void createLinearSolver(std::string const& solver_name)
-	{
-		DBUG("Allocate global matrix, vectors, and linear solver.");
-#ifdef USE_PETSC
-		MathLib::PETScMatrixOption mat_opt;
-		const MeshLib::NodePartitionedMesh& pmesh =
-		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
-		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
-		mat_opt.o_nz = mat_opt.d_nz;
-		mat_opt.is_global_size = false;
-		const std::size_t num_unknowns =
-		    _local_to_global_index_map->dofSizeLocal();
-		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
-		// In the following two lines, false is assigned to
-		// the argument of is_global_size, which indicates num_unknowns
-		// is local.
-		_x.reset( _global_setup.createVector(num_unknowns,
-		          _local_to_global_index_map->getGhostIndices(), false) );
-		_rhs.reset( _global_setup.createVector(num_unknowns,
-		            _local_to_global_index_map->getGhostIndices(), false) );
-#else
-		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
-		_A.reset(_global_setup.createMatrix(num_unknowns));
-		_x.reset(_global_setup.createVector(num_unknowns));
-		_rhs.reset(_global_setup.createVector(num_unknowns));
-#endif
-		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
-		    *_A, solver_name, _linear_solver_options.get()));
-		checkAndInvalidate(_linear_solver_options);
-	}
-
 	/// Computes and stores global matrix' sparsity pattern from given
 	/// DOF-table.
 	void computeSparsityPattern()
@@ -255,7 +264,7 @@ private:
 		    *_local_to_global_index_map, _mesh));
 	}
 
-	void output(std::string const& file_name)
+	void output(std::string const& file_name, GlobalVector const& x)
 	{
 		DBUG("Process output.");
 
@@ -274,16 +283,16 @@ private:
 			    _mesh.getProperties().template createNewPropertyVector<double>(
 			        property_name, MeshLib::MeshItemType::Node);
 #ifdef USE_PETSC
-			result->resize(_x->getLocalSize() + _x->getGhostSize());
+			result->resize(x.getLocalSize() + x.getGhostSize());
 #else
-			result->resize(_x->size());
+			result->resize(x.size());
 #endif
 		}
 
 		assert(result);
 
 		// Copy result
-		_x->copyValues(*result);
+		x.copyValues(*result);
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
@@ -300,21 +309,15 @@ protected:
 
 	GlobalSetup _global_setup;
 
-	using GlobalAssembler =
-	    AssemblerLib::VectorMatrixAssembler<typename GlobalSetup::MatrixType,
-	                                        typename GlobalSetup::VectorType>;
+	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+	        GlobalMatrix,
+	        GlobalVector,
+	        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
 	std::unique_ptr<GlobalAssembler> _global_assembler;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
-
-	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
-	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
-
-	std::unique_ptr<typename GlobalSetup::MatrixType> _A;
-	std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
-	std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 

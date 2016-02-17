@@ -23,6 +23,12 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
+// TODO
+// As far as I can see, this interface is necessary only, because we want to use fixed-size
+// Eigen matrices for the shape matrices. Sure, they improve performance. O nthe other side,
+// virtual calls degrade performance. Maybe somebody should make a measurement and if the
+// performance gain by fixed-size matrices is negligible, we should abandon them.
+// Additionally that would save compile time.
 template <typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerDataInterface
 {
@@ -34,11 +40,15 @@ public:
             Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
             unsigned const integration_order) = 0;
 
-    virtual void assemble(std::vector<double> const& local_x,
-                          std::vector<double> const& local_x_prev_ts) = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
-    virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-            AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
+    // TODO: Don't we waste quite some time by having this as a virtual method?
+    //       If we put a callback arg to the assemble() call, this funcitonality can
+    //       be provided by a non-virtual method.
+    //       Otherwise we could also pass local matrices in with the assemble() call.
+    //       Thereby we would not have to expose global matrices/vectors.
+    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 };
 
 template <typename ShapeFunction_,
@@ -91,8 +101,7 @@ public:
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void assemble(std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_x_prev_ts*/) override
+    void assemble(double const, std::vector<double> const&) override
     {
         _localA->setZero();
         _localRhs->setZero();
@@ -109,13 +118,12 @@ public:
         }
     }
 
-    void addToGlobal(
-        GlobalMatrix& A, GlobalVector& rhs,
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices)
+    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {
-        A.add(indices, *_localA);
-        rhs.add(indices.rows, *_localRhs);
+        K.add(indices, *_localA);
+        b.add(indices.rows, *_localRhs);
     }
 
 private:

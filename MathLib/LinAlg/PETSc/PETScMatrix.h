@@ -37,6 +37,11 @@ class PETScMatrix
         using IndexType = PetscInt;
 
     public:
+        // TODO preliminary
+        PETScMatrix() {
+            // TODO implement
+        }
+
         /*!
           \brief        Constructor for a square matrix partitioning with more options
           \param nrows  The number of rows of the matrix or the local matrix.
@@ -108,6 +113,13 @@ class PETScMatrix
 
         /// Get matrix reference.
         PETSc_Mat &getRawMatrix()
+        {
+            return _A;
+        }
+        // TODO preliminary
+        // this method is dangerous insofar you can do arbitrary things also
+        // with a const PETSc matrix.
+        PETSc_Mat const& getRawMatrix() const
         {
             return _A;
         }

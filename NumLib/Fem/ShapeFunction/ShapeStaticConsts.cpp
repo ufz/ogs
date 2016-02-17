@@ -17,8 +17,8 @@
  *
  * Helper to generate that code:
  *
- * \code{.unparsed}
- * find . \( -name '*.h' -and -not -name '*-impl.h' \) -printf '%f\n' \
+ * \code{.sh}
+ * find . '(' -name '*.h' -and -not -name '*-impl.h' ')' -printf '%f\n' \
  * | sort \
  * | while read f; do
  *     c="${f%.h}";
@@ -26,7 +26,6 @@
  *     echo "const std::size_t $c::NPOINTS;";
  * done >ShapeStaticConsts.cpp
  * \endcode
- *
  */
 
 #include "ShapeHex20.h"

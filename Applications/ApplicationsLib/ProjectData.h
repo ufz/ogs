@@ -24,10 +24,17 @@
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
-#include "ProcessLib/GroundwaterFlowProcess-fwd.h"
+
+#include "NumLib/ODESolver/Types.h"
 
 namespace MeshLib {
 	class Mesh;
+}
+
+namespace ApplicationsLib
+{
+template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
+class UncoupledProcessesTimeLoop;
 }
 
 /**
@@ -35,12 +42,19 @@ namespace MeshLib {
  * geometric data (stored in a GEOObjects-object), all the meshes, processes,
  * and process variables.
  */
-class ProjectData
+class ProjectData final
 {
+	using GlobalMatrix = GlobalSetupType::MatrixType;
+	using GlobalVector = GlobalSetupType::VectorType;
 public:
+	/// The time loop type used to solve this project's processes.
+	/// \todo Currently the Picard scheme is hard-coded.
+	using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
+	    GlobalMatrix, GlobalVector, NumLib::NonlinearSolverTag::Picard>;
+
 	/// The empty constructor used in the gui, for example, when the project's
 	/// configuration is not loaded yet.
-	ProjectData() = default;
+	ProjectData(); // TODO is that still needed?
 
 	/// Constructs project data by parsing provided configuration.
 	/// The additional  path is used to find files referenced in the
@@ -49,7 +63,8 @@ public:
 	            std::string const& path);
 
 	ProjectData(ProjectData&) = delete;
-	virtual ~ProjectData();
+
+	~ProjectData();
 
 	/// Returns the GEOObjects containing all points, polylines and surfaces.
 	GeoLib::GEOObjects* getGEOObjects()
@@ -83,35 +98,8 @@ public:
 	// Process interface
 	//
 
-	/// Builder for processes. The supplied template defines the types of global
-	/// vectors and matrices, and the global executor. These types are passed to
-	/// every of the constructed processes.
-	template <typename GlobalSetupType>
-	void buildProcesses()
-	{
-		for (auto const& pc : _process_configs)
-		{
-			auto const type = pc.peekConfParam<std::string>("type");
-			if (type == "GROUNDWATER_FLOW") {
-				// The existence check of the in the configuration referenced
-				// process variables is checked in the physical process.
-				// TODO at the moment we have only one mesh, later there can be
-				// several meshes. Then we have to assign the referenced mesh
-				// here.
-				_processes.emplace_back(
-				    ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
-				        *_mesh_vec[0], _process_variables, _parameters, pc));
-			}
-			else
-			{
-				ERR("Unknown process type: %s\n", type.c_str());
-			}
-		}
-
-		// process configs are not needed anymore, so clear the storage
-		// in order to trigger config tree checks
-		_process_configs.clear();
-	}
+	/// Builds processes.
+	void buildProcesses();
 
 	/// Iterator access for processes.
 	/// Provides read access to the process container.
@@ -146,13 +134,9 @@ public:
 		return _output_file_prefix;
 	}
 
-	NumLib::ITimeStepAlgorithm const& getTimeStepper() const
+	TimeLoop& getTimeLoop()
 	{
-		return *_time_stepper;
-	}
-	NumLib::ITimeStepAlgorithm& getTimeStepper()
-	{
-		return *_time_stepper;
+		return *_time_loop;
 	}
 
 private:
@@ -207,8 +191,8 @@ private:
 	/// Output file path with project prefix.
 	std::string _output_file_prefix;
 
-	/// Timestepper
-	std::unique_ptr<NumLib::ITimeStepAlgorithm> _time_stepper;
+	/// The time loop used to solve this project's processes.
+	std::unique_ptr<TimeLoop> _time_loop;
 };
 
 #endif //PROJECTDATA_H_

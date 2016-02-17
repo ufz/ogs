@@ -22,54 +22,10 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
+#include "Applications/ApplicationsLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/NumericsConfig.h"
 
-void solveProcesses(ProjectData &project, const std::string &outdir)
-{
-	INFO("Solve processes.");
-
-	std::string const out_pref = project.getOutputFilePrefix();
-
-	auto &time_stepper = project.getTimeStepper();
-
-	while (time_stepper.next())  // skips zeroth timestep, but OK since end of
-	                             // first timestep is after first delta t
-	{
-		const auto dt = time_stepper.getTimeStep().dt();
-		const auto current_time = time_stepper.getTimeStep().current();
-		const auto timestep = time_stepper.getTimeStep().steps();
-
-		INFO("=================== timestep %i === %g s ===================",
-		     timestep, current_time);
-
-		bool accepted = true;
-
-		unsigned i = 0;  // process counter, used to distinguish output files
-		for (auto p = project.processesBegin(); p != project.processesEnd();
-		     ++p)
-		{
-			accepted = accepted && (*p)->solve(dt);
-
-			if (!accepted)
-			{
-				ERR("Timestep has not been accepted. Aborting.");
-				break;
-			}
-
-			std::string const output_file_name =
-				BaseLib::joinPaths(outdir, out_pref) +
-				"_pcs_" + std::to_string(i) + "_ts_" +
-				std::to_string(timestep) + ".vtu";
-			(*p)->postTimestep(output_file_name, timestep);
-
-			++i;
-		}
-
-		if (!accepted)
-			break;
-	}
-}
 
 int main(int argc, char *argv[])
 {
@@ -106,9 +62,11 @@ int main(int argc, char *argv[])
 
 	cmd.parse(argc, argv);
 
+
 	ApplicationsLib::LogogSetup logog_setup;
 	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
 	    argc, argv);
+
 
 	auto project_config = BaseLib::makeConfigTree(
 	    project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
@@ -117,8 +75,9 @@ int main(int argc, char *argv[])
 
 	project_config.checkAndInvalidate();
 
+
 	// Create processes.
-	project.buildProcesses<GlobalSetupType>();
+	project.buildProcesses();
 
 	INFO("Initialize processes.");
 	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
@@ -127,7 +86,10 @@ int main(int argc, char *argv[])
 	}
 
 
-	solveProcesses(project, outdir_arg.getValue());
+	INFO("Solve processes.");
+
+	auto& time_loop = project.getTimeLoop();
+	time_loop.loop(project, outdir_arg.getValue());
 
 	return 0;
 }

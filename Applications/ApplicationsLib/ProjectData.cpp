@@ -30,6 +30,11 @@
 
 #include "BaseLib/ConfigTree.h"
 
+#include "UncoupledProcessesTimeLoop.h"
+
+#include "ProcessLib/GroundwaterFlowProcess-fwd.h"
+
+
 namespace detail
 {
 static
@@ -41,6 +46,8 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 }
 
 }
+
+ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	std::string const& path)
@@ -57,9 +64,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 		);
 
 	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
-	if (!mesh)
+	if (!mesh) {
 		ERR("Could not read mesh from \'%s\' file. No mesh added.",
 			mesh_file.c_str());
+		std::abort();
+	}
 	_mesh_vec.push_back(mesh);
 
 	// process variables
@@ -132,6 +141,32 @@ bool ProjectData::removeMesh(const std::string &name)
 	_mesh_vec.erase(std::remove(_mesh_vec.begin(), _mesh_vec.end(), nullptr),
 			_mesh_vec.end());
 	return mesh_found;
+}
+
+void ProjectData::buildProcesses()
+{
+	for (auto const& pc : _process_configs)
+	{
+		auto const type = pc.peekConfParam<std::string>("type");
+		if (type == "GROUNDWATER_FLOW") {
+			// The existence check of the in the configuration referenced
+			// process variables is checked in the physical process.
+			// TODO at the moment we have only one mesh, later there can be
+			// several meshes. Then we have to assign the referenced mesh
+			// here.
+			_processes.emplace_back(
+				ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
+					*_mesh_vec[0], _process_variables, _parameters, pc));
+		}
+		else
+		{
+			ERR("Unknown process type: %s\n", type.c_str());
+		}
+	}
+
+	// process configs are not needed anymore, so clear the storage
+	// in order to trigger config tree checks
+	_process_configs.clear();
 }
 
 bool ProjectData::meshExists(const std::string &name) const
@@ -257,33 +292,17 @@ void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
 
 void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
 {
-	using namespace ProcessLib;
+	DBUG("Reading time loop configuration.");
 
-	DBUG("Reading timestepping configuration.");
+	_time_loop = std::move(
+	    ApplicationsLib::createUncoupledProcessesTimeLoop<
+	           GlobalMatrix, GlobalVector, NumLib::NonlinearSolverTag::Picard
+	    >(timestepping_config)
+	);
 
-	auto const type = timestepping_config.peekConfParam<std::string>("type");
-
-	if (type == "FixedTimeStepping")
+	if (!_time_loop)
 	{
-		_time_stepper.reset(NumLib::FixedTimeStepping::newInstance(timestepping_config));
-	}
-	else if (type == "SingleStep")
-	{
-		timestepping_config.ignoreConfParam("type");
-		_time_stepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
-	}
-	else
-	{
-		ERR("Unknown timestepper type: `%s'.", type.c_str());
-		std::abort();
-	}
-
-	if (!_time_stepper)
-	{
-		ERR("Initialization of timestepper failed.");
+		ERR("Initialization of time loop failed.");
 		std::abort();
 	}
 }
-
-
-

@@ -23,7 +23,6 @@
 #include <petscvec.h>
 #include "MathLib/LinAlg/VectorNorms.h"
 
-typedef Vec PETSc_Vec;
 
 namespace MathLib
 {
@@ -36,8 +35,15 @@ class PETScVector
 {
     public:
         using IndexType = PetscInt;
+        // TODO make this class opaque, s.t. the PETSc symbols are not scattered all
+        //      over the global namespace
+        using PETSc_Vec = Vec;
 
     public:
+        // TODO preliminary
+        PETScVector() {
+            // TODO implement
+        }
 
         /*!
             \brief Constructor
@@ -171,6 +177,14 @@ class PETScVector
             VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
         }
 
+        // TODO preliminary
+        double operator[] (PetscInt idx) const
+        {
+            double value;
+            VecGetValues(_v, 1, &idx, &value);
+            return value;
+        }
+
         /*!
            Get global vector
            \param u Array to store the global vector. Memory allocation is needed in advance
@@ -181,7 +195,7 @@ class PETScVector
            Copy local entries including ghost ones to an array
            \param u Preallocated vector for the values of local entries.
         */
-        void copyValues(std::vector<double>& u);
+        void copyValues(std::vector<double>& u) const;
 
         /// Get an entry value. This is an expensive operation,
         /// and it only get local value. Use it for only test purpose
@@ -192,6 +206,7 @@ class PETScVector
             return x;
         }
 
+        // TODO eliminate in favour of getRawVector()
         /// Get PETsc vector. Use it only for test purpose
         const PETSc_Vec &getData() const
         {
@@ -203,6 +218,10 @@ class PETScVector
         {
             VecSet(_v, val);
         }
+
+        // TODO preliminary
+        void setZero() { *this = 0.0; }
+
         /// Overloaded operator: assign
         void operator = (const PETScVector &v_in)
         {
@@ -220,6 +239,16 @@ class PETScVector
         {
             VecAXPY(_v, -1.0, v_in._v);
         }
+
+
+        // TODO preliminary
+        PETSc_Vec& getRawVector() {return _v; }
+
+        // TODO preliminary
+        // this method is dangerous insofar you can do arbitrary things also
+        // with a const PETSc vector.
+        const PETSc_Vec& getRawVector() const {return _v; }
+
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
             \param file_name  File name for output
