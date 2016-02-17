@@ -64,8 +64,10 @@ public:
      */
     virtual void getJacobian(Matrix& Jac) = 0;
 
-    // TODO doc
-    virtual void applyKnownComponents(Matrix& Jac, Vector& res, Vector& x) = 0;
+    //! Apply known solutions to the linearized equation system
+    //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
+    virtual void applyKnownComponentsNewton(
+            Matrix& Jac, Vector& res, Vector& minus_delta_x) = 0;
 
     /*! Check whether this is actually a linear equation system.
      *
@@ -104,8 +106,10 @@ public:
     //! //! \todo make const
     virtual void getRhs(Vector& rhs) = 0;
 
-    // TODO doc
-    virtual void applyKnownComponents(Matrix& A, Vector& rhs, Vector& x) = 0;
+    //! Apply known solutions to the linearized equation system
+    //! \f$ A \cdot x = \mathit{rhs} \f$.
+    virtual void applyKnownComponentsPicard(
+            Matrix& A, Vector& rhs, Vector& x) = 0;
 
     /*! Check whether this is actually a linear equation system.
      *

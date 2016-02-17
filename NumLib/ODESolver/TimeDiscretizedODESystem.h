@@ -145,9 +145,10 @@ public:
         _mat_trans->getJacobian(_Jac, Jac);
     }
 
-    void applyKnownComponents(Matrix& Jac, Vector& res, Vector& x) override
+    void applyKnownComponentsNewton(Matrix& Jac, Vector& res,
+                                    Vector& minus_delta_x) override
     {
-        (void) Jac; (void) res; (void) x;
+        (void) Jac; (void) res; (void) minus_delta_x;
         // TODO implement
     }
 
@@ -247,7 +248,7 @@ public:
         _mat_trans->getRhs(_M, _K, _b, rhs);
     }
 
-    void applyKnownComponents(Matrix& A, Vector& rhs, Vector& x) override
+    void applyKnownComponentsPicard(Matrix& A, Vector& rhs, Vector& x) override
     {
         auto const* known_components = _ode.getKnownComponents();
 
