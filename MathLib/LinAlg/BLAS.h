@@ -3,10 +3,13 @@
 #include<cassert>
 
 
+#ifdef OGS_USE_EIGEN
+
 #include <Eigen/Core>
 
 namespace MathLib { namespace BLAS
 {
+
 
 // Dense Eigen matrix/vector //////////////////////////////////////////
 // TODO change to templates
@@ -90,8 +93,13 @@ inline void matMultAdd(EM const& A, EV const& v1, EV const& v2, EV& v3)
 
 }} // namespaces
 
+#endif
+
 
 #ifdef USE_PETSC
+
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 
@@ -107,29 +115,28 @@ inline void copy(PETScVector const& x, PETScVector& y)
 
 inline void scale(PETScVector& x, double const a)
 {
-    (void) x; (void) a;
-    // TODO implement
+    VecScale(x.getRawVector(), a);
 }
 
 // y = a*y + X
 inline void aypx(PETScVector& y, double const a, PETScVector const& x)
 {
-    (void) y; (void) a; (void) x;
-    // TODO implement
+    // TODO check sizes
+    VecAYPX(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + y
 inline void axpy(PETScVector& y, double const a, PETScVector const& x)
 {
-    (void) y; (void) a; (void) x;
-    // TODO implement
+    // TODO check sizes
+    VecAXPY(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + y
 inline void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 {
-    (void) y; (void) a; (void) b; (void) x;
-    // TODO implement
+    // TODO check sizes
+    VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
 }
 
 
@@ -143,22 +150,25 @@ inline void copy(PETScMatrix const& A, PETScMatrix& B)
 // A = a*A
 inline void scale(PETScMatrix& A, double const a)
 {
-    (void) A; (void) a;
-    // TODO implement
+    MatScale(A.getRawMatrix(), a);
 }
 
 // Y = a*Y + X
 inline void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
 {
-    (void) Y;(void) a; (void) X;
-    // TODO implement
+    // TODO check sizes
+    // TODO sparsity pattern, currently they are assumed to be different (slow)
+    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(),
+            DIFFERENT_NONZERO_PATTERN);
 }
 
 // Y = a*X + Y
 inline void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
 {
-    (void) Y; (void) a; (void) X;
-    // TODO implement
+    // TODO check sizes
+    // TODO sparsity pattern, currently they are assumed to be different (slow)
+    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(),
+            DIFFERENT_NONZERO_PATTERN);
 }
 
 
@@ -167,24 +177,24 @@ inline void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
 // v3 = A*v1 + v2
 inline void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
 {
-    (void) A; (void) x; (void) y;
+    // TODO check sizes
     assert(&x != &y);
-    // TODO implement
+    MatMult(A.getRawMatrix(), x.getRawVector(), y.getRawVector());
 }
 
 // v3 = A*v1 + v2
 inline void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
                        PETScVector const& v2, PETScVector& v3)
 {
-    (void) A; (void) v1; (void) v2; (void) v3;
+    // TODO check sizes
     assert(&v1 != &v3);
-    // TODO implement
+    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(), v3.getRawVector());
 }
 
 }} // namespaces
 
 
-#else
+#elif defined(OGS_USE_EIGEN)
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
 
