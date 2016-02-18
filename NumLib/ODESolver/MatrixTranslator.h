@@ -48,21 +48,21 @@ class MatrixTranslator<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasiline
 {
 public:
     //! Computes \c A from \c M and \c K.
-    virtual void getA(Matrix const& M, Matrix const& K, Matrix& A) const = 0;
+    virtual void computeA(Matrix const& M, Matrix const& K, Matrix& A) const = 0;
 
     //! Computes \c rhs from \c M, \c K and \c b.
-    virtual void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
+    virtual void computeRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const = 0;
 
     /*! Computes \c res from \c M, \c K, \c b, \f$ \hat x \f$ and \f$ x_N \f$.
      * You might also want read the remarks on
      * \ref concept_time_discretization "time discretization".
      */
-    virtual void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                             Vector const& x_new_timestep, Vector const& xdot,
-                             Vector& res) const = 0;
+    virtual void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                                 Vector const& x_new_timestep, Vector const& xdot,
+                                 Vector& res) const = 0;
 
     //! Computes the Jacobian of the residual and writes it to \c Jac_out.
-    virtual void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const = 0;
+    virtual void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const = 0;
 
     /*! Allows to store the given matrices internally for later use.
      *
@@ -115,7 +115,7 @@ public:
     {}
 
     //! Computes \f$ A = M \cdot \alpha + K \f$.
-    void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
+    void computeA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -127,7 +127,7 @@ public:
     }
 
     //! Computes \f$ \mathtt{rhs} = M \cdot x_O + b \f$.
-    void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
+    void computeRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -138,9 +138,9 @@ public:
     }
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
-    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep,  Vector const& xdot,
-                     Vector& res) const override
+    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                         Vector const& x_new_timestep,  Vector const& xdot,
+                         Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -154,7 +154,7 @@ public:
 
     //! Writes \c Jac_in to \c Jac_out.
     //! \todo Do not copy.
-    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -203,7 +203,7 @@ public:
     {}
 
     //! Computes \f$ A = M \cdot \alpha \f$.
-    void getA(Matrix const& M, Matrix const& /*K*/, Matrix& A) const override
+    void computeA(Matrix const& M, Matrix const& /*K*/, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -215,7 +215,7 @@ public:
     }
 
     //! Computes \f$ \mathtt{rhs} = M \cdot x_O - K \cdot x_O + b \f$.
-    void getRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
+    void computeRhs(const Matrix &M, const Matrix &K, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -230,9 +230,9 @@ public:
     }
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
-    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep, Vector const& xdot,
-                     Vector& res) const override
+    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                         Vector const& x_new_timestep, Vector const& xdot,
+                         Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -246,7 +246,7 @@ public:
 
     //! Writes \c Jac_in to \c Jac_out.
     //! \todo Do not copy.
-    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -294,7 +294,7 @@ public:
     {}
 
     //! Computes \f$ A = \theta \cdot (M \cdot \alpha + K) + \bar M \cdot \alpha \f$.
-    void getA(Matrix const& M, Matrix const& K, Matrix& A) const override
+    void computeA(Matrix const& M, Matrix const& K, Matrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -310,7 +310,7 @@ public:
     }
 
     //! Computes \f$ \mathtt{rhs} = \theta \cdot (M \cdot x_O + b) + \bar M \cdot x_O - \bar b \f$.
-    void getRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
+    void computeRhs(const Matrix &M, const Matrix &/*K*/, const Vector& b, Vector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -326,9 +326,9 @@ public:
         BLAS::axpy(rhs, -1.0, _b_bar); // rhs -= b
     }
     //! Computes \f$ r = \theta \cdot (M \cdot \hat x + K \cdot x_C - b) + \bar M \cdot \hat x + \bar b \f$.
-    void getResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                     Vector const& x_new_timestep, Vector const& xdot,
-                     Vector& res) const override
+    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
+                         Vector const& x_new_timestep, Vector const& xdot,
+                         Vector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -349,7 +349,7 @@ public:
      * Where \c Jac_in is the Jacobian as assembled by the ODE system, i.e. in the same
      * fashion as for the BackwardEuler scheme.
      */
-    void getJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 

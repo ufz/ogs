@@ -138,13 +138,12 @@ public:
         //      fragile.
         _time_disc.getXdot(x_new_timestep, _xdot);
 
-        // TODO change to calculate
-        _mat_trans->getResidual(_M, _K, _b, x_new_timestep, _xdot, res);
+        _mat_trans->computeResidual(_M, _K, _b, x_new_timestep, _xdot, res);
     }
 
     void getJacobian(Matrix& Jac) const override
     {
-        _mat_trans->getJacobian(_Jac, Jac);
+        _mat_trans->computeJacobian(_Jac, Jac);
     }
 
     void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
@@ -243,12 +242,12 @@ public:
 
     void getA(Matrix& A) const override
     {
-        _mat_trans->getA(_M, _K, A);
+        _mat_trans->computeA(_M, _K, A);
     }
 
     void getRhs(Vector& rhs) const override
     {
-        _mat_trans->getRhs(_M, _K, _b, rhs);
+        _mat_trans->computeRhs(_M, _K, _b, rhs);
     }
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
