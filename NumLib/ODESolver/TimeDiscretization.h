@@ -331,9 +331,8 @@ public:
         _x_old = x0;
     }
 
-    void pushState(const double t, Vector const& x, InternalMatrixStorage const& strg) override
+    void pushState(const double, Vector const& x, InternalMatrixStorage const& strg) override
     {
-        (void) t;
         _x_old = x;
         strg.pushMatrices();
     }
@@ -426,9 +425,8 @@ public:
         _xs_old.push_back(x0);
     }
 
-    void pushState(const double t, Vector const& x, InternalMatrixStorage const&) override
+    void pushState(const double, Vector const& x, InternalMatrixStorage const&) override
     {
-        (void) t;
         // TODO use boost cirular buffer?
 
         // until _xs_old is filled, lower-order BDF formulas are used.
