@@ -151,20 +151,20 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const dxdot_dx = getCurrentXWeight();
+        auto const dxdot_dx = getNewXWeight();
 
         // xdot = dxdot_dx * x_at_new_timestep - x_old
         getWeightedOldX(xdot);
         BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep); // TODO consistent
     }
 
-    //! Returns \f$ \alpha = \partial \hat x / \partial x_C \f$.
-    virtual double getCurrentXWeight() const = 0;  // TODO maybe getNewXWeight
+    //! Returns \f$ \alpha = \partial \hat x / \partial x_N \f$.
+    virtual double getNewXWeight() const = 0;
 
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(Vector& y) const = 0; // = x_old
 
-    virtual ~TimeDiscretization() = default; // TODO virtual needed?
+    virtual ~TimeDiscretization() = default;
 
     //! \name Extended Interface
     //! These methods are provided primarily to make certain concrete time discretizations
@@ -227,7 +227,7 @@ public:
         return _t;
     }
 
-    double getCurrentXWeight() const override {
+    double getNewXWeight() const override {
         return 1.0/_delta_t;
     }
 
@@ -277,7 +277,7 @@ public:
         return _x_old;
     }
 
-    double getCurrentXWeight() const override {
+    double getNewXWeight() const override {
         return 1.0/_delta_t;
     }
 
@@ -346,7 +346,7 @@ public:
         return _t;
     }
 
-    double getCurrentXWeight() const override {
+    double getNewXWeight() const override {
         return 1.0/_delta_t;
     }
 
@@ -447,7 +447,7 @@ public:
         return _t;
     }
 
-    double getCurrentXWeight() const override {
+    double getNewXWeight() const override {
         auto const k = eff_num_steps();
         return detail::BDF_Coeffs[k-1][0] / _delta_t;
     }

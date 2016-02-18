@@ -119,7 +119,7 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const dxdot_dx = _time_disc.getCurrentXWeight();
+        auto const dxdot_dx = _time_disc.getNewXWeight();
 
         // A = M * dxdot_dx + K
         BLAS::copy(M, A);
@@ -207,7 +207,7 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const dxdot_dx = _fwd_euler.getCurrentXWeight();
+        auto const dxdot_dx = _fwd_euler.getNewXWeight();
 
         // A = M * dxdot_dx
         BLAS::copy(M, A);
@@ -298,7 +298,7 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
+        auto const dxdot_dx = _crank_nicolson.getNewXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
         // A = theta * (M * dxdot_dx + K) + dxdot_dx * _M_bar
@@ -353,7 +353,7 @@ public:
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const dxdot_dx = _crank_nicolson.getCurrentXWeight();
+        auto const dxdot_dx = _crank_nicolson.getNewXWeight();
         auto const theta    = _crank_nicolson.getTheta();
 
         // J = theta * Jac + dxdot_dx * _M_bar
