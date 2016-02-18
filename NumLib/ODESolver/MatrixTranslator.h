@@ -24,8 +24,9 @@ namespace NumLib
 //! @{
 
 
-/*! Translates matrices assembled by a provided ODE (or other equation)
- *  to some other matrices suitable to be passed on to nonlinear solvers.
+/*! Translates matrices and vectors assembled by a provided ODE (or other equation)
+ *  to the stiffness matrix and right-hand side vector of a linear equation system
+ *  that can be solved by a linear equation system solver.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the ODEequation
