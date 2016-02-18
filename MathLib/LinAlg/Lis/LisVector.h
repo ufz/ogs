@@ -61,6 +61,9 @@ public:
 	/// set all values in this vector
 	LisVector& operator=(double v);
 
+	// TODO preliminary
+	void setZero() { *this = 0.0; }
+
 	/// access entry
 	double operator[](IndexType rowId) const { return get(rowId); }
 	/// get entry
@@ -108,7 +111,7 @@ public:
 	}
 
 	/// Copy vector values.
-	void copyValues(std::vector<double>& u)
+	void copyValues(std::vector<double>& u) const
 	{
 		assert(u.size() == size());
 		lis_vector_get_values(_vec, 0, size(), u.data());
