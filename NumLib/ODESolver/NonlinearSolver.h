@@ -84,7 +84,7 @@ private:
     Matrix _J;               //!< The Jacobian of the residual.
     Vector _minus_delta_x;   //!< The Newton-Raphson method solves the linearized equation
                              //!< \f$ J \cdot (-\Delta x) = r \f$ repeatedly.
-    double const _alpha = 1; //!< damping factor
+    double const _alpha = 1; //!< Damping factor. \todo Add constructor parameter.
 };
 
 

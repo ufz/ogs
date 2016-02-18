@@ -101,7 +101,10 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
     bool success = false;
 
-    // TODO init _minus_delta_x to right size and 0.0
+    // TODO be more efficient
+    // init _minus_delta_x to the right size and 0.0
+    BLAS::copy(x, _minus_delta_x);
+    _minus_delta_x.setZero();
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
@@ -110,7 +113,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         // std::cout << "  res:\n" << res << std::endl;
 
-        // TODO streamline the, make consistent with Picard.
+        // TODO streamline that, make consistent with Picard.
         if (norm(_res) < _tol) {
             success = true;
             break;
@@ -118,7 +121,6 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         sys.assembleJacobian(x);
         sys.getJacobian(_J);
-        // TODO _minus_delta_x might not have been initialized
         sys.applyKnownComponentsNewton(_J, _res, _minus_delta_x);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
