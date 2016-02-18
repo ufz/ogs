@@ -11,6 +11,7 @@
 #define NUMLIB_NONLINEARSYSTEM_H
 
 #include "Types.h"
+#include "EquationSystem.h"
 
 
 namespace NumLib
@@ -39,6 +40,7 @@ class NonlinearSystem;
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>
+        : public EquationSystem
 {
 public:
     //! Assembles the residual at the point \c x.
@@ -67,19 +69,6 @@ public:
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
     virtual void applyKnownComponentsNewton(
             Matrix& Jac, Vector& res, Vector& minus_delta_x) = 0;
-
-    /*! Check whether this is actually a linear equation system.
-     *
-     * \remark
-     * Depending on its parameters an in general nonlinear equation system
-     * can be linear in special cases. With this method it is possible to
-     * detect that at runtime and thus save an assembly call.
-     */
-    virtual bool isLinear() const = 0;
-
-    // TODO add getNumEquations()
-
-    virtual ~NonlinearSystem() = default;
 };
 
 // TODO common base class
@@ -94,6 +83,7 @@ public:
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>
+        : public EquationSystem
 {
 public:
     //! Assembles the linearized eqation at point \c x.
@@ -110,19 +100,6 @@ public:
     //! \f$ A \cdot x = \mathit{rhs} \f$.
     virtual void applyKnownComponentsPicard(
             Matrix& A, Vector& rhs, Vector& x) = 0;
-
-    /*! Check whether this is actually a linear equation system.
-     *
-     * \remark
-     * Depending on its parameters an in general nonlinear equation system
-     * can be linear in special cases. With this method it is possible to
-     * detect that at runtime and thus save an assembly call.
-     */
-    virtual bool isLinear() const = 0;
-
-    // TODO add getNumEquations()
-
-    virtual ~NonlinearSystem() = default;
 };
 
 //! @}

@@ -11,6 +11,7 @@
 #define NUMLIB_ODESYSTEM_H
 
 #include "Types.h"
+#include "EquationSystem.h"
 
 // TODO move to other namespace
 namespace ProcessLib
@@ -50,22 +51,11 @@ template<typename Matrix, typename Vector>
 class ODESystem<Matrix, Vector,
                 ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Picard>
+        : public EquationSystem
 {
 public:
     //! A tag indicating the type of ODE.
     static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
-
-    /*! Check whether this is actually a linear equation system.
-     *
-     * \remark
-     * Depending on its parameters an in general nonlinear ODE
-     * can be linear in special cases. With this method it is possible to
-     * detect that at runtime and thus save an assembly call.
-     */
-    virtual bool isLinear() const = 0;
-
-    //! Get the number of equations.
-    virtual std::size_t getNumEquations() const = 0;
 
     //! Assemble \c M, \c K and \c b at the state (\c t, \c x).
     virtual void assemble(const double t, Vector const& x,
@@ -78,8 +68,6 @@ public:
     {
         return nullptr; // by default there are no known components
     }
-
-    virtual ~ODESystem() = default;
 };
 
 

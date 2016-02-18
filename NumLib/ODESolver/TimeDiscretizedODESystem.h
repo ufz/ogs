@@ -133,6 +133,12 @@ public:
 
     void getResidual(Vector const& x_new_timestep, Vector& res) const override
     {
+        // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
+        //      can be optimuized. However, that would make the interface a bit more
+        //      fragile.
+        _time_disc.getXdot(x_new_timestep, _xdot);
+
+        // TODO change to calculate
         _mat_trans->getResidual(_M, _K, _b, x_new_timestep, _xdot, res);
     }
 
