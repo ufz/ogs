@@ -145,6 +145,15 @@ public:
         return _ghosts_indices;
     }
 
+    /// Computes the index in a local (for DDC) vector for a given location and
+    /// component.
+    /// When domain decomposition is not used, it is equal to getGlobalIndex().
+    /// The range is needed to compute the offset for non-ghost locations and
+    /// also to map ghost locations.
+    GlobalIndexType getLocalIndex(Location const& l, std::size_t const comp_id,
+                                  std::size_t const range_begin,
+                                  std::size_t const range_end) const;
+
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
     static GlobalIndexType const nop;

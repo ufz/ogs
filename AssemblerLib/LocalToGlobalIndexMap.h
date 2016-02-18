@@ -108,6 +108,16 @@ public:
         return _mesh_component_map.getGhostIndices();
     }
 
+    /// Computes the index in a local (for DDC) vector for a given location and
+    /// component; forwarded from MeshComponentMap.
+    GlobalIndexType getLocalIndex(MeshLib::Location const& l, std::size_t const comp_id,
+                                  std::size_t const range_begin,
+                                  std::size_t const range_end) const
+    {
+        return _mesh_component_map.getLocalIndex(l, comp_id, range_begin,
+                                                 range_end);
+    }
+
 private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being
