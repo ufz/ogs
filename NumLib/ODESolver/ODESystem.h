@@ -63,10 +63,9 @@ public:
 
     using Index = typename MatrixTraits<Matrix>::Index;
 
-    // TODO solutions
-    virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownComponents() const
+    virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownSolutions() const
     {
-        return nullptr; // by default there are no known components
+        return nullptr; // by default there are no known solutions
     }
 };
 

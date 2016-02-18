@@ -52,7 +52,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
         sys.getRhs(_rhs);
 
         // Here _x_new has to be used and it has to be equal to x!
-        sys.applyKnownComponentsPicard(_A, _rhs, _x_new);
+        sys.applyKnownSolutionsPicard(_A, _rhs, _x_new);
 
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
@@ -121,7 +121,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         sys.assembleJacobian(x);
         sys.getJacobian(_J);
-        sys.applyKnownComponentsNewton(_J, _res, _minus_delta_x);
+        sys.applyKnownSolutionsNewton(_J, _res, _minus_delta_x);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
