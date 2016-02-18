@@ -20,13 +20,13 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
-/*! Integrate some first-order ODE system over time.
+/*! Integrate a single first-order ODE system over time.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
  * \tparam Vector the type of the solution vector of the ODE.
  */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
-class TimeLoop
+class TimeLoopSingleODE
 {
 public:
     using TDiscODESys = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
@@ -37,7 +37,7 @@ public:
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
      */
     explicit
-    TimeLoop(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
+    TimeLoopSingleODE(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
         : _ode_sys(ode_sys)
         , _nonlinear_solver(nonlinear_solver)
     {}
@@ -68,11 +68,10 @@ private:
 
 //! @}
 
-// TODO rename class
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
 bool
-TimeLoop<Matrix, Vector, NLTag>::
+TimeLoopSingleODE<Matrix, Vector, NLTag>::
 loop(const double t0, const Vector x0, const double t_end, const double delta_t,
      Callback& post_timestep)
 {
