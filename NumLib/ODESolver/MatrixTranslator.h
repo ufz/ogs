@@ -29,7 +29,7 @@ namespace NumLib
  *  that can be solved by a linear equation system solver.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
@@ -40,7 +40,7 @@ class MatrixTranslator;
  *  to some other matrices suitable to be passed on to nonlinear solvers.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
@@ -83,7 +83,7 @@ public:
 /*! General matrix translator used with time discretization schemes that have no special needs.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
@@ -94,7 +94,7 @@ class MatrixTranslatorGeneral;
  *  time discretization schemes that have no special needs.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
@@ -171,7 +171,7 @@ private:
 /*! Matrix translator used with the ForwardEuler scheme.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
@@ -182,7 +182,7 @@ class MatrixTranslatorForwardEuler;
  *  used with the ForwardEuler scheme.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
@@ -263,7 +263,7 @@ private:
 /*! Matrix translator used with the CrankNicolson scheme.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
@@ -273,7 +273,7 @@ class MatrixTranslatorCrankNicolson;
  *  used with the CrankNicolson scheme.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
- * \tparam Vector the type of the solution vector of the ODEequation
+ * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
