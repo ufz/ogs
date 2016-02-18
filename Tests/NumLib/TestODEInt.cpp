@@ -287,7 +287,7 @@ public:
 
     static void test()
     {
-        for (auto num_timesteps : { 10, 100, 1000 }) {
+        for (auto num_timesteps : { 10u, 100u }) {
             run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(num_timesteps, TestParams::name);
         }
     }
