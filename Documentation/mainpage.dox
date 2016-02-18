@@ -10,4 +10,9 @@
  * - Mailing list: https://groups.google.com/forum/#!forum/ogs-users
  * - Jenkins build server: https://svn.ufz.de/hudson
  *
+ *
+ * \section internal_modules Internal Modules
+ *
+ * * \subpage ODESolver
+ *
  */
