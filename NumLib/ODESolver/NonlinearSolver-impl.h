@@ -64,6 +64,9 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
         auto const error = norm(x);
         // INFO("  picard iteration %u error: %e", iteration, error);
 
+        // Update x s.t. in the next iteration we will compute the right delta x
+        x = _x_new;
+
         if (error < _tol) {
             success = true;
             break;
@@ -75,8 +78,6 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
             break;
         }
     }
-
-    x = _x_new; // always set to what we computed last
 
     return success;
 }
