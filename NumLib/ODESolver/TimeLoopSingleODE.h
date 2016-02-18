@@ -86,12 +86,15 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
 
-    // TODO change n*delta_t
     double t;
     unsigned timestep = 0;
     bool nl_slv_succeeded = true;
-    for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
+    for (t  = t0 + delta_t;
+         t < t_end + std::numeric_limits<double>::epsilon();
+         t = t0 + (timestep+1) * delta_t)
     {
+        ++timestep;
+
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 

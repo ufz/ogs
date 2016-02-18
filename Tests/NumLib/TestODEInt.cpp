@@ -6,7 +6,7 @@
 #include <typeinfo>
 
 #include "ProcessLib/NumericsConfig.h"
-#include "NumLib/ODESolver/TimeLoop.h"
+#include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "ODEs.h"
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/ODESolver/ODETypes.h"
@@ -43,7 +43,7 @@ public:
 
         NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
-        NumLib::TimeLoop<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
+        NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
 
         const double t0      = ODET::t0;
         const double t_end   = ODET::t_end;
