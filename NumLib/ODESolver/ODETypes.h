@@ -10,7 +10,10 @@
 #ifndef NUMLIB_ODETYPES_H
 #define NUMLIB_ODETYPES_H
 
-// TODO: move that file somewhere else
+// TODO: Move that file somewhere else.
+//       Actually it would be better to put all of this into the MathLib namespace
+//       in the end, because all matrices, vectors and linear solvers reside there.
+//       That will be done during some subsequent cleanup.
 
 #include <initializer_list>
 #include <cassert>
@@ -21,6 +24,8 @@
 
 #include <Eigen/LU>
 
+namespace NumLib
+{
 
 inline void setMatrix(Eigen::MatrixXd& m,
                       Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
@@ -57,8 +62,6 @@ inline void addToMatrix(Eigen::MatrixXd& m,
     }
 }
 
-namespace NumLib
-{
 inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::VectorXd& x)
 {
     Eigen::FullPivLU<Eigen::MatrixXd> slv;
@@ -68,14 +71,14 @@ inline void oneShotLinearSolve(Eigen::MatrixXd& A, Eigen::VectorXd& rhs, Eigen::
 
 inline double norm(Eigen::VectorXd const& x) { return x.norm(); }
 
-}
-
 inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 {
     assert((std::size_t) v.size() == values.size());
     auto it = values.begin();
     for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
 }
+
+} // namespace NumLib
 
 
 #ifdef USE_PETSC
@@ -85,9 +88,9 @@ inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 
-
 namespace NumLib
 {
+
 inline void oneShotLinearSolve(MathLib::PETScMatrix& A, MathLib::PETScVector& rhs,
                                MathLib::PETScVector& x)
 {
@@ -99,8 +102,6 @@ inline double norm(MathLib::PETScVector const& x)
 {
     return x.getNorm();
 }
-}
-
 
 inline void setVector(MathLib::PETScVector& v,
                       std::initializer_list<double> values)
@@ -135,6 +136,8 @@ inline void addToMatrix(MathLib::PETScMatrix& m,
     // TODO implement
 }
 
+} // namespace NumLib
+
 
 #elif defined(OGS_USE_EIGEN)
 
@@ -144,23 +147,20 @@ inline void addToMatrix(MathLib::PETScMatrix& m,
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
-
 namespace NumLib
 {
+
 inline void oneShotLinearSolve(MathLib::EigenMatrix& A, MathLib::EigenVector& rhs, MathLib::EigenVector& x)
 {
     MathLib::EigenLinearSolver slv(A);
     slv.solve(rhs, x);
 }
-}
-
 
 inline void setVector(MathLib::EigenVector& v,
                       std::initializer_list<double> values)
 {
     setVector(v.getRawVector(), values);
 }
-
 
 inline void setMatrix(MathLib::EigenMatrix& m,
                       MathLib::EigenMatrix::IndexType const rows,
@@ -204,6 +204,8 @@ inline void addToMatrix(MathLib::EigenMatrix& m,
 
     m.getRawMatrix() += tmp.sparseView();
 }
+
+} // namespace NumLib
 
 #endif // OGS_USE_EIGEN
 
