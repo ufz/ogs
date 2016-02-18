@@ -103,7 +103,6 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 
         time_disc.pushState(t, x, _ode_sys);
 
-        // TODO check const ref
         auto const  t_cb = t; // make sure the callback cannot overwrite anything.
         auto const& x_cb = x; // ditto.
         post_timestep(t_cb, x_cb);
