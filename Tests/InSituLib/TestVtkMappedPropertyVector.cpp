@@ -80,8 +80,8 @@ TEST(InSituLibMappedPropertyVector, Int)
 
 	ASSERT_EQ(dataArray->GetValueReference(0), -5);
 	double* range = dataArray->GetRange(0);
-	ASSERT_EQ(range[0], -5);
-	ASSERT_EQ(range[1], -5 + mesh->getNElements() - 1);
+	ASSERT_EQ(-5.0, range[0]);
+	ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNElements()) - 1.0, range[1]);
 
 	delete mesh;
 }
