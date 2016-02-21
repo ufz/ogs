@@ -49,13 +49,13 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
 
 	if (!poly_stream)
 	{
-		ERR ("TetGenInterface::readTetGenPoly() failed to open %s", geo_fname.c_str());
+		ERR ("TetGenInterface::readTetGenGeometry() failed to open %s", geo_fname.c_str());
 		return false;
 	}
 	std::string ext (BaseLib::getFileExtension(geo_fname));
 	if (ext.compare("smesh") != 0)
 	{
-		ERR ("TetGenInterface::readTetGenPoly() - unknown file type (only *.smesh is supported).");
+		ERR ("TetGenInterface::readTetGenGeometry() - unknown file type (only *.smesh is supported).");
 		return false;
 	}
 
@@ -562,7 +562,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
 		for (std::size_t i=0; i<nAttributePoints; ++i)
 			out << i+1 << " " << attribute_points[i][0] << " " << attribute_points[i][1] << " " << attribute_points[i][2] << " " << 10*attribute_points[i].getID() << "\n";
 	}
-	INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
+	INFO ("TetGenInterface::writeTetGenSmesh() - %d points and %d surfaces successfully written.", nPoints, nSurfaces);
 	out.close();
 	return true;
 }
@@ -639,7 +639,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 	// get position where number of facets need to be written and figure out worst case of chars that are needed
 	const std::streamoff before_elems_pos (out.tellp());
 	const unsigned n_spaces (static_cast<unsigned>(std::floor(log(nElements*8))) + 1);
-	out << std::string(n_spaces, ' ') << "\n";
+	out << std::string(n_spaces, ' ') << " 1\n";
 	boost::optional< MeshLib::PropertyVector<int> const&> materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 	unsigned element_count(0);
 	for (std::size_t i=0; i<nElements; ++i)
@@ -648,28 +648,19 @@ void TetGenInterface::write3dElements(std::ofstream &out,
 			continue;
 
 		const unsigned nFaces (elements[i]->getNNeighbors());
+		std::string const mat_id_str = (materialIds) ? std::to_string((*materialIds)[i]) : "";
 		for (std::size_t j=0; j<nFaces; ++j)
 		{
 			MeshLib::Element const*const neighbor ( elements[i]->getNeighbor(j) );
 
-			if (neighbor)
-			{
-				if (materialIds && (*materialIds)[i] > (*materialIds)[neighbor->getID()])
-				{
-					MeshLib::Element const*const face (elements[i]->getFace(j));
-					this->writeElementToFacets(out, *face, element_count, std::to_string((*materialIds)[i]));
-					delete face;
-				}
-			}
-			else
-			{
-				MeshLib::Element const*const face (elements[i]->getFace(j));
-				std::string matId = (materialIds) ? std::to_string((*materialIds)[i]) : "";
-				this->writeElementToFacets(out, *face, element_count, matId);
-				delete face;
-			}
+			if (neighbor && materialIds && (*materialIds)[i] <= (*materialIds)[neighbor->getID()])
+				continue;
+
+			std::unique_ptr<MeshLib::Element const> const face (elements[i]->getFace(j));
+			this->writeElementToFacets(out, *face, element_count, mat_id_str);
 		}
-		attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), (*materialIds)[i]));
+		if (materialIds)
+			attribute_points.push_back(MeshLib::Node(elements[i]->getCenterOfGravity().getCoords(), (*materialIds)[i]));
 	}
 	// add number of facets at correct position and jump back
 	const std::streamoff after_elems_pos (out.tellp());
