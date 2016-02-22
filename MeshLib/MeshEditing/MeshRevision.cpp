@@ -643,24 +643,34 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					}
 
 					// triangle edge collapsed
-					const int offset = (i>2) ? -3 : 3;
+					const unsigned i_offset = (i>2) ? i-3 : i+3;
+					const unsigned j_offset = (i>2) ? j-3 : j+3;
 					const unsigned k = this->lutPrismThirdNode(i,j);
 					if (k == std::numeric_limits<unsigned>::max())
 					{
 						ERR ("Unexpected error during prism reduction.")
 						return 0;
 					}
+					const unsigned k_offset = (i>2) ? k-3 : k+3;
+
 					MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
-					tet1_nodes[0] = nodes[org_elem->getNode(i+offset)->getID()];
-					tet1_nodes[1] = nodes[org_elem->getNode(j+offset)->getID()];
-					tet1_nodes[2] = nodes[org_elem->getNode(k+offset)->getID()];
+					tet1_nodes[0] = nodes[org_elem->getNode(i_offset)->getID()];
+					tet1_nodes[1] = nodes[org_elem->getNode(j_offset)->getID()];
+					tet1_nodes[2] = nodes[org_elem->getNode(k_offset)->getID()];
 					tet1_nodes[3] = nodes[org_elem->getNode(i)->getID()];
 					new_elements.push_back (new MeshLib::Tet(tet1_nodes));
 
-					unsigned l = (GeoLib::isCoplanar(*org_elem->getNode(i+offset), *org_elem->getNode(k+offset), *org_elem->getNode(i), *org_elem->getNode(k))) ? j : i;
+					const unsigned l =
+					    (GeoLib::isCoplanar(*org_elem->getNode(i_offset),
+					                        *org_elem->getNode(k_offset),
+					                        *org_elem->getNode(i),
+					                        *org_elem->getNode(k)))
+					        ? j
+					        : i;
+					const unsigned l_offset = (i>2) ? l-3 : l+3;
 					MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
-					tet2_nodes[0] = nodes[org_elem->getNode(l+offset)->getID()];
-					tet2_nodes[1] = nodes[org_elem->getNode(k+offset)->getID()];
+					tet2_nodes[0] = nodes[org_elem->getNode(l_offset)->getID()];
+					tet2_nodes[1] = nodes[org_elem->getNode(k_offset)->getID()];
 					tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
 					tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
 					new_elements.push_back (new MeshLib::Tet(tet2_nodes));
