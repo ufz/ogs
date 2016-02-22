@@ -1,6 +1,10 @@
 macro(InstallDependencies TARGET INSTALL_COMPONENT)
 
-	set(TARGET_EXE ${RUNTIME_OUTPUT_DIRECTORY}/${TARGET}${CMAKE_EXECUTABLE_SUFFIX})
+	if(MSVC)
+		set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/Release/${TARGET}.exe)
+	else()
+		set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/${TARGET})
+	endif()
 
 	if(EXISTS ${TARGET_EXE})
 		include(GetPrerequisites)
