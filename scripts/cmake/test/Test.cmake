@@ -45,8 +45,8 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest.log)
 add_custom_target(
-	ctest -T Test
-	COMMAND ${CMAKE_CTEST_COMMAND}
+	ctest
+	COMMAND ${CMAKE_CTEST_COMMAND} -T Test
 	--force-new-ctest-process
 	--output-on-failure --output-log Tests/ctest.log
 	--exclude-regex LARGE
@@ -55,8 +55,8 @@ add_custom_target(
 )
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove Tests/ctest-large.log)
 add_custom_target(
-	ctest-large -T Test
-	COMMAND ${CMAKE_CTEST_COMMAND}
+	ctest-large
+	COMMAND ${CMAKE_CTEST_COMMAND} -T Test
 	--force-new-ctest-process
 	--output-on-failure --output-log Tests/ctest-large.log
 	--tests-regex LARGE
