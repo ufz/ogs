@@ -120,7 +120,7 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const*const sfc)
 			Point const& p0(*((*sfc)[l]->getPoint(0)));
 			Point const& p1(*((*sfc)[l]->getPoint(1)));
 			Point const& p2(*((*sfc)[l]->getPoint(2)));
-			ERR("Sorting triangle %d [(%f,%f,%f), (%f,%f,%f), (%f,%f,%f) into "
+			DBUG("Sorting triangle %d [(%f,%f,%f), (%f,%f,%f), (%f,%f,%f) into "
 				"grid.",
 				l, p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]
 			);
@@ -176,7 +176,7 @@ SurfaceGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
 	}};
 
 	if (coords[0]>=_n_steps[0] || coords[1]>=_n_steps[1] || coords[2]>=_n_steps[2]) {
-		WARN("Computed indices (%d,%d,%d), max grid cell indices (%d,%d,%d)",
+		DBUG("Computed indices (%d,%d,%d), max grid cell indices (%d,%d,%d)",
 			coords[0], coords[1], coords[2], _n_steps[0], _n_steps[1], _n_steps[2]);
 		return boost::optional<std::array<std::size_t, 3>>();
 	}
