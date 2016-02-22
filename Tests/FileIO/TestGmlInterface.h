@@ -1,7 +1,7 @@
 /**
- * \file   TestXmlGmlReader.cpp
+ * \file   TestGmlInterface.h
  * \author Karsten Rink
- * \date   2013-03-20
+ * \date   2016-02-21
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -16,14 +16,13 @@
 
 #include "gtest/gtest.h"
 
-#include "Applications/ApplicationsLib/ProjectData.h"
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Triangle.h"
 
-class FileIOXmlGml : public testing::Test
+class TestGmlInterface : public testing::Test
 {
 public:
 	GeoLib::GEOObjects geo_objects;
@@ -32,7 +31,7 @@ public:
 	std::vector<GeoLib::Point> test_pnts;
 	std::map<std::string, std::size_t> pnt_name_id_map;
 
-	FileIOXmlGml()
+	TestGmlInterface()
 	{
 		createPoints();
 		createPolylines();
@@ -205,61 +204,3 @@ public:
 		checkSurface(*read_sfcs, 1, {{{3,6,8}}, {{3,8,5}}}, "SecondSurface");
 	}
 };
-
-TEST_F(FileIOXmlGml, QtXmlGmlWriterReaderTest)
-{
-	// Writer test
-	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
-		+ "TestXmlGmlReader.gml");
-
-	FileIO::XmlGmlInterface xml(geo_objects);
-	xml.setNameForExport(geo_name);
-	int result = xml.writeToFile(test_data_file);
-	EXPECT_EQ(result, 1);
-
-	// remove the written data from the data structures
-	geo_objects.removeSurfaceVec(geo_name);
-	geo_objects.removePolylineVec(geo_name);
-	geo_objects.removePointVec(geo_name);
-
-	// Reader test
-	result = xml.readFile(QString::fromStdString(test_data_file));
-	EXPECT_EQ(1, result);
-
-	std::remove(test_data_file.c_str());
-	test_data_file += ".md5";
-	std::remove(test_data_file.c_str());
-
-	checkPointProperties();
-	checkPolylineProperties();
-	checkSurfaceProperties();
-}
-
-TEST_F(FileIOXmlGml, BoostXmlGmlWriterReaderTest)
-{
-	// Writer test
-	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
-		+ "TestXmlGmlReader.gml");
-
-	FileIO::BoostXmlGmlInterface xml(geo_objects);
-	xml.setNameForExport(geo_name);
-	int result = xml.writeToFile(test_data_file);
-	EXPECT_EQ(result, 1);
-
-	// remove the written data from the data structures
-	geo_objects.removeSurfaceVec(geo_name);
-	geo_objects.removePolylineVec(geo_name);
-	geo_objects.removePointVec(geo_name);
-
-	// Reader test
-	result = xml.readFile(test_data_file);
-	EXPECT_EQ(1, result);
-
-	std::remove(test_data_file.c_str());
-	test_data_file += ".md5";
-	std::remove(test_data_file.c_str());
-
-	checkPointProperties();
-	checkPolylineProperties();
-	checkSurfaceProperties();
-}
