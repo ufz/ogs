@@ -19,5 +19,5 @@ set(CPACK_NSIS_MENU_LINKS
 	"https://github.com/ufz/ogs" "Source code on GitHub"
 )
 if(OGS_DOWNLOAD_ADDITIONAL_CONTENT)
-	set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "docs" "Documentation folder" PARENT_SCOPE)
+	set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "docs" "Documentation folder")
 endif()
