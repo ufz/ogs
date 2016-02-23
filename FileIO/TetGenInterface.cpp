@@ -485,13 +485,13 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
 		}
 
 		// read region attribute - this is something like material group
-		unsigned region (0);
+		int region (0);
 		if (region_attribute) {
 			pos_beg = line.find_first_not_of(" ", pos_end);
 			pos_end = line.find_first_of(" ", pos_beg);
 			if (pos_end == std::string::npos) pos_end = line.size();
 			if (pos_beg != std::string::npos && pos_end != std::string::npos)
-				region = BaseLib::str2number<unsigned> (line.substr(pos_beg, pos_end - pos_beg));
+				region = BaseLib::str2number<int> (line.substr(pos_beg, pos_end - pos_beg));
 			else {
 				ERR("TetGenInterface::parseElements(): Error reading region attribute of tetrahedron %d.", k);
 				return false;
