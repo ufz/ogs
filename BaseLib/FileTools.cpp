@@ -56,6 +56,9 @@ void truncateFile( std::string const& filename)
 	ofs.close();
 }
 
+namespace
+{
+
 /** Finds the position of last file path separator.
  * Checks for unix or windows file path separators in given path and returns the
  * position of the last one or std::string::npos if no file path separator was
@@ -75,6 +78,7 @@ std::string::size_type findLastDot(std::string const& path)
 {
 	return path.find_last_of(".");
 }
+} // end namespace
 
 std::string dropFileExtension(std::string const& filename)
 {
