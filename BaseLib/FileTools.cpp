@@ -62,7 +62,7 @@ void truncateFile( std::string const& filename)
  * found.
  */
 static
-std::size_t findLastPathSeparator(std::string const& path)
+std::string::size_type findLastPathSeparator(std::string const& path)
 {
 	return path.find_last_of("/\\");
 }
@@ -71,7 +71,7 @@ std::size_t findLastPathSeparator(std::string const& path)
  * This could be used to extract file extension.
  */
 static
-std::size_t findLastDot(std::string const& path)
+std::string::size_type findLastDot(std::string const& path)
 {
 	return path.find_last_of(".");
 }
@@ -79,12 +79,12 @@ std::size_t findLastDot(std::string const& path)
 std::string dropFileExtension(std::string const& filename)
 {
 	// Look for dots in filename.
-	const std::size_t p = findLastDot(filename);
+	auto const p = findLastDot(filename);
 	if (p == std::string::npos)
 		return filename;
 
 	// Check position of the last path separator.
-	const std::size_t s = findLastPathSeparator(filename);
+	auto const s = findLastPathSeparator(filename);
 	if (s != std::string::npos && p < s)
 		return filename;
 
@@ -93,7 +93,7 @@ std::string dropFileExtension(std::string const& filename)
 
 std::string extractBaseName(std::string const& pathname)
 {
-	const std::size_t p = findLastPathSeparator(pathname);
+	auto const p = findLastPathSeparator(pathname);
 	if (p == std::string::npos)
 		return pathname;
 	return pathname.substr(p + 1);
@@ -108,7 +108,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
 std::string getFileExtension(const std::string &path)
 {
 	const std::string str = extractBaseName(path);
-	const std::size_t p = findLastDot(str);
+	auto const p = findLastDot(str);
 	if (p == std::string::npos)
 		return std::string();
 	return str.substr(p + 1);
@@ -123,7 +123,7 @@ std::string copyPathToFileName(const std::string &file_name,
                                const std::string &source)
 {
 	// check if file_name already contains a full path
-	const std::size_t pos = findLastPathSeparator(file_name);
+	auto const pos = findLastPathSeparator(file_name);
 	if (pos != std::string::npos)
 		return file_name;
 
@@ -132,7 +132,7 @@ std::string copyPathToFileName(const std::string &file_name,
 
 std::string extractPath(std::string const& pathname)
 {
-	const std::size_t pos = findLastPathSeparator(pathname);
+	auto const pos = findLastPathSeparator(pathname);
 	if (pos == std::string::npos)
 		return "";
 	return pathname.substr(0, pos + 1);
