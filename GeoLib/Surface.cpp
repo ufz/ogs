@@ -52,6 +52,9 @@ void Surface::addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_
 	if (pnt_a == pnt_b || pnt_a == pnt_c || pnt_b == pnt_c)
 		return;
 
+	// Adding a new triangle invalides the surface grid.
+	if (_surface_grid)
+		delete _surface_grid;
 	_sfc_triangles.push_back(new Triangle(_sfc_pnts, pnt_a, pnt_b, pnt_c));
 	if (!_bounding_volume) {
 		std::vector<std::size_t> ids(3);
@@ -59,24 +62,10 @@ void Surface::addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_
 		ids[1] = pnt_b;
 		ids[2] = pnt_c;
 		_bounding_volume = new AABB(_sfc_pnts, ids);
-		if (_surface_grid == nullptr) {
-			_surface_grid = new SurfaceGrid(this);
-		}
 	} else {
-		bool bbx_updated(_bounding_volume->update(*_sfc_pnts[pnt_a]));
-		bbx_updated = bbx_updated || _bounding_volume->update(*_sfc_pnts[pnt_b]);
-		bbx_updated = bbx_updated || _bounding_volume->update(*_sfc_pnts[pnt_c]);
-		if (bbx_updated) {
-			delete _surface_grid;
-			_surface_grid = new SurfaceGrid(this);
-		} else {
-			if (! _surface_grid->sortTriangleInGridCells(_sfc_triangles.back())) {
-				ERR("Fatal: Could not insert triangle into surface grid. "
-					"To keep things consistent, the triangle is removed from "
-					"the surface!");
-				_sfc_triangles.pop_back();
-			}
-		}
+		_bounding_volume->update(*_sfc_pnts[pnt_a]);
+		_bounding_volume->update(*_sfc_pnts[pnt_b]);
+		_bounding_volume->update(*_sfc_pnts[pnt_c]);
 	}
 }
 
@@ -141,6 +130,10 @@ bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt) const
 
 bool Surface::isPntInSfc(MathLib::Point3d const& pnt) const
 {
+	// Mutable _surface_grid is constructed if method is called the first time.
+	if (_surface_grid == nullptr) {
+		_surface_grid = new SurfaceGrid(this);
+	}
 	return _surface_grid->isPointInSurface(
 		pnt, std::numeric_limits<double>::epsilon());
 }
