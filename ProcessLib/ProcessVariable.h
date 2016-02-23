@@ -47,7 +47,7 @@ namespace ProcessLib
 class ProcessVariable
 {
 public:
-	ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+	ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
 	                GeoLib::GEOObjects const& geometries);
 
 	ProcessVariable(ProcessVariable&&);
@@ -56,6 +56,9 @@ public:
 
 	/// Returns a mesh on which the process variable is defined.
 	MeshLib::Mesh const& getMesh() const;
+
+	/// Returns the number of components of the process variable.
+	int getNumberOfComponents() const { return _n_components; }
 
 	template <typename OutputIterator>
 	void initializeDirichletBCs(
@@ -87,14 +90,21 @@ public:
 		}
 	}
 
-	double getInitialConditionValue(MeshLib::Node const& n) const
+	double getInitialConditionValue(MeshLib::Node const& n,
+	                                int const component_id) const
 	{
-		return _initial_condition->getValue(n);
+		return _initial_condition->getValue(n, component_id);
 	}
+
+	// Get or create a property vector for results.
+	// The returned mesh property size is number of mesh nodes times number of
+	// components.
+	MeshLib::PropertyVector<double>& getOrCreateMeshProperty();
 
 private:
 	std::string const _name;
-	MeshLib::Mesh const& _mesh;
+	MeshLib::Mesh& _mesh;
+	int _n_components;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
 	    _dirichlet_bc_configs;

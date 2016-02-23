@@ -264,7 +264,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 			// Check some properties on equality
 			auto doubleProps = meshProperties.getPropertyVector<double>("PointDoubleProperty");
 			auto newDoubleProps = newMeshProperties.getPropertyVector<double>("PointDoubleProperty");
-			ASSERT_EQ((*newDoubleProps).getTupleSize(), (*doubleProps).getTupleSize());
+			ASSERT_EQ((*newDoubleProps).getNumberOfComponents(), (*doubleProps).getNumberOfComponents());
 			ASSERT_EQ((*newDoubleProps).getNumberOfTuples(), (*doubleProps).getNumberOfTuples());
 			ASSERT_EQ((*newDoubleProps).size(), (*doubleProps).size());
 			for(std::size_t i = 0; i < (*doubleProps).size(); i++)
@@ -273,7 +273,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 			auto unsignedProps = meshProperties.getPropertyVector<unsigned>("CellUnsignedProperty");
 			auto newUnsignedIds = newMeshProperties.getPropertyVector<unsigned>("CellUnsignedProperty");
 
-			ASSERT_EQ((*newUnsignedIds).getTupleSize(), (*unsignedProps).getTupleSize());
+			ASSERT_EQ((*newUnsignedIds).getNumberOfComponents(), (*unsignedProps).getNumberOfComponents());
 			ASSERT_EQ((*newUnsignedIds).getNumberOfTuples(), (*unsignedProps).getNumberOfTuples());
 			ASSERT_EQ((*newUnsignedIds).size(), (*unsignedProps).size());
 			for(std::size_t i = 0; i < (*unsignedProps).size(); i++)
@@ -281,7 +281,7 @@ TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
 
 			auto materialIds = meshProperties.getPropertyVector<int>("MaterialIDs");
 			auto newMaterialIds = newMeshProperties.getPropertyVector<int>("MaterialIDs");
-			ASSERT_EQ((*newMaterialIds).getTupleSize(), (*materialIds).getTupleSize());
+			ASSERT_EQ((*newMaterialIds).getNumberOfComponents(), (*materialIds).getNumberOfComponents());
 			ASSERT_EQ((*newMaterialIds).getNumberOfTuples(), (*materialIds).getNumberOfTuples());
 			ASSERT_EQ((*newMaterialIds).size(), (*materialIds).size());
 			for(std::size_t i = 0; i < (*materialIds).size(); i++)

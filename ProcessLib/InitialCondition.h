@@ -35,7 +35,7 @@ class InitialCondition
 {
 public:
 	virtual ~InitialCondition() = default;
-	virtual double getValue(MeshLib::Node const&) const = 0;
+	virtual double getValue(MeshLib::Node const&, int const component_id) const = 0;
 };
 
 /// Uniform value initial condition
@@ -45,8 +45,10 @@ public:
 	UniformInitialCondition(double const value) : _value(value)
 	{
 	}
-
-	virtual double getValue(MeshLib::Node const&) const override
+	/// Returns a value for given node and component.
+	/// \todo The component_id is to be implemented.
+	virtual double getValue(MeshLib::Node const&,
+	                        int const /* component_id */) const override
 	{
 		return _value;
 	}
@@ -56,8 +58,11 @@ private:
 };
 
 /// Construct a UniformInitialCondition from configuration.
+/// The initial condition will expect a correct number of components in the
+/// configuration, which should be the same as in the corresponding process
+/// variable.
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config, int const n_components);
 
 /// Distribution of values given by a mesh property defined on nodes.
 class MeshPropertyInitialCondition : public InitialCondition
@@ -70,9 +75,11 @@ public:
 		assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
 	}
 
-	virtual double getValue(MeshLib::Node const& n) const override
+	virtual double getValue(MeshLib::Node const& n,
+	                        int const component_id) const override
 	{
-		return _property[n.getID()];
+		return _property[n.getID() * _property.getNumberOfComponents() +
+		                 component_id];
 	}
 
 private:
@@ -80,8 +87,12 @@ private:
 };
 
 /// Construct a MeshPropertyInitialCondition from configuration.
+/// The initial condition will expect a correct number of components in the
+/// configuration, which should be the same as in the corresponding process
+/// variable.
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+    int const n_components);
 
 }  // namespace ProcessLib
 

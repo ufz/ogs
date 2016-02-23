@@ -51,13 +51,14 @@ public:
 	/// @tparam T type of the property value
 	/// @param name the name of the property
 	/// @param mesh_item_type for instance node or element assigned properties
+	/// @param n_components number of components for each tuple
 	/// @return On success a reference to a PropertyVector packed into a
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
 	boost::optional<PropertyVector<T> &>
 	createNewPropertyVector(std::string const& name,
 		MeshItemType mesh_item_type,
-		std::size_t tuple_size = 1);
+		std::size_t n_components = 1);
 
 	/// Method creates a PropertyVector if a PropertyVector with the same name
 	/// and the same type T was not already created before. In case there exists
@@ -73,6 +74,7 @@ public:
 	/// @param item2group_mapping the mapping between mesh item and the property
 	/// group
 	/// @param mesh_item_type for instance node or element assigned properties
+	/// @param n_components number of components for each tuple
 	/// @return On success a reference to a PropertyVector packed into a
 	///   boost::optional else an empty boost::optional.
 	template <typename T>
@@ -81,7 +83,7 @@ public:
 		std::size_t n_prop_groups,
 		std::vector<std::size_t> const& item2group_mapping,
 		MeshItemType mesh_item_type,
-		std::size_t tuple_size = 1);
+		std::size_t n_components = 1);
 
 	/// Method to get a vector of property values.
 	template <typename T>

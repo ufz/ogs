@@ -19,10 +19,11 @@
 namespace ProcessLib
 {
 ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
-                                 MeshLib::Mesh const& mesh,
+                                 MeshLib::Mesh& mesh,
                                  GeoLib::GEOObjects const& geometries)
-    : _name(config.getConfParam<std::string>("name"))
-    , _mesh(mesh)
+    : _name(config.getConfParam<std::string>("name")),
+      _mesh(mesh),
+      _n_components(config.getConfParam<int>("components"))
 {
 	DBUG("Constructing process variable %s", this->_name.c_str());
 
@@ -33,12 +34,12 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 		if (type == "Uniform")
 		{
 			_initial_condition =
-			    createUniformInitialCondition(*ic_config);
+			    createUniformInitialCondition(*ic_config, _n_components);
 		}
 		else if (type == "MeshProperty")
 		{
 			_initial_condition =
-			    createMeshPropertyInitialCondition(*ic_config, _mesh);
+			    createMeshPropertyInitialCondition(*ic_config, _mesh, _n_components);
 		}
 		else
 		{
@@ -111,6 +112,26 @@ std::string const& ProcessVariable::getName() const
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
 	return _mesh;
+}
+
+MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
+{
+	boost::optional<MeshLib::PropertyVector<double>&> result;
+	if (_mesh.getProperties().hasPropertyVector(_name))
+	{
+		result =
+		    _mesh.getProperties().template getPropertyVector<double>(_name);
+		assert(result);
+		assert(result->size() == _mesh.getNNodes() * _n_components);
+	}
+	else
+	{
+		result = _mesh.getProperties().template createNewPropertyVector<double>(
+		    _name, MeshLib::MeshItemType::Node);
+		assert(result);
+		result->resize(_mesh.getNNodes() * _n_components);
+	}
+	return *result;
 }
 
 }  // namespace ProcessLib
