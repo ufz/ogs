@@ -34,7 +34,6 @@ public:
 		double eps = std::numeric_limits<double>::epsilon()) const;
 
 private:
-	friend GeoLib::Surface;
 	void sortTrianglesInGridCells(GeoLib::Surface const*const surface);
 	bool sortTriangleInGridCells(GeoLib::Triangle const*const triangle);
 	boost::optional<std::array<std::size_t,3>>
