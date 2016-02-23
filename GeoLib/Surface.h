@@ -16,6 +16,7 @@
 #define SURFACE_H_
 
 #include <vector>
+#include <memory>
 
 #include "GeoObject.h"
 #include "Point.h"
@@ -95,9 +96,12 @@ protected:
 	/** position of pointers to the geometric points */
 	std::vector<Triangle*> _sfc_triangles;
 	/** bounding volume is an axis aligned bounding box */
-	AABB *_bounding_volume;
-	/** a helper structure to accelerate the search */
-	SurfaceGrid * _surface_grid;
+	std::unique_ptr<AABB> _bounding_volume;
+	/// The surface grid is a helper data structure to accelerate the point
+	/// search. The method addTriangle() invalidates/resets the surface grid.
+	/// A valid surface grid is created in case the const method isPntInSfc() is
+	/// called and a valid surface grid is not existing.
+	mutable std::unique_ptr<SurfaceGrid> _surface_grid;
 };
 
 }
