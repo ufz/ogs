@@ -31,6 +31,8 @@ BoundaryElementsSearcher::BoundaryElementsSearcher(MeshLib::Mesh const& mesh, Me
 
 BoundaryElementsSearcher::~BoundaryElementsSearcher()
 {
+	for (auto p : _boundary_elements_at_point)
+		delete p;
 	for (auto p : _boundary_elements_along_polylines)
 		delete p;
 	for (auto p : _boundary_elements_along_surfaces)
