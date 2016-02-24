@@ -41,7 +41,7 @@ public:
 		LOGOG_SHUTDOWN();
 	}
 
-	void SetFormatter(std::unique_ptr<logog::Formatter> formatter)
+	void SetFormatter(std::unique_ptr<logog::Formatter>&& formatter)
 	{
 		fmt = std::move(formatter);
 		logog_cout->SetFormatter(*fmt);
@@ -73,8 +73,8 @@ public:
 			SetLevel(foo[level]);
 		else
 		{
-			ERR("%s is not a valid log level! Setting log level to all.", level.c_str());
-			SetLevel(LOGOG_LEVEL_ALL);
+			ERR("%s is not a valid log level! Aborting.", level.c_str());
+			std::abort();
 		}
 	}
 
