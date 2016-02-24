@@ -100,6 +100,14 @@ int main(int argc, char *argv[])
 		"output directory");
 	cmd.add(outdir_arg);
 
+	TCLAP::ValueArg<std::string> log_level_arg(
+		"l", "log-level",
+		"the verbosity of logging messages: none, error, warn, info, debug, all",
+		false,
+		"all",
+		"log level");
+	cmd.add(log_level_arg);
+
 	TCLAP::SwitchArg nonfatal_arg("",
 		"config-warnings-nonfatal",
 		"warnings from parsing the configuration file will not trigger program abortion");
@@ -108,6 +116,7 @@ int main(int argc, char *argv[])
 	cmd.parse(argc, argv);
 
 	ApplicationsLib::LogogSetup logog_setup;
+	logog_setup.SetLevel(log_level_arg.getValue());
 	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
 	    argc, argv);
 
