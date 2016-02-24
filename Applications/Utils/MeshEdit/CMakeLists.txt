@@ -8,15 +8,10 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/MeshLib
 )
 
-# Create executables
-if(QT4_FOUND)
-
-	add_executable(moveMeshNodes moveMeshNodes.cpp)
-	target_link_libraries(moveMeshNodes FileIO)
-	ADD_VTK_DEPENDENCY(moveMeshNodes)
-	set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
-
-endif() # QT4_FOUND
+add_executable(moveMeshNodes moveMeshNodes.cpp)
+target_link_libraries(moveMeshNodes FileIO)
+ADD_VTK_DEPENDENCY(moveMeshNodes)
+set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 add_executable(MapGeometryToMeshSurface
 	MapGeometryToMeshSurface.cpp )
@@ -99,7 +94,9 @@ install(TARGETS
 	createLayeredMeshFromRasters
 	editMaterialID
 	ExtractSurface
+	MapGeometryToMeshSurface
 	MoveMesh
+	moveMeshNodes
 	NodeReordering
 	removeMeshElements
 	ResetPropertiesInPolygonalRegion
@@ -107,11 +104,3 @@ install(TARGETS
 	queryMesh
 	RUNTIME DESTINATION bin COMPONENT Utilities
 )
-if(QT4_FOUND)
-	install(TARGETS
-		MapGeometryToMeshSurface
-		moveMeshNodes
-		RUNTIME DESTINATION bin
-		COMPONENT Utilities
-	)
-endif()
