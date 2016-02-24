@@ -16,7 +16,6 @@
 #include <clocale>
 
 #include "gtest/gtest.h"
-#include "logog/include/logog.hpp"
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -30,7 +29,7 @@
 #include <petscksp.h>
 #endif
 
-#include "BaseLib/LogogCustomCout.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef OGS_BUILD_GUI
 #include <QApplication>
@@ -44,57 +43,55 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv, false);
 #endif
     int ret = 0;
-    LOGOG_INITIALIZE();
+#ifdef USE_MPI
+    MPI_Init(&argc, &argv);
+#endif
+    ApplicationsLib::LogogSetup logog_setup;
+    logog_setup.SetFormatter(std::unique_ptr<BaseLib::TemplateLogogFormatterSuppressedGCC
+        <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> >
+            (new BaseLib::TemplateLogogFormatterSuppressedGCC
+            <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG>()));
+
+
+#ifdef USE_PETSC
+    char help[] = "ogs6 with PETSc \n";
+    PetscInitialize(&argc,&argv,(char *)0,help);
+#endif
+
+    try
     {
-#ifdef USE_MPI
-        MPI_Init(&argc, &argv);
-#endif
-        BaseLib::LogogCustomCout out;
-        BaseLib::TemplateLogogFormatterSuppressedGCC<TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> custom_format;
-        out.SetFormatter(custom_format);
-
-#ifdef USE_PETSC
-        char help[] = "ogs6 with PETSc \n";
-        PetscInitialize(&argc,&argv,(char *)0,help);
-#endif
-
-        try
-        {
-            // initialize libraries which will be used while testing
+        // initialize libraries which will be used while testing
 #ifdef USE_LIS
-            lis_initialize(&argc, &argv);
+        lis_initialize(&argc, &argv);
 #endif
-            // start google test
-            testing::InitGoogleTest ( &argc, argv );
-            ret = RUN_ALL_TESTS();
-        }
-        catch (char* e)
-        {
-            ERR(e);
-        }
-        catch (std::exception& e)
-        {
-            ERR(e.what());
-        }
-        catch (...)
-        {
-            ERR("Unknown exception occurred!");
-        }
-        // finalize libraries
+        // start google test
+        testing::InitGoogleTest ( &argc, argv );
+        ret = RUN_ALL_TESTS();
+    }
+    catch (char* e)
+    {
+        ERR(e);
+    }
+    catch (std::exception& e)
+    {
+        ERR(e.what());
+    }
+    catch (...)
+    {
+        ERR("Unknown exception occurred!");
+    }
+    // finalize libraries
 #ifdef USE_LIS
-        lis_finalize();
+    lis_finalize();
 #endif
 
 #ifdef USE_PETSC
-        PetscFinalize();
+    PetscFinalize();
 #endif
 
 #ifdef USE_MPI
-        MPI_Finalize();
+    MPI_Finalize();
 #endif
-
-    } // make sure no logog objects exist when LOGOG_SHUTDOWN() is called.
-    LOGOG_SHUTDOWN();
 
     return ret;
 }

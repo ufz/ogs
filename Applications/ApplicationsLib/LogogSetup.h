@@ -12,6 +12,9 @@
 
 #include <logog/include/logog.hpp>
 
+#include <map>
+#include <memory>
+
 #include "BaseLib/LogogSimpleFormatter.h"
 
 namespace ApplicationsLib
@@ -25,21 +28,28 @@ public:
 	LogogSetup()
 	{
 		LOGOG_INITIALIZE();
-		fmt = new BaseLib::LogogSimpleFormatter;
-		logog_cout = new logog::Cout;
-		logog_cout->SetFormatter(*fmt);
+		logog_cout = std::unique_ptr<logog::Cout>(new logog::Cout);
+		SetFormatter(std::unique_ptr<BaseLib::LogogSimpleFormatter>
+			(new BaseLib::LogogSimpleFormatter));
 	}
 
 	~LogogSetup()
 	{
-		delete fmt;
-		delete logog_cout;
+		// Objects have to be deleted before shutdown
+		fmt.reset(nullptr);
+		logog_cout.reset(nullptr);
 		LOGOG_SHUTDOWN();
 	}
 
+	void SetFormatter(std::unique_ptr<logog::Formatter> formatter)
+	{
+		fmt = std::move(formatter);
+		logog_cout->SetFormatter(*fmt);
+	}
+
 private:
-	BaseLib::LogogSimpleFormatter* fmt;
-	logog::Cout* logog_cout;
+	std::unique_ptr<logog::Formatter> fmt;
+	std::unique_ptr<logog::Cout> logog_cout;
 };
 
 }	// ApplicationsLib
