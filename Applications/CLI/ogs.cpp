@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
 			"(http://www.opengeosys.org) "
 			"Distributed under a Modified BSD License. "
 			"See accompanying file LICENSE.txt or "
-			"http://www.opengeosys.org/project/license",
+			"http://www.opengeosys.org/project/license\n"
+			"version: " + BaseLib::BuildInfo::git_describe,
 		' ',
 		BaseLib::BuildInfo::git_describe);
 
