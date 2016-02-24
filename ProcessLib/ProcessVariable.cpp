@@ -9,6 +9,8 @@
 
 #include "ProcessVariable.h"
 
+#include <utility>
+
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/GEOObjects.h"
@@ -83,13 +85,18 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 
             if (type == "UniformDirichlet")
             {
-                _dirichlet_bc_configs.emplace_back(
-                    new UniformDirichletBoundaryCondition(geometry, bc_config));
+                _dirichlet_bc_configs.emplace_back(std::make_pair(
+                    std::unique_ptr<UniformDirichletBoundaryCondition>(
+                        new UniformDirichletBoundaryCondition(geometry,
+                                                              bc_config)),
+                    0));  // TODO, the 0 stands for component_id. Need parser.
             }
             else if (type == "UniformNeumann")
             {
-                _neumann_bc_configs.emplace_back(
-                    new NeumannBcConfig(geometry, bc_config));
+                _neumann_bc_configs.emplace_back(std::make_pair(
+                    std::unique_ptr<NeumannBcConfig>{
+                        new NeumannBcConfig(geometry, bc_config)},
+                    0));  // TODO, the 0 stands for component_id. Need parser.
             }
             else
             {
