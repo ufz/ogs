@@ -3,7 +3,6 @@
  * 2012/03/07 KR Initial implementation
  */
 
-#include <QCoreApplication>
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
 #include "readMeshFromFile.h"
@@ -47,7 +46,6 @@ bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
 
 int main (int argc, char* argv[])
 {
-	QCoreApplication app(argc, argv, false);
 	LOGOG_INITIALIZE();
 	logog::Cout* logogCout = new logog::Cout;
 	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
@@ -193,6 +191,3 @@ int main (int argc, char* argv[])
 	return 1;
 
 }
-
-
-
