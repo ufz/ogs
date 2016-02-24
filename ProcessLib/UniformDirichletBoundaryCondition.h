@@ -50,6 +50,14 @@ public:
         DBUG("Using value %g", _value);
     }
 
+    UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
+                                      double value)
+        : _value(value), _geometry(geometry)
+    {
+        DBUG("Constructed UniformDirichletBoundaryCondition using value %g",
+            _value);
+    }
+
     /// Initialize Dirichlet type boundary conditions.
     /// Fills in global_ids of the particular geometry of the boundary condition
     /// and the corresponding values.
