@@ -30,6 +30,7 @@
 #endif
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 #ifdef OGS_BUILD_GUI
 #include <QApplication>
@@ -38,6 +39,15 @@
 /// Implementation of the googletest testrunner
 int main(int argc, char* argv[])
 {
+    std::string logLevel("all");
+    for (int i = 1; i < argc; i++)
+    {
+        if(i + 1 == argc)
+            break;
+        if(std::strcmp(argv[i], "-l") == 0)
+            logLevel = argv[i + 1];
+    }
+
     setlocale(LC_ALL, "C");
 #ifdef OGS_BUILD_GUI
     QApplication app(argc, argv, false);
@@ -51,6 +61,7 @@ int main(int argc, char* argv[])
         <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> >
             (new BaseLib::TemplateLogogFormatterSuppressedGCC
             <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG>()));
+    logog_setup.SetLevel(logLevel);
 
 
 #ifdef USE_PETSC

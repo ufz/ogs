@@ -47,6 +47,37 @@ public:
 		logog_cout->SetFormatter(*fmt);
 	}
 
+	void SetLevel(LOGOG_LEVEL_TYPE level)
+	{
+		logog::SetDefaultLevel(level);
+	}
+
+	void SetLevel(std::string const & level)
+	{
+		std::map<std::string, LOGOG_LEVEL_TYPE> foo =
+		{
+			{ "none", LOGOG_LEVEL_NONE },
+			{ "emergency", LOGOG_LEVEL_EMERGENCY },
+			{ "alert", LOGOG_LEVEL_ALERT},
+			{ "critical", LOGOG_LEVEL_CRITICAL },
+			{ "error", LOGOG_LEVEL_ERROR },
+			{ "warn", LOGOG_LEVEL_WARN },
+			{ "info", LOGOG_LEVEL_INFO },
+			{ "debug", LOGOG_LEVEL_DEBUG },
+			{ "all", LOGOG_LEVEL_ALL }
+		};
+
+
+		//LOGOG_LEVEL_TYPE level_type;
+		if(foo.find(level) != foo.end())
+			SetLevel(foo[level]);
+		else
+		{
+			ERR("%s is not a valid log level! Setting log level to all.", level.c_str());
+			SetLevel(LOGOG_LEVEL_ALL);
+		}
+	}
+
 private:
 	std::unique_ptr<logog::Formatter> fmt;
 	std::unique_ptr<logog::Cout> logog_cout;
