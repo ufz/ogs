@@ -73,6 +73,7 @@ if(DEFINED ENV{CI})
 		--gtest_shuffle --gtest_repeat=3)
 endif()
 set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
+	-l warn
 	--gtest_output=xml:./testrunner.xml)
 
 add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
