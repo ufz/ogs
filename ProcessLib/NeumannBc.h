@@ -56,7 +56,7 @@ public:
         NeumannBcConfig const& bc,
         unsigned const integration_order,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-        std::size_t const component_index,
+        std::size_t const component_id,
         MeshLib::MeshSubset const& mesh_subset_all_nodes
         )
         :
@@ -64,7 +64,7 @@ public:
           _all_mesh_subsets(local_to_global_index_map.getNumComponents(), nullptr),
           _integration_order(integration_order)
     {
-        assert(component_index < local_to_global_index_map.getNumComponents());
+        assert(component_id < local_to_global_index_map.getNumComponents());
 
         // deep copy because the neumann bc config destroys the elements.
         std::transform(bc.elementsBegin(), bc.elementsEnd(),
@@ -76,7 +76,8 @@ public:
         _mesh_subset_all_nodes =
             mesh_subset_all_nodes.getIntersectionByNodes(nodes);
 
-        _all_mesh_subsets[component_index] = new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
+        _all_mesh_subsets[component_id] =
+            new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
 
         _local_to_global_index_map.reset(
             local_to_global_index_map.deriveBoundaryConstrainedMap(
