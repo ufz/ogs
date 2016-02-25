@@ -137,6 +137,7 @@ private:
         const unsigned component_id, const unsigned comp_id_write);
 
 private:
+    /// A vector of mesh subsets for each process variables' components.
     std::vector<MeshLib::MeshSubsets*> const _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
