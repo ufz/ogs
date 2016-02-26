@@ -52,15 +52,16 @@ LocalToGlobalIndexMap::findGlobalIndices(
 
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
-    std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
     AssemblerLib::ComponentOrder const order)
-    : _mesh_subsets(mesh_subsets), _mesh_component_map(_mesh_subsets, order)
+    : _mesh_subsets(std::move(mesh_subsets)),
+      _mesh_component_map(_mesh_subsets, order)
 {
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
 
     unsigned comp_id = 0;
-    for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
+    for (auto const& mss : _mesh_subsets)
     {
         for (MeshLib::MeshSubset const* const ms : *mss)
         {
@@ -74,7 +75,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 }
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
-    std::vector<MeshLib::MeshSubsets*>&& mesh_subsets,
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
     std::vector<std::size_t> const& original_indices,
     std::vector<MeshLib::Element*> const& elements,
     AssemblerLib::MeshComponentMap&& mesh_component_map)
@@ -86,7 +87,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     // of that MeshSubset save a line of global indices.
 
     unsigned comp_id = 0;
-    for (MeshLib::MeshSubsets const* const mss : _mesh_subsets)
+    for (auto const& mss : _mesh_subsets)
     {
         if (! mss) continue;
         for (MeshLib::MeshSubset const* const ms : *mss)

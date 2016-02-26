@@ -44,7 +44,7 @@ public:
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
-        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         AssemblerLib::ComponentOrder const order);
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
@@ -62,7 +62,7 @@ public:
     ///       if \c mesh_subsets contains no nullptr!
     ///
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
-        std::vector<MeshLib::MeshSubsets*> const& mesh_subsets,
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
     /// Returns total number of degrees of freedom.
@@ -133,7 +133,7 @@ private:
     /// \attention The passed mesh_component_map is in undefined state after
     /// this construtor.
     explicit LocalToGlobalIndexMap(
-        std::vector<MeshLib::MeshSubsets*>&& mesh_subsets,
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         std::vector<std::size_t> const& original_indices,
         std::vector<MeshLib::Element*> const& elements,
         AssemblerLib::MeshComponentMap&& mesh_component_map);
@@ -146,7 +146,7 @@ private:
 
 private:
     /// A vector of mesh subsets for each process variables' components.
-    std::vector<MeshLib::MeshSubsets*> const _mesh_subsets;
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> const _mesh_subsets;
     AssemblerLib::MeshComponentMap _mesh_component_map;
 
     using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
