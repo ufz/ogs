@@ -77,20 +77,15 @@ public:
         // to each of the MeshSubset in the mesh_subsets.
         _mesh_subset_all_nodes =
             mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes);
-
-        // A vector is of the same size as in the DOF table. Only the one
-        // component for the current NeumannBC will be set.
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets(
-            local_to_global_index_map.getNumComponents());
-        // TODO the component_id in assignment is actually a global_component_id
-        // which must be calculated from variable_id and the (local)
-        // component_id. But for single variable processes both are equal.
-        all_mesh_subsets[component_id] = std::unique_ptr<MeshLib::MeshSubsets>{
+        std::unique_ptr<MeshLib::MeshSubsets> all_mesh_subsets{
             new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
 
+        // Create local DOF table from intersected mesh subsets for the given
+        // variable and component ids.
         _local_to_global_index_map.reset(
             local_to_global_index_map.deriveBoundaryConstrainedMap(
-                std::move(all_mesh_subsets), _elements));
+                variable_id, component_id, std::move(all_mesh_subsets),
+                _elements));
     }
 
     ~NeumannBc()
