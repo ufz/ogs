@@ -377,19 +377,20 @@ unsigned MeshRevision::subdividePyramid(MeshLib::Element const*const pyramid,
 	std::vector<MeshLib::Node*> const& nodes,
 	std::vector<MeshLib::Element*> &new_elements) const
 {
-	MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
-	tet1_nodes[0] = nodes[pyramid->getNode(0)->getID()];
-	tet1_nodes[1] = nodes[pyramid->getNode(1)->getID()];
-	tet1_nodes[2] = nodes[pyramid->getNode(2)->getID()];
-	tet1_nodes[3] = nodes[pyramid->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet1_nodes));
+	auto addTetrahedron = [&pyramid, &nodes, &new_elements](
+	    std::size_t id0, std::size_t id1, std::size_t id2, std::size_t id3)
+	{
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+		tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
+		tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
+		tet_nodes[2] = nodes[pyramid->getNode(id2)->getID()];
+		tet_nodes[3] = nodes[pyramid->getNode(id3)->getID()];
+		new_elements.push_back(new MeshLib::Tet(tet_nodes));
+	};
 
-	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
-	tet2_nodes[0] = nodes[pyramid->getNode(0)->getID()];
-	tet2_nodes[1] = nodes[pyramid->getNode(2)->getID()];
-	tet2_nodes[2] = nodes[pyramid->getNode(3)->getID()];
-	tet2_nodes[3] = nodes[pyramid->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet2_nodes));
+	addTetrahedron(0,1,2,4);
+
+	addTetrahedron(0,2,3,4);
 
 	return 2;
 }
@@ -398,26 +399,22 @@ unsigned MeshRevision::subdividePrism(MeshLib::Element const*const prism,
 	std::vector<MeshLib::Node*> const& nodes,
 	std::vector<MeshLib::Element*> &new_elements) const
 {
-	MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
-	tet1_nodes[0] = nodes[prism->getNode(0)->getID()];
-	tet1_nodes[1] = nodes[prism->getNode(1)->getID()];
-	tet1_nodes[2] = nodes[prism->getNode(2)->getID()];
-	tet1_nodes[3] = nodes[prism->getNode(3)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet1_nodes));
+	auto addTetrahedron = [&prism, &nodes, &new_elements](
+	    std::size_t id0, std::size_t id1, std::size_t id2, std::size_t id3)
+	{
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+		tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
+		tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
+		tet_nodes[2] = nodes[prism->getNode(id2)->getID()];
+		tet_nodes[3] = nodes[prism->getNode(id3)->getID()];
+		new_elements.push_back(new MeshLib::Tet(tet_nodes));
+	};
 
-	MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
-	tet2_nodes[0] = nodes[prism->getNode(3)->getID()];
-	tet2_nodes[1] = nodes[prism->getNode(2)->getID()];
-	tet2_nodes[2] = nodes[prism->getNode(4)->getID()];
-	tet2_nodes[3] = nodes[prism->getNode(5)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet2_nodes));
+	addTetrahedron(0, 1, 2, 3);
 
-	MeshLib::Node** tet3_nodes = new MeshLib::Node*[4];
-	tet3_nodes[0] = nodes[prism->getNode(2)->getID()];
-	tet3_nodes[1] = nodes[prism->getNode(1)->getID()];
-	tet3_nodes[2] = nodes[prism->getNode(3)->getID()];
-	tet3_nodes[3] = nodes[prism->getNode(4)->getID()];
-	new_elements.push_back(new MeshLib::Tet(tet3_nodes));
+	addTetrahedron(3, 2, 4, 5);
+
+	addTetrahedron(2, 1, 3, 4);
 
 	return 3;
 }
@@ -612,11 +609,24 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 	std::vector<MeshLib::Element*> & new_elements,
 	unsigned min_elem_dim) const
 {
-	// TODO?
-	// In theory a node from the bottom triangle and a node from the top triangle that are not connected by an edge
-	// could collapse, resulting in a combination of tri and quad elements. This case is currently not tested.
+	auto addTetrahedron = [&org_elem, &nodes, &new_elements](
+	    std::size_t id0, std::size_t id1, std::size_t id2, std::size_t id3)
+	{
+		MeshLib::Node** tet_nodes = new MeshLib::Node*[4];
+		tet_nodes[0] = nodes[org_elem->getNode(id0)->getID()];
+		tet_nodes[1] = nodes[org_elem->getNode(id1)->getID()];
+		tet_nodes[2] = nodes[org_elem->getNode(id2)->getID()];
+		tet_nodes[3] = nodes[org_elem->getNode(id3)->getID()];
+		new_elements.push_back(new MeshLib::Tet(tet_nodes));
+	};
 
-	// if one of the non-triangle edges collapsed, elem can be reduced to a pyramid, otherwise it will be two tets
+	// TODO?
+	// In theory a node from the bottom triangle and a node from the top
+	// triangle that are not connected by an edge could collapse, resulting in a
+	// combination of tri and quad elements. This case is currently not tested.
+
+	// if one of the non-triangle edges collapsed, elem can be reduced to a
+	// pyramid, otherwise it will be two tets
 	if (n_unique_nodes == 5)
 	{
 		for (unsigned i=0; i<5; ++i)
@@ -626,19 +636,10 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					// non triangle edge collapsed
 					if (i%3 == j%3)
 					{
-						MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
-						tet1_nodes[0] = nodes[org_elem->getNode((i+1)%3)->getID()];
-						tet1_nodes[1] = nodes[org_elem->getNode((i+2)%3)->getID()];
-						tet1_nodes[2] = nodes[org_elem->getNode(i)->getID()];
-						tet1_nodes[3] = nodes[org_elem->getNode((i+1)%3+3)->getID()];
-						new_elements.push_back (new MeshLib::Tet(tet1_nodes));
-
-						MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
-						tet2_nodes[0] = nodes[org_elem->getNode((i+1)%3+3)->getID()];
-						tet2_nodes[1] = nodes[org_elem->getNode((i+2)%3)->getID()];
-						tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
-						tet2_nodes[3] = nodes[org_elem->getNode((i+2)%3+3)->getID()];
-						new_elements.push_back (new MeshLib::Tet(tet2_nodes));
+						addTetrahedron((i + 1) % 3, (i + 2) % 3, i,
+						               (i + 1) % 3 + 3);
+						addTetrahedron((i + 1) % 3 + 3, (i + 2) % 3, i,
+						               (i + 2) % 3 + 3);
 						return 2;
 					}
 
@@ -653,12 +654,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					}
 					const unsigned k_offset = (i>2) ? k-3 : k+3;
 
-					MeshLib::Node** tet1_nodes = new MeshLib::Node*[4];
-					tet1_nodes[0] = nodes[org_elem->getNode(i_offset)->getID()];
-					tet1_nodes[1] = nodes[org_elem->getNode(j_offset)->getID()];
-					tet1_nodes[2] = nodes[org_elem->getNode(k_offset)->getID()];
-					tet1_nodes[3] = nodes[org_elem->getNode(i)->getID()];
-					new_elements.push_back (new MeshLib::Tet(tet1_nodes));
+					addTetrahedron(i_offset, j_offset, k_offset, i);
 
 					const unsigned l =
 					    (GeoLib::isCoplanar(*org_elem->getNode(i_offset),
@@ -668,12 +664,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
 					        ? j
 					        : i;
 					const unsigned l_offset = (i>2) ? l-3 : l+3;
-					MeshLib::Node** tet2_nodes = new MeshLib::Node*[4];
-					tet2_nodes[0] = nodes[org_elem->getNode(l_offset)->getID()];
-					tet2_nodes[1] = nodes[org_elem->getNode(k_offset)->getID()];
-					tet2_nodes[2] = nodes[org_elem->getNode(i)->getID()];
-					tet2_nodes[3] = nodes[org_elem->getNode(k)->getID()];
-					new_elements.push_back (new MeshLib::Tet(tet2_nodes));
+					addTetrahedron(l_offset, k_offset, i, k);
 					return 2;
 				}
 	}
