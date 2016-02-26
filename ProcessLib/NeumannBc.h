@@ -59,8 +59,6 @@ public:
         std::size_t const variable_id,
         std::size_t const component_id)
         : _function(*bc.getFunction()),
-          _all_mesh_subsets(local_to_global_index_map.getNumComponents(),
-                            nullptr),
           _integration_order(integration_order)
     {
         assert(component_id < local_to_global_index_map.getNumComponents());
@@ -80,19 +78,23 @@ public:
         _mesh_subset_all_nodes =
             mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes);
 
-        _all_mesh_subsets[component_id] =
-            new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
+        // A vector is of the same size as in the DOF table. Only the one
+        // component for the current NeumannBC will be set.
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets(
+            local_to_global_index_map.getNumComponents());
+        // TODO the component_id in assignment is actually a global_component_id
+        // which must be calculated from variable_id and the (local)
+        // component_id. But for single variable processes both are equal.
+        all_mesh_subsets[component_id] = std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
 
         _local_to_global_index_map.reset(
             local_to_global_index_map.deriveBoundaryConstrainedMap(
-                _all_mesh_subsets, _elements));
+                std::move(all_mesh_subsets), _elements));
     }
 
     ~NeumannBc()
     {
-        for (auto p : _all_mesh_subsets)
-            delete p;
-
         delete _mesh_subset_all_nodes;
 
         for (auto e : _elements)
@@ -176,7 +178,6 @@ private:
     std::vector<MeshLib::Element*> _elements;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating #_elements of the boundary condition.
