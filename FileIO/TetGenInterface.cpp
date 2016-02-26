@@ -132,7 +132,8 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 	const unsigned offset = (_zero_based_idx) ? 0 : 1;
 	std::vector<std::size_t> idx_map;
 
-	for (std::size_t k(0); k<nFacets && !input.fail(); k++)
+	std::size_t k(0);
+	while (k<nFacets && !input.fail())
 	{
 		getline (input, line);
 		if (input.fail())
@@ -144,7 +145,6 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 		BaseLib::simplify(line);
 		if (line.empty() || line.compare(0,1,"#") == 0)
 		{
-			k--;
 			continue;
 		}
 
@@ -178,6 +178,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 			ERR("TetGenInterface::parseFacets(): Error reading points for facet %d.", k);
 			return false;
 		}
+		++k;
 	}
 	// here the poly-file potentially defines a number of points to mark holes within the volumes defined by the facets, these are ignored for now
 	// here the poly-file potentially defines a number of region attributes, these are ignored for now
@@ -313,7 +314,8 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 	double* coordinates (new double[dim]);
 	nodes.reserve(n_nodes);
 
-	for (std::size_t k(0); k < n_nodes && !ins.fail(); k++)
+	std::size_t k(0);
+	while (k < n_nodes && !ins.fail())
 	{
 		getline(ins, line);
 		if (ins.fail())
@@ -329,7 +331,6 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 
 		if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
 		{
-			k--;
 			continue;
 		}
 
@@ -359,6 +360,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 
 		nodes.push_back(new MeshLib::Node(coordinates, id-offset));
 		// read attributes and boundary markers ... - at the moment we do not use this information
+		++k;
 	}
 
 	delete [] coordinates;
