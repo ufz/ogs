@@ -319,8 +319,8 @@ private:
 		                          _global_setup,
 		                          _integration_order,
 		                          *_local_to_global_index_map,
-		                          component_id,
-		                          *_mesh_subset_all_nodes);
+		                          0,  // 0 is the variable id TODO
+		                          component_id);
 	}
 
 	/// Computes and stores global matrix' sparsity pattern from given

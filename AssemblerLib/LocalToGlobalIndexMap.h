@@ -118,6 +118,14 @@ public:
                                                  range_end);
     }
 
+    MeshLib::MeshSubsets const& getMeshSubsets(std::size_t const /* variable_id */,
+                                        std::size_t const component_id) const
+    {
+        // TODO The (global) component_id should be calculated (looked up) from
+        // variable_id and component_id.
+        return *_mesh_subsets[component_id];
+    }
+
 private:
     /// Private constructor used by internally created local-to-global index
     /// maps. The mesh_component_map is passed as argument instead of being
