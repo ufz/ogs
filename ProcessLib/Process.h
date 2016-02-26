@@ -76,7 +76,8 @@ public:
 		DBUG("Initialize process.");
 
 		DBUG("Construct dof mappings.");
-		initializeMeshSubsets();
+		for (auto const& pv : _process_variables)
+			initializeMeshSubsets(pv);
 
 		_local_to_global_index_map.reset(
 		    new AssemblerLib::LocalToGlobalIndexMap(
@@ -143,15 +144,21 @@ protected:
 
 private:
 	/// Creates mesh subsets, i.e. components, for given mesh.
-	void initializeMeshSubsets()
+	void initializeMeshSubsets(ProcessVariable const& variable)
 	{
 		// Create single component dof in every of the mesh's nodes.
 		_mesh_subset_all_nodes =
 		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
 
 		// Collect the mesh subsets in a vector.
-		_all_mesh_subsets.push_back(
-		    new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+		std::generate_n(
+		    std::back_inserter(_all_mesh_subsets),
+		    variable.getNumberOfComponents(),
+		    [&]()
+		    {
+			    return new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
+		    });
+
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given
