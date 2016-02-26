@@ -49,20 +49,13 @@ public:
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
-    /// mesh_subsets.
-    ///
-    /// \param mesh_subsets the subsets to which this map will be constrained.
-    ///        It must hold that: mesh_subsets.size() == _mesh_subsets.size()
-    ///        If a component shall not be present in the derived map, put a nullptr
-    ///        to the respective position in mesh_subsets.
+    /// mesh_subsets for the given variable and component ids.
     ///
     /// \note The elements are not necessarily those used in the mesh_subsets.
-    ///
-    /// \note It is possible to use this method on the returned map only
-    ///       if \c mesh_subsets contains no nullptr!
-    ///
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+        std::size_t const variable_id,
+        std::size_t const component_id,
+        std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
     /// Returns total number of degrees of freedom.
@@ -134,7 +127,7 @@ private:
     /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-        std::vector<std::size_t> const& original_indices,
+        std::size_t const component_id,
         std::vector<MeshLib::Element*> const& elements,
         AssemblerLib::MeshComponentMap&& mesh_component_map);
 
