@@ -7,6 +7,7 @@
  *
  */
 
+#include <memory>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -29,16 +30,15 @@ public:
         nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
     }
 
     ~AssemblerLibLocalToGlobalIndexMapTest()
     {
         delete dof_map;
-        for (auto p : components)
-            delete p;
-
         delete nodesSubset;
         delete mesh;
     }
@@ -51,34 +51,42 @@ protected:
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
-    std::vector<MeshLib::MeshSubsets*> components;
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
 
     AssemblerLib::LocalToGlobalIndexMap const* dof_map = nullptr;
 };
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
+    // need to store the size because the components will be moved into the
+    // DOF-table.
+    std::size_t components_size = components.size();
+
+    dof_map = new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components.size(), dof_map->dofSize());
+    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
+    // need to store the size because the components will be moved into the
+    // DOF-table.
+    std::size_t components_size = components.size();
+
+    dof_map = new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
         AssemblerLib::ComponentOrder::BY_LOCATION);
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components.size(), dof_map->dofSize());
+    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
+    dof_map = new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
     // Select some elements from the full mesh.
@@ -92,20 +100,19 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
 
     MeshLib::MeshSubset const* const selected_subset =
         nodesSubset->getIntersectionByNodes(selected_nodes);
-    std::vector<MeshLib::MeshSubsets*> selected_components;
-    selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
-    selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{selected_subset}};
 
     AssemblerLib::LocalToGlobalIndexMap* dof_map_subset =
-        dof_map->deriveBoundaryConstrainedMap(selected_components, some_elements);
+        dof_map->deriveBoundaryConstrainedMap(0,  // variable id
+                                              1,  // component id
+                                              std::move(selected_component),
+                                              some_elements);
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(selected_nodes.size() * selected_components.size(),
-            dof_map_subset->dofSize());
+    ASSERT_EQ(selected_nodes.size(), dof_map_subset->dofSize());
 
     delete dof_map_subset;
-    for (auto p : selected_components)
-        delete p;
     delete selected_subset;
 }

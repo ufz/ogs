@@ -74,52 +74,29 @@ public:
 		    mesh_items_all_nodes->getIntersectionByNodes(nodes));
 	}
 
-	virtual ~AssemblerLibLocalToGlobalIndexMapMultiDOFTest()
-	{
-		for (auto p : components_boundary)
-			delete p;
-		for (auto p : components)
-			delete p;
-		for (auto p : boundary_elements)
-			delete p;
-	}
-
-	void clear()
-	{
-		for (auto* mss : components) {
-			delete mss;
-		}
-
-		components.clear();
-
-		for (auto* mss : components_boundary) {
-			delete mss;
-		}
-
-		components_boundary.clear();
-	}
-
 	void initComponents(const unsigned num_components, const unsigned selected_component,
 						const AL::ComponentOrder order)
 	{
 		assert(selected_component < num_components);
 
-		clear();
-
+		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
 		for (unsigned i=0; i<num_components; ++i)
 		{
-			components.push_back(new MeL::MeshSubsets(
-			    mesh_items_all_nodes.get()));
+			components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+                    new MeL::MeshSubsets{
+			    mesh_items_all_nodes.get()}});
 		}
-		dof_map.reset(new AL::LocalToGlobalIndexMap(components, order));
+		dof_map.reset(
+		    new AL::LocalToGlobalIndexMap(std::move(components), order));
 
-		components_boundary.resize(num_components, nullptr);
-		components_boundary[selected_component] =
-		    new MeL::MeshSubsets(mesh_items_boundary.get());
+		auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
+		    new MeL::MeshSubsets{mesh_items_boundary.get()}};
 
-		dof_map_boundary.reset(
-				dof_map->deriveBoundaryConstrainedMap(components_boundary, boundary_elements)
-				);
+		dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
+		    0,  // variable id
+		    selected_component,
+		    std::move(components_boundary),
+		    boundary_elements));
 	}
 
 	template <AL::ComponentOrder order>
@@ -129,8 +106,6 @@ public:
 
 	std::unique_ptr<const MeshLib::Mesh> mesh;
 	std::unique_ptr<const MeL::MeshSubset> mesh_items_all_nodes;
-	std::vector<MeL::MeshSubsets*> components_boundary;
-	std::vector<MeL::MeshSubsets*> components;
 
 	GeoLib::GEOObjects geo_objs;
 

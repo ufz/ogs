@@ -11,6 +11,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <memory>
 #include <vector>
 
 #include "AssemblerLib/MeshComponentMap.h"
@@ -33,15 +34,15 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
         nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
     }
 
     ~AssemblerLibMeshComponentMapTest()
     {
         delete cmap;
-        std::remove_if(components.begin(), components.end(),
-            [](MeshLib::MeshSubsets* p) { delete p; return true; });
         delete nodesSubset;
         delete mesh;
     }
@@ -53,7 +54,7 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
-    std::vector<MeshLib::MeshSubsets*> components;
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
     MeshComponentMap const* cmap;
 
     //
@@ -144,12 +145,13 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
 
     MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
 
-    std::vector<MeshLib::MeshSubsets*> selected_components;
-    selected_components.emplace_back(nullptr);  // empty component
-    selected_components.emplace_back(new MeshLib::MeshSubsets(&some_nodes_mesh_subset));
+    std::size_t const selected_component_id = 1;
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{&some_nodes_mesh_subset}};
 
     // Subset the original cmap.
-    MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
+    MeshComponentMap cmap_subset =
+        cmap->getSubset(selected_component_id, *selected_component);
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.size());
@@ -161,9 +163,6 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
         EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
             cmap_subset.getGlobalIndex(l, comp1_id));
     }
-
-    for (auto p : selected_components)
-        delete p;
 }
 
 TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
@@ -179,12 +178,13 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
 
     MeshLib::MeshSubset some_nodes_mesh_subset(*mesh, &some_nodes);
 
-    std::vector<MeshLib::MeshSubsets*> selected_components;
-    selected_components.emplace_back(nullptr);  // empty component
-    selected_components.emplace_back(new MeshLib::MeshSubsets(&some_nodes_mesh_subset));
+    std::size_t const selected_component_id = 1;
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{&some_nodes_mesh_subset}};
 
     // Subset the original cmap.
-    MeshComponentMap cmap_subset = cmap->getSubset(selected_components);
+    MeshComponentMap cmap_subset =
+        cmap->getSubset(selected_component_id, *selected_component);
 
     // Check number of components as selected
     ASSERT_EQ(ids.size(), cmap_subset.size());
@@ -196,7 +196,4 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
         EXPECT_EQ(cmap->getGlobalIndex(l, comp1_id),
             cmap_subset.getGlobalIndex(l, comp1_id));
     }
-
-    for (auto p : selected_components)
-        delete p;
 }

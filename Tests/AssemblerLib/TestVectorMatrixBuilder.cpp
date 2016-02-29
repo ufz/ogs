@@ -7,6 +7,7 @@
  *
  */
 
+#include <memory>
 #include <gtest/gtest.h>
 
 #include "AssemblerLib/MeshComponentMap.h"
@@ -35,8 +36,10 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
         nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
+        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
+            new MeshLib::MeshSubsets{nodesSubset}});
 
         cmap = new MeshComponentMap(components,
             AssemblerLib::ComponentOrder::BY_COMPONENT);
@@ -45,8 +48,6 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
     ~AssemblerLibVectorMatrixBuilder()
     {
         delete cmap;
-        std::remove_if(components.begin(), components.end(),
-            [](MeshLib::MeshSubsets* p) { delete p; return true; });
         delete nodesSubset;
         delete mesh;
     }
@@ -55,7 +56,7 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
     MeshLib::Mesh const* mesh;
     MeshLib::MeshSubset const* nodesSubset;
 
-    std::vector<MeshLib::MeshSubsets*> components;
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
     MeshComponentMap const* cmap;
 };
 
