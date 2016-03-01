@@ -18,44 +18,13 @@
 #include "BoostXmlGmlInterface.h"
 
 #include "BaseLib/ConfigTreeUtil.h"
+#include "BaseLib/uniqueInsert.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/PointVec.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
-
-
-namespace
-{
-
-//! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
-template<typename T> std::string tostring(T const& value)
-{
-	return std::to_string(value);
-}
-//! \overload
-template<> std::string tostring(std::string const& value)
-{
-	return value;
-}
-
-//! Inserts the given \c key with the given \c value into the \c map if an entry with the
-//! given \c key does not yet exist; otherwise an \c error_message is printed and the
-//! program is aborted.
-template<typename Map, typename Key, typename Value>
-void insert_if_key_unique_else_error(
-	Map& map, Key const& key, Value const& value,
-	std::string const& error_message)
-{
-	auto const inserted = map.emplace(key, value);
-	if (!inserted.second) { // insertion failed, i.e., key already exists
-		ERR("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
-		std::abort();
-	}
-}
-
-}
 
 namespace FileIO
 {
@@ -140,7 +109,7 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 		auto const p_z  = pt.getConfAttribute<double>("z");
 
 		auto const p_size = points.size();
-		insert_if_key_unique_else_error(_idx_map, p_id, p_size,
+		BaseLib::insertIfKeyUniqueElseError(_idx_map, p_id, p_size,
 		    "The point id is not unique.");
 		points.push_back(new GeoLib::Point(p_x, p_y, p_z, p_id));
 
@@ -151,7 +120,7 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
 				std::abort();
 			}
 
-			insert_if_key_unique_else_error(pnt_names, *p_name, p_size,
+			BaseLib::insertIfKeyUniqueElseError(pnt_names, *p_name, p_size,
 			    "The point name is not unique.");
 		}
 	}
@@ -180,7 +149,7 @@ void BoostXmlGmlInterface::readPolylines(
 				std::abort();
 			}
 
-			insert_if_key_unique_else_error(ply_names, *p_name, polylines.size()-1,
+			BaseLib::insertIfKeyUniqueElseError(ply_names, *p_name, polylines.size()-1,
 			    "The polyline name is not unique.");
 
 			for (auto const pt : pl.getConfParamList<std::size_t>("pnt")) {
@@ -217,7 +186,7 @@ void BoostXmlGmlInterface::readSurfaces(
 				std::abort();
 			}
 
-			insert_if_key_unique_else_error(sfc_names, *s_name, surfaces.size()-1,
+			BaseLib::insertIfKeyUniqueElseError(sfc_names, *s_name, surfaces.size()-1,
 			    "The surface name is not unique.");
 
 			for (auto const& element : sfc.getConfParamList("element")) {

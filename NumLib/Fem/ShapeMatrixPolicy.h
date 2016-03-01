@@ -106,7 +106,7 @@ struct EigenDynamicShapeMatrixPolicy
 };
 
 /// Default choice of the ShapeMatrixPolicy.
-#if OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
+#ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 template <typename ShapeFunction, unsigned GlobalDim>
 using ShapeMatrixPolicyType = EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 #else

@@ -70,6 +70,15 @@ void simplify(std::string &str);
  */
 std::string padLeft(std::string const& str, int maxlen, char ch=' ');
 
+
+//! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
+template<typename T> std::string tostring(T const& value)
+{
+	return std::to_string(value);
+}
+//! \overload
+std::string const& tostring(std::string const& value);
+
 } // end namespace BaseLib
 
 #ifdef MSVC
