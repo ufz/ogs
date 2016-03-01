@@ -31,22 +31,41 @@ namespace ProcessLib
 {
 
 template<typename GlobalSetup>
-class GroundwaterFlowProcess : public Process<GlobalSetup>
+class GroundwaterFlowProcess final
+        : public Process<GlobalSetup>
 {
+    // TODO change "this->" to "Base::"
+    using Base = Process<GlobalSetup>;
+
 public:
+    using GlobalMatrix = typename GlobalSetup::MatrixType;
+    using GlobalVector = typename GlobalSetup::VectorType;
+
+
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
+        typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
         ProcessVariable& variable,
         Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity,
-        boost::optional<BaseLib::ConfigTree>&& linear_solver_options)
-        : Process<GlobalSetup>(mesh),
+            hydraulic_conductivity)
+        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
           _hydraulic_conductivity(hydraulic_conductivity)
     {
         this->_process_variables.emplace_back(variable);
-        if (linear_solver_options)
-            Process<GlobalSetup>::setLinearSolverOptions(
-                std::move(*linear_solver_options));
+
+        if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
+                    &Base::getTimeDiscretization()) != nullptr)
+        {
+            ERR("GroundwaterFlowProcess can not be solved with the ForwardEuler"
+                " time discretization scheme. Aborting");
+            // Because the M matrix is not assembled. Thus, the linearized system
+            // would be singular. The same applies to CrankNicolson with theta = 0.0,
+            // but this case is not checked here.
+            // Anyway, the GroundwaterFlowProcess shall be transferred to a simpler
+            // ODESystemTag in the future.
+            std::abort();
+        }
     }
 
     template <unsigned GlobalDim>
@@ -74,7 +93,7 @@ public:
             initializer, *this->_local_to_global_index_map);
 
         DBUG("Calling local assembler builder for all mesh elements.");
-        this->_global_setup.execute(
+        this->_global_setup.transform(
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,
@@ -82,10 +101,13 @@ public:
                 this->_integration_order);
     }
 
+    // TODO remove, but put "gw_" somewhere
+    /*
     std::string getLinearSolverName() const override
     {
         return "gw_";
     }
+    */
 
     void createLocalAssemblers() override
     {
@@ -99,30 +121,41 @@ public:
             assert(false);
     }
 
-    bool assemble(const double /*delta_t*/) override
-    {
-        DBUG("Assemble GroundwaterFlowProcess.");
-
-        *this->_rhs = 0;   // This resets the whole vector.
-
-        // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers);
-
-        return true;
-    }
-
     ~GroundwaterFlowProcess()
     {
         for (auto p : _local_assemblers)
             delete p;
     }
 
+    //! \name ODESystem interface
+    //! @{
+
+    bool isLinear() const override
+    {
+        return true;
+    }
+
+    //! @}
+
 private:
     Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
 
     using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                 GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+    {
+        // TODO It looks like, with little work this entire method can be moved to the Process class.
+
+        DBUG("Assemble GroundwaterFlowProcess.");
+
+        // Call global assembler for each local assembly item.
+        this->_global_setup.execute(*this->_global_assembler,
+                                    _local_assemblers, t, x, M, K, b);
+    }
+
 
     std::vector<LocalAssembler*> _local_assemblers;
 };
@@ -131,6 +164,8 @@ template <typename GlobalSetup>
 std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>
 createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
+    typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -153,13 +188,12 @@ createGroundwaterFlowProcess(
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
 
-    // Linear solver options
-    auto linear_solver_options = config.getConfSubtreeOptional("linear_solver");
-
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
-        new GroundwaterFlowProcess<GlobalSetup>{mesh, process_variable,
-                                                hydraulic_conductivity,
-                                                std::move(linear_solver_options)}};
+        new GroundwaterFlowProcess<GlobalSetup>{
+            mesh, nonlinear_solver,std::move(time_discretization),
+            process_variable,
+            hydraulic_conductivity
+    }};
 }
 }   // namespace ProcessLib
 
