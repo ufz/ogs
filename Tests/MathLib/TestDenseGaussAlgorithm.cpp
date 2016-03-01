@@ -58,28 +58,28 @@ TEST(MathLib, DenseGaussAlgorithm)
 	double *x3 (new double[n_cols]);
 	std::generate(x3,x3+n_cols, std::rand);
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, double*> gauss(mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, double*> gauss;
 
 	// solve with b0 as right hand side
-	gauss.solve(b0, true);
+	gauss.solve(mat, b0, true);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b0[i], 0.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b1 as right hand side
-	gauss.solve(b1, false);
+	gauss.solve(mat, b1, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b1[i], 1.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b2 as right hand side
-	gauss.solve(b2, false);
+	gauss.solve(mat, b2, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b3 as right hand side and x3 as solution vector
-	gauss.solve(b3, x3, false);
+	gauss.solve(mat, b3, x3, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
@@ -133,27 +133,28 @@ TEST(MathLib, DenseGaussAlgorithmDenseVector)
 	MathLib::DenseVector<double> x3 (n_cols);
 	std::generate(std::begin(x3),std::end(x3), std::rand);
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>, MathLib::DenseVector<double>> gauss(mat);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>,
+			MathLib::DenseVector<double>> gauss;
 
 	// solve with b0 as right hand side
-	gauss.solve(b0, true);
+	gauss.solve(mat, b0, true);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b0[i], 0.0, 1e5 * std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b1 as right hand side
-	gauss.solve(b1, false);
+	gauss.solve(mat, b1, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(b1[i], 1.0, std::numeric_limits<float>::epsilon());
 	}
 
 	// solve with b2 as right hand side
-	gauss.solve(b2, false);
+	gauss.solve(mat, b2, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(b2[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
 
-	gauss.solve(b3, x3, false);
+	gauss.solve(mat, b3, x3, false);
 	for (std::size_t i(0); i<n_rows; i++) {
 		ASSERT_NEAR(fabs(x3[i]-x[i])/fabs(x[i]), 0.0, std::numeric_limits<float>::epsilon());
 	}
