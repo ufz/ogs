@@ -126,7 +126,7 @@ if(OGS_USE_MPI)
 endif()
 
 if(OGS_USE_EIGEN)
-	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO)
+	add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
 	add_definitions(-DOGS_USE_EIGEN)
 	if (EIGEN_NO_DEBUG)
 		add_definitions(-DEIGEN_NO_DEBUG)
@@ -134,6 +134,17 @@ if(OGS_USE_EIGEN)
 	if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
 		add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
 	endif()
+endif()
+
+if (OGS_USE_EIGENLIS)
+	if (NOT OGS_USE_EIGEN)
+		message(FATAL_ERROR "OGS_USE_EIGENLIS needs OGS_USE_EIGEN to be set!")
+	endif()
+	if (NOT OGS_USE_LIS)
+		message(FATAL_ERROR "OGS_USE_EIGENLIS needs OGS_USE_LIS to be set!")
+	endif()
+
+	add_definitions(-DOGS_USE_EIGENLIS)
 endif()
 
 if(OGS_BUILD_TESTS)
