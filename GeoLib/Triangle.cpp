@@ -83,8 +83,8 @@ bool Triangle::containsPoint2D (Point const& pnt) const
 	mat(1,1) = c[1] - a[1];
 	double y[2] = {pnt[0]-a[0], pnt[1]-a[1]};
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-	gauss.solve (y, true);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
+	gauss.solve(mat, y, true);
 
 	const double delta (std::numeric_limits<double>::epsilon());
 	const double upper (1+delta);
@@ -115,8 +115,8 @@ void getPlaneCoefficients(Triangle const& tri, double c[3])
 	c[1] = p1[2];
 	c[2] = p2[2];
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss (mat);
-	gauss.solve (c);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
+	gauss.solve (mat, c);
 }
 
 } // end namespace GeoLib
