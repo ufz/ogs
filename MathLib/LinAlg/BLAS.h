@@ -66,6 +66,10 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
     y = a*x + b*y;
 }
 
+//! Computes the Euclidean norm of \c x.
+template<typename MatrixOrVector>
+double norm2(MatrixOrVector const& x);
+
 
 // Matrix and Vector
 

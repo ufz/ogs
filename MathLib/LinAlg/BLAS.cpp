@@ -10,6 +10,27 @@
 #include "BLAS.h"
 
 
+// Dense Eigen matrices and vectors ////////////////////////////////////////
+#ifdef OGS_USE_EIGEN
+
+#include <Eigen/Core>
+
+namespace MathLib { namespace BLAS
+{
+
+// Explicit specialization
+// Computes the Euclidean norm of x
+template<>
+double norm2(Eigen::VectorXd const& x)
+{
+    return x.norm();
+}
+
+} } // namespaces
+
+#endif
+
+
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 #ifdef USE_PETSC
 
@@ -50,6 +71,14 @@ void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 {
     // TODO check sizes
     VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
+}
+
+// Explicit specialization
+// Computes the Euclidean norm of x
+template<>
+double norm2(PETScVector const& x)
+{
+    return x.getNorm(MathLib::VecNormType::NORM2);
 }
 
 
@@ -148,6 +177,14 @@ void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 {
     // TODO: does that break anything?
     y.getRawVector() = a*x.getRawVector() + b*y.getRawVector();
+}
+
+// Explicit specialization
+// Euclidean norm
+template<>
+double norm2(EigenVector const& x)
+{
+    return x.getRawVector().norm();
 }
 
 
