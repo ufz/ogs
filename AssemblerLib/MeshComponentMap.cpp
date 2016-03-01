@@ -287,6 +287,8 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 {
     GlobalIndexType const global_index = getGlobalIndex(l, comp_id);
 #ifndef USE_PETSC
+    (void)range_begin;
+    (void)range_end;
     return global_index;
 #else
     if (global_index >= 0)    // non-ghost location.
