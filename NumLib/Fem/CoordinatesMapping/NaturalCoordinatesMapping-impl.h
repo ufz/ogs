@@ -91,7 +91,7 @@ computeMappingMatrices(
 
 #ifndef NDEBUG
     if (shapemat.detJ<=.0)
-        ERR("***error: det|J|=%e is not positive.\n", shapemat.detJ);
+        ERR("det|J|=%e is not positive.\n", shapemat.detJ);
 #endif
 }
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
