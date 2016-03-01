@@ -56,6 +56,13 @@ private:
             , mat_strg(dynamic_cast<NumLib::InternalMatrixStorage&>(*tdisc_ode_sys))
         {}
 
+        SingleProcessData(SingleProcessData&& spd)
+            : nonlinear_solver_tag(spd.nonlinear_solver_tag)
+            , nonlinear_solver    (spd.nonlinear_solver)
+            , tdisc_ode_sys       (std::move(spd.tdisc_ode_sys))
+            , mat_strg            (spd.mat_strg)
+        {}
+
         //! Tag containing the missing type information necessary to cast the other
         //! members of this struct to their concrety types.
         NumLib::NonlinearSolverTag const nonlinear_solver_tag;
