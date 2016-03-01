@@ -70,10 +70,11 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // allocate a vector and matrix
     typedef GlobalSetup::VectorType GlobalVector;
     typedef GlobalSetup::MatrixType GlobalMatrix;
-    std::unique_ptr<GlobalMatrix> A(globalSetup.createMatrix(local_to_global_index_map.dofSize()));
+    auto A   = globalSetup.createMatrix(local_to_global_index_map.dofSize());
     A->setZero();
-    std::unique_ptr<GlobalVector> rhs(globalSetup.createVector(local_to_global_index_map.dofSize()));
-    std::unique_ptr<GlobalVector> x(globalSetup.createVector(local_to_global_index_map.dofSize()));
+    auto rhs = globalSetup.createVector(local_to_global_index_map.dofSize());
+    auto x   = globalSetup.createVector(local_to_global_index_map.dofSize());
+    // TODO no setZero() for rhs, x?
 
     // Initializer of the local assembler data.
     std::vector<Example::LocalAssemblerData<
@@ -94,20 +95,25 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         local_to_global_index_map);
 
     // Call global initializer for each mesh element.
-    globalSetup.execute(
+    globalSetup.transform(
             local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data,
             ex1);
 
+    // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
     typedef AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector> GlobalAssembler;
+            GlobalMatrix, GlobalVector,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
-    GlobalAssembler assembler(*A.get(), *rhs.get(), local_to_global_index_map);
+    GlobalAssembler assembler(local_to_global_index_map);
 
     // Call global assembler for each mesh element.
-    globalSetup.execute(assembler, local_assembler_data);
+    auto M_dummy = globalSetup.createMatrix(local_to_global_index_map.dofSize());
+    A->setZero();
+    auto const t = 0.0;
+    globalSetup.execute(assembler, local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 
     //std::cout << "A=\n";
     //A->write(std::cout);
@@ -136,10 +142,12 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         t_root.put_child("eigen", t_solver);
     }
     t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "");
+    BaseLib::ConfigTree conf(t_root, "",
+                             BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
 
-    GlobalSetup::LinearSolver ls(*A, "solver_name", &conf);
-    ls.solve(*rhs, *x);
+    GlobalSetup::LinearSolver ls("solver_name", &conf);
+    ls.solve(*A, *rhs, *x);
 
     // copy solution to double vector
     std::vector<double> solution(x->size());
