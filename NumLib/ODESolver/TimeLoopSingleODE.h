@@ -29,17 +29,22 @@ template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeLoopSingleODE
 {
 public:
-    using TDiscODESys = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
-    using NLSolver = NonlinearSolver<Matrix, Vector, NLTag>;
+    using TDiscODESys  = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
+    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
+    using NLSolver     = NonlinearSolver<Matrix, Vector, NLTag>;
 
     /*! Constructs an new instance.
      * \param ode_sys The ODE system to be integrated
+     * \param linear_solver the linear solver used to solve the linearized ODE system.
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
      */
     explicit
-    TimeLoopSingleODE(TDiscODESys& ode_sys, NLSolver& nonlinear_solver)
+    TimeLoopSingleODE(TDiscODESys& ode_sys,
+                      std::unique_ptr<LinearSolver>&& linear_solver,
+                      std::unique_ptr<NLSolver>&& nonlinear_solver)
         : _ode_sys(ode_sys)
-        , _nonlinear_solver(nonlinear_solver)
+        , _linear_solver   (std::move(linear_solver))
+        , _nonlinear_solver(std::move(nonlinear_solver))
     {}
 
     /*! Integrate the ODE from \c t0 to \c t_end with a timestep size of \c delta_t.
@@ -63,7 +68,8 @@ public:
 
 private:
     TDiscODESys& _ode_sys;
-    NLSolver& _nonlinear_solver;
+    std::unique_ptr<LinearSolver> _linear_solver;
+    std::unique_ptr<NLSolver> _nonlinear_solver;
 };
 
 //! @}
@@ -81,8 +87,10 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
 
     time_disc.setInitialState(t0, x0); // push IC
 
+    _nonlinear_solver->setEquationSystem(_ode_sys);
+
     if (time_disc.needsPreload()) {
-        _nonlinear_solver.assemble(_ode_sys, x);
+        _nonlinear_solver->assemble(x);
         time_disc.pushState(t0, x0, _ode_sys); // TODO: that might do duplicate work
     }
 
@@ -98,7 +106,7 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
-        nl_slv_succeeded = _nonlinear_solver.solve(_ode_sys, x);
+        nl_slv_succeeded = _nonlinear_solver->solve(x);
         if (!nl_slv_succeeded) break;
 
         time_disc.pushState(t, x, _ode_sys);
