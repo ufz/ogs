@@ -9,7 +9,6 @@
 #include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "ODEs.h"
 #include "BaseLib/BuildInfo.h"
-#include "NumLib/ODESolver/ODETypes.h"
 
 
 using EDMatrix = Eigen::MatrixXd;
@@ -24,6 +23,8 @@ class TestOutput
 {
 public:
     using TimeDisc = NumLib::TimeDiscretization<Vector>;
+    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
+    using NLSolver = NumLib::NonlinearSolver<Matrix, Vector, NLTag>;
 
     TestOutput(const char* name)
         : _file_name_part(name)
@@ -43,11 +44,17 @@ public:
 
         NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
-        NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(ode_sys, _nonlinear_solver);
+
+        auto linear_solver = MathLib::createLinearSolver<Matrix, Vector>(nullptr);
+        std::unique_ptr<NLSolver> nonlinear_solver(new NLSolver(*linear_solver, _tol, _maxiter));
+
+        NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(
+            ode_sys, std::move(linear_solver), std::move(nonlinear_solver));
 
         const double t0      = ODET::t0;
         const double t_end   = ODET::t_end;
-        const double delta_t = (t_end-t0) / num_timesteps;
+        const double delta_t = (num_timesteps == 0) ? -1.0
+                                                    : ((t_end-t0) / num_timesteps);
 
         INFO("Running test %s with %u timesteps of size %g s.",
              _file_name_part.c_str(), num_timesteps, delta_t);
@@ -63,7 +70,8 @@ public:
             loopCallback<ODE>(t, x);
         };
 
-        EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb));
+        if (num_timesteps > 0)
+            EXPECT_TRUE(loop.loop(t0, x0, t_end, delta_t, cb));
     }
 
 private:
@@ -99,8 +107,6 @@ private:
 
     const double _tol = 1e-9;
     const unsigned _maxiter = 20;
-
-    NumLib::NonlinearSolver<Matrix, Vector, NLTag> _nonlinear_solver{_tol, _maxiter};
 };
 
 

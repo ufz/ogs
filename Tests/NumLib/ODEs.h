@@ -11,6 +11,7 @@
 #define TESTS_NUMLIB_ODES_H
 
 #include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/ODESolver/ODESystem.h"
 
 // debug
@@ -32,10 +33,10 @@ public:
     void assemble(const double /*t*/, Vector const& /*x*/,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        NumLib::setMatrix(M, N, N, { 1.0, 0.0,  0.0, 1.0 });
-        NumLib::setMatrix(K, N, N, { 0.0, 1.0, -1.0, 0.0 });
+        MathLib::setMatrix(M, N, N, { 1.0, 0.0,  0.0, 1.0 });
+        MathLib::setMatrix(K, N, N, { 0.0, 1.0, -1.0, 0.0 });
 
-        NumLib::setVector(b, { 0.0, 0.0 });
+        MathLib::setVector(b, { 0.0, 0.0 });
     }
 
     void assembleJacobian(const double /*t*/, const Vector &/*x*/, Vector const& /*xdot*/,
@@ -71,13 +72,13 @@ class ODETraits<Matrix, Vector, ODE1>
 public:
     static void setIC(Vector& x0)
     {
-        NumLib::setVector(x0, { 1.0, 0.0 });
+        MathLib::setVector(x0, { 1.0, 0.0 });
     }
 
     static Vector solution(const double t)
     {
         Vector v(2);
-        NumLib::setVector(v, { cos(t), sin(t) });
+        MathLib::setVector(v, { cos(t), sin(t) });
         return v;
     }
 
@@ -103,9 +104,9 @@ public:
     void assemble(const double /*t*/, Vector const& x,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        NumLib::setMatrix(M, N, N, { 1.0 });
-        NumLib::setMatrix(K, N, N, { x[0] });
-        NumLib::setVector(b, { 0.0 });
+        MathLib::setMatrix(M, N, N, { 1.0 });
+        MathLib::setMatrix(K, N, N, { x[0] });
+        MathLib::setVector(b, { 0.0 });
     }
 
     void assembleJacobian(const double /*t*/, const Vector &x, Vector const& /*xdot*/,
@@ -119,7 +120,7 @@ public:
         BLAS::copy(M, Jac);
         BLAS::scale(Jac, dxdot_dx);
 
-        NumLib::addToMatrix(Jac, N, N, { x[0] }); // add dK_dx
+        MathLib::addToMatrix(Jac, N, N, { x[0] }); // add dK_dx
 
         if (dx_dx != 0.0)
             BLAS::axpy(Jac, dx_dx, K);
@@ -144,13 +145,13 @@ class ODETraits<Matrix, Vector, ODE2>
 public:
     static void setIC(Vector& x0)
     {
-        NumLib::setVector(x0, { 1.0 });
+        MathLib::setVector(x0, { 1.0 });
     }
 
     static Vector solution(const double t)
     {
         Vector v(1);
-        NumLib::setVector(v, { 1.0/t });
+        MathLib::setVector(v, { 1.0/t });
         return v;
     }
 
@@ -185,15 +186,15 @@ public:
         auto const y = x_curr[1];
         auto const z = x_curr[2];
 
-        NumLib::
+        MathLib::
         setMatrix(M, N, N, {       t*y, 1.0,     0.0,
                                    0.0,  -t,     t*y,
                              omega*x*t, 0.0, omega*x });
-        NumLib::
+        MathLib::
         setMatrix(K, N, N, {             y,   1.0/t,                       -y,
                              omega*omega/y,    -0.5,                      0.0,
                               -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
-        NumLib::
+        MathLib::
         setVector(b, { 0.0,
                        0.5/t,
                        0.5*omega*x*z + omega/t });
@@ -232,7 +233,7 @@ public:
             // in this block it is assumed that dx_dx == 1.0
 
             // add dM/dx \cdot \dot x
-            NumLib::
+            MathLib::
             addToMatrix(Jac, N, N, {                 0.0, t*dx, 0.0,
                                                      0.0, t*dz, 0.0,
                                      omega*t*dx+omega*dz,  0.0, 0.0 });
@@ -240,14 +241,14 @@ public:
             BLAS::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x
-            NumLib::
+            MathLib::
             addToMatrix(Jac, N, N, { 0.0, x-z, 0.0,
                                      0.0, -omega*omega/y/y*x, 0.0,
                                      0.0, y/omega-(1.0/omega/t+omega)*z*z, // -->
                                      /* --> */  -0.5*omega*x - (1.0/omega/t+omega)*y*z });
 
             // add -db/dx
-            NumLib::
+            MathLib::
             addToMatrix(Jac, N, N, {          0.0, 0.0,          0.0,
                                               0.0, 0.0,          0.0,
                                      -0.5*omega*z, 0.0, -0.5*omega*z });
@@ -287,9 +288,9 @@ public:
     {
         auto const omega = ODE3<Matrix, Vector>::omega;
 
-        NumLib::setVector(x0, { sin(omega*t0)/omega/t0,
-                                1.0/t0,
-                                cos(omega*t0) });
+        MathLib::setVector(x0, { sin(omega*t0)/omega/t0,
+                                 1.0/t0,
+                                 cos(omega*t0) });
 
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
     }
@@ -299,9 +300,9 @@ public:
         auto const omega = ODE3<Matrix, Vector>::omega;
 
         Vector v(3);
-        NumLib::setVector(v, { sin(omega*t)/omega/t,
-                               1.0/t,
-                               cos(omega*t) });
+        MathLib::setVector(v, { sin(omega*t)/omega/t,
+                                1.0/t,
+                                cos(omega*t) });
         return v;
     }
 
