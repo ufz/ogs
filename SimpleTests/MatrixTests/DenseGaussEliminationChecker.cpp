@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	std::string const fname_mat(matrix_arg.getValue());
 	std::ifstream in(fname_mat.c_str());
 	if (!in) {
-		ERR("error reading matrix from %s", fname_mat.c_str());
+		INFO("error reading matrix from %s", fname_mat.c_str());
 		return -1;
 	}
 	INFO("reading matrix from %s ...", fname_mat.c_str());
