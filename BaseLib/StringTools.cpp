@@ -72,6 +72,11 @@ std::string padLeft(std::string const& str, int maxlen, char ch)
 	return ss.str();
 }
 
+std::string const& tostring(std::string const& value)
+{
+	return value;
+}
+
 } // end namespace BaseLib
 
 #ifdef MSVC
