@@ -256,8 +256,8 @@ public:
      */
     explicit ConfigTree(PTree const& tree,
                            std::string const& filename,
-                           Callback const& error_cb = onerror,
-                           Callback const& warning_cb = onerror);
+                           Callback const& error_cb,
+                           Callback const& warning_cb);
 
     //! copying is not compatible with the semantics of this class
     ConfigTree(ConfigTree const&) = delete;
