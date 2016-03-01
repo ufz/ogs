@@ -12,35 +12,34 @@
 
 #include <vector>
 
-
 #include "BaseLib/ConfigTree.h"
-#include "EigenVector.h"
+#include "MathLib/LinAlg/LinearSolver.h"
 #include "EigenOption.h"
 
 namespace MathLib
 {
 
 class EigenMatrix;
+class EigenVector;
+
+class EigenLinearSolverBase;
 
 class EigenLinearSolver final
+        : public LinearSolver<EigenMatrix, EigenVector>
 {
 public:
     /**
      * Constructor
-     * @param A           Coefficient matrix object
      * @param solver_name A name used as a prefix for command line options
      *                    if there are such options available.
      * @param option      A pointer to a linear solver option. In case you omit
      *                    this argument, default settings follow those of
      *                    LisOption struct.
      */
-    EigenLinearSolver(EigenMatrix &A, const std::string solver_name = "",
-                      BaseLib::ConfigTree const*const option = nullptr);
+    EigenLinearSolver(const std::string solver_name,
+                      BaseLib::ConfigTree const*const option);
 
-    ~EigenLinearSolver()
-    {
-        delete _solver;
-    }
+    ~EigenLinearSolver();
 
     /**
      * parse linear solvers configuration
@@ -57,27 +56,11 @@ public:
      */
     EigenOption &getOption() { return _option; }
 
-    /**
-     * solve a given linear equations
-     *
-     * @param b     RHS vector
-     * @param x     Solution vector
-     */
-    void solve(EigenVector &b, EigenVector &x);
+    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x) override;
 
 protected:
-    class IEigenSolver
-    {
-    public:
-        virtual ~IEigenSolver() = default;
-        /**
-         * execute a linear solver
-         */
-        virtual void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &) = 0;
-    };
-
     EigenOption _option;
-    IEigenSolver* _solver;
+    std::unique_ptr<EigenLinearSolverBase> _solver;
 };
 
 } // MathLib

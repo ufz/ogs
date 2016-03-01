@@ -21,10 +21,9 @@
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(PETScMatrix& A,
-                                     const std::string prefix,
+PETScLinearSolver::PETScLinearSolver(const std::string prefix,
                                      BaseLib::ConfigTree const* const option)
-    : _A(A), _elapsed_ctime(0.)
+    : _elapsed_ctime(0.)
 {
     // Insert options into petsc database if any.
     if (option)
@@ -47,7 +46,7 @@ PETScLinearSolver::PETScLinearSolver(PETScMatrix& A,
     KSPSetFromOptions(_solver);  // set running time option
 }
 
-bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
+bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)
 {
     BaseLib::RunTime wtimer;
     wtimer.start();
@@ -59,9 +58,9 @@ bool PETScLinearSolver::solve(const PETScVector &b, PETScVector &x)
 #endif
 
 #if (PETSC_VERSION_NUMBER > 3040)
-    KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix());
+    KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix());
 #else
-    KSPSetOperators(_solver, _A.getRawMatrix(), _A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
+    KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 #endif
 
     KSPSolve(_solver, b.getData(), x.getData());

@@ -24,18 +24,18 @@
 namespace MathLib
 {
 EigenLisLinearSolver::EigenLisLinearSolver(
-    EigenMatrix& A,
     const std::string /*solver_name*/,
     BaseLib::ConfigTree const* const option)
-    : _A(A), _lis_option(option)
+    : _lis_option(option)
 {
 }
 
-void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
+bool EigenLisLinearSolver::solve(EigenMatrix &A_, EigenVector& b_,
+                                 EigenVector &x_)
 {
     static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
                   "Sparse matrix is required to be in row major storage.");
-    auto &A = _A.getRawMatrix();
+    auto &A = A_.getRawMatrix();
     auto &b = b_.getRawVector();
     auto &x = x_.getRawVector();
 
@@ -45,16 +45,18 @@ void EigenLisLinearSolver::solve(EigenVector &b_, EigenVector &x_)
     int* ptr = A.outerIndexPtr();
     int* col = A.innerIndexPtr();
     double* data = A.valuePtr();
-    LisMatrix lisA(_A.getNRows(), nnz, ptr, col, data);
+    LisMatrix lisA(A_.getNRows(), nnz, ptr, col, data);
     LisVector lisb(b.rows(), b.data());
     LisVector lisx(x.rows(), x.data());
 
-    LisLinearSolver lissol(lisA);
+    LisLinearSolver lissol; // TODO not always creat Lis solver here
     lissol.setOption(_lis_option);
-    lissol.solve(lisb, lisx);
+    lissol.solve(lisA, lisb, lisx);
 
     for (std::size_t i=0; i<lisx.size(); i++)
         x[i] = lisx[i];
+
+    return true; // TODO implement checks
 }
 
 } //MathLib

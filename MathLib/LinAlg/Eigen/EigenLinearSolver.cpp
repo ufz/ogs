@@ -21,100 +21,124 @@
 namespace MathLib
 {
 
+// TODO change to LinearSolver
+class EigenLinearSolverBase
+{
+public:
+    using Vector = EigenVector::RawVectorType;
+    using Matrix = EigenMatrix::RawMatrixType;
+
+    virtual ~EigenLinearSolverBase() = default;
+
+    //! Solves the linear equation system \f$ A x = b \f$ for \f$ x \f$.
+    virtual bool solve(Matrix &A, Vector const& b, Vector &x, EigenOption &opt) = 0;
+};
+
 namespace details
 {
 
 /// Template class for Eigen direct linear solvers
-template <class T_SOLVER, class T_BASE>
-class EigenDirectLinearSolver final : public T_BASE
+template <class T_SOLVER>
+class EigenDirectLinearSolver final : public EigenLinearSolverBase
 {
 public:
-    explicit EigenDirectLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
-    {
-        INFO("-> initialize with the coefficient matrix");
-    }
-
-    void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &/*opt*/) override
+    bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& /*opt*/) override
     {
         INFO("-> solve");
-        if (!_A.isCompressed())
-            _A.makeCompressed();
-        _solver.compute(_A);
+        if (!A.isCompressed()) A.makeCompressed();
+
+        _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solver initialization");
-            return;
+            return false;
         }
 
         x = _solver.solve(b);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
-            return;
+            return false;
         }
+
+        return true;
     }
 
 private:
     T_SOLVER _solver;
-    EigenMatrix::RawMatrixType& _A;
 };
 
 /// Template class for Eigen iterative linear solvers
-template <class T_SOLVER, class T_BASE>
-class EigenIterativeLinearSolver final : public T_BASE
+template <class T_SOLVER>
+class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 {
 public:
-    explicit EigenIterativeLinearSolver(EigenMatrix::RawMatrixType &A) : _A(A)
-    {
-        INFO("-> initialize with the coefficient matrix");
-    }
-
-    void solve(EigenVector::RawVectorType &b, EigenVector::RawVectorType &x, EigenOption &opt) override
+    bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
         INFO("-> solve");
         _solver.setTolerance(opt.error_tolerance);
         _solver.setMaxIterations(opt.max_iterations);
-        if (!_A.isCompressed())
-            _A.makeCompressed();
-        _solver.compute(_A);
+
+        if (!A.isCompressed())
+            A.makeCompressed();
+
+        _solver.compute(A);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solver initialization");
-            return;
+            return false;
         }
+
         x = _solver.solveWithGuess(b, x);
         if(_solver.info()!=Eigen::Success) {
             ERR("Failed during Eigen linear solve");
-            return;
+            return false;
         }
+
         INFO("\t iteration: %d/%ld", _solver.iterations(), opt.max_iterations);
         INFO("\t residual: %e\n", _solver.error());
+
+        return true;
     }
 
 private:
     T_SOLVER _solver;
-    EigenMatrix::RawMatrixType& _A;
 };
 
 } // details
 
-EigenLinearSolver::EigenLinearSolver(EigenMatrix &A,
+EigenLinearSolver::EigenLinearSolver(
                             const std::string /*solver_name*/,
                             const BaseLib::ConfigTree* const option)
 {
+    using Matrix = EigenMatrix::RawMatrixType;
+
     if (option)
         setOption(*option);
 
-    if (!A.getRawMatrix().isCompressed())
-        A.getRawMatrix().makeCompressed();
-    if (_option.solver_type==EigenOption::SolverType::SparseLU) {
-        using SolverType = Eigen::SparseLU<EigenMatrix::RawMatrixType, Eigen::COLAMDOrdering<int>>;
-        _solver = new details::EigenDirectLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
-    } else if (_option.solver_type==EigenOption::SolverType::BiCGSTAB) {
-        using SolverType = Eigen::BiCGSTAB<EigenMatrix::RawMatrixType, Eigen::DiagonalPreconditioner<double>>;
-        _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
-    } else if (_option.solver_type==EigenOption::SolverType::CG) {
-        using SolverType = Eigen::ConjugateGradient<EigenMatrix::RawMatrixType, Eigen::Lower, Eigen::DiagonalPreconditioner<double>>;
-        _solver = new details::EigenIterativeLinearSolver<SolverType, IEigenSolver>(A.getRawMatrix());
+    // TODO for my taste it is much too unobvious that the default solver type
+    //      currently is SparseLU.
+    switch (_option.solver_type)
+    {
+    case EigenOption::SolverType::SparseLU: {
+        using SolverType = Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
+        _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
+        break;
+    }
+    case EigenOption::SolverType::BiCGSTAB: {
+        using SolverType = Eigen::BiCGSTAB<Matrix, Eigen::DiagonalPreconditioner<double>>;
+        _solver.reset(new details::EigenIterativeLinearSolver<SolverType>);
+        break;
+    }
+    case EigenOption::SolverType::CG: {
+        using SolverType = Eigen::ConjugateGradient<Matrix, Eigen::Lower, Eigen::DiagonalPreconditioner<double>>;
+        _solver.reset(new details::EigenIterativeLinearSolver<SolverType>);
+        break;
+    }
+    case EigenOption::SolverType::INVALID:
+        ERR("Invalid Eigen linear solver type. Aborting.");
+        std::abort();
     }
 }
+
+EigenLinearSolver::~EigenLinearSolver() = default;
 
 void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
@@ -137,12 +161,17 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
     }
 }
 
-void EigenLinearSolver::solve(EigenVector &b, EigenVector &x)
+bool EigenLinearSolver::solve(EigenMatrix &A, EigenVector& b, EigenVector &x)
 {
     INFO("------------------------------------------------------------------");
     INFO("*** Eigen solver computation");
-    _solver->solve(b.getRawVector(), x.getRawVector(), _option);
+
+    auto const success = _solver->solve(A.getRawMatrix(), b.getRawVector(),
+                                        x.getRawVector(), _option);
+
     INFO("------------------------------------------------------------------");
+
+    return success;
 }
 
 } //MathLib

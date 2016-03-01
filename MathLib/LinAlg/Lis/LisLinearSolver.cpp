@@ -21,20 +21,22 @@
 #include <logog/include/logog.hpp>
 
 #include "LisCheck.h"
+#include "LisMatrix.h"
+#include "LisVector.h"
 
 namespace MathLib
 {
 
-LisLinearSolver::LisLinearSolver(LisMatrix &A,
+LisLinearSolver::LisLinearSolver(
                     const std::string /*solver_name*/,
                     const BaseLib::ConfigTree* const option)
-: _A(A), _lis_option(option)
+: _lis_option(option)
 {
 }
 
-void LisLinearSolver::solve(LisVector &b, LisVector &x)
+bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
 {
-    finalizeMatrixAssembly(_A);
+    finalizeMatrixAssembly(A);
 
     INFO("------------------------------------------------------------------");
     INFO("*** LIS solver computation");
@@ -62,7 +64,7 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
 
     // solve
     INFO("-> solve");
-    ierr = lis_solve(_A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
+    ierr = lis_solve(A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
     checkLisError(ierr);
 
     {
@@ -102,6 +104,8 @@ void LisLinearSolver::solve(LisVector &b, LisVector &x)
     ierr = lis_solver_destroy(solver);
     checkLisError(ierr);
     INFO("------------------------------------------------------------------");
+
+    return true; // TODO add checks
 }
 
 } //MathLib
