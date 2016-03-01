@@ -42,19 +42,18 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
 			_localRhs = &localRhs;
 		}
 
-		void assemble(std::vector<double> const& /*local_x*/,
-					  std::vector<double> const& /*local_x_prev_ts*/)
+		void assemble(double const, std::vector<double> const&)
 		{
 			// The local contributions are computed here, usually, but for this
 			// particular test all contributions are equal for all elements and are
 			// already stored in the _localA matrix.
 		}
 
-		void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-				AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
+		void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+						 GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) const
 		{
-			A.add(indices, *_localA);
-			rhs.add(indices.rows, *_localRhs);
+			K.add(indices, *_localA);
+			b.add(indices.rows, *_localRhs);
 		}
 
 
