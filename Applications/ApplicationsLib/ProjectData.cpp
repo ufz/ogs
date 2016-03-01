@@ -19,16 +19,22 @@
 #include "logog/include/logog.hpp"
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/uniqueInsert.h"
 
 #include "MeshLib/Mesh.h"
 
-#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
+#include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 
 // FileIO
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
 #include "BaseLib/ConfigTree.h"
+
+#include "UncoupledProcessesTimeLoop.h"
+
+#include "ProcessLib/GroundwaterFlowProcess-fwd.h"
+
 
 namespace detail
 {
@@ -39,8 +45,9 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 	FileIO::BoostXmlGmlInterface gml_reader(geo_objects);
 	gml_reader.readFile(fname);
 }
-
 }
+
+ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	std::string const& path)
@@ -57,9 +64,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 		);
 
 	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
-	if (!mesh)
+	if (!mesh) {
 		ERR("Could not read mesh from \'%s\' file. No mesh added.",
 			mesh_file.c_str());
+		std::abort();
+	}
 	_mesh_vec.push_back(mesh);
 
 	// process variables
@@ -77,6 +86,10 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
 	// timestepping
 	parseTimeStepping(project_config.getConfSubtree("time_stepping"));
+
+	parseLinearSolvers(project_config.getConfSubtree("linear_solvers"));
+
+	parseNonlinearSolvers(project_config.getConfSubtree("nonlinear_solvers"));
 }
 
 ProjectData::~ProjectData()
@@ -132,6 +145,44 @@ bool ProjectData::removeMesh(const std::string &name)
 	_mesh_vec.erase(std::remove(_mesh_vec.begin(), _mesh_vec.end(), nullptr),
 			_mesh_vec.end());
 	return mesh_found;
+}
+
+void ProjectData::buildProcesses()
+{
+	for (auto const& pc : _process_configs)
+	{
+		auto const type = pc.peekConfParam<std::string>("type");
+
+		auto const nl_slv_name = pc.getConfParam<std::string>("nonlinear_solver");
+		auto& nl_slv = BaseLib::getOrError(_nonlinear_solvers, nl_slv_name,
+		    "A nonlinear solver with the given name has not been defined.");
+
+		auto time_disc = NumLib::createTimeDiscretization<GlobalVector>(
+		        pc.getConfSubtree("time_discretization")
+		    );
+
+		if (type == "GROUNDWATER_FLOW")
+		{
+			// The existence check of the in the configuration referenced
+			// process variables is checked in the physical process.
+			// TODO at the moment we have only one mesh, later there can be
+			// several meshes. Then we have to assign the referenced mesh
+			// here.
+			_processes.emplace_back(
+				ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
+				    *_mesh_vec[0], *nl_slv, std::move(time_disc),
+				    _process_variables, _parameters, pc));
+		}
+		else
+		{
+			ERR("Unknown process type: %s", type.c_str());
+			std::abort();
+		}
+	}
+
+	// process configs are not needed anymore, so clear the storage
+	// in order to trigger config tree checks
+	_process_configs.clear();
 }
 
 bool ProjectData::meshExists(const std::string &name) const
@@ -257,33 +308,48 @@ void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
 
 void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
 {
-	using namespace ProcessLib;
+	DBUG("Reading time loop configuration.");
 
-	DBUG("Reading timestepping configuration.");
+	_time_loop = ApplicationsLib::createUncoupledProcessesTimeLoop<
+	    GlobalMatrix, GlobalVector>(timestepping_config);
 
-	auto const type = timestepping_config.peekConfParam<std::string>("type");
-
-	if (type == "FixedTimeStepping")
+	if (!_time_loop)
 	{
-		_time_stepper.reset(NumLib::FixedTimeStepping::newInstance(timestepping_config));
-	}
-	else if (type == "SingleStep")
-	{
-		timestepping_config.ignoreConfParam("type");
-		_time_stepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
-	}
-	else
-	{
-		ERR("Unknown timestepper type: `%s'.", type.c_str());
-		std::abort();
-	}
-
-	if (!_time_stepper)
-	{
-		ERR("Initialization of timestepper failed.");
+		ERR("Initialization of time loop failed.");
 		std::abort();
 	}
 }
 
+void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
+{
+	DBUG("Reading linear solver configuration.");
 
+	for (auto conf : config.getConfSubtreeList("linear_solver"))
+	{
+		auto const name = conf.getConfParam<std::string>("name");
+		BaseLib::insertIfKeyUniqueElseError(_linear_solvers,
+		    name,
+		    MathLib::createLinearSolver<GlobalMatrix, GlobalVector,
+		        GlobalSetupType::LinearSolver>(&conf),
+		    "The linear solver name is not unique");
+	}
+}
 
+void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
+{
+	DBUG("Reading linear solver configuration.");
+
+	for (auto conf : config.getConfSubtreeList("nonlinear_solver"))
+	{
+		auto const ls_name = conf.getConfParam<std::string>("linear_solver");
+		auto& linear_solver = BaseLib::getOrError(_linear_solvers,
+		    ls_name, "A linear solver with the given name does not exist.");
+
+		auto const name = conf.getConfParam<std::string>("name");
+		BaseLib::insertIfKeyUniqueElseError(_nonlinear_solvers,
+		    name,
+		    NumLib::createNonlinearSolver<GlobalMatrix, GlobalVector>(
+		        *linear_solver, conf).first,
+		    "The nonlinear solver name is not unique");
+	}
+}
