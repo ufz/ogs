@@ -21,6 +21,7 @@ ConfigTreeTopLevel::ConfigTreeTopLevel(
         ConfigTree::PTree&& ptree)
     : _ptree(std::move(ptree))
     , _ctree(_ptree, filepath,
+             ConfigTree::onerror,
              be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning)
 {
 }

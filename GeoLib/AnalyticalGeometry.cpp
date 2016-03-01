@@ -151,8 +151,8 @@ bool lineSegmentIntersect(
 
 	double rhs[2] = {MathLib::scalarProduct(v,qp), MathLib::scalarProduct(w,pq)};
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu(mat);
-	lu.solve(rhs, true);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> lu;
+	lu.solve(mat, rhs, true);
 
 	// no theory for the following tolerances, determined by testing
 	// lower tolerance: little bit smaller than zero
@@ -248,8 +248,8 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
 		w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2])
 	};
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss(mat);
-	gauss.solve(y);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
+	gauss.solve(mat, y);
 
 	const double lower (eps_pnt_out_of_tri);
 	const double upper (1 + lower);
@@ -596,8 +596,8 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
 	std::vector<double> rhs = {{c[0]-a[0], c[1]-a[1]}};
 
 	MathLib::GaussAlgorithm<
-		MathLib::DenseMatrix<double, std::size_t>, std::vector<double>> solver(mat);
-	solver.solve(rhs);
+	    MathLib::DenseMatrix<double, std::size_t>, std::vector<double>> solver;
+	solver.solve(mat, rhs);
 	if (0 <= rhs[1] && rhs[1] <= 1.0) {
 		return { MathLib::Point3d{std::array<double,3>{{
 				c[0]+rhs[1]*(d[0]-c[0]), c[1]+rhs[1]*(d[1]-c[1]),

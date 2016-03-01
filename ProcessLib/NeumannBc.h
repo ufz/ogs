@@ -42,10 +42,13 @@ namespace ProcessLib
 /// right-hand-sides happen in the initialize() function.
 /// The integration() function provides calls then the actual integration of the
 /// Neumann boundary condition.
-template <typename GlobalSetup_>
+template <typename GlobalSetup>
 class NeumannBc
 {
 public:
+    using GlobalVector = typename GlobalSetup::VectorType;
+    using GlobalMatrix = typename GlobalSetup::MatrixType;
+
     /// Create a Neumann boundary condition process from given config,
     /// DOF-table, and a mesh subset.
     /// A local DOF-table, a subset of the given one, is constructed.
@@ -94,35 +97,38 @@ public:
             delete p;
     }
 
-    template <typename GlobalSetup>
-    void
-    initialize(GlobalSetup const& global_setup,
-        typename GlobalSetup::MatrixType& A,
-        typename GlobalSetup::VectorType& rhs,
+    /// Calls local assemblers which calculate their contributions to the global
+    /// matrix and the right-hand-side.
+    void integrate(GlobalSetup const& global_setup,
+                   const double t, GlobalVector& b)
+    {
+        global_setup.execute(*_global_assembler, _local_assemblers, t, b);
+    }
+
+    void initialize(GlobalSetup const& global_setup,
         unsigned global_dim)
     {
         if (global_dim==1)
-            initialize<GlobalSetup, 1u>(global_setup, A, rhs);
+            initialize<1u>(global_setup);
         else if (global_dim==2)
-            initialize<GlobalSetup, 2u>(global_setup, A, rhs);
+            initialize<2u>(global_setup);
         else if (global_dim==3)
-            initialize<GlobalSetup, 3u>(global_setup, A, rhs);
+            initialize<3u>(global_setup);
     }
 
+
+private:
     /// Allocates the local assemblers for each element and stores references to
     /// global matrix and the right-hand-side.
-    template <typename GlobalSetup, unsigned GlobalDim>
+    template <unsigned GlobalDim>
     void
-    initialize(GlobalSetup const& global_setup,
-        typename GlobalSetup::MatrixType& A,
-        typename GlobalSetup::VectorType& rhs)
+    initialize(GlobalSetup const& global_setup)
     {
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
             LocalNeumannBcAsmDataInterface,
             LocalNeumannBcAsmData,
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType,
+            GlobalMatrix, GlobalVector,
             GlobalDim>;
 
         LocalDataInitializer initializer;
@@ -143,7 +149,7 @@ public:
         };
 
         DBUG("Calling local Neumann assembler builder for Neumann boundary elements.");
-        global_setup.execute(
+        global_setup.transform(
                 local_asm_builder,
                 _elements,
                 _local_assemblers,
@@ -152,24 +158,10 @@ public:
 
         DBUG("Create global assembler.");
         _global_assembler.reset(
-            new GlobalAssembler(A, rhs, *_local_to_global_index_map));
-    }
-
-    /// Calls local assemblers which calculate their contributions to the global
-    /// matrix and the right-hand-side.
-    template <typename GlobalSetup>
-    void
-    integrate(GlobalSetup const& global_setup,
-              typename GlobalSetup::VectorType const * x_curr = nullptr,
-              typename GlobalSetup::VectorType const * x_prev_ts = nullptr
-              )
-    {
-        _global_assembler->setX(x_curr, x_prev_ts);
-        global_setup.execute(*_global_assembler, _local_assemblers);
+            new GlobalAssembler(*_local_to_global_index_map));
     }
 
 
-private:
     /// The right-hand-side function of the Neumann boundary condition given as
     /// \f$ \alpha(x) \, \partial u(x) / \partial n = \text{_function}(x)\f$.
     MathLib::ConstantFunction<double> const _function;
@@ -191,13 +183,13 @@ private:
 
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
-            typename GlobalSetup_::MatrixType,
-            typename GlobalSetup_::VectorType>;
+            GlobalMatrix, GlobalVector,
+            NumLib::ODESystemTag::NeumannBC>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
     using LocalAssembler = LocalNeumannBcAsmDataInterface<
-        typename GlobalSetup_::MatrixType, typename GlobalSetup_::VectorType>;
+        GlobalMatrix, GlobalVector>;
 
     /// Local assemblers for each element of #_elements.
     std::vector<LocalAssembler*> _local_assemblers;

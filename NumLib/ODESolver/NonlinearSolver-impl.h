@@ -12,15 +12,12 @@
 // for debugging
 // #include <iostream>
 
+#include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/BLAS.h"
 
 #include "NonlinearSolver.h"
 
 #include "MathLib/LinAlg/VectorNorms.h"
-
-// TODO: change
-#include "ODETypes.h" // for one shot linear solver
-
 
 namespace NumLib
 {
@@ -28,18 +25,18 @@ namespace NumLib
 template<typename Matrix, typename Vector>
 void
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys,
-         Vector const& x) const
+assemble(Vector const& x) const
 {
-    sys.assembleMatricesPicard(x);
+    _equation_system->assembleMatricesPicard(x);
 }
 
 template<typename Matrix, typename Vector>
 bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &x)
+solve(Vector &x)
 {
     namespace BLAS = MathLib::BLAS;
+    auto& sys = *_equation_system;
 
     bool success = false;
 
@@ -57,11 +54,16 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
 
-        oneShotLinearSolve(_A, _rhs, _x_new);
+        if (!_linear_solver.solve(_A, _rhs, _x_new)) {
+            ERR("The linear solver failed.");
+            x = _x_new;
+            success = false;
+            break;
+        }
 
         // x is used as delta_x in order to compute the error.
         BLAS::aypx(x, -1.0, _x_new); // x = _x_new - x
-        auto const error = norm(x);
+        auto const error = BLAS::norm2(x);
         // INFO("  picard iteration %u error: %e", iteration, error);
 
         // Update x s.t. in the next iteration we will compute the right delta x
@@ -86,18 +88,21 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard> &sys, Vector &
 template<typename Matrix, typename Vector>
 void
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-assemble(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys,
-         Vector const& x) const
+assemble(Vector const& x) const
 {
-    sys.assembleResidualNewton(x);
+    _equation_system->assembleResidualNewton(x);
+    // TODO if the equation system would be reset to nullptr after each
+    //      assemble() or solve() call, the user would be forced to set the
+    //      equation every time and could not forget it.
 }
 
 template<typename Matrix, typename Vector>
 bool
 NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &x)
+solve(Vector &x)
 {
     namespace BLAS = MathLib::BLAS;
+    auto& sys = *_equation_system;
 
     bool success = false;
 
@@ -114,7 +119,7 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
         // std::cout << "  res:\n" << res << std::endl;
 
         // TODO streamline that, make consistent with Picard.
-        if (norm(_res) < _tol) {
+        if (BLAS::norm2(_res) < _tol) {
             success = true;
             break;
         }
@@ -125,7 +130,12 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
-        oneShotLinearSolve(_J, _res, _minus_delta_x);
+        if (!_linear_solver.solve(_J, _res, _minus_delta_x)) {
+            ERR("The linear solver failed.");
+            BLAS::axpy(x, -_alpha, _minus_delta_x);
+            success = false;
+            break;
+        }
 
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
@@ -141,5 +151,38 @@ solve(NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton> &sys, Vector &
 
     return success;
 }
+
+
+template<typename Matrix, typename Vector>
+std::pair<
+    std::unique_ptr<NonlinearSolverBase<Matrix, Vector> >,
+    NonlinearSolverTag
+>
+createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
+                      BaseLib::ConfigTree const& config)
+{
+    using AbstractNLS = NonlinearSolverBase<Matrix, Vector>;
+
+    auto const type      = config.getConfParam<std::string>("type");
+    auto const tol       = config.getConfParam<double>("tol");
+    auto const max_iter  = config.getConfParam<unsigned>("max_iter");
+
+    if (type == "Picard")
+    {
+        auto const tag = NonlinearSolverTag::Picard;
+        using ConcreteNLS = NonlinearSolver<Matrix, Vector, tag>;
+        return std::make_pair(std::unique_ptr<AbstractNLS>(
+            new ConcreteNLS{linear_solver, tol, max_iter}), tag);
+    }
+    else if (type == "Newton")
+    {
+        auto const tag = NonlinearSolverTag::Newton;
+        using ConcreteNLS = NonlinearSolver<Matrix, Vector, tag>;
+        return std::make_pair(std::unique_ptr<AbstractNLS>(
+            new ConcreteNLS{linear_solver, tol, max_iter}), tag);
+    }
+    std::abort();
+}
+
 
 }

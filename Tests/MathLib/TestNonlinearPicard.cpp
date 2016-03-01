@@ -61,8 +61,8 @@ public:
         b[0] = -2;
         b[1] = 0.;
 
-        DenseSolverType solver(A);
-        solver.solve(b, x_new);
+        DenseSolverType solver;
+        solver.solve(A, b, x_new);
     }
 private:
     MatrixType A;

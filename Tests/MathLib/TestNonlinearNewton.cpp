@@ -51,10 +51,10 @@ public:
     void operator()(const VectorType &x, const VectorType &r, VectorType &dx)
     {
         _f_Jacobian(x, _matJ);
-        DenseSolverType solver(_matJ);
+        DenseSolverType solver;
         VectorType rhs(r);
         rhs *= -1.;
-        solver.solve(rhs, dx);
+        solver.solve(_matJ, rhs, dx);
     }
 
 private:

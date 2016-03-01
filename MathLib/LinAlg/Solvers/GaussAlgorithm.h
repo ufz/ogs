@@ -15,7 +15,7 @@
 #ifndef GAUSSALGORITHM_H_
 #define GAUSSALGORITHM_H_
 
-#include <cstddef>
+#include <vector>
 
 
 #include "BaseLib/ConfigTree.h"
@@ -42,11 +42,6 @@ public:
 public:
 	/**
 	 * A direct solver for the (dense) linear system \f$A x = b\f$.
-	 * @param A at the beginning the matrix A, at the end of the application of
-	 * method solve the matrix contains the factor L (without the diagonal)
-	 * in the strictly lower part and the factor U in the upper part.
-	 * The diagonal entries of L are all 1.0 and are not explicitly stored.
-	 * @attention The entries of the given matrix will be changed!
 	 * @param solver_name A name used as a prefix for command line options
 	 *                    if there are such options available.
 	 * @param option For some solvers the user can give parameters to the
@@ -54,37 +49,41 @@ public:
 	 * of all solvers of systems of linear equations. For this reason the
 	 * second argument was introduced.
 	 */
-	GaussAlgorithm(MAT_T &A, const std::string solver_name = "",
-                   BaseLib::ConfigTree const*const option = nullptr);
-	/**
-	 * destructor, deletes the permutation
-	 */
-	~GaussAlgorithm();
+	GaussAlgorithm(const std::string /*solver_name*/ = "",
+	               BaseLib::ConfigTree const*const /*option*/ = nullptr)
+	{
+	}
 
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
 	 * using forward solve and backward solve.
+	 * @param A the coefficient matrix
 	 * @param b at the beginning the right hand side, at the end the solution
 	 * @param decompose Flag that signals if the LU decomposition should be
 	 *        performed or not. If the matrix \f$A\f$ does not change, the LU
 	 *        decomposition needs to be performed once only!
 	 * @attention The entries of the given matrix will be changed!
 	 */
-	template <typename V> void solve (V & b, bool decompose = true);
-	void solve(FP_T* & b, bool decompose = true);
+	template <typename V>
+	void solve (MAT_T& A, V & b, bool decompose = true);
+
+	void solve(MAT_T& A, FP_T* & b, bool decompose = true);
 
 	/**
 	 * Method solves the linear system \f$A x = b\f$ (based on the LU factorization)
 	 * using forward solve and backward solve.
+	 * @param A (input) the coefficient matrix
 	 * @param b (input) the right hand side
 	 * @param x (output) the solution
 	 * @param decompose see documentation of the other solve methods.
 	 * @attention The entries of the given matrix will be changed!
 	 */
-	void solve(VEC_T const& b, VEC_T & x, bool decompose = true);
+	void solve(MAT_T& A, VEC_T const& b, VEC_T & x, bool decompose = true);
 
 private:
-	void performLU();
+	// void solve (MAT_T& A, VEC_T const& b, bool decompose);
+
+	void performLU(MAT_T& A);
 	/**
 	 * permute the right hand side vector according to the
 	 * row permutations of the LU factorization
@@ -93,18 +92,8 @@ private:
 	template <typename V> void permuteRHS(V & b) const;
 	void permuteRHS (VEC_T& b) const;
 
-	/**
-	 * a reference to the matrix
-	 */
-	MAT_T& _mat;
-	/**
-	 * the size of the matrix
-	 */
-	IDX_T _n;
-	/**
-	 * the permutation of the rows
-	 */
-	IDX_T* _perm;
+	//! the permutation of the rows
+	std::vector<IDX_T> _perm;
 };
 
 } // end namespace MathLib

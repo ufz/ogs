@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
 	b.resize(n_rows);
 	b = mat * x;
 
-	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>> gauss(mat);
-	gauss.solve(b, true);
+	MathLib::GaussAlgorithm<MathLib::DenseMatrix<double, std::size_t>> gauss;
+	gauss.solve(mat, b, true);
 
 	{
 		std::stringstream stream;

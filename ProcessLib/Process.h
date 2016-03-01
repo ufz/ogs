@@ -20,7 +20,6 @@
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubset.h"
@@ -38,6 +37,10 @@
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
+#include "NumLib/ODESolver/NonlinearSolver.h"
+#include "NumLib/ODESolver/ODESystem.h"
+#include "NumLib/ODESolver/TimeDiscretization.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -47,9 +50,26 @@ namespace ProcessLib
 {
 template <typename GlobalSetup>
 class Process
+		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
+		                           typename GlobalSetup::VectorType,
+		                           // TODO: later on use a simpler ODE system
+		                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+		                           NumLib::NonlinearSolverTag::Newton>
 {
 public:
-	Process(MeshLib::Mesh& mesh) : _mesh(mesh) {}
+	using GlobalVector = typename GlobalSetup::VectorType;
+	using GlobalMatrix = typename GlobalSetup::MatrixType;
+	using Index = typename GlobalMatrix::IndexType;
+	using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+	using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
+
+	Process(MeshLib::Mesh& mesh,
+	        NonlinearSolver& nonlinear_solver,
+	        std::unique_ptr<TimeDiscretization>&& time_discretization)
+	    : _mesh(mesh), _nonlinear_solver(nonlinear_solver)
+	    , _time_discretization(std::move(time_discretization))
+	{}
+
 	virtual ~Process()
 	{
 		for (auto p : _all_mesh_subsets)
@@ -59,16 +79,15 @@ public:
 
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
-	virtual bool assemble(const double delta_t) = 0;
-
-	virtual std::string getLinearSolverName() const = 0;
 
 	/// Postprocessing after solve().
 	/// The file_name is indicating the name of possible output file.
-	void postTimestep(std::string const& file_name, const unsigned /*timestep*/)
+	void postTimestep(std::string const& file_name,
+	                  const unsigned /*timestep*/,
+	                  GlobalVector const& x)
 	{
-		post();
-		output(file_name);
+		post(x);
+		output(file_name, x);
 	}
 
 	void initialize()
@@ -88,61 +107,141 @@ public:
 		computeSparsityPattern();
 #endif
 
-		// create global vectors and linear solver
-		createLinearSolver(getLinearSolverName());
-
 		DBUG("Create global assembler.");
 		_global_assembler.reset(
-		    new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+		    new GlobalAssembler(*_local_to_global_index_map));
 
 		createLocalAssemblers();
 
+		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
 		{
-			DBUG("Set initial conditions.");
-			setInitialConditions(pv, 0);  // 0 is the component id
-
-			DBUG("Initialize boundary conditions.");
 			createDirichletBcs(pv, 0);  // 0 is the component id
-
-			createNeumannBcs(pv, 0);  // 0 is the component id
+			createNeumannBcs(pv, 0);    // 0 is the component id
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_global_setup, *_A, *_rhs, _mesh.getDimension());
+			bc->initialize(_global_setup, _mesh.getDimension());
 	}
 
-	bool solve(const double delta_t)
+	void setInitialConditions(GlobalVector& x)
 	{
-		_A->setZero();
-		MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
+		DBUG("Set initial conditions.");
+		for (ProcessVariable& pv : _process_variables)
+		{
+			setInitialConditions(pv, 0, x);  // 0 is the component id
+		}
+	}
 
-		bool const result = assemble(delta_t);
+	std::size_t getNumEquations() const override final
+	{
+		return _local_to_global_index_map->dofSize();
+
+#ifdef USE_PETSC
+#if 0
+		// TODO for PETSc the method and the interface maybe have to be extended
+		// this is the old code moved here from th deleted createLinearSolver() method.
+
+		MathLib::PETScMatrixOption mat_opt;
+		const MeshLib::NodePartitionedMesh& pmesh =
+		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
+		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
+		mat_opt.o_nz = mat_opt.d_nz;
+		mat_opt.is_global_size = false;
+		const std::size_t num_unknowns =
+		    _local_to_global_index_map->dofSizeLocal();
+		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
+		// In the following two lines, false is assigned to
+		// the argument of is_global_size, which indicates num_unknowns
+		// is local.
+		_x.reset( _global_setup.createVector(num_unknowns,
+		          _local_to_global_index_map->getGhostIndices(), false) );
+		_rhs.reset( _global_setup.createVector(num_unknowns,
+		            _local_to_global_index_map->getGhostIndices(), false) );
+#endif
+#endif
+	}
+
+	void assemble(const double t, GlobalVector const& x,
+	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
+	{
+		MathLib::setMatrixSparsity(M, _sparsity_pattern);
+		MathLib::setMatrixSparsity(K, _sparsity_pattern);
+
+		assembleConcreteProcess(t, x, M, K, b);
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup);
+			bc->integrate(_global_setup, t, b);
+	}
 
-		for (auto const& bc : _dirichlet_bcs)
-			MathLib::applyKnownSolution(*_A, *_rhs, *_x, bc.global_ids,
-			                            bc.values);
+	void assembleJacobian(
+		const double t, GlobalVector const& x, GlobalVector const& xdot,
+		const double dxdot_dx, GlobalMatrix const& M,
+		const double dx_dx, GlobalMatrix const& K,
+		GlobalMatrix& Jac) override final
+	{
+		MathLib::setMatrixSparsity(Jac, _sparsity_pattern);
 
-		_linear_solver->solve(*_rhs, *_x);
-		return result;
+		assembleJacobianConcreteProcess(t, x, xdot, dxdot_dx, M, dx_dx, K, Jac);
+
+		// TODO In this method one could check if the user wants to use an
+		//      analytical or a numerical Jacobian. Then the right
+		//      assembleJacobianConcreteProcess() method will be chosen.
+		//      Additionally in the default implementation of said method one
+		//      could provide a fallback to a numerical Jacobian. However, that
+		//      would be in a sense implicit behaviour and it might be better to
+		//      just abort, as is currently the case.
+		//      In order to implement the Jacobian assembly entirely, in addition
+		//      to the operator() in VectorMatrixAssembler there has to be a method
+		//      that dispatches the Jacobian assembly.
+		//      Similarly, then the NeumannBC specialization of VectorMatrixAssembler
+		//      probably can be merged into the main class s.t. one has only one
+		//      type of VectorMatrixAssembler (for each equation type) with the
+		//      three methods assemble(), assembleJacobian() and assembleNeumannBC().
+		//      That list can be extended, e.g. by methods for the assembly of
+		//      source terms.
+		//      UPDATE: Probably it is better to keep a separate NeumannBC version of the
+		//      VectoMatrixAssembler since that will work for all kinds of processes.
+	}
+
+	std::vector<DirichletBc<Index> > const* getKnownSolutions()
+	const override final
+	{
+		return &_dirichlet_bcs;
+	}
+
+	NonlinearSolver& getNonlinearSolver() const
+	{
+		return _nonlinear_solver;
+	}
+
+	TimeDiscretization& getTimeDiscretization() const
+	{
+		return *_time_discretization;
 	}
 
 protected:
-	virtual void post(){};
-
-	/// Set linear solver options; called by the derived process which is
-	/// parsing the configuration.
-	void setLinearSolverOptions(BaseLib::ConfigTree&& config)
-	{
-		_linear_solver_options.reset(
-		    new BaseLib::ConfigTree(std::move(config)));
-	}
+	virtual void post(GlobalVector const& /*x*/) {}
 
 private:
+	virtual void assembleConcreteProcess(
+	    const double t, GlobalVector const& x,
+	    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+
+	virtual void assembleJacobianConcreteProcess(
+		const double /*t*/, GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
+		const double /*dxdot_dx*/, GlobalMatrix const& /*M*/,
+		const double /*dx_dx*/, GlobalMatrix const& /*K*/,
+		GlobalMatrix& /*Jac*/)
+	{
+		ERR("The concrete implementation of this Process did not override the"
+			" assembleJacobianConcreteProcess() method."
+			" Hence, no analytical Jacobian is provided for this process"
+			" and the Newton-Raphson method cannot be used to solve it.");
+		std::abort();
+	}
+
 	/// Creates mesh subsets, i.e. components, for given mesh.
 	void initializeMeshSubsets(ProcessVariable const& variable)
 	{
@@ -164,7 +263,8 @@ private:
 	/// Sets the initial condition values in the solution vector x for a given
 	/// process variable and component.
 	void setInitialConditions(ProcessVariable const& variable,
-	                          int const component_id)
+	                          int const component_id,
+	                          GlobalVector& x)
 	{
 		std::size_t const n_nodes = _mesh.getNNodes();
 		for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
@@ -182,12 +282,12 @@ private:
 			// To assign the initial value for the ghost entries,
 			// the negative indices of the ghost entries are restored to zero.
 			// checked hereby.
-			if ( global_index == _x->size() )
+			if ( global_index == x.size() )
 			    global_index = 0;
 #endif
-			_x->set(global_index,
-			        variable.getInitialConditionValue(*_mesh.getNode(node_id),
-			                                          component_id));
+			x.set(global_index,
+			      variable.getInitialConditionValue(*_mesh.getNode(node_id),
+			                                        component_id));
 		}
 	}
 
@@ -223,38 +323,6 @@ private:
 		                          *_mesh_subset_all_nodes);
 	}
 
-	/// Creates global matrix, rhs and solution vectors, and the linear solver.
-	void createLinearSolver(std::string const& solver_name)
-	{
-		DBUG("Allocate global matrix, vectors, and linear solver.");
-#ifdef USE_PETSC
-		MathLib::PETScMatrixOption mat_opt;
-		const MeshLib::NodePartitionedMesh& pmesh =
-		    static_cast<const MeshLib::NodePartitionedMesh&>(_mesh);
-		mat_opt.d_nz = pmesh.getMaximumNConnectedNodesToNode();
-		mat_opt.o_nz = mat_opt.d_nz;
-		mat_opt.is_global_size = false;
-		const std::size_t num_unknowns =
-		    _local_to_global_index_map->dofSizeLocal();
-		_A.reset(_global_setup.createMatrix(num_unknowns, mat_opt));
-		// In the following two lines, false is assigned to
-		// the argument of is_global_size, which indicates num_unknowns
-		// is local.
-		_x.reset( _global_setup.createVector(num_unknowns,
-		          _local_to_global_index_map->getGhostIndices(), false) );
-		_rhs.reset( _global_setup.createVector(num_unknowns,
-		            _local_to_global_index_map->getGhostIndices(), false) );
-#else
-		const std::size_t num_unknowns = _local_to_global_index_map->dofSize();
-		_A.reset(_global_setup.createMatrix(num_unknowns));
-		_x.reset(_global_setup.createVector(num_unknowns));
-		_rhs.reset(_global_setup.createVector(num_unknowns));
-#endif
-		_linear_solver.reset(new typename GlobalSetup::LinearSolver(
-		    *_A, solver_name, _linear_solver_options.get()));
-		checkAndInvalidate(_linear_solver_options);
-	}
-
 	/// Computes and stores global matrix' sparsity pattern from given
 	/// DOF-table.
 	void computeSparsityPattern()
@@ -263,7 +331,7 @@ private:
 		    *_local_to_global_index_map, _mesh));
 	}
 
-	void output(std::string const& file_name)
+	void output(std::string const& file_name, GlobalVector const& x)
 	{
 		DBUG("Process output.");
 
@@ -272,11 +340,11 @@ private:
 		// TODO It is also possible directly to copy the data for single process
 		// variable to a mesh property. It needs a vector of global indices and
 		// some PETSc magic to do so.
-		std::vector<double> x_copy(_x->getLocalSize() + _x->getGhostSize());
+		std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
 #else
-		std::vector<double> x_copy(_x->size());
+		std::vector<double> x_copy(x.size());
 #endif
-		_x->copyValues(x_copy);
+		x.copyValues(x_copy);
 
 		std::size_t const n_nodes = _mesh.getNNodes();
 		for (ProcessVariable& pv : _process_variables)
@@ -294,8 +362,8 @@ private:
 				{
 					auto const index =
 					    _local_to_global_index_map->getLocalIndex(
-					        l, component_id, _x->getRangeBegin(),
-					        _x->getRangeEnd());
+					        l, component_id, x.getRangeBegin(),
+					        x.getRangeEnd());
 
 					output_data[node_id * n_components + component_id] =
 					    x_copy[index];
@@ -318,21 +386,15 @@ protected:
 
 	GlobalSetup _global_setup;
 
-	using GlobalAssembler =
-	    AssemblerLib::VectorMatrixAssembler<typename GlobalSetup::MatrixType,
-	                                        typename GlobalSetup::VectorType>;
+	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+	        GlobalMatrix,
+	        GlobalVector,
+	        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
 	std::unique_ptr<GlobalAssembler> _global_assembler;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
-
-	std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
-	std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
-
-	std::unique_ptr<typename GlobalSetup::MatrixType> _A;
-	std::unique_ptr<typename GlobalSetup::VectorType> _rhs;
-	std::unique_ptr<typename GlobalSetup::VectorType> _x;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
@@ -341,6 +403,9 @@ protected:
 
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
+	NonlinearSolver& _nonlinear_solver;
+	std::unique_ptr<TimeDiscretization> _time_discretization;
 };
 
 /// Find a process variable for a name given in the process configuration under

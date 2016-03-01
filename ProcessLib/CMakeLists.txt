@@ -7,6 +7,7 @@ target_link_libraries(ProcessLib INTERFACE
     AssemblerLib
     MeshLib
     MeshGeoToolsLib
+    NumLib # for shape matrices
     ${VTK_LIBRARIES}
     logog
 )

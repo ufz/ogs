@@ -34,11 +34,10 @@ public:
             Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
             unsigned const integration_order) = 0;
 
-    virtual void assemble(std::vector<double> const& local_x,
-                          std::vector<double> const& local_x_prev_ts) = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
-    virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-            AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
+    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 };
 
 template <typename ShapeFunction_,
@@ -91,8 +90,7 @@ public:
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void assemble(std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_x_prev_ts*/) override
+    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
     {
         _localA->setZero();
         _localRhs->setZero();
@@ -109,13 +107,12 @@ public:
         }
     }
 
-    void addToGlobal(
-        GlobalMatrix& A, GlobalVector& rhs,
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices)
+    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {
-        A.add(indices, *_localA);
-        rhs.add(indices.rows, *_localRhs);
+        K.add(indices, *_localA);
+        b.add(indices.rows, *_localRhs);
     }
 
 private:

@@ -24,6 +24,7 @@
 #include "logog/include/logog.hpp"
 
 #include "BaseLib/ConfigTree.h"
+#include "MathLib/LinAlg/LinearSolver.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -31,26 +32,28 @@
 namespace MathLib
 {
 
-/*!
-     A class of linear solver based on PETSc rountines.
+/*! A class of linear solver based on PETSc rountines.
 
-     All options for KSP and PC must given in the command line.
+ All command-line options that are not recognized by OGS are passed on to
+ PETSc, i.e., they potentially affect the linear solver.
+ The linear solver options in the project file take precedence over the
+ command-line options, because the former are processed at a later stage.
 */
 class PETScLinearSolver
+        : public LinearSolver<PETScMatrix, PETScVector>
 {
     public:
 
         /*!
             Constructor
-            \param A       Matrix, cannot be constant.
             \param prefix  Name used to distinguish the options in the command
                            line for this solver. It can be the name of the PDE
                            that owns an instance of this class.
             \param option  Petsc options, which will be inserted into the global
                            petsc options database.
         */
-        PETScLinearSolver(PETScMatrix& A, const std::string prefix = "",
-                          BaseLib::ConfigTree const* const option = nullptr);
+        PETScLinearSolver(const std::string prefix,
+                          BaseLib::ConfigTree const* const option);
 
         ~PETScLinearSolver()
         {
@@ -60,13 +63,8 @@ class PETScLinearSolver
             KSPDestroy(&_solver);
         }
 
-        /*!
-            Solve a system of equations.
-            \param b The right hand side of the equations.
-            \param x The solutions to be solved.
-            \return  true: converged, false: diverged.
-        */
-        bool solve(const PETScVector &b, PETScVector &x);
+        // TODO check if some args in LinearSolver interface can be made const&.
+        bool solve(PETScMatrix& A, PETScVector &b, PETScVector &x) override;
 
         /// Get number of iterations.
         PetscInt getNumberOfIterations() const
@@ -83,10 +81,6 @@ class PETScLinearSolver
         }
 
     private:
-        /// Matrix, kept as a member only for solving successive linear equation
-        /// that preconditioner matrix may vary.
-        PETScMatrix &_A;
-
         KSP _solver; ///< Solver type.
         PC _pc;      ///< Preconditioner type.
 
