@@ -11,33 +11,26 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <memory>
+
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "LogogSimpleFormatter.h"
+#include "FileIO/readMeshFromFile.h"
+#include "FileIO/writeMeshToFile.h"
 
-// FileIO
-#include "Legacy/MeshIO.h"
-#include "readMeshFromFile.h"
-
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "MeshEnums.h"
-#include "MeshSearch/ElementSearch.h"
-#include "MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Remove mesh elements.", ' ', "0.1");
 
@@ -83,13 +76,14 @@ int main (int argc, char* argv[])
 
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh const*const mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(
+	    FileIO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
-	MeshLib::ElementSearch ex(*mesh);
+	MeshLib::ElementSearch searcher(*mesh);
 
 	// search elements IDs to be removed
 	if (zveArg.isSet()) {
-		const std::size_t n_removed_elements = ex.searchByContent();
+		const std::size_t n_removed_elements = searcher.searchByContent();
 		INFO("%d zero volume elements found.", n_removed_elements);
 	}
 	if (eleTypeArg.isSet()) {
@@ -97,7 +91,7 @@ int main (int argc, char* argv[])
 		for (auto typeName : eleTypeNames) {
 			const MeshLib::MeshElemType type = MeshLib::String2MeshElemType(typeName);
 			if (type == MeshLib::MeshElemType::INVALID) continue;
-			const std::size_t n_removed_elements = ex.searchByElementType(type);
+			const std::size_t n_removed_elements = searcher.searchByElementType(type);
 			INFO("%d %s elements found.", n_removed_elements, typeName.c_str());
 		}
 	}
@@ -130,31 +124,26 @@ int main (int argc, char* argv[])
 		    aabb_error = true;
 		}
 		if (aabb_error)
-		    return 1;
+		    return EXIT_FAILURE;
 
 		std::array<MathLib::Point3d, 2> extent({{
 			MathLib::Point3d(std::array<double,3>{{xSmallArg.getValue(),
 				ySmallArg.getValue(), zSmallArg.getValue()}}),
 			MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
 				yLargeArg.getValue(), zLargeArg.getValue()}})}});
-		const std::size_t n_removed_elements = ex.searchByBoundingBox(
+		const std::size_t n_removed_elements = searcher.searchByBoundingBox(
 			GeoLib::AABB(extent.begin(), extent.end()));
 		INFO("%d elements found.", n_removed_elements);
 	}
 
 	// remove the elements and create a new mesh object.
-	MeshLib::Mesh const*const new_mesh = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName());
+	std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshLib::removeElements(
+	    *mesh, searcher.getSearchedElementIDs(), mesh->getName()));
 
 	// write into a file
-	FileIO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(new_mesh);
-	meshIO.writeToFile(mesh_out.getValue());
+	FileIO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
