@@ -73,9 +73,6 @@ public:
 		return matchedIDs.size();
 	}
 
-	/// Marks all elements with the given Material ID.
-	std::size_t searchByMaterialID(int const matID);
-
 	/// Marks all elements of the given element type.
 	std::size_t searchByElementType(MeshElemType eleType);
 

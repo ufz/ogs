@@ -21,26 +21,6 @@ ElementSearch::ElementSearch(const MeshLib::Mesh &mesh)
 {
 }
 
-std::size_t ElementSearch::searchByMaterialID(int const matID)
-{
-	boost::optional<MeshLib::PropertyVector<int> const&> opt_pv(
-		this->_mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-	);
-	if (!opt_pv)
-		return 0;
-
-	MeshLib::PropertyVector<int> const& pv(opt_pv.get());
-
-	std::vector<std::size_t> matchedIDs;
-	for (std::size_t i(0); i<pv.getNumberOfTuples(); ++i) {
-		if (pv[i]==matID)
-			matchedIDs.push_back(i);
-	}
-
-	this->updateUnion(matchedIDs);
-	return matchedIDs.size();
-}
-
 template <typename Container, typename Predicate>
 std::vector<std::size_t> filter(Container const& container, Predicate const& p)
 {
