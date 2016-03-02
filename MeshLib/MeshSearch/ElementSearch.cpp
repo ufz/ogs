@@ -11,7 +11,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
