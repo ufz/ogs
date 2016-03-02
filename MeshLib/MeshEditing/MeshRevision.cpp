@@ -90,7 +90,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 					subdivideElement(elem, new_nodes, new_elements));
 				if (n_new_elements == 0)
 				{
-					ERR("Error: Element %d has unknown element type.", k);
+					ERR("Element %d has unknown element type.", k);
 					this->resetNodeIDs();
 					this->cleanUp(new_nodes, new_elements);
 					return nullptr;
@@ -158,7 +158,7 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
 				subdivideElement(elem, new_nodes, new_elements));
 			if (n_new_elements == 0)
 			{
-				ERR("Error: Element %d has unknown element type.", k);
+				ERR("Element %d has unknown element type.", k);
 				this->cleanUp(new_nodes, new_elements);
 				return nullptr;
 			}
@@ -321,7 +321,7 @@ std::size_t MeshRevision::reduceElement(MeshLib::Element const*const element,
 		return reducePrism(element, n_unique_nodes, nodes, elements, min_elem_dim);
 	}
 
-	ERR ("Error: Unknown element type.");
+	ERR ("Unknown element type.");
 	return 0;
 }
 

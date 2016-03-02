@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 		CS_read(in, n, iA, jA, A);
 		INFO("\t- took %e s", timer.elapsed());
 	} else {
-		ERR("error reading matrix from %s", fname_mat.c_str());
+		INFO("error reading matrix from %s", fname_mat.c_str());
 		return -1;
 	}
 	unsigned nnz(iA[n]);
