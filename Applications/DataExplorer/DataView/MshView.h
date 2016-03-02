@@ -59,6 +59,9 @@ private:
 	void contextMenuEvent( QContextMenuEvent* event );
 
 private slots:
+	/// Opens a dialog for mapping 2d meshes.
+	void openMap2dMeshDialog();
+
 	/// Opens a dialog for editing meshes.
 	void openMeshEditDialog();
 

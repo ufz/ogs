@@ -14,6 +14,8 @@
 
 #include "MshView.h"
 
+#include <memory>
+
 #include <QHeaderView>
 #include <QContextMenuEvent>
 #include <QFileDialog>
@@ -30,6 +32,7 @@
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
 
 #include "OGSError.h"
+#include "MeshMapping2DDialog.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "SurfaceExtractionDialog.h"
@@ -117,6 +120,8 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 	unsigned const mesh_dim (item->getMesh()->getDimension());
 
 	std::vector<MeshAction> actions;
+	actions.push_back({new QAction("Map mesh...", this), 1, 2});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMap2dMeshDialog()));
 	actions.push_back({new QAction("Edit mesh...", this), 3, 3});
 	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
 	actions.push_back({new QAction("Add layer...", this), 1, 3});
@@ -141,6 +146,34 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 			menu.addAction(a.action);
 	}
 	menu.exec(event->globalPos());
+}
+
+void MshView::openMap2dMeshDialog()
+{
+	MshModel const*const model = static_cast<MshModel*>(this->model());
+	QModelIndex const index = this->selectionModel()->currentIndex();
+	MeshLib::Mesh const*const mesh = model->getMesh(index);
+	if (mesh == nullptr)
+		return;
+
+	MeshMapping2DDialog dlg;
+	if (dlg.exec() != QDialog::Accepted)
+		return;
+
+	std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(*mesh));
+	result->setName(dlg.getNewMeshName());
+	if (dlg.useRasterMapping())
+	{
+		if (!MeshLib::MeshLayerMapper::layerMapping(*result, dlg.getRasterPath(), dlg.getNoDataReplacement()))
+		{
+			OGSError::box("Error mapping mesh.");
+			return;
+		}
+	}
+	else
+		MeshLib::MeshLayerMapper::mapToStaticValue(*result, dlg.getStaticValue());
+	static_cast<MshModel*>(this->model())->addMesh(result.release());
+
 }
 
 void MshView::openMeshEditDialog()

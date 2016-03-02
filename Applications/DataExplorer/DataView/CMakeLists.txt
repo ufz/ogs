@@ -20,6 +20,7 @@ set(SOURCES
 	MergeGeometriesDialog.cpp
 	MeshAnalysisDialog.cpp
 	MeshElementRemovalDialog.cpp
+	MeshMapping2DDialog.cpp
 	MeshQualitySelectionDialog.cpp
 	MeshValueEditDialog.cpp
 	ModellingTabWidget.cpp
@@ -67,6 +68,7 @@ set(HEADERS
 	MergeGeometriesDialog.h
 	MeshAnalysisDialog.h
 	MeshElementRemovalDialog.h
+	MeshMapping2DDialog.h
 	MeshQualitySelectionDialog.h
 	MeshValueEditDialog.h
 	ModellingTabWidget.h
