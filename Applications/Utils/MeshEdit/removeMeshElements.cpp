@@ -45,7 +45,10 @@ int main (int argc, char* argv[])
 {
 	ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Remove mesh elements.", ' ', "0.1");
+	TCLAP::CmdLine cmd(
+	    "Remove mesh elements. The documentation is available at "
+	    "https://docs.opengeosys.org/docs/tools/meshing/remove-mesh-elements.",
+	    ' ', "0.1");
 
 	// Bounding box params
 	TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension",
