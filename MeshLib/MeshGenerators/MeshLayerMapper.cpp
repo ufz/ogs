@@ -247,7 +247,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 {
 	if (new_mesh.getDimension() != 2)
 	{
-		ERR("MshLayerMapper::layerMapping - requires 2D mesh");
+		ERR("MshLayerMapper::layerMapping() - requires 2D mesh");
 		return false;
 	}
 
@@ -278,4 +278,19 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
 
 	return true;
 }
+
+bool MeshLayerMapper::mapToStaticValue(MeshLib::Mesh &mesh, double value)
+{
+	if (mesh.getDimension() != 2)
+	{
+		ERR("MshLayerMapper::mapToStaticValue() - requires 2D mesh");
+		return false;
+	}
+
+	std::vector<MeshLib::Node*> const& nodes (mesh.getNodes());
+	for (MeshLib::Node* node : nodes)
+		node->updateCoordinates((*node)[0], (*node)[1], value);
+	return true;
+}
+
 } // end namespace MeshLib

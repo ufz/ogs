@@ -67,6 +67,9 @@ public:
 	*/
 	static bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
 
+	/// Maps the elevation of all mesh nodes to the specified static value.
+	static bool mapToStaticValue(MeshLib::Mesh &mesh, double value);
+
 private:
 	/// Adds another layer to a subsurface mesh
 	void addLayerToMesh(const MeshLib::Mesh &mesh_layer, unsigned layer_id, GeoLib::Raster const& raster);
