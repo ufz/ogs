@@ -93,27 +93,7 @@ public:
 		DBUG("Initialize process.");
 
 		DBUG("Construct dof mappings.");
-		// Create single component dof in every of the mesh's nodes.
-		_mesh_subset_all_nodes =
-		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
-
-		// Collect the mesh subsets in a vector.
-		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-		for (ProcessVariable const& pv : _process_variables)
-		{
-			std::generate_n(
-			    std::back_inserter(all_mesh_subsets),
-			    pv.getNumberOfComponents(),
-			    [&]()
-			    {
-				    return std::unique_ptr<MeshLib::MeshSubsets>{
-				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
-				});
-		}
-
-		_local_to_global_index_map.reset(
-		    new AssemblerLib::LocalToGlobalIndexMap(
-		        std::move(all_mesh_subsets), AssemblerLib::ComponentOrder::BY_COMPONENT));
+		constructDofTable();
 
 #ifndef USE_PETSC
 		DBUG("Compute sparsity pattern");
@@ -253,6 +233,32 @@ private:
 			" Hence, no analytical Jacobian is provided for this process"
 			" and the Newton-Raphson method cannot be used to solve it.");
 		std::abort();
+	}
+
+	void constructDofTable()
+	{
+		// Create single component dof in every of the mesh's nodes.
+		_mesh_subset_all_nodes =
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+
+		// Collect the mesh subsets in a vector.
+		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+		for (ProcessVariable const& pv : _process_variables)
+		{
+			std::generate_n(
+			    std::back_inserter(all_mesh_subsets),
+			    pv.getNumberOfComponents(),
+			    [&]()
+			    {
+				    return std::unique_ptr<MeshLib::MeshSubsets>{
+				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
+				});
+		}
+
+		_local_to_global_index_map.reset(
+		    new AssemblerLib::LocalToGlobalIndexMap(
+		        std::move(all_mesh_subsets),
+		        AssemblerLib::ComponentOrder::BY_COMPONENT));
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given
