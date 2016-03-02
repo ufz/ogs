@@ -28,6 +28,19 @@
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
+template <typename PROPERTY_TYPE>
+void searchByProperty(std::string const& property_name,
+                      std::vector<PROPERTY_TYPE> const& property_values,
+                      MeshLib::ElementSearch& searcher)
+{
+	for (auto const& property_value : property_values) {
+		const std::size_t n_marked_elements =
+		    searcher.searchByPropertyValue(property_value, property_name);
+		INFO("%d elements with property value %s found.", n_marked_elements,
+		     std::to_string(property_value).c_str());
+	}
+}
+
 int main (int argc, char* argv[])
 {
 	ApplicationsLib::LogogSetup logog_setup;
@@ -60,9 +73,15 @@ int main (int argc, char* argv[])
 	TCLAP::MultiArg<std::string> eleTypeArg("t", "element-type",
 	                                      "element type to be removed", false, "element type");
 	cmd.add(eleTypeArg);
-	TCLAP::MultiArg<unsigned> matIDArg("m", "material-id",
-	                                      "material id", false, "material id");
-	cmd.add(matIDArg);
+
+	TCLAP::MultiArg<int> int_property_arg("", "int-property-value",
+	                                      "new property value (data type int)",
+	                                      false, "number");
+	cmd.add(int_property_arg);
+	TCLAP::ValueArg<std::string> property_name_arg(
+	    "n", "property-name", "name of property in the mesh", false,
+	    "MaterialIDs", "string");
+	cmd.add(property_name_arg);
 
 	// I/O params
 	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
@@ -95,12 +114,10 @@ int main (int argc, char* argv[])
 			INFO("%d %s elements found.", n_removed_elements, typeName.c_str());
 		}
 	}
-	if (matIDArg.isSet()) {
-		const std::vector<unsigned> vec_matID = matIDArg.getValue();
-		for (auto matID : vec_matID) {
-			const std::size_t n_removed_elements = ex.searchByMaterialID(matID);
-			INFO("%d elements with material ID %d found.", n_removed_elements, matID);
-		}
+
+	if (int_property_arg.isSet()) {
+		searchByProperty(property_name_arg.getValue(),
+		                 int_property_arg.getValue(), searcher);
 	}
 
 	if (xSmallArg.isSet() || xLargeArg.isSet() ||
