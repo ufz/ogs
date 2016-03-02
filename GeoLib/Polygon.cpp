@@ -384,11 +384,12 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			GeoLib::Polygon *polygon1(new Polygon(polyline1));
 
 			// remove original polyline and add two new polylines
-			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
 			polygon_it = _simple_polygon_list.erase (polygon_it);
-			polygon1_it = _simple_polygon_list.insert (polygon_it, polygon1);
-			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
 
+			std::list<GeoLib::Polygon*>::iterator polygon1_it =
+			    _simple_polygon_list.insert(polygon_it, polygon1);
+			std::list<GeoLib::Polygon*>::iterator polygon0_it =
+			    _simple_polygon_list.insert(polygon1_it, polygon0);
 			splitPolygonAtIntersection (polygon0_it);
 			splitPolygonAtIntersection (polygon1_it);
 		}
