@@ -395,7 +395,7 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 		}
 		else
 			delete intersection_pnt;
-		++polygon_it;
+		return;
 	}
 }
 
