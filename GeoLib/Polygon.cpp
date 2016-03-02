@@ -368,30 +368,20 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 			if (idx0 > idx1)
 				std::swap (idx0, idx1);
 
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(
-			                                   (*polygon_it)->getPointsVec(), false));
+			GeoLib::Polyline polyline0{(*polygon_it)->getPointsVec()};
 			for (std::size_t k(0); k <= idx0; k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			polygon0->addPoint (intersection_pnt_id);
+				polyline0.addPoint ((*polygon_it)->getPointID (k));
+			polyline0.addPoint (intersection_pnt_id);
 			for (std::size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			if (!polygon0->initialise())
-			{
-				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon0 failed.");
-				exit (1);
-			}
+				polyline0.addPoint ((*polygon_it)->getPointID (k));
+			GeoLib::Polygon *polygon0(new Polygon(polyline0));
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(
-			                                   (*polygon_it)->getPointsVec(), false));
-			polygon1->addPoint (intersection_pnt_id);
+			GeoLib::Polyline polyline1{(*polygon_it)->getPointsVec()};
+			polyline1.addPoint (intersection_pnt_id);
 			for (std::size_t k(idx0 + 1); k <= idx1; k++)
-				polygon1->addPoint ((*polygon_it)->getPointID (k));
-			polygon1->addPoint (intersection_pnt_id);
-			if (!polygon1->initialise())
-			{
-				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon1 failed.");
-				exit (1);
-			}
+				polyline1.addPoint ((*polygon_it)->getPointID (k));
+			polyline1.addPoint (intersection_pnt_id);
+			GeoLib::Polygon *polygon1(new Polygon(polyline1));
 
 			// remove original polyline and add two new polylines
 			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
