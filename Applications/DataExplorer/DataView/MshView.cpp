@@ -108,57 +108,39 @@ void MshView::removeMesh()
 
 void MshView::contextMenuEvent( QContextMenuEvent* event )
 {
-	QModelIndex index = this->selectionModel()->currentIndex();
-	MshItem* item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
+	QModelIndex const& index = this->selectionModel()->currentIndex();
+	MshItem const*const item = dynamic_cast<MshItem*>(static_cast<TreeItem*>(index.internalPointer()));
 
-	if (item)
+	if (item == nullptr)
+		return;
+
+	unsigned const mesh_dim (item->getMesh()->getDimension());
+
+	std::vector<MeshAction> actions;
+	actions.push_back({new QAction("Edit mesh...", this), 3, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
+	actions.push_back({new QAction("Add layer...", this), 1, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openAddLayerDialog()));
+	actions.push_back({new QAction("Edit material groups...", this), 1, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
+	actions.push_back({new QAction("Extract surface...", this), 3, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
+	actions.push_back({new QAction("Calculate element quality...", this), 2, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
+	actions.push_back({new QAction("Convert to geometry", this), 1, 2});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
+	actions.push_back({new QAction("Export to Shapefile...", this), 2, 2});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
+	actions.push_back({new QAction("Export to TetGen...", this), 3, 3});
+	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(exportToTetGen()));
+
+	QMenu menu(this);
+	for (MeshAction a : actions)
 	{
-		unsigned mesh_dim (item->getMesh()->getDimension());
-
-		QMenu menu;
-		QMenu direct_cond_menu("DIRECT Conditions");
-		QAction*    editMeshAction = menu.addAction("Edit mesh...");
-		QAction*  editValuesAction = menu.addAction("Edit material groups...");
-		QAction*    addLayerAction = menu.addAction("Add layer...");
-		QAction* meshQualityAction = menu.addAction("Calculate element quality...");
-		QAction* surfaceMeshAction (nullptr);
-		QAction* tetgenExportAction (nullptr);
-		if (mesh_dim==3)
-		{
-			surfaceMeshAction = menu.addAction("Extract surface...");
-			tetgenExportAction = menu.addAction("Export to TetGen...");
-		}
-		QAction* mesh2geoAction (nullptr);
-		QAction* shapeExportAction (nullptr);
-		if (mesh_dim==2)
-		{
-			mesh2geoAction = menu.addAction("Convert to geometry");
-			shapeExportAction = menu.addAction("Export to Shapefile...");
-		}
-
-		menu.addSeparator();
-		//menu.addMenu(&direct_cond_menu);
-		QAction*   addDirectAction = direct_cond_menu.addAction("Add...");
-		QAction*  loadDirectAction = direct_cond_menu.addAction("Load...");
-		//menu.addSeparator();
-		connect(editMeshAction,         SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
-		connect(editValuesAction,       SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
-		connect(addLayerAction,         SIGNAL(triggered()), this, SLOT(openAddLayerDialog()));
-		connect(meshQualityAction,      SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
-		if (mesh_dim==3)
-		{
-			connect(surfaceMeshAction,  SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
-			connect(tetgenExportAction, SIGNAL(triggered()), this, SLOT(exportToTetGen()));
-		}
-		connect(addDirectAction,	    SIGNAL(triggered()), this, SLOT(addDIRECTSourceTerms()));
-		connect(loadDirectAction,       SIGNAL(triggered()), this, SLOT(loadDIRECTSourceTerms()));
-		if (mesh_dim==2)
-		{
-			connect(mesh2geoAction,     SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
-			connect(shapeExportAction,  SIGNAL(triggered()), this, SLOT(exportToShapefile()));
-		}
-		menu.exec(event->globalPos());
+		if (mesh_dim >= a.min_dim && mesh_dim <= a.max_dim)
+			menu.addAction(a.action);
 	}
+	menu.exec(event->globalPos());
 }
 
 void MshView::openMeshEditDialog()

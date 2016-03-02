@@ -49,6 +49,13 @@ protected slots:
 	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
+	struct MeshAction
+	{
+		QAction* action;
+		unsigned min_dim;
+		unsigned max_dim;
+	};
+
 	void contextMenuEvent( QContextMenuEvent* event );
 
 private slots:
