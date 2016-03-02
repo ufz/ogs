@@ -34,10 +34,8 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
         nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeshLib::MeshSubsets{nodesSubset}});
-        components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
-            new MeshLib::MeshSubsets{nodesSubset}});
+        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
+        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
     }
 
     ~AssemblerLibMeshComponentMapTest()

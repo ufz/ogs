@@ -59,8 +59,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> vec_comp_dis;
-    vec_comp_dis.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
-        new MeshLib::MeshSubsets{&mesh_items_all_nodes}});
+    vec_comp_dis.emplace_back(new MeshLib::MeshSubsets{&mesh_items_all_nodes});
     AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
         std::move(vec_comp_dis), AssemblerLib::ComponentOrder::BY_COMPONENT);
 

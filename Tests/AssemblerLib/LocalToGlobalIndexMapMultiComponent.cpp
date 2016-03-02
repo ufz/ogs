@@ -82,9 +82,8 @@ public:
 		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
 		for (unsigned i=0; i<num_components; ++i)
 		{
-			components.emplace_back(std::unique_ptr<MeshLib::MeshSubsets>{
-                    new MeL::MeshSubsets{
-			    mesh_items_all_nodes.get()}});
+			components.emplace_back(
+			    new MeL::MeshSubsets{mesh_items_all_nodes.get()});
 		}
 		dof_map.reset(
 		    new AL::LocalToGlobalIndexMap(std::move(components), order));
