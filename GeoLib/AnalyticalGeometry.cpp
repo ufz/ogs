@@ -121,27 +121,63 @@ bool lineSegmentIntersect(
 		return true;
 	}
 
-	// general case
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(c, d);
 	MathLib::Vector3 const qp(a, c);
 	MathLib::Vector3 const pq(c, a);
 
-	const double sqr_len_v(v.getSqrLength());
-	const double sqr_len_w(w.getSqrLength());
-
-	if (parallel(v,w)) {
-		if (parallel(pq,v)) {
-			// check if c is located at v (c-a = t (b-a), t in [0,1])
-			if (qp[0] / v[0] <= 1.0)
-				return true;
-			// check if d is located at v (d-a = t (b-a), t in [0,1])
-			if (MathLib::Vector3(a,d)[0]/v[0] <= 1.0)
-				return true;
-			return false;
+	if (parallel(v,w)) { // original line segments (a,b) and (c,d) are parallel
+		if (parallel(pq,v)) { // line segment (a,b) and (a,c) are also parallel
+			if (v[0] != 0.0) { // segment (a,b) non perpendicular to x-axis
+				// check if c is located at v (c-a = t (b-a), t in [0,1])
+				if (0.0 <= qp[0] / v[0] && qp[0] / v[0] <= 1.0) {
+					s = c;
+					return true;
+				}
+				// check if d is located at v (d-a = t (b-a), t in [0,1])
+				if (0.0 <= MathLib::Vector3(a, d)[0] / v[0] &&
+				    MathLib::Vector3(a, d)[0] / v[0] <= 1.0) {
+					s = d;
+					return true;
+				}
+				return false;
+			} else if (v[1] != 0.0) {
+				// (a,b) perpendicular to x-axis and not perpendicular to y-axis
+				// check if c is located at v (c-a = t (b-a), t in [0,1])
+				if (0.0 <= qp[1] / v[1] && qp[1] / v[1] <= 1.0) {
+					s = c;
+					return true;
+				}
+				// check if d is located at v (d-a = t (b-a), t in [0,1])
+				if (0.0 <= MathLib::Vector3(a, d)[1] / v[1] &&
+				    MathLib::Vector3(a, d)[1] / v[1] <= 1.0) {
+					s = d;
+					return true;
+				}
+				return false;
+			} else if (v[2] != 0.0) {
+				// (a,b) perpendicular to x- and y-axis and not perpendicular
+				// to z-axis
+				// check if c is located at v (c-a = t (b-a), t in [0,1])
+				if (0.0 <= qp[2] / v[2] && qp[2] / v[2] <= 1.0) {
+					s = c;
+					return true;
+				}
+				// check if d is located at v (d-a = t (b-a), t in [0,1])
+				if (0.0 <= MathLib::Vector3(a, d)[2] / v[2] &&
+				    MathLib::Vector3(a, d)[2] / v[2] <= 1.0) {
+					s = d;
+					return true;
+				}
+				return false;
+			}
 		}
 		return false;
 	}
+
+	// general case
+	const double sqr_len_v(v.getSqrLength());
+	const double sqr_len_w(w.getSqrLength());
 
 	MathLib::DenseMatrix<double> mat(2,2);
 	mat(0,0) = sqr_len_v;
