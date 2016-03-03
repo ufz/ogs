@@ -97,8 +97,8 @@ public:
  *
  * \f$ \hat x \f$ is the discrete approximation of \f$ \dot x := \partial x/\partial t\f$.
  * It is assumed that \f$ \hat x \f$ can be written in the following form:
- * \f[ \hat x = \alpha \cdot x_C - x_O, \f]
- * where \f$ \alpha := \partial \hat x / \partial x_C \f$ is a scalar.
+ * \f[ \hat x = \alpha \cdot x_N - x_O, \f]
+ * where \f$ \alpha := \partial \hat x / \partial x_N \f$ is a scalar.
  *
  * For different time discretization schemes \f$ x_C \f$, \f$ t_C \f$, \f$ x_N \f$,
  * \f$ x_O \f$ and \f$ \alpha \f$ take different values.
