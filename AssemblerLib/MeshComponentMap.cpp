@@ -300,7 +300,8 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 
     // A special case for a ghost location with global index equal to the size
     // of the local vector:
-    if (-global_index == _num_global_dof) return 0;
+    if (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
+        return 0;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.
