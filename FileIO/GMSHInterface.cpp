@@ -38,6 +38,7 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/ElementValueModification.h"
 #include "MeshLib/Node.h"
 
 namespace FileIO
@@ -235,6 +236,9 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		material_ids.insert(material_ids.end(), materials.cbegin(),
 			materials.cend());
 	}
+
+	MeshLib::ElementValueModification::condense(*mesh);
+
 	INFO("\t... finished.");
 	INFO("Nr. Nodes: %d.", nodes.size());
 	INFO("Nr. Elements: %d.", elements.size());
