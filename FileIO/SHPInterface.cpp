@@ -175,15 +175,14 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 
 void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
 {
-	this->readPolylines(hSHP, numberOfElements, listName);
+	readPolylines(hSHP, numberOfElements, listName);
 
-	const std::vector<GeoLib::Polyline*>* polylines(_geoObjects->getPolylineVec(listName));
+	auto const polylines = _geoObjects->getPolylineVec(listName);
 	auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
 	    new std::vector<GeoLib::Surface*>);
 
-	for (std::vector<GeoLib::Polyline*>::const_iterator poly_it(polylines->begin()); poly_it
-	                != polylines->end(); ++poly_it) {
-		GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*(*poly_it)));
+	for (auto const* polyline : *polylines) {
+		GeoLib::Surface* sfc(GeoLib::Surface::createSurface(*polyline));
 		if (sfc)
 			sfc_vec->push_back(sfc);
 		else {
