@@ -287,6 +287,8 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 {
     GlobalIndexType const global_index = getGlobalIndex(l, comp_id);
 #ifndef USE_PETSC
+    (void)range_begin;
+    (void)range_end;
     return global_index;
 #else
     if (global_index >= 0)    // non-ghost location.
@@ -295,11 +297,11 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     //
     // For a ghost location look up the global index in ghost indices.
     //
-    GlobalIndexType index;
 
     // A special case for a ghost location with global index equal to the size
     // of the local vector:
-    if (-global_index == _num_global_dof) return 0;
+    if (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
+        return 0;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.

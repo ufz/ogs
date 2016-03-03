@@ -21,7 +21,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config, int const n_components)
+    BaseLib::ConfigTree const& config, int const /*n_components*/)
 {
 	config.checkConfParam("type", "Uniform");
 
@@ -55,7 +55,8 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
 		std::abort();
 	}
 
-	if (property->getNumberOfComponents() != n_components)
+	if (property->getNumberOfComponents() !=
+	    static_cast<std::size_t>(n_components))
 	{
 		ERR("The required property %s has different number of components %d, "
 		    "expected %d.",

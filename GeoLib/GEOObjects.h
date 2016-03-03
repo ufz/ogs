@@ -66,16 +66,16 @@ class GEOObjects final
 public:
 	struct Callbacks
 	{
-		virtual void addPointVec(std::string const&){};
-		virtual void removePointVec(std::string const&){};
-		virtual void addStationVec(std::string const&){};
-		virtual void removeStationVec(std::string const&){};
-		virtual void addPolylineVec(std::string const&){};
-		virtual void appendPolylineVec(std::string const&){};
-		virtual void removePolylineVec(std::string const&){};
-		virtual void addSurfaceVec(std::string const&){};
-		virtual void appendSurfaceVec(std::string const&){};
-		virtual void removeSurfaceVec(std::string const&){};
+		virtual void addPointVec(std::string const&){}
+		virtual void removePointVec(std::string const&){}
+		virtual void addStationVec(std::string const&){}
+		virtual void removeStationVec(std::string const&){}
+		virtual void addPolylineVec(std::string const&){}
+		virtual void appendPolylineVec(std::string const&){}
+		virtual void removePolylineVec(std::string const&){}
+		virtual void addSurfaceVec(std::string const&){}
+		virtual void appendSurfaceVec(std::string const&){}
+		virtual void removeSurfaceVec(std::string const&){}
 	};
 
 public:
