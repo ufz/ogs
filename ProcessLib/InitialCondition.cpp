@@ -55,7 +55,8 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
 		std::abort();
 	}
 
-	if (property->getNumberOfComponents() != n_components)
+	if (property->getNumberOfComponents() !=
+	    static_cast<std::size_t>(n_components))
 	{
 		ERR("The required property %s has different number of components %d, "
 		    "expected %d.",
