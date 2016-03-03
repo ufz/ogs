@@ -297,7 +297,6 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     //
     // For a ghost location look up the global index in ghost indices.
     //
-    GlobalIndexType index;
 
     // A special case for a ghost location with global index equal to the size
     // of the local vector:
