@@ -122,7 +122,7 @@ void MshView::contextMenuEvent( QContextMenuEvent* event )
 	std::vector<MeshAction> actions;
 	actions.push_back({new QAction("Map mesh...", this), 1, 2});
 	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMap2dMeshDialog()));
-	actions.push_back({new QAction("Edit mesh...", this), 3, 3});
+	actions.push_back({new QAction("Edit mesh...", this), 2, 3});
 	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
 	actions.push_back({new QAction("Add layer...", this), 1, 3});
 	connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openAddLayerDialog()));
