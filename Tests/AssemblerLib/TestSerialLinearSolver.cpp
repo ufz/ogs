@@ -58,11 +58,10 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Allocate a coefficient matrix, RHS and solution vectors
     //--------------------------------------------------------------------------
     // define a mesh item composition in a vector
-    std::vector<MeshLib::MeshSubsets*> vec_comp_dis;
-    vec_comp_dis.push_back(
-        new MeshLib::MeshSubsets(&mesh_items_all_nodes));
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> vec_comp_dis;
+    vec_comp_dis.emplace_back(new MeshLib::MeshSubsets{&mesh_items_all_nodes});
     AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
-            vec_comp_dis, AssemblerLib::ComponentOrder::BY_COMPONENT);
+        std::move(vec_comp_dis), AssemblerLib::ComponentOrder::BY_COMPONENT);
 
     //--------------------------------------------------------------------------
     // Construct a linear system
@@ -158,9 +157,6 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         solution[i] = (*x)[i];
 
     ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], &solution[0], ex1.dim_eqs, 1.e-5);
-
-    std::remove_if(vec_comp_dis.begin(), vec_comp_dis.end(),
-        [](MeshLib::MeshSubsets * p) { delete p; return true; });
 
     for (auto p : local_assembler_data)
         delete p;

@@ -50,21 +50,18 @@ public:
     using GlobalMatrix = typename GlobalSetup::MatrixType;
 
     /// Create a Neumann boundary condition process from given config,
-    /// DOF-table, and a mesh subset.
+    /// DOF-table, and a mesh subset for a given variable and its component.
     /// A local DOF-table, a subset of the given one, is constructed.
     NeumannBc(
         NeumannBcConfig const& bc,
         unsigned const integration_order,
         AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-        std::size_t const component_index,
-        MeshLib::MeshSubset const& mesh_subset_all_nodes
-        )
-        :
-          _function(*bc.getFunction()),
-          _all_mesh_subsets(local_to_global_index_map.getNumComponents(), nullptr),
+        std::size_t const variable_id,
+        std::size_t const component_id)
+        : _function(*bc.getFunction()),
           _integration_order(integration_order)
     {
-        assert(component_index < local_to_global_index_map.getNumComponents());
+        assert(component_id < local_to_global_index_map.getNumComponents());
 
         // deep copy because the neumann bc config destroys the elements.
         std::transform(bc.elementsBegin(), bc.elementsEnd(),
@@ -73,21 +70,26 @@ public:
 
         std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
 
+        auto const& mesh_subsets =
+            local_to_global_index_map.getMeshSubsets(variable_id, component_id);
+
+        // TODO extend the node intersection to all parts of mesh_subsets, i.e.
+        // to each of the MeshSubset in the mesh_subsets.
         _mesh_subset_all_nodes =
-            mesh_subset_all_nodes.getIntersectionByNodes(nodes);
+            mesh_subsets.getMeshSubset(0).getIntersectionByNodes(nodes);
+        std::unique_ptr<MeshLib::MeshSubsets> all_mesh_subsets{
+            new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
 
-        _all_mesh_subsets[component_index] = new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
-
+        // Create local DOF table from intersected mesh subsets for the given
+        // variable and component ids.
         _local_to_global_index_map.reset(
             local_to_global_index_map.deriveBoundaryConstrainedMap(
-                _all_mesh_subsets, _elements));
+                variable_id, component_id, std::move(all_mesh_subsets),
+                _elements));
     }
 
     ~NeumannBc()
     {
-        for (auto p : _all_mesh_subsets)
-            delete p;
-
         delete _mesh_subset_all_nodes;
 
         for (auto e : _elements)
@@ -171,7 +173,6 @@ private:
     std::vector<MeshLib::Element*> _elements;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating #_elements of the boundary condition.

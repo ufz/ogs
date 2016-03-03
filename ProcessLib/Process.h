@@ -72,8 +72,6 @@ public:
 
 	virtual ~Process()
 	{
-		for (auto p : _all_mesh_subsets)
-			delete p;
 		delete _mesh_subset_all_nodes;
 	}
 
@@ -95,12 +93,7 @@ public:
 		DBUG("Initialize process.");
 
 		DBUG("Construct dof mappings.");
-		for (auto const& pv : _process_variables)
-			initializeMeshSubsets(pv);
-
-		_local_to_global_index_map.reset(
-		    new AssemblerLib::LocalToGlobalIndexMap(
-		        _all_mesh_subsets, AssemblerLib::ComponentOrder::BY_COMPONENT));
+		constructDofTable();
 
 #ifndef USE_PETSC
 		DBUG("Compute sparsity pattern");
@@ -242,22 +235,30 @@ private:
 		std::abort();
 	}
 
-	/// Creates mesh subsets, i.e. components, for given mesh.
-	void initializeMeshSubsets(ProcessVariable const& variable)
+	void constructDofTable()
 	{
 		// Create single component dof in every of the mesh's nodes.
 		_mesh_subset_all_nodes =
 		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
 
 		// Collect the mesh subsets in a vector.
-		std::generate_n(
-		    std::back_inserter(_all_mesh_subsets),
-		    variable.getNumberOfComponents(),
-		    [&]()
-		    {
-			    return new MeshLib::MeshSubsets(_mesh_subset_all_nodes);
-		    });
+		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
+		for (ProcessVariable const& pv : _process_variables)
+		{
+			std::generate_n(
+			    std::back_inserter(all_mesh_subsets),
+			    pv.getNumberOfComponents(),
+			    [&]()
+			    {
+				    return std::unique_ptr<MeshLib::MeshSubsets>{
+				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
+				});
+		}
 
+		_local_to_global_index_map.reset(
+		    new AssemblerLib::LocalToGlobalIndexMap(
+		        std::move(all_mesh_subsets),
+		        AssemblerLib::ComponentOrder::BY_COMPONENT));
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given
@@ -319,8 +320,8 @@ private:
 		                          _global_setup,
 		                          _integration_order,
 		                          *_local_to_global_index_map,
-		                          component_id,
-		                          *_mesh_subset_all_nodes);
+		                          0,  // 0 is the variable id TODO
+		                          component_id);
 	}
 
 	/// Computes and stores global matrix' sparsity pattern from given
@@ -382,7 +383,6 @@ protected:
 
 	MeshLib::Mesh& _mesh;
 	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-	std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
 	GlobalSetup _global_setup;
 

@@ -42,24 +42,17 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
-    MeshComponentMap(std::vector<MeshLib::MeshSubsets*> const& components,
+    MeshComponentMap(
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> const& components,
         ComponentOrder order);
 
-    /// Creates a subset of the current mesh component map.
-    /// The components are those from \c components which are not nullptrs.
-    /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the current map.
+    /// Creates a single-component subset of the current mesh component map.
+    /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
+    /// current map.
     ///
     /// \param components components that should remain in the created subset
-    ///
-    /// The size of parameter \c components must be equal to the number of components in this map,
-    /// if an element of \c components is \c nullptr, this component will not be included
-    /// in the subset.
-    ///
-    /// The number of components of the subset will equal the number of non-null pointers in
-    /// \c components.
-    ///
-    MeshComponentMap getSubset(
-        std::vector<MeshLib::MeshSubsets*> const& components) const;
+    MeshComponentMap getSubset(std::size_t const component_id,
+                               MeshLib::MeshSubsets const& components) const;
 
     /// The number of components in the map.
     std::size_t size() const

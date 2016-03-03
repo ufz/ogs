@@ -7,6 +7,7 @@
  *
  */
 
+#include <memory>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -25,61 +26,59 @@ class AssemblerLibLocalToGlobalIndexMapTest : public ::testing::Test
 public:
     AssemblerLibLocalToGlobalIndexMapTest()
     {
-        mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
-        nodesSubset = new MeshLib::MeshSubset(*mesh, &mesh->getNodes());
+        mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
+        nodesSubset.reset(new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
 
         // Add two components both based on the same nodesSubset.
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
-        components.emplace_back(new MeshLib::MeshSubsets(nodesSubset));
-    }
-
-    ~AssemblerLibLocalToGlobalIndexMapTest()
-    {
-        delete dof_map;
-        for (auto p : components)
-            delete p;
-
-        delete nodesSubset;
-        delete mesh;
+        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
+        components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
     }
 
 protected:
     static std::size_t const mesh_size = 9;
-    MeshLib::Mesh const* mesh = nullptr;
-    MeshLib::MeshSubset const* nodesSubset = nullptr;
+    std::unique_ptr<MeshLib::Mesh const> mesh;
+    std::unique_ptr<MeshLib::MeshSubset const> nodesSubset;
 
     //data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
-    std::vector<MeshLib::MeshSubsets*> components;
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
 
-    AssemblerLib::LocalToGlobalIndexMap const* dof_map = nullptr;
+    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap const> dof_map;
 };
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
-        AssemblerLib::ComponentOrder::BY_COMPONENT);
+    // need to store the size because the components will be moved into the
+    // DOF-table.
+    std::size_t components_size = components.size();
+
+    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
+        AssemblerLib::ComponentOrder::BY_COMPONENT));
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components.size(), dof_map->dofSize());
+    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
-        AssemblerLib::ComponentOrder::BY_LOCATION);
+    // need to store the size because the components will be moved into the
+    // DOF-table.
+    std::size_t components_size = components.size();
+
+    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
+        AssemblerLib::ComponentOrder::BY_LOCATION));
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components.size(), dof_map->dofSize());
+    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
 {
-    dof_map = new AssemblerLib::LocalToGlobalIndexMap(components,
-        AssemblerLib::ComponentOrder::BY_COMPONENT);
+    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
+        AssemblerLib::ComponentOrder::BY_COMPONENT));
 
     // Select some elements from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
@@ -90,22 +89,18 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
     // Find unique node ids of the selected elements for testing.
     std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
 
-    MeshLib::MeshSubset const* const selected_subset =
-        nodesSubset->getIntersectionByNodes(selected_nodes);
-    std::vector<MeshLib::MeshSubsets*> selected_components;
-    selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
-    selected_components.emplace_back(new MeshLib::MeshSubsets(selected_subset));
+    auto const selected_subset = std::unique_ptr<MeshLib::MeshSubset const>{
+        nodesSubset->getIntersectionByNodes(selected_nodes)};
+    auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
+        new MeshLib::MeshSubsets{selected_subset.get()}};
 
-    AssemblerLib::LocalToGlobalIndexMap* dof_map_subset =
-        dof_map->deriveBoundaryConstrainedMap(selected_components, some_elements);
+    auto dof_map_subset = std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>{
+        dof_map->deriveBoundaryConstrainedMap(0,  // variable id
+                                              1,  // component id
+                                              std::move(selected_component),
+                                              some_elements)};
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(selected_nodes.size() * selected_components.size(),
-            dof_map_subset->dofSize());
-
-    delete dof_map_subset;
-    for (auto p : selected_components)
-        delete p;
-    delete selected_subset;
+    ASSERT_EQ(selected_nodes.size(), dof_map_subset->dofSize());
 }
