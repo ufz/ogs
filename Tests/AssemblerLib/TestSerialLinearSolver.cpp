@@ -70,10 +70,13 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // allocate a vector and matrix
     typedef GlobalSetup::VectorType GlobalVector;
     typedef GlobalSetup::MatrixType GlobalMatrix;
-    auto A   = globalSetup.createMatrix(local_to_global_index_map.dofSize());
+    auto A = std::unique_ptr<GlobalMatrix>{
+             globalSetup.createMatrix(local_to_global_index_map.dofSize())};
     A->setZero();
-    auto rhs = globalSetup.createVector(local_to_global_index_map.dofSize());
-    auto x   = globalSetup.createVector(local_to_global_index_map.dofSize());
+    auto rhs = std::unique_ptr<GlobalVector>{
+               globalSetup.createVector(local_to_global_index_map.dofSize())};
+    auto x   = std::unique_ptr<GlobalVector>{
+               globalSetup.createVector(local_to_global_index_map.dofSize())};
     // TODO no setZero() for rhs, x?
 
     // Initializer of the local assembler data.
