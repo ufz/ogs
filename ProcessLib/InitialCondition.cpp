@@ -21,7 +21,7 @@
 namespace ProcessLib
 {
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config, int const n_components)
+    BaseLib::ConfigTree const& config, int const /*n_components*/)
 {
 	config.checkConfParam("type", "Uniform");
 
