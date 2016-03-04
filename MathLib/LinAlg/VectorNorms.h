@@ -73,19 +73,19 @@ inline T norm_max(T const * const v, std::size_t n)
 // ----------------------------------------------------------------------------
 
 /// return L1 norm \f$ \|x\|_1 = \sum_{i=1}^n |x_i| \f$
-/// \tparam T   Vector type
+/// \tparam T_VEC   Vector type
 /// \param  v   a vector object
 template<class T_VEC>
 inline double norm_1(const T_VEC &v) { return MathLib::norm_1(&v[0], v.size()); }
 
 /// return L2 norm (Euclidean norm) \f$ \|x\|_2 = \sqrt{\sum_{i=1}^n x_i^2} \f$
-/// \tparam T   Vector type
+/// \tparam T_VEC   Vector type
 /// \param  v   a vector object
 template<class T_VEC>
 inline double norm_2(const T_VEC &v) { return MathLib::norm_2(&v[0], v.size()); }
 
 /// return maximum norm \f$ \|x\|_\infty = \max(|x_1|, ..., |x_n|) \f$
-/// \tparam T   Vector type
+/// \tparam T_VEC   Vector type
 /// \param  v   a vector object
 template<class T_VEC>
 inline double norm_max(const T_VEC &v) { return MathLib::norm_max(&v[0], v.size()); }
@@ -108,9 +108,9 @@ inline double norm_max(const double &v) { return norm_1(v); }
 /**
  * return norm
  *
- * \tparam T            vector type
- * \tparam v            a vector object
- * \tparam normType     norm type (default 2-norm)
+ * \tparam T_VEC       vector type
+ * \param v            a vector object
+ * \param normType     norm type (default 2-norm)
  * \return calculated norm. If the give norm type is invalid, a negative value is returned.
  */
 template<class T_VEC>

@@ -55,7 +55,7 @@ public:
 	/// Get coordinates of a integration point.
 	///
 	/// \param order    the number of integration points.
-	/// \param pt_id     the sampling point id.
+	/// \param igp      the sampling point id.
 	/// \return weight
 	static WeightedPoint getWeightedPoint(std::size_t /* order */,
 	                                      std::size_t /*igp*/)
