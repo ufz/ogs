@@ -38,6 +38,7 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/ElementValueModification.h"
 #include "MeshLib/Node.h"
 
 namespace FileIO
@@ -235,6 +236,9 @@ MeshLib::Mesh* GMSHInterface::readGMSHMesh(std::string const& fname)
 		material_ids.insert(material_ids.end(), materials.cbegin(),
 			materials.cend());
 	}
+
+	MeshLib::ElementValueModification::condense(*mesh);
+
 	INFO("\t... finished.");
 	INFO("Nr. Nodes: %d.", nodes.size());
 	INFO("Nr. Elements: %d.", elements.size());
@@ -278,7 +282,7 @@ GMSHInterface::readElement(std::ifstream &in,
 		MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
 		edge_nodes[0] = nodes[node_ids[0]];
 		edge_nodes[1] = nodes[node_ids[1]];
-		return std::make_pair(new MeshLib::Line(edge_nodes), 0);
+		return std::make_pair(new MeshLib::Line(edge_nodes), mat_id);
 	}
 	case 2: {
 		readNodeIDs(in, 3, node_ids, id_map);
@@ -328,6 +332,7 @@ GMSHInterface::readElement(std::ifstream &in,
 		break;
 	default:
 		WARN("GMSHInterface::readGMSHMesh(): Unknown element type %d.", type);
+		break;
 	}
 	return std::make_pair(nullptr, -1);
 }
