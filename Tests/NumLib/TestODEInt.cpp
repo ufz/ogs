@@ -302,13 +302,21 @@ public:
 
 TYPED_TEST_CASE(NumLibODEIntTyped, TestCases);
 
+#ifndef USE_PETSC
 TYPED_TEST(NumLibODEIntTyped, T1)
+#else
+TYPED_TEST(NumLibODEIntTyped, DISABLED_T1)
+#endif
 {
     TestFixture::test();
 }
 
 
+#ifndef USE_PETSC
 TEST(NumLibODEInt, ODE3)
+#else
+TEST(NumLibODEInt, DISABLED_ODE3)
+#endif
 {
     const char* name = "dummy";
 

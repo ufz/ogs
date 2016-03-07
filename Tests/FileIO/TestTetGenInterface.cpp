@@ -44,7 +44,11 @@ TEST(FileIO, TetGenSmeshReader)
 }
 
 // existing mesh to TetGen geometry
+#ifndef USE_PETSC
 TEST(FileIO, TetGenSmeshInterface)
+#else
+TEST(FileIO, DISABLED_TetGenSmeshInterface)
+#endif
 {
 	std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
 	std::unique_ptr<MeshLib::Mesh const> const mesh (FileIO::readMeshFromFile(file_name));

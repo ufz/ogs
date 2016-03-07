@@ -79,7 +79,7 @@ set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
 add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove testrunner.xml)
 
 if(OGS_USE_PETSC)
-	set(TEST_FILTER_MPI --gtest_filter=-MPITest*:*Assembler*:*MeshSubsets*:*PointVec*:*InsertZeroPointsInGrid*:InSituMesh.MappedMeshSourceRoundtrip)
+	set(TEST_FILTER_MPI --gtest_filter=-MPITest_Math.*)
 	add_custom_target(tests
 		mpirun -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
 		DEPENDS testrunner tests-cleanup

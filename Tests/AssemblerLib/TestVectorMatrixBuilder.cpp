@@ -60,7 +60,11 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
 
 TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder);
 
+#ifndef USE_PETSC
 TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createVector)
+#else
+TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createVector)
+#endif
 {
     typedef typename TestFixture::VectorType V;
     typedef TypeParam Builder;
@@ -72,7 +76,11 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createVector)
     delete v;
 }
 
+#ifndef USE_PETSC
 TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createMatrix)
+#else
+TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createMatrix)
+#endif
 {
     typedef typename TestFixture::MatrixType M;
     typedef TypeParam Builder;
@@ -85,8 +93,13 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createMatrix)
     delete m;
 }
 
+#ifndef USE_PETSC
 REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
     createVector, createMatrix);
+#else
+REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
+    DISABLED_createVector, DISABLED_createMatrix);
+#endif
 
 #include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
@@ -125,4 +138,3 @@ typedef ::testing::Types
 
 INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibVectorMatrixBuilder,
     TestTypes);
-

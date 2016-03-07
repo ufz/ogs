@@ -214,8 +214,11 @@ void assert_equal(AL::LocalToGlobalIndexMap const& dof1, AL::LocalToGlobalIndexM
 	}
 }
 
-
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
+#endif
 {
 	unsigned const num_components = 1;
 
@@ -233,7 +236,11 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
 	assert_equal(*dof_map_boundary, *dof_map_boundary_bc);
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponent)
+#endif
 {
 	unsigned const num_components = 5;
 	for (unsigned c = 0; c < num_components; ++c)
@@ -242,7 +249,11 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 		                           (mesh_subdivs + 1) * (mesh_subdivs + 1)});
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation)
+#endif
 {
 	unsigned const num_components = 5;
 	for (unsigned c = 0; c < num_components; ++c)
