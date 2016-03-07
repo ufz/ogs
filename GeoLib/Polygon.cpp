@@ -348,17 +348,22 @@ void Polygon::ensureCWOrientation ()
 		delete tmp_polygon_pnts[k];
 }
 
-void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_it)
+#if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
+void Polygon::splitPolygonAtIntersection(
+    std::list<Polygon*>::iterator polygon_it)
+#else
+void Polygon::splitPolygonAtIntersection(
+    std::list<Polygon*>::const_iterator polygon_it)
+#endif
 {
 	std::size_t idx0(0), idx1(0);
 	GeoLib::Point intersection_pnt;
-	bool is_simple(!GeoLib::lineSegmentsIntersect(
-	    *polygon_it, idx0, idx1, intersection_pnt));
-	if (is_simple)
+	if (!GeoLib::lineSegmentsIntersect(*polygon_it, idx0, idx1,
+	                                   intersection_pnt))
 		return;
 
 	// adding intersection point to pnt_vec
-	std::size_t intersection_pnt_id (_ply_pnts.size());
+	std::size_t const intersection_pnt_id (_ply_pnts.size());
 	const_cast<std::vector<Point*>&>(_ply_pnts)
 	    .push_back(new GeoLib::Point(intersection_pnt));
 
@@ -380,13 +385,11 @@ void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_
 	polyline1.addPoint(intersection_pnt_id);
 
 	// remove original polyline and add two new polylines
-	polygon_it = _simple_polygon_list.erase(polygon_it);
+	auto polygon1_it = _simple_polygon_list.insert(
+	    _simple_polygon_list.erase(polygon_it), new GeoLib::Polygon(polyline1));
+	auto polygon0_it = _simple_polygon_list.insert(
+	    polygon1_it, new GeoLib::Polygon(polyline0));
 
-	std::list<GeoLib::Polygon*>::iterator polygon1_it =
-	    _simple_polygon_list.insert(polygon_it, new GeoLib::Polygon(polyline1));
-	std::list<GeoLib::Polygon*>::iterator polygon0_it =
-	    _simple_polygon_list.insert(polygon1_it,
-	                                new GeoLib::Polygon(polyline0));
 	splitPolygonAtIntersection(polygon0_it);
 	splitPolygonAtIntersection(polygon1_it);
 }
