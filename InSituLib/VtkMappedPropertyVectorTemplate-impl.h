@@ -437,6 +437,13 @@ template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
 }
 
 //------------------------------------------------------------------------------
+template <class Scalar> void VtkMappedPropertyVectorTemplate<Scalar>
+::InsertVariantValue(vtkIdType /*idx*/, vtkVariant /*value*/)
+{
+	vtkErrorMacro("Read only container.")
+}
+
+//------------------------------------------------------------------------------
 template <class Scalar> VtkMappedPropertyVectorTemplate<Scalar>
 ::VtkMappedPropertyVectorTemplate()
   : Save(false)
