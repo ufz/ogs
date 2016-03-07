@@ -67,7 +67,11 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
 
 };
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByComponent)
+#else
+TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
+#endif
 {
     // - Entries in the vector are arranged in the order of a component type and then node ID
     // - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0), (node 0, comp1) ... ]
@@ -91,7 +95,11 @@ TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByComponent)
     }
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByLocation)
+#else
+TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
+#endif
 {
     // - Entries in the vector are arranged in the order of node ID and then a component type
     // - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0), (node n, comp1) ]
@@ -130,7 +138,11 @@ TEST_F(AssemblerLibMeshComponentMapTest, OutOfRangeAccess)
         Location(mesh->getID(), MeshItemType::Node, 0), 10));
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
+#else
+TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
+#endif
 {
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
@@ -163,7 +175,11 @@ TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
     }
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
+#else
+TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
+#endif
 {
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_LOCATION);

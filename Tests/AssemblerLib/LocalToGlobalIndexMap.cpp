@@ -47,7 +47,11 @@ protected:
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap const> dof_map;
 };
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
+#endif
 {
     // need to store the size because the components will be moved into the
     // DOF-table.
@@ -61,7 +65,11 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
     ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
+#endif
 {
     // need to store the size because the components will be moved into the
     // DOF-table.
@@ -75,7 +83,11 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
     ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSize());
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
+#else
+TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
+#endif
 {
     dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
         AssemblerLib::ComponentOrder::BY_COMPONENT));

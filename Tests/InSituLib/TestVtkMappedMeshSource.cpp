@@ -143,7 +143,11 @@ TEST_F(InSituMesh, MappedMesh)
 
 // Writes the mesh into a vtk file, reads the file back and converts it into a
 // OGS mesh
+#ifndef USE_PETSC
 TEST_F(InSituMesh, MappedMeshSourceRoundtrip)
+#else
+TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
+#endif
 {
 	// TODO Add more comparison criteria
 
