@@ -304,6 +304,12 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
+::InsertVariantValue(vtkIdType /*idx*/, vtkVariant /*value*/)
+{
+	vtkErrorMacro("Read only container.")
+}
+
+template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
 ::DeepCopy(vtkAbstractArray *)
 {
 	vtkErrorMacro("Read only container.")

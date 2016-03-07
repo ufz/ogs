@@ -77,6 +77,7 @@ public:
 	vtkIdType InsertNextTuple(vtkIdType j, vtkAbstractArray *source);
 	vtkIdType InsertNextTuple(const float *source);
 	vtkIdType InsertNextTuple(const double *source);
+	void InsertVariantValue(vtkIdType idx, vtkVariant value);
 	void DeepCopy(vtkAbstractArray *aa);
 	void DeepCopy(vtkDataArray *da);
 	void InterpolateTuple(vtkIdType i, vtkIdList *ptIndices,
