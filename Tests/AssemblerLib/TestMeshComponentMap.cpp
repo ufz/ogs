@@ -123,7 +123,11 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
     }
 }
 
+#ifndef USE_PETSC
 TEST_F(AssemblerLibMeshComponentMapTest, OutOfRangeAccess)
+#else
+TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
+#endif
 {
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
