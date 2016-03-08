@@ -120,6 +120,7 @@ class NodePartitionedMesh : public Mesh
             return _n_nghost_elem;
         }
 
+        // TODO I guess that is a simplified version of computeSparsityPattern()
         /// Get the maximum number of connected nodes to node.
         std::size_t getMaximumNConnectedNodesToNode() const
         {
