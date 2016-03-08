@@ -10,6 +10,8 @@
 #ifndef NUMLIB_ODESYSTEM_H
 #define NUMLIB_ODESYSTEM_H
 
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
+
 #include "Types.h"
 #include "EquationSystem.h"
 
@@ -61,7 +63,7 @@ public:
     virtual void assemble(const double t, Vector const& x,
                           Matrix& M, Matrix& K, Vector& b) = 0;
 
-    using Index = typename MatrixTraits<Matrix>::Index;
+    using Index = typename MathLib::MatrixVectorTraits<Matrix>::Index;
 
     virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownSolutions() const
     {

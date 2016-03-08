@@ -35,9 +35,6 @@ public:
     using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     using IndexType = RawMatrixType::Index;
 
-    // TODO: preliminary
-    EigenMatrix() {}
-
     // TODO The matrix constructor should take num_rows and num_cols as arguments
     //      that is left for a later refactoring.
     /**

@@ -49,9 +49,10 @@ public:
 	 * of all solvers of systems of linear equations. For this reason the
 	 * second argument was introduced.
 	 */
-	GaussAlgorithm(const std::string /*solver_name*/ = "",
-	               BaseLib::ConfigTree const*const /*option*/ = nullptr)
+	GaussAlgorithm(const std::string solver_name = "",
+	               BaseLib::ConfigTree const*const option = nullptr)
 	{
+		(void) solver_name; (void) option; // silence both compiler and doxygen warnings.
 	}
 
 	/**

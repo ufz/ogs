@@ -10,6 +10,7 @@
 #ifndef NUMLIB_TIMELOOP_H
 #define NUMLIB_TIMELOOP_H
 
+#include "MathLib/LinAlg/GlobalMatrixProviders.h"
 #include "TimeDiscretizedODESystem.h"
 #include "NonlinearSolver.h"
 
@@ -26,7 +27,7 @@ namespace NumLib
  * \tparam Vector the type of the solution vector of the ODE.
  */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
-class TimeLoopSingleODE
+class TimeLoopSingleODE final
 {
 public:
     using TDiscODESys  = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
@@ -34,6 +35,7 @@ public:
     using NLSolver     = NonlinearSolver<Matrix, Vector, NLTag>;
 
     /*! Constructs an new instance.
+     *
      * \param ode_sys The ODE system to be integrated
      * \param linear_solver the linear solver used to solve the linearized ODE system.
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
@@ -74,6 +76,7 @@ private:
 
 //! @}
 
+
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
 bool
@@ -81,7 +84,8 @@ TimeLoopSingleODE<Matrix, Vector, NLTag>::
 loop(const double t0, const Vector x0, const double t_end, const double delta_t,
      Callback& post_timestep)
 {
-    Vector x(x0); // solution vector
+    // solution vector
+    Vector& x = MathLib::GlobalVectorProvider<Vector>::provider.getVector(x0);
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -115,6 +119,8 @@ loop(const double t0, const Vector x0, const double t_end, const double delta_t,
         auto const& x_cb = x; // ditto.
         post_timestep(t_cb, x_cb);
     }
+
+    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x);
 
     if (!nl_slv_succeeded) {
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);

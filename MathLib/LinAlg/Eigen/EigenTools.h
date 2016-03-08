@@ -11,6 +11,7 @@
 #define EIGENTOOLS_H_
 
 #include <vector>
+#include <logog/include/logog.hpp>
 
 #include "EigenMatrix.h" // for EigenMatrix::IndexType
 
@@ -37,9 +38,11 @@ void applyKnownSolution(Eigen::MatrixXd &A, Eigen::VectorXd &b, Eigen::VectorXd 
 		const std::vector<Eigen::MatrixXd::Index> &_vec_knownX_id,
 		const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10)
 {
-	// TODO implement
 	(void) A; (void) b; (void) _vec_knownX_id; (void) _vec_knownX_x;
 	(void) penalty_scaling;
+
+	ERR("Method not implemented."); // TODO implement
+	std::abort();
 }
 
 } // MathLib

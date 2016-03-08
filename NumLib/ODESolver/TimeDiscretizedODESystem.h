@@ -96,22 +96,35 @@ public:
         : _ode(ode)
         , _time_disc(time_discretization)
         , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
-        , _Jac(ode.getNumEquations(), ode.getNumEquations())
-        , _M  (ode.getNumEquations(), ode.getNumEquations())
-        , _K  (ode.getNumEquations(), ode.getNumEquations())
-        , _b  (ode.getNumEquations())
-    {}
+    {
+        _Jac  = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+                    _ode, _Jac_id);
+        _M    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+                    _ode, _M_id);
+        _K    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+                    _ode, _K_id);
+        _b    = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+                    _ode, _b_id);
+    }
+
+    ~TimeDiscretizedODESystem()
+    {
+        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_Jac);
+        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
+    }
 
     void assembleResidualNewton(const Vector &x_new_timestep) override
     {
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
-        _M.setZero();
-        _K.setZero();
-        _b.setZero();
+        _M->setZero();
+        _K->setZero();
+        _b->setZero();
 
-        _ode.assemble(t, x_curr, _M, _K, _b);
+        _ode.assemble(t, x_curr, *_M, *_K, *_b);
     }
 
     void assembleJacobian(const Vector &x_new_timestep) override
@@ -122,13 +135,17 @@ public:
         auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
         auto const  dxdot_dx = _time_disc.getNewXWeight();
         auto const  dx_dx    = _time_disc.getDxDx();
-        _time_disc.getXdot(x_new_timestep, _xdot);
 
-        _Jac.setZero();
+        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        _time_disc.getXdot(x_new_timestep, xdot);
 
-        _ode.assembleJacobian(t, x_curr, _xdot,
-                              dxdot_dx, _M, dx_dx, _K,
-                              _Jac);
+        _Jac->setZero();
+
+        _ode.assembleJacobian(t, x_curr, xdot,
+                              dxdot_dx, *_M, dx_dx, *_K,
+                              *_Jac);
+
+        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(xdot);
     }
 
     void getResidual(Vector const& x_new_timestep, Vector& res) const override
@@ -136,21 +153,24 @@ public:
         // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
         //      can be optimuized. However, that would make the interface a bit more
         //      fragile.
-        _time_disc.getXdot(x_new_timestep, _xdot);
+        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        _time_disc.getXdot(x_new_timestep, xdot);
 
-        _mat_trans->computeResidual(_M, _K, _b, x_new_timestep, _xdot, res);
+        _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
+
+        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(xdot);
     }
 
     void getJacobian(Matrix& Jac) const override
     {
-        _mat_trans->computeJacobian(_Jac, Jac);
+        _mat_trans->computeJacobian(*_Jac, Jac);
     }
 
     void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
                                     Vector& minus_delta_x) override
     {
         (void) Jac; (void) res; (void) minus_delta_x;
-        // TODO implement
+        INFO("Method applyKnownSolutionsNewton() not implemented."); // TODO implement
     }
 
     bool isLinear() const override
@@ -160,15 +180,15 @@ public:
 
     void pushMatrices() const override
     {
-        _mat_trans->pushMatrices(_M, _K, _b);
+        _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
     TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
-    std::size_t getNumEquations() const override {
-        return _ode.getNumEquations();
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override {
+        return _ode.getMatrixSpecifications();
     }
 
 private:
@@ -178,13 +198,18 @@ private:
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix _Jac;  //!< the Jacobian of the residual
-    Matrix _M;    //!< Matrix \f$ M \f$.
-    Matrix _K;    //!< Matrix \f$ K \f$.
-    Vector _b;    //!< Matrix \f$ b \f$.
+    Matrix* _Jac; //!< the Jacobian of the residual
+    Matrix* _M;   //!< Matrix \f$ M \f$.
+    Matrix* _K;   //!< Matrix \f$ K \f$.
+    Vector* _b;   //!< Matrix \f$ b \f$.
 
-    // mutable because xdot is computed in the getResidual() method
-    mutable Vector _xdot; //!< Used to cache \f$ \dot x \f$. \todo Save some memory.
+    std::size_t _Jac_id = 0u;          //!< ID of the \c _Jac matrix.
+    std::size_t _M_id = 0u;            //!< ID of the \c _M matrix.
+    std::size_t _K_id = 0u;            //!< ID of the \c _K matrix.
+    std::size_t _b_id = 0u;            //!< ID of the \c _b vector.
+
+    //! ID of the vector storing xdot in intermediate computations.
+    mutable std::size_t _xdot_id = 0u;
 };
 
 
@@ -222,32 +247,41 @@ public:
     TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
-        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
-        , _M(ode.getNumEquations(), ode.getNumEquations())
-        , _K(ode.getNumEquations(), ode.getNumEquations())
-        , _b(ode.getNumEquations())
-    {}
+        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
+                         time_discretization))
+    {
+        _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(ode, _M_id);
+        _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(ode, _K_id);
+        _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(ode, _b_id);
+    }
+
+    ~TimeDiscretizedODESystem()
+    {
+        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
+    }
 
     void assembleMatricesPicard(const Vector &x_new_timestep) override
     {
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
-        _M.setZero();
-        _K.setZero();
-        _b.setZero();
+        _M->setZero();
+        _K->setZero();
+        _b->setZero();
 
-        _ode.assemble(t, x_curr, _M, _K, _b);
+        _ode.assemble(t, x_curr, *_M, *_K, *_b);
     }
 
     void getA(Matrix& A) const override
     {
-        _mat_trans->computeA(_M, _K, A);
+        _mat_trans->computeA(*_M, *_K, A);
     }
 
     void getRhs(Vector& rhs) const override
     {
-        _mat_trans->computeRhs(_M, _K, _b, rhs);
+        _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
     }
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
@@ -269,15 +303,15 @@ public:
 
     void pushMatrices() const override
     {
-        _mat_trans->pushMatrices(_M, _K, _b);
+        _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
     TimeDisc& getTimeDiscretization() override {
         return _time_disc;
     }
 
-    std::size_t getNumEquations() const override {
-        return _ode.getNumEquations();
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override {
+        return _ode.getMatrixSpecifications();
     }
 
 private:
@@ -287,9 +321,13 @@ private:
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix _M;    //!< Matrix \f$ M \f$.
-    Matrix _K;    //!< Matrix \f$ K \f$.
-    Vector _b;    //!< Matrix \f$ b \f$.
+    Matrix* _M; //!< Matrix \f$ M \f$.
+    Matrix* _K; //!< Matrix \f$ K \f$.
+    Vector* _b; //!< Matrix \f$ b \f$.
+
+    std::size_t _M_id = 0u; //!< ID of the \c _M matrix.
+    std::size_t _K_id = 0u; //!< ID of the \c _K matrix.
+    std::size_t _b_id = 0u; //!< ID of the \c _b vector.
 };
 
 //! @}

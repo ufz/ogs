@@ -17,21 +17,12 @@
 
 #include "gtest/gtest.h"
 
-#ifdef USE_MPI
-#include <mpi.h>
-#endif
-
-#ifdef USE_LIS
-#include <lis.h>
-#endif
-
-#ifdef USE_PETSC
-#include <petscksp.h>
-#endif
-
 #include "Applications/ApplicationsLib/LogogSetup.h"
+#include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
+#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+
 #ifdef OGS_BUILD_GUI
 #include <QApplication>
 #endif
@@ -52,57 +43,47 @@ int main(int argc, char* argv[])
 #ifdef OGS_BUILD_GUI
     QApplication app(argc, argv, false);
 #endif
-    int ret = 0;
-#ifdef USE_MPI
-    MPI_Init(&argc, &argv);
-#endif
+
+    // Attention: Order matters!
+    // logog_setup must be created first, then the linear_solver_library_setup,
+    // because destruction order is the reverse of the creation order and the
+    // destructor of linear_solver_library_setup might print log messages.
+    // The methods on logog_setup must be called after the construction of
+    // linear_solver_library_setup since they require, e.g., that MPI_Init()
+    // has been called before.
+
     ApplicationsLib::LogogSetup logog_setup;
+
+    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
+                argc, argv);
+
     logog_setup.SetFormatter(std::unique_ptr<BaseLib::TemplateLogogFormatterSuppressedGCC
         <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG> >
             (new BaseLib::TemplateLogogFormatterSuppressedGCC
             <TOPIC_LEVEL_FLAG | TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG>()));
     logog_setup.SetLevel(logLevel);
 
-
-#ifdef USE_PETSC
-    char help[] = "ogs6 with PETSc \n";
-    PetscInitialize(&argc,&argv,(char *)0,help);
-#endif
-
     try
     {
-        // initialize libraries which will be used while testing
-#ifdef USE_LIS
-        lis_initialize(&argc, &argv);
-#endif
         // start google test
         testing::InitGoogleTest ( &argc, argv );
-        ret = RUN_ALL_TESTS();
+        return RUN_ALL_TESTS();
     }
     catch (char* e)
     {
         ERR(e);
+        return 1;
     }
     catch (std::exception& e)
     {
         ERR(e.what());
+        return 1;
     }
     catch (...)
     {
         ERR("Unknown exception occurred!");
+        return 1;
     }
-    // finalize libraries
-#ifdef USE_LIS
-    lis_finalize();
-#endif
 
-#ifdef USE_PETSC
-    PetscFinalize();
-#endif
-
-#ifdef USE_MPI
-    MPI_Finalize();
-#endif
-
-    return ret;
+    return 0;
 }
