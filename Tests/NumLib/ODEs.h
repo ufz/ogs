@@ -55,7 +55,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -73,12 +73,14 @@ public:
     static void setIC(Vector& x0)
     {
         MathLib::setVector(x0, { 1.0, 0.0 });
+        MathLib::BLAS::finalizeAssembly(x0);
     }
 
     static Vector solution(const double t)
     {
         Vector v(2);
         MathLib::setVector(v, { cos(t), sin(t) });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 
@@ -123,12 +125,15 @@ public:
         MathLib::addToMatrix(Jac, N, N, { x[0] }); // add dK_dx
 
         if (dx_dx != 0.0)
+        {
+            BLAS::finalizeAssembly(Jac);
             BLAS::axpy(Jac, dx_dx, K);
+        }
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -146,12 +151,14 @@ public:
     static void setIC(Vector& x0)
     {
         MathLib::setVector(x0, { 1.0 });
+        MathLib::BLAS::finalizeAssembly(x0);
     }
 
     static Vector solution(const double t)
     {
         Vector v(1);
         MathLib::setVector(v, { 1.0/t });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 
@@ -264,7 +271,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -291,6 +298,7 @@ public:
         MathLib::setVector(x0, { sin(omega*t0)/omega/t0,
                                  1.0/t0,
                                  cos(omega*t0) });
+        MathLib::BLAS::finalizeAssembly(x0);
 
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
     }
@@ -303,6 +311,7 @@ public:
         MathLib::setVector(v, { sin(omega*t)/omega/t,
                                 1.0/t,
                                 cos(omega*t) });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 
