@@ -23,6 +23,9 @@ set(SOURCES ${SOURCES} ${SOURCES_LINALG_SOLVERS})
 GET_SOURCE_FILES(SOURCES_LINALG_PRECOND LinAlg/Preconditioner)
 set(SOURCES ${SOURCES} ${SOURCES_LINALG_PRECOND})
 
+GET_SOURCE_FILES(SOURCES_ODE ODE)
+set(SOURCES ${SOURCES} ${SOURCES_ODE})
+
 if(OGS_USE_EIGEN)
     GET_SOURCE_FILES(SOURCES_LINALG_EIGEN LinAlg/Eigen)
     set(SOURCES ${SOURCES} ${SOURCES_LINALG_EIGEN})
@@ -61,7 +64,10 @@ add_library(MathLib STATIC ${SOURCES})
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(MathLib
-    logog
+	GeoLib
+	logog
+    sundials_cvode
+    sundials_nvecserial
 )
 
 if(METIS_FOUND)
