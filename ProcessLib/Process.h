@@ -126,12 +126,17 @@ public:
 		}
 	}
 
+	MathLib::MatrixSpecifications getMatrixSpecifications() const override final
+	{
+		return { _local_to_global_index_map->dofSize(), _local_to_global_index_map->dofSize() };
+	}
+
+#if 0
 	std::size_t getNumEquations() const override final
 	{
 		return _local_to_global_index_map->dofSize();
 
 #ifdef USE_PETSC
-#if 0
 		// TODO for PETSc the method and the interface maybe have to be extended
 		// this is the old code moved here from th deleted createLinearSolver() method.
 
@@ -152,8 +157,8 @@ public:
 		_rhs.reset( _global_setup.createVector(num_unknowns,
 		            _local_to_global_index_map->getGhostIndices(), false) );
 #endif
-#endif
 	}
+#endif
 
 	void assemble(const double t, GlobalVector const& x,
 	              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final
