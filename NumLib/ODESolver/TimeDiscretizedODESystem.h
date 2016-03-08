@@ -117,6 +117,8 @@ public:
 
     void assembleResidualNewton(const Vector &x_new_timestep) override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
@@ -125,6 +127,10 @@ public:
         _b->setZero();
 
         _ode.assemble(t, x_curr, *_M, *_K, *_b);
+
+        BLAS::finalizeAssembly(*_M);
+        BLAS::finalizeAssembly(*_K);
+        BLAS::finalizeAssembly(*_b);
     }
 
     void assembleJacobian(const Vector &x_new_timestep) override
@@ -144,6 +150,8 @@ public:
         _ode.assembleJacobian(t, x_curr, xdot,
                               dxdot_dx, *_M, dx_dx, *_K,
                               *_Jac);
+
+        MathLib::BLAS::finalizeAssembly(*_Jac);
 
         MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(xdot);
     }
@@ -264,6 +272,8 @@ public:
 
     void assembleMatricesPicard(const Vector &x_new_timestep) override
     {
+        namespace BLAS = MathLib::BLAS;
+
         auto const  t      = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
@@ -272,6 +282,10 @@ public:
         _b->setZero();
 
         _ode.assemble(t, x_curr, *_M, *_K, *_b);
+
+        BLAS::finalizeAssembly(*_M);
+        BLAS::finalizeAssembly(*_K);
+        BLAS::finalizeAssembly(*_b);
     }
 
     void getA(Matrix& A) const override
