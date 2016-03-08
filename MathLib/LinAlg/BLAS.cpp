@@ -9,6 +9,7 @@
 
 #include "BLAS.h"
 
+// TODO reorder BLAS function signatures?
 
 // Dense Eigen matrices and vectors ////////////////////////////////////////
 #ifdef OGS_USE_EIGEN
