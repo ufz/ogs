@@ -13,6 +13,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 #ifndef TESTTOOLS_H_
 #define TESTTOOLS_H_
@@ -24,5 +25,8 @@
 #define ASSERT_ARRAY_EQ(E,A,N)\
     for (std::size_t i=0; i<(unsigned)(N); i++) \
         ASSERT_EQ((E)[i], (A)[i]);
+
+boost::property_tree::ptree
+readXml(const char xml[]);
 
 #endif // TESTTOOLS_H_
