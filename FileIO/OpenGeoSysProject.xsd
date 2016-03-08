@@ -2,57 +2,183 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- OpenGeoSysProject schema; initial implementation: Karsten Rink, 2010-08-20 -->
-  
+
   <!-- object containing just a source file definition -->
-  <xs:complexType name="projectElement">
+  <xs:complexType name="FileType">
     <xs:sequence>
-	<xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
-  <!-- object containing a required reference to a geometry file -->
-  <xs:complexType name="geoElement">
+  <!-- mesh-object with optional geometry- and texture-reference -->
+  <xs:complexType name="MeshFileType">
     <xs:complexContent>
-      <xs:extension base="projectElement">
+      <xs:extension base="FileType">
         <xs:sequence>
-          <xs:element name="geoReference" type="xs:string"/>
+          <xs:element name="GeoReference" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="Texture" type="xs:string" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
-  <!-- msh-object with optional geometry- and texture-reference -->
-  <xs:complexType name="mshElement">
-    <xs:complexContent>
-      <xs:extension base="projectElement">
-        <xs:sequence>
-          <xs:element name="geoReference" type="xs:string" minOccurs="0" />
-          <xs:element name="texture" type="xs:string" minOccurs="0" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
+
+  <!-- output-object with required type-reference -->
+  <xs:complexType name="OutputFileType">
+    <xs:all>
+      <xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:all>
   </xs:complexType>
-  
-  
-  <!-- definition of file content -->    
+
+  <xs:complexType name="ProcessType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="process_variable" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <!-- undefined content -->
+      <xs:any processContents="lax" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ParameterType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InitialConditionType">
+    <xs:sequence>
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="BoundaryConditionType">
+    <xs:sequence>
+      <xs:element name="geometrical_set" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="geometry" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SourceTermType">
+    <xs:sequence>
+      <xs:element name="geometrical_set" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="geometry" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="value" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ProcessVariableType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="components" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
+      <xs:element name="initial_condition" type="InitialConditionType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="boundary_conditions" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="boundary_condition" type="BoundaryConditionType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="source_terms" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="source_term" type="SourceTermType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NonlinearSolverType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <xs:element name="tol" type="xs:double" minOccurs="1" maxOccurs="1" />
+      <xs:element name="max_iter" type="xs:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
+      <xs:element name="linear_solver" type="xs:string" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LinearSolverType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
+      <!-- undefined content -->
+      <xs:any processContents="lax" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- definition of file content -->
   <xs:element name="OpenGeoSysProject">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="geo" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element name="msh" type="mshElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="cnd" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="np"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="out" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="pcs" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="sim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="tim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="input" minOccurs="1" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="mesh" type="MeshFileType" minOccurs="0" maxOccurs="unbounded" />
+              <xs:element name="geometry" type="FileType" minOccurs="0" maxOccurs="unbounded" />
+              <xs:element name="stations" type="FileType" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="processes" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="process" type="ProcessType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="parameters" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="parameter" type="ParameterType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="process_variables" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="process_variable" type="ProcessVariableType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="nonlinear_solvers" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="nonlinear_solver" type="NonlinearSolverType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="linear_solvers" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="linear_solver" type="LinearSolverType" maxOccurs="unbounded" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="time_stepping" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="type" maxOccurs="1" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="output" type="OutputFileType" minOccurs="0" maxOccurs="1" />
+
       </xs:sequence>
-    </xs:complexType>  
-  </xs:element> 
+    </xs:complexType>
+  </xs:element>
 
 </xs:schema>
