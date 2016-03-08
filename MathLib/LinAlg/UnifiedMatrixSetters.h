@@ -7,66 +7,39 @@
  *
  */
 
+// TODO merge that with MatrixVectorTraits?
+
 #ifndef MATHLIB_UNIFIED_MATRIX_SETTERS_H
 #define MATHLIB_UNIFIED_MATRIX_SETTERS_H
 
 #include <initializer_list>
-#include <cassert>
 
+#ifdef OGS_USE_EIGEN
 
 // Dense Eigen matrix/vector //////////////////////////////////////////
-// always enabled
 
-#include <Eigen/LU>
+#include <Eigen/Core>
 
 namespace MathLib
 {
 
-inline void setMatrix(Eigen::MatrixXd& m,
-                      Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
-                      std::initializer_list<double> values)
-{
-    using IndexType = Eigen::MatrixXd::Index;
-    assert((IndexType) values.size() == rows*cols);
+void setMatrix(Eigen::MatrixXd& m,
+               Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
+               std::initializer_list<double> values);
 
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            m(r, c) = *(it++);
-        }
-    }
-}
+void setMatrix(Eigen::MatrixXd& m, Eigen::MatrixXd const& tmp);
 
-inline void setMatrix(Eigen::MatrixXd& m, Eigen::MatrixXd const& tmp)
-{
-    m = tmp;
-}
+void addToMatrix(Eigen::MatrixXd& m,
+                 Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
+                 std::initializer_list<double> values);
 
-inline void addToMatrix(Eigen::MatrixXd& m,
-                        Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
-                        std::initializer_list<double> values)
-{
-    using IndexType = Eigen::MatrixXd::Index;
-    assert((IndexType) values.size() == rows*cols);
+double norm(Eigen::VectorXd const& x);
 
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            m(r, c) += *(it++);
-        }
-    }
-}
-
-inline double norm(Eigen::VectorXd const& x) { return x.norm(); }
-
-inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
-{
-    assert((std::size_t) v.size() == values.size());
-    auto it = values.begin();
-    for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
-}
+void setVector(Eigen::VectorXd& v, std::initializer_list<double> values);
 
 } // namespace MathLib
+
+#endif // OGS_USE_EIGEN
 
 
 #ifdef USE_PETSC
@@ -74,48 +47,29 @@ inline void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
 
 namespace MathLib
 {
 
-inline double norm(MathLib::PETScVector const& x)
-{
-    return x.getNorm();
-}
+class PETScVector;
 
-inline void setVector(MathLib::PETScVector& v,
-                      std::initializer_list<double> values)
-{
-    (void) v; (void) values;
-    // TODO implement
-}
+double norm(PETScVector const& x);
+
+void setVector(PETScVector& v,
+                      std::initializer_list<double> values);
 
 
-inline void setMatrix(MathLib::PETScMatrix& m,
-                      MathLib::PETScMatrix::IndexType const rows,
-                      MathLib::PETScMatrix::IndexType const cols,
-                      std::initializer_list<double> values)
-{
-    (void) m; (void) rows; (void) cols; (void) values;
-    // TODO implement
-}
+void setMatrix(PETScMatrix& m,
+               PETScMatrix::IndexType const rows,
+               PETScMatrix::IndexType const cols,
+               std::initializer_list<double> values);
 
-inline void setMatrix(MathLib::PETScMatrix& m, Eigen::MatrixXd const& tmp)
-{
+void setMatrix(PETScMatrix& m, Eigen::MatrixXd const& tmp);
 
-    (void) m; (void) tmp;
-    // TODO implement
-}
-
-inline void addToMatrix(MathLib::PETScMatrix& m,
-                        MathLib::PETScMatrix::IndexType const rows,
-                        MathLib::PETScMatrix::IndexType const cols,
-                        std::initializer_list<double> values)
-{
-    (void) m; (void) rows; (void) cols; (void) values;
-    // TODO implement
-}
+void addToMatrix(PETScMatrix& m,
+                 PETScMatrix::IndexType const rows,
+                 PETScMatrix::IndexType const cols,
+                 std::initializer_list<double> values);
 
 } // namespace MathLib
 
@@ -124,61 +78,27 @@ inline void addToMatrix(MathLib::PETScMatrix& m,
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
 
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
-#include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 
 namespace MathLib
 {
 
-inline void setVector(MathLib::EigenVector& v,
-                      std::initializer_list<double> values)
-{
-    setVector(v.getRawVector(), values);
-}
+class EigenVector;
 
-inline void setMatrix(MathLib::EigenMatrix& m,
-                      MathLib::EigenMatrix::IndexType const rows,
-                      MathLib::EigenMatrix::IndexType const cols,
-                      std::initializer_list<double> values)
-{
-    using IndexType = MathLib::EigenMatrix::IndexType;
-    assert((IndexType) values.size() == rows*cols);
-    Eigen::MatrixXd tmp(rows, cols);
+void setVector(EigenVector& v,
+                      std::initializer_list<double> values);
 
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            tmp(r, c) = *(it++);
-        }
-    }
+void setMatrix(EigenMatrix& m,
+               EigenMatrix::IndexType const rows,
+               EigenMatrix::IndexType const cols,
+               std::initializer_list<double> values);
 
-    m.getRawMatrix() = tmp.sparseView();
-}
+void setMatrix(EigenMatrix& m, Eigen::MatrixXd const& tmp);
 
-inline void setMatrix(MathLib::EigenMatrix& m, Eigen::MatrixXd const& tmp)
-{
-    m.getRawMatrix() = tmp.sparseView();
-}
-
-inline void addToMatrix(MathLib::EigenMatrix& m,
-                        MathLib::EigenMatrix::IndexType const rows,
-                        MathLib::EigenMatrix::IndexType const cols,
-                        std::initializer_list<double> values)
-{
-    using IndexType = MathLib::EigenMatrix::IndexType;
-    assert((IndexType) values.size() == rows*cols);
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
-
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            tmp(r, c) = *(it++);
-        }
-    }
-
-    m.getRawMatrix() += tmp.sparseView();
-}
+void addToMatrix(EigenMatrix& m,
+                 EigenMatrix::IndexType const rows,
+                 EigenMatrix::IndexType const cols,
+                 std::initializer_list<double> values);
 
 } // namespace MathLib
 
