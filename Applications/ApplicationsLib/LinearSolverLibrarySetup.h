@@ -19,6 +19,8 @@
 /// The default implementation is empty providing polymorphic behaviour when
 /// using this class.
 
+#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+
 #if defined(USE_PETSC)
 #include <petsc.h>
 #include <mpi.h>
@@ -35,6 +37,7 @@ struct LinearSolverLibrarySetup final
 
 	~LinearSolverLibrarySetup()
 	{
+		MathLib::cleanupGlobalMatrixProviders();
 		PetscFinalize();
 		MPI_Finalize();
 	}
@@ -51,7 +54,11 @@ struct LinearSolverLibrarySetup final
 		lis_initialize(&argc, &argv);
 	}
 
-	~LinearSolverLibrarySetup() { lis_finalize(); }
+	~LinearSolverLibrarySetup()
+	{
+		MathLib::cleanupGlobalMatrixProviders();
+		lis_finalize();
+	}
 };
 }	// ApplicationsLib
 #else
@@ -60,7 +67,10 @@ namespace ApplicationsLib
 struct LinearSolverLibrarySetup final
 {
 	LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
-	~LinearSolverLibrarySetup() {}
+	~LinearSolverLibrarySetup()
+	{
+		MathLib::cleanupGlobalMatrixProviders();
+	}
 };
 }	// ApplicationsLib
 #endif
