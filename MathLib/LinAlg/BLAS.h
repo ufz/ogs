@@ -70,6 +70,11 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
 template<typename MatrixOrVector>
 double norm2(MatrixOrVector const& x);
 
+template<typename Matrix>
+void finalizeAssembly(Matrix& /*A*/)
+{
+    // By default do nothing.
+}
 
 // Matrix and Vector
 
@@ -152,8 +157,10 @@ void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y);
 void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
                        PETScVector const& v2, PETScVector& v3);
 
-}} // namespaces
+void finalizeAssembly(PETScMatrix& A);
+void finalizeAssembly(PETScVector& x);
 
+}} // namespaces
 
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////

@@ -50,28 +50,28 @@ void copy(PETScVector const& x, PETScVector& y)
 
 void scale(PETScVector& x, double const a)
 {
-    VecScale(x.getRawVector(), a);
+    VecScale(*x.getRawVector(), a);
 }
 
 // y = a*y + X
 void aypx(PETScVector& y, double const a, PETScVector const& x)
 {
     // TODO check sizes
-    VecAYPX(y.getRawVector(), a, x.getRawVector());
+    VecAYPX(*y.getRawVector(), a, *x.getRawVector());
 }
 
 // y = a*x + y
 void axpy(PETScVector& y, double const a, PETScVector const& x)
 {
     // TODO check sizes
-    VecAXPY(y.getRawVector(), a, x.getRawVector());
+    VecAXPY(*y.getRawVector(), a, *x.getRawVector());
 }
 
-// y = a*x + y
+// y = a*x + b*y
 void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 {
     // TODO check sizes
-    VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
+    VecAXPBY(*y.getRawVector(), a, b, *x.getRawVector());
 }
 
 // Explicit specialization
@@ -122,7 +122,8 @@ void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
 {
     // TODO check sizes
     assert(&x != &y);
-    MatMult(A.getRawMatrix(), x.getRawVector(), y.getRawVector());
+    if (!y.getRawVector()) y.shallowCopy(x);
+    MatMult(A.getRawMatrix(), *x.getRawVector(), *y.getRawVector());
 }
 
 // v3 = A*v1 + v2
@@ -131,7 +132,18 @@ void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
 {
     // TODO check sizes
     assert(&v1 != &v3);
-    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(), v3.getRawVector());
+    if (!v3.getRawVector()) v3.shallowCopy(v1);
+    MatMultAdd(A.getRawMatrix(), *v1.getRawVector(), *v2.getRawVector(), *v3.getRawVector());
+}
+
+void finalizeAssembly(PETScMatrix& A)
+{
+    A.finalizeAssembly(MAT_FINAL_ASSEMBLY);
+}
+
+void finalizeAssembly(PETScVector& x)
+{
+    x.finalizeAssembly();
 }
 
 }} // namespaces
