@@ -24,7 +24,7 @@ if(OGS_USE_PETSC OR OGS_USE_MPI)
 	list(REMOVE_ITEM TEST_SOURCES AssemblerLib/TestSerialLinearSolver.cpp)
 endif()
 
-add_executable(testrunner testrunner.cpp ${TEST_SOURCES})
+add_executable(testrunner ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
 
 target_link_libraries(testrunner

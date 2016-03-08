@@ -7,7 +7,6 @@ endmacro()
 # Returns a list of source files (*.h and *.cpp) in SOURCE_FILES and creates a Visual
 # Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
 macro(GET_SOURCE_FILES SOURCE_FILES)
-
 	if(${ARGC} EQUAL 2)
 		set(DIR "${ARGV1}")
 	else()
@@ -40,7 +39,13 @@ endmacro()
 # Appends a list of source files (*.h and *.cpp) to SOURCE_FILES and creates a Visual
 # Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
 macro(APPEND_SOURCE_FILES SOURCE_FILES)
-	GET_SOURCE_FILES(TMP_SOURCES "${ARGV}")
+	if(${ARGC} EQUAL 2)
+		set(DIR "${ARGV1}")
+	else()
+		set(DIR ".")
+	endif()
+
+	GET_SOURCE_FILES(TMP_SOURCES "${DIR}")
 	set(${SOURCE_FILES} ${${SOURCE_FILES}} ${TMP_SOURCES})
 endmacro()
 
