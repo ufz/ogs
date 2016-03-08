@@ -117,11 +117,11 @@ private:
     const double _tol;       //!< tolerance of the solver
     const unsigned _maxiter; //!< maximum number of iterations
 
-    Vector _res;             //!< The residual.
-    Matrix _J;               //!< The Jacobian of the residual.
-    Vector _minus_delta_x;   //!< The Newton-Raphson method solves the linearized equation
-                             //!< \f$ J \cdot (-\Delta x) = r \f$ repeatedly.
     double const _alpha = 1; //!< Damping factor. \todo Add constructor parameter.
+
+    std::size_t _res_id = 0u;           //!< ID of the residual vector.
+    std::size_t _J_id = 0u;             //!< ID of the Jacobian matrix.
+    std::size_t _minus_delta_x_id = 0u; //!< ID of the \f$ -\Delta x\f$ vector.
 };
 
 
@@ -167,20 +167,20 @@ private:
     const double _tol;       //!< tolerance of the solver
     const unsigned _maxiter; //!< maximum number of iterations
 
-    Matrix _A;     //!< \c Matrix describing the linearized system.
-    Vector _rhs;   //!< \c Vector describing the linearized system.
-    Vector _x_new; //!< \c Vector to store solutions of \f$ A \cdot x = \mathit{rhs} \f$.
+    std::size_t _A_id = 0u;     //!< ID of the \f$ A \f$ matrix.
+    std::size_t _rhs_id = 0u;   //!< ID of the right-hand side vector.
+    std::size_t _x_new_id = 0u; //!< ID of the vector storing the solution of the linearized equation.
 };
+
 
 /*! Creates a new nonlinear solver from the given configuration.
  *
- * \param linear_solver the linear solver that will be used by the nonlinear
- *        solver
+ * \param linear_solver the linear solver that will be used by the nonlinear solver
  * \param config configuration settings
  *
- * \return a pair <tt>(nl_slv, tag)</tt> where \c nl_slv is the generated
- *         nonlinear solver instance and the \c tag indicates if it uses the
- *         Picard or Newton-Raphson method
+ * \return a pair <tt>(nl_slv, tag)</tt> where \c nl_slv is the generated nonlinear
+ *         solver instance and the \c tag indicates if it uses the Picard
+ *         or Newton-Raphson method
  */
 template<typename Matrix, typename Vector>
 std::pair<
