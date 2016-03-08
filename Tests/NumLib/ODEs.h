@@ -53,9 +53,9 @@ public:
             BLAS::axpy(Jac, dx_dx, K);
     }
 
-    std::size_t getNumEquations() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return N;
+        return { N, N };
     }
 
     bool isLinear() const override
@@ -126,9 +126,9 @@ public:
             BLAS::axpy(Jac, dx_dx, K);
     }
 
-    std::size_t getNumEquations() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return N;
+        return { N, N };
     }
 
     bool isLinear() const override
@@ -262,9 +262,9 @@ public:
         // INFO("Det J: %e <<<", J.determinant());
     }
 
-    std::size_t getNumEquations() const override
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return N;
+        return { N, N };
     }
 
     bool isLinear() const override

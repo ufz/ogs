@@ -5,10 +5,10 @@
 #include <memory>
 #include <typeinfo>
 
-#include "ProcessLib/NumericsConfig.h"
-#include "NumLib/ODESolver/TimeLoopSingleODE.h"
-#include "ODEs.h"
 #include "BaseLib/BuildInfo.h"
+#include "NumLib/ODESolver/TimeLoopSingleODE.h"
+#include "ProcessLib/NumericsConfig.h"
+#include "ODEs.h"
 
 
 using EDMatrix = Eigen::MatrixXd;
@@ -46,7 +46,8 @@ public:
                 ode_sys(ode, timeDisc);
 
         auto linear_solver = MathLib::createLinearSolver<Matrix, Vector>(nullptr);
-        std::unique_ptr<NLSolver> nonlinear_solver(new NLSolver(*linear_solver, _tol, _maxiter));
+        std::unique_ptr<NLSolver> nonlinear_solver(
+                    new NLSolver(*linear_solver, _tol, _maxiter));
 
         NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(
             ode_sys, std::move(linear_solver), std::move(nonlinear_solver));
@@ -61,7 +62,7 @@ public:
         init_file(delta_t);
 
         // initial condition
-        Vector x0(ode.getNumEquations());
+        Vector x0(ode.getMatrixSpecifications().nrows);
         ODET::setIC(x0);
 
         write(t0, x0, x0);
@@ -110,12 +111,21 @@ private:
 };
 
 
-// TODO remove debugging macro
-#if 1
+template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
+         NumLib::NonlinearSolverTag NLTag>
+typename std::enable_if<std::is_same<TimeDisc, NumLib::BackwardEuler<Vector> >::value>::type
+run_test_case(const unsigned num_timesteps, const char* name)
+{
+    ODE ode;
+    TimeDisc timeDisc;
+
+    TestOutput<Matrix, Vector, NLTag> test(name);
+    test.run_test(ode, timeDisc, num_timesteps);
+}
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_default_constructible<TimeDisc>::value>::type
+typename std::enable_if<std::is_same<TimeDisc, NumLib::ForwardEuler<Vector> >::value>::type
 run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
@@ -149,21 +159,6 @@ run_test_case(const unsigned num_timesteps, const char* name)
     TestOutput<Matrix, Vector, NLTag> test(name);
     test.run_test(ode, timeDisc, num_timesteps);
 }
-
-#else
-
-template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
-         NumLib::NonlinearSolverTag NLTag>
-void
-run_test_case(const unsigned num_timesteps, const char* name)
-{
-    ODE ode;
-    // TimeDisc timeDisc(3);
-
-    TestOutput<Matrix, Vector, NLTag> test(name);
-    // test.run_test(ode, timeDisc, num_timesteps);
-}
-#endif
 
 
 // This class is only here s.t. I don't have to put the members into
@@ -293,8 +288,10 @@ public:
 
     static void test()
     {
-        for (auto num_timesteps : { 10u, 100u }) {
-            run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(num_timesteps, TestParams::name);
+        for (auto num_timesteps : { 10u, 100u })
+        {
+            run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(
+                        num_timesteps, TestParams::name);
         }
     }
 };
@@ -319,17 +316,19 @@ TEST(NumLibODEInt, DISABLED_ODE3)
 #endif
 {
     const char* name = "dummy";
+    {
 
-    // only make sure ODE3 compiles
-    run_test_case<EDMatrix, EVector, NumLib::BackwardEuler<EVector>,
-                  ODE3<EDMatrix, EVector>,
-                  NumLib::NonlinearSolverTag::Newton>
-            (0u, name);
+        // only make sure ODE3 compiles
+        run_test_case<EDMatrix, EVector, NumLib::BackwardEuler<EVector>,
+                      ODE3<EDMatrix, EVector>,
+                      NumLib::NonlinearSolverTag::Newton>(0u, name);
+    }
 
-    run_test_case<GMatrix, GVector, NumLib::BackwardEuler<GVector>,
-                  ODE3<GMatrix, GVector>,
-                  NumLib::NonlinearSolverTag::Newton>
-            (0u, name);
+    {
+        run_test_case<GMatrix, GVector, NumLib::BackwardEuler<GVector>,
+                      ODE3<GMatrix, GVector>,
+                      NumLib::NonlinearSolverTag::Newton>(0u, name);
+    }
 }
 
 
