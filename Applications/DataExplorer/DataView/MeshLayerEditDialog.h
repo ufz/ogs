@@ -53,7 +53,6 @@ private:
 	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
 	QVector<QLineEdit*> _edits;
 
-	QLabel* _nLayerExplanation;
 	QLineEdit* _layerEdit;
 	QLineEdit* _noDataReplacementEdit;
 	QLineEdit* _minThicknessEdit;

@@ -38,8 +38,7 @@
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
 	: QDialog(parent), _msh(mesh), _n_layers(0),
-	  _nLayerExplanation (new QLabel(this)),
-	  _layerEdit (new QLineEdit("0", this)),
+	  _layerEdit (new QLineEdit("1", this)),
 	  _noDataReplacementEdit(nullptr),
 	  _minThicknessEdit(nullptr),
 	  _nextButton (new QPushButton("Next", this)),
@@ -51,12 +50,10 @@ MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* par
 {
 	setupUi(this);
 
-	_nLayerExplanation->setText("(select \"0\" for surface mapping)");
 	this->gridLayoutLayerMapping->addWidget(new QLabel("Please specify the number of layers to add:", this), 0, 0);
-	this->gridLayoutLayerMapping->addWidget(_nLayerExplanation, 1, 0);
 	this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 1);
 	this->gridLayoutLayerMapping->addWidget(_nextButton, 0, 2);
-	_layerEdit->setValidator(new QIntValidator(0,999,_layerEdit));
+	_layerEdit->setValidator(new QIntValidator(1,999,_layerEdit));
 	connect(_nextButton, SIGNAL(pressed()), this, SLOT(nextButtonPressed()));
 
 	// configure group box + layout
@@ -73,35 +70,33 @@ MeshLayerEditDialog::~MeshLayerEditDialog()
 
 void MeshLayerEditDialog::nextButtonPressed()
 {
-	_layerEdit->setEnabled(false);
-	_nextButton->setEnabled(false);
-	_nLayerExplanation->setText("");
 	_n_layers  = static_cast<unsigned>(_layerEdit->text().toInt());
 
-	if (_n_layers == 0)
-		this->createWithRasters();
-	else
+	if (_n_layers < 1)
 	{
-		QVBoxLayout* _radiobuttonLayout (new QVBoxLayout(_radioButtonBox));
-		QRadioButton* selectButton1 (new QRadioButton("Add layers based on raster files", _radioButtonBox));
-		QRadioButton* selectButton2 (new QRadioButton("Add layers with static thickness", _radioButtonBox));
-		_radioButtonBox = new QGroupBox(this);
-		_radiobuttonLayout->addWidget(selectButton1);
-		_radiobuttonLayout->addWidget(selectButton2);
-		_radioButtonBox->setLayout(_radiobuttonLayout);
-		gridLayoutLayerMapping->addWidget(_radioButtonBox, 2, 0, 1, 3);
-		// add an empty line to better arrange the following information
-		gridLayoutLayerMapping->addWidget(_nLayerExplanation, 3, 0);
-		connect(selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
-		connect(selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
+		OGSError::box("Add the number of layers to add (at least 1)");
+		return;
 	}
+
+	_layerEdit->setEnabled(false);
+	_nextButton->setEnabled(false);
+
+	QVBoxLayout* _radiobuttonLayout (new QVBoxLayout(_radioButtonBox));
+	QRadioButton* selectButton1 (new QRadioButton("Add layers based on raster files", _radioButtonBox));
+	QRadioButton* selectButton2 (new QRadioButton("Add layers with static thickness", _radioButtonBox));
+	_radioButtonBox = new QGroupBox(this);
+	_radiobuttonLayout->addWidget(selectButton1);
+	_radiobuttonLayout->addWidget(selectButton2);
+	_radioButtonBox->setLayout(_radiobuttonLayout);
+	gridLayoutLayerMapping->addWidget(_radioButtonBox, 2, 0, 1, 3);
+	connect(selectButton1, SIGNAL(pressed()), this, SLOT(createWithRasters()));
+	connect(selectButton2, SIGNAL(pressed()), this, SLOT(createStatic()));
 }
 
 void MeshLayerEditDialog::createWithRasters()
 {
-	// _use_rasters=true is needed for this, this is the default setting however
-	if (_n_layers>0)
-		this->_radioButtonBox->setEnabled(false);
+	this->_use_rasters = true;
+	this->_radioButtonBox->setEnabled(false);
 	const QString selectText = (_n_layers>0) ?
 			"Please specify a raster file for mapping each layer:" :
 			"Please specify raster file for surface mapping:";
@@ -124,18 +119,6 @@ void MeshLayerEditDialog::createWithRasters()
 		this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox),  i, 0);
 		this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
 		this->_layerSelectionLayout->addWidget(button, i, 2);
-
-		// don't add bottom layer if mesh contains only surface
-		if (this->_n_layers==0) break;
-	}
-	if (this->_n_layers == 0)
-	{
-		QLabel* noDataReplacementLabel = new QLabel("Set NoData values to ", _layerBox);
-		_noDataReplacementEdit = new QLineEdit("0.0", _layerBox);
-		_noDataReplacementEdit->setValidator(new QDoubleValidator(_noDataReplacementEdit));
-
-		this->_layerSelectionLayout->addWidget(noDataReplacementLabel, 1, 0);
-		this->_layerSelectionLayout->addWidget(_noDataReplacementEdit, 1, 1);
 	}
 	this->_layerBox->setLayout(this->_layerSelectionLayout);
 	this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
@@ -297,27 +280,11 @@ void MeshLayerEditDialog::accept()
 		return;
 	}
 
-	const unsigned nLayers = _layerEdit->text().toInt();
-	MeshLib::Mesh* new_mesh (NULL);
-
-	if (nLayers==0)
-	{
-		new_mesh = new MeshLib::Mesh(*_msh);
-		const std::string imgPath ( this->_edits[0]->text().toStdString() );
-		const double noDataReplacementValue = this->_noDataReplacementEdit->text().toDouble();
-		if (!MeshLib::MeshLayerMapper::layerMapping(*new_mesh, imgPath, noDataReplacementValue))
-		{
-			delete new_mesh;
-			return;
-		}
-	}
+	MeshLib::Mesh* new_mesh (nullptr);
+	if (_ogsMeshButton->isChecked())
+		new_mesh = createPrismMesh();
 	else
-	{
-		if (_ogsMeshButton->isChecked())
-			new_mesh = this->createPrismMesh();
-		else
-			new_mesh = this->createTetMesh();
-	}
+		new_mesh = createTetMesh();
 
 	if (new_mesh)
 		emit mshEditFinished(new_mesh);
