@@ -74,6 +74,12 @@ public:
 		    mesh_items_all_nodes->getIntersectionByNodes(nodes));
 	}
 
+	~AssemblerLibLocalToGlobalIndexMapMultiDOFTest()
+	{
+		for (auto e : boundary_elements)
+			delete e;
+	}
+
 	void initComponents(const unsigned num_components, const unsigned selected_component,
 						const AL::ComponentOrder order)
 	{
