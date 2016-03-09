@@ -198,9 +198,9 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 {
 	auto const n_pnts(std::distance(first,last));
 
-	std::array<double,3> delta = {{this->_max_pnt[0]-this->_min_pnt[0],
-		 this->_max_pnt[1]-this->_min_pnt[1],
-		 this->_max_pnt[2]-this->_min_pnt[2]}};
+	std::array<double, 3> delta = {{_max_pnt[0] - _min_pnt[0],
+	                                _max_pnt[1] - _min_pnt[1],
+	                                _max_pnt[2] - _min_pnt[2]}};
 
 	assert(n_pnts > 0);
 	initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
@@ -289,8 +289,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 {
 	std::vector<std::string> grid_names;
 
-	GeoLib::Point const& llf (this->getMinPoint());
-	GeoLib::Point const& urb (this->getMaxPoint());
+	GeoLib::Point const& llf (getMinPoint());
+	GeoLib::Point const& urb (getMaxPoint());
 
 	const double dx ((urb[0] - llf[0]) / _n_steps[0]);
 	const double dy ((urb[1] - llf[1]) / _n_steps[1]);
@@ -377,14 +377,14 @@ std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
 	std::array<std::size_t,3> coords;
 	for (std::size_t k(0); k<3; k++) {
-		if (pnt[k] < this->_min_pnt[k]) {
+		if (pnt[k] < _min_pnt[k]) {
 			coords[k] = 0;
 		} else {
-			if (pnt[k] > this->_max_pnt[k]) {
+			if (pnt[k] > _max_pnt[k]) {
 				coords[k] = _n_steps[k]-1;
 			} else {
 				coords[k] = static_cast<std::size_t>(
-				    std::floor((pnt[k] - this->_min_pnt[k])) *
+				    std::floor((pnt[k] - _min_pnt[k])) *
 				    _inverse_step_sizes[k]);
 			}
 		}
@@ -398,14 +398,14 @@ std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
 	std::array<std::size_t,3> const& coords) const
 {
 	std::array<double,6> dists;
-	dists[0] = std::abs(p[2]-this->_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
-	dists[5] = std::abs(p[2]-this->_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
+	dists[0] = std::abs(p[2]-_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
+	dists[5] = std::abs(p[2]-_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
 
-	dists[1] = std::abs(p[1]-this->_min_pnt[1] + coords[1]*_step_sizes[1]); // front
-	dists[3] = std::abs(p[1]-this->_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
+	dists[1] = std::abs(p[1]-_min_pnt[1] + coords[1]*_step_sizes[1]); // front
+	dists[3] = std::abs(p[1]-_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
 
-	dists[4] = std::abs(p[0]-this->_min_pnt[0] + coords[0]*_step_sizes[0]); // left
-	dists[2] = std::abs(p[0]-this->_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
+	dists[4] = std::abs(p[0]-_min_pnt[0] + coords[0]*_step_sizes[0]); // left
+	dists[2] = std::abs(p[0]-_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
 	return dists;
 }
 
@@ -415,7 +415,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 {
 	std::array<std::size_t,3> coords(getGridCoords(pnt));
 
-	double sqr_min_dist(MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
+	double sqr_min_dist(MathLib::sqrDist(_min_pnt, _max_pnt));
 	POINT* nearest_pnt(nullptr);
 
 	std::array<double,6> dists(getPointCellBorderDistances(pnt, coords));
