@@ -348,64 +348,50 @@ void Polygon::ensureCWOrientation ()
 		delete tmp_polygon_pnts[k];
 }
 
-void Polygon::splitPolygonAtIntersection (std::list<Polygon*>::iterator polygon_it)
+#if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
+void Polygon::splitPolygonAtIntersection(
+    std::list<Polygon*>::iterator polygon_it)
+#else
+void Polygon::splitPolygonAtIntersection(
+    std::list<Polygon*>::const_iterator polygon_it)
+#endif
 {
-	std::size_t idx0 (0), idx1 (0);
-	while (polygon_it != _simple_polygon_list.end())
-	{
-		GeoLib::Point* intersection_pnt (new GeoLib::Point);
-		bool is_simple (!GeoLib::lineSegmentsIntersect (*polygon_it,
-		                                                 idx0,
-		                                                 idx1,
-		                                                 *intersection_pnt));
-		if (!is_simple)
-		{
-			// adding intersection point to pnt_vec
-			std::size_t intersection_pnt_id (_ply_pnts.size());
-			const_cast<std::vector<Point*>& >(_ply_pnts).push_back (intersection_pnt);
+	std::size_t idx0(0), idx1(0);
+	GeoLib::Point intersection_pnt;
+	if (!GeoLib::lineSegmentsIntersect(*polygon_it, idx0, idx1,
+	                                   intersection_pnt))
+		return;
 
-			// split Polygon
-			if (idx0 > idx1)
-				std::swap (idx0, idx1);
+	// adding intersection point to pnt_vec
+	std::size_t const intersection_pnt_id (_ply_pnts.size());
+	const_cast<std::vector<Point*>&>(_ply_pnts)
+	    .push_back(new GeoLib::Point(intersection_pnt));
 
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(
-			                                   (*polygon_it)->getPointsVec(), false));
-			for (std::size_t k(0); k <= idx0; k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			polygon0->addPoint (intersection_pnt_id);
-			for (std::size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			if (!polygon0->initialise())
-			{
-				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon0 failed.");
-				exit (1);
-			}
+	// split Polygon
+	if (idx0 > idx1)
+		std::swap (idx0, idx1);
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(
-			                                   (*polygon_it)->getPointsVec(), false));
-			polygon1->addPoint (intersection_pnt_id);
-			for (std::size_t k(idx0 + 1); k <= idx1; k++)
-				polygon1->addPoint ((*polygon_it)->getPointID (k));
-			polygon1->addPoint (intersection_pnt_id);
-			if (!polygon1->initialise())
-			{
-				ERR("Polygon::splitPolygonAtIntersection(): Initialization of polygon1 failed.");
-				exit (1);
-			}
+	GeoLib::Polyline polyline0{(*polygon_it)->getPointsVec()};
+	for (std::size_t k(0); k <= idx0; k++)
+		polyline0.addPoint((*polygon_it)->getPointID(k));
+	polyline0.addPoint(intersection_pnt_id);
+	for (std::size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
+		polyline0.addPoint((*polygon_it)->getPointID(k));
 
-			// remove original polyline and add two new polylines
-			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
-			polygon_it = _simple_polygon_list.erase (polygon_it);
-			polygon1_it = _simple_polygon_list.insert (polygon_it, polygon1);
-			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
+	GeoLib::Polyline polyline1{(*polygon_it)->getPointsVec()};
+	polyline1.addPoint(intersection_pnt_id);
+	for (std::size_t k(idx0 + 1); k <= idx1; k++)
+		polyline1.addPoint((*polygon_it)->getPointID(k));
+	polyline1.addPoint(intersection_pnt_id);
 
-			splitPolygonAtIntersection (polygon0_it);
-			splitPolygonAtIntersection (polygon1_it);
-		}
-		else
-			delete intersection_pnt;
-		++polygon_it;
-	}
+	// remove original polyline and add two new polylines
+	auto polygon1_it = _simple_polygon_list.insert(
+	    _simple_polygon_list.erase(polygon_it), new GeoLib::Polygon(polyline1));
+	auto polygon0_it = _simple_polygon_list.insert(
+	    polygon1_it, new GeoLib::Polygon(polyline0));
+
+	splitPolygonAtIntersection(polygon0_it);
+	splitPolygonAtIntersection(polygon1_it);
 }
 
 void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)

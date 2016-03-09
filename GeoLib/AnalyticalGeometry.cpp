@@ -121,27 +121,54 @@ bool lineSegmentIntersect(
 		return true;
 	}
 
-	// general case
 	MathLib::Vector3 const v(a, b);
 	MathLib::Vector3 const w(c, d);
 	MathLib::Vector3 const qp(a, c);
 	MathLib::Vector3 const pq(c, a);
 
-	const double sqr_len_v(v.getSqrLength());
-	const double sqr_len_w(w.getSqrLength());
+	auto isLineSegmentIntersectingAB = [&v](MathLib::Vector3 const& ap,
+	                                        std::size_t i)
+	{
+		// check if p is located at v=(a,b): (ap = t*v, t in [0,1])
+		if (0.0 <= ap[i] / v[i] && ap[i] / v[i] <= 1.0) {
+			return true;
+		}
+		return false;
+	};
 
-	if (parallel(v,w)) {
-		if (parallel(pq,v)) {
-			// check if c is located at v (c-a = t (b-a), t in [0,1])
-			if (qp[0] / v[0] <= 1.0)
+	if (parallel(v,w)) { // original line segments (a,b) and (c,d) are parallel
+		if (parallel(pq,v)) { // line segment (a,b) and (a,c) are also parallel
+			// Here it is already checked that the line segments (a,b) and (c,d)
+			// are parallel. At this point it is also known that the line
+			// segment (a,c) is also parallel to (a,b). In that case it is
+			// possible to express c as c(t) = a + t * (b-a) (analog for the
+			// point d). Since the evaluation of all three coordinate equations
+			// (x,y,z) have to lead to the same solution for the parameter t it
+			// is sufficient to evaluate t only once.
+
+			// Search id of coordinate with largest absolute value which is will
+			// be used in the subsequent computations. This prevents division by
+			// zero in case the line segments are parallel to one of the
+			// coordinate axis.
+			std::size_t i_max(std::abs(v[0]) <= std::abs(v[1]) ? 1 : 0);
+			i_max = std::abs(v[i_max]) <= std::abs(v[2]) ? 2 : i_max;
+			if (isLineSegmentIntersectingAB(qp, i_max)) {
+				s = c;
 				return true;
-			// check if d is located at v (d-a = t (b-a), t in [0,1])
-			if (MathLib::Vector3(a,d)[0]/v[0] <= 1.0)
+			}
+			MathLib::Vector3 const ad(a, d);
+			if (isLineSegmentIntersectingAB(ad, i_max)) {
+				s = d;
 				return true;
+			}
 			return false;
 		}
 		return false;
 	}
+
+	// general case
+	const double sqr_len_v(v.getSqrLength());
+	const double sqr_len_w(w.getSqrLength());
 
 	MathLib::DenseMatrix<double> mat(2,2);
 	mat(0,0) = sqr_len_v;
