@@ -14,6 +14,49 @@
 
 #include "NumLib/ODESolver/Types.h"
 
+namespace
+{
+inline AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices
+getRowColumnIndices(std::size_t const id,
+                    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                    std::vector<GlobalIndexType>& indices)
+{
+    assert(dof_table.size() > id);
+    assert(indices.empty());
+
+    // Local matrices and vectors will always be ordered by component,
+    // no matter what the order of the global matrix is.
+    for (unsigned c = 0; c < dof_table.getNumComponents(); ++c)
+    {
+        auto const& idcs = dof_table(id, c).rows;
+        indices.reserve(indices.size() + idcs.size());
+        indices.insert(indices.end(), idcs.begin(), idcs.end());
+    }
+
+    return AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+                                                                 indices);
+}
+
+template <typename Callback, typename GlobalVector, typename... Args>
+void passLocalVector(Callback& cb, std::size_t const id,
+                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                     GlobalVector const& x, Args&&... args)
+{
+    std::vector<GlobalIndexType> indices;
+    auto const r_c_indices = getRowColumnIndices(id, dof_table, indices);
+
+    std::vector<double> local_x;
+    local_x.reserve(indices.size());
+
+    for (auto i : indices)
+    {
+        local_x.emplace_back(x.get(i));
+    }
+
+    cb(local_x, r_c_indices, std::forward<Args>(args)...);
+}
+}
+
 namespace AssemblerLib
 {
 
@@ -53,31 +96,17 @@ public:
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
-        assert(_data_pos.size() > id);
-
-        std::vector<GlobalIndexType> indices;
-
-        // Local matrices and vectors will always be ordered by component,
-        // no matter what the order of the global matrix is.
-        for (unsigned c=0; c<_data_pos.getNumComponents(); ++c)
+        auto cb = [local_assembler](
+                std::vector<double> local_x,
+                LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
+                const double t,
+                GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
         {
-            auto const& idcs = _data_pos(id, c).rows;
-            indices.reserve(indices.size() + idcs.size());
-            indices.insert(indices.end(), idcs.begin(), idcs.end());
-        }
+            local_assembler->assemble(t, local_x);
+            local_assembler->addToGlobal(r_c_indices, M, K, b);
+        };
 
-        std::vector<double> local_x;
-        local_x.reserve(indices.size());
-
-        for (auto i : indices) {
-            local_x.emplace_back(x.get(i));
-        }
-
-        LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
-                    indices, indices);
-
-        local_assembler->assemble(t, local_x);
-        local_assembler->addToGlobal(r_c_indices, M, K, b);
+        passLocalVector(cb, id, _data_pos, x, t, M, K, b);
     }
 
 private:
@@ -106,24 +135,8 @@ public:
         LocalAssembler_* const local_assembler,
         const double t, GlobalVector& b) const
     {
-        // TODO I hope the changes to the VectorMatrixAssembler don't break multi-components
-        assert(_data_pos.size() > id);
-
-        // TODO Refactor: GlobalMatrix and GlobalVector are always given as
-        // template params but GlobalIndexType is a global constant.
         std::vector<GlobalIndexType> indices;
-
-        // Local matrices and vectors will always be ordered by component,
-        // no matter what the order of the global matrix is.
-        for (unsigned c=0; c<_data_pos.getNumComponents(); ++c)
-        {
-            auto const& idcs = _data_pos(id, c).rows;
-            indices.reserve(indices.size() + idcs.size());
-            indices.insert(indices.end(), idcs.begin(), idcs.end());
-        }
-
-        LocalToGlobalIndexMap::RowColumnIndices const r_c_indices(
-                    indices, indices);
+        auto const r_c_indices = getRowColumnIndices(id, _data_pos, indices);
 
         local_assembler->assemble(t);
         local_assembler->addToGlobal(r_c_indices, b);
