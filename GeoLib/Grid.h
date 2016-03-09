@@ -185,19 +185,11 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 {
 	auto const n_pnts(std::distance(first,last));
 
-	for (std::size_t k(0); k < 3; k++) {
-		// make the bounding box a little bit bigger,
-		// such that the node with maximal coordinates fits into the grid
-		this->_max_pnt[k] += std::abs(this->_max_pnt[k]) * 1e-6;
-		if (std::abs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
-			this->_max_pnt[k] = (this->_max_pnt[k] - this->_min_pnt[k]) * (1.0 + 1e-6);
-		}
-	}
 	std::array<double,3> delta = {{this->_max_pnt[0]-this->_min_pnt[0],
 		 this->_max_pnt[1]-this->_min_pnt[1],
 		 this->_max_pnt[2]-this->_min_pnt[2]}};
 
-	assert(n_pnts >= 0);
+	assert(n_pnts > 0);
 	initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
 
 	const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
