@@ -57,12 +57,9 @@ init(MeshLib::Element const& e,
                     _shape_matrices[ip]);
     }
 
+    constexpr unsigned MAT_SIZE = ShapeFunction::NPOINTS * NODAL_DOF;
     _localA.resize(MAT_SIZE, MAT_SIZE);
     _localRhs.resize(MAT_SIZE);
-    // _localA.reset(new NodalMatrixType);
-    // _localRhs.reset(new NodalVectorType);
-
-    // DBUG("local matrix size: %i", local_matrix_size);
 
     _data._AP = & process->getAssemblyParams();
 
@@ -105,8 +102,7 @@ assemble(std::vector<double> const& localX,
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight);
     }
 
-    // first timestep:
-    const Eigen::Map<const Eigen::VectorXd> oldX(localXPrevTs.data(), localXPrevTs.size());
+    const Eigen::Map<const typename DT::LocalVector> oldX(localXPrevTs.data(), localXPrevTs.size());
     _data.postEachAssemble(_localA, _localRhs, oldX);
 }
 
@@ -151,7 +147,6 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
     case SecondaryVariables::VELOCITY_X:
     case SecondaryVariables::VELOCITY_Y:
     case SecondaryVariables::VELOCITY_Z:
-    case SecondaryVariables::REACTION_KINETIC_INDICATOR:
     case SecondaryVariables::LOADING:
         // These cases do not need access to nodal values
         // Thus, they can be handled inside _data
@@ -180,9 +175,8 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             NumLib::shapeFunctionInterpolate(ps, sm.N, Array{ &p  });
             NumLib::shapeFunctionInterpolate(xs, sm.N, Array{ &xm });
 
-            xm = Trafo::x(xm);
-
-            auto const xn = AP._adsorption->get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
             pVs.push_back(p * xn);
         }
 
@@ -208,10 +202,9 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             using Array = std::array<double*, 3>;
             NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
 
-            xm = Trafo::x(xm);
-
-            auto const xn = AP._adsorption->get_molar_fraction(xm, AP._M_react, AP._M_inert);
-            auto const pS = AP._adsorption->get_equilibrium_vapour_pressure(T);
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            auto const pS = Ads::Adsorption::get_equilibrium_vapour_pressure(T);
             rhs.push_back(p * xn / pS);
         }
 
@@ -237,14 +230,13 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             using Array = std::array<double*, 3>;
             NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
 
-            xm = Trafo::x(xm);
-
-            auto const xn = AP._adsorption->get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
             auto const pV = p * xn;
             if (pV < 0.0) {
                 Cs.push_back(0.0);
             } else {
-                Cs.push_back(AP._adsorption->get_equilibrium_loading(pV, T, AP._M_react));
+                Cs.push_back(AP._reaction_system->get_equilibrium_loading(pV, T, AP._M_react));
             }
         }
 
@@ -254,7 +246,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
     {
         auto& alphas = *_integration_point_values_cache;
         alphas.clear();
-        alphas.resize(_shape_matrices.size(), _data.reaction_damping_factor);
+        alphas.resize(_shape_matrices.size(), _data._reaction_adaptor->getReactionDampingFactor());
 
         return alphas;
     }
@@ -279,52 +271,7 @@ LocalAssemblerData<ShapeFunction_,
 checkBounds(std::vector<double> const& localX,
             const std::vector<double>& localX_pts)
 {
-    double alpha = 1.0;
-
-    const double min_xmV = 1e-6;
-    const std::size_t nnodes = localX.size() / NODAL_DOF;
-    const std::size_t xmV_offset = (NODAL_DOF - 1)*nnodes;
-
-    for (std::size_t i=0; i<nnodes; ++i)
-    {
-        auto const xnew = localX[xmV_offset+i];
-        if (xnew < min_xmV)
-        {
-            auto const xold = localX_pts[i+xmV_offset];
-            const auto a = xold / (xold - xnew);
-            // if (a<alpha) DBUG("xo %g, xn %g, a %g", xold, xnew, a);
-            alpha = std::min(alpha, a);
-            _data.bounds_violation[i] = true;
-        }
-        else if (xnew > 1.0)
-        {
-            auto const xold = localX_pts[i+xmV_offset];
-            const auto a = xold / (xnew - xold);
-            // if (a<alpha) DBUG("xo %g, xn %g, a %g", xold, xnew, a);
-            alpha = std::min(alpha, a);
-            _data.bounds_violation[i] = true;
-        }
-        else
-        {
-            _data.bounds_violation[i] = false;
-        }
-    }
-
-    assert (alpha > 0.0);
-
-    if (alpha != 1.0)
-    {
-        if (_data._AP->_number_of_try_of_iteration <=2) {
-            _data.reaction_damping_factor *= sqrt(std::min(alpha, 0.5));
-                                            // * sqrt(_data.reaction_damping_factor);
-        } else {
-            _data.reaction_damping_factor *= std::min(alpha, 0.5);
-        }
-    }
-
-    // DBUG("new damping factor: %g", _data.reaction_damping_factor);
-
-    return alpha == 1.0;
+    return _data._reaction_adaptor->checkBounds(localX, localX_pts);
 }
 
 

@@ -18,6 +18,7 @@
 
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
+#include "AssemblerLib/ComputeSparsityPattern.h"
 
 #include "FileIO/VtkIO/VtuInterface.h"
 
@@ -27,7 +28,6 @@
 #include "MathLib/Nonlinear/Picard.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshLib/NodeAdjacencyTable.h"
 
 #include "ProcessVariable.h"
 #include "Process.h"
@@ -59,17 +59,17 @@ namespace TES
 /// imposed and their corresponding values.
 struct DirichletBC
 {
-    std::vector<std::size_t> global_ids;
+    std::vector<GlobalIndexType> global_ids;
     std::vector<double> values;
 };
 
 
 template<typename GlobalSetup>
 class TESProcess
-        : public Process,
+        : public Process<GlobalSetup>,
           public TESProcessInterface
 {
-    using ConfigTree = boost::property_tree::ptree;
+    using BP = Process<GlobalSetup>;
 
     unsigned const _integration_order = 2;
 
@@ -80,23 +80,27 @@ public:
     TESProcess(MeshLib::Mesh& mesh,
                std::vector<ProcessVariable> const& variables,
                std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-               ConfigTree const& config);
+               BaseLib::ConfigTreeNew const& config);
 
-    template <unsigned GlobalDim>
-    void createLocalAssemblers();
+    void init() override;
 
-    void initialize() override;
-
-    bool solve(const double delta_t) override;
+    bool assemble(/*const double current_time,*/ const double delta_t) override;
 
     void post(std::string const& file_name) override;
     void postTimestep(std::string const& file_name, const unsigned timestep) override;
 
-    void setInitialConditions(ProcessVariable const& variable, std::size_t component_id);
+    std::string getLinearSolverName() const override { return "tes_"; }
+    void initializeMeshSubsets(MeshLib::Mesh const& /*mesh*/) override {}
 
     ~TESProcess();
 
 private:
+    template <unsigned GlobalDim>
+    void createLocalAssemblers();
+
+    void setInitialConditions(ProcessVariable const& variable,
+                              std::size_t const component_id);
+
     void singlePicardIteration(GlobalVector& x_prev_iter, GlobalVector& x_curr);
 
     using LocalAssembler = TES::LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
@@ -107,7 +111,7 @@ private:
     std::vector<LocalAssembler*> _local_assemblers;
     std::unique_ptr<GlobalAssembler> _global_assembler;
 
-    MeshLib::NodeAdjacencyTable _node_adjacency_table;
+    AssemblerLib::SparsityPattern _sparsity_pattern;
 
     std::unique_ptr<MathLib::Nonlinear::Picard> _picard;
 
@@ -125,7 +129,8 @@ private:
     std::unique_ptr<GlobalVector> _x;           // current iteration
     std::unique_ptr<GlobalVector> _x_prev_ts;   // previous timestep
 
-    std::unique_ptr<typename GlobalSetup::LinearSolver> _linearSolver;
+    std::unique_ptr<BaseLib::ConfigTreeNew> _linear_solver_options;
+    std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 

@@ -18,6 +18,8 @@
 #include "TESProcess-notpl.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
+#include "VariableTransformation.h"
+
 namespace ProcessLib
 {
 
@@ -27,64 +29,12 @@ namespace TES
 enum class SecondaryVariables {
     SOLID_DENSITY, REACTION_RATE,
     VELOCITY_X, VELOCITY_Y, VELOCITY_Z,
-    REACTION_KINETIC_INDICATOR,
     VAPOUR_PARTIAL_PRESSURE,
     RELATIVE_HUMIDITY,
     LOADING,
     EQUILIBRIUM_LOADING,
     REACTION_DAMPING_FACTOR
 };
-
-const double NONLINEAR_ERROR_TOLERANCE = 1e-6;
-
-
-/**
- * y ... variable in global matrix
- * x ... "physical" process variable in local assembly
- *
- * x = exp(y), dx = dx/dy * dy
- * dx/dy = exp(y) = x
- */
-struct TrafoLog
-{
-    static const bool constrained = true;
-
-    /// Converts global matrix entry to "physical" variable
-    /// used in local assembly.
-    static double x(const double y) { return std::exp(y); }
-
-    /// Derivative of the "physical" variable x w.r.t y.
-    /// the argument is x!
-    static double dxdy(const double x) { return x; }
-};
-
-struct TrafoIdentity
-{
-    static const bool constrained = false;
-
-    /// Converts global matrix entry to "physical" variable
-    /// used in local assembly.
-    static double x(const double y) { return y; }
-
-    /// Derivative of the "physical" variable x w.r.t y.
-    /// the argument is x!
-    constexpr static double dxdy(const double /*x*/) { return 1.0; }
-};
-
-struct TrafoTanh
-{
-    static const bool constrained = true;
-
-    /// Converts global matrix entry to "physical" variable
-    /// used in local assembly.
-    static double x(const double y) { return 0.5 * std::tanh(y) + 0.5; }
-
-    /// Derivative of the "physical" variable x w.r.t y.
-    /// the argument is x!
-    constexpr static double dxdy(const double x) { return 2.0*x*(1.0-x); }
-};
-
-typedef TrafoIdentity Trafo;
 
 
 template<typename ShpPol, unsigned NIntPts, unsigned NodalDOF, unsigned Dim>
@@ -105,6 +55,159 @@ struct DataTraitsFixed
     using Vector1Comp = typename ShapeMatrices::ShapeType;
 
     using LaplaceMatrix = Mat<Dim*NodalDOF, Dim*NodalDOF>;
+
+
+    // block dim x dim, fixed-size const matrix
+    // TODO: swap variable names width <--> height
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<const Mat>().template block<Dim, Dim>(0u, 0u))
+    >::type
+    blockDimDim(Mat const& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width==Dim && height==Dim);
+        (void) width; (void) height;
+        return mat.template block<Dim, Dim>(top, left);
+    }
+    // block dim x dim, dynamic-size const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<const Mat>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockDimDim(Mat const& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width == height);
+        return mat.block(top, left, width, height);
+    }
+    // block dim x dim, fixed-size non-const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<Mat>().template block<Dim, Dim>(0u, 0u))
+    >::type
+    blockDimDim(Mat& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width==Dim && height==Dim);
+        (void) width; (void) height;
+        return mat.template block<Dim, Dim>(top, left);
+    }
+    // block dim x dim, dynamic-size non-const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<Mat>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockDimDim(Mat& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width == height);
+        return mat.block(top, left, width, height);
+    }
+
+    // block gauss x gauss, fixed-size const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<const Mat>().template block<NIntPts, NIntPts>(0u, 0u))
+    >::type
+    blockShpShp(Mat const& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width==NIntPts && height==NIntPts);
+        (void) width; (void) height;
+        return mat.template block<NIntPts, NIntPts>(top, left);
+    }
+    // block gauss x gauss, dynamic-size const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<const Mat>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockShpShp(Mat const& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width == height);
+        return mat.block(top, left, width, height);
+    }
+    // block gauss x gauss, fixed-size non-const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<Mat>().template block<NIntPts, NIntPts>(0u, 0u))
+    >::type
+    blockShpShp(Mat& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width==NIntPts && height==NIntPts);
+        (void) width; (void) height;
+        return mat.template block<NIntPts, NIntPts>(top, left);
+    }
+    // block gauss x gauss, dynamic-size non-const matrix
+    template<typename Mat>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<Mat>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockShpShp(Mat& mat,
+                unsigned top, unsigned left, unsigned width, unsigned height)
+    {
+        assert(width == height);
+        return mat.block(top, left, width, height);
+    }
+
+    // block gauss x 1, fixed-size const vector
+    template<typename Vec>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<const Vec>().template block<NIntPts, 1>(0u, 0u))
+    >::type
+    blockShp(Vec const& vec, unsigned top, unsigned height)
+    {
+        assert(height==NIntPts);
+        (void) height;
+        return vec.template block<NIntPts, 1>(top, 0);
+    }
+    // block gauss x 1, dynamic-size const vector
+    template<typename Vec>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<const Vec>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockShp(Vec const& vec, unsigned top, unsigned height)
+    {
+        return vec.block(top, 0, height, 1);
+    }
+    // block gauss x 1, fixed-size non-const vector
+    template<typename Vec>
+    static
+    typename std::enable_if<NodalDOF != 0,
+        decltype(std::declval<Vec>().template block<NIntPts, 1>(0u, 0u))
+    >::type
+    blockShp(Vec& vec, unsigned top, unsigned height)
+    {
+        assert(height==NIntPts);
+        (void) height;
+        return vec.template block<NIntPts, 1>(top, 0);
+    }
+    // block gauss x 1, dynamic-size non-const vector
+    template<typename Vec>
+    static
+    typename std::enable_if<NodalDOF == 0,
+        decltype(std::declval<Vec>().block(0u, 0u, 0u, 0u))
+    >::type
+    blockShp(Vec& vec, unsigned top, unsigned height)
+    {
+        return vec.block(top, 0, height, 1);
+    }
+
+private:
+    static const unsigned _Dim = Dim;
+    static const unsigned _NIntPts = NIntPts;
 };
 
 #ifndef EIGEN_DYNAMIC_SHAPE_MATRICES
@@ -123,13 +226,25 @@ static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macro
 
 
 template<typename Traits>
+class TESFEMReactionAdaptor;
+
+template<typename Traits>
+class TESFEMReactionAdaptorAdsorption;
+
+template<typename Traits>
+class TESFEMReactionAdaptorInert;
+
+template<typename Traits>
+class TESFEMReactionAdaptorSinusoidal;
+
+template<typename Traits>
+class TESFEMReactionAdaptorCaOH2;
+
+
+template<typename Traits>
 class LADataNoTpl
 {
 public:
-    // typedef Eigen::Ref<const typename Traits::Matrix> MatRef;
-    // typedef Eigen::Ref<const typename Traits::Vector> VecRef;
-    typedef std::shared_ptr<std::vector<double> > SharedVector;
-
     void assembleIntegrationPoint(
             unsigned integration_point,
             typename Traits::LocalMatrix const* localA,
@@ -142,9 +257,6 @@ public:
             const double weight
             );
 
-    // TESProcessInterface const* _process;
-    AssemblyParams const* _AP;
-
     void init(const unsigned num_int_pts, const unsigned dimension);
 
     void preEachAssemble();
@@ -154,9 +266,6 @@ public:
 
     std::vector<double> const&
     getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const;
-
-    double reaction_damping_factor = 1.0;
-    std::vector<bool> bounds_violation;
 
 private:
     Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt);
@@ -174,75 +283,52 @@ private:
             const double smDetJ
             );
 
-    void initReaction(
-            const unsigned int_pt,
-            std::vector<double> const& localX,
-            typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
-            typename Traits::ShapeMatrices::JacobianType const& smJ,
-            const double smDetJ);
+    void initReaction(const unsigned int_pt);
 
-    void initReaction_localVapourUptakeStrategy(const unsigned int_pt);
+    // TODO data members except local matrices are independent of any template parameter
+    // they can be moved to a separate non-template struct for better decoupling of the
+    // reaction adaptor.
+    // Maybe the reaction adaptor does not even need direct access to those members!
 
-    void initReaction_localDiffusionStrategy(
-            const unsigned int_pt,
-            std::vector<double> const& localX,
-            typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
-            typename Traits::ShapeMatrices::JacobianType const& smJ,
-            const double smDetJ);
+    AssemblyParams const* _AP;
 
-    void initReaction_simpleStrategy(const unsigned int_pt);
-
-    void initReaction_readjustEquilibriumLoadingStrategy(const unsigned int_pt);
-
-    void initReaction_slowDownUndershootStrategy(const unsigned int_pt);
-
-    /// returns estimated equilibrium vapour pressure
-    /// based on a local (i.e. no diffusion/advection) balance
-    /// of adsorbate loading and vapour partial pressure
-    double estimateAdsorptionEquilibrium(const double p_V0, const double C0) const;
-
-    // nodal quantities, secondary variables
+    // integration point quantities
     std::vector<double> _solid_density;
-    std::vector<double> _solid_density_prev_ts;
-
     std::vector<double> _reaction_rate; // dC/dt * _rho_SR_dry
-    std::vector<double> _reaction_rate_prev_ts; // could also be calculated from _solid_density_prev_ts
+    std::vector<std::vector<double> > _velocity; // vector of velocities for each integration point
 
-    std::vector<double> _equilibrium_loading;
-    std::vector<double> _equilibrium_loading_prev_ts;
 
-    std::vector<bool>   _is_equilibrium_reaction;   ///< true if equilibrium reaction is used in this timestep
-
-    /** the value of p_V that the equilibrium reaction estimated
-     *  in the first iteration of this timestep */
-    std::vector<double> _estimated_vapour_pressure;
-
-    std::vector<std::vector<double> > _velocity;
-    // typename Traits::Matrix _velocity; // row index: gauss point, column index: dimension x/y/z
-
-    std::vector<double> _reaction_rate_indicator; // TODO [CL] get rid of this
-
-    bool is_var_out_of_bounds = false;
-
-    // bool this_is_repeated = false;
-    // bool last_was_repeated = false;
-
-    // integration point values of unknowns
-    double _p = -888.888; // gas pressure
-    double _T = -888.888; // temperature
-    double _vapour_mass_fraction = -888.888;     // fluid mass fraction of the second component
+    // integration point values of unknowns -- temporary storage
+    double _p = std::numeric_limits<double>::quiet_NaN(); // gas pressure
+    double _T = std::numeric_limits<double>::quiet_NaN(); // temperature
+    double _vapour_mass_fraction = std::numeric_limits<double>::quiet_NaN(); // fluid mass fraction of the second component
 
     // temporary storage for some properties
     // values do not change during the assembly of one integration point
-    double _rho_GR = -888.888;
-    double _p_V = -888.888; // vapour partial pressure
-    double _qR = 88888.88888;  // reaction rate, use this in assembly!!!
+    double _rho_GR = std::numeric_limits<double>::quiet_NaN();
+    double _p_V    = std::numeric_limits<double>::quiet_NaN(); // vapour partial pressure
+    double _qR     = std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in assembly!!!
 
-    std::unique_ptr<typename Traits::LocalMatrix> _Lap;
-    std::unique_ptr<typename Traits::LocalMatrix> _Mas;
-    std::unique_ptr<typename Traits::LocalMatrix> _Adv;
-    std::unique_ptr<typename Traits::LocalMatrix> _Cnt;
-    std::unique_ptr<typename Traits::LocalVector> _rhs;
+    // TODO: entirely omit local matrices
+    typename Traits::LocalMatrix _Mas;
+    typename Traits::LocalMatrix _Lap_Adv_Cnt;
+    typename Traits::LocalVector _rhs;
+
+    std::unique_ptr<TESFEMReactionAdaptor<Traits> > _reaction_adaptor;
+
+    // variables at previous timestep
+    std::vector<double> _solid_density_prev_ts;
+    std::vector<double> _reaction_rate_prev_ts; // could also be calculated from _solid_density_prev_ts
+
+
+    template <typename, typename, typename, typename, unsigned>
+    friend class LocalAssemblerData;
+
+    friend class TESFEMReactionAdaptor<Traits>;
+    friend class TESFEMReactionAdaptorAdsorption<Traits>;
+    friend class TESFEMReactionAdaptorInert<Traits>;
+    friend class TESFEMReactionAdaptorSinusoidal<Traits>;
+    friend class TESFEMReactionAdaptorCaOH2<Traits>;
 };
 
 

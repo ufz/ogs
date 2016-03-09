@@ -21,8 +21,9 @@
 
 #include "TESFEM-data-fwd.h"
 
-#include "MathLib/Nonlinear/Root1D.h"
 #include "NumLib/Function/Interpolation.h"
+
+#include "TESFEMReactionAdaptor.h"
 
 namespace
 {
@@ -31,23 +32,7 @@ const double GAS_CONST = 8.3144621;
 enum class MatOutType { OGS5, PYTHON };
 
 const MatOutType MATRIX_OUTPUT_FORMAT = MatOutType::PYTHON;
-
-const double EQ_LOADING_FIRST_TS = -1.0;
-
-const double RATE_CONSTANT = 6.e-3;
 }
-
-
-#if 0
-static double fluid_specific_isobaric_heat_capacity(
-		const double /*p*/, const double /*T*/, const double /*x*/)
-{
-	// OGS-5 heat cap model 1 value 1000
-	// constant cp
-
-	return 1000.0;
-}
-#endif
 
 
 static double fluid_density(const double p, const double T, const double x)
@@ -67,8 +52,12 @@ static double fluid_density(const double p, const double T, const double x)
 template<int i>
 inline double mypow(const double x)
 {
-    const double p = mypow<(i>>1)>(x);
-    return (i&1) ? p*p*x : p*p;
+    if (i<0) {
+        return 1.0/mypow<-i>(x);
+    } else {
+        const double p = mypow<(i>>1)>(x);
+        return (i&1) ? p*p*x : p*p;
+    }
 }
 
 template<>
@@ -242,160 +231,174 @@ static double fluid_viscosity(const double p, const double T, const double x)
 	const double phi_12 = mypow<2>(1.0 + std::sqrt(V0_over_V1) * std::pow(1.0/M0_over_M1, 0.25))
 						  / std::sqrt(8.0*(1.0+M0_over_M1));
 
-	/*
-	const double phi_12 =   (1.0 + std::sqrt(V0_over_V1) * std::pow(1.0/M0_over_M1, 0.25))
-						  * (1.0 + std::sqrt(V0_over_V1) * std::pow(1.0/M0_over_M1, 0.25))
-						  / std::pow(8.0*(1.0+M0_over_M1),0.5);
-						  */
 	const double phi_21 = phi_12 * M0_over_M1 / V0_over_V1;
 
 	return V0*x0 / (x0 + x1 * phi_12)
 			+ V1*x1 / (x1 + x0 * phi_21);
 }
 
-static double fluid_heat_conductivity_N2(double rho, double T)
+
+struct FluidHeatConductivityN2
 {
-	const double X1 = 0.95185202;
-	const double X2 = 1.0205422;
+	static double get(double rho, double T)
+	{
+		const double X1 = 0.95185202;
+		const double X2 = 1.0205422;
 
-	const double rho_c = 314;             // [kg/m3]
-	const double M = 28.013;
-	const double k = 1.38062e-23;
-	const double eps = 138.08483e-23;
-	const double N_A = 6.02213E26;
-	const double R = 8.31434;
-	// const double R = GAS_CONST;
-	const double CCF = 4.173;             //mW/m/K
+		const double rho_c = 314;             // [kg/m3]
+		const double M = 28.013;
+		const double k = 1.38062e-23;
+		const double eps = 138.08483e-23;
+		const double N_A = 6.02213E26;
+		const double R = 8.31434;
+		// const double R = GAS_CONST;
+		const double CCF = 4.173;             //mW/m/K
 
-	const double c1 = 0.3125;
-	const double c2 = 2.0442e-49;
-	const double sigma = 0.36502496e-09;
+		const double c1 = 0.3125;
+		const double c2 = 2.0442e-49;
+		const double sigma = 0.36502496e-09;
 
-	double F;
-	double A[5],f[9],C[4];
-	double sum = 0,eta_0,c_v0,T_star,Omega = 0;
-	double lamda_tr,lamda_in,lamda_r,lamda_0,lamda;
+		rho /= rho_c;
 
-	int i;
+		// dilute heat conductivity
+		const double sum1 = loop1_term<0>(T) + loop1_term<1>(T) + loop1_term<2>(T)
+							+ loop1_term<3>(T) + loop1_term<4>(T) + loop1_term<5>(T)
+							+ loop1_term<6>(T);
+		const double temp (std::exp ((f[8] / T)) - 1);
+		const double c_v0
+				= R * (sum1 + ((f[7] * (f[8] / T) * (f[8] / T) * (std::exp((f[8] / T))))
+				                / (temp * temp) - 1));
 
-	T_star = T * k / eps;
-	rho = rho / rho_c;
+		double cvint;
+		cvint = c_v0 * 1000 / N_A;
 
-	A[0] = 0.46649;
-	A[1] = -0.57015;
-	A[2] = 0.19164;
-	A[3] = -0.03708;
-	A[4] = 0.00241;
+		// dilute gas viscosity
+		const double log_T_star = std::log(T * k / eps);
 
-	f[0] = -0.837079888737e3;
-	f[1] = 0.37914711487e2;
-	f[2] = -0.601737844275;
-	f[3] = 0.350418363823e1;
-	f[4] = -0.874955653028e-5;
-	f[5] = 0.148968607239e-7;
-	f[6] = -0.256370354277e-11;
-	f[7] = 0.100773735767e1;
-	f[8] = 0.335340610e4;
+		const double Omega
+				= std::exp(
+					  loop2_term<0>(log_T_star) + loop2_term<1>(log_T_star) + loop2_term<2>(log_T_star) +
+					  loop2_term<3>(log_T_star) + loop2_term<4>(log_T_star)
+					  );
 
-	C[0] = 3.3373542;
-	C[1] = 0.37098251;
-	C[2] = 0.89913456;
-	C[3] = 0.16972505;
+		//eta in [Pa*s]
+		const double eta_0 = 1e6 * (c1 * std::sqrt(c2 * T) / (sigma * sigma * Omega));
 
-	// dilute heat conductivity
-	for (i = 0; i < 7; i++)
-		sum = sum + f[i] * std::pow(T,(i - 3));
-	const double temp (std::exp ((f[8] / T)) - 1);
-	c_v0 = R * (sum + ((f[7] * (f[8] / T) * (f[8] / T) * (std::exp((f[8] / T)))) / (temp * temp) - 1));
-	sum = 0;
+		const double F = eta_0 * k * N_A / (M * 1000);
 
-	double cvint;
-	cvint = c_v0 * 1000 / N_A;
+		const double lambda_tr = 2.5 * (1.5 - X1);
+		const double lambda_in = X2 * (cvint / k + X1);
 
-	// dilute gas viscosity
-	for (i = 0; i < 5; i++)
-		Omega = Omega + A[i] * std::pow(log(T_star),i);
-	Omega = std::exp (Omega);
+		const double lambda_0 = F * (lambda_tr + lambda_in);
 
-	//eta in [Pa*s]
-	eta_0 = 1e6 * (c1 * std::sqrt(c2 * T) / (sigma * sigma * Omega));
+		const double sum2 = loop3_term<0>(rho) + loop3_term<1>(rho)
+							+ loop3_term<2>(rho) + loop3_term<3>(rho);
+		const double lambda_r = sum2 * CCF;
 
-	F = eta_0 * k * N_A / (M * 1000);
+		return (lambda_0 + lambda_r) / 1000;   //lambda in [W/m/K]
+	}
 
-	lamda_tr = 2.5 * (1.5 - X1);
-	lamda_in = X2 * (cvint / k + X1);
+private:
+	template<int i>
+	static double loop1_term(const double T)
+	{
+		return f[i] * mypow<i-3>(T);
+	}
 
-	lamda_0 = F * (lamda_tr + lamda_in);
-	sum = 0;
-	for (i = 0; i < 4; i++)
-		sum = sum + C[i] * std::pow(rho,(i + 1));
+	template<int i>
+	static double loop2_term(const double log_T_star)
+	{
+		return A[i] * mypow<i>(log_T_star);
+	}
 
-	lamda_r = sum * CCF;
+	template<int i>
+	static double loop3_term(const double rho)
+	{
+		return C[i] * mypow<i+1>(rho);
+	}
 
-	lamda = (lamda_0 + lamda_r) / 1000;   //lamda in [W/m/K]
+	constexpr static double A[5] = {
+		0.46649, -0.57015, 0.19164, -0.03708, 0.00241
+	};
 
-	return lamda;
-}
+	constexpr static double f[9] = {
+		-0.837079888737e3,   0.37914711487e2,  -0.601737844275,
+		 0.350418363823e1,  -0.874955653028e-5, 0.148968607239e-7,
+		-0.256370354277e-11, 0.100773735767e1,  0.335340610e4
+	};
 
-static double fluid_heat_conductivity_H2O(double rho, double T)
+	constexpr static double C[4] = {
+		3.3373542, 0.37098251, 0.89913456, 0.16972505
+	};
+};
+
+
+struct FluidHeatConductivityH2O
 {
-	double lamda,lamda_0,lamda_1,lamda_2;
-	double sum1 = 0;
-	double S,Q,dT;
-	double a[4],b[3],B[2],d[4],C[6];
-	int i;
+	static double get(double rho, double T)
+	{
+		double S, Q;
+		double b[3], B[2], d[4], C[6];
 
-	T = T / 647.096;
-	rho = rho / 317.11;
+		T   /= 647.096;
+		rho /= 317.11;
 
-	a[0] =  0.0102811;
-	a[1] =  0.0299621;
-	a[2] =  0.0156146;
-	a[3] = -0.00422464;
+		b[0] = -0.397070;
+		b[1] =  0.400302;
+		b[2] =  1.060000;
 
-	b[0] = -0.397070;
-	b[1] =  0.400302;
-	b[2] =  1.060000;
+		B[0] = -0.171587;
+		B[1] =  2.392190;
 
-	B[0] = -0.171587;
-	B[1] =  2.392190;
+		d[0] = 0.0701309;
+		d[1] = 0.0118520;
+		d[2] = 0.00169937;
+		d[3] = -1.0200;
 
-	d[0] = 0.0701309;
-	d[1] = 0.0118520;
-	d[2] = 0.00169937;
-	d[3] = -1.0200;
+		C[0] = 0.642857;
+		C[1] = -4.11717;
+		C[2] = -6.17937;
+		C[3] = 0.00308976;
+		C[4] = 0.0822994;
+		C[5] = 10.0932;
 
-	C[0] = 0.642857;
-	C[1] = -4.11717;
-	C[2] = -6.17937;
-	C[3] = 0.00308976;
-	C[4] = 0.0822994;
-	C[5] = 10.0932;
+		const double sum1 = loop_term<0>(T) + loop_term<1>(T)
+							+ loop_term<2>(T) + loop_term<3>(T);
 
-	for (i = 0; i < 4; i++)
-		sum1 = sum1 + a[i] * std::pow(T,i);
+		const double lambda_0 = std::sqrt(T) * sum1;
+		const double lambda_1 = b[0] + b[1] * rho + b[2] * std::exp(B[0] * (rho + B[1]) * (rho + B[1]));
 
-	lamda_0 = std::sqrt(T) * sum1;
-	lamda_1 = b[0] + b[1] * rho + b[2] * std::exp(B[0] * (rho + B[1]) * (rho + B[1]));
+		const double dT = fabs(T - 1) + C[3];
+		const double dT_pow_3_5 = std::pow(dT, 3./5.);
+		Q = 2 + (C[4] / dT_pow_3_5);
 
-	dT = fabs(T - 1) + C[3];
-	Q = 2 + (C[4] / std::pow(dT,3. / 5.));
+		if (T >= 1)
+			S = 1 / dT;
+		else
+			S = C[5] / dT_pow_3_5;
 
-	if (T >= 1)
-		S = 1 / dT;
-	else
-		S = C[5] / std::pow(dT,3. / 5.);
+		const double rho_pow_9_5 = std::pow(rho, 9./5.);
+		const double rho_pow_Q   = std::pow(rho, Q);
+		const double T_pow_3_2   = T * std::sqrt(T);
+		const double lambda_2 =
+				(d[0] /
+				 mypow<10>(T) + d[1]) * rho_pow_9_5 * std::exp(C[0] * (1 - rho * rho_pow_9_5))
+				+ d[2]* S * rho_pow_Q * std::exp((Q / (1. + Q)) * (1 - rho * rho_pow_Q))
+				+ d[3] * std::exp(C[1] * T_pow_3_2 + C[2] / mypow<5>(rho));
 
-	lamda_2 =
-	        (d[0] /
-	         mypow<10>(T) + d[1]) * std::pow(rho,9. / 5.) * std::exp(C[0] * (1 - std::pow(rho,14. / 5.)))
-	        + d[2]* S * std::pow(rho,Q) * std::exp((Q / (1. + Q)) * (1 - std::pow(rho,(1. + Q))))
-	        + d[3] * std::exp(C[1] * std::pow(T,3. / 2.) + C[2] / mypow<5>(rho));
+		return lambda_0 + lambda_1 + lambda_2; // lambda in [W/m/K]
+	}
 
-	lamda = (lamda_0 + lamda_1 + lamda_2); // lamda in [W/m/K]
+private:
+	template<unsigned i>
+	static double loop_term(const double T)
+	{
+		return a[i] * mypow<i>(T);
+	}
 
-	return lamda;
-}
+	static constexpr double a[4] = { 0.0102811, 0.0299621, 0.0156146, -0.00422464 };
+};
+
 
 static double fluid_heat_conductivity(const double p, const double T, const double x)
 {
@@ -407,31 +410,24 @@ static double fluid_heat_conductivity(const double p, const double T, const doub
 	// TODO [CL] max() is redundant if the fraction is guaranteed to be between 0 and 1.
 	//reactive component
 	const double x0 = std::max(M0*x/(M0*x + M1*(1.0-x)), 0.); // convert mass to mole fraction
-	const double k0 = fluid_heat_conductivity_H2O(M1*p/(GAS_CONST*T), T);
+	const double k0 = FluidHeatConductivityH2O::get(M1*p/(GAS_CONST*T), T);
 	//inert component
 	const double x1 = 1.0 - x0;
-	const double k1 = fluid_heat_conductivity_N2(M0*p/(GAS_CONST*T), T);
+	const double k1 = FluidHeatConductivityN2::get(M0*p/(GAS_CONST*T), T);
 
 	const double M1_over_M2 = M1/M0; //reactive over inert
 	const double V1_over_V2 = FluidViscosityH2O::get(M1*p/(GAS_CONST*T), T)
 							/ FluidViscosityN2::get(M0*p/(GAS_CONST*T), T);
 	const double L1_over_L2 = V1_over_V2 / M1_over_M2;
 
-	const double phi_12 =   (1.0 + std::sqrt(L1_over_L2) * std::pow(M1_over_M2, -0.25))
-						  * (1.0 + std::sqrt(V1_over_V2) * std::pow(M1_over_M2, -0.25))
+	const double M12_pow_mquarter = std::pow(M1_over_M2, -0.25);
+	const double phi_12 =   (1.0 + std::sqrt(L1_over_L2) * M12_pow_mquarter)
+						  * (1.0 + std::sqrt(V1_over_V2) * M12_pow_mquarter)
 						  / std::sqrt(8.0 * (1.0 + M1_over_M2));
 	const double phi_21 = phi_12 * M1_over_M2 / V1_over_V2;
 
 	return k0*x0 / (x0+x1*phi_12) + k1*x1 / (x1+x0*phi_21);
 }
-
-#if 0
-static double solid_specific_isobaric_heat_capacity(const double /*rho_SR*/)
-{
-	// OGS 5 heat capacity model 1 (constant) value 620.573
-	return 620.573;
-}
-#endif
 
 
 namespace ProcessLib
@@ -445,24 +441,24 @@ Eigen::Matrix3d
 LADataNoTpl<Traits>::
 getMassCoeffMatrix(const unsigned int_pt)
 {
-	const double dxn_dxm = _AP->_adsorption->d_molar_fraction(
+	// TODO: Dalton's law property
+	const double dxn_dxm = Ads::Adsorption::d_molar_fraction(
 							   _vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
 
 	const double M_pp = _AP->_poro/_p * _rho_GR;
 	const double M_pT = -_AP->_poro/_T *  _rho_GR;
 	const double M_px = (_AP->_M_react-_AP->_M_inert) * _p
-						/ (GAS_CONST * _T) * dxn_dxm * _AP->_poro
-						* Trafo::dxdy(_vapour_mass_fraction);
+						/ (GAS_CONST * _T) * dxn_dxm * _AP->_poro;
 
 	const double M_Tp = -_AP->_poro;
-	const double M_TT = _AP->_poro * _rho_GR * _AP->_cpG // TODO: vapour heat capacity
-						+ (1.0-_AP->_poro) * _solid_density[int_pt] * _AP->_cpS; // TODO: adsorbate heat capacity
+	const double M_TT =
+			_AP->_poro * _rho_GR * _AP->_cpG // TODO: vapour heat capacity
+			+ (1.0-_AP->_poro) * _solid_density[int_pt] * _AP->_cpS; // TODO: adsorbate heat capacity
 	const double M_Tx = 0.0;
 
 	const double M_xp = 0.0;
 	const double M_xT = 0.0;
-	const double M_xx = _AP->_poro * _rho_GR
-						* Trafo::dxdy(_vapour_mass_fraction);
+	const double M_xx = _AP->_poro * _rho_GR;
 
 
 	Eigen::Matrix3d M;
@@ -486,42 +482,26 @@ getLaplaceCoeffMatrix(const unsigned /*int_pt*/, const unsigned dim)
 
 	using Mat = typename Traits::MatrixDimDim;
 
+	typename Traits::LaplaceMatrix L
+			= Traits::LaplaceMatrix::Zero(dim*NODAL_DOF, dim*NODAL_DOF);
+
 	// TODO: k_rel
-	Mat L_pp = _AP->_solid_perm_tensor.block(0,0,dim,dim) * _rho_GR / eta_GR;
-
-	Mat L_pT = Mat::Zero(dim, dim);
-	Mat L_px = Mat::Zero(dim, dim);
-
-	Mat L_Tp = Mat::Zero(dim, dim);
+	// L_pp
+	Traits::blockDimDim(L,     0,     0, dim, dim)
+			= Traits::blockDimDim(_AP->_solid_perm_tensor, 0,0,dim,dim) * _rho_GR / eta_GR;
 
 	// TODO: add zeolite part
-	Mat L_TT = Mat::Identity(dim, dim)
-					  * ( _AP->_poro * lambda_F + (1.0 - _AP->_poro) * lambda_S);
+	// L_TT
+	Traits::blockDimDim(L,   dim,   dim, dim, dim)
+			= Mat::Identity(dim, dim)
+			  * ( _AP->_poro * lambda_F + (1.0 - _AP->_poro) * lambda_S);
 
-	Mat L_Tx = Mat::Zero(dim, dim);
-
-	Mat L_xp = Mat::Zero(dim, dim);
-	Mat L_xT = Mat::Zero(dim, dim);
-
-	Mat L_xx = Mat::Identity(dim, dim)
-			   * (_AP->_tortuosity * _AP->_poro * _rho_GR
-				  * _AP->_diffusion_coefficient_component
-				  * Trafo::dxdy(_vapour_mass_fraction)
-				  );
-
-	typename Traits::LaplaceMatrix L(dim*3, dim*3);
-
-	L.block(    0,     0, dim, dim) = L_pp;
-	L.block(    0,   dim, dim, dim) = L_pT;
-	L.block(    0, 2*dim, dim, dim) = L_px;
-
-	L.block(  dim,     0, dim, dim) = L_Tp;
-	L.block(  dim,   dim, dim, dim) = L_TT;
-	L.block(  dim, 2*dim, dim, dim) = L_Tx;
-
-	L.block(2*dim,     0, dim, dim) = L_xp;
-	L.block(2*dim,   dim, dim, dim) = L_xT;
-	L.block(2*dim, 2*dim, dim, dim) = L_xx;
+	// L_xx
+	Traits::blockDimDim(L, 2*dim, 2*dim, dim, dim)
+			= Mat::Identity(dim, dim)
+			  * (_AP->_tortuosity * _AP->_poro * _rho_GR
+				 * _AP->_diffusion_coefficient_component
+				 );
 
 	return L;
 }
@@ -544,8 +524,7 @@ getAdvectionCoeffMatrix(const unsigned /*int_pt*/)
 
 	const double A_xp = 0.0;
 	const double A_xT = 0.0;
-	const double A_xx = _rho_GR
-						* Trafo::dxdy(_vapour_mass_fraction); // porosity?
+	const double A_xx = _rho_GR; // porosity?
 
 
 	Eigen::Matrix3d A;
@@ -590,7 +569,7 @@ Eigen::Vector3d
 LADataNoTpl<Traits>::
 getRHSCoeffVector(const unsigned int_pt)
 {
-	const double reaction_enthalpy = _AP->_adsorption->get_enthalpy(_p_V, _T, _AP->_M_react);
+	const double reaction_enthalpy = _AP->_reaction_system->get_enthalpy(_p_V, _T, _AP->_M_react);
 
 	const double rhs_p = (_AP->_poro - 1.0) * _qR; // TODO [CL] body force term
 
@@ -614,581 +593,9 @@ getRHSCoeffVector(const unsigned int_pt)
 template<typename Traits>
 void
 LADataNoTpl<Traits>::
-initReaction(const unsigned int_pt, const std::vector<double>& /*localX*/,
-             const typename Traits::ShapeMatrices::DxShapeType& /*smDNdx*/,
-             const typename Traits::ShapeMatrices::JacobianType& /*smJ*/,
-             const double /*smDetJ*/)
+initReaction(const unsigned int_pt)
 {
-    // initReaction_localDiffusionStrategy(int_pt, localX, smDNdx, smJ, smDetJ);
-    // initReaction_simpleStrategy(int_pt);
-    // initReaction_readjustEquilibriumLoadingStrategy(int_pt);
-    initReaction_slowDownUndershootStrategy(int_pt);
-}
-
-
-template<typename Traits>
-void LADataNoTpl<Traits>::
-initReaction_localDiffusionStrategy(
-        const unsigned int_pt,
-        const std::vector<double> &localX,
-        const typename Traits::ShapeMatrices::DxShapeType& smDNdx,
-        const typename Traits::ShapeMatrices::JacobianType& smJ,
-        const double smDetJ
-        )
-{
-    if (_AP->_iteration_in_current_timestep == 0)
-    {
-        bool is_rate_set = false;
-
-        // loading "at the beginning" of this timestep
-        auto const loading = Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry);
-
-        auto const react_rate_kinR = _AP->_adsorption->get_reaction_rate(_p_V, _T, _AP->_M_react, loading)
-                                  * _AP->_rho_SR_dry;
-
-        // calculate density change for the kinetic reaction
-        auto const delta_rhoS_kin = react_rate_kinR * _AP->_delta_t * (1.0 - _AP->_poro);
-        auto const delta_rhoV_kin = - delta_rhoS_kin;
-        auto const rho_V = _AP->_M_react * _p_V / GAS_CONST / _T * _AP->_poro;
-
-        bool do_equilibrium_reaction = false;
-        if (delta_rhoV_kin > rho_V) // there would be more vapour released than there currently is
-        {
-            do_equilibrium_reaction = true;
-        }
-        else if (-delta_rhoV_kin > rho_V) // there would be more vapour sucked up than there currently is
-        {
-            // estimate how much vapour would be added to the system by diffusion
-
-            auto const dim = smDNdx.rows();
-            auto const nnodes = smDNdx.cols();
-
-            assert(smJ.rows() == dim && smJ.cols() == dim);
-            std::array<typename Traits::template Vec<0>, 3> gradients;
-            for (auto& v : gradients) { v.resize(dim); }
-
-            NumLib::shapeFunctionInterpolateGradient(localX, smDNdx, gradients);
-
-            auto const xn = _AP->_adsorption->get_molar_fraction(
-                                _vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
-
-            auto const dxn_dxm = _AP->_adsorption->d_molar_fraction(
-                                     _vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
-
-            // TODO [CL] shouldn't nnodes be compensated for in smJDetJ?
-            auto const elem_volume = smDetJ * nnodes;
-            auto const elem_linear_extension = std::pow(elem_volume, 1.0/dim);
-            // DBUG("elem volume: %g, ext: %g", elem_volume, elem_linear_extension);
-
-            // diffusion current associated with p_V if temperature is assumed to be constant
-            typename Traits::template Vec<0> const j_pV
-                    = - _AP->_diffusion_coefficient_component *
-                      ( _p * dxn_dxm * gradients[2]
-                      + xn * gradients[0] );
-            auto const j_pV_norm = j_pV.norm();
-
-            auto const delta_pV_diffusion = j_pV_norm / elem_linear_extension * _AP->_delta_t;
-
-            // DBUG("estimated delta_pV_diff: %14.7g, j_pV: %g",
-            //      delta_pV_diffusion, j_pV_norm);
-
-
-            auto const delta_rhoV_diffusion = delta_pV_diffusion * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-            assert (delta_rhoV_diffusion >= 0.0);
-
-            auto const rho_V_missing = - (rho_V + delta_rhoV_kin + delta_rhoV_diffusion);
-
-            if (rho_V_missing > 0.0)
-            {
-                // there is not enough vapour there, even when taking diffusion into account
-
-                // interpolate between kinetic reaction and equlibrium reaction
-                auto const pV0 = _p_V;
-                auto const pV = estimateAdsorptionEquilibrium(pV0, loading);
-
-                auto const delta_pV = pV - pV0;
-
-                // set solid density
-                auto const delta_rhoS_eq  = -delta_pV * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-                assert(delta_rhoS_eq > 0.0);
-                auto theta = 1.0 - rho_V_missing / (delta_rhoS_kin - delta_rhoS_eq);
-                theta *= 0.5 * theta;
-
-                assert(0.0 <= theta && theta <= 1.0); // first assertion is guaranteed by above if-clause
-
-                auto const react_rate_eqR = delta_rhoS_eq / (1.0 - _AP->_poro);
-                auto const react_rate_R = theta * react_rate_kinR + (1.0 - theta) * react_rate_eqR;
-
-                _reaction_rate[int_pt] = react_rate_R;
-                _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + react_rate_R * _AP->_delta_t;
-
-                _reaction_rate_indicator[int_pt] = 100.0 * (1.0 - theta);
-                _is_equilibrium_reaction[int_pt] = false;
-
-                is_rate_set = true;
-
-                // assert((1.0-theta)*rho_missing )
-            }
-        }
-
-
-        if (do_equilibrium_reaction)
-        {
-            // in this case more water would be adsorbed than is there, even when considering diffusion
-            // try equilibrium reaction
-
-            auto const pV0 = _p_V;
-            auto const pV = estimateAdsorptionEquilibrium(pV0, loading);
-
-            auto const delta_pV = pV - pV0;
-            _p += delta_pV;
-            _p_V = pV;
-            // set vapour mass fraction accordingly
-            _vapour_mass_fraction = Ads::Adsorption::get_mass_fraction(_p_V/_p, _AP->_M_react, _AP->_M_inert);
-
-            // set solid density
-            auto const delta_rhoV = delta_pV * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-            auto const delta_rhoSR = delta_rhoV / (_AP->_poro - 1.0);
-            _reaction_rate[int_pt] = delta_rhoSR / _AP->_delta_t;
-            _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + delta_rhoSR;
-
-            // DBUG("too much reaction: %14.7g + %14.7g + %14.7g < 0.0; dpV_diff: %14.7g", rho_V, delta_rhoV, delta_rhoV_diffusion, delta_pV_diffusion);
-
-            _reaction_rate_indicator[int_pt] = 100.0;
-            _is_equilibrium_reaction[int_pt] = false;
-
-            is_rate_set = true;
-        }
-        else if (!is_rate_set) // default case, used if reaction rate from the kinetic model should be used unmodified
-        {
-            _reaction_rate[int_pt] = react_rate_kinR;
-            _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + react_rate_kinR * _AP->_delta_t;
-
-            _reaction_rate_indicator[int_pt] = 0.0;
-            _is_equilibrium_reaction[int_pt] = false;
-
-            // TODO [CL] maybe also update p_V and p
-        }
-    } // first iteration
-
-    _qR = _reaction_rate[int_pt];
-}
-
-
-template<typename Traits>
-double LADataNoTpl<Traits>::
-estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
-{
-    auto f = [this, p_V0, C0](double pV) -> double
-    {
-        // pV0 := _p_V
-        const double C_eq = _AP->_adsorption->get_equilibrium_loading(pV, _T, _AP->_M_react);
-        return (pV - p_V0) * _AP->_M_react / GAS_CONST / _T * _AP->_poro
-                + (1.0-_AP->_poro) * (C_eq - C0) * _AP->_rho_SR_dry;
-    };
-
-    // range where to search for roots of f
-    const double C_eq0 = _AP->_adsorption->get_equilibrium_loading(p_V0, _T, _AP->_M_react);
-    const double limit = (C_eq0 > C0)
-                         ? 1e-8
-                         : Ads::Adsorption::get_equilibrium_vapour_pressure(_T);
-
-    // search for roots
-    auto rf = MathLib::Nonlinear::makeRegulaFalsi<MathLib::Nonlinear::Pegasus>(f, p_V0, limit);
-    rf.step(3);
-
-    // set vapour pressure
-    return rf.get_result();
-}
-
-
-template<typename Traits>
-void LADataNoTpl<Traits>::
-initReaction_simpleStrategy(const unsigned int_pt)
-{
-    if (_AP->_iteration_in_current_timestep == 0)
-    {
-        const double loading = Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry);
-
-        double react_rate_R = _AP->_adsorption->get_reaction_rate(_p_V, _T, _AP->_M_react, loading)
-                              * _AP->_rho_SR_dry;
-
-        if (
-            (_p_V < 100.0 || _p_V < 0.025 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T))
-            && react_rate_R > 0.0)
-        {
-            react_rate_R = 0.0;
-            _reaction_rate_indicator[int_pt] = 100.0;
-        }
-        else
-        {
-            _reaction_rate_indicator[int_pt] = 0.0;
-        }
-
-        _reaction_rate[int_pt] = react_rate_R;
-        _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + react_rate_R * _AP->_delta_t;
-
-        _is_equilibrium_reaction[int_pt] = false;
-    }
-
-    _qR = _reaction_rate[int_pt];
-}
-
-
-template<typename Traits>
-void LADataNoTpl<Traits>::
-initReaction_readjustEquilibriumLoadingStrategy(const unsigned int_pt)
-{
-    const double C_eq_curr = _AP->_adsorption->get_equilibrium_loading(_p_V, _T, _AP->_M_react);
-    _equilibrium_loading[int_pt] = C_eq_curr;
-
-    double C_eq_prev = _equilibrium_loading_prev_ts[int_pt];
-    if (_AP->_iteration_in_current_timestep == 0 && C_eq_prev != EQ_LOADING_FIRST_TS) {
-        // first iteration in first timestep: init equilibrium loading at previous timestep
-        C_eq_prev = C_eq_curr;
-        _equilibrium_loading_prev_ts[int_pt] = C_eq_prev;
-    }
-
-    const double C_0 = Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry);
-
-    const double dt   = _AP->_delta_t;
-    const double c_1  = C_0 - C_eq_prev + (C_eq_curr - C_eq_prev) / RATE_CONSTANT / dt;
-    const double C    = c_1 * std::exp(-RATE_CONSTANT*dt) + C_eq_prev
-                        + (1.0 - 1.0/RATE_CONSTANT/dt) * (C_eq_curr - C_eq_prev);
-    const double Cdot = - RATE_CONSTANT * c_1 * std::exp(-RATE_CONSTANT*dt) + (C_eq_curr - C_eq_prev) / dt;
-
-#if 0
-    if (_p_V < 0.025 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T))
-    {
-        // _solid_density[int_pt] stays constant
-        _reaction_rate[int_pt] = 0.0;
-    }
-    else
-#endif
-    if ((C_eq_prev < C && C < C_eq_curr)
-        || (C_eq_prev > C && C > C_eq_curr))
-    {
-        _solid_density[int_pt] = (1.0 + C) * _AP->_rho_SR_dry;
-        _reaction_rate[int_pt] = 0.5 * (C - C_0) * _AP->_rho_SR_dry / dt
-                                 + 0.5 * _reaction_rate[int_pt];
-    }
-    else
-    {
-        DBUG("C_eq_prev %14.7g, C_prev %14.7g, C_eq_curr %14.7g, C %14.7g",
-             C_eq_prev, _solid_density_prev_ts[int_pt]/_AP->_rho_SR_dry - 1.0,
-             C_eq_curr, C);
-
-        _solid_density[int_pt] = (1.0 + C) * _AP->_rho_SR_dry;
-        _reaction_rate[int_pt] = Cdot * _AP->_rho_SR_dry;
-
-    }
-
-    _qR = _reaction_rate[int_pt];
-}
-
-
-template<typename Traits>
-void
-LADataNoTpl<Traits>::
-initReaction_slowDownUndershootStrategy(const unsigned int_pt)
-{
-    assert(_AP->_number_of_try_of_iteration < 20);
-
-    const double loading = Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry);
-
-    double react_rate_R = _AP->_adsorption->get_reaction_rate(_p_V, _T, _AP->_M_react, loading)
-                          * _AP->_rho_SR_dry;
-
-    _reaction_rate_indicator[int_pt] = 0.0;
-
-    // set reaction rate based on current damping factor
-    react_rate_R = (reaction_damping_factor > 1e-3)
-                   ? reaction_damping_factor * react_rate_R
-                   : 0.0;
-
-    if (_p_V < 0.01 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T)
-        && react_rate_R > 0.0)
-    {
-        react_rate_R = 0.0;
-        _reaction_rate_indicator[int_pt] = -100.0;
-    }
-    else if (_p_V < 100.0 || _p_V < 0.05 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T))
-    {
-        // use equilibrium reaction for dry regime
-
-        // in the case of zeroth try in zeroth iteration: _p_V and loading are the values
-        // at the end of the previous timestep
-
-        const double pV_eq = estimateAdsorptionEquilibrium(_p_V, loading);
-        // TODO [CL]: it would be more correct to subtract pV from the previous timestep here
-        const double delta_pV = pV_eq - _p_V;
-        const double delta_rhoV = delta_pV * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-        const double delta_rhoSR = delta_rhoV / (_AP->_poro - 1.0);
-        double react_rate_R2 = delta_rhoSR/_AP->_delta_t;
-
-        if (bounds_violation[int_pt])
-        {
-            react_rate_R2 *= 0.5;
-        }
-
-        // 0th try: make sure reaction is not slower than allowed by local estimation
-        // nth try: make sure reaction is not made faster by local estimation
-        if (
-            (_AP->_number_of_try_of_iteration == 0
-             && std::abs(react_rate_R2) > std::abs(react_rate_R))
-            ||
-            (_AP->_number_of_try_of_iteration != 0
-             && std::abs(react_rate_R2) < std::abs(react_rate_R))
-            )
-        {
-            react_rate_R = react_rate_R2;
-            _reaction_rate_indicator[int_pt] = 100.0;
-        }
-    }
-
-    // smooth out readjustment of reaction rate
-    if (_AP->_iteration_in_current_timestep > 3)
-    {
-        if (_AP->_iteration_in_current_timestep <= 8)
-        {
-            // update reaction rate for for five iterations
-            const auto N = _AP->_iteration_in_current_timestep - 3;
-
-            // take average s.t. does not oscillate so much
-            react_rate_R = 1.0 / (1.0+N) * (N*_reaction_rate[int_pt] + 1.0 * react_rate_R);
-        }
-        else
-        {
-            // afterwards no update anymore
-            react_rate_R = _reaction_rate[int_pt];
-        }
-    }
-
-    if (_AP->_number_of_try_of_iteration > 0)
-    {
-        // assert that within tries reaction does not get faster
-        // (e.g. due to switch equilibrium reaction <--> kinetic reaction)
-
-        // factor of 0.9*N: in fact, even slow down reaction over tries
-        const double r = std::pow(0.9, _AP->_number_of_try_of_iteration)
-                         *_reaction_rate[int_pt];
-        if (std::abs(react_rate_R) > std::abs(r)) {
-            react_rate_R = r;
-        }
-    }
-
-    _reaction_rate[int_pt] = react_rate_R;
-    _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + react_rate_R * _AP->_delta_t;
-
-    _is_equilibrium_reaction[int_pt] = false;
-
-    _qR = _reaction_rate[int_pt];
-}
-
-
-template<typename Traits>
-void LADataNoTpl<Traits>::
-initReaction_localVapourUptakeStrategy(
-        const unsigned int_pt)
-{
-    if (_AP->_iteration_in_current_timestep == 0)
-    {
-        // CAUTION: this procedure calculates the reaction rate
-        // for the current timestep from the solution of the last timestep.
-        // i.e. the local variables in this calculation have to be the solution of the last timestep!!!
-
-        // first get reaction rate from the given kinetics
-        // this does not consider that vapour is actually sucked up into the zeolite
-
-        // loading "at the beginning" of this timestep
-        const double loading = Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry);
-
-        const double react_rate_R = _AP->_adsorption->get_reaction_rate(_p_V, _T, _AP->_M_react, loading)
-                                  * _AP->_rho_SR_dry;
-
-        // calculate density change
-        const double delta_rhoS = react_rate_R * _AP->_delta_t * (1.0 - _AP->_poro);
-        const double delta_rhoV   = - delta_rhoS;
-        const double rho_V = _AP->_M_react * _p_V / GAS_CONST / _T * _AP->_poro;
-
-        if (
-            _p_V < 0.05 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T) && (
-            -delta_rhoV > rho_V   // there would be more vapour sucked up than there currently is
-            || delta_rhoV > rho_V // there would be more vapour released than there currently is
-        ))
-        {
-            // these are the corner cases where the water adsorption/desorption behaviour of the zeolite
-            // controls the equilibrium to a great extent
-
-            // in this case with the model only considering adsorption kinetics, the zeolite will adsorb (or release) more water than
-            // there currently is ==> limit adsorption, use equilibrium reaction
-
-            // function describing local equilibrium between vapour and zeolite loading
-            // temperature is assumed to be constant
-            auto f = [this, loading](double pV) -> double
-            {
-                // pV0 := _p_V
-                const double C_eq = _AP->_adsorption->get_equilibrium_loading(pV, _T, _AP->_M_react);
-                return (pV - _p_V) * _AP->_M_react / GAS_CONST / _T * _AP->_poro
-                        + (1.0-_AP->_poro) * (C_eq - loading) * _AP->_rho_SR_dry;
-            };
-
-            // range where to search for roots of f
-            const double C_eq0 = _AP->_adsorption->get_equilibrium_loading(_p_V, _T, _AP->_M_react);
-            const double limit = (C_eq0 > loading)
-                                 ? 1e-8
-                                 : Ads::Adsorption::get_equilibrium_vapour_pressure(_T);
-
-            // search for roots
-            auto rf = MathLib::Nonlinear::makeRegulaFalsi<MathLib::Nonlinear::Pegasus>(f, _p_V, limit);
-            rf.step(3);
-
-            // set vapour pressure
-            const double pV = rf.get_result();
-            const double delta_pV = pV - _p_V;
-            _p += delta_pV;
-            _p_V = pV;
-            // set vapour mass fraction accordingly
-            _vapour_mass_fraction = Ads::Adsorption::get_mass_fraction(_p_V/_p, _AP->_M_react, _AP->_M_inert);
-
-            // set solid density
-            const double delta_rhoV = delta_pV * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-            const double delta_rhoSR = delta_rhoV / (_AP->_poro - 1.0);
-            _reaction_rate[int_pt] = delta_rhoSR / _AP->_delta_t;
-            _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + delta_rhoSR;
-
-            // assert that reaction rate from this model is always slower than from the kinetic model
-            // in the corner cases handled here
-            assert(react_rate_R <= 0.0 || _reaction_rate[int_pt] < react_rate_R);
-            assert(react_rate_R >= 0.0 || _reaction_rate[int_pt] > react_rate_R);
-
-            DBUG("pV: %14.7g, delta pV: %14.7g, rhoSR: %14.7g, delta_rhoSR: %14.7g"
-                 ", xm: %14.7g, react_rate_R: %14.7g, react_rate_GG: %14.7g"
-                 ", kin rr: %14.7g",
-                 _p_V, delta_pV, _solid_density[int_pt], delta_rhoSR,
-                 _vapour_mass_fraction,
-                 react_rate_R, _reaction_rate[int_pt],
-                 _AP->_rho_SR_dry * _AP->_adsorption->get_reaction_rate(
-                     _p_V, _T, _AP->_M_react,
-                     Ads::Adsorption::get_loading(_solid_density_prev_ts[int_pt], _AP->_rho_SR_dry)
-                     )
-                 );
-
-            _reaction_rate_indicator[int_pt] = 100.0;
-            _is_equilibrium_reaction[int_pt] = true;
-            _estimated_vapour_pressure[int_pt] = _p_V;
-        }
-        else if (_p_V < 50.0 && react_rate_R > 0.0)
-        {
-            _reaction_rate[int_pt] = 0.0;
-            _solid_density[int_pt] = _solid_density_prev_ts[int_pt];
-
-            _reaction_rate_indicator[int_pt] = 0.0;
-            _is_equilibrium_reaction[int_pt] = false;
-        }
-        else
-        {
-            // in this case considering only the adsorption kintetics is sufficient,
-            // and may be also more correct, since it really describes a kinetic.
-
-            // TODO [CL] maybe also alter _p, _p_V, _vapour_mass_fraction
-
-            _reaction_rate[int_pt] = react_rate_R;
-            _solid_density[int_pt] = _solid_density_prev_ts[int_pt] + react_rate_R * _AP->_delta_t;
-
-            _reaction_rate_indicator[int_pt] = 0.0;
-            _is_equilibrium_reaction[int_pt] = false;
-        }
-    }
-    else if (
-             _is_equilibrium_reaction[int_pt]              // only correct the result of the equilibrium reaction
-             && _AP->_iteration_in_current_timestep == 1
-             )
-    {
-        // try to correct the reaction rate calculated in the first timestep
-
-        const double damping = 0.5;
-
-        // current loading in this timestep
-        const double loading = Ads::Adsorption::get_loading(_solid_density[int_pt], _AP->_rho_SR_dry);
-
-        const double react_rate_R = _AP->_adsorption->get_reaction_rate(_p_V, _T, _AP->_M_react, loading)
-                                  * _AP->_rho_SR_dry;
-
-        // calculate density change
-        const double delta_rhoS = react_rate_R * _AP->_delta_t * (1.0 - _AP->_poro);
-        const double delta_rhoV = - delta_rhoS;
-        const double rho_V = _AP->_M_react * _p_V / GAS_CONST / _T * _AP->_poro;
-
-        if (
-            _p_V < 0.05 * Ads::Adsorption::get_equilibrium_vapour_pressure(_T) && (
-            -delta_rhoV > rho_V   // there would be more vapour sucked up than there currently is
-            || delta_rhoV > rho_V // there would be more vapour released than there currently is
-        ))
-        {
-            // try equilibrium reaction again
-
-            // function describing local equilibrium between vapour and zeolite loading
-            // temperature is assumed to be constant
-            auto f = [this, loading](double pV) -> double
-            {
-                // pV0 := _p_V
-                const double C_eq = _AP->_adsorption->get_equilibrium_loading(pV, _T, _AP->_M_react);
-                return (pV - _p_V) * _AP->_M_react / GAS_CONST / _T * _AP->_poro
-                        + (1.0-_AP->_poro) * (C_eq - loading) * _AP->_rho_SR_dry;
-            };
-
-            // range where to search for roots of f
-            const double C_eq0 = _AP->_adsorption->get_equilibrium_loading(_p_V, _T, _AP->_M_react);
-            const double limit = (C_eq0 > loading)
-                                 ? 1e-8
-                                 : Ads::Adsorption::get_equilibrium_vapour_pressure(_T);
-
-            // search for roots
-            auto rf = MathLib::Nonlinear::makeRegulaFalsi<MathLib::Nonlinear::Pegasus>(f, _p_V, limit);
-            rf.step(3);
-
-            // set vapour pressure
-            const double pV = rf.get_result();
-            const double delta_pV = damping * (pV - _p_V);
-            _p   += delta_pV;
-            _p_V += delta_pV;
-            // set vapour mass fraction accordingly
-            _vapour_mass_fraction = Ads::Adsorption::get_mass_fraction(_p_V/_p, _AP->_M_react, _AP->_M_inert);
-
-            // set solid density
-            const double delta_rhoV  = delta_pV * _AP->_M_react / GAS_CONST / _T * _AP->_poro;
-            const double delta_rhoSR = delta_rhoV / (_AP->_poro - 1.0);
-
-            // add values to the reaction rate and solid density
-            _reaction_rate[int_pt] += delta_rhoSR / _AP->_delta_t;
-            _solid_density[int_pt] += delta_rhoSR;
-
-            _reaction_rate_indicator[int_pt] += 50.0;
-        }
-        else if (_p_V < 50.0 && react_rate_R > 0.0)
-        {
-            // do not correct in this case
-        }
-        else
-        {
-            // in this case considering only the adsorption kintetics is sufficient,
-            // and may be also more correct, since it really describes a kinetic.
-
-            // TODO [CL] maybe also alter _p, _p_V, _vapour_mass_fraction
-
-            _reaction_rate[int_pt] += damping * react_rate_R;
-            _solid_density[int_pt] += damping * react_rate_R * _AP->_delta_t;
-
-            _reaction_rate_indicator[int_pt] -= 50.0;
-        }
-    }
-    else
-    {
-        // reaction rate does not change within a timestep
-    }
-
-    _qR = _reaction_rate[int_pt];
+    _reaction_adaptor->initReaction(int_pt);
 }
 
 
@@ -1199,35 +606,26 @@ preEachAssembleIntegrationPoint(
         const unsigned int_pt,
         const std::vector<double> &localX,
         typename Traits::ShapeMatrices::ShapeType const& smN,
-        typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
-        typename Traits::ShapeMatrices::JacobianType const& smJ,
-        const double smDetJ)
+        typename Traits::ShapeMatrices::DxShapeType const& /*smDNdx*/,
+        typename Traits::ShapeMatrices::JacobianType const& /*smJ*/,
+        const double /*smDetJ*/)
 {
 #ifndef NDEBUG
     // fill local data with garbage to aid in debugging
-    _p = _T = _vapour_mass_fraction = std::numeric_limits<double>::quiet_NaN();
-    _p_V = _rho_GR = std::numeric_limits<double>::quiet_NaN();
-    _qR = std::numeric_limits<double>::quiet_NaN();
+    _p = _T   = _vapour_mass_fraction
+       = _p_V = _rho_GR
+       = _qR
+       = std::numeric_limits<double>::quiet_NaN();
 #endif
 
     std::array<double*, NODAL_DOF> int_pt_val = { &_p, &_T, &_vapour_mass_fraction };
 
     NumLib::shapeFunctionInterpolate(localX, smN, int_pt_val);
 
-    _vapour_mass_fraction = Trafo::x(_vapour_mass_fraction);
-
     // pre-compute certain properties
     _p_V = _p * Ads::Adsorption::get_molar_fraction(_vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
 
-    initReaction(int_pt, localX, smDNdx, smJ, smDetJ);
-
-    /*
-    if (_p < 1.0) _p = 1.0;
-    if (_T < 274.0) _T = 274.0;
-    else if (_T > 600.0) _T = 600.0;
-    if (_vapour_mass_fraction < 1e-6) _vapour_mass_fraction = 1e-6;
-    else if (_vapour_mass_fraction > 1.0 - 1e-6) _vapour_mass_fraction = 1.0 - 1e-6;
-    //*/
+    initReaction(int_pt);
 
     assert(_p > 0.0);
     assert(_T > 0.0);
@@ -1325,8 +723,6 @@ getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) co
     case SecondaryVariables::VELOCITY_Z:
         assert(_velocity.size() >= 3);
         return _velocity[2];
-    case SecondaryVariables::REACTION_KINETIC_INDICATOR:
-        return _reaction_rate_indicator;
 
     case SecondaryVariables::LOADING:
     {
@@ -1372,8 +768,7 @@ assembleIntegrationPoint(unsigned integration_point,
     auto const N = smDNdx.cols(); // number of integration points
     auto const D = smDNdx.rows(); // global dimension: 1, 2 or 3
 
-    // assert(N*NODAL_DOF == localA.cols());
-    assert(N*NODAL_DOF == _Lap->cols());
+    assert(N*NODAL_DOF == _Mas.cols());
 
     auto const laplaceCoeffMat = getLaplaceCoeffMatrix(integration_point, D);
     assert(laplaceCoeffMat.cols() == D*NODAL_DOF);
@@ -1383,14 +778,15 @@ assembleIntegrationPoint(unsigned integration_point,
 
 
     // calculate velocity
-    assert((unsigned) smDNdx.rows() == _velocity.size() && (unsigned) smDNdx.cols() == _velocity[0].size());
+    assert((unsigned) smDNdx.rows() == _velocity.size()
+           && (unsigned) smDNdx.cols() == _velocity[0].size());
 
-    // using auto for the type went terribly wrong!
-    // calculating grad_p not separately also went wrong!
-    auto const grad_p = (smDNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(), N)).eval();
-    assert(grad_p.size() == D);
-    auto const velocity = (laplaceCoeffMat.block(0, 0, D, D) * grad_p
-                                     / (-_rho_GR)).eval();
+    auto const velocity = (Traits::blockDimDim(laplaceCoeffMat, 0, 0, D, D)
+                           * (
+                               smDNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(), N) // grad_p
+                               / -_rho_GR
+                               )
+                           ).eval();
     assert(velocity.size() == D);
 
     for (unsigned d=0; d<D; ++d)
@@ -1402,26 +798,23 @@ assembleIntegrationPoint(unsigned integration_point,
     auto const detJ_w_N_NT = (detJ_w_N * smN.transpose()).eval();
     assert(detJ_w_N_NT.rows() == N && detJ_w_N_NT.cols() == N);
 
-    auto const vT_dNdx = (velocity.transpose() * smDNdx).eval();
-    assert(vT_dNdx.cols() == N && vT_dNdx.rows() == 1);
-    auto const detJ_w_N_vT_dNdx = (detJ_w_N * vT_dNdx).eval();
+    auto const detJ_w_N_vT_dNdx = (detJ_w_N
+                                   * velocity.transpose() * smDNdx
+                                   ).eval();
     assert(detJ_w_N_vT_dNdx.rows() == N && detJ_w_N_vT_dNdx.cols() == N);
 
     for (unsigned r=0; r<NODAL_DOF; ++r)
     {
         for (unsigned c=0; c<NODAL_DOF; ++c)
         {
-            auto tmp = (smDetJ * weight * smDNdx.transpose()).eval();
-            assert(tmp.cols() == D && tmp.rows() == N);
-            tmp *= laplaceCoeffMat.block(D*r, D*c, D, D);
-            assert(tmp.cols() == D && tmp.rows() == N);
-            auto const tmp2 = (tmp * smDNdx).eval();
-            assert(tmp2.cols() == N && tmp2.rows() == N);
-
-            _Lap->block(N*r, N*c, N, N).noalias() += tmp2;
-            _Mas->block(N*r, N*c, N, N).noalias() += detJ_w_N_NT      * massCoeffMat(r, c);
-            _Adv->block(N*r, N*c, N, N).noalias() += detJ_w_N_vT_dNdx * advCoeffMat(r, c);
-            _Cnt->block(N*r, N*c, N, N).noalias() += detJ_w_N_NT      * contentCoeffMat(r, c);
+            Traits::blockShpShp(_Lap_Adv_Cnt, N*r, N*c, N, N).noalias() +=
+                    smDetJ * weight * smDNdx.transpose()
+                    * Traits::blockDimDim(laplaceCoeffMat, D*r, D*c, D, D)
+                    * smDNdx                                      // end Laplacian part
+                    + detJ_w_N_NT      * contentCoeffMat(r, c)
+                    + detJ_w_N_vT_dNdx * advCoeffMat(r, c);
+            Traits::blockShpShp(_Mas, N*r, N*c, N, N).noalias() +=
+                    detJ_w_N_NT      * massCoeffMat(r, c);
         }
     }
 
@@ -1429,7 +822,7 @@ assembleIntegrationPoint(unsigned integration_point,
 
     for (unsigned r=0; r<NODAL_DOF; ++r)
     {
-        _rhs->block(N*r, 0, N, 1).noalias() +=
+        Traits::blockShp(_rhs, N*r, N).noalias() +=
                 rhsCoeffVector(r) * smN * smDetJ * weight;
     }
 }
@@ -1445,32 +838,14 @@ LADataNoTpl<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
     _reaction_rate.resize(num_int_pts);
     _reaction_rate_prev_ts.resize(num_int_pts);
 
-    // _velocity.resize(num_int_pts, dimension);
     _velocity.resize(dimension);
     for (auto& v : _velocity) v.resize(num_int_pts);
 
-    _reaction_rate_indicator.resize(num_int_pts);
+    _reaction_adaptor = std::move(TESFEMReactionAdaptor<Traits>::newInstance(*this));
 
-    _is_equilibrium_reaction.resize(num_int_pts);
-    _estimated_vapour_pressure.resize(num_int_pts);
-
-    _equilibrium_loading.resize(num_int_pts);
-    _equilibrium_loading_prev_ts.resize(
-                num_int_pts, EQ_LOADING_FIRST_TS); // TODO [CL] provide separate "first assembly" method
-
-    bounds_violation.resize(num_int_pts, false);
-
-    _Lap.reset(new typename Traits::LocalMatrix(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF));
-    _Mas.reset(new typename Traits::LocalMatrix(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF));
-    _Adv.reset(new typename Traits::LocalMatrix(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF));
-    _Cnt.reset(new typename Traits::LocalMatrix(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF));
-    _rhs.reset(new typename Traits::LocalVector(num_int_pts*NODAL_DOF));
-
-    _Lap->setZero();
-    _Mas->setZero();
-    _Adv->setZero();
-    _Cnt->setZero();
-    _rhs->setZero();
+    _Mas         = Traits::LocalMatrix::Zero(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF);
+    _Lap_Adv_Cnt = Traits::LocalMatrix::Zero(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF);
+    _rhs         = Traits::LocalVector::Zero(num_int_pts*NODAL_DOF);
 }
 
 
@@ -1484,11 +859,8 @@ LADataNoTpl<Traits>::preEachAssemble()
         {
             _solid_density_prev_ts = _solid_density;
             _reaction_rate_prev_ts = _reaction_rate;
-            _equilibrium_loading_prev_ts = _equilibrium_loading;
 
-            reaction_damping_factor = std::min(
-                std::sqrt(reaction_damping_factor),
-                10.0*reaction_damping_factor);
+            _reaction_adaptor->preZerothTryAssemble();
         }
         else
         {
@@ -1496,11 +868,9 @@ LADataNoTpl<Traits>::preEachAssemble()
         }
     }
 
-    _Lap->setZero();
-    _Mas->setZero();
-    _Adv->setZero();
-    _Cnt->setZero();
-    _rhs->setZero();
+    _Mas.setZero();
+    _Lap_Adv_Cnt.setZero();
+    _rhs.setZero();
 }
 
 
@@ -1511,9 +881,9 @@ LADataNoTpl<Traits>
                    typename Traits::LocalVector& localRhs,
                    typename Traits::LocalVector const& oldX)
 {
-    localA.noalias() += *_Lap + *_Mas/_AP->_delta_t + *_Adv + *_Cnt;
-    localRhs.noalias() += *_rhs
-                           + *_Mas * oldX/_AP->_delta_t;
+    localA.noalias() += _Lap_Adv_Cnt + _Mas/_AP->_delta_t;
+    localRhs.noalias() += _rhs
+                           + _Mas * oldX/_AP->_delta_t;
 
     if (_AP->_output_element_matrices)
     {
@@ -1535,19 +905,11 @@ LADataNoTpl<Traits>
         std::printf("\n");
 
         std::printf("\n---Mass matrix: \n");
-        ogs5OutMat(*_Mas);
+        ogs5OutMat(_Mas);
         std::printf("\n");
 
-        std::printf("---Laplacian matrix: \n");
-        ogs5OutMat(*_Lap);
-        std::printf("\n");
-
-        std::printf("---Advective matrix: \n");
-        ogs5OutMat(*_Adv);
-        std::printf("\n");
-
-        std::printf("---Content: \n");
-        ogs5OutMat(*_Cnt);
+        std::printf("---Laplacian + Advective + Content matrix: \n");
+        ogs5OutMat(_Lap_Adv_Cnt);
         std::printf("\n");
 
         std::printf("---RHS: \n");

@@ -69,12 +69,8 @@ class LocalAssemblerData
 {
 public:
     using ShapeFunction = ShapeFunction_;
-    // using NodalMatrixType   = typename ShapeMatrixPolicyType<ShapeFunction, GlobalDim>::NodalMatrixType;
-    // using NodalVectorType   = typename ShapeMatrixPolicyType<ShapeFunction, GlobalDim>::NodalVectorType;
-
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices     = typename ShapeMatricesType::ShapeMatrices;
-
 
     void
     init(MeshLib::Element const& e,
@@ -112,12 +108,6 @@ private:
     using NodalMatrixType = typename DT::LocalMatrix;
     using NodalVectorType = typename DT::LocalVector;
 
-    static const unsigned MAT_SIZE = ShapeFunction::NPOINTS * NODAL_DOF;
-    // using NodalMatrixType = Eigen::Matrix<double, MAT_SIZE, MAT_SIZE>;
-    // using NodalVectorType = Eigen::Matrix<double, MAT_SIZE, 1>;
-
-    // std::unique_ptr<NodalMatrixType> _localA;
-    // std::unique_ptr<NodalVectorType> _localRhs;
     static_assert(std::is_same<NodalMatrixType, typename DT::LocalMatrix>::value,
                   "local matrix and data traits matrix do not coincide");
     static_assert(std::is_same<NodalVectorType, typename DT::LocalVector>::value,
