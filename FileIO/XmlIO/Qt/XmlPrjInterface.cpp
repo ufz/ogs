@@ -1,9 +1,4 @@
 /**
- * \file
- * \author Karsten Rink
- * \date   2011-11-23
- * \brief  Implementation of the XmlGspInterface class.
- *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -12,7 +7,7 @@
  *
  */
 
-#include "XmlGspInterface.h"
+#include "XmlPrjInterface.h"
 
 #include <ostream>
 #include <vector>
@@ -39,13 +34,13 @@
 
 namespace FileIO
 {
-XmlGspInterface::XmlGspInterface(ProjectData& project) :
+XmlPrjInterface::XmlPrjInterface(ProjectData& project) :
 	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
 	_project(project)
 {
 }
 
-int XmlGspInterface::readFile(const QString &fileName)
+int XmlPrjInterface::readFile(const QString &fileName)
 {
 	if(XMLQtInterface::readFile(fileName) == 0)
 		return 0;
@@ -106,13 +101,13 @@ int XmlGspInterface::readFile(const QString &fileName)
 	return 1;
 }
 
-int XmlGspInterface::writeToFile(const std::string& filename)
+int XmlPrjInterface::writeToFile(const std::string& filename)
 {
 	_filename = filename;
 	return FileIO::Writer::writeToFile(filename);
 }
 
-bool XmlGspInterface::write()
+bool XmlPrjInterface::write()
 {
 	GeoLib::GEOObjects* geoObjects = _project.getGEOObjects();
 	QFileInfo fi(QString::fromStdString(_filename));

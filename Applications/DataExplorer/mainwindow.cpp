@@ -67,7 +67,7 @@
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
 #include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "FileIO/XmlIO/Qt/XmlStnInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
@@ -418,9 +418,9 @@ void MainWindow::save()
 	QFileInfo fi(fileName);
 	LastSavedFileDirectory::setDir(fileName);
 
-	if (fi.suffix().toLower() == "gsp")
+	if (fi.suffix().toLower() == "prj")
 	{
-		XmlGspInterface xml(_project);
+		XmlPrjInterface xml(_project);
 		xml.writeToFile(fileName.toStdString());
 	}
 	else if (fi.suffix().toLower() == "geo")
@@ -465,9 +465,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
 		}
-		else if (fi.suffix().toLower() == "gsp")
+		else if (fi.suffix().toLower() == "prj")
 		{
-			XmlGspInterface xml(_project);
+			XmlPrjInterface xml(_project);
 			if (xml.readFile(fileName))
 			{
 				_meshModel->updateModel();
