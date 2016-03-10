@@ -383,7 +383,9 @@ std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 			if (pnt[k] > this->_max_pnt[k]) {
 				coords[k] = _n_steps[k]-1;
 			} else {
-				coords[k] = static_cast<std::size_t>((pnt[k]-this->_min_pnt[k]) * _inverse_step_sizes[k]);
+				coords[k] = static_cast<std::size_t>(
+				    std::floor((pnt[k] - this->_min_pnt[k])) *
+				    _inverse_step_sizes[k]);
 			}
 		}
 	}
