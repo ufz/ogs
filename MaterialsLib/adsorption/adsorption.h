@@ -4,35 +4,20 @@
 #include <array>
 #include <cmath>
 
+#include "reaction.h"
+
 namespace Ads
 {
 
-const double GAS_CONST = 8.3144621;
+constexpr double GAS_CONST = 8.3144621;
 
-const double M_N2  = 0.028;
-const double M_H2O = 0.018;
+constexpr double M_N2  = 0.028;
+constexpr double M_H2O = 0.018;
 
-enum class SolidReactiveSystem
-{
-	Z13XBF,
-	Z13XBF_Const,
-	Z13XBF_Hauer,
-	Z13XBF_Mette,
-	Z13XBF_Nunez,
-	Z13XBF_Cook,
-	Z13XBF_Dubinin,
-	Z13XBF_100MPa,
-	Inert
-};
-
-class Adsorption
+class Adsorption : public Reaction
 {
 public:
-// static members
-	static Adsorption* newInstance(SolidReactiveSystem rsys);
-	static Adsorption* newInstance(std::string const& rsys);
-
-	// TODO [CL] move those four methods to water properties class
+	// TODO [CL] move those three methods to water properties class
 	static double get_evaporation_enthalpy(const double T_Ads);
 	static double get_equilibrium_vapour_pressure(const double T_Ads);
 	static double get_specific_heat_capacity(const double T_Ads); // TODO [CL] why unused?
@@ -44,14 +29,15 @@ public:
 	static double get_loading(const double rho_curr, const double rho_dry);
 
 // non-virtual members
-	double get_equilibrium_loading(const double p_Ads, const double T_Ads, const double M_Ads);
+	double get_equilibrium_loading(const double p_Ads, const double T_Ads, const double M_Ads)
+	const override;
 
 // virtual members:
-	virtual ~Adsorption() {}
+	virtual ~Adsorption() = default;
 
-	virtual double get_enthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const;
+	virtual double get_enthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
 	virtual double get_reaction_rate(const double p_Ads, const double T_Ads,
-									 const double M_Ads, const double loading) const;
+									 const double M_Ads, const double loading) const override;
 	/**
 	 * @brief get_d_reaction_rate
 	 * @param p_Ads

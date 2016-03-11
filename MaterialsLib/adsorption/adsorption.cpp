@@ -1,17 +1,14 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 
 #include "logog/include/logog.hpp"
-
 #include "adsorption.h"
-
-#include "density_legacy.h"
-#include "density_100MPa.h"
-#include "density_const.h"
-#include "density_cook.h"
-#include "density_dubinin.h"
-#include "density_hauer.h"
-#include "density_mette.h"
-#include "density_nunez.h"
-#include "density_inert.h"
 
 namespace {
 	const double k_rate = 6.0e-3; //to be specified
@@ -186,77 +183,13 @@ double Adsorption::get_enthalpy(const double p_Ads, const double T_Ads, const do
 }
 
 
-double Adsorption::get_equilibrium_loading(const double p_Ads, const double T_Ads, const double M_Ads)
+double Adsorption::get_equilibrium_loading(const double p_Ads, const double T_Ads,
+										   const double M_Ads) const
 {
 	const double A = get_potential(p_Ads, T_Ads, M_Ads);
 	return get_adsorbate_density(T_Ads) * characteristic_curve(A);
 }
 
 
-bool
-stringToReactiveSystem(std::string const& name, SolidReactiveSystem& rsys_out)
-{
-	if (name == "Z13XBF")
-		rsys_out = SolidReactiveSystem::Z13XBF;
-	else if (name == "Z13XBF_100MPa")
-		rsys_out = SolidReactiveSystem::Z13XBF_100MPa;
-	else if (name == "Z13XBF_Const")
-		rsys_out = SolidReactiveSystem::Z13XBF_Const;
-	else if (name == "Z13XBF_Cook")
-		rsys_out = SolidReactiveSystem::Z13XBF_Cook;
-	else if (name == "Z13XBF_Dubinin")
-		rsys_out = SolidReactiveSystem::Z13XBF_Dubinin;
-	else if (name == "Z13XBF_Hauer")
-		rsys_out = SolidReactiveSystem::Z13XBF_Hauer;
-	else if (name == "Z13XBF_Mette")
-		rsys_out = SolidReactiveSystem::Z13XBF_Mette;
-	else if (name == "Z13XBF_Nunez")
-		rsys_out = SolidReactiveSystem::Z13XBF_Nunez;
-	else if (name == "Inert")
-		rsys_out = SolidReactiveSystem::Inert;
-	else return false;
-
-	return true;
-}
-
-
-Adsorption* Adsorption::newInstance(std::string const& rsys)
-{
-	SolidReactiveSystem r;
-	if (stringToReactiveSystem(rsys, r)) {
-		return newInstance(r);
-	} else {
-		ERR("unknown reactive system: %s", rsys);
-		return nullptr;
-	}
-}
-
-
-Adsorption* Adsorption::newInstance(const SolidReactiveSystem rsys)
-{
-	switch (rsys)
-	{
-	case SolidReactiveSystem::Z13XBF:
-		return new DensityLegacy();
-	case SolidReactiveSystem::Z13XBF_100MPa:
-		return new Density100MPa();
-	case SolidReactiveSystem::Z13XBF_Const:
-		return new DensityConst();
-	case SolidReactiveSystem::Z13XBF_Cook:
-		return new DensityCook();
-	case SolidReactiveSystem::Z13XBF_Dubinin:
-		return new DensityDubinin();
-	case SolidReactiveSystem::Z13XBF_Hauer:
-		return new DensityHauer();
-	case SolidReactiveSystem::Z13XBF_Mette:
-		return new DensityMette();
-	case SolidReactiveSystem::Z13XBF_Nunez:
-		return new DensityNunez();
-	case SolidReactiveSystem::Inert:
-		return new DensityInert();
-	}
-
-	return nullptr;
-}
 
 } // namespace Ads
