@@ -765,7 +765,7 @@ void MainWindow::loadPetrelFiles()
 
 void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 {
-	VtkAddFilterDialog dlg(_vtkVisPipeline.get(), parentIndex);
+	VtkAddFilterDialog dlg(*_vtkVisPipeline, parentIndex);
 	dlg.exec();
 }
 
