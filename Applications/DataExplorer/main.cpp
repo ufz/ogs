@@ -1,4 +1,6 @@
 #include "mainwindow.h"
+
+#include <memory>
 #include <QtGui/QApplication>
 #ifdef VTKOSGCONVERTER_FOUND
 #include <OpenSG/OSGBaseFunctions.h>
@@ -14,8 +16,6 @@ FbxScene* lScene = NULL;
 
 #include "BaseLib/BuildInfo.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
-
-#include <vtkSmartPointer.h>
 
 int main(int argc, char* argv[])
 {
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	QApplication::setOrganizationDomain("opengeosys.org");
 	setlocale(LC_NUMERIC,"C");
 	QLocale::setDefault(QLocale::German);
-	MainWindow* w = new MainWindow();
+	std::unique_ptr<MainWindow> w (new MainWindow());
 	w->setWindowTitle( w->windowTitle() + " - " +
 		QString::fromStdString(BaseLib::BuildInfo::git_describe));
 	if (QCoreApplication::arguments().size()>1) {
@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
 	}
 	w->show();
 	int returncode = a.exec();
-	delete w;
 	delete formatter;
 	delete logogCout;
 	LOGOG_SHUTDOWN();
