@@ -23,8 +23,6 @@
 
 #include "TESProcess.h"
 
-#include "BaseLib/Timing.h"
-
 
 namespace
 {
