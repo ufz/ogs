@@ -133,11 +133,13 @@ TEST(GeoLib, SearchNearestPointsInDenseGrid)
 	ASSERT_EQ(j_max*k_max*(i_max/2 + 1) - 1, res->getID());
 	ASSERT_NEAR(sqrt(2.0)/50.0, sqrt(MathLib::sqrDist(*res, search_pnt)), std::numeric_limits<double>::epsilon());
 
-	for (std::size_t i(0); i < i_max; i++) {
+	// checking only every fourth point per direction to reduce the run time of
+	// the test
+	for (std::size_t i(0); i < i_max; i=i+4) {
 		std::size_t offset0(i * j_max * k_max);
-		for (std::size_t j(0); j < j_max; j++) {
+		for (std::size_t j(0); j < j_max; j=j+4) {
 			std::size_t offset1(j * k_max + offset0);
-			for (std::size_t k(0); k < k_max; k++) {
+			for (std::size_t k(0); k < k_max; k=k+4) {
 				res = grid->getNearestPoint(*pnts[offset1+k]);
 				ASSERT_EQ(offset1+k, res->getID());
 				ASSERT_NEAR(sqrt(MathLib::sqrDist(*res, *pnts[offset1+k])), 0.0, std::numeric_limits<double>::epsilon());
