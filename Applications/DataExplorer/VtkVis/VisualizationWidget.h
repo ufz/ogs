@@ -19,6 +19,7 @@
 #include "ui_VisualizationWidgetBase.h"
 
 class vtkRenderer;
+class vtkOrientationMarkerWidget;
 class VtkCustomInteractorStyle;
 class VtkPickCallback;
 
@@ -106,6 +107,7 @@ private:
 	vtkRenderer* _vtkRender;
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
+	vtkOrientationMarkerWidget* _markerWidget;
 	bool _isShowAllOnLoad;
 };
 
