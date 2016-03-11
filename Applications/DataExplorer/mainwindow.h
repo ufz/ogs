@@ -128,7 +128,7 @@ private:
 	QString getLastUsedDir();
 	
 	ProjectData _project;
-	std::unique_ptr<MshModel> _meshModels;
+	std::unique_ptr<MshModel> _meshModel;
 	std::unique_ptr<ElementTreeModel> _elementModel;
 	std::unique_ptr<TreeModel> _processModel;
 	std::unique_ptr<VtkVisPipeline> _vtkVisPipeline;
@@ -138,7 +138,7 @@ private:
 
 	std::unique_ptr<VisPrefsDialog> _visPrefsDialog;
 
-	std::unique_ptr<GEOModels> _geo_models;
+	std::unique_ptr<GEOModels> _geo_model;
 
 signals:
 	void fileUsed( QString filename );
