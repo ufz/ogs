@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "GeoLib/AABB.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 
 namespace MeshLib {
@@ -31,8 +32,46 @@ public:
 	/// return marked elements
 	const std::vector<std::size_t>& getSearchedElementIDs() const { return _marked_elements; }
 
-	/// Marks all elements with the given Material ID.
-	std::size_t searchByMaterialID(int const matID);
+	/// @tparam PROPERTY_TYPE integral type of the property
+	/// Different properties can be assigned to the elements of the mesh. These
+	/// properties can be accessed by the name of the property. The method marks
+	/// all elements of the mesh for the property \c property_name with the
+	/// given property value \c property_value.
+	/// @param property_value the value of the property the elements have to
+	/// have to be marked
+	/// @param property_name the name of the property the searching/marking is
+	/// based on
+	/// @return The number of marked elements will be returned. The concrete
+	/// element ids can be requested by getSearchedElementIDs().
+	template <typename PROPERTY_TYPE>
+	std::size_t searchByPropertyValue(
+	    PROPERTY_TYPE const property_value,
+	    std::string const& property_name = "MaterialIDs")
+	{
+		boost::optional<MeshLib::PropertyVector<PROPERTY_TYPE> const&> opt_pv(
+		    _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
+		        property_name));
+		if (!opt_pv) {
+			WARN("Property \"%s\" not found in mesh.", property_name.c_str());
+			return 0;
+		}
+
+		MeshLib::PropertyVector<PROPERTY_TYPE> const& pv(opt_pv.get());
+		if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
+			WARN("The property \"%s\" is not assigned to mesh elements.",
+			     property_name.c_str());
+			return 0;
+		}
+
+		std::vector<std::size_t> matchedIDs;
+		for (std::size_t i(0); i < pv.getNumberOfTuples(); ++i) {
+			if (pv[i] == property_value)
+				matchedIDs.push_back(i);
+		}
+
+		updateUnion(matchedIDs);
+		return matchedIDs.size();
+	}
 
 	/// Marks all elements of the given element type.
 	std::size_t searchByElementType(MeshElemType eleType);
