@@ -4,7 +4,7 @@
 
 #include "MathLib/Nonlinear/Root1D.h"
 
-#include "MaterialsLib/adsorption/adsorption.h"
+#include "MaterialsLib/adsorption/density_hauer.h"
 
 using namespace Ads;
 
@@ -22,7 +22,7 @@ const double rho_SR0 = 1160.0; // kg/m^3
 const double C0 = 0.0;
 const double pV0 = 1e2;
 
-Adsorption* ads = Adsorption::newInstance(SolidReactiveSystem::Z13XBF_Hauer);
+std::unique_ptr<Reaction> ads(new Ads::DensityHauer);
 
 double f(const double pV)
 {
