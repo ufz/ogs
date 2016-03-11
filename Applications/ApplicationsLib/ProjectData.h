@@ -18,7 +18,6 @@
 #include <string>
 #include <boost/optional/optional.hpp>
 
-#include "BaseLib/ConfigTreeNew.h"
 #include "BaseLib/ConfigTree.h"
 
 #include "GeoLib/GEOObjects.h"
