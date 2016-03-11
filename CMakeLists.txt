@@ -107,6 +107,14 @@ set_property(CACHE
 	OGS_LIB_EIGEN
 	PROPERTY STRINGS "Default" "System" "Local")
 
+# Options controlling which FEM elements will be compiled
+set(OGS_MAX_ELEMENT_DIM   3 CACHE STRING "Maximum dimension of FEM elements to be built.")
+set(OGS_MAX_ELEMENT_ORDER 2 CACHE STRING "Maximum order of FEM elements to be built.")
+option(OGS_ENABLE_ELEMENT_SIMPLEX "Build FEM elements for simplices (triangles, tetrahedra)." ON)
+option(OGS_ENABLE_ELEMENT_CUBOID  "Build FEM elements for cuboids (quads, hexahedra)." ON)
+option(OGS_ENABLE_ELEMENT_PRISM   "Build FEM elements for prisms." ON)
+option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
+
 ###################
 ### Definitions ###
 ###################

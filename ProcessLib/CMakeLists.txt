@@ -1,3 +1,5 @@
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
+
 # Source files
 GET_SOURCE_FILES(SOURCES)
 

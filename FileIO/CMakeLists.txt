@@ -49,6 +49,8 @@ if(OGS_USE_PETSC)
 	set(SOURCES ${SOURCES} ${SOURCES_MPI_IO})
 endif()
 
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
+
 # Create the library
 add_library(FileIO STATIC ${SOURCES})
 

@@ -1,3 +1,5 @@
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
+
 # VS2012 doesn't support correctly the tuples yet
 # See http://code.google.com/p/googletest/issues/detail?id=412
 if(MSVC)

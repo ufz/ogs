@@ -1,3 +1,5 @@
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
+
 #Source files grouped by a directory
 GET_SOURCE_FILES(SOURCES_ASSEMBLERLIB)
 set(SOURCES ${SOURCES_ASSEMBLERLIB})
