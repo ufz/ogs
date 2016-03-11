@@ -322,7 +322,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	menuWindows->addAction(showVisDockAction);
 
 	// Presentation mode
-	QMenu* presentationMenu = new QMenu();
+	QMenu* presentationMenu = new QMenu(this);
 	presentationMenu->setTitle("Presentation on");
 	connect(presentationMenu, SIGNAL(aboutToShow()), this,
 	        SLOT(createPresentationMenu()));
@@ -940,9 +940,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 	QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::showFileConverter() const
+void MainWindow::showFileConverter()
 {
-	OGSFileConverter* dlg = new OGSFileConverter();
+	OGSFileConverter* dlg = new OGSFileConverter(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 	dlg->raise();

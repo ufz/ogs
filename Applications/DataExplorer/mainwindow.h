@@ -97,7 +97,7 @@ protected slots:
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
 	/// Calls the OGSFileConverter as an external tool
-	void showFileConverter() const;
+	void showFileConverter();
 	//TODO6 void showFileConverterDialog();
 	void showLicense();
 	void showLineEditDialog(const std::string &geoName);
