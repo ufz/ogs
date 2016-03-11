@@ -21,29 +21,42 @@
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(const std::string prefix,
+PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
                                      BaseLib::ConfigTree const* const option)
-    : _elapsed_ctime(0.)
 {
-    // Insert options into petsc database if any.
-    if (option)
-    {
+    // Insert options into petsc database. Default options are given in the string below.
+    std::string petsc_options
+            = "-ksp_type cg -pc_type bjacobi -ksp_rtol 1e-16 -ksp_max_it 10000";
+
+    std::string prefix;
+
+    if (option) {
         ignoreOtherLinearSolvers(*option, "petsc");
-        std::string const petsc_options = option->getConfParam<std::string>("petsc", "");
-        PetscOptionsInsertString(petsc_options.c_str());
+
+        if (auto const subtree = option->getConfSubtreeOptional("petsc"))
+        {
+            if (auto const parameters = subtree->getConfParamOptional<std::string>(
+                    "parameters")) {
+                petsc_options = *parameters;
+            }
+
+            if (auto const pre = subtree->getConfParamOptional<std::string>("prefix")) {
+                if (!pre->empty())
+                    prefix = *pre + "_";
+            }
+        }
     }
+    PetscOptionsInsertString(petsc_options.c_str());
 
     KSPCreate(PETSC_COMM_WORLD, &_solver);
 
     KSPGetPC(_solver, &_pc);
 
-    //
-    if ( !prefix.empty() )
-    {
+    if (!prefix.empty()) {
         KSPSetOptionsPrefix(_solver, prefix.c_str());
     }
 
-    KSPSetFromOptions(_solver);  // set running time option
+    KSPSetFromOptions(_solver); // set running time option
 }
 
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)

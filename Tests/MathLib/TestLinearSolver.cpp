@@ -43,7 +43,7 @@
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #endif
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 namespace
 {
@@ -288,19 +288,24 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree t_root;
-    t_root.put("petsc",
-                 "-ptest1_ksp_type bcgs "
-                 "-ptest1_ksp_rtol 1.e-8 "
-                 "-ptest1_ksp_atol 1.e-50 "
-                 "-ptest1_ksp_max_it 1000 "
-                 "-ptest1_pc_type bjacobi");
+    const char xml[] =
+            "<petsc>"
+            "  <parameters>"
+            "    -ptest1_ksp_type bcgs "
+            "    -ptest1_ksp_rtol 1.e-8 "
+            "    -ptest1_ksp_atol 1.e-50 "
+            "    -ptest1_ksp_max_it 1000 "
+            "    -ptest1_pc_type bjacobi"
+            "  </parameters>"
+            "  <prefix>ptest1</prefix>"
+            "</petsc>";
+    auto const ptree = readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest1_",
-        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+        A, b, "",
+        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning)
     );
 }
@@ -317,19 +322,24 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree t_root;
-    t_root.put("petsc",
-                 "-ptest2_ksp_type chebyshev "
-                 "-ptest2_ksp_rtol 1.e-8 "
-                 "-ptest2_ksp_atol 1.e-50"
-                 "-ptest2_ksp_max_it 1000 "
-                 "-ptest2_pc_type sor");
+    const char xml[] =
+            "<petsc>"
+            "  <parameters>"
+            "    -ptest2_ksp_type chebyshev "
+            "    -ptest2_ksp_rtol 1.e-8 "
+            "    -ptest2_ksp_atol 1.e-50"
+            "    -ptest2_ksp_max_it 1000 "
+            "    -ptest2_pc_type sor"
+            "  </parameters>"
+            "  <prefix>ptest2</prefix>"
+            "</petsc>";
+    auto const ptree = readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest2_",
-        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+        A, b, "",
+        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning)
     );
 }
@@ -346,21 +356,26 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree t_root;
-    t_root.put("petsc",
-                 "-ptest3_ksp_type gmres "
-                 "-ptest3_ksp_rtol 1.e-8 "
-                 "-ptest3_ksp_gmres_restart 20 "
-                 "-ptest3_ksp_gmres_classicalgramschmidt "
-                 "-ptest3_pc_type gamg "
-                 "-ptest3_pc_gamg_type agg "
-                 "-ptest3_pc_gamg_agg_nsmooths 2");
+    const char xml[] =
+            "<petsc>"
+            "  <parameters>"
+            "    -ptest3_ksp_type gmres "
+            "    -ptest3_ksp_rtol 1.e-8 "
+            "    -ptest3_ksp_gmres_restart 20 "
+            "    -ptest3_ksp_gmres_classicalgramschmidt "
+            "    -ptest3_pc_type gamg "
+            "    -ptest3_pc_gamg_type agg "
+            "    -ptest3_pc_gamg_agg_nsmooths 2"
+            "  </parameters>"
+            "  <prefix>ptest3</prefix>"
+            "</petsc>";
+    auto const ptree = readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "ptest3_",
-        BaseLib::ConfigTree(t_root, "", BaseLib::ConfigTree::onerror,
+        A, b, "",
+        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning)
     );
 }

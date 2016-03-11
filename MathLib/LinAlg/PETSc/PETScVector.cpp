@@ -28,16 +28,15 @@ namespace MathLib
 {
 PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 {
-    if( is_global_size )
-    {
-        VecCreate(PETSC_COMM_WORLD, &_v);
-        VecSetSizes(_v, PETSC_DECIDE, vec_size);
-    }
-    else
-    {
+    _v.reset(new PETSc_Vec);
+
+    if( is_global_size ) {
+        VecCreate(PETSC_COMM_WORLD, _v.get());
+        VecSetSizes(*_v, PETSC_DECIDE, vec_size);
+    } else {
         // Fix size partitioning
         // the size can be associated to specific memory allocation of a matrix
-        VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, &_v);
+        VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, _v.get());
     }
 
     config();
@@ -48,18 +47,20 @@ PETScVector::PETScVector(const PetscInt vec_size,
                          const bool is_global_size) :
                          _size_ghosts(ghost_ids.size()), _has_ghost_id(true)
 {
+    _v.reset(new PETSc_Vec);
+
     PetscInt nghosts = static_cast<PetscInt>( ghost_ids.size() );
     if ( is_global_size )
     {
         VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size, nghosts,
-                       ghost_ids.data(), &_v);
+                       ghost_ids.data(), _v.get());
     }
     else
     {
-        VecCreate(PETSC_COMM_WORLD, &_v);
-        VecSetType(_v, VECMPI);
-        VecSetSizes(_v, vec_size, PETSC_DECIDE);
-        VecMPISetGhost(_v, nghosts, ghost_ids.data());
+        VecCreate(PETSC_COMM_WORLD, _v.get());
+        VecSetType(*_v, VECMPI);
+        VecSetSizes(*_v, vec_size, PETSC_DECIDE);
+        VecMPISetGhost(*_v, nghosts, ghost_ids.data());
     }
 
     config();
@@ -67,37 +68,31 @@ PETScVector::PETScVector(const PetscInt vec_size,
 
 PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
 {
-    VecDuplicate(existing_vec._v, &_v);
-
-    VecGetOwnershipRange(_v, &_start_rank,&_end_rank);
-    VecGetLocalSize(_v, &_size_loc);
-    VecGetSize(_v, &_size);
+    shallowCopy(existing_vec);
 
     // Copy values
     if(deep_copy)
     {
-        VecCopy(existing_vec._v, _v);
+        VecCopy(*existing_vec._v, *_v);
     }
-
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
 void PETScVector::config()
 {
-    VecSetFromOptions(_v);
-    // VecSetUp(_v); // for petsc ver.>3.3
-    VecGetOwnershipRange(_v, &_start_rank, &_end_rank);
+    VecSetFromOptions(*_v);
+    // VecSetUp(*_v); // for petsc ver.>3.3
+    VecGetOwnershipRange(*_v, &_start_rank, &_end_rank);
 
-    VecGetLocalSize(_v, &_size_loc);
-    VecGetSize(_v, &_size);
+    VecGetLocalSize(*_v, &_size_loc);
+    VecGetSize(*_v, &_size);
 
-    VecSetOption(_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
+    VecSetOption(*_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
 void PETScVector::finalizeAssembly()
 {
-    VecAssemblyBegin(_v);
-    VecAssemblyEnd(_v);
+    VecAssemblyBegin(*_v);
+    VecAssemblyEnd(*_v);
 }
 
 void PETScVector::gatherLocalVectors( PetscScalar local_array[],
@@ -136,7 +131,7 @@ void PETScVector::getGlobalVector(PetscScalar u[])
 #endif
 
     PetscScalar *xp = nullptr;
-    VecGetArray(_v, &xp);
+    VecGetArray(*_v, &xp);
 
     gatherLocalVectors(xp, u);
 
@@ -144,7 +139,7 @@ void PETScVector::getGlobalVector(PetscScalar u[])
     //  for a communication load balance:
     //MPI_Barrier(PETSC_COMM_WORLD);
 
-    VecRestoreArray(_v, &xp);
+    VecRestoreArray(*_v, &xp);
 
     //TEST
 #ifdef TEST_MEM_PETSC
@@ -167,13 +162,13 @@ PetscScalar* PETScVector::getLocalVector() const
     PetscScalar *loc_array;
     if (_has_ghost_id)
     {
-        VecGhostUpdateBegin(_v, INSERT_VALUES, SCATTER_FORWARD);
-        VecGhostUpdateEnd(_v, INSERT_VALUES, SCATTER_FORWARD);
-        VecGhostGetLocalForm(_v, &_v_loc);
+        VecGhostUpdateBegin(*_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostUpdateEnd(*_v, INSERT_VALUES, SCATTER_FORWARD);
+        VecGhostGetLocalForm(*_v, &_v_loc);
         VecGetArray(_v_loc, &loc_array);
     }
     else
-       VecGetArray(_v, &loc_array);
+       VecGetArray(*_v, &loc_array);
     return loc_array;
 }
 
@@ -182,10 +177,10 @@ void PETScVector::restoreArray(PetscScalar* array) const
     if (_has_ghost_id)
     {
         VecRestoreArray(_v_loc, &array);
-        VecGhostRestoreLocalForm(_v, &_v_loc);
+        VecGhostRestoreLocalForm(*_v, &_v_loc);
     }
     else
-        VecRestoreArray(_v, &array);
+        VecRestoreArray(*_v, &array);
 }
 
 PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const
@@ -207,7 +202,7 @@ PetscScalar PETScVector::getNorm(MathLib::VecNormType nmtype) const
     }
 
     PetscScalar norm = 0.;
-    VecNorm(_v, petsc_norm, &norm);
+    VecNorm(*_v, petsc_norm, &norm);
     return norm;
 }
 
@@ -217,16 +212,32 @@ void PETScVector::viewer(const std::string &file_name, const PetscViewerFormat v
     PetscViewerASCIIOpen(PETSC_COMM_WORLD, file_name.c_str(), &viewer);
     PetscViewerPushFormat(viewer, vw_format);
 
-    PetscObjectSetName((PetscObject)_v, file_name.c_str());
-    VecView(_v, viewer);
+    PetscObjectSetName((PetscObject)*_v, file_name.c_str());
+    VecView(*_v, viewer);
 
 #define  nEXIT_TEST
 #ifdef EXIT_TEST
-    VecDestroy(&_v);
+    VecDestroy(_v);
     PetscFinalize();
     exit(0);
 #endif
 
+}
+
+void PETScVector::shallowCopy(const PETScVector &v)
+{
+    destroy();
+
+    _v.reset(new PETSc_Vec);
+
+    VecDuplicate(*v._v, _v.get());
+
+    // TODO can't that be copied from v?
+    VecGetOwnershipRange(*_v, &_start_rank,&_end_rank);
+    VecGetLocalSize(*_v, &_size_loc);
+    VecGetSize(*_v, &_size);
+
+    VecSetOption(*_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
 
 void finalizeVectorAssembly(PETScVector &vec)

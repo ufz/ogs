@@ -33,8 +33,8 @@ public:
     void assemble(const double /*t*/, Vector const& /*x*/,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        MathLib::setMatrix(M, N, N, { 1.0, 0.0,  0.0, 1.0 });
-        MathLib::setMatrix(K, N, N, { 0.0, 1.0, -1.0, 0.0 });
+        MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
+        MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
 
         MathLib::setVector(b, { 0.0, 0.0 });
     }
@@ -55,7 +55,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -73,12 +73,14 @@ public:
     static void setIC(Vector& x0)
     {
         MathLib::setVector(x0, { 1.0, 0.0 });
+        MathLib::BLAS::finalizeAssembly(x0);
     }
 
     static Vector solution(const double t)
     {
         Vector v(2);
         MathLib::setVector(v, { cos(t), sin(t) });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 
@@ -104,8 +106,8 @@ public:
     void assemble(const double /*t*/, Vector const& x,
                   Matrix& M, Matrix& K, Vector& b) override
     {
-        MathLib::setMatrix(M, N, N, { 1.0 });
-        MathLib::setMatrix(K, N, N, { x[0] });
+        MathLib::setMatrix(M, { 1.0 });
+        MathLib::setMatrix(K, { x[0] });
         MathLib::setVector(b, { 0.0 });
     }
 
@@ -120,15 +122,18 @@ public:
         BLAS::copy(M, Jac);
         BLAS::scale(Jac, dxdot_dx);
 
-        MathLib::addToMatrix(Jac, N, N, { x[0] }); // add dK_dx
+        MathLib::addToMatrix(Jac, { x[0] }); // add dK_dx
 
         if (dx_dx != 0.0)
+        {
+            BLAS::finalizeAssembly(Jac);
             BLAS::axpy(Jac, dx_dx, K);
+        }
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -146,12 +151,14 @@ public:
     static void setIC(Vector& x0)
     {
         MathLib::setVector(x0, { 1.0 });
+        MathLib::BLAS::finalizeAssembly(x0);
     }
 
     static Vector solution(const double t)
     {
         Vector v(1);
         MathLib::setVector(v, { 1.0/t });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 
@@ -187,13 +194,13 @@ public:
         auto const z = x_curr[2];
 
         MathLib::
-        setMatrix(M, N, N, {       t*y, 1.0,     0.0,
-                                   0.0,  -t,     t*y,
-                             omega*x*t, 0.0, omega*x });
+        setMatrix(M, {       t*y, 1.0,     0.0,
+                             0.0,  -t,     t*y,
+                       omega*x*t, 0.0, omega*x });
         MathLib::
-        setMatrix(K, N, N, {             y,   1.0/t,                       -y,
-                             omega*omega/y,    -0.5,                      0.0,
-                              -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
+        setMatrix(K, {             y,   1.0/t,                       -y,
+                       omega*omega/y,    -0.5,                      0.0,
+                        -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
         MathLib::
         setVector(b, { 0.0,
                        0.5/t,
@@ -234,24 +241,24 @@ public:
 
             // add dM/dx \cdot \dot x
             MathLib::
-            addToMatrix(Jac, N, N, {                 0.0, t*dx, 0.0,
-                                                     0.0, t*dz, 0.0,
-                                     omega*t*dx+omega*dz,  0.0, 0.0 });
+            addToMatrix(Jac, {                 0.0, t*dx, 0.0,
+                                               0.0, t*dz, 0.0,
+                               omega*t*dx+omega*dz,  0.0, 0.0 });
 
             BLAS::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x
             MathLib::
-            addToMatrix(Jac, N, N, { 0.0, x-z, 0.0,
-                                     0.0, -omega*omega/y/y*x, 0.0,
-                                     0.0, y/omega-(1.0/omega/t+omega)*z*z, // -->
-                                     /* --> */  -0.5*omega*x - (1.0/omega/t+omega)*y*z });
+            addToMatrix(Jac, { 0.0, x-z, 0.0,
+                               0.0, -omega*omega/y/y*x, 0.0,
+                               0.0, y/omega-(1.0/omega/t+omega)*z*z, // -->
+                               /* --> */  -0.5*omega*x - (1.0/omega/t+omega)*y*z });
 
             // add -db/dx
             MathLib::
-            addToMatrix(Jac, N, N, {          0.0, 0.0,          0.0,
-                                              0.0, 0.0,          0.0,
-                                     -0.5*omega*z, 0.0, -0.5*omega*z });
+            addToMatrix(Jac, {          0.0, 0.0,          0.0,
+                                        0.0, 0.0,          0.0,
+                               -0.5*omega*z, 0.0, -0.5*omega*z });
         }
 
         // Eigen::MatrixXd J(Jac.getRawMatrix());
@@ -264,7 +271,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N };
+        return { N, N, nullptr, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -291,6 +298,7 @@ public:
         MathLib::setVector(x0, { sin(omega*t0)/omega/t0,
                                  1.0/t0,
                                  cos(omega*t0) });
+        MathLib::BLAS::finalizeAssembly(x0);
 
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
     }
@@ -303,6 +311,7 @@ public:
         MathLib::setVector(v, { sin(omega*t)/omega/t,
                                 1.0/t,
                                 cos(omega*t) });
+        MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
 

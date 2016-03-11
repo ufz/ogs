@@ -269,6 +269,7 @@ setInitialConditions(ProjectData& project,
 
         auto& x0 = *_process_solutions[pcs_idx];
         pcs.setInitialConditions(x0);
+        MathLib::BLAS::finalizeAssembly(x0);
 
         time_disc.setInitialState(t0, x0); // push IC
 

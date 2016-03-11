@@ -18,10 +18,13 @@ namespace MathLib
 {
 
 void setMatrix(Eigen::MatrixXd& m,
-               Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
                std::initializer_list<double> values)
 {
     using IndexType = Eigen::MatrixXd::Index;
+
+    auto const rows = m.rows();
+    auto const cols = m.cols();
+
     assert((IndexType) values.size() == rows*cols);
 
     auto it = values.begin();
@@ -38,10 +41,13 @@ void setMatrix(Eigen::MatrixXd& m, Eigen::MatrixXd const& tmp)
 }
 
 void addToMatrix(Eigen::MatrixXd& m,
-                 Eigen::MatrixXd::Index const rows, Eigen::MatrixXd::Index const cols,
                  std::initializer_list<double> values)
 {
     using IndexType = Eigen::MatrixXd::Index;
+
+    auto const rows = m.rows();
+    auto const cols = m.cols();
+
     assert((IndexType) values.size() == rows*cols);
 
     auto it = values.begin();
@@ -71,6 +77,7 @@ void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 
 namespace MathLib
 {
@@ -83,34 +90,68 @@ double norm(PETScVector const& x)
 void setVector(PETScVector& v,
                std::initializer_list<double> values)
 {
-    (void) v; (void) values;
-    // TODO implement
+    std::vector<double> const vals(values);
+    std::vector<PETScVector::IndexType> idcs(vals.size());
+    std::iota(idcs.begin(), idcs.end(), 0);
+
+    v.set(idcs, vals);
 }
 
-
 void setMatrix(PETScMatrix& m,
-               PETScMatrix::IndexType const rows,
-               PETScMatrix::IndexType const cols,
                std::initializer_list<double> values)
 {
-    (void) m; (void) rows; (void) cols; (void) values;
-    // TODO implement
+    m.setZero();
+    addToMatrix(m, values);
 }
 
 void setMatrix(PETScMatrix& m, Eigen::MatrixXd const& tmp)
 {
+    using IndexType = PETScMatrix::IndexType;
 
-    (void) m; (void) tmp;
-    // TODO implement
+    auto const rows = tmp.rows();
+    auto const cols = tmp.cols();
+
+    assert(rows == m.getNRows() && cols == m.getNCols());
+
+    m.setZero();
+    std::vector<IndexType> row_idcs(rows);
+    std::vector<IndexType> col_idcs(cols);
+
+    std::iota(row_idcs.begin(), row_idcs.end(), 0);
+    std::iota(col_idcs.begin(), col_idcs.end(), 0);
+
+    // PETSc wants row-major
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp_ = tmp;
+
+    m.add(row_idcs, col_idcs, tmp_);
 }
 
 void addToMatrix(PETScMatrix& m,
-                 PETScMatrix::IndexType const rows,
-                 PETScMatrix::IndexType const cols,
                  std::initializer_list<double> values)
 {
-    (void) m; (void) rows; (void) cols; (void) values;
-    // TODO implement
+    using IndexType = PETScMatrix::IndexType;
+
+    auto const rows = m.getNRows();
+    auto const cols = m.getNCols();
+
+    assert((IndexType) values.size() == rows*cols);
+
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
+
+    auto it = values.begin();
+    for (IndexType r=0; r<rows; ++r) {
+        for (IndexType c=0; c<cols; ++c) {
+            tmp(r, c) = *(it++);
+        }
+    }
+
+    std::vector<IndexType> row_idcs(rows);
+    std::vector<IndexType> col_idcs(cols);
+
+    std::iota(row_idcs.begin(), row_idcs.end(), 0);
+    std::iota(col_idcs.begin(), col_idcs.end(), 0);
+
+    m.add(row_idcs, col_idcs, tmp);
 }
 
 } // namespace MathLib
@@ -121,6 +162,7 @@ void addToMatrix(PETScMatrix& m,
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
 
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 
 namespace MathLib
 {
@@ -132,17 +174,17 @@ void setVector(EigenVector& v,
 }
 
 void setMatrix(EigenMatrix& m,
-               EigenMatrix::IndexType const rows,
-               EigenMatrix::IndexType const cols,
                std::initializer_list<double> values)
 {
-    using IndexType = EigenMatrix::IndexType;
-    assert((IndexType) values.size() == rows*cols);
+    auto const rows = m.getNRows();
+    auto const cols = m.getNCols();
+
+    assert(values.size() == rows*cols);
     Eigen::MatrixXd tmp(rows, cols);
 
     auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
+    for (std::size_t r=0; r<rows; ++r) {
+        for (std::size_t c=0; c<cols; ++c) {
             tmp(r, c) = *(it++);
         }
     }
@@ -156,17 +198,17 @@ void setMatrix(EigenMatrix& m, Eigen::MatrixXd const& tmp)
 }
 
 void addToMatrix(EigenMatrix& m,
-                 EigenMatrix::IndexType const rows,
-                 EigenMatrix::IndexType const cols,
                  std::initializer_list<double> values)
 {
-    using IndexType = EigenMatrix::IndexType;
-    assert((IndexType) values.size() == rows*cols);
+    auto const rows = m.getNRows();
+    auto const cols = m.getNCols();
+
+    assert(values.size() == rows*cols);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
 
     auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
+    for (std::size_t r=0; r<rows; ++r) {
+        for (std::size_t c=0; c<cols; ++c) {
             tmp(r, c) = *(it++);
         }
     }

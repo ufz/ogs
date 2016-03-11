@@ -84,7 +84,7 @@ class PETScLinearSolver
         KSP _solver; ///< Solver type.
         PC _pc;      ///< Preconditioner type.
 
-        double _elapsed_ctime; ///< Clock time
+        double _elapsed_ctime = 0.0; ///< Clock time
 };
 
 } // end namespace

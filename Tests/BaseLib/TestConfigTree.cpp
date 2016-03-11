@@ -14,6 +14,7 @@
 #include <sstream>
 
 #include "BaseLib/ConfigTree.h"
+#include "Tests/TestTools.h"
 
 // make useful line numbers appear in the output of gtest
 #define EXPECT_ERR_WARN(cbs, error, warning) do  { \
@@ -72,18 +73,6 @@ private:
     bool _error = false;
     bool _warning = false;
 };
-
-
-boost::property_tree::ptree
-readXml(const char xml[])
-{
-    boost::property_tree::ptree ptree;
-    std::istringstream xml_str(xml);
-    read_xml(xml_str, ptree,
-             boost::property_tree::xml_parser::no_comments |
-             boost::property_tree::xml_parser::trim_whitespace);
-    return ptree;
-}
 
 BaseLib::ConfigTree
 makeConfigTree(boost::property_tree::ptree const& ptree, Callbacks& cbs)
