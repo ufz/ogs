@@ -15,11 +15,11 @@ node('docker')
 
 				stage 'Unit tests'
 				sh '''cd build
-				      make tests'''
+				      UBSAN_OPTIONS=print_stacktrace=1 make tests'''
 
 				stage 'End-to-end tests'
 				sh '''cd build
-				      make ctest'''
+				      UBSAN_OPTIONS=print_stacktrace=1 make ctest'''
 			}
 		}
 		step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
