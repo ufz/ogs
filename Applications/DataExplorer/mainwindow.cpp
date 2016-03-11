@@ -281,8 +281,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 		_screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
 
 	// Setup import files menu
-	QMenu* import_files_menu = new QMenu(this); //owned by MainWindow
-	import_files_menu->addMenu(createImportFilesMenu());
+	QMenu* import_files_menu = createImportFilesMenu(); //owned by MainWindow
 	menu_File->insertMenu(action_Exit, import_files_menu);
 
 	// Setup recent files menu
@@ -329,7 +328,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
-	_visPrefsDialog.reset(new VisPrefsDialog(_vtkVisPipeline.get(), visualizationWidget));
+	_visPrefsDialog.reset(new VisPrefsDialog(*_vtkVisPipeline, *visualizationWidget));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -690,7 +689,7 @@ void MainWindow::about()
 QMenu* MainWindow::createImportFilesMenu()
 {
 	QSignalMapper* signal_mapper = new QSignalMapper(this); //owned by MainWindow
-	QMenu* importFiles = new QMenu("&Import Files");
+	QMenu* importFiles = new QMenu("&Import Files", this);
 	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
 	connect(feflowFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
 	signal_mapper->setMapping(feflowFiles, ImportFileType::FEFLOW);

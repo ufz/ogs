@@ -30,9 +30,9 @@ class VisPrefsDialog : public QDialog, private Ui_VisPrefsDialog
 	Q_OBJECT
 
 public:
-	VisPrefsDialog(VtkVisPipeline* pipeline,
-	               VisualizationWidget* widget,
-	               QDialog* parent = NULL);
+	VisPrefsDialog(VtkVisPipeline &pipeline,
+	               VisualizationWidget &widget,
+	               QDialog* parent = nullptr);
 
 protected slots:
 	/// @brief Sets the background colour.
@@ -54,8 +54,8 @@ protected slots:
 	void on_cullBackfacesCheckBox_stateChanged(int state);
 
 private:
-	VtkVisPipeline* _vtkVisPipeline;
-	VisualizationWidget* _visWidget;
+	VtkVisPipeline& _vtkVisPipeline;
+	VisualizationWidget& _visWidget;
 	GeoLib::Point _above;
 	GeoLib::Point _below;
 };
