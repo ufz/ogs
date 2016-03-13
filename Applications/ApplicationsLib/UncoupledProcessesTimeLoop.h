@@ -303,6 +303,8 @@ solveOneTimeStepOneProcess(
 
     setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
 
+    process.preTimestep(x);
+
     // INFO("time: %e, delta_t: %e", t, delta_t);
     time_disc.nextTimestep(t, delta_t);
 

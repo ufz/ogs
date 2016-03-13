@@ -72,6 +72,9 @@ public:
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
 
+	/// Preprocessing before starting assembly for new timestep.
+	virtual void preTimestep(GlobalVector const& x) {}
+
 	/// Postprocessing after a complete timestep.
 	virtual void postTimestep(GlobalVector const& x) {}
 
