@@ -45,6 +45,8 @@ SensorData::SensorData(std::size_t first_timestep, std::size_t last_timestep, st
 
 SensorData::~SensorData()
 {
+	for (std::vector<float>* vec : _data_vecs)
+		delete vec;
 }
 
 
