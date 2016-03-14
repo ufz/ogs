@@ -125,9 +125,6 @@ private:
     bool _output_residuals = false;
 
 
-    // primary variables
-    std::array<ProcessVariable*, NODAL_DOF> _process_vars; // ) = { nullptr, nullptr, nullptr };
-
     std::unique_ptr<GlobalVector> _x;           // current iteration
 
 

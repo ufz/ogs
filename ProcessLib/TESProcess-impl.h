@@ -88,7 +88,7 @@ TESProcess(MeshLib::Mesh& mesh,
         {
             auto variable = find_variable(proc_vars, vars[i], variables);
 
-            _process_vars[i] = const_cast<ProcessVariable*>(variable);
+            BP::_process_variables[i] = *const_cast<ProcessVariable*>(variable);
         }
     }
 
@@ -131,16 +131,16 @@ TESProcess(MeshLib::Mesh& mesh,
                     std::abort();
                 }
 
-                auto pred = [&out_var](ProcessVariable const* pv) {
-                    return pv->getName() == out_var;
+                auto pred = [&out_var](ProcessVariable const& pv) {
+                    return pv.getName() == out_var;
                 };
 
                 // check if process variable
                 auto const& pcs_var = std::find_if(
-                    _process_vars.cbegin(), _process_vars.cend(),
+                    BP::_process_variables.cbegin(), BP::_process_variables.cend(),
                     pred);
 
-                if (pcs_var == _process_vars.cend())
+                if (pcs_var == BP::_process_variables.cend())
                 {
                     auto pred2 = [&out_var](std::tuple<SecondaryVariables, std::string, unsigned> const& p) {
                         return std::get<1>(p) == out_var;
@@ -324,13 +324,13 @@ createLocalAssemblers()
 
         MeshGeoToolsLib::MeshNodeSearcher& process_var_mesh_node_searcher =
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-                _process_vars[i]->getMesh());
+                BP::_process_variables[i].get().getMesh());
 
 
         // TODO fix this in Process
 #if 0
         DBUG("Initialize boundary conditions.");
-        _process_vars[i]->initializeDirichletBCs(
+        BP::_process_variables[i]->initializeDirichletBCs(
                     process_var_mesh_node_searcher,
                     *_local_to_global_index_map, i,
                     _dirichlet_bc.global_ids, _dirichlet_bc.values);
@@ -342,11 +342,11 @@ createLocalAssemblers()
         {
             // Find mesh nodes.
             MeshGeoToolsLib::BoundaryElementsSearcher process_var_mesh_element_searcher(
-                _process_vars[i]->getMesh(), process_var_mesh_node_searcher);
+                BP::_process_variables[i]->getMesh(), process_var_mesh_node_searcher);
 
             // Create a neumann BC for the hydraulic head storing them in the
             // _neumann_bcs vector.
-            _process_vars[i]->createNeumannBcs(
+            BP::_process_variables[i]->createNeumannBcs(
                     std::back_inserter(_neumann_bcs),
                     process_var_mesh_element_searcher,
                     _global_setup,
@@ -603,7 +603,7 @@ postTimestep(const std::string& file_name, const unsigned /*timestep*/)
 
     auto add_primary_var = [this, &get_or_create_mesh_property](const unsigned vi)
     {
-        std::string const& property_name = _process_vars[vi]->getName();
+        std::string const& property_name = BP::_process_variables[vi].get().getName();
         if (_output_variables.find(property_name) == _output_variables.cend())
             return;
 
