@@ -72,13 +72,13 @@ protected:
 	virtual ~VtkCustomInteractorStyle();
 
 	/// @brief The vtk object to pick.
-	vtkDataObject* Data;
+	vtkDataObject* _data;
 
 	/// @brief The mapper for highlighting the selected cell.
-	vtkDataSetMapper* selectedMapper;
+	vtkDataSetMapper* _selectedMapper;
 
 	/// @brief The actor for highlighting the selected cell.
-	vtkActor* selectedActor;
+	vtkActor* _selectedActor;
 
 private:
 	bool _highlightActor;
