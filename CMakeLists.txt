@@ -23,6 +23,7 @@ list(APPEND CMAKE_PREFIX_PATH
 set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 	"Additional library installation path, e.g. /opt/local or C:/libs")
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
+option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 
 ### CMake includes ###
 include(scripts/cmake/CheckTypeSizes.cmake)
@@ -51,7 +52,6 @@ endif() # GCC AND GPROF_PATH
 option(OGS_DONT_USE_QT "Disables all Qt specific code." OFF)
 
 option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
-option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 if(OGS_BUILD_GUI)
 	add_definitions(-DOGS_BUILD_GUI)
