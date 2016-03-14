@@ -26,6 +26,12 @@ namespace TES
 template<typename Traits>
 class LADataNoTpl;
 
+struct ReactionRate
+{
+    const double reaction_rate;
+    const double solid_density;
+};
+
 template<typename Traits>
 class TESFEMReactionAdaptor
 {
@@ -34,7 +40,7 @@ public:
     checkBounds(std::vector<double> const& localX,
                 std::vector<double> const& localX_pts) = 0;
 
-    virtual void
+    virtual ReactionRate
     initReaction(const unsigned int_pt) = 0;
 
     virtual void
@@ -61,8 +67,8 @@ public:
     bool checkBounds(const std::vector<double> &localX, const std::vector<double> &localX_pts)
     override;
 
-    void initReaction(const unsigned int_pt) override {
-        initReaction_slowDownUndershootStrategy(int_pt);
+    ReactionRate initReaction(const unsigned int_pt) override {
+        return initReaction_slowDownUndershootStrategy(int_pt);
     }
 
     void preZerothTryAssemble() override;
@@ -73,7 +79,7 @@ public:
     }
 
 private:
-    void initReaction_slowDownUndershootStrategy(const unsigned int_pt);
+    ReactionRate initReaction_slowDownUndershootStrategy(const unsigned int_pt);
 
     /// returns estimated equilibrium vapour pressure
     /// based on a local (i.e. no diffusion/advection) balance
@@ -98,10 +104,11 @@ public:
         return true;
     }
 
-    void initReaction(const unsigned int_pt) override
+    ReactionRate initReaction(const unsigned int_pt) override
     {
-        _data._qR = 0.0;
-        _data._reaction_rate[int_pt] = 0.0;
+        return { 0.0, _data._solid_density_prev_ts[int_pt] };
+        // _data._qR = 0.0;
+        // _data._reaction_rate[int_pt] = 0.0;
     }
 
     void preZerothTryAssemble() override
@@ -123,7 +130,7 @@ public:
         return true;
     }
 
-    void initReaction(const unsigned) override;
+    ReactionRate initReaction(const unsigned) override;
 
     void preZerothTryAssemble() override
     {}
@@ -144,7 +151,7 @@ public:
         return true;
     }
 
-    void initReaction(const unsigned) override;
+    ReactionRate initReaction(const unsigned) override;
 
     void preZerothTryAssemble() override
     {}
