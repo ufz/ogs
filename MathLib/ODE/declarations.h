@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATHLIB_ODE_DECLARATIONS_H
+#define MATHLIB_ODE_DECLARATIONS_H
 
 #include <cassert>
 
@@ -48,3 +49,5 @@ public:
 	virtual ~FunctionHandles() = default;
 };
 }
+
+#endif  // MATHLIB_ODE_DECLARATIONS_H

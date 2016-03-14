@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATHLIB_ODE_ODESOLVERFACTORY_H
+#define MATHLIB_ODE_ODESOLVERFACTORY_H
 
 #include <memory>
 
@@ -211,3 +212,5 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
 }
 
 }  // namespace MathLib
+
+#endif  // MATHLIB_ODE_ODESOLVERFACTORY_H
