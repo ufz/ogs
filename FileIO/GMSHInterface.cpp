@@ -454,9 +454,10 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
     const std::size_t n_plys(merged_plys->size());
     for (std::size_t k(0); k<n_plys; k++) {
         if (! (*merged_plys)[k]->isClosed()) {
-            for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-                it != _polygon_tree_list.end(); ++it) {
-                (*it)->insertPolyline(new GeoLib::PolylineWithSegmentMarker(*(*merged_plys)[k]));
+            for (auto * polygon_tree : _polygon_tree_list) {
+                auto polyline_with_segment_marker =
+                    new GeoLib::PolylineWithSegmentMarker(*(*merged_plys)[k]);
+                polygon_tree->insertPolyline(polyline_with_segment_marker);
             }
         }
     }
