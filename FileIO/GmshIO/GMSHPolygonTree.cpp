@@ -110,6 +110,12 @@ void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
         if (ply->isSegmentMarked(k))
             continue;
 
+        if (_node_polygon->containsSegment(*(ply->getPoint(k)),
+                                           *(ply->getPoint(k + 1)))) {
+            ply->markSegment(k, true);
+            continue;
+        }
+
         std::size_t seg_num(0);
         GeoLib::Point *intersection_pnt(new GeoLib::Point);
         while (_node_polygon->getNextIntersectionPointPolygonLine(
