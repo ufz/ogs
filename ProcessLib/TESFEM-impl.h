@@ -9,14 +9,15 @@
 #ifndef PROCESS_LIB_TES_FEM_IMPL_H_
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
-#include "TESFEM.h"
 
+#include "MaterialsLib/adsorption/adsorption.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 
+#include "ProcessUtil.h"
+#include "TESFEM.h"
 #include "TESFEMReactionAdaptor.h"
-#include "MaterialsLib/adsorption/adsorption.h"
 
 namespace ProcessLib
 {
@@ -40,24 +41,11 @@ init(MeshLib::Element const& e,
      std::size_t const /*local_matrix_size*/,
      unsigned const integration_order, TESProcessInterface* process)
 {
-    using FemType = NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
-
-    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
-
     _integration_order = integration_order;
-    IntegrationMethod_ integration_method(_integration_order);
-    std::size_t const n_integration_points = integration_method.getNPoints();
 
-    // TODO: that could be dony by a general function, e.g. static method of Process
-    _shape_matrices.reserve(n_integration_points);
-    for (std::size_t ip = 0; ip < n_integration_points; ++ip)
-    {
-        _shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                     ShapeFunction::NPOINTS);
-        fe.computeShapeFunctions(
-                integration_method.getWeightedPoint(ip).getCoords(),
-                _shape_matrices[ip]);
-    }
+    _shape_matrices =
+        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
+            e, integration_order);
 
     constexpr unsigned MAT_SIZE = ShapeFunction::NPOINTS * NODAL_DOF;
 
