@@ -28,7 +28,7 @@ namespace TES
 template<typename Traits>
 std::unique_ptr<TESFEMReactionAdaptor<Traits> >
 TESFEMReactionAdaptor<Traits>::
-newInstance(LADataNoTpl<Traits>& data)
+newInstance(LADataNoTpl<Traits> const& data)
 {
     auto const* ads = data._AP->_reaction_system.get();
     if (dynamic_cast<Ads::Adsorption const*>(ads) != nullptr) {
@@ -57,7 +57,7 @@ newInstance(LADataNoTpl<Traits>& data)
 
 template<typename Traits>
 TESFEMReactionAdaptorAdsorption<Traits>::
-TESFEMReactionAdaptorAdsorption(LADataNoTpl<Traits> &data)
+TESFEMReactionAdaptorAdsorption(LADataNoTpl<Traits> const& data)
     // caution fragile: this relies in this constructor b eing called __after__
     // data._solid_density has been properly set up!
     : _bounds_violation(data._solid_density.size(), false)
@@ -157,11 +157,6 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
         }
     }
 
-    _data._reaction_rate[int_pt] = react_rate_R;
-    _data._solid_density[int_pt] = _data._solid_density_prev_ts[int_pt] + react_rate_R * AP->_delta_t;
-
-    _data._qR = _data._reaction_rate[int_pt];
-
     return { react_rate_R,
                 _data._solid_density_prev_ts[int_pt] + react_rate_R * AP->_delta_t };
 }
@@ -258,7 +253,7 @@ preZerothTryAssemble()
 
 template<typename Traits>
 TESFEMReactionAdaptorInert<Traits>::
-TESFEMReactionAdaptorInert(LADataNoTpl<Traits>& data)
+TESFEMReactionAdaptorInert(LADataNoTpl<Traits> const& data)
     : _data(data)
 {
 }
@@ -266,7 +261,7 @@ TESFEMReactionAdaptorInert(LADataNoTpl<Traits>& data)
 
 template<typename Traits>
 TESFEMReactionAdaptorSinusoidal<Traits>::
-TESFEMReactionAdaptorSinusoidal(LADataNoTpl<Traits> &data)
+TESFEMReactionAdaptorSinusoidal(LADataNoTpl<Traits> const& data)
     : _data(data)
 {
     assert(dynamic_cast<Ads::ReactionSinusoidal const*>(data._AP->_reaction_system.get()) != nullptr
@@ -287,17 +282,14 @@ initReaction(const unsigned int int_pt)
     const double omega  = 2.0 * 3.1416;
     const double poro   = _data._AP->_poro;
 
-    _data._solid_density[int_pt] = rhoSR0 + rhoTil * std::sin(omega*t) / (1.0 - poro);
-    _data._reaction_rate[int_pt] = rhoTil * omega * cos(omega*t) / (1.0 - poro);
-    _data._qR = _data._reaction_rate[int_pt];
-
-    return { _data._reaction_rate[int_pt], _data._solid_density[int_pt] };
+    return { rhoTil * omega * cos(omega*t) / (1.0 - poro),
+                rhoSR0 + rhoTil * std::sin(omega*t) / (1.0 - poro) };
 }
 
 
 template<typename Traits>
 TESFEMReactionAdaptorCaOH2<Traits>::
-TESFEMReactionAdaptorCaOH2(LADataNoTpl<Traits> &data)
+TESFEMReactionAdaptorCaOH2(LADataNoTpl<Traits> const& data)
     : _data(data)
     , _react(dynamic_cast<Ads::ReactionCaOH2&>(*data._AP->_reaction_system.get()))
 {
@@ -318,7 +310,6 @@ initReaction(const unsigned int int_pt)
     if (_data._AP->_iteration_in_current_timestep > 0
         || _data._AP->_number_of_try_of_iteration > 0)
     {
-        _data._qR = _data._reaction_rate[int_pt];
         return { _data._reaction_rate[int_pt], _data._solid_density[int_pt] };
     }
 
@@ -363,11 +354,8 @@ initReaction(const unsigned int int_pt)
 	else
 		rho_react = y_new;
 
-    _data._solid_density[int_pt] = (1.0-xv_NR) * rho_react + xv_NR * rho_NR;
-    _data._reaction_rate[int_pt] = y_dot_new * (1.0-xv_NR);
-    _data._qR = _data._reaction_rate[int_pt];
-
-    return { _data._reaction_rate[int_pt], _data._solid_density[int_pt] };
+    return { y_dot_new * (1.0-xv_NR),
+                (1.0-xv_NR) * rho_react + xv_NR * rho_NR };
 }
 
 

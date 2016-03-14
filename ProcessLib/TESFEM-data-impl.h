@@ -197,7 +197,10 @@ void
 LADataNoTpl<Traits>::
 initReaction(const unsigned int_pt)
 {
-    _reaction_adaptor->initReaction(int_pt);
+    auto const& rate = _reaction_adaptor->initReaction(int_pt);
+    _qR = rate.reaction_rate;
+    _reaction_rate[int_pt] = rate.reaction_rate;
+    _solid_density[int_pt] = rate.solid_density;
 }
 
 
