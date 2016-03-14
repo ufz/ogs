@@ -128,10 +128,7 @@ private:
     // primary variables
     std::array<ProcessVariable*, NODAL_DOF> _process_vars; // ) = { nullptr, nullptr, nullptr };
 
-    std::unique_ptr<GlobalMatrix> _A;
-    std::unique_ptr<GlobalVector> _rhs;
     std::unique_ptr<GlobalVector> _x;           // current iteration
-    std::unique_ptr<GlobalVector> _x_prev_ts;   // previous timestep
 
 
     // secondary variables

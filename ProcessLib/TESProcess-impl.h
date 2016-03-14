@@ -465,10 +465,13 @@ assembleConcreteProcess(
             // TODO fix after PETSc
             // MathLib::BLAS::finalizeAssembly(*_A); //  MathLib::finalizeMatrixAssembly(*_A);
 
+            // TODO fix
+#if 0
             // TODO [CL] Those files will be written to the working directory.
             //           Relative path needed.
             _A->write("global_matrix.txt");
             _rhs->write("global_rhs.txt");
+#endif
         }
 #endif
 
