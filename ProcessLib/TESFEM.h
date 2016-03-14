@@ -110,8 +110,9 @@ private:
                   "local matrix and data traits matrix do not coincide");
     static_assert(std::is_same<NodalVectorType, typename DT::LocalVector>::value,
                   "local vector and data traits vector do not coincide");
-    NodalMatrixType _localA;
-    NodalVectorType _localRhs;
+    NodalMatrixType _local_M;
+    NodalMatrixType _local_K;
+    NodalVectorType _local_b;
 
     unsigned _integration_order = 2;
 

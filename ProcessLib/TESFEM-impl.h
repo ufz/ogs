@@ -62,8 +62,9 @@ init(MeshLib::Element const& e,
     constexpr unsigned MAT_SIZE = ShapeFunction::NPOINTS * NODAL_DOF;
 
     // Resize will only do something for dynamically allocated matrices.
-    _localA.resize(MAT_SIZE, MAT_SIZE);
-    _localRhs.resize(MAT_SIZE);
+    _local_M.resize(MAT_SIZE, MAT_SIZE);
+    _local_K.resize(MAT_SIZE, MAT_SIZE);
+    _local_b.resize(MAT_SIZE);
 
     _data._AP = & process->getAssemblyParams();
 
@@ -88,8 +89,9 @@ assemble(const double t, std::vector<double> const& local_x)
 {
     const std::vector<double> localXPrevTs; // TODO fix
 
-    _localA.setZero();
-    _localRhs.setZero();
+    _local_M.setZero();
+    _local_K.setZero();
+    _local_b.setZero();
 
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNPoints();
@@ -102,12 +104,12 @@ assemble(const double t, std::vector<double> const& local_x)
         auto const& wp = integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _data.assembleIntegrationPoint(ip, &_localA, &_localRhs, local_x,
+        _data.assembleIntegrationPoint(ip, &_local_K, &_local_b, local_x,
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight);
     }
 
     const Eigen::Map<const typename DT::LocalVector> oldX(localXPrevTs.data(), localXPrevTs.size());
-    _data.postEachAssemble(_localA, _localRhs, oldX);
+    _data.postEachAssemble(_local_K, _local_b, oldX);
 }
 
 
@@ -126,9 +128,9 @@ addToGlobal(
         AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
 {
-    // TODO M
-    K.add(indices, _localA);
-    b.add(indices.rows, _localRhs);
+    M.add(indices, _local_M);
+    K.add(indices, _local_K);
+    b.add(indices.rows, _local_b);
 }
 
 
