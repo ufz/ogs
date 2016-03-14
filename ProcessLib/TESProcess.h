@@ -105,9 +105,6 @@ private:
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
-    void setInitialConditions(ProcessVariable const& variable,
-                              std::size_t const component_id);
-
     using LocalAssembler = TES::LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
     NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;

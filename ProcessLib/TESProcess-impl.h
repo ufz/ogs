@@ -381,29 +381,6 @@ init()
 
 template<typename GlobalSetup>
 void TESProcess<GlobalSetup>::
-setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
-{
-    (void) variable; (void) component_id;
-
-    // TODO fix, move to process.
-#if 0
-    std::size_t const n = BP::_mesh.getNNodes();
-    for (std::size_t i = 0; i < n; ++i)
-    {
-        MeshLib::Location const l(BP::_mesh.getID(),
-                                  MeshLib::MeshItemType::Node, i);
-        std::size_t const global_index =
-            _local_to_global_index_map->getGlobalIndex(
-                l, component_id);
-
-        _x->set(global_index,
-               variable.getInitialConditionValue(*BP::_mesh.getNode(i)));
-    }
-#endif
-}
-
-template<typename GlobalSetup>
-void TESProcess<GlobalSetup>::
 assembleConcreteProcess(
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
