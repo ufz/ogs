@@ -112,13 +112,10 @@ private:
     void setInitialConditions(ProcessVariable const& variable,
                               std::size_t const component_id);
 
-    void singlePicardIteration(GlobalVector& x_prev_iter, GlobalVector& x_curr);
-
     using LocalAssembler = TES::LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
     NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
-    MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     GlobalSetup _global_setup;
     std::vector<LocalAssembler*> _local_assemblers;
     std::unique_ptr<GlobalAssembler> _global_assembler;

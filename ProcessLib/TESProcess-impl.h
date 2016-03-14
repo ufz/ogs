@@ -355,7 +355,7 @@ init()
 
     // for extrapolation of secondary variables
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+    all_mesh_subsets_single_component.emplace_back(new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
     _local_to_global_index_map_single_component.reset(
                 new AssemblerLib::LocalToGlobalIndexMap(std::move(all_mesh_subsets_single_component), _global_matrix_order)
                 );
@@ -406,34 +406,199 @@ assembleConcreteProcess(
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     const double current_time = 0.0;
-    DBUG("Solve TESProcess.");
-
-#if 0
-    auto tmp = *_x;
-    if (false && _timestep != 0)
-    {
-        // this probably cannot be applied with the current reaction scheme!
-        // the reaction rate is extrapolated from the solution of the last timestep
-        // so this solution should not be extrapolated itself here.
-        // the proper treatment would be to use previos timestep values in the local assembler.
-
-        // this is at the beginning of a new timestep t+dt.
-        // _x         contains the solution of timstep t
-        // _x_prev_ts contains the solution of timstep t-dt
-        // get first estimate of _x at timestep t+dt by extrapolation using the last two timesteps.
-        *_x *= 1.0 + delta_t / _assembly_params._delta_t; // _assembly_params._delta_t is the old timestep
-        *_x_prev_ts *= delta_t / _assembly_params._delta_t;
-        *_x -= *_x_prev_ts;
-    }
-    *_x_prev_ts = tmp;
-#else
-    *_x_prev_ts = *_x;
-#endif
+    DBUG("Assemble TESProcess.");
 
     // _assembly_params._delta_t = delta_t; // TODO fix
     _assembly_params._iteration_in_current_timestep = 0;
     _assembly_params._current_time = current_time;
     ++ _timestep;
+
+
+
+    // TODO fix
+    auto& x_curr = *_x;
+    auto& x_prev_iter = *_x_prev_ts;
+
+    bool iteration_accepted = false;
+    unsigned num_try = 0;
+
+    do
+    {
+        INFO("-> TES process try number %u in current picard iteration", num_try);
+        _assembly_params._number_of_try_of_iteration = num_try;
+
+        // TODO fix
+        // _global_assembler->setX(&x_curr, _x_prev_ts.get());
+
+        _A->setZero();
+        *_rhs = 0;   // This resets the whole vector.
+
+        // TODO fix
+#if 0
+        // Call global assembler for each local assembly item.
+        _global_setup.execute(*_global_assembler, _local_assemblers);
+
+        // Call global assembler for each Neumann boundary local assembler.
+        for (auto bc : _neumann_bcs)
+            bc->integrate(_global_setup, &x_curr, _x_prev_ts.get());
+#endif
+
+        // Apply known values from the Dirichlet boundary conditions.
+
+        INFO("size of known values: %li", _dirichlet_bc.global_ids.size());
+
+        MathLib::applyKnownSolution(*_A, *_rhs, x_curr, _dirichlet_bc.global_ids, _dirichlet_bc.values);
+
+#if !defined(USE_LIS)
+        // double residual = MathLib::norm((*_A) * x_curr - (*_rhs), MathLib::VecNormType::INFINITY_N);
+        GlobalVector res_vec;
+        _A->multiply(x_curr, res_vec);
+        res_vec -= *_rhs;
+
+        double residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
+        DBUG("residual of old solution with new matrix: %g", residual);
+#endif
+
+#if defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
+        MathLib::scaleDiagonal(*_A, *_rhs);
+#endif
+
+#ifndef USE_LIS
+        // _A->getRawMatrix().rowwise() /= diag; //  = invDiag * _A->getRawMatrix();
+        // .cwiseQuotient(diag); //  = invDiag * _rhs->getRawVector();
+
+        _A->multiply(x_curr, res_vec);
+        res_vec -= *_rhs;
+        residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
+        DBUG("residual of new solution with new matrix: %g", residual);
+#endif
+
+#if defined(OGS_USE_EIGENLIS)
+        // scaling
+        typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
+
+        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+        {
+            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
+                              : (dof == 1) ? _assembly_params.trafo_T
+                                           : _assembly_params.trafo_x;
+
+            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
+            {
+                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
+                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
+
+                AT.row(idx) *= trafo.dxdy(0);
+                x_curr[idx] /= trafo.dxdy(0);
+            }
+        }
+
+        _A->getRawMatrix() = AT.transpose();
+#endif
+
+#ifndef NDEBUG
+        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
+        {
+#if defined(USE_LIS) && !defined(OGS_USE_EIGENLIS)
+        MathLib::finalizeMatrixAssembly(*_A);
+#endif
+            // TODO [CL] Those files will be written to the working directory.
+            //           Relative path needed.
+            _A->write("global_matrix.txt");
+            _rhs->write("global_rhs.txt");
+        }
+#endif
+
+        // TODO fix
+        // _linear_solver->solve(*_rhs, x_curr);
+
+#ifndef NDEBUG
+        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
+        {
+            // TODO [CL] Those files will be written to the working directory.
+            //           Relative path needed.
+            _A->write("global_matrix_post.txt");
+            _rhs->write("global_rhs_post.txt");
+        }
+#endif
+
+#if defined(OGS_USE_EIGENLIS)
+        // scale back
+        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+        {
+            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
+                              : (dof == 1) ? _assembly_params.trafo_T
+                                           : _assembly_params.trafo_x;
+
+            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
+            {
+                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
+                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
+
+                // TODO: _A
+                x_curr[idx] *= trafo.dxdy(0);
+            }
+        }
+#endif
+
+        if (_output_iteration_results)
+        {
+            DBUG("output results of iteration %li", _total_iteration);
+            std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
+                             + "_ts_" + std::to_string(_timestep)
+                             + "_" +    std::to_string(_assembly_params._iteration_in_current_timestep)
+                             + "_" +    std::to_string(num_try)
+                             + ".vtu";
+
+            postTimestep(fn, 0);
+        }
+
+        bool check_passed = true;
+
+        if (!Trafo::constrained)
+        {
+            // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
+
+            auto& ga = *_global_assembler;
+
+            auto check_variable_bounds
+            = [&ga, &check_passed](
+              std::size_t id, LocalAssembler* const loc_asm)
+            {
+                // DBUG("%lu", id);
+
+                std::vector<double> const* localX;
+                std::vector<double> const* localX_pts;
+
+                // TODO fix
+                // ga.getLocalNodalValues(id, localX, localX_pts);
+
+                // if (!loc_asm->checkBounds(*localX, *localX_pts)) check_passed = false;
+            };
+
+            _global_setup.execute(check_variable_bounds, _local_assemblers);
+
+            if (!check_passed)
+            {
+                x_curr = x_prev_iter;
+            }
+        }
+
+        iteration_accepted = check_passed;
+
+        ++num_try;
+    }
+    while(! iteration_accepted);
+
+    DBUG("ts %lu iteration %lu (%lu) try %u accepted", _timestep, _total_iteration,
+         _assembly_params._iteration_in_current_timestep, num_try-1);
+
+    ++ _assembly_params._iteration_in_current_timestep;
+    ++_total_iteration;
+
+
+
+
 }
 
 
@@ -613,196 +778,7 @@ TESProcess<GlobalSetup>::
 
     for (auto p : _local_assemblers)
         delete p;
-
-    delete _mesh_subset_all_nodes;
 }
-
-
-
-template<typename GlobalSetup>
-void
-TESProcess<GlobalSetup>::
-singlePicardIteration(GlobalVector& x_prev_iter,
-                      GlobalVector& x_curr)
-{
-    bool iteration_accepted = false;
-    unsigned num_try = 0;
-
-    do
-    {
-        INFO("-> TES process try number %u in current picard iteration", num_try);
-        _assembly_params._number_of_try_of_iteration = num_try;
-
-        // TODO fix
-        // _global_assembler->setX(&x_curr, _x_prev_ts.get());
-
-        _A->setZero();
-        *_rhs = 0;   // This resets the whole vector.
-
-        // TODO fix
-#if 0
-        // Call global assembler for each local assembly item.
-        _global_setup.execute(*_global_assembler, _local_assemblers);
-
-        // Call global assembler for each Neumann boundary local assembler.
-        for (auto bc : _neumann_bcs)
-            bc->integrate(_global_setup, &x_curr, _x_prev_ts.get());
-#endif
-
-        // Apply known values from the Dirichlet boundary conditions.
-
-        INFO("size of known values: %li", _dirichlet_bc.global_ids.size());
-
-        MathLib::applyKnownSolution(*_A, *_rhs, x_curr, _dirichlet_bc.global_ids, _dirichlet_bc.values);
-
-#if !defined(USE_LIS)
-        // double residual = MathLib::norm((*_A) * x_curr - (*_rhs), MathLib::VecNormType::INFINITY_N);
-        GlobalVector res_vec;
-        _A->multiply(x_curr, res_vec);
-        res_vec -= *_rhs;
-
-        double residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
-        DBUG("residual of old solution with new matrix: %g", residual);
-#endif
-
-#if defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
-        MathLib::scaleDiagonal(*_A, *_rhs);
-#endif
-
-#ifndef USE_LIS
-        // _A->getRawMatrix().rowwise() /= diag; //  = invDiag * _A->getRawMatrix();
-        // .cwiseQuotient(diag); //  = invDiag * _rhs->getRawVector();
-
-        _A->multiply(x_curr, res_vec);
-        res_vec -= *_rhs;
-        residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
-        DBUG("residual of new solution with new matrix: %g", residual);
-#endif
-
-#if defined(OGS_USE_EIGENLIS)
-        // scaling
-        typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
-
-        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
-        {
-            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                              : (dof == 1) ? _assembly_params.trafo_T
-                                           : _assembly_params.trafo_x;
-
-            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-            {
-                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-                AT.row(idx) *= trafo.dxdy(0);
-                x_curr[idx] /= trafo.dxdy(0);
-            }
-        }
-
-        _A->getRawMatrix() = AT.transpose();
-#endif
-
-#ifndef NDEBUG
-        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
-        {
-#if defined(USE_LIS) && !defined(OGS_USE_EIGENLIS)
-        MathLib::finalizeMatrixAssembly(*_A);
-#endif
-            // TODO [CL] Those files will be written to the working directory.
-            //           Relative path needed.
-            _A->write("global_matrix.txt");
-            _rhs->write("global_rhs.txt");
-        }
-#endif
-
-        // TODO fix
-        // _linear_solver->solve(*_rhs, x_curr);
-
-#ifndef NDEBUG
-        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
-        {
-            // TODO [CL] Those files will be written to the working directory.
-            //           Relative path needed.
-            _A->write("global_matrix_post.txt");
-            _rhs->write("global_rhs_post.txt");
-        }
-#endif
-
-#if defined(OGS_USE_EIGENLIS)
-        // scale back
-        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
-        {
-            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                              : (dof == 1) ? _assembly_params.trafo_T
-                                           : _assembly_params.trafo_x;
-
-            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-            {
-                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-                // TODO: _A
-                x_curr[idx] *= trafo.dxdy(0);
-            }
-        }
-#endif
-
-        if (_output_iteration_results)
-        {
-            DBUG("output results of iteration %li", _total_iteration);
-            std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
-                             + "_ts_" + std::to_string(_timestep)
-                             + "_" +    std::to_string(_assembly_params._iteration_in_current_timestep)
-                             + "_" +    std::to_string(num_try)
-                             + ".vtu";
-
-            postTimestep(fn, 0);
-        }
-
-        bool check_passed = true;
-
-        if (!Trafo::constrained)
-        {
-            // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
-
-            auto& ga = *_global_assembler;
-
-            auto check_variable_bounds
-            = [&ga, &check_passed](
-              std::size_t id, LocalAssembler* const loc_asm)
-            {
-                // DBUG("%lu", id);
-
-                std::vector<double> const* localX;
-                std::vector<double> const* localX_pts;
-
-                // TODO fix
-                // ga.getLocalNodalValues(id, localX, localX_pts);
-
-                // if (!loc_asm->checkBounds(*localX, *localX_pts)) check_passed = false;
-            };
-
-            _global_setup.execute(check_variable_bounds, _local_assemblers);
-
-            if (!check_passed)
-            {
-                x_curr = x_prev_iter;
-            }
-        }
-
-        iteration_accepted = check_passed;
-
-        ++num_try;
-    }
-    while(! iteration_accepted);
-
-    DBUG("ts %lu iteration %lu (%lu) try %u accepted", _timestep, _total_iteration,
-         _assembly_params._iteration_in_current_timestep, num_try-1);
-
-    ++ _assembly_params._iteration_in_current_timestep;
-    ++_total_iteration;
-}
-
 
 } // namespace TES
 
