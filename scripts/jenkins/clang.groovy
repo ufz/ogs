@@ -27,9 +27,9 @@ node('docker')
 	}
 
 	step([$class: 'JUnitResultArchiver',
-		testResults: 'build/tests/testrunner.xml,build_win/tests/testrunner.xml'])
+		testResults: 'build/Tests/testrunner.xml'])
 
-	archive 'build*/*.tar.gz,build_win*/*.zip'
+	archive 'build*/*.tar.gz'
 } // end node
 
 
