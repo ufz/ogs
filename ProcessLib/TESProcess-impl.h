@@ -327,7 +327,7 @@ createLocalAssemblers()
                 _process_vars[i]->getMesh());
 
 
-        // TODO fix
+        // TODO fix this in Process
 #if 0
         DBUG("Initialize boundary conditions.");
         _process_vars[i]->initializeDirichletBCs(
@@ -415,10 +415,7 @@ assembleConcreteProcess(
     ++ _timestep;
 
 
-
-    // TODO fix
-    auto& x_curr = *_x;
-    auto& x_prev_iter = *_x_prev_ts;
+    // from singlePicardIteration()
 
     bool iteration_accepted = false;
     unsigned num_try = 0;
@@ -428,41 +425,18 @@ assembleConcreteProcess(
         INFO("-> TES process try number %u in current picard iteration", num_try);
         _assembly_params._number_of_try_of_iteration = num_try;
 
-        // TODO fix
-        // _global_assembler->setX(&x_curr, _x_prev_ts.get());
-
-        _A->setZero();
-        *_rhs = 0;   // This resets the whole vector.
-
         // Call global assembler for each local assembly item.
         _global_setup.execute(*BP::_global_assembler, _local_assemblers,
                               t, x, M, K, b);
 
-#if !defined(USE_LIS)
-        // double residual = MathLib::norm((*_A) * x_curr - (*_rhs), MathLib::VecNormType::INFINITY_N);
-        GlobalVector res_vec;
-        _A->multiply(x_curr, res_vec);
-        res_vec -= *_rhs;
-
-        double residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
-        DBUG("residual of old solution with new matrix: %g", residual);
-#endif
-
-#if defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
+#if 0 && defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
+        // TODO put that somewhere
         MathLib::scaleDiagonal(*_A, *_rhs);
 #endif
 
-#ifndef USE_LIS
-        // _A->getRawMatrix().rowwise() /= diag; //  = invDiag * _A->getRawMatrix();
-        // .cwiseQuotient(diag); //  = invDiag * _rhs->getRawVector();
+#if 0 && defined(OGS_USE_EIGENLIS)
+        // TODO put that somewhere
 
-        _A->multiply(x_curr, res_vec);
-        res_vec -= *_rhs;
-        residual = MathLib::norm(res_vec, MathLib::VecNormType::INFINITY_N);
-        DBUG("residual of new solution with new matrix: %g", residual);
-#endif
-
-#if defined(OGS_USE_EIGENLIS)
         // scaling
         typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
 
@@ -488,9 +462,9 @@ assembleConcreteProcess(
 #ifndef NDEBUG
         if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
         {
-#if defined(USE_LIS) && !defined(OGS_USE_EIGENLIS)
-        MathLib::finalizeMatrixAssembly(*_A);
-#endif
+            // TODO fix after PETSc
+            // MathLib::BLAS::finalizeAssembly(*_A); //  MathLib::finalizeMatrixAssembly(*_A);
+
             // TODO [CL] Those files will be written to the working directory.
             //           Relative path needed.
             _A->write("global_matrix.txt");
@@ -498,20 +472,9 @@ assembleConcreteProcess(
         }
 #endif
 
-        // TODO fix
-        // _linear_solver->solve(*_rhs, x_curr);
+#if 0 && defined(OGS_USE_EIGENLIS)
+        // TODO put that somewhere
 
-#ifndef NDEBUG
-        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
-        {
-            // TODO [CL] Those files will be written to the working directory.
-            //           Relative path needed.
-            _A->write("global_matrix_post.txt");
-            _rhs->write("global_rhs_post.txt");
-        }
-#endif
-
-#if defined(OGS_USE_EIGENLIS)
         // scale back
         for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
         {
@@ -544,6 +507,7 @@ assembleConcreteProcess(
 
         bool check_passed = true;
 
+        // TODO put to post timestep.
         if (!Trafo::constrained)
         {
             // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
@@ -569,7 +533,8 @@ assembleConcreteProcess(
 
             if (!check_passed)
             {
-                x_curr = x_prev_iter;
+                // TODO fix
+                // x_curr = x_prev_iter;
             }
         }
 
@@ -584,10 +549,6 @@ assembleConcreteProcess(
 
     ++ _assembly_params._iteration_in_current_timestep;
     ++_total_iteration;
-
-
-
-
 }
 
 
