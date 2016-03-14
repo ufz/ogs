@@ -90,9 +90,9 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necesserily the mesh item's id.
-    template <typename LocalAssembler_>
+    template <typename LocalAssembler>
     void operator()(std::size_t const id,
-        LocalAssembler_* const local_assembler,
+        LocalAssembler* const local_assembler,
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
@@ -114,9 +114,9 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necesserily the mesh item's id.
-    template <typename LocalAssembler_>
+    template <typename LocalAssembler>
     void preTimestep(std::size_t const id,
-                     LocalAssembler_* const local_assembler,
+                     LocalAssembler* const local_assembler,
                      GlobalVector const& x) const
     {
         auto cb = [local_assembler](
@@ -134,9 +134,9 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necesserily the mesh item's id.
-    template <typename LocalAssembler_>
+    template <typename LocalAssembler>
     void postTimestep(std::size_t const id,
-                      LocalAssembler_* const local_assembler,
+                      LocalAssembler* const local_assembler,
                       GlobalVector const& x) const
     {
         auto cb = [local_assembler](
@@ -170,9 +170,9 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necesserily the mesh item's id.
-    template <typename LocalAssembler_>
+    template <typename LocalAssembler>
     void operator()(std::size_t const id,
-        LocalAssembler_* const local_assembler,
+        LocalAssembler* const local_assembler,
         const double t, GlobalVector& b) const
     {
         std::vector<GlobalIndexType> indices;
