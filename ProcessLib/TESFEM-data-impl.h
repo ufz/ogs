@@ -754,8 +754,6 @@ template<typename Traits>
 void
 LADataNoTpl<Traits>::
 assembleIntegrationPoint(unsigned integration_point,
-                         typename Traits::LocalMatrix const* /*localA*/,
-                         typename Traits::LocalVector const* /*localRhs*/,
                          std::vector<double> const& localX,
                          const typename Traits::ShapeMatrices::ShapeType& smN,
                          const typename Traits::ShapeMatrices::DxShapeType& smDNdx,

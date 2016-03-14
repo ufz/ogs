@@ -85,7 +85,7 @@ LocalAssemblerData<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-assemble(const double t, std::vector<double> const& local_x)
+assemble(const double /*t*/, std::vector<double> const& local_x)
 {
     const std::vector<double> localXPrevTs; // TODO fix
 
@@ -104,7 +104,7 @@ assemble(const double t, std::vector<double> const& local_x)
         auto const& wp = integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _data.assembleIntegrationPoint(ip, &_local_K, &_local_b, local_x,
+        _data.assembleIntegrationPoint(ip, local_x,
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight);
     }
 

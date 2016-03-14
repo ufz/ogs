@@ -247,8 +247,6 @@ class LADataNoTpl
 public:
     void assembleIntegrationPoint(
             unsigned integration_point,
-            typename Traits::LocalMatrix const* localA,
-            typename Traits::LocalVector const* localRhs,
             std::vector<double> const& localX,
             typename Traits::ShapeMatrices::ShapeType const& smN,
             typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
