@@ -111,10 +111,13 @@ private:
                   "local matrix and data traits matrix do not coincide");
     static_assert(std::is_same<NodalVectorType, typename LAT::LocalVector>::value,
                   "local vector and data traits vector do not coincide");
+
+    // TODO Change VectorMatrixAssembler s.t. these can be omitted.
     NodalMatrixType _local_M;
     NodalMatrixType _local_K;
     NodalVectorType _local_b;
 
+    // TODO try to make const
     unsigned _integration_order = 2;
 
     std::unique_ptr<std::vector<double> > _integration_point_values_cache;
