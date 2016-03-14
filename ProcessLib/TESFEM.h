@@ -99,16 +99,17 @@ public:
 private:
     std::vector<ShapeMatrices> _shape_matrices;
 
-    using DT = DataTraits<ShapeMatricesType, ShapeFunction::NPOINTS, NODAL_DOF, GlobalDim>;
+    using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
+        NODAL_DOF, GlobalDim>;
 
-    LADataNoTpl<DT> _data;
+    LADataNoTpl<LAT> _data;
 
-    using NodalMatrixType = typename DT::LocalMatrix;
-    using NodalVectorType = typename DT::LocalVector;
+    using NodalMatrixType = typename LAT::LocalMatrix;
+    using NodalVectorType = typename LAT::LocalVector;
 
-    static_assert(std::is_same<NodalMatrixType, typename DT::LocalMatrix>::value,
+    static_assert(std::is_same<NodalMatrixType, typename LAT::LocalMatrix>::value,
                   "local matrix and data traits matrix do not coincide");
-    static_assert(std::is_same<NodalVectorType, typename DT::LocalVector>::value,
+    static_assert(std::is_same<NodalVectorType, typename LAT::LocalVector>::value,
                   "local vector and data traits vector do not coincide");
     NodalMatrixType _local_M;
     NodalMatrixType _local_K;
