@@ -67,10 +67,12 @@ namespace TES
 template<typename GlobalSetup>
 TESProcess<GlobalSetup>::
 TESProcess(MeshLib::Mesh& mesh,
+           typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
+           std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
            std::vector<ProcessVariable> const& variables,
            std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
-           const BaseLib::ConfigTreeNew& config)
-    : Process<GlobalSetup>(mesh)
+           const BaseLib::ConfigTree& config)
+    : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization))
 {
     DBUG("Create TESProcess.");
 
@@ -96,6 +98,7 @@ TESProcess(MeshLib::Mesh& mesh,
         auto add_secondary_variable =
                 [this, &proc_vars](
                 std::string const& var, SecondaryVariables type, unsigned num_components)
+                -> void
         {
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
@@ -220,14 +223,6 @@ TESProcess(MeshLib::Mesh& mesh,
     _assembly_params._reaction_system = std::move(
         Ads::Adsorption::newInstance(config.getConfSubtree("reactive_system")));
 
-    // linear solver
-    if (auto opt = config.getConfSubtreeOptional("linear_solver"))
-        BP::setLinearSolverOptions(std::move(*opt));
-
-    // nonlinear solver
-    _picard = std::move(MathLib::Nonlinear::createNonlinearSolver(
-                            config.getConfSubtree("nonlinear_solver")));
-
     // matrix order
     {
         auto const order = config.getConfParam<std::string>("global_matrix_order");
@@ -293,10 +288,10 @@ createLocalAssemblers()
             LocalDataInitializer>;
 
     LocalAssemblerBuilder local_asm_builder(
-        initializer, *_local_to_global_index_map);
+        initializer, *BP::_local_to_global_index_map);
 
     DBUG("Calling local assembler builder for all mesh elements.");
-    _global_setup.execute(
+    _global_setup.transform(
                 local_asm_builder,
                 BP::_mesh.getElements(),
                 _local_assemblers,
@@ -305,7 +300,7 @@ createLocalAssemblers()
 
     DBUG("Create global assembler.");
     _global_assembler.reset(
-        new GlobalAssembler(*_A, *_rhs, *_local_to_global_index_map));
+        new GlobalAssembler(*BP::_local_to_global_index_map));
 
     for (unsigned i=0; i<NODAL_DOF; ++i)
     {
@@ -316,7 +311,8 @@ createLocalAssemblers()
                 _process_vars[i]->getMesh());
 
 
-        // TODO extend
+        // TODO fix
+#if 0
         DBUG("Initialize boundary conditions.");
         _process_vars[i]->initializeDirichletBCs(
                     process_var_mesh_node_searcher,
@@ -343,10 +339,11 @@ createLocalAssemblers()
                     i,
                     *_mesh_subset_all_nodes);
         }
+#endif
     }
 
     for (auto bc : _neumann_bcs)
-        bc->initialize(_global_setup, *_A, *_rhs, BP::_mesh.getDimension());
+        bc->initialize(_global_setup, BP::_mesh.getDimension());
 }
 
 template<typename GlobalSetup>
@@ -356,38 +353,13 @@ init()
 {
     DBUG("Initialize TESProcess.");
 
-    DBUG("Construct dof mappings.");
-    // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes = new MeshLib::MeshSubset(BP::_mesh, &BP::_mesh.getNodes());
-
-    // Collect the mesh subsets in a vector.
-    for (unsigned i=0; i<NODAL_DOF; ++i)
-    {
-        _all_mesh_subsets.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
-    }
-
-    _local_to_global_index_map.reset(
-        new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets, _global_matrix_order));
-
-    DBUG("Compute sparsity pattern");
-    _sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
-                *_local_to_global_index_map, BP::_mesh));
-
-    DBUG("Allocate global matrix, vectors, and linear solver.");
-    _A.reset(_global_setup.createMatrix(_local_to_global_index_map->dofSize()));
-    _x.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-    _rhs.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-
-    _x_prev_ts.reset(_global_setup.createVector(_local_to_global_index_map->dofSize()));
-
     // for extrapolation of secondary variables
-    _all_mesh_subsets_single_component.push_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(new MeshLib::MeshSubsets(_mesh_subset_all_nodes));
     _local_to_global_index_map_single_component.reset(
-                new AssemblerLib::LocalToGlobalIndexMap(_all_mesh_subsets_single_component, _global_matrix_order)
+                new AssemblerLib::LocalToGlobalIndexMap(std::move(all_mesh_subsets_single_component), _global_matrix_order)
                 );
 
-    _linear_solver.reset(new typename GlobalSetup::LinearSolver(
-        *_A, "", _linear_solver_options.get()));
     _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
 
     if (BP::_mesh.getDimension()==1)
@@ -410,6 +382,8 @@ template<typename GlobalSetup>
 void TESProcess<GlobalSetup>::
 setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
 {
+    // TODO fix
+#if 0
     std::size_t const n = BP::_mesh.getNNodes();
     for (std::size_t i = 0; i < n; ++i)
     {
@@ -418,9 +392,11 @@ setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
         std::size_t const global_index =
             _local_to_global_index_map->getGlobalIndex(
                 l, component_id);
+
         _x->set(global_index,
                variable.getInitialConditionValue(*BP::_mesh.getNode(i)));
     }
+#endif
 }
 
 template<typename GlobalSetup>
@@ -527,8 +503,8 @@ postTimestep(const std::string& file_name, const unsigned /*timestep*/)
         for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
         {
             MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-            auto const idx = _local_to_global_index_map->getGlobalIndex(loc, vi);
-            assert(!isnan((*_x)[idx]));
+            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, vi);
+            assert(!std::isnan((*_x)[idx]));
             (*result)[i] = (*_x)[idx];
         }
     };
@@ -544,7 +520,7 @@ postTimestep(const std::string& file_name, const unsigned /*timestep*/)
                              (SecondaryVariables const property,
                              std::string const& property_name,
                              const unsigned num_components
-                             )
+                             ) -> void
     {
         assert(num_components == 1); // TODO [CL] implement other cases
         (void) num_components;
@@ -558,13 +534,13 @@ postTimestep(const std::string& file_name, const unsigned /*timestep*/)
             auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
             assert(result->size() == BP::_mesh.getNNodes());
 
-            _extrapolator->extrapolate(*_x, *_local_to_global_index_map, _local_assemblers, property);
+            _extrapolator->extrapolate(*_x, *BP::_local_to_global_index_map, _local_assemblers, property);
             auto const& nodal_values = _extrapolator->getNodalValues();
 
             // Copy result
             for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
             {
-                assert(!isnan(nodal_values[i]));
+                assert(!std::isnan(nodal_values[i]));
                 (*result)[i] = nodal_values[i];
             }
         }
@@ -576,13 +552,13 @@ postTimestep(const std::string& file_name, const unsigned /*timestep*/)
             auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == BP::_mesh.getNElements());
 
-            _extrapolator->calculateResiduals(*_x, *_local_to_global_index_map, _local_assemblers, property);
+            _extrapolator->calculateResiduals(*_x, *BP::_local_to_global_index_map, _local_assemblers, property);
             auto const& residuals = _extrapolator->getElementResiduals();
 
             // Copy result
             for (std::size_t i = 0; i < BP::_mesh.getNElements(); ++i)
             {
-                assert(!isnan(residuals[i]));
+                assert(!std::isnan(residuals[i]));
                 (*result)[i] = residuals[i];
             }
         }
@@ -643,9 +619,6 @@ TESProcess<GlobalSetup>::
     for (auto p : _local_assemblers)
         delete p;
 
-    for (auto p : _all_mesh_subsets)
-        delete p;
-
     delete _mesh_subset_all_nodes;
 }
 
@@ -665,32 +638,28 @@ singlePicardIteration(GlobalVector& x_prev_iter,
         INFO("-> TES process try number %u in current picard iteration", num_try);
         _assembly_params._number_of_try_of_iteration = num_try;
 
-        _global_assembler->setX(&x_curr, _x_prev_ts.get());
+        // TODO fix
+        // _global_assembler->setX(&x_curr, _x_prev_ts.get());
 
         _A->setZero();
         MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
         *_rhs = 0;   // This resets the whole vector.
 
-        {
-        BaseLib::TimingOneShot timing{"assembly"};
+        // TODO fix
+#if 0
         // Call global assembler for each local assembly item.
         _global_setup.execute(*_global_assembler, _local_assemblers);
-        timing.stop();
-        }
 
         // Call global assembler for each Neumann boundary local assembler.
         for (auto bc : _neumann_bcs)
             bc->integrate(_global_setup, &x_curr, _x_prev_ts.get());
+#endif
 
         // Apply known values from the Dirichlet boundary conditions.
 
         INFO("size of known values: %li", _dirichlet_bc.global_ids.size());
 
-        {
-        BaseLib::TimingOneShot timing{"apply known solutions"};
         MathLib::applyKnownSolution(*_A, *_rhs, x_curr, _dirichlet_bc.global_ids, _dirichlet_bc.values);
-        timing.stop();
-        }
 
 #if !defined(USE_LIS)
         // double residual = MathLib::norm((*_A) * x_curr - (*_rhs), MathLib::VecNormType::INFINITY_N);
@@ -729,7 +698,7 @@ singlePicardIteration(GlobalVector& x_prev_iter,
             for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
             {
                 MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = _local_to_global_index_map->getGlobalIndex(loc, dof);
+                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
 
                 AT.row(idx) *= trafo.dxdy(0);
                 x_curr[idx] /= trafo.dxdy(0);
@@ -752,11 +721,8 @@ singlePicardIteration(GlobalVector& x_prev_iter,
         }
 #endif
 
-        {
-        BaseLib::TimingOneShot timing{"linear solver"};
-        _linear_solver->solve(*_rhs, x_curr);
-        timing.stop();
-        }
+        // TODO fix
+        // _linear_solver->solve(*_rhs, x_curr);
 
 #ifndef NDEBUG
         if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
@@ -779,7 +745,7 @@ singlePicardIteration(GlobalVector& x_prev_iter,
             for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
             {
                 MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = _local_to_global_index_map->getGlobalIndex(loc, dof);
+                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
 
                 // TODO: _A
                 x_curr[idx] *= trafo.dxdy(0);
@@ -796,17 +762,13 @@ singlePicardIteration(GlobalVector& x_prev_iter,
                              + "_" +    std::to_string(num_try)
                              + ".vtu";
 
-            BaseLib::TimingOneShot timing{"output iteration results"};
             postTimestep(fn, 0);
-            timing.stop();
         }
 
         bool check_passed = true;
 
         if (!Trafo::constrained)
         {
-            BaseLib::TimingOneShot timing{"checking bounds"};
-
             // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
 
             auto& ga = *_global_assembler;
@@ -819,9 +781,11 @@ singlePicardIteration(GlobalVector& x_prev_iter,
 
                 std::vector<double> const* localX;
                 std::vector<double> const* localX_pts;
-                ga.getLocalNodalValues(id, localX, localX_pts);
 
-                if (!loc_asm->checkBounds(*localX, *localX_pts)) check_passed = false;
+                // TODO fix
+                // ga.getLocalNodalValues(id, localX, localX_pts);
+
+                // if (!loc_asm->checkBounds(*localX, *localX_pts)) check_passed = false;
             };
 
             _global_setup.execute(check_variable_bounds, _local_assemblers);
@@ -830,8 +794,6 @@ singlePicardIteration(GlobalVector& x_prev_iter,
             {
                 x_curr = x_prev_iter;
             }
-
-            timing.stop();
         }
 
         iteration_accepted = check_passed;
