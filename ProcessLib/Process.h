@@ -82,7 +82,7 @@ public:
 	/// The file_name is indicating the name of possible output file.
 	void output(std::string const& file_name,
 	            const unsigned /*timestep*/,
-	            GlobalVector const& x)
+	            GlobalVector const& x) const
 	{
 		DBUG("Process output.");
 
