@@ -35,7 +35,14 @@ GMSHPolygonTree::GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree* pare
 {}
 
 GMSHPolygonTree::~GMSHPolygonTree()
-{}
+{
+	// the polylines are processed also by the children, but the root is
+	// responsible to cleanup up
+	if (_parent == nullptr) { // root
+		for (auto * polyline : _plys)
+			delete polyline;
+	}
+}
 
 bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 {
