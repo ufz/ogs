@@ -252,15 +252,15 @@ public:
             typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
             typename Traits::ShapeMatrices::JacobianType const& smJ,
             const double smDetJ,
-            const double weight
+            const double weight,
+            typename Traits::LocalMatrix& local_M,
+            typename Traits::LocalMatrix& local_K,
+            typename Traits::LocalVector& local_b
             );
 
     void init(const unsigned num_int_pts, const unsigned dimension);
 
     void preEachAssemble();
-    void postEachAssemble(typename Traits::LocalMatrix& local_M,
-                          typename Traits::LocalMatrix& local_K,
-                          typename Traits::LocalVector& local_b);
 
     std::vector<double> const&
     getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const;
@@ -306,11 +306,6 @@ private:
     double _rho_GR = std::numeric_limits<double>::quiet_NaN();
     double _p_V    = std::numeric_limits<double>::quiet_NaN(); // vapour partial pressure
     double _qR     = std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in assembly!!!
-
-    // TODO: entirely omit local matrices
-    typename Traits::LocalMatrix _Mas;
-    typename Traits::LocalMatrix _Lap_Adv_Cnt;
-    typename Traits::LocalVector _rhs;
 
     std::unique_ptr<TESFEMReactionAdaptor<Traits> > _reaction_adaptor;
 

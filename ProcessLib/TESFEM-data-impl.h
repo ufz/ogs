@@ -759,14 +759,17 @@ assembleIntegrationPoint(unsigned integration_point,
                          const typename Traits::ShapeMatrices::DxShapeType& smDNdx,
                          const typename Traits::ShapeMatrices::JacobianType& smJ,
                          const double smDetJ,
-                         const double weight)
+                         const double weight,
+                         typename Traits::LocalMatrix& local_M,
+                         typename Traits::LocalMatrix& local_K,
+                         typename Traits::LocalVector& local_b)
 {
     preEachAssembleIntegrationPoint(integration_point, localX, smN, smDNdx, smJ, smDetJ);
 
     auto const N = smDNdx.cols(); // number of integration points
     auto const D = smDNdx.rows(); // global dimension: 1, 2 or 3
 
-    assert(N*NODAL_DOF == _Mas.cols());
+    assert(N*NODAL_DOF == local_M.cols());
 
     auto const laplaceCoeffMat = getLaplaceCoeffMatrix(integration_point, D);
     assert(laplaceCoeffMat.cols() == D*NODAL_DOF);
@@ -805,13 +808,13 @@ assembleIntegrationPoint(unsigned integration_point,
     {
         for (unsigned c=0; c<NODAL_DOF; ++c)
         {
-            Traits::blockShpShp(_Lap_Adv_Cnt, N*r, N*c, N, N).noalias() +=
+            Traits::blockShpShp(local_K, N*r, N*c, N, N).noalias() +=
                     smDetJ * weight * smDNdx.transpose()
                     * Traits::blockDimDim(laplaceCoeffMat, D*r, D*c, D, D)
                     * smDNdx                                      // end Laplacian part
                     + detJ_w_N_NT      * contentCoeffMat(r, c)
                     + detJ_w_N_vT_dNdx * advCoeffMat(r, c);
-            Traits::blockShpShp(_Mas, N*r, N*c, N, N).noalias() +=
+            Traits::blockShpShp(local_M, N*r, N*c, N, N).noalias() +=
                     detJ_w_N_NT      * massCoeffMat(r, c);
         }
     }
@@ -820,7 +823,7 @@ assembleIntegrationPoint(unsigned integration_point,
 
     for (unsigned r=0; r<NODAL_DOF; ++r)
     {
-        Traits::blockShp(_rhs, N*r, N).noalias() +=
+        Traits::blockShp(local_b, N*r, N).noalias() +=
                 rhsCoeffVector(r) * smN * smDetJ * weight;
     }
 }
@@ -840,10 +843,6 @@ LADataNoTpl<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
     for (auto& v : _velocity) v.resize(num_int_pts);
 
     _reaction_adaptor = std::move(TESFEMReactionAdaptor<Traits>::newInstance(*this));
-
-    _Mas         = Traits::LocalMatrix::Zero(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF);
-    _Lap_Adv_Cnt = Traits::LocalMatrix::Zero(num_int_pts*NODAL_DOF, num_int_pts*NODAL_DOF);
-    _rhs         = Traits::LocalVector::Zero(num_int_pts*NODAL_DOF);
 }
 
 
@@ -865,24 +864,15 @@ LADataNoTpl<Traits>::preEachAssemble()
             _solid_density = _solid_density_prev_ts;
         }
     }
-
-    _Mas.setZero();
-    _Lap_Adv_Cnt.setZero();
-    _rhs.setZero();
 }
 
 
+#if 0
 template<typename Traits>
 void
 LADataNoTpl<Traits>
-::postEachAssemble(typename Traits::LocalMatrix& local_M,
-                   typename Traits::LocalMatrix& local_K,
-                   typename Traits::LocalVector& local_b)
+::postEachAssemble()
 {
-    local_M = _Mas;
-    local_K = _Lap_Adv_Cnt;
-    local_b = _rhs;
-
     if (_AP->_output_element_matrices)
     {
         std::puts("### Element: ?");
@@ -916,6 +906,7 @@ LADataNoTpl<Traits>
         std::printf("\n");
     }
 }
+#endif
 
 } // namespace TES
 

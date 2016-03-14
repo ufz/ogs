@@ -103,11 +103,9 @@ assemble(const double /*t*/, std::vector<double> const& local_x)
         auto const weight = wp.getWeight();
 
         _data.assembleIntegrationPoint(ip, local_x,
-                                       sm.N, sm.dNdx, sm.J, sm.detJ, weight);
+                                       sm.N, sm.dNdx, sm.J, sm.detJ, weight,
+                                       _local_M, _local_K, _local_b);
     }
-
-    // TODO make that obsolete!
-    _data.postEachAssemble(_local_M, _local_K, _local_b);
 }
 
 
