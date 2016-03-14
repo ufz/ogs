@@ -95,11 +95,7 @@ public:
 
     bool isLinear() const override { return false; }
 
-    void createLocalAssemblers() override
-    {
-        // TODO implement
-        std::abort();
-    }
+    void createLocalAssemblers() override;
 
 private:
     void assembleConcreteProcess(

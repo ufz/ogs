@@ -264,6 +264,22 @@ TESProcess(MeshLib::Mesh& mesh,
 }
 
 template<typename GlobalSetup>
+void
+TESProcess<GlobalSetup>::
+createLocalAssemblers()
+{
+    switch (BP::_mesh.getDimension())
+    {
+    case 1: createLocalAssemblers<1>(); break;
+    case 2: createLocalAssemblers<2>(); break;
+    case 3: createLocalAssemblers<3>(); break;
+    default:
+        ERR("Invalid mesh dimension. Aborting.");
+        std::abort();
+    }
+}
+
+template<typename GlobalSetup>
 template <unsigned GlobalDim>
 void
 TESProcess<GlobalSetup>::
@@ -348,38 +364,26 @@ void
 TESProcess<GlobalSetup>::
 init()
 {
+    // TODO who calls this method?
     DBUG("Initialize TESProcess.");
 
     // for extrapolation of secondary variables
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
+    all_mesh_subsets_single_component.emplace_back(
+                new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
     _local_to_global_index_map_single_component.reset(
-                new AssemblerLib::LocalToGlobalIndexMap(std::move(all_mesh_subsets_single_component), _global_matrix_order)
+                new AssemblerLib::LocalToGlobalIndexMap(
+                    std::move(all_mesh_subsets_single_component), _global_matrix_order)
                 );
 
     _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
-
-    if (BP::_mesh.getDimension()==1)
-        createLocalAssemblers<1>();
-    else if (BP::_mesh.getDimension()==2)
-        createLocalAssemblers<2>();
-    else if (BP::_mesh.getDimension()==3)
-        createLocalAssemblers<3>();
-    else
-        assert(false);
-
-    // set initial values
-    for (unsigned i=0; i<NODAL_DOF; ++i)
-    {
-        setInitialConditions(*_process_vars[i], i);
-    }
 }
 
 template<typename GlobalSetup>
 void TESProcess<GlobalSetup>::
 setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
 {
-    // TODO fix
+    // TODO fix, move to process.
 #if 0
     std::size_t const n = BP::_mesh.getNNodes();
     for (std::size_t i = 0; i < n; ++i)
