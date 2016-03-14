@@ -317,14 +317,9 @@ createLocalAssemblers()
     DBUG("Create global assembler.");
     _global_assembler.reset(
         new GlobalAssembler(*BP::_local_to_global_index_map));
-}
 
-template<typename GlobalSetup>
-void
-TESProcess<GlobalSetup>::
-init()
-{
-    // TODO who calls this method?
+
+    // TODO move somewhere else/make obsolete
     DBUG("Initialize TESProcess.");
 
     // for extrapolation of secondary variables

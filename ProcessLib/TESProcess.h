@@ -84,10 +84,6 @@ public:
                std::vector<std::unique_ptr<ParameterBase>> const& parameters,
                BaseLib::ConfigTree const& config);
 
-    void init();
-
-    bool assemble(/*const double current_time,*/ const double delta_t);
-
     void post(std::string const& file_name);
     void postTimestep(std::string const& file_name, const unsigned timestep);
 
@@ -112,10 +108,6 @@ private:
     GlobalSetup _global_setup;
     std::vector<LocalAssembler*> _local_assemblers;
     std::unique_ptr<GlobalAssembler> _global_assembler;
-
-    AssemblerLib::SparsityPattern _sparsity_pattern;
-
-    std::unique_ptr<MathLib::Nonlinear::Picard> _picard;
 
     AssemblerLib::ComponentOrder _global_matrix_order =
             AssemblerLib::ComponentOrder::BY_COMPONENT;
