@@ -48,7 +48,8 @@ protected:
 	~CVodeSolverInternal();
 
 private:
-	CVodeSolverImpl* _impl;  ///< pimpl idiom hides implementation
+	std::unique_ptr<CVodeSolverImpl>
+	    _impl;  ///< pimpl idiom hides sundials headers.
 };
 
 }  // namespace MathLib

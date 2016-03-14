@@ -308,7 +308,7 @@ CVodeSolverImpl::~CVodeSolverImpl()
 }
 
 CVodeSolverInternal::CVodeSolverInternal(BaseLib::ConfigTree const& config)
-    : _impl(new CVodeSolverImpl(config))
+    : _impl.reset(std::unique_ptr<CVodeSolverImpl>{new CVodeSolverImpl{config}})
 {
 }
 
@@ -364,9 +364,6 @@ double CVodeSolverInternal::getTime() const
 	return _impl->getTime();
 }
 
-CVodeSolverInternal::~CVodeSolverInternal()
-{
-	delete _impl;
-}
+CVodeSolverInternal::~CVodeSolverInternal() = default;
 
 }  // namespace MathLib
