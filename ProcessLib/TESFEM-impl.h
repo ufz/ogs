@@ -56,6 +56,7 @@ init(MeshLib::Element const& e,
 
     _data._AP = & process->getAssemblyParams();
 
+    auto const n_integration_points = _shape_matrices.front().dNdx.rows();
     _data.init(n_integration_points, GlobalDim);
 
     _integration_point_values_cache.reset(new std::vector<double>);
