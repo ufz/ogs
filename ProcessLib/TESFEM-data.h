@@ -53,6 +53,9 @@ class TESFEMReactionAdaptorSinusoidal;
 template<typename Traits>
 class TESFEMReactionAdaptorCaOH2;
 
+template <typename, typename, typename, typename, unsigned>
+class LocalAssemblerData;
+
 
 template<typename Traits>
 class LADataNoTpl
