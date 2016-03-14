@@ -65,7 +65,7 @@ struct DirichletBC
 
 
 template<typename GlobalSetup>
-class TESProcess
+class TESProcess final
         : public Process<GlobalSetup>,
           public TESProcessInterface
 {
