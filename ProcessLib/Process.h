@@ -72,14 +72,60 @@ public:
 	/// Process specific initialization called by initialize().
 	virtual void createLocalAssemblers() = 0;
 
-	/// Postprocessing after solve().
+	/// Preprocessing before starting assembly for new timestep.
+	virtual void preTimestep(GlobalVector const& x) {}
+
+	/// Postprocessing after a complete timestep.
+	virtual void postTimestep(GlobalVector const& x) {}
+
+	/// Process output.
 	/// The file_name is indicating the name of possible output file.
-	void postTimestep(std::string const& file_name,
-	                  const unsigned /*timestep*/,
-	                  GlobalVector const& x)
+	void output(std::string const& file_name,
+	            const unsigned /*timestep*/,
+	            GlobalVector const& x) const
 	{
-		post(x);
-		output(file_name, x);
+		DBUG("Process output.");
+
+		// Copy result
+#ifdef USE_PETSC
+		// TODO It is also possible directly to copy the data for single process
+		// variable to a mesh property. It needs a vector of global indices and
+		// some PETSc magic to do so.
+		std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
+#else
+		std::vector<double> x_copy(x.size());
+#endif
+		x.copyValues(x_copy);
+
+		std::size_t const n_nodes = _mesh.getNNodes();
+		for (ProcessVariable& pv : _process_variables)
+		{
+			auto& output_data = pv.getOrCreateMeshProperty();
+
+			int const n_components = pv.getNumberOfComponents();
+			for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
+			{
+				MeshLib::Location const l(_mesh.getID(),
+				                          MeshLib::MeshItemType::Node, node_id);
+				// TODO extend component ids to multiple process variables.
+				for (int component_id = 0; component_id < n_components;
+				     ++component_id)
+				{
+					auto const index =
+					    _local_to_global_index_map->getLocalIndex(
+					        l, component_id, x.getRangeBegin(),
+					        x.getRangeEnd());
+
+					output_data[node_id * n_components + component_id] =
+					    x_copy[index];
+				}
+			}
+		}
+
+		// Write output file
+		DBUG("Writing output to \'%s\'.", file_name.c_str());
+		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+		vtu_interface.writeToFile(file_name);
 	}
 
 	void initialize()
@@ -181,9 +227,6 @@ public:
 	{
 		return *_time_discretization;
 	}
-
-protected:
-	virtual void post(GlobalVector const& /*x*/) {}
 
 private:
 	virtual void assembleConcreteProcess(
@@ -298,52 +341,6 @@ private:
 	{
 		_sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
 		    *_local_to_global_index_map, _mesh));
-	}
-
-	void output(std::string const& file_name, GlobalVector const& x)
-	{
-		DBUG("Process output.");
-
-		// Copy result
-#ifdef USE_PETSC
-		// TODO It is also possible directly to copy the data for single process
-		// variable to a mesh property. It needs a vector of global indices and
-		// some PETSc magic to do so.
-		std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
-#else
-		std::vector<double> x_copy(x.size());
-#endif
-		x.copyValues(x_copy);
-
-		std::size_t const n_nodes = _mesh.getNNodes();
-		for (ProcessVariable& pv : _process_variables)
-		{
-			auto& output_data = pv.getOrCreateMeshProperty();
-
-			int const n_components = pv.getNumberOfComponents();
-			for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
-			{
-				MeshLib::Location const l(_mesh.getID(),
-				                          MeshLib::MeshItemType::Node, node_id);
-				// TODO extend component ids to multiple process variables.
-				for (int component_id = 0; component_id < n_components;
-				     ++component_id)
-				{
-					auto const index =
-					    _local_to_global_index_map->getLocalIndex(
-					        l, component_id, x.getRangeBegin(),
-					        x.getRangeEnd());
-
-					output_data[node_id * n_components + component_id] =
-					    x_copy[index];
-				}
-			}
-		}
-
-		// Write output file
-		DBUG("Writing output to \'%s\'.", file_name.c_str());
-		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
-		vtu_interface.writeToFile(file_name);
 	}
 
 protected:

@@ -303,6 +303,8 @@ solveOneTimeStepOneProcess(
 
     setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
 
+    process.preTimestep(x);
+
     // INFO("time: %e, delta_t: %e", t, delta_t);
     time_disc.nextTimestep(t, delta_t);
 
@@ -311,7 +313,8 @@ solveOneTimeStepOneProcess(
     auto& mat_strg = process_data.mat_strg;
     time_disc.pushState(t, x, mat_strg);
 
-    process.postTimestep(output_file_name, timestep, x);
+    process.postTimestep(x);
+    process.output(output_file_name, timestep, x);
 
     return nonlinear_solver_succeeded;
 }
