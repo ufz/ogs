@@ -318,6 +318,8 @@ createLocalAssemblers()
     _global_assembler.reset(
         new GlobalAssembler(*BP::_local_to_global_index_map));
 
+    // TODO fix this in Process
+#if 0
     for (unsigned i=0; i<NODAL_DOF; ++i)
     {
         // TODO [CL] can't that be (partially) moved to ProcessVariable?
@@ -327,8 +329,6 @@ createLocalAssemblers()
                 BP::_process_variables[i].get().getMesh());
 
 
-        // TODO fix this in Process
-#if 0
         DBUG("Initialize boundary conditions.");
         BP::_process_variables[i]->initializeDirichletBCs(
                     process_var_mesh_node_searcher,
@@ -355,8 +355,8 @@ createLocalAssemblers()
                     i,
                     *_mesh_subset_all_nodes);
         }
-#endif
     }
+#endif
 }
 
 template<typename GlobalSetup>
@@ -383,6 +383,8 @@ template<typename GlobalSetup>
 void TESProcess<GlobalSetup>::
 setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
 {
+    (void) variable; (void) component_id;
+
     // TODO fix, move to process.
 #if 0
     std::size_t const n = BP::_mesh.getNNodes();
