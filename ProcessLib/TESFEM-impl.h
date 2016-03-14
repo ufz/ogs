@@ -80,9 +80,9 @@ LocalAssemblerData<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-assemble(std::vector<double> const& localX,
-         std::vector<double> const& localXPrevTs)
+assemble(const double t, std::vector<double> const& local_x)
 {
+    const std::vector<double> localXPrevTs; // TODO fix
 
     _localA.setZero();
     _localRhs.setZero();
@@ -98,7 +98,7 @@ assemble(std::vector<double> const& localX,
         auto const& wp = integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _data.assembleIntegrationPoint(ip, &_localA, &_localRhs, localX,
+        _data.assembleIntegrationPoint(ip, &_localA, &_localRhs, local_x,
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight);
     }
 
@@ -118,11 +118,13 @@ LocalAssemblerData<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-            AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const
+addToGlobal(
+        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
 {
-    A.add(indices, _localA);
-    rhs.add(indices.rows, _localRhs);
+    // TODO M
+    K.add(indices, _localA);
+    b.add(indices.rows, _localRhs);
 }
 
 

@@ -137,9 +137,6 @@ private:
     std::unique_ptr<GlobalVector> _x;           // current iteration
     std::unique_ptr<GlobalVector> _x_prev_ts;   // previous timestep
 
-    DirichletBC _dirichlet_bc;
-    std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
-
 
     // secondary variables
     std::vector<std::tuple<SecondaryVariables, std::string, unsigned> >

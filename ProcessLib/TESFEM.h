@@ -47,11 +47,10 @@ public:
                       unsigned const integration_order,
                       TESProcessInterface* process) = 0;
 
-    virtual void assemble(std::vector<double> const& localX,
-                          std::vector<double> const& localXPrevTs) = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
-    virtual void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-                             AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&) const = 0;
+    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 
     virtual bool checkBounds(std::vector<double> const& localX,
                              std::vector<double> const& localX_pts) = 0;
@@ -64,7 +63,7 @@ template <typename ShapeFunction_,
           typename GlobalMatrix,
           typename GlobalVector,
           unsigned GlobalDim>
-class LocalAssemblerData
+class LocalAssemblerData final
         : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
 {
 public:
@@ -78,11 +77,10 @@ public:
          unsigned const integration_order,
          TESProcessInterface* process) override;
 
-    void assemble(std::vector<double> const& localX,
-                  std::vector<double> const& localXPrevTs) override;
+    void assemble(double const t, std::vector<double> const& local_x) override;
 
-    void addToGlobal(GlobalMatrix& A, GlobalVector& rhs,
-                     AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices) const override;
+    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const override;
 
     Eigen::Map<const Eigen::VectorXd>
     getShapeMatrix(const unsigned integration_point) const override {

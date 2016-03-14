@@ -341,9 +341,6 @@ createLocalAssemblers()
         }
 #endif
     }
-
-    for (auto bc : _neumann_bcs)
-        bc->initialize(_global_setup, BP::_mesh.getDimension());
 }
 
 template<typename GlobalSetup>
@@ -433,21 +430,9 @@ assembleConcreteProcess(
         _A->setZero();
         *_rhs = 0;   // This resets the whole vector.
 
-        // TODO fix
-#if 0
         // Call global assembler for each local assembly item.
-        _global_setup.execute(*_global_assembler, _local_assemblers);
-
-        // Call global assembler for each Neumann boundary local assembler.
-        for (auto bc : _neumann_bcs)
-            bc->integrate(_global_setup, &x_curr, _x_prev_ts.get());
-#endif
-
-        // Apply known values from the Dirichlet boundary conditions.
-
-        INFO("size of known values: %li", _dirichlet_bc.global_ids.size());
-
-        MathLib::applyKnownSolution(*_A, *_rhs, x_curr, _dirichlet_bc.global_ids, _dirichlet_bc.values);
+        _global_setup.execute(*BP::_global_assembler, _local_assemblers,
+                              t, x, M, K, b);
 
 #if !defined(USE_LIS)
         // double residual = MathLib::norm((*_A) * x_curr - (*_rhs), MathLib::VecNormType::INFINITY_N);
@@ -773,9 +758,6 @@ template<typename GlobalSetup>
 TESProcess<GlobalSetup>::
 ~TESProcess()
 {
-    for (auto p : _neumann_bcs)
-        delete p;
-
     for (auto p : _local_assemblers)
         delete p;
 }
