@@ -54,7 +54,7 @@ init(MeshLib::Element const& e,
     _local_K.resize(MAT_SIZE, MAT_SIZE);
     _local_b.resize(MAT_SIZE);
 
-    _data._AP = & process->getAssemblyParams();
+    _data.setAssemblyParameters(process->getAssemblyParams());
 
     auto const n_integration_points = _shape_matrices.front().dNdx.rows();
     _data.init(n_integration_points, GlobalDim);
@@ -158,7 +158,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
         auto const& ps = nodal_dof.getElementNodalValues(0); // TODO [CL] use constants for DOF indices
         auto const& xs = nodal_dof.getElementNodalValues(2);
 
-        auto const& AP = *_data._AP;
+        auto const& AP = _data.getAssemblyParameters();
 
         for (auto const& sm : _shape_matrices)
         {
@@ -186,7 +186,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
 
         auto const& nodal_vals = nodal_dof.getElementNodalValues();
 
-        auto const& AP = *_data._AP;
+        auto const& AP = _data.getAssemblyParameters();
 
         for (auto const& sm : _shape_matrices)
         {
@@ -214,7 +214,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
 
         auto const nodal_vals = nodal_dof.getElementNodalValues();
 
-        auto const& AP = *_data._AP;
+        auto const& AP = _data.getAssemblyParameters();
 
         for (auto const& sm : _shape_matrices)
         {
@@ -239,7 +239,8 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
     {
         auto& alphas = *_integration_point_values_cache;
         alphas.clear();
-        alphas.resize(_shape_matrices.size(), _data._reaction_adaptor->getReactionDampingFactor());
+        alphas.resize(_shape_matrices.size(),
+                      _data.getReactionAdaptor().getReactionDampingFactor());
 
         return alphas;
     }
@@ -264,7 +265,7 @@ LocalAssemblerData<ShapeFunction_,
 checkBounds(std::vector<double> const& localX,
             const std::vector<double>& localX_pts)
 {
-    return _data._reaction_adaptor->checkBounds(localX, localX_pts);
+    return _data.getReactionAdaptor().checkBounds(localX, localX_pts);
 }
 
 

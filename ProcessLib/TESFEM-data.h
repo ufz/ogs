@@ -53,9 +53,6 @@ class TESFEMReactionAdaptorSinusoidal;
 template<typename Traits>
 class TESFEMReactionAdaptorCaOH2;
 
-template <typename, typename, typename, typename, unsigned>
-class LocalAssemblerData;
-
 
 template<typename Traits>
 class LADataNoTpl
@@ -80,6 +77,17 @@ public:
 
     std::vector<double> const&
     getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const;
+
+    // TODO pass to constructor
+    void setAssemblyParameters(AssemblyParams const& ap) { _AP = &ap; }
+    // TODO better encapsulation
+    AssemblyParams const& getAssemblyParameters() const { return * _AP; }
+    TESFEMReactionAdaptor<Traits> const& getReactionAdaptor() const {
+        return *_reaction_adaptor;
+    }
+    TESFEMReactionAdaptor<Traits>& getReactionAdaptor() {
+        return *_reaction_adaptor;
+    }
 
 private:
     Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt);
@@ -128,10 +136,6 @@ private:
     // variables at previous timestep
     std::vector<double> _solid_density_prev_ts;
     std::vector<double> _reaction_rate_prev_ts; // could also be calculated from _solid_density_prev_ts
-
-
-    template <typename, typename, typename, typename, unsigned>
-    friend class LocalAssemblerData;
 
     friend class TESFEMReactionAdaptor<Traits>;
     friend class TESFEMReactionAdaptorAdsorption<Traits>;
