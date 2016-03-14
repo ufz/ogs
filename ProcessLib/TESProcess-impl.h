@@ -400,7 +400,10 @@ setInitialConditions(ProcessVariable const& variable, std::size_t component_id)
 }
 
 template<typename GlobalSetup>
-bool TESProcess<GlobalSetup>::assemble(/*const double current_time,*/ const double delta_t)
+void TESProcess<GlobalSetup>::
+assembleConcreteProcess(
+        const double t, GlobalVector const& x,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     const double current_time = 0.0;
     DBUG("Solve TESProcess.");
@@ -427,18 +430,10 @@ bool TESProcess<GlobalSetup>::assemble(/*const double current_time,*/ const doub
     *_x_prev_ts = *_x;
 #endif
 
-    _assembly_params._delta_t = delta_t;
+    // _assembly_params._delta_t = delta_t; // TODO fix
     _assembly_params._iteration_in_current_timestep = 0;
     _assembly_params._current_time = current_time;
     ++ _timestep;
-
-    auto cb = [this](typename GlobalSetup::VectorType& x_prev_iter,
-                             typename GlobalSetup::VectorType& x_curr)
-    {
-        singlePicardIteration(x_prev_iter, x_curr);
-    };
-
-    return _picard->solve(cb, *_x_prev_ts, *_x);
 }
 
 
@@ -642,7 +637,6 @@ singlePicardIteration(GlobalVector& x_prev_iter,
         // _global_assembler->setX(&x_curr, _x_prev_ts.get());
 
         _A->setZero();
-        MathLib::setMatrixSparsity(*_A, _sparsity_pattern);
         *_rhs = 0;   // This resets the whole vector.
 
         // TODO fix

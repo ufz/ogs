@@ -78,23 +78,34 @@ public:
     using GlobalMatrix = typename GlobalSetup::MatrixType;
 
     TESProcess(MeshLib::Mesh& mesh,
+               typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
+               std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
                std::vector<ProcessVariable> const& variables,
                std::vector<std::unique_ptr<ParameterBase>> const& parameters,
                BaseLib::ConfigTree const& config);
 
-    void init() override;
+    void init();
 
-    bool assemble(/*const double current_time,*/ const double delta_t) override;
+    bool assemble(/*const double current_time,*/ const double delta_t);
 
-    void post(std::string const& file_name) override;
-    void postTimestep(std::string const& file_name, const unsigned timestep) override;
-
-    std::string getLinearSolverName() const override { return "tes_"; }
-    void initializeMeshSubsets(MeshLib::Mesh const& /*mesh*/) override {}
+    void post(std::string const& file_name);
+    void postTimestep(std::string const& file_name, const unsigned timestep);
 
     ~TESProcess();
 
+    bool isLinear() const override { return false; }
+
+    void createLocalAssemblers() override
+    {
+        // TODO implement
+        std::abort();
+    }
+
 private:
+    void assembleConcreteProcess(
+            const double t, GlobalVector const& x,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
+
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
@@ -104,7 +115,8 @@ private:
     void singlePicardIteration(GlobalVector& x_prev_iter, GlobalVector& x_curr);
 
     using LocalAssembler = TES::LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector>;
+    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
+    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
     GlobalSetup _global_setup;
@@ -122,21 +134,12 @@ private:
 
     // primary variables
     std::array<ProcessVariable*, NODAL_DOF> _process_vars; // ) = { nullptr, nullptr, nullptr };
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets;
 
     std::unique_ptr<GlobalMatrix> _A;
     std::unique_ptr<GlobalVector> _rhs;
     std::unique_ptr<GlobalVector> _x;           // current iteration
     std::unique_ptr<GlobalVector> _x_prev_ts;   // previous timestep
 
-<<<<<<< HEAD
-    std::unique_ptr<BaseLib::ConfigTree> _linear_solver_options;
-    std::unique_ptr<typename GlobalSetup::LinearSolver> _linear_solver;
-
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
-
-=======
->>>>>>> 98576d4... [TES] removed dof table from TES process
     DirichletBC _dirichlet_bc;
     std::vector<NeumannBc<GlobalSetup>*> _neumann_bcs;
 
@@ -148,7 +151,6 @@ private:
     // output variables
     std::set<std::string> _output_variables;
 
-    std::vector<MeshLib::MeshSubsets*> _all_mesh_subsets_single_component;
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
 
     bool _output_global_matrix = false; ///< output global matrix/rhs at first iteration
@@ -172,6 +174,28 @@ private:
 
 
 };
+
+template <typename GlobalSetup>
+std::unique_ptr<TESProcess<GlobalSetup>>
+createTESProcess(
+    MeshLib::Mesh& mesh,
+    typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
+    std::vector<ProcessVariable> const& variables,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+{
+    config.checkConfParam("type", "TES");
+
+    DBUG("Create TESProcess.");
+
+    return std::unique_ptr<TESProcess<GlobalSetup>>{
+        new TESProcess<GlobalSetup>{
+            mesh, nonlinear_solver, std::move(time_discretization),
+            variables, parameters,
+            config
+    }};
+}
 
 } // namespace TES
 
