@@ -875,13 +875,13 @@ LADataNoTpl<Traits>::preEachAssemble()
 template<typename Traits>
 void
 LADataNoTpl<Traits>
-::postEachAssemble(typename Traits::LocalMatrix& localA,
-                   typename Traits::LocalVector& localRhs,
-                   typename Traits::LocalVector const& oldX)
+::postEachAssemble(typename Traits::LocalMatrix& local_M,
+                   typename Traits::LocalMatrix& local_K,
+                   typename Traits::LocalVector& local_b)
 {
-    localA.noalias() += _Lap_Adv_Cnt + _Mas/_AP->_delta_t;
-    localRhs.noalias() += _rhs
-                           + _Mas * oldX/_AP->_delta_t;
+    local_M = _Mas;
+    local_K = _Lap_Adv_Cnt;
+    local_b = _rhs;
 
     if (_AP->_output_element_matrices)
     {
@@ -898,8 +898,9 @@ LADataNoTpl<Traits>
             std::printf("|\n");
         }
 
+        // TODO meaning has changed. Not the same as in OGS5 anymore!
         std::printf("\nStiffness: \n");
-        ogs5OutMat(localA);
+        ogs5OutMat(local_K);
         std::printf("\n");
 
         std::printf("\n---Mass matrix: \n");
@@ -911,7 +912,7 @@ LADataNoTpl<Traits>
         std::printf("\n");
 
         std::printf("---RHS: \n");
-        ogs5OutVec(localRhs);
+        ogs5OutVec(local_b);
         std::printf("\n");
     }
 }

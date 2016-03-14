@@ -87,8 +87,6 @@ LocalAssemblerData<ShapeFunction_,
     GlobalDim>::
 assemble(const double /*t*/, std::vector<double> const& local_x)
 {
-    const std::vector<double> localXPrevTs; // TODO fix
-
     _local_M.setZero();
     _local_K.setZero();
     _local_b.setZero();
@@ -108,8 +106,8 @@ assemble(const double /*t*/, std::vector<double> const& local_x)
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight);
     }
 
-    const Eigen::Map<const typename DT::LocalVector> oldX(localXPrevTs.data(), localXPrevTs.size());
-    _data.postEachAssemble(_local_K, _local_b, oldX);
+    // TODO make that obsolete!
+    _data.postEachAssemble(_local_M, _local_K, _local_b);
 }
 
 

@@ -258,9 +258,9 @@ public:
     void init(const unsigned num_int_pts, const unsigned dimension);
 
     void preEachAssemble();
-    void postEachAssemble(typename Traits::LocalMatrix& localA,
-                          typename Traits::LocalVector& localRhs,
-                          const typename Traits::LocalVector& oldX);
+    void postEachAssemble(typename Traits::LocalMatrix& local_M,
+                          typename Traits::LocalMatrix& local_K,
+                          typename Traits::LocalVector& local_b);
 
     std::vector<double> const&
     getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const;
