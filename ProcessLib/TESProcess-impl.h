@@ -317,46 +317,6 @@ createLocalAssemblers()
     DBUG("Create global assembler.");
     _global_assembler.reset(
         new GlobalAssembler(*BP::_local_to_global_index_map));
-
-    // TODO fix this in Process
-#if 0
-    for (unsigned i=0; i<NODAL_DOF; ++i)
-    {
-        // TODO [CL] can't that be (partially) moved to ProcessVariable?
-
-        MeshGeoToolsLib::MeshNodeSearcher& process_var_mesh_node_searcher =
-            MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-                BP::_process_variables[i].get().getMesh());
-
-
-        DBUG("Initialize boundary conditions.");
-        BP::_process_variables[i]->initializeDirichletBCs(
-                    process_var_mesh_node_searcher,
-                    *_local_to_global_index_map, i,
-                    _dirichlet_bc.global_ids, _dirichlet_bc.values);
-
-
-        //
-        // Neumann boundary conditions.
-        //
-        {
-            // Find mesh nodes.
-            MeshGeoToolsLib::BoundaryElementsSearcher process_var_mesh_element_searcher(
-                BP::_process_variables[i]->getMesh(), process_var_mesh_node_searcher);
-
-            // Create a neumann BC for the hydraulic head storing them in the
-            // _neumann_bcs vector.
-            BP::_process_variables[i]->createNeumannBcs(
-                    std::back_inserter(_neumann_bcs),
-                    process_var_mesh_element_searcher,
-                    _global_setup,
-                    _integration_order,
-                    *_local_to_global_index_map,
-                    i,
-                    *_mesh_subset_all_nodes);
-        }
-    }
-#endif
 }
 
 template<typename GlobalSetup>
