@@ -109,8 +109,21 @@ public:
 #endif
 
 private:
+	/// Computes the number of grid cells per spatial dimension the objects
+	/// (points or mesh nodes) will be sorted in.
+	/// On the one hand the number of grid cells should be small to reduce the
+	/// management overhead. On the other hand the number should be large such
+	/// that each grid cell contains only a small number of objects.
+	/// Under the assumption that the points are distributed equidistant in
+	/// space the grid cells should be as cubical as possible.
+	/// At first it is necessary to determine the spatial dimension the grid
+	/// should have. The dimensions are computed from the spatial extensions
+	/// Let \f$\max\f$ be the largest spatial extension. The grid will have a
+	/// spatial dimension if the ratio of the corresponding spatial extension
+	/// and the maximal extension is \f$\ge 10^{-4}\f$.
+	/// The second step consists of computing the number of cells per dimension.
 	void initNumberOfSteps(std::size_t n_per_cell,
-		std::size_t n_pnts, std::array<double,3> const& delta);
+		std::size_t n_pnts, std::array<double,3> const& extensions);
 
 	/**
 	 * Method calculates the grid cell coordinates for the given point pnt. If
@@ -185,19 +198,11 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
 {
 	auto const n_pnts(std::distance(first,last));
 
-	for (std::size_t k(0); k < 3; k++) {
-		// make the bounding box a little bit bigger,
-		// such that the node with maximal coordinates fits into the grid
-		this->_max_pnt[k] += std::abs(this->_max_pnt[k]) * 1e-6;
-		if (std::abs(this->_max_pnt[k]) < std::numeric_limits<double>::epsilon()) {
-			this->_max_pnt[k] = (this->_max_pnt[k] - this->_min_pnt[k]) * (1.0 + 1e-6);
-		}
-	}
-	std::array<double,3> delta = {{this->_max_pnt[0]-this->_min_pnt[0],
-		 this->_max_pnt[1]-this->_min_pnt[1],
-		 this->_max_pnt[2]-this->_min_pnt[2]}};
+	std::array<double, 3> delta = {{_max_pnt[0] - _min_pnt[0],
+	                                _max_pnt[1] - _min_pnt[1],
+	                                _max_pnt[2] - _min_pnt[2]}};
 
-	assert(n_pnts >= 0);
+	assert(n_pnts > 0);
 	initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts), delta);
 
 	const std::size_t n_plane(_n_steps[0] * _n_steps[1]);
@@ -284,8 +289,8 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 {
 	std::vector<std::string> grid_names;
 
-	GeoLib::Point const& llf (this->getMinPoint());
-	GeoLib::Point const& urb (this->getMaxPoint());
+	GeoLib::Point const& llf (getMinPoint());
+	GeoLib::Point const& urb (getMaxPoint());
 
 	const double dx ((urb[0] - llf[0]) / _n_steps[0]);
 	const double dy ((urb[1] - llf[1]) / _n_steps[1]);
@@ -372,13 +377,15 @@ std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
 	std::array<std::size_t,3> coords;
 	for (std::size_t k(0); k<3; k++) {
-		if (pnt[k] < this->_min_pnt[k]) {
+		if (pnt[k] < _min_pnt[k]) {
 			coords[k] = 0;
 		} else {
-			if (pnt[k] > this->_max_pnt[k]) {
+			if (pnt[k] > _max_pnt[k]) {
 				coords[k] = _n_steps[k]-1;
 			} else {
-				coords[k] = static_cast<std::size_t>((pnt[k]-this->_min_pnt[k]) * _inverse_step_sizes[k]);
+				coords[k] = static_cast<std::size_t>(
+				    std::floor((pnt[k] - _min_pnt[k])) *
+				    _inverse_step_sizes[k]);
 			}
 		}
 	}
@@ -391,14 +398,14 @@ std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
 	std::array<std::size_t,3> const& coords) const
 {
 	std::array<double,6> dists;
-	dists[0] = std::abs(p[2]-this->_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
-	dists[5] = std::abs(p[2]-this->_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
+	dists[0] = std::abs(p[2]-_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
+	dists[5] = std::abs(p[2]-_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
 
-	dists[1] = std::abs(p[1]-this->_min_pnt[1] + coords[1]*_step_sizes[1]); // front
-	dists[3] = std::abs(p[1]-this->_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
+	dists[1] = std::abs(p[1]-_min_pnt[1] + coords[1]*_step_sizes[1]); // front
+	dists[3] = std::abs(p[1]-_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
 
-	dists[4] = std::abs(p[0]-this->_min_pnt[0] + coords[0]*_step_sizes[0]); // left
-	dists[2] = std::abs(p[0]-this->_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
+	dists[4] = std::abs(p[0]-_min_pnt[0] + coords[0]*_step_sizes[0]); // left
+	dists[2] = std::abs(p[0]-_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
 	return dists;
 }
 
@@ -408,7 +415,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 {
 	std::array<std::size_t,3> coords(getGridCoords(pnt));
 
-	double sqr_min_dist(MathLib::sqrDist(this->_min_pnt, this->_max_pnt));
+	double sqr_min_dist(MathLib::sqrDist(_min_pnt, _max_pnt));
 	POINT* nearest_pnt(nullptr);
 
 	std::array<double,6> dists(getPointCellBorderDistances(pnt, coords));
@@ -484,11 +491,15 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
 
 template <typename POINT>
 void Grid<POINT>::initNumberOfSteps(std::size_t n_per_cell,
-	std::size_t n_pnts, std::array<double,3> const& delta)
+	std::size_t n_pnts, std::array<double,3> const& extensions)
 {
+	double const max_extension(
+	    *std::max_element(extensions.cbegin(), extensions.cend()));
+
 	std::bitset<3> dim; // all bits set to zero
 	for (std::size_t k(0); k<3; ++k) {
-		if (std::abs(delta[k]) >= std::numeric_limits<double>::epsilon()) {
+		// set dimension if the ratio kth-extension/max_extension >= 1e-4
+		if (extensions[k] >= 1e-4 * max_extension) {
 			dim[k] = true;
 		}
 	}
@@ -496,34 +507,41 @@ void Grid<POINT>::initNumberOfSteps(std::size_t n_per_cell,
 	// structured grid: n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
 	// *** condition: n_pnts / n_cells < n_per_cell
 	// => n_pnts / n_per_cell < n_cells
-	// _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
-	// _n_steps[2] = _n_steps[0] * delta[2]/delta[0],
-	// => n_cells = _n_steps[0]^3 * delta[1]/delta[0] * delta[2]/delta[0],
-	// => _n_steps[0] = cbrt(n_cells * delta[0]^2 / (delta[1]*delta[2]))
+	// _n_steps[1] = _n_steps[0] * extensions[1]/extensions[0],
+	// _n_steps[2] = _n_steps[0] * extensions[2]/extensions[0],
+	// => n_cells = _n_steps[0]^3 * extensions[1]/extensions[0] *
+	//              extensions[2]/extensions[0],
+	// => _n_steps[0] = cbrt(n_cells * extensions[0]^2 /
+	//                       (extensions[1]*extensions[2]))
 	auto sc_ceil = [](double v) {
 		return static_cast<std::size_t>(ceil(v));
 	};
 
 	switch (dim.count()) {
 	case 3: // 3d case
-		_n_steps[0] = sc_ceil(std::cbrt(
-			n_pnts*delta[0]*delta[0]/(n_per_cell*delta[1]*delta[2])));
-		_n_steps[1] = sc_ceil(_n_steps[0]*std::min(delta[1]/delta[0],100.0));
-		_n_steps[2] = sc_ceil(_n_steps[0]*std::min(delta[2]/delta[0],100.0));
+		_n_steps[0] =
+			sc_ceil(std::cbrt(n_pnts * (extensions[0] / extensions[1]) *
+			                  (extensions[0] / extensions[2]) / n_per_cell));
+		_n_steps[1] = sc_ceil(_n_steps[0] *
+			                  std::min(extensions[1] / extensions[0], 100.0));
+		_n_steps[2] = sc_ceil(_n_steps[0] *
+			                  std::min(extensions[2] / extensions[0], 100.0));
 		break;
 	case 2: // 2d cases
 		if (dim[0] && dim[1]) { // xy
-			_n_steps[0] = sc_ceil(std::sqrt(
-				n_pnts*delta[0]/(n_per_cell*delta[1])));
-			_n_steps[1] = sc_ceil(_n_steps[0]*std::min(delta[1]/delta[0],100.0));
+			_n_steps[0] = sc_ceil(std::sqrt(n_pnts * extensions[0] /
+				                            (n_per_cell * extensions[1])));
+			_n_steps[1] = sc_ceil(
+				_n_steps[0] * std::min(extensions[1] / extensions[0], 100.0));
 		} else if (dim[0] && dim[2]) { // xz
-			_n_steps[0] = sc_ceil(std::sqrt(
-				n_pnts*delta[0]/(n_per_cell*delta[2])));
-			_n_steps[2] = sc_ceil(_n_steps[0]*std::min(delta[2]/delta[0],100.0));
+			_n_steps[0] = sc_ceil(std::sqrt(n_pnts * extensions[0] /
+				                            (n_per_cell * extensions[2])));
+			_n_steps[2] = sc_ceil(
+				_n_steps[0] * std::min(extensions[2] / extensions[0], 100.0));
 		} else if (dim[1] && dim[2]) { // yz
-			_n_steps[1] = sc_ceil(std::sqrt(
-				n_pnts*delta[1]/(n_per_cell*delta[2])));
-			_n_steps[2] = sc_ceil(std::min(delta[2]/delta[1],100.0));
+			_n_steps[1] = sc_ceil(std::sqrt(n_pnts * extensions[1] /
+				                            (n_per_cell * extensions[2])));
+			_n_steps[2] = sc_ceil(std::min(extensions[2]/extensions[1],100.0));
 		}
 		break;
 	case 1: // 1d cases
