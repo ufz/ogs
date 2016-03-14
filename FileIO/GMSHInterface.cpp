@@ -68,6 +68,15 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
 	}
 }
 
+GMSHInterface::~GMSHInterface()
+{
+	for (auto * gmsh_pnt : _gmsh_pnts)
+		delete gmsh_pnt;
+	delete _mesh_density_strategy;
+	for (auto * polygon_tree : _polygon_tree_list)
+		delete polygon_tree;
+}
+
 int GMSHInterface::writeGeoFile(GeoLib::GEOObjects &geo_objects, std::string const& file_name)
 {
 	std::vector<std::string> names;

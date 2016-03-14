@@ -78,6 +78,8 @@ public:
 					double param1, double param2, std::size_t param3,
 					std::vector<std::string> & selected_geometries);
 
+	~GMSHInterface();
+
 	/**
 	 * checks if there is a GMSH mesh file header
 	 * @param fname the file name of the mesh (including the path)
