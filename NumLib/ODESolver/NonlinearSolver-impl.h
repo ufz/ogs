@@ -43,13 +43,15 @@ solve(Vector &x)
     auto& rhs   = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_rhs_id);
     auto& x_new = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_x_new_id);
 
-    bool success = false;
+    bool error_norms_met = false;
 
     BLAS::copy(x, x_new); // set initial guess, TODO save the copy
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
-        sys.assembleMatricesPicard(x_new);
+        sys.preIteration(iteration, x);
+
+        sys.assembleMatricesPicard(x);
         sys.getA(A);
         sys.getRhs(rhs);
 
@@ -59,10 +61,34 @@ solve(Vector &x)
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
 
-        if (!_linear_solver.solve(A, rhs, x_new)) {
+        bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
+
+        if (!iteration_succeeded)
+        {
             ERR("The linear solver failed.");
-            x = x_new;
-            success = false;
+        }
+        else
+        {
+            switch(sys.postIteration(x_new))
+            {
+            case IterationResult::OK:
+                // Don't copy here. The old x might still be used further below.
+                // Although currently it is not.
+                break;
+            case IterationResult::FAILED:
+                iteration_succeeded = false;
+                // Copy new solution to x.
+                // Thereby the failed solution can be used by the caller for debugging purposes.
+                BLAS::copy(x_new, x);
+                break;
+            case IterationResult::AGAIN:
+                continue; // That throws the iteration result away.
+            }
+        }
+
+        if (!iteration_succeeded) {
+            // Don't compute error norms, break here.
+            error_norms_met = false;
             break;
         }
 
@@ -72,16 +98,16 @@ solve(Vector &x)
         // INFO("  picard iteration %u error: %e", iteration, error);
 
         // Update x s.t. in the next iteration we will compute the right delta x
-        x = x_new;
+        BLAS::copy(x_new, x);
 
         if (error < _tol) {
-            success = true;
+            error_norms_met = true;
             break;
         }
 
         if (sys.isLinear()) {
             // INFO("  picard linear system. not looping");
-            success = true;
+            error_norms_met = true;
             break;
         }
     }
@@ -90,7 +116,7 @@ solve(Vector &x)
     MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(rhs);
     MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
 
-    return success;
+    return error_norms_met;
 }
 
 
@@ -120,7 +146,7 @@ solve(Vector &x)
     auto& J =
             MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(_J_id);
 
-    bool success = false;
+    bool error_norms_met = false;
 
     // TODO be more efficient
     // init _minus_delta_x to the right size and 0.0
@@ -129,6 +155,8 @@ solve(Vector &x)
 
     for (unsigned iteration=1; iteration<_maxiter; ++iteration)
     {
+        sys.preIteration(iteration, x);
+
         sys.assembleResidualNewton(x);
         sys.getResidual(x, res);
 
@@ -136,7 +164,7 @@ solve(Vector &x)
 
         // TODO streamline that, make consistent with Picard.
         if (BLAS::norm2(res) < _tol) {
-            success = true;
+            error_norms_met = true;
             break;
         }
 
@@ -146,21 +174,53 @@ solve(Vector &x)
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
-        if (!_linear_solver.solve(J, res, minus_delta_x)) {
+        bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+
+        if (!iteration_succeeded)
+        {
             ERR("The linear solver failed.");
-            BLAS::axpy(x, -_alpha, minus_delta_x);
-            success = false;
+        }
+        else
+        {
+            // TODO could be solved in a better way
+            // cf. http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
+            auto& x_new =
+                    MathLib::GlobalVectorProvider<Vector>::provider.getVector(x, _x_new_id);
+            BLAS::axpy(x_new, -_alpha, minus_delta_x);
+
+            switch(sys.postIteration(x_new))
+            {
+            case IterationResult::OK:
+                break;
+            case IterationResult::FAILED:
+                iteration_succeeded = false;
+                break;
+            case IterationResult::AGAIN:
+                // TODO introduce some onDestroy hook.
+                MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
+                continue; // That throws the iteration result away.
+            }
+
+            // TODO could be done via swap. Note: that also requires swapping the ids.
+            //      Same for the Picard scheme.
+            BLAS::copy(x_new, x); // copy new solution to x
+            MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
+        }
+
+        if (!iteration_succeeded) {
+            // Don't compute further error norms, but break here.
+            error_norms_met = false;
             break;
         }
+
+        // TODO maybe compute norm of _minus_delta_x here.
 
         // auto const dx_norm = _minus_delta_x.norm();
         // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
 
-        BLAS::axpy(x, -_alpha, minus_delta_x);
-
         if (sys.isLinear()) {
             // INFO("  newton linear system. not looping");
-            success = true;
+            error_norms_met = true;
             break;
         }
     }
@@ -169,7 +229,7 @@ solve(Vector &x)
     MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(res);
     MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(minus_delta_x);
 
-    return success;
+    return error_norms_met;
 }
 
 
