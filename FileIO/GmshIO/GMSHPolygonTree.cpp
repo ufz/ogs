@@ -269,6 +269,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & g
         for (std::size_t j(0); j<n_pnts_in_ply; j++) {
             if (_node_polygon->isPntInPolygon(*(_plys[k]->getPoint(j)))) {
                 const std::size_t id (_plys[k]->getPointID(j));
+                // if this point was already part of another polyline
+                if (gmsh_pnts[id] != nullptr)
+                    continue;
                 GeoLib::Point const*const pnt(_plys[k]->getPoint(j));
                 gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
             }
