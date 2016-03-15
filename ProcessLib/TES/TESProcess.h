@@ -84,6 +84,8 @@ public:
                BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t, const double delta_t) override;
+    void preIteration(const unsigned iter, GlobalVector const& x) override;
+    NumLib::IterationResult postIteration(GlobalVector const& x) override;
 
     void post(std::string const& file_name);
     void output(std::string const& file_name, const unsigned timestep);

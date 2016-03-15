@@ -52,8 +52,7 @@ public:
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 
-    virtual bool checkBounds(std::vector<double> const& localX,
-                             std::vector<double> const& localX_pts) = 0;
+    virtual bool checkBounds(std::vector<double> const& local_x) = 0;
 };
 
 
@@ -90,8 +89,7 @@ public:
         return Eigen::Map<const Eigen::VectorXd>(N.data(), N.size());
     }
 
-    bool checkBounds(std::vector<double> const& localX,
-                     std::vector<double> const& localX_pts);
+    bool checkBounds(std::vector<double> const& local_x) override;
 
     std::vector<double> const&
     getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_dof) const override;

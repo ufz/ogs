@@ -33,9 +33,7 @@ class TESFEMReactionAdaptor
 {
 public:
     virtual bool
-    checkBounds(std::vector<double> const& localX,
-                std::vector<double> const& localX_pts)
-    {
+    checkBounds(std::vector<double> const& /*local_x*/) {
         return true; // by default accept everything
     }
 
@@ -62,9 +60,7 @@ class TESFEMReactionAdaptorAdsorption final : public TESFEMReactionAdaptor
 public:
     explicit TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData const& data);
 
-    bool checkBounds(const std::vector<double> &localX,
-                     const std::vector<double> &localX_pts)
-    override;
+    bool checkBounds(const std::vector<double> &localX) override;
 
     ReactionRate initReaction(const unsigned int_pt) override {
         return initReaction_slowDownUndershootStrategy(int_pt);

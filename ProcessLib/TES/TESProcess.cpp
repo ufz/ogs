@@ -336,140 +336,94 @@ assembleConcreteProcess(
 {
     DBUG("Assemble TESProcess.");
 
-    bool iteration_accepted = false;
     unsigned num_try = 0;
 
-    do
-    {
-        INFO("-> TES process try number %u in current picard iteration", num_try);
-        _assembly_params.number_of_try_of_iteration = num_try;
+    INFO("-> TES process try number %u in current picard iteration", num_try);
+    _assembly_params.number_of_try_of_iteration = num_try;
 
-        // Call global assembler for each local assembly item.
-        _global_setup.execute(*BP::_global_assembler, _local_assemblers,
-                              t, x, M, K, b);
+    // Call global assembler for each local assembly item.
+    _global_setup.execute(*BP::_global_assembler, _local_assemblers,
+                          t, x, M, K, b);
 
 #if 0 && defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
-        // TODO put that somewhere
-        MathLib::scaleDiagonal(*_A, *_rhs);
+    // TODO put that somewhere
+    MathLib::scaleDiagonal(*_A, *_rhs);
 #endif
 
 #if 0 && defined(OGS_USE_EIGENLIS)
-        // TODO put that somewhere
+    // TODO put that somewhere
 
-        // scaling
-        typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
+    // scaling
+    typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
 
-        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+    for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+    {
+        auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
+                          : (dof == 1) ? _assembly_params.trafo_T
+                                       : _assembly_params.trafo_x;
+
+        for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
         {
-            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                              : (dof == 1) ? _assembly_params.trafo_T
-                                           : _assembly_params.trafo_x;
+            MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
+            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
 
-            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-            {
-                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-                AT.row(idx) *= trafo.dxdy(0);
-                x_curr[idx] /= trafo.dxdy(0);
-            }
+            AT.row(idx) *= trafo.dxdy(0);
+            x_curr[idx] /= trafo.dxdy(0);
         }
+    }
 
-        _A->getRawMatrix() = AT.transpose();
+    _A->getRawMatrix() = AT.transpose();
 #endif
 
 #ifndef NDEBUG
-        if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
-        {
-            MathLib::BLAS::finalizeAssembly(M);
-            MathLib::BLAS::finalizeAssembly(K);
-            MathLib::BLAS::finalizeAssembly(b);
+    if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
+    {
+        MathLib::BLAS::finalizeAssembly(M);
+        MathLib::BLAS::finalizeAssembly(K);
+        MathLib::BLAS::finalizeAssembly(b);
 
-            // TODO [CL] Those files will be written to the working directory.
-            //           Relative path needed.
-            M.write("global_matrix_M.txt");
-            K.write("global_matrix_K.txt");
-            b.write("global_vector_b.txt");
-        }
+        // TODO [CL] Those files will be written to the working directory.
+        //           Relative path needed.
+        M.write("global_matrix_M.txt");
+        K.write("global_matrix_K.txt");
+        b.write("global_vector_b.txt");
+    }
 #endif
 
 #if 0 && defined(OGS_USE_EIGENLIS)
-        // TODO put that somewhere
+    // TODO put that somewhere
 
-        // scale back
-        for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+    // scale back
+    for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
+    {
+        auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
+                          : (dof == 1) ? _assembly_params.trafo_T
+                                       : _assembly_params.trafo_x;
+
+        for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
         {
-            auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                              : (dof == 1) ? _assembly_params.trafo_T
-                                           : _assembly_params.trafo_x;
+            MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
+            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
 
-            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-            {
-                MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-                auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-                // TODO: _A
-                x_curr[idx] *= trafo.dxdy(0);
-            }
+            // TODO: _A
+            x_curr[idx] *= trafo.dxdy(0);
         }
+    }
 #endif
 
-        if (_output_iteration_results)
-        {
-            DBUG("output results of iteration %li", _total_iteration);
-            std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
-                             + "_ts_" + std::to_string(_timestep)
-                             + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
-                             + "_" +    std::to_string(num_try)
-                             + ".vtu";
+    if (_output_iteration_results)
+    {
+        DBUG("output results of iteration %li", _total_iteration);
+        std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
+                         + "_ts_" + std::to_string(_timestep)
+                         + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
+                         + "_" +    std::to_string(num_try)
+                         + ".vtu";
 
-            output(fn, 0);
-        }
-
-        bool check_passed = true;
-
-        // TODO put to post timestep.
-        if (!Trafo::constrained)
-        {
-            // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
-
-            auto& ga = *_global_assembler;
-
-            auto check_variable_bounds
-            = [&ga, &check_passed](
-              std::size_t id, LocalAssembler* const loc_asm)
-            {
-                // DBUG("%lu", id);
-
-                std::vector<double> const* localX;
-                std::vector<double> const* localX_pts;
-
-                // TODO fix
-                // ga.getLocalNodalValues(id, localX, localX_pts);
-
-                // if (!loc_asm->checkBounds(*localX, *localX_pts)) check_passed = false;
-            };
-
-            _global_setup.execute(check_variable_bounds, _local_assemblers);
-
-            if (!check_passed)
-            {
-                // TODO fix
-                // x_curr = x_prev_iter;
-            }
-        }
-
-        iteration_accepted = check_passed;
-
-        ++num_try;
+        output(fn, 0);
     }
-    while(! iteration_accepted);
 
-    DBUG("ts %lu iteration %lu (%lu) try %u accepted", _timestep, _total_iteration,
-         _assembly_params.iteration_in_current_timestep, num_try-1);
-
-    ++ _assembly_params.iteration_in_current_timestep;
-    ++_total_iteration;
+    ++num_try;
 }
 
 template<typename GlobalSetup>
@@ -480,9 +434,61 @@ preTimestep(GlobalVector const& /*x*/, const double t, const double delta_t)
     DBUG("new timestep");
 
     _assembly_params.delta_t = delta_t;
-    _assembly_params.iteration_in_current_timestep = 0;
     _assembly_params.current_time = t;
-    ++ _timestep;
+    ++ _timestep; // TODO remove that
+}
+
+template<typename GlobalSetup>
+void
+TESProcess<GlobalSetup>::
+preIteration(const unsigned iter, GlobalVector const& /*x*/)
+{
+    _assembly_params.iteration_in_current_timestep = iter;
+}
+
+template<typename GlobalSetup>
+NumLib::IterationResult
+TESProcess<GlobalSetup>::
+postIteration(GlobalVector const& x)
+{
+    bool check_passed = true;
+
+    // TODO put to post timestep.
+    if (!Trafo::constrained)
+    {
+        // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
+
+        auto do_check = [&](
+                std::vector<double> const& local_x,
+                AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/,
+                LocalAssembler& loc_asm)
+        {
+            if (!loc_asm.checkBounds(local_x)) check_passed = false;
+        };
+
+        auto check_variable_bounds
+        = [&](std::size_t id, LocalAssembler* const loc_asm)
+        {
+            _global_assembler->passLocalVector(do_check, id, x, *loc_asm);
+        };
+
+        // TODO Short-circuit evaluation that stops after the first error.
+        //      But maybe that's not what I want to use here.
+        _global_setup.execute(check_variable_bounds, _local_assemblers);
+    }
+
+    if (!check_passed)
+        return NumLib::IterationResult::REPEAT_ITERATION;
+
+
+    // TODO remove
+    DBUG("ts %lu iteration %lu (%lu) try XXXXXX accepted", _timestep, _total_iteration,
+         _assembly_params.iteration_in_current_timestep);
+
+    ++ _assembly_params.iteration_in_current_timestep;
+    ++_total_iteration;
+
+    return NumLib::IterationResult::SUCCESS;
 }
 
 template<typename GlobalSetup>
