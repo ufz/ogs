@@ -169,7 +169,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             NumLib::shapeFunctionInterpolate(xs, sm.N, Array{ &xm });
 
             // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
             pVs.push_back(p * xn);
         }
 
@@ -196,7 +196,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
 
             // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
             auto const pS = Ads::Adsorption::get_equilibrium_vapour_pressure(T);
             rhs.push_back(p * xn / pS);
         }
@@ -224,12 +224,12 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
             NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
 
             // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP._M_react, AP._M_inert);
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
             auto const pV = p * xn;
             if (pV < 0.0) {
                 Cs.push_back(0.0);
             } else {
-                Cs.push_back(AP._reaction_system->get_equilibrium_loading(pV, T, AP._M_react));
+                Cs.push_back(AP.react_sys->get_equilibrium_loading(pV, T, AP.M_react));
             }
         }
 

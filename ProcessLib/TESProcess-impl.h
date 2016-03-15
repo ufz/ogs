@@ -170,16 +170,16 @@ TESProcess(MeshLib::Mesh& mesh,
 
     {
         std::vector<std::pair<const std::string, double*> > params{
-            { "fluid_specific_heat_source",            &_assembly_params._fluid_specific_heat_source },
-            { "fluid_specific_isobaric_heat_capacity", &_assembly_params._cpG },
-            { "solid_specific_heat_source",            &_assembly_params._solid_specific_heat_source },
-            { "solid_heat_conductivity",               &_assembly_params._solid_heat_cond },
-            { "solid_specific_isobaric_heat_capacity", &_assembly_params._cpS },
-            { "tortuosity",                            &_assembly_params._tortuosity },
-            { "diffusion_coefficient",                 &_assembly_params._diffusion_coefficient_component },
-            { "porosity",                              &_assembly_params._poro },
-            { "solid_density_dry",                     &_assembly_params._rho_SR_dry },
-            { "solid_density_initial",                 &_assembly_params._initial_solid_density }
+            { "fluid_specific_heat_source",            &_assembly_params.fluid_specific_heat_source },
+            { "fluid_specific_isobaric_heat_capacity", &_assembly_params.cpG },
+            { "solid_specific_heat_source",            &_assembly_params.solid_specific_heat_source },
+            { "solid_heat_conductivity",               &_assembly_params.solid_heat_cond },
+            { "solid_specific_isobaric_heat_capacity", &_assembly_params.cpS },
+            { "tortuosity",                            &_assembly_params.tortuosity },
+            { "diffusion_coefficient",                 &_assembly_params.diffusion_coefficient_component },
+            { "porosity",                              &_assembly_params.poro },
+            { "solid_density_dry",                     &_assembly_params.rho_SR_dry },
+            { "solid_density_initial",                 &_assembly_params.initial_solid_density }
         };
 
         for (auto const& p : params)
@@ -213,12 +213,12 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("setting parameter `solid_hydraulic_permeability' to isotropic value `%g'", *par);
         const auto dim = BP::_mesh.getDimension();
-        _assembly_params._solid_perm_tensor
+        _assembly_params.solid_perm_tensor
                 = Eigen::MatrixXd::Identity(dim, dim) * (*par);
     }
 
     // reactive system
-    _assembly_params._reaction_system = std::move(
+    _assembly_params.react_sys = std::move(
         Ads::Adsorption::newInstance(config.getConfSubtree("reactive_system")));
 
     // matrix order
@@ -241,7 +241,7 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("output_element_matrices: %s", (*param) ? "true" : "false");
 
-        _assembly_params._output_element_matrices = *param;
+        _assembly_params.output_element_matrices = *param;
     }
 
     // debug output
@@ -342,8 +342,8 @@ assembleConcreteProcess(
     DBUG("Assemble TESProcess.");
 
     // _assembly_params._delta_t = delta_t; // TODO fix
-    _assembly_params._iteration_in_current_timestep = 0;
-    _assembly_params._current_time = current_time;
+    _assembly_params.iteration_in_current_timestep = 0;
+    _assembly_params.current_time = current_time;
     ++ _timestep;
 
 
@@ -355,7 +355,7 @@ assembleConcreteProcess(
     do
     {
         INFO("-> TES process try number %u in current picard iteration", num_try);
-        _assembly_params._number_of_try_of_iteration = num_try;
+        _assembly_params.number_of_try_of_iteration = num_try;
 
         // Call global assembler for each local assembly item.
         _global_setup.execute(*BP::_global_assembler, _local_assemblers,
@@ -433,7 +433,7 @@ assembleConcreteProcess(
             DBUG("output results of iteration %li", _total_iteration);
             std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
                              + "_ts_" + std::to_string(_timestep)
-                             + "_" +    std::to_string(_assembly_params._iteration_in_current_timestep)
+                             + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
                              + "_" +    std::to_string(num_try)
                              + ".vtu";
 
@@ -480,9 +480,9 @@ assembleConcreteProcess(
     while(! iteration_accepted);
 
     DBUG("ts %lu iteration %lu (%lu) try %u accepted", _timestep, _total_iteration,
-         _assembly_params._iteration_in_current_timestep, num_try-1);
+         _assembly_params.iteration_in_current_timestep, num_try-1);
 
-    ++ _assembly_params._iteration_in_current_timestep;
+    ++ _assembly_params.iteration_in_current_timestep;
     ++_total_iteration;
 }
 
