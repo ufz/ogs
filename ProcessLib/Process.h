@@ -73,10 +73,11 @@ public:
 	virtual void createLocalAssemblers() = 0;
 
 	/// Preprocessing before starting assembly for new timestep.
-	virtual void preTimestep(GlobalVector const& x) {}
+	virtual void preTimestep(GlobalVector const& /*x*/,
+	                         const double /*t*/, const double /*delta_t*/) {}
 
 	/// Postprocessing after a complete timestep.
-	virtual void postTimestep(GlobalVector const& x) {}
+	virtual void postTimestep(GlobalVector const& /*x*/) {}
 
 	/// Process output.
 	/// The file_name is indicating the name of possible output file.
