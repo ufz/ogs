@@ -89,10 +89,13 @@ public:
 		if ((*pnt)[1] < _ll[1]) return false;
 		if ((*pnt)[1] > _ur[1]) return false;
 
-		if (!_is_leaf)
-			for (std::size_t k(0); k < 4; k++)
+		if (!_is_leaf) {
+			for (std::size_t k(0); k < 4; k++) {
 				if (_childs[k]->addPoint (pnt))
 					return true;
+			}
+			return false;
+		}
 
 		// check if point is already in quadtree
 		bool pnt_in_quadtree (false);
