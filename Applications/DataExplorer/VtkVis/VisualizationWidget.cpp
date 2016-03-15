@@ -45,7 +45,8 @@
 #include <QString>
 
 VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
-	: _vtkRender(nullptr), _markerWidget(nullptr), QWidget(parent)
+: QWidget(parent), _vtkRender(nullptr), _markerWidget(nullptr),
+  _interactorStyle(nullptr), _vtkPickCallback(nullptr)
 {
 	this->setupUi(this);
 
@@ -85,10 +86,10 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 VisualizationWidget::~VisualizationWidget()
 {
-	_vtkRender->Delete();
 	_vtkPickCallback->Delete();
 	_interactorStyle->Delete();
 	_markerWidget->Delete();
+	_vtkRender->Delete();
 }
 
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const

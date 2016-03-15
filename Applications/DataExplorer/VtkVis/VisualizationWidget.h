@@ -105,9 +105,9 @@ protected slots:
 
 private:
 	vtkRenderer* _vtkRender;
+	vtkOrientationMarkerWidget* _markerWidget;
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
-	vtkOrientationMarkerWidget* _markerWidget;
 	bool _isShowAllOnLoad;
 };
 
