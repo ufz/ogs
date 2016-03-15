@@ -97,7 +97,7 @@ public:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
         auto cb = [local_assembler](
-                std::vector<double> local_x,
+                std::vector<double> const& local_x,
                 LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
                 const double t,
                 GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
@@ -118,7 +118,7 @@ public:
                      GlobalVector const& x) const
     {
         auto cb = [local_assembler](
-            std::vector<double> local_x,
+            std::vector<double> const& local_x,
             LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
             local_assembler->preTimestep(local_x);
@@ -136,7 +136,7 @@ public:
                       GlobalVector const& x) const
     {
         auto cb = [local_assembler](
-            std::vector<double> local_x,
+            std::vector<double> const& local_x,
             LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
             local_assembler->postTimestep(local_x);
