@@ -38,9 +38,9 @@ getRowColumnIndices(std::size_t const id,
 }
 
 template <typename Callback, typename GlobalVector, typename... Args>
-void passLocalVector(Callback& cb, std::size_t const id,
-                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                     GlobalVector const& x, Args&&... args)
+void passLocalVector_(Callback& cb, std::size_t const id,
+                      AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                      GlobalVector const& x, Args&&... args)
 {
     std::vector<GlobalIndexType> indices;
     auto const r_c_indices = getRowColumnIndices(id, dof_table, indices);
@@ -106,13 +106,11 @@ public:
             local_assembler->addToGlobal(r_c_indices, M, K, b);
         };
 
-        passLocalVector(cb, id, _data_pos, x, t, M, K, b);
+        passLocalVector_(cb, id, _data_pos, x, t, M, K, b);
     }
 
-    /// Executes preTimestep call for each of the local assemblers for the
-    /// given mesh item.
-    /// The positions in the global matrix/vector are taken from
-    /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
+    /// Executes the preTimestep() method of the local assembler for the
+    /// given mesh item passing the mesh item's nodal d.o.f.
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void preTimestep(std::size_t const id,
@@ -121,18 +119,16 @@ public:
     {
         auto cb = [local_assembler](
             std::vector<double> local_x,
-            LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices)
+            LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
             local_assembler->preTimestep(local_x);
         };
 
-        passLocalVector(cb, id, _data_pos, x);
+        passLocalVector_(cb, id, _data_pos, x);
     }
 
-    /// Executes postTimestep call for each of the local assemblers for the
-    /// given mesh item.
-    /// The positions in the global matrix/vector are taken from
-    /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
+    /// Executes the postTimestep() method of the local assembler for the
+    /// given mesh item passing the mesh item's nodal d.o.f.
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void postTimestep(std::size_t const id,
@@ -141,12 +137,22 @@ public:
     {
         auto cb = [local_assembler](
             std::vector<double> local_x,
-            LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices)
+            LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
             local_assembler->postTimestep(local_x);
         };
 
-        passLocalVector(cb, id, _data_pos, x);
+        passLocalVector_(cb, id, _data_pos, x);
+    }
+
+    /// Executes the given callback function for the given mesh item
+    /// passing the mesh item's nodal d.o.f.
+    /// \attention The index \c id is not necesserily the mesh item's id.
+    template <typename Callback, typename... Args>
+    void passLocalVector(Callback& cb, std::size_t const id,
+                         GlobalVector const& x, Args&&... args)
+    {
+        passLocalVector_(cb, id, _data_pos, x, std::forward<Args>(args)...);
     }
 
 private:
