@@ -623,40 +623,6 @@ output(const std::string& file_name, const unsigned /*timestep*/)
     vtu_interface.writeToFile(file_name);
 }
 
-
-template<typename GlobalSetup>
-void
-TESProcess<GlobalSetup>::
-post(std::string const& file_name)
-{
-    DBUG("Postprocessing TESProcess.");
-    std::string const property_name = "Result";
-
-    // Get or create a property vector for results.
-    boost::optional<MeshLib::PropertyVector<double>&> result;
-    if (BP::_mesh.getProperties().hasPropertyVector(property_name))
-    {
-        result = BP::_mesh.getProperties().template
-            getPropertyVector<double>(property_name);
-    }
-    else
-    {
-        result = BP::_mesh.getProperties().template
-            createNewPropertyVector<double>(property_name,
-                MeshLib::MeshItemType::Node);
-        result->resize(_x->size());
-    }
-    assert(result && result->size() == _x->size());
-
-    // Copy result
-    for (std::size_t i = 0; i < _x->size(); ++i)
-        (*result)[i] = (*_x)[i];
-
-    // Write output file
-    FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
-    vtu_interface.writeToFile(file_name);
-}
-
 template<typename GlobalSetup>
 TESProcess<GlobalSetup>::
 ~TESProcess()
