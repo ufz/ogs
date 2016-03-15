@@ -384,16 +384,20 @@ private:
 		POINT mid_point(_ll);
 		mid_point[0] += (_ur[0] - _ll[0]) / 2.0;
 		mid_point[1] += (_ur[1] - _ll[1]) / 2.0;
+		assert(_childs[0] == nullptr);
 		_childs[0] = new QuadTree<POINT> (mid_point, _ur, this, _depth + 1, _max_points_per_node); // north east
 		POINT h_ll(mid_point), h_ur(mid_point);
 		h_ll[0] = _ll[0];
 		h_ur[1] = _ur[1];
+		assert(_childs[1] == nullptr);
 		_childs[1] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_node); // north west
+		assert(_childs[2] == nullptr);
 		_childs[2] = new QuadTree<POINT> (_ll, mid_point, this, _depth + 1, _max_points_per_node); // south west
 		h_ll = _ll;
 		h_ll[0] = mid_point[0];
 		h_ur = _ur;
 		h_ur[1] = mid_point[1];
+		assert(_childs[3] == nullptr);
 		_childs[3] = new QuadTree<POINT> (h_ll, h_ur, this, _depth + 1, _max_points_per_node); // south east
 
 		// distribute points to sub quadtrees
