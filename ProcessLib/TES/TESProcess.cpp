@@ -453,7 +453,6 @@ postIteration(GlobalVector const& x)
 {
     bool check_passed = true;
 
-    // TODO put to post timestep.
     if (!Trafo::constrained)
     {
         // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
