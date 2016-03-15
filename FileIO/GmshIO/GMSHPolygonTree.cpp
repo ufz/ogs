@@ -257,7 +257,7 @@ void GMSHPolygonTree::initMeshDensityStrategy()
 void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const
 {
     const std::size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
-    for (std::size_t k(0); k<n_pnts_polygon; k++) {
+    for (std::size_t k(0); k<n_pnts_polygon-1; k++) {
         const std::size_t id (_node_polygon->getPointID(k));
         GeoLib::Point const*const pnt(_node_polygon->getPoint(k));
         gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
