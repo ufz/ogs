@@ -436,7 +436,8 @@ assembleIntegrationPoint(unsigned integration_point,
 
 template<typename Traits>
 void
-TESLocalAssemblerInner<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
+TESLocalAssemblerInner<Traits>::
+init(const unsigned num_int_pts, const unsigned dimension)
 {
     _d.solid_density.resize(num_int_pts, _d.ap->_initial_solid_density);
     _d.solid_density_prev_ts.resize(num_int_pts, _d.ap->_initial_solid_density);
@@ -447,7 +448,7 @@ TESLocalAssemblerInner<Traits>::init(const unsigned num_int_pts, const unsigned 
     _d.velocity.resize(dimension);
     for (auto& v : _d.velocity) v.resize(num_int_pts);
 
-    _d.reaction_adaptor = std::move(TESFEMReactionAdaptor<Traits>::newInstance(_d));
+    _d.reaction_adaptor = std::move(TESFEMReactionAdaptor::newInstance(_d));
 }
 
 

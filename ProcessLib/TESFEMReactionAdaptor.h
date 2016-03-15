@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -11,11 +11,9 @@
 
 #include <vector>
 #include <memory>
-#include "TESFEM-data.h"
 
 #include "MaterialsLib/adsorption/reaction_CaOH2.h"
-#include "MathLib/ODE/OdeSolverFactory.h"
-
+#include "MathLib/ODE/OdeSolver.h"
 
 
 namespace ProcessLib
@@ -23,8 +21,7 @@ namespace ProcessLib
 namespace TES
 {
 
-template<typename Traits>
-class TESLocalAssemblerInner;
+struct TESLocalAssemblerData;
 
 struct ReactionRate
 {
@@ -32,19 +29,21 @@ struct ReactionRate
     const double solid_density;
 };
 
-template<typename Traits>
 class TESFEMReactionAdaptor
 {
 public:
     virtual bool
     checkBounds(std::vector<double> const& localX,
-                std::vector<double> const& localX_pts) = 0;
+                std::vector<double> const& localX_pts)
+    {
+        return true; // by default accept everything
+    }
 
     virtual ReactionRate
     initReaction(const unsigned int_pt) = 0;
 
     virtual void
-    preZerothTryAssemble() = 0;
+    preZerothTryAssemble() {}
 
     // TODO: remove
     virtual double getReactionDampingFactor() const {
@@ -53,18 +52,18 @@ public:
 
     virtual ~TESFEMReactionAdaptor() = default;
 
-    static std::unique_ptr<TESFEMReactionAdaptor<Traits> >
-    newInstance(TESLocalAssemblerData<Traits> const& data);
+    static std::unique_ptr<TESFEMReactionAdaptor >
+    newInstance(TESLocalAssemblerData const& data);
 };
 
 
-template<typename Traits>
-class TESFEMReactionAdaptorAdsorption final : public TESFEMReactionAdaptor<Traits>
+class TESFEMReactionAdaptorAdsorption final : public TESFEMReactionAdaptor
 {
 public:
-    explicit TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData<Traits> const& data);
+    explicit TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData const& data);
 
-    bool checkBounds(const std::vector<double> &localX, const std::vector<double> &localX_pts)
+    bool checkBounds(const std::vector<double> &localX,
+                     const std::vector<double> &localX_pts)
     override;
 
     ReactionRate initReaction(const unsigned int_pt) override {
@@ -89,75 +88,43 @@ private:
     double _reaction_damping_factor = 1.0;
     std::vector<bool> _bounds_violation;
 
-    TESLocalAssemblerData<Traits> const& _d;
+    TESLocalAssemblerData const& _d;
 };
 
 
-template<typename Traits>
-class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor<Traits>
+class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor
 {
 public:
-    explicit TESFEMReactionAdaptorInert(TESLocalAssemblerData<Traits> const&);
+    explicit TESFEMReactionAdaptorInert(TESLocalAssemblerData const&);
 
-    bool checkBounds(const std::vector<double> &, const std::vector<double> &)
-    override {
-        return true;
-    }
-
-    ReactionRate initReaction(const unsigned int_pt) override
-    {
-        return { 0.0, _d.solid_density_prev_ts[int_pt] };
-        // _d._qR = 0.0;
-        // _d._reaction_rate[int_pt] = 0.0;
-    }
-
-    void preZerothTryAssemble() override
-    {}
+    ReactionRate initReaction(const unsigned int_pt) override;
 
 private:
-    TESLocalAssemblerData<Traits> const& _d;
+    TESLocalAssemblerData const& _d;
 };
 
 
-template<typename Traits>
-class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor<Traits>
+class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor
 {
 public:
-    explicit TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData<Traits> const& data);
-
-    bool checkBounds(const std::vector<double> &, const std::vector<double> &)
-    override {
-        return true;
-    }
+    explicit TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData const& data);
 
     ReactionRate initReaction(const unsigned) override;
 
-    void preZerothTryAssemble() override
-    {}
-
 private:
-    TESLocalAssemblerData<Traits> const& _d;
+    TESLocalAssemblerData const& _d;
 };
 
 
-template<typename Traits>
-class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor<Traits>
+class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor
 {
 public:
-    explicit TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData<Traits> const& data);
-
-    bool checkBounds(const std::vector<double> &, const std::vector<double> &)
-    override {
-        return true;
-    }
+    explicit TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data);
 
     ReactionRate initReaction(const unsigned) override;
 
-    void preZerothTryAssemble() override
-    {}
-
 private:
-    using Data = TESLocalAssemblerData<Traits>;
+    using Data = TESLocalAssemblerData;
     using React = Ads::ReactionCaOH2;
     Data const& _d;
     React& _react;
@@ -170,7 +137,5 @@ private:
                        React& reaction);
 };
 
-}
-}
-
-#include "TESFEMReactionAdaptor-impl.h"
+} // namespace TES
+} // namespace ProcessLib

@@ -7,57 +7,56 @@
  *
  */
 
-#pragma once
-
 #include <cassert>
 
 #include <logog/include/logog.hpp>
 
-#include "TESFEMReactionAdaptor.h"
 #include "MathLib/Nonlinear/Root1D.h"
+#include "MathLib/ODE/OdeSolverFactory.h"
 
 #include "MaterialsLib/adsorption/adsorption.h"
 #include "MaterialsLib/adsorption/reaction_inert.h"
 #include "MaterialsLib/adsorption/reaction_sinusoidal.h"
+
+#include "TESFEMReactionAdaptor.h"
+#include "TESFEM-data.h"
 
 namespace ProcessLib
 {
 namespace TES
 {
 
-template<typename Traits>
-std::unique_ptr<TESFEMReactionAdaptor<Traits> >
-TESFEMReactionAdaptor<Traits>::
-newInstance(TESLocalAssemblerData<Traits> const& data)
+std::unique_ptr<TESFEMReactionAdaptor>
+TESFEMReactionAdaptor::
+newInstance(TESLocalAssemblerData const& data)
 {
     auto const* ads = data.ap->_reaction_system.get();
     if (dynamic_cast<Ads::Adsorption const*>(ads) != nullptr) {
-        return std::unique_ptr<TESFEMReactionAdaptor<Traits> >(
-                    new TESFEMReactionAdaptorAdsorption<Traits>(data)
+        return std::unique_ptr<TESFEMReactionAdaptor>(
+                    new TESFEMReactionAdaptorAdsorption(data)
                     );
     } else if (dynamic_cast<Ads::ReactionInert const*>(ads) != nullptr) {
-        return std::unique_ptr<TESFEMReactionAdaptor<Traits> >(
-                    new TESFEMReactionAdaptorInert<Traits>(data)
+        return std::unique_ptr<TESFEMReactionAdaptor>(
+                    new TESFEMReactionAdaptorInert(data)
                     );
     } else if (dynamic_cast<Ads::ReactionSinusoidal const*>(ads) != nullptr) {
-        return std::unique_ptr<TESFEMReactionAdaptor<Traits> >(
-                    new TESFEMReactionAdaptorSinusoidal<Traits>(data)
+        return std::unique_ptr<TESFEMReactionAdaptor>(
+                    new TESFEMReactionAdaptorSinusoidal(data)
                     );
     } else if (dynamic_cast<Ads::ReactionCaOH2 const*>(ads) != nullptr) {
-        return std::unique_ptr<TESFEMReactionAdaptor<Traits> >(
-                    new TESFEMReactionAdaptorCaOH2<Traits>(data)
+        return std::unique_ptr<TESFEMReactionAdaptor>(
+                    new TESFEMReactionAdaptorCaOH2(data)
                     );
     }
 
     ERR("No suitable TESFEMReactionAdaptor found. Aborting.");
     std::abort();
-    return std::unique_ptr<TESFEMReactionAdaptor<Traits> >(nullptr);
+    return std::unique_ptr<TESFEMReactionAdaptor>(nullptr);
 }
 
 
-template<typename Traits>
-TESFEMReactionAdaptorAdsorption<Traits>::
-TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData<Traits> const& data)
+TESFEMReactionAdaptorAdsorption::
+TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData const& data)
     // caution fragile: this relies in this constructor b eing called __after__
     // data.solid_density has been properly set up!
     : _bounds_violation(data.solid_density.size(), false)
@@ -68,9 +67,8 @@ TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData<Traits> const& data)
     assert(_bounds_violation.size() != 0);
 }
 
-template<typename Traits>
 ReactionRate
-TESFEMReactionAdaptorAdsorption<Traits>::
+TESFEMReactionAdaptorAdsorption::
 initReaction_slowDownUndershootStrategy(const unsigned int_pt)
 {
     auto const& AP = _d.ap;
@@ -161,9 +159,8 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
                 _d.solid_density_prev_ts[int_pt] + react_rate_R * AP->_delta_t };
 }
 
-template<typename Traits>
 double
-TESFEMReactionAdaptorAdsorption<Traits>::
+TESFEMReactionAdaptorAdsorption::
 estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
 {
     auto f = [this, p_V0, C0](double pV) -> double
@@ -189,9 +186,8 @@ estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
     return rf.get_result();
 }
 
-template<typename Traits>
 bool
-TESFEMReactionAdaptorAdsorption<Traits>::
+TESFEMReactionAdaptorAdsorption::
 checkBounds(std::vector<double> const& localX,
             std::vector<double> const& localX_pts)
 {
@@ -238,9 +234,8 @@ checkBounds(std::vector<double> const& localX,
     return alpha == 1.0;
 }
 
-template<typename Traits>
 void
-TESFEMReactionAdaptorAdsorption<Traits>::
+TESFEMReactionAdaptorAdsorption::
 preZerothTryAssemble()
 {
     _reaction_damping_factor = std::min(
@@ -249,17 +244,24 @@ preZerothTryAssemble()
 }
 
 
-template<typename Traits>
-TESFEMReactionAdaptorInert<Traits>::
-TESFEMReactionAdaptorInert(TESLocalAssemblerData<Traits> const& data)
+TESFEMReactionAdaptorInert::
+TESFEMReactionAdaptorInert(TESLocalAssemblerData const& data)
     : _d(data)
 {
 }
 
+ReactionRate
+TESFEMReactionAdaptorInert::
+initReaction(const unsigned int_pt)
+{
+    return { 0.0, _d.solid_density_prev_ts[int_pt] };
+    // _d._qR = 0.0;
+    // _d._reaction_rate[int_pt] = 0.0;
+}
 
-template<typename Traits>
-TESFEMReactionAdaptorSinusoidal<Traits>::
-TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData<Traits> const& data)
+
+TESFEMReactionAdaptorSinusoidal::
+TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData const& data)
     : _d(data)
 {
     assert(dynamic_cast<Ads::ReactionSinusoidal const*>(data.ap->_reaction_system.get()) != nullptr
@@ -267,9 +269,8 @@ TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData<Traits> const& data)
 }
 
 
-template<typename Traits>
 ReactionRate
-TESFEMReactionAdaptorSinusoidal<Traits>::
+TESFEMReactionAdaptorSinusoidal::
 initReaction(const unsigned /*int_pt*/)
 {
     const double t = _d.ap->_current_time;
@@ -285,9 +286,8 @@ initReaction(const unsigned /*int_pt*/)
 }
 
 
-template<typename Traits>
-TESFEMReactionAdaptorCaOH2<Traits>::
-TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData<Traits> const& data)
+TESFEMReactionAdaptorCaOH2::
+TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data)
     : _d(data)
     , _react(dynamic_cast<Ads::ReactionCaOH2&>(*data.ap->_reaction_system.get()))
 {
@@ -300,9 +300,8 @@ TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData<Traits> const& data)
     _ode_solver->setFunction(odeRhs, nullptr, &_react); // TODO: change signature to reference
 }
 
-template<typename Traits>
 ReactionRate
-TESFEMReactionAdaptorCaOH2<Traits>::
+TESFEMReactionAdaptorCaOH2::
 initReaction(const unsigned int int_pt)
 {
     if (_d.ap->_iteration_in_current_timestep > 0
@@ -360,9 +359,8 @@ initReaction(const unsigned int int_pt)
 // TODO: there could be a general implementation for this in the OdeSolver class
 // general implementation should take an object and a member function pointer
 // with suitable signature.
-template<typename Traits>
 bool
-TESFEMReactionAdaptorCaOH2<Traits>::
+TESFEMReactionAdaptorCaOH2::
 odeRhs(const double t,
        BaseLib::ArrayRef<const double, 1> const y,
        BaseLib::ArrayRef<double, 1> ydot,

@@ -37,10 +37,9 @@ enum class SecondaryVariables {
     REACTION_DAMPING_FACTOR
 };
 
-template<typename Traits>
+
 class TESFEMReactionAdaptor;
 
-template<typename Traits>
 struct TESLocalAssemblerData
 {
     AssemblyParams const* ap;
@@ -62,7 +61,7 @@ struct TESLocalAssemblerData
     double p_V    = std::numeric_limits<double>::quiet_NaN(); // vapour partial pressure
     double qR     = std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in assembly!!!
 
-    std::unique_ptr<TESFEMReactionAdaptor<Traits> > reaction_adaptor;
+    std::unique_ptr<TESFEMReactionAdaptor> reaction_adaptor;
 
     // variables at previous timestep
     std::vector<double> solid_density_prev_ts;
@@ -98,10 +97,10 @@ public:
     void setAssemblyParameters(AssemblyParams const& ap) { _d.ap = &ap; }
     // TODO better encapsulation
     AssemblyParams const& getAssemblyParameters() const { return * _d.ap; }
-    TESFEMReactionAdaptor<Traits> const& getReactionAdaptor() const {
+    TESFEMReactionAdaptor const& getReactionAdaptor() const {
         return *_d.reaction_adaptor;
     }
-    TESFEMReactionAdaptor<Traits>& getReactionAdaptor() {
+    TESFEMReactionAdaptor& getReactionAdaptor() {
         return *_d.reaction_adaptor;
     }
 
@@ -128,7 +127,7 @@ private:
     // reaction adaptor.
     // Maybe the reaction adaptor does not even need direct access to those members!
 
-    TESLocalAssemblerData<Traits> _d;
+    TESLocalAssemblerData _d;
 };
 
 
