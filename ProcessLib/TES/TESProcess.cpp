@@ -334,16 +334,7 @@ assembleConcreteProcess(
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
-    const double current_time = 0.0;
     DBUG("Assemble TESProcess.");
-
-    // _assembly_params._delta_t = delta_t; // TODO fix
-    _assembly_params.iteration_in_current_timestep = 0;
-    _assembly_params.current_time = current_time;
-    ++ _timestep;
-
-
-    // from singlePicardIteration()
 
     bool iteration_accepted = false;
     unsigned num_try = 0;
@@ -432,7 +423,7 @@ assembleConcreteProcess(
                              + "_" +    std::to_string(num_try)
                              + ".vtu";
 
-            postTimestep(fn, 0);
+            output(fn, 0);
         }
 
         bool check_passed = true;
@@ -481,14 +472,26 @@ assembleConcreteProcess(
     ++_total_iteration;
 }
 
+template<typename GlobalSetup>
+void
+TESProcess<GlobalSetup>::
+preTimestep(GlobalVector const& /*x*/, const double t, const double delta_t)
+{
+    DBUG("new timestep");
+
+    _assembly_params.delta_t = delta_t;
+    _assembly_params.iteration_in_current_timestep = 0;
+    _assembly_params.current_time = t;
+    ++ _timestep;
+}
 
 template<typename GlobalSetup>
 void
 TESProcess<GlobalSetup>::
-postTimestep(const std::string& file_name, const unsigned /*timestep*/)
+output(const std::string& file_name, const unsigned /*timestep*/)
 // TODO [CL] remove second parameter
 {
-    INFO("postprocessing timestep");
+    DBUG("postprocessing timestep");
 
     /*
     std::puts("---- solution ----");

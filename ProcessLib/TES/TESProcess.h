@@ -83,8 +83,10 @@ public:
                std::vector<std::unique_ptr<ParameterBase>> const& parameters,
                BaseLib::ConfigTree const& config);
 
+    void preTimestep(GlobalVector const& x, const double t, const double delta_t) override;
+
     void post(std::string const& file_name);
-    void postTimestep(std::string const& file_name, const unsigned timestep);
+    void output(std::string const& file_name, const unsigned timestep);
 
     ~TESProcess();
 
