@@ -37,21 +37,37 @@ enum class SecondaryVariables {
     REACTION_DAMPING_FACTOR
 };
 
-
 template<typename Traits>
 class TESFEMReactionAdaptor;
 
 template<typename Traits>
-class TESFEMReactionAdaptorAdsorption;
+struct TESFEMData
+{
+    AssemblyParams const* ap;
 
-template<typename Traits>
-class TESFEMReactionAdaptorInert;
+    // integration point quantities
+    std::vector<double> solid_density;
+    std::vector<double> reaction_rate; // dC/dt * rho_SR_dry
+    std::vector<std::vector<double> > velocity; // vector of velocities for each integration point
 
-template<typename Traits>
-class TESFEMReactionAdaptorSinusoidal;
 
-template<typename Traits>
-class TESFEMReactionAdaptorCaOH2;
+    // integration point values of unknowns -- temporary storage
+    double p = std::numeric_limits<double>::quiet_NaN(); // gas pressure
+    double T = std::numeric_limits<double>::quiet_NaN(); // temperature
+    double vapour_mass_fraction = std::numeric_limits<double>::quiet_NaN(); // fluid mass fraction of the second component
+
+    // temporary storage for some properties
+    // values do not change during the assembly of one integration point
+    double rho_GR = std::numeric_limits<double>::quiet_NaN();
+    double p_V    = std::numeric_limits<double>::quiet_NaN(); // vapour partial pressure
+    double qR     = std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in assembly!!!
+
+    std::unique_ptr<TESFEMReactionAdaptor<Traits> > reaction_adaptor;
+
+    // variables at previous timestep
+    std::vector<double> solid_density_prev_ts;
+    std::vector<double> reaction_rate_prev_ts; // could also be calculated from solid_density_prev_ts
+};
 
 
 template<typename Traits>
@@ -79,14 +95,14 @@ public:
     getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const;
 
     // TODO pass to constructor
-    void setAssemblyParameters(AssemblyParams const& ap) { _AP = &ap; }
+    void setAssemblyParameters(AssemblyParams const& ap) { _d.ap = &ap; }
     // TODO better encapsulation
-    AssemblyParams const& getAssemblyParameters() const { return * _AP; }
+    AssemblyParams const& getAssemblyParameters() const { return * _d.ap; }
     TESFEMReactionAdaptor<Traits> const& getReactionAdaptor() const {
-        return *_reaction_adaptor;
+        return *_d.reaction_adaptor;
     }
     TESFEMReactionAdaptor<Traits>& getReactionAdaptor() {
-        return *_reaction_adaptor;
+        return *_d.reaction_adaptor;
     }
 
 private:
@@ -112,36 +128,7 @@ private:
     // reaction adaptor.
     // Maybe the reaction adaptor does not even need direct access to those members!
 
-    AssemblyParams const* _AP;
-
-    // integration point quantities
-    std::vector<double> _solid_density;
-    std::vector<double> _reaction_rate; // dC/dt * _rho_SR_dry
-    std::vector<std::vector<double> > _velocity; // vector of velocities for each integration point
-
-
-    // integration point values of unknowns -- temporary storage
-    double _p = std::numeric_limits<double>::quiet_NaN(); // gas pressure
-    double _T = std::numeric_limits<double>::quiet_NaN(); // temperature
-    double _vapour_mass_fraction = std::numeric_limits<double>::quiet_NaN(); // fluid mass fraction of the second component
-
-    // temporary storage for some properties
-    // values do not change during the assembly of one integration point
-    double _rho_GR = std::numeric_limits<double>::quiet_NaN();
-    double _p_V    = std::numeric_limits<double>::quiet_NaN(); // vapour partial pressure
-    double _qR     = std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in assembly!!!
-
-    std::unique_ptr<TESFEMReactionAdaptor<Traits> > _reaction_adaptor;
-
-    // variables at previous timestep
-    std::vector<double> _solid_density_prev_ts;
-    std::vector<double> _reaction_rate_prev_ts; // could also be calculated from _solid_density_prev_ts
-
-    friend class TESFEMReactionAdaptor<Traits>;
-    friend class TESFEMReactionAdaptorAdsorption<Traits>;
-    friend class TESFEMReactionAdaptorInert<Traits>;
-    friend class TESFEMReactionAdaptorSinusoidal<Traits>;
-    friend class TESFEMReactionAdaptorCaOH2<Traits>;
+    TESFEMData<Traits> _d;
 };
 
 

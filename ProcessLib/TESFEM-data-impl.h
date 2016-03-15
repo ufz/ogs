@@ -45,22 +45,22 @@ getMassCoeffMatrix(const unsigned int_pt)
 {
 	// TODO: Dalton's law property
 	const double dxn_dxm = Ads::Adsorption::d_molar_fraction(
-							   _vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
+							   _d.vapour_mass_fraction, _d.ap->_M_react, _d.ap->_M_inert);
 
-	const double M_pp = _AP->_poro/_p * _rho_GR;
-	const double M_pT = -_AP->_poro/_T *  _rho_GR;
-	const double M_px = (_AP->_M_react-_AP->_M_inert) * _p
-						/ (GAS_CONST * _T) * dxn_dxm * _AP->_poro;
+	const double M_pp = _d.ap->_poro/_d.p * _d.rho_GR;
+	const double M_pT = -_d.ap->_poro/_d.T *  _d.rho_GR;
+	const double M_px = (_d.ap->_M_react-_d.ap->_M_inert) * _d.p
+						/ (GAS_CONST * _d.T) * dxn_dxm * _d.ap->_poro;
 
-	const double M_Tp = -_AP->_poro;
+	const double M_Tp = -_d.ap->_poro;
 	const double M_TT =
-			_AP->_poro * _rho_GR * _AP->_cpG // TODO: vapour heat capacity
-			+ (1.0-_AP->_poro) * _solid_density[int_pt] * _AP->_cpS; // TODO: adsorbate heat capacity
+			_d.ap->_poro * _d.rho_GR * _d.ap->_cpG // TODO: vapour heat capacity
+			+ (1.0-_d.ap->_poro) * _d.solid_density[int_pt] * _d.ap->_cpS; // TODO: adsorbate heat capacity
 	const double M_Tx = 0.0;
 
 	const double M_xp = 0.0;
 	const double M_xT = 0.0;
-	const double M_xx = _AP->_poro * _rho_GR;
+	const double M_xx = _d.ap->_poro * _d.rho_GR;
 
 
 	Eigen::Matrix3d M;
@@ -77,10 +77,10 @@ typename Traits::LaplaceMatrix
 LADataNoTpl<Traits>::
 getLaplaceCoeffMatrix(const unsigned /*int_pt*/, const unsigned dim)
 {
-	const double eta_GR = fluid_viscosity(_p, _T, _vapour_mass_fraction);
+	const double eta_GR = fluid_viscosity(_d.p, _d.T, _d.vapour_mass_fraction);
 
-	const double lambda_F = fluid_heat_conductivity(_p, _T, _vapour_mass_fraction);
-	const double lambda_S = _AP->_solid_heat_cond;
+	const double lambda_F = fluid_heat_conductivity(_d.p, _d.T, _d.vapour_mass_fraction);
+	const double lambda_S = _d.ap->_solid_heat_cond;
 
 	using Mat = typename Traits::MatrixDimDim;
 
@@ -90,19 +90,19 @@ getLaplaceCoeffMatrix(const unsigned /*int_pt*/, const unsigned dim)
 	// TODO: k_rel
 	// L_pp
 	Traits::blockDimDim(L,     0,     0, dim, dim)
-			= Traits::blockDimDim(_AP->_solid_perm_tensor, 0,0,dim,dim) * _rho_GR / eta_GR;
+			= Traits::blockDimDim(_d.ap->_solid_perm_tensor, 0,0,dim,dim) * _d.rho_GR / eta_GR;
 
 	// TODO: add zeolite part
 	// L_TT
 	Traits::blockDimDim(L,   dim,   dim, dim, dim)
 			= Mat::Identity(dim, dim)
-			  * ( _AP->_poro * lambda_F + (1.0 - _AP->_poro) * lambda_S);
+			  * ( _d.ap->_poro * lambda_F + (1.0 - _d.ap->_poro) * lambda_S);
 
 	// L_xx
 	Traits::blockDimDim(L, 2*dim, 2*dim, dim, dim)
 			= Mat::Identity(dim, dim)
-			  * (_AP->_tortuosity * _AP->_poro * _rho_GR
-				 * _AP->_diffusion_coefficient_component
+			  * (_d.ap->_tortuosity * _d.ap->_poro * _d.rho_GR
+				 * _d.ap->_diffusion_coefficient_component
 				 );
 
 	return L;
@@ -121,12 +121,12 @@ getAdvectionCoeffMatrix(const unsigned /*int_pt*/)
 
 	const double A_Tp = 0.0;
 
-	const double A_TT = _rho_GR * _AP->_cpG; // porosity?
+	const double A_TT = _d.rho_GR * _d.ap->_cpG; // porosity?
 	const double A_Tx = 0.0;
 
 	const double A_xp = 0.0;
 	const double A_xT = 0.0;
-	const double A_xx = _rho_GR; // porosity?
+	const double A_xx = _d.rho_GR; // porosity?
 
 
 	Eigen::Matrix3d A;
@@ -155,7 +155,7 @@ getContentCoeffMatrix(const unsigned /*int_pt*/)
 
 	const double C_xp = 0.0;
 	const double C_xT = 0.0;
-	const double C_xx = (_AP->_poro - 1.0) * _qR;
+	const double C_xx = (_d.ap->_poro - 1.0) * _d.qR;
 
 	Eigen::Matrix3d C;
 	C << C_pp, C_pT, C_px,
@@ -171,16 +171,16 @@ Eigen::Vector3d
 LADataNoTpl<Traits>::
 getRHSCoeffVector(const unsigned int_pt)
 {
-	const double reaction_enthalpy = _AP->_reaction_system->get_enthalpy(_p_V, _T, _AP->_M_react);
+	const double reaction_enthalpy = _d.ap->_reaction_system->get_enthalpy(_d.p_V, _d.T, _d.ap->_M_react);
 
-	const double rhs_p = (_AP->_poro - 1.0) * _qR; // TODO [CL] body force term
+	const double rhs_p = (_d.ap->_poro - 1.0) * _d.qR; // TODO [CL] body force term
 
-	const double rhs_T = _rho_GR * _AP->_poro * _AP->_fluid_specific_heat_source
-						 + (1.0 - _AP->_poro) * _qR * reaction_enthalpy
-						 + _solid_density[int_pt] * (1.0 - _AP->_poro) * _AP->_solid_specific_heat_source;
+	const double rhs_T = _d.rho_GR * _d.ap->_poro * _d.ap->_fluid_specific_heat_source
+						 + (1.0 - _d.ap->_poro) * _d.qR * reaction_enthalpy
+						 + _d.solid_density[int_pt] * (1.0 - _d.ap->_poro) * _d.ap->_solid_specific_heat_source;
 						 // TODO [CL] momentum production term
 
-	const double rhs_x = (_AP->_poro - 1.0) * _qR; // TODO [CL] what if x < 0.0
+	const double rhs_x = (_d.ap->_poro - 1.0) * _d.qR; // TODO [CL] what if x < 0.0
 
 
 	Eigen::Vector3d rhs;
@@ -197,10 +197,10 @@ void
 LADataNoTpl<Traits>::
 initReaction(const unsigned int_pt)
 {
-    auto const& rate = _reaction_adaptor->initReaction(int_pt);
-    _qR = rate.reaction_rate;
-    _reaction_rate[int_pt] = rate.reaction_rate;
-    _solid_density[int_pt] = rate.solid_density;
+    auto const& rate = _d.reaction_adaptor->initReaction(int_pt);
+    _d.qR = rate.reaction_rate;
+    _d.reaction_rate[int_pt] = rate.reaction_rate;
+    _d.solid_density[int_pt] = rate.solid_density;
 }
 
 
@@ -217,26 +217,26 @@ preEachAssembleIntegrationPoint(
 {
 #ifndef NDEBUG
     // fill local data with garbage to aid in debugging
-    _p = _T   = _vapour_mass_fraction
-       = _p_V = _rho_GR
-       = _qR
+    _d.p = _d.T   = _d.vapour_mass_fraction
+       = _d.p_V = _d.rho_GR
+       = _d.qR
        = std::numeric_limits<double>::quiet_NaN();
 #endif
 
-    std::array<double*, NODAL_DOF> int_pt_val = { &_p, &_T, &_vapour_mass_fraction };
+    std::array<double*, NODAL_DOF> int_pt_val = { &_d.p, &_d.T, &_d.vapour_mass_fraction };
 
     NumLib::shapeFunctionInterpolate(localX, smN, int_pt_val);
 
     // pre-compute certain properties
-    _p_V = _p * Ads::Adsorption::get_molar_fraction(_vapour_mass_fraction, _AP->_M_react, _AP->_M_inert);
+    _d.p_V = _d.p * Ads::Adsorption::get_molar_fraction(_d.vapour_mass_fraction, _d.ap->_M_react, _d.ap->_M_inert);
 
     initReaction(int_pt);
 
-    assert(_p > 0.0);
-    assert(_T > 0.0);
-    assert(0.0 <= _vapour_mass_fraction && _vapour_mass_fraction <= 1.0);
+    assert(_d.p > 0.0);
+    assert(_d.T > 0.0);
+    assert(0.0 <= _d.vapour_mass_fraction && _d.vapour_mass_fraction <= 1.0);
 
-    _rho_GR = fluid_density(_p, _T, _vapour_mass_fraction);
+    _d.rho_GR = fluid_density(_d.p, _d.T, _d.vapour_mass_fraction);
 }
 
 
@@ -317,26 +317,26 @@ getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) co
     switch (var)
     {
     case SecondaryVariables::REACTION_RATE:
-        return _reaction_rate;
+        return _d.reaction_rate;
     case SecondaryVariables::SOLID_DENSITY:
-        return _solid_density;
+        return _d.solid_density;
     case SecondaryVariables::VELOCITY_X:
-        return _velocity[0];
+        return _d.velocity[0];
     case SecondaryVariables::VELOCITY_Y:
-        assert(_velocity.size() >= 2);
-        return _velocity[1];
+        assert(_d.velocity.size() >= 2);
+        return _d.velocity[1];
     case SecondaryVariables::VELOCITY_Z:
-        assert(_velocity.size() >= 3);
-        return _velocity[2];
+        assert(_d.velocity.size() >= 3);
+        return _d.velocity[2];
 
     case SecondaryVariables::LOADING:
     {
         auto& Cs = cache;
         Cs.clear();
-        Cs.reserve(_solid_density.size());
+        Cs.reserve(_d.solid_density.size());
 
-        for (auto rho_SR : _solid_density) {
-            Cs.push_back(rho_SR / _AP->_rho_SR_dry - 1.0);
+        for (auto rho_SR : _d.solid_density) {
+            Cs.push_back(rho_SR / _d.ap->_rho_SR_dry - 1.0);
         }
 
         return Cs;
@@ -384,20 +384,20 @@ assembleIntegrationPoint(unsigned integration_point,
 
 
     // calculate velocity
-    assert((unsigned) smDNdx.rows() == _velocity.size()
-           && (unsigned) smDNdx.cols() == _velocity[0].size());
+    assert((unsigned) smDNdx.rows() == _d.velocity.size()
+           && (unsigned) smDNdx.cols() == _d.velocity[0].size());
 
     auto const velocity = (Traits::blockDimDim(laplaceCoeffMat, 0, 0, D, D)
                            * (
                                smDNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(), N) // grad_p
-                               / -_rho_GR
+                               / -_d.rho_GR
                                )
                            ).eval();
     assert(velocity.size() == D);
 
     for (unsigned d=0; d<D; ++d)
     {
-        _velocity[d][integration_point] = velocity[d];
+        _d.velocity[d][integration_point] = velocity[d];
     }
 
     auto const detJ_w_N = (smDetJ * weight * smN).eval();
@@ -438,16 +438,16 @@ template<typename Traits>
 void
 LADataNoTpl<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
 {
-    _solid_density.resize(num_int_pts, _AP->_initial_solid_density);
-    _solid_density_prev_ts.resize(num_int_pts, _AP->_initial_solid_density);
+    _d.solid_density.resize(num_int_pts, _d.ap->_initial_solid_density);
+    _d.solid_density_prev_ts.resize(num_int_pts, _d.ap->_initial_solid_density);
 
-    _reaction_rate.resize(num_int_pts);
-    _reaction_rate_prev_ts.resize(num_int_pts);
+    _d.reaction_rate.resize(num_int_pts);
+    _d.reaction_rate_prev_ts.resize(num_int_pts);
 
-    _velocity.resize(dimension);
-    for (auto& v : _velocity) v.resize(num_int_pts);
+    _d.velocity.resize(dimension);
+    for (auto& v : _d.velocity) v.resize(num_int_pts);
 
-    _reaction_adaptor = std::move(TESFEMReactionAdaptor<Traits>::newInstance(*this));
+    _d.reaction_adaptor = std::move(TESFEMReactionAdaptor<Traits>::newInstance(_d));
 }
 
 
@@ -455,18 +455,18 @@ template<typename Traits>
 void
 LADataNoTpl<Traits>::preEachAssemble()
 {
-    if (_AP->_iteration_in_current_timestep == 0)
+    if (_d.ap->_iteration_in_current_timestep == 0)
     {
-        if (_AP->_number_of_try_of_iteration == 0)
+        if (_d.ap->_number_of_try_of_iteration == 0)
         {
-            _solid_density_prev_ts = _solid_density;
-            _reaction_rate_prev_ts = _reaction_rate;
+            _d.solid_density_prev_ts = _d.solid_density;
+            _d.reaction_rate_prev_ts = _d.reaction_rate;
 
-            _reaction_adaptor->preZerothTryAssemble();
+            _d.reaction_adaptor->preZerothTryAssemble();
         }
         else
         {
-            _solid_density = _solid_density_prev_ts;
+            _d.solid_density = _d.solid_density_prev_ts;
         }
     }
 }
@@ -478,12 +478,12 @@ void
 LADataNoTpl<Traits>
 ::postEachAssemble()
 {
-    if (_AP->_output_element_matrices)
+    if (_d.ap->_output_element_matrices)
     {
         std::puts("### Element: ?");
 
         std::puts("---Velocity of water");
-        for (auto const& vs : _velocity)
+        for (auto const& vs : _d.velocity)
         {
             std::printf("| ");
             for (auto v : vs)
@@ -499,11 +499,11 @@ LADataNoTpl<Traits>
         std::printf("\n");
 
         std::printf("\n---Mass matrix: \n");
-        ogs5OutMat(_Mas);
+        ogs5OutMat(_d.Mas);
         std::printf("\n");
 
         std::printf("---Laplacian + Advective + Content matrix: \n");
-        ogs5OutMat(_Lap_Adv_Cnt);
+        ogs5OutMat(_d.Lap_Adv_Cnt);
         std::printf("\n");
 
         std::printf("---RHS: \n");

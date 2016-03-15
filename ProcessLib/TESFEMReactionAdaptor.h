@@ -54,7 +54,7 @@ public:
     virtual ~TESFEMReactionAdaptor() = default;
 
     static std::unique_ptr<TESFEMReactionAdaptor<Traits> >
-    newInstance(LADataNoTpl<Traits> const& data);
+    newInstance(TESFEMData<Traits> const& data);
 };
 
 
@@ -62,7 +62,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorAdsorption final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorAdsorption(LADataNoTpl<Traits> const& data);
+    explicit TESFEMReactionAdaptorAdsorption(TESFEMData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &localX, const std::vector<double> &localX_pts)
     override;
@@ -89,7 +89,7 @@ private:
     double _reaction_damping_factor = 1.0;
     std::vector<bool> _bounds_violation;
 
-    LADataNoTpl<Traits> const& _data;
+    TESFEMData<Traits> const& _data;
 };
 
 
@@ -97,7 +97,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorInert(LADataNoTpl<Traits> const&);
+    explicit TESFEMReactionAdaptorInert(TESFEMData<Traits> const&);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -106,7 +106,7 @@ public:
 
     ReactionRate initReaction(const unsigned int_pt) override
     {
-        return { 0.0, _data._solid_density_prev_ts[int_pt] };
+        return { 0.0, _data.solid_density_prev_ts[int_pt] };
         // _data._qR = 0.0;
         // _data._reaction_rate[int_pt] = 0.0;
     }
@@ -115,7 +115,7 @@ public:
     {}
 
 private:
-    LADataNoTpl<Traits> const& _data;
+    TESFEMData<Traits> const& _data;
 };
 
 
@@ -123,7 +123,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorSinusoidal(LADataNoTpl<Traits> const& data);
+    explicit TESFEMReactionAdaptorSinusoidal(TESFEMData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -136,7 +136,7 @@ public:
     {}
 
 private:
-    LADataNoTpl<Traits> const& _data;
+    TESFEMData<Traits> const& _data;
 };
 
 
@@ -144,7 +144,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorCaOH2(LADataNoTpl<Traits> const& data);
+    explicit TESFEMReactionAdaptorCaOH2(TESFEMData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -157,7 +157,7 @@ public:
     {}
 
 private:
-    using Data = LADataNoTpl<Traits>;
+    using Data = TESFEMData<Traits>;
     using React = Ads::ReactionCaOH2;
     Data const& _data;
     React& _react;
