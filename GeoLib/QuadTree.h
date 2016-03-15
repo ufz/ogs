@@ -85,9 +85,9 @@ public:
 	bool addPoint (POINT const* pnt)
 	{
 		if ((*pnt)[0] < _ll[0]) return false;
-		if ((*pnt)[0] > _ur[0]) return false;
+		if ((*pnt)[0] >= _ur[0]) return false;
 		if ((*pnt)[1] < _ll[1]) return false;
-		if ((*pnt)[1] > _ur[1]) return false;
+		if ((*pnt)[1] >= _ur[1]) return false;
 
 		if (!_is_leaf) {
 			for (std::size_t k(0); k < 4; k++) {
