@@ -57,7 +57,6 @@ VtkCustomInteractorStyle::VtkCustomInteractorStyle()
 
 VtkCustomInteractorStyle::~VtkCustomInteractorStyle()
 {
-	_data->Delete();
 	_selectedActor->Delete();
 	_selectedMapper->Delete();
 }

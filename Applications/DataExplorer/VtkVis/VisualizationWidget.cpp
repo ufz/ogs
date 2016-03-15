@@ -85,9 +85,10 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 VisualizationWidget::~VisualizationWidget()
 {
+	_vtkRender->Delete();
+	_vtkPickCallback->Delete();
+	_interactorStyle->Delete();
 	_markerWidget->Delete();
-	_interactorStyle->deleteLater();
-	_vtkPickCallback->deleteLater();
 }
 
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const
