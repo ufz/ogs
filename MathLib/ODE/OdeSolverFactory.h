@@ -40,21 +40,21 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 		// alike
 		if (f)
 			return f(t,
-			         BaseLib::ArrayRef<const double, N>{y},
-			         BaseLib::ArrayRef<double, N>{ydot},
+			         Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
+			         Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
 			         *_data);
 		return true;
 	}
 
 	bool callJacobian(const double t, const double* const y,
 	                  const double* const ydot, double* const jac,
-	                  BaseLib::StorageOrder order) override
+	                  MathLib::StorageOrder order) override
 	{
 		if (df)
 			return df(t,
-			          BaseLib::ArrayRef<const double, N>{y},
-			          BaseLib::ArrayRef<const double, N>{ydot},
-			          BaseLib::MatrixRef<double, N, N>{jac, order},
+			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
+			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
+			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac/*, order*/},
 			          *_data);
 		return true;
 	}
@@ -85,21 +85,25 @@ struct Handles<N> : public MathLib::FunctionHandles
 	          double* const ydot) override
 	{
 		if (f)
+		{
+			//auto ydot_ = Eigen::Map<Eigen::Matrix<double, N, 1>>{y};
+			//auto ydot_ = Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot};
 			return f(t,
-			         BaseLib::ArrayRef<const double, N>{y},
-			         BaseLib::ArrayRef<double, N>{ydot});
+			         Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
+			         Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot});
+		}
 		return true;
 	}
 
 	bool callJacobian(const double t, const double* const y,
 	                  const double* const ydot, double* const jac,
-	                  BaseLib::StorageOrder order) override
+	                  MathLib::StorageOrder order) override
 	{
 		if (df)
 			return df(t,
-			          BaseLib::ArrayRef<const double, N>{y},
-			          BaseLib::ArrayRef<const double, N>{ydot},
-			          BaseLib::MatrixRef<double, N, N>{jac, order});
+			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
+			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
+			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac/*, order*/});
 		return true;
 	}
 

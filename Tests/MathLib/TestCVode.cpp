@@ -65,8 +65,8 @@ bool f_zeolite(const double, double const* const y, double* const ydot)
 #endif
 
 bool f(const double,
-       BaseLib::ArrayRef<const double, 1> y,
-       BaseLib::ArrayRef<double, 1> ydot)
+       Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
+       Eigen::Map<Eigen::Matrix<double, 1, 1>> ydot)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -75,9 +75,9 @@ bool f(const double,
 }
 
 bool df(const double /*t*/,
-        BaseLib::ArrayRef<const double, 1> y,
-        BaseLib::ArrayRef<const double, 1> /*ydot*/,
-        BaseLib::MatrixRef<double, 1, 1> jac)
+        Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
+        Eigen::Map<Eigen::Matrix<double, 1, 1>> /*ydot*/,
+        Eigen::Map<Eigen::Matrix<double, 1, 1>> jac)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -93,8 +93,8 @@ struct ExtraData
 };
 
 bool f_extra(const double,
-             BaseLib::ArrayRef<const double, 1> y,
-             BaseLib::ArrayRef<double, 1> ydot,
+             Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
+             Eigen::Map<Eigen::Matrix<double, 1, 1>> ydot,
              ExtraData& data)
 {
 	if (y[0] <= 0.0) return false;
