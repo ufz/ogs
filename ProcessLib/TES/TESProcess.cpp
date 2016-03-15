@@ -390,16 +390,15 @@ assembleConcreteProcess(
 #ifndef NDEBUG
         if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
         {
-            // TODO fix after PETSc
-            // MathLib::BLAS::finalizeAssembly(*_A); //  MathLib::finalizeMatrixAssembly(*_A);
+            MathLib::BLAS::finalizeAssembly(M);
+            MathLib::BLAS::finalizeAssembly(K);
+            MathLib::BLAS::finalizeAssembly(b);
 
-            // TODO fix
-#if 0
             // TODO [CL] Those files will be written to the working directory.
             //           Relative path needed.
-            _A->write("global_matrix.txt");
-            _rhs->write("global_rhs.txt");
-#endif
+            M.write("global_matrix_M.txt");
+            K.write("global_matrix_K.txt");
+            b.write("global_vector_b.txt");
         }
 #endif
 
