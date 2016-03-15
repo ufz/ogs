@@ -14,8 +14,8 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ProcessLib/ProcessUtil.h"
 
-#include "ProcessUtil.h"
 #include "TESLocalAssembler.h"
 #include "TESReactionAdaptor.h"
 
@@ -24,7 +24,6 @@ namespace ProcessLib
 
 namespace TES
 {
-
 
 template <typename ShapeFunction_,
           typename IntegrationMethod_,
@@ -268,10 +267,7 @@ checkBounds(std::vector<double> const& localX,
     return _data.getReactionAdaptor().checkBounds(localX, localX_pts);
 }
 
-
 }   // namespace TES
 }   // namespace ProcessLib
-
-
 
 #endif // PROCESS_LIB_TES_FEM_IMPL_H_

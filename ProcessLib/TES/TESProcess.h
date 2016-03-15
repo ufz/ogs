@@ -29,10 +29,9 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
-#include "ProcessVariable.h"
-#include "Process.h"
-
-#include "Parameter.h"
+#include "ProcessLib/ProcessVariable.h"
+#include "ProcessLib/Process.h"
+#include "ProcessLib/Parameter.h"
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/Extrapolation/GlobalLinearLeastSquaresExtrapolator.h"

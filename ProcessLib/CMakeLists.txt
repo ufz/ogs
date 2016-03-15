@@ -1,22 +1,13 @@
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/TESLocalAssemblerInner-impl-incl-dynamic.h.in"
-		"${CMAKE_CURRENT_SOURCE_DIR}/TESLocalAssemblerInner-impl-incl.h" COPYONLY
-	)
-else()
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/TESLocalAssemblerInner-impl-incl-fixed.h.in"
-		"${CMAKE_CURRENT_SOURCE_DIR}/TESLocalAssemblerInner-impl-incl.h" COPYONLY
-	)
-endif()
-
 # Source files
 APPEND_SOURCE_FILES(SOURCES)
 
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
+
+add_subdirectory(TES)
+APPEND_SOURCE_FILES(SOURCES TES)
 
 add_library(ProcessLib STATIC ${SOURCES})
 

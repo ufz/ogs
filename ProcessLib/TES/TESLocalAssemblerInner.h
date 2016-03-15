@@ -15,11 +15,11 @@
 #include <memory>
 #include <Eigen/Eigen>
 
-#include "TESAssemblyParams.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/LocalAssemblerTraits.h"
+#include "ProcessLib/VariableTransformation.h"
 
-#include "LocalAssemblerTraits.h"
-#include "VariableTransformation.h"
+#include "TESAssemblyParams.h"
 
 namespace ProcessLib
 {

@@ -10,8 +10,8 @@
 #ifndef PROCESS_LIB_TESPROCESS_FWD_H_
 #define PROCESS_LIB_TESPROCESS_FWD_H_
 
+#include "ProcessLib/NumericsConfig.h"
 #include "TESProcess.h"
-#include "NumericsConfig.h"
 
 extern template class ProcessLib::TES::TESProcess<GlobalSetupType>;
 
