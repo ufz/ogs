@@ -48,6 +48,7 @@ struct AssemblyParams
     const double M_inert = M_N2; // N2
     const double M_react = M_H2O;
 
+    // TODO unify variable names
     double initial_solid_density = std::numeric_limits<double>::quiet_NaN();
 
     double       delta_t = std::numeric_limits<double>::quiet_NaN();
