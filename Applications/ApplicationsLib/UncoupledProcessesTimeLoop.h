@@ -37,7 +37,7 @@ private:
     //! An abstract nonlinear solver
     using AbstractNLSolver = NumLib::NonlinearSolverBase<Matrix, Vector>;
     //! An abstract equations system
-    using EquationSystem   = NumLib::EquationSystem;
+    using EquationSystem   = NumLib::EquationSystem<Vector>;
     //! An abstract process
     using Process          = ProcessLib::Process<GlobalSetupType>;
     //! An abstract time discretization
