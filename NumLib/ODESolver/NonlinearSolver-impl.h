@@ -71,17 +71,17 @@ solve(Vector &x)
         {
             switch(sys.postIteration(x_new))
             {
-            case IterationResult::OK:
+            case IterationResult::SUCCESS:
                 // Don't copy here. The old x might still be used further below.
                 // Although currently it is not.
                 break;
-            case IterationResult::FAILED:
+            case IterationResult::FAILURE:
                 iteration_succeeded = false;
                 // Copy new solution to x.
                 // Thereby the failed solution can be used by the caller for debugging purposes.
                 BLAS::copy(x_new, x);
                 break;
-            case IterationResult::AGAIN:
+            case IterationResult::REPEAT_ITERATION:
                 continue; // That throws the iteration result away.
             }
         }
@@ -190,12 +190,12 @@ solve(Vector &x)
 
             switch(sys.postIteration(x_new))
             {
-            case IterationResult::OK:
+            case IterationResult::SUCCESS:
                 break;
-            case IterationResult::FAILED:
+            case IterationResult::FAILURE:
                 iteration_succeeded = false;
                 break;
-            case IterationResult::AGAIN:
+            case IterationResult::REPEAT_ITERATION:
                 // TODO introduce some onDestroy hook.
                 MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
                 continue; // That throws the iteration result away.

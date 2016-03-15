@@ -186,6 +186,16 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
+    void preIteration(const unsigned iter, Vector const& x) override
+    {
+        _ode.preIteration(iter, x);
+    }
+
+    IterationResult postIteration(Vector const& x) override
+    {
+        return _ode.postIteration(x);
+    }
+
     void pushMatrices() const override
     {
         _mat_trans->pushMatrices(*_M, *_K, *_b);
@@ -313,6 +323,16 @@ public:
     bool isLinear() const override
     {
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
+    }
+
+    void preIteration(const unsigned iter, Vector const& x) override
+    {
+        _ode.preIteration(iter, x);
+    }
+
+    IterationResult postIteration(Vector const& x) override
+    {
+        return _ode.postIteration(x);
     }
 
     void pushMatrices() const override

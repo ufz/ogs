@@ -20,46 +20,6 @@ namespace NumLib
 //! \addtogroup ODESolver
 //! @{
 
-//! Status flags telling the NonlinearSolver if an iteration succeeded.
-enum class IterationResult : char
-{
-    OK,     //!< Iteration succeeded.
-    FAILED, //!< Iteration failed irrecoverably.
-    AGAIN   //!< Iteration has to be repeated.
-};
-
-/*! Common methods all nonlinear systems must provide.
- *
- * \tparam Vector the type of the solution vector of the equation.
- */
-template<typename Vector>
-class NonlinearSystemBase
-        : public EquationSystem
-{
-public:
-    /*! Prepares a new iteration.
-     *
-     * \param iter the current iteration number, starting from 1.
-     * \param x    the current approximate solution of the equation.
-     */
-    virtual void preIteration(unsigned iter, Vector const& x)
-    {
-        (void) iter; (void) x; // by default do nothing
-    }
-
-    /*! Post-processes an iteration.
-     *
-     * \param x the current approximate solution of the equation.
-     *
-     * \return A status flag indicating id the current iteration succeeded.
-     */
-    virtual IterationResult postIteration(Vector const& x)
-    {
-        (void) x; // by default do nothing
-        return IterationResult::OK;
-    }
-};
-
 /*! A System of nonlinear equations.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
@@ -80,7 +40,7 @@ class NonlinearSystem;
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>
-        : public NonlinearSystemBase<Vector>
+        : public EquationSystem<Vector>
 {
 public:
     //! Assembles the residual at the point \c x.
@@ -121,7 +81,7 @@ public:
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>
-        : public NonlinearSystemBase<Vector>
+        : public EquationSystem<Vector>
 {
 public:
     //! Assembles the linearized equation at point \c x.
