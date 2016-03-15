@@ -22,9 +22,8 @@ SimplePolygonTree::SimplePolygonTree(Polygon * polygon, SimplePolygonTree * pare
 
 SimplePolygonTree::~SimplePolygonTree()
 {
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
-		     it != _childs.end(); ++it) {
-		delete *it;
+	for (auto * child : _childs) {
+		delete child;
 	}
 }
 
