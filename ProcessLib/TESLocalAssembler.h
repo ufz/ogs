@@ -13,8 +13,8 @@
 #include <memory>
 #include <vector>
 
-#include "TESFEM-data-fwd.h"
-#include "TESProcess-notpl.h"
+#include "TESLocalAssemblerInner-fwd.h"
+#include "TESAssemblyParams.h"
 
 #include "NumLib/Extrapolation/LocalNodalDOF.h"
 
@@ -126,6 +126,6 @@ private:
 }   // namespace TES
 }   // namespace ProcessLib
 
-#include "TESFEM-impl.h"
+#include "TESLocalAssembler-impl.h"
 
 #endif  // PROCESS_LIB_TES_FEM_H_

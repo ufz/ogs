@@ -16,8 +16,8 @@
 #include "NumLib/Function/Interpolation.h"
 
 #include "ProcessUtil.h"
-#include "TESFEM.h"
-#include "TESFEMReactionAdaptor.h"
+#include "TESLocalAssembler.h"
+#include "TESReactionAdaptor.h"
 
 namespace ProcessLib
 {

@@ -9,10 +9,10 @@
  * not all of OGS6 has to be recompiled every time a small change is done.
  */
 
-#include "TESFEM-data-fwd.h"
+#include "TESLocalAssemblerInner-fwd.h"
 
-#ifdef EIGEN_DYNAMIC_SHAPE_MATRICES
-#include "TESFEM-data-impl.h"
+#ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
+#include "TESLocalAssemblerInner-impl.h"
 #endif
 
 namespace ProcessLib
@@ -21,13 +21,13 @@ namespace ProcessLib
 namespace TES
 {
 
-#ifdef EIGEN_DYNAMIC_SHAPE_MATRICES
+#ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 
 template class TESLocalAssemblerInner<LocalAssemblerTraits<ShapeMatrixPolicyType<void, 0>, 0, 0, 0> >;
 
-static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macros");
+static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macros");
 #else
-static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0, "inconsistent use of macros");
+static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0, "inconsistent use of macros");
 #endif
 
 }

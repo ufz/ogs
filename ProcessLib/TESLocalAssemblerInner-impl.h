@@ -21,8 +21,8 @@
 
 #include "NumLib/Function/Interpolation.h"
 
-#include "TESFEM-data-fwd.h"
-#include "TESFEMReactionAdaptor.h"
+#include "TESLocalAssemblerInner-fwd.h"
+#include "TESReactionAdaptor.h"
 #include "TESOGS5MaterialModels.h"
 
 namespace

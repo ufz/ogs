@@ -18,8 +18,8 @@
 #include "MaterialsLib/adsorption/reaction_inert.h"
 #include "MaterialsLib/adsorption/reaction_sinusoidal.h"
 
-#include "TESFEMReactionAdaptor.h"
-#include "TESFEM-data.h"
+#include "TESReactionAdaptor.h"
+#include "TESLocalAssemblerInner.h"
 
 namespace ProcessLib
 {

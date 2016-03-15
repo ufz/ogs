@@ -37,8 +37,8 @@
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/Extrapolation/GlobalLinearLeastSquaresExtrapolator.h"
 
-#include "TESProcess-notpl.h"
-#include "TESFEM.h"
+#include "TESAssemblyParams.h"
+#include "TESLocalAssembler.h"
 
 
 namespace MeshLib
@@ -101,7 +101,7 @@ private:
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
-    using LocalAssembler = TES::TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+    using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
     NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 

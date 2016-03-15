@@ -15,7 +15,7 @@
 #include <memory>
 #include <Eigen/Eigen>
 
-#include "TESProcess-notpl.h"
+#include "TESAssemblyParams.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "LocalAssemblerTraits.h"
@@ -144,6 +144,6 @@ ogs5OutMat(const Mat& mat);
 } // namespace ProcessLib
 
 // tricking cmake dependency checker
-#include "TESFEM-data-impl-incl.h"
+#include "TESLocalAssemblerInner-impl-incl.h"
 
 #endif // PROCESS_LIB_TES_FEM_NOTPL_H_

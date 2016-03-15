@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_TESFEM_DATA_FWD_H_
 #define PROCESS_LIB_TESFEM_DATA_FWD_H_
 
-#include "TESFEM-data.h"
+#include "TESLocalAssemblerInner.h"
 
 namespace ProcessLib
 {
@@ -18,13 +18,13 @@ namespace ProcessLib
 namespace TES
 {
 
-#ifdef EIGEN_DYNAMIC_SHAPE_MATRICES
+#ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 
 extern template class TESLocalAssemblerInner<LocalAssemblerTraits<ShapeMatrixPolicyType<void, 0>, 0, 0, 0> >;
 
-static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macros");
+static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macros");
 #else
-static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0, "inconsistent use of macros");
+static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0, "inconsistent use of macros");
 #endif
 
 }
