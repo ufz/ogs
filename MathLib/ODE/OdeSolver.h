@@ -28,7 +28,8 @@ class OdeSolver
 {
 public:
 	using Arr = std::array<double, NumEquations>;
-	using ConstArrRef = BaseLib::ArrayRef<const double, NumEquations>;
+	using ConstArrRef =
+	    Eigen::Map<const Eigen::Matrix<double, NumEquations, 1>>;
 	using Function = MathLib::Function<NumEquations, FunctionArguments...>;
 	using JacobianFunction =
 	    MathLib::JacobianFunction<NumEquations, FunctionArguments...>;

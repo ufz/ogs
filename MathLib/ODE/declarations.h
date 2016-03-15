@@ -10,25 +10,29 @@
 #ifndef MATHLIB_ODE_DECLARATIONS_H
 #define MATHLIB_ODE_DECLARATIONS_H
 
-#include <cassert>
-
-#include "BaseLib/ArrayRef.h"
-#include "BaseLib/MatrixRef.h"
+#include <Eigen/Core>
 
 namespace MathLib
 {
+enum class StorageOrder
+{
+	ColumnMajor,
+	RowMajor
+};
+
 template <unsigned N, typename... FunctionArguments>
 using Function = bool (*)(const double t,
-                          BaseLib::ArrayRef<const double, N> y,
-                          BaseLib::ArrayRef<double, N> ydot,
+                          Eigen::Map<const Eigen::Matrix<double, N, 1>> const y,
+                          Eigen::Map<Eigen::Matrix<double, N, 1>> ydot,
                           FunctionArguments&... arg);
 
 template <unsigned N, typename... FunctionArguments>
-using JacobianFunction = bool (*)(const double t,
-                                  BaseLib::ArrayRef<const double, N> y,
-                                  BaseLib::ArrayRef<const double, N> ydot,
-                                  BaseLib::MatrixRef<double, N, N> jac,
-                                  FunctionArguments&... arg);
+using JacobianFunction =
+    bool (*)(const double t,
+             Eigen::Map<const Eigen::Matrix<double, N, 1>> const y,
+             Eigen::Map<Eigen::Matrix<double, N, 1>> ydot,
+             Eigen::Map<Eigen::Matrix<double, N, N>> jac,
+             FunctionArguments&... arg);
 
 // This is an internal detail
 class FunctionHandles
@@ -38,9 +42,9 @@ public:
 	                  double* const ydot) = 0;
 	virtual bool callJacobian(const double t,
 	                          double const* const y,
-	                          double const* const ydot,
+	                          double* const ydot,
 	                          double* const jac,
-	                          BaseLib::StorageOrder order) = 0;
+	                          StorageOrder order) = 0;
 
 	virtual bool hasJacobian() const = 0;
 

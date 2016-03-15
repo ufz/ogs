@@ -257,7 +257,7 @@ void CVodeSolverImpl::preSolve()
 			    static_cast<FunctionHandles*>(function_handles)
 			        ->callJacobian(t, NV_DATA_S(y), NV_DATA_S(ydot),
 			                       DENSE_COL(jac, 0),
-			                       BaseLib::StorageOrder::ColumnMajor);
+			                       MathLib::StorageOrder::ColumnMajor);
 			return successful ? 0 : 1;
 		};
 
@@ -308,7 +308,7 @@ CVodeSolverImpl::~CVodeSolverImpl()
 }
 
 CVodeSolverInternal::CVodeSolverInternal(BaseLib::ConfigTree const& config)
-    : _impl.reset(std::unique_ptr<CVodeSolverImpl>{new CVodeSolverImpl{config}})
+    : _impl{new CVodeSolverImpl{config}}
 {
 }
 
