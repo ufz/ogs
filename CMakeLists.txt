@@ -163,13 +163,6 @@ if(OGS_BUILD_TESTS)
 	set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
 endif()
 
-if (OGS_USE_EIGENLIS)
-	if (OGS_USE_EIGEN AND OGS_USE_LIS)
-		add_definitions(-DOGS_USE_EIGENLIS)
-	else()
-		message(WARNING "The setting OGS_USE_EIGENLIS needs both OGS_USE_EIGEN"
-		        " and OGS_USE_LIS set in order to have some effect.")
-	endif()
 endif()
 
 ######################
@@ -197,19 +190,6 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/gtest/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
-
-if(OGS_DYNAMIC_SHAPE_MATRICES)
-	add_definitions(-DEIGEN_DYNAMIC_SHAPE_MATRICES)
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/ProcessLib/TESFEM-data-impl-incl-dynamic.h.in"
-		"${CMAKE_CURRENT_SOURCE_DIR}/ProcessLib/TESFEM-data-impl-incl.h" COPYONLY
-	)
-else()
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/ProcessLib/TESFEM-data-impl-incl-fixed.h.in"
-		"${CMAKE_CURRENT_SOURCE_DIR}/ProcessLib/TESFEM-data-impl-incl.h" COPYONLY
-	)
-endif()
 
 add_subdirectory( Applications )
 add_subdirectory( AssemblerLib )
