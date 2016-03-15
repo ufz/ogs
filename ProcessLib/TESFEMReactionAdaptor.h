@@ -89,7 +89,7 @@ private:
     double _reaction_damping_factor = 1.0;
     std::vector<bool> _bounds_violation;
 
-    TESFEMData<Traits> const& _data;
+    TESFEMData<Traits> const& _d;
 };
 
 
@@ -106,16 +106,16 @@ public:
 
     ReactionRate initReaction(const unsigned int_pt) override
     {
-        return { 0.0, _data.solid_density_prev_ts[int_pt] };
-        // _data._qR = 0.0;
-        // _data._reaction_rate[int_pt] = 0.0;
+        return { 0.0, _d.solid_density_prev_ts[int_pt] };
+        // _d._qR = 0.0;
+        // _d._reaction_rate[int_pt] = 0.0;
     }
 
     void preZerothTryAssemble() override
     {}
 
 private:
-    TESFEMData<Traits> const& _data;
+    TESFEMData<Traits> const& _d;
 };
 
 
@@ -136,7 +136,7 @@ public:
     {}
 
 private:
-    TESFEMData<Traits> const& _data;
+    TESFEMData<Traits> const& _d;
 };
 
 
@@ -159,7 +159,7 @@ public:
 private:
     using Data = TESFEMData<Traits>;
     using React = Ads::ReactionCaOH2;
-    Data const& _data;
+    Data const& _d;
     React& _react;
 
     std::unique_ptr<MathLib::OdeSolver<1, React> > _ode_solver;
