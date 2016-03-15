@@ -173,6 +173,4 @@ createTESProcess(
 
 } // namespace ProcessLib
 
-#include "TESProcess-impl.h"
-
 #endif  // PROCESS_LIB_TESPROCESS_H_

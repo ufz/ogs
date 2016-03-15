@@ -8,16 +8,16 @@
  */
 
 #include "TESProcess-fwd.h"
-#include "TESProcess.h"
+#include "TESProcess-impl.h"
 
 namespace ProcessLib
 {
 
-namespace TES {
+namespace TES
+{
 
 template class TESProcess<GlobalSetupType>;
 
 } // namespace TES
-
 
 }   // namespace ProcessLib
