@@ -28,7 +28,7 @@ namespace TES
 template<typename Traits>
 std::unique_ptr<TESFEMReactionAdaptor<Traits> >
 TESFEMReactionAdaptor<Traits>::
-newInstance(TESFEMData<Traits> const& data)
+newInstance(TESLocalAssemblerData<Traits> const& data)
 {
     auto const* ads = data.ap->_reaction_system.get();
     if (dynamic_cast<Ads::Adsorption const*>(ads) != nullptr) {
@@ -57,7 +57,7 @@ newInstance(TESFEMData<Traits> const& data)
 
 template<typename Traits>
 TESFEMReactionAdaptorAdsorption<Traits>::
-TESFEMReactionAdaptorAdsorption(TESFEMData<Traits> const& data)
+TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData<Traits> const& data)
     // caution fragile: this relies in this constructor b eing called __after__
     // data.solid_density has been properly set up!
     : _bounds_violation(data.solid_density.size(), false)
@@ -251,7 +251,7 @@ preZerothTryAssemble()
 
 template<typename Traits>
 TESFEMReactionAdaptorInert<Traits>::
-TESFEMReactionAdaptorInert(TESFEMData<Traits> const& data)
+TESFEMReactionAdaptorInert(TESLocalAssemblerData<Traits> const& data)
     : _d(data)
 {
 }
@@ -259,7 +259,7 @@ TESFEMReactionAdaptorInert(TESFEMData<Traits> const& data)
 
 template<typename Traits>
 TESFEMReactionAdaptorSinusoidal<Traits>::
-TESFEMReactionAdaptorSinusoidal(TESFEMData<Traits> const& data)
+TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData<Traits> const& data)
     : _d(data)
 {
     assert(dynamic_cast<Ads::ReactionSinusoidal const*>(data.ap->_reaction_system.get()) != nullptr
@@ -270,7 +270,7 @@ TESFEMReactionAdaptorSinusoidal(TESFEMData<Traits> const& data)
 template<typename Traits>
 ReactionRate
 TESFEMReactionAdaptorSinusoidal<Traits>::
-initReaction(const unsigned int int_pt)
+initReaction(const unsigned /*int_pt*/)
 {
     const double t = _d.ap->_current_time;
 
@@ -287,7 +287,7 @@ initReaction(const unsigned int int_pt)
 
 template<typename Traits>
 TESFEMReactionAdaptorCaOH2<Traits>::
-TESFEMReactionAdaptorCaOH2(TESFEMData<Traits> const& data)
+TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData<Traits> const& data)
     : _d(data)
     , _react(dynamic_cast<Ads::ReactionCaOH2&>(*data.ap->_reaction_system.get()))
 {

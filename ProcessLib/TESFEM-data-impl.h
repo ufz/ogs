@@ -40,7 +40,7 @@ namespace TES
 
 template<typename Traits>
 Eigen::Matrix3d
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getMassCoeffMatrix(const unsigned int_pt)
 {
 	// TODO: Dalton's law property
@@ -74,7 +74,7 @@ getMassCoeffMatrix(const unsigned int_pt)
 
 template<typename Traits>
 typename Traits::LaplaceMatrix
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getLaplaceCoeffMatrix(const unsigned /*int_pt*/, const unsigned dim)
 {
 	const double eta_GR = fluid_viscosity(_d.p, _d.T, _d.vapour_mass_fraction);
@@ -111,7 +111,7 @@ getLaplaceCoeffMatrix(const unsigned /*int_pt*/, const unsigned dim)
 
 template<typename Traits>
 Eigen::Matrix3d
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getAdvectionCoeffMatrix(const unsigned /*int_pt*/)
 {
 	const double A_pp = 0.0;
@@ -140,7 +140,7 @@ getAdvectionCoeffMatrix(const unsigned /*int_pt*/)
 
 template<typename Traits>
 Eigen::Matrix3d
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getContentCoeffMatrix(const unsigned /*int_pt*/)
 {
 	const double C_pp = 0.0;
@@ -168,7 +168,7 @@ getContentCoeffMatrix(const unsigned /*int_pt*/)
 
 template<typename Traits>
 Eigen::Vector3d
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getRHSCoeffVector(const unsigned int_pt)
 {
 	const double reaction_enthalpy = _d.ap->_reaction_system->get_enthalpy(_d.p_V, _d.T, _d.ap->_M_react);
@@ -194,7 +194,7 @@ getRHSCoeffVector(const unsigned int_pt)
 
 template<typename Traits>
 void
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 initReaction(const unsigned int_pt)
 {
     auto const& rate = _d.reaction_adaptor->initReaction(int_pt);
@@ -206,7 +206,7 @@ initReaction(const unsigned int_pt)
 
 template<typename Traits>
 void
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 preEachAssembleIntegrationPoint(
         const unsigned int_pt,
         const std::vector<double> &localX,
@@ -311,7 +311,7 @@ ogs5OutVec(const Vec& vec)
 
 template<typename Traits>
 std::vector<double> const&
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) const
 {
     switch (var)
@@ -357,7 +357,7 @@ getIntegrationPointValues(SecondaryVariables var, std::vector<double>& cache) co
 
 template<typename Traits>
 void
-LADataNoTpl<Traits>::
+TESLocalAssemblerInner<Traits>::
 assembleIntegrationPoint(unsigned integration_point,
                          std::vector<double> const& localX,
                          const typename Traits::ShapeMatrices::ShapeType& smN,
@@ -436,7 +436,7 @@ assembleIntegrationPoint(unsigned integration_point,
 
 template<typename Traits>
 void
-LADataNoTpl<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
+TESLocalAssemblerInner<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
 {
     _d.solid_density.resize(num_int_pts, _d.ap->_initial_solid_density);
     _d.solid_density_prev_ts.resize(num_int_pts, _d.ap->_initial_solid_density);
@@ -453,7 +453,7 @@ LADataNoTpl<Traits>::init(const unsigned num_int_pts, const unsigned dimension)
 
 template<typename Traits>
 void
-LADataNoTpl<Traits>::preEachAssemble()
+TESLocalAssemblerInner<Traits>::preEachAssemble()
 {
     if (_d.ap->_iteration_in_current_timestep == 0)
     {
@@ -475,7 +475,7 @@ LADataNoTpl<Traits>::preEachAssemble()
 #if 0
 template<typename Traits>
 void
-LADataNoTpl<Traits>
+TESLocalAssemblerInner<Traits>
 ::postEachAssemble()
 {
     if (_d.ap->_output_element_matrices)

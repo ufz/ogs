@@ -36,11 +36,11 @@ public:
 
 
 template <typename GlobalMatrix, typename GlobalVector>
-class LocalAssemblerDataInterface
+class TESLocalAssemblerInterface
         : public Extrapolatable
 {
 public:
-    virtual ~LocalAssemblerDataInterface() = default;
+    virtual ~TESLocalAssemblerInterface() = default;
 
     virtual void init(MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
@@ -63,8 +63,8 @@ template <typename ShapeFunction_,
           typename GlobalMatrix,
           typename GlobalVector,
           unsigned GlobalDim>
-class LocalAssemblerData final
-        : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
+class TESLocalAssembler final
+        : public TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
 public:
     using ShapeFunction = ShapeFunction_;
@@ -102,7 +102,7 @@ private:
     using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
         NODAL_DOF, GlobalDim>;
 
-    LADataNoTpl<LAT> _data;
+    TESLocalAssemblerInner<LAT> _data;
 
     using NodalMatrixType = typename LAT::LocalMatrix;
     using NodalVectorType = typename LAT::LocalVector;
@@ -123,12 +123,9 @@ private:
     std::unique_ptr<std::vector<double> > _integration_point_values_cache;
 };
 
-
 }   // namespace TES
 }   // namespace ProcessLib
 
-
 #include "TESFEM-impl.h"
-
 
 #endif  // PROCESS_LIB_TES_FEM_H_

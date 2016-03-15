@@ -32,7 +32,7 @@ template <typename ShapeFunction_,
           typename GlobalVector,
           unsigned GlobalDim>
 void
-LocalAssemblerData<ShapeFunction_,
+TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,
@@ -69,7 +69,7 @@ template <typename ShapeFunction_,
           typename GlobalVector,
           unsigned GlobalDim>
 void
-LocalAssemblerData<ShapeFunction_,
+TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,
@@ -104,7 +104,7 @@ template <typename ShapeFunction_,
           typename GlobalVector,
           unsigned GlobalDim>
 void
-LocalAssemblerData<ShapeFunction_,
+TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,
@@ -125,7 +125,7 @@ template <typename ShapeFunction_,
           typename GlobalVector,
           unsigned GlobalDim>
 std::vector<double> const&
-LocalAssemblerData<ShapeFunction_,
+TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,
@@ -257,7 +257,7 @@ template <typename ShapeFunction_,
           typename GlobalVector,
           unsigned GlobalDim>
 bool
-LocalAssemblerData<ShapeFunction_,
+TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,

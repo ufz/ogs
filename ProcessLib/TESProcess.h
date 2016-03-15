@@ -101,7 +101,7 @@ private:
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
-    using LocalAssembler = TES::LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
+    using LocalAssembler = TES::TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
     NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 

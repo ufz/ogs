@@ -24,7 +24,7 @@ namespace TES
 {
 
 template<typename Traits>
-class LADataNoTpl;
+class TESLocalAssemblerInner;
 
 struct ReactionRate
 {
@@ -54,7 +54,7 @@ public:
     virtual ~TESFEMReactionAdaptor() = default;
 
     static std::unique_ptr<TESFEMReactionAdaptor<Traits> >
-    newInstance(TESFEMData<Traits> const& data);
+    newInstance(TESLocalAssemblerData<Traits> const& data);
 };
 
 
@@ -62,7 +62,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorAdsorption final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorAdsorption(TESFEMData<Traits> const& data);
+    explicit TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &localX, const std::vector<double> &localX_pts)
     override;
@@ -89,7 +89,7 @@ private:
     double _reaction_damping_factor = 1.0;
     std::vector<bool> _bounds_violation;
 
-    TESFEMData<Traits> const& _d;
+    TESLocalAssemblerData<Traits> const& _d;
 };
 
 
@@ -97,7 +97,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorInert(TESFEMData<Traits> const&);
+    explicit TESFEMReactionAdaptorInert(TESLocalAssemblerData<Traits> const&);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -115,7 +115,7 @@ public:
     {}
 
 private:
-    TESFEMData<Traits> const& _d;
+    TESLocalAssemblerData<Traits> const& _d;
 };
 
 
@@ -123,7 +123,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorSinusoidal(TESFEMData<Traits> const& data);
+    explicit TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -136,7 +136,7 @@ public:
     {}
 
 private:
-    TESFEMData<Traits> const& _d;
+    TESLocalAssemblerData<Traits> const& _d;
 };
 
 
@@ -144,7 +144,7 @@ template<typename Traits>
 class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor<Traits>
 {
 public:
-    explicit TESFEMReactionAdaptorCaOH2(TESFEMData<Traits> const& data);
+    explicit TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData<Traits> const& data);
 
     bool checkBounds(const std::vector<double> &, const std::vector<double> &)
     override {
@@ -157,7 +157,7 @@ public:
     {}
 
 private:
-    using Data = TESFEMData<Traits>;
+    using Data = TESLocalAssemblerData<Traits>;
     using React = Ads::ReactionCaOH2;
     Data const& _d;
     React& _react;

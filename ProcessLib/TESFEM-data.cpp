@@ -23,7 +23,7 @@ namespace TES
 
 #ifdef EIGEN_DYNAMIC_SHAPE_MATRICES
 
-template class LADataNoTpl<LocalAssemblerTraits<ShapeMatrixPolicyType<void, 0>, 0, 0, 0> >;
+template class TESLocalAssemblerInner<LocalAssemblerTraits<ShapeMatrixPolicyType<void, 0>, 0, 0, 0> >;
 
 static_assert(EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1, "inconsistent use of macros");
 #else

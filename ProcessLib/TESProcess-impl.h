@@ -288,8 +288,8 @@ createLocalAssemblers()
     _local_assemblers.resize(BP::_mesh.getNElements());
     // Shape matrices initializer
     using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-        TES::LocalAssemblerDataInterface,
-        TES::LocalAssemblerData,
+        TES::TESLocalAssemblerInterface,
+        TES::TESLocalAssembler,
         typename GlobalSetup::MatrixType,
         typename GlobalSetup::VectorType,
         GlobalDim>;

@@ -41,7 +41,7 @@ template<typename Traits>
 class TESFEMReactionAdaptor;
 
 template<typename Traits>
-struct TESFEMData
+struct TESLocalAssemblerData
 {
     AssemblyParams const* ap;
 
@@ -71,7 +71,7 @@ struct TESFEMData
 
 
 template<typename Traits>
-class LADataNoTpl
+class TESLocalAssemblerInner
 {
 public:
     void assembleIntegrationPoint(
@@ -128,7 +128,7 @@ private:
     // reaction adaptor.
     // Maybe the reaction adaptor does not even need direct access to those members!
 
-    TESFEMData<Traits> _d;
+    TESLocalAssemblerData<Traits> _d;
 };
 
 
@@ -140,11 +140,9 @@ template <typename Mat>
 void
 ogs5OutMat(const Mat& mat);
 
-
 } // namespace TES
 
 } // namespace ProcessLib
-
 
 // tricking cmake dependency checker
 #include "TESFEM-data-impl-incl.h"
