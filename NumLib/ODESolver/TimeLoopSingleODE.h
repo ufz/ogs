@@ -64,7 +64,7 @@ public:
      * \retval false otherwise
      */
     template<typename Callback>
-    bool loop(const double t0, const Vector x0,
+    bool loop(const double t0, Vector const& x0,
               const double t_end, const double delta_t,
               Callback& post_timestep);
 
@@ -81,7 +81,7 @@ template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 template<typename Callback>
 bool
 TimeLoopSingleODE<Matrix, Vector, NLTag>::
-loop(const double t0, const Vector x0, const double t_end, const double delta_t,
+loop(const double t0, Vector const& x0, const double t_end, const double delta_t,
      Callback& post_timestep)
 {
     // solution vector
