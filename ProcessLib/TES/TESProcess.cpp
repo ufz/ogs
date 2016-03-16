@@ -336,17 +336,12 @@ assembleConcreteProcess(
 {
     DBUG("Assemble TESProcess.");
 
-    unsigned num_try = 0;
-
-    INFO("-> TES process try number %u in current picard iteration", num_try);
-    _assembly_params.number_of_try_of_iteration = num_try;
-
     // Call global assembler for each local assembly item.
     _global_setup.execute(*BP::_global_assembler, _local_assemblers,
                           t, x, M, K, b);
 
 #ifndef NDEBUG
-    if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
+    if (_total_iteration == 0)
     {
         MathLib::BLAS::finalizeAssembly(M);
         MathLib::BLAS::finalizeAssembly(K);
@@ -359,20 +354,6 @@ assembleConcreteProcess(
         b.write("global_vector_b.txt");
     }
 #endif
-
-    if (_output_iteration_results)
-    {
-        DBUG("output results of iteration %li", _total_iteration);
-        std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
-                         + "_ts_" + std::to_string(_timestep)
-                         + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
-                         + "_" +    std::to_string(num_try)
-                         + ".vtu";
-
-        output(fn, 0);
-    }
-
-    ++num_try;
 }
 
 template<typename GlobalSetup>
@@ -400,6 +381,17 @@ NumLib::IterationResult
 TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
+    if (_output_iteration_results)
+    {
+        DBUG("output results of iteration %li", _total_iteration);
+        std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
+                         + "_ts_" + std::to_string(_timestep)
+                         + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
+                         + ".vtu";
+
+        output(fn, 0);
+    }
+
     bool check_passed = true;
 
     if (!Trafo::constrained)
