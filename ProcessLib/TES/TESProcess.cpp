@@ -306,7 +306,7 @@ createLocalAssemblers()
                 BP::_mesh.getElements(),
                 _local_assemblers,
                 _integration_order,
-                *this);
+                _assembly_params);
 
     DBUG("Create global assembler.");
     _global_assembler.reset(

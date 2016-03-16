@@ -60,20 +60,6 @@ struct AssemblyParams
     double   current_time = std::numeric_limits<double>::quiet_NaN();
 };
 
-
-class TESProcessInterface
-{
-public:
-    AssemblyParams const& getAssemblyParams() const {
-        return _assembly_params;
-    }
-
-    virtual ~TESProcessInterface() = default;
-
-protected:
-    AssemblyParams _assembly_params;
-};
-
 } // namespace TES
 
 } // namespace ProcessLib

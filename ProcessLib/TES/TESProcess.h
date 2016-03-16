@@ -53,7 +53,6 @@ namespace ProcessLib
 namespace TES
 {
 
-
 /// Global ids in the global matrix/vector where the dirichlet bc is
 /// imposed and their corresponding values.
 struct DirichletBC
@@ -65,8 +64,7 @@ struct DirichletBC
 
 template<typename GlobalSetup>
 class TESProcess final
-        : public Process<GlobalSetup>,
-          public TESProcessInterface
+        : public Process<GlobalSetup>
 {
     using BP = Process<GlobalSetup>;
 
@@ -115,6 +113,7 @@ private:
             AssemblerLib::ComponentOrder::BY_COMPONENT;
     bool _output_residuals = false;
 
+    AssemblyParams _assembly_params;
 
     std::unique_ptr<GlobalVector> _x;           // current iteration
 

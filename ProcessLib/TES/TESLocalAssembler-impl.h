@@ -38,7 +38,8 @@ TESLocalAssembler<ShapeFunction_,
     GlobalDim>::
 init(MeshLib::Element const& e,
      std::size_t const /*local_matrix_size*/,
-     unsigned const integration_order, TESProcessInterface& process)
+     unsigned const integration_order,
+     AssemblyParams const& asm_params)
 {
     _integration_order = integration_order;
 
@@ -53,7 +54,7 @@ init(MeshLib::Element const& e,
     _local_K.resize(MAT_SIZE, MAT_SIZE);
     _local_b.resize(MAT_SIZE);
 
-    _data.setAssemblyParameters(process.getAssemblyParams());
+    _data.setAssemblyParameters(asm_params);
 
     auto const n_integration_points = _shape_matrices.front().dNdx.rows();
     _data.init(n_integration_points, GlobalDim);
