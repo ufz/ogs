@@ -19,11 +19,11 @@
 #
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
-#       # the given file is compared to [filename]_expected.[extension]
+#       # the given file is compared to a file with the same name from Tests/Data
 #
 #   numdiff-tester
 #     - DIFF_DATA <list of files to numdiff>
-#       # the given file is compared to [filename]_expected.[extension]
+#       # the given file is compared to a file with the same name from Tests/Data
 #
 #   vtkdiff-tester
 #     - DIFF_DATA <vtk file> <data array a name> <data array b name>
@@ -115,9 +115,7 @@ function (AddTest)
 
 	if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
 		foreach(FILE ${AddTest_DIFF_DATA})
-			get_filename_component(FILE_NAME ${FILE} NAME_WE)
-			get_filename_component(FILE_EXT ${FILE} EXT)
-			set(FILE_EXPECTED ${FILE_NAME}_expected${FILE_EXT})
+			get_filename_component(FILE_EXPECTED ${FILE} NAME)
 			set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
 				${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
 				${AddTest_BINARY_PATH}/${FILE}")
