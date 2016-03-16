@@ -36,7 +36,6 @@
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
-#include "GeoLib/QuadTree.h"
 
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
