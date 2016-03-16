@@ -29,12 +29,15 @@
 #include "FileIO/GmshIO/GMSHFixedMeshDensity.h"
 #include "FileIO/GmshIO/GMSHNoMeshDensity.h"
 
+#include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/QuadTree.h"
+
+#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
@@ -371,12 +374,13 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	if (! merged_pnts) {
 		ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
 		return;
-	} else {
-		const std::size_t n_pnts(merged_pnts->size());
-		for (std::size_t k(0); k<n_pnts; k++) {
-			(*((*merged_pnts)[k]))[2] = 0.0;
-		}
 	}
+
+	// Rotate points to the x-y-plane.
+	_inverse_rot_mat = GeoLib::rotatePointsToXY(*merged_pnts);
+	// Compute inverse rotation matrix to reverse the rotation later on.
+	_inverse_rot_mat.transposeInPlace();
+
 	std::vector<GeoLib::Polyline*> const* merged_plys(_geo_objs.getPolylineVec(_gmsh_geo_name));
 	DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");
 
@@ -463,10 +467,15 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 void GMSHInterface::writePoints(std::ostream& out) const
 {
-	const std::size_t n_gmsh_pnts(_gmsh_pnts.size());
-	for (std::size_t k(0); k<n_gmsh_pnts; k++) {
-		if (_gmsh_pnts[k]) {
-			out << *(_gmsh_pnts[k]) << "\n";
+	for (auto & gmsh_pnt : _gmsh_pnts) {
+		// reverse rotation
+		if (gmsh_pnt) {
+			double* tmp = _inverse_rot_mat * gmsh_pnt->getCoords();
+			(*gmsh_pnt)[0] = tmp[0];
+			(*gmsh_pnt)[1] = tmp[1];
+			(*gmsh_pnt)[2] = tmp[2];
+			delete [] tmp;
+			out << *gmsh_pnt << "\n";
 		}
 	}
 }

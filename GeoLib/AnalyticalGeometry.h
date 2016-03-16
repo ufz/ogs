@@ -150,7 +150,7 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
-void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
 
 /**
  * rotate points to X-Y plane
@@ -162,9 +162,10 @@ void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
 template <typename InputIterator1, typename InputIterator2>
-void rotatePointsToXY(
-        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
-        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end);
+MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                              InputIterator1 p_pnts_end,
+                                              InputIterator2 r_pnts_begin,
+                                              InputIterator2 r_pnts_end);
 
 /**
  * rotate points to X-Z plane

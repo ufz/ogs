@@ -399,9 +399,9 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLi
 	rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }
 
-void rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
+MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*>& pnts)
 {
-	rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
+	return rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
 }
 
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)

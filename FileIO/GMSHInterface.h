@@ -25,6 +25,8 @@
 #include "GmshIO/GMSHPolygonTree.h"
 #include "GmshIO/GMSHMeshDensityStrategy.h"
 
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+
 namespace GeoLib
 {
 	class GEOObjects;
@@ -128,6 +130,9 @@ private:
 	std::vector<FileIO::GMSH::GMSHPoint*> _gmsh_pnts;
 
 	GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
+	/// Holds the inverse rotation matrix. The matrix is used in writePoints() to
+	/// revert the rotation done in writeGMSHInputFile().
+	MathLib::DenseMatrix<double> _inverse_rot_mat = MathLib::DenseMatrix<double>(3,3);
 };
 }
 

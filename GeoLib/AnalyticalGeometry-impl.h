@@ -186,9 +186,10 @@ void rotatePoints(
 }
 
 template <typename InputIterator1, typename InputIterator2>
-void rotatePointsToXY(
-        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
-        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end)
+MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                              InputIterator1 p_pnts_end,
+                                              InputIterator2 r_pnts_begin,
+                                              InputIterator2 r_pnts_end)
 {
     assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
 
@@ -198,16 +199,15 @@ void rotatePointsToXY(
     // compute the plane normal
     GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end, plane_normal, d);
 
-    const double tol (std::numeric_limits<double>::epsilon());
-    if (std::abs(plane_normal[0]) > tol || std::abs(plane_normal[1]) > tol) {
-        // rotate copied points into x-y-plane
-        MathLib::DenseMatrix<double> rot_mat(3, 3);
-        computeRotationMatrixToXY(plane_normal, rot_mat);
-        rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
-    }
+    // rotate points into x-y-plane
+    MathLib::DenseMatrix<double> rot_mat(3, 3);
+    computeRotationMatrixToXY(plane_normal, rot_mat);
+    rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
     for (auto it=r_pnts_begin; it!=r_pnts_end; ++it)
         (*(*it))[2] = 0.0; // should be -= d but there are numerical errors
+
+    return rot_mat;
 }
 
 template <typename P>
