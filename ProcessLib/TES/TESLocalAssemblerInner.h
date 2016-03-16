@@ -125,15 +125,6 @@ private:
     TESLocalAssemblerData _d;
 };
 
-
-template <typename Vec>
-void
-ogs5OutVec(const Vec& vec);
-
-template <typename Mat>
-void
-ogs5OutMat(const Mat& mat);
-
 } // namespace TES
 
 } // namespace ProcessLib

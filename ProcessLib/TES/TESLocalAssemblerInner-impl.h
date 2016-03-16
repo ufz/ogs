@@ -30,7 +30,75 @@ namespace
 enum class MatOutType { OGS5, PYTHON };
 
 const MatOutType MATRIX_OUTPUT_FORMAT = MatOutType::PYTHON;
+
+template<typename Mat>
+void
+ogs5OutMat(const Mat& mat)
+{
+    for (unsigned r=0; r<mat.rows(); ++r)
+    {
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            if (r!=0) std::printf("\n");
+            std::printf("|");
+            break;
+        case MatOutType::PYTHON:
+            if (r!=0) std::printf(",\n");
+            std::printf("[");
+            break;
+        }
+
+        for (unsigned c=0; c<mat.cols(); ++c)
+        {
+            switch (MATRIX_OUTPUT_FORMAT)
+            {
+            case MatOutType::OGS5:
+                std::printf(" %.16e", mat(r, c));
+                break;
+            case MatOutType::PYTHON:
+                if (c!=0) std::printf(",");
+                std::printf(" %23.16g", mat(r, c));
+                break;
+            }
+
+        }
+
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            std::printf(" | ");
+            break;
+        case MatOutType::PYTHON:
+            std::printf(" ]");
+            break;
+        }
+    }
+    std::printf("\n");
 }
+
+template<typename Vec>
+void
+ogs5OutVec(const Vec& vec)
+{
+    for (unsigned r=0; r<vec.size(); ++r)
+    {
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            if (r!=0) std::printf("\n");
+            std::printf("| %.16e | ", vec[r]);
+            break;
+        case MatOutType::PYTHON:
+            if (r!=0) std::printf(",\n");
+            std::printf("[ %23.16g ]", vec[r]);
+            break;
+        }
+    }
+    std::printf("\n");
+}
+
+} // anonymous namespace
 
 namespace ProcessLib
 {
@@ -237,75 +305,6 @@ preEachAssembleIntegrationPoint(
     assert(0.0 <= _d.vapour_mass_fraction && _d.vapour_mass_fraction <= 1.0);
 
     _d.rho_GR = fluid_density(_d.p, _d.T, _d.vapour_mass_fraction);
-}
-
-
-template<typename Mat>
-void
-ogs5OutMat(const Mat& mat)
-{
-    for (unsigned r=0; r<mat.rows(); ++r)
-    {
-        switch (MATRIX_OUTPUT_FORMAT)
-        {
-        case MatOutType::OGS5:
-            if (r!=0) std::printf("\n");
-            std::printf("|");
-            break;
-        case MatOutType::PYTHON:
-            if (r!=0) std::printf(",\n");
-            std::printf("[");
-            break;
-        }
-
-        for (unsigned c=0; c<mat.cols(); ++c)
-        {
-            switch (MATRIX_OUTPUT_FORMAT)
-            {
-            case MatOutType::OGS5:
-                std::printf(" %.16e", mat(r, c));
-                break;
-            case MatOutType::PYTHON:
-                if (c!=0) std::printf(",");
-                std::printf(" %23.16g", mat(r, c));
-                break;
-            }
-
-        }
-
-        switch (MATRIX_OUTPUT_FORMAT)
-        {
-        case MatOutType::OGS5:
-            std::printf(" | ");
-            break;
-        case MatOutType::PYTHON:
-            std::printf(" ]");
-            break;
-        }
-    }
-    std::printf("\n");
-}
-
-
-template<typename Vec>
-void
-ogs5OutVec(const Vec& vec)
-{
-    for (unsigned r=0; r<vec.size(); ++r)
-    {
-        switch (MATRIX_OUTPUT_FORMAT)
-        {
-        case MatOutType::OGS5:
-            if (r!=0) std::printf("\n");
-            std::printf("| %.16e | ", vec[r]);
-            break;
-        case MatOutType::PYTHON:
-            if (r!=0) std::printf(",\n");
-            std::printf("[ %23.16g ]", vec[r]);
-            break;
-        }
-    }
-    std::printf("\n");
 }
 
 
