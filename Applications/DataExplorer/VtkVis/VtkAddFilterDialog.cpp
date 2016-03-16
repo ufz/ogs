@@ -31,7 +31,7 @@
 
 #include <QModelIndex>
 
-VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline* pipeline,
+VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline &pipeline,
                                         QModelIndex parentIndex,
                                         QDialog* parent /*= 0*/ )
 	: QDialog(parent), _pipeline(pipeline), _parentIndex(parentIndex)
@@ -40,7 +40,7 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline* pipeline,
 	filterListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	VtkVisPipelineItem* parentItem =
-	        static_cast<VtkVisPipelineItem*>(_pipeline->getItem(parentIndex));
+	        static_cast<VtkVisPipelineItem*>(_pipeline.getItem(parentIndex));
 	vtkDataObject* parentDataObject = parentItem->algorithm()->GetOutputDataObject(0);
 	int parentDataObjectType = parentDataObject->GetDataObjectType();
 
@@ -76,7 +76,7 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 		}
 	}
 	VtkVisPipelineItem* parentItem =
-	        static_cast<VtkVisPipelineItem*>(_pipeline->getItem(_parentIndex));
+	        static_cast<VtkVisPipelineItem*>(_pipeline.getItem(_parentIndex));
 	QList<QVariant> itemData;
 	itemData << filterListWidget->currentItem()->text() << true;
 
@@ -106,7 +106,7 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
 			return;
 		}
 	}
-	_pipeline->addPipelineItem(item, _parentIndex);
+	_pipeline.addPipelineItem(item, _parentIndex);
 }
 
 void VtkAddFilterDialog::on_filterListWidget_currentRowChanged( int currentRow )

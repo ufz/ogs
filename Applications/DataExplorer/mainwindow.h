@@ -15,6 +15,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
 #include "Applications/ApplicationsLib/ProjectData.h"
 #endif
@@ -22,14 +24,14 @@
 #include "ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
-class GEOModels;
-class MshModel;
+#include "ElementTreeModel.h"
+#include "GEOModels.h"
+#include "MshModel.h"
+#include "VtkVisPipeline.h"
+#include "VisPrefsDialog.h"
+
 class TreeModel;
-class ElementTreeModel;
-class StationTreeModel;
 class ProcessModel;
-class VtkVisPipeline;
-class VisPrefsDialog;
 
 namespace InSituLib
 {
@@ -47,7 +49,6 @@ class MainWindow : public QMainWindow, public Ui_MainWindowClass
 
 public:
 	MainWindow(QWidget* parent = 0);
-	~MainWindow();
 
 	void ShowWindow();
 	void HideWindow();
@@ -96,7 +97,7 @@ protected slots:
 	/// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
 	void showDiagramPrefsDialog(QModelIndex &index);
 	/// Calls the OGSFileConverter as an external tool
-	void showFileConverter() const;
+	void showFileConverter();
 	//TODO6 void showFileConverterDialog();
 	void showLicense();
 	void showLineEditDialog(const std::string &geoName);
@@ -125,23 +126,19 @@ private:
 	void readSettings();
 	void writeSettings();
 	QString getLastUsedDir();
-
-	QString curFile;
-
-	MshModel* _meshModels;
-	ElementTreeModel* _elementModel;
-	TreeModel* _processModel;
+	
 	ProjectData _project;
-	VtkVisPipeline* _vtkVisPipeline;
+	std::unique_ptr<MshModel> _meshModel;
+	std::unique_ptr<ElementTreeModel> _elementModel;
+	std::unique_ptr<TreeModel> _processModel;
+	std::unique_ptr<VtkVisPipeline> _vtkVisPipeline;
 	QList<QRect> _screenGeometries;
-	QWidget* _vtkWidget;
+	std::unique_ptr<QWidget> _vtkWidget;
 	QByteArray _windowState;
-	QMenu* _import_files_menu;
-	QSignalMapper* _signal_mapper;
 
-	VisPrefsDialog* _visPrefsDialog;
+	std::unique_ptr<VisPrefsDialog> _visPrefsDialog;
 
-	std::unique_ptr<GEOModels> _geo_models;
+	std::unique_ptr<GEOModels> _geo_model;
 
 signals:
 	void fileUsed( QString filename );

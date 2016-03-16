@@ -22,15 +22,11 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 
-// models
-#include "ElementTreeModel.h"
-#include "GEOModels.h"
-#include "GeoTreeModel.h"
-#include "MshModel.h"
-#include "StationTreeModel.h"
-
 // GeoLib
 #include "Raster.h"
+
+// MeshGeoLib
+#include "MeshGeoToolsLib/GeoMapper.h"
 
 //dialogs
 #include "CreateStructuredGridDialog.h"
@@ -47,18 +43,17 @@
 #include "NetCdfConfigureDialog.h"
 #include "SetNameDialog.h"
 #include "SHPImportDialog.h"
-#include "VisPrefsDialog.h"
 #include "VtkAddFilterDialog.h"
 
+#include "GeoTreeModel.h"
 #include "LastSavedFileDirectory.h"
-#include "MeshGeoToolsLib/GeoMapper.h"
 #include "OGSError.h"
 #include "RecentFiles.h"
+#include "StationTreeModel.h"
 #include "TreeModelIterator.h"
 #include "VtkBGImageSource.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
-#include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 
 #include "InSituLib/VtkMappedMeshSource.h"
@@ -111,35 +106,35 @@
 using namespace FileIO;
 
 MainWindow::MainWindow(QWidget* parent /* = 0*/)
-	: QMainWindow(parent), _project(), _import_files_menu(NULL)
+	: QMainWindow(parent), _project()
 {
 	setupUi(this);
 
 	// Setup various models
-	_meshModels = new MshModel(_project);
-	_elementModel = new ElementTreeModel();
-	_processModel = new TreeModel();
+	_meshModel.reset(new MshModel(_project));
+	_elementModel.reset(new ElementTreeModel());
+	_processModel.reset(new TreeModel());
 
-	_geo_models.reset(new GEOModels{*_project.getGEOObjects()});
-	geoTabWidget->treeView->setModel(_geo_models->getGeoModel());
-	stationTabWidget->treeView->setModel(_geo_models->getStationModel());
-	mshTabWidget->treeView->setModel(_meshModels);
-	mshTabWidget->elementView->setModel(_elementModel);
-	modellingTabWidget->treeView->setModel(_processModel);
+	_geo_model.reset(new GEOModels{*_project.getGEOObjects()});
+	geoTabWidget->treeView->setModel(_geo_model->getGeoModel());
+	stationTabWidget->treeView->setModel(_geo_model->getStationModel());
+	mshTabWidget->treeView->setModel(_meshModel.get());
+	mshTabWidget->elementView->setModel(_elementModel.get());
+	modellingTabWidget->treeView->setModel(_processModel.get());
 
 	// vtk visualization pipeline
-	_vtkVisPipeline = new VtkVisPipeline(visualizationWidget->renderer());
+	_vtkVisPipeline.reset(new VtkVisPipeline(visualizationWidget->renderer()));
 
 	// station model connects
 	connect(stationTabWidget->treeView, SIGNAL(openStationListFile(int)),
 	        this, SLOT(open(int)));
 	connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
 	        this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
-	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geo_models.get(),
+	connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geo_model.get(),
 	        SLOT(removeStationVec(std::string))); // update model when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(stationListSaved(QString, QString)), this,
 	        SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
-	connect(_geo_models.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	connect(_geo_model.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
 	        this, SLOT(updateDataViews())); // update data view when stations are removed
 	connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
 	        this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
@@ -148,7 +143,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)),
         this, SLOT(open(int)));
 	connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)),
-	        _geo_models.get(), SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
+	        _geo_model.get(), SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
 	connect(geoTabWidget->treeView, SIGNAL(geometryMappingRequested(const std::string&)),
 	        this, SLOT(mapGeometry(const std::string&)));
 	connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
@@ -157,18 +152,18 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
 	connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)),
 			this, SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)));
-	connect(_geo_models.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
-	connect(_geo_models.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	connect(_geo_model.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
 	        this, SLOT(updateDataViews()));
 	connect(geoTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
-		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+		    _vtkVisPipeline.get(), SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
 	connect(geoTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
-		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
+		    _vtkVisPipeline.get(), SLOT(removeHighlightedGeoObject()));
 	connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
-		    _vtkVisPipeline, SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+		    _vtkVisPipeline.get(), SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
 	connect(stationTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
-		    _vtkVisPipeline, SLOT(removeHighlightedGeoObject()));
+		    _vtkVisPipeline.get(), SLOT(removeHighlightedGeoObject()));
 
 
 
@@ -176,9 +171,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(mshTabWidget->treeView, SIGNAL(openMeshFile(int)),
         this, SLOT(open(int)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
-	        _meshModels, SLOT(removeMesh(const QModelIndex &)));
+	        _meshModel.get(), SLOT(removeMesh(const QModelIndex &)));
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
-	        _elementModel, SLOT(clearView()));
+	        _elementModel.get(), SLOT(clearView()));
 	connect(mshTabWidget->treeView,
 		SIGNAL(qualityCheckRequested(InSituLib::VtkMappedMeshSource*)),
 	        this,
@@ -186,54 +181,53 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
 			this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
+		    _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
 	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
-		    this->_elementModel, SLOT(setMesh(MeshLib::Mesh const&)));
+		    this->_elementModel.get(), SLOT(setMesh(MeshLib::Mesh const&)));
 	connect(mshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
 		    mshTabWidget->elementView, SLOT(updateView()));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-		    this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
+		    this->_elementModel.get(), SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 	connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
 	connect(mshTabWidget->treeView, SIGNAL(removeSelectedMeshComponent()),
-		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
+		    _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
 	        (QObject*) (visualizationWidget->interactorStyle()), SLOT(removeHighlightActor()));
 	connect(mshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-		    _vtkVisPipeline, SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
+		    _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
 	connect(mshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
-		    _vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
+		    _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
 	// VisPipeline Connects
-	connect(_geo_models.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
-	        _vtkVisPipeline, SLOT(addPipelineItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
-	connect(_geo_models.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
-	        _vtkVisPipeline, SLOT(removeSourceItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
+	connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	        _vtkVisPipeline.get(), SLOT(addPipelineItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
+	connect(_geo_model.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+	        _vtkVisPipeline.get(), SLOT(removeSourceItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
 
-	connect(_geo_models.get(), SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
-	        _vtkVisPipeline, SLOT(addPipelineItem(StationTreeModel *, std::string)));
-	connect(_geo_models.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
-	        _vtkVisPipeline, SLOT(removeSourceItem(StationTreeModel *, std::string)));
+	connect(_geo_model.get(), SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
+	        _vtkVisPipeline.get(), SLOT(addPipelineItem(StationTreeModel *, std::string)));
+	connect(_geo_model.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
+	        _vtkVisPipeline.get(), SLOT(removeSourceItem(StationTreeModel *, std::string)));
 
-	connect(_meshModels, SIGNAL(meshAdded(MshModel *, QModelIndex)),
-	        _vtkVisPipeline, SLOT(addPipelineItem(MshModel *,QModelIndex)));
-	connect(_meshModels, SIGNAL(meshRemoved(MshModel *, QModelIndex)),
-	        _vtkVisPipeline, SLOT(removeSourceItem(MshModel *, QModelIndex)));
+	connect(_meshModel.get(), SIGNAL(meshAdded(MshModel *, QModelIndex)),
+	        _vtkVisPipeline.get(), SLOT(addPipelineItem(MshModel *,QModelIndex)));
+	connect(_meshModel.get(), SIGNAL(meshRemoved(MshModel *, QModelIndex)),
+	        _vtkVisPipeline.get(), SLOT(removeSourceItem(MshModel *, QModelIndex)));
 
-	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
+	connect(_vtkVisPipeline.get(), SIGNAL(vtkVisPipelineChanged()),
 	        visualizationWidget->vtkWidget, SLOT(update()));
-	connect(_vtkVisPipeline, SIGNAL(vtkVisPipelineChanged()),
+	connect(_vtkVisPipeline.get(), SIGNAL(vtkVisPipelineChanged()),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
-	connect(_vtkVisPipeline, SIGNAL(itemSelected(const QModelIndex&)),
+	connect(_vtkVisPipeline.get(), SIGNAL(itemSelected(const QModelIndex&)),
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(const QModelIndex&)));
 
 
-	vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline);
-	connect(vtkVisTabWidget->vtkVisPipelineView,
-	        SIGNAL(requestRemovePipelineItem(QModelIndex)), _vtkVisPipeline,
-	        SLOT(removePipelineItem(QModelIndex)));
+	vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline.get());
+	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(requestRemovePipelineItem(QModelIndex)),
+	        _vtkVisPipeline.get(), SLOT(removePipelineItem(QModelIndex)));
 	connect(vtkVisTabWidget->vtkVisPipelineView,
 	        SIGNAL(requestAddPipelineFilterItem(QModelIndex)), this,
 	        SLOT(showAddPipelineFilterItemDialog(QModelIndex)));
@@ -258,18 +252,18 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(vtkProp3D*)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
 	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
-	        this->_elementModel, SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, const unsigned)));
+	        this->_elementModel.get(), SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, const unsigned)));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
 	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
 	        mshTabWidget->elementView, SLOT(updateView()));
 	connect((QObject*) (visualizationWidget->interactorStyle()), SIGNAL(clearElementView()),
-	        this->_elementModel, SLOT(clearView()));
+	        this->_elementModel.get(), SLOT(clearView()));
 	connect((QObject*) (visualizationWidget->interactorStyle()),
-			SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
-	        this->_vtkVisPipeline, SLOT(removeHighlightedMeshComponent()));
+	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
+	        this->_vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
 	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
-	        _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -280,15 +274,15 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	readSettings();
 
 	// Get info on screens geometry(ies)
-	_vtkWidget = visualizationWidget->vtkWidget;
+	_vtkWidget.reset(visualizationWidget->vtkWidget);
 	QDesktopWidget* desktopWidget = QApplication::desktop();
 	const unsigned int screenCount = desktopWidget->screenCount();
 	for (std::size_t i = 0; i < screenCount; ++i)
 		_screenGeometries.push_back(desktopWidget->availableGeometry((int)i));
 
 	// Setup import files menu
-	_import_files_menu = createImportFilesMenu();
-	menu_File->insertMenu(action_Exit, _import_files_menu);
+	QMenu* import_files_menu = createImportFilesMenu(); //owned by MainWindow
+	menu_File->insertMenu(action_Exit, import_files_menu);
 
 	// Setup recent files menu
 	RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList");
@@ -328,22 +322,13 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	menuWindows->addAction(showVisDockAction);
 
 	// Presentation mode
-	QMenu* presentationMenu = new QMenu();
+	QMenu* presentationMenu = new QMenu(this);
 	presentationMenu->setTitle("Presentation on");
 	connect(presentationMenu, SIGNAL(aboutToShow()), this,
 	        SLOT(createPresentationMenu()));
 	menuWindows->insertMenu(showVisDockAction, presentationMenu);
 
-	_visPrefsDialog = new VisPrefsDialog(_vtkVisPipeline, visualizationWidget);
-}
-
-MainWindow::~MainWindow()
-{
-	delete _signal_mapper;
-	delete _import_files_menu;
-	delete _vtkVisPipeline;
-	delete _meshModels;
-	delete _processModel;
+	_visPrefsDialog.reset(new VisPrefsDialog(*_vtkVisPipeline, *visualizationWidget));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -485,7 +470,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			XmlGspInterface xml(_project);
 			if (xml.readFile(fileName))
 			{
-				_meshModels->updateModel();
+				_meshModel->updateModel();
 			}
 			else
 				OGSError::box("Failed to load project file.\n Please see console for details.");
@@ -517,7 +502,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			myTimer1.start();
 #endif
 			if (mesh)
-				_meshModels->addMesh(mesh);
+				_meshModel->addMesh(mesh);
 			else
 				OGSError::box("Failed to load mesh file.");
 #ifndef NDEBUG
@@ -535,7 +520,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			FEFLOWInterface feflowIO(_project.getGEOObjects());
 			MeshLib::Mesh* msh = feflowIO.readFEFLOWFile(fileName.toStdString());
 			if (msh)
-				_meshModels->addMesh(msh);
+				_meshModel->addMesh(msh);
 			else
 				OGSError::box("Failed to load a FEFLOW mesh.");
 		}
@@ -562,7 +547,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			std::string name = fileName.toStdString();
 			MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
 			if (mesh)
-				_meshModels->addMesh(mesh);
+				_meshModel->addMesh(mesh);
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -573,7 +558,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			MeshLib::Mesh* mesh = FileIO::GMSHInterface::readGMSHMesh(msh_name);
 			if (mesh)
-				_meshModels->addMesh(mesh);
+				_meshModel->addMesh(mesh);
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -587,7 +572,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			mesh = dlg.getMesh();
 			mesh->setName(dlg.getName());
-			_meshModels->addMesh(mesh);
+			_meshModel->addMesh(mesh);
 		}
 		if (dlg.getRaster())
 			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
@@ -641,7 +626,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				FileIO::TetGenInterface tetgen;
 				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
 				if (mesh)
-					_meshModels->addMesh(mesh);
+					_meshModel->addMesh(mesh);
 				else
 					OGSError::box("Failed to load a TetGen mesh.");
 			}
@@ -703,42 +688,42 @@ void MainWindow::about()
 
 QMenu* MainWindow::createImportFilesMenu()
 {
-	_signal_mapper = new QSignalMapper(this);
-	QMenu* importFiles = new QMenu("&Import Files");
+	QSignalMapper* signal_mapper = new QSignalMapper(this); //owned by MainWindow
+	QMenu* importFiles = new QMenu("&Import Files", this);
 	QAction* feflowFiles = importFiles->addAction("&FEFLOW Files...");
-	connect(feflowFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(feflowFiles, ImportFileType::FEFLOW);
+	connect(feflowFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(feflowFiles, ImportFileType::FEFLOW);
 	QAction* gmsFiles = importFiles->addAction("G&MS Files...");
-	connect(gmsFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
+	connect(gmsFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(gmsFiles, ImportFileType::GMS);
 	QAction* gmshFiles = importFiles->addAction("&GMSH Files...");
-	connect(gmshFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
+	connect(gmshFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(gmshFiles, ImportFileType::GMSH);
 	QAction* netcdfFiles = importFiles->addAction("&NetCDF Files...");
-	connect(netcdfFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
+	connect(netcdfFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(netcdfFiles, ImportFileType::NETCDF);
 	QAction* petrelFiles = importFiles->addAction("&Petrel Files...");
 	connect(petrelFiles, SIGNAL(triggered()), this, SLOT(loadPetrelFiles()));
 	QAction* rasterFiles = importFiles->addAction("&Raster Files...");
-	connect(rasterFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
+	connect(rasterFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
 #if defined VTKOSGCONVERTER_FOUND || defined VTKFBXCONVERTER_FOUND
 	QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
 	connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
 	_signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
 #endif
 	QAction* shapeFiles = importFiles->addAction("&Shape Files...");
-	connect(shapeFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()));
-	_signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
+	connect(shapeFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
+	signal_mapper->setMapping(shapeFiles, ImportFileType::SHAPE);
 	QAction* tetgenFiles = importFiles->addAction("&TetGen Files...");
-	connect( tetgenFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
-	_signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);
+	connect( tetgenFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()) );
+	signal_mapper->setMapping(tetgenFiles, ImportFileType::TETGEN);
 
 	QAction* vtkFiles = importFiles->addAction("&VTK Files...");
-	connect( vtkFiles, SIGNAL(triggered()), _signal_mapper, SLOT(map()) );
-	_signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
+	connect( vtkFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()) );
+	signal_mapper->setMapping(vtkFiles, ImportFileType::VTK);
 
-	connect(_signal_mapper, SIGNAL(mapped(int)), this, SLOT(open(int)));
+	connect(signal_mapper, SIGNAL(mapped(int)), this, SLOT(open(int)));
 
 	return importFiles;
 }
@@ -780,7 +765,7 @@ void MainWindow::loadPetrelFiles()
 
 void MainWindow::showAddPipelineFilterItemDialog(QModelIndex parentIndex)
 {
-	VtkAddFilterDialog dlg(_vtkVisPipeline, parentIndex);
+	VtkAddFilterDialog dlg(*_vtkVisPipeline, parentIndex);
 	dlg.exec();
 }
 
@@ -835,7 +820,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
 		{
 			geo_mapper.mapOnDEM(file_name.toStdString());
-			_geo_models->updateGeometry(geo_name);
+			_geo_model->updateGeometry(geo_name);
 		}
 		else
 			OGSError::box("The selected file is no supported raster file.");
@@ -861,12 +846,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (new_geo_name.empty())
 	{
 		geo_mapper.mapOnMesh(mesh);
-		_geo_models->updateGeometry(geo_name);
+		_geo_model->updateGeometry(geo_name);
 	}
 	else
 	{
 		geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
-		_geo_models->updateGeometry(new_geo_name);
+		_geo_model->updateGeometry(new_geo_name);
 	}
 }
 
@@ -955,9 +940,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 	QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::showFileConverter() const
+void MainWindow::showFileConverter()
 {
-	OGSFileConverter* dlg = new OGSFileConverter();
+	OGSFileConverter* dlg = new OGSFileConverter(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 	dlg->raise();
@@ -967,7 +952,7 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 {
 	QString listName;
 	GeoLib::Station* stn =
-	    _geo_models->getStationModel()->stationFromIndex(index, listName);
+	    _geo_model->getStationModel()->stationFromIndex(index, listName);
 
 	if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
 	{
@@ -1002,7 +987,7 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
-	_geo_models->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
+	_geo_model->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
 		id, this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
 }
@@ -1010,14 +995,14 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 void MainWindow::showCreateStructuredGridDialog()
 {
 	CreateStructuredGridDialog dlg;
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
 void MainWindow::showMeshElementRemovalDialog()
 {
 	MeshElementRemovalDialog dlg(this->_project);
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModels, SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
@@ -1034,7 +1019,7 @@ void MainWindow::showLineEditDialog(const std::string &geoName)
 	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&,
 	                                           std::vector<std::size_t>, double,
 	                                           std::string, bool, bool)),
-	        _geo_models.get(), SLOT(connectPolylineSegments(
+	        _geo_model.get(), SLOT(connectPolylineSegments(
 	                         const std::string&, std::vector<std::size_t>,
 	                         double, std::string, bool, bool)));
 	lineEdit.exec();
@@ -1123,7 +1108,7 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
 
 		std::string basename = QFileInfo(filename).path().toStdString();
 		basename.append("/" + QFileInfo(filename).baseName().toStdString());
-		TreeModelIterator it(_vtkVisPipeline);
+		TreeModelIterator it(_vtkVisPipeline.get());
 		++it;
 		while (*it)
 		{
@@ -1283,7 +1268,7 @@ void MainWindow::quitPresentationMode()
 	delete action;
 
 	// Add the widget back to visualization widget
-	visualizationWidget->layout()->addWidget(_vtkWidget);
+	visualizationWidget->layout()->addWidget(_vtkWidget.get());
 
 	QMainWindow::centralWidget()->show();
 
