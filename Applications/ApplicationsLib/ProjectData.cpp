@@ -50,17 +50,18 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
-	std::string const& path)
+	std::string const& project_directory,
+	std::string const& output_directory)
 {
 	// geometry
 	std::string const geometry_file = BaseLib::copyPathToFileName(
-			project_config.getConfParam<std::string>("geometry"), path
+			project_config.getConfParam<std::string>("geometry"), project_directory
 		);
 	detail::readGeometry(geometry_file, *_geoObjects);
 
 	// mesh
 	std::string const mesh_file = BaseLib::copyPathToFileName(
-			project_config.getConfParam<std::string>("mesh"), path
+			project_config.getConfParam<std::string>("mesh"), project_directory
 		);
 
 	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
@@ -82,7 +83,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 	parseProcesses(project_config.getConfSubtree("processes"));
 
 	// output
-	parseOutput(project_config.getConfSubtree("output"), path);
+	parseOutput(project_config.getConfSubtree("output"), output_directory);
 
 	// timestepping
 	parseTimeStepping(project_config.getConfSubtree("time_stepping"));
@@ -296,14 +297,12 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 }
 
 void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
-	std::string const& path)
+	std::string const& output_directory)
 {
 	output_config.checkConfParam("type", "VTK");
 	DBUG("Parse output configuration:");
 
-	auto const file = output_config.getConfParam<std::string>("file");
-
-	_output_file_prefix = path + file;
+	_output = ProcessLib::Output<GlobalSetupType>::newInstance(output_config, output_directory);
 }
 
 void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)

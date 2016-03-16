@@ -22,6 +22,7 @@
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
+#include "ProcessLib/Output.h"
 
 #include "NumLib/ODESolver/Types.h"
 
@@ -60,10 +61,13 @@ public:
 	ProjectData();
 
 	/// Constructs project data by parsing provided configuration.
-	/// The additional  path is used to find files referenced in the
-	/// configuration.
+	///
+	/// \param config_tree Configuration as read from the prj file.
+	/// \param project_directory Where to look for files referenced in the \c config_tree.
+	/// \param output_directory  Where to write simulation output files to.
 	ProjectData(BaseLib::ConfigTree const& config_tree,
-	            std::string const& path);
+	            std::string const& project_directory,
+	            std::string const& output_directory);
 
 	ProjectData(ProjectData&) = delete;
 
@@ -131,10 +135,16 @@ public:
 		return _processes.end();
 	}
 
-	std::string const&
-	getOutputFilePrefix() const
+	ProcessLib::Output<GlobalSetupType> const&
+	getOutputControl() const
 	{
-		return _output_file_prefix;
+		return *_output;
+	}
+
+	ProcessLib::Output<GlobalSetupType>&
+	getOutputControl()
+	{
+		return *_output;
 	}
 
 	TimeLoop& getTimeLoop()
@@ -174,7 +184,8 @@ private:
 
 	/// Parses the output configuration.
 	/// Parses the file tag and sets output file prefix.
-	void parseOutput(BaseLib::ConfigTree const& output_config, std::string const& path);
+	void parseOutput(BaseLib::ConfigTree const& output_config,
+	                 std::string const& output_directory);
 
 	void parseTimeStepping(BaseLib::ConfigTree const& timestepping_config);
 
@@ -195,8 +206,7 @@ private:
 	/// Buffer for each parameter config passed to the process.
 	std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
 
-	/// Output file path with project prefix.
-	std::string _output_file_prefix;
+	std::unique_ptr<ProcessLib::Output<GlobalSetupType>> _output;
 
 	/// The time loop used to solve this project's processes.
 	std::unique_ptr<TimeLoop> _time_loop;
