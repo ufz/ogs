@@ -74,6 +74,8 @@ class PETScVector
         */
         explicit PETScVector(const PETScVector &existing_vec, const bool deep_copy = true);
 
+        PETScVector(PETScVector&& other);
+
         ~PETScVector()
         {
             destroy();

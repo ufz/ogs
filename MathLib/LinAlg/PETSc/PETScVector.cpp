@@ -77,6 +77,17 @@ PETScVector::PETScVector(const PETScVector &existing_vec, const bool deep_copy)
     }
 }
 
+PETScVector::PETScVector(PETScVector &&other)
+    : _v{std::move(other._v)}
+    , _v_loc{std::move(other._v_loc)}
+    , _start_rank{other._start_rank}
+    , _end_rank{other._end_rank}
+    , _size{other._size}
+    , _size_loc{other._size_loc}
+    , _size_ghosts{other._size_ghosts}
+    , _has_ghost_id{other._has_ghost_id}
+{}
+
 void PETScVector::config()
 {
     VecSetFromOptions(*_v);
@@ -232,10 +243,12 @@ void PETScVector::shallowCopy(const PETScVector &v)
 
     VecDuplicate(*v._v, _v.get());
 
-    // TODO can't that be copied from v?
-    VecGetOwnershipRange(*_v, &_start_rank,&_end_rank);
-    VecGetLocalSize(*_v, &_size_loc);
-    VecGetSize(*_v, &_size);
+    _start_rank   = v._start_rank;
+    _end_rank     = v._end_rank;
+    _size         = v._size;
+    _size_loc     = v._size_loc;
+    _size_ghosts  = v._size_ghosts;
+    _has_ghost_id = v._has_ghost_id;
 
     VecSetOption(*_v, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
 }
