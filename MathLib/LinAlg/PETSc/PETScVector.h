@@ -72,7 +72,7 @@ class PETScVector
              \param deep_copy    The flag for a deep copy, which means to copy the values as well,
                                  the default is true
         */
-        PETScVector(const PETScVector &existing_vec, const bool deep_copy = true);
+        explicit PETScVector(const PETScVector &existing_vec, const bool deep_copy = true);
 
         ~PETScVector()
         {
