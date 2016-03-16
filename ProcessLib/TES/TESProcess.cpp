@@ -345,36 +345,6 @@ assembleConcreteProcess(
     _global_setup.execute(*BP::_global_assembler, _local_assemblers,
                           t, x, M, K, b);
 
-#if 0 && defined(OGS_USE_EIGEN) && ! defined(OGS_USE_EIGENLIS)
-    // TODO put that somewhere
-    MathLib::scaleDiagonal(*_A, *_rhs);
-#endif
-
-#if 0 && defined(OGS_USE_EIGENLIS)
-    // TODO put that somewhere
-
-    // scaling
-    typename GlobalMatrix::RawMatrixType AT = _A->getRawMatrix().transpose();
-
-    for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
-    {
-        auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                          : (dof == 1) ? _assembly_params.trafo_T
-                                       : _assembly_params.trafo_x;
-
-        for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-        {
-            MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-            AT.row(idx) *= trafo.dxdy(0);
-            x_curr[idx] /= trafo.dxdy(0);
-        }
-    }
-
-    _A->getRawMatrix() = AT.transpose();
-#endif
-
 #ifndef NDEBUG
     if (_total_iteration == 0 && num_try == 0 && _output_global_matrix)
     {
@@ -387,27 +357,6 @@ assembleConcreteProcess(
         M.write("global_matrix_M.txt");
         K.write("global_matrix_K.txt");
         b.write("global_vector_b.txt");
-    }
-#endif
-
-#if 0 && defined(OGS_USE_EIGENLIS)
-    // TODO put that somewhere
-
-    // scale back
-    for (unsigned dof = 0; dof < NODAL_DOF; ++dof)
-    {
-        auto const& trafo = (dof == 0) ? _assembly_params.trafo_p
-                          : (dof == 1) ? _assembly_params.trafo_T
-                                       : _assembly_params.trafo_x;
-
-        for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-        {
-            MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, dof);
-
-            // TODO: _A
-            x_curr[idx] *= trafo.dxdy(0);
-        }
     }
 #endif
 
