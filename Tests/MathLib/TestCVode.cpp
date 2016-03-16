@@ -152,7 +152,8 @@ TEST(MathLibCVodeTest, Exponential)
 	const double y0 = 1.0;
 	const double t0 = 0.0;
 
-	BaseLib::ConfigTree config(boost::property_tree::ptree{}, "",
+	auto tree = boost::property_tree::ptree{};
+	BaseLib::ConfigTree config(tree, "",
 	                           BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
@@ -191,7 +192,8 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 	const double y0 = 1.0;
 	const double t0 = 0.0;
 
-	BaseLib::ConfigTree config(boost::property_tree::ptree{}, "",
+	auto tree = boost::property_tree::ptree{};
+	BaseLib::ConfigTree config(tree, "",
 	                           BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1, ExtraData>(config);
@@ -231,7 +233,8 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 	const double y0 = 1.0;
 	const double t0 = 0.0;
 
-	BaseLib::ConfigTree config(boost::property_tree::ptree{}, "",
+	auto tree = boost::property_tree::ptree{};
+	BaseLib::ConfigTree config(tree, "",
 	                           BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
