@@ -57,17 +57,17 @@ template <typename ShapeFunction, unsigned GlobalDim>
 struct EigenFixedShapeMatrixPolicy
 {
     template <int N>
-    using _VectorType = typename ::detail::EigenMatrixType<N, 1>::type;
+    using VectorType = typename ::detail::EigenMatrixType<N, 1>::type;
 
     template <int N, int M>
-    using _MatrixType = typename ::detail::EigenMatrixType<N, M>::type;
+    using MatrixType = typename ::detail::EigenMatrixType<N, M>::type;
 
-    using NodalMatrixType = _MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
-    using NodalVectorType = _VectorType<ShapeFunction::NPOINTS>;
-    using DimNodalMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
-    using DimMatrixType = _MatrixType<ShapeFunction::DIM, ShapeFunction::DIM>;
-    using GlobalDimNodalMatrixType = _MatrixType<GlobalDim, ShapeFunction::NPOINTS>;
-    using GlobalDimMatrixType = _MatrixType<GlobalDim, GlobalDim>;
+    using NodalMatrixType = MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
+    using NodalVectorType = VectorType<ShapeFunction::NPOINTS>;
+    using DimNodalMatrixType = MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
+    using DimMatrixType = MatrixType<ShapeFunction::DIM, ShapeFunction::DIM>;
+    using GlobalDimNodalMatrixType = MatrixType<GlobalDim, ShapeFunction::NPOINTS>;
+    using GlobalDimMatrixType = MatrixType<GlobalDim, GlobalDim>;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
@@ -85,17 +85,19 @@ struct EigenDynamicShapeMatrixPolicy
     // Dynamic size local matrices are much slower in allocation than their
     // fixed counterparts.
 
-     using _MatrixType =
+    template<int N, int M>
+    using MatrixType =
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-     using _VectorType =
+    template<int N>
+    using VectorType =
         Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-    using NodalMatrixType = _MatrixType;
-    using NodalVectorType = _VectorType;
-    using DimNodalMatrixType = _MatrixType;
-    using DimMatrixType = _MatrixType;
-    using GlobalDimNodalMatrixType = _MatrixType;
-    using GlobalDimMatrixType = _MatrixType;
+    using NodalMatrixType = MatrixType<0,0>;
+    using NodalVectorType = VectorType<0>;
+    using DimNodalMatrixType = MatrixType<0,0>;
+    using DimMatrixType = MatrixType<0,0>;
+    using GlobalDimNodalMatrixType = MatrixType<0,0>;
+    using GlobalDimMatrixType = MatrixType<0,0>;
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
@@ -105,13 +107,16 @@ struct EigenDynamicShapeMatrixPolicy
             GlobalDimNodalMatrixType>;
 };
 
-/// Default choice of the ShapeMatrixPolicy.
 #ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 template <typename ShapeFunction, unsigned GlobalDim>
 using ShapeMatrixPolicyType = EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
+
+const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 1;
 #else
 template <typename ShapeFunction, unsigned GlobalDim>
 using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalDim>;
+
+const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 0;
 #endif
 
 #endif  // OGS_USE_EIGEN
