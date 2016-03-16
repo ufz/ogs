@@ -260,7 +260,11 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & g
     for (std::size_t k(0); k<n_pnts_polygon-1; k++) {
         const std::size_t id (_node_polygon->getPointID(k));
         GeoLib::Point const*const pnt(_node_polygon->getPoint(k));
-        gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+        // if this point was already part of another polyline
+        if (gmsh_pnts[id] != nullptr)
+            continue;
+        gmsh_pnts[id] = new GMSHPoint(
+            *pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
     }
 
     const std::size_t n_plys(_plys.size());
@@ -273,7 +277,9 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & g
                 if (gmsh_pnts[id] != nullptr)
                     continue;
                 GeoLib::Point const*const pnt(_plys[k]->getPoint(j));
-                gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+                gmsh_pnts[id] = new GMSHPoint(
+                    *pnt, id,
+                    _mesh_density_strategy->getMeshDensityAtPoint(pnt));
             }
         }
     }
