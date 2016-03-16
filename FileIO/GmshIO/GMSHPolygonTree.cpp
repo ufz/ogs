@@ -42,6 +42,8 @@ GMSHPolygonTree::~GMSHPolygonTree()
 		for (auto * polyline : _plys)
 			delete polyline;
 	}
+	// member of GeoLib::SimplePolygonTree, but the ownership is not transmitted
+	delete _node_polygon;
 }
 
 bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
