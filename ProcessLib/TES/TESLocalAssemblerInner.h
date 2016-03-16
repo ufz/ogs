@@ -122,11 +122,6 @@ private:
 
     void initReaction(const unsigned int_pt);
 
-    // TODO data members except local matrices are independent of any template parameter
-    // they can be moved to a separate non-template struct for better decoupling of the
-    // reaction adaptor.
-    // Maybe the reaction adaptor does not even need direct access to those members!
-
     TESLocalAssemblerData _d;
 };
 
