@@ -13,9 +13,12 @@
 #include <memory>
 #include <vector>
 
-#include "Parameter.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+
+#include "Parameter.h"
+#include "ProcessUtil.h"
+
 
 namespace ProcessLib
 {
@@ -62,24 +65,11 @@ public:
                   hydraulic_conductivity,
               unsigned const integration_order) override
     {
-        using FemType = NumLib::TemplateIsoparametric<
-            ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
-
-
         _integration_order = integration_order;
-        IntegrationMethod_ integration_method(_integration_order);
-        std::size_t const n_integration_points = integration_method.getNPoints();
 
-        _shape_matrices.reserve(n_integration_points);
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
-            _shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                         ShapeFunction::NPOINTS);
-            fe.computeShapeFunctions(
-                    integration_method.getWeightedPoint(ip).getCoords(),
-                    _shape_matrices[ip]);
-        }
+        _shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
+                e, integration_order);
 
         _hydraulic_conductivity = [&hydraulic_conductivity, &e]()
         {
