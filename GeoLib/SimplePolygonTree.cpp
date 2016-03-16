@@ -22,7 +22,7 @@ SimplePolygonTree::SimplePolygonTree(Polygon * polygon, SimplePolygonTree * pare
 
 SimplePolygonTree::~SimplePolygonTree()
 {
-	for (auto * child : _childs) {
+	for (auto * child : _children) {
 		delete child;
 	}
 }
@@ -36,15 +36,15 @@ void SimplePolygonTree::insertSimplePolygonTree (SimplePolygonTree* polygon_hier
 {
 	const Polygon* polygon (polygon_hierarchy->getPolygon());
 	bool nfound (true);
-	for (std::list<SimplePolygonTree*>::const_iterator it (_childs.begin());
-	     it != _childs.end() && nfound; ++it) {
+	for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin());
+	     it != _children.end() && nfound; ++it) {
 		if (((*it)->getPolygon())->isPolylineInPolygon (*(polygon))) {
 			(*it)->insertSimplePolygonTree (polygon_hierarchy);
 			nfound = false;
 		}
 	}
 	if (nfound) {
-		_childs.push_back (polygon_hierarchy);
+		_children.push_back (polygon_hierarchy);
 		polygon_hierarchy->setParent(this);
 	}
 }
