@@ -172,7 +172,7 @@ public:
 		Implementation::setIC(t0, y0.data());
 	}
 
-	void preSolve() { Implementation::preSolve(); }
+	void preSolve() override { Implementation::preSolve(); }
 	void solve(const double t) override { Implementation::solve(t); }
 	ConstArrRef getSolution() const override
 	{
