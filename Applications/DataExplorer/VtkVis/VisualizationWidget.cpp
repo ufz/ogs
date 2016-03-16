@@ -45,7 +45,8 @@
 #include <QString>
 
 VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
-	: QWidget(parent)
+: QWidget(parent), _vtkRender(nullptr), _markerWidget(nullptr),
+  _interactorStyle(nullptr), _vtkPickCallback(nullptr)
 {
 	this->setupUi(this);
 
@@ -57,7 +58,7 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 	picker->AddObserver(vtkCommand::EndPickEvent, _vtkPickCallback);
 	vtkWidget->GetRenderWindow()->GetInteractor()->SetPicker(picker);
 
-	vtkRenderWindow* renderWindow = vtkWidget->GetRenderWindow();
+	vtkSmartPointer<vtkRenderWindow> renderWindow = vtkWidget->GetRenderWindow();
 	renderWindow->StereoCapableWindowOn();
 	renderWindow->SetStereoTypeToCrystalEyes();
 	_vtkRender = vtkRenderer::New();
@@ -70,12 +71,11 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 	// Create an orientation marker using vtkAxesActor
 	vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
-	vtkOrientationMarkerWidget* markerWidget = vtkOrientationMarkerWidget::New();
-	markerWidget->SetOrientationMarker(axesActor);
-	//markerWidget->SetViewport(0.0, 0.0, 0.15, 0.3); // size
-	markerWidget->SetInteractor(vtkWidget->GetRenderWindow()->GetInteractor());
-	markerWidget->EnabledOn();
-	markerWidget->InteractiveOff();
+	_markerWidget = vtkOrientationMarkerWidget::New();
+	_markerWidget->SetOrientationMarker(axesActor);
+	_markerWidget->SetInteractor(vtkWidget->GetRenderWindow()->GetInteractor());
+	_markerWidget->EnabledOn();
+	_markerWidget->InteractiveOff();
 
 	_isShowAllOnLoad = settings.value("resetViewOnLoad", true).toBool();
 
@@ -86,8 +86,10 @@ VisualizationWidget::VisualizationWidget( QWidget* parent /*= 0*/ )
 
 VisualizationWidget::~VisualizationWidget()
 {
-	_interactorStyle->deleteLater();
-	_vtkPickCallback->deleteLater();
+	_vtkPickCallback->Delete();
+	_interactorStyle->Delete();
+	_markerWidget->Delete();
+	_vtkRender->Delete();
 }
 
 VtkCustomInteractorStyle* VisualizationWidget::interactorStyle() const

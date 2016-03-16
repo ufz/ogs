@@ -19,6 +19,7 @@
 #include "ui_VisualizationWidgetBase.h"
 
 class vtkRenderer;
+class vtkOrientationMarkerWidget;
 class VtkCustomInteractorStyle;
 class VtkPickCallback;
 
@@ -104,6 +105,7 @@ protected slots:
 
 private:
 	vtkRenderer* _vtkRender;
+	vtkOrientationMarkerWidget* _markerWidget;
 	VtkCustomInteractorStyle* _interactorStyle;
 	VtkPickCallback* _vtkPickCallback;
 	bool _isShowAllOnLoad;
