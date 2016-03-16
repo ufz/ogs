@@ -81,7 +81,8 @@ int main(int argc, char *argv[])
 	auto project_config = BaseLib::makeConfigTree(
 	    project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
 
-	ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()));
+	ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
+	                    outdir_arg.getValue());
 
 	project_config.checkAndInvalidate();
 
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
 	INFO("Solve processes.");
 
 	auto& time_loop = project.getTimeLoop();
-	time_loop.loop(project, outdir_arg.getValue());
+	time_loop.loop(project);
 
 	return 0;
 }
