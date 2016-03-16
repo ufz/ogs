@@ -29,7 +29,7 @@ template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop
 {
 public:
-    bool loop(ProjectData& project, std::string const& outdir);
+    bool loop(ProjectData& project);
 
     ~UncoupledProcessesTimeLoop();
 
@@ -151,11 +151,9 @@ private:
 
     //! Solves one timestep for the given \c process.
     bool solveOneTimeStepOneProcess(
-            unsigned const timestep,
             Vector& x, double const t, double const delta_t,
             SingleProcessData& process_data,
-            Process& process,
-            std::string const& output_file_name);
+            Process& process);
 
     //! Sets the EquationSystem for the given nonlinear solver,
     //! which is Picard or Newton depending on the NLTag.
@@ -290,11 +288,9 @@ template<typename Matrix, typename Vector>
 bool
 UncoupledProcessesTimeLoop<Matrix, Vector>::
 solveOneTimeStepOneProcess(
-        unsigned const timestep,
         Vector& x, double const t, double const delta_t,
         SingleProcessData& process_data,
-        typename UncoupledProcessesTimeLoop<Matrix, Vector>::Process& process,
-        std::string const& output_file_name)
+        typename UncoupledProcessesTimeLoop<Matrix, Vector>::Process& process)
 {
     auto& time_disc        =  process.getTimeDiscretization();
     auto& ode_sys          = *process_data.tdisc_ode_sys;
@@ -314,7 +310,6 @@ solveOneTimeStepOneProcess(
     time_disc.pushState(t, x, mat_strg);
 
     process.postTimestep(x);
-    process.output(output_file_name, timestep, x);
 
     return nonlinear_solver_succeeded;
 }
@@ -323,54 +318,79 @@ solveOneTimeStepOneProcess(
 template<typename Matrix, typename Vector>
 bool
 UncoupledProcessesTimeLoop<Matrix, Vector>::
-loop(ProjectData& project, std::string const& outdir)
+loop(ProjectData& project)
 {
     auto per_process_data = initInternalData(project);
+
+    auto& out_ctrl = project.getOutputControl();
+    out_ctrl.init(project.processesBegin(), project.processesEnd());
 
     auto const t0 = 0.0; // time of the IC
 
     // init solution storage
     setInitialConditions(project, t0, per_process_data);
 
-    auto const delta_t = 1.0;
-
-    // TODO only for now
-    // Make sure there will be exactly one iteration of the loop below.
-    auto const t_end   = 1.5;
-
-    double t;
-    unsigned timestep = 1; // the first timestep really is number one
-    bool nonlinear_solver_succeeded = true;
-    for (t=t0+delta_t; t<t_end+delta_t; t+=delta_t, ++timestep)
+    // output initial conditions
     {
         unsigned pcs_idx = 0;
         for (auto p = project.processesBegin(); p != project.processesEnd();
              ++p, ++pcs_idx)
         {
-            std::string const& outpref = project.getOutputFilePrefix();
-            std::string const  output_file_name =
-                    BaseLib::joinPaths(outdir, outpref)
-                    + "_pcs_" + std::to_string(pcs_idx)
-                    + "_ts_"  + std::to_string(timestep)
-                    // + "_t_"   + std::to_string(t) // TODO: add that later
-                    + ".vtu";
+            auto const& x0 = *_process_solutions[pcs_idx];
+            out_ctrl.doOutput(**p, 0, t0, x0);
+        }
+    }
 
+    auto const delta_t = 1.0;
+
+    // TODO only for now
+    // Make sure there will be exactly one iteration of the loop below.
+    auto const t_end = 0.5;
+
+    double t, t_last;
+    unsigned timestep = 1; // the first timestep really is number one
+    bool nonlinear_solver_succeeded = true;
+
+    for (t=t0+delta_t, t_last=t0;
+         t<t_end+delta_t;
+         t_last=t, t+=delta_t, ++timestep)
+    {
+        // TODO use process name
+        unsigned pcs_idx = 0;
+        for (auto p = project.processesBegin(); p != project.processesEnd();
+             ++p, ++pcs_idx)
+        {
             auto& x = *_process_solutions[pcs_idx];
 
             nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                        timestep, x, t, delta_t,
-                        per_process_data[pcs_idx], **p, output_file_name);
+                        x, t, delta_t, per_process_data[pcs_idx], **p);
 
             if (!nonlinear_solver_succeeded) {
                 ERR("The nonlinear solver failed in timestep #%u at t = %g s"
                     " for process #%u.", timestep, t, pcs_idx);
+
+                // save unsuccessful solution
+                out_ctrl.doOutputAlways(**p, timestep, t, x);
+
                 break;
+            } else {
+                out_ctrl.doOutput(**p, timestep, t, x);
             }
         }
 
         if (!nonlinear_solver_succeeded) break;
+    }
 
-        break; // TODO only do a single timestep for now
+    // output last timestep
+    if (nonlinear_solver_succeeded)
+    {
+        unsigned pcs_idx = 0;
+        for (auto p = project.processesBegin(); p != project.processesEnd();
+             ++p, ++pcs_idx)
+        {
+            auto const& x = *_process_solutions[pcs_idx];
+            out_ctrl.doOutputLastTimestep(**p, timestep-1, t_last, x);
+        }
     }
 
     return nonlinear_solver_succeeded;
