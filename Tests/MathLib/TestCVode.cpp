@@ -121,7 +121,7 @@ TEST(MathLibCVodeTest, ZeoliteAdsorption)
 
 	ode_solver->setFunction(f_zeolite, nullptr);
 
-	ode_solver->setIC(0.0, {pV, C});
+	ode_solver->setIC(0.0, {{pV, C}});
 
 	ode_solver->preSolve();
 
@@ -162,7 +162,7 @@ TEST(MathLibCVodeTest, Exponential)
 
 	ode_solver->setFunction(f, nullptr);
 
-	ode_solver->setIC(t0, {y0});
+	ode_solver->setIC(t0, {{y0}});
 
 	ode_solver->preSolve();
 
@@ -202,7 +202,7 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 	ExtraData data;
 	ode_solver->setFunction(f_extra, nullptr, &data);
 
-	ode_solver->setIC(t0, {y0});
+	ode_solver->setIC(t0, {{y0}});
 
 	ode_solver->preSolve();
 
@@ -241,7 +241,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 
 	ode_solver->setFunction(f, df);
 
-	ode_solver->setIC(t0, {y0});
+	ode_solver->setIC(t0, {{y0}});
 
 	ode_solver->preSolve();
 
@@ -283,7 +283,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 
 	ode_solver->setFunction(f, df);
 
-	ode_solver->setIC(t0, {y0});
+	ode_solver->setIC(t0, {{y0}});
 
 	ode_solver->preSolve();
 
