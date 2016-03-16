@@ -40,7 +40,7 @@ class NonlinearSystem;
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>
-        : public EquationSystem
+        : public EquationSystem<Vector>
 {
 public:
     //! Assembles the residual at the point \c x.
@@ -81,10 +81,10 @@ public:
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>
-        : public EquationSystem
+        : public EquationSystem<Vector>
 {
 public:
-    //! Assembles the linearized eqation at point \c x.
+    //! Assembles the linearized equation at point \c x.
     virtual void assembleMatricesPicard(Vector const& x) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
