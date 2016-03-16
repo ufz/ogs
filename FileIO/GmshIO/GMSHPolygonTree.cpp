@@ -55,7 +55,7 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
 			if (((*it)->getPolygon())->isPntInPolygon (*station)) {
 				bool rval(dynamic_cast<GMSHPolygonTree*>((*it))->insertStation (station));
 				// stop recursion if sub SimplePolygonTree is a leaf
-				if (rval && (*it)->getNChilds() == 0)
+				if (rval && (*it)->getNChildren() == 0)
 					_stations.push_back (station);
 				return rval;
 			}

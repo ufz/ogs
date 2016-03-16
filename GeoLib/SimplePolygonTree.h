@@ -55,7 +55,7 @@ public:
 	const Polygon* getPolygon () const;
 
 	/** returns the number of childs */
-	std::size_t getNChilds() const { return _childs.size(); }
+	std::size_t getNChildren() const { return _childs.size(); }
 
 protected:
 	/**
