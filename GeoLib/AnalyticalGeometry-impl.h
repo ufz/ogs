@@ -186,9 +186,10 @@ void rotatePoints(
 }
 
 template <typename InputIterator1, typename InputIterator2>
-void rotatePointsToXY(
-        InputIterator1 p_pnts_begin, InputIterator1 p_pnts_end,
-        InputIterator2 r_pnts_begin, InputIterator2 r_pnts_end)
+MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                              InputIterator1 p_pnts_end,
+                                              InputIterator2 r_pnts_begin,
+                                              InputIterator2 r_pnts_end)
 {
     assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
 
@@ -205,6 +206,8 @@ void rotatePointsToXY(
 
     for (auto it=r_pnts_begin; it!=r_pnts_end; ++it)
         (*(*it))[2] = 0.0; // should be -= d but there are numerical errors
+
+    return rot_mat;
 }
 
 template <typename P>
