@@ -40,7 +40,7 @@ public:
 	virtual void setTolerance(const double abstol, const double reltol) = 0;
 
 	virtual void setFunction(Function f, JacobianFunction df,
-	                         FunctionArguments*... args) = 0;
+	                         FunctionArguments&... args) = 0;
 
 	virtual void setIC(const double t0, const Arr& y0) = 0;
 

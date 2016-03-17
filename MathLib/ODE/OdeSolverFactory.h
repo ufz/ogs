@@ -31,6 +31,11 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 	using Function = MathLib::Function<N, FunctionArgument>;
 	using JacobianFunction = MathLib::JacobianFunction<N, FunctionArgument>;
 
+	Handles(Function& f, JacobianFunction& df, FunctionArgument& arg)
+	    : f(f), df(df), _data(arg)
+	{
+	}
+
 	bool call(const double t, const double* const y,
 	          double* const ydot) override
 	{
@@ -42,7 +47,7 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 			return f(t,
 			         Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
 			         Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			         *_data);
+			         _data);
 		return true;
 	}
 
@@ -54,24 +59,16 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
 			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
 			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac /*, order*/},
-			          *_data);
+			          _data);
 		return true;
 	}
 
 	bool hasJacobian() const override { return df != nullptr; }
 	unsigned getNumEquations() const override { return N; }
-	void setArguments(FunctionArgument* arg)
-	{
-		assert(arg != nullptr);
-		_data = arg;
-	}
-
-	// TODO: make private
+private:
 	Function f = nullptr;
 	JacobianFunction df = nullptr;
-
-private:
-	FunctionArgument* _data = nullptr;
+	FunctionArgument& _data;
 };
 
 template <unsigned N>
@@ -80,6 +77,7 @@ struct Handles<N> : public MathLib::FunctionHandles
 	using Function = MathLib::Function<N>;
 	using JacobianFunction = MathLib::JacobianFunction<N>;
 
+	Handles(Function& f, JacobianFunction& df) : f(f), df(df) {}
 	bool call(const double t, const double* const y,
 	          double* const ydot) override
 	{
@@ -107,7 +105,6 @@ struct Handles<N> : public MathLib::FunctionHandles
 
 	bool hasJacobian() const override { return df != nullptr; }
 	unsigned getNumEquations() const override { return N; }
-	void setArguments() const {}
 	Function f = nullptr;
 	JacobianFunction df = nullptr;
 };
@@ -148,7 +145,7 @@ public:
 	void init() override
 	{
 		Implementation::init(NumEquations);
-		Implementation::setFunction(&_handles);
+		Implementation::setFunction(_handles.get());
 	}
 
 	void setTolerance(const Arr& abstol, const double reltol) override
@@ -162,11 +159,10 @@ public:
 	}
 
 	void setFunction(Function f, JacobianFunction df,
-	                 FunctionArguments*... args) override
+	                 FunctionArguments&... args) override
 	{
-		_handles.f = f;
-		_handles.df = df;
-		_handles.setArguments(args...);
+		_handles.reset(new detail::Handles<NumEquations, FunctionArguments...>{
+		    f, df, args...});
 	}
 
 	void setIC(const double t0, const Arr& y0) override
@@ -197,7 +193,8 @@ private:
 	{
 	}
 
-	detail::Handles<NumEquations, FunctionArguments...> _handles;
+	std::unique_ptr<detail::Handles<NumEquations, FunctionArguments...>>
+	    _handles;
 
 	friend std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>
 	createOdeSolver<NumEquations, FunctionArguments...>(
