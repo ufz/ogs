@@ -64,7 +64,6 @@ TEST(MathLibCVodeTest, Exponential)
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
 	ode_solver->setFunction(f, nullptr);
-	ode_solver->init();
 	ode_solver->setTolerance(1e-8, 1e-6);
 
 	ode_solver->setIC(t0, {y0});
@@ -103,8 +102,6 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 	ExtraData data;
 	ode_solver->setFunction(f_extra, nullptr, data);
-
-	ode_solver->init();
 	ode_solver->setTolerance(1e-8, 1e-6);
 
 	ode_solver->setIC(t0, {y0});
@@ -159,7 +156,6 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
 	ode_solver->setFunction(f, df);
-	ode_solver->init();
 	ode_solver->setTolerance(1e-10, 1e-8);
 
 	ode_solver->setIC(t0, {y0});
@@ -200,7 +196,6 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
 	ode_solver->setFunction(f, df);
-	ode_solver->init();
 	ode_solver->setTolerance(1e-6, 1e-6);
 
 	ode_solver->setIC(t0, {y0});

@@ -142,9 +142,12 @@ public:
 	using Function = typename Interface::Function;
 	using JacobianFunction = typename Interface::JacobianFunction;
 
-	void init() override
+	void setFunction(Function f, JacobianFunction df,
+	                 FunctionArguments&... args) override
 	{
 		Implementation::init(NumEquations);
+		_handles.reset(new detail::Handles<NumEquations, FunctionArguments...>{
+		    f, df, args...});
 		Implementation::setFunction(_handles.get());
 	}
 
@@ -156,13 +159,6 @@ public:
 	void setTolerance(const double abstol, const double reltol) override
 	{
 		Implementation::setTolerance(abstol, reltol);
-	}
-
-	void setFunction(Function f, JacobianFunction df,
-	                 FunctionArguments&... args) override
-	{
-		_handles.reset(new detail::Handles<NumEquations, FunctionArguments...>{
-		    f, df, args...});
 	}
 
 	void setIC(const double t0, const Arr& y0) override
