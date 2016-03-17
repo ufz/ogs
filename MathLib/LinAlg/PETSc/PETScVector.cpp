@@ -44,8 +44,9 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 
 PETScVector::PETScVector(const PetscInt vec_size,
                          const std::vector<PetscInt>& ghost_ids,
-                         const bool is_global_size) :
-                         _size_ghosts(ghost_ids.size()), _has_ghost_id(true)
+                         const bool is_global_size)
+    : _size_ghosts{ghost_ids.size()}
+    , _has_ghost_id{true}
 {
     _v.reset(new PETSc_Vec);
 
