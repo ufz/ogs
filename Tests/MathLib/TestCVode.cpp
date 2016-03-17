@@ -200,10 +200,9 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 	ExtraData data;
 	ode_solver->setFunction(f_extra, nullptr, data);
+
 	ode_solver->setTolerance(1e-8, 1e-6);
-
 	ode_solver->setIC(t0, {{y0}});
-
 	ode_solver->preSolve();
 
 	const double dt = 1e-1;
@@ -227,7 +226,8 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 		// std::printf("time: %g\n", time_reached);
 	}
 
-	ode_solver->setFunction(f_extra, nullptr, &data);
+	ode_solver->setFunction(f_extra, nullptr, data);
+	ode_solver->preSolve();
 	for (unsigned i = 11; i <= 15; ++i)
 	{
 		const double time = dt * i;

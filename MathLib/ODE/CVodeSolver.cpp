@@ -90,12 +90,11 @@ public:
 	CVodeSolverImpl(BaseLib::ConfigTree const& config,
 	                unsigned const num_equations);
 
-	void setTolerance(const double* abstol, const double reltol);
-	void setTolerance(const double abstol, const double reltol);
+	friend class CVodeSolver;
+	~CVodeSolverImpl();
 
+private:
 	void setFunction(std::unique_ptr<FunctionHandles>&& f);
-
-	void setIC(const double t0, double const* const y0);
 
 	void preSolve();
 	void solve(const double t_end);
@@ -103,8 +102,9 @@ public:
 	double const* getSolution() const { return NV_DATA_S(_y); }
 	double getTime() const { return _t; }
 	void getYDot(const double t, double const* const y, double* const y_dot);
-
-	~CVodeSolverImpl();
+	void setTolerance(const double* abstol, const double reltol);
+	void setTolerance(const double abstol, const double reltol);
+	void setIC(const double t0, double const* const y0);
 
 private:
 	N_Vector _y = nullptr;
