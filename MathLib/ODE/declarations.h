@@ -34,12 +34,11 @@ using Function = bool (*)(const double t,
                           FunctionArguments&... arg);
 
 template <unsigned N, typename... FunctionArguments>
-using JacobianFunction =
-    bool (*)(const double t,
-             MappedConstVector<N> const y,
-             MappedVector<N> ydot,
-             MappedMatrix<N, N> jac,
-             FunctionArguments&... arg);
+using JacobianFunction = bool (*)(const double t,
+                                  MappedConstVector<N> const y,
+                                  MappedVector<N> ydot,
+                                  MappedMatrix<N, N> jac,
+                                  FunctionArguments&... arg);
 
 // This is an internal detail
 class FunctionHandles

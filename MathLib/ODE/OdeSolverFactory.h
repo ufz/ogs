@@ -132,8 +132,6 @@ class ConcreteOdeSolver final
 {
 public:
 	using Interface = OdeSolver<NumEquations, FunctionArguments...>;
-	using Arr = typename Interface::Arr;
-	using ConstArrRef = typename Interface::ConstArrRef;
 	using Function = typename Interface::Function;
 	using JacobianFunction = typename Interface::JacobianFunction;
 
@@ -147,7 +145,8 @@ public:
 		            f, df, args...}});
 	}
 
-	void setTolerance(const Arr& abstol, const double reltol) override
+	void setTolerance(const std::array<double, NumEquations>& abstol,
+	                  const double reltol) override
 	{
 		Implementation::setTolerance(abstol.data(), reltol);
 	}
@@ -157,24 +156,32 @@ public:
 		Implementation::setTolerance(abstol, reltol);
 	}
 
-	void setIC(const double t0, const Arr& y0) override
+	void setIC(const double t0,
+	           std::array<double, NumEquations> const& y0) override
+	{
+		Implementation::setIC(t0, y0.data());
+	}
+
+	void setIC(const double t0,
+	           Eigen::Matrix<double, NumEquations, 1> const& y0) override
 	{
 		Implementation::setIC(t0, y0.data());
 	}
 
 	void preSolve() override { Implementation::preSolve(); }
 	void solve(const double t) override { Implementation::solve(t); }
-	ConstArrRef getSolution() const override
+	MappedConstVector<NumEquations> getSolution() const override
 	{
-		return ConstArrRef(Implementation::getSolution());
+		return MappedConstVector<NumEquations>{Implementation::getSolution()};
 	}
 
 	double getTime() const override { return Implementation::getTime(); }
-	Arr getYDot(const double t, const Arr& y) const override
+	Eigen::Matrix<double, NumEquations, 1> getYDot(
+	    const double t, const MappedConstVector<NumEquations>& y) const override
 	{
-		Arr ydot;
-		Implementation::getYDot(t, y.data(), ydot.data());
-		return ydot;
+		Eigen::Matrix<double, NumEquations, 1> y_dot;
+		Implementation::getYDot(t, y.data(), y_dot.data());
+		return y_dot;
 	}
 
 private:
