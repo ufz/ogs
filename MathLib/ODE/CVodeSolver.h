@@ -30,6 +30,8 @@ protected:
 	CVodeSolver(BaseLib::ConfigTree const& config,
 	            unsigned const num_equations);
 
+	/// Set tolerances for all equations. The abstol is a pointer to an array of
+	/// same size as the number of equations.
 	void setTolerance(double const* const abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
 

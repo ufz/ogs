@@ -27,12 +27,17 @@ using MappedVector = MappedMatrix<N, 1>;
 template <int N>
 using MappedConstVector = MappedConstMatrix<N, 1>;
 
+// y read only
+// ydot is written in the function to be called.
 template <unsigned N, typename... FunctionArguments>
 using Function = bool (*)(const double t,
                           MappedConstVector<N> const y,
                           MappedVector<N> ydot,
                           FunctionArguments&... arg);
 
+// y read only
+// ydot is written in the function to be called.
+// jac is written in the function to be called.
 template <unsigned N, typename... FunctionArguments>
 using JacobianFunction = bool (*)(const double t,
                                   MappedConstVector<N> const y,
