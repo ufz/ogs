@@ -223,11 +223,18 @@ class PETScVector
         void setZero() { *this = 0.0; }
 
         /// Overloaded operator: assign
-        void operator = (const PETScVector &v_in)
+        PETScVector& operator = (const PETScVector &v_in)
         {
             if (!_v) shallowCopy(v_in);
             VecCopy(*v_in._v, *_v);
+
+            return *this;
         }
+
+        /// Disallow moving.
+        /// \todo This operator should be implemented properly when doing a
+        ///       general cleanup of all matrix and vector classes.
+        PETScVector& operator = (PETScVector &&) = delete;
 
         ///  Overloaded operator: add
         void operator += (const PETScVector& v_in)
