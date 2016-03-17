@@ -146,9 +146,11 @@ public:
 	                 FunctionArguments&... args) override
 	{
 		Implementation::init(NumEquations);
-		_handles.reset(new detail::Handles<NumEquations, FunctionArguments...>{
-		    f, df, args...});
-		Implementation::setFunction(_handles.get());
+		Implementation::setFunction(
+		    std::unique_ptr<
+		        detail::Handles<NumEquations, FunctionArguments...>>{
+		        new detail::Handles<NumEquations, FunctionArguments...>{
+		            f, df, args...}});
 	}
 
 	void setTolerance(const Arr& abstol, const double reltol) override
@@ -188,9 +190,6 @@ private:
 	    : Implementation{config}
 	{
 	}
-
-	std::unique_ptr<detail::Handles<NumEquations, FunctionArguments...>>
-	    _handles;
 
 	friend std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>
 	createOdeSolver<NumEquations, FunctionArguments...>(

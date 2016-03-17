@@ -90,7 +90,7 @@ public:
 	void setTolerance(const double* abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
 
-	void setFunction(FunctionHandles* f);
+	void setFunction(std::unique_ptr<FunctionHandles>&& f);
 
 	void setIC(const double t0, double const* const y0);
 
@@ -114,7 +114,7 @@ private:
 	unsigned _num_equations;
 	void* _cvode_mem;
 
-	FunctionHandles* _f;
+	std::unique_ptr<FunctionHandles> _f;
 
 	int _linear_multistep_method = CV_ADAMS;
 	int _nonlinear_solver_iteration = CV_FUNCTIONAL;
@@ -195,10 +195,10 @@ void CVodeSolverImpl::setTolerance(const double abstol, const double reltol)
 	_reltol = reltol;
 }
 
-void CVodeSolverImpl::setFunction(FunctionHandles* f)
+void CVodeSolverImpl::setFunction(std::unique_ptr<FunctionHandles>&& f)
 {
-	_f = f;
-	assert(_num_equations == f->getNumEquations());
+	_f = std::move(f);
+	assert(_num_equations == _f->getNumEquations());
 
 	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
 	                    void* function_handles) -> int
@@ -233,7 +233,7 @@ void CVodeSolverImpl::preSolve()
 	    CVodeReInit(_cvode_mem, _t, _y);  // TODO: consider CVodeReInit()!
 	// if (check_flag(&flag, "CVodeInit", 1)) return(1);
 
-	flag = CVodeSetUserData(_cvode_mem, static_cast<void*>(_f));
+	flag = CVodeSetUserData(_cvode_mem, static_cast<void*>(_f.get()));
 
 	/* Call CVodeSVtolerances to specify the scalar relative tolerance
 	 * and vector absolute tolerances */
@@ -328,9 +328,9 @@ void CVodeSolverInternal::setTolerance(const double abstol, const double reltol)
 	_impl->setTolerance(abstol, reltol);
 }
 
-void CVodeSolverInternal::setFunction(FunctionHandles* f)
+void CVodeSolverInternal::setFunction(std::unique_ptr<FunctionHandles>&& f)
 {
-	_impl->setFunction(f);
+	_impl->setFunction(std::move(f));
 }
 
 void CVodeSolverInternal::setIC(const double t0, double const* const y0)
