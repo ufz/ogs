@@ -83,8 +83,8 @@ class CVodeSolverImpl
 	              "cvode's realtype is not the same as double");
 
 public:
-	CVodeSolverImpl(BaseLib::ConfigTree const& config);
-	void init(const unsigned num_equations);
+	CVodeSolverImpl(BaseLib::ConfigTree const& config,
+	                unsigned const num_equations);
 
 	friend class CVodeSolver;
 	~CVodeSolverImpl();
@@ -119,7 +119,8 @@ private:
 	int _nonlinear_solver_iteration = CV_FUNCTIONAL;
 };
 
-CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config)
+CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
+                                 const unsigned num_equations)
 {
 	if (auto const param =
 	        config.getConfParamOptional<std::string>("linear_multistep_method"))
@@ -160,10 +161,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config)
 			std::abort();
 		}
 	}
-}
 
-void CVodeSolverImpl::init(const unsigned num_equations)
-{
 	_y = N_VNew_Serial(num_equations);
 	_abstol = N_VNew_Serial(num_equations);
 	_num_equations = num_equations;
@@ -306,14 +304,10 @@ CVodeSolverImpl::~CVodeSolverImpl()
 	}
 }
 
-CVodeSolverInternal::CVodeSolverInternal(BaseLib::ConfigTree const& config)
-    : _impl{new CVodeSolverImpl{config}}
+CVodeSolverInternal::CVodeSolverInternal(BaseLib::ConfigTree const& config,
+                                         unsigned const num_equations)
+    : _impl{new CVodeSolverImpl{config, num_equations}}
 {
-}
-
-void CVodeSolverInternal::init(const unsigned num_equations)
-{
-	_impl->init(num_equations);
 }
 
 void CVodeSolverInternal::setTolerance(const double* abstol,

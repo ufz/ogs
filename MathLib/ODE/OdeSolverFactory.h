@@ -145,7 +145,6 @@ public:
 	void setFunction(Function f, JacobianFunction df,
 	                 FunctionArguments&... args) override
 	{
-		Implementation::init(NumEquations);
 		Implementation::setFunction(
 		    std::unique_ptr<
 		        detail::Handles<NumEquations, FunctionArguments...>>{
@@ -187,7 +186,7 @@ private:
 	/// instances of this class shall only be constructed by
 	/// the friend function listed below
 	ConcreteOdeSolver(BaseLib::ConfigTree const& config)
-	    : Implementation{config}
+	    : Implementation{config, NumEquations}
 	{
 	}
 

@@ -27,8 +27,8 @@ class CVodeSolverImpl;
 class CVodeSolverInternal
 {
 protected:
-	CVodeSolverInternal(BaseLib::ConfigTree const& config);
-	void init(const unsigned num_equations);
+	CVodeSolverInternal(BaseLib::ConfigTree const& config,
+	                    unsigned const num_equations);
 
 	void setTolerance(double const* const abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
