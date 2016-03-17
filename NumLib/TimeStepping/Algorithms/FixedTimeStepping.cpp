@@ -17,8 +17,9 @@
 #include <limits>
 #include <cassert>
 
+#include <logog/include/logog.hpp>
+
 #include "BaseLib/ConfigTree.h"
-#include "logog/include/logog.hpp"
 
 namespace NumLib
 {
@@ -31,16 +32,54 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 : _t_initial(t0), _t_end(tn), _dt_vector(static_cast<std::size_t>(std::ceil((tn-t0)/dt)), dt), _ts_prev(t0), _ts_current(t0)
 {}
 
-FixedTimeStepping*
+std::unique_ptr<FixedTimeStepping>
 FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "FixedTimeStepping");
 
     auto const t_initial = config.getConfParam<double>("t_initial");
     auto const t_end     = config.getConfParam<double>("t_end");
-    auto const dt        = config.getConfParam<double>("dt");
+    auto const delta_ts  = config.getConfSubtree("timesteps");
 
-    return new FixedTimeStepping(t_initial, t_end, dt);
+    std::vector<double> timesteps;
+    double t_curr = t_initial;
+    double delta_t = 0.0;
+
+    // TODO: consider adding call "listNonEmpty" to config tree
+    auto const range = delta_ts.getConfSubtreeList("pair");
+    if (range.begin() == range.end()) {
+        ERR("no timesteps have been given");
+        std::abort();
+    }
+    for (auto const pair : range)
+    {
+        auto const repeat = pair.getConfParam<std::size_t>("repeat");
+        delta_t           = pair.getConfParam<double>("delta_t");
+
+        if (repeat == 0) {
+            ERR("<repeat> is zero.");
+            std::abort();
+        }
+        if (delta_t <= 0.0) {
+            ERR("timestep <delta_t> is <= 0.0.");
+            std::abort();
+        }
+
+        if (t_curr <= t_end) {
+            timesteps.resize(timesteps.size() + repeat, delta_t);
+
+            t_curr += repeat * delta_t;
+        }
+    }
+
+    // append last delta_t until t_end is reached
+    if (t_curr <= t_end)
+    {
+        auto const repeat = std::ceil((t_end - t_curr) / delta_t);
+        timesteps.resize(timesteps.size() + repeat, delta_t);
+    }
+
+    return std::unique_ptr<FixedTimeStepping>(new FixedTimeStepping(t_initial, t_end, timesteps));
 }
 
 const TimeStep FixedTimeStepping::getTimeStep() const
