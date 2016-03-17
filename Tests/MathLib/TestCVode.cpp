@@ -128,6 +128,24 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
 	}
+
+	ode_solver->setFunction(f_extra, nullptr, data);
+	ode_solver->preSolve();
+	for (unsigned i = 11; i <= 15; ++i)
+	{
+		const double time = dt * i;
+
+		ode_solver->solve(time);
+
+		auto const y = ode_solver->getSolution();
+		double time_reached = ode_solver->getTime();
+
+		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
+		            y[0] - exp(-15.0 * time_reached));
+
+		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
+		// std::printf("time: %g\n", time_reached);
+	}
 }
 
 TEST(MathLibCVodeTest, ExponentialWithJacobian)
