@@ -414,18 +414,16 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	// *** insert stations
 	auto gmsh_stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
 	    new std::vector<GeoLib::Point*>);
-	const std::size_t n_geo_names(_selected_geometries.size());
-	for (std::size_t j(0); j < n_geo_names; j++) {
-		const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_selected_geometries[j]));
+	for (auto const& geometry_name : _selected_geometries) {
+		auto const* stations(_geo_objs.getStationVec(geometry_name));
 		if (stations) {
-			const std::size_t n_stations(stations->size());
-			for (std::size_t k(0); k < n_stations; k++) {
+			for (auto * station : *stations) {
 				bool found(false);
-				for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+				for (auto it(_polygon_tree_list.begin());
 					it != _polygon_tree_list.end() && !found; ++it) {
-					GeoLib::Station *station_pnt(new GeoLib::Station(* static_cast<GeoLib::Station*>((*stations)[k])));
-					gmsh_stations->push_back(station_pnt);
-					if ((*it)->insertStation(station_pnt)) {
+					gmsh_stations->emplace_back(new GeoLib::Station(
+					    *static_cast<GeoLib::Station*>(station)));
+					if ((*it)->insertStation(gmsh_stations->back())) {
 						found = true;
 					}
 				}
