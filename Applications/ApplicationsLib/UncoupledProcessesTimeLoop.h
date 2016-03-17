@@ -17,6 +17,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
+#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
 
 #include "ProjectData.h"
 
@@ -29,6 +30,11 @@ template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop
 {
 public:
+    explicit UncoupledProcessesTimeLoop(
+            std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper)
+        : _timestepper{std::move(timestepper)}
+    {}
+
     bool loop(ProjectData& project);
 
     ~UncoupledProcessesTimeLoop();
@@ -44,6 +50,7 @@ private:
     using TimeDisc         = NumLib::TimeDiscretization<Vector>;
 
     std::vector<Vector*> _process_solutions;
+    std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;
 
     struct SingleProcessData
     {
@@ -199,16 +206,20 @@ createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 {
     auto const type = conf.getConfParam<std::string>("type");
 
-    if (type == "SingleStep")
-    {
-        using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;
-        return std::unique_ptr<TimeLoop>(new TimeLoop);
-    }
-    else
-    {
+    std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
+
+    if (type == "SingleStep") {
+        conf.ignoreConfParam("type");
+        timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
+    } else if (type == "FixedTimeStepping") {
+        timestepper = NumLib::FixedTimeStepping::newInstance(conf);
+    } else {
             ERR("Unknown timestepper type: `%s'.", type.c_str());
             std::abort();
     }
+
+    using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;
+    return std::unique_ptr<TimeLoop>{new TimeLoop{std::move(timestepper)}};
 }
 
 
