@@ -97,7 +97,7 @@ private:
 
 	double const* getSolution() const { return NV_DATA_S(_y); }
 	double getTime() const { return _t; }
-	bool getYDot(const double t, double const* const y, double* const ydot);
+	void getYDot(const double t, double const* const y, double* const y_dot);
 	void setTolerance(const double* abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
 	void setIC(const double t0, double const* const y0);
@@ -277,15 +277,11 @@ void CVodeSolverImpl::solve(const double t_end)
 	}
 }
 
-bool CVodeSolverImpl::getYDot(const double t, double const* const y,
-                              double* const ydot)
+void CVodeSolverImpl::getYDot(const double t, double const* const y,
+                              double* const y_dot)
 {
-	if (_f != nullptr)
-	{
-		return _f->call(t, y, ydot);
-	}
-
-	return false;
+	assert(_f != nullptr);
+	_f->call(t, y, y_dot);
 }
 
 CVodeSolverImpl::~CVodeSolverImpl()
@@ -346,10 +342,10 @@ double const* CVodeSolverInternal::getSolution() const
 	return _impl->getSolution();
 }
 
-bool CVodeSolverInternal::getYDot(const double t, double const* const y,
-                                  double* const ydot) const
+void CVodeSolverInternal::getYDot(const double t, double const* const y,
+                                  double* const y_dot) const
 {
-	return _impl->getYDot(t, y, ydot);
+	_impl->getYDot(t, y, y_dot);
 }
 
 double CVodeSolverInternal::getTime() const

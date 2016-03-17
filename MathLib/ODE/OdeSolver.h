@@ -27,8 +27,6 @@ template <unsigned NumEquations, typename... FunctionArguments>
 class OdeSolver
 {
 public:
-	using Arr = std::array<double, NumEquations>;
-	using ConstArrRef = MappedConstVector<NumEquations>;
 	using Function = MathLib::Function<NumEquations, FunctionArguments...>;
 	using JacobianFunction =
 	    MathLib::JacobianFunction<NumEquations, FunctionArguments...>;
@@ -36,18 +34,23 @@ public:
 	virtual void setFunction(Function f, JacobianFunction df,
 	                         FunctionArguments&... args) = 0;
 
-	virtual void setTolerance(const Arr& abstol, const double reltol) = 0;
+	virtual void setTolerance(const std::array<double, NumEquations>& abstol,
+	                          const double reltol) = 0;
 	virtual void setTolerance(const double abstol, const double reltol) = 0;
 
-	virtual void setIC(const double t0, const Arr& y0) = 0;
+	virtual void setIC(const double t0,
+	                   std::array<double, NumEquations> const& y0) = 0;
+	virtual void setIC(const double t0,
+	                   Eigen::Matrix<double, NumEquations, 1> const& y0) = 0;
 
 	virtual void preSolve() = 0;
 	virtual void solve(const double t) = 0;
 
 	virtual unsigned getNumEquations() const { return NumEquations; }
-	virtual ConstArrRef getSolution() const = 0;
+	virtual MappedConstVector<NumEquations> getSolution() const = 0;
 	virtual double getTime() const = 0;
-	virtual Arr getYDot(const double t, const Arr& y) const = 0;
+	virtual Eigen::Matrix<double, NumEquations, 1> getYDot(
+	    const double t, const MappedConstVector<NumEquations>& y) const = 0;
 
 	virtual ~OdeSolver() = default;
 };
