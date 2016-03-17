@@ -32,7 +32,7 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 : _t_initial(t0), _t_end(tn), _dt_vector(static_cast<std::size_t>(std::ceil((tn-t0)/dt)), dt), _ts_prev(t0), _ts_current(t0)
 {}
 
-std::unique_ptr<FixedTimeStepping>
+std::unique_ptr<ITimeStepAlgorithm>
 FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "FixedTimeStepping");
@@ -79,7 +79,7 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
         timesteps.resize(timesteps.size() + repeat, delta_t);
     }
 
-    return std::unique_ptr<FixedTimeStepping>(new FixedTimeStepping(t_initial, t_end, timesteps));
+    return std::unique_ptr<ITimeStepAlgorithm>(new FixedTimeStepping(t_initial, t_end, timesteps));
 }
 
 const TimeStep FixedTimeStepping::getTimeStep() const
