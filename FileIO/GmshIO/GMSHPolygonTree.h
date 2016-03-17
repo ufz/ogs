@@ -29,6 +29,7 @@ namespace GeoLib
     class GEOObjects;
     class Polygon;
     class PolylineWithSegmentMarker;
+    class PolygonWithSegmentMarker;
 }
 
 namespace FileIO
@@ -37,7 +38,7 @@ namespace GMSH {
 
 class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
-    GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree * parent,
+    GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon, GMSHPolygonTree * parent,
                     GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
                     GMSHMeshDensityStrategy * mesh_density_strategy);
     virtual ~GMSHPolygonTree();

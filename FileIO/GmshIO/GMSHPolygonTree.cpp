@@ -22,12 +22,14 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
+#include "GeoLib/PolygonWithSegmentMarker.h"
 
 namespace FileIO
 {
 namespace GMSH {
 
-GMSHPolygonTree::GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree* parent,
+GMSHPolygonTree::GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon,
+                GMSHPolygonTree* parent,
                 GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
                 GMSHMeshDensityStrategy * mesh_density_strategy) :
     GeoLib::SimplePolygonTree(polygon, parent), _geo_objs(geo_objs), _geo_name(geo_name),
