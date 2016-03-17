@@ -16,8 +16,8 @@
 #include <cstdio>
 
 bool f(const double,
-       Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
-       Eigen::Map<Eigen::Matrix<double, 1, 1>> ydot)
+       MathLib::MappedConstVector<1> const y,
+       MathLib::MappedVector<1> ydot)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -26,9 +26,9 @@ bool f(const double,
 }
 
 bool df(const double /*t*/,
-        Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
-        Eigen::Map<Eigen::Matrix<double, 1, 1>> /*ydot*/,
-        Eigen::Map<Eigen::Matrix<double, 1, 1>> jac)
+        MathLib::MappedConstVector<1> const y,
+        MathLib::MappedVector<1> /*ydot*/,
+        MathLib::MappedMatrix<1, 1> jac)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -42,8 +42,8 @@ struct ExtraData
 };
 
 bool f_extra(const double,
-             Eigen::Map<const Eigen::Matrix<double, 1, 1>> const y,
-             Eigen::Map<Eigen::Matrix<double, 1, 1>> ydot,
+             MathLib::MappedConstVector<1> const y,
+             MathLib::MappedVector<1> ydot,
              ExtraData& data)
 {
 	if (y[0] <= 0.0) return false;

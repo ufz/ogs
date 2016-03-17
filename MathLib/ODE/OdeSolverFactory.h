@@ -44,10 +44,7 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 		// consider omission of data pointer and switch to std::function or
 		// alike
 		if (f)
-			return f(t,
-			         Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
-			         Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			         _data);
+			return f(t, MappedConstVector<N>{y}, MappedVector<N>{ydot}, _data);
 		return true;
 	}
 
@@ -56,9 +53,9 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 	{
 		if (df)
 			return df(t,
-			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
-			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac /*, order*/},
+			          MappedConstVector<N>{y},
+			          MappedVector<N>{ydot},
+			          MappedMatrix<N, N>{jac /*, order*/},
 			          _data);
 		return true;
 	}
@@ -85,9 +82,7 @@ struct Handles<N> : public MathLib::FunctionHandles
 		{
 			// auto ydot_ = Eigen::Map<Eigen::Matrix<double, N, 1>>{y};
 			// auto ydot_ = Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot};
-			return f(t,
-			         Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
-			         Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot});
+			return f(t, MappedConstVector<N>{y}, MappedVector<N>{ydot});
 		}
 		return true;
 	}
@@ -97,9 +92,9 @@ struct Handles<N> : public MathLib::FunctionHandles
 	{
 		if (df)
 			return df(t,
-			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
-			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac /*, order*/});
+			          MappedConstVector<N>{y},
+			          MappedVector<N>{ydot},
+			          MappedMatrix<N, N>{jac /*, order*/});
 		return true;
 	}
 

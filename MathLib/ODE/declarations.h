@@ -14,19 +14,30 @@
 
 namespace MathLib
 {
+template <int M, int N>
+using MappedMatrix = Eigen::Map<Eigen::Matrix<double, M, N>>;
+
+template <int M, int N>
+using MappedConstMatrix = Eigen::Map<const Eigen::Matrix<double, M, N>>;
+
+template <int N>
+using MappedVector = MappedMatrix<N, 1>;
+
+template <int N>
+using MappedConstVector = MappedConstMatrix<N, 1>;
+
 template <unsigned N, typename... FunctionArguments>
 using Function = bool (*)(const double t,
-                          Eigen::Map<const Eigen::Matrix<double, N, 1>> const y,
-                          Eigen::Map<Eigen::Matrix<double, N, 1>> ydot,
+                          MappedConstVector<N> const y,
+                          MappedVector<N> ydot,
                           FunctionArguments&... arg);
 
 template <unsigned N, typename... FunctionArguments>
-using JacobianFunction =
-    bool (*)(const double t,
-             Eigen::Map<const Eigen::Matrix<double, N, 1>> const y,
-             Eigen::Map<Eigen::Matrix<double, N, 1>> ydot,
-             Eigen::Map<Eigen::Matrix<double, N, N>> jac,
-             FunctionArguments&... arg);
+using JacobianFunction = bool (*)(const double t,
+                                  MappedConstVector<N> const y,
+                                  MappedVector<N> ydot,
+                                  MappedMatrix<N, N> jac,
+                                  FunctionArguments&... arg);
 
 // This is an internal detail
 class FunctionHandles
