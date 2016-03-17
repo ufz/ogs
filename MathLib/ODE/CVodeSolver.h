@@ -33,7 +33,7 @@ protected:
 	void setTolerance(double const* const abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
 
-	void setFunction(FunctionHandles* f);
+	void setFunction(std::unique_ptr<FunctionHandles>&& f);
 
 	void setIC(const double t0, double const* const y0);
 
