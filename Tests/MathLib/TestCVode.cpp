@@ -116,10 +116,9 @@ TEST(MathLibCVodeTest, ZeoliteAdsorption)
 	config.put("linear_multistep_method", "BDF");
 	auto ode_solver = MathLib::createOdeSolver<2>(config);
 
+	ode_solver->setFunction(f_zeolite, nullptr);
 	ode_solver->init();
 	ode_solver->setTolerance({1.0, 0.01}, 1.0);
-
-	ode_solver->setFunction(f_zeolite, nullptr);
 
 	ode_solver->setIC(0.0, {{pV, C}});
 
@@ -158,10 +157,9 @@ TEST(MathLibCVodeTest, Exponential)
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
+	ode_solver->setFunction(f, nullptr);
 	ode_solver->init();
 	ode_solver->setTolerance(1e-8, 1e-6);
-
-	ode_solver->setFunction(f, nullptr);
 
 	ode_solver->setIC(t0, {{y0}});
 
@@ -198,11 +196,11 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1, ExtraData>(config);
 
+	ExtraData data;
+	ode_solver->setFunction(f_extra, nullptr, data);
+
 	ode_solver->init();
 	ode_solver->setTolerance(1e-8, 1e-6);
-
-	ExtraData data;
-	ode_solver->setFunction(f_extra, nullptr, &data);
 
 	ode_solver->setIC(t0, {{y0}});
 
@@ -256,10 +254,9 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 	                           BaseLib::ConfigTree::onwarning);
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
+	ode_solver->setFunction(f, df);
 	ode_solver->init();
 	ode_solver->setTolerance(1e-10, 1e-8);
-
-	ode_solver->setFunction(f, df);
 
 	ode_solver->setIC(t0, {{y0}});
 
@@ -298,10 +295,9 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 
 	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
+	ode_solver->setFunction(f, df);
 	ode_solver->init();
 	ode_solver->setTolerance(1e-6, 1e-6);
-
-	ode_solver->setFunction(f, df);
 
 	ode_solver->setIC(t0, {{y0}});
 
