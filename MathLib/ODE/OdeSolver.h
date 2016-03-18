@@ -12,7 +12,7 @@
 
 #include <array>
 
-#include "declarations.h"
+#include "OdeSolverTypes.h"
 
 namespace MathLib
 {

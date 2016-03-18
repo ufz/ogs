@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef MATHLIB_ODE_DECLARATIONS_H
-#define MATHLIB_ODE_DECLARATIONS_H
+#ifndef MATHLIB_ODE_ODESOLVERTYPES_H
+#define MATHLIB_ODE_ODESOLVERTYPES_H
 
 #include <Eigen/Core>
 
@@ -58,4 +58,4 @@ public:
 };
 }
 
-#endif  // MATHLIB_ODE_DECLARATIONS_H
+#endif  // MATHLIB_ODE_ODESOLVERTYPES_H

@@ -12,7 +12,7 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "declarations.h"
+#include "OdeSolverTypes.h"
 
 namespace MathLib
 {
