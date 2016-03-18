@@ -426,15 +426,18 @@ void MainWindow::save()
     }
     else if (fi.suffix().toLower() == "geo")
     {
-        int const return_val =
-            FileIO::GMSHInterface::writeGeoFile(_project.getGEOObjects(), fileName.toStdString());
+        std::vector<std::string> selected_geometries;
+        _project.getGEOObjects().getGeometryNames(selected_geometries);
 
-        if (return_val == 1)
+        GMSHInterface gmsh_io(
+            _project.getGEOObjects(), true,
+            FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
+            0.05, 0.5, 2, selected_geometries);
+        gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
+        bool const success = gmsh_io.writeToFile(fileName.toStdString());
+
+        if (!success)
             OGSError::box(" No geometry available\n to write to geo-file");
-        else if (return_val == 2)
-            OGSError::box("Error merging geometries");
-        else if (return_val == 3)
-            OGSError::box("Error writing geo-file.");
     }
 }
 
@@ -899,14 +902,14 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
         {
             if (param4 == -1) { // adaptive meshing selected
                 GMSHInterface gmsh_io(
-                    *(_project.getGEOObjects()), true,
+                    _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
                     param2, param3, param1, selectedGeometries);
                 gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
                 gmsh_io.writeToFile(fileName.toStdString());
             } else { // homogeneous meshing selected
                 GMSHInterface gmsh_io(
-                    *(_project.getGEOObjects()), true,
+                    _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
                     param4, param3, param1, selectedGeometries);
                 gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
