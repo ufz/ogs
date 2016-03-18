@@ -404,7 +404,7 @@ public:
         // Note: using x_old here is correct, since this method is called from within
         //       CrankNicolson::pushState() __after__ x_old has been updated to the result
         //       from the timestep just finished.
-        auto const x_old = _crank_nicolson.getXOld();
+        auto const& x_old = _crank_nicolson.getXOld();
 
         // _M_bar = (1.0-theta) * M;
         BLAS::copy(M, _M_bar);
