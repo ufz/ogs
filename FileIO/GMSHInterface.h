@@ -112,8 +112,11 @@ private:
      * 1. get and merge data from _geo_objs
      * 2. compute topological hierarchy
      * @param out
+     * @todo activate error codes and hand them on to the Writer class,
+     * i.e. 0 = okay, 1 = geo_objects is empty, 2 = error while merging,
+     * 3 = error writing file
      */
-    void writeGMSHInputFile(std::ostream & out);
+    int writeGMSHInputFile(std::ostream & out);
 
     static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> const& id_map);
 

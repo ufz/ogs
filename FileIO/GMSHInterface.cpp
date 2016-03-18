@@ -355,23 +355,25 @@ bool GMSHInterface::write()
 #endif
     _out << "\n\n";
 
-    writeGMSHInputFile(_out);
+    if(writeGMSHInputFile(_out) > 0)
+        return false;
     return true;
 }
 
-void GMSHInterface::writeGMSHInputFile(std::ostream& out)
+int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 {
     DBUG("GMSHInterface::writeGMSHInputFile(): get data from GEOObjects.");
 
     if (_selected_geometries.empty())
-        return;
+        return 1;
 
     bool remove_geometry(false);
     // *** get and merge data from _geo_objs
     if (_selected_geometries.size() > 1) {
         _gmsh_geo_name = "GMSHGeometry";
         remove_geometry = true;
-        _geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name);
+        if (_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name))
+            return 2;
     } else {
         _gmsh_geo_name = _selected_geometries[0];
         remove_geometry = false;
@@ -380,7 +382,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
     std::vector<GeoLib::Point*> * merged_pnts(const_cast<std::vector<GeoLib::Point*> *>(_geo_objs.getPointVec(_gmsh_geo_name)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
-        return;
+        return 2;
     }
 
     // Rotate points to the x-y-plane.
@@ -393,7 +395,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
     if (!merged_plys) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any polylines.");
-        return;
+        return 2;
     }
 
     // *** compute and insert all intersection points between polylines
@@ -496,6 +498,8 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _geo_objs.removePointVec(_gmsh_geo_name);
         _geo_objs.removeStationVec(gmsh_stations_name);
     }
+
+    return 0;
 }
 
 void GMSHInterface::writePoints(std::ostream& out) const
