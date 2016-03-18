@@ -58,7 +58,7 @@ public:
 	 * polyline, i.e. the two intersecting line segments are splitt into four line segment.
 	 *
 	 * Line segments of the polyline that are completely within the polygon are inserted into
-	 * the internal vector _gmsh_lines_for_constraints. The childs of this GMSHPolygonTree node
+	 * the internal vector _gmsh_lines_for_constraints. The children of this GMSHPolygonTree node
 	 * are checked recursively.
 	 * @param ply the polyline that should be inserted
 	 */
@@ -86,8 +86,6 @@ public:
 private:
 	void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
 	void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
-	const std::list<SimplePolygonTree*>& getChilds() const;
-	const std::list<GeoLib::GEOObjects*>& getGeoObjects () const;
 
 	GeoLib::GEOObjects & _geo_objs;
 	std::string const& _geo_name;

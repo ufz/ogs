@@ -44,7 +44,7 @@ public:
 	 */
 	bool isPolygonInside (const SimplePolygonTree* polygon_tree) const;
 	/** Either insert the given SimplePolygonTree in one of the existing
-	 * childs or as a new child.
+	 * children or as a new child.
 	 */
 	void insertSimplePolygonTree (SimplePolygonTree* polygon_tree);
 
@@ -54,8 +54,8 @@ public:
 	 */
 	const Polygon* getPolygon () const;
 
-	/** returns the number of childs */
-	std::size_t getNChilds() const { return _childs.size(); }
+	/** returns the number of children */
+	std::size_t getNChildren() const { return _children.size(); }
 
 protected:
 	/**
@@ -71,7 +71,7 @@ protected:
 	 * list of polygons (represented by SimplePolygonTree nodes) contained
 	 * in the _node_polygon
 	 */
-	std::list<SimplePolygonTree*> _childs;
+	std::list<SimplePolygonTree*> _children;
 
 private:
 	void setParent(SimplePolygonTree* parent)
