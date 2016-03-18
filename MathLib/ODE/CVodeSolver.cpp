@@ -171,6 +171,17 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 	    CVodeCreate(_linear_multistep_method, _nonlinear_solver_iteration);
 
 	assert(_cvode_mem != nullptr && _y != nullptr && _abstol != nullptr);
+
+	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
+	                    void* function_handles) -> int
+	{
+		bool successful = static_cast<FunctionHandles*>(function_handles)
+		                      ->call(t, NV_DATA_S(y), NV_DATA_S(ydot));
+		return successful ? 0 : 1;
+	};
+
+	int flag = CVodeInit(_cvode_mem, f_wrapped, 0.0, _y);
+	(void)flag;
 }
 
 void CVodeSolverImpl::setTolerance(const double* abstol, const double reltol)
@@ -197,18 +208,6 @@ void CVodeSolverImpl::setFunction(std::unique_ptr<FunctionHandles>&& f)
 {
 	_f = std::move(f);
 	assert(_num_equations == _f->getNumEquations());
-
-	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
-	                    void* function_handles) -> int
-	{
-		bool successful = static_cast<FunctionHandles*>(function_handles)
-		                      ->call(t, NV_DATA_S(y), NV_DATA_S(ydot));
-		return successful ? 0 : 1;
-	};
-
-	// TODO: check not run twice! move this call somewhere else
-	int flag = CVodeInit(_cvode_mem, f_wrapped, 0.0, _y);
-	(void)flag;
 }
 
 void CVodeSolverImpl::setIC(const double t0, double const* const y0)
