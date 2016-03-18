@@ -128,8 +128,8 @@ private:
     std::unique_ptr<MathLib::OdeSolver<1, React> > _ode_solver;
 
     static bool odeRhs(const double /*t*/,
-                       BaseLib::ArrayRef<const double, 1> y,
-                       BaseLib::ArrayRef<double, 1> ydot,
+                       MathLib::MappedConstVector<1> const y,
+                       MathLib::MappedVector<1> ydot,
                        React& reaction);
 };
 

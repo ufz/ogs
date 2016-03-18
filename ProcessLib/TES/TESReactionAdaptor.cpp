@@ -296,10 +296,9 @@ TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data)
     _ode_solver = std::move(MathLib::createOdeSolver<1, React>(_react.getOdeSolverConfig()));
     // TODO invalidate config
 
-    _ode_solver->init();
     _ode_solver->setTolerance(1e-10, 1e-10);
 
-    _ode_solver->setFunction(odeRhs, nullptr, &_react); // TODO: change signature to reference
+    _ode_solver->setFunction(odeRhs, nullptr, _react);
 }
 
 ReactionRate
@@ -328,7 +327,7 @@ initReaction(const unsigned int int_pt)
 	_react.update_param(_d.T, _d.p, _d.vapour_mass_fraction,
 						_d.solid_density_prev_ts[int_pt]);
 
-	_ode_solver->setIC(t0, { y0 });
+	_ode_solver->setIC(t0, { &y0 }); // TODO &y0 is hackish!
 	_ode_solver->preSolve();
 	_ode_solver->solve(t_end);
 
@@ -336,24 +335,20 @@ initReaction(const unsigned int int_pt)
 	(void) time_reached;
 	assert(std::abs(t_end - time_reached) < std::numeric_limits<double>::epsilon());
 
-	const double y_new     = _ode_solver->getSolution()[0];
-	const double y_dot_new = _ode_solver->getYDot(t_end, { y_new })[0];
-#if 0
-	cvode_conversion_rate(,
-						  delta_t, pcs->m_conversion_rate /* TODO */, y_new, y_dot_new);
-#endif
+	auto const& y_new     = _ode_solver->getSolution();
+	auto const& y_dot_new = _ode_solver->getYDot(t_end, y_new);
 
 	double rho_react;
 
 	//cut off when limits are reached
-	if ( y_new < _react.lower_solid_density_limit )
-		rho_react = _react.lower_solid_density_limit;
-	else if ( y_new > _react.upper_solid_density_limit ) //{
-		rho_react = _react.upper_solid_density_limit;
+	if ( y_new[0] < _react.rho_low )
+		rho_react = _react.rho_low;
+	else if ( y_new[0] > _react.rho_up )
+		rho_react = _react.rho_up;
 	else
-		rho_react = y_new;
+		rho_react = y_new[0];
 
-    return { y_dot_new * (1.0-xv_NR),
+    return { y_dot_new[0] * (1.0-xv_NR),
                 (1.0-xv_NR) * rho_react + xv_NR * rho_NR };
 }
 
@@ -364,8 +359,8 @@ initReaction(const unsigned int int_pt)
 bool
 TESFEMReactionAdaptorCaOH2::
 odeRhs(const double t,
-       BaseLib::ArrayRef<const double, 1> const y,
-       BaseLib::ArrayRef<double, 1> ydot,
+       MathLib::MappedConstVector<1> const y,
+       MathLib::MappedVector<1> ydot,
        Ads::ReactionCaOH2& reaction)
 {
     reaction.eval(t, y, ydot);
