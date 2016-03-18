@@ -24,11 +24,11 @@ class CVodeSolverImpl;
  *
  * For internal use only.
  */
-class CVodeSolverInternal
+class CVodeSolver
 {
 protected:
-	CVodeSolverInternal(BaseLib::ConfigTree const& config,
-	                    unsigned const num_equations);
+	CVodeSolver(BaseLib::ConfigTree const& config,
+	            unsigned const num_equations);
 
 	void setTolerance(double const* const abstol, const double reltol);
 	void setTolerance(const double abstol, const double reltol);
@@ -46,7 +46,7 @@ protected:
 	             double const* const y,
 	             double* const y_dot) const;
 
-	~CVodeSolverInternal();
+	~CVodeSolver();
 
 private:
 	std::unique_ptr<CVodeSolverImpl>

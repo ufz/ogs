@@ -69,7 +69,7 @@ namespace MathLib
  *  |
  *  | Forward calls, disable bounds checking, no need for templates anymore
  *  v
- * Implementation = CVodeSolverInternal (no templates)
+ * Implementation = CVodeSolver (no templates)
  *  |
  *  | Pimpl (hide implementation, do not include 3rd party libs in header)
  *  v
@@ -300,59 +300,58 @@ CVodeSolverImpl::~CVodeSolverImpl()
 	}
 }
 
-CVodeSolverInternal::CVodeSolverInternal(BaseLib::ConfigTree const& config,
-                                         unsigned const num_equations)
+CVodeSolver::CVodeSolver(BaseLib::ConfigTree const& config,
+                         unsigned const num_equations)
     : _impl{new CVodeSolverImpl{config, num_equations}}
 {
 }
 
-void CVodeSolverInternal::setTolerance(const double* abstol,
-                                       const double reltol)
+void CVodeSolver::setTolerance(const double* abstol, const double reltol)
 {
 	_impl->setTolerance(abstol, reltol);
 }
 
-void CVodeSolverInternal::setTolerance(const double abstol, const double reltol)
+void CVodeSolver::setTolerance(const double abstol, const double reltol)
 {
 	_impl->setTolerance(abstol, reltol);
 }
 
-void CVodeSolverInternal::setFunction(std::unique_ptr<FunctionHandles>&& f)
+void CVodeSolver::setFunction(std::unique_ptr<FunctionHandles>&& f)
 {
 	_impl->setFunction(std::move(f));
 }
 
-void CVodeSolverInternal::setIC(const double t0, double const* const y0)
+void CVodeSolver::setIC(const double t0, double const* const y0)
 {
 	_impl->setIC(t0, y0);
 }
 
-void CVodeSolverInternal::preSolve()
+void CVodeSolver::preSolve()
 {
 	_impl->preSolve();
 }
 
-void CVodeSolverInternal::solve(const double t_end)
+void CVodeSolver::solve(const double t_end)
 {
 	_impl->solve(t_end);
 }
 
-double const* CVodeSolverInternal::getSolution() const
+double const* CVodeSolver::getSolution() const
 {
 	return _impl->getSolution();
 }
 
-void CVodeSolverInternal::getYDot(const double t, double const* const y,
-                                  double* const y_dot) const
+void CVodeSolver::getYDot(const double t, double const* const y,
+                          double* const y_dot) const
 {
 	_impl->getYDot(t, y, y_dot);
 }
 
-double CVodeSolverInternal::getTime() const
+double CVodeSolver::getTime() const
 {
 	return _impl->getTime();
 }
 
-CVodeSolverInternal::~CVodeSolverInternal() = default;
+CVodeSolver::~CVodeSolver() = default;
 
 }  // namespace MathLib

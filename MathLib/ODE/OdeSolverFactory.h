@@ -202,8 +202,8 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
     BaseLib::ConfigTree const& config)
 {
 	return std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>(
-	    new ConcreteOdeSolver<NumEquations, CVodeSolverInternal,
-	                          FunctionArguments...>(config));
+	    new ConcreteOdeSolver<NumEquations, CVodeSolver, FunctionArguments...>(
+	        config));
 }
 
 }  // namespace MathLib
