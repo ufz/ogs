@@ -46,15 +46,14 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 		return true;
 	}
 
-	bool callJacobian(const double t, const double* const y,
-	                  const double* const ydot, double* const jac,
-	                  MathLib::StorageOrder order) override
+	bool callJacobian(const double t, const double* const y, double* const ydot,
+	                  double* const jac) override
 	{
 		if (df)
 			return df(t,
 			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
 			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac/*, order*/},
+			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac /*, order*/},
 			          *_data);
 		return true;
 	}
@@ -95,15 +94,14 @@ struct Handles<N> : public MathLib::FunctionHandles
 		return true;
 	}
 
-	bool callJacobian(const double t, const double* const y,
-	                  const double* const ydot, double* const jac,
-	                  MathLib::StorageOrder order) override
+	bool callJacobian(const double t, const double* const y, double* const ydot,
+	                  double* const jac) override
 	{
 		if (df)
 			return df(t,
 			          Eigen::Map<const Eigen::Matrix<double, N, 1>>{y},
 			          Eigen::Map<Eigen::Matrix<double, N, 1>>{ydot},
-			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac/*, order*/});
+			          Eigen::Map<Eigen::Matrix<double, N, N>>{jac /*, order*/});
 		return true;
 	}
 
