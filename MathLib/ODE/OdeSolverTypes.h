@@ -7,14 +7,13 @@
  *
  */
 
-#ifndef MATHLIB_ODE_DECLARATIONS_H
-#define MATHLIB_ODE_DECLARATIONS_H
+#ifndef MATHLIB_ODE_ODESOLVERTYPES_H
+#define MATHLIB_ODE_ODESOLVERTYPES_H
 
 #include <Eigen/Core>
 
 namespace MathLib
 {
-
 template <int M, int N>
 using MappedMatrix = Eigen::Map<Eigen::Matrix<double, M, N>>;
 
@@ -59,4 +58,4 @@ public:
 };
 }
 
-#endif  // MATHLIB_ODE_DECLARATIONS_H
+#endif  // MATHLIB_ODE_ODESOLVERTYPES_H
