@@ -9,11 +9,10 @@
 
 #pragma once
 
-#include "BaseLib/ArrayRef.h"
+#include "MathLib/ODE/OdeSolverTypes.h"
 
 #include "reaction.h"
 #include "adsorption.h"
-
 
 namespace ProcessLib
 {
@@ -49,8 +48,8 @@ public:
 
 
     void eval(double /*t*/,
-              BaseLib::ArrayRef<const double, 1> const& y,
-              BaseLib::ArrayRef<double, 1>& dydx);
+              MathLib::MappedConstVector<1> const y,
+              MathLib::MappedVector<1> dydx);
     void update_param(double T_solid,
                       double p_gas,
                       double x_react,
