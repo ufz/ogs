@@ -98,6 +98,7 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 ProcessVariable::ProcessVariable(ProcessVariable&& other)
     : _name(std::move(other._name)),
       _mesh(other._mesh),
+      _n_components(other._n_components),
       _initial_condition(std::move(other._initial_condition)),
       _dirichlet_bc_configs(std::move(other._dirichlet_bc_configs)),
       _neumann_bc_configs(std::move(other._neumann_bc_configs))
