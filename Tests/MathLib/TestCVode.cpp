@@ -112,7 +112,7 @@ TEST(MathLibCVodeTest, ZeoliteAdsorption)
 
 	ads = Adsorption::newInstance(SolidReactiveSystem::Z13XBF_Hauer);
 
-	MathLib::CVodeSolverInternal::ConfigTree config;
+	MathLib::CVodeSolver::ConfigTree config;
 	config.put("linear_multistep_method", "BDF");
 	auto ode_solver = MathLib::createOdeSolver<2>(config);
 
