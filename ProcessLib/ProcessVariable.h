@@ -104,7 +104,7 @@ public:
 private:
 	std::string const _name;
 	MeshLib::Mesh& _mesh;
-	int _n_components;
+	const int _n_components;
 	std::unique_ptr<InitialCondition> _initial_condition;
 	std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
 	    _dirichlet_bc_configs;
