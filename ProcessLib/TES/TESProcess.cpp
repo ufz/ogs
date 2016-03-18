@@ -78,11 +78,13 @@ TESProcess(MeshLib::Mesh& mesh,
 
         auto const proc_vars = config.getConfSubtree("process_variables");
 
+        BP::_process_variables.reserve(NODAL_DOF);
         for (unsigned i=0; i<NODAL_DOF; ++i)
         {
             auto variable = find_variable(proc_vars, vars[i], variables);
 
-            BP::_process_variables[i] = *const_cast<ProcessVariable*>(variable);
+            // TODO extend Process constructor to cover that
+            BP::_process_variables.emplace_back(*const_cast<ProcessVariable*>(variable));
         }
     }
 
