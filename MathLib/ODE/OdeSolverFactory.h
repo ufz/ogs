@@ -46,9 +46,8 @@ struct Handles<N, FunctionArgument> : public MathLib::FunctionHandles
 		return true;
 	}
 
-	bool callJacobian(const double t, const double* const y,
-	                  const double* const ydot, double* const jac,
-	                  MathLib::StorageOrder order) override
+	bool callJacobian(const double t, const double* const y, double* const ydot,
+	                  double* const jac) override
 	{
 		if (df)
 			return df(t,
@@ -95,9 +94,8 @@ struct Handles<N> : public MathLib::FunctionHandles
 		return true;
 	}
 
-	bool callJacobian(const double t, const double* const y,
-	                  const double* const ydot, double* const jac,
-	                  MathLib::StorageOrder order) override
+	bool callJacobian(const double t, const double* const y, double* const ydot,
+	                  double* const jac) override
 	{
 		if (df)
 			return df(t,

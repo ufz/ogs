@@ -14,12 +14,6 @@
 
 namespace MathLib
 {
-enum class StorageOrder
-{
-	ColumnMajor,
-	RowMajor
-};
-
 template <unsigned N, typename... FunctionArguments>
 using Function = bool (*)(const double t,
                           Eigen::Map<const Eigen::Matrix<double, N, 1>> const y,
@@ -43,8 +37,7 @@ public:
 	virtual bool callJacobian(const double t,
 	                          double const* const y,
 	                          double* const ydot,
-	                          double* const jac,
-	                          StorageOrder order) = 0;
+	                          double* const jac) = 0;
 
 	virtual bool hasJacobian() const = 0;
 

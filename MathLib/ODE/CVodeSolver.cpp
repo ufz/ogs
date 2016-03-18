@@ -256,8 +256,7 @@ void CVodeSolverImpl::preSolve()
 			bool successful =
 			    static_cast<FunctionHandles*>(function_handles)
 			        ->callJacobian(t, NV_DATA_S(y), NV_DATA_S(ydot),
-			                       DENSE_COL(jac, 0),
-			                       MathLib::StorageOrder::ColumnMajor);
+			                       DENSE_COL(jac, 0));
 			return successful ? 0 : 1;
 		};
 
