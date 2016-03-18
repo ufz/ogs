@@ -91,14 +91,6 @@ public:
      */
     static MeshLib::Mesh* readGMSHMesh (std::string const& fname);
 
-    /**
-     * Export script for writing geo files.
-     * To do this, all geometries currently loaded are merged, the merged result is written to a
-     * file and then the merged geometry is removed again.
-     * @return error code, i.e. 0 = okay, 1 = geo_objects is empty, 2 = error while merging, 3 = error writing file
-     */
-    static int writeGeoFile(GeoLib::GEOObjects &geo_objects, std::string const& file_name);
-
 protected:
     bool write();
 
