@@ -80,9 +80,12 @@ TEST(MathLibCVodeTest, Exponential)
 
 		auto const y = ode_solver->getSolution();
 		double time_reached = ode_solver->getTime();
+		auto const y_dot = ode_solver->getYDot(time_reached, y);
 
-		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
-		            y[0] - exp(-15.0 * time_reached));
+		std::printf(
+		    "t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g\n",
+		    time_reached, y[0], y[0] - exp(-15.0 * time_reached), y_dot[0],
+		    y_dot[0] + 15.0 * exp(-15.0 * time_reached));
 
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
@@ -117,9 +120,12 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 		auto const y = ode_solver->getSolution();
 		double time_reached = ode_solver->getTime();
+		auto const y_dot = ode_solver->getYDot(time_reached, y);
 
-		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
-		            y[0] - exp(-15.0 * time_reached));
+		std::printf(
+		    "t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g\n",
+		    time_reached, y[0], y[0] - exp(-15.0 * time_reached), y_dot[0],
+		    y_dot[0] + 15.0 * exp(-15.0 * time_reached));
 
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
@@ -135,9 +141,12 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 		auto const y = ode_solver->getSolution();
 		double time_reached = ode_solver->getTime();
+		auto const y_dot = ode_solver->getYDot(time_reached, y);
 
-		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
-		            y[0] - exp(-15.0 * time_reached));
+		std::printf(
+		    "t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g\n",
+		    time_reached, y[0], y[0] - exp(-15.0 * time_reached), y_dot[0],
+		    y_dot[0] + 15.0 * exp(-15.0 * time_reached));
 
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
@@ -172,9 +181,12 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 
 		auto const y = ode_solver->getSolution();
 		double time_reached = ode_solver->getTime();
+		auto const y_dot = ode_solver->getYDot(time_reached, y);
 
-		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
-		            y[0] - exp(-15.0 * time_reached));
+		std::printf(
+		    "t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g\n",
+		    time_reached, y[0], y[0] - exp(-15.0 * time_reached), y_dot[0],
+		    y_dot[0] + 15.0 * exp(-15.0 * time_reached));
 
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
@@ -212,9 +224,12 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 
 		auto const y = ode_solver->getSolution();
 		double time_reached = ode_solver->getTime();
+		auto const y_dot = ode_solver->getYDot(time_reached, y);
 
-		std::printf("t: %14.7g, y: %14.7g, diff: %14.7g\n", time_reached, y[0],
-		            y[0] - exp(-15.0 * time_reached));
+		std::printf(
+		    "t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g\n",
+		    time_reached, y[0], y[0] - exp(-15.0 * time_reached), y_dot[0],
+		    y_dot[0] + 15.0 * exp(-15.0 * time_reached));
 
 		ASSERT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 		// std::printf("time: %g\n", time_reached);
