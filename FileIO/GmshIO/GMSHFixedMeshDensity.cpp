@@ -29,17 +29,13 @@ void GMSHFixedMeshDensity::init(std::vector<GeoLib::Point const*> const& vec)
 	(void)(vec);
 }
 
-double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const pnt) const
+double GMSHFixedMeshDensity::getMeshDensityAtPoint(GeoLib::Point const*const) const
 {
-	// to avoid a warning here:
-	(void)(const_cast<GeoLib::Point const*>(pnt));
 	return _mesh_density;
 }
 
-double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const pnt) const
+double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const) const
 {
-	// to avoid a warning here:
-	(void)(const_cast<GeoLib::Point const*>(pnt));
 	return _mesh_density;
 }
 

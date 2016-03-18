@@ -31,17 +31,13 @@ public:
 		(void)(vec);
 	}
 
-	double getMeshDensityAtPoint(GeoLib::Point const*const pnt) const
+	double getMeshDensityAtPoint(GeoLib::Point const*const) const
 	{
-		// to avoid a warning here:
-		(void)(pnt);
 		return 0.0;
 	}
 
-	double getMeshDensityAtStation(GeoLib::Point const*const pnt) const
+	double getMeshDensityAtStation(GeoLib::Point const*const) const
 	{
-		// to avoid a warning here:
-		(void)(pnt);
 		return 0.0;
 	}
 
