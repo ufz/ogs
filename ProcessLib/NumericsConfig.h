@@ -52,6 +52,7 @@ namespace detail
 }
 
 #elif defined(USE_PETSC)
+
     #include "MathLib/LinAlg/PETSc/PETScVector.h"
     #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
     #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
@@ -63,8 +64,23 @@ namespace detail
     using LinearSolverType = MathLib::PETScLinearSolver;
 }
 
-#else
-#ifdef OGS_USE_EIGEN
+#elif defined(OGS_USE_MKL)
+
+    #include "MathLib/LinAlg/Sparse/LOLMatrix.h"
+    #include "MathLib/LinAlg/Dense/DenseVector.h"
+    #include  "MathLib/LinAlg/Pardiso/PardisoLinearSolver.h"
+
+namespace detail
+{
+    using GlobalVectorType = MathLib::DenseVector<double>;
+    using GlobalMatrixType = MathLib::LOLMatrix;
+
+    using LinearSolverType =
+        MathLib::PardisoLinearSolver;
+}
+
+#elif defined(OGS_USE_EIGEN)
+
     #include "MathLib/LinAlg/Eigen/EigenVector.h"
     #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
     #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
@@ -75,7 +91,9 @@ namespace detail
 
     using LinearSolverType = MathLib::EigenLinearSolver;
 }
+
 #else   // OGS_USE_EIGEN
+
     #include "MathLib/LinAlg/Dense/DenseVector.h"
     #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
     #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -88,7 +106,6 @@ namespace detail
         MathLib::GaussAlgorithm<GlobalMatrixType, GlobalVectorType>;
 }
 
-#endif    // USE_LIS
 #endif    // OGS_USE_EIGEN
 
 

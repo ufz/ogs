@@ -23,9 +23,9 @@ const double M_H2O = 0.018016;
 
 struct AssemblyParams
 {
-    Trafo trafo_p;
-    Trafo trafo_T;
-    Trafo trafo_x;
+    Trafo trafo_p{1.0};
+    Trafo trafo_T{1.0};
+    Trafo trafo_x{1.0};
 
     std::unique_ptr<Ads::Reaction> react_sys;
 
