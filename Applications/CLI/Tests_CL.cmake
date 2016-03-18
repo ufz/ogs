@@ -11,9 +11,9 @@ AddTest(
 	WRAPPER time
 	TESTER diff
 	DIFF_DATA
-		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_1.vtu
-		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_10.vtu
-		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_101.vtu
+		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_1_t_0.500000.vtu
+		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_10_t_5.000000.vtu
+		line_0.1-10elem-by-comp-Dirichlet_pcs_0_ts_101_t_50.500000.vtu
 	DATA line_0.1-10elem-by-comp-Dirichlet.prj line_0.1.msh line_0.1.gml
 )
 AddTest(
@@ -23,9 +23,9 @@ AddTest(
 	WRAPPER time
 	TESTER diff
 	DIFF_DATA
-		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_1.vtu
-		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_10.vtu
-		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_101.vtu
+		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_1_t_0.500000.vtu
+		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_10_t_5.000000.vtu
+		line_0.1-10elem-by-node-Dirichlet_pcs_0_ts_101_t_50.500000.vtu
 	DATA line_0.1-10elem-by-node-Dirichlet.prj line_0.1.msh line_0.1.gml
 )
 
