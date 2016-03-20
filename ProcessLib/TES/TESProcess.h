@@ -71,36 +71,29 @@ private:
                 GlobalVector const& x);
 
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
-    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
-    GlobalSetup _global_setup;
     std::vector<LocalAssembler*> _local_assemblers;
-    std::unique_ptr<GlobalAssembler> _global_assembler;
 
     AssemblerLib::ComponentOrder _global_matrix_order =
             AssemblerLib::ComponentOrder::BY_COMPONENT;
-    bool _output_residuals = false;
 
     AssemblyParams _assembly_params;
 
-    // secondary variables
     std::vector<std::tuple<SecondaryVariables, std::string, unsigned> >
     _secondary_process_vars;
 
-    // output variables
     std::set<std::string> _output_variables;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
 
-    bool _output_global_matrix = false; ///< output global matrix/rhs at first iteration
+    bool _output_residuals = false;
+    //! Output global matrix/rhs after first iteration.
+    bool _output_global_matrix = false;
     bool _output_iteration_results = false;
 
     std::size_t _timestep = 0;
     std::size_t _total_iteration = 0;
 
-
-    // Extrapolator Interface
+    //! Extrapolator Interface
     using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
     using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
     std::unique_ptr<ExtrapolatorIntf> _extrapolator;

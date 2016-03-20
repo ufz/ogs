@@ -303,17 +303,12 @@ createLocalAssemblers()
         initializer, *BP::_local_to_global_index_map);
 
     DBUG("Calling local assembler builder for all mesh elements.");
-    _global_setup.transform(
+    BP::_global_setup.transform(
                 local_asm_builder,
                 BP::_mesh.getElements(),
                 _local_assemblers,
                 BP::_integration_order,
                 _assembly_params);
-
-    DBUG("Create global assembler.");
-    _global_assembler.reset(
-        new GlobalAssembler(*BP::_local_to_global_index_map));
-
 
     // TODO move somewhere else/make obsolete
     DBUG("Initialize TESProcess.");
@@ -339,8 +334,8 @@ assembleConcreteProcess(
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    _global_setup.execute(*BP::_global_assembler, _local_assemblers,
-                          t, x, M, K, b);
+    BP::_global_setup.execute(*BP::_global_assembler,
+                              _local_assemblers, t, x, M, K, b);
 
 #ifndef NDEBUG
     if (_total_iteration == 0)
@@ -411,12 +406,14 @@ postIteration(GlobalVector const& x)
         auto check_variable_bounds
         = [&](std::size_t id, LocalAssembler* const loc_asm)
         {
-            _global_assembler->passLocalVector(do_check, id, x, *loc_asm);
+            BP::_global_assembler->passLocalVector(
+                        do_check, id, x, *loc_asm);
         };
 
         // TODO Short-circuit evaluation that stops after the first error.
         //      But maybe that's not what I want to use here.
-        _global_setup.execute(check_variable_bounds, _local_assemblers);
+        BP::_global_setup.execute(
+                    check_variable_bounds, _local_assemblers);
     }
 
     if (!check_passed)
