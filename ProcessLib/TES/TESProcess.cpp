@@ -307,7 +307,7 @@ createLocalAssemblers()
                 local_asm_builder,
                 BP::_mesh.getElements(),
                 _local_assemblers,
-                _integration_order,
+                BP::_integration_order,
                 _assembly_params);
 
     DBUG("Create global assembler.");
@@ -391,7 +391,7 @@ postIteration(GlobalVector const& x)
                          + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
                          + ".vtu";
 
-        output(fn, 0);
+        output(fn, x);
     }
 
     bool check_passed = true;
@@ -436,7 +436,7 @@ postIteration(GlobalVector const& x)
 template<typename GlobalSetup>
 void
 TESProcess<GlobalSetup>::
-output(const std::string& file_name, const unsigned /*timestep*/)
+output(const std::string& file_name, const GlobalVector& x)
 // TODO [CL] remove second parameter
 {
     DBUG("postprocessing timestep");
@@ -479,7 +479,8 @@ output(const std::string& file_name, const unsigned /*timestep*/)
         return result;
     };
 
-    auto add_primary_var = [this, &get_or_create_mesh_property](const unsigned vi)
+    auto add_primary_var = [this, &get_or_create_mesh_property, &x]
+                           (const unsigned vi)
     {
         std::string const& property_name = BP::_process_variables[vi].get().getName();
         if (_output_variables.find(property_name) == _output_variables.cend())
@@ -495,19 +496,19 @@ output(const std::string& file_name, const unsigned /*timestep*/)
         {
             MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
             auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, vi);
-            assert(!std::isnan((*_x)[idx]));
-            (*result)[i] = (*_x)[idx];
+            assert(!std::isnan(x[idx]));
+            (*result)[i] = x[idx];
         }
     };
 
-    assert(_x->size() == NODAL_DOF * BP::_mesh.getNNodes());
+    assert(x.size() == NODAL_DOF * BP::_mesh.getNNodes());
     for (unsigned vi=0; vi!=NODAL_DOF; ++vi)
     {
         add_primary_var(vi);
     }
 
 
-    auto add_secondary_var = [this, &get_or_create_mesh_property]
+    auto add_secondary_var = [this, &get_or_create_mesh_property, &x]
                              (SecondaryVariables const property,
                              std::string const& property_name,
                              const unsigned num_components
@@ -525,7 +526,9 @@ output(const std::string& file_name, const unsigned /*timestep*/)
             auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
             assert(result->size() == BP::_mesh.getNNodes());
 
-            _extrapolator->extrapolate(*_x, *BP::_local_to_global_index_map, _local_assemblers, property);
+            _extrapolator->extrapolate(
+                        x, *BP::_local_to_global_index_map,
+                        _local_assemblers, property);
             auto const& nodal_values = _extrapolator->getNodalValues();
 
             // Copy result
@@ -543,7 +546,9 @@ output(const std::string& file_name, const unsigned /*timestep*/)
             auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == BP::_mesh.getNElements());
 
-            _extrapolator->calculateResiduals(*_x, *BP::_local_to_global_index_map, _local_assemblers, property);
+            _extrapolator->calculateResiduals(
+                        x, *BP::_local_to_global_index_map,
+                        _local_assemblers, property);
             auto const& residuals = _extrapolator->getElementResiduals();
 
             // Copy result

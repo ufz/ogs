@@ -53,22 +53,11 @@ namespace ProcessLib
 namespace TES
 {
 
-/// Global ids in the global matrix/vector where the dirichlet bc is
-/// imposed and their corresponding values.
-struct DirichletBC
-{
-    std::vector<GlobalIndexType> global_ids;
-    std::vector<double> values;
-};
-
-
 template<typename GlobalSetup>
 class TESProcess final
         : public Process<GlobalSetup>
 {
-    using BP = Process<GlobalSetup>;
-
-    unsigned const _integration_order = 2;
+    using BP = Process<GlobalSetup>; //!< "Base Process"
 
 public:
     using GlobalVector = typename GlobalSetup::VectorType;
@@ -85,8 +74,6 @@ public:
     void preIteration(const unsigned iter, GlobalVector const& x) override;
     NumLib::IterationResult postIteration(GlobalVector const& x) override;
 
-    void output(std::string const& file_name, const unsigned timestep);
-
     ~TESProcess();
 
     bool isLinear() const override { return false; }
@@ -101,6 +88,9 @@ private:
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
+    void output(std::string const& file_name,
+                GlobalVector const& x);
+
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<GlobalMatrix, GlobalVector,
     NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
@@ -114,8 +104,6 @@ private:
     bool _output_residuals = false;
 
     AssemblyParams _assembly_params;
-
-    std::unique_ptr<GlobalVector> _x;           // current iteration
 
 
     // secondary variables
