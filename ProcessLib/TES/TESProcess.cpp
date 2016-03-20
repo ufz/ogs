@@ -9,38 +9,6 @@
 
 #include "TESProcess.h"
 
-namespace
-{
-
-static ProcessLib::ProcessVariable const*
-find_variable(BaseLib::ConfigTree const& config,
-              std::string const& variable_role,
-              std::vector<ProcessLib::ProcessVariable> const& variables)
-{
-    std::string const name = config.template getConfParam<std::string>(variable_role);
-
-    auto variable = std::find_if(variables.cbegin(), variables.cend(),
-            [&name](ProcessLib::ProcessVariable const& v) {
-                    DBUG("proc var `%s'", v.getName().c_str());
-                return v.getName() == name;
-            });
-
-    if (variable == variables.end())
-    {
-        ERR("Expected process variable \'%s\' not found in provided variables list.",
-            name.c_str());
-        std::abort();
-    }
-
-    DBUG("Found process variable %s for role %s.",
-         name.c_str(), variable_role.c_str());
-
-    return &*variable;
-}
-
-} // anonymous namespace
-
-
 namespace ProcessLib
 {
 
@@ -61,19 +29,15 @@ TESProcess(MeshLib::Mesh& mesh,
 
     // primary variables
     {
-        const std::string vars[NODAL_DOF] = { "fluid_pressure",
-                                              "temperature",
-                                              "vapour_mass_fraction" };
-
         auto const proc_vars = config.getConfSubtree("process_variables");
 
-        BP::_process_variables.reserve(NODAL_DOF);
-        for (unsigned i=0; i<NODAL_DOF; ++i)
+        for (auto const& var_name
+             : { "fluid_pressure", "temperature", "vapour_mass_fraction" })
         {
-            auto variable = find_variable(proc_vars, vars[i], variables);
+            auto& variable = findProcessVariable(proc_vars, var_name, variables);
 
             // TODO extend Process constructor to cover that
-            BP::_process_variables.emplace_back(*const_cast<ProcessVariable*>(variable));
+            BP::_process_variables.emplace_back(variable);
         }
     }
 
