@@ -42,6 +42,24 @@ class Mesh;
 namespace ProcessLib
 {
 
+struct SecondaryVariable
+{
+	std::string const name;
+	unsigned n_components;
+	// std::function<> eval;
+};
+
+struct ProcessOutput
+{
+	std::vector<SecondaryVariable> secondary_variables;
+	std::set<std::string> output_variables;
+
+	bool output_residuals = false;
+	//! Output global matrix/rhs after first iteration.
+	bool output_global_matrix = false;
+	bool output_iteration_results = false;
+};
+
 template <typename GlobalSetup>
 class Process
 		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
@@ -361,6 +379,8 @@ private:
 
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
+	ProcessOutput _process_output;
 };
 
 /// Find process variables in \c variables whose names match the settings under
