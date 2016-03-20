@@ -437,16 +437,9 @@ template<typename GlobalSetup>
 void
 TESProcess<GlobalSetup>::
 output(const std::string& file_name, const GlobalVector& x)
-// TODO [CL] remove second parameter
 {
-    DBUG("postprocessing timestep");
-
-    /*
-    std::puts("---- solution ----");
-    printGlobalVector(_x->getRawVector());
-    */
-
-    auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
+    auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
+            -> std::size_t
     {
         switch (type) {
         case MeshLib::MeshItemType::Cell: return mesh.getNElements();
