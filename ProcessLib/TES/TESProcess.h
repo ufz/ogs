@@ -78,18 +78,13 @@ private:
 
     AssemblyParams _assembly_params;
 
+    // TODO remove
     std::vector<std::tuple<SecondaryVariables, std::string, unsigned> >
     _secondary_process_vars;
 
-    std::set<std::string> _output_variables;
-
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
 
-    bool _output_residuals = false;
     //! Output global matrix/rhs after first iteration.
-    bool _output_global_matrix = false;
-    bool _output_iteration_results = false;
-
     std::size_t _timestep = 0;
     std::size_t _total_iteration = 0;
 

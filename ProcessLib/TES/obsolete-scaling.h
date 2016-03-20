@@ -86,7 +86,7 @@ assembleConcreteProcess(
     }
 #endif
 
-    if (_output_iteration_results)
+    if (BP::_process_output.output_iteration_results)
     {
         DBUG("output results of iteration %li", _total_iteration);
         std::string fn = "tes_iter_" + std::to_string(_total_iteration) +

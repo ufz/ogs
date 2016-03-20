@@ -46,12 +46,14 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         auto add_secondary_variable =
                 [this, &proc_vars](
-                std::string const& var, SecondaryVariables type, unsigned num_components)
+                std::string const& var, SecondaryVariables /*type*/, unsigned num_components)
                 -> void
         {
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
-                _secondary_process_vars.emplace_back(type, *variable, num_components);
+                // _secondary_process_vars.emplace_back(type, *variable, num_components);
+                BP::_process_output.secondary_variables.emplace_back(
+                            SecondaryVariable{var, num_components});
             }
         };
 
@@ -70,11 +72,12 @@ TESProcess(MeshLib::Mesh& mesh,
 
     // variables for output
     if (auto output = config.getConfSubtreeOptional("output")) {
+        auto& output_variables = BP::_process_output.output_variables;
         if (auto out_vars = output->getConfSubtreeOptional("variables"))
         {
             for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
             {
-                if (_output_variables.find(out_var) != _output_variables.cend())
+                if (output_variables.find(out_var) != output_variables.cend())
                 {
                     ERR("output variable `%s' specified twice.", out_var.c_str());
                     std::abort();
@@ -109,12 +112,12 @@ TESProcess(MeshLib::Mesh& mesh,
                 }
 
                 DBUG("adding output variable `%s'", out_var.c_str());
-                _output_variables.insert(out_var);
+                output_variables.insert(out_var);
             }
 
             if (auto out_resid = output->getConfParamOptional<bool>("output_extrapolation_residuals"))
             {
-                _output_residuals = *out_resid;
+                BP::_process_output.output_residuals = *out_resid;
             }
         }
     }
@@ -200,7 +203,7 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("output_iteration_results: %s", (*param) ? "true" : "false");
 
-        _output_iteration_results = *param;
+        BP::_process_output.output_iteration_results = *param;
     }
 
     // debug output
@@ -208,7 +211,7 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
 
-        _output_global_matrix = *param;
+        BP::_process_output.output_global_matrix = *param;
     }
 }
 
@@ -331,7 +334,7 @@ NumLib::IterationResult
 TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
-    if (_output_iteration_results)
+    if (BP::_process_output.output_iteration_results)
     {
         DBUG("output results of iteration %li", _total_iteration);
         std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
@@ -388,6 +391,8 @@ void
 TESProcess<GlobalSetup>::
 output(const std::string& /*file_name*/, const GlobalVector& x)
 {
+    auto& output_variables = BP::_process_output.output_variables;
+
     auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
             -> std::size_t
     {
@@ -422,11 +427,11 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
         return result;
     };
 
-    auto add_primary_var = [this, &get_or_create_mesh_property, &x]
+    auto add_primary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
                            (const unsigned vi)
     {
         std::string const& property_name = BP::_process_variables[vi].get().getName();
-        if (_output_variables.find(property_name) == _output_variables.cend())
+        if (output_variables.find(property_name) == output_variables.cend())
             return;
 
         DBUG("  process var %s", property_name.c_str());
@@ -451,7 +456,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
     }
 
 
-    auto add_secondary_var = [this, &get_or_create_mesh_property, &x]
+    auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
                              (SecondaryVariables const property,
                              std::string const& property_name,
                              const unsigned num_components
@@ -461,7 +466,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
         (void) num_components;
 
         {
-            if (_output_variables.find(property_name) == _output_variables.cend())
+            if (output_variables.find(property_name) == output_variables.cend())
                 return;
 
             DBUG("  process var %s", property_name.c_str());
@@ -482,7 +487,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
             }
         }
 
-        if (_output_residuals) {
+        if (BP::_process_output.output_residuals) {
             DBUG("  process var %s residual", property_name.c_str());
             auto const& property_name_res = property_name + "_residual";
 
