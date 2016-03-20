@@ -7,18 +7,7 @@
  *
  */
 
-#include <cassert>
-#include <cstdio>
-
-#include <logog/include/logog.hpp>
-
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
-#include "MathLib/LinAlg/VectorNorms.h"
-// #include "ProcessLib/NumericsConfig.h"
-
 #include "TESProcess.h"
-
 
 namespace
 {
