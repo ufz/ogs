@@ -52,8 +52,9 @@ TESProcess(MeshLib::Mesh& mesh,
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
                 // _secondary_process_vars.emplace_back(type, *variable, num_components);
-                BP::_process_output.secondary_variables.emplace_back(
-                            SecondaryVariable{var, num_components});
+                // BP::_process_output.secondary_variables.emplace_back(
+                            // SecondaryVariable{var, num_components});
+                BP::_process_output.secondary_variables.push_back({var, num_components});
             }
         };
 
