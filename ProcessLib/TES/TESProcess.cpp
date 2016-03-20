@@ -436,7 +436,7 @@ postIteration(GlobalVector const& x)
 template<typename GlobalSetup>
 void
 TESProcess<GlobalSetup>::
-output(const std::string& file_name, const GlobalVector& x)
+output(const std::string& /*file_name*/, const GlobalVector& x)
 {
     auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
             -> std::size_t
@@ -559,9 +559,11 @@ output(const std::string& file_name, const GlobalVector& x)
     }
 
 
+    /*
     // Write output file
     FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
     vtu_interface.writeToFile(file_name);
+    */
 }
 
 template<typename GlobalSetup>

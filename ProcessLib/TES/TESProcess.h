@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -10,35 +10,14 @@
 #ifndef PROCESS_LIB_TESPROCESS_H_
 #define PROCESS_LIB_TESPROCESS_H_
 
-#include <memory>
-#include <vector>
 #include <set>
-#include <array>
 #include <tuple>
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
-#include "AssemblerLib/ComputeSparsityPattern.h"
-
-#include "FileIO/VtkIO/VtuInterface.h"
-
-#include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/Scaling.h"
-#include "MathLib/LinAlg/SetMatrixSparsity.h"
-#include "MathLib/Nonlinear/Picard.h"
-
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-
-#include "ProcessLib/ProcessVariable.h"
-#include "ProcessLib/Process.h"
-#include "ProcessLib/Parameter.h"
-
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "NumLib/Extrapolation/GlobalLinearLeastSquaresExtrapolator.h"
+#include "ProcessLib/Process.h"
 
 #include "TESAssemblyParams.h"
 #include "TESLocalAssembler.h"
-
 
 namespace MeshLib
 {
@@ -105,7 +84,6 @@ private:
 
     AssemblyParams _assembly_params;
 
-
     // secondary variables
     std::vector<std::tuple<SecondaryVariables, std::string, unsigned> >
     _secondary_process_vars;
@@ -122,19 +100,10 @@ private:
     std::size_t _total_iteration = 0;
 
 
-#if 0
-    NumLib::GlobalLinearLeastSquaresExtrapolator<
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType, SecondaryVariables,
-            LocalAssembler>
-            extrapolator(*_local_to_global_index_map_single_component);
-#else
+    // Extrapolator Interface
     using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
     using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
     std::unique_ptr<ExtrapolatorIntf> _extrapolator;
-#endif
-
-
 };
 
 template <typename GlobalSetup>
