@@ -437,7 +437,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
 
 
     auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
-                             (SecondaryVariables const property,
+                             (unsigned const property,
                              std::string const& property_name,
                              const unsigned num_components
                              ) -> void
@@ -491,7 +491,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
     for (auto const& p : BP::_process_output.secondary_variables)
     {
         // TODO fix
-        add_secondary_var(SecondaryVariables::LOADING, p.name, p.n_components);
+        add_secondary_var(0u, p.name, p.n_components);
     }
 
 

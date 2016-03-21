@@ -130,11 +130,10 @@ TESLocalAssembler<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-getIntegrationPointValues(SecondaryVariables var,
+getIntegrationPointValues(unsigned const var,
                           NumLib::LocalNodalDOF& /*nodal_dof*/) const
 {
-
-    switch (var)
+    switch (static_cast<SecondaryVariables>(var))
     {
     case SecondaryVariables::REACTION_RATE:
     case SecondaryVariables::SOLID_DENSITY:
@@ -144,7 +143,7 @@ getIntegrationPointValues(SecondaryVariables var,
     case SecondaryVariables::LOADING:
         // These cases do not need access to nodal values
         // Thus, they can be handled inside _data
-        return _data.getIntegrationPointValues(var, *_integration_point_values_cache);
+            return _data.getIntegrationPointValues(var, *_integration_point_values_cache);
 
     // TODO that's an element value, ain't it?
     case SecondaryVariables::REACTION_DAMPING_FACTOR:

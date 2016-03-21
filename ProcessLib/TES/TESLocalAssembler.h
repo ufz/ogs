@@ -31,7 +31,7 @@ public:
     getShapeMatrix(const unsigned integration_point) const = 0;
 
     virtual std::vector<double> const&
-    getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_dof) const = 0;
+    getIntegrationPointValues(unsigned const var, NumLib::LocalNodalDOF& nodal_dof) const = 0;
 };
 
 
@@ -92,7 +92,8 @@ public:
     bool checkBounds(std::vector<double> const& local_x) override;
 
     std::vector<double> const&
-    getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_dof) const override;
+    getIntegrationPointValues(unsigned const var,
+                              NumLib::LocalNodalDOF& nodal_dof) const override;
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
