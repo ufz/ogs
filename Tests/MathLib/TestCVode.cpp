@@ -11,7 +11,7 @@
 
 #include "MathLib/ODE/CVodeSolver.h"
 #include "MathLib/ODE/OdeSolver.h"
-#include "MathLib/ODE/OdeSolverFactory.h"
+#include "MathLib/ODE/ConcreteOdeSolver.h"
 
 #include <cstdio>
 
