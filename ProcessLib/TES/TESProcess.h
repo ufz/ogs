@@ -70,6 +70,9 @@ private:
     void output(std::string const& file_name,
                 GlobalVector const& x);
 
+    std::vector<double> computeVapourPartialPressure(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     std::vector<LocalAssembler*> _local_assemblers;
 

@@ -46,29 +46,29 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         auto add_secondary_variable =
                 [this, &proc_vars](
-                std::string const& var, SecondaryVariables /*type*/, unsigned num_components)
+                std::string const& var, const unsigned num_components,
+                typename ProcessLib::SecondaryVariable<GlobalVector>::Fct&& fct)
                 -> void
         {
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
-                // _secondary_process_vars.emplace_back(type, *variable, num_components);
-                // BP::_process_output.secondary_variables.emplace_back(
-                            // SecondaryVariable{var, num_components});
-                BP::_process_output.secondary_variables.push_back({var, num_components});
+                // TODO fix
+                BP::_process_output.secondary_variables.push_back(
+                    {var, num_components, std::move(fct)});
             }
         };
 
-        add_secondary_variable("solid_density", SecondaryVariables::SOLID_DENSITY, 1);
-        add_secondary_variable("reaction_rate", SecondaryVariables::REACTION_RATE, 1);
-        add_secondary_variable("velocity_x",    SecondaryVariables::VELOCITY_X,    1);
-        if (BP::_mesh.getDimension() >= 2) add_secondary_variable("velocity_y",    SecondaryVariables::VELOCITY_Y,    1);
-        if (BP::_mesh.getDimension() >= 3) add_secondary_variable("velocity_z",    SecondaryVariables::VELOCITY_Z,    1);
+        add_secondary_variable("solid_density", 1, nullptr);
+        add_secondary_variable("reaction_rate", 1, nullptr);
+        add_secondary_variable("velocity_x",    1, nullptr);
+        if (BP::_mesh.getDimension() >= 2) add_secondary_variable("velocity_y", 1, nullptr);
+        if (BP::_mesh.getDimension() >= 3) add_secondary_variable("velocity_z", 1, nullptr);
 
-        add_secondary_variable("vapour_partial_pressure", SecondaryVariables::VAPOUR_PARTIAL_PRESSURE, 1);
-        add_secondary_variable("relative_humidity",       SecondaryVariables::RELATIVE_HUMIDITY,       1);
-        add_secondary_variable("loading",                 SecondaryVariables::LOADING,                 1);
-        add_secondary_variable("equilibrium_loading",     SecondaryVariables::EQUILIBRIUM_LOADING,     1);
-        add_secondary_variable("reaction_damping_factor", SecondaryVariables::REACTION_DAMPING_FACTOR, 1);
+        add_secondary_variable("vapour_partial_pressure", 1, nullptr);
+        add_secondary_variable("relative_humidity",       1, nullptr);
+        add_secondary_variable("loading",                 1, nullptr);
+        add_secondary_variable("equilibrium_loading",     1, nullptr);
+        add_secondary_variable("reaction_damping_factor", 1, nullptr);
     }
 
     // variables for output
@@ -95,7 +95,7 @@ TESProcess(MeshLib::Mesh& mesh,
 
                 if (pcs_var == BP::_process_variables.cend())
                 {
-                    auto pred2 = [&out_var](SecondaryVariable const& p) {
+                    auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
                         return p.name == out_var;
                     };
 
@@ -523,6 +523,19 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
     vtu_interface.writeToFile(file_name);
     */
 }
+
+
+
+template<typename GlobalSetup>
+std::vector<double>
+TESProcess<GlobalSetup>::
+computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
+                             AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+{
+    (void) x; (void) dof_table;
+    return std::vector<double>{};
+}
+
 
 template<typename GlobalSetup>
 TESProcess<GlobalSetup>::
