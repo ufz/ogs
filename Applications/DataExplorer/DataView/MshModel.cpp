@@ -32,13 +32,15 @@
 #include "Elements/Element.h"
 #include "MeshEnums.h"
 
+const QVariant MshModel::element_str = "Element";
+const std::map<MeshLib::MeshElemType, QVariant> MshModel::elem_type_map = MshModel::createMeshElemTypeMap();
 
 MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
 	: TreeModel(parent), _project(project)
 {
 	delete _rootItem;
 	QList<QVariant> rootData;
-	rootData << "Mesh Name" << "Type" << "Node IDs";
+	rootData << "Mesh Name" << "#" << "Type";
 	_rootItem = new TreeItem(rootData, nullptr);
 }
 
@@ -46,7 +48,7 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 {
 	Q_UNUSED(parent)
 
-	return 2;
+	return 3;
 }
 
 void MshModel::addMesh(MeshLib::Mesh* mesh)
@@ -58,31 +60,21 @@ void MshModel::addMesh(MeshLib::Mesh* mesh)
 void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
 {
 	INFO("name: %s", mesh->getName().c_str());
-	QString display_name (QString::fromStdString(mesh->getName()));
+	QVariant const display_name (QString::fromStdString(mesh->getName()));
 	QList<QVariant> meshData;
-	meshData << display_name << "";
-	MshItem* newMesh = new MshItem(meshData, _rootItem, mesh);
+	meshData << display_name << "" << "";
+	MshItem *const newMesh = new MshItem(meshData, _rootItem, mesh);
 	_rootItem->appendChild(newMesh);
 
 	// display elements
-	const std::vector<MeshLib::Element*> &elems = mesh->getElements();
-	const std::size_t nElems (elems.size());
-	QString elem_type_string("");
-	MeshLib::MeshElemType elem_type(MeshLib::MeshElemType::INVALID);
+	std::vector<MeshLib::Element*> const& elems = mesh->getElements();
+	int const nElems (static_cast<int>(elems.size()));
 
-	for (std::size_t i = 0; i < nElems; i++)
+	for (int i = 0; i < nElems; i++)
 	{
-		const MeshLib::Element* current_element (elems[i]);
-		MeshLib::MeshElemType t (current_element->getGeomType());
 		QList<QVariant> elemData;
 		elemData.reserve(3);
-		if (t != elem_type)
-		{
-			elem_type = t;
-			elem_type_string = QString::fromStdString(MeshElemType2String(t));
-		}
-
-		elemData << "Element " + QString::number(i) << elem_type_string;
+		elemData << element_str << i << elem_type_map.at(elems[i]->getGeomType());
 		newMesh->appendChild(new TreeItem(elemData, newMesh));
 	}
 
@@ -166,6 +158,17 @@ void MshModel::updateModel()
 	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
 		if (!this->getMesh((*it)->getName())) // if Mesh is not yet added to GUI, do it now
 			addMeshObject(*it);
+}
+
+std::map<MeshLib::MeshElemType, QVariant> MshModel::createMeshElemTypeMap()
+{
+	std::vector<MeshLib::MeshElemType> const& elem_types (MeshLib::getMeshElemTypes());
+	std::map<MeshLib::MeshElemType, QVariant> elem_map;
+
+	for (MeshLib::MeshElemType t : elem_types)
+		elem_map[t] = QVariant(QString::fromStdString(MeshLib::MeshElemType2String(t)));
+
+	return elem_map;
 }
 
 vtkUnstructuredGridAlgorithm* MshModel::vtkSource(const QModelIndex &idx) const
