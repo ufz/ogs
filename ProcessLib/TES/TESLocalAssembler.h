@@ -16,7 +16,7 @@
 #include "TESLocalAssemblerInner-fwd.h"
 #include "TESAssemblyParams.h"
 
-#include "NumLib/Extrapolation/LocalNodalDOF.h"
+#include "NumLib/Extrapolation/Extrapolator.h"
 
 namespace ProcessLib
 {
@@ -24,25 +24,9 @@ namespace ProcessLib
 namespace TES
 {
 
-template <typename GlobalVector>
-class Extrapolatable
-{
-public:
-    virtual Eigen::Map<const Eigen::VectorXd>
-    getShapeMatrix(const unsigned integration_point) const = 0;
-
-    virtual std::vector<double> const&
-    getIntegrationPointValues(unsigned const var,
-                              std::size_t const element_id,
-                              GlobalVector const& x) const = 0;
-
-    virtual ~Extrapolatable() = default;
-};
-
-
 template <typename GlobalMatrix, typename GlobalVector>
 class TESLocalAssemblerInterface
-        : public Extrapolatable<GlobalVector>
+        : public NumLib::Extrapolatable<GlobalVector>
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;

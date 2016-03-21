@@ -285,8 +285,6 @@ createLocalAssemblers()
                 new AssemblerLib::LocalToGlobalIndexMap(
                     std::move(all_mesh_subsets_single_component), _global_matrix_order)
                 );
-
-    _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
 }
 
 template<typename GlobalSetup>
@@ -399,96 +397,6 @@ void
 TESProcess<GlobalSetup>::
 output(const std::string& /*file_name*/, const GlobalVector& x)
 {
-    auto& output_variables = BP::_process_output.output_variables;
-
-    auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
-            -> std::size_t
-    {
-        switch (type) {
-        case MeshLib::MeshItemType::Cell: return mesh.getNElements();
-        case MeshLib::MeshItemType::Node: return mesh.getNNodes();
-        default: break;
-        }
-        return 0;
-    };
-
-    auto get_or_create_mesh_property = [this, &count](std::string const& property_name, MeshLib::MeshItemType type)
-    {
-        // Get or create a property vector for results.
-        boost::optional<MeshLib::PropertyVector<double>&> result;
-
-        auto const N = count(BP::_mesh, type);
-
-        if (BP::_mesh.getProperties().hasPropertyVector(property_name))
-        {
-            result = BP::_mesh.getProperties().template
-                getPropertyVector<double>(property_name);
-        }
-        else
-        {
-            result = BP::_mesh.getProperties().template
-                createNewPropertyVector<double>(property_name, type);
-            result->resize(N);
-        }
-        assert(result && result->size() == N);
-
-        return result;
-    };
-
-
-    auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
-                             (unsigned const property,
-                             std::string const& property_name,
-                             const unsigned num_components
-                             ) -> void
-    {
-        assert(num_components == 1); // TODO [CL] implement other cases
-        (void) num_components;
-
-        {
-            if (output_variables.find(property_name) == output_variables.cend())
-                return;
-
-            DBUG("  process var %s", property_name.c_str());
-
-            auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
-            assert(result->size() == BP::_mesh.getNNodes());
-
-            _extrapolator->extrapolate(x, _local_assemblers, property);
-            auto const& nodal_values = _extrapolator->getNodalValues();
-
-            // Copy result
-            for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-            {
-                assert(!std::isnan(nodal_values[i]));
-                (*result)[i] = nodal_values[i];
-            }
-        }
-
-        if (BP::_process_output.output_residuals) {
-            DBUG("  process var %s residual", property_name.c_str());
-            auto const& property_name_res = property_name + "_residual";
-
-            auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
-            assert(result->size() == BP::_mesh.getNElements());
-
-            _extrapolator->calculateResiduals(x, _local_assemblers, property);
-            auto const& residuals = _extrapolator->getElementResiduals();
-
-            // Copy result
-            for (std::size_t i = 0; i < BP::_mesh.getNElements(); ++i)
-            {
-                assert(!std::isnan(residuals[i]));
-                (*result)[i] = residuals[i];
-            }
-        }
-    };
-
-    for (auto const& p : BP::_process_output.secondary_variables)
-    {
-        // TODO fix
-        add_secondary_var(0u, p.name, p.n_components);
-    }
 
 
     /*

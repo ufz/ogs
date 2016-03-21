@@ -13,7 +13,6 @@
 #include <set>
 #include <tuple>
 
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
 #include "TESAssemblyParams.h"
@@ -64,6 +63,15 @@ private:
             const double t, GlobalVector const& x,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
 
+    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
+    extrapolatableBegin() const override {
+        return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.begin());
+    }
+    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
+    extrapolatableEnd() const override {
+        return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.end());
+    }
+
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
@@ -92,11 +100,6 @@ private:
     //! Output global matrix/rhs after first iteration.
     std::size_t _timestep = 0;
     std::size_t _total_iteration = 0;
-
-    //! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, LocalAssembler>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, LocalAssembler>;
-    std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 
 template <typename GlobalSetup>
