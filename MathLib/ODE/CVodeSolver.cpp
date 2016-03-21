@@ -20,33 +20,36 @@ extern "C" {
 #include <cassert>
 #include <logog/include/logog.hpp>
 
+template <typename F, typename ...Args>
+void check_error(std::string const& f_name, F& f, Args&&... args)
+{
+	if (int error_flag = f(std::forward<Args>(args)...) != 0)
+	{
+		ERR("CVodeSolver: %s failed with error flag %d.", f_name.c_str(),
+		    error_flag);
+		std::abort();
+	}
+}
+
 namespace
 {
 void printStats(void* cvode_mem)
 {
 	long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
-	int flag;
 
-	flag = CVodeGetNumSteps(cvode_mem, &nst);
-	// check_flag(&flag, "CVodeGetNumSteps", 1);
-	flag = CVodeGetNumRhsEvals(cvode_mem, &nfe);
-	// check_flag(&flag, "CVodeGetNumRhsEvals", 1);
-	flag = CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
-	// check_flag(&flag, "CVodeGetNumLinSolvSetups", 1);
-	flag = CVodeGetNumErrTestFails(cvode_mem, &netf);
-	// check_flag(&flag, "CVodeGetNumErrTestFails", 1);
-	flag = CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
-	// check_flag(&flag, "CVodeGetNumNonlinSolvIters", 1);
-	flag = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
-	// check_flag(&flag, "CVodeGetNumNonlinSolvConvFails", 1);
-
-	flag = CVDlsGetNumJacEvals(cvode_mem, &nje);
-	// check_flag(&flag, "CVDlsGetNumJacEvals", 1);
-	flag = CVDlsGetNumRhsEvals(cvode_mem, &nfeLS);
-	// check_flag(&flag, "CVDlsGetNumRhsEvals", 1);
-
-	flag = CVodeGetNumGEvals(cvode_mem, &nge);
-	// check_flag(&flag, "CVodeGetNumGEvals", 1);
+	check_error("CVodeGetNumSteps", CVodeGetNumSteps, cvode_mem, &nst);
+	check_error("CVodeGetNumRhsEvals", CVodeGetNumRhsEvals, cvode_mem, &nfe);
+	check_error("CVodeGetNumLinSolvSetups", CVodeGetNumLinSolvSetups, cvode_mem,
+	            &nsetups);
+	check_error("CVodeGetNumErrTestFails", CVodeGetNumErrTestFails, cvode_mem,
+	            &netf);
+	check_error("CVodeGetNumNonlinSolvIters", CVodeGetNumNonlinSolvIters,
+	            cvode_mem, &nni);
+	check_error("CVodeGetNumNonlinSolvConvFails",
+	            CVodeGetNumNonlinSolvConvFails, cvode_mem, &ncfn);
+	check_error("CVDlsGetNumJacEvals", CVDlsGetNumJacEvals, cvode_mem, &nje);
+	check_error("CVDlsGetNumRhsEvals", CVDlsGetNumRhsEvals, cvode_mem, &nfeLS);
+	check_error("CVodeGetNumGEvals", CVodeGetNumGEvals, cvode_mem, &nge);
 
 	DBUG("\nFinal Statistics:");
 	DBUG("nst = %-6ld nfe  = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
@@ -180,8 +183,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 		return successful ? 0 : 1;
 	};
 
-	int flag = CVodeInit(_cvode_mem, f_wrapped, 0.0, _y);
-	(void)flag;
+	check_error("CVodeInit", CVodeInit, _cvode_mem, f_wrapped, 0.0, _y);
 }
 
 void CVodeSolverImpl::setTolerance(const double* abstol, const double reltol)
@@ -224,22 +226,18 @@ void CVodeSolverImpl::preSolve()
 {
 	assert(_f != nullptr && "ode function handle was not provided");
 
-	// int flag = CVodeInit(_cvode_mem, f_wrapped, _t, _y); // TODO: consider
-	// CVodeReInit()!
-	int flag =
-	    CVodeReInit(_cvode_mem, _t, _y);  // TODO: consider CVodeReInit()!
-	// if (check_flag(&flag, "CVodeInit", 1)) return(1);
+	check_error("CVodeReInit", CVodeReInit, _cvode_mem, _t, _y);
 
-	flag = CVodeSetUserData(_cvode_mem, static_cast<void*>(_f.get()));
+	check_error("CVodeSetUserData", CVodeSetUserData, _cvode_mem,
+	            static_cast<void*>(_f.get()));
 
 	/* Call CVodeSVtolerances to specify the scalar relative tolerance
 	 * and vector absolute tolerances */
-	flag = CVodeSVtolerances(_cvode_mem, _reltol, _abstol);
-	// if (check_flag(&flag, "CVodeSVtolerances", 1)) return(1);
+	check_error("CVodeSVtolerances", CVodeSVtolerances, _cvode_mem, _reltol,
+	            _abstol);
 
 	/* Call CVDense to specify the CVDENSE dense linear solver */
-	flag = CVDense(_cvode_mem, _num_equations);
-	// if (check_flag(&flag, "CVDense", 1)) return(1);
+	check_error("CVDense", CVDense, _cvode_mem, _num_equations);
 
 	if (_f->hasJacobian())
 	{
@@ -258,23 +256,17 @@ void CVodeSolverImpl::preSolve()
 			return successful ? 0 : 1;
 		};
 
-		flag = CVDlsSetDenseJacFn(_cvode_mem, df_wrapped);
-		// if (check_flag(&flag, "CVDlsSetDenseJacFn", 1)) return(1);
+		check_error("CVDlsSetDenseJacFn", CVDlsSetDenseJacFn, _cvode_mem,
+		            df_wrapped);
 	}
 }
 
 void CVodeSolverImpl::solve(const double t_end)
 {
 	realtype t_reached;
-	int flag = CVode(_cvode_mem, t_end, _y, &t_reached, CV_NORMAL);
+	check_error("CVode solve", CVode, _cvode_mem, t_end, _y, &t_reached,
+	            CV_NORMAL);
 	_t = t_reached;
-	// std::cout << "result at time " << t << " is " << NV_Ith_S(y,0) <<
-	// std::endl;
-	if (flag != CV_SUCCESS)
-	{
-		// std::cerr << "ERROR at " << __FUNCTION__ << ":" << __LINE__ <<
-		// std::endl;
-	}
 }
 
 void CVodeSolverImpl::getYDot(const double t, double const* const y,
