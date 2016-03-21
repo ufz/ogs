@@ -435,34 +435,6 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
         return result;
     };
 
-    auto add_primary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
-                           (const unsigned vi)
-    {
-        std::string const& property_name = BP::_process_variables[vi].get().getName();
-        if (output_variables.find(property_name) == output_variables.cend())
-            return;
-
-        DBUG("  process var %s", property_name.c_str());
-
-        auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
-        assert(result->size() == BP::_mesh.getNNodes());
-
-        // Copy result
-        for (std::size_t i = 0; i < BP::_mesh.getNNodes(); ++i)
-        {
-            MeshLib::Location loc(BP::_mesh.getID(), MeshLib::MeshItemType::Node, i);
-            auto const idx = BP::_local_to_global_index_map->getGlobalIndex(loc, vi);
-            assert(!std::isnan(x[idx]));
-            (*result)[i] = x[idx];
-        }
-    };
-
-    assert(x.size() == NODAL_DOF * BP::_mesh.getNNodes());
-    for (unsigned vi=0; vi!=NODAL_DOF; ++vi)
-    {
-        add_primary_var(vi);
-    }
-
 
     auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
                              (SecondaryVariables const property,
