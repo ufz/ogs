@@ -46,9 +46,9 @@ namespace ProcessLib
 template<typename GlobalVector>
 struct SecondaryVariable
 {
-	using Fct = std::function<std::vector<double>(
+	using Fct = std::function<GlobalVector(
 		GlobalVector const& x,
-		AssemblerLib::LocalToGlobalIndexMap dof_table)>;
+		AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
 
 	std::string const name;
 	unsigned n_components;
@@ -188,30 +188,18 @@ public:
 			return result;
 		};
 
-		auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
-								 (unsigned const property,
-								 std::string const& property_name,
-								 const unsigned num_components
-								 ) -> void
+		auto add_secondary_var
+		    = [this, &get_or_create_mesh_property, &x]
+		      (SecondaryVariable<GlobalVector> const& var) -> void
 		{
-			assert(num_components == 1); // TODO [CL] implement other cases
-			(void) num_components;
+			assert(var.n_components == 1); // TODO [CL] implement other cases
 
 			{
-				if (output_variables.find(property_name) == output_variables.cend())
-					return;
-
-				DBUG("  process var %s", property_name.c_str());
-
-				auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
+				auto result = get_or_create_mesh_property(var.name, MeshLib::MeshItemType::Node);
 				assert(result->size() == _mesh.getNNodes());
 
-				_extrapolator->extrapolate(
-					x,
-					*extrapolatableBegin(),
-					*extrapolatableEnd(),
-					property);
-				auto const& nodal_values = _extrapolator->getNodalValues();
+				auto const& nodal_values =
+					var.eval(x, *_local_to_global_index_map);
 
 				// Copy result
 				for (std::size_t i = 0; i < _mesh.getNNodes(); ++i)
@@ -221,6 +209,8 @@ public:
 				}
 			}
 
+#if 0
+			// TODO fix
 			if (_process_output.output_residuals) {
 				DBUG("  process var %s residual", property_name.c_str());
 				auto const& property_name_res = property_name + "_residual";
@@ -242,12 +232,18 @@ public:
 					(*result)[i] = residuals[i];
 				}
 			}
+#endif
 		};
 
 		for (auto const& p : _process_output.secondary_variables)
 		{
+			if (output_variables.find(p.name) == output_variables.cend())
+				return;
+
+			DBUG("  process var %s", p.name.c_str());
+
 			// TODO fix
-			add_secondary_var(0u, p.name, p.n_components);
+			add_secondary_var(p);
 		}
 
 		// Write output file
