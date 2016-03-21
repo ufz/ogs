@@ -130,7 +130,8 @@ TESLocalAssembler<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_dof) const
+getIntegrationPointValues(SecondaryVariables var,
+                          NumLib::LocalNodalDOF& /*nodal_dof*/) const
 {
 
     switch (var)
@@ -145,96 +146,7 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
         // Thus, they can be handled inside _data
         return _data.getIntegrationPointValues(var, *_integration_point_values_cache);
 
-    // TODO [CL] the following cases could be better provided directly using nodal values without extrapolation
-    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
-    {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
-
-        auto& pVs = *_integration_point_values_cache;
-        pVs.clear();
-        pVs.reserve(n_integration_points);
-
-        auto const& ps = nodal_dof.getElementNodalValues(0); // TODO [CL] use constants for DOF indices
-        auto const& xs = nodal_dof.getElementNodalValues(2);
-
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, xm;
-
-            using Array = std::array<double*, 1>;
-            NumLib::shapeFunctionInterpolate(ps, sm.N, Array{ &p  });
-            NumLib::shapeFunctionInterpolate(xs, sm.N, Array{ &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            pVs.push_back(p * xn);
-        }
-
-        return pVs;
-    }
-    case SecondaryVariables::RELATIVE_HUMIDITY:
-    {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
-
-        auto& rhs = *_integration_point_values_cache;
-        rhs.clear();
-        rhs.reserve(n_integration_points);
-
-        auto const& nodal_vals = nodal_dof.getElementNodalValues();
-
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, T, xm;
-
-            using Array = std::array<double*, 3>;
-            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            auto const pS = Ads::Adsorption::get_equilibrium_vapour_pressure(T);
-            rhs.push_back(p * xn / pS);
-        }
-
-        return rhs;
-    }
-    case SecondaryVariables::EQUILIBRIUM_LOADING:
-    {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
-
-        auto& Cs = *_integration_point_values_cache;
-        Cs.clear();
-        Cs.reserve(n_integration_points);
-
-        auto const nodal_vals = nodal_dof.getElementNodalValues();
-
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, T, xm;
-
-            using Array = std::array<double*, 3>;
-            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            auto const pV = p * xn;
-            if (pV < 0.0) {
-                Cs.push_back(0.0);
-            } else {
-                Cs.push_back(AP.react_sys->get_equilibrium_loading(pV, T, AP.M_react));
-            }
-        }
-
-        return Cs;
-    }
+    // TODO that's an element value, ain't it?
     case SecondaryVariables::REACTION_DAMPING_FACTOR:
     {
         auto& alphas = *_integration_point_values_cache;
@@ -244,6 +156,11 @@ getIntegrationPointValues(SecondaryVariables var, NumLib::LocalNodalDOF& nodal_d
 
         return alphas;
     }
+
+    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
+    case SecondaryVariables::EQUILIBRIUM_LOADING:
+    case SecondaryVariables::RELATIVE_HUMIDITY:
+        break;
     }
 
     _integration_point_values_cache->clear();

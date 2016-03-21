@@ -64,11 +64,18 @@ TESProcess(MeshLib::Mesh& mesh,
         if (BP::_mesh.getDimension() >= 2) add_secondary_variable("velocity_y", 1, nullptr);
         if (BP::_mesh.getDimension() >= 3) add_secondary_variable("velocity_z", 1, nullptr);
 
-        add_secondary_variable("vapour_partial_pressure", 1, nullptr);
-        add_secondary_variable("relative_humidity",       1, nullptr);
+
         add_secondary_variable("loading",                 1, nullptr);
-        add_secondary_variable("equilibrium_loading",     1, nullptr);
         add_secondary_variable("reaction_damping_factor", 1, nullptr);
+
+        namespace PH = std::placeholders;
+
+        add_secondary_variable("vapour_partial_pressure", 1,
+            std::bind(&TESProcess<GlobalSetup>::computeVapourPartialPressure, this, PH::_1, PH::_2));
+        add_secondary_variable("relative_humidity",       1,
+            std::bind(&TESProcess<GlobalSetup>::computeRelativeHumidity,      this, PH::_1, PH::_2));
+        add_secondary_variable("equilibrium_loading",     1,
+            std::bind(&TESProcess<GlobalSetup>::computeEquilibriumLoading,    this, PH::_1, PH::_2));
     }
 
     // variables for output
@@ -524,8 +531,6 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
     */
 }
 
-
-
 template<typename GlobalSetup>
 std::vector<double>
 TESProcess<GlobalSetup>::
@@ -534,8 +539,125 @@ computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
 {
     (void) x; (void) dof_table;
     return std::vector<double>{};
+
+#if 0
+    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
+    {
+        IntegrationMethod_ integration_method(_integration_order);
+        auto const n_integration_points = integration_method.getNPoints();
+
+        auto& pVs = *_integration_point_values_cache;
+        pVs.clear();
+        pVs.reserve(n_integration_points);
+
+        auto const& ps = nodal_dof.getElementNodalValues(0); // TODO [CL] use constants for DOF indices
+        auto const& xs = nodal_dof.getElementNodalValues(2);
+
+        auto const& AP = _data.getAssemblyParameters();
+
+        for (auto const& sm : _shape_matrices)
+        {
+            double p, xm;
+
+            using Array = std::array<double*, 1>;
+            NumLib::shapeFunctionInterpolate(ps, sm.N, Array{ &p  });
+            NumLib::shapeFunctionInterpolate(xs, sm.N, Array{ &xm });
+
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
+            pVs.push_back(p * xn);
+        }
+
+        return pVs;
+    }
+#endif
 }
 
+template<typename GlobalSetup>
+std::vector<double>
+TESProcess<GlobalSetup>::
+computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
+                        AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+{
+    (void) x; (void) dof_table;
+    return std::vector<double>{};
+
+#if 0
+    case SecondaryVariables::RELATIVE_HUMIDITY:
+    {
+        IntegrationMethod_ integration_method(_integration_order);
+        auto const n_integration_points = integration_method.getNPoints();
+
+        auto& rhs = *_integration_point_values_cache;
+        rhs.clear();
+        rhs.reserve(n_integration_points);
+
+        auto const& nodal_vals = nodal_dof.getElementNodalValues();
+
+        auto const& AP = _data.getAssemblyParameters();
+
+        for (auto const& sm : _shape_matrices)
+        {
+            double p, T, xm;
+
+            using Array = std::array<double*, 3>;
+            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
+
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
+            auto const pS = Ads::Adsorption::get_equilibrium_vapour_pressure(T);
+            rhs.push_back(p * xn / pS);
+        }
+
+        return rhs;
+    }
+#endif
+}
+
+template<typename GlobalSetup>
+std::vector<double>
+TESProcess<GlobalSetup>::
+computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
+                          AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+{
+    (void) x; (void) dof_table;
+    return std::vector<double>{};
+
+#if 0
+    case SecondaryVariables::EQUILIBRIUM_LOADING:
+    {
+        IntegrationMethod_ integration_method(_integration_order);
+        auto const n_integration_points = integration_method.getNPoints();
+
+        auto& Cs = *_integration_point_values_cache;
+        Cs.clear();
+        Cs.reserve(n_integration_points);
+
+        auto const nodal_vals = nodal_dof.getElementNodalValues();
+
+        auto const& AP = _data.getAssemblyParameters();
+
+        for (auto const& sm : _shape_matrices)
+        {
+            double p, T, xm;
+
+            using Array = std::array<double*, 3>;
+            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
+
+            // TODO: Dalton's law method
+            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
+            auto const pV = p * xn;
+            if (pV < 0.0) {
+                Cs.push_back(0.0);
+            } else {
+                Cs.push_back(AP.react_sys->get_equilibrium_loading(pV, T, AP.M_react));
+            }
+        }
+
+        return Cs;
+    }
+#endif
+}
 
 template<typename GlobalSetup>
 TESProcess<GlobalSetup>::

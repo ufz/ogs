@@ -73,6 +73,12 @@ private:
     std::vector<double> computeVapourPartialPressure(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
 
+    std::vector<double> computeRelativeHumidity(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+
+    std::vector<double> computeEquilibriumLoading(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     std::vector<LocalAssembler*> _local_assemblers;
 
