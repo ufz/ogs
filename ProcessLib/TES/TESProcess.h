@@ -78,10 +78,6 @@ private:
 
     AssemblyParams _assembly_params;
 
-    // TODO remove
-    std::vector<std::tuple<SecondaryVariables, std::string, unsigned> >
-    _secondary_process_vars;
-
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
 
     //! Output global matrix/rhs after first iteration.

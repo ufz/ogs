@@ -95,16 +95,17 @@ TESProcess(MeshLib::Mesh& mesh,
 
                 if (pcs_var == BP::_process_variables.cend())
                 {
-                    auto pred2 = [&out_var](std::tuple<SecondaryVariables, std::string, unsigned> const& p) {
-                        return std::get<1>(p) == out_var;
+                    auto pred2 = [&out_var](SecondaryVariable const& p) {
+                        return p.name == out_var;
                     };
 
                     // check if secondary variable
                     auto const& pcs_var2 = std::find_if(
-                        _secondary_process_vars.cbegin(), _secondary_process_vars.cend(),
+                        BP::_process_output.secondary_variables.cbegin(),
+                        BP::_process_output.secondary_variables.cend(),
                         pred2);
 
-                    if (pcs_var2 == _secondary_process_vars.cend())
+                    if (pcs_var2 == BP::_process_output.secondary_variables.cend())
                     {
                         ERR("Output variable `%s' is neither a process variable nor a"
                             " secondary variable", out_var.c_str());
@@ -509,9 +510,10 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
         }
     };
 
-    for (auto const& p : _secondary_process_vars)
+    for (auto const& p : BP::_process_output.secondary_variables)
     {
-        add_secondary_var(std::get<0>(p), std::get<1>(p), std::get<2>(p));
+        // TODO fix
+        add_secondary_var(SecondaryVariables::LOADING, p.name, p.n_components);
     }
 
 
