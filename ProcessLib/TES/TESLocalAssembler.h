@@ -24,6 +24,7 @@ namespace ProcessLib
 namespace TES
 {
 
+template <typename GlobalVector>
 class Extrapolatable
 {
 public:
@@ -37,7 +38,7 @@ public:
 
 template <typename GlobalMatrix, typename GlobalVector>
 class TESLocalAssemblerInterface
-        : public Extrapolatable
+        : public Extrapolatable<GlobalVector>
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;
