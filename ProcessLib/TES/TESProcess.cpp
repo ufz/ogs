@@ -57,15 +57,17 @@ TESProcess(MeshLib::Mesh& mesh,
             }
         };
 
-        add_secondary_variable("solid_density", 1, nullptr);
-        add_secondary_variable("reaction_rate", 1, nullptr);
-        add_secondary_variable("velocity_x",    1, nullptr);
-        if (BP::_mesh.getDimension() >= 2) add_secondary_variable("velocity_y", 1, nullptr);
-        if (BP::_mesh.getDimension() >= 3) add_secondary_variable("velocity_z", 1, nullptr);
+        add_secondary_variable("solid_density",  1, makeExtrapolator(SecondaryVariables::SOLID_DENSITY));
+        add_secondary_variable("reaction_rate",  1, makeExtrapolator(SecondaryVariables::REACTION_RATE));
+        add_secondary_variable("velocity_x",     1, makeExtrapolator(SecondaryVariables::VELOCITY_X));
+        if (BP::_mesh.getDimension() >= 2)
+            add_secondary_variable("velocity_y", 1, makeExtrapolator(SecondaryVariables::VELOCITY_Y));
+        if (BP::_mesh.getDimension() >= 3)
+            add_secondary_variable("velocity_z", 1, makeExtrapolator(SecondaryVariables::VELOCITY_Z));
 
-
-        add_secondary_variable("loading",                 1, nullptr);
-        add_secondary_variable("reaction_damping_factor", 1, nullptr);
+        add_secondary_variable("loading",        1, makeExtrapolator(SecondaryVariables::LOADING));
+        add_secondary_variable("reaction_damping_factor", 1,
+                               makeExtrapolator(SecondaryVariables::REACTION_DAMPING_FACTOR));
 
         namespace PH = std::placeholders;
 
@@ -348,7 +350,7 @@ postIteration(GlobalVector const& x)
                          + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
                          + ".vtu";
 
-        output(fn, x);
+        BP::output(fn, 0, x);
     }
 
     bool check_passed = true;
@@ -393,27 +395,13 @@ postIteration(GlobalVector const& x)
 }
 
 template<typename GlobalSetup>
-void
-TESProcess<GlobalSetup>::
-output(const std::string& /*file_name*/, const GlobalVector& x)
-{
-
-
-    /*
-    // Write output file
-    FileIO::VtuInterface vtu_interface(&this->_mesh, vtkXMLWriter::Binary, true);
-    vtu_interface.writeToFile(file_name);
-    */
-}
-
-template<typename GlobalSetup>
-std::vector<double>
+typename TESProcess<GlobalSetup>::GlobalVector
 TESProcess<GlobalSetup>::
 computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
                              AssemblerLib::LocalToGlobalIndexMap const& dof_table)
 {
     (void) x; (void) dof_table;
-    return std::vector<double>{};
+    return GlobalVector{};
 
 #if 0
     case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
@@ -449,13 +437,13 @@ computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
 }
 
 template<typename GlobalSetup>
-std::vector<double>
+typename TESProcess<GlobalSetup>::GlobalVector
 TESProcess<GlobalSetup>::
 computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
                         AssemblerLib::LocalToGlobalIndexMap const& dof_table)
 {
     (void) x; (void) dof_table;
-    return std::vector<double>{};
+    return GlobalVector{};
 
 #if 0
     case SecondaryVariables::RELATIVE_HUMIDITY:
@@ -490,13 +478,13 @@ computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
 }
 
 template<typename GlobalSetup>
-std::vector<double>
+typename TESProcess<GlobalSetup>::GlobalVector
 TESProcess<GlobalSetup>::
 computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
                           AssemblerLib::LocalToGlobalIndexMap const& dof_table)
 {
     (void) x; (void) dof_table;
-    return std::vector<double>{};
+    return GlobalVector{};
 
 #if 0
     case SecondaryVariables::EQUILIBRIUM_LOADING:
@@ -532,6 +520,26 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
         return Cs;
     }
 #endif
+}
+
+template<typename GlobalSetup>
+typename SecondaryVariable<typename TESProcess<GlobalSetup>::GlobalVector>::Fct
+TESProcess<GlobalSetup>::
+makeExtrapolator(SecondaryVariables const var) const
+{
+    auto const fct = [var, this](
+            GlobalVector const& x,
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            ) -> GlobalVector
+    {
+        _extrapolator->extrapolate(
+            x,
+            *extrapolatableBegin(),
+            *extrapolatableEnd(),
+            static_cast<unsigned>(var));
+        return _extrapolator->getNodalValues();
+    };
+    return fct;
 }
 
 template<typename GlobalSetup>

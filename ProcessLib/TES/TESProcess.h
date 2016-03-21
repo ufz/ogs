@@ -75,17 +75,17 @@ private:
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
-    void output(std::string const& file_name,
-                GlobalVector const& x);
-
-    std::vector<double> computeVapourPartialPressure(
+    GlobalVector computeVapourPartialPressure(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
 
-    std::vector<double> computeRelativeHumidity(
+    GlobalVector computeRelativeHumidity(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
 
-    std::vector<double> computeEquilibriumLoading(
+    GlobalVector computeEquilibriumLoading(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+
+    typename SecondaryVariable<GlobalVector>::Fct
+    makeExtrapolator(SecondaryVariables const var) const;
 
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     std::vector<LocalAssembler*> _local_assemblers;
@@ -100,6 +100,11 @@ private:
     //! Output global matrix/rhs after first iteration.
     std::size_t _timestep = 0;
     std::size_t _total_iteration = 0;
+
+    //! Extrapolator Interface
+    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector>;
+    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector>;
+    std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 
 template <typename GlobalSetup>
