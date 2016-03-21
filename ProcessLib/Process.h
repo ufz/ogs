@@ -119,8 +119,14 @@ public:
 		x.copyValues(x_copy);
 
 		std::size_t const n_nodes = _mesh.getNNodes();
+
+		// primary variables
 		for (ProcessVariable& pv : _process_variables)
 		{
+			auto const& output_variables = _process_output.output_variables;
+			if (output_variables.find(pv.getName()) == output_variables.cend())
+				continue;
+
 			auto& output_data = pv.getOrCreateMeshProperty();
 
 			int const n_components = pv.getNumberOfComponents();
