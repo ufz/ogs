@@ -105,6 +105,16 @@ private:
             _local_assemblers, t, x, M, K, b);
     }
 
+    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
+    extrapolatableBegin() const override {
+        return nullptr; // TODO fix
+        // return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.begin());
+    }
+    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
+    extrapolatableEnd() const override {
+        return nullptr; // TODO fix
+        // return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.end());
+    }
 
     GroundwaterFlowProcessData _process_data;
 

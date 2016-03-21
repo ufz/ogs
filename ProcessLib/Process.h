@@ -30,6 +30,7 @@
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
+#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
@@ -147,6 +148,106 @@ public:
 					    x_copy[index];
 				}
 			}
+		}
+
+
+
+		auto& output_variables = _process_output.output_variables;
+
+		auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
+				-> std::size_t
+		{
+			switch (type) {
+			case MeshLib::MeshItemType::Cell: return mesh.getNElements();
+			case MeshLib::MeshItemType::Node: return mesh.getNNodes();
+			default: break;
+			}
+			return 0;
+		};
+
+		auto get_or_create_mesh_property = [this, &count](std::string const& property_name, MeshLib::MeshItemType type)
+		{
+			// Get or create a property vector for results.
+			boost::optional<MeshLib::PropertyVector<double>&> result;
+
+			auto const N = count(_mesh, type);
+
+			if (_mesh.getProperties().hasPropertyVector(property_name))
+			{
+				result = _mesh.getProperties().template
+					getPropertyVector<double>(property_name);
+			}
+			else
+			{
+				result = _mesh.getProperties().template
+					createNewPropertyVector<double>(property_name, type);
+				result->resize(N);
+			}
+			assert(result && result->size() == N);
+
+			return result;
+		};
+
+		auto add_secondary_var = [this, &output_variables, &get_or_create_mesh_property, &x]
+								 (unsigned const property,
+								 std::string const& property_name,
+								 const unsigned num_components
+								 ) -> void
+		{
+			assert(num_components == 1); // TODO [CL] implement other cases
+			(void) num_components;
+
+			{
+				if (output_variables.find(property_name) == output_variables.cend())
+					return;
+
+				DBUG("  process var %s", property_name.c_str());
+
+				auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
+				assert(result->size() == _mesh.getNNodes());
+
+				_extrapolator->extrapolate(
+					x,
+					*extrapolatableBegin(),
+					*extrapolatableEnd(),
+					property);
+				auto const& nodal_values = _extrapolator->getNodalValues();
+
+				// Copy result
+				for (std::size_t i = 0; i < _mesh.getNNodes(); ++i)
+				{
+					assert(!std::isnan(nodal_values[i]));
+					(*result)[i] = nodal_values[i];
+				}
+			}
+
+			if (_process_output.output_residuals) {
+				DBUG("  process var %s residual", property_name.c_str());
+				auto const& property_name_res = property_name + "_residual";
+
+				auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
+				assert(result->size() == _mesh.getNElements());
+
+				_extrapolator->calculateResiduals(
+					x,
+					*extrapolatableBegin(),
+					*extrapolatableEnd(),
+					property);
+				auto const& residuals = _extrapolator->getElementResiduals();
+
+				// Copy result
+				for (std::size_t i = 0; i < _mesh.getNElements(); ++i)
+				{
+					assert(!std::isnan(residuals[i]));
+					(*result)[i] = residuals[i];
+				}
+			}
+		};
+
+		for (auto const& p : _process_output.secondary_variables)
+		{
+			// TODO fix
+			add_secondary_var(0u, p.name, p.n_components);
 		}
 
 		// Write output file
@@ -393,6 +494,11 @@ private:
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
 	ProcessOutput<GlobalVector> _process_output;
+
+	//! Extrapolator Interface
+    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector>;
+    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector>;
+    std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 
 /// Find process variables in \c variables whose names match the settings under
