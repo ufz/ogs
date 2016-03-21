@@ -15,10 +15,11 @@
 namespace MathLib
 {
 template <int M, int N>
-using MappedMatrix = Eigen::Map<Eigen::Matrix<double, M, N>>;
+using MappedMatrix = Eigen::Map<Eigen::Matrix<double, M, N, Eigen::ColMajor>>;
 
 template <int M, int N>
-using MappedConstMatrix = Eigen::Map<const Eigen::Matrix<double, M, N>>;
+using MappedConstMatrix =
+    Eigen::Map<const Eigen::Matrix<double, M, N, Eigen::ColMajor>>;
 
 template <int N>
 using MappedVector = MappedMatrix<N, 1>;
