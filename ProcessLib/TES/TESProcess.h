@@ -63,15 +63,6 @@ private:
             const double t, GlobalVector const& x,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
 
-    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
-    extrapolatableBegin() const override {
-        return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.begin());
-    }
-    std::unique_ptr<NumLib::ExtrapolatableIterator<GlobalVector>>
-    extrapolatableEnd() const override {
-        return NumLib::makeExtrapolatableIterator<GlobalVector>(_local_assemblers.end());
-    }
-
     template <unsigned GlobalDim>
     void createLocalAssemblers();
 
@@ -102,8 +93,8 @@ private:
     std::size_t _total_iteration = 0;
 
     //! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector>;
+    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, LocalAssembler>;
+    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, LocalAssembler>;
     std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 

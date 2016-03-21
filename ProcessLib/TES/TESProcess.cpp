@@ -287,6 +287,8 @@ createLocalAssemblers()
                 new AssemblerLib::LocalToGlobalIndexMap(
                     std::move(all_mesh_subsets_single_component), _global_matrix_order)
                 );
+
+    _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
 }
 
 template<typename GlobalSetup>
@@ -533,9 +535,7 @@ makeExtrapolator(SecondaryVariables const var) const
             ) -> GlobalVector
     {
         _extrapolator->extrapolate(
-            x,
-            *extrapolatableBegin(),
-            *extrapolatableEnd(),
+            x, _local_assemblers,
             static_cast<unsigned>(var));
         return _extrapolator->getNodalValues();
     };
