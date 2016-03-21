@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef MATHLIB_ODE_ODESOLVERFACTORY_H
-#define MATHLIB_ODE_ODESOLVERFACTORY_H
+#ifndef MATHLIB_ODE_CONCRETEODESOLVER_H
+#define MATHLIB_ODE_CONCRETEODESOLVER_H
 
 #include <memory>
 
@@ -21,7 +21,6 @@
 
 namespace MathLib
 {
-
 template <unsigned NumEquations, typename... FunctionArguments>
 std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
     BaseLib::ConfigTree const& config);
@@ -79,7 +78,8 @@ public:
 	}
 
 	void setIC(const double t0,
-	           Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const& y0) override
+	           Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const&
+	               y0) override
 	{
 		Implementation::setIC(t0, y0.data());
 	}
@@ -124,4 +124,4 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
 
 }  // namespace MathLib
 
-#endif  // MATHLIB_ODE_ODESOLVERFACTORY_H
+#endif  // MATHLIB_ODE_CONCRETEODESOLVER_H
