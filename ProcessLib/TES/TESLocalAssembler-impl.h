@@ -131,7 +131,8 @@ TESLocalAssembler<ShapeFunction_,
     GlobalVector,
     GlobalDim>::
 getIntegrationPointValues(unsigned const var,
-                          NumLib::LocalNodalDOF& /*nodal_dof*/) const
+                          const std::size_t /*element_id*/,
+                          const GlobalVector& /*x*/) const
 {
     switch (static_cast<SecondaryVariables>(var))
     {

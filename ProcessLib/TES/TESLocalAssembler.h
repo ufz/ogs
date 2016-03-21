@@ -32,7 +32,11 @@ public:
     getShapeMatrix(const unsigned integration_point) const = 0;
 
     virtual std::vector<double> const&
-    getIntegrationPointValues(unsigned const var, NumLib::LocalNodalDOF& nodal_dof) const = 0;
+    getIntegrationPointValues(unsigned const var,
+                              std::size_t const element_id,
+                              GlobalVector const& x) const = 0;
+
+    virtual ~Extrapolatable() = default;
 };
 
 
@@ -94,7 +98,8 @@ public:
 
     std::vector<double> const&
     getIntegrationPointValues(unsigned const var,
-                              NumLib::LocalNodalDOF& nodal_dof) const override;
+                              std::size_t const element_id,
+                              GlobalVector const& x) const override;
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;

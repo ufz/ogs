@@ -454,9 +454,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
             auto result = get_or_create_mesh_property(property_name, MeshLib::MeshItemType::Node);
             assert(result->size() == BP::_mesh.getNNodes());
 
-            _extrapolator->extrapolate(
-                        x, *BP::_local_to_global_index_map,
-                        _local_assemblers, property);
+            _extrapolator->extrapolate(x, _local_assemblers, property);
             auto const& nodal_values = _extrapolator->getNodalValues();
 
             // Copy result
@@ -474,9 +472,7 @@ output(const std::string& /*file_name*/, const GlobalVector& x)
             auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == BP::_mesh.getNElements());
 
-            _extrapolator->calculateResiduals(
-                        x, *BP::_local_to_global_index_map,
-                        _local_assemblers, property);
+            _extrapolator->calculateResiduals(x, _local_assemblers, property);
             auto const& residuals = _extrapolator->getElementResiduals();
 
             // Copy result
