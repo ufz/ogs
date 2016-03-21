@@ -102,6 +102,13 @@ TEST(GeoLib, PolylineTest)
 	ply.closePolyline();
 	ASSERT_TRUE(ply.isClosed());
 
+	std::size_t segment_cnt(0);
+	for (auto seg_it(ply.begin()); seg_it != ply.end(); ++seg_it)
+	{
+		++segment_cnt;
+	}
+	ASSERT_EQ(ply.getNumberOfSegments(), segment_cnt);
+
 	for (std::size_t k(0); k < ply_pnts.size(); ++k)
 		delete ply_pnts[k];
 }
