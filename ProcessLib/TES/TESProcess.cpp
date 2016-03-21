@@ -52,7 +52,6 @@ TESProcess(MeshLib::Mesh& mesh,
         {
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
-                // TODO fix
                 BP::_process_output.secondary_variables.push_back(
                     {var, num_components, std::move(fct)});
             }
