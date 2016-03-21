@@ -42,16 +42,22 @@ class Mesh;
 namespace ProcessLib
 {
 
+template<typename GlobalVector>
 struct SecondaryVariable
 {
+	using Fct = std::function<std::vector<double>(
+		GlobalVector const& x,
+		AssemblerLib::LocalToGlobalIndexMap dof_table)>;
+
 	std::string const name;
 	unsigned n_components;
-	// std::function<> eval;
+	Fct eval;
 };
 
+template <typename GlobalVector>
 struct ProcessOutput
 {
-	std::vector<SecondaryVariable> secondary_variables;
+	std::vector<SecondaryVariable<GlobalVector>> secondary_variables;
 	std::set<std::string> output_variables;
 
 	bool output_residuals = false;
@@ -380,7 +386,7 @@ private:
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
-	ProcessOutput _process_output;
+	ProcessOutput<GlobalVector> _process_output;
 };
 
 /// Find process variables in \c variables whose names match the settings under
