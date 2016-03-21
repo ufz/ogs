@@ -536,7 +536,7 @@ makeExtrapolator(SecondaryVariables const var) const
     {
         _extrapolator->extrapolate(
             x, _local_assemblers,
-            static_cast<unsigned>(var));
+            static_cast<unsigned>(var)); // TODO re-introduce enum?
         return _extrapolator->getNodalValues();
     };
     return fct;
