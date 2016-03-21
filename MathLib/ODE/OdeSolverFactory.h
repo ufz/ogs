@@ -163,7 +163,7 @@ public:
 	}
 
 	void setIC(const double t0,
-	           Eigen::Matrix<double, NumEquations, 1> const& y0) override
+	           Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const& y0) override
 	{
 		Implementation::setIC(t0, y0.data());
 	}
@@ -176,10 +176,10 @@ public:
 	}
 
 	double getTime() const override { return Implementation::getTime(); }
-	Eigen::Matrix<double, NumEquations, 1> getYDot(
+	Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
 	    const double t, const MappedConstVector<NumEquations>& y) const override
 	{
-		Eigen::Matrix<double, NumEquations, 1> y_dot;
+		Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> y_dot;
 		Implementation::getYDot(t, y.data(), y_dot.data());
 		return y_dot;
 	}

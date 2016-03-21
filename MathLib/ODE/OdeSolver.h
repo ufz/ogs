@@ -40,8 +40,9 @@ public:
 
 	virtual void setIC(const double t0,
 	                   std::array<double, NumEquations> const& y0) = 0;
-	virtual void setIC(const double t0,
-	                   Eigen::Matrix<double, NumEquations, 1> const& y0) = 0;
+	virtual void setIC(
+	    const double t0,
+	    Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const& y0) = 0;
 
 	virtual void preSolve() = 0;
 	virtual void solve(const double t) = 0;
@@ -49,7 +50,7 @@ public:
 	virtual unsigned getNumEquations() const { return NumEquations; }
 	virtual MappedConstVector<NumEquations> getSolution() const = 0;
 	virtual double getTime() const = 0;
-	virtual Eigen::Matrix<double, NumEquations, 1> getYDot(
+	virtual Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
 	    const double t, const MappedConstVector<NumEquations>& y) const = 0;
 
 	virtual ~OdeSolver() = default;
