@@ -41,6 +41,27 @@ struct SerialExecutor
             f(i, c[i], std::forward<Args_>(args)...);
     }
 
+    /// Executes a \c f for each element from the input container.
+    ///
+    /// Return values of the function call are ignored.
+    /// This method is very similar to execute() the only difference
+    /// between the two is that here the elements of \c c are dereferenced
+    /// before being passed to the function \c f.
+    ///
+    /// \see execute()
+    template <typename F, typename C, typename ...Args_>
+    static
+    void
+#if defined(_MSC_VER) && (_MSC_VER >= 1700)
+    executeDereferenced(F& f, C const& c, Args_&&... args)
+#else
+    executeDereferenced(F const& f, C const& c, Args_&&... args)
+#endif
+    {
+        for (std::size_t i = 0; i < c.size(); i++)
+            f(i, *c[i], std::forward<Args_>(args)...);
+    }
+
     /// Same as execute(f, c), but with two containers, where the second one is
     /// modified.
     ///
