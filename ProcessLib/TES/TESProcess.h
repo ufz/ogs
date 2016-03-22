@@ -52,8 +52,6 @@ public:
     void preIteration(const unsigned iter, GlobalVector const& x) override;
     NumLib::IterationResult postIteration(GlobalVector const& x) override;
 
-    ~TESProcess();
-
     bool isLinear() const override { return false; }
 
     void createLocalAssemblers() override;
@@ -79,7 +77,7 @@ private:
     makeExtrapolator(TESIntPtVariables const var) const;
 
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
-    std::vector<LocalAssembler*> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
     AssemblerLib::ComponentOrder _global_matrix_order =
             AssemblerLib::ComponentOrder::BY_COMPONENT;

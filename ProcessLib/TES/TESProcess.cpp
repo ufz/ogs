@@ -302,8 +302,8 @@ assembleConcreteProcess(
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    BP::_global_setup.execute(*BP::_global_assembler,
-                              _local_assemblers, t, x, M, K, b);
+    BP::_global_setup.executeDerefd(*BP::_global_assembler,
+                                    _local_assemblers, t, x, M, K, b);
 
 #ifndef NDEBUG
     if (_total_iteration == 0)
@@ -372,15 +372,15 @@ postIteration(GlobalVector const& x)
         };
 
         auto check_variable_bounds
-        = [&](std::size_t id, LocalAssembler* const loc_asm)
+        = [&](std::size_t id, LocalAssembler& loc_asm)
         {
             BP::_global_assembler->passLocalVector(
-                        do_check, id, x, *loc_asm);
+                        do_check, id, x, loc_asm);
         };
 
         // TODO Short-circuit evaluation that stops after the first error.
         //      But maybe that's not what I want to use here.
-        BP::_global_setup.execute(
+        BP::_global_setup.executeDerefd(
                     check_variable_bounds, _local_assemblers);
     }
 
@@ -549,14 +549,6 @@ makeExtrapolator(TESIntPtVariables const var) const
         return _extrapolator->getElementResiduals();
     };
     return { eval_field, eval_residuals };
-}
-
-template<typename GlobalSetup>
-TESProcess<GlobalSetup>::
-~TESProcess()
-{
-    for (auto p : _local_assemblers)
-        delete p;
 }
 
 
