@@ -116,7 +116,8 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         globalSetup.createMatrix(local_to_global_index_map.dofSize())};
     A->setZero();
     auto const t = 0.0;
-    globalSetup.execute(assembler, local_assembler_data, t, *x, *M_dummy, *A, *rhs);
+    globalSetup.executeDereferenced(
+        assembler, local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 
     //std::cout << "A=\n";
     //A->write(std::cout);
