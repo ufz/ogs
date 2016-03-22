@@ -42,16 +42,8 @@ VtkStationSource::VtkStationSource()
 	_removable = false; // From VtkAlgorithmProperties
 	this->SetNumberOfInputPorts(0);
 
-	const GeoLib::Color* c = GeoLib::getRandomColor();
-	GetProperties()->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
-	delete c;
-}
-
-VtkStationSource::~VtkStationSource()
-{
-	std::map<std::string, GeoLib::Color*>::iterator it;
-	for (it = _colorLookupTable.begin(); it != _colorLookupTable.end(); ++it)
-		delete it->second;
+	const GeoLib::Color c = GeoLib::getRandomColor();
+	GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
 void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )

@@ -16,7 +16,7 @@
 #include <QPainter>
 
 StratBar::StratBar(GeoLib::StationBorehole* station,
-                   std::map<std::string, GeoLib::Color*>* stratColors,
+                   std::map<std::string, GeoLib::Color>* stratColors,
                    QGraphicsItem* parent) :
 	QGraphicsItem(parent), _station(station)
 {
@@ -61,11 +61,8 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 		top += height;
 		height = logHeight(((*(profile[i - 1]))[2] - (*(profile[i]))[2]));
 		QRectF layer(0, top, BARWIDTH, height);
-		const GeoLib::Color* c (GeoLib::getColor(soilNames[i], _stratColors));
-		QBrush brush(QColor((int)(*c)[0],
-		                    (int)(*c)[1],
-		                    (int)(*c)[2],
-		                    127), Qt::SolidPattern);
+		GeoLib::Color const& c (GeoLib::getColor(soilNames[i], _stratColors));
+		QBrush brush(QColor((int)c[0], (int)c[1], (int)c[2], 127), Qt::SolidPattern);
 		painter->setBrush(brush);
 
 		painter->drawRect(layer);

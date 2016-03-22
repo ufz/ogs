@@ -36,7 +36,7 @@ public:
 
 	/// Returns the colour lookup table generated for boreholes.
 	/// This method should only be called after the colour lookup table has actually been build (via RequestData() or setColorLookupTable()).
-	const std::map<std::string, GeoLib::Color*>& getColorLookupTable() const
+	const std::map<std::string, GeoLib::Color>& getColorLookupTable() const
 		{ return _colorLookupTable; }
 
 	/// Returns the type of observation site represented in this source object
@@ -57,7 +57,6 @@ public:
 
 protected:
 	VtkStationSource();
-	~VtkStationSource();
 
 	/// Computes the polygonal data object.
 	int RequestData(vtkInformation* request,
@@ -73,7 +72,7 @@ protected:
 
 	/// The colour table for stratigraphic data. This table is either set using the setColorLookupTable() method or is generated
 	/// automatically with random colours while creating the VtkStationSource-object.
-	std::map<std::string, GeoLib::Color*> _colorLookupTable;
+	std::map<std::string, GeoLib::Color> _colorLookupTable;
 
 private:
 	std::size_t GetIndexByName( std::string const& name );

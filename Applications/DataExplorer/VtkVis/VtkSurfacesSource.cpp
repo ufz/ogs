@@ -39,9 +39,9 @@ VtkSurfacesSource::VtkSurfacesSource()
 	this->SetNumberOfInputPorts(0);
 	//this->SetColorBySurface(true);
 
-	const GeoLib::Color* c = GeoLib::getRandomColor();
+	const GeoLib::Color c = GeoLib::getRandomColor();
 	vtkProperty* vtkProps = GetProperties();
-	vtkProps->SetColor((*c)[0] / 255.0,(*c)[1] / 255.0,(*c)[2] / 255.0);
+	vtkProps->SetColor(c[0] / 255.0,c[1] / 255.0,c[2] / 255.0);
 	vtkProps->SetEdgeVisibility(0);
 }
 

@@ -30,7 +30,7 @@ class StratScene : public QGraphicsScene
 public:
 	/// Constructor
 	StratScene(GeoLib::StationBorehole* station,
-	           std::map<std::string, GeoLib::Color*>* stratColors = NULL,
+	           std::map<std::string, GeoLib::Color>* stratColors = nullptr,
 	           QObject* parent = 0);
 	~StratScene();
 
@@ -52,7 +52,7 @@ private:
 
 	/// Add a stratigraphy-bar to the scene.
 	StratBar* addStratBar(GeoLib::StationBorehole* station,
-	                      std::map<std::string, GeoLib::Color*>* stratColors = NULL);
+	                      std::map<std::string, GeoLib::Color>* stratColors = nullptr);
 };
 
 #endif //STRATSCENE_H

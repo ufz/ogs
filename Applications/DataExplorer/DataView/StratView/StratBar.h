@@ -36,7 +36,7 @@ public:
 	 * \param parent The parent QGraphicsItem.
 	 */
 	StratBar(GeoLib::StationBorehole* station,
-	         std::map<std::string, GeoLib::Color*>* stratColors = NULL,
+	         std::map<std::string, GeoLib::Color>* stratColors = nullptr,
 	         QGraphicsItem* parent = 0);
 	~StratBar();
 
@@ -60,7 +60,7 @@ private:
 	static const int BARWIDTH = 50;
 
 	GeoLib::StationBorehole* _station;
-	std::map<std::string, GeoLib::Color*> _stratColors;
+	std::map<std::string, GeoLib::Color> _stratColors;
 };
 
 #endif //STRATBAR_H
