@@ -110,21 +110,6 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #endif
 
-
-// Generates a lambda that creates a new LocalAssembler of type LAData<SHAPE_FCT>
-#define OGS_NEW_LOCAL_ASSEMBLER(SHAPE_FCT) \
-    [](MeshLib::Element const& e, \
-       std::size_t const local_matrix_size, \
-       unsigned const integration_order, \
-       ConstructorArgs&&... args) \
-    { \
-        return new LAData<SHAPE_FCT>{ \
-            e, local_matrix_size, integration_order, \
-            std::forward<ConstructorArgs>(args)... \
-        }; \
-    }
-
-
 namespace AssemblerLib
 {
 
@@ -147,10 +132,20 @@ class LocalDataInitializer
                 typename ShapeFunction_::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunction_>
-        using LAData = LocalAssemblerData_<
-                ShapeFunction_,
-                IntegrationMethod<ShapeFunction_>,
-                GlobalMatrix_, GlobalVector_, GlobalDim>;
+    using LAData = LocalAssemblerData_<
+            ShapeFunction_,
+            IntegrationMethod<ShapeFunction_>,
+            GlobalMatrix_, GlobalVector_, GlobalDim>;
+
+    using LADataIntfPtr
+        = std::unique_ptr<LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>>;
+
+    using LADataBuilder = std::function<LADataIntfPtr(
+            MeshLib::Element const& e,
+            std::size_t const local_matrix_size,
+            unsigned const integration_order,
+            ConstructorArgs&&...
+        )>;
 
 public:
     LocalDataInitializer()
@@ -160,19 +155,19 @@ public:
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 0 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Point))] =
-                OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapePoint1);
+                makeLocalAssemblerBuilder<NumLib::ShapePoint1>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 \
         && OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Line))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeLine2);
+            makeLocalAssemblerBuilder<NumLib::ShapeLine2>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Line3))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeLine3);
+            makeLocalAssemblerBuilder<NumLib::ShapeLine3>();
 #endif
 
 
@@ -181,27 +176,27 @@ public:
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Quad))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeQuad4);
+            makeLocalAssemblerBuilder<NumLib::ShapeQuad4>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Hex))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeHex8);
+            makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Quad8))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeQuad8);
+            makeLocalAssemblerBuilder<NumLib::ShapeQuad8>();
         _builder[std::type_index(typeid(MeshLib::Quad9))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeQuad9);
+            makeLocalAssemblerBuilder<NumLib::ShapeQuad9>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Hex20))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeHex20);
+            makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
 
@@ -210,25 +205,25 @@ public:
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Tri))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeTri3);
+            makeLocalAssemblerBuilder<NumLib::ShapeTri3>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Tet))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeTet4);
+            makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Tri6))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeTri6);
+            makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Tet10))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapeTet10);
+            makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
 
@@ -237,13 +232,13 @@ public:
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Prism))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapePrism6);
+            makeLocalAssemblerBuilder<NumLib::ShapePrism6>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Prism15))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapePrism15);
+            makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
         // /// Pyramids //////////////////////////////////////////////////
@@ -251,20 +246,20 @@ public:
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
         _builder[std::type_index(typeid(MeshLib::Pyramid))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapePyra5);
+            makeLocalAssemblerBuilder<NumLib::ShapePyra5>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 \
     && OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
-            OGS_NEW_LOCAL_ASSEMBLER(NumLib::ShapePyra13);
+            makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
 #endif
     }
 
     /// Sets the provided data_ptr to the newly created local assembler data.
     void operator()(
             const MeshLib::Element& e,
-            LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>*& data_ptr,
+            LADataIntfPtr& data_ptr,
             std::size_t const local_matrix_size,
             unsigned const integration_order,
             ConstructorArgs&&... args)
@@ -285,15 +280,25 @@ public:
     }
 
 private:
+    // Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
+    template<typename ShapeFct>
+    static LADataBuilder makeLocalAssemblerBuilder()
+    {
+        return [](MeshLib::Element const& e,
+                  std::size_t const local_matrix_size,
+                  unsigned const integration_order,
+                  ConstructorArgs&&... args)
+        {
+            return LADataIntfPtr{
+                new LAData<ShapeFct>{
+                    e, local_matrix_size, integration_order,
+                    std::forward<ConstructorArgs>(args)...
+                }};
+        };
+    }
+
     /// Mapping of element types to local assembler constructors.
-    std::unordered_map<
-        std::type_index,
-        std::function<LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>*(
-            MeshLib::Element const& e,
-            std::size_t const local_matrix_size,
-            unsigned const integration_order,
-            ConstructorArgs&&...)>
-        > _builder;
+    std::unordered_map<std::type_index, LADataBuilder> _builder;
 };
 
 }   // namespace AssemblerLib
@@ -307,6 +312,5 @@ private:
 #undef ENABLED_ELEMENT_TYPE_TRI
 #undef ENABLED_ELEMENT_TYPE_QUAD
 #undef OGS_ENABLED_ELEMENTS
-#undef OGS_NEW_LOCAL_ASSEMBLER
 
 #endif  // ASSEMBLER_LIB_LOCALDATAINITIALIZER_H_
