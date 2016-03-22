@@ -92,18 +92,18 @@ public:
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void operator()(std::size_t const id,
-        LocalAssembler* const local_assembler,
+        LocalAssembler& local_assembler,
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
-        auto cb = [local_assembler](
+        auto cb = [&local_assembler](
                 std::vector<double> const& local_x,
                 LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
                 const double t,
                 GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
         {
-            local_assembler->assemble(t, local_x);
-            local_assembler->addToGlobal(r_c_indices, M, K, b);
+            local_assembler.assemble(t, local_x);
+            local_assembler.addToGlobal(r_c_indices, M, K, b);
         };
 
         passLocalVector_(cb, id, _data_pos, x, t, M, K, b);
@@ -114,14 +114,14 @@ public:
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void preTimestep(std::size_t const id,
-                     LocalAssembler* const local_assembler,
+                     LocalAssembler& local_assembler,
                      GlobalVector const& x) const
     {
-        auto cb = [local_assembler](
+        auto cb = [&local_assembler](
             std::vector<double> const& local_x,
             LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
-            local_assembler->preTimestep(local_x);
+            local_assembler.preTimestep(local_x);
         };
 
         passLocalVector_(cb, id, _data_pos, x);
@@ -132,14 +132,14 @@ public:
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void postTimestep(std::size_t const id,
-                      LocalAssembler* const local_assembler,
+                      LocalAssembler& local_assembler,
                       GlobalVector const& x) const
     {
-        auto cb = [local_assembler](
+        auto cb = [&local_assembler](
             std::vector<double> const& local_x,
             LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
         {
-            local_assembler->postTimestep(local_x);
+            local_assembler.postTimestep(local_x);
         };
 
         passLocalVector_(cb, id, _data_pos, x);
@@ -178,14 +178,14 @@ public:
     /// \attention The index \c id is not necesserily the mesh item's id.
     template <typename LocalAssembler>
     void operator()(std::size_t const id,
-        LocalAssembler* const local_assembler,
+        LocalAssembler& local_assembler,
         const double t, GlobalVector& b) const
     {
         std::vector<GlobalIndexType> indices;
         auto const r_c_indices = getRowColumnIndices(id, _data_pos, indices);
 
-        local_assembler->assemble(t);
-        local_assembler->addToGlobal(r_c_indices, b);
+        local_assembler.assemble(t);
+        local_assembler.addToGlobal(r_c_indices, b);
     }
 
 private:
