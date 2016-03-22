@@ -54,10 +54,10 @@ init(MeshLib::Element const& e,
     _local_K.resize(MAT_SIZE, MAT_SIZE);
     _local_b.resize(MAT_SIZE);
 
-    _data.setAssemblyParameters(asm_params);
+    _d.setAssemblyParameters(asm_params);
 
     auto const n_integration_points = _shape_matrices.front().N.rows();
-    _data.init(n_integration_points, GlobalDim);
+    _d.init(n_integration_points, GlobalDim);
 
     _integration_point_values_cache.reset(new std::vector<double>);
 }
@@ -83,7 +83,7 @@ assemble(const double /*t*/, std::vector<double> const& local_x)
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNPoints();
 
-    _data.preEachAssemble();
+    _d.preEachAssemble();
 
     for (std::size_t ip(0); ip < n_integration_points; ip++)
     {
@@ -91,7 +91,7 @@ assemble(const double /*t*/, std::vector<double> const& local_x)
         auto const& wp = integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _data.assembleIntegrationPoint(ip, local_x,
+        _d.assembleIntegrationPoint(ip, local_x,
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight,
                                        _local_M, _local_K, _local_b);
     }
@@ -144,7 +144,7 @@ getIntegrationPointValues(TESIntPtVariables const var,
     case TESIntPtVariables::LOADING:
         // These cases do not need access to nodal values
         // Thus, they can be handled inside _data
-            return _data.getIntegrationPointValues(var, *_integration_point_values_cache);
+            return _d.getIntegrationPointValues(var, *_integration_point_values_cache);
 
     // TODO that's an element value, ain't it?
     case TESIntPtVariables::REACTION_DAMPING_FACTOR:
@@ -152,7 +152,7 @@ getIntegrationPointValues(TESIntPtVariables const var,
         auto& alphas = *_integration_point_values_cache;
         alphas.clear();
         alphas.resize(_shape_matrices.size(),
-                      _data.getReactionAdaptor().getReactionDampingFactor());
+                      _d.getReactionAdaptor().getReactionDampingFactor());
 
         return alphas;
     }
@@ -176,7 +176,7 @@ TESLocalAssembler<ShapeFunction_,
     GlobalDim>::
 checkBounds(std::vector<double> const& local_x)
 {
-    return _data.getReactionAdaptor().checkBounds(local_x);
+    return _d.getReactionAdaptor().checkBounds(local_x);
 }
 
 }   // namespace TES

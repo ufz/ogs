@@ -91,7 +91,7 @@ private:
     using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
         NODAL_DOF, GlobalDim>;
 
-    TESLocalAssemblerInner<LAT> _data;
+    TESLocalAssemblerInner<LAT> _d;
 
     using NodalMatrixType = typename LAT::LocalMatrix;
     using NodalVectorType = typename LAT::LocalVector;
@@ -106,7 +106,7 @@ private:
     NodalMatrixType _local_K;
     NodalVectorType _local_b;
 
-    // TODO try to make const
+    // TODO Use the value from Process
     unsigned _integration_order = 2;
 
     std::unique_ptr<std::vector<double> > _integration_point_values_cache;
