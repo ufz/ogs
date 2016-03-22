@@ -9,6 +9,20 @@
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
    - Requires Boost >= 1.56 because of boost::optional with move semantics.
  - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056
+ - Rework tools:
+   - CreateBoundaryConditionsAlongPolyline
+   - AddTopLayer
+   - ResetPropertyInPolygonalRegion
+   - removeMeshElements
+ - MeshLib: Class MeshElementGrid implements a grid data structure supporting search operations
+ - GeoMapper: Cleanup
+ - GeoLib:
+   - Fix bugs (lineSegmentIntersects, Polygon::splitPolygonAtIntersection, Grid)
+ - FileIO:
+   - Rework GMSH interface
+     - Process geometries located other than in the x-y-plane
+     - Respect the scaling factor for Stations
+     - fix mem leaks
 
 ### Infrastructure
 
