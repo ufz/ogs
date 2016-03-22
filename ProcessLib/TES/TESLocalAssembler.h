@@ -26,7 +26,7 @@ namespace TES
 
 template <typename GlobalMatrix, typename GlobalVector>
 class TESLocalAssemblerInterface
-        : public NumLib::Extrapolatable<GlobalVector, SecondaryVariables>
+        : public NumLib::Extrapolatable<GlobalVector, TESIntPtVariables>
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;
@@ -81,7 +81,7 @@ public:
     bool checkBounds(std::vector<double> const& local_x) override;
 
     std::vector<double> const&
-    getIntegrationPointValues(SecondaryVariables const var,
+    getIntegrationPointValues(TESIntPtVariables const var,
                               std::size_t const element_id,
                               GlobalVector const& x) const override;
 

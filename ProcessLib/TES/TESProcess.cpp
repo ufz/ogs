@@ -57,17 +57,17 @@ TESProcess(MeshLib::Mesh& mesh,
             }
         };
 
-        add_secondary_variable("solid_density",  1, makeExtrapolator(SecondaryVariables::SOLID_DENSITY));
-        add_secondary_variable("reaction_rate",  1, makeExtrapolator(SecondaryVariables::REACTION_RATE));
-        add_secondary_variable("velocity_x",     1, makeExtrapolator(SecondaryVariables::VELOCITY_X));
+        add_secondary_variable("solid_density",  1, makeExtrapolator(TESIntPtVariables::SOLID_DENSITY));
+        add_secondary_variable("reaction_rate",  1, makeExtrapolator(TESIntPtVariables::REACTION_RATE));
+        add_secondary_variable("velocity_x",     1, makeExtrapolator(TESIntPtVariables::VELOCITY_X));
         if (BP::_mesh.getDimension() >= 2)
-            add_secondary_variable("velocity_y", 1, makeExtrapolator(SecondaryVariables::VELOCITY_Y));
+            add_secondary_variable("velocity_y", 1, makeExtrapolator(TESIntPtVariables::VELOCITY_Y));
         if (BP::_mesh.getDimension() >= 3)
-            add_secondary_variable("velocity_z", 1, makeExtrapolator(SecondaryVariables::VELOCITY_Z));
+            add_secondary_variable("velocity_z", 1, makeExtrapolator(TESIntPtVariables::VELOCITY_Z));
 
-        add_secondary_variable("loading",        1, makeExtrapolator(SecondaryVariables::LOADING));
+        add_secondary_variable("loading",        1, makeExtrapolator(TESIntPtVariables::LOADING));
         add_secondary_variable("reaction_damping_factor", 1,
-                               makeExtrapolator(SecondaryVariables::REACTION_DAMPING_FACTOR));
+                               makeExtrapolator(TESIntPtVariables::REACTION_DAMPING_FACTOR));
 
         namespace PH = std::placeholders;
         using Self = TESProcess<GlobalSetup>;
@@ -528,7 +528,7 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
 template<typename GlobalSetup>
 SecondaryVariableFunctions<typename TESProcess<GlobalSetup>::GlobalVector>
 TESProcess<GlobalSetup>::
-makeExtrapolator(SecondaryVariables const var) const
+makeExtrapolator(TESIntPtVariables const var) const
 {
     auto const eval_field = [var, this](
             GlobalVector const& x,

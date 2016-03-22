@@ -76,7 +76,7 @@ private:
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
 
     SecondaryVariableFunctions<GlobalVector>
-    makeExtrapolator(SecondaryVariables const var) const;
+    makeExtrapolator(TESIntPtVariables const var) const;
 
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     std::vector<LocalAssembler*> _local_assemblers;
@@ -93,8 +93,8 @@ private:
     std::size_t _total_iteration = 0;
 
     //! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
+    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, TESIntPtVariables, LocalAssembler>;
+    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, TESIntPtVariables, LocalAssembler>;
     std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 

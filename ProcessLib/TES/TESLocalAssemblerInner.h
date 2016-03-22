@@ -27,13 +27,10 @@ namespace ProcessLib
 namespace TES
 {
 
-enum class SecondaryVariables : unsigned {
+enum class TESIntPtVariables : unsigned {
     SOLID_DENSITY, REACTION_RATE,
     VELOCITY_X, VELOCITY_Y, VELOCITY_Z,
-    VAPOUR_PARTIAL_PRESSURE,
-    RELATIVE_HUMIDITY,
     LOADING,
-    EQUILIBRIUM_LOADING,
     REACTION_DAMPING_FACTOR
 };
 
@@ -91,7 +88,7 @@ public:
     void preEachAssemble();
 
     std::vector<double> const&
-    getIntegrationPointValues(SecondaryVariables const var, std::vector<double>& cache) const;
+    getIntegrationPointValues(TESIntPtVariables const var, std::vector<double>& cache) const;
 
     // TODO pass to constructor
     void setAssemblyParameters(AssemblyParams const& ap) { _d.ap = &ap; }

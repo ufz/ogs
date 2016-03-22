@@ -311,24 +311,24 @@ preEachAssembleIntegrationPoint(
 template<typename Traits>
 std::vector<double> const&
 TESLocalAssemblerInner<Traits>::
-getIntegrationPointValues(SecondaryVariables const var, std::vector<double>& cache) const
+getIntegrationPointValues(TESIntPtVariables const var, std::vector<double>& cache) const
 {
-    switch (static_cast<SecondaryVariables>(var))
+    switch (var)
     {
-    case SecondaryVariables::REACTION_RATE:
+    case TESIntPtVariables::REACTION_RATE:
         return _d.reaction_rate;
-    case SecondaryVariables::SOLID_DENSITY:
+    case TESIntPtVariables::SOLID_DENSITY:
         return _d.solid_density;
-    case SecondaryVariables::VELOCITY_X:
+    case TESIntPtVariables::VELOCITY_X:
         return _d.velocity[0];
-    case SecondaryVariables::VELOCITY_Y:
+    case TESIntPtVariables::VELOCITY_Y:
         assert(_d.velocity.size() >= 2);
         return _d.velocity[1];
-    case SecondaryVariables::VELOCITY_Z:
+    case TESIntPtVariables::VELOCITY_Z:
         assert(_d.velocity.size() >= 3);
         return _d.velocity[2];
 
-    case SecondaryVariables::LOADING:
+    case TESIntPtVariables::LOADING:
     {
         auto& Cs = cache;
         Cs.clear();
@@ -341,10 +341,7 @@ getIntegrationPointValues(SecondaryVariables const var, std::vector<double>& cac
         return Cs;
     }
 
-    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
-    case SecondaryVariables::RELATIVE_HUMIDITY:
-    case SecondaryVariables::EQUILIBRIUM_LOADING:
-    case SecondaryVariables::REACTION_DAMPING_FACTOR:
+    case TESIntPtVariables::REACTION_DAMPING_FACTOR:
         // not handled in this method
         break;
     }

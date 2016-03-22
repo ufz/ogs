@@ -130,24 +130,24 @@ TESLocalAssembler<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-getIntegrationPointValues(SecondaryVariables const var,
+getIntegrationPointValues(TESIntPtVariables const var,
                           const std::size_t /*element_id*/,
                           const GlobalVector& /*x*/) const
 {
     switch (var)
     {
-    case SecondaryVariables::REACTION_RATE:
-    case SecondaryVariables::SOLID_DENSITY:
-    case SecondaryVariables::VELOCITY_X:
-    case SecondaryVariables::VELOCITY_Y:
-    case SecondaryVariables::VELOCITY_Z:
-    case SecondaryVariables::LOADING:
+    case TESIntPtVariables::REACTION_RATE:
+    case TESIntPtVariables::SOLID_DENSITY:
+    case TESIntPtVariables::VELOCITY_X:
+    case TESIntPtVariables::VELOCITY_Y:
+    case TESIntPtVariables::VELOCITY_Z:
+    case TESIntPtVariables::LOADING:
         // These cases do not need access to nodal values
         // Thus, they can be handled inside _data
             return _data.getIntegrationPointValues(var, *_integration_point_values_cache);
 
     // TODO that's an element value, ain't it?
-    case SecondaryVariables::REACTION_DAMPING_FACTOR:
+    case TESIntPtVariables::REACTION_DAMPING_FACTOR:
     {
         auto& alphas = *_integration_point_values_cache;
         alphas.clear();
@@ -156,11 +156,6 @@ getIntegrationPointValues(SecondaryVariables const var,
 
         return alphas;
     }
-
-    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
-    case SecondaryVariables::EQUILIBRIUM_LOADING:
-    case SecondaryVariables::RELATIVE_HUMIDITY:
-        break;
     }
 
     _integration_point_values_cache->clear();
