@@ -58,8 +58,6 @@ init(MeshLib::Element const& e,
 
     auto const n_integration_points = _shape_matrices.front().N.rows();
     _d.init(n_integration_points, GlobalDim);
-
-    _integration_point_values_cache.reset(new std::vector<double>);
 }
 
 
@@ -132,9 +130,10 @@ TESLocalAssembler<ShapeFunction_,
     GlobalDim>::
 getIntegrationPointValues(TESIntPtVariables const var,
                           const std::size_t /*element_id*/,
-                          const GlobalVector& /*x*/) const
+                          const GlobalVector& /*x*/,
+                          std::vector<double>& cache) const
 {
-    return _d.getIntegrationPointValues(var, *_integration_point_values_cache);
+    return _d.getIntegrationPointValues(var, cache);
 }
 
 

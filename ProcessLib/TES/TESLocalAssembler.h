@@ -83,7 +83,8 @@ public:
     std::vector<double> const&
     getIntegrationPointValues(TESIntPtVariables const var,
                               std::size_t const element_id,
-                              GlobalVector const& x) const override;
+                              GlobalVector const& x,
+                              std::vector<double>& cache) const override;
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
@@ -108,8 +109,6 @@ private:
 
     // TODO Use the value from Process
     unsigned _integration_order = 2;
-
-    std::unique_ptr<std::vector<double> > _integration_point_values_cache;
 };
 
 }   // namespace TES
