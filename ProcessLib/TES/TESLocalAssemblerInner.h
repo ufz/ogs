@@ -51,8 +51,6 @@ public:
             typename Traits::LocalVector& local_b
             );
 
-    void init(const unsigned num_int_pts, const unsigned dimension);
-
     void preEachAssemble();
 
     std::vector<double> const&

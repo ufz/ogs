@@ -407,6 +407,7 @@ computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
     (void) x; (void) dof_table;
     return GlobalVector{};
 
+    // TODO implement
 #if 0
     case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
     {
@@ -449,6 +450,7 @@ computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
     (void) x; (void) dof_table;
     return GlobalVector{};
 
+    // TODO implement
 #if 0
     case SecondaryVariables::RELATIVE_HUMIDITY:
     {
@@ -490,6 +492,7 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
     (void) x; (void) dof_table;
     return GlobalVector{};
 
+    // TODO implement
 #if 0
     case SecondaryVariables::EQUILIBRIUM_LOADING:
     {

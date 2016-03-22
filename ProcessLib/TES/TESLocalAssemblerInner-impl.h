@@ -15,8 +15,6 @@
 #include <iostream>
 #include <cstdio>
 
-#include <typeinfo>
-
 #include <logog/include/logog.hpp>
 
 #include "NumLib/Function/Interpolation.h"

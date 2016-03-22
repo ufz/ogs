@@ -10,9 +10,6 @@
 #ifndef PROCESS_LIB_TESPROCESS_H_
 #define PROCESS_LIB_TESPROCESS_H_
 
-#include <set>
-#include <tuple>
-
 #include "ProcessLib/Process.h"
 
 #include "TESAssemblyParams.h"
