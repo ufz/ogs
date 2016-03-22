@@ -130,11 +130,11 @@ TESLocalAssembler<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-getIntegrationPointValues(unsigned const var,
+getIntegrationPointValues(SecondaryVariables const var,
                           const std::size_t /*element_id*/,
                           const GlobalVector& /*x*/) const
 {
-    switch (static_cast<SecondaryVariables>(var))
+    switch (var)
     {
     case SecondaryVariables::REACTION_RATE:
     case SecondaryVariables::SOLID_DENSITY:

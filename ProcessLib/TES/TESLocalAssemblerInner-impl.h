@@ -311,7 +311,7 @@ preEachAssembleIntegrationPoint(
 template<typename Traits>
 std::vector<double> const&
 TESLocalAssemblerInner<Traits>::
-getIntegrationPointValues(unsigned const var, std::vector<double>& cache) const
+getIntegrationPointValues(SecondaryVariables const var, std::vector<double>& cache) const
 {
     switch (static_cast<SecondaryVariables>(var))
     {

@@ -535,9 +535,7 @@ makeExtrapolator(SecondaryVariables const var) const
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
             ) -> GlobalVector
     {
-        _extrapolator->extrapolate(
-            x, _local_assemblers,
-            static_cast<unsigned>(var)); // TODO re-introduce enum?
+        _extrapolator->extrapolate(x, _local_assemblers, var);
         return _extrapolator->getNodalValues();
     };
 
@@ -546,9 +544,7 @@ makeExtrapolator(SecondaryVariables const var) const
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
             ) -> GlobalVector
     {
-        _extrapolator->calculateResiduals(
-                    x, _local_assemblers,
-                    static_cast<unsigned>(var)); // TODO re-introduce enum?
+        _extrapolator->calculateResiduals(x, _local_assemblers, var);
         return _extrapolator->getElementResiduals();
     };
     return { eval_field, eval_residuals };

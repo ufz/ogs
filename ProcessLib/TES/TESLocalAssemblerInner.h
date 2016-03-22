@@ -91,7 +91,7 @@ public:
     void preEachAssemble();
 
     std::vector<double> const&
-    getIntegrationPointValues(unsigned const var, std::vector<double>& cache) const;
+    getIntegrationPointValues(SecondaryVariables const var, std::vector<double>& cache) const;
 
     // TODO pass to constructor
     void setAssemblyParameters(AssemblyParams const& ap) { _d.ap = &ap; }

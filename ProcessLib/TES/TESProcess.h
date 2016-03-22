@@ -93,8 +93,8 @@ private:
     std::size_t _total_iteration = 0;
 
     //! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, LocalAssembler>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, LocalAssembler>;
+    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
+    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, SecondaryVariables, LocalAssembler>;
     std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 
