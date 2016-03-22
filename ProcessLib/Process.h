@@ -44,15 +44,22 @@ namespace ProcessLib
 {
 
 template<typename GlobalVector>
-struct SecondaryVariable
+struct SecondaryVariableFunctions
 {
 	using Fct = std::function<GlobalVector(
 		GlobalVector const& x,
 		AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
 
+	Fct eval_field;
+	Fct eval_residuals;
+};
+
+template<typename GlobalVector>
+struct SecondaryVariable
+{
 	std::string const name;
 	unsigned n_components;
-	Fct eval;
+	SecondaryVariableFunctions<GlobalVector> fcts;
 };
 
 template <typename GlobalVector>
@@ -195,11 +202,13 @@ public:
 			assert(var.n_components == 1); // TODO [CL] implement other cases
 
 			{
+				DBUG("  process var %s", var.name.c_str());
+
 				auto result = get_or_create_mesh_property(var.name, MeshLib::MeshItemType::Node);
 				assert(result->size() == _mesh.getNNodes());
 
 				auto const& nodal_values =
-					var.eval(x, *_local_to_global_index_map);
+					var.fcts.eval_field(x, *_local_to_global_index_map);
 
 				// Copy result
 				for (std::size_t i = 0; i < _mesh.getNNodes(); ++i)
@@ -209,21 +218,15 @@ public:
 				}
 			}
 
-#if 0
-			// TODO fix
-			if (_process_output.output_residuals) {
-				DBUG("  process var %s residual", property_name.c_str());
-				auto const& property_name_res = property_name + "_residual";
+			if (_process_output.output_residuals && var.fcts.eval_residuals) {
+				DBUG("  process var %s residual", var.name.c_str());
+				auto const& property_name_res = var.name + "_residual";
 
 				auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
 				assert(result->size() == _mesh.getNElements());
 
-				_extrapolator->calculateResiduals(
-					x,
-					*extrapolatableBegin(),
-					*extrapolatableEnd(),
-					property);
-				auto const& residuals = _extrapolator->getElementResiduals();
+				auto const& residuals =
+					var.fcts.eval_field(x, *_local_to_global_index_map);
 
 				// Copy result
 				for (std::size_t i = 0; i < _mesh.getNElements(); ++i)
@@ -232,18 +235,12 @@ public:
 					(*result)[i] = residuals[i];
 				}
 			}
-#endif
 		};
 
 		for (auto const& p : _process_output.secondary_variables)
 		{
-			if (output_variables.find(p.name) == output_variables.cend())
-				return;
-
-			DBUG("  process var %s", p.name.c_str());
-
-			// TODO fix
-			add_secondary_var(p);
+			if (output_variables.find(p.name) != output_variables.cend())
+				add_secondary_var(p);
 		}
 
 		// Write output file
