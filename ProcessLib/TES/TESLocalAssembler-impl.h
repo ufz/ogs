@@ -134,32 +134,7 @@ getIntegrationPointValues(TESIntPtVariables const var,
                           const std::size_t /*element_id*/,
                           const GlobalVector& /*x*/) const
 {
-    switch (var)
-    {
-    case TESIntPtVariables::REACTION_RATE:
-    case TESIntPtVariables::SOLID_DENSITY:
-    case TESIntPtVariables::VELOCITY_X:
-    case TESIntPtVariables::VELOCITY_Y:
-    case TESIntPtVariables::VELOCITY_Z:
-    case TESIntPtVariables::LOADING:
-        // These cases do not need access to nodal values
-        // Thus, they can be handled inside _data
-            return _d.getIntegrationPointValues(var, *_integration_point_values_cache);
-
-    // TODO that's an element value, ain't it?
-    case TESIntPtVariables::REACTION_DAMPING_FACTOR:
-    {
-        auto& alphas = *_integration_point_values_cache;
-        alphas.clear();
-        alphas.resize(_shape_matrices.size(),
-                      _d.getReactionAdaptor().getReactionDampingFactor());
-
-        return alphas;
-    }
-    }
-
-    _integration_point_values_cache->clear();
-    return *_integration_point_values_cache;
+    return _d.getIntegrationPointValues(var, *_integration_point_values_cache);
 }
 
 

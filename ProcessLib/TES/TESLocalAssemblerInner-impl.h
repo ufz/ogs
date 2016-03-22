@@ -341,9 +341,17 @@ getIntegrationPointValues(TESIntPtVariables const var, std::vector<double>& cach
         return Cs;
     }
 
+    // TODO that's an element value, ain't it?
     case TESIntPtVariables::REACTION_DAMPING_FACTOR:
-        // not handled in this method
-        break;
+    {
+        auto const num_integration_points = _d.solid_density.size();
+        auto& alphas = cache;
+        alphas.clear();
+        alphas.resize(num_integration_points,
+                      _d.reaction_adaptor->getReactionDampingFactor());
+
+        return alphas;
+    }
     }
 
     cache.clear();
