@@ -10,7 +10,6 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 #define PROCESS_LIB_GROUNDWATERFLOW_FEM_H_
 
-#include <memory>
 #include <vector>
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -26,6 +25,8 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
+// TODO now this interface is basically the same for all processes that assemble a
+//      FirstOrderImplicitQuasiLinear ODE system.
 template <typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerDataInterface
 {
@@ -59,26 +60,23 @@ public:
                        unsigned const integration_order,
                        Parameter<double, MeshLib::Element const&> const&
                        hydraulic_conductivity)
-    {
-        _integration_order = integration_order;
-
-        _shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
-                e, integration_order);
-
-        _hydraulic_conductivity = [&hydraulic_conductivity, &e]()
-        {
-            return hydraulic_conductivity(e);
-        };
-
-        _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
-        _localRhs.reset(new NodalVectorType(local_matrix_size));
-    }
+        : _shape_matrices(
+              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
+                  e, integration_order))
+        , _hydraulic_conductivity([&hydraulic_conductivity, &e]()
+          {
+              return hydraulic_conductivity(e);
+          })
+        // TODO narrowing conversion
+        , _localA(local_matrix_size, local_matrix_size)
+        , _localRhs(local_matrix_size)
+        , _integration_order(integration_order)
+    {}
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
     {
-        _localA->setZero();
-        _localRhs->setZero();
+        _localA.setZero();
+        _localRhs.setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -86,9 +84,9 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _localA->noalias() += sm.dNdx.transpose() *
-                                  _hydraulic_conductivity() * sm.dNdx *
-                                  sm.detJ * wp.getWeight();
+            _localA.noalias() += sm.dNdx.transpose() *
+                                 _hydraulic_conductivity() * sm.dNdx *
+                                 sm.detJ * wp.getWeight();
         }
     }
 
@@ -96,18 +94,18 @@ public:
         GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {
-        K.add(indices, *_localA);
-        b.add(indices.rows, *_localRhs);
+        K.add(indices, _localA);
+        b.add(indices.rows, _localRhs);
     }
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
     std::function<double(void)> _hydraulic_conductivity;
 
-    std::unique_ptr<NodalMatrixType> _localA;
-    std::unique_ptr<NodalVectorType> _localRhs;
+    NodalMatrixType _localA;
+    NodalVectorType _localRhs;
 
-    unsigned _integration_order = 2;
+    unsigned const _integration_order;
 };
 
 
