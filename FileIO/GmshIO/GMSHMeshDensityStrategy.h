@@ -28,7 +28,7 @@ namespace GMSH {
 
 /**
  * virtual base class GMSHMeshDensityStrategy for classes
- * GMSHAdaptiveMeshDensity, GMSHFixedMeshDensity and GMSHNoMeshDensity
+ * GMSHAdaptiveMeshDensity and GMSHFixedMeshDensity.
  */
 class GMSHMeshDensityStrategy
 {
@@ -36,6 +36,7 @@ public:
 	virtual ~GMSHMeshDensityStrategy() {}
 	virtual void init(std::vector<GeoLib::Point const*> const&) = 0;
 	virtual double getMeshDensityAtPoint(GeoLib::Point const*const) const = 0;
+	virtual double getMeshDensityAtStation(GeoLib::Point const*const) const = 0;
 };
 
 }

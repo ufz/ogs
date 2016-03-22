@@ -16,6 +16,7 @@
  */
 
 #include <fstream>
+#include <memory>
 #include <vector>
 
 #include <logog/include/logog.hpp>
@@ -27,7 +28,6 @@
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/GmshIO/GMSHAdaptiveMeshDensity.h"
 #include "FileIO/GmshIO/GMSHFixedMeshDensity.h"
-#include "FileIO/GmshIO/GMSHNoMeshDensity.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -56,9 +56,6 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
 	_n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries)
 {
 	switch (mesh_density_algorithm) {
-	case GMSH::MeshDensityAlgorithm::NoMeshDensity:
-		_mesh_density_strategy = new GMSH::GMSHNoMeshDensity;
-		break;
 	case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
 		_mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(param1);
 		break;
@@ -411,22 +408,30 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 	// *** insert stations and polylines (except polygons) in the appropriate object of
 	//     class GMSHPolygonTree
 	// *** insert stations
-	const std::size_t n_geo_names(_selected_geometries.size());
-	for (std::size_t j(0); j < n_geo_names; j++) {
-		const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_selected_geometries[j]));
+	auto gmsh_stations = std::unique_ptr<std::vector<GeoLib::Point*>>(
+	    new std::vector<GeoLib::Point*>);
+	for (auto const& geometry_name : _selected_geometries) {
+		auto const* stations(_geo_objs.getStationVec(geometry_name));
 		if (stations) {
-			const std::size_t n_stations(stations->size());
-			for (std::size_t k(0); k < n_stations; k++) {
+			for (auto * station : *stations) {
 				bool found(false);
-				for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+				for (auto it(_polygon_tree_list.begin());
 					it != _polygon_tree_list.end() && !found; ++it) {
-					if ((*it)->insertStation((*stations)[k])) {
+					gmsh_stations->emplace_back(new GeoLib::Station(
+					    *static_cast<GeoLib::Station*>(station)));
+					if ((*it)->insertStation(gmsh_stations->back())) {
 						found = true;
 					}
 				}
 			}
 		}
 	}
+
+	std::string gmsh_stations_name(_gmsh_geo_name+"-Stations");
+	if (! gmsh_stations->empty()) {
+		_geo_objs.addStationVec(std::move(gmsh_stations), gmsh_stations_name);
+	}
+
 	// *** insert polylines
 	const std::size_t n_plys(merged_plys->size());
 	for (std::size_t k(0); k<n_plys; k++) {
@@ -471,6 +476,7 @@ void GMSHInterface::writeGMSHInputFile(std::ostream& out)
 		_geo_objs.removeSurfaceVec(_gmsh_geo_name);
 		_geo_objs.removePolylineVec(_gmsh_geo_name);
 		_geo_objs.removePointVec(_gmsh_geo_name);
+		_geo_objs.removeStationVec(gmsh_stations_name);
 	}
 }
 
