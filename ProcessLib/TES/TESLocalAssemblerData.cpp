@@ -18,7 +18,7 @@ namespace TES
 TESLocalAssemblerData::
 TESLocalAssemblerData(AssemblyParams const& ap_,
                       const unsigned num_int_pts, const unsigned dimension)
-    : ap{&ap_}
+    : ap{ap_}
     , solid_density(num_int_pts, ap_.initial_solid_density)
     , reaction_rate(num_int_pts)
     , velocity(dimension, std::vector<double>(num_int_pts))

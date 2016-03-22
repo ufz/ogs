@@ -59,7 +59,7 @@ public:
     getIntegrationPointValues(TESIntPtVariables const var, std::vector<double>& cache) const;
 
     // TODO better encapsulation
-    AssemblyParams const& getAssemblyParameters() const { return * _d.ap; }
+    AssemblyParams const& getAssemblyParameters() const { return _d.ap; }
     TESFEMReactionAdaptor const& getReactionAdaptor() const {
         return *_d.reaction_adaptor;
     }

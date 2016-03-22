@@ -18,7 +18,7 @@ struct TESLocalAssemblerData
 
     ~TESLocalAssemblerData();
 
-    AssemblyParams const*const ap;
+    AssemblyParams const& ap;
 
     // integration point quantities
     std::vector<double> solid_density;
