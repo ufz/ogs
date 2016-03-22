@@ -75,7 +75,7 @@ private:
     GlobalVector computeEquilibriumLoading(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
 
-    typename SecondaryVariable<GlobalVector>::Fct
+    SecondaryVariableFunctions<GlobalVector>
     makeExtrapolator(SecondaryVariables const var) const;
 
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;

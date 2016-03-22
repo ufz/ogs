@@ -47,13 +47,13 @@ TESProcess(MeshLib::Mesh& mesh,
         auto add_secondary_variable =
                 [this, &proc_vars](
                 std::string const& var, const unsigned num_components,
-                typename ProcessLib::SecondaryVariable<GlobalVector>::Fct&& fct)
+                typename ProcessLib::SecondaryVariableFunctions<GlobalVector>&& fcts)
                 -> void
         {
             if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
             {
                 BP::_process_output.secondary_variables.push_back(
-                    {var, num_components, std::move(fct)});
+                    {var, num_components, std::move(fcts)});
             }
         };
 
@@ -70,13 +70,14 @@ TESProcess(MeshLib::Mesh& mesh,
                                makeExtrapolator(SecondaryVariables::REACTION_DAMPING_FACTOR));
 
         namespace PH = std::placeholders;
+        using Self = TESProcess<GlobalSetup>;
 
         add_secondary_variable("vapour_partial_pressure", 1,
-            std::bind(&TESProcess<GlobalSetup>::computeVapourPartialPressure, this, PH::_1, PH::_2));
+            {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
         add_secondary_variable("relative_humidity",       1,
-            std::bind(&TESProcess<GlobalSetup>::computeRelativeHumidity,      this, PH::_1, PH::_2));
+            {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
         add_secondary_variable("equilibrium_loading",     1,
-            std::bind(&TESProcess<GlobalSetup>::computeEquilibriumLoading,    this, PH::_1, PH::_2));
+            {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
     }
 
     // variables for output
@@ -525,11 +526,11 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
 }
 
 template<typename GlobalSetup>
-typename SecondaryVariable<typename TESProcess<GlobalSetup>::GlobalVector>::Fct
+SecondaryVariableFunctions<typename TESProcess<GlobalSetup>::GlobalVector>
 TESProcess<GlobalSetup>::
 makeExtrapolator(SecondaryVariables const var) const
 {
-    auto const fct = [var, this](
+    auto const eval_field = [var, this](
             GlobalVector const& x,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
             ) -> GlobalVector
@@ -539,7 +540,18 @@ makeExtrapolator(SecondaryVariables const var) const
             static_cast<unsigned>(var)); // TODO re-introduce enum?
         return _extrapolator->getNodalValues();
     };
-    return fct;
+
+    auto const eval_residuals = [var, this](
+            GlobalVector const& x,
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            ) -> GlobalVector
+    {
+        _extrapolator->calculateResiduals(
+                    x, _local_assemblers,
+                    static_cast<unsigned>(var)); // TODO re-introduce enum?
+        return _extrapolator->getElementResiduals();
+    };
+    return { eval_field, eval_residuals };
 }
 
 template<typename GlobalSetup>
