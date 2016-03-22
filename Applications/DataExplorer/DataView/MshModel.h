@@ -69,6 +69,12 @@ private:
 	//bool isUniqueMeshName(std::string &name);
 	ProjectData& _project;
 
+	/// Creates a static map of all element type name-strings in QVariant format
+	static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();
+
+	static const std::map<MeshLib::MeshElemType, QVariant> elem_type_map;
+	static const QVariant element_str;
+
 signals:
 	void meshAdded(MshModel*, const QModelIndex&);
 	void meshRemoved(MshModel*, const QModelIndex&);
