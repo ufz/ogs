@@ -30,16 +30,15 @@ template <typename ShapeFunction_,
           typename GlobalMatrix,
           typename GlobalVector,
           unsigned GlobalDim>
-void
 TESLocalAssembler<ShapeFunction_,
     IntegrationMethod_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-init(MeshLib::Element const& e,
-     std::size_t const /*local_matrix_size*/,
-     unsigned const integration_order,
-     AssemblyParams const& asm_params)
+TESLocalAssembler(MeshLib::Element const& e,
+                  std::size_t const /*local_matrix_size*/,
+                  unsigned const integration_order,
+                  AssemblyParams const& asm_params)
 {
     _integration_order = integration_order;
 
@@ -59,7 +58,6 @@ init(MeshLib::Element const& e,
     auto const n_integration_points = _shape_matrices.front().N.rows();
     _d.init(n_integration_points, GlobalDim);
 }
-
 
 template <typename ShapeFunction_,
           typename IntegrationMethod_,

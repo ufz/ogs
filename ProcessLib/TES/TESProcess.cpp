@@ -257,7 +257,8 @@ createLocalAssemblers()
         TES::TESLocalAssembler,
         typename GlobalSetup::MatrixType,
         typename GlobalSetup::VectorType,
-        GlobalDim>;
+        GlobalDim,
+        AssemblyParams const&>;
 
     LocalDataInitializer initializer;
 

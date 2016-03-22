@@ -31,11 +31,6 @@ class TESLocalAssemblerInterface
 public:
     virtual ~TESLocalAssemblerInterface() = default;
 
-    virtual void init(MeshLib::Element const& e,
-                      std::size_t const local_matrix_size,
-                      unsigned const integration_order,
-                      AssemblyParams const& asm_params) = 0;
-
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
@@ -59,11 +54,10 @@ public:
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices     = typename ShapeMatricesType::ShapeMatrices;
 
-    void
-    init(MeshLib::Element const& e,
-         std::size_t const local_matrix_size,
-         unsigned const integration_order,
-         AssemblyParams const& asm_params) override;
+    TESLocalAssembler(MeshLib::Element const& e,
+                      std::size_t const local_matrix_size,
+                      unsigned const integration_order,
+                      AssemblyParams const& asm_params);
 
     void assemble(double const t, std::vector<double> const& local_x) override;
 
