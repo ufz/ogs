@@ -23,6 +23,14 @@
      - Process geometries located other than in the x-y-plane
      - Respect the scaling factor for Stations
      - fix mem leaks
+     - added/modified tests for GML-, GMS- and TetGen-files
+ - added command line tool for creating layered meshes from raster files
+ - OGSFileConverter is now a separate library
+ - Raster file to structured grid conversion can now convert pixel values in user-defined scalar arrays
+ - all scalar arrays will be displayed in mesh information window in DataExplorer
+ - added generation of structured meshes to DataExplorer
+ - restructured mesh creation access in DataExplorer
+ - mesh layers can be added to existing meshes in DataExplorer
 
 ### Infrastructure
 
@@ -219,6 +227,8 @@ The first version ogs6 is dedicated for elliptic problems.
 
 ### Fixes
 - DenseMatrix Gauss algorithm pivoting
+- Fixing mem-leaks on DataExplorer start up
+- Fixing resizing and layout issues in various DataExplorer dialogs
 
 ## Test examples
 ![](https://cloud.githubusercontent.com/assets/329493/6170573/ce9fd96c-b2d5-11e4-9936-a470e7be281f.png)
