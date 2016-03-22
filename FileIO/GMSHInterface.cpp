@@ -28,7 +28,6 @@
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/GmshIO/GMSHAdaptiveMeshDensity.h"
 #include "FileIO/GmshIO/GMSHFixedMeshDensity.h"
-#include "FileIO/GmshIO/GMSHNoMeshDensity.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -57,9 +56,6 @@ GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
 	_n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries)
 {
 	switch (mesh_density_algorithm) {
-	case GMSH::MeshDensityAlgorithm::NoMeshDensity:
-		_mesh_density_strategy = new GMSH::GMSHNoMeshDensity;
-		break;
 	case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
 		_mesh_density_strategy = new GMSH::GMSHFixedMeshDensity(param1);
 		break;

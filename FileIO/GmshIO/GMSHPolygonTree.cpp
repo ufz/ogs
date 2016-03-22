@@ -14,7 +14,6 @@
 
 #include "GMSHPolygonTree.h"
 
-#include "GMSHNoMeshDensity.h"
 #include "GMSHFixedMeshDensity.h"
 #include "GMSHAdaptiveMeshDensity.h"
 

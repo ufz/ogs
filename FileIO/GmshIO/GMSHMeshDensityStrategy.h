@@ -28,7 +28,7 @@ namespace GMSH {
 
 /**
  * virtual base class GMSHMeshDensityStrategy for classes
- * GMSHAdaptiveMeshDensity, GMSHFixedMeshDensity and GMSHNoMeshDensity
+ * GMSHAdaptiveMeshDensity and GMSHFixedMeshDensity.
  */
 class GMSHMeshDensityStrategy
 {
