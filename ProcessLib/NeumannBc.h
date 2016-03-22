@@ -131,7 +131,8 @@ private:
             LocalNeumannBcAsmDataInterface,
             LocalNeumannBcAsmData,
             GlobalMatrix, GlobalVector,
-            GlobalDim>;
+            GlobalDim,
+            std::function<double (MeshLib::Element const&)> const&>;
 
         LocalDataInitializer initializer;
 
@@ -155,8 +156,8 @@ private:
                 local_asm_builder,
                 _elements,
                 _local_assemblers,
-                elementValueLookup,
-                _integration_order);
+                _integration_order,
+                elementValueLookup);
 
         DBUG("Create global assembler.");
         _global_assembler.reset(
