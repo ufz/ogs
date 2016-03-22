@@ -28,10 +28,15 @@
 
 - Minimum Boost version: 1.56.0, #943
 - Boost requirement is now header-only, #940
+- Optional support for VTK 7, #1083
+- Test data is now a git submodule, #1000
+- In-code defined Jenkins jobs, #970
+- Jenkins now [tests also with clang sanitizers](https://svn.ufz.de:8443/job/OGS-6/job/Docker/job/clang-sanitizer/), #958
 
 
 ### Documentation
 
+- Speed up builds with [ccache](http://docs.opengeosys.org/docs/devguide/advanced/using-ccache), #938
 
 ### Fixes
 
