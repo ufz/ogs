@@ -107,6 +107,14 @@ namespace TES
 {
 
 template<typename Traits>
+TESLocalAssemblerInner<Traits>::
+TESLocalAssemblerInner(const AssemblyParams &ap,
+					   const unsigned num_int_pts, const unsigned dimension)
+	: _d{ap, num_int_pts, dimension}
+{}
+
+
+template<typename Traits>
 Eigen::Matrix3d
 TESLocalAssemblerInner<Traits>::
 getMassCoeffMatrix(const unsigned int_pt)
@@ -436,25 +444,6 @@ assembleIntegrationPoint(unsigned integration_point,
                 rhsCoeffVector(r) * smN * smDetJ * weight;
     }
 }
-
-
-template<typename Traits>
-void
-TESLocalAssemblerInner<Traits>::
-init(const unsigned num_int_pts, const unsigned dimension)
-{
-    _d.solid_density.resize(num_int_pts, _d.ap->initial_solid_density);
-    _d.solid_density_prev_ts.resize(num_int_pts, _d.ap->initial_solid_density);
-
-    _d.reaction_rate.resize(num_int_pts);
-    _d.reaction_rate_prev_ts.resize(num_int_pts);
-
-    _d.velocity.resize(dimension);
-    for (auto& v : _d.velocity) v.resize(num_int_pts);
-
-    _d.reaction_adaptor = std::move(TESFEMReactionAdaptor::newInstance(_d));
-}
-
 
 template<typename Traits>
 void

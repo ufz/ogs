@@ -102,7 +102,7 @@ private:
     NodalVectorType _local_b;
 
     // TODO Use the value from Process
-    unsigned _integration_order = 2;
+    unsigned const _integration_order;
 };
 
 }   // namespace TES

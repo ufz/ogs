@@ -39,24 +39,18 @@ TESLocalAssembler(MeshLib::Element const& e,
                   std::size_t const /*local_matrix_size*/,
                   unsigned const integration_order,
                   AssemblyParams const& asm_params)
+    : _shape_matrices{
+          initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
+              e, integration_order)}
+    , _d{asm_params,
+         // TODO narrowing conversion
+         static_cast<const unsigned>(_shape_matrices.front().N.rows()) /* number of integration points */,
+         GlobalDim}
+    , _local_M{ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF}
+    , _local_K{ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF}
+    , _local_b{ShapeFunction::NPOINTS * NODAL_DOF}
+    , _integration_order{integration_order}
 {
-    _integration_order = integration_order;
-
-    _shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
-            e, integration_order);
-
-    constexpr unsigned MAT_SIZE = ShapeFunction::NPOINTS * NODAL_DOF;
-
-    // Resize will only do something for dynamically allocated matrices.
-    _local_M.resize(MAT_SIZE, MAT_SIZE);
-    _local_K.resize(MAT_SIZE, MAT_SIZE);
-    _local_b.resize(MAT_SIZE);
-
-    _d.setAssemblyParameters(asm_params);
-
-    auto const n_integration_points = _shape_matrices.front().N.rows();
-    _d.init(n_integration_points, GlobalDim);
 }
 
 template <typename ShapeFunction_,
