@@ -8,8 +8,8 @@
  - New configuration tree parser
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
    - Requires Boost >= 1.56 because of boost::optional with move semantics.
-   - Command line argument `--config-warnings-nonfatal` that keeps OGS from crashing on warnings during
-     configuration file parsing (errors still makes it crash).
+   - Command line argument `--config-warnings-nonfatal` that keeps OGS from terminating on warnings during
+     configuration file parsing (errors still makes it terminate).
  - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056
  - Rework tools:
    - CreateBoundaryConditionsAlongPolyline
