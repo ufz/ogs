@@ -11,30 +11,26 @@
 #define FILEIO_VTK_PVDFILE_H
 
 #include <string>
-#include <iosfwd>
+#include <vector>
 
 namespace FileIO
 {
 
 /*! Writes a basic PVD file for use with Paraview.
  *
- * The PVD file is automatically finished upon destruction
- * of this classes instance.
  */
 class PVDFile
 {
 public:
-    //! Create a new PVD file at the given path.
-    explicit PVDFile(std::string const& fn);
+    //! Set a PVD file path
+    explicit PVDFile(std::string const& pvd_fname) : _pvd_filename{pvd_fname} {}
 
     //! Add a VTU file to this PVD file.
-    void addVTUFile(std::string const& fn, double timestep);
-
-    //! Automatically finishes the PVD file's XML data.
-    ~PVDFile();
+    void addVTUFile(std::string const& vtu_fname, double timestep);
 
 private:
-    std::ofstream _fh;
+    std::string const _pvd_filename;
+    std::vector<std::pair<double, std::string>> _datasets; // a vector of (time, VTU file name)
 };
 
 } // namespace FileIO
