@@ -237,7 +237,7 @@ void StationTreeView::writeStratigraphiesAsImages(QString listName)
 	std::size_t nLists = lists.size();
 	for (std::size_t i = 0; i < nLists; i++)
 	{
-		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() ) != 0 )
+		if ( listName.compare( lists[i]->data(0).toString() ) != 0 )
 			continue;
 
 		std::vector<GeoLib::Point*> const& stations =
