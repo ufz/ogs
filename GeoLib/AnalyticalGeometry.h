@@ -277,10 +277,10 @@ bool isPointInTetrahedron(MathLib::Point3d const& p,
  * @param intersection_pnt the intersection point if the line segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
-                            std::size_t &idx0,
-                            std::size_t &idx1,
-                            GeoLib::Point& intersection_pnt);
+bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
+                           GeoLib::Polyline::SegmentIterator& seg_it0,
+                           GeoLib::Polyline::SegmentIterator& seg_it1,
+                           GeoLib::Point& intersection_pnt);
 
 /**
  * Check if the two vectors \f$v, w \in R^3\f$ are in parallel

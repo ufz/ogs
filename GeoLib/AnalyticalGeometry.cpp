@@ -215,26 +215,22 @@ bool lineSegmentIntersect(
 }
 
 bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
-                           std::size_t &idx0,
-                           std::size_t &idx1,
+                           GeoLib::Polyline::SegmentIterator &seg_it0,
+                           GeoLib::Polyline::SegmentIterator &seg_it1,
                            GeoLib::Point& intersection_pnt)
 {
-	std::size_t n_segs(ply->getNumberOfPoints() - 1);
-	/**
-	 * computing the intersections of all possible pairs of line segments of the given polyline
-	 * as follows:
-	 * let the segment \f$s_1 = (A,B)\f$ defined by \f$k\f$-th and \f$k+1\f$-st point
-	 * of the polyline and segment \f$s_2 = (C,B)\f$ defined by \f$j\f$-th and
-	 * \f$j+1\f$-st point of the polyline, \f$j>k+1\f$
-	 */
-	for (std::size_t k(0); k < n_segs - 2; k++) {
-		for (std::size_t j(k + 2); j < n_segs; j++) {
-			if (k != 0 || j < n_segs - 1) {
-				if (lineSegmentIntersect(*(ply->getPoint(k)), *(ply->getPoint(k + 1)),
-				                         *(ply->getPoint(j)), *(ply->getPoint(j + 1)),
-				                         intersection_pnt)) {
-					idx0 = k;
-					idx1 = j;
+	std::size_t const n_segs(ply->getNumberOfSegments());
+	// Neighbouring segments always intersects at a common vertex. The algorithm
+	// checks for intersections of non-neighbouring segments.
+	for (seg_it0 = ply->begin(); seg_it0 != ply->end() - 2; ++seg_it0)
+	{
+		seg_it1 = seg_it0+2;
+		std::size_t const seg_num_0 = seg_it0.getSegmentNumber();
+		for ( ; seg_it1 != ply->end(); ++seg_it1) {
+			// Do not check first and last segment, because they are
+			// neighboured.
+			if (!(seg_num_0 == 0 && seg_it1.getSegmentNumber() == n_segs - 1)) {
+				if (lineSegmentIntersect(*seg_it0, *seg_it1, intersection_pnt)) {
 					return true;
 				}
 			}

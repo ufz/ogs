@@ -356,12 +356,15 @@ void Polygon::splitPolygonAtIntersection(
     std::list<Polygon*>::const_iterator polygon_it)
 #endif
 {
-	std::size_t idx0(0), idx1(0);
+	GeoLib::Polyline::SegmentIterator seg_it0((*polygon_it)->begin());
+	GeoLib::Polyline::SegmentIterator seg_it1((*polygon_it)->begin());
 	GeoLib::Point intersection_pnt;
-	if (!GeoLib::lineSegmentsIntersect(*polygon_it, idx0, idx1,
+	if (!GeoLib::lineSegmentsIntersect(*polygon_it, seg_it0, seg_it1,
 	                                   intersection_pnt))
 		return;
 
+	std::size_t idx0(seg_it0.getSegmentNumber());
+	std::size_t idx1(seg_it1.getSegmentNumber());
 	// adding intersection point to pnt_vec
 	std::size_t const intersection_pnt_id (_ply_pnts.size());
 	const_cast<std::vector<Point*>&>(_ply_pnts)
