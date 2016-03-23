@@ -57,7 +57,7 @@
    - lineSegmentIntersects.
    - Polygon::splitPolygonAtIntersection.
    - Grid.
- - GeoMapper: Refactoring few methods, c++11.
+ - GeoMapper: Refactoring few methods, c++11. #977
  - Rework FileIO::GMSH interface
    - Process geometries located other than in the x-y-plane.
    - Respect the scaling factor for Stations.
