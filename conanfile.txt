@@ -1,0 +1,5 @@
+[requires]
+Shapelib/1.3.0@bilke/stable
+
+[generators]
+cmake

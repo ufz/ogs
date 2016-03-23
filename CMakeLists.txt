@@ -26,6 +26,9 @@ set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 
 ### CMake includes ###
+include(conanbuildinfo.cmake)
+conan_basic_setup()
+
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
 include(scripts/cmake/CMakeSetup.cmake)

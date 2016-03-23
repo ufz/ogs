@@ -16,8 +16,6 @@ set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 add_subdirectory(gtest)
 
-add_subdirectory(shape)
-
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
