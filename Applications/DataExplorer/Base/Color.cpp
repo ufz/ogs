@@ -25,7 +25,7 @@ namespace GeoLib {
 
 Color getRandomColor()
 {
-	std::array<unsigned char, 3> col;
+	Color col;
 	col[0] = static_cast<unsigned char>((rand()%5)*50);
 	col[1] = static_cast<unsigned char>((rand()%5)*50);
 	col[2] = static_cast<unsigned char>((rand()%5)*50);
@@ -64,7 +64,7 @@ int readColorLookupTable(std::map<std::string, Color> &colors, const std::string
 	return 1;
 }
 
-Color const& getColor(const std::string &id, std::map<std::string, Color> &colors)
+Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
 {
 	for (std::map<std::string, Color>::const_iterator it=colors.begin(); it !=colors.end(); ++it)
 	{
@@ -75,13 +75,6 @@ Color const& getColor(const std::string &id, std::map<std::string, Color> &color
 	Color c = getRandomColor();
 	colors.insert(std::pair<std::string, Color>(id, c));
 	return c;
-}
-
-Color const& getColor(double id, std::map<std::string, GeoLib::Color> &colors)
-{
-	std::ostringstream stream;
-	stream << id;
-	return getColor(stream.str(), colors);
 }
 
 }

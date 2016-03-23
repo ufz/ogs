@@ -32,10 +32,10 @@ int readColorLookupTable(std::map<std::string, GeoLib::Color> &colors, const std
 
 /// Uses a color-lookup-table (in form of a map) to return a colour for a specified name. If the name is not
 /// in the colortable a new entry is created with the new name and a random colour.
-Color const& getColor(const std::string &id, std::map<std::string, GeoLib::Color> &colors);
+Color const getColor(const std::string &id, std::map<std::string, GeoLib::Color> &colors);
 
 /// Convenience function to use the getColor method with numbers as identifiers.
-Color const& getColor(double id, std::map<std::string, GeoLib::Color> &colors);
+Color const getColor(double id, std::map<std::string, GeoLib::Color> &colors);
 } // namespace
 
 #endif /* COLOR_H_ */
