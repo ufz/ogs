@@ -8,6 +8,8 @@
  - New configuration tree parser
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
    - Requires Boost >= 1.56 because of boost::optional with move semantics.
+   - Command line argument `--config-warnings-nonfatal` that keeps OGS from crashing on warnings during
+     configuration file parsing (errors still makes it crash).
  - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056
  - Rework tools:
    - CreateBoundaryConditionsAlongPolyline
@@ -31,6 +33,13 @@
  - added generation of structured meshes to DataExplorer
  - restructured mesh creation access in DataExplorer
  - mesh layers can be added to existing meshes in DataExplorer
+ - added an ODE solver library that can solve transient and nonlinear processes
+   (see http://doxygen.opengeosys.org/df/d35/group__ODESolver.html)
+ - added pre- and postTimestep and -Iteration hooks to processes, #1094, #1100, #1101
+ - added cmake option `OGS_EIGEN_DYNAMIC_SHAPE_MATRICES` that makes OGS use dynamically
+   allocated shape matrices.
+ - added several cmake options for selecting which element types, dimensions and
+   orders to be built, #1092
 
 ### Infrastructure
 
