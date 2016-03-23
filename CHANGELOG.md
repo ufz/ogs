@@ -4,6 +4,10 @@
 ### Features:
  - Added an ODE solver library that can solve transient and nonlinear processes
    (see http://doxygen.opengeosys.org/df/d35/group__ODESolver.html).
+ - Move up common Process parts from particular GroundwaterFlow process
+   implementation. #951, #982
+ - Separate Dirichlet boundary condition class implementation. #963
+ - Split process output and post timestep. #998
  - Added pre- and postTimestep and -Iteration hooks to processes. #1094, #1100, #1101
  - New configuration tree parser
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
