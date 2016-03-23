@@ -188,10 +188,6 @@ std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
-bool isLineSegmentIntersecting (const Polyline& ply,
-                                GeoLib::Point const& s0,
-                                GeoLib::Point const& s1);
-
 /**
  * comparison operator
  * @param lhs first polyline

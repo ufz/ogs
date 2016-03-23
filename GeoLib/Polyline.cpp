@@ -459,20 +459,6 @@ bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1)
 	return false;
 }
 
-bool isLineSegmentIntersecting (const Polyline& ply,
-                                GeoLib::Point const& s0,
-                                GeoLib::Point const& s1)
-{
-	const std::size_t n (ply.getNumberOfPoints() - 1);
-	bool intersect(false);
-	GeoLib::Point intersection_pnt;
-	for (std::size_t k(0); k < n && !intersect; k++)
-		intersect = GeoLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(
-		                                                                         k + 1)),
-		                                           s0, s1, intersection_pnt);
-	return intersect;
-}
-
 bool operator==(Polyline const& lhs, Polyline const& rhs)
 {
 	if (lhs.getNumberOfPoints() != rhs.getNumberOfPoints())
