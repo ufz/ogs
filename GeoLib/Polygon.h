@@ -94,18 +94,15 @@ public:
 	bool isPartOfPolylineInPolygon (const Polyline& ply) const;
 
 	/**
-	 * Calculates the next intersection point between the line segment (a,b) and the
-	 * polygon starting with segment seg_num.
-	 * @param a (input) the first point of the line segment
-	 * @param b (input) the second point of the line segment
+	 * Calculates the next intersection point between the line segment \c seg
+	 * and the polygon starting with segment \c seg_num.
+	 * @param seg (input) Line segment to compute intersection.
 	 * @param intersection_pnt (output) next intersection point
-	 * @param seg_num (input/output) the number of the polygon segment that is intersecting
+	 * @param seg_num (in/out) the number of the polygon segment that is intersecting
 	 */
-	bool getNextIntersectionPointPolygonLine(GeoLib::Point const & a,
-									GeoLib::Point const & b,
-									GeoLib::Point* intersection_pnt,
-									std::size_t& seg_num) const;
-
+	bool getNextIntersectionPointPolygonLine(GeoLib::LineSegment const& seg,
+	                                         GeoLib::Point& intersection_pnt,
+	                                         std::size_t& seg_num) const;
 
 	void computeListOfSimplePolygons ();
 	const std::list<Polygon*>& getListOfSimplePolygons ();
