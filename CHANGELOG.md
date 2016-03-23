@@ -2,44 +2,38 @@
 # 6.0.5 (in preparation)
 
 ### Features:
- - Axis aligned bounding box:
-   - Is now a from the right half-open interval.
-   - Removed template from class declaration.
+ - Added an ODE solver library that can solve transient and nonlinear processes
+   (see http://doxygen.opengeosys.org/df/d35/group__ODESolver.html).
+ - Added pre- and postTimestep and -Iteration hooks to processes, #1094, #1100, #1101.
  - New configuration tree parser
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
    - Requires Boost >= 1.56 because of boost::optional with move semantics.
    - Command line argument `--config-warnings-nonfatal` that keeps OGS from terminating on warnings during
      configuration file parsing (errors still makes it terminate).
- - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056
+ - Axis aligned bounding box:
+   - Is now a from the right half-open interval.
+   - Removed template from class declaration.
+ - MeshLib: Class MeshElementGrid implements a grid data structure supporting search operations.
+ - Added cmake option `OGS_EIGEN_DYNAMIC_SHAPE_MATRICES` that makes OGS use dynamically.
+   allocated shape matrices.
+ - Added several cmake options for selecting which element types, dimensions and
+   orders to be built, #1092. Selecting only few element types speeds up
+   compilation significantly.
+ - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056.
+
+#### DataExplorer and utilities
+ - Added command line tool for creating layered meshes from raster files
+ - OGSFileConverter is now a separate library
+ - Raster file to structured grid conversion can now convert pixel values in user-defined scalar arrays
+ - All scalar arrays will be displayed in mesh information window in DataExplorer
+ - Added generation of structured meshes to DataExplorer
+ - Restructured mesh creation access in DataExplorer
+ - Mesh layers can be added to existing meshes in DataExplorer
  - Rework tools:
    - CreateBoundaryConditionsAlongPolyline
    - AddTopLayer
    - ResetPropertyInPolygonalRegion
    - removeMeshElements
- - MeshLib: Class MeshElementGrid implements a grid data structure supporting search operations
- - GeoMapper: Cleanup
- - GeoLib:
-   - Fix bugs (lineSegmentIntersects, Polygon::splitPolygonAtIntersection, Grid)
- - FileIO:
-   - Rework GMSH interface
-     - Process geometries located other than in the x-y-plane
-     - Respect the scaling factor for Stations
-     - fix mem leaks
-     - added/modified tests for GML-, GMS- and TetGen-files
- - added command line tool for creating layered meshes from raster files
- - OGSFileConverter is now a separate library
- - Raster file to structured grid conversion can now convert pixel values in user-defined scalar arrays
- - all scalar arrays will be displayed in mesh information window in DataExplorer
- - added generation of structured meshes to DataExplorer
- - restructured mesh creation access in DataExplorer
- - mesh layers can be added to existing meshes in DataExplorer
- - added an ODE solver library that can solve transient and nonlinear processes
-   (see http://doxygen.opengeosys.org/df/d35/group__ODESolver.html)
- - added pre- and postTimestep and -Iteration hooks to processes, #1094, #1100, #1101
- - added cmake option `OGS_EIGEN_DYNAMIC_SHAPE_MATRICES` that makes OGS use dynamically
-   allocated shape matrices.
- - added several cmake options for selecting which element types, dimensions and
-   orders to be built, #1092
 
 ### Infrastructure
 
@@ -48,14 +42,27 @@
 - Optional support for VTK 7, #1083
 - Test data is now a git submodule, #1000
 - In-code defined Jenkins jobs, #970
-- Jenkins now [tests also with clang sanitizers](https://svn.ufz.de:8443/job/OGS-6/job/Docker/job/clang-sanitizer/), #958
+- Use [clang's address and undefined behaviour sanitizers](https://svn.ufz.de:8443/job/OGS-6/job/Docker/job/clang-sanitizer/) on Jenkins now , #958
 
 
 ### Documentation
 
 - Speed up builds with [ccache](http://docs.opengeosys.org/docs/devguide/advanced/using-ccache), #938
+- Overview of the new non-linear, transient solver in [ODESolver](see
+  http://doxygen.opengeosys.org/df/d35/group__ODESolver.html) source code
+  documentation.
 
 ### Fixes
+ - Fix bugs in GeoLib:
+   - lineSegmentIntersects.
+   - Polygon::splitPolygonAtIntersection.
+   - Grid.
+ - GeoMapper: Refactoring few methods, c++11.
+ - Rework FileIO::GMSH interface
+   - Process geometries located other than in the x-y-plane.
+   - Respect the scaling factor for Stations.
+   - Fix memory leaks.
+   - Added/modified tests for GML-, GMS- and TetGen-files.
 
 # 6.0.4
 
