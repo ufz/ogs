@@ -4,7 +4,7 @@
 ### Features:
  - Added an ODE solver library that can solve transient and nonlinear processes
    (see http://doxygen.opengeosys.org/df/d35/group__ODESolver.html).
- - Added pre- and postTimestep and -Iteration hooks to processes, #1094, #1100, #1101.
+ - Added pre- and postTimestep and -Iteration hooks to processes. #1094, #1100, #1101
  - New configuration tree parser
    - Checks configuration parameters more strictly, automatically prints error/warning messages.
    - Requires Boost >= 1.56 because of boost::optional with move semantics.
@@ -17,9 +17,9 @@
  - Added cmake option `OGS_EIGEN_DYNAMIC_SHAPE_MATRICES` that makes OGS use dynamically.
    allocated shape matrices.
  - Added several cmake options for selecting which element types, dimensions and
-   orders to be built, #1092. Selecting only few element types speeds up
-   compilation significantly.
- - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging, #1056.
+   orders to be built. Selecting only few element types speeds up compilation
+   significantly. #1092
+ - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging. #1056
 
 #### DataExplorer and utilities
  - Added command line tool for creating layered meshes from raster files
@@ -37,12 +37,12 @@
 
 ### Infrastructure
 
-- Minimum Boost version: 1.56.0, #943
-- Boost requirement is now header-only, #940
-- Optional support for VTK 7, #1083
-- Test data is now a git submodule, #1000
-- In-code defined Jenkins jobs, #970
-- Use [clang's address and undefined behaviour sanitizers](https://svn.ufz.de:8443/job/OGS-6/job/Docker/job/clang-sanitizer/) on Jenkins now , #958
+- Minimum Boost version: 1.56.0. #943
+- Boost requirement is now header-only. #940
+- Optional support for VTK 7. #1083
+- Test data is now a git submodule. #1000
+- In-code defined Jenkins jobs. #970
+- Use [clang's address and undefined behaviour sanitizers](https://svn.ufz.de:8443/job/OGS-6/job/Docker/job/clang-sanitizer/) on Jenkins now. #958
 
 
 ### Documentation
