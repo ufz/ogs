@@ -518,21 +518,30 @@ bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
 void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 	std::vector<GeoLib::Polyline*> & plys)
 {
+	auto computeSegmentIntersections = [&pnt_vec](GeoLib::Polyline& poly0,
+	                                              GeoLib::Polyline& poly1)
+	{
+		for (auto seg0_it(poly0.begin()); seg0_it != poly0.end(); ++seg0_it)
+		{
+			for (auto seg1_it(poly1.begin()); seg1_it != poly1.end(); ++seg1_it)
+			{
+				GeoLib::Point s(0.0, 0.0, 0.0, pnt_vec.size());
+				if (lineSegmentIntersect(*seg0_it, *seg1_it, s))
+				{
+					std::size_t const id(
+					    pnt_vec.push_back(new GeoLib::Point(s)));
+					poly0.insertPoint(seg0_it.getSegmentNumber() + 1, id);
+					poly1.insertPoint(seg1_it.getSegmentNumber() + 1, id);
+				}
+			}
+		}
+	};
+
 	for (auto it0(plys.begin()); it0 != plys.end(); ++it0) {
 		auto it1(it0);
 		++it1;
 		for (; it1 != plys.end(); ++it1) {
-			for (std::size_t i(0); i<(*it0)->getNumberOfPoints()-1; i++) {
-				for (std::size_t j(0); j<(*it1)->getNumberOfPoints()-1; j++) {
-					GeoLib::Point s(0.0, 0.0, 0.0, pnt_vec.size());
-					if (lineSegmentIntersect(*(*it0)->getPoint(i), *(*it0)->getPoint(i+1),
-						*(*it1)->getPoint(j), *(*it1)->getPoint(j+1), s)) {
-						std::size_t const id(pnt_vec.push_back(new GeoLib::Point(s)));
-						(*it0)->insertPoint(i+1, id);
-						(*it1)->insertPoint(j+1, id);
-					}
-				}
-			}
+			computeSegmentIntersections(*(*it0), *(*it1));
 		}
 	}
 }
