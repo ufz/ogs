@@ -103,17 +103,11 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
                           GeoLib::LineSegment const& s1,
                           GeoLib::Point& s)
 {
-	return lineSegmentIntersect(s0.getBeginPoint(), s0.getEndPoint(),
-	                            s1.getBeginPoint(), s1.getEndPoint(), s);
-}
+	GeoLib::Point const& a{s0.getBeginPoint()};
+	GeoLib::Point const& b{s0.getEndPoint()};
+	GeoLib::Point const& c{s1.getBeginPoint()};
+	GeoLib::Point const& d{s1.getEndPoint()};
 
-bool lineSegmentIntersect(
-	GeoLib::Point const& a,
-	GeoLib::Point const& b,
-	GeoLib::Point const& c,
-	GeoLib::Point const& d,
-	GeoLib::Point& s)
-{
 	if (!isCoplanar(a, b, c, d))
 		return false;
 
