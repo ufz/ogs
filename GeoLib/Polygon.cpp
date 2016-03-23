@@ -191,20 +191,16 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
 			return true;
 		}
 	}
-	// check segment intersections
-	GeoLib::Point* s (new GeoLib::Point (0,0,0));
-	const std::size_t n_nodes(getNumberOfPoints() - 1);
-	for (std::size_t k(0); k < ply_size - 1; k++) {
-		for (std::size_t j(0); j < n_nodes; j++) {
-			if (GeoLib::lineSegmentIntersect(*(getPoint(j)), *(getPoint(j + 1)),
-							*(ply.getPoint(k)), *(ply.getPoint(k + 1)), *s)) {
-				delete s;
+
+	GeoLib::Point s;
+	for (auto polygon_seg : *this) {
+		for (auto polyline_seg : ply) {
+			if (GeoLib::lineSegmentIntersect(polyline_seg, polygon_seg, s)) {
 				return true;
 			}
 		}
 	}
 
-	delete s;
 	return false;
 }
 
