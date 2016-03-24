@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 language: cpp
 
 compiler:
@@ -21,17 +21,21 @@ cache:
     - $HOME/boost_1_56_0
 
 env:
-  global:
-    - VTK_DIR=$HOME/VTK-Install/lib/cmake/vtk-6.3
-    - BOOST_ROOT=$HOME/boost_1_56_0
   matrix:
     - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
     - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
 
 before_install:
   - bash scripts/travis/cmake.sh
-  - bash scripts/travis/vtk.sh
-  - bash scripts/travis/boost.sh
+
+install:
+  # Download conan
+  - wget http://downloads.conan.io/latest_debian -O conan.deb
+  - sudo dpkg -i conan.deb
+  - rm conan.deb
+
+  # Automatic detection of your arch, compiler, etc
+  - conan install -s compiler=gcc -s compiler.version=4.8
 
 before_script:
   - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
