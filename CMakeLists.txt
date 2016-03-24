@@ -26,7 +26,13 @@ set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 
 ### CMake includes ###
-include(conanbuildinfo.cmake)
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+elseif(EXISTS ${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
+	include(${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
+else()
+	message(FATAL_ERROR "External dependencies not setup. Run conan install!")
+endif()
 conan_basic_setup()
 
 include(scripts/cmake/CheckTypeSizes.cmake)
