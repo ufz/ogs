@@ -43,8 +43,8 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 		std::abort();
 	}
 
-	ids_and_area_out << std::numeric_limits<double>::digits10;
-	csv_out << std::numeric_limits<double>::digits10;
+	ids_and_area_out.precision(std::numeric_limits<double>::digits10);
+	csv_out.precision(std::numeric_limits<double>::digits10);
 
 	csv_out << "ID x y z area node_id\n"; // CSV header
 	for (std::size_t k(0); k<ids_and_areas.size(); k++) {
@@ -73,7 +73,7 @@ int main (int argc, char* argv[])
 	cmd.add(id_prop_name);
 	TCLAP::ValueArg<std::string> out_base_fname("p", "output-base-name",
 		"the path and base file name the output will be written to", false,
-		"", "file name of input mesh");
+		"", "output path and base name as one string");
 	cmd.add(out_base_fname);
 
 	cmd.parse(argc, argv);
@@ -85,13 +85,13 @@ int main (int argc, char* argv[])
 	// ToDo check if mesh is read correct and if the mesh is a surface mesh
 
 	// check if a node property containing the subsurface ids is available
-	boost::optional<MeshLib::PropertyVector<int> const&> orig_node_ids(
-	    surface_mesh->getProperties().getPropertyVector<int>(
+	boost::optional<MeshLib::PropertyVector<std::size_t> const&> orig_node_ids(
+	    surface_mesh->getProperties().getPropertyVector<std::size_t>(
 	        id_prop_name.getValue()));
 	// if the node property is not available generate it
 	if (!orig_node_ids) {
-		boost::optional<MeshLib::PropertyVector<int>&> node_ids(
-		    surface_mesh->getProperties().createNewPropertyVector<int>(
+		boost::optional<MeshLib::PropertyVector<std::size_t>&> node_ids(
+		    surface_mesh->getProperties().createNewPropertyVector<std::size_t>(
 		        id_prop_name.getValue(), MeshLib::MeshItemType::Node, 1));
 		if (!node_ids) {
 			ERR("Fatal error: could not create property.");
