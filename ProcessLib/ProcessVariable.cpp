@@ -145,7 +145,7 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
     else
     {
         result = _mesh.getProperties().template createNewPropertyVector<double>(
-            _name, MeshLib::MeshItemType::Node);
+            _name, MeshLib::MeshItemType::Node, _n_components);
         assert(result);
         result->resize(_mesh.getNumberOfNodes() * _n_components);
     }
