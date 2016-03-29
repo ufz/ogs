@@ -137,18 +137,11 @@ void StationTreeView::displayStratigraphy()
 	static_cast<StationTreeModel*>(model())->stationFromIndex(
 	        this->selectionModel()->currentIndex(), temp_name);
 	// get color table (horrible way to do it but there you go ...)
-	std::map<std::string,
-	         GeoLib::Color*> colorLookupTable =
-	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
-	                                               temp_name.
-	                                               toStdString()))
-	        ->getColorLookupTable();
-	StratWindow* stratView =
-	        new StratWindow(static_cast<GeoLib::StationBorehole*>(static_cast<StationTreeModel*>(
-	                                                                      model())
-	                                                              ->stationFromIndex(index,
-	                                                                                 temp_name)),
-	                        &colorLookupTable);
+	std::map<std::string, GeoLib::Color> colorLookupTable =
+		static_cast<VtkStationSource*>(static_cast<StationTreeModel*>
+			(model())->vtkSource(temp_name.toStdString()))->getColorLookupTable();
+	StratWindow* stratView = new StratWindow(static_cast<GeoLib::StationBorehole*>
+		(static_cast<StationTreeModel*>(model())->stationFromIndex(index,temp_name)), &colorLookupTable);
 	stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
 	stratView->show();
 }
@@ -237,38 +230,28 @@ void StationTreeView::showDiagramPrefsDialog()
 
 void StationTreeView::writeStratigraphiesAsImages(QString listName)
 {
-	std::map<std::string,
-	         GeoLib::Color*> colorLookupTable =
-	        static_cast<VtkStationSource*>(static_cast<StationTreeModel*>(model())->vtkSource(
-	                                               listName.
-	                                               toStdString()))
-	        ->getColorLookupTable();
+	std::map<std::string, GeoLib::Color> colorLookupTable =
+		static_cast<VtkStationSource*>(static_cast<StationTreeModel*>
+			(model())->vtkSource(listName.toStdString()))->getColorLookupTable();
 	std::vector<ModelTreeItem*> lists = static_cast<StationTreeModel*>(model())->getLists();
 	std::size_t nLists = lists.size();
 	for (std::size_t i = 0; i < nLists; i++)
-		if ( listName.toStdString().compare( lists[i]->data(0).toString().toStdString() )
-		     == 0 )
-		{
-			const std::vector<GeoLib::Point*>* stations =
-			        dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
+	{
+		if ( listName.compare( lists[i]->data(0).toString() ) != 0 )
+			continue;
 
-			for (std::size_t i = 0; i < stations->size(); i++)
-			{
-				StratWindow* stratView =
-				        new StratWindow(static_cast<GeoLib::StationBorehole*>((*
-				                                                               stations)
-				                                                              [i]),
-				                        &colorLookupTable);
-				stratView->setAttribute(Qt::WA_DeleteOnClose); // this fixes the memory leak shown by cppcheck
-				stratView->show();
-				stratView->stationView->saveAsImage(
-				        "c:/project/" +
-				        QString::fromStdString(static_cast<GeoLib::StationBorehole*>((
-				                                                                             *
-				                                                                             stations)
-				                                                                     [
-				                                                                             i])->getName()) + ".jpg");
-				stratView->close();
-			}
+		std::vector<GeoLib::Point*> const& stations =
+			*dynamic_cast<BaseItem*>(lists[i]->getItem())->getStations();
+
+		for (std::size_t i = 0; i < stations.size(); i++)
+		{
+			StratWindow* stratView = new StratWindow(
+				static_cast<GeoLib::StationBorehole*>(stations[i]), &colorLookupTable);
+			stratView->setAttribute(Qt::WA_DeleteOnClose);
+			stratView->show();
+			stratView->stationView->saveAsImage(QString::fromStdString(
+				static_cast<GeoLib::StationBorehole*>(stations[i])->getName()) + ".jpg");
+			stratView->close();
 		}
+	}
 }

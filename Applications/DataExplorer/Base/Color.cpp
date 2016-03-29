@@ -23,18 +23,17 @@
 
 namespace GeoLib {
 
-Color* getRandomColor()
+Color getRandomColor()
 {
-	std::array<unsigned char, 3> col;
+	Color col;
 	col[0] = static_cast<unsigned char>((rand()%5)*50);
 	col[1] = static_cast<unsigned char>((rand()%5)*50);
 	col[2] = static_cast<unsigned char>((rand()%5)*50);
-	return new Color(col);
+	return col;
 }
 
-int readColorLookupTable(std::map<std::string, Color*> &colors, const std::string &filename)
+int readColorLookupTable(std::map<std::string, Color> &colors, const std::string &filename)
 {
-
 	std::ifstream in( filename.c_str() );
 
 	if (!in)
@@ -50,39 +49,32 @@ int readColorLookupTable(std::map<std::string, Color*> &colors, const std::strin
 
 		if (fields.size()>=4)
 		{
-			Color *c = new Color();
+			Color c;
 			id = fields.front();
 			fields.pop_front();
-			(*c)[0] = std::atoi(fields.front().c_str());
+			c[0] = std::atoi(fields.front().c_str());
 			fields.pop_front();
-			(*c)[1] = std::atoi(fields.front().c_str());
+			c[1] = std::atoi(fields.front().c_str());
 			fields.pop_front();
-			(*c)[2] = std::atoi(fields.front().c_str());
-			colors.insert(std::pair<std::string, Color*>(id, c));
+			c[2] = std::atoi(fields.front().c_str());
+			colors.insert(std::pair<std::string, Color>(id, c));
 		}
 	}
 
 	return 1;
 }
 
-const Color* getColor(const std::string &id, std::map<std::string, Color*> &colors)
+Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
 {
-	for (std::map<std::string, Color*>::const_iterator it=colors.begin(); it !=colors.end(); ++it)
+	for (std::map<std::string, Color>::const_iterator it=colors.begin(); it !=colors.end(); ++it)
 	{
 		if (id.compare(it->first) == 0)
 			return it->second;
 	}
 	WARN("Key \"%s\" not found in color lookup table.", id.c_str());
-	Color* c = getRandomColor();
-	colors.insert(std::pair<std::string, Color*>(id, c));
+	Color c = getRandomColor();
+	colors.insert(std::pair<std::string, Color>(id, c));
 	return c;
-}
-
-const Color* getColor(double id, std::map<std::string, GeoLib::Color*> &colors)
-{
-	std::ostringstream stream;
-	stream << id;
-	return getColor(stream.str(), colors);
 }
 
 }

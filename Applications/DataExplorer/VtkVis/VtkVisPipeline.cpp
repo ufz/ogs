@@ -176,17 +176,17 @@ void VtkVisPipeline::loadFromFile(QString filename)
 
 	if (filename.size() > 0)
 	{
-		vtkXMLDataReader* reader;
+		vtkSmartPointer<vtkXMLDataReader> reader;
 		if (filename.endsWith("vti"))
-			reader = vtkXMLImageDataReader::New();
+			reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
 		else if (filename.endsWith("vtr"))
-			reader = vtkXMLRectilinearGridReader::New();
+			reader = vtkSmartPointer<vtkXMLRectilinearGridReader>::New();
 		else if (filename.endsWith("vts"))
-			reader = vtkXMLStructuredGridReader::New();
+			reader = vtkSmartPointer<vtkXMLStructuredGridReader>::New();
 		else if (filename.endsWith("vtp"))
-			reader = vtkXMLPolyDataReader::New();
+			reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
 		else if (filename.endsWith("vtu"))
-			reader = vtkXMLUnstructuredGridReader::New();
+			reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
 		else if (filename.endsWith("vtk"))
 		{
 			vtkGenericDataObjectReader* oldStyleReader =
@@ -214,7 +214,7 @@ void VtkVisPipeline::loadFromFile(QString filename)
 		//std::cout << "#cell scalars: " << reader->GetNumberOfCellArrays() << std::endl;
 		//std::cout << "#point scalars: " << reader->GetNumberOfPointArrays() << std::endl;
 
-		vtkDataSet* dataSet = reader->GetOutputAsDataSet();
+		vtkSmartPointer<vtkDataSet> dataSet = reader->GetOutputAsDataSet();
 		if (dataSet)
 		{
 			this->listArrays(dataSet);
@@ -222,8 +222,6 @@ void VtkVisPipeline::loadFromFile(QString filename)
 		}
 		else
 			ERR("VtkVisPipeline::loadFromFile(): not a valid vtkDataSet.");
-
-		//reader->Delete();
 	}
 
 #ifndef NDEBUG
