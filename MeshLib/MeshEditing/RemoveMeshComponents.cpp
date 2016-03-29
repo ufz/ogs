@@ -75,10 +75,10 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
 
 	if (!new_elems.empty())
 	{
-		MeshLib::Mesh* new_mesh = new MeshLib::Mesh(new_mesh_name,
-			new_nodes, new_elems,
-			mesh.getProperties().excludeCopyProperties(removed_element_ids)
-		);
+		MeshLib::Mesh* new_mesh =
+		    new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems,
+		                      mesh.getProperties().excludeCopyProperties(
+		                          removed_element_ids, removed_node_ids));
 		return new_mesh;
 	}
 	else
@@ -126,10 +126,10 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
 
 	if (!new_elems.empty())
 	{
-		MeshLib::Mesh* new_mesh = new MeshLib::Mesh(new_mesh_name,
-			new_nodes, new_elems,
-			mesh.getProperties().excludeCopyProperties(removed_element_ids)
-		);
+		MeshLib::Mesh* new_mesh =
+		    new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems,
+		                      mesh.getProperties().excludeCopyProperties(
+		                          removed_element_ids, del_nodes_idx));
 		return new_mesh;
 	}
 	else
