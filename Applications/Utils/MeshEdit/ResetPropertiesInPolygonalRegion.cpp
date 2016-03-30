@@ -95,6 +95,7 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
 			property_name.c_str());
 		return;
 	}
+
 	MeshLib::PropertyVector<PT> & pv(opt_pv.get());
 	if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
 		ERR("Values of the PropertyVector are not assigned to cells.");
@@ -114,7 +115,7 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
 				elem_out = false;
 			}
 		}
-		if (elem_out) {
+		if (!elem_out) {
 			pv[j] = new_property_value;
 		}
 	}
