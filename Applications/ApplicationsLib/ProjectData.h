@@ -13,7 +13,10 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
+#include <map>
 #include <memory>
+#include <string>
+#include <boost/optional/optional.hpp>
 
 #include "BaseLib/ConfigTree.h"
 
@@ -26,6 +29,9 @@
 
 #include "NumLib/ODESolver/Types.h"
 
+namespace MathLib {
+	class PiecewiseLinearInterpolation;
+}
 namespace MeshLib {
 	class Mesh;
 }
@@ -193,6 +199,8 @@ private:
 
 	void parseNonlinearSolvers(BaseLib::ConfigTree const& config);
 
+	void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
+
 private:
 	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
 	std::vector<MeshLib::Mesh*> _mesh_vec;
@@ -216,6 +224,8 @@ private:
 
 	using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
 	std::map<std::string, std::unique_ptr<NonlinearSolver> > _nonlinear_solvers;
+	std::map<std::string,
+	         std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> _curves;
 };
 
 #endif //PROJECTDATA_H_
