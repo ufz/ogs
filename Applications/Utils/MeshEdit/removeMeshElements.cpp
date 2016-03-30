@@ -160,6 +160,9 @@ int main (int argc, char* argv[])
 	std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshLib::removeElements(
 	    *mesh, searcher.getSearchedElementIDs(), mesh->getName()));
 
+	if (new_mesh == nullptr)
+		return EXIT_FAILURE;
+
 	// write into a file
 	FileIO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
