@@ -23,7 +23,7 @@ class PVDFile
 {
 public:
     //! Set a PVD file path
-    explicit PVDFile(std::string const& pvd_fname) : _pvd_filename{pvd_fname} {}
+    explicit PVDFile(std::string const& pvd_fname) : _pvd_filename(pvd_fname) {}
 
     //! Add a VTU file to this PVD file.
     void addVTUFile(std::string const& vtu_fname, double timestep);
