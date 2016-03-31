@@ -111,18 +111,27 @@ public:
     void write(std::ostream &os) const;
 
     /**
-     * Adds an id of a point at the end of the polyline. The id have to be inside
-     * the (internal) _ply_pnts vector the polyline is based on.
+     * Adds an id of a point at the end of the polyline if and only if the
+     * resulting segment won't be empty. The id have to be inside the (internal)
+     * \c _ply_pnts vector the polyline is based on.
+     * @return If the point could be added the return value is \c true. If the
+     * addition of the point would result in empty line segment \c false is
+     * returned.
      */
-    virtual void addPoint(std::size_t pnt_id);
+    bool addPoint(std::size_t pnt_id);
 
     /**
      * Method inserts a new point (that have to be inside the _ply_pnts vector)
-     * at the given position in the polyline.
-     * @param pos the position in the polyline, pos have to be a value into the interval [0, number of points)
-     * @param pnt_id the id of the new point in the vector of points the polyline is based on
+     * at the given position in the polyline if and only if the resulting
+     * segments won't be empty.
+     * @param pos the position in the polyline, pos have to be a value into the
+     * interval [0, number of points)
+     * @param pnt_id the id of the new point in the vector of points the
+     * polyline is based on
+     * @return true if the point could be inserted, else false (if empty line
+     * segments would be created).
      */
-    virtual void insertPoint(std::size_t pos, std::size_t pnt_id);
+    bool insertPoint(std::size_t pos, std::size_t pnt_id);
 
     /**
      * Method removes a point from the polyline. The connecting line segments will
