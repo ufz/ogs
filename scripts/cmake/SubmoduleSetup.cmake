@@ -17,24 +17,21 @@ if(OGS_BUILD_TESTS)
 endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
-	if(WIN32)
-		set(SUBMODULE_STATE 1)
-	else()
-		# Check if submodule is already initialized
-		execute_process(
-			COMMAND ${BASH_TOOL_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/SubmoduleCheck.sh ${SUBMODULE}
-			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-			RESULT_VARIABLE SUBMODULE_STATE
-		)
-	endif()
+	execute_process(
+		COMMAND ${GIT_TOOL_PATH} submodule status ${SUBMODULE}
+		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+		OUTPUT_VARIABLE SUBMODULE_STATE
+	)
+	string(REGEX MATCH "^\\-" UNINITIALIZED ${SUBMODULE_STATE})
+	string(REGEX MATCH "^\\+" MISMATCH ${SUBMODULE_STATE})
 
-	if(SUBMODULE_STATE EQUAL 1)
+	if(UNINITIALIZED)
 		message(STATUS "Initializing submodule ${SUBMODULE}")
 		execute_process(
 			COMMAND ${GIT_TOOL_PATH} submodule update --init ${SUBMODULE}
 			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		)
-	elseif(SUBMODULE_STATE EQUAL 2)
+	elseif(MISMATCH)
 		message(STATUS "Updating submodule ${SUBMODULE}")
 		execute_process(
 			COMMAND git submodule update ${SUBMODULE}
