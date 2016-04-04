@@ -117,6 +117,8 @@ TEST(BaseLibConfigTree, Get)
             "<x>Y</x>"
             "<z attr=\"0.5\" optattr=\"false\">32.0</z>"
             "<vector>0 1 2 3 4</vector>"
+            "<vector_bad1>x 1 2a</vector_bad1>"
+            "<vector_bad2>0 1 2a</vector_bad2>"
             ;
     auto const ptree = readXml(xml);
 
@@ -232,6 +234,12 @@ TEST(BaseLibConfigTree, Get)
             std::iota(expected_vector.begin(), expected_vector.end(), 0);
             EXPECT_TRUE(std::equal(expected_vector.begin(),
                                    expected_vector.end(), v.begin()));
+            EXPECT_ANY_THROW(
+                conf.getConfParam<std::vector<int>>("vector_bad1"));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(
+                conf.getConfParam<std::vector<int>>("vector_bad2"));
+            EXPECT_ERR_WARN(cbs, true, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
