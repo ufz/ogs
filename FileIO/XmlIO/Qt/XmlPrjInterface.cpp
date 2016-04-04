@@ -42,27 +42,44 @@ XmlPrjInterface::XmlPrjInterface(ProjectData& project) :
 
 int XmlPrjInterface::readFile(const QString &fileName)
 {
-	if(XMLQtInterface::readFile(fileName) == 0)
+	if (XMLQtInterface::readFile(fileName) == 0)
 		return 0;
 
 	QFileInfo fi(fileName);
-	QString path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
+	QString const path = (fi.path().length() > 3) ? QString(fi.path() + "/") : fi.path();
 
 	QDomDocument doc("OGS-PROJECT-DOM");
 	doc.setContent(_fileData);
-	QDomElement docElement = doc.documentElement(); //OpenGeoSysProject
+	QDomElement const docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
 		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
 		return 0;
 	}
 
-	QDomNodeList fileList = docElement.childNodes();
+	QDomNodeList const fileList = docElement.childNodes();
 
-	for(int i = 0; i < fileList.count(); i++)
+	for (int i = 0; i < fileList.count(); ++i)
 	{
-		const QString file_node(fileList.at(i).nodeName());
-		if (file_node.compare("geo") == 0)
+		QString const file_node(fileList.at(i).nodeName());
+		if (file_node.compare("input") == 0)
+		{
+			if (int n_errors = readInputFiles(fileList.at(i), path))
+				INFO ("Error reading %d input files.", n_errors);
+		}
+	}
+	return 0;
+}
+
+int XmlPrjInterface::readInputFiles(QDomNode const& node, QString const& path)
+{
+	QDomNodeList const fileList = node.childNodes();
+	int result (0);
+
+	for (int i = 0; i < fileList.count(); i++)
+	{
+		QString const file_node(fileList.at(i).nodeName());
+		if (file_node.compare("geometry") == 0)
 		{
 			XmlGmlInterface gml(*(_project.getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
@@ -70,35 +87,29 @@ int XmlPrjInterface::readFile(const QString &fileName)
 			{
 				const QDomNode child_node (childList.at(j));
 				if (child_node.nodeName().compare("file") == 0)
-				{
-					DBUG("XmlGspInterface::readFile(): path: \"%s\".",
-					     path.data());
-					DBUG("XmlGspInterface::readFile(): file name: \"%s\".",
-					     (child_node.toElement().text()).data());
-					gml.readFile(QString(path + child_node.toElement().text()));
-				}
+					result += gml.readFile(QString(path + child_node.toElement().text()));
 			}
 		}
-		else if (file_node.compare("stn") == 0)
+		else if (file_node.compare("stations") == 0)
 		{
 			XmlStnInterface stn(*(_project.getGEOObjects()));
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
-					stn.readFile(QString(path +
-					                     childList.at(j).toElement().text()));
+					result += stn.readFile(QString(path + childList.at(j).toElement().text()));
 		}
-		else if (file_node.compare("msh") == 0)
+		else if (file_node.compare("mesh") == 0)
 		{
-			const std::string msh_name = path.toStdString() +
-			                             fileList.at(i).toElement().text().toStdString();
-			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
-			if (msh)
-				_project.addMesh(msh);
+			const std::string msh_name = path.toStdString() + fileList.at(i).toElement().text().toStdString();
+			MeshLib::Mesh* mesh = FileIO::readMeshFromFile(msh_name);
+			if (mesh)
+				_project.addMesh(mesh);
+			else
+				result++;
 		}
 	}
 
-	return 1;
+	return result;
 }
 
 int XmlPrjInterface::writeToFile(const std::string& filename)

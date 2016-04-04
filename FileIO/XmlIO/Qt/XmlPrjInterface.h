@@ -48,6 +48,8 @@ protected:
 	bool write();
 
 private:
+	int readInputFiles(QDomNode const& node, QString const& path);
+
 	std::string _filename;
 
 	ProjectData& _project;
