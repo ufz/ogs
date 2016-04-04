@@ -468,24 +468,22 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		else if (fi.suffix().toLower() == "prj")
 		{
 			XmlPrjInterface xml(_project);
-			if (xml.readFile(fileName))
-			{
+			if (xml.readFile(fileName) == 0)
 				_meshModel->updateModel();
-			}
 			else
 				OGSError::box("Failed to load project file.\n Please see console for details.");
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
 			XmlGmlInterface xml(*(_project.getGEOObjects()));
-			if (!xml.readFile(fileName))
+			if (xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
 			XmlStnInterface xml(*(_project.getGEOObjects()));
-			if (!xml.readFile(fileName))
+			if (xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
 		}

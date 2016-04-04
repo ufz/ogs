@@ -40,7 +40,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 
 	// Reader test
 	result = xml.readFile(QString::fromStdString(test_data_file));
-	EXPECT_EQ(1, result);
+	EXPECT_EQ(0, result);
 
 	std::remove(test_data_file.c_str());
 	test_data_file += ".md5";

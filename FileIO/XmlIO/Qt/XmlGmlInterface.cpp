@@ -33,7 +33,7 @@ XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 int XmlGmlInterface::readFile(const QString &fileName)
 {
 	if(XMLQtInterface::readFile(fileName) == 0)
-		return 0;
+		return 1;
 
 	QDomDocument doc("OGS-GLI-DOM");
 	doc.setContent(_fileData);
@@ -41,7 +41,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 	if (docElement.nodeName().compare("OpenGeoSysGLI"))
 	{
 		ERR("XmlGmlInterface::readFile() - Unexpected XML root.");
-		return 0;
+		return 2;
 	}
 
 	std::string gliName("[NN]");
@@ -97,7 +97,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
 		deleteSurfaces(std::move(surfaces), sfc_names);
 	else
 		_geo_objs.addSurfaceVec(std::move(surfaces), gliName, sfc_names);
-	return 1;
+	return 0;
 }
 
 void XmlGmlInterface::readPoints(const QDomNode &pointsRoot, std::vector<GeoLib::Point*>* points,

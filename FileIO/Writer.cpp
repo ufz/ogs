@@ -51,15 +51,15 @@ int Writer::writeToFile(std::string const& filename)
 		if (!fileStream)
 		{
 			std::cerr << "Could not open file " << filename << " !\n";
-			return 0;
+			return 1;
 		}
 
 		fileStream << file_content;
 
 		fileStream.close();
-		return 1;
+		return 0;
 	}
-	return 0;
+	return 2;
 }
 
 void Writer::setPrecision(unsigned int precision)
