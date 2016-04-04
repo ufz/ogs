@@ -403,11 +403,9 @@ void MainWindow::openRecentFile()
 
 void MainWindow::save()
 {
-	QString fileName = QFileDialog::getSaveFileName(
-			this,
-			"Save data as",
-			LastSavedFileDirectory::getDir(),
-			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)");
+	QString fileName = QFileDialog::getSaveFileName(this, "Save data as",
+		LastSavedFileDirectory::getDir(),
+		"OpenGeoSys project (*.prj);;GMSH geometry files (*.geo)");
 
 	if (fileName.isEmpty())
 	{

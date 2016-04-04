@@ -17,15 +17,15 @@
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "GeoLib/GEOObjects.h"
 
-#include "XmlGmlInterface.h"
-#include "XmlStnInterface.h"
-
 #include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"
 
 #include "FileIO/Writer.h"
-#include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/readMeshFromFile.h"
+#include "FileIO/VtkIO/VtuInterface.h"
+#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
+#include "FileIO/XmlIO/Qt/XmlStnInterface.h"
+
 #include "MeshLib/Mesh.h"
 
 #include <QFile>
@@ -53,7 +53,7 @@ int XmlPrjInterface::readFile(const QString &fileName)
 	QDomElement const docElement = doc.documentElement(); //OpenGeoSysProject
 	if (docElement.nodeName().compare("OpenGeoSysProject"))
 	{
-		ERR("XmlGspInterface::readFile(): Unexpected XML root.");
+		ERR("Unexpected XML root.");
 		return 0;
 	}
 
@@ -65,7 +65,7 @@ int XmlPrjInterface::readFile(const QString &fileName)
 		if (file_node.compare("input") == 0)
 		{
 			if (int n_errors = readInputFiles(fileList.at(i), path))
-				INFO ("Error reading %d input files.", n_errors);
+				ERR ("Error reading %d input files.", n_errors);
 		}
 	}
 	return 0;
@@ -135,71 +135,74 @@ bool XmlPrjInterface::write()
 	                   "http://www.opengeosys.org/images/xsd/OpenGeoSysProject.xsd" );
 
 	doc.appendChild(root);
+	QDomElement inputTag = doc.createElement("input");
+	root.appendChild(inputTag);
+
+	// MSH
+	std::vector<MeshLib::Mesh*> const& mesh_vec = _project.getMeshObjects();
+	for (MeshLib::Mesh* mesh : mesh_vec)
+	{
+		// write mesh file
+		std::string const name(path + mesh->getName() + ".vtu");
+		FileIO::VtuInterface vtkIO(mesh, 0, false);
+		if (vtkIO.writeToFile(name.c_str()))
+		{
+			// write entry in project file
+			QDomElement meshTag = doc.createElement("mesh");
+			inputTag.appendChild(meshTag);
+			QDomElement fileNameTag = doc.createElement("file");
+			meshTag.appendChild(fileNameTag);
+			QDomText const fileNameText =
+				doc.createTextNode(QString::fromStdString(mesh->getName() + ".vtu"));
+			fileNameTag.appendChild(fileNameText);
+		}
+		else
+			ERR("Error writing mesh-file \"%s\".", name.c_str());
+	}
 
 	// GML
-	std::vector<std::string> geoNames;
-	geoObjects->getGeometryNames(geoNames);
-	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
+	std::vector<std::string> geo_names;
+	geoObjects->getGeometryNames(geo_names);
+	for (std::string name : geo_names)
 	{
 		// write GLI file
 		XmlGmlInterface gml(*geoObjects);
-		std::string name(*it);
 		gml.setNameForExport(name);
-		if (gml.writeToFile(std::string(path + name + ".gml")))
+		if (gml.writeToFile(std::string(path + name + ".gml")) == 0)
 		{
 			// write entry in project file
-			QDomElement geoTag = doc.createElement("geo");
-			root.appendChild(geoTag);
+			QDomElement geoTag = doc.createElement("geometry");
+			inputTag.appendChild(geoTag);
 			QDomElement fileNameTag = doc.createElement("file");
 			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText =
-			        doc.createTextNode(QString::fromStdString(name + ".gml"));
+			QDomText const fileNameText = doc.createTextNode(QString::fromStdString(name + ".gml"));
 			fileNameTag.appendChild(fileNameText);
 		}
-	}
-
-	// MSH
-	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
-	{
-		// write mesh file
-		Legacy::MeshIO meshIO;
-		meshIO.setMesh(*it);
-		std::string fileName(path + (*it)->getName());
-		meshIO.writeToFile(fileName);
-
-		// write entry in project file
-		QDomElement mshTag = doc.createElement("msh");
-		root.appendChild(mshTag);
-		QDomElement fileNameTag = doc.createElement("file");
-		mshTag.appendChild(fileNameTag);
-		QDomText fileNameText = doc.createTextNode(QString::fromStdString((*it)->getName()));
-		fileNameTag.appendChild(fileNameText);
+		else
+			ERR("Error writing geometry-file \"%s\".", name.c_str());
 	}
 
 	// STN
-	std::vector<std::string> stnNames;
-	geoObjects->getStationVectorNames(stnNames);
-	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
+	std::vector<std::string> stn_names;
+	geoObjects->getStationVectorNames(stn_names);
+	for (std::string name : stn_names)
 	{
 		// write STN file
 		XmlStnInterface stn(*geoObjects);
-		std::string name(*it);
 		stn.setNameForExport(name);
 
 		if (stn.writeToFile(path + name + ".stn"))
 		{
 			// write entry in project file
-			QDomElement geoTag = doc.createElement("stn");
-			root.appendChild(geoTag);
+			QDomElement geoTag = doc.createElement("stations");
+			inputTag.appendChild(geoTag);
 			QDomElement fileNameTag = doc.createElement("file");
 			geoTag.appendChild(fileNameTag);
-			QDomText fileNameText =
-			        doc.createTextNode(QString::fromStdString(name + ".stn"));
+			QDomText const fileNameText = doc.createTextNode(QString::fromStdString(name + ".stn"));
 			fileNameTag.appendChild(fileNameText);
 		}
 		else
-			ERR("XmlGspInterface::writeFile(): Error writing stn-file \"%s\".", name.c_str());
+			ERR("XmlPrjInterface::writeFile(): Error writing stations-file \"%s\".", name.c_str());
 	}
 
 	std::string xml = doc.toString().toStdString();
