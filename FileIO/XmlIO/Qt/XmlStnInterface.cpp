@@ -38,7 +38,7 @@ XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
 int XmlStnInterface::readFile(const QString &fileName)
 {
 	if(XMLQtInterface::readFile(fileName) == 0)
-		return 0;
+		return 1;
 
 	QDomDocument doc("OGS-STN-DOM");
 	doc.setContent(_fileData);
@@ -46,7 +46,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 	if (docElement.nodeName().compare("OpenGeoSysSTN"))
 	{
 		ERR("XmlStnInterface::readFile(): Unexpected XML root.");
-		return 0;
+		return 2;
 	}
 
 	QDomNodeList lists = docElement.childNodes();
@@ -74,7 +74,7 @@ int XmlStnInterface::readFile(const QString &fileName)
 			_geo_objs.addStationVec(std::move(stations), stnName);
 	}
 
-	return 1;
+	return 0;
 }
 
 void XmlStnInterface::readStations( const QDomNode &stationsRoot,

@@ -67,7 +67,7 @@
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
 #include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "FileIO/XmlIO/Qt/XmlStnInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
@@ -403,11 +403,9 @@ void MainWindow::openRecentFile()
 
 void MainWindow::save()
 {
-	QString fileName = QFileDialog::getSaveFileName(
-			this,
-			"Save data as",
-			LastSavedFileDirectory::getDir(),
-			"GeoSys project (*.gsp);;GMSH geometry files (*.geo)");
+	QString fileName = QFileDialog::getSaveFileName(this, "Save data as",
+		LastSavedFileDirectory::getDir(),
+		"OpenGeoSys project (*.prj);;GMSH geometry files (*.geo)");
 
 	if (fileName.isEmpty())
 	{
@@ -418,9 +416,9 @@ void MainWindow::save()
 	QFileInfo fi(fileName);
 	LastSavedFileDirectory::setDir(fileName);
 
-	if (fi.suffix().toLower() == "gsp")
+	if (fi.suffix().toLower() == "prj")
 	{
-		XmlGspInterface xml(_project);
+		XmlPrjInterface xml(_project);
 		xml.writeToFile(fileName.toStdString());
 	}
 	else if (fi.suffix().toLower() == "geo")
@@ -465,27 +463,25 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
 		}
-		else if (fi.suffix().toLower() == "gsp")
+		else if (fi.suffix().toLower() == "prj")
 		{
-			XmlGspInterface xml(_project);
-			if (xml.readFile(fileName))
-			{
+			XmlPrjInterface xml(_project);
+			if (xml.readFile(fileName) == 0)
 				_meshModel->updateModel();
-			}
 			else
 				OGSError::box("Failed to load project file.\n Please see console for details.");
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
 			XmlGmlInterface xml(*(_project.getGEOObjects()));
-			if (!xml.readFile(fileName))
+			if (xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
 			XmlStnInterface xml(*(_project.getGEOObjects()));
-			if (!xml.readFile(fileName))
+			if (xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
 		}

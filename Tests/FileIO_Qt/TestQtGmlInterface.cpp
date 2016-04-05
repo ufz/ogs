@@ -31,7 +31,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 	FileIO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
-	EXPECT_EQ(result, 1);
+	EXPECT_EQ(0, result);
 
 	// remove the written data from the data structures
 	geo_objects.removeSurfaceVec(geo_name);
@@ -40,7 +40,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 
 	// Reader test
 	result = xml.readFile(QString::fromStdString(test_data_file));
-	EXPECT_EQ(1, result);
+	EXPECT_EQ(0, result);
 
 	std::remove(test_data_file.c_str());
 	test_data_file += ".md5";
