@@ -80,7 +80,8 @@ public:
             GroundwaterFlow::LocalAssemblerData,
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType,
-            GlobalDim>;
+            GlobalDim,
+            Parameter<double, MeshLib::Element const&> const&>;
 
         LocalDataInitializer initializer;
 
@@ -97,8 +98,8 @@ public:
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,
-                _hydraulic_conductivity,
-                this->_integration_order);
+                this->_integration_order,
+                _hydraulic_conductivity);
     }
 
     // TODO remove, but put "gw_" somewhere

@@ -25,11 +25,6 @@ class LocalNeumannBcAsmDataInterface
 public:
     virtual ~LocalNeumannBcAsmDataInterface() = default;
 
-    virtual void init(MeshLib::Element const& e,
-            std::size_t const local_matrix_size,
-            std::function<double (MeshLib::Element const&)> const& value_lookup,
-            unsigned const integration_order) = 0;
-
     virtual void assemble(const double t) = 0;
 
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
@@ -53,11 +48,11 @@ public:
 
     /// The neumann_bc_value factor is directly integrated into the local
     /// element matrix.
-    void
-    init(MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
-        std::function<double (MeshLib::Element const&)> const& value_lookup,
-        unsigned const integration_order) override
+    LocalNeumannBcAsmData(
+            MeshLib::Element const& e,
+            std::size_t const local_matrix_size,
+            unsigned const integration_order,
+            std::function<double (MeshLib::Element const&)> const& value_lookup)
     {
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatricesType>;
