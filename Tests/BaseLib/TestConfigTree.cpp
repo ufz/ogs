@@ -11,7 +11,9 @@
 #include <logog/include/logog.hpp>
 
 #include <boost/property_tree/xml_parser.hpp>
+#include <numeric>
 #include <sstream>
+#include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "Tests/TestTools.h"
@@ -114,6 +116,9 @@ TEST(BaseLibConfigTree, Get)
             "</sub>"
             "<x>Y</x>"
             "<z attr=\"0.5\" optattr=\"false\">32.0</z>"
+            "<vector>0 1 2 3 4</vector>"
+            "<vector_bad1>x 1 2a</vector_bad1>"
+            "<vector_bad2>0 1 2a</vector_bad2>"
             ;
     auto const ptree = readXml(xml);
 
@@ -218,6 +223,23 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
+        }
+
+        // Testing vector
+        {
+            auto v = conf.getConfParam<std::vector<int>>("vector");
+            EXPECT_ERR_WARN(cbs, false, false);
+            EXPECT_EQ(5u, v.size());
+            std::vector<int> expected_vector(5);
+            std::iota(expected_vector.begin(), expected_vector.end(), 0);
+            EXPECT_TRUE(std::equal(expected_vector.begin(),
+                                   expected_vector.end(), v.begin()));
+            EXPECT_ANY_THROW(
+                conf.getConfParam<std::vector<int>>("vector_bad1"));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(
+                conf.getConfParam<std::vector<int>>("vector_bad2"));
+            EXPECT_ERR_WARN(cbs, true, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here

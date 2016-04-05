@@ -15,6 +15,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -496,6 +497,15 @@ public:
     //! Will print a warning message
     static void onwarning(std::string const& filename, std::string const& path,
                           std::string const& message);
+
+private:
+    //! Default implementation of reading a value of type T.
+    template<typename T> boost::optional<T>
+    getConfParamOptionalImpl(std::string const& param, T*) const;
+
+    //! Implementation of reading a vector of values of type T.
+    template<typename T> boost::optional<std::vector<T>>
+    getConfParamOptionalImpl(std::string const& param, std::vector<T>*) const;
 
 private:
     struct CountType

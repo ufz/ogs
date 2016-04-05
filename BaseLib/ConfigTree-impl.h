@@ -9,6 +9,8 @@
 
 #include "ConfigTree.h"
 
+#include <sstream>
+
 namespace BaseLib
 {
 
@@ -50,15 +52,48 @@ getConfParam(std::string const& param, T const& default_value) const
     return default_value;
 }
 
-template<typename T>
-boost::optional<T>
-ConfigTree::
-getConfParamOptional(std::string const& param) const
+template <typename T>
+boost::optional<T> ConfigTree::getConfParamOptional(
+    std::string const& param) const
 {
     checkUnique(param);
 
+    return getConfParamOptionalImpl(param, static_cast<T*>(nullptr));
+}
+
+template <typename T>
+boost::optional<T> ConfigTree::getConfParamOptionalImpl(
+    std::string const& param, T*) const
+{
+    if (auto p = getConfSubtreeOptional(param)) return p->getValue<T>();
+
+    return boost::none;
+}
+
+template <typename T>
+boost::optional<std::vector<T>> ConfigTree::getConfParamOptionalImpl(
+    std::string const& param, std::vector<T>*) const
+{
     if (auto p = getConfSubtreeOptional(param))
-        return p->getValue<T>();
+    {
+        std::istringstream sstr{p->getValue<std::string>()};
+        std::vector<T> result;
+        T value;
+        while (sstr >> value)
+            result.push_back(value);
+        if (!sstr.eof())  // The stream is not read until the end, must be an
+                        // error. result contains number of read values.
+        {
+            error("Value for key <" + param + "> `" +
+                  shortString(sstr.str()) +
+                  "' not convertible to a vector of the desired type."
+                  " Could not convert token no. " +
+                  std::to_string(result.size() + 1) + ".");
+            return boost::none;
+        }
+
+        return boost::make_optional(result);
+    }
 
     return boost::none;
 }
