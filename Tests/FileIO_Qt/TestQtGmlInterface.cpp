@@ -31,7 +31,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 	FileIO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
-	EXPECT_EQ(result, 1);
+	EXPECT_EQ(0, result);
 
 	// remove the written data from the data structures
 	geo_objects.removeSurfaceVec(geo_name);
