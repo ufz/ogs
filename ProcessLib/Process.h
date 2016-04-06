@@ -213,8 +213,8 @@ public:
 		//      VectoMatrixAssembler since that will work for all kinds of processes.
 	}
 
-	std::vector<DirichletBc<Index> > const* getKnownSolutions()
-	const override final
+	std::vector<DirichletBc<Index>> const* getKnownSolutions(
+	    double const /*t*/) const override final
 	{
 		return &_dirichlet_bcs;
 	}

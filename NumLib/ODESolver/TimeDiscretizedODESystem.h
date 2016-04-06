@@ -310,7 +310,8 @@ public:
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
     {
-        auto const* known_solutions = _ode.getKnownSolutions();
+        auto const* known_solutions =
+            _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
         if (known_solutions) {
             for (auto const& bc : *known_solutions) {

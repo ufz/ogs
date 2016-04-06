@@ -65,8 +65,12 @@ public:
 
     using Index = typename MathLib::MatrixVectorTraits<Matrix>::Index;
 
-    virtual std::vector<ProcessLib::DirichletBc<Index> > const* getKnownSolutions() const
+    //! Provides known solutions (Dirichlet boundary conditions) vector for
+    //! the ode system at the given time \c t.
+    virtual std::vector<ProcessLib::DirichletBc<Index>> const*
+    getKnownSolutions(double const t) const
     {
+        (void)t;
         return nullptr; // by default there are no known solutions
     }
 };
