@@ -24,6 +24,9 @@
    orders to be built. Selecting only few element types speeds up compilation
    significantly. #1092
  - Command line argument `-l` for OGS cli and testrunner to specify verbosity of logging. #1056
+ - Added possibility to specify after which timesteps there shiuld be output.
+ - Added possibility to specify timesteps of different size for use with
+   transient processes.
 
 #### DataExplorer and utilities
  - Added command line tool for creating layered meshes from raster files
