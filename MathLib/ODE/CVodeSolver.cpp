@@ -6,7 +6,9 @@
  *              http://www.opengeosys.org/project/license
  *
  */
- 
+
+#ifdef CVODE_FOUND
+
 #include "CVodeSolver.h"
 
 #include <cassert>
@@ -346,3 +348,5 @@ double CVodeSolver::getTime() const
 CVodeSolver::~CVodeSolver() = default;
 
 }  // namespace MathLib
+
+#endif  // CVODE_FOUND

@@ -20,15 +20,26 @@ find_path(CVODE_INCLUDE_DIRS sundials_types.h
 	PATH_SUFFIXES include include/sundials
 )
 
-find_library(CVODE_LIBRARIES
+find_library(CVODE_LIBRARY
 	NAMES sundials_cvode
 	ENV CVODE_ROOT
 	PATH_SUFFIXES lib Lib
 )
 
+find_library(CVODE_NVECSERIAL
+	NAMES sundials_nvecserial
+	ENV CVODE_ROOT
+	PATH_SUFFIXES lib Lib
+)
+
 find_package_handle_standard_args(CVODE DEFAULT_MSG
-	CVODE_LIBRARIES
+	CVODE_LIBRARY
+	CVODE_NVECSERIAL
 	CVODE_INCLUDE_DIRS
 )
 
-mark_as_advanced(CVODE_INCLUDE_DIRS CVODE_LIBRARIES)
+if(CVODE_FOUND)
+	set(CVODE_LIBRARIES sundials_cvode sundials_nvecserial)
+endif()
+
+mark_as_advanced(CVODE_INCLUDE_DIRS CVODE_LIBRARY CVODE_NVECSERIAL)
