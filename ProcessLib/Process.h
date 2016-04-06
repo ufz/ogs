@@ -58,7 +58,7 @@ template<typename GlobalVector>
 struct SecondaryVariable
 {
 	std::string const name;
-	unsigned n_components;
+	const unsigned n_components;
 	SecondaryVariableFunctions<GlobalVector> fcts;
 };
 
@@ -226,7 +226,7 @@ public:
 				assert(result->size() == _mesh.getNElements());
 
 				auto const& residuals =
-					var.fcts.eval_field(x, *_local_to_global_index_map);
+					var.fcts.eval_residuals(x, *_local_to_global_index_map);
 
 				// Copy result
 				for (std::size_t i = 0; i < _mesh.getNElements(); ++i)
