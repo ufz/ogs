@@ -302,8 +302,8 @@ assembleConcreteProcess(
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    BP::_global_setup.executeDerefd(*BP::_global_assembler,
-                                    _local_assemblers, t, x, M, K, b);
+    BP::_global_setup.executeDereferenced(
+                *BP::_global_assembler, _local_assemblers, t, x, M, K, b);
 
 #ifndef NDEBUG
     if (_total_iteration == 0)
@@ -380,7 +380,7 @@ postIteration(GlobalVector const& x)
 
         // TODO Short-circuit evaluation that stops after the first error.
         //      But maybe that's not what I want to use here.
-        BP::_global_setup.executeDerefd(
+        BP::_global_setup.executeDereferenced(
                     check_variable_bounds, _local_assemblers);
     }
 
