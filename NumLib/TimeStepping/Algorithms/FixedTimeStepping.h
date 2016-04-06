@@ -12,10 +12,12 @@
 #ifndef FIXEDTIMESTEPPING_H_
 #define FIXEDTIMESTEPPING_H_
 
+#include <memory>
 #include <vector>
 
-#include "BaseLib/ConfigTree.h"
 #include "ITimeStepAlgorithm.h"
+
+namespace BaseLib { class ConfigTree; }
 
 namespace NumLib
 {
@@ -25,10 +27,10 @@ namespace NumLib
  *
  * This algorithm returns time step size defined by a user priori.
  */
-class FixedTimeStepping : public ITimeStepAlgorithm
+class FixedTimeStepping final
+        : public ITimeStepAlgorithm
 {
 public:
-
     /**
      * Constructor with homogeneous time step size
      *
@@ -59,32 +61,26 @@ public:
      */
     FixedTimeStepping(double t_initial, double t_end, const std::vector<double> &vec_all_dt);
 
-    /**
-     * @brief Create timestepper from the given configuration
-     *
-     * Currently this function only covers uniform timestep size.
-     */
-    static FixedTimeStepping* newInstance(BaseLib::ConfigTree const& config);
-
-    virtual ~FixedTimeStepping() {}
+    /// Create timestepper from the given configuration
+    static std::unique_ptr<ITimeStepAlgorithm> newInstance(BaseLib::ConfigTree const& config);
 
     /// return the beginning of time steps
-    virtual double begin() const {return _t_initial;}
+    double begin() const override { return _t_initial; }
 
     /// return the end of time steps
-    virtual double end() const {return _t_end;}
+    double end() const override { return _t_end; }
 
     /// return current time step
-    virtual const TimeStep getTimeStep() const;
+    const TimeStep getTimeStep() const override;
 
     /// move to the next time step
-    virtual bool next();
+    bool next() override;
 
     /// return if current time step is accepted
-    virtual bool accepted() const {return true;}
+    bool accepted() const override { return true; }
 
     /// return a history of time step sizes
-    virtual const std::vector<double>& getTimeStepSizeHistory() const {return _dt_vector; }
+    const std::vector<double>& getTimeStepSizeHistory() const override { return _dt_vector; }
 
 private:
     /// determine true end time

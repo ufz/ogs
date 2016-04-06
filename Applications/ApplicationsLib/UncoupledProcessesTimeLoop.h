@@ -17,6 +17,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
+#include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
 
 #include "ProjectData.h"
 
@@ -29,6 +30,11 @@ template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop
 {
 public:
+    explicit UncoupledProcessesTimeLoop(
+            std::unique_ptr<NumLib::ITimeStepAlgorithm>&& timestepper)
+        : _timestepper{std::move(timestepper)}
+    {}
+
     bool loop(ProjectData& project);
 
     ~UncoupledProcessesTimeLoop();
@@ -44,6 +50,7 @@ private:
     using TimeDisc         = NumLib::TimeDiscretization<Vector>;
 
     std::vector<Vector*> _process_solutions;
+    std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;
 
     struct SingleProcessData
     {
@@ -197,18 +204,22 @@ template<typename Matrix, typename Vector>
 std::unique_ptr<UncoupledProcessesTimeLoop<Matrix, Vector> >
 createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 {
-    auto const type = conf.getConfParam<std::string>("type");
+    auto const type = conf.peekConfParam<std::string>("type");
 
-    if (type == "SingleStep")
-    {
-        using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;
-        return std::unique_ptr<TimeLoop>(new TimeLoop);
-    }
-    else
-    {
+    std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
+
+    if (type == "SingleStep") {
+        conf.ignoreConfParam("type");
+        timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
+    } else if (type == "FixedTimeStepping") {
+        timestepper = NumLib::FixedTimeStepping::newInstance(conf);
+    } else {
             ERR("Unknown timestepper type: `%s'.", type.c_str());
             std::abort();
     }
+
+    using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;
+    return std::unique_ptr<TimeLoop>{new TimeLoop{std::move(timestepper)}};
 }
 
 
@@ -325,7 +336,7 @@ loop(ProjectData& project)
     auto& out_ctrl = project.getOutputControl();
     out_ctrl.init(project.processesBegin(), project.processesEnd());
 
-    auto const t0 = 0.0; // time of the IC
+    auto const t0 = _timestepper->getTimeStep().current(); // time of the IC
 
     // init solution storage
     setInitialConditions(project, t0, per_process_data);
@@ -341,20 +352,17 @@ loop(ProjectData& project)
         }
     }
 
-    auto const delta_t = 1.0;
-
-    // TODO only for now
-    // Make sure there will be exactly one iteration of the loop below.
-    auto const t_end = 0.5;
-
-    double t, t_last;
-    unsigned timestep = 1; // the first timestep really is number one
+    double t = t0;
+    std::size_t timestep = 1; // the first timestep really is number one
     bool nonlinear_solver_succeeded = true;
 
-    for (t=t0+delta_t, t_last=t0;
-         t<t_end+delta_t;
-         t_last=t, t+=delta_t, ++timestep)
+    while (_timestepper->next())
     {
+        auto const ts = _timestepper->getTimeStep();
+        auto const delta_t = ts.dt();
+        t        = ts.current();
+        timestep = ts.steps();
+
         // TODO use process name
         unsigned pcs_idx = 0;
         for (auto p = project.processesBegin(); p != project.processesEnd();
@@ -389,7 +397,7 @@ loop(ProjectData& project)
              ++p, ++pcs_idx)
         {
             auto const& x = *_process_solutions[pcs_idx];
-            out_ctrl.doOutputLastTimestep(**p, timestep-1, t_last, x);
+            out_ctrl.doOutputLastTimestep(**p, timestep, t, x);
         }
     }
 
