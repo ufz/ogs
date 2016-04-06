@@ -63,8 +63,8 @@ const std::vector<Point*>* GEOObjects::getPointVec(const std::string &name) cons
 	if (idx != std::numeric_limits<std::size_t>::max())
 		return _pnt_vecs[idx]->getVector();
 
-	DBUG("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	ERR("GEOObjects::getPointVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
@@ -73,8 +73,8 @@ const PointVec* GEOObjects::getPointVecObj(const std::string &name) const
 	if (idx != std::numeric_limits<std::size_t>::max())
 		return _pnt_vecs[idx];
 
-	DBUG("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	ERR("GEOObjects::getPointVecObj() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 bool GEOObjects::removePointVec(std::string const& name)
@@ -87,6 +87,7 @@ bool GEOObjects::removePointVec(std::string const& name)
 
 	for (std::vector<PointVec*>::iterator it(_pnt_vecs.begin());
 	     it != _pnt_vecs.end(); ++it)
+	{
 		if ((*it)->getName().compare(name) == 0)
 		{
 			_callbacks->removePointVec(name);
@@ -94,8 +95,10 @@ bool GEOObjects::removePointVec(std::string const& name)
 			_pnt_vecs.erase(it);
 			return true;
 		}
-	DBUG("GEOObjects::removePointVec() - No entry found with name \"%s\".", name.c_str());
-	return false;
+	}
+
+	ERR("GEOObjects::removePointVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
@@ -110,13 +113,15 @@ const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     const std::string& name) const
 {
 	for (std::vector<PointVec*>::const_iterator it(_pnt_vecs.begin());
-	     it != _pnt_vecs.end(); ++it) {
+	     it != _pnt_vecs.end(); ++it)
+	{
 		if ((*it)->getName().compare(name) == 0 && (*it)->getType() == PointVec::PointType::STATION) {
 			return (*it)->getVector();
 		}
 	}
-	DBUG("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+
+	ERR("GEOObjects::getStationVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 void GEOObjects::addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
@@ -170,23 +175,25 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
 const std::vector<Polyline*>* GEOObjects::getPolylineVec(const std::string &name) const
 {
 	std::size_t size (_ply_vecs.size());
-	for (std::size_t i = 0; i < size; i++)
+	for (std::size_t i = 0; i < size; i++) {
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i]->getVector();
+	}
 
-	DBUG("GEOObjects::getPolylineVec() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	ERR("GEOObjects::getPolylineVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 const PolylineVec* GEOObjects::getPolylineVecObj(const std::string &name) const
 {
 	std::size_t size (_ply_vecs.size());
-	for (std::size_t i = 0; i < size; i++)
+	for (std::size_t i = 0; i < size; i++) {
 		if (_ply_vecs[i]->getName().compare(name) == 0)
 			return _ply_vecs[i];
+	}
 
-	DBUG("GEOObjects::getPolylineVecObj() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	ERR("GEOObjects::getPolylineVecObj() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 bool GEOObjects::removePolylineVec(std::string const& name)
@@ -194,15 +201,17 @@ bool GEOObjects::removePolylineVec(std::string const& name)
 	_callbacks->removePolylineVec(name);
 	for (std::vector<PolylineVec*>::iterator it = _ply_vecs.begin();
 	     it != _ply_vecs.end(); ++it)
+	{
 		if ((*it)->getName().compare(name) == 0)
 		{
 			delete *it;
 			_ply_vecs.erase(it);
 			return true;
 		}
+	}
 
-	DBUG("GEOObjects::removePolylineVec() - No entry found with name \"%s\".", name.c_str());
-	return false;
+	ERR("GEOObjects::removePolylineVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 void GEOObjects::addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
@@ -249,11 +258,13 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 const std::vector<Surface*>* GEOObjects::getSurfaceVec(const std::string &name) const
 {
 	std::size_t size (_sfc_vecs.size());
-	for (std::size_t i = 0; i < size; i++)
+	for (std::size_t i = 0; i < size; i++) {
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i]->getVector();
-	DBUG("GEOObjects::getSurfaceVec() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	}
+
+	ERR("GEOObjects::getSurfaceVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 bool GEOObjects::removeSurfaceVec(const std::string &name)
@@ -261,25 +272,30 @@ bool GEOObjects::removeSurfaceVec(const std::string &name)
 	_callbacks->removeSurfaceVec(name);
 	for (std::vector<SurfaceVec*>::iterator it (_sfc_vecs.begin());
 	     it != _sfc_vecs.end(); ++it)
+	{
 		if ((*it)->getName().compare (name) == 0)
 		{
 			delete *it;
 			_sfc_vecs.erase (it);
 			return true;
 		}
+	}
 
-	DBUG("GEOObjects::removeSurfaceVec() - No entry found with name \"%s\".", name.c_str());
-	return false;
+	ERR("GEOObjects::removeSurfaceVec() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string &name) const
 {
 	std::size_t size (_sfc_vecs.size());
 	for (std::size_t i = 0; i < size; i++)
+	{
 		if (_sfc_vecs[i]->getName().compare(name) == 0)
 			return _sfc_vecs[i];
-	DBUG("GEOObjects::getSurfaceVecObj() - No entry found with name \"%s\".", name.c_str());
-	return nullptr;
+	}
+
+	ERR("GEOObjects::getSurfaceVecObj() - No entry found with name \"%s\".", name.c_str());
+	std::abort();
 }
 
 bool GEOObjects::isUniquePointVecName(std::string &name)
