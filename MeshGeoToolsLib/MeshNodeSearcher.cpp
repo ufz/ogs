@@ -71,11 +71,6 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(GeoLib::GeoObject cons
 	case GeoLib::GEOTYPE::SURFACE:
 		vec_nodes = this->getMeshNodeIDsAlongSurface(*static_cast<const GeoLib::Surface*>(&geoObj));
 		break;
-	case GeoLib::GEOTYPE::GEODOMAIN:
-		vec_nodes.resize(_mesh.getNNodes());
-		for (std::size_t i=0; i<_mesh.getNNodes(); i++)
-			vec_nodes[i] = i;
-		break;
 	default:
 		break;
 	}
