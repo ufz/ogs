@@ -364,13 +364,6 @@ const std::string GEOObjects::getElementNameByID(const std::string &geometry_nam
 			break;
 		case GeoLib::GEOTYPE::SURFACE:
 			this->getSurfaceVecObj(geometry_name)->getNameOfElementByID(id, name);
-			break;
-		case GeoLib::GEOTYPE::VOLUME:
-		case GeoLib::GEOTYPE::GEODOMAIN:
-		case GeoLib::GEOTYPE::INVALID:
-		default:
-			WARN("GEOObjects::getElementNameByID() - No valid GEOTYPE given.");
-			break;
 	}
 	return name;
 }
@@ -556,10 +549,6 @@ const GeoLib::GeoObject* GEOObjects::getGeoObject(const std::string &geo_name,
 							sfc_vec->getElementByName(geo_obj_name)));
 		break;
 	}
-	case GeoLib::GEOTYPE::GEODOMAIN: {
-		geo_obj = const_cast<GeoLib::GeoDomain*>(&_geo_domain);
-		break;
-	}
 	default:
 		ERR("GEOObjects::getGeoObject(): geometric type not handled.")
 		return nullptr;
@@ -585,9 +574,6 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 
 	if(!geo_obj)
 		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::SURFACE, geo_obj_name);
-
-	if(!geo_obj)
-		geo_obj = getGeoObject(geo_name, GeoLib::GEOTYPE::GEODOMAIN, geo_obj_name);
 
 	if (!geo_obj) {
 		DBUG("GEOObjects::getGeoObject(): Could not find \"%s\" in geometry %s.",

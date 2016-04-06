@@ -25,7 +25,6 @@
 #include "PolylineVec.h"
 #include "Surface.h"
 #include "SurfaceVec.h"
-#include "GeoDomain.h"
 
 #include "Station.h"
 
@@ -277,8 +276,6 @@ public:
 	std::vector<PolylineVec*> _ply_vecs;
 	/** vector manages pointers to SurfaceVec objects */
 	std::vector<SurfaceVec*> _sfc_vecs;
-
-	GeoDomain _geo_domain;
 
 	std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 

@@ -14,27 +14,22 @@
 
 #include "GeoType.h"
 
-namespace GeoLib {
+#include <cstdlib>
 
-GEOTYPE convertGeoType (const std::string& geo_type_str)
+namespace GeoLib
 {
-	if (geo_type_str.compare ("POINT") == 0) return GEOTYPE::POINT;
-	if (geo_type_str.compare ("POLYLINE") == 0) return GEOTYPE::POLYLINE;
-	if (geo_type_str.compare ("SURFACE") == 0) return GEOTYPE::SURFACE;
-	if (geo_type_str.compare ("VOLUME") == 0) return GEOTYPE::VOLUME;
-	if (geo_type_str.compare ("GEODOMAIN") == 0) return GEOTYPE::GEODOMAIN;
-	if (geo_type_str.compare ("DOMAIN") == 0) return GEOTYPE::GEODOMAIN;
-	return GEOTYPE::INVALID;
-}
 
 std::string convertGeoTypeToString (GEOTYPE geo_type)
 {
-	if (geo_type == GEOTYPE::POINT) return "POINT";
-	if (geo_type == GEOTYPE::POLYLINE) return "POLYLINE";
-	if (geo_type == GEOTYPE::SURFACE) return "SURFACE";
-	if (geo_type == GEOTYPE::VOLUME) return "VOLUME";
-	if (geo_type == GEOTYPE::GEODOMAIN) return "GEODOMAIN";
-	return "INVALID";
+    switch (geo_type)
+    {
+    case GEOTYPE::POINT:    return "POINT";
+    case GEOTYPE::POLYLINE: return "POLYLINE";
+    case GEOTYPE::SURFACE:  return "SURFACE";
+    }
+
+    std::abort(); // Cannot happen, because switch covers all cases.
+                  // Used to silence compiler warning.
 }
 
 } // end namespace GeoLib

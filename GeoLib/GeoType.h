@@ -24,15 +24,10 @@ namespace GeoLib {
  */
 
 enum class GEOTYPE {
-	INVALID = 0,
-	POINT,     //!< POINT
-	POLYLINE,  //!< POLYLINE
-	SURFACE,   //!< SURFACE
-	VOLUME,    //!< VOLUME
-	GEODOMAIN //!< GEODOMAIN
+    POINT,
+    POLYLINE,
+    SURFACE
 };
-
-GEOTYPE convertGeoType (const std::string& geo_type_str);
 
 std::string convertGeoTypeToString (GEOTYPE geo_type);
 
