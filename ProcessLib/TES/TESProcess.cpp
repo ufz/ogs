@@ -186,20 +186,6 @@ TESProcess(MeshLib::Mesh& mesh,
     _assembly_params.react_sys = std::move(
         Ads::Adsorption::newInstance(config.getConfSubtree("reactive_system")));
 
-    // matrix order
-    {
-        auto const order = config.getConfParam<std::string>("global_matrix_order");
-        DBUG("global_matrix_order: %s", order.c_str());
-
-        if (order == "BY_COMPONENT")
-            _global_matrix_order = AssemblerLib::ComponentOrder::BY_COMPONENT;
-        else if (order == "BY_LOCATION")
-            _global_matrix_order = AssemblerLib::ComponentOrder::BY_LOCATION;
-        else {
-            ERR("unknown global matrix order `%s'", order.c_str());
-            std::abort();
-        }
-    }
 
     // debug output
     if (auto const param = config.getConfParamOptional<bool>("output_element_matrices"))
@@ -223,6 +209,38 @@ TESProcess(MeshLib::Mesh& mesh,
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
 
         BP::_process_output.output_global_matrix = *param;
+    }
+
+    // matrix order
+    {
+        // TODO full DOF table not built with order anymore?
+        auto getOrder = [&config]() -> AssemblerLib::ComponentOrder
+        {
+            auto const order = config.getConfParam<std::string>("global_matrix_order");
+            DBUG("global_matrix_order: %s", order.c_str());
+
+            if (order == "BY_COMPONENT")
+                return AssemblerLib::ComponentOrder::BY_COMPONENT;
+            else if (order == "BY_LOCATION")
+                return AssemblerLib::ComponentOrder::BY_LOCATION;
+            else {
+                ERR("unknown global matrix order `%s'", order.c_str());
+                std::abort();
+            }
+        };
+
+        // TODO move the two data members somewhere else.
+        // for extrapolation of secondary variables
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+                    new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
+        _local_to_global_index_map_single_component.reset(
+                    new AssemblerLib::LocalToGlobalIndexMap(
+                        std::move(all_mesh_subsets_single_component), getOrder())
+                    );
+
+        _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
+
     }
 }
 
@@ -277,20 +295,6 @@ createLocalAssemblers()
                 _local_assemblers,
                 BP::_integration_order,
                 _assembly_params);
-
-    // TODO move somewhere else/make obsolete
-    DBUG("Initialize TESProcess.");
-
-    // for extrapolation of secondary variables
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-                new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
-    _local_to_global_index_map_single_component.reset(
-                new AssemblerLib::LocalToGlobalIndexMap(
-                    std::move(all_mesh_subsets_single_component), _global_matrix_order)
-                );
-
-    _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
 }
 
 template<typename GlobalSetup>

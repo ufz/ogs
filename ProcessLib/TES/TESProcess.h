@@ -76,9 +76,6 @@ private:
     using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
-    AssemblerLib::ComponentOrder _global_matrix_order =
-            AssemblerLib::ComponentOrder::BY_COMPONENT;
-
     AssemblyParams _assembly_params;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
