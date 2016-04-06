@@ -141,3 +141,6 @@ if(OGS_USE_MPI)
 endif()
 
 find_package(CVODE)
+if(CVODE_FOUND)
+    add_definitions(-DCVODE_FOUND)
+endif() # CVODE_FOUND

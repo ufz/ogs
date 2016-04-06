@@ -17,7 +17,9 @@
 #include "OdeSolver.h"
 #include "Handles.h"
 
+#ifdef CVODE_FOUND
 #include "CVodeSolver.h"
+#endif
 
 namespace MathLib
 {
@@ -113,6 +115,7 @@ private:
 	    BaseLib::ConfigTree const& config);
 };
 
+#ifdef CVODE_FOUND
 template <unsigned NumEquations, typename... FunctionArguments>
 std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
     BaseLib::ConfigTree const& config)
@@ -121,6 +124,7 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
 	    new ConcreteOdeSolver<NumEquations, CVodeSolver, FunctionArguments...>(
 	        config));
 }
+#endif  // CVODE_FOUND
 
 }  // namespace MathLib
 

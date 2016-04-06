@@ -7,6 +7,8 @@
  *
  */
 
+#ifdef CVODE_FOUND
+
 extern "C" {
 #include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
@@ -347,3 +349,5 @@ double CVodeSolver::getTime() const
 CVodeSolver::~CVodeSolver() = default;
 
 }  // namespace MathLib
+
+#endif  // CVODE_FOUND

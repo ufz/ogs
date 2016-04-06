@@ -7,6 +7,8 @@
  *
  */
 
+#ifdef CVODE_FOUND
+
 #include <gtest/gtest.h>
 
 #include <array>
@@ -331,3 +333,5 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 		// std::printf("time: %g\n", time_reached);
 	}
 }
+
+#endif  // CVODE_FOUND
