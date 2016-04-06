@@ -314,7 +314,6 @@ void MshView::addDIRECTSourceTerms()
 {
 	QModelIndex const index = this->selectionModel()->currentIndex();
 	MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
-	emit requestCondSetupDialog(grid->getName(), GeoLib::GEOTYPE::INVALID, 0, false);
 }
 
 void MshView::loadDIRECTSourceTerms()

@@ -76,11 +76,11 @@ void GEOModels::updateGeometry(const std::string &geo_name)
 void GEOModels::removeGeometry(std::string const& geo_name,
                                GeoLib::GEOTYPE const type)
 {
-	if (type == GeoLib::GEOTYPE::INVALID || type == GeoLib::GEOTYPE::SURFACE)
+	if (type == GeoLib::GEOTYPE::SURFACE)
 		_geo_objects.removeSurfaceVec(geo_name);
-	if (type == GeoLib::GEOTYPE::INVALID || type == GeoLib::GEOTYPE::POLYLINE)
+	if (type == GeoLib::GEOTYPE::POLYLINE)
 		_geo_objects.removePolylineVec(geo_name);
-	if (type == GeoLib::GEOTYPE::INVALID || type == GeoLib::GEOTYPE::POINT)
+	if (type == GeoLib::GEOTYPE::POINT)
 		_geo_objects.removePointVec(geo_name);
 }
 
