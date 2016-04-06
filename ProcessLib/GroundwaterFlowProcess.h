@@ -102,14 +102,6 @@ public:
                 _hydraulic_conductivity);
     }
 
-    // TODO remove, but put "gw_" somewhere
-    /*
-    std::string getLinearSolverName() const override
-    {
-        return "gw_";
-    }
-    */
-
     void createLocalAssemblers() override
     {
         if (this->_mesh.getDimension()==1)
@@ -120,12 +112,6 @@ public:
             createLocalAssemblers<3>();
         else
             assert(false);
-    }
-
-    ~GroundwaterFlowProcess()
-    {
-        for (auto p : _local_assemblers)
-            delete p;
     }
 
     //! \name ODESystem interface
@@ -153,12 +139,11 @@ private:
         DBUG("Assemble GroundwaterFlowProcess.");
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers, t, x, M, K, b);
+        this->_global_setup.executeDereferenced(
+            *this->_global_assembler, _local_assemblers, t, x, M, K, b);
     }
 
-
-    std::vector<LocalAssembler*> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 };
 
 template <typename GlobalSetup>

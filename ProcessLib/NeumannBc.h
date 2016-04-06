@@ -94,9 +94,6 @@ public:
 
         for (auto e : _elements)
             delete e;
-
-        for (auto p : _local_assemblers)
-            delete p;
     }
 
     /// Calls local assemblers which calculate their contributions to the global
@@ -104,7 +101,7 @@ public:
     void integrate(GlobalSetup const& global_setup,
                    const double t, GlobalVector& b)
     {
-        global_setup.execute(*_global_assembler, _local_assemblers, t, b);
+        global_setup.executeDereferenced(*_global_assembler, _local_assemblers, t, b);
     }
 
     void initialize(GlobalSetup const& global_setup,
@@ -194,7 +191,7 @@ private:
         GlobalMatrix, GlobalVector>;
 
     /// Local assemblers for each element of #_elements.
-    std::vector<LocalAssembler*> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
 };
 
