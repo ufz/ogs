@@ -201,8 +201,20 @@ public:
     void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
                                     Vector& minus_delta_x) override
     {
-        (void) Jac; (void) res; (void) minus_delta_x;
-        INFO("Method applyKnownSolutionsNewton() not implemented."); // TODO implement
+        auto const* known_solutions =
+            _ode.getKnownSolutions(_time_disc.getCurrentTime());
+
+        if (known_solutions) {
+            std::vector<double> values;
+
+            for (auto const& bc : *known_solutions) {
+                // TODO this is the quick and dirty and bad performance solution.
+                values.resize(bc.values.size(), 0.0);
+
+                // TODO maybe it would be faster to apply all at once
+                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.global_ids, values);
+            }
+        }
     }
 
     bool isLinear() const override
