@@ -8,7 +8,7 @@
  */
 
 #include "HeatTransportProcess-fwd.h"
-#include "HeaTransportProcess.h"
+#include "HeatTransportProcess.h"
 
 namespace ProcessLib
 {
