@@ -173,7 +173,19 @@ void ProjectData::buildProcesses()
 				ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
 				    *_mesh_vec[0], *nl_slv, std::move(time_disc),
 				    _process_variables, _parameters, pc));
-		}
+        }
+        elseif (type == "HEAT_TRANSPORT")
+        {
+            // The existence check of the in the configuration referenced
+            // process variables is checked in the physical process.
+            // TODO at the moment we have only one mesh, later there can be
+            // several meshes. Then we have to assign the referenced mesh
+            // here.
+            _processes.emplace_back(
+                ProcessLib::creatHeatTransportProcess<GlobalSetupType>(
+                    *_mesh_vec[0], *nl_slv, std::move(time_disc),
+                    _process_variables, _parameters, pc));
+        }
 		else
 		{
 			ERR("Unknown process type: %s", type.c_str());
