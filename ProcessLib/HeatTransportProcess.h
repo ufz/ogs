@@ -177,7 +177,7 @@ createHeatTransportProcess(
     // Process variable.
     ProcessVariable& process_variable =
         findProcessVariable(config, "process_variable", variables);
-    DBUG("Associate hydraulic_head with process variable \'%s\'.",
+    DBUG("Associate Temperature with process variable \'%s\'.",
          process_variable.getName().c_str());
 
     // Hydraulic conductivity parameter.
