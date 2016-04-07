@@ -384,6 +384,15 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     MathLib::Vector3 & plane_normal);
 
+/// Sorts the vector of segments such that the \f$i\f$-th segment is connected
+/// with the \f$i+1\f$st segment, i.e. the end point of the \f$i\f$-th segment
+/// is the start point of the \f$i+1\f$st segment.
+/// The current implementation requires that all segments have to be
+/// connectable. In order to obtain a unique result the segments are sorted such
+/// that the begin point of the first segment is \c seg_beg_pnt.
+void sortSegments(MathLib::Point3d const& seg_beg_pnt,
+    std::vector<GeoLib::LineSegment>& sub_segments);
+
 } // end namespace GeoLib
 
 #include "AnalyticalGeometry-impl.h"

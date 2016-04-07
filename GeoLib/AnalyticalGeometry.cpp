@@ -706,4 +706,51 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
     }
 }
 
+void sortSegments(
+    MathLib::Point3d const& seg_beg_pnt,
+    std::vector<GeoLib::LineSegment>& sub_segments)
+{
+    double const eps(std::numeric_limits<double>::epsilon());
+
+    auto findNextSegment = [&eps](
+        MathLib::Point3d const& seg_beg_pnt,
+        std::vector<GeoLib::LineSegment>& sub_segments,
+        std::vector<GeoLib::LineSegment>::iterator& sub_seg_it)
+    {
+        if (sub_seg_it == sub_segments.end())
+            return;
+        // find appropriate segment for the given segment begin point
+        auto act_beg_seg_it = std::find_if(
+            sub_seg_it, sub_segments.end(),
+            [&seg_beg_pnt, &eps](GeoLib::LineSegment const& seg)
+            {
+                return MathLib::sqrDist(seg_beg_pnt, seg.getBeginPoint()) < eps ||
+                       MathLib::sqrDist(seg_beg_pnt, seg.getEndPoint()) < eps;
+            });
+        if (act_beg_seg_it == sub_segments.end())
+            return;
+        // if necessary correct orientation of segment, i.e. swap beg and end
+        if (MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getEndPoint()) <
+            MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getBeginPoint()))
+            std::swap(act_beg_seg_it->getBeginPoint(),
+                      act_beg_seg_it->getEndPoint());
+        assert(sub_seg_it != sub_segments.end());
+        // exchange segments within the container
+        if (sub_seg_it != act_beg_seg_it)
+            std::swap(*sub_seg_it, *act_beg_seg_it);
+    };
+
+    // find start segment
+    auto seg_it = sub_segments.begin();
+    findNextSegment(seg_beg_pnt, sub_segments, seg_it);
+
+    while (seg_it != sub_segments.end())
+    {
+        MathLib::Point3d & new_seg_beg_pnt(seg_it->getEndPoint());
+        seg_it++;
+        if (seg_it != sub_segments.end())
+            findNextSegment(new_seg_beg_pnt, sub_segments, seg_it);
+    }
+}
+
 } // end namespace GeoLib
