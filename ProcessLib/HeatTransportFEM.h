@@ -34,7 +34,7 @@ public:
 
     virtual void init(MeshLib::Element const& e,
             std::size_t const local_matrix_size,
-            Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity,
+            Parameter<double, MeshLib::Element const&> const& thermal_conductivity,
             unsigned const integration_order) = 0;
 
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
@@ -57,12 +57,12 @@ public:
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    /// The hydraulic_conductivity factor is directly integrated into the local
+    /// The thermal_conductivity factor is directly integrated into the local
     /// element matrix.
     void init(MeshLib::Element const& e,
               std::size_t const local_matrix_size,
               Parameter<double, MeshLib::Element const&> const&
-                  hydraulic_conductivity,
+                  thermal_conductivity,
               unsigned const integration_order) override
     {
         _integration_order = integration_order;
@@ -71,9 +71,9 @@ public:
             initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
                 e, integration_order);
 
-        _hydraulic_conductivity = [&hydraulic_conductivity, &e]()
+        _thermal_conductivity = [&thermal_conductivity, &e]()
         {
-            return hydraulic_conductivity(e);
+            return thermal_conductivity(e);
         };
 
         _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
@@ -92,7 +92,7 @@ public:
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
             _localA->noalias() += sm.dNdx.transpose() *
-                                  _hydraulic_conductivity() * sm.dNdx *
+                                  _thermal_conductivity() * sm.dNdx *
                                   sm.detJ * wp.getWeight();
         }
     }
@@ -107,7 +107,7 @@ public:
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
-    std::function<double(void)> _hydraulic_conductivity;
+    std::function<double(void)> _thermal_conductivity;
 
     std::unique_ptr<NodalMatrixType> _localA;
     std::unique_ptr<NodalVectorType> _localRhs;

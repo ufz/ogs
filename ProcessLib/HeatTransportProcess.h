@@ -48,9 +48,9 @@ public:
         std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
         ProcessVariable& variable,
         Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity)
+            thermal_conductivity)
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
-          _hydraulic_conductivity(hydraulic_conductivity)
+          _thermal_conductivity(thermal_conductivity)
     {
         this->_process_variables.emplace_back(variable);
 
@@ -97,7 +97,7 @@ public:
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,
-                _hydraulic_conductivity,
+                _thermal_conductivity,
                 this->_integration_order);
     }
 
@@ -138,7 +138,7 @@ public:
     //! @}
 
 private:
-    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
+    Parameter<double, MeshLib::Element const&> const& _thermal_conductivity;
 
     using LocalAssembler = HeatTransport::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
@@ -180,19 +180,19 @@ createHeatTransportProcess(
     DBUG("Associate Temperature with process variable \'%s\'.",
          process_variable.getName().c_str());
 
-    // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity =
+    // Thermal conductivity parameter.
+    auto& thermal_conductivity =
         findParameter<double, MeshLib::Element const&>(
-            config, "hydraulic_conductivity", parameters);
+            config, "thermal_conductivity", parameters);
 
-    DBUG("Use \'%s\' as hydraulic conductivity parameter.",
-         hydraulic_conductivity.name.c_str());
+    DBUG("Use \'%s\' as thermal conductivity parameter.",
+         thermal_conductivity.name.c_str());
 
     return std::unique_ptr<HeatTransportProcess<GlobalSetup>>{
         new HeatTransportProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             process_variable,
-            hydraulic_conductivity
+            thermal_conductivity
     }};
 }
 }   // namespace ProcessLib
