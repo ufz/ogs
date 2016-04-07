@@ -49,14 +49,25 @@ std::vector<std::string> Properties::getPropertyVectorNames() const
 	return names;
 }
 
-Properties Properties::excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const
+Properties Properties::excludeCopyProperties(
+    std::vector<std::size_t> const& exclude_elem_ids,
+    std::vector<std::size_t> const& exclude_node_ids) const
 {
 	Properties exclude_copy;
 	for (auto property_vector : _properties) {
-		exclude_copy._properties.insert(
-			std::make_pair(property_vector.first,
-			property_vector.second->clone(exclude_ids))
-		);
+		if (property_vector.second->getMeshItemType() == MeshItemType::Cell) {
+			exclude_copy._properties.insert(
+				std::make_pair(property_vector.first,
+				property_vector.second->clone(exclude_elem_ids))
+			);
+		}
+		else if (property_vector.second->getMeshItemType() == MeshItemType::Node)
+		{
+			exclude_copy._properties.insert(
+				std::make_pair(property_vector.first,
+				property_vector.second->clone(exclude_node_ids))
+			);
+		}
 	}
 	return exclude_copy;
 }

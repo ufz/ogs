@@ -105,10 +105,12 @@ public:
 	std::vector<std::string> getPropertyVectorNames() const;
 
 	/** copy all PropertyVector objects stored in the (internal) map but only
-	 * those values of a PropertyVector whose ids are not in the vector
-	 * exclude_ids.
+	 * those nodes/elements of a PropertyVector whose ids are not in the vectors
+	 * exclude_*_ids.
 	 */
-	Properties excludeCopyProperties(std::vector<std::size_t> const& exclude_ids) const;
+	Properties excludeCopyProperties(
+	    std::vector<std::size_t> const& exclude_elem_ids,
+	    std::vector<std::size_t> const& exclude_node_ids) const;
 
 	Properties() {}
 
