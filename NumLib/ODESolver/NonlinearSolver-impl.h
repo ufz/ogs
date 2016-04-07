@@ -160,17 +160,11 @@ solve(Vector &x)
         sys.assembleResidualNewton(x);
         sys.getResidual(x, res);
 
-        // std::cout << "  res:\n" << res << std::endl;
-
-        // TODO streamline that, make consistent with Picard.
-        if (BLAS::norm2(res) < _tol) {
-            error_norms_met = true;
-            break;
-        }
-
         sys.assembleJacobian(x);
         sys.getJacobian(J);
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
+
+        auto const error_res = BLAS::norm2(res);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
@@ -213,10 +207,13 @@ solve(Vector &x)
             break;
         }
 
-        // TODO maybe compute norm of _minus_delta_x here.
+        auto const error_dx = BLAS::norm2(minus_delta_x);
+        DBUG("error of -delta_x %g and of residual %g,", error_dx, error_res);
 
-        // auto const dx_norm = _minus_delta_x.norm();
-        // INFO("  newton iteration %u, norm of delta x: %e", iteration, dx_norm);
+        if (error_dx < _tol) {
+            error_norms_met = true;
+            break;
+        }
 
         if (sys.isLinear()) {
             // INFO("  newton linear system. not looping");
