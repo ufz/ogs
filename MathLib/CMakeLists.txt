@@ -65,6 +65,10 @@ target_link_libraries(MathLib INTERFACE
 	logog
 )
 
+if(METIS_FOUND)
+    target_link_libraries(MathLib INTERFACE ${METIS_LIBRARIES})
+endif()
+
 if(LAPACK_FOUND)
     target_link_libraries(MathLib INTERFACE ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
 endif()
