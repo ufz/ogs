@@ -99,13 +99,13 @@ public:
                                   _thermal_conductivity() * sm.dNdx *
                                   sm.detJ * wp.getWeight();
             _localM->noalias() += sm.N *
-                                  density*heat_capacity*sm.N.transpose(). *
+                                  density*heat_capacity*sm.N.transpose() *
                                   sm.detJ * wp.getWeight();
         }
     }
 
     void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
         const override
     {
         K.add(indices, *_localK);
@@ -119,7 +119,7 @@ private:
 
     std::unique_ptr<NodalMatrixType> _localK;
     std::unique_ptr<NodalVectorType> _localb;
-    std::unique_ptr<NodalVectorType> _localM;
+    std::unique_ptr<NodalMatrixType> _localM;
 
     unsigned _integration_order = 2;
 };
