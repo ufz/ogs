@@ -106,10 +106,10 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 		GeoLib::LineSegment const& segment) const
 {
 	std::vector<GeoLib::Point> intersections;
-	const std::size_t n_segments(getNumberOfPoints() - 1);
 	GeoLib::Point s;
-	for (std::size_t k(0); k < n_segments; k++) {
-		if (GeoLib::lineSegmentIntersect(*(getPoint(k)), *(getPoint(k+1)), a, b, s)) {
+	for (auto seg_it(begin()); seg_it != end(); ++seg_it)
+	{
+		if (GeoLib::lineSegmentIntersect(*seg_it, segment, s)) {
 			intersections.push_back(s);
 		}
 	}
