@@ -103,7 +103,7 @@ bool Polygon::isPntInPolygon(double x, double y, double z) const
 }
 
 std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
-		GeoLib::Point const& a, GeoLib::Point const& b) const
+		GeoLib::LineSegment const& segment) const
 {
 	std::vector<GeoLib::Point> intersections;
 	const std::size_t n_segments(getNumberOfPoints() - 1);
@@ -119,7 +119,7 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 
 bool Polygon::containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const
 {
-	std::vector<GeoLib::Point> s(getAllIntersectionPoints(a, b));
+	std::vector<GeoLib::Point> s(getAllIntersectionPoints({a,b}));
 
 	// no intersections -> check if at least one point of segment is in polygon
 	if (s.empty()) {

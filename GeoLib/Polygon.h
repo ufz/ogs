@@ -115,14 +115,12 @@ public:
 	friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
 	/**
-	 * computes all intersection points of the straight line segment and the polyline boundary
-	 * @param a end point of line segment
-	 * @param b end point of line segment
-	 * @return a vector of tuples, where a tuple contains the intersection point and
-	 * the intersected segment number
+	 * Computes all intersections of the straight line segment and the polyline boundary
+	 * @param segment the line segment that will be processed
+	 * @return a possible empty vector containing the intersection points
 	 */
 	std::vector<GeoLib::Point> getAllIntersectionPoints(
-		GeoLib::Point const& a, GeoLib::Point const& b) const;
+		GeoLib::LineSegment const& segment) const;
 
 	/**
 	 * from book: Computational Geometry and Computer Graphics in C++, page 119
