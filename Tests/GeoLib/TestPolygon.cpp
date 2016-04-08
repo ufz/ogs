@@ -14,6 +14,7 @@
 #include "gtest/gtest.h"
 
 #include "GeoLib/Point.h"
+#include "GeoLib/LineSegment.h"
 #include "GeoLib/Polygon.h"
 
 /**
@@ -138,9 +139,10 @@ TEST_F(PolygonTest, isPntInPolygonCheckOuterPoints)
 TEST_F(PolygonTest, containsSegment)
 {
 	{ // test segment (2,6)
-		GeoLib::Point const& a(*(_polygon->getPoint(2)));
-		GeoLib::Point const& b(*(_polygon->getPoint(6)));
-		ASSERT_FALSE(_polygon->containsSegment(a, b));
+		GeoLib::LineSegment const segment{
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(2)),
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(6))};
+		ASSERT_FALSE(_polygon->containsSegment(segment));
 	}
 
 	// test all segments of polygon
@@ -151,27 +153,31 @@ TEST_F(PolygonTest, containsSegment)
 	}
 
 	{ // 70
-		GeoLib::Point const& a = *(_polygon->getPoint(7));
-		GeoLib::Point const& b = *(_polygon->getPoint(0));
-		ASSERT_TRUE(_polygon->containsSegment(a, b));
+		GeoLib::LineSegment const segment{
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(7)),
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(0))};
+		ASSERT_TRUE(_polygon->containsSegment(segment));
 	}
 
 	{ // test segment (3,5)
-		GeoLib::Point const& a = *(_polygon->getPoint(3));
-		GeoLib::Point const& b = *(_polygon->getPoint(5));
-		ASSERT_TRUE(_polygon->containsSegment(a, b));
+		GeoLib::LineSegment const segment{
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(3)),
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(5))};
+		ASSERT_TRUE(_polygon->containsSegment(segment));
 	}
 
 	{ // test segment (1,7)
-		GeoLib::Point const& a = *(_polygon->getPoint(1));
-		GeoLib::Point const& b = *(_polygon->getPoint(7));
-		ASSERT_TRUE(_polygon->containsSegment(a, b));
+		GeoLib::LineSegment const segment{
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(1)),
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(7))};
+		ASSERT_TRUE(_polygon->containsSegment(segment));
 	}
 
 	{ // test segment (1,4)
-		GeoLib::Point const& a = *(_polygon->getPoint(1));
-		GeoLib::Point const& b = *(_polygon->getPoint(4));
-		ASSERT_FALSE(_polygon->containsSegment(a, b));
+		GeoLib::LineSegment const segment{
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(1)),
+		    const_cast<GeoLib::Point*>(_polygon->getPoint(4))};
+		ASSERT_FALSE(_polygon->containsSegment(segment));
 	}
 }
 

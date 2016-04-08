@@ -73,13 +73,11 @@ public:
 	bool isPntInPolygon (double x, double y, double z) const;
 
 	/**
-	 * Checks if the straight line segment given by its end points a and b
-	 * is contained within the polygon.
-	 * @param a the first end point of the straight line segment
-	 * @param b the second end point of the straight line segment
+	 * Checks if the straight line segment is contained within the polygon.
+	 * @param segment the straight line segment that is checked with
 	 * @return true if the straight line segment is within the polygon, else false
 	 */
-	bool containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const;
+	bool containsSegment(GeoLib::LineSegment const& segment) const;
 
 	/**
 	 * Method checks if all points of the polyline ply are inside of the polygon.
