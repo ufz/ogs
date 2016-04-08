@@ -109,6 +109,8 @@ public:
 	 * */
 	std::size_t getNumberOfPoints() const;
 
+	std::size_t getNumberOfSegments() const;
+
 	/** returns true if the polyline is closed */
 	bool isClosed() const;
 

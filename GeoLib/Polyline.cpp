@@ -184,6 +184,11 @@ std::size_t Polyline::getNumberOfPoints() const
 	return _ply_pnt_ids.size();
 }
 
+std::size_t Polyline::getNumberOfSegments() const
+{
+	return _ply_pnt_ids.empty() ? 0 : _ply_pnt_ids.size()-1;
+}
+
 bool Polyline::isClosed() const
 {
 	if (_ply_pnt_ids.size() < 3)
