@@ -146,10 +146,10 @@ TEST_F(PolygonTest, containsSegment)
 	}
 
 	// test all segments of polygon
-	for (std::size_t k(0); k<_polygon->getNumberOfPoints()-1;k++) {
-		GeoLib::Point const& a = *(_polygon->getPoint(k));
-		GeoLib::Point const& b = *(_polygon->getPoint(k+1));
-		EXPECT_TRUE(_polygon->containsSegment(a, b));
+	for (auto segment_it(_polygon->begin()); segment_it != _polygon->end();
+	     ++segment_it)
+	{
+		EXPECT_TRUE(_polygon->containsSegment(*segment_it));
 	}
 
 	{ // 70
