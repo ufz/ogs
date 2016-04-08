@@ -20,6 +20,7 @@
 
 // GeoLib
 #include "GeoObject.h"
+#include "LineSegment.h"
 #include "Point.h"
 
 // MathLib
@@ -183,6 +184,10 @@ protected:
 	 * the k-th element of the vector contains the length of the polyline until the k-th segment
 	 */
 	std::vector<double> _length;
+private:
+	LineSegment const getSegment(std::size_t i) const;
+	LineSegment getSegment(std::size_t i);
+
 };
 
 /** overload the output operator for class Polyline */
