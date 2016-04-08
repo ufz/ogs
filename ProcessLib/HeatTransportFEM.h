@@ -76,14 +76,14 @@ public:
             return thermal_conductivity(e);
         };
 
-        _localA.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
-        _localRhs.reset(new NodalVectorType(local_matrix_size));
+        _localK.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
+        _localb.reset(new NodalVectorType(local_matrix_size));
     }
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
     {
-        _localA->setZero();
-        _localRhs->setZero();
+        _localK->setZero();
+        _localb->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -91,7 +91,7 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _localA->noalias() += sm.dNdx.transpose() *
+            _localK->noalias() += sm.dNdx.transpose() *
                                   _thermal_conductivity() * sm.dNdx *
                                   sm.detJ * wp.getWeight();
         }
@@ -101,16 +101,16 @@ public:
         GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {
-        K.add(indices, *_localA);
-        b.add(indices.rows, *_localRhs);
+        K.add(indices, *_localK);
+        b.add(indices.rows, *_localb);
     }
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
     std::function<double(void)> _thermal_conductivity;
 
-    std::unique_ptr<NodalMatrixType> _localA;
-    std::unique_ptr<NodalVectorType> _localRhs;
+    std::unique_ptr<NodalMatrixType> _localK;
+    std::unique_ptr<NodalVectorType> _localb;
 
     unsigned _integration_order = 2;
 };
