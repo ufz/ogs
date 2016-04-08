@@ -30,6 +30,7 @@ namespace MathLib
 namespace GeoLib
 {
 class Polyline;
+class LineSegment;
 
 enum TriangleTest
 {
@@ -301,6 +302,9 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
  */
 bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
         const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
+
+bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
+                          GeoLib::LineSegment const& s1, GeoLib::Point& s);
 
 /// A line segment is given by its two end-points. The function checks,
 /// if the two line segments (ab) and (cd) intersects. This method checks the

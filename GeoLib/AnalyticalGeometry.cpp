@@ -99,6 +99,14 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
 	return parallel;
 }
 
+bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
+                          GeoLib::LineSegment const& s1,
+                          GeoLib::Point& s)
+{
+	return lineSegmentIntersect(s0.getBeginPoint(), s0.getEndPoint(),
+	                            s1.getBeginPoint(), s1.getEndPoint(), s);
+}
+
 bool lineSegmentIntersect(
 	GeoLib::Point const& a,
 	GeoLib::Point const& b,
