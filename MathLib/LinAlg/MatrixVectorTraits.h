@@ -12,12 +12,12 @@
 
 #include<memory>
 
-#include "MatrixProviderUser.h"
-
 namespace MathLib
 {
 template<typename Matrix>
 struct MatrixVectorTraits;
+
+struct MatrixSpecifications;
 }
 
 #define SPECIALIZE_MATRIX_VECTOR_TRAITS(MATVEC, IDX) \
