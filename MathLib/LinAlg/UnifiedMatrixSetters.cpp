@@ -67,6 +67,12 @@ void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
     for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
 }
 
+void setVector(Eigen::VectorXd& v, MatrixVectorTraits<Eigen::VectorXd>::Index const index,
+               double const value)
+{
+    v[index] = value;
+}
+
 } // namespace MathLib
 
 #endif // OGS_USE_EIGEN
@@ -95,6 +101,12 @@ void setVector(PETScVector& v,
     std::iota(idcs.begin(), idcs.end(), 0);
 
     v.set(idcs, vals);
+}
+
+void setVector(PETScVector& v, MatrixVectorTraits<PETScVector>::Index const index,
+               double const value)
+{
+    v.set(index, value);
 }
 
 void setMatrix(PETScMatrix& m,
@@ -172,6 +184,13 @@ void setVector(EigenVector& v,
 {
     setVector(v.getRawVector(), values);
 }
+
+void setVector(EigenVector& v, MatrixVectorTraits<EigenVector>::Index const index,
+               double const value)
+{
+    v.getRawVector()[index] = value;
+}
+
 
 void setMatrix(EigenMatrix& m,
                std::initializer_list<double> values)
