@@ -51,6 +51,45 @@ enum class Location
 class Polyline : public GeoObject
 {
 public:
+	class SegmentIterator final
+	    : public std::iterator<std::forward_iterator_tag, LineSegment>
+	{
+	public:
+		explicit SegmentIterator(Polyline const& polyline,
+		                         std::size_t segment_number);
+
+		SegmentIterator(SegmentIterator const& src);
+
+		SegmentIterator() = delete;
+		~SegmentIterator() = default;
+
+		SegmentIterator& operator=(SegmentIterator const& rhs);
+
+		std::size_t getSegmentNumber() const;
+
+		SegmentIterator& operator++();
+
+		LineSegment const operator*() const;
+
+		LineSegment operator*();
+
+		bool operator==(SegmentIterator const& other);
+
+		bool operator!=(SegmentIterator const& other);
+
+		SegmentIterator& operator+=(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator operator+(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator& operator-=(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator operator-(std::vector<GeoLib::Point>::difference_type n);
+
+	private:
+		GeoLib::Polyline const* _polyline;
+		std::vector<GeoLib::Point*>::size_type _segment_number;
+	};
+
 	friend class Polygon;
 	/** constructor
 	 * \param pnt_vec a reference to the point vector
@@ -144,6 +183,16 @@ public:
 	 * */
 	const Point* getPoint(std::size_t i) const;
 
+	SegmentIterator begin() const
+	{
+		return SegmentIterator(*this, 0);
+	}
+
+	SegmentIterator end() const
+	{
+		return SegmentIterator(*this, getNumberOfSegments());
+	}
+
 	std::vector<Point*> const& getPointsVec () const;
 
 	/**
@@ -187,7 +236,6 @@ protected:
 private:
 	LineSegment const getSegment(std::size_t i) const;
 	LineSegment getSegment(std::size_t i);
-
 };
 
 /** overload the output operator for class Polyline */

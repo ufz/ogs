@@ -450,6 +450,106 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 	return dist;
 }
 
+Polyline::SegmentIterator::SegmentIterator(Polyline const& polyline,
+                                           std::size_t segment_number)
+    : _polyline(&polyline),
+      _segment_number(
+          static_cast<std::vector<GeoLib::Point*>::size_type>(segment_number))
+{}
+
+Polyline::SegmentIterator::SegmentIterator(SegmentIterator const& src)
+    : _polyline(src._polyline), _segment_number(src._segment_number)
+{}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator=(
+    SegmentIterator const& rhs)
+{
+	if (&rhs == this)
+		return *this;
+
+	_polyline = rhs._polyline;
+	_segment_number = rhs._segment_number;
+	return *this;
+}
+
+std::size_t Polyline::SegmentIterator::getSegmentNumber() const
+{
+	return static_cast<std::size_t>(_segment_number);
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator++()
+{
+	++_segment_number;
+	return *this;
+}
+
+LineSegment const Polyline::SegmentIterator::operator*() const
+{
+	return _polyline->getSegment(_segment_number);
+}
+
+LineSegment Polyline::SegmentIterator::operator*()
+{
+	return _polyline->getSegment(_segment_number);
+}
+
+bool Polyline::SegmentIterator::operator==(SegmentIterator const& other)
+{
+	return !(*this != other);
+}
+
+bool Polyline::SegmentIterator::operator!=(SegmentIterator const& other)
+{
+	return other._segment_number != _segment_number ||
+	       other._polyline != _polyline;
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator+=(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	if (n < 0) {
+		_segment_number -=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(-n);
+	} else {
+		_segment_number +=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(n);
+	}
+	if (_segment_number > _polyline->getNumberOfSegments())
+		std::abort();
+	return *this;
+}
+
+Polyline::SegmentIterator Polyline::SegmentIterator::operator+(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	SegmentIterator t(*this);
+	t += n;
+	return t;
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator-=(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	if (n >= 0) {
+		_segment_number -=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(n);
+	} else {
+		_segment_number +=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(-n);
+	}
+	if (_segment_number > _polyline->getNumberOfSegments())
+		std::abort();
+	return *this;
+}
+
+Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	Polyline::SegmentIterator t(*this);
+	t -= n;
+	return t;
+}
+
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)
 {
 	pl.write (os);
