@@ -175,9 +175,8 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
 
 bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 {
-	std::size_t const n_segments(ply.getNumberOfPoints()-1);
-	for (std::size_t k(0); k < n_segments; k++) {
-		if (!containsSegment(*ply.getPoint(k), *ply.getPoint(k+1))) {
+	for (auto segment : ply) {
+		if (!containsSegment(segment)) {
 			return false;
 		}
 	}
