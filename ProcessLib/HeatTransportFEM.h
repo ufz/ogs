@@ -77,6 +77,7 @@ public:
         };
 
         _localK.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
+        _localM.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localb.reset(new NodalVectorType(local_matrix_size));
     }
 
@@ -84,6 +85,9 @@ public:
     {
         _localK->setZero();
         _localb->setZero();
+        _localM->setZero();
+        double density = 1000 ;
+        double heat_capacity = 4200 ;
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -94,6 +98,9 @@ public:
             _localK->noalias() += sm.dNdx.transpose() *
                                   _thermal_conductivity() * sm.dNdx *
                                   sm.detJ * wp.getWeight();
+            _localM->noalias() += sm.N *
+                                  density*heat_capacity*sm.N.transpose(). *
+                                  sm.detJ * wp.getWeight();
         }
     }
 
@@ -102,6 +109,7 @@ public:
         const override
     {
         K.add(indices, *_localK);
+        M.add(indices, *_localM);
         b.add(indices.rows, *_localb);
     }
 
@@ -111,6 +119,7 @@ private:
 
     std::unique_ptr<NodalMatrixType> _localK;
     std::unique_ptr<NodalVectorType> _localb;
+    std::unique_ptr<NodalVectorType> _localM;
 
     unsigned _integration_order = 2;
 };
