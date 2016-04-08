@@ -56,7 +56,7 @@ if(METIS_FOUND)
 endif()
 
 # Create the library
-add_library(MathLib STATIC ${SOURCES})
+add_library(MathLib ${SOURCES})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 

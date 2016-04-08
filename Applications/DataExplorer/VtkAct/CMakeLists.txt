@@ -18,7 +18,7 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../VtkVis
 )
 
-add_library( VtkAct STATIC
+add_library( VtkAct
 	${SOURCES}
 	${HEADERS}
 )

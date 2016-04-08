@@ -24,7 +24,7 @@ include_directories(
 file(GLOB_RECURSE UI_FILES *.ui)
 source_group("UI Files" FILES ${UI_FILES})
 
-add_library(QtStratView STATIC
+add_library(QtStratView
 	${SOURCES}
 	${HEADERS}
 	${UIS}

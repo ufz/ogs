@@ -33,7 +33,7 @@ include_directories(
 file(GLOB_RECURSE UIS *.ui)
 source_group("UI Files" FILES ${UIS})
 
-add_library(QtDiagramView STATIC
+add_library(QtDiagramView
 	${SOURCES}
 	${HEADERS}
 	${UIS}

@@ -5,7 +5,7 @@ GET_SOURCE_FILES(SOURCES_ASSEMBLERLIB)
 set(SOURCES ${SOURCES_ASSEMBLERLIB})
 
 # Create the library
-add_library(AssemblerLib STATIC ${SOURCES})
+add_library(AssemblerLib ${SOURCES})
 
 target_link_libraries(AssemblerLib INTERFACE
 	MeshLib

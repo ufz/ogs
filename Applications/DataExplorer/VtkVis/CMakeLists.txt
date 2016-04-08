@@ -113,7 +113,7 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}/../DataView
 )
 
-add_library(VtkVis STATIC
+add_library(VtkVis
 	${SOURCES}
 	${HEADERS}
 	${UIS}

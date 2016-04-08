@@ -53,7 +53,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
-add_library(FileIO STATIC ${SOURCES})
+add_library(FileIO ${SOURCES})
 
 target_link_libraries(FileIO INTERFACE
 	GeoLib

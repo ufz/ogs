@@ -29,7 +29,7 @@ GET_SOURCE_FILES(SOURCES_EXTRAPOLATION Extrapolation)
 set(SOURCES ${SOURCES} ${SOURCES_EXTRAPOLATION})
 
 # Create the library
-add_library(NumLib STATIC ${SOURCES})
+add_library(NumLib ${SOURCES})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
