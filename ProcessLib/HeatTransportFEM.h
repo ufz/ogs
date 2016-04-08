@@ -32,11 +32,6 @@ class LocalAssemblerDataInterface
 public:
     virtual ~LocalAssemblerDataInterface() = default;
 
-    virtual void init(MeshLib::Element const& e,
-            std::size_t const local_matrix_size,
-            Parameter<double, MeshLib::Element const&> const& thermal_conductivity,
-            unsigned const integration_order) = 0;
-
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
     virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
@@ -59,11 +54,12 @@ public:
 
     /// The thermal_conductivity factor is directly integrated into the local
     /// element matrix.
-    void init(MeshLib::Element const& e,
-              std::size_t const local_matrix_size,
-              Parameter<double, MeshLib::Element const&> const&
-                  thermal_conductivity,
-              unsigned const integration_order) override
+    LocalAssemblerData(
+            MeshLib::Element const& e,
+            std::size_t const local_matrix_size,
+            unsigned const integration_order,
+            Parameter<double, MeshLib::Element const&> const&
+                thermal_conductivity)
     {
         _integration_order = integration_order;
 

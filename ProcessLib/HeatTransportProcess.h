@@ -67,6 +67,7 @@ public:
             std::abort();
         }
     }
+ll
 
     template <unsigned GlobalDim>
     void createLocalAssemblers()
@@ -80,7 +81,8 @@ public:
             HeatTransport::LocalAssemblerData,
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType,
-            GlobalDim>;
+            GlobalDim,
+            Parameter<double, MeshLib::Element const&> const&>;
 
         LocalDataInitializer initializer;
 
@@ -97,17 +99,9 @@ public:
                 local_asm_builder,
                 this->_mesh.getElements(),
                 _local_assemblers,
-                _thermal_conductivity,
-                this->_integration_order);
+                this->_integration_order,
+                _thermal_conductivity);
     }
-
-    // TODO remove, but put "gw_" somewhere
-    /*
-    std::string getLinearSolverName() const override
-    {
-        return "gw_";
-    }
-    */
 
     void createLocalAssemblers() override
     {
@@ -119,12 +113,6 @@ public:
             createLocalAssemblers<3>();
         else
             assert(false);
-    }
-
-    ~HeatTransportProcess()
-    {
-        for (auto p : _local_assemblers)
-            delete p;
     }
 
     //! \name ODESystem interface
@@ -152,12 +140,12 @@ private:
         DBUG("Assemble HeatTransportProcess.");
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.execute(*this->_global_assembler,
-                                    _local_assemblers, t, x, M, K, b);
+        this->_global_setup.executeDereferenced(
+                    *this->_global_assembler, _local_assemblers, t, x, M, K, b);
     }
 
 
-    std::vector<LocalAssembler*> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 };
 
 template <typename GlobalSetup>
