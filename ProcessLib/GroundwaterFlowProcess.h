@@ -68,6 +68,26 @@ public:
         }
     }
 
+    //! \name ODESystem interface
+    //! @{
+
+    bool isLinear() const override
+    {
+        return true;
+    }
+
+    //! @}
+
+private:
+    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
+
+    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
+        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+            GlobalMatrix, GlobalVector, LocalAssembler,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
+
     template <unsigned GlobalDim>
     void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                                MeshLib::Mesh const& mesh,
@@ -120,27 +140,6 @@ public:
         else
             assert(false);
     }
-
-    //! \name ODESystem interface
-    //! @{
-
-    bool isLinear() const override
-    {
-        return true;
-    }
-
-    //! @}
-
-private:
-    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
-
-    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
-
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
