@@ -98,23 +98,21 @@ public:
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
-    void integrate(GlobalSetup const& global_setup,
-                   const double t, GlobalVector& b)
+    void integrate(const double t, GlobalVector& b)
     {
-        global_setup.executeMemberDereferenced(
+        GlobalSetup::executeMemberDereferenced(
                     *_global_assembler, &GlobalAssembler::assemble,
                     _local_assemblers, t, b);
     }
 
-    void initialize(GlobalSetup const& global_setup,
-        unsigned global_dim)
+    void initialize(unsigned global_dim)
     {
         if (global_dim==1)
-            initialize<1u>(global_setup);
+            initialize<1u>();
         else if (global_dim==2)
-            initialize<2u>(global_setup);
+            initialize<2u>();
         else if (global_dim==3)
-            initialize<3u>(global_setup);
+            initialize<3u>();
     }
 
 
@@ -122,8 +120,7 @@ private:
     /// Allocates the local assemblers for each element and stores references to
     /// global matrix and the right-hand-side.
     template <unsigned GlobalDim>
-    void
-    initialize(GlobalSetup const& global_setup)
+    void initialize()
     {
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
@@ -151,7 +148,7 @@ private:
         };
 
         DBUG("Calling local Neumann assembler builder for Neumann boundary elements.");
-        global_setup.transform(
+        GlobalSetup::transform(
                 local_asm_builder,
                 _elements,
                 _local_assemblers,
