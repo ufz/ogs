@@ -70,13 +70,14 @@ namespace AssemblerLib
  * VectorMatrixAssembler type.
  */
 template<typename GlobalMatrix, typename GlobalVector,
+         typename LocalAssembler,
          NumLib::ODESystemTag ODETag>
 class VectorMatrixAssembler;
 
 
 //! Specialization for first-order implicit quasi-linear systems.
-template<typename GlobalMatrix, typename GlobalVector>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
+template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
+class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> final
 {
 public:
@@ -90,8 +91,7 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necessarily the mesh item's id.
-    template <typename LocalAssembler>
-    void operator()(std::size_t const id,
+    void assemble(std::size_t const id,
         LocalAssembler& local_assembler,
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
@@ -112,7 +112,6 @@ public:
     /// Executes assembleJacobian() of the local assembler for the
     /// given mesh item passing the mesh item's nodal d.o.f.
     /// \attention The index \c id is not necessarily the mesh item's id.
-    template <typename LocalAssembler>
     void assembleJacobian(std::size_t const id,
                           LocalAssembler& local_assembler,
                           const double t,
@@ -135,7 +134,6 @@ public:
     /// Executes the preTimestep() method of the local assembler for the
     /// given mesh item passing the mesh item's nodal d.o.f.
     /// \attention The index \c id is not necessarily the mesh item's id.
-    template <typename LocalAssembler>
     void preTimestep(std::size_t const id,
                      LocalAssembler& local_assembler,
                      GlobalVector const& x) const
@@ -153,7 +151,6 @@ public:
     /// Executes the postTimestep() method of the local assembler for the
     /// given mesh item passing the mesh item's nodal d.o.f.
     /// \attention The index \c id is not necessarily the mesh item's id.
-    template <typename LocalAssembler>
     void postTimestep(std::size_t const id,
                       LocalAssembler& local_assembler,
                       GlobalVector const& x) const
@@ -184,8 +181,8 @@ private:
 
 
 //! Specialization used to add Neumann boundary conditions.
-template<typename GlobalMatrix, typename GlobalVector>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector,
+template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
+class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
         NumLib::ODESystemTag::NeumannBC> final
 {
 public:
@@ -199,8 +196,7 @@ public:
     /// The positions in the global matrix/vector are taken from
     /// the LocalToGlobalIndexMap provided in the constructor at index \c id.
     /// \attention The index \c id is not necessarily the mesh item's id.
-    template <typename LocalAssembler>
-    void operator()(std::size_t const id,
+    void assemble(std::size_t const id,
         LocalAssembler& local_assembler,
         const double t, GlobalVector& b) const
     {
