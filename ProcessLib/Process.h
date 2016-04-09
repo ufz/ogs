@@ -65,11 +65,6 @@ public:
 	    , _time_discretization(std::move(time_discretization))
 	{}
 
-	virtual ~Process()
-	{
-		delete _mesh_subset_all_nodes;
-	}
-
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
 	                         const double /*t*/, const double /*delta_t*/) {}
@@ -250,8 +245,8 @@ private:
 	void constructDofTable()
 	{
 		// Create single component dof in every of the mesh's nodes.
-		_mesh_subset_all_nodes =
-		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+		_mesh_subset_all_nodes.reset(
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
 
 		// Collect the mesh subsets in a vector.
 		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
@@ -263,7 +258,7 @@ private:
 			    [&]()
 			    {
 				    return std::unique_ptr<MeshLib::MeshSubsets>{
-				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
+				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
 				});
 		}
 
@@ -352,7 +347,7 @@ private:
 	unsigned const _integration_order = 2;
 
 	MeshLib::Mesh& _mesh;
-	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
+	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
