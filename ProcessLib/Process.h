@@ -149,7 +149,7 @@ public:
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_global_setup, _mesh.getDimension());
+			bc->initialize(_mesh.getDimension());
 	}
 
 	void setInitialConditions(GlobalVector& x)
@@ -176,7 +176,7 @@ public:
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup, t, b);
+			bc->integrate(t, b);
 	}
 
 	void assembleJacobian(
@@ -327,9 +327,9 @@ private:
 
 		// Create a neumann BC for the process variable storing them in the
 		// _neumann_bcs vector.
-		variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
+		variable.createNeumannBcs<GlobalSetup>(
+		                          std::back_inserter(_neumann_bcs),
 		                          mesh_element_searcher,
-		                          _global_setup,
 		                          _integration_order,
 		                          *_local_to_global_index_map,
 		                          0,  // 0 is the variable id TODO
@@ -353,8 +353,6 @@ private:
 
 	MeshLib::Mesh& _mesh;
 	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
-
-	GlobalSetup _global_setup;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
