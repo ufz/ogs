@@ -62,6 +62,24 @@ struct SerialExecutor
             f(i, *c[i], std::forward<Args_>(args)...);
     }
 
+    /// Executes the given \c method of the given \c object for each element
+    /// from the input \c container.
+    ///
+    /// This method is very similar to executeDereferenced().
+    ///
+    /// \see executeDereferenced()
+    template <typename Container, typename Object, typename... MethodArgs, typename... Args>
+    static void
+    executeMemberDereferenced(
+            Object& object,
+            void (Object::*method)(MethodArgs... method_args) const,
+            Container const& container, Args&&... args)
+    {
+        for (std::size_t i = 0; i < container.size(); i++) {
+            (object.*method)(i, *container[i], std::forward<Args>(args)...);
+        }
+    }
+
     /// Same as execute(f, c), but with two containers, where the second one is
     /// modified.
     ///

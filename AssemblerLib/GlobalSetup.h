@@ -55,6 +55,13 @@ struct GlobalSetup
 
     template <typename... Args>
     static
+    void executeMemberDereferenced(Args&& ... args)
+    {
+        return Executor::executeMemberDereferenced(std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    static
     void transform(Args&& ... args)
     {
         return Executor::transform(std::forward<Args>(args)...);
