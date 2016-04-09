@@ -101,7 +101,9 @@ public:
     void integrate(GlobalSetup const& global_setup,
                    const double t, GlobalVector& b)
     {
-        global_setup.executeDereferenced(*_global_assembler, _local_assemblers, t, b);
+        global_setup.executeMemberDereferenced(
+                    *_global_assembler, &GlobalAssembler::assemble,
+                    _local_assemblers, t, b);
     }
 
     void initialize(GlobalSetup const& global_setup,
@@ -180,15 +182,15 @@ private:
     /// the #_function.
     unsigned const _integration_order;
 
+    using LocalAssembler = LocalNeumannBcAsmDataInterface<
+        GlobalMatrix, GlobalVector>;
+
     using GlobalAssembler =
         AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector,
+            GlobalMatrix, GlobalVector, LocalAssembler,
             NumLib::ODESystemTag::NeumannBC>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-
-    using LocalAssembler = LocalNeumannBcAsmDataInterface<
-        GlobalMatrix, GlobalVector>;
 
     /// Local assemblers for each element of #_elements.
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
