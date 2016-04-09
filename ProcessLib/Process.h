@@ -60,9 +60,9 @@ public:
 	Process(MeshLib::Mesh& mesh,
 	        NonlinearSolver& nonlinear_solver,
 	        std::unique_ptr<TimeDiscretization>&& time_discretization)
-	    : _nonlinear_solver(nonlinear_solver)
+	    : _mesh(mesh)
+		, _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
-	    , _mesh(mesh)
 	{}
 
 	virtual ~Process()
@@ -345,26 +345,27 @@ private:
 	}
 
 protected:
+	/// Variables used by this process.
+	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
+private:
+	unsigned const _integration_order = 2;
+
+	MeshLib::Mesh& _mesh;
 	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 
 	GlobalSetup _global_setup;
+
+	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+	    _local_to_global_index_map;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
-	/// Variables used by this process.
-	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
-
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
-
-private:
-	MeshLib::Mesh& _mesh;
-	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
-	    _local_to_global_index_map;
-	unsigned const _integration_order = 2;
 };
 
 /// Find a process variable for a name given in the process configuration under
