@@ -15,9 +15,11 @@
 #ifndef BICGSTAB_H_
 #define BICGSTAB_H_
 
-#include "blas.h"
-#include "../Sparse/CRSMatrix.h"
-#include "../Sparse/CRSMatrixDiagPrecond.h"
+namespace MathLib
+{
+template <typename FP_TYPE, typename IDX_TYPE>
+class CRSMatrix;
+}
 
 namespace MathLib {
 

@@ -13,6 +13,8 @@
  */
 
 #include "BiCGStab.h"
+#include "MathLib/LinAlg/Sparse/CRSMatrix.h"
+
 
 #include "MathTools.h"
 #include "blas.h"
