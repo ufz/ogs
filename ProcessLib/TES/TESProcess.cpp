@@ -239,7 +239,7 @@ TESProcess(MeshLib::Mesh& mesh,
                         std::move(all_mesh_subsets_single_component), getOrder())
                     );
 
-        _extrapolator.reset(new ExtrapolatorImpl(*_local_to_global_index_map_single_component));
+        _extrapolator.reset(new ExtrapolatorImplementation(*_local_to_global_index_map_single_component));
 
     }
 }

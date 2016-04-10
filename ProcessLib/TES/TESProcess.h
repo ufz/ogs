@@ -54,6 +54,13 @@ public:
     void createLocalAssemblers() override;
 
 private:
+    using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+    using ExtrapolatorInterface = NumLib::Extrapolator<
+        GlobalVector, TESIntPtVariables, LocalAssembler>;
+    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
+        GlobalVector, TESIntPtVariables, LocalAssembler>;
+
+
     void assembleConcreteProcess(
             const double t, GlobalVector const& x,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
@@ -73,7 +80,7 @@ private:
     SecondaryVariableFunctions<GlobalVector>
     makeExtrapolator(TESIntPtVariables const var) const;
 
-    using LocalAssembler = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
     AssemblyParams _assembly_params;
@@ -84,10 +91,7 @@ private:
     std::size_t _timestep = 0;
     std::size_t _total_iteration = 0;
 
-    //! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector, TESIntPtVariables, LocalAssembler>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector, TESIntPtVariables, LocalAssembler>;
-    std::unique_ptr<ExtrapolatorIntf> _extrapolator;
+    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
 template <typename GlobalSetup>
