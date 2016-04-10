@@ -66,9 +66,17 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
     y = a*x + b*y;
 }
 
+//! Computes the Manhattan norm of \c x.
+template<typename MatrixOrVector>
+double norm1(MatrixOrVector const& x);
+
 //! Computes the Euclidean norm of \c x.
 template<typename MatrixOrVector>
 double norm2(MatrixOrVector const& x);
+
+//! Computes the maximum norm of \c x.
+template<typename MatrixOrVector>
+double normMax(MatrixOrVector const& x);
 
 template<typename Matrix>
 void finalizeAssembly(Matrix& /*A*/)

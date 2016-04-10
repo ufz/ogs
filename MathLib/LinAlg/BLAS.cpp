@@ -20,11 +20,27 @@ namespace MathLib { namespace BLAS
 {
 
 // Explicit specialization
+// Computes the Manhattan norm of x
+template<>
+double norm1(Eigen::VectorXd const& x)
+{
+    return x.lpNorm<1>();
+}
+
+// Explicit specialization
 // Computes the Euclidean norm of x
 template<>
 double norm2(Eigen::VectorXd const& x)
 {
     return x.norm();
+}
+
+// Explicit specialization
+// Computes the Maximum norm of x
+template<>
+double normMax(Eigen::VectorXd const& x)
+{
+    return x.lpNorm<Eigen::Infinity>();
 }
 
 } } // namespaces
@@ -75,11 +91,27 @@ void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 }
 
 // Explicit specialization
+// Computes the Manhattan norm of x
+template<>
+double norm1(PETScVector const& x)
+{
+    return x.getNorm(MathLib::VecNormType::NORM1);
+}
+
+// Explicit specialization
 // Computes the Euclidean norm of x
 template<>
 double norm2(PETScVector const& x)
 {
     return x.getNorm(MathLib::VecNormType::NORM2);
+}
+
+// Explicit specialization
+// Computes the Maximum norm of x
+template<>
+double normMax(PETScVector const& x)
+{
+    return x.getNorm(MathLib::VecNormType::INFINITY_N);
 }
 
 
@@ -193,11 +225,27 @@ void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 }
 
 // Explicit specialization
+// Computes the Manhattan norm of x
+template<>
+double norm1(EigenVector const& x)
+{
+    return x.getRawVector().lpNorm<1>();
+}
+
+// Explicit specialization
 // Euclidean norm
 template<>
 double norm2(EigenVector const& x)
 {
     return x.getRawVector().norm();
+}
+
+// Explicit specialization
+// Computes the Maximum norm of x
+template<>
+double normMax(EigenVector const& x)
+{
+    return x.getRawVector().lpNorm<Eigen::Infinity>();
 }
 
 
