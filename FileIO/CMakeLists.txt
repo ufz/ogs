@@ -15,8 +15,6 @@ set(SOURCES
 	readMeshFromFile.cpp
 	writeGeometryToFile.h
 	writeGeometryToFile.cpp
-	SHPInterface.h
-	SHPInterface.cpp
 	TetGenInterface.h
 	TetGenInterface.cpp
 	TINInterface.h
@@ -26,6 +24,9 @@ set(SOURCES
 	writeMeshToFile.h
 	writeMeshToFile.cpp
 )
+if(Shapelib_FOUND)
+	list(APPEND SOURCES SHPInterface.h SHPInterface.cpp)
+endif()
 
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
 GET_SOURCE_FILES(SOURCES_GMSHIO GmshIO)
@@ -59,7 +60,6 @@ target_link_libraries(FileIO INTERFACE
 	InSituLib
 	MeshLib
 	logog
-	${CONAN_LIBS}
 )
 if(QT4_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
@@ -69,6 +69,10 @@ if(QT4_FOUND)
 			target_link_libraries(FileIO PUBLIC Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
 		endif()
 	endif()
+endif()
+
+if(Shapelib_FOUND)
+	target_link_libraries(FileIO INTERFACE ${Shapelib_LIBRARIES})
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)
