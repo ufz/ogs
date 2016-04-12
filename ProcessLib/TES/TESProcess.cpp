@@ -42,95 +42,44 @@ TESProcess(MeshLib::Mesh& mesh,
     }
 
     // secondary variables
-    if (auto proc_vars = config.getConfSubtreeOptional("secondary_variables"))
+    if (auto sec_vars = config.getConfSubtreeOptional("secondary_variables"))
     {
-        auto add_secondary_variable =
-                [this, &proc_vars](
-                std::string const& var, const unsigned num_components,
-                typename ProcessLib::SecondaryVariableFunctions<GlobalVector>&& fcts)
-                -> void
-        {
-            if (auto variable = proc_vars->getConfParamOptional<std::string>(var))
-            {
-                BP::_process_output.secondary_variables.push_back(
-                    {var, num_components, std::move(fcts)});
-            }
-        };
+        auto& po = BP::_process_output;
 
-        add_secondary_variable("solid_density",  1, makeExtrapolator(TESIntPtVariables::SOLID_DENSITY));
-        add_secondary_variable("reaction_rate",  1, makeExtrapolator(TESIntPtVariables::REACTION_RATE));
-        add_secondary_variable("velocity_x",     1, makeExtrapolator(TESIntPtVariables::VELOCITY_X));
+        po.addSecondaryVariable(*sec_vars, "solid_density",  1,
+            makeExtrapolator(TESIntPtVariables::SOLID_DENSITY));
+        po.addSecondaryVariable(*sec_vars, "reaction_rate",  1,
+            makeExtrapolator(TESIntPtVariables::REACTION_RATE));
+        po.addSecondaryVariable(*sec_vars, "velocity_x",     1,
+            makeExtrapolator(TESIntPtVariables::VELOCITY_X));
         if (BP::_mesh.getDimension() >= 2)
-            add_secondary_variable("velocity_y", 1, makeExtrapolator(TESIntPtVariables::VELOCITY_Y));
+            po.addSecondaryVariable(*sec_vars, "velocity_y", 1,
+                makeExtrapolator(TESIntPtVariables::VELOCITY_Y));
         if (BP::_mesh.getDimension() >= 3)
-            add_secondary_variable("velocity_z", 1, makeExtrapolator(TESIntPtVariables::VELOCITY_Z));
+            po.addSecondaryVariable(*sec_vars, "velocity_z", 1,
+                makeExtrapolator(TESIntPtVariables::VELOCITY_Z));
 
-        add_secondary_variable("loading",        1, makeExtrapolator(TESIntPtVariables::LOADING));
-        add_secondary_variable("reaction_damping_factor", 1,
-                               makeExtrapolator(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+        po.addSecondaryVariable(*sec_vars, "loading",        1,
+            makeExtrapolator(TESIntPtVariables::LOADING));
+        po.addSecondaryVariable(*sec_vars, "reaction_damping_factor", 1,
+            makeExtrapolator(TESIntPtVariables::REACTION_DAMPING_FACTOR));
 
         namespace PH = std::placeholders;
         using Self = TESProcess<GlobalSetup>;
 
-        add_secondary_variable("vapour_partial_pressure", 1,
+        po.addSecondaryVariable(*sec_vars, "vapour_partial_pressure", 1,
             {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
-        add_secondary_variable("relative_humidity",       1,
+        po.addSecondaryVariable(*sec_vars, "relative_humidity",       1,
             {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
-        add_secondary_variable("equilibrium_loading",     1,
+        po.addSecondaryVariable(*sec_vars, "equilibrium_loading",     1,
             {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
     }
 
     // variables for output
-    if (auto output = config.getConfSubtreeOptional("output")) {
-        auto& output_variables = BP::_process_output.output_variables;
-        if (auto out_vars = output->getConfSubtreeOptional("variables"))
-        {
-            for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
-            {
-                if (output_variables.find(out_var) != output_variables.cend())
-                {
-                    ERR("output variable `%s' specified twice.", out_var.c_str());
-                    std::abort();
-                }
-
-                auto pred = [&out_var](ProcessVariable const& pv) {
-                    return pv.getName() == out_var;
-                };
-
-                // check if process variable
-                auto const& pcs_var = std::find_if(
-                    BP::_process_variables.cbegin(), BP::_process_variables.cend(),
-                    pred);
-
-                if (pcs_var == BP::_process_variables.cend())
-                {
-                    auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
-                        return p.name == out_var;
-                    };
-
-                    // check if secondary variable
-                    auto const& pcs_var2 = std::find_if(
-                        BP::_process_output.secondary_variables.cbegin(),
-                        BP::_process_output.secondary_variables.cend(),
-                        pred2);
-
-                    if (pcs_var2 == BP::_process_output.secondary_variables.cend())
-                    {
-                        ERR("Output variable `%s' is neither a process variable nor a"
-                            " secondary variable", out_var.c_str());
-                        std::abort();
-                    }
-                }
-
-                DBUG("adding output variable `%s'", out_var.c_str());
-                output_variables.insert(out_var);
-            }
-
-            if (auto out_resid = output->getConfParamOptional<bool>("output_extrapolation_residuals"))
-            {
-                BP::_process_output.output_residuals = *out_resid;
-            }
-        }
+    // TODO make mandatory option? Move to base Process?
+    if (auto output = config.getConfSubtreeOptional("output"))
+    {
+        BP::_process_output.setOutputVariables(*output, BP::_process_variables);
     }
 
     {
