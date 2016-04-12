@@ -130,8 +130,8 @@ add_library(QtDataView
 	${UIS}
 )
 
-target_link_libraries(QtDataView PUBLIC Qt4::QtCore Qt4::QtGui)
-target_link_libraries(QtDataView INTERFACE
+target_link_libraries(QtDataView Qt4::QtCore Qt4::QtGui)
+target_link_libraries(QtDataView
 	FileIO
 	DataHolderLib
 	QtBase
@@ -141,7 +141,7 @@ add_dependencies(QtDataView QtDiagramView QtStratView)
 ADD_VTK_DEPENDENCY(QtDataView)
 
 if(GEOTIFF_FOUND)
-	target_link_libraries( QtDataView INTERFACE ${GEOTIFF_LIBRARIES} )
+	target_link_libraries( QtDataView ${GEOTIFF_LIBRARIES} )
 endif () # GEOTIFF_FOUND
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")

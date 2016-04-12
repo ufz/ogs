@@ -25,7 +25,7 @@ add_library( VtkAct
 
 ADD_VTK_DEPENDENCY(VtkAct)
 
-target_link_libraries( VtkAct PUBLIC Qt4::QtCore )
-target_link_libraries( VtkAct INTERFACE ${VTK_LIBRARIES} )
+target_link_libraries( VtkAct Qt4::QtCore )
+target_link_libraries( VtkAct ${VTK_LIBRARIES} )
 
 set_property(TARGET VtkAct PROPERTY FOLDER "DataExplorer")

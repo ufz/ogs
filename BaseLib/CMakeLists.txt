@@ -7,12 +7,12 @@ add_library(BaseLib ${SOURCES})
 
 set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(BaseLib INTERFACE
+target_link_libraries(BaseLib
 	logog
 )
 
 if(MSVC)
-	target_link_libraries(BaseLib INTERFACE WinMM) # needed for timeGetTime
+	target_link_libraries(BaseLib WinMM) # needed for timeGetTime
 endif()
 
 if(TARGET Eigen)

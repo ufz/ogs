@@ -123,11 +123,11 @@ ADD_VTK_DEPENDENCY(VtkVis)
 
 if(GEOTIFF_FOUND)
 	include_directories(${GEOTIFF_INCLUDE_DIRS})
-	target_link_libraries(VtkVis INTERFACE ${GEOTIFF_LIBRARIES})
+	target_link_libraries(VtkVis ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis PUBLIC Qt4::QtGui QtDataView)
-target_link_libraries(VtkVis INTERFACE VtkAct)
+target_link_libraries(VtkVis Qt4::QtGui QtDataView)
+target_link_libraries(VtkVis VtkAct)
 
 if(VTKOSGCONVERTER_FOUND)
 	USE_OPENSG(VtkVis)

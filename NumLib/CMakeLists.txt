@@ -33,7 +33,7 @@ add_library(NumLib ${SOURCES})
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(NumLib INTERFACE
+target_link_libraries(NumLib
 	BaseLib
 	GeoLib
 	MathLib

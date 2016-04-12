@@ -8,7 +8,7 @@ APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
 add_library(ProcessLib ${SOURCES})
 
-target_link_libraries(ProcessLib INTERFACE
+target_link_libraries(ProcessLib
     AssemblerLib
     MeshLib
     MeshGeoToolsLib
