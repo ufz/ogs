@@ -160,14 +160,15 @@ TESProcess(MeshLib::Mesh& mesh,
         BP::_process_output.output_global_matrix = *param;
     }
 
-    // matrix order
+    // extrapolator
     {
-        // TODO full DOF table not built with order anymore?
+        // TODO Why is the full DOF table not built with order anymore?
         auto getOrder = [&config]() -> AssemblerLib::ComponentOrder
         {
             auto const order = config.getConfParam<std::string>("global_matrix_order");
             DBUG("global_matrix_order: %s", order.c_str());
 
+            // TODO for single component order does not matter, right?
             if (order == "BY_COMPONENT")
                 return AssemblerLib::ComponentOrder::BY_COMPONENT;
             else if (order == "BY_LOCATION")
