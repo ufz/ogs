@@ -11,6 +11,7 @@
 #define PROCESSLIB_PROCESSOUTPUT_H
 
 #include "BaseLib/ConfigTree.h"
+#include "NumLib/Extrapolation/Extrapolator.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
@@ -26,6 +27,34 @@ struct SecondaryVariableFunctions
     Fct eval_field;
     Fct eval_residuals;
 };
+
+template<typename GlobalVector, typename PropertyEnum, typename LocalAssemblers>
+SecondaryVariableFunctions<GlobalVector>
+makeExtrapolator(PropertyEnum const property,
+                 NumLib::Extrapolator<GlobalVector, PropertyEnum, LocalAssemblers>&
+                 extrapolator,
+                 LocalAssemblers const& local_assemblers)
+{
+    auto const eval_field = [property, &extrapolator, &local_assemblers](
+            GlobalVector const& x,
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            ) -> GlobalVector
+    {
+        extrapolator.extrapolate(x, local_assemblers, property);
+        return extrapolator.getNodalValues();
+    };
+
+    auto const eval_residuals = [property, &extrapolator, &local_assemblers](
+            GlobalVector const& x,
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            ) -> GlobalVector
+    {
+        extrapolator.calculateResiduals(x, local_assemblers, property);
+        return extrapolator.getElementResiduals();
+    };
+    return { eval_field, eval_residuals };
+}
+
 
 template<typename GlobalVector>
 struct SecondaryVariable
