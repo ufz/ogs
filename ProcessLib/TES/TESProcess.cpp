@@ -44,34 +44,38 @@ TESProcess(MeshLib::Mesh& mesh,
     // secondary variables
     if (auto sec_vars = config.getConfSubtreeOptional("secondary_variables"))
     {
-        auto& po = BP::_process_output;
+        auto add2nd = [&](
+            std::string const& var_name, unsigned const n_components,
+            SecondaryVariableFunctions<GlobalVector>&& fcts)
+        {
+            BP::_process_output.addSecondaryVariable(
+                        *sec_vars, var_name, n_components, std::move(fcts));
+        };
+        auto makeEx = [&](TESIntPtVariables var)
+        {
+            return ProcessLib::makeExtrapolator(var, *_extrapolator, _local_assemblers);
+        };
 
-        po.addSecondaryVariable(*sec_vars, "solid_density",  1,
-            makeExtrapolator(TESIntPtVariables::SOLID_DENSITY));
-        po.addSecondaryVariable(*sec_vars, "reaction_rate",  1,
-            makeExtrapolator(TESIntPtVariables::REACTION_RATE));
-        po.addSecondaryVariable(*sec_vars, "velocity_x",     1,
-            makeExtrapolator(TESIntPtVariables::VELOCITY_X));
+        add2nd("solid_density",  1, makeEx(TESIntPtVariables::SOLID_DENSITY));
+        add2nd("reaction_rate",  1, makeEx(TESIntPtVariables::REACTION_RATE));
+        add2nd("velocity_x",     1, makeEx(TESIntPtVariables::VELOCITY_X));
         if (BP::_mesh.getDimension() >= 2)
-            po.addSecondaryVariable(*sec_vars, "velocity_y", 1,
-                makeExtrapolator(TESIntPtVariables::VELOCITY_Y));
+            add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
         if (BP::_mesh.getDimension() >= 3)
-            po.addSecondaryVariable(*sec_vars, "velocity_z", 1,
-                makeExtrapolator(TESIntPtVariables::VELOCITY_Z));
+            add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
 
-        po.addSecondaryVariable(*sec_vars, "loading",        1,
-            makeExtrapolator(TESIntPtVariables::LOADING));
-        po.addSecondaryVariable(*sec_vars, "reaction_damping_factor", 1,
-            makeExtrapolator(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+        add2nd("loading",        1, makeEx(TESIntPtVariables::LOADING));
+        add2nd("reaction_damping_factor",
+                                 1, makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
 
         namespace PH = std::placeholders;
         using Self = TESProcess<GlobalSetup>;
 
-        po.addSecondaryVariable(*sec_vars, "vapour_partial_pressure", 1,
+        add2nd("vapour_partial_pressure", 1,
             {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
-        po.addSecondaryVariable(*sec_vars, "relative_humidity",       1,
+        add2nd("relative_humidity",       1,
             {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
-        po.addSecondaryVariable(*sec_vars, "equilibrium_loading",     1,
+        add2nd("equilibrium_loading",     1,
             {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
     }
 
@@ -481,31 +485,6 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
         return Cs;
     }
 #endif
-}
-
-template<typename GlobalSetup>
-SecondaryVariableFunctions<typename TESProcess<GlobalSetup>::GlobalVector>
-TESProcess<GlobalSetup>::
-makeExtrapolator(TESIntPtVariables const var) const
-{
-    auto const eval_field = [var, this](
-            GlobalVector const& x,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
-            ) -> GlobalVector
-    {
-        _extrapolator->extrapolate(x, _local_assemblers, var);
-        return _extrapolator->getNodalValues();
-    };
-
-    auto const eval_residuals = [var, this](
-            GlobalVector const& x,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
-            ) -> GlobalVector
-    {
-        _extrapolator->calculateResiduals(x, _local_assemblers, var);
-        return _extrapolator->getElementResiduals();
-    };
-    return { eval_field, eval_residuals };
 }
 
 
