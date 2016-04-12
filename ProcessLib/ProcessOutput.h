@@ -10,38 +10,104 @@
 #ifndef PROCESSLIB_PROCESSOUTPUT_H
 #define PROCESSLIB_PROCESSOUTPUT_H
 
+#include "BaseLib/ConfigTree.h"
+#include "ProcessVariable.h"
+
 namespace ProcessLib
 {
 
 template<typename GlobalVector>
 struct SecondaryVariableFunctions
 {
-	using Fct = std::function<GlobalVector(
-		GlobalVector const& x,
-		AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
+    using Fct = std::function<GlobalVector(
+        GlobalVector const& x,
+        AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
 
-	Fct eval_field;
-	Fct eval_residuals;
+    Fct eval_field;
+    Fct eval_residuals;
 };
 
 template<typename GlobalVector>
 struct SecondaryVariable
 {
-	std::string const name;
-	const unsigned n_components;
-	SecondaryVariableFunctions<GlobalVector> fcts;
+    std::string const name;
+    const unsigned n_components;
+    SecondaryVariableFunctions<GlobalVector> fcts;
 };
 
 template <typename GlobalVector>
 struct ProcessOutput
 {
-	std::vector<SecondaryVariable<GlobalVector>> secondary_variables;
-	std::set<std::string> output_variables;
+    void addSecondaryVariable(
+            BaseLib::ConfigTree const& config,
+            std::string const& var_tag, const unsigned num_components,
+            SecondaryVariableFunctions<GlobalVector>&& fcts)
+    {
+        if (auto var_name = config.getConfParamOptional<std::string>(var_tag))
+        {
+            secondary_variables.push_back(
+                {*var_name, num_components, std::move(fcts)});
+        }
+    }
 
-	bool output_residuals = false;
-	//! Output global matrix/rhs after first iteration.
-	bool output_global_matrix = false;
-	bool output_iteration_results = false;
+    template<typename ProcVarRef>
+    void setOutputVariables(BaseLib::ConfigTree const& output_config,
+                            std::vector<ProcVarRef> const& process_variables)
+    {
+        if (auto out_vars = output_config.getConfSubtreeOptional("variables"))
+        {
+            for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
+            {
+                if (output_variables.find(out_var) != output_variables.cend())
+                {
+                    ERR("output variable `%s' specified twice.", out_var.c_str());
+                    std::abort();
+                }
+
+                auto pred = [&out_var](ProcessVariable const& pv) {
+                    return pv.getName() == out_var;
+                };
+
+                // check if process variable
+                auto const& pcs_var = std::find_if(
+                    process_variables.cbegin(), process_variables.cend(), pred);
+
+                if (pcs_var == process_variables.cend())
+                {
+                    auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
+                        return p.name == out_var;
+                    };
+
+                    // check if secondary variable
+                    auto const& pcs_var2 = std::find_if(
+                        secondary_variables.cbegin(), secondary_variables.cend(), pred2);
+
+                    if (pcs_var2 == secondary_variables.cend())
+                    {
+                        ERR("Output variable `%s' is neither a process variable nor a"
+                            " secondary variable", out_var.c_str());
+                        std::abort();
+                    }
+                }
+
+                DBUG("adding output variable `%s'", out_var.c_str());
+                output_variables.insert(out_var);
+            }
+
+            if (auto out_resid = output_config.getConfParamOptional<bool>(
+                    "output_extrapolation_residuals")) {
+                output_residuals = *out_resid;
+            }
+        }
+    }
+
+    std::vector<SecondaryVariable<GlobalVector>> secondary_variables;
+    std::set<std::string> output_variables;
+
+    bool output_residuals = false;
+    //! Output global matrix/rhs after first iteration.
+    bool output_global_matrix = false;
+    bool output_iteration_results = false;
 };
 
 } // ProcessLib
