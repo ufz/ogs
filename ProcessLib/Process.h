@@ -27,6 +27,7 @@
 #include "NeumannBc.h"
 #include "NeumannBcAssembler.h"
 #include "Parameter.h"
+#include "ProcessOutput.h"
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
@@ -42,38 +43,6 @@ class Mesh;
 
 namespace ProcessLib
 {
-
-template<typename GlobalVector>
-struct SecondaryVariableFunctions
-{
-	using Fct = std::function<GlobalVector(
-		GlobalVector const& x,
-		AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
-
-	Fct eval_field;
-	Fct eval_residuals;
-};
-
-template<typename GlobalVector>
-struct SecondaryVariable
-{
-	std::string const name;
-	const unsigned n_components;
-	SecondaryVariableFunctions<GlobalVector> fcts;
-};
-
-template <typename GlobalVector>
-struct ProcessOutput
-{
-	std::vector<SecondaryVariable<GlobalVector>> secondary_variables;
-	std::set<std::string> output_variables;
-
-	bool output_residuals = false;
-	//! Output global matrix/rhs after first iteration.
-	bool output_global_matrix = false;
-	bool output_iteration_results = false;
-};
-
 template <typename GlobalSetup>
 class Process
 		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
