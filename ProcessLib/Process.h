@@ -127,17 +127,22 @@ public:
 		x.copyValues(x_copy);
 
 		std::size_t const n_nodes = _mesh.getNNodes();
+		int global_component_offset = 0;
+		int global_component_offset_next = 0;
 
 		// primary variables
 		for (ProcessVariable& pv : _process_variables)
 		{
+			int const n_components = pv.getNumberOfComponents();
+			global_component_offset = global_component_offset_next;
+			global_component_offset_next += n_components;
+
 			auto const& output_variables = _process_output.output_variables;
 			if (output_variables.find(pv.getName()) == output_variables.cend())
 				continue;
 
 			auto& output_data = pv.getOrCreateMeshProperty();
 
-			int const n_components = pv.getNumberOfComponents();
 			for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
 			{
 				MeshLib::Location const l(_mesh.getID(),
@@ -146,9 +151,10 @@ public:
 				for (int component_id = 0; component_id < n_components;
 				     ++component_id)
 				{
+					auto const global_component_id = global_component_offset + component_id;
 					auto const index =
 					    _local_to_global_index_map->getLocalIndex(
-					        l, component_id, x.getRangeBegin(),
+					        l, global_component_id, x.getRangeBegin(),
 					        x.getRangeEnd());
 
 					output_data[node_id * n_components + component_id] =
