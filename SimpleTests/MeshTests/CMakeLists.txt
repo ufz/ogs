@@ -11,7 +11,6 @@ target_link_libraries(MeshRead
 	MathLib
 	BaseLib
 	GeoLib
-	logog
 	${BOOST_LIBRARIES}
 )
 
@@ -28,6 +27,5 @@ target_link_libraries(MeshSearchTest
 	MathLib
 	BaseLib
 	GeoLib
-	logog
 	${BOOST_LIBRARIES}
 )

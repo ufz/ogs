@@ -57,8 +57,8 @@ add_library(FileIO ${SOURCES})
 
 target_link_libraries(FileIO
 	GeoLib
-	InSituLib
 	MeshLib
+	InSituLib
 	logog
 )
 if(QT4_FOUND)

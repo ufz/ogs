@@ -9,7 +9,6 @@ target_link_libraries(ApplicationsLib
 	NumLib
 	ProcessLib
 	${VTK_LIBRARIES}
-	logog
 )
 ADD_VTK_DEPENDENCY(ApplicationsLib)
 

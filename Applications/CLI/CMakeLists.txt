@@ -5,6 +5,10 @@ add_executable(ogs
 
 target_link_libraries(ogs
     ApplicationsLib
+    AssemblerLib
+    MeshGeoToolsLib
+    ProcessLib
+    NumLib
     FileIO
 )
 

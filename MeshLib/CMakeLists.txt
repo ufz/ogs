@@ -22,7 +22,6 @@ target_link_libraries(MeshLib
 	GeoLib
 	MathLib
 	${VTK_LIBRARIES}
-	logog
 )
 
 ADD_VTK_DEPENDENCY(MeshLib)

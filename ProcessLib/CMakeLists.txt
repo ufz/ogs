@@ -10,11 +10,9 @@ add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
     AssemblerLib
-    MeshLib
     MeshGeoToolsLib
     NumLib # for shape matrices
     ${VTK_LIBRARIES}
-    logog
 )
 
 ADD_VTK_DEPENDENCY(ProcessLib)

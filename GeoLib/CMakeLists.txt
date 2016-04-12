@@ -9,7 +9,6 @@ add_library(GeoLib ${SOURCES_GeoLib}
 target_link_libraries(GeoLib
 	BaseLib
 	MathLib
-	logog
 )
 
 if(TARGET Boost)

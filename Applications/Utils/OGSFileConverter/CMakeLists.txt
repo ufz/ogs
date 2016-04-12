@@ -38,7 +38,12 @@ target_link_libraries(OGSFileConverterLib QtBase)
 
 add_executable(OGSFileConverter main.cpp)
 
-target_link_libraries(OGSFileConverter OGSFileConverterLib FileIO QtBase)
+target_link_libraries(OGSFileConverter
+	ApplicationsLib
+	OGSFileConverterLib
+	FileIO
+	QtBase
+	GeoLib)
 ADD_VTK_DEPENDENCY(OGSFileConverter)
 
 include(${QT_USE_FILE})

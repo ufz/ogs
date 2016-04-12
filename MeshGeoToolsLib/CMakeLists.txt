@@ -10,7 +10,6 @@ target_link_libraries(MeshGeoToolsLib
 	MeshLib
 	GeoLib
 	FileIO
-	logog
 )
 
 if(TARGET Boost)
