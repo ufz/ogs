@@ -156,14 +156,12 @@ bool XmlGspInterface::write()
 	}
 
 	// MSH
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(_mesh_vector.begin());
-	     it != _mesh_vector.end();
-	     ++it)
+	for (auto const& mesh : _mesh_vector)
 	{
 		// write mesh file
 		Legacy::MeshIO meshIO;
-		meshIO.setMesh(*it);
-		std::string fileName(path + (*it)->getName());
+		meshIO.setMesh(mesh);
+		std::string fileName(path + mesh->getName());
 		meshIO.writeToFile(fileName);
 
 		// write entry in project file
@@ -171,7 +169,7 @@ bool XmlGspInterface::write()
 		root.appendChild(mshTag);
 		QDomElement fileNameTag = doc.createElement("file");
 		mshTag.appendChild(fileNameTag);
-		QDomText fileNameText = doc.createTextNode(QString::fromStdString((*it)->getName()));
+		QDomText fileNameText = doc.createTextNode(QString::fromStdString(mesh->getName()));
 		fileNameTag.appendChild(fileNameText);
 	}
 
