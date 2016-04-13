@@ -53,7 +53,6 @@ if(OGS_BUILD_GUI)
 		QtDataView
 		QtStratView
 		VtkVis
-		vtkInteractionStyle
 	)
 endif()
 

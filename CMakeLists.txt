@@ -34,6 +34,8 @@ else()
 	message(FATAL_ERROR "External dependencies not setup. Run conan install!")
 endif()
 conan_basic_setup()
+include(${CONAN_VTK_ROOT}/lib/cmake/vtk-7.0/VTKConfig.cmake)
+include(${VTK_USE_FILE})
 
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)

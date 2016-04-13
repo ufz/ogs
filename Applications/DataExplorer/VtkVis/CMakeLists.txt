@@ -107,6 +107,7 @@ include_directories(
 	${GUI_SOURCE_DIR_REL}/VtkAct
 	${GUI_SOURCE_DIR_REL}/Base
 	${GUI_SOURCE_DIR_REL}/DataView
+	${GUI_SOURCE_DIR_REL}/VtkModules/Qt
 
 	${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
 	${CMAKE_CURRENT_BINARY_DIR}/../DataView
