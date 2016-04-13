@@ -203,11 +203,14 @@ void GeoTreeView::removeGeometry()
 	{
 		TreeItem* item = static_cast<GeoTreeModel*>(model())->getItem(index);
 		GeoObjectListItem* list = dynamic_cast<GeoObjectListItem*>(item);
-		if (list)
+		if (list) {
 			emit listRemoved((item->parentItem()->data(
 									  0).toString()).toStdString(), list->getType());
-		else
-			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::GEOTYPE::INVALID);
+		} else {
+			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::GEOTYPE::SURFACE);
+			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::GEOTYPE::POLYLINE);
+			emit listRemoved((item->data(0).toString()).toStdString(), GeoLib::GEOTYPE::POINT);
+		}
 
 		if(this->selectionModel()->selectedIndexes().count() == 0)
 		{

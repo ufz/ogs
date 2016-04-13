@@ -331,9 +331,6 @@ void GeoTreeModel::setNameForItem(const std::string &name,
 	case GeoLib::GEOTYPE::SURFACE:
 		geo_type_str = "Surfaces";
 		break;
-	case GeoLib::GEOTYPE::VOLUME:
-		geo_type_str = "Volumes";
-		break;
 	default:
 		geo_type_str = "";
 	}
