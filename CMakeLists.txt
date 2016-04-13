@@ -39,6 +39,7 @@ if(USE_CONAN)
 	message(STATUS "Using conan package manager")
 	set(OGS_LIB_VTK System CACHE INTERNAL "")
 	set(OGS_LIB_BOOST System CACHE INTERNAL "")
+	set(OGS_LIB_EIGEN System CACHE INTERNAL "")
 endif()
 
 ### CMake includes ###
