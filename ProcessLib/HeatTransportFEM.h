@@ -74,16 +74,14 @@ public:
 
         _localK.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
         _localM.reset(new NodalMatrixType(local_matrix_size, local_matrix_size));
-        _localb.reset(new NodalVectorType(local_matrix_size));
     }
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
     {
         _localK->setZero();
-        _localb->setZero();
         _localM->setZero();
-        double density = 1000 ;
-        double heat_capacity = 4200 ;
+        const double density = 1000 ;
+        const double heat_capacity = 3000 ;
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -101,12 +99,11 @@ public:
     }
 
     void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& /*b*/)
         const override
     {
         K.add(indices, *_localK);
         M.add(indices, *_localM);
-        b.add(indices.rows, *_localb);
     }
 
 private:
@@ -114,7 +111,6 @@ private:
     std::function<double(void)> _thermal_conductivity;
 
     std::unique_ptr<NodalMatrixType> _localK;
-    std::unique_ptr<NodalVectorType> _localb;
     std::unique_ptr<NodalMatrixType> _localM;
 
     unsigned _integration_order = 2;

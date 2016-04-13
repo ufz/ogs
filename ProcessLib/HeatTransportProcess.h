@@ -67,7 +67,6 @@ public:
             std::abort();
         }
     }
-ll
 
     template <unsigned GlobalDim>
     void createLocalAssemblers()
