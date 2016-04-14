@@ -126,7 +126,7 @@ private:
 	std::function<double(void)> _velocity;
 	//std::function<std::vector<double>(void)> _velocity;
     NodalMatrixType _localA;
-	NodalMatrixType _localM;
+	NodalMatrixType _localM;//transient
 	//NodalMatrixType _localD;
     NodalVectorType _localRhs;
 
