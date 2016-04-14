@@ -85,8 +85,8 @@ public:
         _localA.setZero();
 		_localM.setZero();
         _localRhs.setZero();
-		double rho = 1000.;
-		double test = _velocity();
+		double rho = 1.;
+		//double test = _velocity();
 		Eigen::VectorXd vel = Eigen::VectorXd::Zero(GlobalDim);
 		for (int ii = 0; ii < GlobalDim; ii++) {
 			vel(ii) = _velocity();

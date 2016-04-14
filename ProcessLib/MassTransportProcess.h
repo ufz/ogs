@@ -142,7 +142,7 @@ private:
     {
         // TODO It looks like, with little work this entire method can be moved to the Process class.
 
-        DBUG("Assemble GroundwaterFlowProcess.");
+        DBUG("Assemble MassTransportProcess.");
 
         // Call global assembler for each local assembly item.
         this->_global_setup.executeDereferenced(
