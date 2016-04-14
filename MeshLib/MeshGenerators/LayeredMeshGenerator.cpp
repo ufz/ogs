@@ -19,8 +19,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "FileIO/AsciiRasterInterface.h"
-
 #include "GeoLib/Raster.h"
 
 #include "MeshLib/Mesh.h"
@@ -37,18 +35,14 @@ LayeredMeshGenerator::LayeredMeshGenerator()
 {
 }
 
-bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh,
-                                        std::vector<std::string> const& raster_paths,
-                                        double minimum_thickness,
-                                        double noDataReplacementValue)
+bool LayeredMeshGenerator::createLayers(
+    MeshLib::Mesh const& mesh,
+    std::vector<GeoLib::Raster const*> const& rasters,
+    double minimum_thickness,
+    double noDataReplacementValue)
 {
-    if (mesh.getDimension() != 2 || !FileIO::allRastersExist(raster_paths))
+    if (mesh.getDimension() != 2)
         return false;
-
-    std::vector<GeoLib::Raster const*> rasters;
-    rasters.reserve(raster_paths.size());
-    for (auto path = raster_paths.begin(); path != raster_paths.end(); ++path)
-        rasters.push_back(FileIO::AsciiRasterInterface::readRaster(*path));
 
     bool result = createRasterLayers(mesh, rasters, minimum_thickness, noDataReplacementValue);
     std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
