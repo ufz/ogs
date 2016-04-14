@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "ProcessLib/DirichletBc.h"
 
 #include "ODESystem.h"
@@ -20,6 +21,23 @@
 #include "TimeDiscretization.h"
 #include "MatrixTranslator.h"
 
+namespace detail
+{
+//! Applies known solutions to the solution vector \c x.
+template<typename Solutions, typename Vector>
+void applyKnownSolutions(std::vector<Solutions> const*const known_solutions,
+                         Vector& x)
+{
+    if (!known_solutions) return;
+
+    for (auto const& bc : *known_solutions) {
+        for (std::size_t i=0; i<bc.global_ids.size(); ++i) {
+            // TODO that might have bad performance for some Vector types, e.g., PETSc.
+            MathLib::setVector(x, bc.global_ids[i], bc.values[i]);
+        }
+    }
+}
+}
 
 namespace NumLib
 {
@@ -174,11 +192,29 @@ public:
         _mat_trans->computeJacobian(*_Jac, Jac);
     }
 
+    void applyKnownSolutions(Vector& x) const override
+    {
+        ::detail::applyKnownSolutions(
+                    _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
+    }
+
     void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
                                     Vector& minus_delta_x) override
     {
-        (void) Jac; (void) res; (void) minus_delta_x;
-        INFO("Method applyKnownSolutionsNewton() not implemented."); // TODO implement
+        auto const* known_solutions =
+            _ode.getKnownSolutions(_time_disc.getCurrentTime());
+
+        if (known_solutions) {
+            std::vector<double> values;
+
+            for (auto const& bc : *known_solutions) {
+                // TODO this is the quick and dirty and bad performance solution.
+                values.resize(bc.values.size(), 0.0);
+
+                // TODO maybe it would be faster to apply all at once
+                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.global_ids, values);
+            }
+        }
     }
 
     bool isLinear() const override
@@ -306,6 +342,12 @@ public:
     void getRhs(Vector& rhs) const override
     {
         _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
+    }
+
+    void applyKnownSolutions(Vector& x) const override
+    {
+        ::detail::applyKnownSolutions(
+                    _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
     }
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override

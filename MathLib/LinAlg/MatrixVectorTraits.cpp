@@ -8,6 +8,7 @@
  */
 
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "MatrixProviderUser.h"
 #include "MatrixVectorTraits.h"
 
 #ifdef OGS_USE_EIGEN

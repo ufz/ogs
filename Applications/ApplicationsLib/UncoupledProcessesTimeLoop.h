@@ -197,6 +197,33 @@ private:
             break;
         }
     }
+
+    //! Applies known solutions to the solution vector \c x, transparently
+    //! for equation systems linearized with either the Picard or Newton method.
+    template<NumLib::NonlinearSolverTag NLTag>
+    static void applyKnownSolutions(
+            EquationSystem const& eq_sys, Vector& x)
+    {
+        using EqSys = NumLib::NonlinearSystem<Matrix, Vector, NLTag>;
+        assert(dynamic_cast<EqSys const*> (&eq_sys) != nullptr);
+        auto& eq_sys_ = static_cast<EqSys const&> (eq_sys);
+
+        eq_sys_.applyKnownSolutions(x);
+    }
+
+    //! Applies known solutions to the solution vector \c x, transparently
+    //! for equation systems linearized with either the Picard or Newton method.
+    static void applyKnownSolutions(
+            EquationSystem const& eq_sys,
+            NumLib::NonlinearSolverTag const nl_tag, Vector& x)
+    {
+        using Tag = NumLib::NonlinearSolverTag;
+        switch (nl_tag)
+        {
+        case Tag::Picard: applyKnownSolutions<Tag::Picard>(eq_sys, x); break;
+        case Tag::Newton: applyKnownSolutions<Tag::Newton>(eq_sys, x); break;
+        }
+    }
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.
@@ -310,10 +337,16 @@ solveOneTimeStepOneProcess(
 
     setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
 
-    process.preTimestep(x, t, delta_t);
+    // Note: Order matters!
+    // First advance to the next timestep, then set known solutions at that
+    // time, afterwards pass the right solution vector and time to the
+    // preTimestep() hook.
 
-    // INFO("time: %e, delta_t: %e", t, delta_t);
     time_disc.nextTimestep(t, delta_t);
+
+    applyKnownSolutions(ode_sys, nl_tag, x);
+
+    process.preTimestep(x, t, delta_t);
 
     bool nonlinear_solver_succeeded = nonlinear_solver.solve(x);
 
