@@ -28,7 +28,6 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/DataView/DiagramView
 	${CMAKE_CURRENT_SOURCE_DIR}/VtkVis
 	${CMAKE_CURRENT_SOURCE_DIR}/VtkAct
-	${CMAKE_CURRENT_SOURCE_DIR}/VtkModules/Qt
 )
 
 # Put moc files in a project folder

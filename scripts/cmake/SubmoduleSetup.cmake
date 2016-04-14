@@ -15,6 +15,9 @@ set(REQUIRED_SUBMODULES
 if(OGS_BUILD_TESTS)
 	list(APPEND REQUIRED_SUBMODULES Tests/Data)
 endif()
+if(OGS_BUILD_GUI)
+	list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkGUISupportQt)
+endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
 	execute_process(

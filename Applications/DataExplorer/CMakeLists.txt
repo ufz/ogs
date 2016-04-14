@@ -1,12 +1,3 @@
-if(QT4_FOUND)
-	set(VTK_QT_VERSION 4 CACHE INTERNAL "")
-else()
-	set(VTK_QT_VERSION 5 CACHE INTERNAL "")
-endif()
-if(NOT TARGET vtkGUISupportQt)
-	add_subdirectory(VtkModules/Qt)
-endif()
-
 if(VTKFBXCONVERTER_FOUND)
 	add_definitions(-DVTKFBXCONVERTER_FOUND)
 	include_directories(${VTKFBXCONVERTER_INCLUDE_DIRS})
