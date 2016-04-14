@@ -132,6 +132,7 @@ public:
 private:
     Parameter<double, MeshLib::Element const&> const& _diffusion_coefficient;
 	Parameter<double, MeshLib::Element const&> const& _velocity;
+	//Parameter<std::vector<double>, MeshLib::Element const&> const& _velocity;
     using LocalAssembler = MassTransport::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 

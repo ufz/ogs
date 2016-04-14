@@ -61,7 +61,7 @@ public:
                        Parameter<double, MeshLib::Element const&> const&
 						diffusion_coefficient,
 						Parameter<double, MeshLib::Element const&> const&
-						velocity)
+						velocity)//std::vector<double>
         : _shape_matrices(
               initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
                   e, integration_order))
@@ -86,6 +86,11 @@ public:
 		_localM.setZero();
         _localRhs.setZero();
 		double rho = 1000.;
+		double test = _velocity();
+		Eigen::VectorXd vel = Eigen::VectorXd::Zero(GlobalDim);
+		for (int ii = 0; ii < GlobalDim; ii++) {
+			vel(ii) = _velocity();
+		}
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();//retuen gauss point number
 
@@ -95,9 +100,14 @@ public:
             _localA.noalias() += sm.dNdx.transpose() *
                                  _diffusion_coefficient() * sm.dNdx *
                                  sm.detJ * wp.getWeight();
+			/*_localA.noalias() += sm.N.transpose() *
+				Eigen::Map<Eigen::Vector3d>(_velocity().data()) * sm.dNdx *
+				sm.detJ * wp.getWeight();*/
+			_localA.noalias() += sm.N *vel.transpose()* sm.dNdx *
+				sm.detJ * wp.getWeight();
 			_localM.noalias() += sm.N *
 				rho * sm.N.transpose() *
-				sm.detJ * wp.getWeight();
+				sm.detJ * wp.getWeight();//Eigen::Map<Eigen::VectorXd>(
         }
     }
 
@@ -114,7 +124,7 @@ private:
     std::vector<ShapeMatrices> _shape_matrices;
     std::function<double(void)> _diffusion_coefficient;
 	std::function<double(void)> _velocity;
-
+	//std::function<std::vector<double>(void)> _velocity;
     NodalMatrixType _localA;
 	NodalMatrixType _localM;
 	//NodalMatrixType _localD;
