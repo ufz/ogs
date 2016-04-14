@@ -15,6 +15,9 @@
 #define ASCIIRASTERINTERFACE_H_
 
 #include <fstream>
+#include <vector>
+#include <string>
+#include <boost/optional.hpp>
 
 #include "GeoLib/Raster.h"
 
@@ -48,6 +51,11 @@ private:
     static bool readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header,
                                  double &min, double &max);
 };
+
+/// Reads a vector of rasters given by file names. On error nothing is returned,
+/// otherwise the returned vector contains pointers to the read rasters.
+boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+    std::vector<std::string> const& raster_paths);
 
 /// Checks if all raster files actually exist
 bool allRastersExist(std::vector<std::string> const& raster_paths);
