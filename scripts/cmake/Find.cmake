@@ -141,7 +141,7 @@ endif()
 
 find_package(Shapelib)
 if(Shapelib_FOUND)
-	include_directories(${Shapelib_INCLUDE_DIRS})
+	include_directories(SYSTEM ${Shapelib_INCLUDE_DIRS})
 elseif(OGS_BUILD_GUI)
 	message(FATAL_ERROR "Shapelib not found but it is required for OGS_BUILD_GUI!")
 endif()
