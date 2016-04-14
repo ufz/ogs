@@ -42,7 +42,7 @@ bool LayeredMeshGenerator::createLayers(MeshLib::Mesh const& mesh,
                                         double minimum_thickness,
                                         double noDataReplacementValue)
 {
-    if (mesh.getDimension() != 2 || !allRastersExist(raster_paths))
+    if (mesh.getDimension() != 2 || !FileIO::allRastersExist(raster_paths))
         return false;
 
     std::vector<GeoLib::Raster const*> rasters;
@@ -105,18 +105,6 @@ MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_no
         return new MeshLib::Node(last_layer_node);
     else
         return new MeshLib::Node(dem_node[0], dem_node[1], elevation, new_node_id);
-}
-
-bool LayeredMeshGenerator::allRastersExist(std::vector<std::string> const& raster_paths) const
-{
-    for (auto raster = raster_paths.begin(); raster != raster_paths.end(); ++raster)
-    {
-        std::ifstream file_stream (*raster, std::ifstream::in);
-        if (!file_stream.good())
-            return false;
-        file_stream.close();
-    }
-    return true;
 }
 
 void LayeredMeshGenerator::cleanUpOnError()

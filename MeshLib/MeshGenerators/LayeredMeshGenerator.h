@@ -90,9 +90,6 @@ protected:
 	/// Calculates a data-dependent epsilon value
 	double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
 
-	/// Checks if all raster files actually exist
-	bool allRastersExist(std::vector<std::string> const& raster_paths) const;
-
 	/// Cleans up the already created objects in case of an error
 	void cleanUpOnError();
 

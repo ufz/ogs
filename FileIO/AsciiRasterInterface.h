@@ -49,6 +49,9 @@ private:
                                  double &min, double &max);
 };
 
+/// Checks if all raster files actually exist
+bool allRastersExist(std::vector<std::string> const& raster_paths);
+
 }
 
 #endif /* ASCIIRASTERINTERFACE_H_ */
