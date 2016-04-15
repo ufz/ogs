@@ -164,7 +164,7 @@ public:
     void write(std::ostream &os) const
     {
         for (int k=0; k<_mat.outerSize(); ++k)
-          for (Eigen::SparseMatrix<double>::InnerIterator it(_mat,k); it; ++it)
+          for (RawMatrixType::InnerIterator it(_mat,k); it; ++it)
               os << it.row() << " " << it.col() << ": " << it.value() << "\n";
         os << std::endl;
     }
