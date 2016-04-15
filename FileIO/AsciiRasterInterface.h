@@ -56,10 +56,6 @@ private:
 /// otherwise the returned vector contains pointers to the read rasters.
 boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths);
-
-/// Checks if all raster files actually exist
-bool allRastersExist(std::vector<std::string> const& raster_paths);
-
 }
 
 #endif /* ASCIIRASTERINTERFACE_H_ */
