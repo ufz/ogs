@@ -44,13 +44,12 @@ public:
         MeshLib::Mesh& mesh,
         typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
-        ProcessVariable& variable,
+        std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
         GroundwaterFlowProcessData&& process_data)
-        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization))
+        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
+                               std::move(process_variables))
         , _process_data(std::move(process_data))
     {
-        Base::_process_variables.emplace_back(variable);
-
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
                     &Base::getTimeDiscretization()) != nullptr)
         {
@@ -169,10 +168,8 @@ createGroundwaterFlowProcess(
     DBUG("Create GroundwaterFlowProcess.");
 
     // Process variable.
-    ProcessVariable& process_variable =
-        findProcessVariable(config, "process_variable", variables);
-    DBUG("Associate hydraulic_head with process variable \'%s\'.",
-         process_variable.getName().c_str());
+    auto process_variables =
+        findProcessVariables(variables, config, { "process_variable" });
 
     // Hydraulic conductivity parameter.
     auto& hydraulic_conductivity =
@@ -189,9 +186,10 @@ createGroundwaterFlowProcess(
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
-            process_variable,
+            std::move(process_variables),
             std::move(process_data)
-    }};
+        }
+    };
 }
 
 }   // namespace GroundwaterFlow
