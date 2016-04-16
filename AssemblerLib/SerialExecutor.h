@@ -71,6 +71,19 @@ struct SerialExecutor
         }
     }
 
+    /// \override
+    template <typename Container, typename Object, typename... MethodArgs, typename... Args>
+    static void
+    executeMemberDereferenced(
+            Object& object,
+            void (Object::*method)(MethodArgs... method_args),
+            Container const& container, Args&&... args)
+    {
+        for (std::size_t i = 0; i < container.size(); i++) {
+            (object.*method)(i, *container[i], std::forward<Args>(args)...);
+        }
+    }
+
     /// Same as execute(f, c), but with two containers, where the second one is
     /// modified.
     ///
