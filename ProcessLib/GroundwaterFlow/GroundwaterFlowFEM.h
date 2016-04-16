@@ -25,20 +25,19 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
-template <typename ShapeFunction_,
-         typename IntegrationMethod_,
+template <typename ShapeFunction,
+         typename IntegrationMethod,
          typename GlobalMatrix,
          typename GlobalVector,
          unsigned GlobalDim>
 class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
-public:
-    using ShapeFunction = ShapeFunction_;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
+public:
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
     LocalAssemblerData(MeshLib::Element const& element,
@@ -47,7 +46,7 @@ public:
                        GroundwaterFlowProcessData const& process_data)
         : _element(element)
         , _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
+              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
                   element, integration_order))
         , _process_data(process_data)
         , _localA(local_matrix_size, local_matrix_size) // TODO narrowing conversion
@@ -60,7 +59,7 @@ public:
         _localA.setZero();
         _localRhs.setZero();
 
-        IntegrationMethod_ integration_method(_integration_order);
+        IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
