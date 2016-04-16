@@ -35,15 +35,14 @@ class GroundwaterFlowProcess final
         : public Process<GlobalSetup>
 {
     using Base = Process<GlobalSetup>;
-
-public:
     using GlobalMatrix = typename GlobalSetup::MatrixType;
     using GlobalVector = typename GlobalSetup::VectorType;
 
+public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
-        typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
+        typename Base::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
         GroundwaterFlowProcessData&& process_data)
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
@@ -87,25 +86,23 @@ private:
                                MeshLib::Mesh const& mesh,
                                unsigned const integration_order)
     {
-        DBUG("Create local assemblers.");
-        // Populate the vector of local assemblers.
-        _local_assemblers.resize(mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
             LocalAssemblerInterface,
             GroundwaterFlow::LocalAssemblerData,
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType,
-            GlobalDim,
+            GlobalMatrix, GlobalVector, GlobalDim,
             GroundwaterFlowProcessData const&>;
-
-        LocalDataInitializer initializer;
 
         using LocalAssemblerBuilder =
             AssemblerLib::LocalAssemblerBuilder<
                 MeshLib::Element,
                 LocalDataInitializer>;
 
+        DBUG("Create local assemblers.");
+        // Populate the vector of local assemblers.
+        _local_assemblers.resize(mesh.getNElements());
+
+        LocalDataInitializer initializer;
         LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
 
         DBUG("Calling local assembler builder for all mesh elements.");
