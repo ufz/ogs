@@ -15,6 +15,7 @@
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "LocalAssemblerUtil.h"
 
 namespace ProcessLib
 {
@@ -25,10 +26,7 @@ class LocalNeumannBcAsmDataInterface
 public:
     virtual ~LocalNeumannBcAsmDataInterface() = default;
 
-    virtual void assemble(const double t) = 0;
-
-    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-                             GlobalVector& b) const = 0;
+    virtual void assemble(const double t, std::vector<double>& local_b_data) = 0;
 };
 
 template <typename ShapeFunction_,
@@ -53,13 +51,14 @@ public:
             std::size_t const local_matrix_size,
             unsigned const integration_order,
             std::function<double (MeshLib::Element const&)> const& value_lookup)
+        : _local_matrix_size(local_matrix_size)
+        , _integration_order(integration_order)
     {
         using FemType = NumLib::TemplateIsoparametric<
             ShapeFunction, ShapeMatricesType>;
 
         FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
 
-        _integration_order = integration_order;
         IntegrationMethod_ integration_method(_integration_order);
         std::size_t const n_integration_points = integration_method.getNPoints();
 
@@ -73,16 +72,13 @@ public:
         }
 
         _neumann_bc_value = value_lookup(e);
-
-        _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void
-    assemble(const double t) override
+    void assemble(const double t, std::vector<double>& local_b_data) override
     {
         (void) t; // TODO time-dependent Neumann BCs
 
-        _localRhs->setZero();
+        auto local_b = setupLocalVector(local_b_data, _local_matrix_size);
 
         IntegrationMethod_ integration_method(_integration_order);
         std::size_t const n_integration_points = integration_method.getNPoints();
@@ -90,24 +86,17 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _localRhs->noalias() += sm.N * _neumann_bc_value
+            local_b.noalias() += sm.N * _neumann_bc_value
                         * sm.detJ * wp.getWeight();
         }
-    }
-
-    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-                     GlobalVector& b) const override
-    {
-        b.add(indices.rows, *_localRhs);
     }
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
     double _neumann_bc_value;
 
-    std::unique_ptr<NodalVectorType> _localRhs;
-
-    unsigned _integration_order = 2;
+    std::size_t const _local_matrix_size;
+    unsigned const _integration_order = 2;
 };
 
 }   // namespace ProcessLib

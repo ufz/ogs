@@ -74,11 +74,8 @@ public:
     //! @}
 
 private:
-    using LocalAssemblerInterface =
-        ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
-
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssemblerInterface,
+            GlobalMatrix, GlobalVector, ProcessLib::LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
@@ -109,7 +106,8 @@ private:
     GroundwaterFlowProcessData _process_data;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<ProcessLib::LocalAssemblerInterface>>
+        _local_assemblers;
 };
 
 template <typename GlobalSetup>
