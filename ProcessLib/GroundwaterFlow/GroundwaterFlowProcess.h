@@ -21,8 +21,6 @@
 namespace MeshLib
 {
     class Element;
-    class Mesh;
-    template <typename PROP_VAL_TYPE> class PropertyVector;
 }
 
 namespace ProcessLib
@@ -144,8 +142,6 @@ private:
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
-        // TODO It looks like, with little work this entire method can be moved to the Process class.
-
         DBUG("Assemble GroundwaterFlowProcess.");
 
         // Call global assembler for each local assembly item.
