@@ -12,9 +12,8 @@
 
 #include <cassert>
 
-#include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/LocalDataInitializer.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/ProcessUtil.h"
 
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
@@ -81,39 +80,6 @@ private:
             GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
-    template <unsigned GlobalDim>
-    void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                               MeshLib::Mesh const& mesh,
-                               unsigned const integration_order)
-    {
-        // Shape matrices initializer
-        using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            LocalAssemblerInterface,
-            GroundwaterFlow::LocalAssemblerData,
-            GlobalMatrix, GlobalVector, GlobalDim,
-            GroundwaterFlowProcessData const&>;
-
-        using LocalAssemblerBuilder =
-            AssemblerLib::LocalAssemblerBuilder<
-                MeshLib::Element,
-                LocalDataInitializer>;
-
-        DBUG("Create local assemblers.");
-        // Populate the vector of local assemblers.
-        _local_assemblers.resize(mesh.getNElements());
-
-        LocalDataInitializer initializer;
-        LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
-
-        DBUG("Calling local assembler builder for all mesh elements.");
-        GlobalSetup::transform(
-                local_asm_builder,
-                mesh.getElements(),
-                _local_assemblers,
-                integration_order,
-                _process_data);
-    }
-
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           MeshLib::Mesh const& mesh,
                           unsigned const integration_order) override
@@ -121,15 +87,10 @@ private:
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(dof_table));
 
-        auto const dim = mesh.getDimension();
-        if (dim==1)
-            createLocalAssemblers<1>(dof_table, mesh, integration_order);
-        else if (dim==2)
-            createLocalAssemblers<2>(dof_table, mesh, integration_order);
-        else if (dim==3)
-            createLocalAssemblers<3>(dof_table, mesh, integration_order);
-        else
-            assert(false);
+        ProcessLib::createLocalAssemblers<GlobalSetup, LocalAssemblerData>(
+                    mesh.getDimension(), mesh.getElements(),
+                    dof_table, integration_order, _local_assemblers,
+                    _process_data);
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
