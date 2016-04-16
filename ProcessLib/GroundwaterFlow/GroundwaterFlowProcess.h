@@ -98,7 +98,7 @@ private:
         _local_assemblers.resize(mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            ProcessLib::LocalAssemblerInterface,
+            LocalAssemblerInterface,
             GroundwaterFlow::LocalAssemblerData,
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType,
