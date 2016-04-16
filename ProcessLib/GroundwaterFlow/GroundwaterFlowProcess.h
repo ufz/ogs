@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessUtil.h"
 
