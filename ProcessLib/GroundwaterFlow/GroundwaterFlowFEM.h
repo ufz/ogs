@@ -15,6 +15,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/LocalAssemblerUtil.h"
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/ProcessUtil.h"
 #include "GroundwaterFlowProcessData.h"
@@ -33,8 +34,6 @@ template <typename ShapeFunction,
 class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
 public:
@@ -49,15 +48,18 @@ public:
               initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
                   element, integration_order))
         , _process_data(process_data)
-        , _localA(local_matrix_size, local_matrix_size) // TODO narrowing conversion
-        , _localRhs(local_matrix_size)
+        , _local_matrix_size(local_matrix_size)
         , _integration_order(integration_order)
     {}
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
+    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+                  std::vector<double>& /*local_M_data*/,
+                  std::vector<double>& local_K_data,
+                  std::vector<double>& /*local_b_data*/) override
     {
-        _localA.setZero();
-        _localRhs.setZero();
+        // auto local_M = setupLocalMatrix(local_M_data, _local_matrix_size);
+        auto local_K = setupLocalMatrix(local_K_data, _local_matrix_size);
+        // auto local_b = setupLocalVector(local_b_data, _local_matrix_size);
 
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
@@ -67,17 +69,9 @@ public:
             auto const& wp = integration_method.getWeightedPoint(ip);
 
             auto const k = _process_data.hydraulic_conductivity(_element);
-            _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
+            local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();
         }
-    }
-
-    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
-        const override
-    {
-        K.add(indices, _localA);
-        b.add(indices.rows, _localRhs);
     }
 
 private:
@@ -85,9 +79,7 @@ private:
     std::vector<ShapeMatrices> _shape_matrices;
     GroundwaterFlowProcessData const& _process_data;
 
-    NodalMatrixType _localA;
-    NodalVectorType _localRhs;
-
+    std::size_t const _local_matrix_size;
     unsigned const _integration_order;
 };
 

@@ -24,10 +24,10 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
-
-    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
+    virtual void assemble(double const t, std::vector<double> const& local_x,
+                          std::vector<double>& local_M_data,
+                          std::vector<double>& local_K_data,
+                          std::vector<double>& local_b_data) = 0;
 };
 
 } // namespace ProcessLib
