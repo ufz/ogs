@@ -124,7 +124,7 @@ private:
     {
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            LocalNeumannBcAsmDataInterface,
+            LocalNeumannBcAsmDataInterface<GlobalMatrix, GlobalVector>,
             LocalNeumannBcAsmData,
             GlobalMatrix, GlobalVector,
             GlobalDim,
