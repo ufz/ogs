@@ -14,10 +14,8 @@
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
-#include "Parameter.h"
-#include "ProcessUtil.h"
-
+#include "ProcessLib/Parameter.h"
+#include "ProcessLib/ProcessUtil.h"
 
 namespace ProcessLib
 {

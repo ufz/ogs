@@ -12,13 +12,11 @@
 
 #include <cassert>
 
-#include <boost/optional.hpp>
-
 #include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/LocalDataInitializer.h"
+#include "ProcessLib/Process.h"
 
 #include "GroundwaterFlowFEM.h"
-#include "Process.h"
 
 namespace MeshLib
 {
@@ -28,6 +26,9 @@ namespace MeshLib
 }
 
 namespace ProcessLib
+{
+
+namespace GroundwaterFlow
 {
 
 template<typename GlobalSetup>
@@ -192,6 +193,8 @@ createGroundwaterFlowProcess(
             hydraulic_conductivity
     }};
 }
+
+}   // namespace GroundwaterFlow
 }   // namespace ProcessLib
 
 #endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
