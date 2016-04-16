@@ -81,11 +81,11 @@ public:
 private:
     Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
 
-    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+    using LocalAssemblerInterface =
+        ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
+            GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     template <unsigned GlobalDim>
@@ -98,12 +98,12 @@ private:
         _local_assemblers.resize(mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            GroundwaterFlow::LocalAssemblerDataInterface,
+            ProcessLib::LocalAssemblerInterface,
             GroundwaterFlow::LocalAssemblerData,
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType,
             GlobalDim,
-            Parameter<double, MeshLib::Element const&> const&>;
+            ProcessLib::Parameter<double, MeshLib::Element const&> const&>;
 
         LocalDataInitializer initializer;
 
@@ -155,7 +155,7 @@ private:
     }
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 };
 
 template <typename GlobalSetup>
