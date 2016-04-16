@@ -15,59 +15,86 @@
 #include <numeric>
 #include "AssemblerLib/SerialExecutor.h"
 
-template <typename Container>
+template <typename ContainerElement_>
 class AssemblerLibSerialExecutor : public ::testing::Test
 {
-    public:
-    AssemblerLibSerialExecutor()
+public:
+    using ContainerElement = ContainerElement_;
+    using Container = std::vector<ContainerElement>;
+    using PtrContainer = std::vector<ContainerElement*>;
+
+    template<typename Callback>
+    void test(Callback const& cb)
     {
-        reference.resize(size);
+        Container reference(size);
         std::iota(reference.begin(), reference.end(), 0);
 
-        std::copy(reference.begin(), reference.end(),
-            std::back_inserter(container));
+        Container container_back(reference);
+
+        PtrContainer container;
+        container.reserve(size);
+        for (auto& el : container_back) container.push_back(&el);
+
+        cb(container, reference);
+
+        ASSERT_TRUE(referenceIsZero(reference));
     }
 
-    void
-    subtractFromReference(int const value, std::size_t const index)
+    static void subtractFromReferenceStatic(
+            ContainerElement const value, std::size_t const index,
+            Container& reference)
     {
         reference[index] -= value;
     }
 
-    bool
-    referenceIsZero() const
+    void subtractFromReference(
+            ContainerElement const value, std::size_t const index,
+            Container& reference) const
+    {
+        reference[index] -= value;
+    }
+
+    static bool
+    referenceIsZero(Container const& reference)
     {
         return std::all_of(reference.begin(), reference.end(),
-            [](int const reference_value)
+            [](ContainerElement const reference_value)
             {
                 return reference_value == 0;
             });
     }
 
     static std::size_t const size = 100;
-    std::vector<int> reference;
-    Container container;
 };
 
-TYPED_TEST_CASE_P(AssemblerLibSerialExecutor);
+typedef ::testing::Types<int> TestCases;
 
-using namespace std::placeholders;
+TYPED_TEST_CASE(AssemblerLibSerialExecutor, TestCases);
 
-TYPED_TEST_P(AssemblerLibSerialExecutor, ContainerArgument)
+TYPED_TEST(AssemblerLibSerialExecutor, ContainerArgument)
 {
-    AssemblerLib::SerialExecutor::execute(
-        std::bind(&TestFixture::subtractFromReference, this, _1, _2),
-        this->container);
-    ASSERT_TRUE(this->referenceIsZero());
+    using Elem         = typename TestFixture::ContainerElement;
+    using Container    = typename TestFixture::Container;
+    using PtrContainer = typename TestFixture::PtrContainer;
+
+    TestFixture::test(
+        [](PtrContainer const& ctnr, Container& ref) {
+            auto cb_static =
+                [](Elem const value, std::size_t const index, Container& ref_inner) {
+                    TestFixture::subtractFromReferenceStatic(value, index, ref_inner);
+                };
+
+            AssemblerLib::SerialExecutor::executeDereferenced(
+                cb_static, ctnr, ref);
+        }
+    );
+
+    TestFixture::test(
+        [this](PtrContainer const& ctnr, Container& ref) {
+            AssemblerLib::SerialExecutor::executeMemberDereferenced(
+                *static_cast<TestFixture*>(this), &TestFixture::subtractFromReference,
+                ctnr, ref
+            );
+        }
+    );
 }
-
-REGISTER_TYPED_TEST_CASE_P(AssemblerLibSerialExecutor,
-    ContainerArgument);
-
-
-typedef ::testing::Types <
-      std::vector<int>
-    > TestTypes;
-
-INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibSerialExecutor,
-    TestTypes);
