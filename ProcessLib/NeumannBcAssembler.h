@@ -20,7 +20,6 @@
 namespace ProcessLib
 {
 
-template <typename GlobalMatrix, typename GlobalVector>
 class LocalNeumannBcAsmDataInterface
 {
 public:
@@ -31,16 +30,11 @@ public:
 
 template <typename ShapeFunction_,
          typename IntegrationMethod_,
-         typename GlobalMatrix,
-         typename GlobalVector,
          unsigned GlobalDim>
-class LocalNeumannBcAsmData : public LocalNeumannBcAsmDataInterface<GlobalMatrix, GlobalVector>
+class LocalNeumannBcAsmData : public LocalNeumannBcAsmDataInterface
 {
 public:
     using ShapeFunction = ShapeFunction_;
-    using NodalMatrixType = typename ShapeMatrixPolicyType<ShapeFunction,GlobalDim>::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatrixPolicyType<ShapeFunction,GlobalDim>::NodalVectorType;
-
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction,GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 

@@ -28,8 +28,6 @@ namespace GroundwaterFlow
 
 template <typename ShapeFunction,
          typename IntegrationMethod,
-         typename GlobalMatrix,
-         typename GlobalVector,
          unsigned GlobalDim>
 class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface
 {

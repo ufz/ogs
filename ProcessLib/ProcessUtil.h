@@ -24,8 +24,7 @@ namespace detail
 {
 
 template<unsigned GlobalDim, typename GlobalSetup,
-         template <typename, typename, typename, typename, unsigned> class
-         LocalAssemblerImplementation,
+         template <typename, typename, unsigned> class LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
 void createLocalAssemblers(
@@ -38,17 +37,11 @@ void createLocalAssemblers(
 {
     // Shape matrices initializer
     using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-        LocalAssemblerInterface,
-        LocalAssemblerImplementation,
-        typename GlobalSetup::MatrixType,
-        typename GlobalSetup::VectorType,
-        GlobalDim,
-        ExtraCtorArgs...>;
+        LocalAssemblerInterface, LocalAssemblerImplementation,
+        GlobalDim, ExtraCtorArgs...>;
 
-    using LocalAssemblerBuilder =
-        AssemblerLib::LocalAssemblerBuilder<
-            MeshLib::Element,
-            LocalDataInitializer>;
+    using LocalAssemblerBuilder = AssemblerLib::LocalAssemblerBuilder<
+        MeshLib::Element, LocalDataInitializer>;
 
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
@@ -109,8 +102,7 @@ initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
  * Therefore they always have to be provided manually.
  */
 template<typename GlobalSetup,
-         template <typename, typename, typename, typename, unsigned> class
-         LocalAssemblerImplementation,
+         template <typename, typename, unsigned> class LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
 void createLocalAssemblers(
