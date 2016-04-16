@@ -14,6 +14,7 @@
 
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/ProcessUtil.h"
 
@@ -23,26 +24,12 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
-// TODO now this interface is basically the same for all processes that assemble a
-//      FirstOrderImplicitQuasiLinear ODE system.
-template <typename GlobalMatrix, typename GlobalVector>
-class LocalAssemblerDataInterface
-{
-public:
-    virtual ~LocalAssemblerDataInterface() = default;
-
-    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
-
-    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
-};
-
 template <typename ShapeFunction_,
          typename IntegrationMethod_,
          typename GlobalMatrix,
          typename GlobalVector,
          unsigned GlobalDim>
-class LocalAssemblerData : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
+class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
 public:
     using ShapeFunction = ShapeFunction_;
