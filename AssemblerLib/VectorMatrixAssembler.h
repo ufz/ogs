@@ -136,17 +136,18 @@ public:
                           LocalAssembler& local_assembler,
                           const double t,
                           GlobalVector const& x,
-                          GlobalMatrix& Jac) const
+                          GlobalMatrix& Jac)
     {
-        auto cb = [&local_assembler](
+        auto cb = [this, &local_assembler](
             std::vector<double> const& local_x,
             LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
             const double t,
             GlobalMatrix& Jac)
         {
-            // TODO
-            local_assembler.assembleJacobian(t, local_x);
-            local_assembler.addJacobianToGlobal(r_c_indices, Jac);
+            _local_Jac_data.clear();
+            // TODO pass M, K, b?
+            local_assembler.assembleJacobian(t, local_x, _local_Jac_data);
+            if (!_local_Jac_data.empty()) addTo(Jac, r_c_indices, _local_Jac_data);
         };
 
         passLocalVector_(cb, id, _data_pos, x, t, Jac);
@@ -201,6 +202,7 @@ private:
     std::vector<double> _local_M_data;
     std::vector<double> _local_K_data;
     std::vector<double> _local_b_data;
+    std::vector<double> _local_Jac_data;
 };
 
 
@@ -222,17 +224,19 @@ public:
     /// \attention The index \c id is not necessarily the mesh item's id.
     void assemble(std::size_t const id,
         LocalAssembler& local_assembler,
-        const double t, GlobalVector& b) const
+        const double t, GlobalVector& b)
     {
         std::vector<GlobalIndexType> indices;
         auto const r_c_indices = getRowColumnIndices(id, _data_pos, indices);
 
-        local_assembler.assemble(t);
-        local_assembler.addToGlobal(r_c_indices, b);
+        _local_b_data.clear();
+        local_assembler.assemble(t, _local_b_data);
+        if (!_local_b_data.empty()) b.add(r_c_indices.rows, _local_b_data);
     }
 
 private:
     LocalToGlobalIndexMap const& _data_pos;
+    std::vector<double> _local_b_data;
 };
 
 }   // namespace AssemblerLib
