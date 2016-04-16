@@ -17,8 +17,8 @@ setupLocalMatrix(std::vector<double>& matrix_data, std::size_t const local_matri
 {
     matrix_data.resize(local_matrix_size*local_matrix_size);
     // TODO narrowing conversion
-    Eigen::Map<Eigen::MatrixXd> mat{
-        matrix_data.data(), local_matrix_size, local_matrix_size };
+    Eigen::Map<Eigen::MatrixXd> mat(
+        matrix_data.data(), local_matrix_size, local_matrix_size);
     mat.setZero();
     return mat;
 }
@@ -28,8 +28,7 @@ setupLocalVector(std::vector<double>& vector_data, std::size_t const local_vecto
 {
     vector_data.resize(local_vector_size);
     // TODO narrowing conversion
-    Eigen::Map<Eigen::VectorXd> vec{
-        vector_data.data(), local_vector_size };
+    Eigen::Map<Eigen::VectorXd> vec(vector_data.data(), local_vector_size);
     vec.setZero();
     return vec;
 }

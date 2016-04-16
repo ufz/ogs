@@ -12,12 +12,10 @@
 
 #include <vector>
 
-#include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerUtil.h"
 #include "ProcessLib/Parameter.h"
-#include "ProcessLib/ProcessUtil.h"
 #include "GroundwaterFlowProcessData.h"
 
 namespace ProcessLib
