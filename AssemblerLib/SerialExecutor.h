@@ -18,37 +18,28 @@ namespace AssemblerLib
 
 struct SerialExecutor
 {
-    /// Executes a \c f for each element from the input container.
+    /// Executes \c f for each element from the input container.
+    ///
+    /// The elements of \c c are dereferenced before being passed to \c f.
     /// Return values of the function call are ignored.
     ///
-    /// \tparam F   \c f type.
-    /// \tparam C   input container type.
+    /// \note
+    /// This function is intended to be used if \c f is a plain function,
+    /// a static class method, a lambda or an object having a call operator
+    /// defined. For non-static member functions you are encouraged to use
+    /// executeMemberDereferenced(), if applicable.
     ///
-    /// \param f    a function that accepts a pointer to container's elements and
-    ///             an index as arguments.
+    /// \tparam F    type of the callback function \c f.
+    /// \tparam C    input container type.
+    /// \tparam Args types additional arguments passed to \c f.
+    ///
+    /// \param f    a function that accepts a a reference to container's elements,
+    ///             an index as arguments (and possibly further arguments).
     /// \param c    a container supporting access over operator[].
-    /// \param args additional arguments passed to \c f
-    template <typename F, typename C, typename ...Args_>
-    static
-    void
-#if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    execute(F& f, C const& c, Args_&&... args)
-#else
-    execute(F const& f, C const& c, Args_&&... args)
-#endif
-    {
-        for (std::size_t i = 0; i < c.size(); i++)
-            f(i, c[i], std::forward<Args_>(args)...);
-    }
-
-    /// Executes a \c f for each element from the input container.
+    ///             The elements of \c c must have pointer semantics, i.e.,
+    ///             support dereferencing via unary operator*().
+    /// \param args additional arguments passed to \c f.
     ///
-    /// Return values of the function call are ignored.
-    /// This method is very similar to execute() the only difference
-    /// between the two is that here the elements of \c c are dereferenced
-    /// before being passed to the function \c f.
-    ///
-    /// \see execute()
     template <typename F, typename C, typename ...Args_>
     static
     void
@@ -60,6 +51,24 @@ struct SerialExecutor
     {
         for (std::size_t i = 0; i < c.size(); i++)
             f(i, *c[i], std::forward<Args_>(args)...);
+    }
+
+    /// Executes the given \c method of the given \c object for each element
+    /// from the input \c container.
+    ///
+    /// This method is very similar to executeDereferenced().
+    ///
+    /// \see executeDereferenced()
+    template <typename Container, typename Object, typename... MethodArgs, typename... Args>
+    static void
+    executeMemberDereferenced(
+            Object& object,
+            void (Object::*method)(MethodArgs... method_args) const,
+            Container const& container, Args&&... args)
+    {
+        for (std::size_t i = 0; i < container.size(); i++) {
+            (object.*method)(i, *container[i], std::forward<Args>(args)...);
+        }
     }
 
     /// Same as execute(f, c), but with two containers, where the second one is

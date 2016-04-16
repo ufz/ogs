@@ -78,9 +78,9 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
                globalSetup.createVector(local_to_global_index_map.dofSize())};
     // TODO no setZero() for rhs, x?
 
+    using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
     // Initializer of the local assembler data.
-    std::vector<Example::LocalAssemblerData<
-        GlobalMatrix, GlobalVector>*> local_assembler_data;
+    std::vector<LocalAssembler*> local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
     typedef AssemblerLib::LocalAssemblerBuilder<
@@ -106,7 +106,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
     typedef AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector,
+            GlobalMatrix, GlobalVector, LocalAssembler,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
     GlobalAssembler assembler(local_to_global_index_map);
@@ -116,8 +116,9 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         globalSetup.createMatrix(local_to_global_index_map.dofSize())};
     A->setZero();
     auto const t = 0.0;
-    globalSetup.executeDereferenced(
-        assembler, local_assembler_data, t, *x, *M_dummy, *A, *rhs);
+    globalSetup.executeMemberDereferenced(
+                assembler, &GlobalAssembler::assemble,
+                local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 
     //std::cout << "A=\n";
     //A->write(std::cout);

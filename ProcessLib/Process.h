@@ -60,17 +60,15 @@ public:
 	Process(MeshLib::Mesh& mesh,
 	        NonlinearSolver& nonlinear_solver,
 	        std::unique_ptr<TimeDiscretization>&& time_discretization)
-	    : _mesh(mesh), _nonlinear_solver(nonlinear_solver)
+	    : _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
+	    , _mesh(mesh)
 	{}
 
 	virtual ~Process()
 	{
 		delete _mesh_subset_all_nodes;
 	}
-
-	/// Process specific initialization called by initialize().
-	virtual void createLocalAssemblers() = 0;
 
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
@@ -141,11 +139,7 @@ public:
 		computeSparsityPattern();
 #endif
 
-		DBUG("Create global assembler.");
-		_global_assembler.reset(
-		    new GlobalAssembler(*_local_to_global_index_map));
-
-		createLocalAssemblers();
+		createAssemblers(*_local_to_global_index_map, _mesh, _integration_order);
 
 		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
@@ -230,6 +224,12 @@ public:
 	}
 
 private:
+	/// Process specific initialization called by initialize().
+	virtual void createAssemblers(
+	    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+	    MeshLib::Mesh const& mesh,
+	    unsigned const integration_order) = 0;
+
 	virtual void assembleConcreteProcess(
 	    const double t, GlobalVector const& x,
 	    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
@@ -345,22 +345,9 @@ private:
 	}
 
 protected:
-	unsigned const _integration_order = 2;
-
-	MeshLib::Mesh& _mesh;
 	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 
 	GlobalSetup _global_setup;
-
-	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-	        GlobalMatrix,
-	        GlobalVector,
-	        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
-	std::unique_ptr<GlobalAssembler> _global_assembler;
-
-	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
-	    _local_to_global_index_map;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
@@ -372,6 +359,12 @@ protected:
 
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
+
+private:
+	MeshLib::Mesh& _mesh;
+	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+	    _local_to_global_index_map;
+	unsigned const _integration_order = 2;
 };
 
 /// Find a process variable for a name given in the process configuration under

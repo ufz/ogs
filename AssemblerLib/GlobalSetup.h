@@ -41,16 +41,16 @@ struct GlobalSetup
 
     template <typename... Args>
     static
-    void execute(Args&& ... args)
+    void executeDereferenced(Args&& ... args)
     {
-        return Executor::execute(std::forward<Args>(args)...);
+        return Executor::executeDereferenced(std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     static
-    void executeDereferenced(Args&& ... args)
+    void executeMemberDereferenced(Args&& ... args)
     {
-        return Executor::executeDereferenced(std::forward<Args>(args)...);
+        return Executor::executeMemberDereferenced(std::forward<Args>(args)...);
     }
 
     template <typename... Args>
