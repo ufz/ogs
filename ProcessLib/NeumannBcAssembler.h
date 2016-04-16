@@ -28,14 +28,13 @@ public:
     virtual void assemble(const double t, std::vector<double>& local_b_data) = 0;
 };
 
-template <typename ShapeFunction_,
-         typename IntegrationMethod_,
+template<typename ShapeFunction,
+         typename IntegrationMethod,
          unsigned GlobalDim>
 class LocalNeumannBcAsmData : public LocalNeumannBcAsmDataInterface
 {
 public:
-    using ShapeFunction = ShapeFunction_;
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction,GlobalDim>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
     /// The neumann_bc_value factor is directly integrated into the local
@@ -45,28 +44,13 @@ public:
             std::size_t const local_matrix_size,
             unsigned const integration_order,
             std::function<double (MeshLib::Element const&)> const& value_lookup)
-        : _local_matrix_size(local_matrix_size)
+        : _shape_matrices(
+              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
+                              e, integration_order))
+        , _neumann_bc_value(value_lookup(e))
+        , _local_matrix_size(local_matrix_size)
         , _integration_order(integration_order)
-    {
-        using FemType = NumLib::TemplateIsoparametric<
-            ShapeFunction, ShapeMatricesType>;
-
-        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
-
-        IntegrationMethod_ integration_method(_integration_order);
-        std::size_t const n_integration_points = integration_method.getNPoints();
-
-        _shape_matrices.reserve(n_integration_points);
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
-            _shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                         ShapeFunction::NPOINTS);
-            fe.computeShapeFunctions(
-                    integration_method.getWeightedPoint(ip).getCoords(),
-                    _shape_matrices[ip]);
-        }
-
-        _neumann_bc_value = value_lookup(e);
-    }
+    {}
 
     void assemble(const double t, std::vector<double>& local_b_data) override
     {
@@ -74,7 +58,7 @@ public:
 
         auto local_b = setupLocalVector(local_b_data, _local_matrix_size);
 
-        IntegrationMethod_ integration_method(_integration_order);
+        IntegrationMethod integration_method(_integration_order);
         std::size_t const n_integration_points = integration_method.getNPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
