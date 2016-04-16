@@ -24,6 +24,8 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 
+#include "ProcessLib/LocalAssemblerUtil.h"
+
 template<typename IndexType>struct SteadyDiffusion2DExample1
 {
 	using LocalMatrixType = MathLib::DenseMatrix<double>;
@@ -42,19 +44,33 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
 			_localRhs = &localRhs;
 		}
 
-		void assemble(double const, std::vector<double> const&)
+		void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+					  std::vector<double>& /*local_M_data*/,
+					  std::vector<double>& local_K_data,
+					  std::vector<double>& local_b_data)
 		{
 			// The local contributions are computed here, usually, but for this
 			// particular test all contributions are equal for all elements and are
 			// already stored in the _localA matrix.
+
+			auto local_K = ProcessLib::
+						   setupLocalMatrix(local_K_data, _localA->getNRows());
+			auto local_b = ProcessLib::
+						   setupLocalVector(local_b_data, _localA->getNRows());
+
+			// TODO
+			// local_K = *_localA;
+			// local_b = *_localRhs;
 		}
 
+#if 0
 		void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
 						 GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) const
 		{
 			K.add(indices, *_localA);
 			b.add(indices.rows, *_localRhs);
 		}
+#endif
 
 
 		LocalMatrixType const& getLocalMatrix() const
