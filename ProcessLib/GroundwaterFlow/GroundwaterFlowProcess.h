@@ -17,6 +17,7 @@
 #include "ProcessLib/Process.h"
 
 #include "GroundwaterFlowFEM.h"
+#include "GroundwaterFlowProcessData.h"
 
 namespace MeshLib
 {
@@ -39,16 +40,14 @@ public:
     using GlobalMatrix = typename GlobalSetup::MatrixType;
     using GlobalVector = typename GlobalSetup::VectorType;
 
-
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
         typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
         ProcessVariable& variable,
-        Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity)
-        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
-          _hydraulic_conductivity(hydraulic_conductivity)
+        GroundwaterFlowProcessData&& process_data)
+        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization))
+        , _process_data(std::move(process_data))
     {
         Base::_process_variables.emplace_back(variable);
 
@@ -77,8 +76,6 @@ public:
     //! @}
 
 private:
-    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
-
     using LocalAssemblerInterface =
         ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
@@ -101,7 +98,7 @@ private:
             typename GlobalSetup::MatrixType,
             typename GlobalSetup::VectorType,
             GlobalDim,
-            ProcessLib::Parameter<double, MeshLib::Element const&> const&>;
+            GroundwaterFlowProcessData const&>;
 
         LocalDataInitializer initializer;
 
@@ -118,7 +115,7 @@ private:
                 mesh.getElements(),
                 _local_assemblers,
                 integration_order,
-                _hydraulic_conductivity);
+                _process_data);
     }
 
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
@@ -149,6 +146,9 @@ private:
             *_global_assembler, &GlobalAssembler::assemble,
             _local_assemblers, t, x, M, K, b);
     }
+
+
+    GroundwaterFlowProcessData _process_data;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
@@ -182,11 +182,15 @@ createGroundwaterFlowProcess(
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
 
+    GroundwaterFlowProcessData process_data {
+        hydraulic_conductivity
+    };
+
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             process_variable,
-            hydraulic_conductivity
+            std::move(process_data)
     }};
 }
 

@@ -17,6 +17,7 @@
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/ProcessUtil.h"
+#include "GroundwaterFlowProcessData.h"
 
 namespace ProcessLib
 {
@@ -40,20 +41,16 @@ public:
 
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
-    LocalAssemblerData(MeshLib::Element const& e,
+    LocalAssemblerData(MeshLib::Element const& element,
                        std::size_t const local_matrix_size,
                        unsigned const integration_order,
-                       Parameter<double, MeshLib::Element const&> const&
-                       hydraulic_conductivity)
-        : _shape_matrices(
+                       GroundwaterFlowProcessData const& process_data)
+        : _element(element)
+        , _shape_matrices(
               initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
-                  e, integration_order))
-        , _hydraulic_conductivity([&hydraulic_conductivity, &e]()
-          {
-              return hydraulic_conductivity(e);
-          })
-        // TODO narrowing conversion
-        , _localA(local_matrix_size, local_matrix_size)
+                  element, integration_order))
+        , _process_data(process_data)
+        , _localA(local_matrix_size, local_matrix_size) // TODO narrowing conversion
         , _localRhs(local_matrix_size)
         , _integration_order(integration_order)
     {}
@@ -69,8 +66,9 @@ public:
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _localA.noalias() += sm.dNdx.transpose() *
-                                 _hydraulic_conductivity() * sm.dNdx *
+
+            auto const k = _process_data.hydraulic_conductivity(_element);
+            _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();
         }
     }
@@ -84,8 +82,9 @@ public:
     }
 
 private:
+    MeshLib::Element const& _element;
     std::vector<ShapeMatrices> _shape_matrices;
-    std::function<double(void)> _hydraulic_conductivity;
+    GroundwaterFlowProcessData const& _process_data;
 
     NodalMatrixType _localA;
     NodalVectorType _localRhs;
