@@ -36,6 +36,7 @@
 
 #include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess-fwd.h"
 #include "ProcessLib/MassTransportProcess-fwd.h"
+#include "ProcessLib/RichardsFlowProcess-fwd.h"
 
 namespace detail
 {
@@ -153,6 +154,7 @@ bool ProjectData::removeMesh(const std::string &name)
 
 void ProjectData::buildProcesses()
 {
+<<<<<<< HEAD
     for (auto const& pc : _process_configs)
     {
         auto const type = pc.peekConfParam<std::string>("type");
@@ -178,8 +180,7 @@ void ProjectData::buildProcesses()
                     *_mesh_vec[0], *nl_slv, std::move(time_disc),
                     _process_variables, _parameters, pc));
         }
-        else
-		if (type == "Mass_Transport")
+		else if (type == "Mass_Transport")
 		{
 			// The existence check of the in the configuration referenced
 			// process variables is checked in the physical process.
@@ -191,16 +192,24 @@ void ProjectData::buildProcesses()
 					*_mesh_vec[0], *nl_slv, std::move(time_disc),
 					_process_variables, _parameters, pc));
 		}
+		else if (type == "RICHARDS_FLOW")
+		{
+			// The existence check of the in the configuration referenced
+			// process variables is checked in the physical process.
+			// TODO at the moment we have only one mesh, later there can be
+			// several meshes. Then we have to assign the referenced mesh
+			// here.
+			_processes.emplace_back(
+				ProcessLib::createRichardsFlowProcess<GlobalSetupType>(
+					*_mesh_vec[0], *nl_slv, std::move(time_disc),
+					_process_variables, _parameters, pc));
+		}
         else
         {
             ERR("Unknown process type: %s", type.c_str());
             std::abort();
         }
     }
-
-    // process configs are not needed anymore, so clear the storage
-    // in order to trigger config tree checks
-    _process_configs.clear();
 }
 
 bool ProjectData::meshExists(const std::string &name) const

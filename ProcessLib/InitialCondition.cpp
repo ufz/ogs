@@ -37,6 +37,7 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
     MeshLib::Mesh const& mesh,
     int const n_components)
 {
+    config.checkConfParam("type", "MeshProperty");
     auto field_name = config.getConfParam<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
