@@ -52,11 +52,13 @@ public:
 		Parameter<double, MeshLib::Element const&> const&
 			porosity,
 		Parameter<double, MeshLib::Element const&> const&
-		viscosity)
+		viscosity,
+		bool const gg)
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
 		_intrinsic_permeability(intrinsic_permeability),
 		_porosity(porosity),
-		_viscosity(viscosity)
+		_viscosity(viscosity),
+		_has_gravity(gg)
     {
         this->_process_variables.emplace_back(variable);
 
@@ -138,6 +140,7 @@ private:
     Parameter<double, MeshLib::Element const&> const& _intrinsic_permeability;
 	Parameter<double, MeshLib::Element const&> const& _porosity;
 	Parameter<double, MeshLib::Element const&> const& _viscosity;
+	bool const _has_gravity;
 
     using LocalAssembler = RichardsFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
@@ -201,13 +204,16 @@ createRichardsFlowProcess(
 	DBUG("Use \'%s\' as viscosity parameter.",
 		porosity.name.c_str());
 
+	auto grav = config.getConfParam<bool>("g");
+
     return std::unique_ptr<RichardsFlowProcess<GlobalSetup>>{
         new RichardsFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             process_variable,
 			intrinsic_permeability,
 			porosity,
-			viscosity
+			viscosity,
+			grav
     }};
 }
 }   // namespace ProcessLib

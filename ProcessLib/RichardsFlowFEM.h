@@ -85,7 +85,11 @@ public:
         , _localA(local_matrix_size, local_matrix_size)
         , _localRhs(local_matrix_size)
         , _integration_order(integration_order)
-    {}
+    {
+		const MeshLib::CoordinateSystem coordsystem(e);
+		const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(e, coordsystem);// wp.getCoords());
+		
+	}
 
     void assemble(double const /*t*/, std::vector<double> const& local_x) override
     {
@@ -102,6 +106,9 @@ public:
 
 		Eigen::MatrixXd mass_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
 		Eigen::MatrixXd K_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
+		
+
+		const bool hasGravityEffect = false;
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();//retuen gauss point number
@@ -109,7 +116,7 @@ public:
 		double P_int_pt = 0.0;
 		std::array<double*, 1> const int_pt_array = { &P_int_pt };
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+		for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
 
@@ -129,7 +136,17 @@ public:
                                  sm.detJ * wp.getWeight();
 			_localM.noalias() += sm.N *
 				mass_mat_coeff(0, 0) * sm.N.transpose() *
-				sm.detJ * wp.getWeight();//Eigen::Map<Eigen::VectorXd>(
+				sm.detJ * wp.getWeight();//Eigen::Map<Eigen::VectorXd>
+
+			if (hasGravityEffect) {
+
+				Eigen::Vector3d const vec_g(0, 0, -9.81);
+				// since no primary vairable involved
+				// directly assemble to the Right-Hand-Side
+				// F += dNp^T * K * gz
+				_localRhs.noalias() += sm.dNdx.transpose() * K_mat_coeff(0, 0) * rho_w * vec_g * sm.detJ * wp.getWeight();
+			} // end of if hasGravityEffect
+
         }
     }
 

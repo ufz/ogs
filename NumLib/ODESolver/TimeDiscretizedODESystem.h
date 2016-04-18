@@ -351,6 +351,10 @@ public:
     {
         ::detail::applyKnownSolutions(
                     _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
+		auto const t = _time_disc.getCurrentTime();
+		_M->write("M_" + std::to_string(t));
+		_K->write("K_" + std::to_string(t));
+		_b->write("b_" + std::to_string(t));
     }
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
