@@ -60,7 +60,8 @@ struct GlobalSetup
         return Executor::transform(std::forward<Args>(args)...);
     }
 
-    GlobalSetup() { }
+    //! Do not create any instances; this struct only has static members.
+    GlobalSetup() = delete;
 };
 
 }   // namespace AssemblerLib

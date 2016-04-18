@@ -1,7 +1,10 @@
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Source files
-GET_SOURCE_FILES(SOURCES)
+APPEND_SOURCE_FILES(SOURCES)
+
+add_subdirectory(GroundwaterFlow)
+APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
 add_library(ProcessLib STATIC ${SOURCES})
 
