@@ -73,6 +73,9 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         std::abort();
     }
     _mesh_vec.push_back(mesh);
+	
+	// curves
+	parseCurves(project_config.getConfSubtreeOptional("curves"));
 
     // curves
     parseCurves(project_config.getConfSubtreeOptional("curves"));
@@ -201,7 +204,6 @@ void ProjectData::buildProcesses()
 			_processes.emplace_back(
 				ProcessLib::createRichardsFlowProcess<GlobalSetupType>(
 					*_mesh_vec[0], *nl_slv, std::move(time_disc),
-					_process_variables, _parameters, pc));
 		}
         else
         {

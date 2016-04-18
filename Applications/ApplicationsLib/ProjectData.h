@@ -226,6 +226,8 @@ private:
     std::map<std::string, std::unique_ptr<NonlinearSolver> > _nonlinear_solvers;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> _curves;
+	std::map<std::string,
+		std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> _curves;
 };
 
 #endif //PROJECTDATA_H_
