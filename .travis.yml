@@ -1,10 +1,6 @@
 sudo: true
 language: cpp
 
-compiler:
-  - gcc
-  - clang
-
 addons:
   apt:
     sources:
@@ -13,29 +9,37 @@ addons:
       - g++-4.8
       - qt4-dev-tools
       - libxt-dev
+      - libshp-dev
 
 cache:
   directories:
     - $HOME/cmake-3.1.1-Linux-x86_64
     - $HOME/VTK-Install
     - $HOME/boost_1_56_0
+    - $HOME/.conan
 
 env:
-  matrix:
-    - CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-    - CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
+  global:
+    - VTK_DIR=$HOME/VTK-Install/lib/cmake/vtk-6.3
+    - BOOST_ROOT=$HOME/boost_1_56_0
+matrix:
+  include:
+    - compiler: gcc
+      env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+    - compiler: clang
+      env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
+    - compiler: gcc
+      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
+    - compiler: clang
+      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
+    - compiler: gcc
+      env: CASE=CONAN CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON"
 
 before_install:
   - bash scripts/travis/cmake.sh
-
-install:
-  # Download conan
-  - wget http://downloads.conan.io/latest_debian -O conan.deb
-  - sudo dpkg -i conan.deb
-  - rm conan.deb
-
-  # Automatic detection of your arch, compiler, etc
-  - conan install -s compiler=gcc -s compiler.version=4.8
+  - if [ "$CASE" != "CONAN" ]; then bash scripts/travis/boost.sh; fi
+  - if [ "$CASE" != "CONAN" ]; then bash scripts/travis/vtk.sh; fi
+  - if [ "$CASE" == "CONAN" ]; then bash scripts/travis/conan.sh; fi
 
 before_script:
   - export PATH=$HOME/cmake-3.1.1-Linux-x86_64/bin:$PATH
