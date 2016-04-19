@@ -22,6 +22,7 @@
 #include "StringTools.h"
 #include "Mesh.h"
 
+#include "FileIO/AsciiRasterInterface.h"
 #include "TetGenInterface.h"
 
 #include <QCheckBox>
@@ -188,7 +189,9 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		std::vector<std::string> raster_paths;
 		for (int i=nLayers; i>=0; --i)
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
-		if (mapper.createLayers(*_msh, raster_paths, minimum_thickness))
+
+		auto const rasters = FileIO::readRasters(raster_paths);
+		if (rasters && mapper.createLayers(*_msh, *rasters, minimum_thickness))
 		{
 			INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
 			return mapper.getMesh("SubsurfaceMesh").release();
@@ -227,7 +230,9 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 		for (int i=nLayers; i>=0; --i)
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
-		if (lv.createLayers(*_msh, raster_paths, minimum_thickness))
+
+		auto const rasters = FileIO::readRasters(raster_paths);
+		if (rasters && lv.createLayers(*_msh, *rasters, minimum_thickness))
 			tg_mesh = lv.getMesh("SubsurfaceMesh").release();
 
 		if (tg_mesh)

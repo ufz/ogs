@@ -14,6 +14,7 @@
 #include "AsciiRasterInterface.h"
 
 #include <logog/include/logog.hpp>
+#include <boost/optional.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -215,4 +216,29 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     out.close();
 }
 
-} // end namespace GeoLib
+
+/// Checks if all raster files actually exist
+static bool allRastersExist(std::vector<std::string> const& raster_paths)
+{
+	for (auto raster = raster_paths.begin(); raster != raster_paths.end();
+	     ++raster)
+	{
+		std::ifstream file_stream(*raster, std::ifstream::in);
+		if (!file_stream.good()) return false;
+		file_stream.close();
+	}
+	return true;
+}
+
+boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+    std::vector<std::string> const& raster_paths)
+{
+	if (!allRastersExist(raster_paths)) return boost::none;
+
+	std::vector<GeoLib::Raster const*> rasters;
+	rasters.reserve(raster_paths.size());
+	for (auto const& path : raster_paths)
+		rasters.push_back(FileIO::AsciiRasterInterface::readRaster(path));
+    return boost::make_optional(rasters);
+}
+}

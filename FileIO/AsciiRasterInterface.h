@@ -15,6 +15,9 @@
 #define ASCIIRASTERINTERFACE_H_
 
 #include <fstream>
+#include <vector>
+#include <string>
+#include <boost/optional.hpp>
 
 #include "GeoLib/Raster.h"
 
@@ -49,6 +52,10 @@ private:
                                  double &min, double &max);
 };
 
+/// Reads a vector of rasters given by file names. On error nothing is returned,
+/// otherwise the returned vector contains pointers to the read rasters.
+boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+    std::vector<std::string> const& raster_paths);
 }
 
 #endif /* ASCIIRASTERINTERFACE_H_ */
