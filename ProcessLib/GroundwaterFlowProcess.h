@@ -34,7 +34,6 @@ template<typename GlobalSetup>
 class GroundwaterFlowProcess final
         : public Process<GlobalSetup>
 {
-    // TODO change "this->" to "Base::"
     using Base = Process<GlobalSetup>;
 
 public:
@@ -52,7 +51,7 @@ public:
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
           _hydraulic_conductivity(hydraulic_conductivity)
     {
-        this->_process_variables.emplace_back(variable);
+        Base::_process_variables.emplace_back(variable);
 
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
                     &Base::getTimeDiscretization()) != nullptr)
@@ -67,6 +66,26 @@ public:
             std::abort();
         }
     }
+
+    //! \name ODESystem interface
+    //! @{
+
+    bool isLinear() const override
+    {
+        return true;
+    }
+
+    //! @}
+
+private:
+    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
+
+    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
+        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+
+    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+            GlobalMatrix, GlobalVector, LocalAssembler,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     template <unsigned GlobalDim>
     void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
@@ -95,7 +114,7 @@ public:
         LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
 
         DBUG("Calling local assembler builder for all mesh elements.");
-        this->_global_setup.transform(
+        GlobalSetup::transform(
                 local_asm_builder,
                 mesh.getElements(),
                 _local_assemblers,
@@ -121,27 +140,6 @@ public:
             assert(false);
     }
 
-    //! \name ODESystem interface
-    //! @{
-
-    bool isLinear() const override
-    {
-        return true;
-    }
-
-    //! @}
-
-private:
-    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
-
-    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
-
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
-
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
@@ -150,7 +148,7 @@ private:
         DBUG("Assemble GroundwaterFlowProcess.");
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.executeMemberDereferenced(
+        GlobalSetup::executeMemberDereferenced(
             *_global_assembler, &GlobalAssembler::assemble,
             _local_assemblers, t, x, M, K, b);
     }

@@ -46,7 +46,6 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Choose implementation type
     //--------------------------------------------------------------------------
     using GlobalSetup = GlobalSetupType;    // defined in numerics config
-    const GlobalSetup globalSetup;
 
     //--------------------------------------------------------------------------
     // Prepare mesh items where data are assigned
@@ -70,12 +69,12 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     typedef GlobalSetup::VectorType GlobalVector;
     typedef GlobalSetup::MatrixType GlobalMatrix;
     auto A = std::unique_ptr<GlobalMatrix>{
-             globalSetup.createMatrix(local_to_global_index_map.dofSize())};
+             GlobalSetup::createMatrix(local_to_global_index_map.dofSize())};
     A->setZero();
     auto rhs = std::unique_ptr<GlobalVector>{
-               globalSetup.createVector(local_to_global_index_map.dofSize())};
+               GlobalSetup::createVector(local_to_global_index_map.dofSize())};
     auto x   = std::unique_ptr<GlobalVector>{
-               globalSetup.createVector(local_to_global_index_map.dofSize())};
+               GlobalSetup::createVector(local_to_global_index_map.dofSize())};
     // TODO no setZero() for rhs, x?
 
     using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
@@ -97,7 +96,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         local_to_global_index_map);
 
     // Call global initializer for each mesh element.
-    globalSetup.transform(
+    GlobalSetup::transform(
             local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data,
@@ -113,10 +112,10 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     // Call global assembler for each mesh element.
     auto M_dummy = std::unique_ptr<GlobalMatrix>{
-        globalSetup.createMatrix(local_to_global_index_map.dofSize())};
+        GlobalSetup::createMatrix(local_to_global_index_map.dofSize())};
     A->setZero();
     auto const t = 0.0;
-    globalSetup.executeMemberDereferenced(
+    GlobalSetup::executeMemberDereferenced(
                 assembler, &GlobalAssembler::assemble,
                 local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 

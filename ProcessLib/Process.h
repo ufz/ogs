@@ -60,15 +60,10 @@ public:
 	Process(MeshLib::Mesh& mesh,
 	        NonlinearSolver& nonlinear_solver,
 	        std::unique_ptr<TimeDiscretization>&& time_discretization)
-	    : _nonlinear_solver(nonlinear_solver)
+	    : _mesh(mesh)
+		, _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
-	    , _mesh(mesh)
 	{}
-
-	virtual ~Process()
-	{
-		delete _mesh_subset_all_nodes;
-	}
 
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
@@ -149,7 +144,7 @@ public:
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_global_setup, _mesh.getDimension());
+			bc->initialize(_mesh.getDimension());
 	}
 
 	void setInitialConditions(GlobalVector& x)
@@ -176,7 +171,7 @@ public:
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(_global_setup, t, b);
+			bc->integrate(t, b);
 	}
 
 	void assembleJacobian(
@@ -250,8 +245,8 @@ private:
 	void constructDofTable()
 	{
 		// Create single component dof in every of the mesh's nodes.
-		_mesh_subset_all_nodes =
-		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
+		_mesh_subset_all_nodes.reset(
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
 
 		// Collect the mesh subsets in a vector.
 		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
@@ -263,7 +258,7 @@ private:
 			    [&]()
 			    {
 				    return std::unique_ptr<MeshLib::MeshSubsets>{
-				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
+				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
 				});
 		}
 
@@ -327,9 +322,9 @@ private:
 
 		// Create a neumann BC for the process variable storing them in the
 		// _neumann_bcs vector.
-		variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
+		variable.createNeumannBcs<GlobalSetup>(
+		                          std::back_inserter(_neumann_bcs),
 		                          mesh_element_searcher,
-		                          _global_setup,
 		                          _integration_order,
 		                          *_local_to_global_index_map,
 		                          0,  // 0 is the variable id TODO
@@ -345,26 +340,25 @@ private:
 	}
 
 protected:
-	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
+	/// Variables used by this process.
+	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
-	GlobalSetup _global_setup;
+private:
+	unsigned const _integration_order = 2;
+
+	MeshLib::Mesh& _mesh;
+	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
+
+	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+	    _local_to_global_index_map;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
-	/// Variables used by this process.
-	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
-
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
-
-private:
-	MeshLib::Mesh& _mesh;
-	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
-	    _local_to_global_index_map;
-	unsigned const _integration_order = 2;
 };
 
 /// Find a process variable for a name given in the process configuration under
