@@ -19,7 +19,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "Applications/ApplicationsLib/ProjectData.h"
 #include "GeoLib/GEOObjects.h"
 
 #include "XmlGmlInterface.h"
@@ -39,9 +38,15 @@
 
 namespace FileIO
 {
-XmlGspInterface::XmlGspInterface(ProjectData& project) :
-	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
-	_project(project)
+XmlGspInterface::XmlGspInterface(
+    GeoLib::GEOObjects& geoObjects,
+    std::vector<MeshLib::Mesh*> const& mesh_vector,
+    std::function<void(MeshLib::Mesh* const)>&& add_mesh_callback)
+    : XMLInterface(),
+      XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
+      _geoObjects(geoObjects),
+      _mesh_vector(mesh_vector),
+      _add_mesh_callback(std::move(add_mesh_callback))
 {
 }
 
@@ -69,7 +74,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(*(_project.getGEOObjects()));
+			XmlGmlInterface gml(_geoObjects);
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
@@ -86,7 +91,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(*(_project.getGEOObjects()));
+			XmlStnInterface stn(_geoObjects);
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
@@ -98,8 +103,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 			const std::string msh_name = path.toStdString() +
 			                             fileList.at(i).toElement().text().toStdString();
 			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
-			if (msh)
-				_project.addMesh(msh);
+			if (msh) _add_mesh_callback(msh);
 		}
 	}
 
@@ -114,7 +118,6 @@ int XmlGspInterface::writeToFile(const std::string& filename)
 
 bool XmlGspInterface::write()
 {
-	GeoLib::GEOObjects* geoObjects = _project.getGEOObjects();
 	QFileInfo fi(QString::fromStdString(_filename));
 	std::string path((fi.absolutePath()).toStdString() + "/");
 
@@ -132,11 +135,11 @@ bool XmlGspInterface::write()
 
 	// GML
 	std::vector<std::string> geoNames;
-	geoObjects->getGeometryNames(geoNames);
+	_geoObjects.getGeometryNames(geoNames);
 	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
 	{
 		// write GLI file
-		XmlGmlInterface gml(*geoObjects);
+		XmlGmlInterface gml(_geoObjects);
 		std::string name(*it);
 		gml.setNameForExport(name);
 		if (gml.writeToFile(std::string(path + name + ".gml")))
@@ -153,13 +156,12 @@ bool XmlGspInterface::write()
 	}
 
 	// MSH
-	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
+	for (auto const& mesh : _mesh_vector)
 	{
 		// write mesh file
 		Legacy::MeshIO meshIO;
-		meshIO.setMesh(*it);
-		std::string fileName(path + (*it)->getName());
+		meshIO.setMesh(mesh);
+		std::string fileName(path + mesh->getName());
 		meshIO.writeToFile(fileName);
 
 		// write entry in project file
@@ -167,17 +169,17 @@ bool XmlGspInterface::write()
 		root.appendChild(mshTag);
 		QDomElement fileNameTag = doc.createElement("file");
 		mshTag.appendChild(fileNameTag);
-		QDomText fileNameText = doc.createTextNode(QString::fromStdString((*it)->getName()));
+		QDomText fileNameText = doc.createTextNode(QString::fromStdString(mesh->getName()));
 		fileNameTag.appendChild(fileNameText);
 	}
 
 	// STN
 	std::vector<std::string> stnNames;
-	geoObjects->getStationVectorNames(stnNames);
+	_geoObjects.getStationVectorNames(stnNames);
 	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
 	{
 		// write STN file
-		XmlStnInterface stn(*geoObjects);
+		XmlStnInterface stn(_geoObjects);
 		std::string name(*it);
 		stn.setNameForExport(name);
 

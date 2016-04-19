@@ -15,6 +15,8 @@
 #ifndef XMLGSPINTERFACE_H
 #define XMLGSPINTERFACE_H
 
+#include <functional>
+#include <vector>
 #include <string>
 
 #include <QString>
@@ -22,7 +24,15 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
-class ProjectData;
+namespace MeshLib
+{
+class Mesh;
+}
+
+namespace GeoLib
+{
+class GEOObjects;
+}
 
 namespace FileIO
 {
@@ -33,11 +43,10 @@ namespace FileIO
 class XmlGspInterface : public XMLInterface, public XMLQtInterface
 {
 public:
-	/**
-	 * Constructor
-	 * \param project Project data.
-	 */
-	XmlGspInterface(ProjectData &project);
+	XmlGspInterface(
+	    GeoLib::GEOObjects& geoObjects,
+	    std::vector<MeshLib::Mesh*> const& mesh_vector,
+	    std::function<void(MeshLib::Mesh* const)>&& add_mesh_callback);
 
 	virtual ~XmlGspInterface() {}
 
@@ -54,8 +63,9 @@ protected:
 
 private:
 	std::string _filename;
-
-	ProjectData& _project;
+	GeoLib::GEOObjects& _geoObjects;
+	std::vector<MeshLib::Mesh*> const& _mesh_vector;
+	std::function<void(MeshLib::Mesh* const)> _add_mesh_callback;
 };
 
 }

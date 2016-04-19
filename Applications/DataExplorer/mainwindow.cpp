@@ -420,7 +420,12 @@ void MainWindow::save()
 
 	if (fi.suffix().toLower() == "gsp")
 	{
-		XmlGspInterface xml(_project);
+		XmlGspInterface xml(*_project.getGEOObjects(),
+		                    _project.getMeshObjects(),
+		                    [this](MeshLib::Mesh* const mesh)
+		                    {
+			                    _project.addMesh(mesh);
+		                    });
 		xml.writeToFile(fileName.toStdString());
 	}
 	else if (fi.suffix().toLower() == "geo")
@@ -467,7 +472,12 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gsp")
 		{
-			XmlGspInterface xml(_project);
+			XmlGspInterface xml(*_project.getGEOObjects(),
+			                    _project.getMeshObjects(),
+			                    [this](MeshLib::Mesh* const mesh)
+			                    {
+				                    _project.addMesh(mesh);
+			                    });
 			if (xml.readFile(fileName))
 			{
 				_meshModel->updateModel();
