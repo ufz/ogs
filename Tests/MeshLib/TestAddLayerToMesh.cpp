@@ -33,7 +33,7 @@ namespace AddLayerValidation
 		std::vector<ElementErrorCode> const codes (MeshLib::MeshValidation::testElementGeometry(mesh));
 		for (std::size_t i=0; i<codes.size(); ++i)
 			for (std::size_t j=0; j<nErrorFlags-reduce_tests; ++j)
-				ASSERT_EQ(false, codes[i][flags[j]]);
+				ASSERT_FALSE(codes[i][flags[j]]);
 	}
 
 	void testZCoords2D(MeshLib::Mesh const& input, MeshLib::Mesh const& output, double height)
