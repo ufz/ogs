@@ -414,7 +414,7 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
 double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 	const double epsilon_radius) const
 {
-	double dist, lambda;
+	double dist(-1.0), lambda;
 	bool found = false;
 	// loop over all line segments of the polyline
 	for (std::size_t k = 0; k < this->getNumberOfPoints() - 1; k++) {
@@ -438,7 +438,9 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 		}
 	} // end line segment loop
 
-	return found ? dist : -1;
+	if (! found)
+		dist = -1.0;
+	return dist;
 }
 
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)
