@@ -13,6 +13,7 @@
  */
 #include <cmath>
 #include <limits>
+#include <utility>
 
 #include "PiecewiseLinearInterpolation.h"
 
@@ -20,10 +21,12 @@
 
 namespace MathLib
 {
-PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-                                                           const std::vector<double>& values_at_supp_pnts,
-                                                           bool supp_pnts_sorted) :
-	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
+PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
+    std::vector<double> supporting_points,
+    std::vector<double> values_at_supp_pnts,
+    bool supp_pnts_sorted)
+    : _supp_pnts(std::move(supporting_points)),
+      _values_at_supp_pnts(std::move(values_at_supp_pnts))
 {
 	if (!supp_pnts_sorted) {
 		BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
@@ -31,12 +34,14 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<dou
 	}
 }
 
-PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-                                                           const std::vector<double>& values_at_supp_pnts,
-                                                           const std::vector<double>& points_to_interpolate,
-                                                           std::vector<double>& values_at_interpol_pnts,
-                                                           bool supp_pnts_sorted) :
-	_supp_pnts(supporting_points), _values_at_supp_pnts(values_at_supp_pnts)
+PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
+    std::vector<double> supporting_points,
+    std::vector<double> values_at_supp_pnts,
+    const std::vector<double>& points_to_interpolate,
+    std::vector<double>& values_at_interpol_pnts,
+    bool supp_pnts_sorted)
+    : _supp_pnts(std::move(supporting_points)),
+      _values_at_supp_pnts(std::move(values_at_supp_pnts))
 {
 	if (!supp_pnts_sorted) {
 		BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
