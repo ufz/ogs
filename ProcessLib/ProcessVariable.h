@@ -75,9 +75,10 @@ public:
 		}
 	}
 
-	template <typename GlobalSetup, typename OutputIterator, typename... Args>
+	template <typename OutputIterator, typename GlobalSetup, typename... Args>
 	void createNeumannBcs(OutputIterator bcs,
 	                      MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+	                      GlobalSetup const&,
 	                      Args&&... args)
 	{
 		for (auto& config : _neumann_bc_configs)

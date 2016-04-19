@@ -33,7 +33,7 @@
 
 #include "UncoupledProcessesTimeLoop.h"
 
-#include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess-fwd.h"
+#include "ProcessLib/GroundwaterFlowProcess-fwd.h"
 
 
 namespace detail
@@ -170,8 +170,7 @@ void ProjectData::buildProcesses()
 			// several meshes. Then we have to assign the referenced mesh
 			// here.
 			_processes.emplace_back(
-				ProcessLib::GroundwaterFlow::
-				createGroundwaterFlowProcess<GlobalSetupType>(
+				ProcessLib::createGroundwaterFlowProcess<GlobalSetupType>(
 				    *_mesh_vec[0], *nl_slv, std::move(time_disc),
 				    _process_variables, _parameters, pc));
 		}

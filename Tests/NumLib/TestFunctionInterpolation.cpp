@@ -26,6 +26,7 @@ TEST(NumLibFunctionInterpolationTest, TwoVariablesTwoNodes)
 {
     double variable1 = 0.0;
     double variable2 = 0.0;
+    std::array<double*, 2> interpolated_values = {{&variable1, &variable2}};
 
     const std::array<double, 4> nodal_values = {{
         0.0, 1.0,  // for variable1
@@ -35,7 +36,7 @@ TEST(NumLibFunctionInterpolationTest, TwoVariablesTwoNodes)
     const std::array<double, 2> shape_matrix = {{0.25, 0.75}};
 
     NumLib::shapeFunctionInterpolate(nodal_values, shape_matrix,
-                                     variable1, variable2);
+                                     interpolated_values);
 
     ASSERT_EQ(0.75, variable1);
     ASSERT_EQ(0.5,  variable2);
@@ -77,6 +78,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
     // actual test
     double variable1 = 0.0;
     double variable2 = 0.0;
+    std::array<double*, 2> interpolated_values = {{&variable1, &variable2}};
 
     const std::array<double, 4> nodal_values = {{
         0.0, 1.0,  // for variable1
@@ -84,7 +86,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
     }};
 
     NumLib::shapeFunctionInterpolate(nodal_values, shape_matrix.N,
-                                     variable1, variable2);
+                                     interpolated_values);
 
     const double n0 = shape_matrix.N[0];
     const double n1 = shape_matrix.N[1];

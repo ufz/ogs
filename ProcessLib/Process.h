@@ -17,6 +17,7 @@
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
 #include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -41,7 +42,6 @@ class Mesh;
 
 namespace ProcessLib
 {
-
 template <typename GlobalSetup>
 class Process
 		: public NumLib::ODESystem<typename GlobalSetup::MatrixType,
@@ -59,14 +59,16 @@ public:
 
 	Process(MeshLib::Mesh& mesh,
 	        NonlinearSolver& nonlinear_solver,
-	        std::unique_ptr<TimeDiscretization>&& time_discretization,
-	        std::vector<std::reference_wrapper<ProcessVariable>>&&
-	        process_variables)
-	    : _mesh(mesh)
-	    , _nonlinear_solver(nonlinear_solver)
+	        std::unique_ptr<TimeDiscretization>&& time_discretization)
+	    : _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
-	    , _process_variables(std::move(process_variables))
+	    , _mesh(mesh)
 	{}
+
+	virtual ~Process()
+	{
+		delete _mesh_subset_all_nodes;
+	}
 
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
@@ -147,7 +149,7 @@ public:
 		}
 
 		for (auto& bc : _neumann_bcs)
-			bc->initialize(_mesh.getDimension());
+			bc->initialize(_global_setup, _mesh.getDimension());
 	}
 
 	void setInitialConditions(GlobalVector& x)
@@ -174,7 +176,7 @@ public:
 
 		// Call global assembler for each Neumann boundary local assembler.
 		for (auto const& bc : _neumann_bcs)
-			bc->integrate(t, b);
+			bc->integrate(_global_setup, t, b);
 	}
 
 	void assembleJacobian(
@@ -248,8 +250,8 @@ private:
 	void constructDofTable()
 	{
 		// Create single component dof in every of the mesh's nodes.
-		_mesh_subset_all_nodes.reset(
-		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
+		_mesh_subset_all_nodes =
+		    new MeshLib::MeshSubset(_mesh, &_mesh.getNodes());
 
 		// Collect the mesh subsets in a vector.
 		std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
@@ -261,7 +263,7 @@ private:
 			    [&]()
 			    {
 				    return std::unique_ptr<MeshLib::MeshSubsets>{
-				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
+				        new MeshLib::MeshSubsets{_mesh_subset_all_nodes}};
 				});
 		}
 
@@ -325,9 +327,9 @@ private:
 
 		// Create a neumann BC for the process variable storing them in the
 		// _neumann_bcs vector.
-		variable.createNeumannBcs<GlobalSetup>(
-		                          std::back_inserter(_neumann_bcs),
+		variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
 		                          mesh_element_searcher,
+		                          _global_setup,
 		                          _integration_order,
 		                          *_local_to_global_index_map,
 		                          0,  // 0 is the variable id TODO
@@ -342,50 +344,44 @@ private:
 		    *_local_to_global_index_map, _mesh));
 	}
 
-private:
-	unsigned const _integration_order = 2;
+protected:
+	MeshLib::MeshSubset const* _mesh_subset_all_nodes = nullptr;
 
-	MeshLib::Mesh& _mesh;
-	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
-
-	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
-	    _local_to_global_index_map;
+	GlobalSetup _global_setup;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
 
+	/// Variables used by this process.
+	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
 
-	/// Variables used by this process.
-	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+private:
+	MeshLib::Mesh& _mesh;
+	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+	    _local_to_global_index_map;
+	unsigned const _integration_order = 2;
 };
 
-/// Find process variables in \c variables whose names match the settings under
-/// the given \c tag_names in the \c process_config.
-///
+/// Find a process variable for a name given in the process configuration under
+/// the tag.
 /// In the process config a process variable is referenced by a name. For
 /// example it will be looking for a variable named "H" in the list of process
 /// variables when the tag is "hydraulic_head":
 /// \code
 ///     <process>
 ///         ...
-///         <process_variables>
-///             <hydraulic_head>H</hydraulic_head>
-///             ...
-///         </process_variables>
-///         ...
+///         <hydraulic_head>H</hydraulic_head>
 ///     </process>
 /// \endcode
-///
-/// \return a vector of references to the found variable(s).
-std::vector<std::reference_wrapper<ProcessVariable>>
-findProcessVariables(
-        std::vector<ProcessVariable> const& variables,
-        BaseLib::ConfigTree const& process_config,
-        std::initializer_list<std::string> tag_names);
+/// and return a reference to that variable.
+ProcessVariable& findProcessVariable(
+    BaseLib::ConfigTree const& process_config, std::string const& tag,
+    std::vector<ProcessVariable> const& variables);
 
 /// Find a parameter of specific type for a name given in the process
 /// configuration under the tag.

@@ -119,17 +119,35 @@ namespace AssemblerLib
 /// For example for MeshLib::Line a local assembler data with template argument
 /// NumLib::ShapeLine2 is created.
 template <
-    class LocalAssemblerInterface,
-    template <typename, typename, typename, typename, unsigned> class LocalAssemblerData,
-    typename GlobalMatrix,
-    typename GlobalVector,
+    template <typename, typename> class LocalAssemblerDataInterface_,
+    template <typename, typename, typename, typename, unsigned> class LocalAssemblerData_,
+    typename GlobalMatrix_,
+    typename GlobalVector_,
     unsigned GlobalDim,
     typename... ConstructorArgs>
 class LocalDataInitializer
 {
-public:
-    using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
+    template <typename ShapeFunction_>
+    using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
+                typename ShapeFunction_::MeshElement>::IntegrationMethod;
 
+    template <typename ShapeFunction_>
+    using LAData = LocalAssemblerData_<
+            ShapeFunction_,
+            IntegrationMethod<ShapeFunction_>,
+            GlobalMatrix_, GlobalVector_, GlobalDim>;
+
+    using LADataIntfPtr
+        = std::unique_ptr<LocalAssemblerDataInterface_<GlobalMatrix_, GlobalVector_>>;
+
+    using LADataBuilder = std::function<LADataIntfPtr(
+            MeshLib::Element const& e,
+            std::size_t const local_matrix_size,
+            unsigned const integration_order,
+            ConstructorArgs&&...
+        )>;
+
+public:
     LocalDataInitializer()
     {
         // /// Lines and points ///////////////////////////////////
@@ -262,23 +280,6 @@ public:
     }
 
 private:
-    using LADataBuilder = std::function<LADataIntfPtr(
-            MeshLib::Element const& e,
-            std::size_t const local_matrix_size,
-            unsigned const integration_order,
-            ConstructorArgs&&...
-        )>;
-
-    template <typename ShapeFunction>
-    using IntegrationMethod = typename NumLib::GaussIntegrationPolicy<
-                typename ShapeFunction::MeshElement>::IntegrationMethod;
-
-    template <typename ShapeFunction>
-    using LAData = LocalAssemblerData<
-            ShapeFunction,
-            IntegrationMethod<ShapeFunction>,
-            GlobalMatrix, GlobalVector, GlobalDim>;
-
     // Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
     template<typename ShapeFct>
     static LADataBuilder makeLocalAssemblerBuilder()

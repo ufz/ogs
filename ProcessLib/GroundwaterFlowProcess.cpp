@@ -10,10 +10,9 @@
 #include "GroundwaterFlowProcess-fwd.h"
 #include "GroundwaterFlowProcess.h"
 
-namespace ProcessLib {
-namespace GroundwaterFlow {
+namespace ProcessLib
+{
 
 template class GroundwaterFlowProcess<GlobalSetupType>;
 
-}
-}
+}   // namespace ProcessLib
