@@ -18,8 +18,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "FileIO/AsciiRasterInterface.h"
-
 #include "GeoLib/Raster.h"
 
 #include "MathLib/MathTools.h"
@@ -229,18 +227,6 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
             continue;
         }
     }
-}
-
-bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, std::string const& rasterfile, double noDataReplacementValue = 0.0)
-{
-	const GeoLib::Raster *raster(FileIO::AsciiRasterInterface::readRaster(rasterfile));
-	if (! raster) {
-		ERR("MshLayerMapper::layerMapping - could not read raster file %s", rasterfile.c_str());
-		return false;
-	}
-	const bool result = layerMapping(new_mesh, *raster, noDataReplacementValue);
-	delete raster;
-	return result;
 }
 
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const& raster, double noDataReplacementValue = 0.0)
