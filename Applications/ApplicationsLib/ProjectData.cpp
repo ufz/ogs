@@ -359,8 +359,8 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
 static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
 createPiecewiseLinearInterpolation(BaseLib::ConfigTree const& config)
 {
-	auto const coords = config.getConfParam<std::vector<double>>("coords");
-	auto const values = config.getConfParam<std::vector<double>>("values");
+	auto coords = config.getConfParam<std::vector<double>>("coords");
+	auto values = config.getConfParam<std::vector<double>>("values");
 	if (coords.empty() || values.empty())
 	{
 		ERR("The given co-ordinates or values vector is empty.");
@@ -373,7 +373,8 @@ createPiecewiseLinearInterpolation(BaseLib::ConfigTree const& config)
 	}
 
 	return std::unique_ptr<MathLib::PiecewiseLinearInterpolation>{
-	    new MathLib::PiecewiseLinearInterpolation{coords, values}};
+	    new MathLib::PiecewiseLinearInterpolation{std::move(coords),
+	                                              std::move(values)}};
 }
 
 void ProjectData::parseCurves(

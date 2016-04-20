@@ -32,7 +32,8 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolation)
 		}
 	}
 
-	MathLib::PiecewiseLinearInterpolation interpolation(supp_pnts, values);
+	MathLib::PiecewiseLinearInterpolation interpolation{std::move(supp_pnts),
+	                                                    std::move(values)};
 	// Interpolation
 	for (std::size_t k(0); k<size-1; ++k) {
 		ASSERT_NEAR(0.5, interpolation.getValue(k+0.5), std::numeric_limits<double>::epsilon());
@@ -67,7 +68,8 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationSupportPntsInRe
 		}
 	}
 
-	MathLib::PiecewiseLinearInterpolation interpolation(supp_pnts, values);
+	MathLib::PiecewiseLinearInterpolation interpolation{std::move(supp_pnts),
+	                                                    std::move(values)};
 	// Interpolation
 	for (std::size_t k(0); k<size-1; ++k) {
 		ASSERT_NEAR(0.5, interpolation.getValue(k+0.5), std::numeric_limits<double>::epsilon());
