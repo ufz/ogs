@@ -34,9 +34,6 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
 	}
 }
 
-PiecewiseLinearInterpolation::~PiecewiseLinearInterpolation()
-{}
-
 double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
 	// search interval that has the point inside
