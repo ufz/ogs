@@ -22,8 +22,8 @@
 namespace MathLib
 {
 PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
-    std::vector<double> supporting_points,
-    std::vector<double> values_at_supp_pnts,
+    std::vector<double>&& supporting_points,
+    std::vector<double>&& values_at_supp_pnts,
     bool supp_pnts_sorted)
     : _supp_pnts(std::move(supporting_points)),
       _values_at_supp_pnts(std::move(values_at_supp_pnts))
@@ -35,8 +35,8 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
 }
 
 PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
-    std::vector<double> supporting_points,
-    std::vector<double> values_at_supp_pnts,
+    std::vector<double>&& supporting_points,
+    std::vector<double>&& values_at_supp_pnts,
     const std::vector<double>& points_to_interpolate,
     std::vector<double>& values_at_interpol_pnts,
     bool supp_pnts_sorted)

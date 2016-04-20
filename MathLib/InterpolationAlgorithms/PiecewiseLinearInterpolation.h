@@ -44,8 +44,8 @@ public:
 	 * @param supp_pnts_sorted false (default), if it is sure the supporting points are sorted
 	 * one can set the switch to true
 	 */
-	PiecewiseLinearInterpolation(std::vector<double> supporting_points,
-	                             std::vector<double> values_at_supp_pnts,
+	PiecewiseLinearInterpolation(std::vector<double>&& supporting_points,
+	                             std::vector<double>&& values_at_supp_pnts,
 	                             bool supp_pnts_sorted = false);
 	/**
 	 * The same requirements on the input vectors supporting_points and values_at_supp_pnts
@@ -60,8 +60,8 @@ public:
 	 * @param supp_pnts_sorted Is set to false per default. If it is sure that the supporting
 	 * points are sorted one can set the switch to true.
 	 */
-	PiecewiseLinearInterpolation(std::vector<double> supporting_points,
-	                             std::vector<double> values_at_supp_pnts,
+	PiecewiseLinearInterpolation(std::vector<double>&& supporting_points,
+	                             std::vector<double>&& values_at_supp_pnts,
 	                             const std::vector<double>& points_to_interpolate,
 	                             std::vector<double>& values_at_interpol_pnts,
 	                             bool supp_pnts_sorted = false);
