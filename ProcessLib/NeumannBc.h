@@ -17,14 +17,12 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "AssemblerLib/LocalDataInitializer.h"
-#include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 
 #include "NeumannBcConfig.h"
 #include "NeumannBcAssembler.h"
+#include "ProcessUtil.h"
 
 namespace ProcessLib
 {
@@ -107,60 +105,24 @@ public:
 
     void initialize(unsigned global_dim)
     {
-        if (global_dim==1)
-            initialize<1u>();
-        else if (global_dim==2)
-            initialize<2u>();
-        else if (global_dim==3)
-            initialize<3u>();
-    }
-
-
-private:
-    /// Allocates the local assemblers for each element and stores references to
-    /// global matrix and the right-hand-side.
-    template <unsigned GlobalDim>
-    void initialize()
-    {
-        // Shape matrices initializer
-        using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            LocalNeumannBcAsmDataInterface,
-            LocalNeumannBcAsmData,
-            GlobalMatrix, GlobalVector,
-            GlobalDim,
-            std::function<double (MeshLib::Element const&)> const&>;
-
-        LocalDataInitializer initializer;
-
-        using LocalAssemblerBuilder =
-            AssemblerLib::LocalAssemblerBuilder<
-                MeshLib::Element,
-                LocalDataInitializer>;
-
-        // Populate the vector of local assemblers.
-        _local_assemblers.resize(_elements.size());
-        LocalAssemblerBuilder local_asm_builder(
-            initializer, *_local_to_global_index_map);
+        DBUG("Create global assembler.");
+        _global_assembler.reset(
+            new GlobalAssembler(*_local_to_global_index_map));
 
         auto elementValueLookup = [this](MeshLib::Element const&)
         {
             return _function();
         };
 
-        DBUG("Calling local Neumann assembler builder for Neumann boundary elements.");
-        GlobalSetup::transform(
-                local_asm_builder,
-                _elements,
-                _local_assemblers,
-                _integration_order,
-                elementValueLookup);
-
-        DBUG("Create global assembler.");
-        _global_assembler.reset(
-            new GlobalAssembler(*_local_to_global_index_map));
+        createLocalAssemblers<GlobalSetup, LocalNeumannBcAsmData>(
+            global_dim, _elements,
+            *_local_to_global_index_map, _integration_order,
+            _local_assemblers,
+            elementValueLookup
+            );
     }
 
-
+private:
     /// The right-hand-side function of the Neumann boundary condition given as
     /// \f$ \alpha(x) \, \partial u(x) / \partial n = \text{_function}(x)\f$.
     MathLib::ConstantFunction<double> const _function;

@@ -12,22 +12,22 @@
 
 #include <cassert>
 
-#include <boost/optional.hpp>
-
-#include "AssemblerLib/LocalAssemblerBuilder.h"
-#include "AssemblerLib/LocalDataInitializer.h"
+#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "ProcessLib/Process.h"
+#include "ProcessLib/ProcessUtil.h"
 
 #include "GroundwaterFlowFEM.h"
-#include "Process.h"
+#include "GroundwaterFlowProcessData.h"
 
 namespace MeshLib
 {
     class Element;
-    class Mesh;
-    template <typename PROP_VAL_TYPE> class PropertyVector;
 }
 
 namespace ProcessLib
+{
+
+namespace GroundwaterFlow
 {
 
 template<typename GlobalSetup>
@@ -35,24 +35,20 @@ class GroundwaterFlowProcess final
         : public Process<GlobalSetup>
 {
     using Base = Process<GlobalSetup>;
-
-public:
     using GlobalMatrix = typename GlobalSetup::MatrixType;
     using GlobalVector = typename GlobalSetup::VectorType;
 
-
+public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
-        typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
-        ProcessVariable& variable,
-        Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity)
-        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
-          _hydraulic_conductivity(hydraulic_conductivity)
+        typename Base::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
+        std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+        GroundwaterFlowProcessData&& process_data)
+        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
+                               std::move(process_variables))
+        , _process_data(std::move(process_data))
     {
-        Base::_process_variables.emplace_back(variable);
-
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
                     &Base::getTimeDiscretization()) != nullptr)
         {
@@ -78,49 +74,12 @@ public:
     //! @}
 
 private:
-    Parameter<double, MeshLib::Element const&> const& _hydraulic_conductivity;
-
-    using LocalAssembler = GroundwaterFlow::LocalAssemblerDataInterface<
-        typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
+    using LocalAssemblerInterface =
+        ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
+            GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
-    template <unsigned GlobalDim>
-    void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                               MeshLib::Mesh const& mesh,
-                               unsigned const integration_order)
-    {
-        DBUG("Create local assemblers.");
-        // Populate the vector of local assemblers.
-        _local_assemblers.resize(mesh.getNElements());
-        // Shape matrices initializer
-        using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-            GroundwaterFlow::LocalAssemblerDataInterface,
-            GroundwaterFlow::LocalAssemblerData,
-            typename GlobalSetup::MatrixType,
-            typename GlobalSetup::VectorType,
-            GlobalDim,
-            Parameter<double, MeshLib::Element const&> const&>;
-
-        LocalDataInitializer initializer;
-
-        using LocalAssemblerBuilder =
-            AssemblerLib::LocalAssemblerBuilder<
-                MeshLib::Element,
-                LocalDataInitializer>;
-
-        LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
-
-        DBUG("Calling local assembler builder for all mesh elements.");
-        GlobalSetup::transform(
-                local_asm_builder,
-                mesh.getElements(),
-                _local_assemblers,
-                integration_order,
-                _hydraulic_conductivity);
-    }
 
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           MeshLib::Mesh const& mesh,
@@ -129,22 +88,15 @@ private:
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(dof_table));
 
-        auto const dim = mesh.getDimension();
-        if (dim==1)
-            createLocalAssemblers<1>(dof_table, mesh, integration_order);
-        else if (dim==2)
-            createLocalAssemblers<2>(dof_table, mesh, integration_order);
-        else if (dim==3)
-            createLocalAssemblers<3>(dof_table, mesh, integration_order);
-        else
-            assert(false);
+        ProcessLib::createLocalAssemblers<GlobalSetup, LocalAssemblerData>(
+                    mesh.getDimension(), mesh.getElements(),
+                    dof_table, integration_order, _local_assemblers,
+                    _process_data);
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
-        // TODO It looks like, with little work this entire method can be moved to the Process class.
-
         DBUG("Assemble GroundwaterFlowProcess.");
 
         // Call global assembler for each local assembly item.
@@ -153,8 +105,11 @@ private:
             _local_assemblers, t, x, M, K, b);
     }
 
+
+    GroundwaterFlowProcessData _process_data;
+
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 };
 
 template <typename GlobalSetup>
@@ -172,10 +127,8 @@ createGroundwaterFlowProcess(
     DBUG("Create GroundwaterFlowProcess.");
 
     // Process variable.
-    ProcessVariable& process_variable =
-        findProcessVariable(config, "process_variable", variables);
-    DBUG("Associate hydraulic_head with process variable \'%s\'.",
-         process_variable.getName().c_str());
+    auto process_variables =
+        findProcessVariables(variables, config, { "process_variable" });
 
     // Hydraulic conductivity parameter.
     auto& hydraulic_conductivity =
@@ -185,13 +138,20 @@ createGroundwaterFlowProcess(
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
 
+    GroundwaterFlowProcessData process_data {
+        hydraulic_conductivity
+    };
+
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
-            process_variable,
-            hydraulic_conductivity
-    }};
+            std::move(process_variables),
+            std::move(process_data)
+        }
+    };
 }
+
+}   // namespace GroundwaterFlow
 }   // namespace ProcessLib
 
 #endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
