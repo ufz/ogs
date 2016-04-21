@@ -10,9 +10,10 @@
 #include "RichardsFlowProcess-fwd.h"
 #include "RichardsFlowProcess.h"
 
-namespace ProcessLib
-{
+namespace ProcessLib {
+namespace RichardsFlow {
 
 template class RichardsFlowProcess<GlobalSetupType>;
 
-}   // namespace ProcessLib
+}
+}

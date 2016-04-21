@@ -11,8 +11,8 @@
 #define PROCESS_LIB_RICHARDSFLOWPROCESS_FWD_H_
 
 #include "RichardsFlowProcess.h"
-#include "NumericsConfig.h"
+#include "ProcessLib/NumericsConfig.h"
 
-extern template class ProcessLib::RichardsFlowProcess<GlobalSetupType>;
+extern template class ProcessLib::RichardsFlow::RichardsFlowProcess<GlobalSetupType>;
 
 #endif  // PROCESS_LIB_RICHARDSFLOWPROCESS_FWD_H_

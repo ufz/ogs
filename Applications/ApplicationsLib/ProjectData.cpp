@@ -33,11 +33,8 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "UncoupledProcessesTimeLoop.h"
-
 #include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess-fwd.h"
-#include "ProcessLib/MassTransportProcess-fwd.h"
-#include "ProcessLib/RichardsFlowProcess-fwd.h"
-
+//#include "ProcessLib/MassTransportProcess-fwd.h"#include "ProcessLib/RichardsFlow/RichardsFlowProcess-fwd.h"
 namespace detail
 {
 static
@@ -74,8 +71,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     }
     _mesh_vec.push_back(mesh);
 	
-	// curves
-	parseCurves(project_config.getConfSubtreeOptional("curves"));
+	//// curves
+	//parseCurves(project_config.getConfSubtreeOptional("curves"));
 
     // curves
     parseCurves(project_config.getConfSubtreeOptional("curves"));
@@ -182,6 +179,7 @@ void ProjectData::buildProcesses()
                     *_mesh_vec[0], *nl_slv, std::move(time_disc),
                     _process_variables, _parameters, pc));
         }
+		/*
 		else if (type == "Mass_Transport")
 		{
 			// The existence check of the in the configuration referenced
@@ -194,6 +192,8 @@ void ProjectData::buildProcesses()
 					*_mesh_vec[0], *nl_slv, std::move(time_disc),
 					_process_variables, _parameters, pc));
 		}
+		*/
+		
 		else if (type == "RICHARDS_FLOW")
 		{
 			// The existence check of the in the configuration referenced
@@ -202,7 +202,7 @@ void ProjectData::buildProcesses()
 			// several meshes. Then we have to assign the referenced mesh
 			// here.
 			_processes.emplace_back(
-				ProcessLib::createRichardsFlowProcess<GlobalSetupType>(
+				ProcessLib::RichardsFlow::createRichardsFlowProcess<GlobalSetupType>(
 					*_mesh_vec[0], *nl_slv, std::move(time_disc),
 					_process_variables, _parameters, pc,_curves));
 		}
@@ -418,6 +418,6 @@ void ProjectData::parseCurves(
             createPiecewiseLinearInterpolation(conf),
             "The curve name is not unique.");
     }
-	
-	
+
 }
+
