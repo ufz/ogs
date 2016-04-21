@@ -30,6 +30,14 @@ Polygon::Polygon(const Polyline &ply, bool init) :
 		initialise ();
 }
 
+Polygon::Polygon(Polygon const& other)
+    : Polyline(other), _aabb(other._aabb)
+{
+	for (auto const* sub_polygon : other._simple_polygon_list) {
+		_simple_polygon_list.emplace_back(new Polygon(*sub_polygon));
+	}
+}
+
 Polygon::~Polygon()
 {
 	// remove polygons from list

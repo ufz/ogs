@@ -52,6 +52,7 @@ public:
 	 */
 	Polygon(const Polyline &ply, bool init = true);
 
+	Polygon(Polygon const& other);
 	virtual ~Polygon();
 
 	bool initialise ();
