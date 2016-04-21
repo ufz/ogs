@@ -48,7 +48,7 @@ public:
 	/** virtual destructor */
 	virtual ~TemplatePoint() = default;
 
-	TemplatePoint(TemplatePoint const& other) = default;
+	TemplatePoint(TemplatePoint const&) = default;
 	TemplatePoint& operator=(TemplatePoint const&) = default;
 
 	/** \brief const access operator
