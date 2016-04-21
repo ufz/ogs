@@ -53,12 +53,16 @@ public:
 			porosity,
 		Parameter<double, MeshLib::Element const&> const&
 		viscosity,
-		bool const gg)
+		bool const has_gravity,
+		std::map<std::string,
+		std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&
+		curves)
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization)),
 		_intrinsic_permeability(intrinsic_permeability),
 		_porosity(porosity),
 		_viscosity(viscosity),
-		_has_gravity(gg)
+		_has_gravity(has_gravity),
+		_curves(curves)
     {
         this->_process_variables.emplace_back(variable);
 
@@ -77,11 +81,13 @@ public:
     }
 
     template <unsigned GlobalDim>
-    void createLocalAssemblers()
+	void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+		MeshLib::Mesh const& mesh,
+		unsigned const integration_order)
     {
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.
-        _local_assemblers.resize(this->_mesh.getNElements());
+        _local_assemblers.resize(mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
 			RichardsFlow::LocalAssemblerDataInterface,
@@ -91,7 +97,10 @@ public:
             GlobalDim,
             Parameter<double, MeshLib::Element const&> const&,
 			Parameter<double, MeshLib::Element const&> const&,
-			Parameter<double, MeshLib::Element const&> const&>;
+			Parameter<double, MeshLib::Element const&> const&,
+			bool const&,
+			std::map<std::string,
+			std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&>;
 
         LocalDataInitializer initializer;
 
@@ -100,30 +109,37 @@ public:
                 MeshLib::Element,
                 LocalDataInitializer>;
 
-        LocalAssemblerBuilder local_asm_builder(
-            initializer, *this->_local_to_global_index_map);
+		LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
 
         DBUG("Calling local assembler builder for all mesh elements.");
         this->_global_setup.transform(
                 local_asm_builder,
-                this->_mesh.getElements(),
+                mesh.getElements(),
                 _local_assemblers,
-                this->_integration_order,
+                integration_order,
                 _intrinsic_permeability,
 				_porosity,
-				_viscosity);
+				_viscosity,
+				_has_gravity,
+				_curves);
     }
 
-    void createLocalAssemblers() override
+	void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+		MeshLib::Mesh const& mesh,
+		unsigned const integration_order) override 
     {
-        if (this->_mesh.getDimension()==1)
-            createLocalAssemblers<1>();
-        else if (this->_mesh.getDimension()==2)
-            createLocalAssemblers<2>();
-        else if (this->_mesh.getDimension()==3)
-            createLocalAssemblers<3>();
-        else
-            assert(false);
+		DBUG("Create global assembler.");
+		_global_assembler.reset(new GlobalAssembler(dof_table));
+
+		auto const dim = mesh.getDimension();
+		if (dim == 1)
+			createLocalAssemblers<1>(dof_table, mesh, integration_order);
+		else if (dim == 2)
+			createLocalAssemblers<2>(dof_table, mesh, integration_order);
+		else if (dim == 3)
+			createLocalAssemblers<3>(dof_table, mesh, integration_order);
+		else
+			assert(false);
     }
 
     //! \name ODESystem interface
@@ -140,11 +156,17 @@ private:
     Parameter<double, MeshLib::Element const&> const& _intrinsic_permeability;
 	Parameter<double, MeshLib::Element const&> const& _porosity;
 	Parameter<double, MeshLib::Element const&> const& _viscosity;
+	std::map<std::string,
+		std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&
+		_curves;
 	bool const _has_gravity;
 
     using LocalAssembler = RichardsFlow::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
+	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+		GlobalMatrix, GlobalVector, LocalAssembler,
+		NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
@@ -154,10 +176,11 @@ private:
         DBUG("Assemble RichardsFlowProcess.");
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.executeDereferenced(
-            *this->_global_assembler, _local_assemblers, t, x, M, K, b);
+		this->_global_setup.executeMemberDereferenced(
+			*_global_assembler, &GlobalAssembler::assemble,
+			_local_assemblers, t, x, M, K, b);
     }
-
+	std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 };
 
@@ -169,7 +192,10 @@ createRichardsFlowProcess(
     std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config)
+	BaseLib::ConfigTree const& config, 
+	std::map<std::string,
+			std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&
+	curves)
 {
     config.checkConfParam("type", "RICHARDS_FLOW");
 
@@ -213,7 +239,7 @@ createRichardsFlowProcess(
 			intrinsic_permeability,
 			porosity,
 			viscosity,
-			grav
+			grav,curves
     }};
 }
 }   // namespace ProcessLib

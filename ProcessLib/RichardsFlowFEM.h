@@ -19,7 +19,7 @@
 #include "Parameter.h"
 #include "ProcessUtil.h"
 #include "Richards_materialproperty.h"
-
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 namespace ProcessLib
 {
 
@@ -64,7 +64,11 @@ public:
 						Parameter<double, MeshLib::Element const&> const&
 						porosity,
 						Parameter<double, MeshLib::Element const&> const&
-						viscosity)
+						viscosity,
+						bool const& gravity,
+						std::map<std::string,
+							std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&
+						curves)
         : _shape_matrices(
               initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
                   e, integration_order))
@@ -80,6 +84,8 @@ public:
 		  {
 			  return viscosity(e);
 		  })
+		, _has_gravity(gravity)
+		, _curves(curves)
         // TODO narrowing conversion
 		, _localM(local_matrix_size, local_matrix_size)
         , _localA(local_matrix_size, local_matrix_size)
@@ -107,8 +113,10 @@ public:
 		Eigen::MatrixXd mass_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
 		Eigen::MatrixXd K_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
 		
+		MathLib::PiecewiseLinearInterpolation const&  interP_Pc = *_curves.at("curveA");
+		MathLib::PiecewiseLinearInterpolation const&  interP_Kr = *_curves.at("curveB");
 
-		const bool hasGravityEffect = false;
+		//const bool hasGravityEffect = false;
 
         IntegrationMethod_ integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();//retuen gauss point number
@@ -124,9 +132,12 @@ public:
 			
 			Pc = -P_int_pt;
 			
-			Sw = getSwbyPc_van(Pc);
-			dSwdPc = getdSwdPc_van(Pc);
-			k_rel = getKrelbySw_van(Sw,0);
+			//Sw = getSwbyPc_van(Pc);
+			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
+			//dSwdPc = getdSwdPc_van(Pc);
+			dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
+			//k_rel = getKrelbySw_van(Sw,0);
+			k_rel = interP_Kr.getValue(Sw);//read from S-Kr curve
 
 			mass_mat_coeff(0, 0) = storage * Sw + _porosity() * Sw * drhow_dp - _porosity() * dSwdPc;
 			K_mat_coeff(0, 0) = _intrinsic_permeability()*k_rel / _viscosity();
@@ -138,7 +149,7 @@ public:
 				mass_mat_coeff(0, 0) * sm.N.transpose() *
 				sm.detJ * wp.getWeight();//Eigen::Map<Eigen::VectorXd>
 
-			if (hasGravityEffect) {
+			if (_has_gravity) {
 
 				Eigen::Vector3d const vec_g(0, 0, -9.81);
 				// since no primary vairable involved
@@ -164,6 +175,10 @@ private:
     std::function<double(void)> _intrinsic_permeability;
 	std::function<double(void)> _porosity;
 	std::function<double(void)> _viscosity;
+	std::map<std::string,
+		std::unique_ptr<MathLib::PiecewiseLinearInterpolation >> const&
+		_curves;
+	bool const _has_gravity;
 
     NodalMatrixType _localA;
 	NodalMatrixType _localM;

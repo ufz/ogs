@@ -72,11 +72,13 @@ public:
     }
 
     template <unsigned GlobalDim>
-    void createLocalAssemblers()
+	void createLocalAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+		MeshLib::Mesh const& mesh,
+		unsigned const integration_order) 
     {
         DBUG("Create local assemblers.");
         // Populate the vector of local assemblers.
-        _local_assemblers.resize(this->_mesh.getNElements());
+		_local_assemblers.resize(mesh.getNElements());
         // Shape matrices initializer
         using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
             MassTransport::LocalAssemblerDataInterface,
@@ -94,29 +96,34 @@ public:
                 MeshLib::Element,
                 LocalDataInitializer>;
 
-        LocalAssemblerBuilder local_asm_builder(
-            initializer, *this->_local_to_global_index_map);
+		LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
 
         DBUG("Calling local assembler builder for all mesh elements.");
         this->_global_setup.transform(
                 local_asm_builder,
-                this->_mesh.getElements(),
+                mesh.getElements(),
                 _local_assemblers,
-                this->_integration_order,
+                integration_order,
                 _diffusion_coefficient,
 			_velocity);
     }
 
-    void createLocalAssemblers() override
+	void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+		MeshLib::Mesh const& mesh,
+		unsigned const integration_order) override
     {
-        if (this->_mesh.getDimension()==1)
-            createLocalAssemblers<1>();
-        else if (this->_mesh.getDimension()==2)
-            createLocalAssemblers<2>();
-        else if (this->_mesh.getDimension()==3)
-            createLocalAssemblers<3>();
-        else
-            assert(false);
+		DBUG("Create global assembler.");
+		_global_assembler.reset(new GlobalAssembler(dof_table));
+
+		auto const dim = mesh.getDimension();
+		if (dim == 1)
+			createLocalAssemblers<1>(dof_table, mesh, integration_order);
+		else if (dim == 2)
+			createLocalAssemblers<2>(dof_table, mesh, integration_order);
+		else if (dim == 3)
+			createLocalAssemblers<3>(dof_table, mesh, integration_order);
+		else
+			assert(false);
     }
 
     //! \name ODESystem interface
@@ -136,6 +143,9 @@ private:
     using LocalAssembler = MassTransport::LocalAssemblerDataInterface<
         typename GlobalSetup::MatrixType, typename GlobalSetup::VectorType>;
 
+	using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+		GlobalMatrix, GlobalVector, LocalAssembler,
+		NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
@@ -145,10 +155,11 @@ private:
         DBUG("Assemble MassTransportProcess.");
 
         // Call global assembler for each local assembly item.
-        this->_global_setup.executeDereferenced(
-            *this->_global_assembler, _local_assemblers, t, x, M, K, b);
+		this->_global_setup.executeMemberDereferenced(
+			*_global_assembler, &GlobalAssembler::assemble,
+			_local_assemblers, t, x, M, K, b);
     }
-
+	std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 };
 
