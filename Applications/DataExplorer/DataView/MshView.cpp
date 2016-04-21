@@ -25,6 +25,7 @@
 
 #include "FileIO/SHPInterface.h"
 #include "FileIO/TetGenInterface.h"
+#include "FileIO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -164,7 +165,17 @@ void MshView::openMap2dMeshDialog()
 	result->setName(dlg.getNewMeshName());
 	if (dlg.useRasterMapping())
 	{
-		if (!MeshLib::MeshLayerMapper::layerMapping(*result, dlg.getRasterPath(), dlg.getNoDataReplacement()))
+		std::unique_ptr<GeoLib::Raster> raster{
+		    FileIO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
+		if (!raster)
+		{
+			OGSError::box(QString::fromStdString(
+			    "Error mapping mesh. Could not read raster file " +
+			    dlg.getRasterPath()));
+			return;
+		}
+		if (!MeshLib::MeshLayerMapper::layerMapping(*result, *raster,
+		                                            dlg.getNoDataReplacement()))
 		{
 			OGSError::box("Error mapping mesh.");
 			return;

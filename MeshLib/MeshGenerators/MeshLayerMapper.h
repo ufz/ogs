@@ -56,14 +56,9 @@ public:
 	                        double noDataReplacementValue = 0.0);
 
 	/**
-	* Maps the elevation of nodes of a given 2D mesh according to the raster specified by the file path.
-	* At locations wher no information is given, node elevation is set to noDataReplacementValue.
-	*/
-	static bool layerMapping(MeshLib::Mesh &mesh, const std::string &rasterfile, double noDataReplacementValue);
-
-	/**
-	* Maps the elevation of nodes of a given 2D mesh according to the raster. At locations wher no
-	* information is given, node elevation is set to noDataReplacementValue.
+	* Maps the elevation of nodes of a given 2D mesh according to the raster. At
+	* locations where no information is given, node elevation is set to
+	* noDataReplacementValue.
 	*/
 	static bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
 
