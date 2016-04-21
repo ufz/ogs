@@ -53,6 +53,8 @@ public:
 	Polygon(const Polyline &ply, bool init = true);
 
 	Polygon(Polygon const& other);
+	Polygon& operator=(Polygon const& rhs) = delete;
+
 	virtual ~Polygon();
 
 	bool initialise ();
