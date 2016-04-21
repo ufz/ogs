@@ -396,7 +396,7 @@ void Polygon::splitPolygonAtIntersection(
 
 void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)
 {
-	std::size_t n ((*polygon_it)->getNumberOfPoints() - 1), idx0 (0), idx1(0);
+	std::size_t n((*polygon_it)->getNumberOfPoints() - 1), idx0(0), idx1(0);
 	std::vector<std::size_t> id_vec(n);
 	std::vector<std::size_t> perm(n);
 	for (std::size_t k(0); k < n; k++)
@@ -417,27 +417,25 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 				std::swap (idx0, idx1);
 
 			// create two closed polylines
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(*(*polygon_it)));
-			for (std::size_t k(0); k <= idx0; k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			for (std::size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			polygon0->initialise();
+			GeoLib::Polyline polyline0{*(*polygon_it)};
+			for (std::size_t j(0); j <= idx0; j++)
+				polyline0.addPoint((*polygon_it)->getPointID(j));
+			for (std::size_t j(idx1 + 1);
+			     j < (*polygon_it)->getNumberOfPoints(); j++)
+				polyline0.addPoint((*polygon_it)->getPointID(j));
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(*(*polygon_it)));
-			for (std::size_t k(idx0); k <= idx1; k++)
-				polygon1->addPoint ((*polygon_it)->getPointID (k));
-			polygon1->initialise();
+			GeoLib::Polyline polyline1{*(*polygon_it)};
+			for (std::size_t j(idx0); j <= idx1; j++)
+				polyline1.addPoint((*polygon_it)->getPointID(j));
 
 			// remove original polygon and add two new polygons
-			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
-			polygon1_it =
-			        _simple_polygon_list.insert (_simple_polygon_list.erase (
-			                                             polygon_it), polygon1);
-			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
+			auto polygon1_it = _simple_polygon_list.insert(
+			    _simple_polygon_list.erase(polygon_it), new Polygon(polyline1));
+			auto polygon0_it = _simple_polygon_list.insert(
+			    polygon1_it, new Polygon(polyline0));
 
-			splitPolygonAtPoint (polygon0_it);
-			splitPolygonAtPoint (polygon1_it);
+			splitPolygonAtPoint(polygon0_it);
+			splitPolygonAtPoint(polygon1_it);
 
 			return;
 		}
