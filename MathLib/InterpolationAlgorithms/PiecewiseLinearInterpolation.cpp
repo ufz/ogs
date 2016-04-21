@@ -55,4 +55,24 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 
     return m * (pnt_to_interpolate - _supp_pnts[interval_idx]) + _values_at_supp_pnts[interval_idx];
 }
+
+double PiecewiseLinearInterpolation::getSlope(double pnt_to_interpolate) const
+{
+	std::size_t interval_idx(std::numeric_limits<std::size_t>::max());
+	if (pnt_to_interpolate <= _supp_pnts.front()) {
+		interval_idx = 0;
+	}
+	else {
+		if (_supp_pnts.back() <= pnt_to_interpolate) {
+			interval_idx = _supp_pnts.size() - 2;
+		}
+		else {
+			auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(), pnt_to_interpolate));
+			interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
+		}
+	}
+	const double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
+		/ (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
+	return m;
+}
 } // end MathLib
