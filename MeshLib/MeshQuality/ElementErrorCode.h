@@ -34,12 +34,6 @@ enum class ElementErrorFlag
 class ElementErrorCode : public std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
 {
 public:
-	ElementErrorCode() {}
-	//ElementErrorCode(std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > error_flags)
-	//	: _errors(error_flags) {}
-
-	~ElementErrorCode() {}
-
 	/// Get value for a specific flag
 	bool get(ElementErrorFlag e) const { return test(static_cast<std::size_t>(e)); }
 	/// Set a specific flag

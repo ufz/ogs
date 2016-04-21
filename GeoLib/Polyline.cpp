@@ -94,7 +94,9 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 		}
 	}
 
-	std::vector<std::size_t>::iterator it(_ply_pnt_ids.begin() + pos);
+	std::vector<std::size_t>::difference_type const pos_dt(
+	    static_cast<std::vector<std::size_t>::difference_type>(pos));
+	std::vector<std::size_t>::iterator it(_ply_pnt_ids.begin() + pos_dt);
 	_ply_pnt_ids.insert(it, pnt_id);
 
 	if (_ply_pnt_ids.size() > 1) {
@@ -117,7 +119,8 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 				if (_ply_pnt_ids.size() > 2)
 					dist_until_now = _length[_ply_pnt_ids.size() - 2];
 
-				_length.insert(_length.begin() + pos, dist_until_now + act_dist);
+				_length.insert(_length.begin() + pos_dt,
+				               dist_until_now + act_dist);
 			} else {
 				// insert at arbitrary position within the vector
 				double dist_until_now (0.0);
@@ -132,10 +135,11 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 				double update_dist(
 				        len_seg0 + len_seg1 - (_length[pos] - dist_until_now));
 				_length[pos] = dist_until_now + len_seg0;
-				std::vector<double>::iterator it(_length.begin() + pos + 1);
-				_length.insert(it, _length[pos] + len_seg1);
-				for (it = _length.begin() + pos + 2; it != _length.end(); ++it)
-					*it += update_dist;
+				std::vector<double>::iterator it1(_length.begin() + pos_dt + 1);
+				_length.insert(it1, _length[pos] + len_seg1);
+				for (it1 = _length.begin() + pos_dt + 2; it1 != _length.end();
+				     ++it1)
+					*it1 += update_dist;
 			}
 		}
 	}
@@ -146,11 +150,13 @@ void Polyline::removePoint(std::size_t pos)
 	if (pos >= _ply_pnt_ids.size())
 		return;
 
-	_ply_pnt_ids.erase(_ply_pnt_ids.begin() + pos);
+	std::vector<std::size_t>::difference_type const pos_dt(
+	    static_cast<std::vector<std::size_t>::difference_type>(pos));
+	_ply_pnt_ids.erase(_ply_pnt_ids.begin() + pos_dt);
 
 	if (pos == _ply_pnt_ids.size())
 	{
-		_length.erase(_length.begin() + pos);
+		_length.erase(_length.begin() + pos_dt);
 		return;
 	}
 
@@ -163,7 +169,7 @@ void Polyline::removePoint(std::size_t pos)
 	} else {
 		const double len_seg0(_length[pos] - _length[pos - 1]);
 		const double len_seg1(_length[pos + 1] - _length[pos]);
-		_length.erase(_length.begin() + pos);
+		_length.erase(_length.begin() + pos_dt);
 		const double len_new_seg(std::sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[pos - 1]],
 		                                               *_ply_pnts[_ply_pnt_ids[pos]])));
 		double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
@@ -396,18 +402,18 @@ void Polyline::updatePointIDs(const std::vector<std::size_t> &pnt_ids)
 double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 	const double epsilon_radius) const
 {
-	double dist, lambda;
+	double dist(-1.0), lambda;
 	bool found = false;
 	// loop over all line segments of the polyline
-	for (std::size_t k = 0; k < this->getNumberOfPoints() - 1; k++) {
+	for (std::size_t k = 0; k < getNumberOfPoints() - 1; k++) {
 		// is the orthogonal projection of the j-th node to the
 		// line g(lambda) = _ply->getPoint(k) + lambda * (_ply->getPoint(k+1) - _ply->getPoint(k))
 		// at the k-th line segment of the polyline, i.e. 0 <= lambda <= 1?
 		if (MathLib::calcProjPntToLineAndDists(pnt.getCoords(),
-						(this->getPoint(k))->getCoords(), (this->getPoint(k + 1))->getCoords(),
+						(getPoint(k))->getCoords(), (getPoint(k + 1))->getCoords(),
 						lambda, dist) <= epsilon_radius) {
 
-			double act_length_of_ply(this->getLength(k));
+			double act_length_of_ply(getLength(k));
 			double seg_length (getLength(k+1)-getLength(k));
 			double lower_lambda (- epsilon_radius / seg_length);
 			double upper_lambda (1 + epsilon_radius / seg_length);
@@ -420,7 +426,9 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 		}
 	} // end line segment loop
 
-	return found ? dist : -1;
+	if (! found)
+		dist = -1.0;
+	return dist;
 }
 
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)

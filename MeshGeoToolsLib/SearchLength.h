@@ -27,6 +27,9 @@ public:
 	explicit SearchLength(double search_length = 1e-9)
 		: _search_length(search_length) {}
 
+	SearchLength(SearchLength const&) = default;
+	SearchLength& operator=(SearchLength const&) = default;
+
 	virtual ~SearchLength() = default;
 
 	virtual double getSearchLength() const

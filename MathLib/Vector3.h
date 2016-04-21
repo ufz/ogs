@@ -35,7 +35,7 @@ public:
 	/**
 	 * Default constructor. All coordinates are set to zero.
 	 */
-	TemplateVector3() : TemplatePoint<T>() {}
+	TemplateVector3() = default;
 
 	TemplateVector3(T x0, T x1, T x2)
 	{
@@ -47,9 +47,8 @@ public:
 	/**
 	 * Copy constructor.
 	 */
-	TemplateVector3(TemplateVector3<T> const& v) :
-		TemplatePoint<T>(v)
-	{}
+	TemplateVector3(TemplateVector3<T> const& v) = default;
+	TemplateVector3<T>& operator=(TemplateVector3<T> const& v) = default;
 
 	/**
 	 * Construct Vector3 from TemplatePoint.
@@ -68,8 +67,6 @@ public:
 		this->_x[1] = b[1] - a[1];
 		this->_x[2] = b[2] - a[2];
 	}
-
-	~TemplateVector3() {}
 
 	// vector arithmetic
 	TemplateVector3 operator+(TemplateVector3 const& v) const

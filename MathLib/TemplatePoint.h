@@ -46,7 +46,10 @@ public:
 	explicit TemplatePoint(std::array<T,DIM> const& x);
 
 	/** virtual destructor */
-	virtual ~TemplatePoint() {}
+	virtual ~TemplatePoint() = default;
+
+	TemplatePoint(TemplatePoint const& other) = default;
+	TemplatePoint& operator=(TemplatePoint const&) = default;
 
 	/** \brief const access operator
 	 *  The access to the point coordinates is like the access to a field. Code example:
