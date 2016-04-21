@@ -22,7 +22,7 @@ namespace MathLib
 /**
  * This class implements a one dimensional piecewise linear interpolation algorithm.
  */
-class PiecewiseLinearInterpolation
+class PiecewiseLinearInterpolation final
 {
 public:
 	/**
@@ -44,28 +44,9 @@ public:
 	 * @param supp_pnts_sorted false (default), if it is sure the supporting points are sorted
 	 * one can set the switch to true
 	 */
-	PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-	                             const std::vector<double>& values_at_supp_pnts,
+	PiecewiseLinearInterpolation(std::vector<double>&& supporting_points,
+	                             std::vector<double>&& values_at_supp_pnts,
 	                             bool supp_pnts_sorted = false);
-	/**
-	 * The same requirements on the input vectors supporting_points and values_at_supp_pnts
-	 * have to apply as for the previous constructor.
-	 * @param supporting_points vector of supporting points
-	 * @param values_at_supp_pnts vector of values at the supporting points
-	 * @param points_to_interpolate The points should be located within the range
-	 * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n} x_j\f$ and
-	 * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of this interval are extrapolated.
-	 * @param values_at_interpol_pnts The interpolated values corresponding to the entries
-	 * of the vector points_to_interpolate.
-	 * @param supp_pnts_sorted Is set to false per default. If it is sure that the supporting
-	 * points are sorted one can set the switch to true.
-	 */
-	PiecewiseLinearInterpolation(const std::vector<double>& supporting_points,
-	                             const std::vector<double>& values_at_supp_pnts,
-	                             const std::vector<double>& points_to_interpolate,
-	                             std::vector<double>& values_at_interpol_pnts,
-	                             bool supp_pnts_sorted = false);
-	virtual ~PiecewiseLinearInterpolation();
 
 	/**
 	 * \brief Calculates the interpolation value.

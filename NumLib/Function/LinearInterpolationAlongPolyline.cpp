@@ -55,7 +55,8 @@ MathLib::PiecewiseLinearInterpolation LinearInterpolationAlongPolyline::createIn
 		}
 	}
 
-	return MathLib::PiecewiseLinearInterpolation(vec_known_dist, vec_known_values);
+	return MathLib::PiecewiseLinearInterpolation{std::move(vec_known_dist),
+	                                             std::move(vec_known_values)};
 }
 
 double LinearInterpolationAlongPolyline::operator()(const MathLib::Point3d& pnt) const
