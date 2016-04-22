@@ -21,11 +21,12 @@
 #include "MathLib/Vector3.h"
 #include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
-#include <QtGui/QApplication>
+
+#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
+	QCoreApplication app(argc, argv);
 	LOGOG_INITIALIZE();
 	logog::Cout *logogCout(new logog::Cout);
 	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
@@ -85,4 +86,3 @@ int main(int argc, char *argv[])
 	LOGOG_SHUTDOWN();
 	return 0;
 }
-
