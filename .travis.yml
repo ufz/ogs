@@ -9,7 +9,7 @@ addons:
       - g++-4.8
       - qt4-dev-tools
       - libxt-dev
-      - libshp-dev
+      # - libshp-dev
 
 cache:
   directories:
@@ -28,10 +28,10 @@ matrix:
       env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
     - compiler: clang
       env: CASE=CLI CMAKE_ARGS="-DOGS_BUILD_GUI=OFF -DOGS_BUILD_UTILS=ON"
-    - compiler: gcc
-      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
-    - compiler: clang
-      env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
+    # - compiler: gcc
+    #  env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
+    # - compiler: clang
+    #  env: CASE=GUI CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_BUILD_TESTS=OFF"
     - compiler: gcc
       env: CASE=CONAN CMAKE_ARGS="-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON"
 
