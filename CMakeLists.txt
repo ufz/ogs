@@ -25,24 +25,8 @@ set(CMAKE_LIBRARY_SEARCH_PATH "" CACHE PATH
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults to native.")
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 
-### Conan package manager ###
-set(USE_CONAN false CACHE INTERNAL "")
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-	include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-	set(USE_CONAN true)
-elseif(EXISTS ${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
-	include(${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
-	set(USE_CONAN true)
-endif()
-if(USE_CONAN)
-	set(CMAKE_MODULE_PATH ${CONAN_CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH})
-	message(STATUS "Using conan package manager")
-	set(OGS_LIB_VTK System CACHE INTERNAL "")
-	set(OGS_LIB_BOOST System CACHE INTERNAL "")
-	set(OGS_LIB_EIGEN System CACHE INTERNAL "")
-endif()
-
 ### CMake includes ###
+include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
