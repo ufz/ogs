@@ -45,21 +45,15 @@ void createLocalAssemblers(
         GlobalDim,
         ExtraCtorArgs...>;
 
-    using LocalAssemblerBuilder =
-        AssemblerLib::LocalAssemblerBuilder<
-            MeshLib::Element,
-            LocalDataInitializer>;
-
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer;
-    LocalAssemblerBuilder local_asm_builder(initializer, dof_table);
+    LocalDataInitializer initializer(dof_table);
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalSetup::transform(
-            local_asm_builder,
+            initializer,
             mesh_elements,
             local_assemblers,
             integration_order,

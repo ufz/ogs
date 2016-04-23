@@ -16,8 +16,9 @@
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
-
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
+#include "LocalToGlobalIndexMap.h"
+
 
 #ifndef OGS_MAX_ELEMENT_DIM
 static_assert(false, "The macro OGS_MAX_ELEMENT_DIM is undefined.");
@@ -125,12 +126,13 @@ template <
     typename GlobalVector,
     unsigned GlobalDim,
     typename... ConstructorArgs>
-class LocalDataInitializer
+class LocalDataInitializer final
 {
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
-    LocalDataInitializer()
+    explicit LocalDataInitializer(LocalToGlobalIndexMap const& dof_table)
+        : _dof_table(dof_table)
     {
         // /// Lines and points ///////////////////////////////////
 
@@ -238,20 +240,25 @@ public:
 #endif
     }
 
-    /// Sets the provided data_ptr to the newly created local assembler data.
+    /// Sets the provided \c data_ptr to the newly created local assembler data.
+    ///
+    /// \attention
+    /// The index \c id is not necessarily the mesh item's id. Especially when
+    /// having multiple meshes it will differ from the latter.
     void operator()(
-            const MeshLib::Element& e,
+            std::size_t const id,
+            MeshLib::Element const& mesh_item,
             LADataIntfPtr& data_ptr,
-            std::size_t const local_matrix_size,
             unsigned const integration_order,
-            ConstructorArgs&&... args)
+            ConstructorArgs&&... args) const
     {
-        auto const type_idx = std::type_index(typeid(e));
-        auto it = _builder.find(type_idx);
+        auto const type_idx = std::type_index(typeid(mesh_item));
+        auto const it = _builder.find(type_idx);
 
         if (it != _builder.end()) {
+            auto const num_local_dof = _dof_table.getNumElementDOF(id);
             data_ptr = it->second(
-                           e, local_matrix_size, integration_order,
+                           mesh_item, num_local_dof, integration_order,
                            std::forward<ConstructorArgs>(args)...);
         } else {
             ERR("You are trying to build a local assembler for an unknown mesh element type (%s)."
@@ -279,7 +286,7 @@ private:
             IntegrationMethod<ShapeFunction>,
             GlobalMatrix, GlobalVector, GlobalDim>;
 
-    // Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
+    /// Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
     template<typename ShapeFct>
     static LADataBuilder makeLocalAssemblerBuilder()
     {
@@ -298,6 +305,8 @@ private:
 
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;
+
+    LocalToGlobalIndexMap const& _dof_table;
 };
 
 }   // namespace AssemblerLib
