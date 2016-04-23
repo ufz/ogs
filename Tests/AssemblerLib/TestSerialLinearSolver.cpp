@@ -17,7 +17,6 @@
 #include <gtest/gtest.h>
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
-#include "AssemblerLib/LocalAssemblerBuilder.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -82,25 +81,24 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     std::vector<LocalAssembler*> local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNElements());
 
-    typedef AssemblerLib::LocalAssemblerBuilder<
-            MeshLib::Element,
-            void (const MeshLib::Element &,
-                    Example::LocalAssemblerData<
-                        GlobalMatrix, GlobalVector> *&,
-                    std::size_t const local_matrix_size,
-                    Example const&)
-                > LocalAssemblerBuilder;
+    auto local_asm_builder =
+        [&](std::size_t const id,
+            MeshLib::Element const& item,
+            LocalAssembler*& item_data)
+    {
+        assert(local_to_global_index_map.size() > id);
 
-    LocalAssemblerBuilder local_asm_builder(
-        Example::initializeLocalData<GlobalMatrix, GlobalVector>,
-        local_to_global_index_map);
+        auto const num_local_dof = local_to_global_index_map.getNumElementDOF(id);
+
+        Example::initializeLocalData<GlobalMatrix, GlobalVector>(
+                    item, item_data, num_local_dof, ex1);
+    };
 
     // Call global initializer for each mesh element.
-    GlobalSetup::transform(
+    GlobalSetup::transformDereferenced(
             local_asm_builder,
             ex1.msh->getElements(),
-            local_assembler_data,
-            ex1);
+            local_assembler_data);
 
     // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
