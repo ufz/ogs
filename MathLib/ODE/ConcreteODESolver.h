@@ -67,8 +67,8 @@ public:
 		Implementation::setTolerance(abstol, reltol);
 	}
 
-	virtual void setIC(const double t0,
-	                   std::initializer_list<double> const& y0) override
+	void setIC(const double t0,
+	           std::initializer_list<double> const& y0) override
 	{
 		assert(y0.size() == NumEquations);
 		Implementation::setIC(t0, y0.begin());
@@ -87,7 +87,6 @@ public:
 	{
 		return MappedConstVector<NumEquations>{Implementation::getSolution()};
 	}
-
 	double getTime() const override { return Implementation::getTime(); }
 	Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
 	    const double t, const MappedConstVector<NumEquations>& y) const override
