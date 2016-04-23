@@ -29,7 +29,7 @@ bool f(const double,
 
 bool df(const double /*t*/,
         MathLib::MappedConstVector<1> const y,
-        MathLib::MappedVector<1> /*ydot*/,
+        MathLib::MappedConstVector<1> /*ydot*/,
         MathLib::MappedMatrix<1, 1> jac)
 {
 	if (y[0] <= 0.0) return false;
@@ -103,10 +103,17 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 	auto tree = boost::property_tree::ptree{};
 	BaseLib::ConfigTree config(tree, "", BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
-	auto ode_solver = MathLib::createOdeSolver<1, ExtraData>(config);
+	auto ode_solver = MathLib::createOdeSolver<1>(config);
 
 	ExtraData data;
-	ode_solver->setFunction(f_extra, nullptr, data);
+	auto f_lambda = [&](double t,
+	                    MathLib::MappedConstVector<1> const y,
+	                    MathLib::MappedVector<1> ydot)
+	{
+		return f_extra(t, y, ydot, data);
+	};
+
+	ode_solver->setFunction(f_lambda, nullptr);
 	ode_solver->setTolerance(1e-8, 1e-6);
 
 	ode_solver->setIC(t0, {y0});
@@ -133,7 +140,7 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 		// std::printf("time: %g\n", time_reached);
 	}
 
-	ode_solver->setFunction(f_extra, nullptr, data);
+	ode_solver->setFunction(f_lambda, nullptr);
 	ode_solver->preSolve();
 	for (unsigned i = 11; i <= 15; ++i)
 	{
