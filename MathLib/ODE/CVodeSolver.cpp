@@ -170,7 +170,10 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 	_cvode_mem =
 	    CVodeCreate(_linear_multistep_method, _nonlinear_solver_iteration);
 
-	assert(_cvode_mem != nullptr && _y != nullptr && _abstol != nullptr);
+	if (_cvode_mem == nullptr || _y == nullptr || _abstol == nullptr) {
+		ERR("couldn't allocate storage for CVode solver.");
+		std::abort();
+	}
 
 	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
 	                    void* function_handles) -> int
