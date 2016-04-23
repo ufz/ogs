@@ -300,16 +300,9 @@ CVodeSolverImpl::~CVodeSolverImpl()
 {
 	printStats(_cvode_mem);
 
-	if (_y)
-	{
-		N_VDestroy_Serial(_y);
-		N_VDestroy_Serial(_abstol);
-	}
-
-	if (_cvode_mem)
-	{
-		CVodeFree(&_cvode_mem);
-	}
+	N_VDestroy_Serial(_y);
+	N_VDestroy_Serial(_abstol);
+	CVodeFree(&_cvode_mem);
 }
 
 CVodeSolver::CVodeSolver(BaseLib::ConfigTree const& config,
