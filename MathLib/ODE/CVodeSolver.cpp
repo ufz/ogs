@@ -32,7 +32,8 @@ void check_error(std::string const& f_name, int const error_flag)
 
 void printStats(void* cvode_mem)
 {
-	long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
+	long int nst = 0, nfe = 0, nsetups = 0, nje = 0, nfeLS = 0, nni = 0,
+	         ncfn = 0, netf = 0, nge = 0;
 
 	check_error("CVodeGetNumSteps", CVodeGetNumSteps(cvode_mem, &nst));
 	check_error("CVodeGetNumRhsEvals", CVodeGetNumRhsEvals(cvode_mem, &nfe));
@@ -51,8 +52,8 @@ void printStats(void* cvode_mem)
 	DBUG("Sundials CVode solver. Statistics:");
 	DBUG("nst = %-6ld  nfe = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
 	     nst, nfe, nsetups, nfeLS, nje);
-	DBUG("nni = %-6ld ncfn = %-6ld    netf = %-6ld   nge = %ld\n", nni, ncfn, netf,
-	     nge);
+	DBUG("nni = %-6ld ncfn = %-6ld    netf = %-6ld   nge = %ld\n", nni, ncfn,
+	     netf, nge);
 }
 
 namespace MathLib
@@ -243,18 +244,23 @@ void CVodeSolverImpl::preSolve()
 
 	if (_f->hasJacobian())
 	{
-		auto df_wrapped = [](
-		    const long /*N*/, const realtype t, const N_Vector y,
-		    const N_Vector ydot, const DlsMat jac, void* function_handles,
-		    N_Vector /*tmp1*/, N_Vector /*tmp2*/, N_Vector /*tmp3*/
-		    ) -> int
+		auto df_wrapped = [](const long N, const realtype t, const N_Vector y,
+		                     const N_Vector ydot, const DlsMat jac,
+		                     void* function_handles, N_Vector /*tmp1*/,
+		                     N_Vector /*tmp2*/, N_Vector /*tmp3*/
+		                     ) -> int
 		{
+			(void)N;  // prevent warnings during non-debug build
+			auto* fh = static_cast<detail::FunctionHandles*>(function_handles);
+			assert(N == fh->getNumEquations());
+
 			// Caution: by calling the DENSE_COL() macro we assume that matrices
-			//          are stored contiguously in memory!
-			bool successful =
-			    static_cast<detail::FunctionHandles*>(function_handles)
-			        ->callJacobian(t, NV_DATA_S(y), NV_DATA_S(ydot),
-			                       DENSE_COL(jac, 0));
+			// are stored contiguously in memory!
+			// See also the header files sundials_direct.h and cvode_direct.h in
+			// the Sundials source code. The comments about the macro DENSE_COL
+			// in those files indicate that matrices are stored column-wise.
+			bool successful = fh->callJacobian(t, NV_DATA_S(y), NV_DATA_S(ydot),
+			                                   DENSE_COL(jac, 0));
 			return successful ? 0 : 1;
 		};
 
