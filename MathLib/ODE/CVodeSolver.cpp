@@ -20,6 +20,8 @@
 #include <sundials/sundials_dense.h> /* definitions DlsMat DENSE_ELEM */
 #include <sundials/sundials_types.h> /* definition of type realtype */
 
+#include "BaseLib/ConfigTree.h"
+
 void check_error(std::string const& f_name, int const error_flag)
 {
 	if (error_flag != CV_SUCCESS)

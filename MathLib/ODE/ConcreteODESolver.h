@@ -12,14 +12,13 @@
 
 #include <memory>
 
-#include "BaseLib/ConfigTree.h"
-
-#include "ODESolver.h"
 #include "FunctionHandles.h"
+#include "ODESolver.h"
 
-#ifdef CVODE_FOUND
-#include "CVodeSolver.h"
-#endif
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MathLib
 {

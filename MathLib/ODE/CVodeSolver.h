@@ -10,10 +10,15 @@
 #ifndef MATHLIB_CVODESOLVER_H
 #define MATHLIB_CVODESOLVER_H
 
-#include "BaseLib/ConfigTree.h"
+#include <memory>
 
 #include "ODESolverTypes.h"
 #include "FunctionHandles.h"
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MathLib
 {
