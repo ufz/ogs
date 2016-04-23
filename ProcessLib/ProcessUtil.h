@@ -12,7 +12,6 @@
 #include <vector>
 #include <logog/include/logog.hpp>
 
-#include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 
