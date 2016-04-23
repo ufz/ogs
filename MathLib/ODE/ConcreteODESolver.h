@@ -12,14 +12,10 @@
 
 #include <memory>
 
-#include "BaseLib/ConfigTree.h"
-
-#include "ODESolver.h"
 #include "FunctionHandles.h"
+#include "ODESolver.h"
 
-#ifdef CVODE_FOUND
-#include "CVodeSolver.h"
-#endif
+namespace BaseLib { class ConfigTree; }
 
 namespace MathLib
 {
@@ -113,18 +109,6 @@ private:
     createODESolver<NumEquations>(
         BaseLib::ConfigTree const& config);
 };
-
-template <unsigned NumEquations>
-std::unique_ptr<ODESolver<NumEquations>> createODESolver(
-    BaseLib::ConfigTree const& config)
-{
-#ifdef CVODE_FOUND
-    return std::unique_ptr<ODESolver<NumEquations>>(
-        new ConcreteODESolver<CVodeSolver, NumEquations>(config));
-#else
-    return nullptr;
-#endif  // CVODE_FOUND
-}
 
 }  // namespace MathLib
 
