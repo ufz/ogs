@@ -43,7 +43,7 @@ public:
 	    Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const& y0) = 0;
 
 	virtual void preSolve() = 0;
-	virtual void solve(const double t) = 0;
+	virtual bool solve(const double t) = 0;
 
 	virtual unsigned getNumEquations() const { return NumEquations; }
 	virtual MappedConstVector<NumEquations> getSolution() const = 0;

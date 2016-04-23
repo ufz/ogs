@@ -39,7 +39,7 @@ protected:
 	void setIC(const double t0, double const* const y0);
 
 	void preSolve();
-	void solve(const double t_end);
+	bool solve(const double t_end);
 
 	double const* getSolution() const;
 	double getTime() const;
