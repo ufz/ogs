@@ -14,7 +14,7 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "OdeSolver.h"
+#include "ODESolver.h"
 #include "FunctionHandles.h"
 
 #ifdef CVODE_FOUND
@@ -24,17 +24,17 @@
 namespace MathLib
 {
 template <unsigned NumEquations>
-std::unique_ptr<OdeSolver<NumEquations>> createOdeSolver(
+std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config);
 
 /**
  * ODE solver with a bounds-safe interface.
  *
- * This class makes contact between the abstract \c OdeSolver interface and a
+ * This class makes contact between the abstract \c ODESolver interface and a
  * certain solver \c Implementation.
  *
  * The interface of this class inherits the array bounds checking from \c
- * OdeSolver.
+ * ODESolver.
  * Its methods forward calls to the \c Implementation erasing array bounds info
  * by
  * passing \c std::array as raw pointer.
@@ -42,11 +42,11 @@ std::unique_ptr<OdeSolver<NumEquations>> createOdeSolver(
  * This way the \c Implementation does not need to be templated.
  */
 template <typename Implementation, unsigned NumEquations>
-class ConcreteOdeSolver final : public OdeSolver<NumEquations>,
+class ConcreteODESolver final : public ODESolver<NumEquations>,
                                 private Implementation
 {
 public:
-	using Interface = OdeSolver<NumEquations>;
+	using Interface = ODESolver<NumEquations>;
 	using Function = typename Interface::Function;
 	using JacobianFunction = typename Interface::JacobianFunction;
 
@@ -101,22 +101,22 @@ public:
 private:
 	/// instances of this class shall only be constructed by
 	/// the friend function listed below
-	ConcreteOdeSolver(BaseLib::ConfigTree const& config)
+	ConcreteODESolver(BaseLib::ConfigTree const& config)
 	    : Implementation{config, NumEquations}
 	{
 	}
 
-	friend std::unique_ptr<OdeSolver<NumEquations>>
-	createOdeSolver<NumEquations>(BaseLib::ConfigTree const& config);
+	friend std::unique_ptr<ODESolver<NumEquations>>
+	createODESolver<NumEquations>(BaseLib::ConfigTree const& config);
 };
 
 template <unsigned NumEquations>
-std::unique_ptr<OdeSolver<NumEquations>> createOdeSolver(
+std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config)
 {
 #ifdef CVODE_FOUND
-	return std::unique_ptr<OdeSolver<NumEquations>>(
-	    new ConcreteOdeSolver<CVodeSolver, NumEquations>(config));
+	return std::unique_ptr<ODESolver<NumEquations>>(
+	    new ConcreteODESolver<CVodeSolver, NumEquations>(config));
 #else
 	return nullptr;
 #endif  // CVODE_FOUND

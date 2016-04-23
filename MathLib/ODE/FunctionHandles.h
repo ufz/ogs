@@ -10,7 +10,7 @@
 #ifndef MATHLIB_ODE_HANDLES_H
 #define MATHLIB_ODE_HANDLES_H
 
-#include "OdeSolverTypes.h"
+#include "ODESolverTypes.h"
 
 namespace MathLib
 {

@@ -61,11 +61,11 @@ namespace MathLib
 /**
  * This class provides concrete access to Sundials' CVode solver.
  *
- * OdeSolver (implicitly bounds checked, agnostic to concrete ODE solver)
+ * ODESolver (implicitly bounds checked, agnostic to concrete ODE solver)
  *  |
  *  | Dynamic polymorphism
  *  v
- * ConcreteOdeSolver (implicitly bounds checked, interfaces with a specific
+ * ConcreteODESolver (implicitly bounds checked, interfaces with a specific
  * library)
  *  |
  *  | Forward calls, disable bounds checking, no need for templates anymore

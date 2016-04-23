@@ -12,7 +12,7 @@
 
 #include <array>
 
-#include "OdeSolverTypes.h"
+#include "ODESolverTypes.h"
 
 namespace MathLib
 {
@@ -24,7 +24,7 @@ namespace MathLib
  * ODE solver libraries. However, it is agnostic to the specific solver used.
  */
 template <unsigned NumEquations>
-class OdeSolver
+class ODESolver
 {
 public:
 	using Function = MathLib::Function<NumEquations>;
@@ -51,7 +51,7 @@ public:
 	virtual Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
 	    const double t, const MappedConstVector<NumEquations>& y) const = 0;
 
-	virtual ~OdeSolver() = default;
+	virtual ~ODESolver() = default;
 };
 
 }  // namespace MathLib
