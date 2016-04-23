@@ -33,8 +33,8 @@ using MappedConstVector = MappedConstMatrix<N, 1>;
 template <unsigned N>
 using Function = std::function<bool(
     const double t,
-    MappedConstVector<N> const y,
-    MappedVector<N> ydot)>;
+    MappedConstVector<N> const& y,
+    MappedVector<N>& ydot)>;
 
 // y read only
 // ydot is written in the function to be called.
@@ -42,9 +42,9 @@ using Function = std::function<bool(
 template <unsigned N>
 using JacobianFunction = std::function<bool(
     const double t,
-    MappedConstVector<N> const y,
-    MappedConstVector<N> ydot,
-    MappedMatrix<N, N> jac)>;
+    MappedConstVector<N> const& y,
+    MappedConstVector<N> const& ydot,
+    MappedMatrix<N, N>& jac)>;
 
 } // namespace MathLib
 
