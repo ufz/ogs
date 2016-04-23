@@ -301,7 +301,8 @@ setInitialConditions(ProjectData& project,
 
         // append a solution vector of suitable size
         _process_solutions.emplace_back(
-                    &MathLib::GlobalVectorProvider<Vector>::provider.getVector(ode_sys));
+                    &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+                        ode_sys.getMatrixSpecifications()));
 
         auto& x0 = *_process_solutions[pcs_idx];
         pcs.setInitialConditions(x0);

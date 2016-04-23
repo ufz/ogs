@@ -37,16 +37,14 @@ public:
     SimpleMatrixVectorProvider(SimpleMatrixVectorProvider const&) = delete;
     SimpleMatrixVectorProvider& operator=(SimpleMatrixVectorProvider const&) = delete;
 
-    using MSP = MatrixSpecificationsProvider;
-
     Vector& getVector() override;
     Vector& getVector(std::size_t& id) override;
 
     Vector& getVector(Vector const& x) override;
     Vector& getVector(Vector const& x, std::size_t& id) override;
 
-    Vector& getVector(MSP const& msp) override;
-    Vector& getVector(MSP const& msp, std::size_t& id) override;
+    Vector& getVector(MatrixSpecifications const& ms) override;
+    Vector& getVector(MatrixSpecifications const& ms, std::size_t& id) override;
 
     void releaseVector(Vector const& x) override;
 
@@ -56,8 +54,8 @@ public:
     Matrix& getMatrix(Matrix const& A) override;
     Matrix& getMatrix(Matrix const& A, std::size_t& id) override;
 
-    Matrix& getMatrix(MSP const& msp) override;
-    Matrix& getMatrix(MSP const& msp, std::size_t& id) override;
+    Matrix& getMatrix(MatrixSpecifications const& ms) override;
+    Matrix& getMatrix(MatrixSpecifications const& ms, std::size_t& id) override;
 
     void releaseMatrix(Matrix const& A) override;
 
