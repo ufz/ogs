@@ -66,6 +66,11 @@ void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector con
     y = a*x + b*y;
 }
 
+//! Computes \f$w = x/y\f$ componentwise.
+template<typename MatrixOrVector>
+void componentwiseDivide(MatrixOrVector& w,
+                         MatrixOrVector const& x, MatrixOrVector const& y);
+
 //! Computes the Manhattan norm of \c x.
 template<typename MatrixOrVector>
 double norm1(MatrixOrVector const& x);

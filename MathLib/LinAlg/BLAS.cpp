@@ -20,6 +20,15 @@ namespace MathLib { namespace BLAS
 {
 
 // Explicit specialization
+// Computes w = x/y componentwise.
+template<>
+void componentwiseDivide(Eigen::VectorXd& w,
+                         Eigen::VectorXd const& x, Eigen::VectorXd const& y)
+{
+    w.noalias() = x.cwiseQuotient(y);
+}
+
+// Explicit specialization
 // Computes the Manhattan norm of x
 template<>
 double norm1(Eigen::VectorXd const& x)
@@ -88,6 +97,15 @@ void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 {
     // TODO check sizes
     VecAXPBY(*y.getRawVector(), a, b, *x.getRawVector());
+}
+
+// Explicit specialization
+// Computes w = x/y componentwise.
+template<>
+void componentwiseDivide(PETScVector& w,
+                         PETScVector const& x, PETScVector const& y)
+{
+    VecPointwiseDivide(*w.getRawVector(), *x.getRawVector(), *y.getRawVector());
 }
 
 // Explicit specialization
@@ -222,6 +240,16 @@ void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 {
     // TODO: does that break anything?
     y.getRawVector() = a*x.getRawVector() + b*y.getRawVector();
+}
+
+// Explicit specialization
+// Computes w = x/y componentwise.
+template<>
+void componentwiseDivide(EigenVector& w,
+                         EigenVector const& x, EigenVector const& y)
+{
+    w.getRawVector().noalias() =
+            x.getRawVector().cwiseQuotient(y.getRawVector());
 }
 
 // Explicit specialization
