@@ -38,23 +38,6 @@ using JacobianFunction = std::function<bool(const double t,
                                             MappedConstVector<N> ydot,
                                             MappedMatrix<N, N> jac)>;
 
-// This is an internal detail
-class FunctionHandles
-{
-public:
-	virtual bool call(const double t, double const* const y,
-	                  double* const ydot) = 0;
-	virtual bool callJacobian(const double t,
-	                          double const* const y,
-	                          double* const ydot,
-	                          double* const jac) = 0;
-
-	virtual bool hasJacobian() const = 0;
-
-	virtual unsigned getNumEquations() const = 0;
-
-	virtual ~FunctionHandles() = default;
-};
-}
+}  // namespace MathLib
 
 #endif  // MATHLIB_ODE_ODESOLVERTYPES_H
