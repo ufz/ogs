@@ -223,6 +223,7 @@ void CVodeSolverImpl::preSolve()
 {
 	assert(_f != nullptr && "ode function handle was not provided");
 
+	// sets initial conditions
 	check_error("CVodeReInit", CVodeReInit(_cvode_mem, _t, _y));
 
 	check_error("CVodeSetUserData", CVodeSetUserData(_cvode_mem,
