@@ -94,7 +94,7 @@ private:
 	void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
 
 	void preSolve();
-	void solve(const double t_end);
+	bool solve(const double t_end);
 
 	double const* getSolution() const { return NV_DATA_S(_y); }
 	double getTime() const { return _t; }
@@ -262,12 +262,17 @@ void CVodeSolverImpl::preSolve()
 	}
 }
 
-void CVodeSolverImpl::solve(const double t_end)
+bool CVodeSolverImpl::solve(const double t_end)
 {
 	realtype t_reached;
 	check_error("CVode solve", CVode(_cvode_mem, t_end, _y, &t_reached,
 	            CV_NORMAL));
 	_t = t_reached;
+
+	// check_error asserts that t_end == t_reached and that solving the ODE
+	// went fine. Otherwise the program will be aborted. Therefore, we don't
+	// have to check manually for errors here and can always savely return true.
+	return true;
 }
 
 void CVodeSolverImpl::getYDot(const double t, double const* const y,
@@ -324,9 +329,9 @@ void CVodeSolver::preSolve()
 	_impl->preSolve();
 }
 
-void CVodeSolver::solve(const double t_end)
+bool CVodeSolver::solve(const double t_end)
 {
-	_impl->solve(t_end);
+	return _impl->solve(t_end);
 }
 
 double const* CVodeSolver::getSolution() const

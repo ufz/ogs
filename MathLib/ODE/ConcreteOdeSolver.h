@@ -86,7 +86,7 @@ public:
 	}
 
 	void preSolve() override { Implementation::preSolve(); }
-	void solve(const double t) override { Implementation::solve(t); }
+	bool solve(const double t) override { return Implementation::solve(t); }
 	MappedConstVector<NumEquations> getSolution() const override
 	{
 		return MappedConstVector<NumEquations>{Implementation::getSolution()};
