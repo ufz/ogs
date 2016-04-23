@@ -45,11 +45,8 @@ class ConcreteODESolver final : public ODESolver<NumEquations>,
                                 private Implementation
 {
 public:
-	using Interface = ODESolver<NumEquations>;
-	using Function = typename Interface::Function;
-	using JacobianFunction = typename Interface::JacobianFunction;
-
-	void setFunction(Function f, JacobianFunction df) override
+	void setFunction(MathLib::Function<NumEquations> f,
+	                 MathLib::JacobianFunction<NumEquations> df) override
 	{
 		Implementation::setFunction(
 		    std::unique_ptr<detail::FunctionHandlesImpl<NumEquations>>{
