@@ -162,7 +162,7 @@ TEST(MathLibCVodeTest, Exponential)
 	ode_solver->setFunction(f, nullptr);
 	ode_solver->setTolerance(1e-8, 1e-6);
 
-	ode_solver->setIC(t0, {{y0}});
+	ode_solver->setIC(t0, {y0});
 
 	ode_solver->preSolve();
 
@@ -204,7 +204,7 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 	ode_solver->setFunction(f_extra, nullptr, data);
 
 	ode_solver->setTolerance(1e-8, 1e-6);
-	ode_solver->setIC(t0, {{y0}});
+	ode_solver->setIC(t0, {y0});
 	ode_solver->preSolve();
 
 	const double dt = 1e-1;
@@ -265,7 +265,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
 	ode_solver->setFunction(f, df);
 	ode_solver->setTolerance(1e-10, 1e-8);
 
-	ode_solver->setIC(t0, {{y0}});
+	ode_solver->setIC(t0, {y0});
 
 	ode_solver->preSolve();
 
@@ -308,7 +308,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
 	ode_solver->setFunction(f, df);
 	ode_solver->setTolerance(1e-6, 1e-6);
 
-	ode_solver->setIC(t0, {{y0}});
+	ode_solver->setIC(t0, {y0});
 
 	ode_solver->preSolve();
 
