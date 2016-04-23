@@ -10,6 +10,7 @@
 #ifndef MATHLIB_ODE_ODESOLVERTYPES_H
 #define MATHLIB_ODE_ODESOLVERTYPES_H
 
+#include <functional>
 #include <Eigen/Core>
 
 namespace MathLib
@@ -29,21 +30,21 @@ using MappedConstVector = MappedConstMatrix<N, 1>;
 
 // y read only
 // ydot is written in the function to be called.
-template <unsigned N, typename... FunctionArguments>
-using Function = bool (*)(const double t,
-                          MappedConstVector<N> const y,
-                          MappedVector<N> ydot,
-                          FunctionArguments&... arg);
+template <unsigned N>
+using Function = std::function<bool(
+    const double t,
+    MappedConstVector<N> const y,
+    MappedVector<N> ydot)>;
 
 // y read only
 // ydot is written in the function to be called.
 // jac is written in the function to be called.
-template <unsigned N, typename... FunctionArguments>
-using JacobianFunction = bool (*)(const double t,
-                                  MappedConstVector<N> const y,
-                                  MappedVector<N> ydot,
-                                  MappedMatrix<N, N> jac,
-                                  FunctionArguments&... arg);
+template <unsigned N>
+using JacobianFunction = std::function<bool(
+    const double t,
+    MappedConstVector<N> const y,
+    MappedConstVector<N> ydot,
+    MappedMatrix<N, N> jac)>;
 
 // This is an internal detail
 class FunctionHandles
