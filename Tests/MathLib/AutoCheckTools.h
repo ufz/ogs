@@ -96,7 +96,7 @@ struct randomCoordinateIndexGenerator
     }
 };
 
-static double absoluteValue(double&& v, std::size_t)
+inline double absoluteValue(double&& v, std::size_t)
 {
     return std::abs(v);
 }
