@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 #include <logog/include/logog.hpp>
 
-#include "MathLib/ODE/ConcreteOdeSolver.h"
+#include "MathLib/ODE/ConcreteODESolver.h"
 
 const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
@@ -62,18 +62,18 @@ bool any_ode_solver_libs_available()
 }
 
 template <unsigned NumEquations>
-std::unique_ptr<MathLib::OdeSolver<NumEquations>> make_ode_solver(
+std::unique_ptr<MathLib::ODESolver<NumEquations>> make_ode_solver(
     boost::property_tree::ptree const& conf)
 {
 	BaseLib::ConfigTree config(conf, "", BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
-	return MathLib::createOdeSolver<NumEquations>(config);
+	return MathLib::createODESolver<NumEquations>(config);
 }
 
 // There is no definition of this function in order to prevent passing temporary
 // property trees! There will be linker errors if you do so anyway.
 template <unsigned NumEquations>
-std::unique_ptr<MathLib::OdeSolver<NumEquations>> make_ode_solver(
+std::unique_ptr<MathLib::ODESolver<NumEquations>> make_ode_solver(
     boost::property_tree::ptree&&);
 
 void check(const double time_reached, const double y, const double y_dot,
