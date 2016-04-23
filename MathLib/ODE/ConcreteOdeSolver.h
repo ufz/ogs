@@ -41,7 +41,7 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
  *
  * This way the \c Implementation does not need to be templated.
  */
-template <unsigned NumEquations, typename Implementation,
+template <typename Implementation, unsigned NumEquations,
           typename... FunctionArguments>
 class ConcreteOdeSolver final
     : public OdeSolver<NumEquations, FunctionArguments...>,
@@ -122,7 +122,7 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
 {
 #ifdef CVODE_FOUND
 	return std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>(
-	    new ConcreteOdeSolver<NumEquations, CVodeSolver, FunctionArguments...>(
+	    new ConcreteOdeSolver<CVodeSolver, NumEquations, FunctionArguments...>(
 	        config));
 #else
 	return nullptr;
