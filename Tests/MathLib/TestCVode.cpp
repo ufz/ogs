@@ -17,8 +17,8 @@ const double rel_tol = 1e-8;
 
 
 bool f(const double,
-       MathLib::MappedConstVector<1> const y,
-       MathLib::MappedVector<1> ydot)
+       MathLib::MappedConstVector<1> const& y,
+       MathLib::MappedVector<1>& ydot)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -27,9 +27,9 @@ bool f(const double,
 }
 
 bool df(const double /*t*/,
-        MathLib::MappedConstVector<1> const y,
-        MathLib::MappedConstVector<1> /*ydot*/,
-        MathLib::MappedMatrix<1, 1> jac)
+        MathLib::MappedConstVector<1> const& y,
+        MathLib::MappedConstVector<1> const& /*ydot*/,
+        MathLib::MappedMatrix<1, 1>& jac)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -43,8 +43,8 @@ struct ExtraData
 };
 
 bool f_extra(const double,
-             MathLib::MappedConstVector<1> const y,
-             MathLib::MappedVector<1> ydot,
+             MathLib::MappedConstVector<1> const& y,
+             MathLib::MappedVector<1>& ydot,
              ExtraData& data)
 {
 	if (y[0] <= 0.0) return false;
@@ -156,8 +156,8 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 	ExtraData data;
 	auto f_lambda = [&](double t,
-		MathLib::MappedConstVector<1> const y,
-		MathLib::MappedVector<1> ydot)
+		MathLib::MappedConstVector<1> const& y,
+		MathLib::MappedVector<1>& ydot)
 	{
 		return f_extra(t, y, ydot, data);
 	};
