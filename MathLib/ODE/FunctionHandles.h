@@ -44,7 +44,11 @@ struct FunctionHandlesImpl : FunctionHandles
 	bool call(const double t, const double* const y,
 	          double* const ydot) override
 	{
-		if (f) return f(t, MappedConstVector<N>{y}, MappedVector<N>{ydot});
+		if (f)
+		{
+			MappedVector<N> ydot_mapped{ydot};
+			return f(t, MappedConstVector<N>{y}, ydot_mapped);
+		}
 		return false;
 	}
 
@@ -52,10 +56,13 @@ struct FunctionHandlesImpl : FunctionHandles
 	                  double* const jac) override
 	{
 		if (df)
+		{
+			MappedMatrix<N, N> jac_mapped{jac};
 			return df(t,
 			          MappedConstVector<N>{y},
 			          MappedConstVector<N>{ydot},
-			          MappedMatrix<N, N>{jac});
+			          jac_mapped);
+		}
 		return false;
 	}
 
