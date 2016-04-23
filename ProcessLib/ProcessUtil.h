@@ -52,7 +52,7 @@ void createLocalAssemblers(
     LocalDataInitializer initializer(dof_table);
 
     DBUG("Calling local assembler builder for all mesh elements.");
-    GlobalSetup::transform(
+    GlobalSetup::transformDereferenced(
             initializer,
             mesh_elements,
             local_assemblers,

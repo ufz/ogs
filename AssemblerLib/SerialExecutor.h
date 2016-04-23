@@ -78,25 +78,27 @@ struct SerialExecutor
     /// \tparam C    input container type.
     /// \tparam Data input/output container type.
     ///
-    /// \param f     a function that accepts a pointer to container's elements,
-    ///              an index, and a second container element as arguments, which
-    ///              is modified.
-    /// \param c     a container supporting const access over operator[] and size().
-    /// \param data  a container supporting non-const access over operator[] and size().
+    /// \param f    a function that accepts a pointer to container's elements,
+    ///             an index, and a second container element as arguments, which
+    ///             is modified.
+    /// \param c    a container supporting const access over operator[] and size().
+    ///             The elements of \c c must have pointer semantics, i.e.,
+    ///             support dereferencing via unary operator*().
+    /// \param data a container supporting non-const access over operator[] and size().
     /// \param args additional arguments passed to \c f
     template <typename F, typename C, typename Data, typename ...Args_>
     static
     void
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
-    transform(F& f, C const& c, Data& data, Args_&&... args)
+    transformDereferenced(F& f, C const& c, Data& data, Args_&&... args)
 #else
-    transform(F const& f, C const& c, Data& data, Args_&&... args)
+    transformDereferenced(F const& f, C const& c, Data& data, Args_&&... args)
 #endif
     {
         assert(c.size() == data.size());
 
         for (std::size_t i = 0; i < c.size(); i++)
-            f(i, c[i], data[i], std::forward<Args_>(args)...);
+            f(i, *c[i], data[i], std::forward<Args_>(args)...);
     }
 };
 
