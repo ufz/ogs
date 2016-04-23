@@ -39,7 +39,7 @@ public:
 	virtual void setTolerance(const double abstol, const double reltol) = 0;
 
 	virtual void setIC(const double t0,
-	                   std::array<double, NumEquations> const& y0) = 0;
+	                   std::initializer_list<double> const& y0) = 0;
 	virtual void setIC(
 	    const double t0,
 	    Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const& y0) = 0;
