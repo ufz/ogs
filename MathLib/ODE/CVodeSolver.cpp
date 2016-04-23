@@ -22,7 +22,7 @@
 
 void check_error(std::string const& f_name, int const error_flag)
 {
-	if (error_flag != 0)
+	if (error_flag != CV_SUCCESS)
 	{
 		ERR("CVodeSolver: %s failed with error flag %d.", f_name.c_str(),
 		    error_flag);
