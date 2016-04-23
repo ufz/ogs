@@ -9,18 +9,17 @@
 
 #ifdef CVODE_FOUND
 
-extern "C" {
+#include "CVodeSolver.h"
+
+#include <cassert>
+#include <logog/include/logog.hpp>
+
 #include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
 #include <cvode/cvode_dense.h>       /* prototype for CVDense */
 #include <sundials/sundials_dense.h> /* definitions DlsMat DENSE_ELEM */
 #include <sundials/sundials_types.h> /* definition of type realtype */
-}
 
-#include "CVodeSolver.h"
-
-#include <cassert>
-#include <logog/include/logog.hpp>
 
 template <typename F, typename ...Args>
 void check_error(std::string const& f_name, F& f, Args&&... args)
