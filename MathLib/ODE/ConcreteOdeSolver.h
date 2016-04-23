@@ -73,10 +73,11 @@ public:
 		Implementation::setTolerance(abstol, reltol);
 	}
 
-	void setIC(const double t0,
-	           std::array<double, NumEquations> const& y0) override
+	virtual void setIC(const double t0,
+	                   std::initializer_list<double> const& y0) override
 	{
-		Implementation::setIC(t0, y0.data());
+		assert(y0.size() == NumEquations);
+		Implementation::setIC(t0, y0.begin());
 	}
 
 	void setIC(const double t0,
