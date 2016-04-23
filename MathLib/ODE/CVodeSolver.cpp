@@ -23,6 +23,14 @@
 #include "BaseLib/ConfigTree.h"
 
 
+//! \addtogroup ExternalODESolverInterface
+//! @{
+
+/*! Checks Sundials error flags and aborts the program in case of error.
+ *
+ * \param f_name name of the function that returned the \c error_flag
+ * \param error_flag the error flag to be checked
+ */
 void check_error(std::string const& f_name, int const error_flag)
 {
     if (error_flag != CV_SUCCESS)
@@ -33,6 +41,7 @@ void check_error(std::string const& f_name, int const error_flag)
     }
 }
 
+//! Prints some statistics about an ODE solver run.
 void printStats(void* cvode_mem)
 {
     long int nst = 0, nfe = 0, nsetups = 0, nje = 0, nfeLS = 0, nni = 0,
@@ -59,42 +68,29 @@ void printStats(void* cvode_mem)
          nni, ncfn, netf, nge);
 }
 
+//! @}
 
 namespace MathLib
 {
-/**
- * This class provides concrete access to Sundials' CVode solver.
+
+//! \addtogroup ExternalODESolverInterface
+//! @{
+
+/*! This class provides concrete access to Sundials' CVode solver.
  *
- * ODESolver (implicitly bounds checked, agnostic to concrete ODE solver)
- *  |
- *  | Dynamic polymorphism
- *  v
- * ConcreteODESolver (implicitly bounds checked, interfaces with a specific
- * library)
- *  |
- *  | Forward calls, disable bounds checking, no need for templates anymore
- *  v
- * Implementation = CVodeSolver (no templates)
- *  |
- *  | Pimpl (hide implementation, do not include 3rd party libs in header)
- *  v
- * CVodeSolverImpl
- *
- * This scheme might be a general way for accessing 3rd party libraries.
+ * This class is the implementation part in the pimpl idiom used by the
+ * CVodeSolver class. Therefore all if this classes methods are only forwarded
+ * from CVodeSolver.
  */
-class CVodeSolverImpl
+class CVodeSolverImpl final
 {
     static_assert(std::is_same<realtype, double>::value,
-                  "cvode's realtype is not the same as double");
+                  "CVode's realtype is not the same as double");
 
 public:
     CVodeSolverImpl(BaseLib::ConfigTree const& config,
                     unsigned const num_equations);
 
-    friend class CVodeSolver;
-    ~CVodeSolverImpl();
-
-private:
     void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
 
     void preSolve();
@@ -107,22 +103,31 @@ private:
     void setTolerance(const double abstol, const double reltol);
     void setIC(const double t0, double const* const y0);
 
+    ~CVodeSolverImpl();
+
 private:
-    N_Vector _y = nullptr;
+    N_Vector _y = nullptr;      //!< The solution vector.
 
-    realtype _t;
+    realtype _t;                //! current time
 
-    N_Vector _abstol = nullptr;
-    realtype _reltol;
+    N_Vector _abstol = nullptr; //!< Array of absolute tolerances.
+    realtype _reltol;           //!< Relative tolerance
 
-    unsigned _num_equations;
-    void* _cvode_mem;
+    unsigned _num_equations;    //!< Number of equations in the ODE system.
+    void* _cvode_mem;           //!< CVode's internal memory
 
+    //! Function handles that compute \f$\partial \dot y/\partial y\f$
+    //! and \f$\dot y\f$.
     std::unique_ptr<detail::FunctionHandles> _f;
 
+    //! The multistep method used for solving the ODE.
     int _linear_multistep_method = CV_ADAMS;
+
+    //! Either solve via fixed-point iteration or via Newton-Raphson method.
     int _nonlinear_solver_iteration = CV_FUNCTIONAL;
 };
+
+//! @}
 
 CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
                                  const unsigned num_equations)

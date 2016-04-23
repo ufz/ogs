@@ -23,8 +23,10 @@ template <unsigned NumEquations>
 std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config);
 
-/**
- * ODE solver with a bounds-safe interface.
+//! \addtogroup ExternalODESolverInterface
+//! @{
+
+/*! ODE solver with a bounds-safe interface using a concrete implementation.
  *
  * This class makes contact between the abstract \c ODESolver interface and a
  * certain solver \c Implementation.
@@ -32,10 +34,16 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
  * The interface of this class inherits the array bounds checking from \c
  * ODESolver.
  * Its methods forward calls to the \c Implementation erasing array bounds info
- * by
- * passing \c std::array as raw pointer.
+ * by passing \c std::array and Eigen::Matrix arguments as raw pointers.
  *
- * This way the \c Implementation does not need to be templated.
+ * Thus the \c Implementation does not need template to be templated
+ * which makes it possible for \c Implementation to use the pimpl idiom whereby
+ * the headers of external libraries only have to be included in the final cpp
+ * file. Thereby our namespaces do not get polluted with symbols from external
+ * libraries.
+ *
+ * \tparam NumEquations the number of equations in the ODE system.
+ * \tparam Implementation a concrete ODE solver implementation used as a backend.
  */
 template <typename Implementation,
           unsigned NumEquations>
@@ -44,8 +52,8 @@ class ConcreteODESolver final
       private Implementation
 {
 public:
-    void setFunction(MathLib::Function<NumEquations> f,
-                     MathLib::JacobianFunction<NumEquations> df) override
+    void setFunction(Function<NumEquations> f,
+                     JacobianFunction<NumEquations> df) override
     {
         Implementation::setFunction(
             std::unique_ptr<
@@ -95,8 +103,7 @@ public:
     }
 
 private:
-    /// instances of this class shall only be constructed by
-    /// the friend function listed below
+    //! Instances of this class shall only be constructed by createODESolver().
     ConcreteODESolver(BaseLib::ConfigTree const& config)
         : Implementation{config, NumEquations}
     {
@@ -106,6 +113,8 @@ private:
     createODESolver<NumEquations>(
         BaseLib::ConfigTree const& config);
 };
+
+//! @}
 
 }  // namespace MathLib
 

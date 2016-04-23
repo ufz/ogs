@@ -19,22 +19,33 @@ namespace BaseLib { class ConfigTree; }
 
 namespace MathLib
 {
+
+//! \addtogroup ExternalODESolverInterface
+//! @{
+
 class CVodeSolverImpl;
 
-/**
- * ODE solver, general, pointer based implementation. No implicit bounds
- * checking
+/*! ODE solver interfacing with Sundials' CVode.
  *
- * For internal use only.
+ * All methods of this class have the same semantics as methods from the
+ * ODESolver interface with the same name.
+ *
+ * There is no implicit information about vector and matrix sizes in this class
+ * anymore, rather this class only handles raw pointers. But this is exactly
+ * what is necessary when using C libraries like Sundials.
+ *
+ * \note
+ * This class is for internal use only. Therefore all members of this class are
+ * protected, namely because ConcreteODESolver derives from this class.
  */
 class CVodeSolver
 {
 protected:
+    //! Construct from the given \c config with storage allocated for the given
+    //! \c num_equations.
     CVodeSolver(BaseLib::ConfigTree const& config,
                 unsigned const num_equations);
 
-    /// Set tolerances for all equations. The abstol is a pointer to an array of
-    /// same size as the number of equations.
     void setTolerance(double const* const abstol, const double reltol);
     void setTolerance(const double abstol, const double reltol);
 
@@ -47,16 +58,16 @@ protected:
 
     double const* getSolution() const;
     double getTime() const;
-    void getYDot(const double t,
-                 double const* const y,
-                 double* const y_dot) const;
+    void getYDot(const double t, double const* const y, double* const y_dot) const;
 
     ~CVodeSolver();
 
 private:
-    std::unique_ptr<CVodeSolverImpl>
-        _impl;  ///< pimpl idiom hides sundials headers.
+    //! pimpl idiom.
+    std::unique_ptr<CVodeSolverImpl> _impl;
 };
+
+//! @}}
 
 }  // namespace MathLib
 
