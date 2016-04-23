@@ -20,11 +20,9 @@
 #include <sundials/sundials_dense.h> /* definitions DlsMat DENSE_ELEM */
 #include <sundials/sundials_types.h> /* definition of type realtype */
 
-
-template <typename F, typename... Args>
-void check_error(std::string const& f_name, F& f, Args&&... args)
+void check_error(std::string const& f_name, int const error_flag)
 {
-	if (int error_flag = f(std::forward<Args>(args)...) != 0)
+	if (error_flag != CV_SUCCESS)
 	{
 		ERR("CVodeSolver: %s failed with error flag %d.", f_name.c_str(),
 		    error_flag);
@@ -32,32 +30,29 @@ void check_error(std::string const& f_name, F& f, Args&&... args)
 	}
 }
 
-namespace
-{
 void printStats(void* cvode_mem)
 {
 	long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
 
-	check_error("CVodeGetNumSteps", CVodeGetNumSteps, cvode_mem, &nst);
-	check_error("CVodeGetNumRhsEvals", CVodeGetNumRhsEvals, cvode_mem, &nfe);
-	check_error("CVodeGetNumLinSolvSetups", CVodeGetNumLinSolvSetups, cvode_mem,
-	            &nsetups);
-	check_error("CVodeGetNumErrTestFails", CVodeGetNumErrTestFails, cvode_mem,
-	            &netf);
-	check_error("CVodeGetNumNonlinSolvIters", CVodeGetNumNonlinSolvIters,
-	            cvode_mem, &nni);
+	check_error("CVodeGetNumSteps", CVodeGetNumSteps(cvode_mem, &nst));
+	check_error("CVodeGetNumRhsEvals", CVodeGetNumRhsEvals(cvode_mem, &nfe));
+	check_error("CVodeGetNumLinSolvSetups",
+	            CVodeGetNumLinSolvSetups(cvode_mem, &nsetups));
+	check_error("CVodeGetNumErrTestFails",
+	            CVodeGetNumErrTestFails(cvode_mem, &netf));
+	check_error("CVodeGetNumNonlinSolvIters",
+	            CVodeGetNumNonlinSolvIters(cvode_mem, &nni));
 	check_error("CVodeGetNumNonlinSolvConvFails",
-	            CVodeGetNumNonlinSolvConvFails, cvode_mem, &ncfn);
-	check_error("CVDlsGetNumJacEvals", CVDlsGetNumJacEvals, cvode_mem, &nje);
-	check_error("CVDlsGetNumRhsEvals", CVDlsGetNumRhsEvals, cvode_mem, &nfeLS);
-	check_error("CVodeGetNumGEvals", CVodeGetNumGEvals, cvode_mem, &nge);
+	            CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn));
+	check_error("CVDlsGetNumJacEvals", CVDlsGetNumJacEvals(cvode_mem, &nje));
+	check_error("CVDlsGetNumRhsEvals", CVDlsGetNumRhsEvals(cvode_mem, &nfeLS));
+	check_error("CVodeGetNumGEvals", CVodeGetNumGEvals(cvode_mem, &nge));
 
 	DBUG("\nFinal Statistics:");
 	DBUG("nst = %-6ld nfe  = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
 	     nst, nfe, nsetups, nfeLS, nje);
 	DBUG("nni = %-6ld ncfn = %-6ld netf = %-6ld nge = %ld\n", nni, ncfn, netf,
 	     nge);
-}
 }
 
 namespace MathLib
@@ -174,7 +169,11 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 	_cvode_mem =
 	    CVodeCreate(_linear_multistep_method, _nonlinear_solver_iteration);
 
-	assert(_cvode_mem != nullptr && _y != nullptr && _abstol != nullptr);
+	if (_cvode_mem == nullptr || _y == nullptr || _abstol == nullptr)
+	{
+		ERR("couldn't allocate storage for CVode solver.");
+		std::abort();
+	}
 
 	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
 	                    void* function_handles) -> int
@@ -184,7 +183,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 		return successful ? 0 : 1;
 	};
 
-	check_error("CVodeInit", CVodeInit, _cvode_mem, f_wrapped, 0.0, _y);
+	check_error("CVodeInit", CVodeInit(_cvode_mem, f_wrapped, 0.0, _y));
 }
 
 void CVodeSolverImpl::setTolerance(const double* abstol, const double reltol)
@@ -227,18 +226,18 @@ void CVodeSolverImpl::preSolve()
 {
 	assert(_f != nullptr && "ode function handle was not provided");
 
-	check_error("CVodeReInit", CVodeReInit, _cvode_mem, _t, _y);
+	check_error("CVodeReInit", CVodeReInit(_cvode_mem, _t, _y));
 
-	check_error("CVodeSetUserData", CVodeSetUserData, _cvode_mem,
-	            static_cast<void*>(_f.get()));
+	check_error("CVodeSetUserData",
+	            CVodeSetUserData(_cvode_mem, static_cast<void*>(_f.get())));
 
 	/* Call CVodeSVtolerances to specify the scalar relative tolerance
 	 * and vector absolute tolerances */
-	check_error("CVodeSVtolerances", CVodeSVtolerances, _cvode_mem, _reltol,
-	            _abstol);
+	check_error("CVodeSVtolerances",
+	            CVodeSVtolerances(_cvode_mem, _reltol, _abstol));
 
 	/* Call CVDense to specify the CVDENSE dense linear solver */
-	check_error("CVDense", CVDense, _cvode_mem, _num_equations);
+	check_error("CVDense", CVDense(_cvode_mem, _num_equations));
 
 	if (_f->hasJacobian())
 	{
@@ -257,16 +256,16 @@ void CVodeSolverImpl::preSolve()
 			return successful ? 0 : 1;
 		};
 
-		check_error("CVDlsSetDenseJacFn", CVDlsSetDenseJacFn, _cvode_mem,
-		            df_wrapped);
+		check_error("CVDlsSetDenseJacFn",
+		            CVDlsSetDenseJacFn(_cvode_mem, df_wrapped));
 	}
 }
 
 void CVodeSolverImpl::solve(const double t_end)
 {
 	realtype t_reached;
-	check_error("CVode solve", CVode, _cvode_mem, t_end, _y, &t_reached,
-	            CV_NORMAL);
+	check_error("CVode solve",
+	            CVode(_cvode_mem, t_end, _y, &t_reached, CV_NORMAL));
 	_t = t_reached;
 }
 
