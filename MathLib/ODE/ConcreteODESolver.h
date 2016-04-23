@@ -110,18 +110,6 @@ private:
 	createODESolver<NumEquations>(BaseLib::ConfigTree const& config);
 };
 
-template <unsigned NumEquations>
-std::unique_ptr<ODESolver<NumEquations>> createODESolver(
-    BaseLib::ConfigTree const& config)
-{
-#ifdef CVODE_FOUND
-	return std::unique_ptr<ODESolver<NumEquations>>(
-	    new ConcreteODESolver<CVodeSolver, NumEquations>(config));
-#else
-	return nullptr;
-#endif  // CVODE_FOUND
-}
-
 }  // namespace MathLib
 
 #endif  // MATHLIB_ODE_CONCRETEODESOLVER_H
