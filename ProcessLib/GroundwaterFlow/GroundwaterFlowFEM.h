@@ -15,6 +15,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/ProcessUtil.h"
 #include "GroundwaterFlowProcessData.h"
@@ -25,6 +26,8 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
+const unsigned NUM_NODAL_DOF = 1;
+
 template <typename ShapeFunction,
          typename IntegrationMethod,
          typename GlobalMatrix,
@@ -33,9 +36,13 @@ template <typename ShapeFunction,
 class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+
+    using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
+        ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
+
+    using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
+    using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
 
 public:
     /// The hydraulic_conductivity factor is directly integrated into the local
@@ -52,7 +59,10 @@ public:
         , _localA(local_matrix_size, local_matrix_size) // TODO narrowing conversion
         , _localRhs(local_matrix_size)
         , _integration_order(integration_order)
-    {}
+    {
+        // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+    }
 
     void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
     {
