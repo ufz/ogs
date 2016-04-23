@@ -10,7 +10,8 @@
 #include <gtest/gtest.h>
 #include <logog/include/logog.hpp>
 
-#include "MathLib/ODE/ConcreteODESolver.h"
+#include "BaseLib/ConfigTree.h"
+#include "MathLib/ODE/ODESolverBuilder.h"
 
 const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
