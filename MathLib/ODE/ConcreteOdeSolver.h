@@ -23,8 +23,8 @@
 
 namespace MathLib
 {
-template <unsigned NumEquations, typename... FunctionArguments>
-std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
+template <unsigned NumEquations>
+std::unique_ptr<OdeSolver<NumEquations>> createOdeSolver(
     BaseLib::ConfigTree const& config);
 
 /**
@@ -41,25 +41,21 @@ std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
  *
  * This way the \c Implementation does not need to be templated.
  */
-template <typename Implementation, unsigned NumEquations,
-          typename... FunctionArguments>
-class ConcreteOdeSolver final
-    : public OdeSolver<NumEquations, FunctionArguments...>,
-      private Implementation
+template <typename Implementation, unsigned NumEquations>
+class ConcreteOdeSolver final : public OdeSolver<NumEquations>,
+                                private Implementation
 {
 public:
-	using Interface = OdeSolver<NumEquations, FunctionArguments...>;
+	using Interface = OdeSolver<NumEquations>;
 	using Function = typename Interface::Function;
 	using JacobianFunction = typename Interface::JacobianFunction;
 
-	void setFunction(Function f, JacobianFunction df,
-	                 FunctionArguments&... args) override
+	void setFunction(Function f, JacobianFunction df) override
 	{
 		Implementation::setFunction(
-		    std::unique_ptr<
-		        detail::Handles<NumEquations, FunctionArguments...>>{
-		        new detail::Handles<NumEquations, FunctionArguments...>{
-		            f, df, args...}});
+		    std::unique_ptr<  // TODO unique_ptr not needed
+		        detail::Handles<NumEquations>>{
+		        new detail::Handles<NumEquations>{f, df}});
 	}
 
 	void setTolerance(const std::array<double, NumEquations>& abstol,
@@ -111,19 +107,17 @@ private:
 	{
 	}
 
-	friend std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>
-	createOdeSolver<NumEquations, FunctionArguments...>(
-	    BaseLib::ConfigTree const& config);
+	friend std::unique_ptr<OdeSolver<NumEquations>>
+	createOdeSolver<NumEquations>(BaseLib::ConfigTree const& config);
 };
 
-template <unsigned NumEquations, typename... FunctionArguments>
-std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>> createOdeSolver(
+template <unsigned NumEquations>
+std::unique_ptr<OdeSolver<NumEquations>> createOdeSolver(
     BaseLib::ConfigTree const& config)
 {
 #ifdef CVODE_FOUND
-	return std::unique_ptr<OdeSolver<NumEquations, FunctionArguments...>>(
-	    new ConcreteOdeSolver<CVodeSolver, NumEquations, FunctionArguments...>(
-	        config));
+	return std::unique_ptr<OdeSolver<NumEquations>>(
+	    new ConcreteOdeSolver<CVodeSolver, NumEquations>(config));
 #else
 	return nullptr;
 #endif  // CVODE_FOUND

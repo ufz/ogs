@@ -23,16 +23,14 @@ namespace MathLib
  * It provides type-safe and array-bounds checked access to external
  * ODE solver libraries. However, it is agnostic to the specific solver used.
  */
-template <unsigned NumEquations, typename... FunctionArguments>
+template <unsigned NumEquations>
 class OdeSolver
 {
 public:
-	using Function = MathLib::Function<NumEquations, FunctionArguments...>;
-	using JacobianFunction =
-	    MathLib::JacobianFunction<NumEquations, FunctionArguments...>;
+	using Function = MathLib::Function<NumEquations>;
+	using JacobianFunction = MathLib::JacobianFunction<NumEquations>;
 
-	virtual void setFunction(Function f, JacobianFunction df,
-	                         FunctionArguments&... args) = 0;
+	virtual void setFunction(Function f, JacobianFunction df) = 0;
 
 	virtual void setTolerance(const std::array<double, NumEquations>& abstol,
 	                          const double reltol) = 0;
