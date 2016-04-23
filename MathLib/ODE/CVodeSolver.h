@@ -28,32 +28,32 @@ class CVodeSolverImpl;
 class CVodeSolver
 {
 protected:
-	CVodeSolver(BaseLib::ConfigTree const& config,
-	            unsigned const num_equations);
+    CVodeSolver(BaseLib::ConfigTree const& config,
+                unsigned const num_equations);
 
-	/// Set tolerances for all equations. The abstol is a pointer to an array of
-	/// same size as the number of equations.
-	void setTolerance(double const* const abstol, const double reltol);
-	void setTolerance(const double abstol, const double reltol);
+    /// Set tolerances for all equations. The abstol is a pointer to an array of
+    /// same size as the number of equations.
+    void setTolerance(double const* const abstol, const double reltol);
+    void setTolerance(const double abstol, const double reltol);
 
-	void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
+    void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
 
-	void setIC(const double t0, double const* const y0);
+    void setIC(const double t0, double const* const y0);
 
-	void preSolve();
-	bool solve(const double t_end);
+    void preSolve();
+    bool solve(const double t_end);
 
-	double const* getSolution() const;
-	double getTime() const;
-	void getYDot(const double t,
-	             double const* const y,
-	             double* const y_dot) const;
+    double const* getSolution() const;
+    double getTime() const;
+    void getYDot(const double t,
+                 double const* const y,
+                 double* const y_dot) const;
 
-	~CVodeSolver();
+    ~CVodeSolver();
 
 private:
-	std::unique_ptr<CVodeSolverImpl>
-	    _impl;  ///< pimpl idiom hides sundials headers.
+    std::unique_ptr<CVodeSolverImpl>
+        _impl;  ///< pimpl idiom hides sundials headers.
 };
 
 }  // namespace MathLib

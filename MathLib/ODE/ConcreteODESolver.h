@@ -48,70 +48,70 @@ class ConcreteODESolver final
       private Implementation
 {
 public:
-	using Interface = ODESolver<NumEquations>;
-	using Function = typename Interface::Function;
-	using JacobianFunction = typename Interface::JacobianFunction;
+    using Interface = ODESolver<NumEquations>;
+    using Function = typename Interface::Function;
+    using JacobianFunction = typename Interface::JacobianFunction;
 
-	void setFunction(Function f, JacobianFunction df) override
-	{
-		Implementation::setFunction(
-		    std::unique_ptr<
-		        detail::FunctionHandlesImpl<NumEquations>>{
-		        new detail::FunctionHandlesImpl<NumEquations>{f, df}});
-	}
+    void setFunction(Function f, JacobianFunction df) override
+    {
+        Implementation::setFunction(
+            std::unique_ptr<
+                detail::FunctionHandlesImpl<NumEquations>>{
+                new detail::FunctionHandlesImpl<NumEquations>{f, df}});
+    }
 
-	void setTolerance(const std::array<double, NumEquations>& abstol,
-	                  const double reltol) override
-	{
-		Implementation::setTolerance(abstol.data(), reltol);
-	}
+    void setTolerance(const std::array<double, NumEquations>& abstol,
+                      const double reltol) override
+    {
+        Implementation::setTolerance(abstol.data(), reltol);
+    }
 
-	void setTolerance(const double abstol, const double reltol) override
-	{
-		Implementation::setTolerance(abstol, reltol);
-	}
+    void setTolerance(const double abstol, const double reltol) override
+    {
+        Implementation::setTolerance(abstol, reltol);
+    }
 
-	virtual void setIC(const double t0,
-	                   std::initializer_list<double> const& y0) override
-	{
-		assert(y0.size() == NumEquations);
-		Implementation::setIC(t0, y0.begin());
-	}
+    virtual void setIC(const double t0,
+                       std::initializer_list<double> const& y0) override
+    {
+        assert(y0.size() == NumEquations);
+        Implementation::setIC(t0, y0.begin());
+    }
 
-	void setIC(const double t0,
-	           Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const&
-	               y0) override
-	{
-		Implementation::setIC(t0, y0.data());
-	}
+    void setIC(const double t0,
+               Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> const&
+                   y0) override
+    {
+        Implementation::setIC(t0, y0.data());
+    }
 
-	void preSolve() override { Implementation::preSolve(); }
-	bool solve(const double t) override { return Implementation::solve(t); }
-	MappedConstVector<NumEquations> getSolution() const override
-	{
-		return MappedConstVector<NumEquations>{Implementation::getSolution()};
-	}
+    void preSolve() override { Implementation::preSolve(); }
+    bool solve(const double t) override { return Implementation::solve(t); }
+    MappedConstVector<NumEquations> getSolution() const override
+    {
+        return MappedConstVector<NumEquations>{Implementation::getSolution()};
+    }
 
-	double getTime() const override { return Implementation::getTime(); }
-	Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
-	    const double t, const MappedConstVector<NumEquations>& y) const override
-	{
-		Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> y_dot;
-		Implementation::getYDot(t, y.data(), y_dot.data());
-		return y_dot;
-	}
+    double getTime() const override { return Implementation::getTime(); }
+    Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> getYDot(
+        const double t, const MappedConstVector<NumEquations>& y) const override
+    {
+        Eigen::Matrix<double, NumEquations, 1, Eigen::ColMajor> y_dot;
+        Implementation::getYDot(t, y.data(), y_dot.data());
+        return y_dot;
+    }
 
 private:
-	/// instances of this class shall only be constructed by
-	/// the friend function listed below
-	ConcreteODESolver(BaseLib::ConfigTree const& config)
-	    : Implementation{config, NumEquations}
-	{
-	}
+    /// instances of this class shall only be constructed by
+    /// the friend function listed below
+    ConcreteODESolver(BaseLib::ConfigTree const& config)
+        : Implementation{config, NumEquations}
+    {
+    }
 
-	friend std::unique_ptr<ODESolver<NumEquations>>
-	createODESolver<NumEquations>(
-	    BaseLib::ConfigTree const& config);
+    friend std::unique_ptr<ODESolver<NumEquations>>
+    createODESolver<NumEquations>(
+        BaseLib::ConfigTree const& config);
 };
 
 template <unsigned NumEquations>
@@ -119,10 +119,10 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config)
 {
 #ifdef CVODE_FOUND
-	return std::unique_ptr<ODESolver<NumEquations>>(
-	    new ConcreteODESolver<CVodeSolver, NumEquations>(config));
+    return std::unique_ptr<ODESolver<NumEquations>>(
+        new ConcreteODESolver<CVodeSolver, NumEquations>(config));
 #else
-	return nullptr;
+    return nullptr;
 #endif  // CVODE_FOUND
 }
 
