@@ -15,7 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "OdeSolver.h"
-#include "Handles.h"
+#include "FunctionHandles.h"
 
 #ifdef CVODE_FOUND
 #include "CVodeSolver.h"
@@ -55,9 +55,9 @@ public:
 	void setFunction(Function f, JacobianFunction df) override
 	{
 		Implementation::setFunction(
-		    std::unique_ptr< // TODO unique_ptr not needed
-		        detail::Handles<NumEquations>>{
-		        new detail::Handles<NumEquations>{f, df}});
+		    std::unique_ptr<
+		        detail::FunctionHandlesImpl<NumEquations>>{
+		        new detail::FunctionHandlesImpl<NumEquations>{f, df}});
 	}
 
 	void setTolerance(const std::array<double, NumEquations>& abstol,

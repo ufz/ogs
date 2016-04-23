@@ -91,7 +91,7 @@ public:
 	~CVodeSolverImpl();
 
 private:
-	void setFunction(std::unique_ptr<FunctionHandles>&& f);
+	void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
 
 	void preSolve();
 	void solve(const double t_end);
@@ -114,7 +114,7 @@ private:
 	unsigned _num_equations;
 	void* _cvode_mem;
 
-	std::unique_ptr<FunctionHandles> _f;
+	std::unique_ptr<detail::FunctionHandles> _f;
 
 	int _linear_multistep_method = CV_ADAMS;
 	int _nonlinear_solver_iteration = CV_FUNCTIONAL;
@@ -178,7 +178,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 	auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
 	                    void* function_handles) -> int
 	{
-		bool successful = static_cast<FunctionHandles*>(function_handles)
+		bool successful = static_cast<detail::FunctionHandles*>(function_handles)
 		                      ->call(t, NV_DATA_S(y), NV_DATA_S(ydot));
 		return successful ? 0 : 1;
 	};
@@ -206,7 +206,7 @@ void CVodeSolverImpl::setTolerance(const double abstol, const double reltol)
 	_reltol = reltol;
 }
 
-void CVodeSolverImpl::setFunction(std::unique_ptr<FunctionHandles>&& f)
+void CVodeSolverImpl::setFunction(std::unique_ptr<detail::FunctionHandles>&& f)
 {
 	_f = std::move(f);
 	assert(_num_equations == _f->getNumEquations());
@@ -251,7 +251,7 @@ void CVodeSolverImpl::preSolve()
 			// Caution: by calling the DENSE_COL() macro we assume that matrices
 			//          are stored contiguously in memory!
 			bool successful =
-			    static_cast<FunctionHandles*>(function_handles)
+			    static_cast<detail::FunctionHandles*>(function_handles)
 			        ->callJacobian(t, NV_DATA_S(y), NV_DATA_S(ydot),
 			                       DENSE_COL(jac, 0));
 			return successful ? 0 : 1;
@@ -309,7 +309,7 @@ void CVodeSolver::setTolerance(const double abstol, const double reltol)
 	_impl->setTolerance(abstol, reltol);
 }
 
-void CVodeSolver::setFunction(std::unique_ptr<FunctionHandles>&& f)
+void CVodeSolver::setFunction(std::unique_ptr<detail::FunctionHandles>&& f)
 {
 	_impl->setFunction(std::move(f));
 }
