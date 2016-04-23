@@ -24,6 +24,13 @@ class ConfigTree;
 
 namespace MathLib
 {
+//! \addtogroup ExternalODESolverInterface
+//! @{
+
+/*! Creates a new ODESolver instance from the given \c config.
+ *
+ * \tparam NumEquations the number of equations in the ODE system to be solved.
+ */
 template <unsigned NumEquations>
 std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config)
@@ -35,6 +42,8 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
 	return nullptr;
 #endif  // CVODE_FOUND
 }
+
+//! @}
 
 }  // namespace MathLib
 
