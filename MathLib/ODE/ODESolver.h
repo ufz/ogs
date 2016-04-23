@@ -27,11 +27,8 @@ template <unsigned NumEquations>
 class ODESolver
 {
 public:
-    using Function = MathLib::Function<NumEquations>;
-    using JacobianFunction =
-        MathLib::JacobianFunction<NumEquations>;
-
-    virtual void setFunction(Function f, JacobianFunction df) = 0;
+    virtual void setFunction(MathLib::Function<NumEquations> f,
+                             MathLib::JacobianFunction<NumEquations> df) = 0;
 
     virtual void setTolerance(const std::array<double, NumEquations>& abstol,
                               const double reltol) = 0;
