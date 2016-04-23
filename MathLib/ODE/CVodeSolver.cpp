@@ -48,10 +48,10 @@ void printStats(void* cvode_mem)
 	check_error("CVDlsGetNumRhsEvals", CVDlsGetNumRhsEvals(cvode_mem, &nfeLS));
 	check_error("CVodeGetNumGEvals", CVodeGetNumGEvals(cvode_mem, &nge));
 
-	DBUG("\nFinal Statistics:");
-	DBUG("nst = %-6ld nfe  = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
+	DBUG("Sundials CVode solver. Statistics:");
+	DBUG("nst = %-6ld  nfe = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld",
 	     nst, nfe, nsetups, nfeLS, nje);
-	DBUG("nni = %-6ld ncfn = %-6ld netf = %-6ld nge = %ld\n", nni, ncfn, netf,
+	DBUG("nni = %-6ld ncfn = %-6ld    netf = %-6ld   nge = %ld\n", nni, ncfn, netf,
 	     nge);
 }
 
