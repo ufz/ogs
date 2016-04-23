@@ -14,5 +14,6 @@
  * \section internal_modules Internal Modules
  *
  * * \subpage ODESolver
+ * * \subpage ExternalODESolverInterface
  *
  */
