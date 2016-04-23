@@ -70,6 +70,11 @@ if (CVODE_FOUND)
         sundials_cvode
         sundials_nvecserial
     )
+else()
+    target_link_libraries(MathLib
+        GeoLib
+        logog
+    )
 endif()
 
 if(METIS_FOUND)
