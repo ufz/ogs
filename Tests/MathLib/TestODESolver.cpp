@@ -68,6 +68,10 @@ template<unsigned NumEquations>
 std::unique_ptr<MathLib::ODESolver<NumEquations>>
 make_ode_solver(boost::property_tree::ptree const& conf)
 {
+    // Make sure testrunner does not crash if we haven't built with support for
+    // any external ODE solver lib.
+    if (!any_ode_solver_libs_available()) return nullptr;
+
     BaseLib::ConfigTree config(conf, "",
                                BaseLib::ConfigTree::onerror,
                                BaseLib::ConfigTree::onwarning);
