@@ -10,6 +10,8 @@
 #ifndef MATHLIB_ODE_ODESOLVERBUILDER_H
 #define MATHLIB_ODE_ODESOLVERBUILDER_H
 
+#include <logog/include/logog.hpp>
+
 #include "ODESolver.h"
 #include "ConcreteODESolver.h"
 
@@ -36,9 +38,11 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
 #ifdef CVODE_FOUND
     return std::unique_ptr<ODESolver<NumEquations>>(
         new ConcreteODESolver<CVodeSolver, NumEquations>(config));
-#else
-    return nullptr;
-#endif  // CVODE_FOUND
+#endif
+
+    ERR("No ODE solver could be created. Maybe it is because you did not build"
+        " OGS6 with support for any external ODE solver library.");
+    std::abort();
 }
 
 //! @}
