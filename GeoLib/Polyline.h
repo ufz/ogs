@@ -100,6 +100,7 @@ public:
 	 * @param ply Polyline
 	 */
 	Polyline(const Polyline& ply);
+	Polyline& operator=(Polyline const& other) = delete;
 
 	virtual ~Polyline() {}
 
