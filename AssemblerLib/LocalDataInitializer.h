@@ -11,6 +11,7 @@
 #define ASSEMBLER_LIB_LOCALDATAINITIALIZER_H_
 
 #include <functional>
+#include <memory>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>

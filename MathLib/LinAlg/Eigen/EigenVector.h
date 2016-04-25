@@ -50,7 +50,7 @@ public:
     std::size_t getRangeBegin() const { return 0;}
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const { return this->size(); }
+    std::size_t getRangeEnd() const { return size(); }
 
     /// set all values in this vector
     EigenVector& operator= (double v) { _vec.setConstant(v); return *this; }
@@ -88,7 +88,7 @@ public:
     void add(const std::vector<IndexType> &pos, const T_SUBVEC &sub_vec)
     {
         for (std::size_t i=0; i<pos.size(); ++i) {
-            this->add(pos[i], sub_vec[i]);
+            add(pos[i], sub_vec[i]);
         }
     }
 
@@ -111,13 +111,13 @@ public:
     const RawVectorType& getRawVector() const {return _vec; }
 
     /// vector operation: set data
-    EigenVector& operator= (const EigenVector &src) { _vec = static_cast<const EigenVector&>(src)._vec; return *this; }
+    EigenVector& operator= (const EigenVector &src) { _vec = src._vec; return *this; }
 
     /// vector operation: add
-    void operator+= (const EigenVector& v) { _vec += static_cast<const EigenVector&>(v)._vec; }
+    void operator+= (const EigenVector& v) { _vec += v._vec; }
 
     /// vector operation: subtract
-    void operator-= (const EigenVector& v) { _vec -= static_cast<const EigenVector&>(v)._vec; }
+    void operator-= (const EigenVector& v) { _vec -= v._vec; }
 
 private:
     RawVectorType _vec;

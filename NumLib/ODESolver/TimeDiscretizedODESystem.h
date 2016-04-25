@@ -116,13 +116,13 @@ public:
         , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
     {
         _Jac  = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode, _Jac_id);
+                    _ode.getMatrixSpecifications(), _Jac_id);
         _M    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode, _M_id);
+                    _ode.getMatrixSpecifications(), _M_id);
         _K    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode, _K_id);
+                    _ode.getMatrixSpecifications(), _K_id);
         _b    = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
-                    _ode, _b_id);
+                    _ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
@@ -304,9 +304,12 @@ public:
         , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
                          time_discretization))
     {
-        _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(ode, _M_id);
-        _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(ode, _K_id);
-        _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(ode, _b_id);
+        _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+                    ode.getMatrixSpecifications(), _M_id);
+        _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+                    ode.getMatrixSpecifications(), _K_id);
+        _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+                    ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()

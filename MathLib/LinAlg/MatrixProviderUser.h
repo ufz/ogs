@@ -71,8 +71,6 @@ template<typename Vector>
 class VectorProvider
 {
 public:
-    using MSP = MatrixSpecificationsProvider;
-
     //! Get an uninitialized vector.
     virtual Vector& getVector() = 0;
 
@@ -86,11 +84,11 @@ public:
     virtual Vector& getVector(Vector const& x, std::size_t& id) = 0;
 
     //! Get a vector according to the given specifications.
-    virtual Vector& getVector(MSP const& msp) = 0;
+    virtual Vector& getVector(MatrixSpecifications const& ms) = 0;
 
     //! Get a vector according to the given specifications in the storage
     //! of the vector with the given \c id.
-    virtual Vector& getVector(MSP const& msp, std::size_t& id) = 0;
+    virtual Vector& getVector(MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given vector.
     //!
@@ -109,8 +107,6 @@ template<typename Matrix>
 class MatrixProvider
 {
 public:
-    using MSP = MatrixSpecificationsProvider;
-
     //! Get an uninitialized matrix.
     virtual Matrix& getMatrix() = 0;
 
@@ -124,11 +120,11 @@ public:
     virtual Matrix& getMatrix(Matrix const& A, std::size_t& id) = 0;
 
     //! Get a matrix according to the given specifications.
-    virtual Matrix& getMatrix(MSP const& msp) = 0;
+    virtual Matrix& getMatrix(MatrixSpecifications const& ms) = 0;
 
     //! Get a matrix according to the given specifications in the storage
     //! of the matrix with the given \c id.
-    virtual Matrix& getMatrix(MSP const& msp, std::size_t& id) = 0;
+    virtual Matrix& getMatrix(MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given matrix.
     //!
