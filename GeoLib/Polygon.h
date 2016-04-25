@@ -99,6 +99,8 @@ public:
 	 * @param seg (input) Line segment to compute intersection.
 	 * @param intersection_pnt (output) next intersection point
 	 * @param seg_num (in/out) the number of the polygon segment that is intersecting
+	 * @return true, if there was an intersection, i.e., the \c intersection_pnt
+	 * and \c seg_num contains new valid values
 	 */
 	bool getNextIntersectionPointPolygonLine(GeoLib::LineSegment const& seg,
 	                                         GeoLib::Point& intersection_pnt,
