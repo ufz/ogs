@@ -55,9 +55,9 @@ struct GlobalSetup
 
     template <typename... Args>
     static
-    void transform(Args&& ... args)
+    void transformDereferenced(Args&& ... args)
     {
-        return Executor::transform(std::forward<Args>(args)...);
+        return Executor::transformDereferenced(std::forward<Args>(args)...);
     }
 
     //! Do not create any instances; this struct only has static members.

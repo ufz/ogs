@@ -10,7 +10,6 @@
 
 #include <memory>
 
-#include "AssemblerLib/LocalAssemblerBuilder.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
