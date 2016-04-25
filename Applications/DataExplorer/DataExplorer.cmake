@@ -53,6 +53,7 @@ target_link_libraries(DataExplorer
 	Qt4::QtXml
 	Qt4::QtNetwork
 	ApplicationsLib
+	DataHolderLib
 	FileIO
 	QtDataView
 	QtDiagramView

@@ -17,8 +17,10 @@
 
 // ** INCLUDES **
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "Applications/ApplicationsLib/ProjectData.h"
+#include "DataHolderLib/DataExplorerProject.h"
 #endif
+
+#include "MeshLib/MeshEnums.h"
 
 #include "TreeModel.h"
 
@@ -36,7 +38,7 @@ class MshModel : public TreeModel
 	Q_OBJECT
 
 public:
-	MshModel(ProjectData &project, QObject* parent = 0);
+	MshModel(DataExplorerProject &project, QObject* parent = 0);
 
 	/// Returns the number of columns used for the data list
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
@@ -67,7 +69,7 @@ private:
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	//bool isUniqueMeshName(std::string &name);
-	ProjectData& _project;
+	DataExplorerProject& _project;
 
 	/// Creates a static map of all element type name-strings in QVariant format
 	static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();

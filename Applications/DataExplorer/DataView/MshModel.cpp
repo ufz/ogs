@@ -30,12 +30,11 @@
 // MeshLib
 #include "MeshLib/Node.h"
 #include "Elements/Element.h"
-#include "MeshEnums.h"
 
 const QVariant MshModel::element_str = "Element";
 const std::map<MeshLib::MeshElemType, QVariant> MshModel::elem_type_map = MshModel::createMeshElemTypeMap();
 
-MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
+MshModel::MshModel(DataExplorerProject &project, QObject* parent /*= 0*/ )
 	: TreeModel(parent), _project(project)
 {
 	delete _rootItem;
