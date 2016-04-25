@@ -28,16 +28,12 @@ Polyline::Polyline(const std::vector<Point*>& pnt_vec) :
 	_length.push_back (0.0);
 }
 
-Polyline::Polyline(const Polyline& ply) :
-	GeoObject(), _ply_pnts (ply._ply_pnts)
-{
-	for (std::size_t k(0); k < ply.getNumberOfPoints(); ++k)
-		_ply_pnt_ids.push_back (ply.getPointID (k));
-
-	if (ply.getNumberOfPoints() > 0)
-		for (std::size_t k(0); k < ply.getNumberOfPoints(); ++k)
-			_length.push_back (ply.getLength (k));
-}
+Polyline::Polyline(const Polyline& ply)
+    : GeoObject(),
+      _ply_pnts(ply._ply_pnts),
+      _ply_pnt_ids(ply._ply_pnt_ids),
+      _length(ply._length)
+{}
 
 void Polyline::write(std::ostream &os) const
 {
