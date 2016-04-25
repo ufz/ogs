@@ -217,9 +217,11 @@ bool Polygon::getNextIntersectionPointPolygonLine(
 			}
 		}
 	} else {
-		for (std::list<Polygon*>::const_iterator it(_simple_polygon_list.begin()); it
-					!= _simple_polygon_list.end(); ++it) {
-			Polygon const& polygon(*(*it));
+		for (auto polygon_it(_simple_polygon_list.begin());
+		     polygon_it != _simple_polygon_list.end();
+		     ++polygon_it)
+		{
+			Polygon const& polygon(*(*polygon_it));
 			for (auto seg_it(polygon.begin()); seg_it != polygon.end(); ++seg_it)
 			{
 				if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
