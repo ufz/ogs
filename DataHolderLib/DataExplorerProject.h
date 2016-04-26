@@ -27,7 +27,7 @@ class DataExplorerProject final
 {
 public:
 	/// Constructor
-	DataExplorerProject();
+	DataExplorerProject() = default;
 
 	DataExplorerProject(DataExplorerProject&) = delete;
 

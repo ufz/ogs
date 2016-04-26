@@ -12,14 +12,12 @@
 #include <algorithm>
 
 // ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/uniqueInsert.h"
 
 #include "MeshLib/Mesh.h"
-
-DataExplorerProject::DataExplorerProject() = default;
 
 DataExplorerProject::~DataExplorerProject()
 {
@@ -96,9 +94,8 @@ bool DataExplorerProject::isMeshNameUniqueAndProvideUniqueName(std::string &name
 		if (count > 1)
 			cpName = cpName + "-" + std::to_string(count);
 
-		for (std::vector<MeshLib::Mesh*>::const_iterator it = _mesh_vec.begin();
-				it != _mesh_vec.end(); ++it)
-			if ( cpName.compare((*it)->getName()) == 0 )
+		for (MeshLib::Mesh* mesh :_mesh_vec)
+			if ( cpName.compare(mesh->getName()) == 0 )
 				isUnique = false;
 	}
 
