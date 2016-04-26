@@ -23,8 +23,6 @@ DataExplorerProject::DataExplorerProject() = default;
 
 DataExplorerProject::~DataExplorerProject()
 {
-	delete _geoObjects;
-
 	for (MeshLib::Mesh* m : _mesh_vec)
 		delete m;
 }

@@ -34,10 +34,7 @@ public:
 	~DataExplorerProject();
 
 	/// Returns the GEOObjects containing all points, polylines and surfaces.
-	GeoLib::GEOObjects* getGEOObjects()
-	{
-		return _geoObjects;
-	}
+	GeoLib::GEOObjects& getGEOObjects() { return _geoObjects; }
 
 	/// Adds a new mesh under a (possibly new) unique name.
 	/// \attention This might change the given mesh's name.
@@ -69,12 +66,10 @@ private:
 
 
 	/// Returns an iterator to the first found mesh with the given name.
-	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(
-		std::string const& name) const;
-	std::vector<MeshLib::Mesh*>::iterator findMeshByName(
-		std::string const& name);
+	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(std::string const& name) const;
+	std::vector<MeshLib::Mesh*>::iterator findMeshByName(std::string const& name);
 
-	GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
+	GeoLib::GEOObjects _geoObjects;
 	std::vector<MeshLib::Mesh*> _mesh_vec;
 };
 

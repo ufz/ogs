@@ -85,7 +85,7 @@ void SHPInterface::readPoints(const SHPHandle &hSHP, int numberOfElements, std::
 			points->push_back(pnt);
 		}
 
-		_geoObjects->addPointVec(std::move(points), listName);
+		_geoObjects.addPointVec(std::move(points), listName);
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 }
@@ -107,7 +107,7 @@ void SHPInterface::readStations(const SHPHandle &hSHP, int numberOfElements, std
 			stations->push_back(stn);
 		}
 
-		_geoObjects->addStationVec(std::move(stations), listName);
+		_geoObjects.addStationVec(std::move(stations), listName);
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 }
@@ -143,8 +143,8 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
 
-	_geoObjects->addPointVec(std::move(pnts), listName);
-	GeoLib::PointVec const& points(*(_geoObjects->getPointVecObj(listName)));
+	_geoObjects.addPointVec(std::move(pnts), listName);
+	GeoLib::PointVec const& points(*(_geoObjects.getPointVecObj(listName)));
 	std::vector<std::size_t> const& pnt_id_map(points.getIDMap());
 
 	pnt_id = 0;
@@ -170,14 +170,14 @@ void SHPInterface::readPolylines(const SHPHandle &hSHP, int numberOfElements, st
 		}
 		SHPDestroyObject(hSHPObject); // de-allocate SHPObject
 	}
-	_geoObjects->addPolylineVec(std::move(lines), listName);
+	_geoObjects.addPolylineVec(std::move(lines), listName);
 }
 
 void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, const std::string &listName)
 {
 	readPolylines(hSHP, numberOfElements, listName);
 
-	auto const polylines = _geoObjects->getPolylineVec(listName);
+	auto const polylines = _geoObjects.getPolylineVec(listName);
 	auto sfc_vec = std::unique_ptr<std::vector<GeoLib::Surface*>>(
 	    new std::vector<GeoLib::Surface*>);
 
@@ -191,7 +191,7 @@ void SHPInterface::readPolygons(const SHPHandle &hSHP, int numberOfElements, con
 	}
 
 	if (!sfc_vec->empty())
-		_geoObjects->addSurfaceVec(std::move(sfc_vec), listName);
+		_geoObjects.addSurfaceVec(std::move(sfc_vec), listName);
 }
 
 bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh)

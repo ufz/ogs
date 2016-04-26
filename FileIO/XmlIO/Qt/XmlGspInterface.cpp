@@ -69,7 +69,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(*(_project.getGEOObjects()));
+			XmlGmlInterface gml(_project.getGEOObjects());
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
@@ -86,7 +86,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(*(_project.getGEOObjects()));
+			XmlStnInterface stn(_project.getGEOObjects());
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
@@ -114,7 +114,7 @@ int XmlGspInterface::writeToFile(const std::string& filename)
 
 bool XmlGspInterface::write()
 {
-	GeoLib::GEOObjects& geoObjects = *_project.getGEOObjects();
+	GeoLib::GEOObjects& geoObjects = _project.getGEOObjects();
 	QFileInfo fi(QString::fromStdString(_filename));
 	std::string path((fi.absolutePath()).toStdString() + "/");
 

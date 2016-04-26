@@ -20,17 +20,17 @@
 
 #include "OGSError.h"
 
-MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDialog* parent)
+MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent)
 	: QDialog(parent), _geo_objects(geoObjects), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
 {
 	setupUi(this);
 
 	std::vector<std::string> geoNames;
-	_geo_objects->getGeometryNames(geoNames);
+	_geo_objects.getGeometryNames(geoNames);
 
 	// get station names
 	std::vector<std::string> geo_station_names;
-	_geo_objects->getStationVectorNames(geo_station_names);
+	_geo_objects.getStationVectorNames(geo_station_names);
 
 	// merge method does currently not merge stations, converter function needed first
 	//geoNames.reserve(geo_station_names.size());
@@ -53,7 +53,7 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDi
 	this->selectedGeoView->setModel(_selGeo);
 
 	std::string new_geo_name("MergedGeometry");
-	_geo_objects->isUniquePointVecName(new_geo_name);
+	_geo_objects.isUniquePointVecName(new_geo_name);
 	this->newGeoNameEdit->setText(QString::fromStdString(new_geo_name));
 }
 

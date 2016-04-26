@@ -55,7 +55,7 @@ public:
 	};
 
 	/// Constructor
-	SHPInterface(GeoLib::GEOObjects* geoObjects) : _geoObjects(geoObjects) {}
+	SHPInterface(GeoLib::GEOObjects& geoObjects) : _geoObjects(geoObjects) {}
 
 	/// Reads the header of the shape file.
 	bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);
@@ -81,7 +81,7 @@ private:
 	/// Reads lines into a vector of Polyline and Surface objects.
 	void readPolygons  (const SHPHandle &hSHP, int numberOfElements, const std::string& listName);
 
-	GeoLib::GEOObjects* _geoObjects;
+	GeoLib::GEOObjects& _geoObjects;
 };
 
 }

@@ -430,7 +430,7 @@ std::string readSurfaces(std::istream &in,
 }
 
 bool readGLIFileV4(const std::string& fname,
-                   GeoLib::GEOObjects* geo,
+                   GeoLib::GEOObjects& geo,
                    std::string& unique_name,
                    std::vector<std::string>& errors)
 {
@@ -458,8 +458,7 @@ bool readGLIFileV4(const std::string& fname,
 
 	unique_name = BaseLib::extractBaseName(fname);
 	if (!pnt_vec->empty())
-		// KR: insert into GEOObjects if not empty
-		geo->addPointVec(std::move(pnt_vec), unique_name, pnt_id_names_map, 1e-6);
+		geo.addPointVec(std::move(pnt_vec), unique_name, pnt_id_names_map, 1e-6);
 
 	// extract path for reading external files
 	const std::string path = BaseLib::extractPath(fname);
@@ -469,7 +468,7 @@ bool readGLIFileV4(const std::string& fname,
 	auto ply_vec = std::unique_ptr<std::vector<GeoLib::Polyline*>>(
 	    new std::vector<GeoLib::Polyline*>);
 	GeoLib::PointVec & point_vec(
-		*const_cast<GeoLib::PointVec*>(geo->getPointVecObj(unique_name)));
+		*const_cast<GeoLib::PointVec*>(geo.getPointVecObj(unique_name)));
 	std::vector<GeoLib::Point*>* geo_pnt_vec(const_cast<std::vector<GeoLib::Point*>*>(
 		point_vec.getVector()));
 	if (tag.find("#POLYLINE") != std::string::npos && in)
@@ -477,7 +476,7 @@ bool readGLIFileV4(const std::string& fname,
 		INFO("GeoLib::readGLIFile(): read polylines from stream.");
 		tag = readPolylines(in, ply_vec.get(), *ply_names, *geo_pnt_vec,
 		                    zero_based_idx,
-		                    geo->getPointVecObj(unique_name)->getIDMap(), path, errors);
+		                    geo.getPointVecObj(unique_name)->getIDMap(), path, errors);
 		INFO("GeoLib::readGLIFile(): \t ok, %d polylines read.", ply_vec->size());
 	}
 	else
@@ -505,13 +504,13 @@ bool readGLIFileV4(const std::string& fname,
 	in.close();
 
 	if (!ply_vec->empty())
-		geo->addPolylineVec(std::move(ply_vec), unique_name, ply_names);  // KR: insert into GEOObjects if not empty
+		geo.addPolylineVec(std::move(ply_vec), unique_name, ply_names);  // KR: insert into GEOObjects if not empty
 	else {
 		delete ply_names;
 	}
 
 	if (!sfc_vec->empty())
-		geo->addSurfaceVec(std::move(sfc_vec), unique_name, sfc_names);  // KR: insert into GEOObjects if not empty
+		geo.addSurfaceVec(std::move(sfc_vec), unique_name, sfc_names);  // KR: insert into GEOObjects if not empty
 	else {
 		delete sfc_names;
 	}

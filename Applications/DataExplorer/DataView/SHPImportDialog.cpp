@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 
 SHPImportDialog::SHPImportDialog(std::string filename,
-                                 GeoLib::GEOObjects* geo_objects,
+                                 GeoLib::GEOObjects& geo_objects,
                                  QDialog* parent)
     : QDialog(parent),
       _buttonBox(nullptr),

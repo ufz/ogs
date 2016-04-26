@@ -33,7 +33,7 @@ class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
 	Q_OBJECT
 
 public:
-	GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* parent = 0);
+	GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
 	~GMSHPrefsDialog(void);
 
 private:

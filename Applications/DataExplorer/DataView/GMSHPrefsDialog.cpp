@@ -26,7 +26,7 @@
 
 #include "OGSError.h"
 
-GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* parent)
+GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent)
 	: QDialog(parent), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
 {
 	setupUi(this);
@@ -60,11 +60,11 @@ GMSHPrefsDialog::GMSHPrefsDialog(const GeoLib::GEOObjects* geoObjects, QDialog* 
 	param3->setValidator (mesh_density_scaling_stations_validator);
 
 	std::vector<std::string> geoNames;
-	geoObjects->getGeometryNames(geoNames);
+	geoObjects.getGeometryNames(geoNames);
 
 	// get station names
 	std::vector<std::string> geo_station_names;
-	geoObjects->getStationVectorNames(geo_station_names);
+	geoObjects.getStationVectorNames(geo_station_names);
 
 	for (unsigned k(0); k < geo_station_names.size(); ++k)
 		geoNames.push_back (geo_station_names[k]);
