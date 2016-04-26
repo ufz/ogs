@@ -18,7 +18,7 @@
 #include <memory>
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "DataHolderLib/DataExplorerProject.h"
+#include "DataHolderLib/Project.h"
 #endif
 
 #include "ImportFileTypes.h"
@@ -127,7 +127,7 @@ private:
 	void writeSettings();
 	QString getLastUsedDir();
 	
-	DataExplorerProject _project;
+	DataHolderLib::Project _project;
 	std::unique_ptr<MshModel> _meshModel;
 	std::unique_ptr<ElementTreeModel> _elementModel;
 	std::unique_ptr<TreeModel> _processModel;

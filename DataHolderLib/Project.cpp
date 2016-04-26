@@ -7,7 +7,7 @@
  *
  */
 
-#include "DataExplorerProject.h"
+#include "Project.h"
 
 #include <algorithm>
 
@@ -19,27 +19,30 @@
 
 #include "MeshLib/Mesh.h"
 
-DataExplorerProject::~DataExplorerProject()
+namespace DataHolderLib
+{
+
+Project::~Project()
 {
 	for (MeshLib::Mesh* m : _mesh_vec)
 		delete m;
 }
 
-void DataExplorerProject::addMesh(MeshLib::Mesh* mesh)
+void Project::addMesh(MeshLib::Mesh* mesh)
 {
 	std::string name = mesh->getName();
-	isMeshNameUniqueAndProvideUniqueName(name);
+	getUniqueName(name);
 	mesh->setName(name);
 	_mesh_vec.push_back(mesh);
 }
 
-std::vector<MeshLib::Mesh*>::const_iterator DataExplorerProject::findMeshByName(
+std::vector<MeshLib::Mesh*>::const_iterator Project::findMeshByName(
 		std::string const& name) const
 {
-	return const_cast<DataExplorerProject&>(*this).findMeshByName(name);
+	return const_cast<Project&>(*this).findMeshByName(name);
 }
 
-std::vector<MeshLib::Mesh*>::iterator DataExplorerProject::findMeshByName(
+std::vector<MeshLib::Mesh*>::iterator Project::findMeshByName(
 		std::string const& name)
 {
 	return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
@@ -49,13 +52,13 @@ std::vector<MeshLib::Mesh*>::iterator DataExplorerProject::findMeshByName(
 			});
 }
 
-const MeshLib::Mesh* DataExplorerProject::getMesh(const std::string &name) const
+const MeshLib::Mesh* Project::getMesh(const std::string &name) const
 {
 	std::vector<MeshLib::Mesh*>::const_iterator it = findMeshByName(name);
 	return (it == _mesh_vec.end() ? nullptr : *it);
 }
 
-bool DataExplorerProject::removeMesh(const std::string &name)
+bool Project::removeMesh(const std::string &name)
 {
 	bool mesh_found = false;
 	std::vector<MeshLib::Mesh*>::iterator it = findMeshByName(name);
@@ -72,12 +75,12 @@ bool DataExplorerProject::removeMesh(const std::string &name)
 	return mesh_found;
 }
 
-bool DataExplorerProject::meshExists(const std::string &name) const
+bool Project::meshExists(const std::string &name) const
 {
 	return findMeshByName(name) != _mesh_vec.end();
 }
 
-bool DataExplorerProject::isMeshNameUniqueAndProvideUniqueName(std::string &name) const
+bool Project::getUniqueName(std::string &name) const
 {
 	int count(0);
 	bool isUnique(false);
@@ -109,3 +112,5 @@ bool DataExplorerProject::isMeshNameUniqueAndProvideUniqueName(std::string &name
 	}
 	return isUnique;
 }
+
+} //namespace

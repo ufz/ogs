@@ -19,7 +19,7 @@
 #include <QDialog>
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "DataHolderLib/DataExplorerProject.h"
+#include "DataHolderLib/Project.h"
 #endif
 
 class Node;
@@ -32,7 +32,7 @@ class MeshElementRemovalDialog : public QDialog, private Ui_MeshElementRemoval
 	Q_OBJECT
 
 public:
-	MeshElementRemovalDialog(const DataExplorerProject &project, QDialog* parent = 0);
+	MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent = 0);
 	~MeshElementRemovalDialog(void);
 
 private slots:
@@ -50,7 +50,7 @@ private slots:
 	void reject();
 
 private:
-	const DataExplorerProject& _project;
+	DataHolderLib::Project const& _project;
 	unsigned _currentIndex, _aabbIndex, _matIDIndex;
 	std::array<bool, 6> aabb_edits;
 

@@ -23,7 +23,7 @@
 #include "../XMLInterface.h"
 #include "XMLQtInterface.h"
 
-#include "DataHolderLib/DataExplorerProject.h"
+#include "DataHolderLib/Project.h"
 
 namespace FileIO
 {
@@ -34,7 +34,7 @@ namespace FileIO
 class XmlGspInterface : public XMLInterface, public XMLQtInterface
 {
 public:
-	XmlGspInterface(DataExplorerProject& project);
+	XmlGspInterface(DataHolderLib::Project &project);
 
 	virtual ~XmlGspInterface() {}
 
@@ -51,7 +51,7 @@ protected:
 
 private:
 	std::string _filename;
-	DataExplorerProject& _project;
+	DataHolderLib::Project& _project;
 };
 
 }

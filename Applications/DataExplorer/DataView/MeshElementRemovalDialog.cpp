@@ -26,7 +26,7 @@
 #include <QListWidgetItem>
 
 /// Constructor
-MeshElementRemovalDialog::MeshElementRemovalDialog(const DataExplorerProject &project, QDialog* parent)
+MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent)
 	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
 {
 	setupUi(this);
