@@ -126,7 +126,7 @@ private:
 	void readSettings();
 	void writeSettings();
 	QString getLastUsedDir();
-	
+
 	DataHolderLib::Project _project;
 	std::unique_ptr<MshModel> _meshModel;
 	std::unique_ptr<ElementTreeModel> _elementModel;

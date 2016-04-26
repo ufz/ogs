@@ -46,13 +46,13 @@ public:
 	/// Returns the mesh with the given name or a \c nullptr if the mesh was not
 	/// found.
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
-	
+
 	/// Returns all the meshes with their respective names
 	const std::vector<MeshLib::Mesh*>& getMeshObjects() const
 	{
 		return _mesh_vec;
 	}
-	
+
 	/// Deletes all meshes with the given name and removes them from the list of
 	/// saved meshes. If any mesh was found for removal, true is returned and
 	/// false otherwise.
