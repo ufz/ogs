@@ -69,12 +69,6 @@ public:
         return _mesh_component_map.getNLocalUnknowns();
     }
 
-    /// Returns total number of global degrees of freedom for DDC.
-    std::size_t dofSizeGlobal() const
-    {
-        return _mesh_component_map.getNGlobalUnknowns();
-    }
-
     std::size_t size() const;
 
     std::size_t getNumComponents() const { return _mesh_subsets.size(); }
