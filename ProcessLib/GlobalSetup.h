@@ -7,12 +7,12 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_GLOBALSETUP_H_
-#define ASSEMBLERLIB_GLOBALSETUP_H_
+#ifndef PROCESS_LIB_GLOBAL_SETUP_H_
+#define PROCESS_LIB_GLOBAL_SETUP_H_
 
 #include <functional>
 
-namespace AssemblerLib
+namespace ProcessLib
 {
 
 /// The GlobalSetup collects vector and matrix builder and corresponding global
@@ -64,6 +64,6 @@ struct GlobalSetup
     GlobalSetup() = delete;
 };
 
-}   // namespace AssemblerLib
+}   // namespace ProcessLib
 
-#endif  // ASSEMBLERLIB_GLOBALSETUP_H_
+#endif  // PROCESS_LIB_GLOBAL_SETUP_H_
