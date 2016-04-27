@@ -6,8 +6,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_PROCESSUTIL_H
-#define PROCESSLIB_PROCESSUTIL_H
+#ifndef PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_
+#define PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_
 
 #include <vector>
 
@@ -49,4 +49,4 @@ initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
 } // ProcessLib
 
 
-#endif // PROCESSLIB_PROCESSUTIL_H
+#endif // PROCESSLIB_UTILS_INIT_SHAPE_MATRICES_H_

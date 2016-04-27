@@ -27,7 +27,7 @@
 #include "ProcessLib/NumericsConfig.h"
 #include "ProcessLib/Utils/LocalDataInitializer.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/ProcessUtil.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 
 namespace
