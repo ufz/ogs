@@ -20,9 +20,10 @@
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 
+#include "Utils/CreateLocalAssemblers.h"
+
 #include "NeumannBcConfig.h"
 #include "NeumannBcAssembler.h"
-#include "ProcessUtil.h"
 
 namespace ProcessLib
 {
