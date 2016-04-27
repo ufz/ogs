@@ -60,19 +60,14 @@ const MeshLib::Mesh* Project::getMesh(const std::string &name) const
 
 bool Project::removeMesh(const std::string &name)
 {
-	bool mesh_found = false;
 	std::vector<MeshLib::Mesh*>::iterator it = findMeshByName(name);
-	while (it != _mesh_vec.end())
+	if (it != _mesh_vec.end())
 	{
 		delete *it;
-		*it = nullptr;
-		it = findMeshByName(name);
-		mesh_found = true;
+		_mesh_vec.erase(it);
+		return true;
 	}
-
-	_mesh_vec.erase(std::remove(_mesh_vec.begin(), _mesh_vec.end(), nullptr),
-			_mesh_vec.end());
-	return mesh_found;
+	return false;
 }
 
 bool Project::meshExists(const std::string &name) const
