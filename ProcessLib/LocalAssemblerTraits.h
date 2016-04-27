@@ -211,7 +211,7 @@ public:
 } // namespace detail
 
 
-#ifndef EIGEN_DYNAMIC_SHAPE_MATRICES
+#ifndef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 
 template<typename ShpPol, unsigned NIntPts, unsigned NodalDOF, unsigned Dim>
 using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShpPol, NIntPts, NodalDOF, Dim>;
