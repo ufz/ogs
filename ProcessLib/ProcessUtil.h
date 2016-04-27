@@ -12,8 +12,9 @@
 #include <vector>
 #include <logog/include/logog.hpp>
 
-#include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+
+#include "Utils/LocalDataInitializer.h"
 
 
 namespace ProcessLib
@@ -36,7 +37,7 @@ void createLocalAssemblers(
         )
 {
     // Shape matrices initializer
-    using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
+    using LocalDataInitializer = LocalDataInitializer<
         LocalAssemblerInterface,
         LocalAssemblerImplementation,
         typename GlobalSetup::MatrixType,
