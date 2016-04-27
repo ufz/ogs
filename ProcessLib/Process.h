@@ -20,6 +20,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MathLib/LinAlg/SparsityPattern.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
 
@@ -351,7 +352,7 @@ private:
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
 
-	AssemblerLib::SparsityPattern _sparsity_pattern;
+	MathLib::SparsityPattern _sparsity_pattern;
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;

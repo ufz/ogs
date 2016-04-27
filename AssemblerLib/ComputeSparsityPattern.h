@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "MathLib/LinAlg/SparsityPattern.h"
 #include "ProcessLib/NumericsConfig.h"
 
 namespace MeshLib
@@ -23,9 +24,6 @@ namespace AssemblerLib
 {
 class LocalToGlobalIndexMap;
 
-/// A vector telling how many nonzeros there are in each global matrix row.
-using SparsityPattern = std::vector<GlobalIndexType>;
-
 /**
  * @brief Computes a sparsity pattern for the given inputs.
  *
@@ -34,11 +32,8 @@ using SparsityPattern = std::vector<GlobalIndexType>;
  *
  * @return The computed sparsity pattern.
  */
-SparsityPattern
-computeSparsityPattern(
-        LocalToGlobalIndexMap const& dof_table,
-        MeshLib::Mesh const& mesh
-        );
+MathLib::SparsityPattern computeSparsityPattern(
+    LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 }
 
 #endif // ASSEMBLERLIB_COMPUTESPARSITYPATTERN_H
