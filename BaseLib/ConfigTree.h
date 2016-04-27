@@ -256,9 +256,16 @@ public:
      * i.e., warnings will also result in program abortion!
      */
     explicit ConfigTree(PTree const& tree,
-                           std::string const& filename,
-                           Callback const& error_cb,
-                           Callback const& warning_cb);
+                        std::string const& filename,
+                        Callback const& error_cb,
+                        Callback const& warning_cb);
+
+    /*! This constructor is deleted in order to prevent the user from passing
+     * temporary instances of \c PTree.
+     * Doing so would lead to a dangling reference \c _tree and to program crash.
+     */
+    explicit ConfigTree(PTree&&, std::string const&,
+                        Callback const&, Callback const&) = delete;
 
     //! copying is not compatible with the semantics of this class
     ConfigTree(ConfigTree const&) = delete;
