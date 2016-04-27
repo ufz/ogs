@@ -59,7 +59,7 @@ public:
 		const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(element, coordsystem);// wp.getCoords());
 	}
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x) override
+    void assemble(double const t, std::vector<double> const& local_x) override
     {
 		_localA.setZero();
 		_localM.setZero();
@@ -93,12 +93,12 @@ public:
 			//NumLib::shapeFunctionInterpolate(local_x, sm.N, int_pt_array);
 			NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
 			Pc = -P_int_pt;
-
 			//Sw = getSwbyPc_van(Pc);
 			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
 										//dSwdPc = getdSwdPc_van(Pc);
-			dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
+			//dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
 											//k_rel = getKrelbySw_van(Sw,0);
+			dSwdPc = interP_Pc.PressureSaturationDependency(Pc,true);
 			k_rel = interP_Kr.getValue(Sw);//read from S-Kr curve
 
 			mass_mat_coeff(0, 0) = storage * Sw + _process_data.porosity(_element) * Sw * drhow_dp - _process_data.porosity(_element) * dSwdPc;
@@ -107,19 +107,23 @@ public:
 			_localA.noalias() += sm.dNdx.transpose() *
 				K_mat_coeff(0, 0) * sm.dNdx *
 				sm.detJ * wp.getWeight();
+
+			//std::cout << t << "  " << _localA << "\n";
 			_localM.noalias() += sm.N *
 				mass_mat_coeff(0, 0) * sm.N.transpose() *
 				sm.detJ * wp.getWeight();//Eigen::Map<Eigen::VectorXd>
-
+			//std::cout << t << "  " << _localM << "\n";
 			if (_process_data.has_gravity) {
 
-				Eigen::Vector3d const vec_g(0, 0, -9.81);
+				//Eigen::Vector3d const vec_g(0, 0, -9.81); //2D X-Z 
+				//Eigen::Vector2d const vec_g(0, -9.81);//2D X-Y
+				const double vec_g(-9.81);//1D
 				// since no primary vairable involved
 				// directly assemble to the Right-Hand-Side
 				// F += dNp^T * K * gz
 				_localRhs.noalias() += sm.dNdx.transpose() * K_mat_coeff(0, 0) * rho_w * vec_g * sm.detJ * wp.getWeight();
 			} // end of if hasGravityEffect
-
+			//std::cout << t << "  " << _localRhs << "\n";
 		}
     }
 

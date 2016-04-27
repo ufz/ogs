@@ -62,6 +62,8 @@ solve(Vector &x)
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
 
+		//A.write("A_" + std::to_string(iteration));
+		//rhs.write("rhs_" + std::to_string(iteration));
         bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
 
         if (!iteration_succeeded)

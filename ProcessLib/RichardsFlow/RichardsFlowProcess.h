@@ -68,7 +68,7 @@ public:
 
     bool isLinear() const override
     {
-        return true;
+        return false;
     }
 
     //! @}
@@ -81,6 +81,11 @@ private:
             GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
+	virtual void preIteration(const unsigned iter, GlobalVector const& x) override
+	{
+		//(void)iter; (void)x; // by default do nothing
+		x.write("test" + std::to_string(iter) );//
+	}
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           MeshLib::Mesh const& mesh,
                           unsigned const integration_order) override
