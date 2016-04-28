@@ -35,6 +35,7 @@ makeExtrapolator(PropertyEnum const property,
                  extrapolator,
                  LocalAssemblers const& local_assemblers)
 {
+    // TODO remove argument x
     auto const eval_field = [property, &extrapolator, &local_assemblers](
             GlobalVector const& x,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
