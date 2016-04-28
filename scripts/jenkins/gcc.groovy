@@ -42,7 +42,7 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 			[$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
 	])
 
-	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
+	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,
 			projectRulePath: "${parseRulefile}", useProjectRule: true])
 
 	step([$class: 'GitHubCommitNotifier', resultOnFailure: 'FAILURE', statusMessage: [content: 'Finished Jenkins gcc build']])
