@@ -40,13 +40,14 @@ private slots:
 	void on_radioMesh_toggled(bool isTrue);
 
 private:
-	void setVariableSelect();
+	/// Fills the combobox with all applicable variables and
+	/// returns the index of the first variable with the highest dimension.
+	int setVariableSelect();
 	void setDimensionSelect();
 	void getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue);
 	void getDaysTime(double minSince, QTime &time, int &days);
 	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
 	void createDataObject();
-	int valueWithMaxDim();
 	int getTimeStep();
 	int getDim4() const;
 	double getResolution();
@@ -59,6 +60,7 @@ private:
 	MeshLib::Mesh* _currentMesh;
 	VtkGeoImageSource* _currentRaster;
 	std::string _currentPath;
+	std::vector<int> _id_map;
 };
 
 #endif //NETCDFCONFIGUREDIALOG_H
