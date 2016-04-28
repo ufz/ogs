@@ -50,18 +50,29 @@ public:
 	ac::gtest_reporter gtest_reporter;
 };
 
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+// Compilers of MVS below 2015 do not support unrestricted unions. The
+// unrestricted union is used by autocheck to handle test data. The autocheck
+// workaround for MVS compilers (below version 2015) contains a bug and in the
+// consequence the tests crashes. For this reason the tests are disabled under
+// this environments.
+
 // Test the intersection of intersecting line segments. Line segments are chords
 // of the same circle that both contains the center of the circle. As a
 // consequence the center of the circle is the intersection point.
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 {
-	auto intersect =
-	    [](GeoLib::LineSegment const& s0, GeoLib::LineSegment const& s1)
+	auto intersect = [](GeoLib::LineSegment const& s0,
+	                    GeoLib::LineSegment const& s1)
 	{
-		auto ipnts = GeoLib::lineSegmentIntersect2d(s0.a, s0.b, s1.a, s1.b);
-		if (ipnts.size() == 1) {
+		auto ipnts = GeoLib::lineSegmentIntersect2d(
+		    s0.getBeginPoint(), s0.getEndPoint(), s1.getBeginPoint(),
+		    s1.getEndPoint());
+		if (ipnts.size() == 1)
+		{
 			MathLib::Point3d const center{std::array<double, 3>{
-			    {(s0.a[0] + s0.b[0]) / 2, (s0.a[1] + s0.b[1]) / 2, 0.0}}};
+			    {(s0.getBeginPoint()[0] + s0.getEndPoint()[0]) / 2,
+			     (s0.getBeginPoint()[1] + s0.getEndPoint()[1]) / 2, 0.0}}};
 			const double sqr_dist(MathLib::sqrDist(ipnts[0], center));
 			if (sqr_dist < std::numeric_limits<double>::epsilon())
 				return true;
@@ -84,7 +95,9 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationNonIntersecting)
 	auto intersect =
 	    [](GeoLib::LineSegment const& s0, GeoLib::LineSegment const& s1)
 	{
-		auto ipnts = GeoLib::lineSegmentIntersect2d(s0.a, s0.b, s1.a, s1.b);
+		auto ipnts = GeoLib::lineSegmentIntersect2d(
+		    s0.getBeginPoint(), s0.getEndPoint(), s1.getBeginPoint(),
+		    s1.getEndPoint());
 		return ipnts.empty();
 	};
 
@@ -103,9 +116,11 @@ TEST_F(LineSegmentIntersect2dTest, ParallelNonIntersectingSegmentOrientation)
 	    std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
 	        segment_pair)
 	{
-		auto ipnts = GeoLib::lineSegmentIntersect2d(
-		    segment_pair.first.a, segment_pair.first.b, segment_pair.second.a,
-		    segment_pair.second.b);
+		auto ipnts =
+		    GeoLib::lineSegmentIntersect2d(segment_pair.first.getBeginPoint(),
+		                                   segment_pair.first.getEndPoint(),
+		                                   segment_pair.second.getBeginPoint(),
+		                                   segment_pair.second.getEndPoint());
 		return ipnts.empty();
 	};
 
@@ -123,9 +138,11 @@ TEST_F(LineSegmentIntersect2dTest, ParallelIntersectingSegmentOrientation)
 	    std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
 	        segment_pair)
 	{
-		auto ipnts = GeoLib::lineSegmentIntersect2d(
-		    segment_pair.first.a, segment_pair.first.b, segment_pair.second.a,
-		    segment_pair.second.b);
+		auto ipnts =
+		    GeoLib::lineSegmentIntersect2d(segment_pair.first.getBeginPoint(),
+		                                   segment_pair.first.getEndPoint(),
+		                                   segment_pair.second.getBeginPoint(),
+		                                   segment_pair.second.getEndPoint());
 		return ipnts.size() == 2;
 	};
 
@@ -135,3 +152,5 @@ TEST_F(LineSegmentIntersect2dTest, ParallelIntersectingSegmentOrientation)
 	    ac::make_arbitrary(pair_segment_generator2),
 	    gtest_reporter);
 }
+
+#endif

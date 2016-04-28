@@ -30,6 +30,7 @@ namespace MathLib
 namespace GeoLib
 {
 class Polyline;
+class LineSegment;
 
 enum TriangleTest
 {
@@ -271,15 +272,15 @@ bool isPointInTetrahedron(MathLib::Point3d const& p,
 /**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline
- * @param idx0 beginning index of the first line segment that has an intersection
- * @param idx1 beginning index of the second line segment that has an intersection
- * @param intersection_pnt the intersection point if the line segments intersect
+ * @param seg_it0 iterator pointing to the first segment that has an intersection
+ * @param seg_it1 iterator pointing to the second segment that has an intersection
+ * @param intersection_pnt the intersection point if the segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect (const GeoLib::Polyline* ply,
-                            std::size_t &idx0,
-                            std::size_t &idx1,
-                            GeoLib::Point& intersection_pnt);
+bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
+                           GeoLib::Polyline::SegmentIterator& seg_it0,
+                           GeoLib::Polyline::SegmentIterator& seg_it1,
+                           GeoLib::Point& intersection_pnt);
 
 /**
  * Check if the two vectors \f$v, w \in R^3\f$ are in parallel
@@ -299,8 +300,8 @@ bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
  * @param s the intersection point if the segments do intersect
  * @return true, if the line segments intersect, else false
  */
-bool lineSegmentIntersect (const GeoLib::Point& a, const GeoLib::Point& b,
-        const GeoLib::Point& c, const GeoLib::Point& d, GeoLib::Point& s);
+bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
+                          GeoLib::LineSegment const& s1, GeoLib::Point& s);
 
 /// A line segment is given by its two end-points. The function checks,
 /// if the two line segments (ab) and (cd) intersects. This method checks the

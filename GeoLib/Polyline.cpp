@@ -184,6 +184,11 @@ std::size_t Polyline::getNumberOfPoints() const
 	return _ply_pnt_ids.size();
 }
 
+std::size_t Polyline::getNumberOfSegments() const
+{
+	return _ply_pnt_ids.empty() ? 0 : _ply_pnt_ids.size()-1;
+}
+
 bool Polyline::isClosed() const
 {
 	if (_ply_pnt_ids.size() < 3)
@@ -224,6 +229,20 @@ std::size_t Polyline::getPointID(std::size_t i) const
 {
 	assert(i < _ply_pnt_ids.size());
 	return _ply_pnt_ids[i];
+}
+
+LineSegment const Polyline::getSegment(std::size_t i) const
+{
+	assert(i < getNumberOfSegments());
+	return LineSegment(_ply_pnts[_ply_pnt_ids[i]],
+	                   _ply_pnts[_ply_pnt_ids[i + 1]], false);
+}
+
+LineSegment Polyline::getSegment(std::size_t i)
+{
+	assert(i < getNumberOfSegments());
+	return LineSegment(_ply_pnts[_ply_pnt_ids[i]],
+	                   _ply_pnts[_ply_pnt_ids[i + 1]], false);
 }
 
 void Polyline::setPointID(std::size_t idx, std::size_t id)
@@ -431,6 +450,106 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
 	return dist;
 }
 
+Polyline::SegmentIterator::SegmentIterator(Polyline const& polyline,
+                                           std::size_t segment_number)
+    : _polyline(&polyline),
+      _segment_number(
+          static_cast<std::vector<GeoLib::Point*>::size_type>(segment_number))
+{}
+
+Polyline::SegmentIterator::SegmentIterator(SegmentIterator const& src)
+    : _polyline(src._polyline), _segment_number(src._segment_number)
+{}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator=(
+    SegmentIterator const& rhs)
+{
+	if (&rhs == this)
+		return *this;
+
+	_polyline = rhs._polyline;
+	_segment_number = rhs._segment_number;
+	return *this;
+}
+
+std::size_t Polyline::SegmentIterator::getSegmentNumber() const
+{
+	return static_cast<std::size_t>(_segment_number);
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator++()
+{
+	++_segment_number;
+	return *this;
+}
+
+LineSegment const Polyline::SegmentIterator::operator*() const
+{
+	return _polyline->getSegment(_segment_number);
+}
+
+LineSegment Polyline::SegmentIterator::operator*()
+{
+	return _polyline->getSegment(_segment_number);
+}
+
+bool Polyline::SegmentIterator::operator==(SegmentIterator const& other)
+{
+	return !(*this != other);
+}
+
+bool Polyline::SegmentIterator::operator!=(SegmentIterator const& other)
+{
+	return other._segment_number != _segment_number ||
+	       other._polyline != _polyline;
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator+=(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	if (n < 0) {
+		_segment_number -=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(-n);
+	} else {
+		_segment_number +=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(n);
+	}
+	if (_segment_number > _polyline->getNumberOfSegments())
+		std::abort();
+	return *this;
+}
+
+Polyline::SegmentIterator Polyline::SegmentIterator::operator+(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	SegmentIterator t(*this);
+	t += n;
+	return t;
+}
+
+Polyline::SegmentIterator& Polyline::SegmentIterator::operator-=(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	if (n >= 0) {
+		_segment_number -=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(n);
+	} else {
+		_segment_number +=
+		    static_cast<std::vector<GeoLib::Point>::size_type>(-n);
+	}
+	if (_segment_number > _polyline->getNumberOfSegments())
+		std::abort();
+	return *this;
+}
+
+Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
+    std::vector<GeoLib::Point>::difference_type n)
+{
+	Polyline::SegmentIterator t(*this);
+	t -= n;
+	return t;
+}
+
 std::ostream& operator<< (std::ostream &os, const Polyline &pl)
 {
 	pl.write (os);
@@ -457,20 +576,6 @@ bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1)
 			return true;
 	}
 	return false;
-}
-
-bool isLineSegmentIntersecting (const Polyline& ply,
-                                GeoLib::Point const& s0,
-                                GeoLib::Point const& s1)
-{
-	const std::size_t n (ply.getNumberOfPoints() - 1);
-	bool intersect(false);
-	GeoLib::Point intersection_pnt;
-	for (std::size_t k(0); k < n && !intersect; k++)
-		intersect = GeoLib::lineSegmentIntersect (*(ply.getPoint(k)), *(ply.getPoint(
-		                                                                         k + 1)),
-		                                           s0, s1, intersection_pnt);
-	return intersect;
 }
 
 bool operator==(Polyline const& lhs, Polyline const& rhs)

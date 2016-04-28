@@ -26,7 +26,7 @@ TEST(GeoLib, TestXAxisParallelLineSegmentIntersection2d)
 	GeoLib::Point d(1.5, 0.0, 0.0);
 	GeoLib::Point s;
 
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestParallelLineSegmentIntersection2d)
@@ -38,7 +38,7 @@ TEST(GeoLib, TestParallelLineSegmentIntersection2d)
 	GeoLib::Point d(1.5, 1.5, 0.0);
 	GeoLib::Point s;
 
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseI)
@@ -50,7 +50,7 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseI)
 	GeoLib::Point d(2.5, 2.5, 0.0);
 	GeoLib::Point s;
 
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseII)
@@ -62,7 +62,7 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments2dCaseII)
 	GeoLib::Point d(-1.0, 0.0, 0.0);
 	GeoLib::Point s;
 
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestIntersectingLineSegments2d)
@@ -74,7 +74,7 @@ TEST(GeoLib, TestIntersectingLineSegments2d)
 	GeoLib::Point d(1.0, 0.0, 0.0);
 	GeoLib::Point s;
 
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestIntersectingLineSegments3d)
@@ -86,18 +86,18 @@ TEST(GeoLib, TestIntersectingLineSegments3d)
 	GeoLib::Point d(1.0, 0.0, 1.0);
 	GeoLib::Point s;
 
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 
 	// disturb one point a little bit
 	double const eps(std::numeric_limits<float>::epsilon());
 	d[2] += eps;
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 	d[2] = 1.0+1e-9;
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 	d[2] = 1.0+1e-8;
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 	d[2] = 1.0 + 5e-6;
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestParallelLineSegmentIntersection3d)
@@ -109,7 +109,7 @@ TEST(GeoLib, TestParallelLineSegmentIntersection3d)
 	GeoLib::Point d(1.5, 1.5, 1.5);
 	GeoLib::Point s;
 
-	EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestNonIntersectingParallelLineSegments3d)
@@ -120,7 +120,7 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments3d)
 	GeoLib::Point c(1.5, 1.5, 1.5);
 	GeoLib::Point d(2.5, 2.5, 2.5);
 	GeoLib::Point s;
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 
 	// two axis parallel line segments that do not intersect
 	b[0] = 3.0;
@@ -132,7 +132,7 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments3d)
 	d[0] = 10.0;
 	d[1] = 0.0;
 	d[2] = 0.0;
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 
 	// two axis parallel line segments that do not intersect
 	a[0] = 1000.0;
@@ -147,7 +147,7 @@ TEST(GeoLib, TestNonIntersectingParallelLineSegments3d)
 	d[0] = 0.0;
 	d[1] = 0.0;
 	d[2] = 100.0;
-	EXPECT_FALSE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+	EXPECT_FALSE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 }
 
 TEST(GeoLib, TestRandomLineSegments3d)
@@ -171,7 +171,7 @@ TEST(GeoLib, TestRandomLineSegments3d)
 				0.5*(b[2]+a[2]) - w[2]);
 		GeoLib::Point s;
 
-		EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
+		EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
 	}
 
 	// line segment (c,d) intersects (a,b) at end point a
@@ -186,8 +186,8 @@ TEST(GeoLib, TestRandomLineSegments3d)
 		GeoLib::Point d(a[0] - w[0], a[1] - w[1], a[2] - w[2]);
 		GeoLib::Point s;
 
-		EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
-		EXPECT_TRUE(GeoLib::lineSegmentIntersect(c,d,a,b,s));
+		EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
+		EXPECT_TRUE(GeoLib::lineSegmentIntersect({&c,&d}, {&a,&b}, s));
 	}
 
 	// line segment (c,d) intersects (a,b) at end point b
@@ -202,8 +202,8 @@ TEST(GeoLib, TestRandomLineSegments3d)
 		GeoLib::Point d(b[0] - w[0], b[1] - w[1], b[2] - w[2]);
 		GeoLib::Point s;
 
-		EXPECT_TRUE(GeoLib::lineSegmentIntersect(a,b,c,d,s));
-		EXPECT_TRUE(GeoLib::lineSegmentIntersect(c,d,a,b,s));
+		EXPECT_TRUE(GeoLib::lineSegmentIntersect({&a,&b}, {&c,&d}, s));
+		EXPECT_TRUE(GeoLib::lineSegmentIntersect({&c,&d}, {&a,&b}, s));
 	}
 }
 

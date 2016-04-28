@@ -20,6 +20,7 @@
 
 // GeoLib
 #include "GeoObject.h"
+#include "LineSegment.h"
 #include "Point.h"
 
 // MathLib
@@ -50,6 +51,45 @@ enum class Location
 class Polyline : public GeoObject
 {
 public:
+	class SegmentIterator final
+	    : public std::iterator<std::forward_iterator_tag, LineSegment>
+	{
+	public:
+		explicit SegmentIterator(Polyline const& polyline,
+		                         std::size_t segment_number);
+
+		SegmentIterator(SegmentIterator const& src);
+
+		SegmentIterator() = delete;
+		~SegmentIterator() = default;
+
+		SegmentIterator& operator=(SegmentIterator const& rhs);
+
+		std::size_t getSegmentNumber() const;
+
+		SegmentIterator& operator++();
+
+		LineSegment const operator*() const;
+
+		LineSegment operator*();
+
+		bool operator==(SegmentIterator const& other);
+
+		bool operator!=(SegmentIterator const& other);
+
+		SegmentIterator& operator+=(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator operator+(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator& operator-=(std::vector<GeoLib::Point>::difference_type n);
+
+		SegmentIterator operator-(std::vector<GeoLib::Point>::difference_type n);
+
+	private:
+		GeoLib::Polyline const* _polyline;
+		std::vector<GeoLib::Point*>::size_type _segment_number;
+	};
+
 	friend class Polygon;
 	/** constructor
 	 * \param pnt_vec a reference to the point vector
@@ -109,6 +149,8 @@ public:
 	 * */
 	std::size_t getNumberOfPoints() const;
 
+	std::size_t getNumberOfSegments() const;
+
 	/** returns true if the polyline is closed */
 	bool isClosed() const;
 
@@ -140,6 +182,16 @@ public:
 	 * \brief returns the i-th point contained in the polyline
 	 * */
 	const Point* getPoint(std::size_t i) const;
+
+	SegmentIterator begin() const
+	{
+		return SegmentIterator(*this, 0);
+	}
+
+	SegmentIterator end() const
+	{
+		return SegmentIterator(*this, getNumberOfSegments());
+	}
 
 	std::vector<Point*> const& getPointsVec () const;
 
@@ -181,16 +233,15 @@ protected:
 	 * the k-th element of the vector contains the length of the polyline until the k-th segment
 	 */
 	std::vector<double> _length;
+private:
+	LineSegment const getSegment(std::size_t i) const;
+	LineSegment getSegment(std::size_t i);
 };
 
 /** overload the output operator for class Polyline */
 std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
-
-bool isLineSegmentIntersecting (const Polyline& ply,
-                                GeoLib::Point const& s0,
-                                GeoLib::Point const& s1);
 
 /**
  * comparison operator

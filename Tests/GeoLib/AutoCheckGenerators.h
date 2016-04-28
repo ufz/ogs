@@ -68,10 +68,9 @@ struct SymmSegmentGeneratorXY
 
 	result_type operator()(std::size_t /*size*/ = 0)
 	{
-		result_type rv;
-		rv.a = GeoLib::Point(source(), 0);
-		rv.b = GeoLib::Point(function(rv.a), 1);
-		return rv;
+		std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{source(), 0}};
+		std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{function(*a), 1}};
+		return result_type{a.release(), b.release(), true};
 	}
 
 	Gen source;
@@ -81,14 +80,13 @@ struct SymmSegmentGeneratorXY
 GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
                               GeoLib::LineSegment const& line_seg)
 {
-	GeoLib::LineSegment s;
-	s.a = line_seg.a;
+	std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{line_seg.getBeginPoint()}};
+	std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{line_seg.getEndPoint()}};
 	for (std::size_t k(0); k<3; ++k)
-		s.a[k] += translation[k];
-	s.b = line_seg.b;
+		(*a)[k] += translation[k];
 	for (std::size_t k(0); k<3; ++k)
-		s.b[k] += translation[k];
-	return s;
+		(*b)[k] += translation[k];
+	return GeoLib::LineSegment{a.release(), b.release(), true};
 }
 
 template <typename Gen = SymmSegmentGeneratorXY<
@@ -105,10 +103,9 @@ struct PairSegmentGeneratorXY
 
 	result_type operator()(std::size_t /*size*/ = 0)
 	{
-		result_type rv;
-		rv.first = segment_generator();
-		rv.second = function(rv.first);
-		return rv;
+		auto first = segment_generator();
+		auto second = function(first);
+		return result_type{first, second};
 	}
 
 	Gen segment_generator;

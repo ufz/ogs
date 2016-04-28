@@ -73,13 +73,11 @@ public:
 	bool isPntInPolygon (double x, double y, double z) const;
 
 	/**
-	 * Checks if the straight line segment given by its end points a and b
-	 * is contained within the polygon.
-	 * @param a the first end point of the straight line segment
-	 * @param b the second end point of the straight line segment
+	 * Checks if the straight line segment is contained within the polygon.
+	 * @param segment the straight line segment that is checked with
 	 * @return true if the straight line segment is within the polygon, else false
 	 */
-	bool containsSegment(GeoLib::Point const& a, GeoLib::Point const& b) const;
+	bool containsSegment(GeoLib::LineSegment const& segment) const;
 
 	/**
 	 * Method checks if all points of the polyline ply are inside of the polygon.
@@ -96,18 +94,17 @@ public:
 	bool isPartOfPolylineInPolygon (const Polyline& ply) const;
 
 	/**
-	 * Calculates the next intersection point between the line segment (a,b) and the
-	 * polygon starting with segment seg_num.
-	 * @param a (input) the first point of the line segment
-	 * @param b (input) the second point of the line segment
+	 * Calculates the next intersection point between the line segment \c seg
+	 * and the polygon starting with segment \c seg_num.
+	 * @param seg (input) Line segment to compute intersection.
 	 * @param intersection_pnt (output) next intersection point
-	 * @param seg_num (input/output) the number of the polygon segment that is intersecting
+	 * @param seg_num (in/out) the number of the polygon segment that is intersecting
+	 * @return true, if there was an intersection, i.e., the \c intersection_pnt
+	 * and \c seg_num contains new valid values
 	 */
-	bool getNextIntersectionPointPolygonLine(GeoLib::Point const & a,
-									GeoLib::Point const & b,
-									GeoLib::Point* intersection_pnt,
-									std::size_t& seg_num) const;
-
+	bool getNextIntersectionPointPolygonLine(GeoLib::LineSegment const& seg,
+	                                         GeoLib::Point& intersection_pnt,
+	                                         std::size_t& seg_num) const;
 
 	void computeListOfSimplePolygons ();
 	const std::list<Polygon*>& getListOfSimplePolygons ();
@@ -115,14 +112,12 @@ public:
 	friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
 	/**
-	 * computes all intersection points of the straight line segment and the polyline boundary
-	 * @param a end point of line segment
-	 * @param b end point of line segment
-	 * @return a vector of tuples, where a tuple contains the intersection point and
-	 * the intersected segment number
+	 * Computes all intersections of the straight line segment and the polyline boundary
+	 * @param segment the line segment that will be processed
+	 * @return a possible empty vector containing the intersection points
 	 */
 	std::vector<GeoLib::Point> getAllIntersectionPoints(
-		GeoLib::Point const& a, GeoLib::Point const& b) const;
+		GeoLib::LineSegment const& segment) const;
 
 	/**
 	 * from book: Computational Geometry and Computer Graphics in C++, page 119
