@@ -31,7 +31,6 @@
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"

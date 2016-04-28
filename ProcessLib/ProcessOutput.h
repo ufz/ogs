@@ -20,7 +20,7 @@ namespace ProcessLib
 template<typename GlobalVector>
 struct SecondaryVariableFunctions
 {
-    using Fct = std::function<GlobalVector(
+    using Fct = std::function<GlobalVector const&(
         GlobalVector const& x,
         AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
 
