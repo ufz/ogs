@@ -89,7 +89,7 @@ struct ProcessOutput
             {
                 if (output_variables.find(out_var) != output_variables.cend())
                 {
-                    ERR("output variable `%s' specified twice.", out_var.c_str());
+                    ERR("output variable `%s' specified more than once.", out_var.c_str());
                     std::abort();
                 }
 
@@ -97,7 +97,7 @@ struct ProcessOutput
                     return pv.getName() == out_var;
                 };
 
-                // check if process variable
+                // check if out_var is a process variable
                 auto const& pcs_var = std::find_if(
                     process_variables.cbegin(), process_variables.cend(), pred);
 
@@ -107,7 +107,7 @@ struct ProcessOutput
                         return p.name == out_var;
                     };
 
-                    // check if secondary variable
+                    // check if out_var is a  secondary variable
                     auto const& pcs_var2 = std::find_if(
                         secondary_variables.cbegin(), secondary_variables.cend(), pred2);
 
