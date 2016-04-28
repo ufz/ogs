@@ -34,7 +34,7 @@ namespace AssemblerLib
 /// The number of rows should be equal to the number of mesh items and the
 /// number of columns should be equal to the number of the components on that
 /// mesh item.
-class LocalToGlobalIndexMap
+class LocalToGlobalIndexMap final
 {
 public:
     typedef MathLib::RowColumnIndices<GlobalIndexType> RowColumnIndices;

@@ -31,7 +31,7 @@ enum class ComponentOrder
 };
 
 /// Multidirectional mapping between mesh entities and degrees of freedom.
-class MeshComponentMap
+class MeshComponentMap final
 {
 public:
     typedef MeshLib::Location Location;
