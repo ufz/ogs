@@ -834,7 +834,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 			mesh = FileIO::readMeshFromFile(file_name.toStdString());
 		else
 		{
-			OGSError::box("The selected file is no supported mesh file.");
+			OGSError::box("The selected file isn't a supported mesh file.");
 			return;
 		}
 	}
