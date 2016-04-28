@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessUtil.h"
 
@@ -40,10 +41,10 @@ public:
         std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
         GroundwaterFlowProcessData&& process_data,
-        ProcessOutput<GlobalVector>&& process_output)
+        BaseLib::ConfigTree const& config
+        )
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
-                               std::move(process_variables),
-                               std::move(process_output))
+                               std::move(process_variables))
         , _process_data(std::move(process_data))
     {
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
@@ -58,6 +59,36 @@ public:
             // ODESystemTag in the future.
             std::abort();
         }
+
+        if (auto const secondary_variable_config =
+            config.getConfSubtreeOptional("secondary_variables"))
+        {
+            _extrapolator.reset(
+                new ExtrapolatorImplementation(Base::getMatrixSpecifications()));
+
+            // Note: local assemblers are already passed here, but are created later in
+            // createAssemblers(). But that's OK.
+            Base::_process_output.addSecondaryVariable(
+                *secondary_variable_config, "darcy_velocity_x", 1,
+                makeExtrapolator(IntegrationPointValue::DarcyVelocityX, *_extrapolator,
+                                 _local_assemblers));
+
+            if (mesh.getDimension() > 1) {
+                Base::_process_output.addSecondaryVariable(
+                    *secondary_variable_config, "darcy_velocity_y", 1,
+                    makeExtrapolator(IntegrationPointValue::DarcyVelocityY, *_extrapolator,
+                                     _local_assemblers));
+            }
+            if (mesh.getDimension() > 2) {
+                Base::_process_output.addSecondaryVariable(
+                    *secondary_variable_config, "darcy_velocity_z", 1,
+                    makeExtrapolator(IntegrationPointValue::DarcyVelocityZ, *_extrapolator,
+                                     _local_assemblers));
+            }
+        }
+
+        Base::_process_output.setOutputVariables(config.getConfSubtree("output"),
+                                                 Base::_process_variables);
     }
 
     //! \name ODESystem interface
@@ -72,11 +103,16 @@ public:
 
 private:
     using LocalAssemblerInterface =
-        ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+        GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
+
+    using ExtrapolatorInterface = NumLib::Extrapolator<
+        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
+    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
+        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
 
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           MeshLib::Mesh const& mesh,
@@ -107,6 +143,8 @@ private:
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+
+    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
 template <typename GlobalSetup>
@@ -139,15 +177,12 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
-    ProcessOutput<typename GlobalSetup::VectorType> process_output;
-    process_output.setOutputVariables(config.getConfSubtree("output"), process_variables);
-
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             std::move(process_variables),
             std::move(process_data),
-            std::move(process_output)
+            config
         }
     };
 }

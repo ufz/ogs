@@ -26,14 +26,27 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
+enum class IntegrationPointValue {
+    DarcyVelocityX,
+    DarcyVelocityY,
+    DarcyVelocityZ
+};
+
 const unsigned NUM_NODAL_DOF = 1;
+
+template <typename GlobalMatrix, typename GlobalVector>
+class GroundwaterFlowLocalAssemblerInterface
+        : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
+        , public NumLib::Extrapolatable<GlobalVector, IntegrationPointValue>
+{};
 
 template <typename ShapeFunction,
          typename IntegrationMethod,
          typename GlobalMatrix,
          typename GlobalVector,
          unsigned GlobalDim>
-class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
+class LocalAssemblerData
+        : public GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -64,7 +77,7 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/) override
+    void assemble(double const /*t*/, std::vector<double> const& local_x) override
     {
         _localA.setZero();
         _localRhs.setZero();
@@ -72,13 +85,23 @@ public:
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-
             auto const k = _process_data.hydraulic_conductivity(_element);
+
             _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();
+
+            // Darcy velocity only computed for output.
+            auto const darcy_velocity = (k * sm.dNdx *
+                Eigen::Map<const NodalVectorType>(local_x.data(), ShapeFunction::NPOINTS)
+                ).eval();
+
+            for (unsigned d=0; d<GlobalDim; ++d) {
+                _darcy_velocities[d][ip] = darcy_velocity[d];
+            }
         }
     }
 
@@ -90,6 +113,34 @@ public:
         b.add(indices.rows, _localRhs);
     }
 
+    Eigen::Map<const Eigen::VectorXd>
+    getShapeMatrix(const unsigned integration_point) const override
+    {
+        auto const& N = _shape_matrices[integration_point].N;
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::VectorXd>(N.data(), N.size());
+    }
+
+    std::vector<double> const&
+    getIntegrationPointValues(IntegrationPointValue const property,
+                              std::vector<double>& /*cache*/) const override
+    {
+        switch (property)
+        {
+        case IntegrationPointValue::DarcyVelocityX:
+            return _darcy_velocities[0];
+        case IntegrationPointValue::DarcyVelocityY:
+            assert(GlobalDim > 1);
+            return _darcy_velocities[1];
+        case IntegrationPointValue::DarcyVelocityZ:
+            assert(GlobalDim > 2);
+            return _darcy_velocities[2];
+        }
+
+        std::abort();
+    }
+
 private:
     MeshLib::Element const& _element;
     std::vector<ShapeMatrices> _shape_matrices;
@@ -99,6 +150,10 @@ private:
     NodalVectorType _localRhs;
 
     unsigned const _integration_order;
+
+    std::vector<std::vector<double>> _darcy_velocities
+        = std::vector<std::vector<double>>(
+            GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
 };
 
 
