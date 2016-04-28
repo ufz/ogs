@@ -44,7 +44,7 @@ makeExtrapolator(PropertyEnum const property,
     auto const eval_field = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
-            ) -> GlobalVector
+            ) -> GlobalVector const&
     {
         extrapolator.extrapolate(local_assemblers, property);
         return extrapolator.getNodalValues();
@@ -53,7 +53,7 @@ makeExtrapolator(PropertyEnum const property,
     auto const eval_residuals = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
-            ) -> GlobalVector
+            ) -> GlobalVector const&
     {
         extrapolator.calculateResiduals(local_assemblers, property);
         return extrapolator.getElementResiduals();
@@ -73,12 +73,6 @@ struct SecondaryVariable
 template <typename GlobalVector>
 struct ProcessOutput
 {
-    ProcessOutput() = default;
-    ProcessOutput(ProcessOutput<GlobalVector>&&) = default;
-
-    //! There is no need to copy instances of this struct.
-    ProcessOutput(ProcessOutput<GlobalVector> const&) = delete;
-
     void addSecondaryVariable(
             BaseLib::ConfigTree const& config,
             std::string const& var_tag, const unsigned num_components,
