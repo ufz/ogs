@@ -119,12 +119,6 @@ public:
     std::vector<GlobalIndexType> getGlobalIndicesByComponent(
         const std::vector<Location>& ls) const;
 
-    /// Get the number of global unknowns (for DDC).
-    std::size_t getNGlobalUnknowns() const
-    {
-        return _num_global_dof;
-    }
-
     /// Get the number of local unknowns excluding those associated
     /// with ghost nodes (for DDC with node-wise mesh partitioning).
     std::size_t getNLocalUnknowns() const
@@ -183,12 +177,14 @@ private:
 
     detail::ComponentGlobalIndexDict _dict;
 
-    /// Number of global unknowns.
-    std::size_t _num_global_dof = 0;
-
     /// Number of local unknowns excluding those associated
     /// with ghost nodes (for domain decomposition).
     std::size_t _num_local_dof  = 0;
+
+#ifdef USE_PETSC
+    /// Number of global unknowns. Used internally only.
+    std::size_t _num_global_dof = 0;
+#endif
 
     /// Number of components
     /// introduced mainly for error checking
