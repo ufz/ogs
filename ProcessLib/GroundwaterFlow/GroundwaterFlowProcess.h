@@ -19,16 +19,9 @@
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
 
-namespace MeshLib
-{
-    class Element;
-    class Mesh;
-    template <typename PROP_VAL_TYPE> class PropertyVector;
-}
 
 namespace ProcessLib
 {
-
 namespace GroundwaterFlow
 {
 
@@ -106,6 +99,7 @@ private:
             *_global_assembler, &GlobalAssembler::assemble,
             _local_assemblers, t, x, M, K, b);
     }
+
 
     GroundwaterFlowProcessData _process_data;
 
