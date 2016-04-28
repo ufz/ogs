@@ -14,9 +14,11 @@
 
 #include "GeoLib/GEOObjects.h"
 
-namespace MeshLib {
-	class Mesh;
-}
+#include "MeshLib/Mesh.h"
+
+//namespace MeshLib {
+//	class Mesh;
+//}
 
 namespace DataHolderLib
 {
@@ -34,21 +36,21 @@ public:
 
 	Project(Project&) = delete;
 
-	~Project();
+	~Project() = default;
 
 	/// Returns the GEOObjects containing all points, polylines and surfaces.
 	GeoLib::GEOObjects& getGEOObjects() { return _geoObjects; }
 
 	/// Adds a new mesh under a (possibly new) unique name.
 	/// \attention This might change the given mesh's name.
-	void addMesh(MeshLib::Mesh* mesh);
+	void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
 
 	/// Returns the mesh with the given name or a \c nullptr if the mesh was not
 	/// found.
 	const MeshLib::Mesh* getMesh(const std::string &name) const;
 
 	/// Returns all the meshes with their respective names
-	const std::vector<MeshLib::Mesh*>& getMeshObjects() const
+	const std::vector<std::unique_ptr<MeshLib::Mesh>>& getMeshObjects() const
 	{
 		return _mesh_vec;
 	}
@@ -69,11 +71,13 @@ private:
 
 
 	/// Returns an iterator to the first found mesh with the given name.
-	std::vector<MeshLib::Mesh*>::const_iterator findMeshByName(std::string const& name) const;
-	std::vector<MeshLib::Mesh*>::iterator findMeshByName(std::string const& name);
+	std::vector<std::unique_ptr<MeshLib::Mesh>>::const_iterator findMeshByName(
+	    std::string const& name) const;
+	std::vector<std::unique_ptr<MeshLib::Mesh>>::iterator findMeshByName(
+	    std::string const& name);
 
 	GeoLib::GEOObjects _geoObjects;
-	std::vector<MeshLib::Mesh*> _mesh_vec;
+	std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
 };
 
 } // namespace

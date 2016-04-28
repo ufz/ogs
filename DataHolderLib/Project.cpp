@@ -22,31 +22,25 @@
 namespace DataHolderLib
 {
 
-Project::~Project()
-{
-	for (MeshLib::Mesh* m : _mesh_vec)
-		delete m;
-}
-
-void Project::addMesh(MeshLib::Mesh* mesh)
+void Project::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
 {
 	std::string name = mesh->getName();
 	getUniqueName(name);
 	mesh->setName(name);
-	_mesh_vec.push_back(mesh);
+	_mesh_vec.push_back(std::move(mesh));
 }
 
-std::vector<MeshLib::Mesh*>::const_iterator Project::findMeshByName(
-		std::string const& name) const
+std::vector<std::unique_ptr<MeshLib::Mesh>>::const_iterator
+Project::findMeshByName(std::string const& name) const
 {
 	return const_cast<Project&>(*this).findMeshByName(name);
 }
 
-std::vector<MeshLib::Mesh*>::iterator Project::findMeshByName(
-		std::string const& name)
+std::vector<std::unique_ptr<MeshLib::Mesh>>::iterator
+Project::findMeshByName(std::string const& name)
 {
 	return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
-			[&name](MeshLib::Mesh* mesh)
+			[&name](std::unique_ptr<MeshLib::Mesh> & mesh)
 			{
 				return mesh && (name == mesh->getName());
 			});
@@ -54,16 +48,16 @@ std::vector<MeshLib::Mesh*>::iterator Project::findMeshByName(
 
 const MeshLib::Mesh* Project::getMesh(const std::string &name) const
 {
-	std::vector<MeshLib::Mesh*>::const_iterator it = findMeshByName(name);
-	return (it == _mesh_vec.end() ? nullptr : *it);
+	auto it = findMeshByName(name);
+	return (it == _mesh_vec.end() ? nullptr : it->get());
 }
 
 bool Project::removeMesh(const std::string &name)
 {
-	std::vector<MeshLib::Mesh*>::iterator it = findMeshByName(name);
+	auto it = findMeshByName(name);
 	if (it != _mesh_vec.end())
 	{
-		delete *it;
+		delete it->release();
 		_mesh_vec.erase(it);
 		return true;
 	}
@@ -92,7 +86,7 @@ bool Project::getUniqueName(std::string &name) const
 		if (count > 1)
 			cpName = cpName + "-" + std::to_string(count);
 
-		for (MeshLib::Mesh* mesh :_mesh_vec)
+		for (auto & mesh : _mesh_vec)
 			if ( cpName == mesh->getName())
 				isUnique = false;
 	}
