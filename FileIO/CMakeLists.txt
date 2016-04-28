@@ -60,6 +60,7 @@ target_link_libraries(FileIO INTERFACE
 	InSituLib
 	MeshLib
 	logog
+	shp
 )
 if(QT4_FOUND)
 	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
