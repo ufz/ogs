@@ -11,14 +11,16 @@ node('docker')
 	stage 'Build'
 	docker.image('ogs6/gcc-base:latest')
 		.inside(defaultDockerArgs) {
-			build 'build', '', 'package tests ctest'
+			build 'build', '', 'tests ctest'
 		}
 
 	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
 		'ogs/scripts/jenkins/clang-log-parser.rules'
 
-	if (env.BRANCH_NAME == 'master')
+	if (env.BRANCH_NAME == 'master') {
+		build 'build', '', 'package'
 		archive 'build*/*.tar.gz'
+	}
 }
 
 
