@@ -54,7 +54,7 @@ public:
     MeshComponentMap getSubset(std::size_t const component_id,
                                MeshLib::MeshSubsets const& components) const;
 
-    /// The number of components in the map.
+    /// The number of dofs including the those located in the ghost nodes.
     std::size_t size() const
     {
         return _dict.size();
