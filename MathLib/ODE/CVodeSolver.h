@@ -22,6 +22,8 @@ class ConfigTree;
 
 namespace MathLib
 {
+namespace ODE
+{
 //! \addtogroup ExternalODESolverInterface
 //! @{
 
@@ -73,6 +75,7 @@ private:
 
 //! @}}
 
+}  // namespace ODE
 }  // namespace MathLib
 
 #endif  // MATHLIB_CVODESOLVER_H

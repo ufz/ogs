@@ -16,6 +16,8 @@
 
 namespace MathLib
 {
+namespace ODE
+{
 //! \addtogroup ExternalODESolverInterface
 //! @{
 
@@ -132,6 +134,7 @@ public:
 
 //! @}
 
+}  // namespace ODE
 }  // namespace MathLib
 
 #endif  // MATHLIB_ODESOLVER_H

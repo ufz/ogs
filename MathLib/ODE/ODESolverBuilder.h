@@ -26,6 +26,8 @@ class ConfigTree;
 
 namespace MathLib
 {
+namespace ODE
+{
 //! \addtogroup ExternalODESolverInterface
 //! @{
 
@@ -51,6 +53,7 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
 
 //! @}
 
+}  // namespace ODE
 }  // namespace MathLib
 
 #endif  // MATHLIB_ODE_ODESOLVERBUILDER_H

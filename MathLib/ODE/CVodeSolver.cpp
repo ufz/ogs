@@ -71,6 +71,8 @@ void printStats(void* cvode_mem)
 
 namespace MathLib
 {
+namespace ODE
+{
 //! \addtogroup ExternalODESolverInterface
 //! @{
 
@@ -359,6 +361,7 @@ double CVodeSolver::getTime() const
 
 CVodeSolver::~CVodeSolver() = default;
 
+}  // namespace ODE
 }  // namespace MathLib
 
 #endif  // CVODE_FOUND

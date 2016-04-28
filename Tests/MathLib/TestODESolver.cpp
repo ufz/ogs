@@ -17,8 +17,8 @@ const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
 
 bool f(const double,
-       MathLib::MappedConstVector<1> const& y,
-       MathLib::MappedVector<1>& ydot)
+       MathLib::ODE::MappedConstVector<1> const& y,
+       MathLib::ODE::MappedVector<1>& ydot)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -27,9 +27,9 @@ bool f(const double,
 }
 
 bool df(const double /*t*/,
-        MathLib::MappedConstVector<1> const& y,
-        MathLib::MappedConstVector<1> const& /*ydot*/,
-        MathLib::MappedMatrix<1, 1>& jac)
+        MathLib::ODE::MappedConstVector<1> const& y,
+        MathLib::ODE::MappedConstVector<1> const& /*ydot*/,
+        MathLib::ODE::MappedMatrix<1, 1>& jac)
 {
 	if (y[0] <= 0.0) return false;
 
@@ -43,8 +43,8 @@ struct ExtraData
 };
 
 bool f_extra(const double,
-             MathLib::MappedConstVector<1> const& y,
-             MathLib::MappedVector<1>& ydot,
+             MathLib::ODE::MappedConstVector<1> const& y,
+             MathLib::ODE::MappedVector<1>& ydot,
              ExtraData& data)
 {
 	if (y[0] <= 0.0) return false;
@@ -63,7 +63,7 @@ bool any_ode_solver_libs_available()
 }
 
 template <unsigned NumEquations>
-std::unique_ptr<MathLib::ODESolver<NumEquations>> make_ode_solver(
+std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
     boost::property_tree::ptree const& conf)
 {
 	// Make sure testrunner does not crash if we haven't built with support for
@@ -78,13 +78,13 @@ std::unique_ptr<MathLib::ODESolver<NumEquations>> make_ode_solver(
 
 	BaseLib::ConfigTree config(conf, "", BaseLib::ConfigTree::onerror,
 	                           BaseLib::ConfigTree::onwarning);
-	return MathLib::createODESolver<NumEquations>(config);
+	return MathLib::ODE::createODESolver<NumEquations>(config);
 }
 
 // There is no definition of this function in order to prevent passing temporary
 // property trees! There will be linker errors if you do so anyway.
 template <unsigned NumEquations>
-std::unique_ptr<MathLib::ODESolver<NumEquations>> make_ode_solver(
+std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
     boost::property_tree::ptree&&);
 
 void check(const double time_reached, const double y, const double y_dot,
@@ -164,15 +164,15 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
 
 	ExtraData data;
 	auto f_lambda = [&](double t,
-	                    MathLib::MappedConstVector<1> const& y,
-	                    MathLib::MappedVector<1>& ydot)
+	                    MathLib::ODE::MappedConstVector<1> const& y,
+	                    MathLib::ODE::MappedVector<1>& ydot)
 	{
 		return f_extra(t, y, ydot, data);
 	};
 
 	ode_solver->setFunction(f_lambda, nullptr);
-	ode_solver->setTolerance(abs_tol, rel_tol);
 
+	ode_solver->setTolerance(abs_tol, rel_tol);
 	ode_solver->setIC(t0, {y0});
 	ode_solver->preSolve();
 
