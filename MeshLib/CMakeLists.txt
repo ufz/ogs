@@ -15,7 +15,7 @@ GET_SOURCE_FILES(SOURCES_QUALITY MeshQuality)
 set(SOURCES ${SOURCES_MESHLIB} ${SOURCES_ELEMENTS} ${SOURCES_EDITING} ${SOURCES_GENERATORS} ${SOURCES_QUALITY} ${SOURCES_SEARCH})
 
 # Create the library
-add_library(MeshLib ${SOURCES})
+add_library(MeshLib STATIC ${SOURCES})
 
 target_link_libraries(MeshLib
 	BaseLib
