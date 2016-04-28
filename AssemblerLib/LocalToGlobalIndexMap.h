@@ -62,10 +62,10 @@ public:
     /// the ghost nodes.
     std::size_t dofSizeWithGhosts() const;
 
-    /// Returns total number of local degrees of freedom
-    /// of the present rank, which does not count the unknowns
-    /// associated with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t dofSizeLocal() const
+    /// Returns total number of local degrees of freedom of the present rank,
+    /// which does not count the unknowns associated with ghost nodes (for DDC
+    /// with node-wise mesh partitioning).
+    std::size_t dofSizeWithoutGhosts() const
     {
         return _mesh_component_map.getNLocalUnknowns();
     }
