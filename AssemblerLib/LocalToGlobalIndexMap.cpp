@@ -9,15 +9,8 @@
 
 #include "LocalToGlobalIndexMap.h"
 
-#include "logog/include/logog.hpp"
-
-#include "AssemblerLib/MeshComponentMap.h"
-#include "MeshLib/MeshSubsets.h"
-
 namespace AssemblerLib
 {
-
-
 
 template <typename ElementIterator>
 void

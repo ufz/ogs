@@ -13,10 +13,6 @@
 #ifndef ASSEMBLERLIB_MESHCOMPONENTMAP_H_
 #define ASSEMBLERLIB_MESHCOMPONENTMAP_H_
 
-#include <vector>
-
-#include "MeshLib/Location.h"
-
 #include "ComponentGlobalIndexDict.h"
 
 namespace MeshLib
