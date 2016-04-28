@@ -19,6 +19,9 @@ namespace BaseLib { class ConfigTree; }
 
 namespace MathLib
 {
+namespace ODE
+{
+
 template <unsigned NumEquations>
 std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config);
@@ -116,6 +119,7 @@ private:
 
 //! @}
 
-}  // namespace MathLib
+} // namespace ODE
+} // namespace MathLib
 
 #endif  // MATHLIB_ODE_CONCRETEODESOLVER_H

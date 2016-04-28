@@ -15,6 +15,8 @@
 
 namespace MathLib
 {
+namespace ODE
+{
 
 //! \addtogroup ExternalODESolverInterface
 //! @{
@@ -70,6 +72,7 @@ using JacobianFunction = std::function<bool(
 
 //! @}
 
+} // namespace ODE
 } // namespace MathLib
 
 #endif  // MATHLIB_ODE_ODESOLVERTYPES_H

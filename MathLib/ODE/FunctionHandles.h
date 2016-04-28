@@ -14,6 +14,8 @@
 
 namespace MathLib
 {
+namespace ODE
+{
 namespace detail
 {
 
@@ -106,7 +108,8 @@ struct FunctionHandlesImpl final : public FunctionHandles
 
 //! @}
 
-}  // namespace detail
-}  // namespace MathLib
+} // namespace detail
+} // namespace ODE
+} // namespace MathLib
 
 #endif  // MATHLIB_ODE_HANDLES_H
