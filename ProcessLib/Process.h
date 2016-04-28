@@ -462,11 +462,6 @@ private:
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
 	ProcessOutput<GlobalVector> _process_output;
-
-	//! Extrapolator Interface
-    using ExtrapolatorIntf = NumLib::Extrapolator<GlobalVector>;
-    using ExtrapolatorImpl = NumLib::LocalLinearLeastSquaresExtrapolator<GlobalVector>;
-    std::unique_ptr<ExtrapolatorIntf> _extrapolator;
 };
 
 /// Find process variables in \c variables whose names match the settings under
