@@ -90,50 +90,50 @@ struct ProcessOutput
     void setOutputVariables(BaseLib::ConfigTree const& output_config,
                             std::vector<ProcVarRef> const& process_variables)
     {
-        if (auto out_vars = output_config.getConfSubtreeOptional("variables"))
-        {
-            for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
-            {
-                if (output_variables.find(out_var) != output_variables.cend())
-                {
-                    ERR("output variable `%s' specified more than once.", out_var.c_str());
-                    std::abort();
-                }
+        auto out_vars = output_config.getConfSubtreeOptional("variables");
+        if (!out_vars) return;
 
-                auto pred = [&out_var](ProcessVariable const& pv) {
-                    return pv.getName() == out_var;
+        for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
+        {
+            if (output_variables.find(out_var) != output_variables.cend())
+            {
+                ERR("output variable `%s' specified more than once.", out_var.c_str());
+                std::abort();
+            }
+
+            auto pred = [&out_var](ProcessVariable const& pv) {
+                return pv.getName() == out_var;
+            };
+
+            // check if out_var is a process variable
+            auto const& pcs_var = std::find_if(
+                process_variables.cbegin(), process_variables.cend(), pred);
+
+            if (pcs_var == process_variables.cend())
+            {
+                auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
+                    return p.name == out_var;
                 };
 
-                // check if out_var is a process variable
-                auto const& pcs_var = std::find_if(
-                    process_variables.cbegin(), process_variables.cend(), pred);
+                // check if out_var is a  secondary variable
+                auto const& pcs_var2 = std::find_if(
+                    secondary_variables.cbegin(), secondary_variables.cend(), pred2);
 
-                if (pcs_var == process_variables.cend())
+                if (pcs_var2 == secondary_variables.cend())
                 {
-                    auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
-                        return p.name == out_var;
-                    };
-
-                    // check if out_var is a  secondary variable
-                    auto const& pcs_var2 = std::find_if(
-                        secondary_variables.cbegin(), secondary_variables.cend(), pred2);
-
-                    if (pcs_var2 == secondary_variables.cend())
-                    {
-                        ERR("Output variable `%s' is neither a process variable nor a"
-                            " secondary variable", out_var.c_str());
-                        std::abort();
-                    }
+                    ERR("Output variable `%s' is neither a process variable nor a"
+                        " secondary variable", out_var.c_str());
+                    std::abort();
                 }
-
-                DBUG("adding output variable `%s'", out_var.c_str());
-                output_variables.insert(out_var);
             }
 
-            if (auto out_resid = output_config.getConfParamOptional<bool>(
-                    "output_extrapolation_residuals")) {
-                output_residuals = *out_resid;
-            }
+            DBUG("adding output variable `%s'", out_var.c_str());
+            output_variables.insert(out_var);
+        }
+
+        if (auto out_resid = output_config.getConfParamOptional<bool>(
+                "output_extrapolation_residuals")) {
+            output_residuals = *out_resid;
         }
     }
 
