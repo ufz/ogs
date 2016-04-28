@@ -34,7 +34,7 @@ computeSparsityPattern(LocalToGlobalIndexMap const& dof_table,
         global_idcs.push_back(dof_table.getGlobalIndices(l));
     }
 
-    SparsityPattern sparsity_pattern(dof_table.dofSize());
+    SparsityPattern sparsity_pattern(dof_table.dofSizeWithGhosts());
 
     // Map adjacent mesh nodes to "adjacent global indices".
     for (std::size_t n=0; n<mesh.getNNodes(); ++n)

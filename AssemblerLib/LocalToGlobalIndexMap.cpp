@@ -119,7 +119,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 }
 
 std::size_t
-LocalToGlobalIndexMap::dofSize() const
+LocalToGlobalIndexMap::dofSizeWithGhosts() const
 {
     return _mesh_component_map.size();
 }

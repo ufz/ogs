@@ -68,12 +68,12 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     typedef GlobalSetup::VectorType GlobalVector;
     typedef GlobalSetup::MatrixType GlobalMatrix;
     auto A = std::unique_ptr<GlobalMatrix>{
-             GlobalSetup::createMatrix(local_to_global_index_map.dofSize())};
+             GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
     A->setZero();
     auto rhs = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSize())};
+               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
     auto x   = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSize())};
+               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
     // TODO no setZero() for rhs, x?
 
     using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
@@ -110,7 +110,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     // Call global assembler for each mesh element.
     auto M_dummy = std::unique_ptr<GlobalMatrix>{
-        GlobalSetup::createMatrix(local_to_global_index_map.dofSize())};
+        GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
     A->setZero();
     auto const t = 0.0;
     GlobalSetup::executeMemberDereferenced(

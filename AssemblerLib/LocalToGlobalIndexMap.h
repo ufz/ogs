@@ -58,8 +58,9 @@ public:
         std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
-    /// Returns total number of degrees of freedom.
-    std::size_t dofSize() const;
+    /// Returns total number of degrees of freedom including those located in
+    /// the ghost nodes.
+    std::size_t dofSizeWithGhosts() const;
 
     /// Returns total number of local degrees of freedom
     /// of the present rank, which does not count the unknowns

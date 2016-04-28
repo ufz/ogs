@@ -34,7 +34,7 @@ std::unique_ptr<Eigen::MatrixXd>
 MatrixVectorTraits<Eigen::MatrixXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
     auto const ncols = spec.dof_table ? nrows : spec.ncols;
 
     return std::unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd(nrows, ncols));
@@ -58,7 +58,7 @@ std::unique_ptr<Eigen::VectorXd>
 MatrixVectorTraits<Eigen::VectorXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(nrows));
 }
@@ -177,7 +177,7 @@ std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     auto A = std::unique_ptr<EigenMatrix>(new EigenMatrix(nrows));
 
@@ -205,7 +205,7 @@ std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     return std::unique_ptr<EigenVector>(new EigenVector(nrows));
 }
