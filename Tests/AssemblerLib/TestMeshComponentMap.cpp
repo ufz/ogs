@@ -79,7 +79,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_COMPONENT);
 
-    ASSERT_EQ(2 * mesh->getNNodes(), cmap->size());
+    ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.
@@ -107,7 +107,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
     cmap = new MeshComponentMap(components,
         AssemblerLib::ComponentOrder::BY_LOCATION);
 
-    ASSERT_EQ(2 * mesh->getNNodes(), cmap->size());
+    ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.
@@ -168,7 +168,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
         cmap->getSubset(selected_component_id, *selected_component);
 
     // Check number of components as selected
-    ASSERT_EQ(ids.size(), cmap_subset.size());
+    ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
 
     // .. and the content of the subset.
     for (std::size_t id : ids)
@@ -205,7 +205,7 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
         cmap->getSubset(selected_component_id, *selected_component);
 
     // Check number of components as selected
-    ASSERT_EQ(ids.size(), cmap_subset.size());
+    ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
 
     // .. and the content of the subset.
     for (std::size_t id : ids)

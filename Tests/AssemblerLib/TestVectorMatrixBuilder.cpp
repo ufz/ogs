@@ -68,10 +68,10 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createVector)
 {
     typedef typename TestFixture::VectorType V;
     typedef TypeParam Builder;
-    V* v = Builder::createVector(this->cmap->size());
+    V* v = Builder::createVector(this->cmap->dofSizeWithGhosts());
 
     ASSERT_TRUE(v != nullptr);
-    ASSERT_EQ(this->cmap->size(), v->size());
+    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), v->size());
 
     delete v;
 }
@@ -84,11 +84,11 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createMatrix)
 {
     typedef typename TestFixture::MatrixType M;
     typedef TypeParam Builder;
-    M* m = Builder::createMatrix(this->cmap->size());
+    M* m = Builder::createMatrix(this->cmap->dofSizeWithGhosts());
 
     ASSERT_TRUE(m != nullptr);
-    ASSERT_EQ(this->cmap->size(), m->getNRows());
-    ASSERT_EQ(this->cmap->size(), m->getNCols());
+    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNRows());
+    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNCols());
 
     delete m;
 }

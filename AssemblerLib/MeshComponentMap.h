@@ -51,7 +51,7 @@ public:
                                MeshLib::MeshSubsets const& components) const;
 
     /// The number of dofs including the those located in the ghost nodes.
-    std::size_t size() const
+    std::size_t dofSizeWithGhosts() const
     {
         return _dict.size();
     }
@@ -117,7 +117,7 @@ public:
 
     /// Get the number of local unknowns excluding those associated
     /// with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t getNLocalUnknowns() const
+    std::size_t dofSizeWithoutGhosts() const
     {
         return _num_local_dof;
     }

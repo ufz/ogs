@@ -67,7 +67,7 @@ public:
     /// with node-wise mesh partitioning).
     std::size_t dofSizeWithoutGhosts() const
     {
-        return _mesh_component_map.getNLocalUnknowns();
+        return _mesh_component_map.dofSizeWithoutGhosts();
     }
 
     std::size_t size() const;
