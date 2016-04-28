@@ -323,8 +323,8 @@ void MshView::writeToFile() const
 
 void MshView::addDIRECTSourceTerms()
 {
-	QModelIndex const index = this->selectionModel()->currentIndex();
-	MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	//QModelIndex const index = this->selectionModel()->currentIndex();
+	//MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
 }
 
 void MshView::loadDIRECTSourceTerms()
