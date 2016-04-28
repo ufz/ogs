@@ -63,11 +63,13 @@ public:
 	        NonlinearSolver& nonlinear_solver,
 	        std::unique_ptr<TimeDiscretization>&& time_discretization,
 	        std::vector<std::reference_wrapper<ProcessVariable>>&&
-	        process_variables)
+	        process_variables,
+			ProcessOutput<GlobalVector>&& process_output)
 	    : _mesh(mesh)
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
+		, _process_output(std::move(process_output))
 	{}
 
 	/// Preprocessing before starting assembly for new timestep.

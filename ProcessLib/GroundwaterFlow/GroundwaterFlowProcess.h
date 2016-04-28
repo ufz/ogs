@@ -39,9 +39,11 @@ public:
         typename Base::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-        GroundwaterFlowProcessData&& process_data)
+        GroundwaterFlowProcessData&& process_data,
+        ProcessOutput<GlobalVector>&& process_output)
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
-                               std::move(process_variables))
+                               std::move(process_variables),
+                               std::move(process_output))
         , _process_data(std::move(process_data))
     {
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
@@ -137,11 +139,15 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
+    ProcessOutput<typename GlobalSetup::VectorType> process_output;
+    process_output.setOutputVariables(config.getConfSubtree("output"), process_variables);
+
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             std::move(process_variables),
-            std::move(process_data)
+            std::move(process_data),
+            std::move(process_output)
         }
     };
 }
