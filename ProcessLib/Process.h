@@ -63,14 +63,22 @@ public:
 	        NonlinearSolver& nonlinear_solver,
 	        std::unique_ptr<TimeDiscretization>&& time_discretization,
 	        std::vector<std::reference_wrapper<ProcessVariable>>&&
-	        process_variables,
-			ProcessOutput<GlobalVector>&& process_output)
+	        process_variables)
 	    : _mesh(mesh)
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
-		, _process_output(std::move(process_output))
-	{}
+	{
+		// moved here s.t. matrix specs are ready right after construction.
+
+		DBUG("Construct dof mappings.");
+		constructDofTable();
+
+#ifndef USE_PETSC
+		DBUG("Compute sparsity pattern");
+		computeSparsityPattern();
+#endif
+	}
 
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
@@ -233,14 +241,6 @@ public:
 	void initialize()
 	{
 		DBUG("Initialize process.");
-
-		DBUG("Construct dof mappings.");
-		constructDofTable();
-
-#ifndef USE_PETSC
-		DBUG("Compute sparsity pattern");
-		computeSparsityPattern();
-#endif
 
 		createAssemblers(*_local_to_global_index_map, _mesh, _integration_order);
 
@@ -464,6 +464,7 @@ private:
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
 
+protected:
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
