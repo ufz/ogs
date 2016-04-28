@@ -74,10 +74,10 @@ template <typename GlobalVector>
 struct ProcessOutput
 {
     ProcessOutput() = default;
-    ProcessOutput(ProcessOutput&&) = default;
+    ProcessOutput(ProcessOutput<GlobalVector>&&) = default;
 
     //! There is no need to copy instances of this struct.
-    ProcessOutput(ProcessOutput const&) = delete;
+    ProcessOutput(ProcessOutput<GlobalVector> const&) = delete;
 
     void addSecondaryVariable(
             BaseLib::ConfigTree const& config,
