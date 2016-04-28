@@ -28,29 +28,34 @@ struct SecondaryVariableFunctions
     Fct eval_residuals;
 };
 
-template<typename GlobalVector, typename PropertyEnum, typename LocalAssemblers>
+template<typename GlobalVector, typename PropertyEnum, typename LocalAssembler>
 SecondaryVariableFunctions<GlobalVector>
 makeExtrapolator(PropertyEnum const property,
-                 NumLib::Extrapolator<GlobalVector, PropertyEnum, LocalAssemblers>&
+                 NumLib::Extrapolator<GlobalVector, PropertyEnum, LocalAssembler>&
                  extrapolator,
-                 LocalAssemblers const& local_assemblers)
+                 typename NumLib::Extrapolator<GlobalVector, PropertyEnum,
+                     LocalAssembler>::LocalAssemblers const& local_assemblers)
 {
-    // TODO remove argument x
+    static_assert(std::is_base_of<
+         NumLib::Extrapolatable<GlobalVector, PropertyEnum>, LocalAssembler>::value,
+        "The passed local assembler type (i.e. the local assembler interface) must"
+        " derive from NumLib::Extrapolatable<>!");
+
     auto const eval_field = [property, &extrapolator, &local_assemblers](
-            GlobalVector const& x,
+            GlobalVector const& /*x*/,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
             ) -> GlobalVector
     {
-        extrapolator.extrapolate(x, local_assemblers, property);
+        extrapolator.extrapolate(local_assemblers, property);
         return extrapolator.getNodalValues();
     };
 
     auto const eval_residuals = [property, &extrapolator, &local_assemblers](
-            GlobalVector const& x,
+            GlobalVector const& /*x*/,
             AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
             ) -> GlobalVector
     {
-        extrapolator.calculateResiduals(x, local_assemblers, property);
+        extrapolator.calculateResiduals(local_assemblers, property);
         return extrapolator.getElementResiduals();
     };
     return { eval_field, eval_residuals };
