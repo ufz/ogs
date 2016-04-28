@@ -226,11 +226,11 @@ void MshView::openAddLayerDialog()
 		return;
 
 	double const thickness (dlg.getThickness());
-	MeshLib::Mesh* result =
-		MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(), dlg.isTopLayer());
+	std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
+	    *mesh, thickness, dlg.getName(), dlg.isTopLayer()));
 
-	if (result != nullptr)
-		static_cast<MshModel*>(this->model())->addMesh(result);
+	if (result)
+		static_cast<MshModel*>(model())->addMesh(result.release());
 	else
 		OGSError::box("Error adding layer to mesh.");
 }
@@ -248,9 +248,10 @@ void MshView::extractSurfaceMesh()
 
 	MathLib::Vector3 const& dir (dlg.getNormal());
 	int const tolerance (dlg.getTolerance());
-	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
-	if (sfc_mesh != nullptr)
-		static_cast<MshModel*>(this->model())->addMesh(sfc_mesh);
+	std::unique_ptr<MeshLib::Mesh> sfc_mesh(
+	    MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
+	if (sfc_mesh)
+		static_cast<MshModel*>(model())->addMesh(sfc_mesh.release());
 	else
 		OGSError::box(" No surfaces found to extract\n using the specified parameters.");
 }

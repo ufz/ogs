@@ -23,9 +23,10 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-
-MeshAnalysisDialog::MeshAnalysisDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent)
-	: QDialog(parent), _mesh_vec (mesh_vec)
+MeshAnalysisDialog::MeshAnalysisDialog(
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+    QDialog* parent)
+    : QDialog(parent), _mesh_vec(mesh_vec)
 {
 	setupUi(this);
 
@@ -48,7 +49,7 @@ MeshAnalysisDialog::~MeshAnalysisDialog()
 
 void MeshAnalysisDialog::on_startButton_pressed()
 {
-	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()]);
+	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()].get());
 
 	MeshLib::NodeSearch ns(*mesh);
 	ns.searchUnused();

@@ -15,6 +15,8 @@
 #ifndef MESHANALYSISDIALOG_H
 #define MESHANALYSISDIALOG_H
 
+#include <memory>
+
 #include "ui_MeshAnalysis.h"
 #include <QDialog>
 
@@ -32,7 +34,9 @@ class MeshAnalysisDialog : public QDialog, private Ui_MeshAnalysis
 	Q_OBJECT
 
 public:
-	MeshAnalysisDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = nullptr);
+	MeshAnalysisDialog(
+	    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+	    QDialog* parent = nullptr);
 	~MeshAnalysisDialog(void);
 
 private:
@@ -42,7 +46,7 @@ private:
 	/// Prepares the output for the node message window
 	void elementsMsgOutput(const std::vector<ElementErrorCode> &error_codes);
 
-	const std::vector<MeshLib::Mesh*>& _mesh_vec;
+	std::vector<std::unique_ptr<MeshLib::Mesh>> const& _mesh_vec;
 
 private slots:
 	/// Starts the analysis

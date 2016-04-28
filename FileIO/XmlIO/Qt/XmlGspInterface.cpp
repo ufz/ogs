@@ -97,9 +97,9 @@ int XmlGspInterface::readFile(const QString &fileName)
 		{
 			const std::string msh_name = path.toStdString() +
 			                             fileList.at(i).toElement().text().toStdString();
-			MeshLib::Mesh* msh = FileIO::readMeshFromFile(msh_name);
-			if (msh)
-				_project.addMesh(msh);
+			std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(msh_name));
+			if (mesh)
+				_project.addMesh(std::move(mesh));
 		}
 	}
 
@@ -153,12 +153,12 @@ bool XmlGspInterface::write()
 	}
 
 	// MSH
-	const std::vector<MeshLib::Mesh*> _mesh_vector = _project.getMeshObjects();
-	for (auto const& mesh : _mesh_vector)
+	auto const& mesh_vector = _project.getMeshObjects();
+	for (auto const& mesh : mesh_vector)
 	{
 		// write mesh file
 		Legacy::MeshIO meshIO;
-		meshIO.setMesh(mesh);
+		meshIO.setMesh((&mesh)->get());
 		std::string fileName(path + mesh->getName());
 		meshIO.writeToFile(fileName);
 

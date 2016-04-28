@@ -32,7 +32,9 @@ class GeoOnMeshMappingDialog : public QDialog, private Ui_GeoOnMeshMapping
 	Q_OBJECT
 
 public:
-	GeoOnMeshMappingDialog(const std::vector<MeshLib::Mesh*> &mesh_vec, QDialog* parent = 0);
+	GeoOnMeshMappingDialog(
+	    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+	    QDialog* parent = 0);
 	~GeoOnMeshMappingDialog(void);
 
 	std::string const& getNewGeoName() const { return _new_geo_name; };

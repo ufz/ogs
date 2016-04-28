@@ -31,7 +31,7 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const&
 {
 	setupUi(this);
 
-	const std::vector<MeshLib::Mesh*> mesh_vec (_project.getMeshObjects());
+	auto const& mesh_vec(_project.getMeshObjects());
 
 	const std::size_t nMeshes (mesh_vec.size());
 	for (std::size_t i=0; i<nMeshes; ++i)

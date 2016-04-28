@@ -52,8 +52,9 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 
 void MshModel::addMesh(MeshLib::Mesh* mesh)
 {
-	_project.addMesh(mesh);
-	this->addMeshObject(mesh);
+	_project.addMesh(std::unique_ptr<MeshLib::Mesh>(mesh));
+	auto const& meshes(_project.getMeshObjects());
+	this->addMeshObject(meshes.back().get());
 }
 
 void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
@@ -153,10 +154,10 @@ void MshModel::updateMesh(MeshLib::Mesh* mesh)
 
 void MshModel::updateModel()
 {
-	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
+	auto const & msh_vec = _project.getMeshObjects();
+	for (auto it(msh_vec.begin()); it != msh_vec.end(); ++it)
 		if (!this->getMesh((*it)->getName())) // if Mesh is not yet added to GUI, do it now
-			addMeshObject(*it);
+			addMeshObject(it->get());
 }
 
 std::map<MeshLib::MeshElemType, QVariant> MshModel::createMeshElemTypeMap()
