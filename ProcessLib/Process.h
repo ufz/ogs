@@ -96,6 +96,8 @@ public:
 #endif
 		x.copyValues(x_copy);
 
+		auto const& output_variables = _process_output.output_variables;
+
 		std::size_t const n_nodes = _mesh.getNNodes();
 		int global_component_offset = 0;
 		int global_component_offset_next = 0;
@@ -107,7 +109,6 @@ public:
 			global_component_offset = global_component_offset_next;
 			global_component_offset_next += n_components;
 
-			auto const& output_variables = _process_output.output_variables;
 			if (output_variables.find(pv.getName()) == output_variables.cend())
 				continue;
 
@@ -133,37 +134,36 @@ public:
 			}
 		}
 
+		// the following section is for the output of secondary variables
 
-
-		auto& output_variables = _process_output.output_variables;
-
-		auto count = [](MeshLib::Mesh const& mesh, MeshLib::MeshItemType type)
-				-> std::size_t
+		auto count_mesh_items = [](
+		    MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
 		{
 			switch (type) {
 			case MeshLib::MeshItemType::Cell: return mesh.getNElements();
 			case MeshLib::MeshItemType::Node: return mesh.getNNodes();
-			default: break;
+			default: break; // avoid compiler warning
 			}
 			return 0;
 		};
 
-		auto get_or_create_mesh_property = [this, &count](std::string const& property_name, MeshLib::MeshItemType type)
+		auto get_or_create_mesh_property = [this, &count_mesh_items](
+		    std::string const& property_name, MeshLib::MeshItemType type)
 		{
 			// Get or create a property vector for results.
 			boost::optional<MeshLib::PropertyVector<double>&> result;
 
-			auto const N = count(_mesh, type);
+			auto const N = count_mesh_items(_mesh, type);
 
 			if (_mesh.getProperties().hasPropertyVector(property_name))
 			{
 				result = _mesh.getProperties().template
-					getPropertyVector<double>(property_name);
+				    getPropertyVector<double>(property_name);
 			}
 			else
 			{
 				result = _mesh.getProperties().template
-					createNewPropertyVector<double>(property_name, type);
+				    createNewPropertyVector<double>(property_name, type);
 				result->resize(N);
 			}
 			assert(result && result->size() == N);
@@ -180,11 +180,12 @@ public:
 			{
 				DBUG("  process var %s", var.name.c_str());
 
-				auto result = get_or_create_mesh_property(var.name, MeshLib::MeshItemType::Node);
+				auto result = get_or_create_mesh_property(
+				    var.name, MeshLib::MeshItemType::Node);
 				assert(result->size() == _mesh.getNNodes());
 
 				auto const& nodal_values =
-					var.fcts.eval_field(x, *_local_to_global_index_map);
+				    var.fcts.eval_field(x, *_local_to_global_index_map);
 
 				// Copy result
 				for (std::size_t i = 0; i < _mesh.getNNodes(); ++i)
@@ -218,6 +219,8 @@ public:
 			if (output_variables.find(p.name) != output_variables.cend())
 				add_secondary_var(p);
 		}
+
+		// secondary variables output end
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
