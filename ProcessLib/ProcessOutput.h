@@ -68,6 +68,12 @@ struct SecondaryVariable
 template <typename GlobalVector>
 struct ProcessOutput
 {
+    ProcessOutput() = default;
+    ProcessOutput(ProcessOutput&&) = default;
+
+    //! There is no need to copy instances of this struct.
+    ProcessOutput(ProcessOutput const&) = delete;
+
     void addSecondaryVariable(
             BaseLib::ConfigTree const& config,
             std::string const& var_tag, const unsigned num_components,
