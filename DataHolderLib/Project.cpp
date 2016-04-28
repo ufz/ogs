@@ -93,7 +93,7 @@ bool Project::getUniqueName(std::string &name) const
 			cpName = cpName + "-" + std::to_string(count);
 
 		for (MeshLib::Mesh* mesh :_mesh_vec)
-			if ( cpName.compare(mesh->getName()) == 0 )
+			if ( cpName == mesh->getName())
 				isUnique = false;
 	}
 
