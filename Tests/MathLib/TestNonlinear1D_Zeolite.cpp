@@ -1,10 +1,7 @@
-#include <gtest/gtest.h>
-
 #include <cstdio>
-
+#include <gtest/gtest.h>
 #include "MathLib/Nonlinear/Root1D.h"
-
-#include "MaterialsLib/Adsorption/density_hauer.h"
+#include "MaterialsLib/Adsorption/DensityHauer.h"
 
 using namespace Ads;
 
