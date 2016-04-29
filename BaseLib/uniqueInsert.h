@@ -44,6 +44,31 @@ void insertIfKeyUniqueElseError(
 	}
 }
 
+//! Inserts the given \c key with the given \c value into the \c map if an entry with the
+//! given \c key does not yet exist; otherwise an \c error_message is printed and the
+//! program is aborted.
+template<typename Map, typename Key, typename Value>
+void insertIfKeyValueUniqueElseError(
+	Map& map, Key const& key, Value&& value,
+	std::string const& error_message)
+{
+	auto value_compare = [&value](typename Map::value_type const& elem) {
+		return value == elem.second;
+	};
+
+	if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
+	{
+		ERR("%s Value `%s' already exists.", error_message.c_str(), tostring(value).c_str());
+		std::abort();
+	}
+
+	auto const inserted = map.emplace(key, std::forward<Value>(value));
+	if (!inserted.second) { // insertion failed, i.e., key already exists
+		ERR("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
+		std::abort();
+	}
+}
+
 //! Returns the value of \c key from the given \c map if such an entry exists;
 //! otherwise an \c error_message is printed and the program is aborted.
 //! Cf. also the const overload below.
