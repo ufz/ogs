@@ -22,7 +22,12 @@ namespace MeshLib {
 class VtkGeoImageSource;
 
 /**
- * \brief The dialog which presents the user options to load NetCDF-files.
+ * \brief The dialog for converting data from NetCDF-files into OGS data structures.
+ * While NetCDF files can include data ranging from dimensionality 0 (scalars) to 4
+ * (e.g. 3d arrays over time), only arrays of dimensionality 2 or higher can be
+ * imported as this is the minimum requirement for a meaningful conversion into
+ * raster- or mesh-data-objects. Scalars or vector-variables are not selectable from
+ * the selection menu.
  */
 class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 {
