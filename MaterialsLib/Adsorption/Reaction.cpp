@@ -7,22 +7,22 @@
  *
  */
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
-#include "reaction.h"
+#include "Reaction.h"
 
-#include "density_legacy.h"
-#include "density_100MPa.h"
-#include "density_const.h"
-#include "density_cook.h"
-#include "density_dubinin.h"
-#include "density_hauer.h"
-#include "density_mette.h"
-#include "density_nunez.h"
+#include "Density100MPa.h"
+#include "DensityConst.h"
+#include "DensityCook.h"
+#include "DensityDubinin.h"
+#include "DensityHauer.h"
+#include "DensityLegacy.h"
+#include "DensityMette.h"
+#include "DensityNunez.h"
 
-#include "reaction_inert.h"
-#include "reaction_sinusoidal.h"
-#include "reaction_CaOH2.h"
+#include "ReactionCaOH2.h"
+#include "ReactionInert.h"
+#include "ReactionSinusoidal.h"
 
 
 namespace Ads

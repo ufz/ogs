@@ -1,4 +1,4 @@
-#include "density_hauer.h"
+#include "DensityHauer.h"
 
 namespace
 {

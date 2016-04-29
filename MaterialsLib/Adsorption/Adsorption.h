@@ -4,7 +4,7 @@
 #include <array>
 #include <cmath>
 
-#include "reaction.h"
+#include "Reaction.h"
 
 namespace Ads
 {
