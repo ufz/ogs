@@ -58,15 +58,20 @@ public:
 	using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
 	using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
 
-	Process(MeshLib::Mesh& mesh,
-	        NonlinearSolver& nonlinear_solver,
-	        std::unique_ptr<TimeDiscretization>&& time_discretization,
-	        std::vector<std::reference_wrapper<ProcessVariable>>&&
-	        process_variables)
+	Process(
+	    MeshLib::Mesh& mesh,
+	    NonlinearSolver& nonlinear_solver,
+	    std::unique_ptr<TimeDiscretization>&& time_discretization,
+	    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+	    SecondaryVariableCollection<GlobalVector>&& secondary_variables,
+	    ProcessOutput<GlobalVector>&& process_output
+	    )
 	    : _mesh(mesh)
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
+	    , _secondary_variables(std::move(secondary_variables))
+	    , _process_output(std::move(process_output))
 	{
 		// moved here s.t. matrix specs are ready right after construction.
 
@@ -223,7 +228,7 @@ public:
 			}
 		};
 
-		for (auto const& p : _process_output.secondary_variables)
+		for (auto const& p : _secondary_variables)
 		{
 			if (output_variables.find(p.name) != output_variables.cend())
 				add_secondary_var(p);
@@ -467,6 +472,7 @@ protected:
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
+	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 	ProcessOutput<GlobalVector> _process_output;
 };
 

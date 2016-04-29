@@ -11,6 +11,7 @@
 #define PROCESSLIB_PROCESSOUTPUT_H
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/uniqueInsert.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 #include "ProcessVariable.h"
 
@@ -18,7 +19,7 @@ namespace ProcessLib
 {
 
 template<typename GlobalVector>
-struct SecondaryVariableFunctions
+struct SecondaryVariableFunctions final
 {
     using Fct = std::function<GlobalVector const&(
         GlobalVector const& x,
@@ -63,36 +64,93 @@ makeExtrapolator(PropertyEnum const property,
 
 
 template<typename GlobalVector>
-struct SecondaryVariable
+struct SecondaryVariable final
 {
     std::string const name;
     const unsigned n_components;
     SecondaryVariableFunctions<GlobalVector> fcts;
 };
 
-template <typename GlobalVector>
-struct ProcessOutput
+
+template<typename GlobalVector>
+class SecondaryVariableCollection final
 {
-    void addSecondaryVariable(
-            BaseLib::ConfigTree const& config,
-            std::string const& var_tag, const unsigned num_components,
-            SecondaryVariableFunctions<GlobalVector>&& fcts)
+public:
+    SecondaryVariableCollection(
+            boost::optional<BaseLib::ConfigTree> const& config,
+            std::initializer_list<std::string> tag_names)
     {
-        if (auto var_name = config.getConfParamOptional<std::string>(var_tag))
-        {
-            secondary_variables.push_back(
-                {*var_name, num_components, std::move(fcts)});
+        if (!config) return;
+
+        // read which variables are defined in the config
+        for (auto const& tag_name : tag_names) {
+            if (auto var_name = config->getConfParamOptional<std::string>(tag_name))
+            {
+                // TODO check primary vars, too
+                BaseLib::insertIfKeyValueUniqueElseError(
+                            _map_tagname_to_varname, tag_name, *var_name,
+                            "Secondary variable names must be unique.");
+            }
         }
     }
 
-    template<typename ProcVarRef>
-    void setOutputVariables(BaseLib::ConfigTree const& output_config,
-                            std::vector<ProcVarRef> const& process_variables)
+    bool variableExists(std::string const& variable_name) const
     {
-        auto out_vars = output_config.getConfSubtreeOptional("variables");
-        if (!out_vars) return;
+        auto pred = [&variable_name](SecondaryVariable<GlobalVector> const& p) {
+            return p.name == variable_name;
+        };
 
-        for (auto out_var : out_vars->getConfParamList<std::string>("variable"))
+        // check if out_var is a  secondary variable
+        auto const& var = std::find_if(
+            _secondary_variables.cbegin(), _secondary_variables.cend(), pred);
+
+        return var != _secondary_variables.cend();
+    }
+
+    void addSecondaryVariable(
+            std::string const& tag_name, const unsigned num_components,
+            SecondaryVariableFunctions<GlobalVector>&& fcts)
+    {
+        auto it = _map_tagname_to_varname.find(tag_name);
+
+        // get user-supplied var_name for the given tag_name
+        if (it != _map_tagname_to_varname.end()) {
+            auto const& var_name = it->first;
+            // TODO make sure the same variable is not pushed twice
+            _secondary_variables.push_back(
+                {var_name, num_components, std::move(fcts)});
+        }
+    }
+
+    typename std::vector<SecondaryVariable<GlobalVector>>::const_iterator
+    begin() const
+    {
+        return _secondary_variables.begin();
+    }
+
+    typename std::vector<SecondaryVariable<GlobalVector>>::const_iterator
+    end() const
+    {
+        return _secondary_variables.end();
+    }
+
+private:
+    std::map<std::string, std::string> _map_tagname_to_varname;
+    std::vector<SecondaryVariable<GlobalVector>> _secondary_variables;
+};
+
+
+template <typename GlobalVector>
+struct ProcessOutput final
+{
+    ProcessOutput(BaseLib::ConfigTree const& output_config,
+                  std::vector<std::reference_wrapper<ProcessVariable>> const&
+                  process_variables,
+                  SecondaryVariableCollection<GlobalVector> const& secondary_variables)
+    {
+        auto const out_vars = output_config.getConfSubtree("variables");
+
+        for (auto out_var : out_vars.getConfParamList<std::string>("variable"))
         {
             if (output_variables.find(out_var) != output_variables.cend())
             {
@@ -108,22 +166,12 @@ struct ProcessOutput
             auto const& pcs_var = std::find_if(
                 process_variables.cbegin(), process_variables.cend(), pred);
 
-            if (pcs_var == process_variables.cend())
+            if (pcs_var == process_variables.cend()
+                && !secondary_variables.variableExists(out_var))
             {
-                auto pred2 = [&out_var](SecondaryVariable<GlobalVector> const& p) {
-                    return p.name == out_var;
-                };
-
-                // check if out_var is a  secondary variable
-                auto const& pcs_var2 = std::find_if(
-                    secondary_variables.cbegin(), secondary_variables.cend(), pred2);
-
-                if (pcs_var2 == secondary_variables.cend())
-                {
-                    ERR("Output variable `%s' is neither a process variable nor a"
-                        " secondary variable", out_var.c_str());
-                    std::abort();
-                }
+                ERR("Output variable `%s' is neither a process variable nor a"
+                    " secondary variable", out_var.c_str());
+                std::abort();
             }
 
             DBUG("adding output variable `%s'", out_var.c_str());
@@ -136,7 +184,6 @@ struct ProcessOutput
         }
     }
 
-    std::vector<SecondaryVariable<GlobalVector>> secondary_variables;
     std::set<std::string> output_variables;
 
     bool output_residuals = false;
