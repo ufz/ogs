@@ -72,17 +72,7 @@ public:
 	    , _process_variables(std::move(process_variables))
 	    , _secondary_variables(std::move(secondary_variables))
 	    , _process_output(std::move(process_output))
-	{
-		// moved here s.t. matrix specs are ready right after construction.
-
-		DBUG("Construct dof mappings.");
-		constructDofTable();
-
-#ifndef USE_PETSC
-		DBUG("Compute sparsity pattern");
-		computeSparsityPattern();
-#endif
-	}
+	{}
 
 	/// Preprocessing before starting assembly for new timestep.
 	virtual void preTimestep(GlobalVector const& /*x*/,
@@ -245,6 +235,14 @@ public:
 	void initialize()
 	{
 		DBUG("Initialize process.");
+
+		DBUG("Construct dof mappings.");
+		constructDofTable();
+
+#ifndef USE_PETSC
+		DBUG("Compute sparsity pattern");
+		computeSparsityPattern();
+#endif
 
 		initializeConcreteProcess(*_local_to_global_index_map, _mesh,
 								  _integration_order);
