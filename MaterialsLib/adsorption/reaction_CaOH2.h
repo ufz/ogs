@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "MathLib/ODE/OdeSolverTypes.h"
+#include "MathLib/ODE/ODESolverTypes.h"
 
 #include "reaction.h"
 #include "adsorption.h"
@@ -46,10 +46,10 @@ public:
 
     const BaseLib::ConfigTreeNew& getOdeSolverConfig() const { return ode_solver_config; }
 
-
+    // TODO remove dependency on ODE solver lib.
     void eval(double /*t*/,
-              MathLib::MappedConstVector<1> const y,
-              MathLib::MappedVector<1> dydx);
+              MathLib::ODE::MappedConstVector<1> const y,
+              MathLib::ODE::MappedVector<1> dydx);
     void update_param(double T_solid,
                       double p_gas,
                       double x_react,

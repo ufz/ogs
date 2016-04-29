@@ -39,8 +39,8 @@ ReactionCaOH2::get_reaction_rate(const double, const double, const double, const
 
 
 void ReactionCaOH2::eval(double /*t*/,
-						 MathLib::MappedConstVector<1> const y,
-						 MathLib::MappedVector<1> dydx)
+						 MathLib::ODE::MappedConstVector<1> const y,
+						 MathLib::ODE::MappedVector<1> dydx)
 {
 	assert( y.size() == dydx.size() );
 
