@@ -58,12 +58,12 @@ TYPED_TEST(RegulaFalsiTestZeolite, Zeolite)
 {
     auto rf = makeRegulaFalsi<TypeParam>(f, 1e-8, pV0);
 
-    std::printf(" 0 -- x ~ %14.7g, range = %14.7g\n", rf.get_result(), rf.get_range());
+    std::printf(" 0 -- x ~ %14.7g, range = %14.7g\n", rf.getResult(), rf.getRange());
 
     for (unsigned n=0; n<10; ++n)
     {
         rf.step(1);
-        std::printf("%2i --  x ~ %14.7g, range = %14.7g\n", n+1, rf.get_result(), rf.get_range());
+        std::printf("%2i --  x ~ %14.7g, range = %14.7g\n", n+1, rf.getResult(), rf.getRange());
     }
 }
 
@@ -72,11 +72,11 @@ TYPED_TEST(RegulaFalsiTestZeolite, Zeolite2)
     // auto rf = MakeRegulaFalsi<TypeParam>::create(f2, 1e-8, pV0);
     auto rf = makeRegulaFalsi<TypeParam>(f2, 1e-8, pV0);
 
-    std::printf(" 0 -- x ~ %14.7g, range = %14.7g\n", rf.get_result(), rf.get_range());
+    std::printf(" 0 -- x ~ %14.7g, range = %14.7g\n", rf.getResult(), rf.getRange());
 
     for (unsigned n=0; n<10; ++n)
     {
         rf.step(1);
-        std::printf("%2i --  x ~ %14.7g, range = %14.7g\n", n+1, rf.get_result(), rf.get_range());
+        std::printf("%2i --  x ~ %14.7g, range = %14.7g\n", n+1, rf.getResult(), rf.getRange());
     }
 }
