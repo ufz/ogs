@@ -74,6 +74,11 @@ public:
 
     GlobalVector const& getElementResiduals() const override { return _residuals; }
 
+    ~LocalLinearLeastSquaresExtrapolator()
+    {
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_nodal_values);
+    }
+
 private:
     //! Extrapolate one element.
     void extrapolateElement(

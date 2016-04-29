@@ -88,6 +88,8 @@ public:
     //! Returns the extrapolation residuals.
     //! \todo Maybe write directly to a MeshProperty.
     virtual GlobalVector const& getElementResiduals() const = 0;
+
+    virtual ~Extrapolator() = default;
 };
 
 } // namespace ProcessLib
