@@ -18,10 +18,13 @@ namespace GeoLib
 	class GEOObjects;
 }
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 	void
 	readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs);
+}
 }
 
 #endif // READGEOMETRYFROMFILE_H

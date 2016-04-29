@@ -17,7 +17,7 @@ if (QT4_FOUND)
 
 	add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
 	set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
-	target_link_libraries(FEFLOW2OGS FileIO)
+	target_link_libraries(FEFLOW2OGS GeoLib MeshLib FileIO)
 	ADD_VTK_DEPENDENCY(FEFLOW2OGS)
 endif () # QT4_FOUND
 

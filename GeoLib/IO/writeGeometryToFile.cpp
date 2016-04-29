@@ -13,11 +13,13 @@
 #include "BaseLib/FileTools.h"
 
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/Legacy/OGSIOVer4.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 
 #include "GeoLib/GEOObjects.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 void writeGeometryToFile(std::string const& geo_name,
 	GeoLib::GEOObjects& geo_objs, std::string const& fname)
@@ -28,10 +30,11 @@ void writeGeometryToFile(std::string const& geo_name,
 		xml.setNameForExport(geo_name);
 		xml.writeToFile(fname);
 	} else if (extension == "gli" || extension == "GLI") {
-		FileIO::Legacy::writeGLIFileV4(fname, geo_name, geo_objs);
+		GeoLib::IO::Legacy::writeGLIFileV4(fname, geo_name, geo_objs);
 	} else {
 		ERR("Writing of geometry failed, since it was not possible to determine"
 			" the required format from file extension.");
 	}
+}
 }
 }

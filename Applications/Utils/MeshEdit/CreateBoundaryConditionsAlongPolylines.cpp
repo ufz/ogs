@@ -28,12 +28,12 @@
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/writeMeshToFile.h"
-#include "FileIO/readGeometryFromFile.h"
-#include "FileIO/writeGeometryToFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
+#include "GeoLib/IO/readGeometryFromFile.h"
+#include "GeoLib/IO/writeGeometryToFile.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -101,9 +101,9 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
 {
 	if (write_gml) {
 		INFO("write points to \"%s.gml\".", geo_name.c_str());
-		FileIO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gml");
+		GeoLib::IO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gml");
 	}
-	FileIO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gli");
+	GeoLib::IO::writeGeometryToFile(geo_name, geometry_sets, out_fname+".gli");
 
 	bool liquid_flow(false);
 	if (bc_type == "LIQUID_FLOW")
@@ -188,7 +188,7 @@ int main (int argc, char* argv[])
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
-	FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
+	GeoLib::IO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
 	std::string geo_name;
 	{

@@ -21,7 +21,6 @@
 #include "BaseLib/FileTools.h"
 
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/readGeometryFromFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

@@ -24,6 +24,7 @@
 
 // GeoLib
 #include "Raster.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 
 // MeshGeoLib
 #include "MeshGeoToolsLib/GeoMapper.h"
@@ -62,7 +63,6 @@
 #include "FileIO/FEFLOWInterface.h"
 #include "FileIO/GMSInterface.h"
 #include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/Legacy/OGSIOVer4.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
@@ -460,7 +460,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string unique_name;
 			std::vector<std::string> errors;
-			if (! Legacy::readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
+			if (!GeoLib::IO::Legacy::readGLIFileV4(fileName.toStdString(),
+			                                       _project.getGEOObjects(),
+			                                       unique_name, errors))
+			{
 				for (std::size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
@@ -779,7 +782,8 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "gli")
 	{
-		FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(), this->_project.getGEOObjects());
+		GeoLib::IO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(),
+		                                            _project.getGEOObjects());
 		return;
 	}
 #endif

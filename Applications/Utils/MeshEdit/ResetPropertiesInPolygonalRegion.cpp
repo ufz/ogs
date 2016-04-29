@@ -24,12 +24,13 @@
 // FileIO
 #include "FileIO/readMeshFromFile.h"
 #include "FileIO/writeMeshToFile.h"
-#include "FileIO/readGeometryFromFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/AnalyticalGeometry.h"
+
+#include "GeoLib/IO/readGeometryFromFile.h"
 
 // MathLib
 #include "MathLib/Vector3.h"
@@ -162,7 +163,7 @@ int main (int argc, char* argv[])
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
-	FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
+	GeoLib::IO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
 	std::string geo_name;
 	{

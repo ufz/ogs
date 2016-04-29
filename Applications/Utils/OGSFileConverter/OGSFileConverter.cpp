@@ -27,7 +27,7 @@
 
 // geometry
 #include "GEOObjects.h"
-#include "Legacy/OGSIOVer4.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "XmlIO/Qt/XmlGmlInterface.h"
 
 // mesh
@@ -67,7 +67,7 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
 		}
 		std::vector<std::string> geo_names;
 		geo_objects.getGeometryNames(geo_names);
-		FileIO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
+		GeoLib::IO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
 		geo_objects.removeSurfaceVec(geo_names[0]);
 		geo_objects.removePolylineVec(geo_names[0]);
 		geo_objects.removePointVec(geo_names[0]);
@@ -94,7 +94,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 		std::string unique_name;
 		std::vector<std::string> errors;
 
-		FileIO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
+		GeoLib::IO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
 		if (errors.empty() || (errors.size()==1 && errors[0].compare("[readSurface] polyline for surface not found!")==0))
 		{
 			std::string const geo_name = BaseLib::extractBaseName(it->toStdString());

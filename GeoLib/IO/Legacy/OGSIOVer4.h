@@ -20,10 +20,9 @@
 
 namespace GeoLib
 {
-    class GEOObjects;
-}
+class GEOObjects;
 
-namespace FileIO
+namespace IO
 {
 namespace Legacy {
 
@@ -44,6 +43,7 @@ void writeGLIFileV4 (const std::string& fname,
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo);
 
 }
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* OGSIOVER4_H_ */

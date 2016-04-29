@@ -15,10 +15,9 @@
 
 namespace GeoLib
 {
-	class GEOObjects;
-}
+class GEOObjects;
 
-namespace FileIO
+namespace IO
 {
 
 /// Write geometry given by the \c geo_objs object and specified by the name
@@ -27,6 +26,7 @@ namespace FileIO
 /// case the extension is "gli" or "GLI" a gli file is written.
 void writeGeometryToFile(std::string const& geo_name,
 	GeoLib::GEOObjects& geo_objs, std::string const& fname);
+}
 }
 
 #endif // WRITEGEOMETRYTOFILE_H

@@ -36,7 +36,9 @@
 
 #include "FileIO/TINInterface.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 namespace Legacy {
 
@@ -309,7 +311,7 @@ std::string readSurface(std::istream &in,
 		{
 			in >> line; // read value (file name)
 			line = path + line;
-			sfc = TINInterface::readTIN(line, pnt_vec, &errors);
+			sfc = FileIO::TINInterface::readTIN(line, pnt_vec, &errors);
 		}
 		//....................................................................
 		if (line.find("$MAT_GROUP") != std::string::npos) // subkeyword found
@@ -366,7 +368,7 @@ std::string readSurface(std::istream &in,
             }
             else
             {
-            	WARN("readSurface(): cannot create surface %s from polyline %d since polyline is not closed.",  name.c_str(), ply_id);
+                WARN("readSurface(): cannot create surface %s from polyline %d since polyline is not closed.",  name.c_str(), ply_id);
             }
         }
     }
@@ -539,7 +541,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
 		os << "\t\t" << sfc_name << "\n";
 		// create tin file
 		sfc_name = path + sfc_name;
-		TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
+		FileIO::TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
 		sfc_count++;
 	}
 	return sfc_count;
@@ -689,4 +691,5 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 }
 
 }
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib

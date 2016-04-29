@@ -15,11 +15,13 @@
 #include "BaseLib/FileTools.h"
 
 #include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/Legacy/OGSIOVer4.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 
 #include "GeoLib/GEOObjects.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 void
 readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
@@ -30,7 +32,8 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
 	} else {
 		std::vector<std::string> errors;
 		std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
-		FileIO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
+		GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
 	}
+}
 }
 }
