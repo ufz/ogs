@@ -181,7 +181,7 @@ estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
     rf.step(3);
 
     // set vapour pressure
-    return rf.get_result();
+    return rf.getResult();
 }
 
 bool

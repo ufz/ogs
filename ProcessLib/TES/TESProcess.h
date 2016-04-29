@@ -43,6 +43,8 @@ public:
                typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
                std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
                std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+               SecondaryVariableCollection<GlobalVector>&& secondary_variables,
+               ProcessOutput<GlobalVector>&& process_output,
                BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t, const double delta_t) override;
@@ -65,9 +67,9 @@ private:
 
 
     // TODO move body to cpp
-    void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                          MeshLib::Mesh const& mesh,
-                          unsigned const integration_order) override
+    void initializeConcreteProcess(
+            AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            MeshLib::Mesh const& mesh, unsigned const integration_order) override
     {
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(dof_table));
@@ -76,6 +78,56 @@ private:
                     mesh.getDimension(), mesh.getElements(),
                     dof_table, integration_order, _local_assemblers,
                     _assembly_params);
+
+        // TODO move the two data members somewhere else.
+        // for extrapolation of secondary variables
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+                    new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes.get()));
+        _local_to_global_index_map_single_component.reset(
+                    new AssemblerLib::LocalToGlobalIndexMap(
+                        std::move(all_mesh_subsets_single_component),
+                        // by location order is needed for output
+                        AssemblerLib::ComponentOrder::BY_LOCATION)
+                    );
+
+        _extrapolator.reset(new ExtrapolatorImplementation(
+            { 0u, 0u, nullptr, _local_to_global_index_map_single_component.get(), &mesh }));
+
+        // secondary variables
+        auto add2nd = [&](
+            std::string const& var_name, unsigned const n_components,
+            SecondaryVariableFunctions<GlobalVector>&& fcts)
+        {
+            BP::_secondary_variables.addSecondaryVariable(
+                        var_name, n_components, std::move(fcts));
+        };
+        auto makeEx = [&](TESIntPtVariables var)
+        {
+            return ProcessLib::makeExtrapolator(var, *_extrapolator, _local_assemblers);
+        };
+
+        add2nd("solid_density",  1, makeEx(TESIntPtVariables::SOLID_DENSITY));
+        add2nd("reaction_rate",  1, makeEx(TESIntPtVariables::REACTION_RATE));
+        add2nd("velocity_x",     1, makeEx(TESIntPtVariables::VELOCITY_X));
+        if (mesh.getDimension() >= 2)
+            add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
+        if (mesh.getDimension() >= 3)
+            add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
+
+        add2nd("loading",        1, makeEx(TESIntPtVariables::LOADING));
+        add2nd("reaction_damping_factor",
+                                 1, makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+
+        namespace PH = std::placeholders;
+        using Self = TESProcess<GlobalSetup>;
+
+        add2nd("vapour_partial_pressure", 1,
+            {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
+        add2nd("relative_humidity",       1,
+            {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
+        add2nd("equilibrium_loading",     1,
+            {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
     }
 
     void assembleConcreteProcess(
@@ -127,10 +179,25 @@ createTESProcess(
         findProcessVariables(variables, config,
             { "fluid_pressure", "temperature", "vapour_mass_fraction" });
 
+    SecondaryVariableCollection<typename GlobalSetup::VectorType>
+        secondary_variables{config.getConfSubtreeOptional("secondary_variables"),
+            { "solid_density", "reaction_rate",
+              "velocity_x", "velocity_y", "velocity_z",
+              "loading", "reaction_damping_factor",
+              "vapour_partial_pressure", "relative_humidity",
+              "equilibrium_loading"
+            }};
+
+    ProcessOutput<typename GlobalSetup::VectorType>
+        process_output{config.getConfSubtree("output"),
+                process_variables, secondary_variables};
+
     return std::unique_ptr<TESProcess<GlobalSetup>>{
         new TESProcess<GlobalSetup>{
             mesh, nonlinear_solver, std::move(time_discretization),
             std::move(process_variables),
+            std::move(secondary_variables),
+            std::move(process_output),
             config
     }};
 }

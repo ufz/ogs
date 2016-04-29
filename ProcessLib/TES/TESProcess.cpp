@@ -21,52 +21,15 @@ TESProcess(MeshLib::Mesh& mesh,
            typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
            std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
            std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+           SecondaryVariableCollection<GlobalVector>&& secondary_variables,
+           ProcessOutput<GlobalVector>&& process_output,
            const BaseLib::ConfigTree& config)
-    : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
-                           std::move(process_variables))
+    : Process<GlobalSetup>{mesh, nonlinear_solver, std::move(time_discretization),
+                           std::move(process_variables),
+                           std::move(secondary_variables),
+                           std::move(process_output)}
 {
     DBUG("Create TESProcess.");
-
-    // secondary variables
-    if (auto sec_vars = config.getConfSubtreeOptional("secondary_variables"))
-    {
-        auto add2nd = [&](
-            std::string const& var_name, unsigned const n_components,
-            SecondaryVariableFunctions<GlobalVector>&& fcts)
-        {
-            BP::_process_output.addSecondaryVariable(
-                        *sec_vars, var_name, n_components, std::move(fcts));
-        };
-        auto makeEx = [&](TESIntPtVariables var)
-        {
-            return ProcessLib::makeExtrapolator(var, *_extrapolator, _local_assemblers);
-        };
-
-        add2nd("solid_density",  1, makeEx(TESIntPtVariables::SOLID_DENSITY));
-        add2nd("reaction_rate",  1, makeEx(TESIntPtVariables::REACTION_RATE));
-        add2nd("velocity_x",     1, makeEx(TESIntPtVariables::VELOCITY_X));
-        if (mesh.getDimension() >= 2)
-            add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
-        if (mesh.getDimension() >= 3)
-            add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
-
-        add2nd("loading",        1, makeEx(TESIntPtVariables::LOADING));
-        add2nd("reaction_damping_factor",
-                                 1, makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
-
-        namespace PH = std::placeholders;
-        using Self = TESProcess<GlobalSetup>;
-
-        add2nd("vapour_partial_pressure", 1,
-            {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
-        add2nd("relative_humidity",       1,
-            {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
-        add2nd("equilibrium_loading",     1,
-            {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
-    }
-
-    BP::_process_output.setOutputVariables(
-                config.getConfSubtree("output"), BP::_process_variables);
 
     // physical parameters for local assembly
     {
@@ -131,6 +94,8 @@ TESProcess(MeshLib::Mesh& mesh,
         _assembly_params.output_element_matrices = *param;
     }
 
+    // TODO move to process output
+    /*
     // debug output
     if (auto const param = config.getConfParamOptional<bool>("output_iteration_results"))
     {
@@ -146,6 +111,7 @@ TESProcess(MeshLib::Mesh& mesh,
 
         BP::_process_output.output_global_matrix = *param;
     }
+    */
 
     // extrapolator
     {
@@ -165,18 +131,6 @@ TESProcess(MeshLib::Mesh& mesh,
                 std::abort();
             }
         };
-
-        // TODO move the two data members somewhere else.
-        // for extrapolation of secondary variables
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
-        all_mesh_subsets_single_component.emplace_back(
-                    new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes.get()));
-        _local_to_global_index_map_single_component.reset(
-                    new AssemblerLib::LocalToGlobalIndexMap(
-                        std::move(all_mesh_subsets_single_component), getOrder())
-                    );
-
-        _extrapolator.reset(new ExtrapolatorImplementation(BP::getMatrixSpecifications()));
     }
 }
 
@@ -234,6 +188,8 @@ NumLib::IterationResult
 TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
+    // TODO fix
+    /*
     if (BP::_process_output.output_iteration_results)
     {
         DBUG("output results of iteration %li", _total_iteration);
@@ -244,6 +200,7 @@ postIteration(GlobalVector const& x)
 
         BP::output(fn, 0, x);
     }
+    */
 
     bool check_passed = true;
 
