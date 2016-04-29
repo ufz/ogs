@@ -14,9 +14,9 @@
 #include "MathLib/Nonlinear/Root1D.h"
 #include "MathLib/ODE/ODESolverBuilder.h"
 
-#include "MaterialsLib/adsorption/adsorption.h"
-#include "MaterialsLib/adsorption/reaction_inert.h"
-#include "MaterialsLib/adsorption/reaction_sinusoidal.h"
+#include "MaterialsLib/Adsorption/adsorption.h"
+#include "MaterialsLib/Adsorption/reaction_inert.h"
+#include "MaterialsLib/Adsorption/reaction_sinusoidal.h"
 
 #include "TESReactionAdaptor.h"
 #include "TESLocalAssemblerInner.h"

@@ -5,7 +5,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Eigen>
 
-#include "MaterialsLib/adsorption/reaction.h"
+#include "MaterialsLib/Adsorption/reaction.h"
 
 #include "ProcessLib/VariableTransformation.h"
 

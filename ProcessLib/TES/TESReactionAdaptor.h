@@ -12,7 +12,7 @@
 #include <vector>
 #include <memory>
 
-#include "MaterialsLib/adsorption/reaction_CaOH2.h"
+#include "MaterialsLib/Adsorption/reaction_CaOH2.h"
 #include "MathLib/ODE/ODESolver.h"
 
 
