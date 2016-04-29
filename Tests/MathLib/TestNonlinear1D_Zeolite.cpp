@@ -3,7 +3,7 @@
 #include "MathLib/Nonlinear/Root1D.h"
 #include "MaterialsLib/Adsorption/DensityHauer.h"
 
-using namespace Ads;
+using namespace Adsorption;
 
 
 namespace
@@ -19,7 +19,7 @@ const double rho_SR0 = 1160.0; // kg/m^3
 const double C0 = 0.0;
 const double pV0 = 1e2;
 
-std::unique_ptr<Reaction> ads(new Ads::DensityHauer);
+std::unique_ptr<Reaction> ads(new Adsorption::DensityHauer);
 
 double f(const double pV)
 {
