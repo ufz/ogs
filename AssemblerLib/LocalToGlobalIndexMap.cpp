@@ -9,15 +9,8 @@
 
 #include "LocalToGlobalIndexMap.h"
 
-#include "logog/include/logog.hpp"
-
-#include "AssemblerLib/MeshComponentMap.h"
-#include "MeshLib/MeshSubsets.h"
-
 namespace AssemblerLib
 {
-
-
 
 template <typename ElementIterator>
 void
@@ -119,9 +112,9 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 }
 
 std::size_t
-LocalToGlobalIndexMap::dofSize() const
+LocalToGlobalIndexMap::dofSizeWithGhosts() const
 {
-    return _mesh_component_map.size();
+    return _mesh_component_map.dofSizeWithGhosts();
 }
 
 std::size_t

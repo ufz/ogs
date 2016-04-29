@@ -34,7 +34,7 @@ std::unique_ptr<Eigen::MatrixXd>
 MatrixVectorTraits<Eigen::MatrixXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
     auto const ncols = spec.dof_table ? nrows : spec.ncols;
 
     return std::unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd(nrows, ncols));
@@ -58,7 +58,7 @@ std::unique_ptr<Eigen::VectorXd>
 MatrixVectorTraits<Eigen::VectorXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(nrows));
 }
@@ -93,7 +93,8 @@ std::unique_ptr<PETScMatrix>
 MatrixVectorTraits<PETScMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeLocal() : spec.nrows;
+    auto const nrows =
+        spec.dof_table ? spec.dof_table->dofSizeWithoutGhosts() : spec.nrows;
     auto const ncols = spec.dof_table ? nrows : spec.ncols;
 
     // TODO I guess it is not hard to make AssemblerLib::computeSparsityPattern()
@@ -143,8 +144,8 @@ newInstance(MatrixSpecifications const& spec)
 
     if (spec.dof_table) {
         auto const& dt = *spec.dof_table;
-        return std::unique_ptr<PETScVector>(
-            new PETScVector(dt.dofSizeLocal(), dt.getGhostIndices(), is_global_size));
+        return std::unique_ptr<PETScVector>(new PETScVector(
+            dt.dofSizeWithoutGhosts(), dt.getGhostIndices(), is_global_size));
     } else {
         return std::unique_ptr<PETScVector>(
             new PETScVector(spec.nrows, is_global_size));
@@ -177,7 +178,7 @@ std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     auto A = std::unique_ptr<EigenMatrix>(new EigenMatrix(nrows));
 
@@ -205,7 +206,7 @@ std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSize() : spec.nrows;
+    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
 
     return std::unique_ptr<EigenVector>(new EigenVector(nrows));
 }

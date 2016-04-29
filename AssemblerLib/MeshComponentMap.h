@@ -13,10 +13,6 @@
 #ifndef ASSEMBLERLIB_MESHCOMPONENTMAP_H_
 #define ASSEMBLERLIB_MESHCOMPONENTMAP_H_
 
-#include <vector>
-
-#include "MeshLib/Location.h"
-
 #include "ComponentGlobalIndexDict.h"
 
 namespace MeshLib
@@ -35,7 +31,7 @@ enum class ComponentOrder
 };
 
 /// Multidirectional mapping between mesh entities and degrees of freedom.
-class MeshComponentMap
+class MeshComponentMap final
 {
 public:
     typedef MeshLib::Location Location;
@@ -54,8 +50,8 @@ public:
     MeshComponentMap getSubset(std::size_t const component_id,
                                MeshLib::MeshSubsets const& components) const;
 
-    /// The number of components in the map.
-    std::size_t size() const
+    /// The number of dofs including the those located in the ghost nodes.
+    std::size_t dofSizeWithGhosts() const
     {
         return _dict.size();
     }
@@ -119,15 +115,9 @@ public:
     std::vector<GlobalIndexType> getGlobalIndicesByComponent(
         const std::vector<Location>& ls) const;
 
-    /// Get the number of global unknowns (for DDC).
-    std::size_t getNGlobalUnknowns() const
-    {
-        return _num_global_dof;
-    }
-
     /// Get the number of local unknowns excluding those associated
     /// with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t getNLocalUnknowns() const
+    std::size_t dofSizeWithoutGhosts() const
     {
         return _num_local_dof;
     }
@@ -183,12 +173,14 @@ private:
 
     detail::ComponentGlobalIndexDict _dict;
 
-    /// Number of global unknowns.
-    std::size_t _num_global_dof = 0;
-
     /// Number of local unknowns excluding those associated
     /// with ghost nodes (for domain decomposition).
     std::size_t _num_local_dof  = 0;
+
+#ifdef USE_PETSC
+    /// Number of global unknowns. Used internally only.
+    std::size_t _num_global_dof = 0;
+#endif
 
     /// Number of components
     /// introduced mainly for error checking

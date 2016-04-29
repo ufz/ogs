@@ -34,7 +34,7 @@ namespace AssemblerLib
 /// The number of rows should be equal to the number of mesh items and the
 /// number of columns should be equal to the number of the components on that
 /// mesh item.
-class LocalToGlobalIndexMap
+class LocalToGlobalIndexMap final
 {
 public:
     typedef MathLib::RowColumnIndices<GlobalIndexType> RowColumnIndices;
@@ -58,21 +58,16 @@ public:
         std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
-    /// Returns total number of degrees of freedom.
-    std::size_t dofSize() const;
+    /// Returns total number of degrees of freedom including those located in
+    /// the ghost nodes.
+    std::size_t dofSizeWithGhosts() const;
 
-    /// Returns total number of local degrees of freedom
-    /// of the present rank, which does not count the unknowns
-    /// associated with ghost nodes (for DDC with node-wise mesh partitioning).
-    std::size_t dofSizeLocal() const
+    /// Returns total number of local degrees of freedom of the present rank,
+    /// which does not count the unknowns associated with ghost nodes (for DDC
+    /// with node-wise mesh partitioning).
+    std::size_t dofSizeWithoutGhosts() const
     {
-        return _mesh_component_map.getNLocalUnknowns();
-    }
-
-    /// Returns total number of global degrees of freedom for DDC.
-    std::size_t dofSizeGlobal() const
-    {
-        return _mesh_component_map.getNGlobalUnknowns();
+        return _mesh_component_map.dofSizeWithoutGhosts();
     }
 
     std::size_t size() const;

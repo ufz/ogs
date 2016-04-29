@@ -10,15 +10,13 @@
  *
  */
 
-#include <iostream>
+#include "MeshComponentMap.h"
 
 #include "MeshLib/MeshSubsets.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
-
-#include "MeshComponentMap.h"
 
 namespace AssemblerLib
 {
