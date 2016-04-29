@@ -116,7 +116,7 @@ createTESProcess(
     typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
     BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "TES");
