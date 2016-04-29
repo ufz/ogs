@@ -8,27 +8,33 @@ node('docker')
 	stage 'Checkout'
 	dir('ogs') { checkout scm }
 
-	stage 'Build'
-	docker.image('ogs6/gcc-base:latest')
-		.inside(defaultDockerArgs) {
-			build 'build', '', 'package tests ctest'
-		}
+	docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs)
+	{
+		stage 'Configure'
+		configure 'build', ''
 
+		stage 'Build'
+		build 'build', ''
+		if (env.BRANCH_NAME == 'master')
+			build 'build', 'package'
+
+		stage 'Test'
+		build 'build', 'tests ctest'
+	}
+
+	stage 'Post'
 	publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
 		'ogs/scripts/jenkins/clang-log-parser.rules'
 
-	if (env.BRANCH_NAME == 'master')
-		archive 'build*/*.tar.gz'
+	archive 'build*/*.tar.gz'
 }
 
-
-def build(buildDir, cmakeOptions, target) {
+def configure(buildDir, cmakeOptions) {
 	sh "rm -rf ${buildDir} && mkdir ${buildDir}"
-
-	stage 'Configure'
 	sh "cd ${buildDir} && cmake ../ogs ${defaultCMakeOptions} ${cmakeOptions}"
+}
 
-	stage 'Build'
+def build(buildDir, target) {
 	sh "cd ${buildDir} && make -j \$(nproc) ${target}"
 }
 
@@ -42,7 +48,7 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 			[$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
 	])
 
-	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: true,
+	step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,
 			projectRulePath: "${parseRulefile}", useProjectRule: true])
 
 	step([$class: 'GitHubCommitNotifier', resultOnFailure: 'FAILURE', statusMessage: [content: 'Finished Jenkins gcc build']])
