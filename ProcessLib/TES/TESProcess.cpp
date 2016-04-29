@@ -111,9 +111,7 @@ TESProcess(MeshLib::Mesh& mesh,
 
         BP::_process_output.output_global_matrix = *param;
     }
-    */
 
-    // extrapolator
     {
         // TODO Why is the full DOF table not built with order anymore?
         auto getOrder = [&config]() -> AssemblerLib::ComponentOrder
@@ -132,6 +130,72 @@ TESProcess(MeshLib::Mesh& mesh,
             }
         };
     }
+    */
+}
+
+template<typename GlobalSetup>
+void TESProcess<GlobalSetup>::
+initializeConcreteProcess(
+    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    MeshLib::Mesh const& mesh, unsigned const integration_order)
+{
+    DBUG("Create global assembler.");
+    _global_assembler.reset(new GlobalAssembler(dof_table));
+
+    ProcessLib::createLocalAssemblers<GlobalSetup, TESLocalAssembler>(
+                mesh.getDimension(), mesh.getElements(),
+                dof_table, integration_order, _local_assemblers,
+                _assembly_params);
+
+    // TODO move the two data members somewhere else.
+    // for extrapolation of secondary variables
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
+    all_mesh_subsets_single_component.emplace_back(
+                new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes.get()));
+    _local_to_global_index_map_single_component.reset(
+                new AssemblerLib::LocalToGlobalIndexMap(
+                    std::move(all_mesh_subsets_single_component),
+                    // by location order is needed for output
+                    AssemblerLib::ComponentOrder::BY_LOCATION)
+                );
+
+    _extrapolator.reset(new ExtrapolatorImplementation(
+        { 0u, 0u, nullptr, _local_to_global_index_map_single_component.get(), &mesh }));
+
+    // secondary variables
+    auto add2nd = [&](
+        std::string const& var_name, unsigned const n_components,
+        SecondaryVariableFunctions<GlobalVector>&& fcts)
+    {
+        BP::_secondary_variables.addSecondaryVariable(
+                    var_name, n_components, std::move(fcts));
+    };
+    auto makeEx = [&](TESIntPtVariables var)
+    {
+        return ProcessLib::makeExtrapolator(var, *_extrapolator, _local_assemblers);
+    };
+
+    add2nd("solid_density",  1, makeEx(TESIntPtVariables::SOLID_DENSITY));
+    add2nd("reaction_rate",  1, makeEx(TESIntPtVariables::REACTION_RATE));
+    add2nd("velocity_x",     1, makeEx(TESIntPtVariables::VELOCITY_X));
+    if (mesh.getDimension() >= 2)
+        add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
+    if (mesh.getDimension() >= 3)
+        add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
+
+    add2nd("loading",        1, makeEx(TESIntPtVariables::LOADING));
+    add2nd("reaction_damping_factor",
+                             1, makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+
+    namespace PH = std::placeholders;
+    using Self = TESProcess<GlobalSetup>;
+
+    add2nd("vapour_partial_pressure", 1,
+        {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
+    add2nd("relative_humidity",       1,
+        {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
+    add2nd("equilibrium_loading",     1,
+        {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
 }
 
 template<typename GlobalSetup>
