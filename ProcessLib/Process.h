@@ -312,7 +312,6 @@ private:
 	unsigned const _integration_order = 2;
 
 	MeshLib::Mesh& _mesh;
-	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
@@ -331,6 +330,7 @@ private:
 	ProcessOutput<GlobalVector> _process_output;
 
 protected:
+	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 };
 
