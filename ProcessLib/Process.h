@@ -246,7 +246,8 @@ public:
 	{
 		DBUG("Initialize process.");
 
-		createAssemblers(*_local_to_global_index_map, _mesh, _integration_order);
+		initializeConcreteProcess(*_local_to_global_index_map, _mesh,
+								  _integration_order);
 
 		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
@@ -332,7 +333,7 @@ public:
 
 private:
 	/// Process specific initialization called by initialize().
-	virtual void createAssemblers(
+	virtual void initializeConcreteProcess(
 	    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
 	    MeshLib::Mesh const& mesh,
 	    unsigned const integration_order) = 0;
