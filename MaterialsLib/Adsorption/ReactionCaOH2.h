@@ -24,7 +24,7 @@ namespace Adsorption
 class ReactionCaOH2 final : public Reaction
 {
 public:
-    explicit ReactionCaOH2(BaseLib::ConfigTreeNew const& conf)
+    explicit ReactionCaOH2(BaseLib::ConfigTree const& conf)
         : ode_solver_config{conf.getConfSubtree("ode_solver_config")}
     {
         /*auto const param = conf.get_optional<double>("reaction_enthalpy");
@@ -42,7 +42,7 @@ public:
     double get_reaction_rate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
                              const double /*loading*/) const override;
 
-    const BaseLib::ConfigTreeNew& getOdeSolverConfig() const { return ode_solver_config; }
+    const BaseLib::ConfigTree& getOdeSolverConfig() const { return ode_solver_config; }
 
     // TODO merge with get_reaction_rate()
     double getReactionRate(double const solid_density);
@@ -77,7 +77,7 @@ private:
     static constexpr double tol_u   = 1.0 - 1e-4;
     static constexpr double tol_rho = 0.1;
 
-    const BaseLib::ConfigTreeNew ode_solver_config;
+    const BaseLib::ConfigTree ode_solver_config;
 
     template<typename>
     friend class ProcessLib::TESFEMReactionAdaptorCaOH2;

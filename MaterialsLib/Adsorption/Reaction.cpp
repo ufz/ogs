@@ -30,7 +30,7 @@ namespace Adsorption
 
 std::unique_ptr<Reaction>
 Reaction::
-newInstance(BaseLib::ConfigTreeNew const& conf)
+newInstance(BaseLib::ConfigTree const& conf)
 {
 	auto const type = conf.getConfParam<std::string>("type");
 
