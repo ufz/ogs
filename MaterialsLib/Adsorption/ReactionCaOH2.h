@@ -18,7 +18,7 @@ template<typename>
 class TESFEMReactionAdaptorCaOH2;
 }
 
-namespace Ads
+namespace Adsorption
 {
 
 class ReactionCaOH2 final : public Reaction
@@ -57,7 +57,7 @@ private:
     void set_chemical_equilibrium();
     double Ca_hydration();
 
-    static constexpr double R = Ads::GAS_CONST;  // [J/mol/K]
+    static constexpr double R = GAS_CONST;  // [J/mol/K]
     double rho_s;                 // solid phase density
     double p_gas;                 // gas phase pressure in unit bar
     double p_r_g;                 // pressure of H2O on gas phase;
@@ -70,8 +70,8 @@ private:
     double X_H;                   // mass fraction of hydration in the solid phase;
     static constexpr double reaction_enthalpy = -1.12e+05; // in J/mol; negative for exothermic composition reaction
     static constexpr double reaction_entropy  = -143.5;    // in J/mol/K
-    static constexpr double M_carrier = Ads::M_N2;         // inert component molar mass
-    static constexpr double M_react   = Ads::M_H2O;        // reactive component molar mass
+    static constexpr double M_carrier = M_N2;         // inert component molar mass
+    static constexpr double M_react   = M_H2O;        // reactive component molar mass
 
     static constexpr double tol_l   = 1e-4;
     static constexpr double tol_u   = 1.0 - 1e-4;

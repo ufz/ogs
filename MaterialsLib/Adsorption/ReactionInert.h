@@ -11,7 +11,7 @@
 
 #include "Reaction.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class ReactionInert final : public Reaction

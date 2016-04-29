@@ -15,7 +15,7 @@ const double c[] = { 0.34102920966608297,
 
 }
 
-namespace Ads
+namespace Adsorption
 {
 
 double DensityLegacy::get_adsorbate_density(const double T_Ads) const

@@ -25,7 +25,7 @@
 #include "ReactionSinusoidal.h"
 
 
-namespace Ads
+namespace Adsorption
 {
 
 std::unique_ptr<Reaction>

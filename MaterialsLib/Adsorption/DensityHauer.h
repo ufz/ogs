@@ -3,7 +3,7 @@
 #include "Adsorption.h"
 #include "DensityCook.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class DensityHauer : public Adsorption

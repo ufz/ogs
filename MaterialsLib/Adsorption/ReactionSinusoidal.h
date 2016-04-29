@@ -14,7 +14,7 @@
 #include "Reaction.h"
 #include "BaseLib/ConfigTree.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class ReactionSinusoidal final : public Reaction

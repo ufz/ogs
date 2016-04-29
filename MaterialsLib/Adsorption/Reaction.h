@@ -13,7 +13,7 @@
 
 #include "BaseLib/ConfigTreeNew.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class Reaction

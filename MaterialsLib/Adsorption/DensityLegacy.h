@@ -2,7 +2,7 @@
 
 #include "Adsorption.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class DensityLegacy : public Adsorption
