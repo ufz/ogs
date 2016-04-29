@@ -70,8 +70,8 @@ public:
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
-	    , _secondary_variables(std::move(secondary_variables))
 	    , _process_output(std::move(process_output))
+	    , _secondary_variables(std::move(secondary_variables))
 	{}
 
 	/// Preprocessing before starting assembly for new timestep.
@@ -326,12 +326,13 @@ private:
 	NonlinearSolver& _nonlinear_solver;
 	std::unique_ptr<TimeDiscretization> _time_discretization;
 
-protected:
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
-	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 	ProcessOutput<GlobalVector> _process_output;
+
+protected:
+	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 };
 
 /// Find process variables in \c variables whose names match the settings under
