@@ -27,7 +27,7 @@ struct AssemblyParams
     Trafo trafo_T{1.0};
     Trafo trafo_x{1.0};
 
-    std::unique_ptr<Ads::Reaction> react_sys;
+    std::unique_ptr<Adsorption::Reaction> react_sys;
 
     double fluid_specific_heat_source = std::numeric_limits<double>::quiet_NaN();
     double cpG = std::numeric_limits<double>::quiet_NaN(); // specific isobaric fluid heat capacity

@@ -31,19 +31,19 @@ TESFEMReactionAdaptor::
 newInstance(TESLocalAssemblerData const& data)
 {
     auto const* ads = data.ap.react_sys.get();
-    if (dynamic_cast<Ads::Adsorption const*>(ads) != nullptr) {
+    if (dynamic_cast<Adsorption::Adsorption const*>(ads) != nullptr) {
         return std::unique_ptr<TESFEMReactionAdaptor>(
                     new TESFEMReactionAdaptorAdsorption(data)
                     );
-    } else if (dynamic_cast<Ads::ReactionInert const*>(ads) != nullptr) {
+    } else if (dynamic_cast<Adsorption::ReactionInert const*>(ads) != nullptr) {
         return std::unique_ptr<TESFEMReactionAdaptor>(
                     new TESFEMReactionAdaptorInert(data)
                     );
-    } else if (dynamic_cast<Ads::ReactionSinusoidal const*>(ads) != nullptr) {
+    } else if (dynamic_cast<Adsorption::ReactionSinusoidal const*>(ads) != nullptr) {
         return std::unique_ptr<TESFEMReactionAdaptor>(
                     new TESFEMReactionAdaptorSinusoidal(data)
                     );
-    } else if (dynamic_cast<Ads::ReactionCaOH2 const*>(ads) != nullptr) {
+    } else if (dynamic_cast<Adsorption::ReactionCaOH2 const*>(ads) != nullptr) {
         return std::unique_ptr<TESFEMReactionAdaptor>(
                     new TESFEMReactionAdaptorCaOH2(data)
                     );
@@ -62,7 +62,7 @@ TESFEMReactionAdaptorAdsorption(TESLocalAssemblerData const& data)
     : _bounds_violation(data.solid_density.size(), false)
     , _d(data)
 {
-    assert(dynamic_cast<Ads::Adsorption const*>(data.ap.react_sys.get()) != nullptr
+    assert(dynamic_cast<Adsorption::Adsorption const*>(data.ap.react_sys.get()) != nullptr
            && "Reactive system has wrong type.");
     assert(_bounds_violation.size() != 0);
 }
@@ -73,7 +73,7 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
 {
     assert(_d.ap.number_of_try_of_iteration < 20);
 
-    const double loading = Ads::Adsorption::get_loading(_d.solid_density_prev_ts[int_pt],
+    const double loading = Adsorption::Adsorption::get_loading(_d.solid_density_prev_ts[int_pt],
                                                         _d.ap.rho_SR_dry);
 
     double react_rate_R = _d.ap.react_sys->get_reaction_rate(_d.p_V, _d.T, _d.ap.M_react, loading)
@@ -84,13 +84,13 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
                    ? _reaction_damping_factor * react_rate_R
                    : 0.0;
 
-    if (_d.p_V < 0.01 * Ads::Adsorption::get_equilibrium_vapour_pressure(_d.T)
+    if (_d.p_V < 0.01 * Adsorption::Adsorption::get_equilibrium_vapour_pressure(_d.T)
         && react_rate_R > 0.0)
     {
         react_rate_R = 0.0;
     }
     else if (_d.p_V < 100.0
-             || _d.p_V < 0.05 * Ads::Adsorption::get_equilibrium_vapour_pressure(_d.T))
+             || _d.p_V < 0.05 * Adsorption::Adsorption::get_equilibrium_vapour_pressure(_d.T))
     {
         // use equilibrium reaction for dry regime
 
@@ -100,7 +100,7 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
         const double pV_eq = estimateAdsorptionEquilibrium(_d.p_V, loading);
         // TODO [CL]: it would be more correct to subtract pV from the previous timestep here
         const double delta_pV = pV_eq - _d.p_V;
-        const double delta_rhoV = delta_pV * _d.ap.M_react / Ads::GAS_CONST / _d.T * _d.ap.poro;
+        const double delta_rhoV = delta_pV * _d.ap.M_react / Adsorption::GAS_CONST / _d.T * _d.ap.poro;
         const double delta_rhoSR = delta_rhoV / (_d.ap.poro - 1.0);
         double react_rate_R2 = delta_rhoSR/_d.ap.delta_t;
 
@@ -166,7 +166,7 @@ estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
     {
         // pV0 := _p_V
         const double C_eq = _d.ap.react_sys->get_equilibrium_loading(pV, _d.T, _d.ap.M_react);
-        return (pV - p_V0) * _d.ap.M_react / Ads::GAS_CONST / _d.T * _d.ap.poro
+        return (pV - p_V0) * _d.ap.M_react / Adsorption::GAS_CONST / _d.T * _d.ap.poro
                 + (1.0-_d.ap.poro) * (C_eq - C0) * _d.ap.rho_SR_dry;
     };
 
@@ -174,7 +174,7 @@ estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
     const double C_eq0 = _d.ap.react_sys->get_equilibrium_loading(p_V0, _d.T, _d.ap.M_react);
     const double limit = (C_eq0 > C0)
                          ? 1e-8
-                         : Ads::Adsorption::get_equilibrium_vapour_pressure(_d.T);
+                         : Adsorption::Adsorption::get_equilibrium_vapour_pressure(_d.T);
 
     // search for roots
     auto rf = MathLib::Nonlinear::makeRegulaFalsi<MathLib::Nonlinear::Pegasus>(f, p_V0, limit);
@@ -264,7 +264,7 @@ TESFEMReactionAdaptorSinusoidal::
 TESFEMReactionAdaptorSinusoidal(TESLocalAssemblerData const& data)
     : _d(data)
 {
-    assert(dynamic_cast<Ads::ReactionSinusoidal const*>(data.ap.react_sys.get()) != nullptr
+    assert(dynamic_cast<Adsorption::ReactionSinusoidal const*>(data.ap.react_sys.get()) != nullptr
            && "Reactive system has wrong type.");
 }
 
@@ -289,7 +289,7 @@ initReaction(const unsigned /*int_pt*/)
 TESFEMReactionAdaptorCaOH2::
 TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data)
     : _d(data)
-    , _react(dynamic_cast<Ads::ReactionCaOH2&>(*data.ap.react_sys.get()))
+    , _react(dynamic_cast<Adsorption::ReactionCaOH2&>(*data.ap.react_sys.get()))
 {
     _ode_solver = MathLib::ODE::createODESolver<1>(_react.getOdeSolverConfig());
     // TODO invalidate config

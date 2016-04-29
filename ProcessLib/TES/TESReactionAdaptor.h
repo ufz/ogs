@@ -121,7 +121,7 @@ public:
 
 private:
     using Data = TESLocalAssemblerData;
-    using React = Ads::ReactionCaOH2;
+    using React = Adsorption::ReactionCaOH2;
     Data const& _d;
     React& _react;
 
