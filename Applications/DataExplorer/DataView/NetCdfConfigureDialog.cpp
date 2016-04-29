@@ -1,5 +1,12 @@
-//file NetCDFConfigureDialog.cpp
-//CH Initial implementation
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
 
 #include "NetCdfConfigureDialog.h"
 
@@ -158,7 +165,6 @@ int NetCdfConfigureDialog::setVariableSelect()
 	for (int i=0; i<n_vars; i++)
 	{
 		NcVar const& focusedVar = *_currentFile->get_var(i);
-		std::cout << focusedVar.num_dims() << std::endl;
 		if (focusedVar.num_dims() > 1)
 		{
 			_id_map.push_back(i);
@@ -186,7 +192,7 @@ void NetCdfConfigureDialog::setDimensionSelect()
 
 	for (int i=0; i < dim; ++i) //write dimension-names into selection-boxes
 	{
-		for (std::size_t j=0; j<_currentVar->num_dims(), j<4; ++j)
+		for (std::size_t j=0; j<dim; ++j)
 			dim_box[j]->addItem(_currentVar->get_dim(i)->name());
 	}
 	comboBoxDim1->setCurrentIndex(dim-2);
