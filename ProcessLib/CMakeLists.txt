@@ -10,7 +10,7 @@ add_library(ProcessLib STATIC ${SOURCES})
 
 target_link_libraries(ProcessLib INTERFACE
     AssemblerLib
-    MaterialsLib_adsorption
+    MaterialsLibAdsorption
     MeshLib
     MeshGeoToolsLib
     NumLib # for shape matrices
