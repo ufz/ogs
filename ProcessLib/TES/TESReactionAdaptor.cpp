@@ -296,11 +296,11 @@ TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data)
 
     _ode_solver->setTolerance(1e-10, 1e-10);
 
-    auto f = [this](const double t,
+    auto f = [this](const double /*t*/,
              MathLib::ODE::MappedConstVector<1> const y,
              MathLib::ODE::MappedVector<1> ydot) -> bool
     {
-        _react.eval(t, y, ydot);
+        ydot[0] = _react.getReactionRate(y[0]);
         return true;
     };
 
