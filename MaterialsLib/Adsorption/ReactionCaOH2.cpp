@@ -7,13 +7,10 @@
  *
  */
 
-#include<cassert>
-
+#include <cassert>
 #include <logog/include/logog.hpp>
-
-#include "reaction_CaOH2.h"
-
-#include "adsorption.h"
+#include "ReactionCaOH2.h"
+#include "Adsorption.h"
 
 namespace Ads
 {

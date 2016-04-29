@@ -1,6 +1,5 @@
-#include "density_const.h"
-
-#include "density_hauer.h"
+#include "DensityConst.h"
+#include "DensityHauer.h"
 
 namespace
 {

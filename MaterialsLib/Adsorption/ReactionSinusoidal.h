@@ -11,8 +11,8 @@
 
 #include <logog/include/logog.hpp>
 
-#include "reaction.h"
-#include "BaseLib/ConfigTreeNew.h"
+#include "Reaction.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace Ads
 {
@@ -20,7 +20,7 @@ namespace Ads
 class ReactionSinusoidal final : public Reaction
 {
 public:
-    explicit ReactionSinusoidal(BaseLib::ConfigTreeNew const& conf)
+    explicit ReactionSinusoidal(BaseLib::ConfigTree const& conf)
         : _enthalpy(conf.getConfParam<double>("reaction_enthalpy"))
     {
     }

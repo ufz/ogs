@@ -1,6 +1,6 @@
-#include "density_dubinin.h"
-#include "density_cook.h"
-#include "adsorption.h"
+#include "DensityDubinin.h"
+#include "DensityCook.h"
+#include "Adsorption.h"
 
 namespace
 {

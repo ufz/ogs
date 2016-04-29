@@ -1,4 +1,4 @@
-#include "density_nunez.h"
+#include "DensityNunez.h"
 
 namespace
 {

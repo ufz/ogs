@@ -1,11 +1,11 @@
 #pragma once
 
-#include "adsorption.h"
+#include "Adsorption.h"
 
 namespace Ads
 {
 
-class DensityLegacy : public Adsorption
+class Density100MPa : public Adsorption
 {
 public:
 	double get_adsorbate_density(const double T_Ads) const;

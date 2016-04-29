@@ -1,4 +1,4 @@
-#include "density_legacy.h"
+#include "DensityLegacy.h"
 
 namespace
 {

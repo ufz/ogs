@@ -1,7 +1,7 @@
 #pragma once
 
-#include "adsorption.h"
-#include "density_cook.h"
+#include "Adsorption.h"
+#include "DensityCook.h"
 
 namespace Ads
 {

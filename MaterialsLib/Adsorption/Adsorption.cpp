@@ -7,8 +7,8 @@
  *
  */
 
-#include "logog/include/logog.hpp"
-#include "adsorption.h"
+#include <logog/include/logog.hpp>
+#include "Adsorption.h"
 
 namespace {
 	const double k_rate = 6.0e-3; //to be specified

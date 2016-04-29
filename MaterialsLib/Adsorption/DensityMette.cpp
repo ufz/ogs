@@ -1,5 +1,5 @@
-#include "density_mette.h"
-#include "density_cook.h"
+#include "DensityMette.h"
+#include "DensityCook.h"
 
 namespace
 {

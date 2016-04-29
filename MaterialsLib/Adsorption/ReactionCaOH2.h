@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "reaction.h"
-#include "adsorption.h"
+#include "Reaction.h"
+#include "Adsorption.h"
 
 namespace ProcessLib
 {
