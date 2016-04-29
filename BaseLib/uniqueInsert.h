@@ -44,9 +44,9 @@ void insertIfKeyUniqueElseError(
 	}
 }
 
-//! Inserts the given \c key with the given \c value into the \c map if an entry with the
-//! given \c key does not yet exist; otherwise an \c error_message is printed and the
-//! program is aborted.
+//! Inserts the given \c key with the given \c value into the \c map if neither an entry
+//! with the given \c key nor an entry with the given \c value already exists;
+//! otherwise an \c error_message is printed and the program is aborted.
 template<typename Map, typename Key, typename Value>
 void insertIfKeyValueUniqueElseError(
 	Map& map, Key const& key, Value&& value,
