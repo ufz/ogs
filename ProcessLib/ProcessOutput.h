@@ -10,6 +10,7 @@
 #ifndef PROCESSLIB_PROCESSOUTPUT_H
 #define PROCESSLIB_PROCESSOUTPUT_H
 
+#include "FileIO/VtkIO/VtuInterface.h"
 #include "ProcessVariable.h"
 #include "SecondaryVariable.h"
 

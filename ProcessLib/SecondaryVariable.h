@@ -62,15 +62,15 @@ public:
 
     bool variableExists(std::string const& variable_name) const
     {
-        auto pred = [&variable_name](SecondaryVariable<GlobalVector> const& p) {
-            return p.name == variable_name;
+        auto pred = [&variable_name](std::pair<std::string, std::string> const& p) {
+            return p.second == variable_name;
         };
 
         // check if out_var is a  secondary variable
         auto const& var = std::find_if(
-            _secondary_variables.cbegin(), _secondary_variables.cend(), pred);
+            _map_tagname_to_varname.cbegin(), _map_tagname_to_varname.cend(), pred);
 
-        return var != _secondary_variables.cend();
+        return var != _map_tagname_to_varname.cend();
     }
 
     void addSecondaryVariable(

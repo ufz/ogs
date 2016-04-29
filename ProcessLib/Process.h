@@ -18,7 +18,6 @@
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "BaseLib/ConfigTree.h"
-#include "FileIO/VtkIO/VtuInterface.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
