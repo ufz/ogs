@@ -45,12 +45,12 @@ class RegulaFalsiTestZeolite : public ::testing::Test
 };
 
 
+// TODO fix
+#if 0
 using namespace MathLib::Nonlinear;
 typedef ::testing::Types<Unmodified, Illinois, Pegasus, AndersonBjorck> RegulaFalsiTypes;
 TYPED_TEST_CASE(RegulaFalsiTestZeolite, RegulaFalsiTypes);
 
-// TODO fix
-#if 0
 TYPED_TEST(RegulaFalsiTestZeolite, Zeolite)
 {
     auto rf = makeRegulaFalsi<TypeParam>(f, 1e-8, pV0);
