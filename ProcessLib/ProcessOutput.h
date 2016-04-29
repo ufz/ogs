@@ -194,14 +194,15 @@ struct ProcessOutput final
 
 
 template <typename GlobalVector>
-void doProcessOutput(std::string const& file_name,
-                     GlobalVector const& x,
-                     MeshLib::Mesh& mesh,
-                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                     std::vector<std::reference_wrapper<ProcessVariable>> const&
-                     process_variables,
-                     SecondaryVariableCollection<GlobalVector> secondary_variables,
-                     ProcessOutput<GlobalVector> const& process_output)
+void doProcessOutput(
+        std::string const& file_name,
+        GlobalVector const& x,
+        MeshLib::Mesh& mesh,
+        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        std::vector<std::reference_wrapper<ProcessVariable>> const&
+        process_variables,
+        SecondaryVariableCollection<GlobalVector> secondary_variables,
+        ProcessOutput<GlobalVector> const& process_output)
 {
     DBUG("Process output.");
 
@@ -232,6 +233,8 @@ void doProcessOutput(std::string const& file_name,
         if (output_variables.find(pv.getName()) == output_variables.cend())
             continue;
 
+        DBUG("  process variable %s", pv.getName().c_str());
+
         auto& output_data = pv.getOrCreateMeshProperty();
 
         for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
@@ -257,7 +260,7 @@ void doProcessOutput(std::string const& file_name,
     // the following section is for the output of secondary variables
 
     auto count_mesh_items = [](
-                            MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
+        MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
     {
         switch (type) {
         case MeshLib::MeshItemType::Cell: return mesh.getNElements();
@@ -268,7 +271,7 @@ void doProcessOutput(std::string const& file_name,
     };
 
     auto get_or_create_mesh_property = [&mesh, &count_mesh_items](
-                                       std::string const& property_name, MeshLib::MeshItemType type)
+        std::string const& property_name, MeshLib::MeshItemType type)
     {
         // Get or create a property vector for results.
         boost::optional<MeshLib::PropertyVector<double>&> result;
@@ -291,13 +294,12 @@ void doProcessOutput(std::string const& file_name,
         return result;
     };
 
-    auto add_secondary_var
-        = [&](SecondaryVariable<GlobalVector> const& var) -> void
+    auto add_secondary_var = [&](SecondaryVariable<GlobalVector> const& var)
     {
-        assert(var.n_components == 1); // TODO [CL] implement other cases
+        assert(var.n_components == 1); // TODO implement other cases
 
         {
-            DBUG("  process var %s", var.name.c_str());
+            DBUG("  secondary variable %s", var.name.c_str());
 
             auto result = get_or_create_mesh_property(
                               var.name, MeshLib::MeshItemType::Node);
@@ -314,11 +316,13 @@ void doProcessOutput(std::string const& file_name,
             }
         }
 
-        if (process_output.output_residuals && var.fcts.eval_residuals) {
+        if (process_output.output_residuals && var.fcts.eval_residuals)
+        {
             DBUG("  process var %s residual", var.name.c_str());
             auto const& property_name_res = var.name + "_residual";
 
-            auto result = get_or_create_mesh_property(property_name_res, MeshLib::MeshItemType::Cell);
+            auto result = get_or_create_mesh_property(
+                              property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == mesh.getNElements());
 
             auto const& residuals =
