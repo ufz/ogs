@@ -11,7 +11,7 @@
 
 #include<memory>
 
-#include "BaseLib/ConfigTreeNew.h"
+#include "BaseLib/ConfigTree.h"
 
 namespace Adsorption
 {
@@ -19,7 +19,7 @@ namespace Adsorption
 class Reaction
 {
 public:
-	static std::unique_ptr<Reaction> newInstance(BaseLib::ConfigTreeNew const& rsys);
+	static std::unique_ptr<Reaction> newInstance(BaseLib::ConfigTree const& rsys);
 
 	virtual double get_enthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const = 0;
 	virtual double get_reaction_rate(const double p_Ads, const double T_Ads,
