@@ -12,7 +12,7 @@
 #include "ReactionCaOH2.h"
 #include "Adsorption.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 constexpr double ReactionCaOH2::tol_l;
@@ -58,7 +58,7 @@ void ReactionCaOH2::calculate_qR()
 {
 	//Convert mass fraction into mole fraction
 	// const double mol_frac_react = get_mole_fraction(x_react);
-	const double mol_frac_react = Ads::Adsorption::get_molar_fraction(x_react, M_react, M_carrier);
+	const double mol_frac_react = Adsorption::Adsorption::get_molar_fraction(x_react, M_react, M_carrier);
 
 	p_r_g = std::max(mol_frac_react * p_gas, 1.0e-3); //avoid illdefined log
 	set_chemical_equilibrium();

@@ -20,7 +20,7 @@ namespace {
 	}
 }
 
-namespace Ads
+namespace Adsorption
 {
 
 //Saturation pressure for water used in Nunez

@@ -17,7 +17,7 @@ const double c[] = {
 
 }
 
-namespace Ads
+namespace Adsorption
 {
 
 double Density100MPa::get_adsorbate_density(const double T_Ads) const

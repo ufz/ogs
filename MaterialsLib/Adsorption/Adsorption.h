@@ -6,7 +6,7 @@
 
 #include "Reaction.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 constexpr double GAS_CONST = 8.3144621;

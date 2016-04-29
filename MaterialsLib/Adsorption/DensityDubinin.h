@@ -2,7 +2,7 @@
 
 #include "Adsorption.h"
 
-namespace Ads
+namespace Adsorption
 {
 
 class DensityDubinin : public Adsorption
