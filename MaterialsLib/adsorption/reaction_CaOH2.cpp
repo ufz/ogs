@@ -38,15 +38,11 @@ ReactionCaOH2::get_reaction_rate(const double, const double, const double, const
 }
 
 
-void ReactionCaOH2::eval(double /*t*/,
-						 MathLib::ODE::MappedConstVector<1> const y,
-						 MathLib::ODE::MappedVector<1> dydx)
+double ReactionCaOH2::getReactionRate(double const solid_density)
 {
-	assert( y.size() == dydx.size() );
-
-	rho_s = y[0];
+	rho_s = solid_density;
 	calculate_qR();
-	dydx[0] = qR;
+	return qR;
 }
 
 void ReactionCaOH2::update_param(
