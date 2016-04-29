@@ -65,13 +65,10 @@ TESProcess(MeshLib::Mesh& mesh,
             {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
     }
 
-    // variables for output
-    // TODO make mandatory option? Move to base Process?
-    if (auto output = config.getConfSubtreeOptional("output"))
-    {
-        BP::_process_output.setOutputVariables(*output, BP::_process_variables);
-    }
+    BP::_process_output.setOutputVariables(
+                config.getConfSubtree("output"), BP::_process_variables);
 
+    // physical parameters for local assembly
     {
         std::vector<std::pair<const std::string, double*> > params{
             { "fluid_specific_heat_source",            &_assembly_params.fluid_specific_heat_source },
