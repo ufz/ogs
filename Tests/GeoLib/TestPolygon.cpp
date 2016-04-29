@@ -204,3 +204,14 @@ TEST_F(PolygonTest, isPolylineInPolygon)
 	for (std::size_t k(0); k<pnts.size(); k++)
 		delete pnts[k];
 }
+
+TEST_F(PolygonTest, CopyConstructor)
+{
+	GeoLib::Polygon polygon_copy(*_polygon);
+	ASSERT_EQ(_polygon->getNumberOfSegments(), polygon_copy.getNumberOfSegments());
+
+	// Check if all line segments of the original polygon are contained in the
+	// copy
+	for (auto const& segment : *_polygon)
+		ASSERT_TRUE(polygon_copy.containsSegment(segment));
+}

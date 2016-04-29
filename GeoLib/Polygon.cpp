@@ -28,6 +28,21 @@ Polygon::Polygon(const Polyline &ply, bool init) :
 {
 	if (init)
 		initialise ();
+	_simple_polygon_list.push_back(this);
+}
+
+Polygon::Polygon(Polygon const& other)
+    : Polyline(other), _aabb(other._aabb)
+{
+	_simple_polygon_list.push_back(this);
+	auto sub_polygon_it(other._simple_polygon_list.begin());
+	for (sub_polygon_it++;  // the first entry is the polygon itself, skip the
+	                        // entry
+	     sub_polygon_it != other._simple_polygon_list.end();
+	     ++sub_polygon_it)
+	{
+		_simple_polygon_list.emplace_back(new Polygon(*(*sub_polygon_it)));
+	}
 }
 
 Polygon::~Polygon()
@@ -63,7 +78,7 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
 	std::size_t n_intersections (0);
 	GeoLib::Point s;
 
-	if (_simple_polygon_list.empty ()) {
+	if (_simple_polygon_list.size() == 1) {
 		const std::size_t n_nodes (getNumberOfPoints() - 1);
 		for (std::size_t k(0); k < n_nodes; k++) {
 			if (((*(getPoint(k)))[1] <= pnt[1] && pnt[1] <= (*(getPoint(k + 1)))[1]) ||
@@ -86,8 +101,11 @@ bool Polygon::isPntInPolygon (GeoLib::Point const & pnt) const
 		if (n_intersections % 2 == 1)
 			return true;
 	} else {
-		for (std::list<Polygon*>::const_iterator it (_simple_polygon_list.begin());
-		     it != _simple_polygon_list.end(); ++it) {
+		for (std::list<Polygon*>::const_iterator it(
+		         _simple_polygon_list.begin()++);
+		     it != _simple_polygon_list.end();
+		     ++it)
+		{
 			if ((*it)->isPntInPolygon (pnt))
 				return true;
 		}
@@ -209,7 +227,7 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     GeoLib::LineSegment const& seg, GeoLib::Point & intersection,
     std::size_t& seg_num) const
 {
-	if (_simple_polygon_list.empty()) {
+	if (_simple_polygon_list.size() == 1) {
 		for (auto seg_it(begin()+seg_num); seg_it != end(); ++seg_it) {
 			if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
 				seg_num = seg_it.getSegmentNumber();
@@ -236,17 +254,11 @@ bool Polygon::getNextIntersectionPointPolygonLine(
 
 const std::list<Polygon*>& Polygon::getListOfSimplePolygons()
 {
-	if (_simple_polygon_list.empty())
-		_simple_polygon_list.push_back (this);
 	return _simple_polygon_list;
 }
 
 void Polygon::computeListOfSimplePolygons ()
 {
-	if (!_simple_polygon_list.empty())
-		return;
-
-	_simple_polygon_list.push_back (this);
 	splitPolygonAtPoint (_simple_polygon_list.begin());
 	splitPolygonAtIntersection (_simple_polygon_list.begin());
 
@@ -384,7 +396,10 @@ void Polygon::splitPolygonAtIntersection(
 		polyline1.addPoint((*polygon_it)->getPointID(k));
 	polyline1.addPoint(intersection_pnt_id);
 
-	// remove original polyline and add two new polylines
+	// remove the polygon except the first
+	if (*polygon_it != this)
+		delete *polygon_it;
+	// erase polygon_it and add two new polylines
 	auto polygon1_it = _simple_polygon_list.insert(
 	    _simple_polygon_list.erase(polygon_it), new GeoLib::Polygon(polyline1));
 	auto polygon0_it = _simple_polygon_list.insert(
@@ -396,7 +411,7 @@ void Polygon::splitPolygonAtIntersection(
 
 void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)
 {
-	std::size_t n ((*polygon_it)->getNumberOfPoints() - 1), idx0 (0), idx1(0);
+	std::size_t n((*polygon_it)->getNumberOfPoints() - 1), idx0(0), idx1(0);
 	std::vector<std::size_t> id_vec(n);
 	std::vector<std::size_t> perm(n);
 	for (std::size_t k(0); k < n; k++)
@@ -417,27 +432,28 @@ void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon
 				std::swap (idx0, idx1);
 
 			// create two closed polylines
-			GeoLib::Polygon* polygon0 (new GeoLib::Polygon(*(*polygon_it)));
-			for (std::size_t k(0); k <= idx0; k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			for (std::size_t k(idx1 + 1); k < (*polygon_it)->getNumberOfPoints(); k++)
-				polygon0->addPoint ((*polygon_it)->getPointID (k));
-			polygon0->initialise();
+			GeoLib::Polyline polyline0{*(*polygon_it)};
+			for (std::size_t j(0); j <= idx0; j++)
+				polyline0.addPoint((*polygon_it)->getPointID(j));
+			for (std::size_t j(idx1 + 1);
+			     j < (*polygon_it)->getNumberOfPoints(); j++)
+				polyline0.addPoint((*polygon_it)->getPointID(j));
 
-			GeoLib::Polygon* polygon1 (new GeoLib::Polygon(*(*polygon_it)));
-			for (std::size_t k(idx0); k <= idx1; k++)
-				polygon1->addPoint ((*polygon_it)->getPointID (k));
-			polygon1->initialise();
+			GeoLib::Polyline polyline1{*(*polygon_it)};
+			for (std::size_t j(idx0); j <= idx1; j++)
+				polyline1.addPoint((*polygon_it)->getPointID(j));
 
-			// remove original polygon and add two new polygons
-			std::list<GeoLib::Polygon*>::iterator polygon0_it, polygon1_it;
-			polygon1_it =
-			        _simple_polygon_list.insert (_simple_polygon_list.erase (
-			                                             polygon_it), polygon1);
-			polygon0_it = _simple_polygon_list.insert (polygon1_it, polygon0);
+			// remove the polygon except the first
+			if (*polygon_it != this)
+				delete *polygon_it;
+			// erase polygon_it and add two new polygons
+			auto polygon1_it = _simple_polygon_list.insert(
+			    _simple_polygon_list.erase(polygon_it), new Polygon(polyline1));
+			auto polygon0_it = _simple_polygon_list.insert(
+			    polygon1_it, new Polygon(polyline0));
 
-			splitPolygonAtPoint (polygon0_it);
-			splitPolygonAtPoint (polygon1_it);
+			splitPolygonAtPoint(polygon0_it);
+			splitPolygonAtPoint(polygon1_it);
 
 			return;
 		}
