@@ -4,7 +4,7 @@
 
 #include "MathLib/Nonlinear/Root1D.h"
 
-#include "MaterialsLib/adsorption/density_hauer.h"
+#include "MaterialsLib/Adsorption/density_hauer.h"
 
 using namespace Ads;
 
