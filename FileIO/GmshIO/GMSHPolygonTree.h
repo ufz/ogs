@@ -90,8 +90,9 @@ public:
 private:
     void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
     void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
-    void checkIntersectionsSegmentExistingPolylines(GeoLib::PolylineWithSegmentMarker * ply,
-            std::size_t & ply_segment_number);
+    void checkIntersectionsSegmentExistingPolylines(
+        GeoLib::PolylineWithSegmentMarker* ply,
+        GeoLib::Polyline::SegmentIterator const& segment_iterator);
 
     GeoLib::GEOObjects & _geo_objs;
     std::string const& _geo_name;
