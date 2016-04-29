@@ -17,9 +17,11 @@
 namespace ProcessLib
 {
 
+//! Holds information about which variables to write to output files.
 template <typename GlobalVector>
 struct ProcessOutput final
 {
+    //! Constructs a new instance.
     ProcessOutput(BaseLib::ConfigTree const& output_config,
                   std::vector<std::reference_wrapper<ProcessVariable>> const&
                   process_variables,
@@ -61,15 +63,15 @@ struct ProcessOutput final
         }
     }
 
+    //! All variables that shall be output.
     std::set<std::string> output_variables;
 
+    //! Tells if also to output extrapolation residuals.
     bool output_residuals = false;
-    //! Output global matrix/rhs after first iteration.
-    bool output_global_matrix = false;
-    bool output_iteration_results = false;
 };
 
 
+//! Writes output to the given \c file_name using the VTU file format.
 template <typename GlobalVector>
 void doProcessOutput(
         std::string const& file_name,
