@@ -18,7 +18,9 @@
 #include <string>
 #include <sstream>
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 
 /// @brief Base class which enables writing an object to string, stringstream
@@ -58,6 +60,7 @@ private:
 
 };
 
-} // namespace FileIO
+} // namespace IO
+} // namespace BaseLib
 
 #endif // WRITER_H

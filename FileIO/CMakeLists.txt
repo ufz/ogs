@@ -19,8 +19,6 @@ set(SOURCES
 	TetGenInterface.cpp
 	TINInterface.h
 	TINInterface.cpp
-	Writer.h
-	Writer.cpp
 	writeMeshToFile.h
 	writeMeshToFile.cpp
 )

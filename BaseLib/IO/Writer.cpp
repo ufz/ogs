@@ -19,7 +19,9 @@
 #include <fstream>
 #include <limits>
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 
 Writer::Writer()
@@ -72,4 +74,5 @@ void Writer::setFormat(std::ios_base::fmtflags flags)
 	_out.setf(flags);
 }
 
-} // namespace FileIO
+} // namespace IO
+} // namespace BaseLib

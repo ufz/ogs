@@ -19,11 +19,10 @@
 #include <map>
 #include <string>
 
-// FileIO
-#include "Writer.h"
-#include "GmshIO/GMSHPoint.h"
-#include "GmshIO/GMSHPolygonTree.h"
-#include "GmshIO/GMSHMeshDensityStrategy.h"
+#include "BaseLib/IO/Writer.h"
+#include "FileIO/GmshIO/GMSHPoint.h"
+#include "FileIO/GmshIO/GMSHPolygonTree.h"
+#include "FileIO/GmshIO/GMSHMeshDensityStrategy.h"
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
@@ -55,7 +54,7 @@ enum class MeshDensityAlgorithm {
 /**
  * \brief Reads and writes GMSH-files to and from OGS data structures.
  */
-class GMSHInterface : public Writer
+class GMSHInterface : public BaseLib::IO::Writer
 {
 public:
 

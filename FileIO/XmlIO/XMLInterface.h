@@ -17,14 +17,14 @@
 
 #include <string>
 
-#include "FileIO/Writer.h"
+#include "BaseLib/IO/Writer.h"
 
 namespace FileIO
 {
 /**
  * \brief Base class for writing any information to and from XML files.
  */
-class XMLInterface : public Writer
+class XMLInterface : public BaseLib::IO::Writer
 {
 public:
 	XMLInterface();

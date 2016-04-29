@@ -21,7 +21,7 @@
 #include <vector>
 #include <boost/optional.hpp>
 
-#include "FileIO/Writer.h"
+#include "BaseLib/IO/Writer.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/PropertyVector.h"
 
@@ -39,7 +39,7 @@ namespace FileIO
 namespace Legacy {
 
 /// Interface for handling mesh files from OGS-5 and below. (*.msh files)
-class MeshIO : public Writer
+class MeshIO : public BaseLib::IO::Writer
 {
 public:
 	/// Constructor.

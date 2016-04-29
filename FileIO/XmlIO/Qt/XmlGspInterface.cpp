@@ -26,8 +26,8 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"
+#include "BaseLib/IO/Writer.h"
 
-#include "FileIO/Writer.h"
 #include "FileIO/Legacy/MeshIO.h"
 #include "FileIO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
@@ -109,7 +109,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 int XmlGspInterface::writeToFile(const std::string& filename)
 {
 	_filename = filename;
-	return FileIO::Writer::writeToFile(filename);
+	return BaseLib::IO::Writer::writeToFile(filename);
 }
 
 bool XmlGspInterface::write()
