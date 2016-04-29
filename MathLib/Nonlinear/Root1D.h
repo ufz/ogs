@@ -23,7 +23,7 @@ namespace detail
 {
 
 //! Tells if \c a and \c b have the same sign.
-bool same_sign(double a, double b)
+inline bool same_sign(double a, double b)
 {
     // note: signbit() casts integers to double and distinguishes between +0.0 and
     // -0.0. However, the latter is not a problem, because if f(x0) == 0, we've
@@ -45,6 +45,11 @@ public:
     RegulaFalsi(Function const& f, double a, double b)
         : _f(f), _a(a), _b(b), _fa(f(a)), _fb(f(b))
     {
+        static_assert(
+                std::is_same<double, decltype(f(0.0))>::value,
+                "Using this class for functions that do not return double"
+                " involves a lot of casts. Hence it is disabled.");
+
         if (_fa == 0.0) {
             _b = _a;
         } else if (_fb == 0.0) {
@@ -105,11 +110,11 @@ private:
  *
  * \see https://en.wikipedia.org/wiki/False_position_method#Improvements_in_regula_falsi
  */
-template<typename SubType, typename Function, typename... Args>
+template<typename SubType, typename Function>
 RegulaFalsi<SubType, Function>
-makeRegulaFalsi(Function const& f, Args... args)
+makeRegulaFalsi(Function const& f, double const a, double const b)
 {
-    return RegulaFalsi<SubType, Function>(f, args...);
+    return RegulaFalsi<SubType, Function>(f, a, b);
 }
 
 
