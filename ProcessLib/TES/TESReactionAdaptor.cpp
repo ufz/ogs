@@ -12,7 +12,7 @@
 #include <logog/include/logog.hpp>
 
 #include "MathLib/Nonlinear/Root1D.h"
-#include "MathLib/ODE/OdeSolverFactory.h"
+#include "MathLib/ODE/ODESolverBuilder.h"
 
 #include "MaterialsLib/adsorption/adsorption.h"
 #include "MaterialsLib/adsorption/reaction_inert.h"
@@ -291,12 +291,20 @@ TESFEMReactionAdaptorCaOH2(TESLocalAssemblerData const& data)
     : _d(data)
     , _react(dynamic_cast<Ads::ReactionCaOH2&>(*data.ap.react_sys.get()))
 {
-    _ode_solver = std::move(MathLib::createOdeSolver<1, React>(_react.getOdeSolverConfig()));
+    _ode_solver = MathLib::ODE::createODESolver<1>(_react.getOdeSolverConfig());
     // TODO invalidate config
 
     _ode_solver->setTolerance(1e-10, 1e-10);
 
-    _ode_solver->setFunction(odeRhs, nullptr, _react);
+    auto f = [this](const double t,
+             MathLib::ODE::MappedConstVector<1> const y,
+             MathLib::ODE::MappedVector<1> ydot) -> bool
+    {
+        _react.eval(t, y, ydot);
+        return true;
+    };
+
+    _ode_solver->setFunction(f, nullptr);
 }
 
 ReactionRate
@@ -325,7 +333,7 @@ initReaction(const unsigned int int_pt)
 	_react.update_param(_d.T, _d.p, _d.vapour_mass_fraction,
 						_d.solid_density_prev_ts[int_pt]);
 
-	_ode_solver->setIC(t0, { &y0 }); // TODO &y0 is hackish!
+	_ode_solver->setIC(t0, { y0 });
 	_ode_solver->preSolve();
 	_ode_solver->solve(t_end);
 
@@ -350,21 +358,5 @@ initReaction(const unsigned int int_pt)
                 (1.0-xv_NR) * rho_react + xv_NR * rho_NR };
 }
 
-
-// TODO: there could be a general implementation for this in the OdeSolver class
-// general implementation should take an object and a member function pointer
-// with suitable signature.
-bool
-TESFEMReactionAdaptorCaOH2::
-odeRhs(const double t,
-       MathLib::MappedConstVector<1> const y,
-       MathLib::MappedVector<1> ydot,
-       Ads::ReactionCaOH2& reaction)
-{
-    reaction.eval(t, y, ydot);
-    return true;
-}
-
-
-}
-}
+} // namespace TES
+} // namespace ProcessLib

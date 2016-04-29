@@ -76,8 +76,6 @@ public:
 
     std::vector<double> const&
     getIntegrationPointValues(TESIntPtVariables const var,
-                              std::size_t const element_id,
-                              GlobalVector const& x,
                               std::vector<double>& cache) const override;
 
 private:

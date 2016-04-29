@@ -121,8 +121,6 @@ TESLocalAssembler<ShapeFunction_,
     GlobalVector,
     GlobalDim>::
 getIntegrationPointValues(TESIntPtVariables const var,
-                          const std::size_t /*element_id*/,
-                          const GlobalVector& /*x*/,
                           std::vector<double>& cache) const
 {
     return _d.getIntegrationPointValues(var, cache);

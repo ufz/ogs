@@ -20,26 +20,12 @@ TESProcess<GlobalSetup>::
 TESProcess(MeshLib::Mesh& mesh,
            typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
            std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
-           std::vector<ProcessVariable> const& variables,
-           std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
+           std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
            const BaseLib::ConfigTree& config)
-    : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization))
+    : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
+                           std::move(process_variables))
 {
     DBUG("Create TESProcess.");
-
-    // primary variables
-    {
-        auto const proc_vars = config.getConfSubtree("process_variables");
-
-        for (auto const& var_name
-             : { "fluid_pressure", "temperature", "vapour_mass_fraction" })
-        {
-            auto& variable = findProcessVariable(proc_vars, var_name, variables);
-
-            // TODO extend Process constructor to cover that
-            BP::_process_variables.emplace_back(variable);
-        }
-    }
 
     // secondary variables
     if (auto sec_vars = config.getConfSubtreeOptional("secondary_variables"))
@@ -59,9 +45,9 @@ TESProcess(MeshLib::Mesh& mesh,
         add2nd("solid_density",  1, makeEx(TESIntPtVariables::SOLID_DENSITY));
         add2nd("reaction_rate",  1, makeEx(TESIntPtVariables::REACTION_RATE));
         add2nd("velocity_x",     1, makeEx(TESIntPtVariables::VELOCITY_X));
-        if (BP::_mesh.getDimension() >= 2)
+        if (mesh.getDimension() >= 2)
             add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
-        if (BP::_mesh.getDimension() >= 3)
+        if (mesh.getDimension() >= 3)
             add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
 
         add2nd("loading",        1, makeEx(TESIntPtVariables::LOADING));
@@ -130,7 +116,7 @@ TESProcess(MeshLib::Mesh& mesh,
     if (auto par = config.getConfParamOptional<double>("solid_hydraulic_permeability"))
     {
         DBUG("setting parameter `solid_hydraulic_permeability' to isotropic value `%g'", *par);
-        const auto dim = BP::_mesh.getDimension();
+        const auto dim = mesh.getDimension();
         _assembly_params.solid_perm_tensor
                 = Eigen::MatrixXd::Identity(dim, dim) * (*par);
     }
@@ -187,68 +173,14 @@ TESProcess(MeshLib::Mesh& mesh,
         // for extrapolation of secondary variables
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
         all_mesh_subsets_single_component.emplace_back(
-                    new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes));
+                    new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes.get()));
         _local_to_global_index_map_single_component.reset(
                     new AssemblerLib::LocalToGlobalIndexMap(
                         std::move(all_mesh_subsets_single_component), getOrder())
                     );
 
-        _extrapolator.reset(new ExtrapolatorImplementation(*_local_to_global_index_map_single_component));
-
+        _extrapolator.reset(new ExtrapolatorImplementation(BP::getMatrixSpecifications()));
     }
-}
-
-template<typename GlobalSetup>
-void
-TESProcess<GlobalSetup>::
-createLocalAssemblers()
-{
-    switch (BP::_mesh.getDimension())
-    {
-    case 1: createLocalAssemblers<1>(); break;
-    case 2: createLocalAssemblers<2>(); break;
-    case 3: createLocalAssemblers<3>(); break;
-    default:
-        ERR("Invalid mesh dimension. Aborting.");
-        std::abort();
-    }
-}
-
-template<typename GlobalSetup>
-template <unsigned GlobalDim>
-void
-TESProcess<GlobalSetup>::
-createLocalAssemblers()
-{
-    DBUG("Create local assemblers.");
-    // Populate the vector of local assemblers.
-    _local_assemblers.resize(BP::_mesh.getNElements());
-    // Shape matrices initializer
-    using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
-        TES::TESLocalAssemblerInterface,
-        TES::TESLocalAssembler,
-        typename GlobalSetup::MatrixType,
-        typename GlobalSetup::VectorType,
-        GlobalDim,
-        AssemblyParams const&>;
-
-    LocalDataInitializer initializer;
-
-    using LocalAssemblerBuilder =
-        AssemblerLib::LocalAssemblerBuilder<
-            MeshLib::Element,
-            LocalDataInitializer>;
-
-    LocalAssemblerBuilder local_asm_builder(
-        initializer, *BP::_local_to_global_index_map);
-
-    DBUG("Calling local assembler builder for all mesh elements.");
-    BP::_global_setup.transform(
-                local_asm_builder,
-                BP::_mesh.getElements(),
-                _local_assemblers,
-                BP::_integration_order,
-                _assembly_params);
 }
 
 template<typename GlobalSetup>
@@ -260,8 +192,9 @@ assembleConcreteProcess(
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    BP::_global_setup.executeDereferenced(
-                *BP::_global_assembler, _local_assemblers, t, x, M, K, b);
+    GlobalSetup::executeMemberDereferenced(
+                *_global_assembler, &GlobalAssembler::assemble,
+                _local_assemblers, t, x, M, K, b);
 
 #ifndef NDEBUG
     if (_total_iteration == 0)
@@ -332,13 +265,13 @@ postIteration(GlobalVector const& x)
         auto check_variable_bounds
         = [&](std::size_t id, LocalAssembler& loc_asm)
         {
-            BP::_global_assembler->passLocalVector(
+            _global_assembler->passLocalVector(
                         do_check, id, x, loc_asm);
         };
 
         // TODO Short-circuit evaluation that stops after the first error.
         //      But maybe that's not what I want to use here.
-        BP::_global_setup.executeDereferenced(
+        GlobalSetup::executeDereferenced(
                     check_variable_bounds, _local_assemblers);
     }
 

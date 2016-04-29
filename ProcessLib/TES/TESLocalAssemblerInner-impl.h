@@ -297,9 +297,7 @@ preEachAssembleIntegrationPoint(
        = std::numeric_limits<double>::quiet_NaN();
 #endif
 
-    std::array<double*, NODAL_DOF> int_pt_val = { &_d.p, &_d.T, &_d.vapour_mass_fraction };
-
-    NumLib::shapeFunctionInterpolate(localX, smN, int_pt_val);
+    NumLib::shapeFunctionInterpolate(localX, smN, _d.p, _d.T, _d.vapour_mass_fraction);
 
     // pre-compute certain properties
     _d.p_V = _d.p * Ads::Adsorption::get_molar_fraction(_d.vapour_mass_fraction, _d.ap.M_react, _d.ap.M_inert);

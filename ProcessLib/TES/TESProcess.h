@@ -11,6 +11,7 @@
 #define PROCESS_LIB_TESPROCESS_H_
 
 #include "ProcessLib/Process.h"
+#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 
 #include "TESAssemblyParams.h"
 #include "TESLocalAssembler.h"
@@ -41,8 +42,7 @@ public:
     TESProcess(MeshLib::Mesh& mesh,
                typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
                std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
-               std::vector<ProcessVariable> const& variables,
-               std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+               std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
                BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t, const double delta_t) override;
@@ -51,23 +51,36 @@ public:
 
     bool isLinear() const override { return false; }
 
-    void createLocalAssemblers() override;
-
 private:
     using LocalAssembler  = TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
-    using LocalAssemblers = std::vector<std::unique_ptr<LocalAssembler>>;
-    using ExtrapolatorInterface = NumLib::Extrapolator<
-        GlobalVector, TESIntPtVariables, LocalAssemblers>;
-    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
-        GlobalVector, TESIntPtVariables, LocalAssemblers>;
 
+    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+            GlobalMatrix, GlobalVector, LocalAssembler,
+            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
+
+    using ExtrapolatorInterface = NumLib::Extrapolator<
+        GlobalVector, TESIntPtVariables, LocalAssembler>;
+    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
+        GlobalVector, TESIntPtVariables, LocalAssembler>;
+
+
+    // TODO move body to cpp
+    void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                          MeshLib::Mesh const& mesh,
+                          unsigned const integration_order) override
+    {
+        DBUG("Create global assembler.");
+        _global_assembler.reset(new GlobalAssembler(dof_table));
+
+        ProcessLib::createLocalAssemblers<GlobalSetup, TESLocalAssembler>(
+                    mesh.getDimension(), mesh.getElements(),
+                    dof_table, integration_order, _local_assemblers,
+                    _assembly_params);
+    }
 
     void assembleConcreteProcess(
             const double t, GlobalVector const& x,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
-
-    template <unsigned GlobalDim>
-    void createLocalAssemblers();
 
     GlobalVector computeVapourPartialPressure(
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
@@ -82,7 +95,8 @@ private:
     makeExtrapolator(TESIntPtVariables const var) const;
 
 
-    LocalAssemblers _local_assemblers;
+    std::unique_ptr<GlobalAssembler> _global_assembler;
+    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
     AssemblyParams _assembly_params;
 
@@ -109,10 +123,14 @@ createTESProcess(
 
     DBUG("Create TESProcess.");
 
+    auto process_variables =
+        findProcessVariables(variables, config,
+            { "fluid_pressure", "temperature", "vapour_mass_fraction" });
+
     return std::unique_ptr<TESProcess<GlobalSetup>>{
         new TESProcess<GlobalSetup>{
             mesh, nonlinear_solver, std::move(time_discretization),
-            variables, parameters,
+            std::move(process_variables),
             config
     }};
 }

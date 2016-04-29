@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "MaterialsLib/adsorption/reaction_CaOH2.h"
-#include "MathLib/ODE/OdeSolver.h"
+#include "MathLib/ODE/ODESolver.h"
 
 
 namespace ProcessLib
@@ -125,11 +125,11 @@ private:
     Data const& _d;
     React& _react;
 
-    std::unique_ptr<MathLib::OdeSolver<1, React> > _ode_solver;
+    std::unique_ptr<MathLib::ODE::ODESolver<1>> _ode_solver;
 
     static bool odeRhs(const double /*t*/,
-                       MathLib::MappedConstVector<1> const y,
-                       MathLib::MappedVector<1> ydot,
+                       MathLib::ODE::MappedConstVector<1> const y,
+                       MathLib::ODE::MappedVector<1> ydot,
                        React& reaction);
 };
 
