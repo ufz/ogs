@@ -28,7 +28,9 @@
 #include "GeoLib/StationBorehole.h"
 #include "GeoLib/GEOObjects.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
 	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysSTN.xsd")), _geo_objs(geo_objs)
@@ -475,4 +477,6 @@ void XmlStnInterface::rapidReadStratigraphy( const rapidxml::xml_node<>* strat_r
 			WARN("XmlStnInterface::rapidReadStratigraphy(): Attribute missing in <horizon> tag.");
 	}
 }
-}
+
+} // end namespace IO
+} // end namespace GeoLib

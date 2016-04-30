@@ -14,7 +14,7 @@
 
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
 
 #include "GeoLib/GEOObjects.h"
@@ -27,7 +27,7 @@ void
 readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
 {
 	if (BaseLib::getFileExtension(fname).compare("gml") == 0) {
-		FileIO::BoostXmlGmlInterface xml(geo_objs);
+		GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
 		xml.readFile(fname);
 	} else {
 		std::vector<std::string> errors;

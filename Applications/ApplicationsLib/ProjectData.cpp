@@ -27,7 +27,7 @@
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 
 // FileIO
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "FileIO/readMeshFromFile.h"
 
 #include "BaseLib/ConfigTree.h"
@@ -43,7 +43,7 @@ static
 void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 {
 	DBUG("Reading geometry file \'%s\'.", fname.c_str());
-	FileIO::BoostXmlGmlInterface gml_reader(geo_objects);
+	GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
 	gml_reader.readFile(fname);
 }
 }

@@ -23,7 +23,9 @@ class QDomDocument;
 class QDomNode;
 class QDomElement;
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 
 class XMLQtInterface
@@ -60,6 +62,7 @@ protected:
 	QString _fileName;
 };
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace BaseLib
 
 #endif /* XMLQTINTERFACE_H_ */

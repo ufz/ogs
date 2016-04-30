@@ -26,7 +26,9 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 
 BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
@@ -338,4 +340,5 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
 	}
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib

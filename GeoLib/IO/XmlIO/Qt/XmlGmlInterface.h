@@ -17,18 +17,21 @@
 
 #include <QString>
 
-#include "../XMLInterface.h"
-#include "XMLQtInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
+#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
 #include "GeoLib/GEOObjects.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 
 /**
  * \brief Reads and writes GeoObjects to and from XML files.
  */
-class XmlGmlInterface : public XMLInterface, public XMLQtInterface
+class XmlGmlInterface : public BaseLib::IO::XMLInterface,
+                        public BaseLib::IO::XMLQtInterface
 {
 public:
 	XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
@@ -85,6 +88,7 @@ private:
 	std::map<std::size_t, std::size_t> _idx_map;
 };
 
-}
+} // end namespace IO
+} // end namespace BaseLib
 
 #endif // XMLGMLINTERFACE_H

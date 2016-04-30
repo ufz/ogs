@@ -19,7 +19,9 @@
 
 #include "BaseLib/IO/Writer.h"
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 /**
  * \brief Base class for writing any information to and from XML files.
@@ -37,6 +39,7 @@ protected:
 	std::string _exportName;
 };
 
+}
 }
 
 #endif // XMLINTERFACE_H

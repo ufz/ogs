@@ -29,9 +29,8 @@
 // BaseLib
 #include "LogogSimpleFormatter.h"
 
-// FileIO
-#include "XmlIO/Qt/XmlGmlInterface.h"
-#include "XmlIO/Qt/XmlStnInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
 // GeoLib
 #include "GEOObjects.h"
@@ -88,11 +87,11 @@ void convertPoints (DBFHandle dbf_handle,
 		geo_objs.addPointVec(std::move(points), points_group_name);
 
 	if (station) {
-		FileIO::XmlStnInterface xml (geo_objs);
+		GeoLib::IO::XmlStnInterface xml (geo_objs);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	} else {
-		FileIO::XmlGmlInterface xml (geo_objs);
+		GeoLib::IO::XmlGmlInterface xml (geo_objs);
 		xml.setNameForExport(points_group_name);
 		xml.writeToFile(out_fname);
 	}

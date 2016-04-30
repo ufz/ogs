@@ -21,8 +21,8 @@
 
 #include "GeoLib/GEOObjects.h"
 
-#include "XmlGmlInterface.h"
-#include "XmlStnInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"
@@ -69,7 +69,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		const QString file_node(fileList.at(i).nodeName());
 		if (file_node.compare("geo") == 0)
 		{
-			XmlGmlInterface gml(_project.getGEOObjects());
+			GeoLib::IO::XmlGmlInterface gml(_project.getGEOObjects());
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 			{
@@ -86,7 +86,7 @@ int XmlGspInterface::readFile(const QString &fileName)
 		}
 		else if (file_node.compare("stn") == 0)
 		{
-			XmlStnInterface stn(_project.getGEOObjects());
+			GeoLib::IO::XmlStnInterface stn(_project.getGEOObjects());
 			const QDomNodeList childList = fileList.at(i).childNodes();
 			for(int j = 0; j < childList.count(); j++)
 				if (childList.at(j).nodeName().compare("file") == 0)
@@ -136,7 +136,7 @@ bool XmlGspInterface::write()
 	for (std::vector<std::string>::const_iterator it(geoNames.begin()); it != geoNames.end(); ++it)
 	{
 		// write GLI file
-		XmlGmlInterface gml(geoObjects);
+		GeoLib::IO::XmlGmlInterface gml(geoObjects);
 		std::string name(*it);
 		gml.setNameForExport(name);
 		if (gml.writeToFile(std::string(path + name + ".gml")))
@@ -157,7 +157,7 @@ bool XmlGspInterface::write()
 	for (auto const& mesh : mesh_vector)
 	{
 		// write mesh file
-		Legacy::MeshIO meshIO;
+		FileIO::Legacy::MeshIO meshIO;
 		meshIO.setMesh((&mesh)->get());
 		std::string fileName(path + mesh->getName());
 		meshIO.writeToFile(fileName);
@@ -177,7 +177,7 @@ bool XmlGspInterface::write()
 	for (std::vector<std::string>::const_iterator it(stnNames.begin()); it != stnNames.end(); ++it)
 	{
 		// write STN file
-		XmlStnInterface stn(geoObjects);
+		GeoLib::IO::XmlStnInterface stn(geoObjects);
 		std::string name(*it);
 		stn.setNameForExport(name);
 

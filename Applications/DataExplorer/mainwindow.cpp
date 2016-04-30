@@ -63,13 +63,13 @@
 #include "FileIO/FEFLOWInterface.h"
 #include "FileIO/GMSInterface.h"
 #include "FileIO/Legacy/MeshIO.h"
+#include "FileIO/readMeshFromFile.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "FileIO/XmlIO/Qt/XmlGspInterface.h"
-#include "FileIO/XmlIO/Qt/XmlStnInterface.h"
-#include "FileIO/readMeshFromFile.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
 // MeshLib
 #include "Node.h"
@@ -480,14 +480,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
-			XmlGmlInterface xml(_project.getGEOObjects());
+			GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
-			XmlStnInterface xml(_project.getGEOObjects());
+			GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
@@ -787,14 +787,14 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 		return;
 	}
 #endif
-	XmlGmlInterface xml(_project.getGEOObjects());
+	GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
-	XmlStnInterface xml(_project.getGEOObjects());
+	GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }

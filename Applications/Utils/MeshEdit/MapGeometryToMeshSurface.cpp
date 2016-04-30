@@ -24,7 +24,7 @@
 
 // FileIO
 #include "FileIO/readMeshFromFile.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
@@ -71,7 +71,7 @@ int main (int argc, char* argv[])
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
 	{
-		FileIO::BoostXmlGmlInterface xml_io(geometries);
+		GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
 		if (xml_io.readFile(input_geometry_fname.getValue())) {
 			INFO("Read geometry from file \"%s\".",
 				input_geometry_fname.getValue().c_str());
@@ -98,7 +98,7 @@ int main (int argc, char* argv[])
 	}
 
 	{
-		FileIO::BoostXmlGmlInterface xml_io(geometries);
+		GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
 		xml_io.setNameForExport(new_geo_name);
 		xml_io.writeToFile(output_geometry_fname.getValue());
 	}

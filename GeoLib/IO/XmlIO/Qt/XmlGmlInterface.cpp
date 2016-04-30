@@ -23,7 +23,9 @@
 #include "BaseLib/FileFinder.h"
 #include "GeoLib/Triangle.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
 	XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysGLI.xsd")), _geo_objs(geo_objs)
@@ -403,5 +405,7 @@ bool XmlGmlInterface::write()
 	_out << xml;
 
 	return true;
+}
+
 }
 }

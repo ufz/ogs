@@ -24,7 +24,9 @@
 
 #include <logog/include/logog.hpp>
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 
 XMLQtInterface::XMLQtInterface(const std::string &schemaFile) :
@@ -142,4 +144,5 @@ bool XMLQtInterface::isHashGood(const QByteArray &hash) const
 	return true;
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace BaseLib

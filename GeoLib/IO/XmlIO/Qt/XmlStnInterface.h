@@ -19,22 +19,22 @@
 
 #include "RapidXML/rapidxml.hpp"
 
-#include "../XMLInterface.h"
-#include "XMLQtInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
+#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
 namespace GeoLib {
-	class GEOObjects;
-	class Point;
-	class StationBorehole;
-}
+class GEOObjects;
+class Point;
+class StationBorehole;
 
-namespace FileIO
+namespace IO
 {
 
 /**
  * \brief Reads and writes Observation Sites to and from XML files.
  */
-class XmlStnInterface : public XMLInterface, public XMLQtInterface
+class XmlStnInterface : public BaseLib::IO::XMLInterface,
+                        public BaseLib::IO::XMLQtInterface
 {
 public:
 	XmlStnInterface(GeoLib::GEOObjects& geo_objs);
@@ -71,6 +71,7 @@ private:
 	GeoLib::GEOObjects& _geo_objs;
 };
 
-}
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif // XMLSTNINTERFACE_H

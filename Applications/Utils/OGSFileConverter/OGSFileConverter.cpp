@@ -28,7 +28,7 @@
 // geometry
 #include "GEOObjects.h"
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
-#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 
 // mesh
 #include "Legacy/MeshIO.h"
@@ -50,7 +50,7 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
 		return;
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
 	for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
 	{
@@ -81,7 +81,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 		return;
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
 	for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
 	{

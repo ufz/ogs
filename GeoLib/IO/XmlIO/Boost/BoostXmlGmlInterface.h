@@ -21,21 +21,19 @@
 
 
 #include "BaseLib/ConfigTree.h"
-#include "FileIO/XmlIO/XMLInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
 
 namespace GeoLib
 {
-    class GEOObjects;
-    class Point;
-    class Polyline;
-    class Surface;
-}
+class GEOObjects;
+class Point;
+class Polyline;
+class Surface;
 
-
-namespace FileIO
+namespace IO
 {
 
-class BoostXmlGmlInterface : public XMLInterface
+class BoostXmlGmlInterface : public BaseLib::IO::XMLInterface
 {
 public:
 	BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs);
@@ -75,6 +73,7 @@ private:
 	GeoLib::GEOObjects &_geo_objects;
 };
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* BOOSTXMLGMLINTERFACE_H_ */

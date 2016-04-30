@@ -14,11 +14,14 @@
 
 #include "XMLInterface.h"
 
-namespace FileIO
+namespace BaseLib
+{
+namespace IO
 {
 
 XMLInterface::XMLInterface() :
 	_exportName("")
 {}
 
+}
 }
