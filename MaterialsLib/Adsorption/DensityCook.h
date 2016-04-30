@@ -5,7 +5,7 @@
 namespace Adsorption
 {
 
-class DensityCook : public Adsorption
+class DensityCook : public AdsorptionReaction
 {
 public:
     double get_adsorbate_density(const double T_Ads) const;
