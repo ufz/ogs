@@ -121,30 +121,6 @@ double sqrDist(const double* p0, const double* p1)
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
 
-/**
- * Template metaprogramming, compile-time version of pow() for integral
- * exponents.
- */
-#ifdef WIN32
-template <typename T, T B, unsigned E>
-struct POW
-{
-	static T const value = B * POW<T, B, E-1>::value;
-};
-
-template <typename T, T B>
-struct POW<T, B, 0>
-{
-	static T const value = 1;
-};
-#else   // WIN32
-template <typename T>
-inline constexpr T pow(T const x, unsigned const y)
-{
-	return (y == 0) ? 1 : x * pow(x, y - 1);
-}
-#endif  // WIN32
-
 } // namespace
 
 #endif /* MATHTOOLS_H_ */
