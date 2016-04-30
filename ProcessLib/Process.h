@@ -18,7 +18,6 @@
 #include "AssemblerLib/ComputeSparsityPattern.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "BaseLib/ConfigTree.h"
-#include "FileIO/VtkIO/VtuInterface.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSubsets.h"
@@ -27,6 +26,7 @@
 #include "NeumannBc.h"
 #include "NeumannBcAssembler.h"
 #include "Parameter.h"
+#include "ProcessOutput.h"
 #include "ProcessVariable.h"
 #include "UniformDirichletBoundaryCondition.h"
 
@@ -57,15 +57,20 @@ public:
 	using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
 	using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
 
-	Process(MeshLib::Mesh& mesh,
-	        NonlinearSolver& nonlinear_solver,
-	        std::unique_ptr<TimeDiscretization>&& time_discretization,
-	        std::vector<std::reference_wrapper<ProcessVariable>>&&
-	        process_variables)
+	Process(
+	    MeshLib::Mesh& mesh,
+	    NonlinearSolver& nonlinear_solver,
+	    std::unique_ptr<TimeDiscretization>&& time_discretization,
+	    std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+	    SecondaryVariableCollection<GlobalVector>&& secondary_variables,
+	    ProcessOutput<GlobalVector>&& process_output
+	    )
 	    : _mesh(mesh)
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
+	    , _process_output(std::move(process_output))
+	    , _secondary_variables(std::move(secondary_variables))
 	{}
 
 	/// Preprocessing before starting assembly for new timestep.
@@ -81,48 +86,8 @@ public:
 	            const unsigned /*timestep*/,
 	            GlobalVector const& x) const
 	{
-		DBUG("Process output.");
-
-		// Copy result
-#ifdef USE_PETSC
-		// TODO It is also possible directly to copy the data for single process
-		// variable to a mesh property. It needs a vector of global indices and
-		// some PETSc magic to do so.
-		std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
-#else
-		std::vector<double> x_copy(x.size());
-#endif
-		x.copyValues(x_copy);
-
-		std::size_t const n_nodes = _mesh.getNNodes();
-		for (ProcessVariable& pv : _process_variables)
-		{
-			auto& output_data = pv.getOrCreateMeshProperty();
-
-			int const n_components = pv.getNumberOfComponents();
-			for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
-			{
-				MeshLib::Location const l(_mesh.getID(),
-				                          MeshLib::MeshItemType::Node, node_id);
-				// TODO extend component ids to multiple process variables.
-				for (int component_id = 0; component_id < n_components;
-				     ++component_id)
-				{
-					auto const index =
-					    _local_to_global_index_map->getLocalIndex(
-					        l, component_id, x.getRangeBegin(),
-					        x.getRangeEnd());
-
-					output_data[node_id * n_components + component_id] =
-					    x_copy[index];
-				}
-			}
-		}
-
-		// Write output file
-		DBUG("Writing output to \'%s\'.", file_name.c_str());
-		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
-		vtu_interface.writeToFile(file_name);
+		doProcessOutput(file_name, x, _mesh, *_local_to_global_index_map,
+		                _process_variables, _secondary_variables, _process_output);
 	}
 
 	void initialize()
@@ -137,7 +102,8 @@ public:
 		computeSparsityPattern();
 #endif
 
-		createAssemblers(*_local_to_global_index_map, _mesh, _integration_order);
+		initializeConcreteProcess(*_local_to_global_index_map, _mesh,
+								  _integration_order);
 
 		DBUG("Initialize boundary conditions.");
 		for (ProcessVariable& pv : _process_variables)
@@ -223,7 +189,7 @@ public:
 
 private:
 	/// Process specific initialization called by initialize().
-	virtual void createAssemblers(
+	virtual void initializeConcreteProcess(
 	    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
 	    MeshLib::Mesh const& mesh,
 	    unsigned const integration_order) = 0;
@@ -346,7 +312,6 @@ private:
 	unsigned const _integration_order = 2;
 
 	MeshLib::Mesh& _mesh;
-	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
@@ -361,6 +326,12 @@ private:
 
 	/// Variables used by this process.
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
+	ProcessOutput<GlobalVector> _process_output;
+
+protected:
+	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
+	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 };
 
 /// Find process variables in \c variables whose names match the settings under

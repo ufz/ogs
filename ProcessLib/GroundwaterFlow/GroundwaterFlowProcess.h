@@ -13,20 +13,16 @@
 #include <cassert>
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessUtil.h"
 
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"
 
-namespace MeshLib
-{
-    class Element;
-}
 
 namespace ProcessLib
 {
-
 namespace GroundwaterFlow
 {
 
@@ -44,9 +40,14 @@ public:
         typename Base::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-        GroundwaterFlowProcessData&& process_data)
+        GroundwaterFlowProcessData&& process_data,
+        SecondaryVariableCollection<GlobalVector>&& secondary_variables,
+        ProcessOutput<GlobalVector>&& process_output
+        )
         : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
-                               std::move(process_variables))
+                               std::move(process_variables),
+                               std::move(secondary_variables),
+                               std::move(process_output))
         , _process_data(std::move(process_data))
     {
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
@@ -75,15 +76,21 @@ public:
 
 private:
     using LocalAssemblerInterface =
-        ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+        GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
     using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
-    void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
-                          MeshLib::Mesh const& mesh,
-                          unsigned const integration_order) override
+    using ExtrapolatorInterface = NumLib::Extrapolator<
+        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
+    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
+        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
+
+    void initializeConcreteProcess(
+            AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            MeshLib::Mesh const& mesh,
+            unsigned const integration_order) override
     {
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(dof_table));
@@ -92,6 +99,28 @@ private:
                     mesh.getDimension(), mesh.getElements(),
                     dof_table, integration_order, _local_assemblers,
                     _process_data);
+
+        // TOOD Later on the DOF table can change during the simulation!
+        _extrapolator.reset(
+            new ExtrapolatorImplementation(Base::getMatrixSpecifications()));
+
+        Base::_secondary_variables.addSecondaryVariable(
+            "darcy_velocity_x", 1,
+            makeExtrapolator(IntegrationPointValue::DarcyVelocityX, *_extrapolator,
+                             _local_assemblers));
+
+        if (mesh.getDimension() > 1) {
+            Base::_secondary_variables.addSecondaryVariable(
+                "darcy_velocity_y", 1,
+                makeExtrapolator(IntegrationPointValue::DarcyVelocityY, *_extrapolator,
+                                 _local_assemblers));
+        }
+        if (mesh.getDimension() > 2) {
+            Base::_secondary_variables.addSecondaryVariable(
+                "darcy_velocity_z", 1,
+                makeExtrapolator(IntegrationPointValue::DarcyVelocityZ, *_extrapolator,
+                                 _local_assemblers));
+        }
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
@@ -110,6 +139,8 @@ private:
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+
+    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
 template <typename GlobalSetup>
@@ -142,11 +173,21 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
+    SecondaryVariableCollection<typename GlobalSetup::VectorType>
+        secondary_variables{config.getConfSubtreeOptional("secondary_variables"),
+            { "darcy_velocity_x", "darcy_velocity_y", "darcy_velocity_z" }};
+
+    ProcessOutput<typename GlobalSetup::VectorType>
+        process_output{config.getConfSubtree("output"),
+                process_variables, secondary_variables};
+
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
         new GroundwaterFlowProcess<GlobalSetup>{
             mesh, nonlinear_solver,std::move(time_discretization),
             std::move(process_variables),
-            std::move(process_data)
+            std::move(process_data),
+            std::move(secondary_variables),
+            std::move(process_output)
         }
     };
 }
