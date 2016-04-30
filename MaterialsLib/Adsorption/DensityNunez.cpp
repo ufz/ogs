@@ -22,7 +22,7 @@ namespace Adsorption
 
 double DensityNunez::get_adsorbate_density(const double T_Ads) const
 {
-    if (T_Ads < 273.16 or T_Ads > 633.15) {
+    if (T_Ads < 273.16 || T_Ads > 633.15) {
         // print('Value outside admissible range for rho.');
         // return -1;
     }
@@ -38,7 +38,7 @@ double DensityNunez::get_adsorbate_density(const double T_Ads) const
 //Thermal expansivity model for water found in the works of Hauer
 double DensityNunez::get_alphaT(const double T_Ads) const
 {
-    if (T_Ads < 273.16 or T_Ads > 633.15) {
+    if (T_Ads < 273.16 || T_Ads > 633.15) {
         // print('Value outside admissible range for rho.');
         // return -1;
     }
