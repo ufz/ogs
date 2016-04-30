@@ -14,7 +14,7 @@ const double GAS_CONST = 8.3144621;
 const double M_N2  = 0.028;
 const double M_H2O = 0.018;
 
-class Adsorption : public Reaction
+class AdsorptionReaction : public Reaction
 {
 public:
     // TODO [CL] move those three methods to water properties class
@@ -33,7 +33,7 @@ public:
     const override;
 
 // virtual members:
-    virtual ~Adsorption() = default;
+    virtual ~AdsorptionReaction() = default;
 
     virtual double get_enthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
     virtual double get_reaction_rate(const double p_Ads, const double T_Ads,
