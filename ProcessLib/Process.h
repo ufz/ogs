@@ -66,11 +66,11 @@ public:
 	    ProcessOutput<GlobalVector>&& process_output
 	    )
 	    : _mesh(mesh)
+	    , _secondary_variables(std::move(secondary_variables))
 	    , _nonlinear_solver(nonlinear_solver)
 	    , _time_discretization(std::move(time_discretization))
 	    , _process_variables(std::move(process_variables))
 	    , _process_output(std::move(process_output))
-	    , _secondary_variables(std::move(secondary_variables))
 	{}
 
 	/// Preprocessing before starting assembly for new timestep.
@@ -318,13 +318,17 @@ private:
 		    *_local_to_global_index_map, _mesh));
 	}
 
-private:
-	unsigned const _integration_order = 2;
-
+protected:
 	MeshLib::Mesh& _mesh;
+	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
+
+	SecondaryVariableCollection<GlobalVector> _secondary_variables;
+
+private:
+	unsigned const _integration_order = 2;
 
 	AssemblerLib::SparsityPattern _sparsity_pattern;
 
@@ -338,10 +342,6 @@ private:
 	std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
 
 	ProcessOutput<GlobalVector> _process_output;
-
-protected:
-	std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
-	SecondaryVariableCollection<GlobalVector> _secondary_variables;
 };
 
 /// Find process variables in \c variables whose names match the settings under
