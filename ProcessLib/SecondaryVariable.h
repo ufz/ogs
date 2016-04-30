@@ -28,10 +28,55 @@ struct SecondaryVariableFunctions final
      *
      * \note The argument \c dof_table is the d.o.f. table of the process, i.e.
      * it possibly contains information about several process variables.
+     *
+     * \remark The \c result_cache can be used to store the \c GlobalVector if it
+     * is computed on-the-fly. Then a reference to the result cache can be returned.
+     * Otherwise the \c Function must return a reference to a \c GlobalVector that
+     * is stored somewhere else.
      */
     using Function = std::function<GlobalVector const&(
         GlobalVector const& x,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table)>;
+        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        std::unique_ptr<GlobalVector>& result_cache)>;
+
+    SecondaryVariableFunctions() = default;
+
+    template<typename F1, typename F2>
+    SecondaryVariableFunctions(F1&& eval_field_, F2&& eval_residuals_)
+        : eval_field(std::forward<F1>(eval_field_))
+        , eval_residuals(std::forward<F2>(eval_residuals_))
+    {
+        // Used to detect nasty implicit conversions.
+        static_assert(std::is_same<GlobalVector const&,
+            typename std::result_of<F1(
+                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                std::unique_ptr<GlobalVector>&
+                )>::type>::value,
+            "The function eval_field_ does not return a const reference"
+            " to a GlobalVector");
+
+        static_assert(std::is_same<GlobalVector const&,
+            typename std::result_of<F2(
+                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                std::unique_ptr<GlobalVector>&
+            )>::type>::value,
+            "The function eval_residuals_ does not return a const reference"
+            " to a GlobalVector");
+    }
+
+    template<typename F1>
+    SecondaryVariableFunctions(F1&& eval_field_, std::nullptr_t)
+        : eval_field(std::forward<F1>(eval_field_))
+    {
+        // Used to detect nasty implicit conversions.
+        static_assert(std::is_same<GlobalVector const&,
+            typename std::result_of<F1(
+                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                std::unique_ptr<GlobalVector>&
+                )>::type>::value,
+            "The function eval_field_ does not return a const reference"
+            " to a GlobalVector");
+    }
 
     Function eval_field;
     Function eval_residuals;
@@ -162,7 +207,8 @@ makeExtrapolator(PropertyEnum const property,
 
     auto const eval_field = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/,
+            std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
         extrapolator.extrapolate(local_assemblers, property);
@@ -171,7 +217,8 @@ makeExtrapolator(PropertyEnum const property,
 
     auto const eval_residuals = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/
+            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/,
+            std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
         extrapolator.calculateResiduals(local_assemblers, property);
