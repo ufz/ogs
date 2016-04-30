@@ -209,6 +209,7 @@ solve(Vector &x)
 
         auto const error_dx = BLAS::norm2(minus_delta_x);
         DBUG("error of -delta_x %g and of residual %g,", error_dx, error_res);
+        (void) error_res; // avoid compiler warning when not in debug build
 
         if (error_dx < _tol) {
             error_norms_met = true;
