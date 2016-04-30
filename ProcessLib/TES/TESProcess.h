@@ -73,14 +73,17 @@ private:
             const double t, GlobalVector const& x,
             GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
 
-    GlobalVector computeVapourPartialPressure(
-            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+    GlobalVector const& computeVapourPartialPressure(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            std::unique_ptr<GlobalVector>& result_cache);
 
-    GlobalVector computeRelativeHumidity(
-            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+    GlobalVector const& computeRelativeHumidity(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            std::unique_ptr<GlobalVector>& result_cache);
 
-    GlobalVector computeEquilibriumLoading(
-            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table);
+    GlobalVector const& computeEquilibriumLoading(
+            GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            std::unique_ptr<GlobalVector>& result_cache);
 
     SecondaryVariableFunctions<GlobalVector>
     makeExtrapolator(TESIntPtVariables const var) const;

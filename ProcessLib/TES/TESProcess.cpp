@@ -9,6 +9,23 @@
 
 #include "TESProcess.h"
 
+// TODO that essentially duplicates code which is also present in ProcessOutput.
+template<typename GlobalVector>
+double
+getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
+              AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+              std::size_t const node_id, std::size_t const global_component_id)
+{
+    MeshLib::Location const l{
+        mesh.getID(), MeshLib::MeshItemType::Node, node_id};
+
+    auto const index = dof_table.getLocalIndex(
+        l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
+
+    return x.get(index);
+}
+
+
 namespace ProcessLib
 {
 
@@ -191,11 +208,14 @@ initializeConcreteProcess(
     using Self = TESProcess<GlobalSetup>;
 
     add2nd("vapour_partial_pressure", 1,
-        {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2), nullptr});
+        {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2, PH::_3),
+         nullptr});
     add2nd("relative_humidity",       1,
-        {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2), nullptr});
+        {std::bind(&Self::computeRelativeHumidity,      this, PH::_1, PH::_2, PH::_3),
+         nullptr});
     add2nd("equilibrium_loading",     1,
-        {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2), nullptr});
+        {std::bind(&Self::computeEquilibriumLoading,    this, PH::_1, PH::_2, PH::_3),
+         nullptr});
 }
 
 template<typename GlobalSetup>
@@ -308,134 +328,109 @@ postIteration(GlobalVector const& x)
 }
 
 template<typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector
+typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::
 computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
-                             AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+                             AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                             std::unique_ptr<GlobalVector>& result_cache)
 {
-    (void) x; (void) dof_table;
-    return GlobalVector{};
+    assert(&dof_table == BP::_local_to_global_index_map.get());
 
-    // TODO implement
-#if 0
-    case SecondaryVariables::VAPOUR_PARTIAL_PRESSURE:
+    result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
+
+    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+
+    for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
+        auto const p = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+        auto const x_mV = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
-        auto& pVs = *_integration_point_values_cache;
-        pVs.clear();
-        pVs.reserve(n_integration_points);
+        auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
+            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
 
-        auto const& ps = nodal_dof.getElementNodalValues(0); // TODO [CL] use constants for DOF indices
-        auto const& xs = nodal_dof.getElementNodalValues(2);
-
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, xm;
-
-            using Array = std::array<double*, 1>;
-            NumLib::shapeFunctionInterpolate(ps, sm.N, Array{ &p  });
-            NumLib::shapeFunctionInterpolate(xs, sm.N, Array{ &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            pVs.push_back(p * xn);
-        }
-
-        return pVs;
+        // TODO Problems with PETSc? (local vs. global index)
+        result_cache->set(node_id, p*x_nV);
     }
-#endif
+
+    return *result_cache;
 }
 
 template<typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector
+typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::
 computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
-                        AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+                        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                        std::unique_ptr<GlobalVector>& result_cache)
 {
-    (void) x; (void) dof_table;
-    return GlobalVector{};
+    assert(&dof_table == BP::_local_to_global_index_map.get());
 
-    // TODO implement
-#if 0
-    case SecondaryVariables::RELATIVE_HUMIDITY:
+    result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
+
+    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+
+    for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
+        auto const p = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+        auto const T = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
+        auto const x_mV = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
-        auto& rhs = *_integration_point_values_cache;
-        rhs.clear();
-        rhs.reserve(n_integration_points);
+        auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
+            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
 
-        auto const& nodal_vals = nodal_dof.getElementNodalValues();
+        auto const p_S = Adsorption::AdsorptionReaction
+                        ::get_equilibrium_vapour_pressure(T);
 
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, T, xm;
-
-            using Array = std::array<double*, 3>;
-            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            auto const pS = Ads::Adsorption::get_equilibrium_vapour_pressure(T);
-            rhs.push_back(p * xn / pS);
-        }
-
-        return rhs;
+        // TODO Problems with PETSc? (local vs. global index)
+        result_cache->set(node_id, p*x_nV / p_S);
     }
-#endif
+
+    return *result_cache;
 }
 
 template<typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector
+typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::
 computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
-                          AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+                          AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                          std::unique_ptr<GlobalVector>& result_cache)
 {
-    (void) x; (void) dof_table;
-    return GlobalVector{};
+    assert(&dof_table == BP::_local_to_global_index_map.get());
 
-    // TODO implement
-#if 0
-    case SecondaryVariables::EQUILIBRIUM_LOADING:
+    result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
+
+    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+
+    for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
-        IntegrationMethod_ integration_method(_integration_order);
-        auto const n_integration_points = integration_method.getNPoints();
+        auto const p = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+        auto const T = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
+        auto const x_mV = getNodalValue(
+            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
-        auto& Cs = *_integration_point_values_cache;
-        Cs.clear();
-        Cs.reserve(n_integration_points);
+        auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
+            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
 
-        auto const nodal_vals = nodal_dof.getElementNodalValues();
+        auto const p_V = p*x_nV;
+        auto const C_eq = (p_V <= 0.0)
+            ? 0.0
+            : _assembly_params.react_sys->get_equilibrium_loading(
+                  p_V, T, _assembly_params.M_react);
 
-        auto const& AP = _data.getAssemblyParameters();
-
-        for (auto const& sm : _shape_matrices)
-        {
-            double p, T, xm;
-
-            using Array = std::array<double*, 3>;
-            NumLib::shapeFunctionInterpolate(nodal_vals, sm.N, Array{ &p, &T, &xm });
-
-            // TODO: Dalton's law method
-            auto const xn = Ads::Adsorption::get_molar_fraction(xm, AP.M_react, AP.M_inert);
-            auto const pV = p * xn;
-            if (pV < 0.0) {
-                Cs.push_back(0.0);
-            } else {
-                Cs.push_back(AP.react_sys->get_equilibrium_loading(pV, T, AP.M_react));
-            }
-        }
-
-        return Cs;
+        // TODO Problems with PETSc? (local vs. global index)
+        result_cache->set(node_id, C_eq);
     }
-#endif
+
+    return *result_cache;
 }
 
 
