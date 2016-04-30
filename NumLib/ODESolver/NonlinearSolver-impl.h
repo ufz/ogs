@@ -47,7 +47,8 @@ solve(Vector &x)
 
     BLAS::copy(x, x_new); // set initial guess, TODO save the copy
 
-    for (unsigned iteration=1; iteration<_maxiter; ++iteration)
+    unsigned iteration=1;
+    for (; iteration<=_maxiter; ++iteration)
     {
         sys.preIteration(iteration, x);
 
@@ -65,7 +66,7 @@ solve(Vector &x)
 
         if (!iteration_succeeded)
         {
-            ERR("The linear solver failed.");
+            ERR("Picard: The linear solver failed.");
         }
         else
         {
@@ -76,12 +77,15 @@ solve(Vector &x)
                 // Although currently it is not.
                 break;
             case IterationResult::FAILURE:
+                ERR("Picard: The postIteration() hook reported a non-recoverable error.");
                 iteration_succeeded = false;
                 // Copy new solution to x.
                 // Thereby the failed solution can be used by the caller for debugging purposes.
                 BLAS::copy(x_new, x);
                 break;
             case IterationResult::REPEAT_ITERATION:
+                INFO("Picard: The postIteration() hook decided that this iteration"
+                     " has to be repeated.");
                 continue; // That throws the iteration result away.
             }
         }
@@ -94,22 +98,27 @@ solve(Vector &x)
 
         // x is used as delta_x in order to compute the error.
         BLAS::aypx(x, -1.0, x_new); // x = _x_new - x
-        auto const error = BLAS::norm2(x);
-        // INFO("  picard iteration %u error: %e", iteration, error);
+        auto const error_dx = BLAS::norm2(x);
+        INFO("Picard: Iteration #%u error_dx: %g, tolerance %g",
+             iteration, error_dx, _tol);
 
         // Update x s.t. in the next iteration we will compute the right delta x
         BLAS::copy(x_new, x);
 
-        if (error < _tol) {
+        if (error_dx < _tol) {
             error_norms_met = true;
             break;
         }
 
         if (sys.isLinear()) {
-            // INFO("  picard linear system. not looping");
             error_norms_met = true;
             break;
         }
+    }
+
+    if (iteration > _maxiter) {
+        ERR("Picard: Could not solve the given nonlinear system within %u iterations",
+            _maxiter);
     }
 
     MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(A);
@@ -153,7 +162,8 @@ solve(Vector &x)
     BLAS::copy(x, minus_delta_x);
     minus_delta_x.setZero();
 
-    for (unsigned iteration=1; iteration<_maxiter; ++iteration)
+    unsigned iteration=1;
+    for (; iteration<_maxiter; ++iteration)
     {
         sys.preIteration(iteration, x);
 
@@ -172,7 +182,7 @@ solve(Vector &x)
 
         if (!iteration_succeeded)
         {
-            ERR("The linear solver failed.");
+            ERR("Newton: The linear solver failed.");
         }
         else
         {
@@ -187,9 +197,12 @@ solve(Vector &x)
             case IterationResult::SUCCESS:
                 break;
             case IterationResult::FAILURE:
+                ERR("Newton: The postIteration() hook reported a non-recoverable error.");
                 iteration_succeeded = false;
                 break;
             case IterationResult::REPEAT_ITERATION:
+                INFO("Newton: The postIteration() hook decided that this iteration"
+                     " has to be repeated.");
                 // TODO introduce some onDestroy hook.
                 MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
                 continue; // That throws the iteration result away.
@@ -208,8 +221,9 @@ solve(Vector &x)
         }
 
         auto const error_dx = BLAS::norm2(minus_delta_x);
-        DBUG("error of -delta_x %g and of residual %g,", error_dx, error_res);
-        (void) error_res; // avoid compiler warning when not in debug build
+        INFO("Newton: Iteration #%u error of -delta_x %g (tolerance %g)"
+             " and of residual %g,",
+             iteration, error_dx, _tol, error_res);
 
         if (error_dx < _tol) {
             error_norms_met = true;
@@ -217,10 +231,14 @@ solve(Vector &x)
         }
 
         if (sys.isLinear()) {
-            // INFO("  newton linear system. not looping");
             error_norms_met = true;
             break;
         }
+    }
+
+    if (iteration > _maxiter) {
+        ERR("Newton: Could not solve the given nonlinear system within %u iterations",
+            _maxiter);
     }
 
     MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(J);
