@@ -82,8 +82,8 @@ TESProcess(MeshLib::Mesh& mesh,
     }
 
     // reactive system
-    _assembly_params.react_sys = std::move(
-        Adsorption::Adsorption::newInstance(config.getConfSubtree("reactive_system")));
+    _assembly_params.react_sys =
+        Adsorption::AdsorptionReaction::newInstance(config.getConfSubtree("reactive_system"));
 
 
     // debug output

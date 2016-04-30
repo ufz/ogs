@@ -118,7 +118,7 @@ TESLocalAssemblerInner<Traits>::
 getMassCoeffMatrix(const unsigned int_pt)
 {
 	// TODO: Dalton's law property
-	const double dxn_dxm = Adsorption::Adsorption::d_molar_fraction(
+	const double dxn_dxm = Adsorption::AdsorptionReaction::d_molar_fraction(
 							   _d.vapour_mass_fraction, _d.ap.M_react, _d.ap.M_inert);
 
 	const double M_pp = _d.ap.poro/_d.p * _d.rho_GR;
@@ -300,7 +300,8 @@ preEachAssembleIntegrationPoint(
     NumLib::shapeFunctionInterpolate(localX, smN, _d.p, _d.T, _d.vapour_mass_fraction);
 
     // pre-compute certain properties
-    _d.p_V = _d.p * Adsorption::Adsorption::get_molar_fraction(_d.vapour_mass_fraction, _d.ap.M_react, _d.ap.M_inert);
+    _d.p_V = _d.p * Adsorption::AdsorptionReaction::get_molar_fraction(
+                 _d.vapour_mass_fraction, _d.ap.M_react, _d.ap.M_inert);
 
     initReaction(int_pt);
 
