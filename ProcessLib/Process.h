@@ -106,10 +106,15 @@ public:
 								  _integration_order);
 
 		DBUG("Initialize boundary conditions.");
-		for (ProcessVariable& pv : _process_variables)
+
+		// TODO That will only work with single component process variables!
+		for (std::size_t global_component_id=0;
+			 global_component_id<_process_variables.size();
+			 ++global_component_id)
 		{
-			createDirichletBcs(pv, 0);  // 0 is the component id
-			createNeumannBcs(pv, 0);    // 0 is the component id
+			auto& pv = _process_variables[global_component_id];
+			createDirichletBcs(pv, global_component_id);
+			createNeumannBcs(pv, global_component_id);
 		}
 
 		for (auto& bc : _neumann_bcs)
@@ -119,9 +124,14 @@ public:
 	void setInitialConditions(GlobalVector& x)
 	{
 		DBUG("Set initial conditions.");
-		for (ProcessVariable& pv : _process_variables)
+
+		// TODO That will only work with single component process variables!
+		for (std::size_t global_component_id=0;
+			 global_component_id<_process_variables.size();
+			 ++global_component_id)
 		{
-			setInitialConditions(pv, 0, x);  // 0 is the component id
+			auto& pv = _process_variables[global_component_id];
+			setInitialConditions(pv, global_component_id, x);
 		}
 	}
 
