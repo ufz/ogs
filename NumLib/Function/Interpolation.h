@@ -79,7 +79,7 @@ void shapeFunctionInterpolate(
     auto const num_nodes = shape_matrix_N.size();
 
     assert(num_nodes*num_nodal_dof == nodal_values.size());
-    (void) num_nodal_dof; // no warnings when not in debug build
+    (void) num_nodal_dof; (void) num_nodes; // no warnings when not in debug build
 
     detail::shapeFunctionInterpolate<0>(nodal_values, shape_matrix_N, interpolated_value,
                                         interpolated_values...);
