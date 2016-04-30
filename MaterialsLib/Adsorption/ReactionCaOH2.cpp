@@ -15,8 +15,18 @@
 namespace Adsorption
 {
 
-constexpr double ReactionCaOH2::tol_l;
-constexpr double ReactionCaOH2::tol_u;
+const double ReactionCaOH2::R = GAS_CONST;
+const double ReactionCaOH2::reaction_enthalpy = -1.12e+05;
+const double ReactionCaOH2::reaction_entropy  = -143.5;
+const double ReactionCaOH2::M_carrier = M_N2;
+const double ReactionCaOH2::M_react   = M_H2O;
+
+const double ReactionCaOH2::tol_l   = 1e-4;
+const double ReactionCaOH2::tol_u   = 1.0 - 1e-4;
+const double ReactionCaOH2::tol_rho = 0.1;
+
+const double ReactionCaOH2::rho_low = 1656.0;
+const double ReactionCaOH2::rho_up = 2200.0;
 
 
 double

@@ -57,25 +57,25 @@ private:
     void set_chemical_equilibrium();
     double Ca_hydration();
 
-    static constexpr double R = GAS_CONST;  // [J/mol/K]
-    double rho_s;                 // solid phase density
-    double p_gas;                 // gas phase pressure in unit bar
-    double p_r_g;                 // pressure of H2O on gas phase;
-    double p_eq       = 1.0;      // equilibrium pressure; // unit in bar
-    double T_eq;                  // equilibrium temperature;
-    double T_s;                   // solid phase temperature;
-    double qR;                    // rate of solid density change;
-    double x_react;               // mass fraction of water in gas phase;
-    double X_D;                   // mass fraction of dehydration (CaO) in the solid phase;
-    double X_H;                   // mass fraction of hydration in the solid phase;
-    static constexpr double reaction_enthalpy = -1.12e+05; // in J/mol; negative for exothermic composition reaction
-    static constexpr double reaction_entropy  = -143.5;    // in J/mol/K
-    static constexpr double M_carrier = M_N2;         // inert component molar mass
-    static constexpr double M_react   = M_H2O;        // reactive component molar mass
+    static const double R;  // [J/mol/K]
+    double rho_s;           // solid phase density
+    double p_gas;           // gas phase pressure in unit bar
+    double p_r_g;           // pressure of H2O on gas phase;
+    double p_eq = 1.0;      // equilibrium pressure; // unit in bar
+    double T_eq;            // equilibrium temperature;
+    double T_s;             // solid phase temperature;
+    double qR;              // rate of solid density change;
+    double x_react;         // mass fraction of water in gas phase;
+    double X_D;             // mass fraction of dehydration (CaO) in the solid phase;
+    double X_H;             // mass fraction of hydration in the solid phase;
+    static const double reaction_enthalpy; // in J/mol; negative for exothermic composition reaction
+    static const double reaction_entropy; // in J/mol/K
+    static const double M_carrier;        // inert component molar mass
+    static const double M_react;          // reactive component molar mass
 
-    static constexpr double tol_l   = 1e-4;
-    static constexpr double tol_u   = 1.0 - 1e-4;
-    static constexpr double tol_rho = 0.1;
+    static const double tol_l;
+    static const double tol_u;
+    static const double tol_rho;
 
     const BaseLib::ConfigTree ode_solver_config;
 
@@ -83,8 +83,8 @@ private:
     friend class ProcessLib::TESFEMReactionAdaptorCaOH2;
 
 public:
-    static constexpr double rho_low = 1656.0;              // lower density limit
-    static constexpr double rho_up = 2200.0;               // upper density limit
+    static const double rho_low; // lower density limit
+    static const double rho_up;  // upper density limit
 };
 
 }
