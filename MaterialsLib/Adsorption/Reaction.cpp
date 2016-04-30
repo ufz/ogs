@@ -32,35 +32,35 @@ std::unique_ptr<Reaction>
 Reaction::
 newInstance(BaseLib::ConfigTree const& conf)
 {
-	auto const type = conf.getConfParam<std::string>("type");
+    auto const type = conf.getConfParam<std::string>("type");
 
-	if (type == "Z13XBF")
-		return std::unique_ptr<Reaction>(new DensityLegacy);
-	else if (type == "Z13XBF_100MPa")
-		return std::unique_ptr<Reaction>(new Density100MPa);
-	else if (type == "Z13XBF_Const")
-		return std::unique_ptr<Reaction>(new DensityConst);
-	else if (type == "Z13XBF_Cook")
-		return std::unique_ptr<Reaction>(new DensityCook);
-	else if (type == "Z13XBF_Dubinin")
-		return std::unique_ptr<Reaction>(new DensityDubinin);
-	else if (type == "Z13XBF_Hauer")
-		return std::unique_ptr<Reaction>(new DensityHauer);
-	else if (type == "Z13XBF_Mette")
-		return std::unique_ptr<Reaction>(new DensityMette);
-	else if (type == "Z13XBF_Nunez")
-		return std::unique_ptr<Reaction>(new DensityNunez);
-	else if (type == "Inert")
-		return std::unique_ptr<Reaction>(new ReactionInert);
-	else if (type == "Sinusoidal")
-		return std::unique_ptr<Reaction>(new ReactionSinusoidal(conf));
-	else if (type == "CaOH2")
-		return std::unique_ptr<Reaction>(new ReactionCaOH2(conf));
+    if (type == "Z13XBF")
+        return std::unique_ptr<Reaction>(new DensityLegacy);
+    else if (type == "Z13XBF_100MPa")
+        return std::unique_ptr<Reaction>(new Density100MPa);
+    else if (type == "Z13XBF_Const")
+        return std::unique_ptr<Reaction>(new DensityConst);
+    else if (type == "Z13XBF_Cook")
+        return std::unique_ptr<Reaction>(new DensityCook);
+    else if (type == "Z13XBF_Dubinin")
+        return std::unique_ptr<Reaction>(new DensityDubinin);
+    else if (type == "Z13XBF_Hauer")
+        return std::unique_ptr<Reaction>(new DensityHauer);
+    else if (type == "Z13XBF_Mette")
+        return std::unique_ptr<Reaction>(new DensityMette);
+    else if (type == "Z13XBF_Nunez")
+        return std::unique_ptr<Reaction>(new DensityNunez);
+    else if (type == "Inert")
+        return std::unique_ptr<Reaction>(new ReactionInert);
+    else if (type == "Sinusoidal")
+        return std::unique_ptr<Reaction>(new ReactionSinusoidal(conf));
+    else if (type == "CaOH2")
+        return std::unique_ptr<Reaction>(new ReactionCaOH2(conf));
 
-	ERR("Unknown reactive system: %s.", type.c_str());
-	std::abort();
+    ERR("Unknown reactive system: %s.", type.c_str());
+    std::abort();
 
-	return nullptr;
+    return nullptr;
 }
 
 } // namespace Ads
