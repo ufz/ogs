@@ -197,7 +197,7 @@ void doProcessOutput(
 
         if (process_output.output_residuals && var.fcts.eval_residuals)
         {
-            DBUG("  process var %s residual", var.name.c_str());
+            DBUG("  secondary variable %s residual", var.name.c_str());
             auto const& property_name_res = var.name + "_residual";
 
             auto result = get_or_create_mesh_property(
