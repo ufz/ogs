@@ -93,6 +93,7 @@ void check(const double time_reached, const double y, const double y_dot,
 {
     DBUG("t: %14.7g, y: %14.7g, diff: %14.7g, y_dot: %14.7g, diff: %14.7g",
          time_reached, y, y - y_ana, y_dot, y_dot - y_dot_ana);
+    (void) y_dot_ana; // avoid compiler waring
 
     EXPECT_NEAR(time, time_reached, std::numeric_limits<double>::epsilon());
 
