@@ -76,9 +76,6 @@ option(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
 option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrices" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
-# Shape Matrices
-option(OGS_DYNAMIC_SHAPE_MATRICES "Use Eigen dynamic size shape matrices" OFF)
-
 # Logging
 option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
@@ -161,8 +158,6 @@ endif()
 if(OGS_BUILD_TESTS)
 	set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
 	set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
-endif()
-
 endif()
 
 ######################
