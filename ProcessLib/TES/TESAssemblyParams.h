@@ -17,6 +17,9 @@ namespace TES
 {
 
 const unsigned NODAL_DOF = 3;
+const unsigned COMPONENT_ID_PRESSURE      = 0;
+const unsigned COMPONENT_ID_TEMPERATURE   = 1;
+const unsigned COMPONENT_ID_MASS_FRACTION = 2;
 
 const double M_N2  = 0.028013;
 const double M_H2O = 0.018016;
