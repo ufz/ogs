@@ -184,8 +184,9 @@ void doProcessOutput(
                               var.name, MeshLib::MeshItemType::Node);
             assert(result->size() == mesh.getNNodes());
 
+            std::unique_ptr<GlobalVector> result_cache;
             auto const& nodal_values =
-                    var.fcts.eval_field(x, dof_table);
+                    var.fcts.eval_field(x, dof_table, result_cache);
 
             // Copy result
             for (std::size_t i = 0; i < mesh.getNNodes(); ++i)
@@ -204,8 +205,9 @@ void doProcessOutput(
                               property_name_res, MeshLib::MeshItemType::Cell);
             assert(result->size() == mesh.getNElements());
 
+            std::unique_ptr<GlobalVector> result_cache;
             auto const& residuals =
-                    var.fcts.eval_residuals(x, dof_table);
+                    var.fcts.eval_residuals(x, dof_table, result_cache);
 
             // Copy result
             for (std::size_t i = 0; i < mesh.getNElements(); ++i)
