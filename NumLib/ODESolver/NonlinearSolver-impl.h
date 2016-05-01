@@ -96,11 +96,13 @@ solve(Vector &x)
             break;
         }
 
+        auto const norm_x = BLAS::norm2(x);
         // x is used as delta_x in order to compute the error.
         BLAS::aypx(x, -1.0, x_new); // x = _x_new - x
         auto const error_dx = BLAS::norm2(x);
-        INFO("Picard: Iteration #%u error_dx: %g, tolerance %g",
-             iteration, error_dx, _tol);
+        INFO("Picard: Iteration #%u |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
+             " tolerance(dx)=%.4e",
+             iteration, error_dx, norm_x, error_dx/norm_x, _tol);
 
         // Update x s.t. in the next iteration we will compute the right delta x
         BLAS::copy(x_new, x);
@@ -221,9 +223,10 @@ solve(Vector &x)
         }
 
         auto const error_dx = BLAS::norm2(minus_delta_x);
-        INFO("Newton: Iteration #%u error of -delta_x %g (tolerance %g)"
-             " and of residual %g,",
-             iteration, error_dx, _tol, error_res);
+        auto const norm_x   = BLAS::norm2(x);
+        INFO("Newton: Iteration #%u |dx|=%.4e, |r|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
+             " tolerance(dx)=%.4e",
+             iteration, error_dx, error_res, norm_x, error_dx/norm_x, _tol);
 
         if (error_dx < _tol) {
             error_norms_met = true;
