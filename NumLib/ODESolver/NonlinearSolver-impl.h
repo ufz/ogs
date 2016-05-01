@@ -47,22 +47,39 @@ solve(Vector &x)
 
     BLAS::copy(x, x_new); // set initial guess, TODO save the copy
 
+    static int total_iteration = -1; // be consistent with my old code
     unsigned iteration=1;
     for (; iteration<=_maxiter; ++iteration)
     {
+        ++total_iteration;
+
         sys.preIteration(iteration, x);
 
         sys.assembleMatricesPicard(x);
+
+#if 0 //ndef NDEBUG
+        A.setZero();
+        rhs.setZero();
+        A.write("global_matrix_zeroed_"+std::to_string(total_iteration)+".txt");
+        rhs.write("global_rhs_zeroed_"+std::to_string(total_iteration)+".txt");
+#endif
+
         sys.getA(A);
         sys.getRhs(rhs);
 
         // Here _x_new has to be used and it has to be equal to x!
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
 
-        // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
-        // std::cout << "rhs:\n" << rhs << "\n\n";
+#if 0 //ndef NDEBUG
+        A.write("global_matrix_"+std::to_string(total_iteration)+".txt");
+        rhs.write("global_rhs_"+std::to_string(total_iteration)+".txt");
+#endif
 
         bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
+
+#if 0 //ndef NDEBUG
+        x_new.write("global_x_"+std::to_string(total_iteration)+".txt");
+#endif
 
         if (!iteration_succeeded)
         {
@@ -96,12 +113,15 @@ solve(Vector &x)
             break;
         }
 
-        auto const norm_x = BLAS::normMax(x);
+        sys.applyKnownSolutions(x_new); // TODO test.
+
+        auto const norm_x = BLAS::norm2(x);
         // x is used as delta_x in order to compute the error.
         BLAS::aypx(x, -1.0, x_new); // x = _x_new - x
-        auto const error_dx = BLAS::normMax(x);
-        INFO("Picard: Iteration #%u error_dx: %g, error_dx/|x|: %g, tolerance %g",
-             iteration, error_dx, error_dx/norm_x, _tol);
+        auto const error_dx = BLAS::norm2(x);
+        INFO("Picard: Iteration #%u |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
+             " tolerance(dx)=%.4e",
+             iteration, error_dx, norm_x, error_dx/norm_x, _tol);
 
         // Update x s.t. in the next iteration we will compute the right delta x
         BLAS::copy(x_new, x);
@@ -175,7 +195,7 @@ solve(Vector &x)
         sys.getJacobian(J);
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
 
-        auto const error_res = BLAS::normMax(res);
+        auto const error_res = BLAS::norm2(res);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
@@ -221,11 +241,11 @@ solve(Vector &x)
             break;
         }
 
-        auto const error_dx = BLAS::normMax(minus_delta_x);
-        auto const x_norm   = BLAS::normMax(x);
-        INFO("Newton: Iteration #%u error of -delta_x %g (tolerance %g)"
-             " and of residual %g. (|delta_x|/|x| = %g)",
-             iteration, error_dx, _tol, error_res, error_dx/x_norm);
+        auto const error_dx = BLAS::norm2(minus_delta_x);
+        auto const norm_x   = BLAS::norm2(x);
+        INFO("Newton: Iteration #%u |dx|=%.4e, |r|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
+             " tolerance(dx)=%.4e",
+             iteration, error_dx, error_res, norm_x, error_dx/norm_x, _tol);
 
         if (error_dx < _tol) {
             error_norms_met = true;
