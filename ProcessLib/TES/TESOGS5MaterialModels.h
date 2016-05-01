@@ -9,6 +9,8 @@
 #ifndef PROCESSLIB_TES_OGS5MATERIALMODELS
 #define PROCESSLIB_TES_OGS5MATERIALMODELS
 
+#include "TESAssemblyParams.h"
+
 namespace
 {
 const double GAS_CONST = 8.3144621;
@@ -19,7 +21,7 @@ namespace ProcessLib
 namespace TES
 {
 
-static double fluid_density(const double p, const double T, const double x)
+inline double fluid_density(const double p, const double T, const double x)
 {
 	// OGS-5 density model 26
 
@@ -32,9 +34,8 @@ static double fluid_density(const double p, const double T, const double x)
 }
 
 
-
 template<int i>
-inline double mypow(const double x)
+double mypow(const double x)
 {
     if (i<0) {
         return 1.0/mypow<-i>(x);
@@ -49,19 +50,6 @@ inline double mypow<0>(const double /*x*/)
 {
     return 1.0;
 }
-
-template<>
-inline double mypow<1>(const double x)
-{
-    return x;
-}
-
-template<>
-inline double mypow<2>(const double x)
-{
-    return x*x;
-}
-
 
 
 struct FluidViscosityN2
@@ -114,8 +102,8 @@ private:
 		return C[i] * mypow<i-1>(rho);
 	}
 
-	static constexpr double A[5] = { 0.46649, -0.57015, 0.19164, -0.03708, 0.00241 };
-	static constexpr double C[5] = { -20.09997, 3.4376416, -1.4470051, -0.027766561, -0.21662362 };
+	static const double A[5];
+	static const double C[5];
 };
 
 
@@ -195,7 +183,7 @@ private:
 	}
 };
 
-static double fluid_viscosity(const double p, const double T, const double x)
+inline double fluid_viscosity(const double p, const double T, const double x)
 {
 	// OGS 5 viscosity model 26
 
@@ -301,19 +289,9 @@ private:
 		return C[i] * mypow<i+1>(rho);
 	}
 
-	constexpr static double A[5] = {
-		0.46649, -0.57015, 0.19164, -0.03708, 0.00241
-	};
-
-	constexpr static double f[9] = {
-		-0.837079888737e3,   0.37914711487e2,  -0.601737844275,
-		 0.350418363823e1,  -0.874955653028e-5, 0.148968607239e-7,
-		-0.256370354277e-11, 0.100773735767e1,  0.335340610e4
-	};
-
-	constexpr static double C[4] = {
-		3.3373542, 0.37098251, 0.89913456, 0.16972505
-	};
+	const static double A[5];
+	const static double f[9];
+	const static double C[4];
 };
 
 
@@ -380,11 +358,11 @@ private:
 		return a[i] * mypow<i>(T);
 	}
 
-	static constexpr double a[4] = { 0.0102811, 0.0299621, 0.0156146, -0.00422464 };
+	static const double a[4];
 };
 
 
-static double fluid_heat_conductivity(const double p, const double T, const double x)
+inline double fluid_heat_conductivity(const double p, const double T, const double x)
 {
 	// OGS 5 fluid heat conductivity model 11
 

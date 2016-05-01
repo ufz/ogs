@@ -44,7 +44,7 @@ struct TrafoIdentity
 
     /// Derivative of the "physical" variable x w.r.t. y.
     /// the argument is x!
-    constexpr static double dxdy(const double /*x*/) { return 1.0; }
+    static double dxdy(const double /*x*/) { return 1.0; }
 };
 
 struct TrafoTanh
@@ -57,7 +57,7 @@ struct TrafoTanh
 
     /// Derivative of the "physical" variable x w.r.t. y.
     /// the argument is x!
-    constexpr static double dxdy(const double x) { return 2.0*x*(1.0-x); }
+    static double dxdy(const double x) { return 2.0*x*(1.0-x); }
 };
 
 struct TrafoScale
