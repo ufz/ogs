@@ -91,7 +91,7 @@ TESProcess(MeshLib::Mesh& mesh,
 
     // physical parameters for local assembly
     {
-        std::vector<std::pair<const std::string, double*> > params{
+        std::vector<std::pair<std::string, double*> > params{
             { "fluid_specific_heat_source",            &_assembly_params.fluid_specific_heat_source },
             { "fluid_specific_isobaric_heat_capacity", &_assembly_params.cpG },
             { "solid_specific_heat_source",            &_assembly_params.solid_specific_heat_source },
@@ -115,7 +115,7 @@ TESProcess(MeshLib::Mesh& mesh,
 
     // characteristic values of primary variables
     {
-        std::vector<std::pair<const std::string, Trafo*> > const params{
+        std::vector<std::pair<std::string, Trafo*> > const params{
             { "characteristic_pressure",             &_assembly_params.trafo_p },
             { "characteristic_temperature",          &_assembly_params.trafo_T },
             { "characteristic_vapour_mass_fraction", &_assembly_params.trafo_x }
