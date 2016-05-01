@@ -17,7 +17,7 @@ getRowColumnIndices_(std::size_t const id,
                      std::vector<GlobalIndexType>& indices)
 {
     assert(dof_table.size() > id);
-    assert(indices.empty());
+    indices.clear();
 
     // Local matrices and vectors will always be ordered by component,
     // no matter what the order of the global matrix is.
@@ -299,7 +299,7 @@ preTimestep(GlobalVector const& x, const double t, const double delta_t)
 
     _assembly_params.delta_t = delta_t;
     _assembly_params.current_time = t;
-    ++ _assembly_params.timestep; // TODO remove that
+    ++_assembly_params.timestep; // TODO remove that
 
     _x_previous_timestep = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
 }
@@ -311,6 +311,7 @@ preIteration(const unsigned iter, GlobalVector const& /*x*/)
 {
     _assembly_params.iteration_in_current_timestep = iter;
     ++_assembly_params.total_iteration;
+    ++_assembly_params.number_of_try_of_iteration;
 }
 
 template<typename GlobalSetup>
@@ -318,7 +319,7 @@ NumLib::IterationResult
 TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
-    // TODO fix
+    // TODO move to class Output
     // if (BP::_process_output.output_iteration_results)
 #ifndef NDEBUG
     {
@@ -326,6 +327,7 @@ postIteration(GlobalVector const& x)
         std::string fn = "tes_iter_" + std::to_string(_assembly_params.total_iteration) +
                          + "_ts_" + std::to_string(_assembly_params.timestep)
                          + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
+                         + "_" + std::to_string(_assembly_params.number_of_try_of_iteration)
                          + ".vtu";
 
         BP::output(fn, 0, x);
@@ -355,8 +357,6 @@ postIteration(GlobalVector const& x)
                 check_passed = false;
         };
 
-        // TODO Short-circuit evaluation that stops after the first error.
-        //      But maybe that's not what I want to use here.
         GlobalSetup::executeDereferenced(
                     check_variable_bounds, _local_assemblers);
     }
@@ -364,10 +364,13 @@ postIteration(GlobalVector const& x)
     if (!check_passed)
         return NumLib::IterationResult::REPEAT_ITERATION;
 
-
     // TODO remove
-    DBUG("ts %lu iteration %lu (%lu) try XXXXXX accepted", _assembly_params.timestep, _assembly_params.total_iteration,
-         _assembly_params.iteration_in_current_timestep);
+    DBUG("ts %lu iteration %lu (in current ts: %lu) try %u accepted",
+         _assembly_params.timestep, _assembly_params.total_iteration,
+         _assembly_params.iteration_in_current_timestep,
+         _assembly_params.number_of_try_of_iteration);
+
+    _assembly_params.number_of_try_of_iteration = 0;
 
     return NumLib::IterationResult::SUCCESS;
 }
