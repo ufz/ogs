@@ -71,7 +71,7 @@ ReactionRate
 TESFEMReactionAdaptorAdsorption::
 initReaction_slowDownUndershootStrategy(const unsigned int_pt)
 {
-    assert(_d.ap.number_of_try_of_iteration < 20);
+    assert(_d.ap.number_of_try_of_iteration <= 20);
 
     const double loading = Adsorption::AdsorptionReaction::get_loading(
         _d.solid_density_prev_ts[int_pt], _d.ap.rho_SR_dry);
@@ -112,10 +112,10 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
         // 0th try: make sure reaction is not slower than allowed by local estimation
         // nth try: make sure reaction is not made faster by local estimation
         if (
-            (_d.ap.number_of_try_of_iteration == 0
+            (_d.ap.number_of_try_of_iteration == 1
              && std::abs(react_rate_R2) > std::abs(react_rate_R))
             ||
-            (_d.ap.number_of_try_of_iteration != 0
+            (_d.ap.number_of_try_of_iteration > 1
              && std::abs(react_rate_R2) < std::abs(react_rate_R))
             )
         {
@@ -124,12 +124,12 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
     }
 
     // smooth out readjustment of reaction rate
-    if (_d.ap.iteration_in_current_timestep > 3)
+    if (_d.ap.iteration_in_current_timestep > 4)
     {
-        if (_d.ap.iteration_in_current_timestep <= 8)
+        if (_d.ap.iteration_in_current_timestep <= 9)
         {
             // update reaction rate for for five iterations
-            const auto N = _d.ap.iteration_in_current_timestep - 3;
+            const auto N = _d.ap.iteration_in_current_timestep - 4;
 
             // take average s.t. does not oscillate so much
             react_rate_R = 1.0 / (1.0+N) * (N*_d.reaction_rate[int_pt] + 1.0 * react_rate_R);
@@ -141,13 +141,13 @@ initReaction_slowDownUndershootStrategy(const unsigned int_pt)
         }
     }
 
-    if (_d.ap.number_of_try_of_iteration > 0)
+    if (_d.ap.number_of_try_of_iteration > 1)
     {
         // assert that within tries reaction does not get faster
         // (e.g. due to switch equilibrium reaction <--> kinetic reaction)
 
         // factor of 0.9*N: in fact, even slow down reaction over tries
-        const double r = std::pow(0.9, _d.ap.number_of_try_of_iteration)
+        const double r = std::pow(0.9, _d.ap.number_of_try_of_iteration-1)
                          *_d.reaction_rate[int_pt];
         if (std::abs(react_rate_R) > std::abs(r)) {
             react_rate_R = r;
@@ -222,7 +222,7 @@ checkBounds(std::vector<double> const& local_x,
 
     if (alpha != 1.0)
     {
-        if (_d.ap.number_of_try_of_iteration <=2) {
+        if (_d.ap.number_of_try_of_iteration <= 3) {
             _reaction_damping_factor *= sqrt(std::min(alpha, 0.5));
         } else {
             _reaction_damping_factor *= std::min(alpha, 0.5);
@@ -309,8 +309,9 @@ ReactionRate
 TESFEMReactionAdaptorCaOH2::
 initReaction(const unsigned int int_pt)
 {
-    if (_d.ap.iteration_in_current_timestep > 0
-        || _d.ap.number_of_try_of_iteration > 0)
+    // TODO if the first holds, the second also has to hold
+    if (_d.ap.iteration_in_current_timestep > 1
+        || _d.ap.number_of_try_of_iteration > 1)
     {
         return { _d.reaction_rate[int_pt], _d.solid_density[int_pt] };
     }

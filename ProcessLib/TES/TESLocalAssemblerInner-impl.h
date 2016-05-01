@@ -371,9 +371,9 @@ template<typename Traits>
 void
 TESLocalAssemblerInner<Traits>::preEachAssemble()
 {
-    if (_d.ap.iteration_in_current_timestep == 0)
+    if (_d.ap.iteration_in_current_timestep == 1)
     {
-        if (_d.ap.number_of_try_of_iteration == 0)
+        if (_d.ap.number_of_try_of_iteration == 1) // TODO has to hold if the above holds.
         {
             _d.solid_density_prev_ts = _d.solid_density;
             _d.reaction_rate_prev_ts = _d.reaction_rate;
