@@ -163,9 +163,11 @@ public:
     /// printout this matrix for debugging
     void write(std::ostream &os) const
     {
+        os.precision(16);
+        os << _mat.rows() << " " << _mat.cols() << " " << _mat.nonZeros() << "\n";
         for (int k=0; k<_mat.outerSize(); ++k)
-          for (Eigen::SparseMatrix<double>::InnerIterator it(_mat,k); it; ++it)
-              os << it.row() << " " << it.col() << ": " << it.value() << "\n";
+          for (RawMatrixType::InnerIterator it(_mat,k); it; ++it)
+              os << it.row() << " " << it.col() << " " << it.value() << "\n";
         os << std::endl;
     }
 #endif
