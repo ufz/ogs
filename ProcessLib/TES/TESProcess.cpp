@@ -228,7 +228,7 @@ initializeConcreteProcess(
         BP::_secondary_variables.addSecondaryVariable(
                     var_name, n_components, std::move(fcts));
     };
-    auto makeEx = [&](TESIntPtVariables var)
+    auto makeEx = [&](TESIntPtVariables var) -> SecondaryVariableFunctions<GlobalVector>
     {
         return ProcessLib::makeExtrapolator(var, *_extrapolator, _local_assemblers);
     };
