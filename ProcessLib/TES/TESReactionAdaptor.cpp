@@ -186,29 +186,28 @@ estimateAdsorptionEquilibrium(const double p_V0, const double C0) const
 
 bool
 TESFEMReactionAdaptorAdsorption::
-checkBounds(std::vector<double> const& local_x)
+checkBounds(std::vector<double> const& local_x,
+            std::vector<double> const& local_x_prev_ts)
 {
     double alpha = 1.0;
 
-    // TODO fix
-#if 0
     const double min_xmV = 1e-6;
-    const std::size_t nnodes = localX.size() / NODAL_DOF;
+    const std::size_t nnodes = local_x.size() / NODAL_DOF;
     const std::size_t xmV_offset = (NODAL_DOF - 1)*nnodes;
 
     for (std::size_t i=0; i<nnodes; ++i)
     {
-        auto const xnew = localX[xmV_offset+i];
+        auto const xnew = local_x[xmV_offset+i];
         if (xnew < min_xmV)
         {
-            auto const xold = localX_pts[i+xmV_offset];
+            auto const xold = local_x_prev_ts[i+xmV_offset];
             const auto a = xold / (xold - xnew);
             alpha = std::min(alpha, a);
             _bounds_violation[i] = true;
         }
         else if (xnew > 1.0)
         {
-            auto const xold = localX_pts[i+xmV_offset];
+            auto const xold = local_x_prev_ts[i+xmV_offset];
             const auto a = xold / (xnew - xold);
             alpha = std::min(alpha, a);
             _bounds_violation[i] = true;
@@ -229,7 +228,6 @@ checkBounds(std::vector<double> const& local_x)
             _reaction_damping_factor *= std::min(alpha, 0.5);
         }
     }
-#endif
 
     return alpha == 1.0;
 }

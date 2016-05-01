@@ -96,11 +96,10 @@ private:
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map_single_component;
 
-    //! Output global matrix/rhs after first iteration.
-    std::size_t _timestep = 0;
-    std::size_t _total_iteration = 0;
-
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
+
+    // used for checkBounds()
+    std::unique_ptr<GlobalVector> _x_previous_timestep;
 };
 
 template <typename GlobalSetup>

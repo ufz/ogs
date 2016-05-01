@@ -61,6 +61,10 @@ struct AssemblyParams
 
     unsigned number_of_try_of_iteration = 0;
     double   current_time = std::numeric_limits<double>::quiet_NaN();
+
+    //! Output global matrix/rhs after first iteration.
+    std::size_t timestep = 0;
+    std::size_t total_iteration = 0;
 };
 
 } // namespace TES

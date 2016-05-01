@@ -9,6 +9,47 @@
 
 #include "TESProcess.h"
 
+
+// TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
+inline AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices
+getRowColumnIndices_(std::size_t const id,
+                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                     std::vector<GlobalIndexType>& indices)
+{
+    assert(dof_table.size() > id);
+    assert(indices.empty());
+
+    // Local matrices and vectors will always be ordered by component,
+    // no matter what the order of the global matrix is.
+    for (unsigned c = 0; c < dof_table.getNumComponents(); ++c)
+    {
+        auto const& idcs = dof_table(id, c).rows;
+        indices.reserve(indices.size() + idcs.size());
+        indices.insert(indices.end(), idcs.begin(), idcs.end());
+    }
+
+    return AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices(
+                indices, indices);
+}
+
+template <typename GlobalVector>
+void getVectorValues(GlobalVector const& x,
+                     AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices
+                     const& r_c_indices,
+                     std::vector<double>& local_x)
+{
+    auto const& indices = r_c_indices.rows;
+    local_x.clear();
+    local_x.reserve(indices.size());
+
+    for (auto i : indices)
+    {
+        local_x.emplace_back(x.get(i));
+    }
+}
+
+
+
 // TODO that essentially duplicates code which is also present in ProcessOutput.
 template<typename GlobalVector>
 double
@@ -231,8 +272,9 @@ assembleConcreteProcess(
                 *_global_assembler, &GlobalAssembler::assemble,
                 _local_assemblers, t, x, M, K, b);
 
+#if 0 // TODO fix
 #ifndef NDEBUG
-    if (_total_iteration == 0)
+    if (assembly_parameters.total_iteration == 0)
     {
         MathLib::BLAS::finalizeAssembly(M);
         MathLib::BLAS::finalizeAssembly(K);
@@ -245,18 +287,21 @@ assembleConcreteProcess(
         b.write("global_vector_b.txt");
     }
 #endif
+#endif
 }
 
 template<typename GlobalSetup>
 void
 TESProcess<GlobalSetup>::
-preTimestep(GlobalVector const& /*x*/, const double t, const double delta_t)
+preTimestep(GlobalVector const& x, const double t, const double delta_t)
 {
     DBUG("new timestep");
 
     _assembly_params.delta_t = delta_t;
     _assembly_params.current_time = t;
-    ++ _timestep; // TODO remove that
+    ++ _assembly_params.timestep; // TODO remove that
+
+    _x_previous_timestep = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
 }
 
 template<typename GlobalSetup>
@@ -265,6 +310,7 @@ TESProcess<GlobalSetup>::
 preIteration(const unsigned iter, GlobalVector const& /*x*/)
 {
     _assembly_params.iteration_in_current_timestep = iter;
+    ++_assembly_params.total_iteration;
 }
 
 template<typename GlobalSetup>
@@ -273,18 +319,19 @@ TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
     // TODO fix
-    /*
-    if (BP::_process_output.output_iteration_results)
+    // if (BP::_process_output.output_iteration_results)
+#ifndef NDEBUG
     {
-        DBUG("output results of iteration %li", _total_iteration);
-        std::string fn = "tes_iter_" + std::to_string(_total_iteration) +
-                         + "_ts_" + std::to_string(_timestep)
+        DBUG("output results of iteration %li", _assembly_params.total_iteration);
+        std::string fn = "tes_iter_" + std::to_string(_assembly_params.total_iteration) +
+                         + "_ts_" + std::to_string(_assembly_params.timestep)
                          + "_" +    std::to_string(_assembly_params.iteration_in_current_timestep)
                          + ".vtu";
 
         BP::output(fn, 0, x);
     }
-    */
+#endif
+    // */
 
     bool check_passed = true;
 
@@ -292,19 +339,20 @@ postIteration(GlobalVector const& x)
     {
         // bounds checking only has to happen if the vapour mass fraction is non-logarithmic.
 
-        auto do_check = [&](
-                std::vector<double> const& local_x,
-                AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/,
-                LocalAssembler& loc_asm)
-        {
-            if (!loc_asm.checkBounds(local_x)) check_passed = false;
-        };
+        std::vector<GlobalIndexType> indices_cache;
+        std::vector<double> local_x_cache;
+        std::vector<double> local_x_prev_ts_cache;
 
         auto check_variable_bounds
         = [&](std::size_t id, LocalAssembler& loc_asm)
         {
-            _global_assembler->passLocalVector(
-                        do_check, id, x, loc_asm);
+            auto const r_c_indices =
+                getRowColumnIndices_(id, *BP::_local_to_global_index_map, indices_cache);
+            getVectorValues(x, r_c_indices, local_x_cache);
+            getVectorValues(*_x_previous_timestep, r_c_indices, local_x_prev_ts_cache);
+
+            if (!loc_asm.checkBounds(local_x_cache, local_x_prev_ts_cache))
+                check_passed = false;
         };
 
         // TODO Short-circuit evaluation that stops after the first error.
@@ -318,11 +366,8 @@ postIteration(GlobalVector const& x)
 
 
     // TODO remove
-    DBUG("ts %lu iteration %lu (%lu) try XXXXXX accepted", _timestep, _total_iteration,
+    DBUG("ts %lu iteration %lu (%lu) try XXXXXX accepted", _assembly_params.timestep, _assembly_params.total_iteration,
          _assembly_params.iteration_in_current_timestep);
-
-    ++ _assembly_params.iteration_in_current_timestep;
-    ++_total_iteration;
 
     return NumLib::IterationResult::SUCCESS;
 }

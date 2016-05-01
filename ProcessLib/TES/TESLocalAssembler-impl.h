@@ -249,9 +249,10 @@ TESLocalAssembler<ShapeFunction_,
     GlobalMatrix,
     GlobalVector,
     GlobalDim>::
-checkBounds(std::vector<double> const& local_x)
+checkBounds(std::vector<double> const& local_x,
+            std::vector<double> const& local_x_prev_ts)
 {
-    return _d.getReactionAdaptor().checkBounds(local_x);
+    return _d.getReactionAdaptor().checkBounds(local_x, local_x_prev_ts);
 }
 
 }   // namespace TES
