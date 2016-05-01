@@ -193,27 +193,22 @@ checkBounds(std::vector<double> const& local_x,
 
     const double min_xmV = 1e-6;
     const std::size_t nnodes = local_x.size() / NODAL_DOF;
-    const std::size_t xmV_offset = (NODAL_DOF - 1)*nnodes;
+    const std::size_t xmV_offset = COMPONENT_ID_MASS_FRACTION*nnodes;
 
     for (std::size_t i=0; i<nnodes; ++i)
     {
         auto const xnew = local_x[xmV_offset+i];
-        if (xnew < min_xmV)
-        {
-            auto const xold = local_x_prev_ts[i+xmV_offset];
+        auto const xold = local_x_prev_ts[xmV_offset+i];
+
+        if (xnew < min_xmV) {
             const auto a = xold / (xold - xnew);
             alpha = std::min(alpha, a);
             _bounds_violation[i] = true;
-        }
-        else if (xnew > 1.0)
-        {
-            auto const xold = local_x_prev_ts[i+xmV_offset];
+        } else if (xnew > 1.0) {
             const auto a = xold / (xnew - xold);
             alpha = std::min(alpha, a);
             _bounds_violation[i] = true;
-        }
-        else
-        {
+        } else {
             _bounds_violation[i] = false;
         }
     }
@@ -222,10 +217,13 @@ checkBounds(std::vector<double> const& local_x,
 
     if (alpha != 1.0)
     {
+        if (alpha > 0.5) alpha = 0.5;
+        if (alpha < 0.05) alpha = 0.05;
+
         if (_d.ap.number_of_try_of_iteration <= 3) {
-            _reaction_damping_factor *= sqrt(std::min(alpha, 0.5));
+            _reaction_damping_factor *= sqrt(alpha);
         } else {
-            _reaction_damping_factor *= std::min(alpha, 0.5);
+            _reaction_damping_factor *= alpha;
         }
     }
 
@@ -236,6 +234,8 @@ void
 TESFEMReactionAdaptorAdsorption::
 preZerothTryAssemble()
 {
+    if (_reaction_damping_factor < 1e-3) _reaction_damping_factor = 1e-3;
+
     _reaction_damping_factor = std::min(
         std::sqrt(_reaction_damping_factor),
         10.0*_reaction_damping_factor);
