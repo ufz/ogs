@@ -85,10 +85,6 @@ private:
             GlobalVector const& x, AssemblerLib::LocalToGlobalIndexMap const& dof_table,
             std::unique_ptr<GlobalVector>& result_cache);
 
-    SecondaryVariableFunctions<GlobalVector>
-    makeExtrapolator(TESIntPtVariables const var) const;
-
-
     std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
