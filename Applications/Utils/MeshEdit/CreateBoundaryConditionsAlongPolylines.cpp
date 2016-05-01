@@ -173,7 +173,7 @@ int main (int argc, char* argv[])
 
 	// *** read mesh
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * subsurface_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	MeshLib::Mesh * subsurface_mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	INFO("done.");
 	INFO("Extracting top surface of mesh \"%s\" ... ",
 		mesh_arg.getValue().c_str());

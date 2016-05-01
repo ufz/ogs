@@ -202,7 +202,7 @@ int main (int argc, char* argv[])
 	GeoLib::Polygon polygon(*(ply));
 
 	// *** read mesh
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh * mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	std::vector<std::string> property_names(
 		mesh->getProperties().getPropertyVectorNames());
 	INFO("Mesh contains %d property vectors:", property_names.size());
@@ -249,7 +249,7 @@ int main (int argc, char* argv[])
 		resetMeshElementProperty(*mesh, polygon, property_name, bool_property_val);
 	}
 
-	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
+	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;
 }

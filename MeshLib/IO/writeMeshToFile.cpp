@@ -18,13 +18,15 @@
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
 {
 	if (BaseLib::hasFileExtension("msh", file_name))
 	{
-		Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		meshIO.setMesh(&mesh);
 		meshIO.writeToFile(file_name);
 	} else if (BaseLib::hasFileExtension("vtu", file_name)) {
@@ -35,4 +37,5 @@ void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
 	}
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace MeshLib

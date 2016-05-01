@@ -66,7 +66,7 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	// *** read mesh
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh * mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;

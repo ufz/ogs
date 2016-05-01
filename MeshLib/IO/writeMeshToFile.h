@@ -14,11 +14,10 @@
 namespace MeshLib
 {
 class Mesh;
-}
-
-namespace FileIO
+namespace IO
 {
 void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name);
+}
 }
 
 #endif // WRITEMESHTOFILE_H_

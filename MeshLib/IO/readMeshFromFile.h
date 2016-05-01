@@ -24,11 +24,10 @@
 namespace MeshLib
 {
 class Mesh;
-}
 
-namespace FileIO
+namespace IO
 {
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name);
 }
-
+}
 #endif // READMESHFROMFILE_H

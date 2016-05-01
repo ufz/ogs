@@ -32,7 +32,9 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 namespace Legacy {
 
@@ -332,5 +334,6 @@ std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t) const
 	return "none";
 }
 
-}
-} // end namespace FileIO
+} // end namespace Legacy
+} // end namespace IO
+} // end namespace MeshLin

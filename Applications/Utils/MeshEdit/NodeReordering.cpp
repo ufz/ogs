@@ -107,7 +107,7 @@ int main (int argc, char* argv[])
 	cmd.add(method_arg);
 	cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh> mesh(FileIO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
+	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(input_mesh_arg.getValue().c_str()));
 
 	INFO("Reordering nodes... ");
 	if (!method_arg.isSet() || method_arg.getValue() == 1)
@@ -120,7 +120,7 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	FileIO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
+	MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue().c_str());
 
 	INFO("VTU file written.");
 

@@ -500,7 +500,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			myTimer0.start();
 #endif
 			std::unique_ptr<MeshLib::Mesh> mesh(
-				FileIO::readMeshFromFile(fileName.toStdString()));
+			    MeshLib::IO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
 			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
 			myTimer1.start();
@@ -839,7 +839,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (choice == 0) // load mesh from file
 	{
 		if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
-			mesh = FileIO::readMeshFromFile(file_name.toStdString());
+			mesh = MeshLib::IO::readMeshFromFile(file_name.toStdString());
 		else
 		{
 			OGSError::box("The selected file is no supported mesh file.");

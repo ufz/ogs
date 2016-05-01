@@ -38,7 +38,9 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
@@ -49,15 +51,16 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 #else
 	if (BaseLib::hasFileExtension("msh", file_name))
 	{
-		Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		return meshIO.loadMeshFromFile(file_name);
 	}
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
-		return VtuInterface::readVTUFile(file_name);
+		return FileIO::VtuInterface::readVTUFile(file_name);
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;
 #endif
 }
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace MeshLib

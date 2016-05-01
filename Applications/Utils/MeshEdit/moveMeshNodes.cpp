@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(msh_name));
+	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(msh_name));
 	//std::vector<std::size_t> del_nodes;
 
 	// Start keyword-specific selection of nodes
@@ -136,7 +136,7 @@ int main (int argc, char* argv[])
 		//const std::string value("D:\\Rappbodevorsperre_elevation440m.msh");
 		//double max_dist (25.0);	// squared maximum distance at which reference points are used
 		double offset (0.0); // additional offset for elevation (should be 0)
-		MeshLib::Mesh* ground_truth (FileIO::readMeshFromFile(value));
+		MeshLib::Mesh* ground_truth (MeshLib::IO::readMeshFromFile(value));
 		const std::vector<MeshLib::Node*> ground_truth_nodes (ground_truth->getNodes());
 		GeoLib::AABB bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
 		MathLib::Point3d const& min(bounding_box.getMinPoint());
@@ -183,7 +183,7 @@ int main (int argc, char* argv[])
 	}
 	/**** add other keywords here ****/
 
-	FileIO::Legacy::MeshIO meshIO;
+	MeshLib::IO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.setPrecision(9);
 	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");

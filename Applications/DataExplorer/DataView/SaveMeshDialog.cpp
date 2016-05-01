@@ -85,7 +85,7 @@ void SaveMeshDialog::accept()
 	}
 	if (fi.suffix().toLower() == "msh")
 	{
-		FileIO::Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		meshIO.setMesh(&_mesh);
 		meshIO.writeToFile(file_name.toStdString().c_str());
 	}

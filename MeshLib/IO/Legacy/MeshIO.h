@@ -27,17 +27,14 @@
 
 namespace MeshLib
 {
-	class Mesh;
-	class Node;
-	class Element;
-	enum class MeshElemType;
-}
-
-
-namespace FileIO
+class Mesh;
+class Node;
+class Element;
+enum class MeshElemType;
+namespace IO
 {
-namespace Legacy {
-
+namespace Legacy
+{
 /// Interface for handling mesh files from OGS-5 and below. (*.msh files)
 class MeshIO : public BaseLib::IO::Writer
 {
@@ -69,7 +66,8 @@ private:
 
 };  /* class */
 
-}
-} /* namespace FileIO */
+} // end namespace Legacy
+} // end namespace IO
+} // end namespace MeshLib
 
 #endif /* MESHIO_H_ */

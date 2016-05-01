@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 	BaseLib::RunTime run_time;
 	run_time.start();
-	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
+	const MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
 	if (!mesh)
 		return 1;
 

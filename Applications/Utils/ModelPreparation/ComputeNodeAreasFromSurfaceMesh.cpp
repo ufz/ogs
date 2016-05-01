@@ -78,7 +78,7 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	std::unique_ptr<MeshLib::Mesh> surface_mesh(
-	    FileIO::readMeshFromFile(mesh_in.getValue()));
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %u nodes, %u elements.", surface_mesh->getNNodes(),
 	     surface_mesh->getNElements());
 	// ToDo check if mesh is read correct and if the mesh is a surface mesh

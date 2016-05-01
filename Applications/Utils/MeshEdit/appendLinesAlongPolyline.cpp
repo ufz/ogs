@@ -75,7 +75,7 @@ int main (int argc, char* argv[])
 	}
 
 	// read a mesh
-	MeshLib::Mesh const*const mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	if (!mesh)
 	{
 		ERR("Mesh file %s not found", mesh_in.getValue().c_str());
@@ -89,7 +89,7 @@ int main (int argc, char* argv[])
 	INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 
 	// write into a file
-	FileIO::Legacy::MeshIO meshIO;
+	MeshLib::IO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(new_mesh.get());
 	meshIO.writeToFile(mesh_out.getValue());
 

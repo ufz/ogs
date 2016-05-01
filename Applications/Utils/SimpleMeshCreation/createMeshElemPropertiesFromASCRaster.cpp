@@ -124,7 +124,7 @@ int main (int argc, char* argv[])
 	cmd.parse( argc, argv );
 
 	// read mesh
-	std::unique_ptr<MeshLib::Mesh> dest_mesh(FileIO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> dest_mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 
 	// read raster and if required manipulate it
 	auto raster = std::unique_ptr<GeoLib::Raster>(
@@ -242,7 +242,7 @@ int main (int argc, char* argv[])
 			(*materialIds)[dest_mesh->getElement(dest_perm[k])->getID()] = k;
 		}
 
-		FileIO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
+		MeshLib::IO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
 	}
 
 	return 0;

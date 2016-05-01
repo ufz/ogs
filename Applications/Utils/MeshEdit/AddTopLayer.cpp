@@ -52,7 +52,7 @@ int main (int argc, char* argv[])
 
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
 	auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
-	    FileIO::readMeshFromFile(mesh_arg.getValue()));
+	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	if (!subsfc_mesh) {
 		ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
 		return EXIT_FAILURE;
@@ -67,7 +67,7 @@ int main (int argc, char* argv[])
 	}
 
 	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
-	FileIO::writeMeshToFile(*result, mesh_out_arg.getValue());
+	MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
 	INFO("done.");
 
 	return EXIT_SUCCESS;

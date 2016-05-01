@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
+	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
 
 	MeshLib::Node displacement(0.0, 0.0, 0.0);
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()

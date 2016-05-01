@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 #endif
 	BaseLib::RunTime run_time;
 	run_time.start();
-	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
+	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 //	std::cout << "mem for mesh: " << (mem_with_mesh - mem_without_mesh)/(1024*1024) << " MB" << std::endl;

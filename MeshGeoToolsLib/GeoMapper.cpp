@@ -70,7 +70,7 @@ void GeoMapper::mapOnDEM(const std::string &file_name)
 
 void GeoMapper::mapOnMesh(const std::string &file_name)
 {
-	MeshLib::Mesh *mesh (FileIO::readMeshFromFile(file_name));
+	MeshLib::Mesh *mesh (MeshLib::IO::readMeshFromFile(file_name));
 	mapOnMesh(mesh);
 	delete mesh;
 }

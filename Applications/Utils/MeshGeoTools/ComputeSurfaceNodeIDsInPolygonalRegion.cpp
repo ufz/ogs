@@ -87,7 +87,7 @@ int main (int argc, char* argv[])
 
 	cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh const> mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
 
 	GeoLib::GEOObjects geo_objs;

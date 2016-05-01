@@ -87,7 +87,7 @@ int main (int argc, char* argv[])
 	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
 	INFO("Writing %s.", ogs_mesh_fname.c_str());
-	FileIO::writeMeshToFile(*mesh, ogs_mesh_fname);
+	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
 
 	INFO("\tDone.");
 

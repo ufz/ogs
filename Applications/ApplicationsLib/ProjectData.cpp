@@ -65,7 +65,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 			project_config.getConfParam<std::string>("mesh"), project_directory
 		);
 
-	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
+	MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
 	if (!mesh) {
 		ERR("Could not read mesh from \'%s\' file. No mesh added.",
 			mesh_file.c_str());

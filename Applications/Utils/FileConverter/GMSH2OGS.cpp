@@ -113,7 +113,7 @@ int main (int argc, char* argv[])
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
 	if (BaseLib::getFileExtension(ogs_mesh_fname).compare("msh") == 0) {
 		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		FileIO::Legacy::MeshIO mesh_io;
+		MeshLib::IO::Legacy::MeshIO mesh_io;
 		mesh_io.setMesh(mesh);
 		mesh_io.writeToFile(ogs_mesh_fname);
 	} else {

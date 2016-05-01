@@ -220,7 +220,7 @@ int main (int argc, char* argv[])
 		INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 		// write into a file
-		FileIO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
+		MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
 	}
 
 	return 0;
