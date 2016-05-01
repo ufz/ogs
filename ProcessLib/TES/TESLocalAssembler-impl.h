@@ -19,6 +19,81 @@
 #include "TESLocalAssembler.h"
 #include "TESReactionAdaptor.h"
 
+namespace
+{
+enum class MatOutType { OGS5, PYTHON };
+
+const MatOutType MATRIX_OUTPUT_FORMAT = MatOutType::PYTHON;
+
+template<typename Mat>
+void
+ogs5OutMat(const Mat& mat)
+{
+    for (unsigned r=0; r<mat.rows(); ++r)
+    {
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            if (r!=0) std::printf("\n");
+            std::printf("|");
+            break;
+        case MatOutType::PYTHON:
+            if (r!=0) std::printf(",\n");
+            std::printf("[");
+            break;
+        }
+
+        for (unsigned c=0; c<mat.cols(); ++c)
+        {
+            switch (MATRIX_OUTPUT_FORMAT)
+            {
+            case MatOutType::OGS5:
+                std::printf(" %.16e", mat(r, c));
+                break;
+            case MatOutType::PYTHON:
+                if (c!=0) std::printf(",");
+                std::printf(" %23.16g", mat(r, c));
+                break;
+            }
+
+        }
+
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            std::printf(" | ");
+            break;
+        case MatOutType::PYTHON:
+            std::printf(" ]");
+            break;
+        }
+    }
+    std::printf("\n");
+}
+
+template<typename Vec>
+void
+ogs5OutVec(const Vec& vec)
+{
+    for (unsigned r=0; r<vec.size(); ++r)
+    {
+        switch (MATRIX_OUTPUT_FORMAT)
+        {
+        case MatOutType::OGS5:
+            if (r!=0) std::printf("\n");
+            std::printf("| %.16e | ", vec[r]);
+            break;
+        case MatOutType::PYTHON:
+            if (r!=0) std::printf(",\n");
+            std::printf("[ %23.16g ]", vec[r]);
+            break;
+        }
+    }
+    std::printf("\n");
+}
+
+} // anonymous namespace
+
 namespace ProcessLib
 {
 
@@ -85,6 +160,42 @@ assemble(const double /*t*/, std::vector<double> const& local_x)
                                        sm.N, sm.dNdx, sm.J, sm.detJ, weight,
                                        _local_M, _local_K, _local_b);
     }
+
+
+
+#ifndef NDEBUG
+    // if (_d.ap._output_element_matrices)
+    if (_d.getAssemblyParameters().total_iteration == 2)
+    {
+        std::puts("### Element: ?");
+
+        std::puts("---Velocity of water");
+        for (auto const& vs : _d.getData().velocity)
+        {
+            std::printf("| ");
+            for (auto v : vs)
+            {
+                std::printf("%23.16e ", v);
+            }
+            std::printf("|\n");
+        }
+
+        std::printf("\n---Mass matrix: \n");
+        ogs5OutMat(_local_M);
+        std::printf("\n");
+
+        std::printf("---Laplacian + Advective + Content matrix: \n");
+        ogs5OutMat(_local_K);
+        std::printf("\n");
+
+        std::printf("---RHS: \n");
+        ogs5OutVec(_local_b);
+        std::printf("\n");
+    }
+#endif
+
+
+
 }
 
 

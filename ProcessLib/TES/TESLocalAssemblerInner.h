@@ -64,6 +64,9 @@ public:
     TESFEMReactionAdaptor& getReactionAdaptor() {
         return *_d.reaction_adaptor;
     }
+    TESLocalAssemblerData const& getData() const {
+        return _d;
+    }
 
 private:
     Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt);
