@@ -82,10 +82,10 @@ TESProcess(MeshLib::Mesh& mesh,
            SecondaryVariableCollection<GlobalVector>&& secondary_variables,
            ProcessOutput<GlobalVector>&& process_output,
            const BaseLib::ConfigTree& config)
-    : Process<GlobalSetup>{mesh, nonlinear_solver, std::move(time_discretization),
+    : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
                            std::move(process_variables),
                            std::move(secondary_variables),
-                           std::move(process_output)}
+                           std::move(process_output))
 {
     DBUG("Create TESProcess.");
 
