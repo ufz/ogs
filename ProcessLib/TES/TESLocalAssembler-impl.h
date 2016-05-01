@@ -114,17 +114,17 @@ TESLocalAssembler(MeshLib::Element const& e,
                   std::size_t const /*local_matrix_size*/,
                   unsigned const integration_order,
                   AssemblyParams const& asm_params)
-    : _shape_matrices{
+    : _shape_matrices(
           initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod_, GlobalDim>(
-              e, integration_order)}
-    , _d{asm_params,
+              e, integration_order))
+    , _d(asm_params,
          // TODO narrowing conversion
          static_cast<const unsigned>(_shape_matrices.front().N.rows()) /* number of integration points */,
-         GlobalDim}
-    , _local_M{ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF}
-    , _local_K{ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF}
-    , _local_b{ShapeFunction::NPOINTS * NODAL_DOF}
-    , _integration_order{integration_order}
+         GlobalDim)
+    , _local_M(ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF)
+    , _local_K(ShapeFunction::NPOINTS * NODAL_DOF, ShapeFunction::NPOINTS * NODAL_DOF)
+    , _local_b(ShapeFunction::NPOINTS * NODAL_DOF)
+    , _integration_order(integration_order)
 {
 }
 
