@@ -159,7 +159,7 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("output_iteration_results: %s", (*param) ? "true" : "false");
 
-        BP::_process_output.output_iteration_results = *param;
+        this->_process_output.output_iteration_results = *param;
     }
 
     // debug output
@@ -167,7 +167,7 @@ TESProcess(MeshLib::Mesh& mesh,
     {
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
 
-        BP::_process_output.output_global_matrix = *param;
+        this->_process_output.output_global_matrix = *param;
     }
 
     {
@@ -209,7 +209,7 @@ initializeConcreteProcess(
     // for extrapolation of secondary variables
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets_single_component;
     all_mesh_subsets_single_component.emplace_back(
-                new MeshLib::MeshSubsets(BP::_mesh_subset_all_nodes.get()));
+                new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes.get()));
     _local_to_global_index_map_single_component.reset(
                 new AssemblerLib::LocalToGlobalIndexMap(
                     std::move(all_mesh_subsets_single_component),
@@ -225,7 +225,7 @@ initializeConcreteProcess(
         std::string const& var_name, unsigned const n_components,
         SecondaryVariableFunctions<GlobalVector>&& fcts)
     {
-        BP::_secondary_variables.addSecondaryVariable(
+        this->_secondary_variables.addSecondaryVariable(
                     var_name, n_components, std::move(fcts));
     };
     auto makeEx = [&](TESIntPtVariables var) -> SecondaryVariableFunctions<GlobalVector>
@@ -303,7 +303,7 @@ TESProcess<GlobalSetup>::
 postIteration(GlobalVector const& x)
 {
     // TODO move to class Output
-    // if (BP::_process_output.output_iteration_results)
+    // if (this->_process_output.output_iteration_results)
 #ifndef NDEBUG
     {
         DBUG("output results of iteration %li", _assembly_params.total_iteration);
@@ -313,7 +313,7 @@ postIteration(GlobalVector const& x)
                          + "_" + std::to_string(_assembly_params.number_of_try_of_iteration)
                          + ".vtu";
 
-        BP::output(fn, 0, x);
+        this->output(fn, 0, x);
     }
 #endif
     // */
@@ -332,7 +332,7 @@ postIteration(GlobalVector const& x)
         = [&](std::size_t id, LocalAssembler& loc_asm)
         {
             auto const r_c_indices =
-                getRowColumnIndices_(id, *BP::_local_to_global_index_map, indices_cache);
+                getRowColumnIndices_(id, *this->_local_to_global_index_map, indices_cache);
             getVectorValues(x, r_c_indices, local_x_cache);
             getVectorValues(*_x_previous_timestep, r_c_indices, local_x_prev_ts_cache);
 
@@ -365,19 +365,19 @@ computeVapourPartialPressure(typename TESProcess::GlobalVector const& x,
                              AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                              std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == BP::_local_to_global_index_map.get());
+    assert(&dof_table == this->_local_to_global_index_map.get());
 
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
 
-    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNNodes();
 
     for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
         auto const p = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
         auto const x_mV = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -396,21 +396,21 @@ computeRelativeHumidity(typename TESProcess::GlobalVector const& x,
                         AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                         std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == BP::_local_to_global_index_map.get());
+    assert(&dof_table == this->_local_to_global_index_map.get());
 
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
 
-    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNNodes();
 
     for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
         auto const p = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
         auto const T = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
         auto const x_mV = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -432,21 +432,21 @@ computeEquilibriumLoading(typename TESProcess::GlobalVector const& x,
                           AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           std::unique_ptr<GlobalVector>& result_cache)
 {
-    assert(&dof_table == BP::_local_to_global_index_map.get());
+    assert(&dof_table == this->_local_to_global_index_map.get());
 
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         { 0, 0, nullptr, _local_to_global_index_map_single_component.get(), nullptr });
 
-    GlobalIndexType nnodes = BP::_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNNodes();
 
     for (GlobalIndexType node_id = 0; node_id<nnodes; ++node_id)
     {
         auto const p = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_PRESSURE);
         auto const T = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_TEMPERATURE);
         auto const x_mV = getNodalValue(
-            x, BP::_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
+            x, this->_mesh, dof_table, node_id, COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::get_molar_fraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
