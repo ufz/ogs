@@ -271,23 +271,6 @@ assembleConcreteProcess(
     GlobalSetup::executeMemberDereferenced(
                 *_global_assembler, &GlobalAssembler::assemble,
                 _local_assemblers, t, x, M, K, b);
-
-#if 0 // TODO fix
-#ifndef NDEBUG
-    if (assembly_parameters.total_iteration == 0)
-    {
-        MathLib::BLAS::finalizeAssembly(M);
-        MathLib::BLAS::finalizeAssembly(K);
-        MathLib::BLAS::finalizeAssembly(b);
-
-        // TODO [CL] Those files will be written to the working directory.
-        //           Relative path needed.
-        M.write("global_matrix_M.txt");
-        K.write("global_matrix_K.txt");
-        b.write("global_vector_b.txt");
-    }
-#endif
-#endif
 }
 
 template<typename GlobalSetup>
