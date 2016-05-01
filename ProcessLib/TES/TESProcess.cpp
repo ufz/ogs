@@ -217,8 +217,8 @@ initializeConcreteProcess(
                     AssemblerLib::ComponentOrder::BY_LOCATION)
                 );
 
-    _extrapolator.reset(new ExtrapolatorImplementation(
-        { 0u, 0u, nullptr, _local_to_global_index_map_single_component.get(), &mesh }));
+    _extrapolator.reset(new ExtrapolatorImplementation(MathLib::MatrixSpecifications(
+        0u, 0u, nullptr, _local_to_global_index_map_single_component.get(), &mesh)));
 
     // secondary variables
     auto add2nd = [&](
