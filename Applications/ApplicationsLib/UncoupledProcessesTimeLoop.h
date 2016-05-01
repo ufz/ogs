@@ -397,6 +397,9 @@ loop(ProjectData& project)
         t        = ts.current();
         timestep = ts.steps();
 
+        INFO("=== timestep #%u (t=%gs, dt=%gs) ==============================",
+             timestep, t, delta_t);
+
         // TODO use process name
         unsigned pcs_idx = 0;
         for (auto p = project.processesBegin(); p != project.processesEnd();
