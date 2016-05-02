@@ -21,9 +21,9 @@
 #include "OGSError.h"
 
 GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-    QDialog* parent)
-    : QDialog(parent), _new_geo_name("")
+	std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+	QDialog* parent)
+: QDialog(parent), _new_geo_name("")
 {
 	setupUi(this);
 

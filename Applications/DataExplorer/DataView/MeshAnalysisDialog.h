@@ -35,8 +35,8 @@ class MeshAnalysisDialog : public QDialog, private Ui_MeshAnalysis
 
 public:
 	MeshAnalysisDialog(
-	    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-	    QDialog* parent = nullptr);
+		std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+		QDialog* parent = nullptr);
 	~MeshAnalysisDialog(void);
 
 private:

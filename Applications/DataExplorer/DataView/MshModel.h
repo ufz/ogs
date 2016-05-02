@@ -40,12 +40,15 @@ class MshModel : public TreeModel
 public:
 	MshModel(DataHolderLib::Project &project, QObject* parent = 0);
 
+	/// Adds a new mesh
+	void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
+
 	/// Returns the number of columns used for the data list
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
 public slots:
-	/// Adds a new mesh
-	void addMesh(MeshLib::Mesh* mesh); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
+	/// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)
+	void addMesh(MeshLib::Mesh* mesh);
 	/// Returns the mesh with the given index.
 	const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
 	/// Returns the mesh with the given name.

@@ -24,9 +24,9 @@
 #include "logog/include/logog.hpp"
 
 MeshAnalysisDialog::MeshAnalysisDialog(
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-    QDialog* parent)
-    : QDialog(parent), _mesh_vec(mesh_vec)
+	std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+	QDialog* parent)
+: QDialog(parent), _mesh_vec(mesh_vec)
 {
 	setupUi(this);
 
@@ -49,23 +49,23 @@ MeshAnalysisDialog::~MeshAnalysisDialog()
 
 void MeshAnalysisDialog::on_startButton_pressed()
 {
-	const MeshLib::Mesh* mesh (_mesh_vec[this->meshListBox->currentIndex()].get());
+	MeshLib::Mesh const& mesh (*_mesh_vec[this->meshListBox->currentIndex()].get());
 
-	MeshLib::NodeSearch ns(*mesh);
+	MeshLib::NodeSearch ns(mesh);
 	ns.searchUnused();
 	const std::vector<std::size_t> unusedNodesIdx (ns.getSearchedNodeIDs());
-	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*mesh));
+	MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(mesh));
 	std::vector<std::size_t> const& collapsibleNodeIds (rev.collapseNodeIndices(
 		this->collapsibleNodesThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));
-	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh->getNNodes()) + ")");
+	this->nodesGroupBox->setTitle("Nodes (out of " + QString::number(mesh.getNNodes()) + ")");
 	this->nodesMsgOutput(unusedNodesIdx, collapsibleNodeIds);
 
 	const std::vector<ElementErrorCode> element_error_codes (MeshLib::MeshValidation::testElementGeometry(
-		*mesh, this->zeroVolumeThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));
-	this->elementsGroupBox->setTitle("Elements (out of " + QString::number(mesh->getNElements()) + ")");
+		mesh, this->zeroVolumeThreshold->text().toDouble() + std::numeric_limits<double>::epsilon()));
+	this->elementsGroupBox->setTitle("Elements (out of " + QString::number(mesh.getNElements()) + ")");
 	this->elementsMsgOutput(element_error_codes);
 
-	unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
+	unsigned const n_holes (MeshLib::MeshValidation::detectHoles(mesh));
 	if (n_holes>0)
 		this->meshHoleOutputLabel->setText("<strong>" + QString::number(n_holes) + " hole(s) found within the mesh</strong>");
 }

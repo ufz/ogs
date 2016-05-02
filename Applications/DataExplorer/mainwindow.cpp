@@ -262,9 +262,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	        SIGNAL(elementPicked(vtkUnstructuredGridAlgorithm const*const, const unsigned)),
 	        this->_vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
-	connect(vtkVisTabWidget->vtkVisPipelineView,
-	        SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
-	        SLOT(addMesh(MeshLib::Mesh*)));
+	connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 
 	// Stack the data dock widgets together
 	tabifyDockWidget(geoDock, mshDock);
@@ -498,13 +497,13 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			myTimer0.start();
 #endif
 			std::unique_ptr<MeshLib::Mesh> mesh(
-			    FileIO::readMeshFromFile(fileName.toStdString()));
+				FileIO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
 			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
 			myTimer1.start();
 #endif
 			if (mesh)
-				_meshModel->addMesh(mesh.release());
+				_meshModel->addMesh(std::move(mesh));
 			else
 				OGSError::box("Failed to load mesh file.");
 #ifndef NDEBUG
@@ -520,10 +519,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		if (fi.suffix().toLower() == "fem") // FEFLOW model files
 		{
 			FileIO::FEFLOWInterface feflowIO(&_project.getGEOObjects());
-			std::unique_ptr<MeshLib::Mesh> msh(
-			    feflowIO.readFEFLOWFile(fileName.toStdString()));
-			if (msh)
-				_meshModel->addMesh(msh.release());
+			std::unique_ptr<MeshLib::Mesh> mesh(
+				feflowIO.readFEFLOWFile(fileName.toStdString()));
+			if (mesh)
+				_meshModel->addMesh(std::move(mesh));
 			else
 				OGSError::box("Failed to load a FEFLOW mesh.");
 		}
@@ -538,10 +537,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			    new std::vector<GeoLib::Point*>());
 			std::string name = fi.baseName().toStdString();
 
-			if (GMSInterface::readBoreholesFromGMS(boreholes.get(),
-			                                       fileName.toStdString()))
-				_project.getGEOObjects().addStationVec(std::move(boreholes),
-				                                        name);
+			if (GMSInterface::readBoreholesFromGMS(boreholes.get(), fileName.toStdString()))
+				_project.getGEOObjects().addStationVec(std::move(boreholes), name);
 			else
 				OGSError::box("Error reading GMS file.");
 		}
@@ -550,7 +547,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			std::string name = fileName.toStdString();
 			std::unique_ptr<MeshLib::Mesh> mesh(GMSInterface::readGMS3DMMesh(name));
 			if (mesh)
-				_meshModel->addMesh(mesh.release());
+				_meshModel->addMesh(std::move(mesh));
+			else
+				OGSError::box("Failed to load a GMS mesh.");
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -561,7 +560,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::unique_ptr<MeshLib::Mesh> mesh(FileIO::GMSHInterface::readGMSHMesh(msh_name));
 			if (mesh)
-				_meshModel->addMesh(mesh.release());
+				_meshModel->addMesh(std::move(mesh));
+			else
+				OGSError::box("Failed to load a GMSH mesh.");
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -574,7 +575,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::unique_ptr<MeshLib::Mesh> mesh(dlg.getMesh());
 			mesh->setName(dlg.getName());
-			_meshModel->addMesh(mesh.release());
+			_meshModel->addMesh(std::move(mesh));
 		}
 		if (dlg.getRaster())
 			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
@@ -629,7 +630,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 				std::unique_ptr<MeshLib::Mesh> mesh(tetgen.readTetGenMesh(
 				    fileName.toStdString(), element_fname.toStdString()));
 				if (mesh)
-					_meshModel->addMesh(mesh.release());
+					_meshModel->addMesh(std::move(mesh));
 				else
 					OGSError::box("Failed to load a TetGen mesh.");
 			}
@@ -837,7 +838,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 			mesh = FileIO::readMeshFromFile(file_name.toStdString());
 		else
 		{
-			OGSError::box("The selected file isn't a supported mesh file.");
+			OGSError::box("The selected file is no supported mesh file.");
 			return;
 		}
 	}
@@ -998,16 +999,16 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
 void MainWindow::showCreateStructuredGridDialog()
 {
 	CreateStructuredGridDialog dlg;
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
-	        SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
 void MainWindow::showMeshElementRemovalDialog()
 {
 	MeshElementRemovalDialog dlg(this->_project);
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
-	        SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
