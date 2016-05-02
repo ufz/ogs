@@ -63,11 +63,8 @@ target_link_libraries(FileIO
 )
 if(QT4_FOUND)
 	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
-	if(WIN32 AND CMAKE_CROSSCOMPILING)
-		find_package(OpenSSL)
-		if(OPENSSL_FOUND)
-			target_link_libraries(FileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
-		endif()
+	if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
+		target_link_libraries(FileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
 	endif()
 endif()
 
