@@ -9,12 +9,6 @@
 
 #include "Process.h"
 
-#include <algorithm>
-
-#include <logog/include/logog.hpp>
-
-#include "ProcessVariable.h"
-
 namespace ProcessLib
 {
 ProcessVariable& findProcessVariable(

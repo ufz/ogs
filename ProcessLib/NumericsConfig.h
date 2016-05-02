@@ -16,7 +16,7 @@
  * This file provides a configuration of the global matrix/vector and
  * corresponding linear solver, and the global executer types.
  * The configuration is collected in the GlobalSetupType being a particular
- * instantiation of the AssemblerLib::GlobalSetup template.
+ * instantiation of the ProcessLib::GlobalSetup template.
  * The existence of the GlobalSetupType is checked at the end of the file.
  */
 
@@ -117,9 +117,9 @@ using GlobalExecutorType = AssemblerLib::SerialExecutor;
 ///
 /// Global setup collects the previous configuration in single place.
 ///
-#include "AssemblerLib/GlobalSetup.h"
+#include "GlobalSetup.h"
 using GlobalSetupType =
-    AssemblerLib::GlobalSetup<
+    ProcessLib::GlobalSetup<
         detail::GlobalVectorMatrixBuilderType,
         detail::GlobalExecutorType,
         detail::LinearSolverType>;

@@ -14,7 +14,7 @@
 
 #include "AssemblerLib/VectorMatrixAssembler.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/ProcessUtil.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 #include "GroundwaterFlowFEM.h"
 #include "GroundwaterFlowProcessData.h"

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef ASSEMBLER_LIB_LOCALDATAINITIALIZER_H_
-#define ASSEMBLER_LIB_LOCALDATAINITIALIZER_H_
+#ifndef PROCESS_LIB_LOCALDATAINITIALIVER_H_
+#define PROCESS_LIB_LOCALDATAINITIALIVER_H_
 
 #include <functional>
 #include <memory>
@@ -16,9 +16,9 @@
 #include <typeinfo>
 #include <unordered_map>
 
+#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
-#include "LocalToGlobalIndexMap.h"
 
 
 #ifndef OGS_MAX_ELEMENT_DIM
@@ -112,7 +112,7 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #endif
 
-namespace AssemblerLib
+namespace ProcessLib
 {
 
 /// The LocalDataInitializer is a functor creating a local assembler data with
@@ -132,7 +132,8 @@ class LocalDataInitializer final
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
-    explicit LocalDataInitializer(LocalToGlobalIndexMap const& dof_table)
+    explicit LocalDataInitializer(
+        AssemblerLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
         // /// Lines and points ///////////////////////////////////
@@ -307,10 +308,10 @@ private:
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;
 
-    LocalToGlobalIndexMap const& _dof_table;
+    AssemblerLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
-}   // namespace AssemblerLib
+}   // namespace ProcessLib
 
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
@@ -322,4 +323,4 @@ private:
 #undef ENABLED_ELEMENT_TYPE_QUAD
 #undef OGS_ENABLED_ELEMENTS
 
-#endif  // ASSEMBLER_LIB_LOCALDATAINITIALIZER_H_
+#endif  // PROCESS_LIB_LOCALDATAINITIALIVER_H_

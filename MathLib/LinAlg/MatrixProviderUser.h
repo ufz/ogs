@@ -12,7 +12,10 @@
 
 #include <cstddef>
 
-#include "AssemblerLib/ComputeSparsityPattern.h"
+#include "SparsityPattern.h"
+
+namespace AssemblerLib { class LocalToGlobalIndexMap; }
+namespace MeshLib { class Mesh; }
 
 namespace MathLib
 {
@@ -20,7 +23,7 @@ namespace MathLib
 struct MatrixSpecifications
 {
     MatrixSpecifications(std::size_t const nrows_, std::size_t const ncols_,
-                         AssemblerLib::SparsityPattern const*const sparsity_pattern_,
+                         SparsityPattern const*const sparsity_pattern_,
                          AssemblerLib::LocalToGlobalIndexMap const*const dof_table_,
                          MeshLib::Mesh const*const mesh_)
         : nrows(nrows_), ncols(ncols_), sparsity_pattern(sparsity_pattern_)
@@ -29,7 +32,7 @@ struct MatrixSpecifications
 
     std::size_t const nrows;
     std::size_t const ncols;
-    AssemblerLib::SparsityPattern const*const sparsity_pattern;
+    SparsityPattern const*const sparsity_pattern;
     AssemblerLib::LocalToGlobalIndexMap const*const dof_table;
     MeshLib::Mesh const*const mesh;
 };

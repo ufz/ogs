@@ -10,34 +10,14 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
-#include <memory>
-#include <string>
-
-#include <logog/include/logog.hpp>
-
 #include "AssemblerLib/ComputeSparsityPattern.h"
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
-#include "BaseLib/ConfigTree.h"
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshLib/MeshSubset.h"
-#include "MeshLib/MeshSubsets.h"
-
-#include "DirichletBc.h"
-#include "NeumannBc.h"
-#include "NeumannBcAssembler.h"
-#include "Parameter.h"
-#include "ProcessVariable.h"
-#include "UniformDirichletBoundaryCondition.h"
-
-#include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
+#include "NumLib/ODESolver/NonlinearSolver.h"
 
-namespace MeshLib
-{
-class Mesh;
-}
+#include "Parameter.h"
+#include "ProcessVariable.h"
 
 namespace ProcessLib
 {
@@ -351,7 +331,7 @@ private:
 	std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
 	    _local_to_global_index_map;
 
-	AssemblerLib::SparsityPattern _sparsity_pattern;
+	MathLib::SparsityPattern _sparsity_pattern;
 
 	std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
 	std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;

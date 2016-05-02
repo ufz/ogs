@@ -10,7 +10,6 @@
 #include <random>
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/BLAS.h"
@@ -26,7 +25,9 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "ProcessLib/NumericsConfig.h"
-#include "ProcessLib/ProcessUtil.h"
+#include "ProcessLib/Utils/LocalDataInitializer.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 
 namespace
@@ -233,7 +234,7 @@ private:
     template<unsigned GlobalDim>
     void createLocalAssemblers(MeshLib::Mesh const& mesh)
     {
-        using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
+        using LocalDataInitializer = ProcessLib::LocalDataInitializer<
             LocalAssembler, LocalAssemblerData,
             GlobalMatrix, GlobalVector, GlobalDim>;
 

@@ -6,14 +6,15 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef PROCESSLIB_PROCESSUTIL_H
-#define PROCESSLIB_PROCESSUTIL_H
+#ifndef PROCESSLIB_UTILS_CREATE_LOCAL_ASSEMBLERS_H_
+#define PROCESSLIB_UTILS_CREATE_LOCAL_ASSEMBLERS_H_
 
 #include <vector>
 #include <logog/include/logog.hpp>
 
-#include "AssemblerLib/LocalDataInitializer.h"
 #include "AssemblerLib/LocalToGlobalIndexMap.h"
+
+#include "LocalDataInitializer.h"
 
 
 namespace ProcessLib
@@ -36,7 +37,7 @@ void createLocalAssemblers(
         )
 {
     // Shape matrices initializer
-    using LocalDataInitializer = AssemblerLib::LocalDataInitializer<
+    using LocalDataInitializer = LocalDataInitializer<
         LocalAssemblerInterface,
         LocalAssemblerImplementation,
         typename GlobalSetup::MatrixType,
@@ -61,33 +62,6 @@ void createLocalAssemblers(
 
 } // namespace detail
 
-
-template<typename ShapeFunction, typename ShapeMatricesType, typename IntegrationMethod,
-         unsigned GlobalDim>
-std::vector<typename ShapeMatricesType::ShapeMatrices>
-initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
-{
-    std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
-
-    using FemType = NumLib::TemplateIsoparametric<
-        ShapeFunction, ShapeMatricesType>;
-
-    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
-
-    IntegrationMethod integration_method(integration_order);
-    std::size_t const n_integration_points = integration_method.getNPoints();
-
-    shape_matrices.reserve(n_integration_points);
-    for (std::size_t ip = 0; ip < n_integration_points; ++ip) {
-        shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                     ShapeFunction::NPOINTS);
-        fe.computeShapeFunctions(
-                integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip]);
-    }
-
-    return shape_matrices;
-}
 
 /*! Creates local assemblers for each element of the given \c mesh.
  *
@@ -149,4 +123,4 @@ void createLocalAssemblers(
 } // ProcessLib
 
 
-#endif // PROCESSLIB_PROCESSUTIL_H
+#endif // PROCESSLIB_UTILS_CREATE_LOCAL_ASSEMBLERS_H_
