@@ -1,4 +1,4 @@
-defaultDockerArgs = '-v /home/core/.ccache:/usr/src/.ccache'
+defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 
 node('docker')
 {
