@@ -30,7 +30,8 @@ public:
 
     ~LineSegment();
 
-    LineSegment& operator= (LineSegment const& rhs) = delete;
+    LineSegment& operator=(LineSegment const& rhs);
+    LineSegment& operator=(LineSegment&& rhs);
 
     GeoLib::Point const& getBeginPoint() const;
     GeoLib::Point & getBeginPoint();
