@@ -45,7 +45,7 @@ namespace IO
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 {
 #ifdef USE_PETSC
-	NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
+	FileIO::NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
 	const std::string file_name_base = BaseLib::dropFileExtension(file_name);
 	return read_pmesh.read(file_name_base);
 #else
