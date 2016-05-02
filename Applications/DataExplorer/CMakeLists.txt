@@ -1,3 +1,7 @@
+if(MSVC)
+	add_definitions(-DVTKGUISUPPORTQT_STATIC_DEFINE)
+endif()
+
 if(VTKFBXCONVERTER_FOUND)
 	add_definitions(-DVTKFBXCONVERTER_FOUND)
 	include_directories(${VTKFBXCONVERTER_INCLUDE_DIRS})

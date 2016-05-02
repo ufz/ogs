@@ -16,8 +16,6 @@ set_target_properties(test-logog PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 add_subdirectory(gtest)
 
-add_subdirectory(shape)
-
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 
@@ -47,4 +45,13 @@ endif()
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vtkdiff/CMakeLists.txt)
 	add_subdirectory(vtkdiff)
 	install (PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
+endif()
+
+if(NOT TARGET vtkGUISupportQt AND OGS_BUILD_GUI)
+	if(QT4_FOUND)
+		set(VTK_QT_VERSION 4 CACHE INTERNAL "")
+	else()
+		set(VTK_QT_VERSION 5 CACHE INTERNAL "")
+	endif()
+	add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 endif()

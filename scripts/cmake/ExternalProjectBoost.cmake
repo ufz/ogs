@@ -1,3 +1,10 @@
+if(USE_CONAN)
+	SET(BOOST_HEADER_ONLY TRUE)
+	find_package(Boost REQUIRED)
+	include_directories(SYSTEM ${CONAN_INCLUDE_DIRS_BOOST})
+	link_directories(${Boost_LIBRARY_DIR})
+	return()
+endif()
 include(ThirdPartyLibVersions)
 include(ExternalProject)
 

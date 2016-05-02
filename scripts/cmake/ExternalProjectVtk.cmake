@@ -1,3 +1,9 @@
+if(USE_CONAN)
+	find_package(VTK REQUIRED)
+	include(${VTK_USE_FILE})
+	include_directories(SYSTEM ${CONAN_INCLUDE_DIRS_VTK})
+	return()
+endif()
 include(ThirdPartyLibVersions)
 include(ExternalProject)
 

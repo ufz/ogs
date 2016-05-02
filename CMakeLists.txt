@@ -26,6 +26,7 @@ set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, defaults
 option(OGS_BUILD_TESTS "Should the test executables be built?" ON)
 
 ### CMake includes ###
+include(scripts/cmake/ConanSetup.cmake)
 include(scripts/cmake/CheckTypeSizes.cmake)
 include(scripts/cmake/Functions.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
@@ -185,6 +186,7 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/gtest/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include )
 include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include )
+include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 
 add_subdirectory( Applications )
 add_subdirectory( AssemblerLib )

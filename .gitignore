@@ -10,3 +10,7 @@ tags
 .idea/tasks.xml
 .idea/dictionaries
 .idea/modules.xml
+
+# Conan package manager
+conanbuildinfo.cmake
+conaninfo.txt

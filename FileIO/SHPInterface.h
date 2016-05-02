@@ -22,7 +22,7 @@
 #include <vector>
 
 //ShapeLib includes
-#include "shape/shapefil.h"
+#include <shapefil.h>
 
 
 namespace GeoLib {

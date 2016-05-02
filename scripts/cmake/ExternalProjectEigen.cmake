@@ -1,3 +1,9 @@
+if(USE_CONAN)
+	find_package(Eigen3 REQUIRED)
+	include_directories(SYSTEM ${CONAN_INCLUDE_DIRS_EIGEN3})
+	return()
+endif()
+
 if(OGS_LIB_EIGEN STREQUAL "System")
 	find_package(Eigen3 3.2.5 REQUIRED)
 	if(NOT EIGEN3_FOUND)
