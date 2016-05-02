@@ -1,4 +1,4 @@
-defaultDockerArgs = '-v /home/core/.ccache:/usr/src/.ccache'
+defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
 node('docker')
