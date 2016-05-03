@@ -1,5 +1,11 @@
-//file NetCDFConfigureDialog.cpp
-//CH Initial implementation
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.net)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
 
 #ifndef NETCDFCONFIGUREDIALOG_H
 #define NETCDFCONFIGUREDIALOG_H
@@ -16,7 +22,12 @@ namespace MeshLib {
 class VtkGeoImageSource;
 
 /**
- * \brief The dialog which presents the user options to load NetCDF-files.
+ * \brief The dialog for converting data from NetCDF-files into OGS data structures.
+ * While NetCDF files can include data ranging from dimensionality 0 (scalars) to 4
+ * (e.g. 3d arrays over time), only arrays of dimensionality 2 or higher can be
+ * imported as this is the minimum requirement for a meaningful conversion into
+ * raster- or mesh-data-objects. Scalars or vector-variables are not selectable from
+ * the selection menu.
  */
 class NetCdfConfigureDialog : public QDialog, private Ui_NetCdfConfigure
 {
@@ -40,13 +51,14 @@ private slots:
 	void on_radioMesh_toggled(bool isTrue);
 
 private:
-	void setVariableSelect();
+	/// Fills the combobox with all applicable variables and
+	/// returns the index of the first variable with the highest dimension.
+	int setVariableSelect();
 	void setDimensionSelect();
 	void getDimEdges(int dimId, unsigned &size, double &firstValue, double &lastValue);
 	void getDaysTime(double minSince, QTime &time, int &days);
 	long convertDateToMinutes(QDateTime initialDateTime,QDate selectedDate, QTime selectedTime);
 	void createDataObject();
-	int valueWithMaxDim();
 	int getTimeStep();
 	int getDim4() const;
 	double getResolution();
@@ -59,6 +71,7 @@ private:
 	MeshLib::Mesh* _currentMesh;
 	VtkGeoImageSource* _currentRaster;
 	std::string _currentPath;
+	std::vector<int> _id_map;
 };
 
 #endif //NETCDFCONFIGUREDIALOG_H
