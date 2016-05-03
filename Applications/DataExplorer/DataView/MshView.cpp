@@ -183,7 +183,7 @@ void MshView::openMap2dMeshDialog()
 	}
 	else
 		MeshLib::MeshLayerMapper::mapToStaticValue(*result, dlg.getStaticValue());
-	static_cast<MshModel*>(this->model())->addMesh(result.release());
+	static_cast<MshModel*>(this->model())->addMesh(std::move(result));
 
 }
 
@@ -226,11 +226,11 @@ void MshView::openAddLayerDialog()
 		return;
 
 	double const thickness (dlg.getThickness());
-	MeshLib::Mesh* result =
-		MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(), dlg.isTopLayer());
+	std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
+		*mesh, thickness, dlg.getName(), dlg.isTopLayer()));
 
-	if (result != nullptr)
-		static_cast<MshModel*>(this->model())->addMesh(result);
+	if (result)
+		static_cast<MshModel*>(model())->addMesh(std::move(result));
 	else
 		OGSError::box("Error adding layer to mesh.");
 }
@@ -248,9 +248,10 @@ void MshView::extractSurfaceMesh()
 
 	MathLib::Vector3 const& dir (dlg.getNormal());
 	int const tolerance (dlg.getTolerance());
-	MeshLib::Mesh* sfc_mesh (MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
-	if (sfc_mesh != nullptr)
-		static_cast<MshModel*>(this->model())->addMesh(sfc_mesh);
+	std::unique_ptr<MeshLib::Mesh> sfc_mesh(
+	    MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
+	if (sfc_mesh)
+		static_cast<MshModel*>(model())->addMesh(std::move(sfc_mesh));
 	else
 		OGSError::box(" No surfaces found to extract\n using the specified parameters.");
 }
@@ -323,8 +324,8 @@ void MshView::writeToFile() const
 
 void MshView::addDIRECTSourceTerms()
 {
-	QModelIndex const index = this->selectionModel()->currentIndex();
-	MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
+	//QModelIndex const index = this->selectionModel()->currentIndex();
+	//MeshLib::Mesh const*const grid = static_cast<MshModel*>(this->model())->getMesh(index);
 }
 
 void MshView::loadDIRECTSourceTerms()

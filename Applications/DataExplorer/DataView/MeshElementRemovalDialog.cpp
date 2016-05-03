@@ -26,12 +26,12 @@
 #include <QListWidgetItem>
 
 /// Constructor
-MeshElementRemovalDialog::MeshElementRemovalDialog(const ProjectData &project, QDialog* parent)
+MeshElementRemovalDialog::MeshElementRemovalDialog(DataHolderLib::Project const& project, QDialog* parent)
 	: QDialog(parent), _project(project), _currentIndex(0), _aabbIndex(std::numeric_limits<unsigned>::max()), _matIDIndex(std::numeric_limits<unsigned>::max())
 {
 	setupUi(this);
 
-	const std::vector<MeshLib::Mesh*> mesh_vec (_project.getMeshObjects());
+	auto const& mesh_vec(_project.getMeshObjects());
 
 	const std::size_t nMeshes (mesh_vec.size());
 	for (std::size_t i=0; i<nMeshes; ++i)

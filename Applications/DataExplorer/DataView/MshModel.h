@@ -17,8 +17,10 @@
 
 // ** INCLUDES **
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "Applications/ApplicationsLib/ProjectData.h"
+#include "DataHolderLib/Project.h"
 #endif
+
+#include "MeshLib/MeshEnums.h"
 
 #include "TreeModel.h"
 
@@ -36,14 +38,17 @@ class MshModel : public TreeModel
 	Q_OBJECT
 
 public:
-	MshModel(ProjectData &project, QObject* parent = 0);
+	MshModel(DataHolderLib::Project &project, QObject* parent = 0);
+
+	/// Adds a new mesh
+	void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
 
 	/// Returns the number of columns used for the data list
 	int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
 public slots:
-	/// Adds a new mesh
-	void addMesh(MeshLib::Mesh* mesh); // needs only to be a slot for MshLayerMapper. Otherwise normal function would be okay.
+	/// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)
+	void addMesh(MeshLib::Mesh* mesh);
 	/// Returns the mesh with the given index.
 	const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
 	/// Returns the mesh with the given name.
@@ -67,7 +72,7 @@ private:
 
 	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
 	//bool isUniqueMeshName(std::string &name);
-	ProjectData& _project;
+	DataHolderLib::Project& _project;
 
 	/// Creates a static map of all element type name-strings in QVariant format
 	static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();

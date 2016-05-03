@@ -30,12 +30,11 @@
 // MeshLib
 #include "MeshLib/Node.h"
 #include "Elements/Element.h"
-#include "MeshEnums.h"
 
 const QVariant MshModel::element_str = "Element";
 const std::map<MeshLib::MeshElemType, QVariant> MshModel::elem_type_map = MshModel::createMeshElemTypeMap();
 
-MshModel::MshModel(ProjectData &project, QObject* parent /*= 0*/ )
+MshModel::MshModel(DataHolderLib::Project &project, QObject* parent /*= 0*/ )
 	: TreeModel(parent), _project(project)
 {
 	delete _rootItem;
@@ -51,10 +50,18 @@ int MshModel::columnCount( const QModelIndex &parent /*= QModelIndex()*/ ) const
 	return 3;
 }
 
+void MshModel::addMesh(std::unique_ptr<MeshLib::Mesh> mesh)
+{
+	_project.addMesh(std::move(mesh));
+	auto const& meshes(_project.getMeshObjects());
+	this->addMeshObject(meshes.back().get());
+}
+
 void MshModel::addMesh(MeshLib::Mesh* mesh)
 {
-	_project.addMesh(mesh);
-	this->addMeshObject(mesh);
+	_project.addMesh(std::unique_ptr<MeshLib::Mesh>(mesh));
+	auto const& meshes(_project.getMeshObjects());
+	this->addMeshObject(meshes.back().get());
 }
 
 void MshModel::addMeshObject(const MeshLib::Mesh* mesh)
@@ -154,10 +161,10 @@ void MshModel::updateMesh(MeshLib::Mesh* mesh)
 
 void MshModel::updateModel()
 {
-	const std::vector<MeshLib::Mesh*> msh_vec = _project.getMeshObjects();
-	for (std::vector<MeshLib::Mesh*>::const_iterator it(msh_vec.begin()); it != msh_vec.end(); ++it)
-		if (!this->getMesh((*it)->getName())) // if Mesh is not yet added to GUI, do it now
-			addMeshObject(*it);
+	auto const& mesh_vec = _project.getMeshObjects();
+	for (auto const& mesh : mesh_vec)
+		if (!getMesh(mesh->getName())) // if Mesh is not yet added to GUI, do it now
+			addMeshObject(mesh.get());
 }
 
 std::map<MeshLib::MeshElemType, QVariant> MshModel::createMeshElemTypeMap()

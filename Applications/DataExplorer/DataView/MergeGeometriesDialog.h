@@ -33,7 +33,7 @@ class MergeGeometriesDialog : public QDialog, private Ui_MergeGeometries
 	Q_OBJECT
 
 public:
-	MergeGeometriesDialog(GeoLib::GEOObjects* geoObjects, QDialog* parent = 0);
+	MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent = 0);
 	~MergeGeometriesDialog(void);
 
 	/// Returns a vector of selected geometries
@@ -43,7 +43,7 @@ public:
 	std::string getGeometryName() const;
 
 private:
-	GeoLib::GEOObjects* _geo_objects;
+	GeoLib::GEOObjects& _geo_objects;
 	QStringListModel* _allGeo;
 	QStringListModel* _selGeo;
 

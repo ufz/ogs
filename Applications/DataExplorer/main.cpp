@@ -14,6 +14,8 @@ FbxManager* lSdkManager = NULL;
 FbxScene* lScene = NULL;
 #endif
 
+#include <vtkSmartPointer.h>
+
 #include "BaseLib/BuildInfo.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
 

@@ -42,7 +42,7 @@ class SHPImportDialog : public QDialog
 
 public:
 	/// Constructor
-	SHPImportDialog(std::string filename, GeoLib::GEOObjects* geo_objects,
+	SHPImportDialog(std::string filename, GeoLib::GEOObjects& geo_objects,
 	                QDialog* parent = nullptr);
 	~SHPImportDialog();
 

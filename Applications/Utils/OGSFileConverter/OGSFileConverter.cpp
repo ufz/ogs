@@ -94,7 +94,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 		std::string unique_name;
 		std::vector<std::string> errors;
 
-		FileIO::Legacy::readGLIFileV4(it->toStdString(), &geo_objects, unique_name, errors);
+		FileIO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
 		if (errors.empty() || (errors.size()==1 && errors[0].compare("[readSurface] polyline for surface not found!")==0))
 		{
 			std::string const geo_name = BaseLib::extractBaseName(it->toStdString());

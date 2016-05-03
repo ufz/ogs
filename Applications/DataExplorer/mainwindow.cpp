@@ -115,7 +115,7 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
 	_elementModel.reset(new ElementTreeModel());
 	_processModel.reset(new TreeModel());
 
-	_geo_model.reset(new GEOModels{*_project.getGEOObjects()});
+	_geo_model.reset(new GEOModels{_project.getGEOObjects()});
 	geoTabWidget->treeView->setModel(_geo_model->getGeoModel());
 	stationTabWidget->treeView->setModel(_geo_model->getStationModel());
 	mshTabWidget->treeView->setModel(_meshModel.get());
@@ -420,18 +420,13 @@ void MainWindow::save()
 
 	if (fi.suffix().toLower() == "gsp")
 	{
-		XmlGspInterface xml(*_project.getGEOObjects(),
-		                    _project.getMeshObjects(),
-		                    [this](MeshLib::Mesh* const mesh)
-		                    {
-			                    _project.addMesh(mesh);
-		                    });
+		XmlGspInterface xml(_project);
 		xml.writeToFile(fileName.toStdString());
 	}
 	else if (fi.suffix().toLower() == "geo")
 	{
 		int const return_val =
-			FileIO::GMSHInterface::writeGeoFile(*_project.getGEOObjects(), fileName.toStdString());
+			FileIO::GMSHInterface::writeGeoFile(_project.getGEOObjects(), fileName.toStdString());
 
 		if (return_val == 1)
 			OGSError::box(" No geometry available\n to write to geo-file");
@@ -472,12 +467,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gsp")
 		{
-			XmlGspInterface xml(*_project.getGEOObjects(),
-			                    _project.getMeshObjects(),
-			                    [this](MeshLib::Mesh* const mesh)
-			                    {
-				                    _project.addMesh(mesh);
-			                    });
+			XmlGspInterface xml(_project);
 			if (xml.readFile(fileName))
 			{
 				_meshModel->updateModel();
@@ -487,14 +477,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
-			XmlGmlInterface xml(*(_project.getGEOObjects()));
+			XmlGmlInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
-			XmlStnInterface xml(*(_project.getGEOObjects()));
+			XmlStnInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
@@ -506,13 +496,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			QTime myTimer0, myTimer1;
 			myTimer0.start();
 #endif
-			MeshLib::Mesh* mesh (FileIO::readMeshFromFile(fileName.toStdString()));
+			std::unique_ptr<MeshLib::Mesh> mesh(
+				FileIO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
 			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
 			myTimer1.start();
 #endif
 			if (mesh)
-				_meshModel->addMesh(mesh);
+				_meshModel->addMesh(std::move(mesh));
 			else
 				OGSError::box("Failed to load mesh file.");
 #ifndef NDEBUG
@@ -527,10 +518,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 	{
 		if (fi.suffix().toLower() == "fem") // FEFLOW model files
 		{
-			FEFLOWInterface feflowIO(_project.getGEOObjects());
-			MeshLib::Mesh* msh = feflowIO.readFEFLOWFile(fileName.toStdString());
-			if (msh)
-				_meshModel->addMesh(msh);
+			FileIO::FEFLOWInterface feflowIO(&_project.getGEOObjects());
+			std::unique_ptr<MeshLib::Mesh> mesh(
+				feflowIO.readFEFLOWFile(fileName.toStdString()));
+			if (mesh)
+				_meshModel->addMesh(std::move(mesh));
 			else
 				OGSError::box("Failed to load a FEFLOW mesh.");
 		}
@@ -545,19 +537,19 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			    new std::vector<GeoLib::Point*>());
 			std::string name = fi.baseName().toStdString();
 
-			if (GMSInterface::readBoreholesFromGMS(boreholes.get(),
-			                                       fileName.toStdString()))
-				_project.getGEOObjects()->addStationVec(std::move(boreholes),
-				                                        name);
+			if (GMSInterface::readBoreholesFromGMS(boreholes.get(), fileName.toStdString()))
+				_project.getGEOObjects().addStationVec(std::move(boreholes), name);
 			else
 				OGSError::box("Error reading GMS file.");
 		}
 		else if (fi.suffix().toLower() == "3dm") // GMS mesh files
 		{
 			std::string name = fileName.toStdString();
-			MeshLib::Mesh* mesh = GMSInterface::readGMS3DMMesh(name);
+			std::unique_ptr<MeshLib::Mesh> mesh(GMSInterface::readGMS3DMMesh(name));
 			if (mesh)
-				_meshModel->addMesh(mesh);
+				_meshModel->addMesh(std::move(mesh));
+			else
+				OGSError::box("Failed to load a GMS mesh.");
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
@@ -566,23 +558,24 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		std::string msh_name (fileName.toStdString());
 		if (FileIO::GMSHInterface::isGMSHMeshFile (msh_name))
 		{
-			MeshLib::Mesh* mesh = FileIO::GMSHInterface::readGMSHMesh(msh_name);
+			std::unique_ptr<MeshLib::Mesh> mesh(FileIO::GMSHInterface::readGMSHMesh(msh_name));
 			if (mesh)
-				_meshModel->addMesh(mesh);
+				_meshModel->addMesh(std::move(mesh));
+			else
+				OGSError::box("Failed to load a GMSH mesh.");
 		}
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 	else if (t == ImportFileType::NETCDF)	// CH  01.2012
 	{
-		MeshLib::Mesh* mesh (nullptr);
 
 		NetCdfConfigureDialog dlg(fileName.toStdString());
 		dlg.exec();
 		if (dlg.getMesh())
 		{
-			mesh = dlg.getMesh();
+			std::unique_ptr<MeshLib::Mesh> mesh(dlg.getMesh());
 			mesh->setName(dlg.getName());
-			_meshModel->addMesh(mesh);
+			_meshModel->addMesh(std::move(mesh));
 		}
 		if (dlg.getRaster())
 			_vtkVisPipeline->addPipelineItem(dlg.getRaster());
@@ -625,7 +618,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		if (fi.suffix().toLower().compare("poly") == 0 || fi.suffix().toLower().compare("smesh") == 0)
 		{
 			FileIO::TetGenInterface tetgen;
-			tetgen.readTetGenGeometry(fileName.toStdString(), *(_project.getGEOObjects()));
+			tetgen.readTetGenGeometry(fileName.toStdString(), _project.getGEOObjects());
 		}
 		else {
 			settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
@@ -634,9 +627,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			if (!fileName.isEmpty())
 			{
 				FileIO::TetGenInterface tetgen;
-				MeshLib::Mesh* mesh (tetgen.readTetGenMesh(fileName.toStdString(), element_fname.toStdString()));
+				std::unique_ptr<MeshLib::Mesh> mesh(tetgen.readTetGenMesh(
+				    fileName.toStdString(), element_fname.toStdString()));
 				if (mesh)
-					_meshModel->addMesh(mesh);
+					_meshModel->addMesh(std::move(mesh));
 				else
 					OGSError::box("Failed to load a TetGen mesh.");
 			}
@@ -765,7 +759,7 @@ void MainWindow::loadPetrelFiles()
 
 		std::string unique_str(*(sfc_files.begin()));
 
-		PetrelInterface(sfc_files, well_path_files, unique_str, _project.getGEOObjects());
+		PetrelInterface(sfc_files, well_path_files, unique_str, &_project.getGEOObjects());
 
 
 		QDir dir = QDir(sfc_file_names.at(0));
@@ -785,18 +779,18 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "gli")
 	{
-		FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(), *this->_project.getGEOObjects());
+		FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(), this->_project.getGEOObjects());
 		return;
 	}
 #endif
-	XmlGmlInterface xml(*(_project.getGEOObjects()));
+	XmlGmlInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
-	XmlStnInterface xml(*(_project.getGEOObjects()));
+	XmlStnInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
@@ -823,7 +817,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 	}
 
-	MeshGeoToolsLib::GeoMapper geo_mapper(*_project.getGEOObjects(), geo_name);
+	MeshGeoToolsLib::GeoMapper geo_mapper(_project.getGEOObjects(), geo_name);
 	QFileInfo fi(file_name);
 	if (choice == 1) // load raster from file
 	{
@@ -849,7 +843,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 		}
 	}
 	else // use mesh from ProjectData
-		mesh = this->_project.getMeshObjects()[choice-2];
+		mesh = _project.getMeshObjects()[choice-2].get();
 
 	std::string const& new_geo_name = dlg.getNewGeoName();
 
@@ -867,12 +861,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-	MeshLib::convertMeshToGeo(*mesh, *this->_project.getGEOObjects());
+	MeshLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName)
 {
-	const std::vector<GeoLib::Point*>* stations(_project.getGEOObjects()->getStationVec(listName));
+	const std::vector<GeoLib::Point*>* stations(_project.getGEOObjects().getStationVec(listName));
 	GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
@@ -897,13 +891,13 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 		if (!fileName.isEmpty())
 		{
 			if (param4 == -1) { // adaptive meshing selected
-				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_project.getGEOObjects())), true,
+				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (&_project.getGEOObjects())), true,
 								FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, param2, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
 				gmsh_io.writeToFile(fileName.toStdString());
 			} else { // homogeneous meshing selected
-				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (_project.getGEOObjects())), true,
+				GMSHInterface gmsh_io(*(static_cast<GeoLib::GEOObjects*> (&_project.getGEOObjects())), true,
 								FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, param4, param3, param1,
 								selectedGeometries);
 				gmsh_io.setPrecision(20);
@@ -992,27 +986,29 @@ void MainWindow::showDiagramPrefsDialog()
 
 void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id)
 {
-	std::string old_name = this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id);
+	std::string old_name = _project.getGEOObjects().getElementNameByID(geometry_name, object_type, id);
 	SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id, old_name);
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 
 	_geo_model->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
 	static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
-		id, this->_project.getGEOObjects()->getElementNameByID(geometry_name, object_type, id));
+		id, _project.getGEOObjects().getElementNameByID(geometry_name, object_type, id));
 }
 
 void MainWindow::showCreateStructuredGridDialog()
 {
 	CreateStructuredGridDialog dlg;
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
 void MainWindow::showMeshElementRemovalDialog()
 {
 	MeshElementRemovalDialog dlg(this->_project);
-	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
+	connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
+	        _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
 	dlg.exec();
 }
 
@@ -1025,7 +1021,7 @@ void MainWindow::showMeshAnalysisDialog()
 void MainWindow::showLineEditDialog(const std::string &geoName)
 {
 	LineEditDialog lineEdit(
-	    *(_project.getGEOObjects()->getPolylineVecObj(geoName)));
+	    *(_project.getGEOObjects().getPolylineVecObj(geoName)));
 	connect(&lineEdit, SIGNAL(connectPolylines(const std::string&,
 	                                           std::vector<std::size_t>, double,
 	                                           std::string, bool, bool)),
@@ -1049,7 +1045,7 @@ void MainWindow::showMergeGeometriesDialog()
 	if (dlg.exec() != QDialog::Accepted)
 		return;
 	std::string name (dlg.getGeometryName());
-	if (_project.getGEOObjects()->mergeGeometries(dlg.getSelectedGeometries(), name) < 0)
+	if (_project.getGEOObjects().mergeGeometries(dlg.getSelectedGeometries(), name) < 0)
 		OGSError::box("Points are missing for\n at least one geometry.");
 }
 

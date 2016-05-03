@@ -30,7 +30,7 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
 	} else {
 		std::vector<std::string> errors;
 		std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
-		FileIO::Legacy::readGLIFileV4(fname, &geo_objs, geo_name, errors);
+		FileIO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
 	}
 }
 }
