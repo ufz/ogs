@@ -273,7 +273,7 @@ void extrapolate(TestProcess<GlobalSetup> const& pcs,
     using GlobalVector = typename GlobalSetup::VectorType;
 
     auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
-    auto const tolerance_res =  3.5 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_res =  4.0 * std::numeric_limits<double>::epsilon();
 
     auto const  result   = pcs.extrapolate(property);
     auto const& x_extra  = *result.first;
