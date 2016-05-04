@@ -101,7 +101,11 @@ public:
 
 #ifndef NDEBUG
     /// printout this equation for debugging
-    void write (const std::string &filename) const { std::ofstream os(filename); os << _vec; }
+    void write (const std::string &filename) const {
+		std::ofstream os(filename);
+		os.precision(16);
+		os << _vec;
+	}
 #endif
 
     /// return a raw Eigen vector object
