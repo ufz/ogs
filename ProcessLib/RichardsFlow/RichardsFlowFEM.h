@@ -72,6 +72,11 @@ public:
 		double drhow_dp(0.0);
 		double dSwdPc(0.0);
 
+		/*if (hasGravityEffect) {
+			vec_g = LocalVectorType::Zero(_problem_coordinates.getDimension());
+			vec_g[_problem_coordinates.getIndexOfY()] = -9.81;
+		}
+		*/
 		Eigen::MatrixXd mass_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
 		Eigen::MatrixXd K_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
 		
@@ -81,7 +86,7 @@ public:
 		//const bool hasGravityEffect = false;
 
 		IntegrationMethod integration_method(_integration_order);
-		unsigned const n_integration_points = integration_method.getNPoints();//retuen gauss point number
+		unsigned const n_integration_points = integration_method.getNPoints();//return gauss point number
 
 		double P_int_pt = 0.0;
 		std::array<double*, 1> const int_pt_array = { &P_int_pt };
@@ -117,11 +122,13 @@ public:
 
 				//Eigen::Vector3d const vec_g(0, 0, -9.81); //2D X-Z 
 				//Eigen::Vector2d const vec_g(0, -9.81);//2D X-Y
-				const double vec_g(-9.81);//1D
+				typename ShapeMatricesType::GlobalDimVectorType vec_g;
+				vec_g(GlobalDim-1) = -9.81;
+				//const double vec_g(-9.81);//1D
 				// since no primary vairable involved
 				// directly assemble to the Right-Hand-Side
 				// F += dNp^T * K * gz
-				_localRhs.noalias() += sm.dNdx.transpose() * K_mat_coeff(0, 0) * rho_w * vec_g * sm.detJ * wp.getWeight();
+				_localRhs.noalias() += sm.dNdx.transpose()*K_mat_coeff(0, 0) * rho_w * vec_g * sm.detJ * wp.getWeight();
 			} // end of if hasGravityEffect
 			//std::cout << t << "  " << _localRhs << "\n";
 		}
@@ -138,7 +145,7 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    std::vector<ShapeMatrices> _shape_matrices;
+	std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>> _shape_matrices;
     RichardsFlowProcessData const& _process_data;
 
     NodalMatrixType _localA;
@@ -146,6 +153,10 @@ private:
     NodalVectorType _localRhs;
 
     unsigned const _integration_order;
+	public:
+#ifdef OGS_USE_EIGEN
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 };
 
 
