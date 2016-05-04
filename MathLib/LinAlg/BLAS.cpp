@@ -322,6 +322,10 @@ void matMultAdd(EigenMatrix const& A, EigenVector const& v1, EigenVector const& 
     // TODO: does that break anything?
     v3.getRawVector() = v2.getRawVector() + A.getRawMatrix()*v1.getRawVector();
 }
+void finalizeAssembly(EigenMatrix& x)
+{
+	x.getRawMatrix().makeCompressed();
+}
 
 void finalizeAssembly(EigenMatrix& x)
 {
