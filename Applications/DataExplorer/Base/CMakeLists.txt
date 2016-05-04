@@ -34,7 +34,7 @@ source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 # Create the library
-add_library(QtBase STATIC
+add_library(QtBase
 	${SOURCES}
 	${HEADERS}
 )

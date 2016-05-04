@@ -55,6 +55,7 @@ target_link_libraries(DataExplorer
 	ApplicationsLib
 	DataHolderLib
 	FileIO
+	InSituLib
 	QtDataView
 	QtDiagramView
 	QtStratView
@@ -63,6 +64,7 @@ target_link_libraries(DataExplorer
 	Threads::Threads
 	OGSFileConverterLib
 	vtkGUISupportQt
+	logog
 )
 
 if(CMAKE_CROSSCOMPILING)

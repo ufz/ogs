@@ -6,15 +6,13 @@ APPEND_SOURCE_FILES(SOURCES)
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
-add_library(ProcessLib STATIC ${SOURCES})
+add_library(ProcessLib ${SOURCES})
 
-target_link_libraries(ProcessLib INTERFACE
+target_link_libraries(ProcessLib
     AssemblerLib
-    MeshLib
     MeshGeoToolsLib
     NumLib # for shape matrices
     ${VTK_LIBRARIES}
-    logog
 )
 
 ADD_VTK_DEPENDENCY(ProcessLib)

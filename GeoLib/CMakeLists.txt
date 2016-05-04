@@ -6,10 +6,9 @@ add_library(GeoLib STATIC ${SOURCES_GeoLib}
 	${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
 )
 
-target_link_libraries(GeoLib INTERFACE
+target_link_libraries(GeoLib
 	BaseLib
 	MathLib
-	logog
 )
 
 if(TARGET Boost)

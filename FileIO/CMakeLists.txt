@@ -53,26 +53,26 @@ endif()
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
-add_library(FileIO STATIC ${SOURCES})
+add_library(FileIO ${SOURCES})
 
-target_link_libraries(FileIO INTERFACE
+target_link_libraries(FileIO
 	GeoLib
-	InSituLib
 	MeshLib
+	InSituLib
 	logog
 )
 if(QT4_FOUND)
-	target_link_libraries(FileIO PUBLIC Qt4::QtXml Qt4::QtXmlPatterns)
+	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
 	if(WIN32 AND CMAKE_CROSSCOMPILING)
 		find_package(OpenSSL)
 		if(OPENSSL_FOUND)
-			target_link_libraries(FileIO PUBLIC Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+			target_link_libraries(FileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
 		endif()
 	endif()
 endif()
 
 if(Shapelib_FOUND)
-	target_link_libraries(FileIO INTERFACE ${Shapelib_LIBRARIES})
+	target_link_libraries(FileIO ${Shapelib_LIBRARIES})
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)

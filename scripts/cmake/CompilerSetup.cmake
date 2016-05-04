@@ -22,6 +22,12 @@ if(NOT COMPILER_IS_MSVC)
 	set( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem" CACHE STRING "" FORCE )
 endif()
 
+# When static libraries are used in some shared libraries it is required that
+# also the static libraries have position independent code.
+if(BUILD_SHARED_LIBS)
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
+
 # Set additional user-given compiler flags
 set(CMAKE_CXX_FLAGS ${OGS_CXX_FLAGS})
 

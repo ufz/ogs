@@ -2,15 +2,13 @@
 set(LIB_SOURCES ProjectData.cpp)
 
 # Library
-add_library(ApplicationsLib STATIC ${LIB_SOURCES})
+add_library(ApplicationsLib ${LIB_SOURCES})
 
-target_link_libraries(ApplicationsLib INTERFACE
-	GeoLib
+target_link_libraries(ApplicationsLib
 	MeshGeoToolsLib
 	NumLib
 	ProcessLib
 	${VTK_LIBRARIES}
-	logog
 )
 ADD_VTK_DEPENDENCY(ApplicationsLib)
 

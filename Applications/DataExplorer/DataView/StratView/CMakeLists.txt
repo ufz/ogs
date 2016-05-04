@@ -24,12 +24,12 @@ include_directories(
 file(GLOB_RECURSE UI_FILES *.ui)
 source_group("UI Files" FILES ${UI_FILES})
 
-add_library(QtStratView STATIC
+add_library(QtStratView
 	${SOURCES}
 	${HEADERS}
 	${UIS}
 )
 
-target_link_libraries(QtStratView PUBLIC Qt4::QtGui)
+target_link_libraries(QtStratView Qt4::QtGui QtBase)
 
 set_property(TARGET QtStratView PROPERTY FOLDER "DataExplorer")

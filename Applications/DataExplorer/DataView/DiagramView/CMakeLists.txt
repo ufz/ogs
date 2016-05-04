@@ -33,12 +33,12 @@ include_directories(
 file(GLOB_RECURSE UIS *.ui)
 source_group("UI Files" FILES ${UIS})
 
-add_library(QtDiagramView STATIC
+add_library(QtDiagramView
 	${SOURCES}
 	${HEADERS}
 	${UIS}
 )
 
-target_link_libraries(QtDiagramView PUBLIC Qt4::QtGui)
+target_link_libraries(QtDiagramView Qt4::QtGui)
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")

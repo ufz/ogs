@@ -33,9 +33,11 @@ target_link_libraries(testrunner
 	ApplicationsLib
 	AssemblerLib
 	FileIO
-	MeshGeoToolsLib
-	NumLib
 	GTest
+	InSituLib
+	MeshGeoToolsLib
+	MeshLib
+	NumLib
 	Threads::Threads
 )
 ADD_VTK_DEPENDENCY(testrunner)

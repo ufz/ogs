@@ -17,12 +17,11 @@ set(SOURCES ${SOURCES_MESHLIB} ${SOURCES_ELEMENTS} ${SOURCES_EDITING} ${SOURCES_
 # Create the library
 add_library(MeshLib STATIC ${SOURCES})
 
-target_link_libraries(MeshLib INTERFACE
+target_link_libraries(MeshLib
 	BaseLib
 	GeoLib
 	MathLib
 	${VTK_LIBRARIES}
-	logog
 )
 
 ADD_VTK_DEPENDENCY(MeshLib)
