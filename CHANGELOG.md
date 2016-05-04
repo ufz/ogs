@@ -1,5 +1,12 @@
 ## Release notes
-# 6.0.5 (in preparation)
+# 6.0.6 (in preparation)
+
+### Features:
+ - Add external ode-solver interface with [Sundials CVODE
+   library](http://computation.llnl.gov/projects/sundials-suite-nonlinear-differential-algebraic-equation-solvers/cvode).
+
+## Release notes
+# 6.0.5
 
 ### Features:
  - Added an ODE solver library that can solve transient and nonlinear processes

@@ -146,3 +146,9 @@ if(Shapelib_FOUND)
 elseif(OGS_BUILD_GUI)
 	message(FATAL_ERROR "Shapelib not found but it is required for OGS_BUILD_GUI!")
 endif()
+
+## Sundials cvode ode-solver library
+find_package(CVODE)
+if(CVODE_FOUND)
+    add_definitions(-DCVODE_FOUND)
+endif() # CVODE_FOUND
