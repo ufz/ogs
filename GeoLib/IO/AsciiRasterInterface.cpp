@@ -21,7 +21,10 @@
 
 #include "GeoLib/Raster.h"
 
-namespace FileIO {
+namespace GeoLib
+{
+namespace IO
+{
 
 GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
@@ -238,7 +241,8 @@ boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
 	std::vector<GeoLib::Raster const*> rasters;
 	rasters.reserve(raster_paths.size());
 	for (auto const& path : raster_paths)
-		rasters.push_back(FileIO::AsciiRasterInterface::readRaster(path));
+		rasters.push_back(GeoLib::IO::AsciiRasterInterface::readRaster(path));
     return boost::make_optional(rasters);
 }
-}
+} // end namespace IO
+} // end namespace GeoLib

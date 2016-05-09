@@ -114,7 +114,7 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 
 	MeshLib::MeshLayerMapper mapper;
-	if (auto rasters = FileIO::readRasters(raster_paths))
+	if (auto rasters = GeoLib::IO::readRasters(raster_paths))
 	{
 		if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
 			return EXIT_FAILURE;

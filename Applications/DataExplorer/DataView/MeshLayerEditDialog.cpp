@@ -190,7 +190,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 		for (int i=nLayers; i>=0; --i)
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 
-		auto const rasters = FileIO::readRasters(raster_paths);
+		auto const rasters = GeoLib::IO::readRasters(raster_paths);
 		if (rasters && mapper.createLayers(*_msh, *rasters, minimum_thickness))
 		{
 			INFO("Mesh construction time: %d ms.", myTimer0.elapsed());
@@ -231,7 +231,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 			raster_paths.push_back(this->_edits[i]->text().toStdString());
 		LayeredVolume lv;
 
-		auto const rasters = FileIO::readRasters(raster_paths);
+		auto const rasters = GeoLib::IO::readRasters(raster_paths);
 		if (rasters && lv.createLayers(*_msh, *rasters, minimum_thickness))
 			tg_mesh = lv.getMesh("SubsurfaceMesh").release();
 

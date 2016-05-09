@@ -34,7 +34,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 {
 	if (_direct_values.empty())
 	{
-		GeoLib::Raster* raster (FileIO::AsciiRasterInterface::readRaster(filename));
+		GeoLib::Raster* raster (GeoLib::IO::AsciiRasterInterface::readRaster(filename));
 		if (! raster) {
 			ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - could not load raster file.");
 			return _direct_values;
@@ -70,7 +70,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 	}
 
 	std::unique_ptr<GeoLib::Raster> raster(
-	    FileIO::AsciiRasterInterface::readRaster(filename));
+	    GeoLib::IO::AsciiRasterInterface::readRaster(filename));
 	if (!raster) {
 		ERR(
 		    "Error in DirectConditionGenerator::directWithSurfaceIntegration()"

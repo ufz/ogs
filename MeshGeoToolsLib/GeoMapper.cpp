@@ -50,7 +50,7 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-	_raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
+	_raster = GeoLib::IO::AsciiRasterInterface::getRasterFromASCFile(file_name);
 	if (! _raster) {
 		ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
 		return;

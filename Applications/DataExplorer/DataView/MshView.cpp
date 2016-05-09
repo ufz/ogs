@@ -166,7 +166,7 @@ void MshView::openMap2dMeshDialog()
 	if (dlg.useRasterMapping())
 	{
 		std::unique_ptr<GeoLib::Raster> raster{
-		    FileIO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
+		    GeoLib::IO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
 		if (!raster)
 		{
 			OGSError::box(QString::fromStdString(

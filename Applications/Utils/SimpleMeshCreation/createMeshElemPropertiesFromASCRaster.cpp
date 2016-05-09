@@ -128,7 +128,7 @@ int main (int argc, char* argv[])
 
 	// read raster and if required manipulate it
 	auto raster = std::unique_ptr<GeoLib::Raster>(
-		FileIO::AsciiRasterInterface::getRasterFromASCFile(raster_arg.getValue()));
+		GeoLib::IO::AsciiRasterInterface::getRasterFromASCFile(raster_arg.getValue()));
 	GeoLib::RasterHeader header (raster->getHeader());
 	if (refinement_arg.getValue() > 1) {
 		raster->refineRaster(refinement_arg.getValue());
@@ -138,7 +138,7 @@ int main (int argc, char* argv[])
 			                                      raster_arg.getValue()));
 			new_raster_fname += "-" + std::to_string(header.n_rows) + "x" +
 			                    std::to_string(header.n_cols) + ".asc";
-			FileIO::AsciiRasterInterface::writeRasterAsASC(*raster, new_raster_fname);
+			GeoLib::IO::AsciiRasterInterface::writeRasterAsASC(*raster, new_raster_fname);
 		}
 	}
 
