@@ -59,7 +59,8 @@ int main (int argc, char* argv[])
 	auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
 	    new std::vector<GeoLib::Point*>);
 	GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
-	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, point_vec));
+	std::unique_ptr<GeoLib::Surface> sfc(
+	    GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
 		return 1;
 	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());

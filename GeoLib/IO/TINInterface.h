@@ -18,9 +18,8 @@
 namespace GeoLib
 {
 class Surface;
-}
 
-namespace FileIO
+namespace IO
 {
 
 /**
@@ -48,6 +47,7 @@ public:
 	static void writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string const& file_name);
 };
 
-}
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* TININTERFACE_H_ */

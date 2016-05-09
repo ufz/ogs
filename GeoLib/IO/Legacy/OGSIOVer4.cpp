@@ -311,7 +311,7 @@ std::string readSurface(std::istream &in,
 		{
 			in >> line; // read value (file name)
 			line = path + line;
-			sfc = FileIO::TINInterface::readTIN(line, pnt_vec, &errors);
+			sfc = GeoLib::IO::TINInterface::readTIN(line, pnt_vec, &errors);
 		}
 		//....................................................................
 		if (line.find("$MAT_GROUP") != std::string::npos) // subkeyword found
@@ -541,7 +541,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
 		os << "\t\t" << sfc_name << "\n";
 		// create tin file
 		sfc_name = path + sfc_name;
-		FileIO::TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
+		GeoLib::IO::TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
 		sfc_count++;
 	}
 	return sfc_count;

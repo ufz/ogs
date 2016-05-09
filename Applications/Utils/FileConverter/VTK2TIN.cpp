@@ -61,7 +61,9 @@ int main (int argc, char* argv[])
 	GeoLib::GEOObjects geo_objects;
 	if (MeshLib::convertMeshToGeo(*mesh, geo_objects)) {
 		INFO("Writing TIN into the file");
-		FileIO::TINInterface::writeSurfaceAsTIN(*(*geo_objects.getSurfaceVec(mesh->getName()))[0], mesh_out.getValue());
+		GeoLib::IO::TINInterface::writeSurfaceAsTIN(
+		    *(*geo_objects.getSurfaceVec(mesh->getName()))[0],
+		    mesh_out.getValue());
 	}
 
 	delete custom_format;

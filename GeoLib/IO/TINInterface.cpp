@@ -20,7 +20,9 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 
 GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
@@ -139,5 +141,5 @@ void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string
 	}
 	os.close();
 }
-
+} // end namespace IO
 } // end namespace GeoLib
