@@ -1,4 +1,4 @@
-add_library(InSituLib
+add_library(InSituLib STATIC
 	VtkMappedMesh.h
 	VtkMappedMesh.cpp
 	VtkMappedMeshSource.h

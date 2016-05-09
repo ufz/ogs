@@ -26,6 +26,7 @@ target_link_libraries(MeshLib
 	BaseLib
 	GeoLib
 	MathLib
+	InSituLib # VtkMappedMeshSource
 	${VTK_LIBRARIES}
 )
 
