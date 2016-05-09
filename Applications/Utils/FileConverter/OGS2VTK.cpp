@@ -24,7 +24,7 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 
 // MeshLib

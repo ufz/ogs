@@ -16,7 +16,7 @@
 #include "MeshLib/Mesh.h"
 
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace MeshLib
 {

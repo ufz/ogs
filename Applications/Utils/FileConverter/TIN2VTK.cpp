@@ -29,7 +29,7 @@
 #include "GeoLib/IO/TINInterface.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"

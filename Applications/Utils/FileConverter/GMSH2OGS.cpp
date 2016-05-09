@@ -33,7 +33,7 @@
 // FileIO
 #include "FileIO/GMSHInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/MeshSearch/ElementSearch.h"

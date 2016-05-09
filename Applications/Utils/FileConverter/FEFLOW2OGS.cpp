@@ -28,7 +28,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/FEFLOWInterface.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"

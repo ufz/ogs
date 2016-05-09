@@ -11,7 +11,7 @@
 #define PROCESS_LIB_PROCESS_H_
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"

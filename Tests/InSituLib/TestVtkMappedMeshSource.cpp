@@ -17,7 +17,7 @@
 #include <memory>
 #include <numeric>
 
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 #include "InSituLib/VtkMappedMesh.h"
 #include "InSituLib/VtkMappedMeshSource.h"

@@ -20,7 +20,7 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/Mesh.h"
 #include "OGSError.h"

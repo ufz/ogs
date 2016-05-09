@@ -31,7 +31,7 @@
 #include "MeshLib/Mesh.h"
 
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 #ifdef USE_PETSC
 #include "FileIO/MPI_IO/NodePartitionedMeshReader.h"

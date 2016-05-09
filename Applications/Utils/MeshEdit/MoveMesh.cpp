@@ -23,7 +23,7 @@
 
 // FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "AABB.h"
