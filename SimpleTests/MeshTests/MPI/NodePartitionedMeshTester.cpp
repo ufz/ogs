@@ -27,7 +27,7 @@
 #include "BaseLib/LogogCustomCout.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 
-#include "FileIO/MPI_IO/NodePartitionedMeshReader.h"
+#include "MeshLib/IO/MPI_IO/NodePartitionedMeshReader.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

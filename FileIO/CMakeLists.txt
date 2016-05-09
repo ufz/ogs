@@ -30,12 +30,6 @@ if(QT4_FOUND)
 	set(SOURCES ${SOURCES} ${SOURCES_QT_XML})
 endif()
 
-# It could be used for other MPI based DDC approach in future.
-if(OGS_USE_PETSC)
-	GET_SOURCE_FILES(SOURCES_MPI_IO MPI_IO)
-	set(SOURCES ${SOURCES} ${SOURCES_MPI_IO})
-endif()
-
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
