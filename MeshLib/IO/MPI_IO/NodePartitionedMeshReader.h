@@ -26,9 +26,8 @@ namespace MeshLib
 {
 class Node;
 class Element;
-}
 
-namespace FileIO
+namespace IO
 {
 /// Class for parallel reading of ascii or binary partitioned mesh files into a
 /// NodePartitionedMesh via MPI.
@@ -251,6 +250,7 @@ private:
         std::vector<MeshLib::Element*> &mesh_elems,
         const bool ghost = false) const;
 };
-}   // FileIO
+}   // end namespace IO
+}   // end namespace MeshLib
 
 #endif  // READ_NODE_PARTITIONED_MESH_H

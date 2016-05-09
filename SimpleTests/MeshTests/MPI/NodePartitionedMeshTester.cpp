@@ -33,7 +33,6 @@
 #include "MeshLib/Elements/Element.h"
 
 using namespace MeshLib;
-using namespace FileIO;
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
 
     NodePartitionedMesh *mesh = nullptr;
     {
-        NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
+        MeshLib::IO::NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
         mesh = read_pmesh.read(file_name);
     }
     if (!mesh)

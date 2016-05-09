@@ -36,7 +36,9 @@ is_safely_convertable(VALUE const& value)
     return result;
 }
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 NodePartitionedMeshReader::NodePartitionedMeshReader(MPI_Comm comm)
     : _mpi_comm(comm)
@@ -509,4 +511,5 @@ void NodePartitionedMeshReader::setElements(
         }
     }
 }
-}   // namespace FileIO
+}   // namespace IO
+}   // namespace MeshLib
