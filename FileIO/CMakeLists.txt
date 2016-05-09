@@ -9,8 +9,6 @@ set(SOURCES
 	PetrelInterface.cpp
 	TetGenInterface.h
 	TetGenInterface.cpp
-	TINInterface.h
-	TINInterface.cpp
 )
 if(Shapelib_FOUND)
 	list(APPEND SOURCES SHPInterface.h SHPInterface.cpp)

@@ -34,7 +34,7 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 
-#include "FileIO/TINInterface.h"
+#include "GeoLib/IO/TINInterface.h"
 
 namespace GeoLib
 {

@@ -24,6 +24,7 @@
 // GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/IO/TINInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -33,7 +34,6 @@
 
 // FileIO
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "FileIO/TINInterface.h"
 
 
 int main (int argc, char* argv[])

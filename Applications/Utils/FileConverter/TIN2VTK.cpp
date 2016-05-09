@@ -26,10 +26,10 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/PointVec.h"
+#include "GeoLib/IO/TINInterface.h"
 
 // FileIO
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "FileIO/TINInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
