@@ -36,8 +36,7 @@
 #include <memory>
 #include <logog/include/logog.hpp>
 
-#include "AsciiRasterInterface.h"
-
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 
 

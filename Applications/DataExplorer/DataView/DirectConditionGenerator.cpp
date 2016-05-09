@@ -20,7 +20,7 @@
 
 #include "DirectConditionGenerator.h"
 
-#include "AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 
 #include "Raster.h"
 #include "MeshSurfaceExtraction.h"

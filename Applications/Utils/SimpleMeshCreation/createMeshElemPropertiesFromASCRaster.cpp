@@ -23,7 +23,7 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 
 #include "GeoLib/Raster.h"
 

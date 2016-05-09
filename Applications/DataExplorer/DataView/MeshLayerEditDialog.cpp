@@ -22,7 +22,7 @@
 #include "StringTools.h"
 #include "Mesh.h"
 
-#include "FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "TetGenInterface.h"
 
 #include <QCheckBox>

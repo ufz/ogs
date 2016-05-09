@@ -25,7 +25,7 @@
 
 #include "FileIO/SHPInterface.h"
 #include "FileIO/TetGenInterface.h"
-#include "FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
