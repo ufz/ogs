@@ -47,7 +47,7 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::VtuInterface::readVTUFile(mesh_in.getValue()));
+	MeshLib::Mesh* mesh (MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	MeshLib::IO::Legacy::MeshIO meshIO;

@@ -19,10 +19,9 @@
 #include <vtkXMLWriter.h>
 
 namespace MeshLib {
-	class Mesh;
-}
+class Mesh;
 
-namespace FileIO
+namespace IO
 {
 
 /**
@@ -57,7 +56,8 @@ private:
 	bool _use_compressor;
 };
 
-}
+} // end namespace IO
+} // end namespace MeshLib
 
 #include "VtuInterface-impl.h"
 

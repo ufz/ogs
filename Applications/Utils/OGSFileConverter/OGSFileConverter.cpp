@@ -123,7 +123,7 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
 		if (fileExists(output_str))
 			continue;
 
-		MeshLib::Mesh const*const mesh (FileIO::VtuInterface::readVTUFile(it->toStdString().c_str()));
+		MeshLib::Mesh const*const mesh (MeshLib::IO::VtuInterface::readVTUFile(it->toStdString().c_str()));
 		if (mesh == nullptr)
 		{
 			OGSError::box("Error reading mesh " + fi.fileName());
@@ -157,7 +157,7 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
 			OGSError::box("Error reading mesh " + fi.fileName());
 			continue;
 		}
-		FileIO::VtuInterface vtu(mesh);
+		MeshLib::IO::VtuInterface vtu(mesh);
 		vtu.writeToFile(output_str);
 		delete mesh;
 	}

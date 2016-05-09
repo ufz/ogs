@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
 	INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	INFO("Write it into VTU");
-	FileIO::VtuInterface writer(mesh.get());
+	MeshLib::IO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
 	delete custom_format;

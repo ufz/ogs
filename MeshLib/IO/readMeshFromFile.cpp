@@ -56,7 +56,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 	}
 
 	if (BaseLib::hasFileExtension("vtu", file_name))
-		return FileIO::VtuInterface::readVTUFile(file_name);
+		return MeshLib::IO::VtuInterface::readVTUFile(file_name);
 
 	ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
 	return nullptr;

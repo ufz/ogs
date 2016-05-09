@@ -35,7 +35,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
 VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
@@ -101,5 +103,5 @@ bool VtuInterface::writeToFile(std::string const &file_name)
 	return writeVTU<vtkXMLUnstructuredGridWriter>(file_name);
 #endif
 }
-
-}
+} // end namespace IO
+} // end namespace MeshLib

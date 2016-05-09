@@ -26,7 +26,9 @@
 
 #include "InSituLib/VtkMappedMeshSource.h"
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
 template<typename UnstructuredGridWriter>
@@ -76,4 +78,5 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
 	return (vtuWriter->Write() > 0);
 }
 
-}
+} // end namespace IO
+} // end namespace MeshLib

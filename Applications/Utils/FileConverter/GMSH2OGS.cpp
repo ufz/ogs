@@ -121,7 +121,7 @@ int main (int argc, char* argv[])
 			ogs_mesh_fname += ".vtu";
 		}
 		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		FileIO::VtuInterface mesh_io(mesh);
+		MeshLib::IO::VtuInterface mesh_io(mesh);
 		mesh_io.writeToFile(ogs_mesh_fname);
 	}
 	INFO("\tDone.");

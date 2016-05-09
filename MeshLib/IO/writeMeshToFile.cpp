@@ -30,7 +30,7 @@ void writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name)
 		meshIO.setMesh(&mesh);
 		meshIO.writeToFile(file_name);
 	} else if (BaseLib::hasFileExtension("vtu", file_name)) {
-		FileIO::VtuInterface writer(&mesh);
+		MeshLib::IO::VtuInterface writer(&mesh);
 		writer.writeToFile(file_name);
 	} else {
 		ERR("writeMeshToFile(): Unknown mesh file format in file %s.", file_name.c_str());

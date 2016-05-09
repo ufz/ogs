@@ -216,7 +216,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 		{
 			if(dataMode == vtkXMLWriter::Ascii && compressed)
 				continue;
-			FileIO::VtuInterface vtuInterface(mesh, dataMode, compressed);
+			MeshLib::IO::VtuInterface vtuInterface(mesh, dataMode, compressed);
 			ASSERT_TRUE(vtuInterface.writeToFile(test_data_file));
 
 			// -- Read back VTK mesh

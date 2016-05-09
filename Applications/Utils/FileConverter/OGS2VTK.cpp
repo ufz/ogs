@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
 	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	FileIO::VtuInterface vtu(mesh);
+	MeshLib::IO::VtuInterface vtu(mesh);
 	vtu.writeToFile(mesh_out.getValue());
 
 	delete custom_format;
