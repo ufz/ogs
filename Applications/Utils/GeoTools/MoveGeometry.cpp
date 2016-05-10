@@ -16,9 +16,10 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "MathLib/Vector3.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
+
+#include "MathLib/Vector3.h"
 
 #include <QCoreApplication>
 

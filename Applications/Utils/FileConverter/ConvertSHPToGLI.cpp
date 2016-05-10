@@ -28,11 +28,9 @@
 
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
-
-// GeoLib
-#include "GEOObjects.h"
-#include "Point.h"
-#include "Station.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Station.h"
 
 void convertPoints (DBFHandle dbf_handle,
                     std::string const& out_fname,

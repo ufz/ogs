@@ -26,7 +26,6 @@
 #include "GeoLib/PointVec.h"
 #include "GeoLib/IO/TINInterface.h"
 
-// FileIO
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib

@@ -13,12 +13,8 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// FileIO
-#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/ElementValueModification.h"

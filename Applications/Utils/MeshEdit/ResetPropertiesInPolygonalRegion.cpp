@@ -13,29 +13,21 @@
 #include <cstdlib>
 #include <vector>
 
-// TCLAP
-#include "tclap/CmdLine.h"
-
 #include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
-// GeoLib
+#include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-#include "GeoLib/AnalyticalGeometry.h"
-
 #include "GeoLib/IO/readGeometryFromFile.h"
 
-// MathLib
 #include "MathLib/Vector3.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

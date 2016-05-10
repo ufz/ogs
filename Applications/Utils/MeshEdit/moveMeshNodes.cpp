@@ -13,12 +13,14 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "GeoLib/AABB.h"
+
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "AABB.h"
-#include "Mesh.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MathTools.h"
+
+#include "MathLib/MathTools.h"
 
 int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)
 {

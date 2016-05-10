@@ -15,22 +15,18 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "StringTools.h"
-#include "FileTools.h"
+#include "BaseLib/StringTools.h"
+#include "BaseLib/FileTools.h"
 
-// FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
-// GeoLib
-#include "AABB.h"
+#include "GeoLib/AABB.h"
 
-// MeshLib
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "MeshEditing/moveMeshNodes.h"
-#include "Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEditing/moveMeshNodes.h"
+#include "MeshLib/Mesh.h"
 
 int main(int argc, char *argv[])
 {

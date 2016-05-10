@@ -18,17 +18,12 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// FileIO
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
-// GeoLib
-#include "GeoLib/GEOObjects.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/GeoMapper.h"
 
 int main (int argc, char* argv[])

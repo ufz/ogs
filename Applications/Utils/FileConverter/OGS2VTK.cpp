@@ -19,13 +19,9 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-
-// FileIO
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
@@ -48,7 +44,6 @@ int main (int argc, char* argv[])
 
 	MeshLib::IO::VtuInterface vtu(mesh.get());
 	vtu.writeToFile(mesh_out.getValue());
-
 
 	return EXIT_SUCCESS;
 }

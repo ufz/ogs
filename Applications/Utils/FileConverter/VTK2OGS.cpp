@@ -19,7 +19,6 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// FileIO
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 #include "MeshLib/Mesh.h"

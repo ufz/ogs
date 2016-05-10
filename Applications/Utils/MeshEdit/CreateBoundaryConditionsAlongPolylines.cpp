@@ -19,25 +19,20 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
 #include "BaseLib/FileTools.h"
 
-// FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
-// GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/IO/readGeometryFromFile.h"
 #include "GeoLib/IO/writeGeometryToFile.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,

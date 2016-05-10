@@ -23,12 +23,11 @@
 #endif
 
 // FileIO
+#include "FileIO/FEFLOWInterface.h"
+
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "FileIO/FEFLOWInterface.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])

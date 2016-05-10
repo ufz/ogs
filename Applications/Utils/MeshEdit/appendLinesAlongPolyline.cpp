@@ -11,24 +11,17 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "FileTools.h"
+#include "BaseLib/FileTools.h"
 
-// GeoLib
-#include "GEOObjects.h"
-#include "PolylineVec.h"
-
-// FileIO
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/PolylineVec.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
-// MeshLib
-#include "Mesh.h"
-
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
