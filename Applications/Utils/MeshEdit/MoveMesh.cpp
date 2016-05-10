@@ -10,8 +10,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// ThirdParty
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 

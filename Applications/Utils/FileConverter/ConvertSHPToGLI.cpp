@@ -17,9 +17,7 @@
 #include <iostream>
 #include <vector>
 
-// TCLAP
-#include "tclap/CmdLine.h"
-
+#include <tclap/CmdLine.h>
 
 // ShapeLib
 #include <shapefil.h>

@@ -11,7 +11,7 @@
 #include <sstream>
 #include <string>
 
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
@@ -22,7 +22,6 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 
 int main(int argc, char *argv[])
