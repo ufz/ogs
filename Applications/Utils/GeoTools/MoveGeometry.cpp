@@ -14,10 +14,8 @@
 // ThirdParty
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "MathLib/Vector3.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
@@ -27,10 +25,8 @@
 int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv);
-	LOGOG_INITIALIZE();
-	logog::Cout *logogCout(new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logogCout->SetFormatter(*custom_format);
+
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd
 		("Moves the points of a geometry by a given displacement vector.", ' ', "0.1");
@@ -55,9 +51,6 @@ int main(int argc, char *argv[])
 	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 	if (!xml.readFile(geo_input_arg.getValue()))
 	{
-		delete logogCout;
-		delete custom_format;
-		LOGOG_SHUTDOWN();
 		return 1;
 	}
 
@@ -81,8 +74,5 @@ int main(int argc, char *argv[])
 	xml.setNameForExport(geo_names[0]);
 	xml.writeToFile(geo_output_arg.getValue());
 
-	delete logogCout;
-	delete custom_format;
-	LOGOG_SHUTDOWN();
 	return 0;
 }

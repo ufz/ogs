@@ -13,13 +13,11 @@
 // ThirdParty
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
 #include "StringTools.h"
 #include "FileTools.h"
-#include "LogogSimpleFormatter.h"
 
 // FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -36,10 +34,7 @@
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog::Cout *logogCout(new logog::Cout);
-	logogCout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1");
 	// Define a value argument and add it to the command line.
@@ -97,9 +92,6 @@ int main(int argc, char *argv[])
 	mesh_io.writeToFile(out_fname);
 
 	delete mesh;
-	delete logogCout;
-	delete custom_format;
-	LOGOG_SHUTDOWN();
 }
 
 

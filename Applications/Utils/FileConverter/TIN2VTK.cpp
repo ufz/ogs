@@ -14,12 +14,10 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 // GeoLib
@@ -38,10 +36,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
@@ -72,10 +67,6 @@ int main (int argc, char* argv[])
 	INFO("Write it into VTU");
 	MeshLib::IO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }

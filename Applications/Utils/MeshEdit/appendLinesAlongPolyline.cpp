@@ -9,11 +9,9 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
-#include "LogogSimpleFormatter.h"
 #include "FileTools.h"
 
 // GeoLib
@@ -34,10 +32,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Append line elements into a mesh.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
@@ -93,9 +88,6 @@ int main (int argc, char* argv[])
 	meshIO.setMesh(new_mesh.get());
 	meshIO.writeToFile(mesh_out.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 1;
 }

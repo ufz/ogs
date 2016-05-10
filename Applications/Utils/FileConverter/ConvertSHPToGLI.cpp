@@ -20,14 +20,11 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
 // ShapeLib
 #include <shapefil.h>
 
-// BaseLib
-#include "LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
@@ -140,10 +137,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converts points contained in shape file", ' ', "0.1");
 	TCLAP::ValueArg<std::string> shapefile_arg("s",
@@ -239,9 +233,6 @@ int main (int argc, char* argv[])
 		ERR("Could not open the database file.");
 	}
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }

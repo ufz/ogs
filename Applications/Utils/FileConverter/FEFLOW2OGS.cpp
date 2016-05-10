@@ -13,8 +13,7 @@
 // ThirdParty
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
 #include "BaseLib/FileTools.h"
@@ -22,7 +21,6 @@
 #ifndef WIN32
 #include "BaseLib/MemWatch.h"
 #endif
-#include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -35,10 +33,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *const custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
 

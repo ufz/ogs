@@ -17,11 +17,7 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
-// BaseLib
-#include "LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // FileIO
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -31,10 +27,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converts VTK mesh into OGS mesh.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
@@ -53,10 +46,6 @@ int main (int argc, char* argv[])
 	MeshLib::IO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.writeToFile(mesh_out.getValue());
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }

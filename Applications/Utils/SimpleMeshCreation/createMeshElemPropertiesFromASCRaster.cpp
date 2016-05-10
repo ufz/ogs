@@ -14,7 +14,6 @@
 #include <numeric>
 
 #include <tclap/CmdLine.h>
-#include <logog/include/logog.hpp>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 

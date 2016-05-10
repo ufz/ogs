@@ -10,12 +10,11 @@
 #include <array>
 #include <string>
 
-#include "logog/include/logog.hpp"
 #include "tclap/CmdLine.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/StringTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/Node.h"
@@ -28,10 +27,7 @@
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Mesh revision tool", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
@@ -71,10 +67,6 @@ int main(int argc, char *argv[])
 
 	delete org_mesh;
 	delete new_mesh;
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }

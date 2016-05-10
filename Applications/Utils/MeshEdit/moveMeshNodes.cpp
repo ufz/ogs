@@ -3,8 +3,8 @@
  * 2012/03/07 KR Initial implementation
  */
 
-#include "logog/include/logog.hpp"
-#include "LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "AABB.h"
@@ -46,10 +46,7 @@ bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	std::vector<std::string> keywords;
 	keywords.push_back("-ALL");

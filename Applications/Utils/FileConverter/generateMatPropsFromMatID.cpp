@@ -14,9 +14,6 @@
 
 #include <memory>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
-
 #include "tclap/CmdLine.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -90,7 +87,6 @@ int main (int argc, char* argv[])
 	MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
 
 	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
-	std::cout << "Conversion finished." << std::endl;
 
 	return EXIT_SUCCESS;
 }

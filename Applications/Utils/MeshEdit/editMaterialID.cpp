@@ -9,11 +9,8 @@
 // TCLAP
 #include "tclap/CmdLine.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // FileIO
 #include "MeshLib/IO/Legacy/MeshIO.h"
@@ -27,10 +24,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Edit material IDs of mesh elements.", ' ', "0.1");
 	TCLAP::SwitchArg replaceArg("r", "replace", "replace material IDs", false);
@@ -107,9 +101,6 @@ int main (int argc, char* argv[])
 	// write into a file
 	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 
 	return 0;
 }
