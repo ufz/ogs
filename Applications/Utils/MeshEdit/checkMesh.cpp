@@ -27,8 +27,8 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 int main(int argc, char *argv[])
 {

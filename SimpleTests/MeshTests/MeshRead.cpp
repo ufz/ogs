@@ -21,7 +21,7 @@
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"

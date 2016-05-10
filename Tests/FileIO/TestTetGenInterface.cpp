@@ -19,7 +19,7 @@
 #include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/TetGenInterface.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"

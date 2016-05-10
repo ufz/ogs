@@ -22,7 +22,7 @@ if (QT4_FOUND)
 endif () # QT4_FOUND
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
-target_link_libraries(generateMatPropsFromMatID FileIO)
+target_link_libraries(generateMatPropsFromMatID MeshLib FileIO)
 ADD_VTK_DEPENDENCY(generateMatPropsFromMatID)
 set_target_properties(generateMatPropsFromMatID
 	PROPERTIES FOLDER Utilities)

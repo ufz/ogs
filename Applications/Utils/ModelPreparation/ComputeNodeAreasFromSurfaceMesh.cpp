@@ -20,7 +20,7 @@
 
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

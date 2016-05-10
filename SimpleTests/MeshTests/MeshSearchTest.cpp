@@ -16,7 +16,7 @@
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
 
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 #include "GeoLib/Grid.h"
 

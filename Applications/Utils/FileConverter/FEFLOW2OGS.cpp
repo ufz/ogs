@@ -25,8 +25,8 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/writeMeshToFile.h"
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/FEFLOWInterface.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 

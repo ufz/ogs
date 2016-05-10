@@ -30,8 +30,7 @@
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 
-// mesh
-#include "Legacy/MeshIO.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 OGSFileConverter::OGSFileConverter(QWidget* parent)

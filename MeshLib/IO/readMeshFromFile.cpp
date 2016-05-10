@@ -30,7 +30,7 @@
 
 #include "MeshLib/Mesh.h"
 
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 #ifdef USE_PETSC

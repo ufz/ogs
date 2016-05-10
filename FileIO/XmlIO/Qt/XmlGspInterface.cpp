@@ -28,8 +28,8 @@
 #include "BaseLib/FileFinder.h"
 #include "BaseLib/IO/Writer.h"
 
-#include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 
 #include <QFile>

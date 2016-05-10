@@ -23,7 +23,7 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
 // GeoLib

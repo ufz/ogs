@@ -22,7 +22,7 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/VtkIO/VtuInterface.h"
 
 // GeoLib

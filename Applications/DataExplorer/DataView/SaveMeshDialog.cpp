@@ -21,9 +21,8 @@
 #include "logog/include/logog.hpp"
 
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "Legacy/MeshIO.h"
-
-#include "Mesh.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/Mesh.h"
 #include "OGSError.h"
 #include "LastSavedFileDirectory.h"
 

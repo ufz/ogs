@@ -16,9 +16,9 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"

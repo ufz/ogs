@@ -28,7 +28,7 @@
 
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "BaseLib/ConfigTree.h"
 

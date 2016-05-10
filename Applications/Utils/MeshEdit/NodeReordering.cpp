@@ -18,8 +18,8 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"

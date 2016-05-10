@@ -25,7 +25,7 @@
 
 // FileIO
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 // MeshLib
 #include "Mesh.h"

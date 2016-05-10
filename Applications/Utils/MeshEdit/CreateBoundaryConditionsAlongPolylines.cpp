@@ -26,8 +26,8 @@
 #include "BaseLib/FileTools.h"
 
 // FileIO
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"

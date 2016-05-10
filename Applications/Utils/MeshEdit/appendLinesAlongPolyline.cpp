@@ -21,8 +21,8 @@
 #include "PolylineVec.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
 // MeshLib

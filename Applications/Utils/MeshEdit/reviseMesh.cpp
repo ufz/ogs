@@ -23,8 +23,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 int main(int argc, char *argv[])
 {

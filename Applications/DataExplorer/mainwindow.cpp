@@ -62,8 +62,8 @@
 // FileIO includes
 #include "FileIO/FEFLOWInterface.h"
 #include "FileIO/GMSInterface.h"
-#include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"

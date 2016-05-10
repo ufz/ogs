@@ -20,7 +20,7 @@
 #include <logog/include/logog.hpp>
 
 #include "FileIO/AsciiRasterInterface.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"

@@ -15,8 +15,8 @@
 
 #include "MeshLib/Mesh.h"
 
-#include "Legacy/MeshIO.h"
-#include "VtkIO/VtuInterface.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "FileIO/VtkIO/VtuInterface.h"
 
 namespace FileIO
 {

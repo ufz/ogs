@@ -29,7 +29,7 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 namespace
 {

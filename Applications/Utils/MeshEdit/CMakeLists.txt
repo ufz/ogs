@@ -9,78 +9,78 @@ include_directories(
 )
 
 add_executable(moveMeshNodes moveMeshNodes.cpp)
-target_link_libraries(moveMeshNodes FileIO)
+target_link_libraries(moveMeshNodes MeshLib FileIO)
 ADD_VTK_DEPENDENCY(moveMeshNodes)
 set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 add_executable(MapGeometryToMeshSurface
 	MapGeometryToMeshSurface.cpp )
-target_link_libraries(MapGeometryToMeshSurface FileIO MeshGeoToolsLib)
+target_link_libraries(MapGeometryToMeshSurface MeshLib MeshGeoToolsLib)
 ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
 
 add_executable(removeMeshElements removeMeshElements.cpp)
-target_link_libraries(removeMeshElements FileIO)
+target_link_libraries(removeMeshElements MeshLib FileIO)
 ADD_VTK_DEPENDENCY(removeMeshElements)
 set_target_properties(removeMeshElements PROPERTIES FOLDER Utilities)
 
 add_executable(NodeReordering NodeReordering.cpp)
-target_link_libraries(NodeReordering FileIO)
+target_link_libraries(NodeReordering MeshLib FileIO)
 ADD_VTK_DEPENDENCY(NodeReordering)
 set_target_properties(NodeReordering PROPERTIES FOLDER Utilities)
 
 add_executable(MoveMesh MoveMesh.cpp)
-target_link_libraries(MoveMesh FileIO)
+target_link_libraries(MoveMesh MeshLib FileIO)
 ADD_VTK_DEPENDENCY(MoveMesh)
 set_target_properties(MoveMesh PROPERTIES FOLDER Utilities)
 
 add_executable(appendLinesAlongPolyline appendLinesAlongPolyline.cpp)
-target_link_libraries(appendLinesAlongPolyline FileIO MeshGeoToolsLib)
+target_link_libraries(appendLinesAlongPolyline GeoLib MeshLib MeshGeoToolsLib FileIO)
 ADD_VTK_DEPENDENCY(appendLinesAlongPolyline)
 set_target_properties(appendLinesAlongPolyline PROPERTIES FOLDER Utilities)
 
 add_executable(editMaterialID editMaterialID.cpp)
-target_link_libraries(editMaterialID FileIO)
+target_link_libraries(editMaterialID MeshLib)
 ADD_VTK_DEPENDENCY(editMaterialID)
 set_target_properties(editMaterialID PROPERTIES FOLDER Utilities)
 
 add_executable(checkMesh checkMesh.cpp)
-target_link_libraries(checkMesh FileIO)
+target_link_libraries(checkMesh MeshLib FileIO)
 ADD_VTK_DEPENDENCY(checkMesh)
 set_target_properties(checkMesh PROPERTIES FOLDER Utilities)
 
 add_executable(reviseMesh reviseMesh.cpp)
-target_link_libraries (reviseMesh FileIO)
+target_link_libraries (reviseMesh MeshLib)
 ADD_VTK_DEPENDENCY(reviseMesh)
 set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
 	ResetPropertiesInPolygonalRegion.cpp)
-target_link_libraries(ResetPropertiesInPolygonalRegion FileIO)
+target_link_libraries(ResetPropertiesInPolygonalRegion MeshLib GeoLib FileIO)
 set_target_properties(ResetPropertiesInPolygonalRegion
 	PROPERTIES FOLDER Utilities)
 
 add_executable(AddTopLayer AddTopLayer.cpp)
-target_link_libraries(AddTopLayer FileIO)
+target_link_libraries(AddTopLayer MeshLib FileIO)
 set_target_properties(AddTopLayer PROPERTIES FOLDER Utilities)
 
 add_executable(createLayeredMeshFromRasters createLayeredMeshFromRasters.cpp)
-target_link_libraries(createLayeredMeshFromRasters FileIO)
+target_link_libraries(createLayeredMeshFromRasters MeshLib GeoLib FileIO)
 set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
 	CreateBoundaryConditionsAlongPolylines.cpp )
-target_link_libraries(CreateBoundaryConditionsAlongPolylines FileIO MeshGeoToolsLib)
+target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshLib FileIO MeshGeoToolsLib)
 ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
 	PROPERTIES FOLDER Utilities)
 
 add_executable(queryMesh queryMesh.cpp)
-target_link_libraries(queryMesh FileIO)
+target_link_libraries(queryMesh MeshLib)
 set_target_properties(queryMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ExtractSurface ExtractSurface.cpp)
-target_link_libraries(ExtractSurface FileIO MeshLib)
+target_link_libraries(ExtractSurface MeshLib)
 set_target_properties(ExtractSurface PROPERTIES FOLDER Utilities)
 
 ####################

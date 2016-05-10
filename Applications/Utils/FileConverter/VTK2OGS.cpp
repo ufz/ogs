@@ -25,10 +25,9 @@
 
 // FileIO
 #include "FileIO/VtkIO/VtuInterface.h"
-#include "Legacy/MeshIO.h"
 
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 int main (int argc, char* argv[])
 {

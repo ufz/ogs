@@ -22,9 +22,9 @@
 
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/AsciiRasterInterface.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"

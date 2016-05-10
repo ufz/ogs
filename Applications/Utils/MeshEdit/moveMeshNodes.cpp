@@ -5,8 +5,8 @@
 
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
-#include "readMeshFromFile.h"
-#include "Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "AABB.h"
 #include "Mesh.h"
 #include "MeshLib/Node.h"

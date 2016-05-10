@@ -23,7 +23,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 int main(int argc, char *argv[])
 {
