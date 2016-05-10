@@ -81,11 +81,12 @@ int main(int argc, char *argv[])
 		displacement[2] = z_arg.getValue();
 	}
 
-	INFO("translate model (%f, %f, %f).", displacement[0], displacement[1], displacement[2]);
+	INFO("translate model (%f, %f, %f).",
+	     displacement[0],
+	     displacement[1],
+	     displacement[2]);
 	MeshLib::moveMeshNodes(
-		mesh->getNodes().begin(),
-		mesh->getNodes().end(),
-		displacement);
+	    mesh->getNodes().begin(), mesh->getNodes().end(), displacement);
 
 	std::string out_fname(mesh_out_arg.getValue());
 	if (out_fname.empty()) {

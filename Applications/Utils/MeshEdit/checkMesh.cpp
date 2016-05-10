@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (valid_arg.isSet()) {
-		// Validation
-		MeshLib::MeshValidation validation(*const_cast<MeshLib::Mesh*>(mesh)); // MeshValidation outputs error messages
-		/* Remark: MeshValidation can modify the original mesh */
+		// MeshValidation outputs error messages
+		// Remark: MeshValidation can modify the original mesh
+		MeshLib::MeshValidation validation(*mesh);
 
 		unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
 		if (n_holes > 0)
