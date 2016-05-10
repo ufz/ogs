@@ -100,7 +100,6 @@ int main (int argc, char* argv[])
 		INFO("updated %d elements", cnt);
 	}
 
-	// write into a file
 	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;

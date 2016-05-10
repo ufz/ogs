@@ -183,10 +183,8 @@ int main (int argc, char* argv[])
 	}
 	/**** add other keywords here ****/
 
-	MeshLib::IO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(mesh.get());
-	meshIO.setPrecision(9);
-	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");
+	MeshLib::IO::writeMeshToFile(
+	    *mesh, msh_name.substr(0, msh_name.length() - 4) + "_new.msh");
 	return 1;
 
 }

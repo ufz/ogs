@@ -30,10 +30,8 @@
 
 // FileIO
 #include "FileIO/GMSHInterface.h"
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-// MeshLib
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
@@ -105,21 +103,7 @@ int main (int argc, char* argv[])
 	}
 
 	// *** write mesh in new format
-	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
-	if (BaseLib::getFileExtension(ogs_mesh_fname).compare("msh") == 0) {
-		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		MeshLib::IO::Legacy::MeshIO mesh_io;
-		mesh_io.setMesh(mesh);
-		mesh_io.writeToFile(ogs_mesh_fname);
-	} else {
-		if (BaseLib::getFileExtension(ogs_mesh_fname).compare("vtu") != 0) {
-			ogs_mesh_fname += ".vtu";
-		}
-		INFO("Writing %s.", ogs_mesh_fname.c_str());
-		MeshLib::IO::VtuInterface mesh_io(mesh);
-		mesh_io.writeToFile(ogs_mesh_fname);
-	}
-	INFO("\tDone.");
+	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_arg.getValue());
 
 	delete mesh;
 }

@@ -80,11 +80,9 @@ int main (int argc, char* argv[])
 	INFO("Time for reading: %f seconds.", run_time.elapsed());
 	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
 	INFO("Writing %s.", ogs_mesh_fname.c_str());
 	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
-
 	INFO("\tDone.");
 	return EXIT_SUCCESS;
 }

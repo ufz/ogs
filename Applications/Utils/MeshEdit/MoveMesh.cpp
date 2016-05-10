@@ -93,8 +93,7 @@ int main(int argc, char *argv[])
 		out_fname += "_displaced.vtu";
 	}
 
-	MeshLib::IO::VtuInterface mesh_io(mesh);
-	mesh_io.writeToFile(out_fname);
+	MeshLib::IO::writeMeshToFile(*mesh, out_fname);
 
 	return EXIT_SUCCESS;
 }

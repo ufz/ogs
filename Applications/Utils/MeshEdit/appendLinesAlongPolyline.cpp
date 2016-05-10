@@ -83,12 +83,7 @@ int main (int argc, char* argv[])
 	    MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
 	INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 
-	// write into a file
-	MeshLib::IO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(new_mesh.get());
-	meshIO.writeToFile(mesh_out.getValue());
-
+	MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;
 }
-
