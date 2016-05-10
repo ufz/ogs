@@ -21,7 +21,6 @@ add_library(GeoLib STATIC ${SOURCES}
 )
 
 target_link_libraries(GeoLib
-	BaseLib
 	MathLib
 )
 

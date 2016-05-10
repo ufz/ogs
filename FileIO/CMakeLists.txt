@@ -34,13 +34,8 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library
 add_library(FileIO ${SOURCES})
+target_link_libraries(FileIO DataHolderLib)
 
-target_link_libraries(FileIO
-	GeoLib
-	MeshLib
-	InSituLib
-	logog
-)
 if(QT4_FOUND)
 	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
 	if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)

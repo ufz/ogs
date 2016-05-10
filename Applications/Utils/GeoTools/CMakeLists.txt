@@ -7,7 +7,7 @@ include_directories(
 
 if(QT4_FOUND)
 	add_executable(TriangulatePolyline TriangulatePolyline.cpp)
-	target_link_libraries(TriangulatePolyline FileIO)
+	target_link_libraries(TriangulatePolyline GeoLib)
 	set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
 	install(TARGETS
 		TriangulatePolyline
@@ -16,7 +16,7 @@ if(QT4_FOUND)
 	)
 
 	add_executable(MoveGeometry MoveGeometry.cpp)
-	target_link_libraries(MoveGeometry FileIO)
+	target_link_libraries(MoveGeometry GeoLib)
 	set_target_properties(MoveGeometry PROPERTIES FOLDER Utilities)
 	install(TARGETS
 		MoveGeometry

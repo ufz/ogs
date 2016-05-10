@@ -2,7 +2,6 @@ add_executable(ComputeNodeAreasFromSurfaceMesh ComputeNodeAreasFromSurfaceMesh.c
 set_target_properties(ComputeNodeAreasFromSurfaceMesh PROPERTIES FOLDER Utilities)
 target_link_libraries(ComputeNodeAreasFromSurfaceMesh
 	MeshLib
-	MathLib
 	${OGS_VTK_REQUIRED_LIBS}
 )
 
