@@ -2,7 +2,7 @@
 include_directories(
 	${CMAKE_SOURCE_DIR}/BaseLib
 	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/FileIO/Legacy
+	${CMAKE_SOURCE_DIR}/MeshLib/IO/Legacy
 	${CMAKE_SOURCE_DIR}/GeoLib
 	${CMAKE_SOURCE_DIR}/MathLib
 	${CMAKE_SOURCE_DIR}/MeshLib
@@ -12,13 +12,13 @@ include_directories(
 if(OGS_BUILD_GUI)
 	add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
 	set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utilities)
-	target_link_libraries(createMeshElemPropertiesFromASCRaster FileIO)
+	target_link_libraries(createMeshElemPropertiesFromASCRaster MeshLib)
 	ADD_VTK_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 endif() # OGS_BUILD_GUI (VtkVis-target is existing)
 
 
 add_executable(generateStructuredMesh generateStructuredMesh.cpp)
-target_link_libraries(generateStructuredMesh FileIO)
+target_link_libraries(generateStructuredMesh MeshLib)
 set_target_properties(generateStructuredMesh PROPERTIES FOLDER Utilities)
 
 ####################

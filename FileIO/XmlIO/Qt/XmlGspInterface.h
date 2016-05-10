@@ -20,8 +20,8 @@
 
 #include <QString>
 
-#include "../XMLInterface.h"
-#include "XMLQtInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
+#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
 #include "DataHolderLib/Project.h"
 
@@ -31,7 +31,8 @@ namespace FileIO
 /**
  * \brief Reads and writes project information to and from XML files.
  */
-class XmlGspInterface : public XMLInterface, public XMLQtInterface
+class XmlGspInterface : public BaseLib::IO::XMLInterface,
+                        public BaseLib::IO::XMLQtInterface
 {
 public:
 	XmlGspInterface(DataHolderLib::Project &project);
@@ -54,6 +55,6 @@ private:
 	DataHolderLib::Project& _project;
 };
 
-}
+} // end namespace FileIO
 
 #endif // XMLGSPINTERFACE_H

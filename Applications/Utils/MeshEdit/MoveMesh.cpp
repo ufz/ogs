@@ -22,8 +22,8 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // GeoLib
 #include "AABB.h"
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	MeshLib::Mesh* mesh = FileIO::readMeshFromFile(fname);
+	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
 
 	MeshLib::Node displacement(0.0, 0.0, 0.0);
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		out_fname += "_displaced.vtu";
 	}
 
-	FileIO::VtuInterface mesh_io(mesh);
+	MeshLib::IO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile(out_fname);
 
 	delete mesh;

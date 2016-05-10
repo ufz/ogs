@@ -16,7 +16,7 @@
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
 
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 #include "GeoLib/Grid.h"
 
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	FileIO::Legacy::MeshIO mesh_io;
+	MeshLib::IO::Legacy::MeshIO mesh_io;
 #ifndef WIN32
 	BaseLib::MemWatch mem_watch;
 	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());

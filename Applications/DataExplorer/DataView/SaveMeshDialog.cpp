@@ -20,10 +20,9 @@
 // ThirdParty/logog
 #include "logog/include/logog.hpp"
 
-#include "FileIO/VtkIO/VtuInterface.h"
-#include "Legacy/MeshIO.h"
-
-#include "Mesh.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/Mesh.h"
 #include "OGSError.h"
 #include "LastSavedFileDirectory.h"
 
@@ -81,12 +80,12 @@ void SaveMeshDialog::accept()
 
 		int dataMode = this->dataModeBox->currentIndex();
 		bool compress (this->compressionCheckBox->isChecked());
-		FileIO::VtuInterface vtkIO(&_mesh, dataMode, compress);
+		MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
 		vtkIO.writeToFile(file_name.toStdString().c_str());
 	}
 	if (fi.suffix().toLower() == "msh")
 	{
-		FileIO::Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		meshIO.setMesh(&_mesh);
 		meshIO.writeToFile(file_name.toStdString().c_str());
 	}

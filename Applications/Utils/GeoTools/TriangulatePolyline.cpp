@@ -18,7 +18,7 @@
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/LogogSimpleFormatter.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	std::string const& polyline_name(name_arg.getValue());
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 	if (!xml.readFile(file_name))
 	{
 		ERR ("Failed to load geometry file.");

@@ -20,8 +20,8 @@
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MathLib/Vector3.h"
 
@@ -61,7 +61,7 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	std::unique_ptr<MeshLib::Mesh const> mesh(
-	    FileIO::readMeshFromFile(mesh_in.getValue()));
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
 
 	// extract surface
@@ -74,7 +74,7 @@ int main (int argc, char* argv[])
 	std::string out_fname(mesh_out.getValue());
 	if (out_fname.empty())
 		out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
-	FileIO::writeMeshToFile(*surface_mesh, out_fname);
+	MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
 
 	return EXIT_SUCCESS;
 }

@@ -11,7 +11,7 @@
 #define PROCESS_LIB_PROCESS_H_
 
 #include "AssemblerLib/ComputeSparsityPattern.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -101,7 +101,7 @@ public:
 
 		// Write output file
 		DBUG("Writing output to \'%s\'.", file_name.c_str());
-		FileIO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
+		MeshLib::IO::VtuInterface vtu_interface(&_mesh, vtkXMLWriter::Binary, true);
 		vtu_interface.writeToFile(file_name);
 	}
 

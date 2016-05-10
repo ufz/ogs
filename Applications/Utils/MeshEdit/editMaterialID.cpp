@@ -16,9 +16,9 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -81,7 +81,7 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	if (condenseArg.isSet()) {
@@ -105,7 +105,7 @@ int main (int argc, char* argv[])
 	}
 
 	// write into a file
-	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
+	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	delete custom_format;
 	delete logog_cout;

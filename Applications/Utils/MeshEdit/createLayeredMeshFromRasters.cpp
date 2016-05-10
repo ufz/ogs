@@ -22,9 +22,9 @@
 
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/AsciiRasterInterface.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
@@ -98,7 +98,7 @@ int main (int argc, char* argv[])
 	}
 
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	std::unique_ptr<MeshLib::Mesh> const sfc_mesh (FileIO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> const sfc_mesh (MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	if (!sfc_mesh) {
 		ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
 		return EXIT_FAILURE;
@@ -114,7 +114,7 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 
 	MeshLib::MeshLayerMapper mapper;
-	if (auto rasters = FileIO::readRasters(raster_paths))
+	if (auto rasters = GeoLib::IO::readRasters(raster_paths))
 	{
 		if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
 			return EXIT_FAILURE;
@@ -126,7 +126,7 @@ int main (int argc, char* argv[])
 	if (!BaseLib::hasFileExtension("vtu", output_name))
 		output_name.append(".vtu");
 	INFO("Writing mesh \"%s\" ... ", output_name.c_str());
-	FileIO::writeMeshToFile(*(mapper.getMesh("SubsurfaceMesh").release()), output_name);
+	MeshLib::IO::writeMeshToFile(*(mapper.getMesh("SubsurfaceMesh").release()), output_name);
 	INFO("done.");
 
 	return EXIT_SUCCESS;

@@ -18,8 +18,8 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -99,7 +99,7 @@ int main (int argc, char* argv[])
 	cmd.parse(argc, argv);
 
 	std::unique_ptr<MeshLib::Mesh const> mesh(
-	    FileIO::readMeshFromFile(mesh_in.getValue()));
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 	MeshLib::ElementSearch searcher(*mesh);
 
@@ -164,7 +164,7 @@ int main (int argc, char* argv[])
 		return EXIT_FAILURE;
 
 	// write into a file
-	FileIO::writeMeshToFile(*new_mesh, mesh_out.getValue());
+	MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;
 }

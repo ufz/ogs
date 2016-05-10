@@ -21,9 +21,9 @@
 #include "PolylineVec.h"
 
 // FileIO
-#include "Legacy/MeshIO.h"
-#include "readMeshFromFile.h"
-#include "XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -57,7 +57,7 @@ int main (int argc, char* argv[])
 
 	// read GEO objects
 	GeoLib::GEOObjects geo_objs;
-	FileIO::BoostXmlGmlInterface xml(geo_objs);
+	GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
 	xml.readFile(geoFileArg.getValue());
 
 	std::vector<std::string> geo_names;
@@ -75,7 +75,7 @@ int main (int argc, char* argv[])
 	}
 
 	// read a mesh
-	MeshLib::Mesh const*const mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	if (!mesh)
 	{
 		ERR("Mesh file %s not found", mesh_in.getValue().c_str());
@@ -89,7 +89,7 @@ int main (int argc, char* argv[])
 	INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 
 	// write into a file
-	FileIO::Legacy::MeshIO meshIO;
+	MeshLib::IO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(new_mesh.get());
 	meshIO.writeToFile(mesh_out.getValue());
 

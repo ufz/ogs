@@ -27,12 +27,11 @@
 
 // geometry
 #include "GEOObjects.h"
-#include "Legacy/OGSIOVer4.h"
-#include "XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 
-// mesh
-#include "Legacy/MeshIO.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 OGSFileConverter::OGSFileConverter(QWidget* parent)
 	: QDialog(parent)
@@ -50,7 +49,7 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
 		return;
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
 	for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
 	{
@@ -67,7 +66,7 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
 		}
 		std::vector<std::string> geo_names;
 		geo_objects.getGeometryNames(geo_names);
-		FileIO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
+		GeoLib::IO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
 		geo_objects.removeSurfaceVec(geo_names[0]);
 		geo_objects.removePolylineVec(geo_names[0]);
 		geo_objects.removePointVec(geo_names[0]);
@@ -81,7 +80,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 		return;
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 
 	for (QStringList::const_iterator it=input.begin(); it!=input.end(); ++it)
 	{
@@ -94,7 +93,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
 		std::string unique_name;
 		std::vector<std::string> errors;
 
-		FileIO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
+		GeoLib::IO::Legacy::readGLIFileV4(it->toStdString(), geo_objects, unique_name, errors);
 		if (errors.empty() || (errors.size()==1 && errors[0].compare("[readSurface] polyline for surface not found!")==0))
 		{
 			std::string const geo_name = BaseLib::extractBaseName(it->toStdString());
@@ -124,13 +123,13 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
 		if (fileExists(output_str))
 			continue;
 
-		MeshLib::Mesh const*const mesh (FileIO::VtuInterface::readVTUFile(it->toStdString().c_str()));
+		MeshLib::Mesh const*const mesh (MeshLib::IO::VtuInterface::readVTUFile(it->toStdString().c_str()));
 		if (mesh == nullptr)
 		{
 			OGSError::box("Error reading mesh " + fi.fileName());
 			continue;
 		}
-		FileIO::Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		meshIO.setMesh(mesh);
 		meshIO.writeToFile(output_str.c_str());
 		delete mesh;
@@ -151,14 +150,14 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
 		if (fileExists(output_str))
 			continue;
 
-		FileIO::Legacy::MeshIO meshIO;
+		MeshLib::IO::Legacy::MeshIO meshIO;
 		MeshLib::Mesh const*const mesh (meshIO.loadMeshFromFile(it->toStdString()));
 		if (mesh == nullptr)
 		{
 			OGSError::box("Error reading mesh " + fi.fileName());
 			continue;
 		}
-		FileIO::VtuInterface vtu(mesh);
+		MeshLib::IO::VtuInterface vtu(mesh);
 		vtu.writeToFile(output_str);
 		delete mesh;
 	}

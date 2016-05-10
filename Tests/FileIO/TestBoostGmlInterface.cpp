@@ -19,7 +19,7 @@
 #include "Tests/FileIO/TestGmlInterface.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
 
 TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
@@ -28,7 +28,7 @@ TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
 		+ "TestXmlGmlReader.gml");
 
-	FileIO::BoostXmlGmlInterface xml(geo_objects);
+	GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
 	EXPECT_EQ(result, 1);

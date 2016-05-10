@@ -27,8 +27,8 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 	BaseLib::RunTime run_time;
 	run_time.start();
-	const MeshLib::Mesh* mesh = FileIO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
+	const MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
 	if (!mesh)
 		return 1;
 

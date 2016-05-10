@@ -19,7 +19,7 @@
 
 #include "BaseLib/LogogSimpleFormatter.h"
 #include "MathLib/Vector3.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
 
 #include <QCoreApplication>
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	cmd.parse( argc, argv );
 
 	GeoLib::GEOObjects geo_objects;
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 	if (!xml.readFile(geo_input_arg.getValue()))
 	{
 		delete logogCout;

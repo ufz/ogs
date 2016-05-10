@@ -23,8 +23,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 int main(int argc, char *argv[])
 {
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	cmd.parse( argc, argv );
 
 	// read a mesh file
-	MeshLib::Mesh* org_mesh (FileIO::readMeshFromFile(input_arg.getValue()));
+	MeshLib::Mesh* org_mesh (MeshLib::IO::readMeshFromFile(input_arg.getValue()));
 	if (!org_mesh)
 		return 0;
 	INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNNodes(), org_mesh->getNElements());
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	// write into a file
 	if (new_mesh) {
 		INFO("Revised mesh: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
-		FileIO::writeMeshToFile(*new_mesh, output_arg.getValue());
+		MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
 	}
 
 	delete org_mesh;

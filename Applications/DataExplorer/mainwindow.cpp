@@ -24,6 +24,7 @@
 
 // GeoLib
 #include "Raster.h"
+#include "GeoLib/IO/Legacy/OGSIOVer4.h"
 
 // MeshGeoLib
 #include "MeshGeoToolsLib/GeoMapper.h"
@@ -61,15 +62,14 @@
 // FileIO includes
 #include "FileIO/FEFLOWInterface.h"
 #include "FileIO/GMSInterface.h"
-#include "FileIO/Legacy/MeshIO.h"
-#include "FileIO/Legacy/OGSIOVer4.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
 #include "FileIO/XmlIO/Qt/XmlGspInterface.h"
-#include "FileIO/XmlIO/Qt/XmlStnInterface.h"
-#include "FileIO/readMeshFromFile.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
 // MeshLib
 #include "Node.h"
@@ -460,7 +460,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		{
 			std::string unique_name;
 			std::vector<std::string> errors;
-			if (! Legacy::readGLIFileV4(fileName.toStdString(), _project.getGEOObjects(), unique_name, errors)) {
+			if (!GeoLib::IO::Legacy::readGLIFileV4(fileName.toStdString(),
+			                                       _project.getGEOObjects(),
+			                                       unique_name, errors))
+			{
 				for (std::size_t k(0); k<errors.size(); k++)
 					OGSError::box(QString::fromStdString(errors[k]));
 			}
@@ -477,14 +480,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 		}
 		else if (fi.suffix().toLower() == "gml")
 		{
-			XmlGmlInterface xml(_project.getGEOObjects());
+			GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load geometry.\n Please see console for details.");
 		}
 		// OpenGeoSys observation station files (incl. boreholes)
 		else if (fi.suffix().toLower() == "stn")
 		{
-			XmlStnInterface xml(_project.getGEOObjects());
+			GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
 			if (!xml.readFile(fileName))
 				OGSError::box("Failed to load station data.\n Please see console for details.");
 
@@ -497,7 +500,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
 			myTimer0.start();
 #endif
 			std::unique_ptr<MeshLib::Mesh> mesh(
-				FileIO::readMeshFromFile(fileName.toStdString()));
+			    MeshLib::IO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
 			INFO("Mesh loading time: %d ms.", myTimer0.elapsed());
 			myTimer1.start();
@@ -779,18 +782,19 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 	QFileInfo fi(fileName);
 	if (fi.suffix().toLower() == "gli")
 	{
-		FileIO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(), this->_project.getGEOObjects());
+		GeoLib::IO::Legacy::writeAllDataToGLIFileV4(fileName.toStdString(),
+		                                            _project.getGEOObjects());
 		return;
 	}
 #endif
-	XmlGmlInterface xml(_project.getGEOObjects());
+	GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(gliName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
-	XmlStnInterface xml(_project.getGEOObjects());
+	GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
 	xml.setNameForExport(listName.toStdString());
 	xml.writeToFile(fileName.toStdString());
 }
@@ -835,7 +839,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 	if (choice == 0) // load mesh from file
 	{
 		if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
-			mesh = FileIO::readMeshFromFile(file_name.toStdString());
+			mesh = MeshLib::IO::readMeshFromFile(file_name.toStdString());
 		else
 		{
 			OGSError::box("The selected file is no supported mesh file.");

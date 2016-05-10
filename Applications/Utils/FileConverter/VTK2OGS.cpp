@@ -24,11 +24,10 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
-#include "Legacy/MeshIO.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-// MeshLib
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 
 int main (int argc, char* argv[])
 {
@@ -48,10 +47,10 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::VtuInterface::readVTUFile(mesh_in.getValue()));
+	MeshLib::Mesh* mesh (MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	FileIO::Legacy::MeshIO meshIO;
+	MeshLib::IO::Legacy::MeshIO meshIO;
 	meshIO.setMesh(mesh);
 	meshIO.writeToFile(mesh_out.getValue());
 

@@ -22,14 +22,15 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 // FileIO
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/writeMeshToFile.h"
-#include "FileIO/readGeometryFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
 // GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/AnalyticalGeometry.h"
+
+#include "GeoLib/IO/readGeometryFromFile.h"
 
 // MathLib
 #include "MathLib/Vector3.h"
@@ -162,7 +163,7 @@ int main (int argc, char* argv[])
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
-	FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries);
+	GeoLib::IO::readGeometryFromFile(geometry_fname.getValue(), geometries);
 
 	std::string geo_name;
 	{
@@ -201,7 +202,7 @@ int main (int argc, char* argv[])
 	GeoLib::Polygon polygon(*(ply));
 
 	// *** read mesh
-	MeshLib::Mesh * mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh * mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	std::vector<std::string> property_names(
 		mesh->getProperties().getPropertyVectorNames());
 	INFO("Mesh contains %d property vectors:", property_names.size());
@@ -248,7 +249,7 @@ int main (int argc, char* argv[])
 		resetMeshElementProperty(*mesh, polygon, property_name, bool_property_val);
 	}
 
-	FileIO::writeMeshToFile(*mesh, mesh_out.getValue());
+	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 	return EXIT_SUCCESS;
 }

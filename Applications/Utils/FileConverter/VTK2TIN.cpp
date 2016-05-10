@@ -24,6 +24,7 @@
 // GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/IO/TINInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -32,8 +33,7 @@
 #include "MeshLib/convertMeshToGeo.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
-#include "FileIO/TINInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 
 int main (int argc, char* argv[])
@@ -54,14 +54,16 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh> mesh (FileIO::VtuInterface::readVTUFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	INFO("Converting the mesh to TIN");
 	GeoLib::GEOObjects geo_objects;
 	if (MeshLib::convertMeshToGeo(*mesh, geo_objects)) {
 		INFO("Writing TIN into the file");
-		FileIO::TINInterface::writeSurfaceAsTIN(*(*geo_objects.getSurfaceVec(mesh->getName()))[0], mesh_out.getValue());
+		GeoLib::IO::TINInterface::writeSurfaceAsTIN(
+		    *(*geo_objects.getSurfaceVec(mesh->getName()))[0],
+		    mesh_out.getValue());
 	}
 
 	delete custom_format;

@@ -26,10 +26,10 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/PointVec.h"
+#include "GeoLib/IO/TINInterface.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
-#include "FileIO/TINInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -59,7 +59,8 @@ int main (int argc, char* argv[])
 	auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
 	    new std::vector<GeoLib::Point*>);
 	GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
-	std::unique_ptr<GeoLib::Surface> sfc(FileIO::TINInterface::readTIN(tinFileName, point_vec));
+	std::unique_ptr<GeoLib::Surface> sfc(
+	    GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
 		return 1;
 	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
@@ -69,7 +70,7 @@ int main (int argc, char* argv[])
 	INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	INFO("Write it into VTU");
-	FileIO::VtuInterface writer(mesh.get());
+	MeshLib::IO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
 	delete custom_format;

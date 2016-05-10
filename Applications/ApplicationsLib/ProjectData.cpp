@@ -27,8 +27,8 @@
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 
 // FileIO
-#include "FileIO/XmlIO/Boost/BoostXmlGmlInterface.h"
-#include "FileIO/readMeshFromFile.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "BaseLib/ConfigTree.h"
 
@@ -43,7 +43,7 @@ static
 void readGeometry(std::string const& fname, GeoLib::GEOObjects & geo_objects)
 {
 	DBUG("Reading geometry file \'%s\'.", fname.c_str());
-	FileIO::BoostXmlGmlInterface gml_reader(geo_objects);
+	GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
 	gml_reader.readFile(fname);
 }
 }
@@ -65,7 +65,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 			project_config.getConfParam<std::string>("mesh"), project_directory
 		);
 
-	MeshLib::Mesh* const mesh = FileIO::readMeshFromFile(mesh_file);
+	MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
 	if (!mesh) {
 		ERR("Could not read mesh from \'%s\' file. No mesh added.",
 			mesh_file.c_str());

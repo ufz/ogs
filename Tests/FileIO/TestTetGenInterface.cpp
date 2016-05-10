@@ -19,7 +19,7 @@
 #include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/TetGenInterface.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
@@ -51,7 +51,7 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
 #endif
 {
 	std::string const file_name (BaseLib::BuildInfo::data_path + "/FileIO/AmmerSubsurfaceCoarse.vtu");
-	std::unique_ptr<MeshLib::Mesh const> const mesh (FileIO::readMeshFromFile(file_name));
+	std::unique_ptr<MeshLib::Mesh const> const mesh (MeshLib::IO::readMeshFromFile(file_name));
 
 	std::string const tg_new_name ("TestSmeshWriter");
 	std::string const output_name(BaseLib::BuildInfo::tests_tmp_path + tg_new_name + ".smesh");

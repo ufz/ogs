@@ -24,8 +24,8 @@
 #include "LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/VtkIO/VtuInterface.h"
-#include "readMeshFromFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 // MeshLib
 #include "Mesh.h"
@@ -48,10 +48,10 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (FileIO::readMeshFromFile(mesh_in.getValue()));
+	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	FileIO::VtuInterface vtu(mesh);
+	MeshLib::IO::VtuInterface vtu(mesh);
 	vtu.writeToFile(mesh_out.getValue());
 
 	delete custom_format;

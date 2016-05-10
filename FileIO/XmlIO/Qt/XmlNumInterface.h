@@ -15,13 +15,13 @@
 #ifndef XMLNUMINTERFACE_H
 #define XMLNUMINTERFACE_H
 
-#include "../XMLInterface.h"
-#include "XMLQtInterface.h"
+#include "BaseLib/IO/XmlIO/XMLInterface.h"
+#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
 namespace FileIO
 {
 
-class XmlNumInterface : public XMLInterface, public XMLQtInterface
+class XmlNumInterface : public BaseLib::IO::XMLInterface, public BaseLib::IO::XMLQtInterface
 {
 public:
 	XmlNumInterface();

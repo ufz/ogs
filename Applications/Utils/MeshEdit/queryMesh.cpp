@@ -23,7 +23,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-#include "FileIO/readMeshFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 	// read the mesh file
 	auto const mesh = std::unique_ptr<MeshLib::Mesh>(
-		FileIO::readMeshFromFile(filename));
+		MeshLib::IO::readMeshFromFile(filename));
 	if (!mesh)
 		return EXIT_FAILURE;
 

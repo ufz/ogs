@@ -19,7 +19,7 @@
 #include "Tests/FileIO/TestGmlInterface.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/GEOObjects.h"
 
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
@@ -28,7 +28,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 	std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path
 		+ "TestXmlGmlReader.gml");
 
-	FileIO::XmlGmlInterface xml(geo_objects);
+	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 	xml.setNameForExport(geo_name);
 	int result = xml.writeToFile(test_data_file);
 	EXPECT_EQ(result, 1);

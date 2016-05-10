@@ -21,11 +21,11 @@
 #include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/readGeometryFromFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
+#include "GeoLib/IO/readGeometryFromFile.h"
 
 #include "MathLib/Vector3.h"
 
@@ -87,11 +87,11 @@ int main (int argc, char* argv[])
 
 	cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh const> mesh(FileIO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
 
 	GeoLib::GEOObjects geo_objs;
-	FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs);
+	GeoLib::IO::readGeometryFromFile(geo_in.getValue(), geo_objs);
 	std::vector<std::string> geo_names;
 	geo_objs.getGeometryNames(geo_names);
 	INFO("Geometry \"%s\" read: %u points, %u polylines.",

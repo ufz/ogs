@@ -25,10 +25,10 @@
 #include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
-#include "FileIO/writeMeshToFile.h"
-#include "FileIO/Legacy/MeshIO.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "FileIO/FEFLOWInterface.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
@@ -87,7 +87,7 @@ int main (int argc, char* argv[])
 	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
 	INFO("Writing %s.", ogs_mesh_fname.c_str());
-	FileIO::writeMeshToFile(*mesh, ogs_mesh_fname);
+	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
 
 	INFO("\tDone.");
 

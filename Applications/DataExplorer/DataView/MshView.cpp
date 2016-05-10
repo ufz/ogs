@@ -25,7 +25,7 @@
 
 #include "FileIO/SHPInterface.h"
 #include "FileIO/TetGenInterface.h"
-#include "FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -166,7 +166,7 @@ void MshView::openMap2dMeshDialog()
 	if (dlg.useRasterMapping())
 	{
 		std::unique_ptr<GeoLib::Raster> raster{
-		    FileIO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
+		    GeoLib::IO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
 		if (!raster)
 		{
 			OGSError::box(QString::fromStdString(
