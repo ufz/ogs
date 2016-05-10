@@ -62,6 +62,11 @@ int main(int argc, char *argv[])
 
 	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
 
+	if (!mesh) {
+		ERR("Could not read mesh from file \"%s\".", fname.c_str());
+		return EXIT_FAILURE;
+	}
+
 	MeshLib::Node displacement(0.0, 0.0, 0.0);
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
 		&& fabs(y_arg.getValue()) < std::numeric_limits<double>::epsilon()
@@ -91,6 +96,7 @@ int main(int argc, char *argv[])
 	MeshLib::IO::VtuInterface mesh_io(mesh);
 	mesh_io.writeToFile(out_fname);
 
+	return EXIT_SUCCESS;
 	delete mesh;
 }
 

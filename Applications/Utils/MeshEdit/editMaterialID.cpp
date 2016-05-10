@@ -101,7 +101,5 @@ int main (int argc, char* argv[])
 	// write into a file
 	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
-
-	return 0;
+	return EXIT_SUCCESS;
 }
-

@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	if (!xml.readFile(file_name))
 	{
 		ERR ("Failed to load geometry file.");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	std::vector<std::string> geo_names;
@@ -70,14 +70,14 @@ int main(int argc, char *argv[])
 	if (line == nullptr)
 	{
 		ERR ("No polyline found with name \"%s\". Aborting...", polyline_name.c_str());
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	// check if polyline can be triangulated (i.e. closed + coplanar)
 	if (!line->isCoplanar())
 	{
 		ERR ("Polyline is not coplanar, no unambiguous triangulation possible. Aborting...");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	if (!line->isClosed())
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 			INFO ("Polyline closed.");
 		}
 		else
-			return 1;
+			return EXIT_FAILURE;
 	}
 
 	// create surface
@@ -126,5 +126,5 @@ int main(int argc, char *argv[])
 	xml.writeToFile(output_arg.getValue());
 	INFO ("...done.");
 
-	return 0;
+	return EXIT_SUCCESS;
 }

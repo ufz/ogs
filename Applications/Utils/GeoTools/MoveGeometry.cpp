@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	GeoLib::IO::XmlGmlInterface xml(geo_objects);
 	if (!xml.readFile(geo_input_arg.getValue()))
 	{
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	MathLib::Vector3 displacement(0.0, 0.0, 0.0);
@@ -74,5 +74,5 @@ int main(int argc, char *argv[])
 	xml.setNameForExport(geo_names[0]);
 	xml.writeToFile(geo_output_arg.getValue());
 
-	return 0;
+	return EXIT_SUCCESS;
 }

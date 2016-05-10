@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	// read a mesh file
 	MeshLib::Mesh* org_mesh (MeshLib::IO::readMeshFromFile(input_arg.getValue()));
 	if (!org_mesh)
-		return 0;
+		return EXIT_FAILURE;
 	INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNNodes(), org_mesh->getNElements());
 
 	// revise the mesh
@@ -68,5 +68,5 @@ int main(int argc, char *argv[])
 	delete org_mesh;
 	delete new_mesh;
 
-	return 0;
+	return EXIT_SUCCESS;
 }

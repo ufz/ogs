@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	run_time.start();
 	const MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
 	if (!mesh)
-		return 1;
+		return EXIT_FAILURE;
 
 	const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	if (mem_with_mesh>0)

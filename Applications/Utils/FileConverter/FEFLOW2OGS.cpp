@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
 
 	if (mesh == nullptr) {
 		INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
@@ -85,6 +85,7 @@ int main (int argc, char* argv[])
 	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
 
 	INFO("\tDone.");
+	return EXIT_SUCCESS;
 
 	delete mesh;
 }

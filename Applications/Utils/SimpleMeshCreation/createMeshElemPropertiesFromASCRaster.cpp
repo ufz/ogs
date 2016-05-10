@@ -215,7 +215,7 @@ int main (int argc, char* argv[])
 		if (!property_out)
 		{
 			ERR("Could not open file %s for writing the mapping.", property_fname.c_str());
-			return -1;
+			return EXIT_FAILURE;
 		}
 
 		for (std::size_t k(0); k < n_dest_mesh_elements; k++)
@@ -244,5 +244,5 @@ int main (int argc, char* argv[])
 		MeshLib::IO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -47,5 +47,5 @@ int main (int argc, char* argv[])
 	meshIO.setMesh(mesh);
 	meshIO.writeToFile(mesh_out.getValue());
 
-	return 0;
+	return EXIT_SUCCESS;
 }

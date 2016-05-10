@@ -49,5 +49,5 @@ int main (int argc, char* argv[])
 	vtu.writeToFile(mesh_out.getValue());
 
 
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -200,7 +200,7 @@ int main (int argc, char* argv[])
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	MeshGeoToolsLib::SearchLength search_length_strategy;
@@ -227,7 +227,7 @@ int main (int argc, char* argv[])
 	geometry_sets.getGeometryNames(geo_names);
 	if (geo_names.empty()) {
 		ERR("Did not find mesh nodes along polylines.");
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	std::string merge_name("AllMeshNodesAlongPolylines");
@@ -286,5 +286,5 @@ int main (int argc, char* argv[])
 	    BaseLib::dropFileExtension(output_base_fname.getValue()));
 	writeBCsAndGeometry(geometry_sets, surface_name, base_fname,
 	                    bc_type.getValue(), gml_arg.getValue());
-	return 0;
+	return EXIT_SUCCESS;
 }

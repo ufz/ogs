@@ -62,5 +62,5 @@ int main (int argc, char* argv[])
 		    mesh_out.getValue());
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

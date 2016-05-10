@@ -57,7 +57,7 @@ int main (int argc, char* argv[])
 	std::unique_ptr<GeoLib::Surface> sfc(
 	    GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
-		return 1;
+		return EXIT_FAILURE;
 	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
 
 	INFO("converting to mesh data");
@@ -68,5 +68,5 @@ int main (int argc, char* argv[])
 	MeshLib::IO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
-	return 0;
+	return EXIT_SUCCESS;
 }

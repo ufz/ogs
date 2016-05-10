@@ -166,7 +166,7 @@ int main (int argc, char* argv[])
 			ERR("Shape file contains %d polylines.", number_of_elements);
 			ERR("This programm only handles only files containing points.");
 			SHPClose(hSHP);
-			return 0;
+			return EXIT_SUCCESS;
 		}
 		SHPClose(hSHP);
 	} else {
@@ -233,6 +233,5 @@ int main (int argc, char* argv[])
 		ERR("Could not open the database file.");
 	}
 
-
-	return 0;
+	return EXIT_SUCCESS;
 }

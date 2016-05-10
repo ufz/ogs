@@ -60,21 +60,21 @@ int main (int argc, char* argv[])
 	if (geo_names.empty ())
 	{
 		std::cout << "no geometries found" << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 	const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
 	if (!ply_vec)
 	{
 		std::cout << "could not found polylines" << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	// read a mesh
 	MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	if (!mesh)
 	{
-		ERR("Mesh file %s not found", mesh_in.getValue().c_str());
-		return 1;
+		ERR("Mesh file \"%s\" not found", mesh_in.getValue().c_str());
+		return EXIT_FAILURE;
 	}
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
@@ -89,6 +89,6 @@ int main (int argc, char* argv[])
 	meshIO.writeToFile(mesh_out.getValue());
 
 
-	return 1;
+	return EXIT_SUCCESS;
 }
 
