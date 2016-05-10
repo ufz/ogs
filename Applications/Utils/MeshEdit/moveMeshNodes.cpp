@@ -3,6 +3,8 @@
  * 2012/03/07 KR Initial implementation
  */
 
+#include <memory>
+
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -94,7 +96,8 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(msh_name));
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(msh_name));
 	//std::vector<std::size_t> del_nodes;
 
 	// Start keyword-specific selection of nodes
@@ -181,10 +184,9 @@ int main (int argc, char* argv[])
 	/**** add other keywords here ****/
 
 	MeshLib::IO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(mesh);
+	meshIO.setMesh(mesh.get());
 	meshIO.setPrecision(9);
 	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");
-	delete mesh;
 	return 1;
 
 }

@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
+	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
 
 	if (!mesh) {
 		ERR("Could not read mesh from file \"%s\".", fname.c_str());
@@ -97,7 +97,4 @@ int main(int argc, char *argv[])
 	mesh_io.writeToFile(out_fname);
 
 	return EXIT_SUCCESS;
-	delete mesh;
 }
-
-

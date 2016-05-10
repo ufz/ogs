@@ -170,7 +170,8 @@ int main (int argc, char* argv[])
 
 	// *** read mesh
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * subsurface_mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> subsurface_mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	INFO("done.");
 	INFO("Extracting top surface of mesh \"%s\" ... ",
 		mesh_arg.getValue().c_str());
@@ -180,8 +181,7 @@ int main (int argc, char* argv[])
 	    MeshLib::MeshSurfaceExtraction::getMeshSurface(*subsurface_mesh, dir,
 	                                                   angle));
 	INFO("done.");
-	delete subsurface_mesh;
-	subsurface_mesh = nullptr;
+	subsurface_mesh.reset(nullptr);
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;

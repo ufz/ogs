@@ -8,6 +8,7 @@
  */
 
 #include <array>
+#include <memory>
 #include <string>
 
 #include "tclap/CmdLine.h"
@@ -45,18 +46,20 @@ int main(int argc, char *argv[])
 	cmd.parse( argc, argv );
 
 	// read a mesh file
-	MeshLib::Mesh* org_mesh (MeshLib::IO::readMeshFromFile(input_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> org_mesh(
+	    MeshLib::IO::readMeshFromFile(input_arg.getValue()));
 	if (!org_mesh)
 		return EXIT_FAILURE;
 	INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNNodes(), org_mesh->getNElements());
 
 	// revise the mesh
-	MeshLib::Mesh* new_mesh = nullptr;
+	std::unique_ptr<MeshLib::Mesh> new_mesh;
 	if (simplify_arg.getValue()) {
 		INFO("Simplifying the mesh...");
 		MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*org_mesh));
 		unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
-		new_mesh = rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim);
+		new_mesh.reset(
+		    rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
 	}
 
 	// write into a file
@@ -64,9 +67,6 @@ int main(int argc, char *argv[])
 		INFO("Revised mesh: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 		MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
 	}
-
-	delete org_mesh;
-	delete new_mesh;
 
 	return EXIT_SUCCESS;
 }

@@ -7,8 +7,8 @@
  *
  */
 
-// STL
 #include <string>
+#include <memory>
 
 // ThirdParty
 #include "tclap/CmdLine.h"
@@ -66,7 +66,8 @@ int main (int argc, char* argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	FileIO::FEFLOWInterface feflowIO(nullptr);
-	MeshLib::Mesh const*const mesh(feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(
+	    feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
 	if (mesh == nullptr) {
 		INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
@@ -86,7 +87,5 @@ int main (int argc, char* argv[])
 
 	INFO("\tDone.");
 	return EXIT_SUCCESS;
-
-	delete mesh;
 }
 

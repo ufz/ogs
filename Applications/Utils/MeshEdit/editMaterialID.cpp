@@ -6,6 +6,7 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
+#include <memory>
 // TCLAP
 #include "tclap/CmdLine.h"
 
@@ -75,7 +76,8 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	if (condenseArg.isSet()) {

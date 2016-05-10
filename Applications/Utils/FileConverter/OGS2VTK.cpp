@@ -11,8 +11,8 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-// STL
 #include <string>
+#include <memory>
 
 // TCLAP
 #include "tclap/CmdLine.h"
@@ -42,10 +42,11 @@ int main (int argc, char* argv[])
 	cmd.add(mesh_out);
 	cmd.parse(argc, argv);
 
-	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	MeshLib::IO::VtuInterface vtu(mesh);
+	MeshLib::IO::VtuInterface vtu(mesh.get());
 	vtu.writeToFile(mesh_out.getValue());
 
 

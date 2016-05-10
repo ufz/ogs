@@ -44,14 +44,13 @@ int main(int argc, char *argv[])
 
 	cmd.parse( argc, argv );
 
-	const std::string filename(mesh_arg.getValue());
-
 	// read the mesh file
 	BaseLib::MemWatch mem_watch;
 	const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 	BaseLib::RunTime run_time;
 	run_time.start();
-	const MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	if (!mesh)
 		return EXIT_FAILURE;
 
@@ -113,6 +112,4 @@ int main(int argc, char *argv[])
 		else
 			INFO ("No holes found within the mesh.");
 	}
-
-	delete mesh;
 }
