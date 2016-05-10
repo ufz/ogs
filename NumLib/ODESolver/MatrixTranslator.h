@@ -95,7 +95,6 @@ class MatrixTranslatorGeneral;
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation
- * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
@@ -188,7 +187,6 @@ class MatrixTranslatorForwardEuler;
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation
- * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
@@ -284,7 +282,6 @@ class MatrixTranslatorCrankNicolson;
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation
- * \tparam ODETag a tag indicating the type of equation.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
