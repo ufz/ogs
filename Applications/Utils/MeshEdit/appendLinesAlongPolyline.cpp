@@ -59,13 +59,14 @@ int main (int argc, char* argv[])
 	geo_objs.getGeometryNames (geo_names);
 	if (geo_names.empty ())
 	{
-		std::cout << "no geometries found" << std::endl;
+		ERR("No geometries found.");
 		return EXIT_FAILURE;
 	}
 	const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
 	if (!ply_vec)
 	{
-		std::cout << "could not found polylines" << std::endl;
+		ERR("Could not find polylines in geometry \"%s\".",
+		    geo_names.front().c_str());
 		return EXIT_FAILURE;
 	}
 
