@@ -12,6 +12,7 @@ addons:
       - libshp-dev
 
 cache:
+  ccache: true
   directories:
     - $HOME/cmake-3.1.1-Linux-x86_64
     - $HOME/VTK-Install
