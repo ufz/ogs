@@ -17,15 +17,19 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib
 {
 
+enum ElementType {LINE2, QUAD4, HEX8, TRI3, TET4, PRISM6, PYRAMID5, INVALID};
+
 /// A subdomain mesh.
 class MeshPartitioning : public Mesh
 {
+        typedef int MyInt; // for PetscInt
     public:
         /// Copy constructor
         MeshPartitioning(const MeshLib::Mesh &mesh) : Mesh(mesh)
@@ -35,22 +39,52 @@ class MeshPartitioning : public Mesh
         void write2METIS(const std::string& file_name);
 
         /// Partition by element.
-        void partitionByElement()
+        void partitionByElementMETIS(const std::string& /*file_name_base*/, const unsigned /*npartitions*/)
         {
             /* to be decided */
         }
 
         /// Partition by node.
-        void partitionByNode();
-
-        /// Write the partitioned mesh into ASCII files.
-        void writeNodePartitionedMeshASCII();
-
-        /// Write the partitioned mesh into binary files.
-        void writeNodePartitionedMeshBinary();
+        void partitionByNodeMETIS(const std::string& file_name_base, const unsigned npartitions,
+                                  const bool output_binary);
 
     private:
+        /// Elements connected to each nodes.
+        std::vector< std::vector<Element*> > _node_connected_elements;
 
+        /// Find connected elements for each nodes.
+        void findConnectedElements();
+
+        ElementType getElementType(const Element& elem);
+
+    /*!
+         \brief get integer variables, which are used to define an element
+         \param elem            Element
+         \param local_node_ids  Local node indicies of a partition
+         \param elem_info       An vector holds all integer variables of element definitions
+         \param counter         Recorder of the number of integer variables.
+    */
+    void getElementIntegerVariables(const Element& elem,
+                                    const std::vector<unsigned>& local_node_ids,
+                                    std::vector<MyInt>& elem_info,
+                                    MyInt& counter);
+
+    /*!
+        \brief Write local indicies of element nodes to a ASCII file
+        \param os              Output stream
+        \param elem            Element
+        \param local_node_ids  Local node indicies of a partition
+    */
+    void writeLocalElementNodeIndicies(std::ostream& os, const Element& elem,
+                                       const std::vector<unsigned>& local_node_ids);
+
+        struct NodeStruct
+        {
+            MyInt id;
+            double x;
+            double y;
+            double z;
+        };
 };
 
 }   // namespace MeshLib
