@@ -14,3 +14,5 @@ else()
     # excluded when OGS_BUILD_GUI=ON.
     add_subdirectory(ModelPreparation/PartitionMesh)
 endif() # OGS_BUILD_GUI
+
+include(Tests.cmake)
