@@ -140,7 +140,7 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
     return std::numeric_limits<unsigned>::max();
 }
 
-const Node* Element::getNode(unsigned i) const
+Node* Element::getNode(unsigned i) const
 {
 #ifndef NDEBUG
     if (i < getNumberOfNodes())
