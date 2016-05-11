@@ -6,38 +6,25 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-// TCLAP
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "LogogSimpleFormatter.h"
-#include "FileTools.h"
+#include "BaseLib/FileTools.h"
 
-// GeoLib
-#include "GEOObjects.h"
-#include "PolylineVec.h"
-
-// FileIO
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/PolylineVec.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
-// MeshLib
-#include "Mesh.h"
-
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Append line elements into a mesh.", ' ', "0.1");
 	TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
@@ -64,22 +51,23 @@ int main (int argc, char* argv[])
 	geo_objs.getGeometryNames (geo_names);
 	if (geo_names.empty ())
 	{
-		std::cout << "no geometries found" << std::endl;
-		return -1;
+		ERR("No geometries found.");
+		return EXIT_FAILURE;
 	}
 	const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
 	if (!ply_vec)
 	{
-		std::cout << "could not found polylines" << std::endl;
-		return -1;
+		ERR("Could not find polylines in geometry \"%s\".",
+		    geo_names.front().c_str());
+		return EXIT_FAILURE;
 	}
 
 	// read a mesh
 	MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	if (!mesh)
 	{
-		ERR("Mesh file %s not found", mesh_in.getValue().c_str());
-		return 1;
+		ERR("Mesh file \"%s\" not found", mesh_in.getValue().c_str());
+		return EXIT_FAILURE;
 	}
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
@@ -88,15 +76,7 @@ int main (int argc, char* argv[])
 	    MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
 	INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
 
-	// write into a file
-	MeshLib::IO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(new_mesh.get());
-	meshIO.writeToFile(mesh_out.getValue());
+	MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-	return 1;
+	return EXIT_SUCCESS;
 }
-

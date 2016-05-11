@@ -9,14 +9,14 @@
 #include <array>
 #include <string>
 
-#include "logog/include/logog.hpp"
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
+
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/AABB.h"
@@ -28,14 +28,10 @@
 #include "MeshLib/MeshQuality/MeshValidation.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/Legacy/MeshIO.h"
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Checks mesh properties", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
@@ -47,16 +43,15 @@ int main(int argc, char *argv[])
 
 	cmd.parse( argc, argv );
 
-	const std::string filename(mesh_arg.getValue());
-
 	// read the mesh file
 	BaseLib::MemWatch mem_watch;
 	const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 	BaseLib::RunTime run_time;
 	run_time.start();
-	const MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(filename); // FileIO outputs nr. of nodes and elements
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	if (!mesh)
-		return 1;
+		return EXIT_FAILURE;
 
 	const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
 	if (mem_with_mesh>0)
@@ -104,9 +99,9 @@ int main(int argc, char *argv[])
 	}
 
 	if (valid_arg.isSet()) {
-		// Validation
-		MeshLib::MeshValidation validation(*const_cast<MeshLib::Mesh*>(mesh)); // MeshValidation outputs error messages
-		/* Remark: MeshValidation can modify the original mesh */
+		// MeshValidation outputs error messages
+		// Remark: MeshValidation can modify the original mesh
+		MeshLib::MeshValidation validation(*mesh);
 
 		unsigned const n_holes (MeshLib::MeshValidation::detectHoles(*mesh));
 		if (n_holes > 0)
@@ -116,9 +111,4 @@ int main(int argc, char *argv[])
 		else
 			INFO ("No holes found within the mesh.");
 	}
-
-	delete mesh;
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
 }

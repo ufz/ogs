@@ -13,18 +13,18 @@
 
 #include <string>
 
-#include "logog/include/logog.hpp"
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
+
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
+
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
 
 #include <QCoreApplication>
-
 
 std::string output_question()
 {
@@ -39,10 +39,7 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv, false);
 
-	LOGOG_INITIALIZE();
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog::Cout *logogCout(new logog::Cout);
-	logogCout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Triangulates the specified polyline in the given geometry file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string>  input_arg("i", "input",  "GML input file (*.gml)", true, "", "string");
@@ -61,7 +58,7 @@ int main(int argc, char *argv[])
 	if (!xml.readFile(file_name))
 	{
 		ERR ("Failed to load geometry file.");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	std::vector<std::string> geo_names;
@@ -73,14 +70,14 @@ int main(int argc, char *argv[])
 	if (line == nullptr)
 	{
 		ERR ("No polyline found with name \"%s\". Aborting...", polyline_name.c_str());
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	// check if polyline can be triangulated (i.e. closed + coplanar)
 	if (!line->isCoplanar())
 	{
 		ERR ("Polyline is not coplanar, no unambiguous triangulation possible. Aborting...");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	if (!line->isClosed())
@@ -95,7 +92,7 @@ int main(int argc, char *argv[])
 			INFO ("Polyline closed.");
 		}
 		else
-			return 1;
+			return EXIT_FAILURE;
 	}
 
 	// create surface
@@ -129,8 +126,5 @@ int main(int argc, char *argv[])
 	xml.writeToFile(output_arg.getValue());
 	INFO ("...done.");
 
-	delete logogCout;
-	delete custom_format;
-	LOGOG_SHUTDOWN();
-	return 0;
+	return EXIT_SUCCESS;
 }

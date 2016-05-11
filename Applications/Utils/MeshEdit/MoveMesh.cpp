@@ -10,36 +10,26 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// ThirdParty
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "StringTools.h"
-#include "FileTools.h"
-#include "LogogSimpleFormatter.h"
+#include "BaseLib/StringTools.h"
+#include "BaseLib/FileTools.h"
 
-// FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 
-// GeoLib
-#include "AABB.h"
+#include "GeoLib/AABB.h"
 
-// MeshLib
 #include "MeshLib/Node.h"
-#include "Elements/Element.h"
-#include "MeshEditing/moveMeshNodes.h"
-#include "Mesh.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshEditing/moveMeshNodes.h"
+#include "MeshLib/Mesh.h"
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog::Cout *logogCout(new logog::Cout);
-	logogCout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Moves the mesh nodes using the given displacement vector or if no displacement vector is given, moves the mesh nodes such that the centroid of the given mesh is in the origin.", ' ', "0.1");
 	// Define a value argument and add it to the command line.
@@ -65,7 +55,12 @@ int main(int argc, char *argv[])
 
 	std::string fname (mesh_arg.getValue());
 
-	MeshLib::Mesh* mesh = MeshLib::IO::readMeshFromFile(fname);
+	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
+
+	if (!mesh) {
+		ERR("Could not read mesh from file \"%s\".", fname.c_str());
+		return EXIT_FAILURE;
+	}
 
 	MeshLib::Node displacement(0.0, 0.0, 0.0);
 	if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon()
@@ -81,11 +76,12 @@ int main(int argc, char *argv[])
 		displacement[2] = z_arg.getValue();
 	}
 
-	INFO("translate model (%f, %f, %f).", displacement[0], displacement[1], displacement[2]);
+	INFO("translate model (%f, %f, %f).",
+	     displacement[0],
+	     displacement[1],
+	     displacement[2]);
 	MeshLib::moveMeshNodes(
-		mesh->getNodes().begin(),
-		mesh->getNodes().end(),
-		displacement);
+	    mesh->getNodes().begin(), mesh->getNodes().end(), displacement);
 
 	std::string out_fname(mesh_out_arg.getValue());
 	if (out_fname.empty()) {
@@ -93,13 +89,7 @@ int main(int argc, char *argv[])
 		out_fname += "_displaced.vtu";
 	}
 
-	MeshLib::IO::VtuInterface mesh_io(mesh);
-	mesh_io.writeToFile(out_fname);
+	MeshLib::IO::writeMeshToFile(*mesh, out_fname);
 
-	delete mesh;
-	delete logogCout;
-	delete custom_format;
-	LOGOG_SHUTDOWN();
+	return EXIT_SUCCESS;
 }
-
-

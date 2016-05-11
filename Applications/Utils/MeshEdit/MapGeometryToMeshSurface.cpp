@@ -13,34 +13,21 @@
 #include <cstdlib>
 #include <vector>
 
-// TCLAP
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
-
-// FileIO
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 
-// GeoLib
-#include "GeoLib/GEOObjects.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/GeoMapper.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Maps geometric objects to the surface of a given mesh."
 		"The documentation is available at https://docs.opengeosys.org/docs/tools/model-preparation/map-geometric-object-to-the-surface-of-a-mesh",

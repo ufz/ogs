@@ -1,18 +1,23 @@
+/**
+ *
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
+ */
+
 #include "OGSFileConverter.h"
 
 #include <clocale>
 
-#include "logog/include/logog.hpp"
-#include "LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include <QtGui/QApplication>
 
 int main(int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	QApplication app(argc, argv);
 	setlocale(LC_NUMERIC,"C");
@@ -21,10 +26,6 @@ int main(int argc, char* argv[])
 	fc->show();
 	int returncode = app.exec();
 	delete fc;
-
-	delete formatter;
-	delete logogCout;
-	LOGOG_SHUTDOWN();
 
 	return returncode;
 }

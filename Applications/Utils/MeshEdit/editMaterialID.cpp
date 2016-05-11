@@ -6,31 +6,21 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-// TCLAP
-#include "tclap/CmdLine.h"
+#include <memory>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <tclap/CmdLine.h>
 
-// BaseLib
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
-// FileIO
-#include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/ElementValueModification.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Edit material IDs of mesh elements.", ' ', "0.1");
 	TCLAP::SwitchArg replaceArg("r", "replace", "replace material IDs", false);
@@ -81,7 +71,8 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 	INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
 	if (condenseArg.isSet()) {
@@ -104,13 +95,7 @@ int main (int argc, char* argv[])
 		INFO("updated %d elements", cnt);
 	}
 
-	// write into a file
 	MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-	return 0;
+	return EXIT_SUCCESS;
 }
-

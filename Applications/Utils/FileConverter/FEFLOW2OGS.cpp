@@ -7,14 +7,13 @@
  *
  */
 
-// STL
 #include <string>
+#include <memory>
 
 // ThirdParty
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
 #include "BaseLib/FileTools.h"
@@ -22,23 +21,18 @@
 #ifndef WIN32
 #include "BaseLib/MemWatch.h"
 #endif
-#include "BaseLib/LogogSimpleFormatter.h"
 
 // FileIO
+#include "FileIO/FEFLOWInterface.h"
+
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "FileIO/FEFLOWInterface.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-
-// MeshLib
 #include "MeshLib/Mesh.h"
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *const custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
 
@@ -71,11 +65,12 @@ int main (int argc, char* argv[])
 	BaseLib::RunTime run_time;
 	run_time.start();
 	FileIO::FEFLOWInterface feflowIO(nullptr);
-	MeshLib::Mesh const*const mesh(feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh const> mesh(
+	    feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
 	if (mesh == nullptr) {
 		INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 #ifndef WIN32
 	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
@@ -84,13 +79,10 @@ int main (int argc, char* argv[])
 	INFO("Time for reading: %f seconds.", run_time.elapsed());
 	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	// *** write mesh in new format
 	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
 	INFO("Writing %s.", ogs_mesh_fname.c_str());
 	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
-
 	INFO("\tDone.");
-
-	delete mesh;
+	return EXIT_SUCCESS;
 }
 

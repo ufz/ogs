@@ -8,10 +8,10 @@
 
 #include <array>
 #include <memory>
+#include <sstream>
 #include <string>
 
-#include "logog/include/logog.hpp"
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
@@ -22,7 +22,6 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 
 int main(int argc, char *argv[])
@@ -49,39 +48,46 @@ int main(int argc, char *argv[])
 
 	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 
-	std::cout << std::scientific << std::setprecision(12);
 	for (auto ele_id : eleId_arg.getValue())
 	{
-		std::cout << "--------------------------------------------------------" << std::endl;
+		std::stringstream out;
+		out << std::scientific
+		    << std::setprecision(std::numeric_limits<double>::digits10);
+		out << "--------------------------------------------------------" << std::endl;
 		auto* ele = mesh->getElement(ele_id);
-		std::cout << "# Element " << ele->getID() << std::endl;
-		std::cout << "Type : " << CellType2String(ele->getCellType()) << std::endl;
+		out << "# Element " << ele->getID() << std::endl;
+		out << "Type : " << CellType2String(ele->getCellType()) << std::endl;
 		if (materialIds)
-			std::cout << "Mat ID : " << (*materialIds)[ele_id] << std::endl;
-		std::cout << "Nodes: " << std::endl;
+			out << "Mat ID : " << (*materialIds)[ele_id] << std::endl;
+		out << "Nodes: " << std::endl;
 		for (unsigned i=0; i<ele->getNNodes(); i++)
-			std::cout <<  ele->getNode(i)->getID() << " " << *ele->getNode(i) << std::endl;
-		std::cout << "Content: " << ele->getContent() << std::endl;
-		std::cout << "Neighbors: ";
+			out <<  ele->getNode(i)->getID() << " " << *ele->getNode(i) << std::endl;
+		out << "Content: " << ele->getContent() << std::endl;
+		out << "Neighbors: ";
 		for (unsigned i=0; i<ele->getNNeighbors(); i++)
 		{
 			if (ele->getNeighbor(i))
-				std::cout << ele->getNeighbor(i)->getID() << " ";
+				out << ele->getNeighbor(i)->getID() << " ";
 			else
-				std::cout << "none ";
+				out << "none ";
 		}
-		std::cout << std::endl;
+		out << std::endl;
+		INFO("%s", out.str().c_str());
 	}
 
 	for (auto node_id : nodeId_arg.getValue())
 	{
-		std::cout << "--------------------------------------------------------" << std::endl;
+		std::stringstream out;
+		out << std::scientific
+		    << std::setprecision(std::numeric_limits<double>::digits10);
+		out << "--------------------------------------------------------" << std::endl;
 		auto* node = mesh->getNode(node_id);
-		std::cout << "# Node" << node->getID() << std::endl;
-		std::cout << "Coordinates: " << *node << std::endl;
-		std::cout << "Connected elements: " ;
+		out << "# Node" << node->getID() << std::endl;
+		out << "Coordinates: " << *node << std::endl;
+		out << "Connected elements: " ;
 		for (unsigned i=0; i<node->getNElements(); i++)
-			std::cout << node->getElement(i)->getID() << " ";
-		std::cout << std::endl;
+			out << node->getElement(i)->getID() << " ";
+		out << std::endl;
+		INFO("%s", out.str().c_str());
 	}
 }

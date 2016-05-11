@@ -8,14 +8,15 @@
  */
 
 #include <array>
+#include <memory>
 #include <string>
 
-#include "logog/include/logog.hpp"
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
+
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/StringTools.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/Node.h"
@@ -28,10 +29,7 @@
 
 int main(int argc, char *argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Mesh revision tool", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
@@ -49,18 +47,20 @@ int main(int argc, char *argv[])
 	cmd.parse( argc, argv );
 
 	// read a mesh file
-	MeshLib::Mesh* org_mesh (MeshLib::IO::readMeshFromFile(input_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> org_mesh(
+	    MeshLib::IO::readMeshFromFile(input_arg.getValue()));
 	if (!org_mesh)
-		return 0;
+		return EXIT_FAILURE;
 	INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNNodes(), org_mesh->getNElements());
 
 	// revise the mesh
-	MeshLib::Mesh* new_mesh = nullptr;
+	std::unique_ptr<MeshLib::Mesh> new_mesh;
 	if (simplify_arg.getValue()) {
 		INFO("Simplifying the mesh...");
 		MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*org_mesh));
 		unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
-		new_mesh = rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim);
+		new_mesh.reset(
+		    rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
 	}
 
 	// write into a file
@@ -69,12 +69,5 @@ int main(int argc, char *argv[])
 		MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
 	}
 
-	delete org_mesh;
-	delete new_mesh;
-
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-	return 0;
+	return EXIT_SUCCESS;
 }

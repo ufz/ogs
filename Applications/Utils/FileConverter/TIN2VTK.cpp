@@ -11,15 +11,12 @@
 #include <string>
 #include <vector>
 
-// TCLAP
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
-#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 // GeoLib
@@ -28,7 +25,6 @@
 #include "GeoLib/PointVec.h"
 #include "GeoLib/IO/TINInterface.h"
 
-// FileIO
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
@@ -38,10 +34,7 @@
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logog_cout (new logog::Cout);
-	BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-	logog_cout->SetFormatter(*custom_format);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_describe);
 	TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
@@ -62,7 +55,7 @@ int main (int argc, char* argv[])
 	std::unique_ptr<GeoLib::Surface> sfc(
 	    GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
 	if (!sfc)
-		return 1;
+		return EXIT_FAILURE;
 	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
 
 	INFO("converting to mesh data");
@@ -73,9 +66,5 @@ int main (int argc, char* argv[])
 	MeshLib::IO::VtuInterface writer(mesh.get());
 	writer.writeToFile(outArg.getValue());
 
-	delete custom_format;
-	delete logog_cout;
-	LOGOG_SHUTDOWN();
-
-	return 0;
+	return EXIT_SUCCESS;
 }

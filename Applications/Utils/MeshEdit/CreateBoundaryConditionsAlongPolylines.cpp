@@ -14,33 +14,24 @@
 #include <vector>
 #include <fstream>
 
-// TCLAP
-#include "tclap/CmdLine.h"
-
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
-// BaseLib
 #include "BaseLib/FileTools.h"
 
-// FileIO
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
-// GeoLib
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/IO/readGeometryFromFile.h"
 #include "GeoLib/IO/writeGeometryToFile.h"
 
-// MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
-// MeshGeoToolsLib
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
@@ -173,7 +164,8 @@ int main (int argc, char* argv[])
 
 	// *** read mesh
 	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	MeshLib::Mesh * subsurface_mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+	std::unique_ptr<MeshLib::Mesh> subsurface_mesh(
+	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 	INFO("done.");
 	INFO("Extracting top surface of mesh \"%s\" ... ",
 		mesh_arg.getValue().c_str());
@@ -183,8 +175,7 @@ int main (int argc, char* argv[])
 	    MeshLib::MeshSurfaceExtraction::getMeshSurface(*subsurface_mesh, dir,
 	                                                   angle));
 	INFO("done.");
-	delete subsurface_mesh;
-	subsurface_mesh = nullptr;
+	subsurface_mesh.reset(nullptr);
 
 	// *** read geometry
 	GeoLib::GEOObjects geometries;
@@ -203,7 +194,7 @@ int main (int argc, char* argv[])
 	if (!plys) {
 		ERR("Could not get vector of polylines out of geometry \"%s\".",
 			geo_name.c_str());
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	MeshGeoToolsLib::SearchLength search_length_strategy;
@@ -230,7 +221,7 @@ int main (int argc, char* argv[])
 	geometry_sets.getGeometryNames(geo_names);
 	if (geo_names.empty()) {
 		ERR("Did not find mesh nodes along polylines.");
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 	std::string merge_name("AllMeshNodesAlongPolylines");
@@ -289,5 +280,5 @@ int main (int argc, char* argv[])
 	    BaseLib::dropFileExtension(output_base_fname.getValue()));
 	writeBCsAndGeometry(geometry_sets, surface_name, base_fname,
 	                    bc_type.getValue(), gml_arg.getValue());
-	return 0;
+	return EXIT_SUCCESS;
 }

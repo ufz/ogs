@@ -1,16 +1,26 @@
 /**
  * \file moveMeshNodes.cpp
  * 2012/03/07 KR Initial implementation
+ *
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "logog/include/logog.hpp"
-#include "LogogSimpleFormatter.h"
+#include <memory>
+
+#include "Applications/ApplicationsLib/LogogSetup.h"
+
+#include "GeoLib/AABB.h"
+
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/Legacy/MeshIO.h"
-#include "AABB.h"
-#include "Mesh.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MathTools.h"
+
+#include "MathLib/MathTools.h"
 
 int find_closest_point(MeshLib::Node const*const point, std::vector<MeshLib::Node*> const& nodes, double const& max_dist)
 {
@@ -46,10 +56,7 @@ bool containsPoint(MeshLib::Node const& pnt, MathLib::Point3d const& min,
 
 int main (int argc, char* argv[])
 {
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
+	ApplicationsLib::LogogSetup logog_setup;
 
 	std::vector<std::string> keywords;
 	keywords.push_back("-ALL");
@@ -97,7 +104,8 @@ int main (int argc, char* argv[])
 		return -1;
 	}
 
-	MeshLib::Mesh* mesh (MeshLib::IO::readMeshFromFile(msh_name));
+	std::unique_ptr<MeshLib::Mesh> mesh(
+	    MeshLib::IO::readMeshFromFile(msh_name));
 	//std::vector<std::size_t> del_nodes;
 
 	// Start keyword-specific selection of nodes
@@ -183,11 +191,8 @@ int main (int argc, char* argv[])
 	}
 	/**** add other keywords here ****/
 
-	MeshLib::IO::Legacy::MeshIO meshIO;
-	meshIO.setMesh(mesh);
-	meshIO.setPrecision(9);
-	meshIO.writeToFile(msh_name.substr(0, msh_name.length()-4) + "_new.msh");
-	delete mesh;
+	MeshLib::IO::writeMeshToFile(
+	    *mesh, msh_name.substr(0, msh_name.length() - 4) + "_new.msh");
 	return 1;
 
 }
