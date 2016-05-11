@@ -52,7 +52,11 @@ public:
             MathLib::MatrixSpecifications const& matrix_specs)
         : _nodal_values(MathLib::GlobalVectorProvider<GlobalVector>::provider.
                         getVector(matrix_specs))
+#ifndef USE_PETSC
         , _residuals(matrix_specs.dof_table->size())
+#else
+        , _residuals(matrix_specs.dof_table->size(), false)
+#endif
         , _local_to_global(*matrix_specs.dof_table)
     {}
 
