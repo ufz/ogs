@@ -152,6 +152,13 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
 
     const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
 
+    // If a node of an element is almost equal to the upper right point of the
+    // AABB the grid cell coordinates computed by getGridCellCoordintes() could
+    // be to large (due to numerical errors). The following lines ensure that
+    // the grid cell coordinates are in the valid range.
+    for (std::size_t k(0); k<3; ++k)
+        max[k] = std::min(_n_steps[k]-1, max[k]);
+
     // insert the element into the grid cells
     for (std::size_t i(min[0]); i<=max[0]; i++) {
         for (std::size_t j(min[1]); j<=max[1]; j++) {
