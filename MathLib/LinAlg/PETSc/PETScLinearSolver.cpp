@@ -46,7 +46,11 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
             }
         }
     }
+#if PETSC_VERSION_LT(3,7,0)
     PetscOptionsInsertString(petsc_options.c_str());
+#else
+    PetscOptionsInsertString(nullptr, petsc_options.c_str());
+#endif
 
     KSPCreate(PETSC_COMM_WORLD, &_solver);
 
