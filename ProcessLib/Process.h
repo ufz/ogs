@@ -224,7 +224,7 @@ private:
 		_local_to_global_index_map.reset(
 		    new AssemblerLib::LocalToGlobalIndexMap(
 		        std::move(all_mesh_subsets),
-		        AssemblerLib::ComponentOrder::BY_COMPONENT));
+		        AssemblerLib::ComponentOrder::BY_LOCATION));
 	}
 
 	/// Sets the initial condition values in the solution vector x for a given

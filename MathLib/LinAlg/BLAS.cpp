@@ -323,6 +323,11 @@ void matMultAdd(EigenMatrix const& A, EigenVector const& v1, EigenVector const& 
     v3.getRawVector() = v2.getRawVector() + A.getRawMatrix()*v1.getRawVector();
 }
 
+void finalizeAssembly(EigenMatrix& x)
+{
+    x.getRawMatrix().makeCompressed();
+}
+
 } // namespace BLAS
 
 } // namespace MathLib
