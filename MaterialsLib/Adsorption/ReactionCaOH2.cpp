@@ -131,12 +131,4 @@ double ReactionCaOH2::Ca_hydration()
     return dXdt;
 }
 
-
-
-
-
-
-
-
-
 }
