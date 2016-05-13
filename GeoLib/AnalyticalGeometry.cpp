@@ -568,10 +568,14 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     return GeoLib::Polygon(rot_polyline);
 }
 
-std::vector<MathLib::Point3d>
-lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c, MathLib::Point3d const& d)
+std::vector<MathLib::Point3d> lineSegmentIntersect2d(
+    GeoLib::LineSegment const& ab, GeoLib::LineSegment const& cd)
 {
+    GeoLib::Point const& a{ab.getBeginPoint()};
+    GeoLib::Point const& b{ab.getEndPoint()};
+    GeoLib::Point const& c{cd.getBeginPoint()};
+    GeoLib::Point const& d{cd.getEndPoint()};
+
     double const orient_abc(ExactPredicates::getOrientation2d(a, b, c));
     double const orient_abd(ExactPredicates::getOrientation2d(a, b, d));
 

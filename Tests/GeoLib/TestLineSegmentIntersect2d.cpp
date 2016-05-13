@@ -65,9 +65,7 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
     auto intersect = [](GeoLib::LineSegment const& s0,
                         GeoLib::LineSegment const& s1)
     {
-        auto ipnts = GeoLib::lineSegmentIntersect2d(
-            s0.getBeginPoint(), s0.getEndPoint(), s1.getBeginPoint(),
-            s1.getEndPoint());
+        auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         if (ipnts.size() == 1)
         {
             MathLib::Point3d const center{std::array<double, 3>{
@@ -92,12 +90,10 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 // chords of non-intersecting circles.
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationNonIntersecting)
 {
-    auto intersect =
-        [](GeoLib::LineSegment const& s0, GeoLib::LineSegment const& s1)
+    auto intersect = [](GeoLib::LineSegment const& s0,
+                        GeoLib::LineSegment const& s1)
     {
-        auto ipnts = GeoLib::lineSegmentIntersect2d(
-            s0.getBeginPoint(), s0.getEndPoint(), s1.getBeginPoint(),
-            s1.getEndPoint());
+        auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         return ipnts.empty();
     };
 
@@ -116,11 +112,8 @@ TEST_F(LineSegmentIntersect2dTest, ParallelNonIntersectingSegmentOrientation)
         std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
             segment_pair)
     {
-        auto ipnts =
-            GeoLib::lineSegmentIntersect2d(segment_pair.first.getBeginPoint(),
-                                           segment_pair.first.getEndPoint(),
-                                           segment_pair.second.getBeginPoint(),
-                                           segment_pair.second.getEndPoint());
+        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                    segment_pair.second);
         return ipnts.empty();
     };
 
@@ -138,11 +131,8 @@ TEST_F(LineSegmentIntersect2dTest, ParallelIntersectingSegmentOrientation)
         std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
             segment_pair)
     {
-        auto ipnts =
-            GeoLib::lineSegmentIntersect2d(segment_pair.first.getBeginPoint(),
-                                           segment_pair.first.getEndPoint(),
-                                           segment_pair.second.getBeginPoint(),
-                                           segment_pair.second.getEndPoint());
+        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                    segment_pair.second);
         return ipnts.size() == 2;
     };
 

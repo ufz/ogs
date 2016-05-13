@@ -306,17 +306,14 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
 /// A line segment is given by its two end-points. The function checks,
 /// if the two line segments (ab) and (cd) intersects. This method checks the
 /// intersection only in 2d.
-/// @param a first end-point of the first line segment
-/// @param b second end-point of the first line segment
-/// @param c first end-point of the second line segment
-/// @param d second end-point of the second line segment
+/// @param ab first line segment
+/// @param cd second line segment
 /// @return empty vector in case there isn't an intersection point, a vector
 /// containing one point if the line segments intersect in a single point, a
 /// vector containing two points describing the line segment the original line
 /// segments are interfering.
-std::vector<MathLib::Point3d>
-lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c, MathLib::Point3d const& d);
+std::vector<MathLib::Point3d> lineSegmentIntersect2d(
+    GeoLib::LineSegment const& ab, GeoLib::LineSegment const& cd);
 
 /**
  * Calculates the intersection points of a line PQ and a triangle ABC.
