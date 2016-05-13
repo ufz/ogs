@@ -61,7 +61,9 @@ public:
 		Point3d(), _id(std::numeric_limits<std::size_t>::max())
 	{}
 
-	std::size_t getID() const { return _id; }
+    std::size_t getID() const { return _id; }
+
+    void setID(std::size_t id) { _id = id; }
 
 protected:
 	std::size_t _id;
