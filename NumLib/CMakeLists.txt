@@ -34,17 +34,17 @@ add_library(NumLib ${SOURCES})
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(NumLib
-	BaseLib
-	GeoLib
-	MathLib
-	MeshLib
-	MeshGeoToolsLib
-	logog
+    BaseLib
+    GeoLib
+    MathLib
+    MeshLib
+    MeshGeoToolsLib
+    logog
 )
 
 if(TARGET Eigen)
-	add_dependencies(NumLib Eigen)
+    add_dependencies(NumLib Eigen)
 endif()
 if(TARGET Boost)
-	add_dependencies(NumLib Boost)
+    add_dependencies(NumLib Boost)
 endif()

@@ -27,26 +27,26 @@ template <class T_FUNCTION>
 class TemplateSpatialFunction : public ISpatialFunction
 {
 public:
-	/**
-	 * Constructor
-	 * @param f  a function object
-	 */
-	TemplateSpatialFunction(const T_FUNCTION &f)
-	: _f(f) {}
+    /**
+     * Constructor
+     * @param f  a function object
+     */
+    TemplateSpatialFunction(const T_FUNCTION &f)
+    : _f(f) {}
 
-	/**
-	 * evaluate a function
-	 * @param pnt  a point object
-	 * @return evaluated value
-	 */
-	virtual double operator()(const MathLib::Point3d& pnt) const
-	{
-		return _f(pnt.getCoords());
-	}
+    /**
+     * evaluate a function
+     * @param pnt  a point object
+     * @return evaluated value
+     */
+    virtual double operator()(const MathLib::Point3d& pnt) const
+    {
+        return _f(pnt.getCoords());
+    }
 
 private:
-	/// a function object
-	const T_FUNCTION _f;
+    /// a function object
+    const T_FUNCTION _f;
 };
 
 }

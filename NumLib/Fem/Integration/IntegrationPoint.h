@@ -18,65 +18,65 @@ namespace NumLib
 /// It is only needed to satisfy the common integration rule concepts.
 class IntegrationPoint
 {
-	typedef MathLib::TemplateWeightedPoint<double, double, 1> WeightedPoint;
+    typedef MathLib::TemplateWeightedPoint<double, double, 1> WeightedPoint;
 
 public:
-	/// IntegrationPoint constructor for given order.
-	explicit IntegrationPoint(std::size_t /* order */)
-	{
-	}
+    /// IntegrationPoint constructor for given order.
+    explicit IntegrationPoint(std::size_t /* order */)
+    {
+    }
 
-	/// Change the integration order.
-	void setIntegrationOrder(std::size_t /* order */)
-	{
-	}
+    /// Change the integration order.
+    void setIntegrationOrder(std::size_t /* order */)
+    {
+    }
 
-	/// Return current integration order.
-	std::size_t getIntegrationOrder() const
-	{
-		return 0;
-	}
+    /// Return current integration order.
+    std::size_t getIntegrationOrder() const
+    {
+        return 0;
+    }
 
-	/// Return the number of sampling points.
-	std::size_t getNPoints() const
-	{
-		return 1;
-	}
+    /// Return the number of sampling points.
+    std::size_t getNPoints() const
+    {
+        return 1;
+    }
 
-	/// Get coordinates of a integration point.
-	///
-	/// \param igp      The integration point index.
-	/// \return a weighted point.
-	WeightedPoint getWeightedPoint(std::size_t igp)
-	{
-		return getWeightedPoint(getIntegrationOrder(), igp);
-	}
+    /// Get coordinates of a integration point.
+    ///
+    /// \param igp      The integration point index.
+    /// \return a weighted point.
+    WeightedPoint getWeightedPoint(std::size_t igp)
+    {
+        return getWeightedPoint(getIntegrationOrder(), igp);
+    }
 
-	/// Get coordinates of a integration point.
-	///
-	/// \param order    the number of integration points.
-	/// \param igp      the sampling point id.
-	/// \return weight
-	static WeightedPoint getWeightedPoint(std::size_t /* order */,
-	                                      std::size_t /*igp*/)
-	{
-		return WeightedPoint({{1}}, 1);
-	}
+    /// Get coordinates of a integration point.
+    ///
+    /// \param order    the number of integration points.
+    /// \param igp      the sampling point id.
+    /// \return weight
+    static WeightedPoint getWeightedPoint(std::size_t /* order */,
+                                          std::size_t /*igp*/)
+    {
+        return WeightedPoint({{1}}, 1);
+    }
 
-	template <typename Method>
-	static WeightedPoint getWeightedPoint(std::size_t /*igp*/)
-	{
-		return WeightedPoint({{1}}, 1);
-	}
+    template <typename Method>
+    static WeightedPoint getWeightedPoint(std::size_t /*igp*/)
+    {
+        return WeightedPoint({{1}}, 1);
+    }
 
-	/// Get the number of integration points.
-	///
-	/// \param order    the number of integration points
-	/// \return the number of points.
-	static std::size_t getNPoints(std::size_t /* order */)
-	{
-		return 1;
-	}
+    /// Get the number of integration points.
+    ///
+    /// \param order    the number of integration points
+    /// \return the number of points.
+    static std::size_t getNPoints(std::size_t /* order */)
+    {
+        return 1;
+    }
 };
 }
 

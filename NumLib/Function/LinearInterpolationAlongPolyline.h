@@ -37,43 +37,43 @@ namespace NumLib
 class LinearInterpolationAlongPolyline : public ISpatialFunction
 {
 public:
-	/**
-	 * Constructor
-	 * @param ply  a polyline object
-	 * @param vec_interpolate_point_ids  a vector of point IDs where values are known
-	 * @param vec_interpolate_point_values  a vector of values at points
-	 * @param search_length  distance threshold to decide whether a point is located on a polyline or not
-	 * @param default_value  default value when a given point is not located on a polyine
-	 */
-	LinearInterpolationAlongPolyline(
-			const GeoLib::Polyline& ply,
-			const std::vector<std::size_t>& vec_interpolate_point_ids,
-			const std::vector<double>& vec_interpolate_point_values,
-			const double search_length, const double default_value);
+    /**
+     * Constructor
+     * @param ply  a polyline object
+     * @param vec_interpolate_point_ids  a vector of point IDs where values are known
+     * @param vec_interpolate_point_values  a vector of values at points
+     * @param search_length  distance threshold to decide whether a point is located on a polyline or not
+     * @param default_value  default value when a given point is not located on a polyine
+     */
+    LinearInterpolationAlongPolyline(
+            const GeoLib::Polyline& ply,
+            const std::vector<std::size_t>& vec_interpolate_point_ids,
+            const std::vector<double>& vec_interpolate_point_values,
+            const double search_length, const double default_value);
 
-	/**
-	 * interpolate a value at the given point
-	 * @param pnt  a point object
-	 * @return interpolated value. A default value is returned if the given point
-	 * is not located on a polyline
-	 */
-	double operator()(const MathLib::Point3d& pnt) const;
+    /**
+     * interpolate a value at the given point
+     * @param pnt  a point object
+     * @return interpolated value. A default value is returned if the given point
+     * is not located on a polyline
+     */
+    double operator()(const MathLib::Point3d& pnt) const;
 
 private:
-	/// construct an interpolation algorithm
-	static MathLib::PiecewiseLinearInterpolation createInterpolation(
-			const GeoLib::Polyline& ply,
-			const std::vector<std::size_t>& vec_interpolate_point_ids,
-			const std::vector<double>& vec_interpolate_point_values);
+    /// construct an interpolation algorithm
+    static MathLib::PiecewiseLinearInterpolation createInterpolation(
+            const GeoLib::Polyline& ply,
+            const std::vector<std::size_t>& vec_interpolate_point_ids,
+            const std::vector<double>& vec_interpolate_point_values);
 
-	/// a polyline object
-	const GeoLib::Polyline& _ply;
-	/// an interpolation algorithm
-	const MathLib::PiecewiseLinearInterpolation _interpolation;
-	/// search length
-	const double _search_length;
-	/// default value
-	const double _default_value;
+    /// a polyline object
+    const GeoLib::Polyline& _ply;
+    /// an interpolation algorithm
+    const MathLib::PiecewiseLinearInterpolation _interpolation;
+    /// search length
+    const double _search_length;
+    /// default value
+    const double _default_value;
 };
 
 } // NumLib
