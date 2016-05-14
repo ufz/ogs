@@ -15,15 +15,15 @@
 
 namespace GeoLib
 {
-	class GEOObjects;
+    class GEOObjects;
 }
 
 namespace GeoLib
 {
 namespace IO
 {
-	void
-	readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs);
+    void
+    readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs);
 }
 }
 

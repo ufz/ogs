@@ -37,38 +37,38 @@ class XmlStnInterface : public BaseLib::IO::XMLInterface,
                         public BaseLib::IO::XMLQtInterface
 {
 public:
-	XmlStnInterface(GeoLib::GEOObjects& geo_objs);
+    XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
-	/// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
-	int readFile(const QString &fileName);
+    /// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
+    int readFile(const QString &fileName);
 
-	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
-	/// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
-	int rapidReadFile(const std::string &fileName);
+    /// Reads an xml-file using the RapidXML parser integrated in the source code (i.e. this function is usable without Qt)
+    int rapidReadFile(const std::string &fileName);
 
 protected:
-	bool write();
+    bool write();
 
 private:
-	/// Reads GeoLib::Station- or StationBorehole-objects from an xml-file
-	void readStations  ( const QDomNode &stationsRoot, std::vector<GeoLib::Point*>* stations, const std::string &station_file_name);
+    /// Reads GeoLib::Station- or StationBorehole-objects from an xml-file
+    void readStations  ( const QDomNode &stationsRoot, std::vector<GeoLib::Point*>* stations, const std::string &station_file_name);
 
-	/// Writes borehole-specific data to a station-xml-file.
-	void writeBoreholeData(QDomDocument &doc,
-	                       QDomElement &boreholeTag,
-	                       GeoLib::StationBorehole* borehole) const;
+    /// Writes borehole-specific data to a station-xml-file.
+    void writeBoreholeData(QDomDocument &doc,
+                           QDomElement &boreholeTag,
+                           GeoLib::StationBorehole* borehole) const;
 
-	/// Reads the stratigraphy of a borehole from an xml-file
-	void readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole*  borehole );
+    /// Reads the stratigraphy of a borehole from an xml-file
+    void readStratigraphy( const QDomNode &stratRoot, GeoLib::StationBorehole*  borehole );
 
-	/// Reads GeoLib::Station- or StationBorehole-objects from an xml-file using the RapidXML parser
-	void rapidReadStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name);
+    /// Reads GeoLib::Station- or StationBorehole-objects from an xml-file using the RapidXML parser
+    void rapidReadStations(const rapidxml::xml_node<>* station_root, std::vector<GeoLib::Point*> *stations, const std::string &file_name);
 
-	/// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
-	void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
+    /// Reads the stratigraphy of a borehole from an xml-file using the RapidXML parser
+    void rapidReadStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
 
-	GeoLib::GEOObjects& _geo_objs;
+    GeoLib::GEOObjects& _geo_objs;
 };
 
 } // end namespace IO

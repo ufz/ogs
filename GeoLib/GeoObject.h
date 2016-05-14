@@ -23,12 +23,12 @@ namespace GeoLib
 class GeoObject
 {
 public:
-	GeoObject() = default;
-	GeoObject(GeoObject const&) = default;
-	GeoObject& operator=(GeoObject const&) = default;
-	virtual ~GeoObject() = default;
-	/// return a geometry type
-	virtual GEOTYPE getGeoType() const = 0;
+    GeoObject() = default;
+    GeoObject(GeoObject const&) = default;
+    GeoObject& operator=(GeoObject const&) = default;
+    virtual ~GeoObject() = default;
+    /// return a geometry type
+    virtual GEOTYPE getGeoType() const = 0;
 };
 } // end namespace GeoLib
 

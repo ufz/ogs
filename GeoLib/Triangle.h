@@ -31,61 +31,61 @@ class Point;
 class Triangle
 {
 public:
-	/**
-	 * construction of object, initialization of reference to point vector
-	 */
-	Triangle (std::vector<Point *> const &pnt_vec);
+    /**
+     * construction of object, initialization of reference to point vector
+     */
+    Triangle (std::vector<Point *> const &pnt_vec);
 
-	/**
-	 * construction of object, initialization of reference to point vector,
-	 * saves the three indices describing a triangle
-	 */
-	Triangle (std::vector<Point *> const &pnt_vec, std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
+    /**
+     * construction of object, initialization of reference to point vector,
+     * saves the three indices describing a triangle
+     */
+    Triangle (std::vector<Point *> const &pnt_vec, std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
-	/**
-	 * saves three indices describing a triangle
-	 * */
-	void setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
+    /**
+     * saves three indices describing a triangle
+     * */
+    void setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
-	/** \brief const access operator to access the index
-	 * of the i-th triangle point
-	*/
-	const std::size_t& operator[] (std::size_t i) const {
-		assert (i < 3);
-		return _pnt_ids[i];
-	}
+    /** \brief const access operator to access the index
+     * of the i-th triangle point
+    */
+    const std::size_t& operator[] (std::size_t i) const {
+        assert (i < 3);
+        return _pnt_ids[i];
+    }
 
-	/**
-	 * \brief const access operator to access the i-th triangle Point
-	 */
-	const Point* getPoint (std::size_t i) const {
-		assert (i < 3);
-		return _pnts[_pnt_ids[i]];
-	}
+    /**
+     * \brief const access operator to access the i-th triangle Point
+     */
+    const Point* getPoint (std::size_t i) const {
+        assert (i < 3);
+        return _pnts[_pnt_ids[i]];
+    }
 
-	/**
-	 * Checks if point q is within the triangle, uses GeoLib::isPointInTriangle().
-	 * @param q The input point.
-	 * @param eps Checks the 'epsilon'-neighbourhood
-	 * @return true, if point is in triangle, else false
-	 */
-	bool containsPoint(MathLib::Point3d const& q, double eps = std::numeric_limits<float>::epsilon()) const;
+    /**
+     * Checks if point q is within the triangle, uses GeoLib::isPointInTriangle().
+     * @param q The input point.
+     * @param eps Checks the 'epsilon'-neighbourhood
+     * @return true, if point is in triangle, else false
+     */
+    bool containsPoint(MathLib::Point3d const& q, double eps = std::numeric_limits<float>::epsilon()) const;
 
-	/**
-	 * projects the triangle points to the x-y-plane and
-	 * checks if point pnt is contained into the triangle
-	 * @param pnt the point to test for
-	 * @return true, if the point is into the projected triangle
-	 */
-	bool containsPoint2D (Point const& pnt) const;
+    /**
+     * projects the triangle points to the x-y-plane and
+     * checks if point pnt is contained into the triangle
+     * @param pnt the point to test for
+     * @return true, if the point is into the projected triangle
+     */
+    bool containsPoint2D (Point const& pnt) const;
 
 protected:
-	/** a vector of pointers to points */
-	const std::vector<Point*> &_pnts;
-	/** position of pointers to the geometric points */
-	std::size_t _pnt_ids[3];
-	bool _initialized;
-	double _longest_edge;
+    /** a vector of pointers to points */
+    const std::vector<Point*> &_pnts;
+    /** position of pointers to the geometric points */
+    std::size_t _pnt_ids[3];
+    bool _initialized;
+    double _longest_edge;
 };
 
 void getPlaneCoefficients(Triangle const& tri, double c[3]);

@@ -11,26 +11,26 @@ GET_SOURCE_FILES(SOURCES_IO_BOOST_XML IO/XmlIO/Boost)
 set(SOURCES ${SOURCES} ${SOURCES_IO_BASE_XML} ${SOURCES_IO_BOOST_XML})
 
 if(QT4_FOUND)
-	GET_SOURCE_FILES(SOURCES_IO_QT_XML IO/XmlIO/Qt)
-	set(SOURCES ${SOURCES} ${SOURCES_IO_QT_XML})
+    GET_SOURCE_FILES(SOURCES_IO_QT_XML IO/XmlIO/Qt)
+    set(SOURCES ${SOURCES} ${SOURCES_IO_QT_XML})
 endif()
 
 # Create the library
 add_library(GeoLib STATIC ${SOURCES}
-	${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
 )
 
 target_link_libraries(GeoLib
-	MathLib
+    MathLib
 )
 
 if(QT4_FOUND)
-	target_link_libraries(GeoLib Qt4::QtXml Qt4::QtXmlPatterns)
-	if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-		target_link_libraries(GeoLib Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
-	endif()
+    target_link_libraries(GeoLib Qt4::QtXml Qt4::QtXmlPatterns)
+    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
+        target_link_libraries(GeoLib Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+    endif()
 endif()
 
 if(TARGET Boost)
-	add_dependencies(GeoLib Boost)
+    add_dependencies(GeoLib Boost)
 endif()

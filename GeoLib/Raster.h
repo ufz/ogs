@@ -21,11 +21,11 @@ namespace GeoLib {
 /// Contains the relevant information when handling with geoscientific raster data
 struct RasterHeader
 {
-	std::size_t n_cols; // width
-	std::size_t n_rows; // height
-	MathLib::Point3d origin; // lower left corner
-	double cell_size; // edge length of each pixel
-	double no_data; // no data value
+    std::size_t n_cols; // width
+    std::size_t n_rows; // height
+    MathLib::Point3d origin; // lower left corner
+    double cell_size; // edge length of each pixel
+    double no_data; // no data value
 };
 
 /**
@@ -38,70 +38,70 @@ struct RasterHeader
  */
 class Raster {
 public:
-	typedef double const* const_iterator;
-	typedef double* iterator;
+    typedef double const* const_iterator;
+    typedef double* iterator;
 
-	/**
-	 * @brief Constructor for an object of class Raster. The raster data have
-	 * to be handed over via input iterators. Deploying iterators has the
-	 * advantage that the use of the class is independent from the input
-	 * container.
-	 * @param header meta-information about the raster (height, width, etc.)
-	 * @param begin input iterator pointing to the first element of the data
-	 * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
-	 */
-	template<typename InputIterator>
-	Raster(RasterHeader header, InputIterator begin, InputIterator end) :
-		_header(header), _raster_data(new double[_header.n_cols*_header.n_rows])
-	{
-		iterator raster_it(_raster_data);
-		for (InputIterator it(begin); it != end; ++it) {
-			*raster_it = *it;
-			raster_it++;
-		}
-	}
+    /**
+     * @brief Constructor for an object of class Raster. The raster data have
+     * to be handed over via input iterators. Deploying iterators has the
+     * advantage that the use of the class is independent from the input
+     * container.
+     * @param header meta-information about the raster (height, width, etc.)
+     * @param begin input iterator pointing to the first element of the data
+     * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
+     */
+    template<typename InputIterator>
+    Raster(RasterHeader header, InputIterator begin, InputIterator end) :
+        _header(header), _raster_data(new double[_header.n_cols*_header.n_rows])
+    {
+        iterator raster_it(_raster_data);
+        for (InputIterator it(begin); it != end; ++it) {
+            *raster_it = *it;
+            raster_it++;
+        }
+    }
 
-	/// Returns the complete header information
-	RasterHeader const& getHeader() const { return _header; }
+    /// Returns the complete header information
+    RasterHeader const& getHeader() const { return _header; }
 
-	/**
-	 * Refine the raster using scaling as a refinement parameter.
-	 */
-	void refineRaster(std::size_t scaling);
+    /**
+     * Refine the raster using scaling as a refinement parameter.
+     */
+    void refineRaster(std::size_t scaling);
 
-	/**
-	 * Constant iterator that is pointing to the first raster pixel value.
-	 * @return constant iterator
-	 */
-	const_iterator begin() const { return _raster_data; }
-	/**
-	 * Constant iterator that is pointing to the last raster pixel value.
-	 * @return constant iterator
-	 */
-	const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
+    /**
+     * Constant iterator that is pointing to the first raster pixel value.
+     * @return constant iterator
+     */
+    const_iterator begin() const { return _raster_data; }
+    /**
+     * Constant iterator that is pointing to the last raster pixel value.
+     * @return constant iterator
+     */
+    const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
 
-	/**
-	 * Returns the raster value at the position of the given point.
-	 */
-	double getValueAtPoint(const MathLib::Point3d &pnt) const;
+    /**
+     * Returns the raster value at the position of the given point.
+     */
+    double getValueAtPoint(const MathLib::Point3d &pnt) const;
 
-	/// Interpolates the elevation of the given point based on the 8-neighbourhood of the raster cell it is located on
-	double interpolateValueAtPoint(const MathLib::Point3d &pnt) const;
+    /// Interpolates the elevation of the given point based on the 8-neighbourhood of the raster cell it is located on
+    double interpolateValueAtPoint(const MathLib::Point3d &pnt) const;
 
-	/// Checks if the given point is located within the (x,y)-extension of the raster.
-	bool isPntOnRaster(MathLib::Point3d const& node) const;
+    /// Checks if the given point is located within the (x,y)-extension of the raster.
+    bool isPntOnRaster(MathLib::Point3d const& node) const;
 
-	~Raster();
+    ~Raster();
 
-	/// Creates a Raster based on a GeoLib::Surface
-	static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
+    /// Creates a Raster based on a GeoLib::Surface
+    static Raster* getRasterFromSurface(Surface const& sfc, double cell_size, double no_data_val = -9999);
 
 private:
-	void setCellSize(double cell_size);
-	void setNoDataVal (double no_data_val);
+    void setCellSize(double cell_size);
+    void setNoDataVal (double no_data_val);
 
-	GeoLib::RasterHeader _header;
-	double* _raster_data;
+    GeoLib::RasterHeader _header;
+    double* _raster_data;
 };
 
 }

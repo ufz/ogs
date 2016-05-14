@@ -33,9 +33,9 @@ namespace GeoLib
  */
 enum class EdgeType
 {
-	TOUCHING, //!< TOUCHING
-	CROSSING, //!< CROSSING
-	INESSENTIAL //!< INESSENTIAL
+    TOUCHING, //!< TOUCHING
+    CROSSING, //!< CROSSING
+    INESSENTIAL //!< INESSENTIAL
 };
 
 /**
@@ -44,104 +44,104 @@ enum class EdgeType
 class Polygon : public Polyline
 {
 public:
-	/**
-	 * constructor checks if the given polyline is closed,
-	 * and assures that the orientation is clock wise.
-	 * @param ply closed Polyline
-	 * @param init if true, check if polyline is closed, calculate bounding box
-	 */
-	Polygon(const Polyline &ply, bool init = true);
+    /**
+     * constructor checks if the given polyline is closed,
+     * and assures that the orientation is clock wise.
+     * @param ply closed Polyline
+     * @param init if true, check if polyline is closed, calculate bounding box
+     */
+    Polygon(const Polyline &ply, bool init = true);
 
-	Polygon(Polygon const& other);
-	Polygon& operator=(Polygon const& rhs) = delete;
+    Polygon(Polygon const& other);
+    Polygon& operator=(Polygon const& rhs) = delete;
 
-	virtual ~Polygon();
+    virtual ~Polygon();
 
-	bool initialise ();
+    bool initialise ();
 
-	/**
-	 * Method checks if the given point is inside the polygon.
-	 * The method requires that the polygon has clock wise orientation.
-	 * @param pnt the Point
-	 * @return if point is inside the polygon true, else false
-	 */
-	bool isPntInPolygon (const GeoLib::Point& pnt) const;
-	/**
-	 * wrapper for method isPntInPolygon (const GeoLib::Point&)
-	 * @param x x coordinate of point
-	 * @param y y coordinate of point
-	 * @param z z coordinate of point
-	 * @return if point is inside the polygon true, else false
-	 */
-	bool isPntInPolygon (double x, double y, double z) const;
+    /**
+     * Method checks if the given point is inside the polygon.
+     * The method requires that the polygon has clock wise orientation.
+     * @param pnt the Point
+     * @return if point is inside the polygon true, else false
+     */
+    bool isPntInPolygon (const GeoLib::Point& pnt) const;
+    /**
+     * wrapper for method isPntInPolygon (const GeoLib::Point&)
+     * @param x x coordinate of point
+     * @param y y coordinate of point
+     * @param z z coordinate of point
+     * @return if point is inside the polygon true, else false
+     */
+    bool isPntInPolygon (double x, double y, double z) const;
 
-	/**
-	 * Checks if the straight line segment is contained within the polygon.
-	 * @param segment the straight line segment that is checked with
-	 * @return true if the straight line segment is within the polygon, else false
-	 */
-	bool containsSegment(GeoLib::LineSegment const& segment) const;
+    /**
+     * Checks if the straight line segment is contained within the polygon.
+     * @param segment the straight line segment that is checked with
+     * @return true if the straight line segment is within the polygon, else false
+     */
+    bool containsSegment(GeoLib::LineSegment const& segment) const;
 
-	/**
-	 * Method checks if all points of the polyline ply are inside of the polygon.
-	 * @param ply the polyline that should be checked
-	 */
-	bool isPolylineInPolygon (const Polyline& ply) const;
-	/**
-	 * Method checks first if at least one (end!) point of a line segment of the polyline
-	 * is inside of the polygon. If this test fails each line segment of the polyline will
-	 * be tested against each polygon segment for intersection.
-	 * @param ply the polyline that should be checked
-	 * @return true if a part of the polyline is within the polygon
-	 */
-	bool isPartOfPolylineInPolygon (const Polyline& ply) const;
+    /**
+     * Method checks if all points of the polyline ply are inside of the polygon.
+     * @param ply the polyline that should be checked
+     */
+    bool isPolylineInPolygon (const Polyline& ply) const;
+    /**
+     * Method checks first if at least one (end!) point of a line segment of the polyline
+     * is inside of the polygon. If this test fails each line segment of the polyline will
+     * be tested against each polygon segment for intersection.
+     * @param ply the polyline that should be checked
+     * @return true if a part of the polyline is within the polygon
+     */
+    bool isPartOfPolylineInPolygon (const Polyline& ply) const;
 
-	/**
-	 * Calculates the next intersection point between the line segment \c seg
-	 * and the polygon starting with segment \c seg_num.
-	 * @param seg (input) Line segment to compute intersection.
-	 * @param intersection_pnt (output) next intersection point
-	 * @param seg_num (in/out) the number of the polygon segment that is intersecting
-	 * @return true, if there was an intersection, i.e., the \c intersection_pnt
-	 * and \c seg_num contains new valid values
-	 */
-	bool getNextIntersectionPointPolygonLine(GeoLib::LineSegment const& seg,
-	                                         GeoLib::Point& intersection_pnt,
-	                                         std::size_t& seg_num) const;
+    /**
+     * Calculates the next intersection point between the line segment \c seg
+     * and the polygon starting with segment \c seg_num.
+     * @param seg (input) Line segment to compute intersection.
+     * @param intersection_pnt (output) next intersection point
+     * @param seg_num (in/out) the number of the polygon segment that is intersecting
+     * @return true, if there was an intersection, i.e., the \c intersection_pnt
+     * and \c seg_num contains new valid values
+     */
+    bool getNextIntersectionPointPolygonLine(GeoLib::LineSegment const& seg,
+                                             GeoLib::Point& intersection_pnt,
+                                             std::size_t& seg_num) const;
 
-	void computeListOfSimplePolygons ();
-	const std::list<Polygon*>& getListOfSimplePolygons ();
+    void computeListOfSimplePolygons ();
+    const std::list<Polygon*>& getListOfSimplePolygons ();
 
-	friend bool operator==(Polygon const& lhs, Polygon const& rhs);
+    friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
-	/**
-	 * Computes all intersections of the straight line segment and the polyline boundary
-	 * @param segment the line segment that will be processed
-	 * @return a possible empty vector containing the intersection points
-	 */
-	std::vector<GeoLib::Point> getAllIntersectionPoints(
-		GeoLib::LineSegment const& segment) const;
+    /**
+     * Computes all intersections of the straight line segment and the polyline boundary
+     * @param segment the line segment that will be processed
+     * @return a possible empty vector containing the intersection points
+     */
+    std::vector<GeoLib::Point> getAllIntersectionPoints(
+        GeoLib::LineSegment const& segment) const;
 
-	/**
-	 * from book: Computational Geometry and Computer Graphics in C++, page 119
-	 * get the type of edge with respect to the given point (2d method!)
-	 * @param k number of line segment
-	 * @param pnt point that is edge type computed for
-	 * @return a value of enum EdgeType
-	 */
-	EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
+    /**
+     * from book: Computational Geometry and Computer Graphics in C++, page 119
+     * get the type of edge with respect to the given point (2d method!)
+     * @param k number of line segment
+     * @param pnt point that is edge type computed for
+     * @return a value of enum EdgeType
+     */
+    EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
 
-	void ensureCWOrientation ();
+    void ensureCWOrientation ();
 
 #if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
-	void splitPolygonAtIntersection(std::list<Polygon*>::iterator polygon_it);
+    void splitPolygonAtIntersection(std::list<Polygon*>::iterator polygon_it);
 #else
-	void splitPolygonAtIntersection(
-	    std::list<Polygon*>::const_iterator polygon_it);
+    void splitPolygonAtIntersection(
+        std::list<Polygon*>::const_iterator polygon_it);
 #endif
-	void splitPolygonAtPoint (std::list<Polygon*>::iterator polygon_it);
-	std::list<Polygon*> _simple_polygon_list;
-	AABB _aabb;
+    void splitPolygonAtPoint (std::list<Polygon*>::iterator polygon_it);
+    std::list<Polygon*> _simple_polygon_list;
+    AABB _aabb;
 };
 
 /**
