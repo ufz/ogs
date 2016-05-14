@@ -12,8 +12,8 @@
  */
 
 namespace AssemblerLib {
-	namespace detail {
-	}
+    namespace detail {
+    }
 }
 
 /**
@@ -33,21 +33,21 @@ namespace BaseLib {
  */
 namespace FileIO {
 
-	/**
-	 * @namespace FileIO::GMSH
-	 * Sub-namespace containing all functionality needed for reading and writing GMSH files.
-	 *
-	 * \sa GMSHInterface
-	 */
-	namespace GMSH {
-	}
+    /**
+     * @namespace FileIO::GMSH
+     * Sub-namespace containing all functionality needed for reading and writing GMSH files.
+     *
+     * \sa GMSHInterface
+     */
+    namespace GMSH {
+    }
 
-	/**
-	 * @namespace FileIO::Legacy
-	 * Includes the interfaces to OGS legacy file formats (OGS-5 and below).
-	 */
-	namespace Legacy {
-	}
+    /**
+     * @namespace FileIO::Legacy
+     * Includes the interfaces to OGS legacy file formats (OGS-5 and below).
+     */
+    namespace Legacy {
+    }
 }
 
 /**
@@ -73,11 +73,11 @@ namespace GeoLib {
  * \sa detail
  */
 namespace MathLib {
-	/**
-	 * @namespace MathLib::detail
-	 */
-	namespace detail {
-	}
+    /**
+     * @namespace MathLib::detail
+     */
+    namespace detail {
+    }
 }
 
 /**
@@ -89,12 +89,12 @@ namespace MathLib {
  * \sa MeshGenerator
  */
 namespace MeshLib {
-	/**
-	 * @namespace MeshLib::MeshGenerator
-	 * Functionality for generating meshing.
-	 */
-	namespace MeshGenerator {
-	}
+    /**
+     * @namespace MeshLib::MeshGenerator
+     * Functionality for generating meshing.
+     */
+    namespace MeshGenerator {
+    }
 }
 
 /**
@@ -102,10 +102,10 @@ namespace MeshLib {
  * The numerical algorithms used in OpenGeoSys
  */
 namespace NumLib {
-	/**
-	 * @namespace NumLib::detail
-	 */
-	namespace detail {
-	}
+    /**
+     * @namespace NumLib::detail
+     */
+    namespace detail {
+    }
 }
 
