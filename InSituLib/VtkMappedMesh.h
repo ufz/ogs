@@ -22,8 +22,8 @@
 
 class vtkGenericCell;
 namespace MeshLib {
-	class Element;
-	class Node;
+    class Element;
+    class Node;
 }
 
 namespace InSituLib
@@ -32,42 +32,42 @@ namespace InSituLib
 class VtkMappedMeshImpl : public vtkObject
 {
 public:
-	static VtkMappedMeshImpl *New();
-	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
-	vtkTypeMacro(VtkMappedMeshImpl, vtkObject)
+    static VtkMappedMeshImpl *New();
+    virtual void PrintSelf(std::ostream &os, vtkIndent indent);
+    vtkTypeMacro(VtkMappedMeshImpl, vtkObject)
 
-	void SetNodes(std::vector<MeshLib::Node*> const & nodes);
-	void SetElements(std::vector<MeshLib::Element*> const & elements);
+    void SetNodes(std::vector<MeshLib::Node*> const & nodes);
+    void SetElements(std::vector<MeshLib::Element*> const & elements);
 
-	// API for vtkMappedUnstructuredGrid's implementation
-	vtkIdType GetNumberOfCells();
-	int GetCellType(vtkIdType cellId);
-	void GetCellPoints(vtkIdType cellId, vtkIdList *ptIds);
-	void GetPointCells(vtkIdType ptId, vtkIdList *cellIds);
-	int GetMaxCellSize();
-	void GetIdsOfCellsOfType(int type, vtkIdTypeArray *array);
-	int IsHomogeneous();
+    // API for vtkMappedUnstructuredGrid's implementation
+    vtkIdType GetNumberOfCells();
+    int GetCellType(vtkIdType cellId);
+    void GetCellPoints(vtkIdType cellId, vtkIdList *ptIds);
+    void GetPointCells(vtkIdType ptId, vtkIdList *cellIds);
+    int GetMaxCellSize();
+    void GetIdsOfCellsOfType(int type, vtkIdTypeArray *array);
+    int IsHomogeneous();
 
-	// This container is read only -- these methods do nothing but print a warning.
-	void Allocate(vtkIdType numCells, int extSize = 1000);
-	vtkIdType InsertNextCell(int type, vtkIdList *ptIds);
-	vtkIdType InsertNextCell(int type, vtkIdType npts, vtkIdType *ptIds);
-	vtkIdType InsertNextCell(int type, vtkIdType npts, vtkIdType *ptIds,
-	                         vtkIdType nfaces, vtkIdType *faces);
-	void ReplaceCell(vtkIdType cellId, int npts, vtkIdType *pts);
+    // This container is read only -- these methods do nothing but print a warning.
+    void Allocate(vtkIdType numCells, int extSize = 1000);
+    vtkIdType InsertNextCell(int type, vtkIdList *ptIds);
+    vtkIdType InsertNextCell(int type, vtkIdType npts, vtkIdType *ptIds);
+    vtkIdType InsertNextCell(int type, vtkIdType npts, vtkIdType *ptIds,
+                             vtkIdType nfaces, vtkIdType *faces);
+    void ReplaceCell(vtkIdType cellId, int npts, vtkIdType *pts);
 
 protected:
-	VtkMappedMeshImpl();
-	~VtkMappedMeshImpl();
+    VtkMappedMeshImpl();
+    ~VtkMappedMeshImpl();
 
 private:
-	VtkMappedMeshImpl(const VtkMappedMeshImpl &);  // Not implemented.
-	void operator=(const VtkMappedMeshImpl &); // Not implemented.
+    VtkMappedMeshImpl(const VtkMappedMeshImpl &);  // Not implemented.
+    void operator=(const VtkMappedMeshImpl &); // Not implemented.
 
-	// const MeshLib::Mesh* _mesh;
-	const std::vector<MeshLib::Node*>* _nodes;
-	const std::vector<MeshLib::Element*>* _elements;
-	vtkIdType NumberOfCells;
+    // const MeshLib::Mesh* _mesh;
+    const std::vector<MeshLib::Node*>* _nodes;
+    const std::vector<MeshLib::Element*>* _elements;
+    vtkIdType NumberOfCells;
 };
 
 vtkMakeMappedUnstructuredGrid(VtkMappedMesh, VtkMappedMeshImpl)
