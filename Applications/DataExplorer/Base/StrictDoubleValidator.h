@@ -23,22 +23,22 @@
 class StrictDoubleValidator : public QDoubleValidator
 {
 public:
-	StrictDoubleValidator ( double min, double max, std::size_t decimals, QObject* parent = nullptr) :
-		QDoubleValidator( min, max, decimals, parent)
-	{}
+    StrictDoubleValidator ( double min, double max, std::size_t decimals, QObject* parent = nullptr) :
+        QDoubleValidator( min, max, decimals, parent)
+    {}
 
-	StrictDoubleValidator ( QObject* parent = nullptr) :
-		QDoubleValidator( parent)
-	{}
+    StrictDoubleValidator ( QObject* parent = nullptr) :
+        QDoubleValidator( parent)
+    {}
 
-	QValidator::State validate(QString & input, int &pos) const
-	{
-		if (input.isEmpty() || input == "." || input == "-") return Intermediate;
+    QValidator::State validate(QString & input, int &pos) const
+    {
+        if (input.isEmpty() || input == "." || input == "-") return Intermediate;
 
-		if (QDoubleValidator::validate(input, pos) != Acceptable)
-			return Invalid;
-		return Acceptable;
-	}
+        if (QDoubleValidator::validate(input, pos) != Acceptable)
+            return Invalid;
+        return Acceptable;
+    }
 };
 
 #endif /* STRICTDOUBLEVALIDATOR_H_ */

@@ -19,7 +19,7 @@
 #include <QDialog>
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 class StrictDoubleValidator;
@@ -29,29 +29,29 @@ class StrictDoubleValidator;
  */
 class CondFromRasterDialog : public QDialog, private Ui_CondFromRaster
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent = 0);
-	~CondFromRasterDialog(void);
+    CondFromRasterDialog(const std::vector<MeshLib::Mesh*> &msh_vec, QDialog* parent = 0);
+    ~CondFromRasterDialog(void);
 
 private:
-	const std::vector<MeshLib::Mesh*> _msh_vec;
-	StrictDoubleValidator* _scale_validator;
+    const std::vector<MeshLib::Mesh*> _msh_vec;
+    StrictDoubleValidator* _scale_validator;
 
 private slots:
-	void on_integrateButton_toggled(bool isSelected);
-	void on_selectButton_pressed();
+    void on_integrateButton_toggled(bool isSelected);
+    void on_selectButton_pressed();
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 signals:
-	void directNodesWritten(std::string);
-	void transmitDisValues(std::vector< std::pair<std::size_t,double> >);
+    void directNodesWritten(std::string);
+    void transmitDisValues(std::vector< std::pair<std::size_t,double> >);
 };
 
 #endif //CONDFROMRASTERDIALOG_H

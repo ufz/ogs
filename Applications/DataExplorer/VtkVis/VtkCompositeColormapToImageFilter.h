@@ -21,14 +21,14 @@
 class VtkCompositeColormapToImageFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeColormapToImageFilter();
+    VtkCompositeColormapToImageFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeColormapToImageFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
-	virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
+    virtual void SetUserVectorProperty(QString name, QList<QVariant> values);
 
 private:
 };

@@ -21,12 +21,12 @@
 class VtkCompositeLineToTubeFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeLineToTubeFilter();
+    VtkCompositeLineToTubeFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeLineToTubeFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 private:
 

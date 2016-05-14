@@ -17,9 +17,9 @@
 #include "ModellingTabWidget.h"
 
 ModellingTabWidget::ModellingTabWidget( QWidget* parent /*= 0*/ )
-	: QWidget(parent)
+    : QWidget(parent)
 {
-	setupUi(this);
+    setupUi(this);
 }
 
 

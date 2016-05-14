@@ -19,7 +19,7 @@
 #include <QDialog>
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -27,26 +27,26 @@ namespace MeshLib {
  */
 class SaveMeshDialog : public QDialog, private Ui_SaveMesh
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = 0);
-	~SaveMeshDialog() {}
+    SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent = 0);
+    ~SaveMeshDialog() {}
 
 private slots:
-	/// Selection of path to save file
-	void on_selectDirButton_clicked();
+    /// Selection of path to save file
+    void on_selectDirButton_clicked();
 
-	void on_dataModeBox_currentIndexChanged(int index);
+    void on_dataModeBox_currentIndexChanged(int index);
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject() { this->done(QDialog::Rejected); };
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject() { this->done(QDialog::Rejected); };
 
 private:
-	MeshLib::Mesh const& _mesh;
+    MeshLib::Mesh const& _mesh;
 
 };
 

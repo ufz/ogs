@@ -1,11 +1,11 @@
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/GeoLib
-	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/FileIO/GmshIO
-	${CMAKE_SOURCE_DIR}/MathLib
-	${CMAKE_SOURCE_DIR}/MeshLib
+    ${CMAKE_SOURCE_DIR}/BaseLib
+    ${CMAKE_SOURCE_DIR}/GeoLib
+    ${CMAKE_SOURCE_DIR}/FileIO
+    ${CMAKE_SOURCE_DIR}/FileIO/GmshIO
+    ${CMAKE_SOURCE_DIR}/MathLib
+    ${CMAKE_SOURCE_DIR}/MeshLib
 )
 
 add_executable(moveMeshNodes moveMeshNodes.cpp)
@@ -14,7 +14,7 @@ ADD_VTK_DEPENDENCY(moveMeshNodes)
 set_target_properties(moveMeshNodes PROPERTIES FOLDER Utilities)
 
 add_executable(MapGeometryToMeshSurface
-	MapGeometryToMeshSurface.cpp )
+    MapGeometryToMeshSurface.cpp )
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
 ADD_VTK_DEPENDENCY(MapGeometryToMeshSurface)
 set_target_properties(MapGeometryToMeshSurface PROPERTIES FOLDER Utilities)
@@ -55,10 +55,10 @@ ADD_VTK_DEPENDENCY(reviseMesh)
 set_target_properties(reviseMesh PROPERTIES FOLDER Utilities)
 
 add_executable(ResetPropertiesInPolygonalRegion
-	ResetPropertiesInPolygonalRegion.cpp)
+    ResetPropertiesInPolygonalRegion.cpp)
 target_link_libraries(ResetPropertiesInPolygonalRegion MeshLib)
 set_target_properties(ResetPropertiesInPolygonalRegion
-	PROPERTIES FOLDER Utilities)
+    PROPERTIES FOLDER Utilities)
 
 add_executable(AddTopLayer AddTopLayer.cpp)
 target_link_libraries(AddTopLayer MeshLib)
@@ -69,11 +69,11 @@ target_link_libraries(createLayeredMeshFromRasters MeshLib)
 set_target_properties(createLayeredMeshFromRasters PROPERTIES FOLDER Utilities)
 
 add_executable(CreateBoundaryConditionsAlongPolylines
-	CreateBoundaryConditionsAlongPolylines.cpp )
+    CreateBoundaryConditionsAlongPolylines.cpp )
 target_link_libraries(CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib)
 ADD_VTK_DEPENDENCY(CreateBoundaryConditionsAlongPolylines)
 set_target_properties(CreateBoundaryConditionsAlongPolylines
-	PROPERTIES FOLDER Utilities)
+    PROPERTIES FOLDER Utilities)
 
 add_executable(queryMesh queryMesh.cpp)
 target_link_libraries(queryMesh MeshLib)
@@ -87,20 +87,20 @@ set_target_properties(ExtractSurface PROPERTIES FOLDER Utilities)
 ### Installation ###
 ####################
 install(TARGETS
-	AddTopLayer
-	appendLinesAlongPolyline
-	checkMesh
-	CreateBoundaryConditionsAlongPolylines
-	createLayeredMeshFromRasters
-	editMaterialID
-	ExtractSurface
-	MapGeometryToMeshSurface
-	MoveMesh
-	moveMeshNodes
-	NodeReordering
-	removeMeshElements
-	ResetPropertiesInPolygonalRegion
-	reviseMesh
-	queryMesh
-	RUNTIME DESTINATION bin COMPONENT Utilities
+    AddTopLayer
+    appendLinesAlongPolyline
+    checkMesh
+    CreateBoundaryConditionsAlongPolylines
+    createLayeredMeshFromRasters
+    editMaterialID
+    ExtractSurface
+    MapGeometryToMeshSurface
+    MoveMesh
+    moveMeshNodes
+    NodeReordering
+    removeMeshElements
+    ResetPropertiesInPolygonalRegion
+    reviseMesh
+    queryMesh
+    RUNTIME DESTINATION bin COMPONENT Utilities
 )

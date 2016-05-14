@@ -29,30 +29,30 @@
 #include <vtkPointData.h>
 
 VtkCompositeGeoObjectFilter::VtkCompositeGeoObjectFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm), _type(GeoLib::GEOTYPE::POINT), _threshold(vtkThreshold::New())
+    : VtkCompositeFilter(inputAlgorithm), _type(GeoLib::GEOTYPE::POINT), _threshold(vtkThreshold::New())
 {
-	if (inputAlgorithm->GetNumberOfInputPorts() && inputAlgorithm->GetNumberOfInputConnections(0))
-	{
-	  vtkAlgorithmOutput* ao = inputAlgorithm->GetInputConnection(0,0);
+    if (inputAlgorithm->GetNumberOfInputPorts() && inputAlgorithm->GetNumberOfInputConnections(0))
+    {
+      vtkAlgorithmOutput* ao = inputAlgorithm->GetInputConnection(0,0);
 
-	  if (ao)
-	  {
-		vtkAlgorithm* parentAlg = ao->GetProducer();
+      if (ao)
+      {
+        vtkAlgorithm* parentAlg = ao->GetProducer();
 
-		if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL)
-			_type = GeoLib::GEOTYPE::POLYLINE;
-		else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL)
-			_type = GeoLib::GEOTYPE::SURFACE;
-		else if (dynamic_cast<VtkStationSource*>(parentAlg) != NULL)
-		{
-			/* TODO
-			if (dynamic_cast<VtkStationSource*>(parentAlg)->getType() == GeoLib::Station::StationType::BOREHOLE)
-				_type = GeoLib::GEOTYPE::POLYLINE;
-			*/
-		}
-	  }
-	  this->init();
-	}
+        if (dynamic_cast<VtkPolylinesSource*>(parentAlg) != NULL)
+            _type = GeoLib::GEOTYPE::POLYLINE;
+        else if (dynamic_cast<VtkSurfacesSource*>(parentAlg) != NULL)
+            _type = GeoLib::GEOTYPE::SURFACE;
+        else if (dynamic_cast<VtkStationSource*>(parentAlg) != NULL)
+        {
+            /* TODO
+            if (dynamic_cast<VtkStationSource*>(parentAlg)->getType() == GeoLib::Station::StationType::BOREHOLE)
+                _type = GeoLib::GEOTYPE::POLYLINE;
+            */
+        }
+      }
+      this->init();
+    }
 }
 
 VtkCompositeGeoObjectFilter::~VtkCompositeGeoObjectFilter()
@@ -61,36 +61,36 @@ VtkCompositeGeoObjectFilter::~VtkCompositeGeoObjectFilter()
 
 void VtkCompositeGeoObjectFilter::init()
 {
-	this->_inputDataObjectType = VTK_POLY_DATA;
-	this->_outputDataObjectType = VTK_POLY_DATA;
+    this->_inputDataObjectType = VTK_POLY_DATA;
+    this->_outputDataObjectType = VTK_POLY_DATA;
 
-	_threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
-	_threshold->SetSelectedComponent(0);
-	_threshold->ThresholdBetween(0,0);
+    _threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    _threshold->SetSelectedComponent(0);
+    _threshold->ThresholdBetween(0,0);
 
-	vtkDataSetSurfaceFilter* surface = vtkDataSetSurfaceFilter::New();
-	surface->SetInputConnection(_threshold->GetOutputPort());
+    vtkDataSetSurfaceFilter* surface = vtkDataSetSurfaceFilter::New();
+    surface->SetInputConnection(_threshold->GetOutputPort());
 
-	VtkCompositeFilter* composite;
-	if (_type == GeoLib::GEOTYPE::POINT)
-	{
-		composite = new VtkCompositePointToGlyphFilter(surface);
-		composite->SetUserProperty("Radius", this->GetInitialRadius());
-		_outputAlgorithm = composite->GetOutputAlgorithm();
-	}
-	else if (_type == GeoLib::GEOTYPE::POLYLINE)
-	{
-		composite = new VtkCompositeLineToTubeFilter(surface);
-		composite->SetUserProperty("Radius", this->GetInitialRadius());
-		_outputAlgorithm = composite->GetOutputAlgorithm();
-	}
-	else
-		_outputAlgorithm = surface;
+    VtkCompositeFilter* composite;
+    if (_type == GeoLib::GEOTYPE::POINT)
+    {
+        composite = new VtkCompositePointToGlyphFilter(surface);
+        composite->SetUserProperty("Radius", this->GetInitialRadius());
+        _outputAlgorithm = composite->GetOutputAlgorithm();
+    }
+    else if (_type == GeoLib::GEOTYPE::POLYLINE)
+    {
+        composite = new VtkCompositeLineToTubeFilter(surface);
+        composite->SetUserProperty("Radius", this->GetInitialRadius());
+        _outputAlgorithm = composite->GetOutputAlgorithm();
+    }
+    else
+        _outputAlgorithm = surface;
 }
 
 void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)
 {
-	_threshold->ThresholdBetween(idx, idx);
+    _threshold->ThresholdBetween(idx, idx);
 }
 
 

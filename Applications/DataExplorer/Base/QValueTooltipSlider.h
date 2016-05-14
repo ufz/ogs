@@ -21,13 +21,13 @@
  */
 class QValueTooltipSlider : public QSlider
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	QValueTooltipSlider(QWidget* parent = 0);
+    QValueTooltipSlider(QWidget* parent = 0);
 
 public slots:
-	void setTooltipValue(int value);
+    void setTooltipValue(int value);
 
 protected:
 };

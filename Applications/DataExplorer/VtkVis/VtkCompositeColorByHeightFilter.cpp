@@ -22,55 +22,55 @@
 #include <vtkUnstructuredGrid.h>
 
 VtkCompositeColorByHeightFilter::VtkCompositeColorByHeightFilter( vtkAlgorithm* inputAlgorithm )
-	: VtkCompositeFilter(inputAlgorithm)
+    : VtkCompositeFilter(inputAlgorithm)
 {
-	this->init();
+    this->init();
 }
 
 void VtkCompositeColorByHeightFilter::init()
 {
-	this->_inputDataObjectType = VTK_DATA_SET;
-	this->_outputDataObjectType = VTK_POLY_DATA;
+    this->_inputDataObjectType = VTK_DATA_SET;
+    this->_outputDataObjectType = VTK_POLY_DATA;
 
-	vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter;
-	VtkColorByHeightFilter* heightFilter = VtkColorByHeightFilter::New();
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter;
+    VtkColorByHeightFilter* heightFilter = VtkColorByHeightFilter::New();
 
-	if (dynamic_cast<vtkUnstructuredGrid*>(_inputAlgorithm->GetOutputDataObject(0)))
-	{
-		surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-		surfaceFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
-		heightFilter->SetInputConnection(surfaceFilter->GetOutputPort());
-	}
-	else
-		heightFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+    if (dynamic_cast<vtkUnstructuredGrid*>(_inputAlgorithm->GetOutputDataObject(0)))
+    {
+        surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+        surfaceFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
+        heightFilter->SetInputConnection(surfaceFilter->GetOutputPort());
+    }
+    else
+        heightFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-	unsigned char a[4] = { 0, 0, 255, 255 }; // blue
-	unsigned char b[4] = { 0, 255, 0, 255 }; // green
-	unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
-	unsigned char d[4] = { 155, 100, 50, 255 }; // brown
-	unsigned char e[4] = { 255, 0, 0, 255 }; // red
-	VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
-	ColorLookupTable->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
-	ColorLookupTable->setColor(-50, a);
-	ColorLookupTable->setColor(0, a);
-	ColorLookupTable->setColor(1, b);   // instant change at 0m a.s.l.
-	ColorLookupTable->setColor(200, b); // green at about 200m a.s.l.
-	ColorLookupTable->setColor(500, c); // yellow at about 500m and changing to red from then on
-	ColorLookupTable->setColor(1000, d);
-	ColorLookupTable->setColor(2000, e);
-	ColorLookupTable->SetTableRange(-35, 2000);
-	ColorLookupTable->Build();
+    unsigned char a[4] = { 0, 0, 255, 255 }; // blue
+    unsigned char b[4] = { 0, 255, 0, 255 }; // green
+    unsigned char c[4] = { 255, 255, 0, 255 }; // yellow
+    unsigned char d[4] = { 155, 100, 50, 255 }; // brown
+    unsigned char e[4] = { 255, 0, 0, 255 }; // red
+    VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
+    ColorLookupTable->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
+    ColorLookupTable->setColor(-50, a);
+    ColorLookupTable->setColor(0, a);
+    ColorLookupTable->setColor(1, b);   // instant change at 0m a.s.l.
+    ColorLookupTable->setColor(200, b); // green at about 200m a.s.l.
+    ColorLookupTable->setColor(500, c); // yellow at about 500m and changing to red from then on
+    ColorLookupTable->setColor(1000, d);
+    ColorLookupTable->setColor(2000, e);
+    ColorLookupTable->SetTableRange(-35, 2000);
+    ColorLookupTable->Build();
 
-	// This passes ownership of the ColorLookupTable to VtkVisPointSetItem
-	heightFilter->SetLookUpTable("P-Colors", ColorLookupTable);
-	heightFilter->Update();
+    // This passes ownership of the ColorLookupTable to VtkVisPointSetItem
+    heightFilter->SetLookUpTable("P-Colors", ColorLookupTable);
+    heightFilter->Update();
 
-	_outputAlgorithm = heightFilter;
-	_activeAttributeName = heightFilter->GetActiveAttribute();
+    _outputAlgorithm = heightFilter;
+    _activeAttributeName = heightFilter->GetActiveAttribute();
 }
 
 void VtkCompositeColorByHeightFilter::SetUserProperty( QString name, QVariant value )
 {
-	Q_UNUSED(name);
-	Q_UNUSED(value);
+    Q_UNUSED(name);
+    Q_UNUSED(value);
 }

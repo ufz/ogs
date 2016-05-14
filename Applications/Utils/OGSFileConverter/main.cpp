@@ -17,15 +17,15 @@
 
 int main(int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	QApplication app(argc, argv);
-	setlocale(LC_NUMERIC,"C");
-	OGSFileConverter* fc = new OGSFileConverter();
-	fc->setWindowTitle( fc->windowTitle() );
-	fc->show();
-	int returncode = app.exec();
-	delete fc;
+    QApplication app(argc, argv);
+    setlocale(LC_NUMERIC,"C");
+    OGSFileConverter* fc = new OGSFileConverter();
+    fc->setWindowTitle( fc->windowTitle() );
+    fc->show();
+    int returncode = app.exec();
+    delete fc;
 
-	return returncode;
+    return returncode;
 }

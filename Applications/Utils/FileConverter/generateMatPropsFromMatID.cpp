@@ -28,65 +28,65 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd(
-	        "Creates a new file for material properties and sets the material ids in the msh-file to 0",
-	        ' ',
-	        "0.1");
+    TCLAP::CmdLine cmd(
+            "Creates a new file for material properties and sets the material ids in the msh-file to 0",
+            ' ',
+            "0.1");
 
-	TCLAP::ValueArg<std::string> mesh_arg("m",
-	                                          "mesh",
-	                                          "the mesh to open from a file",
-	                                          false,
-	                                          "",
-	                                          "filename for mesh input");
-	cmd.add( mesh_arg );
+    TCLAP::ValueArg<std::string> mesh_arg("m",
+                                              "mesh",
+                                              "the mesh to open from a file",
+                                              false,
+                                              "",
+                                              "filename for mesh input");
+    cmd.add( mesh_arg );
 
-	cmd.parse( argc, argv );
+    cmd.parse( argc, argv );
 
-	// read mesh
-	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
-	if (!mesh) {
-		INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
-		return EXIT_FAILURE;
-	}
-	auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-	if (!materialIds)
-	{
-		ERR("Mesh contains no int-property vector named \"MaterialIds\".");
-		return EXIT_FAILURE;
-	}
+    // read mesh
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+    if (!mesh) {
+        INFO("Could not read mesh from file \"%s\".", mesh_arg.getValue().c_str());
+        return EXIT_FAILURE;
+    }
+    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+    if (!materialIds)
+    {
+        ERR("Mesh contains no int-property vector named \"MaterialIds\".");
+        return EXIT_FAILURE;
+    }
 
-	std::size_t const n_properties(materialIds->size());
-	if (n_properties != mesh->getNElements()) {
-		ERR("Size mismatch: number of elements (%u) != number of material "
-			"properties (%u).", mesh->getNElements(), n_properties);
-		return EXIT_FAILURE;
-	}
-	std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
-	// create file
-	std::string const new_matname(name + "_prop");
-	std::ofstream out_prop( new_matname.c_str(), std::ios::out );
-	if (out_prop.is_open())
-	{
-		for (std::size_t i=0; i<n_properties; ++i)
-			out_prop << i << "\t" << (*materialIds)[i] << "\n";
-		out_prop.close();
-	}
-	else
-	{
-		ERR("Could not create property \"%s\" file.", new_matname.c_str());
-		return EXIT_FAILURE;
-	}
+    std::size_t const n_properties(materialIds->size());
+    if (n_properties != mesh->getNElements()) {
+        ERR("Size mismatch: number of elements (%u) != number of material "
+            "properties (%u).", mesh->getNElements(), n_properties);
+        return EXIT_FAILURE;
+    }
+    std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());
+    // create file
+    std::string const new_matname(name + "_prop");
+    std::ofstream out_prop( new_matname.c_str(), std::ios::out );
+    if (out_prop.is_open())
+    {
+        for (std::size_t i=0; i<n_properties; ++i)
+            out_prop << i << "\t" << (*materialIds)[i] << "\n";
+        out_prop.close();
+    }
+    else
+    {
+        ERR("Could not create property \"%s\" file.", new_matname.c_str());
+        return EXIT_FAILURE;
+    }
 
-	mesh->getProperties().removePropertyVector("MaterialIDs");
+    mesh->getProperties().removePropertyVector("MaterialIDs");
 
-	std::string const new_mshname(name + "_new.vtu");
-	INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
-	MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
+    std::string const new_mshname(name + "_new.vtu");
+    INFO("Writing mesh to file \"%s\".", new_mshname.c_str());
+    MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
 
-	INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
+    INFO("New files \"%s\" and \"%s\" written.", new_mshname.c_str(), new_matname.c_str());
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

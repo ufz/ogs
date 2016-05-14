@@ -21,7 +21,7 @@
 class vtkUnstructuredGridAlgorithm;
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -30,26 +30,26 @@ namespace MeshLib {
  */
 class ElementTreeModel : public TreeModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ElementTreeModel( QObject* parent = 0 );
-	~ElementTreeModel();
+    ElementTreeModel( QObject* parent = 0 );
+    ~ElementTreeModel();
 
-	vtkUnstructuredGridAlgorithm const* getSource() const { return _mesh_source; };
+    vtkUnstructuredGridAlgorithm const* getSource() const { return _mesh_source; };
 
 public slots:
-	/// Clears the tree.
-	void clearView();
+    /// Clears the tree.
+    void clearView();
 
-	/// Displays information of the element with the given index from the given grid.
-	void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
+    /// Displays information of the element with the given index from the given grid.
+    void setElement(vtkUnstructuredGridAlgorithm const*const grid, const unsigned elem_index);
 
-	/// Displays information of the given mesh.
-	void setMesh(MeshLib::Mesh const& mesh);
+    /// Displays information of the given mesh.
+    void setMesh(MeshLib::Mesh const& mesh);
 
 private:
-	vtkUnstructuredGridAlgorithm const* _mesh_source;
+    vtkUnstructuredGridAlgorithm const* _mesh_source;
 
 };
 

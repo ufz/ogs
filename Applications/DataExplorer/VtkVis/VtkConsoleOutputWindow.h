@@ -20,19 +20,19 @@
 class VtkConsoleOutputWindow : public vtkOutputWindow
 {
 public:
-	vtkTypeMacro(VtkConsoleOutputWindow,vtkOutputWindow);
-	void PrintSelf(ostream& os, vtkIndent indent);
+    vtkTypeMacro(VtkConsoleOutputWindow,vtkOutputWindow);
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	static VtkConsoleOutputWindow * New();
-	virtual void DisplayText(const char*);
+    static VtkConsoleOutputWindow * New();
+    virtual void DisplayText(const char*);
 
 protected:
-	VtkConsoleOutputWindow();
-	virtual ~VtkConsoleOutputWindow();
+    VtkConsoleOutputWindow();
+    virtual ~VtkConsoleOutputWindow();
 
 private:
-	VtkConsoleOutputWindow(const VtkConsoleOutputWindow &);  // Not implemented.
-	void operator=(const VtkConsoleOutputWindow &);  // Not implemented.
+    VtkConsoleOutputWindow(const VtkConsoleOutputWindow &);  // Not implemented.
+    void operator=(const VtkConsoleOutputWindow &);  // Not implemented.
 };
 
 #endif // VTKCONSOLEOUTPUTWINDOW_H_

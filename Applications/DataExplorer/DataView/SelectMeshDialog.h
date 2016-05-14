@@ -18,7 +18,7 @@
 #include <QDialog>
 
 namespace GeoLib {
-	class GeoObject;
+    class GeoObject;
 }
 
 class QDialogButtonBox;
@@ -31,36 +31,36 @@ class QVBoxLayout;
  */
 class SelectMeshDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor
-	SelectMeshDialog(const GeoLib::GeoObject* geo_object,
-				  const std::list<std::string> &msh_names,
-				  QDialog* parent = 0);
-	~SelectMeshDialog();
+    /// Constructor
+    SelectMeshDialog(const GeoLib::GeoObject* geo_object,
+                  const std::list<std::string> &msh_names,
+                  QDialog* parent = 0);
+    ~SelectMeshDialog();
 
-	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
+    QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
 
 private:
-	/// Constructs a dialog window
-	void setupDialog(const std::list<std::string> &msh_names);
+    /// Constructs a dialog window
+    void setupDialog(const std::list<std::string> &msh_names);
 
-	QLabel* _txt_label;
-	QComboBox* _msh_names;
-	QVBoxLayout* _layout;
-	const GeoLib::GeoObject* _geo_object;
+    QLabel* _txt_label;
+    QComboBox* _msh_names;
+    QVBoxLayout* _layout;
+    const GeoLib::GeoObject* _geo_object;
 
 
 private slots:
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 signals:
-	//void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
+    //void requestNameChange(const std::string&, const GeoLib::GEOTYPE, std::size_t, std::string);
 };
 
 #endif //SELECTMESHDIALOG_H

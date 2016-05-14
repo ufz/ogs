@@ -28,39 +28,39 @@
 class VtkSurfacesSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// Create new objects with New() because of VTKs object reference counting.
-	static VtkSurfacesSource* New();
+    /// Create new objects with New() because of VTKs object reference counting.
+    static VtkSurfacesSource* New();
 
-	vtkTypeMacro(VtkSurfacesSource,vtkPolyDataAlgorithm);
+    vtkTypeMacro(VtkSurfacesSource,vtkPolyDataAlgorithm);
 
-	/// Sets the surfaces vector
-	void setSurfaces(const std::vector<GeoLib::Surface*>* surfaces) { _surfaces = surfaces; }
+    /// Sets the surfaces vector
+    void setSurfaces(const std::vector<GeoLib::Surface*>* surfaces) { _surfaces = surfaces; }
 
-	/// Prints its data on a stream.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// Prints its data on a stream.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	/**
-	 * \brief Generates random colors for each surface.
-	 */
-	//ogsUserPropertyMacro(ColorBySurface,bool);
+    /**
+     * \brief Generates random colors for each surface.
+     */
+    //ogsUserPropertyMacro(ColorBySurface,bool);
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	VtkSurfacesSource();
-	~VtkSurfacesSource() {}
+    VtkSurfacesSource();
+    ~VtkSurfacesSource() {}
 
-	/// Computes the polygonal data object.
-	int RequestData(vtkInformation* request,
-	                vtkInformationVector** inputVector,
-	                vtkInformationVector* outputVector);
+    /// Computes the polygonal data object.
+    int RequestData(vtkInformation* request,
+                    vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector);
 
-	int RequestInformation(vtkInformation* request,
-	                       vtkInformationVector** inputVector,
-	                       vtkInformationVector* outputVector);
+    int RequestInformation(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector);
 
-	/// The surfaces to visualize
-	const std::vector<GeoLib::Surface*>* _surfaces;
+    /// The surfaces to visualize
+    const std::vector<GeoLib::Surface*>* _surfaces;
 
 private:
 };

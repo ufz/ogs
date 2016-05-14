@@ -31,51 +31,51 @@ class vtkImageData;
 class VtkGeoImageSource : public vtkSimpleImageToImageFilter, public VtkAlgorithmProperties
 {
 public:
-	/// @brief Create new objects with New() because of VTKs reference counting.
-	static VtkGeoImageSource* New();
+    /// @brief Create new objects with New() because of VTKs reference counting.
+    static VtkGeoImageSource* New();
 
-	vtkTypeMacro(VtkGeoImageSource, vtkSimpleImageToImageFilter);
+    vtkTypeMacro(VtkGeoImageSource, vtkSimpleImageToImageFilter);
 
-	/// @brief Prints information about itself.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// @brief Prints information about itself.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	/// @brief Returns the ImageData object.
-	vtkImageData* getImageData();
+    /// @brief Returns the ImageData object.
+    vtkImageData* getImageData();
 
-	/// @brief Reads an image from file.
-	bool readImage(const QString &filename);
+    /// @brief Reads an image from file.
+    bool readImage(const QString &filename);
 
-	/// @brief Imports an existing image object.
-	void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);
+    /// @brief Imports an existing image object.
+    void setImage(vtkImageAlgorithm* img, const QString &name, double x0, double y0, double spacing);
 
-	/// @brief Returns the origin in world coordinates.
-	void getOrigin(double origin[3]) const;
+    /// @brief Returns the origin in world coordinates.
+    void getOrigin(double origin[3]) const;
 
-	/// @brief Returns the scalar data range.
-	void getRange(double range[2]);
+    /// @brief Returns the scalar data range.
+    void getRange(double range[2]);
 
-	/// @brief Returns the spacing between two pixels.
-	double getSpacing() const;
+    /// @brief Returns the spacing between two pixels.
+    double getSpacing() const;
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	/// @brief Constructor.
-	VtkGeoImageSource();
+    /// @brief Constructor.
+    VtkGeoImageSource();
 
-	/// @brief Destructor.
-	virtual ~VtkGeoImageSource();
+    /// @brief Destructor.
+    virtual ~VtkGeoImageSource();
 
-	/// @brief Filter execution.
-	virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+    /// @brief Filter execution.
+    virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
 private:
-	VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
-	void operator=(const VtkGeoImageSource&); // Not implemented
+    VtkGeoImageSource(const VtkGeoImageSource&); // Not implemented.
+    void operator=(const VtkGeoImageSource&); // Not implemented
 
-	vtkImageAlgorithm* _imageSource;
+    vtkImageAlgorithm* _imageSource;
 
-	double _x0, _y0, _z0, _spacing;
+    double _x0, _y0, _z0, _spacing;
 };
 
 #endif // VTKGEOIMAGESOURCE_H

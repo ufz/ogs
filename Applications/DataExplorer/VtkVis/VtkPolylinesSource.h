@@ -32,34 +32,34 @@ class Polyline;
 class VtkPolylinesSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// Create new objects with New() because of VTKs object reference counting.
-	static VtkPolylinesSource* New();
+    /// Create new objects with New() because of VTKs object reference counting.
+    static VtkPolylinesSource* New();
 
-	vtkTypeMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
+    vtkTypeMacro(VtkPolylinesSource,vtkPolyDataAlgorithm);
 
-	/// Sets the polyline vector.
-	void setPolylines(const std::vector<GeoLib::Polyline*>* polylines) { _polylines = polylines; }
+    /// Sets the polyline vector.
+    void setPolylines(const std::vector<GeoLib::Polyline*>* polylines) { _polylines = polylines; }
 
-	/// Prints its data on a stream.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// Prints its data on a stream.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	VtkPolylinesSource();
-	~VtkPolylinesSource();
+    VtkPolylinesSource();
+    ~VtkPolylinesSource();
 
-	/// Computes the polygonal data object.
-	int RequestData(vtkInformation* request,
-	                vtkInformationVector** inputVector,
-	                vtkInformationVector* outputVector);
+    /// Computes the polygonal data object.
+    int RequestData(vtkInformation* request,
+                    vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector);
 
-	int RequestInformation(vtkInformation* request,
-	                       vtkInformationVector** inputVector,
-	                       vtkInformationVector* outputVector);
+    int RequestInformation(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector);
 
-	/// The polylines to visualize.
-	const std::vector<GeoLib::Polyline*>* _polylines;
+    /// The polylines to visualize.
+    const std::vector<GeoLib::Polyline*>* _polylines;
 
 private:
 };

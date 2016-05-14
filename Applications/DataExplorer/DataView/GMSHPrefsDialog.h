@@ -30,31 +30,31 @@ class GEOObjects;
  */
 class GMSHPrefsDialog : public QDialog, private Ui_GMSHPrefs
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
-	~GMSHPrefsDialog(void);
+    GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* parent = nullptr);
+    ~GMSHPrefsDialog(void);
 
 private:
-	std::vector<std::string> getSelectedObjects(QStringList list);
+    std::vector<std::string> getSelectedObjects(QStringList list);
 
-	QStringListModel* _allGeo;
-	QStringListModel* _selGeo;
+    QStringListModel* _allGeo;
+    QStringListModel* _selGeo;
 
 private slots:
-	void on_selectGeoButton_pressed();
-	void on_deselectGeoButton_pressed();
-	void on_radioAdaptive_toggled(bool isTrue);
+    void on_selectGeoButton_pressed();
+    void on_deselectGeoButton_pressed();
+    void on_radioAdaptive_toggled(bool isTrue);
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 signals:
-	void requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool);
+    void requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool);
 };
 
 #endif //GMSHPREFSDIALOG_H

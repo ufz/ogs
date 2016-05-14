@@ -27,28 +27,28 @@ ElementTreeView::ElementTreeView( QWidget* parent)
 
 void ElementTreeView::updateView()
 {
-	setAlternatingRowColors(true);
-	setColumnWidth(0,125);
-	std::size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
-	for (std::size_t i = 1; i < nColumns; i++)
-		resizeColumnToContents(i);
-	this->expandAll();
+    setAlternatingRowColors(true);
+    setColumnWidth(0,125);
+    std::size_t nColumns = (this->model() != NULL) ? this->model()->columnCount() : 0;
+    for (std::size_t i = 1; i < nColumns; i++)
+        resizeColumnToContents(i);
+    this->expandAll();
 }
 
 void ElementTreeView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
 {
-	Q_UNUSED(deselected);
-	if (!selected.isEmpty())
-	{
-		emit removeSelectedMeshComponent();
-		const QModelIndex idx = *(selected.indexes().begin());
+    Q_UNUSED(deselected);
+    if (!selected.isEmpty())
+    {
+        emit removeSelectedMeshComponent();
+        const QModelIndex idx = *(selected.indexes().begin());
 
-		if (idx.parent().isValid()) // not root node
-			if (idx.parent().parent().isValid()) // not property node
-			{
-				const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
-				const unsigned node_index = tree_item->data(0).toString().mid(5).toUInt();
-				emit nodeSelected(static_cast<ElementTreeModel*>(this->model())->getSource(), node_index, false);
-			}
-	}
+        if (idx.parent().isValid()) // not root node
+            if (idx.parent().parent().isValid()) // not property node
+            {
+                const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+                const unsigned node_index = tree_item->data(0).toString().mid(5).toUInt();
+                emit nodeSelected(static_cast<ElementTreeModel*>(this->model())->getSource(), node_index, false);
+            }
+    }
 }

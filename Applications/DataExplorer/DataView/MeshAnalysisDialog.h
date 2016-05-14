@@ -23,7 +23,7 @@
 #include "MeshQuality/ElementErrorCode.h"
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -31,29 +31,29 @@ namespace MeshLib {
  */
 class MeshAnalysisDialog : public QDialog, private Ui_MeshAnalysis
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MeshAnalysisDialog(
-		std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-		QDialog* parent = nullptr);
-	~MeshAnalysisDialog(void);
+    MeshAnalysisDialog(
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+        QDialog* parent = nullptr);
+    ~MeshAnalysisDialog(void);
 
 private:
-	/// Prepares the output for the node message window
-	void nodesMsgOutput(std::vector<std::size_t> const& node_ids, std::vector<std::size_t> const& collapsibleNodeIds);
+    /// Prepares the output for the node message window
+    void nodesMsgOutput(std::vector<std::size_t> const& node_ids, std::vector<std::size_t> const& collapsibleNodeIds);
 
-	/// Prepares the output for the node message window
-	void elementsMsgOutput(const std::vector<ElementErrorCode> &error_codes);
+    /// Prepares the output for the node message window
+    void elementsMsgOutput(const std::vector<ElementErrorCode> &error_codes);
 
-	std::vector<std::unique_ptr<MeshLib::Mesh>> const& _mesh_vec;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _mesh_vec;
 
 private slots:
-	/// Starts the analysis
-	void on_startButton_pressed();
+    /// Starts the analysis
+    void on_startButton_pressed();
 
-	/// Closes the dialog
-	void on_closeButton_pressed() { this->close(); }
+    /// Closes the dialog
+    void on_closeButton_pressed() { this->close(); }
 };
 
 #endif //MESHANALYSISDIALOG_H

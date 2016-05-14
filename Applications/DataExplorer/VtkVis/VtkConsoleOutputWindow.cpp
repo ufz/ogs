@@ -35,24 +35,24 @@ VtkConsoleOutputWindow::~VtkConsoleOutputWindow()
 //
 void VtkConsoleOutputWindow::DisplayText(const char* someText)
 {
-	if(!someText)
-		return;
+    if(!someText)
+        return;
 
-	// Disable warnings
-	std::string someTextString(someText);
-	if((someTextString.find(
-		"This is very expensive for vtkMappedDataArray subclasses, since the scalar array must be generated for each call.") != std::string::npos) ||
-	   (someTextString.find("Invalid framebuffer operation") != std::string::npos))
-		return;
+    // Disable warnings
+    std::string someTextString(someText);
+    if((someTextString.find(
+        "This is very expensive for vtkMappedDataArray subclasses, since the scalar array must be generated for each call.") != std::string::npos) ||
+       (someTextString.find("Invalid framebuffer operation") != std::string::npos))
+        return;
 
 #ifdef WIN32
-	OutputDebugString(someTextString.c_str());
+    OutputDebugString(someTextString.c_str());
 #endif
-	std::cerr << someText;
+    std::cerr << someText;
 }
 
 //----------------------------------------------------------------------------
 void VtkConsoleOutputWindow::PrintSelf(ostream& os, vtkIndent indent)
 {
-	this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os,indent);
 }

@@ -23,17 +23,17 @@
  */
 class LicenseDialog : public QDialog, private Ui_License
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	LicenseDialog(QDialog* parent = 0);
-	~LicenseDialog() {};
+    LicenseDialog(QDialog* parent = 0);
+    ~LicenseDialog() {};
 
 private:
-	void setText();
+    void setText();
 
 private slots:
-	void on_okPushButton_pressed();
+    void on_okPushButton_pressed();
 
 };
 

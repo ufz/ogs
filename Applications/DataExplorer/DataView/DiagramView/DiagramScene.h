@@ -29,55 +29,55 @@ class QDateTime;
 class DiagramScene : public QGraphicsScene
 {
 public:
-	DiagramScene(QObject* parent = 0);
-	DiagramScene(DiagramList* list, QObject* parent = 0);
-	~DiagramScene();
+    DiagramScene(QObject* parent = 0);
+    DiagramScene(DiagramList* list, QObject* parent = 0);
+    ~DiagramScene();
 
-	QArrow* addArrow(float length, float angle, QPen &pen);
-	void addGraph(DiagramList* list);
-	QGraphicsGrid* addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen);
+    QArrow* addArrow(float length, float angle, QPen &pen);
+    void addGraph(DiagramList* list);
+    QGraphicsGrid* addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen);
 
-	static const int MARGIN = 30; /// The margin between the boundary of the scene and the bounding box of all items within the scene
+    static const int MARGIN = 30; /// The margin between the boundary of the scene and the bounding box of all items within the scene
 
 private:
-	void addCaption(const QString &name, QPen &pen);
-	QNonScalableGraphicsTextItem* addNonScalableText(const QString &text,
-	                                                 const QFont &font = QFont());
-	void adjustAxis(float &min, float &max, int &numberOfTicks);
-	void adjustScaling();
-	void clearGrid();
-	void constructGrid();
-	void drawGraph(DiagramList* list);
-	int getXAxisOffset();
-	int getYAxisOffset();
-	void initialize();
-	void setDiagramBoundaries(DiagramList* list);
+    void addCaption(const QString &name, QPen &pen);
+    QNonScalableGraphicsTextItem* addNonScalableText(const QString &text,
+                                                     const QFont &font = QFont());
+    void adjustAxis(float &min, float &max, int &numberOfTicks);
+    void adjustScaling();
+    void clearGrid();
+    void constructGrid();
+    void drawGraph(DiagramList* list);
+    int getXAxisOffset();
+    int getYAxisOffset();
+    void initialize();
+    void setDiagramBoundaries(DiagramList* list);
 
-	/// Sets an arrow as x-axis
-	void setXAxis(QArrow* arrow) { _xAxis = arrow; }
+    /// Sets an arrow as x-axis
+    void setXAxis(QArrow* arrow) { _xAxis = arrow; }
 
-	/// Sets an arrow as y-axis
-	void setYAxis(QArrow* arrow) { _yAxis = arrow; }
+    /// Sets an arrow as y-axis
+    void setYAxis(QArrow* arrow) { _yAxis = arrow; }
 
-	void update();
+    void update();
 
-	QRectF _bounds;
-	QRectF _unscaledBounds;
-	QVector<DiagramList*> _lists;
-	QVector<QGraphicsItemGroup*> _graphCaptions;
-	QVector<QGraphicsPathItem*> _graphs;
-	QGraphicsGrid* _grid;
-	QDateTime _startDate;
-	float _scaleX;
-	float _scaleY;
-	QArrow* _xAxis;
-	QArrow* _yAxis;
-	QNonScalableGraphicsTextItem* _xLabel;
-	QNonScalableGraphicsTextItem* _yLabel;
-	QNonScalableGraphicsTextItem* _xUnit;
-	QNonScalableGraphicsTextItem* _yUnit;
-	QVector<QNonScalableGraphicsTextItem*> _xTicksText;
-	QVector<QNonScalableGraphicsTextItem*> _yTicksText;
+    QRectF _bounds;
+    QRectF _unscaledBounds;
+    QVector<DiagramList*> _lists;
+    QVector<QGraphicsItemGroup*> _graphCaptions;
+    QVector<QGraphicsPathItem*> _graphs;
+    QGraphicsGrid* _grid;
+    QDateTime _startDate;
+    float _scaleX;
+    float _scaleY;
+    QArrow* _xAxis;
+    QArrow* _yAxis;
+    QNonScalableGraphicsTextItem* _xLabel;
+    QNonScalableGraphicsTextItem* _yLabel;
+    QNonScalableGraphicsTextItem* _xUnit;
+    QNonScalableGraphicsTextItem* _yUnit;
+    QVector<QNonScalableGraphicsTextItem*> _xTicksText;
+    QVector<QNonScalableGraphicsTextItem*> _yTicksText;
 };
 
 #endif //DIAGRAMSCENE_H

@@ -24,29 +24,29 @@
  */
 class ColorTableModel : public QAbstractTableModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ColorTableModel( const std::map<std::string, GeoLib::Color*> &colorLookupTable,
-	                 QObject* parent = 0 );
-	~ColorTableModel();
+    ColorTableModel( const std::map<std::string, GeoLib::Color*> &colorLookupTable,
+                     QObject* parent = 0 );
+    ~ColorTableModel();
 
-	int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
-	QVariant data( const QModelIndex& index, int role ) const;
+    QVariant data( const QModelIndex& index, int role ) const;
 
-	int rowCount(const QModelIndex& parent = QModelIndex()) const
-	{
-		Q_UNUSED (parent);
-		return _listOfPairs.size();
-	}
+    int rowCount(const QModelIndex& parent = QModelIndex()) const
+    {
+        Q_UNUSED (parent);
+        return _listOfPairs.size();
+    }
 
-	QVariant headerData( int section, Qt::Orientation orientation,
-	                     int role /*= Qt::DisplayRole*/ ) const;
+    QVariant headerData( int section, Qt::Orientation orientation,
+                         int role /*= Qt::DisplayRole*/ ) const;
 
 private:
-	bool buildTable( const std::map<std::string, GeoLib::Color*> &colorLookupTable );
+    bool buildTable( const std::map<std::string, GeoLib::Color*> &colorLookupTable );
 
-	QList< QPair<QString, QColor> > _listOfPairs;
+    QList< QPair<QString, QColor> > _listOfPairs;
 };
 #endif // COLORTABLEMODEL_H

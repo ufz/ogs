@@ -21,8 +21,8 @@
 #include <QDialog>
 
 namespace MeshLib {
-	enum class MeshElemType;
-	enum class UseIntensityAs;
+    enum class MeshElemType;
+    enum class UseIntensityAs;
 }
 
 
@@ -31,30 +31,30 @@ namespace MeshLib {
  */
 class MeshFromRasterDialog : public QDialog, private Ui_MeshFromRaster
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor
-	MeshFromRasterDialog(QDialog* parent = 0);
-	~MeshFromRasterDialog(void);
+    /// Constructor
+    MeshFromRasterDialog(QDialog* parent = 0);
+    ~MeshFromRasterDialog(void);
 
-	std::string getMeshName() const { return _mesh_name; }
-	std::string getArrayName() const { return _array_name; }
-	MeshLib::MeshElemType getElementSelection() const { return _element_selection; }
-	MeshLib::UseIntensityAs getIntensitySelection() const { return _intensity_selection; }
+    std::string getMeshName() const { return _mesh_name; }
+    std::string getArrayName() const { return _array_name; }
+    MeshLib::MeshElemType getElementSelection() const { return _element_selection; }
+    MeshLib::UseIntensityAs getIntensitySelection() const { return _intensity_selection; }
 
 private slots:
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 private:
-	std::string _mesh_name;
-	std::string _array_name;
-	MeshLib::MeshElemType _element_selection;
-	MeshLib::UseIntensityAs _intensity_selection;
+    std::string _mesh_name;
+    std::string _array_name;
+    MeshLib::MeshElemType _element_selection;
+    MeshLib::UseIntensityAs _intensity_selection;
 
 };
 

@@ -28,26 +28,26 @@ class StationBorehole;
  */
 class StratWindow : public QWidget, public Ui_StratWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/**
-	 * Constructor
-	 * \param station The borehole object to be visualised.
-	 * \param stratColors A color map.
-	 * \param parent The parent QWidget.
-	 */
-	StratWindow(GeoLib::StationBorehole* station,
-	            std::map<std::string, GeoLib::Color>* stratColors = nullptr,
-	            QWidget* parent = 0);
-	~StratWindow(void) { this->destroy(); }
+    /**
+     * Constructor
+     * \param station The borehole object to be visualised.
+     * \param stratColors A color map.
+     * \param parent The parent QWidget.
+     */
+    StratWindow(GeoLib::StationBorehole* station,
+                std::map<std::string, GeoLib::Color>* stratColors = nullptr,
+                QWidget* parent = 0);
+    ~StratWindow(void) { this->destroy(); }
 
 private:
-	/// Automatically resize window based on the measurements of the borehole.
-	void resizeWindow();
+    /// Automatically resize window based on the measurements of the borehole.
+    void resizeWindow();
 
 private slots:
-	void on_closeButton_clicked();
+    void on_closeButton_clicked();
 };
 
 #endif //STRATWINDOW_H

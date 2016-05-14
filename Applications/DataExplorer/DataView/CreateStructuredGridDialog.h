@@ -25,36 +25,36 @@
  */
 class CreateStructuredGridDialog : public QDialog, private Ui_CreateStructuredGrid
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	CreateStructuredGridDialog(QDialog* parent = 0);
+    CreateStructuredGridDialog(QDialog* parent = 0);
 
 private slots:
-	void on_lineButton_toggled()  const;
-	void on_triButton_toggled()   const { enable2dWidgets(); }
-	void on_quadButton_toggled()  const { enable2dWidgets(); }
-	void on_prismButton_toggled() const { enable3dWidgets(); }
-	void on_hexButton_toggled()   const { enable3dWidgets(); }
-	void on_meshExtentButton_toggled();
-	void on_elemExtentButton_toggled();
+    void on_lineButton_toggled()  const;
+    void on_triButton_toggled()   const { enable2dWidgets(); }
+    void on_quadButton_toggled()  const { enable2dWidgets(); }
+    void on_prismButton_toggled() const { enable3dWidgets(); }
+    void on_hexButton_toggled()   const { enable3dWidgets(); }
+    void on_meshExtentButton_toggled();
+    void on_elemExtentButton_toggled();
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject() { this->done(QDialog::Rejected); };
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject() { this->done(QDialog::Rejected); };
 
 private:
-	void enable2dWidgets() const;
-	void enable3dWidgets() const;
-	void setValidators();
+    void enable2dWidgets() const;
+    void enable3dWidgets() const;
+    void setValidators();
 
-	/// Checks if all necessary inputs have been specified.
-	bool inputIsEmpty() const;
+    /// Checks if all necessary inputs have been specified.
+    bool inputIsEmpty() const;
 
 signals:
-	void meshAdded(MeshLib::Mesh* mesh);
+    void meshAdded(MeshLib::Mesh* mesh);
 };
 
 #endif // CREATESTRUCTUREDGRIDDIALOG_H

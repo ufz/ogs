@@ -26,22 +26,22 @@
 class CondItem : public TreeItem
 {
 public:
-	/// Constructor
-	CondItem(const QList<QVariant> &data, TreeItem* parent, const FEMCondition* cond)
-		: TreeItem(data, parent), _item(cond)
-	{
-	}
+    /// Constructor
+    CondItem(const QList<QVariant> &data, TreeItem* parent, const FEMCondition* cond)
+        : TreeItem(data, parent), _item(cond)
+    {
+    }
 
-	~CondItem() {}
+    ~CondItem() {}
 
-	/// Returns the FEM Condition associated with the item.
-	const FEMCondition* getItem() { return _item; }
+    /// Returns the FEM Condition associated with the item.
+    const FEMCondition* getItem() { return _item; }
 
-	/// Returns the geo-object on which the condition is placed.
-	const GeoLib::GeoObject* getGeoObject() { return this->getGeoObject(); }
+    /// Returns the geo-object on which the condition is placed.
+    const GeoLib::GeoObject* getGeoObject() { return this->getGeoObject(); }
 
 private:
-	const FEMCondition* _item;
+    const FEMCondition* _item;
 };
 
 #endif //CONDITEM_H

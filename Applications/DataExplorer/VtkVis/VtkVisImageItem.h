@@ -39,32 +39,32 @@ class VtkCompositeFilter;
 class VtkVisImageItem : public VtkVisPipelineItem
 {
 public:
-	/// @brief Constructor for a source/filter object.
-	VtkVisImageItem(vtkAlgorithm* algorithm,
-	                TreeItem* parentItem,
-	                const QList<QVariant> data = QList<QVariant>());
+    /// @brief Constructor for a source/filter object.
+    VtkVisImageItem(vtkAlgorithm* algorithm,
+                    TreeItem* parentItem,
+                    const QList<QVariant> data = QList<QVariant>());
 
-	/// @brief Constructor for composite filter
-	VtkVisImageItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-	                const QList<QVariant> data = QList<QVariant>());
+    /// @brief Constructor for composite filter
+    VtkVisImageItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
+                    const QList<QVariant> data = QList<QVariant>());
 
-	~VtkVisImageItem();
+    ~VtkVisImageItem();
 
-	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
-	/// the item and sets the item's properties.
-	void Initialize(vtkRenderer* renderer);
+    /// @brief Initializes vtkMapper and vtkActor necessary for visualization of
+    /// the item and sets the item's properties.
+    void Initialize(vtkRenderer* renderer);
 
-	void setTranslation(double x, double y, double z) const;
+    void setTranslation(double x, double y, double z) const;
 
-	vtkAlgorithm* transformFilter() const;
+    vtkAlgorithm* transformFilter() const;
 
 protected:
-	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
-	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
-	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
+    /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
+    virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+    void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-	vtkImageChangeInformation* _transformFilter;
+    vtkImageChangeInformation* _transformFilter;
 };
 
 #endif // VTKVISIMAGEITEM_H

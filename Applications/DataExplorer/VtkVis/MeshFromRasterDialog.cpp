@@ -19,11 +19,11 @@
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
 : QDialog(parent), _mesh_name("mesh"), _array_name("Colour")
 {
-	setupUi(this);
+    setupUi(this);
 
-	this->elevationButton->setChecked(true);
-	this->triButton->setChecked(true);
-	this->mshNameEdit->setText("RasterDataMesh");
+    this->elevationButton->setChecked(true);
+    this->triButton->setChecked(true);
+    this->mshNameEdit->setText("RasterDataMesh");
 }
 
 
@@ -34,37 +34,37 @@ MeshFromRasterDialog::~MeshFromRasterDialog()
 
 void MeshFromRasterDialog::accept()
 {
-	if (this->mshNameEdit->text().isEmpty())
-	{
-		OGSError::box("Please specify a name for the resulting mesh.");
-		return;
-	}
-	_mesh_name = this->mshNameEdit->text().toStdString();
+    if (this->mshNameEdit->text().isEmpty())
+    {
+        OGSError::box("Please specify a name for the resulting mesh.");
+        return;
+    }
+    _mesh_name = this->mshNameEdit->text().toStdString();
 
-	_intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
-	if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::MATERIALS;
-	else if (this->otherButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
-	else if (this->ignoreButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::NONE;
+    _intensity_selection = MeshLib::UseIntensityAs::ELEVATION;
+    if (this->materialButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::MATERIALS;
+    else if (this->otherButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::DATAVECTOR;
+    else if (this->ignoreButton->isChecked()) _intensity_selection  = MeshLib::UseIntensityAs::NONE;
 
-	if (_intensity_selection == MeshLib::UseIntensityAs::DATAVECTOR)
-	{
-		if (this->arrayNameEdit->text().isEmpty())
-		{
-			OGSError::box("Please specify a name for the data vector.");
-			return;
-		}
-		else
-			_array_name = this->arrayNameEdit->text().toStdString();
-	}
-	_element_selection = MeshLib::MeshElemType::TRIANGLE;
-	if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
-	else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
+    if (_intensity_selection == MeshLib::UseIntensityAs::DATAVECTOR)
+    {
+        if (this->arrayNameEdit->text().isEmpty())
+        {
+            OGSError::box("Please specify a name for the data vector.");
+            return;
+        }
+        else
+            _array_name = this->arrayNameEdit->text().toStdString();
+    }
+    _element_selection = MeshLib::MeshElemType::TRIANGLE;
+    if (this->quadButton->isChecked()) _element_selection = MeshLib::MeshElemType::QUAD;
+    else if (this->hexButton->isChecked()) _element_selection = MeshLib::MeshElemType::HEXAHEDRON;
 
-	this->done(QDialog::Accepted);
+    this->done(QDialog::Accepted);
 }
 
 void MeshFromRasterDialog::reject()
 {
-	this->done(QDialog::Rejected);
+    this->done(QDialog::Rejected);
 }
 

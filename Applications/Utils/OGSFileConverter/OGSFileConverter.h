@@ -23,30 +23,30 @@
  */
 class OGSFileConverter : public QDialog, private Ui_OGSFileConverter
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor
-	OGSFileConverter(QWidget* parent = nullptr);
-	/// Destructor
-	~OGSFileConverter(void);
+    /// Constructor
+    OGSFileConverter(QWidget* parent = nullptr);
+    /// Destructor
+    ~OGSFileConverter(void);
 
 private:
-	/// Checks if a given file already exists
-	bool fileExists(const std::string &file_name) const;
+    /// Checks if a given file already exists
+    bool fileExists(const std::string &file_name) const;
 
 private slots:
-	/// Converts all files in the input list and writes the new files to the output directory with the same file name + updated extension.
-	void convertGML2GLI(const QStringList &input, const QString &output) const;
-	void convertGLI2GML(const QStringList &input, const QString &output) const;
-	void convertVTU2MSH(const QStringList &input, const QString &output) const;
-	void convertMSH2VTU(const QStringList &input, const QString &output) const;
+    /// Converts all files in the input list and writes the new files to the output directory with the same file name + updated extension.
+    void convertGML2GLI(const QStringList &input, const QString &output) const;
+    void convertGLI2GML(const QStringList &input, const QString &output) const;
+    void convertVTU2MSH(const QStringList &input, const QString &output) const;
+    void convertMSH2VTU(const QStringList &input, const QString &output) const;
 
-	void on_gml2gliButton_pressed() const;
-	void on_gli2gmlButton_pressed() const;
-	void on_vtu2mshButton_pressed() const;
-	void on_msh2vtuButton_pressed() const;
-	void on_closeDialogButton_pressed();
+    void on_gml2gliButton_pressed() const;
+    void on_gli2gmlButton_pressed() const;
+    void on_vtu2mshButton_pressed() const;
+    void on_msh2vtuButton_pressed() const;
+    void on_closeDialogButton_pressed();
 };
 
 #endif //OGSFILECONVERTER_H

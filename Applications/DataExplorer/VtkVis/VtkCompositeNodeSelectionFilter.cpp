@@ -28,46 +28,46 @@
 VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* inputAlgorithm )
 : VtkCompositeFilter(inputAlgorithm)
 {
-	//this->init();
+    //this->init();
 }
 
 VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
 {
-	for (unsigned i=0; i<_selection.size(); ++i)
-		delete _selection[i];
+    for (unsigned i=0; i<_selection.size(); ++i)
+        delete _selection[i];
 }
 
 void VtkCompositeNodeSelectionFilter::init()
 {
-	this->_inputDataObjectType = VTK_DATA_SET;
-	this->_outputDataObjectType = VTK_POLY_DATA;
+    this->_inputDataObjectType = VTK_DATA_SET;
+    this->_outputDataObjectType = VTK_POLY_DATA;
 
-	if (!_selection.empty())
-	{
-		vtkSmartPointer<VtkPointsSource> point_source = vtkSmartPointer<VtkPointsSource>::New();
-		point_source->setPoints(&_selection);
+    if (!_selection.empty())
+    {
+        vtkSmartPointer<VtkPointsSource> point_source = vtkSmartPointer<VtkPointsSource>::New();
+        point_source->setPoints(&_selection);
 
-		vtkSmartPointer<vtkSphereSource> _glyphSource = vtkSmartPointer<vtkSphereSource>::New();
-			_glyphSource->SetRadius(this->GetInitialRadius());
+        vtkSmartPointer<vtkSphereSource> _glyphSource = vtkSmartPointer<vtkSphereSource>::New();
+            _glyphSource->SetRadius(this->GetInitialRadius());
 
-		vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-			glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
-			glyphFilter->SetInputConnection(point_source->GetOutputPort());
+        vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
+            glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
+            glyphFilter->SetInputConnection(point_source->GetOutputPort());
 
-		_outputAlgorithm = glyphFilter;
-	}
-	else
-		_outputAlgorithm = nullptr;
+        _outputAlgorithm = glyphFilter;
+    }
+    else
+        _outputAlgorithm = nullptr;
 }
 
 void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsigned> &point_indeces)
 {
-	for (unsigned i=0; i<point_indeces.size(); ++i)
-	{
-		double * coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPoint(point_indeces[i]);
-		GeoLib::Point* p (new GeoLib::Point(coords[0], coords[1], coords[2]));
-		_selection.push_back(p);
-	}
-	init();
+    for (unsigned i=0; i<point_indeces.size(); ++i)
+    {
+        double * coords = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPoint(point_indeces[i]);
+        GeoLib::Point* p (new GeoLib::Point(coords[0], coords[1], coords[2]));
+        _selection.push_back(p);
+    }
+    init();
 }
 

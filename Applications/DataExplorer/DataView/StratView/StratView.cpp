@@ -18,50 +18,50 @@
 
 StratView::~StratView()
 {
-	delete _scene;
+    delete _scene;
 }
 
 void StratView::setStation(GeoLib::StationBorehole* station,
                            std::map<std::string, GeoLib::Color>* stratColors)
 {
-	_scene = new StratScene(station, stratColors);
-	setScene(_scene);
-	initialize();
+    _scene = new StratScene(station, stratColors);
+    setScene(_scene);
+    initialize();
 }
 
 void StratView::initialize()
 {
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-	update();
+    update();
 }
 
 void StratView::resizeEvent(QResizeEvent* event)
 {
-	Q_UNUSED (event)
-	update();
+    Q_UNUSED (event)
+    update();
 }
 
 void StratView::update()
 {
-	QRectF viewRect = _scene->itemsBoundingRect();
-	_scene->setSceneRect(viewRect);
-	QRectF sceneInView(_scene->MARGIN,_scene->MARGIN,
-	                   viewRect.width() + 2 * _scene->MARGIN,
-	                   viewRect.height() + 2 * _scene->MARGIN);
-	fitInView(sceneInView, Qt::IgnoreAspectRatio);
+    QRectF viewRect = _scene->itemsBoundingRect();
+    _scene->setSceneRect(viewRect);
+    QRectF sceneInView(_scene->MARGIN,_scene->MARGIN,
+                       viewRect.width() + 2 * _scene->MARGIN,
+                       viewRect.height() + 2 * _scene->MARGIN);
+    fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }
 
 void StratView::saveAsImage(QString fileName)
 {
-	this->update();
+    this->update();
 
-	QRectF viewRect = _scene->itemsBoundingRect();
-	QImage img(
-	        static_cast<int>(viewRect.width()) + 2 * _scene->MARGIN, 600, QImage::Format_ARGB32);
-	QPainter painter(&img);
+    QRectF viewRect = _scene->itemsBoundingRect();
+    QImage img(
+            static_cast<int>(viewRect.width()) + 2 * _scene->MARGIN, 600, QImage::Format_ARGB32);
+    QPainter painter(&img);
 
-	this->render(&painter);
-	img.save(fileName);
+    this->render(&painter);
+    img.save(fileName);
 }

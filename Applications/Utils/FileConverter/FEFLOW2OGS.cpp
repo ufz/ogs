@@ -32,57 +32,57 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
+    TCLAP::CmdLine cmd("Converting a mesh in FEFLOW file format (ASCII, version 5.4) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
 
-	TCLAP::ValueArg<std::string> ogs_mesh_arg(
-		"o",
-		"out",
-		"filename for output mesh (if extension is msh, old OGS fileformat is written)",
-		true,
-		"",
-		"filename as string");
-	cmd.add(ogs_mesh_arg);
+    TCLAP::ValueArg<std::string> ogs_mesh_arg(
+        "o",
+        "out",
+        "filename for output mesh (if extension is msh, old OGS fileformat is written)",
+        true,
+        "",
+        "filename as string");
+    cmd.add(ogs_mesh_arg);
 
-	TCLAP::ValueArg<std::string> feflow_mesh_arg(
-		"i",
-		"in",
-		"FEFLOW input file (*.fem)",
-		true,
-		"",
-		"filename as string");
-	cmd.add(feflow_mesh_arg);
+    TCLAP::ValueArg<std::string> feflow_mesh_arg(
+        "i",
+        "in",
+        "FEFLOW input file (*.fem)",
+        true,
+        "",
+        "filename as string");
+    cmd.add(feflow_mesh_arg);
 
-	cmd.parse(argc, argv);
+    cmd.parse(argc, argv);
 
-	// *** read mesh
-	INFO("Reading %s.", feflow_mesh_arg.getValue().c_str());
+    // *** read mesh
+    INFO("Reading %s.", feflow_mesh_arg.getValue().c_str());
 #ifndef WIN32
-	BaseLib::MemWatch mem_watch;
-	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+    BaseLib::MemWatch mem_watch;
+    unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 #endif
-	BaseLib::RunTime run_time;
-	run_time.start();
-	FileIO::FEFLOWInterface feflowIO(nullptr);
-	std::unique_ptr<MeshLib::Mesh const> mesh(
-	    feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
+    BaseLib::RunTime run_time;
+    run_time.start();
+    FileIO::FEFLOWInterface feflowIO(nullptr);
+    std::unique_ptr<MeshLib::Mesh const> mesh(
+        feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 
-	if (mesh == nullptr) {
-		INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
-		return EXIT_FAILURE;
-	}
+    if (mesh == nullptr) {
+        INFO("Could not read mesh from %s.", feflow_mesh_arg.getValue().c_str());
+        return EXIT_FAILURE;
+    }
 #ifndef WIN32
-	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-	INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+    unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
+    INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
-	INFO("Time for reading: %f seconds.", run_time.elapsed());
-	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Time for reading: %f seconds.", run_time.elapsed());
+    INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
-	INFO("Writing %s.", ogs_mesh_fname.c_str());
-	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
-	INFO("\tDone.");
-	return EXIT_SUCCESS;
+    std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
+    INFO("Writing %s.", ogs_mesh_fname.c_str());
+    MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
+    INFO("\tDone.");
+    return EXIT_SUCCESS;
 }
 

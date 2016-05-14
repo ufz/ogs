@@ -48,7 +48,7 @@ class VtkVisPipelineItem;
 
 namespace InSituLib
 {
-	class VtkMappedMeshSource;
+    class VtkMappedMeshSource;
 }
 
 /**
@@ -58,99 +58,99 @@ namespace InSituLib
  */
 class VtkVisPipeline : public TreeModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	VtkVisPipeline(vtkRenderer* renderer, QObject* parent = 0);
+    VtkVisPipeline(vtkRenderer* renderer, QObject* parent = 0);
 
-	/// \brief Emits vtkVisPipelineChanged() and calls base class method.
-	bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    /// \brief Emits vtkVisPipelineChanged() and calls base class method.
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
-	/// \brief Adds a light to the scene at the given coordinates.
-	void addLight(const GeoLib::Point &pos);
+    /// \brief Adds a light to the scene at the given coordinates.
+    void addLight(const GeoLib::Point &pos);
 
-	/// \brief Returns a light (or NULL) for the given coordinates.
-	vtkLight* getLight(const GeoLib::Point &pos) const;
+    /// \brief Returns a light (or NULL) for the given coordinates.
+    vtkLight* getLight(const GeoLib::Point &pos) const;
 
-	/// \brief Removes a light at the given coordinates (if possible).
-	void removeLight(const GeoLib::Point &pos);
+    /// \brief Removes a light at the given coordinates (if possible).
+    void removeLight(const GeoLib::Point &pos);
 
-	/// \brief Returns the background-colour of the scene.
-	const QColor getBGColor() const;
+    /// \brief Returns the background-colour of the scene.
+    const QColor getBGColor() const;
 
-	/// \brief Sets the background-colour of the scene.
-	void setBGColor(const QColor &color);
+    /// \brief Sets the background-colour of the scene.
+    void setBGColor(const QColor &color);
 
-	/// \brief Returns the QModelIndex of VtkVisPipelineItem which actor
-	/// is the given one.
-	QModelIndex getIndex(vtkProp3D* actor);
+    /// \brief Returns the QModelIndex of VtkVisPipelineItem which actor
+    /// is the given one.
+    QModelIndex getIndex(vtkProp3D* actor);
 
-	Qt::ItemFlags flags( const QModelIndex &index ) const;
+    Qt::ItemFlags flags( const QModelIndex &index ) const;
 
-	/// \brief Loads a vtk object from the given file and adds it to the pipeline.
-	void loadFromFile(QString filename);
+    /// \brief Loads a vtk object from the given file and adds it to the pipeline.
+    void loadFromFile(QString filename);
 
-	/// \brief Defaults to on.
-	void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
+    /// \brief Defaults to on.
+    void resetCameraOnAddOrRemove(bool reset) { _resetCameraOnAddOrRemove = reset; }
 
-	/// \brief Sets a global superelevation factor on all source items and resets
-	/// the factor on other items to 1.
-	void setGlobalSuperelevation(double factor) const;
+    /// \brief Sets a global superelevation factor on all source items and resets
+    /// the factor on other items to 1.
+    void setGlobalSuperelevation(double factor) const;
 
-	/// \brief Enables / disables backface culling on all actors.
-	void setGlobalBackfaceCulling(bool enable) const;
+    /// \brief Enables / disables backface culling on all actors.
+    void setGlobalBackfaceCulling(bool enable) const;
 
-	/// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
-	void showMeshElementQuality(InSituLib::VtkMappedMeshSource* mesh, MeshLib::MeshQualityType t, std::vector<double> const& quality);
+    /// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
+    void showMeshElementQuality(InSituLib::VtkMappedMeshSource* mesh, MeshLib::MeshQualityType t, std::vector<double> const& quality);
 
 public slots:
-	/// \brief Adds the given Model to the pipeline.
-	void addPipelineItem(MshModel* model, const QModelIndex &idx);
-	void addPipelineItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
-	void addPipelineItem(StationTreeModel* model, const std::string &name);
-	QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
+    /// \brief Adds the given Model to the pipeline.
+    void addPipelineItem(MshModel* model, const QModelIndex &idx);
+    void addPipelineItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
+    void addPipelineItem(StationTreeModel* model, const std::string &name);
+    QModelIndex addPipelineItem(VtkVisPipelineItem* item, const QModelIndex &parent);
 
-	/// \brief Inserts the vtkAlgorithm as a child of the given QModelIndex to the pipeline.
-	QModelIndex addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
+    /// \brief Inserts the vtkAlgorithm as a child of the given QModelIndex to the pipeline.
+    QModelIndex addPipelineItem(vtkAlgorithm* source, QModelIndex parent = QModelIndex());
 
-	/// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
-	void removeSourceItem(MshModel* model, const QModelIndex &idx);
-	void removeSourceItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
-	void removeSourceItem(StationTreeModel* model, const std::string &name);
+    /// \brief Removes the given Model (and all attached vtkAlgorithms) from the pipeline.
+    void removeSourceItem(MshModel* model, const QModelIndex &idx);
+    void removeSourceItem(GeoTreeModel* model, const std::string &name, GeoLib::GEOTYPE type);
+    void removeSourceItem(StationTreeModel* model, const std::string &name);
 
-	/// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
-	/// vtkAlgorithms) from the pipeline.
-	void removePipelineItem(QModelIndex index);
+    /// \brief Removes the vtkAlgorithm at the given QModelIndex (and all attached
+    /// vtkAlgorithms) from the pipeline.
+    void removePipelineItem(QModelIndex index);
 
-	/// Applies a VtkCompositeGeoObjectFilter to add a specific index of the given geometry-source to the pipeline for highlighted display in the render window.
-	void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);
+    /// Applies a VtkCompositeGeoObjectFilter to add a specific index of the given geometry-source to the pipeline for highlighted display in the render window.
+    void highlightGeoObject(const vtkPolyDataAlgorithm* source, int index);
 
-	/// Removes the currently highlighted geometry-object
-	void removeHighlightedGeoObject();
+    /// Removes the currently highlighted geometry-object
+    void removeHighlightedGeoObject();
 
-	/// Applies a VtkCompositeSelectionFilter to add a specific component of the given mesh-source to the pipeline for highlighted display in the render window.
-	void highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, unsigned index, bool is_element);
+    /// Applies a VtkCompositeSelectionFilter to add a specific component of the given mesh-source to the pipeline for highlighted display in the render window.
+    void highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const source, unsigned index, bool is_element);
 
-	/// Removes the currently highlighted mesh component
-	void removeHighlightedMeshComponent();
+    /// Removes the currently highlighted mesh component
+    void removeHighlightedMeshComponent();
 
 
 private:
-	void listArrays(vtkDataSet* dataSet);
+    void listArrays(vtkDataSet* dataSet);
 
-	vtkRenderer* _renderer;
-	QVector<vtkAlgorithm*> _sources;
-	std::list<vtkLight*> _lights;
-	QMap<vtkProp3D*, QModelIndex> _actorMap;
-	bool _resetCameraOnAddOrRemove;
+    vtkRenderer* _renderer;
+    QVector<vtkAlgorithm*> _sources;
+    std::list<vtkLight*> _lights;
+    QMap<vtkProp3D*, QModelIndex> _actorMap;
+    bool _resetCameraOnAddOrRemove;
 
-	QModelIndex _highlighted_geo_index;
-	QModelIndex _highlighted_mesh_component;
+    QModelIndex _highlighted_geo_index;
+    QModelIndex _highlighted_mesh_component;
 
 signals:
-	/// \brief Is emitted when a pipeline item was added or removed.
-	void vtkVisPipelineChanged() const;
-	void itemSelected(const QModelIndex&) const;
+    /// \brief Is emitted when a pipeline item was added or removed.
+    void vtkVisPipelineChanged() const;
+    void itemSelected(const QModelIndex&) const;
 };
 
 #endif // VTKVISPIPELINE_H

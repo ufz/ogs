@@ -27,37 +27,37 @@ class VisualizationWidget;
  */
 class VisPrefsDialog : public QDialog, private Ui_VisPrefsDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	VisPrefsDialog(VtkVisPipeline &pipeline,
-	               VisualizationWidget &widget,
-	               QDialog* parent = nullptr);
+    VisPrefsDialog(VtkVisPipeline &pipeline,
+                   VisualizationWidget &widget,
+                   QDialog* parent = nullptr);
 
 protected slots:
-	/// @brief Sets the background colour.
-	void on_bgColorButton_colorPicked(QColor color);
+    /// @brief Sets the background colour.
+    void on_bgColorButton_colorPicked(QColor color);
 
-	/// @brief Adds a light above the scene.
-	void on_lightAboveBox_clicked();
+    /// @brief Adds a light above the scene.
+    void on_lightAboveBox_clicked();
 
-	/// @brief Adds a light below the scene.
-	void on_lightBelowBox_clicked();
+    /// @brief Adds a light below the scene.
+    void on_lightBelowBox_clicked();
 
-	/// @brief Sets the given superelevation on all vis pipeline source objects
-	void on_superelevationPushButton_pressed();
+    /// @brief Sets the given superelevation on all vis pipeline source objects
+    void on_superelevationPushButton_pressed();
 
-	/// @brief
-	void on_loadShowAllCheckBox_stateChanged(int state);
+    /// @brief
+    void on_loadShowAllCheckBox_stateChanged(int state);
 
-	/// @brief Culls backfacing rendering primitives on all actors.
-	void on_cullBackfacesCheckBox_stateChanged(int state);
+    /// @brief Culls backfacing rendering primitives on all actors.
+    void on_cullBackfacesCheckBox_stateChanged(int state);
 
 private:
-	VtkVisPipeline& _vtkVisPipeline;
-	VisualizationWidget& _visWidget;
-	GeoLib::Point _above;
-	GeoLib::Point _below;
+    VtkVisPipeline& _vtkVisPipeline;
+    VisualizationWidget& _visWidget;
+    GeoLib::Point _above;
+    GeoLib::Point _below;
 };
 
 #endif //VISPREFSDIALOG_H

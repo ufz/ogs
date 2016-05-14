@@ -41,23 +41,23 @@ class PropertyBounds;
  */
 class StationTreeModel : public TreeModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	StationTreeModel(QObject* parent = 0);
-	~StationTreeModel();
+    StationTreeModel(QObject* parent = 0);
+    ~StationTreeModel();
 
-	void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);
-	const std::vector<ModelTreeItem*> &getLists() { return _lists; }
-	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-	//BaseItem* itemFromIndex( const QModelIndex& index ) const;
-	void removeStationList(QModelIndex index);
-	void removeStationList(const std::string &name);
-	GeoLib::Station* stationFromIndex( const QModelIndex& index, QString &listName ) const;
-	vtkPolyDataAlgorithm* vtkSource(const std::string &name) const;
+    void addStationList(QString listName, const std::vector<GeoLib::Point*>* stations);
+    const std::vector<ModelTreeItem*> &getLists() { return _lists; }
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    //BaseItem* itemFromIndex( const QModelIndex& index ) const;
+    void removeStationList(QModelIndex index);
+    void removeStationList(const std::string &name);
+    GeoLib::Station* stationFromIndex( const QModelIndex& index, QString &listName ) const;
+    vtkPolyDataAlgorithm* vtkSource(const std::string &name) const;
 
 private:
-	std::vector<ModelTreeItem*> _lists;
+    std::vector<ModelTreeItem*> _lists;
 };
 
 #endif //QSTATIONTREEMODEL_H

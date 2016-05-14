@@ -19,26 +19,26 @@
 class vtkUnstructuredGridAlgorithm;
 
 /**
- *	A TreeView to display mesh element properties.
+ *    A TreeView to display mesh element properties.
  */
 class ElementTreeView : public QTreeView
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor
-	ElementTreeView(QWidget* parent = 0);
+    /// Constructor
+    ElementTreeView(QWidget* parent = 0);
 
 public slots:
-	void updateView();
+    void updateView();
 
 protected slots:
-	/// Is called when the selection of this view changes.
-	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    /// Is called when the selection of this view changes.
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 signals:
-	void nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
-	void removeSelectedMeshComponent();
+    void nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool);
+    void removeSelectedMeshComponent();
 };
 
 

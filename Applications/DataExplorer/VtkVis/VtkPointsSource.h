@@ -29,34 +29,34 @@
 class VtkPointsSource : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// Create new objects with New() because of VTKs object reference counting.
-	static VtkPointsSource* New();
+    /// Create new objects with New() because of VTKs object reference counting.
+    static VtkPointsSource* New();
 
-	vtkTypeMacro(VtkPointsSource,vtkPolyDataAlgorithm);
+    vtkTypeMacro(VtkPointsSource,vtkPolyDataAlgorithm);
 
-	/// Sets the points as a vector
-	void setPoints(const std::vector<GeoLib::Point*>* points) { _points = points; }
+    /// Sets the points as a vector
+    void setPoints(const std::vector<GeoLib::Point*>* points) { _points = points; }
 
-	/// Prints its data on a stream.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// Prints its data on a stream.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	VtkPointsSource();
-	~VtkPointsSource() {}
+    VtkPointsSource();
+    ~VtkPointsSource() {}
 
-	/// Computes the polygonal data object.
-	int RequestData(vtkInformation* request,
-	                vtkInformationVector** inputVector,
-	                vtkInformationVector* outputVector);
+    /// Computes the polygonal data object.
+    int RequestData(vtkInformation* request,
+                    vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector);
 
-	int RequestInformation(vtkInformation* request,
-	                       vtkInformationVector** inputVector,
-	                       vtkInformationVector* outputVector);
+    int RequestInformation(vtkInformation* request,
+                           vtkInformationVector** inputVector,
+                           vtkInformationVector* outputVector);
 
-	/// The points to visualize
-	const std::vector<GeoLib::Point*>* _points;
+    /// The points to visualize
+    const std::vector<GeoLib::Point*>* _points;
 
 private:
 };

@@ -30,32 +30,32 @@ class GEOObjects;
  */
 class MergeGeometriesDialog : public QDialog, private Ui_MergeGeometries
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent = 0);
-	~MergeGeometriesDialog(void);
+    MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent = 0);
+    ~MergeGeometriesDialog(void);
 
-	/// Returns a vector of selected geometries
-	std::vector<std::string> const getSelectedGeometries() const;
+    /// Returns a vector of selected geometries
+    std::vector<std::string> const getSelectedGeometries() const;
 
-	/// Returns the name of the new merged geometry
-	std::string getGeometryName() const;
+    /// Returns the name of the new merged geometry
+    std::string getGeometryName() const;
 
 private:
-	GeoLib::GEOObjects& _geo_objects;
-	QStringListModel* _allGeo;
-	QStringListModel* _selGeo;
+    GeoLib::GEOObjects& _geo_objects;
+    QStringListModel* _allGeo;
+    QStringListModel* _selGeo;
 
 private slots:
-	void on_selectGeoButton_pressed();
-	void on_deselectGeoButton_pressed();
+    void on_selectGeoButton_pressed();
+    void on_deselectGeoButton_pressed();
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 };
 
 #endif //MERGEGEOMETRIESDIALOG_H

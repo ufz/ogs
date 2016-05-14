@@ -25,30 +25,30 @@ class QString;
 /// object automatically.
 class VtkAlgorithmPropertyLineEdit : public QLineEdit
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// @brief Constructor.
-	/// @param contents The initial text.
-	/// @param name The name of the user property to set.
-	/// @param type The type of the property.
-	/// @param algProps The VtkAlgorithmProperties object.
-	/// @param parent The parent widget.
-	VtkAlgorithmPropertyLineEdit(const QString& contents,
-	                             const QString& name,
-	                             QVariant::Type type,
-	                             VtkAlgorithmProperties* algProps,
-	                             QWidget* parent = 0);
-	virtual ~VtkAlgorithmPropertyLineEdit();
+    /// @brief Constructor.
+    /// @param contents The initial text.
+    /// @param name The name of the user property to set.
+    /// @param type The type of the property.
+    /// @param algProps The VtkAlgorithmProperties object.
+    /// @param parent The parent widget.
+    VtkAlgorithmPropertyLineEdit(const QString& contents,
+                                 const QString& name,
+                                 QVariant::Type type,
+                                 VtkAlgorithmProperties* algProps,
+                                 QWidget* parent = 0);
+    virtual ~VtkAlgorithmPropertyLineEdit();
 
 private:
-	const QString _name;
-	VtkAlgorithmProperties* _algProps;
-	QVariant::Type _type;
+    const QString _name;
+    VtkAlgorithmProperties* _algProps;
+    QVariant::Type _type;
 
 private slots:
-	/// @brief This slots is automatically called when the text changed.
-	void setNewValue();
+    /// @brief This slots is automatically called when the text changed.
+    void setNewValue();
 };
 
 #endif // VTKALGORITHMPROPERTYLINEEDIT_H

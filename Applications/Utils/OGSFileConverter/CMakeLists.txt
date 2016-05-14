@@ -9,41 +9,41 @@ set(CMAKE_AUTOUIC TRUE)
 set(CMAKE_AUTORCC TRUE)
 
 set(SOURCES
-	FileListDialog.cpp
-	OGSFileConverter.cpp
+    FileListDialog.cpp
+    OGSFileConverter.cpp
 )
 
 find_package(Qt4 QUIET REQUIRED)
 
 include_directories(
-	${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
-	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/GeoLib
-	${CMAKE_SOURCE_DIR}/MeshLib
-	${CMAKE_SOURCE_DIR}/Applications/DataExplorer/Base
-	${CMAKE_SOURCE_DIR}/Applications/DataExplorer/DataView
-	${CMAKE_SOURCE_DIR}/Applications/DataExplorer/VtkVis
+    ${CMAKE_BINARY_DIR}/Applications/Utils/OGSFileConverter
+    ${CMAKE_SOURCE_DIR}/BaseLib
+    ${CMAKE_SOURCE_DIR}/FileIO
+    ${CMAKE_SOURCE_DIR}/GeoLib
+    ${CMAKE_SOURCE_DIR}/MeshLib
+    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/Base
+    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/DataView
+    ${CMAKE_SOURCE_DIR}/Applications/DataExplorer/VtkVis
 )
 
 file(GLOB_RECURSE UIS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 add_library(OGSFileConverterLib
-	${SOURCES}
-	${HEADERS}
-	${UIS}
+    ${SOURCES}
+    ${HEADERS}
+    ${UIS}
 )
 target_link_libraries(OGSFileConverterLib QtBase)
 
 add_executable(OGSFileConverter main.cpp)
 
 target_link_libraries(OGSFileConverter
-	ApplicationsLib
-	OGSFileConverterLib
-	FileIO
-	QtBase
-	GeoLib)
+    ApplicationsLib
+    OGSFileConverterLib
+    FileIO
+    QtBase
+    GeoLib)
 ADD_VTK_DEPENDENCY(OGSFileConverter)
 
 include(${QT_USE_FILE})

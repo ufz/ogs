@@ -38,32 +38,32 @@ class vtkImageAlgorithm;
 class VtkTextureOnSurfaceFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// Create new objects with New() because of VTKs object reference counting.
-	static VtkTextureOnSurfaceFilter* New();
+    /// Create new objects with New() because of VTKs object reference counting.
+    static VtkTextureOnSurfaceFilter* New();
 
-	vtkTypeMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
+    vtkTypeMacro(VtkTextureOnSurfaceFilter,vtkPolyDataAlgorithm);
 
-	/// Prints the object data to an output stream.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// Prints the object data to an output stream.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	/// Sets the raster/image to be used as a texture map
-	void SetRaster(vtkImageAlgorithm* img, double x0, double y0, double scalingFactor);
+    /// Sets the raster/image to be used as a texture map
+    void SetRaster(vtkImageAlgorithm* img, double x0, double y0, double scalingFactor);
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	VtkTextureOnSurfaceFilter();
-	~VtkTextureOnSurfaceFilter();
+    VtkTextureOnSurfaceFilter();
+    ~VtkTextureOnSurfaceFilter();
 
-	/// Copies the input data and calculates texture coordinates (this requires that SetRaster() has
-	/// been called before this method is executed.
-	int RequestData(vtkInformation* request,
-	                vtkInformationVector** inputVector,
-	                vtkInformationVector* outputVector);
+    /// Copies the input data and calculates texture coordinates (this requires that SetRaster() has
+    /// been called before this method is executed.
+    int RequestData(vtkInformation* request,
+                    vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector);
 
 private:
-	std::pair<float, float> _origin;
-	double _scalingFactor;
+    std::pair<float, float> _origin;
+    double _scalingFactor;
 };
 
 #endif // VTKOGSPOLYDATAALGORITHM_H

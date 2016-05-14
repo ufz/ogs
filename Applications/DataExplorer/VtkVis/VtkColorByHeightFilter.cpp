@@ -44,76 +44,76 @@ VtkColorByHeightFilter::~VtkColorByHeightFilter()
 
 void VtkColorByHeightFilter::PrintSelf( ostream& os, vtkIndent indent )
 {
-	this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os,indent);
 
-	double range[2];
-	ColorLookupTable->GetTableRange(range);
-	os << indent << "== VtkColorByHeightFilter ==" << endl;
-	os << indent << "Range: " << range[0] << "-" << range[1] << endl;
-	os << indent << "Interpolation Type:" << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
+    double range[2];
+    ColorLookupTable->GetTableRange(range);
+    os << indent << "== VtkColorByHeightFilter ==" << endl;
+    os << indent << "Range: " << range[0] << "-" << range[1] << endl;
+    os << indent << "Interpolation Type:" << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
 }
 
 unsigned long VtkColorByHeightFilter::GetMTime()
 {
-	unsigned long t1, t2;
+    unsigned long t1, t2;
 
-	t1 = this->Superclass::GetMTime();
-	if (this->ColorLookupTable)
-	{
-		t2 = this->ColorLookupTable->GetMTime();
-		if (t2 > t1)
-			t1 = t2;
-	}
-	return t1;
+    t1 = this->Superclass::GetMTime();
+    if (this->ColorLookupTable)
+    {
+        t2 = this->ColorLookupTable->GetMTime();
+        if (t2 > t1)
+            t1 = t2;
+    }
+    return t1;
 }
 int VtkColorByHeightFilter::RequestData( vtkInformation*,
                                          vtkInformationVector** inputVector,
                                          vtkInformationVector* outputVector )
 {
-	vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-	vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+    vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-	vtkSmartPointer<vtkFloatArray> colors = vtkSmartPointer<vtkFloatArray>::New();
-	colors->SetNumberOfComponents(1);
-	std::size_t nPoints = input->GetNumberOfPoints();
-	colors->SetNumberOfValues(nPoints);
-	colors->SetName("Colors");
+    vtkSmartPointer<vtkFloatArray> colors = vtkSmartPointer<vtkFloatArray>::New();
+    colors->SetNumberOfComponents(1);
+    std::size_t nPoints = input->GetNumberOfPoints();
+    colors->SetNumberOfValues(nPoints);
+    colors->SetName("Colors");
 
-	// Inserts height values as a new scalar array
-	for (std::size_t i = 0; i < nPoints; i++)
-	{
-		double p[3];
-		input->GetPoint(i,p);
-		colors->SetValue(i, p[2]);
-	}
+    // Inserts height values as a new scalar array
+    for (std::size_t i = 0; i < nPoints; i++)
+    {
+        double p[3];
+        input->GetPoint(i,p);
+        colors->SetValue(i, p[2]);
+    }
 
-	vtkInformation* outInfo = outputVector->GetInformationObject(0);
-	vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-	output->CopyStructure(input);
-	output->GetPointData()->PassData(input->GetPointData());
-	output->GetCellData()->PassData(input->GetCellData());
-	output->GetPointData()->AddArray(colors);
-	output->GetPointData()->SetActiveScalars("Colors");
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
+    vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    output->CopyStructure(input);
+    output->GetPointData()->PassData(input->GetPointData());
+    output->GetCellData()->PassData(input->GetCellData());
+    output->GetPointData()->AddArray(colors);
+    output->GetPointData()->SetActiveScalars("Colors");
 
-	return 1;
+    return 1;
 }
 
 void VtkColorByHeightFilter::SetTableRange(double min, double max)
 {
-	if (min < max)
-	{
-		this->_tableRange[0] = min;
-		this->_tableRange[1] = max;
-		this->ColorLookupTable->SetTableRange(min, max);
-	}
-	else
-		ERR("VtkColorByHeightFilter::SetLimits(min, max) - Limits not changed because min value > max value.");
+    if (min < max)
+    {
+        this->_tableRange[0] = min;
+        this->_tableRange[1] = max;
+        this->ColorLookupTable->SetTableRange(min, max);
+    }
+    else
+        ERR("VtkColorByHeightFilter::SetLimits(min, max) - Limits not changed because min value > max value.");
 }
 
 void VtkColorByHeightFilter::SetTableRangeScaling( double scale )
 {
-	this->_tableRangeScaling = scale;
-	this->ColorLookupTable->SetTableRange(
-	        this->_tableRange[0] * scale, this->_tableRange[1] * scale);
+    this->_tableRangeScaling = scale;
+    this->ColorLookupTable->SetTableRange(
+            this->_tableRange[0] * scale, this->_tableRange[1] * scale);
 }
 

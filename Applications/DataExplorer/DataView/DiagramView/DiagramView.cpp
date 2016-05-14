@@ -18,37 +18,37 @@
 
 DiagramView::DiagramView(QWidget* parent) : QGraphicsView(parent)
 {
-	_scene = new DiagramScene();
-	setScene(_scene);
-	initialize();
+    _scene = new DiagramScene();
+    setScene(_scene);
+    initialize();
 }
 
 DiagramView::DiagramView(DiagramList* list, QWidget* parent) : QGraphicsView(parent)
 {
-	_scene = new DiagramScene(list);
-	setScene(_scene);
-	initialize();
+    _scene = new DiagramScene(list);
+    setScene(_scene);
+    initialize();
 }
 
 DiagramView::~DiagramView()
 {
-	delete _scene;
+    delete _scene;
 }
 
 void DiagramView::addGraph(DiagramList* list)
 {
-	_scene->addGraph(list);
-	update();
+    _scene->addGraph(list);
+    update();
 }
 
 int DiagramView::getHeight()
 {
-	return static_cast<int>((_scene->itemsBoundingRect()).height());
+    return static_cast<int>((_scene->itemsBoundingRect()).height());
 }
 
 int DiagramView::getWidth()
 {
-	return static_cast<int>((_scene->itemsBoundingRect()).width());
+    return static_cast<int>((_scene->itemsBoundingRect()).width());
 }
 
 /**
@@ -56,19 +56,19 @@ int DiagramView::getWidth()
  */
 void DiagramView::initialize()
 {
-	//QMatrix currentMatrix = matrix();
-	//setMatrix(currentMatrix * scene->getTransformationMatrix());
+    //QMatrix currentMatrix = matrix();
+    //setMatrix(currentMatrix * scene->getTransformationMatrix());
 
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-	update();
+    update();
 }
 
 /*
  * Keeps the aspect ration of the labels when the view is resized.
  * It is only necessary to call this if
- *		Qt::AspectRatioMode == Qt::IgnoreAspectRatio.
+ *        Qt::AspectRatioMode == Qt::IgnoreAspectRatio.
  * Also, this method is kind of annoying because you have to set the
  * appropriate transform for every single QGraphicsTextItem seperately.
  */
@@ -88,19 +88,19 @@ void DiagramView::initialize()
 
 QSize DiagramView::minimumSizeHint() const
 {
-	return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN);
+    return QSize(3 * _scene->MARGIN,2 * _scene->MARGIN);
 }
 
 QSize DiagramView::sizeHint() const
 {
-	return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
+    return QSize(6 * _scene->MARGIN, 4 * _scene->MARGIN);
 }
 
 void DiagramView::resizeEvent(QResizeEvent* event)
 {
-	Q_UNUSED (event)
-	update();
-	//keepItemAspectRatio();
+    Q_UNUSED (event)
+    update();
+    //keepItemAspectRatio();
 }
 
 /**
@@ -111,10 +111,10 @@ void DiagramView::resizeEvent(QResizeEvent* event)
  */
 void DiagramView::update()
 {
-	//setResizeAnchor(QGraphicsView::AnchorViewCenter);
-	QRectF viewRect = _scene->itemsBoundingRect();
-	_scene->setSceneRect(viewRect);
-	QRectF sceneInView(0 /*_scene->MARGIN*/,_scene->MARGIN / 2,
-	                   viewRect.width() /*+_scene->MARGIN*/,viewRect.height() + _scene->MARGIN);
-	fitInView(sceneInView, Qt::IgnoreAspectRatio);
+    //setResizeAnchor(QGraphicsView::AnchorViewCenter);
+    QRectF viewRect = _scene->itemsBoundingRect();
+    _scene->setSceneRect(viewRect);
+    QRectF sceneInView(0 /*_scene->MARGIN*/,_scene->MARGIN / 2,
+                       viewRect.width() /*+_scene->MARGIN*/,viewRect.height() + _scene->MARGIN);
+    fitInView(sceneInView, Qt::IgnoreAspectRatio);
 }

@@ -24,16 +24,16 @@
 class VtkCompositeNodeSelectionFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeNodeSelectionFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeNodeSelectionFilter();
+    VtkCompositeNodeSelectionFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeNodeSelectionFilter();
 
-	virtual void init();
+    virtual void init();
 
-	/// Sets the point indeces to be highlighted
-	void setSelectionArray(const std::vector<unsigned> &point_indeces);
+    /// Sets the point indeces to be highlighted
+    void setSelectionArray(const std::vector<unsigned> &point_indeces);
 
 private:
-	std::vector<GeoLib::Point*> _selection;
+    std::vector<GeoLib::Point*> _selection;
 };
 
 #endif // VTKCOMPOSITENODESELECTIONFILTER_H
