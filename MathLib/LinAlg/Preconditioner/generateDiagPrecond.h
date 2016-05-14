@@ -27,7 +27,7 @@ namespace MathLib {
  * @return true, if all diagonal entries are distinct from zero, else false
  */
 bool generateDiagPrecond(unsigned n, unsigned const*const iA, unsigned const*const jA,
-				double const*const A, double* diag);
+                double const*const A, double* diag);
 
 /**
  * diagonal preconditioner \f$P_{ii} = \left(\sum_{j} |a_{ij}|\right)^{-1}\f$ associated with \f$n \times n\f$ matrix \f$A\f$
@@ -38,7 +38,7 @@ bool generateDiagPrecond(unsigned n, unsigned const*const iA, unsigned const*con
  * @return true, if all row sums are distinct from zero, else false
  */
 bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, double const*const A,
-				double* diag);
+                double* diag);
 
 /**
  * diagonal preconditioner \f$P_{ii} = \left(\max_{j} a_{ij}\right)^{-1}\f$ associated with \f$n \times n\f$ matrix \f$A\f$
@@ -49,7 +49,7 @@ bool generateDiagPrecondRowSum(unsigned n, unsigned const*const iA, double const
  * @return true, if all row sums are distinct from zero, else false
  */
 bool generateDiagPrecondRowMax(unsigned n, unsigned const*const iA, double const*const A,
-				double* diag);
+                double* diag);
 
 } // end namespace MathLib
 

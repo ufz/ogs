@@ -40,15 +40,15 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
     BaseLib::ConfigTree const& config)
 {
 #ifdef CVODE_FOUND
-	return std::unique_ptr<ODESolver<NumEquations>>(
-	    new ConcreteODESolver<CVodeSolver, NumEquations>(config));
+    return std::unique_ptr<ODESolver<NumEquations>>(
+        new ConcreteODESolver<CVodeSolver, NumEquations>(config));
 #endif
-	(void)config;  // Unused parameter warning if no library is available.
+    (void)config;  // Unused parameter warning if no library is available.
 
-	ERR(
-	    "No ODE solver could be created. Maybe it is because you did not build"
-	    " OGS6 with support for any external ODE solver library.");
-	std::abort();
+    ERR(
+        "No ODE solver could be created. Maybe it is because you did not build"
+        " OGS6 with support for any external ODE solver library.");
+    std::abort();
 }
 
 //! @}

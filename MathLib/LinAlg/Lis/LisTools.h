@@ -36,8 +36,8 @@ class LisVector;
  * @param vals a vector of known solutions
  */
 void applyKnownSolution(LisMatrix &eqsA, LisVector &eqsRHS, LisVector &/*eqsX*/,
-	const std::vector<LisMatrix::IndexType> &rows,
-	const std::vector<double> &vals);
+    const std::vector<LisMatrix::IndexType> &rows,
+    const std::vector<double> &vals);
 
 } // MathLib
 

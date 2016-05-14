@@ -31,53 +31,53 @@ namespace MathLib
 template<typename T, int N> inline
 T scalarProduct(T const * const v0, T const * const v1)
 {
-	T res (v0[0] * v1[0]);
+    T res (v0[0] * v1[0]);
 #ifdef _OPENMP
-	OPENMP_LOOP_TYPE k;
+    OPENMP_LOOP_TYPE k;
 
 #pragma omp parallel for reduction (+:res)
-	for (k = 1; k<N; k++) {
-		res += v0[k] * v1[k];
-	}
+    for (k = 1; k<N; k++) {
+        res += v0[k] * v1[k];
+    }
 #else
-	for (std::size_t k(1); k < N; k++)
-		res += v0[k] * v1[k];
+    for (std::size_t k(1); k < N; k++)
+        res += v0[k] * v1[k];
 #endif
-	return res;
+    return res;
 }
 
 template <> inline
 double scalarProduct<double,3>(double const * const v0, double const * const v1)
 {
-	double res (v0[0] * v1[0]);
-	for (std::size_t k(1); k < 3; k++)
-		res += v0[k] * v1[k];
-	return res;
+    double res (v0[0] * v1[0]);
+    for (std::size_t k(1); k < 3; k++)
+        res += v0[k] * v1[k];
+    return res;
 }
 
 template<typename T> inline
 T scalarProduct(T const * const v0, T const * const v1, unsigned n)
 {
-	T res (v0[0] * v1[0]);
+    T res (v0[0] * v1[0]);
 #ifdef _OPENMP
-	OPENMP_LOOP_TYPE k;
+    OPENMP_LOOP_TYPE k;
 
 #pragma omp parallel for reduction (+:res)
 #ifdef WIN32
 #pragma warning ( push )
 #pragma warning ( disable: 4018 )
 #endif
-	for (k = 1; k<n; k++) {
-		res += v0[k] * v1[k];
-	}
+    for (k = 1; k<n; k++) {
+        res += v0[k] * v1[k];
+    }
 #ifdef WIN32
 #pragma warning ( pop )
 #endif
 #else
-	for (std::size_t k(1); k < n; k++)
-		res += v0[k] * v1[k];
+    for (std::size_t k(1); k < n; k++)
+        res += v0[k] * v1[k];
 #endif
-	return res;
+    return res;
 }
 
 /**
@@ -107,8 +107,8 @@ double calcProjPntToLineAndDists(const double p[3], const double a[3],
 inline
 double sqrDist(const double* p0, const double* p1)
 {
-	const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-	return scalarProduct<double,3>(v,v);
+    const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
+    return scalarProduct<double,3>(v,v);
 }
 
 /**

@@ -30,8 +30,8 @@ namespace MathLib {
 template <typename FP_TYPE, typename IDX_TYPE = std::size_t> class DenseMatrix
 {
 public:
-	typedef FP_TYPE FP_T;
-	typedef IDX_TYPE IDX_T;
+    typedef FP_TYPE FP_T;
+    typedef IDX_TYPE IDX_T;
 
 public:
    /// Dense square matrix constructor.
@@ -144,36 +144,36 @@ public:
     */
    void write (std::ostream& out) const;
 
-	/**
-	 * get the number of rows
-	 * @return the number of rows
-	 */
-	IDX_TYPE getNRows () const { return _n_rows; }
-	/**
-	 * get the number of columns
-	 * @return the number of columns
-	 */
-	IDX_TYPE getNCols () const { return _n_cols; }
+    /**
+     * get the number of rows
+     * @return the number of rows
+     */
+    IDX_TYPE getNRows () const { return _n_rows; }
+    /**
+     * get the number of columns
+     * @return the number of columns
+     */
+    IDX_TYPE getNCols () const { return _n_cols; }
 
-	/**
-	 * get the number of entries in the matrix
-	 */
-	IDX_TYPE size() const { return _n_rows*_n_cols; }
+    /**
+     * get the number of entries in the matrix
+     */
+    IDX_TYPE size() const { return _n_rows*_n_cols; }
 
-	/**
-	 * set the identity matrix
-	 */
-	void setIdentity();
+    /**
+     * set the identity matrix
+     */
+    void setIdentity();
 
 protected:
-	/**
-	 * the number of rows
-	 */
-	IDX_TYPE _n_rows;
-	/**
-	 * the number of columns
-	 */
-	IDX_TYPE _n_cols;
+    /**
+     * the number of rows
+     */
+    IDX_TYPE _n_rows;
+    /**
+     * the number of columns
+     */
+    IDX_TYPE _n_cols;
 
    // zero based addressing, but Fortran storage layout
    //inline IDX_TYPE address(IDX_TYPE i, IDX_TYPE j) const { return j*rows+i; }
@@ -187,8 +187,8 @@ protected:
 template <typename FP_TYPE, typename IDX_TYPE>
 std::ostream& operator<< (std::ostream &os, const DenseMatrix<FP_TYPE, IDX_TYPE> &mat)
 {
-	mat.write (os);
-	return os;
+    mat.write (os);
+    return os;
 }
 
 } // end namespace MathLib

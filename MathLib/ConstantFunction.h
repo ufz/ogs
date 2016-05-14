@@ -22,23 +22,23 @@ namespace MathLib
 /**
  * A constant function.
  * \f[
- * 	f(x_1,...,x_k)=a_0
+ *     f(x_1,...,x_k)=a_0
  * \f]
  */
 template <typename T_TYPE>
 class ConstantFunction
 {
 public:
-	explicit ConstantFunction(T_TYPE const& value)
-	: _value(value)
-	{}
+    explicit ConstantFunction(T_TYPE const& value)
+    : _value(value)
+    {}
 
-	T_TYPE operator()() const
-	{
-		return _value;
-	}
+    T_TYPE operator()() const
+    {
+        return _value;
+    }
 private:
-	T_TYPE const _value;
+    T_TYPE const _value;
 };
 
 }

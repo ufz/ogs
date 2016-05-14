@@ -25,25 +25,25 @@ namespace MathLib {
 
 template<typename FP_TYPE, typename IDX_TYPE> class CRSMatrixOpenMP : public CRSMatrix<FP_TYPE, IDX_TYPE> {
 public:
-	CRSMatrixOpenMP(std::string const &fname) :
-			CRSMatrix<FP_TYPE, IDX_TYPE>(fname)
-	{}
+    CRSMatrixOpenMP(std::string const &fname) :
+            CRSMatrix<FP_TYPE, IDX_TYPE>(fname)
+    {}
 
-	CRSMatrixOpenMP(unsigned n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
-		CRSMatrix<FP_TYPE, IDX_TYPE>(n, iA, jA, A)
-	{}
+    CRSMatrixOpenMP(unsigned n, IDX_TYPE *iA, IDX_TYPE *jA, FP_TYPE* A) :
+        CRSMatrix<FP_TYPE, IDX_TYPE>(n, iA, jA, A)
+    {}
 
-	CRSMatrixOpenMP(unsigned n1) :
-		CRSMatrix<FP_TYPE, IDX_TYPE>(n1)
-	{}
+    CRSMatrixOpenMP(unsigned n1) :
+        CRSMatrix<FP_TYPE, IDX_TYPE>(n1)
+    {}
 
-	virtual ~CRSMatrixOpenMP()
-	{}
-	virtual void amux(FP_TYPE const d, FP_TYPE const* const __restrict__ x,
-	                  FP_TYPE* __restrict__ y) const
-	{
-		amuxCRSParallelOpenMP(d, this->_n_rows, this->_row_ptr, this->_col_idx, this->_data, x, y);
-	}
+    virtual ~CRSMatrixOpenMP()
+    {}
+    virtual void amux(FP_TYPE const d, FP_TYPE const* const __restrict__ x,
+                      FP_TYPE* __restrict__ y) const
+    {
+        amuxCRSParallelOpenMP(d, this->_n_rows, this->_row_ptr, this->_col_idx, this->_data, x, y);
+    }
 };
 
 } // end namespace MathLib

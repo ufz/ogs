@@ -19,7 +19,7 @@
 namespace MathLib {
 
 CRSMatrixReorderedOpenMP::CRSMatrixReorderedOpenMP(unsigned n, unsigned *iA, unsigned *jA, double* A) :
-	CRSMatrixReordered(n, iA, jA, A)
+    CRSMatrixReordered(n, iA, jA, A)
 {
 }
 
@@ -28,7 +28,7 @@ CRSMatrixReorderedOpenMP::~CRSMatrixReorderedOpenMP()
 
 void CRSMatrixReorderedOpenMP::amux(double d, double const * const x, double *y) const
 {
-	amuxCRSParallelOpenMP(d, this->_n_rows, this->_row_ptr, this->_col_idx, this->_data, x, y);
+    amuxCRSParallelOpenMP(d, this->_n_rows, this->_row_ptr, this->_col_idx, this->_data, x, y);
 }
 
 } // end namespace MathLib

@@ -28,31 +28,31 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     : _supp_pnts(std::move(supporting_points)),
       _values_at_supp_pnts(std::move(values_at_supp_pnts))
 {
-	if (!supp_pnts_sorted) {
-		BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
-		                                   _supp_pnts.size(), _values_at_supp_pnts);
-	}
+    if (!supp_pnts_sorted) {
+        BaseLib::quicksort<double, double>(_supp_pnts, static_cast<std::size_t> (0),
+                                           _supp_pnts.size(), _values_at_supp_pnts);
+    }
 }
 
 double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
-	// search interval that has the point inside
-	std::size_t interval_idx(std::numeric_limits<std::size_t>::max());
-	if (pnt_to_interpolate <= _supp_pnts.front()) {
-		interval_idx = 0;
-	} else {
-		if (_supp_pnts.back() <= pnt_to_interpolate) {
-			interval_idx = _supp_pnts.size() - 2;
-		} else {
-			auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(), pnt_to_interpolate));
-			interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
-		}
-	}
+    // search interval that has the point inside
+    std::size_t interval_idx(std::numeric_limits<std::size_t>::max());
+    if (pnt_to_interpolate <= _supp_pnts.front()) {
+        interval_idx = 0;
+    } else {
+        if (_supp_pnts.back() <= pnt_to_interpolate) {
+            interval_idx = _supp_pnts.size() - 2;
+        } else {
+            auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(), pnt_to_interpolate));
+            interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
+        }
+    }
 
-	// compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
-	const double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
-					/ (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
+    // compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
+    const double m((_values_at_supp_pnts[interval_idx + 1] - _values_at_supp_pnts[interval_idx])
+                    / (_supp_pnts[interval_idx + 1] - _supp_pnts[interval_idx]));
 
-	return m * (pnt_to_interpolate - _supp_pnts[interval_idx]) + _values_at_supp_pnts[interval_idx];
+    return m * (pnt_to_interpolate - _supp_pnts[interval_idx]) + _values_at_supp_pnts[interval_idx];
 }
 } // end MathLib

@@ -22,10 +22,10 @@ namespace MathLib {
 
 class CRSMatrixReorderedOpenMP : public CRSMatrixReordered {
 public:
-	CRSMatrixReorderedOpenMP(unsigned n, unsigned *iA, unsigned *jA, double* A);
-	virtual ~CRSMatrixReorderedOpenMP();
+    CRSMatrixReorderedOpenMP(unsigned n, unsigned *iA, unsigned *jA, double* A);
+    virtual ~CRSMatrixReorderedOpenMP();
 
-	virtual void amux(double d, double const * const __restrict__ x, double *__restrict__ y) const;
+    virtual void amux(double d, double const * const __restrict__ x, double *__restrict__ y) const;
 };
 
 }

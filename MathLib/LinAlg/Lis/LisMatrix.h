@@ -157,8 +157,8 @@ private:
     LIS_MATRIX _AA;
     LIS_VECTOR _diag;
     bool _is_assembled;
-    IndexType _is;	///< location where the partial matrix _AA starts in global matrix.
-    IndexType _ie;	///< location where the partial matrix _AA ends in global matrix.
+    IndexType _is;    ///< location where the partial matrix _AA starts in global matrix.
+    IndexType _ie;    ///< location where the partial matrix _AA ends in global matrix.
     bool _use_external_arrays;
 
     // friend function

@@ -114,7 +114,7 @@ extern "C"
               unsigned *, unsigned *, const double *, double *, unsigned *,
               double *, unsigned *);
   void dswap_(const unsigned*, double*, const unsigned*, double*,
-	      const unsigned*);
+          const unsigned*);
 
   /******************************************************************/
   //single precision real
@@ -185,36 +185,36 @@ extern "C"
   void stpmv_(const char*, const char*, const char*, const unsigned*,
               const float*, float*, const unsigned*);
   void sswap_(const unsigned*, float*, const unsigned*, float*,
-	      const unsigned*);
+          const unsigned*);
 }
 
 
 namespace blas
 {
   inline void swap(const unsigned n, double* x, const unsigned incx,
-		   double* y, const unsigned incy )
+           double* y, const unsigned incy )
   {
     dswap_(&n, x, &incx, y, &incy);
   }
 
   inline void swap(const unsigned n, float* x, const unsigned incx,
-		   float* y, const unsigned incy )
+           float* y, const unsigned incy )
   {
     sswap_(&n, x, &incx, y, &incy);
   }
 
   inline void laset(const unsigned m, const unsigned n, const double a,
-		    const double b, double* A, unsigned ldA)
+            const double b, double* A, unsigned ldA)
   {
     dlaset_(JOB_STR, &m, &n, &a, &b, A, &ldA);
   }
   inline void lasetu(const unsigned m, const unsigned n, const double a,
-		     const double b, double* A, unsigned ldA)
+             const double b, double* A, unsigned ldA)
   {
     dlaset_(JOB_STR+5, &m, &n, &a, &b, A, &ldA);
   }
   inline void lasetl(const unsigned m, const unsigned n, const double a,
-		     const double b, double* A, unsigned ldA)
+             const double b, double* A, unsigned ldA)
   {
     dlaset_(JOB_STR+6, &m, &n, &a, &b, A, &ldA);
   }
@@ -268,24 +268,24 @@ namespace blas
   }
 
   inline void lacpy(const unsigned m, const unsigned n, double* A,
-		    const unsigned ldA, double* B, const unsigned ldB)
+            const unsigned ldA, double* B, const unsigned ldB)
   {
     dlacpy_(JOB_STR, &m, &n, A, &ldA, B, &ldB);
   }
   inline void lacpyu(const unsigned m, const unsigned n, double* A,
-		     const unsigned ldA, double* B, const unsigned ldB)
+             const unsigned ldA, double* B, const unsigned ldB)
   {
     dlacpy_(JOB_STR+5, &m, &n, A, &ldA, B, &ldB);
   }
 
 
   inline void copy(const unsigned n, double* orig, const unsigned inco,
-		   double* dest, const unsigned incd)
+           double* dest, const unsigned incd)
   {
     dcopy_(&n, orig, &inco, dest, &incd);
   }
   inline void copy(const unsigned n, float* orig, const unsigned inco,
-		   float* dest, const unsigned incd)
+           float* dest, const unsigned incd)
   {
     scopy_(&n, orig, &inco, dest, &incd);
   }
@@ -304,12 +304,12 @@ namespace blas
 
   // Scalar product conj(x)*y
   inline double scpr(const unsigned n, const double* const v1,
-		     const double* const v2)
+             const double* const v2)
   {
     return ddot_(&n, v1, &N_ONE, v2, &N_ONE);
   }
   inline float scpr(const unsigned n, const float* const v1,
-		    const float* const v2)
+            const float* const v2)
   {
     return sdot_(&n, v1, &N_ONE, v2, &N_ONE);
   }
@@ -334,12 +334,12 @@ namespace blas
   }
 
   inline void axpy(const unsigned n, const double d, const double* const x,
-		   double* const y)
+           double* const y)
   {
     daxpy_(&n, &d, x, &N_ONE, y, &N_ONE);
   }
   inline void axpy(const unsigned n, const float d, const float* const x,
-		   float* const y)
+           float* const y)
   {
     saxpy_(&n, &d, x, &N_ONE, y, &N_ONE);
   }
@@ -376,319 +376,319 @@ namespace blas
 
   // y = d Ax
   inline void gemv(const unsigned m, const unsigned n, double d,
-		   const double* A, double *x, double *y)
+           const double* A, double *x, double *y)
   {
     dgemv_(JOB_STR, &m, &n, &d, A, &m, x, &N_ONE, &D_ZERO, y, &N_ONE);
   }
   inline void gemv(const unsigned m, const unsigned n, float d, const float* A,
-		   float *x, float *y)
+           float *x, float *y)
   {
     sgemv_(JOB_STR, &m, &n, &d, A, &m, x, &N_ONE, &S_ZERO, y, &N_ONE);
   }
 
   // y += d Ax
   inline void gemva(const unsigned m, const unsigned n, double d, const double* A,
-		    const double *x, double *y)
+            const double *x, double *y)
   {
     dgemv_(JOB_STR, &m, &n, &d, A, &m, x, &N_ONE, &D_ONE, y, &N_ONE);
   }
   inline void gemva(const unsigned m, const unsigned n, float d, const float* A,
-		    const float *x, float *y)
+            const float *x, float *y)
   {
     sgemv_(JOB_STR, &m, &n, &d, A, &m, x, &N_ONE, &S_ONE, y, &N_ONE);
   }
 
   // y = d A^H x
   inline void gemhv(const unsigned m, const unsigned n, double d, const double* A,
-		    const double *x, double *y)
+            const double *x, double *y)
   {
     dgemv_(JOB_STR+1, &m, &n, &d, A, &m, x, &N_ONE, &D_ZERO, y, &N_ONE);
   }
   inline void gemhv(const unsigned m, const unsigned n, float d, const float* A,
-		    const float *x, float *y)
+            const float *x, float *y)
   {
     sgemv_(JOB_STR+1, &m, &n, &d, A, &m, x, &N_ONE, &S_ZERO, y, &N_ONE);
   }
 
   // y += d A^H x
   inline void gemhva(const unsigned m, const unsigned n, double d,
-		     const double* A, unsigned ldA, const double *x, unsigned incx,
-		     double *y, unsigned incy)
+             const double* A, unsigned ldA, const double *x, unsigned incx,
+             double *y, unsigned incy)
   {
     dgemv_(JOB_STR+1, &m, &n, &d, A, &ldA, x, &incx, &D_ONE, y, &incy);
   }
   inline void gemhva(const unsigned m, const unsigned n, float d,
-		     const float* A, unsigned ldA, const float *x, unsigned incx,
-		     float *y, unsigned incy)
+             const float* A, unsigned ldA, const float *x, unsigned incx,
+             float *y, unsigned incy)
   {
     sgemv_(JOB_STR+1, &m, &n, &d, A, &ldA, x, &incx, &S_ONE, y, &incy);
   }
 
   inline void gemhva(const unsigned m, const unsigned n, double d, const double* A,
-		     const double *x, double *y)
+             const double *x, double *y)
   { gemhva(m, n, d, A, m, x, N_ONE, y, N_ONE); }
   inline void gemhva(const unsigned m, const unsigned n, float d, const float* A,
-		     const float *x, float *y)
+             const float *x, float *y)
   { gemhva(m, n, d, A, m, x, N_ONE, y, N_ONE); }
 
   // y += d A x (A symm. dense in packed format)
   inline void gemsva(const unsigned n, double d, double* A,
-		     double *x, double *y)
+             double *x, double *y)
   {
     dspmv_(JOB_STR+5, &n, &d, A, x, &N_ONE, &D_ONE, y, &N_ONE);
   }
   inline void gemsva(const unsigned n, float d, float* A,
-		     float *x, float *y)
+             float *x, float *y)
   {
     sspmv_(JOB_STR+5, &n, &d, A, x, &N_ONE, &S_ONE, y, &N_ONE);
   }
 
   // sovles Ax=B, A is a triangluar Matrix
   inline void gtsv(const unsigned* n, const double* DiagLower,
-		   const double* Diag, const double* DiagUpper,
-		   const double* B, const int* INFO)
+           const double* Diag, const double* DiagUpper,
+           const double* B, const int* INFO)
   {
     dgtsv_(n, &N_ONE, DiagLower, Diag, DiagUpper, B, n, INFO);
   }
   inline void gtsv(const unsigned* n, const float* DiagLower,
-		   const float* Diag, const float* DiagUpper,
-		   const float* B, const int* INFO)
+           const float* Diag, const float* DiagUpper,
+           const float* B, const int* INFO)
   {
     sgtsv_(n, &N_ONE, DiagLower, Diag, DiagUpper, B, n, INFO);
   }
 
   // C = d A B, A is m x p, B is p x n
   inline void gemm(const unsigned m, const unsigned p, const unsigned n,
-		   const double d, const double* const A, const unsigned ldA,
-		   const double* const B, const unsigned ldB,
-		   double* C, const unsigned ldC)
+           const double d, const double* const A, const unsigned ldA,
+           const double* const B, const unsigned ldB,
+           double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR, JOB_STR, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &D_ZERO, C, &ldC);
+       &D_ZERO, C, &ldC);
   }
   inline void gemm(const unsigned m, const unsigned p, const unsigned n,
-		   const float d, const float* const A, const unsigned ldA,
-		   const float* const B, const unsigned ldB,
-		   float* C, const unsigned ldC)
+           const float d, const float* const A, const unsigned ldA,
+           const float* const B, const unsigned ldB,
+           float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR, JOB_STR, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &S_ZERO, C, &ldC);
+       &S_ZERO, C, &ldC);
   }
 
   // C += d A B, A is m x p, B is p x n
   inline void gemma(const unsigned m, const unsigned p, const unsigned n,
-		    const double d, const double* const A, const unsigned ldA,
-		    const double* const B, const unsigned ldB,
-		    double* C, const unsigned ldC)
+            const double d, const double* const A, const unsigned ldA,
+            const double* const B, const unsigned ldB,
+            double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR, JOB_STR, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &D_ONE, C, &ldC);
+       &D_ONE, C, &ldC);
   }
   inline void gemma(const unsigned m, const unsigned p, const unsigned n,
-		    const float d, const float* const A, const unsigned ldA,
-		    const float* const B, const unsigned ldB,
-		    float* C, const unsigned ldC)
+            const float d, const float* const A, const unsigned ldA,
+            const float* const B, const unsigned ldB,
+            float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR, JOB_STR, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &S_ONE, C, &ldC);
+       &S_ONE, C, &ldC);
   }
 
   // C = d A^H B, A is m x p, B is m x n
   inline void gemhm(const unsigned m, const unsigned p, const unsigned n,
-		    const double d, const double* A, const unsigned ldA,
-		    const double *B, const unsigned ldB,
-		    double* C, const unsigned ldC)
+            const double d, const double* A, const unsigned ldA,
+            const double *B, const unsigned ldB,
+            double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR+1, JOB_STR, &p, &n, &m, &d, A, &ldA, B, &ldB,
-	   &D_ZERO, C, &ldC);
+       &D_ZERO, C, &ldC);
   }
   inline void gemhm(const unsigned m, const unsigned p, const unsigned n,
-		    const float d, const float* const A, const unsigned ldA,
-		    const float* const B, const unsigned ldB,
-		    float* C, const unsigned ldC)
+            const float d, const float* const A, const unsigned ldA,
+            const float* const B, const unsigned ldB,
+            float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR+1, JOB_STR, &p, &n, &m, &d, A, &ldA, B, &ldB,
-	   &S_ZERO, C, &ldC);
+       &S_ZERO, C, &ldC);
   }
 
   // C += d A^H B, A is m x p, B is m x n
   inline void gemhma(unsigned m, unsigned p, unsigned n, double d,
-		     const double* const A, const unsigned ldA, const double* const B,
-		     const unsigned ldB, double* C, unsigned ldC)
+             const double* const A, const unsigned ldA, const double* const B,
+             const unsigned ldB, double* C, unsigned ldC)
   {
     dgemm_(JOB_STR+1, JOB_STR, &p, &n, &m, &d, A, &ldA, B, &ldB,
-	   &D_ONE, C, &ldC);
+       &D_ONE, C, &ldC);
   }
   inline void gemhma(unsigned m, unsigned p, unsigned n, float d,
-		     const float* const A, const unsigned ldA, const float* const B,
-		     const unsigned ldB, float* C, unsigned ldC)
+             const float* const A, const unsigned ldA, const float* const B,
+             const unsigned ldB, float* C, unsigned ldC)
   {
     sgemm_(JOB_STR+1, JOB_STR, &p, &n, &m, &d, A, &ldA, B, &ldB,
-	   &S_ONE, C, &ldC);
+       &S_ONE, C, &ldC);
   }
 
   // C = d A B^H, A is m x p, B is n x p
   inline void gemmh(const unsigned m, const unsigned p, const unsigned n,
-		    const double d, const double* const A, const unsigned ldA,
-		    const double* const B, const unsigned ldB,
-		    double* C, const unsigned ldC)
+            const double d, const double* const A, const unsigned ldA,
+            const double* const B, const unsigned ldB,
+            double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &D_ZERO, C, &ldC);
+       &D_ZERO, C, &ldC);
   }
   inline void gemmh(const unsigned m, const unsigned p, const unsigned n,
-		    const float d, const float* const A, const unsigned ldA,
-		    const float* const B, const unsigned ldB,
-		    float* C, const unsigned ldC)
+            const float d, const float* const A, const unsigned ldA,
+            const float* const B, const unsigned ldB,
+            float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &S_ZERO, C, &ldC);
+       &S_ZERO, C, &ldC);
   }
 
   // C += d A B^H, A is m x p, B is n x p
   inline void gemmha(const unsigned m, const unsigned p, const unsigned n,
-		     const double d, const double* const A, const unsigned ldA,
-		     const double* const B, const unsigned ldB,
-		     double* C, const unsigned ldC)
+             const double d, const double* const A, const unsigned ldA,
+             const double* const B, const unsigned ldB,
+             double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &D_ONE, C, &ldC);
+       &D_ONE, C, &ldC);
   }
   inline void gemmha(const unsigned m, const unsigned p, const unsigned n,
-		     const float d, const float* const A, const unsigned ldA,
-		     const float* const B, const unsigned ldB,
-		     float* C, const unsigned ldC)
+             const float d, const float* const A, const unsigned ldA,
+             const float* const B, const unsigned ldB,
+             float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &S_ONE, C, &ldC);
+       &S_ONE, C, &ldC);
   }
   inline void gemmha(const unsigned m, const unsigned p, const unsigned n,
-		     const double* const A, const unsigned ldA,
-		     const double* const B, const unsigned ldB,
-		     double* C, const unsigned ldC)
+             const double* const A, const unsigned ldA,
+             const double* const B, const unsigned ldB,
+             double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &D_ONE, A, &ldA, B, &ldB,
-	   &D_ONE, C, &ldC);
+       &D_ONE, C, &ldC);
   }
   inline void gemmha(const unsigned m, const unsigned p, const unsigned n,
-		     const float* const A, const unsigned ldA,
-		     const float* const B, const unsigned ldB,
-		     float* C, const unsigned ldC)
+             const float* const A, const unsigned ldA,
+             const float* const B, const unsigned ldB,
+             float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR, JOB_STR+1, &m, &n, &p, &S_ONE, A, &ldA, B, &ldB,
-	   &S_ONE, C, &ldC);
+       &S_ONE, C, &ldC);
   }
 
   // C = d A^H B^H, A is p x m, B is n x p
   inline void gemhmh(const unsigned m, const unsigned p, const unsigned n,
-		     const double d, const double* const A, const unsigned ldA,
-		     const double* const B, const unsigned ldB,
-		     double* C, const unsigned ldC)
+             const double d, const double* const A, const unsigned ldA,
+             const double* const B, const unsigned ldB,
+             double* C, const unsigned ldC)
   {
     dgemm_(JOB_STR+1, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &D_ZERO, C, &ldC);
+       &D_ZERO, C, &ldC);
   }
   inline void gemhmh(const unsigned m, const unsigned p, const unsigned n,
-		     const float d, const float* const A, const unsigned ldA,
-		     const float* const B, const unsigned ldB,
-		     float* C, const unsigned ldC)
+             const float d, const float* const A, const unsigned ldA,
+             const float* const B, const unsigned ldB,
+             float* C, const unsigned ldC)
   {
     sgemm_(JOB_STR+1, JOB_STR+1, &m, &n, &p, &d, A, &ldA, B, &ldB,
-	   &S_ZERO, C, &ldC);
+       &S_ZERO, C, &ldC);
   }
 
   //C += d*AB, A is mxm (packed upper half is stored), B is mxn and regular matrix
   inline void sygemma(const unsigned m, const unsigned n,
-		      const double* const A, const double* const B,
-		      const double d, double* const C)
+              const double* const A, const double* const B,
+              const double d, double* const C)
   {
     for(unsigned i=0;i<m;i++){
       for(unsigned j=0;j<n;j++){
-	for(unsigned k=i;k<m;k++){
-	  if(i==k){
-	    C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
-	  }else{
-	    C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
-	    C[j*m+k] += d*A[i+k*(k+1)/2]*B[i+j*m];
-	  }
-	}
+    for(unsigned k=i;k<m;k++){
+      if(i==k){
+        C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
+      }else{
+        C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
+        C[j*m+k] += d*A[i+k*(k+1)/2]*B[i+j*m];
+      }
+    }
       }
     }
   }
   inline void sygemma(const unsigned m, const unsigned n,
-		      const float* const A, const float* const B,
-		      const float d, float* const C)
+              const float* const A, const float* const B,
+              const float d, float* const C)
   {
     for(unsigned i=0;i<m;i++){
       for(unsigned j=0;j<n;j++){
-	for(unsigned k=i;k<m;k++){
-	  if(i==k){
-	    C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
-	  }else{
-	    C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
-	    C[j*m+k] += d*A[i+k*(k+1)/2]*B[i+j*m];
-	  }
-	}
+    for(unsigned k=i;k<m;k++){
+      if(i==k){
+        C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
+      }else{
+        C[j*m+i] += d*A[i+k*(k+1)/2]*B[k+j*m];
+        C[j*m+k] += d*A[i+k*(k+1)/2]*B[i+j*m];
+      }
+    }
       }
     }
   }
 
   //C += d*AB, A is mxn and regular matrix, B is nxn (packed upper half is stored)
   inline void gesymma(const unsigned m, const unsigned n,
-		      const double* const A, const double* const B,
-		      const double d, double* const C)
+              const double* const A, const double* const B,
+              const double d, double* const C)
   {
     for(unsigned i=0;i<m;i++){
       for(unsigned j=0;j<n;j++){
-	for(unsigned k=j;k<n;k++){
-	  if(j==k)
-	    C[j*m+i] += d*A[i+k*m]*B[k+j*(j+1)/2];
-	  else{
-	    C[j*m+i] += d*A[i+k*m]*B[j+k*(k+1)/2];
-	    C[k*m+i] += d*A[i+j*m]*B[j+k*(k+1)/2];
-	  }
-	}
+    for(unsigned k=j;k<n;k++){
+      if(j==k)
+        C[j*m+i] += d*A[i+k*m]*B[k+j*(j+1)/2];
+      else{
+        C[j*m+i] += d*A[i+k*m]*B[j+k*(k+1)/2];
+        C[k*m+i] += d*A[i+j*m]*B[j+k*(k+1)/2];
+      }
+    }
       }
     }
   }
   inline void gesymma(const unsigned m, const unsigned n,
-		      const float* const A, const float* const B,
-		      const float d, float* const C)
+              const float* const A, const float* const B,
+              const float d, float* const C)
   {
     for(unsigned i=0;i<m;i++){
       for(unsigned j=0;j<n;j++){
-	for(unsigned k=j;k<n;k++){
-	  if(j==k)
-	    C[j*m+i] += d*A[i+k*m]*B[k+j*(j+1)/2];
-	  else{
-	    C[j*m+i] += d*A[i+k*m]*B[j+k*(k+1)/2];
-	    C[k*m+i] += d*A[i+j*m]*B[j+k*(k+1)/2];
-	  }
-	}
+    for(unsigned k=j;k<n;k++){
+      if(j==k)
+        C[j*m+i] += d*A[i+k*m]*B[k+j*(j+1)/2];
+      else{
+        C[j*m+i] += d*A[i+k*m]*B[j+k*(k+1)/2];
+        C[k*m+i] += d*A[i+j*m]*B[j+k*(k+1)/2];
+      }
+    }
       }
     }
   }
 
   // C += d A^H A, C is a symm. matrix (packed upper half is stored), A is mxn
   inline void symhm(const unsigned m, const unsigned n, const double* const A,
-		    const double d, double* C)
+            const double d, double* C)
   {
     for (unsigned j=0; j<n; ++j) {
       for (unsigned i=0; i<=j; ++i) {
-	double sum = 0.0;
-	for (unsigned k=0; k<m; ++k) sum += A[k+i*m] * A[k+j*m];
-	C[i+j*(j+1)/2] += d * sum;
+    double sum = 0.0;
+    for (unsigned k=0; k<m; ++k) sum += A[k+i*m] * A[k+j*m];
+    C[i+j*(j+1)/2] += d * sum;
       }
     }
   }
   inline void symhm(const unsigned m, const unsigned n, const float* const A,
-		    const float d, float* C)
+            const float d, float* C)
   {
     for (unsigned j=0; j<n; ++j) {
       for (unsigned i=0; i<=j; ++i) {
-	float sum = 0.0;
-	for (unsigned k=0; k<m; ++k) sum += A[k+i*m] * A[k+j*m];
-	C[i+j*(j+1)/2] += d * sum;
+    float sum = 0.0;
+    for (unsigned k=0; k<m; ++k) sum += A[k+i*m] * A[k+j*m];
+    C[i+j*(j+1)/2] += d * sum;
       }
     }
   }
@@ -698,8 +698,8 @@ namespace blas
   {
     for (unsigned k=0; k<n; ++k) {
       for (unsigned j=0; j<=n; ++j) {
-	double e = d * A[j+k*m];
-	for (unsigned i=0; i<j; ++i) C[i+j*(j+1)/2] += e * A[i+k*m];
+    double e = d * A[j+k*m];
+    for (unsigned i=0; i<j; ++i) C[i+j*(j+1)/2] += e * A[i+k*m];
       }
     }
   }
@@ -707,59 +707,59 @@ namespace blas
   {
     for (unsigned k=0; k<n; ++k) {
       for (unsigned j=0; j<n; ++j) {
-	float e = d * A[j+k*m];
-	for (unsigned i=0; i<=j; ++i) C[i+j*(j+1)/2] += e * A[i+k*m];
+    float e = d * A[j+k*m];
+    for (unsigned i=0; i<=j; ++i) C[i+j*(j+1)/2] += e * A[i+k*m];
       }
     }
   }
 
   // Singular Value Decomposition
   inline int gesvdS(unsigned m, unsigned n, double* A, double* S,
-		    double* U, unsigned ldU, double* VT, unsigned ldVT,
-		    unsigned nwk, double* wk)
+            double* U, unsigned ldU, double* VT, unsigned ldVT,
+            unsigned nwk, double* wk)
   {
     int INF;
     dgesvd_(JOB_STR+3, JOB_STR+3, &m, &n, A, &m, S, U, &ldU, VT, &ldVT,
-	    wk, &nwk, &INF);
+        wk, &nwk, &INF);
     return INF;
   }
   inline int gesvd(unsigned m, unsigned n, double* A, double* S,
-		   double* VT, unsigned ldVT, unsigned nwk, double* wk)
+           double* VT, unsigned ldVT, unsigned nwk, double* wk)
   {
     int INF;
     dgesvd_(JOB_STR+2, JOB_STR+3, &m, &n, A, &m, S, A, &m, VT, &ldVT,
-	    wk, &nwk, &INF);
+        wk, &nwk, &INF);
     return INF;
   }
   inline int gesvd(unsigned m, unsigned n, float* A, float* S,
-		   float* VT, unsigned ldVT, unsigned nwk, float* wk)
+           float* VT, unsigned ldVT, unsigned nwk, float* wk)
   {
     int INF;
     sgesvd_(JOB_STR+2, JOB_STR+3, &m, &n, A, &m, S, A, &m, VT, &ldVT,
-	    wk, &nwk, &INF);
+        wk, &nwk, &INF);
     return INF;
   }
 
   inline int gesvd(unsigned m, unsigned n, double* A, double* S,
-		   double* U, unsigned ldU, double* VT, unsigned ldVT,
-		   unsigned nwk, double* wk)
+           double* U, unsigned ldU, double* VT, unsigned ldVT,
+           unsigned nwk, double* wk)
   {
     int INF;
     dgesvd_(JOB_STR+9, JOB_STR+9, &m, &n, A, &m, S, U, &ldU, VT, &ldVT,
-	    wk, &nwk, &INF);
+        wk, &nwk, &INF);
     return INF;
   }
 
   // compute singular values
   inline int svals(unsigned m, unsigned n, double* A, double* S,
-		   unsigned nwk, double* wk)
+           unsigned nwk, double* wk)
   {
     int INF;
     dgesvd_(JOB_STR, JOB_STR, &m, &n, A, &m, S, A, &m, A, &n, wk, &nwk, &INF);
     return INF;
   }
   inline int svals(unsigned m, unsigned n, float* A, float* S,
-		   unsigned nwk, float* wk)
+           unsigned nwk, float* wk)
   {
     int INF;
     sgesvd_(JOB_STR, JOB_STR, &m, &n, A, &m, S, A, &m, A, &n, wk, &nwk, &INF);
@@ -802,28 +802,28 @@ namespace blas
 
   // QR factorisation
   inline int geqrf(const unsigned m, const unsigned n, double* A,
-		   double* tau, unsigned nwk, double* wk)
+           double* tau, unsigned nwk, double* wk)
   {
     int INF;
     dgeqrf_(&m, &n, A, &m, tau, wk, &nwk, &INF);
     return INF;
   }
   inline int geqrf(const unsigned m, const unsigned n, float* A,
-		   float* tau, unsigned nwk, float* wk)
+           float* tau, unsigned nwk, float* wk)
   {
     int INF;
     sgeqrf_(&m, &n, A, &m, tau, wk, &nwk, &INF);
     return INF;
   }
   inline int geqrf(const unsigned m, const unsigned n, double* A,
-		   const unsigned ldA, double* tau, unsigned nwk, double* wk)
+           const unsigned ldA, double* tau, unsigned nwk, double* wk)
   {
     int INF;
     dgeqrf_(&m, &n, A, &ldA, tau, wk, &nwk, &INF);
     return INF;
   }
   inline int geqrf(const unsigned m, const unsigned n, float* A,
-		   const unsigned ldA, float* tau, unsigned nwk, float* wk)
+           const unsigned ldA, float* tau, unsigned nwk, float* wk)
   {
     int INF;
     sgeqrf_(&m, &n, A, &ldA, tau, wk, &nwk, &INF);
@@ -832,136 +832,136 @@ namespace blas
 
   // Multiply a general Matrix with the Q-Matrix (QR factorization), Q C
   inline int ormqr(const unsigned m, const unsigned n, const unsigned p,
-		   double* A, double* tau, double* C,
-		   unsigned nwk, double* wk)
+           double* A, double* tau, double* C,
+           unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+6, JOB_STR, &m, &n, &p, A, &m, tau, C, &m, wk, &nwk, &INF);
     return INF;
   }
   inline int ormqr(const unsigned m, const unsigned n, const unsigned p,
-		   float* A, float* tau, float* C,
-		   unsigned nwk, float* wk)
+           float* A, float* tau, float* C,
+           unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+6, JOB_STR, &m, &n, &p, A, &m, tau, C, &m, wk, &nwk, &INF);
     return INF;
   }
   inline int ormqr(const unsigned m, const unsigned n, const unsigned p,
-		   double* A, const unsigned ldA, double* tau, double* C,
-		   const unsigned ldC, unsigned nwk, double* wk)
+           double* A, const unsigned ldA, double* tau, double* C,
+           const unsigned ldC, unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+6, JOB_STR, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
   inline int ormqr(const unsigned m, const unsigned n, const unsigned p,
-		   float* A, const unsigned ldA, float* tau, float* C,
-		   const unsigned ldC, unsigned nwk, float* wk)
+           float* A, const unsigned ldA, float* tau, float* C,
+           const unsigned ldC, unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+6, JOB_STR, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
 
   // Q^H C
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    double* A, const unsigned ldA, double* tau, double* C,
-		    const unsigned ldC, unsigned nwk, double* wk)
+            double* A, const unsigned ldA, double* tau, double* C,
+            const unsigned ldC, unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    float* A, const unsigned ldA, float* tau, float* C,
-		    const unsigned ldC, unsigned nwk, float* wk)
+            float* A, const unsigned ldA, float* tau, float* C,
+            const unsigned ldC, unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
 
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    double* A, const unsigned ldA, double* tau, double* C,
-		    unsigned nwk, double* wk)
+            double* A, const unsigned ldA, double* tau, double* C,
+            unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &ldA, tau, C, &m, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    float* A, const unsigned ldA, float* tau, float* C,
-		    unsigned nwk, float* wk)
+            float* A, const unsigned ldA, float* tau, float* C,
+            unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &ldA, tau, C, &m, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
 
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    double* A, double* tau, double* C,
-		    unsigned nwk, double* wk)
+            double* A, double* tau, double* C,
+            unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &m, tau, C, &m, wk, &nwk, &INF);
     return INF;
   }
   inline int ormqrh(const unsigned m, const unsigned n, const unsigned p,
-		    float* A, float* tau, float* C,
-		    unsigned nwk, float* wk)
+            float* A, float* tau, float* C,
+            unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+6, JOB_STR+1, &m, &n, &p, A, &m, tau, C, &m, wk, &nwk, &INF);
     return INF;
   }
   inline int morqr(const unsigned m, const unsigned n, const unsigned p,
-		   double* A, const unsigned ldA, double* tau, double* C,
-		   const unsigned ldC, unsigned nwk, double* wk)
+           double* A, const unsigned ldA, double* tau, double* C,
+           const unsigned ldC, unsigned nwk, double* wk)
   {
     int INF;
     dormqr_(JOB_STR+8, JOB_STR, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
   inline int morqr(const unsigned m, const unsigned n, const unsigned p,
-		   float* A, const unsigned ldA, float* tau, float* C,
-		   const unsigned ldC, unsigned nwk, float* wk)
+           float* A, const unsigned ldA, float* tau, float* C,
+           const unsigned ldC, unsigned nwk, float* wk)
   {
     int INF;
     sormqr_(JOB_STR+8, JOB_STR, &m, &n, &p, A, &ldA, tau, C, &ldC, wk, &nwk,
-	    &INF);
+        &INF);
     return INF;
   }
 
   inline void ger(unsigned M, unsigned N, double d, double* X, unsigned INCX,
-		  double* y, unsigned INCY, double* A, unsigned LDA)
+          double* y, unsigned INCY, double* A, unsigned LDA)
   {
     dger_(&M, &N, &d, X, &INCX, y, &INCY, A, &LDA);
   }
 
   inline void ger(unsigned M, unsigned N, float d, float* X, unsigned INCX,
-		  float* y, unsigned INCY, float* A, unsigned LDA)
+          float* y, unsigned INCY, float* A, unsigned LDA)
   {
     sger_(&M, &N, &d, X, &INCX, y, &INCY, A, &LDA);
   }
 
   // return Q-Matrix (QR factorization) in A
   inline int orgqr(const unsigned m, const unsigned n, double* A, double* tau,
-		   unsigned nwk, double* wk)
+           unsigned nwk, double* wk)
   {
     int INF;
     dorgqr_(&m, &n, &n, A, &m, tau, wk, &nwk, &INF);
     return INF;
   }
   inline int orgqr(const unsigned m, const unsigned n, float* A, float* tau,
-		   unsigned nwk, float* wk)
+           unsigned nwk, float* wk)
   {
     int INF;
     sorgqr_(&m, &n, &n, A, &m, tau, wk, &nwk, &INF);
@@ -980,10 +980,10 @@ namespace blas
 
   // product of an upper triangular matrix U and a matrix A, A:=U A
   inline void utrgemm(unsigned m, unsigned n, double* U, unsigned ldU,
-		      double* A, unsigned ldA)
+              double* A, unsigned ldA)
   {
     dtrmm_(JOB_STR+6, JOB_STR+5, JOB_STR, JOB_STR, &m, &n, &D_ONE, U, &ldU,
-	   A, &ldA);
+       A, &ldA);
   }
 
 
@@ -993,9 +993,9 @@ namespace blas
   {
     for (unsigned j=0; j<n; ++j) {
       for (unsigned l=j; l<n; ++l) {
-	unsigned idl = l*(l+1)/2;
-	double e = d * U[j+idl];
-	for (unsigned i=0; i<=j; ++i) A[i+j*(j+1)/2] += e * U[i+idl];
+    unsigned idl = l*(l+1)/2;
+    double e = d * U[j+idl];
+    for (unsigned i=0; i<=j; ++i) A[i+j*(j+1)/2] += e * U[i+idl];
       }
     }
   }
@@ -1004,9 +1004,9 @@ namespace blas
   {
     for (unsigned j=0; j<n; ++j) {
       for (unsigned l=j; l<n; ++l) {
-	unsigned idl = l*(l+1)/2;
-	float e = d * U[j+idl];
-	for (unsigned i=0; i<=j; ++i) A[i+j*(j+1)/2] += e * U[i+idl];
+    unsigned idl = l*(l+1)/2;
+    float e = d * U[j+idl];
+    for (unsigned i=0; i<=j; ++i) A[i+j*(j+1)/2] += e * U[i+idl];
       }
     }
   }
@@ -1195,14 +1195,14 @@ namespace lapack
 
   // lower triangular solve
   inline void ltrs(const unsigned n, double* A,
-		   const unsigned p, double* B, const unsigned ldB)
+           const unsigned p, double* B, const unsigned ldB)
   {
     //  dtptrs_(JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
       dtpsv_(JOB_STR+6, JOB_STR, JOB_STR+5, &n, A, B+i*ldB, &N_ONE);
   }
   inline void ltrs(const unsigned n, float* A,
-		   const unsigned p, float* B, const unsigned ldB)
+           const unsigned p, float* B, const unsigned ldB)
   {
     // stptrs_(JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
@@ -1211,14 +1211,14 @@ namespace lapack
 
   // lower triangular transpose solve
   inline void ltrhs(const unsigned n, double* A,
-		    const unsigned p, double* B, const unsigned ldB)
+            const unsigned p, double* B, const unsigned ldB)
   {
     //  dtptrs_(JOB_STR+6, JOB_STR+1, JOB_STR+5, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
       dtpsv_(JOB_STR+6, JOB_STR+1, JOB_STR+5, &n, A, B+i*ldB, &N_ONE);
   }
   inline void ltrhs(const unsigned n, float* A,
-		    const unsigned p, float* B, const unsigned ldB)
+            const unsigned p, float* B, const unsigned ldB)
   {
     //  stptrs_(JOB_STR+6, JOB_STR+1, JOB_STR+5, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
@@ -1228,84 +1228,84 @@ namespace lapack
   // unit upper triangular solve (with L and R stored in one matrix)
   // XR=B, R is pxp, B is nxp
   inline void utrcs(const unsigned p, const double* LR, const unsigned ldLR,
-		    const unsigned n, double* X, const unsigned ldX)
+            const unsigned n, double* X, const unsigned ldX)
   {
     dtrsm_(JOB_STR+8, JOB_STR+5, JOB_STR, JOB_STR+5, &n, &p, &D_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
   inline void utrcs(const unsigned p, const float* LR, const unsigned ldLR,
-		    const unsigned n, float* X, const unsigned ldX)
+            const unsigned n, float* X, const unsigned ldX)
   {
     strsm_(JOB_STR+8, JOB_STR+5, JOB_STR, JOB_STR+5, &n, &p, &S_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
   // unit upper triangular solve (with L and R stored in one matrix)
   // RX=B, R is nxn, B is nxp
   inline void utlcs(const unsigned n, float* LR, const unsigned ldLR,
-		    const unsigned p, float* X, const unsigned ldX)
+            const unsigned p, float* X, const unsigned ldX)
   {
     strsm_(JOB_STR+6, JOB_STR+5, JOB_STR, JOB_STR+5, &n, &p, &S_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
   inline void utlcs(const unsigned n, double* LR, const unsigned ldLR,
-		    const unsigned p, double* X, const unsigned ldX)
+            const unsigned p, double* X, const unsigned ldX)
   {
     dtrsm_(JOB_STR+6, JOB_STR+5, JOB_STR, JOB_STR+5, &n, &p, &D_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
   // unit lower triangular solve (with L and R stored in one matrix)
   // XL=B, L is pxp, B is nxp
   inline void ltrcs(const unsigned p, float* LR, const unsigned ldLR,
-		    const unsigned n, float* X, const unsigned ldX)
+            const unsigned n, float* X, const unsigned ldX)
   {
     strsm_(JOB_STR+8, JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, &S_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
   inline void ltrcs(const unsigned p, double* LR, const unsigned ldLR,
-		    const unsigned n, double* X, const unsigned ldX)
+            const unsigned n, double* X, const unsigned ldX)
   {
     dtrsm_(JOB_STR+8, JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, &D_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
 
   // unit lower triangular transposed solve (with L and R stored in one matrix)
   // XL^T=B, L is pxp, B is nxp
   inline void ltrhcs(const unsigned p, double* LR, const unsigned ldLR,
-		     const unsigned n, double* X, const unsigned ldX)
+             const unsigned n, double* X, const unsigned ldX)
   {
     dtrsm_(JOB_STR+8, JOB_STR+6, JOB_STR+1, JOB_STR+5, &n, &p, &D_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
   // unit lower triangular solve (with L and R stored in one matrix)
   // LX=B, L is nxn, B is nxp
   inline void ltlcs(const unsigned n, float* LR, const unsigned ldLR,
-		    const unsigned p, float* X, const unsigned ldX)
+            const unsigned p, float* X, const unsigned ldX)
   {
     strsm_(JOB_STR+6, JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, &S_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
   inline void ltlcs(const unsigned n, double* LR, const unsigned ldLR,
-		    const unsigned p, double* X, const unsigned ldX)
+            const unsigned p, double* X, const unsigned ldX)
   {
     dtrsm_(JOB_STR+6, JOB_STR+6, JOB_STR, JOB_STR+5, &n, &p, &D_ONE,
-	   LR, &ldLR, X, &ldX);
+       LR, &ldLR, X, &ldX);
   }
 
   // upper triangular solve
   inline void utrs(const unsigned n, double* A,
-		   const unsigned p, double* B, const unsigned ldB)
+           const unsigned p, double* B, const unsigned ldB)
   {
     //  dtptrs_(JOB_STR+5, JOB_STR, JOB_STR, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
       dtpsv_(JOB_STR+5, JOB_STR, JOB_STR, &n, A, B+i*ldB, &N_ONE);
   }
   inline void utrs(const unsigned n, float* A,
-		   const unsigned p, float* B, const unsigned ldB)
+           const unsigned p, float* B, const unsigned ldB)
   {
     //stptrs_(JOB_STR+5, JOB_STR, JOB_STR, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
@@ -1314,14 +1314,14 @@ namespace lapack
 
   // upper triangluar transpose solve
   inline void utrhs(const unsigned n, double* A,
-		    const unsigned p, double* B, const unsigned ldB)
+            const unsigned p, double* B, const unsigned ldB)
   {
     //dtptrs_(JOB_STR+5, JOB_STR+1, JOB_STR, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)
       dtpsv_(JOB_STR+5, JOB_STR+1, JOB_STR, &n, A, B+i*ldB, &N_ONE);
   }
   inline void utrhs(const unsigned n, float* A,
-		    const unsigned p, float* B, const unsigned ldB)
+            const unsigned p, float* B, const unsigned ldB)
   {
     //stptrs_(JOB_STR+5, JOB_STR+1, JOB_STR, &n, &p, A, B, &ldB, &inf);
     for (unsigned i=0; i<p; ++i)

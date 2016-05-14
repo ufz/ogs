@@ -18,13 +18,13 @@ namespace MathLib
 template <typename IDX_TYPE>
 struct RowColumnIndices
 {
-	typedef typename std::vector<IDX_TYPE> LineIndex;
-	RowColumnIndices(LineIndex const& rows_, LineIndex const& columns_)
-		: rows(rows_), columns(columns_)
-	{ }
+    typedef typename std::vector<IDX_TYPE> LineIndex;
+    RowColumnIndices(LineIndex const& rows_, LineIndex const& columns_)
+        : rows(rows_), columns(columns_)
+    { }
 
-	LineIndex const& rows;
-	LineIndex const& columns;
+    LineIndex const& rows;
+    LineIndex const& columns;
 };
 
 } // MathLib
