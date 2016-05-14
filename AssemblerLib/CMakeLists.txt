@@ -8,12 +8,12 @@ set(SOURCES ${SOURCES_ASSEMBLERLIB})
 add_library(AssemblerLib STATIC ${SOURCES})
 
 target_link_libraries(AssemblerLib
-	MeshLib
+    MeshLib
 )
 
 if(TARGET Eigen)
-	add_dependencies(AssemblerLib Eigen)
+    add_dependencies(AssemblerLib Eigen)
 endif()
 if(TARGET Boost)
-	add_dependencies(AssemblerLib Boost)
+    add_dependencies(AssemblerLib Boost)
 endif()
