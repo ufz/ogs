@@ -19,8 +19,8 @@
   <xs:complexType name="stationType">
     <xs:sequence>
       <xs:element ref="name" />
-      <xs:element ref="value"  minOccurs="0" />				<!-- value is optional -->
-      <xs:element name="sensordata" minOccurs="0" />			<!-- time series data (optional) -->
+      <xs:element ref="value"  minOccurs="0" />                <!-- value is optional -->
+      <xs:element name="sensordata" minOccurs="0" />            <!-- time series data (optional) -->
       <!-- other station features can be inserted here -->
     </xs:sequence>
     <xs:attribute ref="id" use="required" />
@@ -36,8 +36,8 @@
       <xs:extension base="stationType">
         <xs:sequence>
           <xs:element name="bdepth" type="xs:decimal" />
-          <xs:element name="bdate" type="xs:date" minOccurs="0" />	<!-- date is optional -->
-          <xs:element name="strat" type="stratType" minOccurs="0" />	<!-- stratigraphy is optional, e.g. wells have none -->
+          <xs:element name="bdate" type="xs:date" minOccurs="0" />    <!-- date is optional -->
+          <xs:element name="strat" type="stratType" minOccurs="0" />    <!-- stratigraphy is optional, e.g. wells have none -->
           <!-- other borehole features can be inserted here -->
         </xs:sequence>
       </xs:extension>
@@ -100,7 +100,7 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element ref="name" />
-              <xs:element name="type" type="xs:string" minOccurs="0" />		<!-- type is optional -->
+              <xs:element name="type" type="xs:string" minOccurs="0" />        <!-- type is optional -->
               <xs:group ref="stationSelection" />
               <!-- other list features can be inserted here -->
             </xs:sequence>

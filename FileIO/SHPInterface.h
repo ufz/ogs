@@ -26,12 +26,12 @@
 
 
 namespace GeoLib {
-	class GEOObjects;
-	class Polyline;
+    class GEOObjects;
+    class Polyline;
 }
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 
@@ -44,44 +44,44 @@ namespace FileIO
 class SHPInterface
 {
 public:
-	/// Connection between ESRI type system for shape files and OGS GeoLib.
-	enum class OGSType
-	{
-		UNDEFINED   = 0,
-		POINT       = 1,
-		STATION     = 2,
-		POLYLINE    = 3,
-		POLYGON     = 4
-	};
+    /// Connection between ESRI type system for shape files and OGS GeoLib.
+    enum class OGSType
+    {
+        UNDEFINED   = 0,
+        POINT       = 1,
+        STATION     = 2,
+        POLYLINE    = 3,
+        POLYGON     = 4
+    };
 
-	/// Constructor
-	SHPInterface(GeoLib::GEOObjects& geoObjects) : _geoObjects(geoObjects) {}
+    /// Constructor
+    SHPInterface(GeoLib::GEOObjects& geoObjects) : _geoObjects(geoObjects) {}
 
-	/// Reads the header of the shape file.
-	bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);
+    /// Reads the header of the shape file.
+    bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);
 
-	/// Reads data from the shape file.
-	void readSHPFile(const std::string &filename, OGSType choice, const std::string &listName);
+    /// Reads data from the shape file.
+    void readSHPFile(const std::string &filename, OGSType choice, const std::string &listName);
 
-	/// Writes a 2D mesh into a shapefile using one polygon for every element
-	/// (based on request by AS, open for discussion)
-	static bool write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh);
+    /// Writes a 2D mesh into a shapefile using one polygon for every element
+    /// (based on request by AS, open for discussion)
+    static bool write2dMeshToSHP(const std::string &file_name, const MeshLib::Mesh &mesh);
 
 
 private:
-	/// Reads points into a vector of Point objects.
-	void readPoints    (const SHPHandle &hSHP, int numberOfElements, std::string listName);
+    /// Reads points into a vector of Point objects.
+    void readPoints    (const SHPHandle &hSHP, int numberOfElements, std::string listName);
 
-	/// Reads points into a vector of Point objects and marks them as Station.
-	void readStations  (const SHPHandle &hSHP, int numberOfElements, std::string listName);
+    /// Reads points into a vector of Point objects and marks them as Station.
+    void readStations  (const SHPHandle &hSHP, int numberOfElements, std::string listName);
 
-	/// Reads lines into a vector of Polyline objects.
-	void readPolylines (const SHPHandle &hSHP, int numberOfElements, std::string listName);
+    /// Reads lines into a vector of Polyline objects.
+    void readPolylines (const SHPHandle &hSHP, int numberOfElements, std::string listName);
 
-	/// Reads lines into a vector of Polyline and Surface objects.
-	void readPolygons  (const SHPHandle &hSHP, int numberOfElements, const std::string& listName);
+    /// Reads lines into a vector of Polyline and Surface objects.
+    void readPolygons  (const SHPHandle &hSHP, int numberOfElements, const std::string& listName);
 
-	GeoLib::GEOObjects& _geoObjects;
+    GeoLib::GEOObjects& _geoObjects;
 };
 
 }

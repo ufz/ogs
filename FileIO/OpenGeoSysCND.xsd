@@ -18,14 +18,14 @@
           <xs:all>
             <xs:element name="Type" maxOccurs="1" >
               <xs:simpleType>
-	        <xs:restriction base="xs:string">
-	          <xs:enumeration value="POINT"/>
-	          <xs:enumeration value="POLYLINE"/>
-	          <xs:enumeration value="SURFACE"/>
-	          <xs:enumeration value="VOLUME"/>
-	          <xs:enumeration value="DOMAIN"/>
-	          <xs:enumeration value="INVALID"/>
-	        </xs:restriction>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="POINT"/>
+              <xs:enumeration value="POLYLINE"/>
+              <xs:enumeration value="SURFACE"/>
+              <xs:enumeration value="VOLUME"/>
+              <xs:enumeration value="DOMAIN"/>
+              <xs:enumeration value="INVALID"/>
+            </xs:restriction>
               </xs:simpleType>
             </xs:element>
             <xs:element name="Name" type="xs:string" maxOccurs="1" />
@@ -50,7 +50,7 @@
     <xs:complexContent>
       <xs:extension base="CondType">
         <xs:sequence>
-          <xs:element name="FunctionType" type="xs:string"  minOccurs="0" maxOccurs="1"/>	 <!-- is optional -->
+          <xs:element name="FunctionType" type="xs:string"  minOccurs="0" maxOccurs="1"/>     <!-- is optional -->
           <xs:element name="TimeType" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1"/> <!-- is optional -->
         </xs:sequence>
       </xs:extension>
@@ -62,10 +62,10 @@
   <xs:element name="OpenGeoSysCond">
     <xs:complexType>
       <xs:sequence>
-	<xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
+    <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1" />
 
         <!-- definition of initial conditions -->
-	<xs:element name="InitialConditions" minOccurs="0" maxOccurs="1">
+    <xs:element name="InitialConditions" minOccurs="0" maxOccurs="1">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="IC" type="CondType" maxOccurs="unbounded" />
@@ -94,5 +94,5 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-	
+    
 </xs:schema>

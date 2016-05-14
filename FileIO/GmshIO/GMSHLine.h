@@ -23,14 +23,14 @@ namespace GMSH {
 
 class GMSHLine {
 public:
-	GMSHLine(std::size_t start_point_id, std::size_t end_point_id);
-	virtual ~GMSHLine();
-	void write(std::ostream &os, std::size_t id) const;
-	void resetLineData(std::size_t start_point_id, std::size_t end_point_id);
+    GMSHLine(std::size_t start_point_id, std::size_t end_point_id);
+    virtual ~GMSHLine();
+    void write(std::ostream &os, std::size_t id) const;
+    void resetLineData(std::size_t start_point_id, std::size_t end_point_id);
 
 private:
-	std::size_t _start_pnt_id;
-	std::size_t _end_pnt_id;
+    std::size_t _start_pnt_id;
+    std::size_t _end_pnt_id;
 };
 
 }

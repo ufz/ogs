@@ -24,19 +24,19 @@ namespace FileIO
 class XmlNumInterface : public BaseLib::IO::XMLInterface, public BaseLib::IO::XMLQtInterface
 {
 public:
-	XmlNumInterface();
+    XmlNumInterface();
 
-	virtual ~XmlNumInterface() {}
+    virtual ~XmlNumInterface() {}
 
-	int readFile(QString const& fileName);
+    int readFile(QString const& fileName);
 
-	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
 protected:
-	void readLinearSolverConfiguration(QDomElement const& lin_root);
-	void readIterationScheme(QDomElement const& iteration_root);
-	void readConvergenceCriteria(QDomElement const& convergence_root);
-	bool write();
+    void readLinearSolverConfiguration(QDomElement const& lin_root);
+    void readIterationScheme(QDomElement const& iteration_root);
+    void readConvergenceCriteria(QDomElement const& convergence_root);
+    bool write();
 
 };
 
