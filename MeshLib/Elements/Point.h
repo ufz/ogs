@@ -17,7 +17,7 @@ extern template class MeshLib::TemplateElement<MeshLib::PointRule1>;
 
 namespace MeshLib
 {
-	using Point = TemplateElement<PointRule1>;
+    using Point = TemplateElement<PointRule1>;
 }
 
 #endif  // MESHLIB_POINT_H_

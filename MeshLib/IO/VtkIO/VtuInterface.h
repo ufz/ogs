@@ -32,28 +32,28 @@ namespace IO
 class VtuInterface
 {
 public:
-	/// Provide the mesh to write and set if compression should be used.
-	VtuInterface(const MeshLib::Mesh* mesh, int dataMode = vtkXMLWriter::Binary, bool compressed = false);
-	~VtuInterface();
+    /// Provide the mesh to write and set if compression should be used.
+    VtuInterface(const MeshLib::Mesh* mesh, int dataMode = vtkXMLWriter::Binary, bool compressed = false);
+    ~VtuInterface();
 
-	/// Read an unstructured grid from a VTU file
-	/// \return The converted mesh or a nullptr if reading failed
-	static MeshLib::Mesh* readVTUFile(std::string const &file_name);
+    /// Read an unstructured grid from a VTU file
+    /// \return The converted mesh or a nullptr if reading failed
+    static MeshLib::Mesh* readVTUFile(std::string const &file_name);
 
-	/// Writes the given mesh to file.
-	/// \return True on success, false on error
-	bool writeToFile(std::string const &file_name);
+    /// Writes the given mesh to file.
+    /// \return True on success, false on error
+    bool writeToFile(std::string const &file_name);
 
-	/// Writes the given mesh to vtu file.
-	/// \param file_name      File name.
-	/// \param num_partitions Number of partiions to be merged.
-	/// \return True on success, false on error
-	template<typename UnstructuredGridWriter> bool writeVTU(std::string const &file_name, const int num_partitions = 1);
+    /// Writes the given mesh to vtu file.
+    /// \param file_name      File name.
+    /// \param num_partitions Number of partiions to be merged.
+    /// \return True on success, false on error
+    template<typename UnstructuredGridWriter> bool writeVTU(std::string const &file_name, const int num_partitions = 1);
 
 private:
-	const MeshLib::Mesh* _mesh;
-	int _data_mode;
-	bool _use_compressor;
+    const MeshLib::Mesh* _mesh;
+    int _data_mode;
+    bool _use_compressor;
 };
 
 } // end namespace IO

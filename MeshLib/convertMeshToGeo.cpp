@@ -30,85 +30,85 @@ namespace MeshLib {
 
 bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects, double eps)
 {
-	if (mesh.getDimension() != 2)
-	{
-		ERR ("Mesh to geometry conversion is only working for 2D meshes.");
-		return false;
-	}
+    if (mesh.getDimension() != 2)
+    {
+        ERR ("Mesh to geometry conversion is only working for 2D meshes.");
+        return false;
+    }
 
-	// nodes to points conversion
-	std::string mesh_name(mesh.getName());
-	{
-		auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
-			new std::vector<GeoLib::Point*>);
-		points->reserve(mesh.getNNodes());
+    // nodes to points conversion
+    std::string mesh_name(mesh.getName());
+    {
+        auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
+            new std::vector<GeoLib::Point*>);
+        points->reserve(mesh.getNNodes());
 
-		for (auto node_ptr : mesh.getNodes())
-			points->push_back(new GeoLib::Point(*node_ptr, node_ptr->getID()));
+        for (auto node_ptr : mesh.getNodes())
+            points->push_back(new GeoLib::Point(*node_ptr, node_ptr->getID()));
 
-		geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
-	}
-	const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
+        geo_objects.addPointVec(std::move(points), mesh_name, nullptr, eps);
+    }
+    const std::vector<std::size_t> id_map (geo_objects.getPointVecObj(mesh_name)->getIDMap());
 
-	// elements to surface triangles conversion
-	std::string const mat_name ("MaterialIDs");
-	auto bounds (MeshInformation::getValueBounds<int>(mesh, mat_name));
-	const unsigned nMatGroups(bounds.second-bounds.first+1);
-	auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(new std::vector<GeoLib::Surface*>);
-	sfcs->reserve(nMatGroups);
-	auto const& points = *geo_objects.getPointVec(mesh_name);
-	for (unsigned i=0; i<nMatGroups; ++i)
-		sfcs->push_back(new GeoLib::Surface(points));
+    // elements to surface triangles conversion
+    std::string const mat_name ("MaterialIDs");
+    auto bounds (MeshInformation::getValueBounds<int>(mesh, mat_name));
+    const unsigned nMatGroups(bounds.second-bounds.first+1);
+    auto sfcs = std::unique_ptr<std::vector<GeoLib::Surface*>>(new std::vector<GeoLib::Surface*>);
+    sfcs->reserve(nMatGroups);
+    auto const& points = *geo_objects.getPointVec(mesh_name);
+    for (unsigned i=0; i<nMatGroups; ++i)
+        sfcs->push_back(new GeoLib::Surface(points));
 
-	const std::vector<MeshLib::Element*> &elements = mesh.getElements();
-	const std::size_t nElems (mesh.getNElements());
+    const std::vector<MeshLib::Element*> &elements = mesh.getElements();
+    const std::size_t nElems (mesh.getNElements());
 
-	auto materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
-	auto const materialIdExist = bool(materialIds);
+    auto materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
+    auto const materialIdExist = bool(materialIds);
 
-	for (unsigned i=0; i<nElems; ++i)
-	{
-		auto surfaceId = materialIdExist ? (*materialIds)[i]-bounds.first : 0;
-		MeshLib::Element* e (elements[i]);
-		if (e->getGeomType() == MeshElemType::TRIANGLE)
-			(*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
-		if (e->getGeomType() == MeshElemType::QUAD)
-		{
-			(*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
-			(*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(2)], id_map[e->getNodeIndex(3)]);
-		}
-		// all other element types are ignored (i.e. lines)
-	}
+    for (unsigned i=0; i<nElems; ++i)
+    {
+        auto surfaceId = materialIdExist ? (*materialIds)[i]-bounds.first : 0;
+        MeshLib::Element* e (elements[i]);
+        if (e->getGeomType() == MeshElemType::TRIANGLE)
+            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
+        if (e->getGeomType() == MeshElemType::QUAD)
+        {
+            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(1)], id_map[e->getNodeIndex(2)]);
+            (*sfcs)[surfaceId]->addTriangle(id_map[e->getNodeIndex(0)], id_map[e->getNodeIndex(2)], id_map[e->getNodeIndex(3)]);
+        }
+        // all other element types are ignored (i.e. lines)
+    }
 
-	std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc){ if (sfc->getNTriangles()==0) delete sfc; sfc = nullptr;});
-	auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
-	sfcs->erase(sfcs_end, sfcs->end());
+    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc){ if (sfc->getNTriangles()==0) delete sfc; sfc = nullptr;});
+    auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
+    sfcs->erase(sfcs_end, sfcs->end());
 
-	geo_objects.addSurfaceVec(std::move(sfcs), mesh_name);
-	return true;
+    geo_objects.addSurfaceVec(std::move(sfcs), mesh_name);
+    return true;
 }
 
 MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::string &mesh_name, double eps)
 {
-	// convert to a mesh including duplicated nodes
-	std::vector<MeshLib::Node*> nodes;
-	std::vector<MeshLib::Element*> elements;
-	std::size_t nodeId = 0;
-	for (std::size_t i=0; i<sfc.getNTriangles(); i++)
-	{
-		auto* tri = sfc[i];
-		MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
-		for (unsigned j=0; j<3; j++)
-			tri_nodes[j] = new MeshLib::Node(tri->getPoint(j)->getCoords(), nodeId++);
-		elements.push_back(new MeshLib::Tri(tri_nodes, i));
-		for (unsigned j=0; j<3; j++)
-			nodes.push_back(tri_nodes[j]);
-	}
-	MeshLib::Mesh mesh_with_duplicated_nodes(mesh_name, nodes, elements);
+    // convert to a mesh including duplicated nodes
+    std::vector<MeshLib::Node*> nodes;
+    std::vector<MeshLib::Element*> elements;
+    std::size_t nodeId = 0;
+    for (std::size_t i=0; i<sfc.getNTriangles(); i++)
+    {
+        auto* tri = sfc[i];
+        MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+        for (unsigned j=0; j<3; j++)
+            tri_nodes[j] = new MeshLib::Node(tri->getPoint(j)->getCoords(), nodeId++);
+        elements.push_back(new MeshLib::Tri(tri_nodes, i));
+        for (unsigned j=0; j<3; j++)
+            nodes.push_back(tri_nodes[j]);
+    }
+    MeshLib::Mesh mesh_with_duplicated_nodes(mesh_name, nodes, elements);
 
-	// remove duplicated nodes
-	MeshLib::MeshRevision rev(mesh_with_duplicated_nodes);
-	return rev.simplifyMesh(mesh_with_duplicated_nodes.getName(), eps);
+    // remove duplicated nodes
+    MeshLib::MeshRevision rev(mesh_with_duplicated_nodes);
+    return rev.simplifyMesh(mesh_with_duplicated_nodes.getName(), eps);
 }
 
 }

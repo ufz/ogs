@@ -175,10 +175,10 @@ Mesh* generateRegularQuadMesh(const double x_length,
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-	                          const double   cell_size,
-	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                          std::string   const& mesh_name = "mesh");
+                              const unsigned n_y_cells,
+                              const double   cell_size,
+                              GeoLib::Point const& origin = GeoLib::ORIGIN,
+                              std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -192,11 +192,11 @@ Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
-	                          const unsigned n_y_cells,
-	                          const double   cell_size_x,
-	                          const double   cell_size_y,
-	                          GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                          std::string   const& mesh_name = "mesh");
+                              const unsigned n_y_cells,
+                              const double   cell_size_x,
+                              const double   cell_size_y,
+                              GeoLib::Point const& origin = GeoLib::ORIGIN,
+                              std::string   const& mesh_name = "mesh");
 
 
 
@@ -259,11 +259,11 @@ Mesh* generateRegularHexMesh(const double x_length,
  * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const unsigned n_x_cells,
-	                         const unsigned n_y_cells,
-	                         const unsigned n_z_cells,
-	                         const double   cell_size,
-	                         GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                         std::string   const& mesh_name = "mesh");
+                             const unsigned n_y_cells,
+                             const unsigned n_z_cells,
+                             const double   cell_size,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -278,13 +278,13 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
  * \param mesh_name    Name of the new mesh.
  */
 Mesh* generateRegularHexMesh(const unsigned n_x_cells,
-	                         const unsigned n_y_cells,
-	                         const unsigned n_z_cells,
-	                         const double   cell_size_x,
-	                         const double   cell_size_y,
-	                         const double   cell_size_z,
-	                         GeoLib::Point const& origin = GeoLib::ORIGIN,
-	                         std::string   const& mesh_name = "mesh");
+                             const unsigned n_y_cells,
+                             const unsigned n_z_cells,
+                             const double   cell_size_x,
+                             const double   cell_size_y,
+                             const double   cell_size_z,
+                             GeoLib::Point const& origin = GeoLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -427,9 +427,9 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
 /// is described using the function \f$f(x,y)\f$.
 MeshLib::Mesh*
 createSurfaceMesh(std::string const& mesh_name,
-	MathLib::Point3d const& ll, MathLib::Point3d const& ur,
-	std::array<std::size_t, 2> const& n_steps,
-	std::function<double(double,double)> f);
+    MathLib::Point3d const& ll, MathLib::Point3d const& ur,
+    std::array<std::size_t, 2> const& n_steps,
+    std::function<double(double,double)> f);
 
 }  //MeshGenerator
 } //MeshLib

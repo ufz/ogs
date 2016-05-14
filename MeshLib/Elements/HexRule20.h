@@ -46,26 +46,26 @@ namespace MeshLib
 class HexRule20 : public HexRule8
 {
 public:
-	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes = 20u;
+    /// Constant: The number of all nodes for this element
+    static const unsigned n_all_nodes = 20u;
 
-	/// Constant: The FEM type of the element
-	static const CellType cell_type = CellType::HEX20;
+    /// Constant: The FEM type of the element
+    static const CellType cell_type = CellType::HEX20;
 
-	/// Constant: Local node index table for faces
-	static const unsigned face_nodes[6][8];
+    /// Constant: Local node index table for faces
+    static const unsigned face_nodes[6][8];
 
-	/// Constant: Local node index table for edge
-	static const unsigned edge_nodes[12][3];
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[12][3];
 
-	/// Returns the i-th edge of the element.
-	typedef QuadraticEdgeReturn EdgeReturn;
+    /// Returns the i-th edge of the element.
+    typedef QuadraticEdgeReturn EdgeReturn;
 
-	/// Get the number of nodes for face i.
-	static unsigned getNFaceNodes(unsigned /*i*/) { return 8; }
+    /// Get the number of nodes for face i.
+    static unsigned getNFaceNodes(unsigned /*i*/) { return 8; }
 
-	/// Returns the i-th face of the element.
-	static const Element* getFace(const Element* e, unsigned i);
+    /// Returns the i-th face of the element.
+    static const Element* getFace(const Element* e, unsigned i);
 
 }; /* class */
 

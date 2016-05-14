@@ -44,29 +44,29 @@ namespace MeshLib
 class PrismRule15 : public PrismRule6
 {
 public:
-	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes = 15u;
+    /// Constant: The number of all nodes for this element
+    static const unsigned n_all_nodes = 15u;
 
-	/// Constant: The FEM type of the element
-	static const CellType cell_type = CellType::PRISM15;
+    /// Constant: The FEM type of the element
+    static const CellType cell_type = CellType::PRISM15;
 
-	/// Constant: Local node index table for faces
-	static const unsigned face_nodes[5][8];
+    /// Constant: Local node index table for faces
+    static const unsigned face_nodes[5][8];
 
-	/// Constant: Local node index table for edge
-	static const unsigned edge_nodes[9][3];
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[9][3];
 
-	/// Constant: Table for the number of nodes for each face
-	static const unsigned n_face_nodes[5];
+    /// Constant: Table for the number of nodes for each face
+    static const unsigned n_face_nodes[5];
 
-	/// Returns the i-th edge of the element.
-	typedef QuadraticEdgeReturn EdgeReturn;
+    /// Returns the i-th edge of the element.
+    typedef QuadraticEdgeReturn EdgeReturn;
 
-	/// Get the number of nodes for face i.
-	static unsigned getNFaceNodes(unsigned i);
+    /// Get the number of nodes for face i.
+    static unsigned getNFaceNodes(unsigned i);
 
-	/// Returns the i-th face of the element.
-	static const Element* getFace(const Element* e, unsigned i);
+    /// Returns the i-th face of the element.
+    static const Element* getFace(const Element* e, unsigned i);
 
 }; /* class */
 

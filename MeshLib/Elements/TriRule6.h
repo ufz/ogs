@@ -39,17 +39,17 @@ namespace MeshLib
 class TriRule6 : public TriRule3
 {
 public:
-	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes = 6u;
+    /// Constant: The number of all nodes for this element
+    static const unsigned n_all_nodes = 6u;
 
-	/// Constant: The FEM type of the element
-	static const CellType cell_type = CellType::TRI6;
+    /// Constant: The FEM type of the element
+    static const CellType cell_type = CellType::TRI6;
 
-	/// Constant: Local node index table for edge
-	static const unsigned edge_nodes[3][3];
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[3][3];
 
-	/// Returns the i-th edge of the element.
-	typedef QuadraticEdgeReturn EdgeReturn;
+    /// Returns the i-th edge of the element.
+    typedef QuadraticEdgeReturn EdgeReturn;
 
 }; /* class */
 

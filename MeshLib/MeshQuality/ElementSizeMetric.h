@@ -26,15 +26,15 @@ namespace MeshLib
 class ElementSizeMetric : public ElementQualityMetric
 {
 public:
-	ElementSizeMetric(Mesh const& mesh);
-	virtual ~ElementSizeMetric() {}
+    ElementSizeMetric(Mesh const& mesh);
+    virtual ~ElementSizeMetric() {}
 
-	virtual void calculateQuality ();
+    virtual void calculateQuality ();
 
 private:
-	std::size_t calc1dQuality();
-	std::size_t calc2dQuality();
-	std::size_t calc3dQuality();
+    std::size_t calc1dQuality();
+    std::size_t calc2dQuality();
+    std::size_t calc3dQuality();
 };
 }
 

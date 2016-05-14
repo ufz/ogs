@@ -24,26 +24,26 @@ class Node;
 class NodeSearch final
 {
 public:
-	explicit NodeSearch(const MeshLib::Mesh &mesh);
+    explicit NodeSearch(const MeshLib::Mesh &mesh);
 
-	/// return marked node IDs
-	const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
+    /// return marked node IDs
+    const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
 
-	/// Marks all nodes connected to any of the given elements ids.
+    /// Marks all nodes connected to any of the given elements ids.
     /// \return number of connected nodes.
-	std::size_t searchNodesConnectedToOnlyGivenElements(const std::vector<std::size_t> &element_ids);
+    std::size_t searchNodesConnectedToOnlyGivenElements(const std::vector<std::size_t> &element_ids);
 
-	/// Marks all unused nodes
-	std::size_t searchUnused();
+    /// Marks all unused nodes
+    std::size_t searchUnused();
 
 private:
-	/// Updates the vector of marked items with values from vec.
-	void updateUnion(const std::vector<std::size_t> &vec);
+    /// Updates the vector of marked items with values from vec.
+    void updateUnion(const std::vector<std::size_t> &vec);
 
-	/// The mesh from which elements should be removed.
-	const MeshLib::Mesh &_mesh;
-	/// The vector of element indices that should be removed.
-	std::vector<std::size_t> _marked_nodes;
+    /// The mesh from which elements should be removed.
+    const MeshLib::Mesh &_mesh;
+    /// The vector of element indices that should be removed.
+    std::vector<std::size_t> _marked_nodes;
 };
 
 /// Create a vector of unique nodes used by given elements.

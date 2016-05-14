@@ -41,26 +41,26 @@ namespace MeshLib
 class TetRule10 : public TetRule4
 {
 public:
-	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes = 10u;
+    /// Constant: The number of all nodes for this element
+    static const unsigned n_all_nodes = 10u;
 
-	/// Constant: The FEM type of the element
-	static const CellType cell_type = CellType::TET10;
+    /// Constant: The FEM type of the element
+    static const CellType cell_type = CellType::TET10;
 
-	/// Constant: Local node index table for faces
-	static const unsigned face_nodes[4][6];
+    /// Constant: Local node index table for faces
+    static const unsigned face_nodes[4][6];
 
-	/// Constant: Local node index table for edge
-	static const unsigned edge_nodes[6][3];
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[6][3];
 
-	/// Returns the i-th edge of the element.
-	typedef QuadraticEdgeReturn EdgeReturn;
+    /// Returns the i-th edge of the element.
+    typedef QuadraticEdgeReturn EdgeReturn;
 
-	/// Get the number of nodes for face i.
-	static unsigned getNFaceNodes(unsigned /*i*/) { return 6; }
+    /// Get the number of nodes for face i.
+    static unsigned getNFaceNodes(unsigned /*i*/) { return 6; }
 
-	/// Returns the i-th face of the element.
-	static const Element* getFace(const Element* e, unsigned i);
+    /// Returns the i-th face of the element.
+    static const Element* getFace(const Element* e, unsigned i);
 
 }; /* class */
 
