@@ -25,74 +25,74 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
       _mesh(mesh),
       _n_components(config.getConfParam<int>("components"))
 {
-	DBUG("Constructing process variable %s", this->_name.c_str());
+    DBUG("Constructing process variable %s", this->_name.c_str());
 
-	// Initial condition
-	if (auto ic_config = config.getConfSubtreeOptional("initial_condition"))
-	{
-		auto const type = ic_config->peekConfParam<std::string>("type");
-		if (type == "Uniform")
-		{
-			_initial_condition =
-			    createUniformInitialCondition(*ic_config, _n_components);
-		}
-		else if (type == "MeshProperty")
-		{
-			_initial_condition =
-			    createMeshPropertyInitialCondition(*ic_config, _mesh, _n_components);
-		}
-		else
-		{
-			ERR("Unknown type of the initial condition.");
-		}
-	}
-	else
-	{
-		INFO("No initial condition found.");
-	}
+    // Initial condition
+    if (auto ic_config = config.getConfSubtreeOptional("initial_condition"))
+    {
+        auto const type = ic_config->peekConfParam<std::string>("type");
+        if (type == "Uniform")
+        {
+            _initial_condition =
+                createUniformInitialCondition(*ic_config, _n_components);
+        }
+        else if (type == "MeshProperty")
+        {
+            _initial_condition =
+                createMeshPropertyInitialCondition(*ic_config, _mesh, _n_components);
+        }
+        else
+        {
+            ERR("Unknown type of the initial condition.");
+        }
+    }
+    else
+    {
+        INFO("No initial condition found.");
+    }
 
-	// Boundary conditions
-	if (auto bcs_config = config.getConfSubtreeOptional("boundary_conditions"))
-	{
-		for (auto bc_config
-			 : bcs_config->getConfSubtreeList("boundary_condition"))
-		{
-			auto const geometrical_set_name =
-					bc_config.getConfParam<std::string>("geometrical_set");
-			auto const geometry_name =
-					bc_config.getConfParam<std::string>("geometry");
+    // Boundary conditions
+    if (auto bcs_config = config.getConfSubtreeOptional("boundary_conditions"))
+    {
+        for (auto bc_config
+             : bcs_config->getConfSubtreeList("boundary_condition"))
+        {
+            auto const geometrical_set_name =
+                    bc_config.getConfParam<std::string>("geometrical_set");
+            auto const geometry_name =
+                    bc_config.getConfParam<std::string>("geometry");
 
-			GeoLib::GeoObject const* const geometry =
-			    geometries.getGeoObject(geometrical_set_name, geometry_name);
-			DBUG(
-			    "Found geometry type \"%s\"",
-			    GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+            GeoLib::GeoObject const* const geometry =
+                geometries.getGeoObject(geometrical_set_name, geometry_name);
+            DBUG(
+                "Found geometry type \"%s\"",
+                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
-			// Construct type dependent boundary condition
-			auto const type = bc_config.peekConfParam<std::string>("type");
+            // Construct type dependent boundary condition
+            auto const type = bc_config.peekConfParam<std::string>("type");
 
-			if (type == "UniformDirichlet")
-			{
-				_dirichlet_bc_configs.emplace_back(
-				    new UniformDirichletBoundaryCondition(geometry, bc_config));
-			}
-			else if (type == "UniformNeumann")
-			{
-				_neumann_bc_configs.emplace_back(
-				    new NeumannBcConfig(geometry, bc_config));
-			}
-			else
-			{
-				ERR("Unknown type \'%s\' of the boundary condition.",
-				    type.c_str());
-			}
-		}
-	} else {
-		INFO("No boundary conditions found.");
-	}
+            if (type == "UniformDirichlet")
+            {
+                _dirichlet_bc_configs.emplace_back(
+                    new UniformDirichletBoundaryCondition(geometry, bc_config));
+            }
+            else if (type == "UniformNeumann")
+            {
+                _neumann_bc_configs.emplace_back(
+                    new NeumannBcConfig(geometry, bc_config));
+            }
+            else
+            {
+                ERR("Unknown type \'%s\' of the boundary condition.",
+                    type.c_str());
+            }
+        }
+    } else {
+        INFO("No boundary conditions found.");
+    }
 
-	// Source Terms
-	config.ignoreConfParam("source_terms");
+    // Source Terms
+    config.ignoreConfParam("source_terms");
 }
 
 ProcessVariable::ProcessVariable(ProcessVariable&& other)
@@ -107,32 +107,32 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
 
 std::string const& ProcessVariable::getName() const
 {
-	return _name;
+    return _name;
 }
 
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
-	return _mesh;
+    return _mesh;
 }
 
 MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
 {
-	boost::optional<MeshLib::PropertyVector<double>&> result;
-	if (_mesh.getProperties().hasPropertyVector(_name))
-	{
-		result =
-		    _mesh.getProperties().template getPropertyVector<double>(_name);
-		assert(result);
-		assert(result->size() == _mesh.getNNodes() * _n_components);
-	}
-	else
-	{
-		result = _mesh.getProperties().template createNewPropertyVector<double>(
-		    _name, MeshLib::MeshItemType::Node);
-		assert(result);
-		result->resize(_mesh.getNNodes() * _n_components);
-	}
-	return *result;
+    boost::optional<MeshLib::PropertyVector<double>&> result;
+    if (_mesh.getProperties().hasPropertyVector(_name))
+    {
+        result =
+            _mesh.getProperties().template getPropertyVector<double>(_name);
+        assert(result);
+        assert(result->size() == _mesh.getNNodes() * _n_components);
+    }
+    else
+    {
+        result = _mesh.getProperties().template createNewPropertyVector<double>(
+            _name, MeshLib::MeshItemType::Node);
+        assert(result);
+        result->resize(_mesh.getNNodes() * _n_components);
+    }
+    return *result;
 }
 
 }  // namespace ProcessLib
