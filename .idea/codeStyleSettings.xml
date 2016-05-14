@@ -9,7 +9,7 @@
             <option name="INDENT_SIZE" value="4" />
             <option name="CONTINUATION_INDENT_SIZE" value="8" />
             <option name="TAB_SIZE" value="4" />
-            <option name="USE_TAB_CHARACTER" value="true" />
+            <option name="USE_TAB_CHARACTER" value="false" />
             <option name="SMART_TABS" value="false" />
             <option name="LABEL_INDENT_SIZE" value="0" />
             <option name="LABEL_INDENT_ABSOLUTE" value="false" />
@@ -55,20 +55,20 @@
         </XML>
         <codeStyleSettings language="CMake">
           <indentOptions>
-            <option name="USE_TAB_CHARACTER" value="true" />
+            <option name="USE_TAB_CHARACTER" value="false" />
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="ObjectiveC">
           <option name="CLASS_BRACE_STYLE" value="2" />
           <indentOptions>
             <option name="CONTINUATION_INDENT_SIZE" value="4" />
-            <option name="USE_TAB_CHARACTER" value="true" />
+            <option name="USE_TAB_CHARACTER" value="false" />
             <option name="SMART_TABS" value="true" />
           </indentOptions>
         </codeStyleSettings>
         <codeStyleSettings language="XML">
           <indentOptions>
-            <option name="USE_TAB_CHARACTER" value="true" />
+            <option name="USE_TAB_CHARACTER" value="false" />
           </indentOptions>
         </codeStyleSettings>
       </value>
