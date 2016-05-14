@@ -36,20 +36,20 @@ class TemplateLogogFormatterSuppressedGCC : public logog::FormatterGCC
 {
 public:
 #ifdef USE_MPI
-	TemplateLogogFormatterSuppressedGCC(MPI_Comm mpi_comm = MPI_COMM_WORLD);
+    TemplateLogogFormatterSuppressedGCC(MPI_Comm mpi_comm = MPI_COMM_WORLD);
 #endif
 
-	virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
-	{
-	return ( logog::Formatter::GetTopicFlags( topic ) &
-		~( T_SUPPPRESS_TOPIC_FLAG ));
-	}
+    virtual TOPIC_FLAGS GetTopicFlags( const logog::Topic &topic )
+    {
+    return ( logog::Formatter::GetTopicFlags( topic ) &
+        ~( T_SUPPPRESS_TOPIC_FLAG ));
+    }
 
-	virtual LOGOG_STRING &Format( const logog::Topic &topic, const logog::Target &target );
+    virtual LOGOG_STRING &Format( const logog::Topic &topic, const logog::Target &target );
 
 private:
 #ifdef USE_MPI
-	std::string _str_mpi_rank;
+    std::string _str_mpi_rank;
 #endif
 };
 

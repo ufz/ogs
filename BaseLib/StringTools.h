@@ -47,10 +47,10 @@ std::string replaceString(const std::string &searchString, const std::string &re
  */
 template<typename T> T str2number (const std::string &str)
 {
-	std::stringstream strs (str, std::stringstream::in | std::stringstream::out);
-	T v;
-	strs >> v;
-	return v;
+    std::stringstream strs (str, std::stringstream::in | std::stringstream::out);
+    T v;
+    strs >> v;
+    return v;
 }
 
 /**
@@ -74,7 +74,7 @@ std::string padLeft(std::string const& str, int maxlen, char ch=' ');
 //! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
 template<typename T> std::string tostring(T const& value)
 {
-	return std::to_string(value);
+    return std::to_string(value);
 }
 //! \overload
 std::string const& tostring(std::string const& value);

@@ -21,10 +21,10 @@ namespace BaseLib
 class ISubdivision
 {
 public:
-	/// Returns a vector of subdivided points
-	virtual std::vector<double> operator()() const = 0;
+    /// Returns a vector of subdivided points
+    virtual std::vector<double> operator()() const = 0;
 
-	virtual ~ISubdivision() {}
+    virtual ~ISubdivision() {}
 };
 
 /**
@@ -33,28 +33,28 @@ public:
 class UniformSubdivision : public ISubdivision
 {
 public:
-	/**
-	 * Configuration
-	 * @param length          total length to be subdivided
-	 * @param n_subdivision   the number of subdivision
-	 */
-	UniformSubdivision(double length, std::size_t n_subdivision)
-	: _length(length), _n_subdivision(n_subdivision) {}
+    /**
+     * Configuration
+     * @param length          total length to be subdivided
+     * @param n_subdivision   the number of subdivision
+     */
+    UniformSubdivision(double length, std::size_t n_subdivision)
+    : _length(length), _n_subdivision(n_subdivision) {}
 
-	/// Returns a vector of subdivided points
-	std::vector<double> operator()() const
-	{
-		std::vector<double> x;
-		x.reserve(_n_subdivision+1);
-		const double dL = _length/static_cast<double>(_n_subdivision);
-		for (std::size_t i=0; i<_n_subdivision+1; i++)
-			x.push_back(i*dL);
-		return x;
-	}
+    /// Returns a vector of subdivided points
+    std::vector<double> operator()() const
+    {
+        std::vector<double> x;
+        x.reserve(_n_subdivision+1);
+        const double dL = _length/static_cast<double>(_n_subdivision);
+        for (std::size_t i=0; i<_n_subdivision+1; i++)
+            x.push_back(i*dL);
+        return x;
+    }
 
 private:
-	const double _length;
-	const std::size_t _n_subdivision;
+    const double _length;
+    const std::size_t _n_subdivision;
 };
 
 /**
@@ -63,48 +63,48 @@ private:
 class GradualSubdivision : public ISubdivision
 {
 public:
-	/**
-	 * Constructor
-	 * @param L           total length to be subdivided
-	 * @param dL0         initial cell length
-	 * @param max_dL      maximum cell length
-	 * @param multiplier  multiplier to cell length
-	 */
-	GradualSubdivision(
-			const double L,
-			const double dL0,
-			const double max_dL,
-			const double multiplier)
-	: _L(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
+    /**
+     * Constructor
+     * @param L           total length to be subdivided
+     * @param dL0         initial cell length
+     * @param max_dL      maximum cell length
+     * @param multiplier  multiplier to cell length
+     */
+    GradualSubdivision(
+            const double L,
+            const double dL0,
+            const double max_dL,
+            const double multiplier)
+    : _L(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
 
-	/// Returns a vector of subdivided points
-	std::vector<double> operator()() const
-	{
-		std::vector<double> vec_x;
+    /// Returns a vector of subdivided points
+    std::vector<double> operator()() const
+    {
+        std::vector<double> vec_x;
 
-		double x = 0;
-		unsigned i=0;
-		do {
-			vec_x.push_back(x);
-			x += std::min(_max_dL, _dL0*std::pow(_multiplier, static_cast<double>(i)));
-			i++;
-		} while (x<_L);
+        double x = 0;
+        unsigned i=0;
+        do {
+            vec_x.push_back(x);
+            x += std::min(_max_dL, _dL0*std::pow(_multiplier, static_cast<double>(i)));
+            i++;
+        } while (x<_L);
 
-		if (vec_x.back() < _L) {
-			double last_dx = vec_x[vec_x.size()-1] - vec_x[vec_x.size()-2];
-			if (_L-vec_x.back()<last_dx)
-				vec_x[vec_x.size()-1] = _L;
-			else
-				vec_x.push_back(_L);
-		}
-		return vec_x;
-	}
+        if (vec_x.back() < _L) {
+            double last_dx = vec_x[vec_x.size()-1] - vec_x[vec_x.size()-2];
+            if (_L-vec_x.back()<last_dx)
+                vec_x[vec_x.size()-1] = _L;
+            else
+                vec_x.push_back(_L);
+        }
+        return vec_x;
+    }
 
 private:
-	const double _L;
-	const double _dL0;
-	const double _max_dL;
-	const double _multiplier;
+    const double _L;
+    const double _dL0;
+    const double _max_dL;
+    const double _multiplier;
 };
 
 } // BaseLib

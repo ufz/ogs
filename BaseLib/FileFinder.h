@@ -32,54 +32,54 @@ namespace BaseLib
 class FileFinder
 {
 public:
-	/// Constructor
-	FileFinder()
-	{
-		addDirectory(".");
-		addDirectory(BuildInfo::source_path + "/FileIO");
-	}
+    /// Constructor
+    FileFinder()
+    {
+        addDirectory(".");
+        addDirectory(BuildInfo::source_path + "/FileIO");
+    }
 
-	/**
-	 * \brief Adds another directory to the search-space.
-	 * If the given directory does not end with a slash one will be appended.
-	 */
-	void addDirectory(std::string const& dir)
-	{
-		if (dir.empty())
-			return;
+    /**
+     * \brief Adds another directory to the search-space.
+     * If the given directory does not end with a slash one will be appended.
+     */
+    void addDirectory(std::string const& dir)
+    {
+        if (dir.empty())
+            return;
 
-		if (dir[dir.size() - 1] != '/')
-			_directories.push_back(std::string(dir + "/"));
-		else
-			_directories.push_back(dir);
-	}
+        if (dir[dir.size() - 1] != '/')
+            _directories.push_back(std::string(dir + "/"));
+        else
+            _directories.push_back(dir);
+    }
 
-	/**
-	 * Given a filename, this method will return the complete path where this file can be found.
-	 * If the file is located in more than one of the directories in the search list, only the
-	 * first location will be returned.
-	 */
-	std::string getPath(std::string const& filename) const
-	{
-		if (_directories.empty())
-			ERR("FileFinder::getPath(): No directories set.");
+    /**
+     * Given a filename, this method will return the complete path where this file can be found.
+     * If the file is located in more than one of the directories in the search list, only the
+     * first location will be returned.
+     */
+    std::string getPath(std::string const& filename) const
+    {
+        if (_directories.empty())
+            ERR("FileFinder::getPath(): No directories set.");
 
-		for (auto it = _directories.begin(); it != _directories.end(); ++it)
-		{
-			std::string testDir(*it);
-			std::ifstream is(testDir.append(filename).c_str());
-			if (is.good())
-			{
-				is.close();
-				return testDir;
-			}
-		}
-		ERR("FileFinder::getPath(): File not found.");
-		return filename;
-	}
+        for (auto it = _directories.begin(); it != _directories.end(); ++it)
+        {
+            std::string testDir(*it);
+            std::ifstream is(testDir.append(filename).c_str());
+            if (is.good())
+            {
+                is.close();
+                return testDir;
+            }
+        }
+        ERR("FileFinder::getPath(): File not found.");
+        return filename;
+    }
 
 private:
-	std::vector<std::string> _directories;
+    std::vector<std::string> _directories;
 };
 } // end namespace BaseLib
 
