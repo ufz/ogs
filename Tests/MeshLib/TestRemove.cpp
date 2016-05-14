@@ -26,38 +26,38 @@
 
 TEST(MeshLib, RemoveNodes)
 {
-	auto mesh = std::unique_ptr<MeshLib::Mesh>{
-		MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
+    auto mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
 
-	std::vector<std::size_t> removed_node_ids;
-	for (std::size_t i=0; i<5; i++)
-		removed_node_ids.push_back(i);
+    std::vector<std::size_t> removed_node_ids;
+    for (std::size_t i=0; i<5; i++)
+        removed_node_ids.push_back(i);
 
-	auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
-		MeshLib::removeNodes(*mesh, removed_node_ids, "")};
+    auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::removeNodes(*mesh, removed_node_ids, "")};
 
-	ASSERT_EQ(5u, new_mesh->getNNodes());
-	ASSERT_EQ(5u, new_mesh->getNBaseNodes());
-	ASSERT_EQ(4u, new_mesh->getNElements());
-	for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
-		ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
+    ASSERT_EQ(5u, new_mesh->getNNodes());
+    ASSERT_EQ(5u, new_mesh->getNBaseNodes());
+    ASSERT_EQ(4u, new_mesh->getNElements());
+    for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
+        ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
 }
 
 TEST(MeshLib, RemoveElements)
 {
-	auto mesh = std::unique_ptr<MeshLib::Mesh>{
-		MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
+    auto mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
 
-	std::vector<std::size_t> removed_ele_ids;
-	for (std::size_t i=0; i<5; i++)
-		removed_ele_ids.push_back(i);
+    std::vector<std::size_t> removed_ele_ids;
+    for (std::size_t i=0; i<5; i++)
+        removed_ele_ids.push_back(i);
 
-	auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
-		MeshLib::removeElements(*mesh, removed_ele_ids, "")};
+    auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::removeElements(*mesh, removed_ele_ids, "")};
 
-	ASSERT_EQ(5u, new_mesh->getNNodes());
-	ASSERT_EQ(5u, new_mesh->getNBaseNodes());
-	ASSERT_EQ(4u, new_mesh->getNElements());
-	for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
-		ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
+    ASSERT_EQ(5u, new_mesh->getNNodes());
+    ASSERT_EQ(5u, new_mesh->getNBaseNodes());
+    ASSERT_EQ(4u, new_mesh->getNElements());
+    for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
+        ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
 }

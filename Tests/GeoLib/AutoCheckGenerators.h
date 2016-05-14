@@ -1,9 +1,9 @@
 /**
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
- *			Distributed under a Modified BSD License.
- *			  See accompanying file LICENSE.txt or
- *			  http://www.opengeosys.org/LICENSE.txt
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/LICENSE.txt
  */
 
 #ifndef TESTS_GEOLIB_AUTOCHECKGENERATORS_H_
@@ -24,33 +24,33 @@ namespace autocheck
 template <typename Gen = generator<double>>
 struct RandomCirclePointGeneratorXY
 {
-	RandomCirclePointGeneratorXY(
-		MathLib::Point3d const& c = MathLib::Point3d{std::array<double, 3>{{0, 0, 0}}},
-		double r = 1.0)
-	    : center(c), radius(r)
-	{}
+    RandomCirclePointGeneratorXY(
+        MathLib::Point3d const& c = MathLib::Point3d{std::array<double, 3>{{0, 0, 0}}},
+        double r = 1.0)
+        : center(c), radius(r)
+    {}
 
-	using result_type = MathLib::Point3d;
+    using result_type = MathLib::Point3d;
 
-	result_type operator()(std::size_t /*size*/ = 0)
-	{
-		// generates uniformly distributed values in the interval [-4, 4]
-		auto const angle(generator(4));
-		return MathLib::Point3d{
-		    std::array<double, 3>{{center[0] + radius * std::cos(angle),
-		                           center[1] + radius * std::sin(angle), 0.0}}};
-	}
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        // generates uniformly distributed values in the interval [-4, 4]
+        auto const angle(generator(4));
+        return MathLib::Point3d{
+            std::array<double, 3>{{center[0] + radius * std::cos(angle),
+                                   center[1] + radius * std::sin(angle), 0.0}}};
+    }
 
-	Gen generator;
-	MathLib::Point3d const center;
-	double const radius;
+    Gen generator;
+    MathLib::Point3d const center;
+    double const radius;
 };
 
 // reflect point p on the point c in x-y plane
 MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
 {
-	return MathLib::Point3d(
-	    std::array<double, 3>{{2 * c[0] - p[0], 2 * c[1] - p[1], 0.0}});
+    return MathLib::Point3d(
+        std::array<double, 3>{{2 * c[0] - p[0], 2 * c[1] - p[1], 0.0}});
 }
 
 // generates line segments that are special chords of a circle, i.e. the chords
@@ -58,58 +58,58 @@ MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
 template <typename Gen = RandomCirclePointGeneratorXY<generator<double>>>
 struct SymmSegmentGeneratorXY
 {
-	SymmSegmentGeneratorXY(
-	    Gen s,
-	    std::function<MathLib::Point3d(MathLib::Point3d const&)> f)
-	    : source(s), function(f)
-	{}
+    SymmSegmentGeneratorXY(
+        Gen s,
+        std::function<MathLib::Point3d(MathLib::Point3d const&)> f)
+        : source(s), function(f)
+    {}
 
-	using result_type = GeoLib::LineSegment;
+    using result_type = GeoLib::LineSegment;
 
-	result_type operator()(std::size_t /*size*/ = 0)
-	{
-		std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{source(), 0}};
-		std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{function(*a), 1}};
-		return result_type{a.release(), b.release(), true};
-	}
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{source(), 0}};
+        std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{function(*a), 1}};
+        return result_type{a.release(), b.release(), true};
+    }
 
-	Gen source;
-	std::function<MathLib::Point3d(MathLib::Point3d const&)> function;
+    Gen source;
+    std::function<MathLib::Point3d(MathLib::Point3d const&)> function;
 };
 
 GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
                               GeoLib::LineSegment const& line_seg)
 {
-	std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{line_seg.getBeginPoint()}};
-	std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{line_seg.getEndPoint()}};
-	for (std::size_t k(0); k<3; ++k)
-		(*a)[k] += translation[k];
-	for (std::size_t k(0); k<3; ++k)
-		(*b)[k] += translation[k];
-	return GeoLib::LineSegment{a.release(), b.release(), true};
+    std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{line_seg.getBeginPoint()}};
+    std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{line_seg.getEndPoint()}};
+    for (std::size_t k(0); k<3; ++k)
+        (*a)[k] += translation[k];
+    for (std::size_t k(0); k<3; ++k)
+        (*b)[k] += translation[k];
+    return GeoLib::LineSegment{a.release(), b.release(), true};
 }
 
 template <typename Gen = SymmSegmentGeneratorXY<
               RandomCirclePointGeneratorXY<generator<double>>>>
 struct PairSegmentGeneratorXY
 {
-	PairSegmentGeneratorXY(
-	    Gen s, std::function<GeoLib::LineSegment(GeoLib::LineSegment const&)> f)
-	    : segment_generator(s), function(f)
-	{
-	}
+    PairSegmentGeneratorXY(
+        Gen s, std::function<GeoLib::LineSegment(GeoLib::LineSegment const&)> f)
+        : segment_generator(s), function(f)
+    {
+    }
 
-	using result_type = std::pair<GeoLib::LineSegment, GeoLib::LineSegment>;
+    using result_type = std::pair<GeoLib::LineSegment, GeoLib::LineSegment>;
 
-	result_type operator()(std::size_t /*size*/ = 0)
-	{
-		auto first = segment_generator();
-		auto second = function(first);
-		return result_type{first, second};
-	}
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        auto first = segment_generator();
+        auto second = function(first);
+        return result_type{first, second};
+    }
 
-	Gen segment_generator;
-	std::function<GeoLib::LineSegment(GeoLib::LineSegment const&)> function;
+    Gen segment_generator;
+    std::function<GeoLib::LineSegment(GeoLib::LineSegment const&)> function;
 };
 
 }  // namespace autocheck

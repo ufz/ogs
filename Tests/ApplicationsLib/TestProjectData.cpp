@@ -16,8 +16,8 @@
 
 TEST(ApplicationsLib, ProjectData)
 {
-	ProjectData project;
-	GeoLib::GEOObjects *geo_objects = project.getGEOObjects();
+    ProjectData project;
+    GeoLib::GEOObjects *geo_objects = project.getGEOObjects();
 
-	ASSERT_TRUE(geo_objects != nullptr);
+    ASSERT_TRUE(geo_objects != nullptr);
 }

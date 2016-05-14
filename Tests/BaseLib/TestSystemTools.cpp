@@ -23,6 +23,6 @@ TEST(BaseLib, EndianLittle) {
     if (*(char*)&x)
         isLittle = true;              //am little
 
-	ASSERT_EQ (isLittle, BaseLib::IsLittleEndian());
+    ASSERT_EQ (isLittle, BaseLib::IsLittleEndian());
 }
 

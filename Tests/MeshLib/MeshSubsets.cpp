@@ -18,47 +18,47 @@ using namespace MeshLib;
 
 TEST(MeshLibMeshSubsets, UniqueMeshIds)
 {
-	// Create first mesh
-	Mesh const m0("first", std::vector<Node*>(), std::vector<Element*>());
-	Mesh const m1("second", std::vector<Node*>(), std::vector<Element*>());
+    // Create first mesh
+    Mesh const m0("first", std::vector<Node*>(), std::vector<Element*>());
+    Mesh const m1("second", std::vector<Node*>(), std::vector<Element*>());
 
-	std::vector<Node*> const empty_node_ptr_vector(0);
+    std::vector<Node*> const empty_node_ptr_vector(0);
 
-	MeshSubset const ms0(m0, &empty_node_ptr_vector);
-	MeshSubset const ms1(m1, &empty_node_ptr_vector);
-	MeshSubset const ms1a(m1, &empty_node_ptr_vector);
+    MeshSubset const ms0(m0, &empty_node_ptr_vector);
+    MeshSubset const ms1(m1, &empty_node_ptr_vector);
+    MeshSubset const ms1a(m1, &empty_node_ptr_vector);
 
-	MeshSubset const* const mesh_subsets[3] = {&ms0, &ms1, &ms1a};
+    MeshSubset const* const mesh_subsets[3] = {&ms0, &ms1, &ms1a};
 
-	// EXPECT_NO_DEATH
-	MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 2);
+    // EXPECT_NO_DEATH
+    MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 2);
 
-	EXPECT_DEATH(MeshSubsets(&mesh_subsets[1], &mesh_subsets[1] + 2), "");
-	EXPECT_DEATH(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 3), "");
+    EXPECT_DEATH(MeshSubsets(&mesh_subsets[1], &mesh_subsets[1] + 2), "");
+    EXPECT_DEATH(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 3), "");
 }
 
 
 TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
 {
-	auto mesh = std::unique_ptr<Mesh>{MeshGenerator::generateLineMesh(1., 10)};
-	MeshSubset all_nodes_mesh_subset(*mesh, &mesh->getNodes());
+    auto mesh = std::unique_ptr<Mesh>{MeshGenerator::generateLineMesh(1., 10)};
+    MeshSubset all_nodes_mesh_subset(*mesh, &mesh->getNodes());
 
-	// Select nodes
-	std::vector<Node*> some_nodes;
-	some_nodes.assign({
-		const_cast<Node*>(mesh->getNode(0)),
-		const_cast<Node*>(mesh->getNode(2)),
-		const_cast<Node*>(mesh->getNode(5)),
-		const_cast<Node*>(mesh->getNode(7)) });
-	auto some_nodes_mesh_subset = std::unique_ptr<MeshSubset>
-		{all_nodes_mesh_subset.getIntersectionByNodes(some_nodes)};
+    // Select nodes
+    std::vector<Node*> some_nodes;
+    some_nodes.assign({
+        const_cast<Node*>(mesh->getNode(0)),
+        const_cast<Node*>(mesh->getNode(2)),
+        const_cast<Node*>(mesh->getNode(5)),
+        const_cast<Node*>(mesh->getNode(7)) });
+    auto some_nodes_mesh_subset = std::unique_ptr<MeshSubset>
+        {all_nodes_mesh_subset.getIntersectionByNodes(some_nodes)};
 
-	// Check sizes.
-	ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNNodes());
+    // Check sizes.
+    ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNNodes());
 
-	// Check ids.
-	std::size_t nnodes = some_nodes.size();
-	for (std::size_t i = 0; i < nnodes; ++i)
-		ASSERT_EQ(some_nodes[i]->getID(), some_nodes_mesh_subset->getNodeID(i));
+    // Check ids.
+    std::size_t nnodes = some_nodes.size();
+    for (std::size_t i = 0; i < nnodes; ++i)
+        ASSERT_EQ(some_nodes[i]->getID(), some_nodes_mesh_subset->getNodeID(i));
 }
 

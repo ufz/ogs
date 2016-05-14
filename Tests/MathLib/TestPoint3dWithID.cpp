@@ -19,11 +19,11 @@ using namespace MathLib;
 
 TEST(MathLib, Point3dWithID)
 {
-	Point3dWithID p0(0,0,0,1);
-	Point3dWithID p1(p0); // copy constructor
-	Point3dWithID p2(p0, 2); // constructor for resetting the id
+    Point3dWithID p0(0,0,0,1);
+    Point3dWithID p1(p0); // copy constructor
+    Point3dWithID p2(p0, 2); // constructor for resetting the id
 
-	EXPECT_EQ(p0.getID(), p1.getID());
-	EXPECT_NE(p0.getID(), p2.getID());
+    EXPECT_EQ(p0.getID(), p1.getID());
+    EXPECT_NE(p0.getID(), p2.getID());
 }
 

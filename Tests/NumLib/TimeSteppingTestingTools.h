@@ -22,8 +22,8 @@ namespace
 
 struct Dummy
 {
-	template <class T>
-	void operator()(T &/*obj*/) {}
+    template <class T>
+    void operator()(T &/*obj*/) {}
 };
 
 template <class T_TIME_STEPPING, class T=Dummy>

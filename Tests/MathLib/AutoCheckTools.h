@@ -24,47 +24,47 @@ namespace autocheck
 template <typename T, typename Gen = generator<T>>
 struct IntervalGenerator
 {
-	/// Construtor initializing the slope and the \f$y\f$-intercept deploying
-	/// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
-	IntervalGenerator(T a, T b)
-	    : _m((b-a)/2), _n((b+a)/2)
-	{}
+    /// Construtor initializing the slope and the \f$y\f$-intercept deploying
+    /// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
+    IntervalGenerator(T a, T b)
+        : _m((b-a)/2), _n((b+a)/2)
+    {}
 
-	// parameters for the interval mapping [-1,1] -> [a,b],
-	// y = _m * x + _n
-	T _m{1};
-	T _n{0};
+    // parameters for the interval mapping [-1,1] -> [a,b],
+    // y = _m * x + _n
+    T _m{1};
+    T _n{0};
 
-	Gen generator;
+    Gen generator;
 
-	using result_type = T;
+    using result_type = T;
 
-	result_type intervalMap(T val) const
-	{
-		return _m * val + _n;
-	}
+    result_type intervalMap(T val) const
+    {
+        return _m * val + _n;
+    }
 
-	result_type operator()(std::size_t /*size*/ = 0)
-	{
-		return intervalMap(fix(1, generator)());
-	}
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        return intervalMap(fix(1, generator)());
+    }
 };
 
 template <typename T, typename Gen = IntervalGenerator<T>>
 struct IntervalTupleGenerator
 {
-	IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
-	    : x_gen(ig0), y_gen(ig1), z_gen(ig2)
-	{}
+    IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
+        : x_gen(ig0), y_gen(ig1), z_gen(ig2)
+    {}
 
-	Gen x_gen, y_gen, z_gen;
+    Gen x_gen, y_gen, z_gen;
 
-	using result_type = std::array<T, 3>;
+    using result_type = std::array<T, 3>;
 
-	result_type operator()(std::size_t /*size*/ = 0)
-	{
-		return {{ x_gen(), y_gen(), z_gen() }};
-	}
+    result_type operator()(std::size_t /*size*/ = 0)
+    {
+        return {{ x_gen(), y_gen(), z_gen() }};
+    }
 };
 
 template <typename T, std::size_t N, typename Gen = generator<T>>
