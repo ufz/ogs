@@ -33,34 +33,34 @@ namespace MeshGeoToolsLib
 class MeshNodesAlongSurface
 {
 public:
-	/**
-	 * Constructor of object, that search mesh nodes along a
-	 * GeoLib::Surface object within a given search radius.
-	 * @param mesh_nodes Nodes the search will be performed on.
-	 * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
-	 */
-	MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc, bool search_all_nodes = true);
+    /**
+     * Constructor of object, that search mesh nodes along a
+     * GeoLib::Surface object within a given search radius.
+     * @param mesh_nodes Nodes the search will be performed on.
+     * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
+     */
+    MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc, bool search_all_nodes = true);
 
-	/// return the mesh object
-	MeshLib::Mesh const& getMesh() const;
+    /// return the mesh object
+    MeshLib::Mesh const& getMesh() const;
 
-	/**
-	 * Access the vector of mesh node ids.
-	 * @return The vector of mesh node ids calculated in the constructor
-	 */
-	std::vector<std::size_t> const& getNodeIDs () const;
+    /**
+     * Access the vector of mesh node ids.
+     * @return The vector of mesh node ids calculated in the constructor
+     */
+    std::vector<std::size_t> const& getNodeIDs () const;
 
-	/**
-	 * Deploying this method the user can get access to the underlying
-	 * GeoLib::Surface.
-	 * @return the underlying GeoLib::Surface
-	 */
-	GeoLib::Surface const& getSurface () const;
+    /**
+     * Deploying this method the user can get access to the underlying
+     * GeoLib::Surface.
+     * @return the underlying GeoLib::Surface
+     */
+    GeoLib::Surface const& getSurface () const;
 
 private:
-	MeshLib::Mesh const& _mesh;
-	GeoLib::Surface const& _sfc;
-	std::vector<std::size_t> _msh_node_ids;
+    MeshLib::Mesh const& _mesh;
+    GeoLib::Surface const& _sfc;
+    std::vector<std::size_t> _msh_node_ids;
 };
 } // end namespace MeshGeoToolsLib
 

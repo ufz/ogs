@@ -5,13 +5,13 @@ GET_SOURCE_FILES(SOURCES_MeshGeoToolsLib)
 add_library(MeshGeoToolsLib ${SOURCES_MeshGeoToolsLib})
 
 target_link_libraries(MeshGeoToolsLib
-	BaseLib
-	MathLib
-	MeshLib
-	GeoLib
-	FileIO
+    BaseLib
+    MathLib
+    MeshLib
+    GeoLib
+    FileIO
 )
 
 if(TARGET Boost)
-	add_dependencies(MeshGeoToolsLib Boost)
+    add_dependencies(MeshGeoToolsLib Boost)
 endif()
