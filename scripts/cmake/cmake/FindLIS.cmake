@@ -8,13 +8,13 @@
 #  Environment variable LIS_ROOT_DIR can be set to give hints
 
 find_path( LIS_INCLUDE_DIR lis.h
-	PATHS ENV LIS_ROOT_DIR
-	PATH_SUFFIXES include
+    PATHS ENV LIS_ROOT_DIR
+    PATH_SUFFIXES include
 )
 
 find_library(LIS_LIBRARY lis
-	PATHS ENV LIS_ROOT_DIR
-	PATH_SUFFIXES lib
+    PATHS ENV LIS_ROOT_DIR
+    PATH_SUFFIXES lib
 )
 
 set(LIS_LIBRARIES ${LIS_LIBRARY})

@@ -18,21 +18,21 @@ so you can easily use this repository for subtree merges, updating simply.
 
 For the initial checkout:
 
-	cd projectdir
+    cd projectdir
 
-	git subtree add --squash --prefix=cmake git@github.com:bilke/cmake-modules.git master
+    git subtree add --squash --prefix=cmake git@github.com:bilke/cmake-modules.git master
 
 For updates:
 
-	cd projectdir
+    cd projectdir
 
-	git subtree pull --squash --prefix=cmake git@github.com:bilke/cmake-modules.git master
+    git subtree pull --squash --prefix=cmake git@github.com:bilke/cmake-modules.git master
 
 For pushing to upstream:
 
-	cd projectdir
+    cd projectdir
 
-	git subtree push --prefix=cmake git@github.com:bilke/cmake-modules.git master
+    git subtree push --prefix=cmake git@github.com:bilke/cmake-modules.git master
 
 
 How to Use
@@ -41,12 +41,12 @@ How to Use
 At the minimum, all you have to do is add a line like this near the top
 of your root CMakeLists.txt file (but not before your project() call):
 
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 You might also want the extra automatic features/fixes included with the
 modules, for that, just add another line following the first one:
 
-	include(UseBackportedModules)
+    include(UseBackportedModules)
 
 
 Licenses
