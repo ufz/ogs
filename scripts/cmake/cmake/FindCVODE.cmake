@@ -39,7 +39,7 @@ find_package_handle_standard_args(CVODE DEFAULT_MSG
 )
 
 if(CVODE_FOUND)
-	set(CVODE_LIBRARIES sundials_cvode sundials_nvecserial)
+	set(CVODE_LIBRARIES ${CVODE_LIBRARY} ${CVODE_NVECSERIAL})
 endif()
 
 mark_as_advanced(CVODE_INCLUDE_DIRS CVODE_LIBRARY CVODE_NVECSERIAL)
