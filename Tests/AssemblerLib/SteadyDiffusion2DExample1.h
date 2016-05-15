@@ -16,8 +16,7 @@
 #include <cmath>
 #include <vector>
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "MathLib/LinAlg/Dense/DenseVector.h"
+#include <Eigen/Dense>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -26,8 +25,9 @@
 
 template<typename IndexType>struct SteadyDiffusion2DExample1
 {
-	using LocalMatrixType = MathLib::DenseMatrix<double>;
-	using LocalVectorType = MathLib::DenseVector<double>;
+	using LocalMatrixType =
+		Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+	using LocalVectorType = Eigen::VectorXd;
 
 	template <typename GlobalMatrix, typename GlobalVector>
 	class LocalAssemblerData

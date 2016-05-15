@@ -101,9 +101,6 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
     DISABLED_createVector, DISABLED_createMatrix);
 #endif
 
-#include "MathLib/LinAlg/Dense/DenseVector.h"
-#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
-
 #ifdef USE_LIS
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
@@ -120,8 +117,9 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
 #endif  // OGS_USE_EIGEN
 
 typedef ::testing::Types
-    < AssemblerLib::VectorMatrixBuilder<
-        MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double>>
+    <
+      AssemblerLib::VectorMatrixBuilder<
+      MathLib::EigenMatrix, MathLib::EigenVector>
 #ifdef USE_LIS
     , AssemblerLib::VectorMatrixBuilder<
         MathLib::LisMatrix, MathLib::LisVector>
@@ -130,10 +128,6 @@ typedef ::testing::Types
     , AssemblerLib::VectorMatrixBuilder<
         MathLib::PETScMatrix, MathLib::PETScVector>
 #endif  // USE_PETSC
-#ifdef OGS_USE_EIGEN
-    , AssemblerLib::VectorMatrixBuilder<
-        MathLib::EigenMatrix, MathLib::EigenVector>
-#endif  // OGS_USE_EIGEN
     > TestTypes;
 
 INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibVectorMatrixBuilder,

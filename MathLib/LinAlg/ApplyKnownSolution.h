@@ -11,8 +11,6 @@
 
 #include <vector>
 
-#include "MathLib/LinAlg/Dense/DenseTools.h"
-
 #ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenTools.h"
 #endif // OGS_USE_EIGEN

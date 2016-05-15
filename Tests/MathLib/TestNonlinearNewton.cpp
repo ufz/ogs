@@ -11,8 +11,9 @@
 
 #include <gtest/gtest.h>
 
+#include <valarray>
+
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/Nonlinear/NewtonRaphson.h"
 #include "Tests/TestTools.h"
@@ -21,7 +22,7 @@ namespace
 {
 
 typedef MathLib::DenseMatrix<double> MatrixType;
-typedef MathLib::DenseVector<double> VectorType;
+typedef std::valarray<double> VectorType;
 typedef MathLib::GaussAlgorithm<MatrixType,VectorType> DenseSolverType;
 
 template<class F_JACOBIAN>
