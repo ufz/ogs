@@ -98,7 +98,7 @@ struct EigenDynamicShapeMatrixPolicy
     using DimMatrixType = MatrixType<0,0>;
     using GlobalDimNodalMatrixType = MatrixType<0,0>;
     using GlobalDimMatrixType = MatrixType<0,0>;
-
+	using GlobalDimVectorType = VectorType<0>;
     using ShapeMatrices =
         NumLib::ShapeMatrices<
             NodalVectorType,

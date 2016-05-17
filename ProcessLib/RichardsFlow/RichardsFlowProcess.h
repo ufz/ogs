@@ -84,7 +84,7 @@ private:
 	virtual void preIteration(const unsigned iter, GlobalVector const& x) override
 	{
 		//(void)iter; (void)x; // by default do nothing
-		x.write("test" + std::to_string(iter) );//
+		//x.write("test" + std::to_string(iter) );//
 	}
     void createAssemblers(AssemblerLib::LocalToGlobalIndexMap const& dof_table,
                           MeshLib::Mesh const& mesh,

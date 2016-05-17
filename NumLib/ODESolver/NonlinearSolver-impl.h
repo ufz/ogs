@@ -69,7 +69,7 @@ solve(Vector &x)
 
 		++unique_iteration_count;
 			
-		A.write("global_A_" + std::to_string(unique_iteration_count));
+		//A.write("global_A_" + std::to_string(unique_iteration_count));
 
         bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
 

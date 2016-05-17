@@ -374,7 +374,10 @@ public:
     void preIteration(const unsigned iter, Vector const& x) override
     {
         _ode.preIteration(iter, x);
-    }
+		//x.write("b_");
+    
+	
+	}
 
     IterationResult postIteration(Vector const& x) override
     {

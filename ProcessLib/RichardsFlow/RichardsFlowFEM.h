@@ -57,6 +57,7 @@ public:
     {
 		const MeshLib::CoordinateSystem coordsystem(element);
 		const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(element, coordsystem);// wp.getCoords());
+		dim = coordsystem.getDimension();
 	}
 
     void assemble(double const t, std::vector<double> const& local_x) override
@@ -99,6 +100,7 @@ public:
 			NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
 			Pc = -P_int_pt;
 			//Sw = getSwbyPc_van(Pc);
+			Pc = 2700;
 			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
 										//dSwdPc = getdSwdPc_van(Pc);
 			//dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
@@ -123,7 +125,8 @@ public:
 				//Eigen::Vector3d const vec_g(0, 0, -9.81); //2D X-Z 
 				//Eigen::Vector2d const vec_g(0, -9.81);//2D X-Y
 				typename ShapeMatricesType::GlobalDimVectorType vec_g;
-				vec_g(GlobalDim-1) = -9.81;
+				vec_g.resize(dim);
+				vec_g(dim-1) = -9.81;
 				//const double vec_g(-9.81);//1D
 				// since no primary vairable involved
 				// directly assemble to the Right-Hand-Side
@@ -145,6 +148,7 @@ public:
 
 private:
     MeshLib::Element const& _element;
+	unsigned dim;
 	std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>> _shape_matrices;
     RichardsFlowProcessData const& _process_data;
 
