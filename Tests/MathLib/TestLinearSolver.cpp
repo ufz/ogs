@@ -15,9 +15,7 @@
 
 #include <gtest/gtest.h>
 
-#include "MathLib/LinAlg/Dense/DenseVector.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -70,7 +68,7 @@ void setMatrix9x9(T_Mat &mat)
 
 template<typename IntType> struct Example1
 {
-    MathLib::GlobalDenseMatrix<double> mat;
+    MathLib::EigenMatrix mat;
     std::vector<IntType> vec_dirichlet_bc_id;
     std::vector<double> vec_dirichlet_bc_value;
     static const std::size_t dim_eqs = 9;
@@ -110,7 +108,7 @@ void checkLinearSolverInterface(T_MATRIX &A, BaseLib::ConfigTree const& ls_optio
     {
         for (std::size_t j=0; j<ex1.dim_eqs; j++)
         {
-            double v = ex1.mat(i, j);
+            double v = ex1.mat.get(i, j);
             if (v!=.0)
                 A.add(i, j, v);
         }
@@ -201,21 +199,6 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 #endif
 
 } // end namespace
-
-TEST(MathLib, CheckInterface_GaussAlgorithm)
-{
-    boost::property_tree::ptree t_root;
-    BaseLib::ConfigTree conf(t_root, "",
-        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-
-    using Example = Example1<std::size_t>;
-
-    typedef MathLib::GaussAlgorithm<MathLib::GlobalDenseMatrix<double>, MathLib::DenseVector<double> > LinearSolverType;
-    MathLib::GlobalDenseMatrix<double> A(Example::dim_eqs, Example::dim_eqs);
-    checkLinearSolverInterface<MathLib::GlobalDenseMatrix<double>,
-                               MathLib::DenseVector<double>, LinearSolverType, std::size_t>(
-        A, conf);
-}
 
 #ifdef OGS_USE_EIGEN
 TEST(Math, CheckInterface_Eigen)

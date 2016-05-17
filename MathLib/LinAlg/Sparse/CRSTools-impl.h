@@ -13,7 +13,6 @@
 #include "CRSTools.h"
 
 #include "CRSMatrix.h"
-#include "../Dense/DenseVector.h"
 
 namespace MathLib
 {
