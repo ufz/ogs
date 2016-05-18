@@ -29,13 +29,13 @@ MinimalBoundingSphere::MinimalBoundingSphere()
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(
-	MathLib::Point3d const& p, double radius)
+    MathLib::Point3d const& p, double radius)
 : _radius(radius), _center(p)
 {
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(
-	MathLib::Point3d const& p, MathLib::Point3d const& q)
+    MathLib::Point3d const& p, MathLib::Point3d const& q)
 : _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
     MathLib::Vector3 const a(p, q);
@@ -49,7 +49,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
-	MathLib::Point3d const& q, MathLib::Point3d const& r)
+    MathLib::Point3d const& q, MathLib::Point3d const& r)
 {
     MathLib::Vector3 const a(p,r);
     MathLib::Vector3 const b(p,q);
@@ -78,9 +78,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
-	MathLib::Point3d const& q,
-	MathLib::Point3d const& r,
-	MathLib::Point3d const& s)
+    MathLib::Point3d const& q,
+    MathLib::Point3d const& r,
+    MathLib::Point3d const& s)
 {
     MathLib::Vector3 const a(p, q);
     MathLib::Vector3 const b(p, r);
@@ -124,21 +124,21 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(
-	std::vector<MathLib::Point3d*> const& points)
+    std::vector<MathLib::Point3d*> const& points)
 : _radius(-1), _center(0,0,0)
 {
-	std::vector<MathLib::Point3d*> sphere_points(points);
-	MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
-	_center = bounding_sphere.getCenter();
-	_radius = bounding_sphere.getRadius();
+    std::vector<MathLib::Point3d*> sphere_points(points);
+    MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
+    _center = bounding_sphere.getCenter();
+    _radius = bounding_sphere.getRadius();
 }
 
 MinimalBoundingSphere
 MinimalBoundingSphere::recurseCalculation(
-	std::vector<MathLib::Point3d*> sphere_points,
-	std::size_t start_idx,
-	std::size_t length,
-	std::size_t n_boundary_points)
+    std::vector<MathLib::Point3d*> sphere_points,
+    std::size_t start_idx,
+    std::size_t length,
+    std::size_t n_boundary_points)
 {
     MinimalBoundingSphere sphere;
     switch(n_boundary_points)

@@ -28,47 +28,47 @@ class vtkInformationVector;
 class VtkImageDataToLinePolyDataFilter : public vtkPolyDataAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// @brief Create new objects with New() because of VTKs reference counting.
-	static VtkImageDataToLinePolyDataFilter* New();
+    /// @brief Create new objects with New() because of VTKs reference counting.
+    static VtkImageDataToLinePolyDataFilter* New();
 
-	vtkTypeMacro(VtkImageDataToLinePolyDataFilter, vtkPolyDataAlgorithm);
+    vtkTypeMacro(VtkImageDataToLinePolyDataFilter, vtkPolyDataAlgorithm);
 
-	/// @brief Prints information about itself.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// @brief Prints information about itself.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	/// @brief Sets the scaling of the length of the lines.
-	ogsUserPropertyMacro(LengthScaleFactor,double);
+    /// @brief Sets the scaling of the length of the lines.
+    ogsUserPropertyMacro(LengthScaleFactor,double);
 
-	/// @brief Sets a user property.
-	virtual void SetUserProperty(QString name, QVariant value)
-	{
-		if (name.compare("LengthScaleFactor") == 0)
-			SetLengthScaleFactor(value.toDouble());
-	}
+    /// @brief Sets a user property.
+    virtual void SetUserProperty(QString name, QVariant value)
+    {
+        if (name.compare("LengthScaleFactor") == 0)
+            SetLengthScaleFactor(value.toDouble());
+    }
 
-	/// @brief Returns the space between two pixels.
-	vtkGetMacro(ImageSpacing,double);
+    /// @brief Returns the space between two pixels.
+    vtkGetMacro(ImageSpacing,double);
 
 protected:
-	/// @brief Constructor.
-	VtkImageDataToLinePolyDataFilter();
+    /// @brief Constructor.
+    VtkImageDataToLinePolyDataFilter();
 
-	/// @brief Destructor.
-	virtual ~VtkImageDataToLinePolyDataFilter();
+    /// @brief Destructor.
+    virtual ~VtkImageDataToLinePolyDataFilter();
 
-	/// @brief Sets input port to vtkImageData.
-	virtual int FillInputPortInformation(int port, vtkInformation* info);
+    /// @brief Sets input port to vtkImageData.
+    virtual int FillInputPortInformation(int port, vtkInformation* info);
 
-	/// @brief Converts the image data to lines
-	virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
-	                        vtkInformationVector* outputVector);
+    /// @brief Converts the image data to lines
+    virtual int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+                            vtkInformationVector* outputVector);
 
-	/// @brief The spacing of the image
-	double ImageSpacing;
+    /// @brief The spacing of the image
+    double ImageSpacing;
 
 private:
-	VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
-	void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
+    VtkImageDataToLinePolyDataFilter(const VtkImageDataToLinePolyDataFilter&); // Not implemented.
+    void operator=(const VtkImageDataToLinePolyDataFilter&); // Not implemented
 };
 
 #endif // VTKIMAGEDATATOLINEPOLYDATAFILTER_H

@@ -25,7 +25,7 @@
 #include "TreeModel.h"
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 class vtkUnstructuredGridAlgorithm;
@@ -35,54 +35,54 @@ class vtkUnstructuredGridAlgorithm;
  */
 class MshModel : public TreeModel
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MshModel(DataHolderLib::Project &project, QObject* parent = 0);
+    MshModel(DataHolderLib::Project &project, QObject* parent = 0);
 
-	/// Adds a new mesh
-	void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
+    /// Adds a new mesh
+    void addMesh(std::unique_ptr<MeshLib::Mesh> mesh);
 
-	/// Returns the number of columns used for the data list
-	int columnCount(const QModelIndex& parent = QModelIndex()) const;
+    /// Returns the number of columns used for the data list
+    int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
 public slots:
-	/// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)
-	void addMesh(MeshLib::Mesh* mesh);
-	/// Returns the mesh with the given index.
-	const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
-	/// Returns the mesh with the given name.
-	const MeshLib::Mesh* getMesh(const std::string &name) const;
-	/// Removes the mesh with the given index.
-	bool removeMesh(const QModelIndex &idx);
-	/// Removes the mesh with the given name.
-	bool removeMesh(const std::string &name);
-	/// Updates the model/view for a mesh.
-	void updateMesh(MeshLib::Mesh*);
-	/// Updates the model based on the ProjectData-object
-	void updateModel();
-	/// Returns the VTK source item for the mesh with the given index.
-	vtkUnstructuredGridAlgorithm* vtkSource(const QModelIndex &idx) const;
-	/// Returns the VTK source item for the mesh with the given name.
-	vtkUnstructuredGridAlgorithm* vtkSource(const std::string &name) const;
+    /// Adds a new mesh (using no unique_ptr as this interferes with Qt's signal/slot policy)
+    void addMesh(MeshLib::Mesh* mesh);
+    /// Returns the mesh with the given index.
+    const MeshLib::Mesh* getMesh(const QModelIndex &idx) const;
+    /// Returns the mesh with the given name.
+    const MeshLib::Mesh* getMesh(const std::string &name) const;
+    /// Removes the mesh with the given index.
+    bool removeMesh(const QModelIndex &idx);
+    /// Removes the mesh with the given name.
+    bool removeMesh(const std::string &name);
+    /// Updates the model/view for a mesh.
+    void updateMesh(MeshLib::Mesh*);
+    /// Updates the model based on the ProjectData-object
+    void updateModel();
+    /// Returns the VTK source item for the mesh with the given index.
+    vtkUnstructuredGridAlgorithm* vtkSource(const QModelIndex &idx) const;
+    /// Returns the VTK source item for the mesh with the given name.
+    vtkUnstructuredGridAlgorithm* vtkSource(const std::string &name) const;
 
 private:
-	/// Adds the mesh to the GUI-Mesh-Model und -View
-	void addMeshObject(const MeshLib::Mesh* mesh);
+    /// Adds the mesh to the GUI-Mesh-Model und -View
+    void addMeshObject(const MeshLib::Mesh* mesh);
 
-	/// Checks if the name of the mesh is already exists, if so it generates a unique name.
-	//bool isUniqueMeshName(std::string &name);
-	DataHolderLib::Project& _project;
+    /// Checks if the name of the mesh is already exists, if so it generates a unique name.
+    //bool isUniqueMeshName(std::string &name);
+    DataHolderLib::Project& _project;
 
-	/// Creates a static map of all element type name-strings in QVariant format
-	static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();
+    /// Creates a static map of all element type name-strings in QVariant format
+    static std::map<MeshLib::MeshElemType, QVariant> createMeshElemTypeMap();
 
-	static const std::map<MeshLib::MeshElemType, QVariant> elem_type_map;
-	static const QVariant element_str;
+    static const std::map<MeshLib::MeshElemType, QVariant> elem_type_map;
+    static const QVariant element_str;
 
 signals:
-	void meshAdded(MshModel*, const QModelIndex&);
-	void meshRemoved(MshModel*, const QModelIndex&);
+    void meshAdded(MshModel*, const QModelIndex&);
+    void meshRemoved(MshModel*, const QModelIndex&);
 };
 
 #endif // MSHMODEL_H

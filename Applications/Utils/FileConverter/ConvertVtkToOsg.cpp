@@ -44,18 +44,18 @@ using namespace std;
 // Replace file extension
 void replaceExt(string& s, const string& newExt)
 {
-	string::size_type i = s.rfind('.', s.length());
-	if (i != string::npos)
-		s.replace(i + 1, newExt.length(), newExt);
+    string::size_type i = s.rfind('.', s.length());
+    if (i != string::npos)
+        s.replace(i + 1, newExt.length(), newExt);
 }
 
 // Get file extension
 string getFileExt(const string& s)
 {
-	std::size_t i = s.rfind('.', s.length());
-	if (i != string::npos)
-		return s.substr(i + 1, s.length() - i);
-	return "";
+    std::size_t i = s.rfind('.', s.length());
+    if (i != string::npos)
+        return s.substr(i + 1, s.length() - i);
+    return "";
 }
 
 // No arguments: batch convert all vt* files
@@ -63,147 +63,147 @@ string getFileExt(const string& s)
 // file argument: convert only the specified file
 int main (int argc, char const* argv[])
 {
-	vector<string> filenames;
-	bool useSwitch = false;
-	if (argc == 2)
-	{
-		if (string(argv[1]).find("switch") != string::npos)
-			useSwitch = true;
-		else
-			filenames.push_back(string(argv[1]));
-	}
+    vector<string> filenames;
+    bool useSwitch = false;
+    if (argc == 2)
+    {
+        if (string(argv[1]).find("switch") != string::npos)
+            useSwitch = true;
+        else
+            filenames.push_back(string(argv[1]));
+    }
 
-	if (useSwitch || filenames.empty())
-	{
-		const boost::regex e(".+\\.vt[a-z]");
-		directory_iterator end;
-		for (directory_iterator it("./"); it != end; ++it)
-		{
-			string curFile = it->path().filename().string();
-			if (regex_match(curFile, e))
-				filenames.push_back(curFile);
-		}
-	}
+    if (useSwitch || filenames.empty())
+    {
+        const boost::regex e(".+\\.vt[a-z]");
+        directory_iterator end;
+        for (directory_iterator it("./"); it != end; ++it)
+        {
+            string curFile = it->path().filename().string();
+            if (regex_match(curFile, e))
+                filenames.push_back(curFile);
+        }
+    }
 
-	OSG::osgInit(0, NULL);
+    OSG::osgInit(0, NULL);
 
-	vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
-	OSG::NodePtr switchNode = OSG::Node::create();
-	OSG::SwitchPtr switchCore = OSG::Switch::create();
-	beginEditCP(switchCore);
-	switchCore->setChoice(0);
-	endEditCP(switchCore);
-	beginEditCP(switchNode);
-	switchNode->setCore(switchCore);
-	endEditCP(switchNode);
+    vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
+    OSG::NodePtr switchNode = OSG::Node::create();
+    OSG::SwitchPtr switchCore = OSG::Switch::create();
+    beginEditCP(switchCore);
+    switchCore->setChoice(0);
+    endEditCP(switchCore);
+    beginEditCP(switchNode);
+    switchNode->setCore(switchCore);
+    endEditCP(switchNode);
 
-	for (vector<string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
-	{
-		string filename(*it);
-		cout << "Opening file " << filename << " ... " << endl << flush;
-		string fileExt = getFileExt(filename);
+    for (vector<string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
+    {
+        string filename(*it);
+        cout << "Opening file " << filename << " ... " << endl << flush;
+        string fileExt = getFileExt(filename);
 
-		vtkXMLDataReader* reader = NULL;
-		vtkGenericDataObjectReader* oldStyleReader = NULL;
-		if (fileExt.find("vti") != string::npos)
-		{
-			reader = vtkXMLImageDataReader::New();
-			vtkSmartPointer<vtkImageDataGeometryFilter> geoFilter =
-			        vtkSmartPointer<vtkImageDataGeometryFilter>::New();
-			geoFilter->SetInputConnection(reader->GetOutputPort());
-			mapper->SetInputConnection(geoFilter->GetOutputPort());
-		}
-		if (fileExt.find("vtr") != string::npos)
-		{
-			reader = vtkXMLRectilinearGridReader::New();
-			vtkSmartPointer<vtkGeometryFilter> geoFilter =
-			        vtkSmartPointer<vtkGeometryFilter>::New();
-			geoFilter->SetInputConnection(reader->GetOutputPort());
-			mapper->SetInputConnection(geoFilter->GetOutputPort());
-		}
-		else if (fileExt.find("vts") != string::npos)
-		{
-			reader = vtkXMLStructuredGridReader::New();
-			vtkSmartPointer<vtkGeometryFilter> geoFilter =
-			        vtkSmartPointer<vtkGeometryFilter>::New();
-			geoFilter->SetInputConnection(reader->GetOutputPort());
-			mapper->SetInputConnection(geoFilter->GetOutputPort());
-		}
-		else if (fileExt.find("vtp") != string::npos)
-		{
-			reader = vtkXMLPolyDataReader::New();
-			mapper->SetInputConnection(reader->GetOutputPort());
-		}
-		else if (fileExt.find("vtu") != string::npos)
-		{
-			reader = vtkXMLUnstructuredGridReader::New();
-			vtkSmartPointer<vtkGeometryFilter> geoFilter =
-			        vtkSmartPointer<vtkGeometryFilter>::New();
-			geoFilter->SetInputConnection(reader->GetOutputPort());
-			mapper->SetInputConnection(geoFilter->GetOutputPort());
-		}
-		else if (fileExt.find("vtk") != string::npos)
-		{
-			oldStyleReader = vtkGenericDataObjectReader::New();
-			oldStyleReader->SetFileName(filename.c_str());
-			oldStyleReader->Update();
-			if(oldStyleReader->IsFilePolyData())
-				mapper->SetInputConnection(oldStyleReader->GetOutputPort());
-			else
-			{
-				vtkSmartPointer<vtkGeometryFilter> geoFilter =
-				        vtkSmartPointer<vtkGeometryFilter>::New();
-				geoFilter->SetInputConnection(oldStyleReader->GetOutputPort());
-				mapper->SetInputConnection(geoFilter->GetOutputPort());
-			}
-		}
-		else
-		{
-			cout << "Not a valid vtk file ending (vti, vtr, vts, vtp, vtu, vtk)" <<
-			endl;
-			return 1;
-		}
+        vtkXMLDataReader* reader = NULL;
+        vtkGenericDataObjectReader* oldStyleReader = NULL;
+        if (fileExt.find("vti") != string::npos)
+        {
+            reader = vtkXMLImageDataReader::New();
+            vtkSmartPointer<vtkImageDataGeometryFilter> geoFilter =
+                    vtkSmartPointer<vtkImageDataGeometryFilter>::New();
+            geoFilter->SetInputConnection(reader->GetOutputPort());
+            mapper->SetInputConnection(geoFilter->GetOutputPort());
+        }
+        if (fileExt.find("vtr") != string::npos)
+        {
+            reader = vtkXMLRectilinearGridReader::New();
+            vtkSmartPointer<vtkGeometryFilter> geoFilter =
+                    vtkSmartPointer<vtkGeometryFilter>::New();
+            geoFilter->SetInputConnection(reader->GetOutputPort());
+            mapper->SetInputConnection(geoFilter->GetOutputPort());
+        }
+        else if (fileExt.find("vts") != string::npos)
+        {
+            reader = vtkXMLStructuredGridReader::New();
+            vtkSmartPointer<vtkGeometryFilter> geoFilter =
+                    vtkSmartPointer<vtkGeometryFilter>::New();
+            geoFilter->SetInputConnection(reader->GetOutputPort());
+            mapper->SetInputConnection(geoFilter->GetOutputPort());
+        }
+        else if (fileExt.find("vtp") != string::npos)
+        {
+            reader = vtkXMLPolyDataReader::New();
+            mapper->SetInputConnection(reader->GetOutputPort());
+        }
+        else if (fileExt.find("vtu") != string::npos)
+        {
+            reader = vtkXMLUnstructuredGridReader::New();
+            vtkSmartPointer<vtkGeometryFilter> geoFilter =
+                    vtkSmartPointer<vtkGeometryFilter>::New();
+            geoFilter->SetInputConnection(reader->GetOutputPort());
+            mapper->SetInputConnection(geoFilter->GetOutputPort());
+        }
+        else if (fileExt.find("vtk") != string::npos)
+        {
+            oldStyleReader = vtkGenericDataObjectReader::New();
+            oldStyleReader->SetFileName(filename.c_str());
+            oldStyleReader->Update();
+            if(oldStyleReader->IsFilePolyData())
+                mapper->SetInputConnection(oldStyleReader->GetOutputPort());
+            else
+            {
+                vtkSmartPointer<vtkGeometryFilter> geoFilter =
+                        vtkSmartPointer<vtkGeometryFilter>::New();
+                geoFilter->SetInputConnection(oldStyleReader->GetOutputPort());
+                mapper->SetInputConnection(geoFilter->GetOutputPort());
+            }
+        }
+        else
+        {
+            cout << "Not a valid vtk file ending (vti, vtr, vts, vtp, vtu, vtk)" <<
+            endl;
+            return 1;
+        }
 
-		if (fileExt.find("vtk") == string::npos)
-		{
-			reader->SetFileName(filename.c_str());
-			reader->Update();
-		}
+        if (fileExt.find("vtk") == string::npos)
+        {
+            reader->SetFileName(filename.c_str());
+            reader->Update();
+        }
 
-		vtkActor* actor = vtkActor::New();
-		actor->SetMapper(mapper);
+        vtkActor* actor = vtkActor::New();
+        actor->SetMapper(mapper);
 
-		vtkOsgConverter converter(actor);
-		converter.SetVerbose(true);
-		//converter->SetMapper(mapper);
-		converter.WriteAnActor();
-		OSG::NodePtr node = converter.GetOsgNode();
-		replaceExt(filename, "osb");
-		if (useSwitch)
-		{
-			beginEditCP(switchNode);
-			switchNode->addChild(node);
-			endEditCP(switchNode);
-		}
-		else
-			OSG::SceneFileHandler::the().write(node, filename.c_str());
+        vtkOsgConverter converter(actor);
+        converter.SetVerbose(true);
+        //converter->SetMapper(mapper);
+        converter.WriteAnActor();
+        OSG::NodePtr node = converter.GetOsgNode();
+        replaceExt(filename, "osb");
+        if (useSwitch)
+        {
+            beginEditCP(switchNode);
+            switchNode->addChild(node);
+            endEditCP(switchNode);
+        }
+        else
+            OSG::SceneFileHandler::the().write(node, filename.c_str());
 
-		if (reader)
-			reader->Delete();
-		if (oldStyleReader)
-			oldStyleReader->Delete();
-	}
-	if (useSwitch)
-	{
-		string filename(filenames[0]);
-		replaceExt(filename, "osb");
-		OSG::SceneFileHandler::the().write(switchNode, filename.c_str());
-	}
-	//mapper->Delete(); // TODO crashes
+        if (reader)
+            reader->Delete();
+        if (oldStyleReader)
+            oldStyleReader->Delete();
+    }
+    if (useSwitch)
+    {
+        string filename(filenames[0]);
+        replaceExt(filename, "osb");
+        OSG::SceneFileHandler::the().write(switchNode, filename.c_str());
+    }
+    //mapper->Delete(); // TODO crashes
 
-	OSG::osgExit();
+    OSG::osgExit();
 
-	cout << "File conversion finished" << endl;
+    cout << "File conversion finished" << endl;
 
-	return 0;
+    return 0;
 }

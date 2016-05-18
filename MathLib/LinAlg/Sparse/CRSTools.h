@@ -35,8 +35,8 @@ template<typename IDX_TYPE> class DenseVector;
  */
 template <typename VEC_T, typename FP_TYPE = double>
 void applyKnownSolution(CRSMatrix<FP_TYPE, typename VEC_T::IndexType>*& mat,
-	VEC_T &rhs, std::vector<std::size_t> const& rows,
-	std::vector<FP_TYPE> const& vals);
+    VEC_T &rhs, std::vector<std::size_t> const& rows,
+    std::vector<FP_TYPE> const& vals);
 
 } // MathLib
 

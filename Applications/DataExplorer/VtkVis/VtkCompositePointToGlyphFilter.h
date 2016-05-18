@@ -23,15 +23,15 @@ class vtkSphereSource;
 class VtkCompositePointToGlyphFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositePointToGlyphFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositePointToGlyphFilter();
+    VtkCompositePointToGlyphFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositePointToGlyphFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 private:
-	vtkSphereSource* _glyphSource;
+    vtkSphereSource* _glyphSource;
 };
 
 #endif // VTKCOMPOSITEPOINTTOGLYPHFILTER_H

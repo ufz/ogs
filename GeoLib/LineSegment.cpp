@@ -33,50 +33,50 @@ LineSegment::LineSegment(LineSegment&& line_segment)
       _point_mem_management_by_line_segment(
           line_segment._point_mem_management_by_line_segment)
 {
-	line_segment._a = nullptr;
-	line_segment._b = nullptr;
-	line_segment._point_mem_management_by_line_segment = false;
+    line_segment._a = nullptr;
+    line_segment._b = nullptr;
+    line_segment._point_mem_management_by_line_segment = false;
 }
 
 LineSegment::~LineSegment()
 {
-	if (_point_mem_management_by_line_segment) {
-		delete _b;
-		delete _a;
-	}
+    if (_point_mem_management_by_line_segment) {
+        delete _b;
+        delete _a;
+    }
 }
 
 Point const& LineSegment::getBeginPoint() const
 {
-	return *_a;
+    return *_a;
 }
 
 Point & LineSegment::getBeginPoint()
 {
-	return *_a;
+    return *_a;
 }
 
 Point const& LineSegment::getEndPoint() const
 {
-	return *_b;
+    return *_b;
 }
 
 Point & LineSegment::getEndPoint()
 {
-	return *_b;
+    return *_b;
 }
 
 std::ostream& operator<< (std::ostream& os, LineSegment const& s)
 {
-	os << "{(" << s.getBeginPoint() << "), (" << s.getEndPoint() << ")}";
-	return os;
+    os << "{(" << s.getBeginPoint() << "), (" << s.getEndPoint() << ")}";
+    return os;
 }
 
 std::ostream& operator<<(std::ostream& os,
                          std::pair<GeoLib::LineSegment const&,
                                    GeoLib::LineSegment const&> const& seg_pair)
 {
-	os << seg_pair.first << " x " << seg_pair.second;
-	return os;
+    os << seg_pair.first << " x " << seg_pair.second;
+    return os;
 }
 }

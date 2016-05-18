@@ -41,12 +41,12 @@ namespace IO
 {
 
 VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
-	_mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
+    _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
-	if(_data_mode == vtkXMLWriter::Appended)
-		ERR("Appended data mode is currently not supported!");
-	if(_data_mode == vtkXMLWriter::Ascii && compress)
-		WARN("Ascii data cannot be compressed, ignoring compression flag.")
+    if(_data_mode == vtkXMLWriter::Appended)
+        ERR("Appended data mode is currently not supported!");
+    if(_data_mode == vtkXMLWriter::Ascii && compress)
+        WARN("Ascii data cannot be compressed, ignoring compression flag.")
 }
 
 VtuInterface::~VtuInterface()
@@ -54,53 +54,53 @@ VtuInterface::~VtuInterface()
 
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
-	if (!BaseLib::IsFileExisting(file_name)) {
-		ERR("File \"%s\" does not exist.", file_name.c_str());
-		return nullptr;
-	}
+    if (!BaseLib::IsFileExisting(file_name)) {
+        ERR("File \"%s\" does not exist.", file_name.c_str());
+        return nullptr;
+    }
 
-	vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
-		vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-	reader->SetFileName(file_name.c_str());
-	reader->Update();
+    vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
+        vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+    reader->SetFileName(file_name.c_str());
+    reader->Update();
 
-	vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
-	if (vtkGrid->GetNumberOfPoints() == 0)
-		return nullptr;
+    vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
+    if (vtkGrid->GetNumberOfPoints() == 0)
+        return nullptr;
 
-	std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
-	return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
+    std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
+    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
 }
 
 bool VtuInterface::writeToFile(std::string const &file_name)
 {
 #ifdef USE_PETSC
-	// Also for other approach with DDC.
-	// In such case, a MPI_Comm argument is need to this member,
-	// and PETSC_COMM_WORLD should be replaced with the argument.
-	int mpi_rank;
-	MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-	const std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
+    // Also for other approach with DDC.
+    // In such case, a MPI_Comm argument is need to this member,
+    // and PETSC_COMM_WORLD should be replaced with the argument.
+    int mpi_rank;
+    MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+    const std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
 
-	const std::string file_name_rank = file_name_base + "_"
-	                                   + std::to_string(mpi_rank) + ".vtu";
-	const bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
-	bool vtu_status = false;
-	MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
+    const std::string file_name_rank = file_name_base + "_"
+                                       + std::to_string(mpi_rank) + ".vtu";
+    const bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
+    bool vtu_status = false;
+    MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
 
-	int mpi_size;
-	MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
-	bool pvtu_status = false;
-	if (mpi_rank == 0)
-	{
-		pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(file_name_base + ".pvtu", mpi_size);
-	}
-	MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
+    int mpi_size;
+    MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
+    bool pvtu_status = false;
+    if (mpi_rank == 0)
+    {
+        pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(file_name_base + ".pvtu", mpi_size);
+    }
+    MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
 
-	return vtu_status && pvtu_status;
+    return vtu_status && pvtu_status;
 
 #else
-	return writeVTU<vtkXMLUnstructuredGridWriter>(file_name);
+    return writeVTU<vtkXMLUnstructuredGridWriter>(file_name);
 #endif
 }
 } // end namespace IO

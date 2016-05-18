@@ -23,12 +23,12 @@ class vtkSphereSource;
 class VtkCompositeColorByHeightFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeColorByHeightFilter() {}
+    VtkCompositeColorByHeightFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeColorByHeightFilter() {}
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
 };

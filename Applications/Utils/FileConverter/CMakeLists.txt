@@ -1,32 +1,32 @@
 
 include_directories(
-	${CMAKE_SOURCE_DIR}/Utils/FileConverter
-	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/GeoLib
-	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/MathLib
-	${CMAKE_SOURCE_DIR}/MeshLib
-	${CMAKE_SOURCE_DIR}/Gui/OpenSG
+    ${CMAKE_SOURCE_DIR}/Utils/FileConverter
+    ${CMAKE_SOURCE_DIR}/BaseLib
+    ${CMAKE_SOURCE_DIR}/GeoLib
+    ${CMAKE_SOURCE_DIR}/FileIO
+    ${CMAKE_SOURCE_DIR}/MathLib
+    ${CMAKE_SOURCE_DIR}/MeshLib
+    ${CMAKE_SOURCE_DIR}/Gui/OpenSG
 )
 
 if (QT4_FOUND AND Shapelib_FOUND)
-	add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
-	set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
+    add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
+    set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
     target_link_libraries(ConvertSHPToGLI GeoLib Qt4::QtXml ${Shapelib_LIBRARIES})
 endif ()
 
 if (QT4_FOUND)
-	add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
-	set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
-	target_link_libraries(FEFLOW2OGS FileIO MeshLib)
-	ADD_VTK_DEPENDENCY(FEFLOW2OGS)
+    add_executable(FEFLOW2OGS FEFLOW2OGS.cpp)
+    set_target_properties(FEFLOW2OGS PROPERTIES FOLDER Utilities)
+    target_link_libraries(FEFLOW2OGS FileIO MeshLib)
+    ADD_VTK_DEPENDENCY(FEFLOW2OGS)
 endif ()
 
 add_executable(generateMatPropsFromMatID generateMatPropsFromMatID.cpp )
 target_link_libraries(generateMatPropsFromMatID MeshLib)
 ADD_VTK_DEPENDENCY(generateMatPropsFromMatID)
 set_target_properties(generateMatPropsFromMatID
-	PROPERTIES FOLDER Utilities)
+    PROPERTIES FOLDER Utilities)
 
 add_executable(GMSH2OGS GMSH2OGS.cpp)
 set_target_properties(GMSH2OGS PROPERTIES FOLDER Utilities)
@@ -57,15 +57,15 @@ ADD_VTK_DEPENDENCY(TIN2VTK)
 ### Installation ###
 ####################
 install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
-	RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(QT4_FOUND)
-	install(TARGETS ConvertSHPToGLI
-		FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    install(TARGETS ConvertSHPToGLI
+        FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()
 
 cpack_add_component(ogs_converter
-	DISPLAY_NAME "File converter"
-	DESCRIPTION "File converter."
-	GROUP Utilities
+    DISPLAY_NAME "File converter"
+    DESCRIPTION "File converter."
+    GROUP Utilities
 )

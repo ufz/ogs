@@ -43,58 +43,58 @@ class VtkVisPointSetItem : public VtkVisPipelineItem
 {
 
 public:
-	/// @brief Constructor for a source/filter object.
-	VtkVisPointSetItem(vtkAlgorithm* algorithm,
-	                   TreeItem* parentItem,
-	                   const QList<QVariant> data = QList<QVariant>());
+    /// @brief Constructor for a source/filter object.
+    VtkVisPointSetItem(vtkAlgorithm* algorithm,
+                       TreeItem* parentItem,
+                       const QList<QVariant> data = QList<QVariant>());
 
-	/// @brief Constructor for composite filter
-	VtkVisPointSetItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
-	                   const QList<QVariant> data = QList<QVariant>());
+    /// @brief Constructor for composite filter
+    VtkVisPointSetItem(VtkCompositeFilter* compositeFilter, TreeItem* parentItem,
+                       const QList<QVariant> data = QList<QVariant>());
 
-	~VtkVisPointSetItem();
+    ~VtkVisPointSetItem();
 
-	/// @brief Gets the last selected attribute.
-	const QString GetActiveAttribute() const;
+    /// @brief Gets the last selected attribute.
+    const QString GetActiveAttribute() const;
 
-	/// @brief Get the scalar range for the active attribute
-	void GetRangeForActiveAttribute(double range[2]) const;
+    /// @brief Get the scalar range for the active attribute
+    void GetRangeForActiveAttribute(double range[2]) const;
 
-	/// @brief Initializes vtkMapper and vtkActor necessary for visualization of
-	/// the item and sets the item's properties.
-	void Initialize(vtkRenderer* renderer);
+    /// @brief Initializes vtkMapper and vtkActor necessary for visualization of
+    /// the item and sets the item's properties.
+    void Initialize(vtkRenderer* renderer);
 
-	vtkAlgorithm* transformFilter() const;
+    vtkAlgorithm* transformFilter() const;
 
-	/// @brief Sets the selected attribute array for the visualisation of the data set.
-	void SetActiveAttribute(const QString& name);
+    /// @brief Sets the selected attribute array for the visualisation of the data set.
+    void SetActiveAttribute(const QString& name);
 
-	/// @brief Scales the data in visualisation-space.
-	void setScale(double x, double y, double z) const;
+    /// @brief Scales the data in visualisation-space.
+    void setScale(double x, double y, double z) const;
 
-	/// @brief Translates the item in visualisation-space.
-	void setTranslation(double x, double y, double z) const;
+    /// @brief Translates the item in visualisation-space.
+    void setTranslation(double x, double y, double z) const;
 
-	/// @brief Enables / disables backface culling.
-	void setBackfaceCulling(bool enable) const;
+    /// @brief Enables / disables backface culling.
+    void setBackfaceCulling(bool enable) const;
 
 protected:
-	QVtkDataSetMapper* _mapper;
-	vtkTransformFilter* _transformFilter;
-	bool _onPointData;
-	std::string _activeArrayName;
+    QVtkDataSetMapper* _mapper;
+    vtkTransformFilter* _transformFilter;
+    bool _onPointData;
+    std::string _activeArrayName;
 
-	/// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
-	virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
+    /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
+    virtual int callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const;
 
-	void SetScalarVisibility(bool on);
+    void SetScalarVisibility(bool on);
 
-	/// @brief Sets pre-set properties on vtkActor and on vtkMapper
-	void setVtkProperties(VtkAlgorithmProperties* vtkProps);
+    /// @brief Sets pre-set properties on vtkActor and on vtkMapper
+    void setVtkProperties(VtkAlgorithmProperties* vtkProps);
 
 private:
-	/// Checks if the selected attribute actually exists for the data set
-	bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
+    /// Checks if the selected attribute actually exists for the data set
+    bool activeAttributeExists(vtkDataSetAttributes* data, std::string& name);
 
 };
 

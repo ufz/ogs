@@ -23,30 +23,30 @@
 
 VtkPickCallback* VtkPickCallback::New()
 {
-	return new VtkPickCallback();
+    return new VtkPickCallback();
 }
 
 void VtkPickCallback::Execute( vtkObject* caller, unsigned long vtkNotUsed(
                                        eventId), void* vtkNotUsed(callData) )
 {
-	vtkCellPicker* picker = static_cast<vtkCellPicker*>(caller);
-	if (picker->GetCellId() < 0)
-	{
-		// Nothing is picked
-	}
-	else
-	{
-		vtkActor* actor = picker->GetActor();
-		if (actor)
-			emit actorPicked (actor);
+    vtkCellPicker* picker = static_cast<vtkCellPicker*>(caller);
+    if (picker->GetCellId() < 0)
+    {
+        // Nothing is picked
+    }
+    else
+    {
+        vtkActor* actor = picker->GetActor();
+        if (actor)
+            emit actorPicked (actor);
 
-		double* pos = picker->GetPickPosition();
-		INFO("Picked cell id is: %d", picker->GetCellId());
-		INFO("Picked position is: %f %f %f", pos[0], pos[1], pos[2]);
-	}
+        double* pos = picker->GetPickPosition();
+        INFO("Picked cell id is: %d", picker->GetCellId());
+        INFO("Picked position is: %f %f %f", pos[0], pos[1], pos[2]);
+    }
 }
 
 VtkPickCallback::VtkPickCallback()
-	: QObject()
+    : QObject()
 {
 }

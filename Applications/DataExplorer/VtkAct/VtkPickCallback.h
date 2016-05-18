@@ -28,19 +28,19 @@ class vtkProp3D;
  */
 class VtkPickCallback : public QObject, public vtkCommand
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static VtkPickCallback* New();
+    static VtkPickCallback* New();
 
-	void Execute(vtkObject* caller, unsigned long eventId, void* callData);
+    void Execute(vtkObject* caller, unsigned long eventId, void* callData);
 
 protected:
-	VtkPickCallback();
+    VtkPickCallback();
 
 signals:
-	/// Is emitted when an vtkActor was picked.
-	void actorPicked (vtkProp3D* actor);
+    /// Is emitted when an vtkActor was picked.
+    void actorPicked (vtkProp3D* actor);
 };
 
 #endif // VTKPICKCALLBACK_H

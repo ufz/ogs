@@ -25,49 +25,49 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd(
-		"Adds a top layer to an existing mesh"
-		"The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/addtoplayer ",
-		' ',
-		"0.1");
+    TCLAP::CmdLine cmd(
+        "Adds a top layer to an existing mesh"
+        "The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/addtoplayer ",
+        ' ',
+        "0.1");
 
-	TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
-		"the name of the file containing the mesh", true,
-		"", "file name");
-	cmd.add(mesh_arg);
+    TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
+        "the name of the file containing the mesh", true,
+        "", "file name");
+    cmd.add(mesh_arg);
 
-	TCLAP::ValueArg<std::string> mesh_out_arg("o", "output-mesh-file",
-		"the name of the file the mesh should be written to (vtu format)", true,
-		"", "file name");
-	cmd.add(mesh_out_arg);
+    TCLAP::ValueArg<std::string> mesh_out_arg("o", "output-mesh-file",
+        "the name of the file the mesh should be written to (vtu format)", true,
+        "", "file name");
+    cmd.add(mesh_out_arg);
 
-	TCLAP::ValueArg<double> layer_thickness_arg("t", "layer-tickness",
-		"the thickness of the new layer", false, 10, "floating point value");
-	cmd.add(layer_thickness_arg);
+    TCLAP::ValueArg<double> layer_thickness_arg("t", "layer-tickness",
+        "the thickness of the new layer", false, 10, "floating point value");
+    cmd.add(layer_thickness_arg);
 
-	cmd.parse(argc, argv);
+    cmd.parse(argc, argv);
 
-	INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
-	auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
-	    MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
-	if (!subsfc_mesh) {
-		ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
-		return EXIT_FAILURE;
-	}
-	INFO("done.");
+    INFO("Reading mesh \"%s\" ... ", mesh_arg.getValue().c_str());
+    auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
+        MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+    if (!subsfc_mesh) {
+        ERR("Error reading mesh \"%s\".", mesh_arg.getValue().c_str());
+        return EXIT_FAILURE;
+    }
+    INFO("done.");
 
-	std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
-	    *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()));
-	if (!result) {
-		ERR("Failure while adding top layer.")
-		return EXIT_FAILURE;
-	}
+    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
+        *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()));
+    if (!result) {
+        ERR("Failure while adding top layer.")
+        return EXIT_FAILURE;
+    }
 
-	INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
-	MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
-	INFO("done.");
+    INFO("Writing mesh \"%s\" ... ", mesh_out_arg.getValue().c_str());
+    MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
+    INFO("done.");
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

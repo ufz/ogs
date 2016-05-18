@@ -39,30 +39,30 @@ namespace Legacy
 class MeshIO : public BaseLib::IO::Writer
 {
 public:
-	/// Constructor.
-	MeshIO();
+    /// Constructor.
+    MeshIO();
 
-	virtual ~MeshIO() {}
+    virtual ~MeshIO() {}
 
-	/// Read mesh from file.
-	MeshLib::Mesh* loadMeshFromFile(const std::string& fileName);
+    /// Read mesh from file.
+    MeshLib::Mesh* loadMeshFromFile(const std::string& fileName);
 
-	/// Set mesh for writing.
-	void setMesh(const MeshLib::Mesh*  mesh);
+    /// Set mesh for writing.
+    void setMesh(const MeshLib::Mesh*  mesh);
 
 protected:
-	/// Write mesh to stream.
-	bool write();
+    /// Write mesh to stream.
+    bool write();
 
 private:
-	void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
-		boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
-		std::ostream &out) const;
-	std::size_t readMaterialID(std::istream & in) const;
-	MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
-	std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
+    void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
+        boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
+        std::ostream &out) const;
+    std::size_t readMaterialID(std::istream & in) const;
+    MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
+    std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
 
-	const MeshLib::Mesh* _mesh;
+    const MeshLib::Mesh* _mesh;
 
 };  /* class */
 

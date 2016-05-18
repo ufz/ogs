@@ -50,33 +50,33 @@ namespace FileIO
 class GMSInterface
 {
 public:
-	/// Exports borehole data from all boreholes in a list to a file in GMS-format. (Note: there are some hardcoded tmp-files in the method that you might need to change!)
-	static void writeBoreholesToGMS(const std::vector<GeoLib::Point*>* stations,
-	                                const std::string &filename);
+    /// Exports borehole data from all boreholes in a list to a file in GMS-format. (Note: there are some hardcoded tmp-files in the method that you might need to change!)
+    static void writeBoreholesToGMS(const std::vector<GeoLib::Point*>* stations,
+                                    const std::string &filename);
 
-	/// Imports borehole data from a file in GMS-format.
-	static int readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
-	                                const std::string &filename);
+    /// Imports borehole data from a file in GMS-format.
+    static int readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
+                                    const std::string &filename);
 
-	/// Writes a file that assigns each soilID-index in the GMS export file a name.
-	static int writeSoilIDTable(const std::vector<std::string> &soilID,
-	                            const std::string &filename);
+    /// Writes a file that assigns each soilID-index in the GMS export file a name.
+    static int writeSoilIDTable(const std::vector<std::string> &soilID,
+                                const std::string &filename);
 
-	/// Reads a GMS *.3dm file and converts it to an CFEMesh.
-	static MeshLib::Mesh* readGMS3DMMesh(const std::string &file_name);
+    /// Reads a GMS *.3dm file and converts it to an CFEMesh.
+    static MeshLib::Mesh* readGMS3DMMesh(const std::string &file_name);
 
 private:
-	/**
-	 * \brief Reads SoilIDs for Borehole export from an external file
-	 *
-	 * The method expects a file with the name of one stratigraphic layer at each line. These layers are assigned
-	 * ascending IDs, i.e. the first name gets index 0, the second line gets index 1, etc.
-	 * \return An array with the names of the stratigraphic layers in which the index for each string equals its ID.
-	 */
-	static std::vector<std::string> readSoilIDfromFile(const std::string &filename);
+    /**
+     * \brief Reads SoilIDs for Borehole export from an external file
+     *
+     * The method expects a file with the name of one stratigraphic layer at each line. These layers are assigned
+     * ascending IDs, i.e. the first name gets index 0, the second line gets index 1, etc.
+     * \return An array with the names of the stratigraphic layers in which the index for each string equals its ID.
+     */
+    static std::vector<std::string> readSoilIDfromFile(const std::string &filename);
 
-	/// Finds the ID assigned to soilName or creates a new one ( this method is called from writeBoreholeToGMS() )
-	static std::size_t getSoilID(std::vector<std::string> &soilID, std::string &soilName);
+    /// Finds the ID assigned to soilName or creates a new one ( this method is called from writeBoreholeToGMS() )
+    static std::size_t getSoilID(std::vector<std::string> &soilID, std::string &soilName);
 };
 
 }

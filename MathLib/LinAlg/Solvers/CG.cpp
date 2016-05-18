@@ -36,86 +36,86 @@ namespace MathLib {
 
 extern
 unsigned CG(CRSMatrix<double,unsigned> const * mat, double const * const b,
-		double* const x, double& eps, unsigned& nsteps)
+        double* const x, double& eps, unsigned& nsteps)
 {
-	unsigned N = mat->getNRows();
-	double *p, *q, *r, *rhat, rho, rho1 = 0.0;
+    unsigned N = mat->getNRows();
+    double *p, *q, *r, *rhat, rho, rho1 = 0.0;
 
-	p = new double[4* N];
-	q = p + N;
-	r = q + N;
-	rhat = r + N;
+    p = new double[4* N];
+    q = p + N;
+    r = q + N;
+    rhat = r + N;
 
-	double nrmb = sqrt(scalarProduct(b, b, N));
-	if (nrmb < std::numeric_limits<double>::epsilon()) {
-		blas::setzero(N, x);
-		eps = 0.0;
-		nsteps = 0;
-		delete[] p;
-		return 0;
-	}
+    double nrmb = sqrt(scalarProduct(b, b, N));
+    if (nrmb < std::numeric_limits<double>::epsilon()) {
+        blas::setzero(N, x);
+        eps = 0.0;
+        nsteps = 0;
+        delete[] p;
+        return 0;
+    }
 
-	// r0 = b - Ax0
-	mat->amux(D_MONE, x, r);
-	for (unsigned k(0); k < N; k++) {
-		r[k] = b[k] - r[k];
-	}
+    // r0 = b - Ax0
+    mat->amux(D_MONE, x, r);
+    for (unsigned k(0); k < N; k++) {
+        r[k] = b[k] - r[k];
+    }
 
-	double resid = blas::nrm2(N, r);
-	if (resid <= eps * nrmb) {
-		eps = resid / nrmb;
-		nsteps = 0;
-		delete[] p;
-		return 0;
-	}
+    double resid = blas::nrm2(N, r);
+    if (resid <= eps * nrmb) {
+        eps = resid / nrmb;
+        nsteps = 0;
+        delete[] p;
+        return 0;
+    }
 
-	for (unsigned l = 1; l <= nsteps; ++l) {
+    for (unsigned l = 1; l <= nsteps; ++l) {
 #ifndef NDEBUG
-		std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
+        std::cout << "Step " << l << ", resid=" << resid / nrmb << std::endl;
 #endif
-		// r^ = C r
-		blas::copy(N, r, rhat);
-		mat->precondApply(rhat);
+        // r^ = C r
+        blas::copy(N, r, rhat);
+        mat->precondApply(rhat);
 
-		// rho = r * r^;
-		rho = scalarProduct(r, rhat, N); // num_threads);
+        // rho = r * r^;
+        rho = scalarProduct(r, rhat, N); // num_threads);
 
-		if (l > 1) {
-			double beta = rho / rho1;
-			// p = r^ + beta * p
-			unsigned k;
-			for (k = 0; k < N; k++) {
-				p[k] = rhat[k] + beta * p[k];
-			}
-		} else blas::copy(N, rhat, p);
+        if (l > 1) {
+            double beta = rho / rho1;
+            // p = r^ + beta * p
+            unsigned k;
+            for (k = 0; k < N; k++) {
+                p[k] = rhat[k] + beta * p[k];
+            }
+        } else blas::copy(N, rhat, p);
 
-		// q = Ap
-		blas::setzero(N, q);
-		mat->amux(D_ONE, p, q);
+        // q = Ap
+        blas::setzero(N, q);
+        mat->amux(D_ONE, p, q);
 
-		// alpha = rho / p*q
-		double alpha = rho / scalarProduct(p, q, N);
+        // alpha = rho / p*q
+        double alpha = rho / scalarProduct(p, q, N);
 
-		// x += alpha * p
-		blas::axpy(N, alpha, p, x);
+        // x += alpha * p
+        blas::axpy(N, alpha, p, x);
 
-		// r -= alpha * q
-		blas::axpy(N, -alpha, q, r);
+        // r -= alpha * q
+        blas::axpy(N, -alpha, q, r);
 
-		resid = sqrt(scalarProduct(r, r, N));
+        resid = sqrt(scalarProduct(r, r, N));
 
-		if (resid <= eps * nrmb) {
-			eps = resid / nrmb;
-			nsteps = l;
-			delete[] p;
-			return 0;
-		}
+        if (resid <= eps * nrmb) {
+            eps = resid / nrmb;
+            nsteps = l;
+            delete[] p;
+            return 0;
+        }
 
-		rho1 = rho;
-	}
-	eps = resid / nrmb;
-	delete[] p;
-	return 1;
+        rho1 = rho;
+    }
+    eps = resid / nrmb;
+    delete[] p;
+    return 1;
 }
 
 } // end namespace MathLib

@@ -27,14 +27,14 @@ namespace NumLib
 class ISpatialFunction
 {
 public:
-	virtual ~ISpatialFunction(){}
+    virtual ~ISpatialFunction(){}
 
-	/**
-	 * return a value at the given point
-	 * \param pnt  a point object
-	 * \return evaluated value
-	 */
-	virtual double operator()(const MathLib::Point3d& pnt) const = 0;
+    /**
+     * return a value at the given point
+     * \param pnt  a point object
+     * \return evaluated value
+     */
+    virtual double operator()(const MathLib::Point3d& pnt) const = 0;
 };
 
 } // NumLib

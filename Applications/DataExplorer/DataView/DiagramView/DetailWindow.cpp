@@ -21,8 +21,8 @@
 
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
-	setupUi(this);
-	stationView->setRenderHints( QPainter::Antialiasing );
+    setupUi(this);
+    stationView->setRenderHints( QPainter::Antialiasing );
 
 /*
     DiagramList* list  = new DiagramList();
@@ -67,43 +67,43 @@ DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 
 DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 {
-	setupUi(this);
-	stationView->setRenderHints( QPainter::Antialiasing );
+    setupUi(this);
+    stationView->setRenderHints( QPainter::Antialiasing );
 
-	std::vector<DiagramList*> lists;
-	DiagramList::readList(filename, lists);
+    std::vector<DiagramList*> lists;
+    DiagramList::readList(filename, lists);
 
-	for (std::size_t i = 0; i < lists.size(); i++)
-		stationView->addGraph(lists[i]);
+    for (std::size_t i = 0; i < lists.size(); i++)
+        stationView->addGraph(lists[i]);
 
-	resizeWindow();
+    resizeWindow();
 }
 
 DetailWindow::DetailWindow(DiagramList* list, QWidget* parent) : QWidget(parent)
 {
-	setupUi(this);
-	stationView->setRenderHints( QPainter::Antialiasing );
-	stationView->addGraph(list);
-	resizeWindow();
+    setupUi(this);
+    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->addGraph(list);
+    resizeWindow();
 }
 
 DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWidget(parent)
 {
-	setupUi(this);
-	std::size_t nEntries = data.size();
-	std::vector< std::pair<float, float> > list_data(nEntries);
+    setupUi(this);
+    std::size_t nEntries = data.size();
+    std::vector< std::pair<float, float> > list_data(nEntries);
 
-	for (std::size_t i=0; i<nEntries; i++)
-		list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
+    for (std::size_t i=0; i<nEntries; i++)
+        list_data.push_back(std::pair<float, float>(static_cast<float>(i), static_cast<float>(data[i])));
 
-	DiagramList* list = new DiagramList();
-	list->setList(list_data);
-	list->setXUnit("Value");
-	list->setYUnit("Amount");
-	list->setName("Histogram");
-	stationView->setRenderHints( QPainter::Antialiasing );
-	stationView->addGraph(list);
-	resizeWindow();
+    DiagramList* list = new DiagramList();
+    list->setList(list_data);
+    list->setXUnit("Value");
+    list->setYUnit("Amount");
+    list->setName("Histogram");
+    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->addGraph(list);
+    resizeWindow();
 }
 
 DetailWindow::~DetailWindow()
@@ -112,43 +112,43 @@ DetailWindow::~DetailWindow()
 
 void DetailWindow::on_closeButton_clicked()
 {
-	this->close();
+    this->close();
 }
 
 void DetailWindow::resizeWindow()
 {
-	int width = (stationView->getWidth() > 800) ? 800 : stationView->getWidth();
-	int height = (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
-	resize(width, height);
+    int width = (stationView->getWidth() > 800) ? 800 : stationView->getWidth();
+    int height = (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
+    resize(width, height);
 }
 
 void DetailWindow::addList(DiagramList* list)
 {
-	GeoLib::Color const c = GeoLib::getRandomColor();
-	QColor colour(c[0], c[1], c[2]);
-	this->addList(list, colour);
-	resizeWindow();
+    GeoLib::Color const c = GeoLib::getRandomColor();
+    QColor colour(c[0], c[1], c[2]);
+    this->addList(list, colour);
+    resizeWindow();
 }
 
 void DetailWindow::addList(DiagramList* list, QColor c)
 {
-	list->setColor(c);
-	this->stationView->addGraph(list);
+    list->setColor(c);
+    this->stationView->addGraph(list);
 }
 
 void DetailWindow::on_addDataButton_clicked()
 {
-	QSettings settings;
-	QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-	                                                 settings.value("lastOpenedFileDirectory").toString(),
-	                                                 "Text files (*.txt);;All files (* *.*)");
-	if (!fileName.isEmpty())
-	{
-		QDir dir = QDir(fileName);
-		settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-		DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName, this);
-		prefs->setAttribute(Qt::WA_DeleteOnClose);
-		prefs->show();
-	}
+    QSettings settings;
+    QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
+                                                     settings.value("lastOpenedFileDirectory").toString(),
+                                                     "Text files (*.txt);;All files (* *.*)");
+    if (!fileName.isEmpty())
+    {
+        QDir dir = QDir(fileName);
+        settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
+        DiagramPrefsDialog* prefs = new DiagramPrefsDialog(fileName, this);
+        prefs->setAttribute(Qt::WA_DeleteOnClose);
+        prefs->show();
+    }
 }
 

@@ -42,43 +42,43 @@ class vtkAlgorithm;
 class VtkCompositeFilter : public VtkAlgorithmProperties
 {
 public:
-	/// @brief Constructor.
-	/// @param inputAlgorithm The algorithm to attach this filter to.
-	VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
+    /// @brief Constructor.
+    /// @param inputAlgorithm The algorithm to attach this filter to.
+    VtkCompositeFilter(vtkAlgorithm* inputAlgorithm);
 
-	/// @brief Destructor.
-	virtual ~VtkCompositeFilter();
+    /// @brief Destructor.
+    virtual ~VtkCompositeFilter();
 
-	/// @return the type of the data input.
-	/// Can be compared with
-	/// - VTK_POLY_DATA
-	/// - VTK_STRUCTURED_POINTS
-	/// - VTK_STRUCTURED_GRID
-	/// - VTK_RECTILINEAR_GRID
-	/// - VTK_UNSTRUCTURED_GRID
-	/// - VTK_IMAGE_DATA
-	/// - VTK_DATA_SET
-	int GetInputDataObjectType() const { return _inputDataObjectType; }
+    /// @return the type of the data input.
+    /// Can be compared with
+    /// - VTK_POLY_DATA
+    /// - VTK_STRUCTURED_POINTS
+    /// - VTK_STRUCTURED_GRID
+    /// - VTK_RECTILINEAR_GRID
+    /// - VTK_UNSTRUCTURED_GRID
+    /// - VTK_IMAGE_DATA
+    /// - VTK_DATA_SET
+    int GetInputDataObjectType() const { return _inputDataObjectType; }
 
-	/// @return the type of the data output.
-	int GetOutputDataObjectType() const { return _outputDataObjectType; }
+    /// @return the type of the data output.
+    int GetOutputDataObjectType() const { return _outputDataObjectType; }
 
-	/// @return the last algorithm in this composite filter.
-	vtkAlgorithm* GetOutputAlgorithm() const { return _outputAlgorithm; }
+    /// @return the last algorithm in this composite filter.
+    vtkAlgorithm* GetOutputAlgorithm() const { return _outputAlgorithm; }
 
 protected:
-	/// Calculates a 1/200th of the largest extension of the bounding box (this is used as default radius for various filters)
-	float GetInitialRadius() const;
+    /// Calculates a 1/200th of the largest extension of the bounding box (this is used as default radius for various filters)
+    float GetInitialRadius() const;
 
-	/// See [vtkSetGet.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkSetGet.h)
-	/// for the defines
-	int _inputDataObjectType;
-	int _outputDataObjectType;
+    /// See [vtkSetGet.h](https://github.com/Kitware/VTK/blob/master/Common/Core/vtkSetGet.h)
+    /// for the defines
+    int _inputDataObjectType;
+    int _outputDataObjectType;
 
-	vtkAlgorithm* _inputAlgorithm;
-	vtkAlgorithm* _outputAlgorithm;
+    vtkAlgorithm* _inputAlgorithm;
+    vtkAlgorithm* _outputAlgorithm;
 
-	virtual void init() = 0;
+    virtual void init() = 0;
 };
 
 #endif // VTKCOMPOSITEFILTER_H

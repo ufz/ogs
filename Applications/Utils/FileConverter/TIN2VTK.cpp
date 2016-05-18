@@ -34,37 +34,37 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_describe);
-	TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
-	                                     "the name of the file containing the input TIN", true,
-	                                     "", "string");
-	cmd.add(inArg);
-	TCLAP::ValueArg<std::string> outArg("o", "output-vtu-file",
-	                                      "the name of the file the mesh will be written to", true,
-	                                      "", "string");
-	cmd.add(outArg);
-	cmd.parse(argc, argv);
+    TCLAP::CmdLine cmd("Converts TIN file into VTU file.", ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
+                                         "the name of the file containing the input TIN", true,
+                                         "", "string");
+    cmd.add(inArg);
+    TCLAP::ValueArg<std::string> outArg("o", "output-vtu-file",
+                                          "the name of the file the mesh will be written to", true,
+                                          "", "string");
+    cmd.add(outArg);
+    cmd.parse(argc, argv);
 
-	INFO("reading the TIN file...");
-	const std::string tinFileName(inArg.getValue());
-	auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
-	    new std::vector<GeoLib::Point*>);
-	GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
-	std::unique_ptr<GeoLib::Surface> sfc(
-	    GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
-	if (!sfc)
-		return EXIT_FAILURE;
-	INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
+    INFO("reading the TIN file...");
+    const std::string tinFileName(inArg.getValue());
+    auto pnt_vec = std::unique_ptr<std::vector<GeoLib::Point*>>(
+        new std::vector<GeoLib::Point*>);
+    GeoLib::PointVec point_vec("SurfacePoints", std::move(pnt_vec));
+    std::unique_ptr<GeoLib::Surface> sfc(
+        GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
+    if (!sfc)
+        return EXIT_FAILURE;
+    INFO("TIN read:  %d points, %d triangles", pnt_vec->size(), sfc->getNTriangles());
 
-	INFO("converting to mesh data");
-	std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
-	INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("converting to mesh data");
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
+    INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	INFO("Write it into VTU");
-	MeshLib::IO::VtuInterface writer(mesh.get());
-	writer.writeToFile(outArg.getValue());
+    INFO("Write it into VTU");
+    MeshLib::IO::VtuInterface writer(mesh.get());
+    writer.writeToFile(outArg.getValue());
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -25,26 +25,26 @@
  */
 class AddLayerToMeshDialog : public QDialog, private Ui_AddLayerToMesh
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	AddLayerToMeshDialog(QDialog* parent = nullptr);
+    AddLayerToMeshDialog(QDialog* parent = nullptr);
 
-	/// Returns if the top layer button is selected (if false, bottom is selected).
-	bool isTopLayer() const { return this->topButton->isChecked(); };
+    /// Returns if the top layer button is selected (if false, bottom is selected).
+    bool isTopLayer() const { return this->topButton->isChecked(); };
 
-	/// Returns the thickness of the new layer.
-	double getThickness() const { return this->thicknessEdit->text().toDouble(); };
+    /// Returns the thickness of the new layer.
+    double getThickness() const { return this->thicknessEdit->text().toDouble(); };
 
-	/// Returns the name of the new mesh.
-	std::string getName() const { return this->nameEdit->text().toStdString(); };
+    /// Returns the name of the new mesh.
+    std::string getName() const { return this->nameEdit->text().toStdString(); };
 
 private slots:
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 };
 
 #endif //ADDLAYERTOMESHDIALOG_H

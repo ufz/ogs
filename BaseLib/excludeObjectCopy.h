@@ -27,36 +27,36 @@ namespace BaseLib
 /// @return vector that contains the copied objects
 template <typename T>
 std::vector<T> excludeObjectCopy(std::vector<T> const& src_vec,
-	std::vector<std::size_t> const& exclude_positions)
+    std::vector<std::size_t> const& exclude_positions)
 {
-	std::vector<T> dest_vec;
-	if (exclude_positions.empty()) {
-		dest_vec = src_vec;
-		return dest_vec;
-	}
+    std::vector<T> dest_vec;
+    if (exclude_positions.empty()) {
+        dest_vec = src_vec;
+        return dest_vec;
+    }
 
-	assert (exclude_positions.back() < src_vec.size());
+    assert (exclude_positions.back() < src_vec.size());
 
-	std::copy_n(src_vec.cbegin(), exclude_positions[0], std::back_inserter(dest_vec));
-	for (std::size_t i=1; i<exclude_positions.size(); ++i) {
-		std::copy_n(
-			src_vec.cbegin()+exclude_positions[i-1]+1,
-			exclude_positions[i]-(exclude_positions[i-1]+1),
-			std::back_inserter(dest_vec)
-		);
-	}
-	std::copy(src_vec.cbegin()+exclude_positions.back()+1,
-		src_vec.cend(), std::back_inserter(dest_vec));
+    std::copy_n(src_vec.cbegin(), exclude_positions[0], std::back_inserter(dest_vec));
+    for (std::size_t i=1; i<exclude_positions.size(); ++i) {
+        std::copy_n(
+            src_vec.cbegin()+exclude_positions[i-1]+1,
+            exclude_positions[i]-(exclude_positions[i-1]+1),
+            std::back_inserter(dest_vec)
+        );
+    }
+    std::copy(src_vec.cbegin()+exclude_positions.back()+1,
+        src_vec.cend(), std::back_inserter(dest_vec));
 
-	return dest_vec;
+    return dest_vec;
 }
 
 template <typename T>
 void excludeObjectCopy(std::vector<T> const& src_vec,
-	std::vector<std::size_t> const& exclude_positions,
-	std::vector<T> & dest_vec)
+    std::vector<std::size_t> const& exclude_positions,
+    std::vector<T> & dest_vec)
 {
-	dest_vec = excludeObjectCopy(src_vec, exclude_positions);
+    dest_vec = excludeObjectCopy(src_vec, exclude_positions);
 }
 
 

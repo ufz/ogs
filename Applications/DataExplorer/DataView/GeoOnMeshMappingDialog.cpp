@@ -21,14 +21,14 @@
 #include "OGSError.h"
 
 GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
-	std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-	QDialog* parent)
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+    QDialog* parent)
 : QDialog(parent), _new_geo_name("")
 {
-	setupUi(this);
+    setupUi(this);
 
-	for (std::size_t i=0; i<mesh_vec.size(); ++i)
-		this->meshNameComboBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
+    for (std::size_t i=0; i<mesh_vec.size(); ++i)
+        this->meshNameComboBox->addItem(QString::fromStdString(mesh_vec[i]->getName()));
 }
 
 GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
@@ -37,29 +37,29 @@ GeoOnMeshMappingDialog::~GeoOnMeshMappingDialog()
 
 int GeoOnMeshMappingDialog::getDataSetChoice() const
 {
-	return this->meshNameComboBox->currentIndex();
+    return this->meshNameComboBox->currentIndex();
 }
 
 void GeoOnMeshMappingDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
-	bool is_enabled(idx != 1);
-	this->normalMappingButton->setEnabled(is_enabled);
-	this->advancedMappingButton->setEnabled(is_enabled);
-	this->geoNameEdit->setEnabled(is_enabled && this->advancedMappingButton->isChecked());
+    bool is_enabled(idx != 1);
+    this->normalMappingButton->setEnabled(is_enabled);
+    this->advancedMappingButton->setEnabled(is_enabled);
+    this->geoNameEdit->setEnabled(is_enabled && this->advancedMappingButton->isChecked());
 }
 
 void GeoOnMeshMappingDialog::accept()
 {
-	if (this->advancedMappingButton->isChecked())
-	{
-		_new_geo_name = this->geoNameEdit->text().toStdString();
-		if (_new_geo_name.empty())
-		{
-			OGSError::box("Please enter name for new geometry.");
-			return;
-		}
-	}
-	this->done(QDialog::Accepted);
+    if (this->advancedMappingButton->isChecked())
+    {
+        _new_geo_name = this->geoNameEdit->text().toStdString();
+        if (_new_geo_name.empty())
+        {
+            OGSError::box("Please enter name for new geometry.");
+            return;
+        }
+    }
+    this->done(QDialog::Accepted);
 }
 
 

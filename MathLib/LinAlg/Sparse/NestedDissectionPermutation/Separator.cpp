@@ -20,9 +20,9 @@
 namespace MathLib {
 
 extern "C" void METIS_PartGraphRecursive(unsigned*, unsigned*, unsigned*,
-					 unsigned*, unsigned*, unsigned*,
-					 unsigned*, unsigned*, unsigned*,
-					 unsigned*, unsigned*);
+                     unsigned*, unsigned*, unsigned*,
+                     unsigned*, unsigned*, unsigned*,
+                     unsigned*, unsigned*);
 
 Separator::Separator(ClusterBase* father, unsigned beg, unsigned end,
                      unsigned* op_perm, unsigned* po_perm,

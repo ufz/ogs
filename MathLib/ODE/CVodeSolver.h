@@ -45,32 +45,32 @@ class CVodeSolverImpl;
 class CVodeSolver
 {
 protected:
-	//! Construct from the given \c config with storage allocated for the given
-	//! \c num_equations.
-	CVodeSolver(BaseLib::ConfigTree const& config,
-	            unsigned const num_equations);
+    //! Construct from the given \c config with storage allocated for the given
+    //! \c num_equations.
+    CVodeSolver(BaseLib::ConfigTree const& config,
+                unsigned const num_equations);
 
-	void setTolerance(double const* const abstol, const double reltol);
-	void setTolerance(const double abstol, const double reltol);
+    void setTolerance(double const* const abstol, const double reltol);
+    void setTolerance(const double abstol, const double reltol);
 
-	void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
+    void setFunction(std::unique_ptr<detail::FunctionHandles>&& f);
 
-	void setIC(const double t0, double const* const y0);
+    void setIC(const double t0, double const* const y0);
 
-	void preSolve();
-	bool solve(const double t_end);
+    void preSolve();
+    bool solve(const double t_end);
 
-	double const* getSolution() const;
-	double getTime() const;
-	void getYDot(const double t,
-	             double const* const y,
-	             double* const y_dot) const;
+    double const* getSolution() const;
+    double getTime() const;
+    void getYDot(const double t,
+                 double const* const y,
+                 double* const y_dot) const;
 
-	~CVodeSolver();
+    ~CVodeSolver();
 
 private:
-	//! pimpl idiom.
-	std::unique_ptr<CVodeSolverImpl> _impl;
+    //! pimpl idiom.
+    std::unique_ptr<CVodeSolverImpl> _impl;
 };
 
 //! @}}

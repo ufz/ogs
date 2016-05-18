@@ -25,12 +25,12 @@
 class QNonScalableGraphicsTextItem : public QGraphicsTextItem
 {
 public:
-	QNonScalableGraphicsTextItem(QGraphicsItem* parent = 0);
-	QNonScalableGraphicsTextItem(const QString &text, QGraphicsItem* parent = 0);
-	~QNonScalableGraphicsTextItem();
+    QNonScalableGraphicsTextItem(QGraphicsItem* parent = 0);
+    QNonScalableGraphicsTextItem(const QString &text, QGraphicsItem* parent = 0);
+    ~QNonScalableGraphicsTextItem();
 
-	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
-	virtual QRectF boundingRect() const;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    virtual QRectF boundingRect() const;
 };
 
 #endif //QNONSCALABLETEXTITEM_H

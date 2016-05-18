@@ -34,45 +34,45 @@
 class CondObjectListItem : public TreeItem
 {
 public:
-	/// Constructor for the TreeItem specifying FEM Conditions.
-	CondObjectListItem(const QList<QVariant> &data,
-	                   TreeItem* parent,
-	                   FEMCondition* cond,
-	                   const std::vector<GeoLib::Point*>* points)
-		: TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(cond->getCondType()),
-		  _cond_vec(new std::vector<FEMCondition*>)
-	{
-		_cond_vec->push_back(cond);
-		QString display_name = parent->data(0).toString().append(" - ").append(
-		        QString::fromStdString(FEMCondition::condTypeToString(_type)));
-		static_cast<VtkConditionSource*>(_vtkSource)->setData( points, _cond_vec);
-		static_cast<VtkConditionSource*>(_vtkSource)->SetName( display_name );
-	}
+    /// Constructor for the TreeItem specifying FEM Conditions.
+    CondObjectListItem(const QList<QVariant> &data,
+                       TreeItem* parent,
+                       FEMCondition* cond,
+                       const std::vector<GeoLib::Point*>* points)
+        : TreeItem(data, parent), _vtkSource(VtkConditionSource::New()),  _type(cond->getCondType()),
+          _cond_vec(new std::vector<FEMCondition*>)
+    {
+        _cond_vec->push_back(cond);
+        QString display_name = parent->data(0).toString().append(" - ").append(
+                QString::fromStdString(FEMCondition::condTypeToString(_type)));
+        static_cast<VtkConditionSource*>(_vtkSource)->setData( points, _cond_vec);
+        static_cast<VtkConditionSource*>(_vtkSource)->SetName( display_name );
+    }
 
-	~CondObjectListItem()
-	{
-		_vtkSource->Delete();
-		delete _cond_vec;
-	}
+    ~CondObjectListItem()
+    {
+        _vtkSource->Delete();
+        delete _cond_vec;
+    }
 
-	/// Adds FEMCondtion for construction of VTK object.
-	void addCondition(FEMCondition* cond)
-	{
-		_cond_vec->push_back(cond);
-		_vtkSource->Modified();
-	}
+    /// Adds FEMCondtion for construction of VTK object.
+    void addCondition(FEMCondition* cond)
+    {
+        _cond_vec->push_back(cond);
+        _vtkSource->Modified();
+    }
 
-	/// Returns the type of geo-objects contained in the subtree of this item.
-	FEMCondition::CondType getType() const { return _type; };
+    /// Returns the type of geo-objects contained in the subtree of this item.
+    FEMCondition::CondType getType() const { return _type; };
 
-	/// Returns the Vtk polydata source object
-	vtkPolyDataAlgorithm* vtkSource() const	{ return _vtkSource; };
+    /// Returns the Vtk polydata source object
+    vtkPolyDataAlgorithm* vtkSource() const    { return _vtkSource; };
 
 private:
-	/// The Vtk data source object. This is the starting point for a Vtk data visualization pipeline.
-	vtkPolyDataAlgorithm* _vtkSource;
-	FEMCondition::CondType _type;
-	std::vector<FEMCondition*>* _cond_vec;
+    /// The Vtk data source object. This is the starting point for a Vtk data visualization pipeline.
+    vtkPolyDataAlgorithm* _vtkSource;
+    FEMCondition::CondType _type;
+    std::vector<FEMCondition*>* _cond_vec;
 };
 
 #endif //CONDOBJECTLISTITEM_H

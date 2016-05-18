@@ -51,10 +51,10 @@
   <xs:element name="OpenGeoSysGLI">
     <xs:complexType>
       <xs:sequence>
-	<xs:element name="name" type="xs:string" maxOccurs="1" />
+    <xs:element name="name" type="xs:string" maxOccurs="1" />
 
         <!-- definition of points -->
-	<xs:element name="points" maxOccurs="1">
+    <xs:element name="points" maxOccurs="1">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="point" type="pointType" maxOccurs="unbounded" />
@@ -92,5 +92,5 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-	
+    
 </xs:schema>

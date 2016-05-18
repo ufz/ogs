@@ -75,46 +75,46 @@
 #=============================================================================
 
 if(__get_compiler_info_string)
-	return()
+    return()
 endif()
 set(__get_compiler_info_string YES)
 
 
 function(get_compiler_info_string _var)
-	set(_out)
+    set(_out)
 
-	if(CTEST_CMAKE_GENERATOR AND NOT CMAKE_GENERATOR)
-		# We're running in CTest - use that generator.
-		set(CMAKE_GENERATOR ${CTEST_CMAKE_GENERATOR})
-	endif()
+    if(CTEST_CMAKE_GENERATOR AND NOT CMAKE_GENERATOR)
+        # We're running in CTest - use that generator.
+        set(CMAKE_GENERATOR ${CTEST_CMAKE_GENERATOR})
+    endif()
 
-	if(NOT CMAKE_CXX_COMPILER)
-		# Also for use in CTest scripts
-		include(CMakeDetermineCXXCompiler)
-	endif()
+    if(NOT CMAKE_CXX_COMPILER)
+        # Also for use in CTest scripts
+        include(CMakeDetermineCXXCompiler)
+    endif()
 
-	if(MSVC)
-		# Parse version for Visual Studio
-		get_vs_short_version_string("${CMAKE_GENERATOR}" _verstring)
-		if(${CMAKE_GENERATOR} MATCHES "Win64")
-			set(_verstring "${_verstring}win64")
-		endif()
+    if(MSVC)
+        # Parse version for Visual Studio
+        get_vs_short_version_string("${CMAKE_GENERATOR}" _verstring)
+        if(${CMAKE_GENERATOR} MATCHES "Win64")
+            set(_verstring "${_verstring}win64")
+        endif()
 
-	elseif(CMAKE_COMPILER_IS_GNUCXX)
-		# Parse version for GCC
-		get_gcc_version(_gccver)
-		set(_verstring "gcc${_gccver}")
+    elseif(CMAKE_COMPILER_IS_GNUCXX)
+        # Parse version for GCC
+        get_gcc_version(_gccver)
+        set(_verstring "gcc${_gccver}")
 
-	else()
-		# Some other compiler we don't handle yet.
-		message(STATUS
-			"WARNING: Not GCC or MSVC, so we invented a messy compiler info string")
-		string(REGEX REPLACE " " "_" _verstring "${CMAKE_GENERATOR}")
-		set(_verstring "generator:${_verstring}")
-	endif()
+    else()
+        # Some other compiler we don't handle yet.
+        message(STATUS
+            "WARNING: Not GCC or MSVC, so we invented a messy compiler info string")
+        string(REGEX REPLACE " " "_" _verstring "${CMAKE_GENERATOR}")
+        set(_verstring "generator:${_verstring}")
+    endif()
 
-	# Return _verstring
-	set(${_var} "${_verstring}" PARENT_SCOPE)
+    # Return _verstring
+    set(${_var} "${_verstring}" PARENT_SCOPE)
 endfunction()
 
 ## Based on a function in FindBoost.cmake from CMake 2.8.0
@@ -124,21 +124,21 @@ endfunction()
 # version with a regex.
 #
 function(get_gcc_version _var)
-	exec_program(${CMAKE_CXX_COMPILER}
-		ARGS
-		${CMAKE_CXX_COMPILER_ARG1}
-		-dumpversion
-		OUTPUT_VARIABLE
-		_compilerinfo_COMPILER_VERSION)
+    exec_program(${CMAKE_CXX_COMPILER}
+        ARGS
+        ${CMAKE_CXX_COMPILER_ARG1}
+        -dumpversion
+        OUTPUT_VARIABLE
+        _compilerinfo_COMPILER_VERSION)
 
-	string(REGEX
-		MATCH
-		"([.0-9]+)"
-		"\\1"
-		_compilerinfo_COMPILER_VERSION
-		"${_compilerinfo_COMPILER_VERSION}")
+    string(REGEX
+        MATCH
+        "([.0-9]+)"
+        "\\1"
+        _compilerinfo_COMPILER_VERSION
+        "${_compilerinfo_COMPILER_VERSION}")
 
-	set(${_var} ${_compilerinfo_COMPILER_VERSION} PARENT_SCOPE)
+    set(${_var} ${_compilerinfo_COMPILER_VERSION} PARENT_SCOPE)
 endfunction()
 
 ## Based on a function in CTest.cmake from CMake 2.8.0
@@ -148,34 +148,34 @@ endfunction()
 # like vs7 vs71 vs8 vs9
 #
 function(get_vs_short_version_string _generator _var)
-	set(_ver_string)
-	if("${_generator}" MATCHES "Visual Studio")
-		string(REGEX
-			REPLACE
-			"Visual Studio ([0-9][0-9]?)($|.*)"
-			"\\1"
-			_vsver
-			"${_generator}")
-		if("${_generator}" MATCHES "Visual Studio 7 .NET 2003")
-			# handle the weird one
-			set(_ver_string "vs71")
-		else()
-			set(_ver_string "vs${_vsver}")
-		endif()
-	elseif(MSVC)
-		if(MSVC71)
-			set(_ver_string "vs71")
-		else()
-			foreach(_ver 6 7 8 9 10)
-				if(MSVC${_ver}0)
-					set(_ver_string "vs${_ver}")
-					break()
-				endif()
-			endforeach()
-		endif()
-	endif()
+    set(_ver_string)
+    if("${_generator}" MATCHES "Visual Studio")
+        string(REGEX
+            REPLACE
+            "Visual Studio ([0-9][0-9]?)($|.*)"
+            "\\1"
+            _vsver
+            "${_generator}")
+        if("${_generator}" MATCHES "Visual Studio 7 .NET 2003")
+            # handle the weird one
+            set(_ver_string "vs71")
+        else()
+            set(_ver_string "vs${_vsver}")
+        endif()
+    elseif(MSVC)
+        if(MSVC71)
+            set(_ver_string "vs71")
+        else()
+            foreach(_ver 6 7 8 9 10)
+                if(MSVC${_ver}0)
+                    set(_ver_string "vs${_ver}")
+                    break()
+                endif()
+            endforeach()
+        endif()
+    endif()
 
-	if(_ver_string)
-		set(${_var} ${_ver_string} PARENT_SCOPE)
-	endif()
+    if(_ver_string)
+        set(${_var} ${_ver_string} PARENT_SCOPE)
+    endif()
 endfunction()

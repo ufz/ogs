@@ -38,73 +38,73 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
+    TCLAP::CmdLine cmd("Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk unstructured grid file (new OGS file format) or to the old OGS file format - see options.", ' ', "0.1");
 
-	TCLAP::ValueArg<std::string> ogs_mesh_arg(
-		"o",
-		"out",
-		"filename for output mesh (if extension is msh, old OGS fileformat is written)",
-		true,
-		"",
-		"filename as string");
-	cmd.add(ogs_mesh_arg);
+    TCLAP::ValueArg<std::string> ogs_mesh_arg(
+        "o",
+        "out",
+        "filename for output mesh (if extension is msh, old OGS fileformat is written)",
+        true,
+        "",
+        "filename as string");
+    cmd.add(ogs_mesh_arg);
 
-	TCLAP::ValueArg<std::string> gmsh_mesh_arg(
-		"i",
-		"in",
-		"gmsh input file",
-		true,
-		"",
-		"filename as string");
-	cmd.add(gmsh_mesh_arg);
+    TCLAP::ValueArg<std::string> gmsh_mesh_arg(
+        "i",
+        "in",
+        "gmsh input file",
+        true,
+        "",
+        "filename as string");
+    cmd.add(gmsh_mesh_arg);
 
-	TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
-		"if set, lines will not be written to the ogs mesh");
-	cmd.add(exclude_lines_arg);
+    TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
+        "if set, lines will not be written to the ogs mesh");
+    cmd.add(exclude_lines_arg);
 
-	cmd.parse(argc, argv);
+    cmd.parse(argc, argv);
 
-	// *** read mesh
-	INFO("Reading %s.", gmsh_mesh_arg.getValue().c_str());
+    // *** read mesh
+    INFO("Reading %s.", gmsh_mesh_arg.getValue().c_str());
 #ifndef WIN32
-	BaseLib::MemWatch mem_watch;
-	unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+    BaseLib::MemWatch mem_watch;
+    unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
 #endif
-	BaseLib::RunTime run_time;
-	run_time.start();
-	MeshLib::Mesh * mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
+    BaseLib::RunTime run_time;
+    run_time.start();
+    MeshLib::Mesh * mesh(FileIO::GMSHInterface::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
-	if (mesh == nullptr) {
-		INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
-		return -1;
-	}
+    if (mesh == nullptr) {
+        INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());
+        return -1;
+    }
 #ifndef WIN32
-	unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-	INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
+    unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
+    INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
 
-	INFO("Time for reading: %f seconds.", run_time.elapsed());
-	INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Time for reading: %f seconds.", run_time.elapsed());
+    INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-	// *** remove line elements on request
-	if (exclude_lines_arg.getValue()) {
-		auto ex = MeshLib::ElementSearch(*mesh);
-		ex.searchByElementType(MeshLib::MeshElemType::LINE);
-		auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
-		if (m != nullptr) {
-			INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
-			std::swap(m, mesh);
-			delete m;
-		} else {
-			INFO("Mesh does not contain any lines.");
-		}
-	}
+    // *** remove line elements on request
+    if (exclude_lines_arg.getValue()) {
+        auto ex = MeshLib::ElementSearch(*mesh);
+        ex.searchByElementType(MeshLib::MeshElemType::LINE);
+        auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
+        if (m != nullptr) {
+            INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
+            std::swap(m, mesh);
+            delete m;
+        } else {
+            INFO("Mesh does not contain any lines.");
+        }
+    }
 
-	// *** write mesh in new format
-	MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_arg.getValue());
+    // *** write mesh in new format
+    MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_arg.getValue());
 
-	delete mesh;
+    delete mesh;
 }
 

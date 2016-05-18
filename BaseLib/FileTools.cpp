@@ -25,26 +25,26 @@ namespace BaseLib
  */
 bool IsFileExisting(const std::string &strFilename)
 {
-	struct stat buffer;
-	return (stat (strFilename.c_str(), &buffer) == 0);
+    struct stat buffer;
+    return (stat (strFilename.c_str(), &buffer) == 0);
 }
 
 double swapEndianness(double const& v)
 {
-	union
-	{
-		double v;
-		char c[sizeof(double)];
-	} a, b;
+    union
+    {
+        double v;
+        char c[sizeof(double)];
+    } a, b;
 
-	a.v = v;
-	for (unsigned short i = 0; i < sizeof(double)/2; i++)
-		b.c[i] = a.c[sizeof(double)/2 - i - 1];
+    a.v = v;
+    for (unsigned short i = 0; i < sizeof(double)/2; i++)
+        b.c[i] = a.c[sizeof(double)/2 - i - 1];
 
-	for (unsigned short i = sizeof(double)/2; i < sizeof(double); i++)
-		b.c[i] = a.c[sizeof(double)+sizeof(double)/2 - i - 1];
+    for (unsigned short i = sizeof(double)/2; i < sizeof(double); i++)
+        b.c[i] = a.c[sizeof(double)+sizeof(double)/2 - i - 1];
 
-	return b.v;
+    return b.v;
 }
 
 /**
@@ -52,8 +52,8 @@ double swapEndianness(double const& v)
  */
 void truncateFile( std::string const& filename)
 {
-	std::ofstream ofs(filename.c_str(), std::ios_base::trunc);
-	ofs.close();
+    std::ofstream ofs(filename.c_str(), std::ios_base::trunc);
+    ofs.close();
 }
 
 namespace
@@ -67,7 +67,7 @@ namespace
 static
 std::string::size_type findLastPathSeparator(std::string const& path)
 {
-	return path.find_last_of("/\\");
+    return path.find_last_of("/\\");
 }
 
 /** Finds the position of last dot.
@@ -76,70 +76,70 @@ std::string::size_type findLastPathSeparator(std::string const& path)
 static
 std::string::size_type findLastDot(std::string const& path)
 {
-	return path.find_last_of(".");
+    return path.find_last_of(".");
 }
 } // end namespace
 
 std::string dropFileExtension(std::string const& filename)
 {
-	// Look for dots in filename.
-	auto const p = findLastDot(filename);
-	if (p == std::string::npos)
-		return filename;
+    // Look for dots in filename.
+    auto const p = findLastDot(filename);
+    if (p == std::string::npos)
+        return filename;
 
-	// Check position of the last path separator.
-	auto const s = findLastPathSeparator(filename);
-	if (s != std::string::npos && p < s)
-		return filename;
+    // Check position of the last path separator.
+    auto const s = findLastPathSeparator(filename);
+    if (s != std::string::npos && p < s)
+        return filename;
 
-	return filename.substr(0, p);
+    return filename.substr(0, p);
 }
 
 std::string extractBaseName(std::string const& pathname)
 {
-	auto const p = findLastPathSeparator(pathname);
-	if (p == std::string::npos)
-		return pathname;
-	return pathname.substr(p + 1);
+    auto const p = findLastPathSeparator(pathname);
+    if (p == std::string::npos)
+        return pathname;
+    return pathname.substr(p + 1);
 }
 
 std::string extractBaseNameWithoutExtension(std::string const& pathname)
 {
-	std::string basename = extractBaseName(pathname);
-	return dropFileExtension(basename);
+    std::string basename = extractBaseName(pathname);
+    return dropFileExtension(basename);
 }
 
 std::string getFileExtension(const std::string &path)
 {
-	const std::string str = extractBaseName(path);
-	auto const p = findLastDot(str);
-	if (p == std::string::npos)
-		return std::string();
-	return str.substr(p + 1);
+    const std::string str = extractBaseName(path);
+    auto const p = findLastDot(str);
+    if (p == std::string::npos)
+        return std::string();
+    return str.substr(p + 1);
 }
 
 bool hasFileExtension(std::string const& extension, std::string const& filename)
 {
-	return boost::iequals(extension, getFileExtension(filename));
+    return boost::iequals(extension, getFileExtension(filename));
 }
 
 std::string copyPathToFileName(const std::string &file_name,
                                const std::string &source)
 {
-	// check if file_name already contains a full path
-	auto const pos = findLastPathSeparator(file_name);
-	if (pos != std::string::npos)
-		return file_name;
+    // check if file_name already contains a full path
+    auto const pos = findLastPathSeparator(file_name);
+    if (pos != std::string::npos)
+        return file_name;
 
-	return BaseLib::extractPath(source).append(file_name);
+    return BaseLib::extractPath(source).append(file_name);
 }
 
 std::string extractPath(std::string const& pathname)
 {
-	auto const pos = findLastPathSeparator(pathname);
-	if (pos == std::string::npos)
-		return "";
-	return pathname.substr(0, pos + 1);
+    auto const pos = findLastPathSeparator(pathname);
+    if (pos == std::string::npos)
+        return "";
+    return pathname.substr(0, pos + 1);
 }
 const char * pathSeparator =
 #ifdef _WIN32
@@ -150,19 +150,19 @@ const char * pathSeparator =
 
 std::string appendPathSeparator(std::string const& path)
 {
-	if(findLastPathSeparator(path) == path.length() - 1)
-		return path;
-	return path + pathSeparator;
+    if(findLastPathSeparator(path) == path.length() - 1)
+        return path;
+    return path + pathSeparator;
 }
 
 std::string joinPaths(std::string const& pathA, std::string const& pathB)
 {
-	std::string tmpB(pathB);
-	if(tmpB.substr(0, 1) == ".")
-		tmpB = tmpB.substr(1);
-	if(tmpB.substr(0, 1) == pathSeparator)
-		tmpB = tmpB.substr(1);
-	return appendPathSeparator(pathA) + tmpB;
+    std::string tmpB(pathB);
+    if(tmpB.substr(0, 1) == ".")
+        tmpB = tmpB.substr(1);
+    if(tmpB.substr(0, 1) == pathSeparator)
+        tmpB = tmpB.substr(1);
+    return appendPathSeparator(pathA) + tmpB;
 }
 
 } // end namespace BaseLib

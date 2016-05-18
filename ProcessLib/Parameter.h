@@ -31,9 +31,9 @@ namespace ProcessLib
 /// Its property name helps addressing the right parameter.
 struct ParameterBase
 {
-	virtual ~ParameterBase() = default;
+    virtual ~ParameterBase() = default;
 
-	std::string name;
+    std::string name;
 };
 
 /// A parameter is representing a value or function of any type.
@@ -43,9 +43,9 @@ struct ParameterBase
 template <typename ReturnType, typename... Args>
 struct Parameter : public ParameterBase
 {
-	virtual ~Parameter() = default;
+    virtual ~Parameter() = default;
 
-	virtual ReturnType operator()(Args&&... args) const = 0;
+    virtual ReturnType operator()(Args&&... args) const = 0;
 };
 
 /// Single, constant value parameter.
@@ -53,17 +53,17 @@ template <typename ReturnType>
 struct ConstParameter final
     : public Parameter<ReturnType, MeshLib::Element const&>
 {
-	ConstParameter(ReturnType value) : _value(value)
-	{
-	}
+    ConstParameter(ReturnType value) : _value(value)
+    {
+    }
 
-	ReturnType operator()(MeshLib::Element const&) const override
-	{
-		return _value;
-	}
+    ReturnType operator()(MeshLib::Element const&) const override
+    {
+        return _value;
+    }
 
 private:
-	ReturnType _value;
+    ReturnType _value;
 };
 
 std::unique_ptr<ParameterBase> createConstParameter(BaseLib::ConfigTree const& config);
@@ -73,18 +73,18 @@ template <typename ReturnType>
 struct MeshPropertyParameter final
     : public Parameter<ReturnType, MeshLib::Element const&>
 {
-	MeshPropertyParameter(MeshLib::PropertyVector<ReturnType> const& property)
-	    : _property(property)
-	{
-	}
+    MeshPropertyParameter(MeshLib::PropertyVector<ReturnType> const& property)
+        : _property(property)
+    {
+    }
 
-	ReturnType operator()(MeshLib::Element const& e) const override
-	{
-		return _property[e.getID()];
-	}
+    ReturnType operator()(MeshLib::Element const& e) const override
+    {
+        return _property[e.getID()];
+    }
 
 private:
-	MeshLib::PropertyVector<ReturnType> const& _property;
+    MeshLib::PropertyVector<ReturnType> const& _property;
 };
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);

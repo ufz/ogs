@@ -34,22 +34,22 @@ namespace
 /// @param eleType element type
 unsigned getDimension(MeshLib::MeshElemType eleType)
 {
-	switch (eleType)
-	{
-		case MeshLib::MeshElemType::LINE:
-			return 1;
-		case MeshLib::MeshElemType::QUAD:
-		case MeshLib::MeshElemType::TRIANGLE:
-			return 2;
-		case MeshLib::MeshElemType::HEXAHEDRON:
-		case MeshLib::MeshElemType::PRISM:
-		case MeshLib::MeshElemType::PYRAMID:
-		case MeshLib::MeshElemType::TETRAHEDRON:
-			return 3;
-		case MeshLib::MeshElemType::INVALID:
-			return 0;
-	}
-	return 0;
+    switch (eleType)
+    {
+        case MeshLib::MeshElemType::LINE:
+            return 1;
+        case MeshLib::MeshElemType::QUAD:
+        case MeshLib::MeshElemType::TRIANGLE:
+            return 2;
+        case MeshLib::MeshElemType::HEXAHEDRON:
+        case MeshLib::MeshElemType::PRISM:
+        case MeshLib::MeshElemType::PYRAMID:
+        case MeshLib::MeshElemType::TETRAHEDRON:
+            return 3;
+        case MeshLib::MeshElemType::INVALID:
+            return 0;
+    }
+    return 0;
 }
 
 } // end namespace
@@ -57,168 +57,168 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Structured mesh generator.\n"
-			"OpenGeoSys-6 software.\n"
-			"Copyright (c) 2012-2016, OpenGeoSys Community "
-			"(http://www.opengeosys.org) "
-			"Distributed under a Modified BSD License. "
-			"See accompanying file LICENSE.txt or "
-			"http://www.opengeosys.org/project/license"
-			"The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/structured-mesh-generation",
-		' ',
-		BaseLib::BuildInfo::git_describe);
+    TCLAP::CmdLine cmd("Structured mesh generator.\n"
+            "OpenGeoSys-6 software.\n"
+            "Copyright (c) 2012-2016, OpenGeoSys Community "
+            "(http://www.opengeosys.org) "
+            "Distributed under a Modified BSD License. "
+            "See accompanying file LICENSE.txt or "
+            "http://www.opengeosys.org/project/license"
+            "The documentation is available at https://docs.opengeosys.org/docs/tools/meshing/structured-mesh-generation",
+        ' ',
+        BaseLib::BuildInfo::git_describe);
 
-	std::unique_ptr<BaseLib::TCLAPCustomOutput> tclapOutput(new BaseLib::TCLAPCustomOutput());
-	cmd.setOutput(tclapOutput.get());
+    std::unique_ptr<BaseLib::TCLAPCustomOutput> tclapOutput(new BaseLib::TCLAPCustomOutput());
+    cmd.setOutput(tclapOutput.get());
 
-	std::vector<std::string> allowed_ele_types;
-	allowed_ele_types.push_back("line");
-	allowed_ele_types.push_back("tri");
-	allowed_ele_types.push_back("quad");
-	allowed_ele_types.push_back("hex");
-	TCLAP::ValuesConstraint<std::string> allowedVals(allowed_ele_types);
-	TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
-	                                      "element type to be created: line | tri | quad | hex", true, "line", &allowedVals);
-	cmd.add(eleTypeArg);
-	TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-	                                      "the name of the file the mesh will be written to", true,
-	                                      "", "file name of output mesh");
-	cmd.add(mesh_out);
-	TCLAP::ValueArg<double> lengthXArg("", "lx",
-	                                      "length of a domain in x direction", false, 10.0, "real");
-	cmd.add(lengthXArg);
-	TCLAP::ValueArg<double> lengthYArg("", "ly",
-	                                      "length of a domain in y direction", false, 10.0, "real");
-	cmd.add(lengthYArg);
-	TCLAP::ValueArg<double> lengthZArg("", "lz",
-	                                      "length of a domain in z direction", false, 10.0, "real");
-	cmd.add(lengthZArg);
-	TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
-	                                      "the number of subdivision in x direction", false, 10, "integer");
-	cmd.add(nsubdivXArg);
-	TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
-	                                      "the number of subdivision in y direction", false, 10, "integer");
-	cmd.add(nsubdivYArg);
-	TCLAP::ValueArg<unsigned> nsubdivZArg("", "nz",
-	                                      "the number of subdivision in z direction", false, 10, "integer");
-	cmd.add(nsubdivZArg);
-	// in case of gradual refinement
-	TCLAP::ValueArg<double> d0XArg("", "dx0",
-	                                      "initial cell length in x direction", false, 1, "real");
-	cmd.add(d0XArg);
-	TCLAP::ValueArg<double> d0YArg("", "dy0",
-	                                      "initial cell length in y direction", false, 1, "real");
-	cmd.add(d0YArg);
-	TCLAP::ValueArg<double> d0ZArg("", "dz0",
-	                                      "initial cell length in z direction", false, 1, "real");
-	cmd.add(d0ZArg);
-	TCLAP::ValueArg<double> dmaxXArg("", "dx-max",
-	                                      "maximum cell length in x direction", false, std::numeric_limits<double>::max(), "real");
-	cmd.add(dmaxXArg);
-	TCLAP::ValueArg<double> dmaxYArg("", "dy-max",
-	                                      "maximum cell length in y direction", false, std::numeric_limits<double>::max(), "real");
-	cmd.add(dmaxYArg);
-	TCLAP::ValueArg<double> dmaxZArg("", "dz-max",
-	                                      "maximum cell length in z direction", false, std::numeric_limits<double>::max(), "real");
-	cmd.add(dmaxZArg);
-	TCLAP::ValueArg<double> multiXArg("", "mx",
-	                                      "multiplier in x direction", false, 1, "real");
-	cmd.add(multiXArg);
-	TCLAP::ValueArg<double> multiYArg("", "my",
-	                                      "multiplier in y direction", false, 1, "real");
-	cmd.add(multiYArg);
-	TCLAP::ValueArg<double> multiZArg("", "mz",
-	                                      "multiplier in z direction", false, 1, "real");
-	cmd.add(multiZArg);
+    std::vector<std::string> allowed_ele_types;
+    allowed_ele_types.push_back("line");
+    allowed_ele_types.push_back("tri");
+    allowed_ele_types.push_back("quad");
+    allowed_ele_types.push_back("hex");
+    TCLAP::ValuesConstraint<std::string> allowedVals(allowed_ele_types);
+    TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
+                                          "element type to be created: line | tri | quad | hex", true, "line", &allowedVals);
+    cmd.add(eleTypeArg);
+    TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
+                                          "the name of the file the mesh will be written to", true,
+                                          "", "file name of output mesh");
+    cmd.add(mesh_out);
+    TCLAP::ValueArg<double> lengthXArg("", "lx",
+                                          "length of a domain in x direction", false, 10.0, "real");
+    cmd.add(lengthXArg);
+    TCLAP::ValueArg<double> lengthYArg("", "ly",
+                                          "length of a domain in y direction", false, 10.0, "real");
+    cmd.add(lengthYArg);
+    TCLAP::ValueArg<double> lengthZArg("", "lz",
+                                          "length of a domain in z direction", false, 10.0, "real");
+    cmd.add(lengthZArg);
+    TCLAP::ValueArg<unsigned> nsubdivXArg("", "nx",
+                                          "the number of subdivision in x direction", false, 10, "integer");
+    cmd.add(nsubdivXArg);
+    TCLAP::ValueArg<unsigned> nsubdivYArg("", "ny",
+                                          "the number of subdivision in y direction", false, 10, "integer");
+    cmd.add(nsubdivYArg);
+    TCLAP::ValueArg<unsigned> nsubdivZArg("", "nz",
+                                          "the number of subdivision in z direction", false, 10, "integer");
+    cmd.add(nsubdivZArg);
+    // in case of gradual refinement
+    TCLAP::ValueArg<double> d0XArg("", "dx0",
+                                          "initial cell length in x direction", false, 1, "real");
+    cmd.add(d0XArg);
+    TCLAP::ValueArg<double> d0YArg("", "dy0",
+                                          "initial cell length in y direction", false, 1, "real");
+    cmd.add(d0YArg);
+    TCLAP::ValueArg<double> d0ZArg("", "dz0",
+                                          "initial cell length in z direction", false, 1, "real");
+    cmd.add(d0ZArg);
+    TCLAP::ValueArg<double> dmaxXArg("", "dx-max",
+                                          "maximum cell length in x direction", false, std::numeric_limits<double>::max(), "real");
+    cmd.add(dmaxXArg);
+    TCLAP::ValueArg<double> dmaxYArg("", "dy-max",
+                                          "maximum cell length in y direction", false, std::numeric_limits<double>::max(), "real");
+    cmd.add(dmaxYArg);
+    TCLAP::ValueArg<double> dmaxZArg("", "dz-max",
+                                          "maximum cell length in z direction", false, std::numeric_limits<double>::max(), "real");
+    cmd.add(dmaxZArg);
+    TCLAP::ValueArg<double> multiXArg("", "mx",
+                                          "multiplier in x direction", false, 1, "real");
+    cmd.add(multiXArg);
+    TCLAP::ValueArg<double> multiYArg("", "my",
+                                          "multiplier in y direction", false, 1, "real");
+    cmd.add(multiYArg);
+    TCLAP::ValueArg<double> multiZArg("", "mz",
+                                          "multiplier in z direction", false, 1, "real");
+    cmd.add(multiZArg);
 
-	// parse arguments
-	cmd.parse(argc, argv);
-	const std::string eleTypeName(eleTypeArg.getValue());
-	const MeshLib::MeshElemType eleType = MeshLib::String2MeshElemType(eleTypeName);
-	const unsigned dim = getDimension(eleType);
+    // parse arguments
+    cmd.parse(argc, argv);
+    const std::string eleTypeName(eleTypeArg.getValue());
+    const MeshLib::MeshElemType eleType = MeshLib::String2MeshElemType(eleTypeName);
+    const unsigned dim = getDimension(eleType);
 
-	bool dim_used[3] = {false};
-	for (unsigned i=0; i<dim; i++)
-		dim_used[i] = true;
+    bool dim_used[3] = {false};
+    for (unsigned i=0; i<dim; i++)
+        dim_used[i] = true;
 
-	std::vector<TCLAP::ValueArg<double>*> vec_lengthArg = {&lengthXArg, &lengthYArg, &lengthZArg};
-	std::vector<TCLAP::ValueArg<unsigned>*> vec_ndivArg = {&nsubdivXArg, &nsubdivYArg, &nsubdivZArg};
-	std::vector<TCLAP::ValueArg<double>*> vec_d0Arg = {&d0XArg, &d0YArg, &d0ZArg};
-	std::vector<TCLAP::ValueArg<double>*> vec_dMaxArg = {&dmaxXArg, &dmaxYArg, &dmaxZArg};
-	std::vector<TCLAP::ValueArg<double>*> vec_multiArg = {&multiXArg, &multiYArg, &multiZArg};
+    std::vector<TCLAP::ValueArg<double>*> vec_lengthArg = {&lengthXArg, &lengthYArg, &lengthZArg};
+    std::vector<TCLAP::ValueArg<unsigned>*> vec_ndivArg = {&nsubdivXArg, &nsubdivYArg, &nsubdivZArg};
+    std::vector<TCLAP::ValueArg<double>*> vec_d0Arg = {&d0XArg, &d0YArg, &d0ZArg};
+    std::vector<TCLAP::ValueArg<double>*> vec_dMaxArg = {&dmaxXArg, &dmaxYArg, &dmaxZArg};
+    std::vector<TCLAP::ValueArg<double>*> vec_multiArg = {&multiXArg, &multiYArg, &multiZArg};
 
-	const bool isLengthSet = std::any_of(vec_lengthArg.begin(), vec_lengthArg.end(),
-	                                     [&](TCLAP::ValueArg<double> *arg){return arg->isSet();});
-	if (!isLengthSet) {
-		ERR("Missing input: Length information is not provided at all.");
-		return EXIT_FAILURE;
-	} else {
-		for (unsigned i=0; i<3; i++) {
-			if (dim_used[i] && !vec_lengthArg[i]->isSet()) {
-				ERR("Missing input: Length for dimension [%d] is required but missing.", i);
-				return EXIT_FAILURE;
-			}
-		}
-	}
+    const bool isLengthSet = std::any_of(vec_lengthArg.begin(), vec_lengthArg.end(),
+                                         [&](TCLAP::ValueArg<double> *arg){return arg->isSet();});
+    if (!isLengthSet) {
+        ERR("Missing input: Length information is not provided at all.");
+        return EXIT_FAILURE;
+    } else {
+        for (unsigned i=0; i<3; i++) {
+            if (dim_used[i] && !vec_lengthArg[i]->isSet()) {
+                ERR("Missing input: Length for dimension [%d] is required but missing.", i);
+                return EXIT_FAILURE;
+            }
+        }
+    }
 
-	std::vector<double> length(dim);
-	std::vector<unsigned> n_subdivision(dim);
-	std::vector<double> vec_dx(dim);
-	for (unsigned i=0; i<dim; i++)
-	{
-		length[i] = vec_lengthArg[i]->getValue();
-		n_subdivision[i] = vec_ndivArg[i]->getValue();
-		vec_dx[i] = length[i] / n_subdivision[i];
-	}
+    std::vector<double> length(dim);
+    std::vector<unsigned> n_subdivision(dim);
+    std::vector<double> vec_dx(dim);
+    for (unsigned i=0; i<dim; i++)
+    {
+        length[i] = vec_lengthArg[i]->getValue();
+        n_subdivision[i] = vec_ndivArg[i]->getValue();
+        vec_dx[i] = length[i] / n_subdivision[i];
+    }
 
-	std::vector<std::unique_ptr<BaseLib::ISubdivision>> vec_div;
-	vec_div.reserve(dim);
-	for (unsigned i=0; i<dim; i++)
-	{
-		if (vec_ndivArg[i]->isSet())
-		{
-			vec_div.emplace_back(
-			    new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
-		}
-		else
-		{
-			vec_div.emplace_back(new BaseLib::GradualSubdivision(
-			    length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(),
-			    vec_multiArg[i]->getValue()));
-		}
-	}
+    std::vector<std::unique_ptr<BaseLib::ISubdivision>> vec_div;
+    vec_div.reserve(dim);
+    for (unsigned i=0; i<dim; i++)
+    {
+        if (vec_ndivArg[i]->isSet())
+        {
+            vec_div.emplace_back(
+                new BaseLib::UniformSubdivision(length[i], n_subdivision[i]));
+        }
+        else
+        {
+            vec_div.emplace_back(new BaseLib::GradualSubdivision(
+                length[i], vec_d0Arg[i]->getValue(), vec_dMaxArg[i]->getValue(),
+                vec_multiArg[i]->getValue()));
+        }
+    }
 
-	// generate a mesh
-	std::unique_ptr<MeshLib::Mesh> mesh;
-	switch (eleType)
-	{
-	case MeshLib::MeshElemType::LINE:
-		mesh.reset(MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]));
-		break;
-	case MeshLib::MeshElemType::TRIANGLE:
-		mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]));
-		break;
-	case MeshLib::MeshElemType::QUAD:
-		mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]));
-		break;
-	case MeshLib::MeshElemType::HEXAHEDRON:
-		mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
-		break;
-	default:
-		ERR("Given element type is not supported.");
-		break;
-	}
+    // generate a mesh
+    std::unique_ptr<MeshLib::Mesh> mesh;
+    switch (eleType)
+    {
+    case MeshLib::MeshElemType::LINE:
+        mesh.reset(MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]));
+        break;
+    case MeshLib::MeshElemType::TRIANGLE:
+        mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0], *vec_div[1]));
+        break;
+    case MeshLib::MeshElemType::QUAD:
+        mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(*vec_div[0], *vec_div[1]));
+        break;
+    case MeshLib::MeshElemType::HEXAHEDRON:
+        mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
+        break;
+    default:
+        ERR("Given element type is not supported.");
+        break;
+    }
 
-	if (mesh)
-	{
-		INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    if (mesh)
+    {
+        INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
-		// write into a file
-		MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
-	}
+        // write into a file
+        MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 

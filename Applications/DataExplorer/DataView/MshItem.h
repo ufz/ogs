@@ -20,7 +20,7 @@
 #include "InSituLib/VtkMappedMeshSource.h"
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -30,17 +30,17 @@ namespace MeshLib {
 class MshItem : public TreeItem
 {
 public:
-	/// Constructor, automatically generates VTK object of the given mesh.
-	MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* grid);
-	~MshItem();
+    /// Constructor, automatically generates VTK object of the given mesh.
+    MshItem(const QList<QVariant> &data, TreeItem* parent, const MeshLib::Mesh* grid);
+    ~MshItem();
 
-	/// Returns the mesh.
-	MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }
-	/// Returns the VTK object.
-	InSituLib::VtkMappedMeshSource*  vtkSource() const { return _mesh_source; }
+    /// Returns the mesh.
+    MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }
+    /// Returns the VTK object.
+    InSituLib::VtkMappedMeshSource*  vtkSource() const { return _mesh_source; }
 
 private:
-	InSituLib::VtkMappedMeshSource * _mesh_source;
+    InSituLib::VtkMappedMeshSource * _mesh_source;
 };
 
 #endif //MSHITEM_H

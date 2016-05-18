@@ -25,11 +25,11 @@ namespace MeshLib
 class LineRule3 : public LineRule2
 {
 public:
-	/// Constant: The number of all nodes for this element
-	static const unsigned n_all_nodes = 3u;
+    /// Constant: The number of all nodes for this element
+    static const unsigned n_all_nodes = 3u;
 
-	/// Constant: The FEM type of the element
-	static const CellType cell_type = CellType::LINE3;
+    /// Constant: The FEM type of the element
+    static const CellType cell_type = CellType::LINE3;
 }; /* class */
 
 } /* namespace */

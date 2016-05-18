@@ -26,11 +26,11 @@ namespace BaseLib
  **/
 class LogogSimpleFormatter : public logog::FormatterMSVC
 {
-	virtual TOPIC_FLAGS GetTopicFlags(const logog::Topic& topic)
-	{
-		return (logog::Formatter::GetTopicFlags(topic) &
-		        ~(TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG));
-	}
+    virtual TOPIC_FLAGS GetTopicFlags(const logog::Topic& topic)
+    {
+        return (logog::Formatter::GetTopicFlags(topic) &
+                ~(TOPIC_FILE_NAME_FLAG | TOPIC_LINE_NUMBER_FLAG));
+    }
 };
 
 }  // namespace BaseLib

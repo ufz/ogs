@@ -15,14 +15,14 @@
 #include "ModelTreeItem.h"
 
 ModelTreeItem::ModelTreeItem(const QList<QVariant> &data, TreeItem* parent, BaseItem* item)
-	: TreeItem(data, parent), _item(item), _stn(nullptr)
+    : TreeItem(data, parent), _item(item), _stn(nullptr)
 {
 }
 
 BaseItem* ModelTreeItem::getItem() const
 {
-	if (_item != NULL)
-		return _item;
-	return NULL;
+    if (_item != NULL)
+        return _item;
+    return NULL;
 }
 

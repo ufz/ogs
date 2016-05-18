@@ -12,4 +12,4 @@ IndentWidth:     4
 PointerAlignment: Left
 Standard:        C++11
 TabWidth:        4
-UseTab:          ForIndentation
+UseTab:          Never

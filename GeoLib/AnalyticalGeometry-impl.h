@@ -212,9 +212,9 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
 
 template <typename P>
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
-	std::vector<P*> const& pnts)
+    std::vector<P*> const& pnts)
 {
-	rotatePoints(rot_mat, pnts.begin(), pnts.end());
+    rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }
 
 } // end namespace GeoLib

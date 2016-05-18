@@ -18,16 +18,16 @@ namespace NumLib
 class ShapePoint1
 {
 public:
-	/// Evaluate the shape function at the given point
-	///
-	/// @param [in]  r    point coordinates
-	/// @param [out] N   a vector of calculated shape function.
-	template <class T_X, class T_N>
-	static void computeShapeFunction(const T_X& r, T_N& N);
+    /// Evaluate the shape function at the given point
+    ///
+    /// @param [in]  r    point coordinates
+    /// @param [out] N   a vector of calculated shape function.
+    template <class T_X, class T_N>
+    static void computeShapeFunction(const T_X& r, T_N& N);
 
-	using MeshElement = MeshLib::Point;
-	static const std::size_t DIM = MeshElement::dimension;
-	static const std::size_t NPOINTS = MeshElement::n_all_nodes;
+    using MeshElement = MeshLib::Point;
+    static const std::size_t DIM = MeshElement::dimension;
+    static const std::size_t NPOINTS = MeshElement::n_all_nodes;
 };
 }
 

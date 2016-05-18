@@ -20,7 +20,7 @@
 #include <QDialog>
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -28,28 +28,28 @@ namespace MeshLib {
  */
 class MeshValueEditDialog : public QDialog, private Ui_MeshValueEdit
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor for creating a new FEM condition.
-	MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = 0);
+    /// Constructor for creating a new FEM condition.
+    MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent = 0);
 
-	~MeshValueEditDialog(void);
+    ~MeshValueEditDialog(void);
 
 private:
-	MeshLib::Mesh* _mesh;
+    MeshLib::Mesh* _mesh;
 
 private slots:
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
-	void on_replaceButton_toggled(bool isSelected);
+    void on_replaceButton_toggled(bool isSelected);
 
 signals:
-	void valueEditFinished(MeshLib::Mesh*);
+    void valueEditFinished(MeshLib::Mesh*);
 };
 
 #endif //MESHVALUEEDITDIALOG_H

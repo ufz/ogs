@@ -33,71 +33,71 @@
 class VtkColorLookupTable : public vtkLookupTable
 {
 public:
-	/// Interpolation methods
-	enum class LUTType {
-		NONE = 0,
-		LINEAR = 1,
-		EXPONENTIAL = 2,
-		SIGMOID = 3 // not yet implemented
-	};
+    /// Interpolation methods
+    enum class LUTType {
+        NONE = 0,
+        LINEAR = 1,
+        EXPONENTIAL = 2,
+        SIGMOID = 3 // not yet implemented
+    };
 
-	static const int DEFAULTMINVALUE = -9999;
-	static const int DEFAULTMAXVALUE =  9999;
+    static const int DEFAULTMINVALUE = -9999;
+    static const int DEFAULTMAXVALUE =  9999;
 
-	/// \brief Create new objects with New() because of VTKs object reference counting.
-	static VtkColorLookupTable* New();
+    /// \brief Create new objects with New() because of VTKs object reference counting.
+    static VtkColorLookupTable* New();
 
-	vtkTypeMacro(VtkColorLookupTable,vtkLookupTable);
+    vtkTypeMacro(VtkColorLookupTable,vtkLookupTable);
 
-	/// \brief Builds the colour table based on the previously set parameters.
-	/// This method should only be called after all options have been set.
-	void Build();
+    /// \brief Builds the colour table based on the previously set parameters.
+    /// This method should only be called after all options have been set.
+    void Build();
 
-	/* \brief Sets the given colour as a constant in the colour lookup table.
-	 * The colour will subsequently be considered in the interpolation process when the lookup table is built. Note that pos is only a
-	 * relative position, i.e. pos in (0,1). The actual position of that colour in the table is dependent on the number of entries set
-	 * the SetRange() method.
-	 */
-	void setColor(double pos, unsigned char rgba[4]);
+    /* \brief Sets the given colour as a constant in the colour lookup table.
+     * The colour will subsequently be considered in the interpolation process when the lookup table is built. Note that pos is only a
+     * relative position, i.e. pos in (0,1). The actual position of that colour in the table is dependent on the number of entries set
+     * the SetRange() method.
+     */
+    void setColor(double pos, unsigned char rgba[4]);
 
-	/* \brief Returns the colour at the given index from the colour lookup table.
-	 * The colour will be interpolated from the colour-dictionary entries before and after this index.
-	 * Make sure that Build() has been called before using this method.
-	 */
-	void getColor(vtkIdType indx, unsigned char rgba[4]) const;
+    /* \brief Returns the colour at the given index from the colour lookup table.
+     * The colour will be interpolated from the colour-dictionary entries before and after this index.
+     * Make sure that Build() has been called before using this method.
+     */
+    void getColor(vtkIdType indx, unsigned char rgba[4]) const;
 
-	/// Returns the type of interpolation used.
-	VtkColorLookupTable::LUTType getInterpolationType() const { return _type; }
+    /// Returns the type of interpolation used.
+    VtkColorLookupTable::LUTType getInterpolationType() const { return _type; }
 
-	/// Sets the type of interpolation.
-	void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
+    /// Sets the type of interpolation.
+    void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
 
-	/// Exports a color table to a file.
-	void writeToFile(const std::string &filename);
+    /// Exports a color table to a file.
+    void writeToFile(const std::string &filename);
 
-	/// Set a value within the LUT
-	void SetTableValueRGBA(vtkIdType idx, unsigned char rgba[4]);
+    /// Set a value within the LUT
+    void SetTableValueRGBA(vtkIdType idx, unsigned char rgba[4]);
 
-	/// Get a value from the LUT
-	void GetTableValue(vtkIdType idx, unsigned char rgba[4]);
+    /// Get a value from the LUT
+    void GetTableValue(vtkIdType idx, unsigned char rgba[4]);
 
 protected:
-	/// Constructor
-	VtkColorLookupTable();
+    /// Constructor
+    VtkColorLookupTable();
 
-	/// Destructor
-	~VtkColorLookupTable();
+    /// Destructor
+    ~VtkColorLookupTable();
 
 private:
-	/// Interpolates values linearly.
-	unsigned char linInterpolation(unsigned char a, unsigned char b, double p) const;
+    /// Interpolates values linearly.
+    unsigned char linInterpolation(unsigned char a, unsigned char b, double p) const;
 
-	/// Interpolates values exponentially. gamma should roughly be in [0,4), for gamma=1 interpolation is linear.
-	unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma,
-	                               double p) const;
+    /// Interpolates values exponentially. gamma should roughly be in [0,4), for gamma=1 interpolation is linear.
+    unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma,
+                                   double p) const;
 
-	std::map<double, unsigned char*> _dict;
-	LUTType _type;
+    std::map<double, unsigned char*> _dict;
+    LUTType _type;
 };
 
 #endif // VTKCOLORLOOKUPTABLE_H

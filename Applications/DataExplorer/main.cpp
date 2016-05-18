@@ -22,44 +22,44 @@ FbxScene* lScene = NULL;
 int main(int argc, char* argv[])
 {
 #ifdef VTKOSGCONVERTER_FOUND
-	OSG::osgInit(argc, argv);
+    OSG::osgInit(argc, argv);
 #endif
 #ifdef VTKFBXCONVERTER_FOUND
-	InitializeSdkObjects(lSdkManager, lScene);
+    InitializeSdkObjects(lSdkManager, lScene);
 #endif
 
-	auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
-	vtkOutputWindow::SetInstance(myOutputWindow);
+    auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
+    vtkOutputWindow::SetInstance(myOutputWindow);
 
-	LOGOG_INITIALIZE();
-	logog::Cout* logogCout = new logog::Cout;
-	BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
-	logogCout->SetFormatter(*formatter);
-	QApplication a(argc, argv);
-	QApplication::setApplicationName("OpenGeoSys - Data Explorer");
-	QApplication::setApplicationVersion(QString::fromStdString(
-		BaseLib::BuildInfo::ogs_version));
-	QApplication::setOrganizationName("OpenGeoSys Community");
-	QApplication::setOrganizationDomain("opengeosys.org");
-	setlocale(LC_NUMERIC,"C");
-	QLocale::setDefault(QLocale::German);
-	std::unique_ptr<MainWindow> w (new MainWindow());
-	w->setWindowTitle( w->windowTitle() + " - " +
-		QString::fromStdString(BaseLib::BuildInfo::git_describe));
-	if (QCoreApplication::arguments().size()>1) {
-		w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
-	}
-	w->show();
-	int returncode = a.exec();
-	delete formatter;
-	delete logogCout;
-	LOGOG_SHUTDOWN();
+    LOGOG_INITIALIZE();
+    logog::Cout* logogCout = new logog::Cout;
+    BaseLib::LogogSimpleFormatter* formatter = new BaseLib::LogogSimpleFormatter;
+    logogCout->SetFormatter(*formatter);
+    QApplication a(argc, argv);
+    QApplication::setApplicationName("OpenGeoSys - Data Explorer");
+    QApplication::setApplicationVersion(QString::fromStdString(
+        BaseLib::BuildInfo::ogs_version));
+    QApplication::setOrganizationName("OpenGeoSys Community");
+    QApplication::setOrganizationDomain("opengeosys.org");
+    setlocale(LC_NUMERIC,"C");
+    QLocale::setDefault(QLocale::German);
+    std::unique_ptr<MainWindow> w (new MainWindow());
+    w->setWindowTitle( w->windowTitle() + " - " +
+        QString::fromStdString(BaseLib::BuildInfo::git_describe));
+    if (QCoreApplication::arguments().size()>1) {
+        w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
+    }
+    w->show();
+    int returncode = a.exec();
+    delete formatter;
+    delete logogCout;
+    LOGOG_SHUTDOWN();
 #ifdef VTKFBXCONVERTER_FOUND
-	DestroySdkObjects(lSdkManager, true);
+    DestroySdkObjects(lSdkManager, true);
 #endif
 #ifdef VTKOSGCONVERTER_FOUND
-	OSG::osgExit();
+    OSG::osgExit();
 #endif
 
-	return returncode;
+    return returncode;
 }

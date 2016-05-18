@@ -1,92 +1,92 @@
 set(SOURCES
-	AddLayerToMeshDialog.cpp
-	ColorTableModel.cpp
-	ColorTableView.cpp
-	CondFromRasterDialog.cpp
-	CreateStructuredGridDialog.cpp
-	DataExplorerSettingsDialog.cpp
-	DirectConditionGenerator.cpp
-	ElementTreeModel.cpp
-	ElementTreeView.cpp
-	GEOModels.cpp
-	GeoOnMeshMappingDialog.cpp
-	GeoTabWidget.cpp
-	GeoTreeModel.cpp
-	GeoTreeView.cpp
-	GMSHPrefsDialog.cpp
-	LicenseDialog.cpp
-	LinearEditDialog.cpp
-	LineEditDialog.cpp
-	MergeGeometriesDialog.cpp
-	MeshAnalysisDialog.cpp
-	MeshElementRemovalDialog.cpp
-	MeshMapping2DDialog.cpp
-	MeshQualitySelectionDialog.cpp
-	MeshValueEditDialog.cpp
-	ModellingTabWidget.cpp
-	ModelTreeItem.cpp
-	MeshLayerEditDialog.cpp
-	MshItem.cpp
-	MshModel.cpp
-	MshTabWidget.cpp
-	MshView.cpp
-	NetCdfConfigureDialog.cpp
-	SaveMeshDialog.cpp
-	SelectMeshDialog.cpp
-	SetNameDialog.cpp
-	SHPImportDialog.cpp
-	StationTabWidget.cpp
-	StationTreeModel.cpp
-	StationTreeView.cpp
-	SurfaceExtractionDialog.cpp
+    AddLayerToMeshDialog.cpp
+    ColorTableModel.cpp
+    ColorTableView.cpp
+    CondFromRasterDialog.cpp
+    CreateStructuredGridDialog.cpp
+    DataExplorerSettingsDialog.cpp
+    DirectConditionGenerator.cpp
+    ElementTreeModel.cpp
+    ElementTreeView.cpp
+    GEOModels.cpp
+    GeoOnMeshMappingDialog.cpp
+    GeoTabWidget.cpp
+    GeoTreeModel.cpp
+    GeoTreeView.cpp
+    GMSHPrefsDialog.cpp
+    LicenseDialog.cpp
+    LinearEditDialog.cpp
+    LineEditDialog.cpp
+    MergeGeometriesDialog.cpp
+    MeshAnalysisDialog.cpp
+    MeshElementRemovalDialog.cpp
+    MeshMapping2DDialog.cpp
+    MeshQualitySelectionDialog.cpp
+    MeshValueEditDialog.cpp
+    ModellingTabWidget.cpp
+    ModelTreeItem.cpp
+    MeshLayerEditDialog.cpp
+    MshItem.cpp
+    MshModel.cpp
+    MshTabWidget.cpp
+    MshView.cpp
+    NetCdfConfigureDialog.cpp
+    SaveMeshDialog.cpp
+    SelectMeshDialog.cpp
+    SetNameDialog.cpp
+    SHPImportDialog.cpp
+    StationTabWidget.cpp
+    StationTreeModel.cpp
+    StationTreeView.cpp
+    SurfaceExtractionDialog.cpp
 )
 
 set(HEADERS
-	AddLayerToMeshDialog.h
-	BaseItem.h
-	ColorTableModel.h
-	ColorTableView.h
-	CondFromRasterDialog.h
-	CondItem.h
-	CondObjectListItem.h
-	CreateStructuredGridDialog.h
-	DataExplorerSettingsDialog.h
-	DirectConditionGenerator.h
-	ElementTreeModel.h
-	ElementTreeView.h
-	GEOModels.h
-	GeoObjectListItem.h
-	GeoOnMeshMappingDialog.h
-	GeoTabWidget.h
-	GeoTreeItem.h
-	GeoTreeModel.h
-	GeoTreeView.h
-	GMSHPrefsDialog.h
-	LicenseDialog.h
-	LinearEditDialog.h
-	LineEditDialog.h
-	MergeGeometriesDialog.h
-	MeshAnalysisDialog.h
-	MeshElementRemovalDialog.h
-	MeshMapping2DDialog.h
-	MeshQualitySelectionDialog.h
-	MeshValueEditDialog.h
-	ModellingTabWidget.h
-	ModelTreeItem.h
-	MeshLayerEditDialog.h
-	MshItem.h
-	MshModel.h
-	MshTabWidget.h
-	MshView.h
-	NetCdfConfigureDialog.h
-	SaveMeshDialog.h
-	SelectMeshDialog.h
-	SetNameDialog.h
-	SHPImportDialog.h
-	StationTabWidget.h
-	StationTreeModel.h
-	StationTreeView.h
-	SurfaceExtractionDialog.h
+    AddLayerToMeshDialog.h
+    BaseItem.h
+    ColorTableModel.h
+    ColorTableView.h
+    CondFromRasterDialog.h
+    CondItem.h
+    CondObjectListItem.h
+    CreateStructuredGridDialog.h
+    DataExplorerSettingsDialog.h
+    DirectConditionGenerator.h
+    ElementTreeModel.h
+    ElementTreeView.h
+    GEOModels.h
+    GeoObjectListItem.h
+    GeoOnMeshMappingDialog.h
+    GeoTabWidget.h
+    GeoTreeItem.h
+    GeoTreeModel.h
+    GeoTreeView.h
+    GMSHPrefsDialog.h
+    LicenseDialog.h
+    LinearEditDialog.h
+    LineEditDialog.h
+    MergeGeometriesDialog.h
+    MeshAnalysisDialog.h
+    MeshElementRemovalDialog.h
+    MeshMapping2DDialog.h
+    MeshQualitySelectionDialog.h
+    MeshValueEditDialog.h
+    ModellingTabWidget.h
+    ModelTreeItem.h
+    MeshLayerEditDialog.h
+    MshItem.h
+    MshModel.h
+    MshTabWidget.h
+    MshView.h
+    NetCdfConfigureDialog.h
+    SaveMeshDialog.h
+    SelectMeshDialog.h
+    SetNameDialog.h
+    SHPImportDialog.h
+    StationTabWidget.h
+    StationTreeModel.h
+    StationTreeView.h
+    SurfaceExtractionDialog.h
 )
 
 # Visual Studio folder
@@ -100,48 +100,48 @@ source_group("UI Files" FILES ${UIS})
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(
-	${CMAKE_CURRENT_BINARY_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}/../Base
-	${CMAKE_CURRENT_BINARY_DIR}/DiagramView
-	${CMAKE_CURRENT_BINARY_DIR}/StratView
-	${SOURCE_DIR_REL}/BaseLib
-	${SOURCE_DIR_REL}/MathLib
-	${SOURCE_DIR_REL}/GeoLib
-	${SOURCE_DIR_REL}/MeshGeoToolsLib
-	${SOURCE_DIR_REL}/MeshLib
-	${SOURCE_DIR_REL}/FileIO
-	${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
-	${CMAKE_CURRENT_SOURCE_DIR}/StratView
-	${GUI_SOURCE_DIR_REL}/Base
-	${GUI_SOURCE_DIR_REL}/VtkVis
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/../Base
+    ${CMAKE_CURRENT_BINARY_DIR}/DiagramView
+    ${CMAKE_CURRENT_BINARY_DIR}/StratView
+    ${SOURCE_DIR_REL}/BaseLib
+    ${SOURCE_DIR_REL}/MathLib
+    ${SOURCE_DIR_REL}/GeoLib
+    ${SOURCE_DIR_REL}/MeshGeoToolsLib
+    ${SOURCE_DIR_REL}/MeshLib
+    ${SOURCE_DIR_REL}/FileIO
+    ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
+    ${CMAKE_CURRENT_SOURCE_DIR}/StratView
+    ${GUI_SOURCE_DIR_REL}/Base
+    ${GUI_SOURCE_DIR_REL}/VtkVis
 )
 
 if(VTKOSGCONVERTER_FOUND)
-	include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
+    include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
 endif()
 
 if(GEOTIFF_FOUND)
-	include_directories(${GEOTIFF_INCLUDE_DIRS})
+    include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
 add_library(QtDataView
-	${SOURCES}
-	${HEADERS}
-	${UIS}
+    ${SOURCES}
+    ${HEADERS}
+    ${UIS}
 )
 
 target_link_libraries(QtDataView Qt4::QtCore Qt4::QtGui)
 target_link_libraries(QtDataView
-	FileIO
-	DataHolderLib
-	QtBase
+    FileIO
+    DataHolderLib
+    QtBase
 )
 add_dependencies(QtDataView QtDiagramView QtStratView)
 
 ADD_VTK_DEPENDENCY(QtDataView)
 
 if(GEOTIFF_FOUND)
-	target_link_libraries( QtDataView ${GEOTIFF_LIBRARIES} )
+    target_link_libraries( QtDataView ${GEOTIFF_LIBRARIES} )
 endif () # GEOTIFF_FOUND
 
 set_property(TARGET QtDataView PROPERTY FOLDER "DataExplorer")

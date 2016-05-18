@@ -52,32 +52,32 @@ bool LayeredMeshGenerator::createLayers(
 std::unique_ptr<MeshLib::Mesh>
 LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 {
-	if (_nodes.empty() || _elements.empty())
-		return nullptr;
+    if (_nodes.empty() || _elements.empty())
+        return nullptr;
 
-	MeshLib::Properties properties;
-	if (_materials.size() == _elements.size())
-	{
-		boost::optional<MeshLib::PropertyVector<int>&> materials =
-		    properties.createNewPropertyVector<int>(
-		        "MaterialIDs", MeshLib::MeshItemType::Cell);
-		assert(materials != boost::none);
-		materials->reserve(_materials.size());
-		std::copy(_materials.cbegin(),
-		          _materials.cend(),
-		          std::back_inserter(*materials));
-	}
-	else
-		WARN ("Skipping MaterialID information, number of entries does not match element number");
+    MeshLib::Properties properties;
+    if (_materials.size() == _elements.size())
+    {
+        boost::optional<MeshLib::PropertyVector<int>&> materials =
+            properties.createNewPropertyVector<int>(
+                "MaterialIDs", MeshLib::MeshItemType::Cell);
+        assert(materials != boost::none);
+        materials->reserve(_materials.size());
+        std::copy(_materials.cbegin(),
+                  _materials.cend(),
+                  std::back_inserter(*materials));
+    }
+    else
+        WARN ("Skipping MaterialID information, number of entries does not match element number");
 
-	std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
-	MeshLib::NodeSearch ns(*result.get());
-	if (ns.searchUnused() > 0) {
-		std::unique_ptr<MeshLib::Mesh> new_mesh(MeshLib::removeNodes(
-			*result.get(), ns.getSearchedNodeIDs(), mesh_name));
-		return new_mesh;
-	}
-	return result;
+    std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
+    MeshLib::NodeSearch ns(*result.get());
+    if (ns.searchUnused() > 0) {
+        std::unique_ptr<MeshLib::Mesh> new_mesh(MeshLib::removeNodes(
+            *result.get(), ns.getSearchedNodeIDs(), mesh_name));
+        return new_mesh;
+    }
+    return result;
 }
 
 double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high)

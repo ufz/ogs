@@ -25,17 +25,17 @@ class VtkImageDataToLinePolyDataFilter;
 class VtkCompositeImageToCylindersFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeImageToCylindersFilter();
+    VtkCompositeImageToCylindersFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeImageToCylindersFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
-	void SetUserVectorProperty( QString name, QList<QVariant> values );
+    void SetUserVectorProperty( QString name, QList<QVariant> values );
 
 private:
-	VtkImageDataToLinePolyDataFilter* _lineFilter;
+    VtkImageDataToLinePolyDataFilter* _lineFilter;
 };
 
 #endif // VTKCOMPOSITEIMAGETOCYLINDERSFILTER_H

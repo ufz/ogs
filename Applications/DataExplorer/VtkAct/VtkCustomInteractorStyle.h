@@ -35,68 +35,68 @@ class vtkUnstructuredGridAlgorithm;
  */
 class VtkCustomInteractorStyle : public QObject, public vtkInteractorStyleTrackballCamera
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	static VtkCustomInteractorStyle* New();
-	vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
+    static VtkCustomInteractorStyle* New();
+    vtkTypeMacro (VtkCustomInteractorStyle, vtkInteractorStyleTrackballCamera);
 
-	/// @brief Handles key press events.
-	virtual void OnChar();
+    /// @brief Handles key press events.
+    virtual void OnChar();
 
-	/// @brief Handles key down events.
-	virtual void OnKeyDown();
+    /// @brief Handles key down events.
+    virtual void OnKeyDown();
 
-	/// @brief Handles key up events.
-	virtual void OnKeyUp();
+    /// @brief Handles key up events.
+    virtual void OnKeyUp();
 
-	/// @brief Handles left mouse button events (picking).
-	virtual void OnLeftButtonDown();
+    /// @brief Handles left mouse button events (picking).
+    virtual void OnLeftButtonDown();
 
-	/// @brief Handles middle mouse button events (rotation point picking).
-	virtual void OnRightButtonDown();
+    /// @brief Handles middle mouse button events (rotation point picking).
+    virtual void OnRightButtonDown();
 
 public slots:
-	void highlightActor(vtkProp3D* prop);
+    void highlightActor(vtkProp3D* prop);
 
-	/// @brief Removes the highlight actor from the visible scene.
-	void removeHighlightActor();
+    /// @brief Removes the highlight actor from the visible scene.
+    void removeHighlightActor();
 
-	void setHighlightActor(bool on);
+    void setHighlightActor(bool on);
 
-	/// @brief Sets the highlightable vtk object.
-	void pickableDataObject(vtkDataObject* object);
+    /// @brief Sets the highlightable vtk object.
+    void pickableDataObject(vtkDataObject* object);
 
 protected:
-	VtkCustomInteractorStyle();
-	virtual ~VtkCustomInteractorStyle();
+    VtkCustomInteractorStyle();
+    virtual ~VtkCustomInteractorStyle();
 
-	/// @brief The vtk object to pick.
-	vtkDataObject* _data;
+    /// @brief The vtk object to pick.
+    vtkDataObject* _data;
 
-	/// @brief The mapper for highlighting the selected cell.
-	vtkDataSetMapper* _selectedMapper;
+    /// @brief The mapper for highlighting the selected cell.
+    vtkDataSetMapper* _selectedMapper;
 
-	/// @brief The actor for highlighting the selected cell.
-	vtkActor* _selectedActor;
+    /// @brief The actor for highlighting the selected cell.
+    vtkActor* _selectedActor;
 
 private:
-	bool _highlightActor;
-	bool _alternateMouseActions;
+    bool _highlightActor;
+    bool _alternateMouseActions;
 
 signals:
-	/// @brief Emitted when something was picked.
-	void requestViewUpdate();
+    /// @brief Emitted when something was picked.
+    void requestViewUpdate();
 
-	/// @brief Emitted when the cursor shape was changed due to alternate
-	/// mouse action mode.
-	void cursorChanged(Qt::CursorShape);
+    /// @brief Emitted when the cursor shape was changed due to alternate
+    /// mouse action mode.
+    void cursorChanged(Qt::CursorShape);
 
-	/// @brief Emitted when a mesh element has been picked
-	void elementPicked(vtkUnstructuredGridAlgorithm const*const, unsigned);
+    /// @brief Emitted when a mesh element has been picked
+    void elementPicked(vtkUnstructuredGridAlgorithm const*const, unsigned);
 
-	/// @brief Emitted when the current object type cannot be handled by the element model
-	void clearElementView();
+    /// @brief Emitted when the current object type cannot be handled by the element model
+    void clearElementView();
 
 };
 

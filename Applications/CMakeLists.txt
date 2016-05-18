@@ -3,13 +3,13 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 add_subdirectory(ApplicationsLib)
 
 if(OGS_BUILD_UTILS AND NOT IS_SUBPROJECT)
-	add_subdirectory(Utils)
+    add_subdirectory(Utils)
 elseif(OGS_BUILD_GUI)
-	add_subdirectory(Utils/OGSFileConverter)
+    add_subdirectory(Utils/OGSFileConverter)
 endif() # OGS_BUILD_UTILS AND NOT IS_SUBPROJECT
 
 if(OGS_BUILD_GUI)
-	add_subdirectory(DataExplorer)
+    add_subdirectory(DataExplorer)
 endif() # OGS_BUILD_GUI
 
 if(OGS_BUILD_CLI)

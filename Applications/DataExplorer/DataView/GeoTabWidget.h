@@ -23,16 +23,16 @@
  */
 class GeoTabWidget : public QWidget, public Ui_GeoTabWidgetBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GeoTabWidget(QWidget* parent = 0);
+    GeoTabWidget(QWidget* parent = 0);
 
 private:
 
 private slots:
-	void enableSaveButton(bool enable) { this->saveGeoPushButton->setEnabled(enable); };
-	void enableRemoveButton(bool enable) { this->removeGeoPushButton->setEnabled(enable); };
+    void enableSaveButton(bool enable) { this->saveGeoPushButton->setEnabled(enable); };
+    void enableRemoveButton(bool enable) { this->removeGeoPushButton->setEnabled(enable); };
 
 };
 

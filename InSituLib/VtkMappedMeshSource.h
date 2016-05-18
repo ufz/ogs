@@ -43,8 +43,8 @@ class vtkDataArrayCollection;
 class vtkPointData;
 class vtkPoints;
 namespace MeshLib {
-	class Mesh;
-	class Properties;
+    class Mesh;
+    class Properties;
 }
 
 namespace InSituLib {
@@ -54,65 +54,65 @@ namespace InSituLib {
 class VtkMappedMeshSource : public vtkUnstructuredGridAlgorithm
 {
 public:
-	static VtkMappedMeshSource *New();
-	vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
-	virtual void PrintSelf(std::ostream &os, vtkIndent indent);
+    static VtkMappedMeshSource *New();
+    vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
+    virtual void PrintSelf(std::ostream &os, vtkIndent indent);
 
-	/// Sets the mesh. Calling is mandatory
-	void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
+    /// Sets the mesh. Calling is mandatory
+    void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
 
-	/// Returns the mesh.
-	const MeshLib::Mesh* GetMesh() const { return _mesh; }
+    /// Returns the mesh.
+    const MeshLib::Mesh* GetMesh() const { return _mesh; }
 
 protected:
-	VtkMappedMeshSource();
-	~VtkMappedMeshSource();
+    VtkMappedMeshSource();
+    ~VtkMappedMeshSource();
 
-	int ProcessRequest(vtkInformation *request, vtkInformationVector **inputVector,
-	                   vtkInformationVector *outputVector);
-	int RequestData(vtkInformation *, vtkInformationVector **,
-	                vtkInformationVector *);
-	int RequestInformation(vtkInformation *, vtkInformationVector **,
-	                       vtkInformationVector *);
+    int ProcessRequest(vtkInformation *request, vtkInformationVector **inputVector,
+                       vtkInformationVector *outputVector);
+    int RequestData(vtkInformation *, vtkInformationVector **,
+                    vtkInformationVector *);
+    int RequestInformation(vtkInformation *, vtkInformationVector **,
+                           vtkInformationVector *);
 
 private:
-	VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
-	void operator=(const VtkMappedMeshSource &);      // Not implemented.
+    VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
+    void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
-	/// Adds a zero-copy array (InSituLib::VtkMappedPropertyVectorTemplate) as
-	/// either point or cell data to the mesh.
-	/// \param properties MeshLib::Properties object
-	/// \param prop_name The name of the property vector to be mapped from
-	/// vtk-mesh to ogs-mesh
-	template <typename T>
-	bool addProperty(MeshLib::Properties const& properties,
-	                 std::string const& prop_name) const
-	{
-		boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(
-			properties.getPropertyVector<T>(prop_name));
-		if(!propertyVector)
-			return false;
+    /// Adds a zero-copy array (InSituLib::VtkMappedPropertyVectorTemplate) as
+    /// either point or cell data to the mesh.
+    /// \param properties MeshLib::Properties object
+    /// \param prop_name The name of the property vector to be mapped from
+    /// vtk-mesh to ogs-mesh
+    template <typename T>
+    bool addProperty(MeshLib::Properties const& properties,
+                     std::string const& prop_name) const
+    {
+        boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(
+            properties.getPropertyVector<T>(prop_name));
+        if(!propertyVector)
+            return false;
 
-		vtkNew<VtkMappedPropertyVectorTemplate<T> > dataArray;
-		dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<T> &>(*propertyVector));
-		dataArray->SetName(prop_name.c_str());
+        vtkNew<VtkMappedPropertyVectorTemplate<T> > dataArray;
+        dataArray->SetPropertyVector(const_cast<MeshLib::PropertyVector<T> &>(*propertyVector));
+        dataArray->SetName(prop_name.c_str());
 
-		if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
-			this->PointData->AddArray(dataArray.GetPointer());
-		else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
-			this->CellData->AddArray(dataArray.GetPointer());
+        if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+            this->PointData->AddArray(dataArray.GetPointer());
+        else if(propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+            this->CellData->AddArray(dataArray.GetPointer());
 
-		return true;
-	}
+        return true;
+    }
 
-	const MeshLib::Mesh* _mesh;
+    const MeshLib::Mesh* _mesh;
 
-	int NumberOfDimensions;
-	int NumberOfNodes;
+    int NumberOfDimensions;
+    int NumberOfNodes;
 
-	vtkNew<vtkPoints> Points;
-	vtkNew<vtkPointData> PointData;
-	vtkNew<vtkCellData> CellData;
+    vtkNew<vtkPoints> Points;
+    vtkNew<vtkPointData> PointData;
+    vtkNew<vtkCellData> CellData;
 };
 
 } // Namespace InSituLib

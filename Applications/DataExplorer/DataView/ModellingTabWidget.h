@@ -23,10 +23,10 @@
  */
 class ModellingTabWidget : public QWidget, public Ui_ModellingTabWidgetBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ModellingTabWidget(QWidget* parent = 0);
+    ModellingTabWidget(QWidget* parent = 0);
 
 private slots:
 

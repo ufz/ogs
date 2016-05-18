@@ -30,29 +30,29 @@ namespace MathLib
 class MatrixSparsityPattern
 {
 public:
-	/// Constant iterator over sorted entries of a row.
-	typedef std::set<std::size_t>::const_iterator ConstRowIterator;
+    /// Constant iterator over sorted entries of a row.
+    typedef std::set<std::size_t>::const_iterator ConstRowIterator;
 
-	explicit MatrixSparsityPattern(std::size_t const n_rows);
-	virtual ~MatrixSparsityPattern();
+    explicit MatrixSparsityPattern(std::size_t const n_rows);
+    virtual ~MatrixSparsityPattern();
 
-	/// Returns number of sparsity pattern rows.
-	std::size_t getNRows() const;
+    /// Returns number of sparsity pattern rows.
+    std::size_t getNRows() const;
 
-	/// Constant iterator over sorted entries of a row.
-	ConstRowIterator getRowBeginIterator(std::size_t const row) const;
-	/// Constant iterator over sorted entries of a row.
-	ConstRowIterator getRowEndIterator(std::size_t const row) const;
+    /// Constant iterator over sorted entries of a row.
+    ConstRowIterator getRowBeginIterator(std::size_t const row) const;
+    /// Constant iterator over sorted entries of a row.
+    ConstRowIterator getRowEndIterator(std::size_t const row) const;
 
-	/// Inserts an entry in the sparsity pattern.
-	/// \param row The row index the entry should be inserted to. The row index must be less or equal to the value returned by getNRows().
-	/// \param col The column index. A new entry will be created if needed.
-	void insert(std::size_t const row, std::size_t const col);
+    /// Inserts an entry in the sparsity pattern.
+    /// \param row The row index the entry should be inserted to. The row index must be less or equal to the value returned by getNRows().
+    /// \param col The column index. A new entry will be created if needed.
+    void insert(std::size_t const row, std::size_t const col);
 
 private:
-	DISALLOW_COPY_AND_ASSIGN(MatrixSparsityPattern);
+    DISALLOW_COPY_AND_ASSIGN(MatrixSparsityPattern);
 
-	std::vector<std::set<std::size_t> > _pattern;
+    std::vector<std::set<std::size_t> > _pattern;
 };
 
 } // end namespace MathLib

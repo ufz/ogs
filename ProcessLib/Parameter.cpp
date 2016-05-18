@@ -19,36 +19,36 @@ namespace ProcessLib
 std::unique_ptr<ParameterBase> createConstParameter(
     BaseLib::ConfigTree const& config)
 {
-	config.checkConfParam("type", "Constant");
-	auto value = config.getConfParam<double>("value");
-	DBUG("Using value %g", value);
+    config.checkConfParam("type", "Constant");
+    auto value = config.getConfParam<double>("value");
+    DBUG("Using value %g", value);
 
-	return std::unique_ptr<ParameterBase>(new ConstParameter<double>(value));
+    return std::unique_ptr<ParameterBase>(new ConstParameter<double>(value));
 }
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
-	config.checkConfParam("type", "MeshProperty");
-	auto field_name = config.getConfParam<std::string>("field_name");
-	DBUG("Using field_name %s", field_name.c_str());
+    config.checkConfParam("type", "MeshProperty");
+    auto field_name = config.getConfParam<std::string>("field_name");
+    DBUG("Using field_name %s", field_name.c_str());
 
-	if (!mesh.getProperties().hasPropertyVector(field_name))
-	{
-		ERR("The required property %s does not exists in the mesh.",
-		    field_name.c_str());
-		std::abort();
-	}
-	auto const& property =
-	    mesh.getProperties().template getPropertyVector<double>(field_name);
-	if (!property)
-	{
-		ERR("The required property %s is not of the requested type.",
-		    field_name.c_str());
-		std::abort();
-	}
+    if (!mesh.getProperties().hasPropertyVector(field_name))
+    {
+        ERR("The required property %s does not exists in the mesh.",
+            field_name.c_str());
+        std::abort();
+    }
+    auto const& property =
+        mesh.getProperties().template getPropertyVector<double>(field_name);
+    if (!property)
+    {
+        ERR("The required property %s is not of the requested type.",
+            field_name.c_str());
+        std::abort();
+    }
 
-	return std::unique_ptr<ParameterBase>(
-	    new MeshPropertyParameter<double>(*property));
+    return std::unique_ptr<ParameterBase>(
+        new MeshPropertyParameter<double>(*property));
 }
 }  // namespace ProcessLib

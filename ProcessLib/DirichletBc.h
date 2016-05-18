@@ -22,8 +22,8 @@ namespace ProcessLib
 template <typename IndexType>
 struct DirichletBc final
 {
-	std::vector<IndexType> global_ids;
-	std::vector<double> values;
+    std::vector<IndexType> global_ids;
+    std::vector<double> values;
 };
 
 }  // namespace ProcessLib

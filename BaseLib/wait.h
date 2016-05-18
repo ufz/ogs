@@ -22,14 +22,14 @@ namespace BaseLib {
 
 void wait(int seconds)
 {
-	time_t start_time, cur_time;
+    time_t start_time, cur_time;
 
-	time(&start_time);
-	do
-	{
-		 time(&cur_time);
-	}
-	while((cur_time - start_time) < seconds);
+    time(&start_time);
+    do
+    {
+         time(&cur_time);
+    }
+    while((cur_time - start_time) < seconds);
 }
 
 } // end namespace BaseLib

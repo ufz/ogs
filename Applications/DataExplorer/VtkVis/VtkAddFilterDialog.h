@@ -28,22 +28,22 @@ class QRadioButton;
  */
 class VtkAddFilterDialog : public QDialog, public Ui_VtkAddFilterDialogBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	VtkAddFilterDialog(VtkVisPipeline &pipeline,
-	                   QModelIndex parentIndex,
-	                   QDialog* parent = nullptr);
+    VtkAddFilterDialog(VtkVisPipeline &pipeline,
+                       QModelIndex parentIndex,
+                       QDialog* parent = nullptr);
 
 public slots:
-	void on_buttonBox_accepted();
+    void on_buttonBox_accepted();
 
 protected slots:
-	void on_filterListWidget_currentRowChanged(int currentRow);
+    void on_filterListWidget_currentRowChanged(int currentRow);
 
 private:
-	VtkVisPipeline& _pipeline;
-	QModelIndex _parentIndex;
+    VtkVisPipeline& _pipeline;
+    QModelIndex _parentIndex;
 };
 
 #endif // VTKADDFILTERDIALOG_H

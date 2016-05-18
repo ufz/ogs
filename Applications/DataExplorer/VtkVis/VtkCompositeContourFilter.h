@@ -23,14 +23,14 @@
 class VtkCompositeContourFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeContourFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeContourFilter();
+    VtkCompositeContourFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeContourFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
-	void SetUserVectorProperty( QString name, QList<QVariant> values );
+    void SetUserVectorProperty( QString name, QList<QVariant> values );
 
 private:
 };

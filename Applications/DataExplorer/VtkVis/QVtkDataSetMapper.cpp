@@ -20,7 +20,7 @@
 vtkStandardNewMacro(QVtkDataSetMapper);
 
 QVtkDataSetMapper::QVtkDataSetMapper()
-	: QObject(NULL)
+    : QObject(NULL)
 {
 }
 
@@ -30,11 +30,11 @@ QVtkDataSetMapper::~QVtkDataSetMapper()
 
 void QVtkDataSetMapper::PrintSelf(ostream& os, vtkIndent indent)
 {
-	this->Superclass::PrintSelf(os, indent);
+    this->Superclass::PrintSelf(os, indent);
 }
 
 void QVtkDataSetMapper::SetScalarVisibility( bool on )
 {
-	vtkDataSetMapper::SetScalarVisibility((int)on);
+    vtkDataSetMapper::SetScalarVisibility((int)on);
 }
 

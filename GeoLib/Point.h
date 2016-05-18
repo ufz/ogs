@@ -33,32 +33,32 @@ class PointVec;
 class Point : public MathLib::Point3dWithID, public GeoLib::GeoObject
 {
 public:
-	Point(double x1, double x2, double x3,
-		std::size_t id = std::numeric_limits<std::size_t>::max()) :
-		MathLib::Point3dWithID(std::array<double,3>({{x1, x2, x3}}), id),
-		GeoLib::GeoObject()
-	{}
+    Point(double x1, double x2, double x3,
+        std::size_t id = std::numeric_limits<std::size_t>::max()) :
+        MathLib::Point3dWithID(std::array<double,3>({{x1, x2, x3}}), id),
+        GeoLib::GeoObject()
+    {}
 
-	Point() :
-		MathLib::Point3dWithID(), GeoLib::GeoObject()
-	{}
+    Point() :
+        MathLib::Point3dWithID(), GeoLib::GeoObject()
+    {}
 
-	Point(MathLib::Point3d const& x, std::size_t id) :
-		MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
-	{}
+    Point(MathLib::Point3d const& x, std::size_t id) :
+        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
+    {}
 
-	Point(std::array<double,3> const& x,
-		std::size_t id = std::numeric_limits<std::size_t>::max()) :
-		MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
-	{}
+    Point(std::array<double,3> const& x,
+        std::size_t id = std::numeric_limits<std::size_t>::max()) :
+        MathLib::Point3dWithID(x, id), GeoLib::GeoObject()
+    {}
 
-	/// return a geometry type
-	virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
+    /// return a geometry type
+    virtual GEOTYPE getGeoType() const {return GEOTYPE::POINT;}
 
 protected:
-	friend GeoLib::PointVec;
-	/// Resets the id.
-	void setID(std::size_t id) { _id = id; }
+    friend GeoLib::PointVec;
+    /// Resets the id.
+    void setID(std::size_t id) { _id = id; }
 };
 
 extern const Point ORIGIN;

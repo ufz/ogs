@@ -26,26 +26,26 @@
 
 TEST(MeshLib, Duplicate)
 {
-	auto mesh = std::unique_ptr<MeshLib::Mesh>{
-		MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1)};
+    auto mesh = std::unique_ptr<MeshLib::Mesh>{
+        MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1)};
 
-	std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh->getNodes()));
-	std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(mesh->getElements(), new_nodes));
+    std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh->getNodes()));
+    std::vector<MeshLib::Element*> new_elements (MeshLib::copyElementVector(mesh->getElements(), new_nodes));
 
-	MeshLib::Mesh new_mesh ("new", new_nodes, new_elements);
+    MeshLib::Mesh new_mesh ("new", new_nodes, new_elements);
 
-	ASSERT_EQ (mesh->getNElements(), new_mesh.getNElements());
-	ASSERT_EQ (mesh->getNNodes(), new_mesh.getNNodes());
+    ASSERT_EQ (mesh->getNElements(), new_mesh.getNElements());
+    ASSERT_EQ (mesh->getNNodes(), new_mesh.getNNodes());
 
-	std::vector<std::size_t> del_idx(1,1);
-	std::unique_ptr<MeshLib::Mesh> mesh2(MeshLib::removeNodes(*mesh, del_idx, "mesh2"));
+    std::vector<std::size_t> del_idx(1,1);
+    std::unique_ptr<MeshLib::Mesh> mesh2(MeshLib::removeNodes(*mesh, del_idx, "mesh2"));
 
-	ASSERT_EQ (mesh2->getNElements(), new_mesh.getNElements()-2);
-	ASSERT_EQ (mesh2->getNNodes(), new_mesh.getNNodes()-2);
+    ASSERT_EQ (mesh2->getNElements(), new_mesh.getNElements()-2);
+    ASSERT_EQ (mesh2->getNNodes(), new_mesh.getNNodes()-2);
 
-	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(0)));
-	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(2)));
+    ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(0)));
+    ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getNode(0), *new_mesh.getNode(2)));
 
-	ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(0)->getNode(0)));
-	ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(2)->getNode(0)));
+    ASSERT_DOUBLE_EQ (4.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(0)->getNode(0)));
+    ASSERT_DOUBLE_EQ (0.0, MathLib::sqrDist(*mesh2->getElement(0)->getNode(0), *new_mesh.getElement(2)->getNode(0)));
 }

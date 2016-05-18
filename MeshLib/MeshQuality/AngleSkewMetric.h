@@ -26,24 +26,24 @@ namespace MeshLib
 class AngleSkewMetric : public ElementQualityMetric
 {
 public:
-	AngleSkewMetric(Mesh const& mesh);
-	virtual ~AngleSkewMetric();
+    AngleSkewMetric(Mesh const& mesh);
+    virtual ~AngleSkewMetric();
 
-	virtual void calculateQuality ();
+    virtual void calculateQuality ();
 
 private:
-	double checkTriangle(Element const& elem) const;
-	double checkQuad(Element const& elem) const;
-	double checkTetrahedron(Element const& elem) const;
-	double checkHexahedron(Element const& elem) const;
-	double checkPrism (Element const& elem) const;
-	void getMinMaxAngleFromQuad(double const* const n0,
-	                            double const* const n1, double const* const n2,
-	                            double const* const n3, double &min_angle,
-	                            double &max_angle) const;
-	void getMinMaxAngleFromTriangle(double const* const n0,
-	                                double const* const n1, double const* const n2,
-	                                double &min_angle, double &max_angle) const;
+    double checkTriangle(Element const& elem) const;
+    double checkQuad(Element const& elem) const;
+    double checkTetrahedron(Element const& elem) const;
+    double checkHexahedron(Element const& elem) const;
+    double checkPrism (Element const& elem) const;
+    void getMinMaxAngleFromQuad(double const* const n0,
+                                double const* const n1, double const* const n2,
+                                double const* const n3, double &min_angle,
+                                double &max_angle) const;
+    void getMinMaxAngleFromTriangle(double const* const n0,
+                                    double const* const n1, double const* const n2,
+                                    double &min_angle, double &max_angle) const;
 };
 }
 

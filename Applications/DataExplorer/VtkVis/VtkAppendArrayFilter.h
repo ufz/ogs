@@ -28,35 +28,35 @@
 class VtkAppendArrayFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
 public:
-	/// @brief Create new objects with New() because of VTKs object reference counting.
-	static VtkAppendArrayFilter* New();
+    /// @brief Create new objects with New() because of VTKs object reference counting.
+    static VtkAppendArrayFilter* New();
 
-	vtkTypeMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
+    vtkTypeMacro(VtkAppendArrayFilter, vtkUnstructuredGridAlgorithm);
 
-	/// @brief Prints the mesh data to an output stream.
-	void PrintSelf(ostream& os, vtkIndent indent);
+    /// @brief Prints the mesh data to an output stream.
+    void PrintSelf(ostream& os, vtkIndent indent);
 
-	/// @brief Sets user properties.
-	void SetUserProperty(QString name, QVariant value)
-	{
-		Q_UNUSED(name);
-		Q_UNUSED(value);
-	}
+    /// @brief Sets user properties.
+    void SetUserProperty(QString name, QVariant value)
+    {
+        Q_UNUSED(name);
+        Q_UNUSED(value);
+    }
 
-	void SetArray(const std::string &array_name, const std::vector<double> &selection);
+    void SetArray(const std::string &array_name, const std::vector<double> &selection);
 
 protected:
-	VtkAppendArrayFilter();
-	~VtkAppendArrayFilter();
+    VtkAppendArrayFilter();
+    ~VtkAppendArrayFilter();
 
-	/// @brief The filter logic.
-	int RequestData(vtkInformation* request,
-	                vtkInformationVector** inputVector,
-	                vtkInformationVector* outputVector);
+    /// @brief The filter logic.
+    int RequestData(vtkInformation* request,
+                    vtkInformationVector** inputVector,
+                    vtkInformationVector* outputVector);
 
 private:
-	std::vector<double> _array;
-	std::string _array_name;
+    std::vector<double> _array;
+    std::string _array_name;
 };
 
 #endif // VTKAPPENDARRAYFILTER_H

@@ -25,7 +25,7 @@ namespace IO
 /// given in the \c fname parameter is "gml" or "GML" a gml file is written. In
 /// case the extension is "gli" or "GLI" a gli file is written.
 void writeGeometryToFile(std::string const& geo_name,
-	GeoLib::GEOObjects& geo_objs, std::string const& fname);
+    GeoLib::GEOObjects& geo_objs, std::string const& fname);
 }
 }
 

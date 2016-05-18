@@ -29,14 +29,14 @@ namespace IO
 class XMLInterface : public BaseLib::IO::Writer
 {
 public:
-	XMLInterface();
-	virtual ~XMLInterface() {}
+    XMLInterface();
+    virtual ~XMLInterface() {}
 
-	void setNameForExport(std::string const& name) { _exportName = name; }
-	virtual bool readFile(std::string const& fname) = 0;
+    void setNameForExport(std::string const& name) { _exportName = name; }
+    virtual bool readFile(std::string const& fname) = 0;
 
 protected:
-	std::string _exportName;
+    std::string _exportName;
 };
 
 }

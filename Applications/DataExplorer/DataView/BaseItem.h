@@ -29,37 +29,37 @@
 class BaseItem
 {
 public:
-	BaseItem(const QString &listName, const std::vector<GeoLib::Point*>* stations = NULL )
-		: _stations(stations), _vtkSource(VtkStationSource::New())
-	{
-		// create the vtk-object for 3d-visualisation of this list
-		static_cast<VtkStationSource*>(_vtkSource)->setStations(stations);
-		static_cast<VtkStationSource*>(_vtkSource)->SetName(listName);
-	}
+    BaseItem(const QString &listName, const std::vector<GeoLib::Point*>* stations = NULL )
+        : _stations(stations), _vtkSource(VtkStationSource::New())
+    {
+        // create the vtk-object for 3d-visualisation of this list
+        static_cast<VtkStationSource*>(_vtkSource)->setStations(stations);
+        static_cast<VtkStationSource*>(_vtkSource)->SetName(listName);
+    }
 
-	~BaseItem()
-	{
-		_vtkSource->Delete();
-	}
+    ~BaseItem()
+    {
+        _vtkSource->Delete();
+    }
 
-	/// Returns the associated QModelIndex which belongs to a Qt model
-	QModelIndex modelIndex() const { return _modelIndex; }
+    /// Returns the associated QModelIndex which belongs to a Qt model
+    QModelIndex modelIndex() const { return _modelIndex; }
 
-	/// Sets the model index
-	void setModelIndex( QModelIndex index ) { _modelIndex = index; }
+    /// Sets the model index
+    void setModelIndex( QModelIndex index ) { _modelIndex = index; }
 
-	const std::vector<GeoLib::Point*>* getStations() { return _stations; }
+    const std::vector<GeoLib::Point*>* getStations() { return _stations; }
 
-	/// Returns the Vtk polydata source object
-	vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
+    /// Returns the Vtk polydata source object
+    vtkPolyDataAlgorithm* vtkSource() const { return _vtkSource; }
 
 private:
-	QModelIndex _modelIndex;
-	const std::vector<GeoLib::Point*>* _stations;
+    QModelIndex _modelIndex;
+    const std::vector<GeoLib::Point*>* _stations;
 
-	/// The Vtk data source object. This is the starting point for a Vtk data
-	/// visualization pipeline.
-	vtkPolyDataAlgorithm* _vtkSource;
+    /// The Vtk data source object. This is the starting point for a Vtk data
+    /// visualization pipeline.
+    vtkPolyDataAlgorithm* _vtkSource;
 };
 
 #endif //BASEITEM_H

@@ -27,10 +27,10 @@ namespace MeshLib
 class SizeDifferenceMetric : public ElementQualityMetric
 {
 public:
-	SizeDifferenceMetric(Mesh const& mesh);
-	virtual ~SizeDifferenceMetric() {}
+    SizeDifferenceMetric(Mesh const& mesh);
+    virtual ~SizeDifferenceMetric() {}
 
-	virtual void calculateQuality ();
+    virtual void calculateQuality ();
 };
 }
 

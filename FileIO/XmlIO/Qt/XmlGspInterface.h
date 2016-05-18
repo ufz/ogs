@@ -35,24 +35,24 @@ class XmlGspInterface : public BaseLib::IO::XMLInterface,
                         public BaseLib::IO::XMLQtInterface
 {
 public:
-	XmlGspInterface(DataHolderLib::Project &project);
+    XmlGspInterface(DataHolderLib::Project &project);
 
-	virtual ~XmlGspInterface() {}
+    virtual ~XmlGspInterface() {}
 
-	/// Reads an xml-file containing a GeoSys project.
-	/// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
-	int readFile(const QString &fileName);
+    /// Reads an xml-file containing a GeoSys project.
+    /// Project files currently cover only geo-, msh- and station-data. This will be expanded in the future.
+    int readFile(const QString &fileName);
 
-	bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
+    bool readFile(std::string const& fname) { return readFile(QString(fname.c_str())) != 0; }
 
-	int writeToFile(const std::string& filename);
+    int writeToFile(const std::string& filename);
 
 protected:
-	bool write();
+    bool write();
 
 private:
-	std::string _filename;
-	DataHolderLib::Project& _project;
+    std::string _filename;
+    DataHolderLib::Project& _project;
 };
 
 } // end namespace FileIO

@@ -33,39 +33,39 @@ namespace MeshLib
 class MeshInformation
 {
 public:
-	/// Returns the smallest and largest value of a scalar array with the given name.
-	template<typename T>
-	static std::pair<T, T> const
-		getValueBounds(MeshLib::Mesh const& mesh, std::string const& name)
-	{
-		boost::optional<MeshLib::PropertyVector<T> const&> 
-			data_vec (mesh.getProperties().getPropertyVector<T>(name));
-		if (!data_vec)
-			return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
-		if (data_vec->empty()) {
-			INFO("Mesh does not contain values for the property \"%s\".", name.c_str());
-			return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
-		}
-		auto vec_bounds = std::minmax_element(data_vec->cbegin(), data_vec->cend());
-		return {*(vec_bounds.first), *(vec_bounds.second)};
-	}
+    /// Returns the smallest and largest value of a scalar array with the given name.
+    template<typename T>
+    static std::pair<T, T> const
+        getValueBounds(MeshLib::Mesh const& mesh, std::string const& name)
+    {
+        boost::optional<MeshLib::PropertyVector<T> const&> 
+            data_vec (mesh.getProperties().getPropertyVector<T>(name));
+        if (!data_vec)
+            return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
+        if (data_vec->empty()) {
+            INFO("Mesh does not contain values for the property \"%s\".", name.c_str());
+            return {std::numeric_limits<T>::max(), std::numeric_limits<T>::max()};
+        }
+        auto vec_bounds = std::minmax_element(data_vec->cbegin(), data_vec->cend());
+        return {*(vec_bounds.first), *(vec_bounds.second)};
+    }
 
-	/// Returns the bounding box of the mesh.
-	static const GeoLib::AABB getBoundingBox(const MeshLib::Mesh &mesh);
+    /// Returns the bounding box of the mesh.
+    static const GeoLib::AABB getBoundingBox(const MeshLib::Mesh &mesh);
 
-	/**
-	 * Returns an array with the number of elements of each type in the given mesh.
-	 * On completion, n_element_types array contains the number of elements of each of the seven
-	 * supported types. The index to element type conversion is this:
-	 *		0: \#lines
-	 *		1: \#triangles
-	 *		2: \#quads
-	 *		3: \#tetrahedra
-	 *		4: \#hexahedra
-	 *		5: \#pyramids
-	 *		6: \#prisms
-	 */
-	static const std::array<unsigned, 7> getNumberOfElementTypes(const MeshLib::Mesh &mesh);
+    /**
+     * Returns an array with the number of elements of each type in the given mesh.
+     * On completion, n_element_types array contains the number of elements of each of the seven
+     * supported types. The index to element type conversion is this:
+     *        0: \#lines
+     *        1: \#triangles
+     *        2: \#quads
+     *        3: \#tetrahedra
+     *        4: \#hexahedra
+     *        5: \#pyramids
+     *        6: \#prisms
+     */
+    static const std::array<unsigned, 7> getNumberOfElementTypes(const MeshLib::Mesh &mesh);
 
 
 };

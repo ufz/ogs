@@ -1,17 +1,17 @@
 set(SOURCES
-	CsvInterface.h
-	CsvInterface.cpp
-	GMSInterface.h
-	GMSInterface.cpp
-	GMSHInterface.h
-	GMSHInterface.cpp
-	PetrelInterface.h
-	PetrelInterface.cpp
-	TetGenInterface.h
-	TetGenInterface.cpp
+    CsvInterface.h
+    CsvInterface.cpp
+    GMSInterface.h
+    GMSInterface.cpp
+    GMSHInterface.h
+    GMSHInterface.cpp
+    PetrelInterface.h
+    PetrelInterface.cpp
+    TetGenInterface.h
+    TetGenInterface.cpp
 )
 if(Shapelib_FOUND)
-	list(APPEND SOURCES SHPInterface.h SHPInterface.cpp)
+    list(APPEND SOURCES SHPInterface.h SHPInterface.cpp)
 endif()
 
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
@@ -25,9 +25,9 @@ set(SOURCES ${SOURCES} ${SOURCES_BASE_XML})
 GET_SOURCE_FILES(SOURCES_BOOST_XML XmlIO/Boost)
 set(SOURCES ${SOURCES} ${SOURCES_BOOST_XML})
 if(QT4_FOUND)
-	set(SOURCES ${SOURCES} FEFLOWInterface.h FEFLOWInterface.cpp)
-	GET_SOURCE_FILES(SOURCES_QT_XML XmlIO/Qt)
-	set(SOURCES ${SOURCES} ${SOURCES_QT_XML})
+    set(SOURCES ${SOURCES} FEFLOWInterface.h FEFLOWInterface.cpp)
+    GET_SOURCE_FILES(SOURCES_QT_XML XmlIO/Qt)
+    set(SOURCES ${SOURCES} ${SOURCES_QT_XML})
 endif()
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
@@ -37,20 +37,20 @@ add_library(FileIO ${SOURCES})
 target_link_libraries(FileIO DataHolderLib)
 
 if(QT4_FOUND)
-	target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
-	if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
-		target_link_libraries(FileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
-	endif()
+    target_link_libraries(FileIO Qt4::QtXml Qt4::QtXmlPatterns)
+    if(WIN32 AND CMAKE_CROSSCOMPILING AND OPENSSL_FOUND)
+        target_link_libraries(FileIO Qt4::QtNetwork ${OPENSSL_LIBRARIES} ws2_32)
+    endif()
 endif()
 
 if(Shapelib_FOUND)
-	target_link_libraries(FileIO ${Shapelib_LIBRARIES})
+    target_link_libraries(FileIO ${Shapelib_LIBRARIES})
 endif()
 
 ADD_VTK_DEPENDENCY(FileIO)
 
 if(TARGET Eigen)
-	add_dependencies(FileIO Eigen)
+    add_dependencies(FileIO Eigen)
 endif()
 
 if(TARGET Boost)
@@ -59,7 +59,7 @@ endif()
 
 file(GLOB XSD_FILES . *.xsd)
 if(APPLE AND OGS_BUILD_GUI)
-	install(FILES ${XSD_FILES} DESTINATION ${CMAKE_BINARY_DIR}/_CPack_Packages/Darwin/DragNDrop/${CPACK_PACKAGE_FILE_NAME}/ALL_IN_ONE/DataExplorer.app/Contents/MacOS COMPONENT ogs_gui)
+    install(FILES ${XSD_FILES} DESTINATION ${CMAKE_BINARY_DIR}/_CPack_Packages/Darwin/DragNDrop/${CPACK_PACKAGE_FILE_NAME}/ALL_IN_ONE/DataExplorer.app/Contents/MacOS COMPONENT ogs_gui)
 else()
-	install(FILES ${XSD_FILES} DESTINATION bin COMPONENT ogs_cli)
+    install(FILES ${XSD_FILES} DESTINATION bin COMPONENT ogs_cli)
 endif()

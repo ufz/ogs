@@ -28,51 +28,51 @@ namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-	LinearSolverLibrarySetup(int argc, char* argv[])
-	{
-		MPI_Init(&argc, &argv);
-		char help[] = "ogs6 with PETSc \n";
-		PetscInitialize(&argc, &argv, nullptr, help);
-	}
+    LinearSolverLibrarySetup(int argc, char* argv[])
+    {
+        MPI_Init(&argc, &argv);
+        char help[] = "ogs6 with PETSc \n";
+        PetscInitialize(&argc, &argv, nullptr, help);
+    }
 
-	~LinearSolverLibrarySetup()
-	{
-		MathLib::cleanupGlobalMatrixProviders();
-		PetscFinalize();
-		MPI_Finalize();
-	}
+    ~LinearSolverLibrarySetup()
+    {
+        MathLib::cleanupGlobalMatrixProviders();
+        PetscFinalize();
+        MPI_Finalize();
+    }
 };
-}	// ApplicationsLib
+}    // ApplicationsLib
 #elif defined(USE_LIS)
 #include <lis.h>
 namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-	LinearSolverLibrarySetup(int argc, char* argv[])
-	{
-		lis_initialize(&argc, &argv);
-	}
+    LinearSolverLibrarySetup(int argc, char* argv[])
+    {
+        lis_initialize(&argc, &argv);
+    }
 
-	~LinearSolverLibrarySetup()
-	{
-		MathLib::cleanupGlobalMatrixProviders();
-		lis_finalize();
-	}
+    ~LinearSolverLibrarySetup()
+    {
+        MathLib::cleanupGlobalMatrixProviders();
+        lis_finalize();
+    }
 };
-}	// ApplicationsLib
+}    // ApplicationsLib
 #else
 namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-	LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
-	~LinearSolverLibrarySetup()
-	{
-		MathLib::cleanupGlobalMatrixProviders();
-	}
+    LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
+    ~LinearSolverLibrarySetup()
+    {
+        MathLib::cleanupGlobalMatrixProviders();
+    }
 };
-}	// ApplicationsLib
+}    // ApplicationsLib
 #endif
 
 

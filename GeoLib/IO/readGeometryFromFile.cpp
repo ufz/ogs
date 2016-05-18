@@ -26,14 +26,14 @@ namespace IO
 void
 readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
 {
-	if (BaseLib::getFileExtension(fname).compare("gml") == 0) {
-		GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
-		xml.readFile(fname);
-	} else {
-		std::vector<std::string> errors;
-		std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
-		GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
-	}
+    if (BaseLib::getFileExtension(fname).compare("gml") == 0) {
+        GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
+        xml.readFile(fname);
+    } else {
+        std::vector<std::string> errors;
+        std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
+        GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
+    }
 }
 }
 }

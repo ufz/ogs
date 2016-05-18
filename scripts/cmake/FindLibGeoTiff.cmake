@@ -18,8 +18,8 @@ find_library(libgeotiff_LIBRARY geotiff)
 
 find_path( xtiff_INCLUDE_DIR xtiffio.h)
 if(MSVC)
-	find_library(xtiff_LIBRARY xtiff)
-	list(APPEND _deps_libs ${xtiff_LIBRARY})
+    find_library(xtiff_LIBRARY xtiff)
+    list(APPEND _deps_libs ${xtiff_LIBRARY})
 endif()
 
 find_package(TIFF)
@@ -30,14 +30,14 @@ list(APPEND _deps_check TIFF_FOUND)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GEOTIFF
-	REQUIRED_VARS
-	libgeotiff_LIBRARY
-	libgeotiff_INCLUDE_DIR
-	xtiff_INCLUDE_DIR
-	${_deps_check}
+    REQUIRED_VARS
+    libgeotiff_LIBRARY
+    libgeotiff_INCLUDE_DIR
+    xtiff_INCLUDE_DIR
+    ${_deps_check}
 )
 
 if(GEOTIFF_FOUND)
-	set(GEOTIFF_INCLUDE_DIRS ${libgeotiff_INCLUDE_DIR} ${xtiff_INCLUDE_DIR} ${_deps_includes})
-	set(GEOTIFF_LIBRARIES ${libgeotiff_LIBRARY} ${_deps_libs})
+    set(GEOTIFF_INCLUDE_DIRS ${libgeotiff_INCLUDE_DIR} ${xtiff_INCLUDE_DIR} ${_deps_includes})
+    set(GEOTIFF_LIBRARIES ${libgeotiff_LIBRARY} ${_deps_libs})
 endif()

@@ -30,51 +30,51 @@
 
 int main (int argc, char* argv[])
 {
-	ApplicationsLib::LogogSetup logog_setup;
+    ApplicationsLib::LogogSetup logog_setup;
 
-	TCLAP::CmdLine cmd("Tool extracts the surface of the given mesh.", ' ',
-	                   "0.1");
-	TCLAP::ValueArg<std::string> mesh_in(
-	    "i", "mesh-input-file",
-	    "the name of the file containing the input mesh", true, "",
-	    "file name of input mesh");
-	cmd.add(mesh_in);
-	TCLAP::ValueArg<std::string> mesh_out(
-	    "o", "mesh-output-file",
-	    "the name of the file the surface mesh should be written to", false, "",
-	    "file name of output mesh");
-	cmd.add(mesh_out);
-	TCLAP::ValueArg<double> x("x", "x-component", "x component of the normal",
-	                          false, 0, "floating point value");
-	cmd.add(x);
-	TCLAP::ValueArg<double> y("y", "y-component", "y component of the normal",
-	                          false, 0, "floating point value");
-	cmd.add(y);
-	TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
-	                          false, -1.0, "floating point value");
-	cmd.add(z);
-	TCLAP::ValueArg<double> angle_arg(
-	    "a", "angle", "angle between given normal and element normal", false,
-	    90, "floating point value");
-	cmd.add(angle_arg);
+    TCLAP::CmdLine cmd("Tool extracts the surface of the given mesh.", ' ',
+                       "0.1");
+    TCLAP::ValueArg<std::string> mesh_in(
+        "i", "mesh-input-file",
+        "the name of the file containing the input mesh", true, "",
+        "file name of input mesh");
+    cmd.add(mesh_in);
+    TCLAP::ValueArg<std::string> mesh_out(
+        "o", "mesh-output-file",
+        "the name of the file the surface mesh should be written to", false, "",
+        "file name of output mesh");
+    cmd.add(mesh_out);
+    TCLAP::ValueArg<double> x("x", "x-component", "x component of the normal",
+                              false, 0, "floating point value");
+    cmd.add(x);
+    TCLAP::ValueArg<double> y("y", "y-component", "y component of the normal",
+                              false, 0, "floating point value");
+    cmd.add(y);
+    TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
+                              false, -1.0, "floating point value");
+    cmd.add(z);
+    TCLAP::ValueArg<double> angle_arg(
+        "a", "angle", "angle between given normal and element normal", false,
+        90, "floating point value");
+    cmd.add(angle_arg);
 
-	cmd.parse(argc, argv);
+    cmd.parse(argc, argv);
 
-	std::unique_ptr<MeshLib::Mesh const> mesh(
-	    MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-	INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
+    std::unique_ptr<MeshLib::Mesh const> mesh(
+        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
 
-	// extract surface
-	MathLib::Vector3 const dir(x.getValue(), y.getValue(), z.getValue());
-	double const angle(angle_arg.getValue());
-	std::unique_ptr<MeshLib::Mesh> surface_mesh(
-	    MeshLib::MeshSurfaceExtraction::getMeshSurface(
-	        *mesh, dir, angle, "OriginalSubsurfaceNodeIDs"));
+    // extract surface
+    MathLib::Vector3 const dir(x.getValue(), y.getValue(), z.getValue());
+    double const angle(angle_arg.getValue());
+    std::unique_ptr<MeshLib::Mesh> surface_mesh(
+        MeshLib::MeshSurfaceExtraction::getMeshSurface(
+            *mesh, dir, angle, "OriginalSubsurfaceNodeIDs"));
 
-	std::string out_fname(mesh_out.getValue());
-	if (out_fname.empty())
-		out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
-	MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
+    std::string out_fname(mesh_out.getValue());
+    if (out_fname.empty())
+        out_fname = BaseLib::dropFileExtension(mesh_in.getValue()) + "_sfc.vtu";
+    MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

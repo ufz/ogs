@@ -31,7 +31,7 @@ TreeItem::TreeItem(const QList<QVariant> &data, TreeItem* parent)
  */
 TreeItem::~TreeItem()
 {
-	qDeleteAll(_childItems);
+    qDeleteAll(_childItems);
 }
 
 /**
@@ -39,7 +39,7 @@ TreeItem::~TreeItem()
  */
 void TreeItem::appendChild(TreeItem* item)
 {
-	_childItems.append(item);
+    _childItems.append(item);
 }
 
 /**
@@ -49,10 +49,10 @@ void TreeItem::appendChild(TreeItem* item)
  */
 TreeItem* TreeItem::child(int row) const
 {
-	if (_childItems.count() > row)
-		return _childItems.value(row);
-	else
-		return NULL;
+    if (_childItems.count() > row)
+        return _childItems.value(row);
+    else
+        return NULL;
 }
 
 /**
@@ -60,7 +60,7 @@ TreeItem* TreeItem::child(int row) const
  */
 int TreeItem::childCount() const
 {
-	return _childItems.count();
+    return _childItems.count();
 }
 
 /**
@@ -68,10 +68,10 @@ int TreeItem::childCount() const
  */
 int TreeItem::row() const
 {
-	if (_parentItem)
-		return _parentItem->_childItems.indexOf(const_cast<TreeItem*>(this));
+    if (_parentItem)
+        return _parentItem->_childItems.indexOf(const_cast<TreeItem*>(this));
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -79,7 +79,7 @@ int TreeItem::row() const
  */
 int TreeItem::columnCount() const
 {
-	return _itemData.count();
+    return _itemData.count();
 }
 
 /**
@@ -87,7 +87,7 @@ int TreeItem::columnCount() const
  */
 QVariant TreeItem::data(int column) const
 {
-	return _itemData.value(column);
+    return _itemData.value(column);
 }
 
 /**
@@ -95,18 +95,18 @@ QVariant TreeItem::data(int column) const
  */
 bool TreeItem::setData( int column, const QVariant &value )
 {
-	if (column < 0 || column >= _itemData.size())
-		return false;
+    if (column < 0 || column >= _itemData.size())
+        return false;
 
-	_itemData[column] = value;
-	return true;
+    _itemData[column] = value;
+    return true;
 }
 /**
  * Returns the parent object of the tree item.
  */
 TreeItem* TreeItem::parentItem() const
 {
-	return _parentItem;
+    return _parentItem;
 }
 
 /**
@@ -114,11 +114,11 @@ TreeItem* TreeItem::parentItem() const
  */
 bool TreeItem::removeChildren(int position, int count)
 {
-	if (position < 0 || position + count > _childItems.size())
-		return false;
+    if (position < 0 || position + count > _childItems.size())
+        return false;
 
-	for (int row = 0; row < count; ++row)
-		delete _childItems.takeAt(position);
+    for (int row = 0; row < count; ++row)
+        delete _childItems.takeAt(position);
 
-	return true;
+    return true;
 }

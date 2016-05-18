@@ -21,7 +21,7 @@
 #include "MeshGeoToolsLib/GeoMapper.h"
 
 namespace MeshLib {
-	class Mesh;
+    class Mesh;
 }
 
 /**
@@ -29,30 +29,30 @@ namespace MeshLib {
  */
 class GeoOnMeshMappingDialog : public QDialog, private Ui_GeoOnMeshMapping
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	GeoOnMeshMappingDialog(
-		std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
-		QDialog* parent = 0);
-	~GeoOnMeshMappingDialog(void);
+    GeoOnMeshMappingDialog(
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,
+        QDialog* parent = 0);
+    ~GeoOnMeshMappingDialog(void);
 
-	std::string const& getNewGeoName() const { return _new_geo_name; };
-	int getDataSetChoice() const;
+    std::string const& getNewGeoName() const { return _new_geo_name; };
+    int getDataSetChoice() const;
 
 private:
-	std::string _new_geo_name;
+    std::string _new_geo_name;
 
 private slots:
-	void on_advancedMappingButton_toggled(bool isSelected) { this->geoNameEdit->setEnabled(isSelected); };
+    void on_advancedMappingButton_toggled(bool isSelected) { this->geoNameEdit->setEnabled(isSelected); };
 
-	void on_meshNameComboBox_currentIndexChanged(int idx);
+    void on_meshNameComboBox_currentIndexChanged(int idx);
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject() { this->done(QDialog::Rejected); };
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject() { this->done(QDialog::Rejected); };
 
 };
 

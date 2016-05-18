@@ -6,7 +6,7 @@
   <!-- object containing just a source file definition -->
   <xs:complexType name="projectElement">
     <xs:sequence>
-	<xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
+    <xs:element name="file" type="xs:string" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
@@ -40,17 +40,17 @@
       <xs:sequence>
         <xs:element name="geo" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
         <xs:element name="msh" type="mshElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="cnd" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="np"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="out" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="pcs" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="sim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="tim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
-	<xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="cnd" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="mfp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="mmp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="msp" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="np"  type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="out" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="pcs" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="sim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="tim" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>  
   </xs:element> 

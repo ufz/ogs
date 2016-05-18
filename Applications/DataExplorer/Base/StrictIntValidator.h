@@ -24,18 +24,18 @@
 class StrictIntValidator : public QIntValidator
 {
 public:
-	StrictIntValidator ( int min, int max, QObject* parent = 0) :
-		QIntValidator( min, max, parent)
-	{}
+    StrictIntValidator ( int min, int max, QObject* parent = 0) :
+        QIntValidator( min, max, parent)
+    {}
 
-	QValidator::State validate(QString & input, int &pos) const
-	{
-		if (input.isEmpty()) return Intermediate;
+    QValidator::State validate(QString & input, int &pos) const
+    {
+        if (input.isEmpty()) return Intermediate;
 
-		if (QIntValidator::validate(input, pos) != Acceptable)
-			return Invalid;
-		return Acceptable;
-	}
+        if (QIntValidator::validate(input, pos) != Acceptable)
+            return Invalid;
+        return Acceptable;
+    }
 };
 
 #endif /* STRICTINTVALIDATOR_H_ */

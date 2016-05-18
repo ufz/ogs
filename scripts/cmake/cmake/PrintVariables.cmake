@@ -1,6 +1,6 @@
 # ------------------------- Begin Generic CMake Variable Logging ------------------
 
-# /*	C++ comment style not allowed	*/
+# /*    C++ comment style not allowed    */
 
 
 # if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 

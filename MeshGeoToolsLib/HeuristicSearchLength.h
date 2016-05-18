@@ -30,21 +30,21 @@ namespace MeshGeoToolsLib
 class HeuristicSearchLength : public SearchLength
 {
 public:
-	/// Type of length to be sampled
-	enum class LengthType
-	{
-		Edge, /// edge length of elements, which is recommended for meshes without nonlinear nodes
-		Node  /// distance between nodes
-	};
+    /// Type of length to be sampled
+    enum class LengthType
+    {
+        Edge, /// edge length of elements, which is recommended for meshes without nonlinear nodes
+        Node  /// distance between nodes
+    };
 
-	/**
-	 * Constructor
-	 * @param mesh  mesh object
-	 * @param sampled_len  length type to be sampled
-	 */
-	HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthType length_type = LengthType::Edge);
+    /**
+     * Constructor
+     * @param mesh  mesh object
+     * @param sampled_len  length type to be sampled
+     */
+    HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthType length_type = LengthType::Edge);
 private:
-	MeshLib::Mesh const& _mesh;
+    MeshLib::Mesh const& _mesh;
 };
 
 } // end namespace MeshGeoToolsLib

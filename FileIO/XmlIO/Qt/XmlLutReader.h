@@ -32,76 +32,76 @@ namespace FileIO
 class XmlLutReader
 {
 public:
-	static VtkColorLookupTable* readFromFile(const QString &fileName)
-	{
-		VtkColorLookupTable* lut = VtkColorLookupTable::New();
+    static VtkColorLookupTable* readFromFile(const QString &fileName)
+    {
+        VtkColorLookupTable* lut = VtkColorLookupTable::New();
 
-		QFile* file = new QFile(fileName);
-		if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
-		{
-			ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
-			delete file;
-			return NULL;
-		}
+        QFile* file = new QFile(fileName);
+        if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
+            delete file;
+            return NULL;
+        }
 
-		QDomDocument doc("ColorMap");
-		doc.setContent(file);
-		QDomElement docElement = doc.documentElement();
-		if (docElement.nodeName().compare("ColorMap"))
-		{
-			ERR("XmlLutReader::readFromFile(): Unexpected XML root.");
-			file->close();
-			delete file;
-			return NULL;
-		}
+        QDomDocument doc("ColorMap");
+        doc.setContent(file);
+        QDomElement docElement = doc.documentElement();
+        if (docElement.nodeName().compare("ColorMap"))
+        {
+            ERR("XmlLutReader::readFromFile(): Unexpected XML root.");
+            file->close();
+            delete file;
+            return NULL;
+        }
 
-		if (docElement.hasAttribute("interpolation"))
-		{
-			if (docElement.attribute("interpolation").compare("Linear") == 0)
-				lut->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
-			else if (docElement.attribute("interpolation").compare("Exponential") == 0)
-				lut->setInterpolationType(VtkColorLookupTable::LUTType::EXPONENTIAL);
-			else
-				lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
-		}
-		else // default
-			lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
+        if (docElement.hasAttribute("interpolation"))
+        {
+            if (docElement.attribute("interpolation").compare("Linear") == 0)
+                lut->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
+            else if (docElement.attribute("interpolation").compare("Exponential") == 0)
+                lut->setInterpolationType(VtkColorLookupTable::LUTType::EXPONENTIAL);
+            else
+                lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
+        }
+        else // default
+            lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
 
-		QDomElement point = docElement.firstChildElement();
-		double range[2] = { point.attribute("x").toDouble(), point.attribute("x").toDouble() };
+        QDomElement point = docElement.firstChildElement();
+        double range[2] = { point.attribute("x").toDouble(), point.attribute("x").toDouble() };
 
-		while (!point.isNull())
-		{
-			if ((point.nodeName().compare("Point") == 0 )
-			    && point.hasAttribute("x")
-			    && point.hasAttribute("r")
-			    && point.hasAttribute("g")
-			    && point.hasAttribute("b"))
-			{
-				double value = point.attribute("x").toDouble();
-				unsigned char r = static_cast<int>(255 * point.attribute("r").toDouble());
-				unsigned char g = static_cast<int>(255 * point.attribute("g").toDouble());
-				unsigned char b = static_cast<int>(255 * point.attribute("b").toDouble());
-				unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? point.attribute("o").toDouble() : 1));
+        while (!point.isNull())
+        {
+            if ((point.nodeName().compare("Point") == 0 )
+                && point.hasAttribute("x")
+                && point.hasAttribute("r")
+                && point.hasAttribute("g")
+                && point.hasAttribute("b"))
+            {
+                double value = point.attribute("x").toDouble();
+                unsigned char r = static_cast<int>(255 * point.attribute("r").toDouble());
+                unsigned char g = static_cast<int>(255 * point.attribute("g").toDouble());
+                unsigned char b = static_cast<int>(255 * point.attribute("b").toDouble());
+                unsigned char o = static_cast<int>(255 * (point.hasAttribute("o") ? point.attribute("o").toDouble() : 1));
 
-				if (value < range[0])
-					range[0] = value;
-				if (value > range[1])
-					range[1] = value;
+                if (value < range[0])
+                    range[0] = value;
+                if (value > range[1])
+                    range[1] = value;
 
-				unsigned char a[4] = { r, g, b, o };
-				lut->setColor(value, a);
-			}
-			point = point.nextSiblingElement();
-		}
+                unsigned char a[4] = { r, g, b, o };
+                lut->setColor(value, a);
+            }
+            point = point.nextSiblingElement();
+        }
 
-		lut->SetTableRange(range[0], range[1]);
+        lut->SetTableRange(range[0], range[1]);
 
-		file->close();
-		delete file;
+        file->close();
+        delete file;
 
-		return lut;
-	};
+        return lut;
+    };
 
 
 };

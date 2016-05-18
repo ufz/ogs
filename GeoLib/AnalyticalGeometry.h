@@ -143,7 +143,7 @@ void rotatePoints(
  */
 template <typename P>
 void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
-	std::vector<P*> const& pnts);
+    std::vector<P*> const& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -189,9 +189,9 @@ double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
  * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
  */
 double calcTetrahedronVolume(MathLib::Point3d const& x1,
-	MathLib::Point3d const& x2,
-	MathLib::Point3d const& x3,
-	MathLib::Point3d const& x4);
+    MathLib::Point3d const& x2,
+    MathLib::Point3d const& x3,
+    MathLib::Point3d const& x4);
 
 /**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
@@ -316,7 +316,7 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
 /// segments are interfering.
 std::vector<MathLib::Point3d>
 lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
-	MathLib::Point3d const& c, MathLib::Point3d const& d);
+    MathLib::Point3d const& c, MathLib::Point3d const& d);
 
 /**
  * Calculates the intersection points of a line PQ and a triangle ABC.
@@ -382,7 +382,7 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
  * @return a rotated polygon
  */
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-	MathLib::Vector3 & plane_normal);
+    MathLib::Vector3 & plane_normal);
 
 } // end namespace GeoLib
 

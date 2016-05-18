@@ -23,16 +23,16 @@
  */
 class StationTabWidget : public QWidget, public Ui_StationTabWidgetBase
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	StationTabWidget(QWidget* parent = 0);
+    StationTabWidget(QWidget* parent = 0);
 
 private:
 
 private slots:
-	void enableSaveButton(bool enable) { this->saveStnPushButton->setEnabled(enable); };
-	void enableRemoveButton(bool enable) { this->removeStnPushButton->setEnabled(enable); };
+    void enableSaveButton(bool enable) { this->saveStnPushButton->setEnabled(enable); };
+    void enableRemoveButton(bool enable) { this->removeStnPushButton->setEnabled(enable); };
 };
 
 #endif // STATIONTABWIDGET_H

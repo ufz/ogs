@@ -24,11 +24,11 @@ namespace GMSH {
 
 class GMSHPoint : public GeoLib::Point {
 public:
-	GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density);
-	virtual ~GMSHPoint();
-	void write(std::ostream &os) const;
+    GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density);
+    virtual ~GMSHPoint();
+    void write(std::ostream &os) const;
 private:
-	double _mesh_density;
+    double _mesh_density;
 };
 
 /** overload the output operator for class GMSHPoint */

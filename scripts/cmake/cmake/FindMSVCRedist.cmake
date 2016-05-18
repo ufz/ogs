@@ -6,7 +6,7 @@ if (MSVC)
     set(VCVERS 9)
   endif()
   if (MSVC10)
-	set(VCVERS 10)
+    set(VCVERS 10)
   endif()
 
   if(CMAKE_CL_64)

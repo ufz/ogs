@@ -24,23 +24,23 @@ class vtkThreshold;
 class VtkCompositeGeoObjectFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeGeoObjectFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeGeoObjectFilter();
+    VtkCompositeGeoObjectFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeGeoObjectFilter();
 
-	virtual void init();
+    virtual void init();
 
-	/// @brief Sets user properties.
-	void SetUserProperty(QString name, QVariant value)
-	{
-		Q_UNUSED(name);
-		Q_UNUSED(value);
-	}
+    /// @brief Sets user properties.
+    void SetUserProperty(QString name, QVariant value)
+    {
+        Q_UNUSED(name);
+        Q_UNUSED(value);
+    }
 
-	void SetIndex(std::size_t idx);
+    void SetIndex(std::size_t idx);
 
 private:
-	GeoLib::GEOTYPE _type;
-	vtkThreshold* _threshold;
+    GeoLib::GEOTYPE _type;
+    vtkThreshold* _threshold;
 };
 
 #endif // VTKCOMPOSITEGEOOBJECTFILTER_H

@@ -34,27 +34,27 @@ namespace ProcessLib
 class InitialCondition
 {
 public:
-	virtual ~InitialCondition() = default;
-	virtual double getValue(MeshLib::Node const&, int const component_id) const = 0;
+    virtual ~InitialCondition() = default;
+    virtual double getValue(MeshLib::Node const&, int const component_id) const = 0;
 };
 
 /// Uniform value initial condition
 class UniformInitialCondition : public InitialCondition
 {
 public:
-	UniformInitialCondition(double const value) : _value(value)
-	{
-	}
-	/// Returns a value for given node and component.
-	/// \todo The component_id is to be implemented.
-	virtual double getValue(MeshLib::Node const&,
-	                        int const /* component_id */) const override
-	{
-		return _value;
-	}
+    UniformInitialCondition(double const value) : _value(value)
+    {
+    }
+    /// Returns a value for given node and component.
+    /// \todo The component_id is to be implemented.
+    virtual double getValue(MeshLib::Node const&,
+                            int const /* component_id */) const override
+    {
+        return _value;
+    }
 
 private:
-	double _value;
+    double _value;
 };
 
 /// Construct a UniformInitialCondition from configuration.
@@ -68,22 +68,22 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
 class MeshPropertyInitialCondition : public InitialCondition
 {
 public:
-	MeshPropertyInitialCondition(
-	    MeshLib::PropertyVector<double> const& property)
-	    : _property(property)
-	{
-		assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
-	}
+    MeshPropertyInitialCondition(
+        MeshLib::PropertyVector<double> const& property)
+        : _property(property)
+    {
+        assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
+    }
 
-	virtual double getValue(MeshLib::Node const& n,
-	                        int const component_id) const override
-	{
-		return _property[n.getID() * _property.getNumberOfComponents() +
-		                 component_id];
-	}
+    virtual double getValue(MeshLib::Node const& n,
+                            int const component_id) const override
+    {
+        return _property[n.getID() * _property.getNumberOfComponents() +
+                         component_id];
+    }
 
 private:
-	MeshLib::PropertyVector<double> const& _property;
+    MeshLib::PropertyVector<double> const& _property;
 };
 
 /// Construct a MeshPropertyInitialCondition from configuration.

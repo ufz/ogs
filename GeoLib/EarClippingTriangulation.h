@@ -29,37 +29,37 @@ class Triangle;
 class EarClippingTriangulation
 {
 public:
-	EarClippingTriangulation(const GeoLib::Polygon* ply,
-	                         std::list<GeoLib::Triangle> &triangles,
-	                         bool rot = true);
-	virtual ~EarClippingTriangulation();
+    EarClippingTriangulation(const GeoLib::Polygon* ply,
+                             std::list<GeoLib::Triangle> &triangles,
+                             bool rot = true);
+    virtual ~EarClippingTriangulation();
 private:
-	/**
-	 * copies the points of the polygon to the vector _pnts
-	 */
-	inline void copyPolygonPoints (const GeoLib::Polygon* polygon);
-	inline void ensureCWOrientation ();
+    /**
+     * copies the points of the polygon to the vector _pnts
+     */
+    inline void copyPolygonPoints (const GeoLib::Polygon* polygon);
+    inline void ensureCWOrientation ();
 
-	inline bool isEar(std::size_t v0, std::size_t v1, std::size_t v2) const;
+    inline bool isEar(std::size_t v0, std::size_t v1, std::size_t v2) const;
 
-	inline void initVertexList ();
-	inline void initLists ();
-	inline void clipEars ();
+    inline void initVertexList ();
+    inline void initLists ();
+    inline void clipEars ();
 
-	/**
-	 * a copy of the polygon points
-	 */
-	std::vector<GeoLib::Point*> _pnts;
-	std::list<std::size_t> _vertex_list;
-	std::list<std::size_t> _convex_vertex_list;
-	std::list<std::size_t> _ear_list;
+    /**
+     * a copy of the polygon points
+     */
+    std::vector<GeoLib::Point*> _pnts;
+    std::list<std::size_t> _vertex_list;
+    std::list<std::size_t> _convex_vertex_list;
+    std::list<std::size_t> _ear_list;
 
-	/**
-	 * triangles of the triangulation (maybe in the wrong orientation)
-	 */
-	std::list<GeoLib::Triangle> _triangles;
+    /**
+     * triangles of the triangulation (maybe in the wrong orientation)
+     */
+    std::list<GeoLib::Triangle> _triangles;
 
-	GeoLib::Orientation _original_orient;
+    GeoLib::Orientation _original_orient;
 };
 } // end namespace GeoLib
 

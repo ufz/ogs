@@ -29,38 +29,38 @@
 class StratBar : public QGraphicsItem
 {
 public:
-	/**
-	 * \brief Constructor
-	 * \param station The borehole whose stratigraphy will be visualised.
-	 * \param stratColors A color map.
-	 * \param parent The parent QGraphicsItem.
-	 */
-	StratBar(GeoLib::StationBorehole* station,
-	         std::map<std::string, GeoLib::Color>* stratColors = nullptr,
-	         QGraphicsItem* parent = 0);
-	~StratBar();
+    /**
+     * \brief Constructor
+     * \param station The borehole whose stratigraphy will be visualised.
+     * \param stratColors A color map.
+     * \param parent The parent QGraphicsItem.
+     */
+    StratBar(GeoLib::StationBorehole* station,
+             std::map<std::string, GeoLib::Color>* stratColors = nullptr,
+             QGraphicsItem* parent = 0);
+    ~StratBar();
 
-	/// Returns the bounding rectangle of the bar.
-	QRectF boundingRect() const;
+    /// Returns the bounding rectangle of the bar.
+    QRectF boundingRect() const;
 
-	/// Paints the bar.
-	void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+    /// Paints the bar.
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
 private:
-	/**
-	 * \brief Calculates the height for a soil layer by "log(d+1)*100".
-	 * \param h The original thickness of the soil layer.
-	 */
-	double logHeight(double h) const { return log(h + 1) * 100; }
+    /**
+     * \brief Calculates the height for a soil layer by "log(d+1)*100".
+     * \param h The original thickness of the soil layer.
+     */
+    double logHeight(double h) const { return log(h + 1) * 100; }
 
-	/// Calculates the total height of the bar by calculating and adding the log-height for all layers in the borehole
-	double totalLogHeight() const;
+    /// Calculates the total height of the bar by calculating and adding the log-height for all layers in the borehole
+    double totalLogHeight() const;
 
-	/// The default width of the bar
-	static const int BARWIDTH = 50;
+    /// The default width of the bar
+    static const int BARWIDTH = 50;
 
-	GeoLib::StationBorehole* _station;
-	std::map<std::string, GeoLib::Color> _stratColors;
+    GeoLib::StationBorehole* _station;
+    std::map<std::string, GeoLib::Color> _stratColors;
 };
 
 #endif //STRATBAR_H

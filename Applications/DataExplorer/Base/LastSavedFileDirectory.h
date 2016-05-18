@@ -23,21 +23,21 @@
 class LastSavedFileDirectory
 {
 public:
-	/// Returns the directory last used for saving a file
-	static const QString getDir()
-	{
-		QSettings settings;
-		return settings.value("lastSavedFileDirectory").toString();
-	}
+    /// Returns the directory last used for saving a file
+    static const QString getDir()
+    {
+        QSettings settings;
+        return settings.value("lastSavedFileDirectory").toString();
+    }
 
-	/// Sets the directory last used for saving a file
-	static void setDir(const QString &path)
-	{
-		QFileInfo fi(path);
-		QDir dir = QDir(fi.absolutePath());
-		QSettings settings;
-		settings.setValue("lastSavedFileDirectory", dir.absolutePath() + "/");
-	}
+    /// Sets the directory last used for saving a file
+    static void setDir(const QString &path)
+    {
+        QFileInfo fi(path);
+        QDir dir = QDir(fi.absolutePath());
+        QSettings settings;
+        settings.setValue("lastSavedFileDirectory", dir.absolutePath() + "/");
+    }
 
 };
 

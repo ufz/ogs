@@ -18,11 +18,11 @@
 #include <QDialog>
 
 namespace FileIO {
-	class SHPInterface;
+    class SHPInterface;
 }
 
 namespace GeoLib {
-	class GEOObjects;
+    class GEOObjects;
 }
 
 class QDialogButtonBox;
@@ -38,38 +38,38 @@ class QVBoxLayout;
  */
 class SHPImportDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	/// Constructor
-	SHPImportDialog(std::string filename, GeoLib::GEOObjects& geo_objects,
-	                QDialog* parent = nullptr);
-	~SHPImportDialog();
+    /// Constructor
+    SHPImportDialog(std::string filename, GeoLib::GEOObjects& geo_objects,
+                    QDialog* parent = nullptr);
+    ~SHPImportDialog();
 
-	QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
+    QDialogButtonBox* _buttonBox; /// The buttons used in this dialog.
 
 private:
-	/// Constructs a dialog window based on the information found in the selected shape file
-	void setupDialog();
+    /// Constructs a dialog window based on the information found in the selected shape file
+    void setupDialog();
 
-	QGridLayout* _layout;
-	QLabel* _shpContentLabel;
-	QLabel* _nameLabel;
-	QLineEdit* _listName;
-	QRadioButton* _choice1, * _choice2;
-	std::string _filename;
-	short _fileType;
-	FileIO::SHPInterface* _shpInterface;
+    QGridLayout* _layout;
+    QLabel* _shpContentLabel;
+    QLabel* _nameLabel;
+    QLineEdit* _listName;
+    QRadioButton* _choice1, * _choice2;
+    std::string _filename;
+    short _fileType;
+    FileIO::SHPInterface* _shpInterface;
 
 private slots:
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 signals:
-	void shpLoaded(QString);
+    void shpLoaded(QString);
 };
 
 #endif //SHPIMPORTDIALOG_H

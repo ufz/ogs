@@ -37,49 +37,49 @@ class Mesh;
  */
 class MeshLayerEditDialog : public QDialog, private Ui_MeshLayerEdit
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = 0);
-	~MeshLayerEditDialog(void);
+    MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent = 0);
+    ~MeshLayerEditDialog(void);
 
 private:
-	void createMeshToolSelection();
-	MeshLib::Mesh* createPrismMesh();
-	MeshLib::Mesh* createTetMesh();
+    void createMeshToolSelection();
+    MeshLib::Mesh* createPrismMesh();
+    MeshLib::Mesh* createTetMesh();
 
-	const MeshLib::Mesh* _msh;
-	unsigned _n_layers;
-	QMap<QPushButton*, QLineEdit*> _fileButtonMap;
-	QVector<QLineEdit*> _edits;
+    const MeshLib::Mesh* _msh;
+    unsigned _n_layers;
+    QMap<QPushButton*, QLineEdit*> _fileButtonMap;
+    QVector<QLineEdit*> _edits;
 
-	QLineEdit* _layerEdit;
-	QLineEdit* _noDataReplacementEdit;
-	QLineEdit* _minThicknessEdit;
-	QPushButton* _nextButton;
-	QGroupBox* _layerBox;
-	QGroupBox* _radioButtonBox;
-	QRadioButton* _ogsMeshButton;
-	QGridLayout* _layerSelectionLayout;
-	bool _use_rasters;
+    QLineEdit* _layerEdit;
+    QLineEdit* _noDataReplacementEdit;
+    QLineEdit* _minThicknessEdit;
+    QPushButton* _nextButton;
+    QGroupBox* _layerBox;
+    QGroupBox* _radioButtonBox;
+    QRadioButton* _ogsMeshButton;
+    QGridLayout* _layerSelectionLayout;
+    bool _use_rasters;
 
 private slots:
-	void getFileName();
+    void getFileName();
 
-	void nextButtonPressed();
+    void nextButtonPressed();
 
-	void createWithRasters();
+    void createWithRasters();
 
-	void createStatic();
+    void createStatic();
 
-	/// Instructions if the OK-Button has been pressed.
-	void accept();
+    /// Instructions if the OK-Button has been pressed.
+    void accept();
 
-	/// Instructions if the Cancel-Button has been pressed.
-	void reject();
+    /// Instructions if the Cancel-Button has been pressed.
+    void reject();
 
 signals:
-	void mshEditFinished(MeshLib::Mesh*);
+    void mshEditFinished(MeshLib::Mesh*);
 };
 
 #endif //MESHLAYEREDITDIALOG_H

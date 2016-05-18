@@ -23,12 +23,12 @@ class vtkSphereSource;
 class VtkCompositeTextureOnSurfaceFilter : public VtkCompositeFilter
 {
 public:
-	VtkCompositeTextureOnSurfaceFilter(vtkAlgorithm* inputAlgorithm);
-	virtual ~VtkCompositeTextureOnSurfaceFilter();
+    VtkCompositeTextureOnSurfaceFilter(vtkAlgorithm* inputAlgorithm);
+    virtual ~VtkCompositeTextureOnSurfaceFilter();
 
-	virtual void init();
+    virtual void init();
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 private:
 };

@@ -28,28 +28,28 @@ class QMouseEvent;
  */
 class ColorPickerPushButton : public QPushButton
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ColorPickerPushButton(QWidget* parent = 0);
+    ColorPickerPushButton(QWidget* parent = 0);
 
 public slots:
-	/// Calls the QColorDialog
-	void mouseReleaseEvent(QMouseEvent* e);
+    /// Calls the QColorDialog
+    void mouseReleaseEvent(QMouseEvent* e);
 
-	/// Sets the color.
-	void setColor(QColor color);
-	void setColor(double* color);
+    /// Sets the color.
+    void setColor(QColor color);
+    void setColor(double* color);
 
 private:
-	QString colorToCss(QColor color);
-	QString colorToString(QColor color);
+    QString colorToCss(QColor color);
+    QString colorToString(QColor color);
 
-	QColor _color;
+    QColor _color;
 
 signals:
-	/// Is emitted when a color was picked from the dialog.
-	void colorPicked(QColor);
+    /// Is emitted when a color was picked from the dialog.
+    void colorPicked(QColor);
 };
 
 #endif // COLORPICKERPUSHBUTTON_H

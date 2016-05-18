@@ -29,24 +29,24 @@ class vtkImageAlgorithm;
 class VtkBGImageSource : public vtkTextureMapToPlane, public VtkAlgorithmProperties
 {
 public:
-	/// Create new objects with New() because of VTKs object reference counting.
-	static VtkBGImageSource* New();
+    /// Create new objects with New() because of VTKs object reference counting.
+    static VtkBGImageSource* New();
 
-	vtkTypeMacro(VtkBGImageSource, vtkTextureMapToPlane);
+    vtkTypeMacro(VtkBGImageSource, vtkTextureMapToPlane);
 
-	/// Sets the raster/image to be used as a texture map
-	void SetRaster(vtkImageAlgorithm *img, double x0, double y0, double scalingFactor);
+    /// Sets the raster/image to be used as a texture map
+    void SetRaster(vtkImageAlgorithm *img, double x0, double y0, double scalingFactor);
 
-	virtual void SetUserProperty(QString name, QVariant value);
+    virtual void SetUserProperty(QString name, QVariant value);
 
 protected:
-	VtkBGImageSource();
-	~VtkBGImageSource();
+    VtkBGImageSource();
+    ~VtkBGImageSource();
 
 private:
 
-	std::pair<double, double> _origin;
-	double _cellsize;
+    std::pair<double, double> _origin;
+    double _cellsize;
 };
 
 #endif // VTKBGIMAGESOURCE_H

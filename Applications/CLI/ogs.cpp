@@ -29,78 +29,78 @@
 
 int main(int argc, char *argv[])
 {
-	// Parse CLI arguments.
-	TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
-			"Copyright (c) 2012-2016, OpenGeoSys Community "
-			"(http://www.opengeosys.org) "
-			"Distributed under a Modified BSD License. "
-			"See accompanying file LICENSE.txt or "
-			"http://www.opengeosys.org/project/license\n"
-			"version: " + BaseLib::BuildInfo::git_describe,
-		' ',
-		BaseLib::BuildInfo::git_describe);
+    // Parse CLI arguments.
+    TCLAP::CmdLine cmd("OpenGeoSys-6 software.\n"
+            "Copyright (c) 2012-2016, OpenGeoSys Community "
+            "(http://www.opengeosys.org) "
+            "Distributed under a Modified BSD License. "
+            "See accompanying file LICENSE.txt or "
+            "http://www.opengeosys.org/project/license\n"
+            "version: " + BaseLib::BuildInfo::git_describe,
+        ' ',
+        BaseLib::BuildInfo::git_describe);
 
-	TCLAP::UnlabeledValueArg<std::string> project_arg(
-		"project-file",
-		"Path to the ogs6 project file.",
-		true,
-		"",
-		"PROJECT FILE");
-	cmd.add(project_arg);
+    TCLAP::UnlabeledValueArg<std::string> project_arg(
+        "project-file",
+        "Path to the ogs6 project file.",
+        true,
+        "",
+        "PROJECT FILE");
+    cmd.add(project_arg);
 
-	TCLAP::ValueArg<std::string> outdir_arg(
-		"o", "output-directory",
-		"the output directory to write to",
-		false,
-		"",
-		"output directory");
-	cmd.add(outdir_arg);
+    TCLAP::ValueArg<std::string> outdir_arg(
+        "o", "output-directory",
+        "the output directory to write to",
+        false,
+        "",
+        "output directory");
+    cmd.add(outdir_arg);
 
-	TCLAP::ValueArg<std::string> log_level_arg(
-		"l", "log-level",
-		"the verbosity of logging messages: none, error, warn, info, debug, all",
-		false,
-		"all",
-		"log level");
-	cmd.add(log_level_arg);
+    TCLAP::ValueArg<std::string> log_level_arg(
+        "l", "log-level",
+        "the verbosity of logging messages: none, error, warn, info, debug, all",
+        false,
+        "all",
+        "log level");
+    cmd.add(log_level_arg);
 
-	TCLAP::SwitchArg nonfatal_arg("",
-		"config-warnings-nonfatal",
-		"warnings from parsing the configuration file will not trigger program abortion");
-	cmd.add(nonfatal_arg);
+    TCLAP::SwitchArg nonfatal_arg("",
+        "config-warnings-nonfatal",
+        "warnings from parsing the configuration file will not trigger program abortion");
+    cmd.add(nonfatal_arg);
 
-	cmd.parse(argc, argv);
-
-
-	ApplicationsLib::LogogSetup logog_setup;
-	logog_setup.SetLevel(log_level_arg.getValue());
-	ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
-	    argc, argv);
+    cmd.parse(argc, argv);
 
 
-	auto project_config = BaseLib::makeConfigTree(
-	    project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
-
-	ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
-	                    outdir_arg.getValue());
-
-	project_config.checkAndInvalidate();
+    ApplicationsLib::LogogSetup logog_setup;
+    logog_setup.SetLevel(log_level_arg.getValue());
+    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
+        argc, argv);
 
 
-	// Create processes.
-	project.buildProcesses();
+    auto project_config = BaseLib::makeConfigTree(
+        project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
 
-	INFO("Initialize processes.");
-	for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
-	{
-		(*p_it)->initialize();
-	}
+    ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
+                        outdir_arg.getValue());
+
+    project_config.checkAndInvalidate();
 
 
-	INFO("Solve processes.");
+    // Create processes.
+    project.buildProcesses();
 
-	auto& time_loop = project.getTimeLoop();
-	time_loop.loop(project);
+    INFO("Initialize processes.");
+    for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+    {
+        (*p_it)->initialize();
+    }
 
-	return 0;
+
+    INFO("Solve processes.");
+
+    auto& time_loop = project.getTimeLoop();
+    time_loop.loop(project);
+
+    return 0;
 }

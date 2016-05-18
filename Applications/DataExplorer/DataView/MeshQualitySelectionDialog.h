@@ -26,31 +26,31 @@ class VtkMeshSource;
  */
 class MeshQualitySelectionDialog : public QDialog, private Ui_MeshQualitySelection
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	MeshQualitySelectionDialog(QDialog* parent = 0);
-	~MeshQualitySelectionDialog(void);
+    MeshQualitySelectionDialog(QDialog* parent = 0);
+    ~MeshQualitySelectionDialog(void);
 
-	/// Returns selected metric
-	MeshLib::MeshQualityType getSelectedMetric() const { return _metric; }
+    /// Returns selected metric
+    MeshLib::MeshQualityType getSelectedMetric() const { return _metric; }
 
-	/// Returns true if a histogram needs to be calculated
-	bool getHistogram() const { return this->histogramCheckBox->isChecked(); }
+    /// Returns true if a histogram needs to be calculated
+    bool getHistogram() const { return this->histogramCheckBox->isChecked(); }
 
-	/// Returns selected path for histogram (or empty string if no histogram is required)
-	std::string getHistogramPath() const { return _histogram_path; }
+    /// Returns selected path for histogram (or empty string if no histogram is required)
+    std::string getHistogramPath() const { return _histogram_path; }
 
 private:
-	MeshLib::MeshQualityType _metric;
-	std::string _histogram_path;
+    MeshLib::MeshQualityType _metric;
+    std::string _histogram_path;
 
 private slots:
-	void on_histogramCheckBox_toggled(bool is_checked) const;
-	void on_histogramPathButton_pressed();
+    void on_histogramCheckBox_toggled(bool is_checked) const;
+    void on_histogramPathButton_pressed();
 
-	void accept();
-	void reject();
+    void accept();
+    void reject();
 };
 
 #endif //MESHQUALITYSELECTIONDIALOG_H

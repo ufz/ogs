@@ -28,23 +28,23 @@
 class TreeItem
 {
 public:
-	TreeItem(const QList<QVariant> &data, TreeItem* parent);
-	virtual ~TreeItem();
+    TreeItem(const QList<QVariant> &data, TreeItem* parent);
+    virtual ~TreeItem();
 
-	void appendChild(TreeItem* child);
-	TreeItem* child(int row) const;
-	virtual int childCount() const;
-	virtual int columnCount() const;
-	virtual QVariant data(int column) const;
-	virtual bool setData(int column, const QVariant &value);
-	int row() const;
-	TreeItem* parentItem() const;
-	bool removeChildren(int position, int count);
+    void appendChild(TreeItem* child);
+    TreeItem* child(int row) const;
+    virtual int childCount() const;
+    virtual int columnCount() const;
+    virtual QVariant data(int column) const;
+    virtual bool setData(int column, const QVariant &value);
+    int row() const;
+    TreeItem* parentItem() const;
+    bool removeChildren(int position, int count);
 
 private:
-	QList<TreeItem*> _childItems;
-	QList<QVariant> _itemData;
-	TreeItem* _parentItem;
+    QList<TreeItem*> _childItems;
+    QList<QVariant> _itemData;
+    TreeItem* _parentItem;
 };
 
 #endif //QTREEITEM_H

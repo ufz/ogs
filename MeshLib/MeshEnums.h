@@ -26,15 +26,15 @@ namespace MeshLib {
  */
 enum class MeshElemType
 {
-	INVALID = 0,
-	POINT = 1,
-	LINE = 3,
-	QUAD = 9,
-	HEXAHEDRON = 12,
-	TRIANGLE = 5,
-	TETRAHEDRON = 10,
-	PRISM = 16,
-	PYRAMID = 14
+    INVALID = 0,
+    POINT = 1,
+    LINE = 3,
+    QUAD = 9,
+    HEXAHEDRON = 12,
+    TRIANGLE = 5,
+    TETRAHEDRON = 10,
+    PRISM = 16,
+    PYRAMID = 14
 };
 
 /**
@@ -42,25 +42,25 @@ enum class MeshElemType
  */
 enum class CellType
 {
-	INVALID,
-	POINT1,
-	LINE2,
-	LINE3,
-	TRI3,
-	TRI6,
-	QUAD4,
-	QUAD8,
-	QUAD9,
-	TET4,
-	TET10,
-	HEX8,
-	HEX20,
-	HEX27,
-	PRISM6,
-	PRISM15,
-	PRISM18,
-	PYRAMID5,
-	PYRAMID13
+    INVALID,
+    POINT1,
+    LINE2,
+    LINE3,
+    TRI3,
+    TRI6,
+    QUAD4,
+    QUAD8,
+    QUAD9,
+    TET4,
+    TET10,
+    HEX8,
+    HEX20,
+    HEX27,
+    PRISM6,
+    PRISM15,
+    PRISM18,
+    PYRAMID5,
+    PYRAMID13
 };
 
 /**
@@ -68,12 +68,12 @@ enum class CellType
  */
 enum class MeshQualityType
 {
-	INVALID = 0,
-	ELEMENTSIZE,
-	SIZEDIFFERENCE,
-	EDGERATIO,
-	EQUIANGLESKEW,
-	RADIUSEDGERATIO
+    INVALID = 0,
+    ELEMENTSIZE,
+    SIZEDIFFERENCE,
+    EDGERATIO,
+    EQUIANGLESKEW,
+    RADIUSEDGERATIO
 };
 
 /**
@@ -81,10 +81,10 @@ enum class MeshQualityType
  */
 enum class UseIntensityAs
 {
-	ELEVATION,
-	MATERIALS,
-	DATAVECTOR,
-	NONE
+    ELEVATION,
+    MATERIALS,
+    DATAVECTOR,
+    NONE
 };
 
 /// Given a MeshElemType this returns the appropriate string.

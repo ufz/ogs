@@ -22,23 +22,23 @@ namespace MeshGeoToolsLib
 class SearchLength
 {
 public:
-	/// Constructor for SearchLength object with a default search length
-	/// of 10 angstrom (\f$10^{-9}\f$ m)
-	explicit SearchLength(double search_length = 1e-9)
-		: _search_length(search_length) {}
+    /// Constructor for SearchLength object with a default search length
+    /// of 10 angstrom (\f$10^{-9}\f$ m)
+    explicit SearchLength(double search_length = 1e-9)
+        : _search_length(search_length) {}
 
-	SearchLength(SearchLength const&) = default;
-	SearchLength& operator=(SearchLength const&) = default;
+    SearchLength(SearchLength const&) = default;
+    SearchLength& operator=(SearchLength const&) = default;
 
-	virtual ~SearchLength() = default;
+    virtual ~SearchLength() = default;
 
-	virtual double getSearchLength() const
-	{
-		return _search_length;
-	}
+    virtual double getSearchLength() const
+    {
+        return _search_length;
+    }
 
 protected:
-	double _search_length;
+    double _search_length;
 };
 
 } // end namespace MeshGeoToolsLib

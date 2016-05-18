@@ -24,37 +24,37 @@ namespace MeshGeoToolsLib
 {
 
 MeshNodesAlongSurface::MeshNodesAlongSurface(
-		MeshLib::Mesh const& mesh,
-		GeoLib::Surface const& sfc,
-		bool search_all_nodes) :
-	_mesh(mesh), _sfc(sfc)
+        MeshLib::Mesh const& mesh,
+        GeoLib::Surface const& sfc,
+        bool search_all_nodes) :
+    _mesh(mesh), _sfc(sfc)
 {
-	auto& mesh_nodes = _mesh.getNodes();
-	const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
-	// loop over all nodes
-	for (std::size_t i = 0; i < n_nodes; i++) {
-		auto* node = mesh_nodes[i];
-		if (!sfc.isPntInBoundingVolume(*node))
-			continue;
-		if (sfc.isPntInSfc(*node)) {
-			_msh_node_ids.push_back(node->getID());
-		}
-	}
+    auto& mesh_nodes = _mesh.getNodes();
+    const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
+    // loop over all nodes
+    for (std::size_t i = 0; i < n_nodes; i++) {
+        auto* node = mesh_nodes[i];
+        if (!sfc.isPntInBoundingVolume(*node))
+            continue;
+        if (sfc.isPntInSfc(*node)) {
+            _msh_node_ids.push_back(node->getID());
+        }
+    }
 }
 
 MeshLib::Mesh const& MeshNodesAlongSurface::getMesh () const
 {
-	return _mesh;
+    return _mesh;
 }
 
 std::vector<std::size_t> const& MeshNodesAlongSurface::getNodeIDs () const
 {
-	return _msh_node_ids;
+    return _msh_node_ids;
 }
 
 GeoLib::Surface const& MeshNodesAlongSurface::getSurface () const
 {
-	return _sfc;
+    return _sfc;
 }
 
 } // end namespace MeshGeoToolsLib

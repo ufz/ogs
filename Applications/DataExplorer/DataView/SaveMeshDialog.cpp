@@ -27,70 +27,70 @@
 #include "LastSavedFileDirectory.h"
 
 SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
-	: QDialog(parent), _mesh(mesh)
+    : QDialog(parent), _mesh(mesh)
 {
-	setupUi(this);
-	this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()) + ".vtu");
+    setupUi(this);
+    this->fileNameEdit->setText(LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()) + ".vtu");
 }
 
 void SaveMeshDialog::on_selectDirButton_clicked()
 {
-	QString file_type ("VTK Unstructured Grid (*.vtu)");
+    QString file_type ("VTK Unstructured Grid (*.vtu)");
 #ifndef NDEBUG
-	file_type.append(";;Legacy geometry file (*.msh)");
+    file_type.append(";;Legacy geometry file (*.msh)");
 #endif // DEBUG
-	QSettings settings;
-	QString const file_name = QFileDialog::getSaveFileName(this,
-		"Save mesh as...",
-		LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()),
-		file_type);
+    QSettings settings;
+    QString const file_name = QFileDialog::getSaveFileName(this,
+        "Save mesh as...",
+        LastSavedFileDirectory::getDir() + QString::fromStdString(_mesh.getName()),
+        file_type);
 
-	if (!file_name.isEmpty())
-		this->fileNameEdit->setText(file_name);
+    if (!file_name.isEmpty())
+        this->fileNameEdit->setText(file_name);
 }
 
 void SaveMeshDialog::on_dataModeBox_currentIndexChanged(int index)
 {
-	// Disable compression on Ascii
-	if(index == 0)
-	{
-		this->compressionCheckBox->setChecked(false);
-		this->compressionCheckBox->setEnabled(false);
-		this->compressionLabel->setEnabled(false);
-	}
-	else
-	{
-		this->compressionCheckBox->setEnabled(true);
-		this->compressionLabel->setEnabled(true);
-	}
+    // Disable compression on Ascii
+    if(index == 0)
+    {
+        this->compressionCheckBox->setChecked(false);
+        this->compressionCheckBox->setEnabled(false);
+        this->compressionLabel->setEnabled(false);
+    }
+    else
+    {
+        this->compressionCheckBox->setEnabled(true);
+        this->compressionLabel->setEnabled(true);
+    }
 }
 
 void SaveMeshDialog::accept()
 {
-	QString const& file_name (this->fileNameEdit->text());
-	if (file_name.isEmpty())
-	{
-		OGSError::box("No file name entered.");
-		return;
-	}
+    QString const& file_name (this->fileNameEdit->text());
+    if (file_name.isEmpty())
+    {
+        OGSError::box("No file name entered.");
+        return;
+    }
 
-	QFileInfo fi(file_name);
-	if (fi.suffix().toLower() == "vtu")
-	{
+    QFileInfo fi(file_name);
+    if (fi.suffix().toLower() == "vtu")
+    {
 
-		int dataMode = this->dataModeBox->currentIndex();
-		bool compress (this->compressionCheckBox->isChecked());
-		MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
-		vtkIO.writeToFile(file_name.toStdString().c_str());
-	}
-	if (fi.suffix().toLower() == "msh")
-	{
-		MeshLib::IO::Legacy::MeshIO meshIO;
-		meshIO.setMesh(&_mesh);
-		meshIO.writeToFile(file_name.toStdString().c_str());
-	}
-	LastSavedFileDirectory::setDir(file_name);
+        int dataMode = this->dataModeBox->currentIndex();
+        bool compress (this->compressionCheckBox->isChecked());
+        MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
+        vtkIO.writeToFile(file_name.toStdString().c_str());
+    }
+    if (fi.suffix().toLower() == "msh")
+    {
+        MeshLib::IO::Legacy::MeshIO meshIO;
+        meshIO.setMesh(&_mesh);
+        meshIO.writeToFile(file_name.toStdString().c_str());
+    }
+    LastSavedFileDirectory::setDir(file_name);
 
-	this->done(QDialog::Accepted);
+    this->done(QDialog::Accepted);
 }
 
