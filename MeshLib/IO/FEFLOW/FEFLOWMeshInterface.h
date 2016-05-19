@@ -6,22 +6,19 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifndef FEFLOWINTERFACE_H_
-#define FEFLOWINTERFACE_H_
+#ifndef FEFLOWMESHINTERFACE_H_
+#define FEFLOWMESHINTERFACE_H_
 
 #include <iosfwd>
 #include <memory>
 #include <string>
 #include <vector>
 
-//#include "MeshLib/MeshEnums.h"
-
 class QDomElement;
 class QString;
 
 namespace GeoLib
 {
-    class GEOObjects;
     class Point;
     class Polyline;
 }
@@ -34,22 +31,18 @@ namespace MeshLib
     enum class MeshElemType;
 }
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
 /**
  * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class supports
  * only import of mesh data and some geometry given in Supermesh section.
  */
-class FEFLOWInterface
+class FEFLOWMeshInterface
 {
 public:
-    /// Constructor
-    explicit FEFLOWInterface(GeoLib::GEOObjects* obj = nullptr)
-            : _geoObjects(obj)
-    {
-    }
-
     /**
      * read a FEFLOW Model file (*.fem) in ASCII format (Version 5.4)
      *
@@ -157,10 +150,8 @@ private:
         std::vector<std::vector<std::size_t>> const& vec_elementsets,
         std::vector<MeshLib::Element*> const& vec_elements,
         std::vector<int> & material_ids);
-
-    //// Geometric objects
-    GeoLib::GEOObjects* _geoObjects;
 };
-} // end namespace FileIO
+} // IO
+} // MeshLib
 
-#endif /* FEFLOWINTERFACE_H_ */
+#endif /* FEFLOWMESHINTERFACE_H_ */

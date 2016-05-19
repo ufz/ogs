@@ -6,7 +6,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "FEFLOWInterface.h"
+#include "FEFLOWMeshInterface.h"
 
 #include <cctype>
 #include <QtXml>
@@ -16,7 +16,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
-#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 
@@ -24,10 +23,12 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
-MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
+MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string &filename)
 {
     std::ifstream in(filename.c_str());
     if (!in)
@@ -156,17 +157,9 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
     }
     in.close();
 
+    INFO("Create mesh");
     std::string project_name(
         BaseLib::extractBaseNameWithoutExtension(filename));
-    if (_geoObjects && points)
-        _geoObjects->addPointVec(
-            std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
-    if (_geoObjects && lines)
-        _geoObjects->addPolylineVec(
-            std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
-            project_name);
-
-    INFO("Create mesh");
     auto mesh(std::unique_ptr<MeshLib::Mesh>(
         new MeshLib::Mesh(project_name, vec_nodes, vec_elements)));
     INFO("Set values for material property.");
@@ -201,7 +194,7 @@ MeshLib::Mesh* FEFLOWInterface::readFEFLOWFile(const std::string &filename)
 }
 
 
-void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
+void FEFLOWMeshInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
     const std::size_t no_nodes_per_layer = (fem_class.dimension == 2) ? fem_dim.n_nodes : fem_dim.n_nodes / (fem_class.n_layers3d + 1);
     assert(no_nodes_per_layer>0);
@@ -239,7 +232,7 @@ void FEFLOWInterface::readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fe
     }
 }
 
-std::vector<std::size_t> FEFLOWInterface::getIndexList(const std::string &str_ranges)
+std::vector<std::size_t> FEFLOWMeshInterface::getIndexList(const std::string &str_ranges)
 {
     std::vector<std::size_t> vec_node_IDs;
 
@@ -268,7 +261,7 @@ std::vector<std::size_t> FEFLOWInterface::getIndexList(const std::string &str_ra
     return vec_node_IDs;
 }
 
-void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
+void FEFLOWMeshInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes)
 {
     const std::size_t no_nodes_per_layer = fem_dim.n_nodes / (fem_class.n_layers3d + 1);
     double z = .0;
@@ -333,7 +326,7 @@ void FEFLOWInterface::readElevation(std::ifstream &in, const FEM_CLASS &fem_clas
         in.seekg(pos_prev_line);
 }
 
-MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim,
+MeshLib::Element* FEFLOWMeshInterface::readElement(const FEM_DIM &fem_dim,
     const MeshLib::MeshElemType elem_type, const std::string& line,
     const std::vector<MeshLib::Node*> &nodes)
 {
@@ -380,7 +373,7 @@ MeshLib::Element* FEFLOWInterface::readElement(const FEM_DIM &fem_dim,
     }
 }
 
-void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points)
+void FEFLOWMeshInterface::readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points)
 {
     QDomElement xmlEle = nodesEle.firstChildElement(QString::fromStdString(tag));
     if (xmlEle.isNull())
@@ -403,7 +396,7 @@ void FEFLOWInterface::readPoints(QDomElement &nodesEle, const std::string &tag, 
     }
 }
 
-void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets)
+void FEFLOWMeshInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets)
 {
     auto compressSpaces = [](std::string const& str) {
         std::stringstream ss(str);
@@ -477,7 +470,7 @@ void FEFLOWInterface::readELEMENTALSETS(std::ifstream &in, std::vector<std::vect
 }
 
 //
-void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** p_points, std::vector<GeoLib::Polyline*>** p_lines)
+void FEFLOWMeshInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** p_points, std::vector<GeoLib::Polyline*>** p_lines)
 {
     // get XML strings
     std::ostringstream oss;
@@ -558,7 +551,7 @@ void FEFLOWInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_clas
     }
 }
 
-void FEFLOWInterface::setMaterialIDs(FEM_CLASS const& fem_class,
+void FEFLOWMeshInterface::setMaterialIDs(FEM_CLASS const& fem_class,
     FEM_DIM const& fem_dim,
     std::vector<GeoLib::Polyline*>* const& lines,
     std::vector<std::vector<std::size_t>> const& vec_elementsets,
@@ -606,4 +599,5 @@ void FEFLOWInterface::setMaterialIDs(FEM_CLASS const& fem_class,
     }
 }
 
-} // end namespace FileIO
+} // IO
+} // MeshLib
