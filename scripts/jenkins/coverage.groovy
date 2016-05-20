@@ -26,3 +26,5 @@ def build(buildDir, cmakeOptions, target) {
     stage 'Build'
     sh "cd ${buildDir} && make -j \$(nproc) ${target}"
 }
+
+properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '1', daysToKeepStr: '', numToKeepStr: '5']]])
