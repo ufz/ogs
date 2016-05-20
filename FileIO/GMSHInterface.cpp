@@ -338,10 +338,19 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         return 2;
     }
 
-    // Rotate points to the x-y-plane.
-    _inverse_rot_mat = GeoLib::rotatePointsToXY(*merged_pnts);
-    // Compute inverse rotation matrix to reverse the rotation later on.
-    _inverse_rot_mat.transposeInPlace();
+    if (_rotate) {
+        // Rotate points to the x-y-plane.
+        _inverse_rot_mat = GeoLib::rotatePointsToXY(*merged_pnts);
+        // Compute inverse rotation matrix to reverse the rotation later on.
+        _inverse_rot_mat.transposeInPlace();
+    } else {
+        // project data on the x-y-plane
+        _inverse_rot_mat(0,0) = 1.0;
+        _inverse_rot_mat(1,1) = 1.0;
+        _inverse_rot_mat(2,2) = 1.0;
+        for (auto pnt : *merged_pnts)
+            (*pnt)[2] = 0.0;
+    }
 
     std::vector<GeoLib::Polyline*> const* merged_plys(_geo_objs.getPolylineVec(_gmsh_geo_name));
     DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");

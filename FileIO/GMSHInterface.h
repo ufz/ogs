@@ -128,6 +128,9 @@ private:
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
     MathLib::DenseMatrix<double> _inverse_rot_mat = MathLib::DenseMatrix<double>(3,3);
+    /// Signals if the input points should be rotated or projected to the
+    /// \f$x\f$-\f$y\f$-plane
+    bool _rotate = false;
 };
 }
 
