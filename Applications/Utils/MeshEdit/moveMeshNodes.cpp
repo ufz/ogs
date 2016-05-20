@@ -10,6 +10,7 @@
  */
 
 #include <memory>
+#include <string>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
