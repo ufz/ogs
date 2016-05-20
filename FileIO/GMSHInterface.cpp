@@ -1,18 +1,10 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-04-29
- * \brief  Implementation of the GMSHInterface class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * @file GMSHInterface.cpp
- * @date 2010-04-29
- * @author Thomas Fischer
  */
 
 #include <fstream>
