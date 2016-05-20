@@ -14,7 +14,6 @@ if(OGS_BUILD_GUI)
         vtknetcdf
         vtkIOLegacy
         vtkIOImage
-        vtkGUISupportQt
         vtkRenderingAnnotation
         vtkFiltersExtraction
         vtkFiltersGeometry
