@@ -307,17 +307,22 @@ void GMSHPolygonTree::writeLineLoop(std::size_t &line_offset, std::size_t &sfc_o
     sfc_offset++;
 }
 
-void GMSHPolygonTree::writeLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const
+void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
+                                           std::size_t sfc_number,
+                                           std::ostream& out) const
 {
     const std::size_t n_plys (_plys.size());
     for (std::size_t j(0); j<n_plys; j++) {
         const std::size_t n_pnts(_plys[j]->getNumberOfPoints());
         std::size_t first_pnt_id(_plys[j]->getPointID(0)), second_pnt_id;
-        for (std::size_t k(1); k<n_pnts; k++) {
             second_pnt_id = _plys[j]->getPointID(k);
             if (_plys[j]->isSegmentMarked(k-1) && _node_polygon->isPntInPolygon(*(_plys[j]->getPoint(k)))) {
-                out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
-                out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };\n";
+        for (std::size_t k(1); k < n_pnts; k++)
+        {
+                out << "Line(" << line_offset + k - 1 << ") = {" << first_pnt_id
+                    << "," << second_pnt_id << "};\n";
+                out << "Line { " << line_offset + k - 1 << " } In Surface { "
+                    << sfc_number << " };\n";
             }
             first_pnt_id = second_pnt_id;
         }

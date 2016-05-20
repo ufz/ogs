@@ -70,11 +70,11 @@ public:
      * @param selected_geometries vector of names of geometries, that should be employed for mesh generation.
      * @return
      */
-    GMSHInterface (GeoLib::GEOObjects & geo_objs,
-                    bool include_stations_as_constraints,
-                    GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                    double param1, double param2, std::size_t param3,
-                    std::vector<std::string> & selected_geometries);
+    GMSHInterface(GeoLib::GEOObjects& geo_objs,
+                  bool include_stations_as_constraints,
+                  GMSH::MeshDensityAlgorithm mesh_density_algorithm,
+                  double param1, double param2, std::size_t param3,
+                  std::vector<std::string>& selected_geometries);
 
     ~GMSHInterface();
 
@@ -96,7 +96,8 @@ protected:
 
 private:
     /// Reads a mesh element from the input stream
-    static std::pair<MeshLib::Element*, int> readElement(std::ifstream &in,
+    static std::pair<MeshLib::Element*, int> readElement(
+        std::ifstream& in,
         std::vector<MeshLib::Node*> const& nodes,
         std::map<unsigned, unsigned> const& id_map);
 
@@ -110,7 +111,9 @@ private:
      */
     int writeGMSHInputFile(std::ostream & out);
 
-    static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> const& id_map);
+    static void readNodeIDs(std::ifstream& in, unsigned n_nodes,
+                            std::vector<unsigned>& node_ids,
+                            std::map<unsigned, unsigned> const& id_map);
 
     void writePoints(std::ostream& out) const;
 
@@ -127,7 +130,8 @@ private:
     GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
-    MathLib::DenseMatrix<double> _inverse_rot_mat = MathLib::DenseMatrix<double>(3,3);
+    MathLib::DenseMatrix<double> _inverse_rot_mat =
+        MathLib::DenseMatrix<double>(3, 3, 0);
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
     bool _rotate = false;

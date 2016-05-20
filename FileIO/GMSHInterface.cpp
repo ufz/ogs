@@ -332,7 +332,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         remove_geometry = false;
     }
 
-    std::vector<GeoLib::Point*> * merged_pnts(const_cast<std::vector<GeoLib::Point*> *>(_geo_objs.getPointVec(_gmsh_geo_name)));
+    std::vector<GeoLib::Point*>* merged_pnts(
+        const_cast<std::vector<GeoLib::Point*>*>(
+            _geo_objs.getPointVec(_gmsh_geo_name)));
     if (! merged_pnts) {
         ERR("GMSHInterface::writeGMSHInputFile(): Did not found any points.");
         return 2;
@@ -352,16 +354,18 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
             (*pnt)[2] = 0.0;
     }
 
-    std::vector<GeoLib::Polyline*> const* merged_plys(_geo_objs.getPolylineVec(_gmsh_geo_name));
+    std::vector<GeoLib::Polyline*> const* merged_plys(
+        _geo_objs.getPolylineVec(_gmsh_geo_name));
     DBUG("GMSHInterface::writeGMSHInputFile(): \t ok.");
 
     if (!merged_plys) {
-        ERR("GMSHInterface::writeGMSHInputFile(): Did not found any polylines.");
+        ERR("GMSHInterface::writeGMSHInputFile(): Did not find any polylines.");
         return 2;
     }
 
     // *** compute and insert all intersection points between polylines
-    GeoLib::PointVec &pnt_vec(*const_cast<GeoLib::PointVec*>(_geo_objs.getPointVecObj(_gmsh_geo_name)));
+    GeoLib::PointVec& pnt_vec(*const_cast<GeoLib::PointVec*>(
+        _geo_objs.getPointVecObj(_gmsh_geo_name)));
     GeoLib::computeAndInsertAllIntersectionPoints(pnt_vec,
         *(const_cast<std::vector<GeoLib::Polyline*>*>(merged_plys)));
 
@@ -377,9 +381,15 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
             );
         }
     }
-    DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - detected %d polygons.", _polygon_tree_list.size());
+    DBUG(
+        "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
+        "detected %d polygons.",
+        _polygon_tree_list.size());
     GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
-    DBUG("GMSHInterface::writeGMSHInputFile(): Compute topological hierarchy - calculated %d polygon trees.", _polygon_tree_list.size());
+    DBUG(
+        "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
+        "calculated %d polygon trees.",
+        _polygon_tree_list.size());
 
     // *** Mark in each polygon tree the segments shared by two polygons.
     for (auto it(_polygon_tree_list.begin()); it != _polygon_tree_list.end(); it++) {
