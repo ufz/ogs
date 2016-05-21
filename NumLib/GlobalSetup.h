@@ -7,12 +7,12 @@
  *
  */
 
-#ifndef PROCESS_LIB_GLOBAL_SETUP_H_
-#define PROCESS_LIB_GLOBAL_SETUP_H_
+#ifndef NUMLIB_GLOBAL_SETUP_H_
+#define NUMLIB_GLOBAL_SETUP_H_
 
 #include <functional>
 
-namespace ProcessLib
+namespace NumLib
 {
 
 /// The GlobalSetup collects vector and matrix builder and corresponding global
@@ -64,6 +64,6 @@ struct GlobalSetup
     GlobalSetup() = delete;
 };
 
-}   // namespace ProcessLib
+}   // namespace NumLib
 
-#endif  // PROCESS_LIB_GLOBAL_SETUP_H_
+#endif  // NUMLIB_GLOBAL_SETUP_H_

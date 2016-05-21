@@ -30,7 +30,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"

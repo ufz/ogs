@@ -14,7 +14,7 @@
 
 namespace NumLib
 {
-MathLib::SparsityPattern computeSparsityPattern(
+GlobalSparsityPattern computeSparsityPattern(
     LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
     MeshLib::NodeAdjacencyTable node_adjacency_table;
@@ -31,7 +31,7 @@ MathLib::SparsityPattern computeSparsityPattern(
         global_idcs.push_back(dof_table.getGlobalIndices(l));
     }
 
-    MathLib::SparsityPattern sparsity_pattern(dof_table.dofSizeWithGhosts());
+    GlobalSparsityPattern sparsity_pattern(dof_table.dofSizeWithGhosts());
 
     // Map adjacent mesh nodes to "adjacent global indices".
     for (std::size_t n=0; n<mesh.getNNodes(); ++n)

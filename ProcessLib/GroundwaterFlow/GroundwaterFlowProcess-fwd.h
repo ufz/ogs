@@ -11,7 +11,7 @@
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_FWD_H_
 
 #include "GroundwaterFlowProcess.h"
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 extern template class ProcessLib::GroundwaterFlow::GroundwaterFlowProcess<GlobalSetupType>;
 

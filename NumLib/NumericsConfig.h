@@ -12,6 +12,8 @@
 
 #include <type_traits>
 
+#include "MathLib/LinAlg/SparsityPattern.h"
+
 /**
  * This file provides a configuration of the global matrix/vector and
  * corresponding linear solver, and the global executer types.
@@ -105,7 +107,7 @@ using GlobalExecutorType = NumLib::SerialExecutor;
 ///
 #include "GlobalSetup.h"
 using GlobalSetupType =
-    ProcessLib::GlobalSetup<
+    NumLib::GlobalSetup<
         detail::GlobalVectorMatrixBuilderType,
         detail::GlobalExecutorType,
         detail::LinearSolverType>;
@@ -128,5 +130,6 @@ static_assert(std::is_same<detail::GlobalMatrixType::IndexType,
 /// A type used for indexing of global vectors and matrices. It is equal to the
 /// GlobalMatrixType::IndexType and the GlobalVectorType::IndexType.
 using GlobalIndexType = detail::GlobalMatrixType::IndexType;
+using GlobalSparsityPattern = MathLib::SparsityPattern<GlobalIndexType>;
 
 #endif  // APPLICATIONS_NUMERICSCONFIG_H_

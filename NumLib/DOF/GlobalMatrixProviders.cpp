@@ -7,9 +7,9 @@
  *
  */
 
-#include<memory>
+#include <memory>
 
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 #include "GlobalMatrixProviders.h"
 #include "SimpleMatrixVectorProvider.h"

@@ -13,13 +13,12 @@
 #include <algorithm>
 #include <vector>
 
-#include "logog/include/logog.hpp"
-
-#include "NumericsConfig.h" // for GlobalIndexType
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/NumericsConfig.h" // for GlobalIndexType
 
 #include "DirichletBc.h"
 
@@ -65,7 +64,7 @@ public:
         std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
 
         // convert mesh node ids to global index for the given component
-        bc.global_ids.reserve(bc.global_ids.size() + ids.size());
+        bc.ids.reserve(bc.ids.size() + ids.size());
         bc.values.reserve(bc.values.size() + ids.size());
         for (auto& id : ids)
         {
@@ -82,7 +81,7 @@ public:
             // PETSc routines. Therefore, the following if-condition is applied.
             if (g_idx >= 0)
             {
-                bc.global_ids.emplace_back(g_idx);
+                bc.ids.emplace_back(g_idx);
                 bc.values.emplace_back(_value);
             }
         }

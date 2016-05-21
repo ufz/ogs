@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "NumLib/IndexValueVector.h"
 
 namespace ProcessLib
 {
@@ -20,11 +20,7 @@ namespace ProcessLib
 /// A dirichlet boundary condition is represented by a list of global indices
 /// with corresponding values.
 template <typename IndexType>
-struct DirichletBc final
-{
-    std::vector<IndexType> global_ids;
-    std::vector<double> values;
-};
+using DirichletBc = NumLib::IndexValueVector<IndexType>;
 
 }  // namespace ProcessLib
 

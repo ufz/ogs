@@ -320,7 +320,7 @@ protected:
 
 private:
     unsigned const _integration_order = 2;
-    MathLib::SparsityPattern _sparsity_pattern;
+    GlobalSparsityPattern _sparsity_pattern;
 
     std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
     std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;

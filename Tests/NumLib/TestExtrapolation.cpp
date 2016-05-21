@@ -24,7 +24,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 #include "ProcessLib/Utils/LocalDataInitializer.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"

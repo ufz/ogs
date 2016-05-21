@@ -7,16 +7,21 @@
  *
  */
 
-#ifndef MATHLIB_LINALG_SPARSITYPATTERN_H
-#define MATHLIB_LINALG_SPARSITYPATTERN_H
+#ifndef NUM_LIB_INDEXVALUEVECTOR_H
+#define NUM_LIB_INDEXVALUEVECTOR_H
 
 #include <vector>
 
-namespace MathLib
+namespace NumLib
 {
-/// A vector telling how many nonzeros there are in each global matrix row.
+
 template <typename IndexType>
-using SparsityPattern = std::vector<IndexType>;
+struct IndexValueVector final
+{
+    std::vector<IndexType> ids;
+    std::vector<double> values;
+};
+
 }
 
-#endif // MATHLIB_LINALG_SPARSITYPATTERN_H
+#endif  // NUM_LIB_INDEXVALUEVECTOR_H

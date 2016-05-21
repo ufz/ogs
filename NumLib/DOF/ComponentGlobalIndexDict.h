@@ -21,7 +21,7 @@
 #include <boost/multi_index_container.hpp>
 
 #include "MeshLib/Location.h"
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 namespace NumLib
 {

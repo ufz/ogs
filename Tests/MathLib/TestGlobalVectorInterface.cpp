@@ -27,7 +27,7 @@
 #endif
 
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 namespace
 {

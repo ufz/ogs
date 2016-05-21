@@ -10,17 +10,11 @@
 #ifndef NUMLIB_ODESYSTEM_H
 #define NUMLIB_ODESYSTEM_H
 
+#include "NumLib/IndexValueVector.h"
 #include "NumLib/DOF/MatrixVectorTraits.h"
 
 #include "Types.h"
 #include "EquationSystem.h"
-
-// TODO move to other namespace
-namespace ProcessLib
-{
-template <typename IndexType>
-struct DirichletBc;
-}
 
 namespace NumLib
 {
@@ -67,7 +61,7 @@ public:
 
     //! Provides known solutions (Dirichlet boundary conditions) vector for
     //! the ode system at the given time \c t.
-    virtual std::vector<ProcessLib::DirichletBc<Index>> const*
+    virtual std::vector<NumLib::IndexValueVector<Index>> const*
     getKnownSolutions(double const t) const
     {
         (void)t;

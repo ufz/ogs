@@ -12,9 +12,9 @@
 
 #include <memory>
 
-#include "NumLib/DOF/UnifiedMatrixSetters.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "ProcessLib/DirichletBc.h"
+#include "NumLib/IndexValueVector.h"
+#include "NumLib/DOF/UnifiedMatrixSetters.h"
 
 #include "ODESystem.h"
 #include "NonlinearSystem.h"
@@ -31,9 +31,9 @@ void applyKnownSolutions(std::vector<Solutions> const*const known_solutions,
     if (!known_solutions) return;
 
     for (auto const& bc : *known_solutions) {
-        for (std::size_t i=0; i<bc.global_ids.size(); ++i) {
+        for (std::size_t i=0; i<bc.ids.size(); ++i) {
             // TODO that might have bad performance for some Vector types, e.g., PETSc.
-            MathLib::setVector(x, bc.global_ids[i], bc.values[i]);
+            MathLib::setVector(x, bc.ids[i], bc.values[i]);
         }
     }
 }
@@ -212,7 +212,7 @@ public:
                 values.resize(bc.values.size(), 0.0);
 
                 // TODO maybe it would be faster to apply all at once
-                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.global_ids, values);
+                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.ids, values);
             }
         }
     }
@@ -361,7 +361,7 @@ public:
         if (known_solutions) {
             for (auto const& bc : *known_solutions) {
                 // TODO maybe it would be faster to apply all at once
-                MathLib::applyKnownSolution(A, rhs, x, bc.global_ids, bc.values);
+                MathLib::applyKnownSolution(A, rhs, x, bc.ids, bc.values);
             }
         }
     }

@@ -28,7 +28,7 @@
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 namespace
 {
