@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_COMPUTESPARSITYPATTERN_H
-#define ASSEMBLERLIB_COMPUTESPARSITYPATTERN_H
+#ifndef NUMLIB_COMPUTESPARSITYPATTERN_H
+#define NUMLIB_COMPUTESPARSITYPATTERN_H
 
 #include <vector>
 
@@ -20,7 +20,7 @@ namespace MeshLib
 class Mesh;
 }
 
-namespace AssemblerLib
+namespace NumLib
 {
 class LocalToGlobalIndexMap;
 
@@ -36,5 +36,5 @@ MathLib::SparsityPattern computeSparsityPattern(
     LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
 }
 
-#endif // ASSEMBLERLIB_COMPUTESPARSITYPATTERN_H
+#endif // NUMLIB_COMPUTESPARSITYPATTERN_H
 

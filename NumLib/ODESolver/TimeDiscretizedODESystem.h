@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "AssemblerLib/UnifiedMatrixSetters.h"
+#include "NumLib/DOF/UnifiedMatrixSetters.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "ProcessLib/DirichletBc.h"
 

@@ -105,7 +105,7 @@ public:
         }
     }
 
-    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+    void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
         const override
     {

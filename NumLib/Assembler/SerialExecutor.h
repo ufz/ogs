@@ -10,10 +10,10 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_SERIALEXECUTOR_H_H
-#define ASSEMBLERLIB_SERIALEXECUTOR_H_H
+#ifndef NUMLIB_SERIALEXECUTOR_H_H
+#define NUMLIB_SERIALEXECUTOR_H_H
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 struct SerialExecutor
@@ -107,6 +107,6 @@ struct SerialExecutor
     }
 };
 
-}   // namespace AssemblerLib
+}   // namespace NumLib
 
-#endif  // ASSEMBLERLIB_SERIALEXECUTOR_H_H
+#endif  // NUMLIB_SERIALEXECUTOR_H_H

@@ -14,20 +14,20 @@
 #include <memory>
 #include <vector>
 
-#include "AssemblerLib/MeshComponentMap.h"
+#include "NumLib/DOF/MeshComponentMap.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-class AssemblerLibMeshComponentMapTest : public ::testing::Test
+class NumLibMeshComponentMapTest : public ::testing::Test
 {
     public:
     typedef MeshLib::MeshItemType MeshItemType;
     typedef MeshLib::Location Location;
-    typedef AssemblerLib::MeshComponentMap MeshComponentMap;
+    typedef NumLib::MeshComponentMap MeshComponentMap;
 
     public:
-    AssemblerLibMeshComponentMapTest()
+    NumLibMeshComponentMapTest()
         : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
@@ -38,7 +38,7 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
         components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
     }
 
-    ~AssemblerLibMeshComponentMapTest()
+    ~NumLibMeshComponentMapTest()
     {
         delete cmap;
         delete nodesSubset;
@@ -68,16 +68,16 @@ class AssemblerLibMeshComponentMapTest : public ::testing::Test
 };
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByComponent)
+TEST_F(NumLibMeshComponentMapTest, CheckOrderByComponent)
 #else
-TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
+TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
 #endif
 {
     // - Entries in the vector are arranged in the order of a component type and then node ID
     // - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0), (node 0, comp1) ... ]
 
     cmap = new MeshComponentMap(components,
-        AssemblerLib::ComponentOrder::BY_COMPONENT);
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
@@ -96,16 +96,16 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibMeshComponentMapTest, CheckOrderByLocation)
+TEST_F(NumLibMeshComponentMapTest, CheckOrderByLocation)
 #else
-TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
+TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
 #endif
 {
     // - Entries in the vector are arranged in the order of node ID and then a component type
     // - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0), (node n, comp1) ]
 
     cmap = new MeshComponentMap(components,
-        AssemblerLib::ComponentOrder::BY_LOCATION);
+        NumLib::ComponentOrder::BY_LOCATION);
 
     ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
@@ -124,13 +124,13 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibMeshComponentMapTest, OutOfRangeAccess)
+TEST_F(NumLibMeshComponentMapTest, OutOfRangeAccess)
 #else
-TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
+TEST_F(NumLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
 #endif
 {
     cmap = new MeshComponentMap(components,
-        AssemblerLib::ComponentOrder::BY_COMPONENT);
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
         Location(mesh->getID(), MeshItemType::Node, mesh_size + 1), comp0_id));
@@ -143,13 +143,13 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByComponent)
+TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByComponent)
 #else
-TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
+TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
 #endif
 {
     cmap = new MeshComponentMap(components,
-        AssemblerLib::ComponentOrder::BY_COMPONENT);
+        NumLib::ComponentOrder::BY_COMPONENT);
 
     // Select some nodes from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};
@@ -180,13 +180,13 @@ TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibMeshComponentMapTest, SubsetOfNodesByLocation)
+TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByLocation)
 #else
-TEST_F(AssemblerLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
+TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
 #endif
 {
     cmap = new MeshComponentMap(components,
-        AssemblerLib::ComponentOrder::BY_LOCATION);
+        NumLib::ComponentOrder::BY_LOCATION);
 
     // Select some nodes from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 9 }};

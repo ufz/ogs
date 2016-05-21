@@ -64,7 +64,7 @@ public:
     void initializeDirichletBCs(
         OutputIterator output_bcs,
         MeshGeoToolsLib::MeshNodeSearcher& searcher,
-        const AssemblerLib::LocalToGlobalIndexMap& dof_table,
+        const NumLib::LocalToGlobalIndexMap& dof_table,
         const unsigned nodal_dof_idx)
     {
         for (auto& bc_config : _dirichlet_bc_configs)

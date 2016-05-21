@@ -10,26 +10,26 @@
 #include <memory>
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/MeshComponentMap.h"
+#include "NumLib/DOF/MeshComponentMap.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubsets.h"
 
-#include "AssemblerLib/VectorMatrixBuilder.h"
+#include "NumLib/Assembler/VectorMatrixBuilder.h"
 
 template <typename Builder>
-class AssemblerLibVectorMatrixBuilder : public ::testing::Test
+class NumLibVectorMatrixBuilder : public ::testing::Test
 {
     public:
     typedef MeshLib::MeshItemType MeshItemType;
     typedef MeshLib::Location Location;
-    typedef AssemblerLib::MeshComponentMap MeshComponentMap;
+    typedef NumLib::MeshComponentMap MeshComponentMap;
 
     typedef typename Builder::VectorType VectorType;
     typedef typename Builder::MatrixType MatrixType;
 
     public:
-    AssemblerLibVectorMatrixBuilder()
+    NumLibVectorMatrixBuilder()
         : mesh(nullptr), nodesSubset(nullptr), cmap(nullptr)
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
@@ -40,10 +40,10 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
         components.emplace_back(new MeshLib::MeshSubsets{nodesSubset});
 
         cmap = new MeshComponentMap(components,
-            AssemblerLib::ComponentOrder::BY_COMPONENT);
+            NumLib::ComponentOrder::BY_COMPONENT);
     }
 
-    ~AssemblerLibVectorMatrixBuilder()
+    ~NumLibVectorMatrixBuilder()
     {
         delete cmap;
         delete nodesSubset;
@@ -58,12 +58,12 @@ class AssemblerLibVectorMatrixBuilder : public ::testing::Test
     MeshComponentMap const* cmap;
 };
 
-TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder);
+TYPED_TEST_CASE_P(NumLibVectorMatrixBuilder);
 
 #ifndef USE_PETSC
-TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createVector)
+TYPED_TEST_P(NumLibVectorMatrixBuilder, createVector)
 #else
-TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createVector)
+TYPED_TEST_P(NumLibVectorMatrixBuilder, DISABLED_createVector)
 #endif
 {
     typedef typename TestFixture::VectorType V;
@@ -77,9 +77,9 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createVector)
 }
 
 #ifndef USE_PETSC
-TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, createMatrix)
+TYPED_TEST_P(NumLibVectorMatrixBuilder, createMatrix)
 #else
-TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createMatrix)
+TYPED_TEST_P(NumLibVectorMatrixBuilder, DISABLED_createMatrix)
 #endif
 {
     typedef typename TestFixture::MatrixType M;
@@ -94,10 +94,10 @@ TYPED_TEST_P(AssemblerLibVectorMatrixBuilder, DISABLED_createMatrix)
 }
 
 #ifndef USE_PETSC
-REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
+REGISTER_TYPED_TEST_CASE_P(NumLibVectorMatrixBuilder,
     createVector, createMatrix);
 #else
-REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
+REGISTER_TYPED_TEST_CASE_P(NumLibVectorMatrixBuilder,
     DISABLED_createVector, DISABLED_createMatrix);
 #endif
 
@@ -118,17 +118,17 @@ REGISTER_TYPED_TEST_CASE_P(AssemblerLibVectorMatrixBuilder,
 
 typedef ::testing::Types
     <
-      AssemblerLib::VectorMatrixBuilder<
+      NumLib::VectorMatrixBuilder<
       MathLib::EigenMatrix, MathLib::EigenVector>
 #ifdef USE_LIS
-    , AssemblerLib::VectorMatrixBuilder<
+    , NumLib::VectorMatrixBuilder<
         MathLib::LisMatrix, MathLib::LisVector>
 #endif  // USE_LIS
 #ifdef USE_PETSC
-    , AssemblerLib::VectorMatrixBuilder<
+    , NumLib::VectorMatrixBuilder<
         MathLib::PETScMatrix, MathLib::PETScVector>
 #endif  // USE_PETSC
     > TestTypes;
 
-INSTANTIATE_TYPED_TEST_CASE_P(templated, AssemblerLibVectorMatrixBuilder,
+INSTANTIATE_TYPED_TEST_CASE_P(templated, NumLibVectorMatrixBuilder,
     TestTypes);

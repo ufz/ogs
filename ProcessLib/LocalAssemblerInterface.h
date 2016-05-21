@@ -27,7 +27,7 @@ public:
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
     virtual void addToGlobal(
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 
     virtual void assembleJacobian(double const /*t*/,
@@ -39,7 +39,7 @@ public:
         std::abort();
     }
 
-    virtual void addJacobianToGlobal(AssemblerLib::LocalToGlobalIndexMap::
+    virtual void addJacobianToGlobal(NumLib::LocalToGlobalIndexMap::
                                          RowColumnIndices const& /*indices*/,
                                      GlobalMatrix& /*Jac*/) const
     {

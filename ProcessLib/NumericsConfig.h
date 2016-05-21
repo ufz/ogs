@@ -82,11 +82,11 @@ namespace detail
 // Global vector/matrix builder.
 //
 
-#include "AssemblerLib/VectorMatrixBuilder.h"
+#include "NumLib/Assembler/VectorMatrixBuilder.h"
 namespace detail
 {
 using GlobalVectorMatrixBuilderType =
-        AssemblerLib::VectorMatrixBuilder<
+        NumLib::VectorMatrixBuilder<
             GlobalMatrixType,
             GlobalVectorType>;
 }
@@ -94,10 +94,10 @@ using GlobalVectorMatrixBuilderType =
 //
 // Global executor
 //
-#include "AssemblerLib/SerialExecutor.h"
+#include "NumLib/Assembler/SerialExecutor.h"
 namespace detail
 {
-using GlobalExecutorType = AssemblerLib::SerialExecutor;
+using GlobalExecutorType = NumLib::SerialExecutor;
 }
 
 ///

@@ -12,7 +12,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
@@ -20,11 +20,11 @@
 #include "MeshLib/Mesh.h"
 
 
-class AssemblerLibLocalToGlobalIndexMapTest : public ::testing::Test
+class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 {
 
 public:
-    AssemblerLibLocalToGlobalIndexMapTest()
+    NumLibLocalToGlobalIndexMapTest()
     {
         mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
         nodesSubset.reset(new MeshLib::MeshSubset(*mesh, &mesh->getNodes()));
@@ -44,21 +44,21 @@ protected:
     static std::size_t const comp1_id = 1;
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> components;
 
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap const> dof_map;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> dof_map;
 };
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapTest, NumberOfRowsByComponent)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
 #endif
 {
     // need to store the size because the components will be moved into the
     // DOF-table.
     std::size_t components_size = components.size();
 
-    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
-        AssemblerLib::ComponentOrder::BY_COMPONENT));
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
+        NumLib::ComponentOrder::BY_COMPONENT));
 
     // There must be as many rows as nodes in the input times the number of
     // components.
@@ -66,17 +66,17 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
+TEST_F(NumLibLocalToGlobalIndexMapTest, NumberOfRowsByLocation)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
 #endif
 {
     // need to store the size because the components will be moved into the
     // DOF-table.
     std::size_t components_size = components.size();
 
-    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
-        AssemblerLib::ComponentOrder::BY_LOCATION));
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
+        NumLib::ComponentOrder::BY_LOCATION));
 
     // There must be as many rows as nodes in the input times the number of
     // components.
@@ -84,13 +84,13 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, SubsetByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapTest, SubsetByComponent)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
 #endif
 {
-    dof_map.reset(new AssemblerLib::LocalToGlobalIndexMap(std::move(components),
-        AssemblerLib::ComponentOrder::BY_COMPONENT));
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(std::move(components),
+        NumLib::ComponentOrder::BY_COMPONENT));
 
     // Select some elements from the full mesh.
     std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
@@ -106,7 +106,7 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
     auto selected_component = std::unique_ptr<MeshLib::MeshSubsets>{
         new MeshLib::MeshSubsets{selected_subset.get()}};
 
-    auto dof_map_subset = std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>{
+    auto dof_map_subset = std::unique_ptr<NumLib::LocalToGlobalIndexMap>{
         dof_map->deriveBoundaryConstrainedMap(0,  // variable id
                                               1,  // component id
                                               std::move(selected_component),

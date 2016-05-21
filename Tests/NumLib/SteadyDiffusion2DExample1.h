@@ -49,7 +49,7 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
             // already stored in the _localA matrix.
         }
 
-        void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
                          GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) const
         {
             K.add(indices, *_localA);

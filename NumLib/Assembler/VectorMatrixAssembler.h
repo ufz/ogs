@@ -7,18 +7,17 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_VECTORMATRIXASSEMBLER_H_
-#define ASSEMBLERLIB_VECTORMATRIXASSEMBLER_H_
+#ifndef NUMLIB_VECTORMATRIXASSEMBLER_H_
+#define NUMLIB_VECTORMATRIXASSEMBLER_H_
 
-#include "LocalToGlobalIndexMap.h"
-
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/ODESolver/Types.h"
 
 namespace
 {
-inline AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices
+inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
 getRowColumnIndices(std::size_t const id,
-                    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                    NumLib::LocalToGlobalIndexMap const& dof_table,
                     std::vector<GlobalIndexType>& indices)
 {
     assert(dof_table.size() > id);
@@ -33,13 +32,13 @@ getRowColumnIndices(std::size_t const id,
         indices.insert(indices.end(), idcs.begin(), idcs.end());
     }
 
-    return AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
                                                                  indices);
 }
 
 template <typename Callback, typename GlobalVector, typename... Args>
 void passLocalVector_(Callback& cb, std::size_t const id,
-                      AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                      NumLib::LocalToGlobalIndexMap const& dof_table,
                       GlobalVector const& x, Args&&... args)
 {
     std::vector<GlobalIndexType> indices;
@@ -57,7 +56,7 @@ void passLocalVector_(Callback& cb, std::size_t const id,
 }
 }
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 /*! Calls the local assemblers of FEM processes and assembles
@@ -215,6 +214,6 @@ private:
     LocalToGlobalIndexMap const& _data_pos;
 };
 
-}   // namespace AssemblerLib
+}   // namespace NumLib
 
-#endif  // ASSEMBLERLIB_VECTORMATRIXASSEMBLER_H_
+#endif  // NUMLIB_VECTORMATRIXASSEMBLER_H_

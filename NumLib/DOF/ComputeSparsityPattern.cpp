@@ -12,7 +12,7 @@
 #include "LocalToGlobalIndexMap.h"
 #include "MeshLib/NodeAdjacencyTable.h"
 
-namespace AssemblerLib
+namespace NumLib
 {
 MathLib::SparsityPattern computeSparsityPattern(
     LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)

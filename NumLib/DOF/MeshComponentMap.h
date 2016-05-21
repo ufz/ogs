@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_MESHCOMPONENTMAP_H_
-#define ASSEMBLERLIB_MESHCOMPONENTMAP_H_
+#ifndef NUMLIB_MESHCOMPONENTMAP_H_
+#define NUMLIB_MESHCOMPONENTMAP_H_
 
 #include "ComponentGlobalIndexDict.h"
 
@@ -20,7 +20,7 @@ namespace MeshLib
     class MeshSubsets;
 }
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 /// Ordering of components in global matrix/vector.
@@ -190,6 +190,6 @@ private:
     std::vector<GlobalIndexType> _ghosts_indices;
 };
 
-}   // namespace AssemblerLib
+}   // namespace NumLib
 
-#endif  // ASSEMBLERLIB_MESHCOMPONENTMAP_H_
+#endif  // NUMLIB_MESHCOMPONENTMAP_H_

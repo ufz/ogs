@@ -27,7 +27,7 @@ public:
 
     virtual void assemble(const double t) = 0;
 
-    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+    virtual void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
                              GlobalVector& b) const = 0;
 };
 
@@ -95,7 +95,7 @@ public:
         }
     }
 
-    void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+    void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
                      GlobalVector& b) const override
     {
         b.add(indices.rows, *_localRhs);

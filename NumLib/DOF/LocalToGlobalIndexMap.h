@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
-#define ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
+#ifndef NUMLIB_LOCALTOGLOBALINDEXMAP_H_
+#define NUMLIB_LOCALTOGLOBALINDEXMAP_H_
 
 #ifndef NDEBUG
 #include <iosfwd>
@@ -18,11 +18,12 @@
 
 #include <Eigen/Dense>
 
-#include "AssemblerLib/MeshComponentMap.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MeshLib/MeshSubsets.h"
 
-namespace AssemblerLib
+#include "MeshComponentMap.h"
+
+namespace NumLib
 {
 
 /// Row and column indices in global linear algebra objects for each mesh item.
@@ -45,7 +46,7 @@ public:
     /// each mesh element of the given mesh_subsets.
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-        AssemblerLib::ComponentOrder const order);
+        NumLib::ComponentOrder const order);
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
@@ -124,7 +125,7 @@ private:
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
         std::size_t const component_id,
         std::vector<MeshLib::Element*> const& elements,
-        AssemblerLib::MeshComponentMap&& mesh_component_map);
+        NumLib::MeshComponentMap&& mesh_component_map);
 
     template <typename ElementIterator>
     void
@@ -135,7 +136,7 @@ private:
 private:
     /// A vector of mesh subsets for each process variables' components.
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> const _mesh_subsets;
-    AssemblerLib::MeshComponentMap _mesh_component_map;
+    NumLib::MeshComponentMap _mesh_component_map;
 
     using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
 
@@ -153,6 +154,6 @@ private:
 
 };
 
-}   // namespace AssemblerLib
+}   // namespace NumLib
 
-#endif  // ASSEMBLERLIB_LOCALTOGLOBALINDEXMAP_H_
+#endif  // NUMLIB_LOCALTOGLOBALINDEXMAP_H_

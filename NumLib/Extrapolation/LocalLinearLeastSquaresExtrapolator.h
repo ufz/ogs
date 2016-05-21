@@ -10,7 +10,7 @@
 #ifndef NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 #define NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 
-#include "AssemblerLib/GlobalMatrixProviders.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Extrapolator.h"
 
 namespace NumLib
@@ -100,7 +100,7 @@ private:
     GlobalVector  _residuals;    //!< extrapolation residuals
 
     //! DOF table used for writing to global vectors.
-    AssemblerLib::LocalToGlobalIndexMap const& _local_to_global;
+    NumLib::LocalToGlobalIndexMap const& _local_to_global;
 
     //! Avoids frequent reallocations.
     Eigen::MatrixXd _local_matrix_cache;

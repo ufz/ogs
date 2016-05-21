@@ -10,8 +10,8 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
-#include "AssemblerLib/ComputeSparsityPattern.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -190,7 +190,7 @@ public:
 private:
     /// Process specific initialization called by initialize().
     virtual void initializeConcreteProcess(
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
@@ -232,9 +232,9 @@ private:
         }
 
         _local_to_global_index_map.reset(
-            new AssemblerLib::LocalToGlobalIndexMap(
+            new NumLib::LocalToGlobalIndexMap(
                 std::move(all_mesh_subsets),
-                AssemblerLib::ComponentOrder::BY_LOCATION));
+                NumLib::ComponentOrder::BY_LOCATION));
     }
 
     /// Sets the initial condition values in the solution vector x for a given
@@ -304,7 +304,7 @@ private:
     /// DOF-table.
     void computeSparsityPattern()
     {
-        _sparsity_pattern = std::move(AssemblerLib::computeSparsityPattern(
+        _sparsity_pattern = std::move(NumLib::computeSparsityPattern(
             *_local_to_global_index_map, _mesh));
     }
 
@@ -312,7 +312,7 @@ protected:
     MeshLib::Mesh& _mesh;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map;
 
     SecondaryVariableCollection<GlobalVector> _secondary_variables;

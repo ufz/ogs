@@ -18,8 +18,8 @@
 #include "NumericsConfig.h" // for GlobalIndexType
 
 #include "BaseLib/ConfigTree.h"
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "DirichletBc.h"
 
@@ -56,7 +56,7 @@ public:
     /// object.
     void initialize(
             MeshGeoToolsLib::MeshNodeSearcher& searcher,
-            AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            NumLib::LocalToGlobalIndexMap const& dof_table,
             std::size_t component_id,
             DirichletBc<GlobalIndexType>& bc)
     {

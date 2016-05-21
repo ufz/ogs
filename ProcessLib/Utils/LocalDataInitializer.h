@@ -16,8 +16,8 @@
 #include <typeinfo>
 #include <unordered_map>
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
 #include "MeshLib/Elements/Elements.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussIntegrationPolicy.h"
 
 
@@ -133,7 +133,7 @@ public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
     explicit LocalDataInitializer(
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
         // /// Lines and points ///////////////////////////////////
@@ -308,7 +308,7 @@ private:
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;
 
-    AssemblerLib::LocalToGlobalIndexMap const& _dof_table;
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
 }   // namespace ProcessLib

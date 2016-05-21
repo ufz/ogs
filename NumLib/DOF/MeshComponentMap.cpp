@@ -18,7 +18,7 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 using namespace detail;
@@ -321,4 +321,4 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 #endif
 }
 
-}   // namespace AssemblerLib
+}   // namespace NumLib

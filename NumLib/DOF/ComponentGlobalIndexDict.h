@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_COMPONENTGLOBALINDEXDICT_H_
-#define ASSEMBLERLIB_COMPONENTGLOBALINDEXDICT_H_
+#ifndef NUMLIB_COMPONENTGLOBALINDEXDICT_H_
+#define NUMLIB_COMPONENTGLOBALINDEXDICT_H_
 
 #include <limits>
 
@@ -23,7 +23,7 @@
 #include "MeshLib/Location.h"
 #include "ProcessLib/NumericsConfig.h"
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 /// \internal
@@ -118,6 +118,6 @@ typedef boost::multi_index::multi_index_container<
     > ComponentGlobalIndexDict;
 
 }    // namespace detail
-}    // namespace AssemblerLib
+}    // namespace NumLib
 
-#endif  // ASSEMBLERLIB_COMPONENTGLOBALINDEXDICT_H_
+#endif  // NUMLIB_COMPONENTGLOBALINDEXDICT_H_

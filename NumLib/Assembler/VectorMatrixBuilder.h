@@ -10,10 +10,10 @@
  *
  */
 
-#ifndef ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
-#define ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
+#ifndef NUMLIB_VECTORMATRIXBUILDER_H_
+#define NUMLIB_VECTORMATRIXBUILDER_H_
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 template <typename MatrixType_, typename VectorType_>
@@ -44,6 +44,6 @@ public:
 
 };
 
-}   // namespace AssemblerLib
+}   // namespace NumLib
 
-#endif  // ASSEMBLERLIB_VECTORMATRIXBUILDER_H_
+#endif  // NUMLIB_VECTORMATRIXBUILDER_H_

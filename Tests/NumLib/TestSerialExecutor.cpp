@@ -13,10 +13,10 @@
 #include <vector>
 #include <functional>
 #include <numeric>
-#include "AssemblerLib/SerialExecutor.h"
+#include "NumLib/Assembler/SerialExecutor.h"
 
 template <typename ContainerElement_>
-class AssemblerLibSerialExecutor : public ::testing::Test
+class NumLibSerialExecutor : public ::testing::Test
 {
 public:
     using ContainerElement = ContainerElement_;
@@ -69,9 +69,9 @@ public:
 
 typedef ::testing::Types<int> TestCases;
 
-TYPED_TEST_CASE(AssemblerLibSerialExecutor, TestCases);
+TYPED_TEST_CASE(NumLibSerialExecutor, TestCases);
 
-TYPED_TEST(AssemblerLibSerialExecutor, ContainerArgument)
+TYPED_TEST(NumLibSerialExecutor, ContainerArgument)
 {
     using Elem         = typename TestFixture::ContainerElement;
     using Container    = typename TestFixture::Container;
@@ -84,14 +84,14 @@ TYPED_TEST(AssemblerLibSerialExecutor, ContainerArgument)
                     TestFixture::subtractFromReferenceStatic(value, index, ref_inner);
                 };
 
-            AssemblerLib::SerialExecutor::executeDereferenced(
+            NumLib::SerialExecutor::executeDereferenced(
                 cb_static, ctnr, ref);
         }
     );
 
     TestFixture::test(
         [this](PtrContainer const& ctnr, Container& ref) {
-            AssemblerLib::SerialExecutor::executeMemberDereferenced(
+            NumLib::SerialExecutor::executeMemberDereferenced(
                 *static_cast<TestFixture*>(this), &TestFixture::subtractFromReference,
                 ctnr, ref
             );

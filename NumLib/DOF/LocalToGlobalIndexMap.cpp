@@ -9,7 +9,7 @@
 
 #include "LocalToGlobalIndexMap.h"
 
-namespace AssemblerLib
+namespace NumLib
 {
 
 template <typename ElementIterator>
@@ -46,7 +46,7 @@ LocalToGlobalIndexMap::findGlobalIndices(
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-    AssemblerLib::ComponentOrder const order)
+    NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(_mesh_subsets, order)
 {
@@ -71,7 +71,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
     std::size_t const component_id,
     std::vector<MeshLib::Element*> const& elements,
-    AssemblerLib::MeshComponentMap&& mesh_component_map)
+    NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map))
 {
@@ -176,4 +176,4 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
 }
 #endif  // NDEBUG
 
-}   // namespace AssemblerLib
+}   // namespace NumLib

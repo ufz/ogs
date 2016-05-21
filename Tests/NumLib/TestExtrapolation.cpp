@@ -10,10 +10,10 @@
 #include <random>
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/MatrixProviderUser.h"
-#include "AssemblerLib/MatrixVectorTraits.h"
-#include "AssemblerLib/UnifiedMatrixSetters.h"
-#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/DOF/MatrixProviderUser.h"
+#include "NumLib/DOF/MatrixVectorTraits.h"
+#include "NumLib/DOF/UnifiedMatrixSetters.h"
+#include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/BLAS.h"
 
@@ -156,7 +156,7 @@ public:
     using GlobalVector = typename GlobalSetup::VectorType;
 
     using LocalAssembler = LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+    using GlobalAssembler = NumLib::VectorMatrixAssembler<
         GlobalMatrix, GlobalVector, LocalAssembler,
         // The exact tag does not matter here.
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
@@ -175,9 +175,9 @@ public:
         all_mesh_subsets.emplace_back(
                     new MeshLib::MeshSubsets{&_mesh_subset_all_nodes});
 
-        _dof_table.reset(new AssemblerLib::LocalToGlobalIndexMap(
+        _dof_table.reset(new NumLib::LocalToGlobalIndexMap(
               std::move(all_mesh_subsets),
-              AssemblerLib::ComponentOrder::BY_COMPONENT));
+              NumLib::ComponentOrder::BY_COMPONENT));
 
         // Passing _dof_table works, because this process has only one variable
         // and the variable has exactly one component.
@@ -196,7 +196,7 @@ public:
         {
             auto inner_cb = [&loc_asm, property](
                 std::vector<double> const& local_x,
-                AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&
+                NumLib::LocalToGlobalIndexMap::RowColumnIndices const&
             ) {
                 loc_asm.interpolateNodalValuesToIntegrationPoints(local_x, property);
             };
@@ -253,7 +253,7 @@ private:
     unsigned const _integration_order;
 
     MeshLib::MeshSubset _mesh_subset_all_nodes;
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _dof_table;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;

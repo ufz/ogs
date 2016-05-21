@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
@@ -23,15 +23,15 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
-namespace AL = AssemblerLib;
+namespace AL = NumLib;
 namespace MeL = MeshLib;
 namespace MGTL = MeshGeoToolsLib;
 
-class AssemblerLibLocalToGlobalIndexMapMultiDOFTest : public ::testing::Test
+class NumLibLocalToGlobalIndexMapMultiDOFTest : public ::testing::Test
 {
 public:
     static const std::size_t mesh_subdivs = 4;
-    AssemblerLibLocalToGlobalIndexMapMultiDOFTest()
+    NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
         mesh.reset(MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
         mesh_items_all_nodes.reset(new MeL::MeshSubset(*mesh, &mesh->getNodes()));
@@ -71,7 +71,7 @@ public:
             mesh_items_all_nodes->getIntersectionByNodes(nodes));
     }
 
-    ~AssemblerLibLocalToGlobalIndexMapMultiDOFTest()
+    ~NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
         for (auto e : boundary_elements)
             delete e;
@@ -143,7 +143,7 @@ struct ComputeGlobalIndexByLocation
 
 
 template <AL::ComponentOrder ComponentOrder>
-void AssemblerLibLocalToGlobalIndexMapMultiDOFTest::test(
+void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     const unsigned num_components,
     const unsigned selected_component,
     std::function<std::size_t(std::size_t, std::size_t)> const
@@ -218,9 +218,9 @@ void assert_equal(AL::LocalToGlobalIndexMap const& dof1, AL::LocalToGlobalIndexM
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, Test1Comp)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
 #endif
 {
     unsigned const num_components = 1;
@@ -240,9 +240,9 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponent)
 #endif
 {
     unsigned const num_components = 5;
@@ -253,9 +253,9 @@ TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByCo
 }
 
 #ifndef USE_PETSC
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
 #else
-TEST_F(AssemblerLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation)
 #endif
 {
     unsigned const num_components = 5;

@@ -12,7 +12,7 @@
 #include <vector>
 #include <logog/include/logog.hpp>
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "LocalDataInitializer.h"
 
@@ -29,7 +29,7 @@ template<unsigned GlobalDim, typename GlobalSetup,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
 void createLocalAssemblers(
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<MeshLib::Element*> const& mesh_elements,
         unsigned const integration_order,
         std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
@@ -83,7 +83,7 @@ template<typename GlobalSetup,
 void createLocalAssemblers(
         const unsigned dimension,
         std::vector<MeshLib::Element*> const& mesh_elements,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         unsigned const integration_order,
         std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
         ExtraCtorArgs&&... extra_ctor_args

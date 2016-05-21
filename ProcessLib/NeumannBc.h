@@ -16,7 +16,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
-#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 
@@ -54,7 +54,7 @@ public:
     NeumannBc(
         NeumannBcConfig const& bc,
         unsigned const integration_order,
-        AssemblerLib::LocalToGlobalIndexMap const& local_to_global_index_map,
+        NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
         std::size_t const variable_id,
         std::size_t const component_id)
         : _function(*bc.getFunction()),
@@ -136,7 +136,7 @@ private:
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating #_elements of the boundary condition.
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap> _local_to_global_index_map;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     /// Integration order for integration over the lower-dimensional elements of
     /// the #_function.
@@ -146,7 +146,7 @@ private:
         GlobalMatrix, GlobalVector>;
 
     using GlobalAssembler =
-        AssemblerLib::VectorMatrixAssembler<
+        NumLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector, LocalAssembler,
             NumLib::ODESystemTag::NeumannBC>;
 

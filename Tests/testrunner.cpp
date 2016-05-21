@@ -19,7 +19,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
-#include "AssemblerLib/GlobalMatrixProviders.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
 

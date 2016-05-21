@@ -7,7 +7,7 @@
  *
  */
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "LocalToGlobalIndexMap.h"
 #include "MatrixProviderUser.h"
 #include "MatrixVectorTraits.h"
 
@@ -97,7 +97,7 @@ newInstance(MatrixSpecifications const& spec)
         spec.dof_table ? spec.dof_table->dofSizeWithoutGhosts() : spec.nrows;
     auto const ncols = spec.dof_table ? nrows : spec.ncols;
 
-    // TODO I guess it is not hard to make AssemblerLib::computeSparsityPattern()
+    // TODO I guess it is not hard to make NumLib::computeSparsityPattern()
     //      work also for NodePartitionedMesh'es.
     assert(((!spec.sparsity_pattern) || spec.sparsity_pattern->size() == 0u) &&
            "The sparsity pattern is not used with PETSc so I rather crash than"

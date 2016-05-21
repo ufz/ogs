@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
@@ -35,7 +35,7 @@
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
 
-TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
+TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 {
     // example
     using Example = SteadyDiffusion2DExample1<GlobalIndexType>;
@@ -58,8 +58,8 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // define a mesh item composition in a vector
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> vec_comp_dis;
     vec_comp_dis.emplace_back(new MeshLib::MeshSubsets{&mesh_items_all_nodes});
-    AssemblerLib::LocalToGlobalIndexMap local_to_global_index_map(
-        std::move(vec_comp_dis), AssemblerLib::ComponentOrder::BY_COMPONENT);
+    NumLib::LocalToGlobalIndexMap local_to_global_index_map(
+        std::move(vec_comp_dis), NumLib::ComponentOrder::BY_COMPONENT);
 
     //--------------------------------------------------------------------------
     // Construct a linear system
@@ -102,7 +102,7 @@ TEST(AssemblerLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
-    typedef AssemblerLib::VectorMatrixAssembler<
+    typedef NumLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector, LocalAssembler,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 

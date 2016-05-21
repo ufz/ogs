@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "MathLib/LinAlg/BLAS.h"
-#include "AssemblerLib/GlobalMatrixProviders.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Types.h"
 
 

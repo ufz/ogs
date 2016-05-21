@@ -12,9 +12,9 @@
 #include <logog/include/logog.hpp>
 #include <Eigen/Core>
 
-#include "AssemblerLib/MatrixVectorTraits.h"
-#include "AssemblerLib/SerialExecutor.h"
 #include "MathLib/LinAlg/BLAS.h"
+#include "NumLib/Assembler/SerialExecutor.h"
+#include "NumLib/DOF/MatrixVectorTraits.h"
 #include "NumLib/Function/Interpolation.h"
 #include "LocalLinearLeastSquaresExtrapolator.h"
 
@@ -37,7 +37,7 @@ extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
     using Self = LocalLinearLeastSquaresExtrapolator<
         GlobalVector, PropertyTag, LocalAssembler>;
 
-    AssemblerLib::SerialExecutor::executeMemberDereferenced(
+    NumLib::SerialExecutor::executeMemberDereferenced(
         *this, &Self::extrapolateElement, local_assemblers, property, *counts);
 
     MathLib::BLAS::componentwiseDivide(_nodal_values, _nodal_values, *counts);
@@ -54,7 +54,7 @@ calculateResiduals(LocalAssemblers const& local_assemblers,
     using Self = LocalLinearLeastSquaresExtrapolator<
         GlobalVector, PropertyTag, LocalAssembler>;
 
-    AssemblerLib::SerialExecutor::executeMemberDereferenced(
+    NumLib::SerialExecutor::executeMemberDereferenced(
         *this, &Self::calculateResiudalElement, local_assemblers, property);
 }
 

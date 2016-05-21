@@ -14,7 +14,7 @@
 #include "BaseLib/uniqueInsert.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 
-namespace AssemblerLib { class LocalToGlobalIndexMap; }
+namespace NumLib { class LocalToGlobalIndexMap; }
 
 namespace ProcessLib
 {
@@ -36,7 +36,7 @@ struct SecondaryVariableFunctions final
      */
     using Function = std::function<GlobalVector const&(
         GlobalVector const& x,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache)>;
 
     SecondaryVariableFunctions() = default;
@@ -49,7 +49,7 @@ struct SecondaryVariableFunctions final
         // Used to detect nasty implicit conversions.
         static_assert(std::is_same<GlobalVector const&,
             typename std::result_of<F1(
-                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
                 std::unique_ptr<GlobalVector>&
                 )>::type>::value,
             "The function eval_field_ does not return a const reference"
@@ -57,7 +57,7 @@ struct SecondaryVariableFunctions final
 
         static_assert(std::is_same<GlobalVector const&,
             typename std::result_of<F2(
-                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
                 std::unique_ptr<GlobalVector>&
             )>::type>::value,
             "The function eval_residuals_ does not return a const reference"
@@ -71,7 +71,7 @@ struct SecondaryVariableFunctions final
         // Used to detect nasty implicit conversions.
         static_assert(std::is_same<GlobalVector const&,
             typename std::result_of<F1(
-                GlobalVector const&, AssemblerLib::LocalToGlobalIndexMap const&,
+                GlobalVector const&, NumLib::LocalToGlobalIndexMap const&,
                 std::unique_ptr<GlobalVector>&
                 )>::type>::value,
             "The function eval_field_ does not return a const reference"
@@ -212,7 +212,7 @@ makeExtrapolator(PropertyEnum const property,
 
     auto const eval_field = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/,
+            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
             std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
@@ -222,7 +222,7 @@ makeExtrapolator(PropertyEnum const property,
 
     auto const eval_residuals = [property, &extrapolator, &local_assemblers](
             GlobalVector const& /*x*/,
-            AssemblerLib::LocalToGlobalIndexMap const& /*dof_table*/,
+            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
             std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
