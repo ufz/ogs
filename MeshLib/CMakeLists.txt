@@ -32,7 +32,7 @@ if(OGS_USE_PETSC)
 endif()
 
 # Create the library
-add_library(MeshLib STATIC ${SOURCES})
+add_library(MeshLib ${SOURCES})
 
 target_link_libraries(MeshLib
     BaseLib

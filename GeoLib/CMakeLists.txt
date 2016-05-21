@@ -22,7 +22,7 @@ GET_SOURCE_FILES(SOURCES_IO_GMSHIO IO/Gmsh)
 set(SOURCES ${SOURCES} ${SOURCES_IO_GMSHIO})
 
 # Create the library
-add_library(GeoLib STATIC ${SOURCES}
+add_library(GeoLib ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
 )
 
