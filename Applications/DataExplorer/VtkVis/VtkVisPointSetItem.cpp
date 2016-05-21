@@ -31,7 +31,7 @@
 #include "VtkCompositeFilter.h"
 #include "VtkCompositeContourFilter.h"
 #include "VtkCompositeThresholdFilter.h"
-#include "MeshLib/VtkMappedMeshSource.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>

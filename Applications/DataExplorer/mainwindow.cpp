@@ -57,7 +57,7 @@
 #include "VtkRaster.h"
 #include "VtkVisPipelineItem.h"
 
-#include "MeshLib/VtkMappedMeshSource.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 // FileIO includes
 #include "GMSInterface.h"

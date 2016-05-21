@@ -57,7 +57,6 @@ target_link_libraries(DataExplorer
     ApplicationsFileIO
     DataHolderLib
     FileIO
-    InSituLib
     QtDataView
     QtDiagramView
     QtStratView

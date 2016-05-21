@@ -13,7 +13,7 @@
  */
 
 #include "MshItem.h"
-#include "MeshLib/VtkMappedMeshSource.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 /**
  * Constructor.

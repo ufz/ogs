@@ -36,7 +36,7 @@
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
 
-#include "MeshLib/VtkMappedMeshSource.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 #include <vtkAlgorithm.h>
 #include <vtkCamera.h>

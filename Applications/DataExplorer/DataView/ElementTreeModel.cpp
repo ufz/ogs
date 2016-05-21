@@ -21,7 +21,7 @@
 
 #include "GeoLib/AABB.h"
 
-#include "MeshLib/VtkMappedMeshSource.h"
+#include "MeshLib/vtk/VtkMappedMeshSource.h"
 
 #include "TreeItem.h"
 
