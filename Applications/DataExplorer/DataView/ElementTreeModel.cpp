@@ -21,7 +21,7 @@
 
 #include "GeoLib/AABB.h"
 
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/VtkMappedMeshSource.h"
 
 #include "TreeItem.h"
 
@@ -46,8 +46,8 @@ void ElementTreeModel::setElement(vtkUnstructuredGridAlgorithm const*const grid,
     _mesh_source = grid;
     this->clearView();
 
-    InSituLib::VtkMappedMeshSource const*const source =
-        dynamic_cast<InSituLib::VtkMappedMeshSource const*const>(grid);
+    MeshLib::VtkMappedMeshSource const*const source =
+        dynamic_cast<MeshLib::VtkMappedMeshSource const*const>(grid);
 
     if (!source)
         return;

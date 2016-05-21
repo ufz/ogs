@@ -18,14 +18,12 @@
 #include <numeric>
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-
-#include "InSituLib/VtkMappedMesh.h"
-#include "InSituLib/VtkMappedMeshSource.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/Vtk/VtkMappedMesh.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 #include "gtest/gtest.h"
 
@@ -127,7 +125,7 @@ TEST_F(InSituMesh, MappedMesh)
 {
     ASSERT_TRUE(mesh != nullptr);
 
-    vtkNew<InSituLib::VtkMappedMesh> vtkMesh;
+    vtkNew<MeshLib::VtkMappedMesh> vtkMesh;
     vtkMesh->GetImplementation()->SetNodes(mesh->getNodes());
     vtkMesh->GetImplementation()->SetElements(mesh->getElements());
 
@@ -155,7 +153,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     std::string test_data_file(BaseLib::BuildInfo::tests_tmp_path + "/MappedMeshSourceRoundtrip.vtu");
 
     // -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
-    vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
+    vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(mesh);
     vtkSource->Update();
     vtkUnstructuredGrid* output = vtkSource->GetOutput();

@@ -22,7 +22,7 @@
 
 #include "MeshLib/Elements/Element.h"
 
-namespace InSituLib {
+namespace MeshLib {
 
 template <class Scalar>
 class VtkMappedPropertyVectorTemplate :
@@ -112,7 +112,7 @@ private:
     bool Save;
 };
 
-} // end namespace InSituLib
+} // end namespace MeshLib
 
 #include "VtkMappedPropertyVectorTemplate-impl.h"
 

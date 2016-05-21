@@ -18,12 +18,12 @@
 
 #include "gtest/gtest.h"
 
-#include "InSituLib/VtkMappedPropertyVectorTemplate.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Vtk/VtkMappedPropertyVectorTemplate.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
-TEST(InSituLibMappedPropertyVector, Double)
+TEST(MeshLibMappedPropertyVector, Double)
 {
     const std::size_t mesh_size = 5;
     const double length = 1.0;
@@ -40,7 +40,7 @@ TEST(InSituLibMappedPropertyVector, Double)
     (*double_properties).resize(number_of_tuples);
     std::iota((*double_properties).begin(), (*double_properties).end(), 1);
 
-    vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
+    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
     dataArray->SetPropertyVector(*double_properties);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
@@ -55,7 +55,7 @@ TEST(InSituLibMappedPropertyVector, Double)
 }
 
 // Creates a PropertyVector<int> and maps it into a vtkDataArray-equivalent
-TEST(InSituLibMappedPropertyVector, Int)
+TEST(MeshLibMappedPropertyVector, Int)
 {
     const std::size_t mesh_size = 5;
     const double length = 1.0;
@@ -72,7 +72,7 @@ TEST(InSituLibMappedPropertyVector, Int)
     (*properties).resize(number_of_tuples);
     std::iota((*properties).begin(), (*properties).end(), -5);
 
-    vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
+    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
     dataArray->SetPropertyVector(*properties);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
@@ -87,7 +87,7 @@ TEST(InSituLibMappedPropertyVector, Int)
 }
 
 // Creates a PropertyVector<unsigned> and maps it into a vtkDataArray-equivalent
-TEST(InSituLibMappedPropertyVector, Unsigned)
+TEST(MeshLibMappedPropertyVector, Unsigned)
 {
     const std::size_t mesh_size = 5;
     const double length = 1.0;
@@ -104,7 +104,7 @@ TEST(InSituLibMappedPropertyVector, Unsigned)
     (*properties).resize(number_of_tuples);
     std::iota((*properties).begin(), (*properties).end(), 0);
 
-    vtkNew<InSituLib::VtkMappedPropertyVectorTemplate<unsigned> > dataArray;
+    vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<unsigned> > dataArray;
     dataArray->SetPropertyVector(*properties);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);

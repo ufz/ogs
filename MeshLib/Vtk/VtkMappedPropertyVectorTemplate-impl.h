@@ -19,7 +19,7 @@
 #include <vtkVariant.h>
 #include <vtkVariantCast.h>
 
-namespace InSituLib {
+namespace MeshLib {
 
 // Can't use vtkStandardNewMacro on a templated class.
 template <class Scalar> VtkMappedPropertyVectorTemplate<Scalar> *
@@ -471,4 +471,4 @@ template <class Scalar> vtkIdType VtkMappedPropertyVectorTemplate<Scalar>
     return -1;
 }
 
-} // end namespace InSituLib
+} // end namespace MeshLib

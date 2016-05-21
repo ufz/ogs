@@ -36,7 +36,7 @@
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
 
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/VtkMappedMeshSource.h"
 
 #include <vtkAlgorithm.h>
 #include <vtkCamera.h>
@@ -317,8 +317,8 @@ QModelIndex VtkVisPipeline::addPipelineItem( vtkAlgorithm* source, QModelIndex p
         vtkXMLReader* new_reader = dynamic_cast<vtkXMLReader*>(source);
         vtkImageReader2* image_reader = dynamic_cast<vtkImageReader2*>(source);
         VtkAlgorithmProperties* props = dynamic_cast<VtkAlgorithmProperties*>(source);
-        InSituLib::VtkMappedMeshSource* meshSource =
-            dynamic_cast<InSituLib::VtkMappedMeshSource*>(source);
+        MeshLib::VtkMappedMeshSource* meshSource =
+            dynamic_cast<MeshLib::VtkMappedMeshSource*>(source);
         if (old_reader)
             itemName = old_reader->GetFileName();
         else if (new_reader)
@@ -432,7 +432,7 @@ void VtkVisPipeline::listArrays(vtkDataSet* dataSet)
 }
 
 void VtkVisPipeline::showMeshElementQuality(
-    InSituLib::VtkMappedMeshSource* source,
+    MeshLib::VtkMappedMeshSource* source,
     MeshLib::MeshQualityType t, std::vector<double> const& quality)
 {
     if (!source || quality.empty())

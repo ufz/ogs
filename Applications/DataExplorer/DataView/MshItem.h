@@ -17,7 +17,7 @@
 
 #include "TreeItem.h"
 
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/VtkMappedMeshSource.h"
 
 namespace MeshLib {
     class Mesh;
@@ -37,10 +37,10 @@ public:
     /// Returns the mesh.
     MeshLib::Mesh const* getMesh() const { return _mesh_source->GetMesh(); }
     /// Returns the VTK object.
-    InSituLib::VtkMappedMeshSource*  vtkSource() const { return _mesh_source; }
+    MeshLib::VtkMappedMeshSource*  vtkSource() const { return _mesh_source; }
 
 private:
-    InSituLib::VtkMappedMeshSource * _mesh_source;
+    MeshLib::VtkMappedMeshSource * _mesh_source;
 };
 
 #endif //MSHITEM_H

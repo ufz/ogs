@@ -16,11 +16,11 @@
 
 #include "gtest/gtest.h"
 
-#include "InSituLib/VtkMeshNodalCoordinatesTemplate.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Vtk/VtkMeshNodalCoordinatesTemplate.h"
 
-TEST(InSituLibNodalCoordinates, Init)
+TEST(MeshLibdalCoordinates, Init)
 {
     const std::size_t subdivisions = 99;
     const double length = 10.0;
@@ -28,7 +28,7 @@ TEST(InSituLibNodalCoordinates, Init)
 
     MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(length, subdivisions);
 
-    vtkNew<InSituLib::VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
+    vtkNew<MeshLib::VtkMeshNodalCoordinatesTemplate<double> > nodeCoords;
     nodeCoords->SetNodes(mesh->getNodes());
     //nodeCoords->PrintSelf(std::cout, vtkIndent());
 

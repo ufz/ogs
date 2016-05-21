@@ -25,7 +25,7 @@ namespace MeshLib {
     class Mesh;
 }
 
-namespace InSituLib {
+namespace MeshLib {
     class VtkMappedMeshSource;
 }
 
@@ -101,7 +101,7 @@ signals:
     void enableRemoveButton(bool);
     void meshSelected(MeshLib::Mesh const&);
     void openMeshFile(int);
-    void qualityCheckRequested(InSituLib::VtkMappedMeshSource*);
+    void qualityCheckRequested(MeshLib::VtkMappedMeshSource*);
     void removeSelectedMeshComponent();
     void requestCondSetupDialog(const std::string&, const GeoLib::GEOTYPE, const std::size_t, bool on_points);
     void requestMeshRemoval(const QModelIndex&);

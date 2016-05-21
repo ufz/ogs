@@ -30,7 +30,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/VtkOGSEnum.h"
 
-namespace InSituLib {
+namespace MeshLib {
 
 vtkStandardNewMacro(VtkMappedMesh)
 vtkStandardNewMacro(VtkMappedMeshImpl)

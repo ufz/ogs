@@ -22,7 +22,7 @@
 #include "VtkMappedMesh.h"
 #include "VtkMeshNodalCoordinatesTemplate.h"
 
-namespace InSituLib {
+namespace MeshLib {
 
 vtkStandardNewMacro(VtkMappedMeshSource)
 
@@ -116,4 +116,4 @@ int VtkMappedMeshSource::RequestInformation(
     return 1;
 }
 
-} // Namespace InSituLib
+} // Namespace MeshLib

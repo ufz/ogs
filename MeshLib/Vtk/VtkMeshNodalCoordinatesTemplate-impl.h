@@ -21,7 +21,7 @@
 
 #include "MeshLib/Node.h"
 
-namespace InSituLib {
+namespace MeshLib {
 
 // Can't use vtkStandardNewMacro with a template.
 template <class Scalar> VtkMeshNodalCoordinatesTemplate<Scalar> *

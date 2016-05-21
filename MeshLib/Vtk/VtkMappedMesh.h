@@ -26,7 +26,7 @@ namespace MeshLib {
     class Node;
 }
 
-namespace InSituLib
+namespace MeshLib
 {
 
 class VtkMappedMeshImpl : public vtkObject

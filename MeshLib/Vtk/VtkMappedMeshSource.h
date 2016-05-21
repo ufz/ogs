@@ -6,7 +6,7 @@
  *         vtkUnstructuredGrids.
  * Usage:
  * \code
- * vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
+ * vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
  * vtkSource->SetMesh(mesh);
  * vtkSource->Update();
  * vtkUnstructuredGrid* output = vtkSource->GetOutput();
@@ -34,9 +34,10 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 
-#include "InSituLib/VtkMappedPropertyVectorTemplate.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
+
+#include "VtkMappedPropertyVectorTemplate.h"
 
 class vtkCellData;
 class vtkDataArrayCollection;
@@ -47,7 +48,7 @@ namespace MeshLib {
     class Properties;
 }
 
-namespace InSituLib {
+namespace MeshLib {
 
 /// Adapter which maps a MeshLib::Mesh to a vtkUnstructuredGridAlgorithm.
 /// Allows for zero-copy access of the mesh from the visualization side.
@@ -79,7 +80,7 @@ private:
     VtkMappedMeshSource(const VtkMappedMeshSource &); // Not implemented.
     void operator=(const VtkMappedMeshSource &);      // Not implemented.
 
-    /// Adds a zero-copy array (InSituLib::VtkMappedPropertyVectorTemplate) as
+    /// Adds a zero-copy array (MeshLib::VtkMappedPropertyVectorTemplate) as
     /// either point or cell data to the mesh.
     /// \param properties MeshLib::Properties object
     /// \param prop_name The name of the property vector to be mapped from
@@ -115,6 +116,6 @@ private:
     vtkNew<vtkCellData> CellData;
 };
 
-} // Namespace InSituLib
+} // Namespace MeshLib
 
 #endif //_VTKMAPPEDMESHSOURCE

@@ -25,7 +25,7 @@ namespace MeshLib
     class Node;
 }
 
-namespace InSituLib
+namespace MeshLib
 {
 
 template <class Scalar>

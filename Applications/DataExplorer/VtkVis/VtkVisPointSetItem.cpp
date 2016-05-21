@@ -31,7 +31,7 @@
 #include "VtkCompositeFilter.h"
 #include "VtkCompositeContourFilter.h"
 #include "VtkCompositeThresholdFilter.h"
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/VtkMappedMeshSource.h"
 
 #include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
@@ -185,7 +185,7 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
     }
 
     // Show edges on meshes
-    if (dynamic_cast<InSituLib::VtkMappedMeshSource*>(this->_algorithm))
+    if (dynamic_cast<MeshLib::VtkMappedMeshSource*>(this->_algorithm))
         _vtkProps->GetProperties()->SetEdgeVisibility(1);
 }
 

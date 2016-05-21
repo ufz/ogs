@@ -24,7 +24,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 namespace MeshLib
 {
@@ -44,7 +44,7 @@ bool VtuInterface::writeVTU(std::string const &file_name, const int num_partitio
     if(_data_mode == vtkXMLWriter::Appended)
         WARN("Appended data mode is currently not supported, written file is not valid!");
 
-    vtkNew<InSituLib::VtkMappedMeshSource> vtkSource;
+    vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);
 
     vtkSmartPointer<UnstructuredGridWriter> vtuWriter =

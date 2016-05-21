@@ -57,7 +57,7 @@
 #include "VtkRaster.h"
 #include "VtkVisPipelineItem.h"
 
-#include "InSituLib/VtkMappedMeshSource.h"
+#include "MeshLib/VtkMappedMeshSource.h"
 
 // FileIO includes
 #include "GMSInterface.h"
@@ -170,9 +170,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
     connect(mshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
             _elementModel.get(), SLOT(clearView()));
     connect(mshTabWidget->treeView,
-        SIGNAL(qualityCheckRequested(InSituLib::VtkMappedMeshSource*)),
+        SIGNAL(qualityCheckRequested(MeshLib::VtkMappedMeshSource*)),
             this,
-            SLOT(showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource*)));
+            SLOT(showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource*)));
     connect(mshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
             this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
     connect(mshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
@@ -1055,7 +1055,7 @@ void MainWindow::showMergeGeometriesDialog()
         OGSError::box("Points are missing for\n at least one geometry.");
 }
 
-void MainWindow::showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource)
+void MainWindow::showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource)
 {
     if (mshSource == nullptr)
         return;
