@@ -19,9 +19,9 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
+#include "AssemblerLib/GlobalMatrixProviders.h"
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/TemplateLogogFormatterSuppressedGCC.h"
-#include "MathLib/LinAlg/GlobalMatrixProviders.h"
 
 #ifdef OGS_BUILD_GUI
 #include <QApplication>

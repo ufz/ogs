@@ -10,7 +10,7 @@
 #ifndef NUMLIB_ODESYSTEM_H
 #define NUMLIB_ODESYSTEM_H
 
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "AssemblerLib/MatrixVectorTraits.h"
 
 #include "Types.h"
 #include "EquationSystem.h"

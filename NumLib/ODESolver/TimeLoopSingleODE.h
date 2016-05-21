@@ -10,7 +10,7 @@
 #ifndef NUMLIB_TIMELOOP_H
 #define NUMLIB_TIMELOOP_H
 
-#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+#include "AssemblerLib/GlobalMatrixProviders.h"
 #include "TimeDiscretizedODESystem.h"
 #include "NonlinearSolver.h"
 

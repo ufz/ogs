@@ -10,7 +10,7 @@
 #include <cassert>
 #include <logog/include/logog.hpp>
 
-#include "BLAS.h"
+#include "MathLib/LinAlg/BLAS.h"
 #include "MatrixVectorTraits.h"
 #include "SimpleMatrixVectorProvider.h"
 

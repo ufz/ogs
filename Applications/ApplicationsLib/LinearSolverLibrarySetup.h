@@ -19,7 +19,7 @@
 /// The default implementation is empty providing polymorphic behaviour when
 /// using this class.
 
-#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+#include "AssemblerLib/GlobalMatrixProviders.h"
 
 #if defined(USE_PETSC)
 #include <petsc.h>

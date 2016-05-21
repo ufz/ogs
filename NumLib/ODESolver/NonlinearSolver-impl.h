@@ -14,7 +14,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/BLAS.h"
-#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+#include "AssemblerLib/GlobalMatrixProviders.h"
 
 #include "NonlinearSolver.h"
 

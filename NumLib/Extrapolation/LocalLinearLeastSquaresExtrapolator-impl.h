@@ -12,9 +12,9 @@
 #include <logog/include/logog.hpp>
 #include <Eigen/Core>
 
+#include "AssemblerLib/MatrixVectorTraits.h"
 #include "AssemblerLib/SerialExecutor.h"
 #include "MathLib/LinAlg/BLAS.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Function/Interpolation.h"
 #include "LocalLinearLeastSquaresExtrapolator.h"
 

@@ -12,7 +12,7 @@
 
 #include <cstddef>
 
-#include "SparsityPattern.h"
+#include "MathLib/LinAlg/SparsityPattern.h"
 
 namespace AssemblerLib { class LocalToGlobalIndexMap; }
 namespace MeshLib { class Mesh; }

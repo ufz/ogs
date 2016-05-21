@@ -12,8 +12,8 @@
 
 #include <memory>
 
+#include "AssemblerLib/UnifiedMatrixSetters.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "ProcessLib/DirichletBc.h"
 
 #include "ODESystem.h"

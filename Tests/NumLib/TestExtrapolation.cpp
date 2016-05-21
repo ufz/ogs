@@ -10,12 +10,12 @@
 #include <random>
 #include <gtest/gtest.h>
 
+#include "AssemblerLib/MatrixProviderUser.h"
+#include "AssemblerLib/MatrixVectorTraits.h"
+#include "AssemblerLib/UnifiedMatrixSetters.h"
 #include "AssemblerLib/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/BLAS.h"
-#include "MathLib/LinAlg/MatrixProviderUser.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
