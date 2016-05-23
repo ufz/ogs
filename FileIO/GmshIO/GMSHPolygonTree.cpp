@@ -311,7 +311,7 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
                                            std::size_t sfc_number,
                                            std::ostream& out) const
 {
-    for (auto polyline : *_plys)
+    for (auto polyline : _plys)
     {
         const std::size_t n_pnts(polyline->getNumberOfPoints());
         std::size_t first_pnt_id(polyline->getPointID(0)), second_pnt_id;
@@ -319,7 +319,8 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
         {
             second_pnt_id = polyline->getPointID(k);
             if (polyline->isSegmentMarked(k - 1) &&
-                _node_polygon->isPntInPolygon(*(polyline->getPoint(k))))
+                _node_polygon->isPntInPolygon(*(polyline->getPoint(k))) &&
+                !GeoLib::containsEdge(*_node_polygon, first_pnt_id, second_pnt_id))
             {
                 out << "Line(" << line_offset + k - 1 << ") = {" << first_pnt_id
                     << "," << second_pnt_id << "};\n";
