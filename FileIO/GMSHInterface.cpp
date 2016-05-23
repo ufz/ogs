@@ -440,7 +440,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     const std::size_t n_merged_pnts(merged_pnts->size());
     _gmsh_pnts.resize(n_merged_pnts);
     for (std::size_t k(0); k<n_merged_pnts; k++) {
-        _gmsh_pnts[k] = NULL;
+        _gmsh_pnts[k] = nullptr;
     }
     for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
         it != _polygon_tree_list.end(); ++it) {
