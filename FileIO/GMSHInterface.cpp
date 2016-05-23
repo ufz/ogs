@@ -370,16 +370,13 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         *(const_cast<std::vector<GeoLib::Polyline*>*>(merged_plys)));
 
     // *** compute topological hierarchy of polygons
-    for (std::vector<GeoLib::Polyline*>::const_iterator it(merged_plys->begin());
-        it!=merged_plys->end(); it++) {
-        if ((*it)->isClosed()) {
-            _polygon_tree_list.push_back(
-                new GMSH::GMSHPolygonTree(
-                    new GeoLib::PolygonWithSegmentMarker(*(*it)),
-                    nullptr, _geo_objs, _gmsh_geo_name, _mesh_density_strategy
-                )
-            );
+    for (auto polyline : *merged_plys) {
+        if (!polyline->isClosed()) {
+            continue;
         }
+        _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
+            new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
+            _gmsh_geo_name, _mesh_density_strategy));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
@@ -417,19 +414,17 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
             }
         }
     }
-
     std::string gmsh_stations_name(_gmsh_geo_name+"-Stations");
     if (! gmsh_stations->empty()) {
         _geo_objs.addStationVec(std::move(gmsh_stations), gmsh_stations_name);
     }
 
     // *** insert polylines
-    const std::size_t n_plys(merged_plys->size());
-    for (std::size_t k(0); k<n_plys; k++) {
-        if (! (*merged_plys)[k]->isClosed()) {
+    for (auto polyline : *merged_plys) {
+        if (!polyline->isClosed()) {
             for (auto * polygon_tree : _polygon_tree_list) {
                 auto polyline_with_segment_marker =
-                    new GeoLib::PolylineWithSegmentMarker(*(*merged_plys)[k]);
+                    new GeoLib::PolylineWithSegmentMarker(*polyline);
                 polygon_tree->insertPolyline(polyline_with_segment_marker);
             }
         }
