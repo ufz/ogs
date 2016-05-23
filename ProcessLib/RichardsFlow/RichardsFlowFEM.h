@@ -16,8 +16,9 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter.h"
-#include "ProcessLib/ProcessUtil.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "RichardsFlowProcessData.h"
 
 namespace ProcessLib
@@ -25,7 +26,17 @@ namespace ProcessLib
 
 namespace RichardsFlow
 {
+	enum class IntegrationPointValue {
+		Saturation
+	};
 
+	const unsigned NUM_NODAL_DOF = 1;
+
+	template <typename GlobalMatrix, typename GlobalVector>
+	class RichardsFlowLocalAssemblerInterface
+		: public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
+		, public NumLib::Extrapolatable<GlobalVector, IntegrationPointValue>
+	{};
 template <typename ShapeFunction,
          typename IntegrationMethod,
          typename GlobalMatrix,
@@ -33,10 +44,14 @@ template <typename ShapeFunction,
          unsigned GlobalDim>
 class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
-    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
-    using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+	using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+	using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+
+	using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
+		ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
+
+	using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
+	using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
 
 public:
     /// The hydraulic_conductivity factor is directly integrated into the local
@@ -103,6 +118,7 @@ public:
 			Pc = 2700;
 			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
 										//dSwdPc = getdSwdPc_van(Pc);
+			//_saturation(ip) = Sw;
 			//dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
 											//k_rel = getKrelbySw_van(Sw,0);
 			dSwdPc = interP_Pc.PressureSaturationDependency(Pc,true);
@@ -145,6 +161,32 @@ public:
         K.add(indices, _localA);
         b.add(indices.rows, _localRhs);
     }
+	/*
+	Eigen::Map<const Eigen::VectorXd>
+		getShapeMatrix(const unsigned integration_point) const override
+	{
+		auto const& N = _shape_matrices[integration_point].N;
+
+		// assumes N is stored contiguously in memory
+		return Eigen::Map<const Eigen::VectorXd>(N.data(), N.size());
+	}
+	*/
+
+	/*
+	std::vector<double> const&
+		getIntegrationPointValues(IntegrationPointValue const property,
+		std::vector<double>& /*cache*//*) const override
+	{
+		switch (property)
+		{
+		case IntegrationPointValue::Saturation:
+			return _saturation;
+	
+		}
+
+		std::abort();
+	}
+	*/
 
 private:
     MeshLib::Element const& _element;
@@ -157,6 +199,10 @@ private:
     NodalVectorType _localRhs;
 
     unsigned const _integration_order;
+
+	std::vector<std::vector<double>> _saturation
+		= std::vector<std::vector<double>>(
+		GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
 	public:
 #ifdef OGS_USE_EIGEN
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

@@ -67,7 +67,7 @@ solve(Vector &x)
 		//A.write("A_" + std::to_string(iteration));
 		//rhs.write("rhs_" + std::to_string(iteration));
 
-		++unique_iteration_count;
+		//++unique_iteration_count;
 			
 		//A.write("global_A_" + std::to_string(unique_iteration_count));
 

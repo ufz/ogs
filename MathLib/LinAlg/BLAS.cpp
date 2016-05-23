@@ -327,10 +327,6 @@ void finalizeAssembly(EigenMatrix& x)
 	x.getRawMatrix().makeCompressed();
 }
 
-void finalizeAssembly(EigenMatrix& x)
-{
-    x.getRawMatrix().makeCompressed();
-}
 
 } // namespace BLAS
 

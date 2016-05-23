@@ -13,7 +13,7 @@
 namespace ProcessLib {
 namespace RichardsFlow {
 
-template class RichardsFlowProcess<GlobalSetupType>;
+//template class RichardsFlowProcess<GlobalSetupType>;
 
 }
 }
