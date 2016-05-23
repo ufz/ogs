@@ -42,49 +42,49 @@ void Polyline::write(std::ostream &os) const
         os << *(_ply_pnts[_ply_pnt_ids[k]]) << "\n";
 }
 
-void Polyline::addPoint(std::size_t pnt_id)
+bool Polyline::addPoint(std::size_t pnt_id)
 {
     assert(pnt_id < _ply_pnts.size());
-    std::size_t n_pnts (_ply_pnt_ids.size());
+    std::size_t const n_pnts(_ply_pnt_ids.size());
 
     // don't insert point if this would result in identical IDs for two adjacent points
-    if (n_pnts > 0 && _ply_pnt_ids[n_pnts - 1] == pnt_id)
-        return;
+    if (n_pnts > 0 && _ply_pnt_ids.back() == pnt_id)
+        return false;
 
     _ply_pnt_ids.push_back(pnt_id);
 
     if (n_pnts > 0)
     {
-        double act_dist (std::sqrt(MathLib::sqrDist (*_ply_pnts[_ply_pnt_ids[n_pnts - 1]],
-                                                *_ply_pnts[pnt_id])));
-        double dist_until_now (0.0);
+        double const act_dist(std::sqrt(MathLib::sqrDist(
+            *_ply_pnts[_ply_pnt_ids[n_pnts-1]], *_ply_pnts[pnt_id])));
+        double dist_until_now(0.0);
         if (n_pnts > 1)
             dist_until_now = _length[n_pnts - 1];
 
-        _length.push_back (dist_until_now + act_dist);
+        _length.push_back(dist_until_now + act_dist);
     }
+    return true;
 }
 
-void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
+bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 {
     assert(pnt_id < _ply_pnts.size());
     assert(pos <= _ply_pnt_ids.size());
 
     if (pos == _ply_pnt_ids.size()) {
-        addPoint(pnt_id);
-        return;
+        return addPoint(pnt_id);
     }
 
     // check if inserting pnt_id would result in two identical IDs for adjacent points
     if (pos == 0 && pnt_id == _ply_pnt_ids[0]) {
-        return;
+        return false;
     } else {
         if (pos != 0) {
             if (pos == (_ply_pnt_ids.size() - 1) && pnt_id == _ply_pnt_ids[pos]) {
-                return;
+                return false;
             } else {
                 if (pnt_id == _ply_pnt_ids[pos - 1] || pnt_id == _ply_pnt_ids[pos]) {
-                    return;
+                    return false;
                 }
             }
         }
@@ -99,8 +99,8 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
         // update the _length vector
         if (pos == 0) {
             // insert at first position
-            double act_dist(std::sqrt(MathLib::sqrDist(*_ply_pnts[_ply_pnt_ids[1]],
-                                                  *_ply_pnts[pnt_id])));
+            double const act_dist(std::sqrt(MathLib::sqrDist(
+                *_ply_pnts[_ply_pnt_ids[1]], *_ply_pnts[pnt_id])));
             _length.insert(_length.begin() + 1, act_dist);
             const std::size_t s(_length.size());
             for (std::size_t k(2); k < s; k++)
@@ -108,9 +108,9 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
         } else {
             if (pos == _ply_pnt_ids.size() - 1) {
                 // insert at last position
-                double act_dist(std::sqrt(MathLib::sqrDist(
-                                             *_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
-                                             *_ply_pnts[pnt_id])));
+                double const act_dist(std::sqrt(MathLib::sqrDist(
+                    *_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
+                    *_ply_pnts[pnt_id])));
                 double dist_until_now (0.0);
                 if (_ply_pnt_ids.size() > 2)
                     dist_until_now = _length[_ply_pnt_ids.size() - 2];
@@ -139,6 +139,7 @@ void Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
             }
         }
     }
+    return true;
 }
 
 void Polyline::removePoint(std::size_t pos)

@@ -331,8 +331,12 @@ bool XmlGmlInterface::write()
                     polylineTag.setAttribute("id", QString::number(i));
 
                     std::string ply_name("");
-                    if (ply_vec->getNameOfElementByID(i, ply_name))
+                    if (ply_vec->getNameOfElementByID(i, ply_name)) {
                         polylineTag.setAttribute("name", QString::fromStdString(ply_name));
+                    } else {
+                        ply_name = std::to_string(i);
+                        polylineTag.setAttribute("name", QString::fromStdString(ply_name));
+                    }
 
                     plyListTag.appendChild(polylineTag);
 

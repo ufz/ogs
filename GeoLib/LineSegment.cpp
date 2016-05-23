@@ -46,6 +46,30 @@ LineSegment::~LineSegment()
     }
 }
 
+LineSegment& LineSegment::operator=(LineSegment const& other)
+{
+    _a = other._a;
+    _b = other._b;
+    _point_mem_management_by_line_segment =
+        other._point_mem_management_by_line_segment;
+
+    return *this;
+}
+
+LineSegment& LineSegment::operator=(LineSegment&& line_segment)
+{
+    _a = std::move(line_segment._a);
+    _b = std::move(line_segment._b);
+    _point_mem_management_by_line_segment =
+        std::move(line_segment._point_mem_management_by_line_segment);
+
+    line_segment._a = nullptr;
+    line_segment._b = nullptr;
+    line_segment._point_mem_management_by_line_segment = false;
+
+    return *this;
+}
+
 Point const& LineSegment::getBeginPoint() const
 {
     return *_a;

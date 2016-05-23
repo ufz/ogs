@@ -10,6 +10,7 @@
 #define TESTS_GEOLIB_AUTOCHECKGENERATORS_H_
 
 #include <cmath>
+#include <memory>
 #include <random>
 
 #include "autocheck/autocheck.hpp"
@@ -47,11 +48,7 @@ struct RandomCirclePointGeneratorXY
 };
 
 // reflect point p on the point c in x-y plane
-MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
-{
-    return MathLib::Point3d(
-        std::array<double, 3>{{2 * c[0] - p[0], 2 * c[1] - p[1], 0.0}});
-}
+MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p);
 
 // generates line segments that are special chords of a circle, i.e. the chords
 // include the circle centre point.
@@ -78,16 +75,7 @@ struct SymmSegmentGeneratorXY
 };
 
 GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
-                              GeoLib::LineSegment const& line_seg)
-{
-    std::unique_ptr<GeoLib::Point> a{new GeoLib::Point{line_seg.getBeginPoint()}};
-    std::unique_ptr<GeoLib::Point> b{new GeoLib::Point{line_seg.getEndPoint()}};
-    for (std::size_t k(0); k<3; ++k)
-        (*a)[k] += translation[k];
-    for (std::size_t k(0); k<3; ++k)
-        (*b)[k] += translation[k];
-    return GeoLib::LineSegment{a.release(), b.release(), true};
-}
+                              GeoLib::LineSegment const& line_seg);
 
 template <typename Gen = SymmSegmentGeneratorXY<
               RandomCirclePointGeneratorXY<generator<double>>>>

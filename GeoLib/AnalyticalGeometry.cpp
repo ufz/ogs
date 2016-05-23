@@ -568,10 +568,14 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     return GeoLib::Polygon(rot_polyline);
 }
 
-std::vector<MathLib::Point3d>
-lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c, MathLib::Point3d const& d)
+std::vector<MathLib::Point3d> lineSegmentIntersect2d(
+    GeoLib::LineSegment const& ab, GeoLib::LineSegment const& cd)
 {
+    GeoLib::Point const& a{ab.getBeginPoint()};
+    GeoLib::Point const& b{ab.getEndPoint()};
+    GeoLib::Point const& c{cd.getBeginPoint()};
+    GeoLib::Point const& d{cd.getEndPoint()};
+
     double const orient_abc(ExactPredicates::getOrientation2d(a, b, c));
     double const orient_abd(ExactPredicates::getOrientation2d(a, b, d));
 
@@ -583,12 +587,77 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
     // check: (cd) and (ab) are on the same line
     if (orient_abc == 0.0 && orient_abd == 0.0) {
         double const eps(std::numeric_limits<double>::epsilon());
-        if (MathLib::sqrDist(a,c) < eps && MathLib::sqrDist(b,d) < eps)
+        if (MathLib::sqrDist2d(a,c) < eps && MathLib::sqrDist2d(b,d) < eps)
             return {{ a, b }};
-        if (MathLib::sqrDist(a,d) < eps && MathLib::sqrDist(b,c) < eps)
+        if (MathLib::sqrDist2d(a,d) < eps && MathLib::sqrDist2d(b,c) < eps)
             return {{ a, b }};
-        ERR("This case of collinear points is not handled yet. Aborting.");
-        std::abort();
+
+        // Since orient_ab and orient_abd vanish, a, b, c, d are on the same
+        // line and for this reason it is enough to check the x-component.
+        auto isPointOnSegment = [](double q, double p0, double p1)
+        {
+            double const t((q - p0) / (p1 - p0));
+            if (0 <= t && t <= 1) return true;
+            return false;
+        };
+
+        // check if c in (ab)
+        if (isPointOnSegment(c[0], a[0], b[0])) {
+            // check if a in (cd)
+            if (isPointOnSegment(a[0], c[0], d[0])) {
+                return {{a, c}};
+            }
+            // check b == c
+            if (MathLib::sqrDist2d(b,c) < eps) {
+                return {{b}};
+            }
+            // check if b in (cd)
+            if (isPointOnSegment(b[0], c[0], d[0])) {
+                return {{b, c}};
+            }
+            // check d in (ab)
+            if (isPointOnSegment(d[0], a[0], b[0])) {
+                return {{c, d}};
+            }
+            std::stringstream err;
+            err.precision(std::numeric_limits<double>::digits10);
+            err << ab << " x " << cd;
+            ERR(
+                "The case of parallel line segments (%s) is not handled yet. "
+                "Aborting.",
+                err.str().c_str());
+            std::abort();
+        }
+
+        // check if d in (ab)
+        if (isPointOnSegment(d[0], a[0], b[0])) {
+            // check if a in (cd)
+            if (isPointOnSegment(a[0], c[0], d[0])) {
+                return {{a, d}};
+            }
+            // check if b==d
+            if (MathLib::sqrDist2d(b, d) < eps) {
+                return {{b}};
+            }
+            // check if b in (cd)
+            if (isPointOnSegment(b[0], c[0], d[0])) {
+                return {{b, d}};
+            }
+            // d in (ab), b not in (cd): check c in (ab)
+            if (isPointOnSegment(c[0], a[0], b[0])) {
+                return {{c, d}};
+            }
+
+            std::stringstream err;
+            err.precision(std::numeric_limits<double>::digits10);
+            err << ab << " x " << cd;
+            ERR(
+                "The case of parallel line segments (%s) "
+                "is not handled yet. Aborting.",
+                err.str().c_str());
+            std::abort();
+        }
+        return std::vector<MathLib::Point3d>();
     }
 
     auto isCollinearPointOntoLineSegment = [](MathLib::Point3d const& a,
@@ -638,6 +707,53 @@ lineSegmentIntersect2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
                 c[2]+rhs[1]*(d[2]-c[2])}} } };
     } else {
         return std::vector<MathLib::Point3d>(); // parameter s not in the valid range
+    }
+}
+
+void sortSegments(
+    MathLib::Point3d const& seg_beg_pnt,
+    std::vector<GeoLib::LineSegment>& sub_segments)
+{
+    double const eps(std::numeric_limits<double>::epsilon());
+
+    auto findNextSegment = [&eps](
+        MathLib::Point3d const& seg_beg_pnt,
+        std::vector<GeoLib::LineSegment>& sub_segments,
+        std::vector<GeoLib::LineSegment>::iterator& sub_seg_it)
+    {
+        if (sub_seg_it == sub_segments.end())
+            return;
+        // find appropriate segment for the given segment begin point
+        auto act_beg_seg_it = std::find_if(
+            sub_seg_it, sub_segments.end(),
+            [&seg_beg_pnt, &eps](GeoLib::LineSegment const& seg)
+            {
+                return MathLib::sqrDist(seg_beg_pnt, seg.getBeginPoint()) < eps ||
+                       MathLib::sqrDist(seg_beg_pnt, seg.getEndPoint()) < eps;
+            });
+        if (act_beg_seg_it == sub_segments.end())
+            return;
+        // if necessary correct orientation of segment, i.e. swap beg and end
+        if (MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getEndPoint()) <
+            MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getBeginPoint()))
+            std::swap(act_beg_seg_it->getBeginPoint(),
+                      act_beg_seg_it->getEndPoint());
+        assert(sub_seg_it != sub_segments.end());
+        // exchange segments within the container
+        if (sub_seg_it != act_beg_seg_it)
+            std::swap(*sub_seg_it, *act_beg_seg_it);
+    };
+
+    // find start segment
+    auto seg_it = sub_segments.begin();
+    findNextSegment(seg_beg_pnt, sub_segments, seg_it);
+
+    while (seg_it != sub_segments.end())
+    {
+        MathLib::Point3d & new_seg_beg_pnt(seg_it->getEndPoint());
+        seg_it++;
+        if (seg_it != sub_segments.end())
+            findNextSegment(new_seg_beg_pnt, sub_segments, seg_it);
     }
 }
 
