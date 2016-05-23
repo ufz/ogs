@@ -118,7 +118,7 @@ public:
 			Pc = 2700;
 			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
 										//dSwdPc = getdSwdPc_van(Pc);
-			//_saturation(ip) = Sw;
+		    _saturation[0][ip] = Sw;
 			//dSwdPc = interP_Pc.getSlope(Pc);//read from slope of Pc-S curve
 											//k_rel = getKrelbySw_van(Sw,0);
 			dSwdPc = interP_Pc.PressureSaturationDependency(Pc,true);
