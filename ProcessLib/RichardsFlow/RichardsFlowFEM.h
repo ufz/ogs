@@ -42,7 +42,7 @@ template <typename ShapeFunction,
          typename GlobalMatrix,
          typename GlobalVector,
          unsigned GlobalDim>
-class LocalAssemblerData : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
+class LocalAssemblerData : public RichardsFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>
 {
 	using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 	using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -161,7 +161,7 @@ public:
         K.add(indices, _localA);
         b.add(indices.rows, _localRhs);
     }
-	/*
+	
 	Eigen::Map<const Eigen::VectorXd>
 		getShapeMatrix(const unsigned integration_point) const override
 	{
@@ -170,23 +170,23 @@ public:
 		// assumes N is stored contiguously in memory
 		return Eigen::Map<const Eigen::VectorXd>(N.data(), N.size());
 	}
-	*/
+	
 
-	/*
+	
 	std::vector<double> const&
 		getIntegrationPointValues(IntegrationPointValue const property,
-		std::vector<double>& /*cache*//*) const override
+		std::vector<double>& /*cache*/) const override
 	{
 		switch (property)
 		{
 		case IntegrationPointValue::Saturation:
-			return _saturation;
+			return _saturation[0];
 	
 		}
 
 		std::abort();
 	}
-	*/
+	
 
 private:
     MeshLib::Element const& _element;
@@ -199,10 +199,10 @@ private:
     NodalVectorType _localRhs;
 
     unsigned const _integration_order;
-
+	//std::vector<double> _saturation=std::vector<double>()
 	std::vector<std::vector<double>> _saturation
-		= std::vector<std::vector<double>>(
-		GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
+		= std::vector<std::vector<double>>(1,
+		std::vector<double>(ShapeFunction::NPOINTS));
 	public:
 #ifdef OGS_USE_EIGEN
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

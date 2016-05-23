@@ -47,7 +47,7 @@ solve(Vector &x)
 
     BLAS::copy(x, x_new); // set initial guess, TODO save the copy
 
-    static unsigned unique_iteration_count = 0:
+    //static unsigned unique_iteration_count = 0:
 
 
     unsigned iteration=1;
