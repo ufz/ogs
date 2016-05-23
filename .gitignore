@@ -6,10 +6,7 @@ tags
 
 # CLion IDE project files
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries
-.idea/modules.xml
+.idea
 
 # Conan package manager
 conanbuildinfo.cmake
