@@ -154,7 +154,6 @@ bool ProjectData::removeMesh(const std::string &name)
 
 void ProjectData::buildProcesses()
 {
-<<<<<<< HEAD
     for (auto const& pc : _process_configs)
     {
         auto const type = pc.peekConfParam<std::string>("type");
