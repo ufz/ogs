@@ -57,24 +57,32 @@ enum class MeshDensityAlgorithm {
 class GMSHInterface final : public BaseLib::IO::Writer
 {
 public:
-
     /**
-     *
-     * @param geo_objs reference tp instance of class GEOObject that maintains the geometries.
-     *     The instance is used for preparation geometries for writing them to the gmsh file format.
-     * @param include_stations_as_constraints switch to enable writing stations as constraints
-     * @param mesh_density_algorithm one of the mesh density algorithms (\@see enum MeshDensityAlgorithm)
+     * @param geo_objs reference to instance of class GEOObject that maintains
+     * the geometries.
+     *     The instance is used for preparation geometries for writing them to
+     * the gmsh file format.
+     * @param include_stations_as_constraints switch to enable writing stations
+     * as constraints
+     * @param mesh_density_algorithm one of the mesh density algorithms (\@see
+     * enum MeshDensityAlgorithm)
      * @param param1 parameter that can be used for the mesh density algorithm
      * @param param2 parameter that can be used for the mesh density algorithm
      * @param param3 parameter that can be used for the mesh density algorithm
-     * @param selected_geometries vector of names of geometries, that should be employed for mesh generation.
-     * @return
+     * @param selected_geometries vector of names of geometries, that should be
+     * employed for mesh generation.
+     * @param rotate if the value of the parameter is true then the input points
+     * will be rotated on the \f$x\f$-\f$y\f$-plane, else the input points will
+     * be (orthogonal) projected to the \f$x\f$-\f$y\f$-plane.
+     * @param keep_preprocessed_geometry keep the pre-processed geometry, useful
+     * for debugging the mesh creation
      */
     GMSHInterface(GeoLib::GEOObjects& geo_objs,
                   bool include_stations_as_constraints,
                   GMSH::MeshDensityAlgorithm mesh_density_algorithm,
                   double param1, double param2, std::size_t param3,
-                  std::vector<std::string>& selected_geometries);
+                  std::vector<std::string>& selected_geometries,
+                  bool rotate = false, bool keep_preprocessed_geometry = false);
 
     GMSHInterface(GMSHInterface const&) = delete;
     GMSHInterface(GMSHInterface &&) = delete;
@@ -140,6 +148,7 @@ private:
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
     bool _rotate = false;
+    bool _keep_preprocessed_geometry = true;
 };
 }
 

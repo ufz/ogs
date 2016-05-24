@@ -38,14 +38,18 @@
 
 namespace FileIO
 {
-GMSHInterface::GMSHInterface(GeoLib::GEOObjects & geo_objs,
+GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
                              bool /*include_stations_as_constraints*/,
                              GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                             double param1,
-                             double param2,
-                             std::size_t param3,
-                             std::vector<std::string>& selected_geometries) :
-    _n_lines(0), _n_plane_sfc(0), _geo_objs(geo_objs), _selected_geometries(selected_geometries)
+                             double param1, double param2, std::size_t param3,
+                             std::vector<std::string>& selected_geometries,
+                             bool rotate, bool keep_preprocessed_geometry)
+    : _n_lines(0),
+      _n_plane_sfc(0),
+      _geo_objs(geo_objs),
+      _selected_geometries(selected_geometries),
+      _rotate(rotate),
+      _keep_preprocessed_geometry(keep_preprocessed_geometry)
 {
     switch (mesh_density_algorithm) {
     case GMSH::MeshDensityAlgorithm::FixedMeshDensity:
@@ -320,16 +324,14 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     if (_selected_geometries.empty())
         return 1;
 
-    bool remove_geometry(false);
     // *** get and merge data from _geo_objs
     if (_selected_geometries.size() > 1) {
         _gmsh_geo_name = "GMSHGeometry";
-        remove_geometry = true;
         if (_geo_objs.mergeGeometries(_selected_geometries, _gmsh_geo_name))
             return 2;
     } else {
         _gmsh_geo_name = _selected_geometries[0];
-        remove_geometry = false;
+        _keep_preprocessed_geometry = true;
     }
 
     std::vector<GeoLib::Point*>* merged_pnts(
@@ -459,7 +461,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         (*it)->writeAdditionalPointData(pnt_id_offset, _n_plane_sfc-1, out);
     }
 
-    if (remove_geometry) {
+    if (! _keep_preprocessed_geometry) {
         _geo_objs.removeSurfaceVec(_gmsh_geo_name);
         _geo_objs.removePolylineVec(_gmsh_geo_name);
         _geo_objs.removePointVec(_gmsh_geo_name);
