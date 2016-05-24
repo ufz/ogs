@@ -3,6 +3,7 @@ Language:        Cpp
 BasedOnStyle:    Google
 
 AccessModifierOffset: -4
+AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
 BreakBeforeBraces: Allman
