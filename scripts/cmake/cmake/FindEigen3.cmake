@@ -15,20 +15,6 @@
 # Copyright (c) 2009 Benoit Jacob <jacob.benoit.1@gmail.com>
 # Redistribution and use is allowed according to the terms of the 2-clause BSD license.
 
-if(NOT Eigen3_FIND_VERSION)
-  if(NOT Eigen3_FIND_VERSION_MAJOR)
-    set(Eigen3_FIND_VERSION_MAJOR 2)
-  endif()
-  if(NOT Eigen3_FIND_VERSION_MINOR)
-    set(Eigen3_FIND_VERSION_MINOR 91)
-  endif()
-  if(NOT Eigen3_FIND_VERSION_PATCH)
-    set(Eigen3_FIND_VERSION_PATCH 0)
-  endif()
-
-  set(Eigen3_FIND_VERSION "${Eigen3_FIND_VERSION_MAJOR}.${Eigen3_FIND_VERSION_MINOR}.${Eigen3_FIND_VERSION_PATCH}")
-endif()
-
 macro(_eigen3_check_version)
   file(READ "${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" _eigen3_version_header)
 
@@ -45,46 +31,22 @@ macro(_eigen3_check_version)
   else()
     set(EIGEN3_VERSION_OK TRUE)
   endif()
-
-  if(NOT EIGEN3_VERSION_OK)
-
-    message(STATUS "Eigen3 version ${EIGEN3_VERSION} found in ${EIGEN3_INCLUDE_DIR}, "
-                   "but at least version ${Eigen3_FIND_VERSION} is required")
-  endif()
 endmacro()
 
-if (EIGEN3_INCLUDE_DIR)
-
-  # in cache already
-  _eigen3_check_version()
-  set(EIGEN3_FOUND ${EIGEN3_VERSION_OK})
-
-else ()
-
-  find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
-      PATHS
-      ${CMAKE_INSTALL_PREFIX}/include
-      ${KDE4_INCLUDE_DIR}
-      /usr/include
-      /usr/local/include
-      /opt/boxen/homebrew/include
-      C:/
-      $ENV{ProgramFiles}/
-      /usr/local/eigen/*/include
-      PATH_SUFFIXES eigen3 eigen
-    )
-
-  if(EIGEN3_INCLUDE_DIR)
-    _eigen3_check_version()
-  endif()
-
-  include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Eigen3 DEFAULT_MSG EIGEN3_INCLUDE_DIR EIGEN3_VERSION_OK)
-
-  mark_as_advanced(EIGEN3_INCLUDE_DIR)
-
-endif()
+find_path(EIGEN3_INCLUDE_DIR NAMES signature_of_eigen3_matrix_library
+  PATHS /opt/eigen/*/include
+  PATH_SUFFIXES eigen3 eigen
+)
 
 if(EIGEN3_INCLUDE_DIR)
-  message(STATUS "Eigen version ${EIGEN3_VERSION}")
+  _eigen3_check_version()
 endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Eigen3
+  REQUIRED_VARS EIGEN3_INCLUDE_DIR EIGEN3_VERSION_OK
+  VERSION_VAR EIGEN3_VERSION
+)
+
+mark_as_advanced(EIGEN3_INCLUDE_DIR)
+

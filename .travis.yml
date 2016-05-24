@@ -49,7 +49,7 @@ before_script:
   - if [ "$CC" == "gcc" ]; then export CXX=g++-4.8 CC=gcc-4.8; fi
 
 script:
-  - if [ "$CASE" == "CHECK" ]; then git diff --check `git merge-base origin/master HEAD` HEAD; fi
+  - if [ "$CASE" == "CHECK" ]; then git config core.whitespace -blank-at-eof; git diff --check `git merge-base origin/master HEAD` HEAD; fi
   - if [ "$CASE" != "CHECK" ]; then mkdir build; fi
   - if [ "$CASE" != "CHECK" ]; then cd build; fi
   - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ..; fi
