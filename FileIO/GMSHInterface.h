@@ -54,7 +54,7 @@ enum class MeshDensityAlgorithm {
 /**
  * \brief Reads and writes GMSH-files to and from OGS data structures.
  */
-class GMSHInterface : public BaseLib::IO::Writer
+class GMSHInterface final : public BaseLib::IO::Writer
 {
 public:
 
