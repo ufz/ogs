@@ -25,16 +25,16 @@ public:
     {
     }
 
-    double get_enthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
+    double getEnthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
                         const double /*M_Ads*/) const override
     {
         return _enthalpy;
     }
 
-    double get_reaction_rate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
+    double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
                              const double /*loading*/) const override
     {
-        ERR("Method get_reaction_rate() should never be called directly");
+        ERR("Method getReactionRate() should never be called directly");
         std::abort();
         return 0.0;
     }

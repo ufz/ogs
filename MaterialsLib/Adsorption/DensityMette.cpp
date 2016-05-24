@@ -28,28 +28,28 @@ const double c[] = {
 namespace Adsorption
 {
 
-double DensityMette::get_adsorbate_density(const double T_Ads) const
+double DensityMette::getAdsorbateDensity(const double T_Ads) const
 {
     const double T0 = 293.15;
-    const double rho0 = rho_water_Dean(T0);
-    const double alpha20 = alphaT_water_Dean(T0);
+    const double rho0 = rhoWaterDean(T0);
+    const double alpha20 = alphaTWaterDean(T0);
     return rho0 / (1. + alpha20*(T_Ads-T0));
 }
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double DensityMette::get_alphaT(const double T_Ads) const
+double DensityMette::getAlphaT(const double T_Ads) const
 {
     const double T0 = 293.15;
-    const double alpha20 = alphaT_water_Dean(T0);
+    const double alpha20 = alphaTWaterDean(T0);
     return alpha20 / (1. + alpha20 * (T_Ads-T0));
 }
 
 
 //Characteristic curve. Return W (A)
-double DensityMette::characteristic_curve(const double A) const
+double DensityMette::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -58,9 +58,9 @@ double DensityMette::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double DensityMette::d_characteristic_curve(const double A) const
+double DensityMette::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }

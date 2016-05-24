@@ -17,10 +17,10 @@ namespace Adsorption
 class DensityMette : public AdsorptionReaction
 {
 public:
-    double get_adsorbate_density(const double T_Ads) const;
-    double get_alphaT(const double T_Ads) const;
-    double characteristic_curve(const double A) const;
-    double d_characteristic_curve(const double A) const;
+    double getAdsorbateDensity(const double T_Ads) const;
+    double getAlphaT(const double T_Ads) const;
+    double characteristicCurve(const double A) const;
+    double dCharacteristicCurve(const double A) const;
 };
 
 }

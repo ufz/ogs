@@ -17,14 +17,14 @@ namespace Adsorption
 class DensityCook : public AdsorptionReaction
 {
 public:
-    double get_adsorbate_density(const double T_Ads) const;
-    double get_alphaT(const double T_Ads) const;
-    double characteristic_curve(const double A) const;
-    double d_characteristic_curve(const double A) const;
+    double getAdsorbateDensity(const double T_Ads) const;
+    double getAlphaT(const double T_Ads) const;
+    double characteristicCurve(const double A) const;
+    double dCharacteristicCurve(const double A) const;
 };
 
 
-inline double rho_water_Dean(const double T_Ads)
+inline double rhoWaterDean(const double T_Ads)
 {
     const double Tcel = T_Ads - 273.15;
     const double b[] = { 999.9,2.03E-02,-6.16E-03,2.26E-05,-4.68E-08 };
@@ -38,7 +38,7 @@ inline double rho_water_Dean(const double T_Ads)
     }
 }
 
-inline double alphaT_water_Dean(const double T_Ads)
+inline double alphaTWaterDean(const double T_Ads)
 {
     const double Tcel = T_Ads - 273.15;
     const double b[] = { 999.9,2.03E-02,-6.16E-03,2.26E-05,-4.68E-08 };

@@ -31,18 +31,18 @@ const double c[] = {
 namespace Adsorption
 {
 
-double DensityDubinin::get_adsorbate_density(const double T_Ads) const
+double DensityDubinin::getAdsorbateDensity(const double T_Ads) const
 {
     const double Tb = 373.1;
 
     if (T_Ads < Tb) {
-        return rho_water_Dean(T_Ads);
+        return rhoWaterDean(T_Ads);
     } else {
         const double Tc = 647.3; //K
         // const double rhoc = 322.; //kg/m^3
         const double pc = 221.2e5; //Pa
         //boiling point density
-        const double rhob = rho_water_Dean(Tb);
+        const double rhob = rhoWaterDean(Tb);
         //state values
         const double R = GAS_CONST;
         const double M = M_H2O;
@@ -55,18 +55,18 @@ double DensityDubinin::get_adsorbate_density(const double T_Ads) const
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double DensityDubinin::get_alphaT(const double T_Ads) const
+double DensityDubinin::getAlphaT(const double T_Ads) const
 {
     const double Tb = 373.1;
     if (T_Ads <= Tb) {
-        return alphaT_water_Dean(T_Ads);
+        return alphaTWaterDean(T_Ads);
     } else {
         //critical T and p
         const double Tc = 647.3; //K
         // const double rhoc = 322.; //kg/m^3
         const double pc = 221.2e5; //Pa
         //boiling point density
-        const double rhob = rho_water_Dean(Tb);
+        const double rhob = rhoWaterDean(Tb);
         //state values
         const double R = GAS_CONST;
         const double M = M_H2O;
@@ -79,9 +79,9 @@ double DensityDubinin::get_alphaT(const double T_Ads) const
 
 
 //Characteristic curve. Return W (A)
-double DensityDubinin::characteristic_curve(const double A) const
+double DensityDubinin::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -90,9 +90,9 @@ double DensityDubinin::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double DensityDubinin::d_characteristic_curve(const double A) const
+double DensityDubinin::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }

@@ -29,23 +29,23 @@ const double c[] = {
 namespace Adsorption
 {
 
-double DensityCook::get_adsorbate_density(const double T_Ads) const
+double DensityCook::getAdsorbateDensity(const double T_Ads) const
 {
-    return rho_water_Dean(T_Ads);
+    return rhoWaterDean(T_Ads);
 }
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double DensityCook::get_alphaT(const double T_Ads) const
+double DensityCook::getAlphaT(const double T_Ads) const
 {
-    return alphaT_water_Dean(T_Ads);
+    return alphaTWaterDean(T_Ads);
 }
 
 
 //Characteristic curve. Return W (A)
-double DensityCook::characteristic_curve(const double A) const
+double DensityCook::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -54,9 +54,9 @@ double DensityCook::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double DensityCook::d_characteristic_curve(const double A) const
+double DensityCook::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }

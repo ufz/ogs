@@ -30,13 +30,13 @@ const double ReactionCaOH2::rho_up = 2200.0;
 
 
 double
-ReactionCaOH2::get_enthalpy(const double, const double, const double) const
+ReactionCaOH2::getEnthalpy(const double, const double, const double) const
 {
     return - reaction_enthalpy/M_react;
 }
 
 double
-ReactionCaOH2::get_reaction_rate(const double, const double, const double, const double) const
+ReactionCaOH2::getReactionRate(const double, const double, const double, const double) const
 {
     ERR("get_reaction_rate do not call directly");
     std::abort();
@@ -48,11 +48,11 @@ ReactionCaOH2::get_reaction_rate(const double, const double, const double, const
 double ReactionCaOH2::getReactionRate(double const solid_density)
 {
     rho_s = solid_density;
-    calculate_qR();
+    calculateQR();
     return qR;
 }
 
-void ReactionCaOH2::update_param(
+void ReactionCaOH2::updateParam(
         double T_solid,
         double p_gas,
         double x_react,
@@ -64,20 +64,20 @@ void ReactionCaOH2::update_param(
     rho_s   = rho_s_initial;
 }
 
-void ReactionCaOH2::calculate_qR()
+void ReactionCaOH2::calculateQR()
 {
     //Convert mass fraction into mole fraction
-    // const double mol_frac_react = get_mole_fraction(x_react);
-    const double mol_frac_react = AdsorptionReaction::get_molar_fraction(x_react, M_react, M_carrier);
+    // const double mol_frac_react = getMoleFraction(x_react);
+    const double mol_frac_react = AdsorptionReaction::getMolarFraction(x_react, M_react, M_carrier);
 
     p_r_g = std::max(mol_frac_react * p_gas, 1.0e-3); //avoid illdefined log
-    set_chemical_equilibrium();
-    const double dXdt = Ca_hydration();
+    setChemicalEquilibrium();
+    const double dXdt = CaHydration();
     qR = (rho_up - rho_low) * dXdt;
 }
 
 //determine equilibrium temperature and pressure according to van't Hoff
-void ReactionCaOH2::set_chemical_equilibrium()
+void ReactionCaOH2::setChemicalEquilibrium()
 {
     X_D = (rho_s - rho_up - tol_rho)/(rho_low - rho_up - 2.0*tol_rho) ;
     X_D = (X_D < 0.5) ? std::max(tol_l,X_D) : std::min(X_D,tol_u); //constrain to interval [tol_l;tol_u]
@@ -92,7 +92,7 @@ void ReactionCaOH2::set_chemical_equilibrium()
 }
 
 
-double ReactionCaOH2::Ca_hydration()
+double ReactionCaOH2::CaHydration()
 {
     double dXdt;
         // step 3, calculate dX/dt

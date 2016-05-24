@@ -27,7 +27,7 @@ const double c[] = { 0.34102920966608297,
 namespace Adsorption
 {
 
-double DensityLegacy::get_adsorbate_density(const double T_Ads) const
+double DensityLegacy::getAdsorbateDensity(const double T_Ads) const
 {
     //set reference state for adsorbate EOS in Hauer
     const double T0 = 293.15, rho0 = 998.084, alpha0 = 2.06508e-4; //K; kg/m^3; 1/K
@@ -37,7 +37,7 @@ double DensityLegacy::get_adsorbate_density(const double T_Ads) const
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double DensityLegacy::get_alphaT(const double T_Ads) const
+double DensityLegacy::getAlphaT(const double T_Ads) const
 {
     //set reference state for adsorbate EOS in Hauer
     const double T0 = 293.15, /*rho0 = 998.084,*/ alpha0 = 2.06508e-4; //K; kg/m^3; 1/K
@@ -47,9 +47,9 @@ double DensityLegacy::get_alphaT(const double T_Ads) const
 
 
 //Characteristic curve. Return W (A)
-double DensityLegacy::characteristic_curve(const double A) const
+double DensityLegacy::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     /*
     if (W < 0.0) {
@@ -60,9 +60,9 @@ double DensityLegacy::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double DensityLegacy::d_characteristic_curve(const double A) const
+double DensityLegacy::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }

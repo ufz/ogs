@@ -36,26 +36,26 @@ public:
         }*/
     }
 
-    double get_enthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
+    double getEnthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
                         const double /*M_Ads*/) const override;
 
-    double get_reaction_rate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
+    double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
                              const double /*loading*/) const override;
 
     const BaseLib::ConfigTree& getOdeSolverConfig() const { return ode_solver_config; }
 
-    // TODO merge with get_reaction_rate()
+    // TODO merge with getReactionRate()
     double getReactionRate(double const solid_density);
 
-    void update_param(double T_solid,
+    void updateParam(double T_solid,
                       double p_gas,
                       double x_react,
                       double rho_s_initial);
 
 private:
-    void calculate_qR();
-    void set_chemical_equilibrium();
-    double Ca_hydration();
+    void calculateQR();
+    void setChemicalEquilibrium();
+    double CaHydration();
 
     static const double R;  // [J/mol/K]
     double rho_s;           // solid phase density

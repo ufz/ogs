@@ -29,7 +29,7 @@ const double c[] = {
 namespace Adsorption
 {
 
-double DensityNunez::get_adsorbate_density(const double T_Ads) const
+double DensityNunez::getAdsorbateDensity(const double T_Ads) const
 {
     if (T_Ads < 273.16 || T_Ads > 633.15) {
         // print('Value outside admissible range for rho.');
@@ -45,7 +45,7 @@ double DensityNunez::get_adsorbate_density(const double T_Ads) const
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double DensityNunez::get_alphaT(const double T_Ads) const
+double DensityNunez::getAlphaT(const double T_Ads) const
 {
     if (T_Ads < 273.16 || T_Ads > 633.15) {
         // print('Value outside admissible range for rho.');
@@ -65,9 +65,9 @@ double DensityNunez::get_alphaT(const double T_Ads) const
 
 
 //Characteristic curve. Return W (A)
-double DensityNunez::characteristic_curve(const double A) const
+double DensityNunez::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -76,9 +76,9 @@ double DensityNunez::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double DensityNunez::d_characteristic_curve(const double A) const
+double DensityNunez::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }

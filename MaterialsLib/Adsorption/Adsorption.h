@@ -27,25 +27,25 @@ class AdsorptionReaction : public Reaction
 {
 public:
     // TODO [CL] move those three methods to water properties class
-    static double get_evaporation_enthalpy(const double T_Ads);
-    static double get_equilibrium_vapour_pressure(const double T_Ads);
-    static double get_specific_heat_capacity(const double T_Ads); // TODO [CL] why unused?
+    static double getEvaporationEnthalpy(const double T_Ads);
+    static double getEquilibriumVapourPressure(const double T_Ads);
+    static double getSpecificHeatCapacity(const double T_Ads); // TODO [CL] why unused?
 
-    static double get_molar_fraction(double xm, double M_this, double M_other);
-    static double get_mass_fraction(double xn, double M_this, double M_other);
-    static double d_molar_fraction(double xm, double M_this, double M_other);
+    static double getMolarFraction(double xm, double M_this, double M_other);
+    static double getMassFraction(double xn, double M_this, double M_other);
+    static double dMolarFraction(double xm, double M_this, double M_other);
 
-    static double get_loading(const double rho_curr, const double rho_dry);
+    static double getLoading(const double rho_curr, const double rho_dry);
 
 // non-virtual members
-    double get_equilibrium_loading(const double p_Ads, const double T_Ads, const double M_Ads)
+    double getEquilibriumLoading(const double p_Ads, const double T_Ads, const double M_Ads)
     const override;
 
 // virtual members:
     virtual ~AdsorptionReaction() = default;
 
-    virtual double get_enthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
-    virtual double get_reaction_rate(const double p_Ads, const double T_Ads,
+    virtual double getEnthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
+    virtual double getReactionRate(const double p_Ads, const double T_Ads,
                                      const double M_Ads, const double loading) const override;
     /**
      * @brief get_d_reaction_rate
@@ -55,24 +55,24 @@ public:
      * @param loading
      * @param dqdr array containing the differentials wrt: p, T, C
      */
-    virtual void get_d_reaction_rate(const double p_Ads, const double T_Ads,
+    virtual void getDReactionRate(const double p_Ads, const double T_Ads,
                                      const double M_Ads, const double loading,
                                      std::array<double, 3>& dqdr) const;
 
 protected:
-    virtual double get_adsorbate_density(const double T_Ads) const = 0;
-    virtual double get_alphaT(const double T_Ads) const = 0;
-    virtual double characteristic_curve(const double A) const = 0;
-    virtual double d_characteristic_curve(const double A) const = 0;
+    virtual double getAdsorbateDensity(const double T_Ads) const = 0;
+    virtual double getAlphaT(const double T_Ads) const = 0;
+    virtual double characteristicCurve(const double A) const = 0;
+    virtual double dCharacteristicCurve(const double A) const = 0;
 
 private:
 // non-virtual members
-    double get_potential(const double p_Ads, const double T_Ads, const double M_Ads) const;
-    double get_entropy(const double T_Ads, const double A) const;
+    double getPotential(const double p_Ads, const double T_Ads, const double M_Ads) const;
+    double getEntropy(const double T_Ads, const double A) const;
 };
 
 
-inline double curve_polyfrac(const double* coeffs, const double x)
+inline double curvePolyfrac(const double* coeffs, const double x)
 {
     return ( coeffs[0] + coeffs[2] * x + coeffs[4] * pow(x,2) + coeffs[6] * pow(x,3) )
             / ( 1.0 + coeffs[1] * x + coeffs[3] * pow(x,2) + coeffs[5] * pow(x,3) );
@@ -90,7 +90,7 @@ inline double curve_polyfrac(const double* coeffs, const double x)
     //        / ( 1.0 + x * coeffs[1] + x*x * coeffs[3] + x*x*x * coeffs[5] );
 }
 
-inline double d_curve_polyfrac(const double* coeffs, const double x)
+inline double dCurvePolyfrac(const double* coeffs, const double x)
 {
     const double x2 = x*x;
     const double x3 = x2*x;

@@ -29,14 +29,14 @@ const double c[] = {
 namespace Adsorption
 {
 
-double Density100MPa::get_adsorbate_density(const double T_Ads) const
+double Density100MPa::getAdsorbateDensity(const double T_Ads) const
 {
     return -0.0013*T_Ads*T_Ads + 0.3529*T_Ads + 1049.2;
 }
 
 
 //Thermal expansivity model for water found in the works of Hauer
-double Density100MPa::get_alphaT(const double T_Ads) const
+double Density100MPa::getAlphaT(const double T_Ads) const
 {
     const double rho    = -0.0013*T_Ads*T_Ads+0.3529*T_Ads+1049.2;
     const double drhodT = -0.0026*T_Ads + 0.3529;
@@ -46,9 +46,9 @@ double Density100MPa::get_alphaT(const double T_Ads) const
 
 
 //Characteristic curve. Return W (A)
-double Density100MPa::characteristic_curve(const double A) const
+double Density100MPa::characteristicCurve(const double A) const
 {
-    double W = curve_polyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); //cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
@@ -57,9 +57,9 @@ double Density100MPa::characteristic_curve(const double A) const
     return W/1.e3; //m^3/kg
 }
 
-double Density100MPa::d_characteristic_curve(const double A) const
+double Density100MPa::dCharacteristicCurve(const double A) const
 {
-    return d_curve_polyfrac(c, A);
+    return dCurvePolyfrac(c, A);
 }
 
 }
