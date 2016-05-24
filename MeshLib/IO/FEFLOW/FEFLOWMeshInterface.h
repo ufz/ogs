@@ -15,26 +15,25 @@
 
 namespace GeoLib
 {
-    class Point;
-    class Polyline;
+class Point;
+class Polyline;
 }
 
 namespace MeshLib
 {
-    class Mesh;
-    class Element;
-    class Node;
-    enum class MeshElemType;
+class Mesh;
+class Element;
+class Node;
+enum class MeshElemType;
 }
 
 namespace MeshLib
 {
 namespace IO
 {
-
 /**
- * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class supports
- * only import of mesh data and some geometry given in Supermesh section.
+ * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class
+ * supports only import of mesh data and some geometry given in Supermesh section.
  */
 class FEFLOWMeshInterface
 {
@@ -42,12 +41,13 @@ public:
     /**
      * read a FEFLOW Model file (*.fem) in ASCII format (Version 5.4)
      *
-     * This function reads mesh data in addition to geometry data given in Supermesh.
+     * This function reads mesh data in addition to geometry data given in
+     * Supermesh.
      *
      * @param filename  FEFLOW file name
      * @return a pointer to a created OGS mesh
      */
-    MeshLib::Mesh* readFEFLOWFile(const std::string &filename);
+    MeshLib::Mesh* readFEFLOWFile(const std::string& filename);
 
 private:
     // CLASS
@@ -85,28 +85,40 @@ private:
     };
 
     /// read node indices and create a mesh element
-    MeshLib::Element* readElement(const FEM_DIM &fem_dim, const MeshLib::MeshElemType elem_type, const std::string& line, const std::vector<MeshLib::Node*> &nodes);
+    MeshLib::Element* readElement(const FEM_DIM& fem_dim,
+                                  const MeshLib::MeshElemType elem_type,
+                                  const std::string& line,
+                                  const std::vector<MeshLib::Node*>& nodes);
 
     /// read node coordinates
-    void readNodeCoordinates(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &nodes);
+    void readNodeCoordinates(std::ifstream& in,
+                             const FEM_CLASS& fem_class,
+                             const FEM_DIM& fem_dim,
+                             std::vector<MeshLib::Node*>& nodes);
 
     /// read elevation data
-    void readElevation(std::ifstream &in, const FEM_CLASS &fem_class, const FEM_DIM &fem_dim, std::vector<MeshLib::Node*> &vec_nodes);
+    void readElevation(std::ifstream& in,
+                       const FEM_CLASS& fem_class,
+                       const FEM_DIM& fem_dim,
+                       std::vector<MeshLib::Node*>& vec_nodes);
 
     //// parse node lists
-    std::vector<std::size_t> getIndexList(const std::string &str_ranges);
+    std::vector<std::size_t> getIndexList(const std::string& str_ranges);
 
     /// parse ELEMENTALSETS
-    void readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets);
+    void readELEMENTALSETS(
+        std::ifstream& in,
+        std::vector<std::vector<std::size_t>>& vec_elementsets);
 
-    void setMaterialIDs(FEM_CLASS const& fem_class,
+    void setMaterialIDs(
+        FEM_CLASS const& fem_class,
         FEM_DIM const& fem_dim,
         std::vector<GeoLib::Polyline*>* const& lines,
         std::vector<std::vector<std::size_t>> const& vec_elementsets,
         std::vector<MeshLib::Element*> const& vec_elements,
-        std::vector<int> & material_ids);
+        std::vector<int>& material_ids);
 };
-} // IO
-} // MeshLib
+}  // IO
+}  // MeshLib
 
 #endif /* FEFLOWMESHINTERFACE_H_ */
