@@ -10,12 +10,10 @@
 #define FEFLOWGEOINTERFACE_H_
 
 #include <iosfwd>
-#include <memory>
 #include <string>
 #include <vector>
 
 class QDomElement;
-class QString;
 
 namespace GeoLib
 {
@@ -30,8 +28,7 @@ namespace IO
 {
 
 /**
- * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class supports
- * only import of mesh data and some geometry given in Supermesh section.
+ * Interface to geometric data in FEFLOW files
  */
 class FEFLOWGeoInterface
 {
@@ -39,35 +36,22 @@ public:
     /**
      * read a FEFLOW Model file (*.fem) in ASCII format (Version 5.4)
      *
-     * This function reads mesh data in addition to geometry data given in Supermesh.
+     * This function reads geometry data given in Supermesh.
      *
      * @param filename  FEFLOW file name
-     * @return a pointer to a created OGS mesh
+     * @param geo_objects Geometric objects where imported geometry data are added
      */
-    void readFEFLOWFile(const std::string &filename, GeoLib::GEOObjects& obj);
+    void readFEFLOWFile(const std::string &filename, GeoLib::GEOObjects& geo_objects);
 
-private:
-    // CLASS
-    struct FEM_CLASS
-    {
-        unsigned problem_class = 0;
-        unsigned time_mode = 0;
-        unsigned orientation = 0;
-        unsigned dimension = 0;
-        unsigned n_layers3d = 0;
-        unsigned saturation_flag = 0;
-        unsigned save_fsize_rreal = 0;
-        unsigned save_fsize_creal = 0;
-    };
-
-    /// read Supermesh data
+    /// read points and polylines in Supermesh section
     ///
     /// A super mesh is a collection of polygons, lines and points in the 2D plane
     /// and will be used for mesh generation and to define the modeling region
-    void readSuperMesh(std::ifstream &feflow_file, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** points, std::vector<GeoLib::Polyline*>** lines);
+    static void readSuperMesh(std::ifstream &feflow_file, unsigned dimension, std::vector<GeoLib::Point*>* &points, std::vector<GeoLib::Polyline*>* &lines);
 
+private:
     //// read point data in Supermesh
-    void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
+    static void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
 
 };
 } // IO

@@ -9,6 +9,10 @@
 #include "FEFLOWGeoInterface.h"
 
 #include <cctype>
+#include <memory>
+
+#include <QDomElement>
+#include <QString>
 #include <QtXml>
 
 #include <logog/include/logog.hpp>
@@ -31,12 +35,13 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string &filename, GeoLib::GEO
     std::ifstream in(filename.c_str());
     if (!in)
     {
-        ERR("FEFLOWInterface::readFEFLOWFile(): Could not open file %s.", filename.c_str());
+        ERR("FEFLOWGeoInterface::readFEFLOWFile(): Could not open file %s.", filename.c_str());
+        return;
     }
 
-    FEM_CLASS fem_class;
-    std::vector<GeoLib::Point*>* points = NULL;
-    std::vector<GeoLib::Polyline*>* lines = NULL;
+    unsigned dimension = 0;
+    std::vector<GeoLib::Point*>* points = nullptr;
+    std::vector<GeoLib::Polyline*>* lines = nullptr;
 
     bool isXZplane = false;
 
@@ -51,8 +56,11 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string &filename, GeoLib::GEO
         {
             getline(in, line_string);
             line_stream.str(line_string);
-            // problem class, time mode, problem orientation, dimension, nr. layers for 3D, saturation switch, precision of results, precision of coordinates
-            line_stream >> fem_class.problem_class >> fem_class.time_mode >> fem_class.orientation >> fem_class.dimension >> fem_class.n_layers3d;
+            // problem class, time mode, problem orientation, dimension, ...
+            unsigned dummy = 0;
+            for (int i=0; i<3; i++)
+                line_stream >> dummy;
+            line_stream >> dimension;
             line_stream.clear();
         }
         //....................................................................
@@ -72,7 +80,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string &filename, GeoLib::GEO
         // SUPERMESH
         else if (line_string.compare("SUPERMESH") == 0)
         {
-            readSuperMesh(in, fem_class, &points, &lines);
+            readSuperMesh(in, dimension, points, lines);
         }
         //....................................................................
     }
@@ -124,7 +132,7 @@ void FEFLOWGeoInterface::readPoints(QDomElement &nodesEle, const std::string &ta
 }
 
 
-void FEFLOWGeoInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** p_points, std::vector<GeoLib::Polyline*>** p_lines)
+void FEFLOWGeoInterface::readSuperMesh(std::ifstream &in, unsigned dimension, std::vector<GeoLib::Point*>* &points, std::vector<GeoLib::Polyline*>* &lines)
 {
     // get XML strings
     std::ostringstream oss;
@@ -143,15 +151,14 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_c
     QDomDocument doc;
     if (!doc.setContent(strXML))
     {
-        ERR("FEFLOWInterface::readSuperMesh(): Illegal XML format error");
+        ERR("FEFLOWGeoInterface::readSuperMesh(): Illegal XML format error");
         return;
     }
 
     // get geometry data from XML
     QDomElement docElem = doc.documentElement(); // #supermesh
     // #nodes
-    *p_points = new std::vector<GeoLib::Point*>();
-    std::vector<GeoLib::Point*>* points = *p_points;
+    points = new std::vector<GeoLib::Point*>();
     QDomElement nodesEle = docElem.firstChildElement("nodes");
     if (nodesEle.isNull())
         return;
@@ -161,14 +168,13 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream &in, const FEM_CLASS &fem_c
         const long n_points = str.toLong();
         points->resize(n_points);
         //fixed
-        readPoints(nodesEle, "fixed", fem_class.dimension, *points);
-        readPoints(nodesEle, "linear", fem_class.dimension, *points);
-        readPoints(nodesEle, "parabolic", fem_class.dimension, *points);
+        readPoints(nodesEle, "fixed", dimension, *points);
+        readPoints(nodesEle, "linear", dimension, *points);
+        readPoints(nodesEle, "parabolic", dimension, *points);
     }
 
     // #polygons
-    *p_lines = new std::vector<GeoLib::Polyline*>();
-    std::vector<GeoLib::Polyline*>* lines = *p_lines;
+    lines = new std::vector<GeoLib::Polyline*>();
     QDomElement polygonsEle = docElem.firstChildElement("polygons");
     if (polygonsEle.isNull())
         return;

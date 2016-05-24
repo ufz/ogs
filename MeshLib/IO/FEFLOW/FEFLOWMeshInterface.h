@@ -10,12 +10,8 @@
 #define FEFLOWMESHINTERFACE_H_
 
 #include <iosfwd>
-#include <memory>
 #include <string>
 #include <vector>
-
-class QDomElement;
-class QString;
 
 namespace GeoLib
 {
@@ -57,67 +53,35 @@ private:
     // CLASS
     struct FEM_CLASS
     {
-        unsigned problem_class;
-        unsigned time_mode;
-        unsigned orientation;
-        unsigned dimension;
-        unsigned n_layers3d;
-        unsigned saturation_flag;
-        unsigned save_fsize_rreal;
-        unsigned save_fsize_creal;
-
-        FEM_CLASS()
-        {
-            problem_class = 0;
-            time_mode = 0;
-            orientation = 0;
-            dimension = 0;
-            n_layers3d = 0;
-            saturation_flag = 0;
-            save_fsize_rreal = 0;
-            save_fsize_creal = 0;
-        }
+        unsigned problem_class = 0;
+        unsigned time_mode = 0;
+        unsigned orientation = 0;
+        unsigned dimension = 0;
+        unsigned n_layers3d = 0;
+        unsigned saturation_flag = 0;
+        unsigned save_fsize_rreal = 0;
+        unsigned save_fsize_creal = 0;
     };
 
     // DIMENSION
     struct FEM_DIM
     {
-        std::size_t n_nodes;
-        std::size_t n_elements;
-        std::size_t obs;
-        std::size_t np_cor;
-        unsigned n_nodes_of_element;
-        unsigned n_steps;
-        unsigned icrank;
-        unsigned upwind;
-        unsigned optim;
-        unsigned aquifer_type;
-        unsigned nwca;
-        unsigned adaptive_mesh;
-        unsigned sp_fem_pcs_id;
-        unsigned sorption_type;
-        unsigned reaction_type;
-        unsigned dispersion_type;
-
-        FEM_DIM()
-        {
-            n_nodes = 0;
-            n_elements = 0;
-            n_nodes_of_element = 0;
-            n_steps = 0;
-            icrank = 0;
-            upwind = 0;
-            obs = 0;
-            optim = 0;
-            aquifer_type = 0;
-            nwca = 0;
-            np_cor = 0;
-            adaptive_mesh = 0;
-            sp_fem_pcs_id = 0;
-            sorption_type = 0;
-            reaction_type = 0;
-            dispersion_type = 0;
-        }
+        std::size_t n_nodes = 0;
+        std::size_t n_elements = 0;
+        std::size_t obs = 0;
+        std::size_t np_cor = 0;
+        unsigned n_nodes_of_element = 0;
+        unsigned n_steps = 0;
+        unsigned icrank = 0;
+        unsigned upwind = 0;
+        unsigned optim = 0;
+        unsigned aquifer_type = 0;
+        unsigned nwca = 0;
+        unsigned adaptive_mesh = 0;
+        unsigned sp_fem_pcs_id = 0;
+        unsigned sorption_type = 0;
+        unsigned reaction_type = 0;
+        unsigned dispersion_type = 0;
     };
 
     /// read node indices and create a mesh element
@@ -134,15 +98,6 @@ private:
 
     /// parse ELEMENTALSETS
     void readELEMENTALSETS(std::ifstream &in, std::vector<std::vector<std::size_t>> &vec_elementsets);
-
-    /// read Supermesh data
-    ///
-    /// A super mesh is a collection of polygons, lines and points in the 2D plane
-    /// and will be used for mesh generation and to define the modeling region
-    void readSuperMesh(std::ifstream &feflow_file, const FEM_CLASS &fem_class, std::vector<GeoLib::Point*>** points, std::vector<GeoLib::Polyline*>** lines);
-
-    //// read point data in Supermesh
-    void readPoints(QDomElement &nodesEle, const std::string &tag, int dim, std::vector<GeoLib::Point*> &points);
 
     void setMaterialIDs(FEM_CLASS const& fem_class,
         FEM_DIM const& fem_dim,
