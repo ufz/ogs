@@ -34,8 +34,7 @@ double DensityHauer::getAdsorbateDensity(const double T_Ads) const
     return rhoWaterHauer(T_Ads);
 }
 
-
-//Thermal expansivity model for water found in the works of Hauer
+// Thermal expansivity model for water found in the works of Hauer
 double DensityHauer::getAlphaT(const double T_Ads) const
 {
     // data like in python script
@@ -44,17 +43,16 @@ double DensityHauer::getAlphaT(const double T_Ads) const
     return alpha0/(1. - alpha0 * (T_Ads-T0)); //in 1/K
 }
 
-
-//Characteristic curve. Return W (A)
+// Characteristic curve. Return W (A)
 double DensityHauer::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
     }
 
-    return W/1.e3; //m^3/kg
+    return W/1.e3; // m^3/kg
 }
 
 double DensityHauer::dCharacteristicCurve(const double A) const

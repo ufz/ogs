@@ -37,7 +37,7 @@ double DensityMette::getAdsorbateDensity(const double T_Ads) const
 }
 
 
-//Thermal expansivity model for water found in the works of Hauer
+// Thermal expansivity model for water found in the works of Hauer
 double DensityMette::getAlphaT(const double T_Ads) const
 {
     const double T0 = 293.15;
@@ -46,16 +46,16 @@ double DensityMette::getAlphaT(const double T_Ads) const
 }
 
 
-//Characteristic curve. Return W (A)
+// Characteristic curve. Return W (A)
 double DensityMette::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
     }
 
-    return W/1.e3; //m^3/kg
+    return W/1.e3; // m^3/kg
 }
 
 double DensityMette::dCharacteristicCurve(const double A) const

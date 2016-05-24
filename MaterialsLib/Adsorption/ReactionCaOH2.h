@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "BaseLib/ConfigTree.h"
 #include "Reaction.h"
 #include "Adsorption.h"
 
@@ -26,15 +27,7 @@ class ReactionCaOH2 final : public Reaction
 public:
     explicit ReactionCaOH2(BaseLib::ConfigTree const& conf)
         : ode_solver_config{conf.getConfSubtree("ode_solver_config")}
-    {
-        /*auto const param = conf.get_optional<double>("reaction_enthalpy");
-        if (param) {
-            _enthalpy = *param;
-        } else {
-            ERR("<reaction_enthalpy> not specified.");
-            std::abort();
-        }*/
-    }
+    {}
 
     double getEnthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
                         const double /*M_Ads*/) const override;
@@ -44,7 +37,7 @@ public:
 
     const BaseLib::ConfigTree& getOdeSolverConfig() const { return ode_solver_config; }
 
-    // TODO merge with getReactionRate()
+    // TODO merge with getReactionRate() above
     double getReactionRate(double const solid_density);
 
     void updateParam(double T_solid,

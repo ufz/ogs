@@ -34,15 +34,12 @@ double DensityCook::getAdsorbateDensity(const double T_Ads) const
     return rhoWaterDean(T_Ads);
 }
 
-
-//Thermal expansivity model for water found in the works of Hauer
 double DensityCook::getAlphaT(const double T_Ads) const
 {
     return alphaTWaterDean(T_Ads);
 }
 
-
-//Characteristic curve. Return W (A)
+// Characteristic curve. Return W (A)
 double DensityCook::characteristicCurve(const double A) const
 {
     double W = curvePolyfrac(c, A); //cm^3/g

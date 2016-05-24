@@ -23,7 +23,6 @@ public:
     double dCharacteristicCurve(const double A) const;
 };
 
-
 inline double rhoWaterDean(const double T_Ads)
 {
     const double Tcel = T_Ads - 273.15;

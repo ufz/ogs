@@ -34,8 +34,7 @@ double Density100MPa::getAdsorbateDensity(const double T_Ads) const
     return -0.0013*T_Ads*T_Ads + 0.3529*T_Ads + 1049.2;
 }
 
-
-//Thermal expansivity model for water found in the works of Hauer
+// Thermal expansivity model for water found in the works of Hauer
 double Density100MPa::getAlphaT(const double T_Ads) const
 {
     const double rho    = -0.0013*T_Ads*T_Ads+0.3529*T_Ads+1049.2;
@@ -44,17 +43,16 @@ double Density100MPa::getAlphaT(const double T_Ads) const
     return - drhodT / rho;
 }
 
-
-//Characteristic curve. Return W (A)
+// Characteristic curve. Return W (A)
 double Density100MPa::characteristicCurve(const double A) const
 {
-    double W = curvePolyfrac(c, A); //cm^3/g
+    double W = curvePolyfrac(c, A); // cm^3/g
 
     if (W < 0.0) {
         W = 0.0; // TODO [CL] debug output
     }
 
-    return W/1.e3; //m^3/kg
+    return W/1.e3; // m^3/kg
 }
 
 double Density100MPa::dCharacteristicCurve(const double A) const

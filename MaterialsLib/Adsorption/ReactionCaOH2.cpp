@@ -40,7 +40,6 @@ ReactionCaOH2::getReactionRate(const double, const double, const double, const d
 {
     ERR("get_reaction_rate do not call directly");
     std::abort();
-    // TODO: error
     return -1.0;
 }
 
@@ -66,29 +65,28 @@ void ReactionCaOH2::updateParam(
 
 void ReactionCaOH2::calculateQR()
 {
-    //Convert mass fraction into mole fraction
-    // const double mol_frac_react = getMoleFraction(x_react);
+    // Convert mass fraction into mole fraction
     const double mol_frac_react = AdsorptionReaction::getMolarFraction(x_react, M_react, M_carrier);
 
-    p_r_g = std::max(mol_frac_react * p_gas, 1.0e-3); //avoid illdefined log
+    p_r_g = std::max(mol_frac_react * p_gas, 1.0e-3); // avoid illdefined log
     setChemicalEquilibrium();
     const double dXdt = CaHydration();
     qR = (rho_up - rho_low) * dXdt;
 }
 
-//determine equilibrium temperature and pressure according to van't Hoff
+// determine equilibrium temperature and pressure according to van't Hoff
 void ReactionCaOH2::setChemicalEquilibrium()
 {
     X_D = (rho_s - rho_up - tol_rho)/(rho_low - rho_up - 2.0*tol_rho) ;
-    X_D = (X_D < 0.5) ? std::max(tol_l,X_D) : std::min(X_D,tol_u); //constrain to interval [tol_l;tol_u]
+    X_D = (X_D < 0.5) ? std::max(tol_l,X_D) : std::min(X_D,tol_u); // constrain to interval [tol_l;tol_u]
 
     X_H = 1.0 - X_D;
 
-    //calculate equilibrium
+    // calculate equilibrium
     // using the p_eq to calculate the T_eq - Clausius-Clapeyron
     T_eq = (reaction_enthalpy/R) / ((reaction_entropy/R) + std::log(p_r_g)); // unit of p in bar
-    //Alternative: Use T_s as T_eq and calculate p_eq - for Schaube kinetics
-    p_eq = exp((reaction_enthalpy/R)/T_s - (reaction_entropy/R));
+    // Alternative: Use T_s as T_eq and calculate p_eq - for Schaube kinetics
+    p_eq = std::exp((reaction_enthalpy/R)/T_s - (reaction_entropy/R));
 }
 
 

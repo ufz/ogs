@@ -63,4 +63,4 @@ newInstance(BaseLib::ConfigTree const& conf)
     return nullptr;
 }
 
-} // namespace Ads
+} // namespace Adsorption

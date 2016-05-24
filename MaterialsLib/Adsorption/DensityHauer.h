@@ -27,9 +27,9 @@ public:
 inline double rhoWaterHauer(const double T_Ads)
 {
     // data like in python script
-    const double T0 = 283.15, rho0 = rhoWaterDean(T0), alpha0 = 3.781e-4; //K; kg/m^3; 1/K
+    const double T0 = 283.15, rho0 = rhoWaterDean(T0), alpha0 = 3.781e-4; // K; kg/m^3; 1/K
 
-    return rho0 * (1. - alpha0 * (T_Ads-T0)); //in kg/m^3
+    return rho0 * (1. - alpha0 * (T_Ads-T0)); // in kg/m^3
 }
 
 }

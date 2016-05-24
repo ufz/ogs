@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include "BaseLib/ConfigTree.h"
+namespace BaseLib { class ConfigTree; }
 
 namespace Adsorption
 {
@@ -25,7 +25,7 @@ public:
     virtual double getReactionRate(const double p_Ads, const double T_Ads,
                                      const double M_Ads, const double loading) const = 0;
 
-    // TODO: get rid of
+    // TODO get rid of
     virtual double getEquilibriumLoading(const double, const double, const double) const {
         return -1.0;
     }

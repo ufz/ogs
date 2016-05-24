@@ -37,16 +37,12 @@ public:
 
     static double getLoading(const double rho_curr, const double rho_dry);
 
-// non-virtual members
     double getEquilibriumLoading(const double p_Ads, const double T_Ads, const double M_Ads)
     const override;
 
-// virtual members:
-    virtual ~AdsorptionReaction() = default;
-
     virtual double getEnthalpy(const double p_Ads, const double T_Ads, const double M_Ads) const override;
     virtual double getReactionRate(const double p_Ads, const double T_Ads,
-                                     const double M_Ads, const double loading) const override;
+                                   const double M_Ads, const double loading) const override;
     /**
      * @brief get_d_reaction_rate
      * @param p_Ads
@@ -66,7 +62,6 @@ protected:
     virtual double dCharacteristicCurve(const double A) const = 0;
 
 private:
-// non-virtual members
     double getPotential(const double p_Ads, const double T_Ads, const double M_Ads) const;
     double getEntropy(const double T_Ads, const double A) const;
 };
@@ -74,20 +69,9 @@ private:
 
 inline double curvePolyfrac(const double* coeffs, const double x)
 {
+    // TODO use Horner scheme
     return ( coeffs[0] + coeffs[2] * x + coeffs[4] * pow(x,2) + coeffs[6] * pow(x,3) )
             / ( 1.0 + coeffs[1] * x + coeffs[3] * pow(x,2) + coeffs[5] * pow(x,3) );
-
-    // Apparently, even pow and std::pow are different
-    // return ( coeffs[0] + coeffs[2] * x + coeffs[4] * std::pow(x,2) + coeffs[6] * std::pow(x,3) )
-    //         / ( 1.0 + coeffs[1] * x + coeffs[3] * std::pow(x,2) + coeffs[5] * std::pow(x,3) );
-
-    // Analytically the same, but numerically quite different
-    // return ( coeffs[0] + x * ( coeffs[2] + x * (coeffs[4] + x * coeffs[6] ) ) )
-    //         / ( 1.0 + x * ( coeffs[1] + x * (coeffs[3] + x * coeffs[5] ) ) );
-
-    // Analytically the same, but numerically quite different
-    // return ( coeffs[0] + x * coeffs[2] + x*x * coeffs[4] + x*x*x * coeffs[6] )
-    //        / ( 1.0 + x * coeffs[1] + x*x * coeffs[3] + x*x*x * coeffs[5] );
 }
 
 inline double dCurvePolyfrac(const double* coeffs, const double x)

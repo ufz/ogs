@@ -11,7 +11,7 @@
 #include "Adsorption.h"
 
 namespace {
-    const double k_rate = 6.0e-3; //to be specified
+    const double k_rate = 6.0e-3; // to be specified
 
     template <typename T>
     T square(const T& v)
@@ -26,23 +26,23 @@ namespace Adsorption
 //Saturation pressure for water used in Nunez
 double AdsorptionReaction::getEquilibriumVapourPressure(const double T_Ads)
 {
-    //critical T and p
-    const double Tc = 647.3; //K
-    const double pc = 221.2e5; //Pa
-    //dimensionless T
+    // critical T and p
+    const double Tc = 647.3; // K
+    const double pc = 221.2e5; // Pa
+    // dimensionless T
     const double Tr = T_Ads/Tc;
     const double theta = 1. - Tr;
-    //empirical constants
+    // empirical constants
     const double c[] = {-7.69123,-26.08023,-168.17065,64.23285,-118.96462,4.16717,20.97506,1.0e9,6.0};
     const double K[] = {c[0]*theta + c[1]*pow(theta,2) + c[2]*pow(theta,3) + c[3]*pow(theta,4) + c[4]*pow(theta,5),
                         1. + c[5]*theta + c[6]*pow(theta,2)};
 
     const double exponent = K[0]/(K[1]*Tr) - theta/(c[7]*pow(theta,2) + c[8]);
-    return pc * exp(exponent); //in Pa
+    return pc * exp(exponent); // in Pa
 }
 
-//Evaporation enthalpy of water from Nunez
-double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) //in kJ/kg
+// Evaporation enthalpy of water from Nunez
+double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) // in kJ/kg
 {
     T_Ads -= 273.15;
     if (T_Ads <= 10.){
@@ -64,14 +64,14 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads) //in kJ/kg
 }
 
 
-//evaluate specific heat capacity of adsorbate follwing Nunez
+// evaluate specific heat capacity of adsorbate follwing Nunez
 double AdsorptionReaction::getSpecificHeatCapacity(const double T_Ads)
 {
     const double c[] = {4.224,-3.716e-3,9.351e-5,-7.1786e-7,-9.1266e-9,2.69247e-10,-2.773104e-12,1.553177e-14,-4.982795e-17,8.578e-20,-6.12423e-23};
     double cp = 0.;
     for (unsigned i=0; i< sizeof(c)/sizeof(c[0]);i++)
         cp += c[i] * pow(T_Ads,i);
-    return cp; //kJ/(kg*K)
+    return cp; // kJ/(kg*K)
 }
 
 
@@ -97,15 +97,11 @@ double AdsorptionReaction::dMolarFraction(double xm, double M_this, double M_oth
 double AdsorptionReaction::getReactionRate(const double p_Ads, const double T_Ads,
                                      const double M_Ads, const double loading) const
 {
-    // const double k_rate = 3.0e-3; //to be specified
-
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
     double C_eq = getAdsorbateDensity(T_Ads) * characteristicCurve(A);
     if (C_eq < 0.0) C_eq = 0.0;
 
-    // return 0.0; // TODO [CL] for testing only
-
-    return k_rate * (C_eq - loading); //scaled with mass fraction
+    return k_rate * (C_eq - loading); // scaled with mass fraction
                                       // this the rate in terms of loading!
 }
 
@@ -132,14 +128,10 @@ void AdsorptionReaction::getDReactionRate(const double p_Ads, const double T_Ads
 }
 
 
-//Evaluate adsorbtion potential A
+// Evaluate adsorbtion potential A
 double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads, const double M_Ads) const
 {
-    double A = GAS_CONST * T_Ads * log(getEquilibriumVapourPressure(T_Ads)/p_Ads) / (M_Ads*1.e3); //in kJ/kg = J/g
-    if (A < 0.0) {
-        // vapour partial pressure > saturation pressure
-        // A = 0.0; // TODO [CL] debug output
-    }
+    double A = GAS_CONST * T_Ads * log(getEquilibriumVapourPressure(T_Ads)/p_Ads) / (M_Ads*1.e3); // in kJ/kg = J/g
     return A;
 }
 
@@ -150,7 +142,7 @@ double AdsorptionReaction::getLoading(const double rho_curr, const double rho_dr
 }
 
 
-//Calculate sorption entropy
+// Calculate sorption entropy
 double AdsorptionReaction::getEntropy(const double T_Ads, const double A) const
 {
     const double epsilon = 1.0e-8;
@@ -167,7 +159,6 @@ double AdsorptionReaction::getEntropy(const double T_Ads, const double A) const
         return 0.0;
     }
 
-    // const double dAdlnW = 2.0*epsilon/(log(characteristicCurve(A+epsilon)) - log(characteristicCurve(A-epsilon)));
     return dAdlnW * getAlphaT(T_Ads);
 }
 
@@ -178,13 +169,12 @@ double AdsorptionReaction::getEnthalpy(const double p_Ads, const double T_Ads, c
     // TODO [CL] consider using A as obtained from current loading (needs inverse CC A(W)) instead of p_Vapour, T_Vapour
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
 
-    // return 0.0; // TODO [CL] for testing only
     return (getEvaporationEnthalpy(T_Ads) + A - T_Ads * getEntropy(T_Ads,A))*1000.0; //in J/kg
 }
 
 
-double AdsorptionReaction::getEquilibriumLoading(const double p_Ads, const double T_Ads,
-                                           const double M_Ads) const
+double AdsorptionReaction::getEquilibriumLoading(
+        const double p_Ads, const double T_Ads, const double M_Ads) const
 {
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
     return getAdsorbateDensity(T_Ads) * characteristicCurve(A);

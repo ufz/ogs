@@ -35,15 +35,12 @@ double DensityConst::getAdsorbateDensity(const double /*T_Ads*/) const
     return rhoWaterHauer(150.0+273.15);
 }
 
-
-//Thermal expansivity model for water found in the works of Hauer
 double DensityConst::getAlphaT(const double /*T_Ads*/) const
 {
     return 0.0;
 }
 
-
-//Characteristic curve. Return W (A)
+// Characteristic curve. Return W (A)
 double DensityConst::characteristicCurve(const double A) const
 {
     double W = curvePolyfrac(c, A); //cm^3/g
@@ -52,7 +49,7 @@ double DensityConst::characteristicCurve(const double A) const
         W = 0.0; // TODO [CL] debug output
     }
 
-    return W/1.e3; //m^3/kg
+    return W/1.e3; // m^3/kg
 }
 
 double DensityConst::dCharacteristicCurve(const double A) const
