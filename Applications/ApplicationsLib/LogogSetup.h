@@ -14,6 +14,7 @@
 
 #include <map>
 #include <memory>
+#include <string>
 
 #include "BaseLib/LogogSimpleFormatter.h"
 
