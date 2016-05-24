@@ -76,6 +76,11 @@ public:
                   double param1, double param2, std::size_t param3,
                   std::vector<std::string>& selected_geometries);
 
+    GMSHInterface(GMSHInterface const&) = delete;
+    GMSHInterface(GMSHInterface &&) = delete;
+    GMSHInterface& operator=(GMSHInterface const&) = delete;
+    GMSHInterface& operator=(GMSHInterface &&) = delete;
+
     ~GMSHInterface();
 
     /**
