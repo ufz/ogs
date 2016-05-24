@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALSLIB_ADSORPTION_REACTION_H
+#define MATERIALSLIB_ADSORPTION_REACTION_H
 
 #include <memory>
 
@@ -34,3 +35,4 @@ public:
 };
 
 }
+#endif // MATERIALSLIB_ADSORPTION_REACTION_H

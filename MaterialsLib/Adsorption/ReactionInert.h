@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALSLIB_ADSORPTION_REACTIONINERT_H
+#define MATERIALSLIB_ADSORPTION_REACTIONINERT_H
 
 #include "Reaction.h"
 
@@ -33,3 +34,4 @@ public:
 };
 
 }
+#endif // MATERIALSLIB_ADSORPTION_REACTIONINERT_H

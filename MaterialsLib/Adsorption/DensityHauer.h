@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALSLIB_ADSORPTION_DENSITYHAUER_H
+#define MATERIALSLIB_ADSORPTION_DENSITYHAUER_H
 
 #include "Adsorption.h"
 #include "DensityCook.h"
@@ -33,3 +34,4 @@ inline double rhoWaterHauer(const double T_Ads)
 }
 
 }
+#endif // MATERIALSLIB_ADSORPTION_DENSITYHAUER_H

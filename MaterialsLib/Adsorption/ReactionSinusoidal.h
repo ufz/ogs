@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALSLIB_ADSORPTION_REACTIONSINUSOIDAL_H
+#define MATERIALSLIB_ADSORPTION_REACTIONSINUSOIDAL_H
 
 #include <logog/include/logog.hpp>
 
@@ -44,3 +45,4 @@ private:
 };
 
 }
+#endif // MATERIALSLIB_ADSORPTION_REACTIONSINUSOIDAL_H

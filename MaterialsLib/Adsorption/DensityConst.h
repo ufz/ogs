@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALSLIB_ADSORPTION_DENSITYCONST_H
+#define MATERIALSLIB_ADSORPTION_DENSITYCONST_H
 
 #include "Adsorption.h"
 
@@ -24,3 +25,4 @@ public:
 };
 
 }
+#endif // MATERIALSLIB_ADSORPTION_DENSITYCONST_H
