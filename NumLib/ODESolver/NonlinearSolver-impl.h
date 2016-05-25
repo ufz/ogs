@@ -70,6 +70,8 @@ solve(Vector &x)
         }
         else
         {
+            sys.applyKnownSolutions(x_new);
+
             switch(sys.postIteration(x_new))
             {
             case IterationResult::SUCCESS:
@@ -193,6 +195,7 @@ solve(Vector &x)
             auto& x_new =
                     MathLib::GlobalVectorProvider<Vector>::provider.getVector(x, _x_new_id);
             BLAS::axpy(x_new, -_alpha, minus_delta_x);
+            sys.applyKnownSolutions(x_new);
 
             switch(sys.postIteration(x_new))
             {
