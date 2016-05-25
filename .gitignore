@@ -11,3 +11,4 @@ tags
 # Conan package manager
 conanbuildinfo.cmake
 conaninfo.txt
+CMakeLists.txt.user

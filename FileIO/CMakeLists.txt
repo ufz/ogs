@@ -1,17 +1,10 @@
-set(SOURCES
-    CsvInterface.h
-    CsvInterface.cpp
-    GMSInterface.h
-    GMSInterface.cpp
-    GMSHInterface.h
-    GMSHInterface.cpp
-    PetrelInterface.h
-    PetrelInterface.cpp
-    TetGenInterface.h
-    TetGenInterface.cpp
-)
-if(Shapelib_FOUND)
-    list(APPEND SOURCES SHPInterface.h SHPInterface.cpp)
+GET_SOURCE_FILES(SOURCES_FileIO)
+set(SOURCES ${SOURCES_FileIO})
+if(NOT Shapelib_FOUND)
+    list(REMOVE_ITEM SOURCES SHPInterface.h SHPInterface.cpp)
+endif()
+if(NOT QT4_FOUND)
+    list(REMOVE_ITEM SOURCES FEFLOWInterface.h FEFLOWInterface.cpp)
 endif()
 
 GET_SOURCE_FILES(SOURCES_LEGACY Legacy)
@@ -25,7 +18,6 @@ set(SOURCES ${SOURCES} ${SOURCES_BASE_XML})
 GET_SOURCE_FILES(SOURCES_BOOST_XML XmlIO/Boost)
 set(SOURCES ${SOURCES} ${SOURCES_BOOST_XML})
 if(QT4_FOUND)
-    set(SOURCES ${SOURCES} FEFLOWInterface.h FEFLOWInterface.cpp)
     GET_SOURCE_FILES(SOURCES_QT_XML XmlIO/Qt)
     set(SOURCES ${SOURCES} ${SOURCES_QT_XML})
 endif()
