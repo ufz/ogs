@@ -100,6 +100,16 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     sortElementsInGridCells(sfc_mesh);
 }
 
+MathLib::Point3d const& MeshElementGrid::getMinPoint() const
+{
+    return _aabb.getMinPoint();
+}
+
+MathLib::Point3d const& MeshElementGrid::getMaxPoint() const
+{
+    return _aabb.getMaxPoint();
+}
+
 void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
 {
     for (auto const element : sfc_mesh.getElements()) {
@@ -141,6 +151,13 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
     }
 
     const std::size_t n_plane(_n_steps[0]*_n_steps[1]);
+
+    // If a node of an element is almost equal to the upper right point of the
+    // AABB the grid cell coordinates computed by getGridCellCoordintes() could
+    // be to large (due to numerical errors). The following lines ensure that
+    // the grid cell coordinates are in the valid range.
+    for (std::size_t k(0); k<3; ++k)
+        max[k] = std::min(_n_steps[k]-1, max[k]);
 
     // insert the element into the grid cells
     for (std::size_t i(min[0]); i<=max[0]; i++) {
