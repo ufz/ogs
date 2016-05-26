@@ -60,14 +60,15 @@
 #include "InSituLib/VtkMappedMeshSource.h"
 
 // FileIO includes
-#include "FileIO/FEFLOWInterface.h"
 #include "FileIO/GMSInterface.h"
+#include "MeshLib/IO/FEFLOW/FEFLOWMeshInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "FileIO/PetrelInterface.h"
 #include "FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "GeoLib/IO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
@@ -521,13 +522,15 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     {
         if (fi.suffix().toLower() == "fem") // FEFLOW model files
         {
-            FileIO::FEFLOWInterface feflowIO(&_project.getGEOObjects());
+            MeshLib::IO::FEFLOWMeshInterface feflowMeshIO;
             std::unique_ptr<MeshLib::Mesh> mesh(
-                feflowIO.readFEFLOWFile(fileName.toStdString()));
+                feflowMeshIO.readFEFLOWFile(fileName.toStdString()));
             if (mesh)
                 _meshModel->addMesh(std::move(mesh));
             else
                 OGSError::box("Failed to load a FEFLOW mesh.");
+            GeoLib::IO::FEFLOWGeoInterface feflowGeoIO;
+            feflowGeoIO.readFEFLOWFile(fileName.toStdString(), _project.getGEOObjects());
         }
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
 
