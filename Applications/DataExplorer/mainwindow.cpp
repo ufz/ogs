@@ -60,14 +60,14 @@
 #include "InSituLib/VtkMappedMeshSource.h"
 
 // FileIO includes
-#include "FileIO/GMSInterface.h"
+#include "GMSInterface.h"
 #include "MeshLib/IO/FEFLOW/FEFLOWMeshInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
-#include "FileIO/PetrelInterface.h"
-#include "FileIO/XmlIO/Qt/XmlGspInterface.h"
+#include "PetrelInterface.h"
+#include "XmlIO/Qt/XmlGspInterface.h"
 #include "GeoLib/IO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
