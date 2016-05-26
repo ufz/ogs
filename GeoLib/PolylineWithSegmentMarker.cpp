@@ -15,15 +15,10 @@
 #include "PolylineWithSegmentMarker.h"
 
 namespace GeoLib {
-
-PolylineWithSegmentMarker::PolylineWithSegmentMarker(GeoLib::Polyline const& polyline)
-    : GeoLib::Polyline(polyline)
+PolylineWithSegmentMarker::PolylineWithSegmentMarker(
+    GeoLib::Polyline const& polyline)
+    : GeoLib::Polyline(polyline), _marker(polyline.getNumberOfSegments(), false)
 {
-    const std::size_t n_pnts(getNumberOfPoints());
-    _marker.resize(n_pnts);
-    for (std::size_t k(0); k<n_pnts; k++) {
-        _marker[k] = false;
-    }
 }
 
 void PolylineWithSegmentMarker::markSegment(std::size_t seg_num, bool mark_val)
