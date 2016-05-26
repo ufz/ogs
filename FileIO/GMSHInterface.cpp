@@ -245,14 +245,14 @@ GMSHInterface::readElement(std::ifstream &in,
     case 1: {
         readNodeIDs(in, 2, node_ids, id_map);
         // edge_nodes array will be deleted from Line object
-        MeshLib::Node** edge_nodes = new MeshLib::Node*[2];
+        auto edge_nodes = new MeshLib::Node*[2];
         edge_nodes[0] = nodes[node_ids[0]];
         edge_nodes[1] = nodes[node_ids[1]];
         return std::make_pair(new MeshLib::Line(edge_nodes), mat_id);
     }
     case 2: {
         readNodeIDs(in, 3, node_ids, id_map);
-        MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
+        auto tri_nodes = new MeshLib::Node*[3];
         tri_nodes[0] = nodes[node_ids[2]];
         tri_nodes[1] = nodes[node_ids[1]];
         tri_nodes[2] = nodes[node_ids[0]];
@@ -260,35 +260,35 @@ GMSHInterface::readElement(std::ifstream &in,
     }
     case 3: {
         readNodeIDs(in, 4, node_ids, id_map);
-        MeshLib::Node** quad_nodes = new MeshLib::Node*[4];
+        auto quad_nodes = new MeshLib::Node*[4];
         for (unsigned k(0); k < 4; k++)
             quad_nodes[k] = nodes[node_ids[k]];
         return std::make_pair(new MeshLib::Quad(quad_nodes), mat_id);
     }
     case 4: {
         readNodeIDs(in, 4, node_ids, id_map);
-        MeshLib::Node** tet_nodes = new MeshLib::Node*[5];
+        auto tet_nodes = new MeshLib::Node*[5];
         for (unsigned k(0); k < 4; k++)
             tet_nodes[k] = nodes[node_ids[k]];
         return std::make_pair(new MeshLib::Tet(tet_nodes), mat_id);
     }
     case 5: {
         readNodeIDs(in, 8, node_ids, id_map);
-        MeshLib::Node** hex_nodes = new MeshLib::Node*[8];
+        auto hex_nodes = new MeshLib::Node*[8];
         for (unsigned k(0); k < 8; k++)
             hex_nodes[k] = nodes[node_ids[k]];
         return std::make_pair(new MeshLib::Hex(hex_nodes), mat_id);
     }
     case 6: {
         readNodeIDs(in, 6, node_ids, id_map);
-        MeshLib::Node** prism_nodes = new MeshLib::Node*[6];
+        auto prism_nodes = new MeshLib::Node*[6];
         for (unsigned k(0); k < 6; k++)
             prism_nodes[k] = nodes[node_ids[k]];
         return std::make_pair(new MeshLib::Prism(prism_nodes), mat_id);
     }
     case 7: {
         readNodeIDs(in, 5, node_ids, id_map);
-        MeshLib::Node** pyramid_nodes = new MeshLib::Node*[5];
+        auto pyramid_nodes = new MeshLib::Node*[5];
         for (unsigned k(0); k < 5; k++)
             pyramid_nodes[k] = nodes[node_ids[k]];
         return std::make_pair(new MeshLib::Pyramid(pyramid_nodes), mat_id);
@@ -312,9 +312,7 @@ bool GMSHInterface::write()
 #endif
     _out << "\n\n";
 
-    if(writeGMSHInputFile(_out) > 0)
-        return false;
-    return true;
+    return writeGMSHInputFile(_out) <= 0;
 }
 
 int GMSHInterface::writeGMSHInputFile(std::ostream& out)
@@ -391,8 +389,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         _polygon_tree_list.size());
 
     // *** Mark in each polygon tree the segments shared by two polygons.
-    for (auto it(_polygon_tree_list.begin()); it != _polygon_tree_list.end(); it++) {
-        (*it)->markSharedSegments();
+    for (auto* polygon_tree : _polygon_tree_list)
+    {
+        polygon_tree->markSharedSegments();
     }
 
     // *** insert stations and polylines (except polygons) in the appropriate object of
@@ -433,7 +432,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** init mesh density strategies
-    for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+    for (auto it(_polygon_tree_list.begin());
         it != _polygon_tree_list.end(); ++it) {
         (*it)->initMeshDensityStrategy();
     }
@@ -444,7 +443,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     for (std::size_t k(0); k<n_merged_pnts; k++) {
         _gmsh_pnts[k] = nullptr;
     }
-    for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
+    for (auto it(_polygon_tree_list.begin());
         it != _polygon_tree_list.end(); ++it) {
         (*it)->createGMSHPoints(_gmsh_pnts);
     }
@@ -452,13 +451,13 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     // *** finally write data :-)
     writePoints(out);
     std::size_t pnt_id_offset(_gmsh_pnts.size());
-    for (std::list<GMSH::GMSHPolygonTree*>::iterator it(_polygon_tree_list.begin());
-        it != _polygon_tree_list.end(); ++it) {
-        (*it)->writeLineLoop(_n_lines, _n_plane_sfc, out);
-        (*it)->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);
-        (*it)->writeLineConstraints(_n_lines, _n_plane_sfc-1, out);
-        (*it)->writeStations(pnt_id_offset, _n_plane_sfc-1, out);
-        (*it)->writeAdditionalPointData(pnt_id_offset, _n_plane_sfc-1, out);
+    for (auto* polygon_tree : _polygon_tree_list)
+    {
+        polygon_tree->writeLineLoop(_n_lines, _n_plane_sfc, out);
+        polygon_tree->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);
+        polygon_tree->writeLineConstraints(_n_lines, _n_plane_sfc-1, out);
+        polygon_tree->writeStations(pnt_id_offset, _n_plane_sfc-1, out);
+        polygon_tree->writeAdditionalPointData(pnt_id_offset, _n_plane_sfc-1, out);
     }
 
     if (! _keep_preprocessed_geometry) {
