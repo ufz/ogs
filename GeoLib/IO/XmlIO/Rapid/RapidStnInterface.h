@@ -26,7 +26,9 @@ namespace GeoLib {
     class StationBorehole;
 }
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 
 /**
@@ -47,6 +49,7 @@ private:
     static void readStratigraphy(const rapidxml::xml_node<>* strat_root, GeoLib::StationBorehole* borehole);
 };
 
-}
+} // IO
+} // GeoLib
 
 #endif // RAPIDXMLINTERFACE_H
