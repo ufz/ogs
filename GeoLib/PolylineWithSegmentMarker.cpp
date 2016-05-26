@@ -25,21 +25,28 @@ void PolylineWithSegmentMarker::markSegment(std::size_t seg_num, bool mark_val)
 {
     _marker[seg_num] = mark_val;
 }
+
 bool PolylineWithSegmentMarker::isSegmentMarked(std::size_t seg_num) const
 {
     return _marker[seg_num];
 }
 
-void PolylineWithSegmentMarker::addPoint(std::size_t pnt_id)
+bool PolylineWithSegmentMarker::addPoint(std::size_t pnt_id)
 {
-    Polyline::addPoint(pnt_id);
-    _marker.push_back(false);
+    if (Polyline::addPoint(pnt_id)) {
+        _marker.push_back(false);
+        return true;
+    }
+    return false;
 }
 
-void PolylineWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
+bool PolylineWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
 {
-    Polyline::insertPoint(pos, pnt_id);
-    _marker.insert(_marker.begin()+pos, _marker[pos]);
+    if (Polyline::insertPoint(pos, pnt_id)) {
+        _marker.insert(_marker.begin()+pos, _marker[pos]);
+        return true;
+    }
+    return false;
 }
 
 } // end GeoLib
