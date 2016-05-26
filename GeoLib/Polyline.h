@@ -118,7 +118,7 @@ public:
      * addition of the point would result in empty line segment \c false is
      * returned.
      */
-    bool addPoint(std::size_t pnt_id);
+    virtual bool addPoint(std::size_t pnt_id);
 
     /**
      * Method inserts a new point (that have to be inside the _ply_pnts vector)
@@ -131,7 +131,7 @@ public:
      * @return true if the point could be inserted, else false (if empty line
      * segments would be created).
      */
-    bool insertPoint(std::size_t pos, std::size_t pnt_id);
+    virtual bool insertPoint(std::size_t pos, std::size_t pnt_id);
 
     /**
      * Method removes a point from the polyline. The connecting line segments will
