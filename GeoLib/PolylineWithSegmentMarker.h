@@ -23,9 +23,9 @@ namespace GeoLib {
  * This is a polyline with the possibility to mark some segments. Thus class
  * PolylineWithSegmentMarker is derived from class Polyline.
  */
-class PolylineWithSegmentMarker: public GeoLib::Polyline {
+class PolylineWithSegmentMarker final : public GeoLib::Polyline {
 public:
-    PolylineWithSegmentMarker(GeoLib::Polyline const& polyline);
+    explicit PolylineWithSegmentMarker(GeoLib::Polyline const& polyline);
 
     /**
      * Method marks the segment (default mark is true).
