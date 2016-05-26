@@ -240,24 +240,6 @@ TEST(Math, CheckInterface_EigenLis)
 }
 #endif
 
-#ifdef USE_LIS
-TEST(Math, CheckInterface_Lis)
-{
-    // set solver options using Boost property tree
-    boost::property_tree::ptree t_root;
-    boost::property_tree::ptree t_solver;
-    t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "",
-        BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-
-    using IntType = MathLib::LisMatrix::IndexType;
-
-    MathLib::LisMatrix A(Example1<IntType>::dim_eqs);
-    checkLinearSolverInterface<MathLib::LisMatrix, MathLib::LisVector,
-                               MathLib::LisLinearSolver, IntType>(A, conf);
-}
-#endif
-
 #ifdef USE_PETSC
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
 {
