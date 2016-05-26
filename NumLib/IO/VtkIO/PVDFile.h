@@ -13,7 +13,9 @@
 #include <string>
 #include <vector>
 
-namespace FileIO
+namespace NumLib
+{
+namespace IO
 {
 
 /*! Writes a basic PVD file for use with Paraview.
@@ -33,6 +35,7 @@ private:
     std::vector<std::pair<double, std::string>> _datasets; // a vector of (time, VTU file name)
 };
 
-} // namespace FileIO
+} // namespace IO
+} // namespace NumLib
 
 #endif // FILEIO_VTK_PVDFILE_H
