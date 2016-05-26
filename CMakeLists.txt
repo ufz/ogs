@@ -73,7 +73,7 @@ option(OGS_USE_PETSC "Use PETSc routines" OFF)
 option(OGS_USE_MPI "Use MPI" OFF)
 
 # Eigen
-option(OGS_USE_EIGEN "Use EIGEN for local matrix and vector" ON)
+option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
 option(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Use dynamically allocated shape matrices" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
@@ -134,15 +134,16 @@ if(OGS_USE_MPI)
     add_definitions(-DUSE_MPI)
 endif()
 
+add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
+if (EIGEN_NO_DEBUG)
+    add_definitions(-DEIGEN_NO_DEBUG)
+endif()
+if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+    add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+endif()
+
 if(OGS_USE_EIGEN)
-    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_ZERO) # TODO check if needed
     add_definitions(-DOGS_USE_EIGEN)
-    if (EIGEN_NO_DEBUG)
-        add_definitions(-DEIGEN_NO_DEBUG)
-    endif()
-    if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-        add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-    endif()
 endif()
 
 if (OGS_USE_EIGENLIS)
@@ -175,10 +176,8 @@ else()
 endif()
 
 include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
-if(OGS_USE_EIGEN)
-    include(scripts/cmake/ExternalProjectEigen.cmake)
-    include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-endif()
+include(scripts/cmake/ExternalProjectEigen.cmake)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 # Add subdirectories with the projects
 add_subdirectory( ThirdParty )

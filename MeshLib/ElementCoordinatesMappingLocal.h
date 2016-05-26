@@ -11,11 +11,7 @@
 
 #include <vector>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#else
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#endif
 
 #include "MathLib/Point3d.h"
 
@@ -28,11 +24,7 @@ namespace MeshLib
 
 namespace MeshLib
 {
-#ifdef OGS_USE_EIGEN
 typedef Eigen::Matrix<double, 3u, 3u, Eigen::RowMajor> RotationMatrix;
-#else
-typedef MathLib::DenseMatrix<double> RotationMatrix;
-#endif
 
 /**
  * This class maps node coordinates on intrinsic coordinates of the given element.

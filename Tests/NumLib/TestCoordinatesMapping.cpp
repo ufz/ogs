@@ -12,9 +12,7 @@
 #include <algorithm>
 #include <vector>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
@@ -52,12 +50,10 @@ public:
     static const unsigned e_nnodes = T_TEST::e_nnodes;
     static const unsigned global_dim = T_TEST::global_dim;
     // Matrix types
-#ifdef OGS_USE_EIGEN
     typedef Eigen::Matrix<double, e_nnodes, 1> NodalVector;
     typedef Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor> DimNodalMatrix;
     typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
     typedef Eigen::Matrix<double, global_dim, e_nnodes, Eigen::RowMajor> GlobalDimNodalMatrix;
-#endif
     // Shape data type
     typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     // Natural coordinates mapping type
@@ -282,12 +278,10 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 {
-#ifdef OGS_USE_EIGEN
     typedef Eigen::Matrix<double, 2, 1> NodalVector;
     typedef Eigen::Matrix<double, 1, 2, Eigen::RowMajor> DimNodalMatrix;
     typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> DimMatrix;
     typedef Eigen::Matrix<double, 2, 2, Eigen::RowMajor> GlobalDimNodalMatrix;
-#endif
     // Shape data type
     typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;

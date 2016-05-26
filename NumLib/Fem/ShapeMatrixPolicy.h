@@ -12,7 +12,6 @@
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Dense>
 
 namespace detail
@@ -118,8 +117,6 @@ using ShapeMatrixPolicyType = EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalD
 
 const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 0;
 #endif
-
-#endif  // OGS_USE_EIGEN
 
 //static_assert(std::is_class<ShapeMatrixPolicyType<>::value,
         //"ShapeMatrixPolicyType was not defined.");

@@ -8,9 +8,7 @@
 
 #include <numeric>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 #include "gtest/gtest.h"
 
@@ -360,7 +358,6 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
     }
 
     // *** add a 3rd property ***
-#ifdef OGS_USE_EIGEN
     std::string const& prop_name_3("ItemwiseEigenMatrixProperties");
     // check if the property is already assigned to the mesh
     ASSERT_FALSE(mesh->getProperties().hasPropertyVector(prop_name_3));
@@ -403,7 +400,6 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
             }
         }
     }
-#endif
 }
 
 TEST_F(MeshLibProperties, CopyConstructor)

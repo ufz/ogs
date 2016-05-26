@@ -11,9 +11,7 @@
 
 #include <gtest/gtest.h>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 
@@ -22,7 +20,6 @@
 using namespace NumLib;
 
 
-#ifdef OGS_USE_EIGEN
 TEST(NumLib, FemShapeMatricesWithEigen)
 {
     const static unsigned dim = 2;
@@ -127,6 +124,3 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     EXPECT_TRUE(shape.invJ.isZero());
     EXPECT_EQ(0.0, shape.detJ);
 }
-#endif
-
-

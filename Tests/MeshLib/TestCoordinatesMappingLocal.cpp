@@ -14,9 +14,7 @@
 #include <cmath>
 #include <memory>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"

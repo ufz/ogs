@@ -86,13 +86,7 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     }
 
     detail::getRotationMatrixToGlobal(element_dimension, global_dimension, _points, _matR2global);
-#ifdef OGS_USE_EIGEN
     detail::rotateToLocal(_matR2global.transpose(), _points);
-#else
-    RotationMatrix* m(_matR2global.transpose());
-    detail::rotateToLocal(*m, _points);
-    delete m;
-#endif
 }
 
 } // MeshLib
