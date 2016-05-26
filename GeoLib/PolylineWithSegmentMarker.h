@@ -26,7 +26,7 @@ namespace GeoLib {
 class PolylineWithSegmentMarker: public GeoLib::Polyline {
 public:
     PolylineWithSegmentMarker(GeoLib::Polyline const& polyline);
-    virtual ~PolylineWithSegmentMarker();
+
     /**
      * Method marks the segment (default mark is true).
      * @param seg_num the segment number that should be marked

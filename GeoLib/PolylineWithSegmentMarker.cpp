@@ -26,10 +26,6 @@ PolylineWithSegmentMarker::PolylineWithSegmentMarker(GeoLib::Polyline const& pol
     }
 }
 
-PolylineWithSegmentMarker::~PolylineWithSegmentMarker()
-{}
-
-
 void PolylineWithSegmentMarker::markSegment(std::size_t seg_num, bool mark_val)
 {
     _marker[seg_num] = mark_val;
