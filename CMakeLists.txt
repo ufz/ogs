@@ -213,9 +213,6 @@ if( OGS_BUILD_TESTS AND NOT IS_SUBPROJECT )
     else()
         add_subdirectory( SimpleTests/MatrixTests )
         add_subdirectory( SimpleTests/MeshTests )
-        if(NOT MSVC AND BLAS_FOUND AND LAPACK_FOUND)
-            add_subdirectory( SimpleTests/SolverTests )
-        endif()
     endif()
 endif() # OGS_BUILD_TESTS
 
