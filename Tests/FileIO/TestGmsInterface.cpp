@@ -13,7 +13,7 @@
 #include "gtest/gtest.h"
 
 #include "BaseLib/BuildInfo.h"
-#include "FileIO/GMSInterface.h"
+#include "Applications/FileIO/GMSInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 

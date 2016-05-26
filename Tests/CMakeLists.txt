@@ -32,6 +32,7 @@ set_target_properties(testrunner PROPERTIES FOLDER Testing)
 
 target_link_libraries(testrunner
     ApplicationsLib
+    ApplicationsFileIO
     AssemblerLib
     FileIO
     GTest
