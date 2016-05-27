@@ -54,27 +54,40 @@ enum class MeshDensityAlgorithm {
 /**
  * \brief Reads and writes GMSH-files to and from OGS data structures.
  */
-class GMSHInterface : public BaseLib::IO::Writer
+class GMSHInterface final : public BaseLib::IO::Writer
 {
 public:
-
     /**
-     *
-     * @param geo_objs reference tp instance of class GEOObject that maintains the geometries.
-     *     The instance is used for preparation geometries for writing them to the gmsh file format.
-     * @param include_stations_as_constraints switch to enable writing stations as constraints
-     * @param mesh_density_algorithm one of the mesh density algorithms (\@see enum MeshDensityAlgorithm)
+     * @param geo_objs reference to instance of class GEOObject that maintains
+     * the geometries.
+     *     The instance is used for preparation geometries for writing them to
+     * the gmsh file format.
+     * @param include_stations_as_constraints switch to enable writing stations
+     * as constraints
+     * @param mesh_density_algorithm one of the mesh density algorithms (\@see
+     * enum MeshDensityAlgorithm)
      * @param param1 parameter that can be used for the mesh density algorithm
      * @param param2 parameter that can be used for the mesh density algorithm
      * @param param3 parameter that can be used for the mesh density algorithm
-     * @param selected_geometries vector of names of geometries, that should be employed for mesh generation.
-     * @return
+     * @param selected_geometries vector of names of geometries, that should be
+     * employed for mesh generation.
+     * @param rotate if the value of the parameter is true then the input points
+     * will be rotated on the \f$x\f$-\f$y\f$-plane, else the input points will
+     * be (orthogonal) projected to the \f$x\f$-\f$y\f$-plane.
+     * @param keep_preprocessed_geometry keep the pre-processed geometry, useful
+     * for debugging the mesh creation
      */
-    GMSHInterface (GeoLib::GEOObjects & geo_objs,
-                    bool include_stations_as_constraints,
-                    GMSH::MeshDensityAlgorithm mesh_density_algorithm,
-                    double param1, double param2, std::size_t param3,
-                    std::vector<std::string> & selected_geometries);
+    GMSHInterface(GeoLib::GEOObjects& geo_objs,
+                  bool include_stations_as_constraints,
+                  GMSH::MeshDensityAlgorithm mesh_density_algorithm,
+                  double param1, double param2, std::size_t param3,
+                  std::vector<std::string>& selected_geometries,
+                  bool rotate = false, bool keep_preprocessed_geometry = false);
+
+    GMSHInterface(GMSHInterface const&) = delete;
+    GMSHInterface(GMSHInterface &&) = delete;
+    GMSHInterface& operator=(GMSHInterface const&) = delete;
+    GMSHInterface& operator=(GMSHInterface &&) = delete;
 
     ~GMSHInterface();
 
@@ -91,20 +104,13 @@ public:
      */
     static MeshLib::Mesh* readGMSHMesh (std::string const& fname);
 
-    /**
-     * Export script for writing geo files.
-     * To do this, all geometries currently loaded are merged, the merged result is written to a
-     * file and then the merged geometry is removed again.
-     * @return error code, i.e. 0 = okay, 1 = geo_objects is empty, 2 = error while merging, 3 = error writing file
-     */
-    static int writeGeoFile(GeoLib::GEOObjects &geo_objects, std::string const& file_name);
-
 protected:
     bool write();
 
 private:
     /// Reads a mesh element from the input stream
-    static std::pair<MeshLib::Element*, int> readElement(std::ifstream &in,
+    static std::pair<MeshLib::Element*, int> readElement(
+        std::ifstream& in,
         std::vector<MeshLib::Node*> const& nodes,
         std::map<unsigned, unsigned> const& id_map);
 
@@ -112,10 +118,15 @@ private:
      * 1. get and merge data from _geo_objs
      * 2. compute topological hierarchy
      * @param out
+     * @todo activate error codes and hand them on to the Writer class,
+     * i.e. 0 = okay, 1 = geo_objects is empty, 2 = error while merging,
+     * 3 = error writing file
      */
-    void writeGMSHInputFile(std::ostream & out);
+    int writeGMSHInputFile(std::ostream & out);
 
-    static void readNodeIDs(std::ifstream &in, unsigned n_nodes, std::vector<unsigned> &node_ids, std::map<unsigned, unsigned> const& id_map);
+    static void readNodeIDs(std::ifstream& in, unsigned n_nodes,
+                            std::vector<unsigned>& node_ids,
+                            std::map<unsigned, unsigned> const& id_map);
 
     void writePoints(std::ostream& out) const;
 
@@ -132,7 +143,12 @@ private:
     GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
-    MathLib::DenseMatrix<double> _inverse_rot_mat = MathLib::DenseMatrix<double>(3,3);
+    MathLib::DenseMatrix<double> _inverse_rot_mat =
+        MathLib::DenseMatrix<double>(3, 3, 0);
+    /// Signals if the input points should be rotated or projected to the
+    /// \f$x\f$-\f$y\f$-plane
+    bool _rotate = false;
+    bool _keep_preprocessed_geometry = true;
 };
 }
 

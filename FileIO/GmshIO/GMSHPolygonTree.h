@@ -1,7 +1,7 @@
 /**
  * \file
  * \author Thomas Fischer
- * \date   Mar 27m 2012
+ * \date   Mar 27 2012
  * \brief  Definition of the GMSHPolygonTree class.
  *
  * \copyright
@@ -29,6 +29,7 @@ namespace GeoLib
     class GEOObjects;
     class Polygon;
     class PolylineWithSegmentMarker;
+    class PolygonWithSegmentMarker;
 }
 
 namespace FileIO
@@ -37,10 +38,13 @@ namespace GMSH {
 
 class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
-    GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree * parent,
+    GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon, GMSHPolygonTree * parent,
                     GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
                     GMSHMeshDensityStrategy * mesh_density_strategy);
     virtual ~GMSHPolygonTree();
+
+    /** Mark the segments shared by several polygons. */
+    void markSharedSegments();
 
     /**
      * If the station point is inside the polygon, the method inserts the station into
@@ -86,6 +90,9 @@ public:
 private:
     void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
     void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
+    void checkIntersectionsSegmentExistingPolylines(
+        GeoLib::PolylineWithSegmentMarker* ply,
+        GeoLib::Polyline::SegmentIterator const& segment_iterator);
 
     GeoLib::GEOObjects & _geo_objs;
     std::string const& _geo_name;

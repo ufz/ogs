@@ -17,16 +17,19 @@
 #include "GMSHFixedMeshDensity.h"
 #include "GMSHAdaptiveMeshDensity.h"
 
+#include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
+#include "GeoLib/PolygonWithSegmentMarker.h"
 
 namespace FileIO
 {
 namespace GMSH {
 
-GMSHPolygonTree::GMSHPolygonTree(GeoLib::Polygon* polygon, GMSHPolygonTree* parent,
+GMSHPolygonTree::GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon,
+                GMSHPolygonTree* parent,
                 GeoLib::GEOObjects &geo_objs, std::string const& geo_name,
                 GMSHMeshDensityStrategy * mesh_density_strategy) :
     GeoLib::SimplePolygonTree(polygon, parent), _geo_objs(geo_objs), _geo_name(geo_name),
@@ -43,6 +46,25 @@ GMSHPolygonTree::~GMSHPolygonTree()
     }
     // member of GeoLib::SimplePolygonTree, but the ownership is not transmitted
     delete _node_polygon;
+}
+
+void GMSHPolygonTree::markSharedSegments()
+{
+    if (_children.empty())
+        return;
+
+    if (_parent == nullptr)
+        return;
+
+    for (auto it(_children.begin()); it != _children.end(); it++) {
+        std::size_t const n_pnts((*it)->getPolygon()->getNumberOfPoints());
+        for (std::size_t k(1); k<n_pnts; k++) {
+            if (GeoLib::containsEdge(*(_parent->getPolygon()),
+                _node_polygon->getPointID(k-1),
+                _node_polygon->getPointID(k)))
+            static_cast<GeoLib::PolygonWithSegmentMarker*>(_node_polygon)->markSegment(k, true);
+        }
+    }
 }
 
 bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
@@ -67,80 +89,134 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
     }
 }
 
-void GMSHPolygonTree::insertPolyline (GeoLib::PolylineWithSegmentMarker * ply)
+void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker * ply)
 {
-    if (_node_polygon->isPartOfPolylineInPolygon(*ply)) {
-        // check children
-        for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin());
-            it != _children.end(); ++it) {
-            dynamic_cast<GMSHPolygonTree*>((*it))->insertPolyline (ply);
+    if (!_node_polygon->isPartOfPolylineInPolygon(*ply))
+        return;
+
+    // check if polyline segments are inside of the polygon, intersect the
+    // polygon or are part of the boundary of the polygon
+    for (auto * polygon_tree : _children) {
+        dynamic_cast<GMSHPolygonTree*>(polygon_tree)->insertPolyline(ply);
+    }
+
+    // calculate possible intersection points between the node polygon
+    // (_node_polygon) and the given polyline ply
+    // pay attention: loop bound is not fix!
+    GeoLib::Point tmp_pnt;
+    GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
+    for (auto segment_it(ply->begin()); segment_it != ply->end();
+         ++segment_it)
+    {
+        if (ply->isSegmentMarked(segment_it.getSegmentNumber()))
+            continue;
+
+        if (_node_polygon->containsSegment(*segment_it)) {
+            ply->markSegment(segment_it.getSegmentNumber(), true);
+            continue;
         }
-        _plys.push_back(ply);
 
-        // calculate possible intersection points
-        // pay attention: loop bound is not fix!
-        std::size_t n_segments (ply->getNumberOfPoints()-1);
-        GeoLib::Point tmp_pnt;
-        GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
-        for (std::size_t k(0); k<n_segments; k++) {
-            if (! ply->isSegmentMarked(k)) {
-                std::size_t seg_num(0);
-                GeoLib::Point *intersection_pnt(new GeoLib::Point);
-                while (_node_polygon->getNextIntersectionPointPolygonLine(
-                    {const_cast<GeoLib::Point*>(ply->getPoint(k)),
-                     const_cast<GeoLib::Point*>(ply->getPoint(k + 1))},
-                    *intersection_pnt, seg_num))
-                {
-                    // insert the intersection point to point vector of GEOObjects instance
-                    const std::size_t pnt_vec_size(pnt_vec.size());
-                    // appendPoints deletes an already existing point
-                    const std::size_t pnt_id(pnt_vec.push_back(intersection_pnt));
-                    if (pnt_vec_size < pnt_vec.size()) { // case: new point
-                        // modify the polygon
-                        _node_polygon->insertPoint(seg_num+1, pnt_id);
-                        // modify the polyline
-                        ply->insertPoint(k+1, pnt_id);
-                        n_segments++;
-                    } else { // case: existing point
-                        // check if point id is within the polygon
-                        if (! _node_polygon->isPointIDInPolyline(pnt_id)) {
-                            _node_polygon->insertPoint(seg_num+1, pnt_id);
-                        }
-                        // check if point id is in polyline
-                        if (! ply->isPointIDInPolyline(pnt_id)) {
-                            ply->insertPoint(k+1, pnt_id);
-                            n_segments++;
-                        }
-                    }
-
-                    std::size_t tmp_seg_num(seg_num+1);
-                    if (!_node_polygon->getNextIntersectionPointPolygonLine(
-                            {const_cast<GeoLib::Point*>(ply->getPoint(k)),
-                             const_cast<GeoLib::Point*>(ply->getPoint(k + 1))},
-                            tmp_pnt, tmp_seg_num))
-                    {
-                        // check a point of the segment except the end points
-                        for (std::size_t i(0); i<3; i++) {
-                            tmp_pnt[i] = ((*(ply->getPoint(k)))[i] + (*(ply->getPoint(k+1)))[i]) / 2;
-                        }
-                        if (_node_polygon->isPntInPolygon(tmp_pnt)) {
-                            ply->markSegment(k, true);
-                            // insert line segment as constraint
-                            _gmsh_lines_for_constraints.push_back(new GMSHLine(ply->getPointID(k), ply->getPointID(k+1)));
-                        }
-                    }
-                    intersection_pnt = new GeoLib::Point;
-                    seg_num++;
+        std::size_t seg_num(0);
+        GeoLib::Point intersection_pnt;
+        while (_node_polygon->getNextIntersectionPointPolygonLine(
+            *segment_it, intersection_pnt, seg_num))
+        {
+            // insert the intersection point to point vector of GEOObjects instance
+            const std::size_t pnt_vec_size(pnt_vec.size());
+            std::size_t pnt_id(
+                pnt_vec.push_back(new GeoLib::Point(intersection_pnt)));
+            if (pnt_vec_size < pnt_vec.size()) { // case: new point
+                // modify the polygon
+                _node_polygon->insertPoint(seg_num+1, pnt_id);
+                // modify the polyline
+                ply->insertPoint(segment_it.getSegmentNumber(), pnt_id);
+            } else { // case: existing point
+                // check if point id is within the polygon
+                if (! _node_polygon->isPointIDInPolyline(pnt_id)) {
+                    _node_polygon->insertPoint(seg_num+1, pnt_id);
                 }
 
+                // check if point id is in polyline
+                if (! ply->isPointIDInPolyline(pnt_id)) {
+                    ply->insertPoint(segment_it.getSegmentNumber()+1, pnt_id);
+                }
+            }
+
+            std::size_t tmp_seg_num(seg_num+1);
+            if (!_node_polygon->getNextIntersectionPointPolygonLine(
+                    *segment_it, tmp_pnt, tmp_seg_num))
+            {
                 // check a point of the segment except the end points
                 for (std::size_t i(0); i<3; i++) {
-                    tmp_pnt[i] = ((*(ply->getPoint(k)))[i] + (*(ply->getPoint(k+1)))[i]) / 2;
+                    tmp_pnt[i] = ((*segment_it).getBeginPoint()[i] +
+                                  (*segment_it).getEndPoint()[i]) /
+                                 2;
                 }
                 if (_node_polygon->isPntInPolygon(tmp_pnt)) {
-                    ply->markSegment(k, true);
+                    ply->markSegment(segment_it.getSegmentNumber(), true);
                     // insert line segment as constraint
-                    _gmsh_lines_for_constraints.push_back(new GMSHLine(ply->getPointID(k), ply->getPointID(k+1)));
+                    _gmsh_lines_for_constraints.push_back(
+                        new GMSHLine((*segment_it).getBeginPoint().getID(),
+                                     (*segment_it).getEndPoint().getID()));
+                }
+            }
+            seg_num++;
+
+            // check a point of the segment except the end points
+            for (std::size_t i(0); i<3; i++) {
+                tmp_pnt[i] = ((*segment_it).getBeginPoint()[i] +
+                              (*segment_it).getEndPoint()[i]) /
+                             2;
+            }
+
+            checkIntersectionsSegmentExistingPolylines(ply, segment_it);
+
+            if (_node_polygon->isPntInPolygon(tmp_pnt)) {
+                ply->markSegment(segment_it.getSegmentNumber(), true);
+                // insert line segment as constraint
+                _gmsh_lines_for_constraints.push_back(
+                    new GMSHLine((*segment_it).getBeginPoint().getID(),
+                                 (*segment_it).getEndPoint().getID()));
+            }
+        }
+    }
+
+    _plys.push_back(ply);
+}
+
+void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
+    GeoLib::PolylineWithSegmentMarker* ply,
+    GeoLib::Polyline::SegmentIterator const& seg_it)
+{
+    std::size_t const ply_segment_number(seg_it.getSegmentNumber());
+    for(GeoLib::PolylineWithSegmentMarker *const p : _plys) {
+        std::size_t n_segments(p->getNumberOfSegments());
+        GeoLib::PointVec & pnt_vec(*(_geo_objs.getPointVecObj(_geo_name)));
+        for (auto seg_it_p(p->begin()); seg_it_p != p->end(); ++seg_it_p) {
+            GeoLib::Point s; // intersection point
+            if (GeoLib::lineSegmentIntersect(*seg_it, *seg_it_p, s))
+            {
+                const std::size_t pnt_vec_size(pnt_vec.size());
+                // point id of new point in GEOObjects instance
+                const std::size_t pnt_id(pnt_vec.push_back(new GeoLib::Point(s)));
+                if (pnt_vec_size < pnt_vec.size()) { // case: new point
+                    // modify polyline already in this node
+                    p->insertPoint(seg_it_p.getSegmentNumber()+1, pnt_id);
+                    n_segments++;
+                    // modify polyline
+                    ply->insertPoint(ply_segment_number+1, pnt_id);
+                } else { // case: point exists already in geometry
+                    // check if point is not alread in polyline p
+                    std::size_t const k(seg_it_p.getSegmentNumber());
+                    if (p->getPointID(k) != pnt_id && p->getPointID(k+1) != pnt_id) {
+                        p->insertPoint(k+1, pnt_id);
+                        n_segments++;
+                    }
+                    // check if point is not already in polyline ply
+                    if (ply->getPointID(ply_segment_number) != pnt_id
+                            && ply->getPointID(ply_segment_number+1) != pnt_id) {
+                        ply->insertPoint(ply_segment_number+1, pnt_id);
+                    }
                 }
             }
         }
@@ -179,10 +255,14 @@ void GMSHPolygonTree::initMeshDensityStrategy()
 void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const
 {
     const std::size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
-    for (std::size_t k(0); k<n_pnts_polygon; k++) {
+    for (std::size_t k(0); k<n_pnts_polygon-1; k++) {
         const std::size_t id (_node_polygon->getPointID(k));
         GeoLib::Point const*const pnt(_node_polygon->getPoint(k));
-        gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+        // if this point was already part of another polyline
+        if (gmsh_pnts[id] != nullptr)
+            continue;
+        gmsh_pnts[id] = new GMSHPoint(
+            *pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
     }
 
     const std::size_t n_plys(_plys.size());
@@ -191,8 +271,13 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & g
         for (std::size_t j(0); j<n_pnts_in_ply; j++) {
             if (_node_polygon->isPntInPolygon(*(_plys[k]->getPoint(j)))) {
                 const std::size_t id (_plys[k]->getPointID(j));
+                // if this point was already part of another polyline
+                if (gmsh_pnts[id] != nullptr)
+                    continue;
                 GeoLib::Point const*const pnt(_plys[k]->getPoint(j));
-                gmsh_pnts[id] = new GMSHPoint(*pnt, id, _mesh_density_strategy->getMeshDensityAtPoint(pnt));
+                gmsh_pnts[id] = new GMSHPoint(
+                    *pnt, id,
+                    _mesh_density_strategy->getMeshDensityAtPoint(pnt));
             }
         }
     }
@@ -222,17 +307,25 @@ void GMSHPolygonTree::writeLineLoop(std::size_t &line_offset, std::size_t &sfc_o
     sfc_offset++;
 }
 
-void GMSHPolygonTree::writeLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const
+void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
+                                           std::size_t sfc_number,
+                                           std::ostream& out) const
 {
-    const std::size_t n_plys (_plys.size());
-    for (std::size_t j(0); j<n_plys; j++) {
-        const std::size_t n_pnts(_plys[j]->getNumberOfPoints());
-        std::size_t first_pnt_id(_plys[j]->getPointID(0)), second_pnt_id;
-        for (std::size_t k(1); k<n_pnts; k++) {
-            second_pnt_id = _plys[j]->getPointID(k);
-            if (_plys[j]->isSegmentMarked(k-1) && _node_polygon->isPntInPolygon(*(_plys[j]->getPoint(k)))) {
-                out << "Line(" << line_offset + k-1 << ") = {" << first_pnt_id << "," << second_pnt_id << "};\n";
-                out << "Line { " << line_offset+k-1 << " } In Surface { " << sfc_number << " };\n";
+    for (auto polyline : _plys)
+    {
+        const std::size_t n_pnts(polyline->getNumberOfPoints());
+        std::size_t first_pnt_id(polyline->getPointID(0)), second_pnt_id;
+        for (std::size_t k(1); k < n_pnts; k++)
+        {
+            second_pnt_id = polyline->getPointID(k);
+            if (polyline->isSegmentMarked(k - 1) &&
+                _node_polygon->isPntInPolygon(*(polyline->getPoint(k))) &&
+                !GeoLib::containsEdge(*_node_polygon, first_pnt_id, second_pnt_id))
+            {
+                out << "Line(" << line_offset + k - 1 << ") = {" << first_pnt_id
+                    << "," << second_pnt_id << "};\n";
+                out << "Line { " << line_offset + k - 1 << " } In Surface { "
+                    << sfc_number << " };\n";
             }
             first_pnt_id = second_pnt_id;
         }
@@ -313,11 +406,6 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t & pnt_id_offset, std:
 
 void GMSHPolygonTree::getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts)
 {
-    const std::size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
-    for (std::size_t k(0); k<n_pnts_polygon; k++) {
-        pnts.push_back(_node_polygon->getPoint(k));
-    }
-
     for (std::list<SimplePolygonTree*>::const_iterator it (_children.begin()); it != _children.end(); ++it) {
         dynamic_cast<GMSHPolygonTree*>((*it))->getPointsFromSubPolygons(pnts);
     }

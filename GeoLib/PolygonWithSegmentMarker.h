@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Apr 3, 2012
- * \brief  Definition of the PolylineWithSegmentMarker class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,20 +8,17 @@
  *
  */
 
-#ifndef POLYLINEWITHSEGMENTMARKER_H_
-#define POLYLINEWITHSEGMENTMARKER_H_
+#ifndef POLYGONWITHSEGMENTMARKER_H_
+#define POLYGONWITHSEGMENTMARKER_H_
 
-#include "Polyline.h"
+#include "Polygon.h"
 
 namespace GeoLib {
 
-/**
- * This is a polyline with the possibility to mark some segments. Thus class
- * PolylineWithSegmentMarker is derived from class Polyline.
- */
-class PolylineWithSegmentMarker final : public GeoLib::Polyline {
+class PolygonWithSegmentMarker final : public GeoLib::Polygon
+{
 public:
-    explicit PolylineWithSegmentMarker(GeoLib::Polyline const& polyline);
+    explicit PolygonWithSegmentMarker(GeoLib::Polyline const& polyline);
 
     /**
      * Method marks the segment (default mark is true).
@@ -33,6 +26,7 @@ public:
      * @param mark_val the value of the flag (true or false)
      */
     void markSegment(std::size_t seg_num, bool mark_val = true);
+
     /**
      * Method returns the value of the mark for the given segment.
      * @param seg_num segment number
@@ -48,8 +42,8 @@ public:
     virtual bool addPoint(std::size_t pnt_id) override;
 
     /**
-     * Method calls the @see Polyline::insertPoint() and initializes the inserted line segment with the same
-     * value the previous line segment had.
+     * Method calls the @see Polyline::insertPoint() and initializes the inserted line
+     * segment with the same value the previous line segment had.
      * @see Polyline::insertPoint()
      */
     virtual bool insertPoint(std::size_t pos, std::size_t pnt_id) override;
@@ -58,6 +52,6 @@ private:
     std::vector<bool> _marker;
 };
 
-}
+} // end namespace GeoLib
 
-#endif /* POLYLINEWITHSEGMENTMARKER_H_ */
+#endif /* POLYGONWITHSEGMENTMARKER_H_ */
