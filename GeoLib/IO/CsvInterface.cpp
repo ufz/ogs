@@ -18,7 +18,8 @@
 
 #include "GeoLib/Point.h"
 
-namespace FileIO {
+namespace GeoLib {
+namespace IO {
 
 int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::vector<GeoLib::Point*> &points)
@@ -181,4 +182,5 @@ std::size_t CsvInterface::findColumn(std::string const& line, char delim, std::s
     return count;
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib

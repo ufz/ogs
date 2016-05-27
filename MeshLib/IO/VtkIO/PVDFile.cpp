@@ -14,7 +14,9 @@
 #include <limits>
 #include <logog/include/logog.hpp>
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
 void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
@@ -40,4 +42,5 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
     fh << "  </Collection>\n</VTKFile>\n";
 }
 
-}
+} // IO
+} // MeshLib

@@ -2,8 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- OpenGeoSysSTN schema; initial implementation: Karsten Rink, 2010-07-19 -->
-  
-  
+
+
   <!-- element definition -->
   <xs:element name="name" type="xs:string" />
   <xs:element name="value" type="xs:decimal" />
@@ -59,7 +59,7 @@
           <xs:attribute ref="y"  use="required" />
           <xs:attribute ref="z"  use="required" />
         </xs:complexType>
-      </xs:element>  
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -75,26 +75,26 @@
             <xs:element name="station" type="stationType" maxOccurs="unbounded" />
           </xs:sequence>
         </xs:complexType>
-      </xs:element> 
+      </xs:element>
 
-      <!-- case 2: list of boreholes -->        
+      <!-- case 2: list of boreholes -->
       <xs:element name="boreholes">
         <xs:complexType>
           <xs:sequence>
             <xs:element name="borehole" type="boreholeType" maxOccurs="unbounded" />
           </xs:sequence>
         </xs:complexType>
-      </xs:element> 
+      </xs:element>
 
     </xs:choice>
   </xs:group>
 
 
-  <!-- definition of file content -->    
+  <!-- definition of file content -->
   <xs:element name="OpenGeoSysSTN">
     <xs:complexType>
       <xs:sequence>
-      
+
         <!-- definition of stationlist -->
         <xs:element name="stationlist" minOccurs="1" maxOccurs="unbounded">
           <xs:complexType>
@@ -105,11 +105,11 @@
               <!-- other list features can be inserted here -->
             </xs:sequence>
           </xs:complexType>
-        </xs:element> 
+        </xs:element>
         <!-- end of "stationlist" -->
-  
+
       </xs:sequence>
-    </xs:complexType>  
-  </xs:element> 
+    </xs:complexType>
+  </xs:element>
 
 </xs:schema>

@@ -7,13 +7,15 @@
  *
  */
 
-#ifndef FILEIO_VTK_PVDFILE_H
-#define FILEIO_VTK_PVDFILE_H
+#ifndef MESHLIB_VTKIO_PVDFILE_H
+#define MESHLIB_VTKIO_PVDFILE_H
 
 #include <string>
 #include <vector>
 
-namespace FileIO
+namespace MeshLib
+{
+namespace IO
 {
 
 /*! Writes a basic PVD file for use with Paraview.
@@ -33,6 +35,7 @@ private:
     std::vector<std::pair<double, std::string>> _datasets; // a vector of (time, VTU file name)
 };
 
-} // namespace FileIO
+} // namespace IO
+} // namespace MeshLib
 
-#endif // FILEIO_VTK_PVDFILE_H
+#endif // MESHLIB_VTKIO_PVDFILE_H

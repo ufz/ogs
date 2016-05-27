@@ -22,7 +22,9 @@
 #include "GeoLib/Station.h"
 #include "GeoLib/StationBorehole.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 
 std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::string &fileName)
@@ -230,4 +232,5 @@ void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root
     }
 }
 
-}
+} // IO
+} // GeoLib
