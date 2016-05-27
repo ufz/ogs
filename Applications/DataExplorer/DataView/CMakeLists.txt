@@ -104,6 +104,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/../Base
     ${CMAKE_CURRENT_BINARY_DIR}/DiagramView
     ${CMAKE_CURRENT_BINARY_DIR}/StratView
+    ${SOURCE_DIR_REL}/Applications/FileIO
     ${SOURCE_DIR_REL}/BaseLib
     ${SOURCE_DIR_REL}/MathLib
     ${SOURCE_DIR_REL}/GeoLib
@@ -132,6 +133,7 @@ add_library(QtDataView
 
 target_link_libraries(QtDataView Qt4::QtCore Qt4::QtGui)
 target_link_libraries(QtDataView
+    ApplicationsFileIO
     FileIO
     DataHolderLib
     QtBase

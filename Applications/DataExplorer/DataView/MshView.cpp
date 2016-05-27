@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QSettings>
 
-#include "FileIO/SHPInterface.h"
+#include "SHPInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 

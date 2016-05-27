@@ -8,7 +8,7 @@
       <xs:enumeration value="PETSc" />
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="NonLinearType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Newton" />
@@ -35,7 +35,7 @@
             <xs:attribute name="Library" type="LibraryType" use="required" />
           </xs:complexType>
         </xs:element>
-          
+
         <!-- definition of temporal discretization -->
         <xs:element name="IterationScheme" maxOccurs="1">
           <xs:complexType>
@@ -46,7 +46,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        
+
         <!-- definition of convergence criteria -->
         <xs:element name="Convergence" minOccurs="0" maxOccurs="1">
       <xs:complexType>
@@ -57,9 +57,9 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        
+
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-    
+
 </xs:schema>

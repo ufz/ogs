@@ -43,8 +43,8 @@
     </xs:sequence>
     <xs:attribute name="geometry" type="xs:string" use="required" />
   </xs:complexType>
-  
-  
+
+
   <!-- definition of "extCondType" as an extension of "CondType" -->
   <xs:complexType name="extCondType">
     <xs:complexContent>
@@ -56,7 +56,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
 
   <!-- definition of file content -->
   <xs:element name="OpenGeoSysCond">
@@ -72,7 +72,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-          
+
         <!-- definition of boundary conditions -->
         <xs:element name="BoundaryConditions" minOccurs="0" maxOccurs="1">
           <xs:complexType>
@@ -90,9 +90,9 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-      
+
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-    
+
 </xs:schema>
