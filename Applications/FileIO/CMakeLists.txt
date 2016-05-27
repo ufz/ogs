@@ -41,7 +41,7 @@ if(TARGET Boost)
     add_dependencies(ApplicationsFileIO Boost)
 endif()
 
-file(GLOB XSD_FILES . *.xsd)
+file(GLOB XSD_FILES . XmlIO/*.xsd)
 if(APPLE AND OGS_BUILD_GUI)
     install(FILES ${XSD_FILES} DESTINATION ${CMAKE_BINARY_DIR}/_CPack_Packages/Darwin/DragNDrop/${CPACK_PACKAGE_FILE_NAME}/ALL_IN_ONE/DataExplorer.app/Contents/MacOS COMPONENT ogs_gui)
 else()
