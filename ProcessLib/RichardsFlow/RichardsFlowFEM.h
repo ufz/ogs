@@ -115,7 +115,7 @@ public:
 			NumLib::shapeFunctionInterpolate(local_x, sm.N, P_int_pt);
 			Pc = -P_int_pt;
 			//Sw = getSwbyPc_van(Pc);
-			Pc = 2700;
+			
 			Sw = interP_Pc.getValue(Pc);//read from Pc-S curve
 										//dSwdPc = getdSwdPc_van(Pc);
 		    _saturation[0][ip] = Sw;
