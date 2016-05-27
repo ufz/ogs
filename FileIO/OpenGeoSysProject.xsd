@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!-- OpenGeoSysProject schema; initial implementation: Karsten Rink, 2010-08-20 -->
-  
+
   <!-- object containing just a source file definition -->
   <xs:complexType name="projectElement">
     <xs:sequence>
@@ -20,7 +20,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- msh-object with optional geometry- and texture-reference -->
   <xs:complexType name="mshElement">
     <xs:complexContent>
@@ -32,9 +32,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
-  
-  <!-- definition of file content -->    
+
+
+  <!-- definition of file content -->
   <xs:element name="OpenGeoSysProject">
     <xs:complexType>
       <xs:sequence>
@@ -52,7 +52,7 @@
     <xs:element name="fct" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
     <xs:element name="stn" type="projectElement" minOccurs="0" maxOccurs="unbounded" />
       </xs:sequence>
-    </xs:complexType>  
-  </xs:element> 
+    </xs:complexType>
+  </xs:element>
 
 </xs:schema>
