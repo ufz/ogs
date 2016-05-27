@@ -11,9 +11,8 @@
 
 #include <vector>
 #include <cmath>
-#ifdef OGS_USE_EIGEN
+
 #include <Eigen/Eigen>
-#endif
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/CoordinateSystem.h"
@@ -53,7 +52,6 @@ struct TestCase
 };
 
 typedef ::testing::Types<
-#ifdef OGS_USE_EIGEN
     TestCase<TestFeHEX8, EigenDynamicShapeMatrixPolicy>,
     TestCase<TestFeLINE2, EigenDynamicShapeMatrixPolicy>,
     TestCase<TestFeLINE2Y, EigenDynamicShapeMatrixPolicy>,
@@ -73,7 +71,6 @@ typedef ::testing::Types<
     TestCase<TestFeQUAD4, EigenFixedShapeMatrixPolicy>,
     TestCase<TestFeTET4, EigenFixedShapeMatrixPolicy>,
     TestCase<TestFeTRI3, EigenFixedShapeMatrixPolicy>
-#endif
     > TestTypes;
 }
 
@@ -160,9 +157,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     MeshElementType* mesh_element;
 
  public:
-#ifdef OGS_USE_EIGEN
    EIGEN_MAKE_ALIGNED_OPERATOR_NEW // required to use fixed size Eigen matrices
-#endif
 }; // NumLibFemIsoTest
 
 template <class T>

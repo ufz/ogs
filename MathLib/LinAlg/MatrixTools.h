@@ -12,15 +12,12 @@
 
 #include <type_traits>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 
 namespace MathLib
 {
 
-#ifdef OGS_USE_EIGEN
 namespace details
 {
 
@@ -115,9 +112,6 @@ void inverse(Eigen::MatrixBase<Derived> const& mat, double det_mat, Eigen::Matri
     using MatrixType = Eigen::MatrixBase<Derived>;
     return details::Inverse<MatrixType, MatrixType::SizeAtCompileTime>::eval(mat, det_mat, result);
 }
-
-
-#endif
 
 } // namespace
 

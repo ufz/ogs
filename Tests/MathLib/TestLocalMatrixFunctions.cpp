@@ -8,15 +8,12 @@
 
 #include <gtest/gtest.h>
 
-#ifdef OGS_USE_EIGEN
 #include <Eigen/Eigen>
-#endif
 
 #include "MathLib/LinAlg/MatrixTools.h"
 
 #include "Tests/TestTools.h"
 
-#ifdef OGS_USE_EIGEN
 TEST(MathLib, LocalMatrixDeterminantInverse_Eigen)
 {
     Eigen::Matrix3d fMat, fInv;
@@ -34,4 +31,3 @@ TEST(MathLib, LocalMatrixDeterminantInverse_Eigen)
     ASSERT_NEAR(fMat_det, dMat_det, std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(fInv.data(), dInv.data(), fInv.size(), std::numeric_limits<double>::epsilon());
 }
-#endif
