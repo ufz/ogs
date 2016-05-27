@@ -26,8 +26,34 @@ public:
 
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
 
-    virtual void addToGlobal(AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
+    virtual void addToGlobal(
+        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
+
+    virtual void assembleJacobian(double const /*t*/,
+                                  std::vector<double> const& /*local_x*/)
+    {
+        ERR(
+            "assembleJacobian function is not implemented in the local "
+            "assembler.");
+        std::abort();
+    }
+
+    virtual void addJacobianToGlobal(AssemblerLib::LocalToGlobalIndexMap::
+                                         RowColumnIndices const& /*indices*/,
+                                     GlobalMatrix& /*Jac*/) const
+    {
+        ERR(
+            "addJacobianToGlobal function is not implemented in the local "
+            "assembler.");
+        std::abort();
+    }
+
+    virtual void preTimestep(std::vector<double> const& /*local_x*/,
+                             double const /*t*/, double const /*delta_t*/)
+    {
+    }
+    virtual void postTimestep(std::vector<double> const& /*local_x*/) {}
 };
 
 } // namespace ProcessLib
