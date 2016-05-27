@@ -143,7 +143,7 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    std::vector<ShapeMatrices> _shape_matrices;
+	std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>> _shape_matrices;
     GroundwaterFlowProcessData const& _process_data;
 
     NodalMatrixType _localA;

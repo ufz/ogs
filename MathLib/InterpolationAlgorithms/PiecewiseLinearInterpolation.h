@@ -58,6 +58,16 @@ public:
      */
     double getValue(double pnt_to_interpolate) const;
 
+	double getSlope(double pnt_to_interpolate) const;
+
+	double GetCurveDerivative(double pnt_to_interpolate) const;
+
+	/*
+	* return the derivative of the capillary pressure / saturation curve
+	* if invert=true return dSw/dPc 
+	* else if invert =false return dPc/dSw
+	*/
+	double PressureSaturationDependency(double pnt_to_interpolate, bool invert) const;
 private:
     std::vector<double> _supp_pnts;
     std::vector<double> _values_at_supp_pnts;

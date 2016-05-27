@@ -47,9 +47,11 @@ solve(Vector &x)
 
     BLAS::copy(x, x_new); // set initial guess, TODO save the copy
 
+    //static unsigned unique_iteration_count = 0:
+
+
     unsigned iteration=1;
-    for (; iteration<=_maxiter; ++iteration)
-    {
+    for (; iteration<=_maxiter; ++iteration)    {
         sys.preIteration(iteration, x);
 
         sys.assembleMatricesPicard(x);
@@ -61,6 +63,13 @@ solve(Vector &x)
 
         // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
         // std::cout << "rhs:\n" << rhs << "\n\n";
+
+		//A.write("A_" + std::to_string(iteration));
+		//rhs.write("rhs_" + std::to_string(iteration));
+
+		//++unique_iteration_count;
+			
+		//A.write("global_A_" + std::to_string(unique_iteration_count));
 
         bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
 

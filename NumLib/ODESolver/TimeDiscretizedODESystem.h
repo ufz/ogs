@@ -374,10 +374,17 @@ public:
     void preIteration(const unsigned iter, Vector const& x) override
     {
         _ode.preIteration(iter, x);
-    }
+		//x.write("b_");
+    
+	
+	}
 
     IterationResult postIteration(Vector const& x) override
     {
+		auto const t = _time_disc.getCurrentTime();
+		//_M->write("M_" + std::to_string(t));
+		//_K->write("K_" + std::to_string(t));
+		//_b->write("b_" + std::to_string(t));
         return _ode.postIteration(x);
     }
 
