@@ -7,13 +7,13 @@
  *
  */
 
-#ifndef FILEIO_VTK_PVDFILE_H
-#define FILEIO_VTK_PVDFILE_H
+#ifndef MESHLIB_VTKIO_PVDFILE_H
+#define MESHLIB_VTKIO_PVDFILE_H
 
 #include <string>
 #include <vector>
 
-namespace NumLib
+namespace MeshLib
 {
 namespace IO
 {
@@ -36,6 +36,6 @@ private:
 };
 
 } // namespace IO
-} // namespace NumLib
+} // namespace MeshLib
 
-#endif // FILEIO_VTK_PVDFILE_H
+#endif // MESHLIB_VTKIO_PVDFILE_H

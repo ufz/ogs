@@ -11,7 +11,7 @@
 #define PROCESSLIB_OUTPUT_H
 
 #include "BaseLib/ConfigTree.h"
-#include "NumLib/IO/VtkIO/PVDFile.h"
+#include "MeshLib/IO/VtkIO/PVDFile.h"
 #include "Process.h"
 
 namespace ProcessLib
@@ -78,7 +78,7 @@ private:
         {}
 
         const unsigned process_index;
-        NumLib::IO::PVDFile pvd_file;
+        MeshLib::IO::PVDFile pvd_file;
     };
 
     Output(std::string const& prefix)

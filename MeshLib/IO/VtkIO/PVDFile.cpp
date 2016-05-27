@@ -14,7 +14,7 @@
 #include <limits>
 #include <logog/include/logog.hpp>
 
-namespace NumLib
+namespace MeshLib
 {
 namespace IO
 {
@@ -43,4 +43,4 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 }
 
 } // IO
-} // NumLib
+} // MeshLib
