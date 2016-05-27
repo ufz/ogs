@@ -32,6 +32,7 @@ std::unique_ptr<Reaction>
 Reaction::
 newInstance(BaseLib::ConfigTree const& conf)
 {
+    //! \ogs_file_param{materials__adsorption__reaction__type}
     auto const type = conf.getConfParam<std::string>("type");
 
     if (type == "Z13XBF")
