@@ -37,20 +37,6 @@
     using LinearSolverType = MathLib::EigenLisLinearSolver;
     }
 
-#elif defined(USE_LIS)
-
-    #include "MathLib/LinAlg/Lis/LisMatrix.h"
-    #include "MathLib/LinAlg/Lis/LisVector.h"
-    #include "MathLib/LinAlg/Lis/LisLinearSolver.h"
-
-namespace detail
-{
-    using GlobalVectorType = MathLib::LisVector;
-    using GlobalMatrixType = MathLib::LisMatrix;
-
-    using LinearSolverType = MathLib::LisLinearSolver;
-}
-
 #elif defined(USE_PETSC)
     #include "MathLib/LinAlg/PETSc/PETScVector.h"
     #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
