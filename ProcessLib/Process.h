@@ -372,6 +372,7 @@ Parameter<ParameterArgs...>& findParameter(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     // Find parameter name in process config.
+    //! \ogs_file_special
     auto const name = process_config.getConfParam<std::string>(tag);
 
     // Find corresponding parameter by name.

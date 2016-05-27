@@ -231,6 +231,7 @@ template<typename Matrix, typename Vector>
 std::unique_ptr<UncoupledProcessesTimeLoop<Matrix, Vector> >
 createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 {
+    //! \ogs_file_param{prj__time_stepping__type}
     auto const type = conf.peekConfParam<std::string>("type");
 
     std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;

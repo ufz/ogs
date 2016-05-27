@@ -48,8 +48,10 @@ public:
         : BoundaryConditionConfig(geometry)
     {
         DBUG("Constructing NeumannBcConfig from config.");
+        //! \ogs_file_param{boundary_condition__type}
         config.checkConfParam("type", "UniformNeumann");
 
+        //! \ogs_file_param{boundary_condition__UniformNeumann__value}
         double const value = config.getConfParam<double>("value");
         DBUG("Using value %g", value);
 

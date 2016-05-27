@@ -50,13 +50,18 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
 {
     std::unique_ptr<Output> out{ new Output{
         BaseLib::joinPaths(output_directory,
-                           config.getConfParam<std::string>("prefix"))}};
+            //! \ogs_file_param{prj__output__prefix}
+            config.getConfParam<std::string>("prefix"))}};
 
+    //! \ogs_file_param{prj__output__timesteps}
     if (auto const timesteps = config.getConfSubtreeOptional("timesteps"))
     {
+        //! \ogs_file_param{prj__output__timesteps__pair}
         for (auto pair : timesteps->getConfSubtreeList("pair"))
         {
+            //! \ogs_file_param{prj__output__timesteps__pair__repeat}
             auto repeat     = pair.getConfParam<unsigned>("repeat");
+            //! \ogs_file_param{prj__output__timesteps__pair__each_steps}
             auto each_steps = pair.getConfParam<unsigned>("each_steps");
 
             assert(repeat != 0 && each_steps != 0);

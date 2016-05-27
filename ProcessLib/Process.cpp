@@ -16,6 +16,7 @@ ProcessVariable& findProcessVariable(
     BaseLib::ConfigTree const& pv_config, std::string const& tag)
 {
     // Find process variable name in process config.
+    //! \ogs_file_special
     std::string const name = pv_config.getConfParam<std::string>(tag);
 
         // Find corresponding variable by name.
@@ -49,6 +50,7 @@ findProcessVariables(
     std::vector<std::reference_wrapper<ProcessVariable>> vars;
     vars.reserve(tag_names.size());
 
+    //! \ogs_file_param{process__process_variables}
     auto const pv_conf = process_config.getConfSubtree("process_variables");
 
     for (auto const& tag : tag_names) {
