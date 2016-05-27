@@ -24,7 +24,7 @@ template<typename ShapeFunction, typename ShapeMatricesType, typename Integratio
 std::vector<typename ShapeMatricesType::ShapeMatrices, Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
 initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
 {
-	std::vector<typename ShapeMatricesType::ShapeMatrices, Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>> shape_matrices;
+    std::vector<typename ShapeMatricesType::ShapeMatrices, Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>> shape_matrices;
 
     using FemType = NumLib::TemplateIsoparametric<
         ShapeFunction, ShapeMatricesType>;
