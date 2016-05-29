@@ -7,7 +7,6 @@
  */
 
 #include <ctime>
-#include <iostream>
 #include <iterator>
 #include "gtest/gtest.h"
 

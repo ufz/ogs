@@ -15,7 +15,6 @@
 #include "MemWatch.h"
 
 #if !defined(WIN32) && !defined(__APPLE__) && !defined(__MINGW32__)
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>

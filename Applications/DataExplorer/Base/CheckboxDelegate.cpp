@@ -21,8 +21,6 @@
 #include <QPainter>
 #include <QStyleOptionButton>
 
-#include <iostream>
-
 CheckboxDelegate::CheckboxDelegate(QObject* parent)
     : QItemDelegate(parent)
 {

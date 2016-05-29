@@ -15,7 +15,6 @@
 #include "ElementQualityMetric.h"
 
 #include <cmath>
-#include <iostream>
 
 #include "GeoLib/Point.h"
 #include "MeshLib/Node.h"

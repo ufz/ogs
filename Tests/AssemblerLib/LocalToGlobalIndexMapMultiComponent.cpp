@@ -23,8 +23,6 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
-#include <iostream>
-
 namespace AL = AssemblerLib;
 namespace MeL = MeshLib;
 namespace MGTL = MeshGeoToolsLib;

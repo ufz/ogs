@@ -15,7 +15,6 @@
 #include <QFileDialog>
 #include <QMenu>
 #include <QSettings>
-#include <iostream>
 
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"

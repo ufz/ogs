@@ -15,8 +15,6 @@
 // ** INCLUDES **
 #include "VtkOsgConverter.h"
 
-#include <iostream>
-
 #include <vtkActor.h>
 #include <vtkDataSetMapper.h>
 #include <vtkGenericDataObjectReader.h>

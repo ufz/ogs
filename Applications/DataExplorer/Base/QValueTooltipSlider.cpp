@@ -19,8 +19,6 @@
 #include <QString>
 #include <QToolTip>
 
-#include <iostream>
-
 QValueTooltipSlider::QValueTooltipSlider(QWidget* parent)
     : QSlider(parent)
 {

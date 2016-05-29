@@ -14,7 +14,6 @@
 
 // STL
 #include <fstream>
-#include <iostream>
 #include <vector>
 
 #include <tclap/CmdLine.h>
