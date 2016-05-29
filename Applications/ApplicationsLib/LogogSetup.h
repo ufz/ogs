@@ -30,7 +30,7 @@ public:
     {
         LOGOG_INITIALIZE();
         logog_cout = std::unique_ptr<logog::Cout>(new logog::Cout);
-        SetFormatter(std::unique_ptr<BaseLib::LogogSimpleFormatter>
+        setFormatter(std::unique_ptr<BaseLib::LogogSimpleFormatter>
             (new BaseLib::LogogSimpleFormatter));
     }
 
@@ -42,18 +42,18 @@ public:
         LOGOG_SHUTDOWN();
     }
 
-    void SetFormatter(std::unique_ptr<logog::Formatter>&& formatter)
+    void setFormatter(std::unique_ptr<logog::Formatter>&& formatter)
     {
         fmt = std::move(formatter);
         logog_cout->SetFormatter(*fmt);
     }
 
-    void SetLevel(LOGOG_LEVEL_TYPE level)
+    void setLevel(LOGOG_LEVEL_TYPE level)
     {
         logog::SetDefaultLevel(level);
     }
 
-    void SetLevel(std::string const & level)
+    void setLevel(std::string const & level)
     {
         std::map<std::string, LOGOG_LEVEL_TYPE> foo =
         {
@@ -71,7 +71,7 @@ public:
 
         //LOGOG_LEVEL_TYPE level_type;
         if(foo.find(level) != foo.end())
-            SetLevel(foo[level]);
+            setLevel(foo[level]);
         else
         {
             ERR("%s is not a valid log level! Aborting.", level.c_str());
