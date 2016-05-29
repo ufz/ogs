@@ -66,14 +66,22 @@ int main (int argc, char* argv[])
 
     if (argc < 3)
     {
-        std::cout << "Moves mesh nodes and connected elements either by a given value or based on a list." << std::endl;
-        std::cout << std::endl;
-        std::cout << "Usage: " << argv[0] << " <msh-file.msh> <keyword> [<value1>] [<value2>]" << std::endl;
-        std::cout << "Available keywords:" << std::endl;
+        INFO(
+            "Moves mesh nodes and connected elements either by a given value "
+            "or based on a list.\n");
+        INFO("Usage: %s <msh-file.msh> <keyword> [<value1>] [<value2>]",
+             argv[0]);
+        INFO("Available keywords:");
         //for (std::size_t i=0; i<keywords.size(); i++)
-        std::cout << "\t" << "-ALL <value1> <value2> : changes the elevation of all mesh nodes by <value2> in direction <value1> [x,y,z]." << std::endl;
-        std::cout << "\t" << "-MESH <value1> <value2> : changes the elevation of mesh nodes based on a second mesh <value1> with a search range of <value2>." << std::endl;
-        std::cout << "\t" << "-LOWPASS : applies a lowpass filter over node elevation using directly connected nodes." << std::endl;
+        INFO(
+            "\t-ALL <value1> <value2> : changes the elevation of all mesh "
+            "nodes by <value2> in direction <value1> [x,y,z].");
+        INFO(
+            "\t-MESH <value1> <value2> : changes the elevation of mesh nodes "
+            "based on a second mesh <value1> with a search range of <value2>.");
+        INFO(
+            "\t-LOWPASS : applies a lowpass filter over node elevation using "
+            "directly connected nodes.");
         return -1;
     }
 
@@ -84,8 +92,8 @@ int main (int argc, char* argv[])
 
     if (msh_name.substr(msh_name.length()-4, 4).compare(".msh") != 0)
     {
-        std::cout << "Error: Parameter 1 should be a msh-file" << std::endl;
-        std::cout << "Usage: " << argv[0] << " <msh-file.gml> <keyword> <value>" << std::endl;
+        ERR("Error: Parameter 1 should be a msh-file.");
+        INFO("Usage: %s <msh-file.gml> <keyword> <value>", argv[0]);
         return -1;
     }
 
@@ -99,9 +107,9 @@ int main (int argc, char* argv[])
 
     if (!is_keyword)
     {
-        std::cout << "Keyword not recognised. Available keywords:" << std::endl;
-        for (std::size_t i=0; i<keywords.size(); i++)
-            std::cout << keywords[i] << std::endl;
+        ERR("Keyword not recognised. Available keywords:");
+        for (auto const& keyword : keywords)
+            INFO("\t%s", keyword.c_str());
         return -1;
     }
 
@@ -116,13 +124,14 @@ int main (int argc, char* argv[])
     {
         if (argc < 5)
         {
-            std::cout << "Missing parameter..." << std::endl;
+            ERR("Missing parameter...");
             return -1;
         }
         const std::string dir(argv[3]);
         unsigned idx = (dir.compare("x") == 0) ? 0 : (dir.compare("y") == 0) ? 1 : 2;
         const double value(strtod(argv[4],0));
-        std::cout << "Moving all mesh nodes by " << value << " in direction " << idx << " (" << dir << ")..." << std::endl;
+        INFO("Moving all mesh nodes by %g in direction %d (%s)...", value, idx,
+             dir.c_str());
         //double value(-10);
         const std::size_t nNodes(mesh->getNNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());
@@ -137,7 +146,7 @@ int main (int argc, char* argv[])
     {
         if (argc < 5)
         {
-            std::cout << "Missing parameter..." << std::endl;
+            ERR("Missing parameter...");
             return -1;
         }
         const std::string value (argv[3]);

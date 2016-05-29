@@ -98,7 +98,7 @@ int main (int argc, char const* argv[])
     for (vector<string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
     {
         string filename(*it);
-        cout << "Opening file " << filename << " ... " << endl << flush;
+        INFO("Opening file %s", filename.c_str());
         string fileExt = getFileExt(filename);
 
         vtkXMLDataReader* reader = NULL;
@@ -157,8 +157,7 @@ int main (int argc, char const* argv[])
         }
         else
         {
-            cout << "Not a valid vtk file ending (vti, vtr, vts, vtp, vtu, vtk)" <<
-            endl;
+            ERR("Not a valid vtk file ending (vti, vtr, vts, vtp, vtu, vtk)");
             return 1;
         }
 
@@ -201,7 +200,7 @@ int main (int argc, char const* argv[])
 
     OSG::osgExit();
 
-    cout << "File conversion finished" << endl;
+    INFO("File conversion finished");
 
     return 0;
 }
