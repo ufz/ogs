@@ -20,8 +20,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <istream>
 #include <cassert>
-#include <iostream>
 
 namespace MathLib
 {
