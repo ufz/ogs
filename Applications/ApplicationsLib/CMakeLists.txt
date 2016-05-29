@@ -1,5 +1,6 @@
 # Source files
-set(LIB_SOURCES ProjectData.cpp)
+GET_SOURCE_FILES(SOURCES_APPLICATIONSLIB)
+set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
 # Library
 add_library(ApplicationsLib ${LIB_SOURCES})
