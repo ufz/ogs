@@ -94,15 +94,18 @@ public:
                                   _integration_order);
 
         DBUG("Initialize boundary conditions.");
-
-        // TODO That will only work with single component process variables!
-        for (std::size_t global_component_id=0;
-             global_component_id<_process_variables.size();
-             ++global_component_id)
+        for (int variable_id = 0;
+             variable_id < static_cast<int>(_process_variables.size());
+             ++variable_id)
         {
-            auto& pv = _process_variables[global_component_id];
-            createDirichletBcs(pv, global_component_id);
-            createNeumannBcs(pv, global_component_id);
+            ProcessVariable& pv = _process_variables[variable_id];
+            for (int component_id = 0;
+                 component_id < pv.getNumberOfComponents();
+                 ++component_id)
+            {
+                createDirichletBcs(pv, variable_id, component_id);
+                createNeumannBcs(pv, variable_id, component_id);
+            }
         }
 
         for (auto& bc : _neumann_bcs)
@@ -112,14 +115,17 @@ public:
     void setInitialConditions(GlobalVector& x)
     {
         DBUG("Set initial conditions.");
-
-        // TODO That will only work with single component process variables!
-        for (std::size_t global_component_id=0;
-             global_component_id<_process_variables.size();
-             ++global_component_id)
+        for (int variable_id = 0;
+             variable_id < static_cast<int>(_process_variables.size());
+             ++variable_id)
         {
-            auto& pv = _process_variables[global_component_id];
-            setInitialConditions(pv, global_component_id, x);
+            ProcessVariable& pv = _process_variables[variable_id];
+            for (int component_id = 0;
+                 component_id < pv.getNumberOfComponents();
+                 ++component_id)
+            {
+                setInitialConditions(pv, variable_id, component_id, x);
+            }
         }
     }
 
@@ -236,6 +242,7 @@ private:
     /// Sets the initial condition values in the solution vector x for a given
     /// process variable and component.
     void setInitialConditions(ProcessVariable const& variable,
+                              int const variable_id,
                               int const component_id,
                               GlobalVector& x)
     {
@@ -244,18 +251,18 @@ private:
         {
             MeshLib::Location const l(_mesh.getID(),
                                       MeshLib::MeshItemType::Node, node_id);
-            auto global_index = std::abs(
-                _local_to_global_index_map->getGlobalIndex(l, component_id));
+            auto global_index =
+                std::abs(_local_to_global_index_map->getGlobalIndex(
+                    l, variable_id, component_id));
 #ifdef USE_PETSC
-            // The global indices of the ghost entries of the global
-            // matrix or the global vectors need to be set as negative values
-            // for equation assembly, however the global indices start from zero.
-            // Therefore, any ghost entry with zero index is assigned an negative
-            // value of the vector size or the matrix dimension.
-            // To assign the initial value for the ghost entries,
-            // the negative indices of the ghost entries are restored to zero.
-            // checked hereby.
-            if ( global_index == x.size() )
+            // The global indices of the ghost entries of the global matrix or
+            // the global vectors need to be set as negative values for equation
+            // assembly, however the global indices start from zero.  Therefore,
+            // any ghost entry with zero index is assigned an negative value of
+            // the vector size or the matrix dimension.  To assign the initial
+            // value for the ghost entries, the negative indices of the ghost
+            // entries are restored to zero.
+            if (global_index == x.size())
                 global_index = 0;
 #endif
             x.set(global_index,
@@ -264,7 +271,8 @@ private:
         }
     }
 
-    void createDirichletBcs(ProcessVariable& variable, int const component_id)
+    void createDirichletBcs(ProcessVariable& variable, int const variable_id,
+                            int const component_id)
     {
         MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
             MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
@@ -273,10 +281,12 @@ private:
         variable.initializeDirichletBCs(std::back_inserter(_dirichlet_bcs),
                                         mesh_node_searcher,
                                         *_local_to_global_index_map,
+                                        variable_id,
                                         component_id);
     }
 
-    void createNeumannBcs(ProcessVariable& variable, int const component_id)
+    void createNeumannBcs(ProcessVariable& variable, int const variable_id,
+                          int const component_id)
     {
         // Find mesh nodes.
         MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
@@ -292,7 +302,7 @@ private:
                                   mesh_element_searcher,
                                   _integration_order,
                                   *_local_to_global_index_map,
-                                  0,  // 0 is the variable id TODO
+                                  variable_id,
                                   component_id);
     }
 
