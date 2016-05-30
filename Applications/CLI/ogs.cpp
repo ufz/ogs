@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
 
     ApplicationsLib::LogogSetup logog_setup;
-    logog_setup.SetLevel(log_level_arg.getValue());
+    logog_setup.setLevel(log_level_arg.getValue());
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
         argc, argv);
 
