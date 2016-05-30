@@ -32,13 +32,6 @@ namespace GeoLib
     class Polygon;
 }
 
-namespace MeshLib
-{
-    class Mesh;
-    class Element;
-    class Node;
-}
-
 namespace FileIO
 {
 
@@ -91,29 +84,10 @@ public:
 
     ~GMSHInterface();
 
-    /**
-     * checks if there is a GMSH mesh file header
-     * @param fname the file name of the mesh (including the path)
-     * @return true, if the file seems to be a valid GMSH file, else false
-     */
-    static bool isGMSHMeshFile (const std::string& fname);
-    /**
-     * reads a mesh created by GMSH - this implementation is based on the former function GMSH2MSH
-     * @param fname the file name of the mesh (including the path)
-     * @return
-     */
-    static MeshLib::Mesh* readGMSHMesh (std::string const& fname);
-
 protected:
     bool write();
 
 private:
-    /// Reads a mesh element from the input stream
-    static std::pair<MeshLib::Element*, int> readElement(
-        std::ifstream& in,
-        std::vector<MeshLib::Node*> const& nodes,
-        std::map<unsigned, unsigned> const& id_map);
-
     /**
      * 1. get and merge data from _geo_objs
      * 2. compute topological hierarchy
@@ -123,10 +97,6 @@ private:
      * 3 = error writing file
      */
     int writeGMSHInputFile(std::ostream & out);
-
-    static void readNodeIDs(std::ifstream& in, unsigned n_nodes,
-                            std::vector<unsigned>& node_ids,
-                            std::map<unsigned, unsigned> const& id_map);
 
     void writePoints(std::ostream& out) const;
 
