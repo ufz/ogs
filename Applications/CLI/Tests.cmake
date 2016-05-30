@@ -125,6 +125,30 @@ if(NOT OGS_USE_MPI)
                     DATA line_${mesh_size}_neumann.prj line_1_line_${mesh_size}.vtu line_1.gml
                 )
         endforeach()
+
+
+    AddTest(
+        NAME TES_zeolite_discharge_small
+        PATH Parabolic/TES/1D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS tes-1D-zeolite-discharge-small.prj
+        WRAPPER time
+        TESTER vtkdiff
+        DIFF_DATA tes_zeolite_discharge_small_pcs_0_ts_19_t_0.100000.vtu pressure pressure
+        DATA line_0.1.gml line_0.1_37.msh tes-1D-zeolite-discharge.prj
+    )
+
+    AddTest(
+        NAME LARGE_TES_zeolite_discharge
+        PATH Parabolic/TES/1D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
+        WRAPPER time
+        TESTER vtkdiff
+        DIFF_DATA tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu pressure pressure
+        DATA line_0.1.gml line_0.1_100.msh tes-1D-zeolite-discharge.prj
+    )
+
 else()
     # MPI groundwater flow tests
     AddTest(
