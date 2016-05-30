@@ -19,6 +19,11 @@ function(documentationProjectFilePutIntoPlace p)
         file(GLOB param_files ${DocumentationProjectFileInputDir}/${dir_name}/*)
         set(subpagelist "")
         foreach(pf ${param_files})
+            # ignore hidden files
+            if (pf MATCHES /[.][^/]+)
+                continue()
+            endif()
+
             get_filename_component(rel_pf ${pf} NAME_WE)
 
             # if the file name matches ^[ic]_, then this
@@ -29,7 +34,8 @@ function(documentationProjectFilePutIntoPlace p)
                     set(pf_tagname ${rel_pf})
                 else()
                     if (NOT "${rel_pf}" MATCHES ^._)
-                        message(SEND_ERROR "Path ${rel_pf} has a wrong name.")
+                        message(SEND_ERROR "Path `${rel_pf}' has a wrong name."
+                            " Full path is `${pf}'.")
                         continue()
                     endif()
 
