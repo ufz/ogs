@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# This script takes the output of get-project-params.sh on stdin
+# and transforms it into a tabular representation for further
+# processing.
+
 import sys
 import re
 import os.path
@@ -10,10 +14,9 @@ def debug(msg):
 def write_out(*args):
     print("@@@".join([str(a) for a in args]))
 
-# capture #1 is the parameter path
+# capture #2 is the parameter path
 comment = re.compile(r"^//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)?$")
 comment_special = re.compile(r"^//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$")
-#comment_special = re.compile(r"^//! \\ogs_file_special$")
 
 # capture #5 is the parameter name
 getter = re.compile(r'^(get|check|ignore|peek)Conf(Param|Attribute|Subtree)(List|Optional|All)?'

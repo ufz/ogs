@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "======== $@"
+# This script creates the quality assurance page and augments the
+# input file parameter documentation by information about end-to-end
+# tests in which the respective parameters are used.
 
 if [ $# -ne 3 ]; then
     echo "USAGE: $0 SRCDIR BUILDDIR DATADIR" >&2

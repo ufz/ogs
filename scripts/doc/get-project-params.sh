@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script traverses the OGS input file documentation source tree
+# making a list of all input file parameter related Doxygen commands,
+# i.e., those beginning with \ogs, and of all ConfigTree related C++
+# code.
+
 if [ $# -ne 1 ]; then
     echo "USAGE: ${0##*/} SRCDIR" >&2
     exit 1
@@ -11,7 +16,7 @@ srcdir="`readlink -f "$1"`"
 color=""
 
 cat <<"EOF" \
-| grep -r $srcdir \
+| grep -r "$srcdir" \
     --include '*.h' \
     --include '*.cpp' \
     --exclude-dir '.git' \

@@ -1,3 +1,6 @@
+# Moves an *.md file from the src directory to DocAux directory in the build
+# tree augmenting it with basic extra information, such as the list of child
+# pages and the page title.
 function(documentationProjectFilePutIntoPlace p)
     file(RELATIVE_PATH relative_path ${DocumentationProjectFileInputDir} ${p})
     get_filename_component(dir_name ${relative_path} DIRECTORY)
@@ -119,6 +122,7 @@ if (IS_DIRECTORY ${DocumentationProjectFileBuildDir})
     file(REMOVE_RECURSE ${DocumentationProjectFileBuildDir})
 endif()
 
+# traverse input file hierarchy
 file(GLOB_RECURSE input_paths ${DocumentationProjectFileInputDir}/c_* ${DocumentationProjectFileInputDir}/i_*)
 
 foreach(p ${input_paths})

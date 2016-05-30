@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+# This script actually generates the QA page.
+# For its usage see generate-project-file-doc-qa.sh
+
 import sys
 import re
 import os.path

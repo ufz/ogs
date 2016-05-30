@@ -1,6 +1,12 @@
 #!/bin/sh
 
-# expect input from get-project-params.sh
+# This script creates missing file in the OGS input file documentation source tree.
+# It expects input from get-project-params.sh
+#
+# The working directory of this script must be the root of the OGS sources.
+#
+# Example:
+# scripts/doc/get-project-params.sh . | scripts/doc/create-docu-file-stubs.sh
 
 base="Documentation/ProjectFile"
 

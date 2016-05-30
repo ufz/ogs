@@ -57,10 +57,9 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating project file documentation hierarchy." VERBATIM)
     add_dependencies(doc internal_pre_doc)
 
-    # TODO also check python
     if (doc_use_external_tools)
         set(data_dir "${PROJECT_SOURCE_DIR}/Tests/Data")
-        add_custom_target(internal_pre_doc2
+        add_custom_target(internal_pre_doc_qa_page
             ${BASH_TOOL_PATH}
             "${PROJECT_SOURCE_DIR}/scripts/doc/generate-project-file-doc-qa.sh"
             ${PROJECT_SOURCE_DIR}
@@ -68,7 +67,7 @@ if(DOXYGEN_FOUND)
             ${data_dir}
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             COMMENT "Generating project file documentation quality assurance pages." VERBATIM)
-        add_dependencies(doc internal_pre_doc2)
-        add_dependencies(internal_pre_doc2 internal_pre_doc)
+        add_dependencies(doc internal_pre_doc_qa_page)
+        add_dependencies(internal_pre_doc_qa_page internal_pre_doc)
     endif()
 endif()
