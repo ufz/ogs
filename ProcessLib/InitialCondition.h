@@ -42,19 +42,18 @@ public:
 class UniformInitialCondition : public InitialCondition
 {
 public:
-    UniformInitialCondition(double const value) : _value(value)
+    UniformInitialCondition(std::vector<double> const& values) : _values(values)
     {
     }
     /// Returns a value for given node and component.
-    /// \todo The component_id is to be implemented.
     virtual double getValue(MeshLib::Node const&,
-                            int const /* component_id */) const override
+                            int const component_id) const override
     {
-        return _value;
+        return _values[component_id];
     }
 
 private:
-    double _value;
+    std::vector<double> const _values;
 };
 
 /// Construct a UniformInitialCondition from configuration.
@@ -75,6 +74,7 @@ public:
         assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
     }
 
+    // TODO replace Node with node's id.
     virtual double getValue(MeshLib::Node const& n,
                             int const component_id) const override
     {
