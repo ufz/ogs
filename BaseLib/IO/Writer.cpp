@@ -12,12 +12,12 @@
  *
  */
 
-// ** INCLUDES **
 #include "Writer.h"
 
-#include <iostream>
 #include <fstream>
 #include <limits>
+
+#include <logog/include/logog.hpp>
 
 namespace BaseLib
 {
@@ -52,7 +52,7 @@ int Writer::writeToFile(std::string const& filename)
         // check file stream
         if (!fileStream)
         {
-            std::cerr << "Could not open file " << filename << " !\n";
+            ERR("Could not open file \"%s\"!", filename.c_str());
             return 0;
         }
 

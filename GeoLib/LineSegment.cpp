@@ -9,8 +9,6 @@
 
 #include "LineSegment.h"
 
-#include <iostream>
-
 namespace GeoLib
 {
 LineSegment::LineSegment(Point* const a, Point* const b,

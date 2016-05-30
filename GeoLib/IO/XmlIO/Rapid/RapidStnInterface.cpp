@@ -33,7 +33,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     std::ifstream in(fileName.c_str());
     if (in.fail())
     {
-        std::cout << "XmlStnInterface::rapidReadFile() - Can't open xml-file." << std::endl;
+        ERR("XmlStnInterface::rapidReadFile() - Can't open xml-file.");
         return NULL;
     }
 
@@ -53,7 +53,7 @@ std::vector<GeoLib::Point*> *RapidStnInterface::readStationFile(const std::strin
     // parse content
     if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN") != 0)
     {
-        std::cout << "XmlStnInterface::readFile() - Unexpected XML root." << std::endl;
+        ERR("XmlStnInterface::readFile() - Unexpected XML root.");
         return NULL;
     }
 
@@ -86,7 +86,7 @@ int RapidStnInterface::rapidReadFile(const std::string &fileName)
     std::ifstream in(fileName.c_str());
     if (in.fail())
     {
-        std::cout << "XmlStnInterface::rapidReadFile() - Can't open xml-file." << std::endl;
+        ERR("XmlStnInterface::rapidReadFile() - Can't open xml-file.");
         return 0;
     }
 
@@ -106,7 +106,7 @@ int RapidStnInterface::rapidReadFile(const std::string &fileName)
     // parse content
     if (std::string(doc.first_node()->name()).compare("OpenGeoSysSTN"))
     {
-        std::cout << "XmlStnInterface::readFile() - Unexpected XML root." << std::endl;
+        ERR("XmlStnInterface::readFile() - Unexpected XML root.");
         return 0;
     }
 
@@ -195,7 +195,11 @@ void RapidStnInterface::readStations(const rapidxml::xml_node<>* station_root, s
             }
         }
         else
-            std::cout << "XmlStnInterface::rapidReadStations() - Attribute missing in <station> tag ..." << std::endl;
+        {
+            ERR(
+                "XmlStnInterface::rapidReadStations() - Attribute missing in "
+                "<station> tag ...");
+        }
     }
 }
 
@@ -223,12 +227,19 @@ void RapidStnInterface::readStratigraphy( const rapidxml::xml_node<>* strat_root
                 depth_check = depth;
             }
             else
-                std::cout << "Warning: Skipped layer \"" << horizon_name << "\" in borehole \""
-                          << borehole->getName() << "\" because of thickness 0.0." << std::endl;
+            {
+                WARN(
+                    "Warning: Skipped layer \"%s\" in borehole \"%s\" because "
+                    "of thickness 0.0.",
+                    horizon_name.c_str(), borehole->getName().c_str());
+            }
         }
         else
-            std::cout <<
-            "XmlStnInterface::rapidReadStratigraphy() - Attribute missing in <horizon> tag ..." << std::endl;
+        {
+            WARN(
+                "XmlStnInterface::rapidReadStratigraphy() - Attribute missing "
+                "in <horizon> tag ...");
+        }
     }
 }
 

@@ -14,7 +14,6 @@
 
 #include <QFileDialog>
 #include <QMenu>
-#include <iostream>
 
 #include "GMSInterface.h"
 #include "Station.h"

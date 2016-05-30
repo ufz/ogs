@@ -13,7 +13,6 @@
 #ifndef ASSEMBLERLIB_COMPONENTGLOBALINDEXDICT_H_
 #define ASSEMBLERLIB_COMPONENTGLOBALINDEXDICT_H_
 
-#include <iostream>
 #include <limits>
 
 #include <boost/multi_index/composite_key.hpp>

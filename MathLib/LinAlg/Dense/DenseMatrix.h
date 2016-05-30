@@ -15,11 +15,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include <new>
-#include <exception>
-#include <stdexcept>
-#include <iostream>
-
 #include "MathLib/Vector3.h"
 
 namespace MathLib {
