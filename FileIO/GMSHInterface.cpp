@@ -15,21 +15,19 @@
 
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/StringTools.h"
 
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/GmshIO/GMSHAdaptiveMeshDensity.h"
 #include "FileIO/GmshIO/GMSHFixedMeshDensity.h"
+#include "FileIO/GmshIO/GMSHPoint.h"
+#include "FileIO/GmshIO/GMSHPolygonTree.h"
+#include "FileIO/GmshIO/GMSHMeshDensityStrategy.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
-#include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
-
-#include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 
 namespace FileIO
 {

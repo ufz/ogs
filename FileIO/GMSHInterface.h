@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-04-29
- * \brief  Definition of the GMSHInterface class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,14 +11,9 @@
 #ifndef GMSHINTERFACE_H_
 #define GMSHINTERFACE_H_
 
-#include <list>
-#include <map>
-#include <string>
+#include <iosfwd>
 
 #include "BaseLib/IO/Writer.h"
-#include "FileIO/GmshIO/GMSHPoint.h"
-#include "FileIO/GmshIO/GMSHPolygonTree.h"
-#include "FileIO/GmshIO/GMSHMeshDensityStrategy.h"
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
@@ -36,6 +27,10 @@ namespace FileIO
 {
 
 namespace GMSH {
+
+class GMSHPoint;
+class GMSHPolygonTree;
+class GMSHMeshDensityStrategy;
 
 enum class MeshDensityAlgorithm {
     FixedMeshDensity, //!< set the parameter with a fixed value
