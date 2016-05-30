@@ -64,6 +64,7 @@
 #include "MeshLib/IO/FEFLOW/FEFLOWMeshInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/GmshReader.h"
 #include "FileIO/GMSHInterface.h"
 #include "FileIO/TetGenInterface.h"
 #include "PetrelInterface.h"
@@ -565,9 +566,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::GMSH)
     {
         std::string msh_name (fileName.toStdString());
-        if (FileIO::GMSHInterface::isGMSHMeshFile (msh_name))
+        if (MeshLib::IO::GMSH::isGMSHMeshFile (msh_name))
         {
-            std::unique_ptr<MeshLib::Mesh> mesh(FileIO::GMSHInterface::readGMSHMesh(msh_name));
+            std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::GMSH::readGMSHMesh(msh_name));
             if (mesh)
                 _meshModel->addMesh(std::move(mesh));
             else
