@@ -6,6 +6,9 @@ APPEND_SOURCE_FILES(SOURCES)
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
+add_subdirectory(TES)
+APPEND_SOURCE_FILES(SOURCES TES)
+
 add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
