@@ -56,11 +56,11 @@ public:
         ProcessOutput<GlobalVector>&& process_output
         )
         : _mesh(mesh)
+        , _secondary_variables(std::move(secondary_variables))
+        , _process_output(std::move(process_output))
         , _nonlinear_solver(nonlinear_solver)
         , _time_discretization(std::move(time_discretization))
         , _process_variables(std::move(process_variables))
-        , _process_output(std::move(process_output))
-        , _secondary_variables(std::move(secondary_variables))
     {}
 
     /// Preprocessing before starting assembly for new timestep.
@@ -96,10 +96,15 @@ public:
                                   _integration_order);
 
         DBUG("Initialize boundary conditions.");
-        for (ProcessVariable& pv : _process_variables)
+
+        // TODO That will only work with single component process variables!
+        for (std::size_t global_component_id=0;
+             global_component_id<_process_variables.size();
+             ++global_component_id)
         {
-            createDirichletBcs(pv, 0);  // 0 is the component id
-            createNeumannBcs(pv, 0);    // 0 is the component id
+            auto& pv = _process_variables[global_component_id];
+            createDirichletBcs(pv, global_component_id);
+            createNeumannBcs(pv, global_component_id);
         }
 
         for (auto& bc : _neumann_bcs)
@@ -109,9 +114,14 @@ public:
     void setInitialConditions(GlobalVector& x)
     {
         DBUG("Set initial conditions.");
-        for (ProcessVariable& pv : _process_variables)
+
+        // TODO That will only work with single component process variables!
+        for (std::size_t global_component_id=0;
+             global_component_id<_process_variables.size();
+             ++global_component_id)
         {
-            setInitialConditions(pv, 0, x);  // 0 is the component id
+            auto& pv = _process_variables[global_component_id];
+            setInitialConditions(pv, global_component_id, x);
         }
     }
 
@@ -298,14 +308,18 @@ private:
             *_local_to_global_index_map, _mesh));
     }
 
-private:
-    unsigned const _integration_order = 2;
-
+protected:
     MeshLib::Mesh& _mesh;
+    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
     std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
         _local_to_global_index_map;
 
+    SecondaryVariableCollection<GlobalVector> _secondary_variables;
+    ProcessOutput<GlobalVector> _process_output;
+
+private:
+    unsigned const _integration_order = 2;
     MathLib::SparsityPattern _sparsity_pattern;
 
     std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
@@ -316,12 +330,6 @@ private:
 
     /// Variables used by this process.
     std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
-
-    ProcessOutput<GlobalVector> _process_output;
-
-protected:
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
-    SecondaryVariableCollection<GlobalVector> _secondary_variables;
 };
 
 /// Find process variables in \c variables whose names match the settings under
