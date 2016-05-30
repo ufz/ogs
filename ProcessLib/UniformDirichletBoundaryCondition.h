@@ -44,7 +44,8 @@ public:
     /// object.
     void initialize(MeshGeoToolsLib::MeshNodeSearcher& searcher,
                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                    std::size_t component_id,
+                    int const variable_id,
+                    int const component_id,
                     DirichletBc<GlobalIndexType>& bc);
 
 private:

@@ -45,7 +45,8 @@ UniformDirichletBoundaryCondition::UniformDirichletBoundaryCondition(
 void UniformDirichletBoundaryCondition::initialize(
     MeshGeoToolsLib::MeshNodeSearcher& searcher,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::size_t component_id,
+    int const component_id,
+    int const variable_id,
     DirichletBc<GlobalIndexType>& bc)
 {
     // Find nodes' ids on the given mesh on which this boundary condition
@@ -60,7 +61,8 @@ void UniformDirichletBoundaryCondition::initialize(
         MeshLib::Location l(searcher.getMeshId(), MeshLib::MeshItemType::Node,
                             id);
         // TODO: that might be slow, but only done once
-        const auto g_idx = dof_table.getGlobalIndex(l, component_id);
+        const auto g_idx =
+            dof_table.getGlobalIndex(l, variable_id, component_id);
         // For the DDC approach (e.g. with PETSc option), the negative
         // index of g_idx means that the entry by that index is a ghost one,
         // which should be dropped. Especially for PETSc routines MatZeroRows
