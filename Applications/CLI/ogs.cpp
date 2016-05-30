@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     INFO("Solve processes.");
 
     auto& time_loop = project.getTimeLoop();
-    time_loop.loop(project);
+    bool solver_succeeded = time_loop.loop(project);
 
-    return 0;
+    return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
 }
