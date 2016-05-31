@@ -10,7 +10,7 @@
 #ifndef PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
 #define PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
 
-#include "ConstitutiveRelationsDB.h"
+#include "ConstitutiveRelationBuildersDB.h"
 
 namespace ProcessLib {
 namespace ConstitutiveRelation {

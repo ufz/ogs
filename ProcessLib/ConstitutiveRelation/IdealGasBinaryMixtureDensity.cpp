@@ -22,12 +22,5 @@ createConstitutiveRelation(BaseLib::ConfigTree const& config)
     return nullptr;
 }
 
-// const AddConstitutiveRelationResult
-bool
-db_dummy = ConstitutiveRelationsDB::singleton().add(
-            "IdealGasBinaryMixtureDensity",
-            std::unique_ptr<ConstitutiveRelationBuilder<double, double, double, double>>(
-                new IdealGasBinaryMixtureDensityBuilder()), &db_dummy);
-
 } // namespace ConstitutiveRelation
 } // namespace ProcessLib
