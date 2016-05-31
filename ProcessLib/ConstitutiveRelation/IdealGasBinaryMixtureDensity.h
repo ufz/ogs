@@ -10,13 +10,10 @@
 #ifndef PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
 #define PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
 
-#include "ConstitutiveRelationBuildersDB.h"
+#include "ConstitutiveRelationBuilder.h"
 
 namespace ProcessLib {
 namespace ConstitutiveRelation {
-
-// extern const AddConstitutiveRelationResult dummy;
-// extern const bool dummy;
 
 class IdealGasBinaryMixtureDensityBuilder final
         : public ConstitutiveRelationBuilder<double, double, double, double>
