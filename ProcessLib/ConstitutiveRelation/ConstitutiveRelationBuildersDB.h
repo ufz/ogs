@@ -59,6 +59,7 @@ public:
 
     template<typename ConstitutiveRelationReturnType,
              typename... ConstitutiveRelationArguments>
+    static
     ConstitutiveRelationBuilder<
         ConstitutiveRelationReturnType,
         ConstitutiveRelationArguments...> const&
@@ -94,7 +95,7 @@ ConstitutiveRelationBuildersDB::add(
 
     if (!res.second) {
         ERR("A function with the name `%s' already exists in the constitutive"
-            " relations database.");
+            " relations database.", name.c_str());
         std::abort();
     }
 
@@ -120,7 +121,7 @@ ConstitutiveRelationBuildersDB::get(
 
     if (it == fcts.end()) {
         ERR("A function with the name `%s' has not been found in the constitutive"
-            " relations database.");
+            " relations database.", name.c_str());
         std::abort();
     }
 
