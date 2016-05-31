@@ -17,6 +17,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/Elements/Element.h"
+#include "NumericsConfig.h"
 
 namespace MeshLib
 {
@@ -48,7 +49,7 @@ private:
 /// The ReturnType can represent an underlying type of an aggregate type like
 /// tuple or matrix (\see tupleSize()).
 /// The total number of stored tuples is provided.
-template <typename ReturnType, typename... Args>
+template <typename ReturnType>
 class Parameter : public ParameterBase
 {
 public:
@@ -56,22 +57,33 @@ public:
         : ParameterBase(name)
     {}
 
-    virtual ReturnType operator()(Args&&... args) const = 0;
+    virtual ReturnType operator()(
+        double const t,
+        /* TODO find a better solution for this pointer */
+        double const*const x,
+        GlobalIndexType const node,
+        MeshLib::Element const& element,
+        std::size_t const integration_point) const = 0;
 };
 
 /// Single, constant value parameter.
 template <typename ReturnType>
 class ConstParameter final
-    : public Parameter<ReturnType, MeshLib::Element const&>
+    : public Parameter<ReturnType>
 {
 public:
     ConstParameter(std::string const& name, ReturnType value)
-        : Parameter<ReturnType, MeshLib::Element const&>(name)
+        : Parameter<ReturnType>(name)
         , _value(value)
     {
     }
 
-    ReturnType operator()(MeshLib::Element const&) const override
+    ReturnType operator()(
+        double const /*t*/,
+        double const*const /*x*/,
+        GlobalIndexType const /*node*/,
+        MeshLib::Element const& /*element*/,
+        std::size_t const /*integration_point*/) const override
     {
         return _value;
     }
@@ -86,19 +98,24 @@ std::unique_ptr<ParameterBase> createConstParameter(
 /// A parameter represented by a mesh property vector.
 template <typename ReturnType>
 class MeshPropertyParameter final
-    : public Parameter<ReturnType, MeshLib::Element const&>
+    : public Parameter<ReturnType>
 {
 public:
     MeshPropertyParameter(std::string const& name,
                           MeshLib::PropertyVector<ReturnType> const& property)
-        : Parameter<ReturnType, MeshLib::Element const&>(name)
+        : Parameter<ReturnType>(name)
         , _property(property)
     {
     }
 
-    ReturnType operator()(MeshLib::Element const& e) const override
+    ReturnType operator()(
+        double const /*t*/,
+        double const*const /*x*/,
+        GlobalIndexType const /*node*/,
+        MeshLib::Element const& element,
+        std::size_t const /*integration_point*/) const override
     {
-        return _property[e.getID()];
+        return _property[element.getID()];
     }
 
 private:

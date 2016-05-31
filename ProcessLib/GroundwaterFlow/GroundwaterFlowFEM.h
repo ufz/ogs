@@ -77,7 +77,7 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x) override
+    void assemble(double const t, std::vector<double> const& local_x) override
     {
         _localA.setZero();
         _localRhs.setZero();
@@ -89,7 +89,8 @@ public:
         {
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.hydraulic_conductivity(_element);
+            auto const k = _process_data.hydraulic_conductivity(
+                t, wp.getCoords(), static_cast<GlobalIndexType>(-1), _element, ip);
 
             _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();

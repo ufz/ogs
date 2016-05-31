@@ -163,7 +163,7 @@ createGroundwaterFlowProcess(
 
     // Hydraulic conductivity parameter.
     auto& hydraulic_conductivity =
-        findParameter<double, MeshLib::Element const&>(
+        findParameter<double>(
             config, "hydraulic_conductivity", parameters);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
