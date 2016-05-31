@@ -113,15 +113,10 @@ TESProcess<GlobalSetup>::TESProcess(
 
     {
         auto fluid_density_config = config.getConfSubtree("fluid_density");
-        auto const fluid_density_model_name =
-            fluid_density_config.getConfParam<std::string>("name");
-        auto const& fluid_density_builder =
-            ProcessLib::ConstitutiveRelation::ConstitutiveRelationBuildersDB::
-                get<double, double, double, double>(fluid_density_model_name);
-        // TODO this can be moved to the DB class
         _assembly_params.fluid_density =
-            fluid_density_builder.createConstitutiveRelation(
-                fluid_density_config);
+            ProcessLib::ConstitutiveRelation::ConstitutiveRelationBuildersDB::
+                invokeBuilder<double, double, double, double>(
+                    fluid_density_config);
     }
 
     // characteristic values of primary variables
