@@ -65,8 +65,6 @@ public:
     }
 
 private:
-    // const double _M0;
-    // const double _M1;
     ProcessLib::Parameter<double> const& _M0;
     ProcessLib::Parameter<double> const& _M1;
 };
