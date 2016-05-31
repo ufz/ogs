@@ -430,10 +430,10 @@ void MainWindow::save()
         std::vector<std::string> selected_geometries;
         _project.getGEOObjects().getGeometryNames(selected_geometries);
 
-        GMSHInterface gmsh_io(
+        GeoLib::IO::GMSHInterface gmsh_io(
             _project.getGEOObjects(), true,
-            FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
-            0.05, 0.5, 2, selected_geometries);
+            GeoLib::IO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity, 0.05,
+            0.5, 2, selected_geometries);
         gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
         bool const success = gmsh_io.writeToFile(fileName.toStdString());
 
@@ -902,16 +902,16 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
         if (!fileName.isEmpty())
         {
             if (param4 == -1) { // adaptive meshing selected
-                GMSHInterface gmsh_io(
+                GeoLib::IO::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
-                    FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
+                    GeoLib::IO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
                     param2, param3, param1, selectedGeometries);
                 gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
                 gmsh_io.writeToFile(fileName.toStdString());
             } else { // homogeneous meshing selected
-                GMSHInterface gmsh_io(
+                GeoLib::IO::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
-                    FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
+                    GeoLib::IO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
                     param4, param3, param1, selectedGeometries);
                 gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
                 gmsh_io.writeToFile(fileName.toStdString());

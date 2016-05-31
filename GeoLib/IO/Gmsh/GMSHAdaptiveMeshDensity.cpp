@@ -17,7 +17,6 @@
 
 #include <logog/include/logog.hpp>
 
-
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #ifndef NDEBUG
@@ -27,9 +26,12 @@
 
 #include "MathLib/MathTools.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 GMSHAdaptiveMeshDensity::GMSHAdaptiveMeshDensity(double pnt_density, double station_density,
                                                  std::size_t max_pnts_per_leaf) :
@@ -157,4 +159,5 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
 #endif
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib

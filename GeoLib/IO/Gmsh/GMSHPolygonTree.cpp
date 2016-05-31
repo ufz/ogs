@@ -20,9 +20,12 @@
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 GMSHPolygonTree::GMSHPolygonTree(GeoLib::PolygonWithSegmentMarker* polygon,
                 GMSHPolygonTree* parent,
@@ -248,7 +251,7 @@ void GMSHPolygonTree::initMeshDensityStrategy()
     }
 }
 
-void GMSHPolygonTree::createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const
+void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) const
 {
     const std::size_t n_pnts_polygon (_node_polygon->getNumberOfPoints());
     for (std::size_t k(0); k<n_pnts_polygon-1; k++) {
@@ -419,5 +422,6 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(std::vector<GeoLib::Point con
     }
 }
 
-}
-} // end namespace FileIO
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib

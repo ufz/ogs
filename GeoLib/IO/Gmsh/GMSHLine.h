@@ -13,9 +13,12 @@
 
 #include <iosfwd>
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHLine {
 public:
@@ -29,7 +32,8 @@ private:
     std::size_t _end_pnt_id;
 };
 
-}
-}
+} // end namespace GMSH
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHLINE_H_ */

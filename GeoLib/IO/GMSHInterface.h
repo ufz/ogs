@@ -19,14 +19,14 @@
 
 namespace GeoLib
 {
-    class GEOObjects;
-    class Polygon;
-}
+class GEOObjects;
+class Polygon;
 
-namespace FileIO
+namespace IO
 {
 
-namespace GMSH {
+namespace GMSH
+{
 
 class GMSHPoint;
 class GMSHPolygonTree;
@@ -103,7 +103,7 @@ private:
     std::string _gmsh_geo_name;
     std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
-    std::vector<FileIO::GMSH::GMSHPoint*> _gmsh_pnts;
+    std::vector<GMSH::GMSHPoint*> _gmsh_pnts;
 
     GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
@@ -115,6 +115,7 @@ private:
     bool _rotate = false;
     bool _keep_preprocessed_geometry = true;
 };
-}
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHINTERFACE_H_ */

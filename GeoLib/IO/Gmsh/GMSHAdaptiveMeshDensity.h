@@ -11,22 +11,21 @@
 #ifndef GMSHADAPTIVEMESHDENSITY_H_
 #define GMSHADAPTIVEMESHDENSITY_H_
 
-// FileIO
 #include "GMSHMeshDensityStrategy.h"
 
 namespace GeoLib
 {
-    class Polygon;
-    class Point;
-    template <typename T> class QuadTree;
+class Polygon;
+class Point;
+template <typename T> class QuadTree;
 #ifndef NDEBUG
-    class Polyline;
+class Polyline;
 #endif
-}
 
-namespace FileIO
+namespace IO
 {
-namespace GMSH {
+namespace GMSH
+{
 
 class GMSHAdaptiveMeshDensity : public GMSHMeshDensityStrategy
 {
@@ -54,6 +53,7 @@ private:
 };
 
 }
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHADAPTIVEMESHDENSITY_H_ */

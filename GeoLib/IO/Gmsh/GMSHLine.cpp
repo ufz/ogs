@@ -11,9 +11,12 @@
 #include <ostream>
 #include "GMSHLine.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 GMSHLine::GMSHLine(std::size_t start_point_id, std::size_t end_point_id) :
     _start_pnt_id(start_point_id), _end_pnt_id(end_point_id)
@@ -33,5 +36,6 @@ void GMSHLine::resetLineData(std::size_t start_point_id, std::size_t end_point_i
     _end_pnt_id = end_point_id;
 }
 
-}
-} // end namespace FileIO
+} // end namespace GMSH
+} // end namespace IO
+} // end namespace GeoLib

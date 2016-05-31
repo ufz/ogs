@@ -14,10 +14,12 @@
 #include <vector>
 #include <iosfwd>
 
-
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHLine;
 
@@ -35,7 +37,8 @@ private:
     bool _is_sfc;
 };
 
-}
-}
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHLINELOOP_H_ */

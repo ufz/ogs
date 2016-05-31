@@ -14,9 +14,12 @@
 // GeoLib
 #include "GeoLib/Point.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHPoint : public GeoLib::Point {
 public:
@@ -30,7 +33,8 @@ private:
 /** overload the output operator for class GMSHPoint */
 std::ostream& operator<< (std::ostream &os, GMSHPoint const& p);
 
-}
-}
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHPOINT_H_ */

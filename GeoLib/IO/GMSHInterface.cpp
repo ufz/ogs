@@ -29,7 +29,9 @@
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
 
-namespace FileIO
+namespace GeoLib
+{
+namespace IO
 {
 GMSHInterface::GMSHInterface(GeoLib::GEOObjects& geo_objs,
                              bool /*include_stations_as_constraints*/,
@@ -244,4 +246,5 @@ void GMSHInterface::writePoints(std::ostream& out) const
     }
 }
 
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib
