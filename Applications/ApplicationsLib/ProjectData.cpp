@@ -35,6 +35,7 @@
 #include "UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess-fwd.h"
+#include "ProcessLib/TES/TESProcess.h"
 
 
 namespace detail
@@ -175,6 +176,13 @@ void ProjectData::buildProcesses()
             _processes.emplace_back(
                 ProcessLib::GroundwaterFlow::
                 createGroundwaterFlowProcess<GlobalSetupType>(
+                    *_mesh_vec[0], *nl_slv, std::move(time_disc),
+                    _process_variables, _parameters, pc));
+        }
+        else if (type == "TES")
+        {
+            _processes.emplace_back(
+                ProcessLib::TES::createTESProcess<GlobalSetupType>(
                     *_mesh_vec[0], *nl_slv, std::move(time_disc),
                     _process_variables, _parameters, pc));
         }
