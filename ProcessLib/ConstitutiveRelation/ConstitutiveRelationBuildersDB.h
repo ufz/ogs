@@ -93,13 +93,50 @@ ConstitutiveRelationBuildersDB::add(
                 name, std::move(constitutive_relation_builder)));
 
     if (!res.second) {
-        ERR("A function with the given name `%s' already exists in the constitutive"
+        ERR("A function with the name `%s' already exists in the constitutive"
             " relations database.");
         std::abort();
     }
 
     DBUG("CtiveRelDB: Added a function with name `%s' and %i argument(s).",
          name.c_str(), sizeof...(ConstitutiveRelationArguments));
+}
+
+
+template<typename ConstitutiveRelationReturnType,
+         typename... ConstitutiveRelationArguments>
+ConstitutiveRelationBuilder<
+    ConstitutiveRelationReturnType,
+    ConstitutiveRelationArguments...> const&
+ConstitutiveRelationBuildersDB::get(
+    std::string const& name)
+{
+    static_assert(
+        detail::AllTypesSameAs<double, ConstitutiveRelationArguments...>::value,
+        "Some of the arguments of the passed function are not of the type double.");
+
+    auto const& fcts = singleton()._fcts;
+    auto it = fcts.find(name);
+
+    if (it == fcts.end()) {
+        ERR("A function with the name `%s' has not been found in the constitutive"
+            " relations database.");
+        std::abort();
+    }
+
+    auto const* builder_base = it->second.get();
+    auto const* builder_concrete = dynamic_cast<
+        ConstitutiveRelationBuilder<
+            ConstitutiveRelationReturnType,
+                ConstitutiveRelationArguments...> const*>(builder_base);
+
+    if (builder_concrete == nullptr) {
+        ERR("The stored and the requested type of the constitutive relation"
+            " `%s' differ.", name.c_str());
+        std::abort();
+    }
+
+    return *builder_concrete;
 }
 
 } // namespace ConstitutiveRelation
