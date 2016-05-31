@@ -30,9 +30,9 @@ namespace TES
 {
 template <typename Traits>
 TESLocalAssemblerInner<Traits>::TESLocalAssemblerInner(
-    const AssemblyParams& ap, const unsigned num_int_pts,
-    const unsigned dimension)
-    : _d{ap, num_int_pts, dimension}
+    const AssemblyParams& ap, MeshLib::Element const& element,
+    const unsigned num_int_pts, const unsigned dimension)
+    : _d{ap, element, num_int_pts, dimension}
 {
 }
 
@@ -214,7 +214,9 @@ void TESLocalAssemblerInner<Traits>::preEachAssembleIntegrationPoint(
     assert(_d.T > 0.0);
     assert(0.0 <= _d.vapour_mass_fraction && _d.vapour_mass_fraction <= 1.0);
 
-    _d.rho_GR = fluid_density(_d.p, _d.T, _d.vapour_mass_fraction);
+    _d.rho_GR = _d.ap.fluid_density->getValue(
+        0.0, nullptr, static_cast<GlobalIndexType>(-1), _d.element, int_pt,
+        _d.p, _d.T, _d.vapour_mass_fraction);
 }
 
 template <typename Traits>

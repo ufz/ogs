@@ -15,6 +15,7 @@
 
 #include "MaterialsLib/Adsorption/Reaction.h"
 
+#include "ProcessLib/ConstitutiveRelation/ConstitutiveRelation.h"
 #include "ProcessLib/VariableTransformation.h"
 
 namespace ProcessLib
@@ -58,6 +59,8 @@ struct AssemblyParams
 
     double rho_SR_dry = std::numeric_limits<double>::quiet_NaN();
 
+    std::unique_ptr<ProcessLib::ConstitutiveRelation::ConstitutiveRelation<
+        double, double, double, double>> fluid_density;
     const double M_inert = M_N2;  // N2
     const double M_react = M_H2O;
 

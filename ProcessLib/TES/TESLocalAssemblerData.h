@@ -20,11 +20,13 @@ class TESFEMReactionAdaptor;
 
 struct TESLocalAssemblerData
 {
-    TESLocalAssemblerData(AssemblyParams const& ap_, const unsigned num_int_pts,
-                          const unsigned dimension);
+    TESLocalAssemblerData(AssemblyParams const& ap_,
+                          MeshLib::Element const& element_,
+                          const unsigned num_int_pts, const unsigned dimension);
 
     ~TESLocalAssemblerData();
 
+    MeshLib::Element const& element;
     AssemblyParams const& ap;
 
     // integration point quantities

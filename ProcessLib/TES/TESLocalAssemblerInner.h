@@ -39,6 +39,7 @@ class TESLocalAssemblerInner
 {
 public:
     explicit TESLocalAssemblerInner(AssemblyParams const& ap,
+                                    MeshLib::Element const& element,
                                     const unsigned num_int_pts,
                                     const unsigned dimension);
 
