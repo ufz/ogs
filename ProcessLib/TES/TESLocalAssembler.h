@@ -33,7 +33,7 @@ public:
                           std::vector<double> const& local_x) = 0;
 
     virtual void addToGlobal(
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const&,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 
     virtual bool checkBounds(std::vector<double> const& local_x,
@@ -58,7 +58,7 @@ public:
     void assemble(double const t, std::vector<double> const& local_x) override;
 
     void addToGlobal(
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const override;
 
     Eigen::Map<const Eigen::VectorXd> getShapeMatrix(

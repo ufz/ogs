@@ -190,7 +190,7 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
 void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
                        GlobalVector, GlobalDim>::
     addToGlobal(
-        AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
 {
     M.add(indices, _local_M);

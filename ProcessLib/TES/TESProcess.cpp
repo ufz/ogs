@@ -10,9 +10,9 @@
 #include "TESProcess.h"
 
 // TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
-inline AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices
+inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
 getRowColumnIndices_(std::size_t const id,
-                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                     NumLib::LocalToGlobalIndexMap const& dof_table,
                      std::vector<GlobalIndexType>& indices)
 {
     assert(dof_table.size() > id);
@@ -27,14 +27,14 @@ getRowColumnIndices_(std::size_t const id,
         indices.insert(indices.end(), idcs.begin(), idcs.end());
     }
 
-    return AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
                                                                  indices);
 }
 
 template <typename GlobalVector>
 void getVectorValues(
     GlobalVector const& x,
-    AssemblerLib::LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
+    NumLib::LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
     std::vector<double>& local_x)
 {
     auto const& indices = r_c_indices.rows;
@@ -50,7 +50,7 @@ void getVectorValues(
 // TODO that essentially duplicates code which is also present in ProcessOutput.
 template <typename GlobalVector>
 double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
-                     AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+                     NumLib::LocalToGlobalIndexMap const& dof_table,
                      std::size_t const node_id,
                      std::size_t const global_component_id)
 {
@@ -170,7 +170,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
 template <typename GlobalSetup>
 void TESProcess<GlobalSetup>::initializeConcreteProcess(
-    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh, unsigned const integration_order)
 {
     DBUG("Create global assembler.");
@@ -187,10 +187,10 @@ void TESProcess<GlobalSetup>::initializeConcreteProcess(
     all_mesh_subsets_single_component.emplace_back(
         new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes.get()));
     _local_to_global_index_map_single_component.reset(
-        new AssemblerLib::LocalToGlobalIndexMap(
+        new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            AssemblerLib::ComponentOrder::BY_LOCATION));
+            NumLib::ComponentOrder::BY_LOCATION));
 
     _extrapolator.reset(
         new ExtrapolatorImplementation(MathLib::MatrixSpecifications(
@@ -338,7 +338,7 @@ template <typename GlobalSetup>
 typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::computeVapourPartialPressure(
     typename TESProcess::GlobalVector const& x,
-    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
@@ -370,7 +370,7 @@ template <typename GlobalSetup>
 typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::computeRelativeHumidity(
     typename TESProcess::GlobalVector const& x,
-    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
@@ -407,7 +407,7 @@ template <typename GlobalSetup>
 typename TESProcess<GlobalSetup>::GlobalVector const&
 TESProcess<GlobalSetup>::computeEquilibriumLoading(
     typename TESProcess::GlobalVector const& x,
-    AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
