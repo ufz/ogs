@@ -30,15 +30,21 @@ struct AllTypesSameAs;
 template<typename TRef, typename T1, typename... Ts>
 struct AllTypesSameAs<TRef, T1, Ts...>
 {
-    static constexpr bool value = std::is_same<TRef, T1>::value
+    static const bool value = std::is_same<TRef, T1>::value
         && AllTypesSameAs<TRef, Ts...>::value;
 };
 
 template<typename TRef>
 struct AllTypesSameAs<TRef>
 {
-    static constexpr bool value = true;
+    static const bool value = true;
 };
+
+template<typename TRef, typename T1, typename... Ts>
+const bool AllTypesSameAs<TRef, T1, Ts...>::value;
+
+template<typename TRef>
+const bool AllTypesSameAs<TRef>::value;
 
 } // namespace detail
 
