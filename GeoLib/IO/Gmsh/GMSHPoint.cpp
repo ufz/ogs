@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-21
- * \brief  Implementation of the GMSHPoint class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,7 +11,7 @@
 #include <cmath>
 #include <limits>
 
-#include "GmshIO/GMSHPoint.h"
+#include "GMSHPoint.h"
 
 namespace FileIO
 {

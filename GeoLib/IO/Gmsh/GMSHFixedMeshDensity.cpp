@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-05
- * \brief  Implementation of the GMSHFixedMeshDensity class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,7 +8,7 @@
  *
  */
 
-#include "GmshIO/GMSHFixedMeshDensity.h"
+#include "GMSHFixedMeshDensity.h"
 
 namespace FileIO
 {

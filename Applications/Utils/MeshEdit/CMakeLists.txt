@@ -3,7 +3,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/BaseLib
     ${CMAKE_SOURCE_DIR}/GeoLib
     ${CMAKE_SOURCE_DIR}/FileIO
-    ${CMAKE_SOURCE_DIR}/FileIO/GmshIO
+    ${CMAKE_SOURCE_DIR}/FileIO/Gmsh
     ${CMAKE_SOURCE_DIR}/MathLib
     ${CMAKE_SOURCE_DIR}/MeshLib
 )

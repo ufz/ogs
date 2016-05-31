@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Mar 22, 2012
- * \brief  Implementation of the GMSHLineLoop class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
