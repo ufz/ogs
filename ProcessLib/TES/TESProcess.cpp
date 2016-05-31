@@ -78,6 +78,7 @@ TESProcess<GlobalSetup>::TESProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection<GlobalVector>&& secondary_variables,
     ProcessOutput<GlobalVector>&& process_output,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     const BaseLib::ConfigTree& config)
     : Process<GlobalSetup>(
           mesh, nonlinear_solver, std::move(time_discretization),
@@ -116,7 +117,7 @@ TESProcess<GlobalSetup>::TESProcess(
         _assembly_params.fluid_density =
             ProcessLib::ConstitutiveRelation::ConstitutiveRelationBuildersDB::
                 invokeBuilder<double, double, double, double>(
-                    fluid_density_config);
+                    fluid_density_config, parameters);
     }
 
     // characteristic values of primary variables

@@ -47,6 +47,7 @@ public:
             process_variables,
         SecondaryVariableCollection<GlobalVector>&& secondary_variables,
         ProcessOutput<GlobalVector>&& process_output,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t,
@@ -113,7 +114,7 @@ std::unique_ptr<TESProcess<GlobalSetup>> createTESProcess(
     std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&&
         time_discretization,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "TES");
@@ -139,7 +140,7 @@ std::unique_ptr<TESProcess<GlobalSetup>> createTESProcess(
     return std::unique_ptr<TESProcess<GlobalSetup>>{new TESProcess<GlobalSetup>{
         mesh, nonlinear_solver, std::move(time_discretization),
         std::move(process_variables), std::move(secondary_variables),
-        std::move(process_output), config}};
+        std::move(process_output), parameters, config}};
 }
 
 }  // namespace TES
