@@ -26,6 +26,8 @@
 
 #include "ProcessLib/NumericsConfig.h"
 
+#include "ProcessLib/ConstitutiveRelation/ConstitutiveRelationBuildersDB.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -77,6 +79,7 @@ int main(int argc, char *argv[])
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
         argc, argv);
 
+    ProcessLib::ConstitutiveRelation::ConstitutiveRelationBuildersDB::initialize();
 
     auto project_config = BaseLib::makeConfigTree(
         project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
