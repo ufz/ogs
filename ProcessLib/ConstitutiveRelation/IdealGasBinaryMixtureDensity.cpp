@@ -28,6 +28,7 @@ public:
         : _M0(config.getConfParam<double>("molar_mass_0")),
           _M1(config.getConfParam<double>("molar_mass_1"))
     {
+        config.checkConfParam("type", "IdealGasBinaryMixtureDensity");
     }
 
     double getValue(const double /*t*/, const double* const /*x*/,
