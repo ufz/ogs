@@ -35,9 +35,13 @@ template <typename ConstitutiveRelationReturnType,
 class ConstitutiveRelationBuilder : public ConstitutiveRelationBuilderBase
 {
 public:
-    virtual std::unique_ptr<ConstitutiveRelation<
-        ConstitutiveRelationReturnType, ConstitutiveRelationArguments...>>
-    createConstitutiveRelation(BaseLib::ConfigTree const& config) const = 0;
+    virtual std::unique_ptr<
+        ConstitutiveRelation<ConstitutiveRelationReturnType,
+                             ConstitutiveRelationArguments...>>
+    createConstitutiveRelation(
+        BaseLib::ConfigTree const& config,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+        const = 0;
 };
 
 }  // namespace ConstitutiveRelation
@@ -50,17 +54,21 @@ public:
     public:                                                                    \
         std::unique_ptr<ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>        \
         createConstitutiveRelation(                                            \
-            BaseLib::ConfigTree const& config) const override;                 \
+            BaseLib::ConfigTree const& config,                                 \
+            std::vector<std::unique_ptr<ParameterBase>> const& parameters)     \
+            const override;                                                    \
     }
 
 #define OGS_DEFINE_CONSTITUTIVE_RELATION_BUILDER(CTIVE_REL, RETURN_TYPE, ...) \
     std::unique_ptr<ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>           \
         CTIVE_REL##Builder::createConstitutiveRelation(                       \
-            BaseLib::ConfigTree const& config) const                          \
+            BaseLib::ConfigTree const& config,                                \
+            std::vector<std::unique_ptr<ParameterBase>> const& parameters)    \
+            const                                                             \
     {                                                                         \
         return std::unique_ptr<                                               \
             ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>(                  \
-            new CTIVE_REL(config));                                           \
+            new CTIVE_REL(config, parameters));                                           \
     }
 
 #endif  // PROCESSLIB_CONSTITUTIVERELATION_CONSTITUTIVERELATIONBUILDER_H

@@ -69,7 +69,9 @@ public:
               typename... ConstitutiveRelationArguments>
     static std::unique_ptr<ConstitutiveRelation<
         ConstitutiveRelationReturnType, ConstitutiveRelationArguments...>>
-    invokeBuilder(BaseLib::ConfigTree const& config);
+    invokeBuilder(BaseLib::ConfigTree const& config,
+                  std::vector<std::unique_ptr<ProcessLib::ParameterBase>> const&
+                      parameters);
 
 private:
     ConstitutiveRelationBuildersDB() = default;
@@ -146,18 +148,18 @@ ConstitutiveRelationBuildersDB::get(
     return *builder_concrete;
 }
 
-
-template<typename ConstitutiveRelationReturnType,
-         typename... ConstitutiveRelationArguments>
-std::unique_ptr<ConstitutiveRelation<
-    ConstitutiveRelationReturnType, ConstitutiveRelationArguments...>>
+template <typename ConstitutiveRelationReturnType,
+          typename... ConstitutiveRelationArguments>
+std::unique_ptr<ConstitutiveRelation<ConstitutiveRelationReturnType,
+                                     ConstitutiveRelationArguments...>>
 ConstitutiveRelationBuildersDB::invokeBuilder(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     auto const& builder =
         get<ConstitutiveRelationReturnType, ConstitutiveRelationArguments...>(
             config.peekConfParam<std::string>("type"));
-    return builder.createConstitutiveRelation(config);
+    return builder.createConstitutiveRelation(config, parameters);
 }
 
 } // namespace ConstitutiveRelation
