@@ -49,7 +49,10 @@ public:
                          const double& p, const double& T,
                          const double& x) const
     {
-        (void) p; (void) T; (void) x; (void) derivative_in_direction_of_argument;
+        (void)p;
+        (void)T;
+        (void)x;
+        (void)derivative_in_direction_of_argument;
         ERR("TODO implement.");
         std::abort();
         return 0.0;
@@ -60,14 +63,8 @@ private:
     const double _M1;
 };
 
-std::unique_ptr<ConstitutiveRelation<double, double, double, double>>
-IdealGasBinaryMixtureDensityBuilder::createConstitutiveRelation(
-    BaseLib::ConfigTree const& config) const
-{
-    return std::unique_ptr<
-        ConstitutiveRelation<double, double, double, double>>(
-            new IdealGasBinaryMixtureDensity(config));
-}
+OGS_DEFINE_CONSTITUTIVE_RELATION_BUILDER(IdealGasBinaryMixtureDensity, double,
+                                         double, double, double)
 
 }  // namespace ConstitutiveRelation
 }  // namespace ProcessLib

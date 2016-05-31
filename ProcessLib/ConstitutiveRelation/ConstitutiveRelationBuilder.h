@@ -43,4 +43,24 @@ public:
 }  // namespace ConstitutiveRelation
 }  // namespace ProcessLib
 
+#define OGS_DECLARE_CONSTITUTIVE_RELATION_BUILDER(CTIVE_REL, RETURN_TYPE, ...) \
+    class CTIVE_REL##Builder final                                             \
+        : public ConstitutiveRelationBuilder<RETURN_TYPE, __VA_ARGS__>         \
+    {                                                                          \
+    public:                                                                    \
+        std::unique_ptr<ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>        \
+        createConstitutiveRelation(                                            \
+            BaseLib::ConfigTree const& config) const override;                 \
+    }
+
+#define OGS_DEFINE_CONSTITUTIVE_RELATION_BUILDER(CTIVE_REL, RETURN_TYPE, ...) \
+    std::unique_ptr<ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>           \
+        CTIVE_REL##Builder::createConstitutiveRelation(                       \
+            BaseLib::ConfigTree const& config) const                          \
+    {                                                                         \
+        return std::unique_ptr<                                               \
+            ConstitutiveRelation<RETURN_TYPE, __VA_ARGS__>>(                  \
+            new CTIVE_REL(config));                                           \
+    }
+
 #endif  // PROCESSLIB_CONSTITUTIVERELATION_CONSTITUTIVERELATIONBUILDER_H

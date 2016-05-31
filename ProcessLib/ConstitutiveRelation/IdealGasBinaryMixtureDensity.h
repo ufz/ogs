@@ -16,14 +16,9 @@ namespace ProcessLib
 {
 namespace ConstitutiveRelation
 {
-class IdealGasBinaryMixtureDensityBuilder final
-    : public ConstitutiveRelationBuilder<double, double, double, double>
-{
-public:
-    std::unique_ptr<ConstitutiveRelation<double, double, double, double>>
-    createConstitutiveRelation(
-        BaseLib::ConfigTree const& config) const override;
-};
+
+OGS_DECLARE_CONSTITUTIVE_RELATION_BUILDER(IdealGasBinaryMixtureDensity, double,
+                                          double, double, double);
 
 }  // namespace ConstitutiveRelation
 }  // namespace ProcessLib
