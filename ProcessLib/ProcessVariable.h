@@ -25,7 +25,6 @@ class BoundaryElementsSearcher;
 namespace MeshLib
 {
 class Mesh;
-class Node;
 }
 
 namespace GeoLib
@@ -101,10 +100,10 @@ public:
         }
     }
 
-    double getInitialConditionValue(MeshLib::Node const& n,
+    double getInitialConditionValue(std::size_t const node_id,
                                     int const component_id) const
     {
-        return _initial_condition->getValue(n, component_id);
+        return _initial_condition->getValue(node_id, component_id);
     }
 
     // Get or create a property vector for results.

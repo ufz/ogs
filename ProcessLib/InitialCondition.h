@@ -12,7 +12,6 @@
 
 #include <cassert>
 #include "BaseLib/ConfigTree.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
 namespace BaseLib
@@ -35,7 +34,8 @@ class InitialCondition
 {
 public:
     virtual ~InitialCondition() = default;
-    virtual double getValue(MeshLib::Node const&, int const component_id) const = 0;
+    virtual double getValue(std::size_t const node_id,
+                            int const component_id) const = 0;
 };
 
 /// Uniform value initial condition
@@ -46,7 +46,7 @@ public:
     {
     }
     /// Returns a value for given node and component.
-    virtual double getValue(MeshLib::Node const&,
+    virtual double getValue(std::size_t const /*node_id*/,
                             int const component_id) const override
     {
         return _values[component_id];
@@ -74,11 +74,10 @@ public:
         assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
     }
 
-    // TODO replace Node with node's id.
-    virtual double getValue(MeshLib::Node const& n,
+    virtual double getValue(std::size_t const node_id,
                             int const component_id) const override
     {
-        return _property[n.getID() * _property.getNumberOfComponents() +
+        return _property[node_id * _property.getNumberOfComponents() +
                          component_id];
     }
 

@@ -266,8 +266,7 @@ private:
                 global_index = 0;
 #endif
             x.set(global_index,
-                  variable.getInitialConditionValue(*_mesh.getNode(node_id),
-                                                    component_id));
+                  variable.getInitialConditionValue(node_id, component_id));
         }
     }
 
