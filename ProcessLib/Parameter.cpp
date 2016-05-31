@@ -17,16 +17,19 @@
 namespace ProcessLib
 {
 std::unique_ptr<ParameterBase> createConstParameter(
+    std::string const& name,
     BaseLib::ConfigTree const& config)
 {
     config.checkConfParam("type", "Constant");
     auto value = config.getConfParam<double>("value");
     DBUG("Using value %g", value);
 
-    return std::unique_ptr<ParameterBase>(new ConstParameter<double>(value));
+    return std::unique_ptr<ParameterBase>(
+        new ConstParameter<double>(name, value));
 }
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(
+    std::string const& name,
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     config.checkConfParam("type", "MeshProperty");
@@ -49,6 +52,6 @@ std::unique_ptr<ParameterBase> createMeshPropertyParameter(
     }
 
     return std::unique_ptr<ParameterBase>(
-        new MeshPropertyParameter<double>(*property));
+        new MeshPropertyParameter<double>(name, *property));
 }
 }  // namespace ProcessLib

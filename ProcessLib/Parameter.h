@@ -29,11 +29,19 @@ namespace ProcessLib
 /// Base class for all parameters, not an interface class. This avoids using of
 /// void* when storing parameters and convenient destruction.
 /// Its property name helps addressing the right parameter.
-struct ParameterBase
+class ParameterBase
 {
+public:
+    explicit ParameterBase(std::string const& name)
+        : _name(name)
+    {}
+
+    std::string const& getName() const { return _name; }
+
     virtual ~ParameterBase() = default;
 
-    std::string name;
+private:
+    std::string const _name;
 };
 
 /// A parameter is representing a value or function of any type.
@@ -41,19 +49,25 @@ struct ParameterBase
 /// tuple or matrix (\see tupleSize()).
 /// The total number of stored tuples is provided.
 template <typename ReturnType, typename... Args>
-struct Parameter : public ParameterBase
+class Parameter : public ParameterBase
 {
-    virtual ~Parameter() = default;
+public:
+    explicit Parameter(std::string const& name)
+        : ParameterBase(name)
+    {}
 
     virtual ReturnType operator()(Args&&... args) const = 0;
 };
 
 /// Single, constant value parameter.
 template <typename ReturnType>
-struct ConstParameter final
+class ConstParameter final
     : public Parameter<ReturnType, MeshLib::Element const&>
 {
-    ConstParameter(ReturnType value) : _value(value)
+public:
+    ConstParameter(std::string const& name, ReturnType value)
+        : Parameter<ReturnType, MeshLib::Element const&>(name)
+        , _value(value)
     {
     }
 
@@ -66,15 +80,19 @@ private:
     ReturnType _value;
 };
 
-std::unique_ptr<ParameterBase> createConstParameter(BaseLib::ConfigTree const& config);
+std::unique_ptr<ParameterBase> createConstParameter(
+        std::string const& name, BaseLib::ConfigTree const& config);
 
 /// A parameter represented by a mesh property vector.
 template <typename ReturnType>
-struct MeshPropertyParameter final
+class MeshPropertyParameter final
     : public Parameter<ReturnType, MeshLib::Element const&>
 {
-    MeshPropertyParameter(MeshLib::PropertyVector<ReturnType> const& property)
-        : _property(property)
+public:
+    MeshPropertyParameter(std::string const& name,
+                          MeshLib::PropertyVector<ReturnType> const& property)
+        : Parameter<ReturnType, MeshLib::Element const&>(name)
+        , _property(property)
     {
     }
 
@@ -87,7 +105,9 @@ private:
     MeshLib::PropertyVector<ReturnType> const& _property;
 };
 
-std::unique_ptr<ParameterBase> createMeshPropertyParameter(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+std::unique_ptr<ParameterBase> createMeshPropertyParameter(
+        std::string const& name,
+        BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // namespace ProcessLib
 

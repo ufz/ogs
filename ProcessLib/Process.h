@@ -382,7 +382,7 @@ Parameter<ParameterArgs...>& findParameter(
         std::find_if(parameters.cbegin(), parameters.cend(),
                      [&name](std::unique_ptr<ParameterBase> const& p)
                      {
-                         return p->name == name;
+                         return p->getName() == name;
                      });
 
     if (parameter_it == parameters.end())
@@ -393,7 +393,7 @@ Parameter<ParameterArgs...>& findParameter(
             name.c_str(), tag.c_str());
         std::abort();
     }
-    DBUG("Found parameter \'%s\'.", (*parameter_it)->name.c_str());
+    DBUG("Found parameter \'%s\'.", (*parameter_it)->getName().c_str());
 
     // Check the type correctness of the found parameter.
     auto* const parameter =

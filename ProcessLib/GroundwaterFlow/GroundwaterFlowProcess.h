@@ -167,7 +167,7 @@ createGroundwaterFlowProcess(
             config, "hydraulic_conductivity", parameters);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
-         hydraulic_conductivity.name.c_str());
+         hydraulic_conductivity.getName().c_str());
 
     GroundwaterFlowProcessData process_data {
         hydraulic_conductivity

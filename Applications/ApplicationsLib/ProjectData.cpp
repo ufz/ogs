@@ -278,15 +278,13 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         if (type == "Constant")
         {
             INFO("ConstantParameter: %s.", name.c_str());
-            _parameters.push_back(createConstParameter(parameter_config));
-            _parameters.back()->name = name;
+            _parameters.push_back(createConstParameter(name, parameter_config));
         }
         else if (type == "MeshProperty")
         {
             INFO("MeshPropertyParameter: %s", name.c_str());
             _parameters.push_back(
-                createMeshPropertyParameter(parameter_config, *_mesh_vec[0]));
-            _parameters.back()->name = name;
+                createMeshPropertyParameter(name, parameter_config, *_mesh_vec[0]));
         }
         else
         {
