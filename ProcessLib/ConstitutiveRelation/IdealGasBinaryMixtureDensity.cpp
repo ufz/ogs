@@ -25,8 +25,8 @@ class IdealGasBinaryMixtureDensity
 {
 public:
     IdealGasBinaryMixtureDensity(BaseLib::ConfigTree const& config)
-        : _M0(config.getConfParam<double>("M0")),
-          _M1(config.getConfParam<double>("M1"))
+        : _M0(config.getConfParam<double>("molar_mass_0")),
+          _M1(config.getConfParam<double>("molar_mass_1"))
     {
     }
 
@@ -62,7 +62,7 @@ private:
 
 std::unique_ptr<ConstitutiveRelation<double, double, double, double>>
 IdealGasBinaryMixtureDensityBuilder::createConstitutiveRelation(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config) const
 {
     return std::unique_ptr<
         ConstitutiveRelation<double, double, double, double>>(

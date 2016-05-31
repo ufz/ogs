@@ -12,18 +12,20 @@
 
 #include "ConstitutiveRelationBuilder.h"
 
-namespace ProcessLib {
-namespace ConstitutiveRelation {
-
+namespace ProcessLib
+{
+namespace ConstitutiveRelation
+{
 class IdealGasBinaryMixtureDensityBuilder final
-        : public ConstitutiveRelationBuilder<double, double, double, double>
+    : public ConstitutiveRelationBuilder<double, double, double, double>
 {
 public:
     std::unique_ptr<ConstitutiveRelation<double, double, double, double>>
-    createConstitutiveRelation(BaseLib::ConfigTree const& config) override;
+    createConstitutiveRelation(
+        BaseLib::ConfigTree const& config) const override;
 };
 
-} // namespace ConstitutiveRelation
-} // namespace ProcessLib
+}  // namespace ConstitutiveRelation
+}  // namespace ProcessLib
 
-#endif // PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
+#endif  // PROCESSLIB_CONSTITUTIVERELATION_IDEALGASBINARYMIXTUREDENSITY_H
