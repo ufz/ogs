@@ -194,14 +194,6 @@ function (AddTest)
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             DATA{${AddTest_DIFF_DATA_PARSED}}
         )
-    elseif(AddTest_TESTER STREQUAL "vtkdiff")
-        add_test(
-            NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
-            COMMAND ${CMAKE_COMMAND}
-            -Dcase_path=${AddTest_SOURCE_PATH}
-            -DTESTER_COMMAND=${TESTER_COMMAND}
-            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-        )
     else()
         add_test(
             NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
