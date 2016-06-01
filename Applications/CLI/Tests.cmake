@@ -124,16 +124,16 @@ if(NOT OGS_USE_MPI)
         )
 
         AddTest(
-                    NAME GroundWaterFlowProcess_line_1_Neumann_${mesh_size}
-                    PATH Elliptic/line_1_GroundWaterFlow
-                    EXECUTABLE ogs
-                    EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
-                    WRAPPER time
-                    TESTER vtkdiff
-                    ABSTOL 1e-16 RELTOL 1e-16
-                    DIFF_DATA line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
-                    DATA line_${mesh_size}_neumann.prj line_1_line_${mesh_size}.vtu line_1.gml
-                )
+            NAME GroundWaterFlowProcess_line_1_Neumann_${mesh_size}
+            PATH Elliptic/line_1_GroundWaterFlow
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
+            WRAPPER time
+            TESTER vtkdiff
+            ABSTOL 1e-16 RELTOL 1e-16
+            DIFF_DATA line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
+            DATA line_${mesh_size}_neumann.prj line_1_line_${mesh_size}.vtu line_1.gml
+        )
         endforeach()
 
 
@@ -177,11 +177,12 @@ else()
         EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
-        TESTER diff
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
-            quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_0.vtu
-            quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_1.vtu
-            quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_2.vtu
+        quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_0.vtu pressure pressure
+        quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_1.vtu pressure pressure
+        quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1.000000_2.vtu pressure pressure
     )
 
     AddTest(
@@ -190,11 +191,12 @@ else()
         EXECUTABLE_ARGS cube_1e3.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
-        TESTER diff
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
-            cube_1e3_pcs_0_ts_1_t_1.000000_0.vtu
-            cube_1e3_pcs_0_ts_1_t_1.000000_1.vtu
-            cube_1e3_pcs_0_ts_1_t_1.000000_2.vtu
+        cube_1e3_pcs_0_ts_1_t_1.000000_0.vtu pressure pressure
+        cube_1e3_pcs_0_ts_1_t_1.000000_1.vtu pressure pressure
+        cube_1e3_pcs_0_ts_1_t_1.000000_2.vtu pressure pressure
     )
 
     AddTest(
@@ -203,10 +205,11 @@ else()
         EXECUTABLE_ARGS cube_1e3_neumann.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 3
-        TESTER diff
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
         DIFF_DATA
-            cube_1e3_neumann_pcs_0_ts_1_t_1.000000_0.vtu
-            cube_1e3_neumann_pcs_0_ts_1_t_1.000000_1.vtu
-            cube_1e3_neumann_pcs_0_ts_1_t_1.000000_2.vtu
+        cube_1e3_neumann_pcs_0_ts_1_t_1.000000_0.vtu pressure pressure
+        cube_1e3_neumann_pcs_0_ts_1_t_1.000000_1.vtu pressure pressure
+        cube_1e3_neumann_pcs_0_ts_1_t_1.000000_2.vtu pressure pressure
     )
 endif()
