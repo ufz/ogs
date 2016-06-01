@@ -7,19 +7,21 @@
  *
  */
 
+#include "ReactionCaOH2.h"
 #include <cassert>
 #include <logog/include/logog.hpp>
-#include "ReactionCaOH2.h"
+#include "MaterialsLib/PhysicalConstant.h"
 #include "Adsorption.h"
 
 namespace Adsorption
 {
 
-const double ReactionCaOH2::_R = GAS_CONST;
 const double ReactionCaOH2::_reaction_enthalpy = -1.12e+05;
 const double ReactionCaOH2::_reaction_entropy  = -143.5;
-const double ReactionCaOH2::_M_carrier = M_N2;
-const double ReactionCaOH2::_M_react   = M_H2O;
+const double ReactionCaOH2::_M_carrier =
+    MaterialsLib::PhysicalConstant::MolarMass::N2;
+const double ReactionCaOH2::_M_react =
+    MaterialsLib::PhysicalConstant::MolarMass::Water;
 
 const double ReactionCaOH2::_tol_l   = 1e-4;
 const double ReactionCaOH2::_tol_u   = 1.0 - 1e-4;
@@ -77,6 +79,8 @@ void ReactionCaOH2::calculateQR()
 // determine equilibrium temperature and pressure according to van't Hoff
 void ReactionCaOH2::setChemicalEquilibrium()
 {
+    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+
     _X_D = (_rho_s - rho_up - _tol_rho)/(rho_low - rho_up - 2.0*_tol_rho) ;
     _X_D = (_X_D < 0.5) ? std::max(_tol_l,_X_D) : std::min(_X_D,_tol_u); // constrain to interval [tol_l;tol_u]
 
@@ -84,14 +88,15 @@ void ReactionCaOH2::setChemicalEquilibrium()
 
     // calculate equilibrium
     // using the p_eq to calculate the T_eq - Clausius-Clapeyron
-    _T_eq = (_reaction_enthalpy/_R) / ((_reaction_entropy/_R) + std::log(_p_r_g)); // unit of p in bar
+    _T_eq = (_reaction_enthalpy/R) / ((_reaction_entropy/R) + std::log(_p_r_g)); // unit of p in bar
     // Alternative: Use T_s as T_eq and calculate p_eq - for Schaube kinetics
-    _p_eq = std::exp((_reaction_enthalpy/_R)/_T_s - (_reaction_entropy/_R));
+    _p_eq = std::exp((_reaction_enthalpy/R)/_T_s - (_reaction_entropy/R));
 }
 
 
 double ReactionCaOH2::CaHydration()
 {
+    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
     double dXdt;
         // step 3, calculate dX/dt
 #ifdef SIMPLE_KINETICS
@@ -107,7 +112,7 @@ double ReactionCaOH2::CaHydration()
         if (_X_H == _tol_u || _rho_s == rho_up)
             dXdt = 0.0;
         else if ( (_T_eq-_T_s) >= 50.0)
-            dXdt = 13945.0 * exp(-89486.0/_R/_T_s) * std::pow(_p_r_g/_p_eq - 1.0,0.83) * 3.0 * (_X_D) * std::pow(-1.0*log(_X_D),0.666);
+            dXdt = 13945.0 * exp(-89486.0/R/_T_s) * std::pow(_p_r_g/_p_eq - 1.0,0.83) * 3.0 * (_X_D) * std::pow(-1.0*log(_X_D),0.666);
         else
             dXdt = 1.0004e-34 * exp(5.3332e4/_T_s) * std::pow(_p_r_g, 6.0) * (_X_D);
 #endif
@@ -121,9 +126,9 @@ double ReactionCaOH2::CaHydration()
         if (_X_D == _tol_u || _rho_s == rho_low)
             dXdt = 0.0;
         else if (_X_D < 0.2)
-            dXdt = -1.9425e12 * exp( -1.8788e5/_R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*(_X_H);
+            dXdt = -1.9425e12 * exp( -1.8788e5/R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*(_X_H);
         else
-            dXdt = -8.9588e9 * exp( -1.6262e5/_R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*2.0 * std::pow(_X_H, 0.5);
+            dXdt = -8.9588e9 * exp( -1.6262e5/R/_T_s ) * std::pow(1.0-_p_r_g/_p_eq,3.0)*2.0 * std::pow(_X_H, 0.5);
 #endif
     }
     return dXdt;

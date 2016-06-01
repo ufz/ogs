@@ -7,8 +7,9 @@
  *
  */
 
-#include <logog/include/logog.hpp>
 #include "Adsorption.h"
+#include <logog/include/logog.hpp>
+#include "MaterialsLib/PhysicalConstant.h"
 
 namespace {
     const double k_rate = 6.0e-3; // to be specified
@@ -111,8 +112,8 @@ void AdsorptionReaction::getDReactionRate(const double p_Ads, const double T_Ads
 {
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
     const double p_S = getEquilibriumVapourPressure(T_Ads);
-    const double dAdT = GAS_CONST * log(p_S/p_Ads) / (M_Ads*1.e3);
-    const double dAdp = - GAS_CONST * T_Ads / M_Ads / p_Ads;
+    const double dAdT = MaterialsLib::PhysicalConstant::IdealGasConstant * log(p_S/p_Ads) / (M_Ads*1.e3);
+    const double dAdp = - MaterialsLib::PhysicalConstant::IdealGasConstant * T_Ads / M_Ads / p_Ads;
 
     const double W = characteristicCurve(A);
     const double dWdA = dCharacteristicCurve(A);
@@ -131,7 +132,7 @@ void AdsorptionReaction::getDReactionRate(const double p_Ads, const double T_Ads
 // Evaluate adsorbtion potential A
 double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads, const double M_Ads) const
 {
-    double A = GAS_CONST * T_Ads * log(getEquilibriumVapourPressure(T_Ads)/p_Ads) / (M_Ads*1.e3); // in kJ/kg = J/g
+    double A = MaterialsLib::PhysicalConstant::IdealGasConstant * T_Ads * log(getEquilibriumVapourPressure(T_Ads)/p_Ads) / (M_Ads*1.e3); // in kJ/kg = J/g
     return A;
 }
 

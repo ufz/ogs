@@ -8,6 +8,7 @@
  */
 
 #include "DensityDubinin.h"
+#include "MaterialsLib/PhysicalConstant.h"
 #include "DensityCook.h"
 #include "Adsorption.h"
 
@@ -43,8 +44,8 @@ double DensityDubinin::getAdsorbateDensity(const double T_Ads) const
         // boiling point density
         const double rhob = rhoWaterDean(Tb);
         // state values
-        const double R = GAS_CONST;
-        const double M = M_H2O;
+        const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+        const double M = MaterialsLib::PhysicalConstant::MolarMass::Water;
         const double b = R * Tc/(8. * pc); // m^3/mol
         const double rhom = M/b; // kg/m^3
         const double rho = rhob - (rhob-rhom)/(Tc-Tb)*(T_Ads-Tb);
@@ -66,8 +67,8 @@ double DensityDubinin::getAlphaT(const double T_Ads) const
         // boiling point density
         const double rhob = rhoWaterDean(Tb);
         // state values
-        const double R = GAS_CONST;
-        const double M = M_H2O;
+        const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+        const double M = MaterialsLib::PhysicalConstant::MolarMass::Water;
         const double b = R * Tc/(8. * pc); // m^3/mol
         const double rhom = M/(b); // kg/m^3
         const double rho = rhob - (rhob-rhom)/(Tc-Tb)*(T_Ads-Tb);
