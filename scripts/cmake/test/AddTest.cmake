@@ -192,7 +192,6 @@ function (AddTest)
             -Dcase_path=${AddTest_SOURCE_PATH}
             -DTESTER_COMMAND=${TESTER_COMMAND}
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-            DATA{${AddTest_DIFF_DATA_PARSED}}
         )
     else()
         add_test(
