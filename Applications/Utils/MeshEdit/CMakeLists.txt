@@ -1,13 +1,4 @@
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/BaseLib
-    ${CMAKE_SOURCE_DIR}/GeoLib
-    ${CMAKE_SOURCE_DIR}/FileIO
-    ${CMAKE_SOURCE_DIR}/FileIO/Gmsh
-    ${CMAKE_SOURCE_DIR}/MathLib
-    ${CMAKE_SOURCE_DIR}/MeshLib
-)
-
 add_executable(moveMeshNodes moveMeshNodes.cpp)
 target_link_libraries(moveMeshNodes MeshLib)
 ADD_VTK_DEPENDENCY(moveMeshNodes)

@@ -1,14 +1,4 @@
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/Utils/FileConverter
-    ${CMAKE_SOURCE_DIR}/BaseLib
-    ${CMAKE_SOURCE_DIR}/GeoLib
-    ${CMAKE_SOURCE_DIR}/FileIO
-    ${CMAKE_SOURCE_DIR}/MathLib
-    ${CMAKE_SOURCE_DIR}/MeshLib
-    ${CMAKE_SOURCE_DIR}/Gui/OpenSG
-)
-
 if (QT4_FOUND AND Shapelib_FOUND)
     add_executable(ConvertSHPToGLI ConvertSHPToGLI.cpp)
     set_target_properties(ConvertSHPToGLI PROPERTIES FOLDER Utilities)
