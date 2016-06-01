@@ -22,10 +22,10 @@
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 // BaseLib
-#include "FileTools.h"
-#include "RunTime.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 #ifndef WIN32
-#include "MemWatch.h"
+#include "BaseLib/MemWatch.h"
 #endif
 
 #include "MeshLib/IO/GmshReader.h"

@@ -1,10 +1,3 @@
-include_directories(
-    ${CMAKE_SOURCE_DIR}/BaseLib
-    ${CMAKE_SOURCE_DIR}/GeoLib
-    ${CMAKE_SOURCE_DIR}/FileIO
-    ${CMAKE_SOURCE_DIR}/MathLib
-)
-
 if(QT4_FOUND)
     add_executable(TriangulatePolyline TriangulatePolyline.cpp)
     target_link_libraries(TriangulatePolyline GeoLib)
