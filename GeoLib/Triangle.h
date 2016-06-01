@@ -78,7 +78,7 @@ protected:
     /** a vector of pointers to points */
     const std::vector<Point*> &_pnts;
     /** position of pointers to the geometric points */
-    std::size_t _pnt_ids[3];
+    std::array<std::size_t, 3> _pnt_ids;
 };
 
 void getPlaneCoefficients(Triangle const& tri, double c[3]);

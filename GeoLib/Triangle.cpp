@@ -23,12 +23,9 @@ namespace GeoLib {
 
 Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
-    _pnts(pnt_vec), _initialized (true)
+    _pnts(pnt_vec), _pnt_ids( {{pnt_a, pnt_b, pnt_c}} )
 {
     assert(!_pnts.empty());
-    _pnt_ids[0] = pnt_a;
-    _pnt_ids[1] = pnt_b;
-    _pnt_ids[2] = pnt_c;
 }
 
 void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
