@@ -19,8 +19,8 @@
 #include "LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
-#include "FileIO/readMeshFromFile.h"
-#include "FileIO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/RunTime.h"
@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
     const std::string ifile_name = mesh_input.getValue();
     const std::string file_name_base = BaseLib::dropFileExtension(ifile_name);
     MeshLib::MeshPartitioning* mesh = static_cast<MeshLib::MeshPartitioning*>
-                                      (FileIO::readMeshFromFile(file_name_base + ".vtu"));
+                                      (MeshLib::IO::readMeshFromFile(file_name_base + ".vtu"));
     INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
 
     if (ogs2metis_flag.getValue())
@@ -82,19 +82,20 @@ int main (int argc, char* argv[])
     {
         if ( elem_part_flag.getValue() )
         {
-            INFO("Partition the mesh in the element wise way.");
+            INFO("Partitioning the mesh in the element wise way ...");
             mesh->partitionByElementMETIS( file_name_base, nparts.getValue());
         }
         else
         {
             const int num_partitions = nparts.getValue();
 
-            INFO("Partition the mesh in the node wise way.");
-            mesh->partitionByNodeMETIS(file_name_base, num_partitions, asci_flag.getValue());
+            INFO("Partitioning the mesh in the node wise way ...");
+            // Binary output is default.
+            mesh->partitionByNodeMETIS(file_name_base, num_partitions, !asci_flag.getValue());
 
             INFO("Write the mesh with renumbered node indicies into VTU");
-            FileIO::VtuInterface writer(mesh);
-            writer.writeToFile(file_name_base + "_" + std::to_string(num_partitions) + ".vtu");
+            MeshLib::IO::VtuInterface writer(mesh);
+            writer.writeToFile(file_name_base + "_node_id_renumbered_partitions_" + std::to_string(num_partitions) + ".vtu");
         }
     }
 

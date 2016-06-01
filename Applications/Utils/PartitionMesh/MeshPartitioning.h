@@ -24,12 +24,12 @@
 namespace MeshLib
 {
 
-enum ElementType {LINE2, QUAD4, HEX8, TRI3, TET4, PRISM6, PYRAMID5, INVALID};
+enum class ElementType : unsigned {LINE2, QUAD4, HEX8, TRI3, TET4, PRISM6, PYRAMID5, INVALID};
 
 /// A subdomain mesh.
 class MeshPartitioning : public Mesh
 {
-        typedef int MyInt; // for PetscInt
+        typedef long MyInt; // for PetscInt
     public:
         /// Copy constructor
         MeshPartitioning(const MeshLib::Mesh &mesh) : Mesh(mesh)
@@ -49,34 +49,28 @@ class MeshPartitioning : public Mesh
                                   const bool output_binary);
 
     private:
-        /// Elements connected to each nodes.
-        std::vector< std::vector<Element*> > _node_connected_elements;
-
-        /// Find connected elements for each nodes.
-        void findConnectedElements();
-
         ElementType getElementType(const Element& elem);
 
-    /*!
-         \brief get integer variables, which are used to define an element
-         \param elem            Element
-         \param local_node_ids  Local node indicies of a partition
-         \param elem_info       An vector holds all integer variables of element definitions
-         \param counter         Recorder of the number of integer variables.
-    */
-    void getElementIntegerVariables(const Element& elem,
-                                    const std::vector<unsigned>& local_node_ids,
-                                    std::vector<MyInt>& elem_info,
-                                    MyInt& counter);
+        /*!
+             \brief get integer variables, which are used to define an element
+             \param elem            Element
+             \param local_node_ids  Local node indicies of a partition
+             \param elem_info       An vector holds all integer variables of element definitions
+             \param counter         Recorder of the number of integer variables.
+        */
+        void getElementIntegerVariables(const Element& elem,
+                                        const std::vector<unsigned>& local_node_ids,
+                                        std::vector<MyInt>& elem_info,
+                                        MyInt& counter);
 
-    /*!
-        \brief Write local indicies of element nodes to a ASCII file
-        \param os              Output stream
-        \param elem            Element
-        \param local_node_ids  Local node indicies of a partition
-    */
-    void writeLocalElementNodeIndicies(std::ostream& os, const Element& elem,
-                                       const std::vector<unsigned>& local_node_ids);
+        /*!
+            \brief Write local indicies of element nodes to a ASCII file
+            \param os              Output stream
+            \param elem            Element
+            \param local_node_ids  Local node indicies of a partition
+        */
+        void writeLocalElementNodeIndicies(std::ostream& os, const Element& elem,
+                                           const std::vector<unsigned>& local_node_ids);
 
         struct NodeStruct
         {

@@ -66,7 +66,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         nodes_partition_ids.push_back(part_id);
     }
     npart_in.close();
-    std::remove(fname_parts.c_str());
+    //TEST  std::remove(fname_parts.c_str());
 
 
     // -- Open files for output
@@ -86,13 +86,13 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         std::string fname = file_name_base + "_partitioned_msh_cfg" + npartitions_str + ".bin";
         of_bin_cfg = fopen(fname.c_str(), "wb");
 
-        fname = fname + "_partitioned_msh_ele" + npartitions_str + ".bin";
+        fname = file_name_base + "_partitioned_msh_ele" + npartitions_str + ".bin";
         of_bin_ele = fopen(fname.c_str(), "wb");
 
-        fname = fname + "_partitioned_msh_ele_g" + npartitions_str + ".bin";
+        fname = file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin";
         of_bin_ele_g = fopen(fname.c_str(), "wb");
 
-        fname = fname + "_partitioned_msh_nod" + npartitions_str + ".bin";
+        fname = file_name_base + "_partitioned_msh_nod" + npartitions_str + ".bin";
         of_bin_nod = fopen(fname.c_str(), "wb");
     }
     else
@@ -119,31 +119,34 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         os_subd.setf(std::ios::scientific);
     }
 
-    findConnectedElements();
-
     MyInt global_node_id_offset = 0;
     std::vector<bool> nodes_part_reserved;
     nodes_part_reserved.reserve(nnodes);
-    std::vector<unsigned> nodes_local_ids_partition;
-    nodes_local_ids_partition.reserve(nnodes);
+    std::vector<MyInt> node_global_ids;
+    node_global_ids.reserve(nnodes);
     for (std::size_t i=0; i<nnodes; i++)
     {
         nodes_part_reserved.push_back(false);
-        nodes_local_ids_partition.push_back(0);
+        node_global_ids.push_back(0);
     }
     std::vector<bool> nodes_reseved(nnodes);
     std::vector<bool> elems_reseved(_elements.size());
-    // For ghost element
-    std::vector< std::vector<unsigned> > elems_non_ghost_nodes_local_ids(_elements.size());
 
     std::vector<MeshLib::Node*> partition_nodes;  // non-ghost nodes of a partition
     std::vector<std::size_t> partition_start_node_id(npartitions);
     std::vector<std::size_t> partition_end_node_id(npartitions);
     std::vector<std::size_t> end_non_ghost_node_id(npartitions);
 
-    /// Assume that the maximum node number element amoung all element types are 100.
-    std::vector<unsigned> nonghost_nodes_local_ids(100);
-    std::vector<unsigned> ghost_nodes_local_ids(100);
+    const MyInt num_headers = 14;
+    MyInt head[num_headers];
+    // node rank offset
+    head[10] = 0;
+    // element rank offset
+    head[11] = 0;
+    // ghost element rank offset
+    head[12] = 0;
+    // Reserved
+    head[13] = 0;
 
     for (std::size_t ipart=0; ipart<npartitions; ipart++)
     {
@@ -151,10 +154,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
 
         partition_start_node_id[ipart] = partition_nodes.size();
 
-        for (auto node_reserved_flag : nodes_reseved)
-        {
-            node_reserved_flag = false;
-        }
+        std::fill(nodes_reseved.begin(), nodes_reseved.end(), false);
 
         // Find non-ghost nodes in this partition
         for (std::size_t i=0; i< nnodes; i++)
@@ -168,14 +168,13 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         }
         end_non_ghost_node_id[ipart] = partition_nodes.size();
 
-        for (auto elem_reserved_flag : elems_reseved)
-        {
-            elem_reserved_flag = false;
-        }
-
         // Find elements in this partition
         std::vector<const Element*> partition_regular_elements;
         std::vector<const Element*> partition_ghost_elements;
+        std::fill(elems_reseved.begin(), elems_reseved.end(), false);
+        // For ghost element
+        std::vector< std::vector<unsigned> >
+        elems_non_ghost_nodes_local_ids(_elements.size());
 
         const MyInt num_non_ghost_nodes =  end_non_ghost_node_id[ipart]
                                            - partition_start_node_id[ipart];
@@ -184,41 +183,38 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
             const unsigned node_id = partition_nodes[ i +  partition_start_node_id[ipart] ]->getID();
 
             // Search the elements connected to this nodes
-            for (const auto elem : _node_connected_elements[node_id])
+            std::vector<Element*> const& connected_elems = _nodes[node_id]->getElements();
+
+            for (const auto elem : connected_elems)
             {
                 // If checked
                 if (elems_reseved[elem->getID()])
                     continue;
 
-                unsigned non_ghost_counter = 0;
+                std::vector<unsigned> nonghost_nodes_local_ids;
                 unsigned ghost_counter = 0;
                 for (unsigned kk=0; kk<elem->getNNodes(); kk++)
                 {
                     if (nodes_reseved[elem->getNodeIndex(kk)])
                     {
-                        nonghost_nodes_local_ids[non_ghost_counter] = kk;
-                        non_ghost_counter++;
+                        nonghost_nodes_local_ids.push_back(kk);
                     }
                     else
                     {
-                        ghost_nodes_local_ids[ghost_counter] = kk;
                         ghost_counter++;
                     }
                 }
 
                 // All nodes of this element are inside this partition
-                if (ghost_nodes_local_ids.size() == 0)
+                if (ghost_counter == 0)
                 {
                     partition_regular_elements.push_back(elem);
                 }
-                else if (ghost_nodes_local_ids.size() != elem->getNNodes()) // ghost element
+                else // ghost element
                 {
                     partition_ghost_elements.push_back(elem);
-
-                    elems_non_ghost_nodes_local_ids[elem->getID()].resize(non_ghost_counter);
-                    std::vector<unsigned>& local_node_ids = elems_non_ghost_nodes_local_ids[elem->getID()];
-                    for (unsigned kk=0; kk<non_ghost_counter; kk++)
-                        local_node_ids[kk] = nonghost_nodes_local_ids[kk];
+                    elems_non_ghost_nodes_local_ids[elem->getID()]
+                        = std::move(nonghost_nodes_local_ids);
                 }
 
                 elems_reseved[elem->getID()] = true;
@@ -236,16 +232,17 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
             // Mark non-ghost nodes
             std::vector<unsigned>& local_node_ids = elems_non_ghost_nodes_local_ids[ghost_elem->getID()];
             for (std::size_t k=0; k<local_node_ids.size(); k++)
-                nodes_reseved[local_node_ids[k]] = true;
+                nodes_reseved[ghost_elem->getNodeIndex(local_node_ids[k])] = true;
         }
         // Add the ghost nodes to the node vector of this partition
         for (const auto ghost_elem : partition_ghost_elements)
         {
             for (unsigned k=0; k<ghost_elem->getNNodes(); k++)
             {
-                if (nodes_reseved[ghost_elem->getNodeIndex(k)])
+                const unsigned node_id = ghost_elem->getNodeIndex(k);
+                if (nodes_reseved[node_id])
                     continue;
-                nodes_reseved[ghost_elem->getNodeIndex(k)] = true;
+                nodes_reseved[node_id] = true;
                 partition_nodes.push_back(ghost_elem->getNode(k));
             }
         }
@@ -253,20 +250,28 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         partition_end_node_id[ipart] = partition_nodes.size();
         // Renumber
         MyInt local_id = 0;
-        for (std::size_t i = partition_start_node_id[ipart];
-                         i < end_non_ghost_node_id[ipart]; i++)
+
+        std::vector<unsigned> nodes_local_ids_partition;
+        nodes_local_ids_partition.reserve(nnodes);
+        for (std::size_t i=0; i<nnodes; i++)
         {
-            MeshLib::Node* a_node = partition_nodes[i];
-            a_node->setID(global_node_id_offset);
-            nodes_local_ids_partition[i] = local_id;
+            nodes_local_ids_partition.push_back(0);
+        }
+
+        for (std::size_t i = partition_start_node_id[ipart];
+                i < end_non_ghost_node_id[ipart]; i++)
+        {
+            const unsigned node_id = partition_nodes[i]->getID();
+            node_global_ids[node_id] = global_node_id_offset;
+            nodes_local_ids_partition[node_id] = local_id;
             local_id++;
             global_node_id_offset++;
         }
         // Assign local IDs to ghost nodes
         for (std::size_t i = end_non_ghost_node_id[ipart];
-                         i < partition_end_node_id[ipart]; i++)
+                i < partition_end_node_id[ipart]; i++)
         {
-            nodes_local_ids_partition[i] = local_id;
+            nodes_local_ids_partition[partition_nodes[i]->getID()] = local_id;
             local_id++;
         }
 
@@ -294,7 +299,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         const MyInt num_non_ghost_nodes_extra = 0;
 
         const MyInt num_nodes_linear_element =   partition_end_node_id[ipart]
-                                               - partition_start_node_id[ipart];
+                - partition_start_node_id[ipart];
         const MyInt num_nodes_quadratic_element = 0;
 
         const MyInt num_nodes_global_mesh = nnodes;
@@ -302,25 +307,18 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         const MyInt num_nodes_global_mesh_extra = nnodes;
 
         // Write configuration data and elements of this partition
+        head[0] = num_nodes_linear_element + num_nodes_quadratic_element;
+        head[1] = num_nodes_linear_element;
+        head[2] = num_non_ghost_elems;
+        head[3] = num_ghost_elems;
+        head[4] = num_non_ghost_nodes;
+        head[5] = num_non_ghost_nodes + num_non_ghost_nodes_extra; // active nodes
+        head[6] = num_nodes_global_mesh;
+        head[7] = num_nodes_global_mesh_extra;
+        head[8] = nmb_element_idxs;
+        head[9] = nmb_element_idxs_g;
         if (output_binary)
         {
-            const MyInt num_headers = 14;
-            MyInt head[num_headers];
-            head[0] = num_nodes_linear_element + num_nodes_quadratic_element;
-            head[1] = num_nodes_linear_element;
-            head[2] = num_non_ghost_elems;
-            head[3] = num_ghost_elems;
-            head[4] = num_non_ghost_nodes;
-            head[5] = num_non_ghost_nodes + num_non_ghost_nodes_extra; // active nodes
-            head[6] = num_nodes_global_mesh;
-            head[7] = num_nodes_global_mesh_extra;
-            head[8] = nmb_element_idxs;
-            head[9] = nmb_element_idxs_g;
-            head[10] = 0;
-            head[11] = 0;
-            head[12] = 0;
-            head[13] = 0;
-
             fwrite(head, 1, num_headers * sizeof(MyInt), of_bin_cfg);
 
             head[10] += head[0] * sizeof(NodeStruct);
@@ -339,7 +337,6 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
                                            ele_info, counter);
             }
             fwrite(&ele_info[0], 1, (offset_e) * sizeof(MyInt), of_bin_ele);
-            ele_info.clear();
 
             // Write ghost elements
             ele_info.resize(offset_e_g);
@@ -354,6 +351,13 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         }
         else
         {
+
+            for (int j=0; j<10; j++)
+            {
+                os_subd_head << head[j] << " ";
+            }
+            os_subd_head << " 0 " << std::endl;
+
             for (const auto elem : partition_regular_elements)
             {
                 writeLocalElementNodeIndicies(os_subd, *elem, nodes_local_ids_partition);
@@ -369,12 +373,11 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
 
     nodes_partition_ids.clear();
     nodes_part_reserved.clear();
-    nodes_local_ids_partition.clear();
     nodes_reseved.clear();
     elems_reseved.clear();
 
     // Write nodes
-    if (!output_binary)
+    if (output_binary)
     {
         fclose(of_bin_cfg);
         fclose(of_bin_ele);
@@ -382,21 +385,21 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
 
         for (std::size_t ipart=0; ipart<npartitions; ipart++)
         {
-            const size_t nnodes = partition_end_node_id[ipart] - partition_start_node_id[ipart];
+            const size_t nnodes_part = partition_end_node_id[ipart] - partition_start_node_id[ipart];
             std::vector<NodeStruct> nodes_buffer;
-            nodes_buffer.reserve(nnodes);
+            nodes_buffer.reserve(nnodes_part);
 
-            for (std::size_t i=partition_end_node_id[ipart]; i<partition_start_node_id[ipart]; i++)
+            for (std::size_t i=partition_start_node_id[ipart]; i<partition_end_node_id[ipart]; i++)
             {
                 double const* coords = partition_nodes[i]->getCoords();
                 NodeStruct node_struct;
-                node_struct.id = partition_nodes[i]->getID();
+                node_struct.id = node_global_ids[partition_nodes[i]->getID()];
                 node_struct.x = coords[0];
                 node_struct.y = coords[1];
                 node_struct.z = coords[2];
                 nodes_buffer.emplace_back(node_struct);
             }
-            fwrite(&nodes_buffer[0], sizeof(NodeStruct), nnodes, of_bin_nod);
+            fwrite(&nodes_buffer[0], sizeof(NodeStruct), nnodes_part, of_bin_nod);
         }
         fclose(of_bin_nod);
     }
@@ -410,40 +413,29 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
 
         for (std::size_t ipart=0; ipart<npartitions; ipart++)
         {
-            for (std::size_t i=partition_end_node_id[ipart]; i<partition_start_node_id[ipart]; i++)
+            for (std::size_t i=partition_start_node_id[ipart]; i<partition_end_node_id[ipart]; i++)
             {
                 double const* coords = partition_nodes[i]->getCoords();
-                os_subd_node << partition_nodes[i]->getID() << " "
+                os_subd_node << node_global_ids[partition_nodes[i]->getID()] << " "
                              << coords[0] << " " << coords[1] << " " << coords[2]<<"\n";
             }
             os_subd_node << std::endl;
         }
         os_subd_node.close();
     }
-}
 
-void MeshPartitioning::findConnectedElements()
-{
-    _node_connected_elements.resize(_nodes.size());
-
-    for (auto elem : _elements)
+    // Update the node IDs
+    for (std::size_t i=0; i<nnodes; i++)
     {
-        for (unsigned i=0; i<elem->getNNodes(); i++)
-        {
-            bool done = false;
-            unsigned node_id = elem->getNodeIndex(i);
-            for (std::size_t j=0; j<_node_connected_elements[node_id].size(); j++)
-            {
-                if ( elem->getID() == _node_connected_elements[node_id][j]->getID())
-                {
-                    done = true;
-                    break;
-                }
-            }
-            if(!done)
-                _node_connected_elements[node_id].push_back(elem);
-        }
+        _nodes[i]->setID(node_global_ids[i]);
     }
+    // sort
+    std::sort(_nodes.begin(), _nodes.end(),
+              [](const MeshLib::Node* a, const MeshLib::Node* b)
+                {
+                   return a->getID() < b->getID();
+                }
+             );
 }
 
 ElementType MeshPartitioning::getElementType(const Element& elem)
@@ -451,17 +443,17 @@ ElementType MeshPartitioning::getElementType(const Element& elem)
     switch ( elem.getCellType() )
     {
         case MeshLib::CellType::LINE2:
-            return LINE2;
+            return ElementType::LINE2;
         case MeshLib::CellType::QUAD4:
-            return QUAD4;
+            return ElementType::QUAD4;
         case MeshLib::CellType::HEX8:
-            return HEX8;
+            return ElementType::HEX8;
         case MeshLib::CellType::TRI3:
-            return TRI3;
+            return ElementType::TRI3;
         case MeshLib::CellType::PYRAMID5:
-            return PYRAMID5;
+            return ElementType::PYRAMID5;
         case MeshLib::CellType::PRISM6:
-            return PRISM6;
+            return ElementType::PRISM6;
         default:
             ERR("Invalid element type in element %d", elem.getID());
             abort();
@@ -469,14 +461,14 @@ ElementType MeshPartitioning::getElementType(const Element& elem)
 }
 
 void MeshPartitioning::getElementIntegerVariables(const Element& elem,
-                                                   const std::vector<unsigned>& local_node_ids,
-                                                   std::vector<MyInt>& elem_info,
-                                                   MyInt& counter)
+        const std::vector<unsigned>& local_node_ids,
+        std::vector<MyInt>& elem_info,
+        MyInt& counter)
 {
     unsigned mat_id = 0; // Materical ID to be set from the mesh data
     const MyInt nn = elem.getNNodes();;
     elem_info[counter++] = mat_id;
-    elem_info[counter++] = getElementType(elem) + 1;
+    elem_info[counter++] = static_cast<unsigned>(getElementType(elem)) + 1;
     elem_info[counter++] = nn;
 
     for(MyInt i=0; i<nn; i++)
@@ -486,11 +478,11 @@ void MeshPartitioning::getElementIntegerVariables(const Element& elem,
 }
 
 void MeshPartitioning::writeLocalElementNodeIndicies(std::ostream& os, const Element& elem,
-                                   const std::vector<unsigned>& local_node_ids)
+        const std::vector<unsigned>& local_node_ids)
 {
     unsigned mat_id = 0; // Materical ID to be set from the mesh data
-    os << mat_id << " " << getElementType(elem) + 1 << " "
-    << elem.getNNodes() <<" ";
+    os << mat_id << " " << static_cast<unsigned>(getElementType(elem)) + 1 << " "
+       << elem.getNNodes() <<" ";
     for(unsigned i=0; i<elem.getNNodes(); i++)
     {
         os << local_node_ids[elem.getNodeIndex(i)] << " ";
