@@ -51,7 +51,6 @@ private:
     void setChemicalEquilibrium();
     double CaHydration();
 
-    static const double _R;  //!< universal gas constant in J/mol/K
     double _rho_s;           //!< solid phase density
     double _p_gas;           //!< gas phase pressure in unit bar
     double _p_r_g;           //!< pressure of H2O on gas phase
