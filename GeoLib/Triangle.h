@@ -28,7 +28,7 @@ class Point;
  * A surface is composed by triangles. The class Surface stores the position
  * of pointers to the points of triangles in the m_sfc_pnt_ids vector.
  * */
-class Triangle
+class Triangle final
 {
 public:
     /**
@@ -74,7 +74,7 @@ public:
      */
     bool containsPoint2D (Point const& pnt) const;
 
-protected:
+private:
     /** a vector of pointers to points */
     const std::vector<Point*> &_pnts;
     /** position of pointers to the geometric points */
