@@ -103,7 +103,6 @@ include_directories(
     ${SOURCE_DIR_REL}/BaseLib
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MathLib
-    ${SOURCE_DIR_REL}/FileIO
     ${SOURCE_DIR_REL}/MeshLib
     ${GUI_SOURCE_DIR_REL}/VtkAct
     ${GUI_SOURCE_DIR_REL}/Base

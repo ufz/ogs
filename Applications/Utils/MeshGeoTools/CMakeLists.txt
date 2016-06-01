@@ -2,7 +2,6 @@ ADD_EXECUTABLE( ComputeSurfaceNodeIDsInPolygonalRegion ComputeSurfaceNodeIDsInPo
 SET_TARGET_PROPERTIES( ComputeSurfaceNodeIDsInPolygonalRegion PROPERTIES FOLDER Utilities)
 TARGET_LINK_LIBRARIES( ComputeSurfaceNodeIDsInPolygonalRegion
     MeshLib
-    FileIO
     GeoLib
     MathLib
     ${OGS_VTK_REQUIRED_LIBS}

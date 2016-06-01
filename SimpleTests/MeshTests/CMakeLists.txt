@@ -7,7 +7,6 @@ add_executable(MeshRead
 
 target_link_libraries(MeshRead
     MeshLib
-    FileIO
     MathLib
     BaseLib
     GeoLib
@@ -23,7 +22,6 @@ add_executable(MeshSearchTest
 
 target_link_libraries(MeshSearchTest
     MeshLib
-    FileIO
     MathLib
     BaseLib
     GeoLib
