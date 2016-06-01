@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Mar 22, 2012
- * \brief  Definition of the GMSHLine class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,9 +13,12 @@
 
 #include <iosfwd>
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHLine {
 public:
@@ -33,7 +32,8 @@ private:
     std::size_t _end_pnt_id;
 };
 
-}
-}
+} // end namespace GMSH
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHLINE_H_ */

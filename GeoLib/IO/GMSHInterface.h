@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-04-29
- * \brief  Definition of the GMSHInterface class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,34 +11,26 @@
 #ifndef GMSHINTERFACE_H_
 #define GMSHINTERFACE_H_
 
-#include <list>
-#include <map>
-#include <string>
+#include <iosfwd>
 
 #include "BaseLib/IO/Writer.h"
-#include "FileIO/GmshIO/GMSHPoint.h"
-#include "FileIO/GmshIO/GMSHPolygonTree.h"
-#include "FileIO/GmshIO/GMSHMeshDensityStrategy.h"
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 namespace GeoLib
 {
-    class GEOObjects;
-    class Polygon;
-}
+class GEOObjects;
+class Polygon;
 
-namespace MeshLib
-{
-    class Mesh;
-    class Element;
-    class Node;
-}
-
-namespace FileIO
+namespace IO
 {
 
-namespace GMSH {
+namespace GMSH
+{
+
+class GMSHPoint;
+class GMSHPolygonTree;
+class GMSHMeshDensityStrategy;
 
 enum class MeshDensityAlgorithm {
     FixedMeshDensity, //!< set the parameter with a fixed value
@@ -91,29 +79,10 @@ public:
 
     ~GMSHInterface();
 
-    /**
-     * checks if there is a GMSH mesh file header
-     * @param fname the file name of the mesh (including the path)
-     * @return true, if the file seems to be a valid GMSH file, else false
-     */
-    static bool isGMSHMeshFile (const std::string& fname);
-    /**
-     * reads a mesh created by GMSH - this implementation is based on the former function GMSH2MSH
-     * @param fname the file name of the mesh (including the path)
-     * @return
-     */
-    static MeshLib::Mesh* readGMSHMesh (std::string const& fname);
-
 protected:
     bool write();
 
 private:
-    /// Reads a mesh element from the input stream
-    static std::pair<MeshLib::Element*, int> readElement(
-        std::ifstream& in,
-        std::vector<MeshLib::Node*> const& nodes,
-        std::map<unsigned, unsigned> const& id_map);
-
     /**
      * 1. get and merge data from _geo_objs
      * 2. compute topological hierarchy
@@ -123,10 +92,6 @@ private:
      * 3 = error writing file
      */
     int writeGMSHInputFile(std::ostream & out);
-
-    static void readNodeIDs(std::ifstream& in, unsigned n_nodes,
-                            std::vector<unsigned>& node_ids,
-                            std::map<unsigned, unsigned> const& id_map);
 
     void writePoints(std::ostream& out) const;
 
@@ -138,7 +103,7 @@ private:
     std::string _gmsh_geo_name;
     std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
 
-    std::vector<FileIO::GMSH::GMSHPoint*> _gmsh_pnts;
+    std::vector<GMSH::GMSHPoint*> _gmsh_pnts;
 
     GMSH::GMSHMeshDensityStrategy *_mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
@@ -150,6 +115,7 @@ private:
     bool _rotate = false;
     bool _keep_preprocessed_geometry = true;
 };
-}
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHINTERFACE_H_ */

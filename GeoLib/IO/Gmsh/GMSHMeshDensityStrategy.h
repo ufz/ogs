@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-03-05
- * \brief  Definition of the GMSHMeshDensityStrategy class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -19,13 +15,11 @@
 
 namespace GeoLib
 {
-    class Point;
-}
-
-namespace FileIO
+class Point;
+namespace IO
 {
-namespace GMSH {
-
+namespace GMSH
+{
 /**
  * virtual base class GMSHMeshDensityStrategy for classes
  * GMSHAdaptiveMeshDensity and GMSHFixedMeshDensity.
@@ -39,8 +33,8 @@ public:
     virtual double getMeshDensityAtStation(GeoLib::Point const*const) const = 0;
 };
 
-}
-} // end namespace
-
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHMESHDENSITYSTRATEGY_H_ */

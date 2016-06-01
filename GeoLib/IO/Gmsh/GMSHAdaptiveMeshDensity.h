@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-05
- * \brief  Definition of the GMSHAdaptiveMeshDensity class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,22 +11,21 @@
 #ifndef GMSHADAPTIVEMESHDENSITY_H_
 #define GMSHADAPTIVEMESHDENSITY_H_
 
-// FileIO
 #include "GMSHMeshDensityStrategy.h"
 
 namespace GeoLib
 {
-    class Polygon;
-    class Point;
-    template <typename T> class QuadTree;
+class Polygon;
+class Point;
+template <typename T> class QuadTree;
 #ifndef NDEBUG
-    class Polyline;
+class Polyline;
 #endif
-}
 
-namespace FileIO
+namespace IO
 {
-namespace GMSH {
+namespace GMSH
+{
 
 class GMSHAdaptiveMeshDensity : public GMSHMeshDensityStrategy
 {
@@ -58,6 +53,7 @@ private:
 };
 
 }
-} // end namespace FileIO
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHADAPTIVEMESHDENSITY_H_ */

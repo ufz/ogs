@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-05
- * \brief  Definition of the GMSHFixedMeshDensity class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,9 +13,12 @@
 
 #include "GMSHMeshDensityStrategy.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHFixedMeshDensity : public GMSHMeshDensityStrategy
 {
@@ -35,6 +34,7 @@ private:
 };
 
 }
-}
+} // end namespace IO
+} // end namespace GeoLib
 
 #endif /* GMSHFIXEDMESHDENSITY_H_ */

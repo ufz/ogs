@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Mar 22, 2012
- * \brief  Implementation of the GMSHLineLoop class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -17,9 +13,12 @@
 #include "GMSHLine.h"
 #include "GMSHLineLoop.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 GMSHLineLoop::GMSHLineLoop(bool is_sfc) :
     _is_sfc(is_sfc)
@@ -56,5 +55,6 @@ void GMSHLineLoop::write(std::ostream &os, std::size_t line_offset, std::size_t 
 
 }
 
-}
-} // end namespace FileIO
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib

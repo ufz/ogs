@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-21
- * \brief  Implementation of the GMSHPoint class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,11 +11,14 @@
 #include <cmath>
 #include <limits>
 
-#include "GmshIO/GMSHPoint.h"
+#include "GMSHPoint.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density) :
     GeoLib::Point(pnt, id), _mesh_density(mesh_density)
@@ -44,5 +43,6 @@ std::ostream& operator<< (std::ostream &os, GMSHPoint const& p)
     return os;
 }
 
-}
-} // end namespace FileIO
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib

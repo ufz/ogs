@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Mar 27 2012
- * \brief  Definition of the GMSHPolygonTree class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,15 +22,15 @@
 
 namespace GeoLib
 {
-    class GEOObjects;
-    class Polygon;
-    class PolylineWithSegmentMarker;
-    class PolygonWithSegmentMarker;
-}
+class GEOObjects;
+class Polygon;
+class PolylineWithSegmentMarker;
+class PolygonWithSegmentMarker;
 
-namespace FileIO
+namespace IO
 {
-namespace GMSH {
+namespace GMSH
+{
 
 class GMSHPolygonTree: public GeoLib::SimplePolygonTree {
 public:
@@ -79,7 +75,7 @@ public:
      * Method creates the gmsh point data structures - including the mesh density.
      * @param gmsh_pnts a vector of pointers to instances of class GMSHPoint
      */
-    void createGMSHPoints(std::vector<FileIO::GMSH::GMSHPoint*> & gmsh_pnts) const;
+    void createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) const;
 
     virtual void writeLineLoop(std::size_t &line_offset, std::size_t &sfc_offset, std::ostream& out) const;
     void writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
@@ -98,12 +94,13 @@ private:
     std::string const& _geo_name;
     std::vector<GeoLib::Point const*> _stations;
     std::vector<GeoLib::PolylineWithSegmentMarker*> _plys;
-    std::vector<FileIO::GMSH::GMSHLine*> _gmsh_lines_for_constraints;
+    std::vector<GMSHLine*> _gmsh_lines_for_constraints;
 
     GMSHMeshDensityStrategy * _mesh_density_strategy;
 };
 
-}
-}
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHPOLYGONTREE_H_ */

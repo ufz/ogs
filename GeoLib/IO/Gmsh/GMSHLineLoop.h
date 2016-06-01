@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   Mar 22, 2012
- * \brief  Definition of the GMSHLineLoop class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -18,10 +14,12 @@
 #include <vector>
 #include <iosfwd>
 
-
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHLine;
 
@@ -39,7 +37,8 @@ private:
     bool _is_sfc;
 };
 
-}
-}
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHLINELOOP_H_ */

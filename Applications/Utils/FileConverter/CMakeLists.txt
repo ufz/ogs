@@ -30,7 +30,7 @@ set_target_properties(generateMatPropsFromMatID
 
 add_executable(GMSH2OGS GMSH2OGS.cpp)
 set_target_properties(GMSH2OGS PROPERTIES FOLDER Utilities)
-target_link_libraries(GMSH2OGS MeshLib FileIO)
+target_link_libraries(GMSH2OGS MeshLib)
 ADD_VTK_DEPENDENCY(GMSH2OGS)
 
 add_executable(OGS2VTK OGS2VTK.cpp)

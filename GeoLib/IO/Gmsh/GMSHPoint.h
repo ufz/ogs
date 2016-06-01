@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2012-03-21
- * \brief  Definition of the GMSHPoint class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -18,9 +14,12 @@
 // GeoLib
 #include "GeoLib/Point.h"
 
-namespace FileIO
+namespace GeoLib
 {
-namespace GMSH {
+namespace IO
+{
+namespace GMSH
+{
 
 class GMSHPoint : public GeoLib::Point {
 public:
@@ -34,7 +33,8 @@ private:
 /** overload the output operator for class GMSHPoint */
 std::ostream& operator<< (std::ostream &os, GMSHPoint const& p);
 
-}
-}
+}  // end namespace GMSH
+}  // end namespace IO
+}  // end namespace GeoLib
 
 #endif /* GMSHPOINT_H_ */
