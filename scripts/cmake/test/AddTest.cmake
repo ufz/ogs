@@ -123,7 +123,7 @@ function (AddTest)
     if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
         foreach(FILE ${AddTest_DIFF_DATA})
             get_filename_component(FILE_EXPECTED ${FILE} NAME)
-            set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
+            list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
                 ${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}")
         endforeach()
@@ -137,7 +137,7 @@ function (AddTest)
         list(GET AddTest_DIFF_DATA 1 NAME_A)
         list(GET AddTest_DIFF_DATA 2 NAME_B)
 
-        set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
+        list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
             ${AddTest_BINARY_PATH}/${VTK_FILE} \
             -a ${NAME_A} -b ${NAME_B} \
             ${TESTER_ARGS}")
