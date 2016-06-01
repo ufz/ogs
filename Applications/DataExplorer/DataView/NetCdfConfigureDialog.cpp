@@ -182,7 +182,7 @@ int NetCdfConfigureDialog::setVariableSelect()
 void NetCdfConfigureDialog::setDimensionSelect()
 {
     int const dim (_currentVar->num_dims());
-    std::array<QComboBox*,4> dim_box = { comboBoxDim1, comboBoxDim2, comboBoxDim3, comboBoxDim4 };
+    std::array<QComboBox*,4> dim_box = {{ comboBoxDim1, comboBoxDim2, comboBoxDim3, comboBoxDim4 }};
 
     for (std::size_t i=0; i<4; ++i)
     {
