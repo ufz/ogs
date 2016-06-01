@@ -26,6 +26,7 @@ Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     _pnts(pnt_vec), _pnt_ids( {{pnt_a, pnt_b, pnt_c}} )
 {
     assert(!_pnts.empty());
+    assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
 }
 
 void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
