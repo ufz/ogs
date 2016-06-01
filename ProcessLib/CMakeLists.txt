@@ -13,7 +13,7 @@ add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
     AssemblerLib
-    MaterialsLibAdsorption
+    MaterialsLib
     MeshGeoToolsLib
     NumLib # for shape matrices
     ${VTK_LIBRARIES}
