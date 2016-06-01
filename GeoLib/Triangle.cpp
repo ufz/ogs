@@ -21,15 +21,6 @@
 
 namespace GeoLib {
 
-Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
-    _pnts(pnt_vec), _initialized (false)
-{
-    assert(!_pnts.empty());
-    _pnt_ids[0] = std::numeric_limits<std::size_t>::max();
-    _pnt_ids[1] = std::numeric_limits<std::size_t>::max();
-    _pnt_ids[2] = std::numeric_limits<std::size_t>::max();
-}
-
 Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
     _pnts(pnt_vec), _initialized (true)

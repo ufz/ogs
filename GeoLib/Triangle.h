@@ -32,11 +32,6 @@ class Triangle
 {
 public:
     /**
-     * construction of object, initialization of reference to point vector
-     */
-    Triangle (std::vector<Point *> const &pnt_vec);
-
-    /**
      * construction of object, initialization of reference to point vector,
      * saves the three indices describing a triangle
      */
@@ -84,7 +79,6 @@ protected:
     const std::vector<Point*> &_pnts;
     /** position of pointers to the geometric points */
     std::size_t _pnt_ids[3];
-    bool _initialized;
 };
 
 void getPlaneCoefficients(Triangle const& tri, double c[3]);
