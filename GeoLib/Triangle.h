@@ -85,7 +85,6 @@ protected:
     /** position of pointers to the geometric points */
     std::size_t _pnt_ids[3];
     bool _initialized;
-    double _longest_edge;
 };
 
 void getPlaneCoefficients(Triangle const& tri, double c[3]);

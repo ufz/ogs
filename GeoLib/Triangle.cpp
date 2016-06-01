@@ -22,7 +22,7 @@
 namespace GeoLib {
 
 Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
-    _pnts(pnt_vec), _initialized (false), _longest_edge (0.0)
+    _pnts(pnt_vec), _initialized (false)
 {
     assert(!_pnts.empty());
     _pnt_ids[0] = std::numeric_limits<std::size_t>::max();
@@ -32,18 +32,12 @@ Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
 
 Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
-    _pnts(pnt_vec), _initialized (true), _longest_edge (0.0)
+    _pnts(pnt_vec), _initialized (true)
 {
     assert(!_pnts.empty());
     _pnt_ids[0] = pnt_a;
     _pnt_ids[1] = pnt_b;
     _pnt_ids[2] = pnt_c;
-    _longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
-    double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    _longest_edge = sqrt (_longest_edge);
 }
 
 void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
@@ -52,13 +46,6 @@ void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pn
     _pnt_ids[0] = pnt_a;
     _pnt_ids[1] = pnt_b;
     _pnt_ids[2] = pnt_c;
-
-    _longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
-    double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    _longest_edge = sqrt (_longest_edge);
 }
 
 bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
