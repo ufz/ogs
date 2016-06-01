@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-03-23
- * \brief  Definition of the Triangle class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,7 +22,7 @@ class Point;
 /** \brief Class Triangle consists of a reference to a point vector and
  * a vector that stores the indices in the point vector.
  * A surface is composed by triangles. The class Surface stores the position
- * of pointers to the points of triangles in the m_sfc_pnt_ids vector.
+ * of pointers to the points of triangles in the _pnt_ids vector.
  * */
 class Triangle final
 {
@@ -48,7 +44,8 @@ public:
     /** \brief const access operator to access the index
      * of the i-th triangle point
     */
-    const std::size_t& operator[] (std::size_t i) const {
+    const std::size_t& operator[](std::size_t i) const
+    {
         assert (i < 3);
         return _pnt_ids[i];
     }
@@ -56,7 +53,8 @@ public:
     /**
      * \brief const access operator to access the i-th triangle Point
      */
-    const Point* getPoint (std::size_t i) const {
+    const Point* getPoint(std::size_t i) const
+    {
         assert (i < 3);
         return _pnts[_pnt_ids[i]];
     }
@@ -77,12 +75,12 @@ public:
      * @param pnt the point to test for
      * @return true, if the point is into the projected triangle
      */
-    bool containsPoint2D (Point const& pnt) const;
+    bool containsPoint2D(Point const& pnt) const;
 
 private:
-    /** a vector of pointers to points */
-    const std::vector<Point*> &_pnts;
-    /** position of pointers to the geometric points */
+    /// a vector of pointers to points the triangle is based on
+    std::vector<Point*> const& _pnts;
+    /// position of pointers to the geometric points
     std::array<std::size_t, 3> _pnt_ids;
 };
 
