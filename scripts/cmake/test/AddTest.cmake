@@ -126,14 +126,8 @@ function (AddTest)
             set(TESTER_COMMAND ${TESTER_COMMAND} "${SELECTED_DIFF_TOOL_PATH} \
                 ${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}")
-            if(AddTest_DIFF_DATA_PARSED)
-                set(AddTest_DIFF_DATA_PARSED "${AddTest_DIFF_DATA_PARSED},${FILE_EXPECTED}")
-            else()
-                set(AddTest_DIFF_DATA_PARSED "${FILE_EXPECTED}")
-            endif()
         endforeach()
         string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
-        set(AddTest_DIFF_DATA_PARSED "${AddTest_SOURCE_PATH}/${AddTest_DIFF_DATA_PARSED}")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         if (NOT ${DiffDataLength} EQUAL 3)
@@ -167,7 +161,7 @@ function (AddTest)
     endforeach()
 
     # Run the wrapper
-    Add_Test(
+    add_test(
         NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
@@ -185,23 +179,13 @@ function (AddTest)
     endif()
 
     # Run the tester
-    if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
-        Add_Test(
-            NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
-            COMMAND ${CMAKE_COMMAND}
-            -Dcase_path=${AddTest_SOURCE_PATH}
-            -DTESTER_COMMAND=${TESTER_COMMAND}
-            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-        )
-    else()
-        add_test(
-            NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
-            COMMAND ${CMAKE_COMMAND}
-            -Dcase_path=${AddTest_SOURCE_PATH}
-            -DTESTER_COMMAND=${TESTER_COMMAND}
-            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-        )
-    endif()
+    add_test(
+        NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
+        COMMAND ${CMAKE_COMMAND}
+        -Dcase_path=${AddTest_SOURCE_PATH}
+        -DTESTER_COMMAND=${TESTER_COMMAND}
+        -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+    )
     set_tests_properties(${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}
         PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
 
