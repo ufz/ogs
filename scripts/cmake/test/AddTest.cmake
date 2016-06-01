@@ -31,12 +31,12 @@
 #
 
 function (AddTest)
-
     # parse arguments
     set(options NONE)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
 
     set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
     set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
@@ -47,6 +47,13 @@ function (AddTest)
     if(NOT AddTest_EXECUTABLE)
         set(AddTest_EXECUTABLE ogs)
     endif()
+    if (NOT AddTest_ABSTOL)
+        set (AddTest_ABSTOL 1e-16)
+    endif()
+    if (NOT AddTest_RELTOL)
+        set (AddTest_RELTOL 1e-16)
+    endif()
+    # message("AddTest_ABSTOL ${AddTest_ABSTOL}")
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
         set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
@@ -107,10 +114,10 @@ function (AddTest)
         set(TESTER_ARGS "-sbB")
     elseif(AddTest_TESTER STREQUAL "numdiff")
         set(SELECTED_DIFF_TOOL_PATH ${NUMDIFF_TOOL_PATH})
-        set(TESTER_ARGS "--statistics --absolute-tolerance=1e-5 --relative-tolerance=1e-4")
+        set(TESTER_ARGS "--statistics --absolute-tolerance=${AddTest_ABSTOL} --relative-tolerance=${AddTest_RELTOL}")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
-        set(TESTER_ARGS "-q --abs 1e-2 --rel 1e-4")
+        set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
     endif()
 
     if(AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "numdiff")
