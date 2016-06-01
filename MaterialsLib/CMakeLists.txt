@@ -1,6 +1,6 @@
 # Source files
-GET_SOURCE_FILES(SOURCES_MATERIALSLIB)
+GET_SOURCE_FILES(SOURCES)
+GET_SOURCE_FILES(SOURCES_ADSORPTION Adsorption)
+set(SOURCES ${SOURCES} ${SOURCES_ADSORPTION})
 
-add_subdirectory( Adsorption )
-
-add_library(MaterialsLib ${SOURCES_MATERIALSLIB} )
+add_library(MaterialsLib ${SOURCES} )
