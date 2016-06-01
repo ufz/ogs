@@ -108,8 +108,10 @@ TESFEMReactionAdaptorAdsorption::initReaction_slowDownUndershootStrategy(
         // TODO [CL]: it would be more correct to subtract pV from the previous
         // timestep here
         const double delta_pV = pV_eq - _d.p_V;
-        const double delta_rhoV = delta_pV * _d.ap.M_react /
-                                  Adsorption::GAS_CONST / _d.T * _d.ap.poro;
+        const double delta_rhoV =
+            delta_pV * _d.ap.M_react /
+            MaterialsLib::PhysicalConstant::IdealGasConstant / _d.T *
+            _d.ap.poro;
         const double delta_rhoSR = delta_rhoV / (_d.ap.poro - 1.0);
         double react_rate_R2 = delta_rhoSR / _d.ap.delta_t;
 
@@ -174,7 +176,8 @@ double TESFEMReactionAdaptorAdsorption::estimateAdsorptionEquilibrium(
         // pV0 := _p_V
         const double C_eq =
             _d.ap.react_sys->getEquilibriumLoading(pV, _d.T, _d.ap.M_react);
-        return (pV - p_V0) * _d.ap.M_react / Adsorption::GAS_CONST / _d.T *
+        return (pV - p_V0) * _d.ap.M_react /
+                   MaterialsLib::PhysicalConstant::IdealGasConstant / _d.T *
                    _d.ap.poro +
                (1.0 - _d.ap.poro) * (C_eq - C0) * _d.ap.rho_SR_dry;
     };

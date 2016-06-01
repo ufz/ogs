@@ -13,6 +13,7 @@
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
 
+#include "MaterialsLib/PhysicalConstant.h"
 #include "MaterialsLib/Adsorption/Reaction.h"
 
 #include "ProcessLib/VariableTransformation.h"
@@ -58,8 +59,8 @@ struct AssemblyParams
 
     double rho_SR_dry = std::numeric_limits<double>::quiet_NaN();
 
-    const double M_inert = M_N2;  // N2
-    const double M_react = M_H2O;
+    const double M_inert = MaterialsLib::PhysicalConstant::MolarMass::N2;
+    const double M_react = MaterialsLib::PhysicalConstant::MolarMass::Water;
 
     // TODO unify variable names
     double initial_solid_density = std::numeric_limits<double>::quiet_NaN();

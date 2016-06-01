@@ -9,12 +9,8 @@
 #ifndef PROCESSLIB_TES_OGS5MATERIALMODELS
 #define PROCESSLIB_TES_OGS5MATERIALMODELS
 
+#include "MaterialsLib/PhysicalConstant.h"
 #include "TESAssemblyParams.h"
-
-namespace
-{
-const double GAS_CONST = 8.3144621;
-}
 
 namespace ProcessLib
 {
@@ -24,12 +20,13 @@ inline double fluid_density(const double p, const double T, const double x)
 {
     // OGS-5 density model 26
 
-    const double M0 = ProcessLib::TES::M_N2;
-    const double M1 = ProcessLib::TES::M_H2O;
+    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
 
     const double xn = M0 * x / (M0 * x + M1 * (1.0 - x));
 
-    return p / (GAS_CONST * T) * (M1 * xn + M0 * (1.0 - xn));
+    return p / (MaterialsLib::PhysicalConstant::IdealGasConstant * T) *
+           (M1 * xn + M0 * (1.0 - xn));
     ;
 }
 
@@ -190,16 +187,17 @@ inline double fluid_viscosity(const double p, const double T, const double x)
 {
     // OGS 5 viscosity model 26
 
-    const double M0 = ProcessLib::TES::M_N2;
-    const double M1 = ProcessLib::TES::M_H2O;
+    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
+    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
 
     // reactive component
     const double x0 =
         M0 * x / (M0 * x + M1 * (1.0 - x));  // mass in mole fraction
-    const double V0 = FluidViscosityH2O::get(M1 * p / (GAS_CONST * T), T);
+    const double V0 = FluidViscosityH2O::get(M1 * p / (R * T), T);
     // inert component
     const double x1 = 1.0 - x0;
-    const double V1 = FluidViscosityN2::get(M0 * p / (GAS_CONST * T), T);
+    const double V1 = FluidViscosityN2::get(M0 * p / (R * T), T);
 
     const double M0_over_M1(M1 / M0);  // reactive over inert
     const double V0_over_V1(V0 / V1);
@@ -227,7 +225,7 @@ struct FluidHeatConductivityN2
         const double eps = 138.08483e-23;
         const double N_A = 6.02213E26;
         const double R = 8.31434;
-        // const double R = GAS_CONST;
+        // const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
         const double CCF = 4.173;  // mW/m/K
 
         const double c1 = 0.3125;
@@ -376,24 +374,23 @@ inline double fluid_heat_conductivity(const double p,
 {
     // OGS 5 fluid heat conductivity model 11
 
-    const double M0 = ProcessLib::TES::M_N2;
-    const double M1 = ProcessLib::TES::M_H2O;
+    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
+    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
 
     // TODO [CL] max() is redundant if the fraction is guaranteed to be between
     // 0 and 1.
     // reactive component
     const double x0 = std::max(M0 * x / (M0 * x + M1 * (1.0 - x)),
                                0.);  // convert mass to mole fraction
-    const double k0 =
-        FluidHeatConductivityH2O::get(M1 * p / (GAS_CONST * T), T);
+    const double k0 = FluidHeatConductivityH2O::get(M1 * p / (R * T), T);
     // inert component
     const double x1 = 1.0 - x0;
-    const double k1 = FluidHeatConductivityN2::get(M0 * p / (GAS_CONST * T), T);
+    const double k1 = FluidHeatConductivityN2::get(M0 * p / (R * T), T);
 
     const double M1_over_M2 = M1 / M0;  // reactive over inert
-    const double V1_over_V2 =
-        FluidViscosityH2O::get(M1 * p / (GAS_CONST * T), T) /
-        FluidViscosityN2::get(M0 * p / (GAS_CONST * T), T);
+    const double V1_over_V2 = FluidViscosityH2O::get(M1 * p / (R * T), T) /
+                              FluidViscosityN2::get(M0 * p / (R * T), T);
     const double L1_over_L2 = V1_over_V2 / M1_over_M2;
 
     const double M12_pow_mquarter = std::pow(M1_over_M2, -0.25);
