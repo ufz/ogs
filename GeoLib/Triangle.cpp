@@ -66,7 +66,9 @@ bool Triangle::containsPoint2D (Point const& pnt) const
     const double upper (1+delta);
 
     // check if u0 and u1 fulfills the condition (with some delta)
-    if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper && y[0] + y[1] <= upper) {
+    if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper &&
+        y[0] + y[1] <= upper)
+    {
         return true;
     }
     return false;

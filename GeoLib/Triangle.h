@@ -35,7 +35,10 @@ public:
      * construction of object, initialization of reference to point vector,
      * saves the three indices describing a triangle
      */
-    Triangle (std::vector<Point *> const &pnt_vec, std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
+    Triangle(std::vector<Point*> const& pnt_vec,
+             std::size_t pnt_a,
+             std::size_t pnt_b,
+             std::size_t pnt_c);
 
     /**
      * saves three indices describing a triangle
@@ -64,7 +67,9 @@ public:
      * @param eps Checks the 'epsilon'-neighbourhood
      * @return true, if point is in triangle, else false
      */
-    bool containsPoint(MathLib::Point3d const& q, double eps = std::numeric_limits<float>::epsilon()) const;
+    bool containsPoint(
+        MathLib::Point3d const& q,
+        double eps = std::numeric_limits<float>::epsilon()) const;
 
     /**
      * projects the triangle points to the x-y-plane and
