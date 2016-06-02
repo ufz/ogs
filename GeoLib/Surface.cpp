@@ -35,6 +35,18 @@ Surface::Surface(const std::vector<Point*>& pnt_vec)
 {
 }
 
+Surface::Surface(Surface const& src)
+    : _sfc_pnts(src._sfc_pnts),
+      _bounding_volume(new AABB(*(src._bounding_volume))),
+      _surface_grid(nullptr)
+{
+    _sfc_triangles.reserve(src._sfc_triangles.size());
+    std::transform(src._sfc_triangles.cbegin(),
+                   src._sfc_triangles.cend(),
+                   std::back_inserter(_sfc_triangles),
+                   [](Triangle* t) { return new Triangle(*t); });
+}
+
 Surface::~Surface()
 {
     for (std::size_t k(0); k < _sfc_triangles.size(); k++)

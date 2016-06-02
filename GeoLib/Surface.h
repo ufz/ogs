@@ -36,6 +36,7 @@ class Surface final : public GeoObject
 {
 public:
     explicit Surface(const std::vector<Point*>& pnt_vec);
+    Surface(Surface const& src);
     ~Surface();
 
     /// return a geometry type
