@@ -11,7 +11,7 @@
 #include <list>
 
 // ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "Surface.h"
 
