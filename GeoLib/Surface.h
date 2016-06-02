@@ -32,14 +32,14 @@ class SurfaceGrid;
  * to a vector of (pointers to) points (_sfc_pnts) and a vector that stores
  * the Triangles consisting of points from _sfc_pnts.
  * */
-class Surface : public GeoObject
+class Surface final : public GeoObject
 {
 public:
     Surface(const std::vector<Point*>& pnt_vec);
-    virtual ~Surface();
+    ~Surface();
 
     /// return a geometry type
-    virtual GEOTYPE getGeoType() const { return GEOTYPE::SURFACE; }
+    GEOTYPE getGeoType() const override { return GEOTYPE::SURFACE; }
     /**
      * adds three indices describing a triangle and updates the bounding box
      * */
