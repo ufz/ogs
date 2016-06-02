@@ -1,9 +1,6 @@
 [submodule "ThirdParty/VtkFbxConverter"]
 	path = ThirdParty/VtkFbxConverter
 	url = git://github.com/ufz-vislab/VtkFbxConverter.git
-[submodule "ThirdParty/VtkOsgConverter"]
-	path = ThirdParty/VtkOsgConverter
-	url = git://github.com/ufz-vislab/VtkOsgConverter.git
 [submodule "ThirdParty/tetgen"]
 	path = ThirdParty/tetgen
 	url = https://github.com/ufz/tetgen.git
