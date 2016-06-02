@@ -63,9 +63,6 @@ private slots:
     /// Exports the currently selected item as a VTK file
     void exportSelectedPipelineItemAsVtk();
 
-    /// Exports the currently selected item as an OpenSG file
-    void exportSelectedPipelineItemAsOsg();
-
     /// Exports the currently selected item as a Fbx file.
     void exportSelectedPipelineItemAsFbx();
 

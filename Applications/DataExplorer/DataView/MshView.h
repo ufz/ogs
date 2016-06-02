@@ -31,7 +31,7 @@ namespace InSituLib {
 
 /**
  *    The DataView is table view which acts as a base class for displaying
- *  several OSG data formats.
+ *  several OGS data formats.
  */
 class MshView : public QTreeView
 {

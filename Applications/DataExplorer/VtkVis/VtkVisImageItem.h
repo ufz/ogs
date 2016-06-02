@@ -24,8 +24,6 @@ class vtkPointSet;
 class vtkProp3D;
 class vtkRenderer;
 
-class vtkOsgActor;
-
 class VtkAlgorithmProperties;
 class VtkCompositeFilter;
 
@@ -68,4 +66,3 @@ private:
 };
 
 #endif // VTKVISIMAGEITEM_H
-

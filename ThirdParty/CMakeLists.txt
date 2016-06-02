@@ -25,12 +25,6 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
     add_subdirectory(VtkFbxConverter)
 endif()
 
-# VtkOsgConverter
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkOsgConverter/CMakeLists.txt
-    AND OGS_USE_OPTIONAL_SUBMODULES)
-    add_subdirectory(VtkOsgConverter)
-endif()
-
 # tetgen
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
     add_subdirectory(tetgen)

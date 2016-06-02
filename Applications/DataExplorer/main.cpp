@@ -2,9 +2,6 @@
 
 #include <memory>
 #include <QtGui/QApplication>
-#ifdef VTKOSGCONVERTER_FOUND
-#include <OpenSG/OSGBaseFunctions.h>
-#endif
 #include "logog/include/logog.hpp"
 #include "LogogSimpleFormatter.h"
 #ifdef VTKFBXCONVERTER_FOUND
@@ -21,9 +18,6 @@ FbxScene* lScene = NULL;
 
 int main(int argc, char* argv[])
 {
-#ifdef VTKOSGCONVERTER_FOUND
-    OSG::osgInit(argc, argv);
-#endif
 #ifdef VTKFBXCONVERTER_FOUND
     InitializeSdkObjects(lSdkManager, lScene);
 #endif
@@ -56,9 +50,6 @@ int main(int argc, char* argv[])
     LOGOG_SHUTDOWN();
 #ifdef VTKFBXCONVERTER_FOUND
     DestroySdkObjects(lSdkManager, true);
-#endif
-#ifdef VTKOSGCONVERTER_FOUND
-    OSG::osgExit();
 #endif
 
     return returncode;
