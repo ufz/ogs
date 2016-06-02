@@ -35,7 +35,7 @@ class SurfaceGrid;
 class Surface final : public GeoObject
 {
 public:
-    Surface(const std::vector<Point*>& pnt_vec);
+    explicit Surface(const std::vector<Point*>& pnt_vec);
     ~Surface();
 
     /// return a geometry type
