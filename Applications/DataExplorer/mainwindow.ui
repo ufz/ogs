@@ -98,7 +98,6 @@
      <addaction name="actionExportVRML2"/>
      <addaction name="actionExportVTK"/>
      <addaction name="actionExportObj"/>
-     <addaction name="actionExportOpenSG"/>
     </widget>
     <addaction name="action_Open"/>
     <addaction name="actionSave_As"/>
@@ -365,14 +364,6 @@
   <action name="actionExportVTK">
    <property name="text">
     <string>VTK</string>
-   </property>
-  </action>
-  <action name="actionExportOpenSG">
-   <property name="text">
-    <string>OpenSG</string>
-   </property>
-   <property name="toolTip">
-    <string>Export to OpenSG binary format</string>
    </property>
   </action>
   <action name="actionMesh_Generation">

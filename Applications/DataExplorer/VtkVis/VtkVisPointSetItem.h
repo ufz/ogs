@@ -26,8 +26,6 @@ class vtkRenderer;
 class vtkTransformFilter;
 class QVtkDataSetMapper;
 
-class vtkOsgActor;
-
 class VtkAlgorithmProperties;
 class VtkCompositeFilter;
 
@@ -99,4 +97,3 @@ private:
 };
 
 #endif // VTKVISPOINTSETITEM_H
-

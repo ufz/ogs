@@ -34,11 +34,6 @@
 
 #include <QMessageBox>
 
-#ifdef VTKOSGCONVERTER_FOUND
-#include "vtkOsgConverter.h"
-#include <OpenSG/OSGSceneFileHandler.h>
-#endif
-
 #ifdef VTKFBXCONVERTER_FOUND
 #include "ThirdParty/VtkFbxConverter/VtkFbxConverter.h"
 #include "Common.h"
@@ -119,29 +114,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 {
     if (!filename.empty())
     {
-        if (filename.substr(filename.size() - 4).find("os") != std::string::npos)
-        {
-#ifdef VTKOSGCONVERTER_FOUND
-            if(!dynamic_cast<vtkImageActor*>(_actor))
-            {
-                vtkOsgConverter osgConverter(static_cast<vtkActor*>(_actor));
-                if(osgConverter.convert())
-                    OSG::SceneFileHandler::the().write(
-                            osgConverter.getNode(), filename.c_str());
-            }
-            else
-                QMessageBox::warning(NULL, "Conversion to OpenSG not possible",
-                    "It is not possible to convert an vtkImageData based object\nto OpenSG. If you want to convert raster data import it via \" File / Import / Raster Files as PolyData\"!");
-#else
-            QMessageBox::warning(
-                NULL,
-                "Functionality not implemented",
-                "Sorry but this program was not compiled with OpenSG support.");
-#endif
-            return 0;
-        }
 #ifdef VTKFBXCONVERTER_FOUND
-        else if (filename.substr(filename.size() - 4).find("fbx") != std::string::npos)
+        if (filename.substr(filename.size() - 4).find("fbx") != std::string::npos)
         {
             if(!dynamic_cast<vtkImageActor*>(_actor))
             {

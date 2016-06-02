@@ -96,13 +96,6 @@
 
 #include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
 
-#ifdef VTKOSGCONVERTER_FOUND
-#include "vtkOsgConverter.h"
-#include <OpenSG/OSGCoredNodePtr.h>
-#include <OpenSG/OSGGroup.h>
-#include <OpenSG/OSGSceneFileHandler.h>
-#endif
-
 #include "BaseLib/BuildInfo.h"
 
 using namespace FileIO;
@@ -721,7 +714,7 @@ QMenu* MainWindow::createImportFilesMenu()
     QAction* rasterFiles = importFiles->addAction("&Raster Files...");
     connect(rasterFiles, SIGNAL(triggered()), signal_mapper, SLOT(map()));
     signal_mapper->setMapping(rasterFiles, ImportFileType::RASTER);
-#if defined VTKOSGCONVERTER_FOUND || defined VTKFBXCONVERTER_FOUND
+#if defined VTKFBXCONVERTER_FOUND
     QAction* rasterPolyFiles = importFiles->addAction("R&aster Files as PolyData...");
     connect(rasterPolyFiles, SIGNAL(triggered()), this, SLOT(map()));
     _signal_mapper->setMapping(rasterPolyFiles, ImportFileType::POLYRASTER);
@@ -1181,43 +1174,6 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
     }
 }
 
-void MainWindow::on_actionExportOpenSG_triggered(bool checked /*= false*/)
-{
-    Q_UNUSED(checked)
-#ifdef VTKOSGCONVERTER_FOUND
-    QSettings settings;
-    QString filename = QFileDialog::getSaveFileName(
-            this, "Export scene to OpenSG binary file", settings.value(
-                    "lastExportedFileDirectory").toString(), "OpenSG files (*.osb);;");
-    if (!filename.isEmpty())
-    {
-        QDir dir = QDir(filename);
-        settings.setValue("lastExportedFileDirectory", dir.absolutePath());
-
-        TreeModelIterator it(_vtkVisPipeline);
-        ++it;
-        OSG::NodePtr root = OSG::makeCoredNode<OSG::Group>();
-        while(*it)
-        {
-            VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(*it);
-            vtkOsgConverter converter(static_cast<vtkActor*>(item->actor()));
-            if(converter.convert())
-            {
-                beginEditCP(root);
-                root->addChild(converter.getNode());
-                endEditCP(root);
-            }
-            ++it;
-        }
-
-        OSG::SceneFileHandler::the().write(root, filename.toStdString().c_str());
-    }
-#else // ifdef VTKOSGCONVERTER_FOUND
-    QMessageBox::warning(this, "Functionality not implemented",
-                         "Sorry but this progam was not compiled with OpenSG support.");
-#endif
-}
-
 void MainWindow::createPresentationMenu()
 {
     QMenu* menu = static_cast<QMenu*> (QObject::sender());
@@ -1305,4 +1261,3 @@ QString MainWindow::getLastUsedDir()
     else
         return QDir::homePath();
 }
-

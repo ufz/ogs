@@ -93,13 +93,6 @@ if(MSVC)
     target_link_libraries(DataExplorer winmm)
 endif()
 
-### OpenSG support ###
-if (VTKOSGCONVERTER_FOUND)
-    USE_OPENSG(DataExplorer)
-    include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
-    target_link_libraries(DataExplorer ${VTKOSGCONVERTER_LIBRARIES})
-endif ()
-
 if(VTKFBXCONVERTER_FOUND)
     target_link_libraries(DataExplorer ${VTKFBXCONVERTER_LIBRARIES})
 endif()

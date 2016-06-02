@@ -117,10 +117,6 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/VtkVis
 )
 
-if(VTKOSGCONVERTER_FOUND)
-    include_directories(${VTKOSGCONVERTER_INCLUDE_DIRS})
-endif()
-
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND

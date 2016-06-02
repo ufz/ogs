@@ -113,7 +113,6 @@ protected slots:
     void on_actionExportVTK_triggered(bool checked = false);
     void on_actionExportVRML2_triggered(bool checked = false);
     void on_actionExportObj_triggered(bool checked = false);
-    void on_actionExportOpenSG_triggered(bool checked = false);
 
     void createPresentationMenu();
     void startPresentationMode();
