@@ -16,7 +16,13 @@
 
 #include "logog/include/logog.hpp"
 
-#include "LogogSimpleFormatter.h"
+#ifdef BUILD_WITH_METIS
+extern "C" {
+#include "metis_main.h"
+}
+#endif
+
+#include "BaseLib/LogogSimpleFormatter.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -88,14 +94,36 @@ int main (int argc, char* argv[])
         else
         {
             const int num_partitions = nparts.getValue();
+            std::string str_nparts = std::to_string(num_partitions);
+
+            // With the metis source code being compiled
+            if (num_partitions > 1)
+            {
+#ifdef BUILD_WITH_METIS
+                INFO("METIS is running ...");
+                const int argc_m = 4;
+                char *argv_m[argc_m];
+                std::string unsc = "-";	 // Avoid compilation warning by argv_m[0] = "-";
+                argv_m[0] = &unsc[0];
+                std::string option = "-gtype=nodal";
+                argv_m[1] = &option[0];
+                std::string part_mesh_file = file_name_base + ".mesh";
+                argv_m[2] = &part_mesh_file[0];
+                argv_m[3] = &str_nparts[0];
+
+                metis_main(argc_m, argv_m);
+#endif
+            }
 
             INFO("Partitioning the mesh in the node wise way ...");
             // Binary output is default.
-            mesh->partitionByNodeMETIS(file_name_base, num_partitions, !asci_flag.getValue());
+            mesh->partitionByNodeMETIS(file_name_base, num_partitions,
+                                       !asci_flag.getValue());
 
             INFO("Write the mesh with renumbered node indicies into VTU");
             MeshLib::IO::VtuInterface writer(mesh);
-            writer.writeToFile(file_name_base + "_node_id_renumbered_partitions_" + std::to_string(num_partitions) + ".vtu");
+            writer.writeToFile(file_name_base + "_node_id_renumbered_partitions_"
+                               + str_nparts + ".vtu");
         }
     }
 

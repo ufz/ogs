@@ -1,14 +1,25 @@
+if(UTILS_PARTMESH_BUILD_WITH_METIS)
+	include_directories(${METIS_PATH}/libmetis)
+	include_directories(${METIS_PATH}/programs)
 
-include_directories(
-	${CMAKE_SOURCE_DIR}/Utils/PartitionMesh
-	${CMAKE_SOURCE_DIR}/BaseLib
-	${CMAKE_SOURCE_DIR}/FileIO
-	${CMAKE_SOURCE_DIR}/MeshLib
-)
+	set(METIS_SOURCES
+	  ${METIS_PATH}/programs/mpmetis.c
+	  ${METIS_PATH}/programs/cmdline_mpmetis.c
+	  ${METIS_PATH}/programs/io.c
+	  ${METIS_PATH}/programs/stat.c
+	  metis_main.h
+	)
+	ADD_LIBRARY(METIS_Lib STATIC ${METIS_SOURCES} )
 
-add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
-set_target_properties(partmesh PROPERTIES FOLDER Utilities)
-target_link_libraries(partmesh FileIO)
+	add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
+	set_target_properties(partmesh PROPERTIES FOLDER Utilities)
+	target_link_libraries(partmesh FileIO METIS_Lib metis)
+else()
+	add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
+	set_target_properties(partmesh PROPERTIES FOLDER Utilities)
+	target_link_libraries(partmesh FileIO)
+endif()
+
 ADD_VTK_DEPENDENCY(partmesh)
 
 ####################
