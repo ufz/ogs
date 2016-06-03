@@ -3,7 +3,7 @@ add_subdirectory(GeoTools)
 add_subdirectory(MeshGeoTools)
 add_subdirectory(MeshEdit)
 add_subdirectory(ModelPreparation)
-add_subdirectory(PartitionMesh)
+add_subdirectory(ModelPreparation/PartitionMesh)
 add_subdirectory(SimpleMeshCreation)
 
 if(OGS_BUILD_GUI)
