@@ -25,6 +25,7 @@ undocumented = []
 unneeded_comments = []
 wrong_input = []
 no_doc_page = []
+wrong_status = False
 
 for inline in sys.stdin:
     inline = inline.strip().split("@@@")
@@ -56,6 +57,7 @@ for inline in sys.stdin:
         # unneeded.append(inline[1:])
     else:
         debug("ERROR: unrecognized status {}".format(status))
+        wrong_status = True
 
 
 if (undocumented):
@@ -100,7 +102,8 @@ if (no_doc_page):
 
 # exit with error status if something was not documented.
 if (not not undocumented) or (not not unneeded_comments) \
-        or (not not wrong_input) or (not not no_doc_page):
+        or (not not wrong_input) or (not not no_doc_page) \
+        or wrong_status:
             sys.exit(1)
 
 sys.exit(0)
