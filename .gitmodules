@@ -22,3 +22,6 @@
 [submodule "ThirdParty/vtkGUISupportQt"]
 	path = ThirdParty/vtkGUISupportQt
 	url = https://github.com/ufz/vtkGUISupportQt.git
+[submodule "ThirdParty/metis"]
+	path = ThirdParty/metis
+	url = https://github.com/envinf/metis.git
