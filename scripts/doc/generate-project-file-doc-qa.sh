@@ -37,7 +37,8 @@ If it is empty, there are no issues detected.
 
 EOF
 
-cat "$param_cache" | "$check_quality_script" "$doxdir/ProjectFile" >>"$qafile"
+cat "$param_cache" \
+    | "$check_quality_script" "$doxdir/ProjectFile" "$srcdir" >>"$qafile"
 
 cat <<EOF >>"$qafile"
 
