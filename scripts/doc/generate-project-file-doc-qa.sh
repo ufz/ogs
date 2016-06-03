@@ -32,7 +32,8 @@ mkdir -p "$doxdir"
 cat <<"EOF" >"$qafile"
 /*! \page project_file_doc_qa OGS Input File Parameters&mdash;Quality Assurance
 
-This is the QA page
+This page lists issues with the OGS input file parameter documentation.
+If it is empty, there are no issues detected.
 
 EOF
 
