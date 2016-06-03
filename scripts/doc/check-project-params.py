@@ -35,7 +35,7 @@ for inline in sys.stdin:
         tag_name_comment = tag_path_comment.split(".")[-1]
 
         dirs = tag_path_comment.split(".")[:-1]
-        p = os.path.join(docauxdir, *dirs, )
+        p = os.path.join(docauxdir, *dirs)
         if     (not os.path.isfile(os.path.join(p,                   "t_" + tag_name_comment + ".dox"))) \
            and (not os.path.isfile(os.path.join(p,                   "a_" + tag_name_comment + ".dox"))) \
            and (not os.path.isfile(os.path.join(p, tag_name_comment, "i_" + tag_name_comment + ".dox"))) \
