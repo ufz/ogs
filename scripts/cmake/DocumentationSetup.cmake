@@ -38,8 +38,7 @@ if(DOXYGEN_FOUND)
 
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
-    if (NOT BASH_TOOL_PATH STREQUAL "BASH_TOOL_PATH-NOTFOUND"
-            AND NOT PYTHON_EXECUTABLE STREQUAL "PYTHON_EXECUTABLE-NOTFOUND")
+    if (BASH_TOOL_PATH AND PYTHON_EXECUTABLE)
         set(doc_use_external_tools TRUE)
     else()
         set(doc_use_external_tools FALSE)
