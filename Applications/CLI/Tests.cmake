@@ -12,7 +12,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS cube_${mesh_size}.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
         )
 
@@ -23,7 +23,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure
         )
     endforeach()
@@ -36,7 +36,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS cube_${mesh_size}.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
         )
 
@@ -47,7 +47,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-2 RELTOL 1e-2
             DIFF_DATA cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure
         )
     endforeach()
@@ -61,7 +61,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS square_${mesh_size}.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-13 RELTOL 1e-13
             DIFF_DATA square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
         )
 
@@ -72,7 +72,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-1 RELTOL 1e-1
             DIFF_DATA square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
         )
     endforeach()
@@ -85,7 +85,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS square_${mesh_size}.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-12 RELTOL 1e-16
             DIFF_DATA square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
         )
 
@@ -96,7 +96,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-02 RELTOL 1e-02
             DIFF_DATA square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure
         )
     endforeach()
@@ -110,7 +110,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS line_${mesh_size}.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-15 RELTOL 1e-15
             DIFF_DATA line_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
         )
 
@@ -121,7 +121,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-16 RELTOL 1e-16
+            ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
         )
         endforeach()
