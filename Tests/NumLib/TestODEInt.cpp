@@ -7,7 +7,7 @@
 
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/ODESolver/TimeLoopSingleODE.h"
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 #include "ODEs.h"
 
 

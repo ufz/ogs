@@ -10,7 +10,7 @@
 #ifndef NUMLIB_EQUATIONSYSTEM_H
 #define NUMLIB_EQUATIONSYSTEM_H
 
-#include "MathLib/LinAlg/MatrixProviderUser.h"
+#include "NumLib/DOF/MatrixProviderUser.h"
 
 namespace NumLib
 {

@@ -46,7 +46,7 @@ class StationTreeModel;
 class TreeModel;
 class VtkVisPipelineItem;
 
-namespace InSituLib
+namespace MeshLib
 {
     class VtkMappedMeshSource;
 }
@@ -101,7 +101,7 @@ public:
     void setGlobalBackfaceCulling(bool enable) const;
 
     /// Checks the quality of mesh elements and adds a filter to highlight deformed elements.
-    void showMeshElementQuality(InSituLib::VtkMappedMeshSource* mesh, MeshLib::MeshQualityType t, std::vector<double> const& quality);
+    void showMeshElementQuality(MeshLib::VtkMappedMeshSource* mesh, MeshLib::MeshQualityType t, std::vector<double> const& quality);
 
 public slots:
     /// \brief Adds the given Model to the pipeline.

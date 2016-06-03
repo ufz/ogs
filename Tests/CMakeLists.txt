@@ -8,12 +8,10 @@ endif()
 
 APPEND_SOURCE_FILES(TEST_SOURCES)
 APPEND_SOURCE_FILES(TEST_SOURCES ApplicationsLib)
-APPEND_SOURCE_FILES(TEST_SOURCES AssemblerLib)
 APPEND_SOURCE_FILES(TEST_SOURCES BaseLib)
 APPEND_SOURCE_FILES(TEST_SOURCES FileIO)
 APPEND_SOURCE_FILES(TEST_SOURCES GeoLib)
 APPEND_SOURCE_FILES(TEST_SOURCES GeoLib/IO)
-APPEND_SOURCE_FILES(TEST_SOURCES InSituLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MathLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshLib)
 APPEND_SOURCE_FILES(TEST_SOURCES MeshGeoToolsLib)
@@ -24,7 +22,7 @@ if(QT4_FOUND)
 endif()
 
 if(OGS_USE_PETSC OR OGS_USE_MPI)
-    list(REMOVE_ITEM TEST_SOURCES AssemblerLib/TestSerialLinearSolver.cpp)
+    list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
 endif()
 
 add_executable(testrunner ${TEST_SOURCES})
@@ -33,10 +31,8 @@ set_target_properties(testrunner PROPERTIES FOLDER Testing)
 target_link_libraries(testrunner
     ApplicationsLib
     ApplicationsFileIO
-    AssemblerLib
     FileIO
     GTest
-    InSituLib
     MeshGeoToolsLib
     MeshLib
     NumLib

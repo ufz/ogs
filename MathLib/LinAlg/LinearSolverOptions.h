@@ -1,4 +1,14 @@
-#pragma once
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef MATHLIB_LINEAR_SOLVER_OPTIONS_H
+#define MATHLIB_LINEAR_SOLVER_OPTIONS_H
 
 #include "BaseLib/ConfigTree.h"
 
@@ -27,3 +37,5 @@ void ignoreOtherLinearSolvers(BaseLib::ConfigTree const& config,
                               std::string const& solver_name);
 
 }
+
+#endif

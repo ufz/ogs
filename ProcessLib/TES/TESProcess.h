@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_TESPROCESS_H_
 #define PROCESS_LIB_TESPROCESS_H_
 
-#include "AssemblerLib/LocalToGlobalIndexMap.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
@@ -59,7 +59,7 @@ private:
     using LocalAssembler =
         TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+    using GlobalAssembler = NumLib::VectorMatrixAssembler<
         GlobalMatrix, GlobalVector, LocalAssembler,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
@@ -70,7 +70,7 @@ private:
             GlobalVector, TESIntPtVariables, LocalAssembler>;
 
     void initializeConcreteProcess(
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
@@ -79,17 +79,17 @@ private:
 
     GlobalVector const& computeVapourPartialPressure(
         GlobalVector const& x,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeRelativeHumidity(
         GlobalVector const& x,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     GlobalVector const& computeEquilibriumLoading(
         GlobalVector const& x,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
@@ -97,7 +97,7 @@ private:
 
     AssemblyParams _assembly_params;
 
-    std::unique_ptr<AssemblerLib::LocalToGlobalIndexMap>
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
 
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;

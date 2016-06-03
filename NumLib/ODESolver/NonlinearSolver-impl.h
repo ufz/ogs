@@ -14,11 +14,11 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/BLAS.h"
-#include "MathLib/LinAlg/GlobalMatrixProviders.h"
+#include "MathLib/LinAlg/VectorNorms.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 
 #include "NonlinearSolver.h"
 
-#include "MathLib/LinAlg/VectorNorms.h"
 
 namespace NumLib
 {

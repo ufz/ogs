@@ -12,7 +12,7 @@
 
 #include <cassert>
 
-#include "AssemblerLib/VectorMatrixAssembler.h"
+#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -78,7 +78,7 @@ private:
     using LocalAssemblerInterface =
         GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
 
-    using GlobalAssembler = AssemblerLib::VectorMatrixAssembler<
+    using GlobalAssembler = NumLib::VectorMatrixAssembler<
             GlobalMatrix, GlobalVector, LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
@@ -88,7 +88,7 @@ private:
         GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
 
     void initializeConcreteProcess(
-            AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+            NumLib::LocalToGlobalIndexMap const& dof_table,
             MeshLib::Mesh const& mesh,
             unsigned const integration_order) override
     {

@@ -12,7 +12,6 @@ APPEND_SOURCE_FILES(SOURCES TES)
 add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
-    AssemblerLib
     MaterialsLib
     MeshGeoToolsLib
     NumLib # for shape matrices

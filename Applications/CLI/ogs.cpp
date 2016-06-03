@@ -24,7 +24,7 @@
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/UncoupledProcessesTimeLoop.h"
 
-#include "ProcessLib/NumericsConfig.h"
+#include "NumLib/NumericsConfig.h"
 
 
 int main(int argc, char *argv[])

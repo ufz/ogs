@@ -188,7 +188,6 @@ include_directories( SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 
 add_subdirectory( Applications )
-add_subdirectory( AssemblerLib )
 add_subdirectory( BaseLib )
 # TODO This is a hack but we have to make sure that Boost is built first
 if(TARGET Boost)
@@ -197,7 +196,6 @@ endif()
 add_subdirectory( DataHolderLib )
 add_subdirectory( FileIO )
 add_subdirectory( GeoLib )
-add_subdirectory( InSituLib )
 add_subdirectory( MaterialsLib )
 add_subdirectory( MathLib )
 add_subdirectory( MeshLib )

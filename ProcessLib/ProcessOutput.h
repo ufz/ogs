@@ -88,7 +88,7 @@ void doProcessOutput(
         std::string const& file_name,
         GlobalVector const& x,
         MeshLib::Mesh& mesh,
-        AssemblerLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
         SecondaryVariableCollection<GlobalVector> secondary_variables,

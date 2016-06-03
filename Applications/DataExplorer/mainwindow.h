@@ -33,7 +33,7 @@
 class TreeModel;
 class ProcessModel;
 
-namespace InSituLib
+namespace MeshLib
 {
     class VtkMappedMeshSource;
 }
@@ -104,7 +104,7 @@ protected slots:
     void showGMSHPrefsDialog();
     void showMergeGeometriesDialog();
     void showMeshAnalysisDialog();
-    void showMeshQualitySelectionDialog(InSituLib::VtkMappedMeshSource* mshSource);
+    void showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
     void updateDataViews();
     void writeGeometryToFile(QString listName, QString fileName);

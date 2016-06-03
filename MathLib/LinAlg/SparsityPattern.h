@@ -12,12 +12,11 @@
 
 #include <vector>
 
-#include "ProcessLib/NumericsConfig.h"
-
 namespace MathLib
 {
 /// A vector telling how many nonzeros there are in each global matrix row.
-using SparsityPattern = std::vector<GlobalIndexType>;
+template <typename IndexType>
+using SparsityPattern = std::vector<IndexType>;
 }
 
 #endif // MATHLIB_LINALG_SPARSITYPATTERN_H
