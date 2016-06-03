@@ -39,6 +39,10 @@ public:
     Surface(Surface const& src);
     ~Surface();
 
+    Surface(Surface && src) = delete;
+    Surface& operator=(Surface const& src) = delete;
+    Surface& operator=(Surface && src) = delete;
+
     /// return a geometry type
     GEOTYPE getGeoType() const override { return GEOTYPE::SURFACE; }
     /**
