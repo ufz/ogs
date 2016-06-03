@@ -10,7 +10,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-srcdir="`readlink -f "$1"`"
+srcdir="`realpath "$1"`"
 
 #color="--color=always"
 color=""
@@ -23,7 +23,7 @@ cat <<"EOF" \
     --exclude-dir 'Tests' \
     --exclude 'ConfigTree*.*' \
     -f - -r -n -o $color \
-| cut -c $((`expr length "$srcdir"` + 2))-
+| cut -c $((${#srcdir} + 2))-
 ^\s*//! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
 ^\s*//! \\ogs_file_special$
 ^\s*//! \\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\?$
