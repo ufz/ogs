@@ -288,9 +288,18 @@ bool XmlGmlInterface::write()
             {
                 QDomElement pointTag = doc.createElement("point");
                 pointTag.setAttribute("id", QString::number(i));
-                pointTag.setAttribute("x", QString::number((*(*points)[i])[0], 'f'));
-                pointTag.setAttribute("y", QString::number((*(*points)[i])[1], 'f'));
-                pointTag.setAttribute("z", QString::number((*(*points)[i])[2], 'f'));
+                pointTag.setAttribute(
+                    "x",
+                    QString::number((*(*points)[i])[0], 'g',
+                                    std::numeric_limits<double>::digits10));
+                pointTag.setAttribute(
+                    "y",
+                    QString::number((*(*points)[i])[1], 'g',
+                                    std::numeric_limits<double>::digits10));
+                pointTag.setAttribute(
+                    "z",
+                    QString::number((*(*points)[i])[2], 'g',
+                                    std::numeric_limits<double>::digits10));
 
                 std::string const& point_name(pnt_vec->getItemNameByID(i));
                 if (!point_name.empty())
