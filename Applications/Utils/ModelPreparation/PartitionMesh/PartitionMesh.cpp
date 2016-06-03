@@ -14,15 +14,13 @@
 
 #include "tclap/CmdLine.h"
 
-#include "logog/include/logog.hpp"
-
 #ifdef BUILD_WITH_METIS
 extern "C" {
 #include "metis_main.h"
 }
 #endif
 
-#include "BaseLib/LogogSimpleFormatter.h"
+#include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -35,10 +33,7 @@ extern "C" {
 
 int main (int argc, char* argv[])
 {
-    LOGOG_INITIALIZE();
-    logog::Cout* logog_cout (new logog::Cout);
-    BaseLib::LogogSimpleFormatter *custom_format (new BaseLib::LogogSimpleFormatter);
-    logog_cout->SetFormatter(*custom_format);
+    ApplicationsLib::LogogSetup logog_setup;
 
     std::string m_str = "Partition a mesh for parallel computing."
                         "The tasks of this tool are in twofold:\n"
@@ -63,8 +58,6 @@ int main (int argc, char* argv[])
     cmd.add(asci_flag);
     TCLAP::SwitchArg elem_part_flag("e","element_wise","Enable element wise partitioing.", false);
     cmd.add(elem_part_flag);
-    TCLAP::SwitchArg output_part_flag("o","output_parititon","Enable output partitions.", false);
-    cmd.add(output_part_flag);
 
     cmd.parse(argc, argv);
 
@@ -129,10 +122,6 @@ int main (int argc, char* argv[])
 
     INFO( "Total runtime: %g s.\n", run_timer.elapsed() );
     INFO( "Total CPU time: %g s.\n", CPU_timer.elapsed() );
-
-    delete custom_format;
-    delete logog_cout;
-    LOGOG_SHUTDOWN();
 
     return 0;
 }

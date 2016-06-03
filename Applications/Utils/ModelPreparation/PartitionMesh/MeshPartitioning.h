@@ -29,7 +29,7 @@ enum class ElementType : unsigned {LINE2, QUAD4, HEX8, TRI3, TET4, PRISM6, PYRAM
 /// A subdomain mesh.
 class MeshPartitioning : public Mesh
 {
-        typedef long MyInt; // for PetscInt
+        typedef long PetscInt;
     public:
         /// Copy constructor
         MeshPartitioning(const MeshLib::Mesh &mesh) : Mesh(mesh)
@@ -60,8 +60,8 @@ class MeshPartitioning : public Mesh
         */
         void getElementIntegerVariables(const Element& elem,
                                         const std::vector<unsigned>& local_node_ids,
-                                        std::vector<MyInt>& elem_info,
-                                        MyInt& counter);
+                                        std::vector<PetscInt>& elem_info,
+                                        PetscInt& counter);
 
         /*!
             \brief Write local indicies of element nodes to a ASCII file
@@ -74,7 +74,7 @@ class MeshPartitioning : public Mesh
 
         struct NodeStruct
         {
-            MyInt id;
+            PetscInt id;
             double x;
             double y;
             double z;

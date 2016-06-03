@@ -1,3 +1,8 @@
+###
+add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
+set_target_properties(partmesh PROPERTIES FOLDER Utilities)
+target_link_libraries(partmesh FileIO)
+
 if(UTILS_PARTMESH_BUILD_WITH_METIS)
 	include_directories(${METIS_PATH}/libmetis)
 	include_directories(${METIS_PATH}/programs)
@@ -11,13 +16,7 @@ if(UTILS_PARTMESH_BUILD_WITH_METIS)
 	)
 	ADD_LIBRARY(METIS_Lib STATIC ${METIS_SOURCES} )
 
-	add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
-	set_target_properties(partmesh PROPERTIES FOLDER Utilities)
-	target_link_libraries(partmesh FileIO METIS_Lib metis)
-else()
-	add_executable(partmesh PartitionMesh.cpp MeshPartitioning.h MeshPartitioning.cpp)
-	set_target_properties(partmesh PROPERTIES FOLDER Utilities)
-	target_link_libraries(partmesh FileIO)
+	target_link_libraries(partmesh METIS_Lib metis)
 endif()
 
 ADD_VTK_DEPENDENCY(partmesh)
