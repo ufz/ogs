@@ -113,8 +113,10 @@ if undocumented:
     print("| File | Line | Parameter | Type | Method | Link |")
     print("| ---- | ---: | --------- | ---- | ------ | ---- |")
     for u in sorted(undocumented):
+        u2 = list(u)
+        u2.append(github_src_url)
         print(("| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> "
-            + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})").format(*u, github_src_url))
+            + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})").format(*u2))
 
 if unneeded_comments:
     print()
@@ -123,9 +125,10 @@ if unneeded_comments:
     print("| ---- | ---: | ------- | ---- |")
     for u in sorted(unneeded_comments):
         u2 = list(u)
+        u2.append(github_src_url)
         u2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", u2[2])
         print(("| {0} | {1} | {2} "
-            + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*u2, github_src_url))
+            + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*u2))
 
 if wrong_input:
     print()
@@ -134,9 +137,10 @@ if wrong_input:
     print("| ---- | ---: | ------- | ---- |")
     for w in sorted(wrong_input):
         w2 = list(w)
+        w2.append(github_src_url)
         w2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", w2[2])
         print(("| {0} | {1} | {2} "
-            + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*w2, github_src_url))
+            + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*w2))
 
 if no_doc_page:
     print()
@@ -144,8 +148,10 @@ if no_doc_page:
     print("| Parameter | File | Line | Link |")
     print("| --------- | ---- | ---: | ---- |")
     for n in sorted(no_doc_page):
+        n2 = list(n)
+        n2.append(github_src_url)
         print(("| {0} | {1} | {2} "
-            + "| [&rarr; ufz/ogs/master]({3}/{1}#L{2}) |").format(*n, github_src_url))
+            + "| [&rarr; ufz/ogs/master]({3}/{1}#L{2}) |").format(*n2))
 
 if unneeded_md_files:
     print()

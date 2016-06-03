@@ -128,10 +128,10 @@ for (dirpath, _, filenames) in os.walk(docdir):
             # TODO this can currently only expand the top level
             tagpathparts = tagpath.split(".")
             if tagpathparts[0] in tag_path_expansion_table:
-                tagpathhead = tag_path_expansion_table[tagpathparts[0]]
+                tagpathparts[0] = tag_path_expansion_table[tagpathparts[0]]
             else:
-                tagpathhead = "NONEXISTENT"
-            tagpath_expanded = ".".join((tagpathhead, *tagpathparts[1:])).lstrip(".")
+                tagpathparts[0] = "NONEXISTENT"
+            tagpath_expanded = ".".join(tagpathparts).lstrip(".")
 
             if tagpath:
                 fh.write("\n\n# Additional info\n")
