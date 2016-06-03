@@ -92,51 +92,49 @@ Surface* Surface::createSurface(const Polyline& ply)
         return nullptr;
     }
 
-    if (ply.getNumberOfPoints() > 2)
-    {
-        // create empty surface
-        Surface* sfc(new Surface(ply.getPointsVec()));
-
-        Polygon* polygon(new Polygon(ply));
-        polygon->computeListOfSimplePolygons();
-
-        // create surfaces from simple polygons
-        const std::list<GeoLib::Polygon*>& list_of_simple_polygons(
-            polygon->getListOfSimplePolygons());
-        for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it(
-                 list_of_simple_polygons.begin());
-             simple_polygon_it != list_of_simple_polygons.end();
-             ++simple_polygon_it)
-        {
-            std::list<GeoLib::Triangle> triangles;
-            GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
-
-            // add Triangles to Surface
-            std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());
-            while (it != triangles.end())
-            {
-                sfc->addTriangle((*it)[0], (*it)[1], (*it)[2]);
-                ++it;
-            }
-        }
-        delete polygon;
-        if (sfc->getNTriangles() == 0)
-        {
-            WARN(
-                "Surface::createSurface(): Triangulation does not contain any "
-                "triangle.");
-            delete sfc;
-            return nullptr;
-        }
-        return sfc;
-    }
-    else
+    if (ply.getNumberOfPoints() <= 2)
     {
         WARN(
             "Error in Surface::createSurface() - Polyline consists of less "
             "than three points and therefore cannot be triangulated.");
         return nullptr;
     }
+
+    // create empty surface
+    Surface* sfc(new Surface(ply.getPointsVec()));
+
+    Polygon* polygon(new Polygon(ply));
+    polygon->computeListOfSimplePolygons();
+
+    // create surfaces from simple polygons
+    const std::list<GeoLib::Polygon*>& list_of_simple_polygons(
+        polygon->getListOfSimplePolygons());
+    for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it(
+             list_of_simple_polygons.begin());
+         simple_polygon_it != list_of_simple_polygons.end();
+         ++simple_polygon_it)
+    {
+        std::list<GeoLib::Triangle> triangles;
+        GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
+
+        // add Triangles to Surface
+        std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());
+        while (it != triangles.end())
+        {
+            sfc->addTriangle((*it)[0], (*it)[1], (*it)[2]);
+            ++it;
+        }
+    }
+    delete polygon;
+    if (sfc->getNTriangles() == 0)
+    {
+        WARN(
+            "Surface::createSurface(): Triangulation does not contain any "
+            "triangle.");
+        delete sfc;
+        return nullptr;
+    }
+    return sfc;
 }
 
 std::size_t Surface::getNTriangles() const
