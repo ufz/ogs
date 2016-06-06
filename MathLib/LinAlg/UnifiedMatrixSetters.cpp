@@ -82,6 +82,7 @@ void setVector(Eigen::VectorXd& v, MatrixVectorTraits<Eigen::VectorXd>::Index co
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 
+#include <numeric>
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 
