@@ -11,8 +11,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/AnalyticalGeometry.h"
-
 #include "MeshLib/Node.h"
 #include "Quad.h"
 #include "Tri.h"
