@@ -359,17 +359,6 @@ double calcTriangleArea(MathLib::Point3d const& a,
     return 0.5 * w.getLength();
 }
 
-double calcTetrahedronVolume(MathLib::Point3d const& x1,
-    MathLib::Point3d const& x2,
-    MathLib::Point3d const& x3,
-    MathLib::Point3d const& x4)
-{
-    const MathLib::Vector3 ab(x1, x2);
-    const MathLib::Vector3 ac(x1, x3);
-    const MathLib::Vector3 ad(x1, x4);
-    return std::abs(MathLib::scalarTriple(ac, ad, ab)) / 6.0;
-}
-
 void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
 {
     // *** some frequently used terms ***

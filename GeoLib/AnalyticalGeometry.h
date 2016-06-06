@@ -185,15 +185,6 @@ double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
     MathLib::Point3d const& c);
 
 /**
- * Calculates the volume of a tetrahedron.
- * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
- */
-double calcTetrahedronVolume(MathLib::Point3d const& x1,
-    MathLib::Point3d const& x2,
-    MathLib::Point3d const& x3,
-    MathLib::Point3d const& x4);
-
-/**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
  * as well as an 'epsilon' outside the triangles plane.

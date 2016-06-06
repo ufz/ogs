@@ -12,6 +12,7 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
 #include "Quad.h"
@@ -70,8 +71,8 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 
 double PyramidRule5::computeVolume(Node const* const* _nodes)
 {
-    return GeoLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4])
-         + GeoLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
+    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4])
+         + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
 }
 
 bool PyramidRule5::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)

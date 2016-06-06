@@ -14,6 +14,7 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
 #include "Quad.h"
@@ -62,12 +63,12 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 
 double HexRule8::computeVolume(Node const* const* _nodes)
 {
-    return GeoLib::calcTetrahedronVolume(*_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0])
-         + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0])
-         + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0])
-         + GeoLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2])
-         + GeoLib::calcTetrahedronVolume(*_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2])
-         + GeoLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
+    return MathLib::calcTetrahedronVolume(*_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0])
+         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0])
+         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0])
+         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2])
+         + MathLib::calcTetrahedronVolume(*_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2])
+         + MathLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
 }
 
 bool HexRule8::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
