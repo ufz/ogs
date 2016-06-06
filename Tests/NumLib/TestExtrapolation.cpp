@@ -11,8 +11,8 @@
 #include <gtest/gtest.h>
 
 #include "NumLib/DOF/MatrixProviderUser.h"
-#include "NumLib/DOF/MatrixVectorTraits.h"
-#include "NumLib/DOF/UnifiedMatrixSetters.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/BLAS.h"

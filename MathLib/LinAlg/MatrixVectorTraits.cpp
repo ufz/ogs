@@ -7,8 +7,8 @@
  *
  */
 
-#include "LocalToGlobalIndexMap.h"
-#include "MatrixProviderUser.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/DOF/MatrixProviderUser.h"
 #include "MatrixVectorTraits.h"
 
 #ifdef OGS_USE_EIGEN

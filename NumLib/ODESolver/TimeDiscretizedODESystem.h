@@ -13,8 +13,8 @@
 #include <memory>
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/IndexValueVector.h"
-#include "NumLib/DOF/UnifiedMatrixSetters.h"
 
 #include "ODESystem.h"
 #include "NonlinearSystem.h"

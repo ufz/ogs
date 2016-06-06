@@ -11,7 +11,7 @@
 #define NUMLIB_ODESYSTEM_H
 
 #include "NumLib/IndexValueVector.h"
-#include "NumLib/DOF/MatrixVectorTraits.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 
 #include "Types.h"
 #include "EquationSystem.h"
