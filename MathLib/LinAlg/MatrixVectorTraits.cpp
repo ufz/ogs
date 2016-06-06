@@ -34,10 +34,8 @@ std::unique_ptr<Eigen::MatrixXd>
 MatrixVectorTraits<Eigen::MatrixXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
-    auto const ncols = spec.dof_table ? nrows : spec.ncols;
-
-    return std::unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd(nrows, ncols));
+    return std::unique_ptr<Eigen::MatrixXd>(
+        new Eigen::MatrixXd(spec.nrows, spec.ncols));
 }
 
 std::unique_ptr<Eigen::VectorXd>
@@ -58,9 +56,7 @@ std::unique_ptr<Eigen::VectorXd>
 MatrixVectorTraits<Eigen::VectorXd>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
-
-    return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(nrows));
+    return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(spec.nrows));
 }
 
 } // namespace MathLib
@@ -93,22 +89,15 @@ std::unique_ptr<PETScMatrix>
 MatrixVectorTraits<PETScMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows =
-        spec.dof_table ? spec.dof_table->dofSizeWithoutGhosts() : spec.nrows;
-    auto const ncols = spec.dof_table ? nrows : spec.ncols;
+    auto const nrows = spec.nrows;
+    auto const ncols = spec.ncols;
 
-    // TODO I guess it is not hard to make NumLib::computeSparsityPattern()
-    //      work also for NodePartitionedMesh'es.
-    assert(((!spec.sparsity_pattern) || spec.sparsity_pattern->size() == 0u) &&
-           "The sparsity pattern is not used with PETSc so I rather crash than"
-           " silently accept a precomputed sparsity pattern.");
-
-    if (spec.mesh)
+    if (spec.sparsity_pattern)
     {
-        assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(spec.mesh));
-        auto const& mesh = *static_cast<MeshLib::NodePartitionedMesh const*>(spec.mesh);
+        // Assert that the misuse of the sparsity pattern is consistent.
+        assert(spec.sparsity_pattern->size() == 1);
 
-        auto const max_nonzeroes = mesh.getMaximumNConnectedNodesToNode();
+        auto const max_nonzeroes = spec.sparsity_pattern->front();
 
         PETScMatrixOption mat_opt;
         mat_opt.d_nz = max_nonzeroes;
@@ -142,10 +131,9 @@ newInstance(MatrixSpecifications const& spec)
 {
     auto const is_global_size = false;
 
-    if (spec.dof_table) {
-        auto const& dt = *spec.dof_table;
-        return std::unique_ptr<PETScVector>(new PETScVector(
-            dt.dofSizeWithoutGhosts(), dt.getGhostIndices(), is_global_size));
+    if (spec.ghost_indices != nullptr) {
+        return std::unique_ptr<PETScVector>(
+            new PETScVector(spec.nrows, *spec.ghost_indices, is_global_size));
     } else {
         return std::unique_ptr<PETScVector>(
             new PETScVector(spec.nrows, is_global_size));
@@ -178,9 +166,7 @@ std::unique_ptr<EigenMatrix>
 MatrixVectorTraits<EigenMatrix>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
-
-    auto A = std::unique_ptr<EigenMatrix>(new EigenMatrix(nrows));
+    auto A = std::unique_ptr<EigenMatrix>(new EigenMatrix(spec.nrows));
 
     if (spec.sparsity_pattern)
         setMatrixSparsity(*A, *spec.sparsity_pattern);
@@ -206,9 +192,7 @@ std::unique_ptr<EigenVector>
 MatrixVectorTraits<EigenVector>::
 newInstance(MatrixSpecifications const& spec)
 {
-    auto const nrows = spec.dof_table ? spec.dof_table->dofSizeWithGhosts() : spec.nrows;
-
-    return std::unique_ptr<EigenVector>(new EigenVector(nrows));
+    return std::unique_ptr<EigenVector>(new EigenVector(spec.nrows));
 }
 
 } // namespace MathLib

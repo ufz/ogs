@@ -192,10 +192,15 @@ void TESProcess<GlobalSetup>::initializeConcreteProcess(
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION));
 
-    _extrapolator.reset(
-        new ExtrapolatorImplementation(MathLib::MatrixSpecifications(
-            0u, 0u, nullptr, _local_to_global_index_map_single_component.get(),
-            &mesh)));
+    {
+        auto const& l = *_local_to_global_index_map_single_component;
+        _extrapolator.reset(new ExtrapolatorImplementation(
+            MathLib::MatrixSpecifications(l.dofSizeWithoutGhosts(),
+                                          l.dofSizeWithoutGhosts(),
+                                          &l.getGhostIndices(),
+                                          nullptr),
+            l));
+    }
 
     // secondary variables
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
@@ -343,9 +348,11 @@ TESProcess<GlobalSetup>::computeVapourPartialPressure(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
+    auto const& dof_table_single = *_local_to_global_index_map_single_component;
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        {0, 0, nullptr, _local_to_global_index_map_single_component.get(),
-         nullptr});
+        {dof_table_single.dofSizeWithoutGhosts(),
+         dof_table_single.dofSizeWithoutGhosts(),
+         &dof_table_single.getGhostIndices(), nullptr});
 
     GlobalIndexType nnodes = this->_mesh.getNNodes();
 
@@ -375,9 +382,11 @@ TESProcess<GlobalSetup>::computeRelativeHumidity(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
+    auto const& dof_table_single = *_local_to_global_index_map_single_component;
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        {0, 0, nullptr, _local_to_global_index_map_single_component.get(),
-         nullptr});
+        {dof_table_single.dofSizeWithoutGhosts(),
+         dof_table_single.dofSizeWithoutGhosts(),
+         &dof_table_single.getGhostIndices(), nullptr});
 
     GlobalIndexType nnodes = this->_mesh.getNNodes();
 
@@ -412,9 +421,11 @@ TESProcess<GlobalSetup>::computeEquilibriumLoading(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
+    auto const& dof_table_single = *_local_to_global_index_map_single_component;
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        {0, 0, nullptr, _local_to_global_index_map_single_component.get(),
-         nullptr});
+        {dof_table_single.dofSizeWithoutGhosts(),
+         dof_table_single.dofSizeWithoutGhosts(),
+         &dof_table_single.getGhostIndices(), nullptr});
 
     GlobalIndexType nnodes = this->_mesh.getNNodes();
 
