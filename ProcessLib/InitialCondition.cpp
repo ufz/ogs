@@ -28,6 +28,21 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
     //! \ogs_file_param{initial_condition__type}
     config.checkConfigParameter("type", "Uniform");
 
+    // Optional case for single-component variables where the value can be used.
+    // If the 'value' tag is found, use it and return. Otherwise continue with
+    // then required tag 'values'.
+    if (n_components == 1)
+    {
+        //! \ogs_file_param{initial_condition__Uniform__value}
+        auto const value = config.getConfigParameterOptional<double>("value");
+        if (value)
+        {
+            DBUG("Using value %g for the initial condition.", *value);
+            return std::unique_ptr<InitialCondition>{
+                new UniformInitialCondition{std::vector<double>{*value}}};
+        }
+    }
+
     std::vector<double> const values =
         //! \ogs_file_param{initial_condition__Uniform__values}
         config.getConfigParameter<std::vector<double>>("values");
