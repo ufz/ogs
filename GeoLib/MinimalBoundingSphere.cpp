@@ -88,7 +88,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 
     if (!GeoLib::isCoplanar(p, q, r, s))
     {
-        double const denom = 2.0 * GeoLib::scalarTriple(a,b,c);
+        double const denom = 2.0 * MathLib::scalarTriple(a,b,c);
         MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b)
                                   + scalarProduct(b,b) * crossProduct(c,a)
                                   + scalarProduct(a,a) * crossProduct(b,c))

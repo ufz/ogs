@@ -367,7 +367,7 @@ double calcTetrahedronVolume(MathLib::Point3d const& x1,
     const MathLib::Vector3 ab(x1, x2);
     const MathLib::Vector3 ac(x1, x3);
     const MathLib::Vector3 ad(x1, x4);
-    return std::abs(GeoLib::scalarTriple(ac, ad, ab)) / 6.0;
+    return std::abs(MathLib::scalarTriple(ac, ad, ab)) / 6.0;
 }
 
 void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
@@ -433,11 +433,11 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     const MathLib::Vector3 pb(p, b);
     const MathLib::Vector3 pc(p, c);
 
-    double u (scalarTriple(pq, pc, pb));
+    double u (MathLib::scalarTriple(pq, pc, pb));
     if (u<0) return nullptr;
-    double v (scalarTriple(pq, pa, pc));
+    double v (MathLib::scalarTriple(pq, pa, pc));
     if (v<0) return nullptr;
-    double w (scalarTriple(pq, pb, pa));
+    double w (MathLib::scalarTriple(pq, pb, pa));
     if (w<0) return nullptr;
 
     const double denom (1.0/(u+v+w));
@@ -450,12 +450,6 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
                           u * a[2] + v * b[2] + w * c[2])};
 }
 
-double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w)
-{
-    MathLib::Vector3 const cross(MathLib::crossProduct(u, v));
-    return MathLib::scalarProduct(cross,w);
-}
-
 double orientation3d(MathLib::Point3d const& p,
                      MathLib::Point3d const& a,
                      MathLib::Point3d const& b,
@@ -464,7 +458,7 @@ double orientation3d(MathLib::Point3d const& p,
     MathLib::Vector3 const ap (a, p);
     MathLib::Vector3 const bp (b, p);
     MathLib::Vector3 const cp (c, p);
-    return scalarTriple(bp,cp,ap);
+    return MathLib::scalarTriple(bp,cp,ap);
 }
 
 bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
