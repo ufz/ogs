@@ -14,12 +14,6 @@
 
 namespace MathLib
 {
-void crossProd(const double u[3], const double v[3], double r[3])
-{
-    r[0] = u[1] * v[2] - u[2] * v[1];
-    r[1] = u[2] * v[0] - u[0] * v[2];
-    r[2] = u[0] * v[1] - u[1] * v[0];
-}
 
 double calcProjPntToLineAndDists(const double p[3], const double a[3],
         const double b[3], double &lambda, double &d0)

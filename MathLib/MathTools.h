@@ -77,12 +77,6 @@ T scalarProduct(T const * const v0, T const * const v1, unsigned n)
 }
 
 /**
- * computes the cross (or vector) product of the 3d vectors u and v
- * the result is given in the vector r
- */
-void crossProd (const double u[3], const double v[3], double r[3]);
-
-/**
  * calcProjPntToLineAndDists computes the orthogonal projection
  * of a point p to the line described by the points a and b,
  * \f$g(\lambda) = a + \lambda (b - a)\f$,
