@@ -20,6 +20,11 @@ namespace MathLib
 template <typename T, std::size_t DIM> class TemplatePoint;
 typedef MathLib::TemplatePoint<double,3> Point3d;
 
+enum TriangleTest
+{
+    GAUSS, BARYCENTRIC
+};
+
 /**
  * Checks if a point p is on the left or right side of a plane spanned by three
  * points a, b, c.
@@ -75,6 +80,79 @@ bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
                           MathLib::Point3d const& b, MathLib::Point3d const& c,
                           MathLib::Point3d const& d,
                           double eps = std::numeric_limits<double>::epsilon());
+
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes
+ * a, b and c.Using two eps-values it is possible to test an 'epsilon'
+ * neighbourhood around the triangle as well as an 'epsilon' outside the
+ * triangles plane.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * spanned by abc
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * abc
+ * @param algorithm defines the method to use
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * triangle
+ */
+bool isPointInTriangle(
+    MathLib::Point3d const& p,
+    MathLib::Point3d const& a,
+    MathLib::Point3d const& b,
+    MathLib::Point3d const& c,
+    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
+    MathLib::TriangleTest algorithm = MathLib::GAUSS);
+
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes
+ * a, b and c.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around
+ * the triangle
+ * as well as an 'epsilon' outside the triangles plane.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * spanned by abc ((orthogonal distance to the plane spaned by triangle)
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * abc
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * triangle
+ */
+bool gaussPointInTriangle(
+    MathLib::Point3d const& p, MathLib::Point3d const& a,
+    MathLib::Point3d const& b, MathLib::Point3d const& c,
+    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
+
+/**
+ * Tests if the given point p is within the triangle, defined by its edge nodes
+ * a, b and c.
+ * Using two eps-values it is possible to test an 'epsilon' neighbourhood around
+ * the triangle
+ * as well as an 'epsilon' outside the triangles plane.
+ * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
+ * @param p test point
+ * @param a edge node of triangle
+ * @param b edge node of triangle
+ * @param c edge node of triangle
+ * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * spanned by abc
+ * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * abc
+ * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * triangle
+ */
+bool barycentricPointInTriangle(
+    MathLib::Point3d const& p, MathLib::Point3d const& a,
+    MathLib::Point3d const& b, MathLib::Point3d const& c,
+    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
+    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 }  // end namespace MathLib
 

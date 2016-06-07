@@ -12,6 +12,7 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
+
 #include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
@@ -34,8 +35,8 @@ double QuadRule4::computeVolume(Node const* const* _nodes)
 
 bool QuadRule4::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
 {
-    return (GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps) ||
-            GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[2], *_nodes[3], eps));
+    return (MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps) ||
+            MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[2], *_nodes[3], eps));
 }
 
 unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])

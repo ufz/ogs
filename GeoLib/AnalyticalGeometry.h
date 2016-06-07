@@ -32,11 +32,6 @@ namespace GeoLib
 class Polyline;
 class LineSegment;
 
-enum TriangleTest
-{
-    GAUSS, BARYCENTRIC
-};
-
 enum Orientation
 {
     CW = 1, CCW = 2, COLLINEAR = 3
@@ -175,65 +170,6 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @param algorithm defines the method to use
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool isPointInTriangle(MathLib::Point3d const& p,
-                       MathLib::Point3d const& a,
-                       MathLib::Point3d const& b,
-                       MathLib::Point3d const& c,
-                       double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-                       double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
-                       GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- *                             ((orthogonal distance to the plane spaned by triangle)
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool gaussPointInTriangle(MathLib::Point3d const& p,
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c,
-    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool barycentricPointInTriangle(MathLib::Point3d const& p,
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c,
-    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
 /**
  * test for intersections of the line segments of the Polyline
