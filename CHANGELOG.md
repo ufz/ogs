@@ -4,6 +4,30 @@
 ### Features:
  - Add external ode-solver interface with [Sundials CVODE
    library](http://computation.llnl.gov/projects/sundials-suite-nonlinear-differential-algebraic-equation-solvers/cvode).
+   #1109
+ - Add piecewise linear curves parser to the project files. The curves are
+   specified by two vectors, the coordinates and values. They can be used for
+   example to map temporal dependencies (time-dependent boundary conditions) or
+   as approximations of coefficient dependencies (e.g. pressure-saturation
+   curves). #1149
+ - Extend the LocalAssemblerInterface by adding default implementations of
+   pre/postTimestep and assembleJacobian functions. The current time and time
+   step size are passed in the preTimestep call to the particular processes. #1214
+
+### Infrastructure
+ - Fix circular dependencies on library level. This allows for dynamic linking
+   which is faster than static and can be used in debug builds, where the
+   compilation time is more important than the runtime.
+   - #1133 Enable shared linking of ogs libraries.
+   - #1138 Break FileIO on ApplicationsLib dependency.
+   - #1143, #1153 Remove MeshLib on FileIO dependency.
+   - #1166 Cleanup some of AssemblerLib dependencies.
+
+ - Inconsistent formatting of tabs and whitespaces was finally resolved: now all
+   formatting, indentation and alignment, are done with four whitespaces. #1201
+
+### Fixes:
+    Fix linking of Metis in MathLib. #1147
 
 ## Release notes
 # 6.0.5
