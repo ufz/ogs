@@ -14,6 +14,17 @@
 
 namespace MathLib
 {
+double orientation3d(MathLib::Point3d const& p,
+                     MathLib::Point3d const& a,
+                     MathLib::Point3d const& b,
+                     MathLib::Point3d const& c)
+{
+    MathLib::Vector3 const ap (a, p);
+    MathLib::Vector3 const bp (b, p);
+    MathLib::Vector3 const cp (c, p);
+    return MathLib::scalarTriple(bp,cp,ap);
+}
+
 double calcTetrahedronVolume(MathLib::Point3d const& a,
                              MathLib::Point3d const& b,
                              MathLib::Point3d const& c,
