@@ -13,7 +13,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
@@ -73,12 +72,12 @@ double HexRule8::computeVolume(Node const* const* _nodes)
 
 bool HexRule8::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
 {
-    return (GeoLib::isPointInTetrahedron(pnt, *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0], eps) ||
-            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0], eps) ||
-            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0], eps) ||
-            GeoLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2], eps) ||
-            GeoLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2], eps) ||
-            GeoLib::isPointInTetrahedron(pnt, *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2], eps));
+    return (MathLib::isPointInTetrahedron(pnt, *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0], eps) ||
+            MathLib::isPointInTetrahedron(pnt, *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2], eps) ||
+            MathLib::isPointInTetrahedron(pnt, *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2], eps) ||
+            MathLib::isPointInTetrahedron(pnt, *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2], eps));
 }
 
 unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])

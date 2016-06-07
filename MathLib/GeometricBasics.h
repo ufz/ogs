@@ -12,6 +12,7 @@
 #define GEOMETRIC_BASICS_H_
 
 #include <cstddef>
+#include <limits>
 
 namespace MathLib
 {
@@ -44,6 +45,27 @@ double calcTetrahedronVolume(MathLib::Point3d const& x1,
                              MathLib::Point3d const& x2,
                              MathLib::Point3d const& x3,
                              MathLib::Point3d const& x4);
+/**
+ * Tests if the given point p is located within a tetrahedron spanned by points
+ * a, b, c, d.
+ * If the tet specified by a, b, c, d is degenerated (i.e. all points are
+ * coplanar) the function
+ * will return false because there is no meaningful concept of "inside" for such
+ * elements.
+ * @param p test point
+ * @param a edge node of tetrahedron
+ * @param b edge node of tetrahedron
+ * @param c edge node of tetrahedron
+ * @param d edge node of tetrahedron
+ * @param eps Accounts for numerical inaccuracies by allowing a point to be
+ * slightly outside of the element and still be regarded as inside.
+ * @return true if the test point p is not located outside of abcd (i.e. inside
+ * or on a plane/edge).
+ */
+bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
+                          MathLib::Point3d const& b, MathLib::Point3d const& c,
+                          MathLib::Point3d const& d,
+                          double eps = std::numeric_limits<double>::epsilon());
 
 }  // end namespace MathLib
 
