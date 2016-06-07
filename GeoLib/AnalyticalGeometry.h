@@ -177,14 +177,6 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
 /**
- * Calculates the area of the triangle defined by its edge nodes a, b and c.
- * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
- * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f$.
- */
-double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c);
-
-/**
  * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
  * as well as an 'epsilon' outside the triangles plane.

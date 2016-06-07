@@ -321,15 +321,6 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
     return true;
 }
 
-double calcTriangleArea(MathLib::Point3d const& a,
-    MathLib::Point3d const& b, MathLib::Point3d const& c)
-{
-    MathLib::Vector3 const u(a,c);
-    MathLib::Vector3 const v(a,b);
-    MathLib::Vector3 const w(MathLib::crossProduct(u, v));
-    return 0.5 * w.getLength();
-}
-
 void computeRotationMatrixToXZ(MathLib::Vector3 const& plane_normal, MathLib::DenseMatrix<double> & rot_mat)
 {
     // *** some frequently used terms ***

@@ -20,6 +20,8 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 
+#include "MathLib/GeometricBasics.h"
+
 namespace GeoLib
 {
 namespace IO
@@ -92,7 +94,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
 
         // check area of triangle
         double const d_eps(std::numeric_limits<double>::epsilon());
-        if (GeoLib::calcTriangleArea(p0, p1, p2) < d_eps) {
+        if (MathLib::calcTriangleArea(p0, p1, p2) < d_eps) {
             ERR("readTIN: Triangle %d has zero area.", id);
             if (errors)
                 errors->push_back (std::string("readTIN: Triangle ")

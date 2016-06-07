@@ -36,6 +36,15 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
     return std::abs(MathLib::scalarTriple(ac, ad, ab)) / 6.0;
 }
 
+double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
+                        MathLib::Point3d const& c)
+{
+    MathLib::Vector3 const u(a, c);
+    MathLib::Vector3 const v(a, b);
+    MathLib::Vector3 const w(MathLib::crossProduct(u, v));
+    return 0.5 * w.getLength();
+}
+
 bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
                           MathLib::Point3d const& b, MathLib::Point3d const& c,
                           MathLib::Point3d const& d, double eps)

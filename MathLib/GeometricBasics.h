@@ -45,6 +45,15 @@ double calcTetrahedronVolume(MathLib::Point3d const& x1,
                              MathLib::Point3d const& x2,
                              MathLib::Point3d const& x3,
                              MathLib::Point3d const& x4);
+
+/**
+ * Calculates the area of the triangle defined by its edge nodes a, b and c.
+ * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
+ * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f$.
+ */
+double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
+                        MathLib::Point3d const& c);
+
 /**
  * Tests if the given point p is located within a tetrahedron spanned by points
  * a, b, c, d.

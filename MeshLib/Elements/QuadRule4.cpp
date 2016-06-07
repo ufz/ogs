@@ -12,6 +12,7 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
 
@@ -27,8 +28,8 @@ const unsigned QuadRule4::edge_nodes[4][2] =
 
 double QuadRule4::computeVolume(Node const* const* _nodes)
 {
-    return GeoLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2])
-         + GeoLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
+    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2])
+         + MathLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
 }
 
 bool QuadRule4::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
