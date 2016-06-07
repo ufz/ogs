@@ -67,10 +67,14 @@ public:
         const int variable_id,
         const int component_id)
     {
+        // Find all boundary conditions matching the component id. There can be
+        // more than one such boundary condition.
         for (auto& bc_config : _dirichlet_bc_configs)
         {
             if (bc_config.second != component_id)
                 continue;
+            // Create/initialize the boundary condition with matching component
+            // id and output it through the OutputIterator.
             DirichletBc<GlobalIndexType> bc;
             bc_config.first->initialize(searcher, dof_table, variable_id,
                                         component_id, bc);
@@ -86,10 +90,15 @@ public:
                           const int variable_id,
                           const int component_id)
     {
+        // Find all boundary conditions matching the component id. There can be
+        // more than one such boundary condition.
         for (auto& bc_config : _neumann_bc_configs)
         {
             if (bc_config.second != component_id)
                 continue;
+
+            // Create/initialize the boundary condition with matching component
+            // id and output it through the OutputIterator.
             bc_config.first->initialize(searcher);
             bcs++ = std::unique_ptr<NeumannBc<GlobalSetup>>{
                 new NeumannBc<GlobalSetup>(*bc_config.first,
