@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-06-06
- * \brief  Implementation of the Triangle class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -21,29 +17,12 @@
 
 namespace GeoLib {
 
-Triangle::Triangle (std::vector<Point *> const &pnt_vec) :
-    _pnts(pnt_vec), _initialized (false), _longest_edge (0.0)
-{
-    assert(!_pnts.empty());
-    _pnt_ids[0] = std::numeric_limits<std::size_t>::max();
-    _pnt_ids[1] = std::numeric_limits<std::size_t>::max();
-    _pnt_ids[2] = std::numeric_limits<std::size_t>::max();
-}
-
 Triangle::Triangle (std::vector<Point *> const &pnt_vec,
     std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
-    _pnts(pnt_vec), _initialized (true), _longest_edge (0.0)
+    _pnts(pnt_vec), _pnt_ids( {{pnt_a, pnt_b, pnt_c}} )
 {
     assert(!_pnts.empty());
-    _pnt_ids[0] = pnt_a;
-    _pnt_ids[1] = pnt_b;
-    _pnt_ids[2] = pnt_c;
-    _longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
-    double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    _longest_edge = sqrt (_longest_edge);
+    assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
 }
 
 void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c)
@@ -52,13 +31,6 @@ void Triangle::setTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pn
     _pnt_ids[0] = pnt_a;
     _pnt_ids[1] = pnt_b;
     _pnt_ids[2] = pnt_c;
-
-    _longest_edge = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[1]]);
-    double tmp (MathLib::sqrDist (*_pnts[_pnt_ids[1]], *_pnts[_pnt_ids[2]]));
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    tmp = MathLib::sqrDist (*_pnts[_pnt_ids[0]], *_pnts[_pnt_ids[2]]);
-    if (tmp > _longest_edge) _longest_edge = tmp;
-    _longest_edge = sqrt (_longest_edge);
 }
 
 bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
@@ -90,7 +62,9 @@ bool Triangle::containsPoint2D (Point const& pnt) const
     const double upper (1+delta);
 
     // check if u0 and u1 fulfills the condition (with some delta)
-    if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper && y[0] + y[1] <= upper) {
+    if (-delta <= y[0] && y[0] <= upper && -delta <= y[1] && y[1] <= upper &&
+        y[0] + y[1] <= upper)
+    {
         return true;
     }
     return false;

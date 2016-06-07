@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-01-22
- * \brief  Definition of the Surface class.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -36,31 +32,36 @@ class SurfaceGrid;
  * to a vector of (pointers to) points (_sfc_pnts) and a vector that stores
  * the Triangles consisting of points from _sfc_pnts.
  * */
-class Surface : public GeoObject
+class Surface final : public GeoObject
 {
 public:
-    Surface(const std::vector<Point*> &pnt_vec);
-    virtual ~Surface ();
+    explicit Surface(const std::vector<Point*>& pnt_vec);
+    Surface(Surface const& src);
+    ~Surface();
+
+    Surface(Surface && src) = delete;
+    Surface& operator=(Surface const& src) = delete;
+    Surface& operator=(Surface && src) = delete;
 
     /// return a geometry type
-    virtual GEOTYPE getGeoType() const {return GEOTYPE::SURFACE;}
-
+    GEOTYPE getGeoType() const override { return GEOTYPE::SURFACE; }
     /**
      * adds three indices describing a triangle and updates the bounding box
      * */
-    void addTriangle (std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
+    void addTriangle(std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c);
 
     /// Triangulates a new surface based on closed polyline.
-    static Surface* createSurface(const Polyline &ply);
+    static Surface* createSurface(const Polyline& ply);
 
     /**
      * returns the number of triangles describing the Surface
      * */
-    std::size_t getNTriangles () const;
+    std::size_t getNTriangles() const;
 
-    /** \brief const access operator for the access to the i-th Triangle of the surface.
+    /** \brief const access operator for the access to the i-th Triangle of the
+     * surface.
     */
-    const Triangle* operator[] (std::size_t i) const;
+    const Triangle* operator[](std::size_t i) const;
 
     /**
      * is the given point in the bounding volume of the surface
@@ -82,17 +83,15 @@ public:
      */
     const Triangle* findTriangle(MathLib::Point3d const& pnt) const;
 
-    const std::vector<Point*> *getPointVec() const { return &_sfc_pnts; }
-
+    const std::vector<Point*>* getPointVec() const { return &_sfc_pnts; }
     /**
      * method allows access to the internal axis aligned bounding box
      * @return axis aligned bounding box
      */
-    AABB const& getAABB () const { return *_bounding_volume; }
-
+    AABB const& getAABB() const { return *_bounding_volume; }
 protected:
     /** a vector of pointers to Points */
-    const std::vector<Point*> &_sfc_pnts;
+    const std::vector<Point*>& _sfc_pnts;
     /** position of pointers to the geometric points */
     std::vector<Triangle*> _sfc_triangles;
     /** bounding volume is an axis aligned bounding box */
@@ -103,7 +102,6 @@ protected:
     /// called and a valid surface grid is not existing.
     mutable std::unique_ptr<SurfaceGrid> _surface_grid;
 };
-
 }
 
 #endif /* SURFACE_H_ */
