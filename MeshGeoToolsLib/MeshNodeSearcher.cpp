@@ -42,7 +42,7 @@ MeshNodeSearcher::MeshNodeSearcher(MeshLib::Mesh const& mesh,
     DBUG("Constructing MeshNodeSearcher obj.");
     _search_length = search_length_algorithm.getSearchLength();
 
-    DBUG("Calculated search length for mesh \"%s\" is %e.",
+    INFO("Calculated search length for mesh \"%s\" is %e.",
         _mesh.getName().c_str(), _search_length);
 }
 
@@ -136,7 +136,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(GeoLib::Surfac
 
     // compute nodes (and supporting points) along polyline
     _mesh_nodes_along_surfaces.push_back(
-            new MeshNodesAlongSurface(_mesh, sfc, _search_all_nodes));
+            new MeshNodesAlongSurface(_mesh, sfc, _search_length, _search_all_nodes));
     return *_mesh_nodes_along_surfaces.back();
 }
 

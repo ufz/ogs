@@ -26,6 +26,7 @@ namespace MeshGeoToolsLib
 MeshNodesAlongSurface::MeshNodesAlongSurface(
         MeshLib::Mesh const& mesh,
         GeoLib::Surface const& sfc,
+        double epsilon_radius,
         bool search_all_nodes) :
     _mesh(mesh), _sfc(sfc)
 {
@@ -36,7 +37,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(
         auto* node = mesh_nodes[i];
         if (!sfc.isPntInBoundingVolume(*node))
             continue;
-        if (sfc.isPntInSfc(*node)) {
+        if (sfc.isPntInSfc(*node, epsilon_radius)) {
             _msh_node_ids.push_back(node->getID());
         }
     }
