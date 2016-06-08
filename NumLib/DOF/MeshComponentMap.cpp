@@ -141,6 +141,7 @@ MeshComponentMap::MeshComponentMap(
         }
         comp_id++;
     }
+    _num_local_dof = _dict.size();
 
     if (order == ComponentOrder::BY_LOCATION)
         renumberByLocation();

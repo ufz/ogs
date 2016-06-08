@@ -11,7 +11,7 @@
 #include <logog/include/logog.hpp>
 
 #include "MathLib/LinAlg/BLAS.h"
-#include "MatrixVectorTraits.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "SimpleMatrixVectorProvider.h"
 
 namespace detail

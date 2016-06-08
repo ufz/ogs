@@ -10,8 +10,8 @@
 #ifndef TESTS_NUMLIB_ODES_H
 #define TESTS_NUMLIB_ODES_H
 
-#include "NumLib/DOF/UnifiedMatrixSetters.h"
 #include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/ODESolver/ODESystem.h"
 
 // debug
@@ -55,7 +55,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N, nullptr, nullptr, nullptr };
+        return { N, N, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -133,7 +133,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N, nullptr, nullptr, nullptr };
+        return { N, N, nullptr, nullptr };
     }
 
     bool isLinear() const override
@@ -271,7 +271,7 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
     {
-        return { N, N, nullptr, nullptr, nullptr };
+        return { N, N, nullptr, nullptr };
     }
 
     bool isLinear() const override

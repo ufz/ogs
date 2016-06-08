@@ -102,7 +102,8 @@ private:
 
         // TOOD Later on the DOF table can change during the simulation!
         _extrapolator.reset(
-            new ExtrapolatorImplementation(Base::getMatrixSpecifications()));
+            new ExtrapolatorImplementation(Base::getMatrixSpecifications(),
+                                           *Base::_local_to_global_index_map));
 
         Base::_secondary_variables.addSecondaryVariable(
             "darcy_velocity_x", 1,

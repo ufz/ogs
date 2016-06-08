@@ -87,10 +87,8 @@ public:
         DBUG("Construct dof mappings.");
         constructDofTable();
 
-#ifndef USE_PETSC
         DBUG("Compute sparsity pattern");
         computeSparsityPattern();
-#endif
 
         initializeConcreteProcess(*_local_to_global_index_map, _mesh,
                                   _integration_order);
@@ -127,10 +125,9 @@ public:
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override final
     {
-        return { 0u, 0u,
-                 &_sparsity_pattern,
-                 _local_to_global_index_map.get(),
-                 &_mesh };
+        auto const& l = *_local_to_global_index_map;
+        return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
+                &l.getGhostIndices(), &_sparsity_pattern};
     }
 
     void assemble(const double t, GlobalVector const& x,
