@@ -19,6 +19,7 @@
 
 #include "Polyline.h"
 #include "AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 namespace GeoLib
 {
@@ -208,7 +209,7 @@ bool Polyline::isCoplanar() const
     GeoLib::Point const& p2 (*this->getPoint(2));
     for (std::size_t i=3; i<n_points; ++i)
     {
-        if (!GeoLib::isCoplanar(p0, p1, p2, *this->getPoint(i)))
+        if (!MathLib::isCoplanar(p0, p1, p2, *this->getPoint(i)))
         {
             DBUG ("Point %d is not coplanar to the first three points of the line.", i);
             return false;

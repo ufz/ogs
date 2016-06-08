@@ -228,22 +228,6 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& q);
 
 /**
- * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
- * (In 2D space this checks if c and d are on different sides of a line through a and b.)
- * @param a first point on plane
- * @param b second point on plane
- * @param c first point to test
- * @param d second point to test
- * @return true, if such a plane can be found, false otherwise
- */
- bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
-     const MathLib::Point3d& c, const MathLib::Point3d& d);
-
- /// Checks if the four given points are located on a plane.
- bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
-     const MathLib::Point3d& c, const MathLib::Point3d & d);
-
-/**
  * Method first computes the intersection points of line segements of GeoLib::Polyline objects
  * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec
  * pnt_vec. For each intersection an id is returned.  This id is used to split the two

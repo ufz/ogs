@@ -169,4 +169,52 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
     return true;
 }
 
+bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
+                    const MathLib::Point3d& c, const MathLib::Point3d& d)
+{
+    for (unsigned x = 0; x < 3; ++x)
+    {
+        const unsigned y = (x + 1) % 3;
+        const double abc =
+            (b[x] - a[x]) * (c[y] - a[y]) - (b[y] - a[y]) * (c[x] - a[x]);
+        const double abd =
+            (b[x] - a[x]) * (d[y] - a[y]) - (b[y] - a[y]) * (d[x] - a[x]);
+
+        if ((abc > 0 && abd < 0) || (abc < 0 && abd > 0))
+            return true;
+    }
+    return false;
+}
+
+bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
+                const MathLib::Point3d& c, const MathLib::Point3d& d)
+{
+    const MathLib::Vector3 ab(a, b);
+    const MathLib::Vector3 ac(a, c);
+    const MathLib::Vector3 ad(a, d);
+
+    if (ab.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2) ||
+        ac.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2) ||
+        ad.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2))
+    {
+        return true;
+    }
+
+    // In exact arithmetic <ac*ad^T, ab> should be zero
+    // if all four points are coplanar.
+    const double sqr_scalar_triple(
+        pow(MathLib::scalarProduct(MathLib::crossProduct(ac, ad), ab), 2));
+    // Due to evaluating the above numerically some cancellation or rounding
+    // can occur. For this reason a normalisation factor is introduced.
+    const double normalisation_factor =
+        (ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
+
+    // tolerance 1e-11 is choosen such that
+    // a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as
+    // coplanar
+    // a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not
+    // coplanar
+    return (sqr_scalar_triple / normalisation_factor < 1e-11);
+}
+
 }  // end namespace MathLib

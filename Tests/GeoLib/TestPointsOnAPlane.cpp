@@ -15,9 +15,9 @@
 #include <ctime>
 #include <random>
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 #include "GeoLib/Point.h"
 
 void testAllPossibilities(
@@ -27,33 +27,33 @@ void testAllPossibilities(
     GeoLib::Point const& d,
     bool expected)
 {
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, b, c, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, b, d, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, c, b, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, c, d, b));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, d, b, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(a, d, c, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, b, c, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, b, d, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, c, b, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, c, d, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, d, b, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(a, d, c, b));
 
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, a, c, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, a, d, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, c, a, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, c, d, a));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, d, a, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(b, d, c, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, a, c, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, a, d, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, c, a, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, c, d, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, d, a, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(b, d, c, a));
 
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, b, a, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, b, d, a));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, a, b, d));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, a, d, b));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, d, b, a));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(c, d, a, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, b, a, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, b, d, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, a, b, d));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, a, d, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, d, b, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(c, d, a, b));
 
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, b, c, a));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, b, a, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, c, b, a));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, c, a, b));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, a, b, c));
-    ASSERT_EQ(expected, GeoLib::isCoplanar(d, a, c, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, b, c, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, b, a, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, c, b, a));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, c, a, b));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, a, b, c));
+    ASSERT_EQ(expected, MathLib::isCoplanar(d, a, c, b));
 }
 
 TEST(GeoLib, TestPointsOnAPlane)

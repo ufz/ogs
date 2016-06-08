@@ -17,6 +17,7 @@
 #include <ctime>
 
 #include "MathLib/Point3d.h"
+#include "MathLib/GeometricBasics.h"
 #include "MathLib/Vector3.h"
 
 #include "AnalyticalGeometry.h"
@@ -86,7 +87,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     MathLib::Vector3 const b(p, r);
     MathLib::Vector3 const c(p, s);
 
-    if (!GeoLib::isCoplanar(p, q, r, s))
+    if (!MathLib::isCoplanar(p, q, r, s))
     {
         double const denom = 2.0 * MathLib::scalarTriple(a,b,c);
         MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b)

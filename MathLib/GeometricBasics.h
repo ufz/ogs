@@ -154,6 +154,23 @@ bool barycentricPointInTriangle(
     double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
     double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
+/**
+ * Checks if a and b can be placed on a plane such that c and d lie on different
+ * sides of said plane. (In 2D space this checks if c and d are on different
+ * sides of a line through a and b.)
+ * @param a first point on plane
+ * @param b second point on plane
+ * @param c first point to test
+ * @param d second point to test
+ * @return true, if such a plane can be found, false otherwise
+ */
+bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
+                    const MathLib::Point3d& c, const MathLib::Point3d& d);
+
+/// Checks if the four given points are located on a plane.
+bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
+                const MathLib::Point3d& c, const MathLib::Point3d& d);
+
 }  // end namespace MathLib
 
 #endif
