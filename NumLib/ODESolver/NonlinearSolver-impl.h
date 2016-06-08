@@ -262,8 +262,11 @@ createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
 {
     using AbstractNLS = NonlinearSolverBase<Matrix, Vector>;
 
+    //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type      = config.getConfParam<std::string>("type");
+    //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__tol}
     auto const tol       = config.getConfParam<double>("tol");
+    //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
     auto const max_iter  = config.getConfParam<unsigned>("max_iter");
 
     if (type == "Picard")

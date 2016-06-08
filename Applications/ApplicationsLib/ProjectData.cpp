@@ -55,14 +55,14 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     std::string const& project_directory,
     std::string const& output_directory)
 {
-    // geometry
     std::string const geometry_file = BaseLib::copyPathToFileName(
+            //! \ogs_file_param{prj__geometry}
             project_config.getConfParam<std::string>("geometry"), project_directory
         );
     detail::readGeometry(geometry_file, *_geoObjects);
 
-    // mesh
     std::string const mesh_file = BaseLib::copyPathToFileName(
+            //! \ogs_file_param{prj__mesh}
             project_config.getConfParam<std::string>("mesh"), project_directory
         );
 
@@ -74,26 +74,28 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     }
     _mesh_vec.push_back(mesh);
 
-    // curves
+    //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfSubtreeOptional("curves"));
 
-    // process variables
+    //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfSubtree("process_variables"));
 
-    // parameters
+    //! \ogs_file_param{prj__parameters}
     parseParameters(project_config.getConfSubtree("parameters"));
 
-    // processes
+    //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfSubtree("processes"));
 
-    // output
+    //! \ogs_file_param{prj__output}
     parseOutput(project_config.getConfSubtree("output"), output_directory);
 
-    // timestepping
+    //! \ogs_file_param{prj__time_stepping}
     parseTimeStepping(project_config.getConfSubtree("time_stepping"));
 
+    //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfSubtree("linear_solvers"));
 
+    //! \ogs_file_param{prj__nonlinear_solvers}
     parseNonlinearSolvers(project_config.getConfSubtree("nonlinear_solvers"));
 }
 
@@ -156,13 +158,16 @@ void ProjectData::buildProcesses()
 {
     for (auto const& pc : _process_configs)
     {
+        //! \ogs_file_param{process__type}
         auto const type = pc.peekConfParam<std::string>("type");
 
+        //! \ogs_file_param{process__nonlinear_solver}
         auto const nl_slv_name = pc.getConfParam<std::string>("nonlinear_solver");
         auto& nl_slv = BaseLib::getOrError(_nonlinear_solvers, nl_slv_name,
             "A nonlinear solver with the given name has not been defined.");
 
         auto time_disc = NumLib::createTimeDiscretization<GlobalVector>(
+                //! \ogs_file_param{process__time_discretization}
                 pc.getConfSubtree("time_discretization")
             );
 
@@ -258,6 +263,7 @@ void ProjectData::parseProcessVariables(
     // _process_variables.reserve(process_variables_config.size());
 
     for (auto var_config
+         //! \ogs_file_param{prj__process_variables__process_variable}
          : process_variables_config.getConfSubtreeList("process_variable")) {
         // TODO Extend to referenced meshes.
         _process_variables.emplace_back(var_config, *_mesh_vec[0], *_geoObjects);
@@ -269,9 +275,12 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
     using namespace ProcessLib;
 
     DBUG("Reading parameters:");
+    //! \ogs_file_param{prj__parameters__parameter}
     for (auto parameter_config : parameters_config.getConfSubtreeList("parameter"))
     {
+        //! \ogs_file_param{parameter__name}
         auto name = parameter_config.getConfParam<std::string>("name");
+        //! \ogs_file_param{parameter__type}
         auto type = parameter_config.peekConfParam<std::string>("type");
 
         // Create parameter based on the provided type.
@@ -300,8 +309,10 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
 void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 {
     DBUG("Reading processes:");
+    //! \ogs_file_param{prj__processes__process}
     for (auto process_config : processes_config.getConfSubtreeList("process")) {
         // process type must be specified.
+        //! \ogs_file_param{process__type}
         process_config.peekConfParam<std::string>("type");
         process_config.ignoreConfParam("name");
         _process_configs.push_back(std::move(process_config));
@@ -311,6 +322,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
     std::string const& output_directory)
 {
+    //! \ogs_file_param{prj__output__type}
     output_config.checkConfParam("type", "VTK");
     DBUG("Parse output configuration:");
 
@@ -335,8 +347,10 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
 {
     DBUG("Reading linear solver configuration.");
 
+    //! \ogs_file_param{prj__linear_solvers__linear_solver}
     for (auto conf : config.getConfSubtreeList("linear_solver"))
     {
+        //! \ogs_file_param{prj__linear_solvers__linear_solver__name}
         auto const name = conf.getConfParam<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_linear_solvers,
             name,
@@ -350,12 +364,15 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
 {
     DBUG("Reading linear solver configuration.");
 
+    //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver}
     for (auto conf : config.getConfSubtreeList("nonlinear_solver"))
     {
+        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
         auto const ls_name = conf.getConfParam<std::string>("linear_solver");
         auto& linear_solver = BaseLib::getOrError(_linear_solvers,
             ls_name, "A linear solver with the given name does not exist.");
 
+        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__name}
         auto const name = conf.getConfParam<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_nonlinear_solvers,
             name,
@@ -368,7 +385,9 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
 static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
 createPiecewiseLinearInterpolation(BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{prj__curves__curve__coords}
     auto coords = config.getConfParam<std::vector<double>>("coords");
+    //! \ogs_file_param{prj__curves__curve__values}
     auto values = config.getConfParam<std::vector<double>>("values");
     if (coords.empty() || values.empty())
     {
@@ -393,8 +412,10 @@ void ProjectData::parseCurves(
 
     DBUG("Reading curves configuration.");
 
+    //! \ogs_file_param{prj__curves__curve}
     for (auto conf : config->getConfSubtreeList("curve"))
     {
+        //! \ogs_file_param{prj__curves__curve__name}
         auto const name = conf.getConfParam<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
             _curves,

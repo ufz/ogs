@@ -21,15 +21,20 @@ namespace ProcessLib
 ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                                  MeshLib::Mesh& mesh,
                                  GeoLib::GEOObjects const& geometries)
-    : _name(config.getConfParam<std::string>("name")),
-      _mesh(mesh),
-      _n_components(config.getConfParam<int>("components"))
+    :
+    //! \ogs_file_param{prj__process_variables__process_variable__name}
+    _name(config.getConfParam<std::string>("name")),
+    _mesh(mesh),
+    //! \ogs_file_param{prj__process_variables__process_variable__components}
+    _n_components(config.getConfParam<int>("components"))
 {
     DBUG("Constructing process variable %s", this->_name.c_str());
 
     // Initial condition
+    //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
     if (auto ic_config = config.getConfSubtreeOptional("initial_condition"))
     {
+        //! \ogs_file_param{initial_condition__type}
         auto const type = ic_config->peekConfParam<std::string>("type");
         if (type == "Uniform")
         {
@@ -52,14 +57,18 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
     }
 
     // Boundary conditions
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}
     if (auto bcs_config = config.getConfSubtreeOptional("boundary_conditions"))
     {
-        for (auto bc_config
-             : bcs_config->getConfSubtreeList("boundary_condition"))
+        for (auto bc_config :
+             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition}
+             bcs_config->getConfSubtreeList("boundary_condition"))
         {
             auto const geometrical_set_name =
+                    //! \ogs_file_param{boundary_condition__geometrical_set}
                     bc_config.getConfParam<std::string>("geometrical_set");
             auto const geometry_name =
+                    //! \ogs_file_param{boundary_condition__geometry}
                     bc_config.getConfParam<std::string>("geometry");
 
             GeoLib::GeoObject const* const geometry =
@@ -69,6 +78,7 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                 GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
             // Construct type dependent boundary condition
+            //! \ogs_file_param{boundary_condition__type}
             auto const type = bc_config.peekConfParam<std::string>("type");
 
             if (type == "UniformDirichlet")

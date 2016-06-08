@@ -154,18 +154,24 @@ createGroundwaterFlowProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{process__type}
     config.checkConfParam("type", "GROUNDWATER_FLOW");
 
     DBUG("Create GroundwaterFlowProcess.");
 
     // Process variable.
-    auto process_variables =
-        findProcessVariables(variables, config, { "process_variable" });
+    auto process_variables = findProcessVariables(variables, config, {
+        //! \ogs_file_param_special{process__GROUNDWATER_FLOW__process_variables__process_variable}
+        "process_variable"
+    });
 
     // Hydraulic conductivity parameter.
     auto& hydraulic_conductivity =
         findParameter<double, MeshLib::Element const&>(
-            config, "hydraulic_conductivity", parameters);
+            config,
+            //! \ogs_file_param_special{process__GROUNDWATER_FLOW__hydraulic_conductivity}
+            "hydraulic_conductivity",
+            parameters);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
@@ -174,11 +180,21 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
-    SecondaryVariableCollection<typename GlobalSetup::VectorType>
-        secondary_variables{config.getConfSubtreeOptional("secondary_variables"),
-            { "darcy_velocity_x", "darcy_velocity_y", "darcy_velocity_z" }};
+    SecondaryVariableCollection<typename GlobalSetup::VectorType> secondary_variables {
+        //! \ogs_file_param{process__secondary_variables}
+        config.getConfSubtreeOptional("secondary_variables"),
+        {
+            //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_x}
+            "darcy_velocity_x",
+            //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_y}
+            "darcy_velocity_y",
+            //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_z}
+            "darcy_velocity_z"
+        }
+    };
 
     ProcessOutput<typename GlobalSetup::VectorType>
+        //! \ogs_file_param{process__output}
         process_output{config.getConfSubtree("output"),
                 process_variables, secondary_variables};
 

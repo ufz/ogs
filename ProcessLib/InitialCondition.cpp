@@ -23,8 +23,10 @@ namespace ProcessLib
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
     BaseLib::ConfigTree const& config, int const /*n_components*/)
 {
+    //! \ogs_file_param{initial_condition__type}
     config.checkConfParam("type", "Uniform");
 
+    //! \ogs_file_param{initial_condition__Uniform__value}
     auto value = config.getConfParam<double>("value");
     DBUG("Using value %g", value);
 
@@ -37,6 +39,10 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
     MeshLib::Mesh const& mesh,
     int const n_components)
 {
+    //! \ogs_file_param{initial_condition__type}
+    config.checkConfParam("type", "MeshProperty");
+
+    //! \ogs_file_param{initial_condition__MeshProperty__field_name}
     auto field_name = config.getConfParam<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 

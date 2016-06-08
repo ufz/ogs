@@ -27,8 +27,10 @@ struct ProcessOutput final
                   process_variables,
                   SecondaryVariableCollection<GlobalVector> const& secondary_variables)
     {
+        //! \ogs_file_param{process__output__variables}
         auto const out_vars = output_config.getConfSubtree("variables");
 
+        //! \ogs_file_param{process__output__variables__variable}
         for (auto out_var : out_vars.getConfParamList<std::string>("variable"))
         {
             if (output_variables.find(out_var) != output_variables.cend())
@@ -64,6 +66,7 @@ struct ProcessOutput final
 
         // debug output
         if (auto const param =
+            //! \ogs_file_param{process__output__output_iteration_results}
             output_config.getConfParamOptional<bool>("output_iteration_results"))
         {
             DBUG("output_iteration_results: %s", (*param) ? "true" : "false");

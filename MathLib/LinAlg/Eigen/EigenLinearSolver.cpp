@@ -143,19 +143,24 @@ EigenLinearSolver::~EigenLinearSolver() = default;
 void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
 {
     ignoreOtherLinearSolvers(option, "eigen");
+    //! \ogs_file_param{linear_solver__eigen}
     auto const ptSolver = option.getConfSubtreeOptional("eigen");
     if (!ptSolver)
         return;
 
+    //! \ogs_file_param{linear_solver__eigen__solver_type}
     if (auto solver_type = ptSolver->getConfParamOptional<std::string>("solver_type")) {
         _option.solver_type = _option.getSolverType(*solver_type);
     }
+    //! \ogs_file_param{linear_solver__eigen__precon_type}
     if (auto precon_type = ptSolver->getConfParamOptional<std::string>("precon_type")) {
         _option.precon_type = _option.getPreconType(*precon_type);
     }
+    //! \ogs_file_param{linear_solver__eigen__error_tolerance}
     if (auto error_tolerance = ptSolver->getConfParamOptional<double>("error_tolerance")) {
         _option.error_tolerance = *error_tolerance;
     }
+    //! \ogs_file_param{linear_solver__eigen__max_iteration_step}
     if (auto max_iteration_step = ptSolver->getConfParamOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }

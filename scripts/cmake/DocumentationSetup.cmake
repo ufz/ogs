@@ -38,4 +38,35 @@ if(DOXYGEN_FOUND)
 
     configure_file(Documentation/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile)
 
+    if (BASH_TOOL_PATH AND PYTHON_EXECUTABLE)
+        set(doc_use_external_tools TRUE)
+    else()
+        set(doc_use_external_tools FALSE)
+    endif()
+
+    # TODO that will always transform all of the input files no matter if they changed
+    # maybe this behaviour can be changed to on-demand processing
+    add_custom_target(internal_pre_doc
+        ${CMAKE_COMMAND}
+        -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
+        -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
+        -Ddoc_use_external_tools=${doc_use_external_tools}
+        -P ${PROJECT_SOURCE_DIR}/scripts/cmake/DocumentationProjectFile.cmake
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Generating project file documentation hierarchy." VERBATIM)
+    add_dependencies(doc internal_pre_doc)
+
+    if (doc_use_external_tools)
+        set(data_dir "${PROJECT_SOURCE_DIR}/Tests/Data")
+        add_custom_target(internal_pre_doc_qa_page
+            ${BASH_TOOL_PATH}
+            "${PROJECT_SOURCE_DIR}/scripts/doc/generate-project-file-doc-qa.sh"
+            ${PROJECT_SOURCE_DIR}
+            ${PROJECT_BINARY_DIR}
+            ${data_dir}
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            COMMENT "Generating project file documentation quality assurance pages." VERBATIM)
+        add_dependencies(doc internal_pre_doc_qa_page)
+        add_dependencies(internal_pre_doc_qa_page internal_pre_doc)
+    endif()
 endif()

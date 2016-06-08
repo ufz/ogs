@@ -133,7 +133,8 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
                                  const unsigned num_equations)
 {
     if (auto const param =
-            config.getConfParamOptional<std::string>("linear_multistep_method"))
+        //! \ogs_file_param{ode_solver__CVODE__linear_multistep_method}
+        config.getConfParamOptional<std::string>("linear_multistep_method"))
     {
         DBUG("setting linear multistep method (config: %s)", param->c_str());
 
@@ -152,8 +153,9 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
     }
 
-    if (auto const param = config.getConfParamOptional<std::string>(
-            "nonlinear_solver_iteration"))
+    if (auto const param =
+        //! \ogs_file_param{ode_solver__CVODE__nonlinear_solver_iteration}
+        config.getConfParamOptional<std::string>("nonlinear_solver_iteration"))
     {
         DBUG("setting nonlinear solver iteration (config: %s)", param->c_str());
 
