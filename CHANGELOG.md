@@ -12,16 +12,16 @@
  - Extend the LocalAssemblerInterface by adding default implementations of
    pre/postTimestep and assembleJacobian functions. The current time and time
    step size are passed in the preTimestep call to the particular processes. #1214
+ - Add support multi-variable/multi-component in the DOF table interface and
+   extend the initial conditions to multi-components. #1224
  - Major rework of the general process interface. That also affects the
    interface of concrete processes and local assemblers.
- - Added extrapolation functionality from integration points to mesh nodes via
    least squares optimization. #1145
  - Added functionality for the output of secondary variables. #1171
  - Added material properties for zeolite adsorption and Calcium oxide/hydroxide
    reactions. #1178
  - Transferred the TES process, a monolithically coupled THC model for simulating
    thermochemical energy storag devices, from OGS5. #1181
- - Introduced central place to put physical constants. #1228
  - Introduced a general scheme for documenting OGS6 input file settings. #978
  - Added copy constructor for the class Surface, minor improvements in GeoLib. #1237
  - Added classes GeoLib::LineSegment and GeoLib::Polyline::SegmentIterator. #1139
