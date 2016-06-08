@@ -59,13 +59,5 @@ using GlobalSetupType =
 //
 static_assert(std::is_class<GlobalSetupType>::value,
               "GlobalSetupType was not defined.");
-static_assert(std::is_integral<detail::GlobalMatrixType::IndexType>::value,
-              "The index type for global matrices is not an integral type.");
-static_assert(std::is_integral<detail::GlobalVectorType::IndexType>::value,
-              "The index type for global vectors is not an integral type.");
-static_assert(std::is_same<detail::GlobalMatrixType::IndexType,
-                           detail::GlobalVectorType::IndexType>::value,
-              "The global matrix and vector index types do not match.");
-// Both types are integral types and equal, define a single GlobalIndexType.
 
 #endif  // APPLICATIONS_NUMERICSCONFIG_H_
