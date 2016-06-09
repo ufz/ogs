@@ -13,6 +13,17 @@
  - Extend the LocalAssemblerInterface by adding default implementations of
    pre/postTimestep and assembleJacobian functions. The current time and time
    step size are passed in the preTimestep call to the particular processes. #1214
+ - Major rework of the general process interface. That also affects the
+   interface of concrete processes and local assemblers.
+ - Added extrapolation functionality from integration points to mesh nodes via
+   least squares optimization. #1145
+ - Added functionality for the output of secondary variables. #1171
+ - Added material properties for zeolite adsorption and Calcium oxide/hydroxide
+   reactions. #1178
+ - Transferred the TES process, a monolithically coupled THC model for simulating
+   thermochemical energy storag devices, from OGS5. #1181
+ - Introduced central place to put physical constants. #1228
+ - Introduced a general scheme for documenting OGS6 input file settings. #978
 
 ### Infrastructure
  - Fix circular dependencies on library level. This allows for dynamic linking
@@ -23,8 +34,11 @@
    - #1143, #1153 Remove MeshLib on FileIO dependency.
    - #1166 Cleanup some of AssemblerLib dependencies.
 
- - Inconsistent formatting of tabs and whitespaces was finally resolved: now all
-   formatting, indentation and alignment, are done with four whitespaces. #1201
+ - Introduced Conan package manager for automatic fetching of build dependencies
+   [#1141]
+
+ - Inconsistent formatting of tabs and spaces was finally resolved: now all
+   formatting, indentation and alignment, are done with four spaces. #1201
 
 ### Fixes:
     Fix linking of Metis in MathLib. #1147
