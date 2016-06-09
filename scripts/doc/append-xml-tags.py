@@ -18,7 +18,7 @@ github_data_url = "https://github.com/ufz/ogs-data/tree/master"
 
 if len(sys.argv) != 4:
     print("Usage:")
-    print("{} EXT DATADIR DOCAUXDIR".format(sys.argv[0]))
+    print("{0} EXT DATADIR DOCAUXDIR".format(sys.argv[0]))
     sys.exit(1)
 
 ext       = sys.argv[1]
@@ -152,9 +152,9 @@ for (dirpath, _, filenames) in os.walk(docdir):
                             fh.write("- This is a required parameter.\n")
 
                         datatype = info[5]
-                        if datatype: fh.write("- Data type: <tt>{}</tt>\n".format(datatype))
+                        if datatype: fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
 
-                        fh.write("- Expanded tag path: {}\n".format(tagpath_expanded))
+                        fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
 
                         fh.write("- Go to source code: [&rarr; ufz/ogs/master]({2}/{0}#L{1})\n"
                                 .format(path, line, github_src_url))
