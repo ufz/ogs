@@ -43,7 +43,7 @@ for inline in sys.stdin:
     line = line.strip()
     lineno = int(lineno)
 
-    m = comment.fullmatch(line)
+    m = comment.match(line)
     if m:
         if state != "getter":
             write_out("UNNEEDED", oldpath, oldlineno, oldline)
@@ -56,7 +56,7 @@ for inline in sys.stdin:
 
         continue
 
-    m = comment_special.fullmatch(line)
+    m = comment_special.match(line)
     if m:
         if state != "getter":
             write_out("UNNEEDED", oldpath, oldlineno, oldline)
