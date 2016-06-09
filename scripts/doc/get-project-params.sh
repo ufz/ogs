@@ -10,7 +10,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-srcdir="`realpath "$1"`"
+srcdir="$1"
 
 #color="--color=always"
 color=""

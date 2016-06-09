@@ -10,22 +10,24 @@ from signal import signal, SIGPIPE, SIG_DFL
 signal(SIGPIPE,SIG_DFL)
 
 import os
+import sys
 import xml.etree.cElementTree as ET
-import argparse
 
 github_src_url  = "https://github.com/ufz/ogs/tree/master"
 github_data_url = "https://github.com/ufz/ogs-data/tree/master"
 
-parser = argparse.ArgumentParser(description="Print XML tags")
+if len(sys.argv) != 4:
+    print("Usage:")
+    print("{} EXT DATADIR DOCAUXDIR".format(sys.argv[0]))
+    sys.exit(1)
 
-parser.add_argument("ext",       help="Extension of files to consider")
-parser.add_argument("datadir",   help="data directory")
-parser.add_argument("docauxdir", help="directory of auxiliary doc files")
+ext       = sys.argv[1]
+datadir   = sys.argv[2]
+docauxdir = sys.argv[3]
 
-args = parser.parse_args()
-extension = '.' + args.ext
-datadir   = os.path.abspath(args.datadir)
-docauxdir = os.path.abspath(args.docauxdir)
+extension = '.' + ext
+datadir   = os.path.abspath(datadir)
+docauxdir = os.path.abspath(docauxdir)
 docdir    = os.path.join(docauxdir, "dox", "ProjectFile")
 
 # used to expand documentation entry points to full xml tag paths
