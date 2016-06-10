@@ -394,7 +394,7 @@ bool XmlGmlInterface::write()
                     sfcListTag.appendChild(surfaceTag);
 
                     // writing the elements compromising the surface
-                    std::size_t nElements = ((*surfaces)[i])->getNTriangles();
+                    std::size_t nElements = ((*surfaces)[i])->getNumberOfTriangles();
                     for (std::size_t j = 0; j < nElements; j++)
                     {
                         QDomElement elementTag = doc.createElement("element");

@@ -49,16 +49,16 @@ public:
     }
 
     /// return the number of rows
-    std::size_t getNRows() const { return _mat.rows(); }
+    std::size_t getNumberOfRows() const { return _mat.rows(); }
 
     /// return the number of columns
-    std::size_t getNCols() const { return _mat.cols(); }
+    std::size_t getNumberOfColumns() const { return _mat.cols(); }
 
     /// return a start index of the active data range
     std::size_t getRangeBegin() const  { return 0; }
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const  { return getNRows(); }
+    std::size_t getRangeEnd() const  { return getNumberOfRows(); }
 
     /// reset data entries to zero.
     void setZero()
@@ -73,7 +73,7 @@ public:
     /// dynamically allocates it.
     int setValue(IndexType row, IndexType col, double val)
     {
-        assert(row < (IndexType) getNRows() && col < (IndexType) getNCols());
+        assert(row < (IndexType) getNumberOfRows() && col < (IndexType) getNumberOfColumns());
         if (val != 0.0) _mat.coeffRef(row, col) = val;
         return 0;
     }
@@ -206,7 +206,7 @@ void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
                   "Set matrix sparsity relies on the EigenMatrix to be in "
                   "row-major storage order.");
 
-    assert(matrix.getNRows() == sparsity_pattern.size());
+    assert(matrix.getNumberOfRows() == sparsity_pattern.size());
 
     matrix.getRawMatrix().reserve(sparsity_pattern);
 }

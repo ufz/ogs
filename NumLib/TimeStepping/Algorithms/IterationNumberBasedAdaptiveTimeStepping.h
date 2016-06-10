@@ -107,7 +107,7 @@ public:
     void setNIterations(std::size_t n_itr) {this->_iter_times = n_itr;}
 
     /// return the number of repeated steps
-    std::size_t getNRepeatedSteps() const {return this->_n_rejected_steps;}
+    std::size_t getNumberOfRepeatedSteps() const {return this->_n_rejected_steps;}
 
 private:
     /// calculate the next time step size

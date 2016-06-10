@@ -111,7 +111,7 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
     // check unused nodes due to element deletion
     std::vector<bool> node_delete_flag(new_nodes.size(), true);
     for (auto e : new_elems) {
-        for (unsigned i=0; i<e->getNNodes(); i++)
+        for (unsigned i=0; i<e->getNumberOfNodes(); i++)
             node_delete_flag[e->getNodeIndex(i)] = false;
     }
 

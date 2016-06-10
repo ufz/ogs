@@ -140,7 +140,7 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
 
     createPolygonTrees(pt_list);
     ASSERT_EQ(1u, pt_list.size());
-    ASSERT_EQ(2u, (*(pt_list.begin()))->getNChildren());
+    ASSERT_EQ(2u, (*(pt_list.begin()))->getNumberOfChildren());
     std::for_each(pt_list.begin(), pt_list.end(), std::default_delete<GeoLib::SimplePolygonTree>());
 }
 
@@ -169,7 +169,7 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2AndP3)
 
     createPolygonTrees(pt_list);
     ASSERT_EQ(1u, pt_list.size());
-    ASSERT_EQ(2u, (*(pt_list.begin()))->getNChildren());
+    ASSERT_EQ(2u, (*(pt_list.begin()))->getNumberOfChildren());
     std::for_each(pt_list.begin(), pt_list.end(), std::default_delete<GeoLib::SimplePolygonTree>());
 }
 

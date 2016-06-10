@@ -124,15 +124,15 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 {
     std::cout.precision(12);
     std::cout << "original" << std::endl;
-    for (unsigned i=0; i<ele->getNNodes(); i++)
+    for (unsigned i=0; i<ele->getNumberOfNodes(); i++)
         std::cout << *ele->getNode(i) << std::endl;
     std::cout << "local coords=" << std::endl;
-    for (unsigned i=0; i<ele->getNNodes(); i++)
+    for (unsigned i=0; i<ele->getNumberOfNodes(); i++)
         std::cout << *mapping.getMappedCoordinates(i) << std::endl;
     std::cout << "R=\n" << mapping.getRotationMatrixToGlobal() << std::endl;
     auto matR(mapping.getRotationMatrixToGlobal());
     std::cout << "global coords=" << std::endl;
-    for (unsigned i=0; i<ele->getNNodes(); i++) {
+    for (unsigned i=0; i<ele->getNumberOfNodes(); i++) {
         double* raw = const_cast<double*>(&(*mapping.getMappedCoordinates(i))[0]);
         Eigen::Map<Eigen::Vector3d> v(raw);
         std::cout << (matR*v).transpose() << std::endl;
@@ -142,7 +142,7 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 
 // check if using the rotation matrix results in the original coordinates
 #define CHECK_COORDS(ele, mapping)\
-    for (unsigned ii=0; ii<ele->getNNodes(); ii++) {\
+    for (unsigned ii=0; ii<ele->getNumberOfNodes(); ii++) {\
         MathLib::Point3d global(matR*mapping.getMappedCoordinates(ii));\
         const double eps(std::numeric_limits<double>::epsilon());\
         ASSERT_ARRAY_NEAR(&(*ele->getNode(ii))[0], global.getCoords(), 3u, eps);\
@@ -164,7 +164,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -181,7 +181,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -199,7 +199,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -217,7 +217,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -237,7 +237,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -257,7 +257,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 
@@ -277,7 +277,7 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
     CHECK_COORDS(ele,mapping);
 
-    for (std::size_t n = 0; n < ele->getNNodes(); ++n)
+    for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
         delete ele->getNode(n);
 }
 

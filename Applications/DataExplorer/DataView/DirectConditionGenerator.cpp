@@ -88,7 +88,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     std::vector<double> node_area_vec =
         MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
     const std::vector<MeshLib::Node*> &surface_nodes(surface_mesh->getNodes());
-    const std::size_t nNodes(surface_mesh->getNNodes());
+    const std::size_t nNodes(surface_mesh->getNumberOfNodes());
     const double no_data(raster->getHeader().no_data);
 
     boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(

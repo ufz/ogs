@@ -100,7 +100,7 @@ void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
     MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
     MathLib::Vector3 normal(0,0,-1);
     std::vector<MeshLib::Node> flat_nodes;
-    flat_nodes.reserve(_surface_mesh->getNNodes());
+    flat_nodes.reserve(_surface_mesh->getNumberOfNodes());
     // copy nodes and project the copied nodes to the x-y-plane, i.e. set
     // z-coordinate to zero
     for (auto n_ptr : _surface_mesh->getNodes()) {
@@ -269,7 +269,7 @@ void GeoMapper::advancedMapOnMesh(
     // squared so it can be compared to the squared distances calculated later
     max_segment_length *= max_segment_length;
 
-    const unsigned nMeshNodes ( mesh->getNNodes() );
+    const unsigned nMeshNodes ( mesh->getNumberOfNodes() );
     // index of closest geo point for each mesh node in (x,y)-plane
     std::vector<int> closest_geo_point(nMeshNodes, -1);
     // distance between geo points and mesh nodes in (x,y)-plane
@@ -317,7 +317,7 @@ void GeoMapper::advancedMapOnMesh(
             const std::size_t nElems = elements.size();
             for (std::size_t e=0; e<nElems; ++e)
             {
-                const unsigned nEdges (elements[e]->getNEdges());
+                const unsigned nEdges (elements[e]->getNumberOfEdges());
                 unsigned intersection_count (0);
 
                 for (unsigned n=0; n<nEdges; ++n)

@@ -133,14 +133,14 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
         result =
             _mesh.getProperties().template getPropertyVector<double>(_name);
         assert(result);
-        assert(result->size() == _mesh.getNNodes() * _n_components);
+        assert(result->size() == _mesh.getNumberOfNodes() * _n_components);
     }
     else
     {
         result = _mesh.getProperties().template createNewPropertyVector<double>(
             _name, MeshLib::MeshItemType::Node);
         assert(result);
-        result->resize(_mesh.getNNodes() * _n_components);
+        result->resize(_mesh.getNumberOfNodes() * _n_components);
     }
     return *result;
 }

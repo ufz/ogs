@@ -41,7 +41,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
     {
         auto points = std::unique_ptr<std::vector<GeoLib::Point*>>(
             new std::vector<GeoLib::Point*>);
-        points->reserve(mesh.getNNodes());
+        points->reserve(mesh.getNumberOfNodes());
 
         for (auto node_ptr : mesh.getNodes())
             points->push_back(new GeoLib::Point(*node_ptr, node_ptr->getID()));
@@ -61,7 +61,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
         sfcs->push_back(new GeoLib::Surface(points));
 
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
-    const std::size_t nElems (mesh.getNElements());
+    const std::size_t nElems (mesh.getNumberOfElements());
 
     auto materialIds = mesh.getProperties().getPropertyVector<int>(mat_name);
     auto const materialIdExist = bool(materialIds);
@@ -80,7 +80,7 @@ bool convertMeshToGeo(const MeshLib::Mesh &mesh, GeoLib::GEOObjects &geo_objects
         // all other element types are ignored (i.e. lines)
     }
 
-    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc){ if (sfc->getNTriangles()==0) delete sfc; sfc = nullptr;});
+    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc){ if (sfc->getNumberOfTriangles()==0) delete sfc; sfc = nullptr;});
     auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
     sfcs->erase(sfcs_end, sfcs->end());
 
@@ -94,7 +94,7 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface &sfc, const std::strin
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
     std::size_t nodeId = 0;
-    for (std::size_t i=0; i<sfc.getNTriangles(); i++)
+    for (std::size_t i=0; i<sfc.getNumberOfTriangles(); i++)
     {
         auto* tri = sfc[i];
         MeshLib::Node** tri_nodes = new MeshLib::Node*[3];

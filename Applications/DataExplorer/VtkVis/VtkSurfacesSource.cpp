@@ -95,7 +95,7 @@ int VtkSurfacesSource::RequestData( vtkInformation* request,
     for (std::vector<GeoLib::Surface*>::const_iterator it = _surfaces->begin();
          it != _surfaces->end(); ++it)
     {
-        const std::size_t nTriangles = (*it)->getNTriangles();
+        const std::size_t nTriangles = (*it)->getNumberOfTriangles();
 
         for (std::size_t i = 0; i < nTriangles; ++i)
         {

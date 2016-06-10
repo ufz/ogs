@@ -48,12 +48,12 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
         return nullptr;
     }
 
-    const std::size_t nNodes = mesh.getNNodes();
+    const std::size_t nNodes = mesh.getNumberOfNodes();
     // count number of 2d elements in the original mesh
     const std::size_t nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
             [](MeshLib::Element const* elem) { return (elem->getDimension() == 2);}));
 
-    const std::size_t nOrgElems (mesh.getNElements());
+    const std::size_t nOrgElems (mesh.getNumberOfElements());
     const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
     const std::vector<MeshLib::Element*> &elems = mesh.getElements();
     std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
@@ -94,7 +94,7 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
             if (sfc_elem->getDimension() < 2) // ignore line-elements
                 continue;
 
-            const unsigned nElemNodes(sfc_elem->getNBaseNodes());
+            const unsigned nElemNodes(sfc_elem->getNumberOfBaseNodes());
             MeshLib::Node** e_nodes = new MeshLib::Node*[2*nElemNodes];
 
             for (unsigned j=0; j<nElemNodes; ++j)
@@ -140,7 +140,7 @@ bool MeshLayerMapper::createRasterLayers(
     }
 
     this->_minimum_thickness = minimum_thickness;
-    std::size_t const nNodes = mesh.getNNodes();
+    std::size_t const nNodes = mesh.getNumberOfNodes();
     _nodes.reserve(nLayers * nNodes);
 
     // number of triangles in the original mesh
@@ -173,7 +173,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         {0, 3, 4, 1}, // Point 6 missing
     };
 
-    std::size_t const nNodes = dem_mesh.getNNodes();
+    std::size_t const nNodes = dem_mesh.getNumberOfNodes();
     std::vector<MeshLib::Node*> const& nodes = dem_mesh.getNodes();
     int const last_layer_node_offset = layer_id * nNodes;
 
@@ -182,7 +182,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         _nodes.push_back(getNewLayerNode(*nodes[i], *_nodes[last_layer_node_offset + i], raster, _nodes.size()));
 
     std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
-    std::size_t const nElems (dem_mesh.getNElements());
+    std::size_t const nElems (dem_mesh.getNumberOfElements());
 
     for (std::size_t i=0; i<nElems; ++i)
     {
@@ -245,7 +245,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh &new_mesh, GeoLib::Raster const
     const std::pair<double, double> xDim(x0, x0 + header.n_cols * delta); // extension in x-dimension
     const std::pair<double, double> yDim(y0, y0 + header.n_rows * delta); // extension in y-dimension
 
-    const std::size_t nNodes (new_mesh.getNNodes());
+    const std::size_t nNodes (new_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes = new_mesh.getNodes();
     for (unsigned i = 0; i < nNodes; ++i)
     {

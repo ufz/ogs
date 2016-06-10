@@ -88,13 +88,13 @@ TEST(MathLib, NonlinearPicard_double)
     picard.setAbsTolerance(1e-5);
     picard.setRelTolerance(std::numeric_limits<double>::max());
     ASSERT_FALSE(picard.solve(f1, x0, x));
-    ASSERT_EQ(3u, picard.getNIterations());
+    ASSERT_EQ(3u, picard.getNumberOfIterations());
 
     // abs tol, converge
     picard.setMaxIterations(10);
     ASSERT_TRUE(picard.solve(f1, x0, x));
     ASSERT_NEAR(2.0, x, 1e-5);
-    ASSERT_EQ(5u, picard.getNIterations());
+    ASSERT_EQ(5u, picard.getNumberOfIterations());
 
     // rel tol, converge
     picard.setMaxIterations(100);
@@ -102,7 +102,7 @@ TEST(MathLib, NonlinearPicard_double)
     picard.setRelTolerance(1e-5);
     ASSERT_TRUE(picard.solve(f1, x0, x));
     ASSERT_NEAR(2.0, x, 1e-5);
-    ASSERT_EQ(5u, picard.getNIterations());
+    ASSERT_EQ(5u, picard.getNumberOfIterations());
 }
 
 TEST(MathLib, NonlinearPicard_vector_x0)

@@ -31,12 +31,12 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     //
     // Note: If there are only few elements to be removed, using a different
     // algorithm might be more memory efficient.
-    std::vector<std::size_t> node_marked_counts(_mesh.getNNodes(), 0);
+    std::vector<std::size_t> node_marked_counts(_mesh.getNumberOfNodes(), 0);
 
     for(std::size_t eid : elements)
     {
         auto* e = _mesh.getElement(eid);
-        for (unsigned i=0; i<e->getNBaseNodes(); i++) {
+        for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++) {
             node_marked_counts[e->getNodeIndex(i)]++;
         }
     }
@@ -57,12 +57,12 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
 
 std::size_t NodeSearch::searchUnused()
 {
-    const std::size_t nNodes (_mesh.getNNodes());
+    const std::size_t nNodes (_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes (_mesh.getNodes());
     std::vector<std::size_t> del_node_idx;
 
     for (unsigned i=0; i<nNodes; ++i)
-        if (nodes[i]->getNElements() == 0)
+        if (nodes[i]->getNumberOfElements() == 0)
             del_node_idx.push_back(i);
 
     this->updateUnion(del_node_idx);
@@ -83,7 +83,7 @@ std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements)
     for (auto e : elements)
     {
         Node* const* nodes = e->getNodes();
-        unsigned const nnodes = e->getNNodes();
+        unsigned const nnodes = e->getNumberOfNodes();
         nodes_set.insert(nodes, nodes + nnodes);
     }
 

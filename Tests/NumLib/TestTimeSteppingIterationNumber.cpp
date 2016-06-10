@@ -121,6 +121,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     //std::cout << vec_t;
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-    ASSERT_EQ(1u, alg.getNRepeatedSteps());
+    ASSERT_EQ(1u, alg.getNumberOfRepeatedSteps());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(), std::numeric_limits<double>::epsilon());
 }

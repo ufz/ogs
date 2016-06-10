@@ -35,7 +35,7 @@ public:
     MeshSubsets(const MeshSubset* mesh_subset)
     {
         _mesh_subsets.push_back(mesh_subset);
-        _n_total_items = mesh_subset->getNTotalItems();
+        _n_total_items = mesh_subset->getNumberOfTotalItems();
     }
 
     /// Construct MeshSubsets from a range of MeshSubset. InputIterator must
@@ -55,12 +55,12 @@ public:
         _n_total_items = std::accumulate(first, last, 0u,
             [](std::size_t const& sum, MeshSubset const* const mesh_subset)
             {
-                return sum + mesh_subset->getNTotalItems();
+                return sum + mesh_subset->getNumberOfTotalItems();
             });
     }
 
     /// return the total number of mesh items (in all meshes) where this component is assigned
-    std::size_t getNMeshItems() const
+    std::size_t getNumberOfMeshItems() const
     {
         return _n_total_items;
     }

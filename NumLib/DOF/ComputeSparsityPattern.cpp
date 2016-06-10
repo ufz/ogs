@@ -40,8 +40,8 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
     // It acts as a cache for dof table queries.
     std::vector<std::vector<GlobalIndexType>> global_idcs;
 
-    global_idcs.reserve(mesh.getNNodes());
-    for (std::size_t n = 0; n < mesh.getNNodes(); ++n)
+    global_idcs.reserve(mesh.getNumberOfNodes());
+    for (std::size_t n = 0; n < mesh.getNumberOfNodes(); ++n)
     {
         MeshLib::Location l(mesh.getID(), MeshLib::MeshItemType::Node, n);
         global_idcs.push_back(dof_table.getGlobalIndices(l));
@@ -50,7 +50,7 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
     GlobalSparsityPattern sparsity_pattern(dof_table.dofSizeWithGhosts());
 
     // Map adjacent mesh nodes to "adjacent global indices".
-    for (std::size_t n = 0; n < mesh.getNNodes(); ++n)
+    for (std::size_t n = 0; n < mesh.getNumberOfNodes(); ++n)
     {
         auto const& node_ids = node_adjacency_table.getAdjacentNodes(n);
         for (auto an : node_ids)

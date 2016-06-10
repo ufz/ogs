@@ -39,7 +39,7 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(mesh_out.getValue());

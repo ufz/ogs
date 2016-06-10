@@ -59,7 +59,7 @@ public:
     const std::vector<Element*>& getElements() const { return _elements; }
 
     /// Get number of elements the node is part of.
-    std::size_t getNElements() const { return _elements.size(); }
+    std::size_t getNumberOfElements() const { return _elements.size(); }
 
     /// Destructor
     virtual ~Node();

@@ -249,8 +249,8 @@ void CreateStructuredGridDialog::accept()
 
     boost::optional<MeshLib::PropertyVector<int>&> mat_ids (
         mesh->getProperties().createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell));
-    mat_ids->reserve(mesh->getNElements());
-    std::fill_n(std::back_inserter(*mat_ids), mesh->getNElements(), 0);
+    mat_ids->reserve(mesh->getNumberOfElements());
+    std::fill_n(std::back_inserter(*mat_ids), mesh->getNumberOfElements(), 0);
     emit meshAdded(mesh);
     this->done(QDialog::Accepted);
 }

@@ -112,7 +112,7 @@ void doProcessOutput(
 
     auto const& output_variables = process_output.output_variables;
 
-    std::size_t const n_nodes = mesh.getNNodes();
+    std::size_t const n_nodes = mesh.getNumberOfNodes();
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
@@ -157,8 +157,8 @@ void doProcessOutput(
         MeshLib::Mesh const& mesh, MeshLib::MeshItemType type) -> std::size_t
     {
         switch (type) {
-        case MeshLib::MeshItemType::Cell: return mesh.getNElements();
-        case MeshLib::MeshItemType::Node: return mesh.getNNodes();
+        case MeshLib::MeshItemType::Cell: return mesh.getNumberOfElements();
+        case MeshLib::MeshItemType::Node: return mesh.getNumberOfNodes();
         default: break; // avoid compiler warning
         }
         return 0;
@@ -198,14 +198,14 @@ void doProcessOutput(
 
             auto result = get_or_create_mesh_property(
                               output_name, MeshLib::MeshItemType::Node);
-            assert(result->size() == mesh.getNNodes());
+            assert(result->size() == mesh.getNumberOfNodes());
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& nodal_values =
                     var.fcts.eval_field(x, dof_table, result_cache);
 
             // Copy result
-            for (std::size_t i = 0; i < mesh.getNNodes(); ++i)
+            for (std::size_t i = 0; i < mesh.getNumberOfNodes(); ++i)
             {
                 assert(!std::isnan(nodal_values[i]));
                 (*result)[i] = nodal_values[i];
@@ -219,14 +219,14 @@ void doProcessOutput(
 
             auto result = get_or_create_mesh_property(
                               property_name_res, MeshLib::MeshItemType::Cell);
-            assert(result->size() == mesh.getNElements());
+            assert(result->size() == mesh.getNumberOfElements());
 
             std::unique_ptr<GlobalVector> result_cache;
             auto const& residuals =
                     var.fcts.eval_residuals(x, dof_table, result_cache);
 
             // Copy result
-            for (std::size_t i = 0; i < mesh.getNElements(); ++i)
+            for (std::size_t i = 0; i < mesh.getNumberOfElements(); ++i)
             {
                 assert(!std::isnan(residuals[i]));
                 (*result)[i] = residuals[i];

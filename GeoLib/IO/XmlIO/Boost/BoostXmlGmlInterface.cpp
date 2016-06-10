@@ -318,7 +318,7 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         surface_tag.put("<xmlattr>.id", i);
         if (!sfc_name.empty())
             surface_tag.put("<xmlattr>.name", sfc_name);
-        for (std::size_t j=0; j<surface->getNTriangles(); ++j) {
+        for (std::size_t j=0; j<surface->getNumberOfTriangles(); ++j) {
             auto& element_tag = surface_tag.add("element", "");
             element_tag.put("<xmlattr>.p1", (*(*surface)[j])[0]);
             element_tag.put("<xmlattr>.p2", (*(*surface)[j])[1]);

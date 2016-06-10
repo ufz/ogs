@@ -34,7 +34,7 @@ TEST(MeshLib, ElementStatus)
                                                            MeshLib::MeshItemType::Cell)
     );
     ASSERT_TRUE(bool(material_id_properties));
-    (*material_id_properties).resize(mesh->getNElements());
+    (*material_id_properties).resize(mesh->getNumberOfElements());
 
     const std::vector<MeshLib::Element*> elements (mesh->getElements());
 
@@ -47,29 +47,29 @@ TEST(MeshLib, ElementStatus)
     {
         // all elements and nodes active
         MeshLib::ElementStatus status(mesh.get());
-        ASSERT_EQ (elements.size(), status.getNActiveElements());
-        ASSERT_EQ (mesh->getNNodes(), status.getNActiveNodes());
+        ASSERT_EQ (elements.size(), status.getNumberOfActiveElements());
+        ASSERT_EQ (mesh->getNumberOfNodes(), status.getNumberOfActiveNodes());
     }
 
     {
         // set material 1 to false
         std::vector<int> inactiveMat{1};
         MeshLib::ElementStatus status(mesh.get(), inactiveMat);
-        ASSERT_EQ (elements.size()-elements_per_side, status.getNActiveElements());
+        ASSERT_EQ (elements.size()-elements_per_side, status.getNumberOfActiveElements());
     }
 
     {
         // set material 0 and 1 to false
         std::vector<int> inactiveMat{0, 1};
         MeshLib::ElementStatus status(mesh.get(), inactiveMat);
-        ASSERT_EQ (elements.size()-(2*elements_per_side), status.getNActiveElements());
+        ASSERT_EQ (elements.size()-(2*elements_per_side), status.getNumberOfActiveElements());
 
         // active elements
         auto &active_elements (status.getActiveElements());
-        ASSERT_EQ (active_elements.size(), status.getNActiveElements());
+        ASSERT_EQ (active_elements.size(), status.getNumberOfActiveElements());
 
         // active nodes
         auto& active_nodes (status.getActiveNodes());
-        ASSERT_EQ (active_nodes.size(), status.getNActiveNodes());
+        ASSERT_EQ (active_nodes.size(), status.getNumberOfActiveNodes());
     }
 }

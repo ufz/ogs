@@ -45,7 +45,7 @@ bool EigenLisLinearSolver::solve(EigenMatrix &A_, EigenVector& b_,
     int* ptr = A.outerIndexPtr();
     int* col = A.innerIndexPtr();
     double* data = A.valuePtr();
-    LisMatrix lisA(A_.getNRows(), nnz, ptr, col, data);
+    LisMatrix lisA(A_.getNumberOfRows(), nnz, ptr, col, data);
     LisVector lisb(b.rows(), b.data());
     LisVector lisx(x.rows(), x.data());
 

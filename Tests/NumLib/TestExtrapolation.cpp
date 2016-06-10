@@ -242,7 +242,7 @@ private:
             LocalAssembler, LocalAssemblerData,
             GlobalMatrix, GlobalVector, GlobalDim>;
 
-        _local_assemblers.resize(mesh.getNElements());
+        _local_assemblers.resize(mesh.getNumberOfElements());
 
         LocalDataInitializer initializer(*_dof_table);
 
@@ -330,8 +330,8 @@ TEST(NumLib, DISABLED_Extrapolation)
                     MeshLib::MeshGenerator::generateRegularHexMesh(
                         mesh_length, mesh_elements_in_each_direction));
 
-        auto const nnodes    = mesh->getNNodes();
-        auto const nelements = mesh->getNElements();
+        auto const nnodes    = mesh->getNumberOfNodes();
+        auto const nelements = mesh->getNumberOfElements();
         DBUG("number of nodes: %lu, number of elements: %lu", nnodes, nelements);
 
         TestProcess<GlobalSetup> pcs(*mesh, integration_order);

@@ -49,7 +49,7 @@ int main (int argc, char* argv[])
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     INFO("Converting the mesh to TIN");
     GeoLib::GEOObjects geo_objects;

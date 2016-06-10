@@ -53,8 +53,8 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
         return boost::optional<unsigned>();
 
     Node* face_nodes[3];
-    const unsigned nNodes (this->getNBaseNodes());
-    const unsigned eNodes (e->getNBaseNodes());
+    const unsigned nNodes (this->getNumberOfBaseNodes());
+    const unsigned eNodes (e->getNumberOfBaseNodes());
     const Node* const* e_nodes = e->getNodes();
     unsigned count(0);
     const unsigned dim (this->getDimension());
@@ -76,7 +76,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
 
 MeshLib::Node Element::getCenterOfGravity() const
 {
-    const unsigned nNodes (this->getNBaseNodes());
+    const unsigned nNodes (this->getNumberOfBaseNodes());
     MeshLib::Node center(0,0,0);
     for (unsigned i=0; i<nNodes; ++i)
     {
@@ -94,7 +94,7 @@ void Element::computeSqrEdgeLengthRange(double &min, double &max) const
 {
     min = std::numeric_limits<double>::max();
     max = 0;
-    const unsigned nEdges (this->getNEdges());
+    const unsigned nEdges (this->getNumberOfEdges());
     for (unsigned i=0; i<nEdges; i++)
     {
         const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
@@ -107,7 +107,7 @@ void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_a
 {
     min = std::numeric_limits<double>::max();
     max = 0;
-    const unsigned nnodes = check_allnodes ? getNNodes() : getNBaseNodes();
+    const unsigned nnodes = check_allnodes ? getNumberOfNodes() : getNumberOfBaseNodes();
     for (unsigned i=0; i<nnodes; i++)
     {
         for (unsigned j=i+1; j<nnodes; j++)
@@ -122,7 +122,7 @@ void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_a
 const Element* Element::getNeighbor(unsigned i) const
 {
 #ifndef NDEBUG
-    if (i < getNNeighbors())
+    if (i < getNumberOfNeighbors())
 #endif
         return _neighbors[i];
 #ifndef NDEBUG
@@ -133,7 +133,7 @@ const Element* Element::getNeighbor(unsigned i) const
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 {
-    const unsigned nNodes (this->getNBaseNodes());
+    const unsigned nNodes (this->getNumberOfBaseNodes());
     for (unsigned i(0); i<nNodes; i++)
         if (node == _nodes[i])
             return i;
@@ -143,7 +143,7 @@ unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 const Node* Element::getNode(unsigned i) const
 {
 #ifndef NDEBUG
-    if (i < getNNodes())
+    if (i < getNumberOfNodes())
 #endif
         return _nodes[i];
 #ifndef NDEBUG
@@ -155,7 +155,7 @@ const Node* Element::getNode(unsigned i) const
 void Element::setNode(unsigned idx, Node* node)
 {
 #ifndef NDEBUG
-    if (idx < getNNodes())
+    if (idx < getNumberOfNodes())
 #endif
         _nodes[idx] = node;
 }
@@ -163,7 +163,7 @@ void Element::setNode(unsigned idx, Node* node)
 unsigned Element::getNodeIndex(unsigned i) const
 {
 #ifndef NDEBUG
-    if (i<getNNodes())
+    if (i<getNumberOfNodes())
 #endif
         return _nodes[i]->getID();
 #ifndef NDEBUG
@@ -174,7 +174,7 @@ unsigned Element::getNodeIndex(unsigned i) const
 
 bool Element::hasNeighbor(Element* elem) const
 {
-    unsigned nNeighbors (this->getNNeighbors());
+    unsigned nNeighbors (this->getNumberOfNeighbors());
     for (unsigned i=0; i<nNeighbors; i++)
         if (this->_neighbors[i]==elem)
             return true;
@@ -183,17 +183,17 @@ bool Element::hasNeighbor(Element* elem) const
 
 bool Element::isBoundaryElement() const
 {
-    return std::any_of(_neighbors, _neighbors + this->getNNeighbors(),
+    return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
         [](MeshLib::Element const*const e){ return e == nullptr; });
 }
 
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-    os << "Element #" << e._id << " @ " << &e << " with " << e.getNNeighbors()
+    os << "Element #" << e._id << " @ " << &e << " with " << e.getNumberOfNeighbors()
        << " neighbours\n";
 
-    unsigned const nnodes = e.getNNodes();
+    unsigned const nnodes = e.getNumberOfNodes();
     MeshLib::Node* const* const nodes = e.getNodes();
     os << "MeshElemType: "
         << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())

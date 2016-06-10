@@ -17,8 +17,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::si
 : Element(id)
 {
     this->_nodes = nodes;
-    this->_neighbors = new Element*[getNNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNNeighbors(), nullptr);
+    this->_neighbors = new Element*[getNumberOfNeighbors()];
+    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
     this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
 }
 
@@ -28,8 +28,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> co
 {
     this->_nodes = new Node*[n_all_nodes];
     std::copy(nodes.begin(), nodes.end(), this->_nodes);
-    this->_neighbors = new Element*[getNNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNNeighbors(), nullptr);
+    this->_neighbors = new Element*[getNumberOfNeighbors()];
+    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
     this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
 }
 
@@ -40,8 +40,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
     this->_nodes = new Node*[n_all_nodes];
     for (unsigned i=0; i<n_all_nodes; i++)
         this->_nodes[i] = e._nodes[i];
-    this->_neighbors = new Element*[getNNeighbors()];
-    for (unsigned i=0; i<getNNeighbors(); i++)
+    this->_neighbors = new Element*[getNumberOfNeighbors()];
+    for (unsigned i=0; i<getNumberOfNeighbors(); i++)
         this->_neighbors[i] = e._neighbors[i];
     this->_content = e.getContent();
 }
@@ -72,7 +72,7 @@ isEdge(unsigned const (&/*edge_nodes*/)[1], unsigned /*idx1*/, unsigned /*idx2*/
 template <class ELEMENT_RULE>
 bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
 {
-    for (unsigned i(0); i<getNEdges(); i++)
+    for (unsigned i(0); i<getNumberOfEdges(); i++)
     {
         if (detail::isEdge(ELEMENT_RULE::edge_nodes[i], idx1, idx2)) return true;
     }

@@ -452,7 +452,7 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
 {
     std::unique_ptr<MeshLib::Mesh> mesh (
         generateRegularTriMesh(n_x_cells, n_y_cells, cell_size_x, cell_size_y, origin, mesh_name));
-    std::size_t const n_tris (mesh->getNElements());
+    std::size_t const n_tris (mesh->getNumberOfElements());
     for (std::size_t i=0; i<n_z_cells; ++i)
         mesh.reset(MeshLib::addTopLayerToMesh(*mesh, cell_size_z, mesh_name));
     std::vector<std::size_t> elem_ids (n_tris);

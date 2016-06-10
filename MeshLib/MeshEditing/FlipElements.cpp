@@ -24,7 +24,7 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(MeshLib::Element const& e
     if (elem.getDimension()>2)
         return nullptr;
 
-    unsigned const n_nodes (elem.getNNodes());
+    unsigned const n_nodes (elem.getNumberOfNodes());
     MeshLib::Node** elem_nodes = new MeshLib::Node*[n_nodes];
     for (unsigned i=0; i<n_nodes; ++i)
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
@@ -50,7 +50,7 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
     std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh.getNodes()));
     std::vector<MeshLib::Element*> const& elems (mesh.getElements());
     std::vector<MeshLib::Element*> new_elems;
-    std::size_t n_elems (mesh.getNElements());
+    std::size_t n_elems (mesh.getNumberOfElements());
     new_elems.reserve(n_elems);
 
     for (std::size_t i=0; i<n_elems; ++i)

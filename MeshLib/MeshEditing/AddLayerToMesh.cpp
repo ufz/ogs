@@ -52,7 +52,7 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
     if (sfc_elem.getDimension() > 2)
         return nullptr;
 
-    const unsigned nElemNodes(sfc_elem.getNBaseNodes());
+    const unsigned nElemNodes(sfc_elem.getNumberOfBaseNodes());
     MeshLib::Node** new_nodes = new MeshLib::Node*[2*nElemNodes];
 
     for (unsigned j=0; j<nElemNodes; ++j)
@@ -111,7 +111,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
                 prop_name, MeshLib::MeshItemType::Node, 1));
         if (pv) {
-            pv->resize(sfc_mesh->getNNodes());
+            pv->resize(sfc_mesh->getNumberOfNodes());
             std::iota(pv->begin(), pv->end(), 0);
         } else {
             ERR("Could not create and initialize property.");
@@ -178,7 +178,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
             new_materials->reserve(subsfc_elements.size());
             int new_layer_id (*(std::max_element(opt_materials->cbegin(), opt_materials->cend()))+1);
             std::copy(opt_materials->cbegin(), opt_materials->cend(), std::back_inserter(*new_materials));
-            auto const n_new_props(subsfc_elements.size()-mesh.getNElements());
+            auto const n_new_props(subsfc_elements.size()-mesh.getNumberOfElements());
             std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);
         }
     } else {

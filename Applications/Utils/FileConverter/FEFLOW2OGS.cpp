@@ -77,7 +77,7 @@ int main (int argc, char* argv[])
     INFO("Mem for mesh: %i MB", (mem_with_mesh - mem_without_mesh)/(1024*1024));
 #endif
     INFO("Time for reading: %f seconds.", run_time.elapsed());
-    INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Read %d nodes and %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
     INFO("Writing %s.", ogs_mesh_fname.c_str());

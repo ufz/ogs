@@ -74,9 +74,9 @@ public:
     }
 
     /// return the total number of mesh items
-    std::size_t getNTotalItems() const
+    std::size_t getNumberOfTotalItems() const
     {
-        return getNNodes() + getNElements();
+        return getNumberOfNodes() + getNumberOfElements();
     }
 
     /// return this mesh ID
@@ -86,7 +86,7 @@ public:
     }
 
     /// return the number of registered nodes
-    std::size_t getNNodes() const
+    std::size_t getNumberOfNodes() const
     {
         return (_nodes==nullptr) ? 0 : _nodes->size();
     }
@@ -101,7 +101,7 @@ public:
     }
 
     /// return the number of registered elements
-    std::size_t getNElements() const
+    std::size_t getNumberOfElements() const
     {
         return (_eles==nullptr) ? 0 : _eles->size();
     }

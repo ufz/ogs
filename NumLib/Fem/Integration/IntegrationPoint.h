@@ -38,7 +38,7 @@ public:
     }
 
     /// Return the number of sampling points.
-    std::size_t getNPoints() const
+    std::size_t getNumberOfPoints() const
     {
         return 1;
     }
@@ -73,7 +73,7 @@ public:
     ///
     /// \param order    the number of integration points
     /// \return the number of points.
-    static std::size_t getNPoints(std::size_t /* order */)
+    static std::size_t getNumberOfPoints(std::size_t /* order */)
     {
         return 1;
     }

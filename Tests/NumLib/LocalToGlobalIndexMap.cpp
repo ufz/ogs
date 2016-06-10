@@ -62,7 +62,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(mesh->getNumberOfNodes() * components_size, dof_map->dofSizeWithGhosts());
 }
 
 #ifndef USE_PETSC
@@ -80,7 +80,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNNodes() * components_size, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(mesh->getNumberOfNodes() * components_size, dof_map->dofSizeWithGhosts());
 }
 
 #ifndef USE_PETSC

@@ -77,26 +77,26 @@ class PETScMatrix
         }
 
         /// Get the number of rows.
-        PetscInt getNRows() const
+        PetscInt getNumberOfRows() const
         {
             return _nrows;
         }
 
         /// Get the number of columns.
-        PetscInt getNCols() const
+        PetscInt getNumberOfCols() const
         {
             return _ncols;
         }
 
 
         /// Get the number of local rows.
-        PetscInt getNLocalRows() const
+        PetscInt getNumberOfLocalRows() const
         {
             return _n_loc_rows;
         }
 
         /// Get the number of local columns.
-        PetscInt getNLocalColumns() const
+        PetscInt getNumberOfLocalColumns() const
         {
             return _n_loc_cols;
         }

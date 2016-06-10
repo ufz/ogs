@@ -38,7 +38,7 @@ namespace AddLayerValidation
 
     void testZCoords2D(MeshLib::Mesh const& input, MeshLib::Mesh const& output, double height)
     {
-        std::size_t const nNodes (input.getNNodes());
+        std::size_t const nNodes (input.getNumberOfNodes());
         for (std::size_t i=0; i<nNodes; ++i)
         {
             ASSERT_EQ((*input.getNode(i))[2], (*output.getNode(i))[2]);
@@ -48,7 +48,7 @@ namespace AddLayerValidation
 
     void testZCoords3D(MeshLib::Mesh const& input, MeshLib::Mesh const& output, double height)
     {
-        std::size_t const nNodes (input.getNNodes());
+        std::size_t const nNodes (input.getNumberOfNodes());
         for (std::size_t i=0; i<nNodes; ++i)
             ASSERT_EQ((*input.getNode(i))[2] + height, (*output.getNode(i))[2]);
     }
@@ -60,8 +60,8 @@ TEST(MeshLib, AddTopLayerToLineMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", true));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(5, n_elems[0]); // tests if 5 lines are present
@@ -77,8 +77,8 @@ TEST(MeshLib, AddBottomLayerToLineMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", false));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(5, n_elems[0]); // tests if 5 lines are present
@@ -96,33 +96,33 @@ TEST(MeshLib, AddTopLayerToTriMesh)
         mesh->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
     if (mats)
     {
-        mats->resize(mesh->getNElements());
-        std::fill_n(mats->begin(), mesh->getNElements(), 0);
+        mats->resize(mesh->getNumberOfElements());
+        std::fill_n(mats->begin(), mesh->getNumberOfElements(), 0);
     }
     boost::optional<MeshLib::PropertyVector<double>&> test =
         mesh->getProperties().createNewPropertyVector<double>("test", MeshLib::MeshItemType::Cell);
     if (test)
     {
-        test->resize(mesh->getNElements());
-        std::fill_n(test->begin(), mesh->getNElements(), 0.1);
+        test->resize(mesh->getNumberOfElements());
+        std::fill_n(test->begin(), mesh->getNumberOfElements(), 0.1);
     }
     ASSERT_EQ(2, mesh->getProperties().getPropertyVectorNames().size());
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", true));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
-    ASSERT_EQ(mesh->getNElements(), n_elems[1]); // tests if 50 tris are present
-    ASSERT_EQ(mesh->getNElements(), n_elems[6]); // tests if 50 prisms are present
+    ASSERT_EQ(mesh->getNumberOfElements(), n_elems[1]); // tests if 50 tris are present
+    ASSERT_EQ(mesh->getNumberOfElements(), n_elems[6]); // tests if 50 prisms are present
 
     ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
     boost::optional<MeshLib::PropertyVector<int>&> new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
-    ASSERT_EQ(result->getNElements(), new_mats->size());
-    ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
-    ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
+    ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
+    ASSERT_EQ(mesh->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
+    ASSERT_EQ(mesh->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
     AddLayerValidation::testZCoords2D(*mesh, *result, height);
     AddLayerValidation::validate(*result, true);
 }
@@ -133,8 +133,8 @@ TEST(MeshLib, AddBottomLayerToTriMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", false));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(50, n_elems[1]); // tests if 50 tris are present
@@ -150,8 +150,8 @@ TEST(MeshLib, AddTopLayerToQuadMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", true));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(25, n_elems[2]); // tests if 25 quads are present
@@ -167,8 +167,8 @@ TEST(MeshLib, AddBottomLayerToQuadMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", false));
 
-    ASSERT_EQ(2*mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(2*mesh->getNElements(), result->getNElements());
+    ASSERT_EQ(2*mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(2*mesh->getNumberOfElements(), result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(25, n_elems[2]); // tests if 25 quads are present
@@ -184,8 +184,8 @@ TEST(MeshLib, AddTopLayerToHexMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", true));
 
-    ASSERT_EQ(mesh->getNNodes(), result->getNNodes()-36);
-    ASSERT_EQ(mesh->getNElements(), result->getNElements()-25);
+    ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes()-36);
+    ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements()-25);
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(150, n_elems[4]); // tests if 150 hexes are present
@@ -205,8 +205,8 @@ TEST(MeshLib, AddBottomLayerToHexMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh, height, "mesh", false));
 
-    ASSERT_EQ(mesh->getNNodes(), result->getNNodes()-36);
-    ASSERT_EQ(mesh->getNElements(), result->getNElements()-25);
+    ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes()-36);
+    ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements()-25);
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(150, n_elems[4]); // tests if 150 hexes are present
@@ -227,8 +227,8 @@ TEST(MeshLib, AddTopLayerToPrismMesh)
     double const height (1);
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh2, height, "mesh", true));
 
-    ASSERT_EQ(mesh2->getNNodes()/2.0 * 3, result->getNNodes());
-    ASSERT_EQ(mesh2->getNElements()/2.0 * 3, result->getNElements());
+    ASSERT_EQ(mesh2->getNumberOfNodes()/2.0 * 3, result->getNumberOfNodes());
+    ASSERT_EQ(mesh2->getNumberOfElements()/2.0 * 3, result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
     ASSERT_EQ(50, n_elems[1]); // tests if 50 tris are present
@@ -253,23 +253,23 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
         mesh2->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
     if (mats)
     {
-        mats->resize(mesh2->getNElements());
-        std::fill_n(mats->begin(), mesh2->getNElements(), 0);
+        mats->resize(mesh2->getNumberOfElements());
+        std::fill_n(mats->begin(), mesh2->getNumberOfElements(), 0);
     }
 
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh2, height, "mesh", false));
-    ASSERT_EQ(mesh2->getNNodes()/2.0 * 3, result->getNNodes());
-    ASSERT_EQ(mesh2->getNElements()/2.0 * 3, result->getNElements());
+    ASSERT_EQ(mesh2->getNumberOfNodes()/2.0 * 3, result->getNumberOfNodes());
+    ASSERT_EQ(mesh2->getNumberOfElements()/2.0 * 3, result->getNumberOfElements());
 
     std::array<unsigned, 7> const n_elems (MeshLib::MeshInformation::getNumberOfElementTypes(*result));
-    ASSERT_EQ(mesh->getNElements(), n_elems[1]); // tests if 50 tris are present
-    ASSERT_EQ(2 * mesh->getNElements(), n_elems[6]); // tests if 50 prisms are present
+    ASSERT_EQ(mesh->getNumberOfElements(), n_elems[1]); // tests if 50 tris are present
+    ASSERT_EQ(2 * mesh->getNumberOfElements(), n_elems[6]); // tests if 50 prisms are present
     ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
     boost::optional<MeshLib::PropertyVector<int>&> new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
-    ASSERT_EQ(result->getNElements(), new_mats->size());
-    ASSERT_EQ(mesh2->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
-    ASSERT_EQ(mesh->getNElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
+    ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
+    ASSERT_EQ(mesh2->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
+    ASSERT_EQ(mesh->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
 
     MathLib::Vector3 const dir(0, 0, 1);
     std::unique_ptr<MeshLib::Mesh> test_input (

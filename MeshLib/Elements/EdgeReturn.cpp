@@ -20,7 +20,7 @@ namespace MeshLib
 
 const Element* LinearEdgeReturn::getEdge(const Element* e, unsigned i)
 {
-    if (i < e->getNEdges())
+    if (i < e->getNumberOfEdges())
     {
         Node** nodes = new Node*[2];
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));
@@ -33,7 +33,7 @@ const Element* LinearEdgeReturn::getEdge(const Element* e, unsigned i)
 
 const Element* QuadraticEdgeReturn::getEdge(const Element* e, unsigned i)
 {
-    if (i < e->getNEdges())
+    if (i < e->getNumberOfEdges())
     {
         Node** nodes = new Node*[3];
         nodes[0] = const_cast<Node*>(e->getEdgeNode(i,0));

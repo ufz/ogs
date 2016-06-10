@@ -111,7 +111,7 @@ int VtkMappedMeshSource::RequestInformation(
     vtkInformation *, vtkInformationVector **, vtkInformationVector *)
 {
     this->NumberOfDimensions = 3;
-    this->NumberOfNodes = _mesh->getNNodes();
+    this->NumberOfNodes = _mesh->getNumberOfNodes();
 
     return 1;
 }

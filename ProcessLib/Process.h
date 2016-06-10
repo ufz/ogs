@@ -240,7 +240,7 @@ private:
                               int const component_id,
                               GlobalVector& x)
     {
-        std::size_t const n_nodes = _mesh.getNNodes();
+        std::size_t const n_nodes = _mesh.getNumberOfNodes();
         for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
         {
             MeshLib::Location const l(_mesh.getID(),

@@ -30,7 +30,7 @@ MeshNodesAlongPolyline::MeshNodesAlongPolyline(
     _mesh(mesh), _ply(ply)
 {
     assert(epsilon_radius > 0);
-    const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
+    const std::size_t n_nodes (search_all_nodes ? _mesh.getNumberOfNodes() : _mesh.getNumberOfBaseNodes());
     auto &mesh_nodes = _mesh.getNodes();
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {

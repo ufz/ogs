@@ -77,28 +77,28 @@ class MeshLibTriLineMesh : public ::testing::Test
 TEST_F(MeshLibTriLineMesh, Construction)
 {
     ASSERT_TRUE(mesh != nullptr);
-    ASSERT_EQ(3u, mesh->getNElements());
+    ASSERT_EQ(3u, mesh->getNumberOfElements());
     ASSERT_EQ(MeshLib::MeshElemType::TRIANGLE, elements[0]->getGeomType());
     ASSERT_EQ(MeshLib::MeshElemType::TRIANGLE, elements[1]->getGeomType());
     ASSERT_EQ(MeshLib::MeshElemType::LINE, elements[2]->getGeomType());
-    ASSERT_EQ(4u, mesh->getNNodes());
+    ASSERT_EQ(4u, mesh->getNumberOfNodes());
 }
 
 TEST_F(MeshLibTriLineMesh, NodeToElementConnectivity)
 {
     // Nodes 0 and 3 are connected only to triangles.
-    EXPECT_EQ(1u, nodes[0]->getNElements());
-    EXPECT_EQ(1u, nodes[3]->getNElements());
+    EXPECT_EQ(1u, nodes[0]->getNumberOfElements());
+    EXPECT_EQ(1u, nodes[3]->getNumberOfElements());
     EXPECT_EQ(elements[0], nodes[0]->getElement(0));
     EXPECT_EQ(elements[1], nodes[3]->getElement(0));
 
     // Nodes 1 and 2 are connected to all elements.
-    EXPECT_EQ(3u, nodes[1]->getNElements());
+    EXPECT_EQ(3u, nodes[1]->getNumberOfElements());
     EXPECT_TRUE(isConnectedToNode(1, 0));
     EXPECT_TRUE(isConnectedToNode(1, 1));
     EXPECT_TRUE(isConnectedToNode(1, 2));
 
-    EXPECT_EQ(3u, nodes[2]->getNElements());
+    EXPECT_EQ(3u, nodes[2]->getNumberOfElements());
     EXPECT_TRUE(isConnectedToNode(2, 0));
     EXPECT_TRUE(isConnectedToNode(2, 1));
     EXPECT_TRUE(isConnectedToNode(2, 2));

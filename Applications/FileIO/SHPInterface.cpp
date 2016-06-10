@@ -202,7 +202,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
         return false;
     }
 
-    unsigned nElements (mesh.getNElements());
+    unsigned nElements (mesh.getNumberOfElements());
     if (nElements<1)
     {
         ERR ("SHPInterface::write2dMeshToSHP(): Mesh contains no elements.");
@@ -241,7 +241,7 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
             if (materialIds)
                 DBFWriteIntegerAttribute(hDBF, polygon_id, mat_field, (*materialIds)[i]);
 
-            unsigned nNodes (e->getNBaseNodes());
+            unsigned nNodes (e->getNumberOfBaseNodes());
             padfX = new double[nNodes+1];
             padfY = new double[nNodes+1];
             padfZ = new double[nNodes+1];

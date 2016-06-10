@@ -26,7 +26,7 @@ ElementQualityMetric(mesh)
 void SizeDifferenceMetric::calculateQuality()
 {
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
-    std::size_t const nElements (_mesh.getNElements());
+    std::size_t const nElements (_mesh.getNumberOfElements());
     std::size_t const mesh_dim (_mesh.getDimension());
 
     for (std::size_t k=0; k < nElements; ++k)
@@ -38,7 +38,7 @@ void SizeDifferenceMetric::calculateQuality()
             continue;
         }
 
-        std::size_t const n_neighbors (elem.getNNeighbors());
+        std::size_t const n_neighbors (elem.getNumberOfNeighbors());
         double const vol_a (elem.getContent());
 
         double worst_ratio(1.0);

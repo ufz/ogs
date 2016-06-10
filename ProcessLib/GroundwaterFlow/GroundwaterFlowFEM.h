@@ -83,7 +83,7 @@ public:
         _localRhs.setZero();
 
         IntegrationMethod integration_method(_integration_order);
-        unsigned const n_integration_points = integration_method.getNPoints();
+        unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {

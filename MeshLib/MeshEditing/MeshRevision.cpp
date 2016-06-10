@@ -44,7 +44,7 @@ MeshLib::Mesh* MeshRevision::collapseNodes(const std::string &new_mesh_name, dou
     return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements, _mesh.getProperties());
 }
 
-unsigned MeshRevision::getNCollapsableNodes(double eps) const
+unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 {
     std::vector<std::size_t> id_map(this->collapseNodeIndices(eps));
     std::size_t nNodes(id_map.size());
@@ -58,7 +58,7 @@ unsigned MeshRevision::getNCollapsableNodes(double eps) const
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     double eps, unsigned min_elem_dim)
 {
-    if (this->_mesh.getNElements() == 0)
+    if (this->_mesh.getNumberOfElements() == 0)
         return nullptr;
 
     // original data
@@ -79,8 +79,8 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 
     for (std::size_t k(0); k<elements.size(); ++k) {
         MeshLib::Element const*const elem(elements[k]);
-        unsigned n_unique_nodes(this->getNUniqueNodes(elem));
-        if (n_unique_nodes == elem->getNBaseNodes()
+        unsigned n_unique_nodes(this->getNumberOfUniqueNodes(elem));
+        if (n_unique_nodes == elem->getNumberOfBaseNodes()
             && elem->getDimension() >= min_elem_dim)
         {
             ElementErrorCode e(elem->validate());
@@ -106,7 +106,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                     new_material_vec->push_back((*material_vec)[k]);
             }
         }
-        else if (n_unique_nodes < elem->getNBaseNodes() && n_unique_nodes>1) {
+        else if (n_unique_nodes < elem->getNumberOfBaseNodes() && n_unique_nodes>1) {
             std::size_t const n_new_elements(reduceElement(
                 elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim)
             );
@@ -129,7 +129,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
 
 MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) const
 {
-    if (this->_mesh.getNElements() == 0)
+    if (this->_mesh.getNumberOfElements() == 0)
         return nullptr;
 
     // original data
@@ -186,7 +186,7 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
 std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
 {
     const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
-    const std::size_t nNodes(_mesh.getNNodes());
+    const std::size_t nNodes(_mesh.getNumberOfNodes());
     std::vector<std::size_t> id_map(nNodes);
     const double half_eps(eps / 2.0);
     const double sqr_eps(eps*eps);
@@ -250,9 +250,9 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
     return new_nodes;
 }
 
-unsigned MeshRevision::getNUniqueNodes(MeshLib::Element const*const element) const
+unsigned MeshRevision::getNumberOfUniqueNodes(MeshLib::Element const*const element) const
 {
-    unsigned const nNodes(element->getNBaseNodes());
+    unsigned const nNodes(element->getNumberOfBaseNodes());
     unsigned count(nNodes);
 
     for (unsigned i = 0; i < nNodes - 1; ++i)
@@ -267,7 +267,7 @@ unsigned MeshRevision::getNUniqueNodes(MeshLib::Element const*const element) con
 
 void MeshRevision::resetNodeIDs()
 {
-    const std::size_t nNodes(this->_mesh.getNNodes());
+    const std::size_t nNodes(this->_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes(_mesh.getNodes());
     for (std::size_t i = 0; i < nNodes; ++i)
         nodes[i]->setID(i);
@@ -687,7 +687,7 @@ MeshLib::Element* MeshRevision::constructLine(MeshLib::Element const*const eleme
     MeshLib::Node** line_nodes = new MeshLib::Node*[2];
     line_nodes[0] = nodes[element->getNode(0)->getID()];
     line_nodes[1] = nullptr;
-    for (unsigned i=1; i<element->getNBaseNodes(); ++i)
+    for (unsigned i=1; i<element->getNumberOfBaseNodes(); ++i)
     {
         if (element->getNode(i)->getID() != element->getNode(0)->getID())
         {
@@ -708,12 +708,12 @@ MeshLib::Element* MeshRevision::constructTri(MeshLib::Element const*const elemen
     MeshLib::Node** tri_nodes = new MeshLib::Node*[3];
     tri_nodes[0] = nodes[element->getNode(0)->getID()];
     tri_nodes[2] = nullptr;
-    for (unsigned i = 1; i < element->getNBaseNodes(); ++i)
+    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
     {
         if (element->getNode(i)->getID() != tri_nodes[0]->getID())
         {
             tri_nodes[1] = nodes[element->getNode(i)->getID()];
-            for (unsigned j = i + 1; j < element->getNBaseNodes(); ++j)
+            for (unsigned j = i + 1; j < element->getNumberOfBaseNodes(); ++j)
             {
                 if (element->getNode(j)->getID() != tri_nodes[1]->getID())
                 {
@@ -736,7 +736,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
     MeshLib::Node** new_nodes = new MeshLib::Node*[4];
     unsigned count(0);
     new_nodes[count++] = nodes[element->getNode(0)->getID()];
-    for (unsigned i=1; i<element->getNBaseNodes(); ++i)
+    for (unsigned i=1; i<element->getNumberOfBaseNodes(); ++i)
     {
         if (count>3)
             break;
@@ -781,7 +781,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
 unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
     std::array<std::size_t,4> const& base_node_ids) const
 {
-    const std::size_t nNodes (element.getNBaseNodes());
+    const std::size_t nNodes (element.getNumberOfBaseNodes());
     for (std::size_t i=0; i<nNodes; ++i)
     {
         bool top_node=true;

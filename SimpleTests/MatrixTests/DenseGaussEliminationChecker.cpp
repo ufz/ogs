@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
     in >> n_rows;
     in >> n_cols;
     MathLib::DenseMatrix<double, std::size_t> mat(n_rows, n_cols);
-    for (std::size_t i(0); i<mat.getNRows(); ++i) {
-        for (std::size_t j(0); j<mat.getNCols(); ++j) {
+    for (std::size_t i(0); i<mat.getNumberOfRows(); ++i) {
+        for (std::size_t j(0); j<mat.getNumberOfColumns(); ++j) {
             in >> mat(i,j);
         }
     }

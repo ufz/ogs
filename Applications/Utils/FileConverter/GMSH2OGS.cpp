@@ -86,7 +86,7 @@ int main (int argc, char* argv[])
 #endif
 
     INFO("Time for reading: %f seconds.", run_time.elapsed());
-    INFO("Read %d nodes and %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Read %d nodes and %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     // *** remove line elements on request
     if (exclude_lines_arg.getValue()) {
@@ -94,7 +94,7 @@ int main (int argc, char* argv[])
         ex.searchByElementType(MeshLib::MeshElemType::LINE);
         auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
         if (m != nullptr) {
-            INFO("Removed %d lines.", mesh->getNElements() - m->getNElements());
+            INFO("Removed %d lines.", mesh->getNumberOfElements() - m->getNumberOfElements());
             std::swap(m, mesh);
             delete m;
         } else {

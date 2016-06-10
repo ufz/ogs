@@ -22,9 +22,9 @@ TEST(MeshLib, FlipLineMesh)
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::MeshGenerator::generateLineMesh(1.0, 5));
     std::unique_ptr<MeshLib::Mesh> result (MeshLib::createFlippedMesh(*mesh));
 
-    ASSERT_EQ(mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(mesh->getNElements(), result->getNElements());
-    for (std::size_t i=0; i<result->getNElements(); ++i)
+    ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
+    for (std::size_t i=0; i<result->getNumberOfElements(); ++i)
     {
         ASSERT_EQ(mesh->getElement(i)->getNode(0)->getID(),
                   result->getElement(i)->getNode(1)->getID());
@@ -38,9 +38,9 @@ TEST(MeshLib, FlipTriMesh)
     std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
     std::unique_ptr<MeshLib::Mesh> result (MeshLib::createFlippedMesh(*mesh));
 
-    ASSERT_EQ(mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(mesh->getNElements(), result->getNElements());
-    for (std::size_t i=0; i<result->getNElements(); ++i)
+    ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
+    for (std::size_t i=0; i<result->getNumberOfElements(); ++i)
     {
         ASSERT_EQ(mesh->getElement(i)->getNode(0)->getID(),
                   result->getElement(i)->getNode(1)->getID());
@@ -57,9 +57,9 @@ TEST(MeshLib, FlipQuadMesh)
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5));
     std::unique_ptr<MeshLib::Mesh> result (MeshLib::createFlippedMesh(*mesh));
 
-    ASSERT_EQ(mesh->getNNodes(), result->getNNodes());
-    ASSERT_EQ(mesh->getNElements(), result->getNElements());
-    for (std::size_t i=0; i<result->getNElements(); ++i)
+    ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
+    ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
+    for (std::size_t i=0; i<result->getNumberOfElements(); ++i)
     {
         ASSERT_EQ(mesh->getElement(i)->getNode(0)->getID(),
                   result->getElement(i)->getNode(1)->getID());
@@ -80,7 +80,7 @@ TEST(MeshLib, FlipHexMesh)
 
     ASSERT_EQ(nullptr, result);
     std::vector<MeshLib::Node*> nodes;
-    for (std::size_t i=0; i<mesh->getNNodes(); ++i)
+    for (std::size_t i=0; i<mesh->getNumberOfNodes(); ++i)
         nodes.push_back(new MeshLib::Node(*mesh->getNode(i)));
     std::unique_ptr<MeshLib::Element> elem (MeshLib::createFlippedElement(*mesh->getElement(0), nodes));
     ASSERT_EQ(nullptr, elem);
@@ -94,9 +94,9 @@ TEST(MeshLib, DoubleFlipQuadMesh)
     std::unique_ptr<MeshLib::Mesh> result (MeshLib::createFlippedMesh(*mesh));
     std::unique_ptr<MeshLib::Mesh> result2 (MeshLib::createFlippedMesh(*result));
 
-    ASSERT_EQ(mesh->getNNodes(), result2->getNNodes());
-    ASSERT_EQ(mesh->getNElements(), result2->getNElements());
-    for (std::size_t i=0; i<result2->getNElements(); ++i)
+    ASSERT_EQ(mesh->getNumberOfNodes(), result2->getNumberOfNodes());
+    ASSERT_EQ(mesh->getNumberOfElements(), result2->getNumberOfElements());
+    for (std::size_t i=0; i<result2->getNumberOfElements(); ++i)
         for (std::size_t j=0; j<4; ++j)
             ASSERT_EQ(mesh->getElement(i)->getNode(j)->getID(),
                       result2->getElement(i)->getNode(j)->getID());

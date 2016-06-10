@@ -38,7 +38,7 @@ MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
                                     MathLib::Point3d const& plane_origin,
                                     MathLib::Vector3 const& plane_normal)
 {
-    std::size_t const n_nodes (mesh.getNNodes());
+    std::size_t const n_nodes (mesh.getNumberOfNodes());
     std::vector<MeshLib::Node*> const& nodes (mesh.getNodes());
     MathLib::Vector3 normal (plane_normal);
     normal.normalize();

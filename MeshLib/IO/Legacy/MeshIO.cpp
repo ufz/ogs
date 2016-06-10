@@ -271,7 +271,7 @@ bool MeshIO::write()
         << "  NO_PCS\n"
         << "$NODES\n"
         << "  ";
-    const std::size_t n_nodes(_mesh->getNNodes());
+    const std::size_t n_nodes(_mesh->getNumberOfNodes());
     _out << n_nodes << "\n";
     for (std::size_t i(0); i < n_nodes; ++i) {
         _out << i << " " << *(_mesh->getNode(i)) << "\n";
@@ -308,7 +308,7 @@ void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
         else
             out << (*material_ids)[i] << " ";
         out << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
-        unsigned nElemNodes (ele_vec[i]->getNBaseNodes());
+        unsigned nElemNodes (ele_vec[i]->getNumberOfBaseNodes());
         for(std::size_t j = 0; j < nElemNodes; ++j)
             out << ele_vec[i]->getNode(j)->getID() << " ";
         out << "\n";

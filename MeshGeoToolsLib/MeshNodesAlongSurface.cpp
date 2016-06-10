@@ -30,7 +30,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(
     _mesh(mesh), _sfc(sfc)
 {
     auto& mesh_nodes = _mesh.getNodes();
-    const std::size_t n_nodes (search_all_nodes ? _mesh.getNNodes() : _mesh.getNBaseNodes());
+    const std::size_t n_nodes (search_all_nodes ? _mesh.getNumberOfNodes() : _mesh.getNumberOfBaseNodes());
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++) {
         auto* node = mesh_nodes[i];

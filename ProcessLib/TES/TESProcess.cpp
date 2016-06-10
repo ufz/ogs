@@ -354,7 +354,7 @@ TESProcess<GlobalSetup>::computeVapourPartialPressure(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
@@ -388,7 +388,7 @@ TESProcess<GlobalSetup>::computeRelativeHumidity(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
@@ -427,7 +427,7 @@ TESProcess<GlobalSetup>::computeEquilibriumLoading(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {

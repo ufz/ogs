@@ -63,7 +63,7 @@ public:
     typedef QuadraticEdgeReturn EdgeReturn;
 
     /// Get the number of nodes for face i.
-    static unsigned getNFaceNodes(unsigned i);
+    static unsigned getNumberOfFaceNodes(unsigned i);
 
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);

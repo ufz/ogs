@@ -95,8 +95,8 @@ TEST_F(TestVtkMeshConverter, Conversion)
 {
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtu));
-    ASSERT_EQ(mesh->getNNodes(), vtu->GetNumberOfPoints());
-    ASSERT_EQ(mesh->getNElements(), vtu->GetNumberOfCells());
+    ASSERT_EQ(mesh->getNumberOfNodes(), vtu->GetNumberOfPoints());
+    ASSERT_EQ(mesh->getNumberOfElements(), vtu->GetNumberOfCells());
     ASSERT_EQ(mesh->getElement(0)->getCellType(), MeshLib::CellType::HEX8);
 
     auto meshProperties = mesh->getProperties();

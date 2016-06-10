@@ -185,7 +185,7 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
 
     std::size_t nTotalTriangles (0);
     for (std::size_t i=0; i<surfaces.size(); ++i)
-        nTotalTriangles += surfaces[i]->getNTriangles();
+        nTotalTriangles += surfaces[i]->getNumberOfTriangles();
     if (nTotalTriangles == nFacets)
         return true;
 
@@ -539,12 +539,12 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
     const std::size_t nSurfaces = (surfaces) ? surfaces->size() : 0;
     std::size_t nTotalTriangles (0);
     for (std::size_t i=0; i<nSurfaces; ++i)
-        nTotalTriangles += (*surfaces)[i]->getNTriangles();
+        nTotalTriangles += (*surfaces)[i]->getNumberOfTriangles();
     out << nTotalTriangles << " 1\n";
 
     for (std::size_t i=0; i<nSurfaces; ++i)
     {
-        const std::size_t nTriangles ((*surfaces)[i]->getNTriangles());
+        const std::size_t nTriangles ((*surfaces)[i]->getNumberOfTriangles());
         const std::size_t marker (i+1); // must NOT be 0!
         // the poly list
         for (std::size_t j=0; j<nTriangles; ++j)
@@ -605,7 +605,7 @@ bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
             out << i+1 << " " << attribute_points[i][0] << " " << attribute_points[i][1] << " " << attribute_points[i][2] << " " << 10*attribute_points[i].getID() << "\n";
     }
 
-    INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, mesh.getNElements());
+    INFO ("TetGenInterface::writeTetGenPoly() - %d points and %d surfaces successfully written.", nPoints, mesh.getNumberOfElements());
     out.close();
     return true;
 }
@@ -649,7 +649,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
         if (elements[i]->getDimension() < 3)
             continue;
 
-        const unsigned nFaces (elements[i]->getNNeighbors());
+        const unsigned nFaces (elements[i]->getNumberOfNeighbors());
         std::string const mat_id_str = (materialIds) ? std::to_string((*materialIds)[i]) : "";
         for (std::size_t j=0; j<nFaces; ++j)
         {
