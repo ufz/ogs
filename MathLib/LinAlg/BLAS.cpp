@@ -70,6 +70,11 @@ namespace MathLib { namespace BLAS
 
 // Vector
 
+void set(PETScVector& x, double const a)
+{
+    VecSet(x.getRawVector(), a);
+}
+
 void copy(PETScVector const& x, PETScVector& y)
 {
     if (!y.getRawVector()) y.shallowCopy(x);
@@ -219,6 +224,11 @@ namespace MathLib { namespace BLAS
 {
 
 // Vector
+
+void set(EigenVector const& x, double const a)
+{
+    x.getRawVector() = a;
+}
 
 void copy(EigenVector const& x, EigenVector& y)
 {
