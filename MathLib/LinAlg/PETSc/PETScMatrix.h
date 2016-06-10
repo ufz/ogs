@@ -83,7 +83,7 @@ class PETScMatrix
         }
 
         /// Get the number of columns.
-        PetscInt getNumberOfCols() const
+        PetscInt getNumberOfColumns() const
         {
             return _ncols;
         }
