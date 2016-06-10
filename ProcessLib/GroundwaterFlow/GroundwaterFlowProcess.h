@@ -53,14 +53,13 @@ public:
         if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
                     &Base::getTimeDiscretization()) != nullptr)
         {
-            ERR("GroundwaterFlowProcess can not be solved with the ForwardEuler"
+            OGS_FATAL("GroundwaterFlowProcess can not be solved with the ForwardEuler"
                 " time discretization scheme. Aborting");
             // Because the M matrix is not assembled. Thus, the linearized system
             // would be singular. The same applies to CrankNicolson with theta = 0.0,
             // but this case is not checked here.
             // Anyway, the GroundwaterFlowProcess shall be transferred to a simpler
             // ODESystemTag in the future.
-            std::abort();
         }
     }
 

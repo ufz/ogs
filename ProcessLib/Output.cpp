@@ -7,11 +7,11 @@
  *
  */
 
-#include<fstream>
 #include "Output.h"
 
-#include<cassert>
-#include<vector>
+#include <cassert>
+#include <fstream>
+#include <vector>
 
 #include <logog/include/logog.hpp>
 
@@ -69,9 +69,8 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
         }
 
         if (out->_repeats_each_steps.empty()) {
-            ERR("You have not given any pair (<repeat/>, <each_steps/>) that defines"
+            OGS_FATAL("You have not given any pair (<repeat/>, <each_steps/>) that defines"
                     " at which timesteps output shall be written. Aborting.");
-            std::abort();
         }
     }
     else
@@ -107,9 +106,8 @@ doOutputAlways(Process<GlobalSetup> const& process,
 {
     auto spd_it = _single_process_data.find(&process);
     if (spd_it == _single_process_data.end()) {
-        ERR("The given process is not contained in the output configuration."
+        OGS_FATAL("The given process is not contained in the output configuration."
             " Aborting.");
-        std::abort();
     }
     auto& spd = spd_it->second;
 

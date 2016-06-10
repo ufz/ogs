@@ -19,6 +19,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "LisVector.h"
 #include "LisCheck.h"
 
@@ -109,8 +110,7 @@ void LisMatrix::write(const std::string &filename) const
 {
     if (!_is_assembled)
     {
-        ERR("LisMatrix::write(): matrix not assembled.");
-        std::abort();
+        OGS_FATAL("LisMatrix::write(): matrix not assembled.");
     }
     lis_output_matrix(_AA, LIS_FMT_MM, const_cast<char*>(filename.c_str()));
 }
@@ -137,8 +137,7 @@ void LisMatrix::multiply(const LisVector &x, LisVector &y) const
 {
     if (!_is_assembled)
     {
-        ERR("LisMatrix::multiply(): matrix not assembled.");
-        std::abort();
+        OGS_FATAL("LisMatrix::multiply(): matrix not assembled.");
     }
     int ierr = lis_matvec(_AA, const_cast<LisVector*>(&x)->getRawVector(), y.getRawVector());
     checkLisError(ierr);

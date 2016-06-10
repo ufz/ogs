@@ -12,11 +12,13 @@
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
+
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-#include "BaseLib/ConfigTree.h"
 
 namespace ProcessLib
 {
@@ -48,26 +50,23 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
 
     if (!mesh.getProperties().hasPropertyVector(field_name))
     {
-        ERR("The required property %s does not exists in the mesh.",
+        OGS_FATAL("The required property %s does not exists in the mesh.",
             field_name.c_str());
-        std::abort();
     }
     auto const& property =
         mesh.getProperties().template getPropertyVector<double>(field_name);
     if (!property)
     {
-        ERR("The required property %s is not of the requested type.",
+        OGS_FATAL("The required property %s is not of the requested type.",
             field_name.c_str());
-        std::abort();
     }
 
     if (property->getNumberOfComponents() !=
         static_cast<std::size_t>(n_components))
     {
-        ERR("The required property %s has different number of components %d, "
+        OGS_FATAL("The required property %s has different number of components %d, "
             "expected %d.",
             field_name.c_str(), property->getNumberOfComponents(), n_components);
-        std::abort();
     }
     return std::unique_ptr<InitialCondition>(
         new MeshPropertyInitialCondition(*property));

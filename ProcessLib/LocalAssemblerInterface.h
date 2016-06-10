@@ -33,20 +33,18 @@ public:
     virtual void assembleJacobian(double const /*t*/,
                                   std::vector<double> const& /*local_x*/)
     {
-        ERR(
+        OGS_FATAL(
             "assembleJacobian function is not implemented in the local "
             "assembler.");
-        std::abort();
     }
 
     virtual void addJacobianToGlobal(NumLib::LocalToGlobalIndexMap::
                                          RowColumnIndices const& /*indices*/,
                                      GlobalMatrix& /*Jac*/) const
     {
-        ERR(
+        OGS_FATAL(
             "addJacobianToGlobal function is not implemented in the local "
             "assembler.");
-        std::abort();
     }
 
     virtual void preTimestep(std::vector<double> const& /*local_x*/,

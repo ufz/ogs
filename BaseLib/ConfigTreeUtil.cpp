@@ -7,10 +7,12 @@
  *
  */
 
+#include "ConfigTreeUtil.h"
+
 #include <boost/property_tree/xml_parser.hpp>
 #include <logog/include/logog.hpp>
 
-#include "ConfigTreeUtil.h"
+#include "Error.h"
 
 namespace BaseLib
 {
@@ -57,9 +59,8 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
                  boost::property_tree::xml_parser::no_comments |
                  boost::property_tree::xml_parser::trim_whitespace);
     } catch (boost::property_tree::xml_parser_error e) {
-        ERR("Error while parsing XML file `%s' at line %lu: %s.",
+        OGS_FATAL("Error while parsing XML file `%s' at line %lu: %s.",
             e.filename().c_str(), e.line(), e.message().c_str());
-        std::abort();
     }
 
     DBUG("Project configuration from file \'%s\' read.", filepath.c_str());
@@ -67,9 +68,8 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
     if (auto child = ptree.get_child_optional(toplevel_tag)) {
         return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
     } else {
-        ERR("Tag <%s> has not been found in file `%s'.",
+        OGS_FATAL("Tag <%s> has not been found in file `%s'.",
             toplevel_tag.c_str(), filepath.c_str());
-        std::abort();
     }
 }
 

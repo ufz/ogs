@@ -310,8 +310,7 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
                                           _ghosts_indices.end(), -global_index);
     if (ghost_index_it == _ghosts_indices.end())
     {
-        ERR("index %d not found in ghost_indices", -global_index);
-        std::abort();
+        OGS_FATAL("index %d not found in ghost_indices", -global_index);
     }
 
     // Using std::distance on a std::vector is O(1). As long as _ghost_indices

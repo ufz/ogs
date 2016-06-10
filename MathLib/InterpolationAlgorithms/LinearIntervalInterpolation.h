@@ -15,7 +15,7 @@
 #ifndef LINEARINTERVALINTERPOLATION_H_
 #define LINEARINTERVALINTERPOLATION_H_
 
-#include <stdexcept>
+#include "BaseLib/Error.h"
 
 namespace MathLib {
 
@@ -66,7 +66,7 @@ LinearIntervalInterpolation<NUMERIC_TYPE>::LinearIntervalInterpolation(NUMERIC_T
     _m (d-c), _n(0.0)
 {
     if (b == a) {
-        throw std::runtime_error("LinearIntervalInterpolation::LinearIntervalInterpolation: a == b, empty interval");
+        OGS_FATAL("LinearIntervalInterpolation::LinearIntervalInterpolation: a == b, empty interval");
     }
     _m /= (b-a);
     _n = c - _m * a;

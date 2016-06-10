@@ -10,6 +10,7 @@
 #include "ReactionCaOH2.h"
 #include <cassert>
 #include <logog/include/logog.hpp>
+#include "BaseLib/Error.h"
 #include "MaterialsLib/PhysicalConstant.h"
 #include "Adsorption.h"
 
@@ -40,9 +41,7 @@ ReactionCaOH2::getEnthalpy(const double, const double, const double) const
 double
 ReactionCaOH2::getReactionRate(const double, const double, const double, const double) const
 {
-    ERR("get_reaction_rate do not call directly");
-    std::abort();
-    return -1.0;
+    OGS_FATAL("get_reaction_rate do not call directly");
 }
 
 

@@ -14,6 +14,7 @@
 
 #include "Reaction.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/StringTools.h"
 
 namespace Adsorption
 {
@@ -36,9 +37,7 @@ public:
     double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
                              const double /*loading*/) const override
     {
-        ERR("Method getReactionRate() should never be called directly");
-        std::abort();
-        return 0.0;
+        OGS_FATAL("Method getReactionRate() should never be called directly");
     }
 
 private:

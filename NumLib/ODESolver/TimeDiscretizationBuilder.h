@@ -44,8 +44,7 @@ createTimeDiscretization(BaseLib::ConfigTree const& config)
         using ConcreteTD = BackwardDifferentiationFormula<Vector>;
         return T(new ConcreteTD(order));
     } else {
-        ERR("Unrecognized time discretization type `%s'", type.c_str());
-        std::abort();
+        OGS_FATAL("Unrecognized time discretization type `%s'", type.c_str());
     }
 }
 

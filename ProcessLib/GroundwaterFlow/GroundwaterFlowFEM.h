@@ -138,7 +138,7 @@ public:
             return _darcy_velocities[2];
         }
 
-        std::abort();
+        OGS_FATAL("");
     }
 
 private:

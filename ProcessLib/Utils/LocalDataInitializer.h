@@ -263,10 +263,9 @@ public:
                            mesh_item, num_local_dof, integration_order,
                            std::forward<ConstructorArgs>(args)...);
         } else {
-            ERR("You are trying to build a local assembler for an unknown mesh element type (%s)."
+            OGS_FATAL("You are trying to build a local assembler for an unknown mesh element type (%s)."
                 " Maybe you have disabled this mesh element type in your build configuration.",
                 type_idx.name());
-            std::abort();
         }
     }
 

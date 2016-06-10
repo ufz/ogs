@@ -125,7 +125,7 @@ public:
             return cache;
         }
 
-        std::abort();
+        OGS_FATAL("");
     }
 
     void interpolateNodalValuesToIntegrationPoints(

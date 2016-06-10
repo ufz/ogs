@@ -133,8 +133,7 @@ EigenLinearSolver::EigenLinearSolver(
         break;
     }
     case EigenOption::SolverType::INVALID:
-        ERR("Invalid Eigen linear solver type. Aborting.");
-        std::abort();
+        OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
     }
 }
 

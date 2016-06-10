@@ -35,8 +35,7 @@ struct ProcessOutput final
         {
             if (output_variables.find(out_var) != output_variables.cend())
             {
-                ERR("output variable `%s' specified more than once.", out_var.c_str());
-                std::abort();
+                OGS_FATAL("output variable `%s' specified more than once.", out_var.c_str());
             }
 
             auto pred = [&out_var](ProcessVariable const& pv) {
@@ -50,9 +49,8 @@ struct ProcessOutput final
             if (pcs_var == process_variables.cend()
                 && !secondary_variables.variableExists(out_var))
             {
-                ERR("Output variable `%s' is neither a process variable nor a"
+                OGS_FATAL("Output variable `%s' is neither a process variable nor a"
                     " secondary variable", out_var.c_str());
-                std::abort();
             }
 
             DBUG("adding output variable `%s'", out_var.c_str());

@@ -15,6 +15,7 @@
 #include <limits>
 #include <type_traits>
 #include <logog/include/logog.hpp>
+#include "BaseLib/Error.h"
 
 namespace MathLib
 {
@@ -62,9 +63,8 @@ public:
         } else if (detail::almost_zero(_fb)) {
             _a = _b;
         } else if (detail::same_sign(_fa, _fb)) {
-            ERR("Regula falsi cannot be done, because the function values"
+            OGS_FATAL("Regula falsi cannot be done, because the function values"
                 " at the interval ends have the same sign.");
-            std::abort();
         }
     }
 

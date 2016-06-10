@@ -15,10 +15,12 @@
 
 #include <logog/include/logog.hpp>
 
-#include "Surface.h"
-#include "Triangle.h"
+#include "BaseLib/Error.h"
 
 #include "MathLib/Point3d.h"
+
+#include "Surface.h"
+#include "Triangle.h"
 
 namespace GeoLib {
 
@@ -124,7 +126,7 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const*const sfc)
                 "grid.",
                 l, p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]
             );
-            std::abort();
+            OGS_FATAL("");
         }
     }
 }

@@ -13,6 +13,7 @@
 #include <iomanip>
 #include <limits>
 #include <logog/include/logog.hpp>
+#include "BaseLib/Error.h"
 
 namespace MeshLib
 {
@@ -25,8 +26,7 @@ void PVDFile::addVTUFile(const std::string &vtu_fname, double timestep)
 
     std::ofstream fh(_pvd_filename.c_str());
     if (!fh) {
-        ERR("could not open file `%s'", _pvd_filename.c_str());
-        std::abort();
+        OGS_FATAL("could not open file `%s'", _pvd_filename.c_str());
     }
 
     fh << std::setprecision(std::numeric_limits<double>::digits10);

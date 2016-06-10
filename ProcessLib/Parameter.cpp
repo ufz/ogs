@@ -12,6 +12,7 @@
 #include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 
 namespace ProcessLib
@@ -39,17 +40,15 @@ std::unique_ptr<ParameterBase> createMeshPropertyParameter(
 
     if (!mesh.getProperties().hasPropertyVector(field_name))
     {
-        ERR("The required property %s does not exists in the mesh.",
+        OGS_FATAL("The required property %s does not exists in the mesh.",
             field_name.c_str());
-        std::abort();
     }
     auto const& property =
         mesh.getProperties().template getPropertyVector<double>(field_name);
     if (!property)
     {
-        ERR("The required property %s is not of the requested type.",
+        OGS_FATAL("The required property %s is not of the requested type.",
             field_name.c_str());
-        std::abort();
     }
 
     return std::unique_ptr<ParameterBase>(

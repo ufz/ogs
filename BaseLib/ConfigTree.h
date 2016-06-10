@@ -496,7 +496,7 @@ public:
     ~ConfigTree();
 
     //! Default error callback function
-    //! Will print an error message and call std::abort()
+    //! Will throw std::runtime_error
     static void onerror(std::string const& filename, std::string const& path,
                         std::string const& message);
 
@@ -532,11 +532,7 @@ private:
 
     /*! Called if an error occurs. Will call the error callback.
      *
-     * This method only acts as a helper method.
-     *
-     * This method finally calls <tt>std::abort()</tt>. In order to prevent that,
-     * a custom error callback that breaks out of the normal control flow---e.g., by throwing
-     * an exception---must be provided.
+     * This method only acts as a helper method and throws std::runtime_error.
      */
 #if defined(_MSC_VER) && _MSC_VER < 1900
     // 1900 == MSCV 14.0 == Visual Studio 2015

@@ -21,6 +21,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "MeshSubset.h"
 
 namespace MeshLib
@@ -48,8 +49,7 @@ public:
     {
         if (!areMeshSubsetMeshesUnique())
         {
-            ERR("Mesh ids of input mesh subsets are not unique.");
-            std::abort();
+            OGS_FATAL("Mesh ids of input mesh subsets are not unique.");
         }
 
         _n_total_items = std::accumulate(first, last, 0u,
