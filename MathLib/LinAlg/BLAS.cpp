@@ -72,6 +72,7 @@ namespace MathLib { namespace BLAS
 
 void copy(PETScVector const& x, PETScVector& y)
 {
+    if (!y.getRawVector()) y.shallowCopy(x);
     VecCopy(x.getRawVector(), y.getRawVector());
 }
 
