@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 #include "../TestTools.h"
 
+#include "MathLib/LinAlg/BLAS.h"
+
 #if defined(USE_LIS)
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #elif defined(USE_PETSC)
@@ -28,6 +30,8 @@
 
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "NumLib/NumericsConfig.h"
+
+using namespace MathLib::BLAS;
 
 namespace
 {
@@ -50,15 +54,27 @@ void checkGlobalVectorInterface()
     x.add(0, 1.0);
     ASSERT_EQ(2.0, x.get(0));
 
+    T_VECTOR y(x);
+    ASSERT_EQ(2.0, y.get(0));
+    ASSERT_EQ(0.0, y.get(1));
+    // y += x;
+    axpy(y, 1., x);
+
+    ASSERT_EQ(4.0, y.get(0));
+    //y -= x;
+    axpy(y, -1., x);
+    ASSERT_EQ(2.0, y.get(0));
+    //y = 1.0;
+    set(y, 1.0);
+    ASSERT_EQ(1.0, y.get(0));
+    // y = x;
+    copy(x, y);
+    ASSERT_EQ(2.0, y.get(0));
+
     std::vector<double> local_vec(2, 1.0);
     std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 0;
     vec_pos[1] = 3;
-
-    T_VECTOR y(x);
-    ASSERT_EQ(2.0, y.get(0));
-    ASSERT_EQ(0.0, y.get(1));
-
     y.add(vec_pos, local_vec);
     ASSERT_EQ(3.0, y.get(0));
     ASSERT_EQ(0.0, y.get(1));
@@ -85,10 +101,26 @@ void checkGlobalVectorInterfacePETSc()
     //x.get(0) is expensive, only get local value. Use it for test purpose
     ASSERT_EQ(.0, x.get(r0));
 
+    set(x, 10.);
+
+
     // Value of x is not copied to y
     const bool deep_copy = false;
     T_VECTOR y(x, deep_copy);
     ASSERT_EQ(0, y.get(r0));
+
+    set(y, 10.0);
+    ASSERT_EQ(10, y.get(r0));
+
+    // y += x
+    axpy(y, 1., x);
+    ASSERT_EQ(20, y.get(r0));
+    ASSERT_EQ(80., norm2(y));
+
+    // y -= x
+    axpy(y, -1., x);
+    ASSERT_EQ(10, y.get(r0));
+    ASSERT_EQ(40., norm2(y));
 
     std::vector<double> local_vec(2, 10.0);
     std::vector<GlobalIndexType> vec_pos(2);
@@ -97,6 +129,10 @@ void checkGlobalVectorInterfacePETSc()
     vec_pos[1] = r0+1; // any index in [0,15]
 
     y.add(vec_pos, local_vec);
+
+    double normy = std::sqrt(6.0*400+10.0*100);
+
+    ASSERT_NEAR(0.0, normy-norm2(y), 1.e-10);
 
     double x0[16];
     double z[] =
@@ -163,6 +199,7 @@ void checkGlobalVectorInterfacePETSc()
     // Deep copy
     MathLib::finalizeVectorAssembly(x_fixed_p);
     T_VECTOR x_deep_copied(x_fixed_p);
+    ASSERT_NEAR(sqrt(3.0*5), norm2(x_deep_copied), 1.e-10);
 
     // -----------------------------------------------------------------
     // Vector with ghost entries
