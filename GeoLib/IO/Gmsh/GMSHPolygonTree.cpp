@@ -242,7 +242,7 @@ void GMSHPolygonTree::initMeshDensityStrategy()
         }
 
         // give collected points to the mesh density strategy
-        _mesh_density_strategy->init(pnts);
+        _mesh_density_strategy->initialize(pnts);
         // insert constraints
         dynamic_cast<GMSHAdaptiveMeshDensity*>(_mesh_density_strategy)->addPoints(_stations);
         std::vector<GeoLib::Point const*> stations;

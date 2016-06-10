@@ -84,7 +84,7 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
 
 template<typename GlobalSetup>
 void Output<GlobalSetup>::
-init(typename Output<GlobalSetup>::ProcessIter first,
+initialize(typename Output<GlobalSetup>::ProcessIter first,
      typename Output<GlobalSetup>::ProcessIter last)
 {
     for (unsigned pcs_idx = 0; first != last; ++first, ++pcs_idx)

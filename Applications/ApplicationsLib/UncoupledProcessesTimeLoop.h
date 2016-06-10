@@ -369,7 +369,7 @@ loop(ProjectData& project)
     auto per_process_data = initInternalData(project);
 
     auto& out_ctrl = project.getOutputControl();
-    out_ctrl.init(project.processesBegin(), project.processesEnd());
+    out_ctrl.initialize(project.processesBegin(), project.processesEnd());
 
     auto const t0 = _timestepper->getTimeStep().current(); // time of the IC
 

@@ -34,7 +34,7 @@ public:
                         ::const_iterator;
 
     //! Opens a PVD file for each process.
-    void init(ProcessIter first, ProcessIter last);
+    void initialize(ProcessIter first, ProcessIter last);
 
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
