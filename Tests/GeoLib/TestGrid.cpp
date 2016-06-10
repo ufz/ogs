@@ -23,7 +23,7 @@
 TEST(GeoLib, InsertZeroPointsInGrid)
 {
     std::vector<GeoLib::Point*> pnts;
-    ASSERT_DEATH(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()), "");
+    ASSERT_THROW(GeoLib::Grid<GeoLib::Point> grid(pnts.begin(), pnts.end()), std::runtime_error);
 }
 
 TEST(GeoLib, InsertOnePointInGrid)

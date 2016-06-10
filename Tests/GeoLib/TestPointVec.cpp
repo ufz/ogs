@@ -43,14 +43,14 @@ protected:
 // Testing nullptr input vector.
 TEST_F(PointVecTest, TestPointVecCtorNullptr)
 {
-    ASSERT_DEATH(GeoLib::PointVec(name, nullptr), "");
+    ASSERT_THROW(GeoLib::PointVec(name, nullptr), std::runtime_error);
 }
 
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
     auto ps_ptr = std::unique_ptr<VectorOfPoints>(new VectorOfPoints);
-    ASSERT_DEATH(GeoLib::PointVec(name, std::move(ps_ptr)), "");
+    ASSERT_THROW(GeoLib::PointVec(name, std::move(ps_ptr)), std::runtime_error);
 }
 
 // Testing input vector with single point.

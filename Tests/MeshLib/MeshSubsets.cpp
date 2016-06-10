@@ -33,8 +33,8 @@ TEST(MeshLibMeshSubsets, UniqueMeshIds)
     // EXPECT_NO_DEATH
     MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 2);
 
-    EXPECT_DEATH(MeshSubsets(&mesh_subsets[1], &mesh_subsets[1] + 2), "");
-    EXPECT_DEATH(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 3), "");
+    EXPECT_THROW(MeshSubsets(&mesh_subsets[1], &mesh_subsets[1] + 2), std::runtime_error);
+    EXPECT_THROW(MeshSubsets(&mesh_subsets[0], &mesh_subsets[0] + 3), std::runtime_error);
 }
 
 
