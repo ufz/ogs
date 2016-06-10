@@ -338,24 +338,6 @@ public:
      */
     //!\{
 
-    /*! Get parameter \c param from the configuration tree.
-     *
-     * \return the subtree representing the requested parameter
-     *
-     * \pre \c param must not have been read before from this ConfigTree.
-     */
-    ConfigTree
-    getConfParam(std::string const& param) const;
-
-    /*! Get parameter \c param from the configuration tree if present.
-     *
-     * \return the subtree representing the requested parameter
-     *
-     * \pre \c param must not have been read before from this ConfigTree.
-     */
-    boost::optional<ConfigTree>
-    getConfParamOptional(std::string const& param) const;
-
     /*! Fetches all parameters with name \c param from the current level of the tree.
      *
      * The return value is suitable to be used with range-base for-loops.

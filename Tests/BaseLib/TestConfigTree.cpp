@@ -157,27 +157,27 @@ TEST(BaseLibConfigTree, Get)
 
             // Testing the getConfParam...() (non-template) / getValue() combination
 
-            auto bool1 = sub.getConfParam("bool1");
+            auto bool1 = sub.getConfSubtree("bool1");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_FALSE(bool1.getValue<bool>());
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_ANY_THROW(bool1.getValue<bool>()); // getting data twice
             EXPECT_ERR_WARN(cbs, true, false);
 
-            if (auto bool2 = sub.getConfParamOptional("bool2")) {
+            if (auto bool2 = sub.getConfSubtreeOptional("bool2")) {
                 EXPECT_ERR_WARN(cbs, false, false);
                 EXPECT_FALSE(bool2->getValue<bool>());
             }
             EXPECT_ERR_WARN(cbs, false, false);
 
-            if (auto bool3 = sub.getConfParamOptional("bool3")) {
+            if (auto bool3 = sub.getConfSubtreeOptional("bool3")) {
                 EXPECT_ERR_WARN(cbs, false, false);
                 EXPECT_ANY_THROW(bool3->getValue<bool>());
                 EXPECT_ERR_WARN(cbs, true, false); // error because of no data
             }
             EXPECT_ERR_WARN(cbs, false, false);
 
-            EXPECT_FALSE(sub.getConfParamOptional("bool4")); // optional value not existent
+            EXPECT_FALSE(sub.getConfSubtreeOptional("bool4")); // optional value not existent
             EXPECT_ERR_WARN(cbs, false, false);
 
 
@@ -206,7 +206,7 @@ TEST(BaseLibConfigTree, Get)
 
         // Testing attributes
         {
-            auto z = conf.getConfParam("z");
+            auto z = conf.getConfSubtree("z");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
             EXPECT_ERR_WARN(cbs, false, false);
@@ -272,7 +272,7 @@ TEST(BaseLibConfigTree, IncompleteParse)
         EXPECT_ERR_WARN(cbs, false, true); // attribute "x" has not been read
 
         {
-            auto pt2 = conf.getConfParam("pt2");
+            auto pt2 = conf.getConfSubtree("pt2");
             EXPECT_EQ(0.5, pt2.getConfAttribute<double>("x"));
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(1.0, pt2.getConfAttribute<double>("y"));
@@ -521,11 +521,6 @@ TEST(BaseLibConfigTree, BadKeynames)
             EXPECT_ANY_THROW(conf.getConfParamOptional<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_ANY_THROW(conf.getConfParamList<int>(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            EXPECT_ANY_THROW(conf.getConfParam(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfParamOptional(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
             EXPECT_ANY_THROW(conf.peekConfParam<int>(tag));

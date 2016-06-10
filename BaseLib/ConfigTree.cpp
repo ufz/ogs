@@ -85,26 +85,6 @@ operator=(ConfigTree&& other)
     return *this;
 }
 
-ConfigTree
-ConfigTree::
-getConfParam(std::string const& root) const
-{
-    auto ct = getConfSubtree(root);
-    if (ct.hasChildren())
-        error("Requested parameter <" + root + "> actually is a subtree.");
-    return ct;
-}
-
-boost::optional<ConfigTree>
-ConfigTree::
-getConfParamOptional(std::string const& root) const
-{
-    auto ct = getConfSubtreeOptional(root);
-    if (ct && ct->hasChildren())
-        error("Requested parameter <" + root + "> actually is a subtree.");
-    return ct;
-}
-
 Range<ConfigTree::ParameterIterator>
 ConfigTree::
 getConfParamList(const std::string &param) const
