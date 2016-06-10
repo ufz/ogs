@@ -16,7 +16,9 @@
 
 #include <Eigen/Core>
 
-namespace MathLib { namespace BLAS
+namespace MathLib
+{
+namespace BLAS
 {
 
 // Explicit specialization
@@ -70,7 +72,7 @@ namespace MathLib { namespace BLAS
 
 void copy(PETScVector const& x, PETScVector& y)
 {
-    y = x;
+    VecCopy(x.getRawVector(), y.getRawVector());
 }
 
 void scale(PETScVector& x, double const a)
@@ -113,7 +115,9 @@ void componentwiseDivide(PETScVector& w,
 template<>
 double norm1(PETScVector const& x)
 {
-    return x.getNorm(MathLib::VecNormType::NORM1);
+    PetscScalar norm = 0.;
+    VecNorm(x.getRawVector(), NORM_1, &norm);
+    return norm;
 }
 
 // Explicit specialization
@@ -121,7 +125,9 @@ double norm1(PETScVector const& x)
 template<>
 double norm2(PETScVector const& x)
 {
-    return x.getNorm(MathLib::VecNormType::NORM2);
+    PetscScalar norm = 0.;
+    VecNorm(x.getRawVector(), NORM_2, &norm);
+    return norm;
 }
 
 // Explicit specialization
@@ -129,7 +135,9 @@ double norm2(PETScVector const& x)
 template<>
 double normMax(PETScVector const& x)
 {
-    return x.getNorm(MathLib::VecNormType::INFINITY_N);
+    PetscScalar norm = 0.;
+    VecNorm(x.getRawVector(), NORM_INFINITY, &norm);
+    return norm;
 }
 
 
@@ -218,7 +226,7 @@ void copy(EigenVector const& x, EigenVector& y)
 
 void scale(EigenVector& x, double const a)
 {
-    x *= a;
+    x.getRawVector() *= a;
 }
 
 // y = a*y + X
@@ -312,7 +320,7 @@ void axpy(EigenMatrix& Y, double const a, EigenMatrix const& X)
 void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y)
 {
     assert(&x != &y);
-    A.multiply(x, y);
+    y.getRawVector() = A.getRawMatrix() * x.getRawVector();
 }
 
 // v3 = A*v1 + v2

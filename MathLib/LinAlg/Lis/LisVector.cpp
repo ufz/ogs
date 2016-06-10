@@ -44,28 +44,6 @@ LisVector::~LisVector()
     lis_vector_destroy(_vec);
 }
 
-LisVector& LisVector::operator=(const LisVector& src)
-{
-    lis_vector_copy(src._vec, _vec);
-    return *this;
-}
-
-void LisVector::operator+=(const LisVector& v)
-{
-    lis_vector_axpy(1.0, v._vec, _vec);
-}
-
-void LisVector::operator-=(const LisVector& v)
-{
-    lis_vector_axpy(-1.0, v._vec, _vec);
-}
-
-LisVector& LisVector::operator=(double v)
-{
-    lis_vector_set_all(v, _vec);
-    return *this;
-}
-
 std::size_t LisVector::size() const
 {
     IndexType dummy;

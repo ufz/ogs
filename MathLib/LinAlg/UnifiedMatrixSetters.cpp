@@ -89,9 +89,27 @@ void setVector(Eigen::VectorXd& v, MatrixVectorTraits<Eigen::VectorXd>::Index co
 namespace MathLib
 {
 
-double norm(PETScVector const& x)
+double norm(PETScVector const& x, MathLib::VecNormType nmtype = MathLib::VecNormType::NORM2)
 {
-    return x.getNorm();
+    NormType petsc_norm = NORM_1;
+    switch(nmtype)
+    {
+        case MathLib::VecNormType::NORM1:
+            petsc_norm = NORM_1;
+            break;
+        case MathLib::VecNormType::NORM2:
+            petsc_norm = NORM_2;
+            break;
+        case MathLib::VecNormType::INFINITY_N:
+            petsc_norm = NORM_INFINITY;
+            break;
+        default:
+            break;
+    }
+
+    PetscScalar norm = 0.;
+    VecNorm(x.getRawVector(), petsc_norm, &norm);
+    return norm;
 }
 
 void setVector(PETScVector& v,

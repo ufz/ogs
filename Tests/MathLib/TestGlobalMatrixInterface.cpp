@@ -94,24 +94,12 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     MathLib::finalizeMatrixAssembly(m);
 
-    // Multiply by a vector
-    v = 1.;
-    const bool deep_copy = false;
-    T_VECTOR y(v, deep_copy);
-    m.multiply(v, y);
-
-    ASSERT_EQ(sqrt(3*(3*3 + 7*7)), y.getNorm());
-
     // set a value
     m.set(2 * mrank, 2 * mrank, 5.0);
     MathLib::finalizeMatrixAssembly(m);
     // add a value
     m.add(2 * mrank+1, 2 * mrank+1, 5.0);
     MathLib::finalizeMatrixAssembly(m);
-    m.multiply(v, y);
-
-    ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), y.getNorm());
-
 }
 
 // Rectanglular matrix
@@ -154,12 +142,6 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     MathLib::finalizeMatrixAssembly(m);
 
-    // Multiply by a vector
-    v = 1.;
-    T_VECTOR y(m.getNumberOfRows());
-    m.multiply(v, y);
-
-    ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);
 }
 
 #endif // end of: ifdef USE_PETSC // or MPI

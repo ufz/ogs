@@ -114,12 +114,6 @@ class PETScVector
         }
 
         /*!
-          Get norm of vector
-          \param nmtype Norm type, default Euclidean norm
-        */
-        PetscScalar getNorm(const MathLib::VecNormType nmtype = MathLib::VecNormType::NORM2) const;
-
-        /*!
            Insert a single entry with value.
            \param i     Entry index
            \param value Entry value
@@ -212,42 +206,13 @@ class PETScVector
             return _v;
         }
 
-        /// Initialize the vector with a constant value
-        void operator = (const PetscScalar val)
-        {
-            VecSet(_v, val);
-        }
-
         // TODO preliminary
-        void setZero() { *this = 0.0; }
-
-        /// Overloaded operator: assign
-        PETScVector& operator = (const PETScVector &v_in)
-        {
-            if (!_v) shallowCopy(v_in);
-            VecCopy(v_in._v, _v);
-
-            return *this;
-        }
+        void setZero() { VecSet(_v, 0.0); }
 
         /// Disallow moving.
         /// \todo This operator should be implemented properly when doing a
         ///       general cleanup of all matrix and vector classes.
         PETScVector& operator = (PETScVector &&) = delete;
-
-        ///  Overloaded operator: add
-        void operator += (const PETScVector& v_in)
-        {
-            if (!_v) shallowCopy(v_in);
-            VecAXPY(_v, 1.0, v_in._v);
-        }
-
-        ///  Overloaded operator: subtract
-        void operator -= (const PETScVector& v_in)
-        {
-            if (!_v) shallowCopy(v_in);
-            VecAXPY(_v, -1.0, v_in._v);
-        }
 
         //! Exposes the underlying PETSc vector.
         PETSc_Vec getRawVector() { return _v; }

@@ -118,9 +118,6 @@ public:
     /// return a raw Lis matrix object
     LIS_MATRIX& getRawMatrix() { return _AA; }
 
-    /// y = mat * x
-    void multiply(const LisVector &x, LisVector &y) const;
-
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions.
     template<class T_DENSE_MATRIX>
