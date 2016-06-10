@@ -232,12 +232,12 @@ std::unique_ptr<UncoupledProcessesTimeLoop<Matrix, Vector> >
 createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
 {
     //! \ogs_file_param{prj__time_stepping__type}
-    auto const type = conf.peekConfParam<std::string>("type");
+    auto const type = conf.peekParameter<std::string>("type");
 
     std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
 
     if (type == "SingleStep") {
-        conf.ignoreConfParam("type");
+        conf.ignoreParameter("type");
         timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
     } else if (type == "FixedTimeStepping") {
         timestepper = NumLib::FixedTimeStepping::newInstance(conf);

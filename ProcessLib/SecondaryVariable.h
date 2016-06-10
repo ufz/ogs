@@ -116,7 +116,7 @@ public:
         // read which variables are defined in the config
         for (auto const& tag_name : tag_names) {
             //! \ogs_file_special
-            if (auto var_name = config->getConfParamOptional<std::string>(tag_name))
+            if (auto var_name = config->getParameterOptional<std::string>(tag_name))
             {
                 // TODO check primary vars, too
                 BaseLib::insertIfKeyValueUniqueElseError(

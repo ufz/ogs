@@ -20,9 +20,9 @@ std::unique_ptr<ParameterBase> createConstParameter(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{parameter__type}
-    config.checkConfParam("type", "Constant");
+    config.checkParameter("type", "Constant");
     //! \ogs_file_param{parameter__Constant__value}
-    auto value = config.getConfParam<double>("value");
+    auto value = config.getParameter<double>("value");
     DBUG("Using value %g", value);
 
     return std::unique_ptr<ParameterBase>(new ConstParameter<double>(value));
@@ -32,9 +32,9 @@ std::unique_ptr<ParameterBase> createMeshPropertyParameter(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{parameter__type}
-    config.checkConfParam("type", "MeshProperty");
+    config.checkParameter("type", "MeshProperty");
     //! \ogs_file_param{parameter__MeshProperty__field_name}
-    auto field_name = config.getConfParam<std::string>("field_name");
+    auto field_name = config.getParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
     if (!mesh.getProperties().hasPropertyVector(field_name))

@@ -155,7 +155,7 @@ createGroundwaterFlowProcess(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{process__type}
-    config.checkConfParam("type", "GROUNDWATER_FLOW");
+    config.checkParameter("type", "GROUNDWATER_FLOW");
 
     DBUG("Create GroundwaterFlowProcess.");
 
@@ -182,7 +182,7 @@ createGroundwaterFlowProcess(
 
     SecondaryVariableCollection<typename GlobalSetup::VectorType> secondary_variables {
         //! \ogs_file_param{process__secondary_variables}
-        config.getConfSubtreeOptional("secondary_variables"),
+        config.getSubtreeOptional("secondary_variables"),
         {
             //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_x}
             "darcy_velocity_x",
@@ -195,7 +195,7 @@ createGroundwaterFlowProcess(
 
     ProcessOutput<typename GlobalSetup::VectorType>
         //! \ogs_file_param{process__output}
-        process_output{config.getConfSubtree("output"),
+        process_output{config.getSubtree("output"),
                 process_variables, secondary_variables};
 
     return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{

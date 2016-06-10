@@ -87,7 +87,7 @@ operator=(ConfigTree&& other)
 
 Range<ConfigTree::ParameterIterator>
 ConfigTree::
-getConfParamList(const std::string &param) const
+getParameterList(const std::string &param) const
 {
     checkUnique(param);
     markVisited(param, Attr::TAG, true);
@@ -101,9 +101,9 @@ getConfParamList(const std::string &param) const
 
 ConfigTree
 ConfigTree::
-getConfSubtree(std::string const& root) const
+getSubtree(std::string const& root) const
 {
-    if (auto t = getConfSubtreeOptional(root)) {
+    if (auto t = getSubtreeOptional(root)) {
         return std::move(*t);
     } else {
         error("Key <" + root + "> has not been found.");
@@ -112,7 +112,7 @@ getConfSubtree(std::string const& root) const
 
 boost::optional<ConfigTree>
 ConfigTree::
-getConfSubtreeOptional(std::string const& root) const
+getSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
 
@@ -127,7 +127,7 @@ getConfSubtreeOptional(std::string const& root) const
 
 Range<ConfigTree::SubtreeIterator>
 ConfigTree::
-getConfSubtreeList(std::string const& root) const
+getSubtreeList(std::string const& root) const
 {
     checkUnique(root);
     markVisited(root, Attr::TAG, true);
@@ -139,7 +139,7 @@ getConfSubtreeList(std::string const& root) const
                 SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTree::ignoreConfParam(const std::string &param) const
+void ConfigTree::ignoreParameter(const std::string &param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -147,7 +147,7 @@ void ConfigTree::ignoreConfParam(const std::string &param) const
     markVisited(param, Attr::TAG, peek_only);
 }
 
-void ConfigTree::ignoreConfAttribute(const std::string &attr) const
+void ConfigTree::ignoreAttribute(const std::string &attr) const
 {
     checkUniqueAttr(attr);
 
@@ -158,7 +158,7 @@ void ConfigTree::ignoreConfAttribute(const std::string &attr) const
     markVisited(attr, Attr::ATTR, peek_only);
 }
 
-void ConfigTree::ignoreConfParamAll(const std::string &param) const
+void ConfigTree::ignoreParameterAll(const std::string &param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, Attr::TAG, true);

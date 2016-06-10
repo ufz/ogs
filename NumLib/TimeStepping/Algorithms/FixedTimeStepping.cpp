@@ -36,14 +36,14 @@ std::unique_ptr<ITimeStepAlgorithm>
 FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_stepping__type}
-    config.checkConfParam("type", "FixedTimeStepping");
+    config.checkParameter("type", "FixedTimeStepping");
 
     //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__t_initial}
-    auto const t_initial = config.getConfParam<double>("t_initial");
+    auto const t_initial = config.getParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__t_end}
-    auto const t_end     = config.getConfParam<double>("t_end");
+    auto const t_end     = config.getParameter<double>("t_end");
     //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__timesteps}
-    auto const delta_ts  = config.getConfSubtree("timesteps");
+    auto const delta_ts  = config.getSubtree("timesteps");
 
     std::vector<double> timesteps;
     double t_curr = t_initial;
@@ -51,7 +51,7 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
 
     // TODO: consider adding call "listNonEmpty" to config tree
     //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__timesteps__pair}
-    auto const range = delta_ts.getConfSubtreeList("pair");
+    auto const range = delta_ts.getSubtreeList("pair");
     if (range.begin() == range.end()) {
         ERR("no timesteps have been given");
         std::abort();
@@ -59,9 +59,9 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
     for (auto const pair : range)
     {
         //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__timesteps__pair__repeat}
-        auto const repeat = pair.getConfParam<std::size_t>("repeat");
+        auto const repeat = pair.getParameter<std::size_t>("repeat");
         //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
-        delta_t           = pair.getConfParam<double>("delta_t");
+        delta_t           = pair.getParameter<double>("delta_t");
 
         if (repeat == 0) {
             ERR("<repeat> is zero.");

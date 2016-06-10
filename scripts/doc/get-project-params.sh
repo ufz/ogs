@@ -27,13 +27,13 @@ cat <<"EOF" \
 ^\s*//! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
 ^\s*//! \\ogs_file_special$
 ^\s*//! \\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\?$
-checkConfParam.*)
-getConfAttribute.*)
-getConfParam.*)
-getConfSubtree.*)
-ignoreConfAttribute.*)
-ignoreConfParam.*)
-peekConfParam.*)
+checkParameter.*)
+getAttribute.*)
+getParameter.*)
+getSubtree.*)
+ignoreAttribute.*)
+ignoreParameter.*)
+peekParameter.*)
 EOF
 
 # format as table:

@@ -38,12 +38,12 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
         {
             if (auto const parameters =
                 //! \ogs_file_param{linear_solver__petsc__parameters}
-                subtree->getConfParamOptional<std::string>("parameters")) {
+                subtree->getParameterOptional<std::string>("parameters")) {
                 petsc_options = *parameters;
             }
 
             //! \ogs_file_param{linear_solver__petsc__prefix}
-            if (auto const pre = subtree->getConfParamOptional<std::string>("prefix")) {
+            if (auto const pre = subtree->getParameterOptional<std::string>("prefix")) {
                 if (!pre->empty())
                     prefix = *pre + "_";
             }

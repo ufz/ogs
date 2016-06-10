@@ -33,9 +33,9 @@ private:
 template<typename T>
 T
 ConfigTree::
-getConfParam(std::string const& param) const
+getParameter(std::string const& param) const
 {
-    if (auto p = getConfParamOptional<T>(param))
+    if (auto p = getParameterOptional<T>(param))
         return *p;
 
     error("Key <" + param + "> has not been found");
@@ -44,37 +44,37 @@ getConfParam(std::string const& param) const
 template<typename T>
 T
 ConfigTree::
-getConfParam(std::string const& param, T const& default_value) const
+getParameter(std::string const& param, T const& default_value) const
 {
-    if (auto p = getConfParamOptional<T>(param))
+    if (auto p = getParameterOptional<T>(param))
         return *p;
 
     return default_value;
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfParamOptional(
+boost::optional<T> ConfigTree::getParameterOptional(
     std::string const& param) const
 {
     checkUnique(param);
 
-    return getConfParamOptionalImpl(param, static_cast<T*>(nullptr));
+    return getParameterOptionalImpl(param, static_cast<T*>(nullptr));
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfParamOptionalImpl(
+boost::optional<T> ConfigTree::getParameterOptionalImpl(
     std::string const& param, T*) const
 {
-    if (auto p = getConfSubtreeOptional(param)) return p->getValue<T>();
+    if (auto p = getSubtreeOptional(param)) return p->getValue<T>();
 
     return boost::none;
 }
 
 template <typename T>
-boost::optional<std::vector<T>> ConfigTree::getConfParamOptionalImpl(
+boost::optional<std::vector<T>> ConfigTree::getParameterOptionalImpl(
     std::string const& param, std::vector<T>*) const
 {
-    if (auto p = getConfSubtreeOptional(param))
+    if (auto p = getSubtreeOptional(param))
     {
         std::istringstream sstr{p->getValue<std::string>()};
         std::vector<T> result;
@@ -101,7 +101,7 @@ boost::optional<std::vector<T>> ConfigTree::getConfParamOptionalImpl(
 template<typename T>
 Range<ConfigTree::ValueIterator<T> >
 ConfigTree::
-getConfParamList(std::string const& param) const
+getParameterList(std::string const& param) const
 {
     checkUnique(param);
     markVisited<T>(param, Attr::TAG, true);
@@ -115,7 +115,7 @@ getConfParamList(std::string const& param) const
 template<typename T>
 T
 ConfigTree::
-peekConfParam(std::string const& param) const
+peekParameter(std::string const& param) const
 {
     checkKeyname(param);
 
@@ -134,9 +134,9 @@ peekConfParam(std::string const& param) const
 template<typename T>
 void
 ConfigTree::
-checkConfParam(std::string const& param, T const& value) const
+checkParameter(std::string const& param, T const& value) const
 {
-    if (getConfParam<T>(param) != value) {
+    if (getParameter<T>(param) != value) {
         error("The value of key <" + param + "> is not the expected one.");
     }
 }
@@ -144,9 +144,9 @@ checkConfParam(std::string const& param, T const& value) const
 template<typename Ch>
 void
 ConfigTree::
-checkConfParam(std::string const& param, Ch const* value) const
+checkParameter(std::string const& param, Ch const* value) const
 {
-    if (getConfParam<std::string>(param) != value) {
+    if (getParameter<std::string>(param) != value) {
         error("The value of key <" + param + "> is not the expected one.");
     }
 }
@@ -173,9 +173,9 @@ getValue() const
 template<typename T>
 T
 ConfigTree::
-getConfAttribute(std::string const& attr) const
+getAttribute(std::string const& attr) const
 {
-    if (auto a = getConfAttributeOptional<T>(attr))
+    if (auto a = getAttributeOptional<T>(attr))
         return *a;
 
     error("Did not find XML attribute with name \"" + attr + "\".");
@@ -184,7 +184,7 @@ getConfAttribute(std::string const& attr) const
 template<typename T>
 boost::optional<T>
 ConfigTree::
-getConfAttributeOptional(std::string const& attr) const
+getAttributeOptional(std::string const& attr) const
 {
     checkUniqueAttr(attr);
     auto& ct = markVisited<T>(attr, Attr::ATTR, true);

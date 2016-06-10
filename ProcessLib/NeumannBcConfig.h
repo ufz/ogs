@@ -49,10 +49,10 @@ public:
     {
         DBUG("Constructing NeumannBcConfig from config.");
         //! \ogs_file_param{boundary_condition__type}
-        config.checkConfParam("type", "UniformNeumann");
+        config.checkParameter("type", "UniformNeumann");
 
         //! \ogs_file_param{boundary_condition__UniformNeumann__value}
-        double const value = config.getConfParam<double>("value");
+        double const value = config.getParameter<double>("value");
         DBUG("Using value %g", value);
 
         _function = new MathLib::ConstantFunction<double>(value);

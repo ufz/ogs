@@ -25,7 +25,7 @@ createTimeDiscretization(BaseLib::ConfigTree const& config)
     using T = std::unique_ptr<TimeDiscretization<Vector> >;
 
     //! \ogs_file_param{process__time_discretization__type}
-    auto const type = config.getConfParam<std::string>("type");
+    auto const type = config.getParameter<std::string>("type");
 
     if (type == "BackwardEuler") {
         using ConcreteTD = BackwardEuler<Vector>;
@@ -35,12 +35,12 @@ createTimeDiscretization(BaseLib::ConfigTree const& config)
         return T(new ConcreteTD);
     } else if (type == "CrankNicolson") {
         //! \ogs_file_param{process__time_discretization__CrankNicolson__theta}
-        auto const theta = config.getConfParam<double>("theta");
+        auto const theta = config.getParameter<double>("theta");
         using ConcreteTD = CrankNicolson<Vector>;
         return T(new ConcreteTD(theta));
     } else if (type == "BackwardDifferentiationFormula") {
         //! \ogs_file_param{process__time_discretization__BackwardDifferentiationFormula__order}
-        auto const order = config.getConfParam<unsigned>("order");
+        auto const order = config.getParameter<unsigned>("order");
         using ConcreteTD = BackwardDifferentiationFormula<Vector>;
         return T(new ConcreteTD(order));
     } else {

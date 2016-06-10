@@ -116,7 +116,7 @@ std::unique_ptr<TESProcess<GlobalSetup>> createTESProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
     BaseLib::ConfigTree const& config)
 {
-    config.checkConfParam("type", "TES");
+    config.checkParameter("type", "TES");
 
     DBUG("Create TESProcess.");
 
@@ -126,14 +126,14 @@ std::unique_ptr<TESProcess<GlobalSetup>> createTESProcess(
 
     SecondaryVariableCollection<typename GlobalSetup::VectorType>
         secondary_variables{
-            config.getConfSubtreeOptional("secondary_variables"),
+            config.getSubtreeOptional("secondary_variables"),
             {"solid_density", "reaction_rate", "velocity_x", "velocity_y",
              "velocity_z", "loading", "reaction_damping_factor",
              "vapour_partial_pressure", "relative_humidity",
              "equilibrium_loading"}};
 
     ProcessOutput<typename GlobalSetup::VectorType> process_output{
-        config.getConfSubtree("output"), process_variables,
+        config.getSubtree("output"), process_variables,
         secondary_variables};
 
     return std::unique_ptr<TESProcess<GlobalSetup>>{new TESProcess<GlobalSetup>{

@@ -373,7 +373,7 @@ Parameter<ParameterArgs...>& findParameter(
 {
     // Find parameter name in process config.
     //! \ogs_file_special
-    auto const name = process_config.getConfParam<std::string>(tag);
+    auto const name = process_config.getParameter<std::string>(tag);
 
     // Find corresponding parameter by name.
     auto const parameter_it =

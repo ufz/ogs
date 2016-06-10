@@ -70,7 +70,7 @@ template<typename Iterator> class Range;
  * existing configuration parameters from the source code.
  *
  * This class maintains a read counter for each parameter accessed through any of its methods.
- * Read counters are increased with every read (the only exception being the peekConfParam() method).
+ * Read counters are increased with every read (the only exception being the peekParameter() method).
  * The destructor finally decreases the read counter for every tag/attribute it find on the
  * current level of the XML tree. If the increases/decreases don't cancel each other, warning
  * messages are generated. This check can also be enforced before destruction by using the
@@ -293,28 +293,28 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> T
-    getConfParam(std::string const& param) const;
+    getParameter(std::string const& param) const;
 
     /*! Get parameter \c param of type \c T from the configuration tree or the \c default_value.
      *
-     * This method has a similar behaviour as getConfParam(std::string const&) except in case
+     * This method has a similar behaviour as getParameter(std::string const&) except in case
      * of errors the \c default_value is returned.
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> T
-    getConfParam(std::string const& param, T const& default_value) const;
+    getParameter(std::string const& param, T const& default_value) const;
 
     /*! Get parameter \c param of type \c T from the configuration tree if present
      *
-     * This method has a similar behaviour as getConfParam(std::string const&) except
+     * This method has a similar behaviour as getParameter(std::string const&) except
      * no errors are raised. Rather it can be told from the return value if the
      * parameter could be read.
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> boost::optional<T>
-    getConfParamOptional(std::string const& param) const;
+    getParameterOptional(std::string const& param) const;
 
     /*! Fetches all parameters with name \c param from the current level of the tree.
      *
@@ -323,13 +323,13 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> Range<ValueIterator<T> >
-    getConfParamList(std::string const& param) const;
+    getParameterList(std::string const& param) const;
 
     //!\}
 
     /*! \name Methods for accessing parameters that have attributes
      *
-     * The <tt>getConfParam...()</tt> methods in this group---note: they do not have template
+     * The <tt>getParameter...()</tt> methods in this group---note: they do not have template
      * parameters---check that the queried parameters do not have any children (apart from XML
      * attributes); if they do, error() is called.
      *
@@ -345,7 +345,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     Range<ParameterIterator>
-    getConfParamList(std::string const& param) const;
+    getParameterList(std::string const& param) const;
 
     /*! Get the plain data contained in the current level of the tree.
      *
@@ -363,7 +363,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> T
-    getConfAttribute(std::string const& attr) const;
+    getAttribute(std::string const& attr) const;
 
     /*! Get XML attribute \c attr of type \c T for the current parameter if present.
      *
@@ -372,7 +372,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     template<typename T> boost::optional<T>
-    getConfAttributeOptional(std::string const& attr) const;
+    getAttributeOptional(std::string const& attr) const;
 
     //!\}
 
@@ -392,21 +392,21 @@ public:
      * But in order that the requested parameter counts as "completely parsed", it has to be
      * read through some other method, too.
      *
-     * Return value and error behaviour are the same as for getConfParam<T>(std::string const&).
+     * Return value and error behaviour are the same as for getParameter<T>(std::string const&).
      */
     template<typename T> T
-    peekConfParam(std::string const& param) const;
+    peekParameter(std::string const& param) const;
 
     /*! Assert that \c param has the given \c value.
      *
-     * Convenience method combining getConfParam(std::string const&) with a check.
+     * Convenience method combining getParameter(std::string const&) with a check.
      */
     template<typename T> void
-    checkConfParam(std::string const& param, T const& value) const;
+    checkParameter(std::string const& param, T const& value) const;
 
-    //! Make checkConfParam() work for string literals.
+    //! Make checkParameter() work for string literals.
     template<typename Ch> void
-    checkConfParam(std::string const& param, Ch const* value) const;
+    checkParameter(std::string const& param, Ch const* value) const;
 
     //!\}
 
@@ -422,14 +422,14 @@ public:
      * \pre \c root must not have been read before from this ConfigTree.
      */
     ConfigTree
-    getConfSubtree(std::string const& root) const;
+    getSubtree(std::string const& root) const;
 
     /*! Get the subtree rooted at \c root if present
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
     boost::optional<ConfigTree>
-    getConfSubtreeOptional(std::string const& root) const;
+    getSubtreeOptional(std::string const& root) const;
 
     /*! Get all subtrees that have a root \c root from the current level of the tree.
      *
@@ -438,7 +438,7 @@ public:
      * \pre \c root must not have been read before from this ConfigTree.
      */
     Range<SubtreeIterator>
-    getConfSubtreeList(std::string const& root) const;
+    getSubtreeList(std::string const& root) const;
 
     //!\}
 
@@ -453,7 +453,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    void ignoreConfParam(std::string const& param) const;
+    void ignoreParameter(std::string const& param) const;
 
     /*! Tell this instance to ignore all parameters \c param on the current level of the tree.
      *
@@ -461,7 +461,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    void ignoreConfParamAll(std::string const& param) const;
+    void ignoreParameterAll(std::string const& param) const;
 
     /*! Tell this instance to ignore the XML attribute \c attr.
      *
@@ -469,7 +469,7 @@ public:
      *
      * \pre \c attr must not have been read before from this ConfigTree.
      */
-    void ignoreConfAttribute(std::string const& attr) const;
+    void ignoreAttribute(std::string const& attr) const;
 
     //!\}
 
@@ -490,11 +490,11 @@ public:
 private:
     //! Default implementation of reading a value of type T.
     template<typename T> boost::optional<T>
-    getConfParamOptionalImpl(std::string const& param, T*) const;
+    getParameterOptionalImpl(std::string const& param, T*) const;
 
     //! Implementation of reading a vector of values of type T.
     template<typename T> boost::optional<std::vector<T>>
-    getConfParamOptionalImpl(std::string const& param, std::vector<T>*) const;
+    getParameterOptionalImpl(std::string const& param, std::vector<T>*) const;
 
 private:
     struct CountType

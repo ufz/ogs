@@ -126,108 +126,108 @@ TEST(BaseLibConfigTree, Get)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_EQ(5.6e-4, conf.getConfParam<double>("double")); // read certain types
+        EXPECT_EQ(5.6e-4, conf.getParameter<double>("double")); // read certain types
         EXPECT_ERR_WARN(cbs, false, false);
-        EXPECT_TRUE(conf.getConfParam<bool>("bool"));
+        EXPECT_TRUE(conf.getParameter<bool>("bool"));
         EXPECT_ERR_WARN(cbs, false, false);
-        EXPECT_EQ(5, conf.getConfParam<int>("int"));
+        EXPECT_EQ(5, conf.getParameter<int>("int"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        EXPECT_EQ(8, conf.getConfParam<int>("intx", 8)); // reading with default value
+        EXPECT_EQ(8, conf.getParameter<int>("intx", 8)); // reading with default value
         EXPECT_ERR_WARN(cbs, false, false);
 
 
         // Testing subtree
         {
-            auto sub = conf.getConfSubtree("sub");
+            auto sub = conf.getSubtree("sub");
             EXPECT_ERR_WARN(cbs, false, false);
 
-            EXPECT_EQ(6.1f, sub.getConfParam<float>("float"));
+            EXPECT_EQ(6.1f, sub.getParameter<float>("float"));
             EXPECT_ERR_WARN(cbs, false, false);
 
-            if (auto f2 = sub.getConfParamOptional<float>("float2")) { // read optional value
+            if (auto f2 = sub.getParameterOptional<float>("float2")) { // read optional value
                 EXPECT_EQ(0.1f, *f2);
             }
             EXPECT_ERR_WARN(cbs, false, false);
 
-            auto f3 = sub.getConfParamOptional<float>("float3"); // optional value not existent
+            auto f3 = sub.getParameterOptional<float>("float3"); // optional value not existent
             ASSERT_FALSE(f3);
             EXPECT_ERR_WARN(cbs, false, false);
 
 
-            // Testing the getConfParam...() (non-template) / getValue() combination
+            // Testing the getParameter...() (non-template) / getValue() combination
 
-            auto bool1 = sub.getConfSubtree("bool1");
+            auto bool1 = sub.getSubtree("bool1");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_FALSE(bool1.getValue<bool>());
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_ANY_THROW(bool1.getValue<bool>()); // getting data twice
             EXPECT_ERR_WARN(cbs, true, false);
 
-            if (auto bool2 = sub.getConfSubtreeOptional("bool2")) {
+            if (auto bool2 = sub.getSubtreeOptional("bool2")) {
                 EXPECT_ERR_WARN(cbs, false, false);
                 EXPECT_FALSE(bool2->getValue<bool>());
             }
             EXPECT_ERR_WARN(cbs, false, false);
 
-            if (auto bool3 = sub.getConfSubtreeOptional("bool3")) {
+            if (auto bool3 = sub.getSubtreeOptional("bool3")) {
                 EXPECT_ERR_WARN(cbs, false, false);
                 EXPECT_ANY_THROW(bool3->getValue<bool>());
                 EXPECT_ERR_WARN(cbs, true, false); // error because of no data
             }
             EXPECT_ERR_WARN(cbs, false, false);
 
-            EXPECT_FALSE(sub.getConfSubtreeOptional("bool4")); // optional value not existent
+            EXPECT_FALSE(sub.getSubtreeOptional("bool4")); // optional value not existent
             EXPECT_ERR_WARN(cbs, false, false);
 
 
             // Testing ignore
 
-            sub.ignoreConfParam("ignored");
+            sub.ignoreParameter("ignored");
             EXPECT_ERR_WARN(cbs, false, false);
-            sub.ignoreConfParamAll("ignored2");
+            sub.ignoreParameterAll("ignored2");
             EXPECT_ERR_WARN(cbs, false, false);
-            sub.ignoreConfParamAll("ignored4"); // I can ignore nonexistent stuff
+            sub.ignoreParameterAll("ignored4"); // I can ignore nonexistent stuff
             EXPECT_ERR_WARN(cbs, false, false);
 
             // I can not ignore stuff that I already read
             // this also makes sure that the subtree inherits the callbacks properly
-            EXPECT_ANY_THROW(sub.ignoreConfParam("float"));
+            EXPECT_ANY_THROW(sub.ignoreParameter("float"));
             EXPECT_ERR_WARN(cbs, true, false);
         }
         for (int i : {0, 1, 2}) {
             (void) i;
-            EXPECT_EQ("Y", conf.peekConfParam<std::string>("x"));
+            EXPECT_EQ("Y", conf.peekParameter<std::string>("x"));
             EXPECT_ERR_WARN(cbs, false, false);
         }
-        conf.checkConfParam<std::string>("x", "Y");
+        conf.checkParameter<std::string>("x", "Y");
         EXPECT_ERR_WARN(cbs, false, false);
 
 
         // Testing attributes
         {
-            auto z = conf.getConfSubtree("z");
+            auto z = conf.getSubtree("z");
             EXPECT_ERR_WARN(cbs, false, false);
-            EXPECT_EQ(0.5, z.getConfAttribute<double>("attr"));
+            EXPECT_EQ(0.5, z.getAttribute<double>("attr"));
             EXPECT_ERR_WARN(cbs, false, false);
-            EXPECT_ANY_THROW(z.getConfAttribute<double>("attr")); // getting attribute twice
+            EXPECT_ANY_THROW(z.getAttribute<double>("attr")); // getting attribute twice
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(z.getConfAttribute<double>("not_an_attr")); // nonexistent attribute
+            EXPECT_ANY_THROW(z.getAttribute<double>("not_an_attr")); // nonexistent attribute
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_EQ(32.0, z.getValue<double>());
             EXPECT_ERR_WARN(cbs, false, false);
-            auto const opt = z.getConfAttributeOptional<bool>("optattr");
+            auto const opt = z.getAttributeOptional<bool>("optattr");
             EXPECT_TRUE(!!opt); EXPECT_FALSE(*opt);
             EXPECT_ERR_WARN(cbs, false, false);
-            EXPECT_ANY_THROW(z.getConfAttributeOptional<bool>("optattr")); // getting attribute twice
+            EXPECT_ANY_THROW(z.getAttributeOptional<bool>("optattr")); // getting attribute twice
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_FALSE(z.getConfAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
+            EXPECT_FALSE(z.getAttributeOptional<bool>("also_not_an_attr")); // nonexisting attribute
             EXPECT_ERR_WARN(cbs, false, false);
         }
 
         // Testing vector
         {
-            auto v = conf.getConfParam<std::vector<int>>("vector");
+            auto v = conf.getParameter<std::vector<int>>("vector");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(5u, v.size());
             std::vector<int> expected_vector(5);
@@ -235,10 +235,10 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_TRUE(std::equal(expected_vector.begin(),
                                    expected_vector.end(), v.begin()));
             EXPECT_ANY_THROW(
-                conf.getConfParam<std::vector<int>>("vector_bad1"));
+                conf.getParameter<std::vector<int>>("vector_bad1"));
             EXPECT_ERR_WARN(cbs, true, false);
             EXPECT_ANY_THROW(
-                conf.getConfParam<std::vector<int>>("vector_bad2"));
+                conf.getParameter<std::vector<int>>("vector_bad2"));
             EXPECT_ERR_WARN(cbs, true, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
@@ -262,20 +262,20 @@ TEST(BaseLibConfigTree, IncompleteParse)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_EQ(5.6, conf.getConfParam<double>("double"));
+        EXPECT_EQ(5.6, conf.getParameter<double>("double"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        conf.getConfSubtree("tag");
+        conf.getSubtree("tag");
         EXPECT_ERR_WARN(cbs, false, true); // data of <tag> has not been read
 
-        EXPECT_EQ(1, conf.getConfParam<int>("pt"));
+        EXPECT_EQ(1, conf.getParameter<int>("pt"));
         EXPECT_ERR_WARN(cbs, false, true); // attribute "x" has not been read
 
         {
-            auto pt2 = conf.getConfSubtree("pt2");
-            EXPECT_EQ(0.5, pt2.getConfAttribute<double>("x"));
+            auto pt2 = conf.getSubtree("pt2");
+            EXPECT_EQ(0.5, pt2.getAttribute<double>("x"));
             EXPECT_ERR_WARN(cbs, false, false);
-            EXPECT_EQ(1.0, pt2.getConfAttribute<double>("y"));
+            EXPECT_EQ(1.0, pt2.getAttribute<double>("y"));
             EXPECT_ERR_WARN(cbs, false, false);
 
             BaseLib::checkAndInvalidate(pt2);
@@ -305,7 +305,7 @@ TEST(BaseLibConfigTree, CheckRange)
 
         {
             // check that std::distance can be computed twice in a row
-            auto list = conf.getConfSubtreeList("val");
+            auto list = conf.getSubtreeList("val");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
             EXPECT_ERR_WARN(cbs, false, false);
@@ -315,7 +315,7 @@ TEST(BaseLibConfigTree, CheckRange)
 
         {
             // check that std::distance can be computed twice in a row
-            auto list = conf.getConfParamList<int>("int");
+            auto list = conf.getParameterList<int>("int");
             EXPECT_ERR_WARN(cbs, false, false);
             EXPECT_EQ(3, std::distance(list.begin(), list.end()));
             EXPECT_ERR_WARN(cbs, false, false);
@@ -342,7 +342,7 @@ TEST(BaseLibConfigTree, GetSubtreeList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfSubtreeList("nonexistent_list"))
+        for (auto p : conf.getSubtreeList("nonexistent_list"))
         {
             (void) p;
             FAIL() << "Expected empty list";
@@ -350,9 +350,9 @@ TEST(BaseLibConfigTree, GetSubtreeList)
         EXPECT_ERR_WARN(cbs, false, false);
 
         int i = 0;
-        for (auto ct : conf.getConfSubtreeList("val"))
+        for (auto ct : conf.getSubtreeList("val"))
         {
-            EXPECT_EQ(i, ct.getConfParam<int>("int"));
+            EXPECT_EQ(i, ct.getParameter<int>("int"));
             EXPECT_ERR_WARN(cbs, false, false);
             ++i;
         }
@@ -374,7 +374,7 @@ TEST(BaseLibConfigTree, GetParamList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfParamList("nonexistent_list"))
+        for (auto p : conf.getParameterList("nonexistent_list"))
         {
             (void) p;
             FAIL() << "Expected empty list";
@@ -382,14 +382,14 @@ TEST(BaseLibConfigTree, GetParamList)
         EXPECT_ERR_WARN(cbs, false, false);
 
         int i = 0;
-        for (auto p : conf.getConfParamList("int"))
+        for (auto p : conf.getParameterList("int"))
         {
             EXPECT_EQ(i, p.getValue<int>());
             EXPECT_ERR_WARN(cbs, false, false);
             ++i;
         }
 
-        for (auto p : conf.getConfParamList("int2"))
+        for (auto p : conf.getParameterList("int2"))
         {
             EXPECT_EQ(i, p.getValue<int>());
             EXPECT_ERR_WARN(cbs, false, false);
@@ -398,7 +398,7 @@ TEST(BaseLibConfigTree, GetParamList)
         EXPECT_ERR_WARN(cbs, false, true); // attribute "a" not read
 
         {
-            auto range = conf.getConfParamList("int3");
+            auto range = conf.getParameterList("int3");
             EXPECT_ERR_WARN(cbs, false, false);
 
             EXPECT_ANY_THROW(*range.begin());
@@ -425,7 +425,7 @@ TEST(BaseLibConfigTree, GetValueList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfParamList<int>("nonexistent_list"))
+        for (auto p : conf.getParameterList<int>("nonexistent_list"))
         {
             (void) p;
             FAIL() << "Expected empty list";
@@ -433,7 +433,7 @@ TEST(BaseLibConfigTree, GetValueList)
         EXPECT_ERR_WARN(cbs, false, false);
 
         int n = 0;
-        for (auto i : conf.getConfParamList<int>("int"))
+        for (auto i : conf.getParameterList<int>("int"))
         {
             EXPECT_EQ(n, i);
             EXPECT_ERR_WARN(cbs, false, false);
@@ -460,39 +460,39 @@ TEST(BaseLibConfigTree, NoConversion)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_ANY_THROW(conf.getConfParam<int>("int"));
+        EXPECT_ANY_THROW(conf.getParameter<int>("int"));
         EXPECT_ERR_WARN(cbs, true, false);
-        EXPECT_ANY_THROW(conf.ignoreConfParam("int")); // after failure I also cannot ignore something
+        EXPECT_ANY_THROW(conf.ignoreParameter("int")); // after failure I also cannot ignore something
         EXPECT_ERR_WARN(cbs, true, false);
 
-        EXPECT_ANY_THROW(conf.getConfParam<double>("double"));
+        EXPECT_ANY_THROW(conf.getParameter<double>("double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // peek value existent but not convertible
-        EXPECT_ANY_THROW(conf.peekConfParam<double>("non_double"));
+        EXPECT_ANY_THROW(conf.peekParameter<double>("non_double"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // optional value existent but not convertible
         EXPECT_ANY_THROW(
-            auto d = conf.getConfParamOptional<double>("non_double");
+            auto d = conf.getParameterOptional<double>("non_double");
             ASSERT_FALSE(d);
         );
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I can only ignore something once
-        conf.ignoreConfParam("ign");
+        conf.ignoreParameter("ign");
         EXPECT_ERR_WARN(cbs, false, false);
-        EXPECT_ANY_THROW(conf.ignoreConfParam("ign"));
+        EXPECT_ANY_THROW(conf.ignoreParameter("ign"));
         EXPECT_ERR_WARN(cbs, true, false);
-        conf.ignoreConfParamAll("ign2");
+        conf.ignoreParameterAll("ign2");
         EXPECT_ERR_WARN(cbs, false, false);
-        EXPECT_ANY_THROW(conf.ignoreConfParamAll("ign2"));
+        EXPECT_ANY_THROW(conf.ignoreParameterAll("ign2"));
         EXPECT_ERR_WARN(cbs, true, false);
 
         // assert that I cannot read a parameter twice
-        conf.getConfParam<bool>("bool");
+        conf.getParameter<bool>("bool");
         EXPECT_ERR_WARN(cbs, false, false);
-        EXPECT_ANY_THROW(conf.getConfParam<bool>("bool"));
+        EXPECT_ANY_THROW(conf.getParameter<bool>("bool"));
         EXPECT_ERR_WARN(cbs, true, false);
 
     } // ConfigTree destroyed here
@@ -514,28 +514,28 @@ TEST(BaseLibConfigTree, BadKeynames)
 
         for (auto tag : { "<", "Z", ".", "$", "0", "", "/", "_", "a__" })
         {
-            EXPECT_ANY_THROW(conf.getConfParam<int>(tag));
+            EXPECT_ANY_THROW(conf.getParameter<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfParam<int>(tag, 500));
+            EXPECT_ANY_THROW(conf.getParameter<int>(tag, 500));
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfParamOptional<int>(tag));
+            EXPECT_ANY_THROW(conf.getParameterOptional<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfParamList<int>(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-
-            EXPECT_ANY_THROW(conf.peekConfParam<int>(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.checkConfParam<int>(tag, 500));
+            EXPECT_ANY_THROW(conf.getParameterList<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            EXPECT_ANY_THROW(conf.getConfSubtree(tag));
+            EXPECT_ANY_THROW(conf.peekParameter<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfSubtreeOptional(tag));
-            EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.getConfSubtreeList(tag));
+            EXPECT_ANY_THROW(conf.checkParameter<int>(tag, 500));
             EXPECT_ERR_WARN(cbs, true, false);
 
-            EXPECT_ANY_THROW(conf.getConfAttribute<int>(tag));
+            EXPECT_ANY_THROW(conf.getSubtree(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getSubtreeOptional(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+            EXPECT_ANY_THROW(conf.getSubtreeList(tag));
+            EXPECT_ERR_WARN(cbs, true, false);
+
+            EXPECT_ANY_THROW(conf.getAttribute<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
         }
 
@@ -556,14 +556,14 @@ TEST(BaseLibConfigTree, StringLiterals)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
+        EXPECT_EQ("test", conf.getParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
         // <n> not present in the XML, so return the default value
-        EXPECT_EQ("XX",   conf.getConfParam<std::string>("n", "XX"));
+        EXPECT_EQ("XX",   conf.getParameter<std::string>("n", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        conf.checkConfParam("t", "Test");
+        conf.checkParameter("t", "Test");
         EXPECT_ERR_WARN(cbs, false, false);
     } // ConfigTree destroyed here
     EXPECT_ERR_WARN(cbs, false, false);
@@ -582,10 +582,10 @@ TEST(BaseLibConfigTree, MoveConstruct)
     {
         auto conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
+        EXPECT_EQ("test", conf.getParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        auto u = conf.getConfSubtree("u");
+        auto u = conf.getSubtree("u");
         EXPECT_ERR_WARN(cbs, false, false);
 
         EXPECT_EQ("data", u.getValue<std::string>());
@@ -601,10 +601,10 @@ TEST(BaseLibConfigTree, MoveConstruct)
         // test that read status of children is transferred in move construction
         BaseLib::ConfigTree conf2(std::move(conf));
 
-        EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
+        EXPECT_EQ("XX",   conf2.getParameter<std::string>("n", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        conf2.checkConfParam("t", "Test");
+        conf2.checkParameter("t", "Test");
         EXPECT_ERR_WARN(cbs, false, false);
 
         BaseLib::checkAndInvalidate(conf2);
@@ -626,10 +626,10 @@ TEST(BaseLibConfigTree, MoveAssign)
     {
         auto conf = makeConfigTree(ptree, cbs);
 
-        EXPECT_EQ("test", conf.getConfParam<std::string>("s", "XX"));
+        EXPECT_EQ("test", conf.getParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
 
-        auto u = conf.getConfSubtree("u");
+        auto u = conf.getSubtree("u");
         EXPECT_ERR_WARN(cbs, false, false);
 
         EXPECT_EQ("data", u.getValue<std::string>());
@@ -653,10 +653,10 @@ TEST(BaseLibConfigTree, MoveAssign)
             // entirely before assignment.
             EXPECT_ERR_WARN(cbs, false, true);
 
-            EXPECT_EQ("XX",   conf2.getConfParam<std::string>("n", "XX"));
+            EXPECT_EQ("XX",   conf2.getParameter<std::string>("n", "XX"));
             EXPECT_ERR_WARN(cbs, false, false);
 
-            conf2.checkConfParam("t", "Test");
+            conf2.checkParameter("t", "Test");
             EXPECT_ERR_WARN(cbs, false, false);
         }
         EXPECT_ERR_WARN(cbs, false, false);
