@@ -86,7 +86,7 @@ bool VtuInterface::writeToFile(std::string const &file_name)
                                        + std::to_string(mpi_rank) + ".vtu";
     const bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
     bool vtu_status = false;
-    MPI_Allreduce(&vtu_status_i, &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
+    MPI_Allreduce(const_cast<bool*>(&vtu_status_i), &vtu_status, 1, MPI_C_BOOL, MPI_LAND, PETSC_COMM_WORLD);
 
     int mpi_size;
     MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
