@@ -237,7 +237,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
         if (tg_mesh)
         {
-            std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
+            std::vector<MeshLib::Node> tg_attr (lv.getConfigAttributePoints());
             FileIO::TetGenInterface tetgen_interface;
             tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
         }

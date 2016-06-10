@@ -28,10 +28,10 @@ struct ProcessOutput final
                   SecondaryVariableCollection<GlobalVector> const& secondary_variables)
     {
         //! \ogs_file_param{process__output__variables}
-        auto const out_vars = output_config.getSubtree("variables");
+        auto const out_vars = output_config.getConfigSubtree("variables");
 
         //! \ogs_file_param{process__output__variables__variable}
-        for (auto out_var : out_vars.getParameterList<std::string>("variable"))
+        for (auto out_var : out_vars.getConfigParameterList<std::string>("variable"))
         {
             if (output_variables.find(out_var) != output_variables.cend())
             {
@@ -59,7 +59,7 @@ struct ProcessOutput final
             output_variables.insert(out_var);
         }
 
-        if (auto out_resid = output_config.getParameterOptional<bool>(
+        if (auto out_resid = output_config.getConfigParameterOptional<bool>(
                 "output_extrapolation_residuals")) {
             output_residuals = *out_resid;
         }
@@ -67,7 +67,7 @@ struct ProcessOutput final
         // debug output
         if (auto const param =
             //! \ogs_file_param{process__output__output_iteration_results}
-            output_config.getParameterOptional<bool>("output_iteration_results"))
+            output_config.getConfigParameterOptional<bool>("output_iteration_results"))
         {
             DBUG("output_iteration_results: %s", (*param) ? "true" : "false");
 

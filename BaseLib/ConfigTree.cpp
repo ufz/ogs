@@ -85,9 +85,29 @@ operator=(ConfigTree&& other)
     return *this;
 }
 
+ConfigTree
+ConfigTree::
+getConfigParameter(std::string const& root) const
+{
+    auto ct = getConfigSubtree(root);
+    if (ct.hasChildren())
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
+}
+
+boost::optional<ConfigTree>
+ConfigTree::
+getConfigParameterOptional(std::string const& root) const
+{
+    auto ct = getConfigSubtreeOptional(root);
+    if (ct && ct->hasChildren())
+        error("Requested parameter <" + root + "> actually is a subtree.");
+    return ct;
+}
+
 Range<ConfigTree::ParameterIterator>
 ConfigTree::
-getParameterList(const std::string &param) const
+getConfigParameterList(const std::string &param) const
 {
     checkUnique(param);
     markVisited(param, Attr::TAG, true);
@@ -101,9 +121,9 @@ getParameterList(const std::string &param) const
 
 ConfigTree
 ConfigTree::
-getSubtree(std::string const& root) const
+getConfigSubtree(std::string const& root) const
 {
-    if (auto t = getSubtreeOptional(root)) {
+    if (auto t = getConfigSubtreeOptional(root)) {
         return std::move(*t);
     } else {
         error("Key <" + root + "> has not been found.");
@@ -112,7 +132,7 @@ getSubtree(std::string const& root) const
 
 boost::optional<ConfigTree>
 ConfigTree::
-getSubtreeOptional(std::string const& root) const
+getConfigSubtreeOptional(std::string const& root) const
 {
     checkUnique(root);
 
@@ -127,7 +147,7 @@ getSubtreeOptional(std::string const& root) const
 
 Range<ConfigTree::SubtreeIterator>
 ConfigTree::
-getSubtreeList(std::string const& root) const
+getConfigSubtreeList(std::string const& root) const
 {
     checkUnique(root);
     markVisited(root, Attr::TAG, true);
@@ -139,7 +159,7 @@ getSubtreeList(std::string const& root) const
                 SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTree::ignoreParameter(const std::string &param) const
+void ConfigTree::ignoreConfigParameter(const std::string &param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -147,7 +167,7 @@ void ConfigTree::ignoreParameter(const std::string &param) const
     markVisited(param, Attr::TAG, peek_only);
 }
 
-void ConfigTree::ignoreAttribute(const std::string &attr) const
+void ConfigTree::ignoreConfigAttribute(const std::string &attr) const
 {
     checkUniqueAttr(attr);
 
@@ -158,7 +178,7 @@ void ConfigTree::ignoreAttribute(const std::string &attr) const
     markVisited(attr, Attr::ATTR, peek_only);
 }
 
-void ConfigTree::ignoreParameterAll(const std::string &param) const
+void ConfigTree::ignoreConfigParameterAll(const std::string &param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, Attr::TAG, true);

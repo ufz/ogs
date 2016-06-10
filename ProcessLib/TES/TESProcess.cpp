@@ -103,7 +103,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
         for (auto const& p : params)
         {
-            if (auto const par = config.getParameterOptional<double>(p.first))
+            if (auto const par = config.getConfigParameterOptional<double>(p.first))
             {
                 DBUG("setting parameter `%s' to value `%g'", p.first.c_str(),
                      *par);
@@ -121,7 +121,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
         for (auto const& p : params)
         {
-            if (auto const par = config.getParameterOptional<double>(p.first))
+            if (auto const par = config.getConfigParameterOptional<double>(p.first))
             {
                 INFO("setting parameter `%s' to value `%g'", p.first.c_str(),
                      *par);
@@ -132,7 +132,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
     // permeability
     if (auto par =
-            config.getParameterOptional<double>("solid_hydraulic_permeability"))
+            config.getConfigParameterOptional<double>("solid_hydraulic_permeability"))
     {
         DBUG(
             "setting parameter `solid_hydraulic_permeability' to isotropic "
@@ -145,11 +145,11 @@ TESProcess<GlobalSetup>::TESProcess(
 
     // reactive system
     _assembly_params.react_sys = Adsorption::AdsorptionReaction::newInstance(
-        config.getSubtree("reactive_system"));
+        config.getConfigSubtree("reactive_system"));
 
     // debug output
     if (auto const param =
-            config.getParameterOptional<bool>("output_element_matrices"))
+            config.getConfigParameterOptional<bool>("output_element_matrices"))
     {
         DBUG("output_element_matrices: %s", (*param) ? "true" : "false");
 
@@ -159,7 +159,7 @@ TESProcess<GlobalSetup>::TESProcess(
     // TODO somewhere else
     /*
     if (auto const param =
-    config.getParameterOptional<bool>("output_global_matrix"))
+    config.getConfigParameterOptional<bool>("output_global_matrix"))
     {
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
 

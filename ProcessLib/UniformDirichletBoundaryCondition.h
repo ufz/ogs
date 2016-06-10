@@ -43,10 +43,10 @@ public:
     {
         DBUG("Constructing UniformDirichletBoundaryCondition from config.");
         //! \ogs_file_param{boundary_condition__type}
-        config.checkParameter("type", "UniformDirichlet");
+        config.checkConfigParameter("type", "UniformDirichlet");
 
         //! \ogs_file_param{boundary_condition__UniformDirichlet__value}
-        _value = config.getParameter<double>("value");
+        _value = config.getConfigParameter<double>("value");
         DBUG("Using value %g", _value);
     }
 

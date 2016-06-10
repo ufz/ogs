@@ -24,10 +24,10 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
     BaseLib::ConfigTree const& config, int const /*n_components*/)
 {
     //! \ogs_file_param{initial_condition__type}
-    config.checkParameter("type", "Uniform");
+    config.checkConfigParameter("type", "Uniform");
 
     //! \ogs_file_param{initial_condition__Uniform__value}
-    auto value = config.getParameter<double>("value");
+    auto value = config.getConfigParameter<double>("value");
     DBUG("Using value %g", value);
 
     return std::unique_ptr<InitialCondition>(
@@ -40,10 +40,10 @@ std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(
     int const n_components)
 {
     //! \ogs_file_param{initial_condition__type}
-    config.checkParameter("type", "MeshProperty");
+    config.checkConfigParameter("type", "MeshProperty");
 
     //! \ogs_file_param{initial_condition__MeshProperty__field_name}
-    auto field_name = config.getParameter<std::string>("field_name");
+    auto field_name = config.getConfigParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
     if (!mesh.getProperties().hasPropertyVector(field_name))
