@@ -19,11 +19,11 @@ comment = re.compile(r"^//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .
 comment_special = re.compile(r"^//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$")
 
 # capture #5 is the parameter name
-getter = re.compile(r'^(get|check|ignore|peek)Conf(Param|Attribute|Subtree)(List|Optional|All)?'
+getter = re.compile(r'^(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
                    +r'(<.*>)?'
                    +r'\("([a-zA-Z_0-9:]+)"[,)]')
 
-getter_special = re.compile(r'^(get|check|ignore|peek)Conf(Param|Attribute|Subtree)(List|Optional|All)?'
+getter_special = re.compile(r'^(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
                            +r'(<.*>)?\(')
 
 state = "getter"
@@ -78,7 +78,7 @@ for inline in sys.stdin:
     if m:
         param = m.group(5)
         paramtype = m.group(4)[1:-1] if m.group(4) else ""
-        method = m.group(1) + "Conf" + m.group(2) + (m.group(3) or "")
+        method = m.group(1) + "Config" + m.group(2) + (m.group(3) or "")
 
         if state != "comment" or oldpath != path:
             write_out("NODOC", path, lineno, "NONE", param, paramtype, method)
@@ -93,7 +93,7 @@ for inline in sys.stdin:
                 debug("error: the associated comment is not on the line preceding this one."
                         + " line numbers {0} vs. {1}".format(oldlineno, lineno))
                 write_out("NODOC", path, lineno, tag_path_comment, param, paramtype, method)
-            elif param_or_attr_comment == "param" and m.group(2) != "Param" and m.group(2) != "Subtree":
+            elif param_or_attr_comment == "param" and m.group(2) != "Parameter" and m.group(2) != "Subtree":
                 debug("error: comment says param but code says different.")
                 write_out("NODOC", path, lineno, tag_path_comment, param, paramtype, method)
             elif param_or_attr_comment == "attr" and m.group(2) != "Attribute":
@@ -111,7 +111,7 @@ for inline in sys.stdin:
     m = getter_special.match(line)
     if m:
         paramtype = m.group(4)[1:-1] if m.group(4) else ""
-        method = m.group(1) + "Conf" + m.group(2) + (m.group(3) or "")
+        method = m.group(1) + "Config" + m.group(2) + (m.group(3) or "")
 
         if state != "comment" or oldpath != path:
             write_out("NODOC", path, lineno, "NONE", "UNKNOWN", paramtype, method)
