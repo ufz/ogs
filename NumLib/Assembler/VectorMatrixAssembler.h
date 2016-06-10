@@ -13,10 +13,13 @@
 #include "NumLib/ODESolver/Types.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
-namespace
+namespace NumLib
+{
+
+namespace detail
 {
 inline std::vector<GlobalIndexType>
-getRowColumnIndices(std::size_t const id,
+getIndices(std::size_t const id,
                     NumLib::LocalToGlobalIndexMap const& dof_table)
 {
     assert(dof_table.size() > id);
@@ -41,7 +44,7 @@ prepareLocalVector(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         GlobalVector const& x)
 {
-    auto const indices = getRowColumnIndices(id, dof_table);
+    auto const indices = getIndices(id, dof_table);
 
     std::vector<double> local_x;
     local_x.reserve(indices.size());
@@ -55,9 +58,6 @@ prepareLocalVector(
     return std::make_tuple(local_x, indices);
 }
 }
-
-namespace NumLib
-{
 
 /*! Calls the local assemblers of FEM processes and assembles
  *  \c GlobalMatrix'es and \c GlobalVector's.
@@ -95,7 +95,7 @@ public:
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
-        auto const x_and_indices = prepareLocalVector(id, _data_pos, x);
+        auto const x_and_indices = detail::prepareLocalVector(id, _data_pos, x);
         auto const& local_x = std::get<0>(x_and_indices);
         auto const& indices = std::get<1>(x_and_indices);
         auto const r_c_indices =
@@ -114,7 +114,7 @@ public:
                           GlobalVector const& x,
                           GlobalMatrix& Jac) const
     {
-        auto const x_and_indices = prepareLocalVector(id, _data_pos, x);
+        auto const x_and_indices = detail::prepareLocalVector(id, _data_pos, x);
         auto const& local_x = std::get<0>(x_and_indices);
         auto const& indices = std::get<1>(x_and_indices);
         auto const r_c_indices =
@@ -133,7 +133,7 @@ public:
                      double const t,
                      double const delta_t) const
     {
-        auto const x_and_indices = prepareLocalVector(id, _data_pos, x);
+        auto const x_and_indices = detail::prepareLocalVector(id, _data_pos, x);
         auto const& local_x = std::get<0>(x_and_indices);
 
         local_assembler.preTimestep(local_x, t, delta_t);
@@ -146,7 +146,7 @@ public:
                       LocalAssembler& local_assembler,
                       GlobalVector const& x) const
     {
-        auto const x_and_indices = prepareLocalVector(id, _data_pos, x);
+        auto const x_and_indices = detail::prepareLocalVector(id, _data_pos, x);
         auto const& local_x = std::get<0>(x_and_indices);
 
         local_assembler.postTimestep(local_x);
@@ -159,7 +159,7 @@ public:
     void passLocalVector(Callback& cb, std::size_t const id,
                          GlobalVector const& x, Args&&... args)
     {
-        auto const x_and_indices = prepareLocalVector(id, _data_pos, x);
+        auto const x_and_indices = detail::prepareLocalVector(id, _data_pos, x);
         auto const& local_x = std::get<0>(x_and_indices);
         auto const& indices = std::get<1>(x_and_indices);
         auto const r_c_indices =
@@ -193,7 +193,7 @@ public:
         LocalAssembler& local_assembler,
         const double t, GlobalVector& b) const
     {
-        auto const indices = getRowColumnIndices(id, _data_pos);
+        auto const indices = detail::getIndices(id, _data_pos);
         auto const r_c_indices =
             NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 
