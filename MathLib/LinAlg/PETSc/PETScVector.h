@@ -17,7 +17,6 @@
 #ifndef PETSCVECTOR_H_
 #define PETSCVECTOR_H_
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -128,7 +127,7 @@ class PETScVector
         */
         void set(const PetscInt i, const PetscScalar value)
         {
-            VecSetValue(*_v, i, value, INSERT_VALUES);
+            VecSetValue(_v, i, value, INSERT_VALUES);
         }
 
         /*!
@@ -138,7 +137,7 @@ class PETScVector
         */
         void add(const PetscInt i, const PetscScalar value)
         {
-            VecSetValue(*_v, i, value,  ADD_VALUES);
+            VecSetValue(_v, i, value,  ADD_VALUES);
         }
 
         /*!
@@ -150,7 +149,7 @@ class PETScVector
         template<class T_SUBVEC> void add(const std::vector<PetscInt> &e_idxs,
                                           const T_SUBVEC &sub_vec)
         {
-            VecSetValues(*_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
+            VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
         }
 
         /*!
@@ -162,7 +161,7 @@ class PETScVector
         template<class T_SUBVEC> void set(const std::vector<PetscInt> &e_idxs,
                                           const T_SUBVEC &sub_vec)
         {
-            VecSetValues(*_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
+            VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
         /*!
@@ -174,14 +173,14 @@ class PETScVector
         template<class T_SUBVEC> void get(const std::vector<PetscInt> &e_idxs,
                                           T_SUBVEC &sub_vec)
         {
-            VecGetValues(*_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
+            VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
         }
 
         // TODO preliminary
         double operator[] (PetscInt idx) const
         {
             double value;
-            VecGetValues(*_v, 1, &idx, &value);
+            VecGetValues(_v, 1, &idx, &value);
             return value;
         }
 
@@ -202,7 +201,7 @@ class PETScVector
         PetscScalar get(const PetscInt idx) const
         {
             PetscScalar x;
-            VecGetValues(*_v, 1, &idx, &x);
+            VecGetValues(_v, 1, &idx, &x);
             return x;
         }
 
@@ -210,13 +209,13 @@ class PETScVector
         /// Get PETsc vector. Use it only for test purpose
         const PETSc_Vec &getData() const
         {
-            return *_v;
+            return _v;
         }
 
         /// Initialize the vector with a constant value
         void operator = (const PetscScalar val)
         {
-            VecSet(*_v, val);
+            VecSet(_v, val);
         }
 
         // TODO preliminary
@@ -226,7 +225,7 @@ class PETScVector
         PETScVector& operator = (const PETScVector &v_in)
         {
             if (!_v) shallowCopy(v_in);
-            VecCopy(*v_in._v, *_v);
+            VecCopy(v_in._v, _v);
 
             return *this;
         }
@@ -240,18 +239,18 @@ class PETScVector
         void operator += (const PETScVector& v_in)
         {
             if (!_v) shallowCopy(v_in);
-            VecAXPY(*_v, 1.0, *v_in._v);
+            VecAXPY(_v, 1.0, v_in._v);
         }
 
         ///  Overloaded operator: subtract
         void operator -= (const PETScVector& v_in)
         {
             if (!_v) shallowCopy(v_in);
-            VecAXPY(*_v, -1.0, *v_in._v);
+            VecAXPY(_v, -1.0, v_in._v);
         }
 
         //! Exposes the underlying PETSc vector.
-        PETSc_Vec* getRawVector() { return _v.get(); }
+        PETSc_Vec getRawVector() { return _v; }
 
         /*! Exposes the underlying PETSc vector.
          *
@@ -259,7 +258,7 @@ class PETScVector
          * This method is dangerous insofar as you can do arbitrary things also
          * with a const PETSc vector!
          */
-        const PETSc_Vec* getRawVector() const {return _v.get(); }
+        PETSc_Vec getRawVector() const {return _v; }
 
 
         /*! View the global vector for test purpose. Do not use it for output a big vector.
@@ -291,12 +290,12 @@ class PETScVector
         void shallowCopy(const PETScVector &v);
 
     private:
-        void destroy() { if (_v) VecDestroy(_v.get()); _v.reset(nullptr); }
+        void destroy() { if (_v) VecDestroy(&_v); _v = nullptr; }
 
-        std::unique_ptr<PETSc_Vec> _v;
+        PETSc_Vec _v = nullptr;
         /// Local vector, which is only for the case that  _v is created
         /// with ghost entries. 
-        mutable PETSc_Vec _v_loc;
+        mutable PETSc_Vec _v_loc = nullptr;
 
         /// Starting index in a rank
         PetscInt _start_rank;

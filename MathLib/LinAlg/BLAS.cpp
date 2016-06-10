@@ -75,28 +75,28 @@ void copy(PETScVector const& x, PETScVector& y)
 
 void scale(PETScVector& x, double const a)
 {
-    VecScale(*x.getRawVector(), a);
+    VecScale(x.getRawVector(), a);
 }
 
 // y = a*y + X
 void aypx(PETScVector& y, double const a, PETScVector const& x)
 {
     // TODO check sizes
-    VecAYPX(*y.getRawVector(), a, *x.getRawVector());
+    VecAYPX(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + y
 void axpy(PETScVector& y, double const a, PETScVector const& x)
 {
     // TODO check sizes
-    VecAXPY(*y.getRawVector(), a, *x.getRawVector());
+    VecAXPY(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + b*y
 void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 {
     // TODO check sizes
-    VecAXPBY(*y.getRawVector(), a, b, *x.getRawVector());
+    VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
 }
 
 // Explicit specialization
@@ -105,7 +105,7 @@ template<>
 void componentwiseDivide(PETScVector& w,
                          PETScVector const& x, PETScVector const& y)
 {
-    VecPointwiseDivide(*w.getRawVector(), *x.getRawVector(), *y.getRawVector());
+    VecPointwiseDivide(w.getRawVector(), x.getRawVector(), y.getRawVector());
 }
 
 // Explicit specialization
@@ -173,7 +173,7 @@ void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
     // TODO check sizes
     assert(&x != &y);
     if (!y.getRawVector()) y.shallowCopy(x);
-    MatMult(A.getRawMatrix(), *x.getRawVector(), *y.getRawVector());
+    MatMult(A.getRawMatrix(), x.getRawVector(), y.getRawVector());
 }
 
 // v3 = A*v1 + v2
@@ -183,7 +183,7 @@ void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
     // TODO check sizes
     assert(&v1 != &v3);
     if (!v3.getRawVector()) v3.shallowCopy(v1);
-    MatMultAdd(A.getRawMatrix(), *v1.getRawVector(), *v2.getRawVector(), *v3.getRawVector());
+    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(), v3.getRawVector());
 }
 
 void finalizeAssembly(PETScMatrix& A)
@@ -225,21 +225,21 @@ void scale(EigenVector& x, double const a)
 void aypx(EigenVector& y, double const a, EigenVector const& x)
 {
     // TODO: does that break anything?
-    y.getRawVector() = a*y.getRawVector() + x.getRawVector();
+    y.getRawVector() = a * y.getRawVector() + x.getRawVector();
 }
 
 // y = a*x + y
 void axpy(EigenVector& y, double const a, EigenVector const& x)
 {
     // TODO: does that break anything?
-    y.getRawVector() += a*x.getRawVector();
+    y.getRawVector() += a * x.getRawVector();
 }
 
 // y = a*x + y
 void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 {
     // TODO: does that break anything?
-    y.getRawVector() = a*x.getRawVector() + b*y.getRawVector();
+    y.getRawVector() = a * x.getRawVector() + b * y.getRawVector();
 }
 
 // Explicit specialization
