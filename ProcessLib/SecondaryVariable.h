@@ -115,6 +115,12 @@ public:
 
         // read which variables are defined in the config
         for (auto const& tag_name : tag_names) {
+            if (!_all_secondary_variables.insert(tag_name).second)
+            {
+                ERR("Tag name <%s> has been specified twice as a secondary variable.");
+                std::abort();
+            }
+
             //! \ogs_file_special
             if (auto var_name = config->getConfParamOptional<std::string>(tag_name))
             {
@@ -145,46 +151,64 @@ public:
 
     /*! Set up a secondary variable.
      *
-     * \param tag_name the tag in the project file associated with this secondary variable.
+     * \param tag_name the tag in the project file associated with this
+     * secondary variable.
      * \param num_components the variable's number of components.
      * \param fcts functions that compute the variable.
      *
      * \note
-     * Only variables requested by the user in the project file will be configured.
+     * Only variables requested by the user in the project file will be
+     * configured.
      * All other variables are silently ignored.
      */
-    void addSecondaryVariable(
-            std::string const& tag_name, const unsigned num_components,
-            SecondaryVariableFunctions<GlobalVector>&& fcts)
+    void addSecondaryVariable(std::string const& tag_name,
+                              const unsigned num_components,
+                              SecondaryVariableFunctions<GlobalVector>&& fcts)
     {
         auto it = _map_tagname_to_varname.find(tag_name);
 
         // get user-supplied var_name for the given tag_name
-        if (it != _map_tagname_to_varname.end()) {
+        if (it != _map_tagname_to_varname.end())
+        {
             auto const& var_name = it->first;
-            // TODO make sure the same variable is not pushed twice
-            _secondary_variables.push_back(
-                {var_name, num_components, std::move(fcts)});
+
+            if (!_configured_secondary_variables
+                     .emplace(std::make_pair(
+                         var_name,
+                         SecondaryVariable<GlobalVector>{
+                             var_name, num_components, std::move(fcts)}))
+                     .second)
+            {
+                ERR("The secondary variable with name `%s' has already been "
+                    "set up.",
+                    var_name.c_str());
+                std::abort();
+            }
+        }
+        else if (_all_secondary_variables.find(tag_name) ==
+                 _all_secondary_variables.end())
+        {
+            ERR("The tag <%s> has not been registered to mark a secondary "
+                "variable.",
+                tag_name.c_str());
+            std::abort();
         }
     }
 
-    std::string const& getMappedName(std::string const& tag_name)
-    {
-        return _map_tagname_to_varname[tag_name];
-    }
-
     //! Returns an iterator to the first secondary variable.
-    typename std::vector<SecondaryVariable<GlobalVector>>::const_iterator
+    typename std::map<std::string,
+                      SecondaryVariable<GlobalVector>>::const_iterator
     begin() const
     {
-        return _secondary_variables.begin();
+        return _configured_secondary_variables.begin();
     }
 
     //! Returns an iterator past the last secondary variable.
-    typename std::vector<SecondaryVariable<GlobalVector>>::const_iterator
+    typename std::map<std::string,
+                      SecondaryVariable<GlobalVector>>::const_iterator
     end() const
     {
-        return _secondary_variables.end();
+        return _configured_secondary_variables.end();
     }
 
 private:
@@ -192,7 +216,11 @@ private:
     std::map<std::string, std::string> _map_tagname_to_varname;
 
     //! Collection of all configured secondary variables.
-    std::vector<SecondaryVariable<GlobalVector>> _secondary_variables;
+    //! Maps the variable name to the corresponding SecondaryVariable.
+    std::map<std::string, SecondaryVariable<GlobalVector>> _configured_secondary_variables;
+
+    //! Set of all tags available as a secondary variable.
+    std::set<std::string> _all_secondary_variables;
 };
 
 

@@ -234,13 +234,12 @@ void doProcessOutput(
         }
     };
 
-    for (auto const& var : secondary_variables)
+    for (auto const& elem : secondary_variables)
     {
-        auto const var_name = secondary_variables.getMappedName(var.name);
-        if (output_variables.find(var_name)
-            != output_variables.cend())
+        auto const& var_name = elem.first;
+        if (output_variables.find(var_name) != output_variables.cend())
         {
-            add_secondary_var(var, var_name);
+            add_secondary_var(elem.second, var_name);
         }
     }
 
