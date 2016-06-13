@@ -49,16 +49,14 @@ PETScMatrix::PETScMatrix (const PetscInt nrows, const PetscInt ncols, const PETS
 }
 
 PETScMatrix::PETScMatrix(const PETScMatrix &A)
-    : _A(new PETSc_Mat)
-    , _nrows(A._nrows)
+    : _nrows(A._nrows)
     , _ncols(A._ncols)
     , _n_loc_rows(A._n_loc_rows)
     , _n_loc_cols(A._n_loc_cols)
     , _start_rank(A._start_rank)
     , _end_rank(A._end_rank)
 {
-    _A.reset(new PETSc_Mat);
-    MatConvert(*A._A, MATSAME, MAT_INITIAL_MATRIX, _A.get());
+    MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
 }
 
 PETScMatrix&
@@ -73,11 +71,10 @@ PETScMatrix::operator=(PETScMatrix const& A)
 
     if (_A) {
         // TODO this is the slowest option for copying
-        MatCopy(*A._A, *_A, DIFFERENT_NONZERO_PATTERN);
+        MatCopy(A._A, _A, DIFFERENT_NONZERO_PATTERN);
     } else {
         destroy();
-        _A.reset(new PETSc_Mat);
-        MatConvert(*A._A, MATSAME, MAT_INITIAL_MATRIX, _A.get());
+        MatConvert(A._A, MATSAME, MAT_INITIAL_MATRIX, &_A);
     }
 
     return *this;
@@ -93,11 +90,11 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     // This avoids all reductions in the zero row routines
     // and thus improves performance for very large process counts.
     // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
-    MatSetOption(*_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
+    MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
     if(nrows>0)
-        MatZeroRows(*_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else
-        MatZeroRows(*_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(_A, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
 }
 
 void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat vw_format)
@@ -108,8 +105,8 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
 
     finalizeAssembly();
 
-    PetscObjectSetName((PetscObject)*_A,"Stiffness_matrix");
-    MatView(*_A,viewer);
+    PetscObjectSetName((PetscObject)_A,"Stiffness_matrix");
+    MatView(_A,viewer);
 
 // This preprocessor is only for debugging, e.g. dump the matrix and exit the program.
 //#define EXIT_TEST
@@ -123,22 +120,20 @@ void PETScMatrix::viewer(const std::string &file_name, const PetscViewerFormat v
 
 void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
 {
-    _A.reset(new PETSc_Mat);
+    MatCreate(PETSC_COMM_WORLD, &_A);
+    MatSetSizes(_A, _n_loc_rows, _n_loc_cols, _nrows, _ncols);
 
-    MatCreate(PETSC_COMM_WORLD, _A.get());
-    MatSetSizes(*_A, _n_loc_rows, _n_loc_cols, _nrows, _ncols);
+    MatSetFromOptions(_A);
 
-    MatSetFromOptions(*_A);
-
-    MatSetType(*_A, MATMPIAIJ);
-    MatSeqAIJSetPreallocation(*_A, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(*_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
-    // If pre-allocation does not work one can use MatSetUp(*_A), which is much
+    MatSetType(_A, MATMPIAIJ);
+    MatSeqAIJSetPreallocation(_A, d_nz, PETSC_NULL);
+    MatMPIAIJSetPreallocation(_A, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
+    // If pre-allocation does not work one can use MatSetUp(_A), which is much
     // slower.
 
-    MatGetOwnershipRange(*_A, &_start_rank, &_end_rank);
-    MatGetSize(*_A, &_nrows,  &_ncols);
-    MatGetLocalSize(*_A, &_n_loc_rows, &_n_loc_cols);
+    MatGetOwnershipRange(_A, &_start_rank, &_end_rank);
+    MatGetSize(_A, &_nrows,  &_ncols);
+    MatGetLocalSize(_A, &_n_loc_rows, &_n_loc_cols);
 }
 
 bool finalizeMatrixAssembly(PETScMatrix &mat, const MatAssemblyType asm_type)
