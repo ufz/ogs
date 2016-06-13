@@ -38,14 +38,14 @@ public:
     void setIntegrationOrder(std::size_t order)
     {
         _order = order;
-        _n_sampl_pt = getNPoints(order);
+        _n_sampl_pt = getNumberOfPoints(order);
     }
 
     /// return current integration order.
     std::size_t getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
-    std::size_t getNPoints() const {return _n_sampl_pt;}
+    std::size_t getNumberOfPoints() const {return _n_sampl_pt;}
 
     /**
      * get coordinates of a integration point
@@ -92,7 +92,7 @@ public:
      * @return the number of points
      */
     static std::size_t
-    getNPoints(std::size_t order)
+    getNumberOfPoints(std::size_t order)
     {
         switch (order)
         {

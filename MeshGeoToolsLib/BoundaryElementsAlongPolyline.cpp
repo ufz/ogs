@@ -39,7 +39,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
         if (!e->isBoundaryElement())
             continue;
         // find edges on the polyline
-        for (unsigned i=0; i<e->getNEdges(); i++) {
+        for (unsigned i=0; i<e->getNumberOfEdges(); i++) {
             auto* edge = e->getEdge(i);
             // check if all edge nodes are along the polyline (if yes, store a distance)
             std::vector<std::size_t> edge_node_distances_along_ply;
@@ -75,14 +75,14 @@ BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
 bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std::size_t> &vec_node_ids, const MeshLib::Element &edge, std::vector<std::size_t> &edge_node_distances) const
 {
     unsigned j=0;
-    for (; j<edge.getNBaseNodes(); j++) {
+    for (; j<edge.getNumberOfBaseNodes(); j++) {
         auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(), edge.getNodeIndex(j));
         if (itr != vec_node_ids.end())
             edge_node_distances.push_back(std::distance(vec_node_ids.begin(), itr));
         else
             break;
     }
-    return (j==edge.getNBaseNodes());
+    return (j==edge.getNumberOfBaseNodes());
 }
 
 MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(const MeshLib::Element &edge, const GeoLib::Polyline &ply, const std::vector<std::size_t> &edge_node_distances_along_ply, const std::vector<std::size_t> &node_ids_on_poly) const
@@ -92,8 +92,8 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(const Me
     // Otherwise, create a new element with reversed local node index
     if (edge_node_distances_along_ply.front() > edge_node_distances_along_ply.back()
             || (ply.isClosed() && edge_node_distances_along_ply.back() == node_ids_on_poly.size()-1)) {
-        MeshLib::Node** new_nodes = new MeshLib::Node*[edge.getNBaseNodes()];
-        std::reverse_copy(edge.getNodes(), edge.getNodes()+edge.getNBaseNodes(), new_nodes);
+        MeshLib::Node** new_nodes = new MeshLib::Node*[edge.getNumberOfBaseNodes()];
+        std::reverse_copy(edge.getNodes(), edge.getNodes()+edge.getNumberOfBaseNodes(), new_nodes);
         new_edge = new MeshLib::Line(new_nodes);
     }
     return new_edge;

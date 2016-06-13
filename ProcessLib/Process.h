@@ -240,7 +240,7 @@ private:
                               int const component_id,
                               GlobalVector& x)
     {
-        std::size_t const n_nodes = _mesh.getNNodes();
+        std::size_t const n_nodes = _mesh.getNumberOfNodes();
         for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
         {
             MeshLib::Location const l(_mesh.getID(),
@@ -373,7 +373,7 @@ Parameter<ParameterArgs...>& findParameter(
 {
     // Find parameter name in process config.
     //! \ogs_file_special
-    auto const name = process_config.getConfParam<std::string>(tag);
+    auto const name = process_config.getConfigParameter<std::string>(tag);
 
     // Find corresponding parameter by name.
     auto const parameter_it =

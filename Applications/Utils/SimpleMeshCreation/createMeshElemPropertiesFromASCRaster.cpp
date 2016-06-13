@@ -189,7 +189,7 @@ int main (int argc, char* argv[])
     compressed_src_properties[n_mat - 1] = src_properties[mat_map_size - 1];
 
     // reset materials in source mesh
-    const std::size_t n_mesh_elements(src_mesh->getNElements());
+    const std::size_t n_mesh_elements(src_mesh->getNumberOfElements());
     auto materialIds = src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     if (!materialIds)
     {
@@ -203,11 +203,11 @@ int main (int argc, char* argv[])
     // do the interpolation
     MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(src_mesh.get(),
                                                                &compressed_src_properties);
-    std::vector<double> dest_properties(dest_mesh->getNElements());
+    std::vector<double> dest_properties(dest_mesh->getNumberOfElements());
     mesh_interpolation.setPropertiesForMesh(dest_mesh.get(),
                                             dest_properties);
 
-    const std::size_t n_dest_mesh_elements(dest_mesh->getNElements());
+    const std::size_t n_dest_mesh_elements(dest_mesh->getNumberOfElements());
 
     { // write property file
         std::string property_fname(mapping_arg.getValue());

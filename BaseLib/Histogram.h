@@ -102,7 +102,7 @@ public:
 
     const Data& getSortedData() const { return _data; }
     const std::vector<std::size_t>& getBinCounts() const { return _histogram; }
-    const unsigned int& getNrBins() const { return _nr_bins; }
+    const unsigned int& getNumberOfBins() const { return _nr_bins; }
     const T& getMinimum() const { return _min; }
     const T& getMaximum() const { return _max; }
     const T& getBinWidth() const { return _bin_width; }
@@ -142,7 +142,7 @@ public:
         }
 
         out << "# Histogram for parameter " << param_name << " of data set " << data_set_name << "\n";
-        std::size_t const n_bins = this->getNrBins();
+        std::size_t const n_bins = this->getNumberOfBins();
         std::vector<std::size_t> const& bin_cnts(this->getBinCounts());
         double const min (this->getMinimum());
         double const bin_width (this->getBinWidth());
@@ -188,7 +188,7 @@ template <typename T>
 std::ostream&
 operator<<(std::ostream& os, const Histogram<T>& h)
 {
-    os << h.getNrBins() << " "
+    os << h.getNumberOfBins() << " "
        << h.getMinimum() << " "
        << h.getMaximum() << " ";
     std::copy(h.getBinCounts().begin(), h.getBinCounts().end(),

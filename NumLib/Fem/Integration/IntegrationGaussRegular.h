@@ -53,7 +53,7 @@ public:
     std::size_t getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
-    std::size_t getNPoints() const {return _n_sampl_pt;}
+    std::size_t getNumberOfPoints() const {return _n_sampl_pt;}
 
     /// Get coordinates of the integration point.
     ///

@@ -126,7 +126,7 @@ Surface* Surface::createSurface(const Polyline& ply)
         }
     }
     delete polygon;
-    if (sfc->getNTriangles() == 0)
+    if (sfc->getNumberOfTriangles() == 0)
     {
         WARN(
             "Surface::createSurface(): Triangulation does not contain any "
@@ -137,7 +137,7 @@ Surface* Surface::createSurface(const Polyline& ply)
     return sfc;
 }
 
-std::size_t Surface::getNTriangles() const
+std::size_t Surface::getNumberOfTriangles() const
 {
     return _sfc_triangles.size();
 }

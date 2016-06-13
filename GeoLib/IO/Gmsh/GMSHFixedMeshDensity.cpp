@@ -22,7 +22,7 @@ GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density) :
 {
 }
 
-void GMSHFixedMeshDensity::init(std::vector<GeoLib::Point const*> const& vec)
+void GMSHFixedMeshDensity::initialize(std::vector<GeoLib::Point const*> const& vec)
 {
     // to avoid a warning here:
     (void)(vec);

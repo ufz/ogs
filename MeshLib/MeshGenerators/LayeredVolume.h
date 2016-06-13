@@ -49,7 +49,7 @@ public:
                             double noDataReplacementValue = 0.0);
 
     /// Returns the region attribute vector necessary for assigning region attributes via TetGen
-    std::vector<MeshLib::Node> getAttributePoints() { return _attribute_points; }
+    std::vector<MeshLib::Node> getConfigAttributePoints() { return _attribute_points; }
 
 private:
     /// Adds another layer to the subsurface mesh

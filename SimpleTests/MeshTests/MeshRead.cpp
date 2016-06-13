@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 /*
     unsigned elem_id = 25000;
     const MeshLib::Element* e = mesh->getElement(elem_id);
-    const std::size_t nElems = mesh->getNElements();
-    for (unsigned i=0; i< e->getNNeighbors(); i++)
+    const std::size_t nElems = mesh->getNumberOfElements();
+    for (unsigned i=0; i< e->getNumberOfNeighbors(); i++)
     {
         for (unsigned j=0; j< nElems; j++)
             if (mesh->getElement(j) == e->getNeighbor(i))

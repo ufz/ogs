@@ -54,7 +54,7 @@ TEST(MeshLibMeshSubsets, GetIntersectionByNodes)
         {all_nodes_mesh_subset.getIntersectionByNodes(some_nodes)};
 
     // Check sizes.
-    ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNNodes());
+    ASSERT_EQ(some_nodes.size(), some_nodes_mesh_subset->getNumberOfNodes());
 
     // Check ids.
     std::size_t nnodes = some_nodes.size();

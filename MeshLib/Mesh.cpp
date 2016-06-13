@@ -56,8 +56,8 @@ Mesh::Mesh(const Mesh &mesh)
     : _id(_counter_value-1), _mesh_dimension(mesh.getDimension()),
       _edge_length(mesh._edge_length.first, mesh._edge_length.second),
       _node_distance(mesh._node_distance.first, mesh._node_distance.second),
-      _name(mesh.getName()), _nodes(mesh.getNNodes()), _elements(mesh.getNElements()),
-      _n_base_nodes(mesh.getNBaseNodes()),
+      _name(mesh.getName()), _nodes(mesh.getNumberOfNodes()), _elements(mesh.getNumberOfElements()),
+      _n_base_nodes(mesh.getNumberOfBaseNodes()),
       _properties(mesh._properties)
 {
     const std::vector<Node*> nodes (mesh.getNodes());
@@ -69,7 +69,7 @@ Mesh::Mesh(const Mesh &mesh)
     const std::size_t nElements (elements.size());
     for (unsigned i=0; i<nElements; ++i)
     {
-        const std::size_t nElemNodes = elements[i]->getNBaseNodes();
+        const std::size_t nElemNodes = elements[i]->getNumberOfBaseNodes();
         _elements[i] = elements[i]->clone();
         for (unsigned j=0; j<nElemNodes; ++j)
             _elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
@@ -103,7 +103,7 @@ void Mesh::addElement(Element* elem)
     _elements.push_back(elem);
 
     // add element information to nodes
-    unsigned nNodes (elem->getNBaseNodes());
+    unsigned nNodes (elem->getNumberOfBaseNodes());
     for (unsigned i=0; i<nNodes; ++i)
         elem->_nodes[i]->addElement(elem);
 }
@@ -134,7 +134,7 @@ void Mesh::setElementsConnectedToNodes()
 {
     for (auto e = _elements.begin(); e != _elements.end(); ++e)
     {
-        const unsigned nNodes ((*e)->getNBaseNodes());
+        const unsigned nNodes ((*e)->getNumberOfBaseNodes());
         for (unsigned j=0; j<nNodes; ++j)
             (*e)->_nodes[j]->addElement(*e);
     }
@@ -154,7 +154,7 @@ void Mesh::calcEdgeLengthRange()
     this->_edge_length.second = 0;
     double min_length(0);
     double max_length(0);
-    const std::size_t nElems (this->getNElements());
+    const std::size_t nElems (this->getNumberOfElements());
     for (std::size_t i=0; i<nElems; ++i)
     {
         _elements[i]->computeSqrEdgeLengthRange(min_length, max_length);
@@ -171,7 +171,7 @@ void Mesh::calcNodeDistanceRange()
     this->_node_distance.second = 0;
     double min_length(0);
     double max_length(0);
-    const std::size_t nElems (this->getNElements());
+    const std::size_t nElems (this->getNumberOfElements());
     for (std::size_t i=0; i<nElems; ++i)
     {
         _elements[i]->computeSqrNodeDistanceRange(min_length, max_length);
@@ -190,7 +190,7 @@ void Mesh::setElementNeighbors()
         // create vector with all elements connected to current element (includes lots of doubles!)
         Element *const element = *it;
 
-        const std::size_t nNodes (element->getNBaseNodes());
+        const std::size_t nNodes (element->getNumberOfBaseNodes());
         for (unsigned n(0); n<nNodes; ++n)
         {
             std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
@@ -223,7 +223,7 @@ void Mesh::setNodesConnectedByEdges()
         for (unsigned j=0; j<nConnElems; ++j)
         {
             const unsigned idx (conn_elems[j]->getNodeIDinElement(node));
-            const unsigned nElemNodes (conn_elems[j]->getNBaseNodes());
+            const unsigned nElemNodes (conn_elems[j]->getNumberOfBaseNodes());
             for (unsigned k(0); k<nElemNodes; ++k)
             {
                 bool is_in_vector (false);
@@ -255,7 +255,7 @@ void Mesh::setNodesConnectedByElements()
         for (Element const* const element : conn_elems)
         {
             Node* const* const single_elem_nodes = element->getNodes();
-            std::size_t const nnodes = element->getNBaseNodes();
+            std::size_t const nnodes = element->getNumberOfBaseNodes();
             for (std::size_t n = 0; n < nnodes; n++)
                 adjacent_nodes.push_back(single_elem_nodes[n]);
         }

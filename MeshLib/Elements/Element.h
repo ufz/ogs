@@ -62,7 +62,7 @@ public:
      * Get node with local index i where i should be at most the number
      * of nodes of the element
      * @param i local index of node, at most the number of nodes of the
-     * element that you can obtain with Element::getNBaseNodes()
+     * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return a pointer to the appropriate (and constant, i.e. not
      * modifiable by the user) instance of class Node or a NULL pointer
      * @sa Element::getNodeIndex()
@@ -92,27 +92,27 @@ public:
     virtual std::size_t getID() const final { return _id; }
 
     /// Get the number of edges for this element.
-    virtual unsigned getNEdges() const = 0;
+    virtual unsigned getNumberOfEdges() const = 0;
 
     /// Get the number of nodes for face i.
-    virtual unsigned getNFaceNodes(unsigned i) const = 0;
+    virtual unsigned getNumberOfFaceNodes(unsigned i) const = 0;
 
     /// Get the number of faces for this element.
-    virtual unsigned getNFaces() const = 0;
+    virtual unsigned getNumberOfFaces() const = 0;
 
     /// Get the specified neighbor.
     const Element* getNeighbor(unsigned i) const;
 
     /// Get the number of neighbors for this element.
-    virtual unsigned getNNeighbors() const = 0;
+    virtual unsigned getNumberOfNeighbors() const = 0;
 
     /**
      * Returns the number of linear nodes.
      */
-    virtual unsigned getNBaseNodes() const = 0;
+    virtual unsigned getNumberOfBaseNodes() const = 0;
 
     /// Returns the number of all nodes including both linear and nonlinear nodes
-    virtual unsigned getNNodes() const = 0;
+    virtual unsigned getNumberOfNodes() const = 0;
 
     /// Returns the position of the given node in the node array of this element.
     virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
@@ -121,7 +121,7 @@ public:
      * Get the global index for the Node with local index i.
      * The index i should be at most the number of nodes of the element.
      * @param i local index of Node, at most the number of nodes of the
-     * element that you can obtain with Element::getNBaseNodes()
+     * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return the global index or std::numeric_limits<unsigned>::max()
      * @sa Element::getNode()
      */

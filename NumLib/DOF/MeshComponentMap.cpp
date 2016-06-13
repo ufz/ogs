@@ -47,7 +47,7 @@ MeshComponentMap::MeshComponentMap(
             const MeshLib::NodePartitionedMesh& mesh =
                 static_cast<const MeshLib::NodePartitionedMesh&>(
                     mesh_subset.getMesh());
-            num_unknowns += mesh.getNGlobalNodes();
+            num_unknowns += mesh.getNumberOfGlobalNodes();
         }
     }
 
@@ -72,7 +72,7 @@ MeshComponentMap::MeshComponentMap(
                     mesh_subset.getMesh());
 
             // mesh items are ordered first by node, cell, ....
-            for (std::size_t j = 0; j < mesh_subset.getNNodes(); j++)
+            for (std::size_t j = 0; j < mesh_subset.getNumberOfNodes(); j++)
             {
                 GlobalIndexType global_id = 0;
                 if (order == ComponentOrder::BY_LOCATION)
@@ -107,12 +107,12 @@ MeshComponentMap::MeshComponentMap(
             // Note: If the cells are really used (e.g. for the mixed FEM),
             // the following global cell index must be reconsidered
             // according to the employed cell indexing method.
-            for (std::size_t j = 0; j < mesh_subset.getNElements(); j++)
+            for (std::size_t j = 0; j < mesh_subset.getNumberOfElements(); j++)
                 _dict.insert(
                     Line(Location(mesh_id, MeshLib::MeshItemType::Cell, j),
                          comp_id, cell_index++));
 
-            _num_global_dof += mesh.getNGlobalNodes();
+            _num_global_dof += mesh.getNumberOfGlobalNodes();
         }
         comp_id++;
     }
@@ -134,9 +134,9 @@ MeshComponentMap::MeshComponentMap(
             MeshLib::MeshSubset const& mesh_subset = c->getMeshSubset(mesh_subset_index);
             std::size_t const mesh_id = mesh_subset.getMeshID();
             // mesh items are ordered first by node, cell, ....
-            for (std::size_t j=0; j<mesh_subset.getNNodes(); j++)
+            for (std::size_t j=0; j<mesh_subset.getNumberOfNodes(); j++)
                 _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, mesh_subset.getNodeID(j)), comp_id, global_index++));
-            for (std::size_t j=0; j<mesh_subset.getNElements(); j++)
+            for (std::size_t j=0; j<mesh_subset.getNumberOfElements(); j++)
                 _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Cell, mesh_subset.getElementID(j)), comp_id, global_index++));
         }
         comp_id++;
@@ -161,12 +161,12 @@ MeshComponentMap MeshComponentMap::getSubset(
         std::size_t const mesh_id = mesh_subset->getMeshID();
         // Lookup the locations in the current mesh component map and
         // insert the full lines into the subset dictionary.
-        for (std::size_t j = 0; j < mesh_subset->getNNodes(); j++)
+        for (std::size_t j = 0; j < mesh_subset->getNumberOfNodes(); j++)
             subset_dict.insert(
                 getLine(Location(mesh_id, MeshLib::MeshItemType::Node,
                                  mesh_subset->getNodeID(j)),
                         component_id));
-        for (std::size_t j = 0; j < mesh_subset->getNElements(); j++)
+        for (std::size_t j = 0; j < mesh_subset->getNumberOfElements(); j++)
             subset_dict.insert(
                 getLine(Location(mesh_id, MeshLib::MeshItemType::Cell,
                                  mesh_subset->getElementID(j)),

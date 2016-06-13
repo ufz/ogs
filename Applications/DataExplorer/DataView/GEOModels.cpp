@@ -237,7 +237,7 @@ void GEOModels::addNameForObjectPoints(const std::string &geometry_name,
     else if (object_type == GeoLib::GEOTYPE::SURFACE)
     {
         const GeoLib::Surface* sfc = dynamic_cast<const GeoLib::Surface*>(obj);
-        std::size_t nTriangles = sfc->getNTriangles();
+        std::size_t nTriangles = sfc->getNumberOfTriangles();
         for (std::size_t i = 0; i < nTriangles; i++)
         {
             const GeoLib::Triangle* tri = (*sfc)[i];

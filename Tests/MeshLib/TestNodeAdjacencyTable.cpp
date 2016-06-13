@@ -27,16 +27,16 @@ TEST(MeshLib, CreateNodeAdjacencyTable1D)
     NodeAdjacencyTable table(mesh->getNodes());
 
     // There must be as many entries as there are nodes in the mesh.
-    ASSERT_EQ(mesh->getNNodes(), table.size());
+    ASSERT_EQ(mesh->getNumberOfNodes(), table.size());
 
     // Minimum connectivity for line mesh is 2 for boundary nodes,
     // and the maximum is 3 for interior nodes.
-    std::size_t const nnodes = mesh->getNNodes();
+    std::size_t const nnodes = mesh->getNumberOfNodes();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
         case 1: // a corner node has 2 adjacent nodes.
@@ -63,14 +63,14 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
     NodeAdjacencyTable table(mesh->getNodes());
 
     // There must be as many entries as there are nodes in the mesh.
-    ASSERT_EQ(mesh->getNNodes(), table.size());
+    ASSERT_EQ(mesh->getNumberOfNodes(), table.size());
 
-    std::size_t const nnodes = mesh->getNNodes();
+    std::size_t const nnodes = mesh->getNumberOfNodes();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
         case 1: // a corner node has 4 adjacent nodes.
@@ -101,14 +101,14 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
     NodeAdjacencyTable table(mesh->getNodes());
 
     // There must be as many entries as there are nodes in the mesh.
-    ASSERT_EQ(mesh->getNNodes(), table.size());
+    ASSERT_EQ(mesh->getNumberOfNodes(), table.size());
 
-    std::size_t const nnodes = mesh->getNNodes();
+    std::size_t const nnodes = mesh->getNumberOfNodes();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNElements();
+        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
         case 1: // a corner node has 8 adjacent nodes.

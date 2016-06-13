@@ -35,8 +35,8 @@ struct MatrixSpecifications;
 
 namespace MathLib
 {
-SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::MatrixXd, Eigen::MatrixXd::Index);
-SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::VectorXd, Eigen::VectorXd::Index);
+SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::MatrixXd, Eigen::MatrixXd::Index)
+SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::VectorXd, Eigen::VectorXd::Index)
 }
 
 #endif
@@ -61,8 +61,8 @@ SPECIALIZE_MATRIX_VECTOR_TRAITS(PETScVector, PETScVector::IndexType);
 
 namespace MathLib
 {
-SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenMatrix, EigenMatrix::IndexType);
-SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenVector, EigenVector::IndexType);
+SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenMatrix, EigenMatrix::IndexType)
+SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenVector, EigenVector::IndexType)
 }
 
 #endif

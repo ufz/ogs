@@ -152,7 +152,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     initComponents(num_components, selected_component, ComponentOrder);
 
     ASSERT_EQ(dof_map->getNumComponents(), num_components);
-    ASSERT_EQ(dof_map->size(), mesh->getNElements());
+    ASSERT_EQ(dof_map->size(), mesh->getNumberOfElements());
 
     ASSERT_EQ(dof_map_boundary->getNumComponents(), 1);
     ASSERT_EQ(dof_map_boundary->size(), boundary_elements.size());
@@ -160,7 +160,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     // check mesh elements
     for (unsigned e=0; e<dof_map->size(); ++e)
     {
-        auto const element_nodes_size = mesh->getElement(e)->getNNodes();
+        auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
         for (unsigned c=0; c<dof_map->getNumComponents(); ++c)

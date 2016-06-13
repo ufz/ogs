@@ -57,7 +57,7 @@ std::size_t ElementSearch::searchByBoundingBox(
 {
     auto matchedIDs = filter(_mesh.getElements(),
         [&aabb](MeshLib::Element* e) {
-            std::size_t const nElemNodes (e->getNBaseNodes());
+            std::size_t const nElemNodes (e->getNumberOfBaseNodes());
             for (std::size_t n=0; n < nElemNodes; ++n)
                 if (aabb.containsPoint(*e->getNode(n)))
                     return true;    // any node of element is in aabb.

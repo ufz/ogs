@@ -58,7 +58,7 @@ SurfaceGrid::SurfaceGrid(Surface const*const sfc) :
         delta[2] = _max_pnt[2] - _min_pnt[2];
     }
 
-    const std::size_t n_tris(sfc->getNTriangles());
+    const std::size_t n_tris(sfc->getNumberOfTriangles());
     const std::size_t n_tris_per_cell(5);
 
     std::bitset<3> dim; // all bits are set to zero.
@@ -115,7 +115,7 @@ SurfaceGrid::SurfaceGrid(Surface const*const sfc) :
 
 void SurfaceGrid::sortTrianglesInGridCells(Surface const*const sfc)
 {
-    for (std::size_t l(0); l<sfc->getNTriangles(); l++) {
+    for (std::size_t l(0); l<sfc->getNumberOfTriangles(); l++) {
         if (! sortTriangleInGridCells((*sfc)[l])) {
             Point const& p0(*((*sfc)[l]->getPoint(0)));
             Point const& p1(*((*sfc)[l]->getPoint(1)));

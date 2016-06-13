@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     // Output nodes
     os.setf(std::ios::scientific, std::ios::floatfield);
     std::setprecision(10);
-    const std::size_t nn = mesh->getNNodes();
+    const std::size_t nn = mesh->getNumberOfNodes();
     for(std::size_t i=0; i<nn; i++)
     {
         const double *x = mesh->getNode(i)->getCoords();
@@ -87,13 +87,13 @@ int main(int argc, char *argv[])
     os.flush();
 
     // Output elements
-    const std::size_t ne = mesh->getNElements();
+    const std::size_t ne = mesh->getNumberOfElements();
     for(std::size_t i=0; i<ne; i++)
     {
         const Element *elem = mesh->getElement(i);
         Node* const* ele_nodes = elem->getNodes();
 
-        for(unsigned j=0; j<elem->getNNodes(); j++)
+        for(unsigned j=0; j<elem->getNumberOfNodes(); j++)
         {
             os << ele_nodes[j]->getID() << " ";
         }

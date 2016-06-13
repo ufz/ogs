@@ -34,7 +34,7 @@ public:
                             double station_density,
                             std::size_t max_pnts_per_leaf);
     virtual ~GMSHAdaptiveMeshDensity();
-    void init(std::vector<GeoLib::Point const*> const& pnts);
+    void initialize(std::vector<GeoLib::Point const*> const& pnts);
     double getMeshDensityAtPoint(GeoLib::Point const* const pnt) const;
     void addPoints(std::vector<GeoLib::Point const*> const& pnts);
     double getMeshDensityAtStation(GeoLib::Point const* const) const;

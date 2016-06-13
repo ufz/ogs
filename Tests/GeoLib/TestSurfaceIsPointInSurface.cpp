@@ -146,7 +146,7 @@ TEST(GeoLib, SurfaceIsPointInSurface)
             EXPECT_FALSE(sfc->isPntInSfc(q));
         }
         // test edge middle points of the triangles
-        for (std::size_t k(0); k<sfc->getNTriangles(); ++k) {
+        for (std::size_t k(0); k<sfc->getNumberOfTriangles(); ++k) {
             MathLib::Point3d p, q, r;
             std::tie(p,q,r) = getEdgeMiddlePoints(*(*sfc)[k]);
             EXPECT_TRUE(sfc->isPntInSfc(p));

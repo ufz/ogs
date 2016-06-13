@@ -72,14 +72,14 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
 
     // close boundaries between layers
     this->addLayerBoundaries(*top, nRasters);
-    this->removeCongruentElements(nRasters, top->getNElements());
+    this->removeCongruentElements(nRasters, top->getNumberOfElements());
 
     return true;
 }
 
 void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
 {
-    const std::size_t nNodes (dem_mesh.getNNodes());
+    const std::size_t nNodes (dem_mesh.getNumberOfNodes());
     const std::vector<MeshLib::Node*> &nodes (dem_mesh.getNodes());
     const std::size_t node_id_offset (_nodes.size());
     const std::size_t last_layer_node_offset (node_id_offset-nNodes);
@@ -113,11 +113,11 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer
 void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers)
 {
     const unsigned nLayerBoundaries (nLayers-1);
-    const std::size_t nNodes (layer.getNNodes());
+    const std::size_t nNodes (layer.getNumberOfNodes());
     const std::vector<MeshLib::Element*> &layer_elements (layer.getElements());
     for (MeshLib::Element* elem : layer_elements)
     {
-        const std::size_t nElemNodes (elem->getNBaseNodes());
+        const std::size_t nElemNodes (elem->getNumberOfBaseNodes());
         for (unsigned i=0; i<nElemNodes; ++i)
             if (elem->getNeighbor(i) == nullptr)
                 for (unsigned j=0; j<nLayerBoundaries; ++j)
@@ -156,7 +156,7 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
             MeshLib::Element *const low  (_elements[lower_offset+j]);
 
             unsigned count(0);
-            const std::size_t nElemNodes (low->getNBaseNodes());
+            const std::size_t nElemNodes (low->getNumberOfBaseNodes());
             for (std::size_t k=0; k<nElemNodes; ++k)
                 if (high->getNodeIndex(k) == low->getNodeIndex(k))
                 {

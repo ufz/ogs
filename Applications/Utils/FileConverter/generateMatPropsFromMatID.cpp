@@ -59,9 +59,9 @@ int main (int argc, char* argv[])
     }
 
     std::size_t const n_properties(materialIds->size());
-    if (n_properties != mesh->getNElements()) {
+    if (n_properties != mesh->getNumberOfElements()) {
         ERR("Size mismatch: number of elements (%u) != number of material "
-            "properties (%u).", mesh->getNElements(), n_properties);
+            "properties (%u).", mesh->getNumberOfElements(), n_properties);
         return EXIT_FAILURE;
     }
     std::string const name = BaseLib::extractBaseNameWithoutExtension(mesh_arg.getValue());

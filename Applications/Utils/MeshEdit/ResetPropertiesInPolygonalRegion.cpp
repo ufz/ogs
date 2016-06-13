@@ -100,8 +100,8 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
     for(std::size_t j(0); j<mesh.getElements().size(); ++j) {
         bool elem_out(true);
         MeshLib::Element const*const elem(mesh.getElements()[j]);
-        for (auto k = decltype(elem->getNNodes()){0};
-             k < elem->getNNodes() && elem_out; ++k)
+        for (auto k = decltype(elem->getNumberOfNodes()){0};
+             k < elem->getNumberOfNodes() && elem_out; ++k)
         {
             if (! outside[elem->getNode(k)->getID()]) {
                 elem_out = false;

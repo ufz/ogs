@@ -111,7 +111,7 @@ public:
     virtual bool solve(const double t) = 0;
 
     //! Returns the number of equations.
-    virtual unsigned getNumEquations() const { return NumEquations; }
+    virtual unsigned getNumberOfEquations() const { return NumEquations; }
     //! Returns the solution vector \c y
     virtual MappedConstVector<NumEquations> getSolution() const = 0;
 

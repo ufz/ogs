@@ -79,22 +79,22 @@ public:
     const Element* getFace(unsigned i) const { return ELEMENT_RULE::getFace(this, i); }
 
     /// Get the number of edges for this element.
-    unsigned getNEdges() const { return ELEMENT_RULE::n_edges; }
+    unsigned getNumberOfEdges() const { return ELEMENT_RULE::n_edges; }
 
     /// Get the number of nodes for face i.
-    unsigned getNFaceNodes(unsigned i) const { return ELEMENT_RULE::getNFaceNodes(i); }
+    unsigned getNumberOfFaceNodes(unsigned i) const { return ELEMENT_RULE::getNumberOfFaceNodes(i); }
 
     /// Get the number of faces for this element.
-    unsigned getNFaces() const { return ELEMENT_RULE::n_faces; }
+    unsigned getNumberOfFaces() const { return ELEMENT_RULE::n_faces; }
 
     /// Get the number of neighbors for this element.
-    unsigned getNNeighbors() const { return ELEMENT_RULE::n_neighbors; }
+    unsigned getNumberOfNeighbors() const { return ELEMENT_RULE::n_neighbors; }
 
     /// Get the number of linear nodes for this element.
-    virtual unsigned getNBaseNodes() const { return n_base_nodes; }
+    virtual unsigned getNumberOfBaseNodes() const { return n_base_nodes; }
 
     /// Get the number of all nodes for this element.
-    virtual unsigned getNNodes() const { return n_all_nodes; }
+    virtual unsigned getNumberOfNodes() const { return n_all_nodes; }
 
     /// Get the type of this element.
     virtual MeshElemType getGeomType() const { return ELEMENT_RULE::mesh_elem_type; }
@@ -136,7 +136,7 @@ public:
     /// Return a specific edge node.
     virtual inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const
     {
-        if (getNEdges()>0)
+        if (getNumberOfEdges()>0)
             return const_cast<Node*>(this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
         else
             return nullptr;

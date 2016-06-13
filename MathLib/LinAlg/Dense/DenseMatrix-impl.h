@@ -33,14 +33,14 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix(IDX_TYPE rows, IDX_TYPE cols,
 
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix (const DenseMatrix<FP_TYPE, IDX_TYPE>& src) :
-        _n_rows(src.getNRows ()), _n_cols(src.getNCols ()), _data (new FP_TYPE[_n_rows * _n_cols])
+        _n_rows(src.getNumberOfRows ()), _n_cols(src.getNumberOfColumns ()), _data (new FP_TYPE[_n_rows * _n_cols])
 {
     std::copy(src._data, src._data+_n_rows*_n_cols, _data);
 }
 
 template<typename FP_TYPE, typename IDX_TYPE>
 DenseMatrix<FP_TYPE, IDX_TYPE>::DenseMatrix (DenseMatrix<FP_TYPE, IDX_TYPE> &&src) :
-       _n_rows(src.getNRows()), _n_cols(src.getNCols())
+       _n_rows(src.getNumberOfRows()), _n_cols(src.getNumberOfColumns())
 {
     src._n_rows = 0;
     src._n_cols = 0;
@@ -62,12 +62,12 @@ DenseMatrix<FP_TYPE, IDX_TYPE>::operator=(DenseMatrix<FP_TYPE, IDX_TYPE> const& 
     if (this == &rhs)
         return *this;
 
-    if (_n_rows != rhs.getNRows() || _n_cols != rhs.getNCols()) {
+    if (_n_rows != rhs.getNumberOfRows() || _n_cols != rhs.getNumberOfColumns()) {
         std::string msg("DenseMatrix::operator=(DenseMatrix const& rhs), Dimension mismatch, ");
         msg += " left hand side: " + std::to_string(_n_rows) + " x "
                 + std::to_string(_n_cols);
-        msg += " right hand side: " + std::to_string(rhs.getNRows()) + " x "
-                + std::to_string(rhs.getNCols());
+        msg += " right hand side: " + std::to_string(rhs.getNumberOfRows()) + " x "
+                + std::to_string(rhs.getNumberOfColumns());
         throw std::range_error(msg);
         return *this;
     }
@@ -168,7 +168,7 @@ DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator+(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
 {
     // make sure the two matrices have the same dimension.
-    if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
+    if (_n_rows != mat.getNumberOfRows() || _n_cols != mat.getNumberOfColumns())
         throw std::range_error("DenseMatrix::operator+, illegal matrix size!");
 
     DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE>(_n_rows, _n_cols));
@@ -186,7 +186,7 @@ DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator-(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
 {
     // make sure the two matrices have the same dimension.
-    if (_n_rows != mat.getNRows() || _n_cols != mat.getNCols())
+    if (_n_rows != mat.getNumberOfRows() || _n_cols != mat.getNumberOfColumns())
         throw std::range_error("DenseMatrix::operator-, illegal matrix size!");
 
     DenseMatrix<FP_TYPE, IDX_TYPE>* y(new DenseMatrix<FP_TYPE, IDX_TYPE>(_n_rows, _n_cols));
@@ -204,11 +204,11 @@ DenseMatrix<FP_TYPE, IDX_TYPE>*
 DenseMatrix<FP_TYPE, IDX_TYPE>::operator*(const DenseMatrix<FP_TYPE, IDX_TYPE>& mat) const
 {
     // make sure the two matrices have the same dimension.
-    if (_n_cols != mat.getNRows())
+    if (_n_cols != mat.getNumberOfRows())
         throw std::range_error(
                 "DenseMatrix::operator*, number of rows and cols should be the same!");
 
-    IDX_TYPE y_cols(mat.getNCols());
+    IDX_TYPE y_cols(mat.getNumberOfColumns());
     DenseMatrix<FP_TYPE, IDX_TYPE>* y(
             new DenseMatrix<FP_TYPE, IDX_TYPE>(_n_rows, y_cols, FP_TYPE(0)));
 
@@ -282,11 +282,11 @@ void
 DenseMatrix<FP_TYPE, IDX_TYPE>::setSubMatrix(IDX_TYPE b_row, IDX_TYPE b_col,
         const DenseMatrix<FP_TYPE, IDX_TYPE>& sub_mat)
 {
-    if (b_row + sub_mat.getNRows() > _n_rows | b_col + sub_mat.getNCols() > _n_cols)
+    if (b_row + sub_mat.getNumberOfRows() > _n_rows | b_col + sub_mat.getNumberOfColumns() > _n_cols)
         throw std::range_error("DenseMatrix::setSubMatrix() sub matrix to big");
 
-    for (IDX_TYPE i = 0; i < sub_mat.getNRows(); i++) {
-        for (IDX_TYPE j = 0; j < sub_mat.getNCols(); j++) {
+    for (IDX_TYPE i = 0; i < sub_mat.getNumberOfRows(); i++) {
+        for (IDX_TYPE j = 0; j < sub_mat.getNumberOfColumns(); j++) {
             _data[address(i + b_row, j + b_col)] = sub_mat(i, j);
         }
     }
@@ -338,8 +338,8 @@ sqrFrobNrm (const DenseMatrix<FP_TYPE, IDX_TYPE> &mat)
 {
     FP_TYPE nrm(static_cast<FP_TYPE>(0));
     IDX_TYPE i, j;
-    for (j = 0; j < mat.getNCols(); j++)
-        for (i = 0; i < mat.getNRows(); i++)
+    for (j = 0; j < mat.getNumberOfColumns(); j++)
+        for (i = 0; i < mat.getNumberOfRows(); i++)
             nrm += mat(i, j) * mat(i, j);
 
     return nrm;

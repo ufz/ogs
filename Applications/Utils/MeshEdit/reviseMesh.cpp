@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (!org_mesh)
         return EXIT_FAILURE;
-    INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNNodes(), org_mesh->getNElements());
+    INFO("Mesh read: %d nodes, %d elements.", org_mesh->getNumberOfNodes(), org_mesh->getNumberOfElements());
 
     // revise the mesh
     std::unique_ptr<MeshLib::Mesh> new_mesh;
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     // write into a file
     if (new_mesh) {
-        INFO("Revised mesh: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
+        INFO("Revised mesh: %d nodes, %d elements.", new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
         MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
     }
 

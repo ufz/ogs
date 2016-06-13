@@ -56,7 +56,7 @@ public:
     /**
      * returns the number of triangles describing the Surface
      * */
-    std::size_t getNTriangles() const;
+    std::size_t getNumberOfTriangles() const;
 
     /** \brief const access operator for the access to the i-th Triangle of the
      * surface.

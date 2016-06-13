@@ -213,7 +213,7 @@ int main (int argc, char* argv[])
 
     if (mesh)
     {
-        INFO("Mesh created: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+        INFO("Mesh created: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         // write into a file
         MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());

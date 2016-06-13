@@ -49,7 +49,7 @@ TEST(MeshLibMappedPropertyVector, Double)
     ASSERT_EQ(dataArray->GetValueReference(0), 1.0);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
-    ASSERT_EQ(range[1], 1.0 + mesh->getNElements() - 1.0);
+    ASSERT_EQ(range[1], 1.0 + mesh->getNumberOfElements() - 1.0);
 
     delete mesh;
 }
@@ -81,7 +81,7 @@ TEST(MeshLibMappedPropertyVector, Int)
     ASSERT_EQ(dataArray->GetValueReference(0), -5);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(-5.0, range[0]);
-    ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNElements()) - 1.0, range[1]);
+    ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNumberOfElements()) - 1.0, range[1]);
 
     delete mesh;
 }
@@ -113,7 +113,7 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     ASSERT_EQ(dataArray->GetValueReference(0), 0);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(range[0], 0);
-    ASSERT_EQ(range[1], 0 + mesh->getNElements() - 1);
+    ASSERT_EQ(range[1], 0 + mesh->getNumberOfElements() - 1);
 
     delete mesh;
 }

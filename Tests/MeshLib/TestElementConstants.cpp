@@ -28,8 +28,8 @@ TEST(MeshLib, ElementConstantsQuad4)
     Quad quad(nodes);
 
     ASSERT_EQ(2u, quad.getDimension());
-    ASSERT_EQ(4u, quad.getNNodes());
-    ASSERT_EQ(4u, quad.getNBaseNodes());
+    ASSERT_EQ(4u, quad.getNumberOfNodes());
+    ASSERT_EQ(4u, quad.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -55,8 +55,8 @@ TEST(MeshLib, ElementConstantsQuad8)
     Quad8 quad8(nodes);
 
     ASSERT_EQ(2u, quad8.getDimension());
-    ASSERT_EQ(8u, quad8.getNNodes());
-    ASSERT_EQ(4u, quad8.getNBaseNodes());
+    ASSERT_EQ(8u, quad8.getNumberOfNodes());
+    ASSERT_EQ(4u, quad8.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -83,8 +83,8 @@ TEST(MeshLib, ElementConstantsQuad9)
     Quad9 quad9(nodes);
 
     ASSERT_EQ(2u, quad9.getDimension());
-    ASSERT_EQ(9u, quad9.getNNodes());
-    ASSERT_EQ(4u, quad9.getNBaseNodes());
+    ASSERT_EQ(9u, quad9.getNumberOfNodes());
+    ASSERT_EQ(4u, quad9.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -108,8 +108,8 @@ TEST(MeshLib, ElementConstantsHex8)
     Hex ele(nodes);
 
     ASSERT_EQ(3u, ele.getDimension());
-    ASSERT_EQ(8u, ele.getNNodes());
-    ASSERT_EQ(8u, ele.getNBaseNodes());
+    ASSERT_EQ(8u, ele.getNumberOfNodes());
+    ASSERT_EQ(8u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -145,8 +145,8 @@ TEST(MeshLib, ElementConstantsHex20)
     Hex20 ele(nodes);
 
     ASSERT_EQ( 3u, ele.getDimension());
-    ASSERT_EQ(20u, ele.getNNodes());
-    ASSERT_EQ( 8u, ele.getNBaseNodes());
+    ASSERT_EQ(20u, ele.getNumberOfNodes());
+    ASSERT_EQ( 8u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -166,8 +166,8 @@ TEST(MeshLib, ElementConstantsTet4)
     Tet ele(nodes);
 
     ASSERT_EQ(3u, ele.getDimension());
-    ASSERT_EQ(4u, ele.getNNodes());
-    ASSERT_EQ(4u, ele.getNBaseNodes());
+    ASSERT_EQ(4u, ele.getNumberOfNodes());
+    ASSERT_EQ(4u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;
@@ -194,8 +194,8 @@ TEST(MeshLib, ElementConstantsTet10)
     Tet10 ele(nodes);
 
     ASSERT_EQ( 3u, ele.getDimension());
-    ASSERT_EQ(10u, ele.getNNodes());
-    ASSERT_EQ( 4u, ele.getNBaseNodes());
+    ASSERT_EQ(10u, ele.getNumberOfNodes());
+    ASSERT_EQ( 4u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
         delete n;

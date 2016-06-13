@@ -142,7 +142,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
     _local_b.setZero();
 
     IntegrationMethod_ integration_method(_integration_order);
-    unsigned const n_integration_points = integration_method.getNPoints();
+    unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
     _d.preEachAssemble();
 

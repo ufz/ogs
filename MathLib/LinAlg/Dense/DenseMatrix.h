@@ -143,12 +143,12 @@ public:
      * get the number of rows
      * @return the number of rows
      */
-    IDX_TYPE getNRows () const { return _n_rows; }
+    IDX_TYPE getNumberOfRows () const { return _n_rows; }
     /**
      * get the number of columns
      * @return the number of columns
      */
-    IDX_TYPE getNCols () const { return _n_cols; }
+    IDX_TYPE getNumberOfColumns () const { return _n_cols; }
 
     /**
      * get the number of entries in the matrix

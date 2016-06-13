@@ -79,8 +79,8 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %u nodes, %u elements.", surface_mesh->getNNodes(),
-         surface_mesh->getNElements());
+    INFO("Mesh read: %u nodes, %u elements.", surface_mesh->getNumberOfNodes(),
+         surface_mesh->getNumberOfElements());
     // ToDo check if mesh is read correct and if the mesh is a surface mesh
 
     // check if a node property containing the subsurface ids is available
@@ -96,7 +96,7 @@ int main (int argc, char* argv[])
             ERR("Fatal error: could not create property.");
             return EXIT_FAILURE;
         }
-        node_ids->resize(surface_mesh->getNNodes());
+        node_ids->resize(surface_mesh->getNumberOfNodes());
         std::iota(node_ids->begin(), node_ids->end(), 0);
         orig_node_ids = node_ids;
     }

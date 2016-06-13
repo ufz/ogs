@@ -124,7 +124,7 @@ void setMatrix(PETScMatrix& m, Eigen::MatrixXd const& tmp)
     auto const rows = tmp.rows();
     auto const cols = tmp.cols();
 
-    assert(rows == m.getNRows() && cols == m.getNCols());
+    assert(rows == m.getNumberOfRows() && cols == m.getNumberOfColumns());
 
     m.setZero();
     std::vector<IndexType> row_idcs(rows);
@@ -144,8 +144,8 @@ void addToMatrix(PETScMatrix& m,
 {
     using IndexType = PETScMatrix::IndexType;
 
-    auto const rows = m.getNRows();
-    auto const cols = m.getNCols();
+    auto const rows = m.getNumberOfRows();
+    auto const cols = m.getNumberOfColumns();
 
     assert((IndexType) values.size() == rows*cols);
 
@@ -196,8 +196,8 @@ void setVector(EigenVector& v, MatrixVectorTraits<EigenVector>::Index const inde
 void setMatrix(EigenMatrix& m,
                std::initializer_list<double> values)
 {
-    auto const rows = m.getNRows();
-    auto const cols = m.getNCols();
+    auto const rows = m.getNumberOfRows();
+    auto const cols = m.getNumberOfColumns();
 
     assert(values.size() == rows*cols);
     Eigen::MatrixXd tmp(rows, cols);
@@ -220,8 +220,8 @@ void setMatrix(EigenMatrix& m, Eigen::MatrixXd const& tmp)
 void addToMatrix(EigenMatrix& m,
                  std::initializer_list<double> values)
 {
-    auto const rows = m.getNRows();
-    auto const cols = m.getNCols();
+    auto const rows = m.getNumberOfRows();
+    auto const cols = m.getNumberOfColumns();
 
     assert(values.size() == rows*cols);
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);

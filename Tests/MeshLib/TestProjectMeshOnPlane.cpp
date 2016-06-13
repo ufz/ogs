@@ -46,7 +46,7 @@ protected:
 TEST_F(ProjectionTest, ProjectToXY)
 {
     MathLib::Vector3 normal (0,0,1);
-    std::size_t const n_nodes (_mesh->getNNodes());
+    std::size_t const n_nodes (_mesh->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,0,static_cast<double>(p)}});
@@ -61,7 +61,7 @@ TEST_F(ProjectionTest, ProjectToXY)
 TEST_F(ProjectionTest, ProjectToXZ)
 {
     MathLib::Vector3 normal (0,1,0);
-    std::size_t const n_nodes (_mesh->getNNodes());
+    std::size_t const n_nodes (_mesh->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{0,static_cast<double>(p),0}});
@@ -76,7 +76,7 @@ TEST_F(ProjectionTest, ProjectToXZ)
 TEST_F(ProjectionTest, ProjectToYZ)
 {
     MathLib::Vector3 normal (1,0,0);
-    std::size_t const n_nodes (_mesh->getNNodes());
+    std::size_t const n_nodes (_mesh->getNumberOfNodes());
     for (std::size_t p=0; p<10; p++)
     {
         MathLib::Point3d origin (std::array<double,3>{{static_cast<double>(p),0,0}});
@@ -92,7 +92,7 @@ TEST_F(ProjectionTest, NormalDirection)
 {
     MathLib::Vector3 normal_p (0,0,1);
     MathLib::Vector3 normal_n (0,0,-1);
-    std::size_t const n_nodes (_mesh->getNNodes());
+    std::size_t const n_nodes (_mesh->getNumberOfNodes());
     MathLib::Point3d origin (std::array<double,3>{{0,0,0}});
     MeshLib::Mesh* result_p = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_p);
     MeshLib::Mesh* result_n = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal_n);
@@ -107,7 +107,7 @@ TEST_F(ProjectionTest, NormalLength)
 {
     MathLib::Point3d origin (std::array<double,3>{{0,0,0}});
     MathLib::Vector3 normal (0,0,1);
-    std::size_t const n_nodes (_mesh->getNNodes());
+    std::size_t const n_nodes (_mesh->getNumberOfNodes());
     MeshLib::Mesh* result = MeshLib::projectMeshOntoPlane(*_mesh, origin, normal);
     for (std::size_t p=2; p<10; p++)
     {

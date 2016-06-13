@@ -69,12 +69,12 @@ int main (int argc, char* argv[])
         ERR("Mesh file \"%s\" not found", mesh_in.getValue().c_str());
         return EXIT_FAILURE;
     }
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     // add line elements
     std::unique_ptr<MeshLib::Mesh> new_mesh =
         MeshGeoToolsLib::appendLinesAlongPolylines(*mesh, *ply_vec);
-    INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNNodes(), new_mesh->getNElements());
+    INFO("Mesh created: %d nodes, %d elements.", new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
 
     MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 

@@ -133,7 +133,7 @@ int main (int argc, char* argv[])
         INFO("Moving all mesh nodes by %g in direction %d (%s)...", value, idx,
              dir.c_str());
         //double value(-10);
-        const std::size_t nNodes(mesh->getNNodes());
+        const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());
         for (std::size_t i=0; i<nNodes; i++)
         {
@@ -160,7 +160,7 @@ int main (int argc, char* argv[])
         MathLib::Point3d const& min(bounding_box.getMinPoint());
         MathLib::Point3d const& max(bounding_box.getMaxPoint());
 
-        const std::size_t nNodes(mesh->getNNodes());
+        const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
         for (std::size_t i=0; i<nNodes; i++)
@@ -179,7 +179,7 @@ int main (int argc, char* argv[])
     // weighted by 2 and the elevation of each connected node weighted by 1
     if (current_key.compare("-LOWPASS")==0)
     {
-        const std::size_t nNodes(mesh->getNNodes());
+        const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes (mesh->getNodes());
 
         std::vector<double> elevation(nNodes);

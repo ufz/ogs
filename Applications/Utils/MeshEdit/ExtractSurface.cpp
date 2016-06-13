@@ -62,7 +62,7 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %u nodes, %u elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     // extract surface
     MathLib::Vector3 const dir(x.getValue(), y.getValue(), z.getValue());

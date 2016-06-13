@@ -53,7 +53,7 @@ public:
     MeshLib::Mesh* collapseNodes(const std::string &new_mesh_name, double eps);
 
     /// Returns the number of potentially collapsable nodes
-    unsigned getNCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
+    unsigned getNumberOfCollapsableNodes(double eps = std::numeric_limits<double>::epsilon()) const;
 
     /// Designates nodes to be collapsed by setting their ID to the index of the node they will get merged with.
     std::vector<std::size_t> collapseNodeIndices(double eps) const;
@@ -81,7 +81,7 @@ private:
         const std::vector<std::size_t> &id_map) const;
 
     /// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
-    unsigned getNUniqueNodes(MeshLib::Element const*const element) const;
+    unsigned getNumberOfUniqueNodes(MeshLib::Element const*const element) const;
 
     /// Resets the node IDs of the source mesh (needs to be called after everything is done).
     void resetNodeIDs();

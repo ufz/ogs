@@ -39,8 +39,8 @@ TEST(FileIO, TetGenSmeshReader)
     ASSERT_EQ(744, pnts.size());
     std::vector<GeoLib::Surface*> const& sfcs (*geo_objects.getSurfaceVec("twolayermdl"));
     ASSERT_EQ(5, sfcs.size());
-    ASSERT_EQ(468, sfcs[2]->getNTriangles());
-    ASSERT_EQ(191, sfcs[3]->getNTriangles());
+    ASSERT_EQ(468, sfcs[2]->getNumberOfTriangles());
+    ASSERT_EQ(191, sfcs[3]->getNumberOfTriangles());
 }
 
 // existing mesh to TetGen geometry
@@ -76,7 +76,7 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
     ASSERT_EQ(ref_sfc.size(), new_sfc.size());
 
     for (std::size_t i=0; i<ref_sfc.size(); ++i)
-        ASSERT_EQ(ref_sfc[i]->getNTriangles(), new_sfc[i]->getNTriangles());
+        ASSERT_EQ(ref_sfc[i]->getNumberOfTriangles(), new_sfc[i]->getNumberOfTriangles());
 
     std::remove(output_name.c_str());
 }
@@ -89,8 +89,8 @@ TEST(FileIO, TetGenMeshReaderWithMaterials)
     FileIO::TetGenInterface tgi;
     std::unique_ptr<MeshLib::Mesh> mesh (tgi.readTetGenMesh(node_name, ele_name));
     ASSERT_TRUE(mesh != nullptr);
-    ASSERT_EQ(1378, mesh->getNNodes());
-    ASSERT_EQ(5114, mesh->getNElements());
+    ASSERT_EQ(1378, mesh->getNumberOfNodes());
+    ASSERT_EQ(5114, mesh->getNumberOfElements());
 
     std::pair<int, int> bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs"));
     ASSERT_EQ(-20, bounds.first);
@@ -105,8 +105,8 @@ TEST(FileIO, TetGenMeshReaderWithoutMaterials)
     FileIO::TetGenInterface tgi;
     std::unique_ptr<MeshLib::Mesh> mesh (tgi.readTetGenMesh(node_name, ele_name));
     ASSERT_TRUE(mesh != nullptr);
-    ASSERT_EQ(202, mesh->getNNodes());
-    ASSERT_EQ(650, mesh->getNElements());
+    ASSERT_EQ(202, mesh->getNumberOfNodes());
+    ASSERT_EQ(650, mesh->getNumberOfElements());
 
     std::pair<int, int> bounds (MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs"));
     ASSERT_EQ(std::numeric_limits<int>::max(), bounds.first);

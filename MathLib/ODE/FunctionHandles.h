@@ -48,7 +48,7 @@ public:
     virtual bool hasJacobian() const = 0;
 
     //! Returns the number of equations in the ODE system.
-    virtual unsigned getNumEquations() const = 0;
+    virtual unsigned getNumberOfEquations() const = 0;
 
     virtual ~FunctionHandles() = default;
 };
@@ -101,7 +101,7 @@ struct FunctionHandlesImpl final : public FunctionHandles
     }
 
     bool hasJacobian() const override { return df != nullptr; }
-    unsigned getNumEquations() const override { return N; }
+    unsigned getNumberOfEquations() const override { return N; }
     Function<N> f;
     JacobianFunction<N> df;
 };

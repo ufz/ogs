@@ -26,7 +26,7 @@ LocalToGlobalIndexMap::findGlobalIndices(
     std::size_t elem_id = 0;
     for (ElementIterator e = first; e != last; ++e, ++elem_id)
     {
-        std::size_t const nnodes = (*e)->getNNodes();
+        std::size_t const nnodes = (*e)->getNumberOfNodes();
 
         LineIndex indices;
         indices.reserve(nnodes);

@@ -66,7 +66,7 @@ public:
     bool solve(T_FUNCTOR &functor,  const T_VALUE &x0, T_VALUE &x_new);
 
     /// return the number of iterations
-    std::size_t getNIterations() const {return _n_iterations; }
+    std::size_t getNumberOfIterations() const {return _n_iterations; }
 
     /// return absolute error in the last iteration
     double getAbsError() const {return _abs_error; }

@@ -68,13 +68,13 @@ class NodePartitionedMesh : public Mesh
         }
 
         /// Get the number of nodes of the global mesh for linear elements.
-        std::size_t getNGlobalBaseNodes() const
+        std::size_t getNumberOfGlobalBaseNodes() const
         {
             return _n_global_base_nodes;
         }
 
         /// Get the number of all nodes of the global mesh.
-        std::size_t getNGlobalNodes() const
+        std::size_t getNumberOfGlobalNodes() const
         {
             return _n_global_nodes;
         }
@@ -86,13 +86,13 @@ class NodePartitionedMesh : public Mesh
         }
 
         /// Get the number of the active nodes of the partition for linear elements.
-        std::size_t getNActiveBaseNodes() const
+        std::size_t getNumberOfActiveBaseNodes() const
         {
             return _n_active_base_nodes;
         }
 
         /// Get the number of all active nodes of the partition.
-        std::size_t getNActiveNodes() const
+        std::size_t getNumberOfActiveNodes() const
         {
             return _n_active_nodes;
         }
@@ -115,7 +115,7 @@ class NodePartitionedMesh : public Mesh
         }
 
         /// Get the number of non-ghost elements, or the start entry ID of ghost elements in element vector.
-        std::size_t getNNonGhostElements() const
+        std::size_t getNumberOfNonGhostElements() const
         {
             return _n_nghost_elem;
         }

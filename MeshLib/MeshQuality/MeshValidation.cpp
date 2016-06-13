@@ -39,7 +39,7 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
         INFO ("%d unused mesh nodes found.", ns.getSearchedNodeIDs().size());
     }
     MeshRevision rev(mesh);
-    INFO ("Found %d potentially collapsable nodes.", rev.getNCollapsableNodes());
+    INFO ("Found %d potentially collapsable nodes.", rev.getNumberOfCollapsableNodes());
 
     const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
     std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str (this->ElementErrorCodeOutput(codes));
@@ -53,7 +53,7 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
     const std::size_t nErrorCodes (static_cast<std::size_t>(ElementErrorFlag::MaxValue));
     unsigned error_count[nErrorCodes];
     std::fill_n(error_count, 4, 0);
-    const std::size_t nElements (mesh.getNElements());
+    const std::size_t nElements (mesh.getNumberOfElements());
     const std::vector<MeshLib::Element*> &elements (mesh.getElements());
     std::vector<ElementErrorCode> error_code_vector;
     error_code_vector.reserve(nElements);
@@ -157,7 +157,7 @@ void MeshValidation::trackSurface(MeshLib::Element const* element, std::vector<u
         MeshLib::Element const*const elem = elem_stack.top();
         elem_stack.pop();
         sfc_idx[elem->getID()] = current_index;
-        std::size_t const n_neighbors (elem->getNNeighbors());
+        std::size_t const n_neighbors (elem->getNumberOfNeighbors());
         for (std::size_t i=0; i<n_neighbors; ++i)
         {
             MeshLib::Element const* neighbor (elem->getNeighbor(i));

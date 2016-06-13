@@ -178,10 +178,10 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
             return;
         }
         auto const& mat_ids = opt_mat_ids.get();
-        if (mat_ids.size() != mesh->getNElements()) {
+        if (mat_ids.size() != mesh->getNumberOfElements()) {
             INFO("Size mismatch: Properties \"MaterialIDs\" contains %u values,"
                 " the mesh \"%s\" contains %u elements.", mat_ids.size(),
-                mesh->getName().c_str(), mesh->getNElements());
+                mesh->getName().c_str(), mesh->getNumberOfElements());
             return;
         }
         auto max_material = std::max_element(mat_ids.cbegin(), mat_ids.cend());
@@ -203,7 +203,7 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     if (materialIds)
     {
-        if (materialIds->size() != mesh->getNElements())
+        if (materialIds->size() != mesh->getNumberOfElements())
         {
             ERR ("Incorrect mesh structure: Number of Material IDs does not match number of mesh elements.");
             OGSError::box("Incorrect mesh structure detected.\n Number of Material IDs does not match number of mesh elements");

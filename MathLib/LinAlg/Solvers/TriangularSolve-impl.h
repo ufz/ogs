@@ -18,7 +18,7 @@ template <typename FP_T, typename VEC_T>
 void forwardSolve (const DenseMatrix <FP_T> &L, VEC_T& b)
 {
     typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
-    IDX_T m (L.getNRows());
+    IDX_T m (L.getNumberOfRows());
     FP_T t;
 
     for (IDX_T r=0; r<m; r++) {
@@ -35,7 +35,7 @@ void backwardSolve (const DenseMatrix <FP_T> &mat, VEC_T& b)
 {
     FP_T t;
     typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
-    IDX_T m (mat.getNRows()), n(mat.getNCols());
+    IDX_T m (mat.getNumberOfRows()), n(mat.getNumberOfColumns());
     for (int r=m-1; r>=0; r--) {
         t = 0.0;
         for (IDX_T c=r+1; c<n; c++) {
@@ -49,7 +49,7 @@ template <typename FP_T, typename VEC_T>
 void backwardSolve ( DenseMatrix<FP_T> const& mat, VEC_T& x, VEC_T const& b)
 {
     typedef typename DenseMatrix<FP_T>::IDX_T IDX_T;
-    IDX_T n_cols (mat.getNCols());
+    IDX_T n_cols (mat.getNumberOfColumns());
     for (int r = (n_cols - 1); r >= 0; r--) {
         FP_T t = 0.0;
 

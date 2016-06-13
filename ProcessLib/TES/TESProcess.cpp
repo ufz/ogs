@@ -103,7 +103,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
         for (auto const& p : params)
         {
-            if (auto const par = config.getConfParamOptional<double>(p.first))
+            if (auto const par = config.getConfigParameterOptional<double>(p.first))
             {
                 DBUG("setting parameter `%s' to value `%g'", p.first.c_str(),
                      *par);
@@ -121,7 +121,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
         for (auto const& p : params)
         {
-            if (auto const par = config.getConfParamOptional<double>(p.first))
+            if (auto const par = config.getConfigParameterOptional<double>(p.first))
             {
                 INFO("setting parameter `%s' to value `%g'", p.first.c_str(),
                      *par);
@@ -132,7 +132,7 @@ TESProcess<GlobalSetup>::TESProcess(
 
     // permeability
     if (auto par =
-            config.getConfParamOptional<double>("solid_hydraulic_permeability"))
+            config.getConfigParameterOptional<double>("solid_hydraulic_permeability"))
     {
         DBUG(
             "setting parameter `solid_hydraulic_permeability' to isotropic "
@@ -145,11 +145,11 @@ TESProcess<GlobalSetup>::TESProcess(
 
     // reactive system
     _assembly_params.react_sys = Adsorption::AdsorptionReaction::newInstance(
-        config.getConfSubtree("reactive_system"));
+        config.getConfigSubtree("reactive_system"));
 
     // debug output
     if (auto const param =
-            config.getConfParamOptional<bool>("output_element_matrices"))
+            config.getConfigParameterOptional<bool>("output_element_matrices"))
     {
         DBUG("output_element_matrices: %s", (*param) ? "true" : "false");
 
@@ -159,7 +159,7 @@ TESProcess<GlobalSetup>::TESProcess(
     // TODO somewhere else
     /*
     if (auto const param =
-    config.getConfParamOptional<bool>("output_global_matrix"))
+    config.getConfigParameterOptional<bool>("output_global_matrix"))
     {
         DBUG("output_global_matrix: %s", (*param) ? "true" : "false");
 
@@ -354,7 +354,7 @@ TESProcess<GlobalSetup>::computeVapourPartialPressure(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
@@ -388,7 +388,7 @@ TESProcess<GlobalSetup>::computeRelativeHumidity(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
@@ -427,7 +427,7 @@ TESProcess<GlobalSetup>::computeEquilibriumLoading(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNNodes();
+    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {

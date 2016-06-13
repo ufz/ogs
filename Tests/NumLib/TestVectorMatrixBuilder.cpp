@@ -87,8 +87,8 @@ TYPED_TEST_P(NumLibVectorMatrixBuilder, DISABLED_createMatrix)
     M* m = Builder::createMatrix(this->cmap->dofSizeWithGhosts());
 
     ASSERT_TRUE(m != nullptr);
-    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNRows());
-    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNCols());
+    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNumberOfRows());
+    ASSERT_EQ(this->cmap->dofSizeWithGhosts(), m->getNumberOfColumns());
 
     delete m;
 }

@@ -37,15 +37,15 @@ TEST_F(MeshLibLineMesh, Construction)
     ASSERT_TRUE(mesh != nullptr);
 
     // There are mesh_size elements in the mesh.
-    ASSERT_EQ(mesh_size, mesh->getNElements());
+    ASSERT_EQ(mesh_size, mesh->getNumberOfElements());
 
     // There are mesh_size+1 nodes in the mesh.
-    ASSERT_EQ(mesh_size+1, mesh->getNNodes());
+    ASSERT_EQ(mesh_size+1, mesh->getNumberOfNodes());
 
     // All elements have maximum two neighbors.
     std::vector<MeshLib::Element*> const& elements = mesh->getElements();
     for (auto e : elements)
-        ASSERT_EQ(2u, e->getNNeighbors());
+        ASSERT_EQ(2u, e->getNumberOfNeighbors());
 }
 
 TEST_F(MeshLibLineMesh, ElementNeigbors)
@@ -83,7 +83,7 @@ TEST_F(MeshLibLineMesh, ElementToNodeConnectivity)
     for (std::size_t i = 0; i < elements.size(); ++i)
     {
         // An element consists of two nodes n and n+1
-        ASSERT_EQ(2u, elements[i]->getNBaseNodes());
+        ASSERT_EQ(2u, elements[i]->getNumberOfBaseNodes());
         ASSERT_EQ(i, elements[i]->getNode(0)->getID());
         ASSERT_EQ(i+1, elements[i]->getNode(1)->getID());
     }
@@ -96,15 +96,15 @@ TEST_F(MeshLibLineMesh, NodeToElementConnectivity)
 
     // Each node n of the line mesh is connected to two elements n-1 and n,
     // except the first and last nodes.
-    ASSERT_EQ(1u, nodes.front()->getNElements());
+    ASSERT_EQ(1u, nodes.front()->getNumberOfElements());
     ASSERT_EQ(elements[0], nodes.front()->getElement(0));
 
-    ASSERT_EQ(1u, nodes.back()->getNElements());
+    ASSERT_EQ(1u, nodes.back()->getNumberOfElements());
     ASSERT_EQ(elements.back(), nodes.back()->getElement(0));
 
     for (std::size_t i = 1; i < nodes.size() - 1; ++i)
     {
-        ASSERT_EQ(2u, nodes[i]->getNElements());
+        ASSERT_EQ(2u, nodes[i]->getNumberOfElements());
         ASSERT_EQ(elements[i-1], nodes[i]->getElement(0));
         ASSERT_EQ(elements[i], nodes[i]->getElement(1));
     }

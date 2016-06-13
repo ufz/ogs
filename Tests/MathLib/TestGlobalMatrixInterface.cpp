@@ -36,8 +36,8 @@ namespace
 template <class T_MATRIX>
 void checkGlobalMatrixInterface(T_MATRIX &m)
 {
-    ASSERT_EQ(10u, m.getNRows());
-    ASSERT_EQ(10u, m.getNCols());
+    ASSERT_EQ(10u, m.getNumberOfRows());
+    ASSERT_EQ(10u, m.getNumberOfColumns());
     ASSERT_EQ(0u,  m.getRangeBegin());
     ASSERT_EQ(10u, m.getRangeEnd());
 
@@ -64,17 +64,17 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
     ASSERT_EQ(3u, msize);
-    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNLocalRows());
+    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNumberOfLocalRows());
 
     int gathered_rows;
-    int local_rows = m.getNLocalRows();
+    int local_rows = m.getNumberOfLocalRows();
     MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
-    ASSERT_EQ(m.getNRows(), gathered_rows);
+    ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
     int gathered_cols;
-    int local_cols = m.getNLocalColumns();
+    int local_cols = m.getNumberOfLocalColumns();
     MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
-    ASSERT_EQ(m.getNCols(), gathered_cols);
+    ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
     MathLib::DenseMatrix<double> loc_m(2, 2);
@@ -121,17 +121,17 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
-    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNLocalRows());
+    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNumberOfLocalRows());
 
     int gathered_rows;
-    int local_rows = m.getNLocalRows();
+    int local_rows = m.getNumberOfLocalRows();
     MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
-    ASSERT_EQ(m.getNRows(), gathered_rows);
+    ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
     int gathered_cols;
-    int local_cols = m.getNLocalColumns();
+    int local_cols = m.getNumberOfLocalColumns();
     MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
-    ASSERT_EQ(m.getNCols(), gathered_cols);
+    ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
     MathLib::DenseMatrix<double> loc_m(2, 3);
@@ -156,7 +156,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     // Multiply by a vector
     v = 1.;
-    T_VECTOR y(m.getNRows());
+    T_VECTOR y(m.getNumberOfRows());
     m.multiply(v, y);
 
     ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);

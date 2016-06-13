@@ -47,10 +47,10 @@ public:
     std::vector<MeshLib::Element*> getActiveElementsAtNode(std::size_t node_id) const;
 
     /// Returns the total number of active nodes
-    std::size_t getNActiveNodes() const;
+    std::size_t getNumberOfActiveNodes() const;
 
     /// Returns the total number of active elements
-    std::size_t getNActiveElements() const;
+    std::size_t getNumberOfActiveElements() const;
 
 protected:
     /// Sets the status of element i

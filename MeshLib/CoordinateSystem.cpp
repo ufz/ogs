@@ -16,7 +16,7 @@ namespace MeshLib
 
 CoordinateSystem::CoordinateSystem(const Element &ele)
 {
-    GeoLib::AABB const aabb(ele.getNodes(), ele.getNodes() + ele.getNNodes());
+    GeoLib::AABB const aabb(ele.getNodes(), ele.getNodes() + ele.getNumberOfNodes());
     CoordinateSystem const bboxCoordSys(getCoordinateSystem(aabb));
     if (bboxCoordSys.getDimension() >= ele.getDimension()) {
         _type = bboxCoordSys.getType();

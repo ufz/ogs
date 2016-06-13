@@ -65,7 +65,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mesh, std::vector<double>& dest_properties) const
 {
     // carry over property information from source elements to source nodes
-    std::vector<double> interpolated_src_node_properties(_src_mesh->getNNodes());
+    std::vector<double> interpolated_src_node_properties(_src_mesh->getNumberOfNodes());
     interpolateElementPropertiesToNodeProperties(interpolated_src_node_properties);
 
     // looping over the destination elements and calculate properties
@@ -89,7 +89,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
     for (std::size_t k(0); k<n_dest_elements; k++)
     {
         // compute axis aligned bounding box around the current element
-        const GeoLib::AABB elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNBaseNodes());
+        const GeoLib::AABB elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNumberOfBaseNodes());
 
         // request "interesting" nodes from grid
         std::vector<std::vector<MeshLib::Node*> const*> nodes;
@@ -157,7 +157,7 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
     const std::size_t n_src_nodes(src_nodes.size());
     for (std::size_t k(0); k<n_src_nodes; k++) {
-        const std::size_t n_con_elems (src_nodes[k]->getNElements());
+        const std::size_t n_con_elems (src_nodes[k]->getNumberOfElements());
         interpolated_node_properties[k] = (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(0)->getID()]];
         for (std::size_t j(1); j<n_con_elems; j++) {
             interpolated_node_properties[k] += (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(j)->getID()]];

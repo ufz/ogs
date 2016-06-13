@@ -61,7 +61,7 @@ public:
 
         _integration_order = integration_order;
         IntegrationMethod_ integration_method(_integration_order);
-        std::size_t const n_integration_points = integration_method.getNPoints();
+        std::size_t const n_integration_points = integration_method.getNumberOfPoints();
 
         _shape_matrices.reserve(n_integration_points);
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
@@ -85,7 +85,7 @@ public:
         _localRhs->setZero();
 
         IntegrationMethod_ integration_method(_integration_order);
-        std::size_t const n_integration_points = integration_method.getNPoints();
+        std::size_t const n_integration_points = integration_method.getNumberOfPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++) {
             auto const& sm = _shape_matrices[ip];

@@ -241,7 +241,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 
     std::vector<std::size_t> const& found_ids_sfc0(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc0));
 
-    ASSERT_EQ(_quad_mesh->getNNodes(), found_ids_sfc0.size());
+    ASSERT_EQ(_quad_mesh->getNumberOfNodes(), found_ids_sfc0.size());
     for (std::size_t k(0); k<found_ids_sfc0.size(); k++)
         ASSERT_EQ(k, found_ids_sfc0[k]);
 
@@ -256,7 +256,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, SurfaceSearch)
 
     std::vector<std::size_t> const& found_ids_sfc1(mesh_node_searcher.getMeshNodeIDsAlongSurface(*sfc1));
 
-    ASSERT_EQ(_quad_mesh->getNNodes()/2, found_ids_sfc1.size());
+    ASSERT_EQ(_quad_mesh->getNumberOfNodes()/2, found_ids_sfc1.size());
     for (std::size_t k(0); k<found_ids_sfc1.size(); k++)
         ASSERT_EQ(k, found_ids_sfc1[k]);
 

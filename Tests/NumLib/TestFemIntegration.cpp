@@ -118,16 +118,16 @@ TEST(NumLib, FemIntegrationGaussRegular)
     // check other member functions
     IntegrationGaussRegular<1> q1;
     ASSERT_EQ(2u, q1.getIntegrationOrder());
-    ASSERT_EQ(2u, q1.getNPoints());
+    ASSERT_EQ(2u, q1.getNumberOfPoints());
     q1.setIntegrationOrder(3u);
     ASSERT_EQ(3u, q1.getIntegrationOrder());
-    ASSERT_EQ(3u, q1.getNPoints());
+    ASSERT_EQ(3u, q1.getNumberOfPoints());
     IntegrationGaussRegular<2> q2;
     ASSERT_EQ(2u, q2.getIntegrationOrder());
-    ASSERT_EQ(4u, q2.getNPoints());
+    ASSERT_EQ(4u, q2.getNumberOfPoints());
     IntegrationGaussRegular<3> q3;
     ASSERT_EQ(2u, q3.getIntegrationOrder());
-    ASSERT_EQ(8u, q3.getNPoints());
+    ASSERT_EQ(8u, q3.getNumberOfPoints());
 }
 
 

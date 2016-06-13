@@ -36,10 +36,10 @@ TEST(MeshLib, RemoveNodes)
     auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
         MeshLib::removeNodes(*mesh, removed_node_ids, "")};
 
-    ASSERT_EQ(5u, new_mesh->getNNodes());
-    ASSERT_EQ(5u, new_mesh->getNBaseNodes());
-    ASSERT_EQ(4u, new_mesh->getNElements());
-    for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
+    ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
+    ASSERT_EQ(5u, new_mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(4u, new_mesh->getNumberOfElements());
+    for (std::size_t i=0; i<new_mesh->getNumberOfNodes(); i++)
         ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
 }
 
@@ -55,9 +55,9 @@ TEST(MeshLib, RemoveElements)
     auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
         MeshLib::removeElements(*mesh, removed_ele_ids, "")};
 
-    ASSERT_EQ(5u, new_mesh->getNNodes());
-    ASSERT_EQ(5u, new_mesh->getNBaseNodes());
-    ASSERT_EQ(4u, new_mesh->getNElements());
-    for (std::size_t i=0; i<new_mesh->getNNodes(); i++)
+    ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
+    ASSERT_EQ(5u, new_mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(4u, new_mesh->getNumberOfElements());
+    for (std::size_t i=0; i<new_mesh->getNumberOfNodes(); i++)
         ASSERT_TRUE(*mesh->getNode(5+i) == *new_mesh->getNode(i));
 }

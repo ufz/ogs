@@ -79,7 +79,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
     cmap = new MeshComponentMap(components,
         NumLib::ComponentOrder::BY_COMPONENT);
 
-    ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
+    ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.
@@ -107,7 +107,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
     cmap = new MeshComponentMap(components,
         NumLib::ComponentOrder::BY_LOCATION);
 
-    ASSERT_EQ(2 * mesh->getNNodes(), cmap->dofSizeWithGhosts());
+    ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.

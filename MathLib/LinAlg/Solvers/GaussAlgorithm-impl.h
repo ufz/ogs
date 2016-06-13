@@ -22,8 +22,8 @@ namespace MathLib
 template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::performLU(MAT_T& A)
 {
-    IDX_T const nr(A.getNRows());
-    IDX_T const nc(A.getNCols());
+    IDX_T const nr(A.getNumberOfRows());
+    IDX_T const nc(A.getNumberOfColumns());
 
     for (IDX_T k=0; k<nc; k++) {
         // search pivot
@@ -59,7 +59,7 @@ template <typename V>
 void GaussAlgorithm<MAT_T, VEC_T>::
 solve (MAT_T& A, V& b, bool decompose)
 {
-    _perm.resize(A.getNRows());
+    _perm.resize(A.getNumberOfRows());
 
     if (decompose)
         performLU(A);
@@ -72,7 +72,7 @@ template <typename MAT_T, typename VEC_T>
 void GaussAlgorithm<MAT_T, VEC_T>::
 solve (MAT_T& A, FP_T* & b, bool decompose)
 {
-    _perm.resize(A.getNRows());
+    _perm.resize(A.getNumberOfRows());
 
     if (decompose)
         performLU(A);
@@ -86,7 +86,7 @@ void GaussAlgorithm<MAT_T, VEC_T>::solve (
         MAT_T& A, VEC_T const& b, VEC_T & x,
         bool decompose)
 {
-    for (std::size_t k(0); k<A.getNRows(); k++)
+    for (std::size_t k(0); k<A.getNumberOfRows(); k++)
         x[k] = b[k];
     solve(A, x, decompose);
 }

@@ -66,7 +66,7 @@ int VtkMappedMeshImpl::GetCellType(vtkIdType cellId)
 void VtkMappedMeshImpl::GetCellPoints(vtkIdType cellId, vtkIdList *ptIds)
 {
     const MeshLib::Element* const elem = (*_elements)[cellId];
-    const unsigned numNodes(elem->getNNodes());
+    const unsigned numNodes(elem->getNumberOfNodes());
     const MeshLib::Node* const* nodes = (*_elements)[cellId]->getNodes();
     ptIds->SetNumberOfIds(numNodes);
 
@@ -115,7 +115,7 @@ int VtkMappedMeshImpl::GetMaxCellSize()
 {
     unsigned int size = 0;
     for (auto elem(_elements->begin()); elem != _elements->end(); ++elem)
-        size = std::max(size, (*elem)->getNNodes());
+        size = std::max(size, (*elem)->getNumberOfNodes());
     return size;
 }
 

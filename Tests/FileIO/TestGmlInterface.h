@@ -188,7 +188,7 @@ public:
         {
             auto const& sfc_vec = *(sfcs.getVector());
             auto const& sfc = *(sfc_vec[sfc_id]);
-            EXPECT_EQ(tri_ids.size(), sfc.getNTriangles());
+            EXPECT_EQ(tri_ids.size(), sfc.getNumberOfTriangles());
             for (std::size_t k(0); k<tri_ids.size(); ++k)
                 checkTriangleIDs(*(sfc[k]), tri_ids[k]);
 

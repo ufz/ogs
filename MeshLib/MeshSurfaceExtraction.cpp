@@ -44,7 +44,7 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(const MeshLib:
 
     // for each node, a vector containing all the element idget every element
     const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-    const std::size_t nNodes ( mesh.getNNodes() );
+    const std::size_t nNodes ( mesh.getNumberOfNodes() );
     for (std::size_t n=0; n<nNodes; ++n)
     {
         double node_area (0);
@@ -87,15 +87,15 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
         return nullptr;
 
     std::vector<MeshLib::Node*> sfc_nodes;
-    std::vector<std::size_t> node_id_map(mesh.getNNodes());
-    get2DSurfaceNodes(sfc_nodes, mesh.getNNodes(), sfc_elements, node_id_map);
+    std::vector<std::size_t> node_id_map(mesh.getNumberOfNodes());
+    get2DSurfaceNodes(sfc_nodes, mesh.getNumberOfNodes(), sfc_elements, node_id_map);
 
     // create new elements vector with newly created nodes
     std::vector<MeshLib::Element*> new_elements;
     new_elements.reserve(sfc_elements.size());
     for (auto elem = sfc_elements.cbegin(); elem != sfc_elements.cend(); ++elem)
     {
-        unsigned const n_elem_nodes ((*elem)->getNBaseNodes());
+        unsigned const n_elem_nodes ((*elem)->getNumberOfBaseNodes());
         MeshLib::Node** new_nodes = new MeshLib::Node*[n_elem_nodes];
         for (unsigned k(0); k<n_elem_nodes; k++)
             new_nodes[k] = sfc_nodes[node_id_map[(*elem)->getNode(k)->getID()]];
@@ -149,7 +149,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
     for (auto it=org_elems.begin(); it!=org_elems.end(); ++it)
     {
         MeshLib::Element* elem (*it);
-        std::size_t const n_edges (elem->getNEdges());
+        std::size_t const n_edges (elem->getNumberOfEdges());
         for (std::size_t i=0; i<n_edges; ++i)
             if (elem->getNeighbor(i) == nullptr)
             {
@@ -200,7 +200,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
         {
             if (!(*elem)->isBoundaryElement())
                 continue;
-            const unsigned nFaces ((*elem)->getNFaces());
+            const unsigned nFaces ((*elem)->getNumberOfFaces());
             for (unsigned j=0; j<nFaces; ++j)
             {
                 if ((*elem)->getNeighbor(j) != nullptr)
@@ -230,7 +230,7 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(std::vector<MeshLib::Node*> &sfc_n
     for (std::size_t i=0; i<nNewElements; ++i)
     {
         const MeshLib::Element* elem (sfc_elements[i]);
-        for (unsigned j=0; j<elem->getNBaseNodes(); ++j)
+        for (unsigned j=0; j<elem->getNumberOfBaseNodes(); ++j)
         {
             const MeshLib::Node* node (elem->getNode(j));
             tmp_nodes[node->getID()] = node;
@@ -254,8 +254,8 @@ std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib
     get2DSurfaceElements(mesh.getElements(), sfc_elements, dir, angle, mesh.getDimension());
 
     std::vector<MeshLib::Node*> sfc_nodes;
-    std::vector<std::size_t> node_id_map(mesh.getNNodes());
-    get2DSurfaceNodes(sfc_nodes, mesh.getNNodes(), sfc_elements, node_id_map);
+    std::vector<std::size_t> node_id_map(mesh.getNumberOfNodes());
+    get2DSurfaceNodes(sfc_nodes, mesh.getNumberOfNodes(), sfc_elements, node_id_map);
 
     for (auto e : sfc_elements)
         delete e;

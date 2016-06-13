@@ -157,15 +157,15 @@ TEST_F(MeshLibQuadMesh, Construction)
     ASSERT_TRUE(mesh != nullptr);
 
     // There are n_elements^2 elements in the mesh.
-    ASSERT_EQ(n_elements * n_elements, mesh->getNElements());
+    ASSERT_EQ(n_elements * n_elements, mesh->getNumberOfElements());
 
     // There are n_nodes^2 nodes in the mesh.
-    ASSERT_EQ(n_nodes*n_nodes, mesh->getNNodes());
+    ASSERT_EQ(n_nodes*n_nodes, mesh->getNumberOfNodes());
 
     // All elements have maximum four neighbors.
     testAllElements([](MeshLib::Element const* const e, ...)
         {
-            ASSERT_EQ(4u, e->getNNeighbors());
+            ASSERT_EQ(4u, e->getNumberOfNeighbors());
         });
 }
 
@@ -252,7 +252,7 @@ TEST_F(MeshLibQuadMesh, ElementToNodeConnectivity)
         std::size_t const i,
         std::size_t const j)
         {
-            EXPECT_EQ(4u, e->getNBaseNodes());
+            EXPECT_EQ(4u, e->getNumberOfBaseNodes());
             EXPECT_EQ(getNode(i,   j),   e->getNode(0));
             EXPECT_EQ(getNode(i,   j+1), e->getNode(1));
             EXPECT_EQ(getNode(i+1, j+1), e->getNode(2));
@@ -269,7 +269,7 @@ TEST_F(MeshLibQuadMesh, NodeToElementConnectivity)
             std::size_t i,
             std::size_t j)
         {
-            EXPECT_EQ(1u, node->getNElements());
+            EXPECT_EQ(1u, node->getNumberOfElements());
 
             if (i == nodes_stride)
                 i--;
@@ -284,7 +284,7 @@ TEST_F(MeshLibQuadMesh, NodeToElementConnectivity)
         std::size_t i,
         std::size_t j)
         {
-            EXPECT_EQ(2u, node->getNElements());
+            EXPECT_EQ(2u, node->getNumberOfElements());
 
             if (i == 0)
             {
@@ -314,7 +314,7 @@ TEST_F(MeshLibQuadMesh, NodeToElementConnectivity)
         std::size_t const i,
         std::size_t const j)
         {
-            EXPECT_EQ(4u, node->getNElements());
+            EXPECT_EQ(4u, node->getNumberOfElements());
 
             EXPECT_EQ(getElement(i-1, j-1), node->getElement(0));
             EXPECT_EQ(getElement(i-1, j  ), node->getElement(1));

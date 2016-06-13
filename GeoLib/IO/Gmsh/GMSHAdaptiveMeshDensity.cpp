@@ -45,7 +45,7 @@ GMSHAdaptiveMeshDensity::~GMSHAdaptiveMeshDensity()
     delete _quad_tree;
 }
 
-void GMSHAdaptiveMeshDensity::init(std::vector<GeoLib::Point const*> const& pnts)
+void GMSHAdaptiveMeshDensity::initialize(std::vector<GeoLib::Point const*> const& pnts)
 {
     // *** QuadTree - determining bounding box
     DBUG("GMSHAdaptiveMeshDensity::init(): computing axis aligned bounding box (2D) for quadtree.");

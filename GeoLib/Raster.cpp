@@ -62,7 +62,7 @@ Raster* Raster::getRasterFromSurface(Surface const& sfc, double cell_size, doubl
 
     const std::size_t n_cols = static_cast<std::size_t>(std::abs(ur[0]-ll[0]) / cell_size)+1;
     const std::size_t n_rows = static_cast<std::size_t>(std::abs(ur[1]-ll[1]) / cell_size)+1;
-    const std::size_t n_triangles(sfc.getNTriangles());
+    const std::size_t n_triangles(sfc.getNumberOfTriangles());
     double *z_vals (new double[n_cols*n_rows]);
     std::size_t k(0);
 

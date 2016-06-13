@@ -48,7 +48,7 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     std::array<double, 3> delta{{ max_pnt[0] - min_pnt[0],
         max_pnt[1] - min_pnt[1], max_pnt[2] - min_pnt[2] }};
 
-    const std::size_t n_eles(sfc_mesh.getNElements());
+    const std::size_t n_eles(sfc_mesh.getNumberOfElements());
     const std::size_t n_eles_per_cell(100);
 
     // *** condition: n_eles / n_cells < n_eles_per_cell
@@ -134,8 +134,8 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
         return false;
     }
 
-    std::vector<std::array<std::size_t,3>> coord_vecs(element.getNNodes());
-    for (std::size_t k(1); k<element.getNNodes(); ++k) {
+    std::vector<std::array<std::size_t,3>> coord_vecs(element.getNumberOfNodes());
+    for (std::size_t k(1); k<element.getNumberOfNodes(); ++k) {
         // compute coordinates of the grid for each node of the element
         c = getGridCellCoordinates(*(static_cast<MathLib::Point3d const*>(element.getNode(k))));
         if (!c.first)

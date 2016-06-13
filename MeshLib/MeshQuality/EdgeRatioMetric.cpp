@@ -28,7 +28,7 @@ void EdgeRatioMetric::calculateQuality()
 {
     // get all elements of mesh
     const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElements (_mesh.getNElements());
+    const std::size_t nElements (_mesh.getNumberOfElements());
     for (std::size_t k(0); k < nElements; k++)
     {
         Element const& elem (*elements[k]);

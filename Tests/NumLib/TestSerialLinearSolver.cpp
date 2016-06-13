@@ -79,7 +79,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
     // Initializer of the local assembler data.
     std::vector<LocalAssembler*> local_assembler_data;
-    local_assembler_data.resize(ex1.msh->getNElements());
+    local_assembler_data.resize(ex1.msh->getNumberOfElements());
 
     auto local_asm_builder =
         [&](std::size_t const id,

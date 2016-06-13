@@ -60,11 +60,11 @@ int main(int argc, char *argv[])
         if (materialIds)
             out << "Mat ID : " << (*materialIds)[ele_id] << std::endl;
         out << "Nodes: " << std::endl;
-        for (unsigned i=0; i<ele->getNNodes(); i++)
+        for (unsigned i=0; i<ele->getNumberOfNodes(); i++)
             out <<  ele->getNode(i)->getID() << " " << *ele->getNode(i) << std::endl;
         out << "Content: " << ele->getContent() << std::endl;
         out << "Neighbors: ";
-        for (unsigned i=0; i<ele->getNNeighbors(); i++)
+        for (unsigned i=0; i<ele->getNumberOfNeighbors(); i++)
         {
             if (ele->getNeighbor(i))
                 out << ele->getNeighbor(i)->getID() << " ";
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         out << "# Node" << node->getID() << std::endl;
         out << "Coordinates: " << *node << std::endl;
         out << "Connected elements: " ;
-        for (unsigned i=0; i<node->getNElements(); i++)
+        for (unsigned i=0; i<node->getNumberOfElements(); i++)
             out << node->getElement(i)->getID() << " ";
         out << std::endl;
         INFO("%s", out.str().c_str());

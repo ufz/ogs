@@ -203,8 +203,8 @@ TEST_F(NumLibDistributionQuad, InterpolationSurface)
 {
     const std::vector<std::size_t> vec_point_ids = {{0, 1, 2, 3}};
     const std::vector<double> vec_point_values = {{0., 100., 100., 0.}};
-    std::vector<double> expected(_msh->getNNodes());
-    for (std::size_t i=0; i<_msh->getNNodes(); i++) {
+    std::vector<double> expected(_msh->getNumberOfNodes());
+    for (std::size_t i=0; i<_msh->getNumberOfNodes(); i++) {
         expected[i] = static_cast<double>((i%(_number_of_subdivisions_per_direction+1)) * 10);
     }
 

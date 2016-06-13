@@ -89,10 +89,10 @@ public:
     virtual ~LisMatrix();
 
     /// return the number of rows
-    std::size_t getNRows() const { return _n_rows; }
+    std::size_t getNumberOfRows() const { return _n_rows; }
 
     /// return the number of columns
-    std::size_t getNCols() const { return getNRows(); }
+    std::size_t getNumberOfColumns() const { return getNumberOfRows(); }
 
     /// return a start index of the active data range
     std::size_t getRangeBegin() const { return _is; }
@@ -196,7 +196,7 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>
 
 void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
 {
-    auto const n_rows = matrix.getNRows();
+    auto const n_rows = matrix.getNumberOfRows();
     std::vector<LisMatrix::IndexType> row_sizes;
     row_sizes.reserve(n_rows);
 

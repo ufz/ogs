@@ -51,18 +51,18 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
     std::unique_ptr<Output> out{ new Output{
         BaseLib::joinPaths(output_directory,
             //! \ogs_file_param{prj__output__prefix}
-            config.getConfParam<std::string>("prefix"))}};
+            config.getConfigParameter<std::string>("prefix"))}};
 
     //! \ogs_file_param{prj__output__timesteps}
-    if (auto const timesteps = config.getConfSubtreeOptional("timesteps"))
+    if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
     {
         //! \ogs_file_param{prj__output__timesteps__pair}
-        for (auto pair : timesteps->getConfSubtreeList("pair"))
+        for (auto pair : timesteps->getConfigSubtreeList("pair"))
         {
             //! \ogs_file_param{prj__output__timesteps__pair__repeat}
-            auto repeat     = pair.getConfParam<unsigned>("repeat");
+            auto repeat     = pair.getConfigParameter<unsigned>("repeat");
             //! \ogs_file_param{prj__output__timesteps__pair__each_steps}
-            auto each_steps = pair.getConfParam<unsigned>("each_steps");
+            auto each_steps = pair.getConfigParameter<unsigned>("each_steps");
 
             assert(repeat != 0 && each_steps != 0);
             out->_repeats_each_steps.emplace_back(repeat, each_steps);
@@ -84,7 +84,7 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
 
 template<typename GlobalSetup>
 void Output<GlobalSetup>::
-init(typename Output<GlobalSetup>::ProcessIter first,
+initialize(typename Output<GlobalSetup>::ProcessIter first,
      typename Output<GlobalSetup>::ProcessIter last)
 {
     for (unsigned pcs_idx = 0; first != last; ++first, ++pcs_idx)

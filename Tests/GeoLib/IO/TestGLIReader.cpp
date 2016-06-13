@@ -64,7 +64,7 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
+    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 
     std::remove(tin_fname.c_str());
 }
@@ -87,7 +87,7 @@ TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
+    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 
     std::remove(tin_fname.c_str());
 }
@@ -196,7 +196,7 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
         sfcs(geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNTriangles());
+    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 
     std::remove(tin_fname.c_str());
 }

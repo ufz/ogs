@@ -87,10 +87,10 @@ public:
     double getMaxNodeDistance() const { return _node_distance.second; }
 
     /// Get the number of elements
-    std::size_t getNElements() const { return _elements.size(); }
+    std::size_t getNumberOfElements() const { return _elements.size(); }
 
     /// Get the number of nodes
-    std::size_t getNNodes() const { return _nodes.size(); }
+    std::size_t getNumberOfNodes() const { return _nodes.size(); }
 
     /// Get name of the mesh.
     const std::string getName() const { return _name; }
@@ -114,13 +114,13 @@ public:
     std::size_t getID() const {return _id; }
 
     /// Get the number of base nodes
-    std::size_t getNBaseNodes() const { return _n_base_nodes; }
+    std::size_t getNumberOfBaseNodes() const { return _n_base_nodes; }
 
     /// Return true if the given node is a basic one (i.e. linear order node)
     bool isBaseNode(std::size_t node_idx) const {return node_idx < _n_base_nodes; }
 
     /// Return true if the mesh has any nonlinear nodes
-    bool isNonlinear() const { return (getNNodes() != getNBaseNodes()); }
+    bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
 
     MeshLib::Properties & getProperties() { return _properties; }
     MeshLib::Properties const& getProperties() const { return _properties; }

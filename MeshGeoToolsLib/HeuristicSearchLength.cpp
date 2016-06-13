@@ -31,7 +31,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
     if (length_type==LengthType::Edge) {
         for (std::vector<MeshLib::Element*>::const_iterator it(elements.cbegin());
                 it != elements.cend(); ++it) {
-            std::size_t const n_edges((*it)->getNEdges());
+            std::size_t const n_edges((*it)->getNumberOfEdges());
             for (std::size_t k(0); k<n_edges; k++) {
                 auto edge = (*it)->getEdge(k);    // allocation inside getEdge().
                 double const len = edge->getContent();
@@ -48,7 +48,7 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
             sum += std::sqrt(min);
             sum_of_sqr += min;
         }
-        n_sampling = _mesh.getNElements();
+        n_sampling = _mesh.getNumberOfElements();
     }
 
     const double mean (sum/n_sampling);

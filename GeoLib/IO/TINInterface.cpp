@@ -115,7 +115,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         }
     }
 
-    if (sfc->getNTriangles() == 0) {
+    if (sfc->getNumberOfTriangles() == 0) {
         WARN("readTIN(): No triangle found.", fname.c_str());
         if (errors)
             errors->push_back ("readTIN error because of no triangle found");
@@ -134,7 +134,7 @@ void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string
         return;
     }
     os.precision(std::numeric_limits<double>::digits10);
-    const std::size_t n_tris (surface.getNTriangles());
+    const std::size_t n_tris (surface.getNumberOfTriangles());
     for (std::size_t l(0); l < n_tris; l++) {
         GeoLib::Triangle const& tri (*(surface[l]));
         os << l << " " << *(tri.getPoint(0)) << " " << *(tri.getPoint(1)) << " " << *(tri.getPoint(2)) << "\n";

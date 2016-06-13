@@ -237,7 +237,7 @@ void GeoTreeModel::addChildren(GeoObjectListItem* sfcList,
         GeoTreeItem* surfaceItem(new GeoTreeItem(surface, sfcList, &sfc));
         sfcList->appendChild(surfaceItem);
 
-        int nElems = static_cast<int>((*surfaces)[i]->getNTriangles());
+        int nElems = static_cast<int>((*surfaces)[i]->getNumberOfTriangles());
         for (int j = 0; j < nElems; j++)
         {
             QList<QVariant> elem;

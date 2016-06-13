@@ -77,7 +77,7 @@ public:
     typedef LinearEdgeReturn EdgeReturn;
 
     /// Get the number of nodes for face i.
-    static unsigned getNFaceNodes(unsigned /*i*/) { return 4; }
+    static unsigned getNumberOfFaceNodes(unsigned /*i*/) { return 4; }
 
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);
