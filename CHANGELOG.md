@@ -24,6 +24,9 @@
    thermochemical energy storag devices, from OGS5. #1181
  - Introduced central place to put physical constants. #1228
  - Introduced a general scheme for documenting OGS6 input file settings. #978
+ - Added copy constructor for the class Surface, minor improvements in GeoLib. #1237
+ - Added classes GeoLib::LineSegment and GeoLib::Polyline::SegmentIterator. #1139
+ - GMSHInterface can handle stations as constraints. #1212
 
 ### Infrastructure
  - Fix circular dependencies on library level. This allows for dynamic linking
@@ -40,8 +43,12 @@
  - Inconsistent formatting of tabs and spaces was finally resolved: now all
    formatting, indentation and alignment, are done with four spaces. #1201
 
+- Moved some IO implementations from FileIO to BaseLib/IO, GeoLib/IO, MeshLib/IO
+  #1182, #1235
+
 ### Fixes:
     Fix linking of Metis in MathLib. #1147
+    Fix memory leaks in GMSHInterface. #1212
 
 ## Release notes
 # 6.0.5
