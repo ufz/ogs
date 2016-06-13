@@ -15,8 +15,6 @@
 
 #include <ostream>
 
-#include <Eigen/Eigen>
-
 namespace NumLib
 {
 
@@ -103,8 +101,6 @@ struct ShapeMatrices
      * @param out the output stream
      */
     void write (std::ostream& out) const;
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 }; // ShapeMatrices
 
