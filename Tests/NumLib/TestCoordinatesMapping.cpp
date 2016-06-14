@@ -16,6 +16,7 @@
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "CoordinatesMappingTestData/TestLine2.h"
 #include "CoordinatesMappingTestData/TestTri3.h"
@@ -50,10 +51,10 @@ public:
     static const unsigned e_nnodes = T_TEST::e_nnodes;
     static const unsigned global_dim = T_TEST::global_dim;
     // Matrix types
-    typedef Eigen::Matrix<double, e_nnodes, 1> NodalVector;
-    typedef Eigen::Matrix<double, dim, e_nnodes, Eigen::RowMajor> DimNodalMatrix;
-    typedef Eigen::Matrix<double, dim, dim, Eigen::RowMajor> DimMatrix;
-    typedef Eigen::Matrix<double, global_dim, e_nnodes, Eigen::RowMajor> GlobalDimNodalMatrix;
+    typedef typename ::detail::EigenMatrixType<e_nnodes, 1>::type NodalVector;
+    typedef typename ::detail::EigenMatrixType<dim, e_nnodes>::type DimNodalMatrix;
+    typedef typename ::detail::EigenMatrixType<dim, dim>::type DimMatrix;
+    typedef typename ::detail::EigenMatrixType<global_dim, e_nnodes>::type GlobalDimNodalMatrix;
     // Shape data type
     typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     // Natural coordinates mapping type
@@ -278,10 +279,10 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 {
-    typedef Eigen::Matrix<double, 2, 1> NodalVector;
-    typedef Eigen::Matrix<double, 1, 2, Eigen::RowMajor> DimNodalMatrix;
-    typedef Eigen::Matrix<double, 1, 1, Eigen::RowMajor> DimMatrix;
-    typedef Eigen::Matrix<double, 2, 2, Eigen::RowMajor> GlobalDimNodalMatrix;
+    typedef typename ::detail::EigenMatrixType<2, 1>::type NodalVector;
+    typedef typename ::detail::EigenMatrixType<1, 2>::type DimNodalMatrix;
+    typedef typename ::detail::EigenMatrixType<1, 1>::type DimMatrix;
+    typedef typename ::detail::EigenMatrixType<2, 2>::type GlobalDimNodalMatrix;
     // Shape data type
     typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
