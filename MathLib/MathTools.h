@@ -1,8 +1,4 @@
 /**
- * \file
- * \author Thomas Fischer
- * \date   2010-01-13
- * \brief  Definition of math helper functions.
  *
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -79,12 +75,6 @@ T scalarProduct(T const * const v0, T const * const v1, unsigned n)
 #endif
     return res;
 }
-
-/**
- * computes the cross (or vector) product of the 3d vectors u and v
- * the result is given in the vector r
- */
-void crossProd (const double u[3], const double v[3], double r[3]);
 
 /**
  * calcProjPntToLineAndDists computes the orthogonal projection

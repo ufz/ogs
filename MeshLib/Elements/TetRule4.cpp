@@ -13,7 +13,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
 #include "Tri.h"
@@ -54,12 +54,12 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
 
 double TetRule4::computeVolume(Node const* const* _nodes)
 {
-    return GeoLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]);
+    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]);
 }
 
 bool TetRule4::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
 {
-    return GeoLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3], eps);
+    return MathLib::isPointInTetrahedron(pnt, *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3], eps);
 }
 
 unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])

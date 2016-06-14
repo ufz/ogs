@@ -11,7 +11,7 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Node.h"
 
@@ -26,12 +26,12 @@ const unsigned TriRule3::edge_nodes[3][2] =
 
 double TriRule3::computeVolume(Node const* const* _nodes)
 {
-    return GeoLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
+    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
 }
 
 bool TriRule3::isPntInElement(Node const* const* _nodes, MathLib::Point3d const& pnt, double eps)
 {
-    return GeoLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
+    return MathLib::isPointInTriangle(pnt, *_nodes[0], *_nodes[1], *_nodes[2], eps);
 }
 
 unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])

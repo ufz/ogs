@@ -17,8 +17,8 @@
 
 #include <memory>
 
-#include "MathLib/Vector3.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/Vector3.h"
 
 #include "Polygon.h"
 
@@ -31,11 +31,6 @@ namespace GeoLib
 {
 class Polyline;
 class LineSegment;
-
-enum TriangleTest
-{
-    GAUSS, BARYCENTRIC
-};
 
 enum Orientation
 {
@@ -177,99 +172,6 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
 void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts);
 
 /**
- * Calculates the area of the triangle defined by its edge nodes a, b and c.
- * The formula is \f$A= \frac{1}{2} \cdot |u \times v|\f$, i.e. half of the area of the
- * parallelogram specified by the vectors\f$u=b-a\f$ and \f$v=c-a\f$.
- */
-double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c);
-
-/**
- * Calculates the volume of a tetrahedron.
- * The formula is V=1/6*|a(b x c)| with a=x1->x2, b=x1->x3 and c=x1->x4.
- */
-double calcTetrahedronVolume(MathLib::Point3d const& x1,
-    MathLib::Point3d const& x2,
-    MathLib::Point3d const& x3,
-    MathLib::Point3d const& x4);
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @param algorithm defines the method to use
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool isPointInTriangle(MathLib::Point3d const& p,
-                       MathLib::Point3d const& a,
-                       MathLib::Point3d const& b,
-                       MathLib::Point3d const& c,
-                       double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-                       double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon(),
-                       GeoLib::TriangleTest algorithm = GeoLib::GAUSS);
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- *                             ((orthogonal distance to the plane spaned by triangle)
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool gaussPointInTriangle(MathLib::Point3d const& p,
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c,
-    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
-
-/**
- * Tests if the given point p is within the triangle, defined by its edge nodes a, b and c.
- * Using two eps-values it is possible to test an 'epsilon' neighbourhood around the triangle
- * as well as an 'epsilon' outside the triangles plane.
- * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the triangle
- */
-bool barycentricPointInTriangle(MathLib::Point3d const& p,
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c,
-    double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
-    double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
-
-/**
- * Tests if the given point p is located within a tetrahedron spanned by points a, b, c, d.
- * If the tet specified by a, b, c, d is degenerated (i.e. all points are coplanar) the function
- * will return false because there is no meaningful concept of "inside" for such elements.
- * @param p test point
- * @param a edge node of tetrahedron
- * @param b edge node of tetrahedron
- * @param c edge node of tetrahedron
- * @param d edge node of tetrahedron
- * @param eps Accounts for numerical inaccuracies by allowing a point to be slightly outside of the element and still be regarded as inside.
- * @return true if the test point p is not located outside of abcd (i.e. inside or on a plane/edge).
- */
-bool isPointInTetrahedron(MathLib::Point3d const& p,
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c, MathLib::Point3d const& d,
-    double eps = std::numeric_limits<double>::epsilon());
-
-/**
  * test for intersections of the line segments of the Polyline
  * @param ply the polyline
  * @param seg_it0 iterator pointing to the first segment that has an intersection
@@ -324,39 +226,6 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& a, MathLib::Point3d const& b,
     MathLib::Point3d const& c, MathLib::Point3d const& p,
     MathLib::Point3d const& q);
-
-/// Calculates the scalar triple (u x v) . w
-double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v, MathLib::Vector3 const& w);
-
-/**
- * Checks if a point p is on the left or right side of a plane spanned by three points a, b, c.
- * @param p point to test
- * @param a first point on plane
- * @param b second point on plane
- * @param c third point on plane
- * @return If the triangle abc is ordered counterclockwise when viewed from p, the method will return a negative value,
- * otherwise it will return a positive value. If p is coplanar with abc, the function will return 0.
- */
-double orientation3d(MathLib::Point3d const& p,
-                     MathLib::Point3d const& a,
-                     MathLib::Point3d const& b,
-                     MathLib::Point3d const& c);
-
-/**
- * Checks if a and b can be placed on a plane such that c and d lie on different sides of said plane.
- * (In 2D space this checks if c and d are on different sides of a line through a and b.)
- * @param a first point on plane
- * @param b second point on plane
- * @param c first point to test
- * @param d second point to test
- * @return true, if such a plane can be found, false otherwise
- */
- bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
-     const MathLib::Point3d& c, const MathLib::Point3d& d);
-
- /// Checks if the four given points are located on a plane.
- bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
-     const MathLib::Point3d& c, const MathLib::Point3d & d);
 
 /**
  * Method first computes the intersection points of line segements of GeoLib::Polyline objects

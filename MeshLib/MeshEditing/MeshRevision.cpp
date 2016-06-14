@@ -16,11 +16,11 @@
 
 #include <numeric>
 
-// ThirdParty/logog
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/Grid.h"
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
@@ -657,10 +657,10 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
                     addTetrahedron(i_offset, j_offset, k_offset, i);
 
                     const unsigned l =
-                        (GeoLib::isCoplanar(*org_elem->getNode(i_offset),
-                                            *org_elem->getNode(k_offset),
-                                            *org_elem->getNode(i),
-                                            *org_elem->getNode(k)))
+                        (MathLib::isCoplanar(*org_elem->getNode(i_offset),
+                                             *org_elem->getNode(k_offset),
+                                             *org_elem->getNode(i),
+                                             *org_elem->getNode(k)))
                             ? j
                             : i;
                     const unsigned l_offset = (i>2) ? l-3 : l+3;
@@ -754,7 +754,8 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
     }
 
     // test if quad or tet
-    const bool isQuad (GeoLib::isCoplanar(*new_nodes[0], *new_nodes[1], *new_nodes[2], *new_nodes[3]));
+    const bool isQuad(MathLib::isCoplanar(*new_nodes[0], *new_nodes[1],
+                                          *new_nodes[2], *new_nodes[3]));
     if (isQuad && min_elem_dim < 3)
     {
         MeshLib::Element* elem (new MeshLib::Quad(new_nodes));

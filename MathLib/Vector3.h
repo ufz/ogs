@@ -187,6 +187,11 @@ template <typename T1> TemplateVector3<T1> operator*(
 }
 
 typedef TemplateVector3<double> Vector3;
+
+/// Calculates the scalar triple (u x v) . w
+double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
+                    MathLib::Vector3 const& w);
+
 }
 
 #endif // VECTOR3_H

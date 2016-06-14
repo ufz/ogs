@@ -17,10 +17,11 @@
 #include <cassert>
 #include <numeric>
 
-#include "MathLib/Vector3.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/Vector3.h"
+#include "MathLib/GeometricBasics.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
@@ -77,7 +78,7 @@ double LinearInterpolationOnSurface::interpolateInTri(
     GeoLib::Point const& v2(pnts[1]);
     GeoLib::Point const& v3(pnts[2]);
     GeoLib::Point const& v_pnt(pnts[3]);
-    const double area = GeoLib::calcTriangleArea(v1, v2, v3);
+    const double area = MathLib::calcTriangleArea(v1, v2, v3);
 
     if (area==.0) {
         // take average if all points have the same coordinates

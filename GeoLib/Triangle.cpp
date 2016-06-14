@@ -14,6 +14,7 @@
 #include "AnalyticalGeometry.h"
 
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
+#include "MathLib/GeometricBasics.h"
 
 namespace GeoLib {
 
@@ -38,7 +39,7 @@ bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const
     GeoLib::Point const& a(*(_pnts[_pnt_ids[0]]));
     GeoLib::Point const& b(*(_pnts[_pnt_ids[1]]));
     GeoLib::Point const& c(*(_pnts[_pnt_ids[2]]));
-    return GeoLib::isPointInTriangle(q, a, b, c, eps);
+    return MathLib::isPointInTriangle(q, a, b, c, eps);
 }
 
 bool Triangle::containsPoint2D (Point const& pnt) const
