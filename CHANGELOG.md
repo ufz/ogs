@@ -43,14 +43,12 @@
  - Simplified FindEigen.cmake, #1209
  - git diff --check is run in its own Travis job, #1207
 
-- Moved some IO implementations from FileIO to BaseLib/IO, GeoLib/IO, MeshLib/IO
-  #1182, #1235
+ - Moved some IO implementations from FileIO to BaseLib/IO, GeoLib/IO, MeshLib/IO, #1182, #1235
 
 ### Fixes:
-    Fix linking of Metis in MathLib. #1147
-    Fix memory leaks in GMSHInterface. #1212
+ - Fix linking of Metis in MathLib. #1147
+ - Fix memory leaks in GMSHInterface. #1212
 
-## Release notes
 # 6.0.5
 
 ### Features:
