@@ -161,7 +161,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     // Multiply by a vector
     set(v, 1);
-    T_VECTOR y(m.getNRows());
+    T_VECTOR y(m.getNumberOfRows());
     matMult(m, v, y);
 
     ASSERT_NEAR(6.*sqrt(6.), norm2(y), 1.e-10);
