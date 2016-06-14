@@ -18,14 +18,10 @@
 
 #include "MathLib/LinAlg/BLAS.h"
 
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/Lis/LisVector.h"
-#elif defined(USE_PETSC)
+#if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #elif defined(OGS_USE_EIGEN)
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
-#else
-#include "MathLib/LinAlg/Dense/DenseVector.h"
 #endif
 
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
@@ -275,12 +271,7 @@ void checkGlobalVectorInterfacePETSc()
 } // end namespace
 
 //--------------------------------------------
-#if defined(USE_LIS)
-TEST(Math, CheckInterface_LisVector)
-{
-    checkGlobalVectorInterface<MathLib::LisVector >();
-}
-#elif defined(USE_PETSC)
+#if defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
@@ -289,10 +280,5 @@ TEST(MPITest_Math, CheckInterface_PETScVector)
 TEST(Math, CheckInterface_EigenVector)
 {
     checkGlobalVectorInterface<MathLib::EigenVector >();
-}
-#else
-TEST(Math, CheckInterface_DenseVector)
-{
-    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 #endif
