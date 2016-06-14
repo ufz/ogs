@@ -64,8 +64,6 @@ option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 # Linear solvers
 option(OGS_USE_LIS "Use Lis" OFF)
 
-option(OGS_USE_EIGENLIS "Use Lis solver together with Eigen sparse matrices" OFF)
-
 # Parallel computing: vector and matrix algebraic caculation, solvers
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 
@@ -144,17 +142,6 @@ endif()
 
 if(OGS_USE_EIGEN)
     add_definitions(-DOGS_USE_EIGEN)
-endif()
-
-if (OGS_USE_EIGENLIS)
-    if (NOT OGS_USE_EIGEN)
-        message(FATAL_ERROR "OGS_USE_EIGENLIS needs OGS_USE_EIGEN to be set!")
-    endif()
-    if (NOT OGS_USE_LIS)
-        message(FATAL_ERROR "OGS_USE_EIGENLIS needs OGS_USE_LIS to be set!")
-    endif()
-
-    add_definitions(-DOGS_USE_EIGENLIS)
 endif()
 
 if(OGS_BUILD_TESTS)
