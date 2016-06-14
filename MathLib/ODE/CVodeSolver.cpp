@@ -21,6 +21,7 @@
 #include <sundials/sundials_types.h> /* definition of type realtype */
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 
 //! \addtogroup ExternalODESolverInterface
 //! @{
@@ -35,7 +36,7 @@ void check_error(std::string const& f_name, int const error_flag)
     if (error_flag != CV_SUCCESS)
     {
         OGS_FATAL("CVodeSolver: %s failed with error flag %d.", f_name.c_str(),
-            error_flag));
+            error_flag);
     }
 }
 
@@ -147,7 +148,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
         else
         {
-            OGS_FATAL("unknown linear multistep method: %s", param->c_str()));
+            OGS_FATAL("unknown linear multistep method: %s", param->c_str());
         }
     }
 
@@ -167,7 +168,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
         else
         {
-            OGS_FATAL("unknown nonlinear solver iteration: %s", param->c_str()));
+            OGS_FATAL("unknown nonlinear solver iteration: %s", param->c_str());
         }
     }
 
@@ -180,7 +181,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 
     if (_cvode_mem == nullptr || _y == nullptr || _abstol == nullptr)
     {
-        OGS_FATAL("couldn't allocate storage for CVode solver."));
+        OGS_FATAL("couldn't allocate storage for CVode solver.");
     }
 
     auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
