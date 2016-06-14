@@ -73,11 +73,14 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                     //! \ogs_file_param{boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
-            GeoLib::GeoObject const* const geometry =
+            GeoLib::GeoObject const* const geometry_ptr =
                 geometries.getGeoObject(geometrical_set_name, geometry_name);
+            assert(geometry_ptr != nullptr);
+            GeoLib::GeoObject const& geometry = *geometry_ptr;
+
             DBUG(
                 "Found geometry type \"%s\"",
-                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+                GeoLib::convertGeoTypeToString(geometry.getGeoType()).c_str());
 
             // Construct type dependent boundary condition
             //! \ogs_file_param{boundary_condition__type}

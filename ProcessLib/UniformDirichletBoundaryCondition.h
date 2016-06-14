@@ -31,10 +31,10 @@ namespace ProcessLib
 class UniformDirichletBoundaryCondition
 {
 public:
-    UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
+    UniformDirichletBoundaryCondition(GeoLib::GeoObject const& geometry,
                                       BaseLib::ConfigTree const& config);
 
-    UniformDirichletBoundaryCondition(GeoLib::GeoObject const* const geometry,
+    UniformDirichletBoundaryCondition(GeoLib::GeoObject const& geometry,
                                       double value);
 
     /// Initialize Dirichlet type boundary conditions.
@@ -50,7 +50,7 @@ public:
 
 private:
     double _value;
-    GeoLib::GeoObject const* const _geometry;
+    GeoLib::GeoObject const& _geometry;
 };
 
 }  // namespace ProcessLib

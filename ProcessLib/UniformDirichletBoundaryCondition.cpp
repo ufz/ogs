@@ -17,7 +17,7 @@
 namespace ProcessLib
 {
 UniformDirichletBoundaryCondition::UniformDirichletBoundaryCondition(
-    GeoLib::GeoObject const* const geometry, BaseLib::ConfigTree const& config)
+    GeoLib::GeoObject const& geometry, BaseLib::ConfigTree const& config)
     : _geometry(geometry)
 {
     DBUG("Constructing UniformDirichletBoundaryCondition from config.");
@@ -30,7 +30,7 @@ UniformDirichletBoundaryCondition::UniformDirichletBoundaryCondition(
 }
 
 UniformDirichletBoundaryCondition::UniformDirichletBoundaryCondition(
-    GeoLib::GeoObject const* const geometry, double value)
+    GeoLib::GeoObject const& geometry, double value)
     : _value(value), _geometry(geometry)
 {
     DBUG("Constructed UniformDirichletBoundaryCondition using value %g",
@@ -51,7 +51,7 @@ void UniformDirichletBoundaryCondition::initialize(
 {
     // Find nodes' ids on the given mesh on which this boundary condition
     // is defined.
-    std::vector<std::size_t> ids = searcher.getMeshNodeIDs(*_geometry);
+    std::vector<std::size_t> ids = searcher.getMeshNodeIDs(_geometry);
 
     // convert mesh node ids to global index for the given component
     bc.ids.reserve(bc.ids.size() + ids.size());
