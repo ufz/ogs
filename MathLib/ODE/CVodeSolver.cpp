@@ -222,7 +222,7 @@ void CVodeSolverImpl::setTolerance(const double abstol, const double reltol)
 void CVodeSolverImpl::setFunction(std::unique_ptr<detail::FunctionHandles>&& f)
 {
     _f = std::move(f);
-    assert(_num_equations == _f->getNumEquations());
+    assert(_num_equations == _f->getNumberOfEquations());
 }
 
 void CVodeSolverImpl::setIC(const double t0, double const* const y0)
@@ -263,7 +263,7 @@ void CVodeSolverImpl::preSolve()
         {
             (void)N;  // prevent warnings during non-debug build
             auto* fh = static_cast<detail::FunctionHandles*>(function_handles);
-            assert(N == fh->getNumEquations());
+            assert(N == fh->getNumberOfEquations());
 
             // Caution: by calling the DENSE_COL() macro we assume that matrices
             // are stored contiguously in memory!
