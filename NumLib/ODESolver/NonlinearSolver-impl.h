@@ -13,6 +13,7 @@
 // #include <iostream>
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "MathLib/LinAlg/BLAS.h"
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
@@ -283,7 +284,7 @@ createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
         return std::make_pair(std::unique_ptr<AbstractNLS>(
             new ConcreteNLS{linear_solver, tol, max_iter}), tag);
     }
-    std::abort();
+    OGS_FATAL("Unsupported nonlinear solver type");
 }
 
 

@@ -12,12 +12,11 @@
  *
  */
 
-// STL
-#include <algorithm>
-
-#include <logog/include/logog.hpp>
-
 #include "Polyline.h"
+
+#include <algorithm>
+#include <logog/include/logog.hpp>
+#include "BaseLib/Error.h"
 #include "AnalyticalGeometry.h"
 #include "MathLib/GeometricBasics.h"
 
@@ -513,7 +512,7 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator+=(
             static_cast<std::vector<GeoLib::Point>::size_type>(n);
     }
     if (_segment_number > _polyline->getNumberOfSegments())
-        std::abort();
+        OGS_FATAL("");
     return *this;
 }
 
@@ -536,7 +535,7 @@ Polyline::SegmentIterator& Polyline::SegmentIterator::operator-=(
             static_cast<std::vector<GeoLib::Point>::size_type>(-n);
     }
     if (_segment_number > _polyline->getNumberOfSegments())
-        std::abort();
+        OGS_FATAL("");
     return *this;
 }
 

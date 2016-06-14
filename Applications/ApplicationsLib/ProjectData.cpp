@@ -68,9 +68,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
     if (!mesh) {
-        ERR("Could not read mesh from \'%s\' file. No mesh added.",
+        OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
             mesh_file.c_str());
-        std::abort();
     }
     _mesh_vec.push_back(mesh);
 
@@ -193,8 +192,7 @@ void ProjectData::buildProcesses()
         }
         else
         {
-            ERR("Unknown process type: %s", type.c_str());
-            std::abort();
+            OGS_FATAL("Unknown process type: %s", type.c_str());
         }
     }
 
@@ -299,9 +297,8 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         }
         else
         {
-            ERR("Cannot construct property of given type \'%s\'.",
+            OGS_FATAL("Cannot construct property of given type \'%s\'.",
                 type.c_str());
-            std::abort();
         }
     }
 }
@@ -338,8 +335,7 @@ void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_conf
 
     if (!_time_loop)
     {
-        ERR("Initialization of time loop failed.");
-        std::abort();
+        OGS_FATAL("Initialization of time loop failed.");
     }
 }
 
@@ -391,13 +387,11 @@ createPiecewiseLinearInterpolation(BaseLib::ConfigTree const& config)
     auto values = config.getConfigParameter<std::vector<double>>("values");
     if (coords.empty() || values.empty())
     {
-        ERR("The given co-ordinates or values vector is empty.");
-        std::abort();
+        OGS_FATAL("The given co-ordinates or values vector is empty.");
     }
     if (coords.size() != values.size())
     {
-        ERR("The given co-ordinates and values vector sizes are different.");
-        std::abort();
+        OGS_FATAL("The given co-ordinates and values vector sizes are different.");
     }
 
     return std::unique_ptr<MathLib::PiecewiseLinearInterpolation>{

@@ -17,7 +17,7 @@
 
 #include <algorithm>
 
-#include "StringTools.h"
+#include "Error.h"
 
 namespace BaseLib {
 
@@ -39,8 +39,7 @@ void insertIfKeyUniqueElseError(
 {
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second) { // insertion failed, i.e., key already exists
-        ERR("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
-        std::abort();
+        OGS_FATAL("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
     }
 }
 
@@ -58,14 +57,12 @@ void insertIfKeyValueUniqueElseError(
 
     if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
     {
-        ERR("%s Value `%s' already exists.", error_message.c_str(), tostring(value).c_str());
-        std::abort();
+        OGS_FATAL("%s Value `%s' already exists.", error_message.c_str(), tostring(value).c_str());
     }
 
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second) { // insertion failed, i.e., key already exists
-        ERR("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
-        std::abort();
+        OGS_FATAL("%s Key `%s' already exists.", error_message.c_str(), tostring(key).c_str());
     }
 }
 
@@ -81,8 +78,7 @@ getOrError(
 {
     auto it = map.find(key);
     if (it == map.end()) {
-        ERR("%s Key `%s' does not exist.", error_message.c_str(), tostring(key).c_str());
-        std::abort();
+        OGS_FATAL("%s Key `%s' does not exist.", error_message.c_str(), tostring(key).c_str());
     }
 
     return it->second;
@@ -96,8 +92,7 @@ getOrError(
 {
     auto it = map.find(key);
     if (it == map.end()) {
-        ERR("%s Key `%s' does not exist.", error_message.c_str(), tostring(key).c_str());
-        std::abort();
+        OGS_FATAL("%s Key `%s' does not exist.", error_message.c_str(), tostring(key).c_str());
     }
 
     return it->second;

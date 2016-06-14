@@ -20,6 +20,7 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 
 namespace NumLib
 {
@@ -53,8 +54,7 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__time_stepping__FixedTimeStepping__timesteps__pair}
     auto const range = delta_ts.getConfigSubtreeList("pair");
     if (range.begin() == range.end()) {
-        ERR("no timesteps have been given");
-        std::abort();
+        OGS_FATAL("no timesteps have been given");
     }
     for (auto const pair : range)
     {
@@ -64,12 +64,10 @@ FixedTimeStepping::newInstance(BaseLib::ConfigTree const& config)
         delta_t           = pair.getConfigParameter<double>("delta_t");
 
         if (repeat == 0) {
-            ERR("<repeat> is zero.");
-            std::abort();
+            OGS_FATAL("<repeat> is zero.");
         }
         if (delta_t <= 0.0) {
-            ERR("timestep <delta_t> is <= 0.0.");
-            std::abort();
+            OGS_FATAL("timestep <delta_t> is <= 0.0.");
         }
 
         if (t_curr <= t_end) {

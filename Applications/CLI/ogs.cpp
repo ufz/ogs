@@ -71,36 +71,41 @@ int main(int argc, char *argv[])
 
     cmd.parse(argc, argv);
 
-
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
-    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
-        argc, argv);
+
+    try {
+        ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
+            argc, argv);
 
 
-    auto project_config = BaseLib::makeConfigTree(
-        project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
+        auto project_config = BaseLib::makeConfigTree(
+            project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
 
-    ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
-                        outdir_arg.getValue());
+        ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
+                            outdir_arg.getValue());
 
-    project_config.checkAndInvalidate();
+        project_config.checkAndInvalidate();
 
 
-    // Create processes.
-    project.buildProcesses();
+        // Create processes.
+        project.buildProcesses();
 
-    INFO("Initialize processes.");
-    for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
-    {
-        (*p_it)->initialize();
+        INFO("Initialize processes.");
+        for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+        {
+            (*p_it)->initialize();
+        }
+
+
+        INFO("Solve processes.");
+
+        auto& time_loop = project.getTimeLoop();
+        bool solver_succeeded = time_loop.loop(project);
+
+        return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+    } catch (std::exception& e) {
+        ERR(e.what());
+        return EXIT_FAILURE;
     }
-
-
-    INFO("Solve processes.");
-
-    auto& time_loop = project.getTimeLoop();
-    bool solver_succeeded = time_loop.loop(project);
-
-    return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
 }

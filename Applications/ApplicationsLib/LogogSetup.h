@@ -10,11 +10,11 @@
 #ifndef APPLICATIONSLIB_LOGOGSETUP_H_
 #define APPLICATIONSLIB_LOGOGSETUP_H_
 
-#include <logog/include/logog.hpp>
-
 #include <map>
 #include <memory>
 #include <string>
+
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/LogogSimpleFormatter.h"
 
@@ -69,14 +69,12 @@ public:
         };
 
 
-        //LOGOG_LEVEL_TYPE level_type;
+        LOGOG_LEVEL_TYPE level_type = LOGOG_LEVEL_ALL;
         if(foo.find(level) != foo.end())
-            setLevel(foo[level]);
+            level_type = foo[level];
         else
-        {
-            ERR("%s is not a valid log level! Aborting.", level.c_str());
-            std::abort();
-        }
+            WARN("'%s' is not a valid log level! 'all' is used instead.", level.c_str());
+        setLevel(level_type);
     }
 
 private:

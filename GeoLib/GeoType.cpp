@@ -16,6 +16,8 @@
 
 #include <cstdlib>
 
+#include "BaseLib/Error.h"
+
 namespace GeoLib
 {
 
@@ -28,8 +30,9 @@ std::string convertGeoTypeToString (GEOTYPE geo_type)
     case GEOTYPE::SURFACE:  return "SURFACE";
     }
 
-    std::abort(); // Cannot happen, because switch covers all cases.
-                  // Used to silence compiler warning.
+    // Cannot happen, because switch covers all cases.
+    // Used to silence compiler warning.
+    OGS_FATAL("convertGeoTypeToString(): Given geo type is not supported");
 }
 
 } // end namespace GeoLib

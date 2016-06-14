@@ -13,6 +13,7 @@
 #include <vector>
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "EigenMatrix.h" // for EigenMatrix::IndexType
 
 namespace MathLib
@@ -41,8 +42,7 @@ void applyKnownSolution(Eigen::MatrixXd &A, Eigen::VectorXd &b, Eigen::VectorXd 
     (void) A; (void) b; (void) _vec_knownX_id; (void) _vec_knownX_x;
     (void) penalty_scaling;
 
-    ERR("Method not implemented."); // TODO implement
-    std::abort();
+    OGS_FATAL("Method not implemented."); // TODO implement
 }
 
 } // MathLib

@@ -9,6 +9,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/StringTools.h"
+
 #include "Reaction.h"
 
 #include "Density100MPa.h"
@@ -58,8 +60,7 @@ newInstance(BaseLib::ConfigTree const& conf)
     else if (type == "CaOH2")
         return std::unique_ptr<Reaction>(new ReactionCaOH2(conf));
 
-    ERR("Unknown reactive system: %s.", type.c_str());
-    std::abort();
+    OGS_FATAL("Unknown reactive system: %s.", type.c_str());
 
     return nullptr;
 }

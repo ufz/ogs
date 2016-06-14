@@ -18,6 +18,7 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -33,13 +34,11 @@ void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
 {
     std::ofstream ids_and_area_out(id_area_fname);
     if (!ids_and_area_out) {
-        ERR("Unable to open the file \"%s\" - aborting.", id_area_fname.c_str());
-        std::abort();
+        OGS_FATAL("Unable to open the file \"%s\" - aborting.", id_area_fname.c_str());
     }
     std::ofstream csv_out(csv_fname);
     if (!csv_out) {
-        ERR("Unable to open the file \"%s\" - aborting.", csv_fname.c_str());
-        std::abort();
+        OGS_FATAL("Unable to open the file \"%s\" - aborting.", csv_fname.c_str());
     }
 
     ids_and_area_out.precision(std::numeric_limits<double>::digits10);

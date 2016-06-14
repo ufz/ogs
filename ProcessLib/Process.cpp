@@ -28,11 +28,10 @@ ProcessVariable& findProcessVariable(
 
     if (variable == variables.end())
     {
-        ERR(
+        OGS_FATAL(
             "Could not find process variable '%s' in the provided variables "
             "list for config tag <%s>.",
             name.c_str(), tag.c_str());
-        std::abort();
     }
     DBUG("Found process variable \'%s\' for config tag <%s>.",
          variable->getName().c_str(), tag.c_str());

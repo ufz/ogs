@@ -20,6 +20,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/StringTools.h"
+
 #include "Polyline.h"
 #include "PointVec.h"
 
@@ -427,11 +429,10 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             std::stringstream err;
             err.precision(std::numeric_limits<double>::digits10);
             err << ab << " x " << cd;
-            ERR(
+            OGS_FATAL(
                 "The case of parallel line segments (%s) is not handled yet. "
                 "Aborting.",
                 err.str().c_str());
-            std::abort();
         }
 
         // check if d in (ab)
@@ -456,11 +457,10 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             std::stringstream err;
             err.precision(std::numeric_limits<double>::digits10);
             err << ab << " x " << cd;
-            ERR(
+            OGS_FATAL(
                 "The case of parallel line segments (%s) "
                 "is not handled yet. Aborting.",
                 err.str().c_str());
-            std::abort();
         }
         return std::vector<MathLib::Point3d>();
     }

@@ -136,14 +136,12 @@ private:
                     *nonlinear_solver_newton, time_disc, *ode_newton };
             }
             else {
-                ERR("You are trying to solve a non-Newton-ready ODE with the"
+                OGS_FATAL("You are trying to solve a non-Newton-ready ODE with the"
                     " Newton-Raphson method. Aborting");
-                std::abort();
             }
         }
         else {
-            ERR("Encountered unknown nonlinear solver type. Aborting");
-            std::abort();
+            OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
         }
     }
 
@@ -242,8 +240,7 @@ createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
     } else if (type == "FixedTimeStepping") {
         timestepper = NumLib::FixedTimeStepping::newInstance(conf);
     } else {
-            ERR("Unknown timestepper type: `%s'.", type.c_str());
-            std::abort();
+            OGS_FATAL("Unknown timestepper type: `%s'.", type.c_str());
     }
 
     using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;

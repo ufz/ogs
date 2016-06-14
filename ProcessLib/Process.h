@@ -201,11 +201,10 @@ private:
         const double /*dx_dx*/, GlobalMatrix const& /*K*/,
         GlobalMatrix& /*Jac*/)
     {
-        ERR("The concrete implementation of this Process did not override the"
+        OGS_FATAL("The concrete implementation of this Process did not override the"
             " assembleJacobianConcreteProcess() method."
             " Hence, no analytical Jacobian is provided for this process"
             " and the Newton-Raphson method cannot be used to solve it.");
-        std::abort();
     }
 
     void constructDofTable()
@@ -385,11 +384,10 @@ Parameter<ParameterArgs...>& findParameter(
 
     if (parameter_it == parameters.end())
     {
-        ERR(
+        OGS_FATAL(
             "Could not find parameter '%s' in the provided parameters list for "
             "config tag <%s>.",
             name.c_str(), tag.c_str());
-        std::abort();
     }
     DBUG("Found parameter \'%s\'.", (*parameter_it)->name.c_str());
 
@@ -398,8 +396,7 @@ Parameter<ParameterArgs...>& findParameter(
         dynamic_cast<Parameter<ParameterArgs...>*>(parameter_it->get());
     if (!parameter)
     {
-        ERR("The read parameter is of incompatible type.");
-        std::abort();
+        OGS_FATAL("The read parameter is of incompatible type.");
     }
     return *parameter;
 }

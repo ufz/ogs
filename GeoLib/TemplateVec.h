@@ -25,6 +25,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
+
 namespace GeoLib
 {
 /**
@@ -60,8 +62,7 @@ public:
     {
         if (_data_vec == nullptr)
         {
-            ERR("Constructor TemplateVec: vector of data elements is a nullptr.");
-            std::abort();
+            OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
         }
 
         if (!_name_id_map)

@@ -27,6 +27,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
 
@@ -88,8 +89,7 @@ public:
     {
         if (std::distance(first,last) <= 0)
         {
-            ERR("AABB::AABB(InputIterator first, InputIterator last): first > last");
-            std::abort();
+            OGS_FATAL("AABB::AABB(InputIterator first, InputIterator last): first > last");
         }
         init(*first);
         InputIterator it(first);

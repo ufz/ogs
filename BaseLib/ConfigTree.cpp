@@ -7,8 +7,11 @@
  *
  */
 
-#include <logog/include/logog.hpp>
 #include "ConfigTree.h"
+
+#include <logog/include/logog.hpp>
+
+#include "Error.h"
 
 // Explicitly instantiate the boost::property_tree::ptree which is a typedef to
 // the following basic_ptree.
@@ -30,12 +33,10 @@ ConfigTree(PTree const& tree,
     : _tree(&tree), _filename(filename), _onerror(error_cb), _onwarning(warning_cb)
 {
     if (!_onerror) {
-        ERR("ConfigTree: No valid error handler provided.");
-        std::abort();
+        OGS_FATAL("ConfigTree: No valid error handler provided.");
     }
     if (!_onwarning) {
-        ERR("ConfigTree: No valid warning handler provided.");
-        std::abort();
+        OGS_FATAL("ConfigTree: No valid warning handler provided.");
     }
 }
 
@@ -193,7 +194,6 @@ void ConfigTree::ignoreConfigParameterAll(const std::string &param) const
 void ConfigTree::error(const std::string& message) const
 {
     _onerror(_filename, _path, message);
-    std::abort();
 }
 
 void ConfigTree::warning(const std::string& message) const
@@ -205,9 +205,8 @@ void ConfigTree::warning(const std::string& message) const
 void ConfigTree::onerror(const std::string& filename, const std::string& path,
                             const std::string& message)
 {
-    ERR("ConfigTree: In file `%s' at path <%s>: %s",
+    OGS_FATAL("ConfigTree: In file `%s' at path <%s>: %s",
         filename.c_str(), path.c_str(), message.c_str());
-    std::abort();
 }
 
 void ConfigTree::onwarning(const std::string& filename, const std::string& path,

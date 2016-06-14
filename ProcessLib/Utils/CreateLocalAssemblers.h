@@ -115,8 +115,7 @@ void createLocalAssemblers(
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     default:
-        ERR("Meshes with dimension greater than three are not supported.");
-        std::abort();
+        OGS_FATAL("Meshes with dimension greater than three are not supported.");
     }
 }
 

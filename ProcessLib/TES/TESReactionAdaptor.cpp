@@ -51,8 +51,7 @@ std::unique_ptr<TESFEMReactionAdaptor> TESFEMReactionAdaptor::newInstance(
             new TESFEMReactionAdaptorCaOH2(data));
     }
 
-    ERR("No suitable TESFEMReactionAdaptor found. Aborting.");
-    std::abort();
+    OGS_FATAL("No suitable TESFEMReactionAdaptor found. Aborting.");
     return std::unique_ptr<TESFEMReactionAdaptor>(nullptr);
 }
 

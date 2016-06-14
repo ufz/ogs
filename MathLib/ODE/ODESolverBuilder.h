@@ -12,6 +12,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/Error.h"
 #include "ODESolver.h"
 #include "ConcreteODESolver.h"
 
@@ -45,10 +46,9 @@ std::unique_ptr<ODESolver<NumEquations>> createODESolver(
 #endif
     (void)config;  // Unused parameter warning if no library is available.
 
-    ERR(
+    OGS_FATAL(
         "No ODE solver could be created. Maybe it is because you did not build"
         " OGS6 with support for any external ODE solver library.");
-    std::abort();
 }
 
 //! @}

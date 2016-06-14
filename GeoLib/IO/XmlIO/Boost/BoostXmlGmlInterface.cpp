@@ -12,10 +12,10 @@
  *
  */
 
+#include "BoostXmlGmlInterface.h"
+
 #include <boost/property_tree/xml_parser.hpp>
 #include <logog/include/logog.hpp>
-
-#include "BoostXmlGmlInterface.h"
 
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/uniqueInsert.h"
@@ -61,8 +61,7 @@ bool BoostXmlGmlInterface::readFile(const std::string &fname)
     auto geo_name = doc->getConfigParameter<std::string>("name");
     if (geo_name.empty())
     {
-        ERR("BoostXmlGmlInterface::readFile(): <name> tag is empty.");
-        std::abort();
+        OGS_FATAL("BoostXmlGmlInterface::readFile(): <name> tag is empty.");
     }
 
     //! \ogs_file_param{gml__points}
@@ -128,8 +127,7 @@ void BoostXmlGmlInterface::readPoints(BaseLib::ConfigTree const& pointsRoot,
         if (auto const p_name = pt.getConfigAttributeOptional<std::string>("name"))
         {
             if (p_name->empty()) {
-                ERR("Empty point name found in geometry file.");
-                std::abort();
+                OGS_FATAL("Empty point name found in geometry file.");
             }
 
             BaseLib::insertIfKeyUniqueElseError(pnt_names, *p_name, p_size,
@@ -160,8 +158,7 @@ void BoostXmlGmlInterface::readPolylines(
         if (auto const p_name = pl.getConfigAttributeOptional<std::string>("name"))
         {
             if (p_name->empty()) {
-                ERR("Empty polyline name found in geometry file.");
-                std::abort();
+                OGS_FATAL("Empty polyline name found in geometry file.");
             }
 
             BaseLib::insertIfKeyUniqueElseError(ply_names, *p_name, polylines.size()-1,
@@ -201,8 +198,7 @@ void BoostXmlGmlInterface::readSurfaces(
         if (auto const s_name = sfc.getConfigAttributeOptional<std::string>("name"))
         {
             if (s_name->empty()) {
-                ERR("Empty surface name found in geometry file.");
-                std::abort();
+                OGS_FATAL("Empty surface name found in geometry file.");
             }
 
             BaseLib::insertIfKeyUniqueElseError(sfc_names, *s_name, surfaces.size()-1,
