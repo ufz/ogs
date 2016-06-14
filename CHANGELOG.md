@@ -3,8 +3,7 @@
 
 ### Features:
  - Add external ode-solver interface with [Sundials CVODE
-   library](http://computation.llnl.gov/projects/sundials-suite-nonlinear-differential-algebraic-equation-solvers/cvode).
-   #1109
+   library](http://computation.llnl.gov/projects/sundials-suite-nonlinear-differential-algebraic-equation-solvers/cvode). #1109
  - Add piecewise linear curves parser to the project files. The curves are
    specified by two vectors, the coordinates and values. They can be used for
    example to map temporal dependencies (time-dependent boundary conditions) or
@@ -32,13 +31,11 @@
  - Fix circular dependencies on library level. This allows for dynamic linking
    which is faster than static and can be used in debug builds, where the
    compilation time is more important than the runtime.
-   - #1133 Enable shared linking of ogs libraries.
-   - #1138 Break FileIO on ApplicationsLib dependency.
-   - #1143, #1153 Remove MeshLib on FileIO dependency.
-   - #1166 Cleanup some of AssemblerLib dependencies.
-
- - Introduced Conan package manager for automatic fetching of build dependencies
-   #1141
+   - Enable shared linking of ogs libraries. #1133
+   - Break FileIO on ApplicationsLib dependency. #1138
+   - Remove MeshLib on FileIO dependency. #1143, #1153
+   - Cleanup some of AssemblerLib dependencies. #1166
+ - Introduced Conan package manager for automatic fetching of build dependencies, #1141
  - Inconsistent formatting of tabs and spaces was finally resolved: now all
    formatting, indentation and alignment, are done with four spaces. #1201
  - Windows 32-bit builds are disallowed because they are not supported.
