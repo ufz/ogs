@@ -38,10 +38,13 @@
    - #1166 Cleanup some of AssemblerLib dependencies.
 
  - Introduced Conan package manager for automatic fetching of build dependencies
-   [#1141]
-
+   #1141
  - Inconsistent formatting of tabs and spaces was finally resolved: now all
    formatting, indentation and alignment, are done with four spaces. #1201
+ - Windows 32-bit builds are disallowed because they are not supported.
+   Can be forced by setting OGS_32_BIT=ON. #1230
+ - Simplified FindEigen.cmake, #1209
+ - git diff --check is run in its own Travis job, #1207
 
 - Moved some IO implementations from FileIO to BaseLib/IO, GeoLib/IO, MeshLib/IO
   #1182, #1235
