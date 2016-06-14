@@ -19,6 +19,16 @@
 
 namespace NumLib
 {
+namespace detail
+{
+template <class T_MESH_ELEMENT,
+          class T_SHAPE_FUNC,
+          class T_SHAPE_MATRICES,
+          ShapeMatrixType T_SHAPE_MATRIX_TYPE>
+void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
+                                                   const double* natural_pt,
+                                                   T_SHAPE_MATRICES& shapemat);
+}  // namespace detail
 
 /**
  * Coordinates mapping tools for natural coordinates
@@ -41,23 +51,39 @@ struct NaturalCoordinatesMapping
      * @param natural_pt        Location in natural coordinates (r,s,t)
      * @param shapemat          Shape matrix data where calculated shape functions are stored
      */
-    static void computeShapeMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat);
+    static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
+                                     const double* natural_pt,
+                                     T_SHAPE_MATRICES& shapemat)
+    {
+        computeShapeMatrices<ShapeMatrixType::ALL>(ele, natural_pt, shapemat);
+    }
 
     /**
-     * compute specified mapping matrices at the given location in natural coordinates
+     * compute specified mapping matrices at the given location in natural
+     * coordinates
      *
      * @tparam T_SHAPE_MATRIX_TYPE  Mapping matrix types to be calculated
      * @param ele                   Mesh element object
      * @param natural_pt            Location in natural coordinates (r,s,t)
-     * @param shapemat              Shape matrix data where calculated shape functions are stored
+     * @param shapemat              Shape matrix data where calculated shape
+     * functions are stored
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-    static void computeShapeMatrices(const T_MESH_ELEMENT &ele, const double* natural_pt, T_SHAPE_MATRICES &shapemat);
+    static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
+                                     const double* natural_pt,
+                                     T_SHAPE_MATRICES& shapemat)
+    {
+        detail::naturalCoordinatesMappingComputeShapeMatrices<
+            T_MESH_ELEMENT,
+            T_SHAPE_FUNC,
+            T_SHAPE_MATRICES,
+            T_SHAPE_MATRIX_TYPE>(ele, natural_pt, shapemat);
+    }
 };
 
 } // NumLib
 
-#include "NaturalCoordinatesMapping-impl.h"
+// #include "NaturalCoordinatesMapping-impl.h"
 
 
 #endif //NATURALCOORDINATESMAPPING_H_
