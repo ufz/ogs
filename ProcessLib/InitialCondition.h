@@ -42,7 +42,8 @@ public:
 class UniformInitialCondition : public InitialCondition
 {
 public:
-    UniformInitialCondition(std::vector<double> const& values) : _values(values)
+    explicit UniformInitialCondition(std::vector<double> const& values)
+        : _values(values)
     {
     }
     /// Returns a value for given node and component.
