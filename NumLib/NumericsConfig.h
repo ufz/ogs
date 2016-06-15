@@ -30,8 +30,8 @@ namespace detail
 {
 using GlobalVectorMatrixBuilderType =
         NumLib::VectorMatrixBuilder<
-            GlobalMatrixType,
-            GlobalVectorType>;
+            GlobalMatrix,
+            GlobalVector>;
 }
 
 //
@@ -51,7 +51,7 @@ using GlobalSetupType =
     NumLib::GlobalSetup<
         detail::GlobalVectorMatrixBuilderType,
         detail::GlobalExecutorType,
-        detail::LinearSolverType>;
+        GlobalLinearSolver>;
 
 
 //
