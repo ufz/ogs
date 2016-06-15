@@ -173,7 +173,7 @@ public:
             if (!_configured_secondary_variables
                      .emplace(std::make_pair(
                          var_name,
-                         SecondaryVariable<GlobalVector>{
+                         SecondaryVariable{
                              var_name, num_components, std::move(fcts)}))
                      .second)
             {
