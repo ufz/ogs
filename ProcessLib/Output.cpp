@@ -47,10 +47,15 @@ namespace ProcessLib
 std::unique_ptr<Output> Output::
 newInstance(const BaseLib::ConfigTree &config, std::string const& output_directory)
 {
-    std::unique_ptr<Output> out{ new Output{
+    auto const output_iteration_results =
+        //! \ogs_file_param{prj__output__output_iteration_results}
+        config.getConfigParameterOptional<bool>("output_iteration_results");
+
+    std::unique_ptr<Output> out{new Output{
         BaseLib::joinPaths(output_directory,
-            //! \ogs_file_param{prj__output__prefix}
-            config.getConfigParameter<std::string>("prefix"))}};
+                           //! \ogs_file_param{prj__output__prefix}
+                           config.getConfigParameter<std::string>("prefix")),
+        output_iteration_results ? *output_iteration_results : false}};
 
     //! \ogs_file_param{prj__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
@@ -135,6 +140,29 @@ doOutputLastTimestep(Process const& process,
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
         doOutputAlways(process, timestep, t, x);
+}
+
+void Output::doOutputIteration(
+    Process const& process, unsigned timestep, const double t,
+    GlobalVector const& x, const unsigned iteration) const
+{
+    if (!_output_iteration_results) return;
+
+    auto spd_it = _single_process_data.find(&process);
+    if (spd_it == _single_process_data.end()) {
+        OGS_FATAL("The given process is not contained in the output configuration."
+            " Aborting.");
+    }
+    auto& spd = spd_it->second;
+
+    std::string const output_file_name =
+            _output_file_prefix + "_pcs_" + std::to_string(spd.process_index)
+            + "_ts_" + std::to_string(timestep)
+            + "_t_"  + std::to_string(t)
+            + "_iter_" + std::to_string(iteration)
+            + ".vtu";
+    DBUG("output iteration results to %s", output_file_name.c_str());
+    process.output(output_file_name, timestep, x);
 }
 
 }
