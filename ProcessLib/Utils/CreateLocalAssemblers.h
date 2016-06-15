@@ -25,7 +25,7 @@ namespace detail
 {
 
 template<unsigned GlobalDim,
-         template <typename, typename, typename, typename, unsigned> class
+         template <typename, typename, unsigned> class
          LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
@@ -41,8 +41,6 @@ void createLocalAssemblers(
     using LocalDataInitializer = LocalDataInitializer<
         LocalAssemblerInterface,
         LocalAssemblerImplementation,
-        ::detail::GlobalMatrixType,
-        ::detail::GlobalVectorType,
         GlobalDim,
         ExtraCtorArgs...>;
 
@@ -75,7 +73,7 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template<template <typename, typename, typename, typename, unsigned> class
+template<template <typename, typename, unsigned> class
          LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>

@@ -74,8 +74,8 @@ TESProcess::TESProcess(
     std::unique_ptr<typename Process::TimeDiscretization>&&
         time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-    SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-    ProcessOutput<GlobalVector>&& process_output,
+    SecondaryVariableCollection&& secondary_variables,
+    ProcessOutput&& process_output,
     const BaseLib::ConfigTree& config)
     : Process(
           mesh, nonlinear_solver, std::move(time_discretization),
@@ -204,12 +204,12 @@ void TESProcess::initializeConcreteProcess(
 
     // secondary variables
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
-                      SecondaryVariableFunctions<GlobalVector>&& fcts) {
+                      SecondaryVariableFunctions&& fcts) {
         this->_secondary_variables.addSecondaryVariable(var_name, n_components,
                                                         std::move(fcts));
     };
     auto makeEx =
-        [&](TESIntPtVariables var) -> SecondaryVariableFunctions<GlobalVector> {
+        [&](TESIntPtVariables var) -> SecondaryVariableFunctions {
         return ProcessLib::makeExtrapolator(var, *_extrapolator,
                                             _local_assemblers);
     };
@@ -471,7 +471,7 @@ std::unique_ptr<TESProcess> createTESProcess(
         variables, config,
         {"fluid_pressure", "temperature", "vapour_mass_fraction"});
 
-    SecondaryVariableCollection<::detail::GlobalVectorType>
+    SecondaryVariableCollection
         secondary_variables{
             config.getConfigSubtreeOptional("secondary_variables"),
             {"solid_density", "reaction_rate", "velocity_x", "velocity_y",
@@ -479,7 +479,7 @@ std::unique_ptr<TESProcess> createTESProcess(
              "vapour_partial_pressure", "relative_humidity",
              "equilibrium_loading"}};
 
-    ProcessOutput<::detail::GlobalVectorType> process_output{
+    ProcessOutput process_output{
         config.getConfigSubtree("output"), process_variables,
         secondary_variables};
 

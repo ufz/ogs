@@ -18,10 +18,12 @@ namespace ProcessLib
  *
  * \todo Generalize to other NumLib::ODESystemTag's.
  */
-template <typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerInterface
 {
 public:
+    using GlobalMatrix = ::detail::GlobalMatrixType;
+    using GlobalVector = ::detail::GlobalVectorType;
+
     virtual ~LocalAssemblerInterface() = default;
 
     virtual void assemble(double const t, std::vector<double> const& local_x) = 0;

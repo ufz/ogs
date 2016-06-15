@@ -52,16 +52,9 @@ public:
         NonlinearSolver& nonlinear_solver,
         std::unique_ptr<TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-        SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-        ProcessOutput<GlobalVector>&& process_output
-        )
-        : _mesh(mesh)
-        , _secondary_variables(std::move(secondary_variables))
-        , _process_output(std::move(process_output))
-        , _nonlinear_solver(nonlinear_solver)
-        , _time_discretization(std::move(time_discretization))
-        , _process_variables(std::move(process_variables))
-    {}
+        SecondaryVariableCollection&& secondary_variables,
+        ProcessOutput&& process_output
+        );
 
     /// Preprocessing before starting assembly for new timestep.
     virtual void preTimestep(GlobalVector const& /*x*/,
@@ -213,31 +206,7 @@ private:
             " and the Newton-Raphson method cannot be used to solve it.");
     }
 
-    void constructDofTable()
-    {
-        // Create single component dof in every of the mesh's nodes.
-        _mesh_subset_all_nodes.reset(
-            new MeshLib::MeshSubset(_mesh, &_mesh.getNodes()));
-
-        // Collect the mesh subsets in a vector.
-        std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
-        for (ProcessVariable const& pv : _process_variables)
-        {
-            std::generate_n(
-                std::back_inserter(all_mesh_subsets),
-                pv.getNumberOfComponents(),
-                [&]()
-                {
-                    return std::unique_ptr<MeshLib::MeshSubsets>{
-                        new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
-                });
-        }
-
-        _local_to_global_index_map.reset(
-            new NumLib::LocalToGlobalIndexMap(
-                std::move(all_mesh_subsets),
-                NumLib::ComponentOrder::BY_LOCATION));
-    }
+    void constructDofTable();
 
     /// Sets the initial condition values in the solution vector x for a given
     /// process variable and component.
@@ -320,8 +289,8 @@ protected:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map;
 
-    SecondaryVariableCollection<GlobalVector> _secondary_variables;
-    ProcessOutput<GlobalVector> _process_output;
+    SecondaryVariableCollection _secondary_variables;
+    ProcessOutput _process_output;
 
 private:
     unsigned const _integration_order = 2;

@@ -105,9 +105,9 @@ namespace ProcessLib
 namespace TES
 {
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
+          unsigned GlobalDim>
 TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_, GlobalMatrix, GlobalVector,
+    ShapeFunction_, IntegrationMethod_,
     GlobalDim>::TESLocalAssembler(MeshLib::Element const& e,
                                   std::size_t const /*local_matrix_size*/,
                                   unsigned const integration_order,
@@ -131,9 +131,8 @@ TESLocalAssembler<
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
-                       GlobalVector,
+          unsigned GlobalDim>
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_,
                        GlobalDim>::assemble(const double /*t*/,
                                             std::vector<double> const& local_x)
 {
@@ -186,9 +185,8 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
-                       GlobalVector, GlobalDim>::
+          unsigned GlobalDim>
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     addToGlobal(
         NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
@@ -199,9 +197,9 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalMatrix,
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
+          unsigned GlobalDim>
 std::vector<double> const& TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_, GlobalMatrix, GlobalVector,
+    ShapeFunction_, IntegrationMethod_,
     GlobalDim>::getIntegrationPointValues(TESIntPtVariables const var,
                                           std::vector<double>& cache) const
 {
@@ -209,9 +207,9 @@ std::vector<double> const& TESLocalAssembler<
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
+          unsigned GlobalDim>
 bool TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_, GlobalMatrix, GlobalVector,
+    ShapeFunction_, IntegrationMethod_,
     GlobalDim>::checkBounds(std::vector<double> const& local_x,
                             std::vector<double> const& local_x_prev_ts)
 {

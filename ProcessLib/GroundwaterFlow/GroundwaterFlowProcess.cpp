@@ -18,8 +18,8 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     GroundwaterFlowProcessData&& process_data,
-    SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-    ProcessOutput<GlobalVector>&& process_output
+    SecondaryVariableCollection&& secondary_variables,
+    ProcessOutput&& process_output
     )
     : Process(mesh, nonlinear_solver, std::move(time_discretization),
                            std::move(process_variables),
@@ -123,7 +123,7 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
-    SecondaryVariableCollection<::detail::GlobalVectorType> secondary_variables {
+    SecondaryVariableCollection secondary_variables {
         //! \ogs_file_param{process__secondary_variables}
         config.getConfigSubtreeOptional("secondary_variables"),
         {
@@ -136,7 +136,7 @@ createGroundwaterFlowProcess(
         }
     };
 
-    ProcessOutput<::detail::GlobalVectorType>
+    ProcessOutput
         //! \ogs_file_param{process__output}
         process_output{config.getConfigSubtree("output"),
                 process_variables, secondary_variables};

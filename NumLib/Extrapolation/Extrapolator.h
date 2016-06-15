@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+
 namespace NumLib
 {
 
@@ -25,10 +27,11 @@ namespace NumLib
  * \tparam PropertyTag  type of the property used to query a specific kind of
  *                      integration point value, usually an enum.
  */
-template <typename GlobalVector, typename PropertyTag>
+template <typename PropertyTag>
 class Extrapolatable
 {
 public:
+    using GlobalVector = ::detail::GlobalVectorType;
     //! Provides the shape matrix at the given integration point.
     virtual Eigen::Map<const Eigen::VectorXd>
     getShapeMatrix(const unsigned integration_point) const = 0;
@@ -61,10 +64,11 @@ public:
  * \tparam LocalAssembler type of the local assembler being queried for
  *                        integration point values.
  */
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 class Extrapolator
 {
 public:
+    using GlobalVector = ::detail::GlobalVectorType;
     //! Vector of local assemblers, the same as is used in the FEM process.
     using LocalAssemblers = std::vector<std::unique_ptr<LocalAssembler>>;
 

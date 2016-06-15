@@ -70,9 +70,8 @@ enum class IntegrationPointValue
     DerivedQuantity // a quantity computed for each integration point on-the-fly
 };
 
-template<typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerDataInterface
-        : public NumLib::Extrapolatable<GlobalVector, IntegrationPointValue>
+        : public NumLib::Extrapolatable<IntegrationPointValue>
 {
 public:
     virtual void interpolateNodalValuesToIntegrationPoints(
@@ -82,12 +81,12 @@ public:
 
 template<typename ShapeFunction,
          typename IntegrationMethod,
-         typename GlobalMatrix,
-         typename GlobalVector,
          unsigned GlobalDim>
 class LocalAssemblerData
-        : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
+        : public LocalAssemblerDataInterface
 {
+    using GlobalMatrix = ::detail::GlobalMatrixType;
+    using GlobalVector = ::detail::GlobalVectorType;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
