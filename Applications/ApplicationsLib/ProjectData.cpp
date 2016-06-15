@@ -330,8 +330,7 @@ void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_conf
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ApplicationsLib::createUncoupledProcessesTimeLoop<
-        GlobalMatrix, GlobalVector>(timestepping_config);
+    _time_loop = ApplicationsLib::createUncoupledProcessesTimeLoop(timestepping_config);
 
     if (!_time_loop)
     {
@@ -372,7 +371,7 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_nonlinear_solvers,
             name,
-            NumLib::createNonlinearSolver<GlobalMatrix, GlobalVector>(
+            NumLib::createNonlinearSolver(
                 *linear_solver, conf).first,
             "The nonlinear solver name is not unique");
     }

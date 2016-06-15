@@ -31,7 +31,6 @@ getRowColumnIndices_(std::size_t const id,
                                                                  indices);
 }
 
-template <typename GlobalVector>
 void getVectorValues(
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
@@ -48,7 +47,6 @@ void getVectorValues(
 }
 
 // TODO that essentially duplicates code which is also present in ProcessOutput.
-template <typename GlobalVector>
 double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
                      std::size_t const node_id,
@@ -73,8 +71,8 @@ TESProcess::TESProcess(
     std::unique_ptr<Process::TimeDiscretization>&&
         time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-    SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-    ProcessOutput<GlobalVector>&& process_output,
+    SecondaryVariableCollection&& secondary_variables,
+    ProcessOutput&& process_output,
     const BaseLib::ConfigTree& config)
     : Process(
           mesh, nonlinear_solver, std::move(time_discretization),
@@ -202,12 +200,12 @@ void TESProcess::initializeConcreteProcess(
 
     // secondary variables
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
-                      SecondaryVariableFunctions<GlobalVector>&& fcts) {
+                      SecondaryVariableFunctions&& fcts) {
         this->_secondary_variables.addSecondaryVariable(var_name, n_components,
                                                         std::move(fcts));
     };
     auto makeEx =
-        [&](TESIntPtVariables var) -> SecondaryVariableFunctions<GlobalVector> {
+        [&](TESIntPtVariables var) -> SecondaryVariableFunctions {
         return ProcessLib::makeExtrapolator(var, *_extrapolator,
                                             _local_assemblers);
     };

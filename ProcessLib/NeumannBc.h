@@ -138,12 +138,11 @@ private:
     /// the #_function.
     unsigned const _integration_order;
 
-    using LocalAssembler = LocalNeumannBcAsmDataInterface<
-        GlobalMatrix, GlobalVector>;
+    using LocalAssembler = LocalNeumannBcAsmDataInterface;
 
     using GlobalAssembler =
         NumLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
+            LocalAssembler,
             NumLib::ODESystemTag::NeumannBC>;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;

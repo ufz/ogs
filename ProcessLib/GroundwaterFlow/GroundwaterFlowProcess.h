@@ -38,8 +38,8 @@ public:
         std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
         GroundwaterFlowProcessData&& process_data,
-        SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-        ProcessOutput<GlobalVector>&& process_output
+        SecondaryVariableCollection&& secondary_variables,
+        ProcessOutput&& process_output
         )
         : Process(mesh, nonlinear_solver, std::move(time_discretization),
                                std::move(process_variables),
@@ -72,16 +72,16 @@ public:
 
 private:
     using LocalAssemblerInterface =
-        GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+        GroundwaterFlowLocalAssemblerInterface;
 
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssemblerInterface,
+            LocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface = NumLib::Extrapolator<
-        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
+        IntegrationPointValue, LocalAssemblerInterface>;
     using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
-        GlobalVector, IntegrationPointValue, LocalAssemblerInterface>;
+        IntegrationPointValue, LocalAssemblerInterface>;
 
     void initializeConcreteProcess(
             NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -175,7 +175,7 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
-    SecondaryVariableCollection<GlobalVector> secondary_variables {
+    SecondaryVariableCollection secondary_variables {
         //! \ogs_file_param{process__secondary_variables}
         config.getConfigSubtreeOptional("secondary_variables"),
         {
@@ -188,7 +188,7 @@ createGroundwaterFlowProcess(
         }
     };
 
-    ProcessOutput<GlobalVector>
+    ProcessOutput
         //! \ogs_file_param{process__output}
         process_output{config.getConfigSubtree("output"),
                 process_variables, secondary_variables};

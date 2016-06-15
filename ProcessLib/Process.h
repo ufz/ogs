@@ -49,8 +49,8 @@ public:
         NonlinearSolver& nonlinear_solver,
         std::unique_ptr<TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-        SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-        ProcessOutput<GlobalVector>&& process_output
+        SecondaryVariableCollection&& secondary_variables,
+        ProcessOutput&& process_output
         )
         : _mesh(mesh)
         , _secondary_variables(std::move(secondary_variables))
@@ -317,8 +317,8 @@ protected:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map;
 
-    SecondaryVariableCollection<GlobalVector> _secondary_variables;
-    ProcessOutput<GlobalVector> _process_output;
+    SecondaryVariableCollection _secondary_variables;
+    ProcessOutput _process_output;
 
 private:
     unsigned const _integration_order = 2;

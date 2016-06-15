@@ -21,7 +21,6 @@ namespace ProcessLib
 
 //! Holder for function objects that compute secondary variables,
 //! and (optionally) also the residuals (e.g., in case of extrapolation)
-template<typename GlobalVector>
 struct SecondaryVariableFunctions final
 {
     /*! Type of functions used.
@@ -83,18 +82,16 @@ struct SecondaryVariableFunctions final
 };
 
 //! Stores information about a specific secondary variable
-template<typename GlobalVector>
 struct SecondaryVariable final
 {
     std::string const name;      //!< Name of the variable; used, e.g., for output.
     const unsigned n_components; //!< Number of components of the variable.
 
     //! Functions used for computing the secondary variable.
-    SecondaryVariableFunctions<GlobalVector> fcts;
+    SecondaryVariableFunctions fcts;
 };
 
 //! Handles configuration of several secondary variables from the project file.
-template<typename GlobalVector>
 class SecondaryVariableCollection final
 {
 public:
@@ -161,7 +158,7 @@ public:
      */
     void addSecondaryVariable(std::string const& tag_name,
                               const unsigned num_components,
-                              SecondaryVariableFunctions<GlobalVector>&& fcts)
+                              SecondaryVariableFunctions&& fcts)
     {
         auto it = _map_tagname_to_varname.find(tag_name);
 
@@ -173,7 +170,7 @@ public:
             if (!_configured_secondary_variables
                      .emplace(std::make_pair(
                          var_name,
-                         SecondaryVariable<GlobalVector>{
+                         SecondaryVariable{
                              var_name, num_components, std::move(fcts)}))
                      .second)
             {
@@ -193,7 +190,7 @@ public:
 
     //! Returns an iterator to the first secondary variable.
     typename std::map<std::string,
-                      SecondaryVariable<GlobalVector>>::const_iterator
+                      SecondaryVariable>::const_iterator
     begin() const
     {
         return _configured_secondary_variables.begin();
@@ -201,7 +198,7 @@ public:
 
     //! Returns an iterator past the last secondary variable.
     typename std::map<std::string,
-                      SecondaryVariable<GlobalVector>>::const_iterator
+                      SecondaryVariable>::const_iterator
     end() const
     {
         return _configured_secondary_variables.end();
@@ -213,7 +210,7 @@ private:
 
     //! Collection of all configured secondary variables.
     //! Maps the variable name to the corresponding SecondaryVariable.
-    std::map<std::string, SecondaryVariable<GlobalVector>> _configured_secondary_variables;
+    std::map<std::string, SecondaryVariable> _configured_secondary_variables;
 
     //! Set of all tags available as a secondary variable.
     std::set<std::string> _all_secondary_variables;
@@ -222,16 +219,16 @@ private:
 
 //! Creates an object that computes a secondary variable via extrapolation
 //! of integration point values.
-template<typename GlobalVector, typename PropertyEnum, typename LocalAssembler>
-SecondaryVariableFunctions<GlobalVector>
+template<typename PropertyEnum, typename LocalAssembler>
+SecondaryVariableFunctions
 makeExtrapolator(PropertyEnum const property,
-                 NumLib::Extrapolator<GlobalVector, PropertyEnum, LocalAssembler>&
+                 NumLib::Extrapolator<PropertyEnum, LocalAssembler>&
                  extrapolator,
-                 typename NumLib::Extrapolator<GlobalVector, PropertyEnum,
+                 typename NumLib::Extrapolator<PropertyEnum,
                      LocalAssembler>::LocalAssemblers const& local_assemblers)
 {
     static_assert(std::is_base_of<
-         NumLib::Extrapolatable<GlobalVector, PropertyEnum>, LocalAssembler>::value,
+         NumLib::Extrapolatable<PropertyEnum>, LocalAssembler>::value,
         "The passed local assembler type (i.e. the local assembler interface) must"
         " derive from NumLib::Extrapolatable<>.");
 

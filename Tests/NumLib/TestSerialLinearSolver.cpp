@@ -73,7 +73,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     auto x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
     // TODO no setZero() for rhs, x?
 
-    using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
+    using LocalAssembler = Example::LocalAssemblerData;
     // Initializer of the local assembler data.
     std::vector<LocalAssembler*> local_assembler_data;
     local_assembler_data.resize(ex1.msh->getNumberOfElements());
@@ -87,7 +87,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
         auto const num_local_dof = local_to_global_index_map.getNumElementDOF(id);
 
-        Example::initializeLocalData<GlobalMatrix, GlobalVector>(
+        Example::initializeLocalData(
                     item, item_data, num_local_dof, ex1);
     };
 
@@ -100,7 +100,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
     typedef NumLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
+            LocalAssembler,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
     GlobalAssembler assembler(local_to_global_index_map);

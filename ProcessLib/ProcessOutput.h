@@ -18,14 +18,13 @@ namespace ProcessLib
 {
 
 //! Holds information about which variables to write to output files.
-template <typename GlobalVector>
 struct ProcessOutput final
 {
     //! Constructs a new instance.
     ProcessOutput(BaseLib::ConfigTree const& output_config,
                   std::vector<std::reference_wrapper<ProcessVariable>> const&
                   process_variables,
-                  SecondaryVariableCollection<GlobalVector> const& secondary_variables)
+                  SecondaryVariableCollection const& secondary_variables)
     {
         //! \ogs_file_param{process__output__variables}
         auto const out_vars = output_config.getConfigSubtree("variables");
@@ -84,16 +83,15 @@ struct ProcessOutput final
 
 
 //! Writes output to the given \c file_name using the VTU file format.
-template <typename GlobalVector>
-void doProcessOutput(
+inline void doProcessOutput(
         std::string const& file_name,
         GlobalVector const& x,
         MeshLib::Mesh& mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
-        SecondaryVariableCollection<GlobalVector> secondary_variables,
-        ProcessOutput<GlobalVector> const& process_output)
+        SecondaryVariableCollection secondary_variables,
+        ProcessOutput const& process_output)
 {
     DBUG("Process output.");
 
@@ -186,7 +184,7 @@ void doProcessOutput(
         return result;
     };
 
-    auto add_secondary_var = [&](SecondaryVariable<GlobalVector> const& var,
+    auto add_secondary_var = [&](SecondaryVariable const& var,
                              std::string const& output_name)
     {
         assert(var.n_components == 1); // TODO implement other cases

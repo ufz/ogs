@@ -22,9 +22,8 @@ namespace ProcessLib
 {
 namespace TES
 {
-template <typename GlobalMatrix, typename GlobalVector>
 class TESLocalAssemblerInterface
-    : public NumLib::Extrapolatable<GlobalVector, TESIntPtVariables>
+    : public NumLib::Extrapolatable<TESIntPtVariables>
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;
@@ -41,9 +40,9 @@ public:
 };
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
-          typename GlobalMatrix, typename GlobalVector, unsigned GlobalDim>
+          unsigned GlobalDim>
 class TESLocalAssembler final
-    : public TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>
+    : public TESLocalAssemblerInterface
 {
 public:
     using ShapeFunction = ShapeFunction_;
