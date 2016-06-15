@@ -154,17 +154,17 @@ public:
     using GlobalMatrix = ::detail::GlobalMatrixType;
     using GlobalVector =::detail::GlobalVectorType;
 
-    using LocalAssembler = LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
+    using LocalAssembler = LocalAssemblerDataInterface;
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        GlobalMatrix, GlobalVector, LocalAssembler,
+        LocalAssembler,
         // The exact tag does not matter here.
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<GlobalVector, IntegrationPointValue, LocalAssembler>;
+        NumLib::Extrapolator<IntegrationPointValue, LocalAssembler>;
     using ExtrapolatorImplementation =
         NumLib::LocalLinearLeastSquaresExtrapolator<
-            GlobalVector, IntegrationPointValue, LocalAssembler>;
+            IntegrationPointValue, LocalAssembler>;
 
     TestProcess(MeshLib::Mesh const& mesh, unsigned const integration_order)
         : _integration_order(integration_order)
@@ -239,7 +239,7 @@ private:
     {
         using LocalDataInitializer = ProcessLib::LocalDataInitializer<
             LocalAssembler, LocalAssemblerData,
-            GlobalMatrix, GlobalVector, GlobalDim>;
+            GlobalDim>;
 
         _local_assemblers.resize(mesh.getNumberOfElements());
 

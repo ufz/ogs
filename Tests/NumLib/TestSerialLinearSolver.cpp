@@ -102,7 +102,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // TODO in the future use simpler NumLib::ODESystemTag
     // Local and global assemblers.
     typedef NumLib::VectorMatrixAssembler<
-            GlobalMatrix, GlobalVector, LocalAssembler,
+            LocalAssembler,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
 
     GlobalAssembler assembler(local_to_global_index_map);

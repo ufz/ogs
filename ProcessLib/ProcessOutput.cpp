@@ -7,35 +7,64 @@
  *
  */
 
-#ifndef PROCESSLIB_PROCESSOUTPUT_H
-#define PROCESSLIB_PROCESSOUTPUT_H
+#include "ProcessOutput.h"
 
-#include "ProcessVariable.h"
-#include "SecondaryVariable.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace ProcessLib
 {
 
-//! Holds information about which variables to write to output files.
-struct ProcessOutput final
+ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config,
+              std::vector<std::reference_wrapper<ProcessVariable>> const&
+              process_variables,
+              SecondaryVariableCollection const& secondary_variables)
 {
-    //! Constructs a new instance.
-    ProcessOutput(BaseLib::ConfigTree const& output_config,
-                  std::vector<std::reference_wrapper<ProcessVariable>> const&
-                  process_variables,
-                  SecondaryVariableCollection const& secondary_variables);
+    //! \ogs_file_param{process__output__variables}
+    auto const out_vars = output_config.getConfigSubtree("variables");
 
-    //! All variables that shall be output.
-    std::set<std::string> output_variables;
+    //! \ogs_file_param{process__output__variables__variable}
+    for (auto out_var : out_vars.getConfigParameterList<std::string>("variable"))
+    {
+        if (output_variables.find(out_var) != output_variables.cend())
+        {
+            OGS_FATAL("output variable `%s' specified more than once.", out_var.c_str());
+        }
 
-    //! Tells if also to output extrapolation residuals.
-    bool output_residuals = false;
+        auto pred = [&out_var](ProcessVariable const& pv) {
+            return pv.getName() == out_var;
+        };
 
-    bool output_iteration_results = false;
-};
+        // check if out_var is a process variable
+        auto const& pcs_var = std::find_if(
+            process_variables.cbegin(), process_variables.cend(), pred);
 
+        if (pcs_var == process_variables.cend()
+            && !secondary_variables.variableExists(out_var))
+        {
+            OGS_FATAL("Output variable `%s' is neither a process variable nor a"
+                " secondary variable", out_var.c_str());
+        }
 
-//! Writes output to the given \c file_name using the VTU file format.
+        DBUG("adding output variable `%s'", out_var.c_str());
+        output_variables.insert(out_var);
+    }
+
+    if (auto out_resid = output_config.getConfigParameterOptional<bool>(
+            "output_extrapolation_residuals")) {
+        output_residuals = *out_resid;
+    }
+
+    // debug output
+    if (auto const param =
+        //! \ogs_file_param{process__output__output_iteration_results}
+        output_config.getConfigParameterOptional<bool>("output_iteration_results"))
+    {
+        DBUG("output_iteration_results: %s", (*param) ? "true" : "false");
+
+        output_iteration_results = *param;
+    }
+}
+
 void doProcessOutput(
         std::string const& file_name,
         ::detail::GlobalVectorType const& x,
@@ -183,12 +212,13 @@ void doProcessOutput(
         }
     };
 
-    for (auto const& elem : secondary_variables)
+    for (auto const& var : secondary_variables)
     {
-        auto const& var_name = elem.first;
-        if (output_variables.find(var_name) != output_variables.cend())
+        auto const var_name = secondary_variables.getMappedName(var.name);
+        if (output_variables.find(var_name)
+            != output_variables.cend())
         {
-            add_secondary_var(elem.second, var_name);
+            add_secondary_var(var, var_name);
         }
     }
 
@@ -204,6 +234,3 @@ void doProcessOutput(
 }
 
 } // ProcessLib
-
-
-#endif // PROCESSLIB_PROCESSOUTPUT_H
