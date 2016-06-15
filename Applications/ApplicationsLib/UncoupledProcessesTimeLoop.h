@@ -155,9 +155,9 @@ private:
 
     //! Solves one timestep for the given \c process.
     bool solveOneTimeStepOneProcess(
-            GlobalVector& x, double const t, double const delta_t,
+            GlobalVector& x, std::size_t timestep, double const t, double const delta_t,
             SingleProcessData& process_data,
-            Process& process);
+            Process& process, ProcessLib::Output const& output_control);
 
     //! Sets the EquationSystem for the given nonlinear solver,
     //! which is Picard or Newton depending on the NLTag.

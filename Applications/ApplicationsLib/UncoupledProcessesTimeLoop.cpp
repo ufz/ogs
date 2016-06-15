@@ -108,9 +108,10 @@ setInitialConditions(ProjectData& project,
 bool
 UncoupledProcessesTimeLoop::
 solveOneTimeStepOneProcess(
-        GlobalVector& x, double const t, double const delta_t,
+        GlobalVector& x, std::size_t timestep, double const t, double const delta_t,
         SingleProcessData& process_data,
-        UncoupledProcessesTimeLoop::Process& process)
+        UncoupledProcessesTimeLoop::Process& process,
+        ProcessLib::Output const& output_control)
 {
     auto& time_disc        =  process.getTimeDiscretization();
     auto& ode_sys          = *process_data.tdisc_ode_sys;
@@ -130,7 +131,13 @@ solveOneTimeStepOneProcess(
 
     process.preTimestep(x, t, delta_t);
 
-    bool nonlinear_solver_succeeded = nonlinear_solver.solve(x);
+    auto const post_iteration_callback = [&](unsigned iteration,
+                                             GlobalVector const& x) {
+        output_control.doOutputIteration(process, timestep, t, x, iteration);
+    };
+
+    bool nonlinear_solver_succeeded =
+        nonlinear_solver.solve(x, post_iteration_callback);
 
     auto& mat_strg = process_data.mat_strg;
     time_disc.pushState(t, x, mat_strg);
@@ -186,7 +193,8 @@ bool UncoupledProcessesTimeLoop::loop(ProjectData& project)
             auto& x = *_process_solutions[pcs_idx];
 
             nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                        x, t, delta_t, per_process_data[pcs_idx], **p);
+                x, timestep, t, delta_t, per_process_data[pcs_idx], **p,
+                out_ctrl);
 
             if (!nonlinear_solver_succeeded) {
                 ERR("The nonlinear solver failed in timestep #%u at t = %g s"
