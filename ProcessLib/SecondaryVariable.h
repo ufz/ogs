@@ -115,10 +115,8 @@ public:
 
         // read which variables are defined in the config
         for (auto const& tag_name : tag_names) {
-            if (!_all_secondary_variables.insert(tag_name).second)
-            {
-                ERR("Tag name <%s> has been specified twice as a secondary variable.");
-                std::abort();
+            if (!_all_secondary_variables.insert(tag_name).second) {
+                OGS_FATAL("Tag name <%s> has been specified twice as a secondary variable.");
             }
 
             //! \ogs_file_special
@@ -179,19 +177,17 @@ public:
                              var_name, num_components, std::move(fcts)}))
                      .second)
             {
-                ERR("The secondary variable with name `%s' has already been "
-                    "set up.",
-                    var_name.c_str());
-                std::abort();
+                OGS_FATAL("The secondary variable with name `%s' has already been "
+                          "set up.",
+                          var_name.c_str());
             }
         }
         else if (_all_secondary_variables.find(tag_name) ==
                  _all_secondary_variables.end())
         {
-            ERR("The tag <%s> has not been registered to mark a secondary "
-                "variable.",
-                tag_name.c_str());
-            std::abort();
+            OGS_FATAL("The tag <%s> has not been registered to mark a secondary "
+                      "variable.",
+                      tag_name.c_str());
         }
     }
 
