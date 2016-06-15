@@ -7,57 +7,22 @@
  *
  */
 
-#ifndef APPLICATIONS_NUMERICSCONFIG_H_
-#define APPLICATIONS_NUMERICSCONFIG_H_
-
-#include <type_traits>
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#ifndef NUMLIB_NUMERICSCONFIG_H_
+#define NUMLIB_NUMERICSCONFIG_H_
 
 /**
  * This file provides a configuration of the global matrix/vector and
  * corresponding linear solver, and the global executer types.
- * The configuration is collected in the GlobalSetupType being a particular
- * instantiation of the ProcessLib::GlobalSetup template.
- * The existence of the GlobalSetupType is checked at the end of the file.
  */
 
-//
-// Global vector/matrix builder.
-//
-
-#include "NumLib/Assembler/VectorMatrixBuilder.h"
-namespace detail
-{
-using GlobalVectorMatrixBuilderType =
-        NumLib::VectorMatrixBuilder<
-            GlobalMatrix,
-            GlobalVector>;
-}
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 //
 // Global executor
 //
 #include "NumLib/Assembler/SerialExecutor.h"
-namespace detail
-{
-using GlobalExecutorType = NumLib::SerialExecutor;
-}
-
-///
-/// Global setup collects the previous configuration in single place.
-///
-#include "GlobalSetup.h"
-using GlobalSetupType =
-    NumLib::GlobalSetup<
-        detail::GlobalVectorMatrixBuilderType,
-        detail::GlobalExecutorType,
-        GlobalLinearSolver>;
+using GlobalExecutor = NumLib::SerialExecutor;
 
 
-//
-// Check the configuration
-//
-static_assert(std::is_class<GlobalSetupType>::value,
-              "GlobalSetupType was not defined.");
 
-#endif  // APPLICATIONS_NUMERICSCONFIG_H_
+#endif  // NUMLIB_NUMERICSCONFIG_H_
