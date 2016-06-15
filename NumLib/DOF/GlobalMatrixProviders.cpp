@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/NumericsConfig.h"
 
 #include "GlobalMatrixProviders.h"
@@ -38,8 +39,8 @@ INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(Eigen::MatrixXd, Eigen::VectorXd,
 #endif
 
 
-using GlobalMatrix = GlobalSetupType::MatrixType;
-using GlobalVector = GlobalSetupType::VectorType;
+using GlobalMatrix =::detail::GlobalMatrixType;
+using GlobalVector =::detail::GlobalVectorType;
 
 INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(GlobalMatrix, GlobalVector,
                                          globalSetupGlobalMatrixVectorProvider)

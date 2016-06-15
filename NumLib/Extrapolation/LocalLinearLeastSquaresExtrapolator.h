@@ -34,13 +34,14 @@ namespace NumLib
  * use of the least squares which requires an exact or overdetermined equation system.
  * \endparblock
  */
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 class LocalLinearLeastSquaresExtrapolator
-        : public Extrapolator<GlobalVector, PropertyTag, LocalAssembler>
+        : public Extrapolator<PropertyTag, LocalAssembler>
 {
 public:
     using LocalAssemblers = typename Extrapolator<
-        GlobalVector, PropertyTag, LocalAssembler>::LocalAssemblers;
+        PropertyTag, LocalAssembler>::LocalAssemblers;
+    using GlobalVector = ::detail::GlobalVectorType;
 
     /*! Constructs a new instance
      *
@@ -52,7 +53,7 @@ public:
         MathLib::MatrixSpecifications const& matrix_specs,
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : _nodal_values(
-              MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+              MathLib::GlobalVectorProvider<::detail::GlobalVectorType>::provider.getVector(
                   matrix_specs))
 #ifndef USE_PETSC
           ,
@@ -85,7 +86,7 @@ public:
 
     ~LocalLinearLeastSquaresExtrapolator()
     {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_nodal_values);
+        MathLib::GlobalVectorProvider<::detail::GlobalVectorType>::provider.releaseVector(_nodal_values);
     }
 
 private:

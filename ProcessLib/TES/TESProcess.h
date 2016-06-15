@@ -29,24 +29,24 @@ namespace ProcessLib
 {
 namespace TES
 {
-template <typename GlobalSetup>
-class TESProcess final : public Process<GlobalSetup>
+
+class TESProcess final : public Process
 {
-    using BP = Process<GlobalSetup>;  //!< "Base Process"
+    using BP = Process;  //!< "Base Process"
 
 public:
-    using GlobalVector = typename GlobalSetup::VectorType;
-    using GlobalMatrix = typename GlobalSetup::MatrixType;
+    using GlobalMatrix =::detail::GlobalMatrixType;
+    using GlobalVector =::detail::GlobalVectorType;
 
     TESProcess(
         MeshLib::Mesh& mesh,
-        typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&&
+        typename Process::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<typename Process::TimeDiscretization>&&
             time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
-        SecondaryVariableCollection<GlobalVector>&& secondary_variables,
-        ProcessOutput<GlobalVector>&& process_output,
+        SecondaryVariableCollection&& secondary_variables,
+        ProcessOutput&& process_output,
         BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t,
@@ -57,17 +57,17 @@ public:
     bool isLinear() const override { return false; }
 private:
     using LocalAssembler =
-        TESLocalAssemblerInterface<GlobalMatrix, GlobalVector>;
+        TESLocalAssemblerInterface;
 
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        GlobalMatrix, GlobalVector, LocalAssembler,
+        LocalAssembler,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<GlobalVector, TESIntPtVariables, LocalAssembler>;
+        NumLib::Extrapolator<TESIntPtVariables, LocalAssembler>;
     using ExtrapolatorImplementation =
         NumLib::LocalLinearLeastSquaresExtrapolator<
-            GlobalVector, TESIntPtVariables, LocalAssembler>;
+            TESIntPtVariables, LocalAssembler>;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -106,41 +106,14 @@ private:
     std::unique_ptr<GlobalVector> _x_previous_timestep;
 };
 
-template <typename GlobalSetup>
-std::unique_ptr<TESProcess<GlobalSetup>> createTESProcess(
+std::unique_ptr<TESProcess> createTESProcess(
     MeshLib::Mesh& mesh,
-    typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&&
+    typename Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<typename Process::TimeDiscretization>&&
         time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
-    BaseLib::ConfigTree const& config)
-{
-    config.checkConfigParameter("type", "TES");
-
-    DBUG("Create TESProcess.");
-
-    auto process_variables = findProcessVariables(
-        variables, config,
-        {"fluid_pressure", "temperature", "vapour_mass_fraction"});
-
-    SecondaryVariableCollection<typename GlobalSetup::VectorType>
-        secondary_variables{
-            config.getConfigSubtreeOptional("secondary_variables"),
-            {"solid_density", "reaction_rate", "velocity_x", "velocity_y",
-             "velocity_z", "loading", "reaction_damping_factor",
-             "vapour_partial_pressure", "relative_humidity",
-             "equilibrium_loading"}};
-
-    ProcessOutput<typename GlobalSetup::VectorType> process_output{
-        config.getConfigSubtree("output"), process_variables,
-        secondary_variables};
-
-    return std::unique_ptr<TESProcess<GlobalSetup>>{new TESProcess<GlobalSetup>{
-        mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(process_variables), std::move(secondary_variables),
-        std::move(process_output), config}};
-}
+    BaseLib::ConfigTree const& config);
 
 }  // namespace TES
 

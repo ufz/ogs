@@ -70,9 +70,8 @@ enum class IntegrationPointValue
     DerivedQuantity // a quantity computed for each integration point on-the-fly
 };
 
-template<typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerDataInterface
-        : public NumLib::Extrapolatable<GlobalVector, IntegrationPointValue>
+        : public NumLib::Extrapolatable<IntegrationPointValue>
 {
 public:
     virtual void interpolateNodalValuesToIntegrationPoints(
@@ -82,12 +81,12 @@ public:
 
 template<typename ShapeFunction,
          typename IntegrationMethod,
-         typename GlobalMatrix,
-         typename GlobalVector,
          unsigned GlobalDim>
 class LocalAssemblerData
-        : public LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>
+        : public LocalAssemblerDataInterface
 {
+    using GlobalMatrix = ::detail::GlobalMatrixType;
+    using GlobalVector = ::detail::GlobalVectorType;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
@@ -148,24 +147,24 @@ private:
     std::vector<double>        _int_pt_values;
 };
 
-template<typename GlobalSetup>
+
 class TestProcess
 {
 public:
-    using GlobalMatrix = typename GlobalSetup::MatrixType;
-    using GlobalVector = typename GlobalSetup::VectorType;
+    using GlobalMatrix = ::detail::GlobalMatrixType;
+    using GlobalVector =::detail::GlobalVectorType;
 
-    using LocalAssembler = LocalAssemblerDataInterface<GlobalMatrix, GlobalVector>;
+    using LocalAssembler = LocalAssemblerDataInterface;
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        GlobalMatrix, GlobalVector, LocalAssembler,
+        LocalAssembler,
         // The exact tag does not matter here.
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<GlobalVector, IntegrationPointValue, LocalAssembler>;
+        NumLib::Extrapolator<IntegrationPointValue, LocalAssembler>;
     using ExtrapolatorImplementation =
         NumLib::LocalLinearLeastSquaresExtrapolator<
-            GlobalVector, IntegrationPointValue, LocalAssembler>;
+            IntegrationPointValue, LocalAssembler>;
 
     TestProcess(MeshLib::Mesh const& mesh, unsigned const integration_order)
         : _integration_order(integration_order)
@@ -208,7 +207,7 @@ public:
             _global_assembler->passLocalVector(inner_cb, id, x);
         };
 
-        GlobalSetup::executeDereferenced(
+        detail::GlobalExecutorType::executeDereferenced(
                     cb, _local_assemblers, global_nodal_values);
     }
 
@@ -240,14 +239,14 @@ private:
     {
         using LocalDataInitializer = ProcessLib::LocalDataInitializer<
             LocalAssembler, LocalAssemblerData,
-            GlobalMatrix, GlobalVector, GlobalDim>;
+            GlobalDim>;
 
         _local_assemblers.resize(mesh.getNumberOfElements());
 
         LocalDataInitializer initializer(*_dof_table);
 
         DBUG("Calling local assembler builder for all mesh elements.");
-        GlobalSetup::transformDereferenced(
+        detail::GlobalExecutorType::transformDereferenced(
                 initializer,
                 mesh.getElements(),
                 _local_assemblers,
@@ -266,15 +265,15 @@ private:
 };
 
 
-template<typename GlobalSetup>
-void extrapolate(TestProcess<GlobalSetup> const& pcs,
+
+void extrapolate(TestProcess const& pcs,
                  IntegrationPointValue property,
-                 typename GlobalSetup::VectorType const&
+                ::detail::GlobalVectorType const&
                  expected_extrapolated_global_nodal_values,
                  std::size_t const nnodes, std::size_t const nelements)
 {
     namespace BLAS = MathLib::BLAS;
-    using GlobalVector = typename GlobalSetup::VectorType;
+    using GlobalVector =::detail::GlobalVectorType;
 
     auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res =  4.0 * std::numeric_limits<double>::epsilon();
@@ -319,8 +318,8 @@ TEST(NumLib, DISABLED_Extrapolation)
     {
 
         namespace BLAS = MathLib::BLAS;
-        using GlobalSetup = GlobalSetupType;
-        using GlobalVector = GlobalSetup::VectorType;
+        using GlobalMatrix =::detail::GlobalMatrixType;
+        using GlobalVector =::detail::GlobalVectorType;
 
         const double mesh_length = 1.0;
         const double mesh_elements_in_each_direction = 5.0;
@@ -334,7 +333,7 @@ TEST(NumLib, DISABLED_Extrapolation)
         auto const nelements = mesh->getNumberOfElements();
         DBUG("number of nodes: %lu, number of elements: %lu", nnodes, nelements);
 
-        TestProcess<GlobalSetup> pcs(*mesh, integration_order);
+        TestProcess pcs(*mesh, integration_order);
 
         // generate random nodal values
         MathLib::MatrixSpecifications spec{nnodes, nnodes, nullptr, nullptr};

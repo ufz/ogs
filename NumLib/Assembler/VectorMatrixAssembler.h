@@ -68,18 +68,20 @@ namespace NumLib
  * Each type of equation as flagged by the \c ODETag will have a different
  * VectorMatrixAssembler type.
  */
-template<typename GlobalMatrix, typename GlobalVector,
-         typename LocalAssembler,
+template<typename LocalAssembler,
          NumLib::ODESystemTag ODETag>
 class VectorMatrixAssembler;
 
 
 //! Specialization for first-order implicit quasi-linear systems.
-template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
+template<typename LocalAssembler>
+class VectorMatrixAssembler<LocalAssembler,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> final
 {
 public:
+    using GlobalMatrix = ::detail::GlobalMatrixType;
+    using GlobalVector = ::detail::GlobalVectorType;
+
     VectorMatrixAssembler(
         LocalToGlobalIndexMap const& data_pos)
     : _data_pos(data_pos)
@@ -184,8 +186,8 @@ private:
 
 
 //! Specialization used to add Neumann boundary conditions.
-template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
+template<typename LocalAssembler>
+class VectorMatrixAssembler<LocalAssembler,
         NumLib::ODESystemTag::NeumannBC> final
 {
 public:
@@ -201,7 +203,7 @@ public:
     /// \attention The index \c id is not necessarily the mesh item's id.
     void assemble(std::size_t const id,
         LocalAssembler& local_assembler,
-        const double t, GlobalVector& b) const
+        const double t, ::detail::GlobalVectorType& b) const
     {
         std::vector<GlobalIndexType> indices;
         auto const r_c_indices = getRowColumnIndices(id, _data_pos, indices);

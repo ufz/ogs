@@ -12,6 +12,7 @@
 #include <vector>
 #include <logog/include/logog.hpp>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include "LocalDataInitializer.h"
@@ -23,8 +24,8 @@ namespace ProcessLib
 namespace detail
 {
 
-template<unsigned GlobalDim, typename GlobalSetup,
-         template <typename, typename, typename, typename, unsigned> class
+template<unsigned GlobalDim,
+         template <typename, typename, unsigned> class
          LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
@@ -40,8 +41,6 @@ void createLocalAssemblers(
     using LocalDataInitializer = LocalDataInitializer<
         LocalAssemblerInterface,
         LocalAssemblerImplementation,
-        typename GlobalSetup::MatrixType,
-        typename GlobalSetup::VectorType,
         GlobalDim,
         ExtraCtorArgs...>;
 
@@ -52,7 +51,7 @@ void createLocalAssemblers(
     LocalDataInitializer initializer(dof_table);
 
     DBUG("Calling local assembler builder for all mesh elements.");
-    GlobalSetup::transformDereferenced(
+    ::detail::GlobalExecutorType::transformDereferenced(
             initializer,
             mesh_elements,
             local_assemblers,
@@ -65,7 +64,6 @@ void createLocalAssemblers(
 
 /*! Creates local assemblers for each element of the given \c mesh.
  *
- * \tparam GlobalSetup the global setup of the process
  * \tparam LocalAssemblerImplementation the individual local assembler type
  * \tparam LocalAssemblerInterface the general local assembler interface
  * \tparam ExtraCtorArgs types of additional constructor arguments.
@@ -75,8 +73,7 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template<typename GlobalSetup,
-         template <typename, typename, typename, typename, unsigned> class
+template<template <typename, typename, unsigned> class
          LocalAssemblerImplementation,
          typename LocalAssemblerInterface,
          typename... ExtraCtorArgs>
@@ -95,21 +92,21 @@ void createLocalAssemblers(
     {
     case 1:
         detail::createLocalAssemblers<
-            1, GlobalSetup, LocalAssemblerImplementation>(
+            1, LocalAssemblerImplementation>(
                 dof_table, mesh_elements, integration_order,
                 local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     case 2:
         detail::createLocalAssemblers<
-            2, GlobalSetup, LocalAssemblerImplementation>(
+            2, LocalAssemblerImplementation>(
                 dof_table, mesh_elements, integration_order,
                 local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     case 3:
         detail::createLocalAssemblers<
-            3, GlobalSetup, LocalAssemblerImplementation>(
+            3, LocalAssemblerImplementation>(
                 dof_table, mesh_elements, integration_order,
                 local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);

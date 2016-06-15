@@ -21,7 +21,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "GeoLib/GEOObjects.h"
-
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
@@ -55,8 +55,9 @@ class UncoupledProcessesTimeLoop;
  */
 class ProjectData final
 {
-    using GlobalMatrix = GlobalSetupType::MatrixType;
-    using GlobalVector = GlobalSetupType::VectorType;
+    using GlobalMatrix =::detail::GlobalMatrixType;
+    using GlobalVector =::detail::GlobalVectorType;
+    using LinearSolver = detail::LinearSolverType;
 public:
     /// The time loop type used to solve this project's processes.
     using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
@@ -117,12 +118,12 @@ public:
     /// Iterator access for processes.
     /// Provides read access to the process container.
     std::vector<
-        std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::const_iterator
+        std::unique_ptr<ProcessLib::Process>>::const_iterator
     processesBegin() const
     {
         return _processes.begin();
     }
-    std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::iterator
+    std::vector<std::unique_ptr<ProcessLib::Process>>::iterator
     processesBegin()
     {
         return _processes.begin();
@@ -130,24 +131,24 @@ public:
 
     /// Iterator access for processes as in processesBegin().
     std::vector<
-        std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::const_iterator
+        std::unique_ptr<ProcessLib::Process>>::const_iterator
     processesEnd() const
     {
         return _processes.end();
     }
-    std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>::iterator
+    std::vector<std::unique_ptr<ProcessLib::Process>>::iterator
     processesEnd()
     {
         return _processes.end();
     }
 
-    ProcessLib::Output<GlobalSetupType> const&
+    ProcessLib::Output const&
     getOutputControl() const
     {
         return *_output;
     }
 
-    ProcessLib::Output<GlobalSetupType>&
+    ProcessLib::Output&
     getOutputControl()
     {
         return *_output;
@@ -204,7 +205,7 @@ private:
 private:
     GeoLib::GEOObjects *_geoObjects = new GeoLib::GEOObjects();
     std::vector<MeshLib::Mesh*> _mesh_vec;
-    std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>
+    std::vector<std::unique_ptr<ProcessLib::Process>>
         _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
@@ -214,7 +215,7 @@ private:
     /// Buffer for each parameter config passed to the process.
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
 
-    std::unique_ptr<ProcessLib::Output<GlobalSetupType>> _output;
+    std::unique_ptr<ProcessLib::Output> _output;
 
     /// The time loop used to solve this project's processes.
     std::unique_ptr<TimeLoop> _time_loop;

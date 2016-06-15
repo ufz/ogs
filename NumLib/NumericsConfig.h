@@ -7,10 +7,9 @@
  *
  */
 
-#ifndef APPLICATIONS_NUMERICSCONFIG_H_
-#define APPLICATIONS_NUMERICSCONFIG_H_
+#ifndef NUMLIB_NUMERICSCONFIG_H_
+#define NUMLIB_NUMERICSCONFIG_H_
 
-#include <type_traits>
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 /**
@@ -22,19 +21,6 @@
  */
 
 //
-// Global vector/matrix builder.
-//
-
-#include "NumLib/Assembler/VectorMatrixBuilder.h"
-namespace detail
-{
-using GlobalVectorMatrixBuilderType =
-        NumLib::VectorMatrixBuilder<
-            GlobalMatrixType,
-            GlobalVectorType>;
-}
-
-//
 // Global executor
 //
 #include "NumLib/Assembler/SerialExecutor.h"
@@ -43,21 +29,4 @@ namespace detail
 using GlobalExecutorType = NumLib::SerialExecutor;
 }
 
-///
-/// Global setup collects the previous configuration in single place.
-///
-#include "GlobalSetup.h"
-using GlobalSetupType =
-    NumLib::GlobalSetup<
-        detail::GlobalVectorMatrixBuilderType,
-        detail::GlobalExecutorType,
-        detail::LinearSolverType>;
-
-
-//
-// Check the configuration
-//
-static_assert(std::is_class<GlobalSetupType>::value,
-              "GlobalSetupType was not defined.");
-
-#endif  // APPLICATIONS_NUMERICSCONFIG_H_
+#endif  // NUMLIB_NUMERICSCONFIG_H_
