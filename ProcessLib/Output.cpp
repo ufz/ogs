@@ -44,8 +44,7 @@ bool shallDoOutput(unsigned timestep, CountsSteps const& repeats_each_steps)
 namespace ProcessLib
 {
 
-template<typename GlobalSetup>
-std::unique_ptr<Output<GlobalSetup>> Output<GlobalSetup>::
+std::unique_ptr<Output> Output::
 newInstance(const BaseLib::ConfigTree &config, std::string const& output_directory)
 {
     std::unique_ptr<Output> out{ new Output{
@@ -81,10 +80,9 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
     return out;
 }
 
-template<typename GlobalSetup>
-void Output<GlobalSetup>::
-initialize(typename Output<GlobalSetup>::ProcessIter first,
-     typename Output<GlobalSetup>::ProcessIter last)
+void Output::
+initialize(typename Output::ProcessIter first,
+     typename Output::ProcessIter last)
 {
     for (unsigned pcs_idx = 0; first != last; ++first, ++pcs_idx)
     {
@@ -97,12 +95,11 @@ initialize(typename Output<GlobalSetup>::ProcessIter first,
     }
 }
 
-template<typename GlobalSetup>
-void Output<GlobalSetup>::
-doOutputAlways(Process<GlobalSetup> const& process,
+void Output::
+doOutputAlways(Process const& process,
                unsigned timestep,
                const double t,
-               typename GlobalSetup::VectorType const& x)
+               GlobalVector const& x)
 {
     auto spd_it = _single_process_data.find(&process);
     if (spd_it == _single_process_data.end()) {
@@ -121,30 +118,24 @@ doOutputAlways(Process<GlobalSetup> const& process,
     spd.pvd_file.addVTUFile(output_file_name, t);
 }
 
-template<typename GlobalSetup>
-void Output<GlobalSetup>::
-doOutput(Process<GlobalSetup> const& process,
+void Output::
+doOutput(Process const& process,
          unsigned timestep,
          const double t,
-         typename GlobalSetup::VectorType const& x)
+         GlobalVector const& x)
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
         doOutputAlways(process, timestep, t, x);
 }
 
-template<typename GlobalSetup>
-void Output<GlobalSetup>::
-doOutputLastTimestep(Process<GlobalSetup> const& process,
+void Output::
+doOutputLastTimestep(Process const& process,
                      unsigned timestep,
                      const double t,
-                     typename GlobalSetup::VectorType const& x)
+                     GlobalVector const& x)
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
         doOutputAlways(process, timestep, t, x);
 }
-
-
-// explicit instantiation
-template class Output<GlobalSetupType>;
 
 }

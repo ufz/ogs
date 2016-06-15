@@ -26,13 +26,10 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
-template<typename GlobalSetup>
 class GroundwaterFlowProcess final
-        : public Process<GlobalSetup>
+        : public Process
 {
-    using Base = Process<GlobalSetup>;
-    using GlobalMatrix = typename GlobalSetup::MatrixType;
-    using GlobalVector = typename GlobalSetup::VectorType;
+    using Base = Process;
 
 public:
     GroundwaterFlowProcess(
@@ -44,7 +41,7 @@ public:
         SecondaryVariableCollection<GlobalVector>&& secondary_variables,
         ProcessOutput<GlobalVector>&& process_output
         )
-        : Process<GlobalSetup>(mesh, nonlinear_solver, std::move(time_discretization),
+        : Process(mesh, nonlinear_solver, std::move(time_discretization),
                                std::move(process_variables),
                                std::move(secondary_variables),
                                std::move(process_output))
@@ -94,7 +91,7 @@ private:
         DBUG("Create global assembler.");
         _global_assembler.reset(new GlobalAssembler(dof_table));
 
-        ProcessLib::createLocalAssemblers<GlobalSetup, LocalAssemblerData>(
+        ProcessLib::createLocalAssemblers<LocalAssemblerData>(
                     mesh.getDimension(), mesh.getElements(),
                     dof_table, integration_order, _local_assemblers,
                     _process_data);
@@ -129,7 +126,7 @@ private:
         DBUG("Assemble GroundwaterFlowProcess.");
 
         // Call global assembler for each local assembly item.
-        GlobalSetup::executeMemberDereferenced(
+        GlobalExecutor::executeMemberDereferenced(
             *_global_assembler, &GlobalAssembler::assemble,
             _local_assemblers, t, x, M, K, b);
     }
@@ -143,12 +140,11 @@ private:
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-template <typename GlobalSetup>
-std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>
+std::unique_ptr<GroundwaterFlowProcess>
 createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
-    typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&& time_discretization,
+    typename Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<typename Process::TimeDiscretization>&& time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -179,7 +175,7 @@ createGroundwaterFlowProcess(
         hydraulic_conductivity
     };
 
-    SecondaryVariableCollection<typename GlobalSetup::VectorType> secondary_variables {
+    SecondaryVariableCollection<GlobalVector> secondary_variables {
         //! \ogs_file_param{process__secondary_variables}
         config.getConfigSubtreeOptional("secondary_variables"),
         {
@@ -192,13 +188,13 @@ createGroundwaterFlowProcess(
         }
     };
 
-    ProcessOutput<typename GlobalSetup::VectorType>
+    ProcessOutput<GlobalVector>
         //! \ogs_file_param{process__output}
         process_output{config.getConfigSubtree("output"),
                 process_variables, secondary_variables};
 
-    return std::unique_ptr<GroundwaterFlowProcess<GlobalSetup>>{
-        new GroundwaterFlowProcess<GlobalSetup>{
+    return std::unique_ptr<GroundwaterFlowProcess>{
+        new GroundwaterFlowProcess{
             mesh, nonlinear_solver,std::move(time_discretization),
             std::move(process_variables),
             std::move(process_data),

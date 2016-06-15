@@ -22,7 +22,6 @@ namespace ProcessLib
  * This class decides at which timesteps output is written
  * and initiates the writing process.
  */
-template<typename GlobalSetup>
 class Output
 {
 public:
@@ -30,7 +29,7 @@ public:
     newInstance(const BaseLib::ConfigTree& config,
                 const std::string& output_directory);
 
-    using ProcessIter = std::vector<std::unique_ptr<ProcessLib::Process<GlobalSetupType>>>
+    using ProcessIter = std::vector<std::unique_ptr<ProcessLib::Process>>
                         ::const_iterator;
 
     //! Opens a PVD file for each process.
@@ -39,25 +38,25 @@ public:
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
     void doOutput(
-            Process<GlobalSetup> const& process, unsigned timestep,
+            Process const& process, unsigned timestep,
             const double t,
-            typename GlobalSetup::VectorType const& x);
+            GlobalVector const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in order
     //! to make sure that its results are written.
     void doOutputLastTimestep(
-            Process<GlobalSetup> const& process, unsigned timestep,
+            Process const& process, unsigned timestep,
             const double t,
-            typename GlobalSetup::VectorType const& x);
+            GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(
-            Process<GlobalSetup> const& process, unsigned timestep,
+            Process const& process, unsigned timestep,
             const double t,
-            typename GlobalSetup::VectorType const& x);
+            GlobalVector const& x);
 
     struct PairRepeatEachSteps
     {
@@ -90,7 +89,7 @@ private:
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
-    std::map<Process<GlobalSetup> const*, SingleProcessData> _single_process_data;
+    std::map<Process const*, SingleProcessData> _single_process_data;
 };
 
 }

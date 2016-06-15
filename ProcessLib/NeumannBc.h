@@ -41,13 +41,9 @@ namespace ProcessLib
 /// right-hand-sides happen in the initialize() function.
 /// The integration() function provides calls then the actual integration of the
 /// Neumann boundary condition.
-template <typename GlobalSetup>
 class NeumannBc
 {
 public:
-    using GlobalVector = typename GlobalSetup::VectorType;
-    using GlobalMatrix = typename GlobalSetup::MatrixType;
-
     /// Create a Neumann boundary condition process from given config,
     /// DOF-table, and a mesh subset for a given variable and its component.
     /// A local DOF-table, a subset of the given one, is constructed.
@@ -99,7 +95,7 @@ public:
     /// matrix and the right-hand-side.
     void integrate(const double t, GlobalVector& b)
     {
-        GlobalSetup::executeMemberDereferenced(
+        GlobalExecutor::executeMemberDereferenced(
                     *_global_assembler, &GlobalAssembler::assemble,
                     _local_assemblers, t, b);
     }
@@ -115,7 +111,7 @@ public:
             return _function();
         };
 
-        createLocalAssemblers<GlobalSetup, LocalNeumannBcAsmData>(
+        createLocalAssemblers<LocalNeumannBcAsmData>(
             global_dim, _elements,
             *_local_to_global_index_map, _integration_order,
             _local_assemblers,

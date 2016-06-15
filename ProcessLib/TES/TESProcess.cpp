@@ -67,17 +67,16 @@ namespace ProcessLib
 {
 namespace TES
 {
-template <typename GlobalSetup>
-TESProcess<GlobalSetup>::TESProcess(
+TESProcess::TESProcess(
     MeshLib::Mesh& mesh,
-    typename Process<GlobalSetup>::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process<GlobalSetup>::TimeDiscretization>&&
+    typename Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<typename Process::TimeDiscretization>&&
         time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection<GlobalVector>&& secondary_variables,
     ProcessOutput<GlobalVector>&& process_output,
     const BaseLib::ConfigTree& config)
-    : Process<GlobalSetup>(
+    : Process(
           mesh, nonlinear_solver, std::move(time_discretization),
           std::move(process_variables), std::move(secondary_variables),
           std::move(process_output))
@@ -168,15 +167,14 @@ TESProcess<GlobalSetup>::TESProcess(
     */
 }
 
-template <typename GlobalSetup>
-void TESProcess<GlobalSetup>::initializeConcreteProcess(
+void TESProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh, unsigned const integration_order)
 {
     DBUG("Create global assembler.");
     _global_assembler.reset(new GlobalAssembler(dof_table));
 
-    ProcessLib::createLocalAssemblers<GlobalSetup, TESLocalAssembler>(
+    ProcessLib::createLocalAssemblers<TESLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _assembly_params);
 
@@ -227,7 +225,7 @@ void TESProcess<GlobalSetup>::initializeConcreteProcess(
            makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
 
     namespace PH = std::placeholders;
-    using Self = TESProcess<GlobalSetup>;
+    using Self = TESProcess;
 
     add2nd("vapour_partial_pressure", 1,
            {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2,
@@ -242,8 +240,7 @@ void TESProcess<GlobalSetup>::initializeConcreteProcess(
             nullptr});
 }
 
-template <typename GlobalSetup>
-void TESProcess<GlobalSetup>::assembleConcreteProcess(const double t,
+void TESProcess::assembleConcreteProcess(const double t,
                                                       GlobalVector const& x,
                                                       GlobalMatrix& M,
                                                       GlobalMatrix& K,
@@ -252,13 +249,12 @@ void TESProcess<GlobalSetup>::assembleConcreteProcess(const double t,
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    GlobalSetup::executeMemberDereferenced(*_global_assembler,
+    GlobalExecutor::executeMemberDereferenced(*_global_assembler,
                                            &GlobalAssembler::assemble,
                                            _local_assemblers, t, x, M, K, b);
 }
 
-template <typename GlobalSetup>
-void TESProcess<GlobalSetup>::preTimestep(GlobalVector const& x, const double t,
+void TESProcess::preTimestep(GlobalVector const& x, const double t,
                                           const double delta_t)
 {
     DBUG("new timestep");
@@ -271,8 +267,7 @@ void TESProcess<GlobalSetup>::preTimestep(GlobalVector const& x, const double t,
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
 }
 
-template <typename GlobalSetup>
-void TESProcess<GlobalSetup>::preIteration(const unsigned iter,
+void TESProcess::preIteration(const unsigned iter,
                                            GlobalVector const& /*x*/)
 {
     _assembly_params.iteration_in_current_timestep = iter;
@@ -280,8 +275,7 @@ void TESProcess<GlobalSetup>::preIteration(const unsigned iter,
     ++_assembly_params.number_of_try_of_iteration;
 }
 
-template <typename GlobalSetup>
-NumLib::IterationResult TESProcess<GlobalSetup>::postIteration(
+NumLib::IterationResult TESProcess::postIteration(
     GlobalVector const& x)
 {
     if (this->_process_output.output_iteration_results)
@@ -321,7 +315,7 @@ NumLib::IterationResult TESProcess<GlobalSetup>::postIteration(
                 check_passed = false;
         };
 
-        GlobalSetup::executeDereferenced(check_variable_bounds,
+        GlobalExecutor::executeDereferenced(check_variable_bounds,
                                          _local_assemblers);
     }
 
@@ -339,10 +333,9 @@ NumLib::IterationResult TESProcess<GlobalSetup>::postIteration(
     return NumLib::IterationResult::SUCCESS;
 }
 
-template <typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector const&
-TESProcess<GlobalSetup>::computeVapourPartialPressure(
-    typename TESProcess::GlobalVector const& x,
+GlobalVector const&
+TESProcess::computeVapourPartialPressure(
+    GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
@@ -373,10 +366,9 @@ TESProcess<GlobalSetup>::computeVapourPartialPressure(
     return *result_cache;
 }
 
-template <typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector const&
-TESProcess<GlobalSetup>::computeRelativeHumidity(
-    typename TESProcess::GlobalVector const& x,
+GlobalVector const&
+TESProcess::computeRelativeHumidity(
+    GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
@@ -412,10 +404,9 @@ TESProcess<GlobalSetup>::computeRelativeHumidity(
     return *result_cache;
 }
 
-template <typename GlobalSetup>
-typename TESProcess<GlobalSetup>::GlobalVector const&
-TESProcess<GlobalSetup>::computeEquilibriumLoading(
-    typename TESProcess::GlobalVector const& x,
+GlobalVector const&
+TESProcess::computeEquilibriumLoading(
+    GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::unique_ptr<GlobalVector>& result_cache)
 {
@@ -453,9 +444,6 @@ TESProcess<GlobalSetup>::computeEquilibriumLoading(
 
     return *result_cache;
 }
-
-// Explicitly instantiate TESProcess for GlobalSetupType.
-template class TESProcess<GlobalSetupType>;
 
 }  // namespace TES
 
