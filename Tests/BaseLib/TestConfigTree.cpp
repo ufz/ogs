@@ -398,13 +398,13 @@ TEST(BaseLibConfigTree, GetParamList)
         EXPECT_ERR_WARN(cbs, false, true); // attribute "a" not read
 
         {
+            // get list of parameters, i.e., subtrees without children
             auto range = conf.getConfigParameterList("int3");
             EXPECT_ERR_WARN(cbs, false, false);
 
             EXPECT_ANY_THROW(*range.begin());
-            // Error because of child tag, raises exception, thus
-            // a temporary ConfigTree gets destroyed producing a warning.
-            EXPECT_ERR_WARN(cbs, true, true);
+            // error because of child tag <error/>
+            EXPECT_ERR_WARN(cbs, true, false);
         } // range destroyed here
         EXPECT_ERR_WARN(cbs, false, false);
 
