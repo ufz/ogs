@@ -359,10 +359,14 @@ public:
             _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
         if (known_solutions) {
+            using IndexType = typename MathLib::MatrixVectorTraits<Matrix>::Index;
+            std::vector<IndexType> ids;
+            std::vector<double> values;
             for (auto const& bc : *known_solutions) {
-                // TODO maybe it would be faster to apply all at once
-                MathLib::applyKnownSolution(A, rhs, x, bc.ids, bc.values);
+                std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
+                std::copy(bc.values.cbegin(), bc.values.cend(), std::back_inserter(values));
             }
+            MathLib::applyKnownSolution(A, rhs, x, ids, values);
         }
     }
 
