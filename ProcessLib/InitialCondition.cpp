@@ -23,17 +23,45 @@
 namespace ProcessLib
 {
 std::unique_ptr<InitialCondition> createUniformInitialCondition(
-    BaseLib::ConfigTree const& config, int const /*n_components*/)
+    BaseLib::ConfigTree const& config, int const n_components)
 {
     //! \ogs_file_param{initial_condition__type}
     config.checkConfigParameter("type", "Uniform");
 
-    //! \ogs_file_param{initial_condition__Uniform__value}
-    auto value = config.getConfigParameter<double>("value");
-    DBUG("Using value %g", value);
+    // Optional case for single-component variables where the value can be used.
+    // If the 'value' tag is found, use it and return. Otherwise continue with
+    // then required tag 'values'.
+    if (n_components == 1)
+    {
+        //! \ogs_file_param{initial_condition__Uniform__value}
+        auto const value = config.getConfigParameterOptional<double>("value");
+        if (value)
+        {
+            DBUG("Using value %g for the initial condition.", *value);
+            return std::unique_ptr<InitialCondition>{
+                new UniformInitialCondition{std::vector<double>{*value}}};
+        }
+    }
 
-    return std::unique_ptr<InitialCondition>(
-        new UniformInitialCondition(value));
+    std::vector<double> const values =
+        //! \ogs_file_param{initial_condition__Uniform__values}
+        config.getConfigParameter<std::vector<double>>("values");
+    if (values.size() != n_components)
+    {
+        OGS_FATAL(
+            "Number of values for the initial condition is different from the "
+            "number of components.");
+    }
+
+    DBUG("Using following values for the initial condition:");
+    for (double const v : values)
+    {
+        (void)v;    // unused value if building w/o DBUG output.
+        DBUG("\t%g", v);
+    }
+
+    return std::unique_ptr<InitialCondition>{
+        new UniformInitialCondition{values}};
 }
 
 std::unique_ptr<InitialCondition> createMeshPropertyInitialCondition(

@@ -54,8 +54,8 @@ public:
     ///
     /// \note The elements are not necessarily those used in the mesh_subsets.
     LocalToGlobalIndexMap* deriveBoundaryConstrainedMap(
-        std::size_t const variable_id,
-        std::size_t const component_id,
+        int const variable_id,
+        int const component_id,
         std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
         std::vector<MeshLib::Element*> const& elements) const;
 
@@ -80,8 +80,10 @@ public:
     std::size_t getNumElementDOF(std::size_t const mesh_item_id) const;
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
-                               std::size_t const c) const
+                                   int const variable_id,
+                                   int const component_id) const
     {
+        auto const c = getGlobalComponent(variable_id, component_id);
         return _mesh_component_map.getGlobalIndex(l, c);
     }
 
@@ -107,12 +109,10 @@ public:
                                                  range_end);
     }
 
-    MeshLib::MeshSubsets const& getMeshSubsets(std::size_t const /* variable_id */,
-                                        std::size_t const component_id) const
+    MeshLib::MeshSubsets const& getMeshSubsets(int const variable_id,
+                                               int const component_id) const
     {
-        // TODO The (global) component_id should be calculated (looked up) from
-        // variable_id and component_id.
-        return *_mesh_subsets[component_id];
+        return *_mesh_subsets[getGlobalComponent(variable_id, component_id)];
     }
 
 private:
@@ -123,7 +123,7 @@ private:
     /// this construtor.
     explicit LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-        std::size_t const component_id,
+        int const component_id,
         std::vector<MeshLib::Element*> const& elements,
         NumLib::MeshComponentMap&& mesh_component_map);
 
@@ -132,6 +132,14 @@ private:
     findGlobalIndices(ElementIterator first, ElementIterator last,
         std::size_t const mesh_id,
         const unsigned component_id, const unsigned comp_id_write);
+
+    /// The global component id for the specific variable (like velocity) and a
+    /// component (like x, or y, or z).
+    std::size_t getGlobalComponent(int const variable_id,
+                                   int const component_id) const
+    {
+        return _variable_component_offsets[variable_id] + component_id;
+    }
 
 private:
     /// A vector of mesh subsets for each process variables' components.
@@ -147,6 +155,7 @@ private:
     /// \see _rows
     Table const& _columns = _rows;
 
+    std::vector<int> _variable_component_offsets;
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
     friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);

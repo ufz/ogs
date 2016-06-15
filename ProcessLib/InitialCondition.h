@@ -12,7 +12,6 @@
 
 #include <cassert>
 #include "BaseLib/ConfigTree.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
 namespace BaseLib
@@ -35,26 +34,27 @@ class InitialCondition
 {
 public:
     virtual ~InitialCondition() = default;
-    virtual double getValue(MeshLib::Node const&, int const component_id) const = 0;
+    virtual double getValue(std::size_t const node_id,
+                            int const component_id) const = 0;
 };
 
 /// Uniform value initial condition
 class UniformInitialCondition : public InitialCondition
 {
 public:
-    UniformInitialCondition(double const value) : _value(value)
+    explicit UniformInitialCondition(std::vector<double> const& values)
+        : _values(values)
     {
     }
     /// Returns a value for given node and component.
-    /// \todo The component_id is to be implemented.
-    virtual double getValue(MeshLib::Node const&,
-                            int const /* component_id */) const override
+    virtual double getValue(std::size_t const /*node_id*/,
+                            int const component_id) const override
     {
-        return _value;
+        return _values[component_id];
     }
 
 private:
-    double _value;
+    std::vector<double> const _values;
 };
 
 /// Construct a UniformInitialCondition from configuration.
@@ -75,10 +75,10 @@ public:
         assert(_property.getMeshItemType() == MeshLib::MeshItemType::Node);
     }
 
-    virtual double getValue(MeshLib::Node const& n,
+    virtual double getValue(std::size_t const node_id,
                             int const component_id) const override
     {
-        return _property[n.getID() * _property.getNumberOfComponents() +
+        return _property[node_id * _property.getNumberOfComponents() +
                          component_id];
     }
 

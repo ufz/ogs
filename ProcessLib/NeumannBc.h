@@ -55,8 +55,8 @@ public:
         NeumannBcConfig const& bc,
         unsigned const integration_order,
         NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-        std::size_t const variable_id,
-        std::size_t const component_id)
+        int const variable_id,
+        int const component_id)
         : _function(*bc.getFunction()),
           _integration_order(integration_order)
     {

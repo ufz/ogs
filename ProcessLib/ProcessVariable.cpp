@@ -9,6 +9,8 @@
 
 #include "ProcessVariable.h"
 
+#include <utility>
+
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/GEOObjects.h"
@@ -71,11 +73,14 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                     //! \ogs_file_param{boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
-            GeoLib::GeoObject const* const geometry =
+            GeoLib::GeoObject const* const geometry_ptr =
                 geometries.getGeoObject(geometrical_set_name, geometry_name);
+            assert(geometry_ptr != nullptr);
+            GeoLib::GeoObject const& geometry = *geometry_ptr;
+
             DBUG(
                 "Found geometry type \"%s\"",
-                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
+                GeoLib::convertGeoTypeToString(geometry.getGeoType()).c_str());
 
             // Construct type dependent boundary condition
             //! \ogs_file_param{boundary_condition__type}
@@ -83,13 +88,18 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
 
             if (type == "UniformDirichlet")
             {
-                _dirichlet_bc_configs.emplace_back(
-                    new UniformDirichletBoundaryCondition(geometry, bc_config));
+                _dirichlet_bc_configs.emplace_back(std::make_pair(
+                    std::unique_ptr<UniformDirichletBoundaryCondition>(
+                        new UniformDirichletBoundaryCondition(geometry,
+                                                              bc_config)),
+                    0));  // TODO, the 0 stands for component_id. Need parser.
             }
             else if (type == "UniformNeumann")
             {
-                _neumann_bc_configs.emplace_back(
-                    new NeumannBcConfig(geometry, bc_config));
+                _neumann_bc_configs.emplace_back(std::make_pair(
+                    std::unique_ptr<NeumannBcConfig>{
+                        new NeumannBcConfig(geometry, bc_config)},
+                    0));  // TODO, the 0 stands for component_id. Need parser.
             }
             else
             {
@@ -138,7 +148,7 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
     else
     {
         result = _mesh.getProperties().template createNewPropertyVector<double>(
-            _name, MeshLib::MeshItemType::Node);
+            _name, MeshLib::MeshItemType::Node, _n_components);
         assert(result);
         result->resize(_mesh.getNumberOfNodes() * _n_components);
     }

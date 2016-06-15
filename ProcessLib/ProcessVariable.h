@@ -25,7 +25,6 @@ class BoundaryElementsSearcher;
 namespace MeshLib
 {
 class Mesh;
-class Node;
 }
 
 namespace GeoLib
@@ -65,34 +64,55 @@ public:
         OutputIterator output_bcs,
         MeshGeoToolsLib::MeshNodeSearcher& searcher,
         const NumLib::LocalToGlobalIndexMap& dof_table,
-        const unsigned nodal_dof_idx)
+        const int variable_id,
+        const int component_id)
     {
+        // Find all boundary conditions matching the component id. There can be
+        // more than one such boundary condition.
         for (auto& bc_config : _dirichlet_bc_configs)
         {
+            if (bc_config.second != component_id)
+                continue;
+            // Create/initialize the boundary condition with matching component
+            // id and output it through the OutputIterator.
             DirichletBc<GlobalIndexType> bc;
-            bc_config->initialize(searcher, dof_table, nodal_dof_idx, bc);
+            bc_config.first->initialize(searcher, dof_table, variable_id,
+                                        component_id, bc);
             output_bcs++ = bc;
         }
     }
 
-    template <typename GlobalSetup, typename OutputIterator, typename... Args>
+    template <typename GlobalSetup, typename OutputIterator>
     void createNeumannBcs(OutputIterator bcs,
                           MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
-                          Args&&... args)
+                          unsigned const integration_order,
+                          const NumLib::LocalToGlobalIndexMap& dof_table,
+                          const int variable_id,
+                          const int component_id)
     {
-        for (auto& config : _neumann_bc_configs)
+        // Find all boundary conditions matching the component id. There can be
+        // more than one such boundary condition.
+        for (auto& bc_config : _neumann_bc_configs)
         {
-            config->initialize(searcher);
+            if (bc_config.second != component_id)
+                continue;
+
+            // Create/initialize the boundary condition with matching component
+            // id and output it through the OutputIterator.
+            bc_config.first->initialize(searcher);
             bcs++ = std::unique_ptr<NeumannBc<GlobalSetup>>{
-                new NeumannBc<GlobalSetup>(*config,
-                                           std::forward<Args>(args)...)};
+                new NeumannBc<GlobalSetup>(*bc_config.first,
+                                           integration_order,
+                                           dof_table,
+                                           variable_id,
+                                           component_id)};
         }
     }
 
-    double getInitialConditionValue(MeshLib::Node const& n,
+    double getInitialConditionValue(std::size_t const node_id,
                                     int const component_id) const
     {
-        return _initial_condition->getValue(n, component_id);
+        return _initial_condition->getValue(node_id, component_id);
     }
 
     // Get or create a property vector for results.
@@ -105,9 +125,16 @@ private:
     MeshLib::Mesh& _mesh;
     const int _n_components;
     std::unique_ptr<InitialCondition> _initial_condition;
-    std::vector<std::unique_ptr<UniformDirichletBoundaryCondition>>
+
+    // Pairs of dirichlet boundary conditions and corresponding component ids.
+    std::vector<
+        std::pair<std::unique_ptr<UniformDirichletBoundaryCondition>, int>>
         _dirichlet_bc_configs;
-    std::vector<std::unique_ptr<NeumannBcConfig>> _neumann_bc_configs;
+
+    // Pairs of neumann boundary conditions' configs and corresponding component
+    // ids.
+    std::vector<std::pair<std::unique_ptr<NeumannBcConfig>, int>>
+        _neumann_bc_configs;
 };
 
 }  // namespace ProcessLib

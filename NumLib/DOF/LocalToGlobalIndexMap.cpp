@@ -53,27 +53,40 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
 
-    unsigned comp_id = 0;
-    for (auto const& mss : _mesh_subsets)
-    {
-        for (MeshLib::MeshSubset const* const ms : *mss)
-        {
-            std::size_t const mesh_id = ms->getMeshID();
 
-            findGlobalIndices(ms->elementsBegin(), ms->elementsEnd(), mesh_id,
-                              comp_id, comp_id);
+    _variable_component_offsets.reserve(_mesh_subsets.size());
+    std::size_t offset = 0;
+    for (int variable_id = 0; variable_id < _mesh_subsets.size();
+         ++variable_id)
+    {
+        _variable_component_offsets.push_back(offset);
+        auto const& mss = *_mesh_subsets[variable_id];
+        for (int component_id = 0; component_id < mss.size();
+             ++component_id)
+        {
+            MeshLib::MeshSubset const& ms = mss.getMeshSubset(component_id);
+            std::size_t const mesh_id = ms.getMeshID();
+
+            auto const global_component_id =
+                getGlobalComponent(variable_id, component_id);
+
+            findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(), mesh_id,
+                              global_component_id, global_component_id);
         }
-        ++comp_id;
+
+        // increase by number of components of that variable
+        offset += mss.size();
     }
 }
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
-    std::size_t const component_id,
+    int const component_id,
     std::vector<MeshLib::Element*> const& elements,
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(std::move(mesh_component_map))
+      _mesh_component_map(std::move(mesh_component_map)),
+      _variable_component_offsets(1, 0) // Single variable only.
 {
     // There is only on mesh_subsets in the vector _mesh_subsets.
     assert(_mesh_subsets.size() == 1);
@@ -93,22 +106,24 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 }
 
 LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
-    std::size_t const variable_id,
-    std::size_t const component_id,
+    int const variable_id,
+    int const component_id,
     std::unique_ptr<MeshLib::MeshSubsets>&& mesh_subsets,
     std::vector<MeshLib::Element*> const& elements) const
 {
     DBUG("Construct reduced local to global index map.");
     // Create a subset of the current mesh component map.
-    // TODO Lookup the (global) component id for given variable and component
-    // ids.
+    auto const global_component_id =
+        getGlobalComponent(variable_id, component_id);
+
     auto mesh_component_map =
-        _mesh_component_map.getSubset(component_id, *mesh_subsets);
+        _mesh_component_map.getSubset(global_component_id, *mesh_subsets);
 
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
     all_mesh_subsets.emplace_back(std::move(mesh_subsets));
-    return new LocalToGlobalIndexMap(std::move(all_mesh_subsets), component_id,
-                                     elements, std::move(mesh_component_map));
+    return new LocalToGlobalIndexMap(std::move(all_mesh_subsets),
+                                     global_component_id, elements,
+                                     std::move(mesh_component_map));
 }
 
 std::size_t

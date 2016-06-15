@@ -28,14 +28,14 @@ namespace ProcessLib
 class BoundaryConditionConfig
 {
 public:
-    BoundaryConditionConfig(GeoLib::GeoObject const* const geometry)
+    BoundaryConditionConfig(GeoLib::GeoObject const& geometry)
         : _geometry(geometry)
     { }
 
     virtual ~BoundaryConditionConfig() = default;
 
 protected:
-    GeoLib::GeoObject const* const _geometry;
+    GeoLib::GeoObject const& _geometry;
 };
 
 
@@ -43,8 +43,8 @@ protected:
 class NeumannBcConfig : public BoundaryConditionConfig
 {
 public:
-    NeumannBcConfig(GeoLib::GeoObject const* const geometry,
-            BaseLib::ConfigTree const& config)
+    NeumannBcConfig(GeoLib::GeoObject const& geometry,
+                    BaseLib::ConfigTree const& config)
         : BoundaryConditionConfig(geometry)
     {
         DBUG("Constructing NeumannBcConfig from config.");
@@ -71,7 +71,8 @@ public:
     /// The elements are appended to the \c elements vector.
     void initialize(MeshGeoToolsLib::BoundaryElementsSearcher& searcher)
     {
-        std::vector<MeshLib::Element*> elems = searcher.getBoundaryElements(*_geometry);
+        std::vector<MeshLib::Element*> elems =
+            searcher.getBoundaryElements(_geometry);
 
         // deep copy because the searcher destroys the elements.
         std::transform(elems.cbegin(), elems.cend(),
