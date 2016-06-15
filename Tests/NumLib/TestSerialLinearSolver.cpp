@@ -19,6 +19,9 @@
 #include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/MatrixSpecifications.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
@@ -65,15 +68,16 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Construct a linear system
     //--------------------------------------------------------------------------
     // allocate a vector and matrix
-    typedef GlobalSetup::VectorType GlobalVector;
-    typedef GlobalSetup::MatrixType GlobalMatrix;
-    auto A = std::unique_ptr<GlobalMatrix>{
-             GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
+    typedef detail::GlobalVectorType GlobalVector;
+    typedef detail::GlobalMatrixType GlobalMatrix;
+    MathLib::MatrixSpecifications ms{local_to_global_index_map.dofSizeWithoutGhosts(),
+        local_to_global_index_map.dofSizeWithoutGhosts(),
+        &local_to_global_index_map.getGhostIndices(),
+        nullptr};
+    auto A = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
-    auto rhs = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
-    auto x   = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
+    auto rhs = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
+    auto x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
     // TODO no setZero() for rhs, x?
 
     using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
@@ -109,8 +113,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     GlobalAssembler assembler(local_to_global_index_map);
 
     // Call global assembler for each mesh element.
-    auto M_dummy = std::unique_ptr<GlobalMatrix>{
-        GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
+    auto M_dummy = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto const t = 0.0;
     GlobalSetup::executeMemberDereferenced(

@@ -6,16 +6,16 @@
 #include <typeinfo>
 
 #include "BaseLib/BuildInfo.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/ODESolver/TimeLoopSingleODE.h"
-#include "NumLib/NumericsConfig.h"
 #include "ODEs.h"
 
 
 using EDMatrix = Eigen::MatrixXd;
 using EVector = Eigen::VectorXd;
 
-using GMatrix = GlobalSetupType::MatrixType;
-using GVector = GlobalSetupType::VectorType;
+using GMatrix = detail::GlobalMatrixType;
+using GVector = detail::GlobalVectorType;
 
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>

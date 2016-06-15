@@ -25,14 +25,14 @@
 // Global vector/matrix builder.
 //
 
-#include "NumLib/Assembler/VectorMatrixBuilder.h"
-namespace detail
-{
-using GlobalVectorMatrixBuilderType =
-        NumLib::VectorMatrixBuilder<
-            GlobalMatrixType,
-            GlobalVectorType>;
-}
+//#include "NumLib/Assembler/VectorMatrixBuilder.h"
+//namespace detail
+//{
+//using GlobalVectorMatrixBuilderType =
+//        NumLib::VectorMatrixBuilder<
+//            GlobalMatrixType,
+//            GlobalVectorType>;
+//}
 
 //
 // Global executor
@@ -49,9 +49,9 @@ using GlobalExecutorType = NumLib::SerialExecutor;
 #include "GlobalSetup.h"
 using GlobalSetupType =
     NumLib::GlobalSetup<
-        detail::GlobalVectorMatrixBuilderType,
-        detail::GlobalExecutorType,
-        detail::LinearSolverType>;
+//        detail::GlobalVectorMatrixBuilderType,
+        detail::GlobalExecutorType>;
+//        detail::LinearSolverType>;
 
 
 //

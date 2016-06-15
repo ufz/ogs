@@ -12,32 +12,35 @@
 
 #include <functional>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+
 namespace NumLib
 {
 
 /// The GlobalSetup collects vector and matrix builder and corresponding global
 /// loop executor.
-template <typename VectorMatrixBuilder, typename Executor, typename LinearSolver_>
+//template <typename VectorMatrixBuilder, typename Executor, typename LinearSolver_>
+template <typename Executor>
 struct GlobalSetup
 {
-    typedef typename VectorMatrixBuilder::VectorType VectorType;
-    typedef typename VectorMatrixBuilder::MatrixType MatrixType;
+    using VectorType = detail::GlobalVectorType;
+    using MatrixType = detail::GlobalMatrixType;
 
-    using LinearSolver = LinearSolver_;
+    using LinearSolver = detail::LinearSolverType;
 
-    template <typename... Args>
-    static
-    VectorType* createVector(Args&& ... args)
-    {
-        return VectorMatrixBuilder::createVector(std::forward<Args>(args)...);
-    }
+//    template <typename... Args>
+//    static
+//    VectorType* createVector(Args&& ... args)
+//    {
+//        return VectorMatrixBuilder::createVector(std::forward<Args>(args)...);
+//    }
 
-    template <typename... Args>
-    static
-    MatrixType* createMatrix(Args&& ... args)
-    {
-        return VectorMatrixBuilder::createMatrix(std::forward<Args>(args)...);
-    }
+//    template <typename... Args>
+//    static
+//    MatrixType* createMatrix(Args&& ... args)
+//    {
+//        return VectorMatrixBuilder::createMatrix(std::forward<Args>(args)...);
+//    }
 
     template <typename... Args>
     static

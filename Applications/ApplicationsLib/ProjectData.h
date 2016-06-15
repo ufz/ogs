@@ -21,7 +21,7 @@
 #include "BaseLib/ConfigTree.h"
 
 #include "GeoLib/GEOObjects.h"
-
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ProcessLib/ProcessVariable.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Parameter.h"
@@ -55,8 +55,8 @@ class UncoupledProcessesTimeLoop;
  */
 class ProjectData final
 {
-    using GlobalMatrix = GlobalSetupType::MatrixType;
-    using GlobalVector = GlobalSetupType::VectorType;
+    using GlobalMatrix = detail::GlobalMatrixType;
+    using GlobalVector = detail::GlobalVectorType;
 public:
     /// The time loop type used to solve this project's processes.
     using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
