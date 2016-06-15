@@ -39,6 +39,12 @@ add_library(QtDiagramView
     ${UIS}
 )
 
-target_link_libraries(QtDiagramView Qt4::QtGui)
+target_link_libraries(QtDiagramView
+    Qt4::QtGui
+    logog
+    BaseLib
+    GeoLib
+    QtBase
+    )
 
 set_property(TARGET QtDiagramView PROPERTY FOLDER "DataExplorer")

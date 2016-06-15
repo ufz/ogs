@@ -121,7 +121,7 @@ if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
-add_library(QtDataView
+add_library(QtDataView STATIC
     ${SOURCES}
     ${HEADERS}
     ${UIS}
@@ -133,6 +133,8 @@ target_link_libraries(QtDataView
     FileIO
     DataHolderLib
     QtBase
+    QtStratView
+    VtkVis
 )
 add_dependencies(QtDataView QtDiagramView QtStratView)
 
