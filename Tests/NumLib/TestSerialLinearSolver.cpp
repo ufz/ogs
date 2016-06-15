@@ -45,11 +45,6 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     Example ex1;
 
     //--------------------------------------------------------------------------
-    // Choose implementation type
-    //--------------------------------------------------------------------------
-    using GlobalSetup = GlobalSetupType;    // defined in numerics config
-
-    //--------------------------------------------------------------------------
     // Prepare mesh items where data are assigned
     //--------------------------------------------------------------------------
     const MeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
@@ -68,8 +63,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Construct a linear system
     //--------------------------------------------------------------------------
     // allocate a vector and matrix
-    typedef detail::GlobalVectorType GlobalVector;
-    typedef detail::GlobalMatrixType GlobalMatrix;
+    typedef::detail::GlobalVectorType GlobalVector;
+    typedef::detail::GlobalMatrixType GlobalMatrix;
     MathLib::MatrixSpecifications ms{local_to_global_index_map.dofSizeWithoutGhosts(),
         local_to_global_index_map.dofSizeWithoutGhosts(),
         &local_to_global_index_map.getGhostIndices(),
@@ -99,7 +94,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     };
 
     // Call global initializer for each mesh element.
-    GlobalSetup::transformDereferenced(
+    detail::GlobalExecutorType::transformDereferenced(
             local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data);
@@ -116,7 +111,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     auto M_dummy = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto const t = 0.0;
-    GlobalSetup::executeMemberDereferenced(
+    detail::GlobalExecutorType::executeMemberDereferenced(
                 assembler, &GlobalAssembler::assemble,
                 local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 
@@ -151,7 +146,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
                              BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
-    GlobalSetup::LinearSolver ls("solver_name", &conf);
+    detail::LinearSolverType ls("solver_name", &conf);
     ls.solve(*A, *rhs, *x);
 
     // copy solution to double vector

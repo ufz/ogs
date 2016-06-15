@@ -39,8 +39,8 @@ INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(Eigen::MatrixXd, Eigen::VectorXd,
 #endif
 
 
-using GlobalMatrix = detail::GlobalMatrixType;
-using GlobalVector = detail::GlobalVectorType;
+using GlobalMatrix =::detail::GlobalMatrixType;
+using GlobalVector =::detail::GlobalVectorType;
 
 INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(GlobalMatrix, GlobalVector,
                                          globalSetupGlobalMatrixVectorProvider)

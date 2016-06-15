@@ -77,10 +77,10 @@ static_assert(std::is_integral<detail::GlobalMatrixType::IndexType>::value,
 static_assert(std::is_integral<detail::GlobalVectorType::IndexType>::value,
               "The index type for global vectors is not an integral type.");
 static_assert(std::is_same<detail::GlobalMatrixType::IndexType,
-                           detail::GlobalVectorType::IndexType>::value,
+                          ::detail::GlobalVectorType::IndexType>::value,
               "The global matrix and vector index types do not match.");
 // Both types are integral types and equal, define a single GlobalIndexType.
-using GlobalIndexType = detail::GlobalMatrixType::IndexType;
+using GlobalIndexType =::detail::GlobalMatrixType::IndexType;
 
 using GlobalSparsityPattern = MathLib::SparsityPattern<GlobalIndexType>;
 

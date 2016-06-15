@@ -10,6 +10,7 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/ODESolver/ODESystem.h"
@@ -32,17 +33,16 @@ class Mesh;
 namespace ProcessLib
 {
 
-template <typename GlobalSetup>
 class Process
-        : public NumLib::ODESystem<typename GlobalSetup::MatrixType,
-                                   typename GlobalSetup::VectorType,
+        : public NumLib::ODESystem<::detail::GlobalMatrixType,
+                                   ::detail::GlobalVectorType,
                                    // TODO: later on use a simpler ODE system
                                    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
                                    NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    using GlobalVector = typename GlobalSetup::VectorType;
-    using GlobalMatrix = typename GlobalSetup::MatrixType;
+    using GlobalVector = ::detail::GlobalVectorType;
+    using GlobalMatrix = ::detail::GlobalMatrixType;
     using Index = typename GlobalMatrix::IndexType;
     using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
     using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
@@ -296,7 +296,7 @@ private:
 
         // Create a neumann BC for the process variable storing them in the
         // _neumann_bcs vector.
-        variable.createNeumannBcs<GlobalSetup>(
+        variable.createNeumannBcs(
                                   std::back_inserter(_neumann_bcs),
                                   mesh_element_searcher,
                                   _integration_order,
@@ -328,7 +328,7 @@ private:
     GlobalSparsityPattern _sparsity_pattern;
 
     std::vector<DirichletBc<GlobalIndexType>> _dirichlet_bcs;
-    std::vector<std::unique_ptr<NeumannBc<GlobalSetup>>> _neumann_bcs;
+    std::vector<std::unique_ptr<NeumannBc>> _neumann_bcs;
 
     NonlinearSolver& _nonlinear_solver;
     std::unique_ptr<TimeDiscretization> _time_discretization;
