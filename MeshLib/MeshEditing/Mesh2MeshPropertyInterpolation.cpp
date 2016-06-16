@@ -98,8 +98,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
         std::size_t cnt(0);
         dest_properties[k] = 0.0;
 
-        for (std::size_t i(0); i<nodes.size(); ++i) {
-            std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
+        for (auto i_th_vec : nodes) {
             const std::size_t n_nodes_in_vec(i_th_vec->size());
             for (std::size_t j(0); j<n_nodes_in_vec; j++) {
                 MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
@@ -132,8 +131,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
             std::ofstream out_src(source_fname.c_str());
             out_src << "#POINTS" << "\n";
             std::size_t nodes_cnt(0);
-            for (std::size_t i(0); i<nodes.size(); ++i) {
-                std::vector<MeshLib::Node*> const* i_th_vec(nodes[i]);
+            for (auto i_th_vec : nodes) {
                 const std::size_t n_nodes_in_vec(i_th_vec->size());
                 for (std::size_t j(0); j<n_nodes_in_vec; j++) {
                     MeshLib::Node const*const j_th_node((*i_th_vec)[j]);

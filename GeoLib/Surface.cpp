@@ -49,8 +49,8 @@ Surface::Surface(Surface const& src)
 
 Surface::~Surface()
 {
-    for (std::size_t k(0); k < _sfc_triangles.size(); k++)
-        delete _sfc_triangles[k];
+    for (auto & _sfc_triangle : _sfc_triangles)
+        delete _sfc_triangle;
 }
 
 void Surface::addTriangle(std::size_t pnt_a,
@@ -166,11 +166,11 @@ bool Surface::isPntInSfc(MathLib::Point3d const& pnt) const
 
 const Triangle* Surface::findTriangle(MathLib::Point3d const& pnt) const
 {
-    for (std::size_t k(0); k < _sfc_triangles.size(); k++)
+    for (auto _sfc_triangle : _sfc_triangles)
     {
-        if (_sfc_triangles[k]->containsPoint(pnt))
+        if (_sfc_triangle->containsPoint(pnt))
         {
-            return _sfc_triangles[k];
+            return _sfc_triangle;
         }
     }
     return nullptr;

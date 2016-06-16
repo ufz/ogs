@@ -127,8 +127,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
         std::iota(perm.begin(), perm.end(), 0);
 
         std::vector<int*> p_xs;
-        for (std::size_t i=0; i<xs.size(); ++i)
-            p_xs.push_back(&xs[i]);
+        for (int & x : xs)
+            p_xs.push_back(&x);
 
         BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 
@@ -199,8 +199,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
         std::iota(perm.begin(), perm.end(), 0);
 
         std::vector<int*> p_xs;
-        for (std::size_t i=0; i<xs.size(); ++i)
-            p_xs.push_back(&xs[i]);
+        for (int & x : xs)
+            p_xs.push_back(&x);
 
         BaseLib::quicksort(p_xs, 0, p_xs.size(), perm);
 

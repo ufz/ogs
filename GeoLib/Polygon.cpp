@@ -125,9 +125,9 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 {
     std::vector<GeoLib::Point> intersections;
     GeoLib::Point s;
-    for (auto seg_it(begin()); seg_it != end(); ++seg_it)
+    for (auto&& seg_it : *this)
     {
-        if (GeoLib::lineSegmentIntersect(*seg_it, segment, s)) {
+        if (GeoLib::lineSegmentIntersect(seg_it, segment, s)) {
             intersections.push_back(s);
         }
     }
@@ -308,8 +308,8 @@ void Polygon::ensureCWOrientation ()
     // rotate copied points into x-y-plane
     GeoLib::rotatePointsToXY(tmp_polygon_pnts);
 
-    for (std::size_t k(0); k < tmp_polygon_pnts.size(); k++)
-        (*(tmp_polygon_pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
+    for (auto & tmp_polygon_pnt : tmp_polygon_pnts)
+        (*tmp_polygon_pnt)[2] = 0.0; // should be -= d but there are numerical errors
 
     // *** get the left most upper point
     std::size_t min_x_max_y_idx (0); // for orientation check

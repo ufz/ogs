@@ -98,8 +98,8 @@ int main (int argc, char* argv[])
     }
 
     bool is_keyword(false);
-    for (std::size_t i=0; i<keywords.size(); i++)
-        if (current_key.compare(keywords[i])==0)
+    for (auto & keyword : keywords)
+        if (current_key.compare(keyword)==0)
         {
             is_keyword = true;
             break;

@@ -285,8 +285,8 @@ void rotatePointsToXZ(std::vector<GeoLib::Point*> &pnts)
         rotatePoints(rot_mat, pnts);
     }
 
-    for (std::size_t k(0); k<pnts.size(); k++)
-        (*(pnts[k]))[1] = 0.0; // should be -= d but there are numerical errors
+    for (auto & pnt : pnts)
+        (*pnt)[1] = 0.0; // should be -= d but there are numerical errors
 }
 
 std::unique_ptr<GeoLib::Point> triangleLineIntersection(

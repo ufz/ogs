@@ -43,8 +43,8 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 
     const std::vector<ElementErrorCode> codes (this->testElementGeometry(mesh));
     std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)> output_str (this->ElementErrorCodeOutput(codes));
-    for (std::size_t i = 0; i < output_str.size(); ++i)
-        INFO (output_str[i].c_str());
+    for (auto & i : output_str)
+        INFO (i.c_str());
 }
 
 std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)

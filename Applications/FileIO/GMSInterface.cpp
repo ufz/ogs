@@ -140,10 +140,10 @@ void GMSInterface::writeBoreholesToGMS(const std::vector<GeoLib::Point*>* statio
     out << "name" << "\t" << std::fixed << "X" << "\t" << "Y"  << "\t" << "Z" <<  "\t" <<
     "soilID" << "\n";
 
-    for (std::size_t j = 0; j < stations->size(); j++)
+    for (auto station_as_point : *stations)
     {
         GeoLib::StationBorehole* station =
-                static_cast<GeoLib::StationBorehole*>((*stations)[j]);
+                static_cast<GeoLib::StationBorehole*>(station_as_point);
         std::vector<GeoLib::Point*> profile = station->getProfile();
         std::vector<std::string> soilNames  = station->getSoilNames();
         //std::size_t idx = 0;

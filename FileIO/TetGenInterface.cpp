@@ -63,8 +63,8 @@ bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
     if (!readNodesFromStream (poly_stream, nodes))
     {
         // remove nodes read until now
-        for (std::size_t k(0); k<nodes.size(); ++k)
-            delete nodes[k];
+        for (auto & node : nodes)
+            delete node;
         return false;
     }
     const std::size_t nNodes (nodes.size());
@@ -184,8 +184,8 @@ bool TetGenInterface::parseSmeshFacets(std::ifstream &input,
     // here the poly-file potentially defines a number of region attributes, these are ignored for now
 
     std::size_t nTotalTriangles (0);
-    for (std::size_t i=0; i<surfaces.size(); ++i)
-        nTotalTriangles += surfaces[i]->getNumberOfTriangles();
+    for (auto & surface : surfaces)
+        nTotalTriangles += surface->getNumberOfTriangles();
     if (nTotalTriangles == nFacets)
         return true;
 
@@ -211,8 +211,8 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     std::vector<MeshLib::Node*> nodes;
     if (!readNodesFromStream (ins_nodes, nodes)) {
         // remove nodes read until now
-        for (std::size_t k(0); k<nodes.size(); k++) {
-            delete nodes[k];
+        for (auto & node : nodes) {
+            delete node;
         }
         return nullptr;
     }
@@ -221,12 +221,12 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     std::vector<int> materials;
     if (!readElementsFromStream (ins_ele, elements, materials, nodes)) {
         // remove elements read until now
-        for (std::size_t k(0); k<elements.size(); k++) {
-            delete elements[k];
+        for (auto & element : elements) {
+            delete element;
         }
         // remove nodes
-        for (std::size_t k(0); k<nodes.size(); k++) {
-            delete nodes[k];
+        for (auto & node : nodes) {
+            delete node;
         }
         return nullptr;
     }

@@ -36,9 +36,9 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
         for (std::size_t j = 0; j < vec_xyz_coords[1]->size(); j++)
         {
             const double y ((*vec_xyz_coords[1])[j]+origin[1]);
-            for (std::size_t k = 0; k < vec_xyz_coords[0]->size(); k++)
+            for (double const x : *vec_xyz_coords[0])
             {
-                nodes.push_back (new Node((*vec_xyz_coords[0])[k]+origin[0], y, z));
+                nodes.push_back (new Node(x+origin[0], y, z));
             }
         }
     }
