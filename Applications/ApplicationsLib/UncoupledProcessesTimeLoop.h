@@ -322,7 +322,7 @@ UncoupledProcessesTimeLoop::
 solveOneTimeStepOneProcess(
         GlobalVector& x, double const t, double const delta_t,
         SingleProcessData& process_data,
-        typename UncoupledProcessesTimeLoop::Process& process)
+        UncoupledProcessesTimeLoop::Process& process)
 {
     auto& time_disc        =  process.getTimeDiscretization();
     auto& ode_sys          = *process_data.tdisc_ode_sys;
