@@ -35,7 +35,7 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
                            std::move(process_output))
     , _process_data(std::move(process_data))
 {
-    if (dynamic_cast<NumLib::ForwardEuler<GlobalVector>*>(
+    if (dynamic_cast<NumLib::ForwardEuler*>(
                 &Base::getTimeDiscretization()) != nullptr)
     {
         OGS_FATAL("GroundwaterFlowProcess can not be solved with the ForwardEuler"

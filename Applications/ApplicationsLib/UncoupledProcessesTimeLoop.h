@@ -46,7 +46,7 @@ private:
     //! An abstract process
     using Process          = ProcessLib::Process;
     //! An abstract time discretization
-    using TimeDisc         = NumLib::TimeDiscretization<GlobalVector>;
+    using TimeDisc         = NumLib::TimeDiscretization;
 
     std::vector<GlobalVector*> _process_solutions;
     std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;

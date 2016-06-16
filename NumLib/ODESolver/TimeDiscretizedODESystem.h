@@ -61,7 +61,7 @@ class TimeDiscretizedODESystemBase
 {
 public:
     //! Exposes the used time discretization scheme.
-    virtual TimeDiscretization<Vector>& getTimeDiscretization() = 0;
+    virtual TimeDiscretization& getTimeDiscretization() = 0;
 };
 
 
@@ -102,7 +102,7 @@ public:
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
     //! A shortcut for a general time discretization scheme
-    using TimeDisc = TimeDiscretization<Vector>;
+    using TimeDisc = TimeDiscretization;
 
     /*! Constructs a new instance.
      *
@@ -290,7 +290,7 @@ public:
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
     //! A shortcut for a general time discretization scheme
-    using TimeDisc = TimeDiscretization<Vector>;
+    using TimeDisc = TimeDiscretization;
 
     /*! Constructs a new instance.
      *

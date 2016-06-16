@@ -36,7 +36,7 @@ class Process
 public:
     using Index = GlobalMatrix::IndexType;
     using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
-    using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
+    using TimeDiscretization = NumLib::TimeDiscretization;
 
     Process(
         MeshLib::Mesh& mesh,

@@ -110,7 +110,7 @@ public:
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorGeneral(TimeDiscretization<Vector> const& timeDisc)
+    MatrixTranslatorGeneral(TimeDiscretization const& timeDisc)
         : _time_disc(timeDisc)
     {}
 
@@ -165,7 +165,7 @@ public:
     }
 
 private:
-    TimeDiscretization<Vector> const& _time_disc; //!< the time discretization used.
+    TimeDiscretization const& _time_disc; //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;
@@ -202,7 +202,7 @@ public:
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorForwardEuler(ForwardEuler<Vector> const& timeDisc)
+    MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
         : _fwd_euler(timeDisc)
     {}
 
@@ -261,7 +261,7 @@ public:
     }
 
 private:
-    ForwardEuler<Vector> const& _fwd_euler; //!< the time discretization used.
+    ForwardEuler const& _fwd_euler; //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;
@@ -297,7 +297,7 @@ public:
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorCrankNicolson(CrankNicolson<Vector> const& timeDisc)
+    MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
         : _crank_nicolson(timeDisc)
         , _M_bar(MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix())
         , _b_bar(MathLib::GlobalVectorProvider<Vector>::provider.getVector())
@@ -414,7 +414,7 @@ public:
     }
 
 private:
-    CrankNicolson<Vector> const& _crank_nicolson;
+    CrankNicolson const& _crank_nicolson;
 
     Matrix& _M_bar; //!< Used to adjust matrices and vectors assembled by the ODE.
                     //!< \see pushMatrices()
@@ -430,14 +430,14 @@ private:
 //! time discretization scheme.
 template<typename Matrix, typename Vector, ODESystemTag ODETag>
 std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>
-createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
+createMatrixTranslator(TimeDiscretization const& timeDisc)
 {
-    if (auto* fwd_euler = dynamic_cast<ForwardEuler<Vector> const*>(&timeDisc))
+    if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc))
     {
         return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
             new MatrixTranslatorForwardEuler<Matrix, Vector, ODETag>(*fwd_euler));
     }
-    else if (auto* crank = dynamic_cast<CrankNicolson<Vector> const*>(&timeDisc))
+    else if (auto* crank = dynamic_cast<CrankNicolson const*>(&timeDisc))
     {
         return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
             new MatrixTranslatorCrankNicolson<Matrix, Vector, ODETag>(*crank));
