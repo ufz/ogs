@@ -52,7 +52,6 @@ void fillVectorRandomly(Vector& x)
     std::random_device rd;
     std::mt19937 random_number_generator(rd());
     std::uniform_real_distribution<double> rnd;
-    std::vector<GeoLib::Point> pnts;
 
     using Index = typename MathLib::MatrixVectorTraits<Vector>::Index;
     Index const size = x.size();
