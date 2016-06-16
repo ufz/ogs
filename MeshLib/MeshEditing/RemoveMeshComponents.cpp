@@ -12,8 +12,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "DuplicateMeshComponents.h"
 
 namespace MeshLib

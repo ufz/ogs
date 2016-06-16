@@ -31,7 +31,7 @@
 #include "MeshLib/IO/GmshReader.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 

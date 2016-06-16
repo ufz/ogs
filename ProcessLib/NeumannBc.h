@@ -18,7 +18,7 @@
 
 #include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "MeshLib/MeshSubset.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 
 #include "Utils/CreateLocalAssemblers.h"
 

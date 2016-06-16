@@ -27,7 +27,7 @@
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 LayeredMeshGenerator::LayeredMeshGenerator()

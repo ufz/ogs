@@ -16,7 +16,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 

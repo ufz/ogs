@@ -16,7 +16,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/GEOObjects.h"
 

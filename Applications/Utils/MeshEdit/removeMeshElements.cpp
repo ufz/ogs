@@ -24,7 +24,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 template <typename PROPERTY_TYPE>

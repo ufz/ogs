@@ -24,7 +24,7 @@
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 
 
 bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,

@@ -17,7 +17,7 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "AABB.h"
 #include "OGSError.h"

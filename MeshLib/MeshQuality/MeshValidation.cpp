@@ -24,7 +24,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib {
