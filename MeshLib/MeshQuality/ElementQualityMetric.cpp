@@ -16,7 +16,6 @@
 
 #include <cmath>
 
-#include "GeoLib/Point.h"
 #include "MeshLib/Node.h"
 
 namespace MeshLib
