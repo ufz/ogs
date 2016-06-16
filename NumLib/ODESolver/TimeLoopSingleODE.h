@@ -85,7 +85,7 @@ loop(const double t0, GlobalVector const& x0, const double t_end, const double d
      Callback& post_timestep)
 {
     // solution vector
-    GlobalVector& x = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0);
+    GlobalVector& x = MathLib::GlobalVectorProvider::provider.getVector(x0);
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -120,7 +120,7 @@ loop(const double t0, GlobalVector const& x0, const double t_end, const double d
         post_timestep(t_cb, x_cb);
     }
 
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x);
+    MathLib::GlobalVectorProvider::provider.releaseVector(x);
 
     if (!nl_slv_succeeded) {
         ERR("Nonlinear solver failed in timestep #%u at t = %g s", timestep, t);

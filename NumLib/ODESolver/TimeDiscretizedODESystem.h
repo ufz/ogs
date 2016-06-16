@@ -114,22 +114,22 @@ public:
         , _time_disc(time_discretization)
         , _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
     {
-        _Jac  = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+        _Jac  = &MathLib::GlobalMatrixProvider::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _Jac_id);
-        _M    = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+        _M    = &MathLib::GlobalMatrixProvider::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _M_id);
-        _K    = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+        _K    = &MathLib::GlobalMatrixProvider::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _K_id);
-        _b    = &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        _b    = &MathLib::GlobalVectorProvider::provider.getVector(
                     _ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
     {
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_Jac);
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
+        MathLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
+        MathLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider::provider.releaseVector(*_b);
     }
 
     void assembleResidualNewton(const GlobalVector &x_new_timestep) override
@@ -159,7 +159,7 @@ public:
         auto const  dxdot_dx = _time_disc.getNewXWeight();
         auto const  dx_dx    = _time_disc.getDxDx();
 
-        auto& xdot = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
+        auto& xdot = MathLib::GlobalVectorProvider::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _Jac->setZero();
@@ -170,7 +170,7 @@ public:
 
         MathLib::BLAS::finalizeAssembly(*_Jac);
 
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
+        MathLib::GlobalVectorProvider::provider.releaseVector(xdot);
     }
 
     void getResidual(GlobalVector const& x_new_timestep, GlobalVector& res) const override
@@ -178,12 +178,12 @@ public:
         // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
         //      can be optimuized. However, that would make the interface a bit more
         //      fragile.
-        auto& xdot = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
+        auto& xdot = MathLib::GlobalVectorProvider::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
 
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
+        MathLib::GlobalVectorProvider::provider.releaseVector(xdot);
     }
 
     void getJacobian(GlobalMatrix& Jac) const override
@@ -302,19 +302,19 @@ public:
         , _mat_trans(createMatrixTranslator<ODETag>(
                          time_discretization))
     {
-        _M = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+        _M = &MathLib::GlobalMatrixProvider::provider.getMatrix(
                     ode.getMatrixSpecifications(), _M_id);
-        _K = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+        _K = &MathLib::GlobalMatrixProvider::provider.getMatrix(
                     ode.getMatrixSpecifications(), _K_id);
-        _b = &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        _b = &MathLib::GlobalVectorProvider::provider.getVector(
                     ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
     {
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
+        MathLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider::provider.releaseVector(*_b);
     }
 
     void assembleMatricesPicard(const GlobalVector &x_new_timestep) override

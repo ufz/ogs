@@ -38,9 +38,9 @@ solve(GlobalVector &x)
     namespace BLAS = MathLib::BLAS;
     auto& sys = *_equation_system;
 
-    auto& A     = MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_A_id);
-    auto& rhs   = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_rhs_id);
-    auto& x_new = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_x_new_id);
+    auto& A     = MathLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs   = MathLib::GlobalVectorProvider::provider.getVector(_rhs_id);
+    auto& x_new = MathLib::GlobalVectorProvider::provider.getVector(_x_new_id);
 
     bool error_norms_met = false;
 
@@ -122,9 +122,9 @@ solve(GlobalVector &x)
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(A);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(rhs);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
+    MathLib::GlobalMatrixProvider::provider.releaseMatrix(A);
+    MathLib::GlobalVectorProvider::provider.releaseVector(rhs);
+    MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
 
     return error_norms_met;
 }
@@ -148,11 +148,11 @@ solve(GlobalVector &x)
     auto& sys = *_equation_system;
 
     auto& res =
-            MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_res_id);
+            MathLib::GlobalVectorProvider::provider.getVector(_res_id);
     auto& minus_delta_x =
-            MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_minus_delta_x_id);
+            MathLib::GlobalVectorProvider::provider.getVector(_minus_delta_x_id);
     auto& J =
-            MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_J_id);
+            MathLib::GlobalMatrixProvider::provider.getMatrix(_J_id);
 
     bool error_norms_met = false;
 
@@ -188,7 +188,7 @@ solve(GlobalVector &x)
             // TODO could be solved in a better way
             // cf. http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
             auto& x_new =
-                    MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x, _x_new_id);
+                    MathLib::GlobalVectorProvider::provider.getVector(x, _x_new_id);
             BLAS::axpy(x_new, -_alpha, minus_delta_x);
 
             switch(sys.postIteration(x_new))
@@ -203,14 +203,14 @@ solve(GlobalVector &x)
                 INFO("Newton: The postIteration() hook decided that this iteration"
                      " has to be repeated.");
                 // TODO introduce some onDestroy hook.
-                MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
+                MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
                 continue; // That throws the iteration result away.
             }
 
             // TODO could be done via swap. Note: that also requires swapping the ids.
             //      Same for the Picard scheme.
             BLAS::copy(x_new, x); // copy new solution to x
-            MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
+            MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
         }
 
         if (!iteration_succeeded) {
@@ -241,9 +241,9 @@ solve(GlobalVector &x)
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(J);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(res);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(minus_delta_x);
+    MathLib::GlobalMatrixProvider::provider.releaseMatrix(J);
+    MathLib::GlobalVectorProvider::provider.releaseVector(res);
+    MathLib::GlobalVectorProvider::provider.releaseVector(minus_delta_x);
 
     return error_norms_met;
 }

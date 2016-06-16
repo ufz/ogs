@@ -208,11 +208,11 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     BackwardEuler()
-        : _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+        : _x_old(MathLib::GlobalVectorProvider::provider.getVector())
     {}
 
     ~BackwardEuler() {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override {
@@ -259,11 +259,11 @@ class ForwardEuler final : public TimeDiscretization
 {
 public:
     ForwardEuler()
-        : _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+        : _x_old(MathLib::GlobalVectorProvider::provider.getVector())
     {}
 
     ~ForwardEuler() {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override {
@@ -337,11 +337,11 @@ public:
     explicit
     CrankNicolson(const double theta)
         : _theta(theta)
-        , _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+        , _x_old(MathLib::GlobalVectorProvider::provider.getVector())
     {}
 
     ~CrankNicolson() {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override {
@@ -439,13 +439,13 @@ public:
 
     ~BackwardDifferentiationFormula() {
         for (auto* x : _xs_old)
-            MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*x);
+            MathLib::GlobalVectorProvider::provider.releaseVector(*x);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override {
         _t = t0;
         _xs_old.push_back(
-            &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0));
+            &MathLib::GlobalVectorProvider::provider.getVector(x0));
     }
 
     void pushState(const double, GlobalVector const& x, InternalMatrixStorage const&) override
@@ -456,7 +456,7 @@ public:
         // until _xs_old is filled, lower-order BDF formulas are used.
         if (_xs_old.size() < _num_steps) {
             _xs_old.push_back(
-                &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x));
+                &MathLib::GlobalVectorProvider::provider.getVector(x));
         } else {
             BLAS::copy(x, *_xs_old[_offset]);
             _offset = (_offset+1) % _num_steps; // treat _xs_old as a circular buffer
