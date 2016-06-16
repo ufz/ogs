@@ -100,7 +100,7 @@ public:
     //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
-    using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    using MatTrans = MatrixTranslator<ODETag>;
     //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization;
 
@@ -113,7 +113,7 @@ public:
     TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
-        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
+        , _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
     {
         _Jac  = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _Jac_id);
@@ -288,7 +288,7 @@ public:
     //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
-    using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
+    using MatTrans = MatrixTranslator<ODETag>;
     //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization;
 
@@ -301,7 +301,7 @@ public:
     TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
         : _ode(ode)
         , _time_disc(time_discretization)
-        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
+        , _mat_trans(createMatrixTranslator<ODETag>(
                          time_discretization))
     {
         _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
