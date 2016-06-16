@@ -48,17 +48,14 @@ public:
     //! @}
 
 private:
-    using LocalAssemblerInterface =
-        GroundwaterFlowLocalAssemblerInterface;
-
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-            LocalAssemblerInterface,
+            GroundwaterFlowLocalAssemblerInterface,
             NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface = NumLib::Extrapolator<
-        IntegrationPointValue, LocalAssemblerInterface>;
+        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
     using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
-        IntegrationPointValue, LocalAssemblerInterface>;
+        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
 
     void initializeConcreteProcess(
             NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -72,7 +69,7 @@ private:
     GroundwaterFlowProcessData _process_data;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>> _local_assemblers;
 
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };

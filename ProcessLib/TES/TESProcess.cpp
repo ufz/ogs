@@ -304,7 +304,7 @@ NumLib::IterationResult TESProcess::postIteration(
         std::vector<double> local_x_prev_ts_cache;
 
         auto check_variable_bounds = [&](std::size_t id,
-                                         LocalAssembler& loc_asm) {
+                                         TESLocalAssemblerInterface& loc_asm) {
             auto const r_c_indices = getRowColumnIndices_(
                 id, *this->_local_to_global_index_map, indices_cache);
             getVectorValues(x, r_c_indices, local_x_cache);

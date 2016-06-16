@@ -52,18 +52,15 @@ public:
 
     bool isLinear() const override { return false; }
 private:
-    using LocalAssembler =
-        TESLocalAssemblerInterface;
-
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        LocalAssembler,
+        TESLocalAssemblerInterface,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<TESIntPtVariables, LocalAssembler>;
+        NumLib::Extrapolator<TESIntPtVariables, TESLocalAssemblerInterface>;
     using ExtrapolatorImplementation =
         NumLib::LocalLinearLeastSquaresExtrapolator<
-            TESIntPtVariables, LocalAssembler>;
+            TESIntPtVariables, TESLocalAssemblerInterface>;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -89,7 +86,7 @@ private:
         std::unique_ptr<GlobalVector>& result_cache);
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
+    std::vector<std::unique_ptr<TESLocalAssemblerInterface>> _local_assemblers;
 
     AssemblyParams _assembly_params;
 
