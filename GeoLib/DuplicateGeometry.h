@@ -28,39 +28,39 @@ class DuplicateGeometry final
 {
 
 public:
-	/**
-	 * Creates a copy of a geometry within GEOObjects
-	 * \param geo_objects The container for geometries
-	 * \param input_name  The geometry to be copied
-	 * \param output_name The name of the copy (note: this might be modified by GEOObjects)
-	 */
-	DuplicateGeometry(GeoLib::GEOObjects &geo_objects,
-		std::string const& input_name,
-		std::string const& output_name);
+    /**
+     * Creates a copy of a geometry within GEOObjects
+     * \param geo_objects The container for geometries
+     * \param input_name  The geometry to be copied
+     * \param output_name The name of the copy (note: this might be modified by GEOObjects)
+     */
+    DuplicateGeometry(GeoLib::GEOObjects &geo_objects,
+        std::string const& input_name,
+        std::string const& output_name);
 
-	// Returns the (possibly modified) output name of the new geometry.
-	std::string const& getFinalizedOutputName() { return _output_name; }
-	// Returns a reference to the copied point vector for modification
-	std::vector<GeoLib::Point*>& getPointVectorCopy();
-	// Returns a reference to the copied polyline vector for modification
-	std::vector<GeoLib::Polyline*>& getPolylineVectorCopy();
-	// Returns a reference to the copied surface vector for modification
-	std::vector<GeoLib::Surface*>& getSurfaceVectorCopy();
+    // Returns the (possibly modified) output name of the new geometry.
+    std::string const& getFinalizedOutputName() { return _output_name; }
+    // Returns a reference to the copied point vector for modification
+    std::vector<GeoLib::Point*>& getPointVectorCopy();
+    // Returns a reference to the copied polyline vector for modification
+    std::vector<GeoLib::Polyline*>& getPolylineVectorCopy();
+    // Returns a reference to the copied surface vector for modification
+    std::vector<GeoLib::Surface*>& getSurfaceVectorCopy();
 
 private:
-	// creates a deep copy of the designated geometry
-	void duplicate(std::string const& input_name);
+    // creates a deep copy of the designated geometry
+    void duplicate(std::string const& input_name);
 
-	// creates a deep copy of the polyline vector
-	std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
-		std::vector<GeoLib::Polyline*> const& polylines);
+    // creates a deep copy of the polyline vector
+    std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
+        std::vector<GeoLib::Polyline*> const& polylines);
 
-	// creates a deep copy of the surface vector
-	std::unique_ptr<std::vector<GeoLib::Surface*>> copySurfacesVector(
-		std::vector<GeoLib::Surface*> const& surfaces);
+    // creates a deep copy of the surface vector
+    std::unique_ptr<std::vector<GeoLib::Surface*>> copySurfacesVector(
+        std::vector<GeoLib::Surface*> const& surfaces);
 
-	std::string _output_name;
-	GeoLib::GEOObjects& _geo_objects;
+    std::string _output_name;
+    GeoLib::GEOObjects& _geo_objects;
 
 }; // class
 
