@@ -40,7 +40,7 @@ bool LayeredVolume::createRasterLayers(const MeshLib::Mesh &mesh,
         return false;
 
     // remove line elements, only tri + quad remain
-    MeshLib::ElementSearch ex(mesh);
+    MeshGeoToolsLib::ElementSearch ex(mesh);
     ex.searchByElementType(MeshLib::MeshElemType::LINE);
     std::unique_ptr<MeshLib::Mesh> top(
         removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));

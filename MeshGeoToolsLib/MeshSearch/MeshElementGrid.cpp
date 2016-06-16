@@ -22,8 +22,8 @@
 
 #include "GeoLib/GEOObjects.h"
 
-namespace MeshLib {
-
+namespace MeshGeoToolsLib
+{
 MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     _aabb{sfc_mesh.getNodes().cbegin(), sfc_mesh.getNodes().cend()},
     _n_steps({{1,1,1}})

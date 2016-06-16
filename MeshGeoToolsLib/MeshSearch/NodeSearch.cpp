@@ -17,8 +17,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
-namespace MeshLib {
-
+namespace MeshGeoToolsLib
+{
 NodeSearch::NodeSearch(const MeshLib::Mesh &mesh)
     : _mesh(mesh)
 {
@@ -77,17 +77,18 @@ void NodeSearch::updateUnion(const std::vector<std::size_t> &vec)
     _marked_nodes.assign(vec_temp.begin(), vec_temp.end());
 }
 
-std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements)
+std::vector<MeshLib::Node*> getUniqueNodes(
+    std::vector<MeshLib::Element*> const& elements)
 {
-    std::set<Node*> nodes_set;
+    std::set<MeshLib::Node*> nodes_set;
     for (auto e : elements)
     {
-        Node* const* nodes = e->getNodes();
+        MeshLib::Node* const* nodes = e->getNodes();
         unsigned const nnodes = e->getNumberOfNodes();
         nodes_set.insert(nodes, nodes + nnodes);
     }
 
-    std::vector<Node*> nodes;
+    std::vector<MeshLib::Node*> nodes;
     nodes.reserve(nodes_set.size());
 
     std::move(nodes_set.cbegin(), nodes_set.cend(),

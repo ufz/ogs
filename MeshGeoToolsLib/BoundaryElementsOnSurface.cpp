@@ -24,7 +24,7 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 {
     // search elements near the polyline
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
-    MeshLib::ElementSearch es(_mesh);
+    MeshGeoToolsLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_sfc);
     auto &ele_ids_near_sfc = es.getSearchedElementIDs();
 

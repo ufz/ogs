@@ -99,7 +99,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
         some_elements.push_back(const_cast<MeshLib::Element*>(mesh->getElement(id)));
 
     // Find unique node ids of the selected elements for testing.
-    std::vector<MeshLib::Node*> selected_nodes = MeshLib::getUniqueNodes(some_elements);
+    std::vector<MeshLib::Node*> selected_nodes = MeshGeoToolsLib::getUniqueNodes(some_elements);
 
     auto const selected_subset = std::unique_ptr<MeshLib::MeshSubset const>{
         nodesSubset->getIntersectionByNodes(selected_nodes)};

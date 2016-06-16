@@ -51,7 +51,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
 {
     MeshLib::Mesh const& mesh (*_mesh_vec[this->meshListBox->currentIndex()].get());
 
-    MeshLib::NodeSearch ns(mesh);
+    MeshGeoToolsLib::NodeSearch ns(mesh);
     ns.searchUnused();
     const std::vector<std::size_t> unusedNodesIdx (ns.getSearchedNodeIDs());
     MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(mesh));

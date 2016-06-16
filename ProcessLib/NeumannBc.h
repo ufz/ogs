@@ -63,7 +63,8 @@ public:
                 std::back_inserter(_elements),
                 std::mem_fn(&MeshLib::Element::clone));
 
-        std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
+        std::vector<MeshLib::Node*> nodes =
+            MeshGeoToolsLib::getUniqueNodes(_elements);
 
         auto const& mesh_subsets =
             local_to_global_index_map.getMeshSubsets(variable_id, component_id);

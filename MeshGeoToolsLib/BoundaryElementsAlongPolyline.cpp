@@ -28,7 +28,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
 {
     // search nodes and elements located along the polyline
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDsAlongPolyline(ply);
-    MeshLib::ElementSearch es(_mesh);
+    MeshGeoToolsLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_poly);
     auto &ele_ids_near_ply = es.getSearchedElementIDs();
 

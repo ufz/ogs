@@ -154,7 +154,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
     double sum_area_b = std::accumulate(found_faces_sfc_b.begin(), found_faces_sfc_b.end(), 0.0,
                 [](double v, MeshLib::Element*e){return v+e->getContent();});
     ASSERT_EQ(_geometric_size*_geometric_size, sum_area_b);
-    auto connected_nodes_b = MeshLib::getUniqueNodes(found_faces_sfc_b);
+    auto connected_nodes_b = MeshGeoToolsLib::getUniqueNodes(found_faces_sfc_b);
     ASSERT_EQ(n_nodes_2d, connected_nodes_b.size());
     for (auto node : connected_nodes_b)
         ASSERT_EQ(0.0, (*node)[2]); // check z coordinates
@@ -165,7 +165,7 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
     double sum_area_f = std::accumulate(found_faces_sfc_f.begin(), found_faces_sfc_f.end(), 0.0,
                 [](double v, MeshLib::Element*e){return v+e->getContent();});
     ASSERT_EQ(_geometric_size*_geometric_size, sum_area_f);
-    auto connected_nodes_f = MeshLib::getUniqueNodes(found_faces_sfc_f);
+    auto connected_nodes_f = MeshGeoToolsLib::getUniqueNodes(found_faces_sfc_f);
     ASSERT_EQ(n_nodes_2d, connected_nodes_f.size());
     for (auto node : connected_nodes_f)
         ASSERT_EQ(0.0, (*node)[1]); // check y coordinates

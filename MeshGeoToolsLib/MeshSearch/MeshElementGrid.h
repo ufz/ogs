@@ -22,12 +22,14 @@ namespace GeoLib {
 class GEOObjects;
 }
 
-namespace MeshLib {
-
-// forward declarations
+namespace MeshLib
+{
 class Mesh;
 class Element;
+}
 
+namespace MeshGeoToolsLib
+{
 /// MeshElementGrid implements a grid data structure supporting search
 /// operations and covers a given mesh. It consists of grid cells that are all
 /// of the same size. Grid cells contain pointers to intersecting mesh elements.
@@ -35,7 +37,7 @@ class Element;
 /// MeshElementGrid instance lives.
 class MeshElementGrid final {
 #ifndef NDEBUG
-    friend void getGridGeometry(MeshLib::MeshElementGrid const& grid,
+    friend void getGridGeometry(MeshGeoToolsLib::MeshElementGrid const& grid,
                                 GeoLib::GEOObjects& geometries,
                                 std::string& geometry_name);
 #endif
@@ -99,7 +101,7 @@ private:
 /// Transfers the grid cells to a geometry. The grid-geometry can be viewed
 /// using the DataExplorer. The visualization can be used to explain the
 /// algorithm or to find bugs in the algorithm.
-void getGridGeometry(MeshLib::MeshElementGrid const& grid,
+void getGridGeometry(MeshGeoToolsLib::MeshElementGrid const& grid,
                      GeoLib::GEOObjects& geometries,
                      std::string& geometry_name);
 #endif

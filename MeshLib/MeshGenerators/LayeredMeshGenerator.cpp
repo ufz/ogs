@@ -71,7 +71,7 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
         WARN ("Skipping MaterialID information, number of entries does not match element number");
 
     std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
-    MeshLib::NodeSearch ns(*result.get());
+    MeshGeoToolsLib::NodeSearch ns(*result.get());
     if (ns.searchUnused() > 0) {
         std::unique_ptr<MeshLib::Mesh> new_mesh(MeshLib::removeNodes(
             *result.get(), ns.getSearchedNodeIDs(), mesh_name));

@@ -14,12 +14,13 @@
 
 namespace MeshLib
 {
-
-// forward declarations
 class Mesh;
 class Element;
 class Node;
+}
 
+namespace MeshGeoToolsLib
+{
 /// Node search class
 class NodeSearch final
 {
@@ -27,11 +28,15 @@ public:
     explicit NodeSearch(const MeshLib::Mesh &mesh);
 
     /// return marked node IDs
-    const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
+    const std::vector<std::size_t>& getSearchedNodeIDs() const
+    {
+        return _marked_nodes;
+    }
 
     /// Marks all nodes connected to any of the given elements ids.
     /// \return number of connected nodes.
-    std::size_t searchNodesConnectedToOnlyGivenElements(const std::vector<std::size_t> &element_ids);
+    std::size_t searchNodesConnectedToOnlyGivenElements(
+        const std::vector<std::size_t>& element_ids);
 
     /// Marks all unused nodes
     std::size_t searchUnused();
@@ -47,7 +52,8 @@ private:
 };
 
 /// Create a vector of unique nodes used by given elements.
-std::vector<Node*> getUniqueNodes(std::vector<Element*> const& elements);
+std::vector<MeshLib::Node*> getUniqueNodes(
+    std::vector<MeshLib::Element*> const& elements);
 
 } // end namespace MeshLib
 

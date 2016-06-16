@@ -62,7 +62,7 @@ void MeshElementRemovalDialog::accept()
     bool anything_checked (false);
 
     const MeshLib::Mesh* msh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
-    MeshLib::ElementSearch ex(*msh);
+    MeshGeoToolsLib::ElementSearch ex(*msh);
     if (this->elementTypeCheckBox->isChecked())
     {
         QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();

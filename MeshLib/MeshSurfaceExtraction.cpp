@@ -159,7 +159,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
             }
     }
     MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
-    MeshLib::NodeSearch ns(*result);
+    MeshGeoToolsLib::NodeSearch ns(*result);
     if (ns.searchUnused() == 0) {
         return result;
     } else {
