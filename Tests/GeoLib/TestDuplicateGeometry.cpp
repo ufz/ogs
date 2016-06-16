@@ -111,7 +111,7 @@ TEST(GeoLib, DuplicateGeometry)
         GeoLib::Surface* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
         for (std::size_t j=0; j<n_tris; ++j)
             sfc->addTriangle(rand() % n_pnts, rand() % n_pnts, rand() % n_pnts);
-        if (sfc->getNTriangles() > 0)
+        if (sfc->getNumberOfTriangles() > 0)
             sfcs->push_back(sfc);
         else
             delete sfc;
@@ -131,8 +131,8 @@ TEST(GeoLib, DuplicateGeometry)
 
         for (std::size_t i=0; i<n_sfcs; ++i)
         {
-            std::size_t const n_tris ((*new_sfcs)[i]->getNTriangles());
-            ASSERT_EQ(n_tris, (*sfcs)[i]->getNTriangles());
+            std::size_t const n_tris ((*new_sfcs)[i]->getNumberOfTriangles());
+            ASSERT_EQ(n_tris, (*sfcs)[i]->getNumberOfTriangles());
             for (std::size_t j=0; j<n_tris; ++j)
                 for (std::size_t k=0; k<3; ++k)
                     ASSERT_EQ((*(*(*sfcs)[i])[j])[k], (*(*(*new_sfcs)[i])[j])[k]);

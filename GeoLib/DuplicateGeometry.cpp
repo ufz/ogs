@@ -94,7 +94,7 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
             continue;
         (*new_surfaces)[i] = new GeoLib::Surface(*_geo_objects.getPointVec(_output_name));
 
-        std::size_t n_tris (surfaces[i]->getNTriangles());
+        std::size_t n_tris (surfaces[i]->getNumberOfTriangles());
         for (std::size_t j=0; j<n_tris; ++j)
         {
             GeoLib::Triangle const* t = (*surfaces[i])[j];
