@@ -141,7 +141,7 @@ std::string extractPath(std::string const& pathname)
         return "";
     return pathname.substr(0, pos + 1);
 }
-const char * pathSeparator =
+static const char * pathSeparator =
 #ifdef _WIN32
                             "\\";
 #else
