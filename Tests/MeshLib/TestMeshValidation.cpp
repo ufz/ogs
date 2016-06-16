@@ -15,6 +15,8 @@
 
 #include <memory>
 
+#include "MathLib/Point3d.h"
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
@@ -60,7 +62,7 @@ TEST(MeshValidation, DetectHolesHex)
 {
     auto mesh = std::unique_ptr<MeshLib::Mesh>{
         MeshLib::MeshGenerator::generateRegularHexMesh(
-            5,4,4,1.0,1.0,1.0,GeoLib::ORIGIN, "mesh")};
+            5, 4, 4, 1.0, 1.0, 1.0, MathLib::ORIGIN, "mesh")};
     ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
     detectHoles(*mesh, {27}, 1);
