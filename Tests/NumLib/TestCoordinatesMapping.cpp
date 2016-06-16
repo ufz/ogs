@@ -279,10 +279,10 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 {
-    typedef typename ::detail::EigenMatrixType<2, 1>::type NodalVector;
-    typedef typename ::detail::EigenMatrixType<1, 2>::type DimNodalMatrix;
-    typedef typename ::detail::EigenMatrixType<1, 1>::type DimMatrix;
-    typedef typename ::detail::EigenMatrixType<2, 2>::type GlobalDimNodalMatrix;
+    typedef ::detail::EigenMatrixType<2, 1>::type NodalVector;
+    typedef ::detail::EigenMatrixType<1, 2>::type DimNodalMatrix;
+    typedef ::detail::EigenMatrixType<1, 1>::type DimMatrix;
+    typedef ::detail::EigenMatrixType<2, 2>::type GlobalDimNodalMatrix;
     // Shape data type
     typedef ShapeMatrices<NodalVector,DimNodalMatrix,DimMatrix,GlobalDimNodalMatrix> ShapeMatricesType;
     typedef NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType> MappingType;
