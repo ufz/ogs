@@ -20,8 +20,6 @@
 #include "MathLib/GeometricBasics.h"
 #include "MathLib/Vector3.h"
 
-#include "AnalyticalGeometry.h"
-
 namespace GeoLib {
 
 MinimalBoundingSphere::MinimalBoundingSphere()
