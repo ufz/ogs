@@ -12,6 +12,9 @@
 
 #include <vector>
 
+#include <Eigen/Eigen>
+#include "NumLib/NumericsConfig.h"
+
 namespace NumLib
 {
 
