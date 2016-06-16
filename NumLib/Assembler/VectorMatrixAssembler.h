@@ -10,20 +10,22 @@
 #ifndef NUMLIB_VECTORMATRIXASSEMBLER_H_
 #define NUMLIB_VECTORMATRIXASSEMBLER_H_
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/ODESolver/Types.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
-namespace
+namespace NumLib
 {
-inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
-getRowColumnIndices(std::size_t const id,
-                    NumLib::LocalToGlobalIndexMap const& dof_table,
-                    std::vector<GlobalIndexType>& indices)
+
+namespace detail
+{
+inline std::vector<GlobalIndexType>
+getIndices(std::size_t const id,
+           NumLib::LocalToGlobalIndexMap const& dof_table)
 {
     assert(dof_table.size() > id);
-    assert(indices.empty());
+    std::vector<GlobalIndexType> indices;
 
-    // Local matrices and vectors will always be ordered by component,
+    // Local matrices and vectors will always be ordered by component
     // no matter what the order of the global matrix is.
     for (unsigned c = 0; c < dof_table.getNumComponents(); ++c)
     {
@@ -32,32 +34,26 @@ getRowColumnIndices(std::size_t const id,
         indices.insert(indices.end(), idcs.begin(), idcs.end());
     }
 
-    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
-                                                                 indices);
+    return indices;
 }
 
-template <typename Callback, typename GlobalVector, typename... Args>
-void passLocalVector_(Callback& cb, std::size_t const id,
-                      NumLib::LocalToGlobalIndexMap const& dof_table,
-                      GlobalVector const& x, Args&&... args)
+template <typename GlobalVector>
+std::vector<double>
+getLocalNodalDOFs(GlobalVector const& x,
+                  std::vector<GlobalIndexType> const& dof_indices)
 {
-    std::vector<GlobalIndexType> indices;
-    auto const r_c_indices = getRowColumnIndices(id, dof_table, indices);
-
     std::vector<double> local_x;
-    local_x.reserve(indices.size());
+    local_x.reserve(dof_indices.size());
 
-    for (auto i : indices)
+    for (auto i : dof_indices)
     {
-        local_x.emplace_back(x.get(i));
+        // TODO save some function calls to x[i]
+        local_x.emplace_back(x[i]);
     }
 
-    cb(local_x, r_c_indices, std::forward<Args>(args)...);
+    return local_x;
 }
-}
-
-namespace NumLib
-{
+} // namespace detail
 
 /*! Calls the local assemblers of FEM processes and assembles
  *  \c GlobalMatrix'es and \c GlobalVector's.
@@ -95,17 +91,13 @@ public:
         const double t, GlobalVector const& x,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
     {
-        auto cb = [&local_assembler](
-                std::vector<double> const& local_x,
-                LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
-                const double t,
-                GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
-        {
-            local_assembler.assemble(t, local_x);
-            local_assembler.addToGlobal(r_c_indices, M, K, b);
-        };
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const local_x = detail::getLocalNodalDOFs(x, indices);
+        auto const r_c_indices =
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 
-        passLocalVector_(cb, id, _data_pos, x, t, M, K, b);
+        local_assembler.assemble(t, local_x);
+        local_assembler.addToGlobal(r_c_indices, M, K, b);
     }
 
     /// Executes assembleJacobian() of the local assembler for the
@@ -117,17 +109,13 @@ public:
                           GlobalVector const& x,
                           GlobalMatrix& Jac) const
     {
-        auto cb = [&local_assembler](
-            std::vector<double> const& local_x,
-            LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
-            const double t,
-            GlobalMatrix& Jac)
-        {
-            local_assembler.assembleJacobian(t, local_x);
-            local_assembler.addJacobianToGlobal(r_c_indices, Jac);
-        };
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const local_x = detail::getLocalNodalDOFs(x, indices);
+        auto const r_c_indices =
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 
-        passLocalVector_(cb, id, _data_pos, x, t, Jac);
+        local_assembler.assembleJacobian(t, local_x);
+        local_assembler.addJacobianToGlobal(r_c_indices, Jac);
     }
 
     /// Executes the preTimestep() method of the local assembler for the
@@ -139,16 +127,10 @@ public:
                      double const t,
                      double const delta_t) const
     {
-        auto cb = [&local_assembler](
-            std::vector<double> const& local_x,
-            LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/,
-            double const t,
-            double const delta_t)
-        {
-            local_assembler.preTimestep(local_x, t, delta_t);
-        };
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const local_x = detail::getLocalNodalDOFs(x, indices);
 
-        passLocalVector_(cb, id, _data_pos, x, t, delta_t);
+        local_assembler.preTimestep(local_x, t, delta_t);
     }
 
     /// Executes the postTimestep() method of the local assembler for the
@@ -158,14 +140,10 @@ public:
                       LocalAssembler& local_assembler,
                       GlobalVector const& x) const
     {
-        auto cb = [&local_assembler](
-            std::vector<double> const& local_x,
-            LocalToGlobalIndexMap::RowColumnIndices const& /*r_c_indices*/)
-        {
-            local_assembler.postTimestep(local_x);
-        };
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const local_x = detail::getLocalNodalDOFs(x, indices);
 
-        passLocalVector_(cb, id, _data_pos, x);
+        local_assembler.postTimestep(local_x);
     }
 
     /// Executes the given callback function for the given mesh item
@@ -175,7 +153,12 @@ public:
     void passLocalVector(Callback& cb, std::size_t const id,
                          GlobalVector const& x, Args&&... args)
     {
-        passLocalVector_(cb, id, _data_pos, x, std::forward<Args>(args)...);
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const local_x = detail::getLocalNodalDOFs(x, indices);
+        auto const r_c_indices =
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
+
+        cb(local_x, r_c_indices, std::forward<Args>(args)...);
     }
 
 private:
@@ -203,8 +186,9 @@ public:
         LocalAssembler& local_assembler,
         const double t, GlobalVector& b) const
     {
-        std::vector<GlobalIndexType> indices;
-        auto const r_c_indices = getRowColumnIndices(id, _data_pos, indices);
+        auto const indices = detail::getIndices(id, _data_pos);
+        auto const r_c_indices =
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 
         local_assembler.assemble(t);
         local_assembler.addToGlobal(r_c_indices, b);
