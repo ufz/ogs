@@ -21,6 +21,7 @@ namespace NumLib
 {
 namespace detail
 {
+//! Used to explicitly instantiate the NaturalCoordinatesMapping class template.
 template <class T_MESH_ELEMENT,
           class T_SHAPE_FUNC,
           class T_SHAPE_MATRICES,
@@ -82,8 +83,5 @@ struct NaturalCoordinatesMapping
 };
 
 } // NumLib
-
-// #include "NaturalCoordinatesMapping-impl.h"
-
 
 #endif //NATURALCOORDINATESMAPPING_H_
