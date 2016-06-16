@@ -86,7 +86,6 @@ class NonlinearSolver<NonlinearSolverTag::Newton> final
 public:
     //! Type of the nonlinear equation system to be solved.
     using System = NonlinearSystem<NonlinearSolverTag::Newton>;
-    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
 
     /*! Constructs a new instance.
      *
@@ -95,7 +94,7 @@ public:
      * \param maxiter the maximum number of iterations used to solve the equation.
      */
     explicit
-    NonlinearSolver(LinearSolver& linear_solver,
+    NonlinearSolver(GlobalLinearSolver& linear_solver,
                     double const tol, const unsigned maxiter)
         : _linear_solver(linear_solver)
         , _tol(tol)
@@ -110,7 +109,7 @@ public:
     bool solve(GlobalVector& x) override;
 
 private:
-    LinearSolver& _linear_solver;
+    GlobalLinearSolver& _linear_solver;
     System*       _equation_system = nullptr;
 
     const double _tol;       //!< tolerance of the solver
@@ -137,7 +136,6 @@ class NonlinearSolver<NonlinearSolverTag::Picard> final
 public:
     //! Type of the nonlinear equation system to be solved.
     using System = NonlinearSystem<NonlinearSolverTag::Picard>;
-    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
 
     /*! Constructs a new instance.
      *
@@ -146,7 +144,7 @@ public:
      * \param maxiter the maximum number of iterations used to solve the equation.
      */
     explicit
-    NonlinearSolver(LinearSolver& linear_solver,
+    NonlinearSolver(GlobalLinearSolver& linear_solver,
                     double const tol, const unsigned maxiter)
         : _linear_solver(linear_solver)
         , _tol(tol)
@@ -161,7 +159,7 @@ public:
     bool solve(GlobalVector& x) override;
 
 private:
-    LinearSolver& _linear_solver;
+    GlobalLinearSolver& _linear_solver;
     System*       _equation_system = nullptr;
 
     const double _tol;       //!< tolerance of the solver
@@ -186,7 +184,7 @@ std::pair<
     std::unique_ptr<NonlinearSolverBase>,
     NonlinearSolverTag
 >
-createNonlinearSolver(MathLib::LinearSolver<GlobalMatrix, GlobalVector>& linear_solver,
+createNonlinearSolver(GlobalLinearSolver& linear_solver,
                       BaseLib::ConfigTree const& config);
 
 //! @}

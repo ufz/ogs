@@ -214,7 +214,7 @@ private:
     /// The time loop used to solve this project's processes.
     std::unique_ptr<TimeLoop> _time_loop;
 
-    std::map<std::string, std::unique_ptr<MathLib::LinearSolver<GlobalMatrix, GlobalVector> > >
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>>
     _linear_solvers;
 
     using NonlinearSolver = NumLib::NonlinearSolverBase;
