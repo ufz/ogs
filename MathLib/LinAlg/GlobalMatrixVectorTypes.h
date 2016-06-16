@@ -21,66 +21,45 @@
     #include "MathLib/LinAlg/Eigen/EigenVector.h"
     #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
 
-    namespace detail
-    {
-    using GlobalVectorType = MathLib::EigenVector;
-    using GlobalMatrixType = MathLib::EigenMatrix;
+    using GlobalVector = MathLib::EigenVector;
+    using GlobalMatrix = MathLib::EigenMatrix;
 
-    using LinearSolverType = MathLib::EigenLisLinearSolver;
-    }
+    using GlobalLinearSolver = MathLib::EigenLisLinearSolver;
 
 #elif defined(USE_PETSC)
     #include "MathLib/LinAlg/PETSc/PETScVector.h"
     #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
     #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
-namespace detail
-{
-    using GlobalVectorType = MathLib::PETScVector;
-    using GlobalMatrixType = MathLib::PETScMatrix;
 
-    using LinearSolverType = MathLib::PETScLinearSolver;
-}
+    using GlobalVector = MathLib::PETScVector;
+    using GlobalMatrix = MathLib::PETScMatrix;
 
-#else
-#ifdef OGS_USE_EIGEN
+    using GlobalLinearSolver = MathLib::PETScLinearSolver;
+
+#elif defined(OGS_USE_EIGEN)
     #include "MathLib/LinAlg/Eigen/EigenVector.h"
     #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
     #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
-namespace detail
-{
-    using GlobalVectorType = MathLib::EigenVector;
-    using GlobalMatrixType = MathLib::EigenMatrix;
 
-    using LinearSolverType = MathLib::EigenLinearSolver;
-}
-#else   // OGS_USE_EIGEN
-    #include "MathLib/LinAlg/Dense/DenseVector.h"
-    #include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
-    #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
-namespace detail
-{
-    using GlobalVectorType = MathLib::DenseVector<double>;
-    using GlobalMatrixType = MathLib::GlobalDenseMatrix<double>;
+    using GlobalVector = MathLib::EigenVector;
+    using GlobalMatrix = MathLib::EigenMatrix;
 
-    using LinearSolverType =
-        MathLib::GaussAlgorithm<GlobalMatrixType, GlobalVectorType>;
-}
+    using GlobalLinearSolver = MathLib::EigenLinearSolver;
 
-#endif    // USE_LIS
 #endif    // OGS_USE_EIGEN
 
 
 /// A type used for indexing of global vectors and matrices. It is equal to the
-/// GlobalMatrixType::IndexType and the GlobalVectorType::IndexType.
-static_assert(std::is_integral<detail::GlobalMatrixType::IndexType>::value,
+/// GlobalMatrix::IndexType and the GlobalVector::IndexType.
+static_assert(std::is_integral<GlobalMatrix::IndexType>::value,
               "The index type for global matrices is not an integral type.");
-static_assert(std::is_integral<detail::GlobalVectorType::IndexType>::value,
+static_assert(std::is_integral<GlobalVector::IndexType>::value,
               "The index type for global vectors is not an integral type.");
-static_assert(std::is_same<detail::GlobalMatrixType::IndexType,
-                           detail::GlobalVectorType::IndexType>::value,
+static_assert(std::is_same<GlobalMatrix::IndexType,
+                           GlobalVector::IndexType>::value,
               "The global matrix and vector index types do not match.");
 // Both types are integral types and equal, define a single GlobalIndexType.
-using GlobalIndexType = detail::GlobalMatrixType::IndexType;
+using GlobalIndexType = GlobalMatrix::IndexType;
 
 using GlobalSparsityPattern = MathLib::SparsityPattern<GlobalIndexType>;
 

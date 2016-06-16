@@ -45,7 +45,7 @@ private:
     //! An abstract equations system
     using EquationSystem   = NumLib::EquationSystem<Vector>;
     //! An abstract process
-    using Process          = ProcessLib::Process<GlobalSetupType>;
+    using Process          = ProcessLib::Process;
     //! An abstract time discretization
     using TimeDisc         = NumLib::TimeDiscretization<Vector>;
 

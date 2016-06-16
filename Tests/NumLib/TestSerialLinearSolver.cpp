@@ -19,6 +19,9 @@
 #include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MathLib/LinAlg/MatrixSpecifications.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/Solvers/GaussAlgorithm.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/MathTools.h"
@@ -42,11 +45,6 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     Example ex1;
 
     //--------------------------------------------------------------------------
-    // Choose implementation type
-    //--------------------------------------------------------------------------
-    using GlobalSetup = GlobalSetupType;    // defined in numerics config
-
-    //--------------------------------------------------------------------------
     // Prepare mesh items where data are assigned
     //--------------------------------------------------------------------------
     const MeshLib::MeshSubset mesh_items_all_nodes(*ex1.msh,
@@ -65,15 +63,14 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Construct a linear system
     //--------------------------------------------------------------------------
     // allocate a vector and matrix
-    typedef GlobalSetup::VectorType GlobalVector;
-    typedef GlobalSetup::MatrixType GlobalMatrix;
-    auto A = std::unique_ptr<GlobalMatrix>{
-             GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
+    MathLib::MatrixSpecifications ms{local_to_global_index_map.dofSizeWithoutGhosts(),
+        local_to_global_index_map.dofSizeWithoutGhosts(),
+        &local_to_global_index_map.getGhostIndices(),
+        nullptr};
+    auto A = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
-    auto rhs = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
-    auto x   = std::unique_ptr<GlobalVector>{
-               GlobalSetup::createVector(local_to_global_index_map.dofSizeWithGhosts())};
+    auto rhs = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
+    auto x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
     // TODO no setZero() for rhs, x?
 
     using LocalAssembler = Example::LocalAssemblerData<GlobalMatrix, GlobalVector>;
@@ -95,7 +92,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     };
 
     // Call global initializer for each mesh element.
-    GlobalSetup::transformDereferenced(
+    GlobalExecutor::transformDereferenced(
             local_asm_builder,
             ex1.msh->getElements(),
             local_assembler_data);
@@ -109,11 +106,10 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     GlobalAssembler assembler(local_to_global_index_map);
 
     // Call global assembler for each mesh element.
-    auto M_dummy = std::unique_ptr<GlobalMatrix>{
-        GlobalSetup::createMatrix(local_to_global_index_map.dofSizeWithGhosts())};
+    auto M_dummy = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto const t = 0.0;
-    GlobalSetup::executeMemberDereferenced(
+    GlobalExecutor::executeMemberDereferenced(
                 assembler, &GlobalAssembler::assemble,
                 local_assembler_data, t, *x, *M_dummy, *A, *rhs);
 
@@ -148,7 +144,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
                              BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
-    GlobalSetup::LinearSolver ls("solver_name", &conf);
+    GlobalLinearSolver ls("solver_name", &conf);
     ls.solve(*A, *rhs, *x);
 
     // copy solution to double vector

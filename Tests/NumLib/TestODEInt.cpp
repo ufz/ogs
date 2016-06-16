@@ -14,8 +14,8 @@
 using EDMatrix = Eigen::MatrixXd;
 using EVector = Eigen::VectorXd;
 
-using GMatrix = GlobalSetupType::MatrixType;
-using GVector = GlobalSetupType::VectorType;
+using GMatrix = GlobalMatrix;
+using GVector = GlobalVector;
 
 
 template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>

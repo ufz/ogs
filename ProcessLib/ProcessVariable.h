@@ -82,7 +82,7 @@ public:
         }
     }
 
-    template <typename GlobalSetup, typename OutputIterator>
+    template <typename OutputIterator>
     void createNeumannBcs(OutputIterator bcs,
                           MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
                           unsigned const integration_order,
@@ -100,8 +100,8 @@ public:
             // Create/initialize the boundary condition with matching component
             // id and output it through the OutputIterator.
             bc_config.first->initialize(searcher);
-            bcs++ = std::unique_ptr<NeumannBc<GlobalSetup>>{
-                new NeumannBc<GlobalSetup>(*bc_config.first,
+            bcs++ = std::unique_ptr<NeumannBc>{
+                new NeumannBc(*bc_config.first,
                                            integration_order,
                                            dof_table,
                                            variable_id,

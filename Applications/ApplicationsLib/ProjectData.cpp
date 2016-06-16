@@ -34,7 +34,7 @@
 
 #include "UncoupledProcessesTimeLoop.h"
 
-#include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess-fwd.h"
+#include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess.h"
 #include "ProcessLib/TES/TESProcess.h"
 
 
@@ -179,14 +179,14 @@ void ProjectData::buildProcesses()
             // here.
             _processes.emplace_back(
                 ProcessLib::GroundwaterFlow::
-                createGroundwaterFlowProcess<GlobalSetupType>(
+                createGroundwaterFlowProcess(
                     *_mesh_vec[0], *nl_slv, std::move(time_disc),
                     _process_variables, _parameters, pc));
         }
         else if (type == "TES")
         {
             _processes.emplace_back(
-                ProcessLib::TES::createTESProcess<GlobalSetupType>(
+                ProcessLib::TES::createTESProcess(
                     *_mesh_vec[0], *nl_slv, std::move(time_disc),
                     _process_variables, _parameters, pc));
         }
@@ -323,7 +323,7 @@ void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
     output_config.checkConfigParameter("type", "VTK");
     DBUG("Parse output configuration:");
 
-    _output = ProcessLib::Output<GlobalSetupType>::newInstance(output_config, output_directory);
+    _output = ProcessLib::Output::newInstance(output_config, output_directory);
 }
 
 void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_config)
@@ -351,7 +351,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
         BaseLib::insertIfKeyUniqueElseError(_linear_solvers,
             name,
             MathLib::createLinearSolver<GlobalMatrix, GlobalVector,
-                GlobalSetupType::LinearSolver>(&conf),
+                GlobalLinearSolver>(&conf),
             "The linear solver name is not unique");
     }
 }
