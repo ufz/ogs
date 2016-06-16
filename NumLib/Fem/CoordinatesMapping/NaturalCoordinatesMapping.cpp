@@ -256,32 +256,32 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
         SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&)
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_DYN(RULE, SHAPE) \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, 0, ALL, EigenDynamicShapeMatrixPolicy);            \
-    /* Those instantiations are needed in unit tests only */              \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, 0, N, EigenDynamicShapeMatrixPolicy);              \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, 0, DNDR, EigenDynamicShapeMatrixPolicy);           \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, 0, N_J, EigenDynamicShapeMatrixPolicy);            \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, 0, DNDR_J, EigenDynamicShapeMatrixPolicy);         \
-    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
+        RULE, SHAPE, 0, ALL, EigenDynamicShapeMatrixPolicy);         \
+    /* Those instantiations are needed in unit tests only */         \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
+        RULE, SHAPE, 0, N, EigenDynamicShapeMatrixPolicy);           \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
+        RULE, SHAPE, 0, DNDR, EigenDynamicShapeMatrixPolicy);        \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
+        RULE, SHAPE, 0, N_J, EigenDynamicShapeMatrixPolicy);         \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
+        RULE, SHAPE, 0, DNDR_J, EigenDynamicShapeMatrixPolicy);      \
+    OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \
         RULE, SHAPE, 0, DNDX, EigenDynamicShapeMatrixPolicy)
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_FIX(RULE, SHAPE, DIM) \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, DIM, ALL, EigenFixedShapeMatrixPolicy);            \
+        RULE, SHAPE, DIM, ALL, EigenFixedShapeMatrixPolicy);              \
     /* Those instantiations are needed in unit tests only */              \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, DIM, N, EigenFixedShapeMatrixPolicy);              \
+        RULE, SHAPE, DIM, N, EigenFixedShapeMatrixPolicy);                \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, DIM, DNDR, EigenFixedShapeMatrixPolicy);           \
+        RULE, SHAPE, DIM, DNDR, EigenFixedShapeMatrixPolicy);             \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, DIM, N_J, EigenFixedShapeMatrixPolicy);            \
+        RULE, SHAPE, DIM, N_J, EigenFixedShapeMatrixPolicy);              \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
-        RULE, SHAPE, DIM, DNDR_J, EigenFixedShapeMatrixPolicy);         \
+        RULE, SHAPE, DIM, DNDR_J, EigenFixedShapeMatrixPolicy);           \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                     \
         RULE, SHAPE, DIM, DNDX, EigenFixedShapeMatrixPolicy)
 
