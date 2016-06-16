@@ -10,6 +10,7 @@
 #ifndef NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 #define NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Extrapolator.h"
 
