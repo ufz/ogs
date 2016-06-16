@@ -65,7 +65,8 @@ ConfigTree(ConfigTree && other)
 
 ConfigTree::~ConfigTree()
 {
-    checkAndInvalidate();
+    if (!std::uncaught_exception())
+        checkAndInvalidate();
 }
 
 ConfigTree&
@@ -194,6 +195,9 @@ void ConfigTree::ignoreConfigParameterAll(const std::string &param) const
 void ConfigTree::error(const std::string& message) const
 {
     _onerror(_filename, _path, message);
+    OGS_FATAL(
+        "ConfigTree: The error handler does not break out of the normal "
+        "control flow.");
 }
 
 void ConfigTree::warning(const std::string& message) const
