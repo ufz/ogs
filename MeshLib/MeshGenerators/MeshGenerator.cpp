@@ -25,7 +25,7 @@ namespace MeshLib
 
 std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     const std::vector<const std::vector<double>*> &vec_xyz_coords,
-    const GeoLib::Point& origin)
+    const MathLib::Point3d& origin)
 {
     std::vector<Node*> nodes;
     nodes.reserve(vec_xyz_coords[0]->size()*vec_xyz_coords[1]->size()*vec_xyz_coords[2]->size());
@@ -47,7 +47,7 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
 
 std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     const std::vector<double> &vec_x_coords,
-    const GeoLib::Point& origin)
+    const MathLib::Point3d& origin)
 {
     std::vector<const std::vector<double>*> vec_xyz_coords;
     vec_xyz_coords.push_back(&vec_x_coords);
@@ -60,7 +60,7 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
 std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     std::vector<double> &vec_x_coords,
     std::vector<double> &vec_y_coords,
-    const GeoLib::Point& origin)
+    const MathLib::Point3d& origin)
 {
     std::vector<const std::vector<double>*> vec_xyz_coords;
     vec_xyz_coords.push_back(&vec_x_coords);
@@ -75,7 +75,7 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     std::vector<double> &vec_x_coords,
     std::vector<double> &vec_y_coords,
     std::vector<double> &vec_z_coords,
-    const GeoLib::Point& origin)
+    const MathLib::Point3d& origin)
 {
     std::vector<const std::vector<double>*> vec_xyz_coords;
     vec_xyz_coords.push_back(&vec_x_coords);
@@ -87,7 +87,7 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
 std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     const std::array<unsigned,3> &n_cells,
     const std::array<double,3> &cell_size,
-    const GeoLib::Point& origin)
+    const MathLib::Point3d& origin)
 {
     std::vector<Node*> nodes;
     nodes.reserve((n_cells[0]+1)*(n_cells[1]+1)*(n_cells[2]+1));
@@ -110,7 +110,7 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
 Mesh* MeshGenerator::generateLineMesh(
     const double length,
     const std::size_t subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string   const& mesh_name)
 {
     return generateLineMesh(subdivision, length/subdivision, origin, mesh_name);
@@ -119,7 +119,7 @@ Mesh* MeshGenerator::generateLineMesh(
 Mesh* MeshGenerator::generateLineMesh(
     const unsigned n_cells,
     const double   cell_size,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string   const& mesh_name)
 {
     return generateLineMesh(BaseLib::UniformSubdivision(n_cells*cell_size, n_cells), origin, mesh_name);
@@ -127,7 +127,7 @@ Mesh* MeshGenerator::generateLineMesh(
 
 Mesh* MeshGenerator::generateLineMesh(
     const BaseLib::ISubdivision &div,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     const std::vector<double> vec_x(div());
@@ -152,7 +152,7 @@ Mesh* MeshGenerator::generateLineMesh(
 Mesh* MeshGenerator::generateRegularQuadMesh(
     const double length,
     const std::size_t subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return generateRegularQuadMesh(subdivision, subdivision,
@@ -164,7 +164,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
     const double y_length,
     const std::size_t x_subdivision,
     const std::size_t y_subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return generateRegularQuadMesh(x_subdivision, y_subdivision,
@@ -175,7 +175,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
     const unsigned n_x_cells,
     const unsigned n_y_cells,
     const double cell_size,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     return generateRegularQuadMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
@@ -186,7 +186,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
     const unsigned n_y_cells,
     const double cell_size_x,
     const double cell_size_y,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     return generateRegularQuadMesh(BaseLib::UniformSubdivision(n_x_cells*cell_size_x, n_x_cells),
@@ -196,7 +196,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 Mesh* MeshGenerator::generateRegularQuadMesh(
     const BaseLib::ISubdivision &div_x,
     const BaseLib::ISubdivision &div_y,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     std::vector<double> vec_x(div_x());
@@ -231,7 +231,7 @@ Mesh* MeshGenerator::generateRegularQuadMesh(
 Mesh* MeshGenerator::generateRegularHexMesh(
     const double length,
     const std::size_t subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return MeshGenerator::generateRegularHexMesh(subdivision, subdivision,
@@ -245,7 +245,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(
     const std::size_t x_subdivision,
     const std::size_t y_subdivision,
     const std::size_t z_subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return MeshGenerator::generateRegularHexMesh(x_subdivision, y_subdivision, z_subdivision,
@@ -257,7 +257,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(
     const unsigned n_y_cells,
     const unsigned n_z_cells,
     const double   cell_size,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string   const& mesh_name)
 {
     return MeshGenerator::generateRegularHexMesh(n_x_cells, n_y_cells, n_z_cells,
@@ -271,7 +271,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(
     const double   cell_size_x,
     const double   cell_size_y,
     const double   cell_size_z,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string   const& mesh_name)
 {
     return generateRegularHexMesh(
@@ -285,7 +285,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(
     const BaseLib::ISubdivision &div_x,
     const BaseLib::ISubdivision &div_y,
     const BaseLib::ISubdivision &div_z,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     std::vector<double> vec_x(div_x());
@@ -335,7 +335,7 @@ Mesh* MeshGenerator::generateRegularHexMesh(
 Mesh* MeshGenerator::generateRegularTriMesh(
     const double length,
     const std::size_t subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return generateRegularTriMesh(subdivision, subdivision, length/subdivision, origin, mesh_name);
@@ -346,7 +346,7 @@ Mesh* MeshGenerator::generateRegularTriMesh(
     const double y_length,
     const std::size_t x_subdivision,
     const std::size_t y_subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return generateRegularTriMesh(x_subdivision, y_subdivision, x_length/x_subdivision, y_length/y_subdivision, origin, mesh_name);
@@ -356,7 +356,7 @@ Mesh* MeshGenerator::generateRegularTriMesh(
     const unsigned n_x_cells,
     const unsigned n_y_cells,
     const double cell_size,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     return generateRegularTriMesh(n_x_cells, n_y_cells, cell_size, cell_size, origin, mesh_name);
@@ -367,7 +367,7 @@ Mesh* MeshGenerator::generateRegularTriMesh(
     const unsigned n_y_cells,
     const double   cell_size_x,
     const double   cell_size_y,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string   const& mesh_name)
 {
     return generateRegularTriMesh(BaseLib::UniformSubdivision(n_x_cells*cell_size_x, n_x_cells),
@@ -377,7 +377,7 @@ Mesh* MeshGenerator::generateRegularTriMesh(
 Mesh* MeshGenerator::generateRegularTriMesh(
     const BaseLib::ISubdivision &div_x,
     const BaseLib::ISubdivision &div_y,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     std::vector<double> vec_x(div_x());
@@ -420,7 +420,7 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
     const std::size_t x_subdivision,
     const std::size_t y_subdivision,
     const std::size_t z_subdivision,
-    const GeoLib::Point& origin,
+    const MathLib::Point3d& origin,
     std::string const& mesh_name)
 {
     return generateRegularPrismMesh(x_subdivision, y_subdivision, z_subdivision,
@@ -433,7 +433,7 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
     const unsigned n_y_cells,
     const unsigned n_z_cells,
     const double cell_size,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string const& mesh_name)
 {
     return generateRegularPrismMesh(n_x_cells, n_y_cells, n_z_cells,
@@ -447,7 +447,7 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
     const double   cell_size_x,
     const double   cell_size_y,
     const double   cell_size_z,
-    GeoLib::Point const& origin,
+    MathLib::Point3d const& origin,
     std::string   const& mesh_name)
 {
     std::unique_ptr<MeshLib::Mesh> mesh (
