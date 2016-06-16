@@ -51,7 +51,7 @@ public:
 class Example2
 {
 public:
-    Example2(std::size_t n) : A(n, n), b(n) {}
+    explicit Example2(std::size_t n) : A(n, n), b(n) {}
 
     void operator()(VectorType &x, VectorType &x_new)
     {
