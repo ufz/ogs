@@ -56,7 +56,7 @@ namespace NumLib
  */
 template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystemBase
-        : public NonlinearSystem<Matrix, Vector, NLTag>
+        : public NonlinearSystem<NLTag>
         , public InternalMatrixStorage
 {
 public:

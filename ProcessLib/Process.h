@@ -35,7 +35,7 @@ class Process
 {
 public:
     using Index = GlobalMatrix::IndexType;
-    using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+    using NonlinearSolver = NumLib::NonlinearSolverBase;
     using TimeDiscretization = NumLib::TimeDiscretization;
 
     Process(

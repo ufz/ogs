@@ -36,7 +36,6 @@ namespace NumLib
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation.
  */
-template<typename Matrix, typename Vector>
 class NonlinearSolverBase
 {
 public:
@@ -48,7 +47,7 @@ public:
      *
      * \param x   the state at which the equation system will be assembled.
      */
-    virtual void assemble(Vector const& x) const = 0;
+    virtual void assemble(GlobalVector const& x) const = 0;
 
     /*! Assemble and solve the equation system.
      *
@@ -57,7 +56,7 @@ public:
      * \retval true if the equation system could be solved
      * \retval false otherwise
      */
-    virtual bool solve(Vector& x) = 0;
+    virtual bool solve(GlobalVector& x) = 0;
 
     virtual ~NonlinearSolverBase() = default;
 };
@@ -71,7 +70,7 @@ public:
  * \tparam Vector the type of the solution vector of the equation.
  * \tparam NLTag  a tag indicating the method used for solving the equation.
  */
-template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
+template<NonlinearSolverTag NLTag>
 class NonlinearSolver;
 
 
@@ -80,14 +79,14 @@ class NonlinearSolver;
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation.
  */
-template<typename Matrix, typename Vector>
-class NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton> final
-        : public NonlinearSolverBase<Matrix, Vector>
+template<>
+class NonlinearSolver<NonlinearSolverTag::Newton> final
+        : public NonlinearSolverBase
 {
 public:
     //! Type of the nonlinear equation system to be solved.
-    using System = NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>;
-    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
+    using System = NonlinearSystem<NonlinearSolverTag::Newton>;
+    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
 
     /*! Constructs a new instance.
      *
@@ -106,9 +105,9 @@ public:
     //! Set the nonlinear equation system that will be solved.
     void setEquationSystem(System& eq) { _equation_system = &eq; }
 
-    void assemble(Vector const& x) const override;
+    void assemble(GlobalVector const& x) const override;
 
-    bool solve(Vector& x) override;
+    bool solve(GlobalVector& x) override;
 
 private:
     LinearSolver& _linear_solver;
@@ -131,14 +130,14 @@ private:
  * \tparam Matrix the type of matrices occuring in the linearization of the equation.
  * \tparam Vector the type of the solution vector of the equation.
  */
-template<typename Matrix, typename Vector>
-class NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard> final
-        : public NonlinearSolverBase<Matrix, Vector>
+template<>
+class NonlinearSolver<NonlinearSolverTag::Picard> final
+        : public NonlinearSolverBase
 {
 public:
     //! Type of the nonlinear equation system to be solved.
-    using System = NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>;
-    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
+    using System = NonlinearSystem<NonlinearSolverTag::Picard>;
+    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
 
     /*! Constructs a new instance.
      *
@@ -157,9 +156,9 @@ public:
     //! Set the nonlinear equation system that will be solved.
     void setEquationSystem(System& eq) { _equation_system = &eq; }
 
-    void assemble(Vector const& x) const override;
+    void assemble(GlobalVector const& x) const override;
 
-    bool solve(Vector& x) override;
+    bool solve(GlobalVector& x) override;
 
 private:
     LinearSolver& _linear_solver;
@@ -183,12 +182,11 @@ private:
  *         solver instance and the \c tag indicates if it uses the Picard
  *         or Newton-Raphson method
  */
-template<typename Matrix, typename Vector>
 std::pair<
-    std::unique_ptr<NonlinearSolverBase<Matrix, Vector> >,
+    std::unique_ptr<NonlinearSolverBase>,
     NonlinearSolverTag
 >
-createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
+createNonlinearSolver(MathLib::LinearSolver<GlobalMatrix, GlobalVector>& linear_solver,
                       BaseLib::ConfigTree const& config);
 
 //! @}

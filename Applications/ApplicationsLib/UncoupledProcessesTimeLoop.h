@@ -40,7 +40,7 @@ public:
 
 private:
     //! An abstract nonlinear solver
-    using AbstractNLSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+    using AbstractNLSolver = NumLib::NonlinearSolverBase;
     //! An abstract equations system
     using EquationSystem   = NumLib::EquationSystem;
     //! An abstract process
@@ -55,7 +55,7 @@ private:
     {
         template<NumLib::ODESystemTag ODETag, NumLib::NonlinearSolverTag NLTag>
         SingleProcessData(
-                NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, NLTag>& nonlinear_solver,
+                NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
                 TimeDisc& time_disc,
                 NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag, NLTag>& ode_sys)
             : nonlinear_solver_tag(NLTag)
@@ -108,10 +108,10 @@ private:
         using Tag = NumLib::NonlinearSolverTag;
         // A concrete Picard solver
         using NonlinearSolverPicard =
-            NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, Tag::Picard>;
+            NumLib::NonlinearSolver<Tag::Picard>;
         // A concrete Newton solver
         using NonlinearSolverNewton =
-            NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, Tag::Newton>;
+            NumLib::NonlinearSolver<Tag::Newton>;
 
         if (auto* nonlinear_solver_picard =
             dynamic_cast<NonlinearSolverPicard*>(&nonlinear_solver))
@@ -165,8 +165,8 @@ private:
     static void setEquationSystem(AbstractNLSolver& nonlinear_solver,
                                   EquationSystem& eq_sys)
     {
-        using Solver = NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, NLTag>;
-        using EqSys  = NumLib::NonlinearSystem<GlobalMatrix, GlobalVector, NLTag>;
+        using Solver = NumLib::NonlinearSolver<NLTag>;
+        using EqSys  = NumLib::NonlinearSystem<NLTag>;
 
         assert(dynamic_cast<Solver*>(&nonlinear_solver) != nullptr);
         assert(dynamic_cast<EqSys*> (&eq_sys) != nullptr);
@@ -201,7 +201,7 @@ private:
     static void applyKnownSolutions(
             EquationSystem const& eq_sys, GlobalVector& x)
     {
-        using EqSys = NumLib::NonlinearSystem<GlobalMatrix, GlobalVector, NLTag>;
+        using EqSys = NumLib::NonlinearSystem<NLTag>;
         assert(dynamic_cast<EqSys const*> (&eq_sys) != nullptr);
         auto& eq_sys_ = static_cast<EqSys const&> (eq_sys);
 

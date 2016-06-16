@@ -24,7 +24,7 @@ class TestOutput
 public:
     using TimeDisc = NumLib::TimeDiscretization;
     using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
-    using NLSolver = NumLib::NonlinearSolver<Matrix, Vector, NLTag>;
+    using NLSolver = NumLib::NonlinearSolver<NLTag>;
 
     TestOutput(const char* name)
         : _file_name_part(name)

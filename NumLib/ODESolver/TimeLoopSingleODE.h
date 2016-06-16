@@ -32,7 +32,7 @@ class TimeLoopSingleODE final
 public:
     using TDiscODESys  = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
     using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
-    using NLSolver     = NonlinearSolver<Matrix, Vector, NLTag>;
+    using NLSolver     = NonlinearSolver<NLTag>;
 
     /*! Constructs an new instance.
      *
