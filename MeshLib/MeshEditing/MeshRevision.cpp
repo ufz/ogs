@@ -19,7 +19,6 @@
 #include "logog/include/logog.hpp"
 
 #include "GeoLib/Grid.h"
-#include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/GeometricBasics.h"
 
 #include "MeshLib/Elements/Elements.h"
