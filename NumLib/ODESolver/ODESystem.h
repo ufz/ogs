@@ -47,7 +47,7 @@ template<typename Matrix, typename Vector>
 class ODESystem<Matrix, Vector,
                 ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Picard>
-        : public EquationSystem<Vector>
+        : public EquationSystem
 {
 public:
     //! A tag indicating the type of ODE.

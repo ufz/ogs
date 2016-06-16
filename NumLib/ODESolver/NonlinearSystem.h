@@ -40,7 +40,7 @@ class NonlinearSystem;
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Newton>
-        : public EquationSystem<Vector>
+        : public EquationSystem
 {
 public:
     //! Assembles the residual at the point \c x.
@@ -84,7 +84,7 @@ public:
  */
 template<typename Matrix, typename Vector>
 class NonlinearSystem<Matrix, Vector, NonlinearSolverTag::Picard>
-        : public EquationSystem<Vector>
+        : public EquationSystem
 {
 public:
     //! Assembles the linearized equation at point \c x.
