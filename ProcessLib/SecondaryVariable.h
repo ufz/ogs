@@ -189,16 +189,14 @@ public:
     }
 
     //! Returns an iterator to the first secondary variable.
-    typename std::map<std::string,
-                      SecondaryVariable>::const_iterator
+    std::map<std::string, SecondaryVariable>::const_iterator
     begin() const
     {
         return _configured_secondary_variables.begin();
     }
 
     //! Returns an iterator past the last secondary variable.
-    typename std::map<std::string,
-                      SecondaryVariable>::const_iterator
+    std::map<std::string, SecondaryVariable>::const_iterator
     end() const
     {
         return _configured_secondary_variables.end();
