@@ -98,7 +98,7 @@ public:
     static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! The type of ODE.
-    using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
+    using ODE = ODESystem<ODETag, NonlinearSolverTag::Newton>;
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<ODETag>;
     //! A shortcut for a general time discretization scheme
@@ -286,7 +286,7 @@ public:
     static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! The type of ODE.
-    using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
+    using ODE = ODESystem<ODETag, NonlinearSolverTag::Picard>;
     //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
     using MatTrans = MatrixTranslator<ODETag>;
     //! A shortcut for a general time discretization scheme

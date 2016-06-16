@@ -27,9 +27,7 @@ namespace ProcessLib
 {
 
 class Process
-        : public NumLib::ODESystem<GlobalMatrix,
-                                   GlobalVector,
-                                   // TODO: later on use a simpler ODE system
+        : public NumLib::ODESystem<// TODO: later on use a simpler ODE system
                                    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
                                    NumLib::NonlinearSolverTag::Newton>
 {

@@ -57,7 +57,7 @@ private:
         SingleProcessData(
                 NumLib::NonlinearSolver<NLTag>& nonlinear_solver,
                 TimeDisc& time_disc,
-                NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag, NLTag>& ode_sys)
+                NumLib::ODESystem<ODETag, NLTag>& ode_sys)
             : nonlinear_solver_tag(NLTag)
             , nonlinear_solver(nonlinear_solver)
             , tdisc_ode_sys(
@@ -101,7 +101,7 @@ private:
     SingleProcessData
     makeSingleProcessData(
             AbstractNLSolver& nonlinear_solver,
-            NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag,
+            NumLib::ODESystem<ODETag,
                 NumLib::NonlinearSolverTag::Picard>& ode_sys,
             TimeDisc& time_disc)
     {
@@ -128,7 +128,7 @@ private:
         {
             // The Newton-Raphson method needs a Newton-ready ODE.
 
-            using ODENewton = NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag, Tag::Newton>;
+            using ODENewton = NumLib::ODESystem<ODETag, Tag::Newton>;
             if (auto* ode_newton = dynamic_cast<ODENewton*>(&ode_sys))
             {
                 return SingleProcessData{

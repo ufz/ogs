@@ -36,11 +36,11 @@ public:
         run_test<ODE>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> class ODE>
-    void run_test(ODE<Matrix, Vector>& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
+    template<class ODE>
+    void run_test(ODE& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
     {
-        using ODE_ = ODE<Matrix, Vector>;
-        using ODET = ODETraits<Matrix, Vector, ODE>;
+        using ODE_ = ODE;
+        using ODET = ODETraits<ODE>;
 
         NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
@@ -97,10 +97,10 @@ private:
         *_file << "\n";
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> class Ode>
+    template<class Ode>
     void loopCallback(const double t, Vector const& x)
     {
-        write(t, x, ODETraits<Matrix, Vector, Ode>::solution(t));
+        write(t, x, ODETraits<Ode>::solution(t));
     }
 
     const std::string _file_name_part;
@@ -164,21 +164,21 @@ run_test_case(const unsigned num_timesteps, const char* name)
 // This class is only here s.t. I don't have to put the members into
 // the definition of the macro TCLITEM below.
 template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
+         class ODE_,
          class TimeDisc_,
          NumLib::NonlinearSolverTag NLTag_>
 struct TestCaseBase
 {
     using Matrix = Matrix_;
     using Vector = Vector_;
-    using ODE = ODE_<Matrix_, Vector_>;
+    using ODE = ODE_;
     using TimeDisc = TimeDisc_;
     static const NumLib::NonlinearSolverTag NLTag = NLTag_;
 };
 
 
 template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
+         class ODE_,
          class TimeDisc_,
          NumLib::NonlinearSolverTag NLTag_>
 struct TestCase;
@@ -319,7 +319,7 @@ TEST(NumLibODEInt, ODE3)
 
     {
         run_test_case<GMatrix, GVector, NumLib::BackwardEuler,
-                      ODE3<GMatrix, GVector>,
+                      ODE3,
                       NumLib::NonlinearSolverTag::Newton>(0u, name);
     }
 }
