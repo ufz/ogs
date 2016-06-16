@@ -141,7 +141,7 @@ int main (int argc, char* argv[])
         "new property value (data type int)", false, 0, "number");
     cmd.add(int_property_arg);
     TCLAP::ValueArg<bool> bool_property_arg("b", "bool-property-value",
-        "new property value (data type bool)", false, 0, "boolean value");
+        "new property value (data type bool)", false, false, "boolean value");
     cmd.add(bool_property_arg);
     TCLAP::ValueArg<std::string> property_name_arg("n", "property-name",
         "name of property in the mesh", false, "MaterialIDs", "string");
