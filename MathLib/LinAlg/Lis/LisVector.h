@@ -58,11 +58,9 @@ public:
     std::size_t getRangeBegin() const { return 0; }
     /// return an end index of the active data range
     std::size_t getRangeEnd() const { return this->size(); }
-    /// set all values in this vector
-    LisVector& operator=(double v);
 
     // TODO preliminary
-    void setZero() { *this = 0.0; }
+    void setZero() { lis_vector_set_all(0.0, _vec); }
 
     /// access entry
     double operator[](IndexType rowId) const { return get(rowId); }
@@ -91,14 +89,6 @@ public:
 
     /// return a raw Lis vector object
     LIS_VECTOR& getRawVector() { return _vec; }
-    /// vector operation: set data
-    LisVector& operator=(const LisVector& src);
-
-    /// vector operation: add
-    void operator+=(const LisVector& v);
-
-    /// vector operation: subtract
-    void operator-=(const LisVector& v);
 
     ///
     template <class T_SUBVEC>

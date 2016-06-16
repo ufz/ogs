@@ -133,6 +133,8 @@ namespace BLAS
 
 // Vector
 
+void set(PETScVector& x, double const a);
+
 void copy(PETScVector const& x, PETScVector& y);
 
 void scale(PETScVector& x, double const a);
@@ -188,6 +190,8 @@ namespace BLAS
 {
 
 // Vector
+
+void set(EigenVector& x, double const a);
 
 void copy(EigenVector const& x, EigenVector& y);
 

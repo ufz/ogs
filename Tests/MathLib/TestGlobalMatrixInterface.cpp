@@ -15,6 +15,8 @@
 
 #include <gtest/gtest.h>
 
+#include "MathLib/LinAlg/BLAS.h"
+
 #if defined(USE_LIS)
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
 #elif defined(USE_PETSC)
@@ -29,6 +31,8 @@
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 
 #include "NumLib/NumericsConfig.h"
+
+using namespace MathLib::BLAS;
 
 namespace
 {
@@ -95,12 +99,13 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MathLib::finalizeMatrixAssembly(m);
 
     // Multiply by a vector
-    v = 1.;
+    // v = 1.;
+    set(v, 1.);
     const bool deep_copy = false;
     T_VECTOR y(v, deep_copy);
-    m.multiply(v, y);
+    matMult(m, v, y);
 
-    ASSERT_EQ(sqrt(3*(3*3 + 7*7)), y.getNorm());
+    ASSERT_EQ(sqrt(3*(3*3 + 7*7)), norm2(y));
 
     // set a value
     m.set(2 * mrank, 2 * mrank, 5.0);
@@ -108,10 +113,10 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     // add a value
     m.add(2 * mrank+1, 2 * mrank+1, 5.0);
     MathLib::finalizeMatrixAssembly(m);
-    m.multiply(v, y);
 
-    ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), y.getNorm());
+    matMult(m, v, y);
 
+    ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), norm2(y));
 }
 
 // Rectanglular matrix
@@ -155,11 +160,11 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MathLib::finalizeMatrixAssembly(m);
 
     // Multiply by a vector
-    v = 1.;
+    set(v, 1);
     T_VECTOR y(m.getNumberOfRows());
-    m.multiply(v, y);
+    matMult(m, v, y);
 
-    ASSERT_NEAR(6.*sqrt(6.), y.getNorm(), 1.e-10);
+    ASSERT_NEAR(6.*sqrt(6.), norm2(y), 1.e-10);
 }
 
 #endif // end of: ifdef USE_PETSC // or MPI

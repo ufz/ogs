@@ -16,18 +16,18 @@
 #include <gtest/gtest.h>
 #include "../TestTools.h"
 
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/Lis/LisVector.h"
-#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/BLAS.h"
+
+#if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #elif defined(OGS_USE_EIGEN)
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
-#else
-#include "MathLib/LinAlg/Dense/DenseVector.h"
 #endif
 
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "NumLib/NumericsConfig.h"
+
+using namespace MathLib::BLAS;
 
 namespace
 {
@@ -53,14 +53,18 @@ void checkGlobalVectorInterface()
     T_VECTOR y(x);
     ASSERT_EQ(2.0, y.get(0));
     ASSERT_EQ(0.0, y.get(1));
-    y += x;
+    // y += x;
+    axpy(y, 1., x);
 
     ASSERT_EQ(4.0, y.get(0));
-    y -= x;
+    //y -= x;
+    axpy(y, -1., x);
     ASSERT_EQ(2.0, y.get(0));
-    y = 1.0;
+    //y = 1.0;
+    set(y, 1.0);
     ASSERT_EQ(1.0, y.get(0));
-    y = x;
+    // y = x;
+    copy(x, y);
     ASSERT_EQ(2.0, y.get(0));
 
     std::vector<double> local_vec(2, 1.0);
@@ -93,23 +97,26 @@ void checkGlobalVectorInterfacePETSc()
     //x.get(0) is expensive, only get local value. Use it for test purpose
     ASSERT_EQ(.0, x.get(r0));
 
-    x = 10.;
+    set(x, 10.);
+
 
     // Value of x is not copied to y
     const bool deep_copy = false;
     T_VECTOR y(x, deep_copy);
     ASSERT_EQ(0, y.get(r0));
 
-    y = 10.0;
+    set(y, 10.0);
     ASSERT_EQ(10, y.get(r0));
 
-    y += x;
+    // y += x
+    axpy(y, 1., x);
     ASSERT_EQ(20, y.get(r0));
-    ASSERT_EQ(80., y.getNorm());
+    ASSERT_EQ(80., norm2(y));
 
-    y -= x;
+    // y -= x
+    axpy(y, -1., x);
     ASSERT_EQ(10, y.get(r0));
-    ASSERT_EQ(40., y.getNorm());
+    ASSERT_EQ(40., norm2(y));
 
     std::vector<double> local_vec(2, 10.0);
     std::vector<GlobalIndexType> vec_pos(2);
@@ -121,7 +128,7 @@ void checkGlobalVectorInterfacePETSc()
 
     double normy = std::sqrt(6.0*400+10.0*100);
 
-    ASSERT_NEAR(0.0, normy-y.getNorm(), 1.e-10);
+    ASSERT_NEAR(0.0, normy-norm2(y), 1.e-10);
 
     double x0[16];
     double z[] =
@@ -188,7 +195,7 @@ void checkGlobalVectorInterfacePETSc()
     // Deep copy
     MathLib::finalizeVectorAssembly(x_fixed_p);
     T_VECTOR x_deep_copied(x_fixed_p);
-    ASSERT_NEAR(sqrt(3.0*5), x_deep_copied.getNorm(), 1.e-10);
+    ASSERT_NEAR(sqrt(3.0*5), norm2(x_deep_copied), 1.e-10);
 
     // -----------------------------------------------------------------
     // Vector with ghost entries
@@ -264,12 +271,7 @@ void checkGlobalVectorInterfacePETSc()
 } // end namespace
 
 //--------------------------------------------
-#if defined(USE_LIS)
-TEST(Math, CheckInterface_LisVector)
-{
-    checkGlobalVectorInterface<MathLib::LisVector >();
-}
-#elif defined(USE_PETSC)
+#if defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
@@ -278,10 +280,5 @@ TEST(MPITest_Math, CheckInterface_PETScVector)
 TEST(Math, CheckInterface_EigenVector)
 {
     checkGlobalVectorInterface<MathLib::EigenVector >();
-}
-#else
-TEST(Math, CheckInterface_DenseVector)
-{
-    checkGlobalVectorInterface<MathLib::DenseVector<double> >();
 }
 #endif

@@ -133,16 +133,6 @@ double LisMatrix::getMaxDiagCoeff()
     return abs_max_entry;
 }
 
-void LisMatrix::multiply(const LisVector &x, LisVector &y) const
-{
-    if (!_is_assembled)
-    {
-        OGS_FATAL("LisMatrix::multiply(): matrix not assembled.");
-    }
-    int ierr = lis_matvec(_AA, const_cast<LisVector*>(&x)->getRawVector(), y.getRawVector());
-    checkLisError(ierr);
-}
-
 bool finalizeMatrixAssembly(LisMatrix &mat)
 {
     LIS_MATRIX &A = mat.getRawMatrix();

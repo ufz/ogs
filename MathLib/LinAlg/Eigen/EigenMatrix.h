@@ -142,12 +142,6 @@ public:
         return _mat.diagonal().maxCoeff();
     }
 
-    /// y = mat * x
-    void multiply(const EigenVector &x, EigenVector &y) const
-    {
-        y.getRawVector() = _mat * x.getRawVector();
-    }
-
     /// return always true, i.e. the matrix is always ready for use
     bool isAssembled() const { return true; }
 

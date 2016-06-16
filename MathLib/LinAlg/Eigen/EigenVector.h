@@ -52,14 +52,8 @@ public:
     /// return an end index of the active data range
     std::size_t getRangeEnd() const { return size(); }
 
-    /// set all values in this vector
-    EigenVector& operator= (double v) { _vec.setConstant(v); return *this; }
-
     // TODO preliminary
     void setZero() { _vec.setZero(); }
-
-    /// set all values in this vector
-    EigenVector& operator*= (double v) { _vec *= v; return *this; }
 
     /// access entry
     double const & operator[] (IndexType rowId) const { return _vec[rowId]; }
@@ -109,15 +103,6 @@ public:
 
     /// return a raw Eigen vector object
     const RawVectorType& getRawVector() const {return _vec; }
-
-    /// vector operation: set data
-    EigenVector& operator= (const EigenVector &src) { _vec = src._vec; return *this; }
-
-    /// vector operation: add
-    void operator+= (const EigenVector& v) { _vec += v._vec; }
-
-    /// vector operation: subtract
-    void operator-= (const EigenVector& v) { _vec -= v._vec; }
 
 private:
     RawVectorType _vec;
