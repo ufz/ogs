@@ -23,6 +23,7 @@ namespace MathLib
 {
 typedef MathLib::TemplatePoint<double,3> Point3d;
 
+extern const Point3d ORIGIN;
 /**
  * rotation of points
  * @param mat a rotation matrix
