@@ -61,9 +61,9 @@ public:
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputIteration(
-            Process<GlobalSetup> const& process, unsigned timestep,
+            Process const& process, unsigned timestep,
             const double t,
-            typename GlobalSetup::VectorType const& x,
+            GlobalVector const& x,
             const unsigned iteration) const;
 
 
