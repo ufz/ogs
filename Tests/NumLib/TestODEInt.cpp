@@ -49,7 +49,7 @@ public:
         std::unique_ptr<NLSolver> nonlinear_solver(
                     new NLSolver(*linear_solver, _tol, _maxiter));
 
-        NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(
+        NumLib::TimeLoopSingleODE<NLTag> loop(
             ode_sys, std::move(linear_solver), std::move(nonlinear_solver));
 
         const double t0      = ODET::t0;
