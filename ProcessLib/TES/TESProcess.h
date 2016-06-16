@@ -36,8 +36,8 @@ class TESProcess final : public Process
 public:
     TESProcess(
         MeshLib::Mesh& mesh,
-        typename Process::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<typename Process::TimeDiscretization>&&
+        Process::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<Process::TimeDiscretization>&&
             time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
@@ -104,8 +104,8 @@ private:
 
 inline std::unique_ptr<TESProcess> createTESProcess(
     MeshLib::Mesh& mesh,
-    typename Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process::TimeDiscretization>&&
+    Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<Process::TimeDiscretization>&&
         time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,

@@ -34,8 +34,8 @@ class GroundwaterFlowProcess final
 public:
     GroundwaterFlowProcess(
         MeshLib::Mesh& mesh,
-        typename Base::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<typename Base::TimeDiscretization>&& time_discretization,
+        Base::NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection<GlobalVector>&& secondary_variables,
@@ -143,8 +143,8 @@ private:
 std::unique_ptr<GroundwaterFlowProcess>
 createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
-    typename Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process::TimeDiscretization>&& time_discretization,
+    Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)

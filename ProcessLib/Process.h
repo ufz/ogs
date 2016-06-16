@@ -40,7 +40,7 @@ class Process
                                    NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    using Index = typename GlobalMatrix::IndexType;
+    using Index = GlobalMatrix::IndexType;
     using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
     using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
 

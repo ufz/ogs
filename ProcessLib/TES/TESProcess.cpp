@@ -69,8 +69,8 @@ namespace TES
 {
 TESProcess::TESProcess(
     MeshLib::Mesh& mesh,
-    typename Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<typename Process::TimeDiscretization>&&
+    Process::NonlinearSolver& nonlinear_solver,
+    std::unique_ptr<Process::TimeDiscretization>&&
         time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection<GlobalVector>&& secondary_variables,
