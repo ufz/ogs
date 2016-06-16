@@ -42,7 +42,7 @@ public:
         using ODE_ = ODE;
         using ODET = ODETraits<ODE>;
 
-        NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
+        NumLib::TimeDiscretizedODESystem<ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
 
         auto linear_solver = MathLib::createLinearSolver<Matrix, Vector>(nullptr);

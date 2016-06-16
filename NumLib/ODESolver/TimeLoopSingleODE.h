@@ -30,7 +30,7 @@ template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeLoopSingleODE final
 {
 public:
-    using TDiscODESys  = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
+    using TDiscODESys  = TimeDiscretizedODESystemBase<NLTag>;
     using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
     using NLSolver     = NonlinearSolver<NLTag>;
 

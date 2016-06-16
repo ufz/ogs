@@ -61,7 +61,7 @@ private:
             : nonlinear_solver_tag(NLTag)
             , nonlinear_solver(nonlinear_solver)
             , tdisc_ode_sys(
-                  new NumLib::TimeDiscretizedODESystem<GlobalMatrix, GlobalVector, ODETag, NLTag>(
+                  new NumLib::TimeDiscretizedODESystem<ODETag, NLTag>(
                                 ode_sys, time_disc))
             , mat_strg(dynamic_cast<NumLib::InternalMatrixStorage&>(*tdisc_ode_sys))
         {}

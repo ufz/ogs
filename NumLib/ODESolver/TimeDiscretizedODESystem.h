@@ -54,7 +54,7 @@ namespace NumLib
  * \tparam Vector the type of the solution vector of the ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
+template<NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystemBase
         : public NonlinearSystem<NLTag>
         , public InternalMatrixStorage
@@ -75,7 +75,7 @@ public:
  * \tparam ODETag a tag indicating the type of ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
+template<ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystem;
 
 
@@ -87,11 +87,10 @@ class TimeDiscretizedODESystem;
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template<typename Matrix, typename Vector>
-class TimeDiscretizedODESystem<Matrix, Vector,
-                               ODESystemTag::FirstOrderImplicitQuasilinear,
+template<>
+class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Newton> final
-        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Newton>
+        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Newton>
 {
 public:
     //! A tag indicating the type of ODE.
@@ -115,25 +114,25 @@ public:
         , _time_disc(time_discretization)
         , _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
     {
-        _Jac  = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+        _Jac  = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _Jac_id);
-        _M    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+        _M    = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _M_id);
-        _K    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+        _K    = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
                     _ode.getMatrixSpecifications(), _K_id);
-        _b    = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+        _b    = &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                     _ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
     {
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_Jac);
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_M);
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_K);
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_Jac);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
     }
 
-    void assembleResidualNewton(const Vector &x_new_timestep) override
+    void assembleResidualNewton(const GlobalVector &x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -151,7 +150,7 @@ public:
         BLAS::finalizeAssembly(*_b);
     }
 
-    void assembleJacobian(const Vector &x_new_timestep) override
+    void assembleJacobian(const GlobalVector &x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -160,7 +159,7 @@ public:
         auto const  dxdot_dx = _time_disc.getNewXWeight();
         auto const  dx_dx    = _time_disc.getDxDx();
 
-        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        auto& xdot = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _Jac->setZero();
@@ -171,35 +170,35 @@ public:
 
         MathLib::BLAS::finalizeAssembly(*_Jac);
 
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(xdot);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
     }
 
-    void getResidual(Vector const& x_new_timestep, Vector& res) const override
+    void getResidual(GlobalVector const& x_new_timestep, GlobalVector& res) const override
     {
         // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
         //      can be optimuized. However, that would make the interface a bit more
         //      fragile.
-        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        auto& xdot = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
 
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(xdot);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
     }
 
-    void getJacobian(Matrix& Jac) const override
+    void getJacobian(GlobalMatrix& Jac) const override
     {
         _mat_trans->computeJacobian(*_Jac, Jac);
     }
 
-    void applyKnownSolutions(Vector& x) const override
+    void applyKnownSolutions(GlobalVector& x) const override
     {
         ::detail::applyKnownSolutions(
                     _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
     }
 
-    void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
-                                    Vector& minus_delta_x) override
+    void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
+                                    GlobalVector& minus_delta_x) override
     {
         auto const* known_solutions =
             _ode.getKnownSolutions(_time_disc.getCurrentTime());
@@ -222,12 +221,12 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    void preIteration(const unsigned iter, Vector const& x) override
+    void preIteration(const unsigned iter, GlobalVector const& x) override
     {
         _ode.preIteration(iter, x);
     }
 
-    IterationResult postIteration(Vector const& x) override
+    IterationResult postIteration(GlobalVector const& x) override
     {
         return _ode.postIteration(x);
     }
@@ -252,10 +251,10 @@ private:
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix* _Jac; //!< the Jacobian of the residual
-    Matrix* _M;   //!< Matrix \f$ M \f$.
-    Matrix* _K;   //!< Matrix \f$ K \f$.
-    Vector* _b;   //!< Matrix \f$ b \f$.
+    GlobalMatrix* _Jac; //!< the Jacobian of the residual
+    GlobalMatrix* _M;   //!< Matrix \f$ M \f$.
+    GlobalMatrix* _K;   //!< Matrix \f$ K \f$.
+    GlobalVector* _b;   //!< Matrix \f$ b \f$.
 
     std::size_t _Jac_id = 0u;          //!< ID of the \c _Jac matrix.
     std::size_t _M_id = 0u;            //!< ID of the \c _M matrix.
@@ -275,11 +274,10 @@ private:
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template<typename Matrix, typename Vector>
-class TimeDiscretizedODESystem<Matrix, Vector,
-                               ODESystemTag::FirstOrderImplicitQuasilinear,
+template<>
+class TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                                NonlinearSolverTag::Picard> final
-        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Picard>
+        : public TimeDiscretizedODESystemBase<NonlinearSolverTag::Picard>
 {
 public:
     //! A tag indicating the type of ODE.
@@ -304,22 +302,22 @@ public:
         , _mat_trans(createMatrixTranslator<ODETag>(
                          time_discretization))
     {
-        _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+        _M = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
                     ode.getMatrixSpecifications(), _M_id);
-        _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+        _K = &MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
                     ode.getMatrixSpecifications(), _K_id);
-        _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+        _b = &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                     ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
     {
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_M);
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(*_K);
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
     }
 
-    void assembleMatricesPicard(const Vector &x_new_timestep) override
+    void assembleMatricesPicard(const GlobalVector &x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -337,29 +335,29 @@ public:
         BLAS::finalizeAssembly(*_b);
     }
 
-    void getA(Matrix& A) const override
+    void getA(GlobalMatrix& A) const override
     {
         _mat_trans->computeA(*_M, *_K, A);
     }
 
-    void getRhs(Vector& rhs) const override
+    void getRhs(GlobalVector& rhs) const override
     {
         _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
     }
 
-    void applyKnownSolutions(Vector& x) const override
+    void applyKnownSolutions(GlobalVector& x) const override
     {
         ::detail::applyKnownSolutions(
                     _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
     }
 
-    void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
+    void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs, GlobalVector& x) override
     {
         auto const* known_solutions =
             _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
         if (known_solutions) {
-            using IndexType = typename MathLib::MatrixVectorTraits<Matrix>::Index;
+            using IndexType = typename MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
             std::vector<IndexType> ids;
             std::vector<double> values;
             for (auto const& bc : *known_solutions) {
@@ -375,12 +373,12 @@ public:
         return _time_disc.isLinearTimeDisc() || _ode.isLinear();
     }
 
-    void preIteration(const unsigned iter, Vector const& x) override
+    void preIteration(const unsigned iter, GlobalVector const& x) override
     {
         _ode.preIteration(iter, x);
     }
 
-    IterationResult postIteration(Vector const& x) override
+    IterationResult postIteration(GlobalVector const& x) override
     {
         return _ode.postIteration(x);
     }
@@ -405,9 +403,9 @@ private:
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix* _M; //!< Matrix \f$ M \f$.
-    Matrix* _K; //!< Matrix \f$ K \f$.
-    Vector* _b; //!< Matrix \f$ b \f$.
+    GlobalMatrix* _M; //!< Matrix \f$ M \f$.
+    GlobalMatrix* _K; //!< Matrix \f$ K \f$.
+    GlobalVector* _b; //!< Matrix \f$ b \f$.
 
     std::size_t _M_id = 0u; //!< ID of the \c _M matrix.
     std::size_t _K_id = 0u; //!< ID of the \c _K matrix.
