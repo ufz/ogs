@@ -61,7 +61,6 @@ protected:
     void setID(std::size_t id) { _id = id; }
 };
 
-extern const Point ORIGIN;
 }
 
 #endif /* POINT_H_ */
