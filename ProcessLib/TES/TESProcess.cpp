@@ -9,6 +9,8 @@
 
 #include "TESProcess.h"
 
+#include "Utils/CreateLocalAssemblers.h"
+
 // TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
 inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
 getRowColumnIndices_(std::size_t const id,
