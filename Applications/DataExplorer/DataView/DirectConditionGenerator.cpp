@@ -30,27 +30,33 @@
 #include <cmath>
 #include <limits>
 
-const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh &mesh, const std::string &filename)
+const std::vector<std::pair<std::size_t, double>>&
+DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
+                                               const std::string& filename)
 {
     if (_direct_values.empty())
     {
-        GeoLib::Raster* raster (GeoLib::IO::AsciiRasterInterface::readRaster(filename));
-        if (! raster) {
-            ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - could not load raster file.");
+        GeoLib::Raster* raster(
+            GeoLib::IO::AsciiRasterInterface::readRaster(filename));
+        if (!raster)
+        {
+            ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - "
+                "could not load raster file.");
             return _direct_values;
         }
 
-        const MathLib::Vector3 dir(0,0,-1);
+        const MathLib::Vector3 dir(0, 0, -1);
         const std::vector<MeshLib::Node*> surface_nodes(
             MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90));
+        const double no_data(raster->getHeader().no_data);
         const std::size_t nNodes(surface_nodes.size());
-        const double no_data (raster->getHeader().no_data);
         _direct_values.reserve(nNodes);
-        for (std::size_t i=0; i<nNodes; i++)
+        for (std::size_t i = 0; i < nNodes; i++)
         {
-            double val (raster->getValueAtPoint(*surface_nodes[i]));
+            double val(raster->getValueAtPoint(*surface_nodes[i]));
             val = (val == no_data) ? 0 : val;
-            _direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
+            _direct_values.push_back(
+                std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
         }
         delete raster;
 
@@ -58,11 +64,11 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
                       std::default_delete<MeshLib::Node>());
     }
     else
-        ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values.");
+        ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - Data "
+            "vector contains outdated values.");
 
     return _direct_values;
 }
-
 
 const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
