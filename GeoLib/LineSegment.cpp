@@ -26,8 +26,8 @@ LineSegment::LineSegment(LineSegment const& line_segment)
 {}
 
 LineSegment::LineSegment(LineSegment&& line_segment)
-    : _a(std::move(line_segment._a)),
-      _b(std::move(line_segment._b)),
+    : _a(line_segment._a),
+      _b(line_segment._b),
       _point_mem_management_by_line_segment(
           line_segment._point_mem_management_by_line_segment)
 {
@@ -48,10 +48,10 @@ LineSegment& LineSegment::operator=(LineSegment const& other) = default;
 
 LineSegment& LineSegment::operator=(LineSegment&& line_segment)
 {
-    _a = std::move(line_segment._a);
-    _b = std::move(line_segment._b);
+    _a = line_segment._a;
+    _b = line_segment._b;
     _point_mem_management_by_line_segment =
-        std::move(line_segment._point_mem_management_by_line_segment);
+        line_segment._point_mem_management_by_line_segment;
 
     line_segment._a = nullptr;
     line_segment._b = nullptr;
