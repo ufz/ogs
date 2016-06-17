@@ -9,6 +9,7 @@
 
 #include "ConfigTree.h"
 
+#include <forward_list>
 #include <logog/include/logog.hpp>
 
 #include "Error.h"
@@ -17,6 +18,10 @@
 // the following basic_ptree.
 template class boost::property_tree::basic_ptree<std::string, std::string,
                                                  std::less<std::string>>;
+
+//! Collects swallowed error messages raised by the check during destruction of
+//! ConfigTree instances.
+static std::forward_list<std::string> configtree_destructor_error_messages;
 
 namespace BaseLib
 {
@@ -65,8 +70,11 @@ ConfigTree(ConfigTree && other)
 
 ConfigTree::~ConfigTree()
 {
-    if (!std::uncaught_exception())
+    try {
         checkAndInvalidate();
+    } catch (std::exception& e) {
+        configtree_destructor_error_messages.push_front(e.what());
+    }
 }
 
 ConfigTree&
@@ -218,6 +226,21 @@ void ConfigTree::onwarning(const std::string& filename, const std::string& path,
 {
     WARN("ConfigTree: In file `%s' at path <%s>: %s",
          filename.c_str(), path.c_str(), message.c_str());
+}
+
+void ConfigTree::assertNoSwallowedErrors()
+{
+    if (configtree_destructor_error_messages.empty())
+        return;
+
+    ERR("ConfigTree: There have been errors when parsing the configuration "
+        "file(s):");
+
+    for (auto const& msg : configtree_destructor_error_messages) {
+        ERR("%s", msg.c_str());
+    }
+
+    OGS_FATAL("There have been errors when parsing the configuration file(s).");
 }
 
 std::string ConfigTree::shortString(const std::string &s)

@@ -493,6 +493,8 @@ public:
 
     //! The destructor performs the check if all nodes at the current level of the tree
     //! have been read.
+    //! Errors raised by the check are swallowed. Use assertNoSwallowedErrors()
+    //! manually to check for those.
     ~ConfigTree();
 
     //! Default error callback function
@@ -505,6 +507,9 @@ public:
     static void onwarning(std::string const& filename, std::string const& path,
                           std::string const& message);
 
+    //! Asserts that there have not been any errors reported in the destructor.
+    static void assertNoSwallowedErrors();
+
 private:
     //! Default implementation of reading a value of type T.
     template<typename T> boost::optional<T>
@@ -514,7 +519,6 @@ private:
     template<typename T> boost::optional<std::vector<T>>
     getConfigParameterOptionalImpl(std::string const& param, std::vector<T>*) const;
 
-private:
     struct CountType
     {
         int count;
