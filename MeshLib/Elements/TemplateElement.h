@@ -81,9 +81,6 @@ public:
     /// Get the number of edges for this element.
     unsigned getNumberOfEdges() const { return ELEMENT_RULE::n_edges; }
 
-    /// Get the number of nodes for face i.
-    unsigned getNumberOfFaceNodes(unsigned i) const { return ELEMENT_RULE::getNumberOfFaceNodes(i); }
-
     /// Get the number of faces for this element.
     unsigned getNumberOfFaces() const { return ELEMENT_RULE::n_faces; }
 

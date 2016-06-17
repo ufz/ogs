@@ -94,9 +94,6 @@ public:
     /// Get the number of edges for this element.
     virtual unsigned getNumberOfEdges() const = 0;
 
-    /// Get the number of nodes for face i.
-    virtual unsigned getNumberOfFaceNodes(unsigned i) const = 0;
-
     /// Get the number of faces for this element.
     virtual unsigned getNumberOfFaces() const = 0;
 
