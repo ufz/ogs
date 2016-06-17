@@ -53,6 +53,9 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
             _direct_values.push_back (std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
         }
         delete raster;
+
+        std::for_each(surface_nodes.begin(), surface_nodes.end(),
+                      std::default_delete<MeshLib::Node>());
     }
     else
         ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - Data vector contains outdated values.");
