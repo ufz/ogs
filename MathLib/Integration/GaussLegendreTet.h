@@ -42,6 +42,11 @@ struct GaussLegendreTet<3> {
     static const double W[NPoints];
 };
 
+template <>
+const std::array<std::array<double, 3>, GaussLegendreTet<1>::NPoints>
+    GaussLegendreTet<1>::X;
+template <>
+double const GaussLegendreTet<1>::W[1];
 }
 
 #endif //GAUSSLEGENDRETET_H_

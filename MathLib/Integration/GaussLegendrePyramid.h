@@ -42,6 +42,12 @@ struct GaussLegendrePyramid<3> {
     static const double W[NPoints];
 };
 
+template <>
+const std::array<std::array<double, 3>, GaussLegendrePyramid<1>::NPoints>
+    GaussLegendrePyramid<1>::X;
+template <>
+double const GaussLegendrePyramid<1>::W[1];
+
 }
 
 #endif //GAUSSLEGENDREPYRAMID_H_

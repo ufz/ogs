@@ -47,6 +47,11 @@ struct GaussLegendreTri<3> {
     static const double W[NPoints];
 };
 
+template <>
+const std::array<std::array<double, 2>, GaussLegendreTri<1>::NPoints>
+    GaussLegendreTri<1>::X;
+template <>
+double const GaussLegendreTri<1>::W[1];
 }
 
 #endif //GAUSSLEGENDRETRI_H_

@@ -29,6 +29,15 @@ struct GaussLegendre {
     static const double W[Order];
 };
 
+template <> double const GaussLegendre<1>::X[1];
+template <> double const GaussLegendre<1>::W[1];
+template <> double const GaussLegendre<2>::X[2];
+template <> double const GaussLegendre<2>::W[2];
+template <> double const GaussLegendre<3>::X[3];
+template <> double const GaussLegendre<3>::W[3];
+template <> double const GaussLegendre<4>::X[4];
+template <> double const GaussLegendre<4>::W[4];
+
 }   // namespace MathLib
 
 #endif // GAUSSLEGENDRE_H_
