@@ -38,10 +38,6 @@ TetGenInterface::TetGenInterface() :
 {
 }
 
-TetGenInterface::~TetGenInterface()
-{
-}
-
 bool TetGenInterface::readTetGenGeometry (std::string const& geo_fname,
                                           GeoLib::GEOObjects &geo_objects)
 {

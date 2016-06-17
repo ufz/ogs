@@ -32,14 +32,13 @@ namespace GeoLib
 
 namespace FileIO
 {
-class PetrelInterface
+class PetrelInterface final
 {
 public:
     PetrelInterface(std::list<std::string> &sfc_fnames,
                     std::list<std::string> &well_path_fnames,
                     std::string &unique_model_name,
                     GeoLib::GEOObjects* obj);
-    virtual ~PetrelInterface();
 
 private:
     void readPetrelSurface (std::istream &in);

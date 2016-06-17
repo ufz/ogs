@@ -29,12 +29,11 @@ namespace IO
  * This class is currently not inherited from Writer because VTK will implement
  * writing to a string from 6.2 onwards.
  */
-class VtuInterface
+class VtuInterface final
 {
 public:
     /// Provide the mesh to write and set if compression should be used.
     VtuInterface(const MeshLib::Mesh* mesh, int dataMode = vtkXMLWriter::Binary, bool compressed = false);
-    ~VtuInterface();
 
     /// Read an unstructured grid from a VTU file
     /// \return The converted mesh or a nullptr if reading failed

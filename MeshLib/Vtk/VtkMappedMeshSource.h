@@ -52,12 +52,12 @@ namespace MeshLib {
 
 /// Adapter which maps a MeshLib::Mesh to a vtkUnstructuredGridAlgorithm.
 /// Allows for zero-copy access of the mesh from the visualization side.
-class VtkMappedMeshSource : public vtkUnstructuredGridAlgorithm
+class VtkMappedMeshSource final : public vtkUnstructuredGridAlgorithm
 {
 public:
     static VtkMappedMeshSource *New();
     vtkTypeMacro(VtkMappedMeshSource, vtkUnstructuredGridAlgorithm)
-    virtual void PrintSelf(std::ostream &os, vtkIndent indent);
+    void PrintSelf(std::ostream &os, vtkIndent indent);
 
     /// Sets the mesh. Calling is mandatory
     void SetMesh(const MeshLib::Mesh* mesh) { this->_mesh = mesh; this->Modified(); }
@@ -67,7 +67,6 @@ public:
 
 protected:
     VtkMappedMeshSource();
-    ~VtkMappedMeshSource();
 
     int ProcessRequest(vtkInformation *request, vtkInformationVector **inputVector,
                        vtkInformationVector *outputVector);

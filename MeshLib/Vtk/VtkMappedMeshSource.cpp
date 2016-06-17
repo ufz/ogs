@@ -39,11 +39,6 @@ VtkMappedMeshSource::VtkMappedMeshSource()
     this->SetNumberOfInputPorts(0);
 }
 
-VtkMappedMeshSource::~VtkMappedMeshSource()
-{
-
-}
-
 int VtkMappedMeshSource::ProcessRequest(
     vtkInformation *request, vtkInformationVector **inputVector,
     vtkInformationVector *outputVector)

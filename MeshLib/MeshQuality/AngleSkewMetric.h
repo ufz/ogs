@@ -23,13 +23,12 @@ namespace MeshLib
 /**
  * Calculates the quality of mesh elements based on the EquiAngleSkew measure
  */
-class AngleSkewMetric : public ElementQualityMetric
+class AngleSkewMetric final : public ElementQualityMetric
 {
 public:
     AngleSkewMetric(Mesh const& mesh);
-    virtual ~AngleSkewMetric();
 
-    virtual void calculateQuality ();
+    void calculateQuality();
 
 private:
     double checkTriangle(Element const& elem) const;

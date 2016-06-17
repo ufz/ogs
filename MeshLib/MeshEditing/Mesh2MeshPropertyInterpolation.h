@@ -24,7 +24,8 @@ class Mesh;
  * (destination) mesh deploying weighted interpolation. The two
  * meshes must have the same dimension.
  */
-class Mesh2MeshPropertyInterpolation {
+class Mesh2MeshPropertyInterpolation final
+{
 public:
     /**
      * Constructor taking the source or input mesh and properties.
@@ -37,7 +38,6 @@ public:
      * indices the vector of properties must have \f$\ge n\f$ entries.
      */
     Mesh2MeshPropertyInterpolation(Mesh const*const source_mesh, std::vector<double> const*const source_properties);
-    virtual ~Mesh2MeshPropertyInterpolation();
 
     /**
      * Calculates entries for the property vector and sets appropriate indices in the

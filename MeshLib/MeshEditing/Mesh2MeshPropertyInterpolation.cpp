@@ -33,9 +33,6 @@ Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(Mesh const*const 
     _src_mesh(src_mesh), _src_properties(src_properties)
 {}
 
-Mesh2MeshPropertyInterpolation::~Mesh2MeshPropertyInterpolation()
-{}
-
 bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::vector<double>& dest_properties) const
 {
     if (_src_mesh->getDimension() != dest_mesh->getDimension()) {

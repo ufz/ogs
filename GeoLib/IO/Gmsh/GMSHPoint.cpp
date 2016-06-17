@@ -34,9 +34,6 @@ void GMSHPoint::write(std::ostream &os) const
     }
 }
 
-GMSHPoint::~GMSHPoint()
-{}
-
 std::ostream& operator<< (std::ostream &os, GMSHPoint const& p)
 {
     p.write (os);

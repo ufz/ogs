@@ -39,7 +39,7 @@ namespace GeoLib
  * a unique name from class GEOObject. For this reason PointVec should have
  * a name.
  * */
-class PointVec : public TemplateVec<Point>
+class PointVec final : public TemplateVec<Point>
 {
 public:
     /// Signals if the vector contains object of type Point or Station
@@ -72,9 +72,6 @@ public:
     PointVec (const std::string& name, std::unique_ptr<std::vector<Point*>> points,
               std::map<std::string, std::size_t>* name_id_map = nullptr,
               PointType type = PointVec::PointType::POINT, double rel_eps = std::numeric_limits<double>::epsilon());
-
-    /** Destructor deletes all Points of this PointVec. */
-    virtual ~PointVec ();
 
     /**
      * Method adds a Point to the (internal) standard vector and takes the ownership.
