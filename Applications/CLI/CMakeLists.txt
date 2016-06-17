@@ -8,7 +8,6 @@ target_link_libraries(ogs
     MeshGeoToolsLib
     ProcessLib
     NumLib
-    FileIO
 )
 
 ADD_VTK_DEPENDENCY(ogs)
