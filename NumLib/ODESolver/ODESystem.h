@@ -56,7 +56,7 @@ public:
     virtual void assemble(const double t, GlobalVector const& x,
                           GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
 
-    using Index = typename MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
     //! Provides known solutions (Dirichlet boundary conditions) vector for
     //! the ode system at the given time \c t.

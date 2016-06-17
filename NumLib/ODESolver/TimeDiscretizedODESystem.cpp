@@ -228,7 +228,7 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
     if (known_solutions) {
-        using IndexType = typename MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+        using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
         std::vector<IndexType> ids;
         std::vector<double> values;
         for (auto const& bc : *known_solutions) {
