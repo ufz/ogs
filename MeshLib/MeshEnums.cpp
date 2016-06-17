@@ -104,7 +104,7 @@ std::vector<std::string> getMeshElemTypeStringsShort()
 const std::string CellType2String(const CellType t)
 {
 #define RETURN_CELL_TYPE_STR(t, type)\
-    if (t == CellType::type)\
+    if ((t) == CellType::type)\
         return #type;
 
     RETURN_CELL_TYPE_STR(t, POINT1);

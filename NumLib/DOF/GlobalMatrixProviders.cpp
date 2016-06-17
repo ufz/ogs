@@ -23,10 +23,10 @@
     \
     namespace MathLib { \
     template<> \
-    VectorProvider<VEC>& GlobalVectorProvider<VEC>::provider = *VARNAME; \
+    VectorProvider<VEC>& GlobalVectorProvider<VEC>::provider = *(VARNAME); \
     \
     template<> \
-    MatrixProvider<MAT>& GlobalMatrixProvider<MAT>::provider = *VARNAME; \
+    MatrixProvider<MAT>& GlobalMatrixProvider<MAT>::provider = *(VARNAME); \
     }
 
 
