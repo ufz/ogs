@@ -7,10 +7,12 @@
  *
  */
 
-#include <logog/include/logog.hpp>
+#include "NonlinearSolver.h"
 
 // for debugging
 // #include <iostream>
+
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -18,20 +20,19 @@
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
-#include "NonlinearSolver.h"
 
 
 namespace NumLib
 {
 
-inline void
+void
 NonlinearSolver<NonlinearSolverTag::Picard>::
 assemble(GlobalVector const& x) const
 {
     _equation_system->assembleMatricesPicard(x);
 }
 
-inline bool
+bool
 NonlinearSolver<NonlinearSolverTag::Picard>::
 solve(GlobalVector &x)
 {
@@ -130,7 +131,7 @@ solve(GlobalVector &x)
 }
 
 
-inline void
+void
 NonlinearSolver<NonlinearSolverTag::Newton>::
 assemble(GlobalVector const& x) const
 {
@@ -140,7 +141,7 @@ assemble(GlobalVector const& x) const
     //      equation every time and could not forget it.
 }
 
-inline bool
+bool
 NonlinearSolver<NonlinearSolverTag::Newton>::
 solve(GlobalVector &x)
 {
@@ -249,7 +250,7 @@ solve(GlobalVector &x)
 }
 
 
-inline std::pair<
+std::pair<
     std::unique_ptr<NonlinearSolverBase>,
     NonlinearSolverTag
 >
