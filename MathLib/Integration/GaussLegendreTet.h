@@ -42,11 +42,14 @@ struct GaussLegendreTet<3> {
     static const double W[NPoints];
 };
 
+#ifndef _MSC_VER  // The following explicit instantatiation declaration does not
+                  // compile on that particular compiler but is necessary.
 template <>
 const std::array<std::array<double, 3>, GaussLegendreTet<1>::NPoints>
     GaussLegendreTet<1>::X;
 template <>
 double const GaussLegendreTet<1>::W[1];
+#endif
 }
 
 #endif //GAUSSLEGENDRETET_H_

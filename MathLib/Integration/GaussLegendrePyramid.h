@@ -42,12 +42,14 @@ struct GaussLegendrePyramid<3> {
     static const double W[NPoints];
 };
 
+#ifndef _MSC_VER  // The following explicit instantatiation declaration does not
+                  // compile on that particular compiler but is necessary.
 template <>
 const std::array<std::array<double, 3>, GaussLegendrePyramid<1>::NPoints>
     GaussLegendrePyramid<1>::X;
 template <>
 double const GaussLegendrePyramid<1>::W[1];
-
+#endif
 }
 
 #endif //GAUSSLEGENDREPYRAMID_H_
