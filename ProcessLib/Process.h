@@ -306,8 +306,8 @@ private:
     /// DOF-table.
     void computeSparsityPattern()
     {
-        _sparsity_pattern = std::move(NumLib::computeSparsityPattern(
-            *_local_to_global_index_map, _mesh));
+        _sparsity_pattern =
+            NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
     }
 
 protected:
