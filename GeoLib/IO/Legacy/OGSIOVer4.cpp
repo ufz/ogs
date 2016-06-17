@@ -59,7 +59,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
     getline(in, line);
     // geometric key words start with the hash #
     // while not found a new key word do ...
-    while (line.find("#") == std::string::npos && !in.eof() && !in.fail())
+    while (line.find('#') == std::string::npos && !in.eof() && !in.fail())
     {
         // read id and point coordinates
         std::stringstream inss(line);
@@ -81,7 +81,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
             if (line.find("$MD") != std::string::npos)
             {
                 double mesh_density;
-                std::size_t pos1(line.find_first_of("M"));
+                std::size_t pos1(line.find_first_of('M'));
                 inss.str(line.substr(pos1 + 2, std::string::npos));
                 inss >> mesh_density;
             }
@@ -90,7 +90,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
             std::size_t pos (line.find("$NAME"));
             if (pos != std::string::npos) //OK
             {
-                std::size_t end_pos ((line.substr (pos + 6)).find(" "));
+                std::size_t end_pos ((line.substr (pos + 6)).find(' '));
                 if (end_pos != std::string::npos)
                     (*pnt_id_name_map)[line.substr (pos + 6, end_pos)] = id;
                 else
@@ -188,8 +188,8 @@ std::string readPolyline(std::istream &in,
             in >> line;
             if (type != 100)
                 while (!in.eof() && !in.fail() && line.size() != 0
-                       && (line.find("#") == std::string::npos)
-                       && (line.find("$") == std::string::npos))
+                       && (line.find('#') == std::string::npos)
+                       && (line.find('$') == std::string::npos))
                 {
                     std::size_t pnt_id(BaseLib::str2number<std::size_t> (line));
                     if (!zero_based_indexing)
@@ -217,7 +217,7 @@ std::string readPolyline(std::istream &in,
             line = path + line;
             readPolylinePointVector(line, pnt_vec, ply, path, errors);
         } // subkeyword found
-    } while (line.find("#") == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
 
     if (type != 100)
     {
@@ -321,8 +321,8 @@ std::string readSurface(std::istream &in,
         { // read the name of the polyline(s)
             in >> line;
             while (!in.eof() && !in.fail() && line.size() != 0
-                   && (line.find("#") == std::string::npos)
-                   && (line.find("$") == std::string::npos))
+                   && (line.find('#') == std::string::npos)
+                   && (line.find('$') == std::string::npos))
             {
                 // we did read the name of a polyline -> search the id for polyline
                 std::map<std::string,std::size_t>::const_iterator it (ply_vec_names.find (
@@ -349,7 +349,7 @@ std::string readSurface(std::istream &in,
             }
             // empty line or a keyword is found
         }
-    } while (line.find("#") == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
 
     if (!name.empty())
         sfc_names.insert(std::pair<std::string,std::size_t>(name,sfc_vec.size()));

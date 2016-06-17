@@ -76,7 +76,7 @@ std::string::size_type findLastPathSeparator(std::string const& path)
 static
 std::string::size_type findLastDot(std::string const& path)
 {
-    return path.find_last_of(".");
+    return path.find_last_of('.');
 }
 } // end namespace
 

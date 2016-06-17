@@ -92,9 +92,9 @@ int strDate2int(const std::string &s)
     std::string str(s);
     if (s.length() > 10)
         str = s.substr(0,10);
-    std::size_t sep ( str.find(".",0) );
+    std::size_t sep ( str.find('.',0) );
     int d ( atoi(str.substr(0, sep).c_str()) );
-    std::size_t sep2 ( str.find(".", sep + 1) );
+    std::size_t sep2 ( str.find('.', sep + 1) );
     int m ( atoi(str.substr(sep + 1,sep2 - (sep + 1)).c_str()) );
     int y ( atoi(str.substr(sep2 + 1, s.length() - (sep2 + 1)).c_str()) );
     return date2int(y, m, d);

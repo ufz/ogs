@@ -322,7 +322,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
 
         std::size_t id;
         std::size_t pos_end = 0;
-        std::size_t pos_beg = line.find_first_not_of(" ", pos_end);
+        std::size_t pos_beg = line.find_first_not_of(' ', pos_end);
         pos_end = line.find_first_of(" \n", pos_beg);
 
         if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
@@ -342,7 +342,7 @@ bool TetGenInterface::parseNodes(std::ifstream &ins,
         // read coordinates
         const unsigned offset = (_zero_based_idx) ? 0 : 1;
         for (std::size_t i(0); i < dim; i++) {
-            pos_beg = line.find_first_not_of(" ", pos_end);
+            pos_beg = line.find_first_not_of(' ', pos_end);
             pos_end = line.find_first_of(" \n", pos_beg);
             if (pos_end == std::string::npos) pos_end = line.size();
             if (pos_beg != std::string::npos)
@@ -402,8 +402,8 @@ bool TetGenInterface::parseElementsFileHeader(std::string &line,
     std::size_t pos_beg, pos_end;
 
     // number of tetrahedras
-    pos_beg = line.find_first_not_of (" ");
-    pos_end = line.find_first_of(" ", pos_beg);
+    pos_beg = line.find_first_not_of (' ');
+    pos_end = line.find_first_of(' ', pos_beg);
     if (pos_beg != std::string::npos && pos_end != std::string::npos)
         n_tets = BaseLib::str2number<std::size_t> (line.substr(pos_beg, pos_end - pos_beg));
     else {
@@ -451,7 +451,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         }
 
         std::size_t pos_end = 0;
-        std::size_t pos_beg = line.find_first_not_of(" ", pos_end);
+        std::size_t pos_beg = line.find_first_not_of(' ', pos_end);
         pos_end = line.find_first_of(" \n", pos_beg);
 
         if (line.empty() || pos_beg==pos_end || line.compare(pos_beg,1,"#") == 0)
@@ -469,8 +469,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         // read node ids
         for (std::size_t i(0); i < n_nodes_per_tet; i++)
         {
-            pos_beg = line.find_first_not_of(" ", pos_end);
-            pos_end = line.find_first_of(" ", pos_beg);
+            pos_beg = line.find_first_not_of(' ', pos_end);
+            pos_end = line.find_first_of(' ', pos_beg);
             if (pos_end == std::string::npos)
                 pos_end = line.size();
             if (pos_beg != std::string::npos && pos_end != std::string::npos)
@@ -485,8 +485,8 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
         // read region attribute - this is something like material group
         int region (0);
         if (region_attribute) {
-            pos_beg = line.find_first_not_of(" ", pos_end);
-            pos_end = line.find_first_of(" ", pos_beg);
+            pos_beg = line.find_first_not_of(' ', pos_end);
+            pos_end = line.find_first_of(' ', pos_beg);
             if (pos_end == std::string::npos) pos_end = line.size();
             if (pos_beg != std::string::npos && pos_end != std::string::npos)
                 region = BaseLib::str2number<int> (line.substr(pos_beg, pos_end - pos_beg));
