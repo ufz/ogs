@@ -19,14 +19,13 @@
 #include "MeshIO.h"
 
 #include <iomanip>
+#include <memory>
 #include <sstream>
 
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
-
-#include "GeoLib/GEOObjects.h"
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Node.h"
