@@ -10,16 +10,16 @@
 #ifndef PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 #define PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_
 
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include <memory>
+
 #include "ProcessLib/Process.h"
-#include "GroundwaterFlowFEM.h"
-#include "GroundwaterFlowProcessData.h"
 
 
 namespace ProcessLib
 {
 namespace GroundwaterFlow
 {
+class GroundwaterFlowProcessData;
 
 class GroundwaterFlowProcess final
         : public Process
@@ -37,6 +37,9 @@ public:
         ProcessOutput&& process_output
         );
 
+    ~GroundwaterFlowProcess();
+
+
     //! \name ODESystem interface
     //! @{
 
@@ -48,15 +51,6 @@ public:
     //! @}
 
 private:
-    using GlobalAssembler = NumLib::VectorMatrixAssembler<
-            GroundwaterFlowLocalAssemblerInterface,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
-    using ExtrapolatorInterface = NumLib::Extrapolator<
-        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
-    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
-        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
-
     void initializeConcreteProcess(
             NumLib::LocalToGlobalIndexMap const& dof_table,
             MeshLib::Mesh const& mesh,
@@ -65,13 +59,8 @@ private:
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
 
-
-    GroundwaterFlowProcessData _process_data;
-
-    std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>> _local_assemblers;
-
-    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
+    class GroundwaterFlowProcessImpl;
+    std::unique_ptr<GroundwaterFlowProcessImpl> impl;
 };
 
 std::unique_ptr<GroundwaterFlowProcess>
