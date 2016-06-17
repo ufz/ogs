@@ -197,7 +197,7 @@ int main (int argc, char* argv[])
     std::vector<std::string> property_names(
         mesh->getProperties().getPropertyVectorNames());
     INFO("Mesh contains %d property vectors:", property_names.size());
-    for (auto name : property_names) {
+    for (const auto& name : property_names) {
         INFO("- %s", name.c_str());
     }
     std::string const& property_name(property_name_arg.getValue());

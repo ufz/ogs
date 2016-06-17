@@ -429,7 +429,7 @@ MeshLib::Mesh*
 createSurfaceMesh(std::string const& mesh_name,
     MathLib::Point3d const& ll, MathLib::Point3d const& ur,
     std::array<std::size_t, 2> const& n_steps,
-    std::function<double(double,double)> f);
+    const std::function<double(double,double)>& f);
 
 }  //MeshGenerator
 } //MeshLib

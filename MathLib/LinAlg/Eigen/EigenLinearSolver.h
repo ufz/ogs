@@ -36,7 +36,7 @@ public:
      *                    this argument, default settings follow those of
      *                    LisOption struct.
      */
-    EigenLinearSolver(const std::string solver_name,
+    EigenLinearSolver(const std::string& solver_name,
                       BaseLib::ConfigTree const*const option);
 
     ~EigenLinearSolver();

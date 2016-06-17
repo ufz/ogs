@@ -464,7 +464,7 @@ MeshLib::Mesh*
 MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
     MathLib::Point3d const& ll, MathLib::Point3d const& ur,
     std::array<std::size_t, 2> const& n_steps,
-    std::function<double(double,double)> f)
+    const std::function<double(double,double)>& f)
 {
     std::array<double, 2> step_size{{
         (ur[0]-ll[0])/(n_steps[0]-1), (ur[1]-ll[1])/(n_steps[1]-1)}};

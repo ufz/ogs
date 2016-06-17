@@ -37,7 +37,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqSamePoint)
     // A point is always less or equal to itself and its copy.
     auto samePointLessEqualCompare = [](MathLib::Point3d const& p)
     {
-        auto q = p;
+        const auto& q = p;
         return lessEq(p, p) && lessEq(p, q) && lessEq(q, p);
     };
 
@@ -104,7 +104,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualSamePoint)
     // A point is always equal to itself and its copy.
     auto samePointEqualCompare = [](MathLib::Point3d const& p)
     {
-        auto q = p;
+        const auto& q = p;
         return (p == p) && (p == q) && (q == p);
     };
 
@@ -170,7 +170,7 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessSamePoint)
     // A point is never less than itself or its copy.
     auto samePointLessCompare = [](MathLib::Point3d const& p)
     {
-        auto q = p;
+        const auto& q = p;
         return !(p < p) && !(p < q) && !(q < p);
     };
 

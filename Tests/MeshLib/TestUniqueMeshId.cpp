@@ -36,7 +36,7 @@ TEST(MeshLib, UniqueMeshId)
     ASSERT_EQ(counter_value + std::size_t(3), m3.getID());
 
     // Copy mesh keeps also increments the counter.
-    Mesh m4(m0);
+    Mesh m4 = m0;
     ASSERT_EQ(counter_value + std::size_t(4), m4.getID());
 
 }

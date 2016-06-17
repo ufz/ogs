@@ -59,12 +59,12 @@ Mesh::Mesh(const Mesh &mesh)
       _n_base_nodes(mesh.getNumberOfBaseNodes()),
       _properties(mesh._properties)
 {
-    const std::vector<Node*> nodes (mesh.getNodes());
+    const std::vector<Node*>& nodes (mesh.getNodes());
     const std::size_t nNodes (nodes.size());
     for (unsigned i=0; i<nNodes; ++i)
         _nodes[i] = new Node(*nodes[i]);
 
-    const std::vector<Element*> elements (mesh.getElements());
+    const std::vector<Element*>& elements (mesh.getElements());
     const std::size_t nElements (elements.size());
     for (unsigned i=0; i<nElements; ++i)
     {

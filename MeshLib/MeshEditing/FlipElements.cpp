@@ -56,7 +56,7 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
     for (std::size_t i=0; i<n_elems; ++i)
         new_elems.push_back(createFlippedElement(*elems[i], new_nodes).release());
 
-    MeshLib::Properties new_props (mesh.getProperties());
+    const MeshLib::Properties& new_props (mesh.getProperties());
     return std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh("FlippedElementMesh", new_nodes, new_elems, new_props));
 }
 

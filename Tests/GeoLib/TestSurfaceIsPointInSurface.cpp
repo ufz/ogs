@@ -80,7 +80,7 @@ TEST(GeoLib, SurfaceIsPointInSurface)
     surface_functions.push_back(constant);
     surface_functions.push_back(coscos);
 
-    for (auto f : surface_functions) {
+    for (const auto& f : surface_functions) {
         std::random_device rd;
 
         std::string name("Surface");

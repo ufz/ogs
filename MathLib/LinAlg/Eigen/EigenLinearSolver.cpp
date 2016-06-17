@@ -105,7 +105,7 @@ private:
 } // details
 
 EigenLinearSolver::EigenLinearSolver(
-                            const std::string /*solver_name*/,
+                            const std::string& /*solver_name*/,
                             const BaseLib::ConfigTree* const option)
 {
     using Matrix = EigenMatrix::RawMatrixType;
