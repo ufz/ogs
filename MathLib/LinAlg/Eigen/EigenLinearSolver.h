@@ -25,7 +25,6 @@ class EigenVector;
 class EigenLinearSolverBase;
 
 class EigenLinearSolver final
-        : public LinearSolver<EigenMatrix, EigenVector>
 {
 public:
     /**
@@ -56,7 +55,7 @@ public:
      */
     EigenOption &getOption() { return _option; }
 
-    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x) override;
+    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 protected:
     EigenOption _option;

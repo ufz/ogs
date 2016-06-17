@@ -165,7 +165,7 @@ void ProjectData::buildProcesses()
         auto& nl_slv = BaseLib::getOrError(_nonlinear_solvers, nl_slv_name,
             "A nonlinear solver with the given name has not been defined.");
 
-        auto time_disc = NumLib::createTimeDiscretization<GlobalVector>(
+        auto time_disc = NumLib::createTimeDiscretization(
                 //! \ogs_file_param{process__time_discretization}
                 pc.getConfigSubtree("time_discretization")
             );
@@ -330,8 +330,7 @@ void ProjectData::parseTimeStepping(BaseLib::ConfigTree const& timestepping_conf
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ApplicationsLib::createUncoupledProcessesTimeLoop<
-        GlobalMatrix, GlobalVector>(timestepping_config);
+    _time_loop = ApplicationsLib::createUncoupledProcessesTimeLoop(timestepping_config);
 
     if (!_time_loop)
     {
@@ -350,8 +349,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_linear_solvers,
             name,
-            MathLib::createLinearSolver<GlobalMatrix, GlobalVector,
-                GlobalLinearSolver>(&conf),
+            MathLib::createLinearSolver<GlobalLinearSolver>(&conf),
             "The linear solver name is not unique");
     }
 }
@@ -372,7 +370,7 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_nonlinear_solvers,
             name,
-            NumLib::createNonlinearSolver<GlobalMatrix, GlobalVector>(
+            NumLib::createNonlinearSolver(
                 *linear_solver, conf).first,
             "The nonlinear solver name is not unique");
     }

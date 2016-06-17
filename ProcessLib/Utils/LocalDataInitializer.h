@@ -122,9 +122,7 @@ namespace ProcessLib
 /// NumLib::ShapeLine2 is created.
 template <
     typename LocalAssemblerInterface,
-    template <typename, typename, typename, typename, unsigned> class LocalAssemblerData,
-    typename GlobalMatrix,
-    typename GlobalVector,
+    template <typename, typename, unsigned> class LocalAssemblerData,
     unsigned GlobalDim,
     typename... ConstructorArgs>
 class LocalDataInitializer final
@@ -285,7 +283,7 @@ private:
     using LAData = LocalAssemblerData<
             ShapeFunction,
             IntegrationMethod<ShapeFunction>,
-            GlobalMatrix, GlobalVector, GlobalDim>;
+            GlobalDim>;
 
     /// Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
     template<typename ShapeFct>

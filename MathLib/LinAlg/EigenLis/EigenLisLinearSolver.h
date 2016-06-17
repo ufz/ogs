@@ -28,7 +28,6 @@ class EigenMatrix;
  * Linear solver using Lis library with Eigen matrix and vector objects
  */
 class EigenLisLinearSolver final
-        : public LinearSolver<EigenMatrix, EigenVector>
 {
 public:
     /**
@@ -47,7 +46,7 @@ public:
      */
     void setOption(const LisOption &option) { _lis_option = option; }
 
-    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x) override;
+    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 private:
     LisOption _lis_option;

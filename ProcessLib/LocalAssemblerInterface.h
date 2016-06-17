@@ -18,7 +18,6 @@ namespace ProcessLib
  *
  * \todo Generalize to other NumLib::ODESystemTag's.
  */
-template <typename GlobalMatrix, typename GlobalVector>
 class LocalAssemblerInterface
 {
 public:

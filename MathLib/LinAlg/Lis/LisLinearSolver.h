@@ -36,7 +36,6 @@ class LisVector;
  *
  */
 class LisLinearSolver final
-        : public LinearSolver<LisMatrix, LisVector>
 {
 public:
     /**
@@ -56,7 +55,7 @@ public:
      */
     void setOption(const LisOption &option) { _lis_option = option; }
 
-    bool solve(LisMatrix& A, LisVector &b, LisVector &x) override;
+    bool solve(LisMatrix& A, LisVector &b, LisVector &x);
 
 private:
     LisOption _lis_option;

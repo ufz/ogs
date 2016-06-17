@@ -38,13 +38,11 @@ namespace MeshLib {
 
 namespace NumLib
 {
-template<typename Matrix, typename Vector>
 class NonlinearSolverBase;
 }
 
 namespace ApplicationsLib
 {
-template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop;
 }
 
@@ -57,8 +55,7 @@ class ProjectData final
 {
 public:
     /// The time loop type used to solve this project's processes.
-    using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
-        GlobalMatrix, GlobalVector>;
+    using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop;
 
     /// The empty constructor used in the gui, for example, when the project's
     /// configuration is not loaded yet.
@@ -217,10 +214,10 @@ private:
     /// The time loop used to solve this project's processes.
     std::unique_ptr<TimeLoop> _time_loop;
 
-    std::map<std::string, std::unique_ptr<MathLib::LinearSolver<GlobalMatrix, GlobalVector> > >
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>>
     _linear_solvers;
 
-    using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+    using NonlinearSolver = NumLib::NonlinearSolverBase;
     std::map<std::string, std::unique_ptr<NonlinearSolver> > _nonlinear_solvers;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> _curves;

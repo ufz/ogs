@@ -7,10 +7,12 @@
  *
  */
 
-#include <logog/include/logog.hpp>
+#include "NonlinearSolver.h"
 
 // for debugging
 // #include <iostream>
+
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -18,31 +20,28 @@
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
-#include "NonlinearSolver.h"
 
 
 namespace NumLib
 {
 
-template<typename Matrix, typename Vector>
 void
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-assemble(Vector const& x) const
+NonlinearSolver<NonlinearSolverTag::Picard>::
+assemble(GlobalVector const& x) const
 {
     _equation_system->assembleMatricesPicard(x);
 }
 
-template<typename Matrix, typename Vector>
 bool
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-solve(Vector &x)
+NonlinearSolver<NonlinearSolverTag::Picard>::
+solve(GlobalVector &x)
 {
     namespace BLAS = MathLib::BLAS;
     auto& sys = *_equation_system;
 
-    auto& A     = MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(_A_id);
-    auto& rhs   = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_rhs_id);
-    auto& x_new = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_x_new_id);
+    auto& A     = MathLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs   = MathLib::GlobalVectorProvider::provider.getVector(_rhs_id);
+    auto& x_new = MathLib::GlobalVectorProvider::provider.getVector(_x_new_id);
 
     bool error_norms_met = false;
 
@@ -124,18 +123,17 @@ solve(Vector &x)
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(A);
-    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(rhs);
-    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
+    MathLib::GlobalMatrixProvider::provider.releaseMatrix(A);
+    MathLib::GlobalVectorProvider::provider.releaseVector(rhs);
+    MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
 
     return error_norms_met;
 }
 
 
-template<typename Matrix, typename Vector>
 void
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-assemble(Vector const& x) const
+NonlinearSolver<NonlinearSolverTag::Newton>::
+assemble(GlobalVector const& x) const
 {
     _equation_system->assembleResidualNewton(x);
     // TODO if the equation system would be reset to nullptr after each
@@ -143,20 +141,19 @@ assemble(Vector const& x) const
     //      equation every time and could not forget it.
 }
 
-template<typename Matrix, typename Vector>
 bool
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-solve(Vector &x)
+NonlinearSolver<NonlinearSolverTag::Newton>::
+solve(GlobalVector &x)
 {
     namespace BLAS = MathLib::BLAS;
     auto& sys = *_equation_system;
 
     auto& res =
-            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_res_id);
+            MathLib::GlobalVectorProvider::provider.getVector(_res_id);
     auto& minus_delta_x =
-            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_minus_delta_x_id);
+            MathLib::GlobalVectorProvider::provider.getVector(_minus_delta_x_id);
     auto& J =
-            MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(_J_id);
+            MathLib::GlobalMatrixProvider::provider.getMatrix(_J_id);
 
     bool error_norms_met = false;
 
@@ -192,7 +189,7 @@ solve(Vector &x)
             // TODO could be solved in a better way
             // cf. http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
             auto& x_new =
-                    MathLib::GlobalVectorProvider<Vector>::provider.getVector(x, _x_new_id);
+                    MathLib::GlobalVectorProvider::provider.getVector(x, _x_new_id);
             BLAS::axpy(x_new, -_alpha, minus_delta_x);
 
             switch(sys.postIteration(x_new))
@@ -207,14 +204,14 @@ solve(Vector &x)
                 INFO("Newton: The postIteration() hook decided that this iteration"
                      " has to be repeated.");
                 // TODO introduce some onDestroy hook.
-                MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
+                MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
                 continue; // That throws the iteration result away.
             }
 
             // TODO could be done via swap. Note: that also requires swapping the ids.
             //      Same for the Picard scheme.
             BLAS::copy(x_new, x); // copy new solution to x
-            MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x_new);
+            MathLib::GlobalVectorProvider::provider.releaseVector(x_new);
         }
 
         if (!iteration_succeeded) {
@@ -245,23 +242,22 @@ solve(Vector &x)
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(J);
-    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(res);
-    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(minus_delta_x);
+    MathLib::GlobalMatrixProvider::provider.releaseMatrix(J);
+    MathLib::GlobalVectorProvider::provider.releaseVector(res);
+    MathLib::GlobalVectorProvider::provider.releaseVector(minus_delta_x);
 
     return error_norms_met;
 }
 
 
-template<typename Matrix, typename Vector>
 std::pair<
-    std::unique_ptr<NonlinearSolverBase<Matrix, Vector> >,
+    std::unique_ptr<NonlinearSolverBase>,
     NonlinearSolverTag
 >
-createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
+createNonlinearSolver(GlobalLinearSolver& linear_solver,
                       BaseLib::ConfigTree const& config)
 {
-    using AbstractNLS = NonlinearSolverBase<Matrix, Vector>;
+    using AbstractNLS = NonlinearSolverBase;
 
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type      = config.getConfigParameter<std::string>("type");
@@ -273,14 +269,14 @@ createNonlinearSolver(MathLib::LinearSolver<Matrix, Vector>& linear_solver,
     if (type == "Picard")
     {
         auto const tag = NonlinearSolverTag::Picard;
-        using ConcreteNLS = NonlinearSolver<Matrix, Vector, tag>;
+        using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(std::unique_ptr<AbstractNLS>(
             new ConcreteNLS{linear_solver, tol, max_iter}), tag);
     }
     else if (type == "Newton")
     {
         auto const tag = NonlinearSolverTag::Newton;
-        using ConcreteNLS = NonlinearSolver<Matrix, Vector, tag>;
+        using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(std::unique_ptr<AbstractNLS>(
             new ConcreteNLS{linear_solver, tol, max_iter}), tag);
     }

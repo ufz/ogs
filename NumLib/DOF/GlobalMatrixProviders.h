@@ -15,16 +15,14 @@
 namespace MathLib
 {
 
-template<typename Vector>
 struct GlobalVectorProvider
 {
-    static VectorProvider<Vector>& provider;
+    static VectorProvider<GlobalVector>& provider;
 };
 
-template<typename Matrix>
 struct GlobalMatrixProvider
 {
-    static MatrixProvider<Matrix>& provider;
+    static MatrixProvider<GlobalMatrix>& provider;
 };
 
 void cleanupGlobalMatrixProviders();
