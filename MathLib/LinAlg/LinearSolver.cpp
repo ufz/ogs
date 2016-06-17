@@ -93,7 +93,7 @@ SPECIALIZE_CREATE_LINEAR_SOLVER(Eigen::MatrixXd, Eigen::VectorXd,
 #endif
 
 
-#ifdef OGS_USE_LIS
+#ifdef USE_LIS
 
 #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
 

@@ -17,14 +17,10 @@
 
 #include "MathLib/LinAlg/BLAS.h"
 
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/Lis/LisMatrix.h"
-#elif defined(USE_PETSC)
+#if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #elif defined(OGS_USE_EIGEN)
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
-#else
-#include "MathLib/LinAlg/Dense/GlobalDenseMatrix.h"
 #endif
 
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
@@ -171,13 +167,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
 } // end namespace
 
-#if defined(USE_LIS)
-TEST(Math, CheckInterface_LisMatrix)
-{
-    MathLib::LisMatrix m(10);
-    checkGlobalMatrixInterface(m);
-}
-#elif defined(USE_PETSC)
+#if defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
@@ -235,12 +225,6 @@ TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 TEST(Math, CheckInterface_EigenMatrix)
 {
     MathLib::EigenMatrix m(10);
-    checkGlobalMatrixInterface(m);
-}
-#else
-TEST(Math, CheckInterface_GlobalDenseMatrix)
-{
-    MathLib::GlobalDenseMatrix<double> m(10, 10);
     checkGlobalMatrixInterface(m);
 }
 #endif

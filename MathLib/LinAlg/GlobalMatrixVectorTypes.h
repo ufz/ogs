@@ -15,7 +15,7 @@
 //
 // Global vector/matrix types and linear solver.
 //
-#if defined(OGS_USE_LIS)
+#if defined(USE_LIS)
 
     #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
     #include "MathLib/LinAlg/Eigen/EigenVector.h"

@@ -120,6 +120,7 @@ option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 if(OGS_USE_LIS)
     add_definitions(-DUSE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
+    set(OGS_USE_EIGEN ON)
 endif()
 
 if(OGS_USE_PETSC)
