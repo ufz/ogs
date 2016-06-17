@@ -73,6 +73,7 @@ ConfigTree::~ConfigTree()
     try {
         checkAndInvalidate();
     } catch (std::exception& e) {
+        ERR("%s", e.what());
         configtree_destructor_error_messages.push_front(e.what());
     }
 }
