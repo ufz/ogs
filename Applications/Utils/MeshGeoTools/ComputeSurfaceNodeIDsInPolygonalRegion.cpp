@@ -162,7 +162,8 @@ int main (int argc, char* argv[])
         writeToFile(id_and_area_fname, csv_fname, ids_and_areas, mesh_nodes);
     }
 
-    std::for_each(all_sfc_pnts.begin(), all_sfc_pnts.end(), std::default_delete<GeoLib::Point>());
+    std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
+                  std::default_delete<MeshLib::Node>());
 
     return 0;
 }
