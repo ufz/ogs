@@ -18,8 +18,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/Point.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Tri.h"
@@ -228,14 +226,12 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(
     const std::vector<MeshLib::Element*>& sfc_elements,
     std::vector<std::size_t>& node_id_map)
 {
-    const std::size_t nNewElements (sfc_elements.size());
     std::vector<const MeshLib::Node*> tmp_nodes(n_all_nodes, nullptr);
-    for (std::size_t i=0; i<nNewElements; ++i)
+    for (auto const* elem : sfc_elements)
     {
-        const MeshLib::Element* elem (sfc_elements[i]);
-        for (unsigned j=0; j<elem->getNumberOfBaseNodes(); ++j)
+        for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
         {
-            const MeshLib::Node* node (elem->getNode(j));
+            const MeshLib::Node* node(elem->getNode(j));
             tmp_nodes[node->getID()] = node;
         }
     }
@@ -245,12 +241,13 @@ void MeshSurfaceExtraction::get2DSurfaceNodes(
         if (tmp_nodes[i])
         {
             node_id_map[i] = sfc_nodes.size();
-            sfc_nodes.push_back(new MeshLib::Node(tmp_nodes[i]->getCoords(), tmp_nodes[i]->getID()));
+            sfc_nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
         }
     }
 }
 
-std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle)
+std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
+    const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
 {
     INFO ("Extracting surface nodes...");
     std::vector<MeshLib::Element*> sfc_elements;
@@ -265,14 +262,7 @@ std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib
     for (auto e : sfc_elements)
         delete e;
 
-    const std::size_t nNodes (sfc_nodes.size());
-    std::vector<GeoLib::Point*> surface_pnts(nNodes);
-    for (std::size_t i=0; i<nNodes; ++i)
-    {
-        surface_pnts[i] = new GeoLib::Point(*(sfc_nodes[i]), sfc_nodes[i]->getID());
-        delete sfc_nodes[i];
-    }
-    return surface_pnts;
+    return sfc_nodes;
 }
 
 } // end namespace MeshLib

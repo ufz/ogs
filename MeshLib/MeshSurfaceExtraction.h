@@ -20,10 +20,6 @@
 
 #include "MathLib/Vector3.h"
 
-namespace GeoLib {
-    class Point;
-}
-
 namespace MeshLib {
 // forward declarations
 class Mesh;
@@ -40,7 +36,8 @@ public:
     static std::vector<double> getSurfaceAreaForNodes(const MeshLib::Mesh &mesh);
 
     /// Returns the surface nodes of a mesh.
-    static std::vector<GeoLib::Point*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle);
+    static std::vector<MeshLib::Node*> getSurfaceNodes(
+        const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle);
 
     /**
      * Returns the 2d-element mesh representing the surface of the given mesh.

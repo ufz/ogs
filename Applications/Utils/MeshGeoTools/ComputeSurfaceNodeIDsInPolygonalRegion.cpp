@@ -110,11 +110,12 @@ int main (int argc, char* argv[])
     };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
-    std::vector<GeoLib::Point*> all_sfc_pnts(
+    std::vector<MeshLib::Node*> all_sfc_nodes(
         MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir, angle)
     );
 
-    std::for_each(all_sfc_pnts.begin(), all_sfc_pnts.end(), [](GeoLib::Point* p) { (*p)[2] = 0.0; });
+    std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
+                  [](MeshLib::Node* p) { (*p)[2] = 0.0; });
 
     std::vector<MeshLib::Node*> const& mesh_nodes(mesh->getNodes());
     GeoLib::PolylineVec const* ply_vec(
@@ -134,9 +135,9 @@ int main (int argc, char* argv[])
         GeoLib::Polygon const& polygon(*(plys[j]));
         // ids of mesh nodes on surface that are within the given polygon
         std::vector<std::pair<std::size_t, double>> ids_and_areas;
-        for (std::size_t k(0); k<all_sfc_pnts.size(); k++) {
-            GeoLib::Point const& pnt(*(all_sfc_pnts[k]));
-            if (polygon.isPntInPolygon(pnt)) {
+        for (std::size_t k(0); k<all_sfc_nodes.size(); k++) {
+            MeshLib::Node const& pnt(*(all_sfc_nodes[k]));
+            if (polygon.isPntInPolygon(pnt[0], pnt[1], pnt[2])) {
                 ids_and_areas.push_back(std::make_pair(pnt.getID(), areas[k]));
             }
         }
