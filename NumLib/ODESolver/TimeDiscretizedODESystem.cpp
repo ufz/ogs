@@ -225,8 +225,7 @@ void TimeDiscretizedODESystem<
 
     if (known_solutions)
     {
-        using IndexType =
-            typename MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+        using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
         std::vector<IndexType> ids;
         std::vector<double> values;
         for (auto const& bc : *known_solutions)
