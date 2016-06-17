@@ -44,15 +44,7 @@ LineSegment::~LineSegment()
     }
 }
 
-LineSegment& LineSegment::operator=(LineSegment const& other)
-{
-    _a = other._a;
-    _b = other._b;
-    _point_mem_management_by_line_segment =
-        other._point_mem_management_by_line_segment;
-
-    return *this;
-}
+LineSegment& LineSegment::operator=(LineSegment const& other) = default;
 
 LineSegment& LineSegment::operator=(LineSegment&& line_segment)
 {
