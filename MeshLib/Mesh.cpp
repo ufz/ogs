@@ -49,7 +49,6 @@ Mesh::Mesh(const std::string &name,
     this->setElementNeighbors();
 
     this->calcEdgeLengthRange();
-    this->calcNodeDistanceRange();
 }
 
 Mesh::Mesh(const Mesh &mesh)
@@ -163,23 +162,6 @@ void Mesh::calcEdgeLengthRange()
     }
     this->_edge_length.first  = sqrt(this->_edge_length.first);
     this->_edge_length.second = sqrt(this->_edge_length.second);
-}
-
-void Mesh::calcNodeDistanceRange()
-{
-    this->_node_distance.first  = std::numeric_limits<double>::max();
-    this->_node_distance.second = 0;
-    double min_length(0);
-    double max_length(0);
-    const std::size_t nElems (this->getNumberOfElements());
-    for (std::size_t i=0; i<nElems; ++i)
-    {
-        _elements[i]->computeSqrNodeDistanceRange(min_length, max_length);
-        this->_node_distance.first  = std::min(this->_node_distance.first,  min_length);
-        this->_node_distance.second = std::max(this->_node_distance.second, max_length);
-    }
-    this->_node_distance.first  = sqrt(this->_node_distance.first);
-    this->_node_distance.second = sqrt(this->_node_distance.second);
 }
 
 void Mesh::setElementNeighbors()

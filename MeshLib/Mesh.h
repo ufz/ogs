@@ -78,14 +78,6 @@ public:
     /// Get the maximum edge length over all elements of the mesh.
     double getMaxEdgeLength() const { return _edge_length.second; }
 
-    /// Get the minimum node distance in the mesh.
-    /// The value is calculated from element-wise minimum node distances.
-    double getMinNodeDistance() const { return _node_distance.first; }
-
-    /// Get the maximum node distance over all elements of the mesh.
-    /// The value is calculated from element-wise maximum node distances.
-    double getMaxNodeDistance() const { return _node_distance.second; }
-
     /// Get the number of elements
     std::size_t getNumberOfElements() const { return _elements.size(); }
 
@@ -128,8 +120,6 @@ public:
 protected:
     /// Set the minimum and maximum length over the edges of the mesh.
     void calcEdgeLengthRange();
-    /// Set the minimum and maximum node distances within elements.
-    void calcNodeDistanceRange();
 
     /**
      * Resets the connected elements for the node vector, i.e. removes the old information and
