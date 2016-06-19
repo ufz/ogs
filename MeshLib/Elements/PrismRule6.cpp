@@ -43,19 +43,11 @@ const unsigned PrismRule6::edge_nodes[9][2] =
 
 const unsigned PrismRule6::n_face_nodes[5] = { 3, 4, 4, 4, 3 };
 
-unsigned PrismRule6::getNumberOfFaceNodes(unsigned i)
-{
-    if (i<5)
-        return n_face_nodes[i];
-    ERR("Error in MeshLib::Element::getNumberOfFaceNodes() - Index %d does not exist.", i);
-    return 0;
-}
-
 const Element* PrismRule6::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)
     {
-        unsigned nFaceNodes (e->getNumberOfFaceNodes(i));
+        unsigned nFaceNodes(PrismRule6::n_face_nodes[i]);
         Node** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));

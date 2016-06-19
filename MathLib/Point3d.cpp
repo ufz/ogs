@@ -9,9 +9,9 @@
  *
  */
 
-#include "Point.h"
+#include "Point3d.h"
 
-namespace GeoLib
+namespace MathLib
 {
-    const Point ORIGIN(0, 0, 0);
+extern const Point3d ORIGIN{ {{0.0, 0.0, 0.0}} };
 }

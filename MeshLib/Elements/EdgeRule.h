@@ -27,9 +27,6 @@ public:
     /// Constant: The number of edges
     static const unsigned n_edges = 0;
 
-    /// Get the number of nodes for face i.
-    static unsigned getNumberOfFaceNodes(unsigned /*i*/) { return 0; }
-
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* /*e*/, unsigned /*i*/) { return nullptr; }
 

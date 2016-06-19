@@ -34,8 +34,7 @@ class Node;
  */
 class Element
 {
-    /* friend classes */
-    friend class Mesh;//void Mesh::setElementInformationForNodes();
+    friend class Mesh;
 
 public:
     /// Compute the minimum and maximum squared edge length for this element
@@ -93,9 +92,6 @@ public:
 
     /// Get the number of edges for this element.
     virtual unsigned getNumberOfEdges() const = 0;
-
-    /// Get the number of nodes for face i.
-    virtual unsigned getNumberOfFaceNodes(unsigned i) const = 0;
 
     /// Get the number of faces for this element.
     virtual unsigned getNumberOfFaces() const = 0;

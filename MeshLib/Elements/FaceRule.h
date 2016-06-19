@@ -25,9 +25,6 @@ public:
     /// Returns the face i of the element.
     static const Element* getFace(const Element* e, unsigned i) { return e->getEdge(i); }
 
-    /// Get the number of nodes for face i.
-    static unsigned getNumberOfFaceNodes(unsigned /*i*/) { return 2; }
-
     /// Constant: The number of faces
     static const unsigned n_faces = 0;
 

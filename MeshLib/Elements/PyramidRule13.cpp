@@ -40,19 +40,11 @@ const unsigned PyramidRule13::edge_nodes[8][3] =
 
 const unsigned PyramidRule13::n_face_nodes[5] = { 6, 6, 6, 6, 8 };
 
-unsigned PyramidRule13::getNumberOfFaceNodes(unsigned i)
-{
-    if (i<5)
-        return n_face_nodes[i];
-    ERR("Error in MeshLib::Element::getNumberOfFaceNodes() - Index %d does not exist.", i);
-    return 0;
-}
-
 const Element* PyramidRule13::getFace(const Element* e, unsigned i)
 {
     if (i<e->getNumberOfFaces())
     {
-        unsigned nFaceNodes (e->getNumberOfFaceNodes(i));
+        unsigned nFaceNodes(PyramidRule13::n_face_nodes[i]);
         Node** nodes = new Node*[nFaceNodes];
         for (unsigned j=0; j<nFaceNodes; j++)
             nodes[j] = const_cast<Node*>(e->getNode(face_nodes[i][j]));
