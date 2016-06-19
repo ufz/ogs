@@ -17,7 +17,7 @@
 #include "Mesh.h"
 #include "Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "AABB.h"
 #include "OGSError.h"
@@ -62,7 +62,7 @@ void MeshElementRemovalDialog::accept()
     bool anything_checked (false);
 
     const MeshLib::Mesh* msh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
-    MeshLib::ElementSearch ex(*msh);
+    MeshGeoToolsLib::ElementSearch ex(*msh);
     if (this->elementTypeCheckBox->isChecked())
     {
         QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();

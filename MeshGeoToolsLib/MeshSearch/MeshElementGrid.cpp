@@ -16,14 +16,14 @@
 
 #include <logog/include/logog.hpp>
 
-#include "../Mesh.h"
-#include "../Node.h"
-#include "../Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Elements/Element.h"
 
 #include "GeoLib/GEOObjects.h"
 
-namespace MeshLib {
-
+namespace MeshGeoToolsLib
+{
 MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     _aabb{sfc_mesh.getNodes().cbegin(), sfc_mesh.getNodes().cend()},
     _n_steps({{1,1,1}})

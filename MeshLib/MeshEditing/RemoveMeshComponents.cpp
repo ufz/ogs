@@ -12,8 +12,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "DuplicateMeshComponents.h"
 
 namespace MeshLib
@@ -62,7 +62,7 @@ MeshLib::Mesh* removeElements(const MeshLib::Mesh& mesh, const std::vector<std::
     std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(tmp_elems, new_nodes);
 
     // delete unused nodes
-    NodeSearch ns(mesh);
+    MeshGeoToolsLib::NodeSearch ns(mesh);
     ns.searchNodesConnectedToOnlyGivenElements(removed_element_ids);
     auto &removed_node_ids(ns.getSearchedNodeIDs());
     INFO("Removing total %d nodes...", removed_node_ids.size());
@@ -98,7 +98,7 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh &mesh, const std::vector<std::siz
     std::vector<MeshLib::Element*> new_elems = MeshLib::copyElementVector(mesh.getElements(), new_nodes);
 
     // delete elements
-    MeshLib::ElementSearch es(mesh);
+    MeshGeoToolsLib::ElementSearch es(mesh);
     es.searchByNodeIDs(del_nodes_idx);
     auto& removed_element_ids = es.getSearchedElementIDs();
     for (auto eid : removed_element_ids)

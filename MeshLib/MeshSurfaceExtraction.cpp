@@ -26,7 +26,7 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 namespace MeshLib {
@@ -159,7 +159,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshBoundary(const MeshLib::Mesh &mesh)
             }
     }
     MeshLib::Mesh* result = new MeshLib::Mesh("Boundary Mesh", nodes, boundary_elements);
-    MeshLib::NodeSearch ns(*result);
+    MeshGeoToolsLib::NodeSearch ns(*result);
     if (ns.searchUnused() == 0) {
         return result;
     } else {

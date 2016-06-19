@@ -17,12 +17,14 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 
-namespace MeshLib {
-
-// forward declarations
+namespace MeshLib
+{
 class Mesh;
 class Element;
+}
 
+namespace MeshGeoToolsLib
+{
 /// Element search class
 class ElementSearch final
 {
@@ -74,7 +76,7 @@ public:
     }
 
     /// Marks all elements of the given element type.
-    std::size_t searchByElementType(MeshElemType eleType);
+    std::size_t searchByElementType(MeshLib::MeshElemType eleType);
 
     /// Marks all elements with a volume smaller than eps.
     std::size_t searchByContent(double eps = std::numeric_limits<double>::epsilon());

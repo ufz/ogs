@@ -16,7 +16,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubsets.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/GEOObjects.h"
 
@@ -65,7 +65,7 @@ public:
                        std::back_inserter(boundary_elements),
                        std::mem_fn(&MeL::Element::clone));
 
-        std::vector<MeL::Node*> nodes = MeL::getUniqueNodes(boundary_elements);
+        std::vector<MeL::Node*> nodes = MGTL::getUniqueNodes(boundary_elements);
 
         mesh_items_boundary.reset(
             mesh_items_all_nodes->getIntersectionByNodes(nodes));

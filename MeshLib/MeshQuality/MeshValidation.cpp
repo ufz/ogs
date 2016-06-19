@@ -24,7 +24,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib {
@@ -33,7 +33,7 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 {
     INFO ("Mesh Quality Control:");
     INFO ("%Looking for unused nodes...");
-    NodeSearch ns(mesh);
+    MeshGeoToolsLib::NodeSearch ns(mesh);
     ns.searchUnused();
     if (!ns.getSearchedNodeIDs().empty()) {
         INFO ("%d unused mesh nodes found.", ns.getSearchedNodeIDs().size());

@@ -14,8 +14,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
-namespace MeshLib {
-
+namespace MeshGeoToolsLib
+{
 ElementSearch::ElementSearch(const MeshLib::Mesh &mesh)
     : _mesh(mesh)
 {
@@ -34,7 +34,7 @@ std::vector<std::size_t> filter(Container const& container, Predicate const& p)
     return matchedIDs;
 }
 
-std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
+std::size_t ElementSearch::searchByElementType(MeshLib::MeshElemType eleType)
 {
     auto matchedIDs = filter(_mesh.getElements(),
         [&](MeshLib::Element* e) { return e->getGeomType()==eleType; });

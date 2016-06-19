@@ -31,7 +31,7 @@
 #include "MeshLib/IO/GmshReader.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
@@ -90,7 +90,7 @@ int main (int argc, char* argv[])
 
     // *** remove line elements on request
     if (exclude_lines_arg.getValue()) {
-        auto ex = MeshLib::ElementSearch(*mesh);
+        auto ex = MeshGeoToolsLib::ElementSearch(*mesh);
         ex.searchByElementType(MeshLib::MeshElemType::LINE);
         auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
         if (m != nullptr) {

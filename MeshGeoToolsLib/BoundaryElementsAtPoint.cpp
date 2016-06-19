@@ -12,7 +12,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Point.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"

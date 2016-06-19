@@ -24,13 +24,13 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshGeoToolsLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 
 template <typename PROPERTY_TYPE>
 void searchByProperty(std::string const& property_name,
                       std::vector<PROPERTY_TYPE> const& property_values,
-                      MeshLib::ElementSearch& searcher)
+                      MeshGeoToolsLib::ElementSearch& searcher)
 {
     for (auto const& property_value : property_values) {
         const std::size_t n_marked_elements =
@@ -100,7 +100,7 @@ int main (int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
-    MeshLib::ElementSearch searcher(*mesh);
+    MeshGeoToolsLib::ElementSearch searcher(*mesh);
 
     // search elements IDs to be removed
     if (zveArg.isSet()) {
