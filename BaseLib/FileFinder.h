@@ -36,7 +36,8 @@ public:
     FileFinder()
     {
         addDirectory(".");
-        addDirectory(BuildInfo::source_path + "/FileIO");
+        addDirectory(BuildInfo::source_path + "/GeoLib/IO/XmlIO");
+        addDirectory(BuildInfo::source_path + "/Applications/FileIO/XmlIO");
     }
 
     /**
