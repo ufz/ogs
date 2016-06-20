@@ -61,9 +61,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
 }
 
 std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylinesVector(
-    std::vector<GeoLib::Polyline*> const& polylines)
+    std::vector<GeoLib::Polyline*> const& polylines) const
 {
-    std::size_t n_plys = polylines.size();
+    std::size_t const n_plys = polylines.size();
     std::unique_ptr<std::vector<GeoLib::Polyline*>> new_lines
         (new std::vector<Polyline*>(n_plys, nullptr));
 
@@ -72,7 +72,7 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylines
         if (polylines[i] == nullptr)
             continue;
         (*new_lines)[i] = new GeoLib::Polyline(*_geo_objects.getPointVec(_output_name));
-        std::size_t nLinePnts (polylines[i]->getNumberOfPoints());
+        std::size_t const nLinePnts (polylines[i]->getNumberOfPoints());
         for (std::size_t j=0; j<nLinePnts; ++j)
             (*new_lines)[i]->addPoint(polylines[i]->getPointID(j));
     }
@@ -80,9 +80,9 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylines
 }
 
 std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
-    std::vector<Surface*> const& surfaces)
+    std::vector<Surface*> const& surfaces) const
 {
-    std::size_t n_sfc = surfaces.size();
+    std::size_t const n_sfc = surfaces.size();
     std::unique_ptr<std::vector<GeoLib::Surface*>> new_surfaces
         (new std::vector<Surface*>(n_sfc, nullptr));
 
@@ -92,7 +92,7 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
             continue;
         (*new_surfaces)[i] = new GeoLib::Surface(*_geo_objects.getPointVec(_output_name));
 
-        std::size_t n_tris (surfaces[i]->getNumberOfTriangles());
+        std::size_t const n_tris (surfaces[i]->getNumberOfTriangles());
         for (std::size_t j=0; j<n_tris; ++j)
         {
             GeoLib::Triangle const* t = (*surfaces[i])[j];
