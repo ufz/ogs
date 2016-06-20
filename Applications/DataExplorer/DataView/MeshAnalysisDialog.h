@@ -20,7 +20,7 @@
 #include "ui_MeshAnalysis.h"
 #include <QDialog>
 
-#include "MeshQuality/ElementErrorCode.h"
+#include "MeshLib/Elements/ElementErrorCode.h"
 
 namespace MeshLib {
     class Mesh;

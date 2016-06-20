@@ -19,7 +19,7 @@
 #include <vector>
 #include <limits>
 
-#include "ElementErrorCode.h"
+#include "MeshLib/Elements/ElementErrorCode.h"
 
 namespace MeshLib {
     class Mesh;
