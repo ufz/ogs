@@ -72,6 +72,8 @@ public:
     /// Returns the name of the station.
     std::string const& getName() const { return _name; }
 
+    void setName(std::string const& name) { _name = name; }
+
     /// Returns the GeoSys-station-type for the station.
     StationType type() const { return _type; }
 

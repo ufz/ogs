@@ -61,6 +61,8 @@ private slots:
     void exportList();
     void exportStation();
     void removeStationList();
+    /// Calls a SetNameDialog.
+    void setNameForElement();
     void writeToFile();
     void showDiagramPrefsDialog();
 
@@ -73,6 +75,7 @@ signals:
                               const QItemSelection & deselected);
     void openStationListFile(int);
     void propertiesDialogRequested(std::string name);
+    void requestNameChangeDialog(const std::string&, std::size_t);
     void stationListExportRequested(std::string listName, std::string fileName);
     void stationListRemoved(std::string name);
     void stationListSaved(QString listName, QString fileName);

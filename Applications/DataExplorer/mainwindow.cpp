@@ -131,6 +131,8 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/)
             SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
     connect(_geo_model.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
             this, SLOT(updateDataViews())); // update data view when stations are removed
+    connect(stationTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, std::size_t)),
+            this, SLOT(showStationNameDialog(const std::string&, std::size_t)));
     connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
             this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
 
@@ -1000,6 +1002,18 @@ void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLi
     _geo_model->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
     static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
         id, _project.getGEOObjects().getElementNameByID(geometry_name, object_type, id));
+}
+
+void MainWindow::showStationNameDialog(const std::string& stn_vec_name, std::size_t id)
+{
+    std::vector<GeoLib::Point*> const* stations = _project.getGEOObjects().getStationVec(stn_vec_name);
+    GeoLib::Station *const stn = static_cast<GeoLib::Station*>((*stations)[id]);
+    SetNameDialog dlg("Station", id, stn->getName());
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    stn->setName(dlg.getNewName());
+    static_cast<StationTreeModel*>(this->stationTabWidget->treeView->model())->setNameForItem(stn_vec_name, id, stn->getName());
 }
 
 void MainWindow::showCreateStructuredGridDialog()

@@ -102,6 +102,17 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
     return nullptr;
 }
 
+void StationTreeModel::setNameForItem(const std::string &stn_vec_name, std::size_t id, std::string item_name)
+{
+    auto const stn_list = find_if(_lists.begin(), _lists.end(), [&stn_vec_name](ModelTreeItem* item)
+        { return (stn_vec_name.compare( item->data(0).toString().toStdString() ) == 0); });
+
+    if (id >=  (*stn_list)->childCount())
+        return;
+    TreeItem *const item = (*stn_list)->child(id);
+    item->setData(0, QString::fromStdString(item_name));
+}
+
 /**
  * Inserts a subtree under _rootItem.
  * \param listName Name of the new subtree. If no name is given a default name is assigned.

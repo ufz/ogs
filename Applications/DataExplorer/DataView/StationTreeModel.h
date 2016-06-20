@@ -53,6 +53,7 @@ public:
     //BaseItem* itemFromIndex( const QModelIndex& index ) const;
     void removeStationList(QModelIndex index);
     void removeStationList(const std::string &name);
+    void setNameForItem(const std::string &stn_vec_name, std::size_t id, std::string item_name);
     GeoLib::Station* stationFromIndex( const QModelIndex& index, QString &listName ) const;
     vtkPolyDataAlgorithm* vtkSource(const std::string &name) const;
 

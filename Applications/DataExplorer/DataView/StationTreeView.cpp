@@ -106,9 +106,10 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
         QString temp_name;
         QMenu menu;
 
-        if (static_cast<StationTreeModel*>(model())->stationFromIndex(index,
-                                                                      temp_name)->type() ==
-            GeoLib::Station::StationType::BOREHOLE)
+        QAction* setNameAction = menu.addAction("Set name...");
+        connect(setNameAction, SIGNAL(triggered()), this, SLOT(setNameForElement()));
+        if (static_cast<StationTreeModel*>(model())->stationFromIndex(index, temp_name)->type()
+                == GeoLib::Station::StationType::BOREHOLE)
         {
             QAction* stratAction = menu.addAction("Display Stratigraphy...");
             QAction* exportAction = menu.addAction("Export to GMS...");
@@ -118,13 +119,20 @@ void StationTreeView::contextMenuEvent( QContextMenuEvent* event )
         }
         else
         {
-            menu.addAction("View Information...");
             QAction* showDiagramAction = menu.addAction("View Diagram...");
             connect(showDiagramAction, SIGNAL(triggered()), this,
                     SLOT(showDiagramPrefsDialog()));
             menu.exec(event->globalPos());
         }
     }
+}
+
+void StationTreeView::setNameForElement()
+{
+    TreeItem const*const item = static_cast<StationTreeModel*>(model())->getItem(
+            this->selectionModel()->currentIndex());
+    std::string const stn_vec_name = item->parentItem()->data(0).toString().toStdString();
+    emit requestNameChangeDialog(stn_vec_name, item->row());
 }
 
 void StationTreeView::displayStratigraphy()
