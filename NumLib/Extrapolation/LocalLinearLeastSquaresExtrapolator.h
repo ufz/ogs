@@ -63,8 +63,18 @@ public:
 #endif
           ,
           _local_to_global(dof_table)
-    {}
-
+    {
+        /* Note in case the following assertion fails.
+         * If you copied the extrapolation code, for your processes from
+         * somewhere, note that the code from the groundwater flow process might
+         * not suit your needs: It is a special case and is therefore most
+         * likely too simplistic. You better adapt the extrapolation code from
+         * some more advanced process, like the TES process.
+         */
+        assert(dof_table.getNumComponents() == 1 &&
+               "The d.o.f. table passed must be for one variable that has "
+               "only one component!");
+    }
 
     void extrapolate(LocalAssemblers const& local_assemblers,
                      PropertyTag const property) override;
