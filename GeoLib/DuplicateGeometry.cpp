@@ -9,12 +9,10 @@
 
 #include "DuplicateGeometry.h"
 
-#include <memory>
-#include <vector>
-
 // ThirdParty/logog
 #include <logog/include/logog.hpp>
 
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"

@@ -10,13 +10,13 @@
 #ifndef DUPLICATEGEOMETRY_H_
 #define DUPLICATEGEOMETRY_H_
 
+#include <memory>
 #include <string>
-
-#include "GeoLib/GEOObjects.h"
+#include <vector>
 
 namespace GeoLib
 {
-
+class GEOObjects;
 class Point;
 class Polyline;
 class Surface;
