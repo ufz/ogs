@@ -39,7 +39,7 @@ public:
         std::string const& output_name);
 
     // Returns the (possibly modified) output name of the new geometry.
-    std::string const& getFinalizedOutputName() { return _output_name; }
+    std::string const& getFinalizedOutputName() const { return _output_name; }
     // Returns a reference to the copied point vector for modification
     std::vector<GeoLib::Point*>& getPointVectorCopy();
     // Returns a reference to the copied polyline vector for modification
