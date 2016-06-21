@@ -1,18 +1,24 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
 #include <gtest/gtest.h>
-#include <logog/include/logog.hpp>
 
 #include <fstream>
 #include <memory>
 #include <typeinfo>
 
+#include <logog/include/logog.hpp>
+
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "NumLib/NumericsConfig.h"
 #include "ODEs.h"
-
-
-//using EDMatrix = Eigen::MatrixXd;
-//using EVector = Eigen::VectorXd;
 
 using GMatrix = GlobalMatrix;
 using GVector = GlobalVector;
@@ -185,28 +191,6 @@ struct TestCase;
 //  Put new test cases to that list
 //
 // /////////////////////////////////////
-//#define TESTCASESLIST \
-//    /* Eigen dense matrix */ \
-//    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
-//    \
-//    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
-//    \
-//    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
-//    \
-//    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
-//    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
-//
 #define TESTCASESLIST \
     /* Global sparse matrix */ \
     TCLITEM(GMatrix,  GVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
@@ -305,14 +289,6 @@ TYPED_TEST(NumLibODEIntTyped, T1)
 TEST(NumLibODEInt, ODE3)
 {
     const char* name = "dummy";
-//    {
-
-//        // only make sure ODE3 compiles
-//        run_test_case<EDMatrix, EVector, NumLib::BackwardEuler,
-//                      ODE3<EDMatrix, EVector>,
-//                      NumLib::NonlinearSolverTag::Newton>(0u, name);
-//    }
-
     {
         run_test_case<GMatrix, GVector, NumLib::BackwardEuler, ODE3,
                       NumLib::NonlinearSolverTag::Newton>(0u, name);
