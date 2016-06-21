@@ -41,6 +41,8 @@ TEST(GeoLib, DuplicateGeometry)
             std::rand() % box_size - half_box_size));
     }
     geo.addPointVec(std::move(pnts), input_name);
+    // update number of points in case because possibly non-unique points have been removed
+    n_pnts = geo.getPointVec(input_name)->size();
     std::string output ("output_geometry");
 
     // duplicate points
