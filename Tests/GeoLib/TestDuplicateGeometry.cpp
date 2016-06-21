@@ -30,15 +30,15 @@ TEST(GeoLib, DuplicateGeometry)
     // generate points
     std::srand ( static_cast<unsigned>(std::time(nullptr)) );
     std::size_t n_pnts (rand() % 1000 + 100);
-    int box_size (rand());
+    int box_size (std::rand());
     double half_box_size(box_size/2);
     std::unique_ptr<std::vector<GeoLib::Point*>> pnts (new std::vector<GeoLib::Point*>);
     pnts->reserve(n_pnts);
     for (int k(0); k<n_pnts; k++) {
         pnts->push_back(new GeoLib::Point(
-            rand() % box_size - half_box_size,
-            rand() % box_size - half_box_size,
-            rand() % box_size - half_box_size));
+            std::rand() % box_size - half_box_size,
+            std::rand() % box_size - half_box_size,
+            std::rand() % box_size - half_box_size));
     }
     geo.addPointVec(std::move(pnts), input_name);
     std::string output ("output_geometry");
