@@ -18,6 +18,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 if(MSVC)
     include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
         ${CMAKE_CURRENT_BINARY_DIR}/../../MathLib
         ${CMAKE_CURRENT_BINARY_DIR}/../../MeshLib
         )
