@@ -20,9 +20,7 @@ namespace ProcessLib
 {
 namespace GroundwaterFlow
 {
-
-class GroundwaterFlowProcess final
-        : public Process
+class GroundwaterFlowProcess final : public Process
 {
     using Base = Process;
 
@@ -31,51 +29,49 @@ public:
         MeshLib::Mesh& mesh,
         Base::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
-        std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
+        std::vector<std::reference_wrapper<ProcessVariable>>&&
+            process_variables,
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        ProcessOutput&& process_output
-        );
+        ProcessOutput&& process_output);
 
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override
-    {
-        return true;
-    }
-
+    bool isLinear() const override { return true; }
     //! @}
 
 private:
     using GlobalAssembler = NumLib::VectorMatrixAssembler<
-            GroundwaterFlowLocalAssemblerInterface,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
+        GroundwaterFlowLocalAssemblerInterface,
+        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
-    using ExtrapolatorInterface = NumLib::Extrapolator<
-        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
-    using ExtrapolatorImplementation = NumLib::LocalLinearLeastSquaresExtrapolator<
-        IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
+    using ExtrapolatorInterface =
+        NumLib::Extrapolator<IntegrationPointValue,
+                             GroundwaterFlowLocalAssemblerInterface>;
+    using ExtrapolatorImplementation =
+        NumLib::LocalLinearLeastSquaresExtrapolator<
+            IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
 
     void initializeConcreteProcess(
-            NumLib::LocalToGlobalIndexMap const& dof_table,
-            MeshLib::Mesh const& mesh,
-            unsigned const integration_order) override;
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        MeshLib::Mesh const& mesh,
+        unsigned const integration_order) override;
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
-                                 GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
-
+                                 GlobalMatrix& M, GlobalMatrix& K,
+                                 GlobalVector& b) override;
 
     GroundwaterFlowProcessData _process_data;
 
     std::unique_ptr<GlobalAssembler> _global_assembler;
-    std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
+        _local_assemblers;
 
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-std::unique_ptr<GroundwaterFlowProcess>
-createGroundwaterFlowProcess(
+std::unique_ptr<GroundwaterFlowProcess> createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
@@ -83,7 +79,7 @@ createGroundwaterFlowProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-}   // namespace GroundwaterFlow
-}   // namespace ProcessLib
+}  // namespace GroundwaterFlow
+}  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_GROUNDWATERFLOWPROCESS_H_

@@ -14,7 +14,6 @@
 
 namespace NumLib
 {
-
 //! \addtogroup ODESolver
 //! @{
 
@@ -30,9 +29,8 @@ enum class IterationResult : char
  *
  * \tparam Vector the type of the solution vector of the equation.
  */
-template<typename Vector>
-class EquationSystem
-        : public MathLib::MatrixSpecificationsProvider
+template <typename Vector>
+class EquationSystem : public MathLib::MatrixSpecificationsProvider
 {
 public:
     /*! Check whether this is actually a linear equation system.
@@ -51,7 +49,8 @@ public:
      */
     virtual void preIteration(const unsigned iter, Vector const& x)
     {
-        (void) iter; (void) x; // by default do nothing
+        (void)iter;
+        (void)x;  // by default do nothing
     }
 
     /*! Post-processes an iteration in the solution process of this equation.
@@ -62,13 +61,12 @@ public:
      */
     virtual IterationResult postIteration(Vector const& x)
     {
-        (void) x; // by default do nothing
+        (void)x;  // by default do nothing
         return IterationResult::SUCCESS;
     }
 };
 
 //! @}
-
 }
 
 #endif

@@ -10,9 +10,9 @@
 #ifndef PROCESS_LIB_PROCESS_H_
 #define PROCESS_LIB_PROCESS_H_
 
+#include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
-#include "NumLib/ODESolver/NonlinearSolver.h"
 
 #include "Parameter.h"
 #include "ProcessOutput.h"
@@ -25,35 +25,34 @@ class Mesh;
 
 namespace ProcessLib
 {
-
-class Process
-        : public NumLib::ODESystem<GlobalMatrix,
-                                   GlobalVector,
-                                   // TODO: later on use a simpler ODE system
-                                   NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                                   NumLib::NonlinearSolverTag::Newton>
+class Process : public NumLib::ODESystem<
+                    GlobalMatrix, GlobalVector,
+                    // TODO: later on use a simpler ODE system
+                    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                    NumLib::NonlinearSolverTag::Newton>
 {
 public:
     using Index = GlobalMatrix::IndexType;
-    using NonlinearSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+    using NonlinearSolver =
+        NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
     using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
 
-    Process(
-        MeshLib::Mesh& mesh,
-        NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<TimeDiscretization>&& time_discretization,
-        std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-        SecondaryVariableCollection&& secondary_variables,
-        ProcessOutput&& process_output
-        );
+    Process(MeshLib::Mesh& mesh,
+            NonlinearSolver& nonlinear_solver,
+            std::unique_ptr<TimeDiscretization>&& time_discretization,
+            std::vector<std::reference_wrapper<ProcessVariable>>&&
+                process_variables,
+            SecondaryVariableCollection&& secondary_variables,
+            ProcessOutput&& process_output);
 
     /// Preprocessing before starting assembly for new timestep.
-    virtual void preTimestep(GlobalVector const& /*x*/,
-                             const double /*t*/, const double /*delta_t*/) {}
+    virtual void preTimestep(GlobalVector const& /*x*/, const double /*t*/,
+                             const double /*delta_t*/)
+    {
+    }
 
     /// Postprocessing after a complete timestep.
     virtual void postTimestep(GlobalVector const& /*x*/) {}
-
     /// Process output.
     /// The file_name is indicating the name of possible output file.
     void output(std::string const& file_name,
@@ -64,16 +63,17 @@ public:
 
     void setInitialConditions(GlobalVector& x);
 
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override final;
+    MathLib::MatrixSpecifications getMatrixSpecifications()
+        const override final;
 
-    void assemble(const double t, GlobalVector const& x,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override final;
+    void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
+                  GlobalMatrix& K, GlobalVector& b) override final;
 
-    void assembleJacobian(
-        const double t, GlobalVector const& x, GlobalVector const& xdot,
-        const double dxdot_dx, GlobalMatrix const& M,
-        const double dx_dx, GlobalMatrix const& K,
-        GlobalMatrix& Jac) override final;
+    void assembleJacobian(const double t, GlobalVector const& x,
+                          GlobalVector const& xdot, const double dxdot_dx,
+                          GlobalMatrix const& M, const double dx_dx,
+                          GlobalMatrix const& K,
+                          GlobalMatrix& Jac) override final;
 
     std::vector<DirichletBc<Index>> const* getKnownSolutions(
         double const /*t*/) const override final
@@ -81,11 +81,7 @@ public:
         return &_dirichlet_bcs;
     }
 
-    NonlinearSolver& getNonlinearSolver() const
-    {
-        return _nonlinear_solver;
-    }
-
+    NonlinearSolver& getNonlinearSolver() const { return _nonlinear_solver; }
     TimeDiscretization& getTimeDiscretization() const
     {
         return *_time_discretization;
@@ -98,15 +94,15 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) = 0;
 
-    virtual void assembleConcreteProcess(
-        const double t, GlobalVector const& x,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+    virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
+                                         GlobalMatrix& M, GlobalMatrix& K,
+                                         GlobalVector& b) = 0;
 
     virtual void assembleJacobianConcreteProcess(
-        const double /*t*/, GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
-        const double /*dxdot_dx*/, GlobalMatrix const& /*M*/,
-        const double /*dx_dx*/, GlobalMatrix const& /*K*/,
-        GlobalMatrix& /*Jac*/);
+        const double /*t*/, GlobalVector const& /*x*/,
+        GlobalVector const& /*xdot*/, const double /*dxdot_dx*/,
+        GlobalMatrix const& /*M*/, const double /*dx_dx*/,
+        GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/);
 
     void constructDofTable();
 
@@ -131,8 +127,7 @@ protected:
     MeshLib::Mesh& _mesh;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
 
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     SecondaryVariableCollection _secondary_variables;
     ProcessOutput _process_output;
@@ -169,11 +164,11 @@ private:
 /// \endcode
 ///
 /// \return a vector of references to the found variable(s).
-std::vector<std::reference_wrapper<ProcessVariable>>
-findProcessVariables(
-        std::vector<ProcessVariable> const& variables,
-        BaseLib::ConfigTree const& process_config,
-        std::initializer_list<std::string> tag_names);
+std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
+    std::vector<ProcessVariable> const& variables,
+    BaseLib::ConfigTree const& process_config,
+    std::initializer_list<std::string>
+        tag_names);
 
 /// Find a parameter of specific type for a name given in the process
 /// configuration under the tag.
@@ -200,8 +195,7 @@ Parameter<ParameterArgs...>& findParameter(
     // Find corresponding parameter by name.
     auto const parameter_it =
         std::find_if(parameters.cbegin(), parameters.cend(),
-                     [&name](std::unique_ptr<ParameterBase> const& p)
-                     {
+                     [&name](std::unique_ptr<ParameterBase> const& p) {
                          return p->name == name;
                      });
 

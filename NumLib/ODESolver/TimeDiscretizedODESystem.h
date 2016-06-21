@@ -16,23 +16,27 @@
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/IndexValueVector.h"
 
-#include "ODESystem.h"
-#include "NonlinearSystem.h"
-#include "TimeDiscretization.h"
 #include "MatrixTranslator.h"
+#include "NonlinearSystem.h"
+#include "ODESystem.h"
+#include "TimeDiscretization.h"
 
 namespace detail
 {
 //! Applies known solutions to the solution vector \c x.
-template<typename Solutions, typename Vector>
-void applyKnownSolutions(std::vector<Solutions> const*const known_solutions,
+template <typename Solutions, typename Vector>
+void applyKnownSolutions(std::vector<Solutions> const* const known_solutions,
                          Vector& x)
 {
-    if (!known_solutions) return;
+    if (!known_solutions)
+        return;
 
-    for (auto const& bc : *known_solutions) {
-        for (std::size_t i=0; i<bc.ids.size(); ++i) {
-            // TODO that might have bad performance for some Vector types, e.g., PETSc.
+    for (auto const& bc : *known_solutions)
+    {
+        for (std::size_t i = 0; i < bc.ids.size(); ++i)
+        {
+            // TODO that might have bad performance for some Vector types, e.g.,
+            // PETSc.
             MathLib::setVector(x, bc.ids[i], bc.values[i]);
         }
     }
@@ -41,7 +45,6 @@ void applyKnownSolutions(std::vector<Solutions> const*const known_solutions,
 
 namespace NumLib
 {
-
 //! \addtogroup ODESolver
 //! @{
 
@@ -54,16 +57,15 @@ namespace NumLib
  * \tparam Vector the type of the solution vector of the ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template<typename Matrix, typename Vector, NonlinearSolverTag NLTag>
+template <typename Matrix, typename Vector, NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystemBase
-        : public NonlinearSystem<Matrix, Vector, NLTag>
-        , public InternalMatrixStorage
+    : public NonlinearSystem<Matrix, Vector, NLTag>,
+      public InternalMatrixStorage
 {
 public:
     //! Exposes the used time discretization scheme.
     virtual TimeDiscretization<Vector>& getTimeDiscretization() = 0;
 };
-
 
 /*! A NonlinearSystem together with some TimeDiscretization scheme.
  *
@@ -75,9 +77,9 @@ public:
  * \tparam ODETag a tag indicating the type of ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
+template <typename Matrix, typename Vector, ODESystemTag ODETag,
+          NonlinearSolverTag NLTag>
 class TimeDiscretizedODESystem;
-
 
 /*! Time discretized first order implicit quasi-linear ODE;
  *  to be solved using the Newton-Raphson method for resolving nonlinearities.
@@ -87,19 +89,22 @@ class TimeDiscretizedODESystem;
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template<typename Matrix, typename Vector>
+template <typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
-                               NonlinearSolverTag::Newton> final
-        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Newton>
+                               NonlinearSolverTag::Newton>
+    final : public TimeDiscretizedODESystemBase<Matrix, Vector,
+                                                NonlinearSolverTag::Newton>
 {
 public:
     //! A tag indicating the type of ODE.
-    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag =
+        ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Newton>;
-    //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
+    //! The auxiliary class that computes the matrix/vector used by the
+    //! nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
     //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization<Vector>;
@@ -109,20 +114,20 @@ public:
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
-        : _ode(ode)
-        , _time_disc(time_discretization)
-        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(time_discretization))
+    explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
+        : _ode(ode),
+          _time_disc(time_discretization),
+          _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
+              time_discretization))
     {
-        _Jac  = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode.getMatrixSpecifications(), _Jac_id);
-        _M    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode.getMatrixSpecifications(), _M_id);
-        _K    = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    _ode.getMatrixSpecifications(), _K_id);
-        _b    = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
-                    _ode.getMatrixSpecifications(), _b_id);
+        _Jac = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+            _ode.getMatrixSpecifications(), _Jac_id);
+        _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+            _ode.getMatrixSpecifications(), _M_id);
+        _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
+            _ode.getMatrixSpecifications(), _K_id);
+        _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
+            _ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
@@ -133,11 +138,11 @@ public:
         MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
     }
 
-    void assembleResidualNewton(const Vector &x_new_timestep) override
+    void assembleResidualNewton(const Vector& x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  t      = _time_disc.getCurrentTime();
+        auto const t = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
         _M->setZero();
@@ -151,22 +156,22 @@ public:
         BLAS::finalizeAssembly(*_b);
     }
 
-    void assembleJacobian(const Vector &x_new_timestep) override
+    void assembleJacobian(const Vector& x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  t        = _time_disc.getCurrentTime();
-        auto const& x_curr   = _time_disc.getCurrentX(x_new_timestep);
-        auto const  dxdot_dx = _time_disc.getNewXWeight();
-        auto const  dx_dx    = _time_disc.getDxDx();
+        auto const t = _time_disc.getCurrentTime();
+        auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
+        auto const dxdot_dx = _time_disc.getNewXWeight();
+        auto const dx_dx = _time_disc.getDxDx();
 
-        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        auto& xdot =
+            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _Jac->setZero();
 
-        _ode.assembleJacobian(t, x_curr, xdot,
-                              dxdot_dx, *_M, dx_dx, *_K,
+        _ode.assembleJacobian(t, x_curr, xdot, dxdot_dx, *_M, dx_dx, *_K,
                               *_Jac);
 
         MathLib::BLAS::finalizeAssembly(*_Jac);
@@ -176,10 +181,11 @@ public:
 
     void getResidual(Vector const& x_new_timestep, Vector& res) const override
     {
-        // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
-        //      can be optimuized. However, that would make the interface a bit more
-        //      fragile.
-        auto& xdot = MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
+        // TODO Maybe the duplicate calculation of xdot here and in
+        //      assembleJacobian can be optimuized. However, that would make
+        //      the interface a bit more fragile.
+        auto& xdot =
+            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_xdot_id);
         _time_disc.getXdot(x_new_timestep, xdot);
 
         _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
@@ -195,24 +201,28 @@ public:
     void applyKnownSolutions(Vector& x) const override
     {
         ::detail::applyKnownSolutions(
-                    _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
+            _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
     }
 
     void applyKnownSolutionsNewton(Matrix& Jac, Vector& res,
-                                    Vector& minus_delta_x) override
+                                   Vector& minus_delta_x) override
     {
         auto const* known_solutions =
             _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
-        if (known_solutions) {
+        if (known_solutions)
+        {
             std::vector<double> values;
 
-            for (auto const& bc : *known_solutions) {
-                // TODO this is the quick and dirty and bad performance solution.
+            for (auto const& bc : *known_solutions)
+            {
+                // TODO this is the quick and dirty and bad performance
+                // solution.
                 values.resize(bc.values.size(), 0.0);
 
                 // TODO maybe it would be faster to apply all at once
-                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.ids, values);
+                MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.ids,
+                                            values);
             }
         }
     }
@@ -237,57 +247,58 @@ public:
         _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
-    TimeDisc& getTimeDiscretization() override {
-        return _time_disc;
-    }
-
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override {
+    TimeDisc& getTimeDiscretization() override { return _time_disc; }
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    {
         return _ode.getMatrixSpecifications();
     }
 
 private:
-    ODE& _ode;            //!< ode the ODE being wrapped
-    TimeDisc& _time_disc; //!< the time discretization to being used
+    ODE& _ode;             //!< ode the ODE being wrapped
+    TimeDisc& _time_disc;  //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix* _Jac; //!< the Jacobian of the residual
-    Matrix* _M;   //!< Matrix \f$ M \f$.
-    Matrix* _K;   //!< Matrix \f$ K \f$.
-    Vector* _b;   //!< Matrix \f$ b \f$.
+    Matrix* _Jac;  //!< the Jacobian of the residual
+    Matrix* _M;    //!< Matrix \f$ M \f$.
+    Matrix* _K;    //!< Matrix \f$ K \f$.
+    Vector* _b;    //!< Matrix \f$ b \f$.
 
-    std::size_t _Jac_id = 0u;          //!< ID of the \c _Jac matrix.
-    std::size_t _M_id = 0u;            //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;            //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u;            //!< ID of the \c _b vector.
+    std::size_t _Jac_id = 0u;  //!< ID of the \c _Jac matrix.
+    std::size_t _M_id = 0u;    //!< ID of the \c _M matrix.
+    std::size_t _K_id = 0u;    //!< ID of the \c _K matrix.
+    std::size_t _b_id = 0u;    //!< ID of the \c _b vector.
 
     //! ID of the vector storing xdot in intermediate computations.
     mutable std::size_t _xdot_id = 0u;
 };
 
-
 /*! Time discretized first order implicit quasi-linear ODE;
- *  to be solved using the Picard fixpoint iteration method for resolving nonlinearities.
+ *  to be solved using the Picard fixpoint iteration method for resolving
+ * nonlinearities.
  *
  * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
  * \tparam Vector the type of the solution vector of the ODE.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template<typename Matrix, typename Vector>
+template <typename Matrix, typename Vector>
 class TimeDiscretizedODESystem<Matrix, Vector,
                                ODESystemTag::FirstOrderImplicitQuasilinear,
-                               NonlinearSolverTag::Picard> final
-        : public TimeDiscretizedODESystemBase<Matrix, Vector, NonlinearSolverTag::Picard>
+                               NonlinearSolverTag::Picard>
+    final : public TimeDiscretizedODESystemBase<Matrix, Vector,
+                                                NonlinearSolverTag::Picard>
 {
 public:
     //! A tag indicating the type of ODE.
-    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag =
+        ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! The type of ODE.
     using ODE = ODESystem<Matrix, Vector, ODETag, NonlinearSolverTag::Picard>;
-    //! The auxiliary class that computes the matrix/vector used by the nonlinear solver.
+    //! The auxiliary class that computes the matrix/vector used by the
+    //! nonlinear solver.
     using MatTrans = MatrixTranslator<Matrix, Vector, ODETag>;
     //! A shortcut for a general time discretization scheme
     using TimeDisc = TimeDiscretization<Vector>;
@@ -297,19 +308,18 @@ public:
      * \param ode the ODE to be wrapped.
      * \param time_discretization the time discretization to be used.
      */
-    explicit
-    TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
-        : _ode(ode)
-        , _time_disc(time_discretization)
-        , _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
-                         time_discretization))
+    explicit TimeDiscretizedODESystem(ODE& ode, TimeDisc& time_discretization)
+        : _ode(ode),
+          _time_disc(time_discretization),
+          _mat_trans(createMatrixTranslator<Matrix, Vector, ODETag>(
+              time_discretization))
     {
         _M = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    ode.getMatrixSpecifications(), _M_id);
+            ode.getMatrixSpecifications(), _M_id);
         _K = &MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix(
-                    ode.getMatrixSpecifications(), _K_id);
+            ode.getMatrixSpecifications(), _K_id);
         _b = &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
-                    ode.getMatrixSpecifications(), _b_id);
+            ode.getMatrixSpecifications(), _b_id);
     }
 
     ~TimeDiscretizedODESystem()
@@ -319,11 +329,11 @@ public:
         MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*_b);
     }
 
-    void assembleMatricesPicard(const Vector &x_new_timestep) override
+    void assembleMatricesPicard(const Vector& x_new_timestep) override
     {
         namespace BLAS = MathLib::BLAS;
 
-        auto const  t      = _time_disc.getCurrentTime();
+        auto const t = _time_disc.getCurrentTime();
         auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
 
         _M->setZero();
@@ -337,11 +347,7 @@ public:
         BLAS::finalizeAssembly(*_b);
     }
 
-    void getA(Matrix& A) const override
-    {
-        _mat_trans->computeA(*_M, *_K, A);
-    }
-
+    void getA(Matrix& A) const override { _mat_trans->computeA(*_M, *_K, A); }
     void getRhs(Vector& rhs) const override
     {
         _mat_trans->computeRhs(*_M, *_K, *_b, rhs);
@@ -350,7 +356,7 @@ public:
     void applyKnownSolutions(Vector& x) const override
     {
         ::detail::applyKnownSolutions(
-                    _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
+            _ode.getKnownSolutions(_time_disc.getCurrentTime()), x);
     }
 
     void applyKnownSolutionsPicard(Matrix& A, Vector& rhs, Vector& x) override
@@ -358,13 +364,18 @@ public:
         auto const* known_solutions =
             _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
-        if (known_solutions) {
-            using IndexType = typename MathLib::MatrixVectorTraits<Matrix>::Index;
+        if (known_solutions)
+        {
+            using IndexType =
+                typename MathLib::MatrixVectorTraits<Matrix>::Index;
             std::vector<IndexType> ids;
             std::vector<double> values;
-            for (auto const& bc : *known_solutions) {
-                std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
-                std::copy(bc.values.cbegin(), bc.values.cend(), std::back_inserter(values));
+            for (auto const& bc : *known_solutions)
+            {
+                std::copy(bc.ids.cbegin(), bc.ids.cend(),
+                          std::back_inserter(ids));
+                std::copy(bc.values.cbegin(), bc.values.cend(),
+                          std::back_inserter(values));
             }
             MathLib::applyKnownSolution(A, rhs, x, ids, values);
         }
@@ -390,32 +401,29 @@ public:
         _mat_trans->pushMatrices(*_M, *_K, *_b);
     }
 
-    TimeDisc& getTimeDiscretization() override {
-        return _time_disc;
-    }
-
-    MathLib::MatrixSpecifications getMatrixSpecifications() const override {
+    TimeDisc& getTimeDiscretization() override { return _time_disc; }
+    MathLib::MatrixSpecifications getMatrixSpecifications() const override
+    {
         return _ode.getMatrixSpecifications();
     }
 
 private:
-    ODE& _ode;            //!< ode the ODE being wrapped
-    TimeDisc& _time_disc; //!< the time discretization to being used
+    ODE& _ode;             //!< ode the ODE being wrapped
+    TimeDisc& _time_disc;  //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
 
-    Matrix* _M; //!< Matrix \f$ M \f$.
-    Matrix* _K; //!< Matrix \f$ K \f$.
-    Vector* _b; //!< Matrix \f$ b \f$.
+    Matrix* _M;  //!< Matrix \f$ M \f$.
+    Matrix* _K;  //!< Matrix \f$ K \f$.
+    Vector* _b;  //!< Matrix \f$ b \f$.
 
-    std::size_t _M_id = 0u; //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u; //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u; //!< ID of the \c _b vector.
+    std::size_t _M_id = 0u;  //!< ID of the \c _M matrix.
+    std::size_t _K_id = 0u;  //!< ID of the \c _K matrix.
+    std::size_t _b_id = 0u;  //!< ID of the \c _b vector.
 };
 
 //! @}
-
 }
 
-#endif // NUMLIB_TIMEDISCRETIZEDODESYSTEM_H
+#endif  // NUMLIB_TIMEDISCRETIZEDODESYSTEM_H

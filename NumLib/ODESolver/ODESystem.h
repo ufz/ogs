@@ -10,15 +10,14 @@
 #ifndef NUMLIB_ODESYSTEM_H
 #define NUMLIB_ODESYSTEM_H
 
-#include "NumLib/IndexValueVector.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "NumLib/IndexValueVector.h"
 
-#include "Types.h"
 #include "EquationSystem.h"
+#include "Types.h"
 
 namespace NumLib
 {
-
 //! \addtogroup ODESolver
 //! @{
 
@@ -32,9 +31,9 @@ namespace NumLib
  * \tparam ODETag a tag indicating the type of ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template<typename Matrix, typename Vector, ODESystemTag ODETag, NonlinearSolverTag NLTag>
+template <typename Matrix, typename Vector, ODESystemTag ODETag,
+          NonlinearSolverTag NLTag>
 class ODESystem;
-
 
 /*! Interface for a first-order implicit quasi-linear ODE.
  *
@@ -43,19 +42,18 @@ class ODESystem;
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template<typename Matrix, typename Vector>
-class ODESystem<Matrix, Vector,
-                ODESystemTag::FirstOrderImplicitQuasilinear,
-                NonlinearSolverTag::Picard>
-        : public EquationSystem<Vector>
+template <typename Matrix, typename Vector>
+class ODESystem<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear,
+                NonlinearSolverTag::Picard> : public EquationSystem<Vector>
 {
 public:
     //! A tag indicating the type of ODE.
-    static const ODESystemTag ODETag = ODESystemTag::FirstOrderImplicitQuasilinear;
+    static const ODESystemTag ODETag =
+        ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
-    virtual void assemble(const double t, Vector const& x,
-                          Matrix& M, Matrix& K, Vector& b) = 0;
+    virtual void assemble(const double t, Vector const& x, Matrix& M, Matrix& K,
+                          Vector& b) = 0;
 
     using Index = typename MathLib::MatrixVectorTraits<Matrix>::Index;
 
@@ -65,23 +63,21 @@ public:
     getKnownSolutions(double const t) const
     {
         (void)t;
-        return nullptr; // by default there are no known solutions
+        return nullptr;  // by default there are no known solutions
     }
 };
-
 
 /*! Interface for a first-order implicit quasi-linear ODE.
  *
  * ODEs using this interface also provide a Jacobian in addition
  * to the functionality of the Picard-related interface.
  */
-template<typename Matrix, typename Vector>
-class ODESystem<Matrix, Vector,
-                ODESystemTag::FirstOrderImplicitQuasilinear,
+template <typename Matrix, typename Vector>
+class ODESystem<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Newton>
-        : public ODESystem<Matrix, Vector,
-                           ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NonlinearSolverTag::Picard>
+    : public ODESystem<Matrix, Vector,
+                       ODESystemTag::FirstOrderImplicitQuasilinear,
+                       NonlinearSolverTag::Picard>
 {
 public:
     /*! Assemble \f$ \mathtt{Jac} := \partial r/\partial x_N \f$ at the provided state (\c t, \c x).
@@ -120,14 +116,13 @@ public:
      * different way, as long as that is consistent with the definition of \f$ \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleJacobian(const double t, Vector const& x, Vector const& xdot,
-                                  const double dxdot_dx, Matrix const& M,
-                                  const double dx_dx, Matrix const& K,
-                                  Matrix& Jac) = 0;
+    virtual void assembleJacobian(const double t, Vector const& x,
+                                  Vector const& xdot, const double dxdot_dx,
+                                  Matrix const& M, const double dx_dx,
+                                  Matrix const& K, Matrix& Jac) = 0;
 };
 
 //! @}
-
 }
 
-#endif // NUMLIB_ODESYSTEM_H
+#endif  // NUMLIB_ODESYSTEM_H

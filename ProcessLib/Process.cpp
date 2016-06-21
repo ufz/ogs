@@ -18,26 +18,25 @@
 
 namespace ProcessLib
 {
-
 Process::Process(
     MeshLib::Mesh& mesh,
     NonlinearSolver& nonlinear_solver,
     std::unique_ptr<TimeDiscretization>&& time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    ProcessOutput&& process_output
-    )
-    : _mesh(mesh)
-    , _secondary_variables(std::move(secondary_variables))
-    , _process_output(std::move(process_output))
-    , _nonlinear_solver(nonlinear_solver)
-    , _time_discretization(std::move(time_discretization))
-    , _process_variables(std::move(process_variables))
-{}
+    ProcessOutput&& process_output)
+    : _mesh(mesh),
+      _secondary_variables(std::move(secondary_variables)),
+      _process_output(std::move(process_output)),
+      _nonlinear_solver(nonlinear_solver),
+      _time_discretization(std::move(time_discretization)),
+      _process_variables(std::move(process_variables))
+{
+}
 
 void Process::output(std::string const& file_name,
-            const unsigned /*timestep*/,
-            GlobalVector const& x) const
+                     const unsigned /*timestep*/,
+                     GlobalVector const& x) const
 {
     doProcessOutput(file_name, x, _mesh, *_local_to_global_index_map,
                     _process_variables, _secondary_variables, _process_output);
@@ -62,8 +61,7 @@ void Process::initialize()
          ++variable_id)
     {
         ProcessVariable& pv = _process_variables[variable_id];
-        for (int component_id = 0;
-             component_id < pv.getNumberOfComponents();
+        for (int component_id = 0; component_id < pv.getNumberOfComponents();
              ++component_id)
         {
             createDirichletBcs(pv, variable_id, component_id);
@@ -83,8 +81,7 @@ void Process::setInitialConditions(GlobalVector& x)
          ++variable_id)
     {
         ProcessVariable& pv = _process_variables[variable_id];
-        for (int component_id = 0;
-             component_id < pv.getNumberOfComponents();
+        for (int component_id = 0; component_id < pv.getNumberOfComponents();
              ++component_id)
         {
             setInitialConditions(pv, variable_id, component_id, x);
@@ -99,8 +96,8 @@ MathLib::MatrixSpecifications Process::getMatrixSpecifications() const
             &l.getGhostIndices(), &_sparsity_pattern};
 }
 
-void Process::assemble(const double t, GlobalVector const& x,
-              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
+                       GlobalMatrix& K, GlobalVector& b)
 {
     assembleConcreteProcess(t, x, M, K, b);
 
@@ -109,11 +106,10 @@ void Process::assemble(const double t, GlobalVector const& x,
         bc->integrate(t, b);
 }
 
-void Process::assembleJacobian(
-    const double t, GlobalVector const& x, GlobalVector const& xdot,
-    const double dxdot_dx, GlobalMatrix const& M,
-    const double dx_dx, GlobalMatrix const& K,
-    GlobalMatrix& Jac)
+void Process::assembleJacobian(const double t, GlobalVector const& x,
+                               GlobalVector const& xdot, const double dxdot_dx,
+                               GlobalMatrix const& M, const double dx_dx,
+                               GlobalMatrix const& K, GlobalMatrix& Jac)
 {
     assembleJacobianConcreteProcess(t, x, xdot, dxdot_dx, M, dx_dx, K, Jac);
 
@@ -140,10 +136,10 @@ void Process::assembleJacobian(
 void Process::assembleJacobianConcreteProcess(
     const double /*t*/, GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
     const double /*dxdot_dx*/, GlobalMatrix const& /*M*/,
-    const double /*dx_dx*/, GlobalMatrix const& /*K*/,
-    GlobalMatrix& /*Jac*/)
+    const double /*dx_dx*/, GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/)
 {
-    OGS_FATAL("The concrete implementation of this Process did not override the"
+    OGS_FATAL(
+        "The concrete implementation of this Process did not override the"
         " assembleJacobianConcreteProcess() method."
         " Hence, no analytical Jacobian is provided for this process"
         " and the Newton-Raphson method cannot be used to solve it.");
@@ -162,32 +158,28 @@ void Process::constructDofTable()
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             pv.getNumberOfComponents(),
-            [&]()
-            {
+            [&]() {
                 return std::unique_ptr<MeshLib::MeshSubsets>{
                     new MeshLib::MeshSubsets{_mesh_subset_all_nodes.get()}};
             });
     }
 
-    _local_to_global_index_map.reset(
-        new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets),
-            NumLib::ComponentOrder::BY_LOCATION));
+    _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
+        std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
 }
 
 void Process::setInitialConditions(ProcessVariable const& variable,
-                          int const variable_id,
-                          int const component_id,
-                          GlobalVector& x)
+                                   int const variable_id,
+                                   int const component_id,
+                                   GlobalVector& x)
 {
     std::size_t const n_nodes = _mesh.getNumberOfNodes();
     for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
     {
-        MeshLib::Location const l(_mesh.getID(),
-                                  MeshLib::MeshItemType::Node, node_id);
-        auto global_index =
-            std::abs(_local_to_global_index_map->getGlobalIndex(
-                l, variable_id, component_id));
+        MeshLib::Location const l(_mesh.getID(), MeshLib::MeshItemType::Node,
+                                  node_id);
+        auto global_index = std::abs(_local_to_global_index_map->getGlobalIndex(
+            l, variable_id, component_id));
 #ifdef USE_PETSC
         // The global indices of the ghost entries of the global matrix or
         // the global vectors need to be set as negative values for equation
@@ -204,8 +196,8 @@ void Process::setInitialConditions(ProcessVariable const& variable,
     }
 }
 
-void Process::createDirichletBcs(ProcessVariable& variable, int const variable_id,
-                        int const component_id)
+void Process::createDirichletBcs(ProcessVariable& variable,
+                                 int const variable_id, int const component_id)
 {
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
@@ -219,7 +211,7 @@ void Process::createDirichletBcs(ProcessVariable& variable, int const variable_i
 }
 
 void Process::createNeumannBcs(ProcessVariable& variable, int const variable_id,
-                      int const component_id)
+                               int const component_id)
 {
     // Find mesh nodes.
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
@@ -230,8 +222,7 @@ void Process::createNeumannBcs(ProcessVariable& variable, int const variable_id,
 
     // Create a neumann BC for the process variable storing them in the
     // _neumann_bcs vector.
-    variable.createNeumannBcs(
-                              std::back_inserter(_neumann_bcs),
+    variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
                               mesh_element_searcher,
                               _integration_order,
                               *_local_to_global_index_map,
@@ -241,8 +232,8 @@ void Process::createNeumannBcs(ProcessVariable& variable, int const variable_id,
 
 void Process::computeSparsityPattern()
 {
-    _sparsity_pattern = NumLib::computeSparsityPattern(
-        *_local_to_global_index_map, _mesh);
+    _sparsity_pattern =
+        NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
 }
 
 ProcessVariable& findProcessVariable(
@@ -253,12 +244,10 @@ ProcessVariable& findProcessVariable(
     //! \ogs_file_special
     std::string const name = pv_config.getConfigParameter<std::string>(tag);
 
-        // Find corresponding variable by name.
-    auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                                 [&name](ProcessVariable const& v)
-                                 {
-                                     return v.getName() == name;
-                                 });
+    // Find corresponding variable by name.
+    auto variable = std::find_if(
+        variables.cbegin(), variables.cend(),
+        [&name](ProcessVariable const& v) { return v.getName() == name; });
 
     if (variable == variables.end())
     {
@@ -274,11 +263,11 @@ ProcessVariable& findProcessVariable(
     return const_cast<ProcessVariable&>(*variable);
 }
 
-std::vector<std::reference_wrapper<ProcessVariable>>
-findProcessVariables(
-        std::vector<ProcessVariable> const& variables,
-        BaseLib::ConfigTree const& process_config,
-        std::initializer_list<std::string> tag_names)
+std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
+    std::vector<ProcessVariable> const& variables,
+    BaseLib::ConfigTree const& process_config,
+    std::initializer_list<std::string>
+        tag_names)
 {
     std::vector<std::reference_wrapper<ProcessVariable>> vars;
     vars.reserve(tag_names.size());
@@ -286,7 +275,8 @@ findProcessVariables(
     //! \ogs_file_param{process__process_variables}
     auto const pv_conf = process_config.getConfigSubtree("process_variables");
 
-    for (auto const& tag : tag_names) {
+    for (auto const& tag : tag_names)
+    {
         vars.emplace_back(findProcessVariable(variables, pv_conf, tag));
     }
 
