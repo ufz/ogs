@@ -25,13 +25,13 @@ namespace NumLib
  * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
  * \tparam Vector the type of the solution vector of the ODE.
  */
-template <typename Matrix, typename Vector, NonlinearSolverTag NLTag>
+template <NonlinearSolverTag NLTag>
 class TimeLoopSingleODE final
 {
 public:
-    using TDiscODESys = TimeDiscretizedODESystemBase<Matrix, Vector, NLTag>;
-    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
-    using NLSolver = NonlinearSolver<Matrix, Vector, NLTag>;
+    using TDiscODESys = TimeDiscretizedODESystemBase<NLTag>;
+    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
+    using NLSolver = NonlinearSolver<NLTag>;
 
     /*! Constructs an new instance.
      *
@@ -65,7 +65,7 @@ public:
      * \retval false otherwise
      */
     template <typename Callback>
-    bool loop(const double t0, Vector const& x0, const double t_end,
+    bool loop(const double t0, GlobalVector const& x0, const double t_end,
               const double delta_t, Callback& post_timestep);
 
 private:
@@ -76,16 +76,15 @@ private:
 
 //! @}
 
-template <typename Matrix, typename Vector, NonlinearSolverTag NLTag>
+template <NonlinearSolverTag NLTag>
 template <typename Callback>
-bool TimeLoopSingleODE<Matrix, Vector, NLTag>::loop(const double t0,
-                                                    Vector const& x0,
-                                                    const double t_end,
-                                                    const double delta_t,
-                                                    Callback& post_timestep)
+bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
+                                    const double t_end, const double delta_t,
+                                    Callback& post_timestep)
 {
     // solution vector
-    Vector& x = MathLib::GlobalVectorProvider<Vector>::provider.getVector(x0);
+    GlobalVector& x =
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0);
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -123,7 +122,7 @@ bool TimeLoopSingleODE<Matrix, Vector, NLTag>::loop(const double t0,
         post_timestep(t_cb, x_cb);
     }
 
-    MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(x);
+    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x);
 
     if (!nl_slv_succeeded)
     {
