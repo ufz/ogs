@@ -93,7 +93,7 @@ private:
      *
      * \note Currently the \c ODETag is automatically inferred from the given
      *       \c ody_sys. This works as long as \c Process derives from
-     *       \c ODESystem<Matrix, GlobalVector, ODETag>, i.e. as long we only deal with
+     *       \c ODESystem<GlobalMatrix, GlobalVector, ODETag>, i.e. as long we only deal with
      *       one type of ODE. When we introduce more types, this method will have
      *       to be extended slightly.
      */
