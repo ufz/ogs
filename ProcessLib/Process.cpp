@@ -9,7 +9,6 @@
 
 #include "Process.h"
 
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "DirichletBc.h"
 #include "NeumannBc.h"
