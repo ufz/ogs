@@ -166,7 +166,7 @@ void ProjectData::buildProcesses()
             _nonlinear_solvers, nl_slv_name,
             "A nonlinear solver with the given name has not been defined.");
 
-        auto time_disc = NumLib::createTimeDiscretization<GlobalVector>(
+        auto time_disc = NumLib::createTimeDiscretization(
             //! \ogs_file_param{process__time_discretization}
             pc.getConfigSubtree("time_discretization"));
 

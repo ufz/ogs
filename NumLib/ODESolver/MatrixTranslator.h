@@ -103,7 +103,7 @@ public:
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorGeneral(TimeDiscretization<Vector> const& timeDisc)
+    MatrixTranslatorGeneral(TimeDiscretization const& timeDisc)
         : _time_disc(timeDisc)
     {
     }
@@ -200,7 +200,7 @@ public:
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorForwardEuler(ForwardEuler<Vector> const& timeDisc)
+    MatrixTranslatorForwardEuler(ForwardEuler const& timeDisc)
         : _fwd_euler(timeDisc)
     {
     }

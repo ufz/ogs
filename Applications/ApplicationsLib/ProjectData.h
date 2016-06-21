@@ -40,7 +40,6 @@ class Mesh;
 
 namespace NumLib
 {
-template <typename Matrix, typename Vector>
 class NonlinearSolverBase;
 }
 
@@ -199,8 +198,7 @@ private:
              std::unique_ptr<MathLib::LinearSolver<GlobalMatrix, GlobalVector>>>
         _linear_solvers;
 
-    using NonlinearSolver =
-        NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
+    using NonlinearSolver = NumLib::NonlinearSolverBase;
     std::map<std::string, std::unique_ptr<NonlinearSolver>> _nonlinear_solvers;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>

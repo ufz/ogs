@@ -25,17 +25,15 @@ class Mesh;
 
 namespace ProcessLib
 {
-class Process : public NumLib::ODESystem<
-                    GlobalMatrix, GlobalVector,
-                    // TODO: later on use a simpler ODE system
-                    NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                    NumLib::NonlinearSolverTag::Newton>
+class Process
+    : public NumLib::ODESystem<  // TODO: later on use a simpler ODE system
+          NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+          NumLib::NonlinearSolverTag::Newton>
 {
 public:
     using Index = GlobalMatrix::IndexType;
-    using NonlinearSolver =
-        NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
-    using TimeDiscretization = NumLib::TimeDiscretization<GlobalVector>;
+    using NonlinearSolver = NumLib::NonlinearSolverBase;
+    using TimeDiscretization = NumLib::TimeDiscretization;
 
     Process(MeshLib::Mesh& mesh,
             NonlinearSolver& nonlinear_solver,

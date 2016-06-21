@@ -17,37 +17,37 @@
 
 namespace NumLib
 {
-template <typename Vector>
-std::unique_ptr<TimeDiscretization<Vector>> createTimeDiscretization(
+
+std::unique_ptr<TimeDiscretization> createTimeDiscretization(
     BaseLib::ConfigTree const& config)
 {
-    using T = std::unique_ptr<TimeDiscretization<Vector>>;
+    using T = std::unique_ptr<TimeDiscretization>;
 
     //! \ogs_file_param{process__time_discretization__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "BackwardEuler")
     {
-        using ConcreteTD = BackwardEuler<Vector>;
+        using ConcreteTD = BackwardEuler;
         return T(new ConcreteTD);
     }
     else if (type == "ForwardEuler")
     {
-        using ConcreteTD = ForwardEuler<Vector>;
+        using ConcreteTD = ForwardEuler;
         return T(new ConcreteTD);
     }
     else if (type == "CrankNicolson")
     {
         //! \ogs_file_param{process__time_discretization__CrankNicolson__theta}
         auto const theta = config.getConfigParameter<double>("theta");
-        using ConcreteTD = CrankNicolson<Vector>;
+        using ConcreteTD = CrankNicolson;
         return T(new ConcreteTD(theta));
     }
     else if (type == "BackwardDifferentiationFormula")
     {
         //! \ogs_file_param{process__time_discretization__BackwardDifferentiationFormula__order}
         auto const order = config.getConfigParameter<unsigned>("order");
-        using ConcreteTD = BackwardDifferentiationFormula<Vector>;
+        using ConcreteTD = BackwardDifferentiationFormula;
         return T(new ConcreteTD(order));
     }
     else

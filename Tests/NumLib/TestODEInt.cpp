@@ -11,8 +11,8 @@
 #include "ODEs.h"
 
 
-using EDMatrix = Eigen::MatrixXd;
-using EVector = Eigen::VectorXd;
+//using EDMatrix = Eigen::MatrixXd;
+//using EVector = Eigen::VectorXd;
 
 using GMatrix = GlobalMatrix;
 using GVector = GlobalVector;
@@ -22,9 +22,9 @@ template<typename Matrix, typename Vector, NumLib::NonlinearSolverTag NLTag>
 class TestOutput
 {
 public:
-    using TimeDisc = NumLib::TimeDiscretization<Vector>;
+    using TimeDisc = NumLib::TimeDiscretization;
     using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
-    using NLSolver = NumLib::NonlinearSolver<Matrix, Vector, NLTag>;
+    using NLSolver = NumLib::NonlinearSolver<NLTag>;
 
     explicit TestOutput(const char* name)
         : _file_name_part(name)
@@ -36,21 +36,22 @@ public:
         run_test<ODE>(ode, timeDisc, 10); // by default make 10 timesteps
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> class ODE>
-    void run_test(ODE<Matrix, Vector>& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
+    template <class ODE>
+    void run_test(ODE& ode, TimeDisc& timeDisc, const unsigned num_timesteps)
     {
-        using ODE_ = ODE<Matrix, Vector>;
-        using ODET = ODETraits<Matrix, Vector, ODE>;
+        using ODE_ = ODE;
+        using ODET = ODETraits<ODE>;
 
-        NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODE_::ODETag, NLTag>
+        NumLib::TimeDiscretizedODESystem<ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
+
 
         auto linear_solver = MathLib::createLinearSolver<Matrix, Vector>(nullptr);
         std::unique_ptr<NLSolver> nonlinear_solver(
                     new NLSolver(*linear_solver, _tol, _maxiter));
 
-        NumLib::TimeLoopSingleODE<Matrix, Vector, NLTag> loop(
-            ode_sys, std::move(linear_solver), std::move(nonlinear_solver));
+        NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
+                                              std::move(nonlinear_solver));
 
         const double t0      = ODET::t0;
         const double t_end   = ODET::t_end;
@@ -97,10 +98,10 @@ private:
         *_file << "\n";
     }
 
-    template<template<typename /*Matrix*/, typename /*Vector*/> class Ode>
+    template <class Ode>
     void loopCallback(const double t, Vector const& x)
     {
-        write(t, x, ODETraits<Matrix, Vector, Ode>::solution(t));
+        write(t, x, ODETraits<Ode>::solution(t));
     }
 
     const std::string _file_name_part;
@@ -113,7 +114,7 @@ private:
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, NumLib::BackwardEuler<Vector> >::value>::type
+typename std::enable_if<std::is_same<TimeDisc, NumLib::BackwardEuler >::value>::type
 run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
@@ -125,7 +126,7 @@ run_test_case(const unsigned num_timesteps, const char* name)
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, NumLib::ForwardEuler<Vector> >::value>::type
+typename std::enable_if<std::is_same<TimeDisc, NumLib::ForwardEuler >::value>::type
 run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
@@ -137,7 +138,7 @@ run_test_case(const unsigned num_timesteps, const char* name)
 
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, NumLib::CrankNicolson<Vector> >::value>::type
+typename std::enable_if<std::is_same<TimeDisc, NumLib::CrankNicolson >::value>::type
 run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
@@ -150,7 +151,7 @@ run_test_case(const unsigned num_timesteps, const char* name)
 template<typename Matrix, typename Vector, typename TimeDisc, typename ODE,
          NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<
-    std::is_same<TimeDisc, NumLib::BackwardDifferentiationFormula<Vector> >::value>::type
+    std::is_same<TimeDisc, NumLib::BackwardDifferentiationFormula >::value>::type
 run_test_case(const unsigned num_timesteps, const char* name)
 {
     ODE ode;
@@ -163,24 +164,19 @@ run_test_case(const unsigned num_timesteps, const char* name)
 
 // This class is only here s.t. I don't have to put the members into
 // the definition of the macro TCLITEM below.
-template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
-         template<typename /*Vector*/> class TimeDisc_,
-         NumLib::NonlinearSolverTag NLTag_>
+template <typename Matrix_, typename Vector_, class ODE_, class TimeDisc_,
+          NumLib::NonlinearSolverTag NLTag_>
 struct TestCaseBase
 {
     using Matrix = Matrix_;
     using Vector = Vector_;
-    using ODE = ODE_<Matrix_, Vector_>;
-    using TimeDisc = TimeDisc_<Vector_>;
+    using ODE = ODE_;
+    using TimeDisc = TimeDisc_;
     static const NumLib::NonlinearSolverTag NLTag = NLTag_;
 };
 
-
-template<typename Matrix_, typename Vector_,
-         template<typename /*Matrix*/, typename /*Vector*/> class ODE_,
-         template<typename /*Vector*/> class TimeDisc_,
-         NumLib::NonlinearSolverTag NLTag_>
+template <typename Matrix_, typename Vector_, class ODE_, class TimeDisc_,
+          NumLib::NonlinearSolverTag NLTag_>
 struct TestCase;
 
 
@@ -189,28 +185,29 @@ struct TestCase;
 //  Put new test cases to that list
 //
 // /////////////////////////////////////
+//#define TESTCASESLIST \
+//    /* Eigen dense matrix */ \
+//    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
+//    \
+//    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
+//    \
+//    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
+//    \
+//    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
+//    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
+//
 #define TESTCASESLIST \
-    /* Eigen dense matrix */ \
-    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Newton) TCLSEP \
-    \
-    TCLITEM(EDMatrix, EVector, ODE1, BackwardEuler,                  Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, ForwardEuler,                   Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, CrankNicolson,                  Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE1, BackwardDifferentiationFormula, Picard) TCLSEP \
-    \
-    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Newton) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Newton) TCLSEP \
-    \
-    TCLITEM(EDMatrix, EVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
-    TCLITEM(EDMatrix, EVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
-    \
     /* Global sparse matrix */ \
     TCLITEM(GMatrix,  GVector, ODE1, BackwardEuler,                  Newton) TCLSEP \
     TCLITEM(GMatrix,  GVector, ODE1, ForwardEuler,                   Newton) TCLSEP \
@@ -308,17 +305,16 @@ TYPED_TEST(NumLibODEIntTyped, T1)
 TEST(NumLibODEInt, ODE3)
 {
     const char* name = "dummy";
-    {
+//    {
 
-        // only make sure ODE3 compiles
-        run_test_case<EDMatrix, EVector, NumLib::BackwardEuler<EVector>,
-                      ODE3<EDMatrix, EVector>,
-                      NumLib::NonlinearSolverTag::Newton>(0u, name);
-    }
+//        // only make sure ODE3 compiles
+//        run_test_case<EDMatrix, EVector, NumLib::BackwardEuler,
+//                      ODE3<EDMatrix, EVector>,
+//                      NumLib::NonlinearSolverTag::Newton>(0u, name);
+//    }
 
     {
-        run_test_case<GMatrix, GVector, NumLib::BackwardEuler<GVector>,
-                      ODE3<GMatrix, GVector>,
+        run_test_case<GMatrix, GVector, NumLib::BackwardEuler, ODE3,
                       NumLib::NonlinearSolverTag::Newton>(0u, name);
     }
 }
