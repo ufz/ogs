@@ -15,7 +15,11 @@
 #define GAUSSLEGENDRE_H_
 
 #include "WeightedSum.h"
-#include <mathlib_export.h>
+#ifdef MSVC
+#include "mathlib_export.h"
+#else
+#define MATHLIB_EXPORT
+#endif
 
 namespace MathLib
 {

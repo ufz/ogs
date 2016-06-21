@@ -37,8 +37,10 @@ set(SOURCES ${SOURCES} ${SOURCES_EXTRAPOLATION})
 # Create the library
 add_library(NumLib ${SOURCES})
 
-include(GenerateExportHeader)
-generate_export_header(NumLib)
+if(MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(NumLib)
+endif()
 
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 

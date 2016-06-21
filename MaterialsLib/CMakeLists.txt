@@ -5,8 +5,10 @@ set(SOURCES ${SOURCES} ${SOURCES_ADSORPTION})
 
 add_library(MaterialsLib ${SOURCES} )
 
-include(GenerateExportHeader)
-generate_export_header(MaterialsLib)
+if(MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(MaterialsLib)
+endif()
 
 target_link_libraries(MaterialsLib
     BaseLib

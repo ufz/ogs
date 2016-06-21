@@ -12,7 +12,11 @@
 
 #include "MatrixProviderUser.h"
 
-#include <numlib_export.h>
+#ifdef MSVC
+#include "numlib_export.h"
+#else
+#define NUMLIB_EXPORT
+#endif
 
 namespace MathLib
 {

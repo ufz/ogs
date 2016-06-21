@@ -21,7 +21,9 @@ endif()
 GET_SOURCE_FILES(SOURCES_IO_GMSHIO IO/Gmsh)
 set(SOURCES ${SOURCES} ${SOURCES_IO_GMSHIO})
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/../BaseLib)
+if(MSVC)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/../BaseLib)
+endif()
 
 # Create the library
 add_library(GeoLib ${SOURCES}
@@ -29,7 +31,6 @@ add_library(GeoLib ${SOURCES}
 )
 
 target_link_libraries(GeoLib
-    BaseLib
     MathLib
 )
 

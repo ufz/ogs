@@ -16,7 +16,11 @@
 #define GAUSSLEGENDRETRI_H_
 
 #include <array>
-#include <mathlib_export.h>
+#ifdef MSVC
+#include "mathlib_export.h"
+#else
+#define MATHLIB_EXPORT
+#endif
 
 namespace MathLib
 {

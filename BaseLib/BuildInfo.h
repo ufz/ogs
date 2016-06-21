@@ -13,7 +13,11 @@
 #define BASE_LIB_BUILD_INFO_H_
 
 #include <string>
+#ifdef MSVC
 #include "baselib_export.h"
+#else
+#define BASELIB_EXPORT
+#endif
 
 namespace BaseLib
 {

@@ -14,7 +14,11 @@
 #include "Reaction.h"
 #include "Adsorption.h"
 
-#include <materialslib_export.h>
+#ifdef MSVC
+#include "materialslib_export.h"
+#else
+#define MATERIALSLIB_EXPORT
+#endif
 
 namespace ProcessLib
 {

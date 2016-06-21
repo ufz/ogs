@@ -11,11 +11,13 @@ APPEND_SOURCE_FILES(SOURCES TES)
 
 APPEND_SOURCE_FILES(SOURCES Utils)
 
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/../MathLib
-    ${CMAKE_CURRENT_BINARY_DIR}/../NumLib
-    ${CMAKE_CURRENT_BINARY_DIR}/../MaterialsLib
-)
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../NumLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../MaterialsLib
+    )
+endif()
 
 add_library(ProcessLib ${SOURCES})
 

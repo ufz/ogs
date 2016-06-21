@@ -16,8 +16,10 @@ list(APPEND SOURCES "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp" BuildInfo.h)
 # Create the library
 add_library(BaseLib ${SOURCES})
 
-include(GenerateExportHeader)
-generate_export_header(BaseLib)
+if(MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(BaseLib)
+endif()
 
 set_target_properties(BaseLib PROPERTIES LINKER_LANGUAGE CXX)
 
