@@ -29,7 +29,6 @@ enum class IterationResult : char
  *
  * \tparam Vector the type of the solution vector of the equation.
  */
-template <typename Vector>
 class EquationSystem : public MathLib::MatrixSpecificationsProvider
 {
 public:
@@ -47,7 +46,7 @@ public:
      * \param iter the current iteration number, starting from 1.
      * \param x    the current approximate solution of the equation.
      */
-    virtual void preIteration(const unsigned iter, Vector const& x)
+    virtual void preIteration(const unsigned iter, GlobalVector const& x)
     {
         (void)iter;
         (void)x;  // by default do nothing
@@ -59,7 +58,7 @@ public:
      *
      * \return A status flag indicating id the current iteration succeeded.
      */
-    virtual IterationResult postIteration(Vector const& x)
+    virtual IterationResult postIteration(GlobalVector const& x)
     {
         (void)x;  // by default do nothing
         return IterationResult::SUCCESS;
