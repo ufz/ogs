@@ -13,6 +13,7 @@
 #define BASE_LIB_BUILD_INFO_H_
 
 #include <string>
+#include "baselib_export.h"
 
 namespace BaseLib
 {
@@ -29,7 +30,7 @@ namespace BuildInfo
     extern const std::string git_version_sha1;
     extern const std::string git_version_sha1_short;
 
-    extern const std::string git_describe;
+	extern const BASELIB_EXPORT std::string git_describe;
     extern const std::string ogs_version;
 
     extern const std::string source_path;

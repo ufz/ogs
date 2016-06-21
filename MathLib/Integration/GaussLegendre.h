@@ -15,6 +15,7 @@
 #define GAUSSLEGENDRE_H_
 
 #include "WeightedSum.h"
+#include <mathlib_export.h>
 
 namespace MathLib
 {
@@ -24,9 +25,9 @@ namespace MathLib
 /// \tparam ORDER   integration order.
 template <unsigned ORDER>
 struct GaussLegendre {
-    static const unsigned Order = ORDER;
-    static const double X[Order];
-    static const double W[Order];
+	static MATHLIB_EXPORT const unsigned Order = ORDER;
+	static MATHLIB_EXPORT const double X[Order];
+	static MATHLIB_EXPORT const double W[Order];
 };
 
 }   // namespace MathLib

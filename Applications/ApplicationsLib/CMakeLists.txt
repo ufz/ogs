@@ -2,6 +2,11 @@
 GET_SOURCE_FILES(SOURCES_APPLICATIONSLIB)
 set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/../../NumLib
+    ${CMAKE_CURRENT_BINARY_DIR}/../../MaterialsLib
+)
+
 # Library
 add_library(ApplicationsLib ${LIB_SOURCES})
 

@@ -21,12 +21,15 @@ endif()
 GET_SOURCE_FILES(SOURCES_IO_GMSHIO IO/Gmsh)
 set(SOURCES ${SOURCES} ${SOURCES_IO_GMSHIO})
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../BaseLib)
+
 # Create the library
 add_library(GeoLib ${SOURCES}
     ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/tetgen/predicates.cxx
 )
 
 target_link_libraries(GeoLib
+    BaseLib
     MathLib
 )
 
