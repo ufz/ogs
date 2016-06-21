@@ -20,10 +20,6 @@
 
 #include "MathLib/Vector3.h"
 
-namespace GeoLib {
-    class Point;
-}
-
 namespace MeshLib {
 // forward declarations
 class Mesh;
@@ -40,7 +36,8 @@ public:
     static std::vector<double> getSurfaceAreaForNodes(const MeshLib::Mesh &mesh);
 
     /// Returns the surface nodes of a mesh.
-    static std::vector<GeoLib::Point*> getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle);
+    static std::vector<MeshLib::Node*> getSurfaceNodes(
+        const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle);
 
     /**
      * Returns the 2d-element mesh representing the surface of the given mesh.
@@ -72,10 +69,19 @@ public:
 
 private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
-    static void get2DSurfaceElements(const std::vector<MeshLib::Element*> &all_elements, std::vector<MeshLib::Element*> &sfc_elements, const MathLib::Vector3 &dir, double angle, unsigned mesh_dimension);
+    static void get2DSurfaceElements(
+        const std::vector<MeshLib::Element*>& all_elements,
+        std::vector<MeshLib::Element*>& sfc_elements,
+        const MathLib::Vector3& dir,
+        double angle,
+        unsigned mesh_dimension);
 
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
-    static void get2DSurfaceNodes(std::vector<MeshLib::Node*> &sfc_nodes, std::size_t n_all_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<std::size_t> &node_id_map);
+    static void get2DSurfaceNodes(
+        std::vector<MeshLib::Node*>& sfc_nodes,
+        std::size_t n_all_nodes,
+        const std::vector<MeshLib::Element*>& sfc_elements,
+        std::vector<std::size_t>& node_id_map);
 };
 
 } // end namespace MeshLib

@@ -18,8 +18,6 @@
 
 #include "logog/include/logog.hpp"
 
-#include "GeoLib/Point.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Tri.h"
@@ -223,51 +221,48 @@ void MeshSurfaceExtraction::get2DSurfaceElements(const std::vector<MeshLib::Elem
     }
 }
 
-void MeshSurfaceExtraction::get2DSurfaceNodes(std::vector<MeshLib::Node*> &sfc_nodes, std::size_t n_all_nodes, const std::vector<MeshLib::Element*> &sfc_elements, std::vector<std::size_t> &node_id_map)
+void MeshSurfaceExtraction::get2DSurfaceNodes(
+    std::vector<MeshLib::Node*>& sfc_nodes, std::size_t n_all_nodes,
+    const std::vector<MeshLib::Element*>& sfc_elements,
+    std::vector<std::size_t>& node_id_map)
 {
-    const std::size_t nNewElements (sfc_elements.size());
     std::vector<const MeshLib::Node*> tmp_nodes(n_all_nodes, nullptr);
-    for (std::size_t i=0; i<nNewElements; ++i)
+    for (auto const* elem : sfc_elements)
     {
-        const MeshLib::Element* elem (sfc_elements[i]);
-        for (unsigned j=0; j<elem->getNumberOfBaseNodes(); ++j)
+        for (unsigned j = 0; j < elem->getNumberOfBaseNodes(); ++j)
         {
-            const MeshLib::Node* node (elem->getNode(j));
+            const MeshLib::Node* node(elem->getNode(j));
             tmp_nodes[node->getID()] = node;
         }
     }
-    const std::size_t nNodes (tmp_nodes.size());
-    for (unsigned i=0; i<nNodes; ++i)
+    const std::size_t nNodes(tmp_nodes.size());
+    for (unsigned i = 0; i < nNodes; ++i)
     {
         if (tmp_nodes[i])
         {
             node_id_map[i] = sfc_nodes.size();
-            sfc_nodes.push_back(new MeshLib::Node(tmp_nodes[i]->getCoords(), tmp_nodes[i]->getID()));
+            sfc_nodes.push_back(new MeshLib::Node(*tmp_nodes[i]));
         }
     }
 }
 
-std::vector<GeoLib::Point*> MeshSurfaceExtraction::getSurfaceNodes(const MeshLib::Mesh &mesh, const MathLib::Vector3 &dir, double angle)
+std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
+    const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
 {
     INFO ("Extracting surface nodes...");
     std::vector<MeshLib::Element*> sfc_elements;
-    get2DSurfaceElements(mesh.getElements(), sfc_elements, dir, angle, mesh.getDimension());
+    get2DSurfaceElements(mesh.getElements(), sfc_elements, dir, angle,
+                         mesh.getDimension());
 
     std::vector<MeshLib::Node*> sfc_nodes;
     std::vector<std::size_t> node_id_map(mesh.getNumberOfNodes());
-    get2DSurfaceNodes(sfc_nodes, mesh.getNumberOfNodes(), sfc_elements, node_id_map);
+    get2DSurfaceNodes(sfc_nodes, mesh.getNumberOfNodes(), sfc_elements,
+                      node_id_map);
 
     for (auto e : sfc_elements)
         delete e;
 
-    const std::size_t nNodes (sfc_nodes.size());
-    std::vector<GeoLib::Point*> surface_pnts(nNodes);
-    for (std::size_t i=0; i<nNodes; ++i)
-    {
-        surface_pnts[i] = new GeoLib::Point(*(sfc_nodes[i]), sfc_nodes[i]->getID());
-        delete sfc_nodes[i];
-    }
-    return surface_pnts;
+    return sfc_nodes;
 }
 
 } // end namespace MeshLib
