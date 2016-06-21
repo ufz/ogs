@@ -1,6 +1,7 @@
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 add_subdirectory(ApplicationsLib)
+add_subdirectory(DataHolderLib)
 add_subdirectory(FileIO)
 
 if(OGS_BUILD_UTILS AND NOT IS_SUBPROJECT)

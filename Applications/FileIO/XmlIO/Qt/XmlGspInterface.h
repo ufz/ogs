@@ -23,7 +23,7 @@
 #include "BaseLib/IO/XmlIO/XMLInterface.h"
 #include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
-#include "DataHolderLib/Project.h"
+#include "Applications/DataHolderLib/Project.h"
 
 namespace FileIO
 {

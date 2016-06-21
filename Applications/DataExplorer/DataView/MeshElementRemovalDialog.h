@@ -19,7 +19,7 @@
 #include <QDialog>
 
 #ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
-#include "DataHolderLib/Project.h"
+#include "Applications/DataHolderLib/Project.h"
 #endif
 
 class Node;
