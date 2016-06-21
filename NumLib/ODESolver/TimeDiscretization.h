@@ -50,8 +50,6 @@ public:
  * respective time discretization scheme. Furthermore, TimeDiscretization instances
  * compute the discretized approximation of the time derivative \f$ \partial x/\partial t \f$.
  *
- * \tparam Vector the type of the solution vector of the ODE.
- *
  * \note The method documentation of this class uses quantities introduced in the
  *       following section.
  *
@@ -114,12 +112,11 @@ public:
  * BDF(2) has bee given here for brevity.
  *
  */
-template <typename Vector>
 class TimeDiscretization
 {
 public:
     //! Sets the initial condition.
-    virtual void setInitialState(const double t0, Vector const& x0) = 0;
+    virtual void setInitialState(const double t0, GlobalVector const& x0) = 0;
 
     /*! Indicate that the current timestep is done and that you will proceed to
      * the next one.
@@ -132,7 +129,7 @@ public:
      * \param strg Trigger storing some internal state.
      *             Currently only used by the CrankNicolson scheme.
      */
-    virtual void pushState(const double t, Vector const& x,
+    virtual void pushState(const double t, GlobalVector const& x,
                            InternalMatrixStorage const& strg) = 0;
 
     /*! Indicate that the computation of a new timestep is being started now.
@@ -149,7 +146,7 @@ public:
 
     //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x
     //! \f$.
-    void getXdot(Vector const& x_at_new_timestep, Vector& xdot) const
+    void getXdot(GlobalVector const& x_at_new_timestep, GlobalVector& xdot) const
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -164,7 +161,7 @@ public:
     virtual double getNewXWeight() const = 0;
 
     //! Returns \f$ x_O \f$.
-    virtual void getWeightedOldX(Vector& y) const = 0;  // = x_old
+    virtual void getWeightedOldX(GlobalVector& y) const = 0;  // = x_old
 
     virtual ~TimeDiscretization() = default;
 
@@ -191,7 +188,7 @@ public:
      *
      * This method is overridden in the ForwardEuler scheme.
      */
-    virtual Vector const& getCurrentX(Vector const& x_at_new_timestep) const
+    virtual GlobalVector const& getCurrentX(GlobalVector const& x_at_new_timestep) const
     {
         return x_at_new_timestep;
     }
@@ -207,27 +204,26 @@ public:
 };
 
 //! Backward Euler scheme.
-template <typename Vector>
-class BackwardEuler final : public TimeDiscretization<Vector>
+class BackwardEuler final : public TimeDiscretization
 {
 public:
     BackwardEuler()
-        : _x_old(MathLib::GlobalVectorProvider<Vector>::provider.getVector())
+        : _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
     {
     }
 
     ~BackwardEuler()
     {
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
     }
 
-    void setInitialState(const double t0, Vector const& x0) override
+    void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
         MathLib::BLAS::copy(x0, _x_old);
     }
 
-    void pushState(const double /*t*/, Vector const& x,
+    void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
         MathLib::BLAS::copy(x, _x_old);
@@ -241,7 +237,7 @@ public:
 
     double getCurrentTime() const override { return _t; }
     double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(Vector& y) const override
+    void getWeightedOldX(GlobalVector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -253,32 +249,31 @@ public:
 private:
     double _t;        //!< \f$ t_C \f$
     double _delta_t;  //!< the timestep size
-    Vector& _x_old;   //!< the solution from the preceding timestep
+    GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
 //! Forward Euler scheme.
-template <typename Vector>
-class ForwardEuler final : public TimeDiscretization<Vector>
+class ForwardEuler final : public TimeDiscretization
 {
 public:
     ForwardEuler()
-        : _x_old(MathLib::GlobalVectorProvider<Vector>::provider.getVector())
+        : _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
     {
     }
 
     ~ForwardEuler()
     {
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
     }
 
-    void setInitialState(const double t0, Vector const& x0) override
+    void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
         _t_old = t0;
         MathLib::BLAS::copy(x0, _x_old);
     }
 
-    void pushState(const double /*t*/, Vector const& x,
+    void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
         MathLib::BLAS::copy(x, _x_old);
@@ -296,14 +291,14 @@ public:
         return _t_old;  // forward Euler does assembly at the preceding timestep
     }
 
-    Vector const& getCurrentX(
-        const Vector& /*x_at_new_timestep*/) const override
+    GlobalVector const& getCurrentX(
+        const GlobalVector& /*x_at_new_timestep*/) const override
     {
         return _x_old;
     }
 
     double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(Vector& y) const override
+    void getWeightedOldX(GlobalVector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -315,17 +310,16 @@ public:
     bool isLinearTimeDisc() const override { return true; }
     double getDxDx() const override { return 0.0; }
     //! Returns the solution from the preceding timestep.
-    Vector const& getXOld() const { return _x_old; }
+    GlobalVector const& getXOld() const { return _x_old; }
 private:
     double _t;        //!< \f$ t_C \f$
     double _t_old;    //!< the time of the preceding timestep
     double _delta_t;  //!< the timestep size
-    Vector& _x_old;   //!< the solution from the preceding timestep
+    GlobalVector& _x_old;   //!< the solution from the preceding timestep
 };
 
 //! Generalized Crank-Nicolson scheme.
-template <typename Vector>
-class CrankNicolson final : public TimeDiscretization<Vector>
+class CrankNicolson final : public TimeDiscretization
 {
 public:
     /*! Constructs a new instance.
@@ -338,22 +332,22 @@ public:
      */
     explicit CrankNicolson(const double theta)
         : _theta(theta),
-          _x_old(MathLib::GlobalVectorProvider<Vector>::provider.getVector())
+          _x_old(MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
     {
     }
 
     ~CrankNicolson()
     {
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(_x_old);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
     }
 
-    void setInitialState(const double t0, Vector const& x0) override
+    void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
         MathLib::BLAS::copy(x0, _x_old);
     }
 
-    void pushState(const double, Vector const& x,
+    void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
     {
         MathLib::BLAS::copy(x, _x_old);
@@ -368,7 +362,7 @@ public:
 
     double getCurrentTime() const override { return _t; }
     double getNewXWeight() const override { return 1.0 / _delta_t; }
-    void getWeightedOldX(Vector& y) const override
+    void getWeightedOldX(GlobalVector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -381,12 +375,12 @@ public:
     //! Returns \f$ \theta \f$.
     double getTheta() const { return _theta; }
     //! Returns the solution from the preceding timestep.
-    Vector const& getXOld() const { return _x_old; }
+    GlobalVector const& getXOld() const { return _x_old; }
 private:
     const double _theta;  //!< the implicitness parameter \f$ \theta \f$
     double _t;            //!< \f$ t_C \f$
     double _delta_t;      //!< the timestep size
-    Vector& _x_old;       //!< the solution from the preceding timestep
+    GlobalVector& _x_old;       //!< the solution from the preceding timestep
 };
 
 namespace detail
@@ -407,8 +401,7 @@ const double BDF_Coeffs[6][7] = {
 }
 
 //! Backward differentiation formula.
-template <typename Vector>
-class BackwardDifferentiationFormula final : public TimeDiscretization<Vector>
+class BackwardDifferentiationFormula final : public TimeDiscretization
 {
 public:
     /*! Constructs a new instance.
@@ -433,17 +426,17 @@ public:
     ~BackwardDifferentiationFormula()
     {
         for (auto* x : _xs_old)
-            MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*x);
+            MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*x);
     }
 
-    void setInitialState(const double t0, Vector const& x0) override
+    void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
         _xs_old.push_back(
-            &MathLib::GlobalVectorProvider<Vector>::provider.getVector(x0));
+            &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0));
     }
 
-    void pushState(const double, Vector const& x,
+    void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
         namespace BLAS = MathLib::BLAS;
@@ -453,7 +446,7 @@ public:
         if (_xs_old.size() < _num_steps)
         {
             _xs_old.push_back(
-                &MathLib::GlobalVectorProvider<Vector>::provider.getVector(x));
+                &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x));
         }
         else
         {
@@ -476,7 +469,7 @@ public:
         return detail::BDF_Coeffs[k - 1][0] / _delta_t;
     }
 
-    void getWeightedOldX(Vector& y) const override
+    void getWeightedOldX(GlobalVector& y) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -502,7 +495,7 @@ private:
     double _t;                  //!< \f$ t_C \f$
     double _delta_t;            //!< the timestep size
 
-    std::vector<Vector*> _xs_old;  //!< solutions from the preceding timesteps
+    std::vector<GlobalVector*> _xs_old;  //!< solutions from the preceding timesteps
     unsigned _offset = 0;  //!< allows treating \c _xs_old as circular buffer
 };
 
