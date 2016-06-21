@@ -11,8 +11,8 @@ set(HEADERS
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../BaseLib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../FileIO/Gmsh
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Applications/FileIO
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../GeoLib/IO/Gmsh
     ${CMAKE_CURRENT_SOURCE_DIR}/../../MeshLib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../MathLib
     ${CMAKE_CURRENT_SOURCE_DIR}/../VtkVis

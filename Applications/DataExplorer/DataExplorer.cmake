@@ -56,7 +56,6 @@ target_link_libraries(DataExplorer
     ApplicationsLib
     ApplicationsFileIO
     DataHolderLib
-    FileIO
     QtDataView
     QtDiagramView
     QtStratView

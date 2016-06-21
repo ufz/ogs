@@ -24,7 +24,7 @@
 #include <QSettings>
 
 #include "SHPInterface.h"
-#include "FileIO/TetGenInterface.h"
+#include "TetGenInterface.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"

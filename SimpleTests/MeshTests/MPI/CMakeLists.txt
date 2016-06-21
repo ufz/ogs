@@ -4,7 +4,6 @@ add_executable(test_node_partitioned_mesh
 
 target_link_libraries(test_node_partitioned_mesh
     MeshLib
-    FileIO
     ${ADDITIONAL_LIBS}
     ${BOOST_LIBRARIES}
 )

@@ -110,7 +110,6 @@ include_directories(
     ${SOURCE_DIR_REL}/GeoLib
     ${SOURCE_DIR_REL}/MeshGeoToolsLib
     ${SOURCE_DIR_REL}/MeshLib
-    ${SOURCE_DIR_REL}/FileIO
     ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
     ${CMAKE_CURRENT_SOURCE_DIR}/StratView
     ${GUI_SOURCE_DIR_REL}/Base
@@ -130,7 +129,6 @@ add_library(QtDataView
 target_link_libraries(QtDataView Qt4::QtCore Qt4::QtGui)
 target_link_libraries(QtDataView
     ApplicationsFileIO
-    FileIO
     DataHolderLib
     QtBase
     QtStratView
