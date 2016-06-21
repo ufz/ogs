@@ -31,8 +31,7 @@ namespace NumLib
  * \tparam ODETag a tag indicating the type of ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
-template <typename Matrix, typename Vector, ODESystemTag ODETag,
-          NonlinearSolverTag NLTag>
+template <ODESystemTag ODETag, NonlinearSolverTag NLTag>
 class ODESystem;
 
 /*! Interface for a first-order implicit quasi-linear ODE.
@@ -42,9 +41,9 @@ class ODESystem;
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template <typename Matrix, typename Vector>
-class ODESystem<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear,
-                NonlinearSolverTag::Picard> : public EquationSystem<Vector>
+template <>
+class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                NonlinearSolverTag::Picard> : public EquationSystem
 {
 public:
     //! A tag indicating the type of ODE.
@@ -52,10 +51,11 @@ public:
         ODESystemTag::FirstOrderImplicitQuasilinear;
 
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
-    virtual void assemble(const double t, Vector const& x, Matrix& M, Matrix& K,
-                          Vector& b) = 0;
+    virtual void assemble(const double t, GlobalVector const& x,
+                          GlobalMatrix& M, GlobalMatrix& K,
+                          GlobalVector& b) = 0;
 
-    using Index = typename MathLib::MatrixVectorTraits<Matrix>::Index;
+    using Index = typename MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
 
     //! Provides known solutions (Dirichlet boundary conditions) vector for
     //! the ode system at the given time \c t.
@@ -72,11 +72,10 @@ public:
  * ODEs using this interface also provide a Jacobian in addition
  * to the functionality of the Picard-related interface.
  */
-template <typename Matrix, typename Vector>
-class ODESystem<Matrix, Vector, ODESystemTag::FirstOrderImplicitQuasilinear,
+template <>
+class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                 NonlinearSolverTag::Newton>
-    : public ODESystem<Matrix, Vector,
-                       ODESystemTag::FirstOrderImplicitQuasilinear,
+    : public ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                        NonlinearSolverTag::Picard>
 {
 public:
@@ -116,10 +115,11 @@ public:
      * different way, as long as that is consistent with the definition of \f$ \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleJacobian(const double t, Vector const& x,
-                                  Vector const& xdot, const double dxdot_dx,
-                                  Matrix const& M, const double dx_dx,
-                                  Matrix const& K, Matrix& Jac) = 0;
+    virtual void assembleJacobian(const double t, GlobalVector const& x,
+                                  GlobalVector const& xdot,
+                                  const double dxdot_dx, GlobalMatrix const& M,
+                                  const double dx_dx, GlobalMatrix const& K,
+                                  GlobalMatrix& Jac) = 0;
 };
 
 //! @}
