@@ -313,7 +313,7 @@ void GeoMapper::advancedMapOnMesh(
             const GeoLib::Point* geo_point (ply->getPoint(node_index_in_ply));
 
             // check if line segments connected to closest geo point intersect connected elements of current node
-            const std::vector<MeshLib::Element*> elements (node->getElements());
+            const std::vector<MeshLib::Element*>& elements (node->getElements());
             const std::size_t nElems = elements.size();
             for (std::size_t e=0; e<nElems; ++e)
             {

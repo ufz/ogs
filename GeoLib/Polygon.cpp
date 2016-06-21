@@ -125,9 +125,9 @@ std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
 {
     std::vector<GeoLib::Point> intersections;
     GeoLib::Point s;
-    for (auto seg_it(begin()); seg_it != end(); ++seg_it)
+    for (auto&& seg_it : *this)
     {
-        if (GeoLib::lineSegmentIntersect(*seg_it, segment, s)) {
+        if (GeoLib::lineSegmentIntersect(seg_it, segment, s)) {
             intersections.push_back(s);
         }
     }
@@ -308,8 +308,8 @@ void Polygon::ensureCWOrientation ()
     // rotate copied points into x-y-plane
     GeoLib::rotatePointsToXY(tmp_polygon_pnts);
 
-    for (std::size_t k(0); k < tmp_polygon_pnts.size(); k++)
-        (*(tmp_polygon_pnts[k]))[2] = 0.0; // should be -= d but there are numerical errors
+    for (auto & tmp_polygon_pnt : tmp_polygon_pnts)
+        (*tmp_polygon_pnt)[2] = 0.0; // should be -= d but there are numerical errors
 
     // *** get the left most upper point
     std::size_t min_x_max_y_idx (0); // for orientation check
@@ -359,10 +359,10 @@ void Polygon::ensureCWOrientation ()
 
 #if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
 void Polygon::splitPolygonAtIntersection(
-    std::list<Polygon*>::iterator polygon_it)
+    const std::list<Polygon*>::iterator& polygon_it)
 #else
 void Polygon::splitPolygonAtIntersection(
-    std::list<Polygon*>::const_iterator polygon_it)
+    const std::list<Polygon*>::const_iterator& polygon_it)
 #endif
 {
     GeoLib::Polyline::SegmentIterator seg_it0((*polygon_it)->begin());
@@ -409,7 +409,7 @@ void Polygon::splitPolygonAtIntersection(
     splitPolygonAtIntersection(polygon1_it);
 }
 
-void Polygon::splitPolygonAtPoint (std::list<GeoLib::Polygon*>::iterator polygon_it)
+void Polygon::splitPolygonAtPoint (const std::list<GeoLib::Polygon*>::iterator& polygon_it)
 {
     std::size_t n((*polygon_it)->getNumberOfPoints() - 1), idx0(0), idx1(0);
     std::vector<std::size_t> id_vec(n);

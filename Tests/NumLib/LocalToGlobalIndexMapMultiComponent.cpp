@@ -103,7 +103,7 @@ public:
 
     template <AL::ComponentOrder order>
     void test(const unsigned num_components, const unsigned selected_component,
-              std::function<std::size_t(std::size_t, std::size_t)> const
+              std::function<std::size_t(std::size_t, std::size_t)> const&
                   compute_global_index);
 
     std::unique_ptr<const MeshLib::Mesh> mesh;
@@ -146,7 +146,7 @@ template <AL::ComponentOrder ComponentOrder>
 void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     const unsigned num_components,
     const unsigned selected_component,
-    std::function<std::size_t(std::size_t, std::size_t)> const
+    std::function<std::size_t(std::size_t, std::size_t)> const&
         compute_global_index)
 {
     initComponents(num_components, selected_component, ComponentOrder);

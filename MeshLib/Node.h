@@ -29,7 +29,7 @@ class Element;
 /**
  * A mesh node with coordinates in 3D space.
  */
-class Node : public MathLib::Point3dWithID
+class Node final : public MathLib::Point3dWithID
 {
     /* friend classes: */
     friend class Mesh;
@@ -61,9 +61,6 @@ public:
     /// Get number of elements the node is part of.
     std::size_t getNumberOfElements() const { return _elements.size(); }
 
-    /// Destructor
-    virtual ~Node();
-
     /// Shift the node according to the displacement vector v.
     Node operator-(MathLib::Vector3 const& v) const
     {
@@ -73,7 +70,7 @@ public:
 protected:
     /// Update coordinates of a node.
     /// This method automatically also updates the areas/volumes of all connected elements.
-    virtual void updateCoordinates(double x, double y, double z);
+    void updateCoordinates(double x, double y, double z);
 
     /**
      * Add an element the node is part of.

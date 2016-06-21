@@ -127,7 +127,7 @@ int main (int argc, char* argv[])
         ' ',
         "0.1");
     TCLAP::ValueArg<bool> gml_arg("", "gml",
-        "if switched on write found nodes to file in gml format", false, 0, "bool");
+        "if switched on write found nodes to file in gml format", false, false, "bool");
     cmd.add(gml_arg);
 
     TCLAP::ValueArg<std::string> output_base_fname("o", "output-base-file-name",

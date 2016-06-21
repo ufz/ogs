@@ -29,13 +29,13 @@ TEST(NumLib, TimeStep)
     ASSERT_EQ(1u, t2.steps());
 
     // copy
-    NumLib::TimeStep t3(t2);
+    const NumLib::TimeStep& t3(t2);
     ASSERT_EQ(1., t3.current());
     ASSERT_EQ(0., t3.previous());
     ASSERT_EQ(1., t3.dt());
     ASSERT_EQ(1u, t3.steps());
 
-    NumLib::TimeStep t4 = t2;
+    const NumLib::TimeStep& t4 = t2;
     ASSERT_EQ(1., t4.current());
     ASSERT_EQ(0., t4.previous());
     ASSERT_EQ(1., t4.dt());

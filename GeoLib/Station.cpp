@@ -15,6 +15,7 @@
 #include "Station.h"
 
 #include <cstdlib>
+#include <utility>
 
 #include <logog/include/logog.hpp>
 
@@ -22,12 +23,12 @@
 
 namespace GeoLib
 {
-Station::Station(double x, double y, double z, std::string name) :
+Station::Station(double x, double y, double z, std::string const& name) :
     Point (x,y,z), _name(name), _type(Station::StationType::STATION),
     _station_value(0.0), _sensor_data(nullptr)
 {}
 
-Station::Station(Point* coords, std::string name) :
+Station::Station(Point* coords, std::string const& name) :
     Point (*coords), _name(name), _type(Station::StationType::STATION),
     _station_value(0.0), _sensor_data(nullptr)
 {}

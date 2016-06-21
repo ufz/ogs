@@ -57,9 +57,9 @@ public:
     Station(double x = 0.0,
             double y = 0.0,
             double z = 0.0,
-            std::string name = "");
+            std::string const& name = "");
 
-    Station(Point* coords, std::string name = "");
+    Station(Point* coords, std::string const& name = "");
 
     /**
      * Constructor copies the source object

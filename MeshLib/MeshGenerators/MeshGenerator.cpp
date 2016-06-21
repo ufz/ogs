@@ -36,9 +36,9 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
         for (std::size_t j = 0; j < vec_xyz_coords[1]->size(); j++)
         {
             const double y ((*vec_xyz_coords[1])[j]+origin[1]);
-            for (std::size_t k = 0; k < vec_xyz_coords[0]->size(); k++)
+            for (double const x : *vec_xyz_coords[0])
             {
-                nodes.push_back (new Node((*vec_xyz_coords[0])[k]+origin[0], y, z));
+                nodes.push_back (new Node(x+origin[0], y, z));
             }
         }
     }
@@ -464,7 +464,7 @@ MeshLib::Mesh*
 MeshGenerator::createSurfaceMesh(std::string const& mesh_name,
     MathLib::Point3d const& ll, MathLib::Point3d const& ur,
     std::array<std::size_t, 2> const& n_steps,
-    std::function<double(double,double)> f)
+    const std::function<double(double,double)>& f)
 {
     std::array<double, 2> step_size{{
         (ur[0]-ll[0])/(n_steps[0]-1), (ur[1]-ll[1])/(n_steps[1]-1)}};

@@ -109,7 +109,7 @@ int main (int argc, char* argv[])
     }
     if (eleTypeArg.isSet()) {
         const std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
-        for (auto typeName : eleTypeNames) {
+        for (const auto& typeName : eleTypeNames) {
             const MeshLib::MeshElemType type = MeshLib::String2MeshElemType(typeName);
             if (type == MeshLib::MeshElemType::INVALID) continue;
             const std::size_t n_removed_elements = searcher.searchByElementType(type);

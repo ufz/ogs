@@ -26,7 +26,7 @@ public:
     using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
     using NLSolver = NumLib::NonlinearSolver<Matrix, Vector, NLTag>;
 
-    TestOutput(const char* name)
+    explicit TestOutput(const char* name)
         : _file_name_part(name)
     {}
 

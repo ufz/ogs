@@ -23,7 +23,7 @@ EigenOption::EigenOption()
 EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_name)
 {
 #define RETURN_SOLVER_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==str) return SolverType::TypeName;
+    if (#TypeName==(str)) return SolverType::TypeName;
 
     RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CG);
     RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCGSTAB);
@@ -36,7 +36,7 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
 EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_name)
 {
 #define RETURN_PRECOM_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==str) return PreconType::TypeName;
+    if (#TypeName==(str)) return PreconType::TypeName;
 
     RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, NONE);
     RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, DIAGONAL);

@@ -57,7 +57,7 @@ Properties::createNewPropertyVector(std::string const& name,
         return boost::optional<PropertyVector<T> &>();
     }
 
-    // check entries of item2group_mapping of consistence
+    // check entries of item2group_mapping for consistence
     for (std::size_t k(0); k<item2group_mapping.size(); k++) {
         std::size_t const group_id (item2group_mapping[k]);
         if (group_id >= n_prop_groups) {

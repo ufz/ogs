@@ -81,7 +81,7 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
 }
 
 void Output::
-initialize(Output::ProcessIter first, Output::ProcessIter last)
+initialize(Output::ProcessIter first, const Output::ProcessIter& last)
 {
     for (unsigned pcs_idx = 0; first != last; ++first, ++pcs_idx)
     {

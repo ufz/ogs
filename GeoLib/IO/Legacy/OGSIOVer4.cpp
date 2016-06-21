@@ -59,7 +59,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
     getline(in, line);
     // geometric key words start with the hash #
     // while not found a new key word do ...
-    while (line.find("#") == std::string::npos && !in.eof() && !in.fail())
+    while (line.find('#') == std::string::npos && !in.eof() && !in.fail())
     {
         // read id and point coordinates
         std::stringstream inss(line);
@@ -81,7 +81,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
             if (line.find("$MD") != std::string::npos)
             {
                 double mesh_density;
-                std::size_t pos1(line.find_first_of("M"));
+                std::size_t pos1(line.find_first_of('M'));
                 inss.str(line.substr(pos1 + 2, std::string::npos));
                 inss >> mesh_density;
             }
@@ -90,7 +90,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
             std::size_t pos (line.find("$NAME"));
             if (pos != std::string::npos) //OK
             {
-                std::size_t end_pos ((line.substr (pos + 6)).find(" "));
+                std::size_t end_pos ((line.substr (pos + 6)).find(' '));
                 if (end_pos != std::string::npos)
                     (*pnt_id_name_map)[line.substr (pos + 6, end_pos)] = id;
                 else
@@ -188,8 +188,8 @@ std::string readPolyline(std::istream &in,
             in >> line;
             if (type != 100)
                 while (!in.eof() && !in.fail() && line.size() != 0
-                       && (line.find("#") == std::string::npos)
-                       && (line.find("$") == std::string::npos))
+                       && (line.find('#') == std::string::npos)
+                       && (line.find('$') == std::string::npos))
                 {
                     std::size_t pnt_id(BaseLib::str2number<std::size_t> (line));
                     if (!zero_based_indexing)
@@ -217,7 +217,7 @@ std::string readPolyline(std::istream &in,
             line = path + line;
             readPolylinePointVector(line, pnt_vec, ply, path, errors);
         } // subkeyword found
-    } while (line.find("#") == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
 
     if (type != 100)
     {
@@ -321,8 +321,8 @@ std::string readSurface(std::istream &in,
         { // read the name of the polyline(s)
             in >> line;
             while (!in.eof() && !in.fail() && line.size() != 0
-                   && (line.find("#") == std::string::npos)
-                   && (line.find("$") == std::string::npos))
+                   && (line.find('#') == std::string::npos)
+                   && (line.find('$') == std::string::npos))
             {
                 // we did read the name of a polyline -> search the id for polyline
                 std::map<std::string,std::size_t>::const_iterator it (ply_vec_names.find (
@@ -349,7 +349,7 @@ std::string readSurface(std::istream &in,
             }
             // empty line or a keyword is found
         }
-    } while (line.find("#") == std::string::npos && line.size() != 0 && in);
+    } while (line.find('#') == std::string::npos && line.size() != 0 && in);
 
     if (!name.empty())
         sfc_names.insert(std::pair<std::string,std::size_t>(name,sfc_vec.size()));
@@ -425,8 +425,8 @@ std::string readSurfaces(std::istream &in,
             sfc_vec.push_back(sfc);
         }
     }
-    for (std::size_t k(0); k < polygon_vec.size(); k++)
-        delete polygon_vec[k];
+    for (auto & k : polygon_vec)
+        delete k;
 
     return tag;
 }
@@ -526,7 +526,7 @@ bool readGLIFileV4(const std::string& fname,
 std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_vec, std::size_t sfc_count, std::string const& path)
 {
     const std::vector<GeoLib::Surface*>* sfcs (sfcs_vec->getVector());
-    for (std::size_t k(0); k < sfcs->size(); k++)
+    for (auto sfc : *sfcs)
     {
         os << "#SURFACE" << "\n";
         std::string sfc_name;
@@ -541,7 +541,7 @@ std::size_t writeTINSurfaces(std::ofstream &os, GeoLib::SurfaceVec const* sfcs_v
         os << "\t\t" << sfc_name << "\n";
         // create tin file
         sfc_name = path + sfc_name;
-        GeoLib::IO::TINInterface::writeSurfaceAsTIN(*(*sfcs)[k], sfc_name.c_str());
+        GeoLib::IO::TINInterface::writeSurfaceAsTIN(*sfc, sfc_name.c_str());
         sfc_count++;
     }
     return sfc_count;
@@ -575,15 +575,15 @@ void writeGLIFileV4 (const std::string& fname,
         const std::vector<GeoLib::Polyline*>* plys (plys_vec->getVector());
         INFO("GeoLib::writeGLIFileV4(): %d polylines to file %s.",
              plys->size (), fname.c_str());
-        for (std::size_t k(0); k < plys->size(); k++)
+        for (auto ply : *plys)
         {
             os << "#POLYLINE" << "\n";
             std::string polyline_name;
-            plys_vec->getNameOfElement((*plys)[k], polyline_name);
+            plys_vec->getNameOfElement(ply, polyline_name);
             os << " $NAME " << "\n" << "  " << polyline_name << "\n";
             os << " $POINTS" << "\n";
-            for (std::size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
-                os << "  " << ((*plys)[k])->getPointID(j) << "\n";
+            for (std::size_t j(0); j < ply->getNumberOfPoints(); j++)
+                os << "  " << ply->getPointID(j) << "\n";
         }
     }
 
@@ -612,10 +612,10 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 
     // writing all points
     os << "#POINTS" << "\n";
-    for (std::size_t j(0); j < geo_names.size(); j++)
+    for (auto & geo_name : geo_names)
     {
         os.precision(std::numeric_limits<double>::digits10);
-        GeoLib::PointVec const* const pnt_vec(geo.getPointVecObj(geo_names[j]));
+        GeoLib::PointVec const* const pnt_vec(geo.getPointVecObj(geo_name));
         std::vector<GeoLib::Point*> const* const pnts (pnt_vec->getVector());
         if (pnts) {
             std::string pnt_name;
@@ -638,10 +638,10 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
     // writing all stations
     std::vector<std::string> stn_names;
     geo.getStationVectorNames (stn_names);
-    for (std::size_t j(0); j < stn_names.size(); j++)
+    for (auto & stn_name : stn_names)
     {
         os.precision(std::numeric_limits<double>::digits10);
-        const std::vector<GeoLib::Point*>* pnts (geo.getStationVec(stn_names[j]));
+        const std::vector<GeoLib::Point*>* pnts (geo.getStationVec(stn_name));
         if (pnts)
         {
             for (std::size_t k(0); k < pnts->size(); k++)
@@ -660,7 +660,7 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
         const GeoLib::PolylineVec* plys_vec (geo.getPolylineVecObj (geo_names[j]));
         if (plys_vec) {
             const std::vector<GeoLib::Polyline*>* plys (plys_vec->getVector());
-            for (std::size_t k(0); k < plys->size(); k++) {
+            for (auto ply : *plys) {
                 os << "#POLYLINE" << "\n";
                 std::string ply_name;
                 os << "  $NAME\n";
@@ -669,9 +669,9 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
                 else
                     os << "    " << geo_names[j] << "-" << plys_cnt << "\n";
                 os << "  $POINTS" << "\n";
-                for (std::size_t l(0); l < (*plys)[k]->getNumberOfPoints(); l++)
+                for (std::size_t l(0); l < ply->getNumberOfPoints(); l++)
                     os << "    " << pnts_id_offset[j] +
-                    ((*plys)[k])->getPointID(l) << "\n";
+                    ply->getPointID(l) << "\n";
                 plys_cnt++;
             }
         }
@@ -679,9 +679,9 @@ void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects
 
     // writing surfaces as TIN files
     std::size_t sfcs_cnt (0);
-    for (std::size_t j(0); j < geo_names.size(); j++)
+    for (auto & geo_name : geo_names)
     {
-        const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_names[j]));
+        const GeoLib::SurfaceVec* sfcs_vec (geo.getSurfaceVecObj (geo_name));
         if (sfcs_vec)
             sfcs_cnt += writeTINSurfaces(os, sfcs_vec, sfcs_cnt, path);
     }

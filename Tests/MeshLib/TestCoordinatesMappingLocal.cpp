@@ -142,10 +142,10 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 
 // check if using the rotation matrix results in the original coordinates
 #define CHECK_COORDS(ele, mapping)\
-    for (unsigned ii=0; ii<ele->getNumberOfNodes(); ii++) {\
-        MathLib::Point3d global(matR*mapping.getMappedCoordinates(ii));\
+    for (unsigned ii=0; ii<(ele)->getNumberOfNodes(); ii++) {\
+        MathLib::Point3d global(matR*(mapping).getMappedCoordinates(ii));\
         const double eps(std::numeric_limits<double>::epsilon());\
-        ASSERT_ARRAY_NEAR(&(*ele->getNode(ii))[0], global.getCoords(), 3u, eps);\
+        ASSERT_ARRAY_NEAR(&(*(ele)->getNode(ii))[0], global.getCoords(), 3u, eps);\
     }
 
 } //namespace

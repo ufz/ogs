@@ -49,9 +49,6 @@ VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compres
         WARN("Ascii data cannot be compressed, ignoring compression flag.")
 }
 
-VtuInterface::~VtuInterface()
-{}
-
 MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 {
     if (!BaseLib::IsFileExisting(file_name)) {

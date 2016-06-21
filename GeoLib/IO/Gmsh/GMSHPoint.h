@@ -20,11 +20,10 @@ namespace IO
 {
 namespace GMSH
 {
-
-class GMSHPoint : public GeoLib::Point {
+class GMSHPoint final : public GeoLib::Point
+{
 public:
     GMSHPoint(GeoLib::Point const& pnt, std::size_t id, double mesh_density);
-    virtual ~GMSHPoint();
     void write(std::ostream &os) const;
 private:
     double _mesh_density;

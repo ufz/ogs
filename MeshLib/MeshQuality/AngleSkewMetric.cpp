@@ -29,9 +29,6 @@ AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
     ElementQualityMetric(mesh)
 {}
 
-AngleSkewMetric::~AngleSkewMetric()
-{}
-
 void AngleSkewMetric::calculateQuality ()
 {
     const std::vector<MeshLib::Element*>& elements(_mesh.getElements());

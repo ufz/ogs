@@ -76,7 +76,7 @@ std::string::size_type findLastPathSeparator(std::string const& path)
 static
 std::string::size_type findLastDot(std::string const& path)
 {
-    return path.find_last_of(".");
+    return path.find_last_of('.');
 }
 } // end namespace
 
@@ -141,7 +141,7 @@ std::string extractPath(std::string const& pathname)
         return "";
     return pathname.substr(0, pos + 1);
 }
-const char * pathSeparator =
+static const char * pathSeparator =
 #ifdef _WIN32
                             "\\";
 #else

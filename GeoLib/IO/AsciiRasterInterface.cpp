@@ -181,7 +181,7 @@ bool AsciiRasterInterface::readSurferHeader(
         else
         {
             ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
-            return 0;
+            return false;
         }
         header.no_data = min-1;
         in >> min >> max;

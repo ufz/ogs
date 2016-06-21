@@ -92,8 +92,8 @@ public:
         delete _p1;
         delete _p2;
         delete _p3;
-        for (std::size_t k(0); k<_pnts.size(); k++)
-            delete _pnts[k];
+        for (auto & _pnt : _pnts)
+            delete _pnt;
     }
 
 protected:

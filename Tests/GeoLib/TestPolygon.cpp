@@ -67,8 +67,8 @@ public:
     ~PolygonTest()
     {
         delete _polygon;
-        for (std::size_t k(0); k<_pnts.size(); k++)
-            delete _pnts[k];
+        for (auto & _pnt : _pnts)
+            delete _pnt;
     }
 
 protected:
@@ -78,8 +78,8 @@ protected:
 
 TEST_F(PolygonTest, isPntInPolygonCheckCorners)
 {
-    for (std::size_t k(0); k<_pnts.size(); k++)
-        EXPECT_TRUE(_polygon->isPntInPolygon(*_pnts[k]));
+    for (auto & _pnt : _pnts)
+        EXPECT_TRUE(_polygon->isPntInPolygon(*_pnt));
 }
 
 TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
@@ -146,10 +146,9 @@ TEST_F(PolygonTest, containsSegment)
     }
 
     // test all segments of polygon
-    for (auto segment_it(_polygon->begin()); segment_it != _polygon->end();
-         ++segment_it)
+    for (auto && segment_it : *_polygon)
     {
-        EXPECT_TRUE(_polygon->containsSegment(*segment_it));
+        EXPECT_TRUE(_polygon->containsSegment(segment_it));
     }
 
     { // 70
@@ -191,8 +190,8 @@ TEST_F(PolygonTest, isPolylineInPolygon)
     outer_ply.addPoint(0);
     outer_ply.addPoint(1);
     ASSERT_FALSE(_polygon->isPolylineInPolygon(outer_ply));
-    for (std::size_t k(0); k<pnts.size(); k++)
-        delete pnts[k];
+    for (auto & pnt : pnts)
+        delete pnt;
     pnts.clear();
 
     pnts.push_back(new GeoLib::Point(-1.0,2.0,0.0)); // 3
@@ -201,8 +200,8 @@ TEST_F(PolygonTest, isPolylineInPolygon)
     inner_ply.addPoint(0);
     inner_ply.addPoint(1);
     ASSERT_TRUE(_polygon->isPolylineInPolygon(inner_ply));
-    for (std::size_t k(0); k<pnts.size(); k++)
-        delete pnts[k];
+    for (auto & pnt : pnts)
+        delete pnt;
 }
 
 TEST_F(PolygonTest, CopyConstructor)

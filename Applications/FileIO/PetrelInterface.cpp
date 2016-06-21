@@ -77,9 +77,6 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
             _unique_name);
 }
 
-PetrelInterface::~PetrelInterface()
-{}
-
 void PetrelInterface::readPetrelSurface(std::istream &in)
 {
     char buffer[MAX_COLS_PER_ROW];

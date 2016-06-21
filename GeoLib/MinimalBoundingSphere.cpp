@@ -128,7 +128,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(
     std::vector<MathLib::Point3d*> const& points)
 : _radius(-1), _center(0,0,0)
 {
-    std::vector<MathLib::Point3d*> sphere_points(points);
+    const std::vector<MathLib::Point3d*>& sphere_points(points);
     MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
     _center = bounding_sphere.getCenter();
     _radius = bounding_sphere.getRadius();

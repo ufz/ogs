@@ -29,7 +29,7 @@ template<class F_JACOBIAN>
 class ScalarDx
 {
 public:
-    ScalarDx(F_JACOBIAN &f_J) : _f_Jacobian(f_J) {}
+    explicit ScalarDx(F_JACOBIAN &f_J) : _f_Jacobian(f_J) {}
     // dx = - r/J
     void operator()(const double &x, const double &r, double &dx)
     {

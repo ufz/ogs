@@ -38,11 +38,10 @@ namespace FileIO
  *   node - mesh node / geometric point definition
  *   ele  - mesh element definition
  */
-class TetGenInterface
+class TetGenInterface final
 {
 public:
     TetGenInterface();
-    virtual ~TetGenInterface();
 
     /**
      * Method reads geometry from a TetGen poly or smesh file.

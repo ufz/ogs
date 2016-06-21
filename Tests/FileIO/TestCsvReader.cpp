@@ -114,8 +114,8 @@ TEST_F(CsvInterfaceTest, Points2D)
     _result = GeoLib::IO::CsvInterface::readPoints(_file_name, '\t', points, "x", "y");
     ASSERT_EQ(0, _result);
     ASSERT_EQ(10, points.size());
-    for (std::size_t i=0; i<points.size(); ++i)
-        ASSERT_NEAR(0, (*points[i])[2], std::numeric_limits<double>::epsilon());
+    for (auto & point : points)
+        ASSERT_NEAR(0, (*point)[2], std::numeric_limits<double>::epsilon());
     for (auto p : points)
         delete p;
 }

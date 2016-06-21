@@ -121,10 +121,6 @@ PointVec::PointVec(const std::string& name,
     }
 }
 
-PointVec::~PointVec()
-{
-}
-
 std::size_t PointVec::push_back(Point* pnt)
 {
     _pnt_id_map.push_back(uniqueInsert(pnt));

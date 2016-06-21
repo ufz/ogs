@@ -31,14 +31,14 @@ GEOObjects::GEOObjects()
 GEOObjects::~GEOObjects()
 {
     // delete surfaces
-    for (std::size_t k(0); k < _sfc_vecs.size(); k++)
-        delete _sfc_vecs[k];
+    for (auto & _sfc_vec : _sfc_vecs)
+        delete _sfc_vec;
     // delete polylines
-    for (std::size_t k(0); k < _ply_vecs.size(); k++)
-        delete _ply_vecs[k];
+    for (auto & _ply_vec : _ply_vecs)
+        delete _ply_vec;
     // delete points
-    for (std::size_t k(0); k < _pnt_vecs.size(); k++)
-        delete _pnt_vecs[k];
+    for (auto & _pnt_vec : _pnt_vecs)
+        delete _pnt_vec;
 }
 
 void GEOObjects::addPointVec(
@@ -239,8 +239,8 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
         // ctor, which needs write access to the surface vector.
         auto sfc = std::unique_ptr<std::vector<GeoLib::Surface*>>{
             new std::vector<GeoLib::Surface*>};
-        for (std::size_t i = 0; i < surfaces.size(); i++)
-            sfc->push_back(surfaces[i]);
+        for (auto surface : surfaces)
+            sfc->push_back(surface);
         addSurfaceVec(std::move(sfc), name);
         return false;
     }
@@ -299,8 +299,8 @@ bool GEOObjects::isUniquePointVecName(std::string &name)
         if (count > 1)
             cpName = cpName + "-" + std::to_string(count);
 
-        for (std::size_t i = 0; i < _pnt_vecs.size(); i++)
-            if ( cpName.compare(_pnt_vecs[i]->getName()) == 0 )
+        for (auto & _pnt_vec : _pnt_vecs)
+            if ( cpName.compare(_pnt_vec->getName()) == 0 )
                 isUnique = false;
     }
 

@@ -258,8 +258,8 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
     ps_ptr.push_back(new GeoLib::Point(5*small_displacement,1,0,6));
 
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    MathLib::Point3d min(aabb.getMinPoint());
-    MathLib::Point3d max(aabb.getMaxPoint());
+    const MathLib::Point3d& min(aabb.getMinPoint());
+    const MathLib::Point3d& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 8>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 8>::createOctTree(min, max, eps));
 
@@ -309,8 +309,8 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    MathLib::Point3d min(aabb.getMinPoint());
-    MathLib::Point3d max(aabb.getMaxPoint());
+    const MathLib::Point3d& min(aabb.getMinPoint());
+    const MathLib::Point3d& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 

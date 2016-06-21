@@ -98,8 +98,8 @@ int main (int argc, char* argv[])
     }
 
     bool is_keyword(false);
-    for (std::size_t i=0; i<keywords.size(); i++)
-        if (current_key.compare(keywords[i])==0)
+    for (auto & keyword : keywords)
+        if (current_key.compare(keyword)==0)
         {
             is_keyword = true;
             break;
@@ -155,7 +155,7 @@ int main (int argc, char* argv[])
         //double max_dist (25.0);    // squared maximum distance at which reference points are used
         double offset (0.0); // additional offset for elevation (should be 0)
         MeshLib::Mesh* ground_truth (MeshLib::IO::readMeshFromFile(value));
-        const std::vector<MeshLib::Node*> ground_truth_nodes (ground_truth->getNodes());
+        const std::vector<MeshLib::Node*>& ground_truth_nodes (ground_truth->getNodes());
         GeoLib::AABB bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
         MathLib::Point3d const& min(bounding_box.getMinPoint());
         MathLib::Point3d const& max(bounding_box.getMaxPoint());
