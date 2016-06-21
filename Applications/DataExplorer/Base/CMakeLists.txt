@@ -41,7 +41,6 @@ add_library(QtBase
 
 target_link_libraries(QtBase
     Qt4::QtGui
-    logog
     GeoLib)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")
