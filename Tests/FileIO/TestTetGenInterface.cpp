@@ -18,9 +18,9 @@
 
 #include "gtest/gtest.h"
 
+#include "Applications/FileIO/TetGenInterface.h"
 #include "BaseLib/BuildInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "FileIO/TetGenInterface.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

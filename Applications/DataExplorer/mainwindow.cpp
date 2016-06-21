@@ -65,7 +65,7 @@
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/GmshReader.h"
-#include "FileIO/TetGenInterface.h"
+#include "TetGenInterface.h"
 #include "PetrelInterface.h"
 #include "XmlIO/Qt/XmlGspInterface.h"
 #include "GeoLib/IO/GMSHInterface.h"
