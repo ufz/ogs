@@ -53,11 +53,14 @@ public:
     /*! Assemble and solve the equation system.
      *
      * \param x   in: the initial guess, out: the solution.
+     * \param postIterationCallback called after each iteration if set.
      *
      * \retval true if the equation system could be solved
      * \retval false otherwise
      */
-    virtual bool solve(Vector& x) = 0;
+    virtual bool solve(Vector& x,
+                       std::function<void(unsigned, Vector const&)> const&
+                           postIterationCallback) = 0;
 
     virtual ~NonlinearSolverBase() = default;
 };
@@ -108,7 +111,9 @@ public:
 
     void assemble(Vector const& x) const override;
 
-    bool solve(Vector& x) override;
+    bool solve(Vector& x,
+               std::function<void(unsigned, Vector const&)> const&
+                   postIterationCallback) override;
 
 private:
     LinearSolver& _linear_solver;
@@ -159,7 +164,9 @@ public:
 
     void assemble(Vector const& x) const override;
 
-    bool solve(Vector& x) override;
+    bool solve(Vector& x,
+               std::function<void(unsigned, Vector const&)> const&
+                   postIterationCallback) override;
 
 private:
     LinearSolver& _linear_solver;

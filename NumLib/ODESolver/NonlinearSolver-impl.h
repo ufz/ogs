@@ -32,10 +32,10 @@ assemble(Vector const& x) const
     _equation_system->assembleMatricesPicard(x);
 }
 
-template<typename Matrix, typename Vector>
-bool
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::
-solve(Vector &x)
+template <typename Matrix, typename Vector>
+bool NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Picard>::solve(
+    Vector& x,
+    std::function<void(unsigned, Vector const&)> const& postIterationCallback)
 {
     namespace BLAS = MathLib::BLAS;
     auto& sys = *_equation_system;
@@ -71,6 +71,9 @@ solve(Vector &x)
         }
         else
         {
+            if (postIterationCallback)
+                postIterationCallback(iteration, x_new);
+
             switch(sys.postIteration(x_new))
             {
             case IterationResult::SUCCESS:
@@ -143,10 +146,10 @@ assemble(Vector const& x) const
     //      equation every time and could not forget it.
 }
 
-template<typename Matrix, typename Vector>
-bool
-NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::
-solve(Vector &x)
+template <typename Matrix, typename Vector>
+bool NonlinearSolver<Matrix, Vector, NonlinearSolverTag::Newton>::solve(
+    Vector& x,
+    std::function<void(unsigned, Vector const&)> const& postIterationCallback)
 {
     namespace BLAS = MathLib::BLAS;
     auto& sys = *_equation_system;
@@ -194,6 +197,9 @@ solve(Vector &x)
             auto& x_new =
                     MathLib::GlobalVectorProvider<Vector>::provider.getVector(x, _x_new_id);
             BLAS::axpy(x_new, -_alpha, minus_delta_x);
+
+            if (postIterationCallback)
+                postIterationCallback(iteration, x_new);
 
             switch(sys.postIteration(x_new))
             {

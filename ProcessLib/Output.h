@@ -58,6 +58,13 @@ public:
             const double t,
             GlobalVector const& x);
 
+    //! Writes output for the given \c process.
+    //! To be used for debug output after an iteration of the nonlinear solver.
+    void doOutputNonlinearIteration(Process const& process,
+                                    const unsigned timestep, const double t,
+                                    GlobalVector const& x,
+                                    const unsigned iteration) const;
+
     struct PairRepeatEachSteps
     {
         explicit PairRepeatEachSteps(unsigned c, unsigned e)
@@ -80,11 +87,14 @@ private:
         MeshLib::IO::PVDFile pvd_file;
     };
 
-    Output(std::string const& prefix)
-        : _output_file_prefix(prefix)
+    Output(std::string const& prefix, bool output_nonlinear_iteration_results)
+        : _output_file_prefix(prefix),
+          _output_nonlinear_iteration_results(
+              output_nonlinear_iteration_results)
     {}
 
-    std::string _output_file_prefix;
+    std::string const _output_file_prefix;
+    bool const _output_nonlinear_iteration_results;
 
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;

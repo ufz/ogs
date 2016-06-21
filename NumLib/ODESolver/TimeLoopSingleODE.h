@@ -110,7 +110,7 @@ loop(const double t0, Vector const& x0, const double t_end, const double delta_t
         // INFO("time: %e, delta_t: %e", t, delta_t);
         time_disc.nextTimestep(t, delta_t);
 
-        nl_slv_succeeded = _nonlinear_solver->solve(x);
+        nl_slv_succeeded = _nonlinear_solver->solve(x, nullptr);
         if (!nl_slv_succeeded) break;
 
         time_disc.pushState(t, x, _ode_sys);
