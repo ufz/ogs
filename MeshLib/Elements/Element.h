@@ -22,7 +22,7 @@
 
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshQuality/ElementErrorCode.h"
+#include "MeshLib/Elements/ElementErrorCode.h"
 
 
 namespace MeshLib {

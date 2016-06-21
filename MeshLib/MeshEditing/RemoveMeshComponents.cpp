@@ -11,7 +11,6 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "DuplicateMeshComponents.h"

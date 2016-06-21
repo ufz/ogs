@@ -17,7 +17,7 @@
 
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshQuality/ElementErrorCode.h"
+#include "MeshLib/Elements/ElementErrorCode.h"
 
 namespace MeshLib
 {
