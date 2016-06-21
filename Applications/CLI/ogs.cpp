@@ -74,34 +74,48 @@ int main(int argc, char *argv[])
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
-    try {
-        ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
-            argc, argv);
-
-
-        auto project_config = BaseLib::makeConfigTree(
-            project_arg.getValue(), !nonfatal_arg.getValue(), "OpenGeoSysProject");
-
-        ProjectData project(*project_config, BaseLib::extractPath(project_arg.getValue()),
-                            outdir_arg.getValue());
-
-        project_config.checkAndInvalidate();
-
-
-        // Create processes.
-        project.buildProcesses();
-
-        INFO("Initialize processes.");
-        for (auto p_it = project.processesBegin(); p_it != project.processesEnd(); ++p_it)
+    try
+    {
+        bool solver_succeeded = false;
         {
-            (*p_it)->initialize();
-        }
+            ApplicationsLib::LinearSolverLibrarySetup
+                linear_solver_library_setup(argc, argv);
 
+            auto project_config = BaseLib::makeConfigTree(
+                project_arg.getValue(), !nonfatal_arg.getValue(),
+                "OpenGeoSysProject");
 
-        INFO("Solve processes.");
+            ProjectData project(*project_config,
+                                BaseLib::extractPath(project_arg.getValue()),
+                                outdir_arg.getValue());
 
-        auto& time_loop = project.getTimeLoop();
-        bool solver_succeeded = time_loop.loop(project);
+            // Check intermediately that config parsing went fine.
+            project_config.checkAndInvalidate();
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+            // Create processes.
+            project.buildProcesses();
+
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+            INFO("Initialize processes.");
+            for (auto p_it = project.processesBegin();
+                 p_it != project.processesEnd(); ++p_it)
+            {
+                (*p_it)->initialize();
+            }
+
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+            INFO("Solve processes.");
+
+            auto& time_loop = project.getTimeLoop();
+            solver_succeeded = time_loop.loop(project);
+        }  // This nested scope ensures that everything that could possibly
+           // possess a ConfigTree is destructed before the final check below is
+           // done.
+
+        BaseLib::ConfigTree::assertNoSwallowedErrors();
 
         return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     } catch (std::exception& e) {
