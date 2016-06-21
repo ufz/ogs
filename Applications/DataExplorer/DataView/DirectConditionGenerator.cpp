@@ -49,14 +49,13 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
         const std::vector<MeshLib::Node*> surface_nodes(
             MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90));
         const double no_data(raster->getHeader().no_data);
-        const std::size_t nNodes(surface_nodes.size());
-        _direct_values.reserve(nNodes);
-        for (std::size_t i = 0; i < nNodes; i++)
+        _direct_values.reserve(surface_nodes.size());
+        for (auto const* surface_node : surface_nodes)
         {
-            double val(raster->getValueAtPoint(*surface_nodes[i]));
+            double val(raster->getValueAtPoint(*surface_node));
             val = (val == no_data) ? 0 : val;
             _direct_values.push_back(
-                std::pair<std::size_t, double>(surface_nodes[i]->getID(), val));
+                std::make_pair(surface_node->getID(), val));
         }
         delete raster;
 
