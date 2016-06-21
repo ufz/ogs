@@ -38,4 +38,4 @@ cpack_add_component(ogs_cli
 )
 
 include(packaging/InstallDependencies)
-InstallDependencies(ogs ogs_cli)
+#InstallDependencies(ogs ogs_cli)
