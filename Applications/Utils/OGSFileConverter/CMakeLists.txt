@@ -34,7 +34,9 @@ add_library(OGSFileConverterLib
     ${HEADERS}
     ${UIS}
 )
-target_link_libraries(OGSFileConverterLib QtBase)
+target_link_libraries(OGSFileConverterLib
+    QtBase
+    MeshLib)
 
 add_executable(OGSFileConverter main.cpp)
 

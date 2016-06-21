@@ -39,6 +39,8 @@ add_library(QtBase
     ${HEADERS}
 )
 
-target_link_libraries(QtBase PUBLIC Qt4::QtGui)
+target_link_libraries(QtBase
+    Qt4::QtGui
+    GeoLib)
 
 set_property(TARGET QtBase PROPERTY FOLDER "DataExplorer")

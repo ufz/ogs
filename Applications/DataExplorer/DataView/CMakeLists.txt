@@ -133,6 +133,7 @@ target_link_libraries(QtDataView
     FileIO
     DataHolderLib
     QtBase
+    QtStratView
 )
 add_dependencies(QtDataView QtDiagramView QtStratView)
 
