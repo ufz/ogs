@@ -12,6 +12,9 @@
 
 #include <vector>
 
+#include <Eigen/Eigen>
+#include "NumLib/NumericsConfig.h"
+
 namespace NumLib
 {
 
@@ -21,11 +24,10 @@ namespace NumLib
  * Local assemblers that want to have some integration point values extrapolated
  * using Extrapolator have to implement this interface.
  *
- * \tparam GlobalVector type of the global vector
  * \tparam PropertyTag  type of the property used to query a specific kind of
  *                      integration point value, usually an enum.
  */
-template <typename GlobalVector, typename PropertyTag>
+template <typename PropertyTag>
 class Extrapolatable
 {
 public:
@@ -55,13 +57,12 @@ public:
 /*! Interface for classes that extrapolate integration point values to nodal
  *  values.
  *
- * \tparam GlobalVector   type of the global vector
  * \tparam PropertyTag    type of the property used to query a specific kind of
  *                        integration point value, usually an enum.
  * \tparam LocalAssembler type of the local assembler being queried for
  *                        integration point values.
  */
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 class Extrapolator
 {
 public:

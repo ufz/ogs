@@ -21,9 +21,9 @@
 namespace NumLib
 {
 
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 void
-LocalLinearLeastSquaresExtrapolator<GlobalVector, PropertyTag, LocalAssembler>::
+LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
 extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
 {
     _nodal_values.setZero();
@@ -35,7 +35,7 @@ extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
     counts->setZero(); // TODO BLAS?
 
     using Self = LocalLinearLeastSquaresExtrapolator<
-        GlobalVector, PropertyTag, LocalAssembler>;
+        PropertyTag, LocalAssembler>;
 
     NumLib::SerialExecutor::executeMemberDereferenced(
         *this, &Self::extrapolateElement, local_assemblers, property, *counts);
@@ -43,24 +43,24 @@ extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
     MathLib::BLAS::componentwiseDivide(_nodal_values, _nodal_values, *counts);
 }
 
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 void
-LocalLinearLeastSquaresExtrapolator<GlobalVector, PropertyTag, LocalAssembler>::
+LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
 calculateResiduals(LocalAssemblers const& local_assemblers,
                    PropertyTag const property)
 {
     assert(static_cast<std::size_t>(_residuals.size()) == local_assemblers.size());
 
     using Self = LocalLinearLeastSquaresExtrapolator<
-        GlobalVector, PropertyTag, LocalAssembler>;
+        PropertyTag, LocalAssembler>;
 
     NumLib::SerialExecutor::executeMemberDereferenced(
         *this, &Self::calculateResiudalElement, local_assemblers, property);
 }
 
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 void
-LocalLinearLeastSquaresExtrapolator<GlobalVector, PropertyTag, LocalAssembler>::
+LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
 extrapolateElement(std::size_t const element_index,
                    LocalAssembler const& loc_asm, PropertyTag const property,
                    GlobalVector& counts)
@@ -115,9 +115,9 @@ extrapolateElement(std::size_t const element_index,
     counts.add(global_indices, std::vector<double>(global_indices.size(), 1.0));
 }
 
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 void
-LocalLinearLeastSquaresExtrapolator<GlobalVector, PropertyTag, LocalAssembler>::
+LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
 calculateResiudalElement(std::size_t const element_index,
                          LocalAssembler const& loc_asm, PropertyTag const property)
 {

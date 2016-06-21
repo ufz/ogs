@@ -34,19 +34,16 @@ enum class IntegrationPointValue {
 
 const unsigned NUM_NODAL_DOF = 1;
 
-template <typename GlobalMatrix, typename GlobalVector>
 class GroundwaterFlowLocalAssemblerInterface
-        : public ProcessLib::LocalAssemblerInterface<GlobalMatrix, GlobalVector>
-        , public NumLib::Extrapolatable<GlobalVector, IntegrationPointValue>
+        : public ProcessLib::LocalAssemblerInterface
+        , public NumLib::Extrapolatable<IntegrationPointValue>
 {};
 
 template <typename ShapeFunction,
          typename IntegrationMethod,
-         typename GlobalMatrix,
-         typename GlobalVector,
          unsigned GlobalDim>
 class LocalAssemblerData
-        : public GroundwaterFlowLocalAssemblerInterface<GlobalMatrix, GlobalVector>
+        : public GroundwaterFlowLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;

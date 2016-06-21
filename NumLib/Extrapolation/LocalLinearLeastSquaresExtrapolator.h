@@ -10,6 +10,7 @@
 #ifndef NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 #define NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Extrapolator.h"
 
@@ -34,13 +35,13 @@ namespace NumLib
  * use of the least squares which requires an exact or overdetermined equation system.
  * \endparblock
  */
-template<typename GlobalVector, typename PropertyTag, typename LocalAssembler>
+template<typename PropertyTag, typename LocalAssembler>
 class LocalLinearLeastSquaresExtrapolator
-        : public Extrapolator<GlobalVector, PropertyTag, LocalAssembler>
+        : public Extrapolator<PropertyTag, LocalAssembler>
 {
 public:
     using LocalAssemblers = typename Extrapolator<
-        GlobalVector, PropertyTag, LocalAssembler>::LocalAssemblers;
+        PropertyTag, LocalAssembler>::LocalAssemblers;
 
     /*! Constructs a new instance
      *

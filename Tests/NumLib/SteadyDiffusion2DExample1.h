@@ -29,7 +29,6 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
     using LocalVectorType = Eigen::VectorXd;
 
-    template <typename GlobalMatrix, typename GlobalVector>
     class LocalAssemblerData
     {
     public:
@@ -72,14 +71,13 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
         LocalVectorType const* _localRhs = nullptr;
     };
 
-    template <typename GlobalMatrix, typename GlobalVector>
     static
     void initializeLocalData(const MeshLib::Element& e,
-            LocalAssemblerData<GlobalMatrix, GlobalVector>*& data_ptr,
+            LocalAssemblerData*& data_ptr,
             std::size_t const local_matrix_size,
             SteadyDiffusion2DExample1 const& example)
     {
-        data_ptr = new LocalAssemblerData<GlobalMatrix, GlobalVector>;
+        data_ptr = new LocalAssemblerData;
         data_ptr->init(e, local_matrix_size, example._localA, example._localRhs);
     }
 

@@ -44,7 +44,6 @@ class NonlinearSolverBase;
 
 namespace ApplicationsLib
 {
-template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop;
 }
 
@@ -57,8 +56,7 @@ class ProjectData final
 {
 public:
     /// The time loop type used to solve this project's processes.
-    using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop<
-        GlobalMatrix, GlobalVector>;
+    using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop;
 
     /// The empty constructor used in the gui, for example, when the project's
     /// configuration is not loaded yet.

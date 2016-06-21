@@ -37,8 +37,7 @@ getIndices(std::size_t const id,
     return indices;
 }
 
-template <typename GlobalVector>
-std::vector<double>
+inline std::vector<double>
 getLocalNodalDOFs(GlobalVector const& x,
                   std::vector<GlobalIndexType> const& dof_indices)
 {
@@ -64,15 +63,14 @@ getLocalNodalDOFs(GlobalVector const& x,
  * Each type of equation as flagged by the \c ODETag will have a different
  * VectorMatrixAssembler type.
  */
-template<typename GlobalMatrix, typename GlobalVector,
-         typename LocalAssembler,
+template<typename LocalAssembler,
          NumLib::ODESystemTag ODETag>
 class VectorMatrixAssembler;
 
 
 //! Specialization for first-order implicit quasi-linear systems.
-template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
+template<typename LocalAssembler>
+class VectorMatrixAssembler<LocalAssembler,
         NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> final
 {
 public:
@@ -167,8 +165,8 @@ private:
 
 
 //! Specialization used to add Neumann boundary conditions.
-template<typename GlobalMatrix, typename GlobalVector, typename LocalAssembler>
-class VectorMatrixAssembler<GlobalMatrix, GlobalVector, LocalAssembler,
+template<typename LocalAssembler>
+class VectorMatrixAssembler<LocalAssembler,
         NumLib::ODESystemTag::NeumannBC> final
 {
 public:

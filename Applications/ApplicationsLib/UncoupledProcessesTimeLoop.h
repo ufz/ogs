@@ -26,7 +26,6 @@ namespace ApplicationsLib
 {
 
 //! Time loop capable of time-integrating several uncoupled processes at once.
-template<typename Matrix, typename Vector>
 class UncoupledProcessesTimeLoop
 {
 public:
@@ -41,28 +40,28 @@ public:
 
 private:
     //! An abstract nonlinear solver
-    using AbstractNLSolver = NumLib::NonlinearSolverBase<Matrix, Vector>;
+    using AbstractNLSolver = NumLib::NonlinearSolverBase<GlobalMatrix, GlobalVector>;
     //! An abstract equations system
-    using EquationSystem   = NumLib::EquationSystem<Vector>;
+    using EquationSystem   = NumLib::EquationSystem<GlobalVector>;
     //! An abstract process
     using Process          = ProcessLib::Process;
     //! An abstract time discretization
-    using TimeDisc         = NumLib::TimeDiscretization<Vector>;
+    using TimeDisc         = NumLib::TimeDiscretization<GlobalVector>;
 
-    std::vector<Vector*> _process_solutions;
+    std::vector<GlobalVector*> _process_solutions;
     std::unique_ptr<NumLib::ITimeStepAlgorithm> _timestepper;
 
     struct SingleProcessData
     {
         template<NumLib::ODESystemTag ODETag, NumLib::NonlinearSolverTag NLTag>
         SingleProcessData(
-                NumLib::NonlinearSolver<Matrix, Vector, NLTag>& nonlinear_solver,
+                NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, NLTag>& nonlinear_solver,
                 TimeDisc& time_disc,
-                NumLib::ODESystem<Matrix, Vector, ODETag, NLTag>& ode_sys)
+                NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag, NLTag>& ode_sys)
             : nonlinear_solver_tag(NLTag)
             , nonlinear_solver(nonlinear_solver)
             , tdisc_ode_sys(
-                  new NumLib::TimeDiscretizedODESystem<Matrix, Vector, ODETag, NLTag>(
+                  new NumLib::TimeDiscretizedODESystem<GlobalMatrix, GlobalVector, ODETag, NLTag>(
                                 ode_sys, time_disc))
             , mat_strg(dynamic_cast<NumLib::InternalMatrixStorage&>(*tdisc_ode_sys))
         {}
@@ -94,7 +93,7 @@ private:
      *
      * \note Currently the \c ODETag is automatically inferred from the given
      *       \c ody_sys. This works as long as \c Process derives from
-     *       \c ODESystem<Matrix, Vector, ODETag>, i.e. as long we only deal with
+     *       \c ODESystem<GlobalMatrix, GlobalVector, ODETag>, i.e. as long we only deal with
      *       one type of ODE. When we introduce more types, this method will have
      *       to be extended slightly.
      */
@@ -102,17 +101,17 @@ private:
     SingleProcessData
     makeSingleProcessData(
             AbstractNLSolver& nonlinear_solver,
-            NumLib::ODESystem<Matrix, Vector, ODETag,
+            NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag,
                 NumLib::NonlinearSolverTag::Picard>& ode_sys,
             TimeDisc& time_disc)
     {
         using Tag = NumLib::NonlinearSolverTag;
         // A concrete Picard solver
         using NonlinearSolverPicard =
-            NumLib::NonlinearSolver<Matrix, Vector, Tag::Picard>;
+            NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, Tag::Picard>;
         // A concrete Newton solver
         using NonlinearSolverNewton =
-            NumLib::NonlinearSolver<Matrix, Vector, Tag::Newton>;
+            NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, Tag::Newton>;
 
         if (auto* nonlinear_solver_picard =
             dynamic_cast<NonlinearSolverPicard*>(&nonlinear_solver))
@@ -129,7 +128,7 @@ private:
         {
             // The Newton-Raphson method needs a Newton-ready ODE.
 
-            using ODENewton = NumLib::ODESystem<Matrix, Vector, ODETag, Tag::Newton>;
+            using ODENewton = NumLib::ODESystem<GlobalMatrix, GlobalVector, ODETag, Tag::Newton>;
             if (auto* ode_newton = dynamic_cast<ODENewton*>(&ode_sys))
             {
                 return SingleProcessData{
@@ -156,7 +155,7 @@ private:
 
     //! Solves one timestep for the given \c process.
     bool solveOneTimeStepOneProcess(
-            Vector& x, double const t, double const delta_t,
+            GlobalVector& x, double const t, double const delta_t,
             SingleProcessData& process_data,
             Process& process);
 
@@ -166,8 +165,8 @@ private:
     static void setEquationSystem(AbstractNLSolver& nonlinear_solver,
                                   EquationSystem& eq_sys)
     {
-        using Solver = NumLib::NonlinearSolver<Matrix, Vector, NLTag>;
-        using EqSys  = NumLib::NonlinearSystem<Matrix, Vector, NLTag>;
+        using Solver = NumLib::NonlinearSolver<GlobalMatrix, GlobalVector, NLTag>;
+        using EqSys  = NumLib::NonlinearSystem<GlobalMatrix, GlobalVector, NLTag>;
 
         assert(dynamic_cast<Solver*>(&nonlinear_solver) != nullptr);
         assert(dynamic_cast<EqSys*> (&eq_sys) != nullptr);
@@ -200,9 +199,9 @@ private:
     //! for equation systems linearized with either the Picard or Newton method.
     template<NumLib::NonlinearSolverTag NLTag>
     static void applyKnownSolutions(
-            EquationSystem const& eq_sys, Vector& x)
+            EquationSystem const& eq_sys, GlobalVector& x)
     {
-        using EqSys = NumLib::NonlinearSystem<Matrix, Vector, NLTag>;
+        using EqSys = NumLib::NonlinearSystem<GlobalMatrix, GlobalVector, NLTag>;
         assert(dynamic_cast<EqSys const*> (&eq_sys) != nullptr);
         auto& eq_sys_ = static_cast<EqSys const&> (eq_sys);
 
@@ -213,7 +212,7 @@ private:
     //! for equation systems linearized with either the Picard or Newton method.
     static void applyKnownSolutions(
             EquationSystem const& eq_sys,
-            NumLib::NonlinearSolverTag const nl_tag, Vector& x)
+            NumLib::NonlinearSolverTag const nl_tag, GlobalVector& x)
     {
         using Tag = NumLib::NonlinearSolverTag;
         switch (nl_tag)
@@ -225,228 +224,8 @@ private:
 };
 
 //! Builds an UncoupledProcessesTimeLoop from the given configuration.
-template<typename Matrix, typename Vector>
-std::unique_ptr<UncoupledProcessesTimeLoop<Matrix, Vector> >
-createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf)
-{
-    //! \ogs_file_param{prj__time_stepping__type}
-    auto const type = conf.peekConfigParameter<std::string>("type");
-
-    std::unique_ptr<NumLib::ITimeStepAlgorithm> timestepper;
-
-    if (type == "SingleStep") {
-        conf.ignoreConfigParameter("type");
-        timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
-    } else if (type == "FixedTimeStepping") {
-        timestepper = NumLib::FixedTimeStepping::newInstance(conf);
-    } else {
-            OGS_FATAL("Unknown timestepper type: `%s'.", type.c_str());
-    }
-
-    using TimeLoop = UncoupledProcessesTimeLoop<Matrix, Vector>;
-    return std::unique_ptr<TimeLoop>{new TimeLoop{std::move(timestepper)}};
-}
-
-
-template<typename Matrix, typename Vector>
-std::vector<typename UncoupledProcessesTimeLoop<Matrix, Vector>::SingleProcessData>
-UncoupledProcessesTimeLoop<Matrix, Vector>::
-initInternalData(ProjectData& project)
-{
-    auto const num_processes = std::distance(project.processesBegin(),
-                                             project.processesEnd());
-
-    std::vector<SingleProcessData> per_process_data;
-    per_process_data.reserve(num_processes);
-
-    // create a time discretized ODE system for each process
-    for (auto p = project.processesBegin(); p != project.processesEnd(); ++p)
-    {
-        auto& pcs = **p;
-        auto& nonlinear_solver = pcs.getNonlinearSolver();
-        auto& time_disc = pcs.getTimeDiscretization();
-
-        per_process_data.emplace_back(
-                    makeSingleProcessData(nonlinear_solver, **p, time_disc));
-    }
-
-    return per_process_data;
-}
-
-
-template<typename Matrix, typename Vector>
-void
-UncoupledProcessesTimeLoop<Matrix, Vector>::
-setInitialConditions(ProjectData& project,
-                     double const t0,
-                     std::vector<SingleProcessData>& per_process_data)
-{
-    auto const num_processes = std::distance(project.processesBegin(),
-                                             project.processesEnd());
-
-    _process_solutions.reserve(num_processes);
-
-    unsigned pcs_idx = 0;
-    for (auto p = project.processesBegin(); p != project.processesEnd();
-         ++p, ++pcs_idx)
-    {
-        auto& pcs         = **p;
-        auto& time_disc   =   pcs.getTimeDiscretization();
-
-        auto& ppd         =   per_process_data[pcs_idx];
-        auto& ode_sys     =  *ppd.tdisc_ode_sys;
-        auto const nl_tag =   ppd.nonlinear_solver_tag;
-
-        // append a solution vector of suitable size
-        _process_solutions.emplace_back(
-                    &MathLib::GlobalVectorProvider<Vector>::provider.getVector(
-                        ode_sys.getMatrixSpecifications()));
-
-        auto& x0 = *_process_solutions[pcs_idx];
-        pcs.setInitialConditions(x0);
-        MathLib::BLAS::finalizeAssembly(x0);
-
-        time_disc.setInitialState(t0, x0); // push IC
-
-        if (time_disc.needsPreload())
-        {
-            auto& nonlinear_solver = ppd.nonlinear_solver;
-            auto& mat_strg         = ppd.mat_strg;
-
-            setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
-            nonlinear_solver.assemble(x0);
-            time_disc.pushState(t0, x0, mat_strg); // TODO: that might do duplicate work
-        }
-    }
-}
-
-
-template<typename Matrix, typename Vector>
-bool
-UncoupledProcessesTimeLoop<Matrix, Vector>::
-solveOneTimeStepOneProcess(
-        Vector& x, double const t, double const delta_t,
-        SingleProcessData& process_data,
-        typename UncoupledProcessesTimeLoop<Matrix, Vector>::Process& process)
-{
-    auto& time_disc        =  process.getTimeDiscretization();
-    auto& ode_sys          = *process_data.tdisc_ode_sys;
-    auto& nonlinear_solver =  process_data.nonlinear_solver;
-    auto const nl_tag      =  process_data.nonlinear_solver_tag;
-
-    setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
-
-    // Note: Order matters!
-    // First advance to the next timestep, then set known solutions at that
-    // time, afterwards pass the right solution vector and time to the
-    // preTimestep() hook.
-
-    time_disc.nextTimestep(t, delta_t);
-
-    applyKnownSolutions(ode_sys, nl_tag, x);
-
-    process.preTimestep(x, t, delta_t);
-
-    bool nonlinear_solver_succeeded = nonlinear_solver.solve(x);
-
-    auto& mat_strg = process_data.mat_strg;
-    time_disc.pushState(t, x, mat_strg);
-
-    process.postTimestep(x);
-
-    return nonlinear_solver_succeeded;
-}
-
-
-template<typename Matrix, typename Vector>
-bool
-UncoupledProcessesTimeLoop<Matrix, Vector>::
-loop(ProjectData& project)
-{
-    auto per_process_data = initInternalData(project);
-
-    auto& out_ctrl = project.getOutputControl();
-    out_ctrl.initialize(project.processesBegin(), project.processesEnd());
-
-    auto const t0 = _timestepper->getTimeStep().current(); // time of the IC
-
-    // init solution storage
-    setInitialConditions(project, t0, per_process_data);
-
-    // output initial conditions
-    {
-        unsigned pcs_idx = 0;
-        for (auto p = project.processesBegin(); p != project.processesEnd();
-             ++p, ++pcs_idx)
-        {
-            auto const& x0 = *_process_solutions[pcs_idx];
-            out_ctrl.doOutput(**p, 0, t0, x0);
-        }
-    }
-
-    double t = t0;
-    std::size_t timestep = 1; // the first timestep really is number one
-    bool nonlinear_solver_succeeded = true;
-
-    while (_timestepper->next())
-    {
-        auto const ts = _timestepper->getTimeStep();
-        auto const delta_t = ts.dt();
-        t        = ts.current();
-        timestep = ts.steps();
-
-        INFO("=== timestep #%u (t=%gs, dt=%gs) ==============================",
-             timestep, t, delta_t);
-
-        // TODO use process name
-        unsigned pcs_idx = 0;
-        for (auto p = project.processesBegin(); p != project.processesEnd();
-             ++p, ++pcs_idx)
-        {
-            auto& x = *_process_solutions[pcs_idx];
-
-            nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
-                        x, t, delta_t, per_process_data[pcs_idx], **p);
-
-            if (!nonlinear_solver_succeeded) {
-                ERR("The nonlinear solver failed in timestep #%u at t = %g s"
-                    " for process #%u.", timestep, t, pcs_idx);
-
-                // save unsuccessful solution
-                out_ctrl.doOutputAlways(**p, timestep, t, x);
-
-                break;
-            } else {
-                out_ctrl.doOutput(**p, timestep, t, x);
-            }
-        }
-
-        if (!nonlinear_solver_succeeded) break;
-    }
-
-    // output last timestep
-    if (nonlinear_solver_succeeded)
-    {
-        unsigned pcs_idx = 0;
-        for (auto p = project.processesBegin(); p != project.processesEnd();
-             ++p, ++pcs_idx)
-        {
-            auto const& x = *_process_solutions[pcs_idx];
-            out_ctrl.doOutputLastTimestep(**p, timestep, t, x);
-        }
-    }
-
-    return nonlinear_solver_succeeded;
-}
-
-
-template<typename Matrix, typename Vector>
-UncoupledProcessesTimeLoop<Matrix, Vector>::
-~UncoupledProcessesTimeLoop()
-{
-    for (auto * x : _process_solutions)
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(*x);
-}
+std::unique_ptr<UncoupledProcessesTimeLoop>
+createUncoupledProcessesTimeLoop(BaseLib::ConfigTree const& conf);
 
 } // namespace ApplicationsLib
 
