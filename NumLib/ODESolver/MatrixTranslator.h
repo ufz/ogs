@@ -26,47 +26,41 @@ namespace NumLib
  * equation) to the stiffness matrix and right-hand side vector of a linear
  * equation system that can be solved by a linear equation system solver.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
-template <typename Matrix, typename Vector, ODESystemTag ODETag>
+template <ODESystemTag ODETag>
 class MatrixTranslator;
 
 /*! Translates matrices assembled by a provided first order implicit
  * quasi-linear ODE to some other matrices suitable to be passed on to nonlinear solvers.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
- *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
-template <typename Matrix, typename Vector>
-class MatrixTranslator<Matrix, Vector,
-                       ODESystemTag::FirstOrderImplicitQuasilinear>
+template <>
+class MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     //! Computes \c A from \c M and \c K.
-    virtual void computeA(Matrix const& M, Matrix const& K,
-                          Matrix& A) const = 0;
+    virtual void computeA(GlobalMatrix const& M, GlobalMatrix const& K,
+                          GlobalMatrix& A) const = 0;
 
     //! Computes \c rhs from \c M, \c K and \c b.
-    virtual void computeRhs(const Matrix& M, const Matrix& K, const Vector& b,
-                            Vector& rhs) const = 0;
+    virtual void computeRhs(const GlobalMatrix& M, const GlobalMatrix& K,
+                            const GlobalVector& b, GlobalVector& rhs) const = 0;
 
     /*! Computes \c res from \c M, \c K, \c b, \f$ \hat x \f$ and \f$ x_N \f$.
      * You might also want read the remarks on
      * \ref concept_time_discretization "time discretization".
      */
-    virtual void computeResidual(Matrix const& M, Matrix const& K,
-                                 Vector const& b, Vector const& x_new_timestep,
-                                 Vector const& xdot, Vector& res) const = 0;
+    virtual void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
+                                 GlobalVector const& b,
+                                 GlobalVector const& x_new_timestep,
+                                 GlobalVector const& xdot,
+                                 GlobalVector& res) const = 0;
 
     //! Computes the Jacobian of the residual and writes it to \c Jac_out.
-    virtual void computeJacobian(Matrix const& Jac_in,
-                                 Matrix& Jac_out) const = 0;
+    virtual void computeJacobian(GlobalMatrix const& Jac_in,
+                                 GlobalMatrix& Jac_out) const = 0;
 
     /*! Allows to store the given matrices internally for later use.
      *
@@ -75,42 +69,34 @@ public:
      * CrankNicolson
      * scheme.
      */
-    virtual void pushMatrices(Matrix const& /*M*/, Matrix const& /*K*/,
-                              Vector const& /*b*/)
+    virtual void pushMatrices(GlobalMatrix const& /*M*/,
+                              GlobalMatrix const& /*K*/,
+                              GlobalVector const& /*b*/)
     {
     }
 
     virtual ~MatrixTranslator() = default;
 };
 
-/*! General matrix translator used with time discretization schemes that have no
- * special needs.
+/*! General GlobalMatrix translator used with time discretization schemes that
+ * have no special needs.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
-template <typename Matrix, typename Vector, ODESystemTag ODETag>
+template <ODESystemTag ODETag>
 class MatrixTranslatorGeneral;
 
 /*! General matrix translator for first order implicit quasi-linear ODEs, used
  * with time discretization schemes that have no special needs.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
  * You might also want read the remarks on
  * \ref concept_time_discretization "time discretization".
  */
-template <typename Matrix, typename Vector>
-class MatrixTranslatorGeneral<Matrix, Vector,
-                              ODESystemTag::FirstOrderImplicitQuasilinear>
-    : public MatrixTranslator<Matrix, Vector,
-                              ODESystemTag::FirstOrderImplicitQuasilinear>
+template <>
+class MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>
+    : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     /*! Constructs a new instance.
@@ -123,7 +109,8 @@ public:
     }
 
     //! Computes \f$ A = M \cdot \alpha + K \f$.
-    void computeA(Matrix const& M, Matrix const& K, Matrix& A) const override
+    void computeA(GlobalMatrix const& M, GlobalMatrix const& K,
+                  GlobalMatrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -135,25 +122,29 @@ public:
     }
 
     //! Computes \f$ \mathtt{rhs} = M \cdot x_O + b \f$.
-    void computeRhs(const Matrix& M, const Matrix& /*K*/, const Vector& b,
-                    Vector& rhs) const override
+    void computeRhs(const GlobalMatrix& M, const GlobalMatrix& /*K*/,
+                    const GlobalVector& b, GlobalVector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto& tmp =
-            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_tmp_id);
+            MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+                _tmp_id);
         _time_disc.getWeightedOldX(tmp);
 
         // rhs = M * weighted_old_x + b
         BLAS::matMultAdd(M, tmp, b, rhs);
 
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(tmp);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            tmp);
     }
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
-    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                         Vector const& x_new_timestep, Vector const& xdot,
-                         Vector& res) const override
+    void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
+                         GlobalVector const& b,
+                         GlobalVector const& x_new_timestep,
+                         GlobalVector const& xdot,
+                         GlobalVector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -169,7 +160,8 @@ public:
 
     //! Writes \c Jac_in to \c Jac_out.
     //! \todo Do not copy.
-    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(GlobalMatrix const& Jac_in,
+                         GlobalMatrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -177,40 +169,31 @@ public:
     }
 
 private:
-    TimeDiscretization<Vector> const&
+    TimeDiscretization const&
         _time_disc;  //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;
 };
 
-/*! Matrix translator used with the ForwardEuler scheme.
+/*! GlobalMatrix translator used with the ForwardEuler scheme.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
-template <typename Matrix, typename Vector, ODESystemTag ODETag>
+template <ODESystemTag ODETag>
 class MatrixTranslatorForwardEuler;
 
-/*! Matrix translator for first order implicit quasi-linear ODEs,
+/*! GlobalMatrix translator for first order implicit quasi-linear ODEs,
  *  used with the ForwardEuler scheme.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
  * You might also want read the remarks on
  * \ref concept_time_discretization "time discretization".
  */
-template <typename Matrix, typename Vector>
-class MatrixTranslatorForwardEuler<Matrix, Vector,
-                                   ODESystemTag::FirstOrderImplicitQuasilinear>
-    : public MatrixTranslator<Matrix, Vector,
-                              ODESystemTag::FirstOrderImplicitQuasilinear>
+template <>
+class MatrixTranslatorForwardEuler<ODESystemTag::FirstOrderImplicitQuasilinear>
+    : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     /*! Constructs a new instance.
@@ -223,8 +206,8 @@ public:
     }
 
     //! Computes \f$ A = M \cdot \alpha \f$.
-    void computeA(Matrix const& M, Matrix const& /*K*/,
-                  Matrix& A) const override
+    void computeA(GlobalMatrix const& M, GlobalMatrix const& /*K*/,
+                  GlobalMatrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -236,13 +219,14 @@ public:
     }
 
     //! Computes \f$ \mathtt{rhs} = M \cdot x_O - K \cdot x_O + b \f$.
-    void computeRhs(const Matrix& M, const Matrix& K, const Vector& b,
-                    Vector& rhs) const override
+    void computeRhs(const GlobalMatrix& M, const GlobalMatrix& K,
+                    const GlobalVector& b, GlobalVector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto& tmp =
-            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_tmp_id);
+            MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+                _tmp_id);
         _fwd_euler.getWeightedOldX(tmp);
 
         auto const& x_old = _fwd_euler.getXOld();
@@ -252,13 +236,16 @@ public:
         BLAS::aypx(rhs, -1.0, b);            // rhs = b - K * x_old
         BLAS::matMultAdd(M, tmp, rhs, rhs);  // rhs += M * weighted_old_x
 
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(tmp);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            tmp);
     }
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
-    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                         Vector const& x_new_timestep, Vector const& xdot,
-                         Vector& res) const override
+    void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
+                         GlobalVector const& b,
+                         GlobalVector const& x_new_timestep,
+                         GlobalVector const& xdot,
+                         GlobalVector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -272,7 +259,8 @@ public:
 
     //! Writes \c Jac_in to \c Jac_out.
     //! \todo Do not copy.
-    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(GlobalMatrix const& Jac_in,
+                         GlobalMatrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -280,60 +268,57 @@ public:
     }
 
 private:
-    ForwardEuler<Vector> const& _fwd_euler;  //!< the time discretization used.
+    ForwardEuler const& _fwd_euler;  //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;
 };
 
-/*! Matrix translator used with the CrankNicolson scheme.
+/*! GlobalMatrix translator used with the CrankNicolson scheme.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  * \tparam ODETag a tag indicating the type of equation.
  */
-template <typename Matrix, typename Vector, ODESystemTag ODETag>
+template <ODESystemTag ODETag>
 class MatrixTranslatorCrankNicolson;
 
-/*! Matrix translator for first order implicit quasi-linear ODEs,
+/*! GlobalMatrix translator for first order implicit quasi-linear ODEs,
  *  used with the CrankNicolson scheme.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  * \remark
  * You might also want read the remarks on
  * \ref concept_time_discretization "time discretization".
  */
-template <typename Matrix, typename Vector>
-class MatrixTranslatorCrankNicolson<Matrix, Vector,
-                                    ODESystemTag::FirstOrderImplicitQuasilinear>
-    : public MatrixTranslator<Matrix, Vector,
-                              ODESystemTag::FirstOrderImplicitQuasilinear>
+template <>
+class MatrixTranslatorCrankNicolson<ODESystemTag::FirstOrderImplicitQuasilinear>
+    : public MatrixTranslator<ODESystemTag::FirstOrderImplicitQuasilinear>
 {
 public:
     /*! Constructs a new instance.
      *
      * \param timeDisc the time discretization scheme to be used.
      */
-    MatrixTranslatorCrankNicolson(CrankNicolson<Vector> const& timeDisc)
+    MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
         : _crank_nicolson(timeDisc),
-          _M_bar(MathLib::GlobalMatrixProvider<Matrix>::provider.getMatrix()),
-          _b_bar(MathLib::GlobalVectorProvider<Vector>::provider.getVector())
+          _M_bar(MathLib::GlobalMatrixProvider<GlobalMatrix>::provider
+                     .getMatrix()),
+          _b_bar(
+              MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
     {
     }
 
     ~MatrixTranslatorCrankNicolson()
     {
-        MathLib::GlobalMatrixProvider<Matrix>::provider.releaseMatrix(_M_bar);
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(_b_bar);
+        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(
+            _M_bar);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            _b_bar);
     }
 
-    //! Computes \f$ A = \theta \cdot (M \cdot \alpha + K) + \bar M \cdot \alpha \f$.
-    void computeA(Matrix const& M, Matrix const& K, Matrix& A) const override
+    //! Computes \f$ A = \theta \cdot (M \cdot \alpha + K) + \bar M \cdot \alpha
+    //! \f$.
+    void computeA(GlobalMatrix const& M, GlobalMatrix const& K,
+                  GlobalMatrix& A) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -348,14 +333,16 @@ public:
         BLAS::axpy(A, dxdot_dx, _M_bar);  // A += dxdot_dx * _M_bar
     }
 
-    //! Computes \f$ \mathtt{rhs} = \theta \cdot (M \cdot x_O + b) + \bar M \cdot x_O - \bar b \f$.
-    void computeRhs(const Matrix& M, const Matrix& /*K*/, const Vector& b,
-                    Vector& rhs) const override
+    //! Computes \f$ \mathtt{rhs} = \theta \cdot (M \cdot x_O + b) + \bar M
+    //! \cdot x_O - \bar b \f$.
+    void computeRhs(const GlobalMatrix& M, const GlobalMatrix& /*K*/,
+                    const GlobalVector& b, GlobalVector& rhs) const override
     {
         namespace BLAS = MathLib::BLAS;
 
         auto& tmp =
-            MathLib::GlobalVectorProvider<Vector>::provider.getVector(_tmp_id);
+            MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+                _tmp_id);
         _crank_nicolson.getWeightedOldX(tmp);
 
         auto const theta = _crank_nicolson.getTheta();
@@ -369,13 +356,16 @@ public:
                          rhs);          // rhs += _M_bar * weighted_old_x
         BLAS::axpy(rhs, -1.0, _b_bar);  // rhs -= b
 
-        MathLib::GlobalVectorProvider<Vector>::provider.releaseVector(tmp);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            tmp);
     }
     //! Computes \f$ r = \theta \cdot (M \cdot \hat x + K \cdot x_C - b) + \bar
     //! M \cdot \hat x + \bar b \f$.
-    void computeResidual(Matrix const& M, Matrix const& K, Vector const& b,
-                         Vector const& x_new_timestep, Vector const& xdot,
-                         Vector& res) const override
+    void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
+                         GlobalVector const& b,
+                         GlobalVector const& x_new_timestep,
+                         GlobalVector const& xdot,
+                         GlobalVector& res) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -397,7 +387,8 @@ public:
      * Where \c Jac_in is the Jacobian as assembled by the ODE system, i.e. in
      * the same fashion as for the BackwardEuler scheme.
      */
-    void computeJacobian(Matrix const& Jac_in, Matrix& Jac_out) const override
+    void computeJacobian(GlobalMatrix const& Jac_in,
+                         GlobalMatrix& Jac_out) const override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -421,8 +412,8 @@ public:
      *
      * Where \f$ x_n \f$ is the solution at the timestep just finished.
      */
-    void pushMatrices(Matrix const& M, Matrix const& K,
-                      Vector const& b) override
+    void pushMatrices(GlobalMatrix const& M, GlobalMatrix const& K,
+                      GlobalVector const& b) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -444,40 +435,39 @@ public:
     }
 
 private:
-    CrankNicolson<Vector> const& _crank_nicolson;
+    CrankNicolson const& _crank_nicolson;
 
-    Matrix&
+    GlobalMatrix&
         _M_bar;  //!< Used to adjust matrices and vectors assembled by the ODE.
                  //!< \see pushMatrices()
-    Vector& _b_bar;  //!< Used to adjust vectors assembled by the ODE.
-                     //!< \see pushMatrices()
+    GlobalVector& _b_bar;  //!< Used to adjust vectors assembled by the ODE.
+                           //!< \see pushMatrices()
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;
 };
 
-//! Creates a matrix translator suitable to work together with the given
+//! Creates a GlobalMatrix translator suitable to work together with the given
 //! time discretization scheme.
-template <typename Matrix, typename Vector, ODESystemTag ODETag>
-std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>
-createMatrixTranslator(TimeDiscretization<Vector> const& timeDisc)
+template <ODESystemTag ODETag>
+std::unique_ptr<MatrixTranslator<ODETag>> createMatrixTranslator(
+    TimeDiscretization const& timeDisc)
 {
-    if (auto* fwd_euler = dynamic_cast<ForwardEuler<Vector> const*>(&timeDisc))
+    if (auto* fwd_euler = dynamic_cast<ForwardEuler const*>(&timeDisc))
     {
-        return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
-            new MatrixTranslatorForwardEuler<Matrix, Vector, ODETag>(
-                *fwd_euler));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+            new MatrixTranslatorForwardEuler<ODETag>(*fwd_euler));
     }
     else if (auto* crank =
-                 dynamic_cast<CrankNicolson<Vector> const*>(&timeDisc))
+                 dynamic_cast<CrankNicolson const*>(&timeDisc))
     {
-        return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
-            new MatrixTranslatorCrankNicolson<Matrix, Vector, ODETag>(*crank));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+            new MatrixTranslatorCrankNicolson<ODETag>(*crank));
     }
     else
     {
-        return std::unique_ptr<MatrixTranslator<Matrix, Vector, ODETag>>(
-            new MatrixTranslatorGeneral<Matrix, Vector, ODETag>(timeDisc));
+        return std::unique_ptr<MatrixTranslator<ODETag>>(
+            new MatrixTranslatorGeneral<ODETag>(timeDisc));
     }
 }
 
