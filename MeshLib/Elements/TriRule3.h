@@ -15,6 +15,12 @@
 #include "FaceRule.h"
 #include "EdgeReturn.h"
 
+#ifdef _MSC_VER
+#include "meshlib_export.h"
+#else
+#define MESHLIB_EXPORT
+#endif
+
 namespace MeshLib
 {
 
@@ -57,7 +63,7 @@ public:
     static const unsigned n_neighbors = 3;
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[3][2];
+    static MESHLIB_EXPORT const unsigned edge_nodes[3][2];
 
     /// Returns the i-th edge of the element.
     typedef LinearEdgeReturn EdgeReturn;

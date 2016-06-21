@@ -14,6 +14,7 @@ APPEND_SOURCE_FILES(SOURCES Utils)
 if(MSVC)
     include_directories(
         ${CMAKE_CURRENT_BINARY_DIR}/../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../MeshLib
         ${CMAKE_CURRENT_BINARY_DIR}/../NumLib
         ${CMAKE_CURRENT_BINARY_DIR}/../MaterialsLib
     )

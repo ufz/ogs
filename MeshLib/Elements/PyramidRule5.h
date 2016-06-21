@@ -15,6 +15,12 @@
 #include "EdgeReturn.h"
 #include "CellRule.h"
 
+#ifdef _MSC_VER
+#include "meshlib_export.h"
+#else
+#define MESHLIB_EXPORT
+#endif
+
 namespace MeshLib
 {
 
@@ -68,7 +74,7 @@ public:
     static const unsigned face_nodes[5][4];
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[8][2];
+    static MESHLIB_EXPORT const unsigned edge_nodes[8][2];
 
     /// Constant: Table for the number of nodes for each face
     static const unsigned n_face_nodes[5];

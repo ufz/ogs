@@ -14,7 +14,7 @@
 #include "Reaction.h"
 #include "Adsorption.h"
 
-#ifdef MSVC
+#ifdef _MSC_VER
 #include "materialslib_export.h"
 #else
 #define MATERIALSLIB_EXPORT

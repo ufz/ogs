@@ -18,12 +18,17 @@
 
 #include "TemplatePoint.h"
 #include "MathTools.h"
+#ifdef _MSC_VER
+#include "mathlib_export.h"
+#else
+#define MATHLIB_EXPORT
+#endif
 
 namespace MathLib
 {
 typedef MathLib::TemplatePoint<double,3> Point3d;
 
-extern const Point3d ORIGIN;
+extern MATHLIB_EXPORT const Point3d ORIGIN;
 /**
  * rotation of points
  * @param mat a rotation matrix

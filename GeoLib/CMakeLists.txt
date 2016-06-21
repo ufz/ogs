@@ -23,6 +23,7 @@ set(SOURCES ${SOURCES} ${SOURCES_IO_GMSHIO})
 
 if(MSVC)
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/../BaseLib)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/../MathLib)
 endif()
 
 # Create the library

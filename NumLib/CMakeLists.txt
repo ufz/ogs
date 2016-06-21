@@ -33,6 +33,12 @@ set(SOURCES ${SOURCES} ${SOURCES_ODESOLVER})
 GET_SOURCE_FILES(SOURCES_EXTRAPOLATION Extrapolation)
 set(SOURCES ${SOURCES} ${SOURCES_EXTRAPOLATION})
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../MeshLib
+        )
+endif()
 
 # Create the library
 add_library(NumLib ${SOURCES})

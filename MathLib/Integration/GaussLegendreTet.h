@@ -11,7 +11,7 @@
 #define GAUSSLEGENDRETET_H_
 
 #include <array>
-#ifdef MSVC
+#ifdef _MSC_VER
 #include "mathlib_export.h"
 #else
 #define MATHLIB_EXPORT

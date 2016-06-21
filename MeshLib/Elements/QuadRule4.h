@@ -16,6 +16,12 @@
 #include "EdgeReturn.h"
 #include "Line.h"
 
+#ifdef _MSC_VER
+#include "meshlib_export.h"
+#else
+#define MESHLIB_EXPORT
+#endif
+
 namespace MeshLib
 {
 
@@ -56,7 +62,7 @@ public:
     static const unsigned n_neighbors = 4;
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[4][2];
+    static MESHLIB_EXPORT const unsigned edge_nodes[4][2];
 
     /// Returns the i-th edge of the element.
     typedef LinearEdgeReturn EdgeReturn;

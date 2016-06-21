@@ -16,6 +16,13 @@ set(SOURCES ${SOURCES} ${SOURCES_RAPID_XML})
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MeshLib
+        )
+endif()
+
 # Create the library
 add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO DataHolderLib)
