@@ -155,7 +155,7 @@ private:
 
     //! Solves one timestep for the given \c process.
     bool solveOneTimeStepOneProcess(
-            GlobalVector& x, std::size_t timestep, double const t, double const delta_t,
+            GlobalVector& x, std::size_t const timestep, double const t, double const delta_t,
             SingleProcessData& process_data,
             Process& process, ProcessLib::Output const& output_control);
 

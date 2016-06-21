@@ -108,7 +108,7 @@ setInitialConditions(ProjectData& project,
 bool
 UncoupledProcessesTimeLoop::
 solveOneTimeStepOneProcess(
-        GlobalVector& x, std::size_t timestep, double const t, double const delta_t,
+        GlobalVector& x, std::size_t const timestep, double const t, double const delta_t,
         SingleProcessData& process_data,
         UncoupledProcessesTimeLoop::Process& process,
         ProcessLib::Output const& output_control)
@@ -133,7 +133,7 @@ solveOneTimeStepOneProcess(
 
     auto const post_iteration_callback = [&](unsigned iteration,
                                              GlobalVector const& x) {
-        output_control.doOutputIteration(process, timestep, t, x, iteration);
+        output_control.doOutputNonlinearIteration(process, timestep, t, x, iteration);
     };
 
     bool nonlinear_solver_succeeded =
