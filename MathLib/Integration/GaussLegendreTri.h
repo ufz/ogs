@@ -16,6 +16,11 @@
 #define GAUSSLEGENDRETRI_H_
 
 #include <array>
+#ifdef _MSC_VER
+#include "mathlib_export.h"
+#else
+#define MATHLIB_EXPORT
+#endif
 
 namespace MathLib
 {
@@ -27,24 +32,24 @@ template <unsigned ORDER>
 struct GaussLegendreTri {
     static const unsigned Order = ORDER;
     static const unsigned NPoints = ORDER;
-    static const std::array<std::array<double, 2>, NPoints> X;
-    static const double W[NPoints];
+	static MATHLIB_EXPORT const std::array<std::array<double, 2>, NPoints> X;
+	static MATHLIB_EXPORT const double W[NPoints];
 };
 
 template <>
 struct GaussLegendreTri<2> {
     static const unsigned Order = 2;
     static const unsigned NPoints = 3;
-    static const std::array<std::array<double, 2>, NPoints> X;
-    static const double W[NPoints];
+	static MATHLIB_EXPORT const std::array<std::array<double, 2>, NPoints> X;
+	static MATHLIB_EXPORT const double W[NPoints];
 };
 
 template <>
 struct GaussLegendreTri<3> {
     static const unsigned Order = 3;
     static const unsigned NPoints = 4;
-    static const std::array<std::array<double, 2>, NPoints> X;
-    static const double W[NPoints];
+	static MATHLIB_EXPORT const std::array<std::array<double, 2>, NPoints> X;
+	static MATHLIB_EXPORT const double W[NPoints];
 };
 
 #ifndef _MSC_VER  // The following explicit instantatiation declaration does not

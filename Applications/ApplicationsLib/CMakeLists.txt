@@ -2,6 +2,15 @@
 GET_SOURCE_FILES(SOURCES_APPLICATIONSLIB)
 set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../NumLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MaterialsLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MeshLib
+    )
+endif()
+
 # Library
 add_library(ApplicationsLib ${LIB_SOURCES})
 

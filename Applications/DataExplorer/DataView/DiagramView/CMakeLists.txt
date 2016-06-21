@@ -33,6 +33,12 @@ include_directories(
 file(GLOB_RECURSE UIS *.ui)
 source_group("UI Files" FILES ${UIS})
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../../../MathLib
+    )
+endif()
+
 add_library(QtDiagramView
     ${SOURCES}
     ${HEADERS}

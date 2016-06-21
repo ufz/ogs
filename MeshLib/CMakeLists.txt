@@ -31,8 +31,17 @@ if(OGS_USE_PETSC)
     set(SOURCES ${SOURCES} ${SOURCES_MPI_IO})
 endif()
 
+if(MSVC)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/../MathLib)
+endif()
+
 # Create the library
 add_library(MeshLib ${SOURCES})
+
+if(MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(MeshLib)
+endif()
 
 target_link_libraries(MeshLib
     BaseLib

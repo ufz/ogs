@@ -1,4 +1,13 @@
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MathLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../NumLib
+        ${CMAKE_CURRENT_BINARY_DIR}/../../MaterialsLib
+    )
+endif()
+
 add_executable(ogs
     ogs.cpp
 )
@@ -31,4 +40,4 @@ cpack_add_component(ogs_cli
 )
 
 include(packaging/InstallDependencies)
-InstallDependencies(ogs ogs_cli)
+#InstallDependencies(ogs ogs_cli)

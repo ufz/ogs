@@ -44,6 +44,11 @@ set(SOURCES ${SOURCES} ${SOURCES_NONLINEAR})
 # Create the library
 add_library(MathLib ${SOURCES})
 
+if(MSVC)
+    include(GenerateExportHeader)
+    generate_export_header(MathLib)
+endif()
+
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(MathLib

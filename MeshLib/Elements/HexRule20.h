@@ -15,6 +15,12 @@
 #include "EdgeReturn.h"
 #include "HexRule8.h"
 
+#ifdef _MSC_VER
+#include "meshlib_export.h"
+#else
+#define MESHLIB_EXPORT
+#endif
+
 namespace MeshLib
 {
 
@@ -56,7 +62,7 @@ public:
     static const unsigned face_nodes[6][8];
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[12][3];
+    static MESHLIB_EXPORT const unsigned edge_nodes[12][3];
 
     /// Returns the i-th edge of the element.
     typedef QuadraticEdgeReturn EdgeReturn;

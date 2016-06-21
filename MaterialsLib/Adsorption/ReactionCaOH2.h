@@ -14,6 +14,12 @@
 #include "Reaction.h"
 #include "Adsorption.h"
 
+#ifdef _MSC_VER
+#include "materialslib_export.h"
+#else
+#define MATERIALSLIB_EXPORT
+#endif
+
 namespace ProcessLib
 {
 template<typename>
@@ -79,8 +85,8 @@ private:
     friend class ProcessLib::TESFEMReactionAdaptorCaOH2;
 
 public:
-    static const double rho_low; //! lower density limit
-    static const double rho_up;  //! upper density limit
+    static MATERIALSLIB_EXPORT const double rho_low; //! lower density limit
+    static MATERIALSLIB_EXPORT const double rho_up;  //! upper density limit
 };
 
 }

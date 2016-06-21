@@ -14,6 +14,12 @@
 #include "QuadRule4.h"
 #include "EdgeReturn.h"
 
+#ifdef _MSC_VER
+#include "meshlib_export.h"
+#else
+#define MESHLIB_EXPORT
+#endif
+
 namespace MeshLib
 {
 
@@ -43,7 +49,7 @@ public:
     static const CellType cell_type = CellType::QUAD8;
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[4][3];
+    static MESHLIB_EXPORT const unsigned edge_nodes[4][3];
 
     /// Returns the i-th edge of the element.
     typedef QuadraticEdgeReturn EdgeReturn;

@@ -12,19 +12,25 @@
 
 #include "MatrixProviderUser.h"
 
+#ifdef _MSC_VER
+#include "numlib_export.h"
+#else
+#define NUMLIB_EXPORT
+#endif
+
 namespace MathLib
 {
 
 template<typename Vector>
 struct GlobalVectorProvider
 {
-    static VectorProvider<Vector>& provider;
+	static NUMLIB_EXPORT VectorProvider<Vector>& provider;
 };
 
 template<typename Matrix>
 struct GlobalMatrixProvider
 {
-    static MatrixProvider<Matrix>& provider;
+	static NUMLIB_EXPORT MatrixProvider<Matrix>& provider;
 };
 
 void cleanupGlobalMatrixProviders();
