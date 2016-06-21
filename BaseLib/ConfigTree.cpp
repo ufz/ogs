@@ -70,6 +70,13 @@ ConfigTree(ConfigTree && other)
 
 ConfigTree::~ConfigTree()
 {
+    if (std::uncaught_exception()) {
+        /* If the stack unwinds the check below shall be suppressed in order to
+         * not accumulate false-positive configuration errors.
+         */
+        return;
+    }
+
     try {
         checkAndInvalidate();
     } catch (std::exception& e) {
