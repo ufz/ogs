@@ -72,7 +72,7 @@ public:
          * likely too simplistic. You better adapt the extrapolation code from
          * some more advanced process, like the TES process.
          */
-        assert(dof_table.getNumComponents() == 1 &&
+        assert(dof_table.getNumberOfComponents() == 1 &&
                "The d.o.f. table passed must be for one variable that has "
                "only one component!");
     }

@@ -85,7 +85,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     {
         assert(local_to_global_index_map.size() > id);
 
-        auto const num_local_dof = local_to_global_index_map.getNumElementDOF(id);
+        auto const num_local_dof = local_to_global_index_map.getNumberOfElementDOF(id);
 
         Example::initializeLocalData(
                     item, item_data, num_local_dof, ex1);

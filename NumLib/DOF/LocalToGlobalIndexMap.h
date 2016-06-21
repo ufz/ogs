@@ -73,11 +73,11 @@ public:
 
     std::size_t size() const;
 
-    std::size_t getNumComponents() const { return _mesh_subsets.size(); }
+    std::size_t getNumberOfComponents() const { return _mesh_subsets.size(); }
 
     RowColumnIndices operator()(std::size_t const mesh_item_id, const unsigned component_id) const;
 
-    std::size_t getNumElementDOF(std::size_t const mesh_item_id) const;
+    std::size_t getNumberOfElementDOF(std::size_t const mesh_item_id) const;
 
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                    int const variable_id,
