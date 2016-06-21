@@ -24,6 +24,12 @@ include_directories(
 file(GLOB_RECURSE UI_FILES *.ui)
 source_group("UI Files" FILES ${UI_FILES})
 
+if(MSVC)
+    include_directories(
+        ${CMAKE_CURRENT_BINARY_DIR}/../../../../MathLib
+    )
+endif()
+
 add_library(QtStratView
     ${SOURCES}
     ${HEADERS}

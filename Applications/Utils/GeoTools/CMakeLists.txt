@@ -1,4 +1,10 @@
 if(QT4_FOUND)
+    if(MSVC)
+        include_directories(
+            ${CMAKE_CURRENT_BINARY_DIR}/../../BaseLib
+        )
+    endif()
+
     add_executable(TriangulatePolyline TriangulatePolyline.cpp)
     target_link_libraries(TriangulatePolyline GeoLib)
     set_target_properties(TriangulatePolyline PROPERTIES FOLDER Utilities)
