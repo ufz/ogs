@@ -142,11 +142,12 @@ doOutputLastTimestep(Process const& process,
         doOutputAlways(process, timestep, t, x);
 }
 
-void Output::doOutputIteration(
-    Process const& process, unsigned timestep, const double t,
-    GlobalVector const& x, const unsigned iteration) const
+void Output::doOutputNonlinearIteration(Process const& process,
+                                        const unsigned timestep, const double t,
+                                        GlobalVector const& x,
+                                        const unsigned iteration) const
 {
-    if (!_output_iteration_results) return;
+    if (!_output_nonlinear_iteration_results) return;
 
     auto spd_it = _single_process_data.find(&process);
     if (spd_it == _single_process_data.end()) {
@@ -159,7 +160,7 @@ void Output::doOutputIteration(
             _output_file_prefix + "_pcs_" + std::to_string(spd.process_index)
             + "_ts_" + std::to_string(timestep)
             + "_t_"  + std::to_string(t)
-            + "_iter_" + std::to_string(iteration)
+            + "_nliter_" + std::to_string(iteration)
             + ".vtu";
     DBUG("output iteration results to %s", output_file_name.c_str());
     process.output(output_file_name, timestep, x);
