@@ -17,21 +17,17 @@
 // debug
 //#include <iostream>
 
-
-template<typename Matrix, typename Vector,
-         template<typename /*Matrix*/, typename /*Vector*/> class Ode>
+template <class Ode>
 class ODETraits;
 
 // ODE 1 //////////////////////////////////////////////////////////
-template<typename Matrix, typename Vector>
-class ODE1 final
-        : public NumLib::ODESystem<Matrix, Vector,
-                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NumLib::NonlinearSolverTag::Newton>
+class ODE1 final : public NumLib::ODESystem<
+                       NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                       NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double /*t*/, Vector const& /*x*/,
-                  Matrix& M, Matrix& K, Vector& b) override
+    void assemble(const double /*t*/, GlobalVector const& /*x*/,
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
         MathLib::setMatrix(M, { 1.0, 0.0,  0.0, 1.0 });
         MathLib::setMatrix(K, { 0.0, 1.0, -1.0, 0.0 });
@@ -39,10 +35,10 @@ public:
         MathLib::setVector(b, { 0.0, 0.0 });
     }
 
-    void assembleJacobian(const double /*t*/, const Vector &/*x*/, Vector const& /*xdot*/,
-                          const double dxdot_dx,  const Matrix& M,
-                          const double dx_dx, const Matrix& K,
-                          Matrix &Jac) override
+    void assembleJacobian(const double /*t*/, const GlobalVector& /*x*/,
+                          GlobalVector const& /*xdot*/, const double dxdot_dx,
+                          const GlobalMatrix& M, const double dx_dx,
+                          const GlobalMatrix& K, GlobalMatrix& Jac) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -66,20 +62,20 @@ public:
     std::size_t const N = 2;
 };
 
-template<typename Matrix, typename Vector>
-class ODETraits<Matrix, Vector, ODE1>
+template <>
+class ODETraits<ODE1>
 {
 public:
-    static void setIC(Vector& x0)
+    static void setIC(GlobalVector& x0)
     {
         MathLib::setVector(x0, { 1.0, 0.0 });
         MathLib::BLAS::finalizeAssembly(x0);
     }
 
-    static Vector solution(const double t)
+    static GlobalVector solution(const double t)
     {
-        Vector v(2);
-        MathLib::setVector(v, { cos(t), sin(t) });
+        GlobalVector v(2);
+        MathLib::setVector(v, {cos(t), sin(t)});
         MathLib::BLAS::finalizeAssembly(v);
         return v;
     }
@@ -88,33 +84,29 @@ public:
     static const double t_end;
 };
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE1>::t0 = 0.0;
+const double ODETraits<ODE1>::t0 = 0.0;
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE1>::t_end = 30.0;
+const double ODETraits<ODE1>::t_end = 30.0;
 // ODE 1 end //////////////////////////////////////////////////////
 
 // ODE 2 //////////////////////////////////////////////////////////
-template<typename Matrix, typename Vector>
-class ODE2 final
-        : public NumLib::ODESystem<Matrix, Vector,
-                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NumLib::NonlinearSolverTag::Newton>
+class ODE2 final : public NumLib::ODESystem<
+                       NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                       NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double /*t*/, Vector const& x,
-                  Matrix& M, Matrix& K, Vector& b) override
+    void assemble(const double /*t*/, GlobalVector const& x, GlobalMatrix& M,
+                  GlobalMatrix& K, GlobalVector& b) override
     {
-        MathLib::setMatrix(M, { 1.0 });
-        MathLib::setMatrix(K, { x[0] });
-        MathLib::setVector(b, { 0.0 });
+        MathLib::setMatrix(M, {1.0});
+        MathLib::setMatrix(K, {x[0]});
+        MathLib::setVector(b, {0.0});
     }
 
-    void assembleJacobian(const double /*t*/, const Vector &x, Vector const& /*xdot*/,
-                          const double dxdot_dx, Matrix const& M,
-                          const double dx_dx, Matrix const& K,
-                          Matrix &Jac) override
+    void assembleJacobian(const double /*t*/, const GlobalVector& x,
+                          GlobalVector const& /*xdot*/, const double dxdot_dx,
+                          GlobalMatrix const& M, const double dx_dx,
+                          GlobalMatrix const& K, GlobalMatrix& Jac) override
     {
         namespace BLAS = MathLib::BLAS;
 
@@ -144,19 +136,19 @@ public:
     std::size_t const N = 1;
 };
 
-template<typename Matrix, typename Vector>
-class ODETraits<Matrix, Vector, ODE2>
+template <>
+class ODETraits<ODE2>
 {
 public:
-    static void setIC(Vector& x0)
+    static void setIC(GlobalVector& x0)
     {
         MathLib::setVector(x0, { 1.0 });
         MathLib::BLAS::finalizeAssembly(x0);
     }
 
-    static Vector solution(const double t)
+    static GlobalVector solution(const double t)
     {
-        Vector v(1);
+        GlobalVector v(1);
         MathLib::setVector(v, { 1.0/t });
         MathLib::BLAS::finalizeAssembly(v);
         return v;
@@ -166,11 +158,9 @@ public:
     static const double t_end;
 };
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE2>::t0 = 1.0;
+const double ODETraits<ODE2>::t0 = 1.0;
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE2>::t_end = 2.0;
+const double ODETraits<ODE2>::t_end = 2.0;
 // ODE 2 end //////////////////////////////////////////////////////
 
 // ODE 3 //////////////////////////////////////////////////////////
@@ -179,15 +169,13 @@ const double ODETraits<Matrix, Vector, ODE2>::t_end = 2.0;
 //      i.e., residual is zero.
 //      Check (by numerical differentiation that the Jacobian is correct.
 //
-template<typename Matrix, typename Vector>
-class ODE3 final
-        : public NumLib::ODESystem<Matrix, Vector,
-                           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                           NumLib::NonlinearSolverTag::Newton>
+class ODE3 final : public NumLib::ODESystem<
+                       NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                       NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double t, Vector const& x_curr,
-                  Matrix& M, Matrix& K, Vector& b) override
+    void assemble(const double t, GlobalVector const& x_curr, GlobalMatrix& M,
+                  GlobalMatrix& K, GlobalVector& b) override
     {
         auto const x = x_curr[0];
         auto const y = x_curr[1];
@@ -207,10 +195,10 @@ public:
                        0.5*omega*x*z + omega/t });
     }
 
-    void assembleJacobian(const double t, const Vector& x_curr, Vector const& xdot,
-                          const double dxdot_dx, Matrix const& M,
-                          const double dx_dx, Matrix const& K,
-                          Matrix &Jac) override
+    void assembleJacobian(const double t, const GlobalVector& x_curr,
+                          GlobalVector const& xdot, const double dxdot_dx,
+                          GlobalMatrix const& M, const double dx_dx,
+                          GlobalMatrix const& K, GlobalMatrix& Jac) override
     {
         auto const x = x_curr[0];
         auto const y = x_curr[1];
@@ -283,17 +271,15 @@ public:
     static const double omega;
 };
 
-template<typename Matrix, typename Vector>
-const double ODE3<Matrix, Vector>::omega = 15.0;
+const double ODE3::omega = 15.0;
 
-
-template<typename Matrix, typename Vector>
-class ODETraits<Matrix, Vector, ODE3>
+template <>
+class ODETraits<ODE3>
 {
 public:
-    static void setIC(Vector& x0)
+    static void setIC(GlobalVector& x0)
     {
-        auto const omega = ODE3<Matrix, Vector>::omega;
+        auto const omega = ODE3::omega;
 
         MathLib::setVector(x0, { sin(omega*t0)/omega/t0,
                                  1.0/t0,
@@ -303,11 +289,11 @@ public:
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
     }
 
-    static Vector solution(const double t)
+    static GlobalVector solution(const double t)
     {
-        auto const omega = ODE3<Matrix, Vector>::omega;
+        auto const omega = ODE3::omega;
 
-        Vector v(3);
+        GlobalVector v(3);
         MathLib::setVector(v, { sin(omega*t)/omega/t,
                                 1.0/t,
                                 cos(omega*t) });
@@ -319,11 +305,9 @@ public:
     static const double t_end;
 };
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE3>::t0 = 1.0;
+const double ODETraits<ODE3>::t0 = 1.0;
 
-template<typename Matrix, typename Vector>
-const double ODETraits<Matrix, Vector, ODE3>::t_end = 3.0;
+const double ODETraits<ODE3>::t_end = 3.0;
 // ODE 3 end //////////////////////////////////////////////////////
 
 #endif // TESTS_NUMLIB_ODES_H

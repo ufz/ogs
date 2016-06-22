@@ -16,7 +16,6 @@
 
 namespace NumLib
 {
-
 /*! Extrapolator doing a linear least squares extrapolation locally in each
  *  element.
  *
@@ -30,18 +29,19 @@ namespace NumLib
  *
  * Currently this class only supports interpolating single component variables.
  *
- * Furthermore, the number of integration points in each element must be greater than
- * or equal to the number of nodes of that element. This restriction is due to the
- * use of the least squares which requires an exact or overdetermined equation system.
+ * Furthermore, the number of integration points in each element must be greater
+ * than or equal to the number of nodes of that element. This restriction is due to
+ * the use of the least squares which requires an exact or overdetermined equation
+ * system.
  * \endparblock
  */
-template<typename PropertyTag, typename LocalAssembler>
+template <typename PropertyTag, typename LocalAssembler>
 class LocalLinearLeastSquaresExtrapolator
-        : public Extrapolator<PropertyTag, LocalAssembler>
+    : public Extrapolator<PropertyTag, LocalAssembler>
 {
 public:
-    using LocalAssemblers = typename Extrapolator<
-        PropertyTag, LocalAssembler>::LocalAssemblers;
+    using LocalAssemblers =
+        typename Extrapolator<PropertyTag, LocalAssembler>::LocalAssemblers;
 
     /*! Constructs a new instance
      *
@@ -90,30 +90,35 @@ public:
     void calculateResiduals(LocalAssemblers const& local_assemblers,
                             PropertyTag const property) override;
 
-    GlobalVector const& getNodalValues() const override { return _nodal_values; }
+    GlobalVector const& getNodalValues() const override
+    {
+        return _nodal_values;
+    }
 
-    GlobalVector const& getElementResiduals() const override { return _residuals; }
+    GlobalVector const& getElementResiduals() const override
+    {
+        return _residuals;
+    }
 
     ~LocalLinearLeastSquaresExtrapolator()
     {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_nodal_values);
+        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            _nodal_values);
     }
 
 private:
     //! Extrapolate one element.
-    void extrapolateElement(
-            std::size_t const element_index,
-            LocalAssembler const& local_assembler, PropertyTag const property,
-            GlobalVector& counts
-            );
+    void extrapolateElement(std::size_t const element_index,
+                            LocalAssembler const& local_assembler,
+                            PropertyTag const property, GlobalVector& counts);
 
     //! Compute the residuals for one element
-    void calculateResiudalElement(
-            std::size_t const element_index,
-            LocalAssembler const& local_assembler, PropertyTag const property);
+    void calculateResiudalElement(std::size_t const element_index,
+                                  LocalAssembler const& local_assembler,
+                                  PropertyTag const property);
 
-    GlobalVector& _nodal_values; //!< extrapolated nodal values
-    GlobalVector  _residuals;    //!< extrapolation residuals
+    GlobalVector& _nodal_values;  //!< extrapolated nodal values
+    GlobalVector _residuals;      //!< extrapolation residuals
 
     //! DOF table used for writing to global vectors.
     NumLib::LocalToGlobalIndexMap const& _local_to_global;
@@ -124,9 +129,8 @@ private:
     //! Avoids frequent reallocations.
     std::vector<double> _integration_point_values_cache;
 };
-
 }
 
 #include "LocalLinearLeastSquaresExtrapolator-impl.h"
 
-#endif // NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
+#endif  // NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
