@@ -110,13 +110,13 @@ public:
         b.add(indices.rows, _localRhs);
     }
 
-    Eigen::Map<const Eigen::VectorXd>
+    Eigen::Map<const Eigen::RowVectorXd>
     getShapeMatrix(const unsigned integration_point) const override
     {
         auto const& N = _shape_matrices[integration_point].N;
 
         // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::VectorXd>(N.data(), N.size());
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
     std::vector<double> const&

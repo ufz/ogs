@@ -195,7 +195,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
         fe.template computeShapeFunctions<ShapeMatrixType::N_J>(wp.getCoords(), shape);
-        M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
+        M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
     }
     //std::cout << "M=\n" << M;
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
@@ -245,7 +245,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
         fe.computeShapeFunctions(wp.getCoords(), shape);
-        M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
+        M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
         K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) * shape.detJ * wp.getWeight();
     }
 

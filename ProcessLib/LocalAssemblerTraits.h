@@ -53,7 +53,7 @@ public:
 
     //! Local vector for one component of one process variable.
     //! The size is the number of nodes in the element.
-    using Vector1Comp = typename ShapeMatrices::ShapeType;
+    using Vector1Comp = Vector<NNodes>;
 
     //! Laplace matrix for the given space dimensionality and number of d.o.f
     //! per node.

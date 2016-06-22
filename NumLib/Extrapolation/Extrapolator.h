@@ -32,7 +32,7 @@ class Extrapolatable
 {
 public:
     //! Provides the shape matrix at the given integration point.
-    virtual Eigen::Map<const Eigen::VectorXd>
+    virtual Eigen::Map<const Eigen::RowVectorXd>
     getShapeMatrix(const unsigned integration_point) const = 0;
 
     /*! Provides integration point values for the given property.

@@ -69,7 +69,7 @@ extrapolateElement(std::size_t const element_index,
             property, _integration_point_values_cache);
 
     // number of nodes in the element
-    const auto nn = loc_asm.getShapeMatrix(0).rows();
+    const auto nn = loc_asm.getShapeMatrix(0).cols();
     // number of integration points in the element
     const auto ni = integration_point_values.size();
 
@@ -83,10 +83,10 @@ extrapolateElement(std::size_t const element_index,
     for (auto int_pt=decltype(ni){0}; int_pt<ni; ++int_pt)
     {
         auto const& shp_mat = loc_asm.getShapeMatrix(int_pt);
-        assert(shp_mat.rows() == nn);
+        assert(shp_mat.cols() == nn);
 
         // copy shape matrix to extrapolation matrix columnwise
-        N.block(0, int_pt, nn, 1) = shp_mat;
+        N.block(0, int_pt, nn, 1) = shp_mat.transpose();
     }
 
     // TODO make gp_vals an Eigen::VectorXd const& ?

@@ -51,7 +51,7 @@ public:
     static const unsigned e_nnodes = T_TEST::e_nnodes;
     static const unsigned global_dim = T_TEST::global_dim;
     // Matrix types
-    typedef typename ::detail::EigenMatrixType<e_nnodes, 1>::type NodalVector;
+    typedef typename ::detail::EigenMatrixType<1, e_nnodes>::type NodalVector;
     typedef typename ::detail::EigenMatrixType<dim, e_nnodes>::type DimNodalMatrix;
     typedef typename ::detail::EigenMatrixType<dim, dim>::type DimMatrix;
     typedef typename ::detail::EigenMatrixType<global_dim, e_nnodes>::type GlobalDimNodalMatrix;
@@ -279,7 +279,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
 {
-    typedef ::detail::EigenMatrixType<2, 1>::type NodalVector;
+    typedef ::detail::EigenMatrixType<1, 2>::type NodalVector;
     typedef ::detail::EigenMatrixType<1, 2>::type DimNodalMatrix;
     typedef ::detail::EigenMatrixType<1, 1>::type DimMatrix;
     typedef ::detail::EigenMatrixType<2, 2>::type GlobalDimNodalMatrix;
