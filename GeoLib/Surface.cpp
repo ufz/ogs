@@ -153,15 +153,14 @@ bool Surface::isPntInBoundingVolume(MathLib::Point3d const& pnt) const
     return _bounding_volume->containsPoint(pnt);
 }
 
-bool Surface::isPntInSfc(MathLib::Point3d const& pnt) const
+bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const
 {
     // Mutable _surface_grid is constructed if method is called the first time.
     if (_surface_grid == nullptr)
     {
         _surface_grid.reset(new SurfaceGrid(this));
     }
-    return _surface_grid->isPointInSurface(
-        pnt, std::numeric_limits<double>::epsilon());
+    return _surface_grid->isPointInSurface(pnt, eps);
 }
 
 const Triangle* Surface::findTriangle(MathLib::Point3d const& pnt) const

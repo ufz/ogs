@@ -128,8 +128,8 @@ TEST(GeoLib, SurfaceIsPointInSurface)
 
         MathLib::Vector3 const normal(0,0,1.0);
         MathLib::Vector3 const surface_normal(rot_mat * normal);
-        double const eps(1e-6);
-        MathLib::Vector3 const displacement(eps * surface_normal);
+        double const scaling(1e-6);
+        MathLib::Vector3 const displacement(scaling * surface_normal);
 
         GeoLib::GEOObjects geometries;
         MeshLib::convertMeshToGeo(*sfc_mesh, geometries);
@@ -137,21 +137,24 @@ TEST(GeoLib, SurfaceIsPointInSurface)
         std::vector<GeoLib::Surface*> const& sfcs(*geometries.getSurfaceVec(name));
         GeoLib::Surface const*const sfc(sfcs.front());
         std::vector<GeoLib::Point*> const& pnts(*geometries.getPointVec(name));
+
+        double const eps(std::numeric_limits<double>::epsilon());
+
         // test triangle edge point of the surface triangles
         for (auto const p : pnts) {
-            EXPECT_TRUE(sfc->isPntInSfc(*p));
+            EXPECT_TRUE(sfc->isPntInSfc(*p, eps));
             MathLib::Point3d q(*p);
             for (std::size_t k(0); k<3; ++k)
                 q[k] += displacement[k];
-            EXPECT_FALSE(sfc->isPntInSfc(q));
+            EXPECT_FALSE(sfc->isPntInSfc(q, eps));
         }
         // test edge middle points of the triangles
         for (std::size_t k(0); k<sfc->getNumberOfTriangles(); ++k) {
             MathLib::Point3d p, q, r;
             std::tie(p,q,r) = getEdgeMiddlePoints(*(*sfc)[k]);
-            EXPECT_TRUE(sfc->isPntInSfc(p));
-            EXPECT_TRUE(sfc->isPntInSfc(q));
-            EXPECT_TRUE(sfc->isPntInSfc(r));
+            EXPECT_TRUE(sfc->isPntInSfc(p, eps));
+            EXPECT_TRUE(sfc->isPntInSfc(q, eps));
+            EXPECT_TRUE(sfc->isPntInSfc(r, eps));
         }
     }
 }

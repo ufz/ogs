@@ -71,9 +71,10 @@ public:
     /**
      * is the given point pnt located in the surface
      * @param pnt the point
+     * @param eps geometric tolerance for the search
      * @return true if the point is contained in the surface
      */
-    bool isPntInSfc(MathLib::Point3d const& pnt) const;
+    bool isPntInSfc(MathLib::Point3d const& pnt, double eps) const;
 
     /**
      * find a triangle in which the given point is located
