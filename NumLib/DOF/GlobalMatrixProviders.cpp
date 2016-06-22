@@ -18,10 +18,10 @@
 // Initializes the static members of the structs in the header file
 // associated with this file.
 #define INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(MAT, VEC, VARNAME) \
-    static std::unique_ptr<MathLib::SimpleMatrixVectorProvider<MAT, VEC>> VARNAME{ \
-        new MathLib::SimpleMatrixVectorProvider<MAT, VEC>}; \
+    static std::unique_ptr<NumLib::SimpleMatrixVectorProvider<MAT, VEC>> VARNAME{ \
+        new NumLib::SimpleMatrixVectorProvider<MAT, VEC>}; \
     \
-    namespace MathLib { \
+    namespace NumLib { \
     template<> \
     VectorProvider<VEC>& GlobalVectorProvider<VEC>::provider = *(VARNAME); \
     \
@@ -42,7 +42,7 @@ INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(GlobalMatrix, GlobalVector,
                                          globalSetupGlobalMatrixVectorProvider)
 
 
-namespace MathLib
+namespace NumLib
 {
 void cleanupGlobalMatrixProviders()
 {

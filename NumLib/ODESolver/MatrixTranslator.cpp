@@ -32,13 +32,13 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto& tmp = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
+    auto& tmp = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
     _time_disc.getWeightedOldX(tmp);
 
     // rhs = M * weighted_old_x + b
     LinAlg::matMultAdd(M, tmp, b, rhs);
 
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
 }
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
@@ -84,7 +84,7 @@ void MatrixTranslatorForwardEuler<ODESystemTag::FirstOrderImplicitQuasilinear>::
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto& tmp = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
+    auto& tmp = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
     _fwd_euler.getWeightedOldX(tmp);
 
     auto const& x_old = _fwd_euler.getXOld();
@@ -94,7 +94,7 @@ void MatrixTranslatorForwardEuler<ODESystemTag::FirstOrderImplicitQuasilinear>::
     LinAlg::aypx(rhs, -1.0, b);            // rhs = b - K * x_old
     LinAlg::matMultAdd(M, tmp, rhs, rhs);  // rhs += M * weighted_old_x
 
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
 }
 
 void MatrixTranslatorForwardEuler<ODESystemTag::FirstOrderImplicitQuasilinear>::
@@ -145,7 +145,7 @@ void MatrixTranslatorCrankNicolson<
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto& tmp = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
+    auto& tmp = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_tmp_id);
     _crank_nicolson.getWeightedOldX(tmp);
 
     auto const theta = _crank_nicolson.getTheta();
@@ -158,7 +158,7 @@ void MatrixTranslatorCrankNicolson<
     LinAlg::matMultAdd(_M_bar, tmp, rhs, rhs);  // rhs += _M_bar * weighted_old_x
     LinAlg::axpy(rhs, -1.0, _b_bar);            // rhs -= b
 
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(tmp);
 }
 
 void MatrixTranslatorCrankNicolson<

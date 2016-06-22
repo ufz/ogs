@@ -83,7 +83,7 @@ void UncoupledProcessesTimeLoop::setInitialConditions(
 
         // append a solution vector of suitable size
         _process_solutions.emplace_back(
-            &MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+            &NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                 ode_sys.getMatrixSpecifications()));
 
         auto& x0 = *_process_solutions[pcs_idx];
@@ -235,7 +235,7 @@ bool UncoupledProcessesTimeLoop::loop(ProjectData& project)
 UncoupledProcessesTimeLoop::~UncoupledProcessesTimeLoop()
 {
     for (auto* x : _process_solutions)
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*x);
+        NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*x);
 }
 
 }  // namespace ApplicationsLib

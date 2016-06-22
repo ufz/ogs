@@ -15,6 +15,8 @@
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "SimpleMatrixVectorProvider.h"
 
+namespace LinAlg = MathLib::LinAlg;
+
 namespace detail
 {
 
@@ -51,7 +53,7 @@ transfer(std::map<MatVec*, std::size_t>& from_used,
 } // detail
 
 
-namespace MathLib
+namespace NumLib
 {
 
 template<typename Matrix, typename Vector>
@@ -80,7 +82,7 @@ get_(std::size_t& id,
     // not searched or not found, so create a new one
     id = _next_id++;
     auto res = used_map.emplace(
-        MatrixVectorTraits<MatVec>::newInstance(std::forward<Args>(args)...).release(),
+        MathLib::MatrixVectorTraits<MatVec>::newInstance(std::forward<Args>(args)...).release(),
         id);
     assert(res.second && "Emplacement failed.");
     return { res.first->first, true };
@@ -116,7 +118,7 @@ getMatrix(std::size_t& id)
 template<typename Matrix, typename Vector>
 Matrix&
 SimpleMatrixVectorProvider<Matrix, Vector>::
-getMatrix(MatrixSpecifications const& ms)
+getMatrix(MathLib::MatrixSpecifications const& ms)
 {
     std::size_t id = 0u;
     return *getMatrix_<false>(id, ms).first;
@@ -126,7 +128,7 @@ getMatrix(MatrixSpecifications const& ms)
 template<typename Matrix, typename Vector>
 Matrix&
 SimpleMatrixVectorProvider<Matrix, Vector>::
-getMatrix(MatrixSpecifications const& ms, std::size_t& id)
+getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
     return *getMatrix_<true>(id, ms).first;
     // TODO assert that the returned object always is of the right size
@@ -198,7 +200,7 @@ getVector(std::size_t& id)
 template<typename Matrix, typename Vector>
 Vector&
 SimpleMatrixVectorProvider<Matrix, Vector>::
-getVector(MatrixSpecifications const& ms)
+getVector(MathLib::MatrixSpecifications const& ms)
 {
     std::size_t id = 0u;
     return *getVector_<false>(id, ms).first;
@@ -208,7 +210,7 @@ getVector(MatrixSpecifications const& ms)
 template<typename Matrix, typename Vector>
 Vector&
 SimpleMatrixVectorProvider<Matrix, Vector>::
-getVector(MatrixSpecifications const& ms, std::size_t& id)
+getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
     return *getVector_<true>(id, ms).first;
     // TODO assert that the returned object always is of the right size

@@ -7,15 +7,15 @@
  *
  */
 
-#ifndef MATHLIB_SIMPLE_MATRIX_PROVIDER_H
-#define MATHLIB_SIMPLE_MATRIX_PROVIDER_H
+#ifndef NUMLIB_SIMPLE_MATRIX_PROVIDER_H
+#define NUMLIB_SIMPLE_MATRIX_PROVIDER_H
 
-#include<map>
-#include<memory>
+#include <map>
+#include <memory>
 
 #include "MatrixProviderUser.h"
 
-namespace MathLib
+namespace NumLib
 {
 
 /*! Manages storage for matrices and vectors.
@@ -43,8 +43,8 @@ public:
     Vector& getVector(Vector const& x) override;
     Vector& getVector(Vector const& x, std::size_t& id) override;
 
-    Vector& getVector(MatrixSpecifications const& ms) override;
-    Vector& getVector(MatrixSpecifications const& ms, std::size_t& id) override;
+    Vector& getVector(MathLib::MatrixSpecifications const& ms) override;
+    Vector& getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id) override;
 
     void releaseVector(Vector const& x) override;
 
@@ -54,8 +54,8 @@ public:
     Matrix& getMatrix(Matrix const& A) override;
     Matrix& getMatrix(Matrix const& A, std::size_t& id) override;
 
-    Matrix& getMatrix(MatrixSpecifications const& ms) override;
-    Matrix& getMatrix(MatrixSpecifications const& ms, std::size_t& id) override;
+    Matrix& getMatrix(MathLib::MatrixSpecifications const& ms) override;
+    Matrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) override;
 
     void releaseMatrix(Matrix const& A) override;
 
@@ -88,8 +88,8 @@ private:
 
 
 
-} // namespace MathLib
+} // namespace NumLib
 
 #include "SimpleMatrixVectorProvider-impl.h"
 
-#endif // MATHLIB_SIMPLE_MATRIX_PROVIDER_H
+#endif // NUMLIB_SIMPLE_MATRIX_PROVIDER_H

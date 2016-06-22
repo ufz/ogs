@@ -7,20 +7,20 @@
  *
  */
 
-#ifndef MATHLIB_MATRIX_PROVIDER_USER_H
-#define MATHLIB_MATRIX_PROVIDER_USER_H
+#ifndef NUMLIB_MATRIX_PROVIDER_USER_H
+#define NUMLIB_MATRIX_PROVIDER_USER_H
 
 #include <cstddef>
 
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 
-namespace MathLib
+namespace NumLib
 {
 
 class MatrixSpecificationsProvider
 {
 public:
-    virtual MatrixSpecifications getMatrixSpecifications() const = 0;
+    virtual MathLib::MatrixSpecifications getMatrixSpecifications() const = 0;
 
     virtual ~MatrixSpecificationsProvider() = default;
 };
@@ -67,11 +67,11 @@ public:
     virtual Vector& getVector(Vector const& x, std::size_t& id) = 0;
 
     //! Get a vector according to the given specifications.
-    virtual Vector& getVector(MatrixSpecifications const& ms) = 0;
+    virtual Vector& getVector(MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a vector according to the given specifications in the storage
     //! of the vector with the given \c id.
-    virtual Vector& getVector(MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual Vector& getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given vector.
     //!
@@ -103,11 +103,11 @@ public:
     virtual Matrix& getMatrix(Matrix const& A, std::size_t& id) = 0;
 
     //! Get a matrix according to the given specifications.
-    virtual Matrix& getMatrix(MatrixSpecifications const& ms) = 0;
+    virtual Matrix& getMatrix(MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a matrix according to the given specifications in the storage
     //! of the matrix with the given \c id.
-    virtual Matrix& getMatrix(MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual Matrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given matrix.
     //!
@@ -118,6 +118,6 @@ public:
     virtual ~MatrixProvider() = default;
 };
 
-} // namespace MathLib
+} // namespace NumLib
 
-#endif // MATHLIB_MATRIX_PROVIDER_USER_H
+#endif // NUMLIB_MATRIX_PROVIDER_USER_H

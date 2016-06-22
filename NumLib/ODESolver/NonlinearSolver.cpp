@@ -36,11 +36,11 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     auto& sys = *_equation_system;
 
     auto& A =
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_A_id);
-    auto& rhs = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_A_id);
+    auto& rhs = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
         _rhs_id);
     auto& x_new =
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
             _x_new_id);
 
     bool error_norms_met = false;
@@ -136,9 +136,9 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(A);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(rhs);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
+    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(A);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(rhs);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
 
     return error_norms_met;
 }
@@ -159,13 +159,13 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    auto& res = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+    auto& res = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
         _res_id);
     auto& minus_delta_x =
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
             _minus_delta_x_id);
     auto& J =
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_J_id);
+        NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_J_id);
 
     bool error_norms_met = false;
 
@@ -202,7 +202,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // cf.
             // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
             auto& x_new =
-                MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+                NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                     x, _x_new_id);
             LinAlg::axpy(x_new, -_alpha, minus_delta_x);
 
@@ -224,7 +224,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                         "iteration"
                         " has to be repeated.");
                     // TODO introduce some onDestroy hook.
-                    MathLib::GlobalVectorProvider<GlobalVector>::provider
+                    NumLib::GlobalVectorProvider<GlobalVector>::provider
                         .releaseVector(x_new);
                     continue;  // That throws the iteration result away.
             }
@@ -232,7 +232,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // TODO could be done via swap. Note: that also requires swapping
             // the ids. Same for the Picard scheme.
             LinAlg::copy(x_new, x);  // copy new solution to x
-            MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
                 x_new);
         }
 
@@ -271,9 +271,9 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             _maxiter);
     }
 
-    MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(J);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(res);
-    MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(J);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(res);
+    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
         minus_delta_x);
 
     return error_norms_met;

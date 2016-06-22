@@ -53,7 +53,7 @@ public:
         MathLib::MatrixSpecifications const& matrix_specs,
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : _nodal_values(
-              MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+              NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                   matrix_specs))
 #ifndef USE_PETSC
           ,
@@ -102,7 +102,7 @@ public:
 
     ~LocalLinearLeastSquaresExtrapolator()
     {
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+        NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
             _nodal_values);
     }
 
