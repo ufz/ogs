@@ -36,11 +36,11 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     auto& sys = *_equation_system;
 
     auto& A =
-        NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_A_id);
-    auto& rhs = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(
         _rhs_id);
     auto& x_new =
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalVectorProvider::provider.getVector(
             _x_new_id);
 
     bool error_norms_met = false;
@@ -136,9 +136,9 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             _maxiter);
     }
 
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(A);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(rhs);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x_new);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(A);
+    NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
+    NumLib::GlobalVectorProvider::provider.releaseVector(x_new);
 
     return error_norms_met;
 }
@@ -159,13 +159,13 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    auto& res = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+    auto& res = NumLib::GlobalVectorProvider::provider.getVector(
         _res_id);
     auto& minus_delta_x =
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+        NumLib::GlobalVectorProvider::provider.getVector(
             _minus_delta_x_id);
     auto& J =
-        NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(_J_id);
+        NumLib::GlobalMatrixProvider::provider.getMatrix(_J_id);
 
     bool error_norms_met = false;
 
@@ -202,7 +202,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // cf.
             // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
             auto& x_new =
-                NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+                NumLib::GlobalVectorProvider::provider.getVector(
                     x, _x_new_id);
             LinAlg::axpy(x_new, -_alpha, minus_delta_x);
 
@@ -224,7 +224,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                         "iteration"
                         " has to be repeated.");
                     // TODO introduce some onDestroy hook.
-                    NumLib::GlobalVectorProvider<GlobalVector>::provider
+                    NumLib::GlobalVectorProvider::provider
                         .releaseVector(x_new);
                     continue;  // That throws the iteration result away.
             }
@@ -232,7 +232,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             // TODO could be done via swap. Note: that also requires swapping
             // the ids. Same for the Picard scheme.
             LinAlg::copy(x_new, x);  // copy new solution to x
-            NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+            NumLib::GlobalVectorProvider::provider.releaseVector(
                 x_new);
         }
 
@@ -271,9 +271,9 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             _maxiter);
     }
 
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(J);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(res);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(J);
+    NumLib::GlobalVectorProvider::provider.releaseVector(res);
+    NumLib::GlobalVectorProvider::provider.releaseVector(
         minus_delta_x);
 
     return error_norms_met;

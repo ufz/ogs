@@ -208,13 +208,13 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     BackwardEuler()
-        : _x_old(NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
     ~BackwardEuler()
     {
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override
@@ -257,13 +257,13 @@ class ForwardEuler final : public TimeDiscretization
 {
 public:
     ForwardEuler()
-        : _x_old(NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+        : _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
     ~ForwardEuler()
     {
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override
@@ -332,13 +332,13 @@ public:
      */
     explicit CrankNicolson(const double theta)
         : _theta(theta),
-          _x_old(NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+          _x_old(NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
     ~CrankNicolson()
     {
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(_x_old);
+        NumLib::GlobalVectorProvider::provider.releaseVector(_x_old);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override
@@ -426,14 +426,14 @@ public:
     ~BackwardDifferentiationFormula()
     {
         for (auto* x : _xs_old)
-            NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*x);
+            NumLib::GlobalVectorProvider::provider.releaseVector(*x);
     }
 
     void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
         _xs_old.push_back(
-            &NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0));
+            &NumLib::GlobalVectorProvider::provider.getVector(x0));
     }
 
     void pushState(const double, GlobalVector const& x,
@@ -446,7 +446,7 @@ public:
         if (_xs_old.size() < _num_steps)
         {
             _xs_old.push_back(
-                &NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x));
+                &NumLib::GlobalVectorProvider::provider.getVector(x));
         }
         else
         {

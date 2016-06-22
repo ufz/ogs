@@ -82,7 +82,7 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 {
     // solution vector
     GlobalVector& x =
-        NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(x0);
+        NumLib::GlobalVectorProvider::provider.getVector(x0);
 
     auto& time_disc = _ode_sys.getTimeDiscretization();
 
@@ -120,7 +120,7 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
         post_timestep(t_cb, x_cb);
     }
 
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(x);
+    NumLib::GlobalVectorProvider::provider.releaseVector(x);
 
     if (!nl_slv_succeeded)
     {

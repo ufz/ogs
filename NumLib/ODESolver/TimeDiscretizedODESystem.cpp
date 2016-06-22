@@ -44,13 +44,13 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
 {
-    _Jac = &NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+    _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         _ode.getMatrixSpecifications(), _Jac_id);
-    _M = &NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         _ode.getMatrixSpecifications(), _M_id);
-    _K = &NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         _ode.getMatrixSpecifications(), _K_id);
-    _b = &NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+    _b = &NumLib::GlobalVectorProvider::provider.getVector(
         _ode.getMatrixSpecifications(), _b_id);
 }
 
@@ -58,10 +58,10 @@ TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::~TimeDiscretizedODESystem()
 {
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_Jac);
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
+    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -95,7 +95,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dxdot_dx = _time_disc.getNewXWeight();
     auto const dx_dx = _time_disc.getDxDx();
 
-    auto& xdot = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
+    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, xdot);
 
     _Jac->setZero();
@@ -104,7 +104,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     MathLib::LinAlg::finalizeAssembly(*_Jac);
 
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
+    NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
 }
 
 void TimeDiscretizedODESystem<
@@ -115,12 +115,12 @@ void TimeDiscretizedODESystem<
     // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
     //      can be optimuized. However, that would make the interface a bit more
     //      fragile.
-    auto& xdot = NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(_xdot_id);
+    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, xdot);
 
     _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
 
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
+    NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
 }
 
 void TimeDiscretizedODESystem<
@@ -169,11 +169,11 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
 {
-    _M = &NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         ode.getMatrixSpecifications(), _M_id);
-    _K = &NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.getMatrix(
+    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         ode.getMatrixSpecifications(), _K_id);
-    _b = &NumLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
+    _b = &NumLib::GlobalVectorProvider::provider.getVector(
         ode.getMatrixSpecifications(), _b_id);
 }
 
@@ -181,9 +181,9 @@ TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Picard>::~TimeDiscretizedODESystem()
 {
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(*_b);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
+    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
