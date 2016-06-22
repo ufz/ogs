@@ -12,11 +12,17 @@ set(REQUIRED_SUBMODULES
     ThirdParty/tetgen
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
+
+
+
 if(OGS_BUILD_TESTS)
     list(APPEND REQUIRED_SUBMODULES Tests/Data)
 endif()
 if(OGS_BUILD_GUI)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkGUISupportQt)
+endif()
+if(OGS_BUILD_UTILS)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
 endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})

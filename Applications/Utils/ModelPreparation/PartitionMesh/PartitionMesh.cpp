@@ -12,13 +12,8 @@
 
 */
 
-#include "tclap/CmdLine.h"
-
-#ifdef BUILD_WITH_METIS
-extern "C" {
-#include "metis_main.h"
-}
-#endif
+#include <sstream>
+#include <tclap/CmdLine.h>
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "BaseLib/FileTools.h"
@@ -54,6 +49,8 @@ int main (int argc, char* argv[])
     TCLAP::SwitchArg ogs2metis_flag("1", "ogs2metis",
                                     "Indicator to convert the ogs mesh file to METIS input file", cmd, false);
 
+    TCLAP::SwitchArg exe_metis_flag("m","exe_metis","Call mpmetis inside the programme via system().", false);
+    cmd.add(exe_metis_flag);
     TCLAP::SwitchArg asci_flag("a","asci","Enable ASCII output.", false);
     cmd.add(asci_flag);
     TCLAP::SwitchArg elem_part_flag("e","element_wise","Enable element wise partitioing.", false);
@@ -70,7 +67,7 @@ int main (int argc, char* argv[])
     const std::string file_name_base = BaseLib::dropFileExtension(ifile_name);
     MeshLib::MeshPartitioning* mesh = static_cast<MeshLib::MeshPartitioning*>
                                       (MeshLib::IO::readMeshFromFile(file_name_base + ".vtu"));
-    INFO("Mesh read: %d nodes, %d elements.", mesh->getNNodes(), mesh->getNElements());
+    INFO("Mesh read: %d nodes, %d elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
     if (ogs2metis_flag.getValue())
     {
@@ -89,23 +86,17 @@ int main (int argc, char* argv[])
             const int num_partitions = nparts.getValue();
             std::string str_nparts = std::to_string(num_partitions);
 
-            // With the metis source code being compiled
-            if (num_partitions > 1)
+            // Execute mpmetis via system(...)
+            if (num_partitions > 1 && exe_metis_flag.getValue())
             {
-#ifdef BUILD_WITH_METIS
                 INFO("METIS is running ...");
-                const int argc_m = 4;
-                char *argv_m[argc_m];
-                std::string unsc = "-";	 // Avoid compilation warning by argv_m[0] = "-";
-                argv_m[0] = &unsc[0];
-                std::string option = "-gtype=nodal";
-                argv_m[1] = &option[0];
-                std::string part_mesh_file = file_name_base + ".mesh";
-                argv_m[2] = &part_mesh_file[0];
-                argv_m[3] = &str_nparts[0];
+                std::stringstream ss;
+                ss << "mpmetis " << " -gtype=nodal "
+                   << file_name_base + ".mesh "
+                   << nparts.getValue();
 
-                metis_main(argc_m, argv_m);
-#endif
+                int status = system(ss.str().c_str());
+                INFO("Return value of system calling %d ", status);
             }
 
             INFO("Partitioning the mesh in the node wise way ...");
@@ -123,5 +114,7 @@ int main (int argc, char* argv[])
     INFO( "Total runtime: %g s.\n", run_timer.elapsed() );
     INFO( "Total CPU time: %g s.\n", CPU_timer.elapsed() );
 
-    return 0;
+    delete mesh;
+
+    return EXIT_SUCCESS;
 }

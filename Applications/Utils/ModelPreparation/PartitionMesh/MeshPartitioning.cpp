@@ -30,7 +30,7 @@ void MeshPartitioning :: write2METIS(const std::string& file_name)
     os << _elements.size() <<" \n";
     for (const auto elem : _elements)
     {
-        for (unsigned j=0; j<elem->getNNodes(); j++)
+        for (unsigned j=0; j<elem->getNumberOfNodes(); j++)
         {
             os << elem->getNodeIndex(j) + 1 <<" ";
         }
@@ -192,7 +192,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
 
                 std::vector<unsigned> nonghost_nodes_local_ids;
                 unsigned ghost_counter = 0;
-                for (unsigned kk=0; kk<elem->getNNodes(); kk++)
+                for (unsigned kk=0; kk<elem->getNumberOfNodes(); kk++)
                 {
                     if (nodes_reseved[elem->getNodeIndex(kk)])
                     {
@@ -225,7 +225,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         // Mark the non-ghost nodes for each ghost element
         for (const auto ghost_elem : partition_ghost_elements)
         {
-            for (unsigned k=0; k<ghost_elem->getNNodes(); k++)
+            for (unsigned k=0; k<ghost_elem->getNumberOfNodes(); k++)
                 nodes_reseved[ghost_elem->getNodeIndex(k)] = false;
 
             // Mark non-ghost nodes
@@ -236,7 +236,7 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         // Add the ghost nodes to the node vector of this partition
         for (const auto ghost_elem : partition_ghost_elements)
         {
-            for (unsigned k=0; k<ghost_elem->getNNodes(); k++)
+            for (unsigned k=0; k<ghost_elem->getNumberOfNodes(); k++)
             {
                 const unsigned node_id = ghost_elem->getNodeIndex(k);
                 if (nodes_reseved[node_id])
@@ -279,13 +279,13 @@ void MeshPartitioning :: partitionByNodeMETIS(const std::string& file_name_base,
         PetscInt nmb_element_idxs = 3 * num_non_ghost_elems;
         for (PetscInt j=0; j<num_non_ghost_elems; j++)
         {
-            nmb_element_idxs += partition_regular_elements[j]->getNNodes();
+            nmb_element_idxs += partition_regular_elements[j]->getNumberOfNodes();
         }
         const PetscInt num_ghost_elems = partition_ghost_elements.size();
         PetscInt nmb_element_idxs_g = 3 * num_ghost_elems;
         for (PetscInt j=0; j<num_ghost_elems; j++)
         {
-            nmb_element_idxs_g += partition_ghost_elements[j]->getNNodes();
+            nmb_element_idxs_g += partition_ghost_elements[j]->getNumberOfNodes();
         }
 
         std::string ipart_str = std::to_string(ipart);
@@ -465,7 +465,7 @@ void MeshPartitioning::getElementIntegerVariables(const Element& elem,
         PetscInt& counter)
 {
     unsigned mat_id = 0; // Materical ID to be set from the mesh data
-    const PetscInt nn = elem.getNNodes();;
+    const PetscInt nn = elem.getNumberOfNodes();;
     elem_info[counter++] = mat_id;
     elem_info[counter++] = static_cast<unsigned>(getElementType(elem)) + 1;
     elem_info[counter++] = nn;
@@ -481,8 +481,8 @@ void MeshPartitioning::writeLocalElementNodeIndicies(std::ostream& os, const Ele
 {
     unsigned mat_id = 0; // Materical ID to be set from the mesh data
     os << mat_id << " " << static_cast<unsigned>(getElementType(elem)) + 1 << " "
-       << elem.getNNodes() <<" ";
-    for(unsigned i=0; i<elem.getNNodes(); i++)
+       << elem.getNumberOfNodes() <<" ";
+    for(unsigned i=0; i<elem.getNumberOfNodes(); i++)
     {
         os << local_node_ids[elem.getNodeIndex(i)] << " ";
     }

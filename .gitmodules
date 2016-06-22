@@ -24,4 +24,4 @@
 	url = https://github.com/ufz/vtkGUISupportQt.git
 [submodule "ThirdParty/metis"]
 	path = ThirdParty/metis
-	url = https://github.com/envinf/metis.git
+	url = https://github.com/scibuilder/metis.git
