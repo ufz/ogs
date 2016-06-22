@@ -22,9 +22,7 @@ class Point;
 class Polyline;
 }
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 /**
  * Interface to geometric data in FEFLOW files
@@ -58,7 +56,6 @@ private:
     static void readPoints(QDomElement& nodesEle, const std::string& tag,
                            int dim, std::vector<GeoLib::Point*>& points);
 };
-}  // IO
-}  // GeoLib
+}  // FileIO
 
 #endif /* FEFLOWGEOINTERFACE_H_ */

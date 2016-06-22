@@ -64,7 +64,7 @@ int main (int argc, char* argv[])
 #endif
     BaseLib::RunTime run_time;
     run_time.start();
-    MeshLib::IO::FEFLOWMeshInterface feflowIO;
+    FileIO::FEFLOWMeshInterface feflowIO;
     std::unique_ptr<MeshLib::Mesh const> mesh(
         feflowIO.readFEFLOWFile(feflow_mesh_arg.getValue()));
 

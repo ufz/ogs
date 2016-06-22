@@ -24,9 +24,7 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
                                         GeoLib::GEOObjects& geoObjects)
@@ -216,5 +214,4 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     }
 }
 
-}  // IO
-}  // GeoLib
+}  // FileIO

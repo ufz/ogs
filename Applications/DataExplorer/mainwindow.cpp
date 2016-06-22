@@ -521,14 +521,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     {
         if (fi.suffix().toLower() == "fem") // FEFLOW model files
         {
-            MeshLib::IO::FEFLOWMeshInterface feflowMeshIO;
+            FileIO::FEFLOWMeshInterface feflowMeshIO;
             std::unique_ptr<MeshLib::Mesh> mesh(
                 feflowMeshIO.readFEFLOWFile(fileName.toStdString()));
             if (mesh)
                 _meshModel->addMesh(std::move(mesh));
             else
                 OGSError::box("Failed to load a FEFLOW mesh.");
-            GeoLib::IO::FEFLOWGeoInterface feflowGeoIO;
+            FileIO::FEFLOWGeoInterface feflowGeoIO;
             feflowGeoIO.readFEFLOWFile(fileName.toStdString(), _project.getGEOObjects());
         }
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
