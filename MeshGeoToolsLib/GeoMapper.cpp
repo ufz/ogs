@@ -19,9 +19,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -33,6 +30,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/MeshEditing/projectMeshOntoPlane.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 
 namespace MeshGeoToolsLib {
 
@@ -48,19 +46,15 @@ GeoMapper::~GeoMapper()
     delete _raster;
 }
 
-void GeoMapper::mapOnDEM(const std::string &file_name)
+void GeoMapper::mapOnDEM(GeoLib::Raster *const raster)
 {
-    _raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
-    if (! _raster) {
-        ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
-        return;
-    }
-
     std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
     if (! pnts) {
         ERR("Geometry \"%s\" does not exist.", _geo_name.c_str());
         return;
     }
+    _raster = raster;
+
     if (GeoLib::isStation((*pnts)[0])) {
         mapStationData(*pnts);
     } else {
@@ -68,14 +62,7 @@ void GeoMapper::mapOnDEM(const std::string &file_name)
     }
 }
 
-void GeoMapper::mapOnMesh(const std::string &file_name)
-{
-    MeshLib::Mesh *mesh (MeshLib::IO::readMeshFromFile(file_name));
-    mapOnMesh(mesh);
-    delete mesh;
-}
-
-void GeoMapper::mapOnMesh(const MeshLib::Mesh* mesh)
+void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
 {
     std::vector<GeoLib::Point*> const* pnts(_geo_objects.getPointVec(_geo_name));
     if (! pnts) {

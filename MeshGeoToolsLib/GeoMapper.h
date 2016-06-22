@@ -44,16 +44,13 @@ public:
     ~GeoMapper();
 
     /// Maps geometry based on a raster file
-    void mapOnDEM(const std::string &file_name);
-
-    /// Maps geometry based on a mesh file
-    void mapOnMesh(const std::string &file_name);
+    void mapOnDEM(GeoLib::Raster *const raster);
 
     /**
      * Maps the geometry based on the given mesh file. The elevation value of all geometric
      * points are modified such that they are located on the mesh surface.
      */
-    void mapOnMesh(const MeshLib::Mesh* mesh);
+    void mapOnMesh(MeshLib::Mesh const*const mesh);
 
     /// Maps geometry to a constant elevation value
     void mapToConstantValue(double value);
