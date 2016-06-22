@@ -22,21 +22,10 @@
         new NumLib::SimpleMatrixVectorProvider<MAT, VEC>}; \
     \
     namespace NumLib { \
-    template<> \
-    VectorProvider<VEC>& GlobalVectorProvider<VEC>::provider = *(VARNAME); \
+    VectorProvider<VEC>& GlobalVectorProvider::provider = *(VARNAME); \
     \
-    template<> \
-    MatrixProvider<MAT>& GlobalMatrixProvider<MAT>::provider = *(VARNAME); \
+    MatrixProvider<MAT>& GlobalMatrixProvider::provider = *(VARNAME); \
     }
-
-
-#ifdef OGS_USE_EIGEN
-
-INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(Eigen::MatrixXd, Eigen::VectorXd,
-                                         eigenGlobalMatrixVectorProvider)
-
-#endif
-
 
 INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(GlobalMatrix, GlobalVector,
                                          globalSetupGlobalMatrixVectorProvider)
@@ -46,7 +35,6 @@ namespace NumLib
 {
 void cleanupGlobalMatrixProviders()
 {
-    eigenGlobalMatrixVectorProvider.reset();
     globalSetupGlobalMatrixVectorProvider.reset();
 }
 }
