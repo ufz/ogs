@@ -56,12 +56,12 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
     _variable_component_offsets.reserve(_mesh_subsets.size());
     std::size_t offset = 0;
-    for (int variable_id = 0; variable_id < _mesh_subsets.size();
+    for (int variable_id = 0; variable_id < static_cast<int>(_mesh_subsets.size());
          ++variable_id)
     {
         _variable_component_offsets.push_back(offset);
         auto const& mss = *_mesh_subsets[variable_id];
-        for (int component_id = 0; component_id < mss.size();
+        for (int component_id = 0; component_id < static_cast<int>(mss.size());
              ++component_id)
         {
             MeshLib::MeshSubset const& ms = mss.getMeshSubset(component_id);

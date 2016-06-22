@@ -28,7 +28,7 @@ NeumannBc::NeumannBc(
     : _function(*bc.getFunction()),
       _integration_order(integration_order)
 {
-    assert(component_id < local_to_global_index_map.getNumberOfComponents());
+    assert(component_id < static_cast<int>(local_to_global_index_map.getNumberOfComponents()));
 
     // deep copy because the neumann bc config destroys the elements.
     std::transform(bc.elementsBegin(), bc.elementsEnd(),
