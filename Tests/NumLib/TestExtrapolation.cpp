@@ -267,7 +267,7 @@ void extrapolate(TestProcess const& pcs,
     namespace BLAS = MathLib::BLAS;
 
     auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
-    auto const tolerance_res =  4.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_res =  5.0 * std::numeric_limits<double>::epsilon();
 
     auto const  result   = pcs.extrapolate(property);
     auto const& x_extra  = *result.first;
