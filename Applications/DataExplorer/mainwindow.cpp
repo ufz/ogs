@@ -61,7 +61,7 @@
 
 // FileIO includes
 #include "GMSInterface.h"
-#include "MeshLib/IO/FEFLOW/FEFLOWMeshInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/GmshReader.h"
@@ -69,7 +69,7 @@
 #include "PetrelInterface.h"
 #include "XmlIO/Qt/XmlGspInterface.h"
 #include "GeoLib/IO/GMSHInterface.h"
-#include "GeoLib/IO/FEFLOW/FEFLOWGeoInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 

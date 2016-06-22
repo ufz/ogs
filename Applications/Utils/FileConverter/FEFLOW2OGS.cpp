@@ -23,7 +23,7 @@
 #endif
 
 // FileIO
-#include "MeshLib/IO/FEFLOW/FEFLOWMeshInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"

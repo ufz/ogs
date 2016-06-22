@@ -16,7 +16,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
-#include "GeoLib/IO/FEFLOW/FEFLOWGeoInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 
