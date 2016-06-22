@@ -119,7 +119,7 @@ TESLocalAssembler<
          // TODO narrowing conversion
          static_cast<const unsigned>(
              _shape_matrices.front()
-                 .N.rows()) /* number of integration points */,
+                 .N.cols()) /* number of integration points */,
          GlobalDim),
       _local_M(ShapeFunction::NPOINTS * NODAL_DOF,
                ShapeFunction::NPOINTS * NODAL_DOF),
