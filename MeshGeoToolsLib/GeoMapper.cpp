@@ -19,7 +19,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 
 #include "GeoLib/AABB.h"
@@ -50,7 +50,7 @@ GeoMapper::~GeoMapper()
 
 void GeoMapper::mapOnDEM(const std::string &file_name)
 {
-    _raster = GeoLib::IO::AsciiRasterInterface::getRasterFromASCFile(file_name);
+    _raster = FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name);
     if (! _raster) {
         ERR("GeoMapper::mapOnDEM(): failed to load %s", file_name.c_str());
         return;

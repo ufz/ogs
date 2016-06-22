@@ -23,8 +23,8 @@
 #include "BaseLib/FileTools.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
@@ -114,7 +114,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
 
     MeshLib::MeshLayerMapper mapper;
-    if (auto rasters = GeoLib::IO::readRasters(raster_paths))
+    if (auto rasters = FileIO::readRasters(raster_paths))
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
             return EXIT_FAILURE;

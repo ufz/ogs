@@ -20,7 +20,7 @@
 
 #include "DirectConditionGenerator.h"
 
-#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
 
 #include "Raster.h"
 #include "MeshSurfaceExtraction.h"
@@ -37,7 +37,7 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
     if (_direct_values.empty())
     {
         GeoLib::Raster* raster(
-            GeoLib::IO::AsciiRasterInterface::readRaster(filename));
+            FileIO::AsciiRasterInterface::readRaster(filename));
         if (!raster)
         {
             ERR("Error in DirectConditionGenerator::directToSurfaceNodes() - "
@@ -72,17 +72,15 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
 const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
 {
     if (!_direct_values.empty()) {
-        ERR(
-            "Error in DirectConditionGenerator::directWithSurfaceIntegration()"
+        ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- Data vector contains outdated values...");
         return _direct_values;
     }
 
     std::unique_ptr<GeoLib::Raster> raster(
-        GeoLib::IO::AsciiRasterInterface::readRaster(filename));
+        FileIO::AsciiRasterInterface::readRaster(filename));
     if (!raster) {
-        ERR(
-            "Error in DirectConditionGenerator::directWithSurfaceIntegration()"
+        ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- could not load raster file.");
         return _direct_values;
     }
