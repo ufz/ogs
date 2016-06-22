@@ -14,8 +14,6 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
-#include "MathLib/LinAlg/LinearSolver.h"
-
 #include "NonlinearSystem.h"
 #include "Types.h"
 
@@ -200,7 +198,5 @@ createNonlinearSolver(
 //! @}
 
 }  // namespace NumLib
-
-#include "NonlinearSolver-impl.h"
 
 #endif  // NUMLIB_NONLINEARSOLVER_H

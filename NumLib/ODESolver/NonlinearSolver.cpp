@@ -7,10 +7,12 @@
  *
  */
 
-#include <logog/include/logog.hpp>
+#include "NonlinearSolver.h"
 
 // for debugging
 // #include <iostream>
+
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -18,17 +20,15 @@
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
-#include "NonlinearSolver.h"
-
 namespace NumLib
 {
-inline void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
+void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     GlobalVector const& x) const
 {
     _equation_system->assembleMatricesPicard(x);
 }
 
-inline bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
+bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
@@ -143,7 +143,7 @@ inline bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     return error_norms_met;
 }
 
-inline void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
+void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     GlobalVector const& x) const
 {
     _equation_system->assembleResidualNewton(x);
@@ -152,7 +152,7 @@ inline void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     //      equation every time and could not forget it.
 }
 
-inline bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
+bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
@@ -279,10 +279,9 @@ inline bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     return error_norms_met;
 }
 
-inline std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
-createNonlinearSolver(
-    MathLib::LinearSolver<GlobalMatrix, GlobalVector>& linear_solver,
-    BaseLib::ConfigTree const& config)
+std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
+createNonlinearSolver(MathLib::LinearSolver<GlobalMatrix, GlobalVector>& linear_solver,
+                      BaseLib::ConfigTree const& config)
 {
     using AbstractNLS = NonlinearSolverBase;
 
