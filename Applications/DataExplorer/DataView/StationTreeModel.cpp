@@ -102,10 +102,14 @@ vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
     return nullptr;
 }
 
-void StationTreeModel::setNameForItem(const std::string &stn_vec_name, std::size_t id, std::string const& item_name)
+void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
+                                      std::size_t id,
+                                      std::string const& item_name)
 {
-    auto const stn_list = find_if(_lists.begin(), _lists.end(), [&stn_vec_name](ModelTreeItem* item)
-        { return (stn_vec_name.compare( item->data(0).toString().toStdString() ) == 0); });
+    auto const stn_list = find_if(
+        _lists.begin(), _lists.end(), [&stn_vec_name](ModelTreeItem* item) {
+            return (stn_vec_name == item->data(0).toString().toStdString());
+        });
 
     if (id >=  (*stn_list)->childCount())
         return;
