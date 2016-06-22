@@ -50,34 +50,33 @@ public:
  * has to be initialized with zero. The respective method then will set the \c id
  * to the specific \c id of the returned vector.
  */
-template<typename Vector>
 class VectorProvider
 {
 public:
     //! Get an uninitialized vector.
-    virtual Vector& getVector() = 0;
+    virtual GlobalVector& getVector() = 0;
 
     //! Get an uninitialized vector with the given \c id.
-    virtual Vector& getVector(std::size_t& id) = 0;
+    virtual GlobalVector& getVector(std::size_t& id) = 0;
 
     //! Get a copy of \c x.
-    virtual Vector& getVector(Vector const& x) = 0;
+    virtual GlobalVector& getVector(GlobalVector const& x) = 0;
 
     //! Get a copy of \c x in the storage of the vector with the given \c id.
-    virtual Vector& getVector(Vector const& x, std::size_t& id) = 0;
+    virtual GlobalVector& getVector(GlobalVector const& x, std::size_t& id) = 0;
 
     //! Get a vector according to the given specifications.
-    virtual Vector& getVector(MathLib::MatrixSpecifications const& ms) = 0;
+    virtual GlobalVector& getVector(MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a vector according to the given specifications in the storage
     //! of the vector with the given \c id.
-    virtual Vector& getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual GlobalVector& getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given vector.
     //!
     //! \pre \c x must have been acquired before, i.e., you must not call this
     //! method twice in a row in the same \c x!
-    virtual void releaseVector(Vector const& x) = 0;
+    virtual void releaseVector(GlobalVector const& x) = 0;
 
     virtual ~VectorProvider() = default;
 };
@@ -86,34 +85,33 @@ public:
  *
  * This the matrix-analog of VectorProvider. The same notes apply to this class.
  */
-template<typename Matrix>
 class MatrixProvider
 {
 public:
     //! Get an uninitialized matrix.
-    virtual Matrix& getMatrix() = 0;
+    virtual GlobalMatrix& getMatrix() = 0;
 
     //! Get an uninitialized matrix with the given \c id.
-    virtual Matrix& getMatrix(std::size_t& id) = 0;
+    virtual GlobalMatrix& getMatrix(std::size_t& id) = 0;
 
     //! Get a copy of \c A.
-    virtual Matrix& getMatrix(Matrix const& A) = 0;
+    virtual GlobalMatrix& getMatrix(GlobalMatrix const& A) = 0;
 
     //! Get a copy of \c A in the storage of the matrix with the given \c id.
-    virtual Matrix& getMatrix(Matrix const& A, std::size_t& id) = 0;
+    virtual GlobalMatrix& getMatrix(GlobalMatrix const& A, std::size_t& id) = 0;
 
     //! Get a matrix according to the given specifications.
-    virtual Matrix& getMatrix(MathLib::MatrixSpecifications const& ms) = 0;
+    virtual GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a matrix according to the given specifications in the storage
     //! of the matrix with the given \c id.
-    virtual Matrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
 
     //! Release the given matrix.
     //!
     //! \pre \c A must have been acquired before, i.e., you must not call this
     //! method twice in a row in the same \c A!
-    virtual void releaseMatrix(Matrix const& A) = 0;
+    virtual void releaseMatrix(GlobalMatrix const& A) = 0;
 
     virtual ~MatrixProvider() = default;
 };

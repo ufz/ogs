@@ -7,28 +7,26 @@
  *
  */
 
+#include "GlobalMatrixProviders.h"
+
 #include <memory>
 
-#include "NumLib/NumericsConfig.h"
-
-#include "GlobalMatrixProviders.h"
 #include "SimpleMatrixVectorProvider.h"
 
 
 // Initializes the static members of the structs in the header file
 // associated with this file.
-#define INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(MAT, VEC, VARNAME) \
-    static std::unique_ptr<NumLib::SimpleMatrixVectorProvider<MAT, VEC>> VARNAME{ \
-        new NumLib::SimpleMatrixVectorProvider<MAT, VEC>}; \
+#define INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(VARNAME) \
+    static std::unique_ptr<NumLib::SimpleMatrixVectorProvider> VARNAME{ \
+        new NumLib::SimpleMatrixVectorProvider}; \
     \
     namespace NumLib { \
-    VectorProvider<VEC>& GlobalVectorProvider::provider = *(VARNAME); \
+    VectorProvider& GlobalVectorProvider::provider = *(VARNAME); \
     \
-    MatrixProvider<MAT>& GlobalMatrixProvider::provider = *(VARNAME); \
+    MatrixProvider& GlobalMatrixProvider::provider = *(VARNAME); \
     }
 
-INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(GlobalMatrix, GlobalVector,
-                                         globalSetupGlobalMatrixVectorProvider)
+INITIALIZE_GLOBAL_MATRIX_VECTOR_PROVIDER(globalSetupGlobalMatrixVectorProvider)
 
 
 namespace NumLib

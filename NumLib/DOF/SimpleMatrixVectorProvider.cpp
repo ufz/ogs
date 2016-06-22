@@ -7,13 +7,14 @@
  *
  */
 
+#include "SimpleMatrixVectorProvider.h"
+
 #include <cassert>
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "SimpleMatrixVectorProvider.h"
 
 namespace LinAlg = MathLib::LinAlg;
 
@@ -56,10 +57,9 @@ transfer(std::map<MatVec*, std::size_t>& from_used,
 namespace NumLib
 {
 
-template<typename Matrix, typename Vector>
 template<bool do_search, typename MatVec, typename... Args>
 std::pair<MatVec*, bool>
-SimpleMatrixVectorProvider<Matrix, Vector>::
+SimpleMatrixVectorProvider::
 get_(std::size_t& id,
      std::map<std::size_t, MatVec*>& unused_map,
      std::map<MatVec*, std::size_t>& used_map,
@@ -88,36 +88,32 @@ get_(std::size_t& id,
     return { res.first->first, true };
 }
 
-template<typename Matrix, typename Vector>
 template<bool do_search, typename... Args>
-std::pair<Matrix*, bool>
-SimpleMatrixVectorProvider<Matrix, Vector>::
+std::pair<GlobalMatrix*, bool>
+SimpleMatrixVectorProvider::
 getMatrix_(std::size_t& id, Args&&... args)
 {
     return get_<do_search>(id, _unused_matrices, _used_matrices, std::forward<Args>(args)...);
 }
 
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalMatrix&
+SimpleMatrixVectorProvider::
 getMatrix()
 {
     std::size_t id = 0u;
     return *getMatrix_<false>(id).first;
 }
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalMatrix&
+SimpleMatrixVectorProvider::
 getMatrix(std::size_t& id)
 {
     return *getMatrix_<true>(id).first;
 }
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalMatrix&
+SimpleMatrixVectorProvider::
 getMatrix(MathLib::MatrixSpecifications const& ms)
 {
     std::size_t id = 0u;
@@ -125,19 +121,17 @@ getMatrix(MathLib::MatrixSpecifications const& ms)
     // TODO assert that the returned object always is of the right size
 }
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalMatrix&
+SimpleMatrixVectorProvider::
 getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
     return *getMatrix_<true>(id, ms).first;
     // TODO assert that the returned object always is of the right size
 }
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
-getMatrix(Matrix const& A)
+GlobalMatrix&
+SimpleMatrixVectorProvider::
+getMatrix(GlobalMatrix const& A)
 {
     std::size_t id = 0u;
     auto const& res = getMatrix_<false>(id, A);
@@ -146,10 +140,9 @@ getMatrix(Matrix const& A)
     return *res.first;
 }
 
-template<typename Matrix, typename Vector>
-Matrix&
-SimpleMatrixVectorProvider<Matrix, Vector>::
-getMatrix(Matrix const& A, std::size_t& id)
+GlobalMatrix&
+SimpleMatrixVectorProvider::
+getMatrix(GlobalMatrix const& A, std::size_t& id)
 {
     auto const& res = getMatrix_<true>(id, A);
     if (!res.second) // no new object has been created
@@ -157,12 +150,11 @@ getMatrix(Matrix const& A, std::size_t& id)
     return *res.first;
 }
 
-template<typename Matrix, typename Vector>
 void
-SimpleMatrixVectorProvider<Matrix, Vector>::
-releaseMatrix(Matrix const& A)
+SimpleMatrixVectorProvider::
+releaseMatrix(GlobalMatrix const& A)
 {
-    auto it = _used_matrices.find(const_cast<Matrix*>(&A));
+    auto it = _used_matrices.find(const_cast<GlobalMatrix*>(&A));
     if (it == _used_matrices.end()) {
         OGS_FATAL("The given matrix has not been found. Cannot release it. Aborting.");
     } else {
@@ -170,36 +162,32 @@ releaseMatrix(Matrix const& A)
     }
 }
 
-template<typename Matrix, typename Vector>
 template<bool do_search, typename... Args>
-std::pair<Vector*, bool>
-SimpleMatrixVectorProvider<Matrix, Vector>::
+std::pair<GlobalVector*, bool>
+SimpleMatrixVectorProvider::
 getVector_(std::size_t& id, Args&&... args)
 {
     return get_<do_search>(id, _unused_vectors, _used_vectors, std::forward<Args>(args)...);
 }
 
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalVector&
+SimpleMatrixVectorProvider::
 getVector()
 {
     std::size_t id = 0u;
     return *getVector_<false>(id).first;
 }
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalVector&
+SimpleMatrixVectorProvider::
 getVector(std::size_t& id)
 {
     return *getVector_<true>(id).first;
 }
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalVector&
+SimpleMatrixVectorProvider::
 getVector(MathLib::MatrixSpecifications const& ms)
 {
     std::size_t id = 0u;
@@ -207,19 +195,17 @@ getVector(MathLib::MatrixSpecifications const& ms)
     // TODO assert that the returned object always is of the right size
 }
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
+GlobalVector&
+SimpleMatrixVectorProvider::
 getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
     return *getVector_<true>(id, ms).first;
     // TODO assert that the returned object always is of the right size
 }
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
-getVector(Vector const& x)
+GlobalVector&
+SimpleMatrixVectorProvider::
+getVector(GlobalVector const& x)
 {
     std::size_t id = 0u;
     auto const& res = getVector_<false>(id, x);
@@ -228,10 +214,9 @@ getVector(Vector const& x)
     return *res.first;
 }
 
-template<typename Matrix, typename Vector>
-Vector&
-SimpleMatrixVectorProvider<Matrix, Vector>::
-getVector(Vector const& x, std::size_t& id)
+GlobalVector&
+SimpleMatrixVectorProvider::
+getVector(GlobalVector const& x, std::size_t& id)
 {
     auto const& res = getVector_<true>(id, x);
     if (!res.second) // no new object has been created
@@ -239,12 +224,11 @@ getVector(Vector const& x, std::size_t& id)
     return *res.first;
 }
 
-template<typename Matrix, typename Vector>
 void
-SimpleMatrixVectorProvider<Matrix, Vector>::
-releaseVector(Vector const& x)
+SimpleMatrixVectorProvider::
+releaseVector(GlobalVector const& x)
 {
-    auto it = _used_vectors.find(const_cast<Vector*>(&x));
+    auto it = _used_vectors.find(const_cast<GlobalVector*>(&x));
     if (it == _used_vectors.end()) {
         OGS_FATAL("The given vector has not been found. Cannot release it. Aborting.");
     } else {
@@ -252,8 +236,7 @@ releaseVector(Vector const& x)
     }
 }
 
-template<typename Matrix, typename Vector>
-SimpleMatrixVectorProvider<Matrix, Vector>::
+SimpleMatrixVectorProvider::
 ~SimpleMatrixVectorProvider()
 {
     if ((!_used_matrices.empty()) || (!_used_vectors.empty())) {

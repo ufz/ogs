@@ -16,12 +16,12 @@ namespace NumLib
 {
 struct GlobalVectorProvider
 {
-    static VectorProvider<GlobalVector>& provider;
+    static VectorProvider& provider;
 };
 
 struct GlobalMatrixProvider
 {
-    static MatrixProvider<GlobalMatrix>& provider;
+    static MatrixProvider& provider;
 };
 
 void cleanupGlobalMatrixProviders();
