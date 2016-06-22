@@ -78,7 +78,7 @@ extrapolateElement(std::size_t const element_index,
            "integration points.");
 
     auto& N = _local_matrix_cache; // TODO make that local?
-    N.resize(nn, ni); // TODO: might reallocate very often
+    N.resize(ni, nn); // TODO: might reallocate very often
 
     for (auto int_pt=decltype(ni){0}; int_pt<ni; ++int_pt)
     {
@@ -86,7 +86,7 @@ extrapolateElement(std::size_t const element_index,
         assert(shp_mat.cols() == nn);
 
         // copy shape matrix to extrapolation matrix columnwise
-        N.block(0, int_pt, nn, 1) = shp_mat.transpose();
+        N.block(int_pt, 0, 1, nn) = shp_mat;
     }
 
     // TODO make gp_vals an Eigen::VectorXd const& ?
@@ -102,7 +102,7 @@ extrapolateElement(std::size_t const element_index,
     // Extrapolate several values at once?
 
     // do the least squares computation using QR decomposition.
-    Eigen::VectorXd tmp = N.transpose().householderQr().solve(integration_point_values_vec);
+    Eigen::VectorXd tmp = N.householderQr().solve(integration_point_values_vec);
 
     // option: do the least squares computation using LDLT decomposition.
     // Eigen::VectorXd tmp =
