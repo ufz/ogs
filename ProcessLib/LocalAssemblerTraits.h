@@ -20,14 +20,14 @@ namespace detail
  * both for fixed-size and dynamically allocated Eigen matrices.
  *
  * \tparam ShpPol   the shape matrix policy used
- * \tparam NIntPts  the number of integration points for the FEM element
+ * \tparam NNodes   the number of nodes for the FEM element
  * \tparam NodalDOF the number of d.o.f. per node.
  *                  If zero, this struct's methods will determine the size of
  *                  the generated Eigen::block's at runtime. If non-zero, the
  *                  size will be determined at compile-time.
  * \tparam Dim      global spatial dimension
  */
-template<typename ShpPol, unsigned NIntPts, unsigned NodalDOF, unsigned Dim>
+template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
 struct LocalAssemblerTraitsFixed
 {
 private:
@@ -46,10 +46,10 @@ public:
     //      and use the same shape fucntions.
     //! Local matrix for the given number of d.o.f.\ per node and number of
     //! integration points
-    using LocalMatrix = Matrix<NIntPts*NodalDOF, NIntPts*NodalDOF>;
+    using LocalMatrix = Matrix<NNodes*NodalDOF, NNodes*NodalDOF>;
     //! Local vector for the given number of d.o.f.\ per node and number of
     //! integration points
-    using LocalVector = Vector<NIntPts*NodalDOF>;
+    using LocalVector = Vector<NNodes*NodalDOF>;
 
     //! Local vector for one component of one process variable.
     //! The size is the number of nodes in the element.
@@ -111,20 +111,20 @@ public:
         return mat.block(top, left, nrows, ncols);
     }
 
-    //! Get a block \c NIntPts x \c NIntPts whose upper left corner is at \c top and \c left.
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
     template<typename Mat>
     static
     typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<const Mat>().template block<NIntPts, NIntPts>(0u, 0u))
+        decltype(std::declval<const Mat>().template block<NNodes, NNodes>(0u, 0u))
     >::type
     blockShpShp(Mat const& mat,
                 unsigned top, unsigned left, unsigned nrows, unsigned ncols)
     {
-        assert(nrows==NIntPts && ncols==NIntPts);
+        assert(nrows==NNodes && ncols==NNodes);
         (void) nrows; (void) ncols;
-        return mat.template block<NIntPts, NIntPts>(top, left);
+        return mat.template block<NNodes, NNodes>(top, left);
     }
-    //! Get a block \c NIntPts x \c NIntPts whose upper left corner is at \c top and \c left.
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
     template<typename Mat>
     static
     typename std::enable_if<NodalDOF == 0,
@@ -136,20 +136,20 @@ public:
         assert(nrows == ncols);
         return mat.block(top, left, nrows, ncols);
     }
-    //! Get a block \c NIntPts x \c NIntPts whose upper left corner is at \c top and \c left.
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
     template<typename Mat>
     static
     typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<Mat>().template block<NIntPts, NIntPts>(0u, 0u))
+        decltype(std::declval<Mat>().template block<NNodes, NNodes>(0u, 0u))
     >::type
     blockShpShp(Mat& mat,
                 unsigned top, unsigned left, unsigned nrows, unsigned ncols)
     {
-        assert(nrows==NIntPts && ncols==NIntPts);
+        assert(nrows==NNodes && ncols==NNodes);
         (void) nrows; (void) ncols;
-        return mat.template block<NIntPts, NIntPts>(top, left);
+        return mat.template block<NNodes, NNodes>(top, left);
     }
-    //! Get a block \c NIntPts x \c NIntPts whose upper left corner is at \c top and \c left.
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
     template<typename Mat>
     static
     typename std::enable_if<NodalDOF == 0,
@@ -162,19 +162,19 @@ public:
         return mat.block(top, left, nrows, ncols);
     }
 
-    //! Get a block \c NIntPts x 1 starting at the \c top'th row.
+    //! Get a block \c NNodes x 1 starting at the \c top'th row.
     template<typename Vec>
     static
     typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<const Vec>().template block<NIntPts, 1>(0u, 0u))
+        decltype(std::declval<const Vec>().template block<NNodes, 1>(0u, 0u))
     >::type
     blockShp(Vec const& vec, unsigned top, unsigned nrows)
     {
-        assert(nrows==NIntPts);
+        assert(nrows==NNodes);
         (void) nrows;
-        return vec.template block<NIntPts, 1>(top, 0);
+        return vec.template block<NNodes, 1>(top, 0);
     }
-    //! Get a block \c NIntPts x 1 starting at the \c top'th row.
+    //! Get a block \c NNodes x 1 starting at the \c top'th row.
     template<typename Vec>
     static
     typename std::enable_if<NodalDOF == 0,
@@ -184,19 +184,19 @@ public:
     {
         return vec.block(top, 0, nrows, 1);
     }
-    //! Get a block \c NIntPts x 1 starting at the \c top'th row.
+    //! Get a block \c NNodes x 1 starting at the \c top'th row.
     template<typename Vec>
     static
     typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<Vec>().template block<NIntPts, 1>(0u, 0u))
+        decltype(std::declval<Vec>().template block<NNodes, 1>(0u, 0u))
     >::type
     blockShp(Vec& vec, unsigned top, unsigned nrows)
     {
-        assert(nrows==NIntPts);
+        assert(nrows==NNodes);
         (void) nrows;
-        return vec.template block<NIntPts, 1>(top, 0);
+        return vec.template block<NNodes, 1>(top, 0);
     }
-    //! Get a block \c NIntPts x 1 starting at the \c top'th row.
+    //! Get a block \c NNodes x 1 starting at the \c top'th row.
     template<typename Vec>
     static
     typename std::enable_if<NodalDOF == 0,
@@ -213,15 +213,15 @@ public:
 
 #ifndef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 
-template<typename ShpPol, unsigned NIntPts, unsigned NodalDOF, unsigned Dim>
-using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShpPol, NIntPts, NodalDOF, Dim>;
+template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
+using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShpPol, NNodes, NodalDOF, Dim>;
 
 static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0,
         "Inconsistent use of the macro OGS_EIGEN_DYNAMIC_SHAPE_MATRICES."
         " Maybe you forgot to include some header file.");
 #else
 
-template<typename ShpPol, unsigned NIntPts, unsigned NodalDOF, unsigned Dim>
+template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
 using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShapeMatrixPolicyType<void, 0>, 0, 0, 0>;
 
 static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1,
