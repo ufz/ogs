@@ -38,6 +38,11 @@ public:
      * GeoLib::Surface object within a given search radius.
      * @param mesh_nodes Nodes the search will be performed on.
      * @param sfc Along the GeoLib::Surface sfc the mesh nodes are searched.
+     * @param epsilon Euclidean distance tolerance value. Is the distance
+     * between a mesh node and the surface smaller than that value it is a mesh
+     * node near the surface.
+     * @param search_all_nodes switch between searching all mesh nodes and
+     * searching the base nodes.
      */
     MeshNodesAlongSurface(MeshLib::Mesh const& mesh, GeoLib::Surface const& sfc,
                           double epsilon, bool search_all_nodes = true);
