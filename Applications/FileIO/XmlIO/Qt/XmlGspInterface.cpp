@@ -18,29 +18,31 @@
 #include <vector>
 
 #include <logog/include/logog.hpp>
+#include <QFile>
+#include <QFileInfo>
+#include <QtXml/QDomDocument>
+
+#include "BaseLib/BuildInfo.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/FileFinder.h"
+#include "BaseLib/IO/Writer.h"
 
 #include "GeoLib/GEOObjects.h"
 
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
-#include "BaseLib/FileTools.h"
-#include "BaseLib/FileFinder.h"
-#include "BaseLib/IO/Writer.h"
 
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 
-#include <QFile>
-#include <QFileInfo>
-#include <QtXml/QDomDocument>
 
 namespace FileIO
 {
 
 XmlGspInterface::XmlGspInterface(DataHolderLib::Project& project)
-: XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysProject.xsd")),
+: XMLInterface(), XMLQtInterface(BaseLib::FileFinder(BaseLib::BuildInfo::app_xml_schema_path).getPath("OpenGeoSysProject.xsd")),
   _project(project)
 {
 }

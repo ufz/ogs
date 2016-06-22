@@ -20,13 +20,14 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileFinder.h"
 
 
 namespace FileIO
 {
 XmlNumInterface::XmlNumInterface() :
-    XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysNUM.xsd"))
+    XMLInterface(), XMLQtInterface(BaseLib::FileFinder(BaseLib::BuildInfo::app_xml_schema_path).getPath("OpenGeoSysNUM.xsd"))
 {
 }
 

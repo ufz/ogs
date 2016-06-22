@@ -20,6 +20,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileFinder.h"
 #include "GeoLib/Triangle.h"
 
@@ -28,7 +29,7 @@ namespace GeoLib
 namespace IO
 {
 XmlGmlInterface::XmlGmlInterface(GeoLib::GEOObjects& geo_objs) :
-    XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysGLI.xsd")), _geo_objs(geo_objs)
+    XMLInterface(), XMLQtInterface(BaseLib::FileFinder(BaseLib::BuildInfo::geo_xml_schema_path).getPath("OpenGeoSysGLI.xsd")), _geo_objs(geo_objs)
 {
 }
 

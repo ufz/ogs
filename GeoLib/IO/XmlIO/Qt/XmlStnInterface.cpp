@@ -21,6 +21,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/BuildInfo.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/FileFinder.h"
@@ -33,7 +34,7 @@ namespace GeoLib
 namespace IO
 {
 XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs) :
-    XMLInterface(), XMLQtInterface(BaseLib::FileFinder().getPath("OpenGeoSysSTN.xsd")), _geo_objs(geo_objs)
+    XMLInterface(), XMLQtInterface(BaseLib::FileFinder(BaseLib::BuildInfo::geo_xml_schema_path).getPath("OpenGeoSysSTN.xsd")), _geo_objs(geo_objs)
 {
 }
 
