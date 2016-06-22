@@ -256,7 +256,7 @@ public:
         auto const it = _builder.find(type_idx);
 
         if (it != _builder.end()) {
-            auto const num_local_dof = _dof_table.getNumElementDOF(id);
+            auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
             data_ptr = it->second(
                            mesh_item, num_local_dof, integration_order,
                            std::forward<ConstructorArgs>(args)...);

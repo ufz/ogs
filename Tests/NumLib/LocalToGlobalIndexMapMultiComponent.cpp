@@ -151,10 +151,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 {
     initComponents(num_components, selected_component, ComponentOrder);
 
-    ASSERT_EQ(dof_map->getNumComponents(), num_components);
+    ASSERT_EQ(dof_map->getNumberOfComponents(), num_components);
     ASSERT_EQ(dof_map->size(), mesh->getNumberOfElements());
 
-    ASSERT_EQ(dof_map_boundary->getNumComponents(), 1);
+    ASSERT_EQ(dof_map_boundary->getNumberOfComponents(), 1);
     ASSERT_EQ(dof_map_boundary->size(), boundary_elements.size());
 
     // check mesh elements
@@ -163,7 +163,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
-        for (unsigned c=0; c<dof_map->getNumComponents(); ++c)
+        for (unsigned c=0; c<dof_map->getNumberOfComponents(); ++c)
         {
             auto const& global_idcs = (*dof_map)(e, c).rows;
             ASSERT_EQ(element_nodes_size, global_idcs.size());
@@ -180,7 +180,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     // check boundary elements
     for (unsigned e=0; e<dof_map_boundary->size(); ++e)
     {
-        ASSERT_EQ(1, dof_map_boundary->getNumComponents());
+        ASSERT_EQ(1, dof_map_boundary->getNumberOfComponents());
 
         for (unsigned c=0; c<1; ++c)
         {
@@ -205,11 +205,11 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 void assert_equal(AL::LocalToGlobalIndexMap const& dof1, AL::LocalToGlobalIndexMap const& dof2)
 {
     ASSERT_EQ(dof1.size(), dof2.size());
-    ASSERT_EQ(dof1.getNumComponents(), dof2.getNumComponents());
+    ASSERT_EQ(dof1.getNumberOfComponents(), dof2.getNumberOfComponents());
 
     for (unsigned e=0; e<dof1.size(); ++e)
     {
-        for (unsigned c=0; c<dof1.getNumComponents(); ++c)
+        for (unsigned c=0; c<dof1.getNumberOfComponents(); ++c)
         {
             EXPECT_EQ(dof1(e, c).rows, dof2(e, c).rows);
             EXPECT_EQ(dof1(e, c).columns, dof2(e, c).columns);
