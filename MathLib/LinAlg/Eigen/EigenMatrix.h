@@ -156,6 +156,7 @@ public:
     /// printout this matrix for debugging
     void write(std::ostream &os) const
     {
+        (void)os;
 #if 0
         for (int k=0; k<_mat.outerSize(); ++k)
           for (Eigen::SparseMatrix<double>::InnerIterator it(_mat,k); it; ++it)
