@@ -21,8 +21,9 @@ namespace GeoLib
 {
 class GEOObjects;
 class Polygon;
+}
 
-namespace IO
+namespace FileIO
 {
 
 namespace GMSH
@@ -36,8 +37,6 @@ enum class MeshDensityAlgorithm {
     FixedMeshDensity, //!< set the parameter with a fixed value
     AdaptiveMeshDensity //!< computing the mesh density employing a QuadTree
 };
-
-}
 
 /**
  * \brief Reads and writes GMSH-files to and from OGS data structures.
@@ -115,7 +114,7 @@ private:
     bool _rotate = false;
     bool _keep_preprocessed_geometry = true;
 };
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace GMSH
+} // end namespace FileIO
 
 #endif /* GMSHINTERFACE_H_ */

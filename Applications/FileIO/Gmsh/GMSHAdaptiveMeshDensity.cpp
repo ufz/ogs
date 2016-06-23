@@ -26,9 +26,7 @@
 
 #include "MathLib/MathTools.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -159,5 +157,4 @@ void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(std::vector<GeoLib::Point*> &p
 #endif
 }
 
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO

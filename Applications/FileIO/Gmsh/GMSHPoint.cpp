@@ -13,9 +13,7 @@
 
 #include "GMSHPoint.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -41,5 +39,4 @@ std::ostream& operator<< (std::ostream &os, GMSHPoint const& p)
 }
 
 }  // end namespace GMSH
-}  // end namespace IO
-}  // end namespace GeoLib
+}  // end namespace FileIO

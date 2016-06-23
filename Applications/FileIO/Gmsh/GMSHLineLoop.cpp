@@ -13,9 +13,7 @@
 #include "GMSHLine.h"
 #include "GMSHLineLoop.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -56,5 +54,4 @@ void GMSHLineLoop::write(std::ostream &os, std::size_t line_offset, std::size_t 
 }
 
 }  // end namespace GMSH
-}  // end namespace IO
-}  // end namespace GeoLib
+}  // end namespace FileIO

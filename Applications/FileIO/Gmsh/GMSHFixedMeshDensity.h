@@ -13,9 +13,7 @@
 
 #include "GMSHMeshDensityStrategy.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -34,7 +32,6 @@ private:
 };
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO
 
 #endif /* GMSHFIXEDMESHDENSITY_H_ */

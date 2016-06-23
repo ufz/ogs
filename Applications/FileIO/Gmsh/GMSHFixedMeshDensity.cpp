@@ -10,9 +10,7 @@
 
 #include "GMSHFixedMeshDensity.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -39,5 +37,4 @@ double GMSHFixedMeshDensity::getMeshDensityAtStation(GeoLib::Point const*const) 
 }
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO
