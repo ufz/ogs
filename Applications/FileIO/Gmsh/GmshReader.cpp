@@ -29,9 +29,7 @@
 #include <map>
 #include <vector>
 
-namespace MeshLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -268,5 +266,4 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
 }
 
 } // end namespace GMSH
-} // end namespace IO
-} // end namespace MeshLib
+} // end namespace FileIO

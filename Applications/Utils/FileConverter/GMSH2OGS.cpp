@@ -74,7 +74,7 @@ int main (int argc, char* argv[])
     BaseLib::RunTime run_time;
     run_time.start();
     MeshLib::Mesh* mesh(
-        MeshLib::IO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
+        FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
     if (mesh == nullptr) {
         INFO("Could not read mesh from %s.", gmsh_mesh_arg.getValue().c_str());

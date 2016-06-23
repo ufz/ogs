@@ -562,9 +562,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     else if (t == ImportFileType::GMSH)
     {
         std::string msh_name (fileName.toStdString());
-        if (MeshLib::IO::GMSH::isGMSHMeshFile (msh_name))
+        if (FileIO::GMSH::isGMSHMeshFile (msh_name))
         {
-            std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::GMSH::readGMSHMesh(msh_name));
+            std::unique_ptr<MeshLib::Mesh> mesh(FileIO::GMSH::readGMSHMesh(msh_name));
             if (mesh)
                 _meshModel->addMesh(std::move(mesh));
             else
