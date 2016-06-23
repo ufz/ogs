@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 #include "../TestTools.h"
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 #if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"

@@ -16,7 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 

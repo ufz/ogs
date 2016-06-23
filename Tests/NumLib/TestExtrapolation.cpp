@@ -15,7 +15,7 @@
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/Assembler/VectorMatrixAssembler.h"
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 

@@ -12,7 +12,7 @@
 #include <logog/include/logog.hpp>
 #include <Eigen/Core>
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/Assembler/SerialExecutor.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Function/Interpolation.h"

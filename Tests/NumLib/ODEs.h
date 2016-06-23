@@ -10,7 +10,7 @@
 #ifndef TESTS_NUMLIB_ODES_H
 #define TESTS_NUMLIB_ODES_H
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/ODESolver/ODESystem.h"
 

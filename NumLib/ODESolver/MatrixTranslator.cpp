@@ -9,7 +9,7 @@
 
 #include "MatrixTranslator.h"
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib
 {

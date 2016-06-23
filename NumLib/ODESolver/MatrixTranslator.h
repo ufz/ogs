@@ -15,7 +15,7 @@
 #include "TimeDiscretization.h"
 #include "Types.h"
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib
 {
