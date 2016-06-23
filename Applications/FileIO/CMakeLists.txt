@@ -14,6 +14,11 @@ endif()
 GET_SOURCE_FILES(SOURCES_RAPID_XML XmlIO/Rapid)
 set(SOURCES ${SOURCES} ${SOURCES_RAPID_XML})
 
+if(QT4_FOUND)
+    GET_SOURCE_FILES(SOURCES_FEFLOW FEFLOW)
+    SET(SOURCES ${SOURCES} ${SOURCES_FEFLOW})
+endif()
+
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library

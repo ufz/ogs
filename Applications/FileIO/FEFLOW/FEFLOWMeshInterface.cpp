@@ -16,7 +16,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 
-#include "GeoLib/IO/FEFLOW/FEFLOWGeoInterface.h"
+#include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 
@@ -24,9 +24,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib
-{
-namespace IO
+namespace FileIO
 {
 MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
 {
@@ -173,7 +171,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         // SUPERMESH
         else if (line_string.compare("SUPERMESH") == 0)
         {
-            GeoLib::IO::FEFLOWGeoInterface::readSuperMesh(
+            FileIO::FEFLOWGeoInterface::readSuperMesh(
                 in, fem_class.dimension, points, lines);
         }
         //....................................................................
@@ -566,5 +564,4 @@ void FEFLOWMeshInterface::setMaterialIDs(
     }
 }
 
-}  // IO
-}  // MeshLib
+}  // FileIO

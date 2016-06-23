@@ -27,9 +27,7 @@ class Node;
 enum class MeshElemType;
 }
 
-namespace MeshLib
-{
-namespace IO
+namespace FileIO
 {
 /**
  * Read FEFLOW model files (*.fem) into OGS data structure. Currently this class
@@ -118,7 +116,6 @@ private:
         std::vector<MeshLib::Element*> const& vec_elements,
         std::vector<int>& material_ids);
 };
-}  // IO
-}  // MeshLib
+}  // FileIO
 
 #endif /* FEFLOWMESHINTERFACE_H_ */
