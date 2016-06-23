@@ -7,7 +7,7 @@
  *
  */
 
-#include "BLAS.h"
+#include "LinAlg.h"
 
 // TODO reorder LinAlg function signatures?
 
