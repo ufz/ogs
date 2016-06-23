@@ -28,7 +28,7 @@
 #include "BaseLib/MemWatch.h"
 #endif
 
-#include "MeshLib/IO/GmshReader.h"
+#include "Applications/FileIO/Gmsh/GmshReader.h"
 
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
