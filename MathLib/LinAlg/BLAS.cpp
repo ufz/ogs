@@ -9,7 +9,7 @@
 
 #include "BLAS.h"
 
-// TODO reorder BLAS function signatures?
+// TODO reorder LinAlg function signatures?
 
 // Dense Eigen matrices and vectors ////////////////////////////////////////
 #ifdef OGS_USE_EIGEN
@@ -18,7 +18,7 @@
 
 namespace MathLib
 {
-namespace BLAS
+namespace LinAlg
 {
 
 // Explicit specialization
@@ -65,7 +65,7 @@ double normMax(Eigen::VectorXd const& x)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 
-namespace MathLib { namespace BLAS
+namespace MathLib { namespace LinAlg
 {
 
 // Vector
@@ -220,7 +220,7 @@ void finalizeAssembly(PETScVector& x)
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 
-namespace MathLib { namespace BLAS
+namespace MathLib { namespace LinAlg
 {
 
 // Vector
@@ -347,7 +347,7 @@ void finalizeAssembly(EigenMatrix& x)
     x.getRawMatrix().makeCompressed();
 }
 
-} // namespace BLAS
+} // namespace LinAlg
 
 } // namespace MathLib
 

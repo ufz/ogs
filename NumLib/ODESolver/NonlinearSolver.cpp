@@ -32,7 +32,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg= MathLib::LinAlg;
     auto& sys = *_equation_system;
 
     auto& A =
@@ -45,7 +45,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
     bool error_norms_met = false;
 
-    BLAS::copy(x, x_new);  // set initial guess, TODO save the copy
+    LinAlg::copy(x, x_new);  // set initial guess, TODO save the copy
 
     unsigned iteration = 1;
     for (; iteration <= _maxiter; ++iteration)
@@ -86,7 +86,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     // Copy new solution to x.
                     // Thereby the failed solution can be used by the caller for
                     // debugging purposes.
-                    BLAS::copy(x_new, x);
+                    LinAlg::copy(x_new, x);
                     break;
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
@@ -104,17 +104,17 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             break;
         }
 
-        auto const norm_x = BLAS::norm2(x);
+        auto const norm_x = LinAlg::norm2(x);
         // x is used as delta_x in order to compute the error.
-        BLAS::aypx(x, -1.0, x_new);  // x = _x_new - x
-        auto const error_dx = BLAS::norm2(x);
+        LinAlg::aypx(x, -1.0, x_new);  // x = _x_new - x
+        auto const error_dx = LinAlg::norm2(x);
         INFO(
             "Picard: Iteration #%u |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
             " tolerance(dx)=%.4e",
             iteration, error_dx, norm_x, error_dx / norm_x, _tol);
 
         // Update x s.t. in the next iteration we will compute the right delta x
-        BLAS::copy(x_new, x);
+        LinAlg::copy(x_new, x);
 
         if (error_dx < _tol)
         {
@@ -156,7 +156,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
     auto& res = MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
@@ -171,7 +171,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     // TODO be more efficient
     // init _minus_delta_x to the right size and 0.0
-    BLAS::copy(x, minus_delta_x);
+    LinAlg::copy(x, minus_delta_x);
     minus_delta_x.setZero();
 
     unsigned iteration = 1;
@@ -186,7 +186,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getJacobian(J);
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
 
-        auto const error_res = BLAS::norm2(res);
+        auto const error_res = LinAlg::norm2(res);
 
         // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
 
@@ -204,7 +204,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             auto& x_new =
                 MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector(
                     x, _x_new_id);
-            BLAS::axpy(x_new, -_alpha, minus_delta_x);
+            LinAlg::axpy(x_new, -_alpha, minus_delta_x);
 
             if (postIterationCallback)
                 postIterationCallback(iteration, x_new);
@@ -231,7 +231,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
             // TODO could be done via swap. Note: that also requires swapping
             // the ids. Same for the Picard scheme.
-            BLAS::copy(x_new, x);  // copy new solution to x
+            LinAlg::copy(x_new, x);  // copy new solution to x
             MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
                 x_new);
         }
@@ -243,8 +243,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             break;
         }
 
-        auto const error_dx = BLAS::norm2(minus_delta_x);
-        auto const norm_x = BLAS::norm2(x);
+        auto const error_dx = LinAlg::norm2(minus_delta_x);
+        auto const norm_x = LinAlg::norm2(x);
         INFO(
             "Newton: Iteration #%u |dx|=%.4e, |r|=%.4e, |x|=%.4e, "
             "|dx|/|x|=%.4e,"

@@ -27,7 +27,7 @@
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "NumLib/NumericsConfig.h"
 
-using namespace MathLib::BLAS;
+using namespace MathLib::LinAlg;
 
 namespace
 {

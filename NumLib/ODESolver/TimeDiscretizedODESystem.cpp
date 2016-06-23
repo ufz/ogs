@@ -68,7 +68,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     assembleResidualNewton(const GlobalVector& x_new_timestep)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
     auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
@@ -79,16 +79,16 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     _ode.assemble(t, x_curr, *_M, *_K, *_b);
 
-    BLAS::finalizeAssembly(*_M);
-    BLAS::finalizeAssembly(*_K);
-    BLAS::finalizeAssembly(*_b);
+    LinAlg::finalizeAssembly(*_M);
+    LinAlg::finalizeAssembly(*_K);
+    LinAlg::finalizeAssembly(*_b);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     assembleJacobian(const GlobalVector& x_new_timestep)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
     auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
@@ -102,7 +102,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     _ode.assembleJacobian(t, x_curr, xdot, dxdot_dx, *_M, dx_dx, *_K, *_Jac);
 
-    MathLib::BLAS::finalizeAssembly(*_Jac);
+    MathLib::LinAlg::finalizeAssembly(*_Jac);
 
     MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(xdot);
 }
@@ -190,7 +190,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Picard>::
     assembleMatricesPicard(const GlobalVector& x_new_timestep)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg = MathLib::LinAlg;
 
     auto const t = _time_disc.getCurrentTime();
     auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
@@ -201,9 +201,9 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     _ode.assemble(t, x_curr, *_M, *_K, *_b);
 
-    BLAS::finalizeAssembly(*_M);
-    BLAS::finalizeAssembly(*_K);
-    BLAS::finalizeAssembly(*_b);
+    LinAlg::finalizeAssembly(*_M);
+    LinAlg::finalizeAssembly(*_K);
+    LinAlg::finalizeAssembly(*_b);
 }
 
 void TimeDiscretizedODESystem<

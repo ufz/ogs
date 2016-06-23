@@ -140,7 +140,7 @@ getMatrix(Matrix const& A)
     std::size_t id = 0u;
     auto const& res = getMatrix_<false>(id, A);
     if (!res.second) // no new object has been created
-        BLAS::copy(A, *res.first);
+        LinAlg::copy(A, *res.first);
     return *res.first;
 }
 
@@ -151,7 +151,7 @@ getMatrix(Matrix const& A, std::size_t& id)
 {
     auto const& res = getMatrix_<true>(id, A);
     if (!res.second) // no new object has been created
-        BLAS::copy(A, *res.first);
+        LinAlg::copy(A, *res.first);
     return *res.first;
 }
 
@@ -222,7 +222,7 @@ getVector(Vector const& x)
     std::size_t id = 0u;
     auto const& res = getVector_<false>(id, x);
     if (!res.second) // no new object has been created
-        BLAS::copy(x, *res.first);
+        LinAlg::copy(x, *res.first);
     return *res.first;
 }
 
@@ -233,7 +233,7 @@ getVector(Vector const& x, std::size_t& id)
 {
     auto const& res = getVector_<true>(id, x);
     if (!res.second) // no new object has been created
-        BLAS::copy(x, *res.first);
+        LinAlg::copy(x, *res.first);
     return *res.first;
 }
 

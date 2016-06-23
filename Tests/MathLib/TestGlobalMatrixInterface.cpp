@@ -28,7 +28,7 @@
 
 #include "NumLib/NumericsConfig.h"
 
-using namespace MathLib::BLAS;
+using namespace MathLib::LinAlg;
 
 namespace
 {

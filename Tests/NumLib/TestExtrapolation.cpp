@@ -264,7 +264,7 @@ void extrapolate(TestProcess const& pcs,
                  expected_extrapolated_global_nodal_values,
                  std::size_t const nnodes, std::size_t const nelements)
 {
-    namespace BLAS = MathLib::BLAS;
+    namespace LinAlg = MathLib::LinAlg;
 
     auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res =  5.0 * std::numeric_limits<double>::epsilon();
@@ -276,15 +276,15 @@ void extrapolate(TestProcess const& pcs,
     ASSERT_EQ(nnodes,    x_extra.size());
     ASSERT_EQ(nelements, residual.size());
 
-    auto const res_norm = BLAS::normMax(residual);
+    auto const res_norm = LinAlg::normMax(residual);
     DBUG("maximum norm of residual: %g", res_norm);
     EXPECT_GT(tolerance_res, res_norm);
 
     auto delta_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
                 expected_extrapolated_global_nodal_values);
-    BLAS::axpy(*delta_x, -1.0, x_extra); // delta_x = x_expected - x_extra
+    LinAlg::axpy(*delta_x, -1.0, x_extra); // delta_x = x_expected - x_extra
 
-    auto const dx_norm = BLAS::normMax(*delta_x);
+    auto const dx_norm = LinAlg::normMax(*delta_x);
     DBUG("maximum norm of delta x:  %g", dx_norm);
     EXPECT_GT(tolerance_dx, dx_norm);
 }
@@ -308,7 +308,7 @@ TEST(NumLib, DISABLED_Extrapolation)
     for (unsigned integration_order : {2, 3, 4})
     {
 
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         const double mesh_length = 1.0;
         const double mesh_elements_in_each_direction = 5.0;
@@ -339,7 +339,7 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         // expect 2*x as extraplation result for derived quantity
         auto two_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x);
-        BLAS::axpy(*two_x, 1.0, *x); // two_x = x + x
+        LinAlg::axpy(*two_x, 1.0, *x); // two_x = x + x
 
         // test extrapolation of a quantity that is derived from some integration
         // point values

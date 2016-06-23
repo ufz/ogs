@@ -148,13 +148,13 @@ public:
     //! \f$.
     void getXdot(GlobalVector const& x_at_new_timestep, GlobalVector& xdot) const
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         auto const dxdot_dx = getNewXWeight();
 
         // xdot = dxdot_dx * x_at_new_timestep - x_old
         getWeightedOldX(xdot);
-        BLAS::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
+        LinAlg::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
     }
 
     //! Returns \f$ \alpha = \partial \hat x / \partial x_N \f$.
@@ -220,13 +220,13 @@ public:
     void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
-        MathLib::BLAS::copy(x0, _x_old);
+        MathLib::LinAlg::copy(x0, _x_old);
     }
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
-        MathLib::BLAS::copy(x, _x_old);
+        MathLib::LinAlg::copy(x, _x_old);
     }
 
     void nextTimestep(const double t, const double delta_t) override
@@ -239,11 +239,11 @@ public:
     double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y) const override
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         // y = x_old / delta_t
-        BLAS::copy(_x_old, y);
-        BLAS::scale(y, 1.0 / _delta_t);
+        LinAlg::copy(_x_old, y);
+        LinAlg::scale(y, 1.0 / _delta_t);
     }
 
 private:
@@ -270,13 +270,13 @@ public:
     {
         _t = t0;
         _t_old = t0;
-        MathLib::BLAS::copy(x0, _x_old);
+        MathLib::LinAlg::copy(x0, _x_old);
     }
 
     void pushState(const double /*t*/, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
-        MathLib::BLAS::copy(x, _x_old);
+        MathLib::LinAlg::copy(x, _x_old);
     }
 
     void nextTimestep(const double t, const double delta_t) override
@@ -300,11 +300,11 @@ public:
     double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y) const override
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         // y = x_old / delta_t
-        BLAS::copy(_x_old, y);
-        BLAS::scale(y, 1.0 / _delta_t);
+        LinAlg::copy(_x_old, y);
+        LinAlg::scale(y, 1.0 / _delta_t);
     }
 
     bool isLinearTimeDisc() const override { return true; }
@@ -344,13 +344,13 @@ public:
     void setInitialState(const double t0, GlobalVector const& x0) override
     {
         _t = t0;
-        MathLib::BLAS::copy(x0, _x_old);
+        MathLib::LinAlg::copy(x0, _x_old);
     }
 
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const& strg) override
     {
-        MathLib::BLAS::copy(x, _x_old);
+        MathLib::LinAlg::copy(x, _x_old);
         strg.pushMatrices();
     }
 
@@ -364,11 +364,11 @@ public:
     double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y) const override
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         // y = x_old / delta_t
-        BLAS::copy(_x_old, y);
-        BLAS::scale(y, 1.0 / _delta_t);
+        LinAlg::copy(_x_old, y);
+        LinAlg::scale(y, 1.0 / _delta_t);
     }
 
     bool needsPreload() const override { return true; }
@@ -439,7 +439,7 @@ public:
     void pushState(const double, GlobalVector const& x,
                    InternalMatrixStorage const&) override
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
         // TODO use boost cirular buffer?
 
         // until _xs_old is filled, lower-order BDF formulas are used.
@@ -450,7 +450,7 @@ public:
         }
         else
         {
-            BLAS::copy(x, *_xs_old[_offset]);
+            LinAlg::copy(x, *_xs_old[_offset]);
             _offset = (_offset + 1) %
                       _num_steps;  // treat _xs_old as a circular buffer
         }
@@ -471,22 +471,22 @@ public:
 
     void getWeightedOldX(GlobalVector& y) const override
     {
-        namespace BLAS = MathLib::BLAS;
+        namespace LinAlg = MathLib::LinAlg;
 
         auto const k = eff_num_steps();
         auto const* const BDFk = detail::BDF_Coeffs[k - 1];
 
         // compute linear combination \sum_{i=0}^{k-1} BDFk_{k-i} \cdot x_{n+i}
-        BLAS::copy(*_xs_old[_offset], y);  // _xs_old[offset] = x_n
-        BLAS::scale(y, BDFk[k]);
+        LinAlg::copy(*_xs_old[_offset], y);  // _xs_old[offset] = x_n
+        LinAlg::scale(y, BDFk[k]);
 
         for (unsigned i = 1; i < k; ++i)
         {
             auto const off = (_offset + i) % k;
-            BLAS::axpy(y, BDFk[k - i], *_xs_old[off]);
+            LinAlg::axpy(y, BDFk[k - i], *_xs_old[off]);
         }
 
-        BLAS::scale(y, 1.0 / _delta_t);
+        LinAlg::scale(y, 1.0 / _delta_t);
     }
 
 private:
