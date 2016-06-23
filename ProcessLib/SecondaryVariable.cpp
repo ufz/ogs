@@ -13,72 +13,75 @@ namespace ProcessLib
 {
 
 SecondaryVariableCollection::SecondaryVariableCollection(
-        boost::optional<BaseLib::ConfigTree> const& config,
-        std::initializer_list<std::string> tag_names)
+        std::initializer_list<std::string> internal_names)
 {
-    if (!config) return;
-
     // read which variables are defined in the config
-    for (auto const& tag_name : tag_names) {
-        if (!_all_secondary_variables.insert(tag_name).second) {
+    for (auto const& internal_name : internal_names) {
+        if (!_all_secondary_variables.insert(internal_name).second) {
             OGS_FATAL("Tag name <%s> has been specified twice as a secondary variable.");
         }
-
-        //! \ogs_file_special
-        if (auto var_name = config->getConfigParameterOptional<std::string>(tag_name))
-        {
-            // TODO check primary vars, too
-            BaseLib::insertIfKeyValueUniqueElseError(
-                        _map_tagname_to_varname, tag_name, *var_name,
-                        "Secondary variable names must be unique.");
-        }
     }
 }
 
-bool SecondaryVariableCollection::variableExists(std::string const& variable_name) const
+void SecondaryVariableCollection::addNameMapping(std::string const& internal_name,
+                                                 std::string const& external_name)
 {
-    auto pred = [&variable_name](std::pair<std::string, std::string> const& p) {
-        return p.second == variable_name;
-    };
+    _all_secondary_variables.insert(internal_name);
 
-    // check if out_var is a  secondary variable
-    auto const& var = std::find_if(
-        _map_tagname_to_varname.cbegin(), _map_tagname_to_varname.cend(), pred);
-
-    return var != _map_tagname_to_varname.cend();
+    // TODO check for missing secondary vars.
+    // TODO check primary vars, too
+    BaseLib::insertIfKeyUniqueElseError(
+        _map_external_to_internal, external_name, internal_name,
+        "Secondary variable names must be unique.");
 }
 
-void SecondaryVariableCollection::addSecondaryVariable(std::string const& tag_name,
-                          const unsigned num_components,
-                          SecondaryVariableFunctions&& fcts)
+bool SecondaryVariableCollection::variableExists(
+    std::string const& external_name) const
 {
-    auto it = _map_tagname_to_varname.find(tag_name);
+    return _map_external_to_internal.find(external_name) !=
+           _map_external_to_internal.cend();
+}
 
-    // get user-supplied var_name for the given tag_name
-    if (it != _map_tagname_to_varname.end())
-    {
-        auto const& var_name = it->first;
-
-        if (!_configured_secondary_variables
-                 .emplace(std::make_pair(
-                     var_name,
-                     SecondaryVariable{
-                         var_name, num_components, std::move(fcts)}))
-                 .second)
-        {
-            OGS_FATAL("The secondary variable with name `%s' has already been "
-                      "set up.",
-                      var_name.c_str());
-        }
-    }
-    else if (_all_secondary_variables.find(tag_name) ==
-             _all_secondary_variables.end())
-    {
-        OGS_FATAL("The tag <%s> has not been registered to mark a secondary "
-                  "variable.",
-                  tag_name.c_str());
+void SecondaryVariableCollection::addSecondaryVariable(
+    std::string const& internal_name,
+    const unsigned num_components,
+    SecondaryVariableFunctions&& fcts)
+{
+    if (!_configured_secondary_variables
+             .emplace(std::make_pair(
+                 internal_name,
+                 SecondaryVariable{internal_name /* TODO change */,
+                                   num_components, std::move(fcts)}))
+             .second) {
+        OGS_FATAL(
+            "The secondary variable with internal name `%s' has already been "
+            "set up.",
+            internal_name.c_str());
     }
 }
 
+SecondaryVariable const& SecondaryVariableCollection::get(
+    std::string const& external_name)
+{
+    auto const it = _map_external_to_internal.find(external_name);
+
+    if (it == _map_external_to_internal.cend()) {
+        OGS_FATAL(
+            "A secondary variable with external name `%s' has not been set up.",
+            external_name.c_str());
+    }
+
+    auto const& internal_name = it->second;
+    auto const it2 = _configured_secondary_variables.find(internal_name);
+
+    if (it2 == _configured_secondary_variables.end()) {
+
+        OGS_FATAL(
+            "A secondary variable with internal name `%s' has not been set up.",
+            internal_name.c_str());
+    }
+
+    return it2->second;
+}
 
 } // namespace ProcessLib
