@@ -21,9 +21,7 @@
 
 #include "GeoLib/Raster.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 /**
  * Interface for reading and writing a number of ASCII raster formats.
@@ -58,7 +56,6 @@ private:
 /// otherwise the returned vector contains pointers to the read rasters.
 boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths);
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO
 
 #endif /* ASCIIRASTERINTERFACE_H_ */

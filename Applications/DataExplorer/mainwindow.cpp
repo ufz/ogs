@@ -65,9 +65,10 @@
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/GmshReader.h"
-#include "TetGenInterface.h"
-#include "PetrelInterface.h"
-#include "XmlIO/Qt/XmlGspInterface.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "Applications/FileIO/PetrelInterface.h"
+#include "Applications/FileIO/TetGenInterface.h"
+#include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
 #include "GeoLib/IO/GMSHInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
@@ -829,7 +830,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
     {
         if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
         {
-            geo_mapper.mapOnDEM(file_name.toStdString());
+            std::unique_ptr<GeoLib::Raster> raster (
+                FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name.toStdString()));
+            if (raster)
+                geo_mapper.mapOnDEM(raster.get());
+            else
+                OGSError::box("Error reading raster file.");
             _geo_model->updateGeometry(geo_name);
         }
         else

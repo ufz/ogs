@@ -31,8 +31,7 @@ namespace GeoLib {
     class Point;
 }
 
-namespace GeoLib {
-namespace IO {
+namespace FileIO {
 
 /**
  * Interface for reading CSV file formats.
@@ -181,7 +180,6 @@ private:
     static std::size_t findColumn(std::string const& line, char delim, std::string const& column_name);
 };
 
-} // IO
-} // GeoLib
+} // FileIO
 
 #endif /* CSVINTERFACE_H_ */

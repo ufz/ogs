@@ -35,7 +35,7 @@
 #include <memory>
 #include <logog/include/logog.hpp>
 
-#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 
 
@@ -47,9 +47,9 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string &fileName,
 
     std::unique_ptr<GeoLib::Raster> raster(nullptr);
     if (fileInfo.suffix().toLower() == "asc")
-        raster.reset(GeoLib::IO::AsciiRasterInterface::getRasterFromASCFile(fileName));
+        raster.reset(FileIO::AsciiRasterInterface::getRasterFromASCFile(fileName));
     else if (fileInfo.suffix().toLower() == "grd")
-        raster.reset(GeoLib::IO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
+        raster.reset(FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
     if (raster)
         return VtkRaster::loadImageFromArray(raster->begin(), raster->getHeader());
     else if ((fileInfo.suffix().toLower() == "tif") || (fileInfo.suffix().toLower() == "tiff"))

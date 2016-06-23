@@ -2,7 +2,10 @@
 if(OGS_BUILD_GUI)
     add_executable(createMeshElemPropertiesFromASCRaster createMeshElemPropertiesFromASCRaster.cpp)
     set_target_properties(createMeshElemPropertiesFromASCRaster PROPERTIES FOLDER Utilities)
-    target_link_libraries(createMeshElemPropertiesFromASCRaster MeshLib)
+    target_link_libraries(createMeshElemPropertiesFromASCRaster
+        ApplicationsFileIO
+        MeshLib
+    )
     ADD_VTK_DEPENDENCY(createMeshElemPropertiesFromASCRaster)
 endif() # OGS_BUILD_GUI (VtkVis-target is existing)
 
