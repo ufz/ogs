@@ -101,6 +101,8 @@ public:
 
     std::string const& getItemNameByID(std::size_t id) const;
 
+    void setNameForElement(std::size_t id, std::string const& name) override;
+
 private:
     /**
      * After the point set is modified (for example by makePntsUnique()) the mapping has to be corrected.

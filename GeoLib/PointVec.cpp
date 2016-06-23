@@ -243,4 +243,10 @@ std::string const& PointVec::getItemNameByID(std::size_t id) const
     return _id_to_name_map[id];
 }
 
+void PointVec::setNameForElement(std::size_t id, std::string const& name)
+{
+    TemplateVec::setNameForElement(id, name);
+    _id_to_name_map[id] = name;
+}
+
 }  // end namespace
