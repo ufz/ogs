@@ -16,12 +16,12 @@
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/FileTools.h"
 
-#include "GeoLib/IO/GMSHInterface.h"
-#include "GeoLib/IO/Gmsh/GMSHAdaptiveMeshDensity.h"
-#include "GeoLib/IO/Gmsh/GMSHFixedMeshDensity.h"
-#include "GeoLib/IO/Gmsh/GMSHPoint.h"
-#include "GeoLib/IO/Gmsh/GMSHPolygonTree.h"
-#include "GeoLib/IO/Gmsh/GMSHMeshDensityStrategy.h"
+#include "Applications/FileIO/Gmsh/GMSHInterface.h"
+#include "Applications/FileIO/Gmsh/GMSHAdaptiveMeshDensity.h"
+#include "Applications/FileIO/Gmsh/GMSHFixedMeshDensity.h"
+#include "Applications/FileIO/Gmsh/GMSHPoint.h"
+#include "Applications/FileIO/Gmsh/GMSHPolygonTree.h"
+#include "Applications/FileIO/Gmsh/GMSHMeshDensityStrategy.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"

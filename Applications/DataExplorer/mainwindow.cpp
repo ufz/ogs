@@ -69,8 +69,9 @@
 #include "Applications/FileIO/Gmsh/GmshReader.h"
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlGspInterface.h"
-#include "GeoLib/IO/GMSHInterface.h"
+#include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
+#include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 
