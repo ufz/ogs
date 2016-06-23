@@ -20,9 +20,6 @@ namespace NumLib
 
 /*! A System of nonlinear equations.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  * \tparam NLTag  a tag indicating the method used for solving the equation.
  */
 template <NonlinearSolverTag NLTag>
@@ -32,10 +29,6 @@ class NonlinearSystem;
  *
  * The Newton-Raphson method will iterate the linearized equation
  * \f$ \mathtt{Jac} \cdot (-\Delta x_i) = \mathtt{res} \f$.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  */
 template <>
 class NonlinearSystem<NonlinearSolverTag::Newton> : public EquationSystem
@@ -77,10 +70,6 @@ public:
  *
  * The Picard method will iterate the linearized equation
  * \f$ \mathtt{A} \cdot x_i = \mathtt{rhs} \f$.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  */
 template <>
 class NonlinearSystem<NonlinearSolverTag::Picard> : public EquationSystem

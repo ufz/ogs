@@ -27,8 +27,6 @@ namespace NumLib
  * This is the interface of an ODE towards the TimeLoop.
  * This interface is abstract, it represents any type of first-order ODE.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
 template <NonlinearSolverTag NLTag>
@@ -45,8 +43,6 @@ public:
  * This class represents a specific type of first-order ODE, as indicated by
  * \c ODETag.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
  * \tparam ODETag a tag indicating the type of ODE.
  * \tparam NLTag  a tag indicating the method used for resolving nonlinearities.
  */
@@ -55,9 +51,6 @@ class TimeDiscretizedODESystem;
 
 /*! Time discretized first order implicit quasi-linear ODE;
  *  to be solved using the Newton-Raphson method for resolving nonlinearities.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
@@ -152,9 +145,6 @@ private:
 /*! Time discretized first order implicit quasi-linear ODE;
  *  to be solved using the Picard fixpoint iteration method for resolving
  * nonlinearities.
- *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */

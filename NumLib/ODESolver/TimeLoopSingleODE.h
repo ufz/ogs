@@ -22,8 +22,6 @@ namespace NumLib
 
 /*! Integrate a single first-order ODE system over time.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the ODE.
- * \tparam Vector the type of the solution vector of the ODE.
  */
 template <NonlinearSolverTag NLTag>
 class TimeLoopSingleODE final
