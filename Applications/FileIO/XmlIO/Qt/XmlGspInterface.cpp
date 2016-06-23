@@ -42,7 +42,7 @@ namespace FileIO
 {
 
 XmlGspInterface::XmlGspInterface(DataHolderLib::Project& project)
-: XMLInterface(), XMLQtInterface(BaseLib::FileFinder(BaseLib::BuildInfo::app_xml_schema_path).getPath("OpenGeoSysProject.xsd")),
+: XMLInterface(), XMLQtInterface(BaseLib::FileFinder({BaseLib::BuildInfo::app_xml_schema_path}).getPath("OpenGeoSysProject.xsd")),
   _project(project)
 {
 }
