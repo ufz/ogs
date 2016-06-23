@@ -15,6 +15,7 @@
 #ifndef FILEFINDER_H
 #define FILEFINDER_H
 
+#include <initializer_list>
 #include <string>
 #include <vector>
 
@@ -29,15 +30,15 @@ namespace BaseLib
 class FileFinder
 {
 public:
-    /// Constructor having current directory as the search-space
+    /// Constructor having current directory (.) as the search-space
     FileFinder();
 
     /**
-     * Construct with the given directory paths in addition to current directory
+     * Construct with the given directory paths in addition to current directory (.)
      *
-     * @param dirs   a vector of directory paths to the search-space
+     * @param dirs   an initializer list of additional directory paths to the search-space
      */
-    explicit FileFinder(std::string const& dir);
+    FileFinder(std::initializer_list<std::string> dirs);
 
     /**
      * \brief Adds another directory to the search-space.

@@ -27,10 +27,11 @@ FileFinder::FileFinder()
     addDirectory(".");
 }
 
-FileFinder::FileFinder(std::string const& dir)
+FileFinder::FileFinder(std::initializer_list<std::string> dirs)
 {
     addDirectory(".");
-    addDirectory(dir);
+    for (auto const& dir : dirs)
+        addDirectory(dir);
 }
 
 void FileFinder::addDirectory(std::string const& dir)
