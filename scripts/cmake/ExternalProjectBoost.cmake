@@ -13,7 +13,7 @@ if(Boost_FOUND)
 endif()
 
 if(NOT DEFINED BOOST_ROOT AND DEFINED ENV{BOOST_ROOT})
-    set(BOOST_ROOT $ENV{BOOST_ROOT} TRUE CACHE PATH "")
+    set(BOOST_ROOT $ENV{BOOST_ROOT} CACHE PATH "")
 endif()
 
 # First check for system boost
