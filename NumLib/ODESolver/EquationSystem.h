@@ -27,7 +27,6 @@ enum class IterationResult : char
 
 /*! Collection of basic methods every equation system must provide.
  *
- * \tparam Vector the type of the solution vector of the equation.
  */
 class EquationSystem : public MathLib::MatrixSpecificationsProvider
 {

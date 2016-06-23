@@ -30,9 +30,6 @@ namespace NumLib
 {
 /*! Common interface for nonlinear solvers.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  */
 class NonlinearSolverBase
 {
@@ -67,9 +64,6 @@ public:
 
 /*! Find a solution to a nonlinear equation.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  * \tparam NLTag  a tag indicating the method used for solving the equation.
  */
 template <NonlinearSolverTag NLTag>
@@ -77,9 +71,6 @@ class NonlinearSolver;
 
 /*! Find a solution to a nonlinear equation using the Newton-Raphson method.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- *                equation.
- * \tparam Vector the type of the solution vector of the equation.
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Newton> final
@@ -132,9 +123,6 @@ private:
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
  * method.
  *
- * \tparam Matrix the type of matrices occuring in the linearization of the
- * equation.
- * \tparam Vector the type of the solution vector of the equation.
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Picard> final
