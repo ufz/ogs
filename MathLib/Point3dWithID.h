@@ -63,8 +63,6 @@ public:
 
     std::size_t getID() const { return _id; }
 
-    void setID(const std::size_t id) { _id = id; }
-
 protected:
     std::size_t _id;
 };

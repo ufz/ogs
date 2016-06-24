@@ -66,7 +66,7 @@ public:
      * modifiable by the user) instance of class Node or a NULL pointer
      * @sa Element::getNodeIndex()
      */
-    Node* getNode(unsigned i) const;
+    const Node* getNode(unsigned i) const;
 
     /**
      * (Re)Sets the node of the element.

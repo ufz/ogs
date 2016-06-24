@@ -68,7 +68,7 @@ public:
     }
 
     /// Sets the ID of a node to the given value.
-    void setID(std::size_t id) { this->_id = id; }
+    void setID(std::size_t id) { _id = id; }
 
 protected:
     /// Update coordinates of a node.
