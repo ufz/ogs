@@ -26,8 +26,9 @@ class GEOObjects;
 class Polygon;
 class PolylineWithSegmentMarker;
 class PolygonWithSegmentMarker;
+}
 
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -100,7 +101,6 @@ private:
 };
 
 }  // end namespace GMSH
-}  // end namespace IO
-}  // end namespace GeoLib
+}  // end namespace FileIO
 
 #endif /* GMSHPOLYGONTREE_H_ */

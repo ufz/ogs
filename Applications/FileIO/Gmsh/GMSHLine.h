@@ -13,9 +13,7 @@
 
 #include <iosfwd>
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -32,7 +30,6 @@ private:
 };
 
 } // end namespace GMSH
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO
 
 #endif /* GMSHLINE_H_ */

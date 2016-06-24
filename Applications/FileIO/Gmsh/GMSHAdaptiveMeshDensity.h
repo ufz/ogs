@@ -21,8 +21,9 @@ template <typename T> class QuadTree;
 #ifndef NDEBUG
 class Polyline;
 #endif
+}
 
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -53,7 +54,6 @@ private:
 };
 
 }
-} // end namespace IO
-} // end namespace GeoLib
+} // end namespace FileIO
 
 #endif /* GMSHADAPTIVEMESHDENSITY_H_ */

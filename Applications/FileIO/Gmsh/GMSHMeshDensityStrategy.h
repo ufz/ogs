@@ -16,7 +16,9 @@
 namespace GeoLib
 {
 class Point;
-namespace IO
+}
+
+namespace FileIO
 {
 namespace GMSH
 {
@@ -34,7 +36,6 @@ public:
 };
 
 }  // end namespace GMSH
-}  // end namespace IO
-}  // end namespace GeoLib
+}  // end namespace FileIO
 
 #endif /* GMSHMESHDENSITYSTRATEGY_H_ */

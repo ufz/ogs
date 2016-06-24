@@ -20,9 +20,7 @@
 #include "GeoLib/PolylineWithSegmentMarker.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
 
-namespace GeoLib
-{
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -423,5 +421,4 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(std::vector<GeoLib::Point con
 }
 
 }  // end namespace GMSH
-}  // end namespace IO
-}  // end namespace GeoLib
+}  // end namespace FileIO

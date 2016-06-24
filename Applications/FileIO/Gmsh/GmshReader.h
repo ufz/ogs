@@ -12,8 +12,9 @@
 namespace MeshLib
 {
 class Mesh;
+}
 
-namespace IO
+namespace FileIO
 {
 namespace GMSH
 {
@@ -34,5 +35,4 @@ bool isGMSHMeshFile(const std::string& fname);
 MeshLib::Mesh* readGMSHMesh(std::string const& fname);
 
 } // end namespace GMSH
-} // end namespace IO
-} // end namespace MeshLib
+} // end namespace FileIO
