@@ -195,7 +195,7 @@ public:
     }
 
     /// Sets the given name for the element of the given ID.
-    void setNameForElement(std::size_t id, std::string const& name)
+    virtual void setNameForElement(std::size_t id, std::string const& name)
     {
         // Erase id if found in map.
         auto it = findFirstElementByID(id);
