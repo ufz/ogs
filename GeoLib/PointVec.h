@@ -87,7 +87,7 @@ public:
      * @param pnt a pointer to the point, PointVec takes ownership of the point
      * @param name the name of the point
      */
-    virtual void push_back (Point* pnt, std::string const*const name);
+    void push_back (Point* pnt, std::string const*const name) override;
 
     /**
      * get the type of Point, this can be either POINT or STATION
