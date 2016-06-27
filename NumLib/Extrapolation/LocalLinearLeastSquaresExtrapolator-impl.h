@@ -12,7 +12,7 @@
 #include <logog/include/logog.hpp>
 #include <Eigen/Core>
 
-#include "MathLib/LinAlg/BLAS.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/Assembler/SerialExecutor.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Function/Interpolation.h"
@@ -40,7 +40,7 @@ extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
     NumLib::SerialExecutor::executeMemberDereferenced(
         *this, &Self::extrapolateElement, local_assemblers, property, *counts);
 
-    MathLib::BLAS::componentwiseDivide(_nodal_values, _nodal_values, *counts);
+    MathLib::LinAlg::componentwiseDivide(_nodal_values, _nodal_values, *counts);
 }
 
 template<typename PropertyTag, typename LocalAssembler>

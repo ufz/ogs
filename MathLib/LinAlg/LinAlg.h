@@ -7,16 +7,16 @@
  *
  */
 
-#ifndef MATHLIB_BLAS_H
-#define MATHLIB_BLAS_H
+#ifndef MATHLIB_LINALG_H
+#define MATHLIB_LINALG_H
 
-#include<cassert>
+#include <cassert>
 
 
 namespace MathLib
 {
 
-/*! \namespace MathLib::BLAS
+/*! \namespace MathLib::LinAlg
  * Some general linear algebra functionality.
  *
  * By using the provided functions linear algebra capabilities can be
@@ -26,7 +26,7 @@ namespace MathLib
  * For documentation, refer to that of the templated method. All specializations
  * or overload must behave in the same way.
  */
-namespace BLAS
+namespace LinAlg
 {
 
 // Matrix or Vector
@@ -128,7 +128,7 @@ namespace MathLib {
 class PETScMatrix;
 class PETScVector;
 
-namespace BLAS
+namespace LinAlg
 {
 
 // Vector
@@ -186,7 +186,7 @@ namespace MathLib {
 class EigenMatrix;
 class EigenVector;
 
-namespace BLAS
+namespace LinAlg
 {
 
 // Vector
@@ -232,10 +232,10 @@ void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
 
 void finalizeAssembly(EigenMatrix& A);
 
-} // namespace BLAS
+} // namespace LinAlg
 
 } // namespace MathLib
 
 #endif
 
-#endif // MATHLIB_BLAS_H
+#endif // MATHLIB_LINALG_H
