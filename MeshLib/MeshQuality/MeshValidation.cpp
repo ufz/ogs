@@ -32,7 +32,7 @@ namespace MeshLib {
 MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
 {
     INFO ("Mesh Quality Control:");
-    INFO ("%Looking for unused nodes...");
+    INFO ("Looking for unused nodes...");
     NodeSearch ns(mesh);
     ns.searchUnused();
     if (!ns.getSearchedNodeIDs().empty()) {

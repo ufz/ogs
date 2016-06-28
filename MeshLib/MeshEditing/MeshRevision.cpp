@@ -72,7 +72,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     MeshLib::Properties new_properties;
     boost::optional<PropertyVector<int> &> new_material_vec;
     if (material_vec) {
-        new_properties.createNewPropertyVector<int>(
+        new_material_vec = new_properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshItemType::Cell, 1);
     }
 
