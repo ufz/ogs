@@ -16,7 +16,7 @@
 #include "StratWindow.h"
 
 StratWindow::StratWindow(GeoLib::StationBorehole* station,
-                         std::map<std::string, GeoLib::Color>* stratColors,
+                         std::map<std::string, DataHolderLib::Color>* stratColors,
                          QWidget* parent) : QWidget(parent)
 {
     setupUi(this);

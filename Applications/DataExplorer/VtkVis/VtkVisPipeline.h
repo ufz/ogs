@@ -15,17 +15,15 @@
 #ifndef VTKVISPIPELINE_H
 #define VTKVISPIPELINE_H
 
-// ** INCLUDES **
-#include "BaseLib/Histogram.h"
+#include <QMap>
+#include <QVector>
 
-#include "Color.h"
+#include "BaseLib/Histogram.h"
 #include "GeoType.h"
 #include "MeshEnums.h"
 #include "Point.h"
 #include "TreeModel.h"
-
-#include <QMap>
-#include <QVector>
+#include "Applications/DataHolderLib/Color.h"
 
 class vtkAlgorithm;
 class vtkDataSet;

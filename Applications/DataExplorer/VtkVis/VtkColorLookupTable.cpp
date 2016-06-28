@@ -19,8 +19,9 @@
 
 #include <logog/include/logog.hpp>
 
-#include <Color.h>
 #include <vtkObjectFactory.h>
+
+#include "Applications/DataHolderLib/Color.h"
 
 vtkStandardNewMacro(VtkColorLookupTable);
 

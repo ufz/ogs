@@ -15,9 +15,10 @@
 #ifndef STRATSCENE_H
 #define STRATSCENE_H
 
-#include "StationBorehole.h"
-#include "Color.h"
 #include <QGraphicsScene>
+
+#include "StationBorehole.h"
+#include "Applications/DataHolderLib/Color.h"
 
 class StratBar;
 class QNonScalableGraphicsTextItem;
@@ -30,7 +31,7 @@ class StratScene : public QGraphicsScene
 public:
     /// Constructor
     StratScene(GeoLib::StationBorehole* station,
-               std::map<std::string, GeoLib::Color>* stratColors = nullptr,
+               std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
                QObject* parent = 0);
     ~StratScene();
 
@@ -52,7 +53,7 @@ private:
 
     /// Add a stratigraphy-bar to the scene.
     StratBar* addStratBar(GeoLib::StationBorehole* station,
-                          std::map<std::string, GeoLib::Color>* stratColors = nullptr);
+                          std::map<std::string, DataHolderLib::Color>* stratColors = nullptr);
 };
 
 #endif //STRATSCENE_H

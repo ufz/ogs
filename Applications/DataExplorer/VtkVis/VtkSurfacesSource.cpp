@@ -27,8 +27,8 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkProperty.h>
 
-#include "Applications/DataExplorer/Base/Color.h"
 #include "GeoLib/Triangle.h"
+#include "Applications/DataHolderLib/Color.h"
 
 vtkStandardNewMacro(VtkSurfacesSource);
 
@@ -39,7 +39,7 @@ VtkSurfacesSource::VtkSurfacesSource()
     this->SetNumberOfInputPorts(0);
     //this->SetColorBySurface(true);
 
-    const GeoLib::Color c = GeoLib::getRandomColor();
+    const DataHolderLib::Color c = DataHolderLib::getRandomColor();
     vtkProperty* vtkProps = GetProperties();
     vtkProps->SetColor(c[0] / 255.0,c[1] / 255.0,c[2] / 255.0);
     vtkProps->SetEdgeVisibility(0);

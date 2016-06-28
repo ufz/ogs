@@ -7,10 +7,8 @@ set(SOURCES
     TreeModel.cpp
     ColorPickerPushButton.cpp
     TreeModelIterator.cpp
-    # modeltest.cpp # Not needed
     CheckboxDelegate.cpp
     QValueTooltipSlider.cpp
-    Color.cpp
 )
 
 # Header files
@@ -24,7 +22,6 @@ set(HEADERS
     RecentFiles.h
     TreeModel.h
     ColorPickerPushButton.h
-    # modeltest.h # Not needed
     CheckboxDelegate.h
     QValueTooltipSlider.h
 )

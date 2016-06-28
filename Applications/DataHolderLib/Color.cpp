@@ -21,7 +21,7 @@
 
 #include "BaseLib/StringTools.h"
 
-namespace GeoLib {
+namespace DataHolderLib {
 
 Color getRandomColor()
 {
@@ -31,7 +31,7 @@ Color getRandomColor()
     col[2] = static_cast<unsigned char>((rand()%5)*50);
     return col;
 }
-
+/*
 int readColorLookupTable(std::map<std::string, Color> &colors, const std::string &filename)
 {
     std::ifstream in( filename.c_str() );
@@ -63,7 +63,7 @@ int readColorLookupTable(std::map<std::string, Color> &colors, const std::string
 
     return 1;
 }
-
+*/
 Color const getColor(const std::string &id, std::map<std::string, Color> &colors)
 {
     for (std::map<std::string, Color>::const_iterator it=colors.begin(); it !=colors.end(); ++it)

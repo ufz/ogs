@@ -12,12 +12,12 @@
  *
  */
 
-#include "Color.h"
-#include "DetailWindow.h"
-#include "DiagramPrefsDialog.h"
-
 #include <QFileDialog>
 #include <QSettings>
+
+#include "Applications/DataHolderLib/Color.h"
+#include "DetailWindow.h"
+#include "DiagramPrefsDialog.h"
 
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
@@ -124,7 +124,7 @@ void DetailWindow::resizeWindow()
 
 void DetailWindow::addList(DiagramList* list)
 {
-    GeoLib::Color const c = GeoLib::getRandomColor();
+    DataHolderLib::Color const c = DataHolderLib::getRandomColor();
     QColor colour(c[0], c[1], c[2]);
     this->addList(list, colour);
     resizeWindow();

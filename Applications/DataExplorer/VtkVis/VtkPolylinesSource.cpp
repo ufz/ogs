@@ -17,10 +17,6 @@
 
 #include <logog/include/logog.hpp>
 
-// GeoLib
-#include "Color.h"
-#include "Polyline.h"
-
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkInformation.h>
@@ -33,6 +29,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
+#include "Polyline.h"
+
+#include "Applications/DataHolderLib/Color.h"
+
+
 vtkStandardNewMacro(VtkPolylinesSource);
 
 VtkPolylinesSource::VtkPolylinesSource()
@@ -41,7 +42,7 @@ VtkPolylinesSource::VtkPolylinesSource()
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
-    const GeoLib::Color c = GeoLib::getRandomColor();
+    const DataHolderLib::Color c = DataHolderLib::getRandomColor();
     GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 

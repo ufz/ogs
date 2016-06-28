@@ -39,7 +39,7 @@ public:
 
     /// Sets the Borehole whose data should be visualised.
     void setStation(GeoLib::StationBorehole* station,
-                    std::map<std::string, GeoLib::Color>* stratColors = nullptr);
+                    std::map<std::string, DataHolderLib::Color>* stratColors = nullptr);
 
     /// Returns the height of the bounding rectangle of all objects within the scene.
     int getHeight() { return static_cast<int>((_scene->itemsBoundingRect()).height()); }
