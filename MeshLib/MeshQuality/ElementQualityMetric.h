@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/Histogram.h"
 

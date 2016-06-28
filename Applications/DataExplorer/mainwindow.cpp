@@ -14,8 +14,7 @@
 
 #include "mainwindow.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"

@@ -18,8 +18,7 @@
 
 #include "VtkPointsSource.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include <vtkCellArray.h>
 #include <vtkInformation.h>

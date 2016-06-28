@@ -15,8 +15,7 @@
 // ** INCLUDES **
 #include "VtkVisImageItem.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 

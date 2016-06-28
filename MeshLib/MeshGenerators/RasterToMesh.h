@@ -12,7 +12,7 @@
 #define RASTERTOMESH_H
 
 #include <boost/optional.hpp>
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoLib/Raster.h"
 #include "MeshLib/Location.h"

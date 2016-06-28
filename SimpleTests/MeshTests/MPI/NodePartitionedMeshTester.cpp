@@ -21,7 +21,7 @@
 #include <petscksp.h>
 #endif
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/LogogCustomCout.h"

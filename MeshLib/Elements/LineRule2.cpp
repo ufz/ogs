@@ -9,7 +9,7 @@
 
 #include "LineRule2.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Node.h"
 

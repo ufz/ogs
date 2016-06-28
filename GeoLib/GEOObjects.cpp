@@ -14,8 +14,7 @@
 
 #include <fstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 // GeoLib
 #include "GEOObjects.h"

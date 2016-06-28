@@ -16,7 +16,7 @@
 
 #include <boost/math/constants/constants.hpp>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"

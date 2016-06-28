@@ -19,7 +19,7 @@
 #include <numeric>
 #include <vector>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

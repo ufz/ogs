@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 #ifdef USE_MPI
 #include <mpi.h>
 #endif

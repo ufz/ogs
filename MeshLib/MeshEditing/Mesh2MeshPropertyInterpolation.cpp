@@ -18,7 +18,7 @@
 
 #include "Mesh2MeshPropertyInterpolation.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoLib/AABB.h"
 #include "GeoLib/Grid.h"
