@@ -445,7 +445,7 @@ TESProcess::computeEquilibriumLoading(
     return *result_cache;
 }
 
-std::unique_ptr<TESProcess> createTESProcess(
+std::unique_ptr<Process> createTESProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
@@ -471,7 +471,7 @@ std::unique_ptr<TESProcess> createTESProcess(
     ProcessOutput process_output{config.getConfigSubtree("output"),
                                  process_variables, secondary_variables};
 
-    return std::unique_ptr<TESProcess>{new TESProcess{
+    return std::unique_ptr<Process>{new TESProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
         std::move(process_variables), std::move(secondary_variables),
         std::move(process_output), config}};
