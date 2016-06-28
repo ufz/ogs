@@ -37,7 +37,7 @@ struct LinearSolverLibrarySetup final
 
     ~LinearSolverLibrarySetup()
     {
-        MathLib::cleanupGlobalMatrixProviders();
+        NumLib::cleanupGlobalMatrixProviders();
         PetscFinalize();
         MPI_Finalize();
     }
@@ -56,7 +56,7 @@ struct LinearSolverLibrarySetup final
 
     ~LinearSolverLibrarySetup()
     {
-        MathLib::cleanupGlobalMatrixProviders();
+        NumLib::cleanupGlobalMatrixProviders();
         lis_finalize();
     }
 };
@@ -69,7 +69,7 @@ struct LinearSolverLibrarySetup final
     LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
     ~LinearSolverLibrarySetup()
     {
-        MathLib::cleanupGlobalMatrixProviders();
+        NumLib::cleanupGlobalMatrixProviders();
     }
 };
 }    // ApplicationsLib

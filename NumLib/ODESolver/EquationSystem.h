@@ -28,7 +28,7 @@ enum class IterationResult : char
 /*! Collection of basic methods every equation system must provide.
  *
  */
-class EquationSystem : public MathLib::MatrixSpecificationsProvider
+class EquationSystem : public NumLib::MatrixSpecificationsProvider
 {
 public:
     /*! Check whether this is actually a linear equation system.

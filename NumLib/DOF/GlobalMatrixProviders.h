@@ -7,28 +7,25 @@
  *
  */
 
-#ifndef MATHLIB_GLOBAL_MATRIX_PROVIDERS
-#define MATHLIB_GLOBAL_MATRIX_PROVIDERS
+#ifndef NUMLIB_GLOBAL_MATRIX_PROVIDERS
+#define NUMLIB_GLOBAL_MATRIX_PROVIDERS
 
 #include "MatrixProviderUser.h"
 
-namespace MathLib
+namespace NumLib
 {
-
-template<typename Vector>
 struct GlobalVectorProvider
 {
-    static VectorProvider<Vector>& provider;
+    static VectorProvider& provider;
 };
 
-template<typename Matrix>
 struct GlobalMatrixProvider
 {
-    static MatrixProvider<Matrix>& provider;
+    static MatrixProvider& provider;
 };
 
 void cleanupGlobalMatrixProviders();
 
 } // MathLib
 
-#endif // MATHLIB_GLOBAL_MATRIX_PROVIDERS
+#endif // NUMLIB_GLOBAL_MATRIX_PROVIDERS

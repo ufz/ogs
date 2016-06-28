@@ -218,18 +218,18 @@ public:
      */
     MatrixTranslatorCrankNicolson(CrankNicolson const& timeDisc)
         : _crank_nicolson(timeDisc),
-          _M_bar(MathLib::GlobalMatrixProvider<GlobalMatrix>::provider
+          _M_bar(NumLib::GlobalMatrixProvider::provider
                      .getMatrix()),
           _b_bar(
-              MathLib::GlobalVectorProvider<GlobalVector>::provider.getVector())
+              NumLib::GlobalVectorProvider::provider.getVector())
     {
     }
 
     ~MatrixTranslatorCrankNicolson()
     {
-        MathLib::GlobalMatrixProvider<GlobalMatrix>::provider.releaseMatrix(
+        NumLib::GlobalMatrixProvider::provider.releaseMatrix(
             _M_bar);
-        MathLib::GlobalVectorProvider<GlobalVector>::provider.releaseVector(
+        NumLib::GlobalVectorProvider::provider.releaseVector(
             _b_bar);
     }
 
