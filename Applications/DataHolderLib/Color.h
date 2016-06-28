@@ -24,6 +24,10 @@ namespace DataHolderLib
 {
 using Color = std::array<unsigned char, 4>;
 
+Color createColor(unsigned char r, unsigned char g, unsigned char b);
+
+Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
 /// Returns a random RGB colour.
 Color getRandomColor();
 

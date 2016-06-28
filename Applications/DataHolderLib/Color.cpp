@@ -23,6 +23,16 @@
 
 namespace DataHolderLib {
 
+Color createColor(unsigned char r, unsigned char g, unsigned char b)
+{
+    return Color{{r,g,b,255}};
+}
+
+Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    return Color{{r,g,b,a}};
+}
+
 Color getRandomColor()
 {
     Color col;
