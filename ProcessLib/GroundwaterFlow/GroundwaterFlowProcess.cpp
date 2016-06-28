@@ -96,7 +96,7 @@ void GroundwaterFlowProcess::assembleConcreteProcess(const double t,
                                               _local_assemblers, t, x, M, K, b);
 }
 
-std::unique_ptr<GroundwaterFlowProcess> createGroundwaterFlowProcess(
+std::unique_ptr<Process> createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
@@ -143,7 +143,7 @@ std::unique_ptr<GroundwaterFlowProcess> createGroundwaterFlowProcess(
         process_output{config.getConfigSubtree("output"), process_variables,
                        secondary_variables};
 
-    return std::unique_ptr<GroundwaterFlowProcess>{new GroundwaterFlowProcess{
+    return std::unique_ptr<Process>{new GroundwaterFlowProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(process_output)}};

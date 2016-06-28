@@ -71,7 +71,7 @@ private:
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-std::unique_ptr<GroundwaterFlowProcess> createGroundwaterFlowProcess(
+std::unique_ptr<Process> createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
