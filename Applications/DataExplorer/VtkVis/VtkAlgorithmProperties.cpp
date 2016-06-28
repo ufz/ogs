@@ -20,6 +20,7 @@
 #include <vtkProperty.h>
 #include <vtkTexture.h>
 
+#include "Applications/DataHolderLib/ColorLookupTable.h"
 #include "VtkColorLookupTable.h"
 #include "XmlIO/Qt/XmlLutReader.h"
 
@@ -80,8 +81,13 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, vtkLookup
 
 void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QString &filename)
 {
-    VtkColorLookupTable* colorLookupTable = FileIO::XmlLutReader::readFromFile(filename);
-    SetLookUpTable(array_name, colorLookupTable);
+    DataHolderLib::ColorLookupTable lut;
+    if (FileIO::XmlLutReader::readFromFile(filename, lut))
+    {
+        VtkColorLookupTable* colorLookupTable = VtkColorLookupTable::New();
+        colorLookupTable->setLookupTable(lut);
+        SetLookUpTable(array_name, colorLookupTable);
+    }
 }
 
 void VtkAlgorithmProperties::SetScalarVisibility(bool on)

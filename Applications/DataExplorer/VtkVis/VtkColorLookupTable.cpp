@@ -26,7 +26,7 @@
 vtkStandardNewMacro(VtkColorLookupTable);
 
 VtkColorLookupTable::VtkColorLookupTable()
-    : _type(VtkColorLookupTable::LUTType::LINEAR)
+: _type(DataHolderLib::LUTType::LINEAR)
 {
 }
 
@@ -79,10 +79,10 @@ void VtkColorLookupTable::Build()
                     unsigned char int_rgba[4];
                     double pos = (i - lastValue.first) / (static_cast<double>(nextIndex - lastValue.first));
 
-                    if (_type == VtkColorLookupTable::LUTType::LINEAR)
+                    if (_type == DataHolderLib::LUTType::LINEAR)
                         for (std::size_t j = 0; j < 4; j++)
                             int_rgba[j] = linInterpolation( (lastValue.second)[j], (it->second)[j], pos);
-                    else if (_type == VtkColorLookupTable::LUTType::EXPONENTIAL)
+                    else if (_type == DataHolderLib::LUTType::EXPONENTIAL)
                         for (std::size_t j = 0; j < 4; j++)
                             int_rgba[j] = expInterpolation((lastValue.second)[j], (it->second)[j], 0.2, pos);
                     else // no interpolation
@@ -98,6 +98,17 @@ void VtkColorLookupTable::Build()
     }
     else
         vtkLookupTable::Build();
+}
+
+void VtkColorLookupTable::setLookupTable(DataHolderLib::ColorLookupTable const& lut)
+{
+    std::size_t const n_colors (lut.size());
+    for (std::size_t i=0; i<n_colors; ++i)
+        setColor(std::get<0>(lut[i]), std::get<1>(lut[i]));
+    setInterpolationType(lut.getInterpolationType());
+    auto const range (lut.getTableRange());
+    SetTableRange(range.first, range.second);
+    Build();
 }
 
 void VtkColorLookupTable::writeToFile(const std::string &filename)
@@ -137,11 +148,11 @@ void VtkColorLookupTable::GetTableValue(vtkIdType idx, unsigned char rgba[4])
         rgba[i] = value[i]*255.0;
 }
 
-void VtkColorLookupTable::setColor(double pos, unsigned char rgba[4])
+void VtkColorLookupTable::setColor(double pos, DataHolderLib::Color const& color)
 {
     unsigned char* dict_rgba = new unsigned char[4];
     for (std::size_t i = 0; i < 4; i++)
-        dict_rgba[i] = rgba[i];
+        dict_rgba[i] = color[i];
     _dict.insert( std::pair<double, unsigned char*>(pos, dict_rgba) );
 }
 

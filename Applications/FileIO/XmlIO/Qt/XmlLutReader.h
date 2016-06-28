@@ -20,7 +20,7 @@
 
 #include <logog/include/logog.hpp>
 
-#include "VtkColorLookupTable.h"
+#include "Applications/DataHolderLib/ColorLookupTable.h"
 
 
 namespace FileIO
@@ -32,40 +32,36 @@ namespace FileIO
 class XmlLutReader
 {
 public:
-    static VtkColorLookupTable* readFromFile(const QString &fileName)
+    static bool readFromFile(const QString &fileName, DataHolderLib::ColorLookupTable &lut)
     {
-        VtkColorLookupTable* lut = VtkColorLookupTable::New();
-
-        QFile* file = new QFile(fileName);
-        if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             ERR("XmlLutReader::readFromFile(): Can't open xml-file %s.", fileName.data());
-            delete file;
-            return NULL;
+            return false;
         }
 
         QDomDocument doc("ColorMap");
-        doc.setContent(file);
+        doc.setContent(&file);
         QDomElement docElement = doc.documentElement();
         if (docElement.nodeName().compare("ColorMap"))
         {
             ERR("XmlLutReader::readFromFile(): Unexpected XML root.");
-            file->close();
-            delete file;
-            return NULL;
+            file.close();
+            return false;
         }
 
         if (docElement.hasAttribute("interpolation"))
         {
             if (docElement.attribute("interpolation").compare("Linear") == 0)
-                lut->setInterpolationType(VtkColorLookupTable::LUTType::LINEAR);
+                lut.setInterpolationType(DataHolderLib::LUTType::LINEAR);
             else if (docElement.attribute("interpolation").compare("Exponential") == 0)
-                lut->setInterpolationType(VtkColorLookupTable::LUTType::EXPONENTIAL);
+                lut.setInterpolationType(DataHolderLib::LUTType::EXPONENTIAL);
             else
-                lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
+                lut.setInterpolationType(DataHolderLib::LUTType::NONE);
         }
         else // default
-            lut->setInterpolationType(VtkColorLookupTable::LUTType::NONE);
+            lut.setInterpolationType(DataHolderLib::LUTType::NONE);
 
         QDomElement point = docElement.firstChildElement();
         double range[2] = { point.attribute("x").toDouble(), point.attribute("x").toDouble() };
@@ -89,18 +85,16 @@ public:
                 if (value > range[1])
                     range[1] = value;
 
-                unsigned char a[4] = { r, g, b, o };
-                lut->setColor(value, a);
+                DataHolderLib::Color color = DataHolderLib::createColor(r, g, b, o);
+                lut.setColor(value, color);
             }
             point = point.nextSiblingElement();
         }
 
-        lut->SetTableRange(range[0], range[1]);
+        lut.setTableRange(range[0], range[1]);
 
-        file->close();
-        delete file;
-
-        return lut;
+        file.close();
+        return true;
     };
 
 
