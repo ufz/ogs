@@ -33,7 +33,7 @@
 
 #include "UncoupledProcessesTimeLoop.h"
 
-#include "ProcessLib/GroundwaterFlow/GroundwaterFlowProcess.h"
+#include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/TESProcess.h"
 
 namespace detail
