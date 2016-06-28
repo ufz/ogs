@@ -15,8 +15,7 @@
 // ** INCLUDES **
 #include "VtkAddFilterDialog.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "VtkCompositeFilter.h"
 #include "VtkFilterFactory.h"

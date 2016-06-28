@@ -11,7 +11,6 @@
 
 #include "HeuristicSearchLength.h"
 
-// ThirdParty/logog
 #include <logog/include/logog.hpp>
 
 #include "MeshLib/Elements/Element.h"

@@ -9,7 +9,7 @@
 
 #include "QuadRule4.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MathLib/GeometricBasics.h"
 

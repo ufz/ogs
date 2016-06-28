@@ -18,8 +18,7 @@
 #include <cstdlib>
 #include <sstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 namespace BaseLib
 {

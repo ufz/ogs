@@ -13,7 +13,7 @@
 
 #include <vector>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/DebugTools.h"
 #include "NumLib/TimeStepping/TimeStep.h"

@@ -11,7 +11,7 @@
 
 #include <utility>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"

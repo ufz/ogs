@@ -20,7 +20,7 @@
 #include <vtkDataArray.h>
 #include <vtkType.h>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoLib/Raster.h"
 #include "MeshLib/Node.h"

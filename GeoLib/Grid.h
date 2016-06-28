@@ -18,8 +18,7 @@
 #include <bitset>
 #include <vector>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 // GeoLib
 #include "AABB.h"

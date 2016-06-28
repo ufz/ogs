@@ -14,7 +14,7 @@
 
 #include "convertMeshToGeo.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Triangle.h"

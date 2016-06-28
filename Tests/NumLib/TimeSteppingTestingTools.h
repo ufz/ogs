@@ -12,7 +12,7 @@
 #ifndef TIMESTEPPINGTESTINGTOOLS_H_
 #define TIMESTEPPINGTESTINGTOOLS_H_
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "NumLib/TimeStepping/TimeStep.h"
 

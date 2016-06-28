@@ -12,8 +12,7 @@
  *
  */
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"

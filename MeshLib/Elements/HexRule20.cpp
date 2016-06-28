@@ -11,7 +11,7 @@
 
 #include <array>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Node.h"
 #include "Quad.h"

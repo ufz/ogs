@@ -21,7 +21,7 @@
 
 #include <petscksp.h>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/LinearSolver.h"

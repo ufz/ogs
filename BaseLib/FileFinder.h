@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "BuildInfo.h"
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 namespace BaseLib
 {

@@ -13,8 +13,7 @@
 
 #include <fstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "Raster.h"
 

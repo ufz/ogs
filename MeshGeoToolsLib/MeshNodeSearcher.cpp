@@ -10,7 +10,6 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
-// ThirdParty/logog
 #include <logog/include/logog.hpp>
 
 // GeoLib

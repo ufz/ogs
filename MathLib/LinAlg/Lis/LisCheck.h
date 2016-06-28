@@ -17,7 +17,7 @@
 
 #include <vector>
 #include "lis.h"
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 namespace MathLib
 {

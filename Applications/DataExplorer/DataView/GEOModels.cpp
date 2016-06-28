@@ -15,8 +15,7 @@
 // ** INCLUDES **
 #include "GEOModels.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "GeoTreeModel.h"
 #include "StationTreeModel.h"

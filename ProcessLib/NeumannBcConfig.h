@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_NEUMANN_BC_CONFIG_H_
 #define PROCESS_LIB_NEUMANN_BC_CONFIG_H_
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/ConstantFunction.h"

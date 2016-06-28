@@ -12,7 +12,7 @@
  *
  */
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>

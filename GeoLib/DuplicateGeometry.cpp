@@ -9,7 +9,6 @@
 
 #include "DuplicateGeometry.h"
 
-// ThirdParty/logog
 #include <logog/include/logog.hpp>
 
 #include "GeoLib/GEOObjects.h"

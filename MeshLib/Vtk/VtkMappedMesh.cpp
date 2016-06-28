@@ -16,7 +16,7 @@
 
 #include <algorithm>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include <vtkCellType.h>
 #include <vtkCellTypes.h>

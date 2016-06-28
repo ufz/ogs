@@ -22,8 +22,7 @@
 #include <QSettings>
 #include <QStringList>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
 

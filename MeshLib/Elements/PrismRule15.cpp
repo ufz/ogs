@@ -9,7 +9,7 @@
 
 #include "PrismRule15.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Node.h"
 #include "Quad.h"

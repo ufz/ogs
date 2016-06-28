@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <stack>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

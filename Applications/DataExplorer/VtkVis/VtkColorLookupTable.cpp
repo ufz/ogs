@@ -17,8 +17,7 @@
 #include <cmath>
 #include <sstream>
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include <Color.h>
 #include <vtkObjectFactory.h>

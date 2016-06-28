@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <QtGui/QApplication>
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 #include "LogogSimpleFormatter.h"
 #ifdef VTKFBXCONVERTER_FOUND
 #include <fbxsdk.h>

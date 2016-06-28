@@ -9,7 +9,7 @@
 
 #include "EdgeReturn.h"
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "MeshLib/Node.h"
 #include "Element.h"

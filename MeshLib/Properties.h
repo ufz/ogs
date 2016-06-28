@@ -20,7 +20,7 @@
 
 #include <boost/optional.hpp>
 
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include "Location.h"
 

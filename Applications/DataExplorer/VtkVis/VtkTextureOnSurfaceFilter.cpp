@@ -15,8 +15,7 @@
 // ** INCLUDES **
 #include "VtkTextureOnSurfaceFilter.h"
 
-// ThirdParty/logog
-#include "logog/include/logog.hpp"
+#include <logog/include/logog.hpp>
 
 #include <vtkCellData.h>
 #include <vtkFloatArray.h>
