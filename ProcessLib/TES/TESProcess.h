@@ -99,15 +99,6 @@ private:
     std::unique_ptr<GlobalVector> _x_previous_timestep;
 };
 
-std::unique_ptr<Process> createTESProcess(
-    MeshLib::Mesh& mesh,
-    Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<Process::TimeDiscretization>&&
-        time_discretization,
-    std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
-    BaseLib::ConfigTree const& config);
-
 }  // namespace TES
 
 }  // namespace ProcessLib
