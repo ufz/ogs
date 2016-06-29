@@ -11,54 +11,6 @@
 
 // TODO reorder LinAlg function signatures?
 
-// Dense Eigen matrices and vectors ////////////////////////////////////////
-#ifdef OGS_USE_EIGEN
-
-#include <Eigen/Core>
-
-namespace MathLib
-{
-namespace LinAlg
-{
-
-// Explicit specialization
-// Computes w = x/y componentwise.
-template<>
-void componentwiseDivide(Eigen::VectorXd& w,
-                         Eigen::VectorXd const& x, Eigen::VectorXd const& y)
-{
-    w.noalias() = x.cwiseQuotient(y);
-}
-
-// Explicit specialization
-// Computes the Manhattan norm of x
-template<>
-double norm1(Eigen::VectorXd const& x)
-{
-    return x.lpNorm<1>();
-}
-
-// Explicit specialization
-// Computes the Euclidean norm of x
-template<>
-double norm2(Eigen::VectorXd const& x)
-{
-    return x.norm();
-}
-
-// Explicit specialization
-// Computes the Maximum norm of x
-template<>
-double normMax(Eigen::VectorXd const& x)
-{
-    return x.lpNorm<Eigen::Infinity>();
-}
-
-} } // namespaces
-
-#endif
-
-
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 #ifdef USE_PETSC
 
