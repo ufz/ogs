@@ -13,17 +13,16 @@
 #define MATHLIB_UNIFIED_MATRIX_SETTERS_H
 
 #include <initializer_list>
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include "MatrixVectorTraits.h"
 
 #ifdef USE_PETSC
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
-#include "PETSc/PETScVector.h"
-
 namespace MathLib
 {
 
+class PETScVector;
 class PETScMatrix;
 
 double norm(PETScVector const& x);
@@ -48,11 +47,11 @@ void setMatrix(PETScMatrix& m,
 #elif defined(OGS_USE_EIGEN)
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
-#include "Eigen/EigenVector.h"
 
 namespace MathLib
 {
 
+class EigenVector;
 class EigenMatrix;
 
 void setVector(EigenVector& v,
