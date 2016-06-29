@@ -13,6 +13,7 @@
 #define MATHLIB_UNIFIED_MATRIX_SETTERS_H
 
 #include <initializer_list>
+#include <Eigen/Eigen>
 #include "MatrixVectorTraits.h"
 
 #ifdef USE_PETSC
