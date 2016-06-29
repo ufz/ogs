@@ -9,17 +9,21 @@ node('visserv3')
     dir('ogs') { checkout scm }
 
     withEnv(['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin']) {
-        stage 'Configure & Build & Test'
-        bat('''rd /S /Q build
-               mkdir build
-               cd build
-               cmake -G"Visual Studio 12 Win64" -DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ..\\ogs
-               cmake --build . --config Release --target tests
-               cmake --build . --config Release --target ctest'''.stripIndent())
-        if (env.BRANCH_NAME == 'master')
-            bat('''cd build
-                   cmake --build . --config Release --target package
-                   rename ogs*Windows*.zip ogs-data_explorer-x64.zip'''.stripIndent())
+
+        stage 'Data Explorer'
+        configure 'build-de', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
+        build 'build-de'
+
+        stage 'CLI'
+        configure 'build', '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
+        build 'build', 'tests'
+        build 'build', 'ctest'
+
+        if (env.BRANCH_NAME == 'master') {
+            stage 'Package'
+            build 'build', 'package'
+            build 'build-de', 'package'
+        }
     }
 
     stage 'Post'
@@ -30,6 +34,21 @@ node('visserv3')
 }
 
 // *** Helper functions ***
+def configure(buildDir, cmakeOptions, generator) {
+    bat("""rd /S /Q ${buildDir}
+           mkdir ${buildDir}
+           cd ${buildDir}
+           cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}""".stripIndent())
+}
+
+def build(buildDir, target=null) {
+    targetString = ""
+    if (target != null)
+        targetString = "--target ${target}"
+    bat("""cd ${buildDir}
+           cmake --build . --config Release ${targetString}""".stripIndent())
+}
+
 def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
     step([$class: 'XUnitPublisher', testTimeMargin: '3000', thresholdMode: 1,
         thresholds: [
