@@ -5,24 +5,27 @@ node('docker')
 {
     step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
 
-    stage 'Checkout'
+    stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 
     docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs)
     {
-        stage 'Configure'
+        stage 'Configure (Linux-Docker)'
         configure 'build', ''
 
-        stage 'Build'
+        stage 'CLI (Linux-Docker)'
         build 'build', ''
-        if (env.BRANCH_NAME == 'master')
-            build 'build', 'package'
 
-        stage 'Test'
+        stage 'Test (Linux-Docker)'
         build 'build', 'tests ctest'
+
+        if (env.BRANCH_NAME == 'master') {
+            stage 'Package (Linux-Docker)'
+            build 'build', 'package'
+        }
     }
 
-    stage 'Post'
+    stage 'Post (Linux-Docker)'
     publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules'
 
