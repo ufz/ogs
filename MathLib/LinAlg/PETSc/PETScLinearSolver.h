@@ -24,7 +24,6 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/ConfigTree.h"
-#include "MathLib/LinAlg/LinearSolver.h"
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -40,7 +39,6 @@ namespace MathLib
  command-line options, because the former are processed at a later stage.
 */
 class PETScLinearSolver
-        : public LinearSolver<PETScMatrix, PETScVector>
 {
     public:
 
@@ -64,7 +62,7 @@ class PETScLinearSolver
         }
 
         // TODO check if some args in LinearSolver interface can be made const&.
-        bool solve(PETScMatrix& A, PETScVector &b, PETScVector &x) override;
+        bool solve(PETScMatrix& A, PETScVector &b, PETScVector &x);
 
         /// Get number of iterations.
         PetscInt getNumberOfIterations() const

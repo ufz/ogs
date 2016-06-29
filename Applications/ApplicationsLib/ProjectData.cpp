@@ -358,8 +358,8 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
         BaseLib::insertIfKeyUniqueElseError(
             _linear_solvers,
             name,
-            MathLib::createLinearSolver<GlobalMatrix, GlobalVector,
-                                        GlobalLinearSolver>(&conf),
+            std::unique_ptr<GlobalLinearSolver>(
+                new GlobalLinearSolver("", &conf)),
             "The linear solver name is not unique");
     }
 }

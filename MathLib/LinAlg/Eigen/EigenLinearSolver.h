@@ -13,7 +13,6 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
-#include "MathLib/LinAlg/LinearSolver.h"
 #include "EigenOption.h"
 
 namespace MathLib
@@ -25,7 +24,6 @@ class EigenVector;
 class EigenLinearSolverBase;
 
 class EigenLinearSolver final
-        : public LinearSolver<EigenMatrix, EigenVector>
 {
 public:
     /**
@@ -56,7 +54,7 @@ public:
      */
     EigenOption &getOption() { return _option; }
 
-    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x) override;
+    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 protected:
     EigenOption _option;

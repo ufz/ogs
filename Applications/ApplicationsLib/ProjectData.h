@@ -195,7 +195,7 @@ private:
     std::unique_ptr<TimeLoop> _time_loop;
 
     std::map<std::string,
-             std::unique_ptr<MathLib::LinearSolver<GlobalMatrix, GlobalVector>>>
+             std::unique_ptr<GlobalLinearSolver>>
         _linear_solvers;
 
     using NonlinearSolver = NumLib::NonlinearSolverBase;
