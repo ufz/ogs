@@ -11,7 +11,7 @@ node('visserv3')
     withEnv(['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin']) {
 
         stage 'Data Explorer'
-        configure 'build-de', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
+        configure 'build-de', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
         build 'build-de'
 
         stage 'CLI'
@@ -25,20 +25,33 @@ node('visserv3')
             build 'build-de', 'package'
         }
     }
+    if (env.BRANCH_NAME == 'master') {
+        withEnv(['ARCH=msvc2013-x32', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;C:\\Tools\\Conan\\conan']) {
+            stage 'x32'
+            configure 'build-32', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
+            build 'build-32', 'package'
+        }
+    }
 
     stage 'Post'
     publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/msvc-log-parser.rules'
 
     archive 'build*/*.zip'
+
+    step([$class: 'S3BucketPublisher', dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'opengeosys', excludedFile: '', flatten: true, gzipFiles: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', sourceFile: 'build*/*.zip', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], profileName: 'S3 UFZ', userMetadata: []])
+
 }
 
 // *** Helper functions ***
-def configure(buildDir, cmakeOptions, generator) {
+def configure(buildDir, cmakeOptions, generator, conan_args=null) {
     bat("""rd /S /Q ${buildDir}
-           mkdir ${buildDir}
-           cd ${buildDir}
-           cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}""".stripIndent())
+           mkdir ${buildDir}""".stripIndent())
+    if (conan_args != null)
+        bat("""cd ${buildDir}
+               conan install ../ogs ${conan_args}""".stripIndent())
+    bat """cd ${buildDir}
+           cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}"""
 }
 
 def build(buildDir, target=null) {
