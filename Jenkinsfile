@@ -1,4 +1,11 @@
 node('master') {
     checkout scm
-    load 'scripts/jenkins/gcc.groovy'
+
+    def builders = [:]
+    builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }
+    builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
+
+    parallel builders
 }
+
+properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])

@@ -1,0 +1,14 @@
+# Workflow stages used for grouping
+start /stage:/
+
+# CMake
+warning /CMake Warning/
+error /CMake Error/
+
+# CTest
+warning \\[WARNING\]\
+error \[*][*][*]Failed\
+
+# MSVC
+warning /: warning C/
+error /: error C/

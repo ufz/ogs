@@ -1,41 +1,32 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
-node('docker')
+node('visserv3')
 {
-    step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
+    step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins MSVC build']])
 
     stage 'Checkout'
     dir('ogs') { checkout scm }
 
-    docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs)
-    {
-        stage 'Configure'
-        configure 'build', ''
-
-        stage 'Build'
-        build 'build', ''
+    withEnv(['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin']) {
+        stage 'Configure & Build & Test'
+        bat('''rd /S /Q build
+               mkdir build
+               cd build
+               cmake -G"Visual Studio 12 Win64" -DOGS_BUILD_GUI=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ..\\ogs
+               cmake --build . --config Release --target tests
+               cmake --build . --config Release --target ctest'''.stripIndent())
         if (env.BRANCH_NAME == 'master')
-            build 'build', 'package'
-
-        stage 'Test'
-        build 'build', 'tests ctest'
+            bat('''cd build
+                   cmake --build . --config Release --target package
+                   rename ogs*Windows*.zip ogs-data_explorer-x64.zip'''.stripIndent())
     }
 
     stage 'Post'
     publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-        'ogs/scripts/jenkins/clang-log-parser.rules'
+        'ogs/scripts/jenkins/msvc-log-parser.rules'
 
-    archive 'build*/*.tar.gz'
-}
-
-def configure(buildDir, cmakeOptions) {
-    sh "rm -rf ${buildDir} && mkdir ${buildDir}"
-    sh "cd ${buildDir} && cmake ../ogs ${defaultCMakeOptions} ${cmakeOptions}"
-}
-
-def build(buildDir, target) {
-    sh "cd ${buildDir} && make -j \$(nproc) ${target}"
+    archive 'build*/*.zip'
 }
 
 // *** Helper functions ***
