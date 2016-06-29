@@ -10,74 +10,6 @@
 #include <cassert>
 #include "UnifiedMatrixSetters.h"
 
-#ifdef OGS_USE_EIGEN
-
-// Dense Eigen matrix/vector //////////////////////////////////////////
-
-namespace MathLib
-{
-
-void setMatrix(Eigen::MatrixXd& m,
-               std::initializer_list<double> values)
-{
-    using IndexType = Eigen::MatrixXd::Index;
-
-    auto const rows = m.rows();
-    auto const cols = m.cols();
-
-    assert((IndexType) values.size() == rows*cols);
-
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            m(r, c) = *(it++);
-        }
-    }
-}
-
-void setMatrix(Eigen::MatrixXd& m, Eigen::MatrixXd const& tmp)
-{
-    m = tmp;
-}
-
-void addToMatrix(Eigen::MatrixXd& m,
-                 std::initializer_list<double> values)
-{
-    using IndexType = Eigen::MatrixXd::Index;
-
-    auto const rows = m.rows();
-    auto const cols = m.cols();
-
-    assert((IndexType) values.size() == rows*cols);
-
-    auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
-            m(r, c) += *(it++);
-        }
-    }
-}
-
-double norm(Eigen::VectorXd const& x) { return x.norm(); }
-
-void setVector(Eigen::VectorXd& v, std::initializer_list<double> values)
-{
-    assert((std::size_t) v.size() == values.size());
-    auto it = values.begin();
-    for (std::size_t i=0; i<values.size(); ++i) v[i] = *(it++);
-}
-
-void setVector(Eigen::VectorXd& v, MatrixVectorTraits<Eigen::VectorXd>::Index const index,
-               double const value)
-{
-    v[index] = value;
-}
-
-} // namespace MathLib
-
-#endif // OGS_USE_EIGEN
-
-
 #ifdef USE_PETSC
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
@@ -198,10 +130,14 @@ void addToMatrix(PETScMatrix& m,
 namespace MathLib
 {
 
-void setVector(EigenVector& v,
+void setVector(EigenVector& v_,
                       std::initializer_list<double> values)
 {
-    setVector(v.getRawVector(), values);
+    auto& v(v_.getRawVector());
+    assert((std::size_t)v.size() == values.size());
+    auto it = values.begin();
+    for (std::size_t i = 0; i < values.size(); ++i)
+        v[i] = *(it++);
 }
 
 void setVector(EigenVector& v, MatrixVectorTraits<EigenVector>::Index const index,

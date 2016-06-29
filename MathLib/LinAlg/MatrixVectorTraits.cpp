@@ -10,59 +10,6 @@
 #include "MatrixVectorTraits.h"
 #include "MatrixSpecifications.h"
 
-#ifdef OGS_USE_EIGEN
-
-namespace MathLib
-{
-
-std::unique_ptr<Eigen::MatrixXd>
-MatrixVectorTraits<Eigen::MatrixXd>::
-newInstance()
-{
-    return std::unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd);
-}
-
-std::unique_ptr<Eigen::MatrixXd>
-MatrixVectorTraits<Eigen::MatrixXd>::
-newInstance(Eigen::MatrixXd const& A)
-{
-    return std::unique_ptr<Eigen::MatrixXd>(new Eigen::MatrixXd(A));
-}
-
-std::unique_ptr<Eigen::MatrixXd>
-MatrixVectorTraits<Eigen::MatrixXd>::
-newInstance(MatrixSpecifications const& spec)
-{
-    return std::unique_ptr<Eigen::MatrixXd>(
-        new Eigen::MatrixXd(spec.nrows, spec.ncols));
-}
-
-std::unique_ptr<Eigen::VectorXd>
-MatrixVectorTraits<Eigen::VectorXd>::
-newInstance()
-{
-    return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd);
-}
-
-std::unique_ptr<Eigen::VectorXd>
-MatrixVectorTraits<Eigen::VectorXd>::
-newInstance(Eigen::VectorXd const& A)
-{
-    return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(A));
-}
-
-std::unique_ptr<Eigen::VectorXd>
-MatrixVectorTraits<Eigen::VectorXd>::
-newInstance(MatrixSpecifications const& spec)
-{
-    return std::unique_ptr<Eigen::VectorXd>(new Eigen::VectorXd(spec.nrows));
-}
-
-} // namespace MathLib
-
-#endif // OGS_USE_EIGEN
-
-
 #ifdef USE_PETSC
 
 #include "MeshLib/NodePartitionedMesh.h"

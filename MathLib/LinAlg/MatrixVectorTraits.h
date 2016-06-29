@@ -29,19 +29,6 @@ struct MatrixSpecifications;
     };
 
 
-#ifdef OGS_USE_EIGEN
-
-#include<Eigen/Core>
-
-namespace MathLib
-{
-SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::MatrixXd, Eigen::MatrixXd::Index)
-SPECIALIZE_MATRIX_VECTOR_TRAITS(Eigen::VectorXd, Eigen::VectorXd::Index)
-}
-
-#endif
-
-
 #ifdef USE_PETSC
 
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
