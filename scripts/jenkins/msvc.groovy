@@ -1,5 +1,5 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
-defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
+defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
 node('visserv3')
 {
@@ -10,14 +10,14 @@ node('visserv3')
 
     withEnv(['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin']) {
 
-        stage 'Data Explorer'
-        configure 'build-de', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_CLI=OFF -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
-        build 'build-de'
-
         stage 'CLI'
-        configure 'build', '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12 Win64'
+        configure 'build', '', 'Visual Studio 12 Win64'
         build 'build', 'tests'
         build 'build', 'ctest'
+
+        stage 'Data Explorer'
+        configure 'build-de', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12 Win64'
+        build 'build-de'
 
         if (env.BRANCH_NAME == 'master') {
             stage 'Package'
@@ -28,7 +28,7 @@ node('visserv3')
     if (env.BRANCH_NAME == 'master') {
         withEnv(['ARCH=msvc2013-x32', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;C:\\Tools\\Conan\\conan']) {
             stage 'x32'
-            configure 'build-32', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
+            configure 'build-32', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
             build 'build-32', 'package'
         }
     }
