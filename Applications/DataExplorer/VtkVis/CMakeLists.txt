@@ -86,6 +86,7 @@ set(HEADERS
     VtkVisPipelineView.h
     VtkVisTabWidget.h
     VtkConsoleOutputWindow.h
+    IO/XmlLutReader.h
 )
 
 # Visual Studio folder

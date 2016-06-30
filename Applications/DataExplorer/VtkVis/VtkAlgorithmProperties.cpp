@@ -21,7 +21,7 @@
 #include <vtkTexture.h>
 
 #include "VtkColorLookupTable.h"
-#include "XmlIO/Qt/XmlLutReader.h"
+#include "IO/XmlLutReader.h"
 
 VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= nullptr*/)
     : QObject(parent)
