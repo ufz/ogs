@@ -28,7 +28,6 @@ class TimeLoopSingleODE final
 {
 public:
     using TDiscODESys = TimeDiscretizedODESystemBase<NLTag>;
-    using LinearSolver = MathLib::LinearSolver<GlobalMatrix, GlobalVector>;
     using NLSolver = NonlinearSolver<NLTag>;
 
     /*! Constructs an new instance.
@@ -39,7 +38,7 @@ public:
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
      */
     TimeLoopSingleODE(TDiscODESys& ode_sys,
-                               std::unique_ptr<LinearSolver>&& linear_solver,
+                               std::unique_ptr<GlobalLinearSolver>&& linear_solver,
                                std::unique_ptr<NLSolver>&& nonlinear_solver)
         : _ode_sys(ode_sys),
           _linear_solver(std::move(linear_solver)),
@@ -68,7 +67,7 @@ public:
 
 private:
     TDiscODESys& _ode_sys;
-    std::unique_ptr<LinearSolver> _linear_solver;
+    std::unique_ptr<GlobalLinearSolver> _linear_solver;
     std::unique_ptr<NLSolver> _nonlinear_solver;
 };
 

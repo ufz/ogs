@@ -280,7 +280,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 }
 
 std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
-createNonlinearSolver(MathLib::LinearSolver<GlobalMatrix, GlobalVector>& linear_solver,
+createNonlinearSolver(GlobalLinearSolver& linear_solver,
                       BaseLib::ConfigTree const& config)
 {
     using AbstractNLS = NonlinearSolverBase;

@@ -29,7 +29,6 @@ class TestOutput
 {
 public:
     using TimeDisc = NumLib::TimeDiscretization;
-    using LinearSolver = MathLib::LinearSolver<Matrix, Vector>;
     using NLSolver = NumLib::NonlinearSolver<NLTag>;
 
     explicit TestOutput(const char* name)
@@ -51,8 +50,8 @@ public:
         NumLib::TimeDiscretizedODESystem<ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
 
-
-        auto linear_solver = MathLib::createLinearSolver<Matrix, Vector>(nullptr);
+        auto linear_solver = std::unique_ptr<GlobalLinearSolver>{
+            new GlobalLinearSolver{"", nullptr}};
         std::unique_ptr<NLSolver> nonlinear_solver(
                     new NLSolver(*linear_solver, _tol, _maxiter));
 
