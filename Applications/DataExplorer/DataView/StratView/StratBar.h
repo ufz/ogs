@@ -15,11 +15,12 @@
 #ifndef STRATBAR_H
 #define STRATBAR_H
 
-#include "StationBorehole.h"
-#include "Color.h"
-#include <QGraphicsItem>
 #include <cmath>
 
+#include <QGraphicsItem>
+
+#include "StationBorehole.h"
+#include "Applications/DataHolderLib/Color.h"
 
 /**
  * \brief A 2D bar visualisation of a borehole stratigraphy.
@@ -36,7 +37,7 @@ public:
      * \param parent The parent QGraphicsItem.
      */
     StratBar(GeoLib::StationBorehole* station,
-             std::map<std::string, GeoLib::Color>* stratColors = nullptr,
+             std::map<std::string, DataHolderLib::Color>* stratColors = nullptr,
              QGraphicsItem* parent = 0);
     ~StratBar();
 
@@ -60,7 +61,7 @@ private:
     static const int BARWIDTH = 50;
 
     GeoLib::StationBorehole* _station;
-    std::map<std::string, GeoLib::Color> _stratColors;
+    std::map<std::string, DataHolderLib::Color> _stratColors;
 };
 
 #endif //STRATBAR_H

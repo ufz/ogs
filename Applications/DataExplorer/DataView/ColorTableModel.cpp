@@ -14,7 +14,7 @@
 
 #include "ColorTableModel.h"
 
-ColorTableModel::ColorTableModel( const std::map<std::string, GeoLib::Color*> &colorLookupTable,
+ColorTableModel::ColorTableModel( const std::map<std::string, DataHolderLib::Color*> &colorLookupTable,
                                   QObject* parent /*= 0*/ )
 {
     Q_UNUSED(parent)
@@ -77,12 +77,12 @@ QVariant ColorTableModel::data( const QModelIndex& index, int role ) const
     return QVariant();
 }
 
-bool ColorTableModel::buildTable(const std::map<std::string, GeoLib::Color*> &colorLookupTable)
+bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Color*> &colorLookupTable)
 {
     int count = 0;
     beginInsertRows(QModelIndex(), 0, colorLookupTable.size() - 1);
 
-    for (std::map<std::string, GeoLib::Color*>::const_iterator it = colorLookupTable.begin();
+    for (std::map<std::string, DataHolderLib::Color*>::const_iterator it = colorLookupTable.begin();
          it != colorLookupTable.end(); ++it)
     {
         QColor color((*(it->second))[0], (*(it->second))[1], (*(it->second))[2]);

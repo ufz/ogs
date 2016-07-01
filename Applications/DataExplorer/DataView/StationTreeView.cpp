@@ -144,7 +144,7 @@ void StationTreeView::displayStratigraphy()
     static_cast<StationTreeModel*>(model())->stationFromIndex(
             this->selectionModel()->currentIndex(), temp_name);
     // get color table (horrible way to do it but there you go ...)
-    std::map<std::string, GeoLib::Color> colorLookupTable =
+    std::map<std::string, DataHolderLib::Color> colorLookupTable =
         static_cast<VtkStationSource*>(static_cast<StationTreeModel*>
             (model())->vtkSource(temp_name.toStdString()))->getColorLookupTable();
     StratWindow* stratView = new StratWindow(static_cast<GeoLib::StationBorehole*>
@@ -237,7 +237,7 @@ void StationTreeView::showDiagramPrefsDialog()
 
 void StationTreeView::writeStratigraphiesAsImages(QString listName)
 {
-    std::map<std::string, GeoLib::Color> colorLookupTable =
+    std::map<std::string, DataHolderLib::Color> colorLookupTable =
         static_cast<VtkStationSource*>(static_cast<StationTreeModel*>
             (model())->vtkSource(listName.toStdString()))->getColorLookupTable();
     std::vector<ModelTreeItem*> lists = static_cast<StationTreeModel*>(model())->getLists();

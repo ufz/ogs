@@ -23,7 +23,7 @@
 #include "StratScene.h"
 
 StratScene::StratScene(GeoLib::StationBorehole* station,
-                       std::map<std::string, GeoLib::Color>* stratColors,
+                       std::map<std::string, DataHolderLib::Color>* stratColors,
                        QObject* parent) : QGraphicsScene(parent)
 {
     QRectF textBounds;
@@ -115,7 +115,7 @@ void StratScene::addSoilNameLabels(std::vector<std::string> soilNames,
 }
 
 StratBar* StratScene::addStratBar(GeoLib::StationBorehole* station,
-                                  std::map<std::string, GeoLib::Color>* stratColors)
+                                  std::map<std::string, DataHolderLib::Color>* stratColors)
 {
     StratBar* b = new StratBar(station, stratColors);
     addItem(b);

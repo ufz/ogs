@@ -42,7 +42,7 @@ void VtkCompositeColormapToImageFilter::init()
     this->_inputDataObjectType = VTK_IMAGE_DATA;
     this->_outputDataObjectType = VTK_IMAGE_DATA;
 
-    vtkSmartPointer<VtkColorLookupTable> colormap;
+    vtkSmartPointer<VtkColorLookupTable> colormap = vtkSmartPointer<VtkColorLookupTable>::New();
 
     QWidget* parent = 0;
     QSettings settings;
@@ -52,14 +52,14 @@ void VtkCompositeColormapToImageFilter::init()
     double range[2];
     dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
 
-    if (fileName.length() > 0)
+    DataHolderLib::ColorLookupTable lut;
+    if (FileIO::XmlLutReader::readFromFile(fileName, lut))
     {
-        colormap = FileIO::XmlLutReader::readFromFile(fileName);
+        colormap->setLookupTable(lut);
         settings.setValue("lastOpenedLookupTableFileDirectory", fileName);
     }
     else
     {
-        colormap = vtkSmartPointer<VtkColorLookupTable>::New();
         colormap->SetTableRange(range[0], range[1]);
         colormap->SetHueRange(0.0, 0.666);
     }

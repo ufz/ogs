@@ -21,6 +21,8 @@
 #include <vector>
 #include <vtkLookupTable.h>
 
+#include "Applications/DataHolderLib/ColorLookupTable.h"
+
 /**
  * \brief Calculates and stores a colour lookup table.
  *
@@ -33,14 +35,6 @@
 class VtkColorLookupTable : public vtkLookupTable
 {
 public:
-    /// Interpolation methods
-    enum class LUTType {
-        NONE = 0,
-        LINEAR = 1,
-        EXPONENTIAL = 2,
-        SIGMOID = 3 // not yet implemented
-    };
-
     static const int DEFAULTMINVALUE = -9999;
     static const int DEFAULTMAXVALUE =  9999;
 
@@ -58,7 +52,7 @@ public:
      * relative position, i.e. pos in (0,1). The actual position of that colour in the table is dependent on the number of entries set
      * the SetRange() method.
      */
-    void setColor(double pos, unsigned char rgba[4]);
+    void setColor(double pos, DataHolderLib::Color const& color);
 
     /* \brief Returns the colour at the given index from the colour lookup table.
      * The colour will be interpolated from the colour-dictionary entries before and after this index.
@@ -67,10 +61,13 @@ public:
     void getColor(vtkIdType indx, unsigned char rgba[4]) const;
 
     /// Returns the type of interpolation used.
-    VtkColorLookupTable::LUTType getInterpolationType() const { return _type; }
+    DataHolderLib::LUTType getInterpolationType() const { return _type; }
 
     /// Sets the type of interpolation.
-    void setInterpolationType(VtkColorLookupTable::LUTType type) { _type = type; }
+    void setInterpolationType(DataHolderLib::LUTType type) { _type = type; }
+
+    /// Imports settings of OGS lookup table class
+    void setLookupTable(DataHolderLib::ColorLookupTable const& lut);
 
     /// Exports a color table to a file.
     void writeToFile(const std::string &filename);
@@ -93,11 +90,10 @@ private:
     unsigned char linInterpolation(unsigned char a, unsigned char b, double p) const;
 
     /// Interpolates values exponentially. gamma should roughly be in [0,4), for gamma=1 interpolation is linear.
-    unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma,
-                                   double p) const;
+    unsigned char expInterpolation(unsigned char a, unsigned char b, double gamma, double p) const;
 
     std::map<double, unsigned char*> _dict;
-    LUTType _type;
+    DataHolderLib::LUTType _type;
 };
 
 #endif // VTKCOLORLOOKUPTABLE_H

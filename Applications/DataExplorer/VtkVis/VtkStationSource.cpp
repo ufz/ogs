@@ -41,7 +41,7 @@ VtkStationSource::VtkStationSource()
     _removable = false; // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
-    const GeoLib::Color c = GeoLib::getRandomColor();
+    const DataHolderLib::Color c = DataHolderLib::getRandomColor();
     GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
