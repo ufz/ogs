@@ -478,28 +478,6 @@ void NodeWiseMeshPartitioner::writeGlobalMeshVTU(
                        npartitions_str + ".vtu");
 }
 
-ElementType NodeWiseMeshPartitioner::getElementType(
-    const MeshLib::Element& elem)
-{
-    switch (elem.getCellType())
-    {
-        case MeshLib::CellType::LINE2:
-            return ElementType::LINE2;
-        case MeshLib::CellType::QUAD4:
-            return ElementType::QUAD4;
-        case MeshLib::CellType::HEX8:
-            return ElementType::HEX8;
-        case MeshLib::CellType::TRI3:
-            return ElementType::TRI3;
-        case MeshLib::CellType::PYRAMID5:
-            return ElementType::PYRAMID5;
-        case MeshLib::CellType::PRISM6:
-            return ElementType::PRISM6;
-        default:
-            OGS_FATAL("Invalid element type in element %d", elem.getID());
-    }
-}
-
 void NodeWiseMeshPartitioner::getElementIntegerVariables(
     const MeshLib::Element& elem,
     const std::vector<PetscInt>& local_node_ids,
@@ -510,7 +488,7 @@ void NodeWiseMeshPartitioner::getElementIntegerVariables(
     const PetscInt nn = elem.getNumberOfNodes();
     ;
     elem_info[counter++] = mat_id;
-    elem_info[counter++] = static_cast<unsigned>(getElementType(elem)) + 1;
+    elem_info[counter++] = static_cast<unsigned>(elem.getCellType());
     elem_info[counter++] = nn;
 
     for (PetscInt i = 0; i < nn; i++)
@@ -525,7 +503,7 @@ void NodeWiseMeshPartitioner::writeLocalElementNodeIndicies(
     const std::vector<PetscInt>& local_node_ids)
 {
     unsigned mat_id = 0;  // TODO: Materical ID to be set from the mesh data
-    os << mat_id << " " << static_cast<unsigned>(getElementType(elem)) + 1
+    os << mat_id << " " << static_cast<unsigned>(elem.getCellType())
        << " " << elem.getNumberOfNodes() << " ";
     for (unsigned i = 0; i < elem.getNumberOfNodes(); i++)
     {

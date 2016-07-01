@@ -24,18 +24,6 @@
 
 namespace ApplicationUtils
 {
-enum class ElementType : unsigned
-{
-    LINE2,
-    QUAD4,
-    HEX8,
-    TRI3,
-    TET4,
-    PRISM6,
-    PYRAMID5,
-    INVALID
-};
-
 ///  A subdomain mesh.
 struct Partition
 {
@@ -131,8 +119,6 @@ private:
    */
     PetscInt getNumberOfIntegerVariablesOfElements(
         const std::vector<const MeshLib::Element*>& elements) const;
-
-    ElementType getElementType(const MeshLib::Element& elem);
 
     /*!
          \brief get integer variables, which are used to define an element

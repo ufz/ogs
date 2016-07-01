@@ -487,25 +487,25 @@ void NodePartitionedMeshReader::setElements(
         // available at https://github.com/ufz/mesh_partition .
         switch(e_type)
         {
-        case 1:
+        case 2:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Line(elem_nodes, mat_idx);
             break;
-        case 2:
+        case 6:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Quad(elem_nodes, mat_idx);
             break;
-        case 3:
+        case 11:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Hex(elem_nodes, mat_idx);
             break;
         case 4:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Tri(elem_nodes, mat_idx);
             break;
-        case 5:
+        case 9:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Tet(elem_nodes, mat_idx);
             break;
-        case 6:
+        case 14:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Prism(elem_nodes, mat_idx);
             break;
-        case 7:
+        case 17:
             mesh_elems[i + id_offset_ghost] = new MeshLib::Pyramid(elem_nodes, mat_idx);
             break;
         }

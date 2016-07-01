@@ -42,25 +42,25 @@ enum class MeshElemType
  */
 enum class CellType
 {
-    INVALID,
-    POINT1,
-    LINE2,
-    LINE3,
-    TRI3,
-    TRI6,
-    QUAD4,
-    QUAD8,
-    QUAD9,
-    TET4,
-    TET10,
-    HEX8,
-    HEX20,
-    HEX27,
-    PRISM6,
-    PRISM15,
-    PRISM18,
-    PYRAMID5,
-    PYRAMID13
+    INVALID = 0,
+    POINT1 = 1,
+    LINE2 = 2,
+    LINE3 = 3,
+    TRI3 = 4,
+    TRI6 = 5,
+    QUAD4 = 6,
+    QUAD8 = 7,
+    QUAD9 = 8,
+    TET4 = 9,
+    TET10 = 10,
+    HEX8 = 11,
+    HEX20 = 12,
+    HEX27 = 13,
+    PRISM6 = 14,
+    PRISM15 = 15,
+    PRISM18 = 16,
+    PYRAMID5 = 17,
+    PYRAMID13 = 18
 };
 
 /**
