@@ -18,7 +18,6 @@
 #include <QMap>
 #include <QVector>
 
-#include "BaseLib/Histogram.h"
 #include "GeoType.h"
 #include "MeshEnums.h"
 #include "Point.h"

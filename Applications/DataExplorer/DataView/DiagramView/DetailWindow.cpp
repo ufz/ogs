@@ -12,11 +12,12 @@
  *
  */
 
+#include "DetailWindow.h"
+
 #include <QFileDialog>
 #include <QSettings>
 
 #include "Applications/DataHolderLib/Color.h"
-#include "DetailWindow.h"
 #include "DiagramPrefsDialog.h"
 
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)

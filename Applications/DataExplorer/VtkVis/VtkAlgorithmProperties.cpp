@@ -88,6 +88,8 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QSt
         colorLookupTable->setLookupTable(lut);
         SetLookUpTable(array_name, colorLookupTable);
     }
+    else
+        ERR ("Error reading color look-up table.");
 }
 
 void VtkAlgorithmProperties::SetScalarVisibility(bool on)
