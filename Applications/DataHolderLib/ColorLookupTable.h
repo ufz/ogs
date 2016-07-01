@@ -40,9 +40,9 @@ class ColorLookupTable
 public:
     ColorLookupTable();
 
-    void setColor(double id, DataHolderLib::Color color);
+    void setColor(double id, DataHolderLib::Color const& color);
 
-    void setColor(std::string const& name, DataHolderLib::Color color);
+    void setColor(std::string const& name, DataHolderLib::Color const& color);
 
     DataHolderLib::LUTType getInterpolationType() const { return _type; }
 

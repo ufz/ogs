@@ -31,9 +31,6 @@ Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned ch
 /// Returns a random RGB colour.
 Color getRandomColor();
 
-/// Reads a color-lookup-table from a file and writes it to a map.
-//int readColorLookupTable(std::map<std::string, GeoLib::Color> &colors, const std::string &filename);
-
 /// Uses a color-lookup-table (in form of a map) to return a colour for a specified name. If the name is not
 /// in the colortable a new entry is created with the new name and a random colour.
 Color const getColor(const std::string &id, std::map<std::string, DataHolderLib::Color> &colors);

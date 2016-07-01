@@ -25,13 +25,13 @@ void ColorLookupTable::setTableRange(double min, double max)
         _range = std::make_pair(min, max);
 }
 
-void ColorLookupTable::setColor(double id, DataHolderLib::Color color)
+void ColorLookupTable::setColor(double id, DataHolderLib::Color const& color)
 {
     if ((id>_range.first) && (id<_range.second))
         _lut.push_back(std::make_tuple(id, color, ""));
 }
 
-void ColorLookupTable::setColor(std::string const& name, DataHolderLib::Color color)
+void ColorLookupTable::setColor(std::string const& name, DataHolderLib::Color const& color)
 {
     _lut.push_back(std::make_tuple(0, color, name));
 }
