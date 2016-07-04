@@ -23,26 +23,19 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
+    virtual void assemble(std::size_t const id,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          double const t, GlobalVector const& x,
+                          GlobalMatrix& M, GlobalMatrix& K,
+                          GlobalVector& b) = 0;
 
-    virtual void addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
-
-    virtual void assembleJacobian(double const /*t*/,
-                                  std::vector<double> const& /*local_x*/)
+    virtual void assembleJacobian(
+        std::size_t const /*id*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/, double const /*t*/,
+        GlobalVector const& /*x*/, GlobalMatrix& /*Jac*/)
     {
         OGS_FATAL(
-            "assembleJacobian function is not implemented in the local "
-            "assembler.");
-    }
-
-    virtual void addJacobianToGlobal(NumLib::LocalToGlobalIndexMap::
-                                         RowColumnIndices const& /*indices*/,
-                                     GlobalMatrix& /*Jac*/) const
-    {
-        OGS_FATAL(
-            "addJacobianToGlobal function is not implemented in the local "
+            "The assembleJacobian() function is not implemented in the local "
             "assembler.");
     }
 
