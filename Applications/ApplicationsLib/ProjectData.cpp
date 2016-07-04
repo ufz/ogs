@@ -32,6 +32,7 @@
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
+#include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 
@@ -268,6 +269,28 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
         {
             process = ProcessLib::HeatConduction::createHeatConductionProcess(
                 *_mesh_vec[0], _process_variables, _parameters, process_config);
+        }
+        else if (type == "SMALL_DEFORMATION")
+        {
+            switch (process_config.getConfigParameter<int>("dimension"))
+            {
+                case 2:
+                    process = ProcessLib::SmallDeformation::
+                        createSmallDeformationProcess<2>(
+                            *_mesh_vec[0], _process_variables, _parameters,
+                            process_config);
+                    break;
+                case 3:
+                    process = ProcessLib::SmallDeformation::
+                        createSmallDeformationProcess<3>(
+                            *_mesh_vec[0], _process_variables, _parameters,
+                            process_config);
+                    break;
+                default:
+                    OGS_FATAL(
+                        "SMALL_DEFORMATION process does not support "
+                        "given dimension");
+            }
         }
         else
         {
