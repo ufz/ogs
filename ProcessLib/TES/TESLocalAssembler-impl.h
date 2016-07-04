@@ -132,13 +132,16 @@ TESLocalAssembler<
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_,
-                       GlobalDim>::assemble(const double /*t*/,
-                                            std::vector<double> const& local_x)
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
+    std::size_t const id, NumLib::LocalToGlobalIndexMap const& dof_table,
+    double const /*t*/, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b)
 {
     _local_M.setZero();
     _local_K.setZero();
     _local_b.setZero();
+    auto const indices = NumLib::detail::getIndices(id, dof_table);
+    auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
 
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNumberOfPoints();
@@ -182,18 +185,12 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_,
         ogs5OutVec(_local_b);
         std::printf("\n");
     }
-}
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
-{
-    M.add(indices, _local_M);
-    K.add(indices, _local_K);
-    b.add(indices.rows, _local_b);
+    auto const r_c_indices =
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
+    M.add(r_c_indices, _local_M);
+    K.add(r_c_indices, _local_K);
+    b.add(indices, _local_b);
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,

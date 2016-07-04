@@ -52,10 +52,6 @@ public:
 
     bool isLinear() const override { return false; }
 private:
-    using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        TESLocalAssemblerInterface,
-        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
     using ExtrapolatorInterface =
         NumLib::Extrapolator<TESIntPtVariables, TESLocalAssemblerInterface>;
     using ExtrapolatorImplementation =
@@ -85,7 +81,6 @@ private:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
-    std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<TESLocalAssemblerInterface>> _local_assemblers;
 
     AssemblyParams _assembly_params;

@@ -23,17 +23,11 @@ namespace ProcessLib
 namespace TES
 {
 class TESLocalAssemblerInterface
-    : public NumLib::Extrapolatable<TESIntPtVariables>
+    : public ProcessLib::LocalAssemblerInterface,
+      public NumLib::Extrapolatable<TESIntPtVariables>
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;
-
-    virtual void assemble(double const t,
-                          std::vector<double> const& local_x) = 0;
-
-    virtual void addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
 
     virtual bool checkBounds(std::vector<double> const& local_x,
                              std::vector<double> const& local_x_prev_ts) = 0;
@@ -54,11 +48,11 @@ public:
                       unsigned const integration_order,
                       AssemblyParams const& asm_params);
 
-    void assemble(double const t, std::vector<double> const& local_x) override;
-
-    void addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const override;
+    void assemble(std::size_t const id,
+                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  double const t, GlobalVector const& x,
+                  GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

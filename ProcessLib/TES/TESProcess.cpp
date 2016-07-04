@@ -171,9 +171,6 @@ void TESProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh, unsigned const integration_order)
 {
-    DBUG("Create global assembler.");
-    _global_assembler.reset(new GlobalAssembler(dof_table));
-
     ProcessLib::createLocalAssemblers<TESLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _assembly_params);
@@ -249,9 +246,9 @@ void TESProcess::assembleConcreteProcess(const double t,
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(*_global_assembler,
-                                           &GlobalAssembler::assemble,
-                                           _local_assemblers, t, x, M, K, b);
+    GlobalExecutor::executeMemberOnDereferenced(
+        &TESLocalAssemblerInterface::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, x, M, K, b);
 }
 
 void TESProcess::preTimestep(GlobalVector const& x, const double t,
