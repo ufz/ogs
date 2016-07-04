@@ -22,6 +22,11 @@ class Element;
 
 namespace Solids
 {
+/// Interface for mechanical solid material models. Provides updates of the
+/// stress for a given current state and also a tangent at that position. If the
+/// implemented material model stores an internal state, the nested
+/// MaterialStateVariables class should be used; it's only responsibility is to
+/// provide state's push back possibility.
 template <int DisplacementDim>
 struct MechanicsBase
 {
@@ -36,9 +41,16 @@ struct MechanicsBase
         virtual void pushBackState() = 0;
     };
 
+    /// Polymorphic creator for MaterialStateVariables objects specific for a
+    /// material model.
+    virtual std::unique_ptr<MaterialStateVariables>
+    createMaterialStateVariables() = 0;
+
     using KelvinVector = ProcessLib::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix = ProcessLib::KelvinMatrixType<DisplacementDim>;
 
+    /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
+    /// constitutive relation compute function.
     void computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
@@ -76,6 +88,10 @@ struct MechanicsBase
         C = C_;
     }
 
+    /// Computation of the constitutive relation for specific material model.
+    /// This should be implemented in the derived model. Fixed Kelvin vector and
+    /// matrix size version; for dynamic size arguments there is an overloaded
+    /// wrapper function.
     virtual void computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
@@ -86,9 +102,6 @@ struct MechanicsBase
         KelvinVector& sigma,
         KelvinMatrix& C,
         MaterialStateVariables& material_state_variables) = 0;
-
-    virtual std::unique_ptr<MaterialStateVariables>
-    createMaterialStateVariables() = 0;
 
     virtual ~MechanicsBase() = default;
 };
