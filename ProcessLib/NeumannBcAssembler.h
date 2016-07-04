@@ -24,10 +24,9 @@ class LocalNeumannBcAsmDataInterface
 public:
     virtual ~LocalNeumannBcAsmDataInterface() = default;
 
-    virtual void assemble(const double t) = 0;
-
-    virtual void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-                             GlobalVector& b) const = 0;
+    virtual void assemble(std::size_t const id,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          double const t, GlobalVector& b) = 0;
 };
 
 template <typename ShapeFunction_,
@@ -74,8 +73,9 @@ public:
         _localRhs.reset(new NodalVectorType(local_matrix_size));
     }
 
-    void
-    assemble(const double t) override
+    void assemble(std::size_t const id,
+                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  double const t, GlobalVector& b) override
     {
         (void) t; // TODO time-dependent Neumann BCs
 
@@ -90,12 +90,9 @@ public:
             _localRhs->noalias() += sm.N * _neumann_bc_value
                         * sm.detJ * wp.getWeight();
         }
-    }
 
-    void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-                     GlobalVector& b) const override
-    {
-        b.add(indices.rows, *_localRhs);
+        auto const indices = NumLib::detail::getIndices(id, dof_table);
+        b.add(indices, *_localRhs);
     }
 
 private:
