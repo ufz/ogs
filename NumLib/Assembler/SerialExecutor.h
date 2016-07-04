@@ -76,6 +76,26 @@ struct SerialExecutor
         }
     }
 
+    /// Executes the given \c method on each element of the input \c container.
+    ///
+    /// This method is very similar to executeMemberDereferenced().
+    ///
+    /// \param container collection of objects having pointer semantics.
+    /// \param method    the method being called, i.e., a member function pointer
+    ///                  to a member function of the \c container's elements.
+    /// \param Args      types of further arguments passed on to the method
+    ///
+    /// \see executeDereferenced()
+    template <typename Container, typename Method, typename... Args>
+    static void executeMemberOnDereferenced(Method method,
+                                            Container const& container,
+                                            Args&&... args)
+    {
+        for (std::size_t i = 0; i < container.size(); i++) {
+            ((*container[i]).*method)(i, std::forward<Args>(args)...);
+        }
+    }
+
     /// Same as execute(f, c), but with two containers, where the second one is
     /// modified.
     ///
