@@ -32,7 +32,7 @@ node('visserv3')
             build 'build-de', 'package'
         }
         withEnv(env32) {
-            configure 'build-32', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
+            configure 'build-32', '-DOGS_32_BIT=ON -DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
             build 'build-32', 'package'
         }
         deploy 'build*/*.zip'
