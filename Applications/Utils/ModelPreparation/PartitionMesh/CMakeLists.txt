@@ -8,7 +8,7 @@ set(METIS_SOURCES
    ${METIS_PATH}/programs/cmdline_mpmetis.c
    ${METIS_PATH}/programs/io.c
    ${METIS_PATH}/programs/stat.c
-	)
+   )
 add_executable(mpmetis ${METIS_SOURCES})
 
 target_link_libraries(mpmetis metis)
@@ -25,7 +25,7 @@ ADD_VTK_DEPENDENCY(partmesh)
 install(TARGETS partmesh mpmetis RUNTIME DESTINATION bin COMPONENT ogs_partmesh)
 
 cpack_add_component(ogs_partmesh
-	DISPLAY_NAME "Mesh partitioning tool"
-	DESCRIPTION "Mesh partitioning tool."
-	GROUP Utilities
+    DISPLAY_NAME "Mesh partitioning tool"
+    DESCRIPTION "Mesh partitioning tool."
+    GROUP Utilities
 )

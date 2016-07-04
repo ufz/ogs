@@ -150,7 +150,7 @@ if(OGS_BUILD_TESTS)
     set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
 endif()
 
-if(OGS_BUILD_UTILS)
+if(OGS_BUILD_UTILS AND NOT OGS_BUILD_GUI)
     include(${CMAKE_SOURCE_DIR}/Applications/Utils/ModelPreparation/PartitionMesh/MetisSetup.cmake)
 endif()
 
