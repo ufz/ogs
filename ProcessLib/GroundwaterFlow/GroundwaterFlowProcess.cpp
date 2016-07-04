@@ -50,14 +50,11 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    DBUG("Create global assembler.");
-    _global_assembler.reset(new GlobalAssembler(dof_table));
-
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _process_data);
 
-    // TOOD Later on the DOF table can change during the simulation!
+    // TODO Later on the DOF table can change during the simulation!
     _extrapolator.reset(new ExtrapolatorImplementation(
         Base::getMatrixSpecifications(), *Base::_local_to_global_index_map));
 
@@ -91,9 +88,9 @@ void GroundwaterFlowProcess::assembleConcreteProcess(const double t,
     DBUG("Assemble GroundwaterFlowProcess.");
 
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(*_global_assembler,
-                                              &GlobalAssembler::assemble,
-                                              _local_assemblers, t, x, M, K, b);
+    GlobalExecutor::executeMemberOnDereferenced(
+        &GroundwaterFlowLocalAssemblerInterface::assemble,
+        _local_assemblers, *_local_to_global_index_map, t, x, M, K, b);
 }
 
 }   // namespace GroundwaterFlow

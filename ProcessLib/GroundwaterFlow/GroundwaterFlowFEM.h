@@ -74,10 +74,16 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x) override
+    void assemble(std::size_t const id,
+                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  double const /*t*/, GlobalVector const& x,
+                  GlobalMatrix& /*M*/, GlobalMatrix& K,
+                  GlobalVector& b) override
     {
         _localA.setZero();
         _localRhs.setZero();
+        auto const indices = NumLib::detail::getIndices(id, dof_table);
+        auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
 
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();
@@ -100,14 +106,11 @@ public:
                 _darcy_velocities[d][ip] = darcy_velocity[d];
             }
         }
-    }
 
-    void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
-        const override
-    {
-        K.add(indices, _localA);
-        b.add(indices.rows, _localRhs);
+        auto const r_c_indices =
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
+        K.add(r_c_indices, _localA);
+        b.add(indices, _localRhs);
     }
 
     Eigen::Map<const Eigen::RowVectorXd>

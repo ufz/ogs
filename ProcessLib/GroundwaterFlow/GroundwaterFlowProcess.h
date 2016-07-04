@@ -42,10 +42,6 @@ public:
     //! @}
 
 private:
-    using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        GroundwaterFlowLocalAssemblerInterface,
-        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
-
     using ExtrapolatorInterface =
         NumLib::Extrapolator<IntegrationPointValue,
                              GroundwaterFlowLocalAssemblerInterface>;
@@ -64,7 +60,6 @@ private:
 
     GroundwaterFlowProcessData _process_data;
 
-    std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
         _local_assemblers;
 
