@@ -26,6 +26,8 @@
  - Added copy constructor for the class Surface, minor improvements in GeoLib. #1237
  - Added classes GeoLib::LineSegment and GeoLib::Polyline::SegmentIterator. #1139
  - GMSHInterface can handle stations as constraints. #1212
+ - Added functionality to duplicate geometric data. #1229
+ - Station names can be modified in Data Explorer #1273
 
 ### Infrastructure
  - Fix circular dependencies on library level. This allows for dynamic linking
@@ -38,6 +40,7 @@
    - Split AssemblerLib and move to MathLib and NumLib #1208
    - Move InsituLib to MeshLib #1208
    - Remove MathLib depends on NumLib #1208
+   - Remove dependency of FileIO on Data Explorer #1302
  - Introduced Conan package manager for automatic fetching of build dependencies, #1141
  - Inconsistent formatting of tabs and spaces was finally resolved: now all
    formatting, indentation and alignment, are done with four spaces. #1201
@@ -45,7 +48,7 @@
    Can be forced by setting OGS_32_BIT=ON. #1230
  - Simplified FindEigen.cmake, #1209
  - git diff --check is run in its own Travis job, #1207
- 
+
  - Moved some IO implementations from FileIO to BaseLib/IO, GeoLib/IO, MeshLib/IO, #1182, #1235
  - Eigen is not optional anymore #1218
  - Removed OGS_USE_EIGENLIS CMake option. Use OGS_USE_LIS instead #1251
@@ -54,11 +57,13 @@
  - Fix linking of Metis in MathLib. #1147
  - Fix memory leaks in GMSHInterface. #1212
  - Fix build with Lis #1267
- - Restructure Applications related modules 
+ - Fixing several small issues with NetCDF import #1169
+ - Restructure Applications related modules
     - Move DataHolderLib and FileIO under Applications #1279
  - Remove calling std::abort within libraries. Exeptions are thrown instead. #1245
  - Fix finding Boost with BOOST_ROOT CMake argument #1287
  - Fix linking of Sundials CVODE library #1197
+ - Fixed issue where geometry names would be missing after merging geometries #1295
 
 # 6.0.5
 
