@@ -11,7 +11,6 @@
 
 #include <cassert>
 
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib

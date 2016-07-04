@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -91,7 +92,7 @@ public:
                         * sm.detJ * wp.getWeight();
         }
 
-        auto const indices = NumLib::detail::getIndices(id, dof_table);
+        auto const indices = NumLib::getIndices(id, dof_table);
         b.add(indices, *_localRhs);
     }
 

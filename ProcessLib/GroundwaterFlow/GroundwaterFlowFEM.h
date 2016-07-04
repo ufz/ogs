@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -82,8 +83,8 @@ public:
     {
         _localA.setZero();
         _localRhs.setZero();
-        auto const indices = NumLib::detail::getIndices(id, dof_table);
-        auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
+        auto const indices = NumLib::getIndices(id, dof_table);
+        auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
 
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();

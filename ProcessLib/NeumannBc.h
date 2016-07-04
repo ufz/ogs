@@ -15,7 +15,6 @@
 
 #include "MeshLib/MeshSubset.h"
 #include "NumLib/NumericsConfig.h"
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "NeumannBcConfig.h"
 #include "NeumannBcAssembler.h"
 

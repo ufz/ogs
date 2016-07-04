@@ -10,6 +10,7 @@
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
 #include "MaterialsLib/Adsorption/Adsorption.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -140,8 +141,8 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     _local_M.setZero();
     _local_K.setZero();
     _local_b.setZero();
-    auto const indices = NumLib::detail::getIndices(id, dof_table);
-    auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
+    auto const indices = NumLib::getIndices(id, dof_table);
+    auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
 
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNumberOfPoints();

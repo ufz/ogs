@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "ProcessLib/LocalAssemblerInterface.h"
 #include "TESAssemblyParams.h"
 #include "TESLocalAssemblerInner-fwd.h"
 
