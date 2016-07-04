@@ -22,8 +22,8 @@
  * | sort \
  * | while read f; do
  *     c="${f%.h}";
- *     echo "const std::size_t $c::DIM;";
- *     echo "const std::size_t $c::NPOINTS;";
+ *     echo "const unsigned $c::DIM;";
+ *     echo "const unsigned $c::NPOINTS;";
  * done >ShapeStaticConsts.cpp
  * \endcode
  */
@@ -48,44 +48,44 @@
 namespace NumLib
 {
 
-const std::size_t ShapeHex20::DIM;
-const std::size_t ShapeHex20::NPOINTS;
-const std::size_t ShapeHex8::DIM;
-const std::size_t ShapeHex8::NPOINTS;
+const unsigned ShapeHex20::DIM;
+const unsigned ShapeHex20::NPOINTS;
+const unsigned ShapeHex8::DIM;
+const unsigned ShapeHex8::NPOINTS;
 
-const std::size_t ShapeLine2::DIM;
-const std::size_t ShapeLine2::NPOINTS;
-const std::size_t ShapeLine3::DIM;
-const std::size_t ShapeLine3::NPOINTS;
+const unsigned ShapeLine2::DIM;
+const unsigned ShapeLine2::NPOINTS;
+const unsigned ShapeLine3::DIM;
+const unsigned ShapeLine3::NPOINTS;
 
-const std::size_t ShapePoint1::DIM;
-const std::size_t ShapePoint1::NPOINTS;
+const unsigned ShapePoint1::DIM;
+const unsigned ShapePoint1::NPOINTS;
 
-const std::size_t ShapePrism15::DIM;
-const std::size_t ShapePrism15::NPOINTS;
-const std::size_t ShapePrism6::DIM;
-const std::size_t ShapePrism6::NPOINTS;
+const unsigned ShapePrism15::DIM;
+const unsigned ShapePrism15::NPOINTS;
+const unsigned ShapePrism6::DIM;
+const unsigned ShapePrism6::NPOINTS;
 
-const std::size_t ShapePyra13::DIM;
-const std::size_t ShapePyra13::NPOINTS;
-const std::size_t ShapePyra5::DIM;
-const std::size_t ShapePyra5::NPOINTS;
+const unsigned ShapePyra13::DIM;
+const unsigned ShapePyra13::NPOINTS;
+const unsigned ShapePyra5::DIM;
+const unsigned ShapePyra5::NPOINTS;
 
-const std::size_t ShapeQuad4::DIM;
-const std::size_t ShapeQuad4::NPOINTS;
-const std::size_t ShapeQuad8::DIM;
-const std::size_t ShapeQuad8::NPOINTS;
-const std::size_t ShapeQuad9::DIM;
-const std::size_t ShapeQuad9::NPOINTS;
+const unsigned ShapeQuad4::DIM;
+const unsigned ShapeQuad4::NPOINTS;
+const unsigned ShapeQuad8::DIM;
+const unsigned ShapeQuad8::NPOINTS;
+const unsigned ShapeQuad9::DIM;
+const unsigned ShapeQuad9::NPOINTS;
 
-const std::size_t ShapeTet10::DIM;
-const std::size_t ShapeTet10::NPOINTS;
-const std::size_t ShapeTet4::DIM;
-const std::size_t ShapeTet4::NPOINTS;
+const unsigned ShapeTet10::DIM;
+const unsigned ShapeTet10::NPOINTS;
+const unsigned ShapeTet4::DIM;
+const unsigned ShapeTet4::NPOINTS;
 
-const std::size_t ShapeTri3::DIM;
-const std::size_t ShapeTri3::NPOINTS;
-const std::size_t ShapeTri6::DIM;
-const std::size_t ShapeTri6::NPOINTS;
+const unsigned ShapeTri3::DIM;
+const unsigned ShapeTri3::NPOINTS;
+const unsigned ShapeTri6::DIM;
+const unsigned ShapeTri6::NPOINTS;
 
 }
