@@ -51,7 +51,7 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
             // particular test all contributions are equal for all elements and are
             // already stored in the _localA matrix.
 
-            auto const indices = NumLib::detail::getIndices(id, dof_table);
+            auto const indices = NumLib::getIndices(id, dof_table);
             auto const r_c_indices =
                 NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
                                                                 indices);

@@ -13,12 +13,12 @@
 #include "NumLib/DOF/MatrixProviderUser.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
 
 #include "MathLib/LinAlg/LinAlg.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -187,8 +187,8 @@ public:
                      NumLib::LocalToGlobalIndexMap const& dof_table,
                      GlobalVector const& x,
                      IntegrationPointValue const property) {
-            auto const indices = NumLib::detail::getIndices(id, dof_table);
-            auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
+            auto const indices = NumLib::getIndices(id, dof_table);
+            auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
 
             loc_asm.interpolateNodalValuesToIntegrationPoints(local_x,
                                                               property);

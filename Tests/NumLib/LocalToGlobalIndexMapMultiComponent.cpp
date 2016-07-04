@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
@@ -23,7 +23,7 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
-namespace AL = NumLib;
+namespace NL = NumLib;
 namespace MeL = MeshLib;
 namespace MGTL = MeshGeoToolsLib;
 
@@ -78,7 +78,7 @@ public:
     }
 
     void initComponents(const unsigned num_components, const unsigned selected_component,
-                        const AL::ComponentOrder order)
+                        const NL::ComponentOrder order)
     {
         assert(selected_component < num_components);
 
@@ -89,7 +89,7 @@ public:
                 new MeL::MeshSubsets{mesh_items_all_nodes.get()});
         }
         dof_map.reset(
-            new AL::LocalToGlobalIndexMap(std::move(components), order));
+            new NL::LocalToGlobalIndexMap(std::move(components), order));
 
         auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
             new MeL::MeshSubsets{mesh_items_boundary.get()}};
@@ -101,7 +101,7 @@ public:
             boundary_elements));
     }
 
-    template <AL::ComponentOrder order>
+    template <NL::ComponentOrder order>
     void test(const unsigned num_components, const unsigned selected_component,
               std::function<std::size_t(std::size_t, std::size_t)> const&
                   compute_global_index);
@@ -111,8 +111,8 @@ public:
 
     GeoLib::GEOObjects geo_objs;
 
-    std::unique_ptr<AL::LocalToGlobalIndexMap> dof_map;
-    std::unique_ptr<AL::LocalToGlobalIndexMap> dof_map_boundary;
+    std::unique_ptr<NL::LocalToGlobalIndexMap> dof_map;
+    std::unique_ptr<NL::LocalToGlobalIndexMap> dof_map_boundary;
 
     std::unique_ptr<MeL::MeshSubset const> mesh_items_boundary;
     std::vector<MeL::Element*> boundary_elements;
@@ -142,7 +142,7 @@ struct ComputeGlobalIndexByLocation
 };
 
 
-template <AL::ComponentOrder ComponentOrder>
+template <NL::ComponentOrder ComponentOrder>
 void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     const unsigned num_components,
     const unsigned selected_component,
@@ -202,7 +202,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 
 
 
-void assert_equal(AL::LocalToGlobalIndexMap const& dof1, AL::LocalToGlobalIndexMap const& dof2)
+void assert_equal(NL::LocalToGlobalIndexMap const& dof1, NL::LocalToGlobalIndexMap const& dof2)
 {
     ASSERT_EQ(dof1.size(), dof2.size());
     ASSERT_EQ(dof1.getNumberOfComponents(), dof2.getNumberOfComponents());
@@ -225,13 +225,13 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
 {
     unsigned const num_components = 1;
 
-    test<AL::ComponentOrder::BY_LOCATION>(
+    test<NL::ComponentOrder::BY_LOCATION>(
         num_components, 0, ComputeGlobalIndexByComponent{num_components});
 
     auto dof_map_bc = std::move(dof_map);
     auto dof_map_boundary_bc = std::move(dof_map_boundary);
 
-    test<AL::ComponentOrder::BY_COMPONENT>(
+    test<NL::ComponentOrder::BY_COMPONENT>(
         num_components, 0,
         ComputeGlobalIndexByComponent{(mesh_subdivs + 1) * (mesh_subdivs + 1)});
 
@@ -247,7 +247,7 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponen
 {
     unsigned const num_components = 5;
     for (unsigned c = 0; c < num_components; ++c)
-        test<AL::ComponentOrder::BY_COMPONENT>(
+        test<NL::ComponentOrder::BY_COMPONENT>(
             num_components, c, ComputeGlobalIndexByComponent{
                                    (mesh_subdivs + 1) * (mesh_subdivs + 1)});
 }
@@ -260,6 +260,6 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation
 {
     unsigned const num_components = 5;
     for (unsigned c = 0; c < num_components; ++c)
-        test<AL::ComponentOrder::BY_LOCATION>(
+        test<NL::ComponentOrder::BY_LOCATION>(
             num_components, c, ComputeGlobalIndexByLocation{num_components});
 }

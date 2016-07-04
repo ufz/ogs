@@ -16,8 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
-
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
@@ -34,6 +32,7 @@
 #include "MeshLib/Node.h"
 
 #include "NumLib/NumericsConfig.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
