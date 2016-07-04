@@ -148,10 +148,6 @@ class TestProcess
 {
 public:
     using LocalAssembler = LocalAssemblerDataInterface;
-    using GlobalAssembler = NumLib::VectorMatrixAssembler<
-        LocalAssembler,
-        // The exact tag does not matter here.
-        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear>;
 
     using ExtrapolatorInterface =
         NumLib::Extrapolator<IntegrationPointValue, LocalAssembler>;
@@ -187,21 +183,19 @@ public:
             GlobalVector const& global_nodal_values,
             IntegrationPointValue const property) const
     {
-        auto cb = [this, property](
-            std::size_t id, LocalAssembler& loc_asm, GlobalVector const& x)
-        {
-            auto inner_cb = [&loc_asm, property](
-                std::vector<double> const& local_x,
-                NumLib::LocalToGlobalIndexMap::RowColumnIndices const&
-            ) {
-                loc_asm.interpolateNodalValuesToIntegrationPoints(local_x, property);
-            };
+        auto cb = [](std::size_t id, LocalAssembler& loc_asm,
+                     NumLib::LocalToGlobalIndexMap const& dof_table,
+                     GlobalVector const& x,
+                     IntegrationPointValue const property) {
+            auto const indices = NumLib::detail::getIndices(id, dof_table);
+            auto const local_x = NumLib::detail::getLocalNodalDOFs(x, indices);
 
-            _global_assembler->passLocalVector(inner_cb, id, x);
+            loc_asm.interpolateNodalValuesToIntegrationPoints(local_x,
+                                                              property);
         };
 
-        GlobalExecutor::executeDereferenced(
-                    cb, _local_assemblers, global_nodal_values);
+        GlobalExecutor::executeDereferenced(cb, _local_assemblers, *_dof_table,
+                                            global_nodal_values, property);
     }
 
     std::pair<GlobalVector const*, GlobalVector const*>
@@ -217,7 +211,6 @@ public:
 private:
     void createAssemblers(MeshLib::Mesh const& mesh)
     {
-        _global_assembler.reset(new GlobalAssembler(*_dof_table));
         switch (mesh.getDimension())
         {
         case 1:  createLocalAssemblers<1>(mesh); break;
@@ -251,7 +244,6 @@ private:
     MeshLib::MeshSubset _mesh_subset_all_nodes;
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table;
 
-    std::unique_ptr<GlobalAssembler> _global_assembler;
     std::vector<std::unique_ptr<LocalAssembler>> _local_assemblers;
 
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
