@@ -53,10 +53,9 @@ public:
     bool isLinear() const override { return false; }
 private:
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<TESIntPtVariables, TESLocalAssemblerInterface>;
+        NumLib::Extrapolator;
     using ExtrapolatorImplementation =
-        NumLib::LocalLinearLeastSquaresExtrapolator<
-            TESIntPtVariables, TESLocalAssemblerInterface>;
+        NumLib::LocalLinearLeastSquaresExtrapolator;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

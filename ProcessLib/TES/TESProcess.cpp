@@ -204,22 +204,27 @@ void TESProcess::initializeConcreteProcess(
                                                         std::move(fcts));
     };
     auto makeEx =
-        [&](TESIntPtVariables var) -> SecondaryVariableFunctions {
-        return ProcessLib::makeExtrapolator(var, *_extrapolator,
-                                            _local_assemblers);
+        [&](std::vector<double> const& (TESLocalAssemblerInterface::*method)(
+            std::vector<double>&)const) -> SecondaryVariableFunctions {
+        return ProcessLib::makeExtrapolator(*_extrapolator, _local_assemblers,
+                                            method);
     };
 
-    add2nd("solid_density", 1, makeEx(TESIntPtVariables::SOLID_DENSITY));
-    add2nd("reaction_rate", 1, makeEx(TESIntPtVariables::REACTION_RATE));
-    add2nd("velocity_x", 1, makeEx(TESIntPtVariables::VELOCITY_X));
+    // add2nd("solid_density", 1, makeEx(TESIntPtVariables::SOLID_DENSITY));
+    add2nd("reaction_rate", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtReactionRate));
+    add2nd("velocity_x", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
     if (mesh.getDimension() >= 2)
-        add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
+        add2nd("velocity_y", 1,
+               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityY));
     if (mesh.getDimension() >= 3)
-        add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
+        add2nd("velocity_z", 1,
+               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
 
-    add2nd("loading", 1, makeEx(TESIntPtVariables::LOADING));
+    /*add2nd("loading", 1, makeEx(TESIntPtVariables::LOADING));
     add2nd("reaction_damping_factor", 1,
-           makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+           makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));*/
 
     namespace PH = std::placeholders;
     using Self = TESProcess;

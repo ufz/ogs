@@ -219,57 +219,6 @@ void TESLocalAssemblerInner<Traits>::preEachAssembleIntegrationPoint(
 }
 
 template <typename Traits>
-std::vector<double> const&
-TESLocalAssemblerInner<Traits>::getIntegrationPointValues(
-    TESIntPtVariables const var, std::vector<double>& cache) const
-{
-    switch (var)
-    {
-        case TESIntPtVariables::REACTION_RATE:
-            return _d.reaction_rate;
-        case TESIntPtVariables::SOLID_DENSITY:
-            return _d.solid_density;
-        case TESIntPtVariables::VELOCITY_X:
-            return _d.velocity[0];
-        case TESIntPtVariables::VELOCITY_Y:
-            assert(_d.velocity.size() >= 2);
-            return _d.velocity[1];
-        case TESIntPtVariables::VELOCITY_Z:
-            assert(_d.velocity.size() >= 3);
-            return _d.velocity[2];
-
-        case TESIntPtVariables::LOADING:
-        {
-            auto& Cs = cache;
-            Cs.clear();
-            Cs.reserve(_d.solid_density.size());
-
-            for (auto rho_SR : _d.solid_density)
-            {
-                Cs.push_back(rho_SR / _d.ap.rho_SR_dry - 1.0);
-            }
-
-            return Cs;
-        }
-
-        // TODO that's an element value, ain't it?
-        case TESIntPtVariables::REACTION_DAMPING_FACTOR:
-        {
-            auto const num_integration_points = _d.solid_density.size();
-            auto& alphas = cache;
-            alphas.clear();
-            alphas.resize(num_integration_points,
-                          _d.reaction_adaptor->getReactionDampingFactor());
-
-            return alphas;
-        }
-    }
-
-    cache.clear();
-    return cache;
-}
-
-template <typename Traits>
 void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     unsigned integration_point,
     std::vector<double> const& localX,
