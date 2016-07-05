@@ -10,6 +10,7 @@
 #include "Process.h"
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "DirichletBc.h"
 #include "NeumannBc.h"
 #include "NeumannBcAssembler.h"
@@ -51,6 +52,9 @@ void Process::initialize()
 
     DBUG("Compute sparsity pattern");
     computeSparsityPattern();
+
+    DBUG("Initialize the extrapolator");
+    initializeExtrapolator();
 
     initializeConcreteProcess(*_local_to_global_index_map, _mesh,
                               _integration_order);
@@ -166,6 +170,48 @@ void Process::constructDofTable()
 
     _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
         std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
+}
+
+void Process::initializeExtrapolator()
+{
+    NumLib::LocalToGlobalIndexMap const* dof_table_single_component;
+    bool manage_storage;
+
+    if (_local_to_global_index_map->getNumberOfComponents() == 1)
+    {
+        // For single-variable-single-component processes reuse the existing DOF
+        // table.
+        dof_table_single_component = _local_to_global_index_map.get();
+        manage_storage = false;
+    }
+    else
+    {
+        // Otherwise construct a new DOF table.
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
+            all_mesh_subsets_single_component;
+        all_mesh_subsets_single_component.emplace_back(
+            new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes.get()));
+
+        dof_table_single_component = new NumLib::LocalToGlobalIndexMap(
+            std::move(all_mesh_subsets_single_component),
+            // by location order is needed for output
+            NumLib::ComponentOrder::BY_LOCATION);
+        manage_storage = true;
+    }
+
+    MathLib::MatrixSpecifications mat_specs(
+        dof_table_single_component->dofSizeWithoutGhosts(),
+        dof_table_single_component->dofSizeWithoutGhosts(),
+        &dof_table_single_component->getGhostIndices(),
+        nullptr);
+
+    std::unique_ptr<NumLib::Extrapolator> extrapolator(
+        new NumLib::LocalLinearLeastSquaresExtrapolator(
+            mat_specs, *dof_table_single_component));
+
+    // TODO Later on the DOF table can change during the simulation!
+    _extrapolator_data = ExtrapolatorData(
+        std::move(extrapolator), dof_table_single_component, manage_storage);
 }
 
 void Process::setInitialConditions(ProcessVariable const& variable,
