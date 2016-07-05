@@ -31,7 +31,7 @@ namespace ApplicationUtils
 {
 struct NodeStruct
 {
-    NodeWiseMeshPartitioner::PetscInt id;
+    NodeWiseMeshPartitioner::IntegerType id;
     double x;
     double y;
     double z;
@@ -171,10 +171,10 @@ void NodeWiseMeshPartitioner::partitionByMETIS(const bool is_mixed_hl_elem)
                                    extra_nodes.end());
     }
 
-    renumberNodeIndecies();
+    renumberNodeIndices();
 }
 
-void NodeWiseMeshPartitioner::renumberNodeIndecies()
+void NodeWiseMeshPartitioner::renumberNodeIndices()
 {
     std::size_t node_global_id_offset = 0;
     for (auto& partition : _partitions)
@@ -223,11 +223,11 @@ void NodeWiseMeshPartitioner::writeMETIS(const std::string& file_name)
     os.flush();
 }
 
-NodeWiseMeshPartitioner::PetscInt
+NodeWiseMeshPartitioner::IntegerType
 NodeWiseMeshPartitioner::getNumberOfIntegerVariablesOfElements(
     const std::vector<const MeshLib::Element*>& elements) const
 {
-    PetscInt nmb_element_idxs = 3 * elements.size();
+    IntegerType nmb_element_idxs = 3 * elements.size();
     for (const auto* elem : elements)
     {
         nmb_element_idxs += elem->getNumberOfNodes();
@@ -244,8 +244,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
         file_name_base + "_partitioned_msh_cfg" + npartitions_str + ".bin";
     FILE* of_bin_cfg = fopen(fname.c_str(), "wb");
 
-    const PetscInt num_config_data = 14;
-    PetscInt config_data[num_config_data];
+    const IntegerType num_config_data = 14;
+    IntegerType config_data[num_config_data];
     // node rank offset
     config_data[10] = 0;
     // element rank offset
@@ -254,8 +254,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
     config_data[12] = 0;
     // Reserved
     config_data[13] = 0;
-    std::vector<PetscInt> num_elem_integers(_partitions.size());
-    std::vector<PetscInt> num_g_elem_integers(_partitions.size());
+    std::vector<IntegerType> num_elem_integers(_partitions.size());
+    std::vector<IntegerType> num_g_elem_integers(_partitions.size());
     std::size_t loop_id = 0;
     for (const auto& partition : _partitions)
     {
@@ -272,7 +272,7 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
         config_data[9] =
             getNumberOfIntegerVariablesOfElements(partition.ghost_elements);
 
-        fwrite(config_data, 1, num_config_data * sizeof(PetscInt), of_bin_cfg);
+        fwrite(config_data, 1, num_config_data * sizeof(IntegerType), of_bin_cfg);
 
         config_data[10] += config_data[0] * sizeof(NodeStruct);
 
@@ -281,12 +281,12 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
             partition.regular_elements.size() + config_data[8];
         // Offset the ending enrtry of the element integer variales of
         // the non-ghost elements of this partition in the vector of elem_info.
-        config_data[11] += num_elem_integers[loop_id] * sizeof(PetscInt);
+        config_data[11] += num_elem_integers[loop_id] * sizeof(IntegerType);
         // Offset the ending enrtry of the element integer variales of
         // the ghost elements of this partition in the vector of elem_info.
         num_g_elem_integers[loop_id] =
             partition.ghost_elements.size() + config_data[9];
-        config_data[12] += num_g_elem_integers[loop_id] * sizeof(PetscInt);
+        config_data[12] += num_g_elem_integers[loop_id] * sizeof(IntegerType);
 
         loop_id++;
     }
@@ -303,8 +303,8 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
         const auto& partition = _partitions[i];
 
         // Set the local node indecies of the current partition.
-        PetscInt node_local_id_offset = 0;
-        std::vector<PetscInt> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
+        IntegerType node_local_id_offset = 0;
+        std::vector<IntegerType> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
         for (const auto* node : partition.nodes)
         {
             nodes_local_ids[node->getID()] = node_local_id_offset;
@@ -313,10 +313,10 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
 
         // An vector contians all element integer variales of
         // the non-ghost elements of this partition
-        std::vector<PetscInt> ele_info(num_elem_integers[i]);
+        std::vector<IntegerType> ele_info(num_elem_integers[i]);
 
         // Non-ghost elements.
-        PetscInt counter = partition.regular_elements.size();
+        IntegerType counter = partition.regular_elements.size();
 
         for (std::size_t j = 0; j < partition.regular_elements.size(); j++)
         {
@@ -326,7 +326,7 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
                                        counter);
         }
         // Write vector data of non-ghost elements
-        fwrite(&ele_info[0], 1, (num_elem_integers[i]) * sizeof(PetscInt),
+        fwrite(&ele_info[0], 1, (num_elem_integers[i]) * sizeof(IntegerType),
                of_bin_ele);
 
         // Ghost elements
@@ -342,7 +342,7 @@ void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
                                        counter);
         }
         // Write vector data of ghost elements
-        fwrite(&ele_info[0], 1, (num_g_elem_integers[i]) * sizeof(PetscInt),
+        fwrite(&ele_info[0], 1, (num_g_elem_integers[i]) * sizeof(IntegerType),
                of_bin_ele_g);
     }
     fclose(of_bin_ele);
@@ -416,8 +416,8 @@ void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
     for (const auto& partition : _partitions)
     {
         // Set the local node indecies of the current partition.
-        PetscInt node_local_id_offset = 0;
-        std::vector<PetscInt> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
+        IntegerType node_local_id_offset = 0;
+        std::vector<IntegerType> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
         for (const auto* node : partition.nodes)
         {
             nodes_local_ids[node->getID()] = node_local_id_offset;
@@ -426,11 +426,11 @@ void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
 
         for (const auto* elem : partition.regular_elements)
         {
-            writeLocalElementNodeIndicies(os_subd, *elem, nodes_local_ids);
+            writeLocalElementNodeIndices(os_subd, *elem, nodes_local_ids);
         }
         for (const auto* elem : partition.ghost_elements)
         {
-            writeLocalElementNodeIndicies(os_subd, *elem, nodes_local_ids);
+            writeLocalElementNodeIndices(os_subd, *elem, nodes_local_ids);
         }
         os_subd << std::endl;
     }
@@ -455,7 +455,7 @@ void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
     os_subd_node.close();
 }
 
-void NodeWiseMeshPartitioner::resetGlobalNodeIndecis()
+void NodeWiseMeshPartitioner::resetGlobalNodeIndices()
 {
     for (std::size_t i = 0; i < _mesh->_nodes.size(); i++)
     {
@@ -471,7 +471,7 @@ void NodeWiseMeshPartitioner::resetGlobalNodeIndecis()
 void NodeWiseMeshPartitioner::writeGlobalMeshVTU(
     const std::string& file_name_base)
 {
-    resetGlobalNodeIndecis();
+    resetGlobalNodeIndices();
     MeshLib::IO::VtuInterface writer(_mesh.get());
     const std::string npartitions_str = std::to_string(_npartitions);
     writer.writeToFile(file_name_base + "_node_id_renumbered_partitions_" +
@@ -480,27 +480,27 @@ void NodeWiseMeshPartitioner::writeGlobalMeshVTU(
 
 void NodeWiseMeshPartitioner::getElementIntegerVariables(
     const MeshLib::Element& elem,
-    const std::vector<PetscInt>& local_node_ids,
-    std::vector<PetscInt>& elem_info,
-    PetscInt& counter)
+    const std::vector<IntegerType>& local_node_ids,
+    std::vector<IntegerType>& elem_info,
+    IntegerType& counter)
 {
     unsigned mat_id = 0;  // TODO: Materical ID to be set from the mesh data
-    const PetscInt nn = elem.getNumberOfNodes();
+    const IntegerType nn = elem.getNumberOfNodes();
     ;
     elem_info[counter++] = mat_id;
     elem_info[counter++] = static_cast<unsigned>(elem.getCellType());
     elem_info[counter++] = nn;
 
-    for (PetscInt i = 0; i < nn; i++)
+    for (IntegerType i = 0; i < nn; i++)
     {
         elem_info[counter++] = local_node_ids[elem.getNodeIndex(i)];
     }
 }
 
-void NodeWiseMeshPartitioner::writeLocalElementNodeIndicies(
+void NodeWiseMeshPartitioner::writeLocalElementNodeIndices(
     std::ostream& os,
     const MeshLib::Element& elem,
-    const std::vector<PetscInt>& local_node_ids)
+    const std::vector<IntegerType>& local_node_ids)
 {
     unsigned mat_id = 0;  // TODO: Materical ID to be set from the mesh data
     os << mat_id << " " << static_cast<unsigned>(elem.getCellType())

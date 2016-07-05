@@ -40,7 +40,7 @@ struct Partition
 class NodeWiseMeshPartitioner
 {
 public:
-    typedef long PetscInt;
+    typedef long IntegerType;
 
 public:
     /*!
@@ -48,7 +48,7 @@ public:
      * \param num_partitions Number of partitions,
      * \param mesh           Pointer to a mesh object.
      */
-    NodeWiseMeshPartitioner(const PetscInt num_partitions,
+    NodeWiseMeshPartitioner(const IntegerType num_partitions,
                             std::unique_ptr<MeshLib::Mesh>& mesh)
         : _npartitions(num_partitions),
           _partitions(num_partitions),
@@ -65,7 +65,7 @@ public:
     /// a mesh can be used for both linear and high order interpolation
     void partitionByMETIS(const bool is_mixed_hl_elem);
 
-    void resetGlobalNodeIndecis();
+    void resetGlobalNodeIndices();
 
     /// Read metis data
     /// \param file_name_base The prefix of the file name.
@@ -89,7 +89,7 @@ public:
 
 private:
     /// Number of partitions.
-    PetscInt _npartitions;
+    IntegerType _npartitions;
 
     /// Data for all  partitions.
     std::vector<Partition> _partitions;
@@ -106,7 +106,7 @@ private:
     /// Flags to indicate the status of all elements.
     std::vector<bool> _elements_status;
 
-    void renumberNodeIndecies();
+    void renumberNodeIndices();
 
     /*!
        Calculate the totoal number of integer variables of an element
@@ -117,7 +117,7 @@ private:
         3 * vector size + sum (number of nodes of each element)
      \param is_ghost Flag to indicate ghost elements or not
    */
-    PetscInt getNumberOfIntegerVariablesOfElements(
+    IntegerType getNumberOfIntegerVariablesOfElements(
         const std::vector<const MeshLib::Element*>& elements) const;
 
     /*!
@@ -129,9 +129,9 @@ private:
          \param counter         Recorder of the number of integer variables.
     */
     void getElementIntegerVariables(const MeshLib::Element& elem,
-                                    const std::vector<PetscInt>& local_node_ids,
-                                    std::vector<PetscInt>& elem_info,
-                                    PetscInt& counter);
+                                    const std::vector<IntegerType>& local_node_ids,
+                                    std::vector<IntegerType>& elem_info,
+                                    IntegerType& counter);
 
     /*!
         \brief Write local indicies of element nodes to a ASCII file
@@ -139,10 +139,10 @@ private:
         \param elem            Element
         \param local_node_ids  Local node indicies of a partition
     */
-    void writeLocalElementNodeIndicies(
+    void writeLocalElementNodeIndices(
         std::ostream& os,
         const MeshLib::Element& elem,
-        const std::vector<PetscInt>& local_node_ids);
+        const std::vector<IntegerType>& local_node_ids);
 };
 
 }  // namespace MeshLib
