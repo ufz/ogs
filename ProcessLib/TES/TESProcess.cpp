@@ -175,28 +175,6 @@ void TESProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _assembly_params);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
-        all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes.get()));
-    _local_to_global_index_map_single_component.reset(
-        new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION));
-
-    {
-        auto const& l = *_local_to_global_index_map_single_component;
-        _extrapolator.reset(new ExtrapolatorImplementation(
-            MathLib::MatrixSpecifications(l.dofSizeWithoutGhosts(),
-                                          l.dofSizeWithoutGhosts(),
-                                          &l.getGhostIndices(),
-                                          nullptr),
-            l));
-    }
-
     // secondary variables
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
                       SecondaryVariableFunctions&& fcts) {
@@ -206,8 +184,8 @@ void TESProcess::initializeConcreteProcess(
     auto makeEx =
         [&](std::vector<double> const& (TESLocalAssemblerInterface::*method)(
             std::vector<double>&)const) -> SecondaryVariableFunctions {
-        return ProcessLib::makeExtrapolator(*_extrapolator, _local_assemblers,
-                                            method);
+        return ProcessLib::makeExtrapolator(getExtrapolator(),
+                                            _local_assemblers, method);
     };
 
     // add2nd("solid_density", 1, makeEx(TESIntPtVariables::SOLID_DENSITY));

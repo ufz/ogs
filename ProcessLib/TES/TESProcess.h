@@ -31,8 +31,6 @@ namespace TES
 {
 class TESProcess final : public Process
 {
-    using BP = Process;  //!< "Base Process"
-
 public:
     TESProcess(
         MeshLib::Mesh& mesh,
@@ -51,12 +49,8 @@ public:
     NumLib::IterationResult postIteration(GlobalVector const& x) override;
 
     bool isLinear() const override { return false; }
-private:
-    using ExtrapolatorInterface =
-        NumLib::Extrapolator;
-    using ExtrapolatorImplementation =
-        NumLib::LocalLinearLeastSquaresExtrapolator;
 
+private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
@@ -86,8 +80,6 @@ private:
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
-
-    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 
     // used for checkBounds()
     std::unique_ptr<GlobalVector> _x_previous_timestep;
