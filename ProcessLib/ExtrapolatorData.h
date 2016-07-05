@@ -52,6 +52,8 @@ struct ExtrapolatorData
         _manage_storage = other._manage_storage;
         _dof_table_single_component = other._dof_table_single_component;
         _extrapolator = std::move(other._extrapolator);
+        other._dof_table_single_component = nullptr;
+        other._manage_storage = false;
         return *this;
     }
 
