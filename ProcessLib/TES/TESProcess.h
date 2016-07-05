@@ -78,9 +78,6 @@ private:
 
     AssemblyParams _assembly_params;
 
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
-
     // used for checkBounds()
     std::unique_ptr<GlobalVector> _x_previous_timestep;
 };

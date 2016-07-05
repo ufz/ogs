@@ -323,7 +323,7 @@ TESProcess::computeVapourPartialPressure(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),
@@ -356,7 +356,7 @@ TESProcess::computeRelativeHumidity(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),
@@ -394,7 +394,7 @@ TESProcess::computeEquilibriumLoading(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),
