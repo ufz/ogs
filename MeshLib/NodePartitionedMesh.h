@@ -39,9 +39,19 @@ class NodePartitionedMesh : public Mesh
               _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
               _n_active_nodes(mesh.getNumberOfNodes())
         {
+            const auto& mesh_nodes = mesh.getNodes();
             for (std::size_t i = 0; i < _nodes.size(); i++)
             {
                 _global_node_ids[i] = _nodes[i]->getID();
+                auto node = _nodes[i];
+                // Copy constructor of Mesh does not copy the connected
+                // nodes to node.
+                if (node->_connected_nodes.size() == 0)
+                {
+                    std::copy(mesh_nodes[i]->_connected_nodes.begin(),
+                              mesh_nodes[i]->_connected_nodes.end(),
+                              std::back_inserter(node->_connected_nodes));
+                }
             }
         }
 
@@ -73,7 +83,7 @@ class NodePartitionedMesh : public Mesh
                             const std::size_t n_active_base_nodes,
                             const std::size_t n_active_nodes)
             : Mesh(name, nodes, elements, properties, n_base_nodes),
-              _global_node_ids(glb_node_ids), //_n_nghost_elem(n_nghost_elem),
+              _global_node_ids(glb_node_ids),
               _n_global_base_nodes(n_global_base_nodes),
               _n_global_nodes(n_global_nodes),
               _n_active_base_nodes(n_active_base_nodes),

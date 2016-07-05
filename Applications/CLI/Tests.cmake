@@ -200,4 +200,15 @@ else()
         cube_1e3_neumann_pcs_0_ts_1_t_1.000000_1.vtu pressure pressure
         cube_1e3_neumann_pcs_0_ts_1_t_1.000000_2.vtu pressure pressure
     )
+
+    AddTest(
+        NAME cube_1e3_neumann_np_1
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE_ARGS cube_1e3_neumann.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-1 RELTOL 1e-1
+        DIFF_DATA cube_1e3_neumann_pcs_0_ts_1_t_1_0.vtu D1_left_front_N1_right pressure
+    )
 endif()
