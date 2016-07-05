@@ -87,9 +87,14 @@ public:
     }
 
 protected:
-    NumLib::Extrapolator& getExtrapolator()
+    NumLib::Extrapolator& getExtrapolator() const
     {
-        return *_extrapolator_data.extrapolator;
+        return _extrapolator_data.getExtrapolator();
+    }
+
+    NumLib::LocalToGlobalIndexMap const& getSingleComponentDOFTable() const
+    {
+        return _extrapolator_data.getDOFTable();
     }
 
 private:

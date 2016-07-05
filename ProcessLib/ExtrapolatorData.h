@@ -28,17 +28,17 @@ struct ExtrapolatorData
     ExtrapolatorData() = default;
 
     ExtrapolatorData(
-        std::unique_ptr<NumLib::Extrapolator>&& extrapolator_,
+        std::unique_ptr<NumLib::Extrapolator>&& extrapolator,
         NumLib::LocalToGlobalIndexMap const* const dof_table_single_component,
         bool const manage_storage)
-        : extrapolator(std::move(extrapolator_))
+        : _extrapolator(std::move(extrapolator))
         , _dof_table_single_component(dof_table_single_component)
         , _manage_storage(manage_storage)
     {
     }
 
     ExtrapolatorData(ExtrapolatorData&& other)
-        : extrapolator(std::move(other.extrapolator))
+        : _extrapolator(std::move(other._extrapolator))
         , _dof_table_single_component(other._dof_table_single_component)
         , _manage_storage(other._manage_storage)
     {
@@ -51,12 +51,17 @@ struct ExtrapolatorData
         cleanup();
         _manage_storage = other._manage_storage;
         _dof_table_single_component = other._dof_table_single_component;
-        extrapolator = std::move(other.extrapolator);
+        _extrapolator = std::move(other._extrapolator);
         return *this;
     }
 
+    NumLib::LocalToGlobalIndexMap const& getDOFTable() const
+    {
+        return *_dof_table_single_component;
+    }
+    NumLib::Extrapolator& getExtrapolator() const { return *_extrapolator; }
+
     ~ExtrapolatorData() { cleanup(); }
-    std::unique_ptr<NumLib::Extrapolator> extrapolator;
 
 private:
     void cleanup()
@@ -66,6 +71,7 @@ private:
         }
     }
 
+    std::unique_ptr<NumLib::Extrapolator> _extrapolator;
     NumLib::LocalToGlobalIndexMap const* _dof_table_single_component = nullptr;
     bool _manage_storage = false;
 };
