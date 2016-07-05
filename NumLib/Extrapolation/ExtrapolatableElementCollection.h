@@ -1,0 +1,121 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#ifndef NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H
+#define NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H
+
+#include "ExtrapolatableElement.h"
+
+namespace NumLib
+{
+//! Adaptor to get information needed by an Extrapolator from an "arbitrary"
+//! collection of elements (e.g., local assemblers).
+class ExtrapolatableElementCollection
+{
+public:
+    //! Returns the shape matrix of the element with the given \c id at the
+    //! given \c integration_point.
+    virtual Eigen::Map<const Eigen::VectorXd> getShapeMatrix(
+        std::size_t const id, unsigned const integration_point) const = 0;
+
+    //! Returns integration point values of some property of the element with
+    //! the given \c id.
+    virtual std::vector<double> const& getIntegrationPointValues(
+        std::size_t const id, std::vector<double>& cache) const = 0;
+
+    //! Returns the number of elements whose properties shall be extrapolated.
+    virtual std::size_t size() const = 0;
+
+    virtual ~ExtrapolatableElementCollection() = default;
+};
+
+template <typename LocalAssemblerCollection>
+class ExtrapolatableLocalAssemblerCollection
+    : public ExtrapolatableElementCollection
+{
+public:
+    //! LocalAssemblerCollection contains many LocalAssembler's.
+    using LocalAssembler = typename std::decay<decltype(
+        *std::declval<LocalAssemblerCollection>()[static_cast<std::size_t>(
+            0)])>::type;
+
+    static_assert(std::is_base_of<ExtrapolatableElement, LocalAssembler>::value,
+                  "Local assemblers used for extrapolation must be derived "
+                  "from Extrapolatable.");
+
+    /*! A method providing integration point values of some property.
+     *
+     * \remark
+     * \parblock
+     * The vector \c cache can be used to store some derived quantities that
+     * should be used as integration point values. They can be written to the
+     * \c cache and a reference to the \c cache can then be returned by the
+     * implementation of this method.
+     * Ordinary integration point values can be returned directly (if they are
+     * stored in the local assembler), and the \c cache can be left untouched.
+     *
+     * For usage examples see the processes already implemented or the unit test
+     * in TestExtrapolation.cpp
+     * \endparblock
+     *
+     * The method must return reference to a vector containing the integration
+     * point values.
+     */
+    using IntegrationPointValuesMethod = std::vector<double> const& (
+        LocalAssembler::*)(std::vector<double>& cache) const;
+
+    /*! Constructs a new instance.
+     *
+     * \param local_assemblers a collection of local assemblers whose
+     * integration point values shall be extrapolated.
+     * \param integration_point_values_method a LocalAssembler method returning
+     * integration point values of some property for that local assembler.
+     */
+    ExtrapolatableLocalAssemblerCollection(
+        LocalAssemblerCollection const& local_assemblers,
+        IntegrationPointValuesMethod integration_point_values_method)
+        : _local_assemblers(local_assemblers)
+        , _integration_point_values_method(integration_point_values_method)
+    {
+    }
+
+    Eigen::Map<const Eigen::VectorXd> getShapeMatrix(
+        std::size_t const id, unsigned const integration_point) const override
+    {
+        ExtrapolatableElement const& loc_asm = *_local_assemblers[id];
+        return loc_asm.getShapeMatrix(integration_point);
+    }
+
+    std::vector<double> const& getIntegrationPointValues(
+        std::size_t const id, std::vector<double>& cache) const override
+    {
+        auto const& loc_asm = *_local_assemblers[id];
+        return (loc_asm.*_integration_point_values_method)(cache);
+    }
+
+    std::size_t size() const override { return _local_assemblers.size(); }
+private:
+    LocalAssemblerCollection const& _local_assemblers;
+    IntegrationPointValuesMethod const _integration_point_values_method;
+};
+
+//! Creates an ExtrapolatableLocalAssemblerCollection, which can be used to
+//! provide information to an Extrapolator.
+template <typename LocalAssemblerCollection,
+          typename IntegrationPointValuesMethod>
+ExtrapolatableLocalAssemblerCollection<LocalAssemblerCollection>
+makeExtrapolatable(LocalAssemblerCollection const& local_assemblers,
+                   IntegrationPointValuesMethod integration_point_values_method)
+{
+    return ExtrapolatableLocalAssemblerCollection<LocalAssemblerCollection>{
+        local_assemblers, integration_point_values_method};
+}
+}  // namespace NumLib
+
+#endif  // NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENTCOLLECTION_H

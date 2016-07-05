@@ -7,24 +7,23 @@
  *
  */
 
+#include "LocalLinearLeastSquaresExtrapolator.h"
+
 #include <functional>
 
-#include <logog/include/logog.hpp>
 #include <Eigen/Core>
+#include <logog/include/logog.hpp>
 
 #include "MathLib/LinAlg/LinAlg.h"
-#include "NumLib/Assembler/SerialExecutor.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "NumLib/Assembler/SerialExecutor.h"
 #include "NumLib/Function/Interpolation.h"
-#include "LocalLinearLeastSquaresExtrapolator.h"
+#include "ExtrapolatableElementCollection.h"
 
 namespace NumLib
 {
-
-template<typename PropertyTag, typename LocalAssembler>
-void
-LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
-extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
+inline void LocalLinearLeastSquaresExtrapolator::extrapolate(
+    ExtrapolatableElementCollection const& extrapolatables)
 {
     _nodal_values.setZero();
 
@@ -32,44 +31,39 @@ extrapolate(LocalAssemblers const& local_assemblers, PropertyTag const property)
     // compute the average afterwards
     auto counts =
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(_nodal_values);
-    counts->setZero(); // TODO BLAS?
+    counts->setZero();  // TODO BLAS?
 
-    using Self = LocalLinearLeastSquaresExtrapolator<
-        PropertyTag, LocalAssembler>;
-
-    NumLib::SerialExecutor::executeMemberDereferenced(
-        *this, &Self::extrapolateElement, local_assemblers, property, *counts);
+    auto const size = extrapolatables.size();
+    for (std::size_t i=0; i<size; ++i) {
+        extrapolateElement(i, extrapolatables, *counts);
+    }
 
     MathLib::LinAlg::componentwiseDivide(_nodal_values, _nodal_values, *counts);
 }
 
-template<typename PropertyTag, typename LocalAssembler>
-void
-LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
-calculateResiduals(LocalAssemblers const& local_assemblers,
-                   PropertyTag const property)
+inline void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
+    ExtrapolatableElementCollection const& extrapolatables)
 {
-    assert(static_cast<std::size_t>(_residuals.size()) == local_assemblers.size());
+    assert(static_cast<std::size_t>(_residuals.size()) ==
+           extrapolatables.size());
 
-    using Self = LocalLinearLeastSquaresExtrapolator<
-        PropertyTag, LocalAssembler>;
-
-    NumLib::SerialExecutor::executeMemberDereferenced(
-        *this, &Self::calculateResiudalElement, local_assemblers, property);
+    auto const size = extrapolatables.size();
+    for (std::size_t i=0; i<size; ++i) {
+        calculateResiudalElement(i, extrapolatables);
+    }
 }
 
-template<typename PropertyTag, typename LocalAssembler>
-void
-LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
-extrapolateElement(std::size_t const element_index,
-                   LocalAssembler const& loc_asm, PropertyTag const property,
-                   GlobalVector& counts)
+inline void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
+    std::size_t const element_index,
+    ExtrapolatableElementCollection const& extrapolatables,
+    GlobalVector& counts)
 {
-    auto const& integration_point_values = loc_asm.getIntegrationPointValues(
-            property, _integration_point_values_cache);
+    auto const& integration_point_values =
+        extrapolatables.getIntegrationPointValues(
+            element_index, _integration_point_values_cache);
 
     // number of nodes in the element
-    const auto nn = loc_asm.getShapeMatrix(0).cols();
+    const auto nn = extrapolatables.getShapeMatrix(element_index, 0).cols();
     // number of integration points in the element
     const auto ni = integration_point_values.size();
 
@@ -80,9 +74,9 @@ extrapolateElement(std::size_t const element_index,
     auto& N = _local_matrix_cache; // TODO make that local?
     N.resize(ni, nn); // TODO: might reallocate very often
 
-    for (auto int_pt=decltype(ni){0}; int_pt<ni; ++int_pt)
-    {
-        auto const& shp_mat = loc_asm.getShapeMatrix(int_pt);
+    for (auto int_pt = decltype(ni){0}; int_pt < ni; ++int_pt) {
+        auto const& shp_mat =
+            extrapolatables.getShapeMatrix(element_index, int_pt);
         assert(shp_mat.cols() == nn);
 
         // copy shape matrix to extrapolation matrix columnwise
@@ -91,7 +85,7 @@ extrapolateElement(std::size_t const element_index,
 
     // TODO make gp_vals an Eigen::VectorXd const& ?
     Eigen::Map<const Eigen::VectorXd> const integration_point_values_vec(
-                integration_point_values.data(), integration_point_values.size());
+        integration_point_values.data(), integration_point_values.size());
 
     // TODO
     // optimization: Store decomposition of N*N^T or N^T for reuse?
@@ -111,19 +105,18 @@ extrapolateElement(std::size_t const element_index,
     // TODO: for now always zeroth component is used
     auto const& global_indices = _local_to_global(element_index, 0).rows;
 
-    _nodal_values.add(global_indices, tmp); // TODO does that give rise to PETSc problems?
+    _nodal_values.add(global_indices,
+                      tmp);  // TODO does that give rise to PETSc problems?
     counts.add(global_indices, std::vector<double>(global_indices.size(), 1.0));
 }
 
-template<typename PropertyTag, typename LocalAssembler>
-void
-LocalLinearLeastSquaresExtrapolator<PropertyTag, LocalAssembler>::
-calculateResiudalElement(std::size_t const element_index,
-                         LocalAssembler const& loc_asm, PropertyTag const property)
+inline void LocalLinearLeastSquaresExtrapolator::calculateResiudalElement(
+    std::size_t const element_index,
+    ExtrapolatableElementCollection const& extrapolatables)
 {
-    auto const& gp_vals = loc_asm.getIntegrationPointValues(
-            property, _integration_point_values_cache);
-    const unsigned ni = gp_vals.size();        // number of gauss points
+    auto const& gp_vals = extrapolatables.getIntegrationPointValues(
+        element_index, _integration_point_values_cache);
+    const unsigned ni = gp_vals.size();  // number of gauss points
 
     // TODO: for now always zeroth component is used
     const auto& global_indices = _local_to_global(element_index, 0).rows;
@@ -131,7 +124,7 @@ calculateResiudalElement(std::size_t const element_index,
     // filter nodal values of the current element
     std::vector<double> nodal_vals_element;
     nodal_vals_element.resize(global_indices.size());
-    for (unsigned i=0; i<global_indices.size(); ++i) {
+    for (unsigned i = 0; i < global_indices.size(); ++i) {
         // TODO PETSc negative indices?
         nodal_vals_element[i] = _nodal_values[global_indices[i]];
     }
@@ -139,10 +132,11 @@ calculateResiudalElement(std::size_t const element_index,
     double residual = 0.0;
     double gp_val_extrapol = 0.0;
 
-    for (unsigned gp=0; gp<ni; ++gp)
-    {
+    for (unsigned gp = 0; gp < ni; ++gp) {
         NumLib::shapeFunctionInterpolate(
-            nodal_vals_element, loc_asm.getShapeMatrix(gp), gp_val_extrapol);
+            nodal_vals_element,
+            extrapolatables.getShapeMatrix(element_index, gp),
+            gp_val_extrapol);
         auto const& ax_m_b = gp_val_extrapol - gp_vals[gp];
         residual += ax_m_b * ax_m_b;
     }
@@ -150,4 +144,4 @@ calculateResiudalElement(std::size_t const element_index,
     _residuals.set(element_index, std::sqrt(residual / ni));
 }
 
-} // namespace ProcessLib
+}  // namespace NumLib

@@ -35,14 +35,9 @@ namespace NumLib
  * system.
  * \endparblock
  */
-template <typename PropertyTag, typename LocalAssembler>
-class LocalLinearLeastSquaresExtrapolator
-    : public Extrapolator<PropertyTag, LocalAssembler>
+class LocalLinearLeastSquaresExtrapolator : public Extrapolator
 {
 public:
-    using LocalAssemblers =
-        typename Extrapolator<PropertyTag, LocalAssembler>::LocalAssemblers;
-
     /*! Constructs a new instance
      *
      * \note
@@ -77,8 +72,8 @@ public:
                "only one component!");
     }
 
-    void extrapolate(LocalAssemblers const& local_assemblers,
-                     PropertyTag const property) override;
+    void extrapolate(
+            ExtrapolatableElementCollection const& extrapolatables) override;
 
     /*! \copydoc Extrapolator::calculateResiduals()
      *
@@ -87,8 +82,8 @@ public:
      * extrapolation results when interpolated back to the integration points
      * again.
      */
-    void calculateResiduals(LocalAssemblers const& local_assemblers,
-                            PropertyTag const property) override;
+    void calculateResiduals(
+            ExtrapolatableElementCollection const& extrapolatables) override;
 
     GlobalVector const& getNodalValues() const override
     {
@@ -108,14 +103,15 @@ public:
 
 private:
     //! Extrapolate one element.
-    void extrapolateElement(std::size_t const element_index,
-                            LocalAssembler const& local_assembler,
-                            PropertyTag const property, GlobalVector& counts);
+    void extrapolateElement(
+        std::size_t const element_index,
+        ExtrapolatableElementCollection const& extrapolatables,
+        GlobalVector& counts);
 
     //! Compute the residuals for one element
-    void calculateResiudalElement(std::size_t const element_index,
-                                  LocalAssembler const& local_assembler,
-                                  PropertyTag const property);
+    void calculateResiudalElement(
+        std::size_t const element_index,
+        ExtrapolatableElementCollection const& extrapolatables);
 
     GlobalVector& _nodal_values;  //!< extrapolated nodal values
     GlobalVector _residuals;      //!< extrapolation residuals
@@ -129,8 +125,7 @@ private:
     //! Avoids frequent reallocations.
     std::vector<double> _integration_point_values_cache;
 };
-}
 
-#include "LocalLinearLeastSquaresExtrapolator-impl.h"
+}  // namespace NumLib
 
 #endif  // NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H
