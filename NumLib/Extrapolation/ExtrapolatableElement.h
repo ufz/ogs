@@ -10,6 +10,8 @@
 #ifndef NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENT_H
 #define NUMLIB_EXTRAPOLATION_EXTRAPOLATABLEELEMENT_H
 
+#include <Eigen/Core>
+
 namespace NumLib
 {
 /*! Interface for providing shape matrices and integration point values for
