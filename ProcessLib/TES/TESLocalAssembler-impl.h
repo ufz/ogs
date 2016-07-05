@@ -203,6 +203,40 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 std::vector<double> const& TESLocalAssembler<
     ShapeFunction_, IntegrationMethod_,
+    GlobalDim>::getIntPtLoading(std::vector<double>& cache) const
+{
+    auto const rho_SR = _d.getData().solid_density;
+    auto const rho_SR_dry = _d.getAssemblyParameters().rho_SR_dry;
+
+    cache.clear();
+    cache.reserve(rho_SR.size());
+
+    for (auto const rho : rho_SR) {
+        cache.push_back(rho/rho_SR_dry - 1.0);
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunction_, typename IntegrationMethod_,
+          unsigned GlobalDim>
+std::vector<double> const&
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    getIntPtReactionDampingFactor(std::vector<double>& cache) const
+{
+    auto const fac = _d.getData().reaction_adaptor->getReactionDampingFactor();
+    auto const num_integration_points = _d.getData().solid_density.size();
+
+    cache.clear();
+    cache.resize(num_integration_points, fac);
+
+    return cache;
+}
+
+template <typename ShapeFunction_, typename IntegrationMethod_,
+          unsigned GlobalDim>
+std::vector<double> const& TESLocalAssembler<
+    ShapeFunction_, IntegrationMethod_,
     GlobalDim>::getIntPtReactionRate(std::vector<double>& /*cache*/) const
 {
     return _d.getData().reaction_rate;

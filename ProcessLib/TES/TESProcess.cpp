@@ -188,9 +188,11 @@ void TESProcess::initializeConcreteProcess(
                                             _local_assemblers, method);
     };
 
-    // add2nd("solid_density", 1, makeEx(TESIntPtVariables::SOLID_DENSITY));
+    add2nd("solid_density", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtSolidDensity));
     add2nd("reaction_rate", 1,
            makeEx(&TESLocalAssemblerInterface::getIntPtReactionRate));
+
     add2nd("velocity_x", 1,
            makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
     if (mesh.getDimension() >= 2)
@@ -200,9 +202,9 @@ void TESProcess::initializeConcreteProcess(
         add2nd("velocity_z", 1,
                makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
 
-    /*add2nd("loading", 1, makeEx(TESIntPtVariables::LOADING));
+    add2nd("loading", 1, makeEx(&TESLocalAssemblerInterface::getIntPtLoading));
     add2nd("reaction_damping_factor", 1,
-           makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));*/
+           makeEx(&TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
     namespace PH = std::placeholders;
     using Self = TESProcess;

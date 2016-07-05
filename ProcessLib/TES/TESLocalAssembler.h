@@ -36,6 +36,12 @@ public:
     virtual std::vector<double> const& getIntPtSolidDensity(
         std::vector<double>& /*cache*/) const = 0;
 
+    virtual std::vector<double> const& getIntPtLoading(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtReactionDampingFactor(
+        std::vector<double>& cache) const = 0;
+
     virtual std::vector<double> const& getIntPtReactionRate(
         std::vector<double>& /*cache*/) const = 0;
 
@@ -83,6 +89,12 @@ public:
 
     std::vector<double> const& getIntPtSolidDensity(
         std::vector<double>& /*cache*/) const override;
+
+    std::vector<double> const& getIntPtLoading(
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtReactionDampingFactor(
+        std::vector<double>& cache) const override;
 
     std::vector<double> const& getIntPtReactionRate(
         std::vector<double>& /*cache*/) const override;
