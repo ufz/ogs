@@ -26,18 +26,22 @@ namespace ProcessLib
 namespace GroundwaterFlow
 {
 
-enum class IntegrationPointValue {
-    DarcyVelocityX,
-    DarcyVelocityY,
-    DarcyVelocityZ
-};
-
 const unsigned NUM_NODAL_DOF = 1;
 
 class GroundwaterFlowLocalAssemblerInterface
         : public ProcessLib::LocalAssemblerInterface
-        , public NumLib::Extrapolatable<IntegrationPointValue>
-{};
+        , public NumLib::ExtrapolatableElement
+{
+public:
+    virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const = 0;
+};
 
 template <typename ShapeFunction,
          typename IntegrationMethod,
@@ -118,22 +122,21 @@ public:
     }
 
     std::vector<double> const&
-    getIntegrationPointValues(IntegrationPointValue const property,
-                              std::vector<double>& /*cache*/) const override
+    getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const override
     {
-        switch (property)
-        {
-        case IntegrationPointValue::DarcyVelocityX:
             return _darcy_velocities[0];
-        case IntegrationPointValue::DarcyVelocityY:
-            assert(GlobalDim > 1);
-            return _darcy_velocities[1];
-        case IntegrationPointValue::DarcyVelocityZ:
-            assert(GlobalDim > 2);
-            return _darcy_velocities[2];
-        }
+    }
 
-        OGS_FATAL("");
+    std::vector<double> const&
+    getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const override
+    {
+            return _darcy_velocities[0];
+    }
+
+    std::vector<double> const&
+    getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const override
+    {
+            return _darcy_velocities[0];
     }
 
 private:

@@ -43,11 +43,9 @@ public:
 
 private:
     using ExtrapolatorInterface =
-        NumLib::Extrapolator<IntegrationPointValue,
-                             GroundwaterFlowLocalAssemblerInterface>;
+        NumLib::Extrapolator;
     using ExtrapolatorImplementation =
-        NumLib::LocalLinearLeastSquaresExtrapolator<
-            IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
+        NumLib::LocalLinearLeastSquaresExtrapolator;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
