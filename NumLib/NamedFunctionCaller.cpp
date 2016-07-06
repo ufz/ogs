@@ -1,0 +1,300 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ */
+
+#include "NamedFunctionCaller.h"
+
+#include <algorithm>
+#include <list>
+
+#include "BaseLib/uniqueInsert.h"
+#include "BaseLib/Error.h"
+
+bool hasTopologicalOrdering(std::vector<std::vector<int>> const& dependencies)
+{
+    std::vector<unsigned> dep_counts(dependencies.size());
+
+    // init dependency counts
+    for (std::size_t fct_idx = 0; fct_idx<dependencies.size(); ++fct_idx)
+    {
+        for (int dep : dependencies[fct_idx]) {
+            if (dep >= 0)
+                ++dep_counts[dep];
+        }
+    }
+
+    auto num_dependent = dep_counts.size();
+    std::list<std::size_t> q;
+
+    // init work queue
+    for (std::size_t fct_idx = 0; fct_idx<dep_counts.size(); ++fct_idx)
+    {
+        if (dep_counts[fct_idx] == 0) {
+            q.push_back(fct_idx);
+            --num_dependent;
+        }
+    }
+
+    while (!q.empty())
+    {
+        auto const fct_idx = q.front();
+        q.pop_front();
+        for (int dep : dependencies[fct_idx]) {
+            if (dep < 0) continue;
+            if (--dep_counts[dep] == 0) {
+                q.push_back(dep);
+                --num_dependent;
+            }
+        }
+    }
+
+    return num_dependent == 0;
+}
+
+enum class TraversePosition { StartNode, BetweenChildren, EndNode };
+
+template <typename Callback>
+void traverse(std::vector<std::vector<int>> const& map_sink_source,
+              int sink_fct, Callback&& callback)
+{
+    assert(sink_fct < static_cast<int>(map_sink_source.size()));
+    callback(sink_fct, TraversePosition::StartNode);
+
+    if (sink_fct < 0)
+        return;
+
+    auto const& si_so = map_sink_source[sink_fct];
+    int const num_args = si_so.size();
+    for (int sink_arg = 0; sink_arg != num_args; ++sink_arg) {
+        if (sink_arg != 0)
+            callback(sink_fct, TraversePosition::BetweenChildren);
+        traverse(map_sink_source, si_so[sink_arg], callback);
+    }
+
+    callback(sink_fct, TraversePosition::EndNode);
+}
+
+namespace NumLib
+{
+NamedFunctionCaller::NamedFunctionCaller(
+    std::initializer_list<std::string> unbound_arguments)
+    : _uninitialized(-1-unbound_arguments.size())
+{
+    int idx = -1;
+    for (auto arg : unbound_arguments) {
+        BaseLib::insertIfKeyUniqueElseError(
+            _map_name_idx, arg, idx,
+            "The name of the unbound argument is not unique.");
+        --idx;
+    }
+}
+
+void NamedFunctionCaller::addNamedFunction(NamedFunction&& fct)
+{
+    DBUG("Adding named function `%s'", fct.getName().c_str());
+
+    BaseLib::insertIfKeyUniqueElseError(
+        _map_name_idx, fct.getName(), _named_functions.size(),
+        "The name of the function is not unique.");
+
+    _map_sink_source.emplace_back(fct.getArgumentInfo().size(), _uninitialized);
+    _named_functions.push_back(std::move(fct));
+}
+
+void NamedFunctionCaller::plug(const std::string& sink_fct,
+                               const std::string& sink_arg,
+                               const std::string& source)
+{
+    _deferred_plugs.push_back({ sink_fct, sink_arg, source });
+}
+
+void NamedFunctionCaller::applyPlugs()
+{
+    while (!_deferred_plugs.empty())
+    {
+        auto const& plug = _deferred_plugs.back();
+        auto const& sink_fct = plug.sink_fct;
+        auto const& sink_arg = plug.sink_arg;
+        auto const& source = plug.source;
+
+        auto const source_it = _map_name_idx.find(source);
+        if (source_it == _map_name_idx.end())
+        {
+            OGS_FATAL("A function with the name `%s' has not been found.",
+                      source.c_str());
+        }
+        auto const source_idx = source_it->second;
+
+        auto const sink_it = _map_name_idx.find(sink_fct);
+        if (sink_it == _map_name_idx.end())
+        {
+            OGS_FATAL("A function with the name `%s' has not been found.",
+                      sink_fct.c_str());
+        }
+        auto const sink_fct_idx = sink_it->second;
+
+        auto const& sink_args =
+            _named_functions[sink_it->second].getArgumentInfo();
+        auto const sink_arg_it =
+            std::find(sink_args.begin(), sink_args.end(), sink_arg);
+        if (sink_arg_it == sink_args.end())
+        {
+            OGS_FATAL(
+                "An argument with the name `%s' has not been found for the "
+                "function `%s'.",
+                sink_arg.c_str(), sink_fct.c_str());
+        }
+        std::size_t sink_arg_idx =
+            std::distance(sink_args.begin(), sink_arg_it);
+
+        auto& sis_sos = _map_sink_source[sink_fct_idx];
+        if (sis_sos[sink_arg_idx] != _uninitialized)
+        {
+            OGS_FATAL("A dependency for `%s'.`%s' has already been introduced.",
+                      sink_fct.c_str(), sink_arg.c_str());
+        }
+        sis_sos[sink_arg_idx] = source_idx;
+        if (!hasTopologicalOrdering(_map_sink_source))
+        {
+            OGS_FATAL(
+                "The call graph being plugged together must be an acyclic "
+                "graph. The added dependency for `%s'.`%s' introduces a cycle "
+                "into the graph.",
+                sink_fct.c_str(), sink_arg.c_str());
+        }
+
+        _deferred_plugs.pop_back();
+    }
+}
+
+double NamedFunctionCaller::call(
+    const std::string& function_name,
+    const std::vector<double>& unbound_arguments) const
+{
+    assert(unbound_arguments.size() == getNumberOfUnboundArguments());
+
+    auto it = _map_name_idx.find(function_name);
+    if (it == _map_name_idx.end()) {
+        OGS_FATAL("A function with the name `%s' has not been found.",
+                  function_name.c_str());
+    }
+
+    return call(it->second, unbound_arguments);
+}
+
+double NamedFunctionCaller::call(
+    std::size_t function_idx,
+    const std::vector<double>& unbound_arguments) const
+{
+    assert(_deferred_plugs.empty() &&
+           "You must call applyPlugs() before this method!");
+
+    DBUG("Preparing call of fct #%lu %s()", function_idx,
+         _named_functions[function_idx].getName().c_str());
+    auto const& sis_sos = _map_sink_source[function_idx];
+    assert(sis_sos.size() ==
+           _named_functions[function_idx].getArgumentInfo().size());
+    std::vector<double> fct_args(sis_sos.size());
+
+    for (std::size_t sink=0; sink<sis_sos.size(); ++sink)
+    {
+        auto const source = sis_sos[sink];
+
+        if (source >= 0) {
+            fct_args[sink] = call(source, unbound_arguments);
+            DBUG("setting %luth argument to %g", sink, fct_args[sink]);
+        } else {
+            assert(source != _uninitialized);
+            fct_args[sink] = unbound_arguments[-source-1];
+            DBUG("setting %luth argument to %g", sink, fct_args[sink]);
+        }
+    }
+
+    DBUG("Finished preparing call of fct #%lu %s()", function_idx,
+         _named_functions[function_idx].getName().c_str());
+
+    return _named_functions[function_idx].call(fct_args);
+}
+
+std::string NamedFunctionCaller::getCallExpression(
+    std::string const& function_name) const
+{
+    auto const fct_it = _map_name_idx.find(function_name);
+    if (fct_it == _map_name_idx.end()) {
+        OGS_FATAL("A function with the name `%s' has not been found.",
+                  function_name.c_str());
+    }
+
+    std::string expr;
+    auto callback = [&](int fct_idx, TraversePosition pos)
+    {
+        switch (pos) {
+        case TraversePosition::StartNode:
+        {
+            if (fct_idx < 0) {
+                auto it = std::find_if(
+                    _map_name_idx.begin(), _map_name_idx.end(),
+                    [fct_idx](std::pair<std::string, int> const& e) {
+                        return e.second == fct_idx;
+                    });
+                if (it == _map_name_idx.end()) {
+                    OGS_FATAL("The function index %i has not been found.", fct_idx);
+                }
+                expr += it->first;
+            } else {
+                expr += _named_functions[fct_idx].getName() + "(";
+            }
+            break;
+        }
+        case TraversePosition::BetweenChildren:
+            expr += ", ";
+            break;
+        case TraversePosition::EndNode:
+            expr += ")";
+        }
+    };
+
+    traverse(_map_sink_source, fct_it->second, callback);
+    DBUG("expression: %s", expr.c_str());
+    return expr;
+}
+
+SpecialFunctionCaller
+NamedFunctionCaller::getSpecialFunction(const std::string &function_name)
+{
+    auto const fct_it = _map_name_idx.find(function_name);
+    if (fct_it == _map_name_idx.end()) {
+        OGS_FATAL("A function with the name `%s' has not been found.",
+                  function_name.c_str());
+    }
+    return SpecialFunctionCaller(fct_it->second, *this);
+}
+
+std::size_t NamedFunctionCaller::getNumberOfUnboundArguments() const
+{
+    return -_uninitialized - 1;
+}
+
+SpecialFunctionCaller::SpecialFunctionCaller(const std::size_t function_idx,
+                                             const NamedFunctionCaller& caller)
+    : _function_idx(function_idx), _caller(caller)
+{
+}
+
+double SpecialFunctionCaller::call(
+    const std::vector<double>& unbound_arguments) const
+{
+    return _caller.call(_function_idx, unbound_arguments);
+}
+
+std::size_t SpecialFunctionCaller::getNumberOfUnboundArguments() const
+{
+    return _caller.getNumberOfUnboundArguments();
+}
+
+} // namespace NumLib
