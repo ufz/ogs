@@ -75,7 +75,7 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(std::size_t const id,
+    void assemble(std::size_t const mesh_item_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const /*t*/, GlobalVector const& x,
                   GlobalMatrix& /*M*/, GlobalMatrix& K,
@@ -83,7 +83,7 @@ public:
     {
         _localA.setZero();
         _localRhs.setZero();
-        auto const indices = NumLib::getIndices(id, dof_table);
+        auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
         auto const local_x = x.get(indices);
 
         IntegrationMethod integration_method(_integration_order);

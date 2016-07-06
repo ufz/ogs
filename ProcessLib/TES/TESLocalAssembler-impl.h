@@ -134,14 +134,14 @@ TESLocalAssembler<
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
 void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
-    std::size_t const id, NumLib::LocalToGlobalIndexMap const& dof_table,
-    double const /*t*/, GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b)
+    std::size_t const mesh_item_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table, double const /*t*/,
+    GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     _local_M.setZero();
     _local_K.setZero();
     _local_b.setZero();
-    auto const indices = NumLib::getIndices(id, dof_table);
+    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
     IntegrationMethod_ integration_method(_integration_order);

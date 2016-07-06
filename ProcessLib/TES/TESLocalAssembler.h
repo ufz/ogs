@@ -49,7 +49,7 @@ public:
                       unsigned const integration_order,
                       AssemblyParams const& asm_params);
 
-    void assemble(std::size_t const id,
+    void assemble(std::size_t const mesh_item_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table,
                   double const t, GlobalVector const& x,
                   GlobalMatrix& M, GlobalMatrix& K,

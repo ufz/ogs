@@ -14,10 +14,11 @@
 
 namespace NumLib
 {
-//! Returns nodal indices for the item identified by \c id from the given
-//!  \c dof_table.
+//! Returns nodal indices for the item identified by \c mesh_item_id from the
+//! given \c dof_table.
 std::vector<GlobalIndexType> getIndices(
-    std::size_t const id, NumLib::LocalToGlobalIndexMap const& dof_table);
+    std::size_t const mesh_item_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table);
 }  // namespace NumLib
 
 #endif  // NUMLIB_DOF_DOFTABLEUTIL_H
