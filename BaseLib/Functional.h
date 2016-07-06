@@ -26,13 +26,10 @@ struct IndexedPlacedPlaceholder;
 //! \param INDEX the integer value which is specialized
 //! \param INDEX_P_1 "index plus one"; if INDEX_P_1 equals 1, then the member
 //! value will be std::placeholders::_1, etc.
-#define SPECIALIZE_INDEXEDPLACEHOLDER(INDEX, INDEX_P_1)                   \
-    template <>                                                           \
-    struct IndexedPlacedPlaceholder<(INDEX)> {                            \
-        static std::enable_if<                                            \
-            std::is_placeholder<decltype(                                 \
-                std::placeholders::_##INDEX_P_1)>::value,                 \
-            const decltype(std::placeholders::_##INDEX_P_1)>::type value; \
+#define SPECIALIZE_INDEXEDPLACEHOLDER(INDEX, INDEX_P_1)               \
+    template <>                                                       \
+    struct IndexedPlacedPlaceholder<(INDEX)> {                        \
+        static const decltype(std::placeholders::_##INDEX_P_1) value; \
     }
 
 // Create specializations up to the tenth placeholder
@@ -52,30 +49,30 @@ SPECIALIZE_INDEXEDPLACEHOLDER(9, 10);
 // Note: The call sequence is easyBind() -> easyBind_inner() ->
 // easyBind_innermost().
 
-template <int... Indices, typename Object, typename MethodClass,
-          typename ReturnType, typename... Args>
+template <int... Indices, typename Object, typename ReturnType,
+          typename... Args>
 std::function<ReturnType(Args...)> easyBind_innermost(
-    ReturnType (MethodClass::*method)(Args...), Object& obj)
+    ReturnType (Object::*method)(Args...), Object& obj)
 {
     // std::ref makes sure that obj is not copied.
     return std::bind(method, std::ref(obj),
                      IndexedPlacedPlaceholder<Indices>::value...);
 }
 
-template <int... Indices, typename Object, typename MethodClass,
-          typename ReturnType, typename... Args>
+template <int... Indices, typename Object, typename ReturnType,
+          typename... Args>
 std::function<ReturnType(Args...)> easyBind_innermost(
-    ReturnType (MethodClass::*method)(Args...) const, Object const& obj)
+    ReturnType (Object::*method)(Args...) const, Object const& obj)
 {
     // std::cref makes sure that obj is not copied.
     return std::bind(method, std::cref(obj),
                      IndexedPlacedPlaceholder<Indices>::value...);
 }
 
-template <int... Indices, typename Object, typename MethodClass,
-          typename ReturnType, typename... Args>
+template <int... Indices, typename Object, typename ReturnType,
+          typename... Args>
 std::function<ReturnType(Args...)> easyBind_innermost(
-    ReturnType (MethodClass::*method)(Args...) const, Object& obj)
+    ReturnType (Object::*method)(Args...) const, Object& obj)
 {
     // std::cref makes sure that obj is not copied.
     return std::bind(method, std::cref(obj),
