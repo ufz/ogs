@@ -17,7 +17,6 @@
 #ifdef _MSC_VER
 #include <windows.h>
 #else
-#include <sys/time.h>
 #include <climits>
 #endif
 
@@ -34,14 +33,16 @@ int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    std::string m_str =
+    const std::string m_str =
         "Partition a mesh for parallel computing."
         "The tasks of this tool are in twofold:\n"
         "1. Convert mesh file to the input file of the partitioning tool,\n"
         "2. Partition a mesh using the partitioning tool,\n"
         "\tcreate the mesh data of each partition,\n"
-        "\trenumber the node indicies of each partition,\n"
-        "\tand output the results for parallel computing.";
+        "\trenumber the node indices of each partition,\n"
+        "\tand output the results for parallel computing.\n"
+        "Note: If this tool is installed as a system command,\n"
+        "\tthe command must be run with its full path.";
 
     TCLAP::CmdLine cmd(m_str, ' ', "0.1");
     TCLAP::ValueArg<std::string> mesh_input(
@@ -86,7 +87,7 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfElements());
 
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
-        nparts.getValue(), mesh_ptr);
+        nparts.getValue(), std::move(mesh_ptr));
 
     if (ogs2metis_flag.getValue())
     {
@@ -103,19 +104,18 @@ int main(int argc, char* argv[])
         {
             INFO("METIS is running ...");
             const std::string exe_name = argv[0];
-            std::string exe_path =
-                exe_name.substr(0, exe_name.find_last_of("/\\"));
-            INFO("Path to mtmetis is: \n\t%s", exe_path.c_str());
+            const std::string exe_path = BaseLib::extractPath(exe_name);
+            INFO("Path to mpmetis is: \n\t%s", exe_path.c_str());
 
-            std::string mpmetis_com =
+            const std::string mpmetis_com =
                 exe_path + "/mpmetis " + " -gtype=nodal " + file_name_base +
                 ".mesh " + std::to_string(nparts.getValue());
 
-            int status = system(mpmetis_com.c_str());
+            const int status = system(mpmetis_com.c_str());
             if (status != 0)
             {
                 INFO("Failed in system calling.");
-                INFO("Return value of system calling %d ", status);
+                INFO("Return value of system call %d ", status);
                 return EXIT_FAILURE;
             }
         }
@@ -135,12 +135,12 @@ int main(int argc, char* argv[])
             mesh_partitioner.writeBinary(file_name_base);
         }
 
-        INFO("Write the mesh with renumbered node indicies into VTU ...");
+        INFO("Write the mesh with renumbered node indices into VTU ...");
         mesh_partitioner.writeGlobalMeshVTU(file_name_base);
     }
 
     INFO("Total runtime: %g s.", run_timer.elapsed());
-    INFO("Total CPU time: %g s.\n", CPU_timer.elapsed());
+    INFO("Total CPU time: %g s.", CPU_timer.elapsed());
 
     return EXIT_SUCCESS;
 }

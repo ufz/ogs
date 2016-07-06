@@ -16,6 +16,7 @@
 #define NODE_WISE_MESH_PARTITIONER_H_
 
 #include <memory>
+#include <tuple>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -49,7 +50,7 @@ public:
      * \param mesh           Pointer to a mesh object.
      */
     NodeWiseMeshPartitioner(const IntegerType num_partitions,
-                            std::unique_ptr<MeshLib::Mesh>& mesh)
+                            std::unique_ptr<MeshLib::Mesh>&& mesh)
         : _npartitions(num_partitions),
           _partitions(num_partitions),
           _mesh(std::move(mesh)),
@@ -58,12 +59,11 @@ public:
           _elements_status(_mesh->getNumberOfElements(), false)
     {
     }
-    ~NodeWiseMeshPartitioner() = default;
 
     /// Partition by node.
     /// \param is_mixed_hl_elem Flag to indicate whether the elements of
     /// a mesh can be used for both linear and high order interpolation
-    void partitionByMETIS(const bool is_mixed_hl_elem);
+    void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
 
     void resetGlobalNodeIndices();
 
@@ -103,13 +103,16 @@ private:
     /// Partition IDs of each nodes.
     std::vector<std::size_t> _nodes_partition_ids;
 
-    /// Flags to indicate the status of all elements.
+    /// Flags to indicate that whether elements are processed or not.
     std::vector<bool> _elements_status;
 
-    void renumberNodeIndices();
+    // Renumber the global indices of nodes,
+    /// \param is_mixed_hl_elem Flag to indicate whether the elements of
+    /// a mesh can be used for both linear and high order interpolation
+    void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
 
     /*!
-       Calculate the totoal number of integer variables of an element
+       Calculate the total number of integer variables of an element
        vector.
            Each element has three integer variables for material ID,
        element type, number of nodes of the element. Therefore
@@ -121,11 +124,11 @@ private:
         const std::vector<const MeshLib::Element*>& elements) const;
 
     /*!
-         \brief get integer variables, which are used to define an element
+         \brief Get integer variables, which are used to define an element
          \param elem            Element
-         \param local_node_ids  Local node indicies of a partition
-         \param elem_info       An vector holds all integer variables of element
-       definitions
+         \param local_node_ids  Local node indices of a partition
+         \param elem_info       A vector holds all integer variables of
+                                element definitions
          \param counter         Recorder of the number of integer variables.
     */
     void getElementIntegerVariables(const MeshLib::Element& elem,
@@ -134,10 +137,53 @@ private:
                                     IntegerType& counter);
 
     /*!
-        \brief Write local indicies of element nodes to a ASCII file
+         \brief Write the configuration data of the partition data in
+                binary files.
+         \param file_name_base The prefix of the file name.
+         \return element 1: The numbers of all non-ghost element integer
+                            variables of each partitions.
+                 element 2: The numbers of all ghost element integer
+                            variables of each partitions.
+    */
+    std::tuple< std::vector<IntegerType>, std::vector<IntegerType>>
+         writeConfigDataBinary(const std::string& file_name_base);
+
+    /*!
+         \brief Write the element integer variables of all partitions
+                into binary files.
+         \param file_name_base      The prefix of the file name.
+         \param num_elem_integers   The numbers of all non-ghost element
+                                    integer variables of each partitions.
+         \param num_g_elem_integers The numbers of all ghost element
+                                    integer variables of each partitions.
+    */
+    void writeElementsBinary(const std::string& file_name_base,
+                      const std::vector<IntegerType>& num_elem_integers,
+                      const std::vector<IntegerType>& num_g_elem_integers);
+
+    ///  Write the nodes of all partitions into a binary file.
+    ///  \param file_name_base The prefix of the file name.
+    void writeNodesBinary(const std::string& file_name_base);
+
+
+    /// Write the configuration data of the partition data in ASCII files.
+    /// \param file_name_base The prefix of the file name.
+    void writeConfigDataASCII(const std::string& file_name_base);
+
+    ///  Write the element integer variables of all partitions into
+    ///  ASCII files.
+    /// \param file_name_base The prefix of the file name.
+    void writeElementsASCII(const std::string& file_name_base);
+
+    ///  Write the nodes of all partitions into a ASCII file.
+    /// \param file_name_base The prefix of the file name.
+    void writeNodesASCII(const std::string& file_name_base);
+
+    /*!
+        \brief Write local indices of element nodes to a ASCII file
         \param os              Output stream
         \param elem            Element
-        \param local_node_ids  Local node indicies of a partition
+        \param local_node_ids  Local node indices of a partition
     */
     void writeLocalElementNodeIndices(
         std::ostream& os,
