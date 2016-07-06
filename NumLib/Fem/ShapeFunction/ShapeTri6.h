@@ -42,8 +42,8 @@ public:
     static void computeGradShapeFunction(const T_X &r, T_N &dN);
 
     using MeshElement = MeshLib::Tri6;
-    static const std::size_t DIM = MeshElement::dimension;
-    static const std::size_t NPOINTS = MeshElement::n_all_nodes;
+    static const unsigned DIM = MeshElement::dimension;
+    static const unsigned NPOINTS = MeshElement::n_all_nodes;
 };
 
 }
