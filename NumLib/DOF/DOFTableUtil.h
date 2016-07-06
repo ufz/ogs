@@ -18,10 +18,6 @@ namespace NumLib
 //!  \c dof_table.
 std::vector<GlobalIndexType> getIndices(
     std::size_t const id, NumLib::LocalToGlobalIndexMap const& dof_table);
-
-//! Returns the values for the given \c dof_indices from the vector \c x.
-std::vector<double> getLocalNodalDOFs(
-    GlobalVector const& x, std::vector<GlobalIndexType> const& dof_indices);
 }  // namespace NumLib
 
 #endif  // NUMLIB_DOF_DOFTABLEUTIL_H

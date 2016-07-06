@@ -29,17 +29,4 @@ std::vector<GlobalIndexType> getIndices(
     return indices;
 }
 
-std::vector<double> getLocalNodalDOFs(
-    GlobalVector const& x, std::vector<GlobalIndexType> const& dof_indices)
-{
-    std::vector<double> local_x;
-    local_x.reserve(dof_indices.size());
-
-    for (auto i : dof_indices) {
-        // TODO save some function calls to x[i]
-        local_x.emplace_back(x[i]);
-    }
-
-    return local_x;
-}
 }  // namespace NumLib
