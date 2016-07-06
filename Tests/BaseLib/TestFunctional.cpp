@@ -192,9 +192,12 @@ TEST(BaseLib, Functional)
         f1_mult(a2);
 
         EXPECT_EQ(num_const, InstanceCounter::getNumberOfConstructions());
-        EXPECT_GE(num_move+1, InstanceCounter::getNumberOfMoves());
+        EXPECT_GE(num_move+2, InstanceCounter::getNumberOfMoves());
         EXPECT_EQ(num_copy+1, InstanceCounter::getNumberOfCopies());
-        EXPECT_GE(num_dest+2, InstanceCounter::getNumberOfDestructions());
+        EXPECT_EQ(num_dest + InstanceCounter::getNumberOfMoves() +
+                      InstanceCounter::getNumberOfCopies() - num_move -
+                      num_copy,
+                  InstanceCounter::getNumberOfDestructions());
         EXPECT_EQ(num_inst, InstanceCounter::getNumberOfInstances());
         UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
 
