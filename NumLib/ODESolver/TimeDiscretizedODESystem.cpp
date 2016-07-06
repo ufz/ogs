@@ -147,20 +147,19 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const* known_solutions =
         _ode.getKnownSolutions(_time_disc.getCurrentTime());
 
-    if (known_solutions)
+    if (!known_solutions || known_solutions->empty())
+        return;
+
+    using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::vector<IndexType> ids;
+    for (auto const& bc : *known_solutions)
     {
-        std::vector<double> values;
-
-        for (auto const& bc : *known_solutions)
-        {
-            // TODO this is the quick and dirty and bad performance solution.
-            values.resize(bc.values.size(), 0.0);
-
-            // TODO maybe it would be faster to apply all at once
-            MathLib::applyKnownSolution(Jac, res, minus_delta_x, bc.ids,
-                                        values);
-        }
+        std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
     }
+
+    // For the Newton method the values must be zero
+    std::vector<double> values(ids.size(), 0);
+    MathLib::applyKnownSolution(Jac, res, minus_delta_x, ids, values);
 }
 
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
