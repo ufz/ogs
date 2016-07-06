@@ -84,7 +84,7 @@ public:
         _localA.setZero();
         _localRhs.setZero();
         auto const indices = NumLib::getIndices(id, dof_table);
-        auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
+        auto const local_x = x.get(indices);
 
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();

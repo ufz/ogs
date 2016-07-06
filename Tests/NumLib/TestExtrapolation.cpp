@@ -188,7 +188,7 @@ public:
                      GlobalVector const& x,
                      IntegrationPointValue const property) {
             auto const indices = NumLib::getIndices(id, dof_table);
-            auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
+            auto const local_x = x.get(indices);
 
             loc_asm.interpolateNodalValuesToIntegrationPoints(local_x,
                                                               property);

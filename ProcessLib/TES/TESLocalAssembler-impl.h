@@ -142,7 +142,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     _local_K.setZero();
     _local_b.setZero();
     auto const indices = NumLib::getIndices(id, dof_table);
-    auto const local_x = NumLib::getLocalNodalDOFs(x, indices);
+    auto const local_x = x.get(indices);
 
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNumberOfPoints();
