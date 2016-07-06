@@ -19,7 +19,11 @@ namespace NumLib
 class NamedFunctionProvider
 {
 public:
-    virtual std::vector<NamedFunction> getNamedFunctions() const { return {}; }
+    virtual std::vector<NamedFunction> getNamedFunctions() const
+    {
+        return std::vector<NamedFunction>{};
+    }
+
     virtual ~NamedFunctionProvider() = default;
 };
 
