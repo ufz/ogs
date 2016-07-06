@@ -32,6 +32,7 @@ void applyKnownSolutions(std::vector<Solutions> const* const known_solutions,
             MathLib::setVector(x, bc.ids[i], bc.values[i]);
         }
     }
+    MathLib::LinAlg::finalizeAssembly(x);
 }
 }
 
