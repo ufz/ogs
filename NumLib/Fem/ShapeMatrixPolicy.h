@@ -58,11 +58,15 @@ struct EigenFixedShapeMatrixPolicy
     template <int N>
     using VectorType = typename ::detail::EigenMatrixType<N, 1>::type;
 
+    template <int N>
+    using RowVectorType = typename ::detail::EigenMatrixType<1, N>::type;
+
     template <int N, int M>
     using MatrixType = typename ::detail::EigenMatrixType<N, M>::type;
 
     using NodalMatrixType = MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
     using NodalVectorType = VectorType<ShapeFunction::NPOINTS>;
+    using NodalRowVectorType = RowVectorType<ShapeFunction::NPOINTS>;
     using DimNodalMatrixType = MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
     using DimMatrixType = MatrixType<ShapeFunction::DIM, ShapeFunction::DIM>;
     using GlobalDimNodalMatrixType = MatrixType<GlobalDim, ShapeFunction::NPOINTS>;
@@ -70,7 +74,7 @@ struct EigenFixedShapeMatrixPolicy
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
-            NodalVectorType,
+            NodalRowVectorType,
             DimNodalMatrixType,
             DimMatrixType,
             GlobalDimNodalMatrixType>;
@@ -84,15 +88,21 @@ struct EigenDynamicShapeMatrixPolicy
     // Dynamic size local matrices are much slower in allocation than their
     // fixed counterparts.
 
-    template<int N, int M>
-    using MatrixType =
-        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
-    template<int N>
+    template<int>
     using VectorType =
         Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
+    template<int>
+    using RowVectorType =
+        Eigen::Matrix<double, 1, Eigen::Dynamic>;
+
+    template<int, int>
+    using MatrixType =
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
     using NodalMatrixType = MatrixType<0,0>;
     using NodalVectorType = VectorType<0>;
+    using NodalRowVectorType = RowVectorType<0>;
     using DimNodalMatrixType = MatrixType<0,0>;
     using DimMatrixType = MatrixType<0,0>;
     using GlobalDimNodalMatrixType = MatrixType<0,0>;
@@ -100,7 +110,7 @@ struct EigenDynamicShapeMatrixPolicy
 
     using ShapeMatrices =
         NumLib::ShapeMatrices<
-            NodalVectorType,
+            NodalRowVectorType,
             DimNodalMatrixType,
             DimMatrixType,
             GlobalDimNodalMatrixType>;
