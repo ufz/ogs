@@ -31,21 +31,6 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config,
             OGS_FATAL("output variable `%s' specified more than once.", out_var.c_str());
         }
 
-        auto pred = [&out_var](ProcessVariable const& pv) {
-            return pv.getName() == out_var;
-        };
-
-        // check if out_var is a process variable
-        auto const& pcs_var = std::find_if(
-            process_variables.cbegin(), process_variables.cend(), pred);
-
-        if (pcs_var == process_variables.cend()
-            && !secondary_variables.variableExists(out_var))
-        {
-            OGS_FATAL("Output variable `%s' is neither a process variable nor a"
-                " secondary variable", out_var.c_str());
-        }
-
         DBUG("adding output variable `%s'", out_var.c_str());
         output_variables.insert(out_var);
     }
@@ -91,6 +76,7 @@ void doProcessOutput(
     x.copyValues(x_copy);
 
     auto const& output_variables = process_output.output_variables;
+    std::set<std::string> already_output;
 
     std::size_t const n_nodes = mesh.getNumberOfNodes();
     int global_component_offset = 0;
@@ -105,6 +91,8 @@ void doProcessOutput(
 
         if (output_variables.find(pv.getName()) == output_variables.cend())
             continue;
+
+        already_output.insert(pv.getName());
 
         DBUG("  process variable %s", pv.getName().c_str());
 
@@ -214,13 +202,14 @@ void doProcessOutput(
         }
     };
 
-    for (auto const& elem : secondary_variables)
+    for (auto const& external_variable_name : output_variables)
     {
-        auto const& var_name = elem.first;
-        if (output_variables.find(var_name) != output_variables.cend())
-        {
-            add_secondary_var(elem.second, var_name);
-        }
+        if (already_output.find(external_variable_name) != already_output.end())
+            continue;
+        already_output.insert(external_variable_name);
+
+        add_secondary_var(secondary_variables.get(external_variable_name),
+                          external_variable_name);
     }
 
     // secondary variables output end
