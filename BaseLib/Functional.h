@@ -169,11 +169,14 @@ struct FunctionTraits<ReturnType (Object::*)(Args...) const> {
  * This is in contrast to the behaviour of std::bind, and has been chosen in
  * order to prevent accidental copies.
  */
-template <typename Object, typename ReturnType, typename... Args>
-std::function<ReturnType(Args...)> easyBind(
-    ReturnType (std::remove_pointer<typename std::decay<Object>::type>::type::*
-                    method)(Args...),
-    Object&& obj)
+template <typename Object, typename MethodClass, typename ReturnType,
+          typename... Args>
+typename std::enable_if<
+    std::is_same<MethodClass,
+                 typename std::remove_cv<typename std::remove_pointer<
+                     typename std::decay<Object>::type>::type>::type>::value,
+    std::function<ReturnType(Args...)>>::type
+easyBind(ReturnType (MethodClass::*method)(Args...), Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
@@ -181,11 +184,14 @@ std::function<ReturnType(Args...)> easyBind(
 }
 
 //! \overload
-template <typename Object, typename ReturnType, typename... Args>
-std::function<ReturnType(Args...)> easyBind(
-    ReturnType (std::remove_pointer<typename std::decay<Object>::type>::type::*
-                    method)(Args...) const,
-    Object&& obj)
+template <typename Object, typename MethodClass, typename ReturnType,
+          typename... Args>
+typename std::enable_if<
+    std::is_same<MethodClass,
+                 typename std::remove_cv<typename std::remove_pointer<
+                     typename std::decay<Object>::type>::type>::type>::value,
+    std::function<ReturnType(Args...)>>::type
+easyBind(ReturnType (MethodClass::*method)(Args...) const, Object&& obj)
 {
     return detail::easyBind_inner(
         method, std::forward<Object>(obj),
