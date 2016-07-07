@@ -33,7 +33,8 @@ public:
             process_variables,
         GroundwaterFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        ProcessOutput&& process_output);
+        ProcessOutput&& process_output,
+        NumLib::NamedFunctionCaller&& named_function_caller);
 
     //! \name ODESystem interface
     //! @{
