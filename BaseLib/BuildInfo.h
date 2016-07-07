@@ -33,6 +33,8 @@ namespace BuildInfo
     extern const std::string ogs_version;
 
     extern const std::string source_path;
+    extern const std::string geo_xml_schema_path;
+    extern const std::string app_xml_schema_path;
     extern const std::string data_path;
     extern const std::string data_binary_path;
     extern const std::string tests_tmp_path;
