@@ -13,12 +13,14 @@
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
+#include "NumLib/NamedFunctionCaller.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
 
 #include "ExtrapolatorData.h"
 #include "Parameter.h"
 #include "ProcessOutput.h"
 #include "SecondaryVariable.h"
+#include "CachedSecondaryVariable.h"
 
 namespace MeshLib
 {
@@ -52,6 +54,12 @@ public:
 
     /// Postprocessing after a complete timestep.
     virtual void postTimestep(GlobalVector const& /*x*/) {}
+
+    void preIteration(const unsigned iter,
+                      GlobalVector const& x) override final;
+
+    NumLib::IterationResult postIteration(GlobalVector const& x) override final;
+
     /// Process output.
     /// The file_name is indicating the name of possible output file.
     void output(std::string const& file_name,
@@ -115,9 +123,20 @@ private:
         GlobalMatrix const& /*M*/, const double /*dx_dx*/,
         GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/);
 
+    virtual void preIterationConcreteProcess(const unsigned /*iter*/,
+                                             GlobalVector const& /*x*/){}
+
+    virtual NumLib::IterationResult postIterationConcreteProcess(
+        GlobalVector const& /*x*/)
+    {
+        return NumLib::IterationResult::SUCCESS;
+    }
+
     void constructDofTable();
 
     void initializeExtrapolator();
+
+    void finishNamedFunctionsInitialization();
 
     /// Sets the initial condition values in the solution vector x for a given
     /// process variable and component.
@@ -138,6 +157,11 @@ protected:
 
     SecondaryVariableCollection _secondary_variables;
     ProcessOutput _process_output;
+
+    NumLib::NamedFunctionCaller _named_function_caller;
+    std::vector<std::unique_ptr<CachedSecondaryVariable>>
+        _cached_secondary_variables;
+    SecondaryVariableContext _secondary_variable_context;
 
 private:
     unsigned const _integration_order = 2;
