@@ -43,6 +43,10 @@ class NodePartitionedMesh : public Mesh
             for (std::size_t i = 0; i < _nodes.size(); i++)
             {
                 _global_node_ids[i] = _nodes[i]->getID();
+
+                // TODO To add copying of the connected nodes (and elements)
+                //      in the copy constructor of class Node in order to
+                //      drop the following lines.
                 auto node = _nodes[i];
                 // Copy constructor of Mesh does not copy the connected
                 // nodes to node.

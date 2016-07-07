@@ -55,27 +55,20 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
     }
     else if (world_size == 1)
     {
-        MeshLib::Mesh* mesh = nullptr;
-        if (BaseLib::hasFileExtension("msh", file_name))
-        {
-            MeshLib::IO::Legacy::MeshIO meshIO;
-            mesh = meshIO.loadMeshFromFile(file_name);
-        }
-
-        if (BaseLib::hasFileExtension("vtu", file_name))
-            mesh = MeshLib::IO::VtuInterface::readVTUFile(file_name);
-
-        if (mesh == nullptr)
-        {
-            ERR("readMeshFromFile(): Unknown mesh file format in file %s.",
-                file_name.c_str());
-        }
+        MeshLib::Mesh* mesh = readMeshFromFileSerial(file_name);
         MeshLib::NodePartitionedMesh* part_mesh
                                = new MeshLib::NodePartitionedMesh(*mesh);
         delete mesh;
         return part_mesh;
     }
+    return nullptr;
 #else
+    return readMeshFromFileSerial(file_name);
+#endif
+}
+
+MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
+{
     if (BaseLib::hasFileExtension("msh", file_name))
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
@@ -86,8 +79,9 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
         return MeshLib::IO::VtuInterface::readVTUFile(file_name);
 
     ERR("readMeshFromFile(): Unknown mesh file format in file %s.", file_name.c_str());
-#endif
     return nullptr;
 }
+
+
 } // end namespace IO
 } // end namespace MeshLib
