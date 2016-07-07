@@ -22,7 +22,7 @@
 
 namespace NumLib
 {
-inline void LocalLinearLeastSquaresExtrapolator::extrapolate(
+void LocalLinearLeastSquaresExtrapolator::extrapolate(
     ExtrapolatableElementCollection const& extrapolatables)
 {
     _nodal_values.setZero();
@@ -41,7 +41,7 @@ inline void LocalLinearLeastSquaresExtrapolator::extrapolate(
     MathLib::LinAlg::componentwiseDivide(_nodal_values, _nodal_values, *counts);
 }
 
-inline void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
+void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
     ExtrapolatableElementCollection const& extrapolatables)
 {
     assert(static_cast<std::size_t>(_residuals.size()) ==
@@ -53,7 +53,7 @@ inline void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
     }
 }
 
-inline void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
+void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     std::size_t const element_index,
     ExtrapolatableElementCollection const& extrapolatables,
     GlobalVector& counts)
@@ -110,7 +110,7 @@ inline void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     counts.add(global_indices, std::vector<double>(global_indices.size(), 1.0));
 }
 
-inline void LocalLinearLeastSquaresExtrapolator::calculateResiudalElement(
+void LocalLinearLeastSquaresExtrapolator::calculateResiudalElement(
     std::size_t const element_index,
     ExtrapolatableElementCollection const& extrapolatables)
 {
