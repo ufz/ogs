@@ -10,7 +10,6 @@
 #ifndef PROCESSLIB_CACHEDSECONDARYVARIABLE_H
 #define PROCESSLIB_CACHEDSECONDARYVARIABLE_H
 
-#include "BaseLib/Functional.h"
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/NamedFunctionProvider.h"
 #include "NumLib/NumericsConfig.h"

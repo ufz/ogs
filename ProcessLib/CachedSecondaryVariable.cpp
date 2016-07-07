@@ -8,6 +8,7 @@
  */
 
 #include "CachedSecondaryVariable.h"
+#include "BaseLib/Functional.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
 namespace ProcessLib

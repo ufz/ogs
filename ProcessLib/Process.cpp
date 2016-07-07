@@ -9,6 +9,7 @@
 
 #include "Process.h"
 
+#include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "GlobalVectorFromNamedFunction.h"
