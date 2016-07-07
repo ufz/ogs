@@ -62,7 +62,7 @@ struct SerialExecutor
     /// \param object    the object whose method will be called.
     /// \param method    the method being called, i.e., a member function pointer
     ///                  to a member function of the class \c Object.
-    /// \param Args      types of further arguments passed on to the method
+    /// \param args      further arguments passed on to the method
     ///
     /// \see executeDereferenced()
     template <typename Container, typename Object, typename Method, typename... Args>
@@ -83,7 +83,7 @@ struct SerialExecutor
     /// \param container collection of objects having pointer semantics.
     /// \param method    the method being called, i.e., a member function pointer
     ///                  to a member function of the \c container's elements.
-    /// \param Args      types of further arguments passed on to the method
+    /// \param args      further arguments passed on to the method
     ///
     /// \see executeDereferenced()
     template <typename Container, typename Method, typename... Args>
