@@ -15,10 +15,7 @@
 namespace ProcessLib
 {
 
-ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config,
-              std::vector<std::reference_wrapper<ProcessVariable>> const&
-              process_variables,
-              SecondaryVariableCollection const& secondary_variables)
+ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
 {
     //! \ogs_file_param{process__output__variables}
     auto const out_vars = output_config.getConfigSubtree("variables");

@@ -12,17 +12,6 @@
 namespace ProcessLib
 {
 
-SecondaryVariableCollection::SecondaryVariableCollection(
-        std::initializer_list<std::string> internal_names)
-{
-    // read which variables are defined in the config
-    for (auto const& internal_name : internal_names) {
-        if (!_all_secondary_variables.insert(internal_name).second) {
-            OGS_FATAL("Tag name <%s> has been specified twice as a secondary variable.");
-        }
-    }
-}
-
 void SecondaryVariableCollection::addNameMapping(std::string const& internal_name,
                                                  std::string const& external_name)
 {
@@ -33,13 +22,6 @@ void SecondaryVariableCollection::addNameMapping(std::string const& internal_nam
     BaseLib::insertIfKeyUniqueElseError(
         _map_external_to_internal, external_name, internal_name,
         "Secondary variable names must be unique.");
-}
-
-bool SecondaryVariableCollection::variableExists(
-    std::string const& external_name) const
-{
-    return _map_external_to_internal.find(external_name) !=
-           _map_external_to_internal.cend();
 }
 
 void SecondaryVariableCollection::addSecondaryVariable(

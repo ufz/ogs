@@ -99,22 +99,9 @@ struct SecondaryVariable final
 class SecondaryVariableCollection final
 {
 public:
-    /*! Constructs new instance.
-     *
-     * \param internal_names list of internal variable names known initially.
-     */
-    SecondaryVariableCollection(
-            std::initializer_list<std::string> internal_names);
-
     //! Register a variable with the given internal and external names.
     void addNameMapping(std::string const& internal_name,
                         std::string const& external_name);
-
-    /*! Tells if a secondary variable with the specified name has been set up.
-     *
-     * \note \c external_name is not the tag name in the project file!
-     */
-    bool variableExists(std::string const& external_name) const;
 
     /*! Set up a secondary variable.
      *
@@ -132,20 +119,7 @@ public:
                               const unsigned num_components,
                               SecondaryVariableFunctions&& fcts);
 
-    //! Returns an iterator to the first secondary variable.
-    std::map<std::string, SecondaryVariable>::const_iterator
-    begin() const
-    {
-        return _configured_secondary_variables.begin();
-    }
-
-    //! Returns an iterator past the last secondary variable.
-    std::map<std::string, SecondaryVariable>::const_iterator
-    end() const
-    {
-        return _configured_secondary_variables.end();
-    }
-
+    //! Returns the secondary variable with the given external name.
     SecondaryVariable const& get(std::string const& external_name);
 
 private:
