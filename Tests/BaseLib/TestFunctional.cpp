@@ -82,19 +82,17 @@ private:
 
 TEST(BaseLib, Functional)
 {
-    A a1(3.0);
-    A a2(a1);
-
     auto num_const = InstanceCounter::getNumberOfConstructions();
     auto num_move = InstanceCounter::getNumberOfMoves();
     auto num_copy = InstanceCounter::getNumberOfCopies();
     auto num_dest = InstanceCounter::getNumberOfDestructions();
     auto num_inst = InstanceCounter::getNumberOfInstances();
-    ASSERT_EQ(1, num_const);
-    ASSERT_EQ(0, num_move);
-    ASSERT_EQ(1, num_copy);
-    ASSERT_EQ(0, num_dest);
-    ASSERT_EQ(2, num_inst);
+
+    A a1(3.0);
+    A a2(a1);
+
+    EXPECT_INSTANCES(num_const+1, num_move, num_copy+1, num_dest, num_inst+2);
+    UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
 
     auto f1_get = BaseLib::easyBind(&A::getValue, a1);
     EXPECT_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
