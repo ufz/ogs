@@ -49,11 +49,10 @@ public:
                       unsigned const integration_order,
                       AssemblyParams const& asm_params);
 
-    void assemble(std::size_t const mesh_item_id,
-                  NumLib::LocalToGlobalIndexMap const& dof_table,
-                  double const t, GlobalVector const& x,
-                  GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b) override;
+    void assembleConcrete(
+        double const t, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

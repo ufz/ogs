@@ -10,7 +10,6 @@
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
 #include "MaterialsLib/Adsorption/Adsorption.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -133,16 +132,15 @@ TESLocalAssembler<
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
-    std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table, double const /*t*/,
-    GlobalVector const& x, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    assembleConcrete(
+        double const /*t*/, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     _local_M.setZero();
     _local_K.setZero();
     _local_b.setZero();
-    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-    auto const local_x = x.get(indices);
 
     IntegrationMethod_ integration_method(_integration_order);
     unsigned const n_integration_points = integration_method.getNumberOfPoints();
@@ -187,11 +185,9 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
         std::printf("\n");
     }
 
-    auto const r_c_indices =
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
-    M.add(r_c_indices, _local_M);
-    K.add(r_c_indices, _local_K);
-    b.add(indices, _local_b);
+    M.add(indices, _local_M);
+    K.add(indices, _local_K);
+    b.add(indices.rows, _local_b);
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,

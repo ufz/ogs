@@ -12,7 +12,6 @@
 
 #include <vector>
 
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -75,16 +74,13 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(std::size_t const mesh_item_id,
-                  NumLib::LocalToGlobalIndexMap const& dof_table,
-                  double const /*t*/, GlobalVector const& x,
-                  GlobalMatrix& /*M*/, GlobalMatrix& K,
-                  GlobalVector& b) override
+    void assembleConcrete(
+        double const /*t*/, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) override
     {
         _localA.setZero();
         _localRhs.setZero();
-        auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-        auto const local_x = x.get(indices);
 
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();
@@ -108,10 +104,8 @@ public:
             }
         }
 
-        auto const r_c_indices =
-            NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
-        K.add(r_c_indices, _localA);
-        b.add(indices, _localRhs);
+        K.add(indices, _localA);
+        b.add(indices.rows, _localRhs);
     }
 
     Eigen::Map<const Eigen::RowVectorXd>

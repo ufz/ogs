@@ -10,6 +10,9 @@
 #ifndef PROCESSLIB_LOCALASSEMBLERINTERFACE_H
 #define PROCESSLIB_LOCALASSEMBLERINTERFACE_H
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/NumericsConfig.h"
+
 namespace ProcessLib
 {
 
@@ -23,27 +26,32 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    virtual void assemble(std::size_t const mesh_item_id,
+    void assemble(std::size_t const mesh_item_id,
+                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  double const t, GlobalVector const& x, GlobalMatrix& M,
+                  GlobalMatrix& K, GlobalVector& b);
+
+    void assembleJacobian(std::size_t const mesh_item_id,
                           NumLib::LocalToGlobalIndexMap const& dof_table,
                           double const t, GlobalVector const& x,
-                          GlobalMatrix& M, GlobalMatrix& K,
-                          GlobalVector& b) = 0;
-
-    virtual void assembleJacobian(
-        std::size_t const /*id*/,
-        NumLib::LocalToGlobalIndexMap const& /*dof_table*/, double const /*t*/,
-        GlobalVector const& /*x*/, GlobalMatrix& /*Jac*/)
-    {
-        OGS_FATAL(
-            "The assembleJacobian() function is not implemented in the local "
-            "assembler.");
-    }
+                          GlobalMatrix& Jac);
 
     virtual void preTimestep(std::vector<double> const& /*local_x*/,
                              double const /*t*/, double const /*delta_t*/)
     {
     }
     virtual void postTimestep(std::vector<double> const& /*local_x*/) {}
+
+protected:
+    virtual void assembleConcrete(
+            double const t, std::vector<double> const& local_x,
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+
+    virtual void assembleJacobianConcrete(
+        double const t, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& Jac);
 };
 
 } // namespace ProcessLib
