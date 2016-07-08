@@ -53,9 +53,10 @@ class A : public InstanceCounter
 {
 public:
     A(const double value) : _value(value) {}
-
-    A(A const&) = default;
-    A(A&&) = default;
+    A(A const& other) : InstanceCounter(other), _value(other._value) {}
+    A(A&& other) : InstanceCounter(std::move(other)), _value(other._value) {}
+    A& operator=(A const& other) { _value = other._value; return *this; }
+    A& operator=(A&& other) { _value = other._value; return *this; }
 
     void add(A const& other) { _value += other._value; }
     // pass by value intended.
