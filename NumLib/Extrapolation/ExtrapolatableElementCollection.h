@@ -21,7 +21,7 @@ class ExtrapolatableElementCollection
 public:
     //! Returns the shape matrix of the element with the given \c id at the
     //! given \c integration_point.
-    virtual Eigen::Map<const Eigen::VectorXd> getShapeMatrix(
+    virtual Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         std::size_t const id, unsigned const integration_point) const = 0;
 
     //! Returns integration point values of some property of the element with
@@ -85,7 +85,7 @@ public:
     {
     }
 
-    Eigen::Map<const Eigen::VectorXd> getShapeMatrix(
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         std::size_t const id, unsigned const integration_point) const override
     {
         ExtrapolatableElement const& loc_asm = *_local_assemblers[id];

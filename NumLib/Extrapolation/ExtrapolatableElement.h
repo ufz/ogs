@@ -24,7 +24,7 @@ class ExtrapolatableElement
 {
 public:
     //! Provides the shape matrix at the given integration point.
-    virtual Eigen::Map<const Eigen::VectorXd> getShapeMatrix(
+    virtual Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const = 0;
 
     virtual ~ExtrapolatableElement() = default;

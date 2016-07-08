@@ -14,6 +14,7 @@
 
 #include <Eigen/Eigen>
 #include "NumLib/NumericsConfig.h"
+#include "ExtrapolatableElementCollection.h"
 
 namespace NumLib
 {
