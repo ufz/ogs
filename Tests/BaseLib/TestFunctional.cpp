@@ -53,6 +53,10 @@ class A : public InstanceCounter
 {
 public:
     A(const double value) : _value(value) {}
+
+    A(A const&) = default;
+    A(A&&) = default;
+
     void add(A const& other) { _value += other._value; }
     // pass by value intended.
     void multiply(A other) {
@@ -144,8 +148,6 @@ TEST(BaseLib, Functional)
         EXPECT_EQ(num_const+1, InstanceCounter::getNumberOfConstructions());
         EXPECT_GE(num_move+2, InstanceCounter::getNumberOfMoves());
         EXPECT_EQ(num_copy, InstanceCounter::getNumberOfCopies());
-        EXPECT_EQ(InstanceCounter::getNumberOfMoves(),
-                  InstanceCounter::getNumberOfDestructions());
         EXPECT_EQ(num_inst+1, InstanceCounter::getNumberOfInstances());
         UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
 
@@ -153,6 +155,26 @@ TEST(BaseLib, Functional)
     }
     // ftemp_get destroyed
     EXPECT_INSTANCES(num_const, num_move, num_copy, num_dest+1, num_inst-1);
+    UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
+
+    // testing explicit move
+    {
+        A a_move(5.0);
+        EXPECT_INSTANCES(num_const+1, num_move, num_copy, num_dest, num_inst+1);
+        UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
+
+        auto ftemp_get = BaseLib::easyBind(&A::getValue, std::move(a_move));
+
+        EXPECT_EQ(num_const, InstanceCounter::getNumberOfConstructions());
+        EXPECT_GE(num_move+2, InstanceCounter::getNumberOfMoves());
+        EXPECT_EQ(num_copy, InstanceCounter::getNumberOfCopies());
+        EXPECT_EQ(num_inst+1, InstanceCounter::getNumberOfInstances());
+        UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
+
+        EXPECT_EQ(5.0, ftemp_get());
+    }
+    // ftemp_get destroyed and a_move
+    EXPECT_INSTANCES(num_const, num_move, num_copy, num_dest+2, num_inst-2);
     UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
 
     // test binding a callable object
@@ -192,10 +214,6 @@ TEST(BaseLib, Functional)
         EXPECT_EQ(num_const, InstanceCounter::getNumberOfConstructions());
         EXPECT_GE(num_move+2, InstanceCounter::getNumberOfMoves());
         EXPECT_EQ(num_copy+1, InstanceCounter::getNumberOfCopies());
-        EXPECT_EQ(num_dest + InstanceCounter::getNumberOfMoves() +
-                      InstanceCounter::getNumberOfCopies() - num_move -
-                      num_copy,
-                  InstanceCounter::getNumberOfDestructions());
         EXPECT_EQ(num_inst, InstanceCounter::getNumberOfInstances());
         UPDATE_INSTANCES(num_const, num_move, num_copy, num_dest, num_inst);
 
