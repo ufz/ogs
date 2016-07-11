@@ -65,6 +65,19 @@ public:
         return _vec[rowId];
     }
 
+    /// get entries
+    std::vector<double> get(std::vector<IndexType> const& indices) const
+    {
+        std::vector<double> local_x;
+        local_x.reserve(indices.size());
+
+        for (auto i : indices) {
+            local_x.emplace_back(_vec[i]);
+        }
+
+        return local_x;
+    }
+
     /// set entry
     void set(IndexType rowId, double v)
     {

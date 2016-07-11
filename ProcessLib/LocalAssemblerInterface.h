@@ -10,6 +10,9 @@
 #ifndef PROCESSLIB_LOCALASSEMBLERINTERFACE_H
 #define PROCESSLIB_LOCALASSEMBLERINTERFACE_H
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/NumericsConfig.h"
+
 namespace ProcessLib
 {
 
@@ -23,34 +26,32 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    virtual void assemble(double const t, std::vector<double> const& local_x) = 0;
+    void assemble(std::size_t const mesh_item_id,
+                  NumLib::LocalToGlobalIndexMap const& dof_table,
+                  double const t, GlobalVector const& x, GlobalMatrix& M,
+                  GlobalMatrix& K, GlobalVector& b);
 
-    virtual void addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const&,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const = 0;
-
-    virtual void assembleJacobian(double const /*t*/,
-                                  std::vector<double> const& /*local_x*/)
-    {
-        OGS_FATAL(
-            "assembleJacobian function is not implemented in the local "
-            "assembler.");
-    }
-
-    virtual void addJacobianToGlobal(NumLib::LocalToGlobalIndexMap::
-                                         RowColumnIndices const& /*indices*/,
-                                     GlobalMatrix& /*Jac*/) const
-    {
-        OGS_FATAL(
-            "addJacobianToGlobal function is not implemented in the local "
-            "assembler.");
-    }
+    void assembleJacobian(std::size_t const mesh_item_id,
+                          NumLib::LocalToGlobalIndexMap const& dof_table,
+                          double const t, GlobalVector const& x,
+                          GlobalMatrix& Jac);
 
     virtual void preTimestep(std::vector<double> const& /*local_x*/,
                              double const /*t*/, double const /*delta_t*/)
     {
     }
     virtual void postTimestep(std::vector<double> const& /*local_x*/) {}
+
+protected:
+    virtual void assembleConcrete(
+            double const t, std::vector<double> const& local_x,
+            NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+            GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
+
+    virtual void assembleJacobianConcrete(
+        double const t, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& Jac);
 };
 
 } // namespace ProcessLib

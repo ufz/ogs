@@ -16,8 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
-
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
@@ -34,6 +32,7 @@
 #include "MeshLib/Node.h"
 
 #include "NumLib/NumericsConfig.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 
 #include "../TestTools.h"
 #include "SteadyDiffusion2DExample1.h"
@@ -75,8 +74,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     using LocalAssembler = Example::LocalAssemblerData;
     // Initializer of the local assembler data.
-    std::vector<LocalAssembler*> local_assembler_data;
-    local_assembler_data.resize(ex1.msh->getNumberOfElements());
+    std::vector<LocalAssembler*> local_assemblers;
+    local_assemblers.resize(ex1.msh->getNumberOfElements());
 
     auto local_asm_builder =
         [&](std::size_t const id,
@@ -95,23 +94,15 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     GlobalExecutor::transformDereferenced(
             local_asm_builder,
             ex1.msh->getElements(),
-            local_assembler_data);
-
-    // TODO in the future use simpler NumLib::ODESystemTag
-    // Local and global assemblers.
-    typedef NumLib::VectorMatrixAssembler<
-            LocalAssembler,
-            NumLib::ODESystemTag::FirstOrderImplicitQuasilinear> GlobalAssembler;
-
-    GlobalAssembler assembler(local_to_global_index_map);
+            local_assemblers);
 
     // Call global assembler for each mesh element.
     auto M_dummy = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto const t = 0.0;
-    GlobalExecutor::executeMemberDereferenced(
-                assembler, &GlobalAssembler::assemble,
-                local_assembler_data, t, *x, *M_dummy, *A, *rhs);
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssembler::assemble, local_assemblers, local_to_global_index_map,
+        t, *x, *M_dummy, *A, *rhs);
 
     //std::cout << "A=\n";
     //A->write(std::cout);
@@ -154,6 +145,6 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], &solution[0], ex1.dim_eqs, 1.e-5);
 
-    for (auto p : local_assembler_data)
+    for (auto p : local_assemblers)
         delete p;
 }

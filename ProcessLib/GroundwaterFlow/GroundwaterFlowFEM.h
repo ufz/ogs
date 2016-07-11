@@ -74,7 +74,10 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assemble(double const /*t*/, std::vector<double> const& local_x) override
+    void assembleConcrete(
+        double const /*t*/, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) override
     {
         _localA.setZero();
         _localRhs.setZero();
@@ -100,12 +103,7 @@ public:
                 _darcy_velocities[d][ip] = darcy_velocity[d];
             }
         }
-    }
 
-    void addToGlobal(NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b)
-        const override
-    {
         K.add(indices, _localA);
         b.add(indices.rows, _localRhs);
     }

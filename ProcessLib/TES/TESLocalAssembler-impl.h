@@ -132,9 +132,11 @@ TESLocalAssembler<
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_,
-                       GlobalDim>::assemble(const double /*t*/,
-                                            std::vector<double> const& local_x)
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    assembleConcrete(
+        double const /*t*/, std::vector<double> const& local_x,
+        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     _local_M.setZero();
     _local_K.setZero();
@@ -182,15 +184,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_,
         ogs5OutVec(_local_b);
         std::printf("\n");
     }
-}
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    addToGlobal(
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) const
-{
     M.add(indices, _local_M);
     K.add(indices, _local_K);
     b.add(indices.rows, _local_b);

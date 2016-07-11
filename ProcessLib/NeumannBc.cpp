@@ -65,17 +65,13 @@ NeumannBc::~NeumannBc()
 
 void NeumannBc::integrate(const double t, GlobalVector& b)
 {
-    GlobalExecutor::executeMemberDereferenced(
-                *_global_assembler, &GlobalAssembler::assemble,
-                _local_assemblers, t, b);
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalNeumannBcAsmDataInterface::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, b);
 }
 
 void NeumannBc::initialize(unsigned global_dim)
 {
-    DBUG("Create global assembler.");
-    _global_assembler.reset(
-        new GlobalAssembler(*_local_to_global_index_map));
-
     auto elementValueLookup = [this](MeshLib::Element const&)
     {
         return _function();

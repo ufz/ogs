@@ -15,7 +15,6 @@
 
 #include "MeshLib/MeshSubset.h"
 #include "NumLib/NumericsConfig.h"
-#include "NumLib/Assembler/VectorMatrixAssembler.h"
 #include "NeumannBcConfig.h"
 #include "NeumannBcAssembler.h"
 
@@ -74,13 +73,6 @@ private:
     /// Integration order for integration over the lower-dimensional elements of
     /// the #_function.
     unsigned const _integration_order;
-
-    using GlobalAssembler =
-        NumLib::VectorMatrixAssembler<
-            LocalNeumannBcAsmDataInterface,
-            NumLib::ODESystemTag::NeumannBC>;
-
-    std::unique_ptr<GlobalAssembler> _global_assembler;
 
     /// Local assemblers for each element of #_elements.
     std::vector<std::unique_ptr<LocalNeumannBcAsmDataInterface>> _local_assemblers;

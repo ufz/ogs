@@ -158,16 +158,14 @@ class PETScVector
             VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
         }
 
-        /*!
-           Get several entries
-           \param e_idxs  Indicies of entries to be gotten.
-                          Note: std::size_t cannot be the type of e_idxs template argument
-           \param sub_vec Values of entries
-        */
-        template<class T_SUBVEC> void get(const std::vector<PetscInt> &e_idxs,
-                                          T_SUBVEC &sub_vec)
+        //! Get several entries
+        std::vector<double> get(std::vector<IndexType> const& indices) const
         {
-            VecGetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0]);
+            std::vector<double> local_x(indices.size());
+
+            VecGetValues(_v, indices.size(), indices.data(), local_x.data());
+
+            return local_x;
         }
 
         // TODO preliminary
