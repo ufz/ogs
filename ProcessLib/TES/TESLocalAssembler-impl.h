@@ -257,7 +257,7 @@ std::vector<double> const& TESLocalAssembler<
     ShapeFunction_, IntegrationMethod_,
     GlobalDim>::getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const
 {
-    assert(_d.getData().velocity.size() >= 2);
+    assert(_d.getData().velocity.size() > 1);
     return _d.getData().velocity[1];
 }
 
@@ -267,7 +267,7 @@ std::vector<double> const& TESLocalAssembler<
     ShapeFunction_, IntegrationMethod_,
     GlobalDim>::getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const
 {
-    assert(_d.getData().velocity.size() >= 3);
+    assert(_d.getData().velocity.size() > 2);
     return _d.getData().velocity[2];
 }
 
