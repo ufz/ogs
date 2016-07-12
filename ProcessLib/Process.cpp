@@ -199,15 +199,9 @@ void Process::initializeExtrapolator()
         manage_storage = true;
     }
 
-    MathLib::MatrixSpecifications mat_specs(
-        dof_table_single_component->dofSizeWithoutGhosts(),
-        dof_table_single_component->dofSizeWithoutGhosts(),
-        &dof_table_single_component->getGhostIndices(),
-        nullptr);
-
     std::unique_ptr<NumLib::Extrapolator> extrapolator(
         new NumLib::LocalLinearLeastSquaresExtrapolator(
-            mat_specs, *dof_table_single_component));
+            *dof_table_single_component));
 
     // TODO Later on the DOF table can change during the simulation!
     _extrapolator_data = ExtrapolatorData(

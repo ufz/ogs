@@ -22,6 +22,32 @@
 
 namespace NumLib
 {
+LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
+    NumLib::LocalToGlobalIndexMap const& dof_table)
+    : _nodal_values(NumLib::GlobalVectorProvider::provider.getVector(
+          MathLib::MatrixSpecifications(dof_table.dofSizeWithoutGhosts(),
+                                        dof_table.dofSizeWithoutGhosts(),
+                                        &dof_table.getGhostIndices(),
+                                        nullptr)))
+#ifndef USE_PETSC
+    , _residuals(dof_table.size())
+#else
+    , _residuals(dof_table.size(), false)
+#endif
+    , _local_to_global(dof_table)
+{
+    /* Note in case the following assertion fails:
+     * If you copied the extrapolation code, for your processes from
+     * somewhere, note that the code from the groundwater flow process might
+     * not suit your needs: It is a special case and is therefore most
+     * likely too simplistic. You better adapt the extrapolation code from
+     * some more advanced process, like the TES process.
+     */
+    assert(dof_table.getNumberOfComponents() == 1 &&
+           "The d.o.f. table passed must be for one variable that has "
+           "only one component!");
+}
+
 void LocalLinearLeastSquaresExtrapolator::extrapolate(
     ExtrapolatableElementCollection const& extrapolatables)
 {

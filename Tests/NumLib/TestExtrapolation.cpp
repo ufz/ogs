@@ -156,12 +156,7 @@ public:
 
         // Passing _dof_table works, because this process has only one variable
         // and the variable has exactly one component.
-        _extrapolator.reset(new ExtrapolatorImplementation(
-            MathLib::MatrixSpecifications{_dof_table->dofSizeWithoutGhosts(),
-                                          _dof_table->dofSizeWithoutGhosts(),
-                                          &_dof_table->getGhostIndices(),
-                                          nullptr},
-            *_dof_table));
+        _extrapolator.reset(new ExtrapolatorImplementation(*_dof_table));
 
         createAssemblers(mesh);
     }
