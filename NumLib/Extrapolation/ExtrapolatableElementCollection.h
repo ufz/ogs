@@ -14,8 +14,12 @@
 
 namespace NumLib
 {
-//! Adaptor to get information needed by an Extrapolator from an "arbitrary"
-//! collection of elements (e.g., local assemblers).
+/*! Adaptor to get information needed by an Extrapolator from an "arbitrary"
+ * collection of elements (e.g., local assemblers).
+ *
+ * This is an interface class; suitable implementations have to be provided for
+ * concrete collections of extrapolatable elements.
+ */
 class ExtrapolatableElementCollection
 {
 public:
@@ -24,8 +28,27 @@ public:
     virtual Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         std::size_t const id, unsigned const integration_point) const = 0;
 
-    //! Returns integration point values of some property of the element with
-    //! the given \c id.
+    /*! Returns integration point values of some property of a specific element.
+     *
+     * \param id ID of the element of which the property is queried.
+     * \param cache Can be used to compute a property on-the-fly.
+     *
+     * \remark
+     * \parblock
+     * Since this method returns a reference, integration point values can not
+     * be computed locally and just returned.
+     *
+     * Instead, the vector \c cache can be used to store some derived quantities
+     * that should be used as integration point values. They can be written to
+     * the \c cache and a reference to the \c cache can then be returned by the
+     * implementation of this method. Ordinary integration point values can be
+     * returned directly (if they are stored in the local assembler), and the
+     * \c cache can be left untouched.
+     *
+     * For usage examples see the processes already implemented or the unit test
+     * in TestExtrapolation.cpp
+     * \endparblock
+     */
     virtual std::vector<double> const& getIntegrationPointValues(
         std::size_t const id, std::vector<double>& cache) const = 0;
 
@@ -51,21 +74,11 @@ public:
 
     /*! A method providing integration point values of some property.
      *
-     * \remark
-     * \parblock
-     * The vector \c cache can be used to store some derived quantities that
-     * should be used as integration point values. They can be written to the
-     * \c cache and a reference to the \c cache can then be returned by the
-     * implementation of this method.
-     * Ordinary integration point values can be returned directly (if they are
-     * stored in the local assembler), and the \c cache can be left untouched.
-     *
-     * For usage examples see the processes already implemented or the unit test
-     * in TestExtrapolation.cpp
-     * \endparblock
-     *
      * The method must return reference to a vector containing the integration
      * point values.
+     *
+     * For further information about the \c cache parameter see
+     * ExtrapolatableElementCollection::getIntegrationPointValues().
      */
     using IntegrationPointValuesMethod = std::vector<double> const& (
         LocalAssembler::*)(std::vector<double>& cache) const;
