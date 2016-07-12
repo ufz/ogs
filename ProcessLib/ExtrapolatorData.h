@@ -23,10 +23,20 @@ namespace ProcessLib
  * \todo Later on this struct shall be moved, e.g., be merged with the process
  * output class.
  */
-struct ExtrapolatorData
+class ExtrapolatorData
 {
+public:
     ExtrapolatorData() = default;
 
+    /*! Constructs a new instance.
+     *
+     * \param extrapolator the extrapolator managed by the instance being
+     * created
+     * \param dof_table_single_component the d.o.f. table used by the \c
+     * extrapolator
+     * \param manage_storage If true the memory of \c dof_table_single_component
+     * will be freed by the destructor of this class.
+     */
     ExtrapolatorData(
         std::unique_ptr<NumLib::Extrapolator>&& extrapolator,
         NumLib::LocalToGlobalIndexMap const* const dof_table_single_component,
@@ -66,15 +76,23 @@ struct ExtrapolatorData
     ~ExtrapolatorData() { cleanup(); }
 
 private:
+    //! Deletes the d.o.f table if it is allowed to do so.
     void cleanup()
     {
         if (_manage_storage) {
             delete _dof_table_single_component;
+            _dof_table_single_component = nullptr;
         }
     }
 
+    //! Extrapolator managed by the ExtrapolatorData instance.
     std::unique_ptr<NumLib::Extrapolator> _extrapolator;
+
+    //! D.o.f. table used by the extrapolator.
     NumLib::LocalToGlobalIndexMap const* _dof_table_single_component = nullptr;
+
+    //! If true, free storage of the d.o.f. table in the ExtrapolatorData
+    //! destructor.
     bool _manage_storage = false;
 };
 
