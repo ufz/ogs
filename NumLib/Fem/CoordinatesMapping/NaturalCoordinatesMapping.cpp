@@ -13,7 +13,6 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MathLib/LinAlg/MatrixTools.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/CoordinateSystem.h"
 
@@ -127,7 +126,7 @@ computeMappingMatrices(
         }
     }
 
-    shapemat.detJ = MathLib::determinant(shapemat.J);
+    shapemat.detJ = shapemat.J.determinant();
 
 #ifndef NDEBUG
     if (shapemat.detJ<=.0)
@@ -176,8 +175,7 @@ computeMappingMatrices(
 
     if (shapemat.detJ>.0) {
         //J^-1, dshape/dx
-        //shapemat.invJ.noalias() = shapemat.J.inverse();
-        MathLib::inverse(shapemat.J, shapemat.detJ, shapemat.invJ);
+        shapemat.invJ.noalias() = shapemat.J.inverse();
 
         auto const nnodes(shapemat.dNdr.cols());
         auto const ele_dim(shapemat.dNdr.rows());
