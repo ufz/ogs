@@ -160,15 +160,23 @@ private:
     std::set<std::string> _all_secondary_variables;
 };
 
-
-//! Creates an object that computes a secondary variable via extrapolation
-//! of integration point values.
-template <typename LocalAssemblerCollection,
-          typename IntegrationPointValuesMethod>
+/*! Creates an object that computes a secondary variable via extrapolation of
+ * integration point values.
+ *
+ * \param extrapolator The extrapolator used for extrapolation.
+ * \param local_assemblers The collection of local assemblers whose integration
+ * point values will be extrapolated.
+ * \param integration_point_values_method The member function of the local
+ * assembler returning/computing the integration point values of the specific
+ * property being extrapolated.
+ */
+template <typename LocalAssemblerCollection>
 SecondaryVariableFunctions makeExtrapolator(
     NumLib::Extrapolator& extrapolator,
     LocalAssemblerCollection const& local_assemblers,
-    IntegrationPointValuesMethod integration_point_values_method)
+    typename NumLib::ExtrapolatableLocalAssemblerCollection<
+        LocalAssemblerCollection>::IntegrationPointValuesMethod
+        integration_point_values_method)
 {
     auto const eval_field = [&extrapolator, &local_assemblers,
                              integration_point_values_method](
