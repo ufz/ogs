@@ -16,14 +16,15 @@
 #include "MeshLib/NodePartitionedMesh.h"
 
 GlobalSparsityPattern computeSparsityPatternPETSc(
-    NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh)
 {
     assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(&mesh));
     auto const& npmesh =
         *static_cast<MeshLib::NodePartitionedMesh const*>(&mesh);
 
-    auto const max_nonzeroes = npmesh.getMaximumNConnectedNodesToNode();
+    auto const max_nonzeroes =   dof_table.getNumberOfComponents()
+                               * npmesh.getMaximumNConnectedNodesToNode();
 
     // The sparsity pattern is misused here in the sense that it will only
     // contain a single value.
