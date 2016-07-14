@@ -24,6 +24,11 @@
 #include "MeshEnums.h"
 #include "Properties.h"
 
+namespace ApplicationUtils
+{
+    class NodeWiseMeshPartitioner;
+}
+
 namespace MeshLib
 {
     class Node;
@@ -36,6 +41,8 @@ class Mesh : BaseLib::Counter<Mesh>
 {
     /* friend functions: */
     friend void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);
+
+    friend class ApplicationUtils::NodeWiseMeshPartitioner;
 
 public:
     /// Constructor using a mesh name and an array of nodes and elements

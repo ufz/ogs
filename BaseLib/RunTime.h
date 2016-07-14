@@ -19,7 +19,7 @@
 #if defined(USE_MPI)
 #include <mpi.h>
 #else
-#ifndef _MSC_VER
+#ifndef WIN32
 #include <sys/time.h>
 #else
 #include <windows.h>

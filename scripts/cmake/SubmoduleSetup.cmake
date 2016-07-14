@@ -18,6 +18,9 @@ endif()
 if(OGS_BUILD_GUI)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkGUISupportQt)
 endif()
+if(OGS_BUILD_UTILS)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
+endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     execute_process(

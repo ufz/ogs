@@ -22,6 +22,11 @@
 #include "MathLib/Point3dWithID.h"
 #include "MathLib/Vector3.h"
 
+namespace ApplicationUtils
+{
+    class NodeWiseMeshPartitioner;
+}
+
 namespace MeshLib {
 
 class Element;
@@ -35,6 +40,7 @@ class Node final : public MathLib::Point3dWithID
     friend class Mesh;
     friend class MeshRevision;
     friend class MeshLayerMapper;
+    friend class ApplicationUtils::NodeWiseMeshPartitioner;
 
 public:
     /// Constructor using a coordinate array
@@ -90,7 +96,7 @@ protected:
     }
 
     /// Sets the ID of a node to the given value.
-    void setID(std::size_t id) { this->_id = id; }
+    void setID(std::size_t id) { _id = id; }
 
     std::vector<Node*> _connected_nodes;
     std::vector<Element*> _elements;
