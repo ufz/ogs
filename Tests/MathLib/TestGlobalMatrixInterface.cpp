@@ -94,23 +94,28 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     MathLib::finalizeMatrixAssembly(m);
 
+    // Test basic assignment operator with an empty T_MATRIX._A
+    T_MATRIX m_c = m;
+    // Test basic assignment operator with an initalized T_MATRIX._A
+    m_c = m;
+
     // Multiply by a vector
     // v = 1.;
     set(v, 1.);
     const bool deep_copy = false;
     T_VECTOR y(v, deep_copy);
-    matMult(m, v, y);
+    matMult(m_c, v, y);
 
     ASSERT_EQ(sqrt(3*(3*3 + 7*7)), norm2(y));
 
     // set a value
-    m.set(2 * mrank, 2 * mrank, 5.0);
+    m_c.set(2 * mrank, 2 * mrank, 5.0);
     MathLib::finalizeMatrixAssembly(m);
     // add a value
-    m.add(2 * mrank+1, 2 * mrank+1, 5.0);
-    MathLib::finalizeMatrixAssembly(m);
+    m_c.add(2 * mrank+1, 2 * mrank+1, 5.0);
+    MathLib::finalizeMatrixAssembly(m_c);
 
-    matMult(m, v, y);
+    matMult(m_c, v, y);
 
     ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), norm2(y));
 }
