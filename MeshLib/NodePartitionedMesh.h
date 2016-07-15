@@ -29,6 +29,36 @@ namespace MeshLib
 class NodePartitionedMesh : public Mesh
 {
     public:
+        // Copy a global mesh for the case of the thread number is one,
+        // i.e the gobal mesh is not partitioned.
+        // \param mesh The gobal mesh
+        explicit NodePartitionedMesh(const Mesh& mesh)
+            : Mesh(mesh), _global_node_ids(mesh.getNumberOfNodes()),
+              _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
+              _n_global_nodes(mesh.getNumberOfNodes()),
+              _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
+              _n_active_nodes(mesh.getNumberOfNodes())
+        {
+            const auto& mesh_nodes = mesh.getNodes();
+            for (std::size_t i = 0; i < _nodes.size(); i++)
+            {
+                _global_node_ids[i] = _nodes[i]->getID();
+
+                // TODO To add copying of the connected nodes (and elements)
+                //      in the copy constructor of class Node in order to
+                //      drop the following lines.
+                auto node = _nodes[i];
+                // Copy constructor of Mesh does not copy the connected
+                // nodes to node.
+                if (node->_connected_nodes.size() == 0)
+                {
+                    std::copy(mesh_nodes[i]->_connected_nodes.begin(),
+                              mesh_nodes[i]->_connected_nodes.end(),
+                              std::back_inserter(node->_connected_nodes));
+                }
+            }
+        }
+
         /*!
             \brief Constructor
             \param name          Name assigned to the mesh.
@@ -39,8 +69,7 @@ class NodePartitionedMesh : public Mesh
             \param glb_node_ids  Global IDs of nodes of a partition.
             \param elements      Vector for elements. Ghost elements are stored
                                  after regular (non-ghost) elements.
-            \param n_nghost_elem Number of non-ghost elements, or the start ID of
-                                 the entry of ghost element in the element vector.
+            \param properties    Mesh property.
             \param n_global_base_nodes Number of the base nodes of the global mesh.
             \param n_global_nodes      Number of all nodes of the global mesh.
             \param n_base_nodes        Number of the base nodes.
@@ -52,14 +81,13 @@ class NodePartitionedMesh : public Mesh
                             const std::vector<std::size_t> &glb_node_ids,
                             const std::vector<Element*> &elements,
                             Properties properties,
-                            const std::size_t n_nghost_elem,
                             const std::size_t n_global_base_nodes,
                             const std::size_t n_global_nodes,
                             const std::size_t n_base_nodes,
                             const std::size_t n_active_base_nodes,
                             const std::size_t n_active_nodes)
             : Mesh(name, nodes, elements, properties, n_base_nodes),
-              _global_node_ids(glb_node_ids), _n_nghost_elem(n_nghost_elem),
+              _global_node_ids(glb_node_ids),
               _n_global_base_nodes(n_global_base_nodes),
               _n_global_nodes(n_global_nodes),
               _n_active_base_nodes(n_active_base_nodes),
@@ -114,12 +142,6 @@ class NodePartitionedMesh : public Mesh
             return _n_base_nodes + _n_active_nodes - _n_active_base_nodes;
         }
 
-        /// Get the number of non-ghost elements, or the start entry ID of ghost elements in element vector.
-        std::size_t getNumberOfNonGhostElements() const
-        {
-            return _n_nghost_elem;
-        }
-
         // TODO I guess that is a simplified version of computeSparsityPattern()
         /// Get the maximum number of connected nodes to node.
         std::size_t getMaximumNConnectedNodesToNode() const
@@ -138,9 +160,6 @@ class NodePartitionedMesh : public Mesh
     private:
         /// Global IDs of nodes of a partition
         std::vector<std::size_t> _global_node_ids;
-
-        /// Number of non-ghost elements, or the ID of the start entry of ghost elements in _elements vector.
-        std::size_t _n_nghost_elem;
 
         /// Number of the nodes of the global mesh linear interpolations.
         std::size_t _n_global_base_nodes;

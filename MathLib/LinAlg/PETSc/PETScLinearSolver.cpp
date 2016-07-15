@@ -107,6 +107,12 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector &b, PETScVector &x)
     }
     else if(reason == KSP_DIVERGED_ITS)
     {
+        const char *ksp_type;
+        const char *pc_type;
+        KSPGetType(_solver, &ksp_type);
+        PCGetType(_pc, &pc_type);
+        PetscPrintf(PETSC_COMM_WORLD, "\nLinear solver %s with %s preconditioner",
+                    ksp_type, pc_type);
         PetscPrintf(PETSC_COMM_WORLD, "\nWarning: maximum number of iterations reached.\n");
     }
     else

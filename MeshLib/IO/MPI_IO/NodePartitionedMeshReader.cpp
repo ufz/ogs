@@ -418,7 +418,6 @@ NodePartitionedMeshReader::newMesh(
         mesh_name + std::to_string(_mpi_comm_size),
         mesh_nodes, glb_node_ids, mesh_elems,
         MeshLib::Properties(),
-        _mesh_info.regular_elements,
         _mesh_info.global_base_nodes,
         _mesh_info.global_nodes,
         _mesh_info.base_nodes,

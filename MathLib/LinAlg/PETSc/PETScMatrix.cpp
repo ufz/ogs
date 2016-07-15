@@ -91,6 +91,10 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     // and thus improves performance for very large process counts.
     // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
     MatSetOption(_A, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
+
+    // Keep the non-zero pattern for the assignment operator.
+    MatSetOption(_A, MAT_KEEP_NONZERO_PATTERN,PETSC_TRUE);
+
     if(nrows>0)
         MatZeroRows(_A, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
     else
