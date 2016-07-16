@@ -66,7 +66,7 @@ public:
                                          ShapeFunction::NPOINTS);
             fe.computeShapeFunctions(
                     integration_method.getWeightedPoint(ip).getCoords(),
-                    _shape_matrices[ip]);
+                    _shape_matrices[ip], GlobalDim);
         }
 
         _neumann_bc_value = value_lookup(e);
