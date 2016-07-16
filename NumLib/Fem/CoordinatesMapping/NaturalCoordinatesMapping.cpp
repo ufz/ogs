@@ -129,6 +129,7 @@ computeMappingMatrices(
     shapemat.detJ = shapemat.J.determinant();
 
 #ifndef NDEBUG
+    // TODO make fatal?
     if (shapemat.detJ<=.0)
         ERR("det|J|=%e is not positive.\n", shapemat.detJ);
 #endif
@@ -180,7 +181,7 @@ computeMappingMatrices(
         auto const nnodes(shapemat.dNdr.cols());
         auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows()==ele.getDimension());
-        const unsigned global_dim(ele_local_coord.getGlobalCoordinateSystem().getDimension());
+        const unsigned global_dim = ele_local_coord.getGlobalDimension();
         if (global_dim==ele_dim) {
             shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
         } else {
@@ -226,10 +227,10 @@ template <class T_MESH_ELEMENT,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
 void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
                                                    const double* natural_pt,
-                                                   T_SHAPE_MATRICES& shapemat)
+                                                   T_SHAPE_MATRICES& shapemat,
+                                                   const unsigned global_dim)
 {
-    const MeshLib::CoordinateSystem coords(ele);
-    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, coords);
+    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, global_dim);
 
     detail::computeMappingMatrices<
         T_MESH_ELEMENT,
@@ -251,7 +252,8 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
         ShapeMatrixType::WHICHPART>(                             \
         MeshLib::TemplateElement<MeshLib::RULE> const&,          \
         double const*,                                           \
-        SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&)
+        SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&,   \
+        const unsigned global_dim)
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_DYN(RULE, SHAPE) \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \

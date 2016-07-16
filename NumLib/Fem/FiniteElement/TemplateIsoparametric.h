@@ -77,16 +77,17 @@ public:
     {
         this->_ele = &e;
     }
-
     /**
      * compute shape functions
      *
      * @param natural_pt    position in natural coordinates
      * @param shape         evaluated shape function matrices
      */
-    void computeShapeFunctions(const double *natural_pt, ShapeMatrices &shape) const
+    void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
+                               const unsigned global_dim) const
     {
-        NaturalCoordsMappingType::computeShapeMatrices(*_ele, natural_pt, shape);
+        NaturalCoordsMappingType::computeShapeMatrices(*_ele, natural_pt, shape,
+                                                       global_dim);
     }
 
     /**
@@ -97,11 +98,12 @@ public:
      * @param shape                 evaluated shape function matrices
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-    void computeShapeFunctions(const double *natural_pt, ShapeMatrices &shape) const
+    void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
+                               const unsigned global_dim) const
     {
-        NaturalCoordsMappingType::template computeShapeMatrices<T_SHAPE_MATRIX_TYPE>(*_ele, natural_pt, shape);
+        NaturalCoordsMappingType::template computeShapeMatrices<
+            T_SHAPE_MATRIX_TYPE>(*_ele, natural_pt, shape, global_dim);
     }
-
 
 private:
     const MeshElementType* _ele;
