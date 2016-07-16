@@ -10,14 +10,10 @@
 #include "NaturalCoordinatesMapping.h"
 
 #include <cassert>
-
 #include <logog/include/logog.hpp>
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/CoordinateSystem.h"
-
 #include "MeshLib/Elements/TemplateElement.h"
-
 #include "MeshLib/Elements/HexRule20.h"
 #include "MeshLib/Elements/HexRule8.h"
 #include "MeshLib/Elements/LineRule2.h"
@@ -51,9 +47,9 @@
 #include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "ShapeMatrices.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace NumLib
 {

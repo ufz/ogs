@@ -82,6 +82,7 @@ public:
      *
      * @param natural_pt    position in natural coordinates
      * @param shape         evaluated shape function matrices
+     * @param global_dim    global dimension
      */
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
                                const unsigned global_dim) const
@@ -96,6 +97,7 @@ public:
      * @tparam T_SHAPE_MATRIX_TYPE  shape matrix types to be calculated
      * @param natural_pt            position in natural coordinates
      * @param shape                 evaluated shape function matrices
+     * @param global_dim            global dimension
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,

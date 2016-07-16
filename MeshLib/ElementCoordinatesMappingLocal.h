@@ -10,12 +10,8 @@
 #define ELEMENTCOORDINATESMAPPINGLOCAL_H_
 
 #include <vector>
-
 #include <Eigen/Eigen>
-
 #include "MathLib/Point3d.h"
-
-#include "MeshLib/CoordinateSystem.h"
 
 namespace MeshLib
 {
@@ -34,12 +30,12 @@ class ElementCoordinatesMappingLocal final
 public:
     /**
      * Constructor
-     * \param e                     Mesh element whose node coordinates are mapped
-     * \param global_coord_system   Global coordinate system
+     * \param e          Mesh element whose node coordinates are mapped
+     * \param global_dim Global dimension
      */
     ElementCoordinatesMappingLocal(const Element &e, const unsigned global_dim);
 
-    /// return the global coordinate system
+    /// return the global dimension
     unsigned getGlobalDimension() const { return _global_dim; }
 
     /// return mapped coordinates of the node

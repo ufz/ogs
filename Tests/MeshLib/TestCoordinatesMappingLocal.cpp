@@ -19,13 +19,14 @@
 #include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
+#include "MeshLib/CoordinateSystem.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 
-#include "../TestTools.h"
+#include "Tests/TestTools.h"
 
 
 namespace
