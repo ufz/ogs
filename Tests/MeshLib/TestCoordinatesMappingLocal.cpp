@@ -153,7 +153,9 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
 {
     auto ele = TestLine2::createY();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y)
+                  .getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -171,8 +173,10 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
 {
     auto ele = TestLine2::createZ();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele,
-            MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Z));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele,
+        MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Z)
+            .getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -188,7 +192,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
 {
     auto ele = TestLine2::createXY();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(*ele));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -206,7 +211,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
 {
     auto ele = TestLine2::createXYZ();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(*ele));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -224,7 +230,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
 {
     auto ele = TestQuad4::createXZ();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(*ele));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -244,7 +251,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
 {
     auto ele = TestQuad4::createYZ();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(*ele));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 
@@ -264,7 +272,8 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
 TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
 {
     auto ele = TestQuad4::createXYZ();
-    MeshLib::ElementCoordinatesMappingLocal mapping(*ele, MeshLib::CoordinateSystem(*ele));
+    MeshLib::ElementCoordinatesMappingLocal mapping(
+        *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
     //debugOutput(ele, mapping);
 

@@ -62,7 +62,7 @@ public:
 
 public:
     NumLibFemNaturalCoordinatesMappingTest()
-    : eps(std::numeric_limits<double>::epsilon())
+    : eps(2*std::numeric_limits<double>::epsilon())
     {
         // create four elements used for testing
         naturalEle   = this->createNaturalShape();
@@ -106,7 +106,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     //only N
-    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N>(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N>(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     ASSERT_FALSE(shape.N.isZero());
     ASSERT_TRUE(shape.dNdr.isZero());
     ASSERT_TRUE(shape.J.isZero());
@@ -122,7 +122,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR)
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr
-    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR>(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR>(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     ASSERT_TRUE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
     ASSERT_TRUE(shape.J.isZero());
@@ -139,7 +139,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N_J)
 
     // N_J
     shape.setZero();
-    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N_J>(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::N_J>(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     ASSERT_FALSE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
     ASSERT_FALSE(shape.J.isZero());
@@ -155,7 +155,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDR_
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
 
     // dNdr, J
-    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR_J>(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDR_J>(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     ASSERT_TRUE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
     ASSERT_FALSE(shape.J.isZero());
@@ -172,7 +172,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_DNDX)
 
     // DNDX
     shape.setZero();
-    NaturalCoordsMappingType::template computeShapeMatrices<ShapeMatrixType::DNDX>(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::template computeShapeMatrices<
+        ShapeMatrixType::DNDX>(*this->naturalEle, this->r, shape,
+                               this->dim);  // TODO check dim
     ASSERT_TRUE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
     ASSERT_FALSE(shape.J.isZero());
@@ -189,7 +191,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_ALL)
 
     // ALL
     shape.setZero();
-    NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     ASSERT_FALSE(shape.N.isZero());
     ASSERT_FALSE(shape.dNdr.isZero());
     ASSERT_FALSE(shape.J.isZero());
@@ -205,7 +207,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckNaturalShape)
 
     // identical to natural coordinates
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape);
+    NaturalCoordsMappingType::computeShapeMatrices(*this->naturalEle, this->r, shape, this->dim); // TODO check dim
     double exp_J[TestFixture::dim*TestFixture::dim]= {0.0};
     for (unsigned i=0; i<this->dim; i++)
         exp_J[i+this->dim*i] = 1.0;
@@ -225,7 +227,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckIrregularShape)
 
     // irregular shape
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(*this->irregularEle, this->r, shape);
+    NaturalCoordsMappingType::computeShapeMatrices(*this->irregularEle, this->r, shape, this->dim); // TODO check dim
     //std::cout <<  std::setprecision(16) << shape;
 
     ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(), this->eps);
@@ -243,7 +245,7 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
 
     // clockwise node ordering, which is invalid)
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(*this->clockwiseEle, this->r, shape);
+    NaturalCoordsMappingType::computeShapeMatrices(*this->clockwiseEle, this->r, shape, this->dim); // TODO check dim
     //std::cout <<  std::setprecision(16) << shape;
     // Inverse of the Jacobian matrix doesn't exist
     double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
@@ -263,8 +265,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(*this->zeroVolumeEle, this->r, shape);
-    //std::cout <<  std::setprecision(16) << shape;
+    NaturalCoordsMappingType::computeShapeMatrices(
+        *this->zeroVolumeEle, this->r, shape, this->dim);  // TODO check dim
+    // std::cout <<  std::setprecision(16) << shape;
     // Inverse of the Jacobian matrix doesn't exist
     double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
     double exp_dNdx[TestFixture::dim*TestFixture::e_nnodes]= {0.0};
@@ -291,7 +294,7 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
     static const unsigned dim = 1;
     static const unsigned e_nnodes = 2;
     ShapeMatricesType shape(dim, 2, e_nnodes);
-    MappingType::computeShapeMatrices(*line, r, shape);
+    MappingType::computeShapeMatrices(*line, r, shape, 2);
 
     double exp_J[dim*dim]= {0.0};
     for (unsigned i=0; i<dim; i++)

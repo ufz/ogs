@@ -71,7 +71,7 @@ TEST(NumLibFunctionInterpolationTest, Linear1DElement)
 
     finite_element.computeShapeFunctions(
             integration_method.getWeightedPoint(0).getCoords(),
-            shape_matrix);
+            shape_matrix, ShapeFunction::DIM); // TODO check DIM
     ASSERT_EQ(2, shape_matrix.N.size());
 
     // actual test
