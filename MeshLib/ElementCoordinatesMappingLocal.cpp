@@ -68,24 +68,23 @@ namespace MeshLib
 
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e,
-    const CoordinateSystem &global_coords)
-: _coords(global_coords), _matR2global(3,3)
+        const unsigned global_dim)
+: _global_dim(global_dim), _matR2global(3,3)
 {
-    assert(e.getDimension() <= global_coords.getDimension());
+    assert(e.getDimension() <= global_dim);
     _points.reserve(e.getNumberOfNodes());
     for(unsigned i = 0; i < e.getNumberOfNodes(); i++)
         _points.emplace_back(*(e.getNode(i)));
 
-    auto const element_dimension = e.getDimension();
-    auto const global_dimension = global_coords.getDimension();
+    auto const element_dim = e.getDimension();
 
-    if (global_dimension == element_dimension)
+    if (global_dim == element_dim)
     {
         _matR2global.setIdentity();
         return;
     }
 
-    detail::getRotationMatrixToGlobal(element_dimension, global_dimension, _points, _matR2global);
+    detail::getRotationMatrixToGlobal(element_dim, global_dim, _points, _matR2global);
     detail::rotateToLocal(_matR2global.transpose(), _points);
 }
 
