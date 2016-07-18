@@ -47,8 +47,8 @@ public:
     /**
      * Copy constructor.
      */
-    TemplateVector3(TemplateVector3<T> const& v) = default;
-    TemplateVector3<T>& operator=(TemplateVector3<T> const& v) = default;
+    TemplateVector3(TemplateVector3<T> const& /* v */) = default;
+    TemplateVector3<T>& operator=(TemplateVector3<T> const& /* v */) = default;
 
     /**
      * Construct Vector3 from TemplatePoint.

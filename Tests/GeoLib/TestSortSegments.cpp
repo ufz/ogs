@@ -75,7 +75,7 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         if (MathLib::sqrDist(s0.getEndPoint(),
                              sub_segments.back().getEndPoint()) >= eps)
             return false;
-        for (auto k(0); k < sub_segments.size() - 1; ++k)
+        for (std::size_t k(0); k < sub_segments.size() - 1; ++k)
         {
             if (MathLib::sqrDist(sub_segments[k].getEndPoint(),
                                  sub_segments[k + 1].getBeginPoint()) >= eps)

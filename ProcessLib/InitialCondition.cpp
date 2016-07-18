@@ -46,7 +46,7 @@ std::unique_ptr<InitialCondition> createUniformInitialCondition(
     std::vector<double> const values =
         //! \ogs_file_param{initial_condition__Uniform__values}
         config.getConfigParameter<std::vector<double>>("values");
-    if (values.size() != n_components)
+    if (values.size() != static_cast<std::size_t>(n_components))
     {
         OGS_FATAL(
             "Number of values for the initial condition is different from the "
