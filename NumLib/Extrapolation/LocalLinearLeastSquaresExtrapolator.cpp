@@ -75,7 +75,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
 
     auto const size = extrapolatables.size();
     for (std::size_t i=0; i<size; ++i) {
-        calculateResiudalElement(i, extrapolatables);
+        calculateResidualElement(i, extrapolatables);
     }
 }
 
@@ -136,7 +136,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     counts.add(global_indices, std::vector<double>(global_indices.size(), 1.0));
 }
 
-void LocalLinearLeastSquaresExtrapolator::calculateResiudalElement(
+void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     std::size_t const element_index,
     ExtrapolatableElementCollection const& extrapolatables)
 {

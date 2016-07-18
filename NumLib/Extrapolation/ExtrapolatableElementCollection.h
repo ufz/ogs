@@ -70,7 +70,7 @@ public:
 
     static_assert(std::is_base_of<ExtrapolatableElement, LocalAssembler>::value,
                   "Local assemblers used for extrapolation must be derived "
-                  "from Extrapolatable.");
+                  "from ExtrapolatableElement.");
 
     /*! A method providing integration point values of some property.
      *

@@ -84,7 +84,7 @@ private:
         GlobalVector& counts);
 
     //! Compute the residuals for one element
-    void calculateResiudalElement(
+    void calculateResidualElement(
         std::size_t const element_index,
         ExtrapolatableElementCollection const& extrapolatables);
 
