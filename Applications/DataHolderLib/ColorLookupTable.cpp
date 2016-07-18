@@ -13,10 +13,12 @@
 
 namespace DataHolderLib
 {
-
 ColorLookupTable::ColorLookupTable()
-: _range(std::make_pair<double, double>(std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max())),
-  _type(DataHolderLib::LUTType::LINEAR)
+    : _type(DataHolderLib::LUTType::LINEAR),
+      _range(
+          std::make_pair<double, double>(std::numeric_limits<double>::lowest(),
+                                         std::numeric_limits<double>::max()))
+
 {}
 
 void ColorLookupTable::setTableRange(double min, double max)
