@@ -8,6 +8,7 @@
  */
 
 #include "UncoupledProcessesTimeLoop.h"
+#include "BaseLib/RunTime.h"
 
 namespace ApplicationsLib
 {
@@ -177,6 +178,9 @@ bool UncoupledProcessesTimeLoop::loop(ProjectData& project)
 
     while (_timestepper->next())
     {
+        BaseLib::RunTime time_timestep;
+        time_timestep.start();
+
         auto const ts = _timestepper->getTimeStep();
         auto const delta_t = ts.dt();
         t = ts.current();
@@ -190,11 +194,17 @@ bool UncoupledProcessesTimeLoop::loop(ProjectData& project)
         for (auto p = project.processesBegin(); p != project.processesEnd();
              ++p, ++pcs_idx)
         {
+            BaseLib::RunTime time_timestep_process;
+            time_timestep_process.start();
+
             auto& x = *_process_solutions[pcs_idx];
 
             nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep, t, delta_t, per_process_data[pcs_idx], **p,
                 out_ctrl);
+
+            INFO("[time] Solving process #%u took %g s in timestep #%u.",
+                 timestep, time_timestep.elapsed(), pcs_idx);
 
             if (!nonlinear_solver_succeeded)
             {
@@ -212,6 +222,9 @@ bool UncoupledProcessesTimeLoop::loop(ProjectData& project)
                 out_ctrl.doOutput(**p, timestep, t, x);
             }
         }
+
+        INFO("[time] Timestep #%u took %g s.", timestep,
+             time_timestep.elapsed());
 
         if (!nonlinear_solver_succeeded)
             break;

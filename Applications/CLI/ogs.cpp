@@ -10,6 +10,9 @@
  *
  */
 
+#include <chrono>
+#include <ctime>
+#include <sstream>
 
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
@@ -18,6 +21,7 @@
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -74,6 +78,21 @@ int main(int argc, char *argv[])
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
+    BaseLib::RunTime run_time;
+    run_time.start();
+
+    {
+        auto const start_time_sys = std::chrono::system_clock::to_time_t(
+            std::chrono::system_clock::now());
+        std::ostringstream sstr;
+        sstr << std::put_time(std::localtime(&start_time_sys), "%F %T %z");
+        INFO("OGS started on %s.", sstr.str().c_str());
+    }
+
+    std::chrono::steady_clock::now();
+
+    auto ogs_status = EXIT_SUCCESS;
+
     try
     {
         bool solver_succeeded = false;
@@ -117,9 +136,20 @@ int main(int argc, char *argv[])
 
         BaseLib::ConfigTree::assertNoSwallowedErrors();
 
-        return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+        ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     } catch (std::exception& e) {
         ERR(e.what());
-        return EXIT_FAILURE;
+        ogs_status = EXIT_FAILURE;
     }
+
+    {
+        auto const end_time_sys = std::chrono::system_clock::to_time_t(
+            std::chrono::system_clock::now());
+        std::ostringstream sstr;
+        sstr << std::put_time(std::localtime(&end_time_sys), "%F %T %z");
+        INFO("OGS terminated on %s.", sstr.str().c_str());
+        INFO("[time] Execution took %g s.", run_time.elapsed());
+    }
+
+    return ogs_status;
 }
