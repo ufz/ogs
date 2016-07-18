@@ -10,7 +10,8 @@
 #include "NaturalCoordinatesMapping.h"
 
 #include <cassert>
-#include <logog/include/logog.hpp>
+
+#include "BaseLib/Error.h"
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Elements/TemplateElement.h"
@@ -124,11 +125,8 @@ computeMappingMatrices(
 
     shapemat.detJ = shapemat.J.determinant();
 
-#ifndef NDEBUG
-    // TODO make fatal?
     if (shapemat.detJ<=.0)
-        ERR("det|J|=%e is not positive.\n", shapemat.detJ);
-#endif
+        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
 }
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
@@ -170,7 +168,7 @@ computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 
-    if (shapemat.detJ>.0) {
+    if (shapemat.detJ > 0) {
         //J^-1, dshape/dx
         shapemat.invJ.noalias() = shapemat.J.inverse();
 
@@ -186,8 +184,11 @@ computeMappingMatrices(
             auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
             shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
         }
+    } else {
+        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
     }
 }
+
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
 typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
