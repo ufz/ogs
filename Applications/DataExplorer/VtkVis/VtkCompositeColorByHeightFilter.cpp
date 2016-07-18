@@ -44,11 +44,11 @@ void VtkCompositeColorByHeightFilter::init()
     else
         heightFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-    DataHolderLib::Color a = { 0, 0, 255, 255 }; // blue
-    DataHolderLib::Color b = { 0, 255, 0, 255 }; // green
-    DataHolderLib::Color c = { 255, 255, 0, 255 }; // yellow
-    DataHolderLib::Color d = { 155, 100, 50, 255 }; // brown
-    DataHolderLib::Color e = { 255, 0, 0, 255 }; // red
+    DataHolderLib::Color a{{0, 0, 255, 255}};    // blue
+    DataHolderLib::Color b{{0, 255, 0, 255}};    // green
+    DataHolderLib::Color c{{255, 255, 0, 255}};  // yellow
+    DataHolderLib::Color d{{155, 100, 50, 255}}; // brown
+    DataHolderLib::Color e{{255, 0, 0, 255}};    // red
     VtkColorLookupTable* ColorLookupTable = heightFilter->GetColorLookupTable();
     ColorLookupTable->setInterpolationType(DataHolderLib::LUTType::LINEAR);
     ColorLookupTable->setColor(-50, a);
