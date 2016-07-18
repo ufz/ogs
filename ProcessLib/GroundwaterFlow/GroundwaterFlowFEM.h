@@ -125,19 +125,22 @@ public:
     std::vector<double> const&
     getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const override
     {
-            return _darcy_velocities[0];
+        assert(_darcy_velocities.size() > 1);
+        return _darcy_velocities[0];
     }
 
     std::vector<double> const&
     getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const override
     {
-            return _darcy_velocities[0];
+        assert(_darcy_velocities.size() > 1);
+        return _darcy_velocities[1];
     }
 
     std::vector<double> const&
     getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const override
     {
-            return _darcy_velocities[0];
+        assert(_darcy_velocities.size() > 2);
+        return _darcy_velocities[2];
     }
 
 private:
