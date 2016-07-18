@@ -245,18 +245,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckClockwise)
 
     // clockwise node ordering, which is invalid)
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(*this->clockwiseEle, this->r, shape, this->global_dim);
-    //std::cout <<  std::setprecision(16) << shape;
-    // Inverse of the Jacobian matrix doesn't exist
-    double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
-    double exp_dNdx[TestFixture::dim*TestFixture::e_nnodes]= {0.0};
 
-    ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(), this->eps);
-    ASSERT_ARRAY_NEAR(this->nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), this->eps);
-    ASSERT_ARRAY_NEAR(this->cl_exp_J, shape.J.data(), shape.J.size(), this->eps);
-    ASSERT_NEAR(this->cl_exp_detJ, shape.detJ, this->eps);
-    ASSERT_ARRAY_NEAR(exp_invJ, shape.invJ.data(), shape.invJ.size(), this->eps);
-    ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), this->eps);
+    EXPECT_ANY_THROW(NaturalCoordsMappingType::computeShapeMatrices(
+        *this->clockwiseEle, this->r, shape, this->global_dim));
 }
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
@@ -265,19 +256,9 @@ TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckZeroVolume)
     typedef typename TestFixture::NaturalCoordsMappingType NaturalCoordsMappingType;
 
     ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
-    NaturalCoordsMappingType::computeShapeMatrices(
-        *this->zeroVolumeEle, this->r, shape, this->global_dim);
-    // std::cout <<  std::setprecision(16) << shape;
-    // Inverse of the Jacobian matrix doesn't exist
-    double exp_invJ[TestFixture::dim*TestFixture::dim]= {0.0};
-    double exp_dNdx[TestFixture::dim*TestFixture::e_nnodes]= {0.0};
 
-    ASSERT_ARRAY_NEAR(this->nat_exp_N, shape.N.data(), shape.N.size(), this->eps);
-    ASSERT_ARRAY_NEAR(this->nat_exp_dNdr, shape.dNdr.data(), shape.dNdr.size(), this->eps);
-    ASSERT_ARRAY_NEAR(this->ze_exp_J, shape.J.data(), shape.J.size(), this->eps);
-    ASSERT_NEAR(0.0, shape.detJ, this->eps);
-    ASSERT_ARRAY_NEAR(exp_invJ, shape.invJ.data(), shape.invJ.size(), this->eps);
-    ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), this->eps);
+    EXPECT_ANY_THROW(NaturalCoordsMappingType::computeShapeMatrices(
+        *this->zeroVolumeEle, this->r, shape, this->global_dim));
 }
 
 TEST(NumLib, FemNaturalCoordinatesMappingLineY)
