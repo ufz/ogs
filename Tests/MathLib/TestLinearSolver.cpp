@@ -228,12 +228,11 @@ TEST(Math, CheckInterface_EigenLis)
 {
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
-    boost::property_tree::ptree t_solver;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
     BaseLib::ConfigTree conf(t_root, "",
         BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
 
-    using IntType = MathLib::LisMatrix::IndexType;
+    using IntType = MathLib::EigenMatrix::IndexType;
 
     MathLib::EigenMatrix A(Example1<IntType>::dim_eqs);
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
