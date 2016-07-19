@@ -42,13 +42,6 @@ public:
     //! @}
 
 private:
-    using ExtrapolatorInterface =
-        NumLib::Extrapolator<IntegrationPointValue,
-                             GroundwaterFlowLocalAssemblerInterface>;
-    using ExtrapolatorImplementation =
-        NumLib::LocalLinearLeastSquaresExtrapolator<
-            IntegrationPointValue, GroundwaterFlowLocalAssemblerInterface>;
-
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
@@ -62,8 +55,6 @@ private:
 
     std::vector<std::unique_ptr<GroundwaterFlowLocalAssemblerInterface>>
         _local_assemblers;
-
-    std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
 }   // namespace GroundwaterFlow

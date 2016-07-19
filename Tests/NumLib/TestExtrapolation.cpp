@@ -10,25 +10,25 @@
 #include <random>
 #include <gtest/gtest.h>
 
-#include "NumLib/DOF/MatrixProviderUser.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
-
 #include "MathLib/LinAlg/LinAlg.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/DOF/MatrixProviderUser.h"
+#include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericsConfig.h"
+
 #include "ProcessLib/Utils/LocalDataInitializer.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-
 
 namespace
 {
@@ -63,26 +63,25 @@ void fillVectorRandomly(Vector& x)
 
 }
 
-enum class IntegrationPointValue
-{
-    StoredQuantity, // some quantity acutally stored in the local assembler
-    DerivedQuantity // a quantity computed for each integration point on-the-fly
-};
-
-class LocalAssemblerDataInterface
-        : public NumLib::Extrapolatable<IntegrationPointValue>
+class LocalAssemblerDataInterface : public NumLib::ExtrapolatableElement
 {
 public:
     virtual void interpolateNodalValuesToIntegrationPoints(
-            std::vector<double> const& local_nodal_values,
-            IntegrationPointValue const property) = 0;
+        std::vector<double> const& local_nodal_values) = 0;
+
+    virtual std::vector<double> const& getStoredQuantity(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getDerivedQuantity(
+        std::vector<double>& cache) const = 0;
 };
 
-template<typename ShapeFunction,
-         typename IntegrationMethod,
-         unsigned GlobalDim>
-class LocalAssemblerData
-        : public LocalAssemblerDataInterface
+using IntegrationPointValuesMethod = std::vector<double> const& (
+    LocalAssemblerDataInterface::*)(std::vector<double>&)const;
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+class LocalAssemblerData : public LocalAssemblerDataInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -93,9 +92,11 @@ public:
                        unsigned const integration_order)
         : _shape_matrices(
               ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                  IntegrationMethod, GlobalDim>(e, integration_order))
+                                            IntegrationMethod, GlobalDim>(
+                  e, integration_order))
         , _int_pt_values(_shape_matrices.size())
-    {}
+    {
+    }
 
     Eigen::Map<const Eigen::RowVectorXd>
     getShapeMatrix(const unsigned integration_point) const override
@@ -106,42 +107,31 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const&
-    getIntegrationPointValues(IntegrationPointValue const property,
-                              std::vector<double>& cache) const override
+    std::vector<double> const& getStoredQuantity(
+        std::vector<double>& /*cache*/) const override
     {
-        switch (property)
-        {
-        case IntegrationPointValue::StoredQuantity:
-            return _int_pt_values;
-        case IntegrationPointValue::DerivedQuantity:
-            cache.clear();
-            for (auto value : _int_pt_values)
-                cache.push_back(2.0 * value);
-            return cache;
-        }
+        return _int_pt_values;
+    }
 
-        OGS_FATAL("");
+    std::vector<double> const& getDerivedQuantity(
+        std::vector<double>& cache) const override
+    {
+        cache.clear();
+        for (auto value : _int_pt_values)
+            cache.push_back(2.0 * value);
+        return cache;
     }
 
     void interpolateNodalValuesToIntegrationPoints(
-            std::vector<double> const& local_nodal_values,
-            IntegrationPointValue const property) override
+        std::vector<double> const& local_nodal_values) override
     {
-        switch (property)
-        {
-        case IntegrationPointValue::StoredQuantity:
-            ::interpolateNodalValuesToIntegrationPoints(
-                        local_nodal_values, _shape_matrices, _int_pt_values);
-            break;
-        case IntegrationPointValue::DerivedQuantity:
-            break;
-        }
+        ::interpolateNodalValuesToIntegrationPoints(
+            local_nodal_values, _shape_matrices, _int_pt_values);
     }
 
 private:
     std::vector<ShapeMatrices> _shape_matrices;
-    std::vector<double>        _int_pt_values;
+    std::vector<double> _int_pt_values;
 };
 
 class TestProcess
@@ -149,11 +139,9 @@ class TestProcess
 public:
     using LocalAssembler = LocalAssemblerDataInterface;
 
-    using ExtrapolatorInterface =
-        NumLib::Extrapolator<IntegrationPointValue, LocalAssembler>;
+    using ExtrapolatorInterface = NumLib::Extrapolator;
     using ExtrapolatorImplementation =
-        NumLib::LocalLinearLeastSquaresExtrapolator<
-            IntegrationPointValue, LocalAssembler>;
+        NumLib::LocalLinearLeastSquaresExtrapolator;
 
     TestProcess(MeshLib::Mesh const& mesh, unsigned const integration_order)
         : _integration_order(integration_order)
@@ -161,51 +149,44 @@ public:
     {
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>> all_mesh_subsets;
         all_mesh_subsets.emplace_back(
-                    new MeshLib::MeshSubsets{&_mesh_subset_all_nodes});
+            new MeshLib::MeshSubsets{&_mesh_subset_all_nodes});
 
         _dof_table.reset(new NumLib::LocalToGlobalIndexMap(
-              std::move(all_mesh_subsets),
-              NumLib::ComponentOrder::BY_COMPONENT));
+            std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_COMPONENT));
 
         // Passing _dof_table works, because this process has only one variable
         // and the variable has exactly one component.
-        _extrapolator.reset(new ExtrapolatorImplementation(
-            MathLib::MatrixSpecifications{_dof_table->dofSizeWithoutGhosts(),
-                                          _dof_table->dofSizeWithoutGhosts(),
-                                          &_dof_table->getGhostIndices(),
-                                          nullptr},
-            *_dof_table));
+        _extrapolator.reset(new ExtrapolatorImplementation(*_dof_table));
 
         createAssemblers(mesh);
     }
 
     void interpolateNodalValuesToIntegrationPoints(
-            GlobalVector const& global_nodal_values,
-            IntegrationPointValue const property) const
+        GlobalVector const& global_nodal_values) const
     {
         auto cb = [](std::size_t id, LocalAssembler& loc_asm,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
-                     GlobalVector const& x,
-                     IntegrationPointValue const property) {
+                     GlobalVector const& x) {
             auto const indices = NumLib::getIndices(id, dof_table);
             auto const local_x = x.get(indices);
 
-            loc_asm.interpolateNodalValuesToIntegrationPoints(local_x,
-                                                              property);
+            loc_asm.interpolateNodalValuesToIntegrationPoints(local_x);
         };
 
         GlobalExecutor::executeDereferenced(cb, _local_assemblers, *_dof_table,
-                                            global_nodal_values, property);
+                                            global_nodal_values);
     }
 
-    std::pair<GlobalVector const*, GlobalVector const*>
-    extrapolate(IntegrationPointValue const property) const
+    std::pair<GlobalVector const*, GlobalVector const*> extrapolate(
+        IntegrationPointValuesMethod method) const
     {
-        _extrapolator->extrapolate(_local_assemblers, property);
-        _extrapolator->calculateResiduals(_local_assemblers, property);
+        auto const extrapolatables =
+            NumLib::makeExtrapolatable(_local_assemblers, method);
+        _extrapolator->extrapolate(extrapolatables);
+        _extrapolator->calculateResiduals(extrapolatables);
 
-        return { &_extrapolator->getNodalValues(),
-                 &_extrapolator->getElementResiduals() };
+        return {&_extrapolator->getNodalValues(),
+                &_extrapolator->getElementResiduals()};
     }
 
 private:
@@ -249,11 +230,8 @@ private:
     std::unique_ptr<ExtrapolatorInterface> _extrapolator;
 };
 
-
-void extrapolate(TestProcess const& pcs,
-                 IntegrationPointValue property,
-                 GlobalVector const&
-                 expected_extrapolated_global_nodal_values,
+void extrapolate(TestProcess const& pcs, IntegrationPointValuesMethod method,
+                 GlobalVector const& expected_extrapolated_global_nodal_values,
                  std::size_t const nnodes, std::size_t const nelements)
 {
     namespace LinAlg = MathLib::LinAlg;
@@ -261,8 +239,8 @@ void extrapolate(TestProcess const& pcs,
     auto const tolerance_dx  = 20.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res =  5.0 * std::numeric_limits<double>::epsilon();
 
-    auto const  result   = pcs.extrapolate(property);
-    auto const& x_extra  = *result.first;
+    auto const result = pcs.extrapolate(method);
+    auto const& x_extra = *result.first;
     auto const& residual = *result.second;
 
     ASSERT_EQ(nnodes,    x_extra.size());
@@ -322,20 +300,20 @@ TEST(NumLib, DISABLED_Extrapolation)
 
         fillVectorRandomly(*x);
 
-        pcs.interpolateNodalValuesToIntegrationPoints(
-                    *x, IntegrationPointValue::StoredQuantity);
+        pcs.interpolateNodalValuesToIntegrationPoints(*x);
 
-        // test extrapolation of a quantity that is stored in the local assembler
-        extrapolate(pcs, IntegrationPointValue::StoredQuantity,
-                    *x, nnodes, nelements);
+        // test extrapolation of a quantity that is stored in the local
+        // assembler
+        extrapolate(pcs, &LocalAssemblerDataInterface::getStoredQuantity, *x,
+                    nnodes, nelements);
 
         // expect 2*x as extraplation result for derived quantity
         auto two_x = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x);
         LinAlg::axpy(*two_x, 1.0, *x); // two_x = x + x
 
-        // test extrapolation of a quantity that is derived from some integration
-        // point values
-        extrapolate(pcs, IntegrationPointValue::DerivedQuantity,
+        // test extrapolation of a quantity that is derived from some
+        // integration point values
+        extrapolate(pcs, &LocalAssemblerDataInterface::getDerivedQuantity,
                     *two_x, nnodes, nelements);
     }
 }

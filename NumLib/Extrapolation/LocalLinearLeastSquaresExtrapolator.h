@@ -35,50 +35,20 @@ namespace NumLib
  * system.
  * \endparblock
  */
-template <typename PropertyTag, typename LocalAssembler>
-class LocalLinearLeastSquaresExtrapolator
-    : public Extrapolator<PropertyTag, LocalAssembler>
+class LocalLinearLeastSquaresExtrapolator : public Extrapolator
 {
 public:
-    using LocalAssemblers =
-        typename Extrapolator<PropertyTag, LocalAssembler>::LocalAssemblers;
-
-    /*! Constructs a new instance
+    /*! Constructs a new instance.
      *
      * \note
-     * The \c dof_table of \c matrix_specs must be set, and it must point to a
-     * dof_table for one single component variable.
+     * The \c dof_table must point to a d.o.f. table for one single-component
+     * variable.
      */
     explicit LocalLinearLeastSquaresExtrapolator(
-        MathLib::MatrixSpecifications const& matrix_specs,
-        NumLib::LocalToGlobalIndexMap const& dof_table)
-        : _nodal_values(
-              NumLib::GlobalVectorProvider::provider.getVector(
-                  matrix_specs))
-#ifndef USE_PETSC
-          ,
-          _residuals(dof_table.size())
-#else
-          ,
-          _residuals(dof_table.size(), false)
-#endif
-          ,
-          _local_to_global(dof_table)
-    {
-        /* Note in case the following assertion fails.
-         * If you copied the extrapolation code, for your processes from
-         * somewhere, note that the code from the groundwater flow process might
-         * not suit your needs: It is a special case and is therefore most
-         * likely too simplistic. You better adapt the extrapolation code from
-         * some more advanced process, like the TES process.
-         */
-        assert(dof_table.getNumberOfComponents() == 1 &&
-               "The d.o.f. table passed must be for one variable that has "
-               "only one component!");
-    }
+        NumLib::LocalToGlobalIndexMap const& dof_table);
 
-    void extrapolate(LocalAssemblers const& local_assemblers,
-                     PropertyTag const property) override;
+    void extrapolate(
+            ExtrapolatableElementCollection const& extrapolatables) override;
 
     /*! \copydoc Extrapolator::calculateResiduals()
      *
@@ -87,8 +57,8 @@ public:
      * extrapolation results when interpolated back to the integration points
      * again.
      */
-    void calculateResiduals(LocalAssemblers const& local_assemblers,
-                            PropertyTag const property) override;
+    void calculateResiduals(
+            ExtrapolatableElementCollection const& extrapolatables) override;
 
     GlobalVector const& getNodalValues() const override
     {
@@ -108,14 +78,15 @@ public:
 
 private:
     //! Extrapolate one element.
-    void extrapolateElement(std::size_t const element_index,
-                            LocalAssembler const& local_assembler,
-                            PropertyTag const property, GlobalVector& counts);
+    void extrapolateElement(
+        std::size_t const element_index,
+        ExtrapolatableElementCollection const& extrapolatables,
+        GlobalVector& counts);
 
     //! Compute the residuals for one element
-    void calculateResiudalElement(std::size_t const element_index,
-                                  LocalAssembler const& local_assembler,
-                                  PropertyTag const property);
+    void calculateResidualElement(
+        std::size_t const element_index,
+        ExtrapolatableElementCollection const& extrapolatables);
 
     GlobalVector& _nodal_values;  //!< extrapolated nodal values
     GlobalVector _residuals;      //!< extrapolation residuals
@@ -129,8 +100,7 @@ private:
     //! Avoids frequent reallocations.
     std::vector<double> _integration_point_values_cache;
 };
-}
 
-#include "LocalLinearLeastSquaresExtrapolator-impl.h"
+}  // namespace NumLib
 
 #endif  // NUMLIB_LOCAL_LLSQ_EXTRAPOLATOR_H

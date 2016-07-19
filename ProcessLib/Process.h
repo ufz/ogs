@@ -14,6 +14,7 @@
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 
+#include "ExtrapolatorData.h"
 #include "Parameter.h"
 #include "ProcessOutput.h"
 #include "SecondaryVariable.h"
@@ -85,6 +86,17 @@ public:
         return *_time_discretization;
     }
 
+protected:
+    NumLib::Extrapolator& getExtrapolator() const
+    {
+        return _extrapolator_data.getExtrapolator();
+    }
+
+    NumLib::LocalToGlobalIndexMap const& getSingleComponentDOFTable() const
+    {
+        return _extrapolator_data.getDOFTable();
+    }
+
 private:
     /// Process specific initialization called by initialize().
     virtual void initializeConcreteProcess(
@@ -103,6 +115,8 @@ private:
         GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/);
 
     void constructDofTable();
+
+    void initializeExtrapolator();
 
     /// Sets the initial condition values in the solution vector x for a given
     /// process variable and component.
@@ -142,6 +156,8 @@ private:
 
     /// Variables used by this process.
     std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;
+
+    ExtrapolatorData _extrapolator_data;
 };
 
 /// Find process variables in \c variables whose names match the settings under

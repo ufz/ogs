@@ -23,17 +23,6 @@ namespace ProcessLib
 {
 namespace TES
 {
-enum class TESIntPtVariables : unsigned
-{
-    SOLID_DENSITY,
-    REACTION_RATE,
-    VELOCITY_X,
-    VELOCITY_Y,
-    VELOCITY_Z,
-    LOADING,
-    REACTION_DAMPING_FACTOR
-};
-
 template <typename Traits>
 class TESLocalAssemblerInner
 {
@@ -55,9 +44,6 @@ public:
         typename Traits::LocalVector& local_b);
 
     void preEachAssemble();
-
-    std::vector<double> const& getIntegrationPointValues(
-        TESIntPtVariables const var, std::vector<double>& cache) const;
 
     // TODO better encapsulation
     AssemblyParams const& getAssemblyParameters() const { return _d.ap; }

@@ -53,28 +53,25 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _process_data);
 
-    // TODO Later on the DOF table can change during the simulation!
-    _extrapolator.reset(new ExtrapolatorImplementation(
-        Base::getMatrixSpecifications(), *Base::_local_to_global_index_map));
-
-    Base::_secondary_variables.addSecondaryVariable(
+    _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,
-        makeExtrapolator(IntegrationPointValue::DarcyVelocityX, *_extrapolator,
-                         _local_assemblers));
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &GroundwaterFlowLocalAssemblerInterface::getIntPtDarcyVelocityX));
 
-    if (mesh.getDimension() > 1)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
+    if (mesh.getDimension() > 1) {
+        _secondary_variables.addSecondaryVariable(
             "darcy_velocity_y", 1,
-            makeExtrapolator(IntegrationPointValue::DarcyVelocityY,
-                             *_extrapolator, _local_assemblers));
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &GroundwaterFlowLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityY));
     }
-    if (mesh.getDimension() > 2)
-    {
-        Base::_secondary_variables.addSecondaryVariable(
+    if (mesh.getDimension() > 2) {
+        _secondary_variables.addSecondaryVariable(
             "darcy_velocity_z", 1,
-            makeExtrapolator(IntegrationPointValue::DarcyVelocityZ,
-                             *_extrapolator, _local_assemblers));
+            makeExtrapolator(getExtrapolator(), _local_assemblers,
+                             &GroundwaterFlowLocalAssemblerInterface::
+                                 getIntPtDarcyVelocityZ));
     }
 }
 

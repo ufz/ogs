@@ -175,28 +175,6 @@ void TESProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _assembly_params);
 
-    // TODO move the two data members somewhere else.
-    // for extrapolation of secondary variables
-    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>
-        all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(
-        new MeshLib::MeshSubsets(this->_mesh_subset_all_nodes.get()));
-    _local_to_global_index_map_single_component.reset(
-        new NumLib::LocalToGlobalIndexMap(
-            std::move(all_mesh_subsets_single_component),
-            // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION));
-
-    {
-        auto const& l = *_local_to_global_index_map_single_component;
-        _extrapolator.reset(new ExtrapolatorImplementation(
-            MathLib::MatrixSpecifications(l.dofSizeWithoutGhosts(),
-                                          l.dofSizeWithoutGhosts(),
-                                          &l.getGhostIndices(),
-                                          nullptr),
-            l));
-    }
-
     // secondary variables
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
                       SecondaryVariableFunctions&& fcts) {
@@ -204,22 +182,29 @@ void TESProcess::initializeConcreteProcess(
                                                         std::move(fcts));
     };
     auto makeEx =
-        [&](TESIntPtVariables var) -> SecondaryVariableFunctions {
-        return ProcessLib::makeExtrapolator(var, *_extrapolator,
-                                            _local_assemblers);
+        [&](std::vector<double> const& (TESLocalAssemblerInterface::*method)(
+            std::vector<double>&)const) -> SecondaryVariableFunctions {
+        return ProcessLib::makeExtrapolator(getExtrapolator(),
+                                            _local_assemblers, method);
     };
 
-    add2nd("solid_density", 1, makeEx(TESIntPtVariables::SOLID_DENSITY));
-    add2nd("reaction_rate", 1, makeEx(TESIntPtVariables::REACTION_RATE));
-    add2nd("velocity_x", 1, makeEx(TESIntPtVariables::VELOCITY_X));
-    if (mesh.getDimension() >= 2)
-        add2nd("velocity_y", 1, makeEx(TESIntPtVariables::VELOCITY_Y));
-    if (mesh.getDimension() >= 3)
-        add2nd("velocity_z", 1, makeEx(TESIntPtVariables::VELOCITY_Z));
+    add2nd("solid_density", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtSolidDensity));
+    add2nd("reaction_rate", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtReactionRate));
 
-    add2nd("loading", 1, makeEx(TESIntPtVariables::LOADING));
+    add2nd("velocity_x", 1,
+           makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
+    if (mesh.getDimension() >= 2)
+        add2nd("velocity_y", 1,
+               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityY));
+    if (mesh.getDimension() >= 3)
+        add2nd("velocity_z", 1,
+               makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
+
+    add2nd("loading", 1, makeEx(&TESLocalAssemblerInterface::getIntPtLoading));
     add2nd("reaction_damping_factor", 1,
-           makeEx(TESIntPtVariables::REACTION_DAMPING_FACTOR));
+           makeEx(&TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
     namespace PH = std::placeholders;
     using Self = TESProcess;
@@ -338,7 +323,7 @@ TESProcess::computeVapourPartialPressure(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),
@@ -371,7 +356,7 @@ TESProcess::computeRelativeHumidity(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),
@@ -409,7 +394,7 @@ TESProcess::computeEquilibriumLoading(
 {
     assert(&dof_table == this->_local_to_global_index_map.get());
 
-    auto const& dof_table_single = *_local_to_global_index_map_single_component;
+    auto const& dof_table_single = getSingleComponentDOFTable();
     result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {dof_table_single.dofSizeWithoutGhosts(),
          dof_table_single.dofSizeWithoutGhosts(),

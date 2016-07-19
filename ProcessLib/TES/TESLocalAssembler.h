@@ -14,10 +14,9 @@
 #include <vector>
 
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "TESAssemblyParams.h"
 #include "TESLocalAssemblerInner-fwd.h"
-
-#include "NumLib/Extrapolation/Extrapolator.h"
 
 namespace ProcessLib
 {
@@ -25,13 +24,34 @@ namespace TES
 {
 class TESLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::Extrapolatable<TESIntPtVariables>
+      public NumLib::ExtrapolatableElement
 {
 public:
     virtual ~TESLocalAssemblerInterface() = default;
 
     virtual bool checkBounds(std::vector<double> const& local_x,
                              std::vector<double> const& local_x_prev_ts) = 0;
+
+    virtual std::vector<double> const& getIntPtSolidDensity(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtLoading(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtReactionDampingFactor(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtReactionRate(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const = 0;
 };
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
@@ -66,9 +86,26 @@ public:
     bool checkBounds(std::vector<double> const& local_x,
                      std::vector<double> const& local_x_prev_ts) override;
 
-    std::vector<double> const& getIntegrationPointValues(
-        TESIntPtVariables const var, std::vector<double>& cache) const override;
+    std::vector<double> const& getIntPtSolidDensity(
+        std::vector<double>& /*cache*/) const override;
 
+    std::vector<double> const& getIntPtLoading(
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtReactionDampingFactor(
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtReactionRate(
+        std::vector<double>& /*cache*/) const override;
+
+    std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const override;
+
+    std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const override;
+
+    std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const override;
 private:
     std::vector<ShapeMatrices> _shape_matrices;
 

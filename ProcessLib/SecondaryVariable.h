@@ -13,8 +13,12 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/uniqueInsert.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
+#include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 
-namespace NumLib { class LocalToGlobalIndexMap; }
+namespace NumLib
+{
+class LocalToGlobalIndexMap;
+}
 
 namespace ProcessLib
 {
@@ -156,44 +160,50 @@ private:
     std::set<std::string> _all_secondary_variables;
 };
 
-
-//! Creates an object that computes a secondary variable via extrapolation
-//! of integration point values.
-template<typename PropertyEnum, typename LocalAssembler>
-SecondaryVariableFunctions
-makeExtrapolator(PropertyEnum const property,
-                 NumLib::Extrapolator<PropertyEnum, LocalAssembler>&
-                 extrapolator,
-                 typename NumLib::Extrapolator<PropertyEnum,
-                     LocalAssembler>::LocalAssemblers const& local_assemblers)
+/*! Creates an object that computes a secondary variable via extrapolation of
+ * integration point values.
+ *
+ * \param extrapolator The extrapolator used for extrapolation.
+ * \param local_assemblers The collection of local assemblers whose integration
+ * point values will be extrapolated.
+ * \param integration_point_values_method The member function of the local
+ * assembler returning/computing the integration point values of the specific
+ * property being extrapolated.
+ */
+template <typename LocalAssemblerCollection>
+SecondaryVariableFunctions makeExtrapolator(
+    NumLib::Extrapolator& extrapolator,
+    LocalAssemblerCollection const& local_assemblers,
+    typename NumLib::ExtrapolatableLocalAssemblerCollection<
+        LocalAssemblerCollection>::IntegrationPointValuesMethod
+        integration_point_values_method)
 {
-    static_assert(std::is_base_of<
-         NumLib::Extrapolatable<PropertyEnum>, LocalAssembler>::value,
-        "The passed local assembler type (i.e. the local assembler interface) must"
-        " derive from NumLib::Extrapolatable<>.");
-
-    auto const eval_field = [property, &extrapolator, &local_assemblers](
-            GlobalVector const& /*x*/,
-            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-            std::unique_ptr<GlobalVector>& /*result_cache*/
-            ) -> GlobalVector const&
-    {
-        extrapolator.extrapolate(local_assemblers, property);
+    auto const eval_field = [&extrapolator, &local_assemblers,
+                             integration_point_values_method](
+        GlobalVector const& /*x*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::unique_ptr<GlobalVector> & /*result_cache*/
+        ) -> GlobalVector const& {
+        auto const extrapolatables = NumLib::makeExtrapolatable(
+            local_assemblers, integration_point_values_method);
+        extrapolator.extrapolate(extrapolatables);
         return extrapolator.getNodalValues();
     };
 
-    auto const eval_residuals = [property, &extrapolator, &local_assemblers](
-            GlobalVector const& /*x*/,
-            NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
-            std::unique_ptr<GlobalVector>& /*result_cache*/
-            ) -> GlobalVector const&
-    {
-        extrapolator.calculateResiduals(local_assemblers, property);
+    auto const eval_residuals = [&extrapolator, &local_assemblers,
+                                 integration_point_values_method](
+        GlobalVector const& /*x*/,
+        NumLib::LocalToGlobalIndexMap const& /*dof_table*/,
+        std::unique_ptr<GlobalVector> & /*result_cache*/
+        ) -> GlobalVector const& {
+        auto const extrapolatables = NumLib::makeExtrapolatable(
+            local_assemblers, integration_point_values_method);
+        extrapolator.calculateResiduals(extrapolatables);
         return extrapolator.getElementResiduals();
     };
-    return { eval_field, eval_residuals };
+    return {eval_field, eval_residuals};
 }
 
-} // namespace ProcessLib
+}  // namespace ProcessLib
 
 #endif // PROCESSLIB_SECONDARY_VARIABLE_H
