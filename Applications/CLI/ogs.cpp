@@ -12,8 +12,6 @@
 
 #include <chrono>
 #include <ctime>
-#include <iomanip>
-#include <sstream>
 
 // ThirdParty/tclap
 #include "tclap/CmdLine.h"
@@ -85,9 +83,11 @@ int main(int argc, char *argv[])
     {
         auto const start_time_sys = std::chrono::system_clock::to_time_t(
             std::chrono::system_clock::now());
-        std::ostringstream sstr;
-        sstr << std::put_time(std::localtime(&start_time_sys), "%F %T %z");
-        INFO("OGS started on %s.", sstr.str().c_str());
+        char time_str[100];
+        if (std::strftime(time_str, sizeof(time_str), "%F %T %z",
+            std::localtime(&start_time_sys))) {
+	    INFO("OGS started on %s.", time_str);
+	}
     }
 
     std::chrono::steady_clock::now();
@@ -146,9 +146,11 @@ int main(int argc, char *argv[])
     {
         auto const end_time_sys = std::chrono::system_clock::to_time_t(
             std::chrono::system_clock::now());
-        std::ostringstream sstr;
-        sstr << std::put_time(std::localtime(&end_time_sys), "%F %T %z");
-        INFO("OGS terminated on %s.", sstr.str().c_str());
+        char time_str[100];
+        if (std::strftime(time_str, sizeof(time_str), "%F %T %z",
+            std::localtime(&end_time_sys))) {
+	    INFO("OGS terminated on %s.", time_str);
+	}
         INFO("[time] Execution took %g s.", run_time.elapsed());
     }
 
