@@ -93,4 +93,13 @@ std::ostream& operator<<(std::ostream& os,
     os << seg_pair.first << " x " << seg_pair.second;
     return os;
 }
+
+bool operator==(LineSegment const& s0, LineSegment const& s1)
+{
+    double const tol(std::numeric_limits<double>::epsilon());
+    return (MathLib::sqrDist(s0.getBeginPoint(), s1.getBeginPoint()) < tol &&
+         MathLib::sqrDist(s0.getEndPoint(), s1.getEndPoint()) < tol) ||
+        (MathLib::sqrDist(s0.getBeginPoint(), s1.getEndPoint()) < tol &&
+         MathLib::sqrDist(s0.getEndPoint(), s1.getBeginPoint()) < tol);
+}
 }
