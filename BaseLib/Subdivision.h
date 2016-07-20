@@ -75,7 +75,7 @@ public:
             const double dL0,
             const double max_dL,
             const double multiplier)
-    : _L(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
+    : _length(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier) {}
 
     /// Returns a vector of subdivided points
     std::vector<double> operator()() const
@@ -88,20 +88,20 @@ public:
             vec_x.push_back(x);
             x += std::min(_max_dL, _dL0*std::pow(_multiplier, static_cast<double>(i)));
             i++;
-        } while (x<_L);
+        } while (x<_length);
 
-        if (vec_x.back() < _L) {
+        if (vec_x.back() < _length) {
             double last_dx = vec_x[vec_x.size()-1] - vec_x[vec_x.size()-2];
-            if (_L-vec_x.back()<last_dx)
-                vec_x[vec_x.size()-1] = _L;
+            if (_length-vec_x.back()<last_dx)
+                vec_x[vec_x.size()-1] = _length;
             else
-                vec_x.push_back(_L);
+                vec_x.push_back(_length);
         }
         return vec_x;
     }
 
 private:
-    const double _L;
+    const double _length;
     const double _dL0;
     const double _max_dL;
     const double _multiplier;
