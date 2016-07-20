@@ -125,7 +125,7 @@ public:
     std::vector<double> const&
     getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const override
     {
-        assert(_darcy_velocities.size() > 1);
+        assert(_darcy_velocities.size() > 0);
         return _darcy_velocities[0];
     }
 
