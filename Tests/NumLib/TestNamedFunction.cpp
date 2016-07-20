@@ -95,6 +95,9 @@ TEST(NumLib, NamedFunctionCaller)
 
 TEST(NumLib, NamedFunctionNoLeaks)
 {
+    auto num_const = InstanceCounter<H>::getNumberOfConstructions();
+    auto num_copy = InstanceCounter<H>::getNumberOfCopies();
+
     {
         H h_inst(1.0);
 
@@ -118,8 +121,8 @@ TEST(NumLib, NamedFunctionNoLeaks)
         auto h_fct4 = std::move(h_fct3);
         EXPECT_EQ(3.0, h_fct4.call({ 3.0, 2.0 }));
     }
-    EXPECT_EQ(2, InstanceCounter<H>::getNumberOfConstructions());
-    EXPECT_EQ(1, InstanceCounter<H>::getNumberOfCopies());
+    EXPECT_EQ(num_const+2, InstanceCounter<H>::getNumberOfConstructions());
+    EXPECT_EQ(num_copy+1, InstanceCounter<H>::getNumberOfCopies());
     // If zero instances are left, the destructor has been called the right
     // number of times, i.e., all internal casts in NamedFunction have been
     // successful.
