@@ -130,20 +130,23 @@ function (AddTest)
         string(REPLACE ";" " && " TESTER_COMMAND "${TESTER_COMMAND}")
     elseif(AddTest_TESTER STREQUAL "vtkdiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
-        math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
-        if (NOT ${DiffDataLengthMod3} EQUAL 0)
-            message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of three.")
+        math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
+        if (NOT ${DiffDataLengthMod4} EQUAL 0)
+            message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of four.")
         endif()
 
         math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
-            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" VTK_FILE)
+        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" REFERENCE_VTK_FILE)
             math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
             math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
             list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
 
             list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
                 ${AddTest_BINARY_PATH}/${VTK_FILE} \
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS}")
