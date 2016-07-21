@@ -1,10 +1,16 @@
-add_executable(SWMMInterface SWMMInterface.cpp)
+add_executable(SWMMConverter
+    SWMMConverter.cpp
+    SwmmInterface.h
+    SwmmInterface.cpp
+)
 
-target_link_libraries(SWMMInterface
+target_link_libraries(SWMMConverter
+    ApplicationsFileIO
+    GeoLib
     MeshLib
     swmm5interface
 )
 
-ADD_VTK_DEPENDENCY(SWMMInterface)
+ADD_VTK_DEPENDENCY(SWMMConverter)
 
-set_target_properties(SWMMInterface PROPERTIES FOLDER Utilities)
+set_target_properties(SWMMConverter PROPERTIES FOLDER Utilities)
