@@ -39,6 +39,9 @@ public:
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::LINE2;
 
+    /// Constant: The number of edges
+    static const unsigned n_edges = 1;
+
     /// Constant: The number of neighbors
     static const unsigned n_neighbors = 2;
 
