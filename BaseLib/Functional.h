@@ -173,6 +173,8 @@ template <typename Object, typename MethodClass, typename ReturnType,
           typename... Args>
 typename std::enable_if<
     std::is_same<MethodClass,
+                 /* Note: All of remove_cv, remove_pointer and decay is
+                  * necessary, e.g. if method is a member function pointer. */
                  typename std::remove_cv<typename std::remove_pointer<
                      typename std::decay<Object>::type>::type>::type>::value,
     std::function<ReturnType(Args...)>>::type
