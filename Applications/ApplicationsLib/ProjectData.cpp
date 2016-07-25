@@ -33,6 +33,7 @@
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
+#include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 
 namespace detail
 {
@@ -261,6 +262,11 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
         else if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
+                *_mesh_vec[0], _process_variables, _parameters, process_config);
+        }
+        else if (type == "HEAT_CONDUCTION")
+        {
+            process = ProcessLib::HeatConduction::createHeatConductionProcess(
                 *_mesh_vec[0], _process_variables, _parameters, process_config);
         }
         else
