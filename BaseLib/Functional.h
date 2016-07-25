@@ -155,7 +155,7 @@ struct FunctionTraits<ReturnType (Object::*)(Args...) const> {
  *
  * auto f_bind = std::function<ReturnType(Arg1, Arg2, Arg3>(
  *                  std::bind(&Object::methodWithThreeArguments,
- *                      std::ref(some_object), _1, _2, _3);
+ *                      std::ref(some_object), _1, _2, _3));
  *
  * auto f_easy = easyBind(&Object::methodWithThreeArguments, some_object);
  * \endcode
