@@ -77,7 +77,10 @@ bool VtuInterface::writeToFile(std::string const &file_name)
     // and PETSC_COMM_WORLD should be replaced with the argument.
     int mpi_rank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-    const std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
+    std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
+
+    // Since the pvtu writing function drops all letters from the letter of '.'.
+    std::replace(file_name_base.begin(), file_name_base.end(), '.', '_');
 
     const std::string file_name_rank = file_name_base + "_"
                                        + std::to_string(mpi_rank) + ".vtu";
