@@ -96,33 +96,56 @@ TEST(NumLib, NamedFunctionCaller)
 TEST(NumLib, NamedFunctionNoLeaks)
 {
     auto num_const = InstanceCounter<H>::getNumberOfConstructions();
+    auto num_move = InstanceCounter<H>::getNumberOfMoves();
     auto num_copy = InstanceCounter<H>::getNumberOfCopies();
+    auto num_inst = InstanceCounter<H>::getNumberOfInstances();
 
     {
         H h_inst(1.0);
+        EXPECT_EQ(num_const+1, InstanceCounter<H>::getNumberOfConstructions());
+        EXPECT_EQ(num_inst+1, InstanceCounter<H>::getNumberOfInstances());
+        InstanceCounter<H>::update(num_const, num_move, num_copy, num_inst);
 
         auto h_fct = NumLib::NamedFunction("h", {"x", "y"},
                                            BaseLib::easyBind(&H::h, h_inst));
+        EXPECT_EQ(num_const, InstanceCounter<H>::getNumberOfConstructions());
+        EXPECT_EQ(num_inst, InstanceCounter<H>::getNumberOfInstances());
+
         EXPECT_EQ(5.0, h_fct.call({ 2.0, 3.0 }));
         h_inst.setZ(2.0);
         EXPECT_EQ(4.0, h_fct.call({ 2.0, 3.0 }));
 
-        // Pass a temporary H object. NamedFunction will implicitly do memory
-        // management.
-        auto h_fct2 = NumLib::NamedFunction("h", {"x", "y"},
-                                            BaseLib::easyBind(&H::h, H{3.0}));
+        auto h_bind = BaseLib::easyBind(&H::h, H{3.0});
+        EXPECT_EQ(num_const+1, InstanceCounter<H>::getNumberOfConstructions());
+        EXPECT_EQ(num_inst+1, InstanceCounter<H>::getNumberOfInstances());
+        InstanceCounter<H>::update(num_const, num_move, num_copy, num_inst);
+
+        // Move an object. NamedFunction will implicitly do memory management.
+        auto h_fct2 = NumLib::NamedFunction("h", {"x", "y"}, std::move(h_bind));
+        EXPECT_EQ(num_copy, InstanceCounter<H>::getNumberOfCopies());
+        EXPECT_EQ(num_const, InstanceCounter<H>::getNumberOfConstructions());
+        EXPECT_EQ(num_inst, InstanceCounter<H>::getNumberOfInstances());
+
         EXPECT_EQ(5.0, h_fct2.call({ 2.0, 4.0 }));
 
         // copy
-        auto h_fct3 = h_fct2;
+        NumLib::NamedFunction h_fct3 = h_fct2;
+        EXPECT_EQ(num_const, InstanceCounter<H>::getNumberOfConstructions());
+        EXPECT_EQ(num_copy+1, InstanceCounter<H>::getNumberOfCopies());
+        EXPECT_EQ(num_inst+1, InstanceCounter<H>::getNumberOfInstances());
+        InstanceCounter<H>::update(num_const, num_move, num_copy, num_inst);
+
         EXPECT_EQ(-1.0, h_fct3.call({ 2.0, 1.0 }));
 
         // move
-        auto h_fct4 = std::move(h_fct3);
+        NumLib::NamedFunction h_fct4 = std::move(h_fct3);
+        EXPECT_INSTANCES(H, num_const, num_move, num_copy, num_inst);
+        InstanceCounter<H>::update(num_const, num_move, num_copy, num_inst);
+
         EXPECT_EQ(3.0, h_fct4.call({ 3.0, 2.0 }));
     }
-    EXPECT_EQ(num_const+2, InstanceCounter<H>::getNumberOfConstructions());
-    EXPECT_EQ(num_copy+1, InstanceCounter<H>::getNumberOfCopies());
+    EXPECT_EQ(num_const, InstanceCounter<H>::getNumberOfConstructions());
+    EXPECT_EQ(num_copy, InstanceCounter<H>::getNumberOfCopies());
     // If zero instances are left, the destructor has been called the right
     // number of times, i.e., all internal casts in NamedFunction have been
     // successful.
