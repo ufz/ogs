@@ -46,7 +46,7 @@ set(VTK_DIR ${CMAKE_BINARY_DIR}/External/vtk/src/vtk-build CACHE PATH "" FORCE)
 
 message(STATUS "Building VTK as an external project in the build directory")
 
-if(WIN32)
+if(WIN32 AND NOT CYGWIN)
     set(VTK_MAKE_COMMAND
         msbuild /p:Configuration=Release /m:${NUM_PROCESSORS} VTK.sln &&
         msbuild /p:Configuration=Debug /m:${NUM_PROCESSORS} /m VTK.sln)
