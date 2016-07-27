@@ -17,7 +17,7 @@
 #include <memory>
 #include <string>
 
-#include <ParameterBase.h>
+#include "MaterialLib/ParameterBase.h"
 
 namespace MaterialLib
 {

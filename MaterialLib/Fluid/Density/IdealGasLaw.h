@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "DensityType.h"
+#include "MaterialLib/DensityType.h"
 
 namespace MaterialLib
 {
