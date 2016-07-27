@@ -94,11 +94,15 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
             continue;
 
         // compute axis aligned bounding box around the current element
-        const GeoLib::AABB elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNumberOfBaseNodes());
+        const GeoLib::AABB elem_aabb(
+            dest_elements[k]->getNodes(),
+            dest_elements[k]->getNodes() +
+                dest_elements[k]->getNumberOfBaseNodes());
 
         // request "interesting" nodes from grid
         std::vector<std::vector<MeshLib::Node*> const*> nodes;
-        src_grid.getPntVecsOfGridCellsIntersectingCuboid(elem_aabb.getMinPoint(), elem_aabb.getMaxPoint(), nodes);
+        src_grid.getPntVecsOfGridCellsIntersectingCuboid(
+            elem_aabb.getMinPoint(), elem_aabb.getMaxPoint(), nodes);
 
         std::size_t cnt(0);
         dest_properties[k] = 0.0;
@@ -151,7 +155,8 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
     }
 }
 
-void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const
+void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(
+    std::vector<double> &interpolated_node_properties) const
 {
     auto materialIds = _src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     if (!materialIds)
