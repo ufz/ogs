@@ -77,12 +77,17 @@ bool VtuInterface::writeToFile(std::string const &file_name)
     // and PETSC_COMM_WORLD should be replaced with the argument.
     int mpi_rank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-    std::string file_name_base = boost::erase_last_copy(file_name, ".vtu");
+    auto const file_name_base = boost::erase_last_copy(file_name, ".vtu");
+
+    auto const dirname = BaseLib::extractPath(file_name_base);
+    auto basename = BaseLib::extractBaseName(file_name_base);
 
     // Since the pvtu writing function drops all letters from the letter of '.'.
-    std::replace(file_name_base.begin(), file_name_base.end(), '.', '_');
+    std::replace(basename.begin(), basename.end(), '.', '_');
 
-    const std::string file_name_rank = file_name_base + "_"
+    auto const vtu_file_name = BaseLib::joinPaths(dirname, basename);
+
+    const std::string file_name_rank = vtu_file_name + "_"
                                        + std::to_string(mpi_rank) + ".vtu";
     bool vtu_status_i = writeVTU<vtkXMLUnstructuredGridWriter>(file_name_rank);
     bool vtu_status = false;
@@ -93,7 +98,7 @@ bool VtuInterface::writeToFile(std::string const &file_name)
     bool pvtu_status = false;
     if (mpi_rank == 0)
     {
-        pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(file_name_base + ".pvtu", mpi_size);
+        pvtu_status = writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu", mpi_size);
     }
     MPI_Bcast(&pvtu_status, 1, MPI_C_BOOL, 0, PETSC_COMM_WORLD);
 
