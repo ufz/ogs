@@ -34,10 +34,8 @@ public:
      * @param property_name is the name of a PropertyVector in the \c
      * source_mesh
      */
-    Mesh2MeshPropertyInterpolation(
-        Mesh const* const source_mesh,
-        std::string const& property_name,
-        std::vector<double> const* const source_properties);
+    Mesh2MeshPropertyInterpolation(Mesh const* const source_mesh,
+                                   std::string const& property_name);
 
     /**
      * Calculates entries for the property vector and sets appropriate indices in the
@@ -66,7 +64,6 @@ private:
 
     Mesh const*const _src_mesh;
     std::string const& _property_name;
-    std::vector<double> const*const _src_properties;
 };
 
 } // end namespace MeshLib

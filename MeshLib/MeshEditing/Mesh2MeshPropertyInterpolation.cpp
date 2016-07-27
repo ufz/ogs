@@ -31,11 +31,8 @@
 namespace MeshLib {
 
 Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
-    Mesh const*const src_mesh,
-    std::string const& property_name,
-    std::vector<double> const*const src_properties)
-    : _src_mesh(src_mesh), _property_name(property_name),
-        _src_properties(src_properties)
+    Mesh const*const src_mesh, std::string const& property_name)
+    : _src_mesh(src_mesh), _property_name(property_name)
 {}
 
 bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::vector<double>& dest_properties) const
@@ -156,7 +153,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
 }
 
 void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(
-    std::vector<double> &interpolated_node_properties) const
+    std::vector<double> &interpolated_properties) const
 {
     auto materialIds = _src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     if (!materialIds)
@@ -183,7 +180,7 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
         {
             interpolated_properties[k] += elem_props[(src_nodes[k]->getElement(j))->getID()];
         }
-        interpolated_node_properties[k] /= n_con_elems;
+        interpolated_properties[k] /= n_con_elems;
     }
 }
 
