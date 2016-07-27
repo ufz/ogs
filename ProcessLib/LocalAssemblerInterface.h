@@ -36,11 +36,14 @@ public:
                           double const t, GlobalVector const& x,
                           GlobalMatrix& Jac);
 
-    virtual void preTimestep(std::vector<double> const& /*local_x*/,
-                             double const /*t*/, double const /*delta_t*/)
-    {
-    }
-    virtual void postTimestep(std::vector<double> const& /*local_x*/) {}
+    virtual void preTimestep(std::size_t const mesh_item_id,
+                             NumLib::LocalToGlobalIndexMap const& dof_table,
+                             GlobalVector const& x, double const t,
+                             double const delta_t);
+
+    virtual void postTimestep(std::size_t const mesh_item_id,
+                              NumLib::LocalToGlobalIndexMap const& dof_table,
+                              GlobalVector const& x);
 
 protected:
     virtual void assembleConcrete(
@@ -52,6 +55,13 @@ protected:
         double const t, std::vector<double> const& local_x,
         NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& Jac);
+
+    virtual void preTimestepConcrete(std::vector<double> const& /*local_x*/,
+                                     double const /*t*/, double const /*dt*/)
+    {
+    }
+
+    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/) {}
 };
 
 } // namespace ProcessLib

@@ -48,4 +48,26 @@ void LocalAssemblerInterface::assembleJacobianConcrete(
         "assembler.");
 }
 
+void LocalAssemblerInterface::preTimestep(
+    std::size_t const mesh_item_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+    double const t, double const delta_t)
+{
+    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
+    auto const local_x = x.get(indices);
+
+    preTimestepConcrete(local_x, t, delta_t);
+}
+
+void LocalAssemblerInterface::postTimestep(
+    std::size_t const mesh_item_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    GlobalVector const& x)
+{
+    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
+    auto const local_x = x.get(indices);
+
+    postTimestepConcrete(local_x);
+}
+
 }  // namespace ProcessLib
