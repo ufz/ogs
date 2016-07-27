@@ -30,8 +30,12 @@
 
 namespace MeshLib {
 
-Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(Mesh const*const src_mesh, std::vector<double> const*const src_properties) :
-    _src_mesh(src_mesh), _src_properties(src_properties)
+Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
+    Mesh const*const src_mesh,
+    std::string const& property_name,
+    std::vector<double> const*const src_properties)
+    : _src_mesh(src_mesh), _property_name(property_name),
+        _src_properties(src_properties)
 {}
 
 bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh, std::vector<double>& dest_properties) const

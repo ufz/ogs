@@ -31,13 +31,13 @@ public:
      * Constructor taking the source or input mesh and properties.
      * @param source_mesh the mesh the given property information is
      * assigned to.
-     * @param source_properties a vector containing property information
-     * assigned to the mesh. The number of entries in the property vector
-     * must be at least the number of different properties stored in mesh.
-     * For instance if mesh has \f$n\f$ (pairwise) different property
-     * indices the vector of properties must have \f$\ge n\f$ entries.
+     * @param property_name is the name of a PropertyVector in the \c
+     * source_mesh
      */
-    Mesh2MeshPropertyInterpolation(Mesh const*const source_mesh, std::vector<double> const*const source_properties);
+    Mesh2MeshPropertyInterpolation(
+        Mesh const* const source_mesh,
+        std::string const& property_name,
+        std::vector<double> const* const source_properties);
 
     /**
      * Calculates entries for the property vector and sets appropriate indices in the
@@ -65,6 +65,7 @@ private:
     void interpolateElementPropertiesToNodeProperties(std::vector<double> &interpolated_node_properties) const;
 
     Mesh const*const _src_mesh;
+    std::string const& _property_name;
     std::vector<double> const*const _src_properties;
 };
 
