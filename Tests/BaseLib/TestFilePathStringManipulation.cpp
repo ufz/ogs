@@ -391,12 +391,13 @@ TEST(BaseLib, ExtractPathUnix)
 TEST(BaseLib, JoinPaths)
 {
 #if _WIN32
-    ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", "path") );
     ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", "\\path") );
-    ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path", ".\\path") );
+    ASSERT_EQ ( "\\path\\path", BaseLib::joinPaths("\\path\\", "\\path") );
+    ASSERT_EQ ( "\\path\\.\\path", BaseLib::joinPaths("\\path", ".\\path") );
 #else
-    ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "path") );
     ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "/path") );
-    ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path", "./path") );
+    ASSERT_EQ ( "/path/path", BaseLib::joinPaths("/path/", "/path") );
+    ASSERT_EQ ( "/path/./path", BaseLib::joinPaths("/path", "./path") );
+    ASSERT_EQ ( "/path", BaseLib::joinPaths("/", "path") );
 #endif
 }
