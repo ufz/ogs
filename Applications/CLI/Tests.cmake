@@ -124,9 +124,31 @@ if(NOT OGS_USE_MPI)
             ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
         )
-        endforeach()
+    endforeach()
 
+    # Some Neumann BC tests
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_top
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_top_neumann.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+    )
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_bottom
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_bottom_neumann.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+    )
 
+    # TES tests
     AddTest(
         NAME TES_zeolite_discharge_small
         PATH Parabolic/TES/1D

@@ -11,13 +11,10 @@
 
 #include <cassert>
 
-#include <logog/include/logog.hpp>
+#include "BaseLib/Error.h"
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/CoordinateSystem.h"
-
 #include "MeshLib/Elements/TemplateElement.h"
-
 #include "MeshLib/Elements/HexRule20.h"
 #include "MeshLib/Elements/HexRule8.h"
 #include "MeshLib/Elements/LineRule2.h"
@@ -51,9 +48,9 @@
 #include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "ShapeMatrices.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace NumLib
 {
@@ -128,10 +125,8 @@ computeMappingMatrices(
 
     shapemat.detJ = shapemat.J.determinant();
 
-#ifndef NDEBUG
     if (shapemat.detJ<=.0)
-        ERR("det|J|=%e is not positive.\n", shapemat.detJ);
-#endif
+        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
 }
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
@@ -173,14 +168,14 @@ computeMappingMatrices(
     computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
         (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 
-    if (shapemat.detJ>.0) {
+    if (shapemat.detJ > 0) {
         //J^-1, dshape/dx
         shapemat.invJ.noalias() = shapemat.J.inverse();
 
         auto const nnodes(shapemat.dNdr.cols());
         auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows()==ele.getDimension());
-        const unsigned global_dim(ele_local_coord.getGlobalCoordinateSystem().getDimension());
+        const unsigned global_dim = ele_local_coord.getGlobalDimension();
         if (global_dim==ele_dim) {
             shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
         } else {
@@ -189,8 +184,11 @@ computeMappingMatrices(
             auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
             shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
         }
+    } else {
+        OGS_FATAL("det J = %e is not positive.\n", shapemat.detJ);
     }
 }
+
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline
 typename std::enable_if<T_SHAPE_FUNC::DIM==0>::type
@@ -226,10 +224,10 @@ template <class T_MESH_ELEMENT,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
 void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
                                                    const double* natural_pt,
-                                                   T_SHAPE_MATRICES& shapemat)
+                                                   T_SHAPE_MATRICES& shapemat,
+                                                   const unsigned global_dim)
 {
-    const MeshLib::CoordinateSystem coords(ele);
-    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, coords);
+    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, global_dim);
 
     detail::computeMappingMatrices<
         T_MESH_ELEMENT,
@@ -251,7 +249,8 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
         ShapeMatrixType::WHICHPART>(                             \
         MeshLib::TemplateElement<MeshLib::RULE> const&,          \
         double const*,                                           \
-        SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&)
+        SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&,   \
+        const unsigned global_dim)
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_DYN(RULE, SHAPE) \
     OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(                \

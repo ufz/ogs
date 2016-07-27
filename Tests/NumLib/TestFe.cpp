@@ -119,7 +119,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
         setIdentityMatrix(dim, D);
         D *= conductivity;
         MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
-            *mesh_element, MeshLib::CoordinateSystem(*mesh_element));
+            *mesh_element, MeshLib::CoordinateSystem(*mesh_element).getDimension());
         auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
             TestFeType::dim, TestFeType::global_dim);
         globalD.noalias() = R.transpose() * (D * R);
@@ -161,7 +161,7 @@ template <class T>
 const double NumLibFemIsoTest<T>::conductivity = 1e-11;
 
 template <class T>
-const double NumLibFemIsoTest<T>::eps = std::numeric_limits<double>::epsilon();
+const double NumLibFemIsoTest<T>::eps = 2*std::numeric_limits<double>::epsilon();
 
 template <class T>
 const unsigned NumLibFemIsoTest<T>::dim;
@@ -194,7 +194,8 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.template computeShapeFunctions<ShapeMatrixType::N_J>(wp.getCoords(), shape);
+        fe.template computeShapeFunctions<ShapeMatrixType::N_J>(
+            wp.getCoords(), shape, this->global_dim);
         M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
     }
     //std::cout << "M=\n" << M;
@@ -218,7 +219,8 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.template computeShapeFunctions<ShapeMatrixType::DNDX>(wp.getCoords(), shape);
+        fe.template computeShapeFunctions<ShapeMatrixType::DNDX>(
+            wp.getCoords(), shape, this->global_dim);
         K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx * shape.detJ * wp.getWeight();
     }
     //std::cout << "K=\n" << K << std::endl;
@@ -244,7 +246,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
         shape.setZero();
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.computeShapeFunctions(wp.getCoords(), shape);
+        fe.computeShapeFunctions(wp.getCoords(), shape, this->global_dim);
         M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
         K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) * shape.detJ * wp.getWeight();
     }

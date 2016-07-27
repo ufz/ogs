@@ -118,8 +118,7 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n,
         T_MATRIX & rot_mat)
 {
     // check if normal points already in the right direction
-    if (sqrt(n[0]*n[0]+n[1]*n[1]) == 0) {
-        rot_mat(0,0) = 1.0;
+    if (n[0] == 0 && n[1] == 0) {
         rot_mat(0,1) = 0.0;
         rot_mat(0,2) = 0.0;
         rot_mat(1,0) = 0.0;
@@ -127,7 +126,17 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n,
         rot_mat(1,2) = 0.0;
         rot_mat(2,0) = 0.0;
         rot_mat(2,1) = 0.0;
-        rot_mat(2,2) = 1.0;
+
+        if (n[2] > 0) {
+            // identity matrix
+            rot_mat(0,0) = 1.0;
+            rot_mat(2,2) = 1.0;
+        } else {
+            // rotate by pi about the y-axis
+            rot_mat(0,0) = -1.0;
+            rot_mat(2,2) = -1.0;
+        }
+
         return;
     }
 

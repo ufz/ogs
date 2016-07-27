@@ -10,12 +10,8 @@
 #define ELEMENTCOORDINATESMAPPINGLOCAL_H_
 
 #include <vector>
-
 #include <Eigen/Eigen>
-
 #include "MathLib/Point3d.h"
-
-#include "MeshLib/CoordinateSystem.h"
 
 namespace MeshLib
 {
@@ -34,13 +30,13 @@ class ElementCoordinatesMappingLocal final
 public:
     /**
      * Constructor
-     * \param e                     Mesh element whose node coordinates are mapped
-     * \param global_coord_system   Global coordinate system
+     * \param e          Mesh element whose node coordinates are mapped
+     * \param global_dim Global dimension
      */
-    ElementCoordinatesMappingLocal(const Element &e, const CoordinateSystem &global_coord_system);
+    ElementCoordinatesMappingLocal(const Element &e, const unsigned global_dim);
 
-    /// return the global coordinate system
-    const CoordinateSystem getGlobalCoordinateSystem() const { return _coords; }
+    /// return the global dimension
+    unsigned getGlobalDimension() const { return _global_dim; }
 
     /// return mapped coordinates of the node
     MathLib::Point3d const& getMappedCoordinates(std::size_t node_id) const
@@ -52,7 +48,7 @@ public:
     const RotationMatrix& getRotationMatrixToGlobal() const {return _matR2global;}
 
 private:
-    const CoordinateSystem _coords;
+    const unsigned _global_dim;
     std::vector<MathLib::Point3d> _points;
     RotationMatrix _matR2global;
 };

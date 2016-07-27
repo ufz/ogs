@@ -28,7 +28,8 @@ template <class T_MESH_ELEMENT,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
 void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
                                                    const double* natural_pt,
-                                                   T_SHAPE_MATRICES& shapemat);
+                                                   T_SHAPE_MATRICES& shapemat,
+                                                   const unsigned global_dim);
 }  // namespace detail
 
 /**
@@ -51,12 +52,14 @@ struct NaturalCoordinatesMapping
      * @param ele               Mesh element object
      * @param natural_pt        Location in natural coordinates (r,s,t)
      * @param shapemat          Shape matrix data where calculated shape functions are stored
+     * @param global_dim        Global dimension
      */
     static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
                                      const double* natural_pt,
-                                     T_SHAPE_MATRICES& shapemat)
+                                     T_SHAPE_MATRICES& shapemat,
+                                     const unsigned global_dim)
     {
-        computeShapeMatrices<ShapeMatrixType::ALL>(ele, natural_pt, shapemat);
+        computeShapeMatrices<ShapeMatrixType::ALL>(ele, natural_pt, shapemat, global_dim);
     }
 
     /**
@@ -68,17 +71,19 @@ struct NaturalCoordinatesMapping
      * @param natural_pt            Location in natural coordinates (r,s,t)
      * @param shapemat              Shape matrix data where calculated shape
      * functions are stored
+     * @param global_dim            Global dimension
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
     static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
                                      const double* natural_pt,
-                                     T_SHAPE_MATRICES& shapemat)
+                                     T_SHAPE_MATRICES& shapemat,
+                                     const unsigned global_dim)
     {
         detail::naturalCoordinatesMappingComputeShapeMatrices<
             T_MESH_ELEMENT,
             T_SHAPE_FUNC,
             T_SHAPE_MATRICES,
-            T_SHAPE_MATRIX_TYPE>(ele, natural_pt, shapemat);
+            T_SHAPE_MATRIX_TYPE>(ele, natural_pt, shapemat, global_dim);
     }
 };
 

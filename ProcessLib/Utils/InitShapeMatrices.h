@@ -40,7 +40,7 @@ initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
                                      ShapeFunction::NPOINTS);
         fe.computeShapeFunctions(
                 integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip]);
+                shape_matrices[ip], GlobalDim);
     }
 
     return shape_matrices;
