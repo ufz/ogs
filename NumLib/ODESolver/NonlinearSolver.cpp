@@ -16,6 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
@@ -47,22 +48,32 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
     LinAlg::copy(x, x_new);  // set initial guess, TODO save the copy
 
+
     unsigned iteration = 1;
     for (; iteration <= _maxiter; ++iteration)
     {
+        BaseLib::RunTime time_iteration;
+        time_iteration.start();
+
         sys.preIteration(iteration, x);
 
+        BaseLib::RunTime time_assembly;
+        time_assembly.start();
         sys.assembleMatricesPicard(x);
         sys.getA(A);
         sys.getRhs(rhs);
+        INFO("[time] Assembly took %g s.", time_assembly.elapsed());
 
+        BaseLib::RunTime time_dirichlet;
+        time_dirichlet.start();
         // Here _x_new has to be used and it has to be equal to x!
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
+        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        // std::cout << "A:\n" << Eigen::MatrixXd(A) << "\n";
-        // std::cout << "rhs:\n" << rhs << "\n\n";
-
+        BaseLib::RunTime time_linear_solver;
+        time_linear_solver.start();
         bool iteration_succeeded = _linear_solver.solve(A, rhs, x_new);
+        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
 
         if (!iteration_succeeded)
         {
@@ -115,6 +126,9 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         // Update x s.t. in the next iteration we will compute the right delta x
         LinAlg::copy(x_new, x);
+
+        INFO("[time] Iteration #%u took %g s.", iteration,
+             time_iteration.elapsed());
 
         if (error_dx < _tol)
         {
@@ -177,20 +191,30 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     unsigned iteration = 1;
     for (; iteration < _maxiter; ++iteration)
     {
+        BaseLib::RunTime time_iteration;
+        time_iteration.start();
+
         sys.preIteration(iteration, x);
 
+        BaseLib::RunTime time_assembly;
+        time_assembly.start();
         sys.assembleResidualNewton(x);
         sys.getResidual(x, res);
-
         sys.assembleJacobian(x);
         sys.getJacobian(J);
+        INFO("[time] Assembly took %g s.", time_assembly.elapsed());
+
+        BaseLib::RunTime time_dirichlet;
+        time_dirichlet.start();
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
+        INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
         auto const error_res = LinAlg::norm2(res);
 
-        // std::cout << "  J:\n" << Eigen::MatrixXd(J) << std::endl;
-
+        BaseLib::RunTime time_linear_solver;
+        time_linear_solver.start();
         bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+        INFO("[time] Linear solver took %g s.", time_linear_solver.elapsed());
 
         if (!iteration_succeeded)
         {
@@ -250,6 +274,9 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             "|dx|/|x|=%.4e,"
             " tolerance(dx)=%.4e",
             iteration, error_dx, error_res, norm_x, error_dx / norm_x, _tol);
+
+        INFO("[time] Iteration #%u took %g s.", iteration,
+             time_iteration.elapsed());
 
         if (error_dx < _tol)
         {

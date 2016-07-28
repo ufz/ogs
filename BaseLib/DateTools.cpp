@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 #include <sstream>
 
 #include <logog/include/logog.hpp>
@@ -113,5 +114,18 @@ int xmlDate2int(const std::string &s)
         return date2int(y, m, d);
     }
     return 0;
+}
+
+std::string formatDate(
+    std::chrono::time_point<std::chrono::system_clock> const& time)
+{
+    auto const time_t = std::chrono::system_clock::to_time_t(time);
+    char time_str[100];
+    if (std::strftime(time_str, sizeof(time_str), "%F %T%z",
+                      std::localtime(&time_t))) {
+        return time_str;
+    } else {
+        return "FAILED FORMATTING THE GIVEN TIME POINT.";
+    }
 }
 } // end namespace BaseLib

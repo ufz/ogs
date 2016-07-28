@@ -10,14 +10,15 @@
  *
  */
 
-
-// ThirdParty/tclap
-#include "tclap/CmdLine.h"
+#include <chrono>
+#include <tclap/CmdLine.h>
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/ConfigTreeUtil.h"
+#include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
@@ -74,6 +75,20 @@ int main(int argc, char *argv[])
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
+    INFO("This is OpenGeoSys-6 version %s.",
+         BaseLib::BuildInfo::git_describe.c_str());
+
+    BaseLib::RunTime run_time;
+    run_time.start();
+
+    {
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on %s.", time_str.c_str());
+    }
+
+    auto ogs_status = EXIT_SUCCESS;
+
     try
     {
         bool solver_succeeded = false;
@@ -117,9 +132,19 @@ int main(int argc, char *argv[])
 
         BaseLib::ConfigTree::assertNoSwallowedErrors();
 
-        return solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+        ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     } catch (std::exception& e) {
         ERR(e.what());
-        return EXIT_FAILURE;
+        ogs_status = EXIT_FAILURE;
     }
+
+    {
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        INFO("OGS terminated on %s.", time_str.c_str());
+    }
+
+    INFO("[time] Execution took %g s.", run_time.elapsed());
+
+    return ogs_status;
 }

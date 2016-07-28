@@ -15,9 +15,11 @@
 #ifndef DATETOOLS_H
 #define DATETOOLS_H
 
+#include <chrono>
 #include <string>
 
-namespace BaseLib {
+namespace BaseLib
+{
 
 /**
  * Converts three integers representing a date into a double.
@@ -54,6 +56,15 @@ int strDate2int(const std::string &s);
  * \return A number representing the date as yyyymmdd.
  */
 int xmlDate2int(const std::string &s);
+
+/**
+ * Formats the given time point according to RFC 3339 (cf. man-page of the unix
+ * date utility).
+ *
+ * Example: 2006-08-14 02:34:56-06:00
+ */
+std::string formatDate(
+    std::chrono::time_point<std::chrono::system_clock> const& time);
 
 } // namespace BaseLib
 

@@ -16,6 +16,7 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 
 namespace
 {
@@ -105,6 +106,9 @@ doOutputAlways(Process const& process,
                const double t,
                GlobalVector const& x)
 {
+    BaseLib::RunTime time_output;
+    time_output.start();
+
     auto spd_it = _single_process_data.find(&process);
     if (spd_it == _single_process_data.end()) {
         OGS_FATAL("The given process is not contained in the output configuration."
@@ -120,6 +124,8 @@ doOutputAlways(Process const& process,
     DBUG("output to %s", output_file_name.c_str());
     process.output(output_file_name, timestep, x);
     spd.pvd_file.addVTUFile(output_file_name, t);
+
+    INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
 void Output::
@@ -149,6 +155,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
 {
     if (!_output_nonlinear_iteration_results) return;
 
+    BaseLib::RunTime time_output;
+    time_output.start();
+
     auto spd_it = _single_process_data.find(&process);
     if (spd_it == _single_process_data.end()) {
         OGS_FATAL("The given process is not contained in the output configuration."
@@ -164,6 +173,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + ".vtu";
     DBUG("output iteration results to %s", output_file_name.c_str());
     process.output(output_file_name, timestep, x);
+
+    INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
 }
