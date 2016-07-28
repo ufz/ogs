@@ -213,6 +213,16 @@ protected:
 
 }; /* class */
 
+/// Let \f$p'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$ plane of the
+/// point \c p and \f$e'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$
+/// plane of the element \c e.
+/// The method checks if \f$p'\f$ is located in \f$e'\f$.  \todo At the moment
+/// the test works only for triangle and quad elements.
+/// @param p \c MathLib::Point3d is the test point
+/// @param e the element that is used for the request
+/// @return true if the \f$p' \in e'\f$ and false if \f$p' \notin e'\f$
+bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
+
 } /* namespace */
 
 #endif /* ELEMENT_H_ */
