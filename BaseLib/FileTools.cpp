@@ -141,11 +141,11 @@ std::string extractPath(std::string const& pathname)
         return "";
     return pathname.substr(0, pos + 1);
 }
-static const char * pathSeparator =
+static const char pathSeparator =
 #ifdef _WIN32
-                            "\\";
+                            '\\';
 #else
-                            "/";
+                            '/';
 #endif
 
 std::string appendPathSeparator(std::string const& path)
@@ -157,12 +157,18 @@ std::string appendPathSeparator(std::string const& path)
 
 std::string joinPaths(std::string const& pathA, std::string const& pathB)
 {
-    std::string tmpB(pathB);
-    if(tmpB.substr(0, 1) == ".")
-        tmpB = tmpB.substr(1);
-    if(tmpB.substr(0, 1) == pathSeparator)
-        tmpB = tmpB.substr(1);
-    return appendPathSeparator(pathA) + tmpB;
+    if (pathA.empty())
+        return pathB;
+
+    if (pathB.empty())
+        return pathA;
+
+    if (pathB.front() == pathSeparator) {
+        auto const tmpB = pathB.substr(1);
+        return appendPathSeparator(pathA) + tmpB;
+    } else {
+        return appendPathSeparator(pathA) + pathB;
+    }
 }
 
 } // end namespace BaseLib
