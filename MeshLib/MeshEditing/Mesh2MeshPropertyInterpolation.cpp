@@ -121,13 +121,14 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
         std::size_t cnt(0);
         dest_properties[k] = 0.0;
 
-        for (auto i_th_vec : nodes) {
-            const std::size_t n_nodes_in_vec(i_th_vec->size());
-            for (std::size_t j(0); j<n_nodes_in_vec; j++) {
-                MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
-                if (elem_aabb.containsPoint(*j_th_node)) {
-                    if (dest_elements[k]->isPntInElement(*j_th_node)) {
-                        dest_properties[k] += interpolated_src_node_properties[(*i_th_vec)[j]->getID()];
+        for (auto const* nodes_vec : nodes) {
+            for (auto const* node : *nodes_vec) {
+                if (elem_aabb.containsPointXY(*node))
+                {
+                    if (MeshLib::isPointInElementXY(*node, *dest_elements[k]))
+                    {
+                        dest_properties[k] +=
+                            interpolated_src_node_properties[node->getID()];
                         cnt++;
                     }
                 }
