@@ -11,14 +11,12 @@
  */
 
 #include <chrono>
-#include <ctime>
-
-// ThirdParty/tclap
-#include "tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 // BaseLib
 #include "BaseLib/BuildInfo.h"
 #include "BaseLib/ConfigTreeUtil.h"
+#include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 
@@ -81,16 +79,10 @@ int main(int argc, char *argv[])
     run_time.start();
 
     {
-        auto const start_time_sys = std::chrono::system_clock::to_time_t(
-            std::chrono::system_clock::now());
-        char time_str[100];
-        if (std::strftime(time_str, sizeof(time_str), "%F %T %z",
-            std::localtime(&start_time_sys))) {
-	    INFO("OGS started on %s.", time_str);
-	}
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on %s.", time_str.c_str());
     }
-
-    std::chrono::steady_clock::now();
 
     auto ogs_status = EXIT_SUCCESS;
 
@@ -144,15 +136,12 @@ int main(int argc, char *argv[])
     }
 
     {
-        auto const end_time_sys = std::chrono::system_clock::to_time_t(
-            std::chrono::system_clock::now());
-        char time_str[100];
-        if (std::strftime(time_str, sizeof(time_str), "%F %T %z",
-            std::localtime(&end_time_sys))) {
-	    INFO("OGS terminated on %s.", time_str);
-	}
-        INFO("[time] Execution took %g s.", run_time.elapsed());
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        INFO("OGS terminated on %s.", time_str.c_str());
     }
+
+    INFO("[time] Execution took %g s.", run_time.elapsed());
 
     return ogs_status;
 }
