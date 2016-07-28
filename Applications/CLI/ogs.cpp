@@ -75,6 +75,9 @@ int main(int argc, char *argv[])
     ApplicationsLib::LogogSetup logog_setup;
     logog_setup.setLevel(log_level_arg.getValue());
 
+    INFO("This is OpenGeoSys-6 version %s.",
+         BaseLib::BuildInfo::git_describe.c_str());
+
     BaseLib::RunTime run_time;
     run_time.start();
 
