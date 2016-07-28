@@ -144,6 +144,14 @@ public:
         return true;
     }
 
+    template <typename T>
+    bool containsPointXY(T const & pnt) const
+    {
+        if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0]) return false;
+        if (pnt[1] < _min_pnt[1] || _max_pnt[1] <= pnt[1]) return false;
+        return true;
+    }
+
     /**
      * returns a point that coordinates are minimal for each dimension
      * for the given point set
