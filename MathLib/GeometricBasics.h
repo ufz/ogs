@@ -154,6 +154,13 @@ bool barycentricPointInTriangle(
     double eps_pnt_out_of_plane = std::numeric_limits<float>::epsilon(),
     double eps_pnt_out_of_tri = std::numeric_limits<float>::epsilon());
 
+/// Checks if the point \f$p'\f$ is in the triangle defined by the points
+/// \f$a', b', c'\f$, where the \f$p', a', b', c' \f$ are the orthogonal
+/// projections to the \f$x\f$-\f$y\f$ plane of the points \f$p, a, b, c\f$,
+/// respectively.
+bool isPointInTriangleXY(MathLib::Point3d const& p, MathLib::Point3d const& a,
+MathLib::Point3d const& b, MathLib::Point3d const& c);
+
 /**
  * Checks if a and b can be placed on a plane such that c and d lie on different
  * sides of said plane. (In 2D space this checks if c and d are on different
