@@ -15,6 +15,7 @@
 #define CSVINTERFACE_H_
 
 #include <logog/include/logog.hpp>
+#include <boost/any.hpp>
 
 #include <array>
 #include <fstream>
@@ -22,10 +23,12 @@
 #include <limits>
 #include <list>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 
 #include "BaseLib/StringTools.h"
+#include "BaseLib/IO/Writer.h"
 
 namespace GeoLib {
     class Point;
@@ -36,9 +39,36 @@ namespace FileIO {
 /**
  * Interface for reading CSV file formats.
  */
-class CsvInterface {
+class CsvInterface  : public BaseLib::IO::Writer
+{
 
 public:
+    /// Contructor (only needed for writing files)
+    CsvInterface() {};
+
+    /// Adds an index vector of size s to the CSV file
+    void addIndexVectorForWriting(std::size_t s);
+
+    /// Adds a data vector to the CSV file. All data vectors have to have the same size.
+    /// Vectors will be written in the same sequence they have been added to the interfaceW.
+    template<typename T>
+    bool addVectorForWriting(std::string const& vec_name, std::vector<T> const& vec)
+    {
+        if (typeid(vec) == typeid(std::vector<std::string>) ||
+            typeid(vec) == typeid(std::vector<double>) ||
+            typeid(vec) == typeid(std::vector<int>))
+        {
+            _vec_names.push_back(vec_name);
+            _data.push_back(vec);
+            return true;
+        }
+        ERR ("Vector type currently not supported.");
+        return false;
+    }
+
+    /// Writes the CSV file.
+    bool write();
+
     /**
      * Reads 3D points from a CSV file. It is assumed that the file has a header
      * specifying a name for each of the columns. The first three columns will be
@@ -178,6 +208,19 @@ private:
 
     /// Returns the number of the column with column_name (or std::numeric_limits::max() if no such column has been found).
     static std::size_t findColumn(std::string const& line, char delim, std::string const& column_name);
+
+    /// Returns the size of the vector with the given index
+    std::size_t getVectorSize(std::size_t idx) const;
+
+    /**
+     * Writes a value from a vector to the file.
+     * \param vec_idx     Index of the vector
+     * \param in_vec_idx  Entry in the selected vector
+     */
+    void writeValue(std::size_t vec_idx, std::size_t in_vec_idx);
+
+    std::vector<std::string> _vec_names;
+    std::vector< boost::any > _data;
 };
 
 } // FileIO
