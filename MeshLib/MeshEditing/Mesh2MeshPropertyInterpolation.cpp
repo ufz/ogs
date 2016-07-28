@@ -100,16 +100,6 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
 
     GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
 
-    auto materialIds = dest_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    if (!materialIds)
-        materialIds = dest_mesh->getProperties().createNewPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-    if (!materialIds)
-    {
-        ERR("Could not create PropertyVector for MaterialIDs in Mesh.");
-        return;
-    }
-
     std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
     const std::size_t n_dest_elements(dest_elements.size());
     for (std::size_t k(0); k<n_dest_elements; k++)
@@ -145,7 +135,6 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
         }
 
         dest_properties[k] /= cnt;
-        materialIds->push_back(k);
 
         if (cnt == 0) {
             std::string base_name("DebugData/Element-");
@@ -182,10 +171,6 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
 void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(
     std::vector<double> &interpolated_properties) const
 {
-    auto materialIds = _src_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    if (!materialIds)
-        return;
-
     // fetch the source of property values
     boost::optional<MeshLib::PropertyVector<double> const&> opt_src_props(
         _src_mesh->getProperties().getPropertyVector<double>(_property_name));
