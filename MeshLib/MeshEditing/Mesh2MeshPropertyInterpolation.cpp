@@ -157,7 +157,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
                 const std::size_t n_nodes_in_vec(i_th_vec->size());
                 for (std::size_t j(0); j<n_nodes_in_vec; j++) {
                     MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
-                    out_src << nodes_cnt << " " << *(dynamic_cast<GeoLib::Point const*>(j_th_node)) << "\n";
+                    out_src << nodes_cnt << " " << *j_th_node << "\n";
                     nodes_cnt++;
                 }
             }
