@@ -17,7 +17,7 @@ std::vector<NumLib::NamedFunction> CachedSecondaryVariable::getNamedFunctions()
     const
 {
     return {{_internal_variable_name,
-             {},
+             std::vector<std::string>{},
              BaseLib::easyBind(&CachedSecondaryVariable::getValue, this)}};
 }
 
