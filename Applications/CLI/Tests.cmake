@@ -217,6 +217,18 @@ if(NOT OGS_USE_MPI)
         tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu solid_density fct_solid_density
     )
 
+   AddTest(
+        NAME 1D_HeatTransport
+        PATH Parabolic/T/1D_dirichlet
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_60_heat.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        line_60_heat_pcs_0_ts_13_t_5078125.000000.vtu temperature temperature
+   )
+
 else()
     # MPI groundwater flow tests
     AddTest(
