@@ -56,10 +56,19 @@ class LinearSolidDensityModel
         {
            return _tangential * (var - _var1) + _density1;  
         }
-    private:
+
+        /// Get the partial differential of density with the respect to
+        /// or pressure.
+        /// \param var    Variable.
+        double getdValue() const
+        {
+           return _tangential;
+        }
+
+private:
        double _var1;       ///<  Reference variable 1.
        double _density1;   ///<  Reference density 1.
-       double _tangential; ///< Tangential of the linear curve.
+       double _tangential; ///<  Tangential of the linear curve.
 };
 
 } // end namespace

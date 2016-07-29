@@ -44,6 +44,13 @@ template<typename T_PARAMETER_TYPE, typename T_MAT_MODEL> class ScalarParameter
         {
             return _material_model->getValue(args...);
         }
+
+        /// Get the partial differential of the parameter with respect to variables.
+        template<typename... Args> double getdValue(Args... args) const
+        {
+            return _material_model->getdValue(args...);
+        }
+
     private:
         std::unique_ptr<T_MAT_MODEL> _material_model;
 };

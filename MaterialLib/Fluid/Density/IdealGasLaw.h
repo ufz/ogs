@@ -17,7 +17,10 @@
 
 #include <string>
 
+#include "BaseLib/Error.h"
+
 #include "MaterialLib/DensityType.h"
+#include "MaterialLib/PhysicalConstant.h"
 
 namespace MaterialLib
 {
@@ -47,12 +50,27 @@ class IdealGasLaw
         /// \param pg Gas phase pressure in Pa.        
         double getValue(const double T, const double pg) const
         {
-           return _molar_mass * pg /(_gas_constant * T);  
+           return _molar_mass * pg /(PhysicalConstant::IdealGasConstant * T);  
         }
-    private:       
-       /// Normally denoted as R, unit \f$J(kmol K)^{-1}\f$.
-       static constexpr double _gas_constant = 8315.41;
-       
+
+        /// Get the partial differential of density with the respect to
+        /// or pressure.
+        /// \param T  Temperature in K.
+        /// \param pg Gas phase pressure in Pa.
+        /// \param var_id Variable ID, 0 for temperature and 1 for pressure.        
+        double getdValue(const double T, const double pg, const int var_id) const
+        {
+           if (var_id == 0)
+               return -_molar_mass * pg /(PhysicalConstant::IdealGasConstant * T * T);
+           else if (var_id == 1)
+               return _molar_mass /(PhysicalConstant::IdealGasConstant * T);
+
+           OGS_FATAL("Variable ID is larger than 1, "
+                     "however the ideal gas law only has two variables." );
+           return 0.;
+        }
+
+    private:
        /// Molar mass of gas phase.
        double _molar_mass;
 };

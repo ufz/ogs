@@ -15,6 +15,7 @@
 
 #include <algorithm>    // std::max
 
+#include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/ScalarParameter.h"
 #include "MaterialLib/ConstantScalarModel.h"
 
@@ -66,9 +67,15 @@ TEST(Material, checkDensity)
     MaterialLib::ScalarParameter<DensityType, IdealGasLaw> air_density(molar_air);
     const double T = 290.;
     const double p = 1.e+5;
-    const double R = 8315.41;
+    const double R = PhysicalConstant::IdealGasConstant;
     const double expected_air_dens = molar_air * p /(R * T);
     ASSERT_NEAR(expected_air_dens, air_density.getValue(T, p), 1.e-10);
+
+    const double expected_d_air_dens_dT = -molar_air * p /(R * T * T);
+    ASSERT_NEAR(expected_d_air_dens_dT, air_density.getdValue(T, p, 0), 1.e-10);
+
+    const double expected_d_air_dens_dp = molar_air /(R * T);
+    ASSERT_NEAR(expected_d_air_dens_dp, air_density.getdValue(T, p, 1), 1.e-10);
 
     TestScalar< MaterialLib::ScalarParameter<DensityType, IdealGasLaw> > test0(air_density);
     ASSERT_NEAR(expected_air_dens, test0.getMatParameterTest(T, p), 1.e-10);
