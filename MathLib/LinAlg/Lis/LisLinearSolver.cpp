@@ -44,7 +44,8 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     // Create solver
     LIS_SOLVER solver;
     int ierr = lis_solver_create(&solver);
-    checkLisError(ierr);
+    if (!checkLisError(ierr))
+        return false;
 
     lis_solver_set_option(
         const_cast<char*>(_lis_option._option_string.c_str()), solver);
@@ -65,34 +66,37 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     // solve
     INFO("-> solve");
     ierr = lis_solve(A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
-    checkLisError(ierr);
+    if (!checkLisError(ierr))
+        return false;
 
-    {
-        LIS_INT status;
-        ierr = lis_solver_get_status(solver, &status);
-        checkLisError(ierr);
+    LIS_INT linear_solver_status;
+    ierr = lis_solver_get_status(solver, &linear_solver_status);
+    if (!checkLisError(ierr))
+        return false;
 
-        INFO("-> status: %d", status);
-    }
+    INFO("-> status: %d", linear_solver_status);
 
     {
         int iter = 0;
         ierr = lis_solver_get_iter(solver, &iter);
-        checkLisError(ierr);
+        if (!checkLisError(ierr))
+            return false;
 
         INFO("-> iteration: %d", iter);
     }
     {
         double resid = 0.0;
         ierr = lis_solver_get_residualnorm(solver, &resid);
-        checkLisError(ierr);
+        if (!checkLisError(ierr))
+            return false;
         INFO("-> residual: %g", resid);
     }
     {
         double time, itime, ptime, p_ctime, p_itime;
         ierr = lis_solver_get_timeex(solver, &time, &itime,
                                      &ptime, &p_ctime, &p_itime);
-        checkLisError(ierr);
+        if (!checkLisError(ierr))
+            return false;
         INFO("-> time total           (s): %g", time);
         INFO("-> time iterations      (s): %g", itime);
         INFO("-> time preconditioning (s): %g", ptime);
@@ -102,10 +106,11 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
 
     // Clear solver
     ierr = lis_solver_destroy(solver);
-    checkLisError(ierr);
+    if (!checkLisError(ierr))
+        return false;
     INFO("------------------------------------------------------------------");
 
-    return true; // TODO add checks
+    return linear_solver_status == LIS_SUCCESS;
 }
 
 } //MathLib

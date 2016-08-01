@@ -51,12 +51,12 @@ bool EigenLisLinearSolver::solve(EigenMatrix &A_, EigenVector& b_,
 
     LisLinearSolver lissol; // TODO not always creat Lis solver here
     lissol.setOption(_lis_option);
-    lissol.solve(lisA, lisb, lisx);
+    bool const status = lissol.solve(lisA, lisb, lisx);
 
     for (std::size_t i=0; i<lisx.size(); i++)
         x[i] = lisx[i];
 
-    return true; // TODO implement checks
+    return status;
 }
 
 } //MathLib
