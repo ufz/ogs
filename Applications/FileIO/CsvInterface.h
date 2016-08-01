@@ -54,16 +54,14 @@ public:
     template<typename T>
     bool addVectorForWriting(std::string const& vec_name, std::vector<T> const& vec)
     {
-        if (typeid(vec) == typeid(std::vector<std::string>) ||
-            typeid(vec) == typeid(std::vector<double>) ||
-            typeid(vec) == typeid(std::vector<int>))
-        {
-            _vec_names.push_back(vec_name);
-            _data.push_back(vec);
-            return true;
-        }
-        ERR ("Vector type currently not supported.");
-        return false;
+        static_assert(std::is_same<T, std::string>::value
+                || std::is_same<T, double>::value
+                || std::is_same<T, int>::value,
+                "CsvInterface can only write vectors of strings, doubles or ints.");
+
+        _vec_names.push_back(vec_name);
+        _data.push_back(vec);
+        return true;
     }
 
     /// Writes the CSV file.
