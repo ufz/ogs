@@ -218,16 +218,30 @@ if(NOT OGS_USE_MPI)
     )
 
    AddTest(
-        NAME 1D_HeatTransport
+        NAME 1D_HeatTransport_dirichlet
         PATH Parabolic/T/1D_dirichlet
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_60_heat.prj
         WRAPPER time
         TESTER vtkdiff
-        ABSTOL 1e-16 RELTOL 1e-16
+        ABSTOL 1e-2 RELTOL 1e-2
         DIFF_DATA
-        line_60_heat_pcs_0_ts_13_t_5078125.000000.vtu temperature temperature
+        temperature_analytical.vtu line_60_heat_pcs_0_ts_13_t_5078125.000000.vtu Temperature_Analytical_2months temperature
+        temperature_analytical.vtu line_60_heat_pcs_0_ts_81_t_31640625.000000.vtu Temperature_Analytical_1year temperature
    )
+
+AddTest(
+     NAME 1D_HeatTransport_neumann
+     PATH Parabolic/T/1D_neumann
+     EXECUTABLE ogs
+     EXECUTABLE_ARGS line_60_heat.prj
+     WRAPPER time
+     TESTER vtkdiff
+     ABSTOL 1e-3 RELTOL 1e-3
+     DIFF_DATA
+     temperature_analytical.vtu line_60_heat_pcs_0_ts_13_t_5078125.000000.vtu Temperature_Analytical_2months temperature
+     temperature_analytical.vtu line_60_heat_pcs_0_ts_81_t_31640625.000000.vtu Temperature_Analytical_1year temperature
+)
 
 else()
     # MPI groundwater flow tests
