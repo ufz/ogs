@@ -9,7 +9,7 @@
 #ifndef PROCESS_LIB_TES_FEM_IMPL_H_
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
-#include "MaterialsLib/Adsorption/Adsorption.h"
+#include "MaterialLib/Adsorption/Adsorption.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"

@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "MaterialsLib/Adsorption/ReactionCaOH2.h"
+#include "MaterialLib/Adsorption/ReactionCaOH2.h"
 #include "MathLib/ODE/ODESolver.h"
 
 namespace ProcessLib

@@ -14,7 +14,7 @@ APPEND_SOURCE_FILES(SOURCES Utils)
 add_library(ProcessLib ${SOURCES})
 
 target_link_libraries(ProcessLib
-    MaterialsLib
+    MaterialLib
     MeshGeoToolsLib
     NumLib # for shape matrices
     ${VTK_LIBRARIES}

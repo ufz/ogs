@@ -9,7 +9,7 @@
 #ifndef PROCESSLIB_TES_OGS5MATERIALMODELS
 #define PROCESSLIB_TES_OGS5MATERIALMODELS
 
-#include "MaterialsLib/PhysicalConstant.h"
+#include "MaterialLib/PhysicalConstant.h"
 #include "TESAssemblyParams.h"
 
 namespace ProcessLib
@@ -20,12 +20,12 @@ inline double fluid_density(const double p, const double T, const double x)
 {
     // OGS-5 density model 26
 
-    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
-    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
+    const double M0 = MaterialLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialLib::PhysicalConstant::MolarMass::Water;
 
     const double xn = M0 * x / (M0 * x + M1 * (1.0 - x));
 
-    return p / (MaterialsLib::PhysicalConstant::IdealGasConstant * T) *
+    return p / (MaterialLib::PhysicalConstant::IdealGasConstant * T) *
            (M1 * xn + M0 * (1.0 - xn));
     ;
 }
@@ -187,9 +187,9 @@ inline double fluid_viscosity(const double p, const double T, const double x)
 {
     // OGS 5 viscosity model 26
 
-    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
-    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
-    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+    const double M0 = MaterialLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialLib::PhysicalConstant::MolarMass::Water;
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     // reactive component
     const double x0 =
@@ -225,7 +225,7 @@ struct FluidHeatConductivityN2
         const double eps = 138.08483e-23;
         const double N_A = 6.02213E26;
         const double R = 8.31434;
-        // const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+        // const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
         const double CCF = 4.173;  // mW/m/K
 
         const double c1 = 0.3125;
@@ -374,9 +374,9 @@ inline double fluid_heat_conductivity(const double p,
 {
     // OGS 5 fluid heat conductivity model 11
 
-    const double M0 = MaterialsLib::PhysicalConstant::MolarMass::N2;
-    const double M1 = MaterialsLib::PhysicalConstant::MolarMass::Water;
-    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+    const double M0 = MaterialLib::PhysicalConstant::MolarMass::N2;
+    const double M1 = MaterialLib::PhysicalConstant::MolarMass::Water;
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     // TODO [CL] max() is redundant if the fraction is guaranteed to be between
     // 0 and 1.

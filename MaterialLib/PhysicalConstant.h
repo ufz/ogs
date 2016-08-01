@@ -9,7 +9,7 @@
 #ifndef MATERIALSLIB_PHYSICALCONSTANT_H
 #define MATERIALSLIB_PHYSICALCONSTANT_H
 
-namespace MaterialsLib
+namespace MaterialLib
 {
 /**
  * Namespace containing physical constants
@@ -88,5 +88,5 @@ namespace SpecificGasConstant
 const double WaterVapour = IdealGasConstant / MolarMass::Water;  // = 461.504;
 }  // namespace SpecificGasConstant
 }  // namespace PhysicalConstant
-}  // namespace MaterialsLib
+}  // namespace MaterialLib
 #endif  // MATERIALSLIB_PHYSICALCONSTANT_H
