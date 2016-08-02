@@ -32,8 +32,8 @@ target_link_libraries(ProcessLib
 ADD_VTK_DEPENDENCY(ProcessLib)
 
 if(TARGET Eigen)
-	add_dependencies(ProcessLib Eigen)
+    add_dependencies(ProcessLib Eigen)
 endif()
 if(TARGET Boost)
-	add_dependencies(ProcessLib Boost)
+    add_dependencies(ProcessLib Boost)
 endif()

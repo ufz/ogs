@@ -90,9 +90,6 @@ public:
         _localM.setZero();
         _localRhs.setZero();
 
-        //const double density = 2500 ;
-        //const double heat_capacity = 1000 ;
-
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
