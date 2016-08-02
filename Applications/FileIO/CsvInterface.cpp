@@ -22,6 +22,12 @@
 
 namespace FileIO {
 
+CsvInterface::CsvInterface()
+: _writeCsvHeader(true)
+{
+}
+
+
 int CsvInterface::readPoints(std::string const& fname, char delim,
                              std::vector<GeoLib::Point*> &points)
 {
@@ -198,31 +204,26 @@ bool CsvInterface::write()
         return false;
     }
 
-    std::size_t const vec_size (getVectorSize(0));
     std::size_t const n_vecs (_data.size());
-    for (std::size_t i=1; i<n_vecs; ++i)
+    std::size_t const vec_size (getVectorSize(0));
+
+    if (_writeCsvHeader)
     {
-        if (getVectorSize(i) != vec_size)
-        {
-            ERR ("CsvInterface::write() - Data vectors are not equally long.");
-            return false;
-        }
+        _out << _vec_names[0];
+        for (std::size_t i=1; i<n_vecs; ++i)
+            _out << "\t" << _vec_names[i];
+        _out << "\n";
     }
 
-    _out << _vec_names[0];
-    for (std::size_t i=1; i<n_vecs; ++i)
-        _out << "\t " << _vec_names[i];
-    _out << std::endl;
-
-    for (std::size_t j=1; j<vec_size; ++j)
+    for (std::size_t j=0; j<vec_size; ++j)
     {
         writeValue(0,j);
         for (std::size_t i=1; i<n_vecs; ++i)
         {
-            _out << "\t ";
+            _out << "\t";
             writeValue(i,j);
         }
-        _out << std::endl;
+        _out << "\n";
     }
     return true;
 }

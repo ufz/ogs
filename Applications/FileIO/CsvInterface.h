@@ -44,13 +44,19 @@ class CsvInterface  : public BaseLib::IO::Writer
 
 public:
     /// Contructor (only needed for writing files)
-    CsvInterface() {};
+    CsvInterface();
+
+    /// Returns the number of vectors currently staged for writing.
+    std::size_t getNArrays() const { return _vec_names.size(); }
 
     /// Adds an index vector of size s to the CSV file
     void addIndexVectorForWriting(std::size_t s);
 
+    /// Stores if the CSV file to be written should include a header or not.
+    void setCsvHeader(bool write_header) { _writeCsvHeader = write_header; }
+
     /// Adds a data vector to the CSV file. All data vectors have to have the same size.
-    /// Vectors will be written in the same sequence they have been added to the interfaceW.
+    /// Vectors will be written in the same sequence they have been added to the interface.
     template<typename T>
     bool addVectorForWriting(std::string const& vec_name, std::vector<T> const& vec)
     {
@@ -58,6 +64,16 @@ public:
                 || std::is_same<T, double>::value
                 || std::is_same<T, int>::value,
                 "CsvInterface can only write vectors of strings, doubles or ints.");
+
+        if (!_data.empty())
+        {
+            std::size_t const vec_size (getVectorSize(0));
+            if (vec_size != vec.size())
+            {
+                ERR ("Vector size does not match existing data (should be %d).", vec_size);
+                return false;
+            }
+        }
 
         _vec_names.push_back(vec_name);
         _data.push_back(vec);
@@ -217,6 +233,7 @@ private:
      */
     void writeValue(std::size_t vec_idx, std::size_t in_vec_idx);
 
+    bool _writeCsvHeader;
     std::vector<std::string> _vec_names;
     std::vector< boost::any > _data;
 };
