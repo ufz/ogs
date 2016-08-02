@@ -43,7 +43,7 @@ Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getMassCoeffMatrix(
     // TODO: Dalton's law property
     const double dxn_dxm = Adsorption::AdsorptionReaction::dMolarFraction(
         _d.vapour_mass_fraction, _d.ap.M_react, _d.ap.M_inert);
-    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     const double M_pp = _d.ap.poro / _d.p * _d.rho_GR;
     const double M_pT = -_d.ap.poro / _d.T * _d.rho_GR;

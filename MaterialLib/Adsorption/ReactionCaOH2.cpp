@@ -11,7 +11,7 @@
 #include <cassert>
 #include <logog/include/logog.hpp>
 #include "BaseLib/Error.h"
-#include "MaterialsLib/PhysicalConstant.h"
+#include "MaterialLib/PhysicalConstant.h"
 #include "Adsorption.h"
 
 namespace Adsorption
@@ -20,9 +20,9 @@ namespace Adsorption
 const double ReactionCaOH2::_reaction_enthalpy = -1.12e+05;
 const double ReactionCaOH2::_reaction_entropy  = -143.5;
 const double ReactionCaOH2::_M_carrier =
-    MaterialsLib::PhysicalConstant::MolarMass::N2;
+    MaterialLib::PhysicalConstant::MolarMass::N2;
 const double ReactionCaOH2::_M_react =
-    MaterialsLib::PhysicalConstant::MolarMass::Water;
+    MaterialLib::PhysicalConstant::MolarMass::Water;
 
 const double ReactionCaOH2::_tol_l   = 1e-4;
 const double ReactionCaOH2::_tol_u   = 1.0 - 1e-4;
@@ -78,7 +78,7 @@ void ReactionCaOH2::calculateQR()
 // determine equilibrium temperature and pressure according to van't Hoff
 void ReactionCaOH2::setChemicalEquilibrium()
 {
-    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     _X_D = (_rho_s - rho_up - _tol_rho)/(rho_low - rho_up - 2.0*_tol_rho) ;
     _X_D = (_X_D < 0.5) ? std::max(_tol_l,_X_D) : std::min(_X_D,_tol_u); // constrain to interval [tol_l;tol_u]
@@ -95,7 +95,7 @@ void ReactionCaOH2::setChemicalEquilibrium()
 
 double ReactionCaOH2::CaHydration()
 {
-    const double R = MaterialsLib::PhysicalConstant::IdealGasConstant;
+    const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
     double dXdt;
         // step 3, calculate dX/dt
 #ifdef SIMPLE_KINETICS
