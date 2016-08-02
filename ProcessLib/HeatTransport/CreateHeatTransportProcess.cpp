@@ -36,8 +36,7 @@ std::unique_ptr<Process> createHeatTransportProcess(
          "process_variable"});
 
     // thermal conductivity parameter.
-    auto& thermal_conductivity = findParameter<double,
-                                                 MeshLib::Element const&>(
+    auto& thermal_conductivity = findParameter<double, MeshLib::Element const&>(
         config,
         //! \ogs_file_param_special{process__HEAT_TRANSPORT__thermal_conductivity}
         "thermal_conductivity",
@@ -48,7 +47,7 @@ std::unique_ptr<Process> createHeatTransportProcess(
 
     // heat capacity parameter.
     auto& heat_capacity = findParameter<double,
-                                                 MeshLib::Element const&>(
+                                        MeshLib::Element const&>(
         config,
         //! \ogs_file_param_special{process__HEAT_TRANSPORT__heat_capacity}
         "heat_capacity",
@@ -59,7 +58,7 @@ std::unique_ptr<Process> createHeatTransportProcess(
 
     // density parameter.
     auto& density = findParameter<double,
-                                                 MeshLib::Element const&>(
+                                  MeshLib::Element const&>(
         config,
         //! \ogs_file_param_special{process__HEAT_TRANSPORT__density}
         "density",

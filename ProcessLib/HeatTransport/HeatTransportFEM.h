@@ -108,49 +108,49 @@ public:
                                   density*heat_capacity*sm.N *
                                   sm.detJ * wp.getWeight();
             // heat flux only computed for output.
-            auto const heat_flux = (k * sm.dNdx *
+            const NodalVectorType heat_flux = (k * sm.dNdx *
                 Eigen::Map<const NodalVectorType>(local_x.data(), ShapeFunction::NPOINTS)
-                ).eval();
+                );
 
             for (unsigned d=0; d<GlobalDim; ++d) {
                 _heat_fluxes[d][ip] = heat_flux[d];
            }
        }
 
-        K.add(indices, _localK);
-        M.add(indices, _localM);
-        b.add(indices.rows, _localRhs);
+       K.add(indices, _localK);
+       M.add(indices, _localM);
+       b.add(indices.rows, _localRhs);
     }
 
-       Eigen::Map<const Eigen::RowVectorXd>
-       getShapeMatrix(const unsigned integration_point) const override
-       {
-          auto const& N = _shape_matrices[integration_point].N;
+    Eigen::Map<const Eigen::RowVectorXd>
+    getShapeMatrix(const unsigned integration_point) const override
+    {
+        auto const& N = _shape_matrices[integration_point].N;
 
-          // assumes N is stored contiguously in memory
-          return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-       }
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+    }
 
-      std::vector<double> const&
-      getIntPtHeatFluxX(std::vector<double>& /*cache*/) const override
-      {
-          assert(_heat_fluxes.size() > 0);
-          return _heat_fluxes[0];
-      }
+    std::vector<double> const&
+    getIntPtHeatFluxX(std::vector<double>& /*cache*/) const override
+    {
+        assert(_heat_fluxes.size() > 0);
+        return _heat_fluxes[0];
+    }
 
-      std::vector<double> const&
-      getIntPtHeatFluxY(std::vector<double>& /*cache*/) const override
-      {
-          assert(_heat_fluxes.size() > 1);
-          return _heat_fluxes[1];
-      }
+    std::vector<double> const&
+    getIntPtHeatFluxY(std::vector<double>& /*cache*/) const override
+    {
+        assert(_heat_fluxes.size() > 1);
+        return _heat_fluxes[1];
+    }
 
-      std::vector<double> const&
-      getIntPtHeatFluxZ(std::vector<double>& /*cache*/) const override
-      {
-          assert(_heat_fluxes.size() > 2);
-          return _heat_fluxes[2];
-  }
+    std::vector<double> const&
+    getIntPtHeatFluxZ(std::vector<double>& /*cache*/) const override
+    {
+        assert(_heat_fluxes.size() > 2);
+        return _heat_fluxes[2];
+    }
 
 private:
     MeshLib::Element const& _element;

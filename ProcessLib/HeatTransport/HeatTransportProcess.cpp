@@ -37,11 +37,6 @@ HeatTransportProcess::HeatTransportProcess(
         OGS_FATAL(
             "HeatTransportProcess can not be solved with the ForwardEuler"
             " time discretization scheme. Aborting");
-        // Because the M matrix is not assembled. Thus, the linearized system
-        // would be singular. The same applies to CrankNicolson with theta = 0.0,
-        // but this case is not checked here.
-        // Anyway, the HeatTransportProcess shall be transferred to a simpler
-        // ODESystemTag in the future.
     }
 }
 
