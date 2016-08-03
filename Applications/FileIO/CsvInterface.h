@@ -15,6 +15,7 @@
 #define CSVINTERFACE_H_
 
 #include <logog/include/logog.hpp>
+#include <boost/any.hpp>
 
 #include <array>
 #include <fstream>
@@ -22,10 +23,12 @@
 #include <limits>
 #include <list>
 #include <string>
+#include <typeinfo>
 #include <vector>
 
 
 #include "BaseLib/StringTools.h"
+#include "BaseLib/IO/Writer.h"
 
 namespace GeoLib {
     class Point;
@@ -36,9 +39,50 @@ namespace FileIO {
 /**
  * Interface for reading CSV file formats.
  */
-class CsvInterface {
+class CsvInterface  : public BaseLib::IO::Writer
+{
 
 public:
+    /// Contructor (only needed for writing files)
+    CsvInterface();
+
+    /// Returns the number of vectors currently staged for writing.
+    std::size_t getNArrays() const { return _vec_names.size(); }
+
+    /// Adds an index vector of size s to the CSV file
+    void addIndexVectorForWriting(std::size_t s);
+
+    /// Stores if the CSV file to be written should include a header or not.
+    void setCsvHeader(bool write_header) { _writeCsvHeader = write_header; }
+
+    /// Adds a data vector to the CSV file. All data vectors have to have the same size.
+    /// Vectors will be written in the same sequence they have been added to the interface.
+    template<typename T>
+    bool addVectorForWriting(std::string const& vec_name, std::vector<T> const& vec)
+    {
+        static_assert(std::is_same<T, std::string>::value
+                || std::is_same<T, double>::value
+                || std::is_same<T, int>::value,
+                "CsvInterface can only write vectors of strings, doubles or ints.");
+
+        if (!_data.empty())
+        {
+            std::size_t const vec_size (getVectorSize(0));
+            if (vec_size != vec.size())
+            {
+                ERR ("Vector size does not match existing data (should be %d).", vec_size);
+                return false;
+            }
+        }
+
+        _vec_names.push_back(vec_name);
+        _data.push_back(vec);
+        return true;
+    }
+
+    /// Writes the CSV file.
+    bool write();
+
     /**
      * Reads 3D points from a CSV file. It is assumed that the file has a header
      * specifying a name for each of the columns. The first three columns will be
@@ -178,6 +222,20 @@ private:
 
     /// Returns the number of the column with column_name (or std::numeric_limits::max() if no such column has been found).
     static std::size_t findColumn(std::string const& line, char delim, std::string const& column_name);
+
+    /// Returns the size of the vector with the given index
+    std::size_t getVectorSize(std::size_t idx) const;
+
+    /**
+     * Writes a value from a vector to the file.
+     * \param vec_idx     Index of the vector
+     * \param in_vec_idx  Entry in the selected vector
+     */
+    void writeValue(std::size_t vec_idx, std::size_t in_vec_idx);
+
+    bool _writeCsvHeader;
+    std::vector<std::string> _vec_names;
+    std::vector< boost::any > _data;
 };
 
 } // FileIO
