@@ -60,6 +60,21 @@ private:
     double _z;
 };
 
+class I : public NumLib::NamedFunctionProvider
+{
+public:
+    double i(double arg_x) const
+    {
+        return -arg_x;
+    }
+
+    std::vector<NumLib::NamedFunction>
+    getNamedFunctions() const override
+    {
+        return {{"i", {"x"}, BaseLib::easyBind(&I::i, this)}};
+    }
+};
+
 TEST(NumLib, NamedFunctionCaller)
 {
     F f_inst;
@@ -91,6 +106,33 @@ TEST(NumLib, NamedFunctionCaller)
     auto const f_caller = caller.getSpecialFunction("f");
     DBUG("calling %s", caller.getCallExpression("f").c_str());
     EXPECT_EQ(f_inst.f(g_inst.g(x), y), f_caller.call({x, y}));
+}
+
+TEST(NumLib, NamedFunctionCallerCyclicGraph)
+{
+    // Construct a cyclic case with f(g(i(f(...), y)))
+    F f_inst;
+    G g_inst;
+    I i_inst;
+
+    NumLib::NamedFunctionCaller caller{ "x", "y" };
+
+    for (auto&& f_named : f_inst.getNamedFunctions()) {
+        caller.addNamedFunction(std::move(f_named));
+    }
+    for (auto&& g_named : g_inst.getNamedFunctions()) {
+        caller.addNamedFunction(std::move(g_named));
+    }
+    for (auto&& i_named : i_inst.getNamedFunctions()) {
+        caller.addNamedFunction(std::move(i_named));
+    }
+
+    caller.plug("f", "g_arg", "g");
+    caller.plug("f", "y", "y");
+    caller.plug("g", "x", "i");
+    caller.plug("i", "x", "f");
+
+    ASSERT_ANY_THROW(caller.applyPlugs());
 }
 
 TEST(NumLib, NamedFunctionNoLeaks)
