@@ -13,6 +13,23 @@
 #include "BoundaryConditionConfig.h"
 #include "UniformDirichletBoundaryCondition.h"
 #include "UniformNeumannBoundaryCondition.h"
+#include "UniformRobinBoundaryCondition.h"
+
+std::vector<MeshLib::Element*> getClonedElements(
+    MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
+    GeoLib::GeoObject const& geometry)
+{
+    std::vector<MeshLib::Element*> elements =
+        boundary_element_searcher.getBoundaryElements(geometry);
+
+    // Deep copy all the elements, because the searcher might destroy the
+    // originals. Store pointers to the copies in the elements vector (i.e.,
+    // in-place modification).
+    for (auto& e : elements)
+        e = e->clone();
+
+    return elements;
+}
 
 namespace ProcessLib
 {
@@ -44,18 +61,18 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     }
     else if (type == "UniformNeumann")
     {
-        std::vector<MeshLib::Element*> elements =
-            boundary_element_searcher.getBoundaryElements(config.geometry);
-
-        // Deep copy all the elements, because the searcher might destroy the
-        // originals. Store pointers to the copies in the elements vector (i.e.,
-        // in-place modification).
-        for (auto& e : elements)
-            e = e->clone();
-
         return createUniformNeumannBoundaryCondition(
-            config.config, std::move(elements), dof_table, variable_id,
-            config.component_id, integration_order, mesh.getDimension());
+            config.config,
+            getClonedElements(boundary_element_searcher, config.geometry),
+            dof_table, variable_id, config.component_id, integration_order,
+            mesh.getDimension());
+    }
+    else if (type == "UniformRobin") {
+        return createUniformRobinBoundaryCondition(
+            config.config,
+            getClonedElements(boundary_element_searcher, config.geometry),
+            dof_table, variable_id, config.component_id, integration_order,
+            mesh.getDimension());
     }
     else
     {
