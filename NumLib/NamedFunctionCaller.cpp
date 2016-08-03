@@ -10,44 +10,62 @@
 #include "NamedFunctionCaller.h"
 
 #include <algorithm>
-#include <list>
 
 #include "BaseLib/uniqueInsert.h"
 #include "BaseLib/Error.h"
 
-bool hasTopologicalOrdering(std::vector<std::vector<int>> const& dependencies)
+/// To understand the working of the algorithm the following two lemmata are
+/// useful:
+/// If a directed graph has a topological order, then it is a Directed Acyclic
+/// Graph (DAG).
+/// If a graph is a DAG, then it has a node with no incoming edges.
+///
+/// \note Negative indices in the graph adjacency list are leaves of the graph.
+///
+/// \param graph represents directed graph given as an adjacency list.
+/// \return true if the given directed graph is acyclic.
+bool hasTopologicalOrdering(std::vector<std::vector<int>> const& graph)
 {
-    std::vector<unsigned> dep_counts(dependencies.size());
+    // Number of incoming edges for each node of the graph
+    std::vector<unsigned> number_incoming_edges(graph.size());
 
-    // init dependency counts
-    for (std::size_t fct_idx = 0; fct_idx<dependencies.size(); ++fct_idx)
+    // Count all incoming edges (i,j) for each node (i).
+    for (auto const& node_i_adjacencies : graph)
     {
-        for (int dep : dependencies[fct_idx]) {
-            if (dep >= 0)
-                ++dep_counts[dep];
+        for (int node_j : node_i_adjacencies)
+        {
+            if (node_j >= 0)    // ignore negative indices.
+                ++number_incoming_edges[node_j];
         }
     }
 
-    auto num_dependent = dep_counts.size();
-    std::list<std::size_t> q;
-
-    // init work queue
-    for (std::size_t fct_idx = 0; fct_idx<dep_counts.size(); ++fct_idx)
+    // Working queue: a set of nodes with no incoming edges.
+    std::vector<std::size_t> q;
+    for (std::size_t node_i = 0; node_i < number_incoming_edges.size();
+         ++node_i)
     {
-        if (dep_counts[fct_idx] == 0) {
-            q.push_back(fct_idx);
-            --num_dependent;
+        if (number_incoming_edges[node_i] == 0)
+        {
+            q.push_back(node_i);
         }
     }
+
+
+    auto num_dependent = number_incoming_edges.size() - q.size();
 
     while (!q.empty())
     {
-        auto const fct_idx = q.front();
-        q.pop_front();
-        for (int dep : dependencies[fct_idx]) {
-            if (dep < 0) continue;
-            if (--dep_counts[dep] == 0) {
-                q.push_back(dep);
+        auto const node_i = q.back();
+        q.pop_back();
+
+        // Decrement counts for all edges (i,j).
+        for (int node_j : graph[node_i])
+        {
+            if (node_j < 0)
+                continue;  // ignore negative indices
+            if (--number_incoming_edges[node_j] == 0)
+            {  // Add a node without incoming edges to the queue.
+                q.push_back(node_j);
                 --num_dependent;
             }
         }
