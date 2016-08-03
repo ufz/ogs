@@ -73,39 +73,21 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                     //! \ogs_file_param{boundary_condition__geometry}
                     bc_config.getConfigParameter<std::string>("geometry");
 
-            GeoLib::GeoObject const* const geometry_ptr =
+            GeoLib::GeoObject const* const geometry =
                 geometries.getGeoObject(geometrical_set_name, geometry_name);
-            assert(geometry_ptr != nullptr);
-            GeoLib::GeoObject const& geometry = *geometry_ptr;
+
+            if (! geometry)
+                OGS_FATAL(
+                    "No geometry with name `%s' has been found in the "
+                    "geometrical set `%s'.",
+                    geometry_name.c_str(), geometrical_set_name.c_str());
 
             DBUG(
                 "Found geometry type \"%s\"",
-                GeoLib::convertGeoTypeToString(geometry.getGeoType()).c_str());
+                GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
-            // Construct type dependent boundary condition
-            //! \ogs_file_param{boundary_condition__type}
-            auto const type = bc_config.peekConfigParameter<std::string>("type");
-
-            if (type == "UniformDirichlet")
-            {
-                _dirichlet_bc_configs.emplace_back(std::make_pair(
-                    std::unique_ptr<UniformDirichletBoundaryCondition>(
-                        new UniformDirichletBoundaryCondition(geometry,
-                                                              bc_config)),
-                    0));  // TODO, the 0 stands for component_id. Need parser.
-            }
-            else if (type == "UniformNeumann")
-            {
-                _neumann_bc_configs.emplace_back(std::make_pair(
-                    std::unique_ptr<NeumannBcConfig>{
-                        new NeumannBcConfig(geometry, bc_config)},
-                    0));  // TODO, the 0 stands for component_id. Need parser.
-            }
-            else
-            {
-                ERR("Unknown type \'%s\' of the boundary condition.",
-                    type.c_str());
-            }
+            // TODO, the 0 is the component_id. Need parser.
+            _bc_configs.emplace_back(std::move(bc_config), *geometry, 0);
         }
     } else {
         INFO("No boundary conditions found.");
@@ -120,8 +102,7 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
       _mesh(other._mesh),
       _n_components(other._n_components),
       _initial_condition(std::move(other._initial_condition)),
-      _dirichlet_bc_configs(std::move(other._dirichlet_bc_configs)),
-      _neumann_bc_configs(std::move(other._neumann_bc_configs))
+      _bc_configs(std::move(other._bc_configs))
 {
 }
 
@@ -153,6 +134,21 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
         result->resize(_mesh.getNumberOfNodes() * _n_components);
         return *result;
     }
+}
+
+std::vector<std::unique_ptr<BoundaryCondition>>
+ProcessVariable::getBoundaryConditions(
+    const NumLib::LocalToGlobalIndexMap& dof_table,
+    const int variable_id,
+    unsigned const integration_order)
+{
+    std::vector<std::unique_ptr<BoundaryCondition>> bcs;
+
+    for (auto& config : _bc_configs)
+        bcs.emplace_back(createBoundaryCondition(
+            config, dof_table, _mesh, variable_id, integration_order));
+
+    return bcs;
 }
 
 }  // namespace ProcessLib

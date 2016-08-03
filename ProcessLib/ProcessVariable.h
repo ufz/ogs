@@ -12,9 +12,8 @@
 
 
 #include "InitialCondition.h"
-#include "UniformDirichletBoundaryCondition.h"
-#include "NeumannBc.h"
-#include "DirichletBc.h"
+#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
+#include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
 
 namespace MeshGeoToolsLib
 {
@@ -59,55 +58,10 @@ public:
     /// Returns the number of components of the process variable.
     int getNumberOfComponents() const { return _n_components; }
 
-    template <typename OutputIterator>
-    void initializeDirichletBCs(
-        OutputIterator output_bcs,
-        MeshGeoToolsLib::MeshNodeSearcher& searcher,
+    std::vector<std::unique_ptr<BoundaryCondition>> getBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table,
         const int variable_id,
-        const int component_id)
-    {
-        // Find all boundary conditions matching the component id. There can be
-        // more than one such boundary condition.
-        for (auto& bc_config : _dirichlet_bc_configs)
-        {
-            if (bc_config.second != component_id)
-                continue;
-            // Create/initialize the boundary condition with matching component
-            // id and output it through the OutputIterator.
-            DirichletBc<GlobalIndexType> bc;
-            bc_config.first->initialize(searcher, dof_table, variable_id,
-                                        component_id, bc);
-            output_bcs++ = bc;
-        }
-    }
-
-    template <typename OutputIterator>
-    void createNeumannBcs(OutputIterator bcs,
-                          MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
-                          unsigned const integration_order,
-                          const NumLib::LocalToGlobalIndexMap& dof_table,
-                          const int variable_id,
-                          const int component_id)
-    {
-        // Find all boundary conditions matching the component id. There can be
-        // more than one such boundary condition.
-        for (auto& bc_config : _neumann_bc_configs)
-        {
-            if (bc_config.second != component_id)
-                continue;
-
-            // Create/initialize the boundary condition with matching component
-            // id and output it through the OutputIterator.
-            bc_config.first->initialize(searcher);
-            bcs++ = std::unique_ptr<NeumannBc>{
-                new NeumannBc(*bc_config.first,
-                                           integration_order,
-                                           dof_table,
-                                           variable_id,
-                                           component_id)};
-        }
-    }
+        unsigned const integration_order);
 
     double getInitialConditionValue(std::size_t const node_id,
                                     int const component_id) const
@@ -126,15 +80,7 @@ private:
     const int _n_components;
     std::unique_ptr<InitialCondition> _initial_condition;
 
-    // Pairs of dirichlet boundary conditions and corresponding component ids.
-    std::vector<
-        std::pair<std::unique_ptr<UniformDirichletBoundaryCondition>, int>>
-        _dirichlet_bc_configs;
-
-    // Pairs of neumann boundary conditions' configs and corresponding component
-    // ids.
-    std::vector<std::pair<std::unique_ptr<NeumannBcConfig>, int>>
-        _neumann_bc_configs;
+    std::vector<BoundaryConditionConfig> _bc_configs;
 };
 
 }  // namespace ProcessLib
