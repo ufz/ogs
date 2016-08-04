@@ -87,8 +87,8 @@ void traverse(std::vector<std::vector<int>> const& map_sink_source,
         return;
 
     auto const& si_so = map_sink_source[sink_fct];
-    int const num_args = si_so.size();
-    for (int sink_arg = 0; sink_arg != num_args; ++sink_arg) {
+    std::size_t const num_args = si_so.size();
+    for (std::size_t sink_arg = 0; sink_arg != num_args; ++sink_arg) {
         if (sink_arg != 0)
             callback(sink_fct, TraversePosition::BetweenChildren);
         traverse(map_sink_source, si_so[sink_arg], callback);
@@ -168,7 +168,7 @@ void NamedFunctionCaller::applyPlugs()
                 "function `%s'.",
                 sink_arg.c_str(), sink_fct.c_str());
         }
-        std::size_t sink_arg_idx =
+        std::size_t const sink_arg_idx =
             std::distance(sink_args.begin(), sink_arg_it);
 
         auto& sis_sos = _map_sink_source[sink_fct_idx];
