@@ -1,4 +1,3 @@
-
 /**
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -31,8 +30,8 @@ HeatTransportProcess::HeatTransportProcess(
               std::move(process_output)),
       _process_data(std::move(process_data))
 {
-    if (dynamic_cast<NumLib::ForwardEuler*>(
-            &Base::getTimeDiscretization()) != nullptr)
+    if (dynamic_cast<NumLib::ForwardEuler*>(&Base::getTimeDiscretization()) !=
+        nullptr)
     {
         OGS_FATAL(
             "HeatTransportProcess can not be solved with the ForwardEuler"
@@ -50,40 +49,42 @@ void HeatTransportProcess::initializeConcreteProcess(
         _local_assemblers, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-           "heat_flux_x", 1,
-           makeExtrapolator(
-               getExtrapolator(), _local_assemblers,
-               &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxX));
+        "heat_flux_x", 1,
+        makeExtrapolator(
+            getExtrapolator(), _local_assemblers,
+            &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxX));
 
-       if (mesh.getDimension() > 1) {
-           _secondary_variables.addSecondaryVariable(
-               "heat_flux_y", 1,
-               makeExtrapolator(getExtrapolator(), _local_assemblers,
-                                &HeatTransportLocalAssemblerInterface::
-                                    getIntPtHeatFluxY));
-       }
-       if (mesh.getDimension() > 2) {
-           _secondary_variables.addSecondaryVariable(
-               "heat_flux_z", 1,
-               makeExtrapolator(getExtrapolator(), _local_assemblers,
-                                &HeatTransportLocalAssemblerInterface::
-                                    getIntPtHeatFluxZ));
-   }
+    if (mesh.getDimension() > 1)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "heat_flux_y", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxY));
+    }
+    if (mesh.getDimension() > 2)
+    {
+        _secondary_variables.addSecondaryVariable(
+            "heat_flux_z", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxZ));
+    }
 }
 
 void HeatTransportProcess::assembleConcreteProcess(const double t,
-                                                     GlobalVector const& x,
-                                                     GlobalMatrix& M,
-                                                     GlobalMatrix& K,
-                                                     GlobalVector& b)
+                                                   GlobalVector const& x,
+                                                   GlobalMatrix& M,
+                                                   GlobalMatrix& K,
+                                                   GlobalVector& b)
 {
     DBUG("Assemble HeatTransportProcess.");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberOnDereferenced(
-        &HeatTransportLocalAssemblerInterface::assemble,
-        _local_assemblers, *_local_to_global_index_map, t, x, M, K, b);
+        &HeatTransportLocalAssemblerInterface::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, x, M, K, b);
 }
 
-}   // namespace HeatTransport
-} // namespace ProcessLib
+}  // namespace HeatTransport
+}  // namespace ProcessLib

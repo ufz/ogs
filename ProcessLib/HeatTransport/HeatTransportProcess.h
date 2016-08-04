@@ -1,4 +1,3 @@
-
 /**
  * \copyright
  * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
@@ -15,7 +14,6 @@
 #include "ProcessLib/Process.h"
 #include "HeatTransportFEM.h"
 #include "HeatTransportProcessData.h"
-
 
 namespace ProcessLib
 {
@@ -55,10 +53,10 @@ private:
     HeatTransportProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatTransportLocalAssemblerInterface>>
-_local_assemblers;
+        _local_assemblers;
 };
 
-}   // namespace HeatTransport
-}   // namespace ProcessLib
+}  // namespace HeatTransport
+}  // namespace ProcessLib
 
-#endif // PROCESS_LIB_HEATTRANSPORTPROCESS_H_
+#endif  // PROCESS_LIB_HEATTRANSPORTPROCESS_H_

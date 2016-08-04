@@ -12,38 +12,37 @@
 
 namespace MeshLib
 {
-    class Element;
+class Element;
 }
-
 
 namespace ProcessLib
 {
-
 template <typename ReturnType, typename... Args>
 struct Parameter;
 
 namespace HeatTransport
 {
-
 // copy that and change names
 struct HeatTransportProcessData
 {
     HeatTransportProcessData(
-            ProcessLib::Parameter<double, MeshLib::Element const&> const&
+        ProcessLib::Parameter<double, MeshLib::Element const&> const&
             thermal_conductivity_,
-            ProcessLib::Parameter<double, MeshLib::Element const&> const&
+        ProcessLib::Parameter<double, MeshLib::Element const&> const&
             heat_capacity_,
-            ProcessLib::Parameter<double, MeshLib::Element const&> const&
-            density_
-            )
-        : thermal_conductivity(thermal_conductivity_), heat_capacity(heat_capacity_), density(density_)
-    {}
+        ProcessLib::Parameter<double, MeshLib::Element const&> const& density_)
+        : thermal_conductivity(thermal_conductivity_),
+          heat_capacity(heat_capacity_),
+          density(density_)
+    {
+    }
 
     HeatTransportProcessData(HeatTransportProcessData&& other)
         : thermal_conductivity(other.thermal_conductivity),
           heat_capacity(other.heat_capacity),
           density(other.density)
-    {}
+    {
+    }
 
     //! Copies are forbidden.
     HeatTransportProcessData(HeatTransportProcessData const&) = delete;
@@ -59,7 +58,7 @@ struct HeatTransportProcessData
     Parameter<double, MeshLib::Element const&> const& density;
 };
 
-} // namespace HeatTransport
-} // namespace ProcessLib
+}  // namespace HeatTransport
+}  // namespace ProcessLib
 
-#endif // PROCESSLIB_HEATTRANSPORT_HEATTRANSPORTPROCESSDATA_H
+#endif  // PROCESSLIB_HEATTRANSPORT_HEATTRANSPORTPROCESSDATA_H

@@ -23,15 +23,13 @@
 
 namespace ProcessLib
 {
-
 namespace HeatTransport
 {
-
 const unsigned NUM_NODAL_DOF = 1;
 
 class HeatTransportLocalAssemblerInterface
-        : public ProcessLib::LocalAssemblerInterface
-        , public NumLib::ExtrapolatableElement
+    : public ProcessLib::LocalAssemblerInterface,
+      public NumLib::ExtrapolatableElement
 {
 public:
     virtual std::vector<double> const& getIntPtHeatFluxX(
@@ -41,14 +39,12 @@ public:
         std::vector<double>& /*cache*/) const = 0;
 
     virtual std::vector<double> const& getIntPtHeatFluxZ(
-std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& /*cache*/) const = 0;
 };
 
-template <typename ShapeFunction,
-         typename IntegrationMethod,
-         unsigned GlobalDim>
-class LocalAssemblerData
-        : public HeatTransportLocalAssemblerInterface
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+class LocalAssemblerData : public HeatTransportLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -66,20 +62,22 @@ public:
                        std::size_t const local_matrix_size,
                        unsigned const integration_order,
                        HeatTransportProcessData const& process_data)
-        : _element(element)
-        , _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
-                  element, integration_order))
-        , _process_data(process_data)
-        , _localK(local_matrix_size, local_matrix_size) // TODO narrowing conversion
-        , _localM(local_matrix_size, local_matrix_size)
-        , _localRhs(local_matrix_size)
-        , _integration_order(integration_order)
+        : _element(element),
+          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                            IntegrationMethod, GlobalDim>(
+              element, integration_order)),
+          _process_data(process_data),
+          _localK(local_matrix_size,
+                  local_matrix_size)  // TODO narrowing conversion
+          ,
+          _localM(local_matrix_size, local_matrix_size),
+          _localRhs(local_matrix_size),
+          _integration_order(integration_order)
     {
-        // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
-       assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
-
 
     void assembleConcrete(
         double const /*t*/, std::vector<double> const& local_x,
@@ -91,7 +89,8 @@ public:
         _localRhs.setZero();
 
         IntegrationMethod integration_method(_integration_order);
-        unsigned const n_integration_points = integration_method.getNumberOfPoints();
+        unsigned const n_integration_points =
+            integration_method.getNumberOfPoints();
 
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
@@ -101,29 +100,28 @@ public:
             auto const heat_capacity = _process_data.heat_capacity(_element);
             auto const density = _process_data.density(_element);
 
-            _localK.noalias() += sm.dNdx.transpose() *
-                                  k * sm.dNdx *
-                                  sm.detJ * wp.getWeight();
-            _localM.noalias() += sm.N.transpose() *
-                                  density*heat_capacity*sm.N *
-                                  sm.detJ * wp.getWeight();
+            _localK.noalias() +=
+                sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();
+            _localM.noalias() += sm.N.transpose() * density * heat_capacity *
+                                 sm.N * sm.detJ * wp.getWeight();
             // heat flux only computed for output.
-            const NodalVectorType heat_flux = (k * sm.dNdx *
-                Eigen::Map<const NodalVectorType>(local_x.data(), ShapeFunction::NPOINTS)
-                );
+            const NodalVectorType heat_flux =
+                (k * sm.dNdx * Eigen::Map<const NodalVectorType>(
+                                   local_x.data(), ShapeFunction::NPOINTS));
 
-            for (unsigned d=0; d<GlobalDim; ++d) {
+            for (unsigned d = 0; d < GlobalDim; ++d)
+            {
                 _heat_fluxes[d][ip] = heat_flux[d];
-           }
-       }
+            }
+        }
 
-       K.add(indices, _localK);
-       M.add(indices, _localM);
-       b.add(indices.rows, _localRhs);
+        K.add(indices, _localK);
+        M.add(indices, _localM);
+        b.add(indices.rows, _localRhs);
     }
 
-    Eigen::Map<const Eigen::RowVectorXd>
-    getShapeMatrix(const unsigned integration_point) const override
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
         auto const& N = _shape_matrices[integration_point].N;
 
@@ -131,22 +129,22 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const&
-    getIntPtHeatFluxX(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtHeatFluxX(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_heat_fluxes.size() > 0);
         return _heat_fluxes[0];
     }
 
-    std::vector<double> const&
-    getIntPtHeatFluxY(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtHeatFluxY(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_heat_fluxes.size() > 1);
         return _heat_fluxes[1];
     }
 
-    std::vector<double> const&
-    getIntPtHeatFluxZ(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtHeatFluxZ(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_heat_fluxes.size() > 2);
         return _heat_fluxes[2];
@@ -162,13 +160,12 @@ private:
     NodalVectorType _localRhs;
 
     unsigned const _integration_order;
-    std::vector<std::vector<double>> _heat_fluxes
-            = std::vector<std::vector<double>>(
-    GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
+    std::vector<std::vector<double>> _heat_fluxes =
+        std::vector<std::vector<double>>(
+            GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
 };
 
-
-}   // namespace HeatTransport
-}   // namespace ProcessLib
+}  // namespace HeatTransport
+}  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_HEATTRANSPORT_FEM_H_
