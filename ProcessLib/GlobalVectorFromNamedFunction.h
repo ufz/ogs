@@ -22,7 +22,7 @@ class GlobalVectorFromNamedFunction
 {
 public:
     GlobalVectorFromNamedFunction(
-        NumLib::SpecialFunctionCaller&& function_caller,
+        NumLib::SpecificFunctionCaller&& function_caller,
         MeshLib::Mesh const& mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_single,
         SecondaryVariableContext& context);
@@ -32,7 +32,7 @@ public:
                              std::unique_ptr<GlobalVector>& result_cache);
 
 private:
-    NumLib::SpecialFunctionCaller _function_caller;
+    NumLib::SpecificFunctionCaller _function_caller;
     MeshLib::Mesh const& _mesh;
     NumLib::LocalToGlobalIndexMap const& _dof_table_single;
     SecondaryVariableContext& _context;

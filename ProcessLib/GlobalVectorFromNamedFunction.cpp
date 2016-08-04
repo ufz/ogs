@@ -14,7 +14,7 @@
 namespace ProcessLib
 {
 GlobalVectorFromNamedFunction::GlobalVectorFromNamedFunction(
-    NumLib::SpecialFunctionCaller&& function_caller,
+    NumLib::SpecificFunctionCaller&& function_caller,
     MeshLib::Mesh const& mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_single,
     SecondaryVariableContext& context)

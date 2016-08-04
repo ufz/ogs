@@ -208,7 +208,7 @@ void Process::finishNamedFunctionsInitialization()
             {BaseLib::easyBind(
                  &GlobalVectorFromNamedFunction::call,
                  GlobalVectorFromNamedFunction(
-                     _named_function_caller.getSpecialFunction(name), _mesh,
+                     _named_function_caller.getSpecificFunctionCaller(name), _mesh,
                      getSingleComponentDOFTable(),
                      _secondary_variable_context)),
              nullptr});
