@@ -11,52 +11,9 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/Functional.h"
+#include "Tests/InstanceCounter.h"
 
-class InstanceCounter
-{
-public:
-    InstanceCounter() {
-        ++_num_constructed;
-    }
-    InstanceCounter(InstanceCounter const&) {
-        ++_num_copied;
-    }
-    InstanceCounter(InstanceCounter&&) {
-        ++_num_moved;
-    }
-    virtual ~InstanceCounter() {
-        ++_num_destroyed;
-    }
-
-    static int getNumberOfConstructions() { return _num_constructed; }
-    static int getNumberOfCopies() { return _num_copied; }
-    static int getNumberOfMoves() { return _num_moved; }
-    static int getNumberOfInstances()
-    {
-        return _num_constructed + _num_moved + _num_copied - _num_destroyed;
-    }
-
-    static void update(int& num_const, int& num_move, int& num_copy, int& num_inst)
-    {
-        num_const = getNumberOfConstructions();
-        num_move = getNumberOfMoves();
-        num_copy = getNumberOfCopies();
-        num_inst = getNumberOfInstances();
-    }
-
-private:
-    static int _num_constructed;
-    static int _num_copied;
-    static int _num_moved;
-    static int _num_destroyed;
-};
-
-int InstanceCounter::_num_constructed = 0;
-int InstanceCounter::_num_copied = 0;
-int InstanceCounter::_num_moved = 0;
-int InstanceCounter::_num_destroyed = 0;
-
-class A : public InstanceCounter
+class A : private InstanceCounter<A>
 {
 public:
     A(const double value) : _value(value) {}
@@ -79,52 +36,45 @@ private:
     double _value;
 };
 
-#define EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst) \
-    EXPECT_EQ((num_const), InstanceCounter::getNumberOfConstructions());    \
-    EXPECT_EQ((num_move), InstanceCounter::getNumberOfMoves());             \
-    EXPECT_EQ((num_copy), InstanceCounter::getNumberOfCopies());            \
-    EXPECT_EQ((num_inst), InstanceCounter::getNumberOfInstances())
-
-
 TEST(BaseLib, Functional)
 {
-    auto num_const = InstanceCounter::getNumberOfConstructions();
-    auto num_move = InstanceCounter::getNumberOfMoves();
-    auto num_copy = InstanceCounter::getNumberOfCopies();
-    auto num_inst = InstanceCounter::getNumberOfInstances();
+    auto num_const = InstanceCounter<A>::getNumberOfConstructions();
+    auto num_move = InstanceCounter<A>::getNumberOfMoves();
+    auto num_copy = InstanceCounter<A>::getNumberOfCopies();
+    auto num_inst = InstanceCounter<A>::getNumberOfInstances();
 
     // Base line: measure how many copies and moves
     // std::function<>(std::bind(...)) needs.
     A a_base(0.0);
 
     // move the object to std::bind()
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
     std::function<void(A)> fct_mult(
         std::bind(&A::multiply, std::move(a_base), std::placeholders::_1));
     auto const num_copy_base_move =
-        InstanceCounter::getNumberOfCopies() - num_copy;
+        InstanceCounter<A>::getNumberOfCopies() - num_copy;
     auto const num_move_base_move =
-        InstanceCounter::getNumberOfMoves() - num_move;
+        InstanceCounter<A>::getNumberOfMoves() - num_move;
 
     // call std::function using pass-by-value
     A a_base2(0.0);
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
     fct_mult(a_base2);
     auto const num_copy_base_pass =
-        InstanceCounter::getNumberOfCopies() - num_copy;
+        InstanceCounter<A>::getNumberOfCopies() - num_copy;
     auto const num_move_base_pass =
-        InstanceCounter::getNumberOfMoves() - num_move;
+        InstanceCounter<A>::getNumberOfMoves() - num_move;
     // end base line
 
     // self test
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
     A a1(3.0);
     A a2(a1);
-    EXPECT_INSTANCES(num_const+1, num_move, num_copy+1, num_inst+2);
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const+1, num_move, num_copy+1, num_inst+2);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
     auto f1_get = BaseLib::easyBind(&A::getValue, a1);
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
     EXPECT_EQ(3.0, f1_get());
 
     // check that really a reference is returned
@@ -135,76 +85,76 @@ TEST(BaseLib, Functional)
         value_ref = 4.0;
         EXPECT_EQ(4.0, a2.getValue());
     }
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
 
     // test binding to pointers
     {
         A* ap = &a1;
         auto fp_get = BaseLib::easyBind(&A::getValue, ap);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(3.0, fp_get());
 
         A const* apc = &a1;
         auto fpc_get = BaseLib::easyBind(&A::getValue, apc);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(3.0, fpc_get());
     }
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
 
     // check that referenced objects are not copied
     {
         A& a3 = a2;
         auto f3_get = BaseLib::easyBind(&A::getValue, a3);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(4.0, f3_get());
     }
     {
         A const& a3 = a2;
         auto f3_get = BaseLib::easyBind(&A::getValue, a3);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(4.0, f3_get());
     }
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
 
     // temporaries must be moved
     {
         auto ftemp_get = BaseLib::easyBind(&A::getValue, A(5.0));
 
-        EXPECT_INSTANCES(num_const + 1, num_move + num_move_base_move,
+        EXPECT_INSTANCES(A, num_const + 1, num_move + num_move_base_move,
                          num_copy + num_copy_base_move, num_inst + 1);
-        InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+        InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
         EXPECT_EQ(5.0, ftemp_get());
     }
     // ftemp_get destroyed
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst-1);
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst-1);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
     // testing explicit move
     {
         A a_move(5.0);
-        EXPECT_INSTANCES(num_const+1, num_move, num_copy, num_inst+1);
-        InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const+1, num_move, num_copy, num_inst+1);
+        InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
         auto ftemp_get = BaseLib::easyBind(&A::getValue, std::move(a_move));
 
-        EXPECT_INSTANCES(num_const, num_move + num_move_base_move,
+        EXPECT_INSTANCES(A, num_const, num_move + num_move_base_move,
                          num_copy + num_copy_base_move, num_inst+1);
-        InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+        InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
         EXPECT_EQ(5.0, ftemp_get());
     }
     // ftemp_get destroyed and a_move
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst-2);
-    InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst-2);
+    InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
     // test binding a callable object
     {
         auto f1_op = BaseLib::easyBind(a1);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(21.0, f1_op(7.0));
     }
-    EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+    EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
 
     // test binding a lambda
     {
@@ -220,21 +170,21 @@ TEST(BaseLib, Functional)
     // check that parameters passed by reference are not copied
     {
         auto f1_add = BaseLib::easyBind(&A::add, a1);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         f1_add(a2);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         EXPECT_EQ(7.0, f1_get());
     }
 
     // check that parameters passed by value are copied
     {
         auto f1_mult = BaseLib::easyBind(&A::multiply, a1);
-        EXPECT_INSTANCES(num_const, num_move, num_copy, num_inst);
+        EXPECT_INSTANCES(A, num_const, num_move, num_copy, num_inst);
         f1_mult(a2);
 
-        EXPECT_INSTANCES(num_const, num_move + num_move_base_pass,
+        EXPECT_INSTANCES(A, num_const, num_move + num_move_base_pass,
                          num_copy + num_copy_base_pass, num_inst);
-        InstanceCounter::update(num_const, num_move, num_copy, num_inst);
+        InstanceCounter<A>::update(num_const, num_move, num_copy, num_inst);
 
         EXPECT_EQ(28.0, f1_get());
         EXPECT_EQ(4.0, a2.getValue());
