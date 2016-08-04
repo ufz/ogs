@@ -24,22 +24,24 @@ class NamedFunctionCaller final
 public:
     //! Constructs an instance whose unbound arguments have the given names.
     explicit NamedFunctionCaller(
-        std::initializer_list<std::string> unbound_arguments);
+        std::initializer_list<std::string> unbound_argument_names);
 
     //! Adds the given named function
     void addNamedFunction(NamedFunction&& fct);
+
+    //! Returns all named functions associated with the caller instance.
     std::vector<NamedFunction> const& getNamedFunctions() const
     {
         return _named_functions;
     }
 
     //! Declares that the argument with name \c sink_arg of the function \c
-    //! sink_fct is being computed by the function \c source.
+    //! sink_fct is being computed by the function \c source_fct.
     //!
     //! The functions involved need not already be known to the
     //! NamedFunctionCaller.
     void plug(std::string const& sink_fct, std::string const& sink_arg,
-              std::string const& source);
+              std::string const& source_fct);
 
     //! Actually plug all the plugs previously declared.
     //!

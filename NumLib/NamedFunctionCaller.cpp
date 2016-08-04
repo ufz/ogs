@@ -100,11 +100,11 @@ void traverse(std::vector<std::vector<int>> const& map_sink_source,
 namespace NumLib
 {
 NamedFunctionCaller::NamedFunctionCaller(
-    std::initializer_list<std::string> unbound_arguments)
-    : _uninitialized(-1-unbound_arguments.size())
+    std::initializer_list<std::string> unbound_argument_names)
+    : _uninitialized(-1 - unbound_argument_names.size())
 {
     int idx = -1;
-    for (auto arg : unbound_arguments) {
+    for (auto arg : unbound_argument_names) {
         BaseLib::insertIfKeyUniqueElseError(
             _map_name_idx, arg, idx,
             "The name of the unbound argument is not unique.");
@@ -127,9 +127,9 @@ void NamedFunctionCaller::addNamedFunction(NamedFunction&& fct)
 
 void NamedFunctionCaller::plug(const std::string& sink_fct,
                                const std::string& sink_arg,
-                               const std::string& source)
+                               const std::string& source_fct)
 {
-    _deferred_plugs.push_back({ sink_fct, sink_arg, source });
+    _deferred_plugs.push_back({sink_fct, sink_arg, source_fct});
 }
 
 void NamedFunctionCaller::applyPlugs()
