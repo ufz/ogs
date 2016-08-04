@@ -76,6 +76,12 @@ bool hasTopologicalOrdering(std::vector<std::vector<int>> const& graph)
 
 enum class TraversePosition { StartNode, BetweenChildren, EndNode };
 
+/*! Traverses the graph given by the adjacency list \c map_sink_source in a
+ * depth-first manner starting at the node \c sink_fct.
+ *
+ * At the beginning and end of each node as well as between every two child
+ * nodes the given \c callback is called.
+ */
 template <typename Callback>
 void traverse(std::vector<std::vector<int>> const& map_sink_source,
               int sink_fct, Callback&& callback)
