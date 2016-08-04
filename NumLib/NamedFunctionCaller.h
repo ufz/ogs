@@ -16,7 +16,7 @@
 
 namespace NumLib
 {
-class SpecialFunctionCaller;
+class SpecificFunctionCaller;
 
 //! Builds expression trees of named functions dynamically at runtime.
 class NamedFunctionCaller final
@@ -50,7 +50,8 @@ public:
 
     //! Creates a function caller that is able to call the function with the
     //! given name.
-    SpecialFunctionCaller getSpecialFunction(std::string const& function_name);
+    SpecificFunctionCaller getSpecificFunctionCaller(
+        std::string const& function_name);
 
     //! Returns a string representing the expression graph of the given
     //! function.
@@ -94,18 +95,18 @@ private:
     //! Saves plugs declared by plug().
     std::vector<SinkSource> _deferred_plugs;
 
-    friend class SpecialFunctionCaller;
+    friend class SpecificFunctionCaller;
 };
 
 //! A function caller that can call one specific function.
 //!
 //! \todo Use this class to provide some optimizations of the expression
 //! evaluation.
-class SpecialFunctionCaller final
+class SpecificFunctionCaller final
 {
 public:
     //! Constructs a new instance.
-    SpecialFunctionCaller(std::size_t const function_idx,
+    SpecificFunctionCaller(std::size_t const function_idx,
                           NamedFunctionCaller const& caller);
 
     //! Call the function set up with the given unbound arguments.

@@ -268,15 +268,15 @@ std::string NamedFunctionCaller::getCallExpression(
     return expr;
 }
 
-SpecialFunctionCaller
-NamedFunctionCaller::getSpecialFunction(const std::string &function_name)
+SpecificFunctionCaller
+NamedFunctionCaller::getSpecificFunctionCaller(const std::string &function_name)
 {
     auto const fct_it = _map_name_idx.find(function_name);
     if (fct_it == _map_name_idx.end()) {
         OGS_FATAL("A function with the name `%s' has not been found.",
                   function_name.c_str());
     }
-    return SpecialFunctionCaller(fct_it->second, *this);
+    return SpecificFunctionCaller(fct_it->second, *this);
 }
 
 std::size_t NamedFunctionCaller::getNumberOfUnboundArguments() const
@@ -284,19 +284,19 @@ std::size_t NamedFunctionCaller::getNumberOfUnboundArguments() const
     return -_uninitialized - 1;
 }
 
-SpecialFunctionCaller::SpecialFunctionCaller(const std::size_t function_idx,
+SpecificFunctionCaller::SpecificFunctionCaller(const std::size_t function_idx,
                                              const NamedFunctionCaller& caller)
     : _function_idx(function_idx), _caller(caller)
 {
 }
 
-double SpecialFunctionCaller::call(
+double SpecificFunctionCaller::call(
     const std::vector<double>& unbound_arguments) const
 {
     return _caller.call(_function_idx, unbound_arguments);
 }
 
-std::size_t SpecialFunctionCaller::getNumberOfUnboundArguments() const
+std::size_t SpecificFunctionCaller::getNumberOfUnboundArguments() const
 {
     return _caller.getNumberOfUnboundArguments();
 }

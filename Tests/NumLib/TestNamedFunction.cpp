@@ -100,11 +100,11 @@ TEST(NumLib, NamedFunctionCaller)
     double x = 1.0;
     double y = 2.0;
 
-    auto const g_caller = caller.getSpecialFunction("g");
+    auto const g_caller = caller.getSpecificFunctionCaller("g");
     DBUG("calling %s", caller.getCallExpression("g").c_str());
     EXPECT_EQ(g_inst.g(x), g_caller.call({x, y}));
 
-    auto const f_caller = caller.getSpecialFunction("f");
+    auto const f_caller = caller.getSpecificFunctionCaller("f");
     DBUG("calling %s", caller.getCallExpression("f").c_str());
     EXPECT_EQ(f_inst.f(g_inst.g(x), y), f_caller.call({x, y}));
 }
