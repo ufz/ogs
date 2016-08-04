@@ -192,21 +192,6 @@ void NamedFunctionCaller::applyPlugs()
 }
 
 double NamedFunctionCaller::call(
-    const std::string& function_name,
-    const std::vector<double>& unbound_arguments) const
-{
-    assert(unbound_arguments.size() == getNumberOfUnboundArguments());
-
-    auto it = _map_name_idx.find(function_name);
-    if (it == _map_name_idx.end()) {
-        OGS_FATAL("A function with the name `%s' has not been found.",
-                  function_name.c_str());
-    }
-
-    return call(it->second, unbound_arguments);
-}
-
-double NamedFunctionCaller::call(
     std::size_t function_idx,
     const std::vector<double>& unbound_arguments) const
 {

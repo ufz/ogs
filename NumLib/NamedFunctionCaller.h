@@ -48,12 +48,6 @@ public:
     //! \pre All functions involved must have been added.
     void applyPlugs();
 
-    //! Calls the function with the given name with the given unbound arguments.
-    //!
-    //! \pre applyPlugs() must have been called before.
-    double call(std::string const& function_name,
-                std::vector<double> const& unbound_arguments) const;
-
     //! Creates a function caller that is able to call the function with the
     //! given name.
     SpecialFunctionCaller getSpecialFunction(std::string const& function_name);
