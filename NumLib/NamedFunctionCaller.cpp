@@ -120,7 +120,8 @@ void NamedFunctionCaller::addNamedFunction(NamedFunction&& fct)
         _map_name_idx, fct.getName(), _named_functions.size(),
         "The name of the function is not unique.");
 
-    _map_sink_source.emplace_back(fct.getArgumentInfo().size(), _uninitialized);
+    _map_sink_source.emplace_back(fct.getArgumentNames().size(),
+                                  _uninitialized);
     _named_functions.push_back(std::move(fct));
 }
 
@@ -157,7 +158,7 @@ void NamedFunctionCaller::applyPlugs()
         auto const sink_fct_idx = sink_it->second;
 
         auto const& sink_args =
-            _named_functions[sink_it->second].getArgumentInfo();
+            _named_functions[sink_it->second].getArgumentNames();
         auto const sink_arg_it =
             std::find(sink_args.begin(), sink_args.end(), sink_arg);
         if (sink_arg_it == sink_args.end())
@@ -216,7 +217,7 @@ double NamedFunctionCaller::call(
          _named_functions[function_idx].getName().c_str());
     auto const& sis_sos = _map_sink_source[function_idx];
     assert(sis_sos.size() ==
-           _named_functions[function_idx].getArgumentInfo().size());
+           _named_functions[function_idx].getArgumentNames().size());
     std::vector<double> fct_args(sis_sos.size());
 
     for (std::size_t sink=0; sink<sis_sos.size(); ++sink)

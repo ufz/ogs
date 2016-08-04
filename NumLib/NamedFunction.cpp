@@ -64,9 +64,9 @@ static const CallerFunction callers[] = {
     generateCaller<21>(), generateCaller<22>(), generateCaller<23>(),
     generateCaller<24>(), generateCaller<25>(), generateCaller<26>(),
     generateCaller<27>(), generateCaller<28>(), generateCaller<29>(),
-    generateCaller<30>(), generateCaller<31>()};
+    generateCaller<30>(), generateCaller<31>(), generateCaller<32>()};
 static_assert(sizeof(callers) / sizeof(CallerFunction) ==
-                  NumLib::MAX_FUNCTION_ARGS,
+                  NumLib::NamedFunction::MAX_FUNCTION_ARGS + 1,
               "You did not instantiate the right number of callers.");
 
 /*! Deletes the given \c function.
@@ -113,9 +113,9 @@ static const DeleterFunction deleters[] = {
     generateDeleter<21>(), generateDeleter<22>(), generateDeleter<23>(),
     generateDeleter<24>(), generateDeleter<25>(), generateDeleter<26>(),
     generateDeleter<27>(), generateDeleter<28>(), generateDeleter<29>(),
-    generateDeleter<30>(), generateDeleter<31>()};
+    generateDeleter<30>(), generateDeleter<31>(), generateDeleter<32>()};
 static_assert(sizeof(deleters) / sizeof(DeleterFunction) ==
-                  NumLib::MAX_FUNCTION_ARGS,
+                  NumLib::NamedFunction::MAX_FUNCTION_ARGS + 1,
               "You did not instantiate the right number of deleters.");
 
 /*! Copies the given \c function.
@@ -162,16 +162,16 @@ static const CopierFunction copiers[] = {
     generateCopier<21>(), generateCopier<22>(), generateCopier<23>(),
     generateCopier<24>(), generateCopier<25>(), generateCopier<26>(),
     generateCopier<27>(), generateCopier<28>(), generateCopier<29>(),
-    generateCopier<30>(), generateCopier<31>()};
+    generateCopier<30>(), generateCopier<31>(), generateCopier<32>()};
 static_assert(sizeof(copiers) / sizeof(CopierFunction) ==
-                  NumLib::MAX_FUNCTION_ARGS,
+                  NumLib::NamedFunction::MAX_FUNCTION_ARGS + 1,
               "You did not instantiate the right number of deleters.");
 
 namespace NumLib
 {
 NamedFunction::NamedFunction(NamedFunction&& other)
     : _name(std::move(other._name)),
-      _argument_info(std::move(other._argument_info)),
+      _argument_names(std::move(other._argument_names)),
       _function(other._function)
 {
     other._function = nullptr;
@@ -179,20 +179,20 @@ NamedFunction::NamedFunction(NamedFunction&& other)
 
 NamedFunction::NamedFunction(NamedFunction const& other)
     : _name(other._name),
-      _argument_info(other._argument_info),
-      _function(copiers[_argument_info.size()](other._function))
+      _argument_names(other._argument_names),
+      _function(copiers[_argument_names.size()](other._function))
 {
 }
 
 NamedFunction::~NamedFunction()
 {
-    deleters[_argument_info.size()](_function);
+    deleters[_argument_names.size()](_function);
 }
 
 double NamedFunction::call(const std::vector<double>& arguments) const
 {
-    assert(arguments.size() == _argument_info.size());
-    return callers[_argument_info.size()](_function, arguments);
+    assert(arguments.size() == _argument_names.size());
+    return callers[_argument_names.size()](_function, arguments);
 }
 
 }  // namespace NumLib
