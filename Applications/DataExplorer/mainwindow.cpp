@@ -24,6 +24,7 @@
 // GeoLib
 #include "Raster.h"
 #include "GeoLib/IO/Legacy/OGSIOVer4.h"
+#include "GeoLib/DuplicateGeometry.h"
 
 // MeshGeoLib
 #include "MeshGeoToolsLib/GeoMapper.h"
@@ -857,7 +858,7 @@ void MainWindow::mapGeometry(const std::string &geo_name)
     else // use mesh from ProjectData
         mesh = _project.getMeshObjects()[choice-2].get();
 
-    std::string const& new_geo_name = dlg.getNewGeoName();
+    std::string new_geo_name = dlg.getNewGeoName();
 
     if (new_geo_name.empty())
     {
@@ -866,7 +867,12 @@ void MainWindow::mapGeometry(const std::string &geo_name)
     }
     else
     {
-        geo_mapper.advancedMapOnMesh(mesh, new_geo_name);
+        GeoLib::DuplicateGeometry dup(_project.getGEOObjects(), geo_name,
+                                      new_geo_name);
+        new_geo_name = dup.getFinalizedOutputName();
+        MeshGeoToolsLib::GeoMapper mapper =
+            MeshGeoToolsLib::GeoMapper(_project.getGEOObjects(), new_geo_name);
+        mapper.advancedMapOnMesh(*mesh);
         _geo_model->updateGeometry(new_geo_name);
     }
 }

@@ -249,4 +249,25 @@ void PointVec::setNameForElement(std::size_t id, std::string const& name)
     _id_to_name_map[id] = name;
 }
 
+void PointVec::resetInternalDataStructures()
+{
+    MathLib::Point3d const& min(_aabb.getMinPoint());
+    MathLib::Point3d const& max(_aabb.getMaxPoint());
+    double const rel_eps(_rel_eps / std::sqrt(MathLib::sqrDist(min, max)));
+
+    _aabb = GeoLib::AABB(_data_vec->begin(), _data_vec->end());
+
+    _rel_eps = rel_eps * std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(),
+                                                    _aabb.getMaxPoint()));
+
+    _oct_tree.reset(OctTree<GeoLib::Point, 16>::createOctTree(
+        _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
+
+    GeoLib::Point* ret_pnt(nullptr);
+    for (auto const p : *_data_vec)
+    {
+        _oct_tree->addPoint(p, ret_pnt);
+    }
+}
+
 }  // end namespace

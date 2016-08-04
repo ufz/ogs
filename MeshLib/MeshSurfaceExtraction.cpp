@@ -70,7 +70,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle,
     std::string const& subsfc_node_id_backup_prop_name)
 {
-    if (angle < 0 || angle > 90)
+    // allow slightly greater angles than 90 degrees for numerical errors
+    if (angle < 0 || angle > 91)
     {
         ERR ("Supported angle between 0 and 90 degrees only.");
         return nullptr;

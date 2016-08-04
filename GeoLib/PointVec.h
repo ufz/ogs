@@ -103,6 +103,12 @@ public:
 
     void setNameForElement(std::size_t id, std::string const& name) override;
 
+    /// Resets the internal data structures, i.e., the axis aligned bounding
+    /// box, the relative epsilon for the equality tests and the oct tree data
+    /// structure.
+    /// \note This method have to be called if the coordinates of a point stored
+    /// by the PointVec is modified from outside.
+    void resetInternalDataStructures();
 private:
     /**
      * After the point set is modified (for example by makePntsUnique()) the mapping has to be corrected.

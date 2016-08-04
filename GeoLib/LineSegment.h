@@ -50,5 +50,14 @@ std::ostream& operator<< (std::ostream& os, LineSegment const& s);
 std::ostream& operator<<(std::ostream& os,
                          std::pair<GeoLib::LineSegment const&,
                                    GeoLib::LineSegment const&> const& seg_pair);
+
+/// Compares two objects of type LineSegment.
+/// @note The comparison is not strict. Two line segments \f$s_0 = (b_0, e_0)\f$
+/// and \f$s_1 = (b_1, e_1)\f$ are equal, if \f$\|b_0-b_1\|^2 < \epsilon\f$ and
+/// \f$\|e_0-e_1\|^2 < \epsilon\f$ or \f$\|b_0-e_1\|^2 < \epsilon\f$ and
+/// \f$\|e_0-b_1\|^2 < \epsilon\f$ where \f$\epsilon\f$ is the machine precision
+///  of double.
+bool operator==(LineSegment const& s0, LineSegment const& s1);
+
 }
 #endif
