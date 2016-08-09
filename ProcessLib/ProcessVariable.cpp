@@ -137,7 +137,7 @@ MeshLib::PropertyVector<double>& ProcessVariable::getOrCreateMeshProperty()
 }
 
 std::vector<std::unique_ptr<BoundaryCondition>>
-ProcessVariable::getBoundaryConditions(
+ProcessVariable::createBoundaryConditions(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
     unsigned const integration_order)

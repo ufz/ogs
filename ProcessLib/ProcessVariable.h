@@ -58,7 +58,7 @@ public:
     /// Returns the number of components of the process variable.
     int getNumberOfComponents() const { return _n_components; }
 
-    std::vector<std::unique_ptr<BoundaryCondition>> getBoundaryConditions(
+    std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table,
         const int variable_id,
         unsigned const integration_order);
