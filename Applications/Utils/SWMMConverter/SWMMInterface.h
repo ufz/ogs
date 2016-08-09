@@ -97,6 +97,12 @@ public:
     /// Returns an array for a given variable for one specific object from a SWMM output file for all time steps.
     std::vector<double> getArrayForObject(SwmmObject obj_type, std::size_t obj_idx, std::size_t var_idx) const;
 
+    /// Writes the node coordinates into double vectors for writing of CSV files
+    bool getNodeCoordinateVectors(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z) const;
+
+    /// Writes the inlet- and outlet IDs for links into vectors for writing of CSV files
+    bool getLinkPointIds(std::vector<std::size_t> &inlets, std::vector<std::size_t> &outlets) const;
+
     /// Write a CSV file for all object of the given type at one time step
     bool writeCsvForTimestep(std::string const& file_name, SwmmObject obj_type, std::size_t time_step) const;
 
@@ -105,7 +111,7 @@ public:
 
     /// Checks if file is a SWMM input file
     static bool isSwmmInputFile(std::string const& inp_file_name);
-    
+
     /// Checks if file is a SWMM output file
     static bool isSwmmOutputFile(std::string const& inp_file_name);
 

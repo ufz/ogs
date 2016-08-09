@@ -1177,6 +1177,34 @@ bool SwmmInterface::isCommentLine(std::string const& str)
     return (str.compare(str.find_first_not_of(' ', 0),2,";;") == 0);
 }
 
+bool SwmmInterface::getNodeCoordinateVectors(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z) const
+{
+    std::vector<MeshLib::Node*> const& nodes (_mesh->getNodes());
+    for (MeshLib::Node const*const node : nodes)
+    {
+        x.push_back((*node)[0]);
+        y.push_back((*node)[1]);
+        z.push_back((*node)[2]);
+    }
+    return true;
+}
+
+bool SwmmInterface::getLinkPointIds(std::vector<std::size_t> &inlets, std::vector<std::size_t> &outlets) const
+{
+    std::vector<MeshLib::Element*> const& elements (_mesh->getElements());
+    for (MeshLib::Element const*const elem : elements)
+    {
+        if (elem->getGeomType() != MeshLib::MeshElemType::LINE)
+        {
+            ERR ("Non line-element found in mesh.");
+            return false;
+        }
+        inlets.push_back(elem->getNodeIndex(0));
+        outlets.push_back(elem->getNodeIndex(1));
+    }
+    return true;
+}
+
 bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject obj_type, std::size_t time_step) const
 {
     FileIO::CsvInterface csv;

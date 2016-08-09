@@ -79,15 +79,24 @@ int main(int argc, char *argv[])
     // Writing node information to csv file
     FileIO::CsvInterface csv;
     csv.addIndexVectorForWriting(SWMM_Nnodes);
+    std::vector<double> x;
+    std::vector<double> y;
+    std::vector<double> z;
+    swmm->getNodeCoordinateVectors(x,y,z);
+    csv.addVectorForWriting("x", x);
+    csv.addVectorForWriting("y", y);
+    csv.addVectorForWriting("z", z);
     for (std::size_t i=0; i<9; ++i)
     {
-        std::vector<double> data_vec = swmm.getArrayAtTimeStep(SwmmObject::NODE, 10, i);
+        std::vector<double> data_vec = swmm->getArrayAtTimeStep(SwmmObject::NODE, 10, i);
         csv.addVectorForWriting(swmm.getArrayName(SwmmObject::NODE, i), data_vec);
     }
     csv.writeToFile("d:/csvtest.csv");
     std::cout << "csv written" << std::endl;
     std::cin.ignore();
+*/
 
+/*
     // Add simulated parameter to mesh for each timestep and write result
     for (std::size_t i=0; i<SWMM_Nperiods; i+=10)
     {
