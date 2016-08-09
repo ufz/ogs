@@ -29,8 +29,11 @@ struct BoundaryConditionConfig;
 class BoundaryCondition
 {
 public:
+    //! Applies natural BCs (i.e. non-Dirichlet BCs) to the stiffness matrix
+    //! \c K and the vector \c b.
     virtual void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
                        GlobalVector& b) = 0;
+
     virtual ~BoundaryCondition() = default;
 };
 
