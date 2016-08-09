@@ -16,11 +16,11 @@
 namespace ProcessLib
 {
 
-class BoundaryConditionCollection : public BoundaryCondition
+class BoundaryConditionCollection final
 {
 public:
     void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
-               GlobalVector& b) override;
+               GlobalVector& b);
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const /*t*/) const
