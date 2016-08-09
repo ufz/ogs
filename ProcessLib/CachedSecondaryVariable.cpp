@@ -55,12 +55,11 @@ GlobalVector const& CachedSecondaryVariable::evalField(
 GlobalVector const& CachedSecondaryVariable::evalFieldNoArgs() const
 {
     if (!_needs_recomputation) {
-        INFO(
-            "Solid density does not need to be recomputed. Returning "
-            "cached values");
+        DBUG("%s does not need to be recomputed. Returning cached values",
+             _internal_variable_name.c_str());
         return _solid_density;
     }
-    DBUG("Recomputing solid density.");
+    DBUG("Recomputing %s.", _internal_variable_name.c_str());
     _extrapolator.extrapolate(*_extrapolatables);
     auto const& nodal_values = _extrapolator.getNodalValues();
     MathLib::LinAlg::copy(nodal_values, _solid_density);
