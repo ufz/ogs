@@ -189,7 +189,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     minus_delta_x.setZero();
 
     unsigned iteration = 1;
-    for (; iteration < _maxiter; ++iteration)
+    for (; iteration <= _maxiter; ++iteration)
     {
         BaseLib::RunTime time_iteration;
         time_iteration.start();
