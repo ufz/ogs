@@ -153,13 +153,26 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     if (!materialIds)
         return;
 
+    // fetch the source of property values
+    boost::optional<MeshLib::PropertyVector<double> const&> opt_src_props(
+        _src_mesh->getProperties().getPropertyVector<double>(_property_name));
+    if (!opt_src_props)
+    {
+        WARN("Did not find PropertyVector<double> \"%s\".",
+             _property_name.c_str());
+        return;
+    }
+
+    MeshLib::PropertyVector<double> const& elem_props(opt_src_props.get());
     std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
     const std::size_t n_src_nodes(src_nodes.size());
-    for (std::size_t k(0); k<n_src_nodes; k++) {
-        const std::size_t n_con_elems (src_nodes[k]->getNumberOfElements());
-        interpolated_node_properties[k] = (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(0)->getID()]];
-        for (std::size_t j(1); j<n_con_elems; j++) {
-            interpolated_node_properties[k] += (*_src_properties)[(*materialIds)[src_nodes[k]->getElement(j)->getID()]];
+    for (std::size_t k(0); k < n_src_nodes; k++)
+    {
+        const std::size_t n_con_elems(src_nodes[k]->getNumberOfElements());
+        interpolated_properties[k] = elem_props[(src_nodes[k]->getElement(0))->getID()];
+        for (std::size_t j(1); j < n_con_elems; j++)
+        {
+            interpolated_properties[k] += elem_props[(src_nodes[k]->getElement(j))->getID()];
         }
         interpolated_node_properties[k] /= n_con_elems;
     }
