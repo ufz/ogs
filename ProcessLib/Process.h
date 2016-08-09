@@ -136,6 +136,8 @@ private:
 
     void initializeExtrapolator();
 
+    /// Finishes the \c _named_function_caller and adds a secondary variable for
+    /// each of the named functions.
     void finishNamedFunctionsInitialization();
 
     /// Sets the initial condition values in the solution vector x for a given

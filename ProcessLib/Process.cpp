@@ -278,6 +278,7 @@ ProcessVariable& findProcessVariable(
 
 void Process::preIteration(const unsigned iter, const GlobalVector &x)
 {
+    // In every new iteration cached values of secondary variables are expired.
     for (auto& cached_var : _cached_secondary_variables) {
         cached_var->expire();
     }
