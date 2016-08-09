@@ -13,11 +13,6 @@
 #include "GenericNaturalBoundaryCondition.h"
 #include "UniformNeumannBoundaryConditionLocalAssembler.h"
 
-namespace MeshGeoToolsLib
-{
-class BoundaryElementsSearcher;
-}
-
 namespace ProcessLib
 {
 using UniformNeumannBoundaryCondition = GenericNaturalBoundaryCondition<
@@ -25,10 +20,11 @@ using UniformNeumannBoundaryCondition = GenericNaturalBoundaryCondition<
 
 std::unique_ptr<UniformNeumannBoundaryCondition>
 createUniformNeumannBoundaryCondition(
-    BoundaryConditionConfig const& config,
-    MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+    BaseLib::ConfigTree const& config,
+    std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    unsigned const integration_order, unsigned const global_dim);
+    int const component_id, unsigned const integration_order,
+    unsigned const global_dim);
 
 }  // ProcessLib
 

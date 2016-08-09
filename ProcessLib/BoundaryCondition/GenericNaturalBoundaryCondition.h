@@ -35,7 +35,7 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim,
-        std::vector<MeshLib::Element*> const& elements, Data&& data);
+        std::vector<MeshLib::Element*>&& elements, Data&& data);
 
     ~GenericNaturalBoundaryCondition() override;
 

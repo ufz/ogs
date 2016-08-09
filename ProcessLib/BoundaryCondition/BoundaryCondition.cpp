@@ -31,14 +31,34 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
 
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
-    if (type == "UniformDirichlet") {
+    if (type == "UniformDirichlet")
+    {
+        // Find nodes' ids on the given mesh on which this boundary condition
+        // is defined.
+        std::vector<std::size_t> ids =
+            mesh_node_searcher.getMeshNodeIDs(config.geometry);
+
         return createUniformDirichletBoundaryCondition(
-            config, mesh_node_searcher, dof_table, variable_id);
-    } else if (type == "UniformNeumann") {
+            config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
+            config.component_id);
+    }
+    else if (type == "UniformNeumann")
+    {
+        std::vector<MeshLib::Element*> elements =
+            boundary_element_searcher.getBoundaryElements(config.geometry);
+
+        // Deep copy all the elements, because the searcher might destroy the
+        // originals. Store pointers to the copies in the elements vector (i.e.,
+        // in-place modification).
+        for (auto& e : elements)
+            e = e->clone();
+
         return createUniformNeumannBoundaryCondition(
-            config, boundary_element_searcher, dof_table, variable_id,
-            integration_order, mesh.getDimension());
-    } else {
+            config.config, std::move(elements), dof_table, variable_id,
+            config.component_id, integration_order, mesh.getDimension());
+    }
+    else
+    {
         OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
     }
 }

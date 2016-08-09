@@ -28,16 +28,13 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim,
-        std::vector<MeshLib::Element*> const& elements, Data&& data)
-    : _data(std::forward<Data>(data)), _integration_order(integration_order)
+        std::vector<MeshLib::Element*>&& elements, Data&& data)
+    : _data(std::forward<Data>(data)),
+      _elements(std::move(elements)),
+      _integration_order(integration_order)
 {
     assert(component_id <
            static_cast<int>(dof_table_bulk.getNumberOfComponents()));
-
-    // deep copy because the neumann bc config destroys the elements.
-    std::transform(elements.begin(), elements.end(),
-                   std::back_inserter(_elements),
-                   std::mem_fn(&MeshLib::Element::clone));
 
     std::vector<MeshLib::Node*> nodes = MeshLib::getUniqueNodes(_elements);
 
