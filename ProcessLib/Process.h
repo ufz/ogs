@@ -44,7 +44,8 @@ public:
             std::vector<std::reference_wrapper<ProcessVariable>>&&
                 process_variables,
             SecondaryVariableCollection&& secondary_variables,
-            ProcessOutput&& process_output);
+            ProcessOutput&& process_output,
+            NumLib::NamedFunctionCaller&& named_function_caller);
 
     /// Preprocessing before starting assembly for new timestep.
     virtual void preTimestep(GlobalVector const& /*x*/, const double /*t*/,
