@@ -15,6 +15,8 @@
 
 namespace ProcessLib
 {
+//! Returns the value for the given \c node_id and \c global_component_id from
+//! the vector \c x.
 double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
                      std::size_t const node_id,
