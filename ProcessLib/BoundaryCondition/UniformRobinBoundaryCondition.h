@@ -33,10 +33,11 @@ using UniformRobinBoundaryCondition = GenericNaturalBoundaryCondition<
  */
 std::unique_ptr<UniformRobinBoundaryCondition>
 createUniformRobinBoundaryCondition(
-    BoundaryConditionConfig const& config,
-    MeshGeoToolsLib::BoundaryElementsSearcher& searcher,
+    BaseLib::ConfigTree const& config,
+    std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    unsigned const integration_order, unsigned const global_dim);
+    int const component_id, unsigned const integration_order,
+    unsigned const global_dim);
 
 }  // ProcessLib
 
