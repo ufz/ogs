@@ -18,15 +18,31 @@
 
 namespace ProcessLib
 {
-class GlobalVectorFromNamedFunction
+//! Computes a global vector from a NamedFunction (which can only compute double
+//! values).
+class GlobalVectorFromNamedFunction final
 {
 public:
+    /*! Constructs a new instance.
+     *
+     * \param function_caller will provide the individual entries of the
+     * GlobalVector to be computed.
+     * \param mesh to which the \c dof_table_single is associated
+     * \param dof_table_single used for constructing the GlobalVector
+     * \param context used by the \c function_caller to access "auxiliary
+     * unbound arguments".
+     */
     GlobalVectorFromNamedFunction(
         NumLib::SpecificFunctionCaller&& function_caller,
         MeshLib::Mesh const& mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_single,
         SecondaryVariableContext& context);
 
+    //! Computes the GlobalVector.
+    //!
+    //! The signature of this method matches
+    //! SecondaryVariableFunctions::Function, i.e., this method can be used to
+    //! compute a secondary variable.
     GlobalVector const& call(GlobalVector const& x,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
                              std::unique_ptr<GlobalVector>& result_cache);
