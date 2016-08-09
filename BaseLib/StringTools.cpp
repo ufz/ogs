@@ -25,6 +25,16 @@
 
 namespace BaseLib
 {
+std::vector<std::string> splitString(std::string const& str)
+{
+    std::istringstream str_stream(str);
+    std::vector<std::string> items;
+    std::copy(std::istream_iterator<std::string>(str_stream),
+        std::istream_iterator<std::string>(),
+        std::back_inserter(items));
+    return items;
+}
+
 std::list<std::string> splitString(const std::string &str, char delim)
 {
     std::list<std::string> strList;
