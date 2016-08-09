@@ -11,11 +11,7 @@
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "DirichletBc.h"
-#include "NeumannBc.h"
-#include "NeumannBcAssembler.h"
 #include "ProcessVariable.h"
-#include "UniformDirichletBoundaryCondition.h"
 
 namespace ProcessLib
 {
@@ -60,21 +56,8 @@ void Process::initialize()
                               _integration_order);
 
     DBUG("Initialize boundary conditions.");
-    for (int variable_id = 0;
-         variable_id < static_cast<int>(_process_variables.size());
-         ++variable_id)
-    {
-        ProcessVariable& pv = _process_variables[variable_id];
-        for (int component_id = 0; component_id < pv.getNumberOfComponents();
-             ++component_id)
-        {
-            createDirichletBcs(pv, variable_id, component_id);
-            createNeumannBcs(pv, variable_id, component_id);
-        }
-    }
-
-    for (auto& bc : _neumann_bcs)
-        bc->initialize(_mesh.getDimension());
+    _boundary_conditions.addBCsForProcessVariables(
+        _process_variables, *_local_to_global_index_map, _integration_order);
 }
 
 void Process::setInitialConditions(GlobalVector& x)
@@ -104,10 +87,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b)
 {
     assembleConcreteProcess(t, x, M, K, b);
-
-    // Call global assembler for each Neumann boundary local assembler.
-    for (auto const& bc : _neumann_bcs)
-        bc->integrate(t, b);
+    _boundary_conditions.apply(t, x, K, b);
 }
 
 void Process::assembleJacobian(const double t, GlobalVector const& x,
@@ -234,40 +214,6 @@ void Process::setInitialConditions(ProcessVariable const& variable,
         x.set(global_index,
               variable.getInitialConditionValue(node_id, component_id));
     }
-}
-
-void Process::createDirichletBcs(ProcessVariable& variable,
-                                 int const variable_id, int const component_id)
-{
-    MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            variable.getMesh());
-
-    variable.initializeDirichletBCs(std::back_inserter(_dirichlet_bcs),
-                                    mesh_node_searcher,
-                                    *_local_to_global_index_map,
-                                    variable_id,
-                                    component_id);
-}
-
-void Process::createNeumannBcs(ProcessVariable& variable, int const variable_id,
-                               int const component_id)
-{
-    // Find mesh nodes.
-    MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            variable.getMesh());
-    MeshGeoToolsLib::BoundaryElementsSearcher mesh_element_searcher(
-        variable.getMesh(), mesh_node_searcher);
-
-    // Create a neumann BC for the process variable storing them in the
-    // _neumann_bcs vector.
-    variable.createNeumannBcs(std::back_inserter(_neumann_bcs),
-                              mesh_element_searcher,
-                              _integration_order,
-                              *_local_to_global_index_map,
-                              variable_id,
-                              component_id);
 }
 
 void Process::computeSparsityPattern()

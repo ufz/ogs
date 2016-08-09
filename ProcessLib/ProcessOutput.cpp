@@ -10,6 +10,7 @@
 #include "ProcessOutput.h"
 
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
 {

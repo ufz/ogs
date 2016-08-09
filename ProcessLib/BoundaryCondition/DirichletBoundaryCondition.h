@@ -10,17 +10,24 @@
 #ifndef PROCESS_LIB_DIRICHLETBC_H
 #define PROCESS_LIB_DIRICHLETBC_H
 
-#include <vector>
-
 #include "NumLib/IndexValueVector.h"
+#include "BoundaryCondition.h"
 
 namespace ProcessLib
 {
+class DirichletBoundaryCondition : public BoundaryCondition
+{
+public:
+    virtual NumLib::IndexValueVector<GlobalIndexType> getBCValues() = 0;
 
-/// A dirichlet boundary condition is represented by a list of global indices
-/// with corresponding values.
-template <typename IndexType>
-using DirichletBc = NumLib::IndexValueVector<IndexType>;
+    void apply(const double /*t*/,
+               GlobalVector const& /*x*/,
+               GlobalMatrix& /*K*/,
+               GlobalVector& /*b*/) override final
+    {
+        // Do nothing. Dirichlet BCs are handled specially.
+    }
+};
 
 }  // namespace ProcessLib
 

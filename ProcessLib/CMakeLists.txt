@@ -3,6 +3,9 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 # Source files
 APPEND_SOURCE_FILES(SOURCES)
 
+add_subdirectory(BoundaryCondition)
+APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
+
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
