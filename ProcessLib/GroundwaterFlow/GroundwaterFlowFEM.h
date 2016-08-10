@@ -100,7 +100,7 @@ public:
                                  sm.detJ * wp.getWeight();
 
             // Darcy velocity only computed for output.
-            auto const darcy_velocity = (k * sm.dNdx *
+            auto const darcy_velocity = -(k * sm.dNdx *
                 Eigen::Map<const NodalVectorType>(local_x.data(), ShapeFunction::NPOINTS)
                 ).eval();
 
