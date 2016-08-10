@@ -81,12 +81,16 @@ int main(int argc, char *argv[])
         out << std::scientific
             << std::setprecision(std::numeric_limits<double>::digits10);
         out << "--------------------------------------------------------" << std::endl;
-        auto* node = mesh->getNode(node_id);
+        MeshLib::Node const* node = mesh->getNode(node_id);
         out << "# Node" << node->getID() << std::endl;
         out << "Coordinates: " << *node << std::endl;
-        out << "Connected elements: " ;
-        for (unsigned i=0; i<node->getNumberOfElements(); i++)
-            out << node->getElement(i)->getID() << " ";
+        out << "Connected elements (" << node->getNumberOfElements() << "): ";
+        for (auto ele : node->getElements())
+            out << ele->getID() << " ";
+        out << std::endl;
+        out << "Connected nodes (" << node->getConnectedNodes().size() << "): ";
+        for (auto nd : node->getConnectedNodes())
+            out << nd->getID() << " ";
         out << std::endl;
         INFO("%s", out.str().c_str());
     }
