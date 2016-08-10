@@ -27,9 +27,13 @@ using UniformRobinBoundaryCondition = GenericNaturalBoundaryCondition<
 /*! Creates a new uniform Robin boundary condition from the given data.
  *
  * The Robin boundary condition is given in the form
- * \f$ \partial f/\partial n = \alpha \cdot [ f(x) - f_0 ] \f$,
- * where the coefficients \f$ \alpha \f$ and \f$ f_0 \f$ are obtained from the
- * \c config.
+ * \f$ \alpha \cdot [ u_0 - u(x) ] \f$,
+ * where the coefficients \f$ \alpha \f$ and \f$ u_0 \f$ are obtained from the
+ * \c config, and \f$ u \f$ is the unknown to which the boundary condition is
+ * applied.
+ *
+ * The value \f$ \alpha \cdot [ u_0 - u(x) ] \f$ is a flux. It replaces the
+ * integrand in the boundary integral for the variable \f$ u \f$.
  */
 std::unique_ptr<UniformRobinBoundaryCondition>
 createUniformRobinBoundaryCondition(

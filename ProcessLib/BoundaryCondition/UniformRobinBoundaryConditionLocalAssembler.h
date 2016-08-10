@@ -16,7 +16,7 @@ namespace ProcessLib
 {
 struct UniformRobinBoundaryConditionData final {
     double const alpha;
-    double const f_0;
+    double const u_0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -59,13 +59,13 @@ public:
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
 
-            // df/dn = alpha ( f - f_0 )
-            // adding a -alpha term to the diagonal of the stiffness matrix
-            // and a -alpha * f_0 term to the rhs vector
-            _local_K.diagonal().noalias() -=
+            // flux = alpha * ( u_0 - u )
+            // adding a alpha term to the diagonal of the stiffness matrix
+            // and a alpha * u_0 term to the rhs vector
+            _local_K.diagonal().noalias() +=
                 sm.N * _data.alpha * sm.detJ * wp.getWeight();
-            _local_rhs.noalias() -=
-                sm.N * _data.alpha * _data.f_0 * sm.detJ * wp.getWeight();
+            _local_rhs.noalias() +=
+                sm.N * _data.alpha * _data.u_0 * sm.detJ * wp.getWeight();
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

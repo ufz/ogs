@@ -25,14 +25,14 @@ createUniformRobinBoundaryCondition(
 
     //! \ogs_file_param{boundary_condition__UniformRobin__alpha}
     double const alpha = config.getConfigParameter<double>("alpha");
-    //! \ogs_file_param{boundary_condition__UniformRobin__f_0}
-    double const f_0 = config.getConfigParameter<double>("f_0");
+    //! \ogs_file_param{boundary_condition__UniformRobin__u_0}
+    double const u_0 = config.getConfigParameter<double>("u_0");
 
     return std::unique_ptr<UniformRobinBoundaryCondition>(
         new UniformRobinBoundaryCondition(
             integration_order, dof_table, variable_id, component_id, global_dim,
             std::move(elements),
-            UniformRobinBoundaryConditionData{alpha, f_0}));
+            UniformRobinBoundaryConditionData{alpha, u_0}));
 }
 
 }  // ProcessLib
