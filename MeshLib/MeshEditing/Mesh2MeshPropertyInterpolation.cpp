@@ -23,6 +23,7 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/Grid.h"
 
+#include "MeshLib/MeshEnums.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
@@ -85,6 +86,9 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(Mesh *dest_mes
     const std::size_t n_dest_elements(dest_elements.size());
     for (std::size_t k(0); k<n_dest_elements; k++)
     {
+        if (dest_elements[k]->getGeomType() == MeshElemType::LINE)
+            continue;
+
         // compute axis aligned bounding box around the current element
         const GeoLib::AABB elem_aabb(dest_elements[k]->getNodes(), dest_elements[k]->getNodes()+dest_elements[k]->getNumberOfBaseNodes());
 
