@@ -35,6 +35,8 @@ int main(int argc, char *argv[])
     cmd.add( eleId_arg );
     TCLAP::MultiArg<std::size_t> nodeId_arg("n","node-id","node ID",false,"number");
     cmd.add( nodeId_arg );
+    TCLAP::SwitchArg showNodeWithMaxEle_arg("", "show-node-with-max-elements", "show a node having the max number of connected elements", false);
+    cmd.add( showNodeWithMaxEle_arg );
 
     cmd.parse( argc, argv );
 
@@ -47,6 +49,19 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
 
     auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+
+    std::vector<std::size_t> selected_node_ids;
+    if  (showNodeWithMaxEle_arg.getValue())
+    {
+        auto itr = std::max_element(mesh->getNodes().begin(), mesh->getNodes().end(),
+                     [](MeshLib::Node* i, MeshLib::Node* j) { return i->getNumberOfElements() < j->getNumberOfElements(); });
+        if (itr != mesh->getNodes().end())
+        {
+            MeshLib::Node* node = *itr;
+            selected_node_ids.push_back(node->getID());
+        }
+    }
+    selected_node_ids.insert(selected_node_ids.end(), nodeId_arg.getValue().begin(), nodeId_arg.getValue().end());
 
     for (auto ele_id : eleId_arg.getValue())
     {
@@ -75,14 +90,14 @@ int main(int argc, char *argv[])
         INFO("%s", out.str().c_str());
     }
 
-    for (auto node_id : nodeId_arg.getValue())
+    for (auto node_id : selected_node_ids)
     {
         std::stringstream out;
         out << std::scientific
             << std::setprecision(std::numeric_limits<double>::digits10);
         out << "--------------------------------------------------------" << std::endl;
         MeshLib::Node const* node = mesh->getNode(node_id);
-        out << "# Node" << node->getID() << std::endl;
+        out << "# Node " << node->getID() << std::endl;
         out << "Coordinates: " << *node << std::endl;
         out << "Connected elements (" << node->getNumberOfElements() << "): ";
         for (auto ele : node->getElements())
