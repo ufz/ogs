@@ -15,7 +15,7 @@
 #include "UniformNeumannBoundaryCondition.h"
 #include "UniformRobinBoundaryCondition.h"
 
-std::vector<MeshLib::Element*> getClonedElements(
+static std::vector<MeshLib::Element*> getClonedElements(
     MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
     GeoLib::GeoObject const& geometry)
 {
