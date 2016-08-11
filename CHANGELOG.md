@@ -1,5 +1,14 @@
 ## Release notes
-# 6.0.6 (in preparation)
+# 6.0.7 (in preparation)
+
+### Features:
+
+### Infrastructure
+
+### Fixes:
+ - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
+
+# 6.0.6
 
 ### Features:
  - Add external ode-solver interface with [Sundials CVODE
@@ -64,8 +73,7 @@
  - Fix finding Boost with BOOST_ROOT CMake argument #1287
  - Fix linking of Sundials CVODE library #1197
  - Fixed issue where geometry names would be missing after merging geometries #1295
- - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
- 
+
 # 6.0.5
 
 ### Features:
