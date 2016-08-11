@@ -42,11 +42,9 @@ public:
      * mesh elements.
      * @param mesh the mesh the property information will be calculated and set via
      * weighted interpolation
-     * @param properties at input a vector of length equal to the number of elements,
-     *     at output interpolated property values
      * @return true if the operation was successful, false on error
      */
-    bool setPropertiesForMesh(Mesh *mesh, std::vector<double>& properties) const;
+    bool setPropertiesForMesh(Mesh *mesh) const;
 
 private:
     /**
@@ -54,7 +52,7 @@ private:
      * @param dest_mesh
      * @param dest_properties
      */
-    void interpolatePropertiesForMesh(Mesh *dest_mesh, std::vector<double>& dest_properties) const;
+    void interpolatePropertiesForMesh(Mesh *dest_mesh) const;
     /**
      * Method interpolates the element wise given properties to the nodes of the element
      * @param interpolated_node_properties the vector must have the same number of entries as
