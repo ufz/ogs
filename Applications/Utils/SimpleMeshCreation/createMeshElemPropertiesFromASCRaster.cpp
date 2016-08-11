@@ -36,6 +36,17 @@
 #include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshLib/MeshEnums.h"
 
+void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
+                             std::string const& property_name,
+                             double factor)
+{
+    boost::optional<MeshLib::PropertyVector<double> &> pv(
+        mesh.getProperties().getPropertyVector<double>(property_name));
+
+    for (auto & v : *pv)
+        v *= factor;
+}
+
 int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logo_setup;
@@ -98,6 +109,17 @@ int main(int argc, char* argv[])
                                           "file name");
     cmd.add(mesh_arg);
 
+    std::vector<std::string> allowed_units{ "mm/a", "mm/month", "m/s" };
+    TCLAP::ValuesConstraint<std::string> allowed_units_constraints{
+        allowed_units};
+    TCLAP::ValueArg<std::string> unit_arg("u",
+                                          "input-unit",
+                                          "input unit of the data",
+                                          true,
+                                          "m/s",
+                                          &allowed_units_constraints);
+    cmd.add(unit_arg);
+
     cmd.parse(argc, argv);
 
     // read mesh
@@ -147,6 +169,22 @@ int main(int argc, char* argv[])
     MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
         src_mesh.get(), property_arg.getValue());
     mesh_interpolation.setPropertiesForMesh(dest_mesh.get());
+
+    double scale(1.0);
+    if (unit_arg.getValue() == "m/s")
+    {
+        scale = 1.0;
+    }
+    else if (unit_arg.getValue() == "mm/a")
+    {
+        scale = 1e-3 / (365.25 * 86400);
+    }
+    else if (unit_arg.getValue() == "mm/month")
+    {
+        scale = 1e-3 * (12.0 / (365.25 * 86400));
+    }
+
+    scaleMeshPropertyVector(*dest_mesh, property_arg.getValue(), scale);
 
     if (!out_mesh_arg.getValue().empty())
     {
