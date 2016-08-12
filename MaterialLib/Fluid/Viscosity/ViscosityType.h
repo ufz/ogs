@@ -6,7 +6,7 @@
    \date Jan 2015
 
    \copyright
-    Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+    Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
@@ -16,12 +16,16 @@
 
 namespace MaterialLib
 {
-
+namespace Fluid
+{
 enum class ViscosityType
 {
     CONSTANT = 0,
-    PRESSURE_DEPENDENT
+    LINEAR_PRESSURE_DEPENDENT,
+    TEMPERATURE_DEPENDENT,
+    VOGEL
 };
 
-} // end namespace
+}  // end namespace
+}  // end namespace
 #endif
