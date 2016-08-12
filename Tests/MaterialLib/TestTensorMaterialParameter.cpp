@@ -17,9 +17,10 @@
 
 #include <gtest/gtest.h>
 
+#include "MaterialLib/ConstantScalarModel.h"
 #include "MaterialLib/TensorParameter.h"
-#include "MaterialLib/PorousMedia/Permeability/PermeabilityType.h"
-#include "MaterialLib/PorousMedia/Permeability/IntrinsicPermeability.h"
+#include "MaterialLib/PorousMedium/Permeability/PermeabilityType.h"
+#include "MaterialLib/PorousMedium/Permeability/IntrinsicPermeability.h"
 
 namespace
 {
@@ -53,7 +54,7 @@ struct MockGrabPhi
 
 static MockGrabPhi mock_grad_phi;
 
-TEST(Material, checkConstantTensor)
+TEST(Material, checkAnisotropicTensor)
 {
     Matrix anis_k(3, 3);
     anis_k.setZero();
@@ -66,10 +67,20 @@ TEST(Material, checkConstantTensor)
         K(anis_k);
 
     Matrix laplace =
-        mock_grad_phi.trans_dphi * K.getParameterMatrix() * mock_grad_phi.dphi;
+        mock_grad_phi.trans_dphi * K.getValue() * mock_grad_phi.dphi;
 
     ASSERT_NEAR(5.e-9, laplace(0, 0), 1.e-16);
     ASSERT_NEAR(5.e-9, laplace(2, 2), 1.e-16);
 }
+
+TEST(Material, checkConstantTensor)
+{
+   
+    MaterialLib::TensorParameter<MaterialLib::PorousMedia::PermeabilityType,
+				 MaterialLib::ConstantScalarModel, double>
+                                K(1.e-6);
+    ASSERT_EQ(1.e-6, K.getValue());   
+}
+
 }
 #endif  // OGS_USE_EIGEN

@@ -32,6 +32,7 @@ public:
     {
         return "Constant";
     }
+
     unsigned getType() const
     {
         return 0;

@@ -19,15 +19,14 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "ViscosityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
 /// Temperature dependent viscosity model,
-
-class TemperatureDependentViscosity
+class TemperatureDependentViscosity : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
@@ -44,24 +43,33 @@ public:
     }
 
     /// Get model name.
-    std::string getName() const { return "Temperature dependent viscosity"; }
-    ViscosityType getType() const
+    virtual std::string getName() const final
     {
-        return ViscosityType::TEMPERATURE_DEPENDENT;
+        return "Temperature dependent viscosity";
     }
 
-    /// Get viscosity value
-    /// \param T Temperature
-    double getValue(const double T) const
+    /// Get viscosity value.
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return _mu0 * std::exp(-(T - _temperature_c) / _temperature_v);
+        return _mu0 *
+               std::exp(-(var_vals[static_cast<int>(PropertyVariable::T)] -
+                          _temperature_c) /
+                        _temperature_v);
     }
 
-    /// Get the derivative of viscosity
-    /// \param T Temperature
-    double getdValue(const double T) const
+    /// Get the partial differential of the viscosity with respect to
+    /// temperature.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                   is given in enum class PropertyVariable.
+    virtual double getdValue(const double var_vals[],
+                             const PropertyVariable /* var */) const final
     {
-        return -_mu0 * std::exp(-(T - _temperature_c) / _temperature_v);
+        return -_mu0 *
+               std::exp(-(var_vals[static_cast<int>(PropertyVariable::T)] -
+                          _temperature_c) /
+                        _temperature_v);
     }
 
 private:

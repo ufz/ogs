@@ -19,14 +19,14 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "ViscosityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
 /// Linear pressure dependent viscosity model.
-class LinearPressureDependentViscosity
+class LinearPressureDependentViscosity : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
@@ -43,26 +43,33 @@ public:
     }
 
     /// Get model name.
-    std::string getName() const
+    virtual std::string getName() const final
     {
         return "Linear pressure dependent viscosity";
     }
 
-    ViscosityType getType() const
+    /// Get viscosity value.
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return ViscosityType::LINEAR_PRESSURE_DEPENDENT;
+        return _mu0 *
+               (1 +
+                _gamma *
+                    (std::max(var_vals[static_cast<int>(PropertyVariable::pl)],
+                              0.) -
+                     _p0));
     }
 
-    /// Get viscosity value
-    /// \param p Pressure
-    double getValue(const double p) const
+    /// Get the partial differential of the viscosity with respect to pressure.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                  is given in enum class PropertyVariable.
+    virtual double getdValue(const double /* var_vals */[],
+                             const PropertyVariable /* var  */) const final
     {
-        return _mu0 * (1 + _gamma * (std::max(p, 0.) - _p0));
+        return _mu0 * _gamma;
     }
 
-    /// Get the derivative of viscosity.
-    /// \param p Pressure
-    double getdValue(const double /* p */) const { return _mu0 * _gamma; }
 private:
     double _mu0;    ///<  Reference viscosity.
     double _p0;     ///<  Reference pressure.

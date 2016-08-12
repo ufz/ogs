@@ -18,13 +18,14 @@
 #include <vector>
 #include <cmath>
 
-#include "ViscosityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
-class VogelsLiquidDynamicViscosity
+/// A temperature dependent viscosity model.
+class VogelsLiquidDynamicViscosity : public FluidProperty
 {
 public:
     /*!
@@ -36,27 +37,34 @@ public:
     VogelsLiquidDynamicViscosity(const unsigned mat_id)
         : _abc(_constants[mat_id])
     {
-        assert(mat_id < 3);  // So far only three sets of data are given.
     }
 
     /// Get model name.
-    std::string getName() const
+    virtual std::string getName() const final
     {
         return "Liquid viscosity by Vogel's equation";
     }
 
-    ViscosityType getType() const { return ViscosityType::VOGEL; }
-    /// Get viscosity value
-    /// \param T Temperature
-    double getValue(const double T) const
+    /// Get viscosity value.
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return 1.e-3 * std::exp(_abc[0] + _abc[1] / (_abc[2] + T));
+        return 1.e-3 *
+               std::exp(_abc[0] +
+                        _abc[1] /
+                            (_abc[2] +
+                             var_vals[static_cast<int>(PropertyVariable::T)]));
     }
 
-    /// Get the derivative of viscosity
-    /// \param T Temperature
-    double getdValue(const double T) const
+    /// Get the partial differential of the viscosity with respect to
+    /// temperature.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                   is given in enum class PropertyVariable.
+    virtual double getdValue(const double var_vals[],
+                             const PropertyVariable /* var */) const final
     {
+        const double T = var_vals[static_cast<int>(PropertyVariable::T)];
         const double f_buff = _abc[1] / (_abc[2] + T);
         return -1.e-3 * f_buff * std::exp(_abc[0] + f_buff) / (_abc[2] + T);
     }

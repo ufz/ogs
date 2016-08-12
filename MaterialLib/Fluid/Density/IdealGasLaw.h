@@ -17,8 +17,9 @@
 #define IDEAL_GAS_LAW_H_
 
 #include <string>
+#include <cassert>
 
-#include "FluidDensityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PhysicalConstant.h"
 
 namespace MaterialLib
@@ -27,41 +28,43 @@ namespace Fluid
 {
 /// Fluid density by ideal gas low
 
-class IdealGasLaw
+class IdealGasLaw : public FluidProperty
 {
 public:
     ///   \param molar_mass Molar mass of the gas phase.
     IdealGasLaw(const double molar_mass)
-        : _molar_mass(molar_mass),
+        : FluidProperty(),
+          _molar_mass(molar_mass),
           _derivative_functions{&IdealGasLaw::dIdealGasLaw_dT,
                                 &IdealGasLaw::dIdealGasLaw_dp}
     {
     }
 
     /// Get density model name.
-
-    std::string getName() const { return "Ideal gas law"; }
-    FluidDensityType getType() const { return FluidDensityType::IDEAL_GAS; }
-    /// Get density value
-    /// \param T  Temperature in K.
-    /// \param pg Gas phase pressure in Pa.
-
-    double getValue(const double T, const double pg) const
+    virtual std::string getName() const final { return "Ideal gas law"; }
+    /// Get density value.
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return _molar_mass * pg / (PhysicalConstant::IdealGasConstant * T);
+        return _molar_mass * var_vals[static_cast<int>(PropertyVariable::pg)] /
+               (PhysicalConstant::IdealGasConstant *
+                var_vals[static_cast<int>(PropertyVariable::T)]);
     }
 
-    /// Get the partial differential of density with the respect to
-    /// or pressure.
-    /// \param T  Temperature in K.
-    /// \param pg Gas phase pressure in Pa.
-    /// \param var_id Variable ID, 0 for temperature and 1 for pressure.
-
-    double getdValue(const double T, const double pg, const int var_id) const
+    /// Get the partial differential of the density with respect to temperature
+    /// or gas pressure.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                   is given in enum class PropertyVariable.
+    virtual double getdValue(const double var_vals[],
+                             const PropertyVariable var) const final
     {
-        assert(var_id > -1 && var_id < 2);
+        assert(var == PropertyVariable::T || var == PropertyVariable::pg);
 
-        return (this->*_derivative_functions[var_id])(T, pg);
+        const int func_id = (var == PropertyVariable::T) ? 0 : 1;
+        return (this->*_derivative_functions[func_id])(
+            var_vals[static_cast<int>(PropertyVariable::T)],
+            var_vals[static_cast<int>(PropertyVariable::pg)]);
     }
 
 private:
@@ -80,7 +83,6 @@ private:
     /// Get the partial differential of density with the respect to pressure
     /// \param T  Temperature in K.
     /// \param pg Gas phase pressure in Pa.
-
     double dIdealGasLaw_dp(const double T, const double /* pg */) const
     {
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);

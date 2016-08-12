@@ -37,7 +37,7 @@ public:
     }
 
     /// Get permeability tensor.
-    T_MATRIX &getValue()
+    T_MATRIX getValue()
     {
         return _perm;
     }

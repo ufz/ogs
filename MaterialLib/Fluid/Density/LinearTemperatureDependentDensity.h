@@ -19,19 +19,19 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "FluidDensityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
 /// Linear temperature dependent density model.
-class LinearTemperatureDependentDensity
+class LinearTemperatureDependentDensity : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
     ///                including <type>temperature_dependent</type> and it has
-    ///                a tag of <liquid_density>
+    ///                a tag of <density>
     LinearTemperatureDependentDensity(BaseLib::ConfigTree const* const config)
         :  //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
           _rho0(config->getConfigParameter<double>("rho0")),
@@ -43,25 +43,32 @@ public:
     }
 
     /// Get model name.
-    std::string getName() const
+    virtual std::string getName() const final
     {
         return "Linear temperature dependent density";
     }
 
-    FluidDensityType getType() const
-    {
-        return FluidDensityType::LINEAR_TEMPERATURE_DEPENDENT;
-    }
-
     /// Get density value.
-    /// \param T Temperature.
-    double getValue(const double T) const
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return _rho0 * (1 + _beta * (T - _temperature0));
+        return _rho0 *
+               (1 +
+                _beta * (var_vals[static_cast<int>(PropertyVariable::T)] -
+                         _temperature0));
     }
 
-    /// Get the derivative of temperature.
-    double getdValue(const double /* T */) const { return _rho0 * _beta; }
+    /// Get the partial differential of the density with respect to temperature.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                   is given in enum class PropertyVariable.
+    virtual double getdValue(const double /* var_vals */[],
+                             const PropertyVariable /* var  */) const final
+    {
+        return _rho0 * _beta;
+        ;
+    }
+
 private:
     double _rho0;          ///<  Reference density.
     double _temperature0;  ///<  Reference temperature.

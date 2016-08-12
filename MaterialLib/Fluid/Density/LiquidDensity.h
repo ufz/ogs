@@ -20,14 +20,16 @@
 
 #include "BaseLib/ConfigTree.h"
 
-#include "FluidDensityType.h"
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
 /**
- *  Class for density of fluids varying with temperature or pressure.
+ *  Class of a generic density model for liquid fluids varying with temperature
+ *  or pressure.
+ *
  *  The formula is given on
  *  <a href="engineeringtoolbox">
  * http://www.engineeringtoolbox.com/fluid-density-temperature-pressure-d_309.html</a>
@@ -47,12 +49,12 @@ namespace Fluid
  *       &E:&      \mbox{bulk modulus fluid elasticity.}\\
  *    \f}
  */
-class LiquidDensity
+class LiquidDensity : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
     ///                 including  <type>liquid_density</type> and it has
-    ///                 a tag of <liquid_density>
+    ///                 a tag of <density>
     LiquidDensity(BaseLib::ConfigTree const* const config)
         :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
           _beta(config->getConfigParameter<double>("beta")),
@@ -60,7 +62,7 @@ public:
           _rho0(config->getConfigParameter<double>("rho0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
           _temperature0(config->getConfigParameter<double>("temperature0")),
-          //! \ogs_file_param{material__fluid__density__liquid_density__pressure0}
+          //! \ogs_file_param{material__fluid__density__liquid_density__p0}
           _p0(config->getConfigParameter<double>("p0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
           _bulk_moudlus(config->getConfigParameter<double>("bulk_modulus")),
@@ -70,36 +72,35 @@ public:
     }
 
     /// Get density model name.
-    std::string getName() const
+    virtual std::string getName() const final
     {
         return "Temperature or pressure dependent liquid density";
     }
 
-    /// Get density type.
-    FluidDensityType getType() const
+    /// Get density value.
+    /// \param var_vals Variable values in an array. The order of its elements
+    ///                 is given in enum class PropertyVariable.
+    virtual double getValue(const double var_vals[]) const final
     {
-        return FluidDensityType::LIQUID_DENSITY;
-    }
-
-    /// Get density value
-    /// \param T  Temperature in K.
-    /// \param p  Pressure in Pa.
-    double getValue(const double T, const double p) const
-    {
+        const double T = var_vals[static_cast<int>(PropertyVariable::T)];
+        const double p = var_vals[static_cast<int>(PropertyVariable::pl)];
         return _rho0 / (1. + _beta * (T - _temperature0)) /
                (1. - (p - _p0) / _bulk_moudlus);
     }
 
-    /// Get the partial differential of density with the respect to
-    /// or pressure.
-    /// \param T      Temperature in K.
-    /// \param p      Pressure in Pa.
-    /// \param var_id Variable ID, 0 for temperature and 1 for pressure.
-    double getdValue(const double T, const double pg, const int var_id) const
+    /// Get the partial differential of the density with respect to temperature
+    /// or liquid pressure.
+    /// \param var_vals  Variable values  in an array. The order of its elements
+    ///                   is given in enum class PropertyVariable.
+    virtual double getdValue(const double var_vals[],
+                             const PropertyVariable var) const final
     {
-        assert(var_id > -1 && var_id < 2);
+        assert(var == PropertyVariable::T || var == PropertyVariable::pl);
 
-        return (this->*_derivative_functions[var_id])(T, pg);
+        const int func_id = (var == PropertyVariable::T) ? 0 : 1;
+        const double T = var_vals[static_cast<int>(PropertyVariable::T)];
+        const double p = var_vals[static_cast<int>(PropertyVariable::pl)];
+        return (this->*_derivative_functions[func_id])(T, p);
     }
 
 private:

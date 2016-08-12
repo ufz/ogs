@@ -1,6 +1,5 @@
 /*!
-   \file  FluidDensityType.h
-   \brief Declaration of fluid density types.
+   \file  createViscosityModel.h
 
    \author Wenqing Wang
    \date Jan 2015
@@ -11,20 +10,21 @@
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef FLUIDDENSITY_TYPE_H_
-#define FLUIDDENSITY_TYPE_H_
+#ifndef CREATE_VISCOSITY_MODEL_H_
+#define CREATE_VISCOSITY_MODEL_H_
+
+#include "BaseLib/ConfigTree.h"
+
+#include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
 {
 namespace Fluid
 {
-enum class FluidDensityType
-{
-    CONSTANT = 0,
-    IDEAL_GAS,
-    LIQUID_DENSITY,
-    LINEAR_TEMPERATURE_DEPENDENT
-};
-}
+/// Create a viscosity model
+/// \param config  ConfigTree object has a tag of <viscosity>
+FluidProperty* createViscosityModel(BaseLib::ConfigTree const* const config);
+
+}  // end namespace
 }  // end namespace
 #endif
