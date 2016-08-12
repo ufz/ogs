@@ -86,8 +86,25 @@ ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
                 "Found geometry type \"%s\"",
                 GeoLib::convertGeoTypeToString(geometry->getGeoType()).c_str());
 
-            // TODO, the 0 is the component_id. Need parser.
-            _bc_configs.emplace_back(std::move(bc_config), *geometry, 0);
+            auto component_id =
+                //! \ogs_file_param{boundary_condition__component}
+                bc_config.getConfigParameterOptional<int>("component");
+
+            if (!component_id)
+            {
+                if (_n_components == 1)
+                    // default value for single component vars.
+                    component_id = 0;
+                else
+                    OGS_FATAL(
+                        "The <component> tag could not be found for the "
+                        "multi-component boundary condition of the process "
+                        "variable `%s'.",
+                        _name.c_str());
+            }
+
+            _bc_configs.emplace_back(std::move(bc_config), *geometry,
+                                     *component_id);
         }
     } else {
         INFO("No boundary conditions found.");

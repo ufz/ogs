@@ -2,6 +2,8 @@
 # 6.0.7 (in preparation)
 
 ### Features:
+ - Finalize support for multicomponent boundary conditions adding configuration
+   parser. #1343
 
 ### Infrastructure
 
