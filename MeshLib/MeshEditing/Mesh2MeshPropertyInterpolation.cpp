@@ -47,27 +47,6 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh) const
         return false;
     }
 
-    interpolatePropertiesForMesh(dest_mesh);
-
-    return true;
-}
-
-void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
-    Mesh *dest_mesh) const
-{
-    // check the existence of PropertyVector in the source mesh
-    boost::optional<MeshLib::PropertyVector<double> const&> opt_src_pv(
-        _src_mesh->getProperties().getPropertyVector<double>(_property_name));
-    if (!opt_src_pv) {
-        WARN("Did not find PropertyVector<double> \"%s\" in source mesh.",
-            _property_name.c_str());
-        return;
-    }
-
-    // carry over property information from source elements to source nodes
-    std::vector<double> interpolated_src_node_properties(_src_mesh->getNumberOfNodes());
-    interpolateElementPropertiesToNodeProperties(interpolated_src_node_properties);
-
     boost::optional<MeshLib::PropertyVector<double> &> opt_pv(
         dest_mesh->getProperties().getPropertyVector<double>(_property_name));
     if (!opt_pv) {
@@ -78,20 +57,32 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
         if (!opt_pv) {
             WARN("Could not get or create a PropertyVector of type double"
                 " using the given name \"%s\".", _property_name.c_str());
-            return;
+            return false;
         }
     }
     MeshLib::PropertyVector<double> & dest_properties(opt_pv.get());
     if (dest_properties.size() != dest_mesh->getNumberOfElements())
         dest_properties.resize(dest_mesh->getNumberOfElements());
 
-    // looping over the destination elements and calculate properties
-    // from interpolated_src_node_properties
-    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
+    interpolatePropertiesForMesh(*dest_mesh, dest_properties);
 
+    return true;
+}
+
+void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
+    Mesh &dest_mesh, MeshLib::PropertyVector<double> & dest_properties) const
+{
+    std::vector<double> interpolated_src_node_properties(_src_mesh->getNumberOfNodes());
+    interpolateElementPropertiesToNodeProperties(
+        interpolated_src_node_properties);
+
+    // idea: looping over the destination elements and calculate properties
+    // from interpolated_src_node_properties
+    // to accelerate the (source) point search construct a grid
+    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
     GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
 
-    std::vector<MeshLib::Element*> const& dest_elements(dest_mesh->getElements());
+    auto const& dest_elements(dest_mesh.getElements());
     const std::size_t n_dest_elements(dest_elements.size());
     for (std::size_t k(0); k<n_dest_elements; k++)
     {

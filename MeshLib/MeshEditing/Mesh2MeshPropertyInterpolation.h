@@ -15,9 +15,12 @@
 #ifndef MESH2MESHPROPERTYINTERPOLATION_H_
 #define MESH2MESHPROPERTYINTERPOLATION_H_
 
+#include "MeshLib/PropertyVector.h"
+
 namespace MeshLib {
 
 class Mesh;
+
 /**
  * Class Mesh2MeshPropertyInterpolation transfers properties of
  * mesh elements of a (source) mesh to mesh elements of another
@@ -48,11 +51,13 @@ public:
 
 private:
     /**
-     *
      * @param dest_mesh
      * @param dest_properties
      */
-    void interpolatePropertiesForMesh(Mesh *dest_mesh) const;
+    void interpolatePropertiesForMesh(
+        Mesh& dest_mesh,
+        MeshLib::PropertyVector<double>& dest_properties) const;
+
     /**
      * Method interpolates the element wise given properties to the nodes of the element
      * @param interpolated_node_properties the vector must have the same number of entries as
