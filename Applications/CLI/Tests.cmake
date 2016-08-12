@@ -134,6 +134,30 @@ if(NOT OGS_USE_MPI)
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
         )
+
+        AddTest(
+            NAME GroundWaterFlowProcess_line_1_Robin_Right_Picard_${mesh_size}
+            PATH Elliptic/line_1_GroundWaterFlow
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
+            WRAPPER time
+            TESTER vtkdiff
+            ABSTOL 1e-14 RELTOL 1e-14
+            DIFF_DATA
+            line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
+        )
+
+        AddTest(
+            NAME GroundWaterFlowProcess_line_1_Robin_Left_Picard_${mesh_size}
+            PATH Elliptic/line_1_GroundWaterFlow
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS line_${mesh_size}_robin_left_picard.prj
+            WRAPPER time
+            TESTER vtkdiff
+            ABSTOL 1e-14 RELTOL 1e-14
+            DIFF_DATA
+            line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
+        )
     endforeach()
 
     # Some Neumann BC tests
