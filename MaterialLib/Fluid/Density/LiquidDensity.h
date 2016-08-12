@@ -1,0 +1,156 @@
+/**
+ * \copyright
+ * Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ * \author wenqing
+ * \file   LiquidDensity.h
+ *
+ * Created on August 4, 2016, 10:15 AM
+ */
+
+#ifndef LIQUIDDENSITY_H
+#define LIQUIDDENSITY_H
+
+#include <vector>
+
+#include "BaseLib/Error.h"
+
+#include "BaseLib/ConfigTree.h"
+
+#include "FluidDensityType.h"
+
+namespace MaterialLib
+{
+namespace Fluid
+{
+/**
+ *  Class for density of fluids varying with temperature or pressure.
+ *  The formula is given on
+ *  <a href="engineeringtoolbox">
+ * http://www.engineeringtoolbox.com/fluid-density-temperature-pressure-d_309.html</a>
+ *   which reads
+ *   \f[
+ *        \rho_l = \rho_0/(1+\beta(T-T_0))/(1-(p-p_0)/E)
+ *   \f]
+ *   where
+ *    \f{eqnarray*}{
+ *       &\rho_l:& \mbox{liquid density,}\\
+ *       &\rho_0:& \mbox{initial liquid density,}\\
+ *       &\beta: & \mbox{volumetric temperature expansion coefficient,}\\
+ *       &T:&      \mbox{temperature,}\\
+ *       &T_0:&    \mbox{initial temperature,}\\
+ *       &p:&      \mbox{pressure,}\\
+ *       &p_0:&    \mbox{initial pressure,}\\
+ *       &E:&      \mbox{bulk modulus fluid elasticity.}\\
+ *    \f}
+ */
+class LiquidDensity
+{
+public:
+    /// \param config  ConfigTree object which contains the input data
+    ///                 including  <type>liquid_density</type> and it has
+    ///                 a tag of <liquid_density>
+    LiquidDensity(BaseLib::ConfigTree const* const config)
+        :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
+          _beta(config->getConfigParameter<double>("beta")),
+          //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
+          _rho0(config->getConfigParameter<double>("rho0")),
+          //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
+          _temperature0(config->getConfigParameter<double>("temperature0")),
+          //! \ogs_file_param{material__fluid__density__liquid_density__pressure0}
+          _p0(config->getConfigParameter<double>("p0")),
+          //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
+          _bulk_moudlus(config->getConfigParameter<double>("bulk_modulus")),
+          _derivative_functions{&LiquidDensity::dLiquidDensity_dT,
+                                &LiquidDensity::dLiquidDensity_dp}
+    {
+    }
+
+    /// Get density model name.
+    std::string getName() const
+    {
+        return "Temperature or pressure dependent liquid density";
+    }
+
+    /// Get density type.
+    FluidDensityType getType() const
+    {
+        return FluidDensityType::LIQUID_DENSITY;
+    }
+
+    /// Get density value
+    /// \param T  Temperature in K.
+    /// \param p  Pressure in Pa.
+    double getValue(const double T, const double p) const
+    {
+        return _rho0 / (1. + _beta * (T - _temperature0)) /
+               (1. - (p - _p0) / _bulk_moudlus);
+    }
+
+    /// Get the partial differential of density with the respect to
+    /// or pressure.
+    /// \param T      Temperature in K.
+    /// \param p      Pressure in Pa.
+    /// \param var_id Variable ID, 0 for temperature and 1 for pressure.
+    double getdValue(const double T, const double pg, const int var_id) const
+    {
+        assert(var_id > -1 && var_id < 2);
+
+        return (this->*_derivative_functions[var_id])(T, pg);
+    }
+
+private:
+    /// Volumetric temperature expansion coefficient.
+    double _beta;
+
+    /// Initial density.
+    double _rho0;
+
+    /// Initial temperature.
+    double _temperature0;
+
+    /// Initial pressure.
+    double _p0;
+
+    /// Bulk modulus.
+    double _bulk_moudlus;
+
+    /**
+     *  Calculate the derivative of density of fluids with respect to
+     * temperature.
+     *   \param T    Temperature (K).
+     *   \param p    Pressure (Pa).
+     */
+    double dLiquidDensity_dT(const double T, const double p) const
+    {
+        const double fac_T = 1. + _beta * (T - _temperature0);
+        return -_beta * _rho0 / (fac_T * fac_T) /
+               (1. - (p - _p0) / _bulk_moudlus);
+    }
+
+    /**
+     *  Calculate the derivative of density of fluids with respect to pressure.
+     *   \param T    Temperature (K).
+     *   \param p    Pressure (Pa).
+     */
+    double dLiquidDensity_dp(const double T, const double p) const
+    {
+        const double fac_p = 1. - (p - _p0) / _bulk_moudlus;
+        return _rho0 / (1. + _beta * (T - _temperature0)) /
+               (fac_p * fac_p * _bulk_moudlus);
+    }
+
+    typedef double (LiquidDensity::*ptr2_derivative_f)(const double,
+                                                       const double) const;
+
+    /// An array of pointer to derivative functions.
+    ptr2_derivative_f _derivative_functions[2];
+};
+
+}  // end of namespace
+}  // end of namespace
+
+#endif /* LIQUIDDENSITY_H */
