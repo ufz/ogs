@@ -16,7 +16,7 @@
 
 namespace MaterialLib
 {
-namespace Fluid
+namespace PorousMedia
 {
 enum class StorageType
 {

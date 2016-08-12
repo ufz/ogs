@@ -18,7 +18,7 @@
 
 namespace MaterialLib
 {
-namespace Fluid
+namespace PorousMedia
 {
 template <typename T_MATRIX>
 using IntrinsicPermeability = ConstantTensor<T_MATRIX>;

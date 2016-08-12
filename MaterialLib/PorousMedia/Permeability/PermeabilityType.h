@@ -16,7 +16,7 @@
 
 namespace MaterialLib
 {
-namespace Fluid
+namespace PorousMedia
 {
 /// Intrinsic permeability or hydraulic conductivity type
 enum class PermeabilityType

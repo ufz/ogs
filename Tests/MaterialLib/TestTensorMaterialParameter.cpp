@@ -18,13 +18,13 @@
 #include <gtest/gtest.h>
 
 #include "MaterialLib/TensorParameter.h"
-#include "MaterialLib/Fluid/Permeability/PermeabilityType.h"
-#include "MaterialLib/Fluid/Permeability/IntrinsicPermeability.h"
+#include "MaterialLib/PorousMedia/Permeability/PermeabilityType.h"
+#include "MaterialLib/PorousMedia/Permeability/IntrinsicPermeability.h"
 
 namespace
 {
 using namespace MaterialLib;
-using namespace MaterialLib::Fluid;
+using namespace MaterialLib::PorousMedia;
 
 using Matrix = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
 
