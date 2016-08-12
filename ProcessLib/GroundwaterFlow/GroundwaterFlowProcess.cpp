@@ -28,8 +28,8 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, nonlinear_solver, std::move(time_discretization),
               std::move(process_variables), std::move(secondary_variables),
-              std::move(process_output), std::move(named_function_caller))
-    , _process_data(std::move(process_data))
+              std::move(process_output), std::move(named_function_caller)),
+      _process_data(std::move(process_data))
 {
     if (dynamic_cast<NumLib::ForwardEuler*>(
             &Base::getTimeDiscretization()) != nullptr)

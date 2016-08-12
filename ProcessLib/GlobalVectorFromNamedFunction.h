@@ -45,7 +45,7 @@ public:
     //! compute a secondary variable.
     GlobalVector const& call(GlobalVector const& x,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                             std::unique_ptr<GlobalVector>& result_cache);
+                             std::unique_ptr<GlobalVector>& result);
 
 private:
     NumLib::SpecificFunctionCaller _function_caller;

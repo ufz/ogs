@@ -77,7 +77,7 @@ private:
     GlobalVector const& evalFieldNoArgs() const;
 
     //! Cache for the computed values.
-    mutable GlobalVector _solid_density;
+    mutable GlobalVector _cached_nodal_values;
     mutable bool _needs_recomputation = true;
 
     NumLib::Extrapolator& _extrapolator;

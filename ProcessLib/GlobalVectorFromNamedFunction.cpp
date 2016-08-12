@@ -29,9 +29,9 @@ GlobalVectorFromNamedFunction::GlobalVectorFromNamedFunction(
 GlobalVector const& GlobalVectorFromNamedFunction::call(
     GlobalVector const& x,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::unique_ptr<GlobalVector>& result_cache)
+    std::unique_ptr<GlobalVector>& result)
 {
-    result_cache = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+    result = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
         {_dof_table_single.dofSizeWithoutGhosts(),
          _dof_table_single.dofSizeWithoutGhosts(),
          &_dof_table_single.getGhostIndices(), nullptr});
@@ -50,14 +50,14 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
             args[i] = getNodalValue(x, _mesh, dof_table, node_id, i);
         }
 
-        _context.setIndex(node_id);
-        auto const result = _function_caller.call(args);
+        _context.index = node_id;
+        auto const value = _function_caller.call(args);
 
         // TODO Problems with PETSc? (local vs. global index)
-        result_cache->set(node_id, result);
+        result->set(node_id, value);
     }
 
-    return *result_cache;
+    return *result;
 }
 
 }  // namespace ProcessLib

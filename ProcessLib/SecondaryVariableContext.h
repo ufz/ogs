@@ -18,17 +18,12 @@ namespace ProcessLib
  * NamedFunction which needs additional external data apart from the unbound
  * variables that are configured.
  */
-class SecondaryVariableContext
+struct SecondaryVariableContext
 {
 public:
-    //! Returns the current index value.
-    GlobalIndexType getIndex() const { return _index; }
-
-    //! Sets the index.
-    void setIndex(GlobalIndexType index) { _index = index; }
-
-private:
-    GlobalIndexType _index = 0;
+    //! Points to the position in a GlobalVector being read or written right
+    //! now.
+    GlobalIndexType index = 0;
 };
 
 }  // namespace ProcessLib
