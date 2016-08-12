@@ -1,28 +1,25 @@
 /*!
-   \file  DensityType.h
-   \brief Declaration of density types.
+   \file  SolidDensityType.h
+   \brief Declaration of solid density types.
 
    \author Wenqing Wang
    \date Jan 2015
 
    \copyright
-    Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
+    Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
                See accompanying file LICENSE.txt or
                http://www.opengeosys.org/project/license
 */
-#ifndef DENSITY_TYPE_H_
-#define DENSITY_TYPE_H_
+#ifndef SOLID_DENSITY_TYPE_H_
+#define SOLID_DENSITY_TYPE_H_
 
 namespace MaterialLib
 {
-
-enum class DensityType
+enum class SolidDensityType
 {
     CONSTANT = 0,
-    SOLID_LINEAR,
-    IDEAL_GAS
+    LINEAR
 };
-
-} // end namespace
+}  // end namespace
 #endif
