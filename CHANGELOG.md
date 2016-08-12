@@ -4,8 +4,10 @@
 ### Features:
  - Finalize support for multicomponent boundary conditions adding configuration
    parser. #1343
+ - Added uniform Robin boundary condition. #1336
 
 ### Infrastructure
+ - Added a generic natural boundary condition class. #1337
 
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
