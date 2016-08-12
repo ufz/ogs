@@ -126,37 +126,12 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
             }
         }
 
+        if (cnt == 0)
+            OGS_FATAL(
+                "Mesh2MeshInterpolation: Could not find values in source mesh "
+                "for the element %d.",
+                k);
         dest_properties[k] /= cnt;
-
-        if (cnt == 0) {
-            std::string base_name("DebugData/Element-");
-            base_name += std::to_string(k);
-
-            std::string aabb_fname(base_name + "-aabb.gli");
-            std::ofstream out_aabb(aabb_fname.c_str());
-            out_aabb << "#POINTS" << "\n";
-            out_aabb << "0 " << elem_aabb.getMinPoint() << "\n";
-            out_aabb << "1 " << elem_aabb.getMaxPoint() << "\n";
-            out_aabb << "#STOP" << "\n";
-            out_aabb.close();
-
-
-            std::string source_fname(base_name + "-SourceNodes.gli");
-            std::ofstream out_src(source_fname.c_str());
-            out_src << "#POINTS" << "\n";
-            std::size_t nodes_cnt(0);
-            for (auto i_th_vec : nodes) {
-                const std::size_t n_nodes_in_vec(i_th_vec->size());
-                for (std::size_t j(0); j<n_nodes_in_vec; j++) {
-                    MeshLib::Node const*const j_th_node((*i_th_vec)[j]);
-                    out_src << nodes_cnt << " " << *j_th_node << "\n";
-                    nodes_cnt++;
-                }
-            }
-            out_src << "#STOP" << "\n";
-            out_src.close();
-            ERR("no source nodes in dest element %d", k);
-        }
     }
 }
 
