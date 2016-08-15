@@ -31,7 +31,7 @@
 namespace MeshLib {
 
 Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
-    Mesh const*const src_mesh, std::string const& property_name)
+    Mesh const& src_mesh, std::string const& property_name)
     : _src_mesh(src_mesh), _property_name(property_name)
 {}
 
@@ -72,14 +72,14 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh) const
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     Mesh &dest_mesh, MeshLib::PropertyVector<double> & dest_properties) const
 {
-    std::vector<double> interpolated_src_node_properties(_src_mesh->getNumberOfNodes());
+    std::vector<double> interpolated_src_node_properties(_src_mesh.getNumberOfNodes());
     interpolateElementPropertiesToNodeProperties(
         interpolated_src_node_properties);
 
     // idea: looping over the destination elements and calculate properties
     // from interpolated_src_node_properties
     // to accelerate the (source) point search construct a grid
-    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
+    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
     GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
 
     auto const& dest_elements(dest_mesh.getElements());
@@ -131,7 +131,7 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
 {
     // fetch the source of property values
     boost::optional<MeshLib::PropertyVector<double> const&> opt_src_props(
-        _src_mesh->getProperties().getPropertyVector<double>(_property_name));
+        _src_mesh.getProperties().getPropertyVector<double>(_property_name));
     if (!opt_src_props)
     {
         WARN("Did not find PropertyVector<double> \"%s\".",
@@ -140,7 +140,7 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     }
 
     MeshLib::PropertyVector<double> const& elem_props(opt_src_props.get());
-    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh->getNodes());
+    std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
     const std::size_t n_src_nodes(src_nodes.size());
     for (std::size_t k(0); k < n_src_nodes; k++)
     {
