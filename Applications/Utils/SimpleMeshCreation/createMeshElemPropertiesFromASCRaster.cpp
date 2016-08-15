@@ -36,17 +36,6 @@
 #include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshLib/MeshEnums.h"
 
-void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
-                             std::string const& property_name,
-                             double factor)
-{
-    boost::optional<MeshLib::PropertyVector<double> &> pv(
-        mesh.getProperties().getPropertyVector<double>(property_name));
-
-    for (auto & v : *pv)
-        v *= factor;
-}
-
 int main(int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logo_setup;
