@@ -124,19 +124,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    // put raster data in a std::vector
-    GeoLib::Raster::const_iterator raster_it(raster->begin());
-    std::size_t size(header.n_cols * header.n_rows);
-    std::vector<double> src_properties(size);
-    for (unsigned row(0); row < header.n_rows; row++)
-    {
-        for (unsigned col(0); col < header.n_cols; col++)
-        {
-            src_properties[row * header.n_cols + col] = *raster_it;
-            ++raster_it;
-        }
-    }
-
     std::unique_ptr<MeshLib::Mesh> src_mesh(
         MeshLib::RasterToMesh::convert(*raster,
                                        MeshLib::MeshElemType::QUAD,
