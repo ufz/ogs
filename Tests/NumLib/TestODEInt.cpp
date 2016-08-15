@@ -34,10 +34,6 @@ public:
     using TimeDisc = NumLib::TimeDiscretization;
     using NLSolver = NumLib::NonlinearSolver<NLTag>;
 
-    explicit TestOutput(const char* name)
-        : _file_name_part(name)
-    {}
-
     template <class ODE>
     Solution run_test(ODE& ode, TimeDisc& timeDisc,
                               const unsigned num_timesteps)
@@ -67,20 +63,17 @@ public:
         const double delta_t = (num_timesteps == 0) ? -1.0
                                                     : ((t_end-t0) / num_timesteps);
 
-        INFO("Running test %s with %u timesteps of size %g s.",
-             _file_name_part.c_str(), num_timesteps, delta_t);
-        // init_file(delta_t);
+        INFO("Running test with %u timesteps of size %g s.", num_timesteps,
+             delta_t);
 
         // initial condition
         GlobalVector x0(ode.getMatrixSpecifications().nrows);
         ODET::setIC(x0);
 
-        // write(t0, x0, x0);
         sol.ts.push_back(t0);
         sol.solutions.push_back(x0);
 
         auto cb = [this, &sol](const double t, GlobalVector const& x) {
-            // loopCallback<ODE>(t, x);
             sol.ts.push_back(t);
             sol.solutions.push_back(x);
         };
@@ -92,38 +85,6 @@ public:
     }
 
 private:
-    /*
-    void init_file(const double delta_t)
-    {
-        std::string path(BaseLib::BuildInfo::tests_tmp_path + "ODEInt_");
-        path += _file_name_part;
-        path += "_" + std::to_string(delta_t);
-        path += ".csv";
-
-        _file.reset(new std::ofstream(path));
-        _file->precision(15);
-    }
-
-    void write(double const t, Vector const& x_num, Vector const& x_ana)
-    {
-        *_file << t;
-        for (decltype(x_num.size()) i = 0; i < x_num.size(); ++i)
-            *_file << '\t' << x_num[i];
-        for (decltype(x_ana.size()) i = 0; i < x_ana.size(); ++i)
-            *_file << '\t' << x_ana[i];
-        *_file << "\n";
-    }
-
-    template <class Ode>
-    void loopCallback(const double t, Vector const& x)
-    {
-        write(t, x, ODETraits<Ode>::solution(t));
-    }
-    */
-
-    const std::string _file_name_part;
-    std::unique_ptr<std::ofstream> _file;
-
     const double _tol = 1e-9;
     const unsigned _maxiter = 20;
 };
@@ -131,36 +92,36 @@ private:
 template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, NumLib::BackwardEuler>::value,
                         Solution>::type
-run_test_case(const unsigned num_timesteps, const char* name)
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test(name);
+    TestOutput<NLTag> test;
     return test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, NumLib::ForwardEuler>::value,
                         Solution>::type
-run_test_case(const unsigned num_timesteps, const char* name)
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc;
 
-    TestOutput<NLTag> test(name);
+    TestOutput<NLTag> test;
     return test.run_test(ode, timeDisc, num_timesteps);
 }
 
 template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<std::is_same<TimeDisc, NumLib::CrankNicolson>::value,
                         Solution>::type
-run_test_case(const unsigned num_timesteps, const char* name)
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(0.5);
 
-    TestOutput<NLTag> test(name);
+    TestOutput<NLTag> test;
     return test.run_test(ode, timeDisc, num_timesteps);
 }
 
@@ -168,12 +129,12 @@ template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>
 typename std::enable_if<
     std::is_same<TimeDisc, NumLib::BackwardDifferentiationFormula>::value,
     Solution>::type
-run_test_case(const unsigned num_timesteps, const char* name)
+run_test_case(const unsigned num_timesteps)
 {
     ODE ode;
     TimeDisc timeDisc(3);
 
-    TestOutput<NLTag> test(name);
+    TestOutput<NLTag> test;
     return test.run_test(ode, timeDisc, num_timesteps);
 }
 
@@ -215,11 +176,9 @@ struct TestCase;
     template <>                                                              \
     struct TestCase<ODE, NumLib::TIMEDISC>                                   \
         : TestCaseBase<ODE, NumLib::TIMEDISC> {                              \
-        static const char name[];                                            \
         static const double tol_picard_newton;                               \
         static const double tol_analyt;                                      \
     };                                                                       \
-    const char TestCase<ODE, NumLib::TIMEDISC>::name[] = #ODE "_" #TIMEDISC; \
     const double TestCase<ODE, NumLib::TIMEDISC>::tol_picard_newton =        \
         (TOL_PICARD_NEWTON);                                                 \
     const double TestCase<ODE, NumLib::TIMEDISC>::tol_analyt = (TOL_ANALYT);
@@ -254,13 +213,11 @@ public:
 
         auto const sol_picard =
             run_test_case<TimeDisc, ODE, NumLib::NonlinearSolverTag::Picard>(
-                num_timesteps, TestParams::name);
+                num_timesteps);
 
         auto const sol_newton =
             run_test_case<TimeDisc, ODE, NumLib::NonlinearSolverTag::Newton>(
-                num_timesteps, TestParams::name);
-
-        // const double tol_picard_newton = 2e-9;
+                num_timesteps);
 
         ASSERT_EQ(sol_picard.ts.size(), sol_newton.ts.size());
         for (std::size_t i = 0; i < sol_picard.ts.size(); ++i) {
