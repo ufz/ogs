@@ -41,13 +41,13 @@ public:
                                    std::string const& property_name);
 
     /**
-     * Calculates entries for the property vector and sets appropriate indices in the
-     * mesh elements.
-     * @param mesh the mesh the property information will be calculated and set via
-     * weighted interpolation
+     * Calculates entries for the property vector and sets appropriate indices
+     * in the mesh elements.
+     * @param mesh the mesh the property information will be calculated and set
+     * via weighted interpolation
      * @return true if the operation was successful, false on error
      */
-    bool setPropertiesForMesh(Mesh *mesh) const;
+    bool setPropertiesForMesh(Mesh& mesh) const;
 
 private:
     /**

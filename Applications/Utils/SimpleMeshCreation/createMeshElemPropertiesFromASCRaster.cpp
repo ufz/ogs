@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
     // do the interpolation
     MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
         *src_mesh, property_arg.getValue());
-    mesh_interpolation.setPropertiesForMesh(dest_mesh.get());
+    mesh_interpolation.setPropertiesForMesh(*dest_mesh);
 
     double scale(1.0);
     if (unit_arg.getValue() == "m/s")

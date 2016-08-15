@@ -35,24 +35,29 @@ Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
     : _src_mesh(src_mesh), _property_name(property_name)
 {}
 
-bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh) const
+bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 {
-    if (_src_mesh->getDimension() != dest_mesh->getDimension()) {
-        ERR ("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() dimension of source (dim = %d) and destination (dim = %d) mesh does not match.", _src_mesh->getDimension(), dest_mesh->getDimension());
+    if (_src_mesh.getDimension() != dest_mesh.getDimension()) {
+        ERR("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
+            "dimension of source (dim = %d) and destination (dim = %d) mesh "
+            "does not match.",
+            _src_mesh.getDimension(), dest_mesh.getDimension());
         return false;
     }
 
-    if (_src_mesh->getDimension() != 2) {
-        WARN ("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() implemented only for 2D case at the moment.");
+    if (_src_mesh.getDimension() != 2) {
+        WARN(
+            "MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
+            "implemented only for 2D case at the moment.");
         return false;
     }
 
     boost::optional<MeshLib::PropertyVector<double> &> opt_pv(
-        dest_mesh->getProperties().getPropertyVector<double>(_property_name));
+        dest_mesh.getProperties().getPropertyVector<double>(_property_name));
     if (!opt_pv) {
         INFO("Create new PropertyVector \"%s\" of type double.",
              _property_name.c_str());
-        opt_pv = dest_mesh->getProperties().createNewPropertyVector<double>(
+        opt_pv = dest_mesh.getProperties().createNewPropertyVector<double>(
             _property_name, MeshItemType::Cell, 1);
         if (!opt_pv) {
             WARN("Could not get or create a PropertyVector of type double"
@@ -61,16 +66,16 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh *dest_mesh) const
         }
     }
     MeshLib::PropertyVector<double> & dest_properties(opt_pv.get());
-    if (dest_properties.size() != dest_mesh->getNumberOfElements())
-        dest_properties.resize(dest_mesh->getNumberOfElements());
+    if (dest_properties.size() != dest_mesh.getNumberOfElements())
+        dest_properties.resize(dest_mesh.getNumberOfElements());
 
-    interpolatePropertiesForMesh(*dest_mesh, dest_properties);
+    interpolatePropertiesForMesh(dest_mesh, dest_properties);
 
     return true;
 }
 
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
-    Mesh &dest_mesh, MeshLib::PropertyVector<double> & dest_properties) const
+    Mesh& dest_mesh, MeshLib::PropertyVector<double>& dest_properties) const
 {
     std::vector<double> interpolated_src_node_properties(_src_mesh.getNumberOfNodes());
     interpolateElementPropertiesToNodeProperties(
