@@ -32,8 +32,10 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
         output_variables.insert(out_var);
     }
 
-    if (auto out_resid = output_config.getConfigParameterOptional<bool>(
-            "output_extrapolation_residuals")) {
+    if (auto out_resid =
+            //! \ogs_file_param{process__output__output_extrapolation_residuals}
+            output_config.getConfigParameterOptional<bool>("output_extrapolation_residuals"))
+    {
         output_residuals = *out_resid;
     }
 

@@ -46,6 +46,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     MeshGeoToolsLib::BoundaryElementsSearcher boundary_element_searcher(
         mesh, mesh_node_searcher);
 
+    //! \ogs_file_param{boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
     if (type == "UniformDirichlet")

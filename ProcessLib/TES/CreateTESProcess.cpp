@@ -24,6 +24,7 @@ std::unique_ptr<Process> createTESProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
     BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{process__type}
     config.checkConfigParameter("type", "TES");
 
     DBUG("Create TESProcess.");

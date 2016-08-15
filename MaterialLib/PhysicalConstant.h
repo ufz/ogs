@@ -48,7 +48,7 @@ namespace MolarMass
 const double Water = 0.018016;  ///< kg \per{mol}
 
 /**
- * Nitrogen N<sub>2<sub>.
+ * Nitrogen N<sub>2</sub>.
  *
  * - Source:       http://www.ciaaw.org/pubs/TSAW2013_xls.xls
  * - Date visited: 2015-05-28
@@ -59,7 +59,7 @@ const double Water = 0.018016;  ///< kg \per{mol}
 const double N2 = 0.028013;  ///< kg \per{mol}
 
 /**
- * Oxygen O<sub>2<sub>.
+ * Oxygen O<sub>2</sub>.
  *
  * - Source:       http://www.ciaaw.org/pubs/TSAW2013_xls.xls
  * - Date visited: 2015-05-28

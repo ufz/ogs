@@ -23,11 +23,13 @@ std::unique_ptr<TimeDiscretization> createTimeDiscretization(
 
     if (type == "BackwardEuler")
     {
+        //! \ogs_file_param_special{process__time_discretization__BackwardEuler}
         using ConcreteTD = BackwardEuler;
         return T(new ConcreteTD);
     }
     else if (type == "ForwardEuler")
     {
+        //! \ogs_file_param_special{process__time_discretization__ForwardEuler}
         using ConcreteTD = ForwardEuler;
         return T(new ConcreteTD);
     }
