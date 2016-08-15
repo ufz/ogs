@@ -196,31 +196,33 @@ struct TestCase;
 //
 // /////////////////////////////////////
 #define TESTCASESLIST \
-    TCLITEM(ODE1, BackwardEuler                 , 1e-15) TCLSEP \
-    TCLITEM(ODE1, ForwardEuler                  , 1e-13) TCLSEP \
-    TCLITEM(ODE1, CrankNicolson                 , 4e-15) TCLSEP \
-    TCLITEM(ODE1, BackwardDifferentiationFormula, 4e-15) TCLSEP \
+    TCLITEM(ODE1, BackwardEuler                 , 1e-15  , 0.2) TCLSEP \
+    TCLITEM(ODE1, ForwardEuler                  , 1e-13  , 0.22) TCLSEP \
+    TCLITEM(ODE1, CrankNicolson                 , 4e-15  , 2.1e-3) TCLSEP \
+    TCLITEM(ODE1, BackwardDifferentiationFormula, 4e-15  , 3e-3) TCLSEP \
     \
-    TCLITEM(ODE2, BackwardEuler                 , 1.5e-10) TCLSEP \
-    TCLITEM(ODE2, ForwardEuler                  , 2e-3) TCLSEP \
-    TCLITEM(ODE2, CrankNicolson                 , 1.5e-10) TCLSEP \
-    TCLITEM(ODE2, BackwardDifferentiationFormula, 1.5e-10) TCLSEP \
+    TCLITEM(ODE2, BackwardEuler                 , 1.5e-10, 2e-3) TCLSEP \
+    TCLITEM(ODE2, ForwardEuler                  , 2e-3   , 2e-3) TCLSEP \
+    TCLITEM(ODE2, CrankNicolson                 , 1.5e-10, 8e-6) TCLSEP \
+    TCLITEM(ODE2, BackwardDifferentiationFormula, 1.5e-10, 2e-4) TCLSEP \
     \
-    TCLITEM(ODE3, BackwardEuler                 , 1e-9) TCLSEP \
-    TCLITEM(ODE3, ForwardEuler                  , 1e-13) TCLSEP \
-    TCLITEM(ODE3, CrankNicolson                 , 2e-9) TCLSEP \
-    TCLITEM(ODE3, BackwardDifferentiationFormula, 2e-9)
+    TCLITEM(ODE3, BackwardEuler                 , 1e-9   , 0.028) TCLSEP \
+    TCLITEM(ODE3, ForwardEuler                  , 1e-13  , 0.03) TCLSEP \
+    TCLITEM(ODE3, CrankNicolson                 , 2e-9   , 6e-4) TCLSEP \
+    TCLITEM(ODE3, BackwardDifferentiationFormula, 2e-9   , 7e-4)
 
-#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON)                            \
+#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON, TOL_ANALYT)                \
     template <>                                                              \
     struct TestCase<ODE, NumLib::TIMEDISC>                                   \
         : TestCaseBase<ODE, NumLib::TIMEDISC> {                              \
         static const char name[];                                            \
         static const double tol_picard_newton;                               \
+        static const double tol_analyt;                                      \
     };                                                                       \
     const char TestCase<ODE, NumLib::TIMEDISC>::name[] = #ODE "_" #TIMEDISC; \
     const double TestCase<ODE, NumLib::TIMEDISC>::tol_picard_newton =        \
-        (TOL_PICARD_NEWTON);
+        (TOL_PICARD_NEWTON);                                                 \
+    const double TestCase<ODE, NumLib::TIMEDISC>::tol_analyt = (TOL_ANALYT);
 #define TCLSEP
 
 TESTCASESLIST
@@ -228,7 +230,7 @@ TESTCASESLIST
 #undef TCLITEM
 #undef TCLSEP
 
-#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON) \
+#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON, TOL_ANALYT) \
     TestCase<ODE, NumLib::TIMEDISC>
 #define TCLSEP ,
 
@@ -268,6 +270,14 @@ public:
                 EXPECT_NEAR(sol_picard.solutions[i][comp],
                             sol_newton.solutions[i][comp],
                             TestParams::tol_picard_newton);
+
+                auto const t = sol_picard.ts[i];
+                auto const sol_analyt = ODETraits<ODE>::solution(t);
+
+                EXPECT_NEAR(sol_picard.solutions[i][comp], sol_analyt[comp],
+                            TestParams::tol_analyt);
+                EXPECT_NEAR(sol_newton.solutions[i][comp], sol_analyt[comp],
+                            TestParams::tol_analyt);
             }
         }
     }
