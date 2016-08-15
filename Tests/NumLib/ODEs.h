@@ -10,6 +10,7 @@
 #ifndef TESTS_NUMLIB_ODES_H
 #define TESTS_NUMLIB_ODES_H
 
+#include <boost/math/constants/constants.hpp>
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/ODESolver/ODESystem.h"
@@ -185,25 +186,16 @@ class ODE3 final : public NumLib::ODESystem<
                        NumLib::NonlinearSolverTag::Newton>
 {
 public:
-    void assemble(const double t, GlobalVector const& x_curr, GlobalMatrix& M,
+    void assemble(const double /*t*/, GlobalVector const& x_curr, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) override
     {
-        auto const x = x_curr[0];
-        auto const y = x_curr[1];
-        auto const z = x_curr[2];
+        auto const u = x_curr[0];
+        auto const v = x_curr[1];
 
-        MathLib::
-        setMatrix(M, {       t*y, 1.0,     0.0,
-                             0.0,  -t,     t*y,
-                       omega*x*t, 0.0, omega*x });
-        MathLib::
-        setMatrix(K, {             y,   1.0/t,                       -y,
-                       omega*omega/y,    -0.5,                      0.0,
-                        -0.5*omega*z, y/omega, -(1.0/omega/t+omega)*y*z });
-        MathLib::
-        setVector(b, { 0.0,
-                       0.5/t,
-                       0.5*omega*x*z + omega/t });
+        MathLib::setMatrix(M, {u, 2.0 - u, 2.0 - v, v});
+        MathLib::setMatrix(K, {2.0 - u - v, -u, v, 2.0 * v - 5.0});
+        MathLib::setVector(
+            b, {-2 * u + 2.0 * u * v, -2.0 * v * v + 5.0 * v - 4.0});
     }
 
     void assembleWithJacobian(const double t, GlobalVector const& x_curr,
@@ -214,12 +206,11 @@ public:
     {
         assemble(t, x_curr, M, K, b);
 
-        auto const x = x_curr[0];
-        auto const y = x_curr[1];
-        auto const z = x_curr[2];
+        auto const u = x_curr[0];
+        auto const v = x_curr[1];
 
-        auto const dx = xdot[0];
-        auto const dz = xdot[2];
+        auto const du = xdot[0];
+        auto const dv = xdot[1];
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -243,26 +234,17 @@ public:
             // in this block it is assumed that dx_dx == 1.0
 
             // add dM/dx \cdot \dot x
-            MathLib::
-            addToMatrix(Jac, {                 0.0, t*dx, 0.0,
-                                               0.0, t*dz, 0.0,
-                               omega*t*dx+omega*dz,  0.0, 0.0 });
+            MathLib::addToMatrix(Jac, {du - dv, 0.0, 0.0, dv - du});
 
             LinAlg::finalizeAssembly(K);
             LinAlg::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x
-            MathLib::
-            addToMatrix(Jac, { 0.0, x-z, 0.0,
-                               0.0, -omega*omega/y/y*x, 0.0,
-                               0.0, y/omega-(1.0/omega/t+omega)*z*z, // -->
-                               /* --> */  -0.5*omega*x - (1.0/omega/t+omega)*y*z });
+            MathLib::addToMatrix(Jac, {-du - dv, -du, 0.0, du + 2.0 * dv});
 
             // add -db/dx
-            MathLib::
-            addToMatrix(Jac, {          0.0, 0.0,          0.0,
-                                        0.0, 0.0,          0.0,
-                               -0.5*omega*z, 0.0, -0.5*omega*z });
+            MathLib::addToMatrix(Jac,
+                                 {2.0 - 2.0 * v, -2.0 * u, 0.0, 2.0 * v - 5.0});
         }
 
         // Eigen::MatrixXd J(Jac.getRawMatrix());
@@ -283,11 +265,8 @@ public:
         return false;
     }
 
-    std::size_t const N = 3;
-    static const double omega;
+    std::size_t const N = 2;
 };
-
-const double ODE3::omega = 15.0;
 
 template <>
 class ODETraits<ODE3>
@@ -295,11 +274,8 @@ class ODETraits<ODE3>
 public:
     static void setIC(GlobalVector& x0)
     {
-        auto const omega = ODE3::omega;
-
-        MathLib::setVector(x0, { sin(omega*t0)/omega/t0,
-                                 1.0/t0,
-                                 cos(omega*t0) });
+        MathLib::setVector(x0,
+                           {std::sin(2.0 * t0), std::cos(t0) * std::cos(t0)});
         MathLib::LinAlg::finalizeAssembly(x0);
 
         // std::cout << "IC:\n" << Eigen::VectorXd(x0.getRawVector()) << "\n";
@@ -307,12 +283,8 @@ public:
 
     static GlobalVector solution(const double t)
     {
-        auto const omega = ODE3::omega;
-
-        GlobalVector v(3);
-        MathLib::setVector(v, { sin(omega*t)/omega/t,
-                                1.0/t,
-                                cos(omega*t) });
+        GlobalVector v(2);
+        MathLib::setVector(v, {std::sin(2.0 * t), std::cos(t) * std::cos(t)});
         MathLib::LinAlg::finalizeAssembly(v);
         return v;
     }
@@ -321,9 +293,10 @@ public:
     static const double t_end;
 };
 
-const double ODETraits<ODE3>::t0 = 1.0;
+const double ODETraits<ODE3>::t0 = 0.0;
 
-const double ODETraits<ODE3>::t_end = 3.0;
+const double ODETraits<ODE3>::t_end =
+    0.5 * boost::math::constants::pi<double>();
 // ODE 3 end //////////////////////////////////////////////////////
 
 #endif // TESTS_NUMLIB_ODES_H

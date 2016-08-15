@@ -215,21 +215,17 @@ struct TestCase;
     TCLITEM(GMatrix,  GVector, ODE2, BackwardEuler,                  Picard) TCLSEP \
     TCLITEM(GMatrix,  GVector, ODE2, ForwardEuler,                   Picard) TCLSEP \
     TCLITEM(GMatrix,  GVector, ODE2, CrankNicolson,                  Picard) TCLSEP \
-    TCLITEM(GMatrix,  GVector, ODE2, BackwardDifferentiationFormula, Picard)
-
-// ODE3 behaves too badly. Even with very tiny timesteps it cannot be solved.
-// Probably because then the singular M matrix has too much weight.
-//  TCLITEM(EDMatrix, EVector, ODE3, BackwardEuler,                  Newton) TCLSEP
-//  /* Not possible because of singular matrix */
-//  /* TCLITEM(EDMatrix, EVector, ODE3, ForwardEuler,                   Newton) TCLSEP */
-//  TCLITEM(EDMatrix, EVector, ODE3, CrankNicolson,                  Newton) TCLSEP
-//  TCLITEM(EDMatrix, EVector, ODE3, BackwardDifferentiationFormula, Newton) TCLSEP
-//
-//  TCLITEM(EDMatrix, EVector, ODE3, BackwardEuler,                  Picard) TCLSEP
-//  /* Not possible because of singular matrix */
-//  /* TCLITEM(EDMatrix, EVector, ODE3, ForwardEuler,                   Picard) TCLSEP */
-//  TCLITEM(EDMatrix, EVector, ODE3, CrankNicolson,                  Picard) TCLSEP
-//  TCLITEM(EDMatrix, EVector, ODE3, BackwardDifferentiationFormula, Picard)
+    TCLITEM(GMatrix,  GVector, ODE2, BackwardDifferentiationFormula, Picard) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE3, BackwardEuler,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, ForwardEuler,                   Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, CrankNicolson,                  Newton) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, BackwardDifferentiationFormula, Newton) TCLSEP \
+    \
+    TCLITEM(GMatrix,  GVector, ODE3, BackwardEuler,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, ForwardEuler,                   Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, CrankNicolson,                  Picard) TCLSEP \
+    TCLITEM(GMatrix,  GVector, ODE3, BackwardDifferentiationFormula, Picard)
 
 
 #define TCLITEM(MAT, VEC, ODE, TIMEDISC, NLTAG) \
@@ -273,7 +269,7 @@ public:
 
     static void test()
     {
-        for (auto num_timesteps : { 10u, 100u })
+        for (auto num_timesteps : { 100u })
         {
             run_test_case<Matrix, Vector, TimeDisc, ODE, NLTag>(
                         num_timesteps, TestParams::name);
