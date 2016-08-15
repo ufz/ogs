@@ -421,6 +421,62 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
                                MathLib::Point3d const& origin = MathLib::ORIGIN,
                                std::string   const& mesh_name = "mesh");
 
+/**
+ * Generate a regular 3D Tet-Element mesh.
+ *
+ * \param div_x Subdivision operator in x direction
+ * \param div_y Subdivision operator in y direction
+ * \param div_z Subdivision operator in z direction
+ * \param origin Optional mesh's origin (the bottom lower left corner) with MathLib::ORIGIN default.
+ */
+Mesh* generateRegularTetMesh(const BaseLib::ISubdivision &div_x,
+                             const BaseLib::ISubdivision &div_y,
+                             const BaseLib::ISubdivision &div_z,
+                             MathLib::Point3d const& origin = MathLib::ORIGIN,
+                             std::string const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 3D Tet-Element mesh.
+ *
+ * \param x_length      Mesh dimension in x-direction.
+ * \param y_length      Mesh dimension in y-direction.
+ * \param z_length      Mesh dimension in z-direction.
+ * \param x_subdivision Number of subdivisions in x-direction.
+ * \param y_subdivision Number of subdivisions in y-direction.
+ * \param z_subdivision Number of subdivisions in z-direction.
+ * \param origin        Optional mesh's origin (the bottom lower left corner) with MathLib::ORIGIN default.
+ * \param mesh_name     Name of the new mesh.
+  */
+Mesh* generateRegularTetMesh(const double x_length,
+                             const double y_length,
+                             const double z_length,
+                             const std::size_t x_subdivision,
+                             const std::size_t y_subdivision,
+                             const std::size_t z_subdivision,
+                             MathLib::Point3d const& origin = MathLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
+
+/**
+ * Generate a regular 3D Tet-Element mesh.
+ *
+ * \param n_x_cells    Number of cells in x-direction.
+ * \param n_y_cells    Number of cells in y-direction.
+ * \param n_z_cells    Number of cells in z-direction.
+ * \param cell_size_x  Edge length of Tet elements in x-direction.
+ * \param cell_size_y  Edge length of Tet elements in y s-direction.
+ * \param cell_size_z  Edge length of Tet elements in z-direction
+ * \param origin       Optional mesh's origin (the lower left corner) with MathLib::ORIGIN default.
+ * \param mesh_name    Name of the new mesh.
+ */
+Mesh* generateRegularTetMesh(const unsigned n_x_cells,
+                             const unsigned n_y_cells,
+                             const unsigned n_z_cells,
+                             const double   cell_size_x,
+                             const double   cell_size_y,
+                             const double   cell_size_z,
+                             MathLib::Point3d const& origin = MathLib::ORIGIN,
+                             std::string   const& mesh_name = "mesh");
+
 /// Constructs a surface mesh approximating a surface in the 3d space given by
 /// a function.
 /// The surface within the xy-domain \f$[ll[0], ur[0]] \times [ll[1], ur[1]\f$

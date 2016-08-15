@@ -79,9 +79,10 @@ int main (int argc, char* argv[])
     allowed_ele_types.push_back("tri");
     allowed_ele_types.push_back("quad");
     allowed_ele_types.push_back("hex");
+    allowed_ele_types.push_back("tet");
     TCLAP::ValuesConstraint<std::string> allowedVals(allowed_ele_types);
     TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
-                                          "element type to be created: line | tri | quad | hex", true, "line", &allowedVals);
+                                          "element type to be created: line | tri | quad | hex | tet", true, "line", &allowedVals);
     cmd.add(eleTypeArg);
     TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
                                           "the name of the file the mesh will be written to", true,
@@ -206,6 +207,9 @@ int main (int argc, char* argv[])
         break;
     case MeshLib::MeshElemType::HEXAHEDRON:
         mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
+        break;
+    case MeshLib::MeshElemType::TETRAHEDRON:
+        mesh.reset(MeshLib::MeshGenerator::generateRegularTetMesh(*vec_div[0], *vec_div[1], *vec_div[2]));
         break;
     default:
         ERR("Given element type is not supported.");
