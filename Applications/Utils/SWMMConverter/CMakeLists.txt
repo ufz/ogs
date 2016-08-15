@@ -1,15 +1,15 @@
 add_executable(SWMMConverter
     SWMMConverter.cpp
-    SwmmInterface.h
-    SwmmInterface.cpp
 )
 
 target_link_libraries(SWMMConverter
     ApplicationsFileIO
     GeoLib
     MeshLib
-    swmm5interface
+    SwmmInterface
 )
+
+include_directories( ${CMAKE_SOURCE_DIR}/Applications/FileIO )
 
 ADD_VTK_DEPENDENCY(SWMMConverter)
 

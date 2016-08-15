@@ -8,7 +8,7 @@
 
 #include <tclap/CmdLine.h>
 
-#include "SWMMInterface.h"
+#include "Applications/FileIO/SWMM/SWMMInterface.h"
 #include "ThirdParty/SWMMInterface/swmm5_iface.h"
 
 #include "Applications/ApplicationsLib/LogogSetup.h"

@@ -52,6 +52,5 @@ if(NOT TARGET vtkGUISupportQt AND OGS_BUILD_GUI)
 endif()
 
 if(OGS_BUILD_SWMM)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/SWMMInterface/swmm5)
     add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/SWMMInterface)
 endif()
