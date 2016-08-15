@@ -9,6 +9,8 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
+set -e
+
 srcdir="$1"
 builddir="$2"
 datadir="$3"
@@ -24,11 +26,16 @@ check_quality_script="$toolsdir/check-project-params.py"
 
 mkdir -p "$doxdir"
 
-# gather information about documented parameters
+# Gather information about documented parameters.
 "$toolsdir/get-project-params.sh" "$srcdir" \
     | "$toolsdir/normalize-param-cache.py" >"$param_cache"
 
-# write QA information
+# Document ctest project files
+# and find out which tags and attributes are tested in which prj file and what
+# is not tested at all.
+"$toolsdir/linked-xml-file.py" "$datadir" "$docauxdir"
+
+# Write QA information.
 cat <<"EOF" >"$qafile"
 /*! \page project_file_doc_qa OGS Input File Parameters&mdash;Quality Assurance
 
@@ -37,13 +44,13 @@ If it is empty, there are no issues detected.
 
 EOF
 
-cat "$param_cache" \
-    | "$check_quality_script" "$doxdir/ProjectFile" "$srcdir" >>"$qafile"
+"$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile" || true
 
 cat <<EOF >>"$qafile"
 
 */
 EOF
 
-# finish parameter documentation dox files
+# Finish parameter documentation dox files by appending auxiliary information,
+# e.g., associated ctests, data type, etc.
 "$toolsdir/append-xml-tags.py" prj "$datadir" "$docauxdir"
