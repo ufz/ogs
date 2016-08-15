@@ -196,28 +196,31 @@ struct TestCase;
 //
 // /////////////////////////////////////
 #define TESTCASESLIST \
-    TCLITEM(ODE1, BackwardEuler                 ) TCLSEP \
-    TCLITEM(ODE1, ForwardEuler                  ) TCLSEP \
-    TCLITEM(ODE1, CrankNicolson                 ) TCLSEP \
-    TCLITEM(ODE1, BackwardDifferentiationFormula) TCLSEP \
+    TCLITEM(ODE1, BackwardEuler                 , 1e-15) TCLSEP \
+    TCLITEM(ODE1, ForwardEuler                  , 1e-13) TCLSEP \
+    TCLITEM(ODE1, CrankNicolson                 , 4e-15) TCLSEP \
+    TCLITEM(ODE1, BackwardDifferentiationFormula, 4e-15) TCLSEP \
     \
-    TCLITEM(ODE2, BackwardEuler                 ) TCLSEP \
-    TCLITEM(ODE2, ForwardEuler                  ) TCLSEP \
-    TCLITEM(ODE2, CrankNicolson                 ) TCLSEP \
-    TCLITEM(ODE2, BackwardDifferentiationFormula) TCLSEP \
+    TCLITEM(ODE2, BackwardEuler                 , 1.5e-10) TCLSEP \
+    TCLITEM(ODE2, ForwardEuler                  , 2e-3) TCLSEP \
+    TCLITEM(ODE2, CrankNicolson                 , 1.5e-10) TCLSEP \
+    TCLITEM(ODE2, BackwardDifferentiationFormula, 1.5e-10) TCLSEP \
     \
-    TCLITEM(ODE3, BackwardEuler                 ) TCLSEP \
-    TCLITEM(ODE3, ForwardEuler                  ) TCLSEP \
-    TCLITEM(ODE3, CrankNicolson                 ) TCLSEP \
-    TCLITEM(ODE3, BackwardDifferentiationFormula)
+    TCLITEM(ODE3, BackwardEuler                 , 1e-9) TCLSEP \
+    TCLITEM(ODE3, ForwardEuler                  , 1e-13) TCLSEP \
+    TCLITEM(ODE3, CrankNicolson                 , 2e-9) TCLSEP \
+    TCLITEM(ODE3, BackwardDifferentiationFormula, 2e-9)
 
-#define TCLITEM(ODE, TIMEDISC)                  \
-    template <>                                 \
-    struct TestCase<ODE, NumLib::TIMEDISC>      \
-        : TestCaseBase<ODE, NumLib::TIMEDISC> { \
-        static const char name[];               \
-    };                                          \
-    const char TestCase<ODE, NumLib::TIMEDISC>::name[] = #ODE "_" #TIMEDISC;
+#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON)                            \
+    template <>                                                              \
+    struct TestCase<ODE, NumLib::TIMEDISC>                                   \
+        : TestCaseBase<ODE, NumLib::TIMEDISC> {                              \
+        static const char name[];                                            \
+        static const double tol_picard_newton;                               \
+    };                                                                       \
+    const char TestCase<ODE, NumLib::TIMEDISC>::name[] = #ODE "_" #TIMEDISC; \
+    const double TestCase<ODE, NumLib::TIMEDISC>::tol_picard_newton =        \
+        (TOL_PICARD_NEWTON);
 #define TCLSEP
 
 TESTCASESLIST
@@ -225,7 +228,7 @@ TESTCASESLIST
 #undef TCLITEM
 #undef TCLSEP
 
-#define TCLITEM(ODE, TIMEDISC) \
+#define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON) \
     TestCase<ODE, NumLib::TIMEDISC>
 #define TCLSEP ,
 
@@ -243,8 +246,6 @@ public:
     using ODE      = typename TestParams::ODE;
     using TimeDisc = typename TestParams::TimeDisc;
 
-    static const NumLib::NonlinearSolverTag NLTag = TestParams::NLTag;
-
     static void test()
     {
         const unsigned num_timesteps = 100;
@@ -257,14 +258,16 @@ public:
             run_test_case<TimeDisc, ODE, NumLib::NonlinearSolverTag::Newton>(
                 num_timesteps, TestParams::name);
 
-        const double tol_picard_newton = 2e-9;
+        // const double tol_picard_newton = 2e-9;
 
         ASSERT_EQ(sol_picard.ts.size(), sol_newton.ts.size());
         for (std::size_t i = 0; i < sol_picard.ts.size(); ++i) {
             ASSERT_EQ(sol_picard.ts[i], sol_newton.ts[i]);
-            for (std::size_t comp = 0; comp < sol_picard.solutions[i].size(); ++comp) {
+            for (std::size_t comp = 0; comp < sol_picard.solutions[i].size();
+                 ++comp) {
                 EXPECT_NEAR(sol_picard.solutions[i][comp],
-                            sol_newton.solutions[i][comp], tol_picard_newton);
+                            sol_newton.solutions[i][comp],
+                            TestParams::tol_picard_newton);
             }
         }
     }
