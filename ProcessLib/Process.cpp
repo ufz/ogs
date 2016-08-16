@@ -72,15 +72,47 @@ void Process::initialize()
 void Process::setInitialConditions(GlobalVector& x)
 {
     DBUG("Set initial conditions.");
+    std::size_t const n_nodes = _mesh.getNumberOfNodes();
+
+    SpatialPosition pos;
+
     for (int variable_id = 0;
          variable_id < static_cast<int>(_process_variables.size());
          ++variable_id)
     {
         ProcessVariable& pv = _process_variables[variable_id];
-        for (int component_id = 0; component_id < pv.getNumberOfComponents();
-             ++component_id)
+        auto const* ic = pv.getInitialCondition();
+        if (!ic)
+            continue;
+
+        auto const num_comp = pv.getNumberOfComponents();
+
+        for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
         {
-            setInitialConditions(pv, variable_id, component_id, x);
+            MeshLib::Location const l(_mesh.getID(),
+                                      MeshLib::MeshItemType::Node, node_id);
+
+            pos.setNodeID(node_id);
+            auto const& tup = ic->getTuple(0.0, pos); // 0.0 is t!
+
+            for (int comp_id = 0; comp_id < num_comp; ++comp_id)
+            {
+                auto global_index =
+                    std::abs(_local_to_global_index_map->getGlobalIndex(
+                        l, variable_id, comp_id));
+#ifdef USE_PETSC
+                // The global indices of the ghost entries of the global matrix
+                // or the global vectors need to be set as negative values for
+                // equation assembly, however the global indices start from
+                // zero. Therefore, any ghost entry with zero index is assigned
+                // an negative value of the vector size or the matrix dimension.
+                // To assign the initial value for the ghost entries, the
+                // negative indices of the ghost entries are restored to zero.
+                if (global_index == x.size())
+                    global_index = 0;
+#endif
+                x.set(global_index, tup[comp_id]);
+            }
         }
     }
 }
@@ -221,34 +253,6 @@ void Process::finishNamedFunctionsInitialization()
                      getSingleComponentDOFTable(),
                      _secondary_variable_context)),
              nullptr});
-    }
-}
-
-void Process::setInitialConditions(ProcessVariable const& variable,
-                                   int const variable_id,
-                                   int const component_id,
-                                   GlobalVector& x)
-{
-    std::size_t const n_nodes = _mesh.getNumberOfNodes();
-    for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
-    {
-        MeshLib::Location const l(_mesh.getID(), MeshLib::MeshItemType::Node,
-                                  node_id);
-        auto global_index = std::abs(_local_to_global_index_map->getGlobalIndex(
-            l, variable_id, component_id));
-#ifdef USE_PETSC
-        // The global indices of the ghost entries of the global matrix or
-        // the global vectors need to be set as negative values for equation
-        // assembly, however the global indices start from zero.  Therefore,
-        // any ghost entry with zero index is assigned an negative value of
-        // the vector size or the matrix dimension.  To assign the initial
-        // value for the ghost entries, the negative indices of the ghost
-        // entries are restored to zero.
-        if (global_index == x.size())
-            global_index = 0;
-#endif
-        x.set(global_index,
-              variable.getInitialConditionValue(node_id, component_id));
     }
 }
 

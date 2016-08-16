@@ -43,6 +43,48 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     std::initializer_list<std::string>
         tag_names);
 
+/// Find a parameter of specific type for a given name.
+///
+/// \see The documentation of the other findParameter() function.
+template <typename ParameterDataType>
+Parameter<ParameterDataType>& findParameter(
+    std::string const& parameter_name,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const num_components)
+{
+    // Find corresponding parameter by name.
+    auto const parameter_it = std::find_if(
+        parameters.cbegin(), parameters.cend(),
+        [&parameter_name](std::unique_ptr<ParameterBase> const& p) {
+            return p->name == parameter_name;
+        });
+
+    if (parameter_it == parameters.end()) {
+        OGS_FATAL(
+            "Could not find parameter `%s' in the provided parameters list.",
+            parameter_name.c_str());
+    }
+    DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
+
+    // Check the type correctness of the found parameter.
+    auto* const parameter =
+        dynamic_cast<Parameter<ParameterDataType>*>(parameter_it->get());
+    if (!parameter) {
+        OGS_FATAL("The read parameter `%s' is of incompatible type.",
+                  parameter_name.c_str());
+    }
+
+    if (parameter->getNumberOfComponents() != num_components) {
+        OGS_FATAL(
+            "The read parameter `%s' has the wrong number of components (%lu "
+            "instead of %u).",
+            parameter_name.c_str(), parameter->getNumberOfComponents(),
+            num_components);
+    }
+
+    return *parameter;
+}
+
 /// Find a parameter of specific type for a name given in the process
 /// configuration under the tag.
 /// The parameter must have the specified number of components.
@@ -67,37 +109,7 @@ Parameter<ParameterDataType>& findParameter(
     //! \ogs_file_special
     auto const name = process_config.getConfigParameter<std::string>(tag);
 
-    // Find corresponding parameter by name.
-    auto const parameter_it =
-        std::find_if(parameters.cbegin(), parameters.cend(),
-                     [&name](std::unique_ptr<ParameterBase> const& p) {
-                         return p->name == name;
-                     });
-
-    if (parameter_it == parameters.end()) {
-        OGS_FATAL(
-            "Could not find parameter `%s' in the provided parameters list for "
-            "config tag <%s>.",
-            name.c_str(), tag.c_str());
-    }
-    DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
-
-    // Check the type correctness of the found parameter.
-    auto* const parameter =
-        dynamic_cast<Parameter<ParameterDataType>*>(parameter_it->get());
-    if (!parameter) {
-        OGS_FATAL("The read parameter `%s' is of incompatible type.",
-                  name.c_str());
-    }
-
-    if (parameter->getNumberOfComponents() != num_components) {
-        OGS_FATAL(
-            "The read parameter `%s' has the wrong number of components (%lu "
-            "instead of %u).",
-            name.c_str(), parameter->getNumberOfComponents(), num_components);
-    }
-
-    return *parameter;
+    return findParameter<ParameterDataType>(name, parameters, num_components);
 }
 }  // ProcessLib
 

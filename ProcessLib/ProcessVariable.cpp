@@ -10,48 +10,33 @@
 #include "ProcessVariable.h"
 
 #include <utility>
-
 #include <logog/include/logog.hpp>
 
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Mesh.h"
-
-#include "BaseLib/ConfigTree.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
-ProcessVariable::ProcessVariable(BaseLib::ConfigTree const& config,
-                                 MeshLib::Mesh& mesh,
-                                 GeoLib::GEOObjects const& geometries)
-    :
-    //! \ogs_file_param{prj__process_variables__process_variable__name}
-    _name(config.getConfigParameter<std::string>("name")),
-    _mesh(mesh),
-    //! \ogs_file_param{prj__process_variables__process_variable__components}
-    _n_components(config.getConfigParameter<int>("components"))
+ProcessVariable::ProcessVariable(
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
+    GeoLib::GEOObjects const& geometries,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    :  //! \ogs_file_param{prj__process_variables__process_variable__name}
+      _name(config.getConfigParameter<std::string>("name")),
+      _mesh(mesh),
+      //! \ogs_file_param{prj__process_variables__process_variable__components}
+      _n_components(config.getConfigParameter<int>("components"))
 {
-    DBUG("Constructing process variable %s", this->_name.c_str());
+    DBUG("Constructing process variable %s", _name.c_str());
 
     // Initial condition
-    //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
-    if (auto ic_config = config.getConfigSubtreeOptional("initial_condition"))
+    if (auto ic_name =
+            //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
+            config.getConfigParameterOptional<std::string>("initial_condition"))
     {
-        //! \ogs_file_param{initial_condition__type}
-        auto const type = ic_config->peekConfigParameter<std::string>("type");
-        if (type == "Uniform")
-        {
-            _initial_condition =
-                createUniformInitialCondition(*ic_config, _n_components);
-        }
-        else if (type == "MeshProperty")
-        {
-            _initial_condition =
-                createMeshPropertyInitialCondition(*ic_config, _mesh, _n_components);
-        }
-        else
-        {
-            ERR("Unknown type of the initial condition.");
-        }
+        _initial_condition.reset(new InitialCondition(
+            findParameter<double>(*ic_name, parameters, _n_components)));
     }
     else
     {

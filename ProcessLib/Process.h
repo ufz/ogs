@@ -148,13 +148,6 @@ private:
     /// each of the named functions.
     void finishNamedFunctionsInitialization();
 
-    /// Sets the initial condition values in the solution vector x for a given
-    /// process variable and component.
-    void setInitialConditions(ProcessVariable const& variable,
-                              int const variable_id,
-                              int const component_id,
-                              GlobalVector& x);
-
     /// Computes and stores global matrix' sparsity pattern from given
     /// DOF-table.
     void computeSparsityPattern();
