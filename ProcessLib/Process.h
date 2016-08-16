@@ -215,6 +215,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
 /// Find a parameter of specific type for a name given in the process
 /// configuration under the tag.
+/// The parameter must have the specified number of components.
 /// In the process config a parameter is referenced by a name. For example it
 /// will be looking for a parameter named "K" in the list of parameters
 /// when the tag is "hydraulic_conductivity":
@@ -229,7 +230,8 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 template <typename ParameterDataType>
 Parameter<ParameterDataType>& findParameter(
     BaseLib::ConfigTree const& process_config, std::string const& tag,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const num_components)
 {
     // Find parameter name in process config.
     //! \ogs_file_special
@@ -244,18 +246,27 @@ Parameter<ParameterDataType>& findParameter(
 
     if (parameter_it == parameters.end()) {
         OGS_FATAL(
-            "Could not find parameter '%s' in the provided parameters list for "
+            "Could not find parameter `%s' in the provided parameters list for "
             "config tag <%s>.",
             name.c_str(), tag.c_str());
     }
-    DBUG("Found parameter \'%s\'.", (*parameter_it)->name.c_str());
+    DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
 
     // Check the type correctness of the found parameter.
     auto* const parameter =
         dynamic_cast<Parameter<ParameterDataType>*>(parameter_it->get());
     if (!parameter) {
-        OGS_FATAL("The read parameter is of incompatible type.");
+        OGS_FATAL("The read parameter `%s' is of incompatible type.",
+                  name.c_str());
     }
+
+    if (parameter->getNumberOfComponents() != num_components) {
+        OGS_FATAL(
+            "The read parameter `%s' has the wrong number of components (%lu "
+            "instead of %u).",
+            name.c_str(), parameter->getNumberOfComponents(), num_components);
+    }
+
     return *parameter;
 }
 

@@ -42,7 +42,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
         config,
         //! \ogs_file_param_special{process__GROUNDWATER_FLOW__hydraulic_conductivity}
         "hydraulic_conductivity",
-        parameters);
+        parameters, 1);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());
