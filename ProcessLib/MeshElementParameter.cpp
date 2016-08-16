@@ -32,7 +32,12 @@ std::unique_ptr<ParameterBase> createMeshElementParameter(
     auto const& property =
         mesh.getProperties().template getPropertyVector<double>(field_name);
     if (!property) {
-        OGS_FATAL("The required property %s is not of the requested type.",
+        OGS_FATAL("The mesh property `%s' is not of the requested type.",
+                  field_name.c_str());
+    }
+
+    if (property->getMeshItemType() != MeshLib::MeshItemType::Cell) {
+        OGS_FATAL("The mesh property `%s' is not an element property.",
                   field_name.c_str());
     }
 

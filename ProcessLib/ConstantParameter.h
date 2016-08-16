@@ -18,6 +18,10 @@ namespace ProcessLib
 template <typename T>
 struct ConstantParameter final : public Parameter<T> {
     ConstantParameter(T const& value) : _value{{value}} {}
+
+    // TODO allow for different sizes
+    unsigned getNumberOfComponents() const { return 1; }
+
     std::vector<T> const& getTuple(
         double const /*t*/, SpatialPosition const& /*pos*/) const override
     {
@@ -25,7 +29,7 @@ struct ConstantParameter final : public Parameter<T> {
     }
 
 private:
-    std::vector<T> _value;
+    std::vector<T> const _value;
 };
 
 std::unique_ptr<ParameterBase> createConstantParameter(

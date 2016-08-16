@@ -25,7 +25,13 @@ template <typename T>
 struct MeshElementParameter final : public Parameter<T> {
     MeshElementParameter(MeshLib::PropertyVector<T> const& property)
         : _property(property)
+        , _cache(_property.getNumberOfComponents())
     {
+    }
+
+    unsigned getNumberOfComponents() const override
+    {
+        return _property.getNumberOfComponents();
     }
 
     std::vector<T> const& getTuple(double const /*t*/,
@@ -33,14 +39,16 @@ struct MeshElementParameter final : public Parameter<T> {
     {
         auto const e = pos.getElementID();
         assert(e);
-        _cache.front() = _property[*e];
+        auto const num_comp = _property.getNumberOfComponents();
+        for (std::size_t c=0; c<num_comp; ++c) {
+            _cache[c] = _property.getComponent(*e, c);
+        }
         return _cache;
     }
 
 private:
     MeshLib::PropertyVector<T> const& _property;
-    // TODO multi-component
-    mutable std::vector<double> _cache = std::vector<double>(1);
+    mutable std::vector<double> _cache;
 };
 
 std::unique_ptr<ParameterBase> createMeshElementParameter(

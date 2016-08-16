@@ -36,16 +36,29 @@ struct ParameterBase
     std::string name;
 };
 
+/*! A Parameter is a function \f$ (t, x) \mapsto f(t, x) \in T^n \f$.
+ *
+ * Where \f$ t \f$ is the time and \f$ x \f$ is the SpatialPosition.
+ * \f$ n \f$ is the number of components of \f$f\f$'s results, i.e., 1 for a
+ * scalar parameter and >1 for a vectorial or tensorial parameter.
+ */
 template <typename T>
 struct Parameter : public ParameterBase
 {
     virtual ~Parameter() = default;
 
-    // TODO number of components
+    //! Returns the number of components this Parameter has at every position and
+    //! point in time.
+    virtual unsigned getNumberOfComponents() const = 0;
+
+    //! Returns the parameter value at the given time and position.
     virtual std::vector<T> const& getTuple(
         double const t, SpatialPosition const& pos) const = 0;
 };
 
+//! Constructs a new ParameterBase from the given configuration.
+//!
+//! The \c meshes vector is used to set up parameters from mesh input data.
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
     const std::vector<MeshLib::Mesh*>& meshes);
