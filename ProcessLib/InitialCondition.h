@@ -78,8 +78,7 @@ public:
     virtual double getValue(std::size_t const node_id,
                             int const component_id) const override
     {
-        return _property[node_id * _property.getNumberOfComponents() +
-                         component_id];
+        return _property.getComponent(node_id, component_id);
     }
 
 private:
