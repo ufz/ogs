@@ -13,7 +13,7 @@
 #include <vector>
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "ProcessLib/Parameter.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace ProcessLib
 {

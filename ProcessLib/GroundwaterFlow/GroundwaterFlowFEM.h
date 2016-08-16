@@ -17,7 +17,7 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Parameter.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "GroundwaterFlowProcessData.h"
 

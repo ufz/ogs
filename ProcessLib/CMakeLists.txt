@@ -6,6 +6,9 @@ APPEND_SOURCE_FILES(SOURCES)
 add_subdirectory(BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
 
+add_subdirectory(Parameter)
+APPEND_SOURCE_FILES(SOURCES Parameter)
+
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 

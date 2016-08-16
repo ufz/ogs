@@ -10,7 +10,7 @@
 #ifndef PROCESS_LIB_INITIAL_CONDITION_H_
 #define PROCESS_LIB_INITIAL_CONDITION_H_
 
-#include "Parameter.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace ProcessLib
 {
