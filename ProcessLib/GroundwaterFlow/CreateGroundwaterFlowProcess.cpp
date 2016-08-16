@@ -10,6 +10,7 @@
 #include "CreateGroundwaterFlowProcess.h"
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
 

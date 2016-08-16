@@ -9,6 +9,7 @@
 
 #include "CreateTESProcess.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 #include "TESProcess.h"
 
 namespace ProcessLib
