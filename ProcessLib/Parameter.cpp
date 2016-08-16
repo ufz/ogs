@@ -52,6 +52,6 @@ std::unique_ptr<ParameterBase> createMeshPropertyParameter(
     }
 
     return std::unique_ptr<ParameterBase>(
-        new MeshPropertyParameter<double>(*property));
+        new MeshElementParameter<double>(*property));
 }
 }  // namespace ProcessLib

@@ -17,6 +17,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/Elements/Element.h"
+#include "SpatialPosition.h"
 
 namespace MeshLib
 {
@@ -36,55 +37,55 @@ struct ParameterBase
     std::string name;
 };
 
-/// A parameter is representing a value or function of any type.
-/// The ReturnType can represent an underlying type of an aggregate type like
-/// tuple or matrix (\see tupleSize()).
-/// The total number of stored tuples is provided.
-template <typename ReturnType, typename... Args>
+template <typename T>
 struct Parameter : public ParameterBase
 {
     virtual ~Parameter() = default;
 
-    virtual ReturnType operator()(Args&&... args) const = 0;
+    // TODO number of components
+    virtual std::vector<T> const& getTuple(
+        double const t, SpatialPosition const& pos) const = 0;
 };
 
 /// Single, constant value parameter.
-template <typename ReturnType>
-struct ConstParameter final
-    : public Parameter<ReturnType, MeshLib::Element const&>
-{
-    ConstParameter(ReturnType value) : _value(value)
-    {
-    }
-
-    ReturnType operator()(MeshLib::Element const&) const override
+template <typename T>
+struct ConstParameter final : public Parameter<T> {
+    ConstParameter(T const& value) : _value{{value}} {}
+    std::vector<T> const& getTuple(
+        double const /*t*/, SpatialPosition const& /*pos*/) const override
     {
         return _value;
     }
 
 private:
-    ReturnType _value;
+    std::vector<T> _value;
 };
 
 std::unique_ptr<ParameterBase> createConstParameter(BaseLib::ConfigTree const& config);
 
 /// A parameter represented by a mesh property vector.
-template <typename ReturnType>
-struct MeshPropertyParameter final
-    : public Parameter<ReturnType, MeshLib::Element const&>
+template <typename T>
+struct MeshElementParameter final
+    : public Parameter<T>
 {
-    MeshPropertyParameter(MeshLib::PropertyVector<ReturnType> const& property)
+    MeshElementParameter(MeshLib::PropertyVector<T> const& property)
         : _property(property)
     {
     }
 
-    ReturnType operator()(MeshLib::Element const& e) const override
+    std::vector<T> const& getTuple(
+        double const /*t*/, SpatialPosition const& pos) const override
     {
-        return _property[e.getID()];
+        auto const e = pos.getElementID();
+        assert(e);
+        _cache.front() = _property[*e];
+        return _cache;
     }
 
 private:
-    MeshLib::PropertyVector<ReturnType> const& _property;
+    MeshLib::PropertyVector<T> const& _property;
+    // TODO multi-component
+    mutable std::vector<double> _cache = std::vector<double>(1);
 };
 
 std::unique_ptr<ParameterBase> createMeshPropertyParameter(BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
