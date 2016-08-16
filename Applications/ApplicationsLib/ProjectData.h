@@ -23,7 +23,7 @@
 #include "GeoLib/GEOObjects.h"
 
 #include "ProcessLib/Output.h"
-#include "ProcessLib/Parameter.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
 
