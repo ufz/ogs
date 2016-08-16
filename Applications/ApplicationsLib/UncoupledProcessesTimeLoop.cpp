@@ -89,7 +89,7 @@ void UncoupledProcessesTimeLoop::setInitialConditions(
                 ode_sys.getMatrixSpecifications()));
 
         auto& x0 = *_process_solutions[pcs_idx];
-        pcs.setInitialConditions(x0);
+        pcs.setInitialConditions(t0, x0);
         MathLib::LinAlg::finalizeAssembly(x0);
 
         time_disc.setInitialState(t0, x0);  // push IC

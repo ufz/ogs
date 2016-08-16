@@ -71,7 +71,7 @@ public:
 
     void initialize();
 
-    void setInitialConditions(GlobalVector& x);
+    void setInitialConditions(const double t, GlobalVector& x);
 
     MathLib::MatrixSpecifications getMatrixSpecifications()
         const override final;

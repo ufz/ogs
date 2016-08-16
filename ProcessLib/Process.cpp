@@ -69,7 +69,7 @@ void Process::initialize()
         _process_variables, *_local_to_global_index_map, _integration_order);
 }
 
-void Process::setInitialConditions(GlobalVector& x)
+void Process::setInitialConditions(double const t, GlobalVector& x)
 {
     DBUG("Set initial conditions.");
     std::size_t const n_nodes = _mesh.getNumberOfNodes();
@@ -93,7 +93,7 @@ void Process::setInitialConditions(GlobalVector& x)
                                       MeshLib::MeshItemType::Node, node_id);
 
             pos.setNodeID(node_id);
-            auto const& tup = ic->getTuple(0.0, pos); // 0.0 is t!
+            auto const& tup = ic->getTuple(t, pos);
 
             for (int comp_id = 0; comp_id < num_comp; ++comp_id)
             {
