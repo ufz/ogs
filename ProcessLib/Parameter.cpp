@@ -8,50 +8,44 @@
  */
 
 #include "Parameter.h"
-
-#include <boost/optional.hpp>
-#include <logog/include/logog.hpp>
-
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "MeshLib/Elements/Element.h"
+
+#include "ConstantParameter.h"
+#include "MeshElementParameter.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<ParameterBase> createConstParameter(
-    BaseLib::ConfigTree const& config)
-{
-    //! \ogs_file_param{parameter__type}
-    config.checkConfigParameter("type", "Constant");
-    //! \ogs_file_param{parameter__Constant__value}
-    auto value = config.getConfigParameter<double>("value");
-    DBUG("Using value %g", value);
 
-    return std::unique_ptr<ParameterBase>(new ConstParameter<double>(value));
+std::unique_ptr<ParameterBase> createParameter(
+    BaseLib::ConfigTree const& config, std::vector<MeshLib::Mesh*> const& meshes)
+{
+
+    //! \ogs_file_param{parameter__name}
+    auto name = config.getConfigParameter<std::string>("name");
+    //! \ogs_file_param{parameter__type}
+    auto type = config.peekConfigParameter<std::string>("type");
+
+    // Create parameter based on the provided type.
+    if (type == "Constant")
+    {
+        INFO("ConstantParameter: %s", name.c_str());
+        auto param = createConstantParameter(config);
+        param->name = name;
+        return param;
+    }
+    else if (type == "MeshElement")
+    {
+        INFO("MeshElementParameter: %s", name.c_str());
+        auto param = createMeshElementParameter(config, *meshes.front());
+        param->name = name;
+        return param;
+    }
+    else
+    {
+        OGS_FATAL("Cannot construct property of given type \'%s\'.",
+                  type.c_str());
+    }
 }
 
-std::unique_ptr<ParameterBase> createMeshPropertyParameter(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
-{
-    //! \ogs_file_param{parameter__type}
-    config.checkConfigParameter("type", "MeshProperty");
-    //! \ogs_file_param{parameter__MeshProperty__field_name}
-    auto field_name = config.getConfigParameter<std::string>("field_name");
-    DBUG("Using field_name %s", field_name.c_str());
-
-    if (!mesh.getProperties().hasPropertyVector(field_name))
-    {
-        OGS_FATAL("The required property %s does not exists in the mesh.",
-            field_name.c_str());
-    }
-    auto const& property =
-        mesh.getProperties().template getPropertyVector<double>(field_name);
-    if (!property)
-    {
-        OGS_FATAL("The required property %s is not of the requested type.",
-            field_name.c_str());
-    }
-
-    return std::unique_ptr<ParameterBase>(
-        new MeshElementParameter<double>(*property));
-}
-}  // namespace ProcessLib
+}  // ProcessLib
