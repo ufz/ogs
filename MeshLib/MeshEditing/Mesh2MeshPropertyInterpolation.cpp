@@ -77,28 +77,30 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     Mesh& dest_mesh, MeshLib::PropertyVector<double>& dest_properties) const
 {
-    std::vector<double> interpolated_src_node_properties(_src_mesh.getNumberOfNodes());
+    std::vector<double> interpolated_src_node_properties(
+        _src_mesh.getNumberOfNodes());
     interpolateElementPropertiesToNodeProperties(
         interpolated_src_node_properties);
 
     // idea: looping over the destination elements and calculate properties
-    // from interpolated_src_node_properties
-    // to accelerate the (source) point search construct a grid
+    // from interpolated_src_node_properties to accelerate the (source) point
+    // search construct a grid
     std::vector<MeshLib::Node*> const& src_nodes(_src_mesh.getNodes());
-    GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(), 64);
+    GeoLib::Grid<MeshLib::Node> src_grid(src_nodes.begin(), src_nodes.end(),
+                                         64);
 
     auto const& dest_elements(dest_mesh.getElements());
     const std::size_t n_dest_elements(dest_elements.size());
-    for (std::size_t k(0); k<n_dest_elements; k++)
+    for (std::size_t k(0); k < n_dest_elements; k++)
     {
-        if (dest_elements[k]->getGeomType() == MeshElemType::LINE)
+        MeshLib::Element& dest_element(*dest_elements[k]);
+        if (dest_element.getGeomType() == MeshElemType::LINE)
             continue;
 
         // compute axis aligned bounding box around the current element
         const GeoLib::AABB elem_aabb(
-            dest_elements[k]->getNodes(),
-            dest_elements[k]->getNodes() +
-                dest_elements[k]->getNumberOfBaseNodes());
+            dest_element.getNodes(),
+            dest_element.getNodes() + dest_element.getNumberOfBaseNodes());
 
         // request "interesting" nodes from grid
         std::vector<std::vector<MeshLib::Node*> const*> nodes;
@@ -106,18 +108,18 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
             elem_aabb.getMinPoint(), elem_aabb.getMaxPoint(), nodes);
 
         std::size_t cnt(0);
-        dest_properties[k] = 0.0;
+        double average_value(0.0);
 
-        for (auto const* nodes_vec : nodes) {
-            for (auto const* node : *nodes_vec) {
-                if (elem_aabb.containsPointXY(*node))
+        for (auto const* nodes_vec : nodes)
+        {
+            for (auto const* node : *nodes_vec)
+            {
+                if (elem_aabb.containsPointXY(*node) &&
+                    MeshLib::isPointInElementXY(*node, dest_element))
                 {
-                    if (MeshLib::isPointInElementXY(*node, *dest_elements[k]))
-                    {
-                        dest_properties[k] +=
-                            interpolated_src_node_properties[node->getID()];
-                        cnt++;
-                    }
+                    average_value +=
+                        interpolated_src_node_properties[node->getID()];
+                    cnt++;
                 }
             }
         }
@@ -127,7 +129,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
                 "Mesh2MeshInterpolation: Could not find values in source mesh "
                 "for the element %d.",
                 k);
-        dest_properties[k] /= cnt;
+        dest_properties[k] = average_value / cnt;
     }
 }
 
