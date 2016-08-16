@@ -13,6 +13,7 @@
 
 #include "ConstantParameter.h"
 #include "MeshElementParameter.h"
+#include "MeshNodeParameter.h"
 
 namespace ProcessLib
 {
@@ -38,6 +39,13 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("MeshElementParameter: %s", name.c_str());
         auto param = createMeshElementParameter(config, *meshes.front());
+        param->name = name;
+        return param;
+    }
+    else if (type == "MeshNode")
+    {
+        INFO("MeshElementParameter: %s", name.c_str());
+        auto param = createMeshNodeParameter(config, *meshes.front());
         param->name = name;
         return param;
     }
