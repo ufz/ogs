@@ -155,6 +155,11 @@ struct TestCase;
 //
 //  Put new test cases to that list
 //
+//  Arguments are: The ODE, the used time discretization
+//                 the absolute infinity-norm tolerance when comparing Picard to
+//                 Newton results, and the absolute infinity-norm tolerance when
+//                 comparing the numerical to the analytical solution
+//
 // /////////////////////////////////////
 #define TESTCASESLIST \
     TCLITEM(ODE1, BackwardEuler                 , 1e-15  , 0.2) TCLSEP \
