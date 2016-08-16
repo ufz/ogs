@@ -226,8 +226,8 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 /// \endcode
 /// and return a reference to that parameter. Additionally it checks for the
 /// type of the found parameter.
-template <typename... ParameterArgs>
-Parameter<ParameterArgs...>& findParameter(
+template <typename ParameterDataType>
+Parameter<ParameterDataType>& findParameter(
     BaseLib::ConfigTree const& process_config, std::string const& tag,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
@@ -252,7 +252,7 @@ Parameter<ParameterArgs...>& findParameter(
 
     // Check the type correctness of the found parameter.
     auto* const parameter =
-        dynamic_cast<Parameter<ParameterArgs...>*>(parameter_it->get());
+        dynamic_cast<Parameter<ParameterDataType>*>(parameter_it->get());
     if (!parameter) {
         OGS_FATAL("The read parameter is of incompatible type.");
     }

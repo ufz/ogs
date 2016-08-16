@@ -81,7 +81,7 @@ public:
     }
 
     void assembleConcrete(
-        double const /*t*/, std::vector<double> const& local_x,
+        double const t, std::vector<double> const& local_x,
         NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& /*M*/, GlobalMatrix& K, GlobalVector& b) override
     {
@@ -91,11 +91,15 @@ public:
         IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.hydraulic_conductivity(_element);
+            auto const k = _process_data.hydraulic_conductivity.getTuple(t, pos).front();
 
             _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();

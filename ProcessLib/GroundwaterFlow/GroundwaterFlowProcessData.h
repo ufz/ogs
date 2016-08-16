@@ -19,7 +19,7 @@ namespace MeshLib
 namespace ProcessLib
 {
 
-template <typename ReturnType, typename... Args>
+template <typename T>
 struct Parameter;
 
 namespace GroundwaterFlow
@@ -28,9 +28,7 @@ namespace GroundwaterFlow
 struct GroundwaterFlowProcessData
 {
     GroundwaterFlowProcessData(
-            ProcessLib::Parameter<double, MeshLib::Element const&> const&
-            hydraulic_conductivity_
-            )
+        Parameter<double> const& hydraulic_conductivity_)
         : hydraulic_conductivity(hydraulic_conductivity_)
     {}
 
@@ -47,7 +45,7 @@ struct GroundwaterFlowProcessData
     //! Assignments are not needed.
     void operator=(GroundwaterFlowProcessData&&) = delete;
 
-    Parameter<double, MeshLib::Element const&> const& hydraulic_conductivity;
+    Parameter<double> const& hydraulic_conductivity;
 };
 
 } // namespace GroundwaterFlow

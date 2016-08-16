@@ -38,8 +38,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
          "process_variable"});
 
     // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity = findParameter<double,
-                                                 MeshLib::Element const&>(
+    auto& hydraulic_conductivity = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__GROUNDWATER_FLOW__hydraulic_conductivity}
         "hydraulic_conductivity",
