@@ -76,11 +76,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
 
-    //! \ogs_file_param{prj__process_variables}
-    parseProcessVariables(project_config.getConfigSubtree("process_variables"));
-
     //! \ogs_file_param{prj__parameters}
     parseParameters(project_config.getConfigSubtree("parameters"));
+
+    //! \ogs_file_param{prj__process_variables}
+    parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"));
@@ -273,7 +273,7 @@ void ProjectData::parseProcessVariables(
     {
         // TODO Extend to referenced meshes.
         _process_variables.emplace_back(var_config, *_mesh_vec[0],
-                                        *_geoObjects);
+                                        *_geoObjects, _parameters);
     }
 }
 
