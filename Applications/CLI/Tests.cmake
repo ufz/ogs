@@ -192,7 +192,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small.prj
         WRAPPER time
         TESTER vtkdiff
-        ABSTOL 1e-7 RELTOL 1e-12
+        ABSTOL 1e-7 RELTOL 5e-9
         DIFF_DATA
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0.100000.vtu pressure pressure
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0.100000.vtu temperature temperature
@@ -401,7 +401,7 @@ else()
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
-        ABSTOL 1e-7 RELTOL 1e-12
+        ABSTOL 1e-7 RELTOL 5e-9
         DIFF_DATA
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0_100000_0.vtu pressure pressure
         tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_pcs_0_ts_19_t_0_100000_0.vtu temperature temperature
