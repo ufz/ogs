@@ -47,7 +47,8 @@ public:
     }
 
 protected:
-    std::vector<typename ShapeMatricesType::ShapeMatrices> _shape_matrices;
+    std::vector<typename ShapeMatricesType::ShapeMatrices> const
+        _shape_matrices;
     unsigned const _integration_order;
 };
 
