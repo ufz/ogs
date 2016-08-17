@@ -7,7 +7,7 @@
  *
  */
 
-#include "UniformDirichletBoundaryCondition.h"
+#include "DirichletBoundaryCondition.h"
 
 #include <algorithm>
 #include <vector>
@@ -15,17 +15,16 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<UniformDirichletBoundaryCondition>
-createUniformDirichletBoundaryCondition(
+std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config, std::vector<std::size_t>&& mesh_node_ids,
     NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t const mesh_id,
     int const variable_id, int const component_id)
 {
-    DBUG("Constructing UniformDirichletBoundaryCondition from config.");
+    DBUG("Constructing DirichletBoundaryCondition from config.");
     //! \ogs_file_param{boundary_condition__type}
-    config.checkConfigParameter("type", "UniformDirichlet");
+    config.checkConfigParameter("type", "Dirichlet");
 
-    //! \ogs_file_param{boundary_condition__UniformDirichlet__value}
+    //! \ogs_file_param{boundary_condition__Dirichlet__value}
     auto const value = config.getConfigParameter<double>("value");
     DBUG("Using value %g", value);
 
@@ -51,8 +50,8 @@ createUniformDirichletBoundaryCondition(
         }
     }
 
-    return std::unique_ptr<UniformDirichletBoundaryCondition>(
-        new UniformDirichletBoundaryCondition(std::move(bc)));
+    return std::unique_ptr<DirichletBoundaryCondition>(
+        new DirichletBoundaryCondition(std::move(bc)));
 }
 
 }  // namespace ProcessLib
