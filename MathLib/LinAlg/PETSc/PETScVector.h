@@ -19,10 +19,7 @@
 
 #include <string>
 #include <vector>
-
 #include <petscvec.h>
-#include "MathLib/LinAlg/VectorNorms.h"
-
 
 namespace MathLib
 {

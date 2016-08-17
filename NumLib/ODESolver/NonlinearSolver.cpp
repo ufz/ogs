@@ -18,7 +18,6 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/LinAlg.h"
-#include "MathLib/LinAlg/VectorNorms.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
 namespace NumLib

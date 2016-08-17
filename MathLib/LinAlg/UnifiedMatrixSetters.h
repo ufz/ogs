@@ -25,8 +25,6 @@ namespace MathLib
 class PETScVector;
 class PETScMatrix;
 
-double norm(PETScVector const& x);
-
 void setVector(PETScVector& v,
                std::initializer_list<double> values);
 
