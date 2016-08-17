@@ -34,14 +34,20 @@ class BoundaryCondition
 public:
     //! Applies natural BCs (i.e. non-Dirichlet BCs) to the stiffness matrix
     //! \c K and the vector \c b.
-    virtual void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
-                       GlobalVector& b) = 0;
+    virtual void applyNaturalBC(const double /*t*/, GlobalVector const& /*x*/,
+                                GlobalMatrix& /*K*/, GlobalVector& /*b*/)
+    {
+        // By default it is assumed that the BC is not a natural BC. Therefore
+        // there is nothing to do here.
+    }
 
-    // TODO docu
+    //! Writes the values of Dirichlet BCs to \c bc_values.
     virtual void getDirichletBCValues(
         const double /*t*/,
         NumLib::IndexValueVector<GlobalIndexType>& /*bc_values*/) const
     {
+        // By default it is assumed that the BC is not a Dirichlet BC. Therefore
+        // there is nothing to do here.
     }
 
     virtual ~BoundaryCondition() = default;

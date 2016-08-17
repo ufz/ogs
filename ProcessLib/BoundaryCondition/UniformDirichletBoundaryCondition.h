@@ -29,11 +29,6 @@ public:
     {
     }
 
-    void apply(const double, GlobalVector const&, GlobalMatrix&,
-               GlobalVector&) override
-    {
-    }
-
     void getDirichletBCValues(
         const double /*t*/,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const

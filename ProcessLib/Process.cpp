@@ -112,7 +112,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b)
 {
     assembleConcreteProcess(t, x, M, K, b);
-    _boundary_conditions.apply(t, x, K, b);
+    _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
 
 void Process::assembleJacobian(const double t, GlobalVector const& x,

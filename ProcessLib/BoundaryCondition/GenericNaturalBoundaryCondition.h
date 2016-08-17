@@ -41,10 +41,10 @@ public:
 
     /// Calls local assemblers which calculate their contributions to the global
     /// matrix and the right-hand-side.
-    void apply(const double t,
-               GlobalVector const& x,
-               GlobalMatrix& K,
-               GlobalVector& b) override;
+    void applyNaturalBC(const double t,
+                        GlobalVector const& x,
+                        GlobalMatrix& K,
+                        GlobalVector& b) override;
 
 private:
     /// Data used in the assembly of the specific boundary condition.
