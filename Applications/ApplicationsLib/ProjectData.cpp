@@ -231,9 +231,12 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
          //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
-        _parameters.push_back(
-            ProcessLib::createParameter(parameter_config, _mesh_vec));
+        _parameters.push_back(ProcessLib::createParameter(
+            parameter_config, _mesh_vec, _curves));
     }
+
+    for (auto& parameter : _parameters)
+        parameter->initialize(_parameters);
 }
 
 void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
