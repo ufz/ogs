@@ -5,29 +5,30 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file:   createStorageModel.cpp
+ * \file:   createPorosityModel.cpp
  *
  * Created on August 16, 2016, 1:16 PM
  */
 
-#include "createStorageModel.h"
+#include "createPorosityModel.h"
 
 #include "BaseLib/Error.h"
 
-#include "ConstantStorage.h"
+#include "ConstantPorosity.h"
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-Storage* createStorageModel(BaseLib::ConfigTree const* const config)
+Porosity* createPorosityModel(BaseLib::ConfigTree const* const config)
 {
     //! \ogs_file_param{material__porous_medium__storage__type}
     auto const type = config->getConfigParameter<std::string>("type");
 
     if (type.find("constant") != std::string::npos)
-        //! \ogs_file_param{material__porous_medium__storage__value}
-        return new ConstantStorage(config->getConfigParameter<double>("value"));
+        //! \ogs_file_param{material__porous_medium__porosity__value}
+        return new ConstantPorosity(
+            config->getConfigParameter<double>("value"));
     else
     {
         OGS_FATAL(

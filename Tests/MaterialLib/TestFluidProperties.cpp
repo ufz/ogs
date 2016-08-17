@@ -48,8 +48,8 @@ TEST(Material, checkConstantDensity)
     std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
 
     ASSERT_EQ(998.0, rho->getValue(nullptr));
-    ASSERT_EQ(0.0, rho->getdValue(nullptr,
-                                  MaterialLib::Fluid::PropertyVariable::T));
+    ASSERT_EQ(0.0,
+              rho->getdValue(nullptr, MaterialLib::Fluid::PropertyVariable::T));
 }
 
 TEST(Material, checkIdealGasLaw)
@@ -70,8 +70,8 @@ TEST(Material, checkIdealGasLaw)
     ASSERT_NEAR(expected_air_dens, rho->getValue(vars), 1.e-10);
 
     const double expected_d_air_dens_dT = -molar_air * p / (R * T * T);
-    ASSERT_NEAR(expected_d_air_dens_dT, rho->getdValue(vars,
-                                        Fluid::PropertyVariable::T), 1.e-10);
+    ASSERT_NEAR(expected_d_air_dens_dT,
+                rho->getdValue(vars, Fluid::PropertyVariable::T), 1.e-10);
 
     const double expected_d_air_dens_dp = molar_air / (R * T);
     ASSERT_NEAR(expected_d_air_dens_dp,
@@ -93,8 +93,8 @@ TEST(Material, checkLinearTemperatureDependentDensity)
     double vars[] = {273.1 + 60.0};
     ASSERT_NEAR(1000.0 * (1 + 4.3e-4 * (vars[0] - 293.0)), rho->getValue(vars),
                 1.e-10);
-    ASSERT_NEAR(1000.0 * 4.3e-4, rho->getdValue(vars,
-                                         Fluid::PropertyVariable::T), 1.e-10);
+    ASSERT_NEAR(1000.0 * 4.3e-4,
+                rho->getdValue(vars, Fluid::PropertyVariable::T), 1.e-10);
 }
 
 TEST(Material, checkLiquidDensity)
@@ -130,7 +130,7 @@ TEST(Material, checkLiquidDensity)
     // Test the derivative with respect to pressure.
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                rho->getdValue(vars, Fluid::PropertyVariable::pl), 1.e-10);    
+                rho->getdValue(vars, Fluid::PropertyVariable::pl), 1.e-10);
 }
 
 //----------------------------------------------------------------------------
@@ -154,8 +154,8 @@ TEST(Material, checkConstantViscosity)
     std::unique_ptr<FluidProperty> mu(createTestViscosityModel(xml));
 
     ASSERT_EQ(1.e-4, mu->getValue(nullptr));
-    ASSERT_EQ(0.0, mu->getdValue(nullptr,
-                                  MaterialLib::Fluid::PropertyVariable::T));
+    ASSERT_EQ(0.0,
+              mu->getdValue(nullptr, MaterialLib::Fluid::PropertyVariable::T));
 }
 
 TEST(Material, checkTemperatureDependentViscosity)
@@ -174,8 +174,9 @@ TEST(Material, checkTemperatureDependentViscosity)
     // Test the density.
     ASSERT_NEAR(mu_expected, mu->getValue(vars), 1.e-10);
     // Test the derivative with respect to temperature.
-    ASSERT_NEAR(-mu_expected, mu->getdValue(vars,
-                              MaterialLib::Fluid::PropertyVariable::T), 1.e-10);
+    ASSERT_NEAR(-mu_expected,
+                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariable::T),
+                1.e-10);
 }
 
 TEST(Material, checkLinearPressureDependentViscosity)
@@ -191,11 +192,12 @@ TEST(Material, checkLinearPressureDependentViscosity)
 
     const double vars[] = {293, 2.e+6};
     // Test the density.
-    ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)),
-                                                   mu->getValue(vars), 1.e-10);
+    ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)), mu->getValue(vars),
+                1.e-10);
     // Test the derivative with respect to pressure.
-    ASSERT_NEAR(1.e-9, mu->getdValue(vars,
-                             MaterialLib::Fluid::PropertyVariable::pl), 1.e-10);
+    ASSERT_NEAR(1.e-9,
+                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariable::pl),
+                1.e-10);
 }
 
 TEST(Material, checkVogelViscosity)
@@ -217,7 +219,7 @@ TEST(Material, checkVogelViscosity)
         "  <liquid_type> CO2 </liquid_type>"
         "</viscosity>";
     std::unique_ptr<FluidProperty> mu_co2(createTestViscosityModel(xml_co2));
-    vars[0] = 255.04; 
+    vars[0] = 255.04;
     ASSERT_NEAR(0.137956e-3, mu_co2->getValue(vars), 1.e-5);
     ASSERT_NEAR(-2.35664e-6, mu_co2->getdValue(vars, var_type), 1.e-5);
 
@@ -227,9 +229,8 @@ TEST(Material, checkVogelViscosity)
         "  <liquid_type> CH4 </liquid_type>"
         "</viscosity>";
     std::unique_ptr<FluidProperty> mu_ch4(createTestViscosityModel(xml_ch4));
-    vars[0] = 172.0; 
+    vars[0] = 172.0;
     ASSERT_NEAR(0.352072e-4, mu_ch4->getValue(vars), 1.e-5);
     ASSERT_NEAR(-2.35664e-6, mu_ch4->getdValue(vars, var_type), 1.e-5);
 }
-
 }
