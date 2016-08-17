@@ -7,21 +7,23 @@
  *
  */
 
-#ifndef PROCESSLIB_UNIFORMROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_UNIFORMROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
+#ifndef PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
+#define PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
 
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Parameter/Parameter.h"
+#include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-struct UniformRobinBoundaryConditionData final {
-    double const alpha;
-    double const u_0;
+struct RobinBoundaryConditionData final {
+    Parameter<double> const& alpha;
+    Parameter<double> const& u_0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class UniformRobinBoundaryConditionLocalAssembler final
+class RobinBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
@@ -29,10 +31,10 @@ class UniformRobinBoundaryConditionLocalAssembler final
         ShapeFunction, IntegrationMethod, GlobalDim>;
 
 public:
-    UniformRobinBoundaryConditionLocalAssembler(
+    RobinBoundaryConditionLocalAssembler(
         MeshLib::Element const& e, std::size_t const local_matrix_size,
         unsigned const integration_order,
-        UniformRobinBoundaryConditionData const& data)
+        RobinBoundaryConditionData const& data)
         : Base(e, integration_order),
           _data(data),
           _local_K(local_matrix_size, local_matrix_size),
@@ -46,8 +48,6 @@ public:
                   double const t, const GlobalVector& /*x*/, GlobalMatrix& K,
                   GlobalVector& b) override
     {
-        (void)t;  // TODO time-dependent Robin BCs
-
         _local_K.setZero();
         _local_rhs.setZero();
 
@@ -55,17 +55,25 @@ public:
         std::size_t const n_integration_points =
             integration_method.getNumberOfPoints();
 
-        for (std::size_t ip = 0; ip < n_integration_points; ++ip) {
+        SpatialPosition pos;
+        pos.setElementID(id);
+
+        for (std::size_t ip = 0; ip < n_integration_points; ++ip)
+        {
+            pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
+
+            double const alpha = _data.alpha.getTuple(t, pos).front();
+            double const u_0 = _data.u_0.getTuple(t, pos).front();
 
             // flux = alpha * ( u_0 - u )
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
             _local_K.diagonal().noalias() +=
-                sm.N * _data.alpha * sm.detJ * wp.getWeight();
+                sm.N * alpha * sm.detJ * wp.getWeight();
             _local_rhs.noalias() +=
-                sm.N * _data.alpha * _data.u_0 * sm.detJ * wp.getWeight();
+                sm.N * alpha * u_0 * sm.detJ * wp.getWeight();
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
@@ -75,7 +83,7 @@ public:
     }
 
 private:
-    UniformRobinBoundaryConditionData const& _data;
+    RobinBoundaryConditionData const& _data;
 
     typename Base::NodalMatrixType _local_K;
     typename Base::NodalVectorType _local_rhs;
@@ -83,4 +91,4 @@ private:
 
 }  // ProcessLib
 
-#endif  // PROCESSLIB_UNIFORMROBINBOUNDARYCONDITIONLOCALASSEMBLER_H
+#endif  // PROCESSLIB_ROBINBOUNDARYCONDITIONLOCALASSEMBLER_H

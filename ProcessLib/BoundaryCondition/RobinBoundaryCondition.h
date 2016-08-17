@@ -7,11 +7,11 @@
  *
  */
 
-#ifndef PROCESSLIB_UNIFORMROBINBOUNDARYCONDITION_H
-#define PROCESSLIB_UNIFORMROBINBOUNDARYCONDITION_H
+#ifndef PROCESSLIB_ROBINBOUNDARYCONDITION_H
+#define PROCESSLIB_ROBINBOUNDARYCONDITION_H
 
 #include "GenericNaturalBoundaryCondition.h"
-#include "UniformRobinBoundaryConditionLocalAssembler.h"
+#include "RobinBoundaryConditionLocalAssembler.h"
 
 namespace MeshGeoToolsLib
 {
@@ -20,9 +20,9 @@ class BoundaryElementsSearcher;
 
 namespace ProcessLib
 {
-using UniformRobinBoundaryCondition = GenericNaturalBoundaryCondition<
-    UniformRobinBoundaryConditionData,
-    UniformRobinBoundaryConditionLocalAssembler>;
+using RobinBoundaryCondition = GenericNaturalBoundaryCondition<
+    RobinBoundaryConditionData,
+    RobinBoundaryConditionLocalAssembler>;
 
 /*! Creates a new uniform Robin boundary condition from the given data.
  *
@@ -35,14 +35,14 @@ using UniformRobinBoundaryCondition = GenericNaturalBoundaryCondition<
  * The value \f$ \alpha \cdot [ u_0 - u(x) ] \f$ is a flux. It replaces the
  * integrand in the boundary integral for the variable \f$ u \f$.
  */
-std::unique_ptr<UniformRobinBoundaryCondition>
-createUniformRobinBoundaryCondition(
+std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
-    unsigned const global_dim);
+    unsigned const global_dim,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // ProcessLib
 
-#endif  // PROCESSLIB_UNIFORMROBINBOUNDARYCONDITION_H
+#endif  // PROCESSLIB_ROBINBOUNDARYCONDITION_H

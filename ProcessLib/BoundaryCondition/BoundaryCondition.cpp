@@ -13,7 +13,7 @@
 #include "BoundaryConditionConfig.h"
 #include "UniformDirichletBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
-#include "UniformRobinBoundaryCondition.h"
+#include "RobinBoundaryCondition.h"
 
 static std::vector<MeshLib::Element*> getClonedElements(
     MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
@@ -69,12 +69,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             dof_table, variable_id, config.component_id, integration_order,
             mesh.getDimension(), parameters);
     }
-    else if (type == "UniformRobin") {
-        return createUniformRobinBoundaryCondition(
+    else if (type == "Robin") {
+        return createRobinBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
             dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension());
+            mesh.getDimension(), parameters);
     }
     else
     {
