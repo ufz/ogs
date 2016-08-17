@@ -27,7 +27,7 @@ createNeumannBoundaryCondition(
 
     //! \ogs_file_param{boundary_condition__Neumann__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter %g", param_name);
+    DBUG("Using parameter %s", param_name.c_str());
 
     auto& param = findParameter<double>(param_name, parameters, 1);
 
