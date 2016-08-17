@@ -40,8 +40,8 @@ public:
         NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config);
 
-    void preTimestep(GlobalVector const& x, const double t,
-                     const double delta_t) override;
+    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
+                                    const double delta_t) override;
     void preIterationConcreteProcess(const unsigned iter,
                                      GlobalVector const& x) override;
     NumLib::IterationResult postIterationConcreteProcess(

@@ -39,6 +39,8 @@ public:
     {
     }
 
+    void preTimestep(const double t) override;
+
     void getDirichletBCValues(
         const double t,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
@@ -46,11 +48,12 @@ public:
 private:
     Parameter<double> const& _parameter;
 
-    std::vector<std::size_t> const _mesh_node_ids;
+    std::vector<std::size_t> _mesh_node_ids;
     NumLib::LocalToGlobalIndexMap const& _dof_table;
     std::size_t const _mesh_id;
     int const _variable_id;
     int const _component_id;
+    mutable bool _already_computed = false;
 };
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(

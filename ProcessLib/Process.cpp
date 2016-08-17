@@ -241,6 +241,18 @@ void Process::computeSparsityPattern()
         NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
 }
 
+void Process::preTimestep(GlobalVector const& x, const double t,
+                 const double delta_t)
+{
+    preTimestepConcreteProcess(x, t, delta_t);
+    _boundary_conditions.preTimestep(t);
+}
+
+void Process::postTimestep(GlobalVector const& x)
+{
+    postTimestepConcreteProcess(x);
+}
+
 void Process::preIteration(const unsigned iter, const GlobalVector &x)
 {
     // In every new iteration cached values of secondary variables are expired.
