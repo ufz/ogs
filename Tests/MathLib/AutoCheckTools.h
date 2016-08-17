@@ -9,7 +9,8 @@
 #ifndef TESTS_MATHLIB_AUTOCHECKTOOLS_H_
 #define TESTS_MATHLIB_AUTOCHECKTOOLS_H_
 
-#include "autocheck/autocheck.hpp"
+#include <Eigen/Dense>
+#include <autocheck/autocheck.hpp>
 
 #include "MathLib/Point3d.h"
 
@@ -64,6 +65,22 @@ struct IntervalTupleGenerator
     result_type operator()(std::size_t /*size*/ = 0)
     {
         return {{ x_gen(), y_gen(), z_gen() }};
+    }
+};
+
+/// Generator for MxN fixed size eigen matrices with underlying type T.
+template <typename T, std::size_t M, std::size_t N, typename Gen = generator<T>>
+struct randomEigenMatrixGenerator
+{
+    Gen source;
+
+    using result_type = Eigen::Matrix<T, M, N>;
+
+    result_type operator()(std::size_t size = 0)
+    {
+        result_type rv;
+        std::generate_n(rv.data(), M*N, fix(size, source));
+        return rv;
     }
 };
 
