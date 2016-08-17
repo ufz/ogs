@@ -17,7 +17,7 @@ namespace ProcessLib
 /// Single, constant value parameter.
 template <typename T>
 struct ConstantParameter final : public Parameter<T> {
-    ConstantParameter(T const& value) : _value{{value}} {}
+    ConstantParameter(T const& value) : _value({value}) {}
 
     // TODO allow for different sizes
     unsigned getNumberOfComponents() const { return 1; }
