@@ -16,6 +16,7 @@
 
 #include <logog/include/logog.hpp>
 
+#include "MathLib/GeometricBasics.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
 
@@ -204,5 +205,41 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     return os;
 }
 #endif  // NDEBUG
+
+bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
+{
+    for(std::size_t i(0); i<e.getNumberOfBaseNodes(); ++i) {
+        if (MathLib::sqrDist2d(p, *e.getNode(i)) <
+            std::numeric_limits<double>::epsilon())
+        {
+            return true;
+        }
+    }
+
+    if (e.getGeomType() == MeshElemType::TRIANGLE)
+    {
+        MathLib::Point3d const& n0(*e.getNode(0));
+        MathLib::Point3d const& n1(*e.getNode(1));
+        MathLib::Point3d const& n2(*e.getNode(2));
+
+        return MathLib::isPointInTriangleXY(p, n0, n1, n2);
+    }
+    else if (e.getGeomType() == MeshElemType::QUAD)
+    {
+        MathLib::Point3d const& n0(*e.getNode(0));
+        MathLib::Point3d const& n1(*e.getNode(1));
+        MathLib::Point3d const& n2(*e.getNode(2));
+        MathLib::Point3d const& n3(*e.getNode(3));
+
+        return MathLib::isPointInTriangleXY(p, n0, n1, n2) ||
+               MathLib::isPointInTriangleXY(p, n0, n2, n3);
+    }
+    else
+    {
+        WARN("isPointInElementXY: element type \"%s\" is not supported.",
+             MeshLib::MeshElemType2String(e.getGeomType()).c_str());
+        return false;
+    }
+}
 
 }

@@ -164,6 +164,14 @@ protected:
     Properties _properties;
 }; /* class */
 
+
+
+/// Scales the mesh property with name \c property_name by given \c factor.
+/// \note The property must be a "double" property.
+void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
+                             std::string const& property_name,
+                             double factor);
+
 } /* namespace */
 
 #endif /* MESH_H_ */

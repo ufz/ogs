@@ -169,6 +169,31 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
     return true;
 }
 
+bool isPointInTriangleXY(MathLib::Point3d const& p,
+                         MathLib::Point3d const& a,
+                         MathLib::Point3d const& b,
+                         MathLib::Point3d const& c)
+{
+    // criterion: p-a = u0 * (b-a) + u1 * (c-a); 0 <= u0, u1 <= 1, u0+u1 <= 1
+    MathLib::DenseMatrix<double> mat(2, 2);
+    mat(0, 0) = b[0] - a[0];
+    mat(0, 1) = c[0] - a[0];
+    mat(1, 0) = b[1] - a[1];
+    mat(1, 1) = c[1] - a[1];
+    double y[2] = {p[0] - a[0], p[1] - a[1]};
+
+    MathLib::GaussAlgorithm<MathLib::DenseMatrix<double>, double*> gauss;
+    gauss.solve(mat, y, true);
+
+    // check if u0 and u1 fulfills the condition
+    if (0 <= y[0] && y[0] <= 1 && 0 <= y[1] && y[1] <= 1 && y[0] + y[1] <= 1)
+    {
+        return true;
+    }
+    return false;
+
+}
+
 bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
                     const MathLib::Point3d& c, const MathLib::Point3d& d)
 {
