@@ -133,13 +133,14 @@ std::vector<std::unique_ptr<BoundaryCondition>>
 ProcessVariable::createBoundaryConditions(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
-    unsigned const integration_order)
+    unsigned const integration_order,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
 
     for (auto& config : _bc_configs)
         bcs.emplace_back(createBoundaryCondition(
-            config, dof_table, _mesh, variable_id, integration_order));
+            config, dof_table, _mesh, variable_id, integration_order, parameters));
 
     return bcs;
 }

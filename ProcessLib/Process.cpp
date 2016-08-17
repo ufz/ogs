@@ -19,6 +19,7 @@
 namespace ProcessLib
 {
 Process::Process(
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     MeshLib::Mesh& mesh,
     NonlinearSolver& nonlinear_solver,
     std::unique_ptr<TimeDiscretization>&& time_discretization,
@@ -34,7 +35,8 @@ Process::Process(
       _nonlinear_solver(nonlinear_solver),
       _time_discretization(std::move(time_discretization)),
       _convergence_criterion(std::move(convergence_criterion)),
-      _process_variables(std::move(process_variables))
+      _process_variables(std::move(process_variables)),
+      _boundary_conditions(parameters)
 {
 }
 

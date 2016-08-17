@@ -22,7 +22,7 @@ std::unique_ptr<Process> createTESProcess(
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{process__type}
@@ -46,7 +46,7 @@ std::unique_ptr<Process> createTESProcess(
     ProcessOutput process_output{config.getConfigSubtree("output")};
 
     return std::unique_ptr<Process>{new TESProcess{
-        mesh, nonlinear_solver, std::move(time_discretization),
+        parameters, mesh, nonlinear_solver, std::move(time_discretization),
         std::move(convergence_criterion), std::move(process_variables),
         std::move(secondary_variables), std::move(process_output),
         std::move(named_function_caller), config}};

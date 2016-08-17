@@ -46,7 +46,7 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
     {
         ProcessVariable& pv = process_variables[variable_id];
         auto bcs = pv.createBoundaryConditions(dof_table, variable_id,
-                                            integration_order);
+                                               integration_order, _parameters);
 
         std::move(bcs.begin(), bcs.end(),
                   std::back_inserter(_boundary_conditions));

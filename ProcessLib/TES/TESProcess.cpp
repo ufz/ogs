@@ -54,6 +54,7 @@ namespace ProcessLib
 namespace TES
 {
 TESProcess::TESProcess(
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
@@ -63,7 +64,7 @@ TESProcess::TESProcess(
     ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
-    : Process(mesh, nonlinear_solver, std::move(time_discretization),
+    : Process(parameters, mesh, nonlinear_solver, std::move(time_discretization),
               std::move(convergence_criterion), std::move(process_variables),
               std::move(secondary_variables), std::move(process_output),
               std::move(named_function_caller))

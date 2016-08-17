@@ -38,7 +38,8 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& mesh,
     const int variable_id,
-    const unsigned integration_order)
+    const unsigned integration_order,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(mesh);
@@ -66,7 +67,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
             dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension());
+            mesh.getDimension(), parameters);
     }
     else if (type == "UniformRobin") {
         return createUniformRobinBoundaryCondition(

@@ -32,6 +32,7 @@ class TESProcess final : public Process
 {
 public:
     TESProcess(
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         MeshLib::Mesh& mesh,
         Process::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
