@@ -59,7 +59,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
 
         return createDirichletBoundaryCondition(
             config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
-            config.component_id);
+            config.component_id, parameters);
     }
     else if (type == "Neumann")
     {
