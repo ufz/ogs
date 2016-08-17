@@ -9,7 +9,7 @@
 
 #include "GlobalVectorFromNamedFunction.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "ProcessLib/Utils/VectorUtil.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 
 namespace ProcessLib
 {
@@ -47,7 +47,7 @@ GlobalVector const& GlobalVectorFromNamedFunction::call(
         // Caution: The order of args will be the same as the order of the
         // components in the global vector!
         for (std::size_t i = 0; i < n_args; ++i) {
-            args[i] = getNodalValue(x, _mesh, dof_table, node_id, i);
+            args[i] = NumLib::getNodalValue(x, _mesh, dof_table, node_id, i);
         }
 
         _context.index = node_id;
