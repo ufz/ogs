@@ -15,6 +15,13 @@
 
 namespace ProcessLib
 {
+//! Represents a position in space which can be either one of
+//! a node, an element, an integration point or a cartesian coordinates triple.
+//!
+//! The setters of this class make sure that only compatible information can be
+//! stored at the same time; e.g., it is not possible to specify an element ID
+//! and a node ID at the same time (the setAll() method being an exception to
+//! that rule).
 class SpatialPosition
 {
 public:
