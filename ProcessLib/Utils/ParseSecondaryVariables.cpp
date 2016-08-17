@@ -36,11 +36,11 @@ void parseSecondaryVariables(
         auto const internal_name =
             // \ogs_file_attr{process__secondary_variables__secondary_variable__internal_name}
             sec_var_config.getConfigAttribute<std::string>("internal_name");
-        auto const external_name =
+        auto const output_name =
             // \ogs_file_attr{process__secondary_variables__secondary_variable__output_name}
             sec_var_config.getConfigAttribute<std::string>("output_name");
 
-        secondary_variables.addNameMapping(internal_name, external_name);
+        secondary_variables.addNameMapping(internal_name, output_name);
 
         if (type == "static") {
             // alright
@@ -54,11 +54,11 @@ void parseSecondaryVariables(
                 auto const sink_arg =
                     // \ogs_file_attr{process__secondary_variables__secondary_variable__sink_arg}
                     plug.getConfigAttribute<std::string>("sink_arg");
-                auto const source =
+                auto const source_fct =
                     // \ogs_file_attr{process__secondary_variables__secondary_variable__source_fct}
                     plug.getConfigAttribute<std::string>("source_fct");
 
-                named_function_caller.plug(sink_fct, sink_arg, source);
+                named_function_caller.plug(sink_fct, sink_arg, source_fct);
             }
         }
     }
