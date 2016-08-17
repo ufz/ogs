@@ -201,9 +201,10 @@ void doProcessOutput(
 
     for (auto const& external_variable_name : output_variables)
     {
-        if (already_output.find(external_variable_name) != already_output.end())
+        if (!already_output.insert(external_variable_name).second) {
+            // no insertion took place, output already done
             continue;
-        already_output.insert(external_variable_name);
+        }
 
         add_secondary_var(secondary_variables.get(external_variable_name),
                           external_variable_name);
