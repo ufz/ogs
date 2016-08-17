@@ -11,9 +11,8 @@
 #define PROCESS_LIB_BOUNDARY_CONDITION_H_
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/NumericsConfig.h" // for GlobalIndexType
-
-#include "DirichletBoundaryCondition.h"
+#include "NumLib/IndexValueVector.h"
+#include "BoundaryCondition.h"
 
 namespace ProcessLib
 {
@@ -21,7 +20,7 @@ namespace ProcessLib
 /// and time Dirichlet boundary condition.
 /// The expected parameter in the passed configuration is "value" which, when
 /// not present defaults to zero.
-class UniformDirichletBoundaryCondition : public DirichletBoundaryCondition
+class UniformDirichletBoundaryCondition : public BoundaryCondition
 {
 public:
     UniformDirichletBoundaryCondition(
@@ -30,13 +29,21 @@ public:
     {
     }
 
-    NumLib::IndexValueVector<GlobalIndexType> getBCValues()
+    void apply(const double, GlobalVector const&, GlobalMatrix&,
+               GlobalVector&) override
     {
-        return std::move(_bc);
+    }
+
+    void getDirichletBCValues(
+        const double /*t*/,
+        NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
+    {
+        if (!_bc.ids.empty())
+            bc_values = std::move(_bc);
     }
 
 private:
-    NumLib::IndexValueVector<GlobalIndexType> _bc;
+    mutable NumLib::IndexValueVector<GlobalIndexType> _bc;
 };
 
 std::unique_ptr<UniformDirichletBoundaryCondition>

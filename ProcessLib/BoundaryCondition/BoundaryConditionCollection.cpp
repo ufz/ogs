@@ -9,21 +9,6 @@
 
 #include "BoundaryConditionCollection.h"
 
-void initializeDirichletBCs(
-    std::vector<std::unique_ptr<ProcessLib::BoundaryCondition>> const&
-        boundary_conditions,
-    std::vector<NumLib::IndexValueVector<GlobalIndexType>>&
-        dirichlet_bcs)
-{
-    for (auto const& bc : boundary_conditions) {
-        if (auto* dirichlet_bc =
-                dynamic_cast<ProcessLib::DirichletBoundaryCondition*>(
-                    bc.get())) {
-            dirichlet_bcs.emplace_back(dirichlet_bc->getBCValues());
-        }
-    }
-}
-
 namespace ProcessLib
 {
 void BoundaryConditionCollection::apply(const double t, GlobalVector const& x,
@@ -52,6 +37,9 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
                   std::back_inserter(_boundary_conditions));
     }
 
-    initializeDirichletBCs(_boundary_conditions, _dirichlet_bcs);
+    // For each BC there will be storage for Dirichlet BC. This storage will be
+    // uninitialized by default, and has to be filled by the respective BC
+    // object if needed.
+    _dirichlet_bcs.resize(_boundary_conditions.size());
 }
 }

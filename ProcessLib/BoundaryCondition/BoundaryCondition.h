@@ -20,6 +20,8 @@ class Mesh;
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
+template <typename>
+struct IndexValueVector;
 }
 
 namespace ProcessLib
@@ -34,6 +36,13 @@ public:
     //! \c K and the vector \c b.
     virtual void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
                        GlobalVector& b) = 0;
+
+    // TODO docu
+    virtual void getDirichletBCValues(
+        const double /*t*/,
+        NumLib::IndexValueVector<GlobalIndexType>& /*bc_values*/) const
+    {
+    }
 
     virtual ~BoundaryCondition() = default;
 };
