@@ -39,6 +39,8 @@ struct ParameterBase
 {
     virtual ~ParameterBase() = default;
 
+    virtual bool isTimeDependent() const = 0;
+
     /// Parameters might depend on each other; this method allows to set up the
     /// dependencies between parameters after they have been constructed.
     virtual void initialize(

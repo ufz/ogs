@@ -26,6 +26,8 @@ struct CurveScaledParameter final : public Parameter<T> {
     {
     }
 
+    bool isTimeDependent() const override { return true; }
+
     void initialize(
         std::vector<
             std::unique_ptr<ProcessLib::ParameterBase>> const& parameters)

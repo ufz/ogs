@@ -29,6 +29,8 @@ struct MeshNodeParameter final : public Parameter<T> {
     {
     }
 
+    bool isTimeDependent() const override { return false; }
+
     unsigned getNumberOfComponents() const override
     {
         return _property.getNumberOfComponents();
