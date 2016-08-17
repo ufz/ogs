@@ -78,7 +78,7 @@ int main (int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 
     if (additional_insert_mapping.getValue()) {
-        geo_mapper.advancedMapOnMesh(*mesh.get());
+        geo_mapper.advancedMapOnMesh(*mesh);
     } else {
         geo_mapper.mapOnMesh(mesh.get());
     }

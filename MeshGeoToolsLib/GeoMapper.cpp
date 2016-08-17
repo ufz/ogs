@@ -265,7 +265,7 @@ static std::vector<MathLib::Point3d> computeElementSegmentIntersections(
                 const_cast<MeshLib::Node*>(edge->getNode(0))), 0),
             new GeoLib::Point(*dynamic_cast<MathLib::Point3d*>(
                 const_cast<MeshLib::Node*>(edge->getNode(1))), 0),
-            false};
+            true};
         std::vector<MathLib::Point3d> const intersections(
             GeoLib::lineSegmentIntersect2d(segment, elem_segment));
         for (auto const& p : intersections)
