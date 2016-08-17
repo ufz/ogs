@@ -69,7 +69,7 @@ struct IntervalTupleGenerator
 };
 
 /// Generator for MxN fixed size eigen matrices with underlying type T.
-template <typename T, std::size_t M, std::size_t N, typename Gen = generator<T>>
+template <typename T, int M, int N, typename Gen = generator<T>>
 struct randomEigenMatrixGenerator
 {
     Gen source;
