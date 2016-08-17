@@ -9,8 +9,8 @@
 
 #include "TESProcess.h"
 #include "BaseLib/Functional.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/VectorUtil.h"
 
 // TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
 inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
@@ -367,13 +367,13 @@ TESProcess::computeVapourPartialPressure(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
+    GlobalIndexType nnodes = _mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
-        auto const p = getNodalValue(x, this->_mesh, dof_table, node_id,
+        auto const p = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
                                      COMPONENT_ID_PRESSURE);
-        auto const x_mV = getNodalValue(x, this->_mesh, dof_table, node_id,
+        auto const x_mV = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
                                         COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
@@ -400,15 +400,15 @@ TESProcess::computeRelativeHumidity(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType nnodes = this->_mesh.getNumberOfNodes();
+    GlobalIndexType nnodes = _mesh.getNumberOfNodes();
 
     for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
     {
-        auto const p = getNodalValue(x, this->_mesh, dof_table, node_id,
+        auto const p = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
                                      COMPONENT_ID_PRESSURE);
-        auto const T = getNodalValue(x, this->_mesh, dof_table, node_id,
+        auto const T = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
                                      COMPONENT_ID_TEMPERATURE);
-        auto const x_mV = getNodalValue(x, this->_mesh, dof_table, node_id,
+        auto const x_mV = NumLib::getNodalValue(x, _mesh, dof_table, node_id,
                                         COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
