@@ -54,7 +54,7 @@ enum class SwmmObject
  * number of nodes, links or subcatchments but only ever one system.
  * The interface can convert the SWMM input data into a geometry or a (line-)mesh.
  * For meshes, also output data can be added to nodes and elements.
- * The interface also provides routines for returning data as vectors as well as convenience 
+ * The interface also provides routines for returning data as vectors as well as convenience
  * methods for outputting data into CSV files. CSV files will either contain all parameters for one
  * object at all time steps or all parameters for all objects of a given type at one timestep.
  */

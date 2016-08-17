@@ -83,7 +83,7 @@ std::array<std::size_t,4> const n_obj_params = { 8, 6, 5, 15 };
 
 SwmmInterface* SwmmInterface::create(std::string const& file_name)
 {
-    if (file_name.length() < 5) 
+    if (file_name.length() < 5)
         return nullptr;
 
     if (!(SwmmInterface::isSwmmInputFile(file_name) || SwmmInterface::isSwmmOutputFile(file_name)))
@@ -174,7 +174,6 @@ bool SwmmInterface::isSwmmOutputFile(std::string const& out_file_name)
         ERR ("SWMMInterface: Could not open input file %s.", out_file_name.c_str());
         return false;
     }
-    
     in.close();
     return true;
 }
@@ -876,7 +875,7 @@ std::size_t SwmmInterface::getNTimeSteps() const
     return n_time_steps;
 }
 
-bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_type, 
+bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_type,
     std::string const& vec_name, std::vector<double> const& data)
 {
     if (!(swmm_type == SwmmObject::NODE) || (swmm_type == SwmmObject::LINK))
@@ -971,7 +970,7 @@ std::vector<double> SwmmInterface::getArrayAtTimeStep(SwmmObject obj_type, std::
         return data;
     }
 
-    INFO ("Fetching \"%s\"-data for time step %d...", 
+    INFO ("Fetching \"%s\"-data for time step %d...",
         getArrayName(obj_type, var_idx, SWMM_Npolluts).c_str(), time_step);
 
     for (std::size_t i=0; i<n_objects; ++i)
