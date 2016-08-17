@@ -81,9 +81,7 @@ void Process::setInitialConditions(double const t, GlobalVector& x)
          ++variable_id)
     {
         ProcessVariable& pv = _process_variables[variable_id];
-        auto const* ic = pv.getInitialCondition();
-        if (!ic)
-            continue;
+        auto const& ic = pv.getInitialCondition();
 
         auto const num_comp = pv.getNumberOfComponents();
 
@@ -93,7 +91,7 @@ void Process::setInitialConditions(double const t, GlobalVector& x)
                                       MeshLib::MeshItemType::Node, node_id);
 
             pos.setNodeID(node_id);
-            auto const& tup = ic->getTuple(t, pos);
+            auto const& tup = ic.getTuple(t, pos);
 
             for (int comp_id = 0; comp_id < num_comp; ++comp_id)
             {

@@ -26,22 +26,13 @@ ProcessVariable::ProcessVariable(
       _name(config.getConfigParameter<std::string>("name")),
       _mesh(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
-      _n_components(config.getConfigParameter<int>("components"))
+      _n_components(config.getConfigParameter<int>("components")),
+      _initial_condition(findParameter<double>(
+          //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
+          config.getConfigParameter<std::string>("initial_condition"),
+          parameters, _n_components))
 {
     DBUG("Constructing process variable %s", _name.c_str());
-
-    // Initial condition
-    if (auto ic_name =
-            //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
-            config.getConfigParameterOptional<std::string>("initial_condition"))
-    {
-        _initial_condition.reset(new InitialCondition(
-            findParameter<double>(*ic_name, parameters, _n_components)));
-    }
-    else
-    {
-        INFO("No initial condition found.");
-    }
 
     // Boundary conditions
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions}

@@ -10,9 +10,9 @@
 #ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
 #define PROCESS_LIB_PROCESS_VARIABLE_H_
 
-#include "InitialCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace MeshLib
 {
@@ -47,9 +47,9 @@ public:
         const int variable_id,
         unsigned const integration_order);
 
-    InitialCondition const* getInitialCondition() const
+    Parameter<double> const& getInitialCondition() const
     {
-        return _initial_condition.get();
+        return _initial_condition;
     }
 
     // Get or create a property vector for results.
@@ -61,7 +61,7 @@ private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
     const int _n_components;
-    std::unique_ptr<InitialCondition> _initial_condition;
+    Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
 };
