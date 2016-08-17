@@ -99,28 +99,13 @@ struct SecondaryVariable final
 class SecondaryVariableCollection final
 {
 public:
-    /*! Constructs new instance.
-     *
-     * \param config    Configuration settings.
-     * \param tag_names Possible tag names that contain information about specific
-     *                  secondary variables.
-     *
-     * In this method only the mapping from tag names to variables is set up.
-     * Any further information has to be passed via addSecondaryVariable().
-     */
-    SecondaryVariableCollection(
-            boost::optional<BaseLib::ConfigTree> const& config,
-            std::initializer_list<std::string> tag_names);
-
-    /*! Tells if a secondary variable with the specified name has been set up.
-     *
-     * \note \c variable_name is not the tag name in the project file!
-     */
-    bool variableExists(std::string const& variable_name) const;
+    //! Register a variable with the given internal and external names.
+    void addNameMapping(std::string const& internal_name,
+                        std::string const& external_name);
 
     /*! Set up a secondary variable.
      *
-     * \param tag_name the tag in the project file associated with this
+     * \param internal_name the tag in the project file associated with this
      * secondary variable.
      * \param num_components the variable's number of components.
      * \param fcts functions that compute the variable.
@@ -130,33 +115,24 @@ public:
      * configured.
      * All other variables are silently ignored.
      */
-    void addSecondaryVariable(std::string const& tag_name,
+    void addSecondaryVariable(std::string const& internal_name,
                               const unsigned num_components,
                               SecondaryVariableFunctions&& fcts);
 
-    //! Returns an iterator to the first secondary variable.
-    std::map<std::string, SecondaryVariable>::const_iterator
-    begin() const
-    {
-        return _configured_secondary_variables.begin();
-    }
-
-    //! Returns an iterator past the last secondary variable.
-    std::map<std::string, SecondaryVariable>::const_iterator
-    end() const
-    {
-        return _configured_secondary_variables.end();
-    }
+    //! Returns the secondary variable with the given external name.
+    SecondaryVariable const& get(std::string const& external_name);
 
 private:
-    //! Maps project file tag names to secondary variable names.
-    std::map<std::string, std::string> _map_tagname_to_varname;
+    //! Maps external variable names to internal ones.
+    //! The external variable names are used, e.g., for output.
+    std::map<std::string, std::string> _map_external_to_internal;
 
     //! Collection of all configured secondary variables.
-    //! Maps the variable name to the corresponding SecondaryVariable.
+    //! Maps the internal variable name to the corresponding SecondaryVariable
+    //! instance.
     std::map<std::string, SecondaryVariable> _configured_secondary_variables;
 
-    //! Set of all tags available as a secondary variable.
+    //! Set of all internal variable names known to this instance.
     std::set<std::string> _all_secondary_variables;
 };
 

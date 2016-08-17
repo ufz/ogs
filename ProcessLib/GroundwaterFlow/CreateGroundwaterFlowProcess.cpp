@@ -9,6 +9,7 @@
 
 #include "CreateGroundwaterFlowProcess.h"
 
+#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
 
@@ -48,25 +49,22 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
 
     GroundwaterFlowProcessData process_data{hydraulic_conductivity};
 
-    SecondaryVariableCollection secondary_variables{
-        //! \ogs_file_param{process__secondary_variables}
-        config.getConfigSubtreeOptional("secondary_variables"),
-        {//! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_x}
-         "darcy_velocity_x",
-         //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_y}
-         "darcy_velocity_y",
-         //! \ogs_file_param_special{process__GROUNDWATER_FLOW__secondary_variables__darcy_velocity_z}
-         "darcy_velocity_z"}};
+    SecondaryVariableCollection secondary_variables;
 
-    ProcessOutput
-        //! \ogs_file_param{process__output}
-        process_output{config.getConfigSubtree("output"), process_variables,
-                       secondary_variables};
+    NumLib::NamedFunctionCaller named_function_caller(
+        {"GWFlow_pressure"});
+
+    ProcessLib::parseSecondaryVariables(config, secondary_variables,
+                                        named_function_caller);
+
+    //! \ogs_file_param{process__output}
+    ProcessOutput process_output{config.getConfigSubtree("output")};
 
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(process_output)}};
+        std::move(secondary_variables), std::move(process_output),
+        std::move(named_function_caller)}};
 }
 
 }  // namespace GroundwaterFlow

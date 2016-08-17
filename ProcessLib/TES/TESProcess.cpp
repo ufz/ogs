@@ -8,8 +8,9 @@
  */
 
 #include "TESProcess.h"
-
+#include "BaseLib/Functional.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/VectorUtil.h"
 
 // TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
 inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
@@ -48,21 +49,6 @@ void getVectorValues(
     }
 }
 
-// TODO that essentially duplicates code which is also present in ProcessOutput.
-double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
-                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::size_t const node_id,
-                     std::size_t const global_component_id)
-{
-    MeshLib::Location const l{mesh.getID(), MeshLib::MeshItemType::Node,
-                              node_id};
-
-    auto const index = dof_table.getLocalIndex(
-        l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
-
-    return x.get(index);
-}
-
 namespace ProcessLib
 {
 namespace TES
@@ -75,11 +61,13 @@ TESProcess::TESProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     ProcessOutput&& process_output,
+    NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
     : Process(
           mesh, nonlinear_solver, std::move(time_discretization),
           std::move(process_variables), std::move(secondary_variables),
-          std::move(process_output))
+          std::move(process_output),
+          std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 
@@ -175,12 +163,19 @@ void TESProcess::initializeConcreteProcess(
         mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
         _local_assemblers, _assembly_params);
 
-    // secondary variables
+    initializeSecondaryVariables();
+}
+
+void TESProcess::initializeSecondaryVariables()
+{
+    // adds a secondary variables to the collection of all secondary variables.
     auto add2nd = [&](std::string const& var_name, unsigned const n_components,
                       SecondaryVariableFunctions&& fcts) {
-        this->_secondary_variables.addSecondaryVariable(var_name, n_components,
-                                                        std::move(fcts));
+        _secondary_variables.addSecondaryVariable(var_name, n_components,
+                                                  std::move(fcts));
     };
+
+    // creates an extrapolator
     auto makeEx =
         [&](std::vector<double> const& (TESLocalAssemblerInterface::*method)(
             std::vector<double>&)const) -> SecondaryVariableFunctions {
@@ -188,37 +183,59 @@ void TESProcess::initializeConcreteProcess(
                                             _local_assemblers, method);
     };
 
-    add2nd("solid_density", 1,
-           makeEx(&TESLocalAssemblerInterface::getIntPtSolidDensity));
+    // named functions: vapour partial pressure ////////////////////////////////
+    auto p_V_fct = [=](const double p, const double x_mV) {
+        const double x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
+            x_mV, _assembly_params.M_react, _assembly_params.M_inert);
+        return p*x_nV;
+    };
+    _named_function_caller.addNamedFunction(
+        {"vapour_partial_pressure",
+         {"pressure", "vapour_mass_fraction"},
+         BaseLib::easyBind(std::move(p_V_fct))});
+    _named_function_caller.plug("vapour_partial_pressure", "pressure",
+                                "TES_pressure");
+    _named_function_caller.plug("vapour_partial_pressure",
+                                "vapour_mass_fraction",
+                                "TES_vapour_mass_fraction");
+    // /////////////////////////////////////////////////////////////////////////
+
+    // named functions: solid density //////////////////////////////////////////
+    std::unique_ptr<CachedSecondaryVariable> solid_density(
+        new CachedSecondaryVariable(
+            "TES_solid_density", getExtrapolator(), _local_assemblers,
+            &TESLocalAssemblerInterface::getIntPtSolidDensity,
+            _secondary_variable_context));
+
+    for (auto&& fct : solid_density->getNamedFunctions())
+        _named_function_caller.addNamedFunction(std::move(fct));
+
+    add2nd("solid_density", 1, solid_density->getExtrapolator());
+
+    _cached_secondary_variables.emplace_back(std::move(solid_density));
+    // /////////////////////////////////////////////////////////////////////////
+
     add2nd("reaction_rate", 1,
            makeEx(&TESLocalAssemblerInterface::getIntPtReactionRate));
 
     add2nd("velocity_x", 1,
            makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityX));
-    if (mesh.getDimension() >= 2)
+    if (_mesh.getDimension() >= 2)
         add2nd("velocity_y", 1,
                makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityY));
-    if (mesh.getDimension() >= 3)
+    if (_mesh.getDimension() >= 3)
         add2nd("velocity_z", 1,
                makeEx(&TESLocalAssemblerInterface::getIntPtDarcyVelocityZ));
 
     add2nd("loading", 1, makeEx(&TESLocalAssemblerInterface::getIntPtLoading));
     add2nd("reaction_damping_factor", 1,
-           makeEx(&TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
+          makeEx(&TESLocalAssemblerInterface::getIntPtReactionDampingFactor));
 
-    namespace PH = std::placeholders;
-    using Self = TESProcess;
-
-    add2nd("vapour_partial_pressure", 1,
-           {std::bind(&Self::computeVapourPartialPressure, this, PH::_1, PH::_2,
-                      PH::_3),
+    add2nd("relative_humidity", 1,
+           {BaseLib::easyBind(&TESProcess::computeRelativeHumidity, this),
             nullptr});
-    add2nd("relative_humidity", 1, {std::bind(&Self::computeRelativeHumidity,
-                                              this, PH::_1, PH::_2, PH::_3),
-                                    nullptr});
     add2nd("equilibrium_loading", 1,
-           {std::bind(&Self::computeEquilibriumLoading, this, PH::_1, PH::_2,
-                      PH::_3),
+           {BaseLib::easyBind(&TESProcess::computeEquilibriumLoading, this),
             nullptr});
 }
 
@@ -249,15 +266,15 @@ void TESProcess::preTimestep(GlobalVector const& x, const double t,
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
 }
 
-void TESProcess::preIteration(const unsigned iter,
-                                           GlobalVector const& /*x*/)
+void TESProcess::preIterationConcreteProcess(const unsigned iter,
+                                             GlobalVector const& /*x*/)
 {
     _assembly_params.iteration_in_current_timestep = iter;
     ++_assembly_params.total_iteration;
     ++_assembly_params.number_of_try_of_iteration;
 }
 
-NumLib::IterationResult TESProcess::postIteration(
+NumLib::IterationResult TESProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
     if (this->_process_output.output_iteration_results)

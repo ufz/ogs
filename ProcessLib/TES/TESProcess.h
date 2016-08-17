@@ -11,7 +11,6 @@
 #define PROCESS_LIB_TESPROCESS_H_
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
 #include "TESAssemblyParams.h"
@@ -35,18 +34,20 @@ public:
     TESProcess(
         MeshLib::Mesh& mesh,
         Process::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<Process::TimeDiscretization>&&
-            time_discretization,
+        std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
         ProcessOutput&& process_output,
+        NumLib::NamedFunctionCaller&& named_function_caller,
         BaseLib::ConfigTree const& config);
 
     void preTimestep(GlobalVector const& x, const double t,
                      const double delta_t) override;
-    void preIteration(const unsigned iter, GlobalVector const& x) override;
-    NumLib::IterationResult postIteration(GlobalVector const& x) override;
+    void preIterationConcreteProcess(const unsigned iter,
+                                     GlobalVector const& x) override;
+    NumLib::IterationResult postIterationConcreteProcess(
+        GlobalVector const& x) override;
 
     bool isLinear() const override { return false; }
 
@@ -58,6 +59,8 @@ private:
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b) override;
+
+    void initializeSecondaryVariables();
 
     GlobalVector const& computeVapourPartialPressure(
         GlobalVector const& x,

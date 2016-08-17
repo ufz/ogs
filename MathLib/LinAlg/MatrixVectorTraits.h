@@ -10,14 +10,13 @@
 #ifndef MATHLIB_MATRIX_VECTOR_TRAITS_H
 #define MATHLIB_MATRIX_VECTOR_TRAITS_H
 
-#include<memory>
+#include <memory>
+#include "MatrixSpecifications.h"
 
 namespace MathLib
 {
 template<typename Matrix>
 struct MatrixVectorTraits;
-
-struct MatrixSpecifications;
 }
 
 #define SPECIALIZE_MATRIX_VECTOR_TRAITS(MATVEC, IDX) \

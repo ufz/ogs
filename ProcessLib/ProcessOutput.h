@@ -20,10 +20,7 @@ namespace ProcessLib
 struct ProcessOutput final
 {
     //! Constructs a new instance.
-    ProcessOutput(BaseLib::ConfigTree const& output_config,
-                  std::vector<std::reference_wrapper<ProcessVariable>> const&
-                  process_variables,
-                  SecondaryVariableCollection const& secondary_variables);
+    ProcessOutput(BaseLib::ConfigTree const& output_config);
 
     //! All variables that shall be output.
     std::set<std::string> output_variables;

@@ -9,8 +9,10 @@
 
 #include "Process.h"
 
+#include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include "GlobalVectorFromNamedFunction.h"
 #include "ProcessVariable.h"
 
 namespace ProcessLib
@@ -21,10 +23,12 @@ Process::Process(
     std::unique_ptr<TimeDiscretization>&& time_discretization,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    ProcessOutput&& process_output)
+    ProcessOutput&& process_output,
+    NumLib::NamedFunctionCaller&& named_function_caller)
     : _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
       _process_output(std::move(process_output)),
+      _named_function_caller(std::move(named_function_caller)),
       _nonlinear_solver(nonlinear_solver),
       _time_discretization(std::move(time_discretization)),
       _process_variables(std::move(process_variables))
@@ -54,6 +58,8 @@ void Process::initialize()
 
     initializeConcreteProcess(*_local_to_global_index_map, _mesh,
                               _integration_order);
+
+    finishNamedFunctionsInitialization();
 
     DBUG("Initialize boundary conditions.");
     _boundary_conditions.addBCsForProcessVariables(
@@ -188,6 +194,27 @@ void Process::initializeExtrapolator()
         std::move(extrapolator), dof_table_single_component, manage_storage);
 }
 
+void Process::finishNamedFunctionsInitialization()
+{
+    _named_function_caller.applyPlugs();
+
+    for (auto const& named_function :
+         _named_function_caller.getNamedFunctions()) {
+        auto const& name = named_function.getName();
+        // secondary variables generated from named functions have the prefix
+        // "fct_".
+        _secondary_variables.addSecondaryVariable(
+            "fct_" + name, 1,
+            {BaseLib::easyBind(
+                 &GlobalVectorFromNamedFunction::call,
+                 GlobalVectorFromNamedFunction(
+                     _named_function_caller.getSpecificFunctionCaller(name), _mesh,
+                     getSingleComponentDOFTable(),
+                     _secondary_variable_context)),
+             nullptr});
+    }
+}
+
 void Process::setInitialConditions(ProcessVariable const& variable,
                                    int const variable_id,
                                    int const component_id,
@@ -247,6 +274,21 @@ ProcessVariable& findProcessVariable(
 
     // Const cast is needed because of variables argument constness.
     return const_cast<ProcessVariable&>(*variable);
+}
+
+void Process::preIteration(const unsigned iter, const GlobalVector &x)
+{
+    // In every new iteration cached values of secondary variables are expired.
+    for (auto& cached_var : _cached_secondary_variables) {
+        cached_var->expire();
+    }
+
+    preIterationConcreteProcess(iter, x);
+}
+
+NumLib::IterationResult Process::postIteration(const GlobalVector &x)
+{
+    return postIterationConcreteProcess(x);
 }
 
 std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
