@@ -7,13 +7,13 @@
  *
  */
 
-#include "UniformNeumannBoundaryCondition.h"
+#include "NeumannBoundaryCondition.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<UniformNeumannBoundaryCondition>
-createUniformNeumannBoundaryCondition(
+std::unique_ptr<NeumannBoundaryCondition>
+createNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
@@ -21,18 +21,18 @@ createUniformNeumannBoundaryCondition(
     unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
-    DBUG("Constructing NeumannBcConfig from config.");
+    DBUG("Constructing Neumann BC from config.");
     //! \ogs_file_param{boundary_condition__type}
-    config.checkConfigParameter("type", "UniformNeumann");
+    config.checkConfigParameter("type", "Neumann");
 
-    //! \ogs_file_param{boundary_condition__UniformNeumann__parameter}
+    //! \ogs_file_param{boundary_condition__Neumann__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %g", param_name);
 
     auto& param = findParameter<double>(param_name, parameters, 1);
 
-    return std::unique_ptr<UniformNeumannBoundaryCondition>(
-        new UniformNeumannBoundaryCondition(
+    return std::unique_ptr<NeumannBoundaryCondition>(
+        new NeumannBoundaryCondition(
             integration_order, dof_table, variable_id, component_id,
             global_dim, std::move(elements), param));
 }

@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#ifndef PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#define PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
 
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Parameter/Parameter.h"
@@ -18,7 +18,7 @@ namespace ProcessLib
 {
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class UniformNeumannBoundaryConditionLocalAssembler final
+class NeumannBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
@@ -28,7 +28,7 @@ class UniformNeumannBoundaryConditionLocalAssembler final
 public:
     /// The neumann_bc_value factor is directly integrated into the local
     /// element matrix.
-    UniformNeumannBoundaryConditionLocalAssembler(
+    NeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         unsigned const integration_order,
@@ -74,4 +74,4 @@ private:
 
 }   // namespace ProcessLib
 
-#endif  // PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#endif  // PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H

@@ -12,7 +12,7 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "BoundaryConditionConfig.h"
 #include "UniformDirichletBoundaryCondition.h"
-#include "UniformNeumannBoundaryCondition.h"
+#include "NeumannBoundaryCondition.h"
 #include "UniformRobinBoundaryCondition.h"
 
 static std::vector<MeshLib::Element*> getClonedElements(
@@ -61,9 +61,9 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
             config.component_id);
     }
-    else if (type == "UniformNeumann")
+    else if (type == "Neumann")
     {
-        return createUniformNeumannBoundaryCondition(
+        return createNeumannBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
             dof_table, variable_id, config.component_id, integration_order,
