@@ -21,7 +21,7 @@ namespace ProcessLib
 /*! Secondary variable which is extrapolated from integration points to mesh
  * nodes; the resulting extrapolated values are cached for subsequent use.
  */
-class CachedSecondaryVariable : public NumLib::NamedFunctionProvider
+class CachedSecondaryVariable final : public NumLib::NamedFunctionProvider
 {
 public:
     /*! Constructs a new instance.
