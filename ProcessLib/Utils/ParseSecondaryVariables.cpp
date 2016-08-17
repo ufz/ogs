@@ -20,19 +20,25 @@ void parseSecondaryVariables(
     NumLib::NamedFunctionCaller& named_function_caller)
 {
     auto sec_vars_config =
+        // \ogs_file_param{process__secondary_variables}
         config.getConfigSubtreeOptional("secondary_variables");
     if (!sec_vars_config)
         return;
 
     for (auto sec_var_config :
-         sec_vars_config->getConfigSubtreeList("secondary_variable")) {
+         // \ogs_file_param{process__secondary_variables__secondary_variable}
+         sec_vars_config->getConfigSubtreeList("secondary_variable"))
+    {
         auto const type =
+            // \ogs_file_attr{process__secondary_variables__secondary_variable__type}
             sec_var_config.getConfigAttribute<std::string>("type");
 
         auto const internal_name =
-            sec_var_config.getConfigAttribute<std::string>("internal");
+            // \ogs_file_attr{process__secondary_variables__secondary_variable__internal_name}
+            sec_var_config.getConfigAttribute<std::string>("internal_name");
         auto const external_name =
-            sec_var_config.getConfigAttribute<std::string>("external");
+            // \ogs_file_attr{process__secondary_variables__secondary_variable__output_name}
+            sec_var_config.getConfigAttribute<std::string>("output_name");
 
         secondary_variables.addNameMapping(internal_name, external_name);
 
@@ -42,11 +48,15 @@ void parseSecondaryVariables(
             auto const& sink_fct = internal_name;
 
             for (auto const plug :
-                 sec_var_config.getConfigParameterList("plug")) {
+                 // \ogs_file_param{process__secondary_variables__secondary_variable__plug}
+                 sec_var_config.getConfigParameterList("plug"))
+            {
                 auto const sink_arg =
+                    // \ogs_file_attr{process__secondary_variables__secondary_variable__sink_arg}
                     plug.getConfigAttribute<std::string>("sink_arg");
                 auto const source =
-                    plug.getConfigAttribute<std::string>("source");
+                    // \ogs_file_attr{process__secondary_variables__secondary_variable__source_fct}
+                    plug.getConfigAttribute<std::string>("source_fct");
 
                 named_function_caller.plug(sink_fct, sink_arg, source);
             }
