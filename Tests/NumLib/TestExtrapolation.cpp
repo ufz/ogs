@@ -7,11 +7,8 @@
  *
  */
 
-#include <random>
 #include <gtest/gtest.h>
 
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
@@ -30,6 +27,8 @@
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 
+#include "Tests/VectorUtils.h"
+
 namespace
 {
 
@@ -43,21 +42,6 @@ void interpolateNodalValuesToIntegrationPoints(
     {
         NumLib::shapeFunctionInterpolate(
             local_nodal_values, shape_matrices[ip].N, interpolated_values[ip]);
-    }
-}
-
-template<typename Vector>
-void fillVectorRandomly(Vector& x)
-{
-    std::random_device rd;
-    std::mt19937 random_number_generator(rd());
-    std::uniform_real_distribution<double> rnd;
-
-    using Index = typename MathLib::MatrixVectorTraits<Vector>::Index;
-    Index const size = x.size();
-
-    for (Index i=0; i<size; ++i) {
-        MathLib::setVector(x, i, rnd(random_number_generator));
     }
 }
 
