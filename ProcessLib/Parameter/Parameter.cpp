@@ -14,12 +14,16 @@
 #include "ConstantParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
+#include "CurveScaledParameter.h"
 
 namespace ProcessLib
 {
-
 std::unique_ptr<ParameterBase> createParameter(
-    BaseLib::ConfigTree const& config, std::vector<MeshLib::Mesh*> const& meshes)
+    BaseLib::ConfigTree const& config,
+    std::vector<MeshLib::Mesh*> const& meshes,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
 
     //! \ogs_file_param{parameter__name}
@@ -46,6 +50,13 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("MeshElementParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(config, *meshes.front());
+        param->name = name;
+        return param;
+    }
+    else if (type == "CurveScaled")
+    {
+        INFO("CurveScaledParameter: %s", name.c_str());
+        auto param = createCurveScaledParameter(config, curves);
         param->name = name;
         return param;
     }
