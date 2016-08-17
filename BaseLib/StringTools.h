@@ -19,6 +19,8 @@
 #include <string>
 #include <list>
 #include <sstream>
+#include <vector>
+#include <iterator>
 
 namespace BaseLib {
 
@@ -81,6 +83,15 @@ std::string const& tostring(std::string const& value);
 
 //! returns printf-like formatted string
 std::string format(const char* format_string, ... );
+
+/// Convert a string containing values to values and return in a vector
+template <typename Type> std::vector<Type>
+                     convertStringValues2Values(const std::string& string_vals)
+{
+    std::istringstream iss(string_vals);
+    return std::vector<Type> { std::istream_iterator<Type>(iss),
+                               std::istream_iterator<Type>() };
+}
 
 } // end namespace BaseLib
 
