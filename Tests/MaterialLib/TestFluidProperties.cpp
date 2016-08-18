@@ -34,17 +34,17 @@ FluidProperty* createTestFluidDensityModel(const char xml[])
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
-    auto const& sub_config = conf.getConfigSubtree("fluid_density");
+    auto const& sub_config = conf.getConfigSubtree("density");
     return MaterialLib::Fluid::createFluidDensityModel(&sub_config);
 }
 
 TEST(Material, checkConstantDensity)
 {
     const char xml[] =
-        "<fluid_density>"
+        "<density>"
         "   <type>constant</type>"
         "   <value> 998.0 </value> "
-        "</fluid_density>";
+        "</density>";
     std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
 
     ASSERT_EQ(998.0, rho->getValue(nullptr));
@@ -55,10 +55,10 @@ TEST(Material, checkConstantDensity)
 TEST(Material, checkIdealGasLaw)
 {
     const char xml[] =
-        "<fluid_density>"
+        "<density>"
         "   <type>ideal_gas_law</type>"
         "   <molar_mass> 28.96 </molar_mass> "
-        "</fluid_density>";
+        "</density>";
     std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
 
     const double molar_air = 28.96;
@@ -81,12 +81,12 @@ TEST(Material, checkIdealGasLaw)
 TEST(Material, checkLinearTemperatureDependentDensity)
 {
     const char xml[] =
-        "<fluid_density>"
+        "<density>"
         "   <type>temperature_dependent</type>"
         "   <temperature0> 293.0 </temperature0> "
         "   <beta> 4.3e-4 </beta> "
         "   <rho0>1000.</rho0>"
-        "</fluid_density>";
+        "</density>";
 
     std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
 
@@ -100,14 +100,14 @@ TEST(Material, checkLinearTemperatureDependentDensity)
 TEST(Material, checkLiquidDensity)
 {
     const char xml[] =
-        "<fluid_density>"
+        "<density>"
         "   <type>liquid_density</type>"
         "   <temperature0> 273.15 </temperature0> "
         "   <p0> 1.e+5 </p0> "
         "   <bulk_modulus> 2.15e+9 </bulk_modulus> "
         "   <beta> 2.0e-4 </beta> "
         "   <rho0>999.8</rho0>"
-        "</fluid_density>";
+        "</density>";
     std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
 
     const double vars[] = {273.15 + 60.0, 1.e+6};

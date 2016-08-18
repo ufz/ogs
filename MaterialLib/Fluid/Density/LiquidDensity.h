@@ -53,7 +53,7 @@ class LiquidDensity : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
-    ///                 including  <type>liquid_density</type> and it has
+    ///                 including  <type>fluid</type> and it has
     ///                 a tag of <density>
     LiquidDensity(BaseLib::ConfigTree const* const config)
         :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
