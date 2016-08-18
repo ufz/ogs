@@ -11,3 +11,10 @@ target_link_libraries(scaleProperty
     MeshLib
     ${OGS_VTK_REQUIRED_LIBS}
 )
+
+add_executable(createNeumannBc createNeumannBc.cpp)
+set_target_properties(createNeumannBc PROPERTIES FOLDER Utilities)
+target_link_libraries(createNeumannBc
+    MeshLib
+    ${OGS_VTK_REQUIRED_LIBS}
+)
