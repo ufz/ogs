@@ -102,7 +102,7 @@ TEST(NumLib, DISABLED_ComponentNormSingleComponent)
 #endif
 {
     unsigned const num_components = 1;
-    auto const tolerance = 600 * std::numeric_limits<double>::epsilon();
+    auto const tolerance = 700 * std::numeric_limits<double>::epsilon();
 
     using VNT = MathLib::VecNormType;
     for (auto norm_type : {VNT::NORM1, VNT::NORM2, VNT::INFINITY_N}) {
