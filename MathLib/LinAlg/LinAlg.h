@@ -11,7 +11,8 @@
 #define MATHLIB_LINALG_H
 
 #include <cassert>
-
+#include "BaseLib/Error.h"
+#include "LinAlgEnums.h"
 
 namespace MathLib
 {
@@ -82,6 +83,21 @@ double norm2(MatrixOrVector const& x);
 //! Computes the maximum norm of \c x.
 template<typename MatrixOrVector>
 double normMax(MatrixOrVector const& x);
+
+template<typename MatrixOrVector>
+double norm(MatrixOrVector const& x, MathLib::VecNormType type)
+{
+    switch (type) {
+        case MathLib::VecNormType::NORM1:
+            return norm1(x);
+        case MathLib::VecNormType::NORM2:
+            return norm2(x);
+        case MathLib::VecNormType::INFINITY_N:
+            return normMax(x);
+        default:
+            OGS_FATAL("Invalid norm type given.");
+    }
+}
 
 template<typename Matrix>
 void finalizeAssembly(Matrix& /*A*/)
