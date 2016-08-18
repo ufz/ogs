@@ -88,14 +88,14 @@ template<typename MatrixOrVector>
 double norm(MatrixOrVector const& x, MathLib::VecNormType type)
 {
     switch (type) {
-    case MathLib::VecNormType::NORM1:
-        return norm1(x);
-    case MathLib::VecNormType::NORM2:
-        return norm2(x);
-    case MathLib::VecNormType::INFINITY_N:
-        return normMax(x);
-    default:
-        OGS_FATAL("Invalid norm type given.");
+        case MathLib::VecNormType::NORM1:
+            return norm1(x);
+        case MathLib::VecNormType::NORM2:
+            return norm2(x);
+        case MathLib::VecNormType::INFINITY_N:
+            return normMax(x);
+        default:
+            OGS_FATAL("Invalid norm type given.");
     }
 }
 
