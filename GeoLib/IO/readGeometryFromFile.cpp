@@ -31,7 +31,7 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
         xml.readFile(fname);
     } else {
         std::vector<std::string> errors;
-        std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
+        std::string geo_name; // geo_name is output of the reading function
         GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
     }
 }
