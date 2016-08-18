@@ -43,6 +43,12 @@ set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
 target_link_libraries(TIN2VTK MeshLib)
 ADD_VTK_DEPENDENCY(TIN2VTK)
 
+if (QT4_FOUND)
+    add_executable(convertGEO convertGEO.cpp)
+    set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
+    target_link_libraries(convertGEO GeoLib)
+endif()
+
 ####################
 ### Installation ###
 ####################
