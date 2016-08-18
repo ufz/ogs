@@ -22,6 +22,7 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
 
     if (type == "SingleStep")
     {
+        //! \ogs_file_param_special{prj__time_stepping__SingleStep}
         conf.ignoreConfigParameter("type");
         timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
     }

@@ -24,9 +24,9 @@ cat <<"EOF" \
     --exclude 'ConfigTree*.*' \
     -f - -r -n -o $color \
 | cut -c $((${#srcdir} + 2))-
-^\s*//! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
-^\s*//! \\ogs_file_special$
-^\s*//! \\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\?$
+//! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
+//! \\ogs_file_special$
+//! \\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\?$
 checkConfigParameter.*)
 getConfigAttribute.*)
 getConfigParameter.*)

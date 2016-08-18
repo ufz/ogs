@@ -60,8 +60,7 @@ private:
     /// participating #_elements of the boundary condition.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
 
-    /// Integration order for integration over the lower-dimensional elements of
-    /// the #_function.
+    /// Integration order for integration over the lower-dimensional elements
     unsigned const _integration_order;
 
     /// Local assemblers for each element of #_elements.

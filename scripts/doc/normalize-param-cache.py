@@ -15,15 +15,15 @@ def write_out(*args):
     print("@@@".join([str(a) for a in args]))
 
 # capture #2 is the parameter path
-comment = re.compile(r"^//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)?$")
-comment_special = re.compile(r"^//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$")
+comment = re.compile(r"//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)?$")
+comment_special = re.compile(r"//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$")
 
 # capture #5 is the parameter name
-getter = re.compile(r'^(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
+getter = re.compile(r'(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
                    +r'(<.*>)?'
                    +r'\("([a-zA-Z_0-9:]+)"[,)]')
 
-getter_special = re.compile(r'^(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
+getter_special = re.compile(r'(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
                            +r'(<.*>)?\(')
 
 state = "getter"
@@ -43,7 +43,7 @@ for inline in sys.stdin:
     line = line.strip()
     lineno = int(lineno)
 
-    m = comment.match(line)
+    m = comment.search(line)
     if m:
         if state != "getter":
             write_out("UNNEEDED", oldpath, oldlineno, oldline)
@@ -56,7 +56,7 @@ for inline in sys.stdin:
 
         continue
 
-    m = comment_special.match(line)
+    m = comment_special.search(line)
     if m:
         if state != "getter":
             write_out("UNNEEDED", oldpath, oldlineno, oldline)
@@ -74,7 +74,7 @@ for inline in sys.stdin:
 
         continue
 
-    m = getter.match(line)
+    m = getter.search(line)
     if m:
         param = m.group(5)
         paramtype = m.group(4)[1:-1] if m.group(4) else ""
@@ -108,7 +108,7 @@ for inline in sys.stdin:
         state = "getter"
         continue
 
-    m = getter_special.match(line)
+    m = getter_special.search(line)
     if m:
         paramtype = m.group(4)[1:-1] if m.group(4) else ""
         method = m.group(1) + "Config" + m.group(2) + (m.group(3) or "")

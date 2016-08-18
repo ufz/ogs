@@ -158,8 +158,8 @@ void ProjectData::buildProcesses()
         //! \ogs_file_param{process__type}
         auto const type = pc.peekConfigParameter<std::string>("type");
 
-        //! \ogs_file_param{process__nonlinear_solver}
         auto const nl_slv_name =
+            //! \ogs_file_param{process__nonlinear_solver}
             pc.getConfigParameter<std::string>("nonlinear_solver");
         auto& nl_slv = BaseLib::getOrError(
             _nonlinear_solvers, nl_slv_name,
@@ -277,8 +277,8 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
     using namespace ProcessLib;
 
     DBUG("Reading parameters:");
-    //! \ogs_file_param{prj__parameters__parameter}
     for (auto parameter_config :
+         //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
         //! \ogs_file_param{parameter__name}
@@ -325,6 +325,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
                               std::string const& output_directory)
 {
+    //! \ogs_file_param_special{prj__output__VTK}
     //! \ogs_file_param{prj__output__type}
     output_config.checkConfigParameter("type", "VTK");
     DBUG("Parse output configuration:");
@@ -353,7 +354,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__linear_solvers__linear_solver}
     for (auto conf : config.getConfigSubtreeList("linear_solver"))
     {
-        //! \ogs_file_param{prj__linear_solvers__linear_solver__name}
+        //! \ogs_file_param{linear_solver__name}
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(
             _linear_solvers,
@@ -371,8 +372,8 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver}
     for (auto conf : config.getConfigSubtreeList("nonlinear_solver"))
     {
-        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
         auto const ls_name =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
             conf.getConfigParameter<std::string>("linear_solver");
         auto& linear_solver = BaseLib::getOrError(
             _linear_solvers, ls_name,
