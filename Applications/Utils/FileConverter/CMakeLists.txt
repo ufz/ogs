@@ -56,8 +56,8 @@ install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(QT4_FOUND)
-    install(TARGETS ConvertSHPToGLI
-        FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    install(TARGETS ConvertSHPToGLI FEFLOW2OGS convertGEO
+        RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()
 
 cpack_add_component(ogs_converter
