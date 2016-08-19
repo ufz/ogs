@@ -24,6 +24,7 @@
 #include "MeshLib/Mesh.h"
 
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
+#include "ProcessLib/CreateJacobianAssembler.h"
 
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
@@ -253,6 +254,9 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
 
         std::unique_ptr<ProcessLib::Process> process;
 
+        auto jacobian_assembler = ProcessLib::createJacobianAssembler(
+            pc.getConfigSubtreeOptional("jacobian_assembler"));
+
         if (type == "GROUNDWATER_FLOW")
         {
             // The existence check of the in the configuration referenced
@@ -261,7 +265,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
             // several meshes. Then we have to assign the referenced mesh
             // here.
             process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                *_mesh_vec[0], _process_variables, _parameters, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler), _process_variables, _parameters, process_config);
         }
         else if (type == "TES")
         {
