@@ -40,6 +40,8 @@ public:
 
     Process(
         MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
@@ -68,14 +70,14 @@ public:
     void assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                   GlobalMatrix& K, GlobalVector& b) override final;
 
-    void assembleJacobian(const double t, GlobalVector const& x,
-                          GlobalVector const& xdot, const double dxdot_dx,
-                          GlobalMatrix const& M, const double dx_dx,
-                          GlobalMatrix const& K,
-                          GlobalMatrix& Jac) override final;
+    void assembleWithJacobian(const double t, GlobalVector const& x,
+                              GlobalVector const& xdot, const double dxdot_dx,
+                              const double dx_dx, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override final;
+
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(
-
         double const t) const override final
     {
         return _boundary_conditions.getKnownSolutions(t);
@@ -120,6 +122,12 @@ private:
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
                                          GlobalVector& b) = 0;
+
+    virtual void assembleWithJacobianConcreteProcess(
+        const double t, GlobalVector const& x,
+        GlobalVector const& xdot, const double dxdot_dx,
+        const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
+        GlobalVector& b, GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
                                             const double /*t*/,
@@ -168,6 +176,8 @@ protected:
     std::vector<std::unique_ptr<CachedSecondaryVariable>>
         _cached_secondary_variables;
     SecondaryVariableContext _secondary_variable_context;
+
+    VectorMatrixAssembler _global_assembler;
 
 private:
     unsigned const _integration_order = 2;

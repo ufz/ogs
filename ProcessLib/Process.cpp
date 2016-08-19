@@ -20,6 +20,7 @@ namespace ProcessLib
 {
 Process::Process(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
@@ -27,6 +28,7 @@ Process::Process(
     : _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
       _named_function_caller(std::move(named_function_caller)),
+      _global_assembler(std::move(jacobian_assembler)),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(parameters)
 {
@@ -115,43 +117,16 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
     _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
 
-void Process::assembleJacobian(const double t, GlobalVector const& x,
-                               GlobalVector const& xdot, const double dxdot_dx,
-                               GlobalMatrix const& M, const double dx_dx,
-                               GlobalMatrix const& K, GlobalMatrix& Jac)
+void Process::assembleWithJacobian(const double t, GlobalVector const& x,
+                                   GlobalVector const& xdot,
+                                   const double dxdot_dx, const double dx_dx,
+                                   GlobalMatrix& M, GlobalMatrix& K,
+                                   GlobalVector& b, GlobalMatrix& Jac)
 {
-    assembleJacobianConcreteProcess(t, x, xdot, dxdot_dx, M, dx_dx, K, Jac);
+    assembleWithJacobianConcreteProcess(t, x, xdot, dxdot_dx, dx_dx, M, K, b, Jac);
 
-    // TODO In this method one could check if the user wants to use an
-    //      analytical or a numerical Jacobian. Then the right
-    //      assembleJacobianConcreteProcess() method will be chosen.
-    //      Additionally in the default implementation of said method one
-    //      could provide a fallback to a numerical Jacobian. However, that
-    //      would be in a sense implicit behaviour and it might be better to
-    //      just abort, as is currently the case.
-    //      In order to implement the Jacobian assembly entirely, in addition
-    //      to the operator() in VectorMatrixAssembler there has to be a method
-    //      that dispatches the Jacobian assembly.
-    //      Similarly, then the NeumannBC specialization of VectorMatrixAssembler
-    //      probably can be merged into the main class s.t. one has only one
-    //      type of VectorMatrixAssembler (for each equation type) with the
-    //      three methods assemble(), assembleJacobian() and assembleNeumannBC().
-    //      That list can be extended, e.g. by methods for the assembly of
-    //      source terms.
-    //      UPDATE: Probably it is better to keep a separate NeumannBC version of the
-    //      VectoMatrixAssembler since that will work for all kinds of processes.
-}
-
-void Process::assembleJacobianConcreteProcess(
-    const double /*t*/, GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
-    const double /*dxdot_dx*/, GlobalMatrix const& /*M*/,
-    const double /*dx_dx*/, GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/)
-{
-    OGS_FATAL(
-        "The concrete implementation of this Process did not override the"
-        " assembleJacobianConcreteProcess() method."
-        " Hence, no analytical Jacobian is provided for this process"
-        " and the Newton-Raphson method cannot be used to solve it.");
+    // TODO apply BCs to Jacobian.
+    _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
 
 void Process::constructDofTable()
