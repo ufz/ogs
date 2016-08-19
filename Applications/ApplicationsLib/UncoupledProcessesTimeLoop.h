@@ -162,7 +162,8 @@ private:
     //! which is Picard or Newton depending on the NLTag.
     template <NumLib::NonlinearSolverTag NLTag>
     static void setEquationSystem(AbstractNLSolver& nonlinear_solver,
-                                  EquationSystem& eq_sys)
+                                  EquationSystem& eq_sys,
+                                  NumLib::ConvergenceCriterion& conv_crit)
     {
         using Solver = NumLib::NonlinearSolver<NLTag>;
         using EqSys = NumLib::NonlinearSystem<NLTag>;
@@ -173,23 +174,26 @@ private:
         auto& nl_solver_ = static_cast<Solver&>(nonlinear_solver);
         auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
 
-        nl_solver_.setEquationSystem(eq_sys_);
+        nl_solver_.setEquationSystem(eq_sys_, conv_crit);
     }
 
     //! Sets the EquationSystem for the given nonlinear solver,
     //! transparently both for Picard and Newton solvers.
     static void setEquationSystem(AbstractNLSolver& nonlinear_solver,
                                   EquationSystem& eq_sys,
+                                  NumLib::ConvergenceCriterion& conv_crit,
                                   NumLib::NonlinearSolverTag nl_tag)
     {
         using Tag = NumLib::NonlinearSolverTag;
         switch (nl_tag)
         {
             case Tag::Picard:
-                setEquationSystem<Tag::Picard>(nonlinear_solver, eq_sys);
+                setEquationSystem<Tag::Picard>(nonlinear_solver, eq_sys,
+                                               conv_crit);
                 break;
             case Tag::Newton:
-                setEquationSystem<Tag::Newton>(nonlinear_solver, eq_sys);
+                setEquationSystem<Tag::Newton>(nonlinear_solver, eq_sys,
+                                               conv_crit);
                 break;
         }
     }

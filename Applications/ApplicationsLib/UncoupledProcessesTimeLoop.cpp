@@ -98,8 +98,9 @@ void UncoupledProcessesTimeLoop::setInitialConditions(
         {
             auto& nonlinear_solver = ppd.nonlinear_solver;
             auto& mat_strg = ppd.mat_strg;
+            auto& conv_crit = pcs.getConvergenceCriterion();
 
-            setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
+            setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
             nonlinear_solver.assemble(x0);
             time_disc.pushState(
                 t0, x0, mat_strg);  // TODO: that might do duplicate work
@@ -117,11 +118,12 @@ solveOneTimeStepOneProcess(
         ProcessLib::Output const& output_control)
 {
     auto& time_disc = process.getTimeDiscretization();
+    auto& conv_crit = process.getConvergenceCriterion();
     auto& ode_sys = *process_data.tdisc_ode_sys;
     auto& nonlinear_solver = process_data.nonlinear_solver;
     auto const nl_tag = process_data.nonlinear_solver_tag;
 
-    setEquationSystem(nonlinear_solver, ode_sys, nl_tag);
+    setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
 
     // Note: Order matters!
     // First advance to the next timestep, then set known solutions at that
