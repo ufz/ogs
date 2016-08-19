@@ -46,6 +46,7 @@ unsigned getDimension(MeshLib::MeshElemType eleType)
         case MeshLib::MeshElemType::PYRAMID:
         case MeshLib::MeshElemType::TETRAHEDRON:
             return 3;
+        case MeshLib::MeshElemType::POINT:
         case MeshLib::MeshElemType::INVALID:
             return 0;
     }
