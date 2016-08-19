@@ -67,27 +67,7 @@ TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
-    assembleResidualNewton(const GlobalVector& x_new_timestep)
-{
-    namespace LinAlg = MathLib::LinAlg;
-
-    auto const t = _time_disc.getCurrentTime();
-    auto const& x_curr = _time_disc.getCurrentX(x_new_timestep);
-
-    _M->setZero();
-    _K->setZero();
-    _b->setZero();
-
-    _ode.assemble(t, x_curr, *_M, *_K, *_b);
-
-    LinAlg::finalizeAssembly(*_M);
-    LinAlg::finalizeAssembly(*_K);
-    LinAlg::finalizeAssembly(*_b);
-}
-
-void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
-                              NonlinearSolverTag::Newton>::
-    assembleJacobian(const GlobalVector& x_new_timestep)
+    assemble(const GlobalVector& x_new_timestep)
 {
     namespace LinAlg = MathLib::LinAlg;
 
@@ -99,10 +79,17 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, xdot);
 
+    _M->setZero();
+    _K->setZero();
+    _b->setZero();
     _Jac->setZero();
 
-    _ode.assembleJacobian(t, x_curr, xdot, dxdot_dx, *_M, dx_dx, *_K, *_Jac);
+    _ode.assembleWithJacobian(t, x_curr, xdot, dxdot_dx, dx_dx, *_M, *_K, *_b,
+                              *_Jac);
 
+    LinAlg::finalizeAssembly(*_M);
+    LinAlg::finalizeAssembly(*_K);
+    LinAlg::finalizeAssembly(*_b);
     MathLib::LinAlg::finalizeAssembly(*_Jac);
 
     NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
@@ -188,7 +175,7 @@ TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Picard>::
-    assembleMatricesPicard(const GlobalVector& x_new_timestep)
+    assemble(const GlobalVector& x_new_timestep)
 {
     namespace LinAlg = MathLib::LinAlg;
 

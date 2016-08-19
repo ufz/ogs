@@ -81,9 +81,7 @@ public:
 
     ~TimeDiscretizedODESystem();
 
-    void assembleResidualNewton(const GlobalVector& x_new_timestep) override;
-
-    void assembleJacobian(const GlobalVector& x_new_timestep) override;
+    void assemble(const GlobalVector& x_new_timestep) override;
 
     void getResidual(GlobalVector const& x_new_timestep,
                      GlobalVector& res) const override;
@@ -175,7 +173,7 @@ public:
 
     ~TimeDiscretizedODESystem();
 
-    void assembleMatricesPicard(const GlobalVector& x_new_timestep) override;
+    void assemble(const GlobalVector& x_new_timestep) override;
 
     void getA(GlobalMatrix& A) const override
     {

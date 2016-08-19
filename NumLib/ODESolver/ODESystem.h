@@ -110,11 +110,11 @@ public:
      * different way, as long as that is consistent with the definition of \f$ \mathtt{Jac} \f$.
      * \endparblock
      */
-    virtual void assembleJacobian(const double t, GlobalVector const& x,
-                                  GlobalVector const& xdot,
-                                  const double dxdot_dx, GlobalMatrix const& M,
-                                  const double dx_dx, GlobalMatrix const& K,
-                                  GlobalMatrix& Jac) = 0;
+    virtual void assembleWithJacobian(const double t, GlobalVector const& x,
+                                      GlobalVector const& xdot,
+                                      const double dxdot_dx, const double dx_dx,
+                                      GlobalMatrix& M, GlobalMatrix& K,
+                                      GlobalVector& b, GlobalMatrix& Jac) = 0;
 };
 
 //! @}

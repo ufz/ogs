@@ -34,11 +34,8 @@ template <>
 class NonlinearSystem<NonlinearSolverTag::Newton> : public EquationSystem
 {
 public:
-    //! Assembles the residual at the point \c x.
-    virtual void assembleResidualNewton(GlobalVector const& x) = 0;
-
-    //! Assembles the Jacobian of the residual at the point \c x.
-    virtual void assembleJacobian(GlobalVector const& x) = 0;
+    //! TODO doc
+    virtual void assemble(GlobalVector const& x) = 0;
 
     /*! Writes the residual at point \c x to \c res.
      *
@@ -75,8 +72,8 @@ template <>
 class NonlinearSystem<NonlinearSolverTag::Picard> : public EquationSystem
 {
 public:
-    //! Assembles the linearized equation at point \c x.
-    virtual void assembleMatricesPicard(GlobalVector const& x) = 0;
+    //! TODO doc
+    virtual void assemble(GlobalVector const& x) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
     virtual void getA(GlobalMatrix& A) const = 0;
