@@ -3,7 +3,7 @@
 # This script actually generates the QA page.
 # For its usage see generate-project-file-doc-qa.sh
 
-from six import print_
+from print23 import print_
 import sys
 import re
 import os.path

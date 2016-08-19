@@ -14,7 +14,7 @@ import os
 import sys
 import xml.etree.cElementTree as ET
 import json
-from six import print_
+from print23 import print_
 
 github_src_url  = "https://github.com/ufz/ogs/tree/master"
 github_data_url = "https://github.com/ufz/ogs-data/tree/master"
