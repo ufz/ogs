@@ -14,6 +14,7 @@
 #include <utility>
 #include <logog/include/logog.hpp>
 
+#include "ConvergenceCriterion.h"
 #include "NonlinearSystem.h"
 #include "Types.h"
 
@@ -88,14 +89,21 @@ public:
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
      */
-    explicit NonlinearSolver(GlobalLinearSolver& linear_solver, double const tol,
-                             const unsigned maxiter)
-        : _linear_solver(linear_solver), _tol(tol), _maxiter(maxiter)
+    explicit NonlinearSolver(
+        GlobalLinearSolver& linear_solver,
+        const unsigned maxiter)
+        : _linear_solver(linear_solver),
+          _maxiter(maxiter)
     {
     }
 
     //! Set the nonlinear equation system that will be solved.
-    void setEquationSystem(System& eq) { _equation_system = &eq; }
+    //! TODO doc
+    void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
+    {
+        _equation_system = &eq;
+        _convergence_criterion = &conv_crit;
+    }
     void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
@@ -106,7 +114,8 @@ private:
     GlobalLinearSolver& _linear_solver;
     System* _equation_system = nullptr;
 
-    const double _tol;        //!< tolerance of the solver
+    // TODO doc
+    ConvergenceCriterion* _convergence_criterion = nullptr;
     const unsigned _maxiter;  //!< maximum number of iterations
 
     double const _alpha =
@@ -139,14 +148,19 @@ public:
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
      */
-    explicit NonlinearSolver(GlobalLinearSolver& linear_solver, double const tol,
+    explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
                              const unsigned maxiter)
-        : _linear_solver(linear_solver), _tol(tol), _maxiter(maxiter)
+        : _linear_solver(linear_solver), _maxiter(maxiter)
     {
     }
 
     //! Set the nonlinear equation system that will be solved.
-    void setEquationSystem(System& eq) { _equation_system = &eq; }
+    //! TODO doc
+    void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
+    {
+        _equation_system = &eq;
+        _convergence_criterion = &conv_crit;
+    }
     void assemble(GlobalVector const& x) const override;
 
     bool solve(GlobalVector& x,
@@ -157,7 +171,8 @@ private:
     GlobalLinearSolver& _linear_solver;
     System* _equation_system = nullptr;
 
-    const double _tol;        //!< tolerance of the solver
+    // TODO doc
+    ConvergenceCriterion* _convergence_criterion = nullptr;
     const unsigned _maxiter;  //!< maximum number of iterations
 
     std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.

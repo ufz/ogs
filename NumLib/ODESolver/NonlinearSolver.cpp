@@ -19,6 +19,7 @@
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
+#include "ConvergenceCriterion.h"
 
 namespace NumLib
 {
@@ -32,7 +33,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     GlobalVector& x,
     std::function<void(unsigned, GlobalVector const&)> const& postIterationCallback)
 {
-    namespace LinAlg= MathLib::LinAlg;
+    namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
     auto& A =
@@ -51,6 +52,8 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     unsigned iteration = 1;
     for (; iteration <= _maxiter; ++iteration)
     {
+        _convergence_criterion->reset();
+
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
@@ -68,6 +71,13 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         // Here _x_new has to be used and it has to be equal to x!
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
+
+        if (_convergence_criterion->hasResidualCheck()) {
+            GlobalVector res;
+            LinAlg::matMult(A, x_new, res); // res = A * x_new
+            LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
+            _convergence_criterion->checkResidual(res);
+        }
 
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();
@@ -114,14 +124,18 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             break;
         }
 
-        auto const norm_x = LinAlg::norm2(x);
-        // x is used as delta_x in order to compute the error.
-        LinAlg::aypx(x, -1.0, x_new);  // x = _x_new - x
-        auto const error_dx = LinAlg::norm2(x);
-        INFO(
-            "Picard: Iteration #%u |dx|=%.4e, |x|=%.4e, |dx|/|x|=%.4e,"
-            " tolerance(dx)=%.4e",
-            iteration, error_dx, norm_x, error_dx / norm_x, _tol);
+        if (sys.isLinear()) {
+            error_norms_met = true;
+        } else {
+            if (_convergence_criterion->hasDeltaXCheck()) {
+                GlobalVector minus_delta_x(x);
+                LinAlg::axpy(minus_delta_x, -1.0,
+                             x_new);  // minus_delta_x = x - x_new
+                _convergence_criterion->checkDeltaX(minus_delta_x, x_new);
+            }
+
+            error_norms_met = _convergence_criterion->isSatisfied();
+        }
 
         // Update x s.t. in the next iteration we will compute the right delta x
         LinAlg::copy(x_new, x);
@@ -129,17 +143,8 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         INFO("[time] Iteration #%u took %g s.", iteration,
              time_iteration.elapsed());
 
-        if (error_dx < _tol)
-        {
-            error_norms_met = true;
+        if (error_norms_met)
             break;
-        }
-
-        if (sys.isLinear())
-        {
-            error_norms_met = true;
-            break;
-        }
     }
 
     if (iteration > _maxiter)
@@ -190,6 +195,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     unsigned iteration = 1;
     for (; iteration <= _maxiter; ++iteration)
     {
+        _convergence_criterion->reset();
+
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
@@ -208,7 +215,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        auto const error_res = LinAlg::norm2(res);
+        if (_convergence_criterion->hasResidualCheck())
+            _convergence_criterion->checkResidual(res);
 
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();
@@ -266,28 +274,22 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             break;
         }
 
-        auto const error_dx = LinAlg::norm2(minus_delta_x);
-        auto const norm_x = LinAlg::norm2(x);
-        INFO(
-            "Newton: Iteration #%u |dx|=%.4e, |r|=%.4e, |x|=%.4e, "
-            "|dx|/|x|=%.4e,"
-            " tolerance(dx)=%.4e",
-            iteration, error_dx, error_res, norm_x, error_dx / norm_x, _tol);
+        if (sys.isLinear()) {
+            error_norms_met = true;
+        } else {
+            if (_convergence_criterion->hasDeltaXCheck()) {
+                // Note: x contains the new solution!
+                _convergence_criterion->checkDeltaX(minus_delta_x, x);
+            }
+
+            error_norms_met = _convergence_criterion->isSatisfied();
+        }
 
         INFO("[time] Iteration #%u took %g s.", iteration,
              time_iteration.elapsed());
 
-        if (error_dx < _tol)
-        {
-            error_norms_met = true;
+        if (error_norms_met)
             break;
-        }
-
-        if (sys.isLinear())
-        {
-            error_norms_met = true;
-            break;
-        }
     }
 
     if (iteration > _maxiter)
@@ -313,27 +315,23 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type = config.getConfigParameter<std::string>("type");
-    //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__tol}
-    auto const tol = config.getConfigParameter<double>("tol");
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
     auto const max_iter = config.getConfigParameter<unsigned>("max_iter");
 
-    //! \ogs_file_param_special{prj__nonlinear_solvers__nonlinear_solver__Picard}
-    if (type == "Picard")
-    {
+    if (type == "Picard") {
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
-        return std::make_pair(std::unique_ptr<AbstractNLS>(new ConcreteNLS{
-                                  linear_solver, tol, max_iter}),
-                              tag);
-    }
-    else if (type == "Newton")
-    {
+        return std::make_pair(
+            std::unique_ptr<AbstractNLS>(
+                new ConcreteNLS{linear_solver, max_iter}),
+            tag);
+    } else if (type == "Newton") {
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
-        return std::make_pair(std::unique_ptr<AbstractNLS>(new ConcreteNLS{
-                                  linear_solver, tol, max_iter}),
-                              tag);
+        return std::make_pair(
+            std::unique_ptr<AbstractNLS>(
+                new ConcreteNLS{linear_solver, max_iter}),
+            tag);
     }
     OGS_FATAL("Unsupported nonlinear solver type");
 }
