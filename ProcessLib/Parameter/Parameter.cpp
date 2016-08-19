@@ -51,7 +51,7 @@ std::unique_ptr<ParameterBase> createParameter(
     }
     else
     {
-        OGS_FATAL("Cannot construct property of given type \'%s\'.",
+        OGS_FATAL("Cannot construct a parameter of given type \'%s\'.",
                   type.c_str());
     }
 }
