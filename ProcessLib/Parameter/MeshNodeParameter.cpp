@@ -30,7 +30,7 @@ std::unique_ptr<ParameterBase> createMeshNodeParameter(
 
     // TODO other data types than only double
     auto const& property =
-        mesh.getProperties().template getPropertyVector<double>(field_name);
+        mesh.getProperties().getPropertyVector<double>(field_name);
     if (!property) {
         OGS_FATAL("The mesh property `%s' is not of the requested type.",
                   field_name.c_str());
