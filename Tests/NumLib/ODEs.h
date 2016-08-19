@@ -35,11 +35,14 @@ public:
         MathLib::setVector(b, { 0.0, 0.0 });
     }
 
-    void assembleJacobian(const double /*t*/, const GlobalVector& /*x*/,
-                          GlobalVector const& /*xdot*/, const double dxdot_dx,
-                          const GlobalMatrix& M, const double dx_dx,
-                          const GlobalMatrix& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+                              GlobalVector const& /*xdot*/, const double dxdot_dx,
+                              const double dx_dx, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
+        assemble(t, x_curr, M, K, b);
+
         namespace LinAlg = MathLib::LinAlg;
 
         // compute Jac = M*dxdot_dx + dx_dx*K
@@ -103,11 +106,14 @@ public:
         MathLib::setVector(b, {0.0});
     }
 
-    void assembleJacobian(const double /*t*/, const GlobalVector& x,
-                          GlobalVector const& /*xdot*/, const double dxdot_dx,
-                          GlobalMatrix const& M, const double dx_dx,
-                          GlobalMatrix const& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x,
+                              GlobalVector const& /*xdot*/,
+                              const double dxdot_dx, const double dx_dx,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
+        assemble(t, x, M, K, b);
+
         namespace LinAlg = MathLib::LinAlg;
 
         // compute Jac = M*dxdot_dx + dK_dx + dx_dx*K
@@ -195,11 +201,14 @@ public:
                        0.5*omega*x*z + omega/t });
     }
 
-    void assembleJacobian(const double t, const GlobalVector& x_curr,
-                          GlobalVector const& xdot, const double dxdot_dx,
-                          GlobalMatrix const& M, const double dx_dx,
-                          GlobalMatrix const& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+                              GlobalVector const& xdot, const double dxdot_dx,
+                              const double dx_dx, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
+        assemble(t, x_curr, M, K, b);
+
         auto const x = x_curr[0];
         auto const y = x_curr[1];
         auto const z = x_curr[2];
