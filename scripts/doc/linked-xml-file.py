@@ -15,7 +15,7 @@
 from signal import signal, SIGPIPE, SIG_DFL
 signal(SIGPIPE,SIG_DFL)
 
-from six import print_
+from print23 import print_
 import os
 import sys
 import xml.etree.cElementTree as ET

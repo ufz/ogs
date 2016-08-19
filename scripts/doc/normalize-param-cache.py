@@ -4,6 +4,7 @@
 # and transforms it into a tabular representation for further
 # processing.
 
+from print23 import print_
 import sys
 import re
 import os.path
@@ -12,7 +13,7 @@ def debug(msg):
     sys.stderr.write(msg+"\n")
 
 def write_out(*args):
-    print("@@@".join([str(a) for a in args]))
+    print_("@@@".join(str(a) for a in args))
 
 # capture #2 is the parameter path
 comment = re.compile(r"//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)?$")
