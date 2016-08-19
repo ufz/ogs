@@ -55,13 +55,15 @@ namespace TES
 {
 TESProcess::TESProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
-    : Process(mesh, parameters, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller))
+    : Process(mesh, std::move(jacobian_assembler), parameters,
+              std::move(process_variables), std::move(secondary_variables),
+              std::move(process_output), std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 
@@ -255,22 +257,32 @@ void TESProcess::initializeSecondaryVariables()
 }
 
 void TESProcess::assembleConcreteProcess(const double t,
-                                                      GlobalVector const& x,
-                                                      GlobalMatrix& M,
-                                                      GlobalMatrix& K,
-                                                      GlobalVector& b)
+                                         GlobalVector const& x,
+                                         GlobalMatrix& M,
+                                         GlobalMatrix& K,
+                                         GlobalVector& b)
 {
     DBUG("Assemble TESProcess.");
 
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &TESLocalAssemblerInterface::assemble, _local_assemblers,
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         *_local_to_global_index_map, t, x, M, K, b);
 }
 
-void TESProcess::preTimestepConcreteProcess(GlobalVector const& x,
-                                            const double t,
-                                            const double delta_t)
+void TESProcess::assembleWithJacobianConcreteProcess(
+    const double t, GlobalVector const& x, GlobalVector const& xdot,
+    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac)
+{
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac);
+}
+
+void TESProcess::preTimestep(GlobalVector const& x, const double t,
+                                          const double delta_t)
 {
     DBUG("new timestep");
 

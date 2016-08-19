@@ -19,13 +19,16 @@ namespace GroundwaterFlow
 {
 GroundwaterFlowProcess::GroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     GroundwaterFlowProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
+    ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller)
-    : Process(mesh, parameters, std::move(process_variables),
-              std::move(secondary_variables), std::move(named_function_caller)),
+    : Process(mesh, std::move(jacobian_assembler), parameters,
+              std::move(process_variables), std::move(secondary_variables),
+              std::move(process_output), std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
 }
@@ -70,9 +73,20 @@ void GroundwaterFlowProcess::assembleConcreteProcess(const double t,
     DBUG("Assemble GroundwaterFlowProcess.");
 
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &GroundwaterFlowLocalAssemblerInterface::assemble,
-        _local_assemblers, *_local_to_global_index_map, t, x, M, K, b);
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        *_local_to_global_index_map, t, x, M, K, b);
+}
+
+void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
+    const double t, GlobalVector const& x, GlobalVector const& xdot,
+    const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac)
+{
+    GlobalExecutor::executeMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+        _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,
+        dx_dx, M, K, b, Jac);
 }
 
 }   // namespace GroundwaterFlow
