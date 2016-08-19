@@ -25,13 +25,15 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converts OGS geometric file into another file format.", ' ', BaseLib::BuildInfo::git_describe);
+    TCLAP::CmdLine cmd("Converts OGS geometry file into another file format. "
+                       "Currently *.gml (OGS6 XML-based format) and *.gli (OGS5 format) formats are supported.",
+                       ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> argInputFileName("i", "input-file",
-                                         "the name of the gli file to be converted", true,
+                                         "the name of the geometry file to be converted", true,
                                          "", "file name");
     cmd.add(argInputFileName);
     TCLAP::ValueArg<std::string> argOutputFileName("o", "output-file",
-                                          "the name of the new gml file", true,
+                                          "the name of the new geometry file whose file format is guessed from its file extension", true,
                                           "", "file name");
     cmd.add(argOutputFileName);
     cmd.parse(argc, argv);
