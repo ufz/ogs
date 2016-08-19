@@ -15,12 +15,12 @@ def debug(msg):
     sys.stderr.write(msg+"\n")
 
 if len(sys.argv) != 3:
-    print_("USAGE: {} DOCAUXDIR SRCDIR".format(sys.argv[0]))
+    print_("USAGE: {0} DOCAUXDIR SRCDIR".format(sys.argv[0]))
     sys.exit(1)
 
 docauxdir = sys.argv[1]
 if not os.path.isdir(docauxdir):
-    print_("error: `{}' is not a directory".format(docauxdir))
+    print_("error: `{0}' is not a directory".format(docauxdir))
     sys.exit(1)
 
 doxdir = os.path.join(docauxdir, "dox", "ProjectFile")
@@ -67,7 +67,7 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
             debug("SPECIAL: " + " ".join(inline[1:])) # TODO implement proper handling
             # unneeded.append(inline[1:])
         else:
-            debug("ERROR: unrecognized status {}".format(status))
+            debug("ERROR: unrecognized status {0}".format(status))
             wrong_status = True
 
 
@@ -89,7 +89,7 @@ for (dirpath, _, filenames) in os.walk(srcdocdir):
             tagpath = os.path.join(reldirpath, f[2:-len(".md")])
             tag_or_attr = "attr"
         else:
-            debug("ERROR: Found md file with unrecognized name: {}"
+            debug("ERROR: Found md file with unrecognized name: {0}"
                     .format(filepath))
             continue
 
@@ -186,7 +186,7 @@ with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
         print_("# Tags that do not occur in any CTest project file")
         for utag in sorted(utags):
             pagename = "ogs_file_param__" + utag.replace(".", "__")
-            print_(r'- \ref {} "{}"'.format(pagename, utag))
+            print_(r'- \ref {0} "{1}"'.format(pagename, utag))
 
     uattrs = [ ua for ua in untested_tags_attrs["attributes"] \
             if ua != "gml" and not ua.startswith("gml.") ]
@@ -196,7 +196,7 @@ with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
         print_("# Attributes that do not occur in any CTest project file")
         for uattr in sorted(uattrs):
             pagename = "ogs_file_attr__" + uattr.replace(".", "__")
-            print_(r'- \ref {} "{}"'.format(pagename, uattr))
+            print_(r'- \ref {0} "{1}"'.format(pagename, uattr))
 
 # exit with error status if something was not documented/tested
 if qa_status_succeeded:
