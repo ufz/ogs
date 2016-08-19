@@ -12,6 +12,8 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/BuildInfo.h"
+
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
 #include "GeoLib/IO/readGeometryFromFile.h"
@@ -23,7 +25,7 @@ int main (int argc, char* argv[])
 {
     ApplicationsLib::LogogSetup logog_setup;
 
-    TCLAP::CmdLine cmd("Converts OGS geometric file into another file format.", ' ', "0.1");
+    TCLAP::CmdLine cmd("Converts OGS geometric file into another file format.", ' ', BaseLib::BuildInfo::git_describe);
     TCLAP::ValueArg<std::string> argInputFileName("i", "input-file",
                                          "the name of the gli file to be converted", true,
                                          "", "file name");
