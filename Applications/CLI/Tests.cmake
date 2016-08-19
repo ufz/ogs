@@ -18,6 +18,18 @@ if(NOT OGS_USE_MPI)
         )
 
         AddTest(
+            NAME GroundWaterFlowProcess_cube_1x1x1_${mesh_size}_Newton
+            PATH Elliptic/cube_1x1x1_GroundWaterFlow
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS cube_${mesh_size}_newton.prj
+            WRAPPER time
+            TESTER vtkdiff
+            ABSTOL 1e-15 RELTOL 1e-15
+            DIFF_DATA
+            cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_newton_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure
+        )
+
+        AddTest(
             NAME GroundWaterFlowProcess_cube_1x1x1_Neumann_${mesh_size}
             PATH Elliptic/cube_1x1x1_GroundWaterFlow
             EXECUTABLE ogs
@@ -198,7 +210,7 @@ if(NOT OGS_USE_MPI)
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
-        cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+        cube_1e3_top_neumann.vtu cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
     )
     AddTest(
         NAME GroundWaterFlowProcess_cube_bottom
@@ -209,7 +221,30 @@ if(NOT OGS_USE_MPI)
         TESTER vtkdiff
         ABSTOL 1e-14 RELTOL 1e-14
         DIFF_DATA
-        cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+        cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+    )
+    # Some Neumann BC tests -- Newton
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_top_Newton
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_top_neumann_newton.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-14 RELTOL 1e-14
+        DIFF_DATA
+        cube_1e3_top_neumann.vtu cube_1e3_top_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure
+    )
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_bottom_Newton
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_bottom_neumann_newton.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-14 RELTOL 1e-14
+        DIFF_DATA
+        cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure
     )
 
     # TES tests
@@ -243,6 +278,21 @@ if(NOT OGS_USE_MPI)
         tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu vapour_partial_pressure vapour_partial_pressure
         tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu solid_density solid_density
         tes_zeolite_discharge_large_pcs_0_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_pcs_0_ts_28_t_1.000000.vtu solid_density fct_solid_density
+    )
+
+    AddTest(
+        NAME TES_zeolite_discharge_small_Newton
+        PATH Parabolic/TES/1D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS tes-1D-zeolite-discharge-small-newton.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1.5e-3 RELTOL 1.5e-3
+        DIFF_DATA
+        tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_pcs_0_ts_32_t_0.100000.vtu pressure pressure
+        tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_pcs_0_ts_32_t_0.100000.vtu temperature temperature
+        # tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_pcs_0_ts_32_t_0.100000.vtu vapour_partial_pressure vapour_partial_pressure
+        tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_pcs_0_ts_32_t_0.100000.vtu solid_density solid_density
     )
 
     AddTest(
