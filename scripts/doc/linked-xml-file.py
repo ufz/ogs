@@ -45,9 +45,9 @@ indent = "&nbsp;"*2
 
 def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
     if is_doc:
-        tag_attr_formatted = r'\ref {} "{}"'.format(fullpagename, tag_attr)
+        tag_attr_formatted = r'\ref {0} "{1}"'.format(fullpagename, tag_attr)
     else:
-        tag_attr_formatted = r'<span style="color: red;" title="undocumented: {}">{}</span>'.format(fullpagename, tag_attr)
+        tag_attr_formatted = r'<span style="color: red;" title="undocumented: {0}">{1}</span>'.format(fullpagename, tag_attr)
 
     return fmt.format(tag_attr_formatted, tag_attr, *args)
 
@@ -232,12 +232,12 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
             pagetitle = "OGS CTests&mdash;Project Files"
 
         with open(os.path.join(outdirpath, "index.dox"), "w") as fh:
-            fh.write("""/*! \page {} {}
+            fh.write("""/*! \page {0} {1}
 
 """.format(pagename, pagetitle))
 
             for sp in sorted(subpages):
-                fh.write("- \\subpage {}\n".format(sp))
+                fh.write("- \\subpage {0}\n".format(sp))
 
             fh.write("""
 
