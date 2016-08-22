@@ -8,6 +8,7 @@
  */
 
 #include "EigenOption.h"
+#include "BaseLib/Error.h"
 
 namespace MathLib
 {
@@ -22,27 +23,26 @@ EigenOption::EigenOption()
 
 EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_name)
 {
-#define RETURN_SOLVER_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==(str)) return SolverType::TypeName;
+    if (solver_name == "CG")
+        return SolverType::CG;
+    if (solver_name == "BiCGSTAB")
+        return SolverType::BiCGSTAB;
+    if (solver_name == "SparseLU")
+        return SolverType::SparseLU;
 
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, CG);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, BiCGSTAB);
-    RETURN_SOLVER_ENUM_IF_SAME_STRING(solver_name, SparseLU);
-
-    return SolverType::INVALID;
-#undef RETURN_SOLVER_ENUM_IF_SAME_STRING
+    OGS_FATAL("Unknown Eigen solver type `%s'", solver_name.c_str());
 }
 
 EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_name)
 {
-#define RETURN_PRECOM_ENUM_IF_SAME_STRING(str, TypeName) \
-    if (#TypeName==(str)) return PreconType::TypeName;
+    if (precon_name == "NONE")
+        return PreconType::NONE;
+    if (precon_name == "DIAGONAL")
+        return PreconType::DIAGONAL;
+    if (precon_name == "ILUT")
+        return PreconType::ILUT;
 
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, NONE);
-    RETURN_PRECOM_ENUM_IF_SAME_STRING(precon_name, DIAGONAL);
-
-    return PreconType::NONE;
-#undef RETURN_PRECOM_ENUM_IF_SAME_STRING
+    OGS_FATAL("Unknown Eigen preconditioner type `%s'", precon_name.c_str());
 }
 
 } //MathLib
