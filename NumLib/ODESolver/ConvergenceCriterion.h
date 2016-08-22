@@ -53,6 +53,10 @@ public:
     //! Check if the residual satisfies the convergence criterion.
     virtual void checkResidual(GlobalVector const& residual) = 0;
 
+    //! Tell the ConvergenceCriterion that it is called for the first time now
+    //! (while solving a specific nonlinear system).
+    virtual void preFirstIteration() {}
+
     //! Indicate that a new iteration now starts.
     //!
     //! A concrete implementation of ConvergenceCriterion might want to check

@@ -48,12 +48,12 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
     LinAlg::copy(x, x_new);  // set initial guess, TODO save the copy
 
+    _convergence_criterion->preFirstIteration();
 
     unsigned iteration = 1;
-    for (; iteration <= _maxiter; ++iteration)
+    for (; iteration <= _maxiter;
+         ++iteration, _convergence_criterion->reset())
     {
-        _convergence_criterion->reset();
-
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
@@ -192,11 +192,12 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     LinAlg::copy(x, minus_delta_x);
     minus_delta_x.setZero();
 
-    unsigned iteration = 1;
-    for (; iteration <= _maxiter; ++iteration)
-    {
-        _convergence_criterion->reset();
+    _convergence_criterion->preFirstIteration();
 
+    unsigned iteration = 1;
+    for (; iteration <= _maxiter;
+         ++iteration, _convergence_criterion->reset())
+    {
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
