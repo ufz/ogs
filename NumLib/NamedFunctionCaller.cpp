@@ -204,8 +204,6 @@ double NamedFunctionCaller::call(
     assert(_deferred_plugs.empty() &&
            "You must call applyPlugs() before this method!");
 
-    DBUG("Preparing call of fct #%lu %s()", function_idx,
-         _named_functions[function_idx].getName().c_str());
     auto const& sis_sos = _map_sink_source[function_idx];
     assert(sis_sos.size() ==
            _named_functions[function_idx].getArgumentNames().size());
@@ -217,16 +215,11 @@ double NamedFunctionCaller::call(
 
         if (source >= 0) {
             fct_args[sink] = call(source, unbound_arguments);
-            DBUG("setting %luth argument to %g", sink, fct_args[sink]);
         } else {
             assert(source != _uninitialized);
             fct_args[sink] = unbound_arguments[-source-1];
-            DBUG("setting %luth argument to %g", sink, fct_args[sink]);
         }
     }
-
-    DBUG("Finished preparing call of fct #%lu %s()", function_idx,
-         _named_functions[function_idx].getName().c_str());
 
     return _named_functions[function_idx].call(fct_args);
 }
