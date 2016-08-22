@@ -14,6 +14,7 @@
 #include "ConvergenceCriterionDeltaX.h"
 #include "ConvergenceCriterionResidual.h"
 #include "ConvergenceCriterionPerComponentDeltaX.h"
+#include "ConvergenceCriterionPerComponentResidual.h"
 
 namespace NumLib
 {
@@ -29,6 +30,8 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
         return createConvergenceCriterionResidual(config);
     } else if (type == "PerComponentDeltaX") {
         return createConvergenceCriterionPerComponentDeltaX(config);
+    } else if (type == "PerComponentResidual") {
+        return createConvergenceCriterionPerComponentResidual(config);
     }
 
     OGS_FATAL("There is no convergence criterion of type `%s'.", type.c_str());
