@@ -142,7 +142,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-14 RELTOL 1e-14
+            ABSTOL 4e-14 RELTOL 2e-14
             DIFF_DATA
             line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure
         )
