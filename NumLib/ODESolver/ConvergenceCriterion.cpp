@@ -12,6 +12,7 @@
 #include "BaseLib/Error.h"
 
 #include "ConvergenceCriterionDeltaX.h"
+#include "ConvergenceCriterionResidual.h"
 #include "ConvergenceCriterionPerComponentDeltaX.h"
 
 namespace NumLib
@@ -24,6 +25,8 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
 
     if (type == "DeltaX") {
         return createConvergenceCriterionDeltaX(config);
+    } else if (type == "Residual") {
+        return createConvergenceCriterionResidual(config);
     } else if (type == "PerComponentDeltaX") {
         return createConvergenceCriterionPerComponentDeltaX(config);
     }
