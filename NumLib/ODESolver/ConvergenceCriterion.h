@@ -54,6 +54,12 @@ public:
     virtual void checkResidual(GlobalVector const& residual) = 0;
 
     //! Indicate that a new iteration now starts.
+    //!
+    //! A concrete implementation of ConvergenceCriterion might want to check
+    //! both delta x and the residual. I.e., in a new iteration both checks have
+    //! to be done anew. This method will make the ConvergenceCriterion forget
+    //! the result of all checks already done, s.t. all necessary checks will
+    //! have to be repeated in order to satisfy the ConvergenceCriterion.
     virtual void reset() = 0;
 
     //! Tell if the convergence criterion is satisfied.
