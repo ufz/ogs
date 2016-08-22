@@ -72,7 +72,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.applyKnownSolutionsPicard(A, rhs, x_new);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (_convergence_criterion->hasResidualCheck()) {
+        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
             GlobalVector res;
             LinAlg::matMult(A, x_new, res); // res = A * x_new
             LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
@@ -215,7 +215,7 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
         INFO("[time] Applying Dirichlet BCs took %g s.", time_dirichlet.elapsed());
 
-        if (_convergence_criterion->hasResidualCheck())
+        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
             _convergence_criterion->checkResidual(res);
 
         BaseLib::RunTime time_linear_solver;
