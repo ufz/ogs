@@ -28,6 +28,9 @@ ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
         OGS_FATAL(
             "The number of absolute and relative tolerances given must be the "
             "same.");
+
+    if (_abstols.empty())
+        OGS_FATAL("The given tolerances vector is empty.");
 }
 
 void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
