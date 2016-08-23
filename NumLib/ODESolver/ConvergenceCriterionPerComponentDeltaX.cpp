@@ -80,13 +80,17 @@ void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
 std::unique_ptr<ConvergenceCriterionPerComponentDeltaX>
 createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
 {
+    //! \ogs_file_param{process__convergence_criterion__type}
     config.checkConfigParameter("type", "PerComponentDeltaX");
 
     auto abstols =
+        //! \ogs_file_param{process__convergence_criterion__PerComponentDeltaX__abstols}
         config.getConfigParameterOptional<std::vector<double>>("abstols");
     auto reltols =
+        //! \ogs_file_param{process__convergence_criterion__PerComponentDeltaX__reltols}
         config.getConfigParameterOptional<std::vector<double>>("reltols");
     auto const norm_type_str =
+        //! \ogs_file_param{process__convergence_criterion__PerComponentDeltaX__norm_type}
         config.getConfigParameter<std::string>("norm_type");
 
     if ((!abstols) && (!reltols))
