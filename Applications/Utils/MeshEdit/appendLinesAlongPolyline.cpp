@@ -14,7 +14,7 @@
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/PolylineVec.h"
-#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/readGeometryFromFile.h"
 
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 
@@ -44,8 +44,7 @@ int main (int argc, char* argv[])
 
     // read GEO objects
     GeoLib::GEOObjects geo_objs;
-    GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
-    xml.readFile(geoFileArg.getValue());
+    GeoLib::IO::readGeometryFromFile(geoFileArg.getValue(), geo_objs);
 
     std::vector<std::string> geo_names;
     geo_objs.getGeometryNames (geo_names);

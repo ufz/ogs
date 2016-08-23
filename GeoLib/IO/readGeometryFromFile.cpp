@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
@@ -31,8 +32,15 @@ readGeometryFromFile(std::string const& fname, GeoLib::GEOObjects & geo_objs)
         xml.readFile(fname);
     } else {
         std::vector<std::string> errors;
-        std::string geo_name(BaseLib::extractBaseNameWithoutExtension(fname));
+        std::string geo_name; // geo_name is output of the reading function
         GeoLib::IO::Legacy::readGLIFileV4(fname, geo_objs, geo_name, errors);
+    }
+
+    std::vector<std::string> geo_names;
+    geo_objs.getGeometryNames(geo_names);
+    if (geo_names.empty()) {
+        OGS_FATAL("GEOObjects has no geometry name after reading the geometry file. "
+                  "Something is wrong in the reading function.");
     }
 }
 }

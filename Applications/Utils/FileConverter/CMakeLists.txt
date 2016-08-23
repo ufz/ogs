@@ -43,6 +43,12 @@ set_target_properties(TIN2VTK PROPERTIES FOLDER Utilities)
 target_link_libraries(TIN2VTK MeshLib)
 ADD_VTK_DEPENDENCY(TIN2VTK)
 
+if (QT4_FOUND)
+    add_executable(convertGEO convertGEO.cpp)
+    set_target_properties(convertGEO PROPERTIES FOLDER Utilities)
+    target_link_libraries(convertGEO GeoLib)
+endif()
+
 ####################
 ### Installation ###
 ####################
@@ -50,8 +56,8 @@ install(TARGETS generateMatPropsFromMatID GMSH2OGS OGS2VTK VTK2OGS VTK2TIN
     RUNTIME DESTINATION bin COMPONENT ogs_converter)
 
 if(QT4_FOUND)
-    install(TARGETS ConvertSHPToGLI
-        FEFLOW2OGS RUNTIME DESTINATION bin COMPONENT ogs_converter)
+    install(TARGETS ConvertSHPToGLI FEFLOW2OGS convertGEO
+        RUNTIME DESTINATION bin COMPONENT ogs_converter)
 endif()
 
 cpack_add_component(ogs_converter
