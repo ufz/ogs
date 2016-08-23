@@ -19,10 +19,11 @@ class ConfigTree;
 
 namespace NumLib
 {
-/*! Convergence criterion for nonlinear solvers.
+/*! Convergence criterion for iterative algorithms, like nonlinear solvers.
  *
  * It is able to check the difference of the solution vector between iterations
- * and the residual of the nonlinear equation system.
+ * and the residual of the equation being solved (e.g. the nonlinear equation
+ * system).
  */
 class ConvergenceCriterion
 {
