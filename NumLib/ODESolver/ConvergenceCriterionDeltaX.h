@@ -16,6 +16,12 @@
 
 namespace NumLib
 {
+//! Convergence criterion applying a single absolute or relative tolerance to
+//! the whole solution increment vector.
+//!
+//! A residual check is not done.
+//! If both an absolute and a relative tolerance are specified, at least one of
+//! them has to be satisfied.
 class ConvergenceCriterionDeltaX final : public ConvergenceCriterion
 {
 public:

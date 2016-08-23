@@ -18,6 +18,12 @@ namespace NumLib
 {
 class LocalToGlobalIndexMap;
 
+//! Convergence criterion applying absolute or relative tolerances individually
+//! to each component of the whole residual vector.
+//!
+//! A check of the solution increment is not done.
+//! If both an absolute and a relative tolerances are specified, at least one of
+//! them has to be satisfied.
 class ConvergenceCriterionPerComponentResidual
     : public ConvergenceCriterionPerComponent
 {

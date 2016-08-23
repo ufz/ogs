@@ -17,6 +17,12 @@ namespace NumLib
 {
 class LocalToGlobalIndexMap;
 
+//! Convergence criterion applying absolute or relative tolerances individually
+//! to each component of the whole solution increment vector.
+//!
+//! A residual check is not done.
+//! If both an absolute and a relative tolerances are specified, at least one of
+//! them has to be satisfied.
 class ConvergenceCriterionPerComponentDeltaX
     : public ConvergenceCriterionPerComponent
 {
