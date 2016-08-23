@@ -22,12 +22,9 @@
 
 #include "GeoLib/GEOObjects.h"
 
-#include "ProcessLib/Output.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
-
-#include "NumLib/ODESolver/Types.h"
 
 namespace MathLib
 {
@@ -43,7 +40,7 @@ namespace NumLib
 class NonlinearSolverBase;
 }
 
-namespace ApplicationsLib
+namespace ProcessLib
 {
 class UncoupledProcessesTimeLoop;
 }
@@ -57,7 +54,7 @@ class ProjectData final
 {
 public:
     /// The time loop type used to solve this project's processes.
-    using TimeLoop = ApplicationsLib::UncoupledProcessesTimeLoop;
+    using TimeLoop = ProcessLib::UncoupledProcessesTimeLoop;
 
     /// The empty constructor used in the gui, for example, when the project's
     /// configuration is not loaded yet.
@@ -105,35 +102,31 @@ public:
     // Process interface
     //
 
-    /// Builds processes.
-    void buildProcesses();
-
     /// Iterator access for processes.
     /// Provides read access to the process container.
-    std::vector<std::unique_ptr<ProcessLib::Process>>::const_iterator
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::const_iterator
     processesBegin() const
     {
         return _processes.begin();
     }
-    std::vector<std::unique_ptr<ProcessLib::Process>>::iterator processesBegin()
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::iterator processesBegin()
     {
         return _processes.begin();
     }
 
     /// Iterator access for processes as in processesBegin().
-    std::vector<std::unique_ptr<ProcessLib::Process>>::const_iterator
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::const_iterator
     processesEnd() const
     {
         return _processes.end();
     }
-    std::vector<std::unique_ptr<ProcessLib::Process>>::iterator processesEnd()
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::iterator processesEnd()
     {
         return _processes.end();
     }
 
-    ProcessLib::Output const& getOutputControl() const { return *_output; }
-    ProcessLib::Output& getOutputControl() { return *_output; }
     TimeLoop& getTimeLoop() { return *_time_loop; }
+
 private:
     /// Checks if a mesh with the same name exists and provides a unique name in
     /// case of already existing mesh. Returns true if the mesh name is unique.
@@ -164,12 +157,9 @@ private:
     /// constructor.
     void parseProcesses(BaseLib::ConfigTree const& process_config);
 
-    /// Parses the output configuration.
-    /// Parses the file tag and sets output file prefix.
-    void parseOutput(BaseLib::ConfigTree const& output_config,
-                     std::string const& output_directory);
-
-    void parseTimeStepping(BaseLib::ConfigTree const& timestepping_config);
+    /// Parses the time loop configuration.
+    void parseTimeLoop(BaseLib::ConfigTree const& config,
+                       const std::string& output_directory);
 
     void parseLinearSolvers(BaseLib::ConfigTree const& config);
 
@@ -177,29 +167,21 @@ private:
 
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
-private:
     GeoLib::GEOObjects* _geoObjects = new GeoLib::GEOObjects();
     std::vector<MeshLib::Mesh*> _mesh_vec;
-    std::vector<std::unique_ptr<ProcessLib::Process>> _processes;
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
-
-    /// Buffer for each process' config used in the process building function.
-    std::vector<BaseLib::ConfigTree> _process_configs;
 
     /// Buffer for each parameter config passed to the process.
     std::vector<std::unique_ptr<ProcessLib::ParameterBase>> _parameters;
 
-    std::unique_ptr<ProcessLib::Output> _output;
-
     /// The time loop used to solve this project's processes.
     std::unique_ptr<TimeLoop> _time_loop;
 
-    std::map<std::string,
-             std::unique_ptr<GlobalLinearSolver>>
-        _linear_solvers;
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> _linear_solvers;
 
-    using NonlinearSolver = NumLib::NonlinearSolverBase;
-    std::map<std::string, std::unique_ptr<NonlinearSolver>> _nonlinear_solvers;
+    std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>
+        _nonlinear_solvers;
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;

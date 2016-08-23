@@ -23,16 +23,13 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
 
-#include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 
-#include "BaseLib/ConfigTree.h"
-
-#include "UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
@@ -85,17 +82,14 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"));
 
-    //! \ogs_file_param{prj__output}
-    parseOutput(project_config.getConfigSubtree("output"), output_directory);
-
-    //! \ogs_file_param{prj__time_stepping}
-    parseTimeStepping(project_config.getConfigSubtree("time_stepping"));
-
     //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
 
     //! \ogs_file_param{prj__nonlinear_solvers}
     parseNonlinearSolvers(project_config.getConfigSubtree("nonlinear_solvers"));
+
+    //! \ogs_file_param{prj__time_loop}
+    parseTimeLoop(project_config.getConfigSubtree("time_loop"), output_directory);
 }
 
 ProjectData::~ProjectData()
@@ -150,57 +144,6 @@ bool ProjectData::removeMesh(const std::string& name)
     _mesh_vec.erase(std::remove(_mesh_vec.begin(), _mesh_vec.end(), nullptr),
                     _mesh_vec.end());
     return mesh_found;
-}
-
-void ProjectData::buildProcesses()
-{
-    for (auto const& pc : _process_configs)
-    {
-        //! \ogs_file_param{process__type}
-        auto const type = pc.peekConfigParameter<std::string>("type");
-
-        auto const nl_slv_name =
-            //! \ogs_file_param{process__nonlinear_solver}
-            pc.getConfigParameter<std::string>("nonlinear_solver");
-        auto& nl_slv = BaseLib::getOrError(
-            _nonlinear_solvers, nl_slv_name,
-            "A nonlinear solver with the given name has not been defined.");
-
-        auto time_disc = NumLib::createTimeDiscretization(
-            //! \ogs_file_param{process__time_discretization}
-            pc.getConfigSubtree("time_discretization"));
-
-        auto conv_crit = NumLib::createConvergenceCriterion(
-            //! \ogs_file_param{process__convergence_criterion}
-            pc.getConfigSubtree("convergence_criterion"));
-
-        if (type == "GROUNDWATER_FLOW")
-        {
-            // The existence check of the in the configuration referenced
-            // process variables is checked in the physical process.
-            // TODO at the moment we have only one mesh, later there can be
-            // several meshes. Then we have to assign the referenced mesh
-            // here.
-            _processes.emplace_back(
-                ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                    *_mesh_vec[0], *nl_slv, std::move(time_disc),
-                    std::move(conv_crit), _process_variables, _parameters, pc));
-        }
-        else if (type == "TES")
-        {
-            _processes.emplace_back(ProcessLib::TES::createTESProcess(
-                *_mesh_vec[0], *nl_slv, std::move(time_disc),
-                std::move(conv_crit), _process_variables, _parameters, pc));
-        }
-        else
-        {
-            OGS_FATAL("Unknown process type: %s", type.c_str());
-        }
-    }
-
-    // process configs are not needed anymore, so clear the storage
-    // in order to trigger config tree checks
-    _process_configs.clear();
 }
 
 bool ProjectData::meshExists(const std::string& name) const
@@ -297,32 +240,48 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
     //! \ogs_file_param{prj__processes__process}
     for (auto process_config : processes_config.getConfigSubtreeList("process"))
     {
-        // process type must be specified.
         //! \ogs_file_param{process__type}
-        process_config.peekConfigParameter<std::string>("type");
-        process_config.ignoreConfigParameter("name");
-        _process_configs.push_back(std::move(process_config));
+        auto const type = process_config.peekConfigParameter<std::string>("type");
+
+        //! \ogs_file_param{process__type}
+        auto const name = process_config.getConfigParameter<std::string>("name");
+
+        std::unique_ptr<ProcessLib::Process> process;
+
+        if (type == "GROUNDWATER_FLOW")
+        {
+            // The existence check of the in the configuration referenced
+            // process variables is checked in the physical process.
+            // TODO at the moment we have only one mesh, later there can be
+            // several meshes. Then we have to assign the referenced mesh
+            // here.
+            process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
+                *_mesh_vec[0], _process_variables, _parameters, process_config);
+        }
+        else if (type == "TES")
+        {
+            process = ProcessLib::TES::createTESProcess(
+                *_mesh_vec[0], _process_variables, _parameters, process_config);
+        }
+        else
+        {
+            OGS_FATAL("Unknown process type: %s", type.c_str());
+        }
+
+        BaseLib::insertIfKeyUniqueElseError(_processes,
+                                            name,
+                                            std::move(process),
+                                            "The process name is not unique");
     }
 }
 
-void ProjectData::parseOutput(BaseLib::ConfigTree const& output_config,
-                              std::string const& output_directory)
-{
-    //! \ogs_file_param_special{prj__output__VTK}
-    //! \ogs_file_param{prj__output__type}
-    output_config.checkConfigParameter("type", "VTK");
-    DBUG("Parse output configuration:");
-
-    _output = ProcessLib::Output::newInstance(output_config, output_directory);
-}
-
-void ProjectData::parseTimeStepping(
-    BaseLib::ConfigTree const& timestepping_config)
+void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
+                                std::string const& output_directory)
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop =
-        ApplicationsLib::createUncoupledProcessesTimeLoop(timestepping_config);
+    _time_loop = ProcessLib::createUncoupledProcessesTimeLoop(
+        config, output_directory, _processes, _nonlinear_solvers);
 
     if (!_time_loop)
     {
