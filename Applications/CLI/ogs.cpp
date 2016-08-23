@@ -23,7 +23,7 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/LogogSetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
-#include "Applications/ApplicationsLib/UncoupledProcessesTimeLoop.h"
+#include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "NumLib/NumericsConfig.h"
 
@@ -108,16 +108,13 @@ int main(int argc, char *argv[])
             project_config.checkAndInvalidate();
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
-            // Create processes.
-            project.buildProcesses();
-
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
             INFO("Initialize processes.");
             for (auto p_it = project.processesBegin();
                  p_it != project.processesEnd(); ++p_it)
             {
-                (*p_it)->initialize();
+                p_it->second->initialize();
             }
 
             BaseLib::ConfigTree::assertNoSwallowedErrors();
@@ -125,7 +122,7 @@ int main(int argc, char *argv[])
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
-            solver_succeeded = time_loop.loop(project);
+            solver_succeeded = time_loop.loop();
         }  // This nested scope ensures that everything that could possibly
            // possess a ConfigTree is destructed before the final check below is
            // done.
