@@ -106,7 +106,7 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
         delete *elem;
     }
 
-    std::vector<std::size_t> id_map;
+    std::vector<int> id_map;
     if (!subsfc_node_id_backup_prop_name.empty())
     {
         id_map.reserve(sfc_nodes.size());
@@ -116,8 +116,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     MeshLib::Mesh* result (new Mesh(mesh.getName()+"-Surface", sfc_nodes, new_elements));
     // transmit the original node ids of the subsurface mesh as a property
     if (!subsfc_node_id_backup_prop_name.empty()) {
-        boost::optional<MeshLib::PropertyVector<std::size_t>&> orig_node_ids(
-            result->getProperties().createNewPropertyVector<std::size_t>(
+        boost::optional<MeshLib::PropertyVector<int>&> orig_node_ids(
+            result->getProperties().createNewPropertyVector<int>(
                 subsfc_node_id_backup_prop_name , MeshLib::MeshItemType::Node, 1));
         if (orig_node_ids) {
             orig_node_ids->resize(id_map.size());

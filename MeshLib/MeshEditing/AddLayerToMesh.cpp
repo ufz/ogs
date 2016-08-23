@@ -46,7 +46,7 @@ namespace MeshLib
 */
 MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
     MeshLib::Element const& sfc_elem,
-    MeshLib::PropertyVector<std::size_t> const& sfc_to_subsfc_id_map,
+    MeshLib::PropertyVector<int> const& sfc_to_subsfc_id_map,
     std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
 {
     if (sfc_elem.getDimension() > 2)
@@ -107,8 +107,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
                               std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
         // add property storing node ids
-        boost::optional<MeshLib::PropertyVector<std::size_t>&> pv(
-            sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
+        boost::optional<MeshLib::PropertyVector<int>&> pv(
+            sfc_mesh->getProperties().createNewPropertyVector<int>(
                 prop_name, MeshLib::MeshItemType::Node, 1));
         if (pv) {
             pv->resize(sfc_mesh->getNumberOfNodes());
@@ -132,8 +132,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::size_t const n_sfc_nodes(sfc_nodes.size());
 
     // fetch subsurface node ids PropertyVector
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&> opt_node_id_pv(
-        sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name));
+    boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(
+        sfc_mesh->getProperties().getPropertyVector<int>(prop_name));
     if (!opt_node_id_pv) {
         ERR(
             "Need subsurface node ids, but the property \"%s\" is not "
@@ -142,7 +142,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         return nullptr;
     }
 
-    MeshLib::PropertyVector<std::size_t> const& node_id_pv(*opt_node_id_pv);
+    MeshLib::PropertyVector<int> const& node_id_pv(*opt_node_id_pv);
     // *** copy sfc nodes to subsfc mesh node
     std::map<std::size_t, std::size_t> subsfc_sfc_id_map;
     for (std::size_t k(0); k<n_sfc_nodes; ++k) {
