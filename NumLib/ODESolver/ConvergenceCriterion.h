@@ -77,6 +77,13 @@ public:
 std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
     BaseLib::ConfigTree const& config);
 
+//! Returns if |numerator/denominator| < |reltol|.
+//! This method copes with the case that denominator = 0 by always adding
+//! epsilon to the denominator.
+bool checkRelativeTolerance(double const reltol,
+                            double const numerator,
+                            double const denominator);
+
 } // namespace NumLib
 
 #endif  // NUMLIB_CONVERGENCECRITERION_H

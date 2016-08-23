@@ -58,7 +58,8 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
 
         satisfied_abs = satisfied_abs && error_dx < _abstols[global_component];
         satisfied_rel =
-            satisfied_rel && error_dx < _reltols[global_component] * norm_x;
+            satisfied_rel && checkRelativeTolerance(_reltols[global_component],
+                                                    error_dx, norm_x);
     }
 
     _satisfied = _satisfied && (satisfied_abs || satisfied_rel);

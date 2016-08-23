@@ -45,7 +45,7 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
         satisfied_abs = error_dx < *_abstol;
     }
     if (_reltol) {
-        satisfied_rel = error_dx < *_reltol * norm_x;
+        satisfied_rel = checkRelativeTolerance(*_reltol, error_dx, norm_x);
     }
 
     _satisfied = _satisfied && (satisfied_abs || satisfied_rel);

@@ -65,9 +65,10 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
         }
 
         satisfied_abs = satisfied_abs && norm_res < _abstols[global_component];
-        satisfied_rel = satisfied_rel &&
-                        norm_res < _reltols[global_component] *
-                                       _residual_norms_0[global_component];
+        satisfied_rel =
+            satisfied_rel &&
+            checkRelativeTolerance(_reltols[global_component], norm_res,
+                                   _residual_norms_0[global_component]);
     }
 
     _satisfied = _satisfied && (satisfied_abs || satisfied_rel);

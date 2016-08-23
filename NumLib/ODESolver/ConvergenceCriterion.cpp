@@ -37,4 +37,12 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
     OGS_FATAL("There is no convergence criterion of type `%s'.", type.c_str());
 }
 
+bool checkRelativeTolerance(const double reltol, const double numerator,
+                            const double denominator)
+{
+    auto const eps = std::numeric_limits<double>::epsilon();
+    return std::abs(numerator) <
+           std::abs(reltol) * (std::abs(denominator) + eps);
+}
+
 }  // NumLib
