@@ -55,19 +55,13 @@ namespace TES
 {
 TESProcess::TESProcess(
     MeshLib::Mesh& mesh,
-    Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
-    : Process(mesh, nonlinear_solver, std::move(time_discretization),
-              std::move(convergence_criterion), parameters,
-              std::move(process_variables), std::move(secondary_variables),
-              std::move(process_output), std::move(named_function_caller))
+    : Process(mesh, parameters, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 
@@ -298,20 +292,6 @@ void TESProcess::preIterationConcreteProcess(const unsigned iter,
 NumLib::IterationResult TESProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
-    if (this->_process_output.output_iteration_results)
-    {
-        DBUG("output results of iteration %li",
-             _assembly_params.total_iteration);
-        std::string fn =
-            "tes_iter_" + std::to_string(_assembly_params.total_iteration) +
-            +"_ts_" + std::to_string(_assembly_params.timestep) + "_" +
-            std::to_string(_assembly_params.iteration_in_current_timestep) +
-            "_" + std::to_string(_assembly_params.number_of_try_of_iteration) +
-            ".vtu";
-
-        this->output(fn, 0, x);
-    }
-
     bool check_passed = true;
 
     if (!Trafo::constrained)
