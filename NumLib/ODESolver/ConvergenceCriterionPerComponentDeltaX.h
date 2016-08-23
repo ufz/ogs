@@ -21,7 +21,7 @@ class ConvergenceCriterionPerComponentDeltaX
     : public ConvergenceCriterionPerComponent
 {
 public:
-    explicit ConvergenceCriterionPerComponentDeltaX(
+    ConvergenceCriterionPerComponentDeltaX(
         std::vector<double>&& absolute_tolerances,
         std::vector<double>&& relative_tolerances,
         MathLib::VecNormType norm_type);

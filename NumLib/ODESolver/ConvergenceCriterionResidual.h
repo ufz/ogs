@@ -19,7 +19,7 @@ namespace NumLib
 class ConvergenceCriterionResidual final : public ConvergenceCriterion
 {
 public:
-    explicit ConvergenceCriterionResidual(
+    ConvergenceCriterionResidual(
         boost::optional<double>&& absolute_tolerance,
         boost::optional<double>&& relative_tolerance,
         MathLib::VecNormType norm_type);

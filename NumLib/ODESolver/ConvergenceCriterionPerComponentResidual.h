@@ -22,7 +22,7 @@ class ConvergenceCriterionPerComponentResidual
     : public ConvergenceCriterionPerComponent
 {
 public:
-    explicit ConvergenceCriterionPerComponentResidual(
+    ConvergenceCriterionPerComponentResidual(
         std::vector<double>&& absolute_tolerances,
         std::vector<double>&& relative_tolerances,
         MathLib::VecNormType norm_type);

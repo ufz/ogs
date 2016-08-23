@@ -19,7 +19,7 @@ namespace NumLib
 class ConvergenceCriterionDeltaX final : public ConvergenceCriterion
 {
 public:
-    explicit ConvergenceCriterionDeltaX(
+    ConvergenceCriterionDeltaX(
         boost::optional<double>&& absolute_tolerance,
         boost::optional<double>&& relative_tolerance,
         MathLib::VecNormType norm_type);
