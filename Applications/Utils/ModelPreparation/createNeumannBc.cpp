@@ -131,8 +131,8 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(in_mesh.getValue()));
 
     std::string const prop_name("OriginalSubsurfaceNodeIDs");
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&> node_id_pv(
-        surface_mesh->getProperties().getPropertyVector<std::size_t>(prop_name));
+    boost::optional<MeshLib::PropertyVector<int> const&> node_id_pv(
+        surface_mesh->getProperties().getPropertyVector<int>(prop_name));
     if (!node_id_pv)
     {
         ERR(
