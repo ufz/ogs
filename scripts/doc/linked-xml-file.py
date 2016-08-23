@@ -250,7 +250,7 @@ for k, v in map_tag_to_prj_files.items():
 
 for k, v in map_attr_to_prj_files.items():
     map_attr_to_prj_files[k] = list(v)
-    documented_tags_attrs.discard((k, True))
+    documented_tags_attrs.discard((k, False))
 
 with open(os.path.join(docauxdir, "tested-parameters-cache.json"), "w") as fh:
     json.dump({ "tags": map_tag_to_prj_files, "attributes": map_attr_to_prj_files }, \
