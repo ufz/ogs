@@ -12,6 +12,7 @@
 #include "BaseLib/Functional.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "GlobalVectorFromNamedFunction.h"
 #include "ProcessVariable.h"
 
@@ -21,6 +22,7 @@ Process::Process(
     MeshLib::Mesh& mesh,
     NonlinearSolver& nonlinear_solver,
     std::unique_ptr<TimeDiscretization>&& time_discretization,
+    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     ProcessOutput&& process_output,
@@ -31,6 +33,7 @@ Process::Process(
       _named_function_caller(std::move(named_function_caller)),
       _nonlinear_solver(nonlinear_solver),
       _time_discretization(std::move(time_discretization)),
+      _convergence_criterion(std::move(convergence_criterion)),
       _process_variables(std::move(process_variables))
 {
 }
@@ -156,6 +159,12 @@ void Process::constructDofTable()
 
     _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
         std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
+
+    if (auto* conv_crit =
+            dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
+                _convergence_criterion.get())) {
+        conv_crit->setDOFTable(*_local_to_global_index_map, _mesh);
+    }
 }
 
 void Process::initializeExtrapolator()

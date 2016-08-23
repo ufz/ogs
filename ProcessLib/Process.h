@@ -38,14 +38,16 @@ public:
     using NonlinearSolver = NumLib::NonlinearSolverBase;
     using TimeDiscretization = NumLib::TimeDiscretization;
 
-    Process(MeshLib::Mesh& mesh,
-            NonlinearSolver& nonlinear_solver,
-            std::unique_ptr<TimeDiscretization>&& time_discretization,
-            std::vector<std::reference_wrapper<ProcessVariable>>&&
-                process_variables,
-            SecondaryVariableCollection&& secondary_variables,
-            ProcessOutput&& process_output,
-            NumLib::NamedFunctionCaller&& named_function_caller);
+    Process(
+        MeshLib::Mesh& mesh,
+        NonlinearSolver& nonlinear_solver,
+        std::unique_ptr<TimeDiscretization>&& time_discretization,
+        std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+        std::vector<std::reference_wrapper<ProcessVariable>>&&
+            process_variables,
+        SecondaryVariableCollection&& secondary_variables,
+        ProcessOutput&& process_output,
+        NumLib::NamedFunctionCaller&& named_function_caller);
 
     /// Preprocessing before starting assembly for new timestep.
     virtual void preTimestep(GlobalVector const& /*x*/, const double /*t*/,
@@ -94,6 +96,11 @@ public:
     TimeDiscretization& getTimeDiscretization() const
     {
         return *_time_discretization;
+    }
+
+    NumLib::ConvergenceCriterion& getConvergenceCriterion() const
+    {
+        return *_convergence_criterion;
     }
 
 protected:
@@ -172,6 +179,7 @@ private:
 
     NonlinearSolver& _nonlinear_solver;
     std::unique_ptr<TimeDiscretization> _time_discretization;
+    std::unique_ptr<NumLib::ConvergenceCriterion> _convergence_criterion;
 
     /// Variables used by this process.
     std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;

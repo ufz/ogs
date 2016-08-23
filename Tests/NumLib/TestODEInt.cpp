@@ -16,8 +16,9 @@
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/BuildInfo.h"
-#include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "NumLib/NumericsConfig.h"
+#include "NumLib/ODESolver/TimeLoopSingleODE.h"
+#include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
 #include "ODEs.h"
 
 using GMatrix = GlobalMatrix;
@@ -52,11 +53,15 @@ public:
 
         auto linear_solver = std::unique_ptr<GlobalLinearSolver>{
             new GlobalLinearSolver{"", nullptr}};
+        auto conv_crit = std::unique_ptr<NumLib::ConvergenceCriterion>(
+            new NumLib::ConvergenceCriterionDeltaX(
+                _tol, boost::none, MathLib::VecNormType::NORM2));
         std::unique_ptr<NLSolver> nonlinear_solver(
-                    new NLSolver(*linear_solver, _tol, _maxiter));
+            new NLSolver(*linear_solver, _maxiter));
 
         NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
-                                              std::move(nonlinear_solver));
+                                              std::move(nonlinear_solver),
+                                              std::move(conv_crit));
 
         const double t0      = ODET::t0;
         const double t_end   = ODET::t_end;

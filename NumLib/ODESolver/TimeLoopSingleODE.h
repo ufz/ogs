@@ -36,13 +36,18 @@ public:
      * \param linear_solver the linear solver used to solve the linearized ODE
      *                      system.
      * \param nonlinear_solver The solver to be used to resolve nonlinearities.
+     * \param convergence_criterion The convergence criterion used by the
+     * nonlinear solver.
      */
-    TimeLoopSingleODE(TDiscODESys& ode_sys,
-                               std::unique_ptr<GlobalLinearSolver>&& linear_solver,
-                               std::unique_ptr<NLSolver>&& nonlinear_solver)
+    TimeLoopSingleODE(
+        TDiscODESys& ode_sys,
+        std::unique_ptr<GlobalLinearSolver>&& linear_solver,
+        std::unique_ptr<NLSolver>&& nonlinear_solver,
+        std::unique_ptr<ConvergenceCriterion>&& convergence_criterion)
         : _ode_sys(ode_sys),
           _linear_solver(std::move(linear_solver)),
-          _nonlinear_solver(std::move(nonlinear_solver))
+          _nonlinear_solver(std::move(nonlinear_solver)),
+          _convergence_criterion(std::move(convergence_criterion))
     {
     }
 
@@ -69,6 +74,7 @@ private:
     TDiscODESys& _ode_sys;
     std::unique_ptr<GlobalLinearSolver> _linear_solver;
     std::unique_ptr<NLSolver> _nonlinear_solver;
+    std::unique_ptr<ConvergenceCriterion> _convergence_criterion;
 };
 
 //! @}
@@ -87,7 +93,7 @@ bool TimeLoopSingleODE<NLTag>::loop(const double t0, GlobalVector const& x0,
 
     time_disc.setInitialState(t0, x0);  // push IC
 
-    _nonlinear_solver->setEquationSystem(_ode_sys);
+    _nonlinear_solver->setEquationSystem(_ode_sys, *_convergence_criterion);
 
     if (time_disc.needsPreload())
     {
