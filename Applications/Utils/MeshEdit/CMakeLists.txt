@@ -77,6 +77,10 @@ add_executable(ExtractSurface ExtractSurface.cpp)
 target_link_libraries(ExtractSurface MeshLib)
 set_target_properties(ExtractSurface PROPERTIES FOLDER Utilities)
 
+add_executable(swapNodeCoordinateAxes swapNodeCoordinateAxes.cpp)
+target_link_libraries(swapNodeCoordinateAxes MeshLib)
+set_target_properties(swapNodeCoordinateAxes PROPERTIES FOLDER Utilities)
+
 ####################
 ### Installation ###
 ####################
@@ -96,5 +100,6 @@ install(TARGETS
     ResetPropertiesInPolygonalRegion
     reviseMesh
     queryMesh
+    swapNodeCoordinateAxes
     RUNTIME DESTINATION bin COMPONENT Utilities
 )
