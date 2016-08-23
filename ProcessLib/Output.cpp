@@ -86,25 +86,20 @@ newInstance(const BaseLib::ConfigTree &config, std::string const& output_directo
     return out;
 }
 
-void Output::
-initialize(Output::ProcessIter first, const Output::ProcessIter& last)
+void Output::addProcess(ProcessLib::Process const& process, const unsigned pcs_idx)
 {
-    for (unsigned pcs_idx = 0; first != last; ++first, ++pcs_idx)
-    {
-        auto const filename = _output_file_prefix
-                              + "_pcs_" + std::to_string(pcs_idx)
-                              + ".pvd";
-        _single_process_data.emplace(std::piecewise_construct,
-                std::forward_as_tuple(&**first),
-                std::forward_as_tuple(pcs_idx, filename));
-    }
+    auto const filename =
+        _output_file_prefix + "_pcs_" + std::to_string(pcs_idx) + ".pvd";
+    _single_process_data.emplace(std::piecewise_construct,
+                                 std::forward_as_tuple(&process),
+                                 std::forward_as_tuple(pcs_idx, filename));
 }
 
-void Output::
-doOutputAlways(Process const& process,
-               unsigned timestep,
-               const double t,
-               GlobalVector const& x)
+void Output::doOutputAlways(Process const& process,
+                            ProcessOutput const& process_output,
+                            unsigned timestep,
+                            const double t,
+                            GlobalVector const& x)
 {
     BaseLib::RunTime time_output;
     time_output.start();
@@ -122,33 +117,36 @@ doOutputAlways(Process const& process,
             + "_t_"  + std::to_string(t)
             + ".vtu";
     DBUG("output to %s", output_file_name.c_str());
-    process.output(output_file_name, timestep, x);
+    doProcessOutput(output_file_name, x, process.getMesh(),
+                    process.getDOFTable(), process.getProcessVariables(),
+                    process.getSecondaryVariables(), process_output);
     spd.pvd_file.addVTUFile(output_file_name, t);
 
     INFO("[time] Output took %g s.", time_output.elapsed());
 }
 
-void Output::
-doOutput(Process const& process,
-         unsigned timestep,
-         const double t,
-         GlobalVector const& x)
+void Output::doOutput(Process const& process,
+                      ProcessOutput const& process_output,
+                      unsigned timestep,
+                      const double t,
+                      GlobalVector const& x)
 {
     if (shallDoOutput(timestep, _repeats_each_steps))
-        doOutputAlways(process, timestep, t, x);
+        doOutputAlways(process, process_output, timestep, t, x);
 }
 
-void Output::
-doOutputLastTimestep(Process const& process,
-                     unsigned timestep,
-                     const double t,
-                     GlobalVector const& x)
+void Output::doOutputLastTimestep(Process const& process,
+                                  ProcessOutput const& process_output,
+                                  unsigned timestep,
+                                  const double t,
+                                  GlobalVector const& x)
 {
     if (!shallDoOutput(timestep, _repeats_each_steps))
-        doOutputAlways(process, timestep, t, x);
+        doOutputAlways(process, process_output, timestep, t, x);
 }
 
 void Output::doOutputNonlinearIteration(Process const& process,
+                                        ProcessOutput const& process_output,
                                         const unsigned timestep, const double t,
                                         GlobalVector const& x,
                                         const unsigned iteration) const
@@ -172,7 +170,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
             + "_nliter_" + std::to_string(iteration)
             + ".vtu";
     DBUG("output iteration results to %s", output_file_name.c_str());
-    process.output(output_file_name, timestep, x);
+    doProcessOutput(output_file_name, x, process.getMesh(),
+                    process.getDOFTable(), process.getProcessVariables(),
+                    process.getSecondaryVariables(), process_output);
 
     INFO("[time] Output took %g s.", time_output.elapsed());
 }
