@@ -18,7 +18,7 @@
 #include "ProcessLib/Parameter/Parameter.h"
 
 #include "ExtrapolatorData.h"
-#include "ProcessOutput.h"
+#include "ProcessVariable.h"
 #include "SecondaryVariable.h"
 #include "CachedSecondaryVariable.h"
 
@@ -40,14 +40,10 @@ public:
 
     Process(
         MeshLib::Mesh& mesh,
-        NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<TimeDiscretization>&& time_discretization,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
-        ProcessOutput&& process_output,
         NumLib::NamedFunctionCaller&& named_function_caller);
 
     /// Preprocessing before starting assembly for new timestep.
@@ -63,12 +59,6 @@ public:
                       GlobalVector const& x) override final;
 
     NumLib::IterationResult postIteration(GlobalVector const& x) override final;
-
-    /// Process output.
-    /// The file_name is indicating the name of possible output file.
-    void output(std::string const& file_name,
-                const unsigned /*timestep*/,
-                GlobalVector const& x) const;
 
     void initialize();
 
@@ -93,15 +83,22 @@ public:
         return _boundary_conditions.getKnownSolutions(t);
     }
 
-    NonlinearSolver& getNonlinearSolver() const { return _nonlinear_solver; }
-    TimeDiscretization& getTimeDiscretization() const
+    NumLib::LocalToGlobalIndexMap const& getDOFTable() const
     {
-        return *_time_discretization;
+        return *_local_to_global_index_map;
     }
 
-    NumLib::ConvergenceCriterion& getConvergenceCriterion() const
+    MeshLib::Mesh& getMesh() const { return _mesh; }
+
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+    getProcessVariables() const
     {
-        return *_convergence_criterion;
+        return _process_variables;
+    }
+
+    SecondaryVariableCollection const& getSecondaryVariables() const
+    {
+        return _secondary_variables;
     }
 
 protected:
@@ -160,7 +157,6 @@ protected:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     SecondaryVariableCollection _secondary_variables;
-    ProcessOutput _process_output;
 
     NumLib::NamedFunctionCaller _named_function_caller;
     std::vector<std::unique_ptr<CachedSecondaryVariable>>
@@ -170,10 +166,6 @@ protected:
 private:
     unsigned const _integration_order = 2;
     GlobalSparsityPattern _sparsity_pattern;
-
-    NonlinearSolver& _nonlinear_solver;
-    std::unique_ptr<TimeDiscretization> _time_discretization;
-    std::unique_ptr<NumLib::ConvergenceCriterion> _convergence_criterion;
 
     /// Variables used by this process.
     std::vector<std::reference_wrapper<ProcessVariable>> _process_variables;

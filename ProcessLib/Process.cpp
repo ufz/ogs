@@ -20,32 +20,16 @@ namespace ProcessLib
 {
 Process::Process(
     MeshLib::Mesh& mesh,
-    NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<TimeDiscretization>&& time_discretization,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
-    ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
-      _process_output(std::move(process_output)),
       _named_function_caller(std::move(named_function_caller)),
-      _nonlinear_solver(nonlinear_solver),
-      _time_discretization(std::move(time_discretization)),
-      _convergence_criterion(std::move(convergence_criterion)),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(parameters)
 {
-}
-
-void Process::output(std::string const& file_name,
-                     const unsigned /*timestep*/,
-                     GlobalVector const& x) const
-{
-    doProcessOutput(file_name, x, _mesh, *_local_to_global_index_map,
-                    _process_variables, _secondary_variables, _process_output);
 }
 
 void Process::initialize()
@@ -192,11 +176,6 @@ void Process::constructDofTable()
     _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
         std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
 
-    if (auto* conv_crit =
-            dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
-                _convergence_criterion.get())) {
-        conv_crit->setDOFTable(*_local_to_global_index_map, _mesh);
-    }
 }
 
 void Process::initializeExtrapolator()
