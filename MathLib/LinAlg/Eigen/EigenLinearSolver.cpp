@@ -102,6 +102,53 @@ private:
     T_SOLVER _solver;
 };
 
+template <template <typename, typename> class Solver, typename Precon>
+std::unique_ptr<EigenLinearSolverBase> createIterativeSolver()
+{
+    using Slv = EigenIterativeLinearSolver<
+        Solver<EigenMatrix::RawMatrixType, Precon>>;
+    return std::unique_ptr<Slv>(new Slv);
+}
+
+template <template <typename, typename> class Solver>
+std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
+    EigenOption::PreconType precon_type)
+{
+    switch (precon_type) {
+        case EigenOption::PreconType::NONE:
+            return createIterativeSolver<Solver,
+                                         Eigen::IdentityPreconditioner>();
+        case EigenOption::PreconType::DIAGONAL:
+            return createIterativeSolver<
+                Solver, Eigen::DiagonalPreconditioner<double>>();
+        case EigenOption::PreconType::ILUT:
+            // TODO for this preconditioner further options can be passed.
+            // see https://eigen.tuxfamily.org/dox/classEigen_1_1IncompleteLUT.html
+            return createIterativeSolver<
+                Solver, Eigen::IncompleteLUT<double>>();
+        default:
+            OGS_FATAL("Invalid Eigen preconditioner type.");
+    }
+}
+
+template <typename Mat, typename Precon>
+using EigenCGSolver = Eigen::ConjugateGradient<Mat, Eigen::Lower, Precon>;
+
+std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
+    EigenOption::SolverType solver_type, EigenOption::PreconType precon_type)
+{
+    switch (solver_type) {
+        case EigenOption::SolverType::BiCGSTAB: {
+            return createIterativeSolver<Eigen::BiCGSTAB>(precon_type);
+        }
+        case EigenOption::SolverType::CG: {
+            return createIterativeSolver<EigenCGSolver>(precon_type);
+        }
+        default:
+            OGS_FATAL("Invalid Eigen iterative linear solver type. Aborting.");
+    }
+}
+
 } // details
 
 EigenLinearSolver::EigenLinearSolver(
@@ -115,26 +162,21 @@ EigenLinearSolver::EigenLinearSolver(
 
     // TODO for my taste it is much too unobvious that the default solver type
     //      currently is SparseLU.
-    switch (_option.solver_type)
-    {
-    case EigenOption::SolverType::SparseLU: {
-        using SolverType = Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
-        _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
-        break;
+    switch (_option.solver_type) {
+        case EigenOption::SolverType::SparseLU: {
+            using SolverType =
+                Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
+            _solver.reset(new details::EigenDirectLinearSolver<SolverType>);
+            return;
+        }
+        case EigenOption::SolverType::BiCGSTAB:
+        case EigenOption::SolverType::CG:
+            _solver = details::createIterativeSolver(_option.solver_type,
+                                                     _option.precon_type);
+            return;
     }
-    case EigenOption::SolverType::BiCGSTAB: {
-        using SolverType = Eigen::BiCGSTAB<Matrix, Eigen::DiagonalPreconditioner<double>>;
-        _solver.reset(new details::EigenIterativeLinearSolver<SolverType>);
-        break;
-    }
-    case EigenOption::SolverType::CG: {
-        using SolverType = Eigen::ConjugateGradient<Matrix, Eigen::Lower, Eigen::DiagonalPreconditioner<double>>;
-        _solver.reset(new details::EigenIterativeLinearSolver<SolverType>);
-        break;
-    }
-    case EigenOption::SolverType::INVALID:
-        OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
-    }
+
+    OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
 }
 
 EigenLinearSolver::~EigenLinearSolver() = default;
@@ -147,20 +189,24 @@ void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
     if (!ptSolver)
         return;
 
-    //! \ogs_file_param{linear_solver__eigen__solver_type}
-    if (auto solver_type = ptSolver->getConfigParameterOptional<std::string>("solver_type")) {
+    if (auto solver_type =
+            //! \ogs_file_param{linear_solver__eigen__solver_type}
+            ptSolver->getConfigParameterOptional<std::string>("solver_type")) {
         _option.solver_type = _option.getSolverType(*solver_type);
     }
-    //! \ogs_file_param{linear_solver__eigen__precon_type}
-    if (auto precon_type = ptSolver->getConfigParameterOptional<std::string>("precon_type")) {
+    if (auto precon_type =
+            //! \ogs_file_param{linear_solver__eigen__precon_type}
+            ptSolver->getConfigParameterOptional<std::string>("precon_type")) {
         _option.precon_type = _option.getPreconType(*precon_type);
     }
-    //! \ogs_file_param{linear_solver__eigen__error_tolerance}
-    if (auto error_tolerance = ptSolver->getConfigParameterOptional<double>("error_tolerance")) {
+    if (auto error_tolerance =
+            //! \ogs_file_param{linear_solver__eigen__error_tolerance}
+            ptSolver->getConfigParameterOptional<double>("error_tolerance")) {
         _option.error_tolerance = *error_tolerance;
     }
-    //! \ogs_file_param{linear_solver__eigen__max_iteration_step}
-    if (auto max_iteration_step = ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
+    if (auto max_iteration_step =
+            //! \ogs_file_param{linear_solver__eigen__max_iteration_step}
+            ptSolver->getConfigParameterOptional<int>("max_iteration_step")) {
         _option.max_iterations = *max_iteration_step;
     }
 }

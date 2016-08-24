@@ -21,7 +21,6 @@ struct EigenOption final
     /// Solver type
     enum class SolverType : short
     {
-        INVALID,
         CG,
         BiCGSTAB,
         SparseLU
@@ -31,7 +30,8 @@ struct EigenOption final
     enum class PreconType : short
     {
         NONE,
-        DIAGONAL
+        DIAGONAL,
+        ILUT
     };
 
     /// Linear solver type
