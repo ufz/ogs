@@ -513,7 +513,7 @@ Mesh* MeshGenerator::generateRegularTetMesh(
 
     //elements
     std::vector<Element*> elements;
-    elements.reserve(n_x_cells * n_y_cells * n_z_cells * 5);
+    elements.reserve(n_x_cells * n_y_cells * n_z_cells * 6);
 
     for (std::size_t i = 0; i < n_z_cells; i++)
     {
@@ -530,31 +530,31 @@ Mesh* MeshGenerator::generateRegularTetMesh(
                     std::array<Node*, 4> element_nodes;
                     // bottom
                     element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                    element_nodes[1] = nodes[offset_z1 + offset_y1 + k + 1];
-                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k];
                     // top
-                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
+                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k];
                     elements.push_back (new Tet(element_nodes));
                 }
                 // tet 2
                 {
                     std::array<Node*, 4> element_nodes;
                     // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
-                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
-                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k];
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k];
                     // top
-                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k];
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
                     elements.push_back (new Tet(element_nodes));
                 }
                 // tet 3
                 {
                     std::array<Node*, 4> element_nodes;
                     // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k];
                     // top
                     element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
-                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k + 1];
+                    element_nodes[2] = nodes[offset_z2 + offset_y2 + k + 1];
                     element_nodes[3] = nodes[offset_z2 + offset_y2 + k];
                     elements.push_back (new Tet(element_nodes));
                 }
@@ -562,11 +562,11 @@ Mesh* MeshGenerator::generateRegularTetMesh(
                 {
                     std::array<Node*, 4> element_nodes;
                     // bottom
-                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
+                    element_nodes[1] = nodes[offset_z1 + offset_y1 + k + 1];
+                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k + 1];
                     // top
-                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k + 1];
-                    element_nodes[2] = nodes[offset_z2 + offset_y2 + k + 1];
-                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k];
+                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
                     elements.push_back (new Tet(element_nodes));
                 }
                 // tet 5
@@ -576,8 +576,19 @@ Mesh* MeshGenerator::generateRegularTetMesh(
                     element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
                     element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
                     // top
-                    element_nodes[2] = nodes[offset_z2 + offset_y2 + k];
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
                     element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 6
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
+                    // top
+                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k + 1];
+                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
                     elements.push_back (new Tet(element_nodes));
                 }
             }
