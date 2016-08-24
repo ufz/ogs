@@ -413,14 +413,17 @@ static void mapPointOnSurfaceElement(MeshLib::Element const& elem,
 static std::vector<MeshLib::Element const*>
 getCandidateElementsForLineSegmentIntersection(
     MeshLib::MeshElementGrid const& mesh_element_grid,
-    GeoLib::LineSegment segment)
+    GeoLib::LineSegment const& segment)
 {
+    GeoLib::LineSegment seg_deep_copy(
+        new GeoLib::Point(segment.getBeginPoint()),
+        new GeoLib::Point(segment.getEndPoint()), true);
     // modify z coordinates such that all surface elements around the line
     // segment are found
-    segment.getBeginPoint()[2] = mesh_element_grid.getMinPoint()[2];
-    segment.getEndPoint()[2] = mesh_element_grid.getMaxPoint()[2];
+    seg_deep_copy.getBeginPoint()[2] = mesh_element_grid.getMinPoint()[2];
+    seg_deep_copy.getEndPoint()[2] = mesh_element_grid.getMaxPoint()[2];
     std::array<MathLib::Point3d, 2> const pnts{
-        {segment.getBeginPoint(), segment.getEndPoint()}};
+        {seg_deep_copy.getBeginPoint(), seg_deep_copy.getEndPoint()}};
     GeoLib::AABB aabb(pnts.cbegin(), pnts.cend());
 
     auto candidate_elements = mesh_element_grid.getElementsInVolume(
