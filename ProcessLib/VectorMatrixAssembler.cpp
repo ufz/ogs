@@ -96,7 +96,9 @@ void VectorMatrixAssembler::assembleWithJacobian(
             MathLib::toMatrix(_local_Jac_data, num_r_c, num_r_c);
         Jac.add(r_c_indices, local_Jac);
     } else {
-        OGS_FATAL("No Jacobian has been assembled!");
+        OGS_FATAL(
+            "No Jacobian has been assembled! This might be due to programming "
+            "errors in the local assembler of the current process.");
     }
 }
 
