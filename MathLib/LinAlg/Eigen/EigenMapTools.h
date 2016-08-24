@@ -7,37 +7,184 @@
  *
  */
 
-#pragma once
+#ifndef MATHLIB_EIGENMAPTOOLS_H
+#define MATHLIB_EIGENMAPTOOLS_H
 
+#include <cassert>
 #include <vector>
 #include <Eigen/Core>
 
 namespace MathLib
 {
-Eigen::Map<
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * \return An Eigen mapped matrix of the given size. All values of the matrix
+ * are set to zero.
+ *
+ * \pre The passed \c data vector must have zero size.
+ * \post The \c data has size \c rows * \c cols.
+ *
+ * \note The data vector will have the same storage order (row or column major)
+ * as the requested matrix type.
+ */
+template <typename Matrix>
+Eigen::Map<Matrix> toZeroedMatrix(std::vector<double>& data,
+                                  Eigen::MatrixXd::Index rows,
+                                  Eigen::MatrixXd::Index cols)
+{
+    static_assert(Matrix::IsRowMajor || Matrix::IsVectorAtCompileTime,
+                  "The default storage order in OGS is row major storage for "
+                  "dense matrices.");
+    assert(Matrix::RowsAtCompileTime == Eigen::Dynamic ||
+           Matrix::RowsAtCompileTime == rows);
+    assert(Matrix::ColsAtCompileTime == Eigen::Dynamic ||
+           Matrix::ColsAtCompileTime == cols);
+    assert(data.empty());  // in order that resize fills the vector with zeros.
+
+    data.resize(rows * cols);
+    return {data.data(), rows, cols};
+}
+
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * This is a convienence method which makes the specification of dynamically
+ * allocated Eigen matrices as return type easier.
+ */
+inline Eigen::Map<
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
 toZeroedMatrix(std::vector<double>& data,
                Eigen::MatrixXd::Index rows,
-               Eigen::MatrixXd::Index cols);
+               Eigen::MatrixXd::Index cols)
+{
+    return toZeroedMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+        data, rows, cols);
+}
 
-Eigen::Map<const Eigen::
-               Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * \attention The data vector must have the same storage order (row or column
+ * major) as the requested matrix type.
+ */
+template <typename Matrix>
+Eigen::Map<const Matrix> toMatrix(std::vector<double> const& data,
+                                  Eigen::MatrixXd::Index rows,
+                                  Eigen::MatrixXd::Index cols)
+{
+    static_assert(Matrix::IsRowMajor || Matrix::IsVectorAtCompileTime,
+                  "The default storage order in OGS is row major storage for "
+                  "dense matrices.");
+    assert(Matrix::RowsAtCompileTime == Eigen::Dynamic ||
+           Matrix::RowsAtCompileTime == rows);
+    assert(Matrix::ColsAtCompileTime == Eigen::Dynamic ||
+           Matrix::ColsAtCompileTime == cols);
+    assert(static_cast<Eigen::MatrixXd::Index>(data.size()) == rows * cols);
+
+    return {data.data(), rows, cols};
+}
+
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * This is a convienence method which makes the specification of dynamically
+ * allocated Eigen matrices as return type easier.
+ */
+inline Eigen::Map<
+    const Eigen::
+        Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
 toMatrix(std::vector<double> const& data,
          Eigen::MatrixXd::Index rows,
-         Eigen::MatrixXd::Index cols);
+         Eigen::MatrixXd::Index cols)
+{
+    return toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+        data, rows, cols);
+}
 
-Eigen::Map<
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * \attention The data vector must have the same storage order (row or column
+ * major) as the requested matrix type.
+ */
+template <typename Matrix>
+Eigen::Map<Matrix> toMatrix(std::vector<double>& data,
+                            Eigen::MatrixXd::Index rows,
+                            Eigen::MatrixXd::Index cols)
+{
+    static_assert(Matrix::IsRowMajor || Matrix::IsVectorAtCompileTime,
+                  "The default storage order in OGS is row major storage for "
+                  "dense matrices.");
+    assert(Matrix::RowsAtCompileTime == Eigen::Dynamic ||
+           Matrix::RowsAtCompileTime == rows);
+    assert(Matrix::ColsAtCompileTime == Eigen::Dynamic ||
+           Matrix::ColsAtCompileTime == cols);
+    assert(static_cast<Eigen::MatrixXd::Index>(data.size()) == rows * cols);
+
+    return {data.data(), rows, cols};
+}
+
+/*! Creates an Eigen mapped matrix from the given data vector.
+ *
+ * This is a convienence method which makes the specification of dynamically
+ * allocated Eigen matrices as return type easier.
+ */
+inline Eigen::Map<
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
 toMatrix(std::vector<double>& data,
          Eigen::MatrixXd::Index rows,
-         Eigen::MatrixXd::Index cols);
+         Eigen::MatrixXd::Index cols)
+{
+    return toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+        data, rows, cols);
+}
 
-Eigen::Map<Eigen::VectorXd> toZeroedVector(std::vector<double>& data,
-                                           Eigen::VectorXd::Index rows);
+/*! Creates an Eigen mapped vector from the given data vector.
+ *
+ * \return An Eigen mapped vector of the given size. All values of the vector
+ * are set to zero.
+ *
+ * \pre The passed \c data vector must have zero size.
+ * \post The \c data has size \c size.
+ */
+template <typename Vector>
+Eigen::Map<Vector> toZeroedVector(std::vector<double>& data,
+                                  Eigen::VectorXd::Index size)
+{
+    static_assert(Vector::IsVectorAtCompileTime, "A vector type is required.");
+    assert(Vector::SizeAtCompileTime == Eigen::Dynamic ||
+           Vector::SizeAtCompileTime == size);
+    assert(data.empty());  // in order that resize fills the vector with zeros.
 
-Eigen::Map<const Eigen::VectorXd> toVector(std::vector<double> const& data,
-                                           Eigen::VectorXd::Index rows);
+    data.resize(size);
+    return {data.data(), size};
+}
 
-Eigen::Map<Eigen::VectorXd> toVector(std::vector<double>& data,
-                                     Eigen::VectorXd::Index rows);
+//! Creates an Eigen mapped vector from the given data vector.
+template <typename Vector>
+Eigen::Map<const Vector> toVector(std::vector<double> const& data,
+                                  Eigen::VectorXd::Index size)
+{
+    static_assert(Vector::IsVectorAtCompileTime, "A vector type is required.");
+    assert(Vector::SizeAtCompileTime == Eigen::Dynamic ||
+           Vector::SizeAtCompileTime == size);
+    assert(static_cast<Eigen::VectorXd::Index>(data.size()) == size);
+
+    return {data.data(), size};
+}
+
+//! Creates an Eigen mapped vector from the given data vector.
+template <typename Vector>
+Eigen::Map<Vector> toVector(std::vector<double>& data,
+                            Eigen::VectorXd::Index size)
+{
+    static_assert(Vector::IsVectorAtCompileTime, "A vector type is required.");
+    assert(Vector::SizeAtCompileTime == Eigen::Dynamic ||
+           Vector::SizeAtCompileTime == size);
+    assert(static_cast<Eigen::VectorXd::Index>(data.size()) == size);
+
+    return {data.data(), size};
+}
+
 }  // MathLib
+
+#endif  // MATHLIB_EIGENMAPTOOLS_H
