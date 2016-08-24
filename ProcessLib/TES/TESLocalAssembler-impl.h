@@ -10,6 +10,7 @@
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
 #include "MaterialLib/Adsorption/Adsorption.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -135,15 +136,12 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
     assert(local_matrix_size == ShapeFunction::NPOINTS * NODAL_DOF);
 
-    local_M_data.resize(local_matrix_size * local_matrix_size);
-    auto local_M = Eigen::Map<NodalMatrixType>(
-        local_M_data.data(), local_matrix_size, local_matrix_size);
-    local_K_data.resize(local_matrix_size * local_matrix_size);
-    auto local_K = Eigen::Map<NodalMatrixType>(
-        local_K_data.data(), local_matrix_size, local_matrix_size);
-    local_b_data.resize(local_matrix_size);
-    auto local_b =
-        Eigen::Map<NodalVectorType>(local_b_data.data(), local_matrix_size);
+    auto local_M = MathLib::toZeroedMatrix<NodalMatrixType>(
+        local_M_data, local_matrix_size, local_matrix_size);
+    auto local_K = MathLib::toZeroedMatrix<NodalMatrixType>(
+        local_K_data, local_matrix_size, local_matrix_size);
+    auto local_b = MathLib::toZeroedVector<NodalVectorType>(local_b_data,
+                                                            local_matrix_size);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
