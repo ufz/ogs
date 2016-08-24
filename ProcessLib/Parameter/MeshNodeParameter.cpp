@@ -20,7 +20,7 @@ std::unique_ptr<ParameterBase> createMeshNodeParameter(
     //! \ogs_file_param{parameter__type}
     config.checkConfigParameter("type", "MeshNode");
     //! \ogs_file_param{parameter__MeshNode__field_name}
-    auto field_name = config.getConfigParameter<std::string>("field_name");
+    auto const field_name = config.getConfigParameter<std::string>("field_name");
     DBUG("Using field_name %s", field_name.c_str());
 
     if (!mesh.getProperties().hasPropertyVector(field_name)) {

@@ -23,9 +23,9 @@ std::unique_ptr<ParameterBase> createParameter(
 {
 
     //! \ogs_file_param{parameter__name}
-    auto name = config.getConfigParameter<std::string>("name");
+    auto const name = config.getConfigParameter<std::string>("name");
     //! \ogs_file_param{parameter__type}
-    auto type = config.peekConfigParameter<std::string>("type");
+    auto const type = config.peekConfigParameter<std::string>("type");
 
     // Create parameter based on the provided type.
     if (type == "Constant")

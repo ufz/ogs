@@ -19,7 +19,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     //! \ogs_file_param{parameter__type}
     config.checkConfigParameter("type", "Constant");
     //! \ogs_file_param{parameter__Constant__value}
-    auto value = config.getConfigParameter<double>("value");
+    auto const value = config.getConfigParameter<double>("value");
     DBUG("Using value %g", value);
 
     return std::unique_ptr<ParameterBase>(new ConstantParameter<double>(value));
