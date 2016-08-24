@@ -18,6 +18,8 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
     std::vector<double>&& absolute_epsilons)
     : _absolute_epsilons(std::move(absolute_epsilons))
 {
+    if (_absolute_epsilons.empty())
+        OGS_FATAL("No values for the absolute epsilons have been given.");
 }
 
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
@@ -59,6 +61,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     // afterwards.
     for (Eigen::MatrixXd::Index i = 0; i < num_r_c; ++i)
     {
+        // assume that local_x_data is ordered by component.
         auto const component = i / num_dofs_per_component;
         auto const eps = _absolute_epsilons[component];
 

@@ -19,9 +19,15 @@ class ConfigTree;
 
 namespace ProcessLib
 {
+//! Assembles the Jacobian matrix using a provided "analytical" method from the
+//! local assembler.
 class AnalyticalJacobianAssembler final : public AbstractJacobianAssembler
 {
 public:
+    //! Assembles the Jacobian, the matrices \f$M\f$ and \f$K\f$, and the vector
+    //! \f$b\f$.
+    //! In this implementation the call is only forwarded to the respective
+    //! method of the given \c local_assembler.
     void assembleWithJacobian(
         LocalAssemblerInterface& local_assembler, double const t,
         std::vector<double> const& local_x,

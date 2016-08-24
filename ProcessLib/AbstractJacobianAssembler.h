@@ -16,9 +16,12 @@ namespace ProcessLib
 {
 class LocalAssemblerInterface;
 
+//! Base class for Jacobian assemblers.
 class AbstractJacobianAssembler
 {
 public:
+    //! Assembles the Jacobian, the matrices \f$M\f$ and \f$K\f$, and the vector
+    //! \f$b\f$.
     virtual void assembleWithJacobian(
         LocalAssemblerInterface& local_assembler, double const t,
         std::vector<double> const& local_x,
