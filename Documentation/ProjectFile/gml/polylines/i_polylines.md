@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Contains polyline definitions.
