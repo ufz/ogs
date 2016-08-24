@@ -21,6 +21,8 @@
 #include "ProcessVariable.h"
 #include "SecondaryVariable.h"
 #include "CachedSecondaryVariable.h"
+#include "AbstractJacobianAssembler.h"
+#include "VectorMatrixAssembler.h"
 
 namespace MeshLib
 {
@@ -40,7 +42,7 @@ public:
 
     Process(
         MeshLib::Mesh& mesh,
-        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+        std::unique_ptr<AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
