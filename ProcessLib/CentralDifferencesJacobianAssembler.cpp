@@ -38,10 +38,13 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     auto const num_r_c =
         static_cast<Eigen::MatrixXd::Index>(local_x_data.size());
 
-    auto const local_x = MathLib::toVector(local_x_data, num_r_c);
-    auto const local_xdot = MathLib::toVector(local_xdot_data, num_r_c);
+    auto const local_x =
+        MathLib::toVector<Eigen::VectorXd>(local_x_data, num_r_c);
+    auto const local_xdot =
+        MathLib::toVector<Eigen::VectorXd>(local_xdot_data, num_r_c);
 
-    auto local_Jac = MathLib::toZeroedMatrix(local_Jac_data, num_r_c, num_r_c);
+    auto local_Jac = MathLib::toZeroedMatrix(local_Jac_data,
+                                             num_r_c, num_r_c);
     _local_x_perturbed_data = local_x_data;
 
     auto const num_dofs_per_component =
@@ -92,8 +95,10 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
             _local_K_data.clear();
         }
         if (!local_b_data.empty()) {
-            auto const local_b_p = MathLib::toVector(local_b_data, num_r_c);
-            auto const local_b_m = MathLib::toVector(_local_b_data, num_r_c);
+            auto const local_b_p =
+                MathLib::toVector<Eigen::VectorXd>(local_b_data, num_r_c);
+            auto const local_b_m =
+                MathLib::toVector<Eigen::VectorXd>(_local_b_data, num_r_c);
             local_Jac.col(i).noalias() -=
                 // db/dxi
                 (local_b_p - local_b_m) / (2.0 * eps);
