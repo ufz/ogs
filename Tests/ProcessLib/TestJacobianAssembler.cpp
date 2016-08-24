@@ -48,7 +48,8 @@ struct MatDiagX
     {
         auto mat =
             MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
-        mat.diagonal().noalias() = MathLib::toVector(x_data, x_data.size());
+        mat.diagonal().noalias() =
+            MathLib::toVector<Eigen::VectorXd>(x_data, x_data.size());
     }
 
     // dM/dx * y = diag(y1, y2, y3, ...)
@@ -58,7 +59,8 @@ struct MatDiagX
     {
         auto dMdxTy =
             MathLib::toZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
-        dMdxTy.diagonal().noalias() = MathLib::toVector(y_data, y_data.size());
+        dMdxTy.diagonal().noalias() =
+            MathLib::toVector<Eigen::VectorXd>(y_data, y_data.size());
     }
 };
 
@@ -113,8 +115,8 @@ struct MatXY
                                 std::vector<double>& dMdxTy_data)
     {
         auto const N = x_data.size();
-        auto const x_dot_y =
-            MathLib::toVector(x_data, N).dot(MathLib::toVector(y_data, N));
+        auto const x_dot_y = MathLib::toVector<Eigen::VectorXd>(x_data, N).dot(
+            MathLib::toVector<Eigen::VectorXd>(y_data, N));
         auto dMdxTy =
             MathLib::toZeroedMatrix(dMdxTy_data, N, N);
         for (std::size_t r=0; r<N; ++r) {
