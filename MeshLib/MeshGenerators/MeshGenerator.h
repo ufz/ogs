@@ -428,6 +428,7 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
  * \param div_y Subdivision operator in y direction
  * \param div_z Subdivision operator in z direction
  * \param origin Optional mesh's origin (the bottom lower left corner) with MathLib::ORIGIN default.
+ * \param mesh_name Name of the new mesh.
  */
 Mesh* generateRegularTetMesh(const BaseLib::ISubdivision &div_x,
                              const BaseLib::ISubdivision &div_y,
