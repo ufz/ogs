@@ -424,6 +424,8 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
 /**
  * Generate a regular 3D Tet-Element mesh.
  *
+ * This algorithm generates regular grid points and split each grid cell into six tetrahedrals.
+ *
  * \param div_x Subdivision operator in x direction
  * \param div_y Subdivision operator in y direction
  * \param div_z Subdivision operator in z direction
@@ -438,6 +440,8 @@ Mesh* generateRegularTetMesh(const BaseLib::ISubdivision &div_x,
 
 /**
  * Generate a regular 3D Tet-Element mesh.
+ *
+ * This algorithm generates regular grid points and split each grid cell into six tetrahedrals.
  *
  * \param x_length      Mesh dimension in x-direction.
  * \param y_length      Mesh dimension in y-direction.
@@ -459,6 +463,8 @@ Mesh* generateRegularTetMesh(const double x_length,
 
 /**
  * Generate a regular 3D Tet-Element mesh.
+ *
+ * This algorithm generates regular grid points and split each grid cell into six tetrahedrals.
  *
  * \param n_x_cells    Number of cells in x-direction.
  * \param n_y_cells    Number of cells in y-direction.
