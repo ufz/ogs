@@ -16,6 +16,7 @@
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
@@ -458,6 +459,143 @@ Mesh* MeshGenerator::generateRegularPrismMesh(
     std::vector<std::size_t> elem_ids (n_tris);
     std::iota(elem_ids.begin(), elem_ids.end(), 0);
     return MeshLib::removeElements(*mesh, elem_ids, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularTetMesh(
+    const double x_length,
+    const double y_length,
+    const double z_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    const std::size_t z_subdivision,
+    const MathLib::Point3d& origin,
+    std::string const& mesh_name)
+{
+    return generateRegularTetMesh(x_subdivision, y_subdivision, z_subdivision,
+        x_length/x_subdivision, y_length/y_subdivision, z_length/z_subdivision,
+        origin, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularTetMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double   cell_size_x,
+    const double   cell_size_y,
+    const double   cell_size_z,
+    MathLib::Point3d const& origin,
+    std::string   const& mesh_name)
+{
+    return generateRegularTetMesh(
+            BaseLib::UniformSubdivision(n_x_cells*cell_size_x, n_x_cells),
+            BaseLib::UniformSubdivision(n_y_cells*cell_size_y, n_y_cells),
+            BaseLib::UniformSubdivision(n_z_cells*cell_size_z, n_z_cells),
+            origin, mesh_name);
+}
+
+Mesh* MeshGenerator::generateRegularTetMesh(
+    const BaseLib::ISubdivision &div_x,
+    const BaseLib::ISubdivision &div_y,
+    const BaseLib::ISubdivision &div_z,
+    MathLib::Point3d const& origin,
+    std::string const& mesh_name)
+{
+    std::vector<double> vec_x(div_x());
+    std::vector<double> vec_y(div_y());
+    std::vector<double> vec_z(div_z());
+    std::vector<Node*> nodes(generateRegularNodes(vec_x, vec_y, vec_z, origin));
+
+    const unsigned n_x_nodes (vec_x.size());
+    const unsigned n_y_nodes (vec_y.size());
+    const unsigned n_x_cells (vec_x.size()-1);
+    const unsigned n_y_cells (vec_y.size()-1);
+    const unsigned n_z_cells (vec_z.size()-1);
+
+    //elements
+    std::vector<Element*> elements;
+    elements.reserve(n_x_cells * n_y_cells * n_z_cells * 6);
+
+    for (std::size_t i = 0; i < n_z_cells; i++)
+    {
+        const std::size_t offset_z1 = i * n_x_nodes * n_y_nodes; // bottom
+        const std::size_t offset_z2 = (i + 1) * n_x_nodes * n_y_nodes; // top
+        for (std::size_t j = 0; j < n_y_cells; j++)
+        {
+            const std::size_t offset_y1 = j * n_x_nodes;
+            const std::size_t offset_y2 = (j + 1) * n_x_nodes;
+            for (std::size_t k = 0; k < n_x_cells; k++)
+            {
+                // tet 1
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
+                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k];
+                    // top
+                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 2
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
+                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k];
+                    // top
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 3
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k];
+                    // top
+                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[2] = nodes[offset_z2 + offset_y2 + k + 1];
+                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 4
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
+                    element_nodes[1] = nodes[offset_z1 + offset_y1 + k + 1];
+                    element_nodes[2] = nodes[offset_z1 + offset_y2 + k + 1];
+                    // top
+                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 5
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y1 + k];
+                    element_nodes[1] = nodes[offset_z1 + offset_y2 + k + 1];
+                    // top
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[3] = nodes[offset_z2 + offset_y1 + k + 1];
+                    elements.push_back (new Tet(element_nodes));
+                }
+                // tet 6
+                {
+                    std::array<Node*, 4> element_nodes;
+                    // bottom
+                    element_nodes[0] = nodes[offset_z1 + offset_y2 + k + 1];
+                    // top
+                    element_nodes[1] = nodes[offset_z2 + offset_y1 + k];
+                    element_nodes[2] = nodes[offset_z2 + offset_y1 + k + 1];
+                    element_nodes[3] = nodes[offset_z2 + offset_y2 + k + 1];
+                    elements.push_back (new Tet(element_nodes));
+                }
+            }
+        }
+    }
+
+    return new Mesh(mesh_name, nodes, elements);
 }
 
 MeshLib::Mesh*
