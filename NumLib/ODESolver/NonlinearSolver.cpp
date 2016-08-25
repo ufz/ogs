@@ -319,7 +319,6 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
     auto const max_iter = config.getConfigParameter<unsigned>("max_iter");
 
-    //! \ogs_file_param_special{prj__nonlinear_solvers__nonlinear_solver__Picard}
     if (type == "Picard") {
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
