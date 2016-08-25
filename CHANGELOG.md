@@ -5,6 +5,7 @@
  - Finalize support for multicomponent boundary conditions adding configuration
    parser. #1343
  - Added uniform Robin boundary condition. #1336
+ - Added B-Matrices and Kelven mapping tools for deformation processes. #1359
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
