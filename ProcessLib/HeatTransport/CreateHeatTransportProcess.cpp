@@ -9,6 +9,7 @@
 
 #include "CreateHeatTransportProcess.h"
 
+#include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "HeatTransportProcess.h"
 #include "HeatTransportProcessData.h"
 
@@ -20,6 +21,7 @@ std::unique_ptr<Process> createHeatTransportProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
+    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -68,28 +70,22 @@ std::unique_ptr<Process> createHeatTransportProcess(
     HeatTransportProcessData process_data{thermal_conductivity, heat_capacity,
                                           density};
 
-    SecondaryVariableCollection secondary_variables{
-        //! \ogs_file_param{process__secondary_variables}
-        config.getConfigSubtreeOptional("secondary_variables"),
-        {//!
-         //\ogs_file_param_special{process__HeatTransport__secondary_variables__heat_flux_x}
-         "heat_flux_x",
-         //!
-         //\ogs_file_param_special{process__HeatTransport__secondary_variables__heat_flux_y}
-         "heat_flux_y",
-         //!
-         //\ogs_file_param_special{process__HeatTransport__secondary_variables__heat_flux_z}
-         "heat_flux_z"}};
+    SecondaryVariableCollection secondary_variables;
 
-    ProcessOutput
-        //! \ogs_file_param{process__output}
-        process_output{config.getConfigSubtree("output"), process_variables,
-                       secondary_variables};
+    NumLib::NamedFunctionCaller named_function_caller(
+        {"HeatConduction_temperature"});
+
+    ProcessLib::parseSecondaryVariables(config, secondary_variables,
+                                        named_function_caller);
+
+    //! \ogs_file_param{process__output}
+    ProcessOutput process_output{config.getConfigSubtree("output")};
 
     return std::unique_ptr<Process>{new HeatTransportProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(process_output)}};
+        std::move(convergence_criterion), std::move(process_variables),
+        std::move(process_data), std::move(secondary_variables),
+        std::move(process_output), std::move(named_function_caller)}};
 }
 
 }  // namespace HeatTransport

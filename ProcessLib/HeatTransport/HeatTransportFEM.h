@@ -106,7 +106,7 @@ public:
                                  sm.N * sm.detJ * wp.getWeight();
             // heat flux only computed for output.
             const NodalVectorType heat_flux =
-                (k * sm.dNdx * Eigen::Map<const NodalVectorType>(
+                (-k * sm.dNdx * Eigen::Map<const NodalVectorType>(
                                    local_x.data(), ShapeFunction::NPOINTS));
 
             for (unsigned d = 0; d < GlobalDim; ++d)

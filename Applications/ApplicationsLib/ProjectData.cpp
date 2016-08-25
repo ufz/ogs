@@ -33,6 +33,7 @@
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
+#include "ProcessLib/HeatTransport/CreateHeatTransportProcess.h"
 
 namespace detail
 {
@@ -81,7 +82,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"));
-
+  
     //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
 
