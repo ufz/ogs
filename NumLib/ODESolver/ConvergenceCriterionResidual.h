@@ -39,7 +39,7 @@ public:
 
     void preFirstIteration() override { _is_first_iteration = true; }
     void reset() override { _satisfied = true; _is_first_iteration = false; }
-    bool isSatisfied() const { return _satisfied; }
+    bool isSatisfied() const override { return _satisfied; }
 private:
     const boost::optional<double> _abstol;
     const boost::optional<double> _reltol;

@@ -38,7 +38,7 @@ public:
     void checkResidual(const GlobalVector& /*residual*/) override {}
 
     void reset() override { _satisfied = true; }
-    bool isSatisfied() const { return _satisfied; }
+    bool isSatisfied() const override { return _satisfied; }
 private:
     const boost::optional<double> _abstol;
     const boost::optional<double> _reltol;
