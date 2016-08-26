@@ -20,7 +20,7 @@ struct ConstantParameter final : public Parameter<T> {
     ConstantParameter(T const& value) : _value({value}) {}
 
     // TODO allow for different sizes
-    unsigned getNumberOfComponents() const { return 1; }
+    unsigned getNumberOfComponents() const override { return 1; }
 
     std::vector<T> const& getTuple(
         double const /*t*/, SpatialPosition const& /*pos*/) const override
