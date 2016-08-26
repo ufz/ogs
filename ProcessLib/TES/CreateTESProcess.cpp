@@ -46,10 +46,10 @@ std::unique_ptr<Process> createTESProcess(
     ProcessOutput process_output{config.getConfigSubtree("output")};
 
     return std::unique_ptr<Process>{new TESProcess{
-        parameters, mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(convergence_criterion), std::move(process_variables),
-        std::move(secondary_variables), std::move(process_output),
-        std::move(named_function_caller), config}};
+        mesh, nonlinear_solver, std::move(time_discretization),
+        std::move(convergence_criterion), parameters,
+        std::move(process_variables), std::move(secondary_variables),
+        std::move(process_output), std::move(named_function_caller), config}};
 }
 
 }  // namespace TES

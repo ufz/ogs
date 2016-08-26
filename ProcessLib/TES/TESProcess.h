@@ -32,11 +32,11 @@ class TESProcess final : public Process
 {
 public:
     TESProcess(
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         MeshLib::Mesh& mesh,
         Process::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,

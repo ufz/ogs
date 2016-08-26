@@ -26,11 +26,11 @@ class GroundwaterFlowProcess final : public Process
 
 public:
     GroundwaterFlowProcess(
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         MeshLib::Mesh& mesh,
         Base::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         GroundwaterFlowProcessData&& process_data,

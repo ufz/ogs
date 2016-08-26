@@ -39,11 +39,11 @@ public:
     using TimeDiscretization = NumLib::TimeDiscretization;
 
     Process(
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         MeshLib::Mesh& mesh,
         NonlinearSolver& nonlinear_solver,
         std::unique_ptr<TimeDiscretization>&& time_discretization,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
