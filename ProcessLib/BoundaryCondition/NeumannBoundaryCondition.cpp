@@ -29,7 +29,7 @@ createNeumannBoundaryCondition(
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter %s", param_name.c_str());
 
-    auto& param = findParameter<double>(param_name, parameters, 1);
+    auto const& param = findParameter<double>(param_name, parameters, 1);
 
     return std::unique_ptr<NeumannBoundaryCondition>(
         new NeumannBoundaryCondition(
