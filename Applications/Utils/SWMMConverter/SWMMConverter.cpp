@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     std::unique_ptr<MeshLib::Mesh> mesh = nullptr;
     if (mesh_output_arg.isSet())
     {
-        swmm.reset(FileIO::SwmmInterface::create(swmm_input_arg.getValue()));
+        swmm = FileIO::SwmmInterface::create(swmm_input_arg.getValue());
         if (swmm == nullptr)
             return -1;
 

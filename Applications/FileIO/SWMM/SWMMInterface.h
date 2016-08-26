@@ -58,12 +58,12 @@ enum class SwmmObject
  * methods for outputting data into CSV files. CSV files will either contain all parameters for one
  * object at all time steps or all parameters for all objects of a given type at one timestep.
  */
-class SwmmInterface
+class SwmmInterface final
 {
 public:
     /// Basic method to create the interface (containing a mesh) from a SWMM file
     /// Other non-static methods rely on this being called in the beginning.
-    static SwmmInterface* create(std::string const& file_name);
+    static std::unique_ptr<SwmmInterface> create(std::string const& file_name);
 
     /// If a mesh has already been created, this methods allows to add node- or link-arrays as property
     /// to that mesh. The data vectors can be created using the getArrayAtTimeStep() method.

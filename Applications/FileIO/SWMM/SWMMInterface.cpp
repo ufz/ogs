@@ -94,7 +94,7 @@ const std::array<std::string,15> system_vars =
 /// Number of base variables for the four object types (subcatchments/nodes/links/system).
 std::array<std::size_t,4> const n_obj_params = { 8, 6, 5, 15 };
 
-SwmmInterface* SwmmInterface::create(std::string const& file_name)
+std::unique_ptr<SwmmInterface> SwmmInterface::create(std::string const& file_name)
 {
     //The input/output methods take a base name and check if the corresponding i/o file for that base name exists.
     //This check takes any swmm project file, i.e. [base name].[extension] which needs to be at least 5 chars
@@ -108,7 +108,7 @@ SwmmInterface* SwmmInterface::create(std::string const& file_name)
     std::string const base_name (file_name.substr(0, file_name.length() - 4));
     SwmmInterface* swmm = new SwmmInterface(base_name);
     if (swmm->readSwmmInputToLineMesh())
-        return swmm;
+        return std::unique_ptr<SwmmInterface>(swmm);
 
     ERR ("Error creating mesh from SWMM file.");
     delete swmm;
@@ -546,7 +546,7 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
         auto const i_it = name_id_map.find(inlet);
         if (i_it == name_id_map.end())
         {
-            ERR ("SwmmInterface::readLineElements(): Inlet node %s not found incoordinates map.", inlet.c_str());
+            ERR ("SwmmInterface::readLineElements(): Inlet node %s not found in coordinates map.", inlet.c_str());
             return false;
         }
 
