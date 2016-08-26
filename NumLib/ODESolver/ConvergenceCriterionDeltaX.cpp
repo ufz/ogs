@@ -54,11 +54,15 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
 std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
     const BaseLib::ConfigTree& config)
 {
+    //! \ogs_file_param{process__convergence_criterion__type}
     config.checkConfigParameter("type", "DeltaX");
 
+    //! \ogs_file_param{process__convergence_criterion__DeltaX__abstol}
     auto abstol = config.getConfigParameterOptional<double>("abstol");
+    //! \ogs_file_param{process__convergence_criterion__DeltaX__reltol}
     auto reltol = config.getConfigParameterOptional<double>("reltol");
     auto const norm_type_str =
+        //! \ogs_file_param{process__convergence_criterion__DeltaX__norm_type}
         config.getConfigParameter<std::string>("norm_type");
     auto const norm_type = MathLib::convertStringToVecNormType(norm_type_str);
 

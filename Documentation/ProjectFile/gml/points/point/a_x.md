@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+x-coordinate of the point.

@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+ID of the polyline. Currently unused.
