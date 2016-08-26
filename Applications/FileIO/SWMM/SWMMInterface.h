@@ -8,15 +8,12 @@
 #ifndef SWMMINTERFACE_H_
 #define SWMMINTERFACE_H_
 
-#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include <logog/include/logog.hpp>
-
-#include "ThirdParty/SWMMInterface/swmm5_iface.h"
 
 #include "GeoLib/Station.h"
 
@@ -32,6 +29,9 @@ namespace MeshLib {
     class Element;
 }
 
+namespace FileIO
+{
+
 /// SWMM object types
 enum class SwmmObject
 {
@@ -42,7 +42,7 @@ enum class SwmmObject
 };
 
 /**
- * Interface for reading files used within the  * Storm Water Management Model (SWMM) and
+ * Interface for reading files used within the Storm Water Management Model (SWMM) and
  * converting the data therein into corresponding OGS data structures.
  * SWMM distinguishes four different object types (defined in the SwmmObject enum):
  *     * Subcatchments
@@ -83,13 +83,13 @@ public:
     std::string getName(SwmmObject obj_type, std::size_t idx) const;
 
     /// Returns the number of objects of the given type.
-    std::size_t getNObjects(SwmmObject obj_type) const;
+    std::size_t getNumberOfObjects(SwmmObject obj_type) const;
 
     /// Returns the number of parameters (incl. pollutants) of the given type.
-    std::size_t getNParameters(SwmmObject obj_type) const;
+    std::size_t getNumberOfParameters(SwmmObject obj_type) const;
 
     /// Returns the number of time steps for the simulation results.
-    std::size_t getNTimeSteps() const;
+    std::size_t getNumberOfTimeSteps() const;
 
     /// Returns an array for a given variable at all nodes/links from a SWMM output file for a given time step.
     std::vector<double> getArrayAtTimeStep(SwmmObject obj_type, std::size_t time_step, std::size_t var_idx) const;
@@ -116,7 +116,8 @@ public:
     static bool isSwmmOutputFile(std::string const& inp_file_name);
 
     /// Reading a SWMM input file and conversion into OGS geometry.
-    static bool SwmmInputToGeometry(std::string const& inp_file_name, GeoLib::GEOObjects &geo_objects, bool add_subcatchments);
+    static bool convertSwmmInputToGeometry(std::string const& inp_file_name,
+        GeoLib::GEOObjects &geo_objects, bool add_subcatchments);
 
     /// Destructor
     ~SwmmInterface();
@@ -126,42 +127,12 @@ private:
     SwmmInterface(std::string const& swmm_base_name);
 
     /// Reading a SWMM input file and creating an OGS line mesh. This is automatically called when the object is created
-    bool convertSwmmInputToLineMesh();
+    bool readSwmmInputToLineMesh();
 
     /// Reading points from SWMM input file and converting them into OGS point-type vector.
     /// This method is shared by geometry- and mesh conversion.
     template <typename T>
-    static bool readCoordinates(std::ifstream &in, std::vector<T*> &points, std::vector<std::string> &names)
-    {
-        bool finished (false);
-        std::size_t id (points.size());
-        std::string line;
-        getline(in, line);
-        while (!isSectionFinished(line))
-        {
-            if (isCommentLine(line))
-            {
-                getline(in, line);
-                continue;
-            }
-
-            std::vector<std::string> split_str (BaseLib::splitString(line));
-            if (split_str.size() != 3)
-            {
-                ERR ("Format not recognised.");
-                return false;
-            }
-            names.push_back(split_str[0]);
-
-            double const x = BaseLib::str2number<double>(split_str[1]);
-            double const y = BaseLib::str2number<double>(split_str[2]);
-            T* pnt = new T(x, y, 0, id);
-            points.push_back(pnt);
-            id++;
-            getline(in, line);
-        }
-        return true;
-    }
+    static bool readCoordinates(std::ifstream &in, std::vector<T*> &points, std::vector<std::string> &names);
 
     /// Reads input information associated with nodes (elevation, depth, etc.)
     bool readNodeData(std::ifstream &in, std::vector<MeshLib::Node*> &nodes,
@@ -185,13 +156,13 @@ private:
     bool addRainGaugeTimeSeriesLocations(std::ifstream &in);
 
     /// Matches existing subcatchment names with subsequently read polylines marking the outlines of said subcatchments.
-    bool matchSubcatchmentsWithOutlines(std::vector<GeoLib::Polyline*> const& lines, std::vector<std::string> const& names);
+    bool matchSubcatchmentsWithPolygons(std::vector<GeoLib::Polyline*> const& lines, std::vector<std::string> const& names);
 
     /// Creates a temporary string vector containing all subcatchment names in correct order
     std::vector<std::string> getSubcatchmentNameMap() const;
 
     /// During geometry conversion, this adds elevation values to the existing point vector
-    static bool SwmmInterface::addPointElevation(std::ifstream &in,
+    static bool addPointElevation(std::ifstream &in,
         std::vector<GeoLib::Point*> &points, std::map<std::string,
         std::size_t> const& name_id_map);
 
@@ -234,12 +205,14 @@ private:
     std::vector<std::string> _pollutant_names;
     /// Vector storing information about all subcatchments
     std::vector<Subcatchment> _subcatchments;
-    /// Seperate node vector containing points for defining subcatchment outlines
+    /// Separate node vector containing points for defining subcatchment outlines
     std::vector<GeoLib::Point*> _subcatchment_points;
     /// Vector containing rain gauge information as well the position of external time series files
     std::vector< std::pair<GeoLib::Station, std::string> > _rain_gauges;
     /// Mesh generated from SWMM input (+ optional output data)
     std::unique_ptr<MeshLib::Mesh> _mesh;
 };
+
+} // namespace FileIO
 
 #endif // SWMMINTERFACE_H_
