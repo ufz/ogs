@@ -71,7 +71,7 @@ public:
         std::string const& vec_name, std::vector<double> const& data);
 
     /// Returns the mesh generated from SWMM file content.
-    MeshLib::Mesh* getMesh() const { return _mesh.get(); }
+    MeshLib::Mesh const& getMesh() const { return *_mesh; }
 
     /// Returns the name of the data array for the given object type and parameter index.
     std::string getArrayName(SwmmObject obj_type, std::size_t var_idx) const;

@@ -379,6 +379,12 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         return false;
 
     std::ifstream in ( inp_file_name.c_str() );
+    if (!in.is_open())
+    {
+        ERR ("SWMMInterface: Could not open input file %s.", inp_file_name.c_str());
+        return false;
+    }
+
     std::unique_ptr<std::vector<GeoLib::Point*>> points (new std::vector<GeoLib::Point*>);
     std::unique_ptr<std::vector<GeoLib::Polyline*>> lines (new std::vector<GeoLib::Polyline*>);
     std::vector<std::string> pnt_names;
@@ -632,6 +638,12 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         return false;
 
     std::ifstream in ( inp_file_name.c_str() );
+    if (!in.is_open())
+    {
+        ERR ("SWMMInterface: Could not open input file %s.", inp_file_name.c_str());
+        return false;
+    }
+
     _id_nodename_map.clear();
     std::vector< MeshLib::Node* > nodes;
     std::string line;
@@ -954,9 +966,9 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
     }
 
     MeshLib::Properties& p = mesh.getProperties();
-    MeshLib::MeshItemType item_type = (swmm_type == SwmmObject::NODE) ? 
+    MeshLib::MeshItemType item_type = (swmm_type == SwmmObject::NODE) ?
         MeshLib::MeshItemType::Node : MeshLib::MeshItemType::Cell;
-    boost::optional<MeshLib::PropertyVector<double>&> prop = 
+    boost::optional<MeshLib::PropertyVector<double>&> prop =
         p.createNewPropertyVector<double>(vec_name, item_type, 1);
     if (!prop)
     {

@@ -58,19 +58,18 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    std::unique_ptr<FileIO::SwmmInterface> swmm = nullptr;
-    std::unique_ptr<MeshLib::Mesh> mesh = nullptr;
-    if (mesh_output_arg.isSet())
-    {
-        swmm = FileIO::SwmmInterface::create(swmm_input_arg.getValue());
-        if (swmm == nullptr)
-            return -1;
+    if (!mesh_output_arg.isSet())
+        return -1;
 
-        std::size_t a = swmm->getNumberOfObjects(FileIO::SwmmObject::SUBCATCHMENT);
-        mesh.reset(swmm->getMesh());
-        MeshLib::IO::VtuInterface vtkIO(mesh.get(), 0, false);
-        vtkIO.writeToFile(mesh_output_arg.getValue());
-    }
+    std::unique_ptr<FileIO::SwmmInterface> swmm = nullptr;
+    swmm = FileIO::SwmmInterface::create(swmm_input_arg.getValue());
+    if (swmm == nullptr)
+        return -1;
+
+    std::size_t a = swmm->getNumberOfObjects(FileIO::SwmmObject::SUBCATCHMENT);
+    MeshLib::Mesh mesh = swmm->getMesh();
+    MeshLib::IO::VtuInterface vtkIO(&mesh, 0, false);
+    vtkIO.writeToFile(mesh_output_arg.getValue());
 
     std::cout << "Simulation time steps: " << swmm->getNumberOfTimeSteps() << std::endl;
 
@@ -111,17 +110,17 @@ int main(int argc, char *argv[])
             std::vector<double> data_vec = swmm->getArrayAtTimeStep(type, i, j);
             if (data_vec.empty())
                 return -20;
-            bool done = swmm->addResultsToMesh(*mesh, type, vec_name, data_vec);
+            bool done = swmm->addResultsToMesh(mesh, type, vec_name, data_vec);
             if (!done)
                 return -30;
         }
 
-        MeshLib::IO::VtuInterface vtkio(mesh.get(), 0, false);
+        MeshLib::IO::VtuInterface vtkio(&mesh, 0, false);
         std::string name ("d:/swmmresults" + BaseLib::tostring(i) + ".vtu");
         vtkio.writeToFile(name);
-        mesh->getProperties().removePropertyVector("P");
-        mesh->getProperties().removePropertyVector("NH4");
-        mesh->getProperties().removePropertyVector("CSB");
+        mesh.getProperties().removePropertyVector("P");
+        mesh.getProperties().removePropertyVector("NH4");
+        mesh.getProperties().removePropertyVector("CSB");
     }
 
     return 0;
