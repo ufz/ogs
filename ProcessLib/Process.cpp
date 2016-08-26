@@ -69,18 +69,48 @@ void Process::initialize()
         _process_variables, *_local_to_global_index_map, _integration_order);
 }
 
-void Process::setInitialConditions(GlobalVector& x)
+void Process::setInitialConditions(double const t, GlobalVector& x)
 {
     DBUG("Set initial conditions.");
+    std::size_t const n_nodes = _mesh.getNumberOfNodes();
+
+    SpatialPosition pos;
+
     for (int variable_id = 0;
          variable_id < static_cast<int>(_process_variables.size());
          ++variable_id)
     {
         ProcessVariable& pv = _process_variables[variable_id];
-        for (int component_id = 0; component_id < pv.getNumberOfComponents();
-             ++component_id)
+        auto const& ic = pv.getInitialCondition();
+
+        auto const num_comp = pv.getNumberOfComponents();
+
+        for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
         {
-            setInitialConditions(pv, variable_id, component_id, x);
+            MeshLib::Location const l(_mesh.getID(),
+                                      MeshLib::MeshItemType::Node, node_id);
+
+            pos.setNodeID(node_id);
+            auto const& tup = ic.getTuple(t, pos);
+
+            for (int comp_id = 0; comp_id < num_comp; ++comp_id)
+            {
+                auto global_index =
+                    std::abs(_local_to_global_index_map->getGlobalIndex(
+                        l, variable_id, comp_id));
+#ifdef USE_PETSC
+                // The global indices of the ghost entries of the global matrix
+                // or the global vectors need to be set as negative values for
+                // equation assembly, however the global indices start from
+                // zero. Therefore, any ghost entry with zero index is assigned
+                // an negative value of the vector size or the matrix dimension.
+                // To assign the initial value for the ghost entries, the
+                // negative indices of the ghost entries are restored to zero.
+                if (global_index == x.size())
+                    global_index = 0;
+#endif
+                x.set(global_index, tup[comp_id]);
+            }
         }
     }
 }
@@ -224,65 +254,10 @@ void Process::finishNamedFunctionsInitialization()
     }
 }
 
-void Process::setInitialConditions(ProcessVariable const& variable,
-                                   int const variable_id,
-                                   int const component_id,
-                                   GlobalVector& x)
-{
-    std::size_t const n_nodes = _mesh.getNumberOfNodes();
-    for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
-    {
-        MeshLib::Location const l(_mesh.getID(), MeshLib::MeshItemType::Node,
-                                  node_id);
-        auto global_index = std::abs(_local_to_global_index_map->getGlobalIndex(
-            l, variable_id, component_id));
-#ifdef USE_PETSC
-        // The global indices of the ghost entries of the global matrix or
-        // the global vectors need to be set as negative values for equation
-        // assembly, however the global indices start from zero.  Therefore,
-        // any ghost entry with zero index is assigned an negative value of
-        // the vector size or the matrix dimension.  To assign the initial
-        // value for the ghost entries, the negative indices of the ghost
-        // entries are restored to zero.
-        if (global_index == x.size())
-            global_index = 0;
-#endif
-        x.set(global_index,
-              variable.getInitialConditionValue(node_id, component_id));
-    }
-}
-
 void Process::computeSparsityPattern()
 {
     _sparsity_pattern =
         NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
-}
-
-ProcessVariable& findProcessVariable(
-    std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& pv_config, std::string const& tag)
-{
-    // Find process variable name in process config.
-    //! \ogs_file_special
-    std::string const name = pv_config.getConfigParameter<std::string>(tag);
-
-    // Find corresponding variable by name.
-    auto variable = std::find_if(
-        variables.cbegin(), variables.cend(),
-        [&name](ProcessVariable const& v) { return v.getName() == name; });
-
-    if (variable == variables.end())
-    {
-        OGS_FATAL(
-            "Could not find process variable '%s' in the provided variables "
-            "list for config tag <%s>.",
-            name.c_str(), tag.c_str());
-    }
-    DBUG("Found process variable \'%s\' for config tag <%s>.",
-         variable->getName().c_str(), tag.c_str());
-
-    // Const cast is needed because of variables argument constness.
-    return const_cast<ProcessVariable&>(*variable);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector &x)
@@ -298,26 +273,6 @@ void Process::preIteration(const unsigned iter, const GlobalVector &x)
 NumLib::IterationResult Process::postIteration(const GlobalVector &x)
 {
     return postIterationConcreteProcess(x);
-}
-
-std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
-    std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& process_config,
-    std::initializer_list<std::string>
-        tag_names)
-{
-    std::vector<std::reference_wrapper<ProcessVariable>> vars;
-    vars.reserve(tag_names.size());
-
-    //! \ogs_file_param{process__process_variables}
-    auto const pv_conf = process_config.getConfigSubtree("process_variables");
-
-    for (auto const& tag : tag_names)
-    {
-        vars.emplace_back(findProcessVariable(variables, pv_conf, tag));
-    }
-
-    return vars;
 }
 
 }  // namespace ProcessLib

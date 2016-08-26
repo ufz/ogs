@@ -76,11 +76,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));
 
-    //! \ogs_file_param{prj__process_variables}
-    parseProcessVariables(project_config.getConfigSubtree("process_variables"));
-
     //! \ogs_file_param{prj__parameters}
     parseParameters(project_config.getConfigSubtree("parameters"));
+
+    //! \ogs_file_param{prj__process_variables}
+    parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"));
@@ -273,7 +273,7 @@ void ProjectData::parseProcessVariables(
     {
         // TODO Extend to referenced meshes.
         _process_variables.emplace_back(var_config, *_mesh_vec[0],
-                                        *_geoObjects);
+                                        *_geoObjects, _parameters);
     }
 }
 
@@ -286,30 +286,8 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
          //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
-        //! \ogs_file_param{parameter__name}
-        auto name = parameter_config.getConfigParameter<std::string>("name");
-        //! \ogs_file_param{parameter__type}
-        auto type = parameter_config.peekConfigParameter<std::string>("type");
-
-        // Create parameter based on the provided type.
-        if (type == "Constant")
-        {
-            INFO("ConstantParameter: %s.", name.c_str());
-            _parameters.push_back(createConstParameter(parameter_config));
-            _parameters.back()->name = name;
-        }
-        else if (type == "MeshProperty")
-        {
-            INFO("MeshPropertyParameter: %s", name.c_str());
-            _parameters.push_back(
-                createMeshPropertyParameter(parameter_config, *_mesh_vec[0]));
-            _parameters.back()->name = name;
-        }
-        else
-        {
-            OGS_FATAL("Cannot construct property of given type \'%s\'.",
-                      type.c_str());
-        }
+        _parameters.push_back(
+            ProcessLib::createParameter(parameter_config, _mesh_vec));
     }
 }
 

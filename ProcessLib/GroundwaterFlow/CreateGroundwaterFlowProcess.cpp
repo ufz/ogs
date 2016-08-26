@@ -10,6 +10,7 @@
 #include "CreateGroundwaterFlowProcess.h"
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
 
@@ -38,12 +39,11 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
          "process_variable"});
 
     // Hydraulic conductivity parameter.
-    auto& hydraulic_conductivity = findParameter<double,
-                                                 MeshLib::Element const&>(
+    auto& hydraulic_conductivity = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__GROUNDWATER_FLOW__hydraulic_conductivity}
         "hydraulic_conductivity",
-        parameters);
+        parameters, 1);
 
     DBUG("Use \'%s\' as hydraulic conductivity parameter.",
          hydraulic_conductivity.name.c_str());

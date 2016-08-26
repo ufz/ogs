@@ -66,6 +66,15 @@ public:
         return std::vector<PROP_VAL_TYPE>::size() / _n_components;
     }
 
+    //! Returns the value for the given component stored in the given tuple.
+    PROP_VAL_TYPE const& getComponent(std::size_t tuple_index,
+                                      std::size_t component) const
+    {
+        assert(component < _n_components);
+        assert(tuple_index < getNumberOfTuples());
+        return this->operator[](tuple_index* getNumberOfTuples() + component);
+    }
+
     PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
     {
         PropertyVector<PROP_VAL_TYPE> *t(new PropertyVector<PROP_VAL_TYPE>(_property_name,

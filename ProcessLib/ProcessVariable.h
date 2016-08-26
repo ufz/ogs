@@ -10,32 +10,14 @@
 #ifndef PROCESS_LIB_PROCESS_VARIABLE_H_
 #define PROCESS_LIB_PROCESS_VARIABLE_H_
 
-
-#include "InitialCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
-
-namespace MeshGeoToolsLib
-{
-class MeshNodeSearcher;
-class BoundaryElementsSearcher;
-}
+#include "ProcessLib/Parameter/Parameter.h"
 
 namespace MeshLib
 {
 class Mesh;
-}
-
-namespace GeoLib
-{
-class GEOObjects;
-}
-
-namespace ProcessLib
-{
-class NeumannBcConfig;
-class InitialCondition;
-class UniformDirichletBoundaryCondition;
+template <typename T> class PropertyVector;
 }
 
 namespace ProcessLib
@@ -45,8 +27,10 @@ namespace ProcessLib
 class ProcessVariable
 {
 public:
-    ProcessVariable(BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
-                    GeoLib::GEOObjects const& geometries);
+    ProcessVariable(
+        BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
+        GeoLib::GEOObjects const& geometries,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
     ProcessVariable(ProcessVariable&&);
 
@@ -63,10 +47,9 @@ public:
         const int variable_id,
         unsigned const integration_order);
 
-    double getInitialConditionValue(std::size_t const node_id,
-                                    int const component_id) const
+    Parameter<double> const& getInitialCondition() const
     {
-        return _initial_condition->getValue(node_id, component_id);
+        return _initial_condition;
     }
 
     // Get or create a property vector for results.
@@ -78,7 +61,7 @@ private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
     const int _n_components;
-    std::unique_ptr<InitialCondition> _initial_condition;
+    Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
 };
