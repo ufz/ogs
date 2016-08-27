@@ -16,11 +16,20 @@ namespace ProcessLib
 {
 /// Single, constant value parameter.
 template <typename T>
-struct ConstantParameter final : public Parameter<T> {
+struct ConstantParameter final : public Parameter<T>
+{
+    /// Construction with single value.
     ConstantParameter(T const& value) : _value({value}) {}
-
-    // TODO allow for different sizes
-    unsigned getNumberOfComponents() const override { return 1; }
+    /// Construction with a tuple.
+    /// The given tuple must be non-empty.
+    ConstantParameter(std::vector<T> const& value) : _value(value)
+    {
+        assert(!value.empty());
+    }
+    unsigned getNumberOfComponents() const override
+    {
+        return static_cast<unsigned>(_value.size());
+    }
 
     std::vector<T> const& getTuple(
         double const /*t*/, SpatialPosition const& /*pos*/) const override
