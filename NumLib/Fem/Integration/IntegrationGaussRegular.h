@@ -26,7 +26,7 @@ namespace NumLib
 /// Gauss quadrature rule for regular shape elements: line, quad and hex.
 ///
 /// \tparam N_DIM    Spatial dimension
-template <std::size_t N_DIM>
+template <unsigned N_DIM>
 class IntegrationGaussRegular
 {
     typedef typename MathLib::TemplateWeightedPoint<double, double, N_DIM>
@@ -36,31 +36,31 @@ public:
     /// order.
     ///
     /// @param order     integration order (default 2)
-    explicit IntegrationGaussRegular(std::size_t order = 2)
+    explicit IntegrationGaussRegular(unsigned order = 2)
     : _order(order), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(std::size_t order)
+    void setIntegrationOrder(unsigned order)
     {
-        this->_n_sampl_pt = static_cast<std::size_t>(std::pow(order, N_DIM));
+        this->_n_sampl_pt = static_cast<unsigned>(std::pow(order, N_DIM));
         this->_order = order;
     }
 
     /// return current integration order.
-    std::size_t getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
-    std::size_t getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
 
     /// Get coordinates of the integration point.
     ///
     /// @param igp       The integration point index
     /// @return a weighted point
     WeightedPoint
-    getWeightedPoint(std::size_t igp) const
+    getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -70,7 +70,7 @@ public:
     /// @param order     The number of integration points
     /// @param igp       The integration point index
     /// @return  a tuple of position indexes
-    static std::array<std::size_t, N_DIM> getPositionIndices(std::size_t order, std::size_t igp);
+    static std::array<unsigned, N_DIM> getPositionIndices(unsigned order, unsigned igp);
 
     /// Get coordinates of the integration point.
     ///
@@ -78,7 +78,7 @@ public:
     /// @param igp       The integration point index
     /// @return a weighted point
     static WeightedPoint
-    getWeightedPoint(std::size_t order, std::size_t igp);
+    getWeightedPoint(unsigned order, unsigned igp);
 
 private:
     /// Computes weighted point using given integration method.
@@ -88,11 +88,11 @@ private:
     template <typename Method>
     static
     WeightedPoint
-    getWeightedPoint(std::array<std::size_t, N_DIM> const& pos);
+    getWeightedPoint(std::array<unsigned, N_DIM> const& pos);
 
 private:
-    std::size_t _order;
-    std::size_t _n_sampl_pt;
+    unsigned _order;
+    unsigned _n_sampl_pt;
 };
 
 } // NumLib

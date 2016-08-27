@@ -29,24 +29,24 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussPrism(std::size_t order = 2)
+    explicit IntegrationGaussPrism(unsigned order = 2)
     : _order(2), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(std::size_t /*order*/)
+    void setIntegrationOrder(unsigned /*order*/)
     {
         _order = 2; // fixed
         _n_sampl_pt = getNumberOfPoints(_order);
     }
 
     /// return current integration order.
-    std::size_t getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
-    std::size_t getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
 
     /**
      * get coordinates of a integration point
@@ -54,7 +54,7 @@ public:
      * @param igp      The integration point index
      * @return a weighted point
      */
-    WeightedPoint getWeightedPoint(std::size_t igp)
+    WeightedPoint getWeightedPoint(unsigned igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -67,7 +67,7 @@ public:
      * @return weight
      */
     static WeightedPoint
-    getWeightedPoint(std::size_t /*order*/, std::size_t igp)
+    getWeightedPoint(unsigned /*order*/, unsigned igp)
     {
         const unsigned gp_r = igp % 3;
         const unsigned gp_t = (unsigned)(igp/3);
@@ -81,7 +81,7 @@ public:
 
     template <typename Method>
     static WeightedPoint
-    getWeightedPoint(std::size_t igp)
+    getWeightedPoint(unsigned igp)
     {
         return WeightedPoint(Method::X[igp], Method::W[igp]);
     }
@@ -93,16 +93,16 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static std::size_t
-    getNumberOfPoints(std::size_t order)
+    static unsigned
+    getNumberOfPoints(unsigned order)
     {
         if (order==2) return 6;
         return 0;
     }
 
 private:
-    std::size_t _order;
-    std::size_t _n_sampl_pt;
+    unsigned _order;
+    unsigned _n_sampl_pt;
 };
 
 }

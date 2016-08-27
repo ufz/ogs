@@ -22,23 +22,23 @@ class IntegrationPoint
 
 public:
     /// IntegrationPoint constructor for given order.
-    explicit IntegrationPoint(std::size_t /* order */)
+    explicit IntegrationPoint(unsigned /* order */)
     {
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(std::size_t /* order */)
+    void setIntegrationOrder(unsigned /* order */)
     {
     }
 
     /// Return current integration order.
-    std::size_t getIntegrationOrder() const
+    unsigned getIntegrationOrder() const
     {
         return 0;
     }
 
     /// Return the number of sampling points.
-    std::size_t getNumberOfPoints() const
+    unsigned getNumberOfPoints() const
     {
         return 1;
     }
@@ -47,7 +47,7 @@ public:
     ///
     /// \param igp      The integration point index.
     /// \return a weighted point.
-    WeightedPoint getWeightedPoint(std::size_t igp)
+    WeightedPoint getWeightedPoint(unsigned igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -57,14 +57,14 @@ public:
     /// \param order    the number of integration points.
     /// \param igp      the sampling point id.
     /// \return weight
-    static WeightedPoint getWeightedPoint(std::size_t /* order */,
-                                          std::size_t /*igp*/)
+    static WeightedPoint getWeightedPoint(unsigned /* order */,
+                                          unsigned /*igp*/)
     {
         return WeightedPoint({{1}}, 1);
     }
 
     template <typename Method>
-    static WeightedPoint getWeightedPoint(std::size_t /*igp*/)
+    static WeightedPoint getWeightedPoint(unsigned /*igp*/)
     {
         return WeightedPoint({{1}}, 1);
     }
@@ -73,7 +73,7 @@ public:
     ///
     /// \param order    the number of integration points
     /// \return the number of points.
-    static std::size_t getNumberOfPoints(std::size_t /* order */)
+    static unsigned getNumberOfPoints(unsigned /* order */)
     {
         return 1;
     }
