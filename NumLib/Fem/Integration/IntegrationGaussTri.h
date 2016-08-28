@@ -69,7 +69,7 @@ public:
      * @param igp      The integration point index
      * @return a weighted point
      */
-    WeightedPoint getWeightedPoint(unsigned igp)
+    WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }

@@ -50,9 +50,9 @@ IntegrationGaussRegular<3>::getPositionIndices(unsigned order, unsigned igp)
 }
 
 template <unsigned N_DIM>
-inline
-MathLib::TemplateWeightedPoint<double,double,N_DIM>
-IntegrationGaussRegular<N_DIM>::getWeightedPoint(unsigned order, unsigned igp)
+inline MathLib::TemplateWeightedPoint<double, double, N_DIM>
+IntegrationGaussRegular<N_DIM>::getWeightedPoint(unsigned order,
+                                                 unsigned igp)
 {
     assert(igp < std::pow(order, N_DIM));
     std::array<unsigned, N_DIM> const pos = getPositionIndices(order, igp);
@@ -70,9 +70,9 @@ IntegrationGaussRegular<N_DIM>::getWeightedPoint(unsigned order, unsigned igp)
 
 template <unsigned N_DIM>
 template <typename Method>
-inline
-MathLib::TemplateWeightedPoint<double, double, N_DIM>
-IntegrationGaussRegular<N_DIM>::getWeightedPoint(std::array<unsigned, N_DIM> const& pos)
+inline MathLib::TemplateWeightedPoint<double, double, N_DIM>
+IntegrationGaussRegular<N_DIM>::getWeightedPoint(
+    std::array<unsigned, N_DIM> const& pos)
 {
     std::array<double, N_DIM> coords;
     double weight = 1;
