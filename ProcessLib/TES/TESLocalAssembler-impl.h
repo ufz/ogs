@@ -147,7 +147,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 
     _d.preEachAssemble();
 
-    for (std::size_t ip(0); ip < n_integration_points; ip++)
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
         auto const& wp = integration_method.getWeightedPoint(ip);
