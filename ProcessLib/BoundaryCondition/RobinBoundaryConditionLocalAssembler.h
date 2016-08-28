@@ -51,9 +51,8 @@ public:
         _local_K.setZero();
         _local_rhs.setZero();
 
-        IntegrationMethod integration_method(Base::_integration_order);
         unsigned const n_integration_points =
-            integration_method.getNumberOfPoints();
+            Base::_integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(id);
@@ -62,7 +61,7 @@ public:
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
-            auto const& wp = integration_method.getWeightedPoint(ip);
+            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
 
             double const alpha = _data.alpha(t, pos)[0];
             double const u_0 = _data.u_0(t, pos)[0];

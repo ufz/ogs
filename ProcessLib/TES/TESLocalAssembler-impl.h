@@ -126,7 +126,7 @@ TESLocalAssembler<
       _local_K(ShapeFunction::NPOINTS * NODAL_DOF,
                ShapeFunction::NPOINTS * NODAL_DOF),
       _local_b(ShapeFunction::NPOINTS * NODAL_DOF),
-      _integration_order(integration_order)
+      _integration_method(integration_order)
 {
 }
 
@@ -142,15 +142,15 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     _local_K.setZero();
     _local_b.setZero();
 
-    IntegrationMethod_ integration_method(_integration_order);
-    unsigned const n_integration_points = integration_method.getNumberOfPoints();
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
     _d.preEachAssemble();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
-        auto const& wp = integration_method.getWeightedPoint(ip);
+        auto const& wp = _integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
         _d.assembleIntegrationPoint(ip, local_x, sm.N, sm.dNdx, sm.J, sm.detJ,

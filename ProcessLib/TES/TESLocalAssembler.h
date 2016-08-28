@@ -129,8 +129,7 @@ private:
     NodalMatrixType _local_K;
     NodalVectorType _local_b;
 
-    // TODO Use the value from Process
-    unsigned const _integration_order;
+    IntegrationMethod_ const _integration_method;
 };
 
 }  // namespace TES
