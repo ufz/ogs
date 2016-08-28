@@ -47,13 +47,13 @@ public:
         _local_rhs.setZero();
 
         IntegrationMethod integration_method(Base::_integration_order);
-        std::size_t const n_integration_points =
+        unsigned const n_integration_points =
             integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(id);
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
