@@ -64,8 +64,8 @@ public:
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
 
-            double const alpha = _data.alpha.getTuple(t, pos).front();
-            double const u_0 = _data.u_0.getTuple(t, pos).front();
+            double const alpha = _data.alpha(t, pos)[0];
+            double const u_0 = _data.u_0(t, pos)[0];
 
             // flux = alpha * ( u_0 - u )
             // adding a alpha term to the diagonal of the stiffness matrix

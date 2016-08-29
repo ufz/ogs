@@ -99,7 +99,7 @@ public:
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.hydraulic_conductivity.getTuple(t, pos).front();
+            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
             _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
                                  sm.detJ * wp.getWeight();
