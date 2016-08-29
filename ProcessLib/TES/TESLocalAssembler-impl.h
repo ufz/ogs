@@ -106,15 +106,15 @@ namespace TES
 {
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::TESLocalAssembler(MeshLib::Element const& e,
-                                  std::size_t const /*local_matrix_size*/,
-                                  unsigned const integration_order,
-                                  AssemblyParams const& asm_params)
-    : _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    TESLocalAssembler(MeshLib::Element const& e,
+                      std::size_t const /*local_matrix_size*/,
+                      unsigned const integration_order,
+                      AssemblyParams const& asm_params)
+    : _integration_method(integration_order),
+      _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod_, GlobalDim>(
-          e, integration_order)),
+          e, _integration_method)),
       _d(asm_params,
          // TODO narrowing conversion
          static_cast<const unsigned>(
@@ -125,8 +125,7 @@ TESLocalAssembler<
                ShapeFunction::NPOINTS * NODAL_DOF),
       _local_K(ShapeFunction::NPOINTS * NODAL_DOF,
                ShapeFunction::NPOINTS * NODAL_DOF),
-      _local_b(ShapeFunction::NPOINTS * NODAL_DOF),
-      _integration_method(integration_order)
+      _local_b(ShapeFunction::NPOINTS * NODAL_DOF)
 {
 }
 
