@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Configures which secondary variables the current process can compute.

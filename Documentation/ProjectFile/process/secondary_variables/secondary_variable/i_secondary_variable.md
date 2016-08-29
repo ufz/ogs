@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Sets up a single secondary variable.

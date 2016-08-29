@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Internal name of the secondary variable.
