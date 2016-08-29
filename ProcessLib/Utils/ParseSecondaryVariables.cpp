@@ -52,10 +52,10 @@ void parseSecondaryVariables(
                  sec_var_config.getConfigParameterList("plug"))
             {
                 auto const sink_arg =
-                    //! \ogs_file_attr{process__secondary_variables__secondary_variable__sink_arg}
+                    //! \ogs_file_attr{process__secondary_variables__secondary_variable__plug__sink_arg}
                     plug.getConfigAttribute<std::string>("sink_arg");
                 auto const source_fct =
-                    //! \ogs_file_attr{process__secondary_variables__secondary_variable__source_fct}
+                    //! \ogs_file_attr{process__secondary_variables__secondary_variable__plug__source_fct}
                     plug.getConfigAttribute<std::string>("source_fct");
 
                 named_function_caller.plug(sink_fct, sink_arg, source_fct);
