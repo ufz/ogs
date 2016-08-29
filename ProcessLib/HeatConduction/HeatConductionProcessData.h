@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef PROCESSLIB_HEATTRANSPORT_HEATTRANSPORTPROCESSDATA_H
-#define PROCESSLIB_HEATTRANSPORT_HEATTRANSPORTPROCESSDATA_H
+#ifndef PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H
+#define PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H
 
 namespace MeshLib
 {
@@ -20,12 +20,12 @@ namespace ProcessLib
 template <typename ReturnType, typename... Args>
 struct Parameter;
 
-namespace HeatTransport
+namespace HeatConduction
 {
 // copy that and change names
-struct HeatTransportProcessData
+struct HeatConductionProcessData
 {
-    HeatTransportProcessData(
+    HeatConductionProcessData(
         ProcessLib::Parameter<double, MeshLib::Element const&> const&
             thermal_conductivity_,
         ProcessLib::Parameter<double, MeshLib::Element const&> const&
@@ -37,7 +37,7 @@ struct HeatTransportProcessData
     {
     }
 
-    HeatTransportProcessData(HeatTransportProcessData&& other)
+    HeatConductionProcessData(HeatConductionProcessData&& other)
         : thermal_conductivity(other.thermal_conductivity),
           heat_capacity(other.heat_capacity),
           density(other.density)
@@ -45,20 +45,20 @@ struct HeatTransportProcessData
     }
 
     //! Copies are forbidden.
-    HeatTransportProcessData(HeatTransportProcessData const&) = delete;
+    HeatConductionProcessData(HeatConductionProcessData const&) = delete;
 
     //! Assignments are not needed.
-    void operator=(HeatTransportProcessData const&) = delete;
+    void operator=(HeatConductionProcessData const&) = delete;
 
     //! Assignments are not needed.
-    void operator=(HeatTransportProcessData&&) = delete;
+    void operator=(HeatConductionProcessData&&) = delete;
 
     Parameter<double, MeshLib::Element const&> const& thermal_conductivity;
     Parameter<double, MeshLib::Element const&> const& heat_capacity;
     Parameter<double, MeshLib::Element const&> const& density;
 };
 
-}  // namespace HeatTransport
+}  // namespace HeatConduction
 }  // namespace ProcessLib
 
-#endif  // PROCESSLIB_HEATTRANSPORT_HEATTRANSPORTPROCESSDATA_H
+#endif  // PROCESSLIB_HEATCONDUCTION_HEATCONDUCTIONPROCESSDATA_H

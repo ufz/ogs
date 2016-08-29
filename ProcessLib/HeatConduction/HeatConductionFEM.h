@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef PROCESS_LIB_HEATTRANSPORT_FEM_H_
-#define PROCESS_LIB_HEATTRANSPORT_FEM_H_
+#ifndef PROCESS_LIB_HEATCONDUCTION_FEM_H_
+#define PROCESS_LIB_HEATCONDUCTION_FEM_H_
 
 #include <vector>
 
@@ -19,15 +19,15 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-#include "HeatTransportProcessData.h"
+#include "HeatConductionProcessData.h"
 
 namespace ProcessLib
 {
-namespace HeatTransport
+namespace HeatConduction
 {
 const unsigned NUM_NODAL_DOF = 1;
 
-class HeatTransportLocalAssemblerInterface
+class HeatConductionLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
@@ -44,7 +44,7 @@ public:
 
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class LocalAssemblerData : public HeatTransportLocalAssemblerInterface
+class LocalAssemblerData : public HeatConductionLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -61,7 +61,7 @@ public:
     LocalAssemblerData(MeshLib::Element const& element,
                        std::size_t const local_matrix_size,
                        unsigned const integration_order,
-                       HeatTransportProcessData const& process_data)
+                       HeatConductionProcessData const& process_data)
         : _element(element),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
@@ -153,7 +153,7 @@ public:
 private:
     MeshLib::Element const& _element;
     std::vector<ShapeMatrices> _shape_matrices;
-    HeatTransportProcessData const& _process_data;
+    HeatConductionProcessData const& _process_data;
 
     NodalMatrixType _localK;
     NodalMatrixType _localM;
@@ -165,7 +165,7 @@ private:
             GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
 };
 
-}  // namespace HeatTransport
+}  // namespace HeatConduction
 }  // namespace ProcessLib
 
-#endif  // PROCESS_LIB_HEATTRANSPORT_FEM_H_
+#endif  // PROCESS_LIB_HEATCONDUCTION_FEM_H_

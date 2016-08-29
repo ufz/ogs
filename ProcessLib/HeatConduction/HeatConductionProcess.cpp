@@ -7,7 +7,7 @@
  *
  */
 
-#include "HeatTransportProcess.h"
+#include "HeatConductionProcess.h"
 
 #include <cassert>
 
@@ -15,15 +15,15 @@
 
 namespace ProcessLib
 {
-namespace HeatTransport
+namespace HeatConduction
 {
-HeatTransportProcess::HeatTransportProcess(
+HeatConductionProcess::HeatConductionProcess(
     MeshLib::Mesh& mesh,
     Base::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
-    HeatTransportProcessData&& process_data,
+    HeatConductionProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller)
@@ -37,12 +37,12 @@ HeatTransportProcess::HeatTransportProcess(
         nullptr)
     {
         OGS_FATAL(
-            "HeatTransportProcess can not be solved with the ForwardEuler"
+            "HeatConductionProcess can not be solved with the ForwardEuler"
             " time discretization scheme. Aborting");
     }
 }
 
-void HeatTransportProcess::initializeConcreteProcess(
+void HeatConductionProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
@@ -55,7 +55,7 @@ void HeatTransportProcess::initializeConcreteProcess(
         "heat_flux_x", 1,
         makeExtrapolator(
             getExtrapolator(), _local_assemblers,
-            &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxX));
+            &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxX));
 
     if (mesh.getDimension() > 1)
     {
@@ -63,7 +63,7 @@ void HeatTransportProcess::initializeConcreteProcess(
             "heat_flux_y", 1,
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
-                &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxY));
+                &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxY));
     }
     if (mesh.getDimension() > 2)
     {
@@ -71,23 +71,23 @@ void HeatTransportProcess::initializeConcreteProcess(
             "heat_flux_z", 1,
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
-                &HeatTransportLocalAssemblerInterface::getIntPtHeatFluxZ));
+                &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxZ));
     }
 }
 
-void HeatTransportProcess::assembleConcreteProcess(const double t,
+void HeatConductionProcess::assembleConcreteProcess(const double t,
                                                    GlobalVector const& x,
                                                    GlobalMatrix& M,
                                                    GlobalMatrix& K,
                                                    GlobalVector& b)
 {
-    DBUG("Assemble HeatTransportProcess.");
+    DBUG("Assemble HeatConductionProcess.");
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberOnDereferenced(
-        &HeatTransportLocalAssemblerInterface::assemble, _local_assemblers,
+        &HeatConductionLocalAssemblerInterface::assemble, _local_assemblers,
         *_local_to_global_index_map, t, x, M, K, b);
 }
 
-}  // namespace HeatTransport
+}  // namespace HeatConduction
 }  // namespace ProcessLib

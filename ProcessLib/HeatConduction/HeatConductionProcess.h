@@ -7,31 +7,31 @@
  *
  */
 
-#ifndef PROCESS_LIB_HEATTRANSPORTPROCESS_H_
-#define PROCESS_LIB_HEATTRANSPORTPROCESS_H_
+#ifndef PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
+#define PROCESS_LIB_HEATCONDUCTIONPROCESS_H_
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
-#include "HeatTransportFEM.h"
-#include "HeatTransportProcessData.h"
+#include "HeatConductionFEM.h"
+#include "HeatConductionProcessData.h"
 
 namespace ProcessLib
 {
-namespace HeatTransport
+namespace HeatConduction
 {
-class HeatTransportProcess final : public Process
+class HeatConductionProcess final : public Process
 {
     using Base = Process;
 
 public:
-    HeatTransportProcess(
+    HeatConductionProcess(
         MeshLib::Mesh& mesh,
         Base::NonlinearSolver& nonlinear_solver,
         std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
-        HeatTransportProcessData&& process_data,
+        HeatConductionProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         ProcessOutput&& process_output,
         NumLib::NamedFunctionCaller&& named_function_caller);
@@ -52,13 +52,13 @@ private:
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b) override;
 
-    HeatTransportProcessData _process_data;
+    HeatConductionProcessData _process_data;
 
-    std::vector<std::unique_ptr<HeatTransportLocalAssemblerInterface>>
+    std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
         _local_assemblers;
 };
 
-}  // namespace HeatTransport
+}  // namespace HeatConduction
 }  // namespace ProcessLib
 
-#endif  // PROCESS_LIB_HEATTRANSPORTPROCESS_H_
+#endif  // PROCESS_LIB_HEATCONDUCTIONPROCESS_H_

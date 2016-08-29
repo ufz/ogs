@@ -7,17 +7,17 @@
  *
  */
 
-#ifndef PROCESS_LIB_CREATE_HEATTRANSPORTPROCESS_H_
-#define PROCESS_LIB_CREATE_HEATTRANSPORTPROCESS_H_
+#ifndef PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_
+#define PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_
 
 #include <memory>
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
-namespace HeatTransport
+namespace HeatConduction
 {
-std::unique_ptr<Process> createHeatTransportProcess(
+std::unique_ptr<Process> createHeatConductionProcess(
     MeshLib::Mesh& mesh,
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
@@ -26,7 +26,7 @@ std::unique_ptr<Process> createHeatTransportProcess(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-}  // namespace HeatTransport
+}  // namespace HeatConduction
 }  // namespace ProcessLib
 
-#endif  // PROCESS_LIB_CREATE_HEATTRANSPORTPROCESS_H_
+#endif  // PROCESS_LIB_CREATE_HEATCONDUCTIONPROCESS_H_

@@ -33,7 +33,7 @@
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
-#include "ProcessLib/HeatTransport/CreateHeatTransportProcess.h"
+#include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 
 namespace detail
 {
