@@ -203,9 +203,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     double const cos_theta(std::cos(angle * pi / 180.0));
     MathLib::Vector3 const norm_dir(dir.getNormalizedVector());
 
-    for (auto elem = all_elements.cbegin(); elem != all_elements.cend(); ++elem)
+    for (auto const* elem : all_elements)
     {
-        const unsigned element_dimension((*elem)->getDimension());
+        const unsigned element_dimension(elem->getDimension());
         if (element_dimension < mesh_dimension)
             continue;
 
@@ -213,7 +213,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
         {
             if (!complete_surface)
             {
-                MeshLib::Element* face = *elem;
+                auto const* face = elem;
                 if (MathLib::scalarProduct(
                         FaceRule::getSurfaceNormal(face).getNormalizedVector(),
                         norm_dir) > cos_theta)
@@ -225,16 +225,16 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
         }
         else
         {
-            if (!(*elem)->isBoundaryElement())
+            if (!elem->isBoundaryElement())
                 continue;
-            const unsigned nFaces((*elem)->getNumberOfFaces());
+            const unsigned nFaces(elem->getNumberOfFaces());
             for (unsigned j = 0; j < nFaces; ++j)
             {
-                if ((*elem)->getNeighbor(j) != nullptr)
+                if (elem->getNeighbor(j) != nullptr)
                     continue;
 
-                auto const face = std::unique_ptr<MeshLib::Element const>{
-                    (*elem)->getFace(j)};
+                auto const face =
+                    std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
                 if (!complete_surface)
                 {
                     if (MathLib::scalarProduct(
