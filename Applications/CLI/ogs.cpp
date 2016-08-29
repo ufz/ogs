@@ -111,10 +111,9 @@ int main(int argc, char *argv[])
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
             INFO("Initialize processes.");
-            for (auto p_it = project.processesBegin();
-                 p_it != project.processesEnd(); ++p_it)
+            for (auto& p : project.getProcesses())
             {
-                p_it->second->initialize();
+                p.second->initialize();
             }
 
             BaseLib::ConfigTree::assertNoSwallowedErrors();

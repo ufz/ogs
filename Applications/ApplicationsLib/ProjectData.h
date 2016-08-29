@@ -102,27 +102,11 @@ public:
     // Process interface
     //
 
-    /// Iterator access for processes.
     /// Provides read access to the process container.
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::const_iterator
-    processesBegin() const
+    std::map<std::string, std::unique_ptr<ProcessLib::Process>> const&
+    getProcesses() const
     {
-        return _processes.begin();
-    }
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::iterator processesBegin()
-    {
-        return _processes.begin();
-    }
-
-    /// Iterator access for processes as in processesBegin().
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::const_iterator
-    processesEnd() const
-    {
-        return _processes.end();
-    }
-    std::map<std::string, std::unique_ptr<ProcessLib::Process>>::iterator processesEnd()
-    {
-        return _processes.end();
+        return _processes;
     }
 
     TimeLoop& getTimeLoop() { return *_time_loop; }
