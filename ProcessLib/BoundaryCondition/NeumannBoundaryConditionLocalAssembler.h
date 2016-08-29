@@ -32,9 +32,9 @@ public:
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         unsigned const integration_order,
-        Parameter<double> const& neumann_bc_value)
+        Parameter<double> const& neumann_bc_parameter)
         : Base(e, integration_order),
-          _neumann_bc_value(neumann_bc_value),
+          _neumann_bc_parameter(neumann_bc_parameter),
           _local_rhs(local_matrix_size)
     {
     }
@@ -58,9 +58,9 @@ public:
             pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            _local_rhs.noalias() += sm.N *
-                                    _neumann_bc_value.getTuple(t, pos).front() *
-                                    sm.detJ * wp.getWeight();
+            _local_rhs.noalias() +=
+                sm.N * _neumann_bc_parameter.getTuple(t, pos).front() *
+                sm.detJ * wp.getWeight();
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
@@ -68,7 +68,7 @@ public:
     }
 
 private:
-    Parameter<double> const& _neumann_bc_value;
+    Parameter<double> const& _neumann_bc_parameter;
     typename Base::NodalVectorType _local_rhs;
 };
 
