@@ -41,22 +41,30 @@ public:
 
     /**
      * Returns the 2d-element mesh representing the surface of the given mesh.
-     * \param mesh                The original mesh
-     * \param dir                 The direction in which face normals have to
+     * \param subsfc_mesh The original mesh
+     * \param dir The direction in which face normals have to
      * point to be considered surface elements
-     * \param angle               The angle of the allowed deviation from the
+     * \param angle The angle of the allowed deviation from the
      * given direction (0 <= angle <= 90 degrees)
-     * \param subsfc_node_id_backup_prop_name Name of the property in the
-     * surface mesh the subsurface node ids are stored to. This is a mapping
-     * surface node -> subsurface node which is needed from some applications.
-     * If the string is empty, there isn't a backup created.
+     * \param subsfc_node_id_prop_name The name of the \c PropertyVector in
+     * the surface mesh the subsurface mesh node ids are stored to. If the
+     * string is empty, there won't be such a \c PropertyVector.
+     * \param subsfc_element_id_prop_name The name of the PropertyVector in
+     * the surface mesh that stores the subsurface element ids. If the string
+     * is empty, there won't be such a \c PropertyVector.
+     * \param face_id_prop_name The name of the \c PropertyVector in the surface
+     * mesh that stores the face number of the subsurface element that belongs
+     * to the boundary. If the string is empty, there won't be such a \c
+     * PropertyVector.
      * \return A 2D mesh representing the surface in direction dir
      */
     static MeshLib::Mesh* getMeshSurface(
-        const MeshLib::Mesh& mesh,
+        const MeshLib::Mesh& subsfc_mesh,
         const MathLib::Vector3& dir,
         double angle,
-        std::string const& subsfc_node_id_backup_prop_name = "");
+        std::string const& subsfc_node_id_prop_name = "",
+        std::string const& subsfc_element_id_prop_name = "",
+        std::string const& face_id_prop_name = "");
 
     /**
      * Returns the boundary of mesh, i.e. lines for 2D meshes and surfaces for 3D meshes.
@@ -72,6 +80,8 @@ private:
     static void get2DSurfaceElements(
         const std::vector<MeshLib::Element*>& all_elements,
         std::vector<MeshLib::Element*>& sfc_elements,
+        std::vector<std::size_t>& element_to_bulk_element_id_map,
+        std::vector<std::size_t>& element_to_bulk_face_id_map,
         const MathLib::Vector3& dir,
         double angle,
         unsigned mesh_dimension);
