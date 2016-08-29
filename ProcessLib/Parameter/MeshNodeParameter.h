@@ -34,8 +34,8 @@ struct MeshNodeParameter final : public Parameter<T> {
         return _property.getNumberOfComponents();
     }
 
-    std::vector<T> const& getTuple(double const /*t*/,
-                                   SpatialPosition const& pos) const override
+    std::vector<T> const& operator()(double const /*t*/,
+                                     SpatialPosition const& pos) const override
     {
         auto const n = pos.getNodeID();
         assert(n);

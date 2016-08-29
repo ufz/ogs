@@ -52,7 +52,7 @@ struct Parameter : public ParameterBase
     virtual unsigned getNumberOfComponents() const = 0;
 
     //! Returns the parameter value at the given time and position.
-    virtual std::vector<T> const& getTuple(
+    virtual std::vector<T> const& operator()(
         double const t, SpatialPosition const& pos) const = 0;
 };
 

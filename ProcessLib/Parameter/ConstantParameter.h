@@ -31,7 +31,7 @@ struct ConstantParameter final : public Parameter<T>
         return static_cast<unsigned>(_value.size());
     }
 
-    std::vector<T> const& getTuple(
+    std::vector<T> const& operator()(
         double const /*t*/, SpatialPosition const& /*pos*/) const override
     {
         return _value;
