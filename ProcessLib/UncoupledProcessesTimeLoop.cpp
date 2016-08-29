@@ -193,8 +193,7 @@ void setTimeDiscretizedODESystem(
     // A concrete Newton solver
     using NonlinearSolverNewton = NumLib::NonlinearSolver<Tag::Newton>;
 
-    if (auto* nonlinear_solver_picard =
-            dynamic_cast<NonlinearSolverPicard*>(&spd.nonlinear_solver))
+    if (dynamic_cast<NonlinearSolverPicard*>(&spd.nonlinear_solver))
     {
         // The Picard solver can also work with a Newton-ready ODE,
         // because the Newton ODESystem derives from the Picard ODESystem.
@@ -204,8 +203,7 @@ void setTimeDiscretizedODESystem(
             new NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>(
                 ode_sys, *spd.time_disc));
     }
-    else if (auto* nonlinear_solver_newton =
-                 dynamic_cast<NonlinearSolverNewton*>(&spd.nonlinear_solver))
+    else if (dynamic_cast<NonlinearSolverNewton*>(&spd.nonlinear_solver))
     {
         // The Newton-Raphson method needs a Newton-ready ODE.
 
