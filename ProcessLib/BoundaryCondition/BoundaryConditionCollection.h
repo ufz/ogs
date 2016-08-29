@@ -19,6 +19,12 @@ namespace ProcessLib
 class BoundaryConditionCollection final
 {
 public:
+    BoundaryConditionCollection(
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+        : _parameters(parameters)
+    {
+    }
+
     void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
                GlobalVector& b);
 
@@ -38,6 +44,7 @@ public:
 private:
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
     std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;
+    std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
 };
 
 

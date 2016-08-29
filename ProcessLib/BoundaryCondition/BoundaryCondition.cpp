@@ -12,8 +12,8 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "BoundaryConditionConfig.h"
 #include "UniformDirichletBoundaryCondition.h"
-#include "UniformNeumannBoundaryCondition.h"
-#include "UniformRobinBoundaryCondition.h"
+#include "NeumannBoundaryCondition.h"
+#include "RobinBoundaryCondition.h"
 
 static std::vector<MeshLib::Element*> getClonedElements(
     MeshGeoToolsLib::BoundaryElementsSearcher& boundary_element_searcher,
@@ -38,7 +38,8 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& mesh,
     const int variable_id,
-    const unsigned integration_order)
+    const unsigned integration_order,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(mesh);
@@ -60,20 +61,20 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
             config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
             config.component_id);
     }
-    else if (type == "UniformNeumann")
+    else if (type == "Neumann")
     {
-        return createUniformNeumannBoundaryCondition(
+        return createNeumannBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
             dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension());
+            mesh.getDimension(), parameters);
     }
-    else if (type == "UniformRobin") {
-        return createUniformRobinBoundaryCondition(
+    else if (type == "Robin") {
+        return createRobinBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
             dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension());
+            mesh.getDimension(), parameters);
     }
     else
     {

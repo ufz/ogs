@@ -7,16 +7,18 @@
  *
  */
 
-#ifndef PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
-#define PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#ifndef PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#define PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
 
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Parameter/Parameter.h"
+#include "GenericNaturalBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
-class UniformNeumannBoundaryConditionLocalAssembler final
+class NeumannBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>
 {
@@ -26,13 +28,13 @@ class UniformNeumannBoundaryConditionLocalAssembler final
 public:
     /// The neumann_bc_value factor is directly integrated into the local
     /// element matrix.
-    UniformNeumannBoundaryConditionLocalAssembler(
+    NeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         unsigned const integration_order,
-        double neumann_bc_value)
+        Parameter<double> const& neumann_bc_parameter)
         : Base(e, integration_order),
-          _neumann_bc_value(neumann_bc_value),
+          _neumann_bc_parameter(neumann_bc_parameter),
           _local_rhs(local_matrix_size)
     {
     }
@@ -42,19 +44,23 @@ public:
                   double const t, const GlobalVector& /*x*/,
                   GlobalMatrix& /*K*/, GlobalVector& b) override
     {
-        (void)t;  // TODO time-dependent Neumann BCs
-
         _local_rhs.setZero();
 
         IntegrationMethod integration_method(Base::_integration_order);
         std::size_t const n_integration_points =
             integration_method.getNumberOfPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++) {
+        SpatialPosition pos;
+        pos.setElementID(id);
+
+        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
             _local_rhs.noalias() +=
-                sm.N * _neumann_bc_value * sm.detJ * wp.getWeight();
+                sm.N * _neumann_bc_parameter.getTuple(t, pos).front() *
+                sm.detJ * wp.getWeight();
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
@@ -62,10 +68,10 @@ public:
     }
 
 private:
-    double const _neumann_bc_value;
+    Parameter<double> const& _neumann_bc_parameter;
     typename Base::NodalVectorType _local_rhs;
 };
 
 }   // namespace ProcessLib
 
-#endif  // PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H
+#endif  // PROCESSLIB_NEUMANNBOUNDARYCONDITIONLOCALASSEMBLER_H

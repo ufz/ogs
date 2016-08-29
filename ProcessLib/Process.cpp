@@ -23,6 +23,7 @@ Process::Process(
     NonlinearSolver& nonlinear_solver,
     std::unique_ptr<TimeDiscretization>&& time_discretization,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     ProcessOutput&& process_output,
@@ -34,7 +35,8 @@ Process::Process(
       _nonlinear_solver(nonlinear_solver),
       _time_discretization(std::move(time_discretization)),
       _convergence_criterion(std::move(convergence_criterion)),
-      _process_variables(std::move(process_variables))
+      _process_variables(std::move(process_variables)),
+      _boundary_conditions(parameters)
 {
 }
 

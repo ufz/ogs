@@ -58,15 +58,16 @@ TESProcess::TESProcess(
     Process::NonlinearSolver& nonlinear_solver,
     std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
     : Process(mesh, nonlinear_solver, std::move(time_discretization),
-              std::move(convergence_criterion), std::move(process_variables),
-              std::move(secondary_variables), std::move(process_output),
-              std::move(named_function_caller))
+              std::move(convergence_criterion), parameters,
+              std::move(process_variables), std::move(secondary_variables),
+              std::move(process_output), std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 

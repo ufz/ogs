@@ -63,9 +63,10 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
 
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(convergence_criterion), std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables),
-        std::move(process_output), std::move(named_function_caller)}};
+        std::move(convergence_criterion), parameters,
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(process_output),
+        std::move(named_function_caller)}};
 }
 
 }  // namespace GroundwaterFlow

@@ -43,9 +43,9 @@ public:
     int getNumberOfComponents() const { return _n_components; }
 
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
-        const NumLib::LocalToGlobalIndexMap& dof_table,
-        const int variable_id,
-        unsigned const integration_order);
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
+        unsigned const integration_order,
+        std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
     Parameter<double> const& getInitialCondition() const
     {

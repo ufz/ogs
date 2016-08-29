@@ -7,25 +7,27 @@
  *
  */
 
-#ifndef PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITION_H
-#define PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITION_H
+#ifndef PROCESSLIB_NEUMANNBOUNDARYCONDITION_H
+#define PROCESSLIB_NEUMANNBOUNDARYCONDITION_H
 
+#include "ProcessLib/Parameter/Parameter.h"
 #include "GenericNaturalBoundaryCondition.h"
-#include "UniformNeumannBoundaryConditionLocalAssembler.h"
+#include "NeumannBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-using UniformNeumannBoundaryCondition = GenericNaturalBoundaryCondition<
-    double, UniformNeumannBoundaryConditionLocalAssembler>;
+using NeumannBoundaryCondition = GenericNaturalBoundaryCondition<
+    Parameter<double> const&, NeumannBoundaryConditionLocalAssembler>;
 
-std::unique_ptr<UniformNeumannBoundaryCondition>
-createUniformNeumannBoundaryCondition(
+std::unique_ptr<NeumannBoundaryCondition>
+createNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
-    unsigned const global_dim);
+    unsigned const global_dim,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters);
 
 }  // ProcessLib
 
-#endif  // PROCESSLIB_UNIFORMNEUMANNBOUNDARYCONDITION_H
+#endif  // PROCESSLIB_NEUMANNBOUNDARYCONDITION_H
