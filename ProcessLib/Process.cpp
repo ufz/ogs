@@ -93,7 +93,7 @@ void Process::setInitialConditions(double const t, GlobalVector& x)
                                       MeshLib::MeshItemType::Node, node_id);
 
             pos.setNodeID(node_id);
-            auto const& tup = ic.getTuple(t, pos);
+            auto const& ic_value = ic(t, pos);
 
             for (int comp_id = 0; comp_id < num_comp; ++comp_id)
             {
@@ -111,7 +111,7 @@ void Process::setInitialConditions(double const t, GlobalVector& x)
                 if (global_index == x.size())
                     global_index = 0;
 #endif
-                x.set(global_index, tup[comp_id]);
+                x.set(global_index, ic_value[comp_id]);
             }
         }
     }

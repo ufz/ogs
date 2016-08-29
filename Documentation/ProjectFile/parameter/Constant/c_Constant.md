@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+A constant scalar value or tuple parameter.
