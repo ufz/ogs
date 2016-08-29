@@ -53,6 +53,26 @@ int main (int argc, char* argv[])
     TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
                               false, -1.0, "floating point value");
     cmd.add(z);
+
+    TCLAP::ValueArg<std::string> node_prop_name(
+        "n", "node-property-name",
+        "the name of the data array the subsurface/bulk node id will be stored "
+        "to",
+        false, "OriginalSubsurfaceNodeIDs", "string");
+    cmd.add(node_prop_name);
+    TCLAP::ValueArg<std::string> element_prop_name(
+        "e", "element-property-name",
+        "the name of the data array the subsurface/bulk element id will be "
+        "stored to",
+        false, "OriginalSubsurfaceElementIDs", "string");
+    cmd.add(element_prop_name);
+    TCLAP::ValueArg<std::string> face_prop_name(
+        "f", "face-property-name",
+        "the name of the data array the surface face id of the subsurface/bulk "
+        "element will be stored to",
+        false, "OriginalFaceIDs", "string");
+    cmd.add(face_prop_name);
+
     TCLAP::ValueArg<double> angle_arg(
         "a", "angle", "angle between given normal and element normal", false,
         90, "floating point value");
@@ -62,14 +82,16 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
-    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+    INFO("Mesh read: %u nodes, %u elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
 
     // extract surface
     MathLib::Vector3 const dir(x.getValue(), y.getValue(), z.getValue());
     double const angle(angle_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(
-            *mesh, dir, angle, "OriginalSubsurfaceNodeIDs"));
+            *mesh, dir, angle, node_prop_name.getValue(),
+            element_prop_name.getValue(), face_prop_name.getValue()));
 
     std::string out_fname(mesh_out.getValue());
     if (out_fname.empty())
