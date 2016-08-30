@@ -14,12 +14,37 @@
 #include <typeinfo>
 
 #include <logog/include/logog.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 #include "BaseLib/BuildInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/TimeLoopSingleODE.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
+#include "Tests/TestTools.h"
 #include "ODEs.h"
+
+#ifndef USE_PETSC
+std::unique_ptr<GlobalLinearSolver>
+createLinearSolver()
+{
+    return std::unique_ptr<GlobalLinearSolver>{
+        new GlobalLinearSolver{"", nullptr}};
+}
+#else
+std::unique_ptr<GlobalLinearSolver>
+createLinearSolver()
+{
+    const char xml[] =
+        "<petsc><parameters>"
+        "-ksp_type bcgs -pc_type sor -ksp_rtol 1e-24 -ksp_max_it 100"
+        "</parameters></petsc>";
+    auto const ptree = readXml(xml);
+    BaseLib::ConfigTree config(ptree, "", BaseLib::ConfigTree::onerror,
+                               BaseLib::ConfigTree::onwarning);
+    return std::unique_ptr<GlobalLinearSolver>{
+        new GlobalLinearSolver{"", &config}};
+}
+#endif
 
 struct Solution
 {
@@ -46,8 +71,7 @@ public:
         NumLib::TimeDiscretizedODESystem<ODE_::ODETag, NLTag>
                 ode_sys(ode, timeDisc);
 
-        auto linear_solver = std::unique_ptr<GlobalLinearSolver>{
-            new GlobalLinearSolver{"", nullptr}};
+        auto linear_solver = createLinearSolver();
         auto conv_crit = std::unique_ptr<NumLib::ConvergenceCriterion>(
             new NumLib::ConvergenceCriterionDeltaX(
                 _tol, boost::none, MathLib::VecNormType::NORM2));
@@ -225,10 +249,13 @@ public:
                 num_timesteps);
 
         ASSERT_EQ(sol_picard.ts.size(), sol_newton.ts.size());
-        for (std::size_t i = 0; i < sol_picard.ts.size(); ++i) {
+        for (std::size_t i = 0; i < sol_picard.ts.size(); ++i)
+        {
             ASSERT_EQ(sol_picard.ts[i], sol_newton.ts[i]);
-            for (std::size_t comp = 0; comp < sol_picard.solutions[i].size();
-                 ++comp) {
+            for (GlobalIndexType comp = 0;
+                 comp < sol_picard.solutions[i].size();
+                 ++comp)
+            {
                 EXPECT_NEAR(sol_picard.solutions[i][comp],
                             sol_newton.solutions[i][comp],
                             TestParams::tol_picard_newton);
