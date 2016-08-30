@@ -162,10 +162,10 @@ struct TestCase;
 //
 // /////////////////////////////////////
 #define TESTCASESLIST \
-    TCLITEM(ODE1, BackwardEuler                 , 1e-15  , 0.2) TCLSEP \
+    TCLITEM(ODE1, BackwardEuler                 , 1e-14  , 0.2) TCLSEP \
     TCLITEM(ODE1, ForwardEuler                  , 1e-13  , 0.22) TCLSEP \
-    TCLITEM(ODE1, CrankNicolson                 , 4e-15  , 2.1e-3) TCLSEP \
-    TCLITEM(ODE1, BackwardDifferentiationFormula, 4e-15  , 3e-3) TCLSEP \
+    TCLITEM(ODE1, CrankNicolson                 , 1e-14  , 2.1e-3) TCLSEP \
+    TCLITEM(ODE1, BackwardDifferentiationFormula, 1e-14  , 3e-3) TCLSEP \
     \
     TCLITEM(ODE2, BackwardEuler                 , 1.5e-10, 2e-3) TCLSEP \
     TCLITEM(ODE2, ForwardEuler                  , 2e-3   , 2e-3) TCLSEP \
