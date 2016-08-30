@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Contains boundary conditions for the process variable.
