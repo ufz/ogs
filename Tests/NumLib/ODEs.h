@@ -238,6 +238,7 @@ public:
             MathLib::addToMatrix(Jac, {du - dv, 0.0, 0.0, dv - du});
 
             LinAlg::finalizeAssembly(K);
+            LinAlg::finalizeAssembly(Jac);
             LinAlg::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x
