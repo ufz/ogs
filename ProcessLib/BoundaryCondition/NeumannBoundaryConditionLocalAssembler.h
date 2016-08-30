@@ -46,18 +46,17 @@ public:
     {
         _local_rhs.setZero();
 
-        IntegrationMethod integration_method(Base::_integration_order);
-        std::size_t const n_integration_points =
-            integration_method.getNumberOfPoints();
+        unsigned const n_integration_points =
+            Base::_integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(id);
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = Base::_shape_matrices[ip];
-            auto const& wp = integration_method.getWeightedPoint(ip);
+            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
             _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
                                     sm.detJ * wp.getWeight();
         }

@@ -39,17 +39,16 @@ protected:
 public:
     GenericNaturalBoundaryConditionLocalAssembler(
         MeshLib::Element const& e, unsigned const integration_order)
-        : _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+        : _integration_method(integration_order),
+          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              e, integration_order)),
-          _integration_order(integration_order)
+              e, _integration_method))
     {
     }
 
 protected:
-    std::vector<typename ShapeMatricesType::ShapeMatrices> const
-        _shape_matrices;
-    unsigned const _integration_order;
+    IntegrationMethod const _integration_method;
+    std::vector<typename ShapeMatricesType::ShapeMatrices> const _shape_matrices;
 };
 
 }  // ProcessLib

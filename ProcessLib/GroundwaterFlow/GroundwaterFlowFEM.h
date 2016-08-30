@@ -67,14 +67,15 @@ public:
                        std::size_t const local_matrix_size,
                        unsigned const integration_order,
                        GroundwaterFlowProcessData const& process_data)
-        : _element(element)
-        , _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
-                  element, integration_order))
-        , _process_data(process_data)
-        , _localA(local_matrix_size, local_matrix_size) // TODO narrowing conversion
-        , _localRhs(local_matrix_size)
-        , _integration_order(integration_order)
+        : _element(element),
+          _process_data(process_data),
+          _localA(local_matrix_size,
+                  local_matrix_size),  // TODO narrowing conversion
+          _localRhs(local_matrix_size),
+          _integration_method(integration_order),
+          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                            IntegrationMethod, GlobalDim>(
+              element, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
@@ -88,8 +89,8 @@ public:
         _localA.setZero();
         _localRhs.setZero();
 
-        IntegrationMethod integration_method(_integration_order);
-        unsigned const n_integration_points = integration_method.getNumberOfPoints();
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -98,7 +99,7 @@ public:
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
-            auto const& wp = integration_method.getWeightedPoint(ip);
+            auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
             _localA.noalias() += sm.dNdx.transpose() * k * sm.dNdx *
@@ -151,13 +152,13 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    std::vector<ShapeMatrices> _shape_matrices;
     GroundwaterFlowProcessData const& _process_data;
 
     NodalMatrixType _localA;
     NodalVectorType _localRhs;
 
-    unsigned const _integration_order;
+    IntegrationMethod const _integration_method;
+    std::vector<ShapeMatrices> _shape_matrices;
 
     std::vector<std::vector<double>> _darcy_velocities
         = std::vector<std::vector<double>>(

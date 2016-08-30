@@ -107,6 +107,8 @@ public:
     std::vector<double> const& getIntPtDarcyVelocityZ(
         std::vector<double>& /*cache*/) const override;
 private:
+    IntegrationMethod_ const _integration_method;
+
     std::vector<ShapeMatrices> _shape_matrices;
 
     using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
@@ -128,9 +130,6 @@ private:
     NodalMatrixType _local_M;
     NodalMatrixType _local_K;
     NodalVectorType _local_b;
-
-    // TODO Use the value from Process
-    unsigned const _integration_order;
 };
 
 }  // namespace TES

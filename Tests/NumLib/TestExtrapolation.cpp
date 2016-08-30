@@ -77,8 +77,8 @@ public:
         : _shape_matrices(
               ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-                  e, integration_order))
-        , _int_pt_values(_shape_matrices.size())
+                  e, IntegrationMethod{integration_order})),
+          _int_pt_values(_shape_matrices.size())
     {
     }
 

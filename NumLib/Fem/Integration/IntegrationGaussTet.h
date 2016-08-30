@@ -28,24 +28,24 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussTet(std::size_t order = 2)
+    explicit IntegrationGaussTet(unsigned order = 2)
     : _order(order), _n_sampl_pt(0)
     {
         this->setIntegrationOrder(order);
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(std::size_t order)
+    void setIntegrationOrder(unsigned order)
     {
         _order = order;
         _n_sampl_pt = getNumberOfPoints(order);
     }
 
     /// return current integration order.
-    std::size_t getIntegrationOrder() const {return _order;}
+    unsigned getIntegrationOrder() const {return _order;}
 
     /// return the number of sampling points
-    std::size_t getNumberOfPoints() const {return _n_sampl_pt;}
+    unsigned getNumberOfPoints() const {return _n_sampl_pt;}
 
     /**
      * get coordinates of a integration point
@@ -53,7 +53,7 @@ public:
      * @param igp      The integration point index
      * @return a weighted point
      */
-    WeightedPoint getWeightedPoint(std::size_t igp)
+    WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -66,7 +66,7 @@ public:
      * @return weight
      */
     static WeightedPoint
-    getWeightedPoint(std::size_t order, std::size_t igp)
+    getWeightedPoint(unsigned order, unsigned igp)
     {
         switch (order)
         {
@@ -79,7 +79,7 @@ public:
 
     template <typename Method>
     static WeightedPoint
-    getWeightedPoint(std::size_t igp)
+    getWeightedPoint(unsigned igp)
     {
         return WeightedPoint(Method::X[igp], Method::W[igp]);
     }
@@ -91,8 +91,8 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static std::size_t
-    getNumberOfPoints(std::size_t order)
+    static unsigned
+    getNumberOfPoints(unsigned order)
     {
         switch (order)
         {
@@ -104,8 +104,8 @@ public:
     }
 
 private:
-    std::size_t _order;
-    std::size_t _n_sampl_pt;
+    unsigned _order;
+    unsigned _n_sampl_pt;
 };
 
 }

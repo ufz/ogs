@@ -17,12 +17,10 @@
 
 namespace ProcessLib
 {
-
-
-template<typename ShapeFunction, typename ShapeMatricesType, typename IntegrationMethod,
-         unsigned GlobalDim>
-std::vector<typename ShapeMatricesType::ShapeMatrices>
-initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
+template <typename ShapeFunction, typename ShapeMatricesType,
+          typename IntegrationMethod, unsigned GlobalDim>
+std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
+    MeshLib::Element const& e, IntegrationMethod const& integration_method)
 {
     std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
 
@@ -31,11 +29,10 @@ initShapeMatrices(MeshLib::Element const& e, unsigned integration_order)
 
     FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
 
-    IntegrationMethod integration_method(integration_order);
-    std::size_t const n_integration_points = integration_method.getNumberOfPoints();
+    unsigned const n_integration_points = integration_method.getNumberOfPoints();
 
     shape_matrices.reserve(n_integration_points);
-    for (std::size_t ip = 0; ip < n_integration_points; ++ip) {
+    for (unsigned ip = 0; ip < n_integration_points; ++ip) {
         shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                      ShapeFunction::NPOINTS);
         fe.computeShapeFunctions(
