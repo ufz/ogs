@@ -64,16 +64,15 @@ public:
                        unsigned const integration_order,
                        HeatConductionProcessData const& process_data)
         : _element(element),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, integration_order)),
           _process_data(process_data),
           _localK(local_matrix_size,
-                  local_matrix_size)  // TODO narrowing conversion
-          ,
+                  local_matrix_size),  // TODO narrowing conversion
           _localM(local_matrix_size, local_matrix_size),
           _localRhs(local_matrix_size),
-          _integration_order(integration_order)
+          _integration_method(integration_order),
+          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                          IntegrationMethod, GlobalDim>(
+            element, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -89,19 +88,18 @@ public:
         _localM.setZero();
         _localRhs.setZero();
 
-        IntegrationMethod integration_method(_integration_order);
         unsigned const n_integration_points =
-            integration_method.getNumberOfPoints();
+            _integration_method.getNumberOfPoints();
 
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        for (unsigned ip(0); ip < n_integration_points; ip++)
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
-            auto const& wp = integration_method.getWeightedPoint(ip);
+            auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.thermal_conductivity(t, pos)[0];
             auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
             auto const density = _process_data.density(t, pos)[0];
@@ -158,14 +156,15 @@ public:
 
 private:
     MeshLib::Element const& _element;
-    std::vector<ShapeMatrices> _shape_matrices;
     HeatConductionProcessData const& _process_data;
 
     NodalMatrixType _localK;
     NodalMatrixType _localM;
     NodalVectorType _localRhs;
 
-    unsigned const _integration_order;
+    IntegrationMethod const _integration_method;
+    std::vector<ShapeMatrices> _shape_matrices;
+
     std::vector<std::vector<double>> _heat_fluxes =
         std::vector<std::vector<double>>(
             GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
