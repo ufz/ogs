@@ -71,8 +71,8 @@ public:
           _localRhs(local_matrix_size),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                          IntegrationMethod, GlobalDim>(
-            element, _integration_method))
+                                            IntegrationMethod, GlobalDim>(
+              element, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -90,7 +90,6 @@ public:
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
-
 
         SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -111,7 +110,7 @@ public:
             // heat flux only computed for output.
             const NodalVectorType heat_flux =
                 (-k * sm.dNdx * Eigen::Map<const NodalVectorType>(
-                                   local_x.data(), ShapeFunction::NPOINTS));
+                                    local_x.data(), ShapeFunction::NPOINTS));
 
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

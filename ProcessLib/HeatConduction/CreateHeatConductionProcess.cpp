@@ -44,8 +44,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         config,
         //!
         //\ogs_file_param_special{process__HEAT_CONDUCTION__thermal_conductivity}
-        "thermal_conductivity",
-        parameters,1);
+        "thermal_conductivity", parameters, 1);
 
     DBUG("Use \'%s\' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
@@ -54,8 +53,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     auto& heat_capacity = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__HEAT_CONDUCTION__heat_capacity}
-        "heat_capacity",
-        parameters,1);
+        "heat_capacity", parameters, 1);
 
     DBUG("Use \'%s\' as heat capacity parameter.", heat_capacity.name.c_str());
 
@@ -63,13 +61,12 @@ std::unique_ptr<Process> createHeatConductionProcess(
     auto& density = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__HEAT_CONDUCTION__density}
-        "density",
-        parameters,1);
+        "density", parameters, 1);
 
     DBUG("Use \'%s\' as density parameter.", density.name.c_str());
 
     HeatConductionProcessData process_data{thermal_conductivity, heat_capacity,
-                                          density};
+                                           density};
 
     SecondaryVariableCollection secondary_variables;
 
@@ -85,8 +82,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
     return std::unique_ptr<Process>{new HeatConductionProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
         std::move(convergence_criterion), parameters,
-        std::move(process_variables),std::move(process_data),
-        std::move(secondary_variables),std::move(process_output),
+        std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(process_output),
         std::move(named_function_caller)}};
 }
 

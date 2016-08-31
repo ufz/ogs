@@ -29,11 +29,10 @@ HeatConductionProcess::HeatConductionProcess(
     ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, nonlinear_solver, std::move(time_discretization),
-          std::move(convergence_criterion), parameters,
-          std::move(process_variables),
-          std::move(secondary_variables), std::move(process_output),
-          std::move(named_function_caller)),
-  _process_data(std::move(process_data))
+              std::move(convergence_criterion), parameters,
+              std::move(process_variables), std::move(secondary_variables),
+              std::move(process_output), std::move(named_function_caller)),
+      _process_data(std::move(process_data))
 {
     if (dynamic_cast<NumLib::ForwardEuler*>(&Base::getTimeDiscretization()) !=
         nullptr)
@@ -78,10 +77,10 @@ void HeatConductionProcess::initializeConcreteProcess(
 }
 
 void HeatConductionProcess::assembleConcreteProcess(const double t,
-                                                   GlobalVector const& x,
-                                                   GlobalMatrix& M,
-                                                   GlobalMatrix& K,
-                                                   GlobalVector& b)
+                                                    GlobalVector const& x,
+                                                    GlobalMatrix& M,
+                                                    GlobalMatrix& K,
+                                                    GlobalVector& b)
 {
     DBUG("Assemble HeatConductionProcess.");
 

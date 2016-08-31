@@ -25,10 +25,9 @@ namespace HeatConduction
 // copy that and change names
 struct HeatConductionProcessData
 {
-    HeatConductionProcessData(
-        Parameter<double> const& thermal_conductivity_,
-        Parameter<double> const& heat_capacity_,
-        Parameter<double> const& density_)
+    HeatConductionProcessData(Parameter<double> const& thermal_conductivity_,
+                              Parameter<double> const& heat_capacity_,
+                              Parameter<double> const& density_)
         : thermal_conductivity(thermal_conductivity_),
           heat_capacity(heat_capacity_),
           density(density_)
