@@ -17,7 +17,7 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Parameter.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "HeatConductionProcessData.h"
 
@@ -54,6 +54,7 @@ class LocalAssemblerData : public HeatConductionLocalAssemblerInterface
 
     using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
+    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
 public:
     /// The thermal_conductivity factor is directly integrated into the local
@@ -80,7 +81,7 @@ public:
     }
 
     void assembleConcrete(
-        double const /*t*/, std::vector<double> const& local_x,
+        double const t, std::vector<double> const& local_x,
         NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
     {
@@ -92,13 +93,18 @@ public:
         unsigned const n_integration_points =
             integration_method.getNumberOfPoints();
 
-        for (std::size_t ip(0); ip < n_integration_points; ip++)
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        for (unsigned ip(0); ip < n_integration_points; ip++)
         {
+            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.thermal_conductivity(_element);
-            auto const heat_capacity = _process_data.heat_capacity(_element);
-            auto const density = _process_data.density(_element);
+            auto const k = _process_data.thermal_conductivity(t, pos)[0];
+            auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
+            auto const density = _process_data.density(t, pos)[0];
 
             _localK.noalias() +=
                 sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();

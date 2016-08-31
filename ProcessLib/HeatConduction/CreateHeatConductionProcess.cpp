@@ -10,6 +10,7 @@
 #include "CreateHeatConductionProcess.h"
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
 
@@ -39,31 +40,31 @@ std::unique_ptr<Process> createHeatConductionProcess(
          "process_variable"});
 
     // thermal conductivity parameter.
-    auto& thermal_conductivity = findParameter<double, MeshLib::Element const&>(
+    auto& thermal_conductivity = findParameter<double>(
         config,
         //!
         //\ogs_file_param_special{process__HEAT_CONDUCTION__thermal_conductivity}
         "thermal_conductivity",
-        parameters);
+        parameters,1);
 
     DBUG("Use \'%s\' as thermal conductivity parameter.",
          thermal_conductivity.name.c_str());
 
     // heat capacity parameter.
-    auto& heat_capacity = findParameter<double, MeshLib::Element const&>(
+    auto& heat_capacity = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__HEAT_CONDUCTION__heat_capacity}
         "heat_capacity",
-        parameters);
+        parameters,1);
 
     DBUG("Use \'%s\' as heat capacity parameter.", heat_capacity.name.c_str());
 
     // density parameter.
-    auto& density = findParameter<double, MeshLib::Element const&>(
+    auto& density = findParameter<double>(
         config,
         //! \ogs_file_param_special{process__HEAT_CONDUCTION__density}
         "density",
-        parameters);
+        parameters,1);
 
     DBUG("Use \'%s\' as density parameter.", density.name.c_str());
 
@@ -83,7 +84,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
 
     return std::unique_ptr<Process>{new HeatConductionProcess{
         mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(convergence_criterion), std::move(process_variables),
+        std::move(convergence_criterion), parameters,
+        std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         std::move(process_output), std::move(named_function_caller)}};
 }

@@ -17,7 +17,7 @@ class Element;
 
 namespace ProcessLib
 {
-template <typename ReturnType, typename... Args>
+template <typename T>
 struct Parameter;
 
 namespace HeatConduction
@@ -26,11 +26,9 @@ namespace HeatConduction
 struct HeatConductionProcessData
 {
     HeatConductionProcessData(
-        ProcessLib::Parameter<double, MeshLib::Element const&> const&
-            thermal_conductivity_,
-        ProcessLib::Parameter<double, MeshLib::Element const&> const&
-            heat_capacity_,
-        ProcessLib::Parameter<double, MeshLib::Element const&> const& density_)
+        Parameter<double> const& thermal_conductivity_,
+        Parameter<double> const& heat_capacity_,
+        Parameter<double> const& density_)
         : thermal_conductivity(thermal_conductivity_),
           heat_capacity(heat_capacity_),
           density(density_)
@@ -53,9 +51,9 @@ struct HeatConductionProcessData
     //! Assignments are not needed.
     void operator=(HeatConductionProcessData&&) = delete;
 
-    Parameter<double, MeshLib::Element const&> const& thermal_conductivity;
-    Parameter<double, MeshLib::Element const&> const& heat_capacity;
-    Parameter<double, MeshLib::Element const&> const& density;
+    Parameter<double> const& thermal_conductivity;
+    Parameter<double> const& heat_capacity;
+    Parameter<double> const& density;
 };
 
 }  // namespace HeatConduction
