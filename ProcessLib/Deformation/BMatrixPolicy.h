@@ -34,7 +34,7 @@ struct KelvinVectorDimensions<3>
 // Kelvin vector and matrix templates for given displacement dimension.
 //
 
-/// \TODO Maybe better to move the KelvinVector/MatrixType into
+/// \todo Maybe better to move the KelvinVector/MatrixType into
 /// MaterialLib/SolidModels/KelvinVector.h.
 
 /// Kelvin vector type for given displacement dimension.
