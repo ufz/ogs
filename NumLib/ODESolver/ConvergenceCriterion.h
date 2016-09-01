@@ -45,6 +45,9 @@ public:
     //! Check if the change of the solution between iterations satisfies the
     //! convergence criterion.
     //!
+    //! \param minus_delta_x the current solution update
+    //! \param x the new solution from the current iteration
+    //!
     //! \remark
     //! The Newton-Raphson solver computes \c minus_delta_x. \c x is needed for
     //! relative tolerances.
