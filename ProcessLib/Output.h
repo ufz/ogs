@@ -13,6 +13,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
 #include "Process.h"
+#include "ProcessOutput.h"
 
 namespace ProcessLib
 {
@@ -29,38 +30,33 @@ public:
     newInstance(const BaseLib::ConfigTree& config,
                 const std::string& output_directory);
 
-    using ProcessIter = std::vector<std::unique_ptr<ProcessLib::Process>>
-                        ::const_iterator;
-
-    //! Opens a PVD file for each process.
-    void initialize(ProcessIter first, const ProcessIter& last);
+    //! TODO doc. Opens a PVD file for each process.
+    void addProcess(ProcessLib::Process const& process, const unsigned pcs_idx);
 
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
-    void doOutput(
-            Process const& process, unsigned timestep,
-            const double t,
-            GlobalVector const& x);
+    void doOutput(Process const& process, ProcessOutput const& process_output,
+                  unsigned timestep, const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in order
     //! to make sure that its results are written.
-    void doOutputLastTimestep(
-            Process const& process, unsigned timestep,
-            const double t,
-            GlobalVector const& x);
+    void doOutputLastTimestep(Process const& process,
+                              ProcessOutput const& process_output,
+                              unsigned timestep, const double t,
+                              GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
-    void doOutputAlways(
-            Process const& process, unsigned timestep,
-            const double t,
-            GlobalVector const& x);
+    void doOutputAlways(Process const& process,
+                        ProcessOutput const& process_output, unsigned timestep,
+                        const double t, GlobalVector const& x);
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
+                                    ProcessOutput const& process_output,
                                     const unsigned timestep, const double t,
                                     GlobalVector const& x,
                                     const unsigned iteration) const;

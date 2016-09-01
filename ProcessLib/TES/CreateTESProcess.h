@@ -19,9 +19,6 @@ namespace TES
 {
 std::unique_ptr<Process> createTESProcess(
     MeshLib::Mesh& mesh,
-    Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
     BaseLib::ConfigTree const& config);

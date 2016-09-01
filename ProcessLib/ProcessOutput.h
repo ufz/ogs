@@ -27,8 +27,6 @@ struct ProcessOutput final
 
     //! Tells if also to output extrapolation residuals.
     bool output_residuals = false;
-
-    bool output_iteration_results = false;
 };
 
 

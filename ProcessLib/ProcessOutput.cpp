@@ -38,16 +38,6 @@ ProcessOutput::ProcessOutput(BaseLib::ConfigTree const& output_config)
     {
         output_residuals = *out_resid;
     }
-
-    // debug output
-    if (auto const param =
-        //! \ogs_file_param{process__output__output_iteration_results}
-        output_config.getConfigParameterOptional<bool>("output_iteration_results"))
-    {
-        DBUG("output_iteration_results: %s", (*param) ? "true" : "false");
-
-        output_iteration_results = *param;
-    }
 }
 
 
