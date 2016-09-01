@@ -26,15 +26,11 @@ class HeatConductionProcess final : public Process
 public:
     HeatConductionProcess(
         MeshLib::Mesh& mesh,
-        Base::NonlinearSolver& nonlinear_solver,
-        std::unique_ptr<Base::TimeDiscretization>&& time_discretization,
-        std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         HeatConductionProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        ProcessOutput&& process_output,
         NumLib::NamedFunctionCaller&& named_function_caller);
 
     //! \name ODESystem interface

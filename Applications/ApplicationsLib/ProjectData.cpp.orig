@@ -33,7 +33,11 @@
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
+<<<<<<< f8f8c25d57bd365d47d720b64798896328adb8ac
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
+=======
+#include "ProcessLib/HeatTransport/CreateHeatTransportProcess.h"
+>>>>>>> fix the erros after rebasing
 
 namespace detail
 {
@@ -262,11 +266,6 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
         else if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
-                *_mesh_vec[0], _process_variables, _parameters, process_config);
-        }
-        else if (type == "HEAT_CONDUCTION")
-        {
-            process = ProcessLib::HeatConduction::createHeatConductionProcess(
                 *_mesh_vec[0], _process_variables, _parameters, process_config);
         }
         else

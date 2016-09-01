@@ -20,9 +20,6 @@ namespace HeatConduction
 {
 std::unique_ptr<Process> createHeatConductionProcess(
     MeshLib::Mesh& mesh,
-    Process::NonlinearSolver& nonlinear_solver,
-    std::unique_ptr<Process::TimeDiscretization>&& time_discretization,
-    std::unique_ptr<NumLib::ConvergenceCriterion>&& convergence_criterion,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -76,15 +73,9 @@ std::unique_ptr<Process> createHeatConductionProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    //! \ogs_file_param{process__output}
-    ProcessOutput process_output{config.getConfigSubtree("output")};
-
     return std::unique_ptr<Process>{new HeatConductionProcess{
-        mesh, nonlinear_solver, std::move(time_discretization),
-        std::move(convergence_criterion), parameters,
-        std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(process_output),
-        std::move(named_function_caller)}};
+        mesh, parameters, std::move(process_variables), std::move(process_data),
+        std::move(secondary_variables), std::move(named_function_caller)}};
 }
 
 }  // namespace HeatConduction
