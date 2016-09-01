@@ -41,7 +41,7 @@ public:
 
     void preTimestep(const double t) override;
 
-    void getDirichletBCValues(
+    void getEssentialBCValues(
         const double t,
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 

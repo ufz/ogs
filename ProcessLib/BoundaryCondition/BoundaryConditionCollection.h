@@ -33,7 +33,7 @@ public:
         for (std::size_t i=0; i<_boundary_conditions.size(); ++i) {
             auto const& bc = *_boundary_conditions[i];
             auto& dirichlet_storage = _dirichlet_bcs[i];
-            bc.getDirichletBCValues(t, dirichlet_storage);
+            bc.getEssentialBCValues(t, dirichlet_storage);
         }
         return &_dirichlet_bcs;
     }

@@ -41,13 +41,13 @@ public:
         // there is nothing to do here.
     }
 
-    //! Writes the values of Dirichlet BCs to \c bc_values.
-    virtual void getDirichletBCValues(
+    //! Writes the values of essential BCs to \c bc_values.
+    virtual void getEssentialBCValues(
         const double /*t*/,
         NumLib::IndexValueVector<GlobalIndexType>& /*bc_values*/) const
     {
-        // By default it is assumed that the BC is not a Dirichlet BC. Therefore
-        // there is nothing to do here.
+        // By default it is assumed that the BC is not an essential BC.
+        // Therefore there is nothing to do here.
     }
 
     virtual void preTimestep(const double /*t*/) {}

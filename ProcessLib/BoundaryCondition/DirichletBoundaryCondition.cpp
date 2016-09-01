@@ -22,7 +22,7 @@ void DirichletBoundaryCondition::preTimestep(const double /*t*/)
         _already_computed = false;
 }
 
-void DirichletBoundaryCondition::getDirichletBCValues(
+void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     if (_already_computed)
