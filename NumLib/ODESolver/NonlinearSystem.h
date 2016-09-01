@@ -34,13 +34,14 @@ template <>
 class NonlinearSystem<NonlinearSolverTag::Newton> : public EquationSystem
 {
 public:
-    //! TODO doc
+    //! Assembles the linearized equation system at the point \c x.
+    //! The linearized system is \f$A(x) \cdot x = b(x)\f$. Here the matrix
+    //! \f$A(x)\f$ and the vector \f$b(x)\f$ are assembled.
     virtual void assemble(GlobalVector const& x) = 0;
 
     /*! Writes the residual at point \c x to \c res.
      *
-     * \pre assembleResidualNewton() must have been called before
-     *      with the same argument \c x.
+     * \pre assemble() must have been called before with the same argument \c x.
      *
      * \todo Remove argument \c x.
      */
@@ -49,7 +50,7 @@ public:
 
     /*! Writes the Jacobian of the residual to \c Jac.
      *
-     * \pre assembleJacobian() must have been called before.
+     * \pre assemble() must have been called before.
      */
     virtual void getJacobian(GlobalMatrix& Jac) const = 0;
 
@@ -72,13 +73,17 @@ template <>
 class NonlinearSystem<NonlinearSolverTag::Picard> : public EquationSystem
 {
 public:
-    //! TODO doc
+    //! Assembles the linearized equation system at the point \c x.
+    //! The linearized system is \f$J(x) \cdot \Delta x = (x)\f$. Here the
+    //! residual vector \f$r(x)\f$ and its Jacobian \f$J(x)\f$ are assembled.
     virtual void assemble(GlobalVector const& x) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
+    //! \pre assemble() must have been called before.
     virtual void getA(GlobalMatrix& A) const = 0;
 
     //! Writes the linearized equation system right-hand side to \c rhs.
+    //! \pre assemble() must have been called before.
     virtual void getRhs(GlobalVector& rhs) const = 0;
 
     //! Apply known solutions to the solution vector \c x.

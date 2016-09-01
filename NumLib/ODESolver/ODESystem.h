@@ -74,7 +74,9 @@ class ODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                        NonlinearSolverTag::Picard>
 {
 public:
-    /*! Assemble \f$ \mathtt{Jac} := \partial r/\partial x_N \f$ at the provided state (\c t, \c x).
+    /*! Assemble \c M, \c K, \c b and the Jacobian
+     * \f$ \mathtt{Jac} := \partial r/\partial x_N \f$
+     * at the provided state (\c t, \c x).
      *
      * For the meaning of the other parameters refer to the the introductory remarks on
      * \ref concept_time_discretization "time discretization".
