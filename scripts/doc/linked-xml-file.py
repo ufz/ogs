@@ -51,6 +51,14 @@ def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
 
     return fmt.format(tag_attr_formatted, tag_attr, *args)
 
+def format_if_documented_nowarn(is_doc, fmt, fullpagename, tag_attr, *args):
+    if is_doc:
+        tag_attr_formatted = r'\ref {0} "{1}"'.format(fullpagename, tag_attr)
+    else:
+        tag_attr_formatted = tag_attr
+
+    return fmt.format(tag_attr_formatted, tag_attr, *args)
+
 def get_tagpath(pagename, typetag, typetag_levels_up):
     tagpath = pagename.replace("__", ".")
     is_doc = (tagpath, True) in documented_tags_attrs
@@ -128,12 +136,14 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
                 else:
                     typepagename = node.text.strip()
 
-                typetagpath = typepagename.replace("__", ".")
-                dict_of_set_add(map_tag_to_prj_files, typetagpath, relfilepath)
-                # print_("type tag path:", typetagpath)
+                typetagpath, typepagename, type_is_doc = get_tagpath(typepagename, None, 0)
+                if type_is_doc:
+                    dict_of_set_add(map_tag_to_prj_files, typetagpath, relfilepath)
                 typepagename = "ogs_file_param__" + typepagename
 
-                type_text_formatted = format_if_documented(is_doc, \
+                # If the content of a type tag is undocumented no red
+                # "undocumented..." HTML code will be generated.
+                type_text_formatted = format_if_documented_nowarn(type_is_doc, \
                         '{0}', typepagename, node.text.strip())
 
                 fh.write(format_if_documented(is_doc, \

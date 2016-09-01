@@ -54,7 +54,7 @@ struct LisOption
         }
     }
 
-    std::string _option_string = "-initxzeros 0";
+    std::string _option_string = "-initx_zeros 0";
 
 };
 }
