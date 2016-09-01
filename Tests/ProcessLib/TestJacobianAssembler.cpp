@@ -47,7 +47,7 @@ struct MatDiagX
                        std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         mat.diagonal().noalias() =
             MathLib::toVector<Eigen::VectorXd>(x_data, x_data.size());
     }
@@ -58,7 +58,7 @@ struct MatDiagX
                                 std::vector<double>& dMdxTy_data)
     {
         auto dMdxTy =
-            MathLib::toZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
         dMdxTy.diagonal().noalias() =
             MathLib::toVector<Eigen::VectorXd>(y_data, y_data.size());
     }
@@ -78,7 +78,7 @@ struct VecX
                           std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
                             Eigen::RowMajor>::Identity(x_data.size(),
                                                        x_data.size());
@@ -96,7 +96,7 @@ struct MatXY
                        std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         for (std::size_t r=0; r<x_data.size(); ++r) {
             for (std::size_t c=0; c<x_data.size(); ++c) {
                 mat(r, c) = x_data[r] * x_data[c];
@@ -118,7 +118,7 @@ struct MatXY
         auto const x_dot_y = MathLib::toVector<Eigen::VectorXd>(x_data, N).dot(
             MathLib::toVector<Eigen::VectorXd>(y_data, N));
         auto dMdxTy =
-            MathLib::toZeroedMatrix(dMdxTy_data, N, N);
+            MathLib::createZeroedMatrix(dMdxTy_data, N, N);
         for (std::size_t r=0; r<N; ++r) {
             for (std::size_t c=0; c<N; ++c) {
                 dMdxTy(r, c) = x_data[r] * y_data[c];
@@ -150,7 +150,7 @@ struct VecXRevX
                           std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         auto const N = x_data.size();
         for (std::size_t i=0; i<N; ++i) {
             mat(i, i) += x_data[N-i-1];
@@ -166,7 +166,7 @@ struct MatDiagXSquared
                        std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
 
         for (std::size_t i=0; i<x_data.size(); ++i)
             mat(i, i) = x_data[i] * x_data[i];
@@ -178,7 +178,7 @@ struct MatDiagXSquared
                                 std::vector<double>& dMdxTy_data)
     {
         auto dMdxTy =
-            MathLib::toZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
 
         for (std::size_t i=0; i<x_data.size(); ++i)
             dMdxTy(i, i) = 2.0 * x_data[i] * y_data[i];
@@ -201,7 +201,7 @@ struct VecXSquared
                           std::vector<double>& mat_data)
     {
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, x_data.size(), x_data.size());
+            MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         for (std::size_t i=0; i< x_data.size(); ++i) {
             mat(i, i) = 2.0 * x_data[i];
         }
@@ -221,7 +221,7 @@ struct MatXSquaredShifted
     {
         auto const N = x_data.size();
         auto mat =
-            MathLib::toZeroedMatrix(mat_data, N, N);
+            MathLib::createZeroedMatrix(mat_data, N, N);
         for (std::size_t r=0; r<N; ++r) {
             for (std::size_t c=0; c<N; ++c) {
                 auto const i = (r + c) % N;
@@ -241,7 +241,7 @@ struct MatXSquaredShifted
     {
         auto const N = x_data.size();
         auto dMdxTy =
-            MathLib::toZeroedMatrix(dMdxTy_data, N, N);
+            MathLib::createZeroedMatrix(dMdxTy_data, N, N);
         for (std::size_t r=0; r<N; ++r) {
             for (std::size_t c=0; c<N; ++c) {
                 auto const i = (r + c) % N;

@@ -16,7 +16,8 @@
 
 namespace MathLib
 {
-/*! Creates an Eigen mapped matrix from the given data vector.
+/*! Creates an Eigen mapped matrix having its entries stored in the given
+ * \c data vector.
  *
  * \return An Eigen mapped matrix of the given size. All values of the matrix
  * are set to zero.
@@ -28,9 +29,9 @@ namespace MathLib
  * as the requested matrix type.
  */
 template <typename Matrix>
-Eigen::Map<Matrix> toZeroedMatrix(std::vector<double>& data,
-                                  Eigen::MatrixXd::Index rows,
-                                  Eigen::MatrixXd::Index cols)
+Eigen::Map<Matrix> createZeroedMatrix(std::vector<double>& data,
+                                      Eigen::MatrixXd::Index rows,
+                                      Eigen::MatrixXd::Index cols)
 {
     static_assert(Matrix::IsRowMajor || Matrix::IsVectorAtCompileTime,
                   "The default storage order in OGS is row major storage for "
@@ -45,18 +46,19 @@ Eigen::Map<Matrix> toZeroedMatrix(std::vector<double>& data,
     return {data.data(), rows, cols};
 }
 
-/*! Creates an Eigen mapped matrix from the given data vector.
+/*! Creates an Eigen mapped matrix having its entries stored in the given
+ * \c data vector.
  *
  * This is a convienence method which makes the specification of dynamically
  * allocated Eigen matrices as return type easier.
  */
 inline Eigen::Map<
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
-toZeroedMatrix(std::vector<double>& data,
-               Eigen::MatrixXd::Index rows,
-               Eigen::MatrixXd::Index cols)
+createZeroedMatrix(std::vector<double>& data,
+                   Eigen::MatrixXd::Index rows,
+                   Eigen::MatrixXd::Index cols)
 {
-    return toZeroedMatrix<
+    return createZeroedMatrix<
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
         data, rows, cols);
 }
@@ -138,7 +140,8 @@ toMatrix(std::vector<double>& data,
         data, rows, cols);
 }
 
-/*! Creates an Eigen mapped vector from the given data vector.
+/*! Creates an Eigen mapped vector having its entries stored in the given
+ * \c data vector.
  *
  * \return An Eigen mapped vector of the given size. All values of the vector
  * are set to zero.
@@ -147,8 +150,8 @@ toMatrix(std::vector<double>& data,
  * \post The \c data has size \c size.
  */
 template <typename Vector>
-Eigen::Map<Vector> toZeroedVector(std::vector<double>& data,
-                                  Eigen::VectorXd::Index size)
+Eigen::Map<Vector> createZeroedVector(std::vector<double>& data,
+                                      Eigen::VectorXd::Index size)
 {
     static_assert(Vector::IsVectorAtCompileTime, "A vector type is required.");
     assert(Vector::SizeAtCompileTime == Eigen::Dynamic ||

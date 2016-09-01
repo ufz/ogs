@@ -86,7 +86,7 @@ public:
         // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
-        auto local_K = MathLib::toZeroedMatrix<NodalMatrixType>(
+        auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_K_data, local_matrix_size, local_matrix_size);
 
         unsigned const n_integration_points =

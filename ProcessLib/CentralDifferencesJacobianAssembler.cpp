@@ -45,7 +45,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     auto const local_xdot =
         MathLib::toVector<Eigen::VectorXd>(local_xdot_data, num_r_c);
 
-    auto local_Jac = MathLib::toZeroedMatrix(local_Jac_data,
+    auto local_Jac = MathLib::createZeroedMatrix(local_Jac_data,
                                              num_r_c, num_r_c);
     _local_x_perturbed_data = local_x_data;
 

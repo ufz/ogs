@@ -136,11 +136,11 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
     assert(local_matrix_size == ShapeFunction::NPOINTS * NODAL_DOF);
 
-    auto local_M = MathLib::toZeroedMatrix<NodalMatrixType>(
+    auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
-    auto local_K = MathLib::toZeroedMatrix<NodalMatrixType>(
+    auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_K_data, local_matrix_size, local_matrix_size);
-    auto local_b = MathLib::toZeroedVector<NodalVectorType>(local_b_data,
+    auto local_b = MathLib::createZeroedVector<NodalVectorType>(local_b_data,
                                                             local_matrix_size);
 
     unsigned const n_integration_points =
