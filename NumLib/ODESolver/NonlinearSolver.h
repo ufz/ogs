@@ -84,8 +84,6 @@ public:
     /*! Constructs a new instance.
      *
      * \param linear_solver the linear solver used by this nonlinear solver.
-     * \param tol     the tolerance of the solver. \todo Be more specific about
-     *                that!
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
      */
@@ -143,8 +141,6 @@ public:
     /*! Constructs a new instance.
      *
      * \param linear_solver the linear solver used by this nonlinear solver.
-     * \param tol     the tolerance of the solver. \todo Be more specific about
-     *                that!
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
      */
