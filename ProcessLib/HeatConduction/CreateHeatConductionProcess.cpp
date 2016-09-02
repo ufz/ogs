@@ -32,15 +32,13 @@ std::unique_ptr<Process> createHeatConductionProcess(
     // Process variable.
     auto process_variables = findProcessVariables(
         variables, config,
-        {//!
-         //\ogs_file_param_special{process__HEAT_CONDUCTION__process_variables__process_variable}
+        {//! \ogs_file_param_special{process__HEAT_CONDUCTION__process_variables__process_variable}
          "process_variable"});
 
     // thermal conductivity parameter.
     auto& thermal_conductivity = findParameter<double>(
         config,
-        //!
-        //\ogs_file_param_special{process__HEAT_CONDUCTION__thermal_conductivity}
+        //! \ogs_file_param_special{process__HEAT_CONDUCTION__thermal_conductivity}
         "thermal_conductivity", parameters, 1);
 
     DBUG("Use \'%s\' as thermal conductivity parameter.",
