@@ -224,7 +224,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS line_60_heat.prj
         WRAPPER time
         TESTER vtkdiff
-        ABSTOL 1e-4 RELTOL 1e-4
+        ABSTOL 1e-5 RELTOL 1e-5
         DIFF_DATA
         temperature_analytical.vtu line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature
         temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature

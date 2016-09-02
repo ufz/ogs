@@ -22,7 +22,7 @@ struct Parameter;
 
 namespace HeatConduction
 {
-// copy that and change names
+
 struct HeatConductionProcessData
 {
     HeatConductionProcessData(Parameter<double> const& thermal_conductivity_,

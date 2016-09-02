@@ -21,7 +21,6 @@ namespace HeatConduction
 {
 class HeatConductionProcess final : public Process
 {
-    using Base = Process;
 
 public:
     HeatConductionProcess(
