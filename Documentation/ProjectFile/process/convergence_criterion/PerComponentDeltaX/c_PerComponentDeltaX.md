@@ -7,4 +7,6 @@ vectorial process variable, to each vector component) of the solution vector
 individually.
 
 For each component at least one of the relative or absolute tolerance has to be
-met in order to satisfy this convergence criterion.
+met in order to satisfy this convergence criterion, i.e., the following has to
+hold (with errors \f$e\f$ and tolerances \f$t\f$):
+\f[ e_{\mathrm{abs}} \le t_{\mathrm{abs}} \vee e_{\mathrm{rel}} \le t_{\mathrm{rel}} \f]
