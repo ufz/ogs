@@ -15,6 +15,9 @@ APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 add_subdirectory(TES)
 APPEND_SOURCE_FILES(SOURCES TES)
 
+add_subdirectory(HeatConduction)
+APPEND_SOURCE_FILES(SOURCES HeatConduction)
+
 APPEND_SOURCE_FILES(SOURCES Utils)
 
 add_library(ProcessLib ${SOURCES})
