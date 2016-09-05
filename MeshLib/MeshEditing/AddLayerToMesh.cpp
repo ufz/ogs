@@ -132,7 +132,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::size_t const n_sfc_nodes(sfc_nodes.size());
 
     // fetch subsurface node ids PropertyVector
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&> opt_node_id_pv(
+    boost::optional<MeshLib::PropertyVector<std::size_t>&> const opt_node_id_pv(
         sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name));
     if (!opt_node_id_pv) {
         ERR(
