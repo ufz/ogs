@@ -1,8 +1,8 @@
 # Source files
-GET_SOURCE_FILES(SOURCES_MeshGeoToolsLib)
+GET_SOURCE_FILES(SOURCES)
 
 # Create the library
-add_library(MeshGeoToolsLib ${SOURCES_MeshGeoToolsLib})
+add_library(MeshGeoToolsLib ${SOURCES})
 
 target_link_libraries(MeshGeoToolsLib
     BaseLib
