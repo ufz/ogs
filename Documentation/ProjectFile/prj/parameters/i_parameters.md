@@ -1,2 +1,1 @@
-
-List of parameters...
+Contains parameter definitions.

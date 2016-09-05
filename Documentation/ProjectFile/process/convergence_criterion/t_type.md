@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Defines the type of the convergence criterion.

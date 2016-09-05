@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Sets the type of the boundary condition.
