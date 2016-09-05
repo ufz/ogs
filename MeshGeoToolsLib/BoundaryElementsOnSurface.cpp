@@ -16,6 +16,12 @@
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
+#ifndef NDEBUG
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/IO/writeGeometryToFile.h"
+#include "MeshGeoToolsLib/convertMeshNodesToGeometry.h"
+#endif
+
 namespace MeshGeoToolsLib
 {
 
@@ -24,6 +30,16 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(MeshLib::Mesh const& mesh, 
 {
     // search elements near the surface
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
+#ifndef NDEBUG
+    {
+        GeoLib::GEOObjects geometries;
+        std::string geo_name("FoundMeshNodesOnSurface");
+        MeshGeoToolsLib::convertMeshNodesToGeometry(
+            _mesh, node_ids_on_sfc, geo_name, geometries);
+        GeoLib::IO::writeGeometryToFile(geo_name, geometries,
+                                        geo_name + ".gml");
+    }
+#endif
     MeshLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_sfc);
     auto &ele_ids_near_sfc = es.getSearchedElementIDs();

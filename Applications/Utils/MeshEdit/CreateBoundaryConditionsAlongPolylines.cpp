@@ -33,28 +33,7 @@
 #include "MeshLib/MeshSurfaceExtraction.h"
 
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
-
-void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
-    std::vector<std::size_t> const& node_ids,
-    std::string & geo_name,
-    GeoLib::GEOObjects & geometry_sets)
-{
-    // copy data
-    auto pnts = std::unique_ptr<std::vector<GeoLib::Point*>>(
-        new std::vector<GeoLib::Point*>);
-    std::map<std::string, std::size_t>* pnt_names(
-        new std::map<std::string, std::size_t>);
-    std::size_t cnt(0);
-    for (std::size_t id: node_ids) {
-        pnts->push_back(new GeoLib::Point(*(nodes[id]), cnt));
-        pnt_names->insert(std::pair<std::string, std::size_t>(
-            geo_name+"-PNT-"+std::to_string(cnt), cnt));
-        cnt++;
-    }
-
-    // create data structures for geometry
-    geometry_sets.addPointVec(std::move(pnts), geo_name, pnt_names);
-}
+#include "MeshGeoToolsLib/convertMeshNodesToGeometry.h"
 
 void writeGroundwaterFlowPointBC(std::ostream& bc_out,
                                  std::string const& pnt_name, double head_value)
@@ -212,8 +191,8 @@ int main (int argc, char* argv[])
         if (ids.empty())
             continue;
         std::string geo_name("Polyline-"+std::to_string(k));
-        convertMeshNodesToGeometry(surface_mesh->getNodes(), ids, geo_name,
-            geometry_sets);
+        MeshGeoToolsLib::convertMeshNodesToGeometry(
+            *surface_mesh, ids, geo_name, geometry_sets);
     }
 
     // merge all together
