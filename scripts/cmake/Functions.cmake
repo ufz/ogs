@@ -19,6 +19,10 @@ macro(GET_SOURCE_FILES SOURCE_FILES)
     file(GLOB GET_SOURCE_FILES_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${DIR}/*.cpp)
 
     set(${SOURCE_FILES} ${GET_SOURCE_FILES_HEADERS} ${GET_SOURCE_FILES_TEMPLATES} ${GET_SOURCE_FILES_SOURCES})
+    list(LENGTH ${SOURCE_FILES} NUM_FILES)
+    if(${NUM_FILES} EQUAL 0)
+        message(FATAL_ERROR "No source files found in ${DIR}")
+    endif()
 
     # Adapt DIR var to backslash syntax of SOURCE_GROUP cmd
     if(${ARGC} EQUAL 2)
