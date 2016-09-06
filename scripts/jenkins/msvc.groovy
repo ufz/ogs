@@ -25,7 +25,7 @@ node('visserv3')
         build 'build-de'
     }
 
-    if (env.BRANCH_NAME == 'master') {
+    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
         stage 'Release (Win)'
         withEnv(env64) {
             build 'build', 'package'
@@ -35,7 +35,7 @@ node('visserv3')
             configure 'build-32', '-DOGS_32_BIT=ON -DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
             build 'build-32', 'package'
         }
-        deploy 'build*/*.zip'
+        deploy 'build/*.zip,build-de/*.zip,build-32/*.zip'
     }
 
     stage 'Post (Win)'
@@ -65,7 +65,7 @@ def build(buildDir, target=null) {
 
 def deploy(files) {
     archive "${files}"
-    step([$class: 'S3BucketPublisher', dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'opengeosys', excludedFile: '', flatten: true, gzipFiles: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', sourceFile: "${files}", storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], profileName: 'S3 UFZ', userMetadata: []])
+    step([$class: 'S3BucketPublisher', dontWaitForConcurrentBuildCompletion: true, entries: [[bucket: 'opengeosys', excludedFile: '', flatten: true, gzipFiles: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', sourceFile: "${files}", storageClass: 'STANDARD', uploadFromSlave: true, useServerSideEncryption: false]], profileName: 'S3 UFZ', userMetadata: []])
 }
 
 def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
