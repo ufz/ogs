@@ -367,6 +367,32 @@ if(NOT OGS_USE_MPI)
         square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement
     )
 
+    # Mechanics; Small deformations, Burgers (SDB)
+    AddTest(
+        NAME Mechanics_SDB_cube_1e0_tractionBC
+        PATH Mechanics/Burgers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e0.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        cube_1e0_expected_pcs_0_ts_1_t_0.000100.vtu cube_1e0_pcs_0_ts_1_t_0.000100.vtu displacement displacement
+        cube_1e0_expected_pcs_0_ts_101_t_1.000000.vtu cube_1e0_pcs_0_ts_101_t_1.000000.vtu displacement displacement
+    )
+    AddTest(
+        NAME LARGE_Mechanics_SDB_cube_1e3_tractionBC
+        PATH Mechanics/Burgers
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        cube_1e3_expected_pcs_0_ts_1_t_0.000100.vtu cube_1e3_pcs_0_ts_1_t_0.000100.vtu displacement displacement
+        cube_1e3_expected_pcs_0_ts_101_t_1.000000.vtu cube_1e3_pcs_0_ts_101_t_1.000000.vtu displacement displacement
+    )
+
 else()
     # MPI groundwater flow tests
     AddTest(
