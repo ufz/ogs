@@ -83,7 +83,7 @@ int main (int argc, char* argv[])
     // ToDo check if mesh is read correct and if the mesh is a surface mesh
 
     // check if a node property containing the subsurface ids is available
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&> orig_node_ids(
+    boost::optional<MeshLib::PropertyVector<std::size_t>&> orig_node_ids(
         surface_mesh->getProperties().getPropertyVector<std::size_t>(
             id_prop_name.getValue()));
     // if the node property is not available generate it
