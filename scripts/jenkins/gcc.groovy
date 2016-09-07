@@ -3,8 +3,6 @@ defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
 node('docker')
 {
-    step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
-
     stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 
@@ -56,8 +54,5 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 
     step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,
             projectRulePath: "${parseRulefile}", useProjectRule: true])
-
-    step([$class: 'GitHubCommitNotifier', resultOnFailure: 'FAILURE', statusMessage: [content: 'Finished Jenkins gcc build']])
-
 }
 // *** End helper functions ***

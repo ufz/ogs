@@ -28,6 +28,8 @@ node('docker')
 
     step([$class: 'JUnitResultArchiver',
         testResults: 'build/Tests/testrunner.xml'])
+
+    archive 'build*/*.tar.gz'
 } // end node
 
 
