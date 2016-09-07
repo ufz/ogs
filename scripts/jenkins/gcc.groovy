@@ -19,17 +19,16 @@ node('docker')
         stage 'Test (Linux-Docker)'
         build 'build', 'tests ctest'
 
-        if (env.BRANCH_NAME == 'master') {
-            stage 'Package (Linux-Docker)'
+        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+            stage 'Release (Linux-Docker)'
             build 'build', 'package'
+            archive 'build/*.tar.gz'
         }
+
+        stage 'Post (Linux-Docker)'
+        publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+            'ogs/scripts/jenkins/clang-log-parser.rules'
     }
-
-    stage 'Post (Linux-Docker)'
-    publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-        'ogs/scripts/jenkins/clang-log-parser.rules'
-
-    archive 'build*/*.tar.gz'
 }
 
 def configure(buildDir, cmakeOptions) {
