@@ -47,6 +47,7 @@ void computeBMatrix(DNDX_Type const& dNdx, BMatrixType& b_matrix)
                 b_matrix(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
                 b_matrix(0, i) = dNdx(0, i);
             }
+            break;
         default:
             break;
     }

@@ -243,6 +243,52 @@ if(NOT OGS_USE_MPI)
          temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature
     )
 
+    # Mechanics; Small deformations, linear (SDL)
+    AddTest(
+        NAME Mechanics_SDL_square_1e0_displacementBC
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e0.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        square_1e0_expected_pcs_0_ts_4_t_1.000000.vtu square_1e0_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    )
+    AddTest(
+        NAME Mechanics_SDL_square_1e2_tractionBC
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        square_1e2_expected_pcs_0_ts_4_t_1.000000.vtu square_1e2_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    )
+    AddTest(
+        NAME LARGE_Mechanics_SDL_disc_with_hole
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS disc_with_hole.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        disc_with_hole_expected_pcs_0_ts_4_t_1.000000.vtu disc_with_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    )
+    AddTest(
+        NAME LARGE_Mechanics_SDL_square_1e5_tractionBC
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e5.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-16 RELTOL 1e-16
+        DIFF_DATA
+        square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    )
+
 else()
     # MPI groundwater flow tests
     AddTest(

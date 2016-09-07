@@ -12,6 +12,8 @@ APPEND_SOURCE_FILES(SOURCES Parameter)
 add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
+APPEND_SOURCE_FILES(SOURCES SmallDeformation)
+
 add_subdirectory(TES)
 APPEND_SOURCE_FILES(SOURCES TES)
 

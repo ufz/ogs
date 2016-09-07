@@ -39,13 +39,15 @@ struct KelvinVectorDimensions<3>
 
 /// Kelvin vector type for given displacement dimension.
 /// \note The Eigen vector is always a fixed size vector in contrast to the
-/// BMatrixPolicyType::StressVectorType.
+/// BMatrixPolicyType::KelvinVectorType.
 template <int DisplacementDim>
 using KelvinVectorType =
     Eigen::Matrix<double, KelvinVectorDimensions<DisplacementDim>::value, 1,
                   Eigen::ColMajor>;
 
 /// Kelvin matrix type for given displacement dimension.
+/// \note The Eigen matrix is always a fixed size matrix in contrast to the
+/// BMatrixPolicyType::KelvinMatrixType.
 template <int DisplacementDim>
 using KelvinMatrixType =
     Eigen::Matrix<double, KelvinVectorDimensions<DisplacementDim>::value,
@@ -80,11 +82,13 @@ public:
     /// Rhs residual
     using NodalForceVectorType = VectorType<_number_of_dof>;
 
-    /// Sigma
-    using StressVectorType = VectorType<_kelvin_vector_size>;
+    /// This type can be different (fixed vs. dynamic size) from the
+    /// ProcessLib::KelvinVectorType.
+    using KelvinVectorType = VectorType<_kelvin_vector_size>;
 
-    /// C
-    using ModulusMatrixType =
+    /// This type can be different (fixed vs. dynamic size) from the
+    /// ProcessLib::KelvinMatrixType.
+    using KelvinMatrixType =
         MatrixType<_kelvin_vector_size, _kelvin_vector_size>;
 
     using BMatrixType = MatrixType<_kelvin_vector_size, _number_of_dof>;
