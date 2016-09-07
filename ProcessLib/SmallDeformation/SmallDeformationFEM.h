@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/Lubby2.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
