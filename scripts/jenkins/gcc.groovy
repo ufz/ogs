@@ -24,11 +24,11 @@ node('docker')
             build 'build', 'package'
             archive 'build/*.tar.gz'
         }
-
-        stage 'Post (Linux-Docker)'
-        publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-            'ogs/scripts/jenkins/clang-log-parser.rules'
     }
+
+    stage 'Post (Linux-Docker)'
+    publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+        'ogs/scripts/jenkins/clang-log-parser.rules'
 }
 
 def configure(buildDir, cmakeOptions) {
