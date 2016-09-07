@@ -17,11 +17,6 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     set(COMPILER_IS_MSVC TRUE CACHE INTERNAL "")
 endif() # CMAKE_CXX_COMPILER_ID
 
-# Better Clang warning suppression, see http://www.openwalnut.org/issues/230
-if(NOT COMPILER_IS_MSVC)
-    set( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem" CACHE STRING "" FORCE )
-endif()
-
 # When static libraries are used in some shared libraries it is required that
 # also the static libraries have position independent code.
 if(BUILD_SHARED_LIBS)
