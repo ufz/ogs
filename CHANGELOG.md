@@ -2,6 +2,8 @@
 # 6.0.7 (in preparation)
 
 ### Features:
+ - Add small deformation process with linear elastic material model. The
+   implementation is based on the Kelvin mapping. #1340
  - Finalize support for multicomponent boundary conditions adding configuration
    parser. #1343
  - Added uniform Robin boundary condition. #1336
@@ -12,6 +14,7 @@
 
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
+ - Fix usage of `boost::optional<T const&>`, which has changed in version 1.61. #1385
 
 # 6.0.6
 
