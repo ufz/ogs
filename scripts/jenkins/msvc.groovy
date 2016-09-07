@@ -1,6 +1,5 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
-env32 = ['ARCH=msvc2013-x32', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;C:\\Tools\\Conan\\conan']
 env64 = ['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin']
 
 node('visserv3')
@@ -27,11 +26,7 @@ node('visserv3')
 
     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
         stage 'Release (Win)'
-        withEnv(env32) {
-            configure 'build-32', '-DOGS_32_BIT=ON -DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
-            build 'build-32', 'package'
-        }
-        deploy 'build/*.zip,build-32/*.zip'
+        deploy 'build/*.zip
     }
 
     stage 'Post (Win)'
