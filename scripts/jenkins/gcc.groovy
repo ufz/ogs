@@ -22,8 +22,11 @@ node('docker')
         if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
             stage 'Release (Linux-Docker)'
             build 'build', 'package'
-            archive 'build/*.tar.gz'
         }
+    }
+
+    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+        archive 'build/*.tar.gz'
     }
 
     stage 'Post (Linux-Docker)'
