@@ -26,7 +26,7 @@ node('visserv3')
 
     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
         stage 'Release (Win)'
-        deploy 'build/*.zip
+        archive 'build/*.zip
     }
 
     stage 'Post (Win)'

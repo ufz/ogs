@@ -9,12 +9,12 @@ node('win1')
     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
         step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins MSVC32 build']])
 
-        stage 'Release (Win)'
+        stage 'Data Explorer (Win)'
         withEnv(env32) {
             configure 'build-32', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Visual Studio 12', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86'
             build 'build-32', 'package'
         }
-        deploy 'build-32/*.zip'
+        archive 'build-32/*.zip'
     }
 }
 
