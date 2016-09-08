@@ -1,13 +1,11 @@
-defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DCMAKE_BUILD_TYPE=Release -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
-env64 = ['ARCH=msvc2013-x64', 'CMAKE_LIBRARY_SEARCH_PATH=C:\\libs\\$ARCH', 'QTDIR=C:\\libs\\qt\\4.8\\$ARCH', 'Path=$Path;$QTDIR\\bin;$CMAKE_LIBRARY_SEARCH_PATH\\bin','CONAN_CMAKE_GENERATOR=Ninja']
 
-node('visserv3')
+node('win && conan')
 {
     stage 'Checkout (Win)'
     dir('ogs') { checkout scm }
 
-    withEnv(env64) {
+    withEnv(getEnv()) {
         stage 'Configure (Win)'
         configure 'build', '', 'Ninja',
             '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86_64'
@@ -36,6 +34,21 @@ node('visserv3')
 }
 
 // *** Helper functions ***
+def getEnv()
+{
+    if (env.NODE_NAME == 'visserv3')
+        qtdir = 'C:\\libs\\qt\\4.8\\msvc2013-x64'
+    if (env.NODE_NAME == 'win1')
+        qtdir = 'C:\\libs\\qt-4.8.7-x64-msvc2013\\qt-4.8.7-x64-msvc2013'
+
+    return [
+        "QTDIR=${qtdir}",
+        'Path=$Path;$QTDIR\\bin',
+        'CONAN_CMAKE_GENERATOR=Ninja'
+    ]
+}
+
+
 def configure(buildDir, cmakeOptions, generator, conan_args=null, keepBuildDir=false) {
     if (keepBuildDir == false)
         bat("""rd /S /Q ${buildDir}
