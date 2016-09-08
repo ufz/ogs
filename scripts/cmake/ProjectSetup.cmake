@@ -33,9 +33,7 @@ include(GetGitRevisionDescription)
 GET_GIT_HEAD_REVISION(GIT_REFSPEC GIT_SHA1)
 string(SUBSTRING ${GIT_SHA1} 0 8 GIT_SHA1_SHORT)
 
-if($ENV{CI})
-    set(OGS_VERSION 6.6.6) # Dummy version for CI-environment (Travis) or subproject
-elseif(IS_SUBPROJECT)
+if(IS_SUBPROJECT)
     set(OGS_VERSION x.x.x)
 else()
     GIT_GET_TAG(GIT_DESCRIBE)

@@ -3,8 +3,6 @@ defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
 node('docker')
 {
-    step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins gcc build']])
-
     stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 
@@ -19,17 +17,19 @@ node('docker')
         stage 'Test (Linux-Docker)'
         build 'build', 'tests ctest'
 
-        if (env.BRANCH_NAME == 'master') {
-            stage 'Package (Linux-Docker)'
+        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+            stage 'Release (Linux-Docker)'
             build 'build', 'package'
         }
+    }
+
+    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+        archive 'build/*.tar.gz'
     }
 
     stage 'Post (Linux-Docker)'
     publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules'
-
-    archive 'build*/*.tar.gz'
 }
 
 def configure(buildDir, cmakeOptions) {
@@ -54,8 +54,5 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
 
     step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,
             projectRulePath: "${parseRulefile}", useProjectRule: true])
-
-    step([$class: 'GitHubCommitNotifier', resultOnFailure: 'FAILURE', statusMessage: [content: 'Finished Jenkins gcc build']])
-
 }
 // *** End helper functions ***
