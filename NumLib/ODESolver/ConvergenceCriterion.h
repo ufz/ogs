@@ -73,7 +73,7 @@ public:
     //! Tell if the convergence criterion is satisfied.
     virtual bool isSatisfied() const = 0;
 
-    ~ConvergenceCriterion() = default;
+    virtual ~ConvergenceCriterion() = default;
 };
 
 //! Creates a convergence criterion from the given configuration.

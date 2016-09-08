@@ -75,6 +75,7 @@ public:
         virtual void addSurfaceVec(std::string const&){}
         virtual void appendSurfaceVec(std::string const&){}
         virtual void removeSurfaceVec(std::string const&){}
+        virtual ~Callbacks() = default;
     };
 
 public:

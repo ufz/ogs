@@ -67,7 +67,7 @@ public:
 
 protected:
     LayeredMeshGenerator();
-    ~LayeredMeshGenerator() {}
+    virtual ~LayeredMeshGenerator() = default;
 
     /// Adds another layer to the subsurface mesh
     virtual void addLayerToMesh(MeshLib::Mesh const& mesh_layer, unsigned layer_id, GeoLib::Raster const& raster) = 0;
