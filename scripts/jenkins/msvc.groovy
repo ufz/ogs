@@ -9,7 +9,8 @@ node('visserv3')
 
     withEnv(env64) {
         stage 'Configure (Win)'
-        configure 'build', '', 'Ninja'
+        configure 'build', '', 'Ninja',
+            '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86_64'
 
         stage 'CLI (Win)'
         build 'build', 'package'
@@ -19,7 +20,8 @@ node('visserv3')
 
         stage 'Data Explorer (Win)'
         configure 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
-            'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86_64'
+            'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s arch=x86_64',
+            true
         build 'build', 'package'
     }
 
@@ -34,9 +36,10 @@ node('visserv3')
 }
 
 // *** Helper functions ***
-def configure(buildDir, cmakeOptions, generator, conan_args=null) {
-    bat("""rd /S /Q ${buildDir}
-           mkdir ${buildDir}""".stripIndent())
+def configure(buildDir, cmakeOptions, generator, conan_args=null, keepBuildDir=false) {
+    if (keepBuildDir == false)
+        bat("""rd /S /Q ${buildDir}
+               mkdir ${buildDir}""".stripIndent())
     if (conan_args != null)
         bat("""cd ${buildDir}
                conan install ../ogs ${conan_args}""".stripIndent())
