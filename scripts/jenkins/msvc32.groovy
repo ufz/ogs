@@ -52,9 +52,4 @@ def build(buildDir, target=null) {
            cd ${buildDir}
            cmake --build . --config Release ${targetString}""".stripIndent())
 }
-
-def deploy(files) {
-    // archive "${files}"
-    step([$class: 'S3BucketPublisher', dontWaitForConcurrentBuildCompletion: true, entries: [[bucket: 'opengeosys', excludedFile: '', flatten: true, gzipFiles: false, managedArtifacts: true, noUploadOnFailure: true, selectedRegion: 'eu-central-1', sourceFile: "${files}", storageClass: 'STANDARD', uploadFromSlave: true, useServerSideEncryption: false]], profileName: 'S3 UFZ', userMetadata: []])
-}
 // *** End helper functions ***
