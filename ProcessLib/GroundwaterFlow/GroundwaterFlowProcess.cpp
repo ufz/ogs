@@ -24,11 +24,10 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     GroundwaterFlowProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    ProcessOutput&& process_output,
     NumLib::NamedFunctionCaller&& named_function_caller)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               std::move(process_variables), std::move(secondary_variables),
-              std::move(process_output), std::move(named_function_caller)),
+              std::move(named_function_caller)),
       _process_data(std::move(process_data))
 {
 }
@@ -83,6 +82,9 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
     const double dxdot_dx, const double dx_dx, GlobalMatrix& M, GlobalMatrix& K,
     GlobalVector& b, GlobalMatrix& Jac)
 {
+    DBUG("AssembleWithJacobian GroundwaterFlowProcess.");
+
+    // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, *_local_to_global_index_map, t, x, xdot, dxdot_dx,

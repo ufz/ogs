@@ -68,12 +68,12 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        unsigned const integration_order,
                        GroundwaterFlowProcessData const& process_data)
-        : _element(element)
-        , _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod, GlobalDim>(
-                  element, integration_order))
-        , _process_data(process_data)
+        : _element(element),
+          _process_data(process_data),
           _integration_method(integration_order),
+          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                            IntegrationMethod, GlobalDim>(
+              element, _integration_method))
     {
     }
 
