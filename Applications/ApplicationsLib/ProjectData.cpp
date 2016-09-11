@@ -255,7 +255,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
         std::unique_ptr<ProcessLib::Process> process;
 
         auto jacobian_assembler = ProcessLib::createJacobianAssembler(
-            pc.getConfigSubtreeOptional("jacobian_assembler"));
+            process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
         if (type == "GROUNDWATER_FLOW")
         {
@@ -265,17 +265,20 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
             // several meshes. Then we have to assign the referenced mesh
             // here.
             process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler), _process_variables, _parameters, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, process_config);
         }
         else if (type == "TES")
         {
             process = ProcessLib::TES::createTESProcess(
-                *_mesh_vec[0], _process_variables, _parameters, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, process_config);
         }
         else if (type == "HEAT_CONDUCTION")
         {
             process = ProcessLib::HeatConduction::createHeatConductionProcess(
-                *_mesh_vec[0], _process_variables, _parameters, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, process_config);
         }
         else if (type == "SMALL_DEFORMATION")
         {
@@ -284,14 +287,14 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
                 case 2:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<2>(
-                            *_mesh_vec[0], _process_variables, _parameters,
-                            process_config);
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, process_config);
                     break;
                 case 3:
                     process = ProcessLib::SmallDeformation::
                         createSmallDeformationProcess<3>(
-                            *_mesh_vec[0], _process_variables, _parameters,
-                            process_config);
+                            *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters, process_config);
                     break;
                 default:
                     OGS_FATAL(
