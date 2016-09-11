@@ -25,6 +25,8 @@ class HeatConductionProcess final : public Process
 public:
     HeatConductionProcess(
         MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
@@ -47,6 +49,11 @@ private:
     void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b) override;
+
+    void assembleWithJacobianConcreteProcess(
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     HeatConductionProcessData _process_data;
 
