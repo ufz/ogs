@@ -63,7 +63,7 @@ TESProcess::TESProcess(
     const BaseLib::ConfigTree& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               std::move(process_variables), std::move(secondary_variables),
-              std::move(process_output), std::move(named_function_caller))
+              std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 

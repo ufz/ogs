@@ -121,7 +121,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
          static_cast<const unsigned>(
              _shape_matrices.front()
                  .N.cols()) /* number of integration points */,
-         GlobalDim),
+         GlobalDim)
 {
 }
 
