@@ -13,6 +13,10 @@ node('master') {
     parallel builders
 
     step([$class: 'GitHubCommitStatusSetter'])
+
+    if (env.BRANCH_NAME == 'master') {
+        build job: 'OGS-6/Deploy', wait: false
+    }
 }
 
 properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])

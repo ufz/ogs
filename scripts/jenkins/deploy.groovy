@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 
 node('master') {
+    stage 'Deploy to S3'
     step([$class: 'CopyArtifact', fingerprintArtifacts: true, flatten: true, projectName: 'OGS-6/ufz/master'])
     s3upload('*')
     build job: 'OGS-6/Deploy-Post', wait: false
