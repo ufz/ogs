@@ -69,11 +69,13 @@ createSmallDeformationProcess(
     auto const type =
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<Solids::MechanicsBase<DisplacementDim>> material = nullptr;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        material = nullptr;
     if (type == "LinearElasticIsotropic")
     {
-        material = Solids::createLinearElasticIsotropic<DisplacementDim>(
-            parameters, constitutive_relation_config);
+        material =
+            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
+                parameters, constitutive_relation_config);
     }
     else
     {

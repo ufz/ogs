@@ -13,6 +13,8 @@
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 #include "LinearElasticIsotropic.h"
 
+namespace MaterialLib
+{
 namespace Solids
 {
 
@@ -45,5 +47,6 @@ createLinearElasticIsotropic(
 }
 
 }  // namespace Solids
+}  // namespace MaterialLib
 
 #endif  // MATERIALLIB_SOLIDMODELS_CREATELINEARELASTICISOTROPIC_H_

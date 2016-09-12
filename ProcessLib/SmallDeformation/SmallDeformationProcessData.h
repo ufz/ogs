@@ -23,7 +23,8 @@ template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
     SmallDeformationProcessData(
-        std::unique_ptr<Solids::MechanicsBase<DisplacementDim>>&& material)
+        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>&&
+            material)
         : _material{std::move(material)}
     {
     }
@@ -42,7 +43,8 @@ struct SmallDeformationProcessData
     //! Assignments are not needed.
     void operator=(SmallDeformationProcessData&&) = delete;
 
-    std::unique_ptr<Solids::MechanicsBase<DisplacementDim>> _material;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        _material;
     double dt;
     double t;
 };

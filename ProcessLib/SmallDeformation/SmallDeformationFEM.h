@@ -31,7 +31,7 @@ template <typename BMatricesType, int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
         : _solid_material(solid_material),
           _material_state_variables(
               _solid_material.createMaterialStateVariables())
@@ -59,9 +59,9 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType _sigma, _sigma_prev;
     typename BMatricesType::KelvinVectorType _eps, _eps_prev;
 
-    Solids::MechanicsBase<DisplacementDim>& _solid_material;
-    std::unique_ptr<
-        typename Solids::MechanicsBase<DisplacementDim>::MaterialStateVariables>
+    MaterialLib::Solids::MechanicsBase<DisplacementDim>& _solid_material;
+    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables>
         _material_state_variables;
 
     typename BMatricesType::KelvinMatrixType _C;

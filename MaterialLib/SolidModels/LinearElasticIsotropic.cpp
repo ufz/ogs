@@ -9,11 +9,13 @@
 
 #include "LinearElasticIsotropic.h"
 
+namespace MaterialLib
+{
 namespace Solids
 {
 
 template class LinearElasticIsotropic<2>;
 template class LinearElasticIsotropic<3>;
 
-
 }   // namespace Solids
+}   // namespace MaterialLib

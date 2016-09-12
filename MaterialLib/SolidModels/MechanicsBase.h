@@ -20,6 +20,8 @@ namespace MeshLib
 class Element;
 }
 
+namespace MaterialLib
+{
 namespace Solids
 {
 /// Interface for mechanical solid material models. Provides updates of the
@@ -105,6 +107,8 @@ struct MechanicsBase
 
     virtual ~MechanicsBase() = default;
 };
-}
+
+}  // namespace Solids
+}  // namespace MaterialLib
 
 #endif  // MATERIALLIB_SOLIDMODELS_MECHANICSBASE_H_

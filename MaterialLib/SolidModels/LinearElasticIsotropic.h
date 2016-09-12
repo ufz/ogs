@@ -12,6 +12,8 @@
 
 #include "MechanicsBase.h"
 
+namespace MaterialLib
+{
 namespace Solids
 {
 template <int DisplacementDim>
@@ -101,12 +103,10 @@ private:
     MaterialProperties _mp;
 };
 
-}  // namespace Solids
-
-namespace Solids
-{
 extern template class LinearElasticIsotropic<2>;
 extern template class LinearElasticIsotropic<3>;
+
 }  // namespace Solids
+}  // namespace MaterialLib
 
 #endif  // MATERIALLIB_SOLIDMODELS_LINEARELASTICISOTROPIC_H_
