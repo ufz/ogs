@@ -11,6 +11,7 @@
 #define PROCESSLIB_LOCALASSEMBLERINTERFACE_H
 
 #include "NumLib/NumericsConfig.h"
+#include "MathLib/Point3d.h"
 
 namespace NumLib
 {
@@ -52,6 +53,15 @@ public:
     virtual void postTimestep(std::size_t const mesh_item_id,
                               NumLib::LocalToGlobalIndexMap const& dof_table,
                               GlobalVector const& x);
+
+    /// Computes the flux in the point \c p_local_coords that is given in local
+    /// coordinates using the values from \c local_x.
+    virtual std::vector<double> getFlux(
+        MathLib::Point3d const& p_local_coords,
+        std::vector<double> const& local_x) const
+    {
+        return std::vector<double>();
+    }
 
 private:
     virtual void preTimestepConcrete(std::vector<double> const& /*local_x*/,
