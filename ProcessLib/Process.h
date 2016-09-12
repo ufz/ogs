@@ -79,8 +79,7 @@ public:
                               GlobalMatrix& Jac) override final;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(
-        double const t) const override final
+    getKnownSolutions(double const t) const override final
     {
         return _boundary_conditions.getKnownSolutions(t);
     }
@@ -101,6 +100,14 @@ public:
     SecondaryVariableCollection const& getSecondaryVariables() const
     {
         return _secondary_variables;
+    }
+
+    // used as call back for CalculateSurfaceFlux process
+    virtual std::vector<double> getFlux(std::size_t element_id,
+                                        MathLib::Point3d const& p,
+                                        GlobalVector const&) const
+    {
+        return std::vector<double>{};
     }
 
 protected:
