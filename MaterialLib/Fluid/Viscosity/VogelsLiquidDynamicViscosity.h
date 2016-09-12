@@ -78,7 +78,7 @@ private:
         {-24.0592, 28535.2, 1037.41},  // Carbon dioxide
         {-25.5947, 25392, 969.306}};   // Methane
 
-    /// Address of the data array in _constants for given liquid type.
+    /// Parameter vector in _constants for a given liquid type.
     const std::vector<double>& _abc;
 };
 

@@ -21,9 +21,9 @@ using namespace MaterialLib;
 using namespace MaterialLib::PorousMedium;
 
 // Mock of the gradient of shape functions
-struct MockGrabPhi
+struct MockGradPhi
 {
-    MockGrabPhi()
+    MockGradPhi()
     {
         dphi.resize(3, 3);
         dphi(0, 0) = 1.0;
@@ -43,7 +43,7 @@ struct MockGrabPhi
     CoefMatrix trans_dphi;
 };
 
-static MockGrabPhi mock_grad_phi;
+static MockGradPhi mock_grad_phi;
 
 CoefMatrix createTestPermeabilityModel(const char xml[])
 {
@@ -51,7 +51,7 @@ CoefMatrix createTestPermeabilityModel(const char xml[])
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("permeability");
-    return MaterialLib::PorousMedium::createPermeabilityModel(&sub_config);
+    return MaterialLib::PorousMedium::createPermeabilityModel(sub_config);
 }
 
 TEST(Material, checkAnisotropicPermeability)

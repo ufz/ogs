@@ -55,17 +55,17 @@ public:
     /// \param config  ConfigTree object which contains the input data
     ///                 including  <type>fluid</type> and it has
     ///                 a tag of <density>
-    LiquidDensity(BaseLib::ConfigTree const* const config)
+    LiquidDensity(BaseLib::ConfigTree const& config)
         :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
-          _beta(config->getConfigParameter<double>("beta")),
+    _beta(config.getConfigParameter<double>("beta")),
           //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
-          _rho0(config->getConfigParameter<double>("rho0")),
+    _rho0(config.getConfigParameter<double>("rho0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
-          _temperature0(config->getConfigParameter<double>("temperature0")),
+    _temperature0(config.getConfigParameter<double>("temperature0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__p0}
-          _p0(config->getConfigParameter<double>("p0")),
+    _p0(config.getConfigParameter<double>("p0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
-          _bulk_moudlus(config->getConfigParameter<double>("bulk_modulus")),
+    _bulk_moudlus(config.getConfigParameter<double>("bulk_modulus")),
           _derivative_functions{&LiquidDensity::dLiquidDensity_dT,
                                 &LiquidDensity::dLiquidDensity_dp}
     {

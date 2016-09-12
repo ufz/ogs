@@ -88,11 +88,11 @@ private:
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);
     }
 
-    typedef double (IdealGasLaw::*ptr2_derivative_f)(const double,
+    typedef double (IdealGasLaw::*DerivativeFunctionPointer)(const double,
                                                      const double) const;
 
     /// An array of pointer to derivative functions.
-    ptr2_derivative_f _derivative_functions[2];
+    DerivativeFunctionPointer _derivative_functions[2];
 };
 }  // end namespace
 }  // end namespace

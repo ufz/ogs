@@ -25,13 +25,13 @@ using namespace MaterialLib::PorousMedium;
 
 //----------------------------------------------------------------------------
 // Test storage models.
-Storage* createTestStorageModel(const char xml[])
+std::unique_ptr<Storage> createTestStorageModel(const char xml[])
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("storage");
-    return MaterialLib::PorousMedium::createStorageModel(&sub_config);
+    return MaterialLib::PorousMedium::createStorageModel(sub_config);
 }
 
 TEST(Material, checkConstantStorage)
@@ -41,20 +41,20 @@ TEST(Material, checkConstantStorage)
         "   <type>constant</type>"
         "   <value> 1.e-4 </value> "
         "</storage>";
-    std::unique_ptr<Storage> eta(createTestStorageModel(xml));
+    auto const eta = createTestStorageModel(xml);
 
     ASSERT_EQ(1.e-4, eta->getValue());
 }
 
 //----------------------------------------------------------------------------
 // Test porosity models.
-Porosity* createTestPorosityModel(const char xml[])
+std::unique_ptr<Porosity> createTestPorosityModel(const char xml[])
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("porosity");
-    return MaterialLib::PorousMedium::createPorosityModel(&sub_config);
+    return MaterialLib::PorousMedium::createPorosityModel(sub_config);
 }
 
 TEST(Material, checkConstantPorosity)
@@ -64,7 +64,7 @@ TEST(Material, checkConstantPorosity)
         "   <type>constant</type>"
         "   <value> 0.2 </value> "
         "</porosity>";
-    std::unique_ptr<Porosity> n(createTestPorosityModel(xml));
+    auto const n = createTestPorosityModel(xml);
 
     ASSERT_EQ(0.2, n->getValue());
 }

@@ -11,6 +11,8 @@
 #ifndef CREATE_FLUID_DENSITY_MODEL_H_
 #define CREATE_FLUID_DENSITY_MODEL_H_
 
+#include <memory>
+
 #include "BaseLib/ConfigTree.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
@@ -21,7 +23,7 @@ namespace Fluid
 {
 /// Create a density model
 /// \param config  ConfigTree object has a tag of <density>
-FluidProperty* createFluidDensityModel(BaseLib::ConfigTree const* const config);
+std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const& config);
 }
 }  // end namespace
 #endif

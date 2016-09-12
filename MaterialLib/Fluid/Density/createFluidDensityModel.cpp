@@ -22,31 +22,35 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-FluidProperty* createFluidDensityModel(BaseLib::ConfigTree const* const config)
+std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fluid__density__type}
-    auto const type = config->getConfigParameter<std::string>("type");
+    auto const type = config.getConfigParameter<std::string>("type");
 
-    if (type.find("constant") != std::string::npos)
+    if (type == "constant")
     {
-        //! \ogs_file_param{material__fluid__density__value}
-        return new ConstantFluidProperty(
-            config->getConfigParameter<double>("value"));
+        return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
+            //! \ogs_file_param{material__fluid__density__constant_value}
+            config.getConfigParameter<double>("value")) );
     }
-    else if (type.find("liquid_density") != std::string::npos)
-        return new LiquidDensity(config);
-    else if (type.find("temperature_dependent") != std::string::npos)
-        return new LinearTemperatureDependentDensity(config);
-    else if (type.find("ideal_gas_law") != std::string::npos)
+    //! \ogs_file_param{material__fluid__density__LiquidDensity}
+    else if (type == "LiquidDensity")
+        return std::unique_ptr<FluidProperty>(new LiquidDensity(config));
+    //! \ogs_file_param{material__fluid__density__TemperatureDependent}
+    else if (type == "TemperatureDependent")
+        return std::unique_ptr<FluidProperty>(
+                new LinearTemperatureDependentDensity(config));
+    //! \ogs_file_param{material__fluid__density__IdealGasLaw}
+    else if (type == "IdealGasLaw")
     {
-        //! \ogs_file_param{material__fluid__density__ideal_gas_law__malar_mass}
-        return new IdealGasLaw(
-            config->getConfigParameter<double>("molar_mass"));
+        //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
+        return std::unique_ptr<FluidProperty>(new IdealGasLaw(
+            config.getConfigParameter<double>("molar_mass")) );
     }
     else
     {
         OGS_FATAL(
-            "The density type is unavailable.\n"
+            "The density type %s is unavailable.\n", type.data(),
             "The available types are liquid_density "
             "temperature_dependent and ideal_gas_law");
     }

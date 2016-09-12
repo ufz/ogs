@@ -13,6 +13,8 @@
 #ifndef CREATEPOROSITYMODEL_H
 #define CREATEPOROSITYMODEL_H
 
+#include <memory>
+
 #include "Porosity.h"
 
 #include "BaseLib/ConfigTree.h"
@@ -23,7 +25,7 @@ namespace PorousMedium
 {
 /// Create a porosity model
 /// \param config  ConfigTree object has a tag of <porosity>
-Porosity* createPorosityModel(BaseLib::ConfigTree const* const config);
+std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace

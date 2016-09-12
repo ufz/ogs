@@ -25,7 +25,7 @@ using CoefMatrix = Eigen::MatrixXd;
 
 /// Create a porosity model
 /// \param config  ConfigTree object has a tag of <permeability>
-CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const* const config);
+CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const& config);
 
 }  // end of namespace
 }  // end of namespace

@@ -13,6 +13,8 @@
 #ifndef CREATE_VISCOSITY_MODEL_H_
 #define CREATE_VISCOSITY_MODEL_H_
 
+#include <memory>
+
 #include "BaseLib/ConfigTree.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
@@ -23,7 +25,7 @@ namespace Fluid
 {
 /// Create a viscosity model
 /// \param config  ConfigTree object has a tag of <viscosity>
-FluidProperty* createViscosityModel(BaseLib::ConfigTree const* const config);
+std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace

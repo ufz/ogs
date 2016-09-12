@@ -29,13 +29,13 @@ using namespace MaterialLib::Fluid;
 
 //----------------------------------------------------------------------------
 // Test density models.
-FluidProperty* createTestFluidDensityModel(const char xml[])
+std::unique_ptr<FluidProperty> createTestFluidDensityModel(const char xml[])
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("density");
-    return MaterialLib::Fluid::createFluidDensityModel(&sub_config);
+    return MaterialLib::Fluid::createFluidDensityModel(sub_config);
 }
 
 TEST(Material, checkConstantDensity)
@@ -45,7 +45,7 @@ TEST(Material, checkConstantDensity)
         "   <type>constant</type>"
         "   <value> 998.0 </value> "
         "</density>";
-    std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
+    const auto rho = createTestFluidDensityModel(xml);
 
     ASSERT_EQ(998.0, rho->getValue(nullptr));
     ASSERT_EQ(0.0,
@@ -56,10 +56,10 @@ TEST(Material, checkIdealGasLaw)
 {
     const char xml[] =
         "<density>"
-        "   <type>ideal_gas_law</type>"
+        "   <type>IdealGasLaw</type>"
         "   <molar_mass> 28.96 </molar_mass> "
         "</density>";
-    std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
+    const auto rho = createTestFluidDensityModel(xml);
 
     const double molar_air = 28.96;
     const double T = 290.;
@@ -82,13 +82,13 @@ TEST(Material, checkLinearTemperatureDependentDensity)
 {
     const char xml[] =
         "<density>"
-        "   <type>temperature_dependent</type>"
+        "   <type>TemperatureDependent</type>"
         "   <temperature0> 293.0 </temperature0> "
         "   <beta> 4.3e-4 </beta> "
         "   <rho0>1000.</rho0>"
         "</density>";
 
-    std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
+    const auto rho = createTestFluidDensityModel(xml);
 
     double vars[] = {273.1 + 60.0};
     ASSERT_NEAR(1000.0 * (1 + 4.3e-4 * (vars[0] - 293.0)), rho->getValue(vars),
@@ -101,14 +101,14 @@ TEST(Material, checkLiquidDensity)
 {
     const char xml[] =
         "<density>"
-        "   <type>liquid_density</type>"
+        "   <type>LiquidDensity</type>"
         "   <temperature0> 273.15 </temperature0> "
         "   <p0> 1.e+5 </p0> "
         "   <bulk_modulus> 2.15e+9 </bulk_modulus> "
         "   <beta> 2.0e-4 </beta> "
         "   <rho0>999.8</rho0>"
         "</density>";
-    std::unique_ptr<FluidProperty> rho(createTestFluidDensityModel(xml));
+    const auto rho = createTestFluidDensityModel(xml);
 
     const double vars[] = {273.15 + 60.0, 1.e+6};
     const double T0 = 273.15;
@@ -135,13 +135,13 @@ TEST(Material, checkLiquidDensity)
 
 //----------------------------------------------------------------------------
 // Test viscosity models.
-FluidProperty* createTestViscosityModel(const char xml[])
+std::unique_ptr<FluidProperty> createTestViscosityModel(const char xml[])
 {
     auto const ptree = readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("viscosity");
-    return MaterialLib::Fluid::createViscosityModel(&sub_config);
+    return MaterialLib::Fluid::createViscosityModel(sub_config);
 }
 
 TEST(Material, checkConstantViscosity)
@@ -151,7 +151,7 @@ TEST(Material, checkConstantViscosity)
         "   <type>constant</type>"
         "   <value> 1.e-4 </value> "
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu(createTestViscosityModel(xml));
+    auto const mu = createTestViscosityModel(xml);
 
     ASSERT_EQ(1.e-4, mu->getValue(nullptr));
     ASSERT_EQ(0.0,
@@ -162,12 +162,12 @@ TEST(Material, checkTemperatureDependentViscosity)
 {
     const char xml[] =
         "<viscosity>"
-        "  <type>temperature_dependent</type>"
+        "  <type>TemperatureDependent</type>"
         "  <mu0>1.e-3 </mu0>"
         "   <tc>293.</tc>"
         "   <tv>368.</tv>"
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu(createTestViscosityModel(xml));
+    auto const mu = createTestViscosityModel(xml);
 
     const double vars[] = {350.0};
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
@@ -183,12 +183,12 @@ TEST(Material, checkLinearPressureDependentViscosity)
 {
     const char xml[] =
         "<viscosity>"
-        "  <type>linear_pressure</type>"
+        "  <type>LinearPressure</type>"
         "  <mu0>1.e-3 </mu0>"
         "   <p0>1.e+5</p0>"
         "   <gamma>1.e-6</gamma>"
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu(createTestViscosityModel(xml));
+    const auto mu = createTestViscosityModel(xml);
 
     const double vars[] = {293, 2.e+6};
     // Test the density.
@@ -204,10 +204,10 @@ TEST(Material, checkVogelViscosity)
 {
     const char xml_w[] =
         "<viscosity>"
-        "  <type>vogels</type>"
+        "  <type>Vogels</type>"
         "  <liquid_type>water </liquid_type>"
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu_w(createTestViscosityModel(xml_w));
+    const auto mu_w = createTestViscosityModel(xml_w);
     double vars[] = {303.0};
     const auto var_type = MaterialLib::Fluid::PropertyVariable::T;
     ASSERT_NEAR(0.802657e-3, mu_w->getValue(vars), 1.e-5);
@@ -215,20 +215,20 @@ TEST(Material, checkVogelViscosity)
 
     const char xml_co2[] =
         "<viscosity>"
-        "  <type>vogels</type>"
+        "  <type>Vogels</type>"
         "  <liquid_type> CO2 </liquid_type>"
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu_co2(createTestViscosityModel(xml_co2));
+    const auto mu_co2 = createTestViscosityModel(xml_co2);
     vars[0] = 255.04;
     ASSERT_NEAR(0.137956e-3, mu_co2->getValue(vars), 1.e-5);
     ASSERT_NEAR(-2.35664e-6, mu_co2->getdValue(vars, var_type), 1.e-5);
 
     const char xml_ch4[] =
         "<viscosity>"
-        "  <type>vogels</type>"
+        "  <type>Vogels</type>"
         "  <liquid_type> CH4 </liquid_type>"
         "</viscosity>";
-    std::unique_ptr<FluidProperty> mu_ch4(createTestViscosityModel(xml_ch4));
+    const auto mu_ch4 = createTestViscosityModel(xml_ch4);
     vars[0] = 172.0;
     ASSERT_NEAR(0.352072e-4, mu_ch4->getValue(vars), 1.e-5);
     ASSERT_NEAR(-2.35664e-6, mu_ch4->getdValue(vars, var_type), 1.e-5);

@@ -31,7 +31,6 @@ enum class PropertyVariable
 class FluidProperty
 {
 public:
-    FluidProperty() = default;
 
     /// Get model name.
     virtual std::string getName() const = 0;

@@ -21,47 +21,57 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-FluidProperty* createViscosityModel(BaseLib::ConfigTree const* const config)
+std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fluid__viscosity__type}
-    auto const type = config->getConfigParameter<std::string>("type");
+    auto const type = config.getConfigParameter<std::string>("type");
 
-    if (type.find("constant") != std::string::npos)
-        //! \ogs_file_param{material__fluid__viscosity__value}
-        return new ConstantFluidProperty(
-            config->getConfigParameter<double>("value"));
-    else if (type.find("linear_pressure") != std::string::npos)
-        return new LinearPressureDependentViscosity(config);
-    else if (type.find("temperature_dependent") != std::string::npos)
-        return new TemperatureDependentViscosity(config);
-    else if (type.find("vogels") != std::string::npos)
+    if (type == "constant")
+        return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
+            //! \ogs_file_param{material__fluid__viscosity__constant__value}
+            config.getConfigParameter<double>("value")));
+    //! \ogs_file_param{material__fluid__viscosity__LinearPressure}
+    else if (type == "LinearPressure")
+        return std::unique_ptr<FluidProperty>(
+                new LinearPressureDependentViscosity(config));
+    //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent}
+    else if (type == "TemperatureDependent")
+        return std::unique_ptr<FluidProperty>(
+                new TemperatureDependentViscosity(config));
+    //! \ogs_file_param{material__fluid__viscosity__Vogels}
+    else if (type == "Vogels")
     {
-        //! \ogs_file_param{material__fluid__viscosity__vogels__fluid_type}
+        //! \ogs_file_param{material__fluid__viscosity__Vogels__fluid_type}
         auto const fluid_type =
-            config->getConfigParameter<std::string>("liquid_type");
+            config.getConfigParameter<std::string>("liquid_type");
         int type_id = -1;
-        if (fluid_type.find("water") != std::string::npos)
+        //! \ogs_file_param{material__fluid__viscosity__Vogels__water}
+        if (fluid_type == "water")
             type_id = 0;
-        else if (fluid_type.find("CO2") != std::string::npos)
+        //! \ogs_file_param{material__fluid__viscosity__Vogels__CO2}
+        else if (fluid_type == "CO2")
             type_id = 1;
-        else if (fluid_type.find("CH4") != std::string::npos)
+        //! \ogs_file_param{material__fluid__viscosity__Vogels__CH4}
+        else if (fluid_type == "CH4")
             type_id = 2;
 
         if (type_id > -1 && type_id < 3)
         {
-            return new VogelsLiquidDynamicViscosity(type_id);
+            return std::unique_ptr<FluidProperty>(
+                    new VogelsLiquidDynamicViscosity(type_id));
         }
         else
         {
             OGS_FATAL(
-                "The fluid type for Vogels model is unavailable.\n"
+                "The fluid type %s for Vogels model is unavailable.\n",
+                fluid_type.data(),
                 "The available fluid types are water, CO2 and CH4 ");
         }
     }
     else
     {
         OGS_FATAL(
-            "The viscosity type is unavailable.\n"
+            "The viscosity type %s is unavailable.\n", type.data(),
             "The available types are linear_pressure "
             "temperature_dependent and vogels");
     }

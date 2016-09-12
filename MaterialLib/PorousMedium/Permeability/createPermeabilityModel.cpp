@@ -15,18 +15,15 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
-#include "BaseLib/StringTools.h"
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const* const config)
+CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__porous_medium__permeability__values}
-    auto const val_strs = config->getConfigParameter<std::string>("values");
-    std::vector<double> values =
-        BaseLib::convertStringValues2Values<double>(val_strs);
+    auto const values = config.getConfigParameter<std::vector<double>>("values");
 
     auto const data_size = values.size();
 

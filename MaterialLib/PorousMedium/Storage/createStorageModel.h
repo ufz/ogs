@@ -13,6 +13,8 @@
 #ifndef CREATESTORAGEMODEL_H
 #define CREATESTORAGEMODEL_H
 
+#include <memory>
+
 #include "Storage.h"
 
 #include "BaseLib/ConfigTree.h"
@@ -23,7 +25,7 @@ namespace PorousMedium
 {
 /// Create a storage model
 /// \param config  ConfigTree object has a tag of <storage>
-Storage* createStorageModel(BaseLib::ConfigTree const* const config);
+std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace

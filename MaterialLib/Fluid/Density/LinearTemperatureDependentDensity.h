@@ -15,7 +15,6 @@
 #define LINEARTEMPERATUREDEPENDENTDENSITY_H
 
 #include <string>
-#include <algorithm>  // std::max
 
 #include "BaseLib/ConfigTree.h"
 
@@ -32,13 +31,13 @@ public:
     /// \param config  ConfigTree object which contains the input data
     ///                including <type>temperature_dependent</type> and it has
     ///                a tag of <density>
-    LinearTemperatureDependentDensity(BaseLib::ConfigTree const* const config)
+    LinearTemperatureDependentDensity(BaseLib::ConfigTree const& config)
         :  //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
-          _rho0(config->getConfigParameter<double>("rho0")),
+    _rho0(config.getConfigParameter<double>("rho0")),
           //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
-          _temperature0(config->getConfigParameter<double>("temperature0")),
+    _temperature0(config.getConfigParameter<double>("temperature0")),
           //! \ogs_file_param{material__fluid__density__linear_temperature__beta}
-          _beta(config->getConfigParameter<double>("beta"))
+    _beta(config.getConfigParameter<double>("beta"))
     {
     }
 

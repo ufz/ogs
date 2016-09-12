@@ -20,18 +20,19 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-Storage* createStorageModel(BaseLib::ConfigTree const* const config)
+std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__porous_medium__storage__type}
-    auto const type = config->getConfigParameter<std::string>("type");
+    auto const type = config.getConfigParameter<std::string>("type");
 
-    if (type.find("constant") != std::string::npos)
-        //! \ogs_file_param{material__porous_medium__storage__value}
-        return new ConstantStorage(config->getConfigParameter<double>("value"));
+    if (type == "constant")
+        //! \ogs_file_param{material__porous_medium__storage__constant__value}
+        return std::unique_ptr<Storage>(
+                 new ConstantStorage(config.getConfigParameter<double>("value")) );
     else
     {
         OGS_FATAL(
-            "The storage type is unavailable.\n"
+            "The storage type %s is unavailable.\n", type.data(),
             "The available type is constant.");
     }
 }
