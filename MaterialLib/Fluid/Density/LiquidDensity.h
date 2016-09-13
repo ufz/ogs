@@ -65,9 +65,7 @@ public:
           //! \ogs_file_param{material__fluid__density__liquid_density__p0}
     _p0(config.getConfigParameter<double>("p0")),
           //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
-    _bulk_moudlus(config.getConfigParameter<double>("bulk_modulus")),
-          _derivative_functions{&LiquidDensity::dLiquidDensity_dT,
-                                &LiquidDensity::dLiquidDensity_dp}
+    _bulk_moudlus(config.getConfigParameter<double>("bulk_modulus"))
     {
     }
 
@@ -144,12 +142,15 @@ private:
                (fac_p * fac_p * _bulk_moudlus);
     }
 
-    typedef double (LiquidDensity::*ptr2_derivative_f)(const double,
+    typedef double (LiquidDensity::*DerivativeFunctionPointer)(const double,
                                                        const double) const;
 
     /// An array of pointer to derivative functions.
-    ptr2_derivative_f _derivative_functions[2];
+    static DerivativeFunctionPointer _derivative_functions[2];
 };
+
+LiquidDensity::DerivativeFunctionPointer LiquidDensity::_derivative_functions[2]
+        = {&LiquidDensity::dLiquidDensity_dT,&LiquidDensity::dLiquidDensity_dp};
 
 }  // end of namespace
 }  // end of namespace

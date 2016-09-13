@@ -1,6 +1,6 @@
 /*!
    \file  IdealGasLow.h
-   \brief Declaration of class LIdealGasLow for fluid density by the ideal gas
+   \brief Declaration of class IdealGasLow for fluid density by the ideal gas
    law
           depending on one variable linearly.
 
@@ -26,17 +26,15 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/// Fluid density by ideal gas low
+/// Fluid density by ideal gas law
 
 class IdealGasLaw : public FluidProperty
 {
 public:
     ///   \param molar_mass Molar mass of the gas phase.
+
     IdealGasLaw(const double molar_mass)
-        : FluidProperty(),
-          _molar_mass(molar_mass),
-          _derivative_functions{&IdealGasLaw::dIdealGasLaw_dT,
-                                &IdealGasLaw::dIdealGasLaw_dp}
+    : FluidProperty(),_molar_mass(molar_mass)
     {
     }
 
@@ -92,8 +90,11 @@ private:
                                                      const double) const;
 
     /// An array of pointer to derivative functions.
-    DerivativeFunctionPointer _derivative_functions[2];
+    static DerivativeFunctionPointer _derivative_functions[2];
 };
+
+IdealGasLaw::DerivativeFunctionPointer IdealGasLaw::_derivative_functions[2]
+        = {&IdealGasLaw::dIdealGasLaw_dT,&IdealGasLaw::dIdealGasLaw_dp};
 }  // end namespace
 }  // end namespace
 #endif

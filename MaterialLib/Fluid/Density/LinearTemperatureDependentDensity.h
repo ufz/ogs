@@ -52,10 +52,8 @@ public:
     ///                 is given in enum class PropertyVariable.
     virtual double getValue(const double var_vals[]) const final
     {
-        return _rho0 *
-               (1 +
-                _beta * (var_vals[static_cast<int>(PropertyVariable::T)] -
-                         _temperature0));
+        const double T = var_vals[static_cast<int> (PropertyVariable::T)];
+        return _rho0 * (1 + _beta * (T - _temperature0));
     }
 
     /// Get the partial differential of the density with respect to temperature.
