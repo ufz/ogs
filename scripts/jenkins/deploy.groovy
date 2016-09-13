@@ -2,6 +2,7 @@
 
 node('master') {
     stage 'Deploy to S3'
+    deleteDir()
     step([$class: 'CopyArtifact', fingerprintArtifacts: true, flatten: true,
         projectName: 'OGS-6/ufz/master'])
     s3upload('*')
