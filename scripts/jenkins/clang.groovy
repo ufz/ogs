@@ -1,17 +1,15 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 
-node('docker')
-{
+node('docker') {
     stage 'Checkout'
     dir('ogs') { checkout scm }
 
     // Multiple configurations are build in parallel
     parallel linux: {
-        docker.image('ogs6/clang-base:latest')
-            .inside(defaultDockerArgs)
-        {
+        docker.image('ogs6/clang-base:latest').inside(defaultDockerArgs) {
             catchError {
-                build 'build', '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
+                build 'build', '-DOGS_ADDRESS_SANITIZER=ON ' +
+                    '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
 
                 stage 'Unit tests'
                 sh '''cd build
@@ -43,4 +41,5 @@ def build(buildDir, cmakeOptions, target) {
     sh "cd ${buildDir} && make -j \$(nproc) ${target}"
 }
 
-properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])
+properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator',
+    artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])

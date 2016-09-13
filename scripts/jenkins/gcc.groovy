@@ -1,13 +1,11 @@
 defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
 defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
 
-node('docker')
-{
+node('docker') {
     stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 
-    docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs)
-    {
+    docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs) {
         stage 'Configure (Linux-Docker)'
         configure 'build', ''
 
@@ -17,13 +15,13 @@ node('docker')
         stage 'Test (Linux-Docker)'
         build 'build', 'tests ctest'
 
-        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release')) {
             stage 'Release (Linux-Docker)'
             build 'build', 'package'
         }
     }
 
-    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release') ) {
+    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release')) {
         archive 'build/*.tar.gz'
     }
 
@@ -45,14 +43,18 @@ def build(buildDir, target) {
 def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
     step([$class: 'XUnitPublisher', testTimeMargin: '3000', thresholdMode: 1,
         thresholds: [
-            [$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: ''],
-            [$class: 'SkippedThreshold', failureNewThreshold: '', failureThreshold: '', unstableNewThreshold: '', unstableThreshold: '']],
+            [$class: 'FailedThreshold', failureNewThreshold: '', failureThreshold: '',
+                unstableNewThreshold: '', unstableThreshold: ''],
+            [$class: 'SkippedThreshold', failureNewThreshold: '', failureThreshold: '',
+                unstableNewThreshold: '', unstableThreshold: '']],
         tools: [
-            [$class: 'CTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${ctestPattern}", skipNoTestFiles: false, stopProcessingIfError: true],
-            [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern: "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
+            [$class: 'CTestType', deleteOutputFiles: true, failIfNotNew: true, pattern:
+                "${ctestPattern}", skipNoTestFiles: false, stopProcessingIfError: true],
+            [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern:
+                "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
     ])
 
     step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,
-            projectRulePath: "${parseRulefile}", useProjectRule: true])
+        projectRulePath: "${parseRulefile}", useProjectRule: true])
 }
 // *** End helper functions ***
