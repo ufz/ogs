@@ -151,7 +151,9 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
     std::size_t pos_beg (0), pos_end (0);
     while (!header_found)
     {
-        std::getline(in, line);
+        if (!std::getline(in, line))
+            return false;
+
         pos_beg = line.find_first_not_of(' ', pos_end);
         pos_end = line.find_first_of(" \n", pos_beg);
 
@@ -176,7 +178,7 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
 bool SwmmInterface::isSwmmOutputFile(std::string const& out_file_name)
 {
     std::string path (out_file_name);
-    std::transform(path.begin(), path.end(), path.begin(), tolower);
+    std::transform(path.begin(), path.end(), path.begin(), std::tolower);
     if (BaseLib::getFileExtension(path) != "out")
     {
         ERR ("SWMMInterface: file extension %s not recognised (should be *.out).",
@@ -199,14 +201,14 @@ bool SwmmInterface::readCoordinates(std::ifstream &in, std::vector<T*> &points, 
 {
     std::size_t id (points.size());
     std::string line;
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> split_str (BaseLib::splitString(line));
         if (split_str.size() != 3)
@@ -221,7 +223,6 @@ bool SwmmInterface::readCoordinates(std::ifstream &in, std::vector<T*> &points, 
         T* pnt = new T(x, y, 0, id);
         points.push_back(pnt);
         id++;
-        std::getline(in, line);
     }
     return true;
 }
@@ -235,19 +236,19 @@ bool SwmmInterface::readPolygons(std::ifstream &in, std::vector<GeoLib::Polyline
     std::string line;
     std::string polygon_name("");
     GeoLib::Polyline* p (nullptr);
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            break;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> split_str (BaseLib::splitString(line));
         if (split_str.size() != 3)
         {
             ERR ("Polygon format not recognised.");
+            delete p;
             return false;
         }
 
@@ -264,12 +265,10 @@ bool SwmmInterface::readPolygons(std::ifstream &in, std::vector<GeoLib::Polyline
 
         double const x = BaseLib::str2number<double>(split_str[1]);
         double const y = BaseLib::str2number<double>(split_str[2]);
-        GeoLib::Point* pnt = new GeoLib::Point(x, y, 0, id);
-        points.push_back(pnt);
+        points.push_back(new GeoLib::Point(x, y, 0, id));
         p->addPoint(points.size()-1);
         pnt_names.push_back("");
         id++;
-        std::getline(in, line);
     }
 
     // when the section is finished, add the last polygon
@@ -284,14 +283,13 @@ bool SwmmInterface::addPointElevation(std::ifstream &in,
     std::size_t> const& name_id_map)
 {
     std::string line;
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         // Junctions = 6, Outfalls = 4, Storage = 8
@@ -309,7 +307,6 @@ bool SwmmInterface::addPointElevation(std::ifstream &in,
         }
         std::size_t const id = it->second;
         (*points[id])[2] = BaseLib::str2number<double>(split_str[1]);
-        std::getline(in, line);
     }
     return true;
 }
@@ -319,14 +316,13 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
     std::vector<GeoLib::Point*> const& points, std::map<std::string, std::size_t> const& point_names)
 {
     std::string line;
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         // Conduits = 9, Pumps = 7, Weirs = 8
@@ -357,7 +353,6 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
         ply->addPoint(o_it->second);
         lines.push_back(ply);
         line_names.push_back(split_str[0]);
-        std::getline(in, line);
     }
     return true;
 }
@@ -491,14 +486,13 @@ bool SwmmInterface::readNodeData(std::ifstream &in, std::vector<MeshLib::Node*> 
     std::size_t> const& name_id_map, std::vector<double> &max_depth, bool read_max_depth)
 {
     std::string line;
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         // Junctions = 6, Outfalls = 4, Storage = 8
@@ -521,8 +515,6 @@ bool SwmmInterface::readNodeData(std::ifstream &in, std::vector<MeshLib::Node*> 
             max_depth[id] = BaseLib::str2number<double>(split_str[2]);
         else
             max_depth[id] = 0;
-
-        std::getline(in, line);
     }
     return true;
 }
@@ -531,14 +523,13 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
     std::vector<MeshLib::Node*> const& nodes, std::map<std::string, std::size_t> const& name_id_map)
 {
     std::string line;
-    std::getline(in, line);
-    while (!isSectionFinished(line))
+    while (std::getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            std::getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         // Conduits = 9, Pumps = 7, Weirs = 8
@@ -567,7 +558,6 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
         std::array<MeshLib::Node*, 2> const line_nodes = { nodes[i_it->second], nodes[o_it->second] };
         elements.push_back(new MeshLib::Line(line_nodes));
         _id_linkname_map.push_back(split_str[0]);
-        getline(in, line);
     }
     return true;
 }
@@ -575,14 +565,13 @@ bool SwmmInterface::readLineElements(std::ifstream &in, std::vector<MeshLib::Ele
 bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, std::size_t> const& name_id_map)
 {
     std::string line;
-    getline(in, line);
-    while (!isSectionFinished(line))
+    while (getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         if (split_str.size() < 8)
@@ -619,7 +608,6 @@ bool SwmmInterface::readSubcatchments(std::ifstream &in, std::map< std::string, 
         sc.outlet = it->second;
         sc.area = BaseLib::str2number<double>(split_str[3]);
         _subcatchments.push_back(sc);
-        getline(in, line);
     }
 
     return true;
@@ -1168,14 +1156,13 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type, std::size_t var_idx
 bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
 {
     std::string line;
-    getline(in, line);
-    while (!isSectionFinished(line))
+    while (getline(in, line))
     {
+        if (isSectionFinished(line))
+            break;
+
         if (isCommentLine(line))
-        {
-            getline(in, line);
             continue;
-        }
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         if (split_str.size() != 8)
@@ -1189,8 +1176,6 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
             if (stn.first.getName() == split_str[0] && split_str[4] == "FILE")
                 stn.second = split_str[5].substr(1, split_str[5].size()-2);
         }
-
-        getline(in, line);
     }
 
     for (auto const& stn : _rain_gauges)
@@ -1202,14 +1187,13 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
 bool SwmmInterface::readPollutants(std::ifstream &in)
 {
     std::string line;
-    getline(in, line);
-    while (!isSectionFinished(line))
+    while (getline(in, line))
     {
+        if (isSectionFinished(line))
+            return true;
+
         if (isCommentLine(line))
-        {
-            getline(in, line);
             continue;
-        }
 
         std::vector<std::string> split_str (BaseLib::splitString(line));
         if (split_str.size() < 10)
@@ -1217,9 +1201,7 @@ bool SwmmInterface::readPollutants(std::ifstream &in)
             ERR ("Parameter format for pollutants not recognised.");
             return false;
         }
-
         _pollutant_names.push_back(split_str[0]);
-        getline(in, line);
     }
     return true;
 }
