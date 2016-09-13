@@ -2,7 +2,7 @@
 
 node('master') {
     stage 'Deploy S3 Info'
-    sh "curl 'https://svn.ufz.de:8443/job/OGS-6/job/Deploy/2/api/json?pretty=true&tree=actions" +
+    sh "curl 'https://svn.ufz.de:8443/job/OGS-6/job/Deploy/lastSuccessfulBuild/api/json?pretty=true&tree=actions" +
         "[artifacts[*]],url' -g --insecure -o lastSuccessfulArtifacts.json"
     archive 'lastSuccessfulArtifacts.json'
     step([$class: 'S3BucketPublisher', dontWaitForConcurrentBuildCompletion: true, entries:
