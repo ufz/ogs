@@ -154,8 +154,10 @@ private:
         return NumLib::IterationResult::SUCCESS;
     }
 
-    void constructDofTable();
+protected:
+    virtual void constructDofTable();
 
+private:
     void initializeExtrapolator();
 
     /// Finishes the \c _named_function_caller and adds a secondary variable for
