@@ -15,6 +15,7 @@ add_subdirectory(GroundwaterFlow)
 APPEND_SOURCE_FILES(SOURCES GroundwaterFlow)
 
 APPEND_SOURCE_FILES(SOURCES LiquidFlow)
+APPEND_SOURCE_FILES(SOURCES HydroMechanics)
 
 APPEND_SOURCE_FILES(SOURCES SmallDeformation)
 
