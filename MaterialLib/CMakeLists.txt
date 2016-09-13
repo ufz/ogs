@@ -1,8 +1,12 @@
-GET_SOURCE_FILES(SOURCES)
-APPEND_SOURCE_FILES(SOURCES Adsorption)
-APPEND_SOURCE_FILES(SOURCES SolidModels)
+# Source files
+get_source_files(SOURCES)
+append_source_files(SOURCES Adsorption)
+append_source_files(SOURCES SolidModels)
 
-add_library(MaterialLib ${SOURCES})
+append_source_files(SOURCES Fluid)
+append_source_files(SOURCES Fluid/Density)
+
+add_library(MaterialLib ${SOURCES} )
 target_link_libraries(MaterialLib
     BaseLib
 )
