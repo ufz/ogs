@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     MeshLib::IO::VtuInterface vtkIO(&mesh, 0, false);
     vtkIO.writeToFile(mesh_output_arg.getValue());
 
-    std::cout << "Simulation time steps: " << swmm->getNumberOfTimeSteps() << std::endl;
+    INFO ("Simulation time steps: %d", swmm->getNumberOfTimeSteps());
 
 
     // Example code: Writing node information to csv file
@@ -90,11 +90,11 @@ int main(int argc, char *argv[])
         csv.addVectorForWriting(swmm->getArrayName(FileIO::SwmmObject::NODE, i), data_vec);
     }
     csv.writeToFile("d:/csvtest.csv");
-    std::cout << "csv written" << std::endl;
+    INFO ("CSV written.");
     std::cin.ignore();
 
     for (std::size_t i=0; i<swmm->getNumberOfParameters(FileIO::SwmmObject::NODE); ++i)
-        std::cout << i << "\t" << swmm->getArrayName(FileIO::SwmmObject::NODE, i) << std::endl;
+        INFO ("%d\t%s", i, swmm->getArrayName(FileIO::SwmmObject::NODE, i).c_str());
     std::cin.ignore();
 
     // Example code: Add simulated parameter to mesh for each timestep and write result
