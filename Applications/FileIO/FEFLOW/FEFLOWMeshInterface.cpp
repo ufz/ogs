@@ -192,6 +192,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     }
     else
     {
+        opt_material_ids->resize(mesh->getNumberOfElements());
         setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets, vec_elements,
                        *opt_material_ids);
     }
@@ -515,6 +516,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
     std::vector<MeshLib::Element*> const& vec_elements,
     std::vector<int>& material_ids)
 {
+    assert(material_ids.size()==vec_elements.size());
     if (!vec_elementsets.empty())
     {
         for (std::size_t matid = 0; matid < vec_elementsets.size(); ++matid)
