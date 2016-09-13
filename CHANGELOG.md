@@ -8,6 +8,7 @@
    parser. #1343
  - Added uniform Robin boundary condition. #1336
  - Added B-Matrices and Kelven mapping tools for deformation processes. #1359
+ - New tools: scaleProperty, createNeumannBc #1346
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
@@ -15,6 +16,9 @@
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
  - Fix usage of `boost::optional<T const&>`, which has changed in version 1.61. #1385
+ - Fix Grid (enlarge bounding box to fit all points) #1369
+ - Fix mapping of geometries to mesh surfaces #1327, #1368
+ - Fix transmitting raster data to element properties #1347
 
 # 6.0.6
 
