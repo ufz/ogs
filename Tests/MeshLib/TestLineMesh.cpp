@@ -19,7 +19,7 @@ class MeshLibLineMesh : public ::testing::Test
     MeshLibLineMesh()
         : mesh(nullptr)
     {
-        mesh = MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size);
+        mesh = MeshLib::MeshGenerator::generateLineMesh(extent, mesh_size);
     }
 
     ~MeshLibLineMesh()
@@ -28,6 +28,7 @@ class MeshLibLineMesh : public ::testing::Test
     }
 
     static std::size_t const mesh_size = 9;
+    double extent = 1.0;
     MeshLib::Mesh const* mesh;
 };
 std::size_t const MeshLibLineMesh::mesh_size;
@@ -46,6 +47,9 @@ TEST_F(MeshLibLineMesh, Construction)
     std::vector<MeshLib::Element*> const& elements = mesh->getElements();
     for (auto e : elements)
         ASSERT_EQ(2u, e->getNumberOfNeighbors());
+
+    ASSERT_NEAR(extent/mesh_size, mesh->getMinEdgeLength(),std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(extent/mesh_size, mesh->getMaxEdgeLength(),std::numeric_limits<double>::epsilon());
 }
 
 TEST_F(MeshLibLineMesh, ElementNeigbors)
