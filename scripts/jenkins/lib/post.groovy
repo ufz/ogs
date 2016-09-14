@@ -7,9 +7,9 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
                 unstableNewThreshold: '', unstableThreshold: '']],
         tools: [
             [$class: 'CTestType', deleteOutputFiles: true, failIfNotNew: true, pattern:
-                "${ctestPattern}", skipNoTestFiles: false, stopProcessingIfError: true],
+                "${ctestPattern}", skipNoTestFiles: true, stopProcessingIfError: true],
             [$class: 'GoogleTestType', deleteOutputFiles: true, failIfNotNew: true, pattern:
-                "${gtestPattern}", skipNoTestFiles: false, stopProcessingIfError: true]]
+                "${gtestPattern}", skipNoTestFiles: true, stopProcessingIfError: true]]
     ])
 
     step([$class: 'LogParserPublisher', failBuildOnError: true, unstableOnWarning: false,

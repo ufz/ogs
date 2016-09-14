@@ -30,6 +30,6 @@ node('docker') {
         archive 'build/*.tar.gz'
 
     stage 'Post (Linux-Docker)'
-    helper.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules'
 }
