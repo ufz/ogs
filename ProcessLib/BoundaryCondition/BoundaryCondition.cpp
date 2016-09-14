@@ -11,7 +11,7 @@
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "BoundaryConditionConfig.h"
-#include "UniformDirichletBoundaryCondition.h"
+#include "DirichletBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 
@@ -50,16 +50,16 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     //! \ogs_file_param{boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
-    if (type == "UniformDirichlet")
+    if (type == "Dirichlet")
     {
         // Find nodes' ids on the given mesh on which this boundary condition
         // is defined.
         std::vector<std::size_t> ids =
             mesh_node_searcher.getMeshNodeIDs(config.geometry);
 
-        return createUniformDirichletBoundaryCondition(
+        return createDirichletBoundaryCondition(
             config.config, std::move(ids), dof_table, mesh.getID(), variable_id,
-            config.component_id);
+            config.component_id, parameters);
     }
     else if (type == "Neumann")
     {

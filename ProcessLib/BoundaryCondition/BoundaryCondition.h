@@ -20,6 +20,8 @@ class Mesh;
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
+template <typename>
+struct IndexValueVector;
 }
 
 namespace ProcessLib
@@ -32,8 +34,23 @@ class BoundaryCondition
 public:
     //! Applies natural BCs (i.e. non-Dirichlet BCs) to the stiffness matrix
     //! \c K and the vector \c b.
-    virtual void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
-                       GlobalVector& b) = 0;
+    virtual void applyNaturalBC(const double /*t*/, GlobalVector const& /*x*/,
+                                GlobalMatrix& /*K*/, GlobalVector& /*b*/)
+    {
+        // By default it is assumed that the BC is not a natural BC. Therefore
+        // there is nothing to do here.
+    }
+
+    //! Writes the values of essential BCs to \c bc_values.
+    virtual void getEssentialBCValues(
+        const double /*t*/,
+        NumLib::IndexValueVector<GlobalIndexType>& /*bc_values*/) const
+    {
+        // By default it is assumed that the BC is not an essential BC.
+        // Therefore there is nothing to do here.
+    }
+
+    virtual void preTimestep(const double /*t*/) {}
 
     virtual ~BoundaryCondition() = default;
 };

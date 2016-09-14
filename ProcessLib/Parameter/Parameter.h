@@ -10,6 +10,7 @@
 #ifndef PROCESS_LIB_PARAMETER_H_
 #define PROCESS_LIB_PARAMETER_H_
 
+#include <map>
 #include <memory>
 #include <vector>
 #include "SpatialPosition.h"
@@ -18,6 +19,11 @@ namespace BaseLib
 {
 class ConfigTree;
 }  // BaseLib
+
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}  // MathLib
 
 namespace MeshLib
 {
@@ -32,6 +38,16 @@ namespace ProcessLib
 struct ParameterBase
 {
     virtual ~ParameterBase() = default;
+
+    virtual bool isTimeDependent() const = 0;
+
+    /// Parameters might depend on each other; this method allows to set up the
+    /// dependencies between parameters after they have been constructed.
+    virtual void initialize(
+        std::vector<
+            std::unique_ptr<ProcessLib::ParameterBase>> const& /*parameters*/)
+    {
+    }
 
     std::string name;
 };
@@ -61,7 +77,10 @@ struct Parameter : public ParameterBase
 //! The \c meshes vector is used to set up parameters from mesh input data.
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
-    const std::vector<MeshLib::Mesh*>& meshes);
+    const std::vector<MeshLib::Mesh*>& meshes,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 
 }  // namespace ProcessLib
 

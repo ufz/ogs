@@ -47,13 +47,11 @@ public:
         NumLib::NamedFunctionCaller&& named_function_caller);
 
     /// Preprocessing before starting assembly for new timestep.
-    virtual void preTimestep(GlobalVector const& /*x*/, const double /*t*/,
-                             const double /*delta_t*/)
-    {
-    }
+    void preTimestep(GlobalVector const& x, const double t,
+                     const double delta_t);
 
     /// Postprocessing after a complete timestep.
-    virtual void postTimestep(GlobalVector const& /*x*/) {}
+    void postTimestep(GlobalVector const& x);
 
     void preIteration(const unsigned iter,
                       GlobalVector const& x) override final;
@@ -122,6 +120,14 @@ private:
     virtual void assembleConcreteProcess(const double t, GlobalVector const& x,
                                          GlobalMatrix& M, GlobalMatrix& K,
                                          GlobalVector& b) = 0;
+
+    virtual void preTimestepConcreteProcess(GlobalVector const& /*x*/,
+                                            const double /*t*/,
+                                            const double /*delta_t*/)
+    {
+    }
+
+    virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/) {}
 
     virtual void assembleJacobianConcreteProcess(
         const double /*t*/, GlobalVector const& /*x*/,

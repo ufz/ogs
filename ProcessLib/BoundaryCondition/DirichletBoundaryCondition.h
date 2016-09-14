@@ -7,28 +7,61 @@
  *
  */
 
-#ifndef PROCESS_LIB_DIRICHLETBC_H
-#define PROCESS_LIB_DIRICHLETBC_H
+#ifndef PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H
+#define PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
+#include "ProcessLib/Parameter/Parameter.h"
 #include "BoundaryCondition.h"
 
 namespace ProcessLib
 {
-class DirichletBoundaryCondition : public BoundaryCondition
+// TODO docu
+/// The DirichletBoundaryCondition class describes a constant in space
+/// and time Dirichlet boundary condition.
+/// The expected parameter in the passed configuration is "value" which, when
+/// not present defaults to zero.
+class DirichletBoundaryCondition final : public BoundaryCondition
 {
 public:
-    virtual NumLib::IndexValueVector<GlobalIndexType> getBCValues() = 0;
-
-    void apply(const double /*t*/,
-               GlobalVector const& /*x*/,
-               GlobalMatrix& /*K*/,
-               GlobalVector& /*b*/) override final
+    DirichletBoundaryCondition(Parameter<double> const& parameter,
+                               std::vector<std::size_t>&& mesh_node_ids,
+                               NumLib::LocalToGlobalIndexMap const& dof_table,
+                               std::size_t const mesh_id, int const variable_id,
+                               int const component_id)
+        : _parameter(parameter),
+          _mesh_node_ids(std::move(mesh_node_ids)),
+          _dof_table(dof_table),
+          _mesh_id(mesh_id),
+          _variable_id(variable_id),
+          _component_id(component_id)
     {
-        // Do nothing. Dirichlet BCs are handled specially.
     }
+
+    void preTimestep(const double t) override;
+
+    void getEssentialBCValues(
+        const double t,
+        NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
+
+private:
+    Parameter<double> const& _parameter;
+
+    std::vector<std::size_t> _mesh_node_ids;
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
+    std::size_t const _mesh_id;
+    int const _variable_id;
+    int const _component_id;
+    mutable bool _already_computed = false;
 };
+
+std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config, std::vector<std::size_t>&& mesh_node_ids,
+    NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t const mesh_id,
+    int const variable_id, int const component_id,
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters);
 
 }  // namespace ProcessLib
 
-#endif  // PROCESS_LIB_DIRICHLETBC_H
+#endif  // PROCESSLIB_DIRICHLETBOUNDARYCONDITION_H

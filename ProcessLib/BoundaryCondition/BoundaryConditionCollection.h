@@ -10,12 +10,11 @@
 #ifndef PROCESSLIB_BOUNDARYCONDITIONCOLLECTION_H
 #define PROCESSLIB_BOUNDARYCONDITIONCOLLECTION_H
 
-#include "DirichletBoundaryCondition.h"
+#include "NumLib/IndexValueVector.h"
 #include "ProcessLib/ProcessVariable.h"
 
 namespace ProcessLib
 {
-
 class BoundaryConditionCollection final
 {
 public:
@@ -25,13 +24,17 @@ public:
     {
     }
 
-    void apply(const double t, GlobalVector const& x, GlobalMatrix& K,
-               GlobalVector& b);
+    void applyNaturalBC(const double t, GlobalVector const& x, GlobalMatrix& K,
+                        GlobalVector& b);
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
-    getKnownSolutions(double const /*t*/) const
+    getKnownSolutions(double const t) const
     {
-        // TODO time-dependent Dirichlet BCs.
+        for (std::size_t i=0; i<_boundary_conditions.size(); ++i) {
+            auto const& bc = *_boundary_conditions[i];
+            auto& dirichlet_storage = _dirichlet_bcs[i];
+            bc.getEssentialBCValues(t, dirichlet_storage);
+        }
         return &_dirichlet_bcs;
     }
 
@@ -41,8 +44,10 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         unsigned const integration_order);
 
+    void preTimestep(const double t);
+
 private:
-    std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
+    mutable std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
     std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;
     std::vector<std::unique_ptr<ParameterBase>> const& _parameters;
 };

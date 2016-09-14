@@ -112,7 +112,7 @@ void Process::assemble(const double t, GlobalVector const& x, GlobalMatrix& M,
                        GlobalMatrix& K, GlobalVector& b)
 {
     assembleConcreteProcess(t, x, M, K, b);
-    _boundary_conditions.apply(t, x, K, b);
+    _boundary_conditions.applyNaturalBC(t, x, K, b);
 }
 
 void Process::assembleJacobian(const double t, GlobalVector const& x,
@@ -239,6 +239,18 @@ void Process::computeSparsityPattern()
 {
     _sparsity_pattern =
         NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
+}
+
+void Process::preTimestep(GlobalVector const& x, const double t,
+                 const double delta_t)
+{
+    preTimestepConcreteProcess(x, t, delta_t);
+    _boundary_conditions.preTimestep(t);
+}
+
+void Process::postTimestep(GlobalVector const& x)
+{
+    postTimestepConcreteProcess(x);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector &x)

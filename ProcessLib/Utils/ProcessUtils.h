@@ -45,6 +45,12 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
 /// Find a parameter of specific type for a given name.
 ///
+/// \tparam ParameterDataType the data type of the parameter
+/// \param parameter_name name of the requested parameter
+/// \param parameters list of parameters in which it will be searched
+/// \param num_components the number of components of the parameters or zero if
+/// any number is acceptable
+///
 /// \see The documentation of the other findParameter() function.
 template <typename ParameterDataType>
 Parameter<ParameterDataType>& findParameter(
@@ -64,6 +70,7 @@ Parameter<ParameterDataType>& findParameter(
             "Could not find parameter `%s' in the provided parameters list.",
             parameter_name.c_str());
     }
+
     DBUG("Found parameter `%s'.", (*parameter_it)->name.c_str());
 
     // Check the type correctness of the found parameter.
@@ -74,7 +81,9 @@ Parameter<ParameterDataType>& findParameter(
                   parameter_name.c_str());
     }
 
-    if (parameter->getNumberOfComponents() != num_components) {
+    if (num_components != 0 &&
+        parameter->getNumberOfComponents() != num_components)
+    {
         OGS_FATAL(
             "The read parameter `%s' has the wrong number of components (%lu "
             "instead of %u).",

@@ -74,10 +74,10 @@ template <typename BoundaryConditionData,
           class LocalAssemblerImplementation>
 void GenericNaturalBoundaryCondition<
     BoundaryConditionData,
-    LocalAssemblerImplementation>::apply(const double t,
-                                         const GlobalVector& x,
-                                         GlobalMatrix& K,
-                                         GlobalVector& b)
+    LocalAssemblerImplementation>::applyNaturalBC(const double t,
+                                                  const GlobalVector& x,
+                                                  GlobalMatrix& K,
+                                                  GlobalVector& b)
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &GenericNaturalBoundaryConditionLocalAssemblerInterface::assemble,
