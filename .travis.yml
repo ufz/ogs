@@ -54,7 +54,7 @@ script:
   - if [ "$CASE" != "CHECK" ]; then cd build; fi
   - if [ "$CASE" != "CHECK" ]; then cmake $CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ..; fi
   - if [ "$CASE" != "CHECK" ]; then make -j 2; fi
-  - if [ "$CASE" == "CLI" ] && [ "$CASE" != "CHECK" ]; then make tests; fi
+  - if [ "$CASE" != "CHECK" ]; then make tests; fi
 
 notifications:
   hipchat:
