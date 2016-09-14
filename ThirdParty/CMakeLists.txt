@@ -50,3 +50,7 @@ if(NOT TARGET vtkGUISupportQt AND OGS_BUILD_GUI)
     include_directories(SYSTEM ${VTK_INCLUDE_DIRS})
     add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/vtkGUISupportQt)
 endif()
+
+if(OGS_BUILD_SWMM)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/SWMMInterface)
+endif()

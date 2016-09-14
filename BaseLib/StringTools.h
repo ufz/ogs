@@ -19,8 +19,17 @@
 #include <string>
 #include <list>
 #include <sstream>
+#include <vector>
 
 namespace BaseLib {
+
+/**
+ *  Splits a string into a vector of strings. This method only works for string seperation
+ *  recognised by the std::stringstream iterator such as ' ' or '\t'.
+ *  \param str String to be splitted
+ *  \return Vector of strings
+ */
+std::vector<std::string> splitString(std::string const& str);
 
 /**
  *   Splits a string into a list of strings.

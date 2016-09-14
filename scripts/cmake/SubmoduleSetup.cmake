@@ -21,6 +21,9 @@ endif()
 if(OGS_BUILD_UTILS)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
 endif()
+if(OGS_BUILD_SWMM)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
+endif()
 
 foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     execute_process(

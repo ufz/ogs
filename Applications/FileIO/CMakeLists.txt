@@ -11,6 +11,11 @@ if(QT4_FOUND)
     APPEND_SOURCE_FILES(SOURCES FEFLOW)
 endif()
 
+if(OGS_BUILD_SWMM)
+    GET_SOURCE_FILES(SOURCES_SWMM SWMM)
+    SET(SOURCES ${SOURCES} ${SOURCES_SWMM})
+endif()
+
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # Create the library

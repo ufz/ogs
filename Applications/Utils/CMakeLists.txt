@@ -15,4 +15,6 @@ else()
     add_subdirectory(ModelPreparation/PartitionMesh)
 endif() # OGS_BUILD_GUI
 
-include(Tests.cmake)
+if(OGS_BUILD_SWMM)
+    add_subdirectory(SWMMConverter)
+endif()
