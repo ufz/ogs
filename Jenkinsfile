@@ -9,6 +9,7 @@ node('master') {
     builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }
     builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
     builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
+    builders['mac'] = { load 'scripts/jenkins/mac.groovy' }
 
     parallel builders
 
