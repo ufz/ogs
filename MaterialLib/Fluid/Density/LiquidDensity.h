@@ -49,13 +49,13 @@ namespace Fluid
  *       &E:&      \mbox{bulk modulus fluid elasticity.}\\
  *    \f}
  */
-class LiquidDensity : public FluidProperty
+class LiquidDensity final : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
     ///                 including  <type>fluid</type> and it has
     ///                 a tag of <density>
-    LiquidDensity(BaseLib::ConfigTree const& config)
+    explicit LiquidDensity(BaseLib::ConfigTree const& config)
         :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
     _beta(config.getConfigParameter<double>("beta")),
           //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
@@ -70,7 +70,7 @@ public:
     }
 
     /// Get density model name.
-    virtual std::string getName() const final
+    std::string getName() const override
     {
         return "Temperature or pressure dependent liquid density";
     }
@@ -78,7 +78,7 @@ public:
     /// Get density value.
     /// \param var_vals Variable values in an array. The order of its elements
     ///                 is given in enum class PropertyVariable.
-    virtual double getValue(const double var_vals[]) const final
+    double getValue(const double var_vals[]) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariable::T)];
         const double p = var_vals[static_cast<int>(PropertyVariable::pl)];
@@ -90,8 +90,9 @@ public:
     /// or liquid pressure.
     /// \param var_vals  Variable values  in an array. The order of its elements
     ///                   is given in enum class PropertyVariable.
-    virtual double getdValue(const double var_vals[],
-                             const PropertyVariable var) const final
+    /// \param var       Variable type.
+    double getdValue(const double var_vals[],
+            const PropertyVariable var) const override
     {
         assert(var == PropertyVariable::T || var == PropertyVariable::pl);
 
@@ -103,19 +104,19 @@ public:
 
 private:
     /// Volumetric temperature expansion coefficient.
-    double _beta;
+    const double _beta;
 
     /// Initial density.
-    double _rho0;
+    const double _rho0;
 
     /// Initial temperature.
-    double _temperature0;
+    const double _temperature0;
 
     /// Initial pressure.
-    double _p0;
+    const double _p0;
 
     /// Bulk modulus.
-    double _bulk_moudlus;
+    const double _bulk_moudlus;
 
     /**
      *  Calculate the derivative of density of fluids with respect to
@@ -145,7 +146,7 @@ private:
     typedef double (LiquidDensity::*DerivativeFunctionPointer)(const double,
                                                        const double) const;
 
-    /// An array of pointer to derivative functions.
+    /// An array of pointers to derivative functions.
     static DerivativeFunctionPointer _derivative_functions[2];
 };
 

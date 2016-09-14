@@ -20,8 +20,6 @@
 #include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
 
-namespace
-{
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
 
@@ -40,7 +38,7 @@ TEST(Material, checkConstantDensity)
 {
     const char xml[] =
         "<density>"
-        "   <type>constant</type>"
+        "   <type>Constant</type>"
         "   <value> 998.0 </value> "
         "</density>";
     const auto rho = createTestFluidDensityModel(xml);
@@ -129,6 +127,4 @@ TEST(Material, checkLiquidDensity)
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
                 rho->getdValue(vars, Fluid::PropertyVariable::pl), 1.e-10);
-}
-
 }

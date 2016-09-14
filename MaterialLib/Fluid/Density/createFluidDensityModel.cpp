@@ -27,10 +27,10 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const
     //! \ogs_file_param{material__fluid__density__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
-    if (type == "constant")
+    if (type == "Constant")
     {
         return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
-            //! \ogs_file_param{material__fluid__density__constant_value}
+            //! \ogs_file_param{material__fluid__density__Constant_value}
             config.getConfigParameter<double>("value")) );
     }
     //! \ogs_file_param{material__fluid__density__LiquidDensity}
@@ -51,8 +51,8 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const
     {
         OGS_FATAL(
             "The density type %s is unavailable.\n", type.data(),
-            "The available types are liquid_density "
-            "temperature_dependent and ideal_gas_law");
+            "The available types are Constant, LiquidDensity, "
+            "TemperatureDependent and IdealGasLaw");
     }
 }
 

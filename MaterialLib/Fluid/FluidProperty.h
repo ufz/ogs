@@ -32,17 +32,23 @@ class FluidProperty
 {
 public:
 
+    virtual ~FluidProperty()
+    {
+    }
+
     /// Get model name.
     virtual std::string getName() const = 0;
 
     /// Get property value.
-    /// \param var_vals Variable values in an array. The order of its elements
+    /// The argument is an array of variables. The order of its elements
     ///                 is given in enum class PropertyVariable.
     virtual double getValue(const double /* var_vals*/[]) const = 0;
 
     /// Get the partial differential of the property value
-    /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                   is given in enum class PropertyVariable.
+    /// The first argument is an array of variables, and the order of the array
+    /// elements is given in enum class PropertyVariable.
+    /// The second argument is the variable type indicating which partial derivative
+    /// to be get.
     virtual double getdValue(const double /* var_vals*/[],
                              const PropertyVariable /* var */) const = 0;
 };

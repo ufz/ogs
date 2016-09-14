@@ -25,13 +25,13 @@ namespace MaterialLib
 namespace Fluid
 {
 /// Linear temperature dependent density model.
-class LinearTemperatureDependentDensity : public FluidProperty
+class LinearTemperatureDependentDensity final : public FluidProperty
 {
 public:
     /// \param config  ConfigTree object which contains the input data
     ///                including <type>temperature_dependent</type> and it has
     ///                a tag of <density>
-    LinearTemperatureDependentDensity(BaseLib::ConfigTree const& config)
+    explicit LinearTemperatureDependentDensity(BaseLib::ConfigTree const& config)
         :  //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
     _rho0(config.getConfigParameter<double>("rho0")),
           //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
@@ -42,7 +42,7 @@ public:
     }
 
     /// Get model name.
-    virtual std::string getName() const final
+    std::string getName() const override
     {
         return "Linear temperature dependent density";
     }
@@ -50,7 +50,7 @@ public:
     /// Get density value.
     /// \param var_vals Variable values in an array. The order of its elements
     ///                 is given in enum class PropertyVariable.
-    virtual double getValue(const double var_vals[]) const final
+    double getValue(const double var_vals[]) const override
     {
         const double T = var_vals[static_cast<int> (PropertyVariable::T)];
         return _rho0 * (1 + _beta * (T - _temperature0));
@@ -59,17 +59,19 @@ public:
     /// Get the partial differential of the density with respect to temperature.
     /// \param var_vals  Variable values  in an array. The order of its elements
     ///                   is given in enum class PropertyVariable.
-    virtual double getdValue(const double /* var_vals */[],
-                             const PropertyVariable /* var  */) const final
+    /// \param var       Variable type.
+    double getdValue(const double var_vals[],
+            const PropertyVariable var) const override
     {
+        (void) var_vals;
+        (void) var;
         return _rho0 * _beta;
-        ;
     }
 
 private:
-    double _rho0;          ///<  Reference density.
-    double _temperature0;  ///<  Reference temperature.
-    double _beta;          ///<  Parameter.
+    const double _rho0; ///<  Reference density.
+    const double _temperature0; ///<  Reference temperature.
+    const double _beta; ///<  Parameter.
 };
 
 }  // end namespace
