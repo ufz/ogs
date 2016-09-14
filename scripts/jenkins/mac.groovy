@@ -1,3 +1,5 @@
+configure = load 'scripts/jenkins/lib/configure.groovy'
+
 defaultCMakeOptions = '-DCMAKE_BUILD_TYPE=Release -DOGS_CPU_ARCHITECTURE=core2 -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
 node('mac && conan') {
@@ -5,7 +7,7 @@ node('mac && conan') {
     dir('ogs') { checkout scm }
 
     stage 'Configure (Mac)'
-    configure 'build', '', 'Ninja', ''
+    configure.linux 'build', '', 'Ninja', ''
 
     stage 'CLI (Mac)'
     build 'build'
@@ -14,7 +16,7 @@ node('mac && conan') {
     build 'build', 'tests ctest'
 
     stage 'Data Explorer (Mac)'
-    configure 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+    configure.linux 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
         'Ninja', '', true
     build 'build'
 
@@ -26,17 +28,6 @@ node('mac && conan') {
     stage 'Post (Mac)'
     publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/msvc-log-parser.rules'
-}
-
-def configure(buildDir, cmakeOptions, generator, conan_args = null, keepBuildDir = false) {
-    if (keepBuildDir == false)
-        sh("""rm -rf ${buildDir}
-              mkdir ${buildDir}""".stripIndent())
-    if (conan_args != null)
-        sh("""cd ${buildDir}
-              conan install ../ogs ${conan_args}""".stripIndent())
-    sh """cd ${buildDir}
-          cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}"""
 }
 
 def build(buildDir, target = null) {
