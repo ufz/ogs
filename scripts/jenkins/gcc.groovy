@@ -10,24 +10,25 @@ node('docker') {
     stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 
-    docker.image('ogs6/gcc-base:latest').inside(defaultDockerArgs) {
+    docker.image('ogs6/gcc-gui:latest').inside(defaultDockerArgs) {
         stage 'Configure (Linux-Docker)'
         configure.linux 'build', ''
 
         stage 'CLI (Linux-Docker)'
-        build.linux 'build', ''
+        build.linux 'build'
 
         stage 'Test (Linux-Docker)'
         build.linux 'build', 'tests ctest'
 
-        if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME.contains('release')) {
-            stage 'Release (Linux-Docker)'
-            build.linux 'build', 'package'
-        }
+        stage 'Data Explorer (Linux-Docker)'
+        configure.linux 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Unix Makefiles', null, true
+        build.linux 'build'
     }
 
-    if (helper.isRelease())
+    if (helper.isRelease()) {
+        stage 'Release (Linux-Docker)'
         archive 'build/*.tar.gz'
+    }
 
     stage 'Post (Linux-Docker)'
     post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
