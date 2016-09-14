@@ -97,7 +97,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     const std::size_t nNodes(surface_mesh->getNumberOfNodes());
     const double no_data(raster->getHeader().no_data);
 
-    boost::optional<MeshLib::PropertyVector<int> const&> opt_node_id_pv(
+    boost::optional<MeshLib::PropertyVector<int>&> const opt_node_id_pv(
         surface_mesh->getProperties().getPropertyVector<int>(prop_name));
     if (!opt_node_id_pv) {
         ERR(
@@ -133,4 +133,3 @@ int DirectConditionGenerator::writeToFile(const std::string &name) const
     }
     return 0;
 }
-
