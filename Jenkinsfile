@@ -1,8 +1,6 @@
 #!/usr/bin/env groovy
 
 node('master') {
-    helper = load 'scripts/jenkins/lib/helper.groovy'
-
     step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins build']])
     checkout scm
 
@@ -11,6 +9,7 @@ node('master') {
     builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
     builders['mac'] = { load 'scripts/jenkins/mac.groovy' }
 
+    helper = load 'scripts/jenkins/lib/helper.groovy'
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
     }
