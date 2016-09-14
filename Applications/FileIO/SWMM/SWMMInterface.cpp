@@ -102,7 +102,7 @@ std::unique_ptr<SwmmInterface> SwmmInterface::create(std::string const& file_nam
     if (file_name.length() < 5)
         return nullptr;
 
-    if (!(SwmmInterface::isSwmmInputFile(file_name) || SwmmInterface::isSwmmOutputFile(file_name)))
+    if (!SwmmInterface::isSwmmInputFile(file_name))
         return nullptr;
 
     std::string const base_name (file_name.substr(0, file_name.length() - 4));
@@ -175,24 +175,11 @@ bool SwmmInterface::isSwmmInputFile(std::string const& inp_file_name)
     return true;
 }
 
-bool SwmmInterface::isSwmmOutputFile(std::string const& out_file_name)
+bool SwmmInterface::existsSwmmOutputFile() const
 {
-    std::string path (out_file_name);
-    std::transform(path.begin(), path.end(), path.begin(), std::tolower);
-    if (BaseLib::getFileExtension(path) != "out")
-    {
-        ERR ("SWMMInterface: file extension %s not recognised (should be *.out).",
-            BaseLib::getFileExtension(out_file_name).c_str());
+    std::string const outfile (_base_name + ".out");
+    if (OpenSwmmOutFile(const_cast<char*>(outfile.c_str())) != 0)
         return false;
-    }
-
-    std::ifstream in ( out_file_name.c_str() );
-    if (!in.is_open())
-    {
-        ERR ("SWMMInterface: Could not open input file %s.", out_file_name.c_str());
-        return false;
-    }
-    in.close();
     return true;
 }
 
@@ -496,7 +483,7 @@ bool SwmmInterface::readNodeData(std::ifstream &in, std::vector<MeshLib::Node*> 
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
         // Junctions = 6, Outfalls = 4, Storage = 8
-        if (split_str.size() < 4)
+        if (split_str.size() < 3)
         {
             ERR ("Format not recognised.");
             return false;
@@ -681,7 +668,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     std::vector< MeshLib::Element* > elements;
     std::vector<double> max_depth(n_nodes);
     std::size_t const n_types = 3;
-    std::array< std::size_t, n_types> n_elem_types;
+    std::array< std::size_t, n_types> n_elem_types {{0,0,0}};
     while ( getline(in, line) )
     {
         if (line == "[RAINGAGES]")
@@ -773,7 +760,10 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         props.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
     mat_ids->resize(elements.size(), 0);
     for (std::size_t i=1; i<n_types; ++i)
-        std::fill(mat_ids->begin()+n_elem_types[i-1], mat_ids->begin()+n_elem_types[i], i);
+    {
+        if (n_elem_types[i] > 0)
+            std::fill(mat_ids->begin()+n_elem_types[i-1], mat_ids->begin()+n_elem_types[i], i);
+    }
 
     if (nodes.size() == max_depth.size())
     {
@@ -1165,7 +1155,7 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream &in)
             continue;
 
         std::vector<std::string> const split_str (BaseLib::splitString(line));
-        if (split_str.size() != 8)
+        if (split_str.size() < 6)
         {
             ERR ("Rain gauge parameter format not recognised.");
             return false;
@@ -1196,7 +1186,7 @@ bool SwmmInterface::readPollutants(std::ifstream &in)
             continue;
 
         std::vector<std::string> split_str (BaseLib::splitString(line));
-        if (split_str.size() < 10)
+        if (split_str.size() < 6)
         {
             ERR ("Parameter format for pollutants not recognised.");
             return false;
@@ -1220,7 +1210,7 @@ bool SwmmInterface::isSectionFinished(std::string const& str)
 
 bool SwmmInterface::isCommentLine(std::string const& str)
 {
-    return (str.compare(str.find_first_not_of(' ', 0),2,";;") == 0);
+    return (str.compare(str.find_first_not_of(' ', 0),1,";") == 0);
 }
 
 bool SwmmInterface::getNodeCoordinateVectors(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z) const

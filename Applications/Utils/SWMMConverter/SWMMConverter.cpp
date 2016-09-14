@@ -66,13 +66,17 @@ int main(int argc, char *argv[])
     if (swmm == nullptr)
         return -1;
 
-    std::size_t a = swmm->getNumberOfObjects(FileIO::SwmmObject::SUBCATCHMENT);
     MeshLib::Mesh mesh = swmm->getMesh();
     MeshLib::IO::VtuInterface vtkIO(&mesh, 0, false);
     vtkIO.writeToFile(mesh_output_arg.getValue());
 
-    INFO ("Simulation time steps: %d", swmm->getNumberOfTimeSteps());
+    if (!swmm->existsSwmmOutputFile())
+    {
+        INFO ("No output file found.");
+        return 0;
+    }
 
+    INFO ("Simulation time steps: %d", swmm->getNumberOfTimeSteps());
 
     // Example code: Writing node information to csv file
     FileIO::CsvInterface csv;

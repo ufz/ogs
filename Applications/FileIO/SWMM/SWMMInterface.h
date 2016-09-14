@@ -112,8 +112,8 @@ public:
     /// Checks if file is a SWMM input file
     static bool isSwmmInputFile(std::string const& inp_file_name);
 
-    /// Checks if file is a SWMM output file
-    static bool isSwmmOutputFile(std::string const& inp_file_name);
+    /// Checks if a SWMM output file exists for the current input
+    bool existsSwmmOutputFile() const;
 
     /// Reading a SWMM input file and conversion into OGS geometry.
     static bool convertSwmmInputToGeometry(std::string const& inp_file_name,
