@@ -25,7 +25,7 @@ node('mac && conan') {
 
     if (helper.isRelease()) {
         stage 'Release (Mac)'
-        archive 'build/*.zip,build/*.dmg'
+        archive 'build/*.tar.gz,build/*.dmg'
     }
 
     stage 'Post (Mac)'
