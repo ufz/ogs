@@ -13,7 +13,8 @@ def getEnv(arch = 'x64') {
     return [
         "QTDIR=${qtdir}",
         'Path=$Path;$QTDIR\\bin',
-        'CONAN_CMAKE_GENERATOR=Ninja'
+        'CONAN_CMAKE_GENERATOR=Ninja',
+        "ARCH=${arch}"
     ]
 }
 
