@@ -3,10 +3,13 @@ build     = load 'scripts/jenkins/lib/build.groovy'
 post      = load 'scripts/jenkins/lib/post.groovy'
 helper    = load 'scripts/jenkins/lib/helper.groovy'
 
-defaultCMakeOptions = '-DCMAKE_BUILD_TYPE=Release -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System ' +
-    '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
-
 node('win && conan') {
+    def defaultCMakeOptions =
+        '-DCMAKE_BUILD_TYPE=Release ' +
+        '-DOGS_LIB_BOOST=System ' +
+        '-DOGS_LIB_VTK=System ' +
+        '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
+
     stage 'Checkout (Win)'
     dir('ogs') { checkout scm }
 

@@ -3,9 +3,14 @@ build     = load 'scripts/jenkins/lib/build.groovy'
 post      = load 'scripts/jenkins/lib/post.groovy'
 helper    = load 'scripts/jenkins/lib/helper.groovy'
 
-defaultCMakeOptions = '-DCMAKE_BUILD_TYPE=Release -DOGS_CPU_ARCHITECTURE=core2 -DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System -DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
-
 node('mac && conan') {
+    def defaultCMakeOptions =
+        '-DCMAKE_BUILD_TYPE=Release ' +
+        '-DOGS_CPU_ARCHITECTURE=core2 ' +
+        '-DOGS_LIB_BOOST=System' +
+        '-DOGS_LIB_VTK=System ' +
+        '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
+
     stage 'Checkout (Mac)'
     dir('ogs') { checkout scm }
 

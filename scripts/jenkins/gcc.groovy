@@ -3,10 +3,12 @@ build     = load 'scripts/jenkins/lib/build.groovy'
 post      = load 'scripts/jenkins/lib/post.groovy'
 helper    = load 'scripts/jenkins/lib/helper.groovy'
 
-defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
-defaultCMakeOptions = '-DOGS_LIB_BOOST=System -DOGS_LIB_VTK=System'
-
 node('docker') {
+    def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
+    def defaultCMakeOptions =
+        '-DOGS_LIB_BOOST=System ' +
+        '-DOGS_LIB_VTK=System'
+
     stage 'Checkout (Linux-Docker)'
     dir('ogs') { checkout scm }
 

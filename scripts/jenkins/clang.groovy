@@ -2,9 +2,9 @@ configure = load 'scripts/jenkins/lib/configure.groovy'
 build     = load 'scripts/jenkins/lib/build.groovy'
 post      = load 'scripts/jenkins/lib/post.groovy'
 
-defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
-
 node('docker') {
+    def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
+
     stage 'Checkout'
     dir('ogs') { checkout scm }
 
