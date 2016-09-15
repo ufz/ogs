@@ -11,7 +11,7 @@ def win(buildDir, target = null) {
     targetString = ""
     if (target == null && helper.isRelease())
         targetString = "--target package"
-    else
+    else if (target != null)
         targetString = "--target ${target}"
 
     vcvarsallParam = "amd64"
