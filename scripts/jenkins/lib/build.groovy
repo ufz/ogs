@@ -9,7 +9,9 @@ def linux(buildDir, target = null, cmd = "make -j \$(nproc)") {
 
 def win(buildDir, target = null) {
     targetString = ""
-    if (target != null)
+    if (target == null && helper.isRelease())
+        targetString = "--target package"
+    else
         targetString = "--target ${target}"
     bat("""set path=%path:\"=%
            call "%vs120comntools%..\\..\\VC\\vcvarsall.bat" x86_amd64
