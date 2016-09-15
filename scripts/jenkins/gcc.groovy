@@ -12,7 +12,7 @@ node('docker') {
 
     docker.image('ogs6/gcc-gui:latest').inside(defaultDockerArgs) {
         stage 'Configure (Linux-Docker)'
-        configure.linux 'build', ''
+        configure.linux 'build', "${defaultCMakeOptions}"
 
         stage 'CLI (Linux-Docker)'
         build.linux 'build'
@@ -21,7 +21,9 @@ node('docker') {
         build.linux 'build', 'tests ctest'
 
         stage 'Data Explorer (Linux-Docker)'
-        configure.linux 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF', 'Unix Makefiles', null, true
+        configure.linux 'build', "${defaultCMakeOptions} " +
+            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+            'Unix Makefiles', null, true
         build.linux 'build'
     }
 

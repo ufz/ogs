@@ -6,7 +6,7 @@ def linux(buildDir, cmakeOptions, generator = 'Unix Makefiles', conan_args = nul
         sh("""cd ${buildDir}
               conan install ../ogs ${conan_args}""".stripIndent())
     sh """cd ${buildDir}
-          cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}"""
+          cmake ../ogs -G "${generator}" ${cmakeOptions}"""
 }
 
 def win(buildDir, cmakeOptions, generator, conan_args = null, keepBuildDir = false) {
@@ -25,7 +25,7 @@ def win(buildDir, cmakeOptions, generator, conan_args = null, keepBuildDir = fal
     bat """set path=%path:\"=%
            call "%vs120comntools%..\\..\\VC\\vcvarsall.bat" ${vcvarsallParam}
            cd ${buildDir}
-           cmake ../ogs -G "${generator}" ${defaultCMakeOptions} ${cmakeOptions}"""
+           cmake ../ogs -G "${generator}" ${cmakeOptions}"""
 }
 
 return this;

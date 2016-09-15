@@ -10,8 +10,9 @@ node('docker') {
 
     docker.image('ogs6/clang-base:latest').inside(defaultDockerArgs) {
         catchError {
-            configure.linux 'build', '-DOGS_ADDRESS_SANITIZER=ON ' +
-                '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON', ''
+            configure.linux 'build', "${defaultCMakeOptions} " +
+            '-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON',
+            ''
 
             stage 'Unit tests'
             build.linux 'build', 'tests', 'UBSAN_OPTIONS=print_stacktrace=1 make'

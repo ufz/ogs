@@ -10,7 +10,7 @@ node('mac && conan') {
     dir('ogs') { checkout scm }
 
     stage 'Configure (Mac)'
-    configure.linux 'build', '', 'Ninja', ''
+    configure.linux 'build', "${defaultCMakeOptions}", 'Ninja', ''
 
     stage 'CLI (Mac)'
     build.linux 'build', null, 'ninja'
@@ -19,7 +19,8 @@ node('mac && conan') {
     build.linux 'build', 'tests ctest', 'ninja'
 
     stage 'Data Explorer (Mac)'
-    configure.linux 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+    configure.linux 'build', "${defaultCMakeOptions} " +
+        '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
         'Ninja', '', true
     build.linux 'build', null, 'ninja'
 

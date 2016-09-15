@@ -12,7 +12,7 @@ node('win && conan') {
 
     withEnv(helper.getEnv()) {
         stage 'Configure (Win)'
-        configure.win 'build', '', 'Ninja',
+        configure.win 'build', "${defaultCMakeOptions}", 'Ninja',
             '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s ' +
                 'arch=x86_64'
 
@@ -23,7 +23,8 @@ node('win && conan') {
         build.win 'build', 'tests'
 
         stage 'Data Explorer (Win)'
-        configure.win 'build', '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+        configure.win 'build', "${defaultCMakeOptions} " +
+            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
             'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12' +
             ' -s arch=x86_64',
             true
