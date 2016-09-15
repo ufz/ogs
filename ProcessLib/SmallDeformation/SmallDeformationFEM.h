@@ -234,9 +234,10 @@ public:
                 Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
-            _ip_data[ip]._solid_material.computeConstitutiveRelation(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                sigma, C, material_state_variables);
+            if (!_ip_data[ip]._solid_material.computeConstitutiveRelation(
+                    t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
+                    sigma, C, material_state_variables))
+                OGS_FATAL("Computation of local constitutive relation failed.");
 
             local_b.noalias() -= B.transpose() * sigma * detJ * wp.getWeight();
             local_Jac.noalias() +=

@@ -127,7 +127,7 @@ public:
     {
     }
 
-    void computeConstitutiveRelation(
+    bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x_position,
         double const dt,

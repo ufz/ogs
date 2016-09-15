@@ -79,7 +79,7 @@ public:
     {
     }
 
-    void computeConstitutiveRelation(
+    bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const /*dt*/,
@@ -97,6 +97,7 @@ public:
         C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
 
         sigma.noalias() = sigma_prev + C * (eps - eps_prev);
+        return true;
     }
 
 private:

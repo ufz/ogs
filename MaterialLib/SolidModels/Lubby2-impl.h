@@ -17,7 +17,7 @@ namespace MaterialLib
 namespace Solids
 {
 template <int DisplacementDim>
-void Lubby2<DisplacementDim>::computeConstitutiveRelation(
+bool Lubby2<DisplacementDim>::computeConstitutiveRelation(
     double const t,
     ProcessLib::SpatialPosition const& x,
     double const dt,
@@ -115,7 +115,7 @@ void Lubby2<DisplacementDim>::computeConstitutiveRelation(
         auto const success_iterations = newton_solver.solve(K_loc);
 
         if (!success_iterations)
-            OGS_FATAL("The local Newton method did not succeed.");
+            return false;
 
         // If the Newton loop didn't run, the linear solver will not be
         // initialized.
@@ -142,6 +142,8 @@ void Lubby2<DisplacementDim>::computeConstitutiveRelation(
 
     auto const& P_sph = Invariants::spherical_projection;
     C.noalias() = state.GM * dzdE * P_dev + 3. * state.KM * P_sph;
+
+    return true;
 }
 
 template <int DisplacementDim>
