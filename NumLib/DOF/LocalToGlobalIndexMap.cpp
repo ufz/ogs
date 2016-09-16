@@ -16,6 +16,7 @@ template <typename ElementIterator>
 void
 LocalToGlobalIndexMap::findGlobalIndices(
     ElementIterator first, ElementIterator last,
+    std::vector<MeshLib::Node*> const& nodes,
     std::size_t const mesh_id,
     const unsigned comp_id, const unsigned comp_id_write)
 {
@@ -26,16 +27,16 @@ LocalToGlobalIndexMap::findGlobalIndices(
     std::size_t elem_id = 0;
     for (ElementIterator e = first; e != last; ++e, ++elem_id)
     {
-        std::size_t const nnodes = (*e)->getNumberOfNodes();
-
         LineIndex indices;
-        indices.reserve(nnodes);
 
-        for (unsigned n = 0; n < nnodes; n++)
+        for (auto* n = (*e)->getNodes(); n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
         {
+            // Check if the element's node is in the given list of nodes.
+            if (std::find(std::begin(nodes), std::end(nodes), *n) == std::end(nodes))
+                continue;
             MeshLib::Location l(mesh_id,
                                 MeshLib::MeshItemType::Node,
-                                (*e)->getNode(n)->getID());
+                                (*n)->getID());
             indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
         }
 
@@ -70,8 +71,8 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             auto const global_component_id =
                 getGlobalComponent(variable_id, component_id);
 
-            findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(), mesh_id,
-                              global_component_id, global_component_id);
+            findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(), ms.getNodes(),
+                              mesh_id, global_component_id, global_component_id);
         }
 
         // increase by number of components of that variable
@@ -98,7 +99,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     {
         std::size_t const mesh_id = ms->getMeshID();
 
-        findGlobalIndices(elements.cbegin(), elements.cend(), mesh_id,
+        findGlobalIndices(elements.cbegin(), elements.cend(), ms->getNodes(), mesh_id,
                           component_id, 0);  // There is only one component to
                                              // write out, therefore the zero
                                              // parameter.

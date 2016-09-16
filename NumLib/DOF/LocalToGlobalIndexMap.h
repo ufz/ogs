@@ -130,6 +130,7 @@ private:
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,
+        std::vector<MeshLib::Node*> const& nodes,
         std::size_t const mesh_id,
         const unsigned component_id, const unsigned comp_id_write);
 
