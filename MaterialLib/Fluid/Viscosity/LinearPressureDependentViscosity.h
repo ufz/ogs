@@ -46,19 +46,20 @@ public:
 
     /// Get viscosity value.
     /// \param var_vals Variable values in an array. The order of its elements
-    ///                 is given in enum class PropertyVariable.
-    double getValue(const double var_vals[]) const override
+    ///                 is given in enum class PropertyVariableType.
+
+    double getValue(const ArrayType& var_vals) const override
     {
-        const double p = var_vals[static_cast<int> (PropertyVariable::pl)];
+        const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
         return _mu0 * (1 + _gamma * (std::max(p,0.) - _p0));
     }
 
     /// Get the partial differential of the viscosity with respect to pressure.
     /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                  is given in enum class PropertyVariable.
+    ///                  is given in enum class PropertyVariableType.
     /// \param var       Variable type.
-    double getdValue(const double var_vals[],
-            const PropertyVariable var) const override
+    double getdValue(const ArrayType& var_vals,
+            const PropertyVariableType var) const override
     {
         (void) var_vals;
         (void) var;

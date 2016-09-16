@@ -20,6 +20,7 @@
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
+using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
 std::unique_ptr<FluidProperty> createTestViscosityModel(const char xml[])
 {
@@ -39,9 +40,10 @@ TEST(Material, checkConstantViscosity)
         "</viscosity>";
     auto const mu = createTestViscosityModel(xml);
 
-    ASSERT_EQ(1.e-4, mu->getValue(nullptr));
+    ArrayType dummy;
+    ASSERT_EQ(1.e-4, mu->getValue(dummy));
     ASSERT_EQ(0.0,
-              mu->getdValue(nullptr, MaterialLib::Fluid::PropertyVariable::T));
+              mu->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
 }
 
 TEST(Material, checkTemperatureDependentViscosity)
@@ -55,13 +57,14 @@ TEST(Material, checkTemperatureDependentViscosity)
         "</viscosity>";
     auto const mu = createTestViscosityModel(xml);
 
-    const double vars[] = {350.0};
+    ArrayType vars;
+    vars[0] = 350.0;
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
     // Test the density.
     ASSERT_NEAR(mu_expected, mu->getValue(vars), 1.e-10);
     // Test the derivative with respect to temperature.
     ASSERT_NEAR(-mu_expected,
-                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariable::T),
+                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::T),
                 1.e-10);
 }
 
@@ -76,13 +79,15 @@ TEST(Material, checkLinearPressureDependentViscosity)
         "</viscosity>";
     const auto mu = createTestViscosityModel(xml);
 
-    const double vars[] = {293, 2.e+6};
+    ArrayType vars;
+    vars[0] = 293.;
+    vars[1] = 2.e+6;
     // Test the density.
     ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)), mu->getValue(vars),
                 1.e-10);
     // Test the derivative with respect to pressure.
     ASSERT_NEAR(1.e-9,
-                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariable::pl),
+                mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::pl),
                 1.e-10);
 }
 
@@ -94,8 +99,9 @@ TEST(Material, checkVogelViscosity)
         "  <liquid_type>Water </liquid_type>"
         "</viscosity>";
     const auto mu_w = createTestViscosityModel(xml_w);
-    double vars[] = {303.0};
-    const auto var_type = MaterialLib::Fluid::PropertyVariable::T;
+    ArrayType vars;
+    vars[0] = 303.;
+    const auto var_type = MaterialLib::Fluid::PropertyVariableType::T;
     ASSERT_NEAR(0.802657e-3, mu_w->getValue(vars), 1.e-5);
     ASSERT_NEAR(-1.87823e-5, mu_w->getdValue(vars, var_type), 1.e-5);
 
