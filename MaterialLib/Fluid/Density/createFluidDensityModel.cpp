@@ -9,6 +9,8 @@
                http://www.opengeosys.org/project/license
 */
 
+#include <array>
+
 #include "createFluidDensityModel.h"
 
 #include "BaseLib/Error.h"
@@ -22,6 +24,50 @@ namespace MaterialLib
 {
 namespace Fluid
 {
+/*
+    config  ConfigTree object which contains the input data
+                   including  <type>fluid</type> and it has
+                   a tag of <density>
+*/
+std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree const& config)
+{
+    std::array<double, 5> parameters =
+    {
+        //! \ogs_file_param{material__fluid__density__liquid_density__beta}
+        config.getConfigParameter<double>("beta"),
+        //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
+        config.getConfigParameter<double>("rho0"),
+        //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
+        config.getConfigParameter<double>("temperature0"),
+        //! \ogs_file_param{material__fluid__density__liquid_density__p0}
+        config.getConfigParameter<double>("p0"),
+        //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
+        config.getConfigParameter<double>("bulk_modulus")
+    };
+    return std::unique_ptr<FluidProperty>(new LiquidDensity(parameters));
+}
+
+/*
+    config  ConfigTree object which contains the input data
+                   including  <type>fluid</type> and it has
+                   a tag of <density>
+*/
+std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity
+                                     (BaseLib::ConfigTree const& config)
+{
+    std::array<double, 3> parameters =
+    {
+        //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
+        config.getConfigParameter<double>("rho0"),
+        //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
+        config.getConfigParameter<double>("temperature0"),
+        //! \ogs_file_param{material__fluid__density__linear_temperature__beta}
+        config.getConfigParameter<double>("beta")
+    };
+    return std::unique_ptr<FluidProperty>(
+            new LinearTemperatureDependentDensity(parameters));
+}
+
 std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fluid__density__type}
@@ -35,11 +81,11 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const
     }
     //! \ogs_file_param{material__fluid__density__LiquidDensity}
     else if (type == "LiquidDensity")
-        return std::unique_ptr<FluidProperty>(new LiquidDensity(config));
+        return createLiquidDensity(config);
+
     //! \ogs_file_param{material__fluid__density__TemperatureDependent}
     else if (type == "TemperatureDependent")
-        return std::unique_ptr<FluidProperty>(
-                new LinearTemperatureDependentDensity(config));
+        return createLinearTemperatureDependentDensity(config);
     //! \ogs_file_param{material__fluid__density__IdealGasLaw}
     else if (type == "IdealGasLaw")
     {
@@ -50,9 +96,9 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const
     else
     {
         OGS_FATAL(
-            "The density type %s is unavailable.\n", type.data(),
-            "The available types are Constant, LiquidDensity, "
-            "TemperatureDependent and IdealGasLaw");
+            "The density type %s is unavailable.\n"
+            "The available types are: \n\tConstant, \n\tLiquidDensity, "
+            "\n\tTemperatureDependent, \n\tIdealGasLaw.\n", type.data());
     }
 }
 

@@ -52,20 +52,14 @@ namespace Fluid
 class LiquidDensity final : public FluidProperty
 {
 public:
-    /// \param config  ConfigTree object which contains the input data
-    ///                 including  <type>fluid</type> and it has
-    ///                 a tag of <density>
-    explicit LiquidDensity(BaseLib::ConfigTree const& config)
-        :  //! \ogs_file_param{material__fluid__density__liquid_density__beta}
-    _beta(config.getConfigParameter<double>("beta")),
-          //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
-    _rho0(config.getConfigParameter<double>("rho0")),
-          //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
-    _temperature0(config.getConfigParameter<double>("temperature0")),
-          //! \ogs_file_param{material__fluid__density__liquid_density__p0}
-    _p0(config.getConfigParameter<double>("p0")),
-          //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
-    _bulk_modulus(config.getConfigParameter<double>("bulk_modulus"))
+    /// \param parameters An array contains the five parameters.
+    explicit LiquidDensity(std::array<double,5>& parameters)
+    :
+    _beta(parameters[0]),
+    _rho0(parameters[1]),
+    _temperature0(parameters[2]),
+    _p0(parameters[3]),
+    _bulk_modulus(parameters[4])
     {
     }
 

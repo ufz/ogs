@@ -28,16 +28,9 @@ namespace Fluid
 class LinearTemperatureDependentDensity final : public FluidProperty
 {
 public:
-    /// \param config  ConfigTree object which contains the input data
-    ///                including <type>temperature_dependent</type> and it has
-    ///                a tag of <density>
-    explicit LinearTemperatureDependentDensity(BaseLib::ConfigTree const& config)
-        :  //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
-    _rho0(config.getConfigParameter<double>("rho0")),
-          //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
-    _temperature0(config.getConfigParameter<double>("temperature0")),
-          //! \ogs_file_param{material__fluid__density__linear_temperature__beta}
-    _beta(config.getConfigParameter<double>("beta"))
+    /// \param parameters An array contains the five parameters.
+    explicit LinearTemperatureDependentDensity(std::array<double,3>& parameters)
+    : _rho0(parameters[0]),_temperature0(parameters[1]),_beta(parameters[2])
     {
     }
 
