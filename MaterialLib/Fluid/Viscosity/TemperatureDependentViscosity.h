@@ -29,16 +29,10 @@ namespace Fluid
 class TemperatureDependentViscosity final : public FluidProperty
 {
 public:
-    /// \param config  ConfigTree object which contains the input data
-    ///                including <type>temperature_dependent</type> and it has
-    ///                a tag of <viscosity>
-    explicit TemperatureDependentViscosity(BaseLib::ConfigTree const& config)
-        :  //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__mu0}
-    _mu0(config.getConfigParameter<double>("mu0")),
-          //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tc}
-    _temperature_c(config.getConfigParameter<double>("tc")),
-          //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tv}
-    _temperature_v(config.getConfigParameter<double>("tv"))
+    /// \param parameters An array contains the five parameters.
+    explicit TemperatureDependentViscosity(std::array<double,3>& parameters)
+    : _mu0(parameters[0]),_temperature_c(parameters[1]),
+    _temperature_v(parameters[2])
     {
     }
 

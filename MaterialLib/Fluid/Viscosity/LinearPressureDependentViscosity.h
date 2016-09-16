@@ -25,16 +25,9 @@ namespace Fluid
 class LinearPressureDependentViscosity final : public FluidProperty
 {
 public:
-    /// \param config  ConfigTree object which contains the input data
-    ///                including <type>linear_pressure</type> and it has
-    ///                a tag of <viscosity>
-    explicit LinearPressureDependentViscosity(BaseLib::ConfigTree const& config)
-        :  //! \ogs_file_param{material__fluid__viscosity__linear_pressure_dependent__mu0}
-    _mu0(config.getConfigParameter<double>("mu0")),
-          //! \ogs_file_param{material__fluid__viscosity__linear_pressure_dependent__p0}
-    _p0(config.getConfigParameter<double>("p0")),
-          //! \ogs_file_param{material__fluid__viscosity__linear_pressure_dependent__gamma}
-    _gamma(config.getConfigParameter<double>("gamma"))
+    /// \param parameters An array contains the five parameters.
+    explicit LinearPressureDependentViscosity(std::array<double,3>& parameters)
+    : _mu0(parameters[0]),_p0(parameters[1]),_gamma(parameters[2])
     {
     }
 
@@ -47,7 +40,6 @@ public:
     /// Get viscosity value.
     /// \param var_vals Variable values in an array. The order of its elements
     ///                 is given in enum class PropertyVariableType.
-
     double getValue(const ArrayType& var_vals) const override
     {
         const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];

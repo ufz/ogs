@@ -21,6 +21,48 @@ namespace MaterialLib
 {
 namespace Fluid
 {
+/*
+    config  ConfigTree object which contains the input data
+                   including  <type>fluid</type> and it has
+                   a tag of <density>
+*/
+std::unique_ptr<FluidProperty> createLinearPressureDependentViscosity
+                                   (BaseLib::ConfigTree const& config)
+{
+    std::array<double, 3> parameters =
+    {
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__mu0}
+        config.getConfigParameter<double>("mu0"),
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__p0}
+        config.getConfigParameter<double>("p0"),
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__gamma}
+        config.getConfigParameter<double>("gamma")
+    };
+    return std::unique_ptr<FluidProperty>(
+            new LinearPressureDependentViscosity(parameters));
+}
+
+/*
+    config  ConfigTree object which contains the input data
+                   including  <type>fluid</type> and it has
+                   a tag of <density>
+*/
+std::unique_ptr<FluidProperty> createTemperatureDependentViscosity
+                                   (BaseLib::ConfigTree const& config)
+{
+    std::array<double, 3> parameters =
+    {
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__mu0}
+        config.getConfigParameter<double>("mu0"),
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tc}
+        config.getConfigParameter<double>("tc"),
+        //! \ogs_file_param{material__fluid__viscosity__temperature_dependent__tv}
+        config.getConfigParameter<double>("tv")
+    };
+    return std::unique_ptr<FluidProperty>(
+            new TemperatureDependentViscosity(parameters));
+}
+
 std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__fluid__viscosity__type}
@@ -32,12 +74,10 @@ std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& c
             config.getConfigParameter<double>("value")));
     //! \ogs_file_param{material__fluid__viscosity__LinearPressure}
     else if (type == "LinearPressure")
-        return std::unique_ptr<FluidProperty>(
-                new LinearPressureDependentViscosity(config));
+        return createLinearPressureDependentViscosity(config);
     //! \ogs_file_param{material__fluid__viscosity__TemperatureDependent}
     else if (type == "TemperatureDependent")
-        return std::unique_ptr<FluidProperty>(
-                new TemperatureDependentViscosity(config));
+        return createTemperatureDependentViscosity(config);
     //! \ogs_file_param{material__fluid__viscosity__Vogels}
     else if (type == "Vogels")
     {
@@ -63,17 +103,17 @@ std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& c
         else
         {
             OGS_FATAL(
-                "The fluid type %s for Vogels model is unavailable.\n",
-                fluid_type.data(),
-                "The available fluid types are Water, CO2 and CH4 ");
+                "The fluid type %s for Vogels model is unavailable.\n"
+                "The available fluid types are Water, CO2 and CH4\n",
+                fluid_type.data());
         }
     }
     else
     {
         OGS_FATAL(
-            "The viscosity type %s is unavailable.\n", type.data(),
-            "The available types are Constant, LinearPressure "
-            "TemperatureDependent and Vogels");
+            "The viscosity type %s is unavailable.\n"
+            "The available types are \n\tConstant, \n\tLinearPressure "
+            "\n\tTemperatureDependent, \n\tVogels\n", type.data());
     }
 }
 
