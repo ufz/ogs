@@ -1,6 +1,3 @@
-configure = load 'scripts/jenkins/lib/configure.groovy'
-build     = load 'scripts/jenkins/lib/build.groovy'
-
 node('win && conan') {
     def defaultCMakeOptions =
         '-DCMAKE_BUILD_TYPE=Release ' +

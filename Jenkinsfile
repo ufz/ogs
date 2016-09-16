@@ -1,5 +1,10 @@
 #!/usr/bin/env groovy
 
+configure = null
+build = null
+post = null
+helper = null
+
 node('master') {
     step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins build']])
 
@@ -7,12 +12,16 @@ node('master') {
     checkout scm
     stash name: 'source', useDefaultExcludes: false
 
+    configure = load 'scripts/jenkins/lib/configure.groovy'
+    build     = load 'scripts/jenkins/lib/build.groovy'
+    post      = load 'scripts/jenkins/lib/post.groovy'
+    helper    = load 'scripts/jenkins/lib/helper.groovy'
+
     def builders = [:]
     builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }
     builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
     builders['mac'] = { load 'scripts/jenkins/mac.groovy' }
 
-    helper = load 'scripts/jenkins/lib/helper.groovy'
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
     }
