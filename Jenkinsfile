@@ -2,7 +2,10 @@
 
 node('master') {
     step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins build']])
+
+    stage 'Checkout'
     checkout scm
+    stash name: 'source', useDefaultExcludes: false
 
     def builders = [:]
     builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }

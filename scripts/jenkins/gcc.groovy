@@ -9,8 +9,7 @@ node('docker') {
         '-DOGS_LIB_BOOST=System ' +
         '-DOGS_LIB_VTK=System'
 
-    stage 'Checkout (Linux-Docker)'
-    dir('ogs') { checkout scm }
+    dir('ogs') { unstash 'source' }
 
     docker.image('ogs6/gcc-gui:latest').inside(defaultDockerArgs) {
         stage 'Configure (Linux-Docker)'

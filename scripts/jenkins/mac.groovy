@@ -11,8 +11,7 @@ node('mac && conan') {
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
-    stage 'Checkout (Mac)'
-    dir('ogs') { checkout scm }
+    dir('ogs') { unstash 'source' }
 
     stage 'Configure (Mac)'
     configure.linux 'build', "${defaultCMakeOptions}", 'Ninja', ''
