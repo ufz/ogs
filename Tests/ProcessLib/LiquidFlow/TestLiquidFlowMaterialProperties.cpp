@@ -17,10 +17,9 @@
 #include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 
-namespace
-{
 using namespace ProcessLib::LiquidFlow;
 using namespace MaterialLib::Fluid;
+using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
 TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 {
@@ -67,7 +66,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
     LiquidFlowMaterialProperties lprop(sub_config);
 
     // Check density
-    const double vars[] = {273.15 + 60.0, 1.e+6};
+    const ArrayType vars = {273.15 + 60.0, 1.e+6};
     const double T0 = 273.15;
     const double p0 = 1.e+5;
     const double rho0 = 999.8;
@@ -82,16 +81,17 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 
     // Test the derivative with respect to temperature.
     ASSERT_NEAR(-beta * rho0 / (fac_T * fac_T) / (1. - (p - p0) / K),
-                lprop.density_l->getdValue(vars, PropertyVariable::T), 1.e-10);
+                lprop.density_l->getdValue(vars, PropertyVariableType::T), 1.e-10);
 
     // Test the derivative with respect to pressure.
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                lprop.density_l->getdValue(vars, PropertyVariable::pl), 1.e-10);
+                lprop.density_l->getdValue(vars, PropertyVariableType::pl), 1.e-10);
 
     // Check viscosity
-    const double vars1[] = {303.0};
-    const auto var_type = MaterialLib::Fluid::PropertyVariable::T;
+    ArrayType vars1;
+    vars1[0] = 303.0;
+    const auto var_type = MaterialLib::Fluid::PropertyVariableType::T;
     ASSERT_NEAR(0.802657e-3, lprop.viscosity->getValue(vars1), 1.e-5);
     ASSERT_NEAR(-1.87823e-5, lprop.viscosity->getdValue(vars1, var_type),
                 1.e-5);
@@ -114,5 +114,4 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 
     // Check storage
     ASSERT_EQ(1.e-4, lprop.storage[0]->getValue(nullptr));
-}
 }

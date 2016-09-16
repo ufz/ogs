@@ -64,11 +64,12 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
 double LiquidFlowMaterialProperties::getMassCoeffcient(
     const double p, const double T, const unsigned material_group_id)
 {
+    ArrayType vars;
     vars[0] = T;
     vars[1] = p;
     return porosity[material_group_id]->getValue() *
                density_l->getdValue(vars,
-                                    MaterialLib::Fluid::PropertyVariable::pl) +
+                                    MaterialLib::Fluid::PropertyVariableType::pl) +
            storage[material_group_id]->getValue(nullptr);
 }
 

@@ -24,6 +24,8 @@ namespace LiquidFlow
 {
 struct LiquidFlowMaterialProperties
 {
+    typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
+
     LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config);
 
     /**
@@ -43,6 +45,7 @@ struct LiquidFlowMaterialProperties
 
     double getLiquidDensity(const double p, const double T)
     {
+        ArrayType vars;
         vars[0] = T;
         vars[1] = p;
         return density_l->getValue(vars);
@@ -50,6 +53,7 @@ struct LiquidFlowMaterialProperties
 
     double getViscosity(const double p, const double T)
     {
+        ArrayType vars;
         vars[0] = T;
         vars[1] = p;
         return viscosity->getValue(vars);
@@ -64,8 +68,6 @@ struct LiquidFlowMaterialProperties
     std::vector<MaterialLib::PorousMedium::CoefMatrix> intrinsic_permeabiliy;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
-
-    double vars[2];
 };
 
 }  // end of namespace
