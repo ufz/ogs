@@ -23,6 +23,7 @@
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
 
+using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 //----------------------------------------------------------------------------
 // Test density models.
 std::unique_ptr<FluidProperty> createTestFluidDensityModel(const char xml[])
@@ -43,9 +44,10 @@ TEST(Material, checkConstantDensity)
         "</density>";
     const auto rho = createTestFluidDensityModel(xml);
 
-    ASSERT_EQ(998.0, rho->getValue(nullptr));
+    ArrayType dummy;
+    ASSERT_EQ(998.0, rho->getValue(dummy));
     ASSERT_EQ(0.0,
-              rho->getdValue(nullptr, MaterialLib::Fluid::PropertyVariable::T));
+              rho->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
 }
 
 TEST(Material, checkIdealGasLaw)
@@ -62,16 +64,16 @@ TEST(Material, checkIdealGasLaw)
     const double p = 1.e+5;
     const double R = PhysicalConstant::IdealGasConstant;
     const double expected_air_dens = molar_air * p / (R * T);
-    double vars[] = {290, 0, 1.e+5};
+    ArrayType vars = {290, 0, 1.e+5};
     ASSERT_NEAR(expected_air_dens, rho->getValue(vars), 1.e-10);
 
     const double expected_d_air_dens_dT = -molar_air * p / (R * T * T);
     ASSERT_NEAR(expected_d_air_dens_dT,
-                rho->getdValue(vars, Fluid::PropertyVariable::T), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::T), 1.e-10);
 
     const double expected_d_air_dens_dp = molar_air / (R * T);
     ASSERT_NEAR(expected_d_air_dens_dp,
-                rho->getdValue(vars, Fluid::PropertyVariable::pg), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::pg), 1.e-10);
 }
 
 TEST(Material, checkLinearTemperatureDependentDensity)
@@ -86,11 +88,12 @@ TEST(Material, checkLinearTemperatureDependentDensity)
 
     const auto rho = createTestFluidDensityModel(xml);
 
-    double vars[] = {273.1 + 60.0};
+    ArrayType vars;
+    vars[0] = 273.1;
     ASSERT_NEAR(1000.0 * (1 + 4.3e-4 * (vars[0] - 293.0)), rho->getValue(vars),
                 1.e-10);
     ASSERT_NEAR(1000.0 * 4.3e-4,
-                rho->getdValue(vars, Fluid::PropertyVariable::T), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::T), 1.e-10);
 }
 
 TEST(Material, checkLiquidDensity)
@@ -106,7 +109,7 @@ TEST(Material, checkLiquidDensity)
         "</density>";
     const auto rho = createTestFluidDensityModel(xml);
 
-    const double vars[] = {273.15 + 60.0, 1.e+6};
+    const ArrayType vars = {273.15 + 60.0, 1.e+6, 0.};
     const double T0 = 273.15;
     const double p0 = 1.e+5;
     const double rho0 = 999.8;
@@ -121,10 +124,10 @@ TEST(Material, checkLiquidDensity)
 
     // Test the derivative with respect to temperature.
     ASSERT_NEAR(-beta * rho0 / (fac_T * fac_T) / (1. - (p - p0) / K),
-                rho->getdValue(vars, Fluid::PropertyVariable::T), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::T), 1.e-10);
 
     // Test the derivative with respect to pressure.
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                rho->getdValue(vars, Fluid::PropertyVariable::pl), 1.e-10);
+                rho->getdValue(vars, Fluid::PropertyVariableType::pl), 1.e-10);
 }

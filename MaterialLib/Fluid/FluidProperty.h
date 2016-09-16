@@ -14,23 +14,30 @@
 #define FLUIDPROPERTY_H
 
 #include <string>
+#include <array>
 
 namespace MaterialLib
 {
 namespace Fluid
 {
 /// Variable that determine the property.
-enum class PropertyVariable
+enum class PropertyVariableType
 {
-    T = 0,   ///< temperature
-    pl = 1,  ///< pressure of the liquid phase (1st phase for some cases))
-    pg = 2,  ///< pressure of the gas phase (2nd phase for some cases))
+    T = 0,///< temperature.
+    pl = 1,///< pressure of the liquid phase (1st phase for some cases).
+    pg = 2,///< pressure of the gas phase (2nd phase for some cases).
+    vars_num = 3 ///< Number of property variables.
 };
+
+const unsigned PropertyVariableNumber
+        = static_cast<unsigned> (PropertyVariableType::vars_num);
 
 /// Base class of fluid density properties
 class FluidProperty
 {
 public:
+
+    typedef std::array<double,PropertyVariableNumber> ArrayType;
 
     virtual ~FluidProperty()
     {
@@ -41,16 +48,16 @@ public:
 
     /// Get property value.
     /// The argument is an array of variables. The order of its elements
-    ///                 is given in enum class PropertyVariable.
-    virtual double getValue(const double /* var_vals*/[]) const = 0;
+    ///                 is given in enum class PropertyVariableType.
+    virtual double getValue(const ArrayType& /* var_vals*/) const = 0;
 
     /// Get the partial differential of the property value
     /// The first argument is an array of variables, and the order of the array
-    /// elements is given in enum class PropertyVariable.
+    /// elements is given in enum class PropertyVariableType.
     /// The second argument is the variable type indicating which partial derivative
     /// to be get.
-    virtual double getdValue(const double /* var_vals*/[],
-                             const PropertyVariable /* var */) const = 0;
+    virtual double getdValue(const ArrayType& /* var_vals*/,
+            const PropertyVariableType /* var */) const = 0;
 };
 
 }  // end namespace

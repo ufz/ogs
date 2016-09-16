@@ -35,8 +35,8 @@ public:
 
     /// Get property value.
     /// \param var_vals Variable values in an array. The order of its elements
-    ///                 is given in enum class PropertyVariable.
-    double getValue(const double var_vals[]) const override
+    ///                 is given in enum class PropertyVariableType.
+    double getValue(const ArrayType& var_vals) const override
     {
         (void) var_vals;
         return _value;
@@ -44,10 +44,10 @@ public:
 
     /// Get the partial differential of the property value
     /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                  is given in enum class PropertyVariable.
+    ///                  is given in enum class PropertyVariableType.
     /// \param var       Variable type.
-    double getdValue(const double var_vals[],
-            const PropertyVariable var) const override
+    double getdValue(const ArrayType& var_vals,
+            const PropertyVariableType var) const override
     {
         (void) var_vals;
         (void) var;

@@ -43,28 +43,28 @@ public:
 
     /// Get density value.
     /// \param var_vals Variable values in an array. The order of its elements
-    ///                 is given in enum class PropertyVariable.
-    double getValue(const double var_vals[]) const override
+    ///                 is given in enum class PropertyVariableType.
+    double getValue(const ArrayType& var_vals) const override
     {
-        return _molar_mass * var_vals[static_cast<int>(PropertyVariable::pg)] /
+        return _molar_mass * var_vals[static_cast<int> (PropertyVariableType::pg)] /
                (PhysicalConstant::IdealGasConstant *
-                var_vals[static_cast<int>(PropertyVariable::T)]);
+                var_vals[static_cast<int> (PropertyVariableType::T)]);
     }
 
     /// Get the partial differential of the density with respect to temperature
     /// or gas pressure.
     /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                   is given in enum class PropertyVariable.
+    ///                   is given in enum class PropertyVariableType.
     /// \param var       Variable type.
-    double getdValue(const double var_vals[],
-            const PropertyVariable var) const override
+    double getdValue(const ArrayType& var_vals,
+            const PropertyVariableType var) const override
     {
-        assert(var == PropertyVariable::T || var == PropertyVariable::pg);
+        assert(var == PropertyVariableType::T || var == PropertyVariableType::pg);
 
-        const int func_id = (var == PropertyVariable::T) ? 0 : 1;
+        const int func_id = (var == PropertyVariableType::T) ? 0 : 1;
         return (this->*_derivative_functions[func_id])(
-            var_vals[static_cast<int>(PropertyVariable::T)],
-            var_vals[static_cast<int>(PropertyVariable::pg)]);
+                var_vals[static_cast<int> (PropertyVariableType::T)],
+                var_vals[static_cast<int> (PropertyVariableType::pg)]);
     }
 
 private:
