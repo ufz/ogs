@@ -59,6 +59,13 @@ if(OGS_BUILD_GUI)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
+if(WIN32)
+    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" OFF)
+endif()
+if(NOT WIN32 AND OGS_BUILD_SWMM)
+    message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
+endif()
+
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers

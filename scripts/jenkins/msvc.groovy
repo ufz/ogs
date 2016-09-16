@@ -10,8 +10,13 @@ node('win && conan') {
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
-    stage 'Checkout (Win)'
-    dir('ogs') { checkout scm }
+    def guiCMakeOptions =
+        '-DOGS_BUILD_GUI=ON ' +
+        '-DOGS_BUILD_UTILS=ON ' +
+        '-DOGS_BUILD_TESTS=OFF ' +
+        '-DOGS_BUILD_SWMM=ON'
+
+    dir('ogs') { unstash 'source' }
 
     withEnv(helper.getEnv()) {
         stage 'Configure (Win)'
@@ -26,8 +31,7 @@ node('win && conan') {
         build.win 'build', 'tests'
 
         stage 'Data Explorer (Win)'
-        configure.win 'build', "${defaultCMakeOptions} " +
-            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+        configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}",
             'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12' +
             ' -s arch=x86_64',
             true

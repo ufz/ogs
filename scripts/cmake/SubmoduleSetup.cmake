@@ -37,13 +37,15 @@ foreach(SUBMODULE ${REQUIRED_SUBMODULES})
     if(UNINITIALIZED)
         message(STATUS "Initializing submodule ${SUBMODULE}")
         execute_process(
-            COMMAND ${GIT_TOOL_PATH} submodule update --init ${SUBMODULE}
+            COMMAND ${GIT_TOOL_PATH}
+                submodule update --init --recursive ${SUBMODULE}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
     elseif(MISMATCH)
         message(STATUS "Updating submodule ${SUBMODULE}")
         execute_process(
-            COMMAND git submodule update ${SUBMODULE}
+            COMMAND ${GIT_TOOL_PATH}
+                submodule update --recursive ${SUBMODULE}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
     endif()
