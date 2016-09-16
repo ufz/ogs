@@ -18,3 +18,5 @@ endif() # OGS_BUILD_GUI
 if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMConverter)
 endif()
+
+include(Tests.cmake)
