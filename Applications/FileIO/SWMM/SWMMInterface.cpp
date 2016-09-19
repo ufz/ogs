@@ -18,6 +18,7 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Polygon.h"
+#include "GeoLib/PointVec.h"
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -243,7 +244,10 @@ bool SwmmInterface::readPolygons(std::ifstream &in, std::vector<GeoLib::Polyline
         if (split_str[0] != polygon_name)
         {
             if (p != nullptr)
+            {
+                p->addPoint(p->getPointID(0));
                 lines.push_back(p);
+            }
 
             polygon_name = split_str[0];
             p = new GeoLib::Polyline(points);
@@ -260,7 +264,10 @@ bool SwmmInterface::readPolygons(std::ifstream &in, std::vector<GeoLib::Polyline
 
     // when the section is finished, add the last polygon
     if (p != nullptr)
+    {
+        p->addPoint(p->getPointID(0));
         lines.push_back(p);
+    }
 
     return true;
 }
@@ -464,6 +471,19 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         std::size_t const n_names (line_names.size());
         for (std::size_t i=0; i<n_names; ++i)
             line_id_map->insert(std::make_pair(line_names[i], i));
+        std::vector<std::size_t> const& pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
+        for (GeoLib::Polyline* line : *lines)
+        {
+            for (std::size_t i=0; i<line->getNumberOfPoints(); ++i)
+            {
+                line->setPointID(i, pnt_id_map[line->getPointID(i)]);
+                if (i>0 && line->getPointID(i-1) == line->getPointID(i))
+                {
+                    line->removePoint(i);
+                    i--;
+                }
+            }
+        }
         geo_objects.addPolylineVec(std::move(lines), geo_name, line_id_map);
     }
     return true;
