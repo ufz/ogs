@@ -281,8 +281,9 @@ void TESProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac);
 }
 
-void TESProcess::preTimestep(GlobalVector const& x, const double t,
-                                          const double delta_t)
+void TESProcess::preTimestepConcreteProcess(GlobalVector const& x,
+                                            const double t,
+                                            const double delta_t)
 {
     DBUG("new timestep");
 

@@ -139,12 +139,6 @@ private:
 
     virtual void postTimestepConcreteProcess(GlobalVector const& /*x*/) {}
 
-    virtual void assembleJacobianConcreteProcess(
-        const double /*t*/, GlobalVector const& /*x*/,
-        GlobalVector const& /*xdot*/, const double /*dxdot_dx*/,
-        GlobalMatrix const& /*M*/, const double /*dx_dx*/,
-        GlobalMatrix const& /*K*/, GlobalMatrix& /*Jac*/);
-
     virtual void preIterationConcreteProcess(const unsigned /*iter*/,
                                              GlobalVector const& /*x*/){}
 
