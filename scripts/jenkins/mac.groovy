@@ -6,31 +6,29 @@ node('mac && conan') {
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
-    ws {
-        dir('ogs') { unstash 'source' }
+    dir('ogs') { unstash 'source' }
 
-        stage 'Configure (Mac)'
-        configure.linux 'build', "${defaultCMakeOptions}", 'Ninja', ''
+    stage 'Configure (Mac)'
+    configure.linux 'build', "${defaultCMakeOptions}", 'Ninja', ''
 
-        stage 'CLI (Mac)'
-        build.linux 'build', null, 'ninja'
+    stage 'CLI (Mac)'
+    build.linux 'build', null, 'ninja'
 
-        stage 'Test (Mac)'
-        build.linux 'build', 'tests ctest', 'ninja'
+    stage 'Test (Mac)'
+    build.linux 'build', 'tests ctest', 'ninja'
 
-        stage 'Data Explorer (Mac)'
-        configure.linux 'build', "${defaultCMakeOptions} " +
-            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
-            'Ninja', '', true
-        build.linux 'build', null, 'ninja'
+    stage 'Data Explorer (Mac)'
+    configure.linux 'build', "${defaultCMakeOptions} " +
+        '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+        'Ninja', '', true
+    build.linux 'build', null, 'ninja'
 
-        if (helper.isRelease()) {
-            stage 'Release (Mac)'
-            archive 'build/*.tar.gz,build/*.dmg'
-        }
-
-        stage 'Post (Mac)'
-        post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-            'ogs/scripts/jenkins/msvc-log-parser.rules'
+    if (helper.isRelease()) {
+        stage 'Release (Mac)'
+        archive 'build/*.tar.gz,build/*.dmg'
     }
+
+    stage 'Post (Mac)'
+    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+        'ogs/scripts/jenkins/msvc-log-parser.rules'
 }
