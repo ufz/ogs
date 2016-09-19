@@ -6,7 +6,8 @@ node('win && conan') {
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
-    dir('ogs') { unstash 'source' }
+    stage 'Checkout (Win)'
+    dir('ogs') { checkout scm }
 
     stage 'Data Explorer 32-bit (Win)'
     withEnv(helper.getEnv('x32')) {

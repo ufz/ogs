@@ -7,10 +7,7 @@ helper = null
 
 node('master') {
     step([$class: 'GitHubSetCommitStatusBuilder', statusMessage: [content: 'Started Jenkins build']])
-
-    stage 'Checkout'
     checkout scm
-    stash name: 'source', useDefaultExcludes: false
 
     configure = load 'scripts/jenkins/lib/configure.groovy'
     build     = load 'scripts/jenkins/lib/build.groovy'

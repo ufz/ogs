@@ -11,7 +11,8 @@ node('win && conan') {
         '-DOGS_BUILD_TESTS=OFF ' +
         '-DOGS_BUILD_SWMM=ON'
 
-    dir('ogs') { unstash 'source' }
+    stage 'Checkout (Win)'
+    dir('ogs') { checkout scm }
 
     withEnv(helper.getEnv()) {
         stage 'Configure (Win)'
