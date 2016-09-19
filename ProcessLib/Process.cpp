@@ -60,7 +60,6 @@ void Process::initialize()
 void Process::setInitialConditions(double const t, GlobalVector& x)
 {
     DBUG("Set initial conditions.");
-    std::size_t const n_nodes = _mesh.getNumberOfNodes();
 
     SpatialPosition pos;
 
@@ -73,31 +72,38 @@ void Process::setInitialConditions(double const t, GlobalVector& x)
 
         auto const num_comp = pv.getNumberOfComponents();
 
-        for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
+        for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            MeshLib::Location const l(_mesh.getID(),
-                                      MeshLib::MeshItemType::Node, node_id);
-
-            pos.setNodeID(node_id);
-            auto const& ic_value = ic(t, pos);
-
-            for (int comp_id = 0; comp_id < num_comp; ++comp_id)
+            auto const& mesh_subsets =
+                _local_to_global_index_map->getMeshSubsets(variable_id,
+                                                           component_id);
+            for (auto const& mesh_subset : mesh_subsets)
             {
-                auto global_index =
-                    std::abs(_local_to_global_index_map->getGlobalIndex(
-                        l, variable_id, comp_id));
+                auto const mesh_id = mesh_subset->getMeshID();
+                for (auto const* node : mesh_subset->getNodes())
+                {
+                    MeshLib::Location const l(
+                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
+
+                    pos.setNodeID(node->getID());
+                    auto const& ic_value = ic(t, pos);
+
+                    auto global_index =
+                        std::abs(_local_to_global_index_map->getGlobalIndex(
+                            l, variable_id, component_id));
 #ifdef USE_PETSC
-                // The global indices of the ghost entries of the global matrix
-                // or the global vectors need to be set as negative values for
-                // equation assembly, however the global indices start from
-                // zero. Therefore, any ghost entry with zero index is assigned
-                // an negative value of the vector size or the matrix dimension.
-                // To assign the initial value for the ghost entries, the
-                // negative indices of the ghost entries are restored to zero.
-                if (global_index == x.size())
-                    global_index = 0;
+                    // The global indices of the ghost entries of the global matrix
+                    // or the global vectors need to be set as negative values for
+                    // equation assembly, however the global indices start from
+                    // zero. Therefore, any ghost entry with zero index is assigned
+                    // an negative value of the vector size or the matrix dimension.
+                    // To assign the initial value for the ghost entries, the
+                    // negative indices of the ghost entries are restored to zero.
+                    if (global_index == x.size())
+                        global_index = 0;
 #endif
-                x.set(global_index, ic_value[comp_id]);
+                    x.set(global_index, ic_value[component_id]);
+                }
             }
         }
     }
