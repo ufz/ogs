@@ -6,6 +6,8 @@ APPEND_SOURCE_FILES(SOURCES)
 add_subdirectory(BoundaryCondition)
 APPEND_SOURCE_FILES(SOURCES BoundaryCondition)
 
+APPEND_SOURCE_FILES(SOURCES Deformation)
+
 add_subdirectory(Parameter)
 APPEND_SOURCE_FILES(SOURCES Parameter)
 
