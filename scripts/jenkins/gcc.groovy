@@ -1,8 +1,3 @@
-configure = load 'scripts/jenkins/lib/configure.groovy'
-build     = load 'scripts/jenkins/lib/build.groovy'
-post      = load 'scripts/jenkins/lib/post.groovy'
-helper    = load 'scripts/jenkins/lib/helper.groovy'
-
 node('docker') {
     def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
     def defaultCMakeOptions =
