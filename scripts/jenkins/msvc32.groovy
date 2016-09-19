@@ -9,15 +9,17 @@ node('win && conan') {
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON'
 
-    dir('ogs') { unstash 'source' }
+    ws {
+        dir('ogs') { unstash 'source' }
 
-    stage 'Data Explorer 32-bit (Win)'
-    withEnv(helper.getEnv('x32')) {
-        configure.win 'build-32', "${defaultCMakeOptions} " +
-            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
-            'Ninja', '-u -s build_type=Release -s compiler="Visual ' +
-            'Studio" -s compiler.version=12 -s arch=x86'
-        build.win 'build-32'
+        stage 'Data Explorer 32-bit (Win)'
+        withEnv(helper.getEnv('x32')) {
+            configure.win 'build-32', "${defaultCMakeOptions} " +
+                '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+                'Ninja', '-u -s build_type=Release -s compiler="Visual ' +
+                'Studio" -s compiler.version=12 -s arch=x86'
+            build.win 'build-32'
+        }
+        archive 'build-32/*.zip'
     }
-    archive 'build-32/*.zip'
 }
