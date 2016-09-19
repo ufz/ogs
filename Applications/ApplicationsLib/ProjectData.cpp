@@ -263,12 +263,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         //! \ogs_file_param{process__type}
         auto const type = process_config.peekConfigParameter<std::string>("type");
 
-        //! \ogs_file_param{process__type}
+        //! \ogs_file_param{process__name}
         auto const name = process_config.getConfigParameter<std::string>("name");
 
         std::unique_ptr<ProcessLib::Process> process;
 
         auto jacobian_assembler = ProcessLib::createJacobianAssembler(
+            //! \ogs_file_param{process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
         if (type == "GROUNDWATER_FLOW")
@@ -297,6 +298,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "SMALL_DEFORMATION")
         {
+            //! \ogs_file_param{process__SMALL_DEFORMATION__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

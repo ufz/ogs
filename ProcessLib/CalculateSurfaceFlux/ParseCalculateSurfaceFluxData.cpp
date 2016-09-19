@@ -23,14 +23,14 @@ void parseCalculateSurfaceFluxData(BaseLib::ConfigTree const& config,
         return;
 
     mesh_name =
-        //! \ogs_file_attr{process__calculatesurfaceflux__mesh}
+        //! \ogs_file_param{process__calculatesurfaceflux__mesh}
         calculatesurfaceflux_config->getConfigParameter<std::string>("mesh");
     property_name =
-        //! \ogs_file_attr{process__calculatesurfaceflux__property_name}
+        //! \ogs_file_param{process__calculatesurfaceflux__property_name}
         calculatesurfaceflux_config->getConfigParameter<std::string>(
             "property_name");
     out_fname =
-        //! \ogs_file_attr{process__calculatesurfaceflux__output_mesh}
+        //! \ogs_file_param{process__calculatesurfaceflux__output_mesh}
         calculatesurfaceflux_config->getConfigParameter<std::string>(
             "output_mesh");
 }

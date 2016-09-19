@@ -25,7 +25,7 @@ std::unique_ptr<NumLib::ITimeStepAlgorithm> createTimeStepper(
 
     if (type == "SingleStep")
     {
-        //! \ogs_file_param_special{prj__time_stepping__SingleStep}
+        //! \ogs_file_param_special{prj__time_loop__time_stepping__SingleStep}
         config.ignoreConfigParameter("type");
         timestepper.reset(new NumLib::FixedTimeStepping(0.0, 1.0, 1.0));
     }
@@ -282,8 +282,8 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             processes, pcs_name,
             "A process with the given name has not been defined.");
 
-        //! \ogs_file_param{prj__time_loop__processes__process__nonlinear_solver}
         auto const nl_slv_name =
+            //! \ogs_file_param{prj__time_loop__processes__process__nonlinear_solver}
             pcs_config.getConfigParameter<std::string>("nonlinear_solver");
         auto& nl_slv = *BaseLib::getOrError(
             nonlinear_solvers, nl_slv_name,
@@ -298,8 +298,7 @@ std::vector<std::unique_ptr<SingleProcessData>> createPerProcessData(
             pcs_config.getConfigSubtree("convergence_criterion"));
 
         //! \ogs_file_param{prj__time_loop__processes__process__output}
-        ProcessOutput process_output{
-            pcs_config.getConfigSubtree("output")};
+        ProcessOutput process_output{pcs_config.getConfigSubtree("output")};
 
         per_process_data.emplace_back(makeSingleProcessData(
             nl_slv, pcs, std::move(time_disc), std::move(conv_crit),
@@ -321,16 +320,16 @@ std::unique_ptr<UncoupledProcessesTimeLoop> createUncoupledProcessesTimeLoop(
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers)
 {
-    //! \ogs_file_param{prj__time_loop__time_stepping}
     auto timestepper =
+        //! \ogs_file_param{prj__time_loop__time_stepping}
         createTimeStepper(config.getConfigSubtree("time_stepping"));
 
-    //! \ogs_file_param{prj__time_loop__output}
     auto output =
+        //! \ogs_file_param{prj__time_loop__output}
         createOutput(config.getConfigSubtree("output"), output_directory);
 
-    //! \ogs_file_param{prj__time_loop__processes}
     auto per_process_data = createPerProcessData(
+        //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers);
 
     return std::unique_ptr<UncoupledProcessesTimeLoop>{

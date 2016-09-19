@@ -68,6 +68,7 @@ createSmallDeformationProcess(
         config.getConfigSubtree("constitutive_relation");
 
     auto const type =
+        //! \ogs_file_param{process__SMALL_DEFORMATION__constitutive_relation__type}
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
