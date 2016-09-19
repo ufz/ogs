@@ -16,34 +16,36 @@ node('win && conan') {
         '-DOGS_BUILD_TESTS=OFF ' +
         '-DOGS_BUILD_SWMM=ON'
 
-    dir('ogs') { unstash 'source' }
+    ws {
+        dir('ogs') { unstash 'source' }
 
-    withEnv(helper.getEnv()) {
-        stage 'Configure (Win)'
-        configure.win 'build', "${defaultCMakeOptions}", 'Ninja',
-            '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s ' +
-                'arch=x86_64'
+        withEnv(helper.getEnv()) {
+            stage 'Configure (Win)'
+            configure.win 'build', "${defaultCMakeOptions}", 'Ninja',
+                '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12 -s ' +
+                    'arch=x86_64'
 
-        stage 'CLI (Win)'
-        build.win 'build'
+            stage 'CLI (Win)'
+            build.win 'build'
 
-        stage 'Test (Win)'
-        build.win 'build', 'tests'
+            stage 'Test (Win)'
+            build.win 'build', 'tests'
 
-        stage 'Data Explorer (Win)'
-        configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}",
-            'Ninja', '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12' +
-            ' -s arch=x86_64',
-            true
-        build.win 'build'
+            stage 'Data Explorer (Win)'
+            configure.win 'build', "${defaultCMakeOptions} ${guiCMakeOptions}", 'Ninja',
+                '-u -s build_type=Release -s compiler="Visual Studio" -s compiler.version=12' +
+                ' -s arch=x86_64',
+                true
+            build.win 'build'
+        }
+
+        if (helper.isRelease()) {
+            stage 'Release (Win)'
+            archive 'build/*.zip'
+        }
+
+        stage 'Post (Win)'
+        post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
+            'ogs/scripts/jenkins/msvc-log-parser.rules'
     }
-
-    if (helper.isRelease()) {
-        stage 'Release (Win)'
-        archive 'build/*.zip'
-    }
-
-    stage 'Post (Win)'
-    post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
-        'ogs/scripts/jenkins/msvc-log-parser.rules'
 }
