@@ -55,6 +55,6 @@ if(OGS_BUILD_SWMM)
     add_subdirectory(${CMAKE_SOURCE_DIR}/ThirdParty/SWMMInterface)
 endif()
 
-if(OGS_BUILD_UTILS)
+if(OGS_BUILD_METIS)
     include(${CMAKE_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
 endif()

@@ -18,3 +18,7 @@ target_link_libraries(createNeumannBc
     MeshLib
     ${OGS_VTK_REQUIRED_LIBS}
 )
+
+if(OGS_BUILD_METIS)
+    add_subdirectory(PartitionMesh)
+endif()
