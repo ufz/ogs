@@ -20,7 +20,8 @@ node('mac && conan') {
 
     stage 'Data Explorer (Mac)'
     configure.linux 'build', "${defaultCMakeOptions} " +
-        '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+        '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF ' +
+        '-DOGS_BUILD_METIS=ON',
         'Ninja', '', true
     build.linux 'build', null, 'ninja'
 
