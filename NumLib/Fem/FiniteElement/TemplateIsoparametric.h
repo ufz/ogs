@@ -16,9 +16,10 @@
 
 
 #include <cassert>
+#include <boost/math/constants/constants.hpp>
 
-#include "../CoordinatesMapping/ShapeMatrices.h"
-#include "../CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
+#include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
 
 namespace NumLib
 {
@@ -111,6 +112,18 @@ public:
         computeIntegralMeasure(is_axially_symmetric, shape);
     }
 
+    double interpolateZerothCoordinate(
+        typename ShapeMatrices::ShapeType const& N) const
+    {
+        auto* nodes = _ele->getNodes();
+        typename ShapeMatrices::ShapeType rs(N.size());
+        for (int i=0; i<rs.size(); ++i) {
+            rs[i] = (*nodes[i])[0];
+        }
+        auto const r = N.dot(rs);
+        return r;
+    }
+
 private:
     void computeIntegralMeasure(bool is_axially_symmetric,
                                 ShapeMatrices& shape) const
@@ -119,6 +132,16 @@ private:
             shape.integralMeasure = 1.0;
             return;
         }
+
+        // Note: If an integration point is located at the rotation axis, r will
+        // be zero which might lead to problems with the assembled equation
+        // system.
+        // E.g., for triangle elements, if an integration point is
+        // located at edge of the unit triangle, it is possible that
+        // r becomes zero.
+        auto const r = interpolateZerothCoordinate(shape.N);
+        shape.integralMeasure =
+            boost::math::constants::two_pi<double>() * r;
     }
 
     const MeshElementType* _ele;
