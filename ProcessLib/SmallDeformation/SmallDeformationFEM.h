@@ -151,7 +151,7 @@ public:
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, _integration_method);
+                e, false /* TODO */, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {

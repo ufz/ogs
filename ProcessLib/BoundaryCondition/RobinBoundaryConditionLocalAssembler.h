@@ -31,11 +31,12 @@ class RobinBoundaryConditionLocalAssembler final
         ShapeFunction, IntegrationMethod, GlobalDim>;
 
 public:
-    RobinBoundaryConditionLocalAssembler(
-        MeshLib::Element const& e, std::size_t const local_matrix_size,
-        unsigned const integration_order,
-        RobinBoundaryConditionData const& data)
-        : Base(e, integration_order),
+    RobinBoundaryConditionLocalAssembler(MeshLib::Element const& e,
+                                         std::size_t const local_matrix_size,
+                                         bool is_axially_symmetric,
+                                         unsigned const integration_order,
+                                         RobinBoundaryConditionData const& data)
+        : Base(e, is_axially_symmetric, integration_order),
           _data(data),
           _local_K(local_matrix_size, local_matrix_size),
           _local_rhs(local_matrix_size)

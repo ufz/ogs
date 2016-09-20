@@ -54,8 +54,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         variable_id, component_id, std::move(all_mesh_subsets), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, _integration_order,
-        _local_assemblers, _data);
+        global_dim, _elements, *_dof_table_boundary, _local_assemblers,
+        false /* TODO */, _integration_order, _data);
 }
 
 template <typename BoundaryConditionData,

@@ -66,6 +66,7 @@ public:
     /// element matrix.
     LocalAssemblerData(MeshLib::Element const& element,
                        std::size_t const /*local_matrix_size*/,
+                       bool is_axially_symmetric,
                        unsigned const integration_order,
                        GroundwaterFlowProcessData const& process_data)
         : _element(element),
@@ -73,7 +74,7 @@ public:
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, _integration_method))
+              element, is_axially_symmetric, _integration_method))
     {
     }
 

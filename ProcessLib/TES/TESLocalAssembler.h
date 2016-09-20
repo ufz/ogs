@@ -66,6 +66,7 @@ public:
 
     TESLocalAssembler(MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
+                      bool is_axially_symmetric,
                       unsigned const integration_order,
                       AssemblyParams const& asm_params);
 

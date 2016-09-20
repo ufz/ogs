@@ -62,6 +62,7 @@ public:
     /// element matrix.
     LocalAssemblerData(MeshLib::Element const& element,
                        std::size_t const local_matrix_size,
+                       bool is_axially_symmetric,
                        unsigned const integration_order,
                        HeatConductionProcessData const& process_data)
         : _element(element),
@@ -69,11 +70,12 @@ public:
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, _integration_method))
+              element, is_axially_symmetric, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+        (void) local_matrix_size;
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
