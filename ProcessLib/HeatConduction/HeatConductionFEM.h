@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "HeatConductionProcessData.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -19,7 +21,6 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-#include "HeatConductionProcessData.h"
 
 namespace ProcessLib
 {
@@ -65,10 +66,6 @@ public:
                        HeatConductionProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
-          _localK(local_matrix_size,
-                  local_matrix_size),  // TODO narrowing conversion
-          _localM(local_matrix_size, local_matrix_size),
-          _localRhs(local_matrix_size),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
@@ -79,14 +76,19 @@ public:
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
     }
 
-    void assembleConcrete(
-        double const t, std::vector<double> const& local_x,
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) override
+    void assemble(double const t, std::vector<double> const& local_x,
+                  std::vector<double>& local_M_data,
+                  std::vector<double>& local_K_data,
+                  std::vector<double>& /*local_b_data*/) override
     {
-        _localK.setZero();
-        _localM.setZero();
-        _localRhs.setZero();
+        auto const local_matrix_size = local_x.size();
+        // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+
+        auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_M_data, local_matrix_size, local_matrix_size);
+        auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_K_data, local_matrix_size, local_matrix_size);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -103,9 +105,9 @@ public:
             auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
             auto const density = _process_data.density(t, pos)[0];
 
-            _localK.noalias() +=
+            local_K.noalias() +=
                 sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();
-            _localM.noalias() += sm.N.transpose() * density * heat_capacity *
+            local_M.noalias() += sm.N.transpose() * density * heat_capacity *
                                  sm.N * sm.detJ * wp.getWeight();
             // heat flux only computed for output.
             GlobalDimVectorType const heat_flux =
@@ -117,10 +119,6 @@ public:
                 _heat_fluxes[d][ip] = heat_flux[d];
             }
         }
-
-        K.add(indices, _localK);
-        M.add(indices, _localM);
-        b.add(indices.rows, _localRhs);
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -156,10 +154,6 @@ public:
 private:
     MeshLib::Element const& _element;
     HeatConductionProcessData const& _process_data;
-
-    NodalMatrixType _localK;
-    NodalMatrixType _localM;
-    NodalVectorType _localRhs;
 
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices> _shape_matrices;

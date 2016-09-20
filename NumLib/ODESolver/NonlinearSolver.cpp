@@ -26,7 +26,7 @@ namespace NumLib
 void NonlinearSolver<NonlinearSolverTag::Picard>::assemble(
     GlobalVector const& x) const
 {
-    _equation_system->assembleMatricesPicard(x);
+    _equation_system->assemble(x);
 }
 
 bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
@@ -61,7 +61,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assembleMatricesPicard(x);
+        sys.assemble(x);
         sys.getA(A);
         sys.getRhs(rhs);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
@@ -164,7 +164,7 @@ bool NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 void NonlinearSolver<NonlinearSolverTag::Newton>::assemble(
     GlobalVector const& x) const
 {
-    _equation_system->assembleResidualNewton(x);
+    _equation_system->assemble(x);
     // TODO if the equation system would be reset to nullptr after each
     //      assemble() or solve() call, the user would be forced to set the
     //      equation every time and could not forget it.
@@ -205,9 +205,8 @@ bool NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assembleResidualNewton(x);
+        sys.assemble(x);
         sys.getResidual(x, res);
-        sys.assembleJacobian(x);
         sys.getJacobian(J);
         INFO("[time] Assembly took %g s.", time_assembly.elapsed());
 

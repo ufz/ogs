@@ -30,14 +30,16 @@ class SmallDeformationProcess final : public Process
 public:
     SmallDeformationProcess(
         MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         SmallDeformationProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller)
-        : Process(mesh, parameters, std::move(process_variables),
-                  std::move(secondary_variables),
+        : Process(mesh, std::move(jacobian_assembler), parameters,
+                  std::move(process_variables), std::move(secondary_variables),
                   std::move(named_function_caller)),
           _process_data(std::move(process_data))
     {
@@ -100,25 +102,23 @@ private:
         DBUG("Assemble SmallDeformationProcess.");
 
         // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberOnDereferenced(
-            &SmallDeformationLocalAssemblerInterface::assemble,
+        GlobalExecutor::executeMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assemble,
             _local_assemblers, *_local_to_global_index_map, t, x, M, K, b);
     }
 
-    void assembleJacobianConcreteProcess(const double t, GlobalVector const& x,
-                                         GlobalVector const& /*xdot*/,
-                                         const double /*dxdot_dx*/,
-                                         GlobalMatrix const& /*M*/,
-                                         const double /*dx_dx*/,
-                                         GlobalMatrix const& /*K*/,
-                                         GlobalMatrix& Jac) override
+    void assembleWithJacobianConcreteProcess(
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override
     {
-        DBUG("AssembleJacobian SmallDeformationProcess.");
+        DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
         // Call global assembler for each local assembly item.
-        GlobalExecutor::executeMemberOnDereferenced(
-            &SmallDeformationLocalAssemblerInterface::assembleJacobian,
-            _local_assemblers, *_local_to_global_index_map, t, x, Jac);
+        GlobalExecutor::executeMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+            _local_assemblers, *_local_to_global_index_map, t, x, xdot,
+            dxdot_dx, dx_dx, M, K, b, Jac);
     }
 
     void preTimestepConcreteProcess(GlobalVector const& x, double const t,

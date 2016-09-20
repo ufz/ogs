@@ -31,6 +31,7 @@ template <int DisplacementDim>
 std::unique_ptr<Process>
 createSmallDeformationProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -94,24 +95,21 @@ createSmallDeformationProcess(
 
     return std::unique_ptr<SmallDeformationProcess<DisplacementDim>>{
         new SmallDeformationProcess<DisplacementDim>{
-            mesh, parameters, std::move(process_variables),
-            std::move(process_data), std::move(secondary_variables),
-            std::move(named_function_caller)}};
+            mesh, std::move(jacobian_assembler), parameters,
+            std::move(process_variables), std::move(process_data),
+            std::move(secondary_variables), std::move(named_function_caller)}};
 }
 
-
-template
-std::unique_ptr<Process>
-createSmallDeformationProcess<2>(
+template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 
-template
-std::unique_ptr<Process>
-createSmallDeformationProcess<3>(
+template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);

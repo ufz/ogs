@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -129,12 +130,10 @@ public:
 
     SmallDeformationLocalAssembler(
         MeshLib::Element const& e,
-        std::size_t const local_matrix_size,
+        std::size_t const /*local_matrix_size*/,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
-          _localA(local_matrix_size, local_matrix_size),
-          _localRhs(local_matrix_size),
           _integration_method(integration_order),
           _element(e)
     {
@@ -180,18 +179,35 @@ public:
         }
     }
 
-    void assembleConcrete(
-        double const t, std::vector<double> const& local_x,
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& /*M*/, GlobalMatrix& /*K*/, GlobalVector& b) override
+    void assemble(double const /*t*/, std::vector<double> const& /*local_x*/,
+                  std::vector<double>& /*local_M_data*/,
+                  std::vector<double>& /*local_K_data*/,
+                  std::vector<double>& /*local_b_data*/) override
     {
-        _localRhs.setZero();
+        OGS_FATAL(
+            "SmallDeformationLocalAssembler: assembly without jacobian is not "
+            "implemented.");
+    }
+
+    void assembleWithJacobian(double const t,
+                              std::vector<double> const& local_x,
+                              std::vector<double> const& /*local_xdot*/,
+                              const double /*dxdot_dx*/, const double /*dx_dx*/,
+                              std::vector<double>& /*local_M_data*/,
+                              std::vector<double>& /*local_K_data*/,
+                              std::vector<double>& local_b_data,
+                              std::vector<double>& local_Jac_data) override
+    {
+        auto const local_matrix_size = local_x.size();
+
+        auto local_Jac = MathLib::createZeroedMatrix<StiffnessMatrixType>(
+            local_Jac_data, local_matrix_size, local_matrix_size);
+
+        auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
+            local_b_data, local_matrix_size);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
-
-        NodalDisplacementVectorType local_displacement(ShapeFunction::NPOINTS *
-                                                       DisplacementDim);
 
         SpatialPosition x_position;
         x_position.setElementID(_element.getID());
@@ -221,40 +237,16 @@ public:
                 t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
                 sigma, C, material_state_variables);
 
-            _localRhs.noalias() -=
-                B.transpose() * sigma * detJ * wp.getWeight();
+            local_b.noalias() -= B.transpose() * sigma * detJ * wp.getWeight();
+            local_Jac.noalias() +=
+                B.transpose() * C * B * detJ * wp.getWeight();
+
 
             // TODO: Reuse _ip_data[ip]._sigma
             _secondary_data._sigmaXX[ip] = sigma[0];
             _secondary_data._sigmaYY[ip] = sigma[1];
             _secondary_data._sigmaXY[ip] = sigma[3];
         }
-
-        b.add(indices.rows, _localRhs);
-    }
-
-    void assembleJacobianConcrete(
-        double const /*t*/,
-        std::vector<double> const& /*local_x*/,
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& Jac) override
-    {
-        _localA.setZero();
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            auto const& B = _ip_data[ip]._b_matrices;
-            auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto& C = _ip_data[ip]._C;
-            auto const& detJ = _ip_data[ip]._detJ;
-
-            _localA.noalias() += B.transpose() * C * B * detJ * wp.getWeight();
-        }
-
-        Jac.add(indices, _localA);
     }
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
@@ -301,9 +293,6 @@ private:
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<IntegrationPointData<BMatricesType, DisplacementDim>> _ip_data;
-
-    StiffnessMatrixType _localA;
-    NodalForceVectorType _localRhs;
 
     IntegrationMethod _integration_method;
     MeshLib::Element const& _element;

@@ -16,11 +16,10 @@ namespace ProcessLib
 {
 namespace SmallDeformation
 {
-
 template <int DisplacementDim>
-std::unique_ptr<Process>
-createSmallDeformationProcess(
+std::unique_ptr<Process> createSmallDeformationProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);

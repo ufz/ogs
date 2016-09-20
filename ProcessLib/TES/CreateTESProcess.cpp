@@ -18,6 +18,7 @@ namespace TES
 {
 std::unique_ptr<Process> createTESProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -40,7 +41,8 @@ std::unique_ptr<Process> createTESProcess(
                                         named_function_caller);
 
     return std::unique_ptr<Process>{new TESProcess{
-        mesh, parameters, std::move(process_variables), std::move(secondary_variables),
+        mesh, std::move(jacobian_assembler), parameters,
+        std::move(process_variables), std::move(secondary_variables),
         std::move(named_function_caller), config}};
 }
 

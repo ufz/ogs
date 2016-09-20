@@ -33,6 +33,7 @@ class TESProcess final : public Process
 public:
     TESProcess(
         MeshLib::Mesh& mesh,
+        std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
@@ -59,6 +60,11 @@ private:
                                  GlobalVector& b) override;
 
     void initializeSecondaryVariables();
+
+    void assembleWithJacobianConcreteProcess(
+        const double t, GlobalVector const& x, GlobalVector const& xdot,
+        const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     GlobalVector const& computeVapourPartialPressure(
         GlobalVector const& x,

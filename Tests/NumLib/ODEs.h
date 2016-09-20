@@ -35,18 +35,24 @@ public:
         MathLib::setVector(b, { 0.0, 0.0 });
     }
 
-    void assembleJacobian(const double /*t*/, const GlobalVector& /*x*/,
-                          GlobalVector const& /*xdot*/, const double dxdot_dx,
-                          const GlobalMatrix& M, const double dx_dx,
-                          const GlobalMatrix& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+                              GlobalVector const& /*xdot*/, const double dxdot_dx,
+                              const double dx_dx, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
         namespace LinAlg = MathLib::LinAlg;
 
+        assemble(t, x_curr, M, K, b);
+
         // compute Jac = M*dxdot_dx + dx_dx*K
+        LinAlg::finalizeAssembly(M);
         LinAlg::copy(M, Jac);
         LinAlg::scale(Jac, dxdot_dx);
-        if (dx_dx != 0.0)
+        if (dx_dx != 0.0) {
+            LinAlg::finalizeAssembly(K);
             LinAlg::axpy(Jac, dx_dx, K);
+        }
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications() const override
@@ -103,13 +109,17 @@ public:
         MathLib::setVector(b, {0.0});
     }
 
-    void assembleJacobian(const double /*t*/, const GlobalVector& x,
-                          GlobalVector const& /*xdot*/, const double dxdot_dx,
-                          GlobalMatrix const& M, const double dx_dx,
-                          GlobalMatrix const& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x,
+                              GlobalVector const& /*xdot*/,
+                              const double dxdot_dx, const double dx_dx,
+                              GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
+        assemble(t, x, M, K, b);
+
         namespace LinAlg = MathLib::LinAlg;
 
+        LinAlg::finalizeAssembly(M);
         // compute Jac = M*dxdot_dx + dK_dx + dx_dx*K
         LinAlg::copy(M, Jac);
         LinAlg::scale(Jac, dxdot_dx);
@@ -118,6 +128,7 @@ public:
 
         if (dx_dx != 0.0)
         {
+            LinAlg::finalizeAssembly(K);
             LinAlg::finalizeAssembly(Jac);
             LinAlg::axpy(Jac, dx_dx, K);
         }
@@ -195,11 +206,14 @@ public:
                        0.5*omega*x*z + omega/t });
     }
 
-    void assembleJacobian(const double t, const GlobalVector& x_curr,
-                          GlobalVector const& xdot, const double dxdot_dx,
-                          GlobalMatrix const& M, const double dx_dx,
-                          GlobalMatrix const& K, GlobalMatrix& Jac) override
+    void assembleWithJacobian(const double t, GlobalVector const& x_curr,
+                              GlobalVector const& xdot, const double dxdot_dx,
+                              const double dx_dx, GlobalMatrix& M,
+                              GlobalMatrix& K, GlobalVector& b,
+                              GlobalMatrix& Jac) override
     {
+        assemble(t, x_curr, M, K, b);
+
         auto const x = x_curr[0];
         auto const y = x_curr[1];
         auto const z = x_curr[2];
@@ -211,6 +225,7 @@ public:
 
         // Compute Jac = M dxdot/dx + dM/dx xdot + K dx/dx + dK/dx x - db/dx
 
+        LinAlg::finalizeAssembly(M);
         LinAlg::copy(M, Jac);
         LinAlg::scale(Jac, dxdot_dx); // Jac = M * dxdot_dx
 
@@ -233,6 +248,7 @@ public:
                                                0.0, t*dz, 0.0,
                                omega*t*dx+omega*dz,  0.0, 0.0 });
 
+            LinAlg::finalizeAssembly(K);
             LinAlg::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
 
             // add dK/dx \cdot \dot x

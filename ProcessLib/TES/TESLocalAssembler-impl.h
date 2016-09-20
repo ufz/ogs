@@ -10,6 +10,7 @@
 #define PROCESS_LIB_TES_FEM_IMPL_H_
 
 #include "MaterialLib/Adsorption/Adsorption.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
@@ -120,26 +121,27 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
          static_cast<const unsigned>(
              _shape_matrices.front()
                  .N.cols()) /* number of integration points */,
-         GlobalDim),
-      _local_M(ShapeFunction::NPOINTS * NODAL_DOF,
-               ShapeFunction::NPOINTS * NODAL_DOF),
-      _local_K(ShapeFunction::NPOINTS * NODAL_DOF,
-               ShapeFunction::NPOINTS * NODAL_DOF),
-      _local_b(ShapeFunction::NPOINTS * NODAL_DOF)
+         GlobalDim)
 {
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,
           unsigned GlobalDim>
-void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
-    assembleConcrete(
-        double const /*t*/, std::vector<double> const& local_x,
-        NumLib::LocalToGlobalIndexMap::RowColumnIndices const& indices,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
+    double const /*t*/, std::vector<double> const& local_x,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& local_b_data)
 {
-    _local_M.setZero();
-    _local_K.setZero();
-    _local_b.setZero();
+    auto const local_matrix_size = local_x.size();
+    // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+    assert(local_matrix_size == ShapeFunction::NPOINTS * NODAL_DOF);
+
+    auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
+        local_M_data, local_matrix_size, local_matrix_size);
+    auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
+        local_K_data, local_matrix_size, local_matrix_size);
+    auto local_b = MathLib::createZeroedVector<NodalVectorType>(local_b_data,
+                                                            local_matrix_size);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -153,7 +155,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
         auto const weight = wp.getWeight();
 
         _d.assembleIntegrationPoint(ip, local_x, sm.N, sm.dNdx, sm.J, sm.detJ,
-                                    weight, _local_M, _local_K, _local_b);
+                                    weight, local_M, local_K, local_b);
     }
 
     if (_d.getAssemblyParameters().output_element_matrices)
@@ -172,21 +174,17 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
         }
 
         std::printf("\n---Mass matrix: \n");
-        ogs5OutMat(_local_M);
+        ogs5OutMat(local_M);
         std::printf("\n");
 
         std::printf("---Laplacian + Advective + Content matrix: \n");
-        ogs5OutMat(_local_K);
+        ogs5OutMat(local_K);
         std::printf("\n");
 
         std::printf("---RHS: \n");
-        ogs5OutVec(_local_b);
+        ogs5OutVec(local_b);
         std::printf("\n");
     }
-
-    M.add(indices, _local_M);
-    K.add(indices, _local_K);
-    b.add(indices.rows, _local_b);
 }
 
 template <typename ShapeFunction_, typename IntegrationMethod_,

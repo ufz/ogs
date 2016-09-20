@@ -227,9 +227,9 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     const typename Traits::ShapeMatrices::JacobianType& smJ,
     const double smDetJ,
     const double weight,
-    typename Traits::LocalMatrix& local_M,
-    typename Traits::LocalMatrix& local_K,
-    typename Traits::LocalVector& local_b)
+    Eigen::Map<typename Traits::LocalMatrix>& local_M,
+    Eigen::Map<typename Traits::LocalMatrix>& local_K,
+    Eigen::Map<typename Traits::LocalVector>& local_b)
 {
     preEachAssembleIntegrationPoint(integration_point, localX, smN, smDNdx, smJ,
                                     smDetJ);

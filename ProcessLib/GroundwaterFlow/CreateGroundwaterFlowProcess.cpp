@@ -20,6 +20,7 @@ namespace GroundwaterFlow
 {
 std::unique_ptr<Process> createGroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config)
@@ -56,7 +57,8 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
                                         named_function_caller);
 
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{
-        mesh, parameters, std::move(process_variables), std::move(process_data),
+        mesh, std::move(jacobian_assembler), parameters,
+        std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller)}};
 }
 
