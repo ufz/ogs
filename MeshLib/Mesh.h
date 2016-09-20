@@ -125,6 +125,16 @@ public:
     MeshLib::Properties & getProperties() { return _properties; }
     MeshLib::Properties const& getProperties() const { return _properties; }
 
+    bool isAxiallySymmetric() const { return _is_axially_symmetric; }
+    void setAxiallySymmetric(bool is_axial_symmetric) {
+        _is_axially_symmetric = is_axial_symmetric;
+        if (_is_axially_symmetric && getDimension() != 2) {
+            OGS_FATAL(
+                "Axial symmetry is implemented only for two-dimensional "
+                "meshes.");
+        }
+    }
+
 protected:
     /// Set the minimum and maximum length over the edges of the mesh.
     void calcEdgeLengthRange();
@@ -163,6 +173,8 @@ protected:
     std::vector<Element*> _elements;
     std::size_t _n_base_nodes;
     Properties _properties;
+
+    bool _is_axially_symmetric = false;
 }; /* class */
 
 
