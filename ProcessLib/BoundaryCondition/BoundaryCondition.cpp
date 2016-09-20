@@ -33,13 +33,12 @@ static std::vector<MeshLib::Element*> getClonedElements(
 
 namespace ProcessLib
 {
-std::unique_ptr<BoundaryCondition> createBoundaryCondition(
+
+std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondition(
     const BoundaryConditionConfig& config,
-    const NumLib::LocalToGlobalIndexMap& dof_table,
-    const MeshLib::Mesh& mesh,
-    const int variable_id,
-    const unsigned integration_order,
-    std::vector<std::unique_ptr<ParameterBase>> const& parameters)
+    const NumLib::LocalToGlobalIndexMap& dof_table, const MeshLib::Mesh& mesh,
+    const int variable_id, const unsigned integration_order,
+    const std::vector<std::unique_ptr<ProcessLib::ParameterBase>>& parameters)
 {
     MeshGeoToolsLib::MeshNodeSearcher& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(mesh);
@@ -101,5 +100,6 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         OGS_FATAL("Unknown boundary condition type: `%s'.", type.c_str());
     }
 }
+
 
 }  // ProcessLib
