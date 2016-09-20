@@ -7,8 +7,9 @@
  - Finalize support for multicomponent boundary conditions adding configuration
    parser. #1343
  - Added uniform Robin boundary condition. #1336
- - Added B-Matrices and Kelven mapping tools for deformation processes. #1359
+ - Added B-Matrices and Kelvin mapping tools for deformation processes. #1359
  - New tools: scaleProperty, createNeumannBc #1346
+ - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
