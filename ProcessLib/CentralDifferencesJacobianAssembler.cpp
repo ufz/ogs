@@ -117,11 +117,11 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
                              local_b_data);
 
     // Compute remaining terms of the Jacobian.
-    if (dxdot_dx != 0 && !local_M_data.empty()) {
+    if (dxdot_dx != 0.0 && !local_M_data.empty()) {
         auto local_M = MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
         local_Jac.noalias() += local_M * dxdot_dx;
     }
-    if (dx_dx != 0 && !local_K_data.empty()) {
+    if (dx_dx != 0.0 && !local_K_data.empty()) {
         auto local_K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
         local_Jac.noalias() += local_K * dx_dx;
     }
