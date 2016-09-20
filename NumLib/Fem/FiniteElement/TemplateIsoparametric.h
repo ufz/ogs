@@ -85,10 +85,12 @@ public:
      * @param global_dim    global dimension
      */
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
-                               const unsigned global_dim) const
+                               const unsigned global_dim,
+                               bool is_axially_symmetric) const
     {
         NaturalCoordsMappingType::computeShapeMatrices(*_ele, natural_pt, shape,
                                                        global_dim);
+        computeIntegralMeasure(is_axially_symmetric, shape);
     }
 
     /**
@@ -101,13 +103,24 @@ public:
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
     void computeShapeFunctions(const double* natural_pt, ShapeMatrices& shape,
-                               const unsigned global_dim) const
+                               const unsigned global_dim,
+                               bool is_axially_symmetric) const
     {
         NaturalCoordsMappingType::template computeShapeMatrices<
             T_SHAPE_MATRIX_TYPE>(*_ele, natural_pt, shape, global_dim);
+        computeIntegralMeasure(is_axially_symmetric, shape);
     }
 
 private:
+    void computeIntegralMeasure(bool is_axially_symmetric,
+                                ShapeMatrices& shape) const
+    {
+        if (!is_axially_symmetric) {
+            shape.integralMeasure = 1.0;
+            return;
+        }
+    }
+
     const MeshElementType* _ele;
 };
 
