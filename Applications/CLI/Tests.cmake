@@ -281,7 +281,7 @@ if(NOT OGS_USE_MPI)
     )
 
     AddTest(
-        NAME TES_zeolite_discharge_small_Newton
+        NAME LARGE_TES_zeolite_discharge_Newton
         PATH Parabolic/TES/1D
         EXECUTABLE ogs
         EXECUTABLE_ARGS tes-1D-zeolite-discharge-small-newton.prj
