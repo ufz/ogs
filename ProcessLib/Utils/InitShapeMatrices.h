@@ -38,8 +38,7 @@ std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
                                      ShapeFunction::NPOINTS);
         fe.computeShapeFunctions(
                 integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim/*, is_axially_symmetric*/);
-        (void) is_axially_symmetric;
+                shape_matrices[ip], GlobalDim, is_axially_symmetric);
     }
 
     return shape_matrices;
