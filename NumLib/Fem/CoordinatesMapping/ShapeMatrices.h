@@ -54,6 +54,7 @@ struct ShapeMatrices
     double detJ;        ///< Determinant of the Jacobian
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
     DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
+    double integralMeasure;
 
     /** Not default constructible, dimensions always must be given.
      *
@@ -80,7 +81,8 @@ struct ShapeMatrices
           J(local_dim, local_dim),
           detJ(.0),
           invJ(local_dim, local_dim),
-          dNdx(global_dim, n_nodes)
+          dNdx(global_dim, n_nodes),
+          integralMeasure(0.0)
     {
         setZero();
     }
