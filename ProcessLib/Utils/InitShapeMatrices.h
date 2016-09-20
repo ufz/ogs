@@ -20,7 +20,8 @@ namespace ProcessLib
 template <typename ShapeFunction, typename ShapeMatricesType,
           typename IntegrationMethod, unsigned GlobalDim>
 std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
-    MeshLib::Element const& e, IntegrationMethod const& integration_method)
+    MeshLib::Element const& e, bool is_axially_symmetric,
+    IntegrationMethod const& integration_method)
 {
     std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
 
@@ -37,7 +38,8 @@ std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
                                      ShapeFunction::NPOINTS);
         fe.computeShapeFunctions(
                 integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim);
+                shape_matrices[ip], GlobalDim/*, is_axially_symmetric*/);
+        (void) is_axially_symmetric;
     }
 
     return shape_matrices;
