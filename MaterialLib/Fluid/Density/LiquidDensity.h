@@ -52,7 +52,13 @@ namespace Fluid
 class LiquidDensity final : public FluidProperty
 {
 public:
-    /// \param parameters An array contains the five parameters.
+    /** \param parameters An array contains the five parameters:
+     *                     [0] $f \beta $f
+     *                     [1] $f \rho_0 $f
+     *                     [2] $f T_0 $f
+     *                     [3] $f p_0 $f
+     *                     [4] $f E_0 $f
+     */
     explicit LiquidDensity(std::array<double,5>& parameters)
     :
     _beta(parameters[0]),

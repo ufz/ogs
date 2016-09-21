@@ -26,11 +26,11 @@ enum class PropertyVariableType
     T = 0,///< temperature.
     pl = 1,///< pressure of the liquid phase (1st phase for some cases).
     pg = 2,///< pressure of the gas phase (2nd phase for some cases).
-    vars_num = 3 ///< Number of property variables.
+    number_of_variables = 3 ///< Number of property variables.
 };
 
 const unsigned PropertyVariableNumber
-        = static_cast<unsigned> (PropertyVariableType::vars_num);
+        = static_cast<unsigned> (PropertyVariableType::number_of_variables);
 
 /// Base class of fluid density properties
 class FluidProperty
@@ -55,7 +55,7 @@ public:
     /// The first argument is an array of variables, and the order of the array
     /// elements is given in enum class PropertyVariableType.
     /// The second argument is the variable type indicating which partial derivative
-    /// to be get.
+    /// to be calculated.
     virtual double getdValue(const ArrayType& /* var_vals*/,
             const PropertyVariableType /* var */) const = 0;
 };

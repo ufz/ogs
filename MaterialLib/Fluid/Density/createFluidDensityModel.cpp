@@ -24,12 +24,12 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/*
-    config  ConfigTree object which contains the input data
+/*!
+    \param config  ConfigTree object which contains the input data
                    including  <type>fluid</type> and it has
                    a tag of <density>
 */
-std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree const& config)
+static std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree const& config)
 {
     std::array<double, 5> parameters =
     {
@@ -47,12 +47,12 @@ std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree const& co
     return std::unique_ptr<FluidProperty>(new LiquidDensity(parameters));
 }
 
-/*
-    config  ConfigTree object which contains the input data
+/*!
+    \param config  ConfigTree object which contains the input data
                    including  <type>fluid</type> and it has
                    a tag of <density>
 */
-std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity
+static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity
                                      (BaseLib::ConfigTree const& config)
 {
     std::array<double, 3> parameters =
