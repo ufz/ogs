@@ -71,9 +71,9 @@ public:
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
             _local_K.diagonal().noalias() +=
-                sm.N * alpha * sm.detJ * wp.getWeight();
-            _local_rhs.noalias() +=
-                sm.N * alpha * u_0 * sm.detJ * wp.getWeight();
+                sm.N * alpha * sm.detJ * wp.getWeight() * sm.integralMeasure;
+            _local_rhs.noalias() += sm.N * alpha * u_0 * sm.detJ *
+                                    wp.getWeight() * sm.integralMeasure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

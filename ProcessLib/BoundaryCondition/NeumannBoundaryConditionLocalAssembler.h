@@ -59,7 +59,8 @@ public:
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
             _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
-                                    sm.detJ * wp.getWeight();
+                                    sm.detJ * wp.getWeight() *
+                                    sm.integralMeasure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
