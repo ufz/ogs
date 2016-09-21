@@ -117,8 +117,44 @@ public:
         }
     }
 
-    Eigen::Map<const Eigen::RowVectorXd>
-    getShapeMatrix(const unsigned integration_point) const override
+    /// Computes the flux in the point \c p_local_coords that is given in local
+    /// coordinates using the values from \c local_x.
+    // TODO add time dependency
+    std::vector<double> getFlux(
+        MathLib::Point3d const& p_local_coords,
+        std::vector<double> const& local_x) const override
+    {
+        // eval dNdx and invJ at p
+        using FemType =
+            NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
+
+        FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(
+            &_element));
+
+        typename ShapeMatricesType::ShapeMatrices shape_matrices(
+            ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
+
+        fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
+                                 GlobalDim);
+        std::vector<double> flux;
+        flux.resize(3);
+
+        // fetch hydraulic conductivity
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+        // TODO remove follwing line if time dependency is implemented
+        double const t = 0.0;
+        auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+
+        Eigen::Map<Eigen::RowVectorXd>(flux.data(), flux.size()) =
+            - k * shape_matrices.dNdx *
+            Eigen::Map<const Eigen::VectorXd>(local_x.data(), local_x.size());
+
+        return flux;
+    }
+
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
         auto const& N = _shape_matrices[integration_point].N;
 
@@ -126,22 +162,22 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const&
-    getIntPtDarcyVelocityX(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocityX(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 0);
         return _darcy_velocities[0];
     }
 
-    std::vector<double> const&
-    getIntPtDarcyVelocityY(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocityY(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 1);
         return _darcy_velocities[1];
     }
 
-    std::vector<double> const&
-    getIntPtDarcyVelocityZ(std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtDarcyVelocityZ(
+        std::vector<double>& /*cache*/) const override
     {
         assert(_darcy_velocities.size() > 2);
         return _darcy_velocities[2];
@@ -154,8 +190,8 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices> _shape_matrices;
 
-    std::vector<std::vector<double>> _darcy_velocities
-        = std::vector<std::vector<double>>(
+    std::vector<std::vector<double>> _darcy_velocities =
+        std::vector<std::vector<double>>(
             GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
 };
 

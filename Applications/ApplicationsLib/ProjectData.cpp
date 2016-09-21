@@ -83,7 +83,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
 
     //! \ogs_file_param{prj__processes}
-    parseProcesses(project_config.getConfigSubtree("processes"));
+    parseProcesses(project_config.getConfigSubtree("processes"),
+                   project_directory, output_directory);
 
     //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
@@ -240,7 +241,9 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
         parameter->initialize(_parameters);
 }
 
-void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
+void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
+                                 std::string const& project_directory,
+                                 std::string const& output_directory)
 {
     DBUG("Reading processes:");
     //! \ogs_file_param{prj__processes__process}
@@ -266,7 +269,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config)
             // here.
             process = ProcessLib::GroundwaterFlow::createGroundwaterFlowProcess(
                 *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, process_config);
+                _process_variables, _parameters, process_config,
+                project_directory, output_directory);
         }
         else if (type == "TES")
         {
