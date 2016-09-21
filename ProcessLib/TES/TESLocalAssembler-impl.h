@@ -155,8 +155,8 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
         auto const& wp = _integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _d.assembleIntegrationPoint(ip, local_x, sm.N, sm.dNdx, sm.J, sm.detJ,
-                                    weight, local_M, local_K, local_b);
+        _d.assembleIntegrationPoint(ip, local_x, sm, weight, local_M, local_K,
+                                    local_b);
     }
 
     if (_d.getAssemblyParameters().output_element_matrices)
