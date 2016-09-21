@@ -107,10 +107,11 @@ public:
             auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
             auto const density = _process_data.density(t, pos)[0];
 
-            local_K.noalias() +=
-                sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();
+            local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
+                                 wp.getWeight() * sm.integralMeasure;
             local_M.noalias() += sm.N.transpose() * density * heat_capacity *
-                                 sm.N * sm.detJ * wp.getWeight();
+                                 sm.N * sm.detJ * wp.getWeight() *
+                                 sm.integralMeasure;
             // heat flux only computed for output.
             GlobalDimVectorType const heat_flux =
                 -k * sm.dNdx * Eigen::Map<const NodalVectorType>(

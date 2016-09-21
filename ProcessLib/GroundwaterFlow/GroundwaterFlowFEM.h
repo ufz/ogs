@@ -103,8 +103,8 @@ public:
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
-            local_K.noalias() +=
-                sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();
+            local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
+                                 sm.integralMeasure * wp.getWeight();
 
             // Darcy velocity only computed for output.
             GlobalDimVectorType const darcy_velocity =

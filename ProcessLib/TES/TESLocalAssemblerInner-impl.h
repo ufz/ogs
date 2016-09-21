@@ -256,26 +256,27 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
         _d.velocity[d][integration_point] = velocity[d];
     }
 
-    auto const detJ_w_NT = (sm.detJ * weight * sm.N.transpose()).eval();
-    auto const detJ_w_NT_N = (detJ_w_NT * sm.N).eval();
-    assert(detJ_w_NT_N.rows() == N && detJ_w_NT_N.cols() == N);
+    auto const detJ_w_im_NT =
+        (sm.detJ * weight * sm.integralMeasure * sm.N.transpose()).eval();
+    auto const detJ_w_im_NT_N = (detJ_w_im_NT * sm.N).eval();
+    assert(detJ_w_im_NT_N.rows() == N && detJ_w_im_NT_N.cols() == N);
 
-    auto const detJ_w_NT_vT_dNdx =
-        (detJ_w_NT * velocity.transpose() * sm.dNdx).eval();
-    assert(detJ_w_NT_vT_dNdx.rows() == N && detJ_w_NT_vT_dNdx.cols() == N);
+    auto const detJ_w_im_NT_vT_dNdx =
+        (detJ_w_im_NT * velocity.transpose() * sm.dNdx).eval();
+    assert(detJ_w_im_NT_vT_dNdx.rows() == N && detJ_w_im_NT_vT_dNdx.cols() == N);
 
     for (unsigned r = 0; r < NODAL_DOF; ++r)
     {
         for (unsigned c = 0; c < NODAL_DOF; ++c)
         {
             Traits::blockShpShp(local_K, N * r, N * c, N, N).noalias() +=
-                sm.detJ * weight * sm.dNdx.transpose() *
+                sm.detJ * weight * sm.integralMeasure * sm.dNdx.transpose() *
                     Traits::blockDimDim(laplaceCoeffMat, D * r, D * c, D, D) *
                     sm.dNdx  // end Laplacian part
-                + detJ_w_NT_N * contentCoeffMat(r, c) +
-                detJ_w_NT_vT_dNdx * advCoeffMat(r, c);
+                + detJ_w_im_NT_N * contentCoeffMat(r, c) +
+                detJ_w_im_NT_vT_dNdx * advCoeffMat(r, c);
             Traits::blockShpShp(local_M, N * r, N * c, N, N).noalias() +=
-                detJ_w_NT_N * massCoeffMat(r, c);
+                detJ_w_im_NT_N * massCoeffMat(r, c);
         }
     }
 
@@ -284,7 +285,8 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     for (unsigned r = 0; r < NODAL_DOF; ++r)
     {
         Traits::blockShp(local_b, N * r, N).noalias() +=
-            rhsCoeffVector(r) * sm.N.transpose() * sm.detJ * weight;
+            rhsCoeffVector(r) * sm.N.transpose() * sm.detJ * weight *
+            sm.integralMeasure;
     }
 }
 
