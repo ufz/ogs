@@ -14,12 +14,16 @@
 
 #include <logog/include/logog.hpp>
 
+#include "MeshLib/Mesh.h"
+
 namespace ProcessLib
 {
 namespace LiquidFlow
 {
 LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
-    BaseLib::ConfigTree const& config)
+    MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config)
+    : material_IDs_of_elements(
+          mesh.getProperties().getPropertyVector<unsigned>("MaterialIDs").get())
 {
     DBUG("Reading material properties of liquid flow process.");
 
@@ -62,14 +66,14 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
 }
 
 double LiquidFlowMaterialProperties::getMassCoeffcient(
-    const double p, const double T, const unsigned material_group_id)
+    const double p, const double T, const unsigned material_group_id) const
 {
     ArrayType vars;
     vars[0] = T;
     vars[1] = p;
     return porosity[material_group_id]->getValue() *
-               density_l->getdValue(vars,
-                                    MaterialLib::Fluid::PropertyVariableType::pl) +
+               density_l->getdValue(
+                   vars, MaterialLib::Fluid::PropertyVariableType::pl) +
            storage[material_group_id]->getValue(nullptr);
 }
 

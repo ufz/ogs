@@ -18,6 +18,13 @@
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 
+#include "MeshLib/PropertyVector.h"
+
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -26,7 +33,8 @@ struct LiquidFlowMaterialProperties
 {
     typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
 
-    LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config);
+    LiquidFlowMaterialProperties(MeshLib::Mesh const& mesh,
+                                 BaseLib::ConfigTree const& config);
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -41,9 +49,9 @@ struct LiquidFlowMaterialProperties
      * @return
      */
     double getMassCoeffcient(const double p, const double T,
-                             const unsigned material_group_id = 0);
+                             const unsigned material_group_id = 0) const;
 
-    double getLiquidDensity(const double p, const double T)
+    double getLiquidDensity(const double p, const double T) const
     {
         ArrayType vars;
         vars[0] = T;
@@ -51,7 +59,7 @@ struct LiquidFlowMaterialProperties
         return density_l->getValue(vars);
     }
 
-    double getViscosity(const double p, const double T)
+    double getViscosity(const double p, const double T) const
     {
         ArrayType vars;
         vars[0] = T;
@@ -68,6 +76,8 @@ struct LiquidFlowMaterialProperties
     std::vector<MaterialLib::PorousMedium::CoefMatrix> intrinsic_permeabiliy;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
+
+    MeshLib::PropertyVector<unsigned> const& material_IDs_of_elements;
 };
 
 }  // end of namespace
