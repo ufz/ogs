@@ -72,7 +72,8 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfTuples() + component);
+        return this->operator[](tuple_index* getNumberOfComponents() +
+                                component);
     }
 
     PropertyVectorBase* clone(std::vector<std::size_t> const& exclude_positions) const
