@@ -20,6 +20,8 @@ namespace MeshLib
 class Element;
 }
 
+namespace MaterialLib
+{
 namespace Solids
 {
 /// Interface for mechanical solid material models. Provides updates of the
@@ -51,7 +53,9 @@ struct MechanicsBase
 
     /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
     /// constitutive relation compute function.
-    void computeConstitutiveRelation(
+    /// Returns false in case of errors in the computation if Newton iterations
+    /// did not converge, for example.
+    bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const dt,
@@ -74,25 +78,29 @@ struct MechanicsBase
         KelvinVector sigma_{sigma};
         KelvinMatrix C_{C};
 
-        computeConstitutiveRelation(t,
-                                    x,
-                                    dt,
-                                    eps_prev_,
-                                    eps_,
-                                    sigma_prev_,
-                                    sigma_,
-                                    C_,
-                                    material_state_variables);
+        bool const result =
+            computeConstitutiveRelation(t,
+                                        x,
+                                        dt,
+                                        eps_prev_,
+                                        eps_,
+                                        sigma_prev_,
+                                        sigma_,
+                                        C_,
+                                        material_state_variables);
 
         sigma = sigma_;
         C = C_;
+        return result;
     }
 
     /// Computation of the constitutive relation for specific material model.
     /// This should be implemented in the derived model. Fixed Kelvin vector and
     /// matrix size version; for dynamic size arguments there is an overloaded
     /// wrapper function.
-    virtual void computeConstitutiveRelation(
+    /// Returns false in case of errors in the computation if Newton iterations
+    /// did not converge, for example.
+    virtual bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const dt,
@@ -105,6 +113,8 @@ struct MechanicsBase
 
     virtual ~MechanicsBase() = default;
 };
-}
+
+}  // namespace Solids
+}  // namespace MaterialLib
 
 #endif  // MATERIALLIB_SOLIDMODELS_MECHANICSBASE_H_

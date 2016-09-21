@@ -12,6 +12,8 @@
 
 #include "MechanicsBase.h"
 
+namespace MaterialLib
+{
 namespace Solids
 {
 template <int DisplacementDim>
@@ -77,7 +79,7 @@ public:
     {
     }
 
-    void computeConstitutiveRelation(
+    bool computeConstitutiveRelation(
         double const t,
         ProcessLib::SpatialPosition const& x,
         double const /*dt*/,
@@ -95,18 +97,17 @@ public:
         C.noalias() += 2 * _mp.mu(t, x) * KelvinMatrix::Identity();
 
         sigma.noalias() = sigma_prev + C * (eps - eps_prev);
+        return true;
     }
 
 private:
     MaterialProperties _mp;
 };
 
-}  // namespace Solids
-
-namespace Solids
-{
 extern template class LinearElasticIsotropic<2>;
 extern template class LinearElasticIsotropic<3>;
+
 }  // namespace Solids
+}  // namespace MaterialLib
 
 #endif  // MATERIALLIB_SOLIDMODELS_LINEARELASTICISOTROPIC_H_

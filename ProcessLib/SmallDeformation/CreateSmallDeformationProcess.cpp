@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/CreateLubby2.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 
 #include "SmallDeformationProcess.h"
@@ -69,10 +70,17 @@ createSmallDeformationProcess(
     auto const type =
         constitutive_relation_config.peekConfigParameter<std::string>("type");
 
-    std::unique_ptr<Solids::MechanicsBase<DisplacementDim>> material = nullptr;
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        material = nullptr;
     if (type == "LinearElasticIsotropic")
     {
-        material = Solids::createLinearElasticIsotropic<DisplacementDim>(
+        material =
+            MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
+                parameters, constitutive_relation_config);
+    }
+    else if (type == "Lubby2")
+    {
+        material = MaterialLib::Solids::createLubby2<DisplacementDim>(
             parameters, constitutive_relation_config);
     }
     else

@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MaterialLib/SolidModels/Lubby2.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -31,7 +32,7 @@ template <typename BMatricesType, int DisplacementDim>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(
-        Solids::MechanicsBase<DisplacementDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
         : _solid_material(solid_material),
           _material_state_variables(
               _solid_material.createMaterialStateVariables())
@@ -59,9 +60,9 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType _sigma, _sigma_prev;
     typename BMatricesType::KelvinVectorType _eps, _eps_prev;
 
-    Solids::MechanicsBase<DisplacementDim>& _solid_material;
-    std::unique_ptr<
-        typename Solids::MechanicsBase<DisplacementDim>::MaterialStateVariables>
+    MaterialLib::Solids::MechanicsBase<DisplacementDim>& _solid_material;
+    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables>
         _material_state_variables;
 
     typename BMatricesType::KelvinMatrixType _C;
@@ -233,9 +234,10 @@ public:
                 Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
-            _ip_data[ip]._solid_material.computeConstitutiveRelation(
-                t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
-                sigma, C, material_state_variables);
+            if (!_ip_data[ip]._solid_material.computeConstitutiveRelation(
+                    t, x_position, _process_data.dt, eps_prev, eps, sigma_prev,
+                    sigma, C, material_state_variables))
+                OGS_FATAL("Computation of local constitutive relation failed.");
 
             local_b.noalias() -= B.transpose() * sigma * detJ * wp.getWeight();
             local_Jac.noalias() +=

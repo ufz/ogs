@@ -7,15 +7,14 @@
  *
  */
 
-#include "LinearElasticIsotropic.h"
+#include "Lubby2.h"
 
 namespace MaterialLib
 {
 namespace Solids
 {
+template class Lubby2<2>;
+template class Lubby2<3>;
 
-template class LinearElasticIsotropic<2>;
-template class LinearElasticIsotropic<3>;
-
-}   // namespace Solids
-}   // namespace MaterialLib
+}  // namespace Solids
+}  // namespace MaterialLib

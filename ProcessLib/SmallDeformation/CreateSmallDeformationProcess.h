@@ -10,6 +10,7 @@
 #ifndef PROCESS_LIB_CREATESMALLDEFORMATIONPROCESS_H_
 #define PROCESS_LIB_CREATESMALLDEFORMATIONPROCESS_H_
 
+#include "MaterialLib/SolidModels/CreateLubby2.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
