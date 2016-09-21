@@ -85,15 +85,17 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
         return createNeumannBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
-            dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension(), parameters);
+            dof_table, variable_id, config.component_id,
+            mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
+            parameters);
     }
     else if (type == "Robin") {
         return createRobinBoundaryCondition(
             config.config,
             getClonedElements(boundary_element_searcher, config.geometry),
-            dof_table, variable_id, config.component_id, integration_order,
-            mesh.getDimension(), parameters);
+            dof_table, variable_id, config.component_id,
+            mesh.isAxiallySymmetric(), integration_order, mesh.getDimension(),
+            parameters);
     }
     else
     {

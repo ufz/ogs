@@ -31,11 +31,12 @@ public:
         typename std::enable_if<
             std::is_same<typename std::decay<BoundaryConditionData>::type,
                          typename std::decay<Data>::type>::value,
-            unsigned const>::type integration_order,
+            bool>::type is_axially_symmetric,
+        unsigned const integration_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim,
-        std::vector<MeshLib::Element*>&& elements, Data&& data);
+        unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
+        Data&& data);
 
     ~GenericNaturalBoundaryCondition() override;
 
