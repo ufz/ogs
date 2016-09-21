@@ -19,7 +19,8 @@ node('docker') {
 
         stage 'Data Explorer (Linux-Docker)'
         configure.linux 'build', "${defaultCMakeOptions} " +
-            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF',
+            '-DOGS_BUILD_GUI=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_TESTS=OFF ' +
+            '-DOGS_BUILD_METIS=ON',
             'Unix Makefiles', null, true
         build.linux 'build'
     }

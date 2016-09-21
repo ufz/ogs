@@ -9,7 +9,8 @@ node('win && conan') {
         '-DOGS_BUILD_GUI=ON ' +
         '-DOGS_BUILD_UTILS=ON ' +
         '-DOGS_BUILD_TESTS=OFF ' +
-        '-DOGS_BUILD_SWMM=ON'
+        '-DOGS_BUILD_SWMM=ON ' +
+        '-DOGS_BUILD_METIS=ON'
 
     stage 'Checkout (Win)'
     dir('ogs') { checkout scm }

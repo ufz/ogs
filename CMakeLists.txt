@@ -66,6 +66,8 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
     message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
 endif()
 
+option(OGS_BUILD_METIS "Should metis and the partmesh util be built?" OFF)
+
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 
 # Linear solvers
@@ -155,10 +157,6 @@ endif()
 if(OGS_BUILD_TESTS)
     set(Data_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
     set(Data_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
-endif()
-
-if(OGS_BUILD_UTILS AND NOT OGS_BUILD_GUI)
-    include(${CMAKE_SOURCE_DIR}/Applications/Utils/ModelPreparation/PartitionMesh/MetisSetup.cmake)
 endif()
 
 ######################
