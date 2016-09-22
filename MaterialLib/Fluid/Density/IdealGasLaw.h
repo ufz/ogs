@@ -59,12 +59,16 @@ public:
     double getdValue(const ArrayType& var_vals,
             const PropertyVariableType var) const override
     {
-        assert(var == PropertyVariableType::T || var == PropertyVariableType::pg);
-
-        const int func_id = static_cast<int> (var);
-        return (this->*_derivative_functions[func_id])(
-                var_vals[static_cast<int> (PropertyVariableType::T)],
-                var_vals[static_cast<int> (PropertyVariableType::pg)]);
+        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
+        const double p = var_vals[static_cast<int> (PropertyVariableType::pg)];
+        switch (var) {
+            case PropertyVariableType::T:
+                return dIdealGasLaw_dT(T, p);
+            case PropertyVariableType::pg:
+                return dIdealGasLaw_dp(T, p);
+            default:
+                return 0.;
+        }
     }
 
 private:
@@ -86,17 +90,7 @@ private:
     {
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);
     }
-
-    typedef double (IdealGasLaw::*DerivativeFunctionPointer)(const double,
-                                                     const double) const;
-
-    /// An array of pointers to derivative functions.
-      static DerivativeFunctionPointer _derivative_functions[PropertyVariableNumber];
 };
-
-    IdealGasLaw::DerivativeFunctionPointer IdealGasLaw
-            ::_derivative_functions[PropertyVariableNumber]
-            = {&IdealGasLaw::dIdealGasLaw_dT, nullptr, &IdealGasLaw::dIdealGasLaw_dp};
-}  // end namespace
+} // end namespace
 }  // end namespace
 #endif

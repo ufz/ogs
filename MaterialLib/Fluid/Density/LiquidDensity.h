@@ -91,12 +91,16 @@ public:
     double getdValue(const ArrayType& var_vals,
             const PropertyVariableType var) const override
     {
-        assert(var == PropertyVariableType::T || var == PropertyVariableType::pl);
-
-        const int func_id = static_cast<int> (var);
         const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
         const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
-        return (this->*_derivative_functions[func_id])(T, p);
+        switch (var) {
+            case PropertyVariableType::T:
+                return dLiquidDensity_dT(T, p);
+            case PropertyVariableType::pl:
+                return dLiquidDensity_dp(T, p);
+            default:
+                return 0.;
+        }
     }
 
 private:
@@ -139,17 +143,7 @@ private:
         return _rho0 / (1. + _beta * (T - _temperature0)) /
                 (fac_p * fac_p * _bulk_modulus);
     }
-
-    typedef double (LiquidDensity::*DerivativeFunctionPointer)(const double,
-                                                       const double) const;
-
-    /// An array of pointers to derivative functions.
-      static DerivativeFunctionPointer _derivative_functions[PropertyVariableNumber];
 };
-
-    LiquidDensity::DerivativeFunctionPointer LiquidDensity
-            ::_derivative_functions[PropertyVariableNumber]
-            = {&LiquidDensity::dLiquidDensity_dT, &LiquidDensity::dLiquidDensity_dp, nullptr};
 
 }  // end of namespace
 }  // end of namespace
