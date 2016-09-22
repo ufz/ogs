@@ -33,8 +33,11 @@ public:
      *                     [1] $fT_0$f
      *                     [2] $f\beta$f
      */
-    explicit LinearTemperatureDependentDensity(std::array<double,3>& parameters)
-    : _rho0(parameters[0]),_temperature0(parameters[1]),_beta(parameters[2])
+    explicit LinearTemperatureDependentDensity(
+        std::array<double, 3>& parameters)
+        : _rho0(parameters[0]),
+          _temperature0(parameters[1]),
+          _beta(parameters[2])
     {
     }
 
@@ -49,7 +52,7 @@ public:
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         return _rho0 * (1 + _beta * (T - _temperature0));
     }
 
@@ -58,17 +61,17 @@ public:
     ///                   is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        (void) var_vals;
-        (void) var;
+        (void)var_vals;
+        (void)var;
         return _rho0 * _beta;
     }
 
 private:
-    const double _rho0; ///<  Reference density.
-    const double _temperature0; ///<  Reference temperature.
-    const double _beta; ///<  Parameter.
+    const double _rho0;          ///<  Reference density.
+    const double _temperature0;  ///<  Reference temperature.
+    const double _beta;          ///<  Parameter.
 };
 
 }  // end namespace

@@ -59,10 +59,12 @@ public:
      *                     [3] $f p_0 $f
      *                     [4] $f E_0 $f
      */
-    explicit LiquidDensity(std::array<double,5>& parameters)
-      : _beta (parameters[0]), _rho0 (parameters[1]),
-      _temperature0 (parameters[2]), _p0 (parameters[3]),
-      _bulk_modulus (parameters[4])
+    explicit LiquidDensity(std::array<double, 5>& parameters)
+        : _beta(parameters[0]),
+          _rho0(parameters[1]),
+          _temperature0(parameters[2]),
+          _p0(parameters[3]),
+          _bulk_modulus(parameters[4])
     {
     }
 
@@ -77,10 +79,10 @@ public:
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
         return _rho0 / (1. + _beta * (T - _temperature0)) /
-                (1. - (p - _p0) / _bulk_modulus);
+               (1. - (p - _p0) / _bulk_modulus);
     }
 
     /// Get the partial differential of the density with respect to temperature
@@ -89,11 +91,12 @@ public:
     ///                   is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
-        switch (var) {
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
+        switch (var)
+        {
             case PropertyVariableType::T:
                 return dLiquidDensity_dT(T, p);
             case PropertyVariableType::pl:
@@ -129,7 +132,7 @@ private:
     {
         const double fac_T = 1. + _beta * (T - _temperature0);
         return -_beta * _rho0 / (fac_T * fac_T) /
-                (1. - (p - _p0) / _bulk_modulus);
+               (1. - (p - _p0) / _bulk_modulus);
     }
 
     /**
@@ -141,7 +144,7 @@ private:
     {
         const double fac_p = 1. - (p - _p0) / _bulk_modulus;
         return _rho0 / (1. + _beta * (T - _temperature0)) /
-                (fac_p * fac_p * _bulk_modulus);
+               (fac_p * fac_p * _bulk_modulus);
     }
 };
 

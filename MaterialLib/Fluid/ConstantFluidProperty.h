@@ -23,22 +23,19 @@ namespace Fluid
 class ConstantFluidProperty final : public FluidProperty
 {
 public:
-    explicit ConstantFluidProperty(const double value) : FluidProperty(),_value(value)
+    explicit ConstantFluidProperty(const double value)
+        : FluidProperty(), _value(value)
     {
     }
 
     /// Get model name.
-    std::string getName() const override
-    {
-        return "Constant";
-    }
-
+    std::string getName() const override { return "Constant"; }
     /// Get property value.
     /// \param var_vals Variable values in an array. The order of its elements
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        (void) var_vals;
+        (void)var_vals;
         return _value;
     }
 
@@ -47,10 +44,10 @@ public:
     ///                  is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        (void) var_vals;
-        (void) var;
+        (void)var_vals;
+        (void)var;
         return 0.;
     }
 

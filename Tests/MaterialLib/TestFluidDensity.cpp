@@ -46,8 +46,9 @@ TEST(Material, checkConstantDensity)
 
     ArrayType dummy;
     ASSERT_EQ(998.0, rho->getValue(dummy));
-    ASSERT_EQ(0.0,
-              rho->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
+    ASSERT_EQ(
+        0.0,
+        rho->getdValue(dummy, MaterialLib::Fluid::PropertyVariableType::T));
 }
 
 TEST(Material, checkIdealGasLaw)

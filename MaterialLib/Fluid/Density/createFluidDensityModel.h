@@ -23,7 +23,8 @@ namespace Fluid
 {
 /// Create a density model
 /// \param config  ConfigTree object has a tag of <density>
-std::unique_ptr<FluidProperty> createFluidDensityModel(BaseLib::ConfigTree const& config);
+std::unique_ptr<FluidProperty> createFluidDensityModel(
+    BaseLib::ConfigTree const& config);
 }
 }  // end namespace
 #endif

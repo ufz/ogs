@@ -15,8 +15,8 @@
 #ifndef IDEAL_GAS_LAW_H_
 #define IDEAL_GAS_LAW_H_
 
-#include <string>
 #include <cassert>
+#include <string>
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -31,24 +31,21 @@ class IdealGasLaw final : public FluidProperty
 public:
     ///   \param molar_mass Molar mass of the gas phase.
     explicit IdealGasLaw(const double molar_mass)
-    : FluidProperty(),_molar_mass(molar_mass)
+        : FluidProperty(), _molar_mass(molar_mass)
     {
     }
 
     /// Get density model name.
-    std::string getName() const override
-    {
-        return "Ideal gas law";
-    }
-
+    std::string getName() const override { return "Ideal gas law"; }
     /// Get density value.
     /// \param var_vals Variable values in an array. The order of its elements
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        return _molar_mass * var_vals[static_cast<int> (PropertyVariableType::pg)] /
+        return _molar_mass *
+               var_vals[static_cast<int>(PropertyVariableType::pg)] /
                (PhysicalConstant::IdealGasConstant *
-                var_vals[static_cast<int> (PropertyVariableType::T)]);
+                var_vals[static_cast<int>(PropertyVariableType::T)]);
     }
 
     /// Get the partial differential of the density with respect to temperature
@@ -57,11 +54,12 @@ public:
     ///                   is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
-        const double p = var_vals[static_cast<int> (PropertyVariableType::pg)];
-        switch (var) {
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
+        const double p = var_vals[static_cast<int>(PropertyVariableType::pg)];
+        switch (var)
+        {
             case PropertyVariableType::T:
                 return dIdealGasLaw_dT(T, p);
             case PropertyVariableType::pg:
@@ -91,6 +89,6 @@ private:
         return _molar_mass / (PhysicalConstant::IdealGasConstant * T);
     }
 };
-} // end namespace
+}  // end namespace
 }  // end namespace
 #endif

@@ -13,8 +13,8 @@
 #ifndef FLUIDPROPERTY_H
 #define FLUIDPROPERTY_H
 
-#include <string>
 #include <array>
+#include <string>
 
 namespace MaterialLib
 {
@@ -23,26 +23,22 @@ namespace Fluid
 /// Variable that determine the property.
 enum class PropertyVariableType
 {
-    T = 0,///< temperature.
-    pl = 1,///< pressure of the liquid phase (1st phase for some cases).
-    pg = 2,///< pressure of the gas phase (2nd phase for some cases).
-    number_of_variables = 3 ///< Number of property variables.
+    T = 0,   ///< temperature.
+    pl = 1,  ///< pressure of the liquid phase (1st phase for some cases).
+    pg = 2,  ///< pressure of the gas phase (2nd phase for some cases).
+    number_of_variables = 3  ///< Number of property variables.
 };
 
-const unsigned PropertyVariableNumber
-        = static_cast<unsigned> (PropertyVariableType::number_of_variables);
+const unsigned PropertyVariableNumber =
+    static_cast<unsigned>(PropertyVariableType::number_of_variables);
 
 /// Base class of fluid density properties
 class FluidProperty
 {
 public:
+    typedef std::array<double, PropertyVariableNumber> ArrayType;
 
-    typedef std::array<double,PropertyVariableNumber> ArrayType;
-
-    virtual ~FluidProperty()
-    {
-    }
-
+    virtual ~FluidProperty() {}
     /// Get model name.
     virtual std::string getName() const = 0;
 
@@ -54,10 +50,10 @@ public:
     /// Get the partial differential of the property value
     /// The first argument is an array of variables, and the order of the array
     /// elements is given in enum class PropertyVariableType.
-    /// The second argument is the variable type indicating which partial derivative
-    /// to be calculated.
+    /// The second argument is the variable type indicating which partial
+    /// derivative to be calculated.
     virtual double getdValue(const ArrayType& /* var_vals*/,
-            const PropertyVariableType /* var */) const = 0;
+                             const PropertyVariableType /* var */) const = 0;
 };
 
 }  // end namespace
