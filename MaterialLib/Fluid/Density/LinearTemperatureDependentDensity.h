@@ -34,7 +34,7 @@ public:
      *                     [2] $f\beta$f
      */
     explicit LinearTemperatureDependentDensity(
-        std::array<double, 3>& parameters)
+        std::array<double, 3> const& parameters)
         : _rho0(parameters[0]),
           _temperature0(parameters[1]),
           _beta(parameters[2])

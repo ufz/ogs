@@ -59,7 +59,7 @@ public:
      *                     [3] $f p_0 $f
      *                     [4] $f E_0 $f
      */
-    explicit LiquidDensity(std::array<double, 5>& parameters)
+    explicit LiquidDensity(std::array<double, 5> const& parameters)
         : _beta(parameters[0]),
           _rho0(parameters[1]),
           _temperature0(parameters[2]),
