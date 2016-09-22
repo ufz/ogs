@@ -27,9 +27,14 @@
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
 {
+    std::size_t n_corrected_elements = 0;
     std::size_t nElements (elements.size());
     for (std::size_t i=0; i<nElements; ++i)
     {
+        if (elements[i]->testElementNodeOrder())
+            continue;
+        n_corrected_elements++;
+
         const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
         std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
 
@@ -62,6 +67,8 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
                     elements[i]->setNode(j, nodes[nElemNodes - j - 1]);
         }
     }
+
+    INFO("Corrected %d elements.", n_corrected_elements);
 }
 
 /// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib
