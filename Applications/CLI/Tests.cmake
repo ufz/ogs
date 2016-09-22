@@ -416,6 +416,110 @@ if(NOT OGS_USE_MPI)
         cube_1e3_expected_pcs_0_ts_101_t_1.000000.vtu cube_1e3_pcs_0_ts_101_t_1.000000.vtu displacement displacement
     )
 
+    # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
+    # test results are compared to 3D simulation on a wedge-shaped domain
+    AddTest(
+        NAME GroundWaterFlowProcess_square_1x1_1e2_axi
+        PATH Elliptic/square_1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2_axi.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1.6e-5 RELTOL 1e-5
+        DIFF_DATA
+        wedge-1e2-ang-0.02-surface.vtu square_1e2_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature
+    )
+    # # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
+    # AddTest(
+    #     NAME GroundWaterFlowProcess_wedge_1e2_ang_0.02
+    #     PATH Elliptic/square_1x1_GroundWaterFlow
+    #     EXECUTABLE ogs
+    #     EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
+    # )
+
+    # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
+    # test results are compared to 3D simulation on a wedge-shaped domain
+    AddTest(
+        NAME GroundWaterFlowProcess_square_1x1_1e4_axi_ang_0.02
+        PATH Elliptic/square_1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e4_axi.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1.6e-5 RELTOL 1e-5
+        DIFF_DATA
+        wedge-1e4-ang-0.02-surface.vtu square_1e4_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature
+    )
+    # # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
+    # AddTest(
+    #     NAME GroundWaterFlowProcess_wedge_1e4_ang_0.02
+    #     PATH Elliptic/square_1x1_GroundWaterFlow
+    #     EXECUTABLE ogs
+    #     EXECUTABLE_ARGS wedge_1e4_axi_ang_0.02.prj
+    # )
+
+    # SMALL DEFORMATION TEST -- AXIALLY SYMMETRIC
+    AddTest(
+        NAME SmallDeformation_ring_plane_strain_axi
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS ring_plane_strain.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 6e-4 RELTOL 1e-4
+        DIFF_DATA
+        ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu u displacement
+        ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_rr sigma_rr
+        ring_plane_strain_1e4_solution.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma_ff sigma_ff
+    )
+
+    # SQUARE 1x1 HEAT CONDUCTION TEST -- AXIALLY SYMMETRIC
+    # test results are compared to 3D simulation on a wedge-shaped domain
+    AddTest(
+         NAME 2D_HeatConduction_axi
+         PATH Parabolic/T/2D_axially_symmetric
+         EXECUTABLE ogs
+         EXECUTABLE_ARGS square_1e2_axi.prj
+         WRAPPER time
+         TESTER vtkdiff
+         ABSTOL 1.7e-5 RELTOL 1e-5
+         DIFF_DATA
+         wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_pcs_0_ts_2_t_2.000000.vtu temperature temperature
+         wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_pcs_0_ts_2_t_2.000000.vtu heat_flux_x heat_flux_x
+    )
+    # # WEDGE 1x1 HEATCONDUCTION TEST -- computes reference results for the above test
+    # AddTest(
+    #      NAME 2D_HeatConduction_wedge
+    #      PATH Parabolic/T/2D_axially_symmetric
+    #      EXECUTABLE ogs
+    #      EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
+    # )
+
+    # SQUARE 1x1 TES TEST -- AXIALLY SYMMETRIC
+    # test results are compared to 3D simulation on a wedge-shaped domain
+    AddTest(
+        NAME LARGE_TES_inert_axi
+        PATH Parabolic/TES/2D
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS tes-inert-axi.prj
+        WRAPPER time
+        TESTER vtkdiff
+        # Note: Since the temperature and pressure only vary by a factor of ~ 1.e-6 in x-direction
+        # the relative tolerance has to be much smaller than 1.e-6
+        ABSTOL 1e-12 RELTOL 2e-9
+        DIFF_DATA
+        inert-wedge-extracted-surface-t-1s.vtu tes_inert_axi_pcs_0_ts_4_t_1.000000.vtu pressure pressure
+        inert-wedge-extracted-surface-t-1s.vtu tes_inert_axi_pcs_0_ts_4_t_1.000000.vtu temperature temperature
+        inert-wedge-extracted-surface-t-1s.vtu tes_inert_axi_pcs_0_ts_4_t_1.000000.vtu v_mass_frac v_mass_frac
+    )
+    # # WEDGE 1x1 TES TEST -- computes reference results for the above test
+    # AddTest(
+    #     NAME TES_inert_wedge
+    #     PATH Parabolic/TES/2D
+    #     EXECUTABLE ogs
+    #     EXECUTABLE_ARGS tes-inert-wedge.prj
+    # )
+
 else()
     # MPI groundwater flow tests
     AddTest(
