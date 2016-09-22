@@ -31,19 +31,17 @@ namespace Fluid
 */
 static std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree const& config)
 {
-    std::array<double, 5> parameters =
-    {
-        //! \ogs_file_param{material__fluid__density__liquid_density__beta}
-        config.getConfigParameter<double>("beta"),
-        //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
-        config.getConfigParameter<double>("rho0"),
-        //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
-        config.getConfigParameter<double>("temperature0"),
-        //! \ogs_file_param{material__fluid__density__liquid_density__p0}
-        config.getConfigParameter<double>("p0"),
-        //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
-        config.getConfigParameter<double>("bulk_modulus")
-    };
+    std::array<double, 5> parameters = {
+        {//! \ogs_file_param{material__fluid__density__liquid_density__beta}
+         config.getConfigParameter<double>("beta"),
+         //! \ogs_file_param{material__fluid__density__liquid_density__rho0}
+         config.getConfigParameter<double>("rho0"),
+         //! \ogs_file_param{material__fluid__density__liquid_density__temperature0}
+         config.getConfigParameter<double>("temperature0"),
+         //! \ogs_file_param{material__fluid__density__liquid_density__p0}
+         config.getConfigParameter<double>("p0"),
+         //! \ogs_file_param{material__fluid__density__liquid_density__bulk_modulus}
+         config.getConfigParameter<double>("bulk_modulus")}};
     return std::unique_ptr<FluidProperty>(new LiquidDensity(parameters));
 }
 
@@ -55,15 +53,13 @@ static std::unique_ptr<FluidProperty> createLiquidDensity(BaseLib::ConfigTree co
 static std::unique_ptr<FluidProperty> createLinearTemperatureDependentDensity
                                      (BaseLib::ConfigTree const& config)
 {
-    std::array<double, 3> parameters =
-    {
-        //! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
-        config.getConfigParameter<double>("rho0"),
-        //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
-        config.getConfigParameter<double>("temperature0"),
-        //! \ogs_file_param{material__fluid__density__linear_temperature__beta}
-        config.getConfigParameter<double>("beta")
-    };
+    std::array<double, 3> parameters = {
+        {//! \ogs_file_param{material__fluid__density__linear_temperature__rho0}
+         config.getConfigParameter<double>("rho0"),
+         //! \ogs_file_param{material__fluid__density__linear_temperature__temperature0}
+         config.getConfigParameter<double>("temperature0"),
+         //! \ogs_file_param{material__fluid__density__linear_temperature__beta}
+         config.getConfigParameter<double>("beta")}};
     return std::unique_ptr<FluidProperty>(
             new LinearTemperatureDependentDensity(parameters));
 }

@@ -64,7 +64,7 @@ TEST(Material, checkIdealGasLaw)
     const double p = 1.e+5;
     const double R = PhysicalConstant::IdealGasConstant;
     const double expected_air_dens = molar_air * p / (R * T);
-    ArrayType vars = {290, 0, 1.e+5};
+    ArrayType vars = {{290, 0, 1.e+5}};
     ASSERT_NEAR(expected_air_dens, rho->getValue(vars), 1.e-10);
 
     const double expected_d_air_dens_dT = -molar_air * p / (R * T * T);
@@ -109,7 +109,7 @@ TEST(Material, checkLiquidDensity)
         "</density>";
     const auto rho = createTestFluidDensityModel(xml);
 
-    const ArrayType vars = {273.15 + 60.0, 1.e+6, 0.};
+    const ArrayType vars = {{273.15 + 60.0, 1.e+6, 0.}};
     const double T0 = 273.15;
     const double p0 = 1.e+5;
     const double rho0 = 999.8;
