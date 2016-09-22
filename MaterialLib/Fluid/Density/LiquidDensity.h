@@ -60,12 +60,9 @@ public:
      *                     [4] $f E_0 $f
      */
     explicit LiquidDensity(std::array<double,5>& parameters)
-    :
-    _beta(parameters[0]),
-    _rho0(parameters[1]),
-    _temperature0(parameters[2]),
-    _p0(parameters[3]),
-    _bulk_modulus(parameters[4])
+      : _beta (parameters[0]), _rho0 (parameters[1]),
+      _temperature0 (parameters[2]), _p0 (parameters[3]),
+      _bulk_modulus (parameters[4])
     {
     }
 
@@ -96,7 +93,7 @@ public:
     {
         assert(var == PropertyVariableType::T || var == PropertyVariableType::pl);
 
-        const int func_id = (var == PropertyVariableType::T) ? 0 : 1;
+        const int func_id = static_cast<int> (var);
         const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
         const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
         return (this->*_derivative_functions[func_id])(T, p);
@@ -147,11 +144,12 @@ private:
                                                        const double) const;
 
     /// An array of pointers to derivative functions.
-    static DerivativeFunctionPointer _derivative_functions[2];
+      static DerivativeFunctionPointer _derivative_functions[PropertyVariableNumber];
 };
 
-LiquidDensity::DerivativeFunctionPointer LiquidDensity::_derivative_functions[2]
-        = {&LiquidDensity::dLiquidDensity_dT,&LiquidDensity::dLiquidDensity_dp};
+    LiquidDensity::DerivativeFunctionPointer LiquidDensity
+            ::_derivative_functions[PropertyVariableNumber]
+            = {&LiquidDensity::dLiquidDensity_dT, &LiquidDensity::dLiquidDensity_dp, nullptr};
 
 }  // end of namespace
 }  // end of namespace

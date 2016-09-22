@@ -61,7 +61,7 @@ public:
     {
         assert(var == PropertyVariableType::T || var == PropertyVariableType::pg);
 
-        const int func_id = (var == PropertyVariableType::T) ? 0 : 1;
+        const int func_id = static_cast<int> (var);
         return (this->*_derivative_functions[func_id])(
                 var_vals[static_cast<int> (PropertyVariableType::T)],
                 var_vals[static_cast<int> (PropertyVariableType::pg)]);
@@ -91,11 +91,12 @@ private:
                                                      const double) const;
 
     /// An array of pointers to derivative functions.
-    static DerivativeFunctionPointer _derivative_functions[2];
+      static DerivativeFunctionPointer _derivative_functions[PropertyVariableNumber];
 };
 
-IdealGasLaw::DerivativeFunctionPointer IdealGasLaw::_derivative_functions[2]
-        = {&IdealGasLaw::dIdealGasLaw_dT,&IdealGasLaw::dIdealGasLaw_dp};
+    IdealGasLaw::DerivativeFunctionPointer IdealGasLaw
+            ::_derivative_functions[PropertyVariableNumber]
+            = {&IdealGasLaw::dIdealGasLaw_dT, nullptr, &IdealGasLaw::dIdealGasLaw_dp};
 }  // end namespace
 }  // end namespace
 #endif
