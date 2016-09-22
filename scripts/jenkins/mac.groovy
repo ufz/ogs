@@ -5,7 +5,7 @@ node('mac && conan') {
         '-DOGS_LIB_BOOST=System' +
         '-DOGS_LIB_VTK=System ' +
         '-DOGS_DOWNLOAD_ADDITIONAL_CONTENT=ON ' +
-        '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.10"'
+        '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.11"'
 
     stage 'Checkout (Mac)'
     dir('ogs') { checkout scm }
