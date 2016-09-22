@@ -21,6 +21,7 @@ node('master') {
 
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
+        builders['clang'] = { load 'scripts/jenkins/clang.groovy' }
     }
 
     parallel builders
