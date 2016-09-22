@@ -21,7 +21,6 @@ node('master') {
 
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
-        build job: 'OGS-6/clang-sanitizer', wait: false
     }
 
     parallel builders
@@ -29,7 +28,10 @@ node('master') {
     step([$class: 'GitHubCommitStatusSetter'])
 
     if (currentBuild.result == "SUCCESS") {
-        if (helper.isOriginMaster()) { build job: 'OGS-6/Deploy', wait: false }
+        if (helper.isOriginMaster()) {
+            build job: 'OGS-6/clang-sanitizer', wait: false
+            build job: 'OGS-6/Deploy', wait: false
+        }
     }
 }
 
