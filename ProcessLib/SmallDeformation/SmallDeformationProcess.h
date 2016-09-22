@@ -62,7 +62,8 @@ private:
         ProcessLib::SmallDeformation::createLocalAssemblers<DisplacementDim,
                                                             LocalAssemblerData>(
             mesh.getDimension(), mesh.getElements(), dof_table,
-            integration_order, _local_assemblers, _process_data);
+            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+            _process_data);
 
         // TODO move the two data members somewhere else.
         // for extrapolation of secondary variables

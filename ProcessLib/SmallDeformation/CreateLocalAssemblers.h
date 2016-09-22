@@ -30,7 +30,6 @@ template <unsigned GlobalDim, int DisplacementDim,
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<MeshLib::Element*> const& mesh_elements,
-    unsigned const integration_order,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
@@ -51,7 +50,6 @@ void createLocalAssemblers(
         initializer,
         mesh_elements,
         local_assemblers,
-        integration_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 
@@ -76,7 +74,6 @@ void createLocalAssemblers(
     const unsigned dimension,
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    unsigned const integration_order,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
@@ -87,13 +84,13 @@ void createLocalAssemblers(
         case 2:
             detail::createLocalAssemblers<2, DisplacementDim,
                                           LocalAssemblerImplementation>(
-                dof_table, mesh_elements, integration_order, local_assemblers,
+                dof_table, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 3:
             detail::createLocalAssemblers<3, DisplacementDim,
                                           LocalAssemblerImplementation>(
-                dof_table, mesh_elements, integration_order, local_assemblers,
+                dof_table, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         default:

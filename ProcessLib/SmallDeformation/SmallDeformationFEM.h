@@ -134,6 +134,7 @@ public:
     SmallDeformationLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        bool is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
@@ -153,7 +154,7 @@ public:
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, false /* TODO */, _integration_method);
+                e, is_axially_symmetric, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -318,11 +319,13 @@ public:
     LocalAssemblerData(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : SmallDeformationLocalAssembler<ShapeFunction, IntegrationMethod,
                                          DisplacementDim>(
-              e, local_matrix_size, integration_order, process_data)
+              e, local_matrix_size, is_axially_symmetric, integration_order,
+              process_data)
     {
     }
 };
