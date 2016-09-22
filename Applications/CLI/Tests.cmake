@@ -247,6 +247,29 @@ if(NOT OGS_USE_MPI)
         cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure
     )
 
+    # test CalculateSurfaceFlux
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_1x1x1_1e3_dirichlet_calculatesurfaceflux
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_surfaceflux.vtu surfaceflux_left_right_dirichlet_reference surfaceflux
+    )
+    AddTest(
+        NAME GroundWaterFlowProcess_cube_1x1x1_1e3_neumann_calculatesurfaceflux
+        PATH Elliptic/cube_1x1x1_GroundWaterFlow
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e3_neumann_calculatesurfaceflux.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        cube_1x1x1_hex_1e3_complete_surface.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_surfaceflux.vtu surfaceflux_neumann_reference surfaceflux
+    )
     # TES tests
     AddTest(
         NAME TES_zeolite_discharge_small
