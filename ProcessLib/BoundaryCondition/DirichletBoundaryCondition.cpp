@@ -25,8 +25,9 @@ void DirichletBoundaryCondition::preTimestep(const double /*t*/)
 void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_already_computed)
-        return;
+    // TODO: Reenable when fixed ;)
+    //if (_already_computed)
+        //return;
 
     _already_computed = true;
 
