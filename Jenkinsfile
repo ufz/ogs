@@ -28,7 +28,9 @@ node('master') {
 
     step([$class: 'GitHubCommitStatusSetter'])
 
-    if (helper.isRelease()) { build job: 'OGS-6/Deploy', wait: false }
+    if (currentBuild.result == "SUCCESS") {
+        if (helper.isOriginMaster()) { build job: 'OGS-6/Deploy', wait: false }
+    }
 }
 
 properties ([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])

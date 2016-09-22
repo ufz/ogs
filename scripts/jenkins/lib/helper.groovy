@@ -4,6 +4,12 @@ def isRelease () {
     return false;
 }
 
+def isOriginMaster() {
+    if (env.BRANCH_NAME == 'master' && env.JOB_URL.contains('ufz'))
+        return true;
+    return  false;
+}
+
 def getEnv(arch = 'x64') {
     if (env.NODE_NAME == 'visserv3')
         qtdir = "C:\\libs\\qt\\4.8\\msvc2013-${arch}"
