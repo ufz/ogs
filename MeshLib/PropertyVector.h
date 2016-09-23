@@ -161,6 +161,14 @@ public:
         _values[group_id] = p;
     }
 
+    void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
+    {
+        T* p = new T[values.size()];
+        for (unsigned i=0; i<values.size(); i++)
+            p[i] = values[i];
+        _values[group_id] = p;
+    }
+
     std::size_t getNumberOfTuples() const
     {
         return std::vector<std::size_t>::size();
