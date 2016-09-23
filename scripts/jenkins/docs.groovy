@@ -17,10 +17,11 @@ node('docker') {
     stage 'Reports (Docs)'
     publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
         reportDir: 'build/docs', reportFiles: 'index.html', reportName: 'Doxygen'])
-    step([$class: 'WarningsPublisher', canComputeNew: false,
-        canResolveRelativePaths: false, consoleParsers: [[parserName: 'Doxygen']],
-        defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '',
-        messagesPattern: '', unHealthy: ''])
+    step([$class: 'WarningsPublisher', canResolveRelativePaths: false,
+        canRunOnFailed: true, consoleParsers: [[parserName: 'Doxygen']],
+        defaultEncoding: '', excludePattern: '', healthy: '',
+        includePattern: '', messagesPattern: '', unHealthy: '',
+        unstableNewAll: '0', useStableBuildAsReference: true])
 
     if (helper.isOriginMaster()) {
         stage 'Deploy (Docs)'
