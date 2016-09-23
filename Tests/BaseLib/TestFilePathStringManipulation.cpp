@@ -146,29 +146,35 @@ TEST(BaseLib, getFileExtensionUnix)
     ASSERT_EQ ( BaseLib::getFileExtension("/path.wrong0/path.wrong/path.ext/"), "" );
 }
 
+#ifdef _WIN32
 TEST(BaseLib, CopyPathToFileNameWin)
 {
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend"), "file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path\\file", "extend"), "path\\file" );
-
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend\\"), "extend\\file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path\\file", "extend\\"), "path\\file" );
-
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend\\smth"), "extend\\file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path\\file", "extend\\smth"), "path\\file" );
+    ASSERT_EQ("extend\\file", BaseLib::copyPathToFileName("file", "extend"));
+    ASSERT_EQ("path\\file",
+              BaseLib::copyPathToFileName("path\\file", "extend"));
+    ASSERT_EQ("extend\\file", BaseLib::copyPathToFileName("file", "extend\\"));
+    ASSERT_EQ("path\\file",
+              BaseLib::copyPathToFileName("path\\file", "extend\\"));
+    ASSERT_EQ("extend\\smth\\file",
+              BaseLib::copyPathToFileName("file", "extend\\smth"));
+    ASSERT_EQ("path\\file",
+              BaseLib::copyPathToFileName("path\\file", "extend\\smth"));
 }
-
+#else
 TEST(BaseLib, CopyPathToFileNameUnix)
 {
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend"), "file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path/file", "extend"), "path/file" );
+    ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend"));
+    ASSERT_EQ("path/file",
+              BaseLib::copyPathToFileName("path/file", "extend"));
+    ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend/"));
+    ASSERT_EQ("path/file", BaseLib::copyPathToFileName("path/file", "extend/"));
 
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend/"), "extend/file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path/file", "extend/"), "path/file" );
-
-    ASSERT_EQ ( BaseLib::copyPathToFileName("file", "extend/smth"), "extend/file" );
-    ASSERT_EQ ( BaseLib::copyPathToFileName("path/file", "extend/smth"), "path/file" );
+    ASSERT_EQ("extend/smth/file",
+              BaseLib::copyPathToFileName("file", "extend/smth"));
+    ASSERT_EQ("path/file",
+              BaseLib::copyPathToFileName("path/file", "extend/smth"));
 }
+#endif
 
 TEST(BaseLib, ExtractPathWin)
 {

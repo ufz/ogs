@@ -123,6 +123,13 @@ bool hasFileExtension(std::string const& extension, std::string const& filename)
     return boost::iequals(extension, getFileExtension(filename));
 }
 
+static const char pathSeparator =
+#ifdef _WIN32
+                            '\\';
+#else
+                            '/';
+#endif
+
 std::string copyPathToFileName(const std::string &file_name,
                                const std::string &source)
 {
@@ -131,6 +138,10 @@ std::string copyPathToFileName(const std::string &file_name,
     if (pos != std::string::npos)
         return file_name;
 
+    if (source.empty())
+        return file_name;
+    if (source.back() != pathSeparator)
+        return BaseLib::extractPath(source + pathSeparator).append(file_name);
     return BaseLib::extractPath(source).append(file_name);
 }
 
@@ -141,12 +152,6 @@ std::string extractPath(std::string const& pathname)
         return "";
     return pathname.substr(0, pos + 1);
 }
-static const char pathSeparator =
-#ifdef _WIN32
-                            '\\';
-#else
-                            '/';
-#endif
 
 std::string appendPathSeparator(std::string const& path)
 {
