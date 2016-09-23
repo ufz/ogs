@@ -138,7 +138,7 @@ public:
     ~PropertyVector()
     {
         for (auto v : _values)
-            delete v;
+            delete [] v;
     }
 
     /// The operator[] uses the item to group property map to access to the
@@ -155,13 +155,16 @@ public:
 
     void initPropertyValue(std::size_t group_id, T const& value)
     {
-        _values[group_id] = new T(value);
+        T* p = new T[1];
+        p[0] = value;
+        _values[group_id] = p;
     }
 
     std::size_t getNumberOfTuples() const
     {
         return std::vector<std::size_t>::size();
     }
+
     /// Method returns the number of tuples times the number of tuple components.
     std::size_t size() const
     {
