@@ -25,7 +25,7 @@ public:
     static const unsigned n_faces = 0;
 
     /// Constant: The number of edges
-    static const unsigned n_edges = 0;
+    static const unsigned n_edges = 1;
 
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* /*e*/, unsigned /*i*/) { return nullptr; }
