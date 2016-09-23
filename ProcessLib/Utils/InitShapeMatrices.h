@@ -44,6 +44,19 @@ std::vector<typename ShapeMatricesType::ShapeMatrices> initShapeMatrices(
     return shape_matrices;
 }
 
+template <typename ShapeFunction, typename ShapeMatricesType>
+double interpolateXCoordinate(
+    MeshLib::Element const& e,
+    typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
+{
+    using FemType = NumLib::TemplateIsoparametric<
+        ShapeFunction, ShapeMatricesType>;
+
+    FemType fe(*static_cast<const typename ShapeFunction::MeshElement*>(&e));
+
+    return fe.interpolateZerothCoordinate(N);
+}
+
 } // ProcessLib
 
 
