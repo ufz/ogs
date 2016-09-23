@@ -21,13 +21,29 @@ namespace MaterialLib
 {
 namespace Fluid
 {
-/// Linear pressure dependent viscosity model.
+/**
+ *  Class of a linear pressure dependent viscosity model.
+ *   \f[
+ *        \mu = \mu_0\,(1 + \gamma (p -p_0) )
+ *   where
+ *    \f{eqnarray*}{
+ *       &\mu_0:&  \mbox{reference viscosity,}\\
+ *       &\gamma:& \mbox{parameter,}\\
+ *       &p:&      \mbox{pressure,}\\
+ *       &p_0:&    \mbox{initial pressure.}\\
+ *    \f}
+ */
 class LinearPressureDependentViscosity final : public FluidProperty
 {
 public:
-    /// \param parameters An array contains the five parameters.
-    explicit LinearPressureDependentViscosity(std::array<double,3>& parameters)
-    : _mu0(parameters[0]),_p0(parameters[1]),_gamma(parameters[2])
+    /** \param parameters An array contains the three parameters:
+     *                     [0] $f\mu_0$f
+     *                     [1] $fp_0$f
+     *                     [2] $f\gamma$f
+     */
+    explicit LinearPressureDependentViscosity(
+        std::array<double, 3> const& parameters)
+        : _mu0(parameters[0]), _p0(parameters[1]), _gamma(parameters[2])
     {
     }
 
@@ -42,8 +58,8 @@ public:
     ///                 is given in enum class PropertyVariableType.
     double getValue(const ArrayType& var_vals) const override
     {
-        const double p = var_vals[static_cast<int> (PropertyVariableType::pl)];
-        return _mu0 * (1 + _gamma * (std::max(p,0.) - _p0));
+        const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
+        return _mu0 * (1 + _gamma * (std::max(p, 0.) - _p0));
     }
 
     /// Get the partial differential of the viscosity with respect to pressure.
@@ -51,17 +67,17 @@ public:
     ///                  is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        (void) var_vals;
-        (void) var;
+        (void)var_vals;
+        (void)var;
         return _mu0 * _gamma;
     }
 
 private:
-    const double _mu0; ///<  Reference viscosity.
-    const double _p0; ///<  Reference pressure.
-    const double _gamma; ///<  Parameter.
+    const double _mu0;    ///<  Reference viscosity.
+    const double _p0;     ///<  Reference pressure.
+    const double _gamma;  ///<  Parameter.
 };
 
 }  // end namespace

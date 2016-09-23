@@ -22,6 +22,8 @@ namespace MaterialLib
 namespace Fluid
 {
 /// A temperature dependent viscosity model.
+/// <a href="ddbst">
+/// http://ddbonline.ddbst.de/VogelCalculation/VogelCalculationCGI.exe</a>
 class VogelsLiquidDynamicViscosity final : public FluidProperty
 {
 public:
@@ -48,7 +50,7 @@ public:
 
     double getValue(const ArrayType& var_vals) const override
     {
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         return 1.e-3 * std::exp(_abc[0] + _abc[1] / (_abc[2] + T));
     }
 
@@ -58,10 +60,10 @@ public:
     ///                   is given in enum class PropertyVariableType.
     /// \param var       Variable type.
     double getdValue(const ArrayType& var_vals,
-            const PropertyVariableType var) const override
+                     const PropertyVariableType var) const override
     {
-        (void) var;
-        const double T = var_vals[static_cast<int> (PropertyVariableType::T)];
+        (void)var;
+        const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         const double f_buff = _abc[1] / (_abc[2] + T);
         return -1.e-3 * f_buff * std::exp(_abc[0] + f_buff) / (_abc[2] + T);
     }

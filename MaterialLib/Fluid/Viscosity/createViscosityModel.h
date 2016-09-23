@@ -1,9 +1,6 @@
 /*!
    \file  createViscosityModel.h
 
-   \author Wenqing Wang
-   \date Jan 2015
-
    \copyright
     Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
                Distributed under a Modified BSD License.
@@ -25,7 +22,8 @@ namespace Fluid
 {
 /// Create a viscosity model
 /// \param config  ConfigTree object has a tag of <viscosity>
-std::unique_ptr<FluidProperty> createViscosityModel(BaseLib::ConfigTree const& config);
+std::unique_ptr<FluidProperty> createViscosityModel(
+    BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace
