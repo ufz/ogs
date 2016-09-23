@@ -18,6 +18,7 @@ node('master') {
     builders['gcc'] = { load 'scripts/jenkins/gcc.groovy' }
     builders['msvc'] = { load 'scripts/jenkins/msvc.groovy' }
     builders['mac'] = { load 'scripts/jenkins/mac.groovy' }
+    builders['docs'] = { load 'scripts/jenkins/docs.groovy' }
 
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }

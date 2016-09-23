@@ -15,7 +15,7 @@ node('docker') {
     }
 
     stage 'Reports (Docs)'
-    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
+    publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
         reportDir: 'build/docs', reportFiles: 'index.html', reportName: 'Doxygen'])
     step([$class: 'WarningsPublisher', canComputeNew: false,
         canResolveRelativePaths: false, consoleParsers: [[parserName: 'Doxygen']],
