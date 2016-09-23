@@ -160,15 +160,20 @@ public:
         {
             _ip_data.emplace_back(*_process_data._material);
             auto& ip_data = _ip_data[ip];
-            ip_data._detJ = shape_matrices[ip].detJ;
-            ip_data._integralMeasure = shape_matrices[ip].integralMeasure;
+            auto const& sm = shape_matrices[ip];
+            ip_data._detJ = sm.detJ;
+            ip_data._integralMeasure = sm.integralMeasure;
             ip_data._b_matrices.resize(
                 KelvinVectorDimensions<DisplacementDim>::value,
                 ShapeFunction::NPOINTS * DisplacementDim);
-            LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunction::NPOINTS,
-                typename ShapeMatricesType::GlobalDimNodalMatrixType,
-                BMatrixType>(shape_matrices[ip].dNdx, ip_data._b_matrices);
+
+            auto const x_coord =
+                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(e,
+                                                                         sm.N);
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS>(
+                sm.dNdx, ip_data._b_matrices, is_axially_symmetric, sm.N,
+                x_coord);
 
             ip_data._sigma.resize(
                 KelvinVectorDimensions<DisplacementDim>::value);
