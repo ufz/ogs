@@ -89,9 +89,6 @@ template <typename ShapeMatrixType>
 struct SecondaryData
 {
     std::vector<ShapeMatrixType> N;
-    std::vector<double> _sigmaXX;
-    std::vector<double> _sigmaYY;
-    std::vector<double> _sigmaXY;
 };
 
 struct SmallDeformationLocalAssemblerInterface
@@ -99,13 +96,22 @@ struct SmallDeformationLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
     virtual std::vector<double> const& getIntPtSigmaXX(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYY(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXY(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -145,11 +151,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         _ip_data.reserve(n_integration_points);
-
         _secondary_data.N.resize(n_integration_points);
-        _secondary_data._sigmaXX.resize(n_integration_points);
-        _secondary_data._sigmaYY.resize(n_integration_points);
-        _secondary_data._sigmaXY.resize(n_integration_points);
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -253,11 +255,6 @@ public:
                 B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
             local_Jac.noalias() +=
                 B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
-
-            // TODO: Reuse _ip_data[ip]._sigma
-            _secondary_data._sigmaXX[ip] = sigma[0];
-            _secondary_data._sigmaYY[ip] = sigma[1];
-            _secondary_data._sigmaXY[ip] = sigma[3];
         }
     }
 
@@ -284,24 +281,57 @@ public:
     }
 
     std::vector<double> const& getIntPtSigmaXX(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaXX;
+        return getIntPtSigma(cache, 0);
     }
 
     std::vector<double> const& getIntPtSigmaYY(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaYY;
+        return getIntPtSigma(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 2);
     }
 
     std::vector<double> const& getIntPtSigmaXY(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaXY;
+        return getIntPtSigma(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 5);
     }
 
 private:
+    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
+                                             std::size_t const component) const
+    {
+        cache.clear();
+        cache.reserve(_ip_data.size());
+
+        for (auto const& ip_data : _ip_data) {
+            cache.push_back(ip_data._sigma[component]);
+        }
+
+        return cache;
+    }
+
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<IntegrationPointData<BMatricesType, DisplacementDim>> _ip_data;

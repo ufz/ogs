@@ -90,10 +90,30 @@ private:
                 &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYY));
 
         Base::_secondary_variables.addSecondaryVariable(
+            "sigma_zz", 1,
+            makeExtrapolator(
+                getExtrapolator(), _local_assemblers,
+                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
+
+        Base::_secondary_variables.addSecondaryVariable(
             "sigma_xy", 1,
             makeExtrapolator(
                 getExtrapolator(), _local_assemblers,
-                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXY));
+                &SmallDeformationLocalAssemblerInterface::getIntPtSigmaZZ));
+
+        if (DisplacementDim == 3) {
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_xz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &SmallDeformationLocalAssemblerInterface::getIntPtSigmaXZ));
+
+            Base::_secondary_variables.addSecondaryVariable(
+                "sigma_yz", 1,
+                makeExtrapolator(
+                    getExtrapolator(), _local_assemblers,
+                    &SmallDeformationLocalAssemblerInterface::getIntPtSigmaYZ));
+        }
     }
 
     void assembleConcreteProcess(const double t, GlobalVector const& x,
