@@ -53,6 +53,38 @@ private:
     mutable std::vector<double> _cache;
 };
 
+template <typename T>
+struct MeshElementParameter<T*> final : public Parameter<T> {
+    MeshElementParameter(MeshLib::PropertyVector<T*> const& property)
+        : _property(property)
+        , _cache(_property.getNumberOfComponents())
+    {
+    }
+
+    bool isTimeDependent() const override { return false; }
+
+    unsigned getNumberOfComponents() const override
+    {
+        return _property.getNumberOfComponents();
+    }
+
+    std::vector<T> const& operator()(double const /*t*/,
+                                     SpatialPosition const& pos) const override
+    {
+        auto const e = pos.getElementID();
+        assert(e);
+        auto const num_comp = _property.getNumberOfComponents();
+        for (std::size_t c=0; c<num_comp; ++c) {
+            _cache[c] = _property.getComponent(*e, c);
+        }
+        return _cache;
+    }
+
+private:
+    MeshLib::PropertyVector<T*> const& _property;
+    mutable std::vector<double> _cache;
+};
+
 std::unique_ptr<ParameterBase> createMeshElementParameter(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
