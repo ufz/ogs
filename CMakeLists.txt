@@ -87,6 +87,9 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 # Logging
 option(OGS_DISABLE_LOGGING "Disables all logog messages." OFF)
 
+# Debug
+option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
+
 # Compiler flags
 set(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
 option(STL_NO_DEBUG "Disable STL debug in debug build" OFF)
@@ -152,6 +155,10 @@ endif()
 
 if(OGS_USE_EIGEN)
     add_definitions(-DOGS_USE_EIGEN)
+endif()
+
+if (OGS_FATAL_ABORT)
+    add_definitions(-DOGS_FATAL_ABORT)
 endif()
 
 if(OGS_BUILD_TESTS)
