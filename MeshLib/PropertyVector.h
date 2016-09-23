@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/excludeObjectCopy.h"
 #include "Location.h"
 
@@ -186,6 +187,20 @@ public:
             t->initPropertyValue(j, *(_values[j]));
         }
         return t;
+    }
+
+    //! Returns the value for the given component stored in the given tuple.
+    T const& getComponent(std::size_t tuple_index,
+                                      std::size_t component) const
+    {
+        assert(component < _n_components);
+        assert(tuple_index < getNumberOfTuples());
+        const double* p = this->operator[](tuple_index);
+        if (p==nullptr)
+            OGS_FATAL("No data found in the property vector %s "
+                      "for the tuple index %d and component %d",
+                      getPropertyName().c_str(), tuple_index, component);
+        return p[component];
     }
 
 #ifndef NDEBUG
