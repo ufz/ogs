@@ -35,6 +35,9 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(MeshLib::Mesh const
     // check all edges of the elements near the polyline
     for (auto ele_id : ele_ids_near_ply) {
         auto* e = _mesh.getElement(ele_id);
+        // skip line elements
+        if (e->getDimension() == 1)
+            continue;
         // skip internal elements
         if (!e->isBoundaryElement())
             continue;
