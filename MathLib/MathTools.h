@@ -11,6 +11,7 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
+#include <cmath>
 #include <cstddef>
 
 #ifdef _OPENMP
@@ -110,6 +111,16 @@ double sqrDist(const double* p0, const double* p1)
  * @return the angle between the edges
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
+
+/// sign function
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
+/// converts the given degrees to radians
+inline double to_radians(double degrees) {
+    return degrees*M_PI/180.;
+}
 
 } // namespace
 
