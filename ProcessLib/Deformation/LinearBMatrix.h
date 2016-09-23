@@ -16,10 +16,31 @@ namespace ProcessLib
 {
 namespace LinearBMatrix
 {
+namespace detail
+{
+template <int NPOINTS, typename DNDX_Type, typename BMatrixType>
+void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& b_matrix)
+{
+    for (int i = 0; i < NPOINTS; ++i) {
+        b_matrix(1, NPOINTS + i) = dNdx(1, i);
+        b_matrix(3, i) = dNdx(1, i) / std::sqrt(2);
+        b_matrix(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
+        b_matrix(0, i) = dNdx(0, i);
+    }
+}
+}  // detail
+
 /// Fills a B-matrix based on given shape function dN/dx values.
-template <int DisplacementDim, int NPOINTS, typename DNDX_Type,
+template <int DisplacementDim,
+          int NPOINTS,
+          typename N_Type,
+          typename DNDX_Type,
           typename BMatrixType>
-void computeBMatrix(DNDX_Type const& dNdx, BMatrixType& b_matrix)
+void computeBMatrix(DNDX_Type const& dNdx,
+                    BMatrixType& b_matrix,
+                    const bool is_axially_symmetric,
+                    N_Type const& N,
+                    const double radius)
 {
     static_assert(0 < DisplacementDim && DisplacementDim <= 3,
                   "LinearBMatrix::computeBMatrix: DisplacementDim must be in "
@@ -38,14 +59,16 @@ void computeBMatrix(DNDX_Type const& dNdx, BMatrixType& b_matrix)
                 b_matrix(5, i) = dNdx(2, i) / std::sqrt(2);
                 b_matrix(5, 2 * NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
             }
-        // no break for fallthrough.
+            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, b_matrix);
+            break;
         case 2:
-            for (int i = 0; i < NPOINTS; ++i)
+            detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, b_matrix);
+            if (is_axially_symmetric)
             {
-                b_matrix(1, NPOINTS + i) = dNdx(1, i);
-                b_matrix(3, i) = dNdx(1, i) / std::sqrt(2);
-                b_matrix(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
-                b_matrix(0, i) = dNdx(0, i);
+                for (int i = 0; i < NPOINTS; ++i)
+                {
+                    b_matrix(2, i) = N[i] / radius;
+                }
             }
             break;
         default:
