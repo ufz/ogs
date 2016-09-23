@@ -15,3 +15,5 @@ tags
 conanbuildinfo.cmake
 conaninfo.txt
 CMakeLists.txt.user*
+
+*.pyc
