@@ -22,6 +22,9 @@ node('master') {
     if (helper.isRelease()) {
         builders['msvc32'] = { load 'scripts/jenkins/msvc32.groovy' }
     }
+    if (helper.isOriginMaster()) {
+        builders['docs'] = { load 'scripts/jenkins/docs.groovy' }
+    }
 
     parallel builders
 

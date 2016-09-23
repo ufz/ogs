@@ -1,7 +1,12 @@
 node('docker') {
-    def configure = load 'scripts/jenkins/lib/configure.groovy'
-    def build     = load 'scripts/jenkins/lib/build.groovy'
-    def post      = load 'scripts/jenkins/lib/post.groovy'
+    stage 'Checkout (Clang)'
+    dir('ogs') {
+        checkout scm
+
+        configure = load 'scripts/jenkins/lib/configure.groovy'
+        build     = load 'scripts/jenkins/lib/build.groovy'
+        post      = load 'scripts/jenkins/lib/post.groovy'
+    }
 
     def defaultDockerArgs = '-v /home/jenkins/.ccache:/usr/src/.ccache'
     def defaultCMakeOptions =
@@ -10,9 +15,6 @@ node('docker') {
         '-DOGS_ADDRESS_SANITIZER=ON ' +
         '-DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON ' +
         '-DOGS_BUILD_UTILS=ON'
-
-    stage 'Checkout (Clang)'
-    dir('ogs') { checkout scm }
 
     docker.image('ogs6/clang-base:latest').inside(defaultDockerArgs) {
         stage 'Configure (Clang)'
