@@ -1,12 +1,13 @@
-/*!
-   \file  LinearPressureDependentViscosity.h
-   \brief Declaration of class for the pressure dependent viscosity model.
-
-   \copyright
-    Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
+/**
+ *  \brief Declaration of class for the pressure dependent viscosity model.
+ *
+ *  \copyright
+ *   Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *              Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ *   \file  LinearPressureDependentViscosity.h
  */
 #ifndef LINEAR_PRESSURE_DEPENDENT_VISCOSITY_H_
 #define LINEAR_PRESSURE_DEPENDENT_VISCOSITY_H_
@@ -53,19 +54,21 @@ public:
         return "Linear pressure dependent viscosity";
     }
 
-    /// Get viscosity value.
-    /// \param var_vals Variable values in an array. The order of its elements
-    ///                 is given in enum class PropertyVariableType.
+    /** Get viscosity value.
+     * \param var_vals Variable values in an array. The order of its elements
+     *                 is given in enum class PropertyVariableType.
+     */
     double getValue(const ArrayType& var_vals) const override
     {
         const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
         return _mu0 * (1 + _gamma * (std::max(p, 0.) - _p0));
     }
 
-    /// Get the partial differential of the viscosity with respect to pressure.
-    /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                  is given in enum class PropertyVariableType.
-    /// \param var       Variable type.
+    /** Get the partial differential of the viscosity with respect to pressure.
+     * \param var_vals  Variable values  in an array. The order of its elements
+     *                  is given in enum class PropertyVariableType.
+     * \param var       Variable type.
+     */
     double getdValue(const ArrayType& var_vals,
                      const PropertyVariableType var) const override
     {

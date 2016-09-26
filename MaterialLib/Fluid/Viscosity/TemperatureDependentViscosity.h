@@ -1,4 +1,6 @@
 /**
+ *  \brief A linear temperature dependent viscosity model.
+ *
  *  \copyright
  *   Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
  *              Distributed under a Modified BSD License.
@@ -58,20 +60,23 @@ public:
         return "Temperature dependent viscosity";
     }
 
-    /// Get viscosity value.
-    /// \param var_vals Variable values in an array. The order of its elements
-    ///                 is given in enum class PropertyVariableType.
+    /** Get viscosity value.
+     * \param var_vals Variable values in an array. The order of its elements
+     *                 is given in enum class PropertyVariableType.
+     */
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         return _mu0 * std::exp(-(T - _temperature_c) / _temperature_v);
     }
 
-    /// Get the partial differential of the viscosity with respect to
-    /// temperature.
-    /// \param var_vals  Variable values  in an array. The order of its elements
-    ///                   is given in enum class PropertyVariableType.
-    /// \param var       Variable type.
+    /**
+     *  Get the partial differential of the viscosity with respect to
+     * temperature.
+     * \param var_vals  Variable values  in an array. The order of its elements
+     *                  is given in enum class PropertyVariableType.
+     * \param var       Variable type.
+     */
     double getdValue(const ArrayType& var_vals,
                      const PropertyVariableType var) const override
     {
