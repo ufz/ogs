@@ -11,12 +11,13 @@
 #ifndef MATHTOOLS_H_
 #define MATHTOOLS_H_
 
-#include <cmath>
 #include <cstddef>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include <boost/math/constants/constants.hpp>
 
 namespace MathLib
 {
@@ -119,7 +120,7 @@ template <typename T> int sgn(T val) {
 
 /// converts the given degrees to radians
 inline double to_radians(double degrees) {
-    return degrees*M_PI/180.;
+    return degrees*boost::math::constants::pi<double>()/180.;
 }
 
 } // namespace
