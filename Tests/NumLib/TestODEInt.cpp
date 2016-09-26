@@ -87,7 +87,7 @@ public:
         const double delta_t = (num_timesteps == 0) ? -1.0
                                                     : ((t_end-t0) / num_timesteps);
 
-        INFO("Running test with %u timesteps of size %g s.", num_timesteps,
+        DBUG("Running test with %u timesteps of size %g s.", num_timesteps,
              delta_t);
 
         // initial condition
