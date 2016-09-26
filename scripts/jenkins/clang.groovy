@@ -35,4 +35,5 @@ node('docker') {
     stage 'Post (Clang)'
     post.publishTestReports('build/Testing/**/*.xml','build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/clang-log-parser.rules')
+    post.cleanup()
 }

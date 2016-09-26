@@ -43,4 +43,5 @@ node('win && conan') {
     stage 'Post (Win)'
     post.publishTestReports 'build/Testing/**/*.xml', 'build/Tests/testrunner.xml',
         'ogs/scripts/jenkins/msvc-log-parser.rules'
+    post.cleanup()
 }

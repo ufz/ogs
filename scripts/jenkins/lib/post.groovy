@@ -16,4 +16,10 @@ def publishTestReports(ctestPattern, gtestPattern, parseRulefile) {
         projectRulePath: "${parseRulefile}", useProjectRule: true])
 }
 
+def cleanup(directory = 'build') {
+    dir(directory) {
+        deleteDir()
+    }
+}
+
 return this;

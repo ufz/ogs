@@ -19,4 +19,5 @@ node('win && conan') {
         build.win 'build-32'
     }
     archive 'build-32/*.zip'
+    post.cleanup('build-32')
 }
