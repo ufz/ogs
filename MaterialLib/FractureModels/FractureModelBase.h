@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALLIB_FRACTURE_FRACTUREMODELBASE_H_
+#define MATERIALLIB_FRACTURE_FRACTUREMODELBASE_H_
 
 #include <Eigen/Eigen>
 
@@ -54,3 +55,4 @@ public:
 }  // namespace Fracture
 }  // namespace MaterialLib
 
+#endif

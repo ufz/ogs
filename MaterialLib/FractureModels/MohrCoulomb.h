@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALLIB_FRACTURE_MOHRCOULOMB_H_
+#define MATERIALLIB_FRACTURE_MOHRCOULOMB_H_
 
 #include <Eigen/Eigen>
 
@@ -20,9 +21,6 @@ namespace MaterialLib
 namespace Fracture
 {
 
-/**
- * Mohr-Coulomb fracture model
- */
 template <int DisplacementDim>
 class MohrCoulomb final : public FractureModelBase<DisplacementDim>
 {
@@ -84,3 +82,4 @@ extern template class MohrCoulomb<3>;
 }  // namespace Fractrue
 }  // namespace MaterialLib
 
+#endif

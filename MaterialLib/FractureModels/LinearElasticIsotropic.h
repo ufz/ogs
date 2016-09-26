@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALLIB_FRACTURE_LINEARELASTICISOTROPIC_H_
+#define MATERIALLIB_FRACTURE_LINEARELASTICISOTROPIC_H_
 
 #include <Eigen/Eigen>
 
@@ -71,3 +72,4 @@ extern template class LinearElasticIsotropic<3>;
 }  // namespace Fractrue
 }  // namespace MaterialLib
 
+#endif

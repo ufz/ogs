@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef MATERIALLIB_FRACTURE_CREATEMOHRCOULOMB_H_
+#define MATERIALLIB_FRACTURE_CREATEMOHRCOULOMB_H_
 
 #include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 #include "FractureModelBase.h"
@@ -26,3 +27,4 @@ createMohrCoulomb(
 }  // namespace Fracture
 }  // namespace MaterialLib
 
+#endif
