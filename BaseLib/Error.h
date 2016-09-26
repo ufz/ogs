@@ -10,15 +10,31 @@
 #ifndef BASELIB_ERROR_H
 #define BASELIB_ERROR_H
 
-#include <stdexcept>
+#ifdef OGS_FATAL_ABORT
 
+#include <cstdlib>
+#include <logog/include/logog.hpp>
 #include "StringTools.h"
+
+#define OGS_FATAL(fmt, ...)\
+    {\
+    ERR("%s", BaseLib::format(fmt, ##__VA_ARGS__).data());\
+    std::abort();\
+    }
+
+#else // OGS_FATAL_ABORT
+
+#include <stdexcept>
 #include "FileTools.h"
+#include "StringTools.h"
 
 #define OGS_STR(x) #x
 #define OGS_STRINGIFY(x) OGS_STR(x)
 #define OGS_LOCATION " at " + BaseLib::extractBaseName(__FILE__) + ", line " OGS_STRINGIFY(__LINE__)
+
 #define OGS_FATAL(fmt, ...)\
     throw std::runtime_error(BaseLib::format(fmt, ##__VA_ARGS__) + OGS_LOCATION);
+
+#endif // OGS_FATAL_ABORT
 
 #endif //BASELIB_ERROR_H
