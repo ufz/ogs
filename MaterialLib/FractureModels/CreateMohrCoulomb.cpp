@@ -26,10 +26,10 @@ createMohrCoulomb(
     DBUG("Create MohrCoulomb material");
 
     auto& Kn = ProcessLib::findParameter<double>(
-        config, "kn", parameters, 1);
+        config, "normal_stiffness", parameters, 1);
 
     auto& Ks = ProcessLib::findParameter<double>(
-        config, "ks", parameters, 1);
+        config, "shear_stiffness", parameters, 1);
 
     auto& friction_angle = ProcessLib::findParameter<double>(
         config, "friction_angle", parameters, 1);

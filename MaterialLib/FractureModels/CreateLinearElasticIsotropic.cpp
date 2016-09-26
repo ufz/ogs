@@ -25,17 +25,11 @@ createLinearElasticIsotropic(
     config.checkConfigParameter("type", "LinearElasticIsotropic");
     DBUG("Create LinearElasticIsotropic material");
 
-    // Youngs modulus
     auto& Kn = ProcessLib::findParameter<double>(
-        config, "kn", parameters, 1);
+        config, "normal_stiffness", parameters, 1);
 
-    DBUG("Use '%s' as Kn parameter.", Kn.name.c_str());
-
-    // Poissons ratio
     auto& Ks = ProcessLib::findParameter<double>(
-        config, "ks", parameters, 1);
-
-    DBUG("Use '%s' as Ks parameter.", Ks.name.c_str());
+        config, "shear_stiffness", parameters, 1);
 
     typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
         Kn, Ks};
