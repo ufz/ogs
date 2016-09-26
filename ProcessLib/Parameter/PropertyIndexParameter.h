@@ -25,8 +25,8 @@ class PropertyVector;
 namespace ProcessLib
 {
 
-/// A parameter class looking for values from index in a property vector.
-/// This class can be used for material ID depependent parameters.
+/// A parameter class looking for values from indices in a property vector.
+/// This class can be used for material ID dependent parameters.
 template <typename T, MeshLib::MeshItemType MeshItemType>
 struct PropertyIndexParameter final
     : public Parameter<T>
