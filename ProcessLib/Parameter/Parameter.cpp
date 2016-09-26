@@ -12,9 +12,10 @@
 #include "BaseLib/Error.h"
 
 #include "ConstantParameter.h"
+#include "CurveScaledParameter.h"
+#include "MaterialIDParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
-#include "CurveScaledParameter.h"
 
 namespace ProcessLib
 {
@@ -39,6 +40,20 @@ std::unique_ptr<ParameterBase> createParameter(
         param->name = name;
         return param;
     }
+    else if (type == "CurveScaled")
+    {
+        INFO("CurveScaledParameter: %s", name.c_str());
+        auto param = createCurveScaledParameter(config, curves);
+        param->name = name;
+        return param;
+    }
+    else if (type == "MaterialID")
+    {
+        INFO("MaterialIDParameter: %s", name.c_str());
+        auto param = createMaterialIDParameter(config, *meshes.front());
+        param->name = name;
+        return param;
+    }
     else if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
@@ -50,13 +65,6 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("MeshElementParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(config, *meshes.front());
-        param->name = name;
-        return param;
-    }
-    else if (type == "CurveScaled")
-    {
-        INFO("CurveScaledParameter: %s", name.c_str());
-        auto param = createCurveScaledParameter(config, curves);
         param->name = name;
         return param;
     }
