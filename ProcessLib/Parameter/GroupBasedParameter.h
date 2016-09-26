@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef PROCESSLIB_PROPERTYINDEXPARAMETER_H_
-#define PROCESSLIB_PROPERTYINDEXPARAMETER_H_
+#ifndef PROCESSLIB_GROUPBASEDPARAMETER_H_
+#define PROCESSLIB_GROUPBASEDPARAMETER_H_
 
 #include "BaseLib/Error.h"
 #include "MeshLib/PropertyVector.h"
@@ -28,7 +28,7 @@ namespace ProcessLib
 /// A parameter class looking for values from indices in a property vector.
 /// This class can be used for material ID dependent parameters.
 template <typename T, MeshLib::MeshItemType MeshItemType>
-struct PropertyIndexParameter final
+struct GroupBasedParameter final
     : public Parameter<T>
 {
     /**
@@ -37,8 +37,9 @@ struct PropertyIndexParameter final
      * @param property    a property vector of index for mesh items
      * @param vec_values  a vector of values for each index
      */
-    PropertyIndexParameter(MeshLib::PropertyVector<int> const& property,
-    std::vector<std::vector<double>> const& vec_values)
+    GroupBasedParameter(
+        MeshLib::PropertyVector<int> const& property,
+        std::vector<std::vector<double>> const& vec_values)
         : _property_index(property), _vec_values(vec_values)
     {
     }
@@ -82,9 +83,9 @@ private:
 };
 
 
-std::unique_ptr<ParameterBase> createPropertyIndexParameter(
+std::unique_ptr<ParameterBase> createGroupBasedParameter(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
 
 }  // ProcessLib
 
-#endif // PROCESSLIB_PROPERTYINDEXPARAMETER_H_
+#endif // PROCESSLIB_GROUPBASEDPARAMETER_H_

@@ -13,9 +13,9 @@
 
 #include "ConstantParameter.h"
 #include "CurveScaledParameter.h"
+#include "GroupBasedParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
-#include "PropertyIndexParameter.h"
 
 namespace ProcessLib
 {
@@ -47,6 +47,13 @@ std::unique_ptr<ParameterBase> createParameter(
         param->name = name;
         return param;
     }
+    else if (type == "Group")
+    {
+        INFO("GroupBasedParameter: %s", name.c_str());
+        auto param = createGroupBasedParameter(config, *meshes.front());
+        param->name = name;
+        return param;
+    }
     else if (type == "MeshElement")
     {
         INFO("MeshElementParameter: %s", name.c_str());
@@ -58,13 +65,6 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("MeshElementParameter: %s", name.c_str());
         auto param = createMeshNodeParameter(config, *meshes.front());
-        param->name = name;
-        return param;
-    }
-    else if (type == "PropertyIndex")
-    {
-        INFO("PropertyIndexParameter: %s", name.c_str());
-        auto param = createPropertyIndexParameter(config, *meshes.front());
         param->name = name;
         return param;
     }
