@@ -7,7 +7,7 @@
  *
  */
 
-#include "PropertyIndexParameter.h"
+#include "GroupBasedParameter.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -15,34 +15,34 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<ParameterBase> createPropertyIndexParameter(
+std::unique_ptr<ParameterBase> createGroupBasedParameter(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{parameter__type}
-    config.checkConfigParameter("type", "PropertyIndex");
+    config.checkConfigParameter("type", "Group");
 
-    // get a property vector
-    //! \ogs_file_param{parameter_PropertyIndex__property_name}
-    std::string const property_name = config.getConfigParameter<std::string>("property_name");
-    DBUG("Using property_name %s", property_name.c_str());
+    // get a property vector of group IDs
+    //! \ogs_file_param{parameter_Group__group_id_property}
+    std::string const group_id_property_name = config.getConfigParameter<std::string>("group_id_property");
+    DBUG("Using group_id_property %s", group_id_property_name.c_str());
 
-    auto const& property_vector =
-        mesh.getProperties().getPropertyVector<int>(property_name);
-    if (!property_vector) {
-        OGS_FATAL("The required property %s does not exist in the given mesh", property_name.c_str());
+    auto const& group_id_property =
+        mesh.getProperties().getPropertyVector<int>(group_id_property_name);
+    if (!group_id_property) {
+        OGS_FATAL("The required property %s does not exist in the given mesh", group_id_property_name.c_str());
     }
 
     // parse mapping data
     typedef std::vector<double> Values;
     typedef std::pair<int, Values> Index_Values;
     std::vector<Index_Values> vec_index_values;
-    //! \ogs_file_param{parameter_PropertyIndex__index_values}
+    //! \ogs_file_param{parameter_Group__index_values}
     for (auto p : config.getConfigSubtreeList("index_values"))
     {
-        //! \ogs_file_param{parameter_PropertyIndex__index_values__index}
+        //! \ogs_file_param{parameter_Group__index_values__index}
         auto const index = p.getConfigParameter<int>("index");
         {
-            //! \ogs_file_param{parameter_PropertyIndex__index_values__value}
+            //! \ogs_file_param{parameter_Group__index_values__value}
             auto const value = p.getConfigParameterOptional<double>("value");
 
             if (value)
@@ -54,7 +54,7 @@ std::unique_ptr<ParameterBase> createPropertyIndexParameter(
         }
 
         // Value tag not available; continue with required values tag.
-        //! \ogs_file_param{parameter_PropertyIndex__index_values__values}
+        //! \ogs_file_param{parameter_Group__index_values__values}
         Values const values = p.getConfigParameter<Values>("values");
 
         if (values.empty())
@@ -67,10 +67,10 @@ std::unique_ptr<ParameterBase> createPropertyIndexParameter(
     unsigned n_values = vec_index_values.front().second.size();
     for (auto p : vec_index_values)
     {
-        auto itr = std::find(property_vector->begin(), property_vector->end(), p.first);
-        if (itr == property_vector->end())
+        auto itr = std::find(group_id_property->begin(), group_id_property->end(), p.first);
+        if (itr == group_id_property->end())
             OGS_FATAL("Specified property index %d does not exist in the property vector %s",
-                      p.first, property_name.c_str());
+                      p.first, group_id_property_name.c_str());
 
         if (p.second.size() != n_values)
             OGS_FATAL("The length of some values (%d) is different from the first one (%d). "
@@ -79,17 +79,17 @@ std::unique_ptr<ParameterBase> createPropertyIndexParameter(
     }
 
     // create a mapping table
-    const int max_index = *std::max_element(property_vector->begin(), property_vector->end());
+    const int max_index = *std::max_element(group_id_property->begin(), group_id_property->end());
     std::vector<Values> vec_values(max_index + 1);
     for (auto p : vec_index_values)
         vec_values[p.first] = p.second;
 
-    if (property_vector->getMeshItemType() == MeshLib::MeshItemType::Node)
+    if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Node)
         return std::unique_ptr<ParameterBase>(
-            new PropertyIndexParameter<double, MeshLib::MeshItemType::Node>(*property_vector, vec_values));
-    else if (property_vector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+            new GroupBasedParameter<double, MeshLib::MeshItemType::Node>(*group_id_property, vec_values));
+    else if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Cell)
         return std::unique_ptr<ParameterBase>(
-            new PropertyIndexParameter<double, MeshLib::MeshItemType::Cell>(*property_vector, vec_values));
+            new GroupBasedParameter<double, MeshLib::MeshItemType::Cell>(*group_id_property, vec_values));
 
     OGS_FATAL("Mesh item type of the specified property is not supported.");
 }
