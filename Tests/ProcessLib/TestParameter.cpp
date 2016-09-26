@@ -41,7 +41,8 @@ TEST(ProcessLib_Parameter, GroupBasedParameterElement)
     MeshLib::addPropertyToMesh(*mesh, "MaterialIDs", MeshLib::MeshItemType::Cell, 1, mat_ids);
 
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base
+            = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
 
     auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
@@ -74,7 +75,8 @@ TEST(ProcessLib_Parameter, GroupBasedParameterNode)
     MeshLib::addPropertyToMesh(*mesh, "PointGroupIDs", MeshLib::MeshItemType::Node, 1, group_ids);
 
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base
+            = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
 
     auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
