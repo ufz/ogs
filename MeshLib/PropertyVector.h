@@ -11,6 +11,7 @@
 #ifndef PROPERTYVECTOR_H_
 #define PROPERTYVECTOR_H_
 
+#include <cassert>
 #include <iterator>
 #include <ostream>
 #include <string>
