@@ -39,9 +39,6 @@ public:
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::LINE2;
 
-    /// Constant: The number of edges
-    static const unsigned n_edges = 1;
-
     /// Constant: The number of neighbors
     static const unsigned n_neighbors = 2;
 
@@ -49,7 +46,7 @@ public:
     static const unsigned edge_nodes[1][2];
 
     /// Edge rule
-    typedef NoEdgeReturn EdgeReturn;
+    typedef LinearEdgeReturn EdgeReturn;
 
     /**
      * Checks if a point is inside the element.

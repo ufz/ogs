@@ -30,6 +30,9 @@ public:
 
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::LINE3;
+
+    /// Edge rule
+    typedef QuadraticEdgeReturn EdgeReturn;
 }; /* class */
 
 } /* namespace */
