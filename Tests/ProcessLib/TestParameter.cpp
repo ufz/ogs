@@ -22,14 +22,14 @@
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 
-#include "ProcessLib/Parameter/PropertyIndexParameter.h"
+#include "ProcessLib/Parameter/GroupBasedParameter.h"
 
-TEST(ProcessLib_Parameter, PropertyIndexParameterElement)
+TEST(ProcessLib_Parameter, GroupBasedParameterElement)
 {
     const char xml[] =
             "<parameter>"
-            "<type>PropertyIndex</type>"
-            "<property_name>MaterialIDs</property_name>"
+            "<type>Group</type>"
+            "<group_id_property>MaterialIDs</group_id_property>"
             "<index_values><index>0</index><value>0</value></index_values>"
             "<index_values><index>1</index><value>100</value></index_values>"
             "<index_values><index>3</index><value>300</value></index_values>"
@@ -41,7 +41,7 @@ TEST(ProcessLib_Parameter, PropertyIndexParameterElement)
     MeshLib::addPropertyToMesh(*mesh, "MaterialIDs", MeshLib::MeshItemType::Cell, 1, mat_ids);
 
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createPropertyIndexParameter(conf.getConfigSubtree("parameter"), *mesh);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
 
     auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
@@ -57,12 +57,12 @@ TEST(ProcessLib_Parameter, PropertyIndexParameterElement)
 
 }
 
-TEST(ProcessLib_Parameter, PropertyIndexParameterNode)
+TEST(ProcessLib_Parameter, GroupBasedParameterNode)
 {
     const char xml[] =
             "<parameter>"
-            "<type>PropertyIndex</type>"
-            "<property_name>PointGroupIDs</property_name>"
+            "<type>Group</type>"
+            "<group_id_property>PointGroupIDs</group_id_property>"
             "<index_values><index>0</index><value>0</value></index_values>"
             "<index_values><index>1</index><value>100</value></index_values>"
             "<index_values><index>3</index><value>300</value></index_values>"
@@ -74,7 +74,7 @@ TEST(ProcessLib_Parameter, PropertyIndexParameterNode)
     MeshLib::addPropertyToMesh(*mesh, "PointGroupIDs", MeshLib::MeshItemType::Node, 1, group_ids);
 
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror, BaseLib::ConfigTree::onwarning);
-    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createPropertyIndexParameter(conf.getConfigSubtree("parameter"), *mesh);
+    std::unique_ptr<ProcessLib::ParameterBase> parameter_base = ProcessLib::createGroupBasedParameter(conf.getConfigSubtree("parameter"), *mesh);
 
     auto parameter = dynamic_cast<ProcessLib::Parameter<double>*>(parameter_base.get());
     double t = 0;
