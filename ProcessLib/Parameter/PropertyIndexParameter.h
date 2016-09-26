@@ -10,9 +10,11 @@
 #ifndef PROCESSLIB_PROPERTYINDEXPARAMETER_H_
 #define PROCESSLIB_PROPERTYINDEXPARAMETER_H_
 
+#include "BaseLib/Error.h"
+#include "MeshLib/PropertyVector.h"
+
 #include "Parameter.h"
 
-#include "MeshLib/PropertyVector.h"
 
 namespace MeshLib
 {
@@ -53,8 +55,11 @@ struct PropertyIndexParameter final
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
         assert(item_id);
-        int index = _property_index[item_id.get()];
-        return _vec_values[index];
+        int const index = _property_index[item_id.get()];
+        auto const& values = _vec_values[index];
+        if (values.empty())
+            OGS_FATAL("No data found for the group index %d", index);
+         return values;
     }
 
 private:
