@@ -65,14 +65,14 @@ struct PropertyIndexParameter final
 private:
     template <MeshLib::MeshItemType ITEM_TYPE> struct type {};
 
-    boost::optional<std::size_t>
-    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Cell>) const
+    static boost::optional<std::size_t>
+    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Cell>)
     {
         return pos.getElementID();
     }
 
-    boost::optional<std::size_t>
-    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Node>) const
+    static boost::optional<std::size_t>
+    getMeshItemID(SpatialPosition const& pos, type<MeshLib::MeshItemType::Node>)
     {
         return pos.getNodeID();
     }
