@@ -117,11 +117,9 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices> _shape_matrices;
 
-    // TODO size of ShapeFunction::NPOINTS should be the number of
-    // integration points.
     std::vector<std::vector<double>> _darcy_velocities =
         std::vector<std::vector<double>>(
-            GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
+            GlobalDim, std::vector<double>(_integration_method.getNumberOfPoints()));
 
     LiquidFlowMaterialProperties const& _material_properties;
     double _temperature;  ///< Temperature.

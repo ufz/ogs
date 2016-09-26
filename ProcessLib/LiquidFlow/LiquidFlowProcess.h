@@ -42,6 +42,7 @@ public:
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
+        const bool compute_gravitational_term,
         BaseLib::ConfigTree const& config);
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double t,
@@ -65,6 +66,7 @@ private:
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
+    const bool _compute_gravitational_term;
     LiquidFlowMaterialProperties _material_properties;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>

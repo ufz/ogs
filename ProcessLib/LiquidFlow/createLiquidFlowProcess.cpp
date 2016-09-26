@@ -32,21 +32,30 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     DBUG("Create LiquidFlowProcess.");
 
+    // Process variable.
     auto process_variables = findProcessVariables(
-        //! \ogs_file_param_special{process__LIQUID_FLOW__process_variables__liquid_pressure}
-        variables, config, {"liquid_pressure"});
+        variables, config,
+        {//! \ogs_file_param_special{process__LIQUID_FLOW__process_variables__process_variable}
+         "process_variable"});
 
     SecondaryVariableCollection secondary_variables;
 
-    NumLib::NamedFunctionCaller named_function_caller({"Liquid_flow_pressure"});
+    NumLib::NamedFunctionCaller named_function_caller({"LiquidFlow_pressure"});
 
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
+    auto const gravitational_term =
+    //! \ogs_file_param{process__LIQUID_FLOW__gravitational_term}
+    config.getConfigParameter<std::string>("gravitational_term");
+    const bool has_gravitational_term = (gravitational_term == "enabled") ? true : false;
+
+    auto const& mat_config = config.getConfigSubtree("material_property");
+
     return std::unique_ptr<Process>{new LiquidFlowProcess{
         mesh, std::move(jacobian_assembler), parameters,
         std::move(process_variables), std::move(secondary_variables),
-        std::move(named_function_caller), config}};
+        std::move(named_function_caller), has_gravitational_term, mat_config}};
 }
 
 }  // end of namespace

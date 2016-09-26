@@ -28,10 +28,12 @@ LiquidFlowProcess::LiquidFlowProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
+    const bool compute_gravitational_term,
     BaseLib::ConfigTree const& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               std::move(process_variables), std::move(secondary_variables),
               std::move(named_function_caller)),
+      _compute_gravitational_term(compute_gravitational_term),
       _material_properties(LiquidFlowMaterialProperties(mesh, config))
 {
     DBUG("Create Liquid flow process.");
