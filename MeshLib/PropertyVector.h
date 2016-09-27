@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/excludeObjectCopy.h"
 #include "Location.h"
 
@@ -138,7 +139,7 @@ public:
     ~PropertyVector()
     {
         for (auto v : _values)
-            delete v;
+            delete [] v;
     }
 
     /// The operator[] uses the item to group property map to access to the
@@ -155,13 +156,31 @@ public:
 
     void initPropertyValue(std::size_t group_id, T const& value)
     {
-        _values[group_id] = new T(value);
+        if (_n_components != 1)
+            OGS_FATAL("Single-component version of initPropertyValue() is called "
+                      "for a multi-components PropertyVector<T*>");
+        T* p = new T[1];
+        p[0] = value;
+        _values[group_id] = p;
+    }
+
+    void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
+    {
+        if (_n_components != values.size())
+            OGS_FATAL("The size of provided values in initPropertyValue() is "
+                      "not same as the number of components in PropertyVector<T*>");
+
+        T* p = new T[values.size()];
+        for (unsigned i=0; i<values.size(); i++)
+            p[i] = values[i];
+        _values[group_id] = p;
     }
 
     std::size_t getNumberOfTuples() const
     {
         return std::vector<std::size_t>::size();
     }
+
     /// Method returns the number of tuples times the number of tuple components.
     std::size_t size() const
     {
@@ -180,9 +199,23 @@ public:
         );
         // copy pointers to property values
         for (std::size_t j(0); j<_values.size(); j++) {
-            t->initPropertyValue(j, *(_values[j]));
+            std::vector<T> values(_values[j], _values[j] + _n_components);
+            t->initPropertyValue(j, values);
         }
         return t;
+    }
+
+    //! Returns the value for the given component stored in the given tuple.
+    T const& getComponent(std::size_t tuple_index, std::size_t component) const
+    {
+        assert(component < _n_components);
+        assert(tuple_index < getNumberOfTuples());
+        const double* p = this->operator[](tuple_index);
+        if (p==nullptr)
+            OGS_FATAL("No data found in the property vector %s "
+                      "for the tuple index %d and component %d",
+                      getPropertyName().c_str(), tuple_index, component);
+        return p[component];
     }
 
 #ifndef NDEBUG
