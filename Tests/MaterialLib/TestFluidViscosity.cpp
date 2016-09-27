@@ -1,16 +1,20 @@
-/*!
-   \file  TestFluidViscosity.cpp
-   \brief Test classes for fluid viscosity models.
+/**
+ *  \brief Test viscosity models
+ *
+ *  \copyright
+ *   Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *              Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ *  \file  TestFluidViscosity.cpp
+ *
+ */
 
-   \copyright
-    Copyright (c) 2012-2015, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
-*/
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <cmath>
 
 #include "TestTools.h"
 

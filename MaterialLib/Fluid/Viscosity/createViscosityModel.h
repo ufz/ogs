@@ -1,12 +1,16 @@
-/*!
-   \file  createViscosityModel.h
+/**
+ *  \brief A function for creating viscosity model
+ *
+ *  \copyright
+ *   Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
+ *              Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ *
+ *   \file  createViscosityModel.h
+ *
+ */
 
-   \copyright
-    Copyright (c) 2012-2016, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
-*/
 #ifndef CREATE_VISCOSITY_MODEL_H_
 #define CREATE_VISCOSITY_MODEL_H_
 
