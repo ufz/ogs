@@ -12,23 +12,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
-// TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
-
-void getVectorValues(
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
-    std::vector<double>& local_x)
-{
-    auto const& indices = r_c_indices.rows;
-    local_x.clear();
-    local_x.reserve(indices.size());
-
-    for (auto i : indices)
-    {
-        local_x.emplace_back(x.get(i));
-    }
-}
-
 namespace ProcessLib
 {
 namespace TES
@@ -301,9 +284,8 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
                                          TESLocalAssemblerInterface& loc_asm) {
             auto const r_c_indices = NumLib::getRowColumnIndices(
                 id, *this->_local_to_global_index_map, indices_cache);
-            getVectorValues(x, r_c_indices, local_x_cache);
-            getVectorValues(*_x_previous_timestep, r_c_indices,
-                            local_x_prev_ts_cache);
+            local_x_cache = x.get(r_c_indices.rows);
+            local_x_prev_ts_cache = _x_previous_timestep->get(r_c_indices.rows);
 
             if (!loc_asm.checkBounds(local_x_cache, local_x_prev_ts_cache))
                 check_passed = false;
