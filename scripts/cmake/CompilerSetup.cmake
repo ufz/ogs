@@ -52,8 +52,8 @@ endif() # COMPILER_IS_GCC
 
 ### Clang
 if(COMPILER_IS_CLANG)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.3")
-        message(FATAL_ERROR "Aborting: Clang 3.3 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5")
+        message(FATAL_ERROR "Aborting: Clang 3.5 is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
     endif()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPU_FLAGS} -std=c++11 -Wall -Wno-c++98-compat-pedantic")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
