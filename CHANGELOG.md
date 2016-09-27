@@ -10,6 +10,7 @@
  - Added B-Matrices and Kelvin mapping tools for deformation processes. #1359
  - New tools: scaleProperty, createNeumannBc #1346
  - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
+ - Add the new parameter type "Group" which can be used for setting material ID dependent values. #1426
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
