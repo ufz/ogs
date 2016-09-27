@@ -11,6 +11,9 @@
  - New tools: scaleProperty, createNeumannBc #1346
  - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
  - Add the new parameter type "Group" which can be used for setting material ID dependent values. #1426
+ - Support tetrahedra types in generateStructuredMesh #1353
+ - New tool: convertGEO #1360
+ - New tool: swapNodeCoordinateAxes #1361
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
@@ -23,6 +26,10 @@
  - Fix mapping of geometries to mesh surfaces #1327, #1368
  - Fix transmitting raster data to element properties #1347
  - Fixed missing XSD files in packages, #1410
+ - Fix a shape vector to a row vector #1288
+ - Fix FEFLOW import #1397
+ - Fix NodeReordering to check ordering of each element #1425
+ - Fix build with shared VTK library #1431
 
 # 6.0.6
 
