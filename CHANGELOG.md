@@ -13,6 +13,7 @@
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
+ - Migrated all important Jenkins jobs to script-based [Jenkins Pipeline](https://jenkins.io/doc/pipeline/) functionality (#1392, #1396, #1404, #1411, #1424, #1428, #1436). For an introduction see [docs.opengeosys.org - Continuous Integration](https://docs.opengeosys.org/docs/devguide/development-workflows/continuous-integration)
 
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
@@ -20,6 +21,7 @@
  - Fix Grid (enlarge bounding box to fit all points) #1369
  - Fix mapping of geometries to mesh surfaces #1327, #1368
  - Fix transmitting raster data to element properties #1347
+ - Fixed missing XSD files in packages, #1410
 
 # 6.0.6
 
