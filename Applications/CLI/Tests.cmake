@@ -192,7 +192,7 @@ if(NOT OGS_USE_MPI)
             EXECUTABLE_ARGS line_${mesh_size}_time_dep_neumann.prj
             WRAPPER time
             TESTER vtkdiff
-            ABSTOL 1e-15 RELTOL 1e-15
+            ABSTOL 1e-14 RELTOL 1e-14
             DIFF_DATA
             line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_1_t_1.000000.vtu t_1s pressure
             line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_5_t_5.000000.vtu t_5s pressure
