@@ -197,7 +197,8 @@ public:
         );
         // copy pointers to property values
         for (std::size_t j(0); j<_values.size(); j++) {
-            t->initPropertyValue(j, *(_values[j]));
+            std::vector<T> values(_values[j], _values[j] + _n_components);
+            t->initPropertyValue(j, values);
         }
         return t;
     }
