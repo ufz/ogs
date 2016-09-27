@@ -156,6 +156,8 @@ public:
 
     void initPropertyValue(std::size_t group_id, T const& value)
     {
+        if (_n_components != 1)
+            OGS_FATAL("Single-component version of initPropertyValue() is called for a multi-components PropertyVector<T*>");
         T* p = new T[1];
         p[0] = value;
         _values[group_id] = p;
@@ -163,6 +165,9 @@ public:
 
     void initPropertyValue(std::size_t group_id, std::vector<T> const& values)
     {
+        if (_n_components != values.size())
+            OGS_FATAL("The size of provided values in initPropertyValue() is not same as the number of components in PropertyVector<T*>");
+
         T* p = new T[values.size()];
         for (unsigned i=0; i<values.size(); i++)
             p[i] = values[i];
