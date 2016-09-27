@@ -154,7 +154,7 @@ TEST_F(MaterialLibSolidsKelvinVector4, Inverse)
             (inverse(v) - tensorToKelvin<4>(kelvinToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
-        return error < 1e-7 && 1e-9 * std::pow(v.norm(), 1.2);
+        return error < 1e-7 && 1e-9 * std::pow(v.norm(), 1.3);
     };
 
     auto eps = std::numeric_limits<double>::epsilon();
@@ -175,7 +175,7 @@ TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
             (inverse(v) - tensorToKelvin<6>(kelvinToTensor(v).inverse()))
                 .norm();
         // The error is only weekly depending on the input vector norm.
-        return error < 1e-7 && 1e-9 * std::pow(v.norm(), 1.2);
+        return error < 1e-7 && 1e-9 * std::pow(v.norm(), 1.3);
     };
 
     auto eps = std::numeric_limits<double>::epsilon();
