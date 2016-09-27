@@ -252,8 +252,7 @@ public:
         for (std::size_t i = 0; i < sol_picard.ts.size(); ++i)
         {
             ASSERT_EQ(sol_picard.ts[i], sol_newton.ts[i]);
-            for (GlobalIndexType comp = 0;
-                 comp < sol_picard.solutions[i].size();
+            for (std::size_t comp = 0; comp < sol_picard.solutions[i].size();
                  ++comp)
             {
                 EXPECT_NEAR(sol_picard.solutions[i][comp],
