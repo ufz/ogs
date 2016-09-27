@@ -78,7 +78,7 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     // check shear yield function (Fs)
-    double const Fs = std::abs(sigma[0]) + sigma[1] * tan(mat.phi) - mat.c;
+    double const Fs = std::abs(sigma[0]) + sigma[1] * std::tan(mat.phi) - mat.c;
     if (Fs < .0)
     {
         Kep = Ke;
@@ -87,12 +87,12 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
 
     Eigen::VectorXd dFs_dS(2);
     dFs_dS[0] = MathLib::sgn(sigma[0]);
-    dFs_dS[1] = tan(mat.phi);
+    dFs_dS[1] = std::tan(mat.phi);
 
     // plastic potential function: Qs = |tau| + Sn * tan da
     Eigen::VectorXd dQs_dS(2);
     dQs_dS[0] = MathLib::sgn(sigma[0]);
-    dQs_dS[1] = tan(mat.psi);
+    dQs_dS[1] = std::tan(mat.psi);
 
     // plastic multiplier
     Eigen::RowVectorXd const A = dFs_dS.transpose() * Ke / (dFs_dS.transpose() * Ke * dQs_dS);
