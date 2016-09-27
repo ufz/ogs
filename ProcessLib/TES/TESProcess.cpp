@@ -12,43 +12,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
-// TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
-inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
-getRowColumnIndices_(std::size_t const id,
-                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::vector<GlobalIndexType>& indices)
-{
-    assert(dof_table.size() > id);
-    indices.clear();
-
-    // Local matrices and vectors will always be ordered by component,
-    // no matter what the order of the global matrix is.
-    for (unsigned c = 0; c < dof_table.getNumberOfComponents(); ++c)
-    {
-        auto const& idcs = dof_table(id, c).rows;
-        indices.reserve(indices.size() + idcs.size());
-        indices.insert(indices.end(), idcs.begin(), idcs.end());
-    }
-
-    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
-                                                                 indices);
-}
-
-void getVectorValues(
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap::RowColumnIndices const& r_c_indices,
-    std::vector<double>& local_x)
-{
-    auto const& indices = r_c_indices.rows;
-    local_x.clear();
-    local_x.reserve(indices.size());
-
-    for (auto i : indices)
-    {
-        local_x.emplace_back(x.get(i));
-    }
-}
-
 namespace ProcessLib
 {
 namespace TES
@@ -319,11 +282,10 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
 
         auto check_variable_bounds = [&](std::size_t id,
                                          TESLocalAssemblerInterface& loc_asm) {
-            auto const r_c_indices = getRowColumnIndices_(
+            auto const r_c_indices = NumLib::getRowColumnIndices(
                 id, *this->_local_to_global_index_map, indices_cache);
-            getVectorValues(x, r_c_indices, local_x_cache);
-            getVectorValues(*_x_previous_timestep, r_c_indices,
-                            local_x_prev_ts_cache);
+            local_x_cache = x.get(r_c_indices.rows);
+            local_x_prev_ts_cache = _x_previous_timestep->get(r_c_indices.rows);
 
             if (!loc_asm.checkBounds(local_x_cache, local_x_prev_ts_cache))
                 check_passed = false;

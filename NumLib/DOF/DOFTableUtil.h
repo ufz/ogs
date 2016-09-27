@@ -28,6 +28,13 @@ std::vector<GlobalIndexType> getIndices(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table);
 
+//! Returns row/column indices for the item identified by \c id from the
+//! given \c dof_table.
+LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
+    std::size_t const id,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalIndexType>& indices);
+
 //! Computes the specified norm of the given global component of the given vector x.
 //! \remark
 //! \c x is typically the solution vector of a monolithically coupled process

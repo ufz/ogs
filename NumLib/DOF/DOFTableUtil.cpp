@@ -44,6 +44,26 @@ std::vector<GlobalIndexType> getIndices(
     return indices;
 }
 
+NumLib::LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
+    std::size_t const id,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalIndexType>& indices)
+{
+    assert(dof_table.size() > id);
+    indices.clear();
+
+    // Local matrices and vectors will always be ordered by component,
+    // no matter what the order of the global matrix is.
+    for (unsigned c = 0; c < dof_table.getNumberOfComponents(); ++c)
+    {
+        auto const& idcs = dof_table(id, c).rows;
+        indices.reserve(indices.size() + idcs.size());
+        indices.insert(indices.end(), idcs.begin(), idcs.end());
+    }
+
+    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
+}
+
 double norm1(GlobalVector const& x, unsigned const global_component,
              LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
