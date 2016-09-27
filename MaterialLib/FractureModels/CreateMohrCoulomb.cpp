@@ -9,6 +9,7 @@
 
 #include "CreateMohrCoulomb.h"
 
+#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 #include "MohrCoulomb.h"
 
 namespace MaterialLib

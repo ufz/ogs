@@ -9,6 +9,7 @@
 
 #include "CreateLinearElasticIsotropic.h"
 
+#include "ProcessLib/Utils/ProcessUtils.h"  // required for findParameter
 #include "LinearElasticIsotropic.h"
 
 namespace MaterialLib
