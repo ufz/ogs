@@ -29,7 +29,7 @@ TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 {
     ProcessLib::ConstantParameter<double> const kn(1e11);
     ProcessLib::ConstantParameter<double> const ks(1e9);
-    typename LinearElasticIsotropic<2>::MaterialProperties const mp{kn, ks};
+    LinearElasticIsotropic<2>::MaterialProperties const mp{kn, ks};
 
     LinearElasticIsotropic<2> fractureModel{mp};
 
@@ -66,7 +66,7 @@ TEST(MaterialLib_Fracture, MohrCoulomb)
     ProcessLib::ConstantParameter<double> const phi(15);
     ProcessLib::ConstantParameter<double> const psi(5);
     ProcessLib::ConstantParameter<double> const c(3e6);
-    typename MohrCoulomb<2>::MaterialProperties const mp{kn, ks, phi, psi, c};
+    MohrCoulomb<2>::MaterialProperties const mp{kn, ks, phi, psi, c};
 
     MohrCoulomb<2> fractureModel{mp};
 
