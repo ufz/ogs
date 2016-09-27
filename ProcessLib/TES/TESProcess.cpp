@@ -13,26 +13,6 @@
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 // TODO Copied from VectorMatrixAssembler. Could be provided by the DOF table.
-inline NumLib::LocalToGlobalIndexMap::RowColumnIndices
-getRowColumnIndices_(std::size_t const id,
-                     NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::vector<GlobalIndexType>& indices)
-{
-    assert(dof_table.size() > id);
-    indices.clear();
-
-    // Local matrices and vectors will always be ordered by component,
-    // no matter what the order of the global matrix is.
-    for (unsigned c = 0; c < dof_table.getNumberOfComponents(); ++c)
-    {
-        auto const& idcs = dof_table(id, c).rows;
-        indices.reserve(indices.size() + idcs.size());
-        indices.insert(indices.end(), idcs.begin(), idcs.end());
-    }
-
-    return NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
-                                                                 indices);
-}
 
 void getVectorValues(
     GlobalVector const& x,
@@ -319,7 +299,7 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
 
         auto check_variable_bounds = [&](std::size_t id,
                                          TESLocalAssemblerInterface& loc_asm) {
-            auto const r_c_indices = getRowColumnIndices_(
+            auto const r_c_indices = NumLib::getRowColumnIndices(
                 id, *this->_local_to_global_index_map, indices_cache);
             getVectorValues(x, r_c_indices, local_x_cache);
             getVectorValues(*_x_previous_timestep, r_c_indices,
