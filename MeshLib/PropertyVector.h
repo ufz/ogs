@@ -203,8 +203,7 @@ public:
     }
 
     //! Returns the value for the given component stored in the given tuple.
-    T const& getComponent(std::size_t tuple_index,
-                                      std::size_t component) const
+    T const& getComponent(std::size_t tuple_index, std::size_t component) const
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
