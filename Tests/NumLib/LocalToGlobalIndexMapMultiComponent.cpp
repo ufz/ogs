@@ -88,8 +88,9 @@ public:
             components.emplace_back(
                 new MeL::MeshSubsets{mesh_items_all_nodes.get()});
         }
+        std::vector<unsigned> vec_var_n_components(1, num_components);
         dof_map.reset(
-            new NL::LocalToGlobalIndexMap(std::move(components), order));
+            new NL::LocalToGlobalIndexMap(std::move(components), vec_var_n_components, order));
 
         auto components_boundary = std::unique_ptr<MeshLib::MeshSubsets>{
             new MeL::MeshSubsets{mesh_items_boundary.get()}};
