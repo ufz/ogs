@@ -125,6 +125,12 @@ public:
         return _msh.getElements().cend();
     }
 
+    std::vector<Node*> const& getNodes() const
+    {
+        assert(_nodes);
+        return *_nodes;
+    }
+
     /// Constructs a new mesh subset which is a set intersection of the current
     /// nodes and the provided vector of nodes.
     /// An empty mesh subset may be returned, not a nullptr, in case of empty

@@ -67,13 +67,15 @@ void doProcessOutput(
     auto const& output_variables = process_output.output_variables;
     std::set<std::string> already_output;
 
-    std::size_t const n_nodes = mesh.getNumberOfNodes();
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
     // primary variables
-    for (ProcessVariable& pv : process_variables)
+    for (int variable_id = 0;
+         variable_id < static_cast<int>(process_variables.size());
+         ++variable_id)
     {
+        ProcessVariable& pv = process_variables[variable_id];
         int const n_components = pv.getNumberOfComponents();
         global_component_offset = global_component_offset_next;
         global_component_offset_next += n_components;
@@ -87,22 +89,30 @@ void doProcessOutput(
 
         auto& output_data = pv.getOrCreateMeshProperty();
 
-        for (std::size_t node_id = 0; node_id < n_nodes; ++node_id)
+        auto const num_comp = pv.getNumberOfComponents();
+
+        for (int component_id = 0; component_id < num_comp; ++component_id)
         {
-            MeshLib::Location const l(mesh.getID(),
-                                      MeshLib::MeshItemType::Node, node_id);
-            // TODO extend component ids to multiple process variables.
-            for (int component_id = 0; component_id < n_components;
-                 ++component_id)
+            auto const& mesh_subsets =
+                dof_table.getMeshSubsets(variable_id,
+                                                           component_id);
+            for (auto const& mesh_subset : mesh_subsets)
             {
+                auto const mesh_id = mesh_subset->getMeshID();
+                for (auto const* node : mesh_subset->getNodes())
+                {
+                    MeshLib::Location const l(
+                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
+
                 auto const global_component_id = global_component_offset + component_id;
                 auto const index =
                         dof_table.getLocalIndex(
                             l, global_component_id, x.getRangeBegin(),
                             x.getRangeEnd());
 
-                output_data[node_id * n_components + component_id] =
+                output_data[node->getID() * n_components + component_id] =
                         x_copy[index];
+                }
             }
         }
     }
