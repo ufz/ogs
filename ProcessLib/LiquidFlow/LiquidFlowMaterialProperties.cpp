@@ -20,10 +20,7 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
-    MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config)
-    : material_IDs_of_elements(
-          mesh.getProperties().getPropertyVector<unsigned>("MaterialIDs").get())
+LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config)
 {
     DBUG("Reading material properties of liquid flow process.");
 

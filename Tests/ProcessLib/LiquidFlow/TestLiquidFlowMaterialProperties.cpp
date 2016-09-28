@@ -65,8 +65,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("material_property");
 
-    const MeshLib::Mesh* dummy_mesh= nullptr;
-    LiquidFlowMaterialProperties lprop(*dummy_mesh, sub_config);
+    LiquidFlowMaterialProperties lprop(sub_config);
 
     // Check density
     const ArrayType vars = {273.15 + 60.0, 1.e+6};

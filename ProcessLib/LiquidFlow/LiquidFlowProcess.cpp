@@ -34,7 +34,7 @@ LiquidFlowProcess::LiquidFlowProcess(
               std::move(process_variables), std::move(secondary_variables),
               std::move(named_function_caller)),
       _compute_gravitational_term(compute_gravitational_term),
-      _material_properties(LiquidFlowMaterialProperties(mesh, config))
+      _material_properties(LiquidFlowMaterialProperties(config))
 {
     DBUG("Create Liquid flow process.");
 }

@@ -46,12 +46,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    const unsigned mat_id =
-        (_material_properties.material_IDs_of_elements.size() > 0)
-            ? _material_properties.material_IDs_of_elements[_element.getID()]
-            : 0;
-    assert(mat_id < _material_properties.intrinsic_permeabiliy.size());
-
+    const unsigned mat_id = 0; // TODO for heterogeneous medium
     const MaterialLib::PorousMedium::CoefMatrix& perm =
         _material_properties.intrinsic_permeabiliy[mat_id];
 

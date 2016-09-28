@@ -33,8 +33,7 @@ struct LiquidFlowMaterialProperties
 {
     typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
 
-    LiquidFlowMaterialProperties(MeshLib::Mesh const& mesh,
-                                 BaseLib::ConfigTree const& config);
+    explicit LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config);
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -77,7 +76,7 @@ struct LiquidFlowMaterialProperties
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
 
-    MeshLib::PropertyVector<unsigned> const& material_IDs_of_elements;
+    // TODO: heterogeneous medium.
 };
 
 }  // end of namespace
