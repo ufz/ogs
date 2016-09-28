@@ -12,6 +12,10 @@
 #include "BaseLib/Error.h"
 #include "MathLib/MathTools.h"
 
+#ifndef Q_MOC_RUN // to avoid Qt4 bug, https://bugreports.qt.io/browse/QTBUG-22829
+#include <boost/math/special_functions/sign.hpp>
+#endif
+
 namespace MaterialLib
 {
 namespace Fracture
@@ -86,12 +90,12 @@ void MohrCoulomb<DisplacementDim>::computeConstitutiveRelation(
     }
 
     Eigen::VectorXd dFs_dS(2);
-    dFs_dS[0] = MathLib::sgn(sigma[0]);
+    dFs_dS[0] = boost::math::sign(sigma[0]);
     dFs_dS[1] = std::tan(mat.phi);
 
     // plastic potential function: Qs = |tau| + Sn * tan da
     Eigen::VectorXd dQs_dS(2);
-    dQs_dS[0] = MathLib::sgn(sigma[0]);
+    dQs_dS[0] = boost::math::sign(sigma[0]);
     dQs_dS[1] = std::tan(mat.psi);
 
     // plastic multiplier
