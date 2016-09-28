@@ -31,8 +31,8 @@ public:
         using P = ProcessLib::Parameter<double>;
         using X = ProcessLib::SpatialPosition;
 
-        MaterialProperties(P const& normal_stiffness, P const& shear_stiffness)
-            : normal_stiffness(normal_stiffness), shear_stiffness(shear_stiffness)
+        MaterialProperties(P const& normal_stiffness_, P const& shear_stiffness_)
+            : normal_stiffness(normal_stiffness_), shear_stiffness(shear_stiffness_)
         {
         }
 

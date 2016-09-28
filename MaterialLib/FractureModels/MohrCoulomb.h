@@ -32,12 +32,12 @@ public:
         using X = ProcessLib::SpatialPosition;
 
         MaterialProperties(
-                P const& normal_stiffness, P const& shear_stiffness,
-                P const& friction_angle, P const& dilatancy_angle,
-                P const& cohesion)
-            : normal_stiffness(normal_stiffness), shear_stiffness(shear_stiffness),
-              friction_angle(friction_angle), dilatancy_angle(dilatancy_angle),
-              cohesion(cohesion)
+                P const& normal_stiffness_, P const& shear_stiffness_,
+                P const& friction_angle_, P const& dilatancy_angle_,
+                P const& cohesion_)
+            : normal_stiffness(normal_stiffness_), shear_stiffness(shear_stiffness_),
+              friction_angle(friction_angle_), dilatancy_angle(dilatancy_angle_),
+              cohesion(cohesion_)
         {
         }
 
