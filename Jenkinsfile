@@ -24,6 +24,7 @@ node('master') {
     }
     if (helper.isOriginMaster()) {
         builders['docs'] = { load 'scripts/jenkins/docs.groovy' }
+        builders['gcc-no-deps'] = { load 'scripts/jenkins/gcc-no-deps.groovy' }
     }
 
     parallel builders
