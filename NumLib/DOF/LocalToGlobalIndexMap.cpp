@@ -48,35 +48,54 @@ LocalToGlobalIndexMap::findGlobalIndices(
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
     NumLib::ComponentOrder const order)
+    : LocalToGlobalIndexMap(std::move(mesh_subsets), std::vector<unsigned>(mesh_subsets.size(), 1), order)
+{
+}
+
+
+LocalToGlobalIndexMap::LocalToGlobalIndexMap(
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+    std::vector<unsigned> const& vec_var_n_components,
+    NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(_mesh_subsets, order)
 {
+    // construct a mapping table to get a global component ID from a variableID & a variable comp ID
+    _map_varCompID_to_globalCompID.resize(vec_var_n_components.size());
+    {
+        unsigned global_component_ID = 0;
+        for (unsigned i=0; i<vec_var_n_components.size(); i++)
+            for (unsigned j=0; j<vec_var_n_components[i]; j++)
+                _map_varCompID_to_globalCompID[i].push_back(global_component_ID++);
+    }
+
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
 
 
-    _variable_component_offsets.reserve(_mesh_subsets.size());
     std::size_t offset = 0;
-    for (int variable_id = 0; variable_id < static_cast<int>(_mesh_subsets.size());
+    for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
     {
-        _variable_component_offsets.push_back(offset);
-        auto const& mss = *_mesh_subsets[variable_id];
-        for (int component_id = 0; component_id < static_cast<int>(mss.size());
+        for (int component_id = 0; component_id < static_cast<int>(vec_var_n_components[variable_id]);
              ++component_id)
         {
-            MeshLib::MeshSubset const& ms = mss.getMeshSubset(component_id);
-            std::size_t const mesh_id = ms.getMeshID();
-
             auto const global_component_id =
                 getGlobalComponent(variable_id, component_id);
 
-            findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(), ms.getNodes(),
-                              mesh_id, global_component_id, global_component_id);
-        }
+            auto const& mss = *_mesh_subsets[global_component_id];
+            for (int subset_id = 0; subset_id < static_cast<int>(mss.size());
+                 ++subset_id)
+            {
+                MeshLib::MeshSubset const& ms = mss.getMeshSubset(subset_id);
+                std::size_t const mesh_id = ms.getMeshID();
 
-        // increase by number of components of that variable
-        offset += mss.size();
+                findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(), ms.getNodes(),
+                                  mesh_id, global_component_id, global_component_id);
+            }
+            // increase by number of components of that variable
+            offset += mss.size();
+        }
     }
 }
 
@@ -87,7 +106,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
-      _variable_component_offsets(1, 0) // Single variable only.
+      _map_varCompID_to_globalCompID(1, std::vector<int>(1, 0)) // Single variable only.
 {
     // There is only on mesh_subsets in the vector _mesh_subsets.
     assert(_mesh_subsets.size() == 1);
