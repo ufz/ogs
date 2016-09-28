@@ -17,6 +17,10 @@
 #include <omp.h>
 #endif
 
+#ifndef Q_MOC_RUN // to avoid Qt4 bug, https://bugreports.qt.io/browse/QTBUG-22829
+#include <boost/math/constants/constants.hpp>
+#endif
+
 namespace MathLib
 {
 /**
@@ -110,6 +114,11 @@ double sqrDist(const double* p0, const double* p1)
  * @return the angle between the edges
  */
 double getAngle (const double p0[3], const double p1[3], const double p2[3]);
+
+/// converts the given degrees to radians
+inline double to_radians(double degrees) {
+    return degrees*boost::math::constants::pi<double>()/180.;
+}
 
 } // namespace
 
