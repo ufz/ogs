@@ -25,6 +25,15 @@ namespace MeshLib
 class Mesh;
 }
 
+namespace MaterialLib
+{
+namespace PorousMedium
+{
+class Porosity;
+class Storage;
+}
+}
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -42,12 +51,15 @@ struct LiquidFlowMaterialProperties
      *      \f]
      *     where \f$n\f$ is the porosity, \f$rho_l\f$ is the liquid density,
      *     \f$bata_s\f$ is the storage.
-     * @param p                  Pressure value
-     * @param T                  Temperature value
-     * @param material_group_id  Material ID of the element
-     * @return
+     * \param var4porosity       The first variable for porosity model, and it could be
+     *                           saturation, and invariant of stress or strain.
+     * \param var4storage        Variable for storage model.
+     * \param p                  Pressure value
+     * \param T                  Temperature value
+     * \param material_group_id  Material ID of the element
      */
-    double getMassCoeffcient(const double p, const double T,
+    double getMassCoefficient(const double p, const double T,
+                             const double var4porosity, const double var4storage,
                              const unsigned material_group_id = 0) const;
 
     double getLiquidDensity(const double p, const double T) const
@@ -72,7 +84,7 @@ struct LiquidFlowMaterialProperties
     /// Porous medium properties of different material zones.
     /// The vector is left empty if the property data are given in vtu file,
     /// e.g for heterogeneous medium.
-    std::vector<MaterialLib::PorousMedium::CoefMatrix> intrinsic_permeabiliy;
+    std::vector<Eigen::MatrixXd> intrinsic_permeabiliy;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
 

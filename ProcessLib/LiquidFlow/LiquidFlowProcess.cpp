@@ -17,6 +17,9 @@
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "LiquidFlowLocalAssembler.h"
 
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -45,8 +48,9 @@ void LiquidFlowProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
-        _local_assemblers, _material_properties);
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order,
+        _compute_gravitational_term, _material_properties);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,

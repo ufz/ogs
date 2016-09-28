@@ -16,6 +16,9 @@
 
 #include "MeshLib/Mesh.h"
 
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
+
 namespace ProcessLib
 {
 namespace LiquidFlow
@@ -62,16 +65,17 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(BaseLib::ConfigTree c
     }
 }
 
-double LiquidFlowMaterialProperties::getMassCoeffcient(
+double LiquidFlowMaterialProperties::getMassCoefficient(
+    const double var4porosity, const double var4storage,
     const double p, const double T, const unsigned material_group_id) const
 {
     ArrayType vars;
     vars[0] = T;
     vars[1] = p;
-    return porosity[material_group_id]->getValue() *
+    return porosity[material_group_id]->getValue(var4porosity, T) *
                density_l->getdValue(
                    vars, MaterialLib::Fluid::PropertyVariableType::pl) +
-           storage[material_group_id]->getValue(nullptr);
+           storage[material_group_id]->getValue(var4storage);
 }
 
 }  // end of namespace

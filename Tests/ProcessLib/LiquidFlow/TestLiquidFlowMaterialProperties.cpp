@@ -17,11 +17,15 @@
 #include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 
+#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
+#include "MaterialLib/PorousMedium/Storage/Storage.h"
+
 #include "MeshLib/Mesh.h"
 
 using namespace ProcessLib::LiquidFlow;
 using namespace MaterialLib::Fluid;
 using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
+using Matrix = Eigen::MatrixXd;
 
 TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 {
@@ -99,8 +103,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
                 1.e-5);
 
     // Check permeability
-    MaterialLib::PorousMedium::CoefMatrix& perm =
-        lprop.intrinsic_permeabiliy[0];
+    Eigen::MatrixXd& perm = lprop.intrinsic_permeabiliy[0];
     ASSERT_EQ(2.e-10, perm(0, 0));
     ASSERT_EQ(0., perm(0, 1));
     ASSERT_EQ(0., perm(0, 2));
@@ -112,8 +115,10 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
     ASSERT_EQ(4.e-10, perm(2, 2));
 
     // Check porosity
-    ASSERT_EQ(0.2, lprop.porosity[0]->getValue(nullptr));
+    const double variable = 0.;
+    const double temperature = 0.;
+    ASSERT_EQ(0.2, lprop.porosity[0]->getValue(variable, temperature));
 
     // Check storage
-    ASSERT_EQ(1.e-4, lprop.storage[0]->getValue(nullptr));
+    ASSERT_EQ(1.e-4, lprop.storage[0]->getValue(variable));
 }
