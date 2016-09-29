@@ -313,6 +313,7 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
         << " rows\n";
     for (std::size_t e=0; e<map.size(); ++e)
     {
+        os << "== e " << e << " ==\n";
         for (std::size_t c=0; c<map.getNumberOfComponents(); ++c)
         {
             auto const& line = map._rows(e, c);
