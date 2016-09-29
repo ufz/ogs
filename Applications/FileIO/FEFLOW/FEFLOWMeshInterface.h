@@ -82,6 +82,10 @@ private:
         unsigned dispersion_type = 0;
     };
 
+    /// Read element type and node indices according to the element type.
+    MeshLib::Element* readElement(std::string const& line,
+                                  std::vector<MeshLib::Node*> const& nodes);
+
     /// read node indices and create a mesh element
     MeshLib::Element* readElement(const FEM_DIM& fem_dim,
                                   const MeshLib::MeshElemType elem_type,

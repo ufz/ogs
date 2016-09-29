@@ -72,7 +72,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         else if (line_string.compare("DIMENS") == 0)
         {
             // DIMENS
-            getline(in, line_string);
+            std::getline(in, line_string);
             line_stream.str(line_string);
             line_stream >> fem_dim.n_nodes >> fem_dim.n_elements >>
                 fem_dim.n_nodes_of_element >> std::ws;
@@ -129,9 +129,32 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             vec_elements.reserve(fem_dim.n_elements);
             for (std::size_t i = 0; i < fem_dim.n_elements; i++)
             {
-                getline(in, line_string);
+                std::getline(in, line_string);
                 vec_elements.push_back(
                     readElement(fem_dim, eleType, line_string, vec_nodes));
+            }
+        }
+        else if (line_string.compare("VARNODE") == 0)
+        {
+            assert(!vec_nodes.empty());
+
+            vec_elements.reserve(fem_dim.n_elements);
+            if (fem_dim.n_nodes_of_element == 0) // mixed element case
+                if (!std::getline(in, line_string))
+                {
+                    ERR("FEFLOWInterface::readFEFLOWFile(): read element "
+                        "error");
+                    std::for_each(vec_nodes.begin(), vec_nodes.end(),
+                                  [](MeshLib::Node* nod) { delete nod; });
+                    vec_nodes.clear();
+                    return nullptr;
+                }
+
+            for (std::size_t i = 0; i < fem_dim.n_elements; i++)
+            {
+                std::getline(in, line_string);
+                vec_elements.push_back(
+                    readElement(line_string, vec_nodes));
             }
         }
         //....................................................................
@@ -373,6 +396,70 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
     // move stream position to previous line
     if (std::isalpha(line_string[0]))
         in.seekg(pos_prev_line);
+}
+
+MeshLib::Element* FEFLOWMeshInterface::readElement(
+    std::string const& line, std::vector<MeshLib::Node*> const& nodes)
+{
+    std::stringstream ss(line);
+
+    int ele_type;
+    ss >> ele_type;
+
+    MeshLib::MeshElemType elem_type;
+    int n_nodes_of_element;
+    switch (ele_type)
+    {
+        case 6:
+            elem_type = MeshLib::MeshElemType::TETRAHEDRON;
+            n_nodes_of_element = 4;
+            break;
+        case 7:
+            elem_type = MeshLib::MeshElemType::PRISM;
+            n_nodes_of_element = 6;
+            break;
+        case 8:
+            elem_type = MeshLib::MeshElemType::HEXAHEDRON;
+            n_nodes_of_element = 8;
+            break;
+        default:
+            WARN("Could not parse element type.");
+            return nullptr;
+    }
+
+    unsigned idx[8];
+    for (std::size_t i = 0; i < n_nodes_of_element; ++i)
+        ss >> idx[i];
+    MeshLib::Node** ele_nodes = new MeshLib::Node*[n_nodes_of_element];
+
+    switch (elem_type)
+    {
+        default:
+            for (unsigned k(0); k < n_nodes_of_element; ++k)
+                ele_nodes[k] = nodes[idx[k] - 1];
+            break;
+        case MeshLib::MeshElemType::HEXAHEDRON:
+        case MeshLib::MeshElemType::PRISM:
+            const unsigned n_half_nodes = n_nodes_of_element / 2;
+            for (unsigned k(0); k < n_half_nodes; ++k)
+            {
+                ele_nodes[k] = nodes[idx[k + n_half_nodes] - 1];
+                ele_nodes[k + n_half_nodes] = nodes[idx[k] - 1];
+            }
+            break;
+    }
+
+    switch (elem_type)
+    {
+        case MeshLib::MeshElemType::TETRAHEDRON:
+            return new MeshLib::Tet(ele_nodes);
+        case MeshLib::MeshElemType::HEXAHEDRON:
+            return new MeshLib::Hex(ele_nodes);
+        case MeshLib::MeshElemType::PRISM:
+            return new MeshLib::Prism(ele_nodes);
+        default:
+            return nullptr;
+    }
 }
 
 MeshLib::Element* FEFLOWMeshInterface::readElement(
