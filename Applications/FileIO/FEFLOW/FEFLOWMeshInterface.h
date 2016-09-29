@@ -92,6 +92,10 @@ private:
                                   const std::string& line,
                                   const std::vector<MeshLib::Node*>& nodes);
 
+    /// read node coordinates given in the XYZCOOR section
+    void readNodeCoordinates(std::ifstream& in,
+                             std::vector<MeshLib::Node*>& nodes);
+
     /// read node coordinates
     void readNodeCoordinates(std::ifstream& in,
                              const FEM_CLASS& fem_class,

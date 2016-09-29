@@ -163,7 +163,10 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         {
             readNodeCoordinates(in, fem_class, fem_dim, vec_nodes);
         }
-        //....................................................................
+        else if (line_string.compare("XYZCOOR") == 0)
+        {
+            readNodeCoordinates(in, vec_nodes);
+        }
         // ELEV_I
         else if (line_string.compare("ELEV_I") == 0)
         {
@@ -238,6 +241,45 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     }
 
     return mesh.release();
+}
+
+void FEFLOWMeshInterface::readNodeCoordinates(
+    std::ifstream& in, std::vector<MeshLib::Node*>& vec_nodes)
+{
+    std::string line_string;
+    char dummy_char;  // for comma(,)
+
+    for (unsigned k = 0; k < vec_nodes.size(); ++k)
+    {
+        // read the line containing the coordinates as string
+        if (!std::getline(in, line_string))
+        {
+            ERR("Could not read the node '%u'.", k);
+            for (auto * n : vec_nodes)
+                delete n;
+            return;
+        }
+        std::stringstream line_stream;
+        line_stream.str(line_string);
+        // parse the particular coordinates from the string read above
+        for (std::size_t i(0); i < 3; ++i)
+        {
+            if (!(line_stream >> (*vec_nodes[k])[i]))
+            {
+                ERR("Could not parse coordinate %u of node '%u'.", i, k);
+                for (auto* n : vec_nodes)
+                    delete n;
+                return;
+            }
+            if (!(line_stream >> dummy_char) && i < 2)  // read comma
+            {
+                ERR("Could not parse node '%u'.", k);
+                for (auto* n : vec_nodes)
+                    delete n;
+                return;
+            }
+        }
+    }
 }
 
 void FEFLOWMeshInterface::readNodeCoordinates(
