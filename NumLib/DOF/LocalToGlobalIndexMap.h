@@ -118,6 +118,10 @@ public:
 
     std::size_t getNumberOfElementDOF(std::size_t const mesh_item_id) const;
 
+    std::size_t getNumberOfElementComponents(std::size_t const mesh_item_id) const;
+
+    std::vector<std::size_t> getElementVariableIDs(std::size_t const mesh_item_id) const;
+
     GlobalIndexType getGlobalIndex(MeshLib::Location const& l,
                                    int const variable_id,
                                    int const component_id) const

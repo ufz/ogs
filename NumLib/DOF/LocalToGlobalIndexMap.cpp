@@ -272,6 +272,37 @@ LocalToGlobalIndexMap::getNumberOfElementDOF(std::size_t const mesh_item_id) con
     return ndof;
 }
 
+std::size_t
+LocalToGlobalIndexMap::getNumberOfElementComponents(std::size_t const mesh_item_id) const
+{
+    std::size_t n = 0;
+    for (unsigned c=0; c<_rows.cols(); ++c)
+    {
+        if (!_rows(mesh_item_id, c).empty())
+            n++;
+    }
+    return n;
+}
+
+std::vector<std::size_t>
+LocalToGlobalIndexMap::getElementVariableIDs(std::size_t const mesh_item_id) const
+{
+    std::vector<std::size_t> vec;
+    for (unsigned i=0; i<getNumberOfVariables(); i++)
+    {
+        for (unsigned j=0; j<getNumberOfVariableComponents(i); j++)
+        {
+            auto comp_id = getGlobalComponent(i, j);
+            if (!_rows(mesh_item_id, comp_id).empty())
+                vec.push_back(i);
+        }
+    }
+    std::sort(vec.begin(), vec.end());
+    vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+
+    return vec;
+}
+
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
 {
