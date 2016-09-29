@@ -10,7 +10,8 @@
  - Added B-Matrices and Kelvin mapping tools for deformation processes. #1359
  - New tools: scaleProperty, createNeumannBc #1346
  - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
- - Add the new parameter type "Group" which can be used for setting material ID dependent values. #1426
+ - Added the new parameter type "Group" which can be used for setting material ID dependent values. #1426
+ - Added fluid property class and several fluid density models based it. #1398
  - Support tetrahedra types in generateStructuredMesh #1353
  - New tool: convertGEO #1360
  - New tool: swapNodeCoordinateAxes #1361
