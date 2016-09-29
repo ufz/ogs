@@ -150,6 +150,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             fac * rho_g * sm.dNdx.transpose() * perm.col(gravitational_axis_id);
     }
 }
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    computeSecondaryVariable(std::vector<double> const& local_x)
+{
+  (void) local_x;
+}
+
 }  // end of namespace
 }  // end of namespace
 

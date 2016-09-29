@@ -26,6 +26,13 @@ void LocalAssemblerInterface::assembleWithJacobian(
         "assembler.");
 }
 
+void LocalAssemblerInterface::computeSecondaryVariable(std::vector<double> const& /*local_x*/)
+{
+    OGS_FATAL(
+        "computeSecondaryVariable(...) function is not implemented in the local "
+        "assembler.");
+}
+
 void LocalAssemblerInterface::preTimestep(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
