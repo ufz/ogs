@@ -19,6 +19,9 @@
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337
  - Migrated all important Jenkins jobs to script-based [Jenkins Pipeline](https://jenkins.io/doc/pipeline/) functionality (#1392, #1396, #1404, #1411, #1424, #1428, #1436). For an introduction see [docs.opengeosys.org - Continuous Integration](https://docs.opengeosys.org/docs/devguide/development-workflows/continuous-integration)
+ - Moved CMake logic for packaging executable dependencies (such as shared libs)
+   to the install and package targets instead of running after each executable
+   gets build, #1458
 
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
