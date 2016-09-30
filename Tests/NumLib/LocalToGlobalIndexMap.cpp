@@ -145,3 +145,32 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 1, 0));
     ASSERT_EQ(20, dof_map->getGlobalIndex(l_node0, 1, 1));
 }
+
+#ifndef USE_PETSC
+TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponents2)
+#else
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponents2)
+#endif
+{
+    // test 2 variables (1st variable with 2 component, 2nd variable with 1 components)
+    components.emplace_back(new MeshLib::MeshSubsets{nodesSubset.get()});
+
+    std::vector<unsigned> vec_var_n_components{2, 1};
+
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
+                      std::move(components),
+                      vec_var_n_components,
+                      NumLib::ComponentOrder::BY_COMPONENT));
+
+    ASSERT_EQ(30, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(3u, dof_map->getNumberOfComponents());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariables());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariableComponents(0));
+    ASSERT_EQ(1u, dof_map->getNumberOfVariableComponents(1));
+
+    MeshLib::Location l_node0(mesh->getID(), MeshLib::MeshItemType::Node, 0);
+
+    ASSERT_EQ(0, dof_map->getGlobalIndex(l_node0, 0, 0));
+    ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
+    ASSERT_EQ(20, dof_map->getGlobalIndex(l_node0, 1, 0));
+}
