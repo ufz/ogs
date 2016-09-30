@@ -116,7 +116,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
-      _variable_component_offsets{0, 1} // Single variable only.
+      _variable_component_offsets(to_cumulative(std::vector<unsigned>(1,1))) // Single variable only.
 {
     // There is only on mesh_subsets in the vector _mesh_subsets.
     assert(_mesh_subsets.size() == 1);
