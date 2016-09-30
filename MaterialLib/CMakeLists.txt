@@ -6,6 +6,7 @@ append_source_files(SOURCES FractureModels)
 
 append_source_files(SOURCES Fluid)
 append_source_files(SOURCES Fluid/Density)
+append_source_files(SOURCES Fluid/Viscosity)
 
 add_library(MaterialLib ${SOURCES} )
 target_link_libraries(MaterialLib
