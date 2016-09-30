@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 1:03 PM
  */
 
-#ifndef CONSTANTPOROSITY_H
-#define CONSTANTPOROSITY_H
+#ifndef OGS_CONSTANTPOROSITY_H
+#define OGS_CONSTANTPOROSITY_H
 
 #include "Porosity.h"
 

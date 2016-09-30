@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 1:03 PM
  */
 
-#ifndef CONSTANTSTORAGE_H
-#define CONSTANTSTORAGE_H
+#ifndef OGS_CONSTANTSTORAGE_H
+#define OGS_CONSTANTSTORAGE_H
 
 #include "Storage.h"
 
@@ -22,7 +22,6 @@ namespace PorousMedium
 class ConstantStorage final : public Storage
 {
 public:
-
     explicit ConstantStorage(const double value) : _value(value)
     {
     }

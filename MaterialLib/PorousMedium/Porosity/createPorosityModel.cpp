@@ -32,8 +32,8 @@ std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config)
     else
     {
         OGS_FATAL(
-            "The storage type %s is unavailable.\n", type.data(),
-            "The available type is Constant.");
+            "The storage type %s is unavailable.\n",
+            "The available type is \n\tConstant.",  type.data());
     }
 }
 

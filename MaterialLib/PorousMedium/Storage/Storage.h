@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 12:53 PM
  */
 
-#ifndef STORAGE_H
-#define STORAGE_H
+#ifndef OGS_STORAGE_H
+#define OGS_STORAGE_H
 
 #include <string>
 

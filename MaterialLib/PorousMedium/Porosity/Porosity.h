@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 12:53 PM
  */
 
-#ifndef POROSITY_H
-#define POROSITY_H
+#ifndef OGS_POROSITY_H
+#define OGS_POROSITY_H
 
 #include <string>
 

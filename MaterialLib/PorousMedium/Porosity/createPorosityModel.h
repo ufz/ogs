@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 1:16 PM
  */
 
-#ifndef CREATEPOROSITYMODEL_H
-#define CREATEPOROSITYMODEL_H
+#ifndef OGS_CREATEPOROSITYMODEL_H
+#define OGS_CREATEPOROSITYMODEL_H
 
 #include <memory>
 

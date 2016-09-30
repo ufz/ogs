@@ -15,6 +15,7 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
 namespace MaterialLib
 {
@@ -46,15 +47,7 @@ CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const& config)
         }
     }
 
-    CoefMatrix c_matrix(dim, dim);
-    for (int i = 0; i < dim; i++)
-    {
-        for (int j = 0; j < dim; j++)
-        {
-            c_matrix(i, j) = values[i * dim + j];
-        }
-    }
-    return c_matrix;
+    return MathLib::toMatrix(values, dim, dim);
 }
 
 }  // end of namespace

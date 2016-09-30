@@ -10,8 +10,8 @@
  * Created on August 16, 2016, 1:16 PM
  */
 
-#ifndef CREATESTORAGEMODEL_H
-#define CREATESTORAGEMODEL_H
+#ifndef OGS_CREATESTORAGEMODEL_H
+#define OGS_CREATESTORAGEMODEL_H
 
 #include <memory>
 
