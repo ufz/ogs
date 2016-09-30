@@ -69,6 +69,63 @@ std::size_t NodeSearch::searchUnused()
     return del_node_idx.size();
 }
 
+std::size_t NodeSearch::searchBoundaryNodes()
+{
+    std::vector<std::size_t> vec_boundary_nodes;
+    if (_mesh.getDimension() == 1)
+    {
+        for (MeshLib::Node const* n : _mesh.getNodes())
+            if (n->getElements().size() == 1)
+                vec_boundary_nodes.push_back(n->getID());
+    }
+    else if (_mesh.getDimension() == 2)
+    {
+        for (MeshLib::Element const* elem : _mesh.getElements())
+        {
+            if (elem->getDimension() < _mesh.getDimension())
+                continue;
+            if (!elem->isBoundaryElement())
+                continue;
+
+            std::size_t const n_edges (elem->getNumberOfEdges());
+            for (std::size_t i=0; i<n_edges; ++i)
+            {
+                if (elem->getNeighbor(i) != nullptr)
+                    continue;
+                std::unique_ptr<MeshLib::Element const> edge(elem->getEdge(i));
+                for (unsigned j=0; j<edge->getNumberOfNodes(); j++)
+                    vec_boundary_nodes.push_back(edge->getNode(j)->getID());
+            }
+        }
+    }
+    else
+    {
+        for (MeshLib::Element const* elem : _mesh.getElements())
+        {
+            if (elem->getDimension() < _mesh.getDimension())
+                continue;
+            if (!elem->isBoundaryElement())
+                continue;
+
+            std::size_t const n_faces (elem->getNumberOfFaces());
+            for (std::size_t i=0; i<n_faces; ++i)
+            {
+                if (elem->getNeighbor(i) != nullptr)
+                    continue;
+                std::unique_ptr<MeshLib::Element const> face(elem->getFace(i));
+                for (unsigned j=0; j<face->getNumberOfNodes(); j++)
+                    vec_boundary_nodes.push_back(face->getNode(j)->getID());
+            }
+        }
+    }
+    std::sort(vec_boundary_nodes.begin(), vec_boundary_nodes.end());
+    vec_boundary_nodes.erase(std::unique(vec_boundary_nodes.begin(), vec_boundary_nodes.end()), vec_boundary_nodes.end());
+
+
+    this->updateUnion(vec_boundary_nodes);
+    return vec_boundary_nodes.size();
+}
+
 void NodeSearch::updateUnion(const std::vector<std::size_t> &vec)
 {
     std::vector<std::size_t> vec_temp(vec.size() + _marked_nodes.size());
