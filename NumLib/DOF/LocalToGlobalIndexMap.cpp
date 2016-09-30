@@ -9,24 +9,20 @@
 
 #include "LocalToGlobalIndexMap.h"
 
+#include <algorithm>
+
 namespace NumLib
 {
 
 namespace
 {
 
-// Make the cumulative sum of an array
+// Make the cumulative sum of an array, which starts with zero
 template <typename T>
 std::vector<T> to_cumulative(std::vector<T> const& vec)
 {
-    std::vector<T> result(vec.size() + 1);
-    T sum = 0;
-    for (std::size_t i=0; i<vec.size(); i++)
-    {
-        result[i] = sum;
-        sum += vec[i];
-    }
-    result[vec.size()] = sum;
+    std::vector<T> result(vec.size()+1, 0);
+    std::partial_sum(vec.begin(), vec.end(), result.begin()+1);
 
     return result;
 }
