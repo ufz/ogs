@@ -21,6 +21,7 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     GroundwaterFlowProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
@@ -29,8 +30,8 @@ GroundwaterFlowProcess::GroundwaterFlowProcess(
     std::string&& balance_pv_name,
     std::string&& balance_out_fname)
     : Process(mesh, std::move(jacobian_assembler), parameters,
-              std::move(process_variables), std::move(secondary_variables),
-              std::move(named_function_caller)),
+              integration_order, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller)),
       _process_data(std::move(process_data)),
       _balance_mesh(balance_mesh),
       _balance_pv_name(std::move(balance_pv_name)),
