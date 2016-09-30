@@ -82,6 +82,9 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
             "\"%s\"\n\toutput to: \"%s\"",
             mesh_name.c_str(), balance_pv_name.c_str(),
             balance_out_fname.c_str());
+
+        // Surface mesh and bulk mesh must have equal axial symmetry flags!
+        surface_mesh->setAxiallySymmetric(mesh.isAxiallySymmetric());
     }
 
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{

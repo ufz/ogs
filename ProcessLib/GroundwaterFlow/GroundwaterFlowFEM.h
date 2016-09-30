@@ -135,8 +135,10 @@ public:
         typename ShapeMatricesType::ShapeMatrices shape_matrices(
             ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
 
+        // Note: Axial symmetry is set to false here, because we only need dNdx
+        // here, which is not affected by axial symmetry.
         fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
-                                 GlobalDim);
+                                 GlobalDim, false);
         std::vector<double> flux;
         flux.resize(3);
 

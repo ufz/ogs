@@ -48,11 +48,12 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
     boost::optional<MeshLib::PropertyVector<std::size_t> const&> bulk_face_ids(
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
             "OriginalFaceIDs"));
-    const std::size_t integration_order = 2;
+    const unsigned integration_order = 2;
     ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
-        boundary_mesh.getDimension()+1, // or bulk_mesh.getDimension()?
-        boundary_mesh.getElements(), *dof_table, integration_order,
-        _local_assemblers, *bulk_element_ids, *bulk_face_ids);
+        boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
+        boundary_mesh.getElements(), *dof_table, _local_assemblers,
+        boundary_mesh.isAxiallySymmetric(), integration_order,
+        *bulk_element_ids, *bulk_face_ids);
 }
 
 void CalculateSurfaceFlux::integrate(GlobalVector const& x,

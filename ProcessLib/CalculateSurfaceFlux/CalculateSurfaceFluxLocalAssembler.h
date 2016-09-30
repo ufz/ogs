@@ -55,6 +55,7 @@ public:
     CalculateSurfaceFluxLocalAssembler(
         MeshLib::Element const& surface_element,
         std::size_t const /*local_matrix_size*/,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         MeshLib::PropertyVector<std::size_t> const& bulk_element_ids,
         MeshLib::PropertyVector<std::size_t> const& bulk_face_ids)
@@ -74,15 +75,16 @@ public:
 
         std::vector<typename ShapeMatricesType::ShapeMatrices> shape_matrices;
         shape_matrices.reserve(n_integration_points);
-        _detJ.reserve(n_integration_points);
+        _detJ_times_integralMeasure.reserve(n_integration_points);
         for (std::size_t ip = 0; ip < n_integration_points; ++ip)
         {
             shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                         ShapeFunction::NPOINTS);
             fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
                 _integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim);
-            _detJ.push_back(shape_matrices[ip].detJ);
+                shape_matrices[ip], GlobalDim, is_axially_symmetric);
+            _detJ_times_integralMeasure.push_back(
+                shape_matrices[ip].detJ * shape_matrices[ip].integralMeasure);
         }
     }
 
@@ -133,7 +135,8 @@ public:
                             surface_element_normal.getCoords(), 3)));
 
                 balance.getComponent(element_id, component_id) +=
-                    bulk_grad_times_normal * _detJ[ip] * wp.getWeight();
+                    bulk_grad_times_normal * _detJ_times_integralMeasure[ip] *
+                    wp.getWeight();
             }
         }
     }
@@ -141,7 +144,7 @@ public:
 private:
     MeshLib::Element const& _surface_element;
 
-    std::vector<double> _detJ;
+    std::vector<double> _detJ_times_integralMeasure;
 
     IntegrationMethod const _integration_method;
     std::size_t _bulk_element_id;
