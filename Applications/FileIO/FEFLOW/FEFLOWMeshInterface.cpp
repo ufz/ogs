@@ -11,6 +11,8 @@
 #include <cctype>
 #include <memory>
 
+#include <boost/algorithm/string/trim.hpp>
+
 #include <logog/include/logog.hpp>
 
 #include "BaseLib/FileTools.h"
@@ -52,12 +54,14 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     std::stringstream line_stream;
     while (!in.eof())
     {
-        getline(in, line_string);
+        std::getline(in, line_string);
+        boost::trim_right(line_string);
         //....................................................................
         // CLASS: the version number follows afterward, e.g. CLASS (v.5.313)
         if (line_string.find("CLASS") != std::string::npos)
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
+            boost::trim_right(line_string);
             line_stream.str(line_string);
             // problem class, time mode, problem orientation, dimension, nr.
             // layers for 3D, saturation switch, precision of results, precision
@@ -380,7 +384,8 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
     while (true)
     {
         pos_prev_line = in.tellg();
-        getline(in, line_string);
+        std::getline(in, line_string);
+        boost::trim_right(line_string);
 
         // check mode
         auto columns = BaseLib::splitString(line_string, ' ');
@@ -423,8 +428,8 @@ void FEFLOWMeshInterface::readElevation(std::ifstream& in,
             // parse current line
             line_stream.str(line_string);
             line_stream >> z;
-            getline(line_stream, str_nodeList);
-            BaseLib::trim(str_nodeList, '\t');
+            std::getline(line_stream, str_nodeList);
+            boost::trim(str_nodeList);
             line_stream.clear();
         }
         else if (mode == 3)

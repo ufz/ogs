@@ -11,6 +11,8 @@
 #include <cctype>
 #include <memory>
 
+#include <boost/algorithm/string/trim.hpp>
+
 #include <QDomElement>
 #include <QString>
 #include <QtXml>
@@ -119,7 +121,7 @@ void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
     while (!ss.eof())
     {
         std::getline(ss, line_str);
-        BaseLib::trim(line_str, ' ');
+        boost::trim_right(line_str);
         if (line_str.empty())
             continue;
         std::istringstream line_ss(line_str);
