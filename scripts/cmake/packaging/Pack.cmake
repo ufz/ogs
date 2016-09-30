@@ -100,3 +100,14 @@ cpack_add_component(ogs_docs
     DESCRIPTION "PDF documentation."
     GROUP Utilities
 )
+
+# Clear cache variable holding all targets to install dependencies for.
+set(INSTALL_DEPENDENCIES "" CACHE INTERNAL "")
+
+# Rerun CMake on install
+install(CODE "\
+    message(STATUS \"Rerunning CMake for getting executable dependencies.\")\n \
+    execute_process(COMMAND ${CMAKE_COMMAND} \
+                    ARGS ${CMAKE_SOURCE_DIR} -DPRE_INSTALL_RUN=ON \
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR} OUTPUT_QUIET)"
+)

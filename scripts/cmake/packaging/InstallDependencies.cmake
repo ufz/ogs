@@ -1,35 +1,4 @@
+# Registers a target for installing its dependencies (dll / so files)
 macro(InstallDependencies TARGET INSTALL_COMPONENT)
-
-    if(MSVC AND NOT CMAKE_GENERATOR STREQUAL "Ninja" )
-        set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/Release/${TARGET}${CMAKE_EXECUTABLE_SUFFIX})
-    else()
-        set(TARGET_EXE ${EXECUTABLE_OUTPUT_PATH}/${TARGET}${CMAKE_EXECUTABLE_SUFFIX})
-    endif()
-
-    if(EXISTS ${TARGET_EXE})
-        include(GetPrerequisites)
-        # arg3: exclude system, arg4: recursive
-        if (VTK_BUILD_SHARED_LIBS)
-            list(APPEND dirs ${vtkIOXML_RUNTIME_LIBRARY_DIRS})
-        endif()
-        list(APPEND dirs "/usr/local/lib")
-        get_prerequisites(${TARGET_EXE} TARGET_DEPENDENCIES 1 1 "" ${dirs})
-        message(STATUS "${TARGET_EXE} dependencies:")
-        foreach(DEPENDENCY ${TARGET_DEPENDENCIES})
-            if(NOT ${DEPENDENCY} MATCHES "@loader_path")
-                gp_resolve_item("${TARGET_EXE}" "${DEPENDENCY}" "" "" DEPENDENCY_PATH)
-                get_filename_component(RESOLVED_DEPENDENCY_PATH "${DEPENDENCY_PATH}" REALPATH)
-                string(TOLOWER ${DEPENDENCY} DEPENDENCY_LOWER)
-                set(DEPENDENCY_PATHS ${DEPENDENCY_PATHS} ${RESOLVED_DEPENDENCY_PATH})
-                message("    ${RESOLVED_DEPENDENCY_PATH}")
-            endif()
-        endforeach()
-        install(FILES ${DEPENDENCY_PATHS} DESTINATION bin COMPONENT ${INSTALL_COMPONENT})
-        add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ;)
-    else()
-        # Run CMake after target was built to run GetPrerequisites on executable
-        add_custom_command(TARGET ${TARGET} POST_BUILD COMMAND ${CMAKE_COMMAND}
-            ARGS ${CMAKE_SOURCE_DIR} WORKING_DIRECTORY ${CMAKE_BINARY_DIR} VERBATIM)
-    endif()
-
+    set(INSTALL_DEPENDENCIES "${INSTALL_DEPENDENCIES};${TARGET}" CACHE INTERNAL "")
 endmacro()
