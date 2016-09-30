@@ -20,13 +20,14 @@ TESProcess::TESProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
     const BaseLib::ConfigTree& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
-              std::move(process_variables), std::move(secondary_variables),
-              std::move(named_function_caller))
+              integration_order, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller))
 {
     DBUG("Create TESProcess.");
 
