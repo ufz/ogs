@@ -23,6 +23,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{process__type}
@@ -73,7 +74,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
                                         named_function_caller);
 
     return std::unique_ptr<Process>{new HeatConductionProcess{
-        mesh, std::move(jacobian_assembler), parameters,
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller)}};
 }
