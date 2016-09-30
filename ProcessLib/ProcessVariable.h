@@ -22,6 +22,8 @@ template <typename T> class PropertyVector;
 
 namespace ProcessLib
 {
+class BoundaryConditionBuilder;
+
 /// A named process variable. Its properties includes the mesh, and the initial
 /// and boundary conditions.
 class ProcessVariable
@@ -41,6 +43,11 @@ public:
 
     /// Returns the number of components of the process variable.
     int getNumberOfComponents() const { return _n_components; }
+
+    void setBoundaryConditionBuilder(std::unique_ptr<BoundaryConditionBuilder> bc_builder)
+    {
+        _bc_builder = std::move(bc_builder);
+    }
 
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
@@ -64,6 +71,7 @@ private:
     Parameter<double> const& _initial_condition;
 
     std::vector<BoundaryConditionConfig> _bc_configs;
+    std::unique_ptr<BoundaryConditionBuilder> _bc_builder;
 };
 
 }  // namespace ProcessLib
