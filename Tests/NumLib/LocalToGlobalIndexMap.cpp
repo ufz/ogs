@@ -174,3 +174,108 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
     ASSERT_EQ(20, dof_map->getGlobalIndex(l_node0, 1, 0));
 }
+
+
+#ifndef USE_PETSC
+TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponentsHeterogeneousElements)
+#else
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponentsHeterogeneousElements)
+#endif
+{
+    // test 2 variables
+    // - 1st variable with 2 components for all nodes, elements
+    // - 2nd variable with 1 component for nodes of element id 1
+    std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1)), const_cast<MeshLib::Node*>(mesh->getNode(2))};
+    std::unique_ptr<MeshLib::MeshSubset> var2_subset(new MeshLib::MeshSubset(*mesh, &var2_nodes));
+    components.emplace_back(new MeshLib::MeshSubsets{var2_subset.get()});
+
+    std::vector<unsigned> vec_var_n_components{2, 1};
+    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    vec_var_elements.push_back(&mesh->getElements());
+    std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
+    vec_var_elements.push_back(&var2_elements);
+
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
+                      std::move(components),
+                      vec_var_n_components,
+                      vec_var_elements,
+                      NumLib::ComponentOrder::BY_COMPONENT));
+
+    ASSERT_EQ(22u, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(3u, dof_map->getNumberOfComponents());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariables());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariableComponents(0));
+    ASSERT_EQ(1u, dof_map->getNumberOfVariableComponents(1));
+
+    MeshLib::Location l_node0(mesh->getID(), MeshLib::MeshItemType::Node, 0);
+
+    ASSERT_EQ(0, dof_map->getGlobalIndex(l_node0, 0, 0));
+    ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
+    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(), dof_map->getGlobalIndex(l_node0, 1, 0));
+
+    MeshLib::Location l_node1(mesh->getID(), MeshLib::MeshItemType::Node, 1);
+    ASSERT_EQ(1, dof_map->getGlobalIndex(l_node1, 0, 0));
+    ASSERT_EQ(11, dof_map->getGlobalIndex(l_node1, 0, 1));
+    ASSERT_EQ(20, dof_map->getGlobalIndex(l_node1, 1, 0));
+
+    auto ele0_c0_indices = (*dof_map)(0, 0);
+    ASSERT_EQ(2u, ele0_c0_indices.rows.size());
+    auto ele0_c2_indices = (*dof_map)(0, 2);
+    ASSERT_EQ(0u, ele0_c2_indices.rows.size());
+
+    auto ele1_c2_indices = (*dof_map)(1, 2);
+    ASSERT_EQ(2u, ele1_c2_indices.rows.size());
+}
+
+
+#ifndef USE_PETSC
+TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
+#else
+TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
+#endif
+{
+    // test 2 variables
+    // - 1st variable with 2 components for all nodes, elements
+    // - 2nd variable with 1 component for 1st node of element id 1
+    std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1))};
+    std::unique_ptr<MeshLib::MeshSubset> var2_subset(new MeshLib::MeshSubset(*mesh, &var2_nodes));
+    components.emplace_back(new MeshLib::MeshSubsets{var2_subset.get()});
+
+    std::vector<unsigned> vec_var_n_components{2, 1};
+    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    vec_var_elements.push_back(&mesh->getElements());
+    std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
+    vec_var_elements.push_back(&var2_elements);
+
+    dof_map.reset(new NumLib::LocalToGlobalIndexMap(
+                      std::move(components),
+                      vec_var_n_components,
+                      vec_var_elements,
+                      NumLib::ComponentOrder::BY_COMPONENT));
+
+    ASSERT_EQ(21u, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(3u, dof_map->getNumberOfComponents());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariables());
+    ASSERT_EQ(2u, dof_map->getNumberOfVariableComponents(0));
+    ASSERT_EQ(1u, dof_map->getNumberOfVariableComponents(1));
+
+    MeshLib::Location l_node0(mesh->getID(), MeshLib::MeshItemType::Node, 0);
+
+    ASSERT_EQ(0, dof_map->getGlobalIndex(l_node0, 0, 0));
+    ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
+    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(), dof_map->getGlobalIndex(l_node0, 1, 0));
+
+    MeshLib::Location l_node1(mesh->getID(), MeshLib::MeshItemType::Node, 1);
+    ASSERT_EQ(1, dof_map->getGlobalIndex(l_node1, 0, 0));
+    ASSERT_EQ(11, dof_map->getGlobalIndex(l_node1, 0, 1));
+    ASSERT_EQ(20, dof_map->getGlobalIndex(l_node1, 1, 0));
+
+    auto ele0_c0_indices = (*dof_map)(0, 0);
+    ASSERT_EQ(2u, ele0_c0_indices.rows.size());
+    auto ele0_c2_indices = (*dof_map)(0, 2);
+    ASSERT_EQ(0u, ele0_c2_indices.rows.size());
+
+    auto ele1_c2_indices = (*dof_map)(1, 2);
+    ASSERT_EQ(1u, ele1_c2_indices.rows.size());
+    ASSERT_EQ(20u, ele1_c2_indices.rows[0]);
+}

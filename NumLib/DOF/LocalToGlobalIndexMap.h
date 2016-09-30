@@ -64,6 +64,21 @@ public:
         std::vector<unsigned> const& vec_var_n_components,
         NumLib::ComponentOrder const order);
 
+    /// Creates a MeshComponentMap internally and stores the global indices for
+    /// the given mesh elements
+    ///
+    /// \param mesh_subsets  a vector of components
+    /// \param vec_var_n_components  a vector of the number of variable components.
+    /// The size of the vector should be equal to the number of variables. Sum of the entries
+    /// should be equal to the size of the mesh_subsets.
+    /// \param vec_var_elements  a vector of active mesh elements for each variable.
+    /// \param order  type of ordering values in a vector
+    LocalToGlobalIndexMap(
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+        std::vector<unsigned> const& vec_var_n_components,
+        std::vector<std::vector<MeshLib::Element*>const*> const& vec_var_elements,
+        NumLib::ComponentOrder const order);
+
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
     /// elements. A new mesh component map will be constructed using the passed
     /// mesh_subsets for the given variable and component ids.
@@ -154,6 +169,13 @@ private:
     template <typename ElementIterator>
     void
     findGlobalIndices(ElementIterator first, ElementIterator last,
+        std::vector<MeshLib::Node*> const& nodes,
+        std::size_t const mesh_id,
+        const unsigned component_id, const unsigned comp_id_write);
+
+    template <typename ElementIterator>
+    void
+    findGlobalIndicesWithElementID(ElementIterator first, ElementIterator last,
         std::vector<MeshLib::Node*> const& nodes,
         std::size_t const mesh_id,
         const unsigned component_id, const unsigned comp_id_write);

@@ -30,6 +30,46 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
 } // no named namespace
 
 template <typename ElementIterator>
+void
+LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
+    ElementIterator first, ElementIterator last,
+    std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
+    const unsigned comp_id, const unsigned comp_id_write)
+{
+    // _rows should be resized based on an element ID
+    std::size_t max_elem_id = 0;
+    for (ElementIterator e = first; e != last; ++e)
+        max_elem_id = std::max(max_elem_id, (*e)->getID());
+    if (max_elem_id+1 > static_cast<unsigned>(_rows.rows()))
+        _rows.conservativeResize(max_elem_id + 1, _mesh_subsets.size());
+
+    std::vector<MeshLib::Node*> sorted_nodes{nodes};
+    std::sort(std::begin(sorted_nodes), std::end(sorted_nodes));
+
+    // For each element find the global indices for node/element
+    // components.
+    for (ElementIterator e = first; e != last; ++e)
+    {
+        LineIndex indices;
+
+        for (auto* n = (*e)->getNodes();
+             n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
+        {
+            // Check if the element's node is in the given list of nodes.
+            if (!std::binary_search(std::begin(sorted_nodes),
+                                    std::end(sorted_nodes), *n))
+                continue;
+            MeshLib::Location l(
+                mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
+            indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
+        }
+
+        _rows((*e)->getID(), comp_id_write) = std::move(indices);
+    }
+}
+
+
+template <typename ElementIterator>
 void LocalToGlobalIndexMap::findGlobalIndices(
     ElementIterator first, ElementIterator last,
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
@@ -108,6 +148,50 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
         }
     }
 }
+
+
+LocalToGlobalIndexMap::LocalToGlobalIndexMap(
+    std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+    std::vector<unsigned> const& vec_var_n_components,
+    std::vector<std::vector<MeshLib::Element*>const*> const& vec_var_elements,
+    NumLib::ComponentOrder const order)
+    : _mesh_subsets(std::move(mesh_subsets)),
+      _mesh_component_map(_mesh_subsets, order),
+      _variable_component_offsets(to_cumulative(vec_var_n_components))
+{
+    assert(vec_var_n_components.size() == vec_var_elements.size());
+
+    // For all MeshSubsets and each of their MeshSubset's and each element
+    // of that MeshSubset save a line of global indices.
+
+
+    std::size_t offset = 0;
+    for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
+         ++variable_id)
+    {
+        std::vector<MeshLib::Element*> const& var_elements = *vec_var_elements[variable_id];
+        for (int component_id = 0; component_id < static_cast<int>(vec_var_n_components[variable_id]);
+             ++component_id)
+        {
+            auto const global_component_id =
+                getGlobalComponent(variable_id, component_id);
+
+            auto const& mss = *_mesh_subsets[global_component_id];
+            for (int subset_id = 0; subset_id < static_cast<int>(mss.size());
+                 ++subset_id)
+            {
+                MeshLib::MeshSubset const& ms = mss.getMeshSubset(subset_id);
+                std::size_t const mesh_id = ms.getMeshID();
+
+                findGlobalIndicesWithElementID(var_elements.cbegin(), var_elements.cend(), ms.getNodes(),
+                                               mesh_id, global_component_id, global_component_id);
+            }
+            // increase by number of components of that variable
+            offset += mss.size();
+        }
+    }
+}
+
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
