@@ -12,6 +12,28 @@
 namespace NumLib
 {
 
+namespace
+{
+
+// Make the cumulative sum of an array
+template <typename T>
+std::vector<T> to_cumulative(std::vector<T> const& vec)
+{
+    std::vector<T> result(vec.size() + 1);
+    T sum = 0;
+    for (std::size_t i=0; i<vec.size(); i++)
+    {
+        result[i] = sum;
+        sum += vec[i];
+    }
+    result[vec.size()] = sum;
+
+    return result;
+}
+
+} // no named namespace
+
+
 template <typename ElementIterator>
 void
 LocalToGlobalIndexMap::findGlobalIndices(
@@ -58,17 +80,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<unsigned> const& vec_var_n_components,
     NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(_mesh_subsets, order)
+      _mesh_component_map(_mesh_subsets, order),
+      _variable_component_offsets(to_cumulative(vec_var_n_components))
 {
-    // construct a mapping table to get a global component ID from a variableID & a variable comp ID
-    _map_varCompID_to_globalCompID.resize(vec_var_n_components.size());
-    {
-        unsigned global_component_ID = 0;
-        for (unsigned i=0; i<vec_var_n_components.size(); i++)
-            for (unsigned j=0; j<vec_var_n_components[i]; j++)
-                _map_varCompID_to_globalCompID[i].push_back(global_component_ID++);
-    }
-
     // For all MeshSubsets and each of their MeshSubset's and each element
     // of that MeshSubset save a line of global indices.
 
@@ -106,7 +120,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     NumLib::MeshComponentMap&& mesh_component_map)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(std::move(mesh_component_map)),
-      _map_varCompID_to_globalCompID(1, std::vector<int>(1, 0)) // Single variable only.
+      _variable_component_offsets{0, 1} // Single variable only.
 {
     // There is only on mesh_subsets in the vector _mesh_subsets.
     assert(_mesh_subsets.size() == 1);

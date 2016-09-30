@@ -89,9 +89,13 @@ public:
 
     std::size_t size() const;
 
-    std::size_t getNumberOfVariables() const { return _map_varCompID_to_globalCompID.size(); }
+    std::size_t getNumberOfVariables() const { return (_variable_component_offsets.size() - 1); }
 
-    std::size_t getNumberOfVariableComponents(int variable_id) const { return _map_varCompID_to_globalCompID[variable_id].size(); }
+    std::size_t getNumberOfVariableComponents(int variable_id) const
+    {
+        assert(static_cast<unsigned>(variable_id) < getNumberOfVariables());
+        return _variable_component_offsets[variable_id+1] - _variable_component_offsets[variable_id];
+    }
 
     std::size_t getNumberOfComponents() const { return _mesh_subsets.size(); }
 
@@ -159,7 +163,7 @@ private:
     std::size_t getGlobalComponent(int const variable_id,
                                    int const component_id) const
     {
-        return _map_varCompID_to_globalCompID[variable_id][component_id];
+        return _variable_component_offsets[variable_id] + component_id;
     }
 
 private:
@@ -176,7 +180,7 @@ private:
     /// \see _rows
     Table const& _columns = _rows;
 
-    std::vector<std::vector<int>> _map_varCompID_to_globalCompID;
+    std::vector<unsigned> const _variable_component_offsets;
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
     friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);
