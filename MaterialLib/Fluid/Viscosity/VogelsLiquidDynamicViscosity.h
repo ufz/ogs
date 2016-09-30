@@ -33,7 +33,7 @@ class VogelsLiquidDynamicViscosity final : public FluidProperty
 {
 public:
     /**
-     *  \brief Viscosity defined by \f$e^{A+\dfrac{B}{C+T}}\f$
+     *  \brief Viscosity defined by \f$10^3 \, e^{A+\dfrac{B}{C+T}}\f$
      *  \param constants Constants of the fluid.
      *
      */
@@ -48,13 +48,14 @@ public:
         return "Liquid viscosity by Vogel's equation";
     }
 
-    /** Get viscosity value.
+    /** Get viscosity value (in SI unit: Pa * s).
      *  \param var_vals Variable values in an array. The order of its elements
      *                  is given in enum class PropertyVariableType.
      */
     double getValue(const ArrayType& var_vals) const override
     {
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
+        // Note: the constant of 1.e-3 is for the SI unit conversion.
         return 1.e-3 *
                std::exp(_constants.A + _constants.B / (_constants.C + T));
     }
@@ -71,6 +72,7 @@ public:
         (void)var;
         const double T = var_vals[static_cast<int>(PropertyVariableType::T)];
         const double f_buff = _constants.B / (_constants.C + T);
+        // Note: the constant of 1.e-3 is for the SI unit conversion.
         return -1.e-3 * f_buff * std::exp(_constants.A + f_buff) /
                (_constants.C + T);
     }

@@ -18,8 +18,6 @@
 #include <string>
 #include <cmath>
 
-#include "BaseLib/ConfigTree.h"
-
 #include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
@@ -27,15 +25,17 @@ namespace MaterialLib
 namespace Fluid
 {
 /**
- *  Class of a temperature dependent viscosity model
+ *  Class of a temperature dependent viscosity model, which provides a good fit
+ *  over temperature variations of 150 °C.
+ *
  *   \f[
- *        \mu = \mu_0\, exp(\frac{T-T_c}{T_v})
+ *        \mu = \mu_0\, exp(-\frac{T-T_c}{T_v})
  *   where
  *    \f{eqnarray*}{
- *       &\mu_0:&  \mbox{reference viscosity,}\\
+ *       &\mu_0:&  \mbox{reference viscosity at the temperature of} T_c\\
  *       &T:&      \mbox{temperature,}\\
- *       &T_c:&    \mbox{parameter,}\\
- *       &T_v:&    \mbox{parameter,}\\
+ *       &T_c:&    \mbox{reference temperature,}\\
+ *       &T_v:&    \mbox{constant}\\
  *    \f}
  */
 class TemperatureDependentViscosity final : public FluidProperty

@@ -18,7 +18,6 @@
 
 #include "TestTools.h"
 
-#include "MaterialLib/Fluid/Density/createFluidDensityModel.h"
 #include "MaterialLib/Fluid/Viscosity/createViscosityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -64,9 +63,7 @@ TEST(Material, checkTemperatureDependentViscosity)
     ArrayType vars;
     vars[0] = 350.0;
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
-    // Test the density.
     ASSERT_NEAR(mu_expected, mu->getValue(vars), 1.e-10);
-    // Test the derivative with respect to temperature.
     ASSERT_NEAR(-mu_expected,
                 mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::T),
                 1.e-10);
@@ -86,10 +83,8 @@ TEST(Material, checkLinearPressureDependentViscosity)
     ArrayType vars;
     vars[0] = 293.;
     vars[1] = 2.e+6;
-    // Test the density.
     ASSERT_NEAR(1.e-3 * (1. + 1.e-6 * (vars[1] - 1.e+5)), mu->getValue(vars),
                 1.e-10);
-    // Test the derivative with respect to pressure.
     ASSERT_NEAR(1.e-9,
                 mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::pl),
                 1.e-10);

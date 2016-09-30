@@ -14,8 +14,6 @@
 
 #include <string>
 
-#include "BaseLib/ConfigTree.h"
-
 #include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib
@@ -61,7 +59,7 @@ public:
     double getValue(const ArrayType& var_vals) const override
     {
         const double p = var_vals[static_cast<int>(PropertyVariableType::pl)];
-        return _mu0 * (1 + _gamma * (std::max(p, 0.) - _p0));
+        return _mu0 * (1 + _gamma * (p - _p0));
     }
 
     /** Get the partial differential of the viscosity with respect to pressure.
