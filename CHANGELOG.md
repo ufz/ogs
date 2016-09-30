@@ -15,6 +15,7 @@
  - Support tetrahedra types in generateStructuredMesh #1353
  - New tool: convertGEO #1360
  - New tool: swapNodeCoordinateAxes #1361
+ - Add calculation of surface flux, tests for groundwater flow #1429
 
 ### Infrastructure
  - Added a generic natural boundary condition class. #1337

@@ -69,6 +69,15 @@ public:
     }
 
     //! Returns the value for the given component stored in the given tuple.
+    PROP_VAL_TYPE& getComponent(std::size_t tuple_index, std::size_t component)
+    {
+        assert(component < _n_components);
+        assert(tuple_index < getNumberOfTuples());
+        return this->operator[](tuple_index* getNumberOfComponents() +
+                                component);
+    }
+
+    //! Returns the value for the given component stored in the given tuple.
     PROP_VAL_TYPE const& getComponent(std::size_t tuple_index,
                                       std::size_t component) const
     {

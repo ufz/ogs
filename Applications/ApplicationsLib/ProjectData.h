@@ -139,7 +139,9 @@ private:
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process
     /// constructor.
-    void parseProcesses(BaseLib::ConfigTree const& process_config);
+    void parseProcesses(BaseLib::ConfigTree const& process_config,
+                        std::string const& project_directory,
+                        std::string const& output_directory);
 
     /// Parses the time loop configuration.
     void parseTimeLoop(BaseLib::ConfigTree const& config,

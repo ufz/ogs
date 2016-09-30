@@ -23,7 +23,9 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::string const& project_directory,
+    std::string const& output_directory);
 
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib

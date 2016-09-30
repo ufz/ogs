@@ -22,6 +22,9 @@ APPEND_SOURCE_FILES(SOURCES TES)
 add_subdirectory(HeatConduction)
 APPEND_SOURCE_FILES(SOURCES HeatConduction)
 
+add_subdirectory(CalculateSurfaceFlux)
+APPEND_SOURCE_FILES(SOURCES CalculateSurfaceFlux)
+
 APPEND_SOURCE_FILES(SOURCES Utils)
 
 add_library(ProcessLib ${SOURCES})

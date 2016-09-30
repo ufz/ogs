@@ -11,8 +11,11 @@
 
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+#include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
 #include "GroundwaterFlowProcess.h"
 #include "GroundwaterFlowProcessData.h"
+
+#include "MeshLib/IO/readMeshFromFile.h"
 
 namespace ProcessLib
 {
@@ -23,7 +26,9 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::string const& project_directory,
+    std::string const& output_directory)
 {
     //! \ogs_file_param{process__type}
     config.checkConfigParameter("type", "GROUNDWATER_FLOW");
@@ -56,10 +61,35 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
+    std::string mesh_name;
+    std::string balance_pv_name;
+    std::string balance_out_fname;
+    std::unique_ptr<MeshLib::Mesh> surface_mesh;
+    ProcessLib::parseCalculateSurfaceFluxData(config, mesh_name, balance_pv_name,
+                                        balance_out_fname);
+
+    if (! mesh_name.empty()) // balance is optional
+    {
+        mesh_name = BaseLib::copyPathToFileName(mesh_name, project_directory);
+
+        balance_out_fname =
+            BaseLib::copyPathToFileName(balance_out_fname, output_directory);
+
+        surface_mesh.reset(MeshLib::IO::readMeshFromFile(mesh_name));
+
+        DBUG(
+            "read balance meta data:\n\tbalance mesh:\"%s\"\n\tproperty name: "
+            "\"%s\"\n\toutput to: \"%s\"",
+            mesh_name.c_str(), balance_pv_name.c_str(),
+            balance_out_fname.c_str());
+    }
+
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{
         mesh, std::move(jacobian_assembler), parameters,
         std::move(process_variables), std::move(process_data),
-        std::move(secondary_variables), std::move(named_function_caller)}};
+        std::move(secondary_variables), std::move(named_function_caller),
+        surface_mesh.release(), std::move(balance_pv_name),
+        std::move(balance_out_fname)}};
 }
 
 }  // namespace GroundwaterFlow
