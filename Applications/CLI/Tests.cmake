@@ -547,6 +547,26 @@ if(NOT OGS_USE_MPI)
     #     EXECUTABLE_ARGS tes-inert-wedge.prj
     # )
 
+    # HydroMechanics; Small deformations, linear poroelastic (HML)
+    AddTest(
+        NAME HydroMechanics_HML_square_1e2_confined_compression
+        PATH HydroMechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-15 RELTOL 1e-15
+        DIFF_DATA
+        expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu displacement displacement
+        expected_square_1e2_pcs_0_ts_20_t_100.000000.vtu square_1e2_pcs_0_ts_20_t_100.000000.vtu displacement displacement
+        expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu displacement displacement
+        expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu displacement displacement
+        expected_square_1e2_pcs_0_ts_1_t_5.000000.vtu square_1e2_pcs_0_ts_1_t_5.000000.vtu pressure pressure
+        expected_square_1e2_pcs_0_ts_20_t_100.000000.vtu square_1e2_pcs_0_ts_20_t_100.000000.vtu pressure pressure
+        expected_square_1e2_pcs_0_ts_120_t_1000.000000.vtu square_1e2_pcs_0_ts_120_t_1000.000000.vtu pressure pressure
+        expected_square_1e2_pcs_0_ts_420_t_4000.000000.vtu square_1e2_pcs_0_ts_420_t_4000.000000.vtu pressure pressure
+    )
+
     # LIE; Small deformation
     AddTest(
         NAME LIE_M_single_joint
