@@ -57,8 +57,8 @@ public:
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
     virtual std::vector<double> getFlux(
-        MathLib::Point3d const& p_local_coords,
-        std::vector<double> const& local_x) const
+        MathLib::Point3d const& /*p_local_coords*/,
+        std::vector<double> const& /*local_x*/) const
     {
         return std::vector<double>();
     }
