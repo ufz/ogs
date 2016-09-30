@@ -22,6 +22,7 @@ Process::Process(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller)
@@ -30,6 +31,7 @@ Process::Process(
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
       _process_variables(std::move(process_variables)),
+      _integration_order(integration_order),
       _boundary_conditions(parameters)
 {
 }
