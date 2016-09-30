@@ -154,8 +154,14 @@ void Process::constructDofTable()
             });
     }
 
+    // Create a vector of the number of variable components
+    std::vector<unsigned> vec_var_n_components;
+    for (ProcessVariable const& pv : _process_variables)
+        vec_var_n_components.push_back(pv.getNumberOfComponents());
+
     _local_to_global_index_map.reset(new NumLib::LocalToGlobalIndexMap(
-        std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION));
+        std::move(all_mesh_subsets), vec_var_n_components,
+        NumLib::ComponentOrder::BY_LOCATION));
 
 }
 

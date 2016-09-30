@@ -44,8 +44,24 @@ public:
 public:
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
-    explicit LocalToGlobalIndexMap(
+    ///
+    /// \attention This constructor assumes the number of the given mesh subsets
+    /// is equal to the number of variables, i.e. every variable has a single component.
+    LocalToGlobalIndexMap(
         std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+        NumLib::ComponentOrder const order);
+
+    /// Creates a MeshComponentMap internally and stores the global indices for
+    /// each mesh element of the given mesh_subsets.
+    ///
+    /// \param mesh_subsets  a vector of components
+    /// \param vec_var_n_components  a vector of the number of variable components.
+    /// The size of the vector should be equal to the number of variables. Sum of the entries
+    /// should be equal to the size of the mesh_subsets.
+    /// \param order  type of ordering values in a vector
+    LocalToGlobalIndexMap(
+        std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
+        std::vector<unsigned> const& vec_var_n_components,
         NumLib::ComponentOrder const order);
 
     /// Derive a LocalToGlobalIndexMap constrained to a set of mesh subsets and
@@ -72,6 +88,14 @@ public:
     }
 
     std::size_t size() const;
+
+    std::size_t getNumberOfVariables() const { return (_variable_component_offsets.size() - 1); }
+
+    std::size_t getNumberOfVariableComponents(int variable_id) const
+    {
+        assert(static_cast<unsigned>(variable_id) < getNumberOfVariables());
+        return _variable_component_offsets[variable_id+1] - _variable_component_offsets[variable_id];
+    }
 
     std::size_t getNumberOfComponents() const { return _mesh_subsets.size(); }
 
@@ -156,7 +180,7 @@ private:
     /// \see _rows
     Table const& _columns = _rows;
 
-    std::vector<int> _variable_component_offsets;
+    std::vector<unsigned> const _variable_component_offsets;
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
     friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);
