@@ -44,9 +44,15 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
     auto const bulk_element_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
             "OriginalSubsurfaceElementIDs");
+    if (!bulk_element_ids)
+        OGS_FATAL(
+            "OriginalSubsurfaceElementIDs boundary mesh property not found.");
     auto const bulk_face_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
             "OriginalFaceIDs");
+    if (!bulk_face_ids)
+        OGS_FATAL("OriginalFaceIDs boundary mesh property not found.");
+
     const unsigned integration_order = 2;
     ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
