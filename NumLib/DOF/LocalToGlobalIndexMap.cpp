@@ -37,6 +37,9 @@ void LocalToGlobalIndexMap::findGlobalIndices(
 {
     _rows.resize(std::distance(first, last), _mesh_subsets.size());
 
+    std::vector<MeshLib::Node*> sorted_nodes{nodes};
+    std::sort(std::begin(sorted_nodes), std::end(sorted_nodes));
+
     // For each element find the global indices for node/element
     // components.
     std::size_t elem_id = 0;
@@ -48,8 +51,8 @@ void LocalToGlobalIndexMap::findGlobalIndices(
              n < (*e)->getNodes() + (*e)->getNumberOfNodes(); ++n)
         {
             // Check if the element's node is in the given list of nodes.
-            if (std::find(std::begin(nodes), std::end(nodes), *n) ==
-                std::end(nodes))
+            if (!std::binary_search(std::begin(sorted_nodes),
+                                    std::end(sorted_nodes), *n))
                 continue;
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
