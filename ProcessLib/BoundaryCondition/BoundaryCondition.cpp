@@ -57,23 +57,29 @@ std::unique_ptr<BoundaryCondition> BoundaryConditionBuilder::createBoundaryCondi
             mesh_node_searcher.getMeshNodeIDs(config.geometry);
         // Filter out ids, which are not part of mesh subsets corresponding to
         // the variable_id and component_id.
+
+        // Sorted ids of all mesh_subsets.
+        std::vector<std::size_t> sorted_nodes_ids;
+
         auto const& mesh_subsets =
             dof_table.getMeshSubsets(variable_id, config.component_id);
-        auto ids_new_end_iterator = std::end(ids);
         for (auto const& mesh_subset : mesh_subsets)
         {
             auto const& nodes = mesh_subset->getNodes();
-            ids_new_end_iterator = std::remove_if(std::begin(ids), ids_new_end_iterator,
-                    [&nodes](std::size_t const node_id)
-                    {
-                        return std::end(nodes) == std::find_if(
-                                std::begin(nodes), std::end(nodes),
-                                    [&node_id](MeshLib::Node* const node)
-                                    {
-                                        return node->getID() == node_id;
-                                    });
-                    });
+            sorted_nodes_ids.reserve(sorted_nodes_ids.size() + nodes.size());
+            std::transform(std::begin(nodes), std::end(nodes),
+                           std::back_inserter(sorted_nodes_ids),
+                           [](MeshLib::Node* const n) { return n->getID(); });
         }
+        std::sort(std::begin(sorted_nodes_ids), std::end(sorted_nodes_ids));
+
+        auto ids_new_end_iterator = std::end(ids);
+        ids_new_end_iterator = std::remove_if(
+            std::begin(ids), ids_new_end_iterator,
+            [&sorted_nodes_ids](std::size_t const node_id) {
+                return !std::binary_search(std::begin(sorted_nodes_ids),
+                                           std::end(sorted_nodes_ids), node_id);
+            });
         ids.erase(ids_new_end_iterator, std::end(ids));
 
         return createDirichletBoundaryCondition(
