@@ -19,6 +19,16 @@ namespace ProcessLib
 namespace SmallDeformationWithLIE
 {
 
+/**
+ * get data about fracture and matrix elements/nodes from a mesh
+ *
+ * @param mesh  A mesh which includes fracture elements, i.e. lower-dimensional elements.
+ * It is assumed that elements forming a fracture have a distinct material ID.
+ * @param vec_matrix_elements  a vector of matrix elements
+ * @param vec_fracutre_elements  a vector of fracture elements
+ * @param vec_fracutre_matrix_elements  a vector of fracture elements and matrix elements connecting to the fracture
+ * @param vec_fracutre_nodes  a vector of fracture element nodes
+ */
 void getFractureMatrixDataInMesh(
         MeshLib::Mesh const& mesh,
         std::vector<MeshLib::Element*>& vec_matrix_elements,
