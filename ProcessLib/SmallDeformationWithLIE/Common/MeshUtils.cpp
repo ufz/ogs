@@ -58,7 +58,7 @@ void getFractureMatrixDataInMesh(
             MeshLib::Node const* node = e->getNode(i);
             for (unsigned j=0; j<node->getNumberOfElements(); j++)
             {
-                // only matrix elemetns
+                // only matrix elements
                 if (node->getElement(j)->getDimension() == mesh.getDimension()-1)
                     continue;
                 vec_fracutre_matrix_elements.push_back(const_cast<MeshLib::Element*>(node->getElement(j)));
