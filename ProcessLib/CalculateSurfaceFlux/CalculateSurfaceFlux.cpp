@@ -41,13 +41,12 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
         new NumLib::LocalToGlobalIndexMap(std::move(all_mesh_subsets),
                                           NumLib::ComponentOrder::BY_LOCATION));
 
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&>
-        bulk_element_ids(boundary_mesh.getProperties()
-                             .template getPropertyVector<std::size_t>(
-                                 "OriginalSubsurfaceElementIDs"));
-    boost::optional<MeshLib::PropertyVector<std::size_t> const&> bulk_face_ids(
+    auto const bulk_element_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "OriginalFaceIDs"));
+            "OriginalSubsurfaceElementIDs");
+    auto const bulk_face_ids =
+        boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
+            "OriginalFaceIDs");
     const unsigned integration_order = 2;
     ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
