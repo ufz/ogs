@@ -1,40 +1,72 @@
 ## Release notes
-# 6.0.7 (in preparation)
+# 6.0.8 (in preparation)
+
+## Release notes
+# 6.0.7
 
 ### Features:
+
+The main features of this release is the implementation of two new processes,
+the small deformation, and the heat conduction.  Some extensions were done to
+the DOF table to be able to manage multi-component/multi-variable processes.
+Also, during implementation of the Robin boundary conditions, the base classes
+for boundary conditions were generalized.
+
  - Add small deformation process with linear elastic material model. The
    implementation is based on the Kelvin mapping. #1340
+ - Added B-Matrices and Kelvin mapping tools for deformation processes. #1359
+ - Heat conduction process implementation. #1328
  - Finalize support for multicomponent boundary conditions adding configuration
    parser. #1343
  - Added uniform Robin boundary condition. #1336
- - Added B-Matrices and Kelvin mapping tools for deformation processes. #1359
- - New tools: scaleProperty, createNeumannBc #1346
+ - Added a generic natural boundary condition class. #1337
+ - Add calculation of surface flux, tests for groundwater flow. #1429
  - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
- - Added the new parameter type "Group" which can be used for setting material ID dependent values. #1426
- - Added fluid property class and several fluid density models based it. #1398
- - Support tetrahedra types in generateStructuredMesh #1353
- - New tool: convertGEO #1360
- - New tool: swapNodeCoordinateAxes #1361
- - Add calculation of surface flux, tests for groundwater flow #1429
+ - Added the new parameter type "Group" which can be used for setting material
+   ID dependent values. #1426
+ - Added fluid property class and several fluid density and viscosity models
+   based on it. #1398, #1435
+
+#### Utilities
+ New utilities:
+ - createNeumannBc: The tool integrates the given element property and writes
+   the computed data as a PropertyVector with the name `node_aggregated_gwn`
+   into the mesh. The tool also outputs an OGS-5 direct source term (Neumann
+   boundary condition) data file. #1346
+ - scaleProperty for simple rescaling of mesh properties. #1347
+ - Support tetrahedra types in generateStructuredMesh. #1353
+ - convertGEO for geometric file conversion, e.g. gli to glm. #1360
+ - swapNodeCoordinateAxes to swap node coordinate values, e.g. XY to XZ plane.
+   #1361
 
 ### Infrastructure
- - Added a generic natural boundary condition class. #1337
- - Migrated all important Jenkins jobs to script-based [Jenkins Pipeline](https://jenkins.io/doc/pipeline/) functionality (#1392, #1396, #1404, #1411, #1424, #1428, #1436). For an introduction see [docs.opengeosys.org - Continuous Integration](https://docs.opengeosys.org/docs/devguide/development-workflows/continuous-integration)
+ - Migrated all important Jenkins jobs to script-based
+   [Jenkins Pipeline](https://jenkins.io/doc/pipeline/)
+   functionality.  For an introduction see
+   [docs.opengeosys.org - Continuous Integration](https://docs.opengeosys.org/docs/devguide/development-workflows/continuous-integration).
+   #1392, #1396, #1404, #1411, #1424, #1428, #1436
  - Moved CMake logic for packaging executable dependencies (such as shared libs)
    to the install and package targets instead of running after each executable
-   gets build, #1458
+   gets build. #1458
+ - Increase minimum clang compiler version to 3.5 in course of updating travis
+   build enviroment to Ubuntu LTS 14.04. #1448
 
 ### Fixes:
- - Fix an issue that a shape vector was defined as a column vector. Corrected to a row vector  #1288
- - Fix usage of `boost::optional<T const&>`, which has changed in version 1.61. #1385
- - Fix Grid (enlarge bounding box to fit all points) #1369
- - Fix mapping of geometries to mesh surfaces #1327, #1368
- - Fix transmitting raster data to element properties #1347
- - Fixed missing XSD files in packages, #1410
- - Fix a shape vector to a row vector #1288
- - Fix FEFLOW import #1397
- - Fix NodeReordering to check ordering of each element #1425
- - Fix build with shared VTK library #1431
+ - Fix an issue that a shape vector was defined as a column vector. Corrected to
+   a row vector . #1288
+ - Fix usage of `boost::optional<T const&>`, which has changed in version 1.61.
+   #1385
+ - Fix Grid (enlarge bounding box to fit all points). #1369
+ - Fix mapping of geometries to mesh surfaces. #1327. #1368
+ - Fix transmitting raster data to element properties. #1347
+ - Fixed missing XSD files in packages. #1410
+ - Fix a shape vector to a row vector. #1288
+ - Fix FEFLOW import. #1397
+ - Fix NodeReordering to check ordering of each element. #1425
+ - Fix builds linking shared VTK library. #1431
+ - Fix global Newton iteration counter. #1341
+ - Correct few loops over mesh nodes, which should run over the mesh subsets.
+   #1437
 
 # 6.0.6
 
