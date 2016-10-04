@@ -40,6 +40,7 @@ TEST(Material, checkConstantStorage)
         "</storage>";
     auto const eta = createTestStorageModel(xml);
 
-    ASSERT_EQ(1.e-4, eta->getValue(nullptr));
+    const double var = 0;
+    ASSERT_EQ(1.e-4, eta->getValue(var));
 }
 

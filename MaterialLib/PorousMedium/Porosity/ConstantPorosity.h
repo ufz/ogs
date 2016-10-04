@@ -33,11 +33,15 @@ public:
         return "Constant porosity";
     }
 
-    /// Get porosity value.
-    /// \param vars Variable values
-    double getValue(const double vars[]) const override
+    /**
+     *  Get property value.
+     *  \param variable    A variable with any double type value.
+     *  \param temperature Temperature with any double type value.
+     */
+    double getValue(const double variable, double temperature) const override
     {
-        (void) vars;
+        (void) variable;
+        (void) temperature;
         return _value;
     }
 

@@ -33,10 +33,10 @@ public:
     }
 
     /// Get storage value.
-    /// \param vars Variable values
-    double getValue(const double vars[]) const override
+    /// \param variable Variable with any double type value
+    double getValue(const double variable) const override
     {
-        (void) vars;
+        (void) variable;
         return _value;
     }
 

@@ -38,5 +38,7 @@ TEST(Material, checkConstantPorosity)
         "</porosity>";
     auto const n = createTestPorosityModel(xml);
 
-    ASSERT_EQ(0.2, n->getValue(nullptr));
+    const double variable = 0.;
+    const double temperature = 0.;
+    ASSERT_EQ(0.2, n->getValue(variable, temperature));
 }

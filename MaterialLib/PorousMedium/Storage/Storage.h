@@ -31,8 +31,8 @@ public:
     virtual std::string getName() const = 0;
 
     /// Get property value.
-    /// The argument is an array of variables.
-    virtual double getValue(const double /* vars*/[]) const = 0;
+    /// The argument is a double variable
+    virtual double getValue(const double /*variable*/) const = 0;
 };
 
 }  // end of namespace
