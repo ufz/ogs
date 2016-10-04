@@ -117,12 +117,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
       _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod_, GlobalDim>(
           e, is_axially_symmetric, _integration_method)),
-      _d(asm_params,
-         // TODO narrowing conversion
-         static_cast<const unsigned>(
-             _shape_matrices.front()
-                 .N.cols()) /* number of integration points */,
-         GlobalDim)
+      _d(asm_params, _integration_method.getNumberOfPoints(), GlobalDim)
 {
 }
 
