@@ -73,11 +73,13 @@ class LocalAssemblerData : public LocalAssemblerDataInterface
 public:
     LocalAssemblerData(MeshLib::Element const& e,
                        std::size_t const /*local_matrix_size*/,
+                       bool is_axially_symmetric,
                        unsigned const integration_order)
         : _shape_matrices(
               ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-                  e, IntegrationMethod{integration_order})),
+                  e, is_axially_symmetric,
+                  IntegrationMethod{integration_order})),
           _int_pt_values(_shape_matrices.size())
     {
     }
@@ -142,7 +144,10 @@ public:
         // and the variable has exactly one component.
         _extrapolator.reset(new ExtrapolatorImplementation(*_dof_table));
 
-        createAssemblers(mesh);
+        // createAssemblers(mesh);
+        ProcessLib::createLocalAssemblers<LocalAssemblerData>(
+            mesh.getDimension(), mesh.getElements(), *_dof_table,
+            _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
     }
 
     void interpolateNodalValuesToIntegrationPoints(
@@ -174,36 +179,6 @@ public:
     }
 
 private:
-    void createAssemblers(MeshLib::Mesh const& mesh)
-    {
-        switch (mesh.getDimension())
-        {
-        case 1:  createLocalAssemblers<1>(mesh); break;
-        case 2:  createLocalAssemblers<2>(mesh); break;
-        case 3:  createLocalAssemblers<3>(mesh); break;
-        default: assert(false);
-        }
-    }
-
-    template<unsigned GlobalDim>
-    void createLocalAssemblers(MeshLib::Mesh const& mesh)
-    {
-        using LocalDataInitializer = ProcessLib::LocalDataInitializer<
-            LocalAssembler, LocalAssemblerData,
-            GlobalDim>;
-
-        _local_assemblers.resize(mesh.getNumberOfElements());
-
-        LocalDataInitializer initializer(*_dof_table);
-
-        DBUG("Calling local assembler builder for all mesh elements.");
-        GlobalExecutor::transformDereferenced(
-                initializer,
-                mesh.getElements(),
-                _local_assemblers,
-                _integration_order);
-    }
-
     unsigned const _integration_order;
 
     MeshLib::MeshSubset _mesh_subset_all_nodes;

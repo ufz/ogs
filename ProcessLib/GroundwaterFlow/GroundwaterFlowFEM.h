@@ -66,6 +66,7 @@ public:
     /// element matrix.
     LocalAssemblerData(MeshLib::Element const& element,
                        std::size_t const /*local_matrix_size*/,
+                       bool is_axially_symmetric,
                        unsigned const integration_order,
                        GroundwaterFlowProcessData const& process_data)
         : _element(element),
@@ -73,7 +74,7 @@ public:
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, _integration_method))
+              element, is_axially_symmetric, _integration_method))
     {
     }
 
@@ -102,8 +103,8 @@ public:
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
-            local_K.noalias() +=
-                sm.dNdx.transpose() * k * sm.dNdx * sm.detJ * wp.getWeight();
+            local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
+                                 sm.integralMeasure * wp.getWeight();
 
             // Darcy velocity only computed for output.
             GlobalDimVectorType const darcy_velocity =
@@ -134,8 +135,10 @@ public:
         typename ShapeMatricesType::ShapeMatrices shape_matrices(
             ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
 
+        // Note: Axial symmetry is set to false here, because we only need dNdx
+        // here, which is not affected by axial symmetry.
         fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
-                                 GlobalDim);
+                                 GlobalDim, false);
         std::vector<double> flux;
         flux.resize(3);
 

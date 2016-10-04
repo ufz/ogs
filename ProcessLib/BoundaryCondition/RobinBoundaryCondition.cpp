@@ -16,8 +16,8 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     BaseLib::ConfigTree const& config,
     std::vector<MeshLib::Element*>&& elements,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    int const component_id, unsigned const integration_order,
-    unsigned const global_dim,
+    int const component_id, bool is_axially_symmetric,
+    unsigned const integration_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     DBUG("Constructing RobinBcConfig from config.");
@@ -32,11 +32,10 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     auto const& alpha = findParameter<double>(alpha_name, parameters, 1);
     auto const& u_0 = findParameter<double>(u_0_name, parameters, 1);
 
-    return std::unique_ptr<RobinBoundaryCondition>(
-        new RobinBoundaryCondition(
-            integration_order, dof_table, variable_id, component_id, global_dim,
-            std::move(elements),
-            RobinBoundaryConditionData{alpha, u_0}));
+    return std::unique_ptr<RobinBoundaryCondition>(new RobinBoundaryCondition(
+        is_axially_symmetric, integration_order, dof_table, variable_id,
+        component_id, global_dim, std::move(elements),
+        RobinBoundaryConditionData{alpha, u_0}));
 }
 
 }  // ProcessLib

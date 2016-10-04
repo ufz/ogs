@@ -60,18 +60,29 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         project_directory);
     detail::readGeometry(geometry_file, *_geoObjects);
 
-    std::string const mesh_file = BaseLib::copyPathToFileName(
-        //! \ogs_file_param{prj__mesh}
-        project_config.getConfigParameter<std::string>("mesh"),
-        project_directory);
-
-    MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
-    if (!mesh)
     {
-        OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
-                  mesh_file.c_str());
+        //! \ogs_file_param{prj__mesh}
+        auto const mesh_param = project_config.getConfigParameter("mesh");
+
+        std::string const mesh_file = BaseLib::copyPathToFileName(
+            //! \ogs_file_param{prj__mesh}
+            mesh_param.getValue<std::string>(), project_directory);
+
+        MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
+        if (!mesh)
+        {
+            OGS_FATAL("Could not read mesh from \'%s\' file. No mesh added.",
+                      mesh_file.c_str());
+        }
+
+        if (auto const axially_symmetric =
+                //! \ogs_file_param{prj__mesh__axial_symmetric}
+            mesh_param.getConfigAttributeOptional<bool>("axially_symmetric"))
+        {
+            mesh->setAxiallySymmetric(*axially_symmetric);
+        }
+        _mesh_vec.push_back(mesh);
     }
-    _mesh_vec.push_back(mesh);
 
     //! \ogs_file_param{prj__curves}
     parseCurves(project_config.getConfigSubtreeOptional("curves"));

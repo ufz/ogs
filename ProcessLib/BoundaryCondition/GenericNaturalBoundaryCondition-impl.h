@@ -24,11 +24,12 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         typename std::enable_if<
             std::is_same<typename std::decay<BoundaryConditionData>::type,
                          typename std::decay<Data>::type>::value,
-            unsigned const>::type integration_order,
+            bool>::type is_axially_symmetric,
+        unsigned const integration_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        unsigned const global_dim,
-        std::vector<MeshLib::Element*>&& elements, Data&& data)
+        unsigned const global_dim, std::vector<MeshLib::Element*>&& elements,
+        Data&& data)
     : _data(std::forward<Data>(data)),
       _elements(std::move(elements)),
       _integration_order(integration_order)
@@ -54,8 +55,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         variable_id, component_id, std::move(all_mesh_subsets), _elements));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _elements, *_dof_table_boundary, _integration_order,
-        _local_assemblers, _data);
+        global_dim, _elements, *_dof_table_boundary, _local_assemblers,
+        is_axially_symmetric, _integration_order, _data);
 }
 
 template <typename BoundaryConditionData,

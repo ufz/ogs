@@ -38,11 +38,12 @@ protected:
 
 public:
     GenericNaturalBoundaryConditionLocalAssembler(
-        MeshLib::Element const& e, unsigned const integration_order)
+        MeshLib::Element const& e, bool is_axially_symmetric,
+        unsigned const integration_order)
         : _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              e, _integration_method))
+              e, is_axially_symmetric, _integration_method))
     {
     }
 

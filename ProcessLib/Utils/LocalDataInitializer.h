@@ -249,7 +249,6 @@ public:
             std::size_t const id,
             MeshLib::Element const& mesh_item,
             LADataIntfPtr& data_ptr,
-            unsigned const integration_order,
             ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
@@ -257,9 +256,8 @@ public:
 
         if (it != _builder.end()) {
             auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
-            data_ptr = it->second(
-                           mesh_item, num_local_dof, integration_order,
-                           std::forward<ConstructorArgs>(args)...);
+            data_ptr = it->second(mesh_item, num_local_dof,
+                                  std::forward<ConstructorArgs>(args)...);
         } else {
             OGS_FATAL("You are trying to build a local assembler for an unknown mesh element type (%s)."
                 " Maybe you have disabled this mesh element type in your build configuration.",
@@ -271,7 +269,6 @@ private:
     using LADataBuilder = std::function<LADataIntfPtr(
             MeshLib::Element const& e,
             std::size_t const local_matrix_size,
-            unsigned const integration_order,
             ConstructorArgs&&...
         )>;
 
@@ -291,12 +288,11 @@ private:
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  unsigned const integration_order,
                   ConstructorArgs&&... args)
         {
             return LADataIntfPtr{
                 new LAData<ShapeFct>{
-                    e, local_matrix_size, integration_order,
+                    e, local_matrix_size,
                     std::forward<ConstructorArgs>(args)...
                 }};
         };

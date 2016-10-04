@@ -31,11 +31,12 @@ class RobinBoundaryConditionLocalAssembler final
         ShapeFunction, IntegrationMethod, GlobalDim>;
 
 public:
-    RobinBoundaryConditionLocalAssembler(
-        MeshLib::Element const& e, std::size_t const local_matrix_size,
-        unsigned const integration_order,
-        RobinBoundaryConditionData const& data)
-        : Base(e, integration_order),
+    RobinBoundaryConditionLocalAssembler(MeshLib::Element const& e,
+                                         std::size_t const local_matrix_size,
+                                         bool is_axially_symmetric,
+                                         unsigned const integration_order,
+                                         RobinBoundaryConditionData const& data)
+        : Base(e, is_axially_symmetric, integration_order),
           _data(data),
           _local_K(local_matrix_size, local_matrix_size),
           _local_rhs(local_matrix_size)
@@ -70,9 +71,9 @@ public:
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
             _local_K.diagonal().noalias() +=
-                sm.N * alpha * sm.detJ * wp.getWeight();
-            _local_rhs.noalias() +=
-                sm.N * alpha * u_0 * sm.detJ * wp.getWeight();
+                sm.N * alpha * sm.detJ * wp.getWeight() * sm.integralMeasure;
+            _local_rhs.noalias() += sm.N * alpha * u_0 * sm.detJ *
+                                    wp.getWeight() * sm.integralMeasure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

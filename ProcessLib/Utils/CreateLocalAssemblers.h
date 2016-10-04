@@ -31,7 +31,6 @@ template<unsigned GlobalDim,
 void createLocalAssemblers(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         std::vector<MeshLib::Element*> const& mesh_elements,
-        unsigned const integration_order,
         std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
         ExtraCtorArgs&&... extra_ctor_args
         )
@@ -51,11 +50,8 @@ void createLocalAssemblers(
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
-            initializer,
-            mesh_elements,
-            local_assemblers,
-            integration_order,
-            std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+        initializer, mesh_elements, local_assemblers,
+        std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 
 } // namespace detail
@@ -80,7 +76,6 @@ void createLocalAssemblers(
         const unsigned dimension,
         std::vector<MeshLib::Element*> const& mesh_elements,
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        unsigned const integration_order,
         std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
         ExtraCtorArgs&&... extra_ctor_args
         )
@@ -90,25 +85,19 @@ void createLocalAssemblers(
     switch (dimension)
     {
     case 1:
-        detail::createLocalAssemblers<
-            1, LocalAssemblerImplementation>(
-                dof_table, mesh_elements, integration_order,
-                local_assemblers,
-                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+        detail::createLocalAssemblers<1, LocalAssemblerImplementation>(
+            dof_table, mesh_elements, local_assemblers,
+            std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     case 2:
-        detail::createLocalAssemblers<
-            2, LocalAssemblerImplementation>(
-                dof_table, mesh_elements, integration_order,
-                local_assemblers,
-                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+        detail::createLocalAssemblers<2, LocalAssemblerImplementation>(
+            dof_table, mesh_elements, local_assemblers,
+            std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     case 3:
-        detail::createLocalAssemblers<
-            3, LocalAssemblerImplementation>(
-                dof_table, mesh_elements, integration_order,
-                local_assemblers,
-                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+        detail::createLocalAssemblers<3, LocalAssemblerImplementation>(
+            dof_table, mesh_elements, local_assemblers,
+            std::forward<ExtraCtorArgs>(extra_ctor_args)...);
         break;
     default:
         OGS_FATAL("Meshes with dimension greater than three are not supported.");

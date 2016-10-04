@@ -191,10 +191,7 @@ template <typename Traits>
 void TESLocalAssemblerInner<Traits>::preEachAssembleIntegrationPoint(
     const unsigned int_pt,
     const std::vector<double>& localX,
-    typename Traits::ShapeMatrices::ShapeType const& smN,
-    typename Traits::ShapeMatrices::DxShapeType const& /*smDNdx*/,
-    typename Traits::ShapeMatrices::JacobianType const& /*smJ*/,
-    const double /*smDetJ*/)
+    typename Traits::ShapeMatrices const& sm)
 {
 #ifndef NDEBUG
     // fill local data with garbage to aid in debugging
@@ -202,7 +199,7 @@ void TESLocalAssemblerInner<Traits>::preEachAssembleIntegrationPoint(
         std::numeric_limits<double>::quiet_NaN();
 #endif
 
-    NumLib::shapeFunctionInterpolate(localX, smN, _d.p, _d.T,
+    NumLib::shapeFunctionInterpolate(localX, sm.N, _d.p, _d.T,
                                      _d.vapour_mass_fraction);
 
     // pre-compute certain properties
@@ -222,20 +219,16 @@ template <typename Traits>
 void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     unsigned integration_point,
     std::vector<double> const& localX,
-    const typename Traits::ShapeMatrices::ShapeType& smN,
-    const typename Traits::ShapeMatrices::DxShapeType& smDNdx,
-    const typename Traits::ShapeMatrices::JacobianType& smJ,
-    const double smDetJ,
+    typename Traits::ShapeMatrices const& sm,
     const double weight,
     Eigen::Map<typename Traits::LocalMatrix>& local_M,
     Eigen::Map<typename Traits::LocalMatrix>& local_K,
     Eigen::Map<typename Traits::LocalVector>& local_b)
 {
-    preEachAssembleIntegrationPoint(integration_point, localX, smN, smDNdx, smJ,
-                                    smDetJ);
+    preEachAssembleIntegrationPoint(integration_point, localX, sm);
 
-    auto const N = smDNdx.cols();  // number of integration points
-    auto const D = smDNdx.rows();  // global dimension: 1, 2 or 3
+    auto const N = sm.dNdx.cols();  // number of integration points
+    auto const D = sm.dNdx.rows();  // global dimension: 1, 2 or 3
 
     assert(N * NODAL_DOF == local_M.cols());
 
@@ -246,12 +239,12 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     auto const contentCoeffMat = getContentCoeffMatrix(integration_point);
 
     // calculate velocity
-    assert((unsigned)smDNdx.rows() == _d.velocity.size() &&
-           (unsigned)smDNdx.cols() == _d.velocity[0].size());
+    assert((unsigned)sm.dNdx.rows() == _d.velocity.size() &&
+           (unsigned)sm.dNdx.cols() == _d.velocity[0].size());
 
     auto const velocity =
         (Traits::blockDimDim(laplaceCoeffMat, 0, 0, D, D) *
-         (smDNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(),
+         (sm.dNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(),
                                                                   N)  // grad_p
           /
           -_d.rho_GR))
@@ -263,26 +256,27 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
         _d.velocity[d][integration_point] = velocity[d];
     }
 
-    auto const detJ_w_NT = (smDetJ * weight * smN.transpose()).eval();
-    auto const detJ_w_NT_N = (detJ_w_NT * smN).eval();
-    assert(detJ_w_NT_N.rows() == N && detJ_w_NT_N.cols() == N);
+    auto const detJ_w_im_NT =
+        (sm.detJ * weight * sm.integralMeasure * sm.N.transpose()).eval();
+    auto const detJ_w_im_NT_N = (detJ_w_im_NT * sm.N).eval();
+    assert(detJ_w_im_NT_N.rows() == N && detJ_w_im_NT_N.cols() == N);
 
-    auto const detJ_w_NT_vT_dNdx =
-        (detJ_w_NT * velocity.transpose() * smDNdx).eval();
-    assert(detJ_w_NT_vT_dNdx.rows() == N && detJ_w_NT_vT_dNdx.cols() == N);
+    auto const detJ_w_im_NT_vT_dNdx =
+        (detJ_w_im_NT * velocity.transpose() * sm.dNdx).eval();
+    assert(detJ_w_im_NT_vT_dNdx.rows() == N && detJ_w_im_NT_vT_dNdx.cols() == N);
 
     for (unsigned r = 0; r < NODAL_DOF; ++r)
     {
         for (unsigned c = 0; c < NODAL_DOF; ++c)
         {
             Traits::blockShpShp(local_K, N * r, N * c, N, N).noalias() +=
-                smDetJ * weight * smDNdx.transpose() *
+                sm.detJ * weight * sm.integralMeasure * sm.dNdx.transpose() *
                     Traits::blockDimDim(laplaceCoeffMat, D * r, D * c, D, D) *
-                    smDNdx  // end Laplacian part
-                + detJ_w_NT_N * contentCoeffMat(r, c) +
-                detJ_w_NT_vT_dNdx * advCoeffMat(r, c);
+                    sm.dNdx  // end Laplacian part
+                + detJ_w_im_NT_N * contentCoeffMat(r, c) +
+                detJ_w_im_NT_vT_dNdx * advCoeffMat(r, c);
             Traits::blockShpShp(local_M, N * r, N * c, N, N).noalias() +=
-                detJ_w_NT_N * massCoeffMat(r, c);
+                detJ_w_im_NT_N * massCoeffMat(r, c);
         }
     }
 
@@ -291,7 +285,8 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
     for (unsigned r = 0; r < NODAL_DOF; ++r)
     {
         Traits::blockShp(local_b, N * r, N).noalias() +=
-            rhsCoeffVector(r) * smN.transpose() * smDetJ * weight;
+            rhsCoeffVector(r) * sm.N.transpose() * sm.detJ * weight *
+            sm.integralMeasure;
     }
 }
 

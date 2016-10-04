@@ -44,8 +44,8 @@ void GroundwaterFlowProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table, integration_order,
-        _local_assemblers, _process_data);
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity_x", 1,

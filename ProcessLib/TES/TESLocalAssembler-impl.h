@@ -110,12 +110,13 @@ template <typename ShapeFunction_, typename IntegrationMethod_,
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     TESLocalAssembler(MeshLib::Element const& e,
                       std::size_t const /*local_matrix_size*/,
+                      bool is_axially_symmetric,
                       unsigned const integration_order,
                       AssemblyParams const& asm_params)
     : _integration_method(integration_order),
       _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod_, GlobalDim>(
-          e, _integration_method)),
+          e, is_axially_symmetric, _integration_method)),
       _d(asm_params,
          // TODO narrowing conversion
          static_cast<const unsigned>(
@@ -154,8 +155,8 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
         auto const& wp = _integration_method.getWeightedPoint(ip);
         auto const weight = wp.getWeight();
 
-        _d.assembleIntegrationPoint(ip, local_x, sm.N, sm.dNdx, sm.J, sm.detJ,
-                                    weight, local_M, local_K, local_b);
+        _d.assembleIntegrationPoint(ip, local_x, sm, weight, local_M, local_K,
+                                    local_b);
     }
 
     if (_d.getAssemblyParameters().output_element_matrices)

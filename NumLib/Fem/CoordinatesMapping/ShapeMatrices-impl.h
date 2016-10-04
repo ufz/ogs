@@ -64,6 +64,7 @@ inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape, ShapeDataFie
     setZero(shape, ShapeDataFieldType<ShapeMatrixType::DNDR>());
     setMatrixZero(shape.J);
     shape.detJ = .0;
+    shape.integralMeasure = 0.0;
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>

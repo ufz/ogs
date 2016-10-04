@@ -51,7 +51,8 @@ struct IntegrationPointData final
           _solid_material(other._solid_material),
           _material_state_variables(std::move(other._material_state_variables)),
           _C(std::move(other._C)),
-          _detJ(std::move(other._detJ))
+          _detJ(std::move(other._detJ)),
+          _integralMeasure(other._integralMeasure)
     {
     }
 #endif  // _MSC_VER
@@ -67,6 +68,7 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType _C;
     double _detJ;
+    double _integralMeasure;
 
     void pushBackState()
     {
@@ -87,9 +89,6 @@ template <typename ShapeMatrixType>
 struct SecondaryData
 {
     std::vector<ShapeMatrixType> N;
-    std::vector<double> _sigmaXX;
-    std::vector<double> _sigmaYY;
-    std::vector<double> _sigmaXY;
 };
 
 struct SmallDeformationLocalAssemblerInterface
@@ -97,13 +96,22 @@ struct SmallDeformationLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
     virtual std::vector<double> const& getIntPtSigmaXX(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaYY(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtSigmaXY(
-        std::vector<double>& /*cache*/) const = 0;
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const = 0;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -132,6 +140,7 @@ public:
     SmallDeformationLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        bool is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
@@ -142,29 +151,31 @@ public:
             _integration_method.getNumberOfPoints();
 
         _ip_data.reserve(n_integration_points);
-
         _secondary_data.N.resize(n_integration_points);
-        _secondary_data._sigmaXX.resize(n_integration_points);
-        _secondary_data._sigmaYY.resize(n_integration_points);
-        _secondary_data._sigmaXY.resize(n_integration_points);
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, _integration_method);
+                e, is_axially_symmetric, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(*_process_data._material);
             auto& ip_data = _ip_data[ip];
-            ip_data._detJ = shape_matrices[ip].detJ;
+            auto const& sm = shape_matrices[ip];
+            ip_data._detJ = sm.detJ;
+            ip_data._integralMeasure = sm.integralMeasure;
             ip_data._b_matrices.resize(
                 KelvinVectorDimensions<DisplacementDim>::value,
                 ShapeFunction::NPOINTS * DisplacementDim);
-            LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunction::NPOINTS,
-                typename ShapeMatricesType::GlobalDimNodalMatrixType,
-                BMatrixType>(shape_matrices[ip].dNdx, ip_data._b_matrices);
+
+            auto const x_coord =
+                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(e,
+                                                                         sm.N);
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS>(
+                sm.dNdx, ip_data._b_matrices, is_axially_symmetric, sm.N,
+                x_coord);
 
             ip_data._sigma.resize(
                 KelvinVectorDimensions<DisplacementDim>::value);
@@ -218,6 +229,7 @@ public:
             x_position.setIntegrationPoint(ip);
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const& detJ = _ip_data[ip]._detJ;
+            auto const& integralMeasure = _ip_data[ip]._integralMeasure;
 
             auto const& B = _ip_data[ip]._b_matrices;
             auto const& eps_prev = _ip_data[ip]._eps_prev;
@@ -239,15 +251,10 @@ public:
                     sigma, C, material_state_variables))
                 OGS_FATAL("Computation of local constitutive relation failed.");
 
-            local_b.noalias() -= B.transpose() * sigma * detJ * wp.getWeight();
+            local_b.noalias() -=
+                B.transpose() * sigma * detJ * wp.getWeight() * integralMeasure;
             local_Jac.noalias() +=
-                B.transpose() * C * B * detJ * wp.getWeight();
-
-
-            // TODO: Reuse _ip_data[ip]._sigma
-            _secondary_data._sigmaXX[ip] = sigma[0];
-            _secondary_data._sigmaYY[ip] = sigma[1];
-            _secondary_data._sigmaXY[ip] = sigma[3];
+                B.transpose() * C * B * detJ * wp.getWeight() * integralMeasure;
         }
     }
 
@@ -274,24 +281,57 @@ public:
     }
 
     std::vector<double> const& getIntPtSigmaXX(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaXX;
+        return getIntPtSigma(cache, 0);
     }
 
     std::vector<double> const& getIntPtSigmaYY(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaYY;
+        return getIntPtSigma(cache, 1);
+    }
+
+    std::vector<double> const& getIntPtSigmaZZ(
+        std::vector<double>& cache) const override
+    {
+        return getIntPtSigma(cache, 2);
     }
 
     std::vector<double> const& getIntPtSigmaXY(
-        std::vector<double>& /*cache*/) const override
+        std::vector<double>& cache) const override
     {
-        return _secondary_data._sigmaXY;
+        return getIntPtSigma(cache, 3);
+    }
+
+    std::vector<double> const& getIntPtSigmaXZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 4);
+    }
+
+    std::vector<double> const& getIntPtSigmaYZ(
+        std::vector<double>& cache) const override
+    {
+        assert(DisplacementDim == 3);
+        return getIntPtSigma(cache, 5);
     }
 
 private:
+    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
+                                             std::size_t const component) const
+    {
+        cache.clear();
+        cache.reserve(_ip_data.size());
+
+        for (auto const& ip_data : _ip_data) {
+            cache.push_back(ip_data._sigma[component]);
+        }
+
+        return cache;
+    }
+
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<IntegrationPointData<BMatricesType, DisplacementDim>> _ip_data;
@@ -314,11 +354,13 @@ public:
     LocalAssemblerData(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : SmallDeformationLocalAssembler<ShapeFunction, IntegrationMethod,
                                          DisplacementDim>(
-              e, local_matrix_size, integration_order, process_data)
+              e, local_matrix_size, is_axially_symmetric, integration_order,
+              process_data)
     {
     }
 };

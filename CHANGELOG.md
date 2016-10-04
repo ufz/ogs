@@ -26,6 +26,8 @@ for boundary conditions were generalized.
    ID dependent values. #1426
  - Added fluid property class and several fluid density and viscosity models
    based on it. #1398, #1435
+ - Enabled solving of axially symmetric problems on 2D meshes for all currently
+   implemented processes. #1443
 
 #### Utilities
  New utilities:

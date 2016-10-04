@@ -31,9 +31,10 @@ public:
     NeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        bool is_axially_symmetric,
         unsigned const integration_order,
         Parameter<double> const& neumann_bc_parameter)
-        : Base(e, integration_order),
+        : Base(e, is_axially_symmetric, integration_order),
           _neumann_bc_parameter(neumann_bc_parameter),
           _local_rhs(local_matrix_size)
     {
@@ -58,7 +59,8 @@ public:
             auto const& sm = Base::_shape_matrices[ip];
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
             _local_rhs.noalias() += sm.N * _neumann_bc_parameter(t, pos)[0] *
-                                    sm.detJ * wp.getWeight();
+                                    sm.detJ * wp.getWeight() *
+                                    sm.integralMeasure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);

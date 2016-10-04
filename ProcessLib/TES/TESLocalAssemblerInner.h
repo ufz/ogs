@@ -34,10 +34,7 @@ public:
     void assembleIntegrationPoint(
         unsigned integration_point,
         std::vector<double> const& localX,
-        typename Traits::ShapeMatrices::ShapeType const& smN,
-        typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
-        typename Traits::ShapeMatrices::JacobianType const& smJ,
-        const double smDetJ,
+        typename Traits::ShapeMatrices const& sm,
         const double weight,
         Eigen::Map<typename Traits::LocalMatrix>& local_M,
         Eigen::Map<typename Traits::LocalMatrix>& local_K,
@@ -64,10 +61,7 @@ private:
     void preEachAssembleIntegrationPoint(
         const unsigned int_pt,
         std::vector<double> const& localX,
-        typename Traits::ShapeMatrices::ShapeType const& smN,
-        typename Traits::ShapeMatrices::DxShapeType const& smDNdx,
-        typename Traits::ShapeMatrices::JacobianType const& smJ,
-        const double smDetJ);
+        typename Traits::ShapeMatrices const& sm);
 
     void initReaction(const unsigned int_pt);
 
