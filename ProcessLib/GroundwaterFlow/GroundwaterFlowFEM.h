@@ -74,7 +74,9 @@ public:
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method))
+              element, is_axially_symmetric, _integration_method)),
+          _darcy_velocities(GlobalDim,
+			  std::vector<double>(_integration_method.getNumberOfPoints()))
     {
     }
 
@@ -102,6 +104,7 @@ public:
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
+
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
@@ -193,9 +196,7 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices> _shape_matrices;
 
-    std::vector<std::vector<double>> _darcy_velocities =
-        std::vector<std::vector<double>>(
-            GlobalDim, std::vector<double>(ShapeFunction::NPOINTS));
+    std::vector<std::vector<double>> _darcy_velocities;
 };
 
 
