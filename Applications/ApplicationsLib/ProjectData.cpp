@@ -65,7 +65,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         auto const mesh_param = project_config.getConfigParameter("mesh");
 
         std::string const mesh_file = BaseLib::copyPathToFileName(
-            //! \ogs_file_param{prj__mesh}
             mesh_param.getValue<std::string>(), project_directory);
 
         MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
@@ -76,7 +75,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         }
 
         if (auto const axially_symmetric =
-                //! \ogs_file_param{prj__mesh__axial_symmetric}
+                //! \ogs_file_attr{prj__mesh__axially_symmetric}
             mesh_param.getConfigAttributeOptional<bool>("axially_symmetric"))
         {
             mesh->setAxiallySymmetric(*axially_symmetric);
@@ -263,12 +262,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         //! \ogs_file_param{process__type}
         auto const type = process_config.peekConfigParameter<std::string>("type");
 
-        //! \ogs_file_param{process__type}
+        //! \ogs_file_param{process__name}
         auto const name = process_config.getConfigParameter<std::string>("name");
 
         std::unique_ptr<ProcessLib::Process> process;
 
         auto jacobian_assembler = ProcessLib::createJacobianAssembler(
+            //! \ogs_file_param{process__jacobian_assembler}
             process_config.getConfigSubtreeOptional("jacobian_assembler"));
 
         if (type == "GROUNDWATER_FLOW")
@@ -297,6 +297,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         }
         else if (type == "SMALL_DEFORMATION")
         {
+            //! \ogs_file_param{process__SMALL_DEFORMATION__dimension}
             switch (process_config.getConfigParameter<int>("dimension"))
             {
                 case 2:

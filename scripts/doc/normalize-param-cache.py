@@ -21,11 +21,73 @@ comment_special = re.compile(r"//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0
 
 # capture #5 is the parameter name
 getter = re.compile(r'(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
-                   +r'(<.*>)?'
-                   +r'\("([a-zA-Z_0-9:]+)"[,)]')
+                   +r'\s*(<.*>)?'
+                   +r'\s*\(\s*"([a-zA-Z_0-9:]+)"\s*[,)]')
 
 getter_special = re.compile(r'(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?'
-                           +r'(<.*>)?\(')
+                           +r'\s*(<.*>)?\(')
+
+
+# merge lines belonging together from grep -A 2 output.
+def merge_lines(it):
+    buf = ""
+    buf_fn = ""
+    buf_lno = 0
+
+    for l in it:
+        l = l.strip()
+        if (not l) or l == "--":
+            # separator line
+            if buf_fn:
+                yield buf_fn, buf_lno, buf
+            buf = ""
+            buf_fn = ""
+            buf_lno = 0
+        else:
+            m = re.match("(.*)([:-])([0-9]+)([:-])(.*)$", l)
+            assert m
+            assert m.group(2) == m.group(4)
+            fn = m.group(1)
+            lno = int(m.group(3))
+            line = m.group(5)
+            msg =  fn + m.group(2) + str(lno) + m.group(4) + line
+
+            # remove non-doxygen comments
+            line = re.sub('/\*[^!*].*\*/|/\*\*/', '', line)
+            line = re.sub("//[^!*].*|//$", "", line, 1)
+
+            if buf_fn:
+                if m.group(2) == ":":
+                    # new location started, yield the old one
+                    yield buf_fn, buf_lno, buf
+                    buf = line
+                    buf_fn = fn
+                    buf_lno = lno
+                else:
+                    # continuation line
+                    assert buf_fn == fn
+                    buf += " " + line
+            elif m.group(2) == ":":
+                buf = line
+                buf_fn = fn
+                buf_lno = lno
+            else:
+                # continuation line and empty buffer
+                pass
+
+            if buf_fn and (comment.search(line) or comment_special.search(line)):
+                # make sure nothing can be appended to doxygen comment lines
+                yield buf_fn, buf_lno, buf
+                buf = ""
+                buf_lno = 0
+                buf_fn = ""
+
+    if buf_fn:
+        yield buf_fn, buf_lno, buf
+
+    return
+    yield
+
 
 state = "getter"
 path = ""
@@ -34,15 +96,11 @@ line = ""
 tag_path_comment = ""
 param_or_attr_comment = ""
 
-for inline in sys.stdin:
+for inline in merge_lines(sys.stdin):
     oldpath = path; oldlineno = lineno; oldline = line
-
-    path, lineno, line = inline.split(":", 2)
+    path, lineno, line = inline
 
     if path != oldpath: debug(path)
-
-    line = line.strip()
-    lineno = int(lineno)
 
     m = comment.search(line)
     if m:

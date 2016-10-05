@@ -21,7 +21,7 @@ namespace NumLib
 std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
     const BaseLib::ConfigTree& config)
 {
-    //! \ogs_file_param{process__convergence_criterion__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
     if (type == "DeltaX") {

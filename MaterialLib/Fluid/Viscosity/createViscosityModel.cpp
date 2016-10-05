@@ -80,7 +80,7 @@ std::unique_ptr<FluidProperty> createViscosityModel(
     {
         INFO("Using Vogels model, which gives viscosity in SI unit, Pa s");
         auto const fluid_type =
-            //! \ogs_file_param{material__fluid__viscosity__Vogels__fluid_type}
+            //! \ogs_file_param{material__fluid__viscosity__Vogels__liquid_type}
             config.getConfigParameter<std::string>("liquid_type");
         if (fluid_type == "Water")
         {

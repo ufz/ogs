@@ -58,15 +58,15 @@ void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
 std::unique_ptr<ConvergenceCriterionResidual>
 createConvergenceCriterionResidual(const BaseLib::ConfigTree& config)
 {
-    //! \ogs_file_param{process__convergence_criterion__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__type}
     config.checkConfigParameter("type", "Residual");
 
-    //! \ogs_file_param{process__convergence_criterion__Residual__abstol}
+    //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__Residual__abstol}
     auto abstol = config.getConfigParameterOptional<double>("abstol");
-    //! \ogs_file_param{process__convergence_criterion__Residual__reltol}
+    //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__Residual__reltol}
     auto reltol = config.getConfigParameterOptional<double>("reltol");
     auto const norm_type_str =
-        //! \ogs_file_param{process__convergence_criterion__Residual__norm_type}
+        //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__Residual__norm_type}
         config.getConfigParameter<std::string>("norm_type");
     auto const norm_type = MathLib::convertStringToVecNormType(norm_type_str);
 

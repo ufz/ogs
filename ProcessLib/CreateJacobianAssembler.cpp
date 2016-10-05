@@ -22,6 +22,7 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
         return std::unique_ptr<AbstractJacobianAssembler>(
             new AnalyticalJacobianAssembler);
 
+    //! \ogs_file_param{process__jacobian_assembler__type}
     auto const type = config->peekConfigParameter<std::string>("type");
 
     if (type == "Analytical") {

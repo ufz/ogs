@@ -49,24 +49,24 @@ std::unique_ptr<Output> Output::
 newInstance(const BaseLib::ConfigTree &config, std::string const& output_directory)
 {
     auto const output_iteration_results =
-        //! \ogs_file_param{prj__output__output_iteration_results}
+        //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameterOptional<bool>("output_iteration_results");
 
     std::unique_ptr<Output> out{new Output{
         BaseLib::joinPaths(output_directory,
-                           //! \ogs_file_param{prj__output__prefix}
+                           //! \ogs_file_param{prj__time_loop__output__prefix}
                            config.getConfigParameter<std::string>("prefix")),
         output_iteration_results ? *output_iteration_results : false}};
 
-    //! \ogs_file_param{prj__output__timesteps}
+    //! \ogs_file_param{prj__time_loop__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
     {
-        //! \ogs_file_param{prj__output__timesteps__pair}
+        //! \ogs_file_param{prj__time_loop__output__timesteps__pair}
         for (auto pair : timesteps->getConfigSubtreeList("pair"))
         {
-            //! \ogs_file_param{prj__output__timesteps__pair__repeat}
+            //! \ogs_file_param{prj__time_loop__output__timesteps__pair__repeat}
             auto repeat     = pair.getConfigParameter<unsigned>("repeat");
-            //! \ogs_file_param{prj__output__timesteps__pair__each_steps}
+            //! \ogs_file_param{prj__time_loop__output__timesteps__pair__each_steps}
             auto each_steps = pair.getConfigParameter<unsigned>("each_steps");
 
             assert(repeat != 0 && each_steps != 0);

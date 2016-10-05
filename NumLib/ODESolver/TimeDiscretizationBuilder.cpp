@@ -18,31 +18,31 @@ std::unique_ptr<TimeDiscretization> createTimeDiscretization(
 {
     using T = std::unique_ptr<TimeDiscretization>;
 
-    //! \ogs_file_param{process__time_discretization__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__time_discretization__type}
     auto const type = config.getConfigParameter<std::string>("type");
 
     if (type == "BackwardEuler")
     {
-        //! \ogs_file_param_special{process__time_discretization__BackwardEuler}
+        //! \ogs_file_param_special{prj__time_loop__processes__process__time_discretization__BackwardEuler}
         using ConcreteTD = BackwardEuler;
         return T(new ConcreteTD);
     }
     else if (type == "ForwardEuler")
     {
-        //! \ogs_file_param_special{process__time_discretization__ForwardEuler}
+        //! \ogs_file_param_special{prj__time_loop__processes__process__time_discretization__ForwardEuler}
         using ConcreteTD = ForwardEuler;
         return T(new ConcreteTD);
     }
     else if (type == "CrankNicolson")
     {
-        //! \ogs_file_param{process__time_discretization__CrankNicolson__theta}
+        //! \ogs_file_param{prj__time_loop__processes__process__time_discretization__CrankNicolson__theta}
         auto const theta = config.getConfigParameter<double>("theta");
         using ConcreteTD = CrankNicolson;
         return T(new ConcreteTD(theta));
     }
     else if (type == "BackwardDifferentiationFormula")
     {
-        //! \ogs_file_param{process__time_discretization__BackwardDifferentiationFormula__order}
+        //! \ogs_file_param{prj__time_loop__processes__process__time_discretization__BackwardDifferentiationFormula__order}
         auto const order = config.getConfigParameter<unsigned>("order");
         using ConcreteTD = BackwardDifferentiationFormula;
         return T(new ConcreteTD(order));

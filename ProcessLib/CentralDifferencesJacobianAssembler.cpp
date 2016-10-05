@@ -130,11 +130,14 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
 std::unique_ptr<CentralDifferencesJacobianAssembler>
 createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
 {
+    //! \ogs_file_param{process__jacobian_assembler__type}
     config.checkConfigParameter("type", "CentralDifferences");
 
     // TODO make non-optional.
+    //! \ogs_file_param{process__jacobian_assembler__relative_epsilons}
     auto rel_eps = config.getConfigParameterOptional<std::vector<double>>(
         "relative_epsilons");
+    //! \ogs_file_param{process__jacobian_assembler__component_magnitudes}
     auto comp_mag = config.getConfigParameterOptional<std::vector<double>>(
         "component_magnitudes");
 

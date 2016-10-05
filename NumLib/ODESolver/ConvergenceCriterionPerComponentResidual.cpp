@@ -90,17 +90,17 @@ std::unique_ptr<ConvergenceCriterionPerComponentResidual>
 createConvergenceCriterionPerComponentResidual(
     const BaseLib::ConfigTree& config)
 {
-    //! \ogs_file_param{process__convergence_criterion__type}
+    //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__type}
     config.checkConfigParameter("type", "PerComponentResidual");
 
     auto abstols =
-        //! \ogs_file_param{process__convergence_criterion__PerComponentResidual__abstols}
+        //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentResidual__abstols}
         config.getConfigParameterOptional<std::vector<double>>("abstols");
     auto reltols =
-        //! \ogs_file_param{process__convergence_criterion__PerComponentResidual__reltols}
+        //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentResidual__reltols}
         config.getConfigParameterOptional<std::vector<double>>("reltols");
     auto const norm_type_str =
-        //! \ogs_file_param{process__convergence_criterion__PerComponentResidual__norm_type}
+        //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentResidual__norm_type}
         config.getConfigParameter<std::string>("norm_type");
 
     if ((!abstols) && (!reltols))
