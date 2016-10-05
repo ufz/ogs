@@ -1,7 +1,11 @@
 ## Release notes
 # 6.0.8 (in preparation)
 
-## Release notes
+### Features:
+### Utilities
+### Infrastructure:
+### Fixes:
+
 # 6.0.7
 
 ### Features:
@@ -40,7 +44,7 @@ for boundary conditions were generalized.
    solvers. #1349, #1342
  - Restructured the time loop. #1364
 
-#### Utilities
+### Utilities
 New utilities:
  - createNeumannBc: The tool integrates the given element property and writes
    the computed data as a PropertyVector with the name `node_aggregated_gwn`
@@ -53,7 +57,7 @@ New utilities:
 New feature:
  - Support tetrahedra types in generateStructuredMesh. #1353
 
-### Infrastructure
+### Infrastructure:
  - Migrated all important Jenkins jobs to script-based
    [Jenkins Pipeline](https://jenkins.io/doc/pipeline/)
    functionality.  For an introduction see
