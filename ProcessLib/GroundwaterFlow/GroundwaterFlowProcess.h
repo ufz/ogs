@@ -73,7 +73,8 @@ public:
                                        init_values);
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,
-                getProcessVariables()[0].get().getNumberOfComponents());
+                getProcessVariables()[0].get().getNumberOfComponents(),
+                _integration_order);
 
             boost::optional<MeshLib::PropertyVector<double>&> balance_pv(
                 _balance_mesh->getProperties()

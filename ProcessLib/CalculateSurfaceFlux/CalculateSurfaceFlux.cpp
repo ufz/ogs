@@ -15,8 +15,10 @@
 
 namespace ProcessLib
 {
-CalculateSurfaceFlux::CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
-                               std::size_t bulk_property_number_of_components)
+CalculateSurfaceFlux::CalculateSurfaceFlux(
+    MeshLib::Mesh& boundary_mesh,
+    std::size_t bulk_property_number_of_components,
+    unsigned const integration_order)
 {
     DBUG("Create local balance assemblers.");
     // Populate the vector of local assemblers.
@@ -53,7 +55,6 @@ CalculateSurfaceFlux::CalculateSurfaceFlux(MeshLib::Mesh& boundary_mesh,
     if (!bulk_face_ids)
         OGS_FATAL("OriginalFaceIDs boundary mesh property not found.");
 
-    const unsigned integration_order = 2;
     ProcessLib::createLocalAssemblers<CalculateSurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
         boundary_mesh.getElements(), *dof_table, _local_assemblers,
