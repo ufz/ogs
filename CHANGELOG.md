@@ -41,16 +41,17 @@ for boundary conditions were generalized.
  - Restructured the time loop. #1364
 
 #### Utilities
- New utilities:
+New utilities:
  - createNeumannBc: The tool integrates the given element property and writes
    the computed data as a PropertyVector with the name `node_aggregated_gwn`
    into the mesh. The tool also outputs an OGS-5 direct source term (Neumann
    boundary condition) data file. #1346
  - scaleProperty for simple rescaling of mesh properties. #1347
- - Support tetrahedra types in generateStructuredMesh. #1353
  - convertGEO for geometric file conversion, e.g. gli to glm. #1360
  - swapNodeCoordinateAxes to swap node coordinate values, e.g. XY to XZ plane.
    #1361
+New feature:
+ - Support tetrahedra types in generateStructuredMesh. #1353
 
 ### Infrastructure
  - Migrated all important Jenkins jobs to script-based
