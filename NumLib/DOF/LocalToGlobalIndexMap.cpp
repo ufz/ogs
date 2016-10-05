@@ -29,16 +29,16 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
 
 } // no named namespace
 
-
 template <typename ElementIterator>
-void
-LocalToGlobalIndexMap::findGlobalIndices(
+void LocalToGlobalIndexMap::findGlobalIndices(
     ElementIterator first, ElementIterator last,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::size_t const mesh_id,
+    std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
     const unsigned comp_id, const unsigned comp_id_write)
 {
     _rows.resize(std::distance(first, last), _mesh_subsets.size());
+
+    std::vector<MeshLib::Node*> sorted_nodes{nodes};
+    std::sort(std::begin(sorted_nodes), std::end(sorted_nodes));
 
     // For each element find the global indices for node/element
     // components.
@@ -47,21 +47,21 @@ LocalToGlobalIndexMap::findGlobalIndices(
     {
         LineIndex indices;
 
-        for (auto* n = (*e)->getNodes(); n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
+        for (auto* n = (*e)->getNodes();
+             n < (*e)->getNodes() + (*e)->getNumberOfNodes(); ++n)
         {
             // Check if the element's node is in the given list of nodes.
-            if (std::find(std::begin(nodes), std::end(nodes), *n) == std::end(nodes))
+            if (!std::binary_search(std::begin(sorted_nodes),
+                                    std::end(sorted_nodes), *n))
                 continue;
-            MeshLib::Location l(mesh_id,
-                                MeshLib::MeshItemType::Node,
-                                (*n)->getID());
+            MeshLib::Location l(
+                mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
             indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
         }
 
         _rows(elem_id, comp_id_write) = std::move(indices);
     }
 }
-
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<std::unique_ptr<MeshLib::MeshSubsets>>&& mesh_subsets,
