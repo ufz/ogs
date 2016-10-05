@@ -598,7 +598,8 @@ if(NOT OGS_USE_MPI)
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
-        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v_x
     )
     AddTest(
         NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
@@ -620,7 +621,9 @@ if(NOT OGS_USE_MPI)
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
-        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVx v_x
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVy v_y
     )
     AddTest(
         NAME LiquidFlow_AxisymTheis
@@ -877,7 +880,8 @@ else()
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
-        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
+        sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticVec v_x
     )
     AddTest(
         NAME LiquidFlow_GravityDriven
@@ -888,7 +892,9 @@ else()
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
-        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticPressure pressure
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVx v_x
+        mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticVy v_y
     )
     AddTest(
         NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
