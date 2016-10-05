@@ -13,7 +13,7 @@
 
 namespace ProcessLib
 {
-MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& quad,
+MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint1D const& wp)
 {
@@ -31,7 +31,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& quad,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& hex,
+MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
@@ -89,10 +89,10 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
 }
 
 // TODO disable the 3d elements in the local assembler creator
-MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
-                                     std::size_t bulk_element_id,
-                                     std::size_t bulk_face_id,
-                                     MathLib::WeightedPoint3D const& wp)
+MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& /*mesh*/,
+                                     std::size_t /*bulk_element_id*/,
+                                     std::size_t /*bulk_face_id*/,
+                                     MathLib::WeightedPoint3D const& /*wp*/)
 {
     return MathLib::ORIGIN;
 }

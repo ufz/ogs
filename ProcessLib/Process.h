@@ -102,7 +102,7 @@ public:
         return _secondary_variables;
     }
 
-    // used as call back for CalculateSurfaceFlux process
+    // Used as a call back for CalculateSurfaceFlux process.
     virtual std::vector<double> getFlux(std::size_t /*element_id*/,
                                         MathLib::Point3d const& /*p*/,
                                         GlobalVector const& /*x*/) const
