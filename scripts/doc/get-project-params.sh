@@ -22,7 +22,8 @@ cat <<"EOF" \
     --exclude-dir '.git' \
     --exclude-dir 'Tests' \
     --exclude 'ConfigTree*.*' \
-    -f - -r -n -o $color \
+    -f - -r -n $color \
+    -A 2 \
 | cut -c $((${#srcdir} + 2))-
 //! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
 //! \\ogs_file_special$
