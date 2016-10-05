@@ -74,21 +74,17 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
     if (type == "Constant")
     {
         return std::unique_ptr<FluidProperty>(new ConstantFluidProperty(
-            //! \ogs_file_param{material__fluid__density__Constant_value}
+            //! \ogs_file_param{material__fluid__density__value}
             config.getConfigParameter<double>("value")));
     }
-    //! \ogs_file_param{material__fluid__density__LiquidDensity}
     else if (type == "LiquidDensity")
         return createLiquidDensity(config);
-
-    //! \ogs_file_param{material__fluid__density__TemperatureDependent}
     else if (type == "TemperatureDependent")
         return createLinearTemperatureDependentDensity(config);
-    //! \ogs_file_param{material__fluid__density__IdealGasLaw}
     else if (type == "IdealGasLaw")
     {
-        //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
         return std::unique_ptr<FluidProperty>(
+            //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
             new IdealGasLaw(config.getConfigParameter<double>("molar_mass")));
     }
     else
