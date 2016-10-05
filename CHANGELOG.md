@@ -20,6 +20,10 @@ for boundary conditions were generalized.
    parser. #1343
  - Added uniform Robin boundary condition. #1336
  - Added a generic natural boundary condition class. #1337
+ - Added Robin boundary condition. #1336
+ - Reworked the Parameter class. It now serves as a basis for BCs and ICs.
+   #1357, #1356
+ - Added time-dependent Dirichlet BCs. #1380
  - Add calculation of surface flux, tests for groundwater flow. #1429
  - Implemented numerical Jacobian assembly for Newton-Raphson solver. #1352
  - Added the new parameter type "Group" which can be used for setting material
@@ -28,6 +32,13 @@ for boundary conditions were generalized.
    based on it. #1398, #1435
  - Enabled solving of axially symmetric problems on 2D meshes for all currently
    implemented processes. #1443
+ - Added time measurement for assembly and solvers. #1322
+ - Added named functions, out of which expressions can be built up at run-time
+   from the prj file, which can be used to output additional nodal quantities.
+   #1314, #1315
+ - Added component-wise norms, and flexible convergence criteria for nonlinear
+   solvers. #1349, #1342
+ - Restructured the time loop. #1364
 
 #### Utilities
  New utilities:
@@ -52,6 +63,8 @@ for boundary conditions were generalized.
    gets build. #1458
  - Increase minimum clang compiler version to 3.5 in course of updating travis
    build enviroment to Ubuntu LTS 14.04. #1448
+ - Added a script that generates crosslinked Doxygen pages out of ctest input
+   files #1348
 
 ### Fixes:
  - Fix an issue that a shape vector was defined as a column vector. Corrected to
@@ -69,6 +82,9 @@ for boundary conditions were generalized.
  - Fix global Newton iteration counter. #1341
  - Correct few loops over mesh nodes, which should run over the mesh subsets.
    #1437
+ - Fix shape function computation for 2D elements lying in the x-y-plane #1318
+ - Fix AddTest, s.t. ctest now really checks results. #1325
+ - Made Eigen preconditioner configurable. #1367
 
 # 6.0.6
 
