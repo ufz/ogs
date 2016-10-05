@@ -113,5 +113,13 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac);
 }
 
+void LiquidFlowProcess::computeSecondaryVariableConcrete(GlobalVector const& x)
+{
+    DBUG("Compute the velocity for LiquidFlowProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+            &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
+            _local_assemblers, *_local_to_global_index_map, x);
+}
+        
 }  // end of namespace
 }  // end of namespace

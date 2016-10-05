@@ -85,7 +85,7 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
-    void computeSecondaryVariable(std::vector<double> const& local_x) override;
+    void computeSecondaryVariableConcrete(std::vector<double> const& local_x) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

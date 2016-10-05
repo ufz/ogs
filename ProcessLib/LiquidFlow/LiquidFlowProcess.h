@@ -69,6 +69,8 @@ public:
         double const gravitational_acceleration,
         BaseLib::ConfigTree const& config);
 
+    void computeSecondaryVariableConcrete(GlobalVector const& x) override;
+
     bool isLinear() const override { return true; }
 private:
     void initializeConcreteProcess(

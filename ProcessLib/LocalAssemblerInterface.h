@@ -45,7 +45,9 @@ public:
                                       std::vector<double>& local_b_data,
                                       std::vector<double>& local_Jac_data);
 
-    virtual void computeSecondaryVariable(std::vector<double> const& local_x);
+    virtual void computeSecondaryVariable(std::size_t const mesh_item_id,
+                              NumLib::LocalToGlobalIndexMap const& dof_table,
+                              GlobalVector const& x);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -72,6 +74,9 @@ private:
     }
 
     virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/) {}
+
+    virtual void computeSecondaryVariableConcrete
+                         (std::vector<double> const& /*local_x*/) {}
 };
 
 } // namespace ProcessLib

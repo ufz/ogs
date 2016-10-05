@@ -154,9 +154,67 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariable(std::vector<double> const& local_x)
+    computeSecondaryVariableConcrete(std::vector<double> const& local_x)
 {
-  (void) local_x;
+    auto const local_matrix_size = local_x.size();
+    assert(local_matrix_size == ShapeFunction::NPOINTS);
+
+    const auto local_p_vec =
+        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    _material_properties.setMaterialID(pos);
+    const Eigen::MatrixXd& perm =
+        _material_properties.getPermeability(t, pos, _element.getDimension());
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& sm = _shape_matrices[ip];
+        double p = 0.;
+        NumLib::shapeFunctionInterpolate(local_x, sm.N, p);
+        // TODO : compute _temperature from the heat transport pcs
+
+        const double rho_g =
+            _material_properties.getLiquidDensity(p, _temperature) *
+            _gravitational_acceleration;
+        // Compute viscosity:
+        const double mu = _material_properties.getViscosity(p, _temperature);
+
+        // Assemble Laplacian, K, and RHS by the gravitational term
+        if (perm.size() == 1)  // Save time for isotropic permeability.
+        {
+            //  Use scalar number for isotropic permeability
+            //  to save the computation time.
+            const double K = perm(0, 0) / mu;
+            // Compute the velocity
+            GlobalDimVectorType darcy_velocity = -K * sm.dNdx * local_p_vec;
+            // gravity term
+            if (_gravitational_axis_id >= 0)
+                darcy_velocity[GlobalDim - 1] -= K * rho_g;
+            for (unsigned d = 0; d < GlobalDim; ++d)
+            {
+                _darcy_velocities[d][ip] = darcy_velocity[d];
+            }
+        }
+        else
+        {
+            // Compute the velocity
+            GlobalDimVectorType darcy_velocity = -perm * sm.dNdx * local_p_vec / mu;
+            if (_gravitational_axis_id >= 0)
+            {
+                darcy_velocity.noalias() -=  rho_g * perm.col(GlobalDim - 1) / mu;
+            }
+            for (unsigned d = 0; d < GlobalDim; ++d)
+            {
+                _darcy_velocities[d][ip] = darcy_velocity[d];
+            }
+        }
+    }
+
 }
 
 }  // end of namespace
