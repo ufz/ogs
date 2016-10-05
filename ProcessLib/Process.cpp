@@ -30,8 +30,8 @@ Process::Process(
       _secondary_variables(std::move(secondary_variables)),
       _named_function_caller(std::move(named_function_caller)),
       _global_assembler(std::move(jacobian_assembler)),
-      _process_variables(std::move(process_variables)),
       _integration_order(integration_order),
+      _process_variables(std::move(process_variables)),
       _boundary_conditions(parameters)
 {
 }

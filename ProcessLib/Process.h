@@ -181,8 +181,9 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
-private:
     unsigned const _integration_order;
+
+private:
     GlobalSparsityPattern _sparsity_pattern;
 
     /// Variables used by this process.
