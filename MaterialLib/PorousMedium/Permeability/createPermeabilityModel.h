@@ -15,17 +15,19 @@
 
 #include <Eigen/Dense>
 
-#include "BaseLib/ConfigTree.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-using CoefMatrix = Eigen::MatrixXd;
-
-/// Create a porosity model
-/// \param config  ConfigTree object has a tag of <permeability>
-CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const& config);
+/** Create a porosity model
+ *  @param config  ConfigTree object has a tag of <permeability>
+ */
+Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config);
 
 }  // end of namespace
 }  // end of namespace

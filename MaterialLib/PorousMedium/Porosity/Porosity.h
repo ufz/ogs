@@ -22,21 +22,19 @@ namespace PorousMedium
 class Porosity
 {
 public:
-
-    virtual ~Porosity()
-    {
-    }
+    virtual ~Porosity() = default;
 
     /// Get model name.
     virtual std::string getName() const = 0;
 
     /**
      *  Get property value.
-     *  \param variable    A variable that can be saturation, or an invariant
+     *  @param variable    A variable that can be saturation, or an invariant
      *                     of stress or strain.
-     *  \param temperature Temperature.
+     *  @param temperature Temperature.
      */
-    virtual double getValue(const double variable, double temperature) const = 0;
+    virtual double getValue(const double variable,
+                            double temperature) const = 0;
 };
 
 }  // end of namespace

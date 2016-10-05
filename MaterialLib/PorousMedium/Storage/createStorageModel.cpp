@@ -13,7 +13,9 @@
 #include "createStorageModel.h"
 
 #include "BaseLib/Error.h"
+#include "BaseLib/ConfigTree.h"
 
+#include "Storage.h"
 #include "ConstantStorage.h"
 
 namespace MaterialLib
@@ -28,12 +30,11 @@ std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config)
     if (type == "Constant")
         //! \ogs_file_param{material__porous_medium__storage__constant__value}
         return std::unique_ptr<Storage>(
-                 new ConstantStorage(config.getConfigParameter<double>("value")) );
+            new ConstantStorage(config.getConfigParameter<double>("value")));
     else
     {
-        OGS_FATAL(
-            "The storage type %s is unavailable.\n", type.data(),
-            "The available type is Constant.");
+        OGS_FATAL("The storage type %s is unavailable.\n", type.data(),
+                  "The available type is Constant.");
     }
 }
 

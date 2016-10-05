@@ -22,17 +22,15 @@ namespace PorousMedium
 class Storage
 {
 public:
-
-    virtual ~Storage()
-    {
-    }
-
+    virtual ~Storage() = default;
     /// Get model name.
     virtual std::string getName() const = 0;
 
-    /// Get property value.
-    /// The argument is a double variable
-    virtual double getValue(const double /*variable*/) const = 0;
+    /**
+     *  Get property value.
+     *  @param variable A double type variable
+     */
+    virtual double getValue(const double variable) const = 0;
 };
 
 }  // end of namespace

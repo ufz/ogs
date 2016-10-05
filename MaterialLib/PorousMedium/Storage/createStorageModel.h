@@ -15,16 +15,19 @@
 
 #include <memory>
 
-#include "Storage.h"
-
-#include "BaseLib/ConfigTree.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-/// Create a storage model
-/// \param config  ConfigTree object has a tag of <storage>
+class Storage;
+/** Create a storage model
+ *  @param config  ConfigTree object has a tag of <storage>
+ */
 std::unique_ptr<Storage> createStorageModel(BaseLib::ConfigTree const& config);
 
 }  // end namespace

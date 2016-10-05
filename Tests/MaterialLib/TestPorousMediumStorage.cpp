@@ -14,14 +14,14 @@
 #include <memory>
 
 #include "TestTools.h"
+#include "BaseLib/ConfigTree.h"
 
+#include "MaterialLib/PorousMedium/Storage/ConstantStorage.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::PorousMedium;
 
-//----------------------------------------------------------------------------
-// Test storage models.
 std::unique_ptr<Storage> createTestStorageModel(const char xml[])
 {
     auto const ptree = readXml(xml);

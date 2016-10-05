@@ -15,6 +15,9 @@
 
 #include "TestTools.h"
 
+#include "BaseLib/ConfigTree.h"
+
+#include "MaterialLib/PorousMedium/Porosity/ConstantPorosity.h"
 #include "MaterialLib/PorousMedium/Porosity/createPorosityModel.h"
 
 using namespace MaterialLib;

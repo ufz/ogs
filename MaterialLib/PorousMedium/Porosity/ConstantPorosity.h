@@ -22,26 +22,20 @@ namespace PorousMedium
 class ConstantPorosity final : public Porosity
 {
 public:
-
-    explicit ConstantPorosity(const double value) : _value(value)
-    {
-    }
+    explicit ConstantPorosity(const double value) : _value(value) {}
 
     /// Get model name.
-    std::string getName() const override
-    {
-        return "Constant porosity";
-    }
+    std::string getName() const override { return "Constant porosity"; }
 
     /**
      *  Get property value.
-     *  \param variable    A variable with any double type value.
-     *  \param temperature Temperature with any double type value.
+     *  @param variable    A variable with any double type value.
+     *  @param temperature Temperature with any double type value.
      */
     double getValue(const double variable, double temperature) const override
     {
-        (void) variable;
-        (void) temperature;
+        (void)variable;
+        (void)temperature;
         return _value;
     }
 

@@ -13,7 +13,9 @@
 #include "createPorosityModel.h"
 
 #include "BaseLib/Error.h"
+#include "BaseLib/ConfigTree.h"
 
+#include "Porosity.h"
 #include "ConstantPorosity.h"
 
 namespace MaterialLib
@@ -27,13 +29,12 @@ std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config)
 
     if (type == "Constant")
         //! \ogs_file_param{material__porous_medium__porosity__Constant_value}
-        return std::unique_ptr<Porosity>(new ConstantPorosity(
-            config.getConfigParameter<double>("value")) );
+        return std::unique_ptr<Porosity>(
+            new ConstantPorosity(config.getConfigParameter<double>("value")));
     else
     {
-        OGS_FATAL(
-            "The storage type %s is unavailable.\n",
-            "The available type is \n\tConstant.",  type.data());
+        OGS_FATAL("The porosity type %s is unavailable.\n",
+                  "The available type is \n\tConstant.", type.data());
     }
 }
 

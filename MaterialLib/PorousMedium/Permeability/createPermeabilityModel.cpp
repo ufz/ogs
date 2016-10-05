@@ -14,6 +14,8 @@
 
 #include <cassert>
 
+#include "BaseLib/ConfigTree.h"
+
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
@@ -21,10 +23,11 @@ namespace MaterialLib
 {
 namespace PorousMedium
 {
-CoefMatrix createPermeabilityModel(BaseLib::ConfigTree const& config)
+Eigen::MatrixXd createPermeabilityModel(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{material__porous_medium__permeability__values}
-    auto const values = config.getConfigParameter<std::vector<double>>("values");
+    auto const values =
+        config.getConfigParameter<std::vector<double>>("values");
 
     auto const data_size = values.size();
 

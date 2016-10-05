@@ -15,17 +15,22 @@
 
 #include <memory>
 
-#include "Porosity.h"
-
-#include "BaseLib/ConfigTree.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MaterialLib
 {
 namespace PorousMedium
 {
-/// Create a porosity model
-/// \param config  ConfigTree object has a tag of <porosity>
-std::unique_ptr<Porosity> createPorosityModel(BaseLib::ConfigTree const& config);
+class Porosity;
+
+/** Create a porosity model
+ *  @param config  ConfigTree object has a tag of <porosity>
+ */
+std::unique_ptr<Porosity> createPorosityModel(
+    BaseLib::ConfigTree const& config);
 
 }  // end namespace
 }  // end namespace
