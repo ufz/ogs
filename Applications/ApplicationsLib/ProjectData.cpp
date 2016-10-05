@@ -65,7 +65,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         auto const mesh_param = project_config.getConfigParameter("mesh");
 
         std::string const mesh_file = BaseLib::copyPathToFileName(
-            //! \ogs_file_param{prj__mesh}
             mesh_param.getValue<std::string>(), project_directory);
 
         MeshLib::Mesh* const mesh = MeshLib::IO::readMeshFromFile(mesh_file);
@@ -76,7 +75,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         }
 
         if (auto const axially_symmetric =
-                //! \ogs_file_param{prj__mesh__axial_symmetric}
+                //! \ogs_file_attr{prj__mesh__axially_symmetric}
             mesh_param.getConfigAttributeOptional<bool>("axially_symmetric"))
         {
             mesh->setAxiallySymmetric(*axially_symmetric);
