@@ -185,6 +185,11 @@ function (AddTest)
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
+    if(TARGET ${AddTest_EXECUTABLE})
+        add_dependencies(ctest ${AddTest_EXECUTABLE})
+        add_dependencies(ctest-large ${AddTest_EXECUTABLE})
+    endif()
+
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
         return()
     endif()
