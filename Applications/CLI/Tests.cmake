@@ -598,7 +598,7 @@ if(NOT OGS_USE_MPI)
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
     )
     AddTest(
-        NAME LiquidFlowProcess_LiquidFlowProcessGravityDriven
+        NAME LiquidFlowProcessGravityDriven
         PATH Parabolic/LiquidFlow/GravityDriven
         EXECUTABLE ogs
         EXECUTABLE_ARGS gravity_driven.prj
@@ -607,6 +607,17 @@ if(NOT OGS_USE_MPI)
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
+    )
+    AddTest(
+        NAME LiquidFlowProcess_axisymTheis
+        PATH Parabolic/LiquidFlow/AxiSymTheis
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS axisym_theis.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
     )
 
 else()
@@ -851,6 +862,17 @@ else()
         ABSTOL 1e-8 RELTOL 1e-8
         DIFF_DATA
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
+    )
+    AddTest(
+        NAME LiquidFlowProcess_axisymTheis
+        PATH Parabolic/LiquidFlow/AxiSymTheis
+        EXECUTABLE_ARGS axisym_theis.prj
+        WRAPPER mpirun
+        WRAPPER_ARGS -np 1
+        TESTER vtkdiff
+        ABSTOL 1e-8 RELTOL 1e-8
+        DIFF_DATA
+        axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728.000000.vtu OGS5_pressure pressure
     )
 
 endif()
