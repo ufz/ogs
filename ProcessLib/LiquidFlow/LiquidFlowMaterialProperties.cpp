@@ -74,8 +74,10 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     vars[1] = p;
     return porosity[material_group_id]->getValue(var4porosity, T) *
                density_l->getdValue(
-                   vars, MaterialLib::Fluid::PropertyVariableType::pl) +
-           storage[material_group_id]->getValue(var4storage);
+                   vars, MaterialLib::Fluid::PropertyVariableType::pl)
+                     // Divided by rho_l because the PDE is scaled with rho_l
+                     /density_l->getValue(vars)
+                     +  storage[material_group_id]->getValue(var4storage);
 }
 
 }  // end of namespace

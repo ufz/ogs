@@ -10,6 +10,9 @@
  * Created on August 19, 2016, 2:28 PM
  */
 
+#ifndef OGS_LIQUIDFLOWLOCALASSEMBLER_IMP_H
+#define OGS_LIQUIDFLOWLOCALASSEMBLER_IMP_H
+
 #include "LiquidFlowLocalAssembler.h"
 
 #include "NumLib/Function/Interpolation.h"
@@ -80,7 +83,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        if (perm.size() == 1)  // Save time for isotropic permeability.
+        if (perm.size() == 1)  // Save the computing time for isotropic permeability.
         {
             //  Use scalar number for isotropic permeability
             //  to save the computation time.
@@ -129,3 +132,5 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
 }  // end of namespace
 }  // end of namespace
+
+#endif

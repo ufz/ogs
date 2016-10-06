@@ -10,8 +10,8 @@
  * Created on August 19, 2016, 1:38 PM
  */
 
-#ifndef LIQUIDFLOWPROCESS_H
-#define LIQUIDFLOWPROCESS_H
+#ifndef OGS_LIQUIDFLOWPROCESS_H
+#define OGS_LIQUIDFLOWPROCESS_H
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
@@ -31,6 +31,25 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
+/**
+ * \brief A class to simulate the liquid flow process in porous media described by
+ *
+ * \f[
+ *     \frac{\partial n \rho_l}{\partial T} \frac{\partial T}{\partial t}/\rho_l
+ *       + (\frac{\partial n \rho_l}{\partial p}/\rho_l + \beta_s)
+ *          \frac{\partial p}{\partial t}
+ *       -\nabla (\frac{K}{\mu}(\nabla p + \rho_l g \nabla z) ) = Q
+ * \f]
+ * where
+ *    \f{eqnarray*}{
+ *       &p:&        \mbox{pore pressure,}\\
+ *       &T: &       \mbox{Temperature,}\\
+ *       &\rho_l:&   \mbox{liquid density,}\\
+ *       &\beta_s:&  \mbox{specific storage,}\\
+ *       &K:&        \mbox{permeability,}\\
+ *       &\mu:&      \mbox{viscosity,}\\
+ *    \f}
+ */
 class LiquidFlowProcess final : public Process
 {
 public:

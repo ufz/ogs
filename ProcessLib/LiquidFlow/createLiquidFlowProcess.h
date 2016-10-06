@@ -10,8 +10,8 @@
  * Created on August 19, 2016, 1:30 PM
  */
 
-#ifndef CREATELIQUIDFLOWPROCESS_H
-#define CREATELIQUIDFLOWPROCESS_H
+#ifndef OGS_CREATELIQUIDFLOWPROCESS_H
+#define OGS_CREATELIQUIDFLOWPROCESS_H
 
 #include <memory>
 #include "ProcessLib/Process.h"
