@@ -50,9 +50,9 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolation)
     }
 
     // Extrapolation
-    ASSERT_NEAR(-0.5, interpolation.getValue(-0.5), std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.0, interpolation.getValue(-0.5), std::numeric_limits<double>::epsilon());
     // Extrapolation
-    ASSERT_NEAR(1.5, interpolation.getValue(size-0.5), std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(1.0, interpolation.getValue(size-0.5), std::numeric_limits<double>::epsilon());
 }
 
 TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationSupportPntsInReverseOrder)
@@ -86,7 +86,30 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationSupportPntsInRe
     }
 
     // Extrapolation
-    ASSERT_NEAR(-0.5, interpolation.getValue(-0.5), std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.0, interpolation.getValue(-0.5), std::numeric_limits<double>::epsilon());
     // Extrapolation
-    ASSERT_NEAR(1.5, interpolation.getValue(size-0.5), std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(1.0, interpolation.getValue(size-0.5), std::numeric_limits<double>::epsilon());
+}
+
+TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
+{
+	const std::size_t size(1000);
+	std::vector<double> supp_pnts, values;
+	for (std::size_t k(0); k<size; ++k) {
+		supp_pnts.push_back(static_cast<double>(k));
+		values.push_back(k*k);
+	}
+
+	MathLib::PiecewiseLinearInterpolation interpolation{ std::move(supp_pnts),
+		std::move(values) };
+	// Interpolation
+	for (std::size_t k(0); k<size - 1; ++k) {
+
+		ASSERT_NEAR(1 + 2 * k, interpolation.GetCurveDerivative(k + 0.5), std::numeric_limits<double>::epsilon());
+	}
+
+	// Extrapolation
+	ASSERT_NEAR(1, interpolation.GetCurveDerivative(-1), std::numeric_limits<double>::epsilon());
+	// Extrapolation
+	ASSERT_NEAR(1997, interpolation.GetCurveDerivative(1001), std::numeric_limits<double>::epsilon());
 }
