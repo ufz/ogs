@@ -14,8 +14,11 @@
 
 #include "Applications/ApplicationsLib/LogogSetup.h"
 
+#include "BaseLib/FileTools.h"
+
 #include "GeoLib/AABB.h"
 
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -87,12 +90,10 @@ int main (int argc, char* argv[])
 
     const std::string msh_name(argv[1]);
     const std::string current_key(argv[2]);
-    //const std::string msh_name("D:\\rappbode-2013-03-03--30m_lowpass_new_new.msh");
-    //const std::string current_key("-MESH");
-
-    if (msh_name.substr(msh_name.length()-4, 4).compare(".msh") != 0)
+    std::string const ext (BaseLib::getFileExtension(msh_name));
+    if (!(ext == "msh" || ext == "vtu"))
     {
-        ERR("Error: Parameter 1 should be a msh-file.");
+        ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
         INFO("Usage: %s <msh-file.gml> <keyword> <value>", argv[0]);
         return -1;
     }
@@ -113,9 +114,12 @@ int main (int argc, char* argv[])
         return -1;
     }
 
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::IO::readMeshFromFile(msh_name));
-    //std::vector<std::size_t> del_nodes;
+    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::readMeshFromFile(msh_name));
+    if (mesh == nullptr)
+    {
+        ERR ("Error reading mesh file.");
+        return 1;
+    }
 
     // Start keyword-specific selection of nodes
 
@@ -151,10 +155,14 @@ int main (int argc, char* argv[])
         }
         const std::string value (argv[3]);
         double max_dist(pow(strtod(argv[4],0), 2));
-        //const std::string value("D:\\Rappbodevorsperre_elevation440m.msh");
-        //double max_dist (25.0);    // squared maximum distance at which reference points are used
         double offset (0.0); // additional offset for elevation (should be 0)
-        MeshLib::Mesh* ground_truth (MeshLib::IO::readMeshFromFile(value));
+        std::unique_ptr<MeshLib::Mesh> ground_truth (MeshLib::IO::readMeshFromFile(value));
+        if (mesh == nullptr)
+        {
+            ERR ("Error reading mesh file.");
+            return 1;
+        }
+
         const std::vector<MeshLib::Node*>& ground_truth_nodes (ground_truth->getNodes());
         GeoLib::AABB bounding_box(ground_truth_nodes.begin(), ground_truth_nodes.end());
         MathLib::Point3d const& min(bounding_box.getMinPoint());
@@ -201,8 +209,7 @@ int main (int argc, char* argv[])
     }
     /**** add other keywords here ****/
 
-    MeshLib::IO::writeMeshToFile(
-        *mesh, msh_name.substr(0, msh_name.length() - 4) + "_new.msh");
+    MeshLib::IO::VtuInterface vtu (mesh.get(), 0, false);
+    vtu.writeToFile(msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
     return 1;
-
 }
