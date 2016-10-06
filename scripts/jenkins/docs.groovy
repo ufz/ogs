@@ -6,7 +6,7 @@ node('docker') {
     stage 'Checkout (Docs)'
     dir('ogs') { checkout scm }
 
-    docker.image('ogs6/gcc-gui:latest').inside() {
+    docker.image('ogs6/gcc-base:16.04').inside() {
         stage 'Configure (Docs)'
         configure.linux 'build', "${defaultCMakeOptions}"
 
