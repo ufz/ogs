@@ -460,7 +460,7 @@ if(NOT OGS_USE_MPI)
 
     # SMALL DEFORMATION TEST -- AXIALLY SYMMETRIC
     AddTest(
-        NAME SmallDeformation_ring_plane_strain_axi
+        NAME LARGE_SmallDeformation_ring_plane_strain_axi
         PATH Mechanics/Linear
         EXECUTABLE ogs
         EXECUTABLE_ARGS ring_plane_strain.prj
