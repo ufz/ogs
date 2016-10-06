@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "GroundwaterFlowProcessData.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -20,19 +21,16 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-#include "GroundwaterFlowProcessData.h"
 
 namespace ProcessLib
 {
-
 namespace GroundwaterFlow
 {
-
 const unsigned NUM_NODAL_DOF = 1;
 
 class GroundwaterFlowLocalAssemblerInterface
-        : public ProcessLib::LocalAssemblerInterface
-        , public NumLib::ExtrapolatableElement
+    : public ProcessLib::LocalAssemblerInterface,
+      public NumLib::ExtrapolatableElement
 {
 public:
     virtual std::vector<double> const& getIntPtDarcyVelocityX(
@@ -45,11 +43,9 @@ public:
         std::vector<double>& /*cache*/) const = 0;
 };
 
-template <typename ShapeFunction,
-         typename IntegrationMethod,
-         unsigned GlobalDim>
-class LocalAssemblerData
-        : public GroundwaterFlowLocalAssemblerInterface
+template <typename ShapeFunction, typename IntegrationMethod,
+          unsigned GlobalDim>
+class LocalAssemblerData : public GroundwaterFlowLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -75,8 +71,9 @@ public:
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
               element, is_axially_symmetric, _integration_method)),
-          _darcy_velocities(GlobalDim,
-			  std::vector<double>(_integration_method.getNumberOfPoints()))
+          _darcy_velocities(
+              GlobalDim,
+              std::vector<double>(_integration_method.getNumberOfPoints()))
     {
     }
 
@@ -86,7 +83,8 @@ public:
                   std::vector<double>& /*local_b_data*/) override
     {
         auto const local_matrix_size = local_x.size();
-        // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
         auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
@@ -104,7 +102,6 @@ public:
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
-
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
@@ -153,7 +150,7 @@ public:
         auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
 
         Eigen::Map<Eigen::RowVectorXd>(flux.data(), flux.size()) =
-            - k * shape_matrices.dNdx *
+            -k * shape_matrices.dNdx *
             Eigen::Map<const Eigen::VectorXd>(local_x.data(), local_x.size());
 
         return flux;
@@ -199,8 +196,7 @@ private:
     std::vector<std::vector<double>> _darcy_velocities;
 };
 
-
-}   // namespace GroundwaterFlow
-}   // namespace ProcessLib
+}  // namespace GroundwaterFlow
+}  // namespace ProcessLib
 
 #endif  // PROCESS_LIB_GROUNDWATERFLOW_FEM_H_

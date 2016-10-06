@@ -71,13 +71,14 @@ public:
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
               element, is_axially_symmetric, _integration_method)),
-          _heat_fluxes(GlobalDim,
+          _heat_fluxes(
+              GlobalDim,
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
-        (void) local_matrix_size;
+        (void)local_matrix_size;
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
@@ -86,7 +87,8 @@ public:
                   std::vector<double>& /*local_b_data*/) override
     {
         auto const local_matrix_size = local_x.size();
-        // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
         auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
@@ -117,7 +119,7 @@ public:
             // heat flux only computed for output.
             GlobalDimVectorType const heat_flux =
                 -k * sm.dNdx * Eigen::Map<const NodalVectorType>(
-                                    local_x.data(), ShapeFunction::NPOINTS);
+                                   local_x.data(), ShapeFunction::NPOINTS);
 
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

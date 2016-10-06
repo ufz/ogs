@@ -120,11 +120,9 @@ namespace ProcessLib
 /// initialization of the new local assembler data.
 /// For example for MeshLib::Line a local assembler data with template argument
 /// NumLib::ShapeLine2 is created.
-template <
-    typename LocalAssemblerInterface,
-    template <typename, typename, unsigned> class LocalAssemblerData,
-    unsigned GlobalDim,
-    typename... ConstructorArgs>
+template <typename LocalAssemblerInterface,
+          template <typename, typename, unsigned> class LocalAssemblerData,
+          unsigned GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -277,24 +275,20 @@ private:
                 typename ShapeFunction::MeshElement>::IntegrationMethod;
 
     template <typename ShapeFunction>
-    using LAData = LocalAssemblerData<
-            ShapeFunction,
-            IntegrationMethod<ShapeFunction>,
-            GlobalDim>;
+    using LAData =
+        LocalAssemblerData<ShapeFunction, IntegrationMethod<ShapeFunction>,
+                           GlobalDim>;
 
-    /// Generates a function that creates a new LocalAssembler of type LAData<SHAPE_FCT>
-    template<typename ShapeFct>
+    /// Generates a function that creates a new LocalAssembler of type
+    /// LAData<SHAPE_FCT>
+    template <typename ShapeFct>
     static LADataBuilder makeLocalAssemblerBuilder()
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args)
-        {
-            return LADataIntfPtr{
-                new LAData<ShapeFct>{
-                    e, local_matrix_size,
-                    std::forward<ConstructorArgs>(args)...
-                }};
+                  ConstructorArgs&&... args) {
+            return LADataIntfPtr{new LAData<ShapeFct>{
+                e, local_matrix_size, std::forward<ConstructorArgs>(args)...}};
         };
     }
 
