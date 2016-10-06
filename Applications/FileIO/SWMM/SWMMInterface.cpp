@@ -483,6 +483,11 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
                     i--;
                 }
             }
+            if (line->getPointID(0) == line->getPointID(line->getNumberOfPoints()-1))
+            {
+                line->removePoint(line->getNumberOfPoints()-1);
+                line->addPoint(line->getPointID(0));
+            }
         }
         geo_objects.addPolylineVec(std::move(lines), geo_name, line_id_map);
     }
