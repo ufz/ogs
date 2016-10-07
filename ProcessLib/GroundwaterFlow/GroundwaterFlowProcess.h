@@ -34,6 +34,7 @@ public:
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+        unsigned const integration_order,
         std::vector<std::reference_wrapper<ProcessVariable>>&&
             process_variables,
         GroundwaterFlowProcessData&& process_data,
@@ -72,7 +73,8 @@ public:
                                        init_values);
             auto balance = ProcessLib::CalculateSurfaceFlux(
                 *_balance_mesh,
-                getProcessVariables()[0].get().getNumberOfComponents());
+                getProcessVariables()[0].get().getNumberOfComponents(),
+                _integration_order);
 
             boost::optional<MeshLib::PropertyVector<double>&> balance_pv(
                 _balance_mesh->getProperties()

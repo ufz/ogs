@@ -40,15 +40,14 @@ public:
     using NonlinearSolver = NumLib::NonlinearSolverBase;
     using TimeDiscretization = NumLib::TimeDiscretization;
 
-    Process(
-        MeshLib::Mesh& mesh,
-        std::unique_ptr<AbstractJacobianAssembler>&&
-            jacobian_assembler,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-        std::vector<std::reference_wrapper<ProcessVariable>>&&
-            process_variables,
-        SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller);
+    Process(MeshLib::Mesh& mesh,
+            std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
+            std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+            unsigned const integration_order,
+            std::vector<std::reference_wrapper<ProcessVariable>>&&
+                process_variables,
+            SecondaryVariableCollection&& secondary_variables,
+            NumLib::NamedFunctionCaller&& named_function_caller);
 
     /// Preprocessing before starting assembly for new timestep.
     void preTimestep(GlobalVector const& x, const double t,
@@ -182,8 +181,9 @@ protected:
 
     VectorMatrixAssembler _global_assembler;
 
+    unsigned const _integration_order;
+
 private:
-    unsigned const _integration_order = 2;
     GlobalSparsityPattern _sparsity_pattern;
 
     /// Variables used by this process.

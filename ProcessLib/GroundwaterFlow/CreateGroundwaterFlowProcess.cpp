@@ -26,6 +26,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+    unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::string const& project_directory,
     std::string const& output_directory)
@@ -88,7 +89,7 @@ std::unique_ptr<Process> createGroundwaterFlowProcess(
     }
 
     return std::unique_ptr<Process>{new GroundwaterFlowProcess{
-        mesh, std::move(jacobian_assembler), parameters,
+        mesh, std::move(jacobian_assembler), parameters, integration_order,
         std::move(process_variables), std::move(process_data),
         std::move(secondary_variables), std::move(named_function_caller),
         surface_mesh.release(), std::move(balance_pv_name),

@@ -31,15 +31,15 @@ namespace TES
 class TESProcess final : public Process
 {
 public:
-    TESProcess(
-        MeshLib::Mesh& mesh,
-        std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
-        std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-        std::vector<std::reference_wrapper<ProcessVariable>>&&
-            process_variables,
-        SecondaryVariableCollection&& secondary_variables,
-        NumLib::NamedFunctionCaller&& named_function_caller,
-        BaseLib::ConfigTree const& config);
+    TESProcess(MeshLib::Mesh& mesh,
+               std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
+               std::vector<std::unique_ptr<ParameterBase>> const& parameters,
+               unsigned const integration_order,
+               std::vector<std::reference_wrapper<ProcessVariable>>&&
+                   process_variables,
+               SecondaryVariableCollection&& secondary_variables,
+               NumLib::NamedFunctionCaller&& named_function_caller,
+               BaseLib::ConfigTree const& config);
 
     void preTimestepConcreteProcess(GlobalVector const& x, const double t,
                                     const double delta_t) override;
