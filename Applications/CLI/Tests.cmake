@@ -576,10 +576,10 @@ if(NOT OGS_USE_MPI)
 
     # Liquid flow
     AddTest(
-        NAME LiquidFlowProcess_sat1D
-        PATH Parabolic/LiquidFlow/sat1D
+        NAME LiquidFlow_LineDirichletNeumannBC
+        PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
         EXECUTABLE ogs
-        EXECUTABLE_ARGS sat1D.prj
+        EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
         WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
@@ -587,10 +587,10 @@ if(NOT OGS_USE_MPI)
         sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlowProcess_sat2DLFlow
-        PATH Parabolic/LiquidFlow/sat2DLFlow
+        NAME LiquidFlow_PressureBCatCornerOfHeterogeneousSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfHeterogeneousSquare
         EXECUTABLE ogs
-        EXECUTABLE_ARGS sat2DLFlow.prj
+        EXECUTABLE_ARGS pressureBC_at_corner_of_heterogeneous_square.prj
         WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
@@ -598,7 +598,7 @@ if(NOT OGS_USE_MPI)
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
     )
     AddTest(
-        NAME LiquidFlowProcessGravityDriven
+        NAME LiquidFlow_GravityDriven
         PATH Parabolic/LiquidFlow/GravityDriven
         EXECUTABLE ogs
         EXECUTABLE_ARGS gravity_driven.prj
@@ -609,7 +609,7 @@ if(NOT OGS_USE_MPI)
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlowProcess_axisymTheis
+        NAME LiquidFlow_AxisymTheis
         PATH Parabolic/LiquidFlow/AxiSymTheis
         EXECUTABLE ogs
         EXECUTABLE_ARGS axisym_theis.prj
@@ -831,9 +831,9 @@ else()
 
     # Liquid flow
     AddTest(
-        NAME LiquidFlowProcess_sat1D
-        PATH Parabolic/LiquidFlow/sat1D
-        EXECUTABLE_ARGS sat1D.prj
+        NAME LiquidFlow_LineDirichletNeumannBC
+        PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
+        EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
@@ -842,7 +842,7 @@ else()
         sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlowProcessGravityDriven
+        NAME LiquidFlow_GravityDriven
         PATH Parabolic/LiquidFlow/GravityDriven
         EXECUTABLE_ARGS gravity_driven.prj
         WRAPPER mpirun
@@ -853,9 +853,9 @@ else()
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlowProcess_sat2DLFlow
-        PATH Parabolic/LiquidFlow/sat2DLFlow
-        EXECUTABLE_ARGS sat2DLFlow.prj
+        NAME LiquidFlow_PressureBCatCornerOfHeterogeneousSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfHeterogeneousSquare
+        EXECUTABLE_ARGS pressureBC_at_corner_of_heterogeneous_square.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
@@ -864,7 +864,7 @@ else()
         mesh2D.vtu sat_2D_lflow_pcs_0_ts_1_t_1.000000.vtu OGS5_Results pressure
     )
     AddTest(
-        NAME LiquidFlowProcess_axisymTheis
+        NAME LiquidFlow_AxisymTheis
         PATH Parabolic/LiquidFlow/AxiSymTheis
         EXECUTABLE_ARGS axisym_theis.prj
         WRAPPER mpirun
