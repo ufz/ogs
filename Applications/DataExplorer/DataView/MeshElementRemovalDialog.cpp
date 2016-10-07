@@ -171,20 +171,25 @@ void MeshElementRemovalDialog::on_materialIDCheckBox_toggled(bool is_checked)
         materialListWidget->clear();
         _matIDIndex = _currentIndex;
         auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-        auto const opt_mat_ids = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-        if (!opt_mat_ids) {
+        auto const* const mat_ids =
+            mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+        if (!mat_ids)
+        {
             INFO("Properties \"MaterialIDs\" not found in the mesh \"%s\".",
                 mesh->getName().c_str());
             return;
         }
-        auto const& mat_ids = opt_mat_ids.get();
-        if (mat_ids.size() != mesh->getNumberOfElements()) {
-            INFO("Size mismatch: Properties \"MaterialIDs\" contains %u values,"
-                " the mesh \"%s\" contains %u elements.", mat_ids.size(),
-                mesh->getName().c_str(), mesh->getNumberOfElements());
+        if (mat_ids->size() != mesh->getNumberOfElements())
+        {
+            INFO(
+                "Size mismatch: Properties \"MaterialIDs\" contains %u values,"
+                " the mesh \"%s\" contains %u elements.",
+                mat_ids->size(), mesh->getName().c_str(),
+                mesh->getNumberOfElements());
             return;
         }
-        auto max_material = std::max_element(mat_ids.cbegin(), mat_ids.cend());
+        auto max_material =
+            std::max_element(mat_ids->cbegin(), mat_ids->cend());
 
         for (unsigned i=0; i <= static_cast<unsigned>(*max_material); ++i)
             materialListWidget->addItem(QString::number(i));
@@ -200,7 +205,8 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     this->materialListWidget->clearSelection();
     if (this->boundingBoxCheckBox->isChecked()) this->on_boundingBoxCheckBox_toggled(true);
     auto mesh = _project.getMesh(meshNameComboBox->currentText().toStdString());
-    auto materialIds = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+    auto const* const materialIds =
+        mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     if (materialIds)
     {
         if (materialIds->size() != mesh->getNumberOfElements())
