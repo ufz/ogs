@@ -32,7 +32,8 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 /**
- * \brief A class to simulate the liquid flow process in porous media described by
+ * \brief A class to simulate the liquid flow process in porous media described
+ * by
  *
  * \f[
  *     \frac{\partial n \rho_l}{\partial T} \frac{\partial T}{\partial t}/\rho_l
@@ -76,7 +77,7 @@ private:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, GlobalVector const& p,
+    void assembleConcreteProcess(const double t, GlobalVector const& x,
                                  GlobalMatrix& M, GlobalMatrix& K,
                                  GlobalVector& b) override;
 

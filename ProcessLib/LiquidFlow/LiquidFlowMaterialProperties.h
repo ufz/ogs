@@ -51,16 +51,18 @@ struct LiquidFlowMaterialProperties
      *      \f]
      *     where \f$n\f$ is the porosity, \f$rho_l\f$ is the liquid density,
      *     \f$bata_s\f$ is the storage.
-     * \param var4porosity       The first variable for porosity model, and it could be
+     * \param porosity_variable  The first variable for porosity model, and it
+     *                           passes a double type value that could be
      *                           saturation, and invariant of stress or strain.
-     * \param var4storage        Variable for storage model.
+     * \param storage_variable   Variable for storage model.
      * \param p                  Pressure value
      * \param T                  Temperature value
      * \param material_group_id  Material ID of the element
      */
     double getMassCoefficient(const double p, const double T,
-                             const double var4porosity, const double var4storage,
-                             const unsigned material_group_id = 0) const;
+                              const double porosity_variable,
+                              const double storage_variable,
+                              const unsigned material_group_id = 0) const;
 
     double getLiquidDensity(const double p, const double T) const
     {

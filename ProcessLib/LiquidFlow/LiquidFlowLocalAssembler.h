@@ -79,7 +79,7 @@ public:
     {
     }
 
-    void assemble(double const t, std::vector<double> const& local_p,
+    void assemble(double const t, std::vector<double> const& local_x,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
@@ -122,12 +122,12 @@ private:
 
     std::vector<std::vector<double>> _darcy_velocities =
         std::vector<std::vector<double>>(
-            GlobalDim, std::vector<double>(_integration_method.getNumberOfPoints()));
+            GlobalDim,
+            std::vector<double>(_integration_method.getNumberOfPoints()));
 
     const bool _compute_gravitational_term;
     LiquidFlowMaterialProperties const& _material_properties;
     double _temperature;  ///< Temperature.
-
 };
 
 }  // end of namespace

@@ -77,7 +77,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
 }
 
 void LiquidFlowProcess::assembleConcreteProcess(const double t,
-                                                GlobalVector const& p,
+                                                GlobalVector const& x,
                                                 GlobalMatrix& M,
                                                 GlobalMatrix& K,
                                                 GlobalVector& b)
@@ -86,7 +86,7 @@ void LiquidFlowProcess::assembleConcreteProcess(const double t,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        *_local_to_global_index_map, t, p, M, K, b);
+        *_local_to_global_index_map, t, x, M, K, b);
 }
 
 void LiquidFlowProcess::assembleWithJacobianConcreteProcess(

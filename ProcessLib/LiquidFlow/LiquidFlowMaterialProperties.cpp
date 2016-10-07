@@ -23,7 +23,8 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config)
+LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
+    BaseLib::ConfigTree const& config)
 {
     DBUG("Reading material properties of liquid flow process.");
 
@@ -31,16 +32,12 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(BaseLib::ConfigTree c
     auto const& fluid_config = config.getConfigSubtree("fluid");
 
     // Get fluid properties
-    //! \ogs_file_param{prj__material_property__fluid__fluid}
-    for (auto const& conf : fluid_config.getConfigSubtreeList("fluid"))
-    {
-        //! \ogs_file_param{prj__material_property__fluid__fluid__density}
-        auto const& rho_conf = conf.getConfigSubtree("density");
-        density_l = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
-        //! \ogs_file_param{prj__material_property__fluid__fluid__viscosity}
-        auto const& mu_conf = conf.getConfigSubtree("viscosity");
-        viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
-    }
+    //! \ogs_file_param{prj__material_property__fluid__density}
+    auto const& rho_conf = fluid_config.getConfigSubtree("density");
+    density_l = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
+    //! \ogs_file_param{prj__material_property__fluid__viscosity}
+    auto const& mu_conf = fluid_config.getConfigSubtree("viscosity");
+    viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
 
     // Get porous properties
     //! \ogs_file_param{prj__material_property__porous_medium}
@@ -66,18 +63,18 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(BaseLib::ConfigTree c
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
-    const double var4porosity, const double var4storage,
+    const double porosity_variable, const double storage_variable,
     const double p, const double T, const unsigned material_group_id) const
 {
     ArrayType vars;
     vars[0] = T;
     vars[1] = p;
-    return porosity[material_group_id]->getValue(var4porosity, T) *
+    return porosity[material_group_id]->getValue(porosity_variable, T) *
                density_l->getdValue(
                    vars, MaterialLib::Fluid::PropertyVariableType::pl)
-                     // Divided by rho_l because the PDE is scaled with rho_l
-                     /density_l->getValue(vars)
-                     +  storage[material_group_id]->getValue(var4storage);
+               // Divided by rho_l because the PDE is scaled with rho_l
+               / density_l->getValue(vars) +
+           storage[material_group_id]->getValue(storage_variable);
 }
 
 }  // end of namespace

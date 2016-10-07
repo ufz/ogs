@@ -46,9 +46,9 @@ std::unique_ptr<Process> createLiquidFlowProcess(
                                         named_function_caller);
 
     auto const gravitational_term =
-    //! \ogs_file_param{process__LIQUID_FLOW__gravitational_term}
-    config.getConfigParameter<std::string>("gravitational_term");
-    const bool has_gravitational_term = (gravitational_term == "enabled") ? true : false;
+        //! \ogs_file_param{process__LIQUID_FLOW__gravitational_term}
+        config.getConfigParameter<std::string>("gravitational_term");
+    const bool has_gravitational_term = (gravitational_term == "enabled");
 
     //! \ogs_file_param{process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");

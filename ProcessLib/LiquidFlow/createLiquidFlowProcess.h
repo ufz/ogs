@@ -24,7 +24,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterBase>> const& /*parameters*/,
+    std::vector<std::unique_ptr<ParameterBase>> const& parameters,
     BaseLib::ConfigTree const& config);
 }  // end of namespace
 }  // end of namespace

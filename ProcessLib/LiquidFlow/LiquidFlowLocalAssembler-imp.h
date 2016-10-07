@@ -25,12 +25,12 @@ namespace LiquidFlow
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assemble(double const /*t*/, std::vector<double> const& local_p,
+    assemble(double const /*t*/, std::vector<double> const& local_x,
              std::vector<double>& local_M_data,
              std::vector<double>& local_K_data,
              std::vector<double>& local_b_data)
 {
-    auto const local_matrix_size = local_p.size();
+    auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
 
     auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
@@ -40,40 +40,34 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto local_b = MathLib::createZeroedVector<NodalVectorType>(
         local_b_data, local_matrix_size);
 
-    // For velocity calculation:
-    // TODO: move velocity calculation to a member function, and call the
-    // function after the linearization step if the calculation is needed.
-    const auto local_p_vec =
-        MathLib::toVector<NodalVectorType>(local_p, local_matrix_size);
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    const unsigned mat_id = 0; // TODO for heterogeneous medium
+    const unsigned mat_id = 0;  // TODO for heterogeneous medium
     const Eigen::MatrixXd& perm =
         _material_properties.intrinsic_permeabiliy[mat_id];
 
     // TODO: The following two variables should be calculated inside the
     //       the integration loop for non-constant porosity and storage models.
-    double var4porosity = 0.;
-    double var4storage = 0.;
+    double porosity_variable = 0.;
+    double storage_variable = 0.;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
         auto const& wp = _integration_method.getWeightedPoint(ip);
 
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_p, sm.N, p);
+        NumLib::shapeFunctionInterpolate(local_x, sm.N, p);
         // TODO : compute _temperature from the heat transport pcs
 
-        const double integration_factor
-                               = sm.integralMeasure * sm.detJ * wp.getWeight();
+        const double integration_factor =
+            sm.integralMeasure * sm.detJ * wp.getWeight();
 
         // Assemble mass matrix, M
         local_M.noalias() +=
-            _material_properties.getMassCoefficient(var4porosity, var4storage,
-                                                   p, _temperature, mat_id) *
-                                 sm.N.transpose() * sm.N * integration_factor;
+            _material_properties.getMassCoefficient(porosity_variable, storage_variable,
+                                                    p, _temperature, mat_id) *
+            sm.N.transpose() * sm.N * integration_factor;
 
         // Compute density:
         const double rho_g =
@@ -83,7 +77,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        if (perm.size() == 1)  // Save the computing time for isotropic permeability.
+        if (perm.size() ==
+            1)  // Save the computing time for isotropic permeability.
         {
             //  Use scalar number for isotropic permeability
             //  to save the computation time.
@@ -95,16 +90,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                 local_b.noalias() -=
                     fac * sm.dNdx.transpose().col(GlobalDim - 1) * rho_g;
             }
-
-            // Compute the velocity
-            GlobalDimVectorType darcy_velocity = -K * sm.dNdx * local_p_vec;
-            // gravity term
-            if (_compute_gravitational_term)
-                darcy_velocity[GlobalDim - 1] -= K * rho_g;
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = darcy_velocity[d];
-            }
         }
         else
         {
@@ -114,17 +99,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             {
                 local_b.noalias() -=
                     fac * rho_g * sm.dNdx.transpose() * perm.col(GlobalDim - 1);
-            }
-
-            // Compute the velocity
-            GlobalDimVectorType darcy_velocity = -perm * sm.dNdx * local_p_vec / mu;
-            if (_compute_gravitational_term)
-            {
-                darcy_velocity.noalias() -=  rho_g * perm.col(GlobalDim - 1) / mu;
-            }
-            for (unsigned d = 0; d < GlobalDim; ++d)
-            {
-                _darcy_velocities[d][ip] = darcy_velocity[d];
             }
         }
     }
