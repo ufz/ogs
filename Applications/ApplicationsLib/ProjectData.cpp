@@ -296,8 +296,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
         else if (type == "LIQUID_FLOW")
         {
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
-                *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, process_config);
+                *_mesh_vec[0], std::move(jacobian_assembler), _process_variables,
+                _parameters, integration_order, process_config);
         }
         else if (type == "TES")
         {
