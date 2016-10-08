@@ -83,21 +83,22 @@ int main (int argc, char* argv[])
     // ToDo check if mesh is read correct and if the mesh is a surface mesh
 
     // check if a node property containing the subsurface ids is available
-    boost::optional<MeshLib::PropertyVector<std::size_t>&> orig_node_ids(
+    auto* orig_node_ids =
         surface_mesh->getProperties().getPropertyVector<std::size_t>(
-            id_prop_name.getValue()));
+            id_prop_name.getValue());
     // if the node property is not available generate it
-    if (!orig_node_ids) {
-        boost::optional<MeshLib::PropertyVector<std::size_t>&> node_ids(
+    if (!orig_node_ids)
+    {
+        orig_node_ids =
             surface_mesh->getProperties().createNewPropertyVector<std::size_t>(
-                id_prop_name.getValue(), MeshLib::MeshItemType::Node, 1));
-        if (!node_ids) {
+                id_prop_name.getValue(), MeshLib::MeshItemType::Node, 1);
+        if (!orig_node_ids)
+        {
             ERR("Fatal error: could not create property.");
             return EXIT_FAILURE;
         }
-        node_ids->resize(surface_mesh->getNumberOfNodes());
-        std::iota(node_ids->begin(), node_ids->end(), 0);
-        orig_node_ids = node_ids;
+        orig_node_ids->resize(surface_mesh->getNumberOfNodes());
+        std::iota(orig_node_ids->begin(), orig_node_ids->end(), 0);
     }
 
     std::vector<double> areas(
