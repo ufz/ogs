@@ -28,8 +28,9 @@
 #include "BaseLib/StringTools.h"
 
 #include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Location.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace MeshLib
 {
@@ -127,16 +128,17 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
         MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
                                                        file_name), nodes, elements));
 
-        boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+        auto* const material_ids =
             mesh->getProperties().createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1)
-        );
-        if (!opt_material_ids) {
+                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        if (!material_ids)
+        {
             WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
-        } else {
-            MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
-            material_ids.insert(material_ids.end(), materials.cbegin(),
-                materials.cend());
+        }
+        else
+        {
+            material_ids->insert(material_ids->end(), materials.cbegin(),
+                                 materials.cend());
         }
         INFO("\t... finished.");
         INFO("Nr. Nodes: %d.", nodes.size());
@@ -279,8 +281,8 @@ bool MeshIO::write()
     _out << "$ELEMENTS\n"
         << "  ";
 
-    boost::optional<MeshLib::PropertyVector<int> const&>
-        materials(_mesh->getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto const* const materials =
+        _mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     writeElements(_mesh->getElements(), materials, _out);
 
     _out << "#STOP\n";
@@ -293,9 +295,10 @@ void MeshIO::setMesh(const MeshLib::Mesh* mesh)
     _mesh = mesh;
 }
 
-void MeshIO::writeElements(std::vector<MeshLib::Element*> const& ele_vec,
-    boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
-    std::ostream &out) const
+void MeshIO::writeElements(
+    std::vector<MeshLib::Element*> const& ele_vec,
+    MeshLib::PropertyVector<int> const* const material_ids,
+    std::ostream& out) const
 {
     const std::size_t ele_vector_size (ele_vec.size());
 
