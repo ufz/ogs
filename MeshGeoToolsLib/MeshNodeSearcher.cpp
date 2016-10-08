@@ -8,7 +8,11 @@
  *              http://www.opengeosys.org/LICENSE.txt
  */
 
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshNodeSearcher.h"
+#include "HeuristicSearchLength.h"
+#include "MeshNodesAlongPolyline.h"
+#include "MeshNodesAlongSurface.h"
+#include "MeshNodesOnPoint.h"
 
 #include <logog/include/logog.hpp>
 
@@ -20,12 +24,6 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-
-// MeshGeoToolsLib
-#include "MeshGeoToolsLib/HeuristicSearchLength.h"
-#include "MeshGeoToolsLib/MeshNodesOnPoint.h"
-#include "MeshGeoToolsLib/MeshNodesAlongPolyline.h"
-#include "MeshGeoToolsLib/MeshNodesAlongSurface.h"
 
 namespace MeshGeoToolsLib
 {
