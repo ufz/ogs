@@ -16,7 +16,6 @@
 #ifndef VTKMESHCONVERTER_H
 #define VTKMESHCONVERTER_H
 
-#include <boost/optional.hpp>
 #include <vtkDataArray.h>
 #include <vtkType.h>
 
@@ -105,8 +104,8 @@ private:
         int const nComponents (array.GetNumberOfComponents());
         char const*const array_name (array.GetName());
 
-        boost::optional<MeshLib::PropertyVector<T> &> vec
-            (properties.createNewPropertyVector<T>(array_name, type, nComponents));
+        auto* const vec = properties.createNewPropertyVector<T>(
+            array_name, type, nComponents);
         if (!vec)
         {
             WARN("Array %s could not be converted to PropertyVector.", array_name);

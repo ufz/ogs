@@ -60,9 +60,8 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
     std::vector<MeshLib::Element*> new_elems;
     new_elems.reserve(nElems * nLayers);
     MeshLib::Properties properties;
-    boost::optional<PropertyVector<int>&> materials =
-        properties.createNewPropertyVector<int>("MaterialIDs",
-                                                MeshLib::MeshItemType::Cell);
+    auto* const materials = properties.createNewPropertyVector<int>(
+        "MaterialIDs", MeshLib::MeshItemType::Cell);
     if (!materials)
     {
         ERR("Could not create PropertyVector object \"MaterialIDs\".");

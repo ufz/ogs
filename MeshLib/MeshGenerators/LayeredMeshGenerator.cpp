@@ -57,10 +57,9 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
     MeshLib::Properties properties;
     if (_materials.size() == _elements.size())
     {
-        boost::optional<MeshLib::PropertyVector<int>&> materials =
-            properties.createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell);
-        assert(materials != boost::none);
+        auto* const materials = properties.createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell);
+        assert(materials != nullptr);
         materials->reserve(_materials.size());
         std::copy(_materials.cbegin(),
                   _materials.cend(),

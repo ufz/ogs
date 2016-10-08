@@ -11,14 +11,12 @@
 #ifndef RASTERTOMESH_H
 #define RASTERTOMESH_H
 
-#include <boost/optional.hpp>
 #include <logog/include/logog.hpp>
 
 #include "GeoLib/Raster.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
-#include "MeshLib/PropertyVector.h"
 
 class vtkImageData; // For conversion from Image to QuadMesh
 
@@ -27,6 +25,8 @@ namespace MeshLib {
 class Mesh;
 class Node;
 class Element;
+template <typename T>
+class PropertyVector;
 
 /**
  * \brief Converts raster data into an OGS mesh.
