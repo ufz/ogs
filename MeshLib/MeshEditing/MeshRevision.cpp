@@ -63,14 +63,14 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
     // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
     MeshLib::Properties const& properties(_mesh.getProperties());
-    boost::optional<MeshLib::PropertyVector<int> const&> material_vec(
-        properties.getPropertyVector<int>("MaterialIDs"));
+    auto const* const material_vec =
+        properties.getPropertyVector<int>("MaterialIDs");
 
     // data structures for the new mesh
     std::vector<MeshLib::Node*> new_nodes = this->constructNewNodesArray(this->collapseNodeIndices(eps));
     std::vector<MeshLib::Element*> new_elements;
     MeshLib::Properties new_properties;
-    boost::optional<PropertyVector<int> &> new_material_vec;
+    PropertyVector<int>* new_material_vec = nullptr;
     if (material_vec) {
         new_material_vec = new_properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshItemType::Cell, 1);
@@ -134,14 +134,13 @@ MeshLib::Mesh* MeshRevision::subdivideMesh(const std::string &new_mesh_name) con
     // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
     MeshLib::Properties const& properties(_mesh.getProperties());
-    boost::optional<MeshLib::PropertyVector<int> const&> material_vec(
-        properties.getPropertyVector<int>("MaterialIDs"));
+    auto const* material_vec = properties.getPropertyVector<int>("MaterialIDs");
 
     // data structures for the new mesh
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(_mesh.getNodes());
     std::vector<MeshLib::Element*> new_elements;
     MeshLib::Properties new_properties;
-    boost::optional<PropertyVector<int> &> new_material_vec;
+    PropertyVector<int>* new_material_vec = nullptr;
     if (material_vec) {
         new_material_vec = new_properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshItemType::Cell, 1
