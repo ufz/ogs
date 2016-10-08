@@ -215,9 +215,8 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
                 mesh.getNumberOfElements(),
                 values.size() / number_of_components);
 
-    boost::optional<MeshLib::PropertyVector<T>&> property(
-        mesh.getProperties().createNewPropertyVector<T>(name, item_type,
-                                                        number_of_components));
+    auto* const property = mesh.getProperties().createNewPropertyVector<T>(
+        name, item_type, number_of_components);
     if (!property)
     {
         OGS_FATAL("Error while creating PropertyVector \"%s\".", name.c_str());
