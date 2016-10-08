@@ -139,14 +139,14 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
     // Interpolation
     for (std::size_t k(0); k < size - 1; ++k)
     {
-        ASSERT_NEAR(1 + 2 * k, interpolation.GetDerivative(k + 0.5),
+        ASSERT_NEAR(1 + 2 * k, interpolation.getDerivative(k + 0.5),
                     std::numeric_limits<double>::epsilon());
     }
 
     // Extrapolation
-    ASSERT_NEAR(0, interpolation.GetDerivative(-1),
+    ASSERT_NEAR(0, interpolation.getDerivative(-1),
                 std::numeric_limits<double>::epsilon());
     // Extrapolation
-    ASSERT_NEAR(0, interpolation.GetDerivative(1001),
+    ASSERT_NEAR(0, interpolation.getDerivative(1001),
                 std::numeric_limits<double>::epsilon());
 }

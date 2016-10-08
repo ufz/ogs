@@ -70,13 +70,13 @@ public:
      * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. when points are located
      * outside of this interval
      * the derivative is set to 0
-     * \attention if the points is located between the first and second points
+     * \attention if the points are located between the first and second points
      * (or last and second to last point), the derivative is calculated by
      * simple linear interpolation
      * otherwise, it is calculated by second order of interpolation with central
      * difference
      */
-    double GetDerivative(double pnt_to_interpolate) const;
+    double getDerivative(double const pnt_to_interpolate) const;
 
 private:
     std::vector<double> _supp_pnts;

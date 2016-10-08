@@ -68,7 +68,7 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
            _values_at_supp_pnts[interval_idx];
 }
 
-double PiecewiseLinearInterpolation::GetDerivative(
+double PiecewiseLinearInterpolation::getDerivative(
     double const pnt_to_interpolate) const
 {
     if (pnt_to_interpolate < _supp_pnts.front() ||
@@ -84,18 +84,18 @@ double PiecewiseLinearInterpolation::GetDerivative(
     // interval_idx = interval_max - 1 - interval_idx;
     if (interval_idx > 1 && interval_idx < _supp_pnts.size() - 2)
     {
-        double const slope_right =
+        double const tangent_right =
             (_values_at_supp_pnts[interval_idx] -
              _values_at_supp_pnts[interval_idx + 2]) /
             (_supp_pnts[interval_idx] - _supp_pnts[interval_idx + 2]);
-        double const slope_left =
+        double const tangent_left =
             (_values_at_supp_pnts[interval_idx - 1] -
              _values_at_supp_pnts[interval_idx + 1]) /
             (_supp_pnts[interval_idx - 1] - _supp_pnts[interval_idx + 1]);
         double const w =
             (pnt_to_interpolate - _supp_pnts[interval_idx + 1]) /
             (_supp_pnts[interval_idx] - _supp_pnts[interval_idx + 1]);
-        return (1. - w) * slope_right + w * slope_left;
+        return (1. - w) * tangent_right + w * tangent_left;
     }
     else
     {
