@@ -92,19 +92,17 @@ TEST(MeshLib, AddTopLayerToTriMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh (MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
     std::string const& mat_name ("MaterialIDs");
-    boost::optional<MeshLib::PropertyVector<int>&> mats =
-        mesh->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
+    auto* const mats = mesh->getProperties().createNewPropertyVector<int>(
+        mat_name, MeshLib::MeshItemType::Cell);
     if (mats)
     {
-        mats->resize(mesh->getNumberOfElements());
-        std::fill_n(mats->begin(), mesh->getNumberOfElements(), 0);
+        mats->resize(mesh->getNumberOfElements(), 0);
     }
-    boost::optional<MeshLib::PropertyVector<double>&> test =
-        mesh->getProperties().createNewPropertyVector<double>("test", MeshLib::MeshItemType::Cell);
+    auto* const test = mesh->getProperties().createNewPropertyVector<double>(
+        "test", MeshLib::MeshItemType::Cell);
     if (test)
     {
-        test->resize(mesh->getNumberOfElements());
-        std::fill_n(test->begin(), mesh->getNumberOfElements(), 0.1);
+        test->resize(mesh->getNumberOfElements(), 0.1);
     }
     ASSERT_EQ(2, mesh->getProperties().getPropertyVectorNames().size());
     double const height (1);
@@ -118,7 +116,7 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     ASSERT_EQ(mesh->getNumberOfElements(), n_elems[6]); // tests if 50 prisms are present
 
     ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
-    boost::optional<MeshLib::PropertyVector<int>&> new_mats =
+    auto const* const new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
     ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
     ASSERT_EQ(mesh->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
@@ -249,12 +247,11 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
     std::unique_ptr<MeshLib::Mesh> const mesh2 (MeshLib::addLayerToMesh(*mesh, 5, "mesh", true));
     double const height (1);
     std::string const& mat_name ("MaterialIDs");
-    boost::optional<MeshLib::PropertyVector<int>&> mats =
-        mesh2->getProperties().createNewPropertyVector<int>(mat_name, MeshLib::MeshItemType::Cell);
+    auto* const mats = mesh2->getProperties().createNewPropertyVector<int>(
+        mat_name, MeshLib::MeshItemType::Cell);
     if (mats)
     {
-        mats->resize(mesh2->getNumberOfElements());
-        std::fill_n(mats->begin(), mesh2->getNumberOfElements(), 0);
+        mats->resize(mesh2->getNumberOfElements(), 0);
     }
 
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh2, height, "mesh", false));
@@ -265,7 +262,7 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
     ASSERT_EQ(mesh->getNumberOfElements(), n_elems[1]); // tests if 50 tris are present
     ASSERT_EQ(2 * mesh->getNumberOfElements(), n_elems[6]); // tests if 50 prisms are present
     ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
-    boost::optional<MeshLib::PropertyVector<int>&> new_mats =
+    auto const* const new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
     ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
     ASSERT_EQ(mesh2->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));

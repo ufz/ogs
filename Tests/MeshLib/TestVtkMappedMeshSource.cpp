@@ -42,66 +42,67 @@ class InSituMesh : public ::testing::Test
     InSituMesh()
      : mesh(nullptr)
     {
-        mesh = MeshLib::MeshGenerator::generateRegularHexMesh(this->length, this->subdivisions);
+        mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
+            this->length, this->subdivisions);
 
         std::string const point_prop_name("PointDoubleProperty");
-        boost::optional<MeshLib::PropertyVector<double> &> point_double_properties(
-            mesh->getProperties().createNewPropertyVector<double>(point_prop_name,
-                MeshLib::MeshItemType::Node)
-        );
-        (*point_double_properties).resize(mesh->getNumberOfNodes());
-        std::iota((*point_double_properties).begin(), (*point_double_properties).end(), 1);
+        auto* const point_double_properties =
+            mesh->getProperties().createNewPropertyVector<double>(
+                point_prop_name, MeshLib::MeshItemType::Node);
+        point_double_properties->resize(mesh->getNumberOfNodes());
+        std::iota(point_double_properties->begin(),
+                  point_double_properties->end(),
+                  1);
 
         std::string const cell_prop_name("CellDoubleProperty");
-        boost::optional<MeshLib::PropertyVector<double> &> cell_double_properties(
-            mesh->getProperties().createNewPropertyVector<double>(cell_prop_name,
-                MeshLib::MeshItemType::Cell)
-        );
-        (*cell_double_properties).resize(mesh->getNumberOfElements());
-        std::iota((*cell_double_properties).begin(), (*cell_double_properties).end(), 1);
+        auto* const cell_double_properties =
+            mesh->getProperties().createNewPropertyVector<double>(
+                cell_prop_name, MeshLib::MeshItemType::Cell);
+        cell_double_properties->resize(mesh->getNumberOfElements());
+        std::iota(
+            cell_double_properties->begin(), cell_double_properties->end(), 1);
 
         std::string const point_int_prop_name("PointIntProperty");
-        boost::optional<MeshLib::PropertyVector<int> &> point_int_properties(
-            mesh->getProperties().createNewPropertyVector<int>(point_int_prop_name,
-                MeshLib::MeshItemType::Node)
-        );
-        (*point_int_properties).resize(mesh->getNumberOfNodes());
-        std::iota((*point_int_properties).begin(), (*point_int_properties).end(), 1);
+        auto* const point_int_properties =
+            mesh->getProperties().createNewPropertyVector<int>(
+                point_int_prop_name, MeshLib::MeshItemType::Node);
+        point_int_properties->resize(mesh->getNumberOfNodes());
+        std::iota(
+            point_int_properties->begin(), point_int_properties->end(), 1);
 
         std::string const cell_int_prop_name("CellIntProperty");
-        boost::optional<MeshLib::PropertyVector<int> &> cell_int_properties(
-            mesh->getProperties().createNewPropertyVector<int>(cell_int_prop_name,
-                MeshLib::MeshItemType::Cell)
-        );
-        (*cell_int_properties).resize(mesh->getNumberOfElements());
-        std::iota((*cell_int_properties).begin(), (*cell_int_properties).end(), 1);
+        auto* const cell_int_properties =
+            mesh->getProperties().createNewPropertyVector<int>(
+                cell_int_prop_name, MeshLib::MeshItemType::Cell);
+        cell_int_properties->resize(mesh->getNumberOfElements());
+        std::iota(cell_int_properties->begin(), cell_int_properties->end(), 1);
 
         std::string const point_unsigned_prop_name("PointUnsignedProperty");
-        boost::optional<MeshLib::PropertyVector<unsigned> &> point_unsigned_properties(
-            mesh->getProperties().createNewPropertyVector<unsigned>(point_unsigned_prop_name,
-                MeshLib::MeshItemType::Node)
-        );
-        (*point_unsigned_properties).resize(mesh->getNumberOfNodes());
-        std::iota((*point_unsigned_properties).begin(), (*point_unsigned_properties).end(), 1);
+        auto point_unsigned_properties =
+            mesh->getProperties().createNewPropertyVector<unsigned>(
+                point_unsigned_prop_name, MeshLib::MeshItemType::Node);
+        point_unsigned_properties->resize(mesh->getNumberOfNodes());
+        std::iota(point_unsigned_properties->begin(),
+                  point_unsigned_properties->end(),
+                  1);
 
         std::string const cell_unsigned_prop_name("CellUnsignedProperty");
-        boost::optional<MeshLib::PropertyVector<unsigned> &> cell_unsigned_properties(
-            mesh->getProperties().createNewPropertyVector<unsigned>(cell_unsigned_prop_name,
-                MeshLib::MeshItemType::Cell)
-        );
-        (*cell_unsigned_properties).resize(mesh->getNumberOfElements());
-        std::iota((*cell_unsigned_properties).begin(), (*cell_unsigned_properties).end(), 1);
+        auto cell_unsigned_properties =
+            mesh->getProperties().createNewPropertyVector<unsigned>(
+                cell_unsigned_prop_name, MeshLib::MeshItemType::Cell);
+        cell_unsigned_properties->resize(mesh->getNumberOfElements());
+        std::iota(cell_unsigned_properties->begin(),
+                  cell_unsigned_properties->end(),
+                  1);
 
         std::string const material_ids_name("MaterialIDs");
-        boost::optional<MeshLib::PropertyVector<int> &> material_id_properties(
-            mesh->getProperties().createNewPropertyVector<int>(material_ids_name,
-                MeshLib::MeshItemType::Cell)
-        );
-        (*material_id_properties).resize(mesh->getNumberOfElements());
-        std::iota((*material_id_properties).begin(), (*material_id_properties).end(), 1);
+        auto material_id_properties =
+            mesh->getProperties().createNewPropertyVector<int>(
+                material_ids_name, MeshLib::MeshItemType::Cell);
+        material_id_properties->resize(mesh->getNumberOfElements());
+        std::iota(
+            material_id_properties->begin(), material_id_properties->end(), 1);
     }
-
-
 
     ~InSituMesh()
     {
@@ -232,7 +233,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(),
                 pointIntArray->GetNumberOfTuples());
             ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointUnsignedProperty")->GetNumberOfTuples(),
-                      pointUnsignedArray->GetNumberOfTuples());
+                pointUnsignedArray->GetNumberOfTuples());
             ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(),
                 cellDoubleArray->GetNumberOfTuples());
             ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellIntProperty")->GetNumberOfTuples(),
@@ -251,42 +252,55 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_EQ(newMeshProperties.hasPropertyVector("PointDoubleProperty"),
                 meshProperties.hasPropertyVector("PointDoubleProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("PointIntProperty"),
-                meshProperties.hasPropertyVector("PointIntProperty"));
+                      meshProperties.hasPropertyVector("PointIntProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("PointUnsignedProperty"),
-                      meshProperties.hasPropertyVector("PointUnsignedProperty"));
+                meshProperties.hasPropertyVector("PointUnsignedProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellDoubleProperty"),
                 meshProperties.hasPropertyVector("CellDoubleProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellIntProperty"),
                 meshProperties.hasPropertyVector("CellIntProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellUnsignedProperty"),
-                      meshProperties.hasPropertyVector("CellUnsignedProperty"));
+                meshProperties.hasPropertyVector("CellUnsignedProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("MaterialIDs"),
                 meshProperties.hasPropertyVector("MaterialIDs"));
 
             // Check some properties on equality
-            auto doubleProps = meshProperties.getPropertyVector<double>("PointDoubleProperty");
-            auto newDoubleProps = newMeshProperties.getPropertyVector<double>("PointDoubleProperty");
-            ASSERT_EQ((*newDoubleProps).getNumberOfComponents(), (*doubleProps).getNumberOfComponents());
-            ASSERT_EQ((*newDoubleProps).getNumberOfTuples(), (*doubleProps).getNumberOfTuples());
-            ASSERT_EQ((*newDoubleProps).size(), (*doubleProps).size());
-            for(std::size_t i = 0; i < (*doubleProps).size(); i++)
+            auto const* const doubleProps =
+                meshProperties.getPropertyVector<double>("PointDoubleProperty");
+            auto const* const newDoubleProps =
+                newMeshProperties.getPropertyVector<double>(
+                    "PointDoubleProperty");
+            ASSERT_EQ(newDoubleProps->getNumberOfComponents(),
+                      doubleProps->getNumberOfComponents());
+            ASSERT_EQ(newDoubleProps->getNumberOfTuples(),
+                      doubleProps->getNumberOfTuples());
+            ASSERT_EQ(newDoubleProps->size(), doubleProps->size());
+            for (std::size_t i = 0; i < doubleProps->size(); i++)
                 ASSERT_EQ((*newDoubleProps)[i], (*doubleProps)[i]);
 
-            auto unsignedProps = meshProperties.getPropertyVector<unsigned>("CellUnsignedProperty");
-            auto newUnsignedIds = newMeshProperties.getPropertyVector<unsigned>("CellUnsignedProperty");
+            auto unsignedProps = meshProperties.getPropertyVector<unsigned>(
+                "CellUnsignedProperty");
+            auto newUnsignedIds = newMeshProperties.getPropertyVector<unsigned>(
+                "CellUnsignedProperty");
 
-            ASSERT_EQ((*newUnsignedIds).getNumberOfComponents(), (*unsignedProps).getNumberOfComponents());
-            ASSERT_EQ((*newUnsignedIds).getNumberOfTuples(), (*unsignedProps).getNumberOfTuples());
-            ASSERT_EQ((*newUnsignedIds).size(), (*unsignedProps).size());
-            for(std::size_t i = 0; i < (*unsignedProps).size(); i++)
+            ASSERT_EQ(newUnsignedIds->getNumberOfComponents(),
+                      unsignedProps->getNumberOfComponents());
+            ASSERT_EQ(newUnsignedIds->getNumberOfTuples(),
+                      unsignedProps->getNumberOfTuples());
+            ASSERT_EQ(newUnsignedIds->size(), unsignedProps->size());
+            for (std::size_t i = 0; i < unsignedProps->size(); i++)
                 ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
 
-            auto materialIds = meshProperties.getPropertyVector<int>("MaterialIDs");
-            auto newMaterialIds = newMeshProperties.getPropertyVector<int>("MaterialIDs");
-            ASSERT_EQ((*newMaterialIds).getNumberOfComponents(), (*materialIds).getNumberOfComponents());
-            ASSERT_EQ((*newMaterialIds).getNumberOfTuples(), (*materialIds).getNumberOfTuples());
-            ASSERT_EQ((*newMaterialIds).size(), (*materialIds).size());
-            for(std::size_t i = 0; i < (*materialIds).size(); i++)
+            auto const* const materialIds =
+                meshProperties.getPropertyVector<int>("MaterialIDs");
+            auto const* const newMaterialIds =
+                newMeshProperties.getPropertyVector<int>("MaterialIDs");
+            ASSERT_EQ(newMaterialIds->getNumberOfComponents(),
+                      materialIds->getNumberOfComponents());
+            ASSERT_EQ(newMaterialIds->getNumberOfTuples(),
+                      materialIds->getNumberOfTuples());
+            ASSERT_EQ(newMaterialIds->size(), materialIds->size());
+            for (std::size_t i = 0; i < materialIds->size(); i++)
                 ASSERT_EQ((*newMaterialIds)[i], (*materialIds)[i]);
         }
     }
