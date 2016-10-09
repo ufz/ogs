@@ -63,18 +63,16 @@ public:
     double getValue(double pnt_to_interpolate) const;
 
     /**
-     * \brief Calculates the derivative value.
+     * \brief Calculates derivative using quadratic interpolation
+     * and central difference quotient.
      * @param pnt_to_interpolate The point should be located within the range
      * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n}
      * x_j\f$ and
      * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. when points are located
-     * outside of this interval
-     * the derivative is set to 0
-     * \attention if the points are located between the first and second points
-     * (or last and second to last point), the derivative is calculated by
-     * simple linear interpolation
-     * otherwise, it is calculated by second order of interpolation with central
-     * difference
+     * outside of this interval, the derivative is set to 0.
+     * \attention if a point is located between the first and second points
+     * (or last and second to last point), the derivative is calculated
+     * using linear interpolation.
      */
     double getDerivative(double const pnt_to_interpolate) const;
 
