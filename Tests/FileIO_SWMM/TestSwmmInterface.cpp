@@ -58,7 +58,7 @@ TEST(FileIO, TestSwmmInterface)
     ASSERT_EQ(n_nodes, mesh.getNumberOfNodes());
     ASSERT_EQ(n_elems, mesh.getNumberOfElements());
 
-    boost::optional<MeshLib::PropertyVector<double> const&> depth =
+    auto const* const depth =
         mesh.getProperties().getPropertyVector<double>("Max Depth");
     ASSERT_TRUE(n_nodes == depth->size());
     ASSERT_NEAR((*depth)[1], 2*(*depth)[0], std::numeric_limits<double>::epsilon());
