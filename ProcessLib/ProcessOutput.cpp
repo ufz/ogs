@@ -135,7 +135,7 @@ void doProcessOutput(
         std::string const& property_name, MeshLib::MeshItemType type)
     {
         // Get or create a property vector for results.
-        boost::optional<MeshLib::PropertyVector<double>&> result;
+        MeshLib::PropertyVector<double>* result = nullptr;
 
         auto const N = count_mesh_items(mesh, type);
 

@@ -76,9 +76,9 @@ public:
                 getProcessVariables()[0].get().getNumberOfComponents(),
                 _integration_order);
 
-            boost::optional<MeshLib::PropertyVector<double>&> balance_pv(
+            auto* const balance_pv =
                 _balance_mesh->getProperties()
-                    .template getPropertyVector<double>(_balance_pv_name));
+                    .template getPropertyVector<double>(_balance_pv_name);
 
             balance.integrate(x, *balance_pv, *this);
             // post: surface_mesh has vectorial element property
