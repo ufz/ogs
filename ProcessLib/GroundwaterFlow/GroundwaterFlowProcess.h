@@ -88,6 +88,9 @@ public:
         }
     }
 
+    void computeSecondaryVariableConcrete(double const t,
+                                          GlobalVector const& x) override;
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

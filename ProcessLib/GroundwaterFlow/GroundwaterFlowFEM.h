@@ -105,11 +105,34 @@ public:
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  sm.integralMeasure * wp.getWeight();
+        }
+    }
 
+    void computeSecondaryVariableConcrete(
+                                    const double t,
+                                    std::vector<double> const& local_x) override
+    {
+        auto const local_matrix_size = local_x.size();
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        const auto local_x_vec =
+        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
+
+        SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+            auto const& sm = _shape_matrices[ip];
+            auto const k = _process_data.hydraulic_conductivity(t, pos)[0];
             // Darcy velocity only computed for output.
-            GlobalDimVectorType const darcy_velocity =
-                -k * sm.dNdx * Eigen::Map<const NodalVectorType>(
-                                   local_x.data(), ShapeFunction::NPOINTS);
+            GlobalDimVectorType const darcy_velocity = -k * sm.dNdx * local_x_vec;
 
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

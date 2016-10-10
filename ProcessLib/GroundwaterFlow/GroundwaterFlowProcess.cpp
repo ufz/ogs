@@ -100,5 +100,15 @@ void GroundwaterFlowProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac);
 }
 
+
+void GroundwaterFlowProcess::computeSecondaryVariableConcrete(const double t,
+                                                         GlobalVector const& x)
+{
+    DBUG("Compute the velocity for GroundwaterFlowProcess.");
+    GlobalExecutor::executeMemberOnDereferenced(
+            &GroundwaterFlowLocalAssemblerInterface::computeSecondaryVariable,
+            _local_assemblers, *_local_to_global_index_map, t, x);
+}
+
 }   // namespace GroundwaterFlow
 }   // namespace ProcessLib
