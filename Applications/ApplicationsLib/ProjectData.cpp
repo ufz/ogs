@@ -36,6 +36,7 @@
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #include "ProcessLib/TES/CreateTESProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
+#include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
 
 namespace detail
 {
@@ -326,6 +327,12 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
+		else if (type == "RICHARDS_FLOW")
+		{
+			process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
+				*_mesh_vec[0], std::move(jacobian_assembler),
+				_process_variables, _parameters, integration_order, process_config, _curves);
+		}
         else
         {
             OGS_FATAL("Unknown process type: %s", type.c_str());
