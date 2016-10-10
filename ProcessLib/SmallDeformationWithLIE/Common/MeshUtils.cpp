@@ -17,9 +17,9 @@ namespace SmallDeformationWithLIE
 void getFractureMatrixDataInMesh(
         MeshLib::Mesh const& mesh,
         std::vector<MeshLib::Element*>& vec_matrix_elements,
-        std::vector<MeshLib::Element*>& vec_fracutre_elements,
-        std::vector<MeshLib::Element*>& vec_fracutre_matrix_elements,
-        std::vector<MeshLib::Node*>& vec_fracutre_nodes
+        std::vector<MeshLib::Element*>& vec_fracture_elements,
+        std::vector<MeshLib::Element*>& vec_fracture_matrix_elements,
+        std::vector<MeshLib::Node*>& vec_fracture_nodes
         )
 {
     // get vectors of matrix elements and fracture elements
@@ -29,29 +29,31 @@ void getFractureMatrixDataInMesh(
         if (e->getDimension() == mesh.getDimension())
             vec_matrix_elements.push_back(e);
         else
-            vec_fracutre_elements.push_back(e);
+            vec_fracture_elements.push_back(e);
     }
     DBUG("-> found total %d matrix elements and %d fracture elements",
-         vec_matrix_elements.size(), vec_fracutre_elements.size());
+         vec_matrix_elements.size(), vec_fracture_elements.size());
 
     // get a vector of fracture nodes
-    for (MeshLib::Element* e : vec_fracutre_elements)
+    for (MeshLib::Element* e : vec_fracture_elements)
     {
         for (unsigned i=0; i<e->getNumberOfNodes(); i++)
         {
-            vec_fracutre_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
+            vec_fracture_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
         }
     }
-    std::sort(vec_fracutre_nodes.begin(), vec_fracutre_nodes.end(),
+    std::sort(vec_fracture_nodes.begin(), vec_fracture_nodes.end(),
         [](MeshLib::Node* node1, MeshLib::Node* node2) { return (node1->getID() < node2->getID()); }
         );
-    vec_fracutre_nodes.erase(std::unique(vec_fracutre_nodes.begin(), vec_fracutre_nodes.end()), vec_fracutre_nodes.end());
-    DBUG("-> found %d nodes on the fracture", vec_fracutre_nodes.size());
+    vec_fracture_nodes.erase(
+                std::unique(vec_fracture_nodes.begin(), vec_fracture_nodes.end()),
+                vec_fracture_nodes.end());
+    DBUG("-> found %d nodes on the fracture", vec_fracture_nodes.size());
 
-    // create a vector fractre elements and connected matrix elements,
+    // create a vector fracture elements and connected matrix elements,
     // which are passed to a DoF table
     // first, collect matrix elements
-    for (MeshLib::Element *e : vec_fracutre_elements)
+    for (MeshLib::Element *e : vec_fracture_elements)
     {
         for (unsigned i=0; i<e->getNumberOfBaseNodes(); i++)
         {
@@ -61,17 +63,21 @@ void getFractureMatrixDataInMesh(
                 // only matrix elements
                 if (node->getElement(j)->getDimension() == mesh.getDimension()-1)
                     continue;
-                vec_fracutre_matrix_elements.push_back(const_cast<MeshLib::Element*>(node->getElement(j)));
+                vec_fracture_matrix_elements.push_back(const_cast<MeshLib::Element*>(node->getElement(j)));
             }
         }
     }
-    std::sort(vec_fracutre_matrix_elements.begin(), vec_fracutre_matrix_elements.end(),
+    std::sort(vec_fracture_matrix_elements.begin(), vec_fracture_matrix_elements.end(),
         [](MeshLib::Element* p1, MeshLib::Element* p2) { return (p1->getID() < p2->getID()); }
         );
-    vec_fracutre_matrix_elements.erase(std::unique(vec_fracutre_matrix_elements.begin(), vec_fracutre_matrix_elements.end()), vec_fracutre_matrix_elements.end());
+    vec_fracture_matrix_elements.erase(
+                std::unique(vec_fracture_matrix_elements.begin(), vec_fracture_matrix_elements.end()),
+                vec_fracture_matrix_elements.end());
 
     // second, append fracture elements
-    vec_fracutre_matrix_elements.insert(vec_fracutre_matrix_elements.end(), vec_fracutre_elements.begin(), vec_fracutre_elements.end());
+    vec_fracture_matrix_elements.insert(
+                vec_fracture_matrix_elements.end(),
+                vec_fracture_elements.begin(), vec_fracture_elements.end());
 }
 
 }  // namespace SmallDeformationWithLIE

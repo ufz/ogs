@@ -14,35 +14,40 @@
 #include <Eigen/Eigen>
 
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Mesh.h"
 
 #include "ProcessLib/SmallDeformationWithLIE/Common/Utils.h"
 
 
 namespace
 {
-typedef MeshLib::Line ElementType;
-const unsigned e_nnodes = ElementType::n_all_nodes;
 
-std::unique_ptr<MeshLib::Line> createLine(
+std::unique_ptr<MeshLib::Mesh> createLine(
     std::array<double, 3> const& a, std::array<double, 3> const& b)
 {
-    MeshLib::Node** nodes = new MeshLib::Node*[e_nnodes];
+    MeshLib::Node** nodes = new MeshLib::Node*[2];
     nodes[0] = new MeshLib::Node(a);
     nodes[1] = new MeshLib::Node(b);
-    return std::unique_ptr<MeshLib::Line>{new MeshLib::Line(nodes)};
+    MeshLib::Element* e = new MeshLib::Line(nodes);
+
+    return std::unique_ptr<MeshLib::Mesh>(
+                new MeshLib::Mesh("",
+                                  std::vector<MeshLib::Node*>{nodes[0], nodes[1]},
+                                  std::vector<MeshLib::Element*>{e})
+                );
 }
 
-std::unique_ptr<MeshLib::Line> createX()
+std::unique_ptr<MeshLib::Mesh> createX()
 {
     return createLine({{-1.0, 0.0, 0.0}}, {{1.0,  0.0, 0.0}});
 }
 
-std::unique_ptr<MeshLib::Line> createY()
+std::unique_ptr<MeshLib::Mesh> createY()
 {
     return createLine({{0.0, -1.0, 0.0}}, {{0.0,  1.0, 0.0}});
 }
 
-std::unique_ptr<MeshLib::Line> createXY()
+std::unique_ptr<MeshLib::Mesh> createXY()
 {
     // 45degree inclined
     return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(2), 2./sqrt(2), 0.0}});
@@ -54,7 +59,8 @@ const double eps = std::numeric_limits<double>::epsilon();
 
 TEST(LIE, rotationMatrixX)
 {
-    auto e(createX());
+    auto msh(createX());
+    auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
     ASSERT_EQ(0., nv[0]);
@@ -72,7 +78,8 @@ TEST(LIE, rotationMatrixX)
 
 TEST(LIE, rotationMatrixY)
 {
-    auto e(createY());
+    auto msh(createY());
+    auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
     ASSERT_EQ(-1., nv[0]);
@@ -90,7 +97,8 @@ TEST(LIE, rotationMatrixY)
 
 TEST(LIE, rotationMatrixXY)
 {
-    auto e(createXY());
+    auto msh(createXY());
+    auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::SmallDeformationWithLIE::computeNormalVector(*e, nv);
     ASSERT_NEAR(-1./sqrt(2), nv[0], eps);
