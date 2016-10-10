@@ -154,7 +154,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeSecondaryVariableConcrete(std::vector<double> const& local_x)
+    computeSecondaryVariableConcrete(double const t,
+                                     std::vector<double> const& local_x)
 {
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
@@ -194,7 +195,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             GlobalDimVectorType darcy_velocity = -K * sm.dNdx * local_p_vec;
             // gravity term
             if (_gravitational_axis_id >= 0)
-                darcy_velocity[GlobalDim - 1] -= K * rho_g;
+                darcy_velocity[_gravitational_axis_id] -= K * rho_g;
             for (unsigned d = 0; d < GlobalDim; ++d)
             {
                 _darcy_velocities[d][ip] = darcy_velocity[d];
@@ -203,10 +204,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         else
         {
             // Compute the velocity
-            GlobalDimVectorType darcy_velocity = -perm * sm.dNdx * local_p_vec / mu;
+            GlobalDimVectorType darcy_velocity
+                    = -perm * sm.dNdx * local_p_vec / mu;
             if (_gravitational_axis_id >= 0)
             {
-                darcy_velocity.noalias() -=  rho_g * perm.col(GlobalDim - 1) / mu;
+                darcy_velocity.noalias() -=
+                        rho_g * perm.col(_gravitational_axis_id) / mu;
             }
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

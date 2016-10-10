@@ -505,7 +505,7 @@ bool UncoupledProcessesTimeLoop::loop()
             nonlinear_solver_succeeded = solveOneTimeStepOneProcess(
                 x, timestep, t, delta_t, *spd, *_output);
 
-            pcs.computeSecondaryVariable(x);
+            pcs.computeSecondaryVariable(t, x);
 
             INFO("[time] Solving process #%u took %g s in timestep #%u.",
                  timestep, time_timestep.elapsed(), pcs_idx);
