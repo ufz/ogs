@@ -131,7 +131,7 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
     for (std::size_t k(0); k < size; ++k)
     {
         supp_pnts.push_back(static_cast<double>(k));
-        values.push_back(k * k);
+        values.push_back(static_cast<double>(k * k));
     }
 
     MathLib::PiecewiseLinearInterpolation interpolation{std::move(supp_pnts),
@@ -142,6 +142,11 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
         ASSERT_NEAR(1 + 2 * k, interpolation.getDerivative(k + 0.5),
                     std::numeric_limits<double>::epsilon());
     }
+    // max and min value test
+    ASSERT_NEAR(1, interpolation.getDerivative(0),
+                std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(1997, interpolation.getDerivative(999),
+                std::numeric_limits<double>::epsilon());
 
     // Extrapolation
     ASSERT_NEAR(0, interpolation.getDerivative(-1),
