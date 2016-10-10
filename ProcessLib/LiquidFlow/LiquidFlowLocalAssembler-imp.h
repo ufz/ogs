@@ -47,6 +47,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     const Eigen::MatrixXd& perm =
         _material_properties.intrinsic_permeabiliy[mat_id];
 
+    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
+    //  the assert must be changed to perm.rows() == _element->getDimension()
+    assert(perm.rows() == GlobalDim || perm.rows() == 1);
+
     // TODO: The following two variables should be calculated inside the
     //       the integration loop for non-constant porosity and storage models.
     double porosity_variable = 0.;
