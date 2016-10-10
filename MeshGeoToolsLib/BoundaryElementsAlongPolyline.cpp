@@ -9,6 +9,7 @@
 #include "BoundaryElementsAlongPolyline.h"
 
 #include <algorithm>
+#include <typeinfo>
 
 #include "GeoLib/Polyline.h"
 
@@ -88,18 +89,38 @@ bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(const std::vector<std
     return (j==edge.getNumberOfBaseNodes());
 }
 
-MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(const MeshLib::Element &edge, const GeoLib::Polyline &ply, const std::vector<std::size_t> &edge_node_distances_along_ply, const std::vector<std::size_t> &node_ids_on_poly) const
+MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
+    const MeshLib::Element& edge, const GeoLib::Polyline& ply,
+    const std::vector<std::size_t>& edge_node_distances_along_ply,
+    const std::vector<std::size_t>& node_ids_on_poly) const
 {
-    MeshLib::Element* new_edge = const_cast<MeshLib::Element*>(&edge);
-    // The first node of the edge should be always closer to the beginning of the polyline than other nodes.
-    // Otherwise, create a new element with reversed local node index
-    if (edge_node_distances_along_ply.front() > edge_node_distances_along_ply.back()
-            || (ply.isClosed() && edge_node_distances_along_ply.back() == node_ids_on_poly.size()-1)) {
-        MeshLib::Node** new_nodes = new MeshLib::Node*[edge.getNumberOfBaseNodes()];
-        std::reverse_copy(edge.getNodes(), edge.getNodes()+edge.getNumberOfBaseNodes(), new_nodes);
-        new_edge = new MeshLib::Line(new_nodes);
+    // The first node of the edge should be always closer to the beginning of
+    // the polyline than other nodes.
+    if (edge_node_distances_along_ply.front() >
+            edge_node_distances_along_ply.back() ||
+        (ply.isClosed() &&
+         edge_node_distances_along_ply.back() == node_ids_on_poly.size() - 1))
+    {  // Create a new element with reversed local node index
+        auto new_nodes = new MeshLib::Node*[edge.getNumberOfNodes()];
+        if (auto const* e = dynamic_cast<MeshLib::Line const*>(&edge))
+        {
+            new_nodes[0] = const_cast<MeshLib::Node*>(e->getNode(1));
+            new_nodes[1] = const_cast<MeshLib::Node*>(e->getNode(0));
+        }
+        else if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
+        {
+            new_nodes[0] = const_cast<MeshLib::Node*>(e->getNode(1));
+            new_nodes[1] = const_cast<MeshLib::Node*>(e->getNode(0));
+            new_nodes[2] = const_cast<MeshLib::Node*>(e->getNode(2));
+        }
+        else
+            OGS_FATAL("Not implemented for element type %s", typeid(edge).name());
+
+        return edge.clone(new_nodes, edge.getID());
     }
-    return new_edge;
+
+    // Return the original edge otherwise.
+    return const_cast<MeshLib::Element*>(&edge);
 }
 
 } // end namespace MeshGeoToolsLib
