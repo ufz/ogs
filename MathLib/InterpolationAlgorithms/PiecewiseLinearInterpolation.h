@@ -20,7 +20,8 @@
 namespace MathLib
 {
 /**
- * This class implements a one dimensional piecewise linear interpolation algorithm.
+ * This class implements a one dimensional piecewise linear interpolation
+ * algorithm.
  */
 class PiecewiseLinearInterpolation final
 {
@@ -41,7 +42,8 @@ public:
      * time.
      * @param supporting_points vector of supporting points
      * @param values_at_supp_pnts vector of values at the supporting points
-     * @param supp_pnts_sorted false (default), if it is sure the supporting points are sorted
+     * @param supp_pnts_sorted false (default), if it is sure the supporting
+     * points are sorted
      * one can set the switch to true
      */
     PiecewiseLinearInterpolation(std::vector<double>&& supporting_points,
@@ -51,17 +53,33 @@ public:
     /**
      * \brief Calculates the interpolation value.
      * @param pnt_to_interpolate The point should be located within the range
-     * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n} x_j\f$ and
-     * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of this interval are
-     * extrapolated.
+     * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n}
+     * x_j\f$ and
+     * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. Points outside of this
+     * interval are
+     * set to x_{\min} or x_{\max}.
      * @return The interpolated value.
      */
     double getValue(double pnt_to_interpolate) const;
+
+    /**
+     * \brief Calculates derivative using quadratic interpolation
+     * and central difference quotient.
+     * @param pnt_to_interpolate The point should be located within the range
+     * \f$[x_{\min}, x_{\max}]\f$, where \f$x_{\min} = \min_{1 \le j \le n}
+     * x_j\f$ and
+     * \f$x_{\max} = \max_{1 \le j \le n} x_j\f$. when points are located
+     * outside of this interval, the derivative is set to 0.
+     * \attention if a point is located between the first and second points
+     * (or last and second to last point), the derivative is calculated
+     * using linear interpolation.
+     */
+    double getDerivative(double const pnt_to_interpolate) const;
 
 private:
     std::vector<double> _supp_pnts;
     std::vector<double> _values_at_supp_pnts;
 };
-} // end namespace MathLib
+}  // end namespace MathLib
 
 #endif /* PIECEWISELINEARINTERPOLATION_H_ */

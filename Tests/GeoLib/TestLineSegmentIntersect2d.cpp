@@ -50,7 +50,7 @@ public:
     ac::gtest_reporter gtest_reporter;
 };
 
-#if !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#if !defined(_MSC_VER) || (_MSC_VER >= 2000)
 // Compilers of MVS below 2015 do not support unrestricted unions. The
 // unrestricted union is used by autocheck to handle test data. The autocheck
 // workaround for MVS compilers (below version 2015) contains a bug and in the
