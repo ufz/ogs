@@ -72,29 +72,42 @@ double PiecewiseLinearInterpolation::getDerivative(
 
     auto const& it(std::lower_bound(_supp_pnts.begin(), _supp_pnts.end(),
                                     pnt_to_interpolate));
-    std::size_t const interval_idx = std::distance(_supp_pnts.begin(), it) - 1;
+	std::size_t interval_idx = std::distance(_supp_pnts.begin(), it);
 
-    // interval_idx = interval_max - 1 - interval_idx;
-    if (interval_idx > 1 && interval_idx < _supp_pnts.size() - 2)
+    if (pnt_to_interpolate == _supp_pnts.front())
+    {
+        interval_idx = 1;
+    }
+
+    if (interval_idx > 2 && interval_idx < _supp_pnts.size() - 1)
     {
         double const tangent_right =
-            (_values_at_supp_pnts[interval_idx] -
-             _values_at_supp_pnts[interval_idx + 2]) /
-            (_supp_pnts[interval_idx] - _supp_pnts[interval_idx + 2]);
-        double const tangent_left =
             (_values_at_supp_pnts[interval_idx - 1] -
              _values_at_supp_pnts[interval_idx + 1]) /
             (_supp_pnts[interval_idx - 1] - _supp_pnts[interval_idx + 1]);
+        double const tangent_left =
+            (_values_at_supp_pnts[interval_idx - 2] -
+             _values_at_supp_pnts[interval_idx]) /
+            (_supp_pnts[interval_idx - 2] - _supp_pnts[interval_idx]);
         double const w =
-            (pnt_to_interpolate - _supp_pnts[interval_idx + 1]) /
-            (_supp_pnts[interval_idx] - _supp_pnts[interval_idx + 1]);
+            (pnt_to_interpolate - _supp_pnts[interval_idx]) /
+            (_supp_pnts[interval_idx - 1] - _supp_pnts[interval_idx]);
         return (1. - w) * tangent_right + w * tangent_left;
     }
     else
     {
         return (_values_at_supp_pnts[interval_idx] -
-                _values_at_supp_pnts[interval_idx + 1]) /
-               (_supp_pnts[interval_idx] - _supp_pnts[interval_idx + 1]);
+                _values_at_supp_pnts[interval_idx - 1]) /
+               (_supp_pnts[interval_idx] - _supp_pnts[interval_idx - 1]);
     }
+}
+
+double PiecewiseLinearInterpolation::getSupportMax() const
+{
+    return _supp_pnts.back();
+}
+double PiecewiseLinearInterpolation::getSupportMin() const
+{
+    return _supp_pnts.front();
 }
 }  // end MathLib
