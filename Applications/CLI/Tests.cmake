@@ -587,10 +587,10 @@ if(NOT OGS_USE_MPI)
         sat1D.vtu sat_1D_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlow_PressureBCatCornerOfHeterogeneousSquare
-        PATH Parabolic/LiquidFlow/PressureBCatCornerOfHeterogeneousSquare
+        NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare
         EXECUTABLE ogs
-        EXECUTABLE_ARGS pressureBC_at_corner_of_heterogeneous_square.prj
+        EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
         WRAPPER time
         TESTER vtkdiff
         ABSTOL 1e-8 RELTOL 1e-8
@@ -853,9 +853,9 @@ else()
         mesh2D.vtu gravity_driven_pcs_0_ts_1_t_1.000000.vtu AnalyticSolution pressure
     )
     AddTest(
-        NAME LiquidFlow_PressureBCatCornerOfHeterogeneousSquare
-        PATH Parabolic/LiquidFlow/PressureBCatCornerOfHeterogeneousSquare
-        EXECUTABLE_ARGS pressureBC_at_corner_of_heterogeneous_square.prj
+        NAME LiquidFlow_PressureBCatCornerOfAnisotropicSquare
+        PATH Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare
+        EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
