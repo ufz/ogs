@@ -36,6 +36,9 @@ public:
     /// Marks all unused nodes
     std::size_t searchUnused();
 
+    /// Marks all boundary nodes
+    std::size_t searchBoundaryNodes();
+
 private:
     /// Updates the vector of marked items with values from vec.
     void updateUnion(const std::vector<std::size_t> &vec);
