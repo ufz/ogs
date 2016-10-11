@@ -69,9 +69,6 @@ public:
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
-        const MeshLib::CoordinateSystem coordsystem(element);
-        _dim = coordsystem.getDimension();
     }
 
     void assemble(double const t, std::vector<double> const& local_x,
