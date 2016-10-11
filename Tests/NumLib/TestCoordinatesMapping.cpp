@@ -20,6 +20,7 @@
 
 #include "CoordinatesMappingTestData/TestHex8.h"
 #include "CoordinatesMappingTestData/TestLine2.h"
+#include "CoordinatesMappingTestData/TestLine3.h"
 #include "CoordinatesMappingTestData/TestQuad4.h"
 #include "CoordinatesMappingTestData/TestTri3.h"
 
@@ -31,7 +32,8 @@ using namespace CoordinatesMappingTestData;
 namespace
 {
 // Element types to be tested
-typedef ::testing::Types<TestLine2, TestTri3, TestQuad4, TestHex8> TestTypes;
+typedef ::testing::Types<TestLine2, TestLine3, TestTri3, TestQuad4, TestHex8>
+    TestTypes;
 }
 
 template <class T_TEST>
