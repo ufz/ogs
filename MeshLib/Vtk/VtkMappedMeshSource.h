@@ -26,8 +26,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/optional.hpp>
-
 #include <vtkCellData.h>
 #include <vtkPointData.h>
 #include <vtkNew.h>
@@ -88,8 +86,7 @@ private:
     bool addProperty(MeshLib::Properties const& properties,
                      std::string const& prop_name) const
     {
-        boost::optional<MeshLib::PropertyVector<T> const &> propertyVector(
-            properties.getPropertyVector<T>(prop_name));
+        auto* const propertyVector = properties.getPropertyVector<T>(prop_name);
         if(!propertyVector)
             return false;
 

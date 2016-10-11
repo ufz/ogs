@@ -29,12 +29,11 @@ TEST(MeshLib, ElementStatus)
     auto const mesh = std::unique_ptr<MeshLib::Mesh>{
         MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side)};
 
-    boost::optional<MeshLib::PropertyVector<int> &> material_id_properties(
-        mesh->getProperties().createNewPropertyVector<int>("MaterialIDs",
-                                                           MeshLib::MeshItemType::Cell)
-    );
-    ASSERT_TRUE(bool(material_id_properties));
-    (*material_id_properties).resize(mesh->getNumberOfElements());
+    auto* const material_id_properties =
+        mesh->getProperties().createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell);
+    ASSERT_NE(nullptr, material_id_properties);
+    material_id_properties->resize(mesh->getNumberOfElements());
 
     const std::vector<MeshLib::Element*> elements (mesh->getElements());
 

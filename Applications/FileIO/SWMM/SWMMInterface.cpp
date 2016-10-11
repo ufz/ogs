@@ -781,8 +781,8 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     }
 
     MeshLib::Properties props;
-    boost::optional< MeshLib::PropertyVector<int>& > mat_ids =
-        props.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    auto* const mat_ids = props.createNewPropertyVector<int>(
+        "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
     mat_ids->resize(elements.size(), 0);
     for (std::size_t i=1; i<n_types; ++i)
     {
@@ -792,8 +792,8 @@ bool SwmmInterface::readSwmmInputToLineMesh()
 
     if (nodes.size() == max_depth.size())
     {
-        boost::optional< MeshLib::PropertyVector<double>& > depth =
-            props.createNewPropertyVector<double>("Max Depth", MeshLib::MeshItemType::Node, 1);
+        auto* const depth = props.createNewPropertyVector<double>(
+            "Max Depth", MeshLib::MeshItemType::Node, 1);
         depth->reserve(max_depth.size());
         std::copy(max_depth.cbegin(), max_depth.cend(), std::back_inserter(*depth));
     }
@@ -971,7 +971,7 @@ bool SwmmInterface::addResultsToMesh(MeshLib::Mesh &mesh, SwmmObject const swmm_
     MeshLib::Properties& p = mesh.getProperties();
     MeshLib::MeshItemType item_type = (swmm_type == SwmmObject::NODE) ?
         MeshLib::MeshItemType::Node : MeshLib::MeshItemType::Cell;
-    boost::optional<MeshLib::PropertyVector<double>&> prop =
+    auto* const prop =
         p.createNewPropertyVector<double>(vec_name, item_type, 1);
     if (!prop)
     {

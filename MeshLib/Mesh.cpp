@@ -257,10 +257,8 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
                              std::string const& property_name,
                              double factor)
 {
-    boost::optional<MeshLib::PropertyVector<double> &> pv(
-        mesh.getProperties().getPropertyVector<double>(property_name));
-
-    for (auto & v : *pv)
+    for (auto& v :
+         *mesh.getProperties().getPropertyVector<double>(property_name))
         v *= factor;
 }
 

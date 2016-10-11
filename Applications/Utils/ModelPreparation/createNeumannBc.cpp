@@ -38,8 +38,8 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
         return std::vector<double>();
     }
 
-    boost::optional<MeshLib::PropertyVector<double> const&> elem_pv(
-        mesh.getProperties().getPropertyVector<double>(prop_name));
+    auto const* const elem_pv =
+        mesh.getProperties().getPropertyVector<double>(prop_name);
     if (!elem_pv)
     {
         ERR("Need element property, but the property \"%s\" is not "
@@ -131,9 +131,8 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(in_mesh.getValue()));
 
     std::string const prop_name("OriginalSubsurfaceNodeIDs");
-    boost::optional<MeshLib::PropertyVector<std::size_t>&> const node_id_pv(
-        surface_mesh->getProperties().getPropertyVector<std::size_t>(
-            prop_name));
+    auto const* const node_id_pv =
+        surface_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
     if (!node_id_pv)
     {
         ERR(
@@ -156,10 +155,10 @@ int main(int argc, char* argv[])
         direct_values.push_back(std::make_pair(subsurface_node_id, val));
     }
 
-    boost::optional<MeshLib::PropertyVector<double>&> pv(
+    auto* const pv =
         surface_mesh->getProperties().createNewPropertyVector<double>(
-            property_out_arg.getValue(), MeshLib::MeshItemType::Node, 1));
-    (*pv).resize(surface_mesh->getNodes().size());
+            property_out_arg.getValue(), MeshLib::MeshItemType::Node, 1);
+    pv->resize(surface_mesh->getNodes().size());
     for (std::size_t k(0); k<surface_mesh->getNodes().size(); ++k) {
         (*pv)[k] = direct_values[k].second;
     }

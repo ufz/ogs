@@ -231,9 +231,8 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     // Transmit material values if there is any material value != 0
     if (std::any_of(materials.cbegin(), materials.cend(), [](int m){ return m != 0; }))
     {
-        boost::optional<MeshLib::PropertyVector<int>&> mat_props =
-            properties.createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell);
+        auto* const mat_props = properties.createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell);
         mat_props->reserve(elements.size());
         std::copy(materials.cbegin(),
                   materials.cend(),
@@ -615,12 +614,14 @@ void TetGenInterface::write2dElements(std::ofstream &out,
     out << nTotalTriangles << " 1\n";
 
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
-    boost::optional< MeshLib::PropertyVector<int> const&> materialIds (mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto const* const materialIds =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     const std::size_t nElements (elements.size());
     unsigned element_count(0);
     for (std::size_t i=0; i<nElements; ++i)
     {
-        std::string matId = (materialIds) ? std::to_string((*materialIds)[i]) : "";
+        std::string matId =
+            materialIds ? std::to_string((*materialIds)[i]) : "";
         this->writeElementToFacets(out, *elements[i], element_count, matId);
     }
 }
@@ -638,7 +639,8 @@ void TetGenInterface::write3dElements(std::ofstream &out,
     const std::streamoff before_elems_pos (out.tellp());
     const unsigned n_spaces (static_cast<unsigned>(std::floor(log(nElements*8))) + 1);
     out << std::string(n_spaces, ' ') << " 1\n";
-    boost::optional< MeshLib::PropertyVector<int> const&> materialIds = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    auto const* const materialIds =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
     unsigned element_count(0);
     for (std::size_t i=0; i<nElements; ++i)
     {
@@ -646,7 +648,8 @@ void TetGenInterface::write3dElements(std::ofstream &out,
             continue;
 
         const unsigned nFaces (elements[i]->getNumberOfNeighbors());
-        std::string const mat_id_str = (materialIds) ? std::to_string((*materialIds)[i]) : "";
+        std::string const mat_id_str =
+            materialIds ? std::to_string((*materialIds)[i]) : "";
         for (std::size_t j=0; j<nFaces; ++j)
         {
             MeshLib::Element const*const neighbor ( elements[i]->getNeighbor(j) );

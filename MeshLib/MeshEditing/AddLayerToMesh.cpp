@@ -107,9 +107,9 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         sfc_mesh = (on_top) ? std::unique_ptr<MeshLib::Mesh>(new MeshLib::Mesh(mesh)) :
                               std::unique_ptr<MeshLib::Mesh>(MeshLib::createFlippedMesh(mesh));
         // add property storing node ids
-        boost::optional<MeshLib::PropertyVector<std::size_t>&> pv(
+        auto* const pv =
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
-                prop_name, MeshLib::MeshItemType::Node, 1));
+                prop_name, MeshLib::MeshItemType::Node, 1);
         if (pv) {
             pv->resize(sfc_mesh->getNumberOfNodes());
             std::iota(pv->begin(), pv->end(), 0);
@@ -132,9 +132,9 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::size_t const n_sfc_nodes(sfc_nodes.size());
 
     // fetch subsurface node ids PropertyVector
-    boost::optional<MeshLib::PropertyVector<std::size_t>&> const opt_node_id_pv(
-        sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name));
-    if (!opt_node_id_pv) {
+    auto const* const node_id_pv =
+        sfc_mesh->getProperties().getPropertyVector<std::size_t>(prop_name);
+    if (!node_id_pv) {
         ERR(
             "Need subsurface node ids, but the property \"%s\" is not "
             "available.",
@@ -142,11 +142,10 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         return nullptr;
     }
 
-    MeshLib::PropertyVector<std::size_t> const& node_id_pv(*opt_node_id_pv);
     // *** copy sfc nodes to subsfc mesh node
     std::map<std::size_t, std::size_t> subsfc_sfc_id_map;
     for (std::size_t k(0); k<n_sfc_nodes; ++k) {
-        std::size_t const subsfc_id(node_id_pv[k]);
+        std::size_t const subsfc_id((*node_id_pv)[k]);
         std::size_t const sfc_id(k+n_subsfc_nodes);
         subsfc_sfc_id_map.insert(std::make_pair(subsfc_id, sfc_id));
         MeshLib::Node const& node(*sfc_nodes[k]);
@@ -158,34 +157,37 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     std::vector<MeshLib::Element*> const& sfc_elements(sfc_mesh->getElements());
     std::size_t const n_sfc_elements(sfc_elements.size());
     for (std::size_t k(0); k<n_sfc_elements; ++k)
-        subsfc_elements.push_back(extrudeElement(subsfc_nodes, *sfc_elements[k],
-                                                 node_id_pv,
-                                                 subsfc_sfc_id_map));
+        subsfc_elements.push_back(extrudeElement(
+            subsfc_nodes, *sfc_elements[k], *node_id_pv, subsfc_sfc_id_map));
 
     auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements);
 
-    boost::optional<MeshLib::PropertyVector<int> const&> opt_materials(
-        mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-    );
-
-    if (opt_materials) {
-        boost::optional<PropertyVector<int> &> new_materials(
-        new_mesh->getProperties().createNewPropertyVector<int>("MaterialIDs",
-            MeshLib::MeshItemType::Cell, 1));
-        if (!new_materials) {
-            ERR("Can not set material properties for new layer");
-        } else {
-            new_materials->reserve(subsfc_elements.size());
-            int new_layer_id (*(std::max_element(opt_materials->cbegin(), opt_materials->cend()))+1);
-            std::copy(opt_materials->cbegin(), opt_materials->cend(), std::back_inserter(*new_materials));
-            auto const n_new_props(subsfc_elements.size()-mesh.getNumberOfElements());
-            std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);
-        }
-    } else {
-        ERR(
-            "Could not copy the property \"MaterialIDs\" since the original "
+    auto const* const opt_materials =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    if (!opt_materials)
+    {
+        ERR("Could not copy the property \"MaterialIDs\" since the original "
             "mesh does not contain such a property.");
+        return new_mesh;
     }
+
+    auto* const new_materials =
+        new_mesh->getProperties().createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    if (!new_materials)
+    {
+        ERR("Can not set material properties for new layer");
+        return new_mesh;
+    }
+
+    new_materials->reserve(subsfc_elements.size());
+    int new_layer_id(
+        *(std::max_element(opt_materials->cbegin(), opt_materials->cend())) +
+        1);
+    std::copy(opt_materials->cbegin(), opt_materials->cend(),
+              std::back_inserter(*new_materials));
+    auto const n_new_props(subsfc_elements.size() - mesh.getNumberOfElements());
+    std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);
 
     return new_mesh;
 }

@@ -34,11 +34,11 @@ TEST(MeshLibMappedPropertyVector, Double)
     const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
     std::string const prop_name("TestProperty");
-    boost::optional<MeshLib::PropertyVector<double> &> double_properties(
-        mesh->getProperties().createNewPropertyVector<double>(prop_name,
-            MeshLib::MeshItemType::Cell));
-    (*double_properties).resize(number_of_tuples);
-    std::iota((*double_properties).begin(), (*double_properties).end(), 1);
+    auto* const double_properties =
+        mesh->getProperties().createNewPropertyVector<double>(
+            prop_name, MeshLib::MeshItemType::Cell);
+    double_properties->resize(number_of_tuples);
+    std::iota(double_properties->begin(), double_properties->end(), 1);
 
     vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<double> > dataArray;
     dataArray->SetPropertyVector(*double_properties);
@@ -66,11 +66,10 @@ TEST(MeshLibMappedPropertyVector, Int)
     const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
     std::string const prop_name("TestProperty");
-    boost::optional<MeshLib::PropertyVector<int> &> properties(
-        mesh->getProperties().createNewPropertyVector<int>(prop_name,
-            MeshLib::MeshItemType::Cell));
-    (*properties).resize(number_of_tuples);
-    std::iota((*properties).begin(), (*properties).end(), -5);
+    auto* const properties = mesh->getProperties().createNewPropertyVector<int>(
+        prop_name, MeshLib::MeshItemType::Cell);
+    properties->resize(number_of_tuples);
+    std::iota(properties->begin(), properties->end(), -5);
 
     vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<int> > dataArray;
     dataArray->SetPropertyVector(*properties);
@@ -98,11 +97,11 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
 
     std::string const prop_name("TestProperty");
-    boost::optional<MeshLib::PropertyVector<unsigned> &> properties(
-        mesh->getProperties().createNewPropertyVector<unsigned>(prop_name,
-                                                           MeshLib::MeshItemType::Cell));
-    (*properties).resize(number_of_tuples);
-    std::iota((*properties).begin(), (*properties).end(), 0);
+    auto* const properties =
+        mesh->getProperties().createNewPropertyVector<unsigned>(
+            prop_name, MeshLib::MeshItemType::Cell);
+    properties->resize(number_of_tuples);
+    std::iota(properties->begin(), properties->end(), 0);
 
     vtkNew<MeshLib::VtkMappedPropertyVectorTemplate<unsigned> > dataArray;
     dataArray->SetPropertyVector(*properties);

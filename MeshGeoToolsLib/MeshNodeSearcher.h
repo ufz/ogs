@@ -13,8 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include <boost/optional.hpp>
-
 // GeoLib
 #include "GeoLib/Grid.h"
 

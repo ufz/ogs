@@ -17,15 +17,14 @@
 
 #include <vector>
 
-#include <boost/optional.hpp>
-
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/PropertyVector.h"
 
 namespace MeshLib {
 // forward declarations
 class Mesh;
+template <typename T>
+class PropertyVector;
 
 /**
  * \brief A set of methods for manipulating mesh element values

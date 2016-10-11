@@ -18,8 +18,6 @@
 #include <string>
 #include <map>
 
-#include <boost/optional.hpp>
-
 #include <logog/include/logog.hpp>
 
 #include "Location.h"
@@ -42,28 +40,25 @@ class Properties
 public:
     /// Method creates a PropertyVector if a PropertyVector with the same name
     /// and the same type T was not already created before. In case there exists
-    /// already such a PropertyVector the returned boost::optional holds an
-    /// invalid/unusable PropertyVector.
-    /// There are two versions of this method. This method is used
-    /// when every mesh item at hand has its own property value, i.e. \f$n\f$
-    /// mesh item and \f$n\f$ different property values.
+    /// already such a PropertyVector a nullptr is returned.
+    /// There are two versions of this method. This method is used when every
+    /// mesh item at hand has its own property value, i.e. \f$n\f$ mesh item and
+    /// \f$n\f$ different property values.
     /// The user has to ensure the correct usage of the vector later on.
     /// @tparam T type of the property value
     /// @param name the name of the property
     /// @param mesh_item_type for instance node or element assigned properties
     /// @param n_components number of components for each tuple
-    /// @return On success a reference to a PropertyVector packed into a
-    ///   boost::optional else an empty boost::optional.
+    /// @return A pointer to a PropertyVector on success and a nullptr
+    /// otherwise.
     template <typename T>
-    boost::optional<PropertyVector<T> &>
-    createNewPropertyVector(std::string const& name,
-        MeshItemType mesh_item_type,
-        std::size_t n_components = 1);
+    PropertyVector<T>* createNewPropertyVector(std::string const& name,
+                                               MeshItemType mesh_item_type,
+                                               std::size_t n_components = 1);
 
     /// Method creates a PropertyVector if a PropertyVector with the same name
     /// and the same type T was not already created before. In case there exists
-    /// already such a PropertyVector the returned boost::optional holds an
-    /// invalid/unusable PropertyVector.
+    /// already such a PropertyVector a nullptr is returned.
     /// This method is used if only a small number of distinct property values
     /// in a property exist (e.g. mapping property groups to elements).
     /// In this case a mapping between mesh items and properties (stored
@@ -75,25 +70,25 @@ public:
     /// group
     /// @param mesh_item_type for instance node or element assigned properties
     /// @param n_components number of components for each tuple
-    /// @return On success a reference to a PropertyVector packed into a
-    ///   boost::optional else an empty boost::optional.
+    /// @return A pointer to a PropertyVector on success and a nullptr
+    /// otherwise.
     template <typename T>
-    boost::optional<PropertyVector<T> &>
-    createNewPropertyVector(std::string const& name,
+    PropertyVector<T>* createNewPropertyVector(
+        std::string const& name,
         std::size_t n_prop_groups,
         std::vector<std::size_t> const& item2group_mapping,
         MeshItemType mesh_item_type,
         std::size_t n_components = 1);
 
-    /// Method to get a vector of property values.
+    /// Returns a property vector with given \c name or nullptr if no such
+    /// property vector exists.
     template <typename T>
-    boost::optional<PropertyVector<T> const&>
-    getPropertyVector(std::string const& name) const;
+    PropertyVector<T> const* getPropertyVector(std::string const& name) const;
 
-    /// Method to get a vector of property values.
+    /// Returns a property vector with given \c name or nullptr if no such
+    /// property vector exists.
     template <typename T>
-    boost::optional<PropertyVector<T>&>
-    getPropertyVector(std::string const& name);
+    PropertyVector<T>* getPropertyVector(std::string const& name);
 
     void removePropertyVector(std::string const& name);
 

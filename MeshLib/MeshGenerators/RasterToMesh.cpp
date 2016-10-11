@@ -147,14 +147,14 @@ MeshLib::Mesh* RasterToMesh::constructMesh(
     MeshLib::Properties properties;
     if (intensity_type == MeshLib::UseIntensityAs::MATERIALS)
     {
-        boost::optional< MeshLib::PropertyVector<int>& > prop_vec =
-            properties.createNewPropertyVector<int>("MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        auto* const prop_vec = properties.createNewPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
         fillPropertyVector<int>(*prop_vec, pix_val, pix_vis, header.n_rows, header.n_cols, elem_type);
     }
     else if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR)
     {
-        boost::optional< MeshLib::PropertyVector<double>& > prop_vec =
-            properties.createNewPropertyVector<double>(array_name, MeshLib::MeshItemType::Cell, 1);
+        auto* const prop_vec = properties.createNewPropertyVector<double>(
+            array_name, MeshLib::MeshItemType::Cell, 1);
         fillPropertyVector<double>(*prop_vec, pix_val, pix_vis, header.n_rows, header.n_cols, elem_type);
     }
 

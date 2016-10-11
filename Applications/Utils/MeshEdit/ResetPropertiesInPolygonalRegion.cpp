@@ -79,17 +79,15 @@ template <typename PT>
 void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygon,
     std::string const& property_name, PT new_property_value)
 {
-    boost::optional<MeshLib::PropertyVector<PT> &> opt_pv(
-        mesh.getProperties().getPropertyVector<PT>(property_name)
-    );
-    if (!opt_pv) {
+    auto* const pv = mesh.getProperties().getPropertyVector<PT>(property_name);
+    if (!pv) {
         WARN("Did not find a PropertyVector with name \"%s\".",
             property_name.c_str());
         return;
     }
 
-    MeshLib::PropertyVector<PT> & pv(opt_pv.get());
-    if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
+    if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
+    {
         ERR("Values of the PropertyVector are not assigned to cells.");
         return;
     }
@@ -108,7 +106,7 @@ void resetMeshElementProperty(MeshLib::Mesh &mesh, GeoLib::Polygon const& polygo
             }
         }
         if (!elem_out) {
-            pv[j] = new_property_value;
+            (*pv)[j] = new_property_value;
         }
     }
 }
@@ -206,14 +204,14 @@ int main (int argc, char* argv[])
         char new_property_val(char_property_arg.getValue());
 
         // check if PropertyVector exists
-        boost::optional<MeshLib::PropertyVector<char> &> opt_pv(
-            mesh->getProperties().getPropertyVector<char>(property_name)
-        );
-        if (!opt_pv) {
-            opt_pv = mesh->getProperties().createNewPropertyVector<char>(
+        auto* pv = mesh->getProperties().getPropertyVector<char>(property_name);
+        if (!pv)
+        {
+            pv = mesh->getProperties().createNewPropertyVector<char>(
                 property_name, MeshLib::MeshItemType::Cell, 1);
-            opt_pv.get().resize(mesh->getElements().size());
-            INFO("Created PropertyVector with name \"%s\".", property_name.c_str());
+            pv->resize(mesh->getElements().size());
+            INFO("Created PropertyVector with name \"%s\".",
+                 property_name.c_str());
         }
         resetMeshElementProperty(*mesh, polygon, property_name, new_property_val);
     }
@@ -222,13 +220,12 @@ int main (int argc, char* argv[])
         int int_property_val(int_property_arg.getValue());
 
         // check if PropertyVector exists
-        boost::optional<MeshLib::PropertyVector<int> &> opt_pv(
-            mesh->getProperties().getPropertyVector<int>(property_name)
-        );
-        if (!opt_pv) {
-            opt_pv = mesh->getProperties().createNewPropertyVector<int>(
+        auto* pv = mesh->getProperties().getPropertyVector<int>(property_name);
+        if (!pv)
+        {
+            pv = mesh->getProperties().createNewPropertyVector<int>(
                 property_name, MeshLib::MeshItemType::Cell, 1);
-            opt_pv.get().resize(mesh->getElements().size());
+            pv->resize(mesh->getElements().size());
             INFO("Created PropertyVector with name \"%s\".", property_name.c_str());
         }
 

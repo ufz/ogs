@@ -244,16 +244,17 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     MeshLib::Mesh * mesh(new MeshLib::Mesh(
         BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements));
 
-    boost::optional<MeshLib::PropertyVector<int> &> opt_material_ids(
+    auto* const material_ids =
         mesh->getProperties().createNewPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell, 1)
-    );
-    if (!opt_material_ids) {
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    if (!material_ids)
+    {
         WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
-    } else {
-        MeshLib::PropertyVector<int> & material_ids(opt_material_ids.get());
-        material_ids.insert(material_ids.end(), materials.cbegin(),
-            materials.cend());
+    }
+    else
+    {
+        material_ids->insert(material_ids->end(), materials.cbegin(),
+                             materials.cend());
     }
 
     MeshLib::ElementValueModification::condense(*mesh);

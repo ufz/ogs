@@ -48,24 +48,25 @@ public:
         PROPERTY_TYPE const property_value,
         std::string const& property_name = "MaterialIDs")
     {
-        boost::optional<MeshLib::PropertyVector<PROPERTY_TYPE> const&> opt_pv(
+        auto const* const pv =
             _mesh.getProperties().getPropertyVector<PROPERTY_TYPE>(
-                property_name));
-        if (!opt_pv) {
+                property_name);
+        if (!pv)
+        {
             WARN("Property \"%s\" not found in mesh.", property_name.c_str());
             return 0;
         }
 
-        MeshLib::PropertyVector<PROPERTY_TYPE> const& pv(opt_pv.get());
-        if (pv.getMeshItemType() != MeshLib::MeshItemType::Cell) {
+        if (pv->getMeshItemType() != MeshLib::MeshItemType::Cell)
+        {
             WARN("The property \"%s\" is not assigned to mesh elements.",
                  property_name.c_str());
             return 0;
         }
 
         std::vector<std::size_t> matchedIDs;
-        for (std::size_t i(0); i < pv.getNumberOfTuples(); ++i) {
-            if (pv[i] == property_value)
+        for (std::size_t i(0); i < pv->getNumberOfTuples(); ++i) {
+            if ((*pv)[i] == property_value)
                 matchedIDs.push_back(i);
         }
 

@@ -325,8 +325,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string &filename)
     MeshLib::Properties properties;
     if (mat_ids.size() == elements.size())
     {
-        boost::optional<MeshLib::PropertyVector<int> &> opt_pv
-            = properties.createNewPropertyVector<int>(
+        auto* const opt_pv = properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell);
         if (!opt_pv)
         {

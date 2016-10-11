@@ -18,17 +18,17 @@
 
 #include <string>
 #include <vector>
-#include <boost/optional.hpp>
 
 #include "BaseLib/IO/Writer.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/PropertyVector.h"
 
 namespace MeshLib
 {
 class Mesh;
 class Node;
 class Element;
+template <typename T>
+class PropertyVector;
 enum class MeshElemType;
 namespace IO
 {
@@ -55,8 +55,8 @@ protected:
 
 private:
     void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
-        boost::optional<MeshLib::PropertyVector<int> const&> material_ids,
-        std::ostream &out) const;
+                       MeshLib::PropertyVector<int> const* const material_ids,
+                       std::ostream& out) const;
     std::size_t readMaterialID(std::istream & in) const;
     MeshLib::Element* readElement(std::istream& line, const std::vector<MeshLib::Node*> &nodes) const;
     std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;

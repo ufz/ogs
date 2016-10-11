@@ -18,8 +18,9 @@
 
 #include <logog/include/logog.hpp>
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace MeshLib {
 
@@ -27,33 +28,37 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
     std::string const& property_name, int const old_value, int const new_value,
     bool replace_if_exists)
 {
-    boost::optional<MeshLib::PropertyVector<int> &> optional_property_value_vec(
-        mesh.getProperties().getPropertyVector<int>(property_name)
-    );
+    auto* const property_value_vec =
+        mesh.getProperties().getPropertyVector<int>(property_name);
 
-    if (!optional_property_value_vec) {
+    if (!property_value_vec)
+    {
         return false;
     }
 
-    MeshLib::PropertyVector<int> & property_value_vec(
-        optional_property_value_vec.get()
-    );
-    const std::size_t n_property_tuples(property_value_vec.getNumberOfTuples());
+    const std::size_t n_property_tuples(
+        property_value_vec->getNumberOfTuples());
 
-    if (!replace_if_exists) {
-        for (std::size_t i=0; i<n_property_tuples; ++i) {
-            if (property_value_vec[i] == new_value) {
-                WARN ("ElementValueModification::replaceElementValue() "
+    if (!replace_if_exists)
+    {
+        for (std::size_t i = 0; i < n_property_tuples; ++i)
+        {
+            if ((*property_value_vec)[i] == new_value)
+            {
+                WARN(
+                    "ElementValueModification::replaceElementValue() "
                     "- Replacement value \"%d\" is already taken, "
-                    "no changes have been made.", new_value);
+                    "no changes have been made.",
+                    new_value);
                 return false;
             }
         }
     }
 
-    for (std::size_t i=0; i<n_property_tuples; ++i) {
-        if (property_value_vec[i] == old_value)
-            property_value_vec[i] = new_value;
+    for (std::size_t i = 0; i < n_property_tuples; ++i)
+    {
+        if ((*property_value_vec)[i] == old_value)
+            (*property_value_vec)[i] = new_value;
     }
 
     return true;
@@ -67,55 +72,46 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
 
 std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
 {
-    boost::optional<MeshLib::PropertyVector<int> &>
-        optional_property_value_vec(
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-        );
+    auto* property_value_vector =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 
-    if (!optional_property_value_vec) {
+    if (!property_value_vector)
+    {
         return 0;
     }
 
-    MeshLib::PropertyVector<int> & property_value_vector(
-        optional_property_value_vec.get()
-    );
     std::vector<int> value_mapping(
-        getSortedPropertyValues(property_value_vector)
-    );
+        getSortedPropertyValues(*property_value_vector));
 
     std::vector<int> reverse_mapping(value_mapping.back()+1, 0);
     std::size_t const nValues (value_mapping.size());
     for (std::size_t i=0; i<nValues; ++i)
         reverse_mapping[value_mapping[i]] = i;
 
-    std::size_t const n_property_values(property_value_vector.size());
-    for (std::size_t i=0; i<n_property_values; ++i)
-        property_value_vector[i] = reverse_mapping[property_value_vector[i]];
+    std::size_t const n_property_values(property_value_vector->size());
+    for (std::size_t i = 0; i < n_property_values; ++i)
+        (*property_value_vector)[i] =
+            reverse_mapping[(*property_value_vector)[i]];
 
     return nValues;
 }
 
 std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
 {
-    boost::optional<MeshLib::PropertyVector<int> &>
-        optional_property_value_vec(
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs")
-        );
+    auto* const property_value_vector =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 
-    if (!optional_property_value_vec) {
+    if (!property_value_vector)
+    {
         return 0;
     }
-
-    MeshLib::PropertyVector<int> & property_value_vector(
-        optional_property_value_vec.get()
-    );
 
     std::vector<MeshLib::Element*> const& elements(mesh.getElements());
     std::size_t cnt(0);
     for (std::size_t k(0); k<elements.size(); k++) {
         if (elements[k]->getGeomType()!=ele_type)
             continue;
-        property_value_vector[k] = new_value;
+        (*property_value_vector)[k] = new_value;
         cnt++;
     }
 
