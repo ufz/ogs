@@ -9,6 +9,7 @@
 
 #include "CreateGroundwaterFlowProcess.h"
 
+#include "BaseLib/FileTools.h"
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ProcessLib/CalculateSurfaceFlux/ParseCalculateSurfaceFluxData.h"
