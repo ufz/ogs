@@ -63,14 +63,8 @@ public:
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
-        const bool compute_gravitational_term,
+        bool const compute_gravitational_term,
         BaseLib::ConfigTree const& config);
-
-    void preTimestepConcreteProcess(GlobalVector const& x, const double t,
-                                    const double delta_t) override;
-
-    void preIterationConcreteProcess(const unsigned iter,
-                                     GlobalVector const& x) override;
 
     bool isLinear() const override { return true; }
 private:
@@ -92,8 +86,6 @@ private:
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;
-
-    std::unique_ptr<GlobalVector> _p_previous_timestep;
 };
 
 }  // end of namespace

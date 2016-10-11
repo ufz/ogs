@@ -10,8 +10,8 @@
  * Created on August 19, 2016, 2:28 PM
  */
 
-#ifndef OGS_LIQUIDFLOWLOCALASSEMBLER_IMP_H
-#define OGS_LIQUIDFLOWLOCALASSEMBLER_IMP_H
+#ifndef OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H
+#define OGS_LIQUIDFLOWLOCALASSEMBLER_IMPL_H
 
 #include "LiquidFlowLocalAssembler.h"
 
@@ -45,7 +45,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     const unsigned mat_id = 0;  // TODO for heterogeneous medium
     const Eigen::MatrixXd& perm =
-        _material_properties.intrinsic_permeabiliy[mat_id];
+        _material_properties.intrinsic_permeability[mat_id];
 
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
@@ -81,8 +81,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        if (perm.size() ==
-            1)  // Save the computing time for isotropic permeability.
+        if (perm.size() == 1) //Save the computing time for isotropic permeability.
         {
             //  Use scalar number for isotropic permeability
             //  to save the computation time.

@@ -32,7 +32,7 @@ LiquidFlowProcess::LiquidFlowProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
-    const bool compute_gravitational_term,
+    bool const compute_gravitational_term,
     BaseLib::ConfigTree const& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
               integration_order,
@@ -105,20 +105,5 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
         dx_dx, M, K, b, Jac);
 }
 
-void LiquidFlowProcess::preTimestepConcreteProcess(GlobalVector const& x,
-                                                   const double /*t*/,
-                                                   const double /*delta_t*/)
-{
-    DBUG("New time step");
-
-    _p_previous_timestep =
-        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
-}
-
-void LiquidFlowProcess::preIterationConcreteProcess(const unsigned /*iter*/,
-                                                    GlobalVector const& /*x*/)
-{
-    // TODO
-}
 }  // end of namespace
 }  // end of namespace

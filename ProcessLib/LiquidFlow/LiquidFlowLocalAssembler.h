@@ -65,17 +65,17 @@ public:
     LiquidFlowLocalAssembler(
         MeshLib::Element const& element,
         std::size_t const /*local_matrix_size*/,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
-        const bool compute_gravitational_term,
-        LiquidFlowMaterialProperties const& matetial_propertries)
+        bool const compute_gravitational_term,
+        LiquidFlowMaterialProperties const& material_propertries)
         : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
               element, is_axially_symmetric, _integration_method)),
           _compute_gravitational_term(compute_gravitational_term),
-          _material_properties(matetial_propertries)
+          _material_properties(material_propertries)
     {
     }
 
@@ -127,12 +127,12 @@ private:
 
     const bool _compute_gravitational_term;
     LiquidFlowMaterialProperties const& _material_properties;
-    double _temperature;  ///< Temperature.
+    double _temperature;
 };
 
 }  // end of namespace
 }  // end of namespace
 
-#include "LiquidFlowLocalAssembler-imp.h"
+#include "LiquidFlowLocalAssembler-impl.h"
 
 #endif /* LIQUIDFLOWLOCALASSEMBLER_H */

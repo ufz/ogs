@@ -81,16 +81,16 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
 
     const double fac_T = 1. + beta * (T - T0);
     ASSERT_NEAR(rho0 / fac_T / (1. - (p - p0) / K),
-                lprop.density_l->getValue(vars), 1.e-10);
+                lprop.liquid_density->getValue(vars), 1.e-10);
 
     // Test the derivative with respect to temperature.
     ASSERT_NEAR(-beta * rho0 / (fac_T * fac_T) / (1. - (p - p0) / K),
-                lprop.density_l->getdValue(vars, PropertyVariableType::T), 1.e-10);
+                lprop.liquid_density->getdValue(vars, PropertyVariableType::T), 1.e-10);
 
     // Test the derivative with respect to pressure.
     const double fac_p = 1. - (p - p0) / K;
     ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                lprop.density_l->getdValue(vars, PropertyVariableType::pl), 1.e-10);
+                lprop.liquid_density->getdValue(vars, PropertyVariableType::pl), 1.e-10);
 
     // Check viscosity
     ArrayType vars1;
@@ -101,7 +101,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
                 1.e-5);
 
     // Check permeability
-    Eigen::MatrixXd& perm = lprop.intrinsic_permeabiliy[0];
+    Eigen::MatrixXd& perm = lprop.intrinsic_permeability[0];
     ASSERT_EQ(2.e-10, perm(0, 0));
     ASSERT_EQ(0., perm(0, 1));
     ASSERT_EQ(0., perm(0, 2));

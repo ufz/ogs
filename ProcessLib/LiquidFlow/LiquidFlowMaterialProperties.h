@@ -64,29 +64,17 @@ struct LiquidFlowMaterialProperties
                               const double storage_variable,
                               const unsigned material_group_id = 0) const;
 
-    double getLiquidDensity(const double p, const double T) const
-    {
-        ArrayType vars;
-        vars[0] = T;
-        vars[1] = p;
-        return density_l->getValue(vars);
-    }
+    double getLiquidDensity(const double p, const double T) const;
 
-    double getViscosity(const double p, const double T) const
-    {
-        ArrayType vars;
-        vars[0] = T;
-        vars[1] = p;
-        return viscosity->getValue(vars);
-    }
+    double getViscosity(const double p, const double T) const;
 
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> density_l;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> liquid_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity;
 
     /// Porous medium properties of different material zones.
     /// The vector is left empty if the property data are given in vtu file,
     /// e.g for heterogeneous medium.
-    std::vector<Eigen::MatrixXd> intrinsic_permeabiliy;
+    std::vector<Eigen::MatrixXd> intrinsic_permeability;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
 

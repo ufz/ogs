@@ -16,6 +16,7 @@
 
 #include "MeshLib/Mesh.h"
 
+#include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
@@ -34,7 +35,7 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     // Get fluid properties
     //! \ogs_file_param{prj__material_property__fluid__density}
     auto const& rho_conf = fluid_config.getConfigSubtree("density");
-    density_l = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
+    liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
     //! \ogs_file_param{prj__material_property__fluid__viscosity}
     auto const& mu_conf = fluid_config.getConfigSubtree("viscosity");
     viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
@@ -47,7 +48,7 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     {
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__permeability}
         auto const& perm_conf = conf.getConfigSubtree("permeability");
-        intrinsic_permeabiliy.emplace_back(
+        intrinsic_permeability.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(perm_conf));
 
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__porosity}
@@ -62,18 +63,36 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     }
 }
 
+double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
+                                                      const double T) const
+{
+    ArrayType vars;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
+    return liquid_density->getValue(vars);
+}
+
+double LiquidFlowMaterialProperties::getViscosity(const double p,
+                                                  const double T) const
+{
+    ArrayType vars;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
+    return viscosity->getValue(vars);
+}
+
 double LiquidFlowMaterialProperties::getMassCoefficient(
     const double porosity_variable, const double storage_variable,
     const double p, const double T, const unsigned material_group_id) const
 {
     ArrayType vars;
-    vars[0] = T;
-    vars[1] = p;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
+    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
     return porosity[material_group_id]->getValue(porosity_variable, T) *
-               density_l->getdValue(
+               liquid_density->getdValue(
                    vars, MaterialLib::Fluid::PropertyVariableType::pl)
                // Divided by rho_l because the PDE is scaled with rho_l
-               / density_l->getValue(vars) +
+               / liquid_density->getValue(vars) +
            storage[material_group_id]->getValue(storage_variable);
 }
 
