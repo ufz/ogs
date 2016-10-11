@@ -84,12 +84,9 @@ public:
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
 
-        Eigen::MatrixXd mass_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
-        Eigen::MatrixXd K_mat_coeff = Eigen::MatrixXd::Zero(1, 1);
-
-        MathLib::PiecewiseLinearInterpolation const& interP_Pc =
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Pc =
             *_process_data.curves.at("curveA");
-        MathLib::PiecewiseLinearInterpolation const& interP_Kr =
+        MathLib::PiecewiseLinearInterpolation const& interpolated_Kr =
             *_process_data.curves.at("curveB");
 
         auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
@@ -117,40 +114,41 @@ public:
             auto const mu = _process_data.viscosity(t, pos)[0];
             auto const storage = _process_data.storage(t, pos)[0];
             auto const rho_w = _process_data.water_density(t, pos)[0];
+            auto const body_force = _process_data.specific_body_force(t, pos);
+            assert(body_force.size() == GlobalDim);
+            auto const b =
+                Eigen::Map<typename ShapeMatricesType::template VectorType<
+                    GlobalDim> const>(body_force.data(), GlobalDim);
 
             double Pc = -P_int_pt;
-            double Sw(1.0);
-            double dSwdPc(0.0);
 
-            Sw = interP_Pc.getValue(Pc);
-            dSwdPc = interP_Pc.getDerivative(Pc);
-            if (Pc > interP_Pc.getSupportMax())
-                dSwdPc = interP_Pc.getDerivative(interP_Pc.getSupportMax());
-            else if (Pc < interP_Pc.getSupportMin())
-                dSwdPc = interP_Pc.getDerivative(interP_Pc.getSupportMin());
+            double Sw = interpolated_Pc.getValue(Pc);
+            double dSwdPc = interpolated_Pc.getDerivative(Pc);
+            if (Pc > interpolated_Pc.getSupportMax())
+                dSwdPc = interpolated_Pc.getDerivative(
+                    interpolated_Pc.getSupportMax());
+            else if (Pc < interpolated_Pc.getSupportMin())
+                dSwdPc = interpolated_Pc.getDerivative(
+                    interpolated_Pc.getSupportMin());
 
             _saturation[ip] = Sw;
 
-            double k_rel = interP_Kr.getValue(Sw);
+            double k_rel = interpolated_Kr.getValue(Sw);
             double drhow_dp(0.0);
 
-            mass_mat_coeff(0, 0) =
+            double const mass_mat_coeff =
                 storage * Sw + poro * Sw * drhow_dp - poro * dSwdPc;
-            K_mat_coeff(0, 0) = K * k_rel / mu;
+            double const K_mat_coeff = K * k_rel / mu;
 
-            local_K.noalias() += sm.dNdx.transpose() * K_mat_coeff(0, 0) *
-                                 sm.dNdx * sm.detJ * sm.integralMeasure *
-                                 wp.getWeight();
+            local_K.noalias() += sm.dNdx.transpose() * K_mat_coeff * sm.dNdx *
+                                 sm.detJ * sm.integralMeasure * wp.getWeight();
 
-            local_M.noalias() += sm.N.transpose() * mass_mat_coeff(0, 0) *
-                                 sm.N * sm.detJ * wp.getWeight();
+            local_M.noalias() += sm.N.transpose() * mass_mat_coeff * sm.N *
+                                 sm.detJ * wp.getWeight();
             if (_process_data.has_gravity)
             {
-                typename ShapeMatricesType::GlobalDimVectorType vec_g;
-                vec_g.resize(_dim);
-                vec_g(_dim - 1) = -9.81;
-                local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff(0, 0) *
-                                     rho_w * vec_g * sm.detJ * wp.getWeight();
+                local_b.noalias() += sm.dNdx.transpose() * K_mat_coeff * rho_w *
+                                     b * sm.detJ * wp.getWeight();
             }  // end of if hasGravityEffect
         }      // end of GP
         if (_process_data.has_mass_lumping)

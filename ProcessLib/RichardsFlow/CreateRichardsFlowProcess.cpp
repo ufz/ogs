@@ -81,13 +81,21 @@ std::unique_ptr<Process> createRichardsFlowProcess(
 
     DBUG("Use \'%s\' as storage parameter.", water_density.name.c_str());
 
+    // Specific body force parameter.
+    auto& specific_body_force = findParameter<double>(
+        config,
+        //! \ogs_file_param_special{process__RICHARDS_FLOW_specific_body_force}
+        "specific_body_force", parameters, mesh.getDimension());
+    DBUG("Use \'%s\' as specific body force parameter.",
+         specific_body_force.name.c_str());
+
     // has  gravity
     auto has_gravity = config.getConfigParameter<bool>("g");
     auto mass_lump = config.getConfigParameter<bool>("mass_lumping");
 
     RichardsFlowProcessData process_data{
-        intrinsic_permeability, porosity,    viscosity, storage,
-        water_density,          has_gravity, mass_lump, curves};
+        intrinsic_permeability, porosity,    viscosity, storage, water_density,
+        specific_body_force,    has_gravity, mass_lump, curves};
     SecondaryVariableCollection secondary_variables;
 
     NumLib::NamedFunctionCaller named_function_caller(

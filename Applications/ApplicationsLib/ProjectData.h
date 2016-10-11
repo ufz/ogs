@@ -13,10 +13,10 @@
 #ifndef PROJECTDATA_H_
 #define PROJECTDATA_H_
 
+#include <boost/optional/optional.hpp>
 #include <map>
 #include <memory>
 #include <string>
-#include <boost/optional/optional.hpp>
 
 #include "BaseLib/ConfigTree.h"
 
@@ -110,7 +110,6 @@ public:
     }
 
     TimeLoop& getTimeLoop() { return *_time_loop; }
-
 private:
     /// Checks if a mesh with the same name exists and provides a unique name in
     /// case of already existing mesh. Returns true if the mesh name is unique.

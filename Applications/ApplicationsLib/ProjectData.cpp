@@ -33,10 +33,10 @@
 #include "ProcessLib/UncoupledProcessesTimeLoop.h"
 
 #include "ProcessLib/GroundwaterFlow/CreateGroundwaterFlowProcess.h"
-#include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
-#include "ProcessLib/TES/CreateTESProcess.h"
 #include "ProcessLib/HeatConduction/CreateHeatConductionProcess.h"
 #include "ProcessLib/RichardsFlow/CreateRichardsFlowProcess.h"
+#include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
+#include "ProcessLib/TES/CreateTESProcess.h"
 
 namespace detail
 {
@@ -104,7 +104,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     parseNonlinearSolvers(project_config.getConfigSubtree("nonlinear_solvers"));
 
     //! \ogs_file_param{prj__time_loop}
-    parseTimeLoop(project_config.getConfigSubtree("time_loop"), output_directory);
+    parseTimeLoop(project_config.getConfigSubtree("time_loop"),
+                  output_directory);
 }
 
 ProjectData::~ProjectData()
@@ -230,8 +231,8 @@ void ProjectData::parseProcessVariables(
          : process_variables_config.getConfigSubtreeList("process_variable"))
     {
         // TODO Extend to referenced meshes.
-        _process_variables.emplace_back(var_config, *_mesh_vec[0],
-                                        *_geoObjects, _parameters);
+        _process_variables.emplace_back(var_config, *_mesh_vec[0], *_geoObjects,
+                                        _parameters);
     }
 }
 
@@ -244,8 +245,8 @@ void ProjectData::parseParameters(BaseLib::ConfigTree const& parameters_config)
          //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
-        _parameters.push_back(ProcessLib::createParameter(
-            parameter_config, _mesh_vec, _curves));
+        _parameters.push_back(
+            ProcessLib::createParameter(parameter_config, _mesh_vec, _curves));
     }
 
     for (auto& parameter : _parameters)
@@ -261,10 +262,12 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
     for (auto process_config : processes_config.getConfigSubtreeList("process"))
     {
         //! \ogs_file_param{process__type}
-        auto const type = process_config.peekConfigParameter<std::string>("type");
+        auto const type =
+            process_config.peekConfigParameter<std::string>("type");
 
         //! \ogs_file_param{process__name}
-        auto const name = process_config.getConfigParameter<std::string>("name");
+        auto const name =
+            process_config.getConfigParameter<std::string>("name");
 
         auto const integration_order =
             //! \ogs_file_param{process__integration_order}
@@ -327,12 +330,13 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                         "given dimension");
             }
         }
-		else if (type == "RICHARDS_FLOW")
-		{
-			process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
-				*_mesh_vec[0], std::move(jacobian_assembler),
-				_process_variables, _parameters, integration_order, process_config, _curves);
-		}
+        else if (type == "RICHARDS_FLOW")
+        {
+            process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
+                *_mesh_vec[0], std::move(jacobian_assembler),
+                _process_variables, _parameters, integration_order,
+                process_config, _curves);
+        }
         else
         {
             OGS_FATAL("Unknown process type: %s", type.c_str());
