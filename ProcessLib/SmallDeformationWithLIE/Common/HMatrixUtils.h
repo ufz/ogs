@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_HMATRIXPOLICYTYPE_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_HMATRIXPOLICYTYPE_H_
 
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -62,3 +63,4 @@ void computeHMatrix(N_Type const& N, HMatrixType& H)
 
 }  // namespace ProcessLib
 
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_HMATRIXPOLICYTYPE_H_

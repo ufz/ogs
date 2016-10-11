@@ -6,7 +6,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_UTILS_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_UTILS_H_
 
 #include <Eigen/Eigen>
 
@@ -40,3 +41,5 @@ MathLib::Point3d computePhysicalCoordinates(MeshLib::Element const&e, Eigen::Mat
 
 }  // namespace SmallDeformationWithLIE
 }  // namespace ProcessLib
+
+#endif

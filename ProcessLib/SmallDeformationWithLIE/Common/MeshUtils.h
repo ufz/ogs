@@ -6,7 +6,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_MESHUTILS_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_MESHUTILS_H_
 
 #include <vector>
 
@@ -39,3 +40,5 @@ void getFractureMatrixDataInMesh(
 
 }  // namespace SmallDeformationWithLIE
 }  // namespace ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_MESHUTILS_H_

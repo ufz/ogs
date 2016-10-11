@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_FRACTUREPROPERTY_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_FRACTUREPROPERTY_H_
 
 #include <Eigen/Eigen>
 
@@ -52,3 +53,5 @@ inline void setFractureProperty(unsigned dim, MeshLib::Element const& e,
 
 }  // namespace SmallDeformationWithLIE
 }  // namespace ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_FRACTUREPROPERTY_H_

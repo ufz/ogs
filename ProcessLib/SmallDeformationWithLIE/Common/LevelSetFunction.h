@@ -6,7 +6,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_LEVELSETFUNCTION_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_LEVELSETFUNCTION_H_
 
 namespace ProcessLib
 {
@@ -24,3 +25,5 @@ double calculateLevelSetFunction(
 
 } // SmallDeformationWithLIE
 } // ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_COMMON_LEVELSETFUNCTION_H_
