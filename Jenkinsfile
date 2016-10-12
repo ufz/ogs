@@ -30,7 +30,7 @@ node('master') {
 
     step([$class: 'GitHubCommitStatusSetter'])
 
-    if (currentBuild.result == "SUCCESS") {
+    if (currentBuild.result == "SUCCESS" || currentBuild.result == "UNSTABLE") {
         if (helper.isOriginMaster()) {
             build job: 'OGS-6/clang-sanitizer', wait: false
             build job: 'OGS-6/Deploy', wait: false
