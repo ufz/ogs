@@ -15,6 +15,10 @@
 #include <logog/include/logog.hpp>
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/PropertyVector.h"
+
+#include "ProcessLib/Parameter/Parameter.h"
+#include "ProcessLib/Parameter/SpatialPosition.h"
 
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -25,7 +29,15 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
-    BaseLib::ConfigTree const& config)
+            BaseLib::ConfigTree const& config,
+            MeshLib::PropertyVector<int> const& material_ids,
+            Parameter<double> const& intrinsic_permeability_data,
+            Parameter<double> const& porosity_data,
+            Parameter<double> const& storage_data)
+    : _material_ids(material_ids),
+      _intrinsic_permeability_data(intrinsic_permeability_data),
+      _porosity_data(porosity_data),
+      _storage_data(storage_data)
 {
     DBUG("Reading material properties of liquid flow process.");
 
@@ -35,10 +47,10 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     // Get fluid properties
     //! \ogs_file_param{prj__material_property__fluid__density}
     auto const& rho_conf = fluid_config.getConfigSubtree("density");
-    liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
+    _liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
     //! \ogs_file_param{prj__material_property__fluid__viscosity}
     auto const& mu_conf = fluid_config.getConfigSubtree("viscosity");
-    viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
+    _viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
 
     // Get porous properties
     //! \ogs_file_param{prj__material_property__porous_medium}
@@ -48,18 +60,18 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     {
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__permeability}
         auto const& perm_conf = conf.getConfigSubtree("permeability");
-        intrinsic_permeability.emplace_back(
+        _intrinsic_permeability_models.emplace_back(
             MaterialLib::PorousMedium::createPermeabilityModel(perm_conf));
 
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__porosity}
         auto const& poro_conf = conf.getConfigSubtree("porosity");
         auto n = MaterialLib::PorousMedium::createPorosityModel(poro_conf);
-        porosity.emplace_back(std::move(n));
+        _porosity_models.emplace_back(std::move(n));
 
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__storage}
         auto const& stora_conf = conf.getConfigSubtree("storage");
         auto beta = MaterialLib::PorousMedium::createStorageModel(stora_conf);
-        storage.emplace_back(std::move(beta));
+        _storage_models.emplace_back(std::move(beta));
     }
 }
 
@@ -69,7 +81,7 @@ double LiquidFlowMaterialProperties::getLiquidDensity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
-    return liquid_density->getValue(vars);
+    return _liquid_density->getValue(vars);
 }
 
 double LiquidFlowMaterialProperties::getViscosity(const double p,
@@ -78,22 +90,53 @@ double LiquidFlowMaterialProperties::getViscosity(const double p,
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
-    return viscosity->getValue(vars);
+    return _viscosity->getValue(vars);
 }
 
 double LiquidFlowMaterialProperties::getMassCoefficient(
-    const double porosity_variable, const double storage_variable,
-    const double p, const double T, const unsigned material_group_id) const
+                                     const double t, const SpatialPosition& pos,
+                                     const double p, const double T,
+                                     const double porosity_variable,
+                                     const double storage_variable) const
 {
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::pl)] = p;
-    return porosity[material_group_id]->getValue(porosity_variable, T) *
-               liquid_density->getdValue(
-                   vars, MaterialLib::Fluid::PropertyVariableType::pl)
-               // Divided by rho_l because the PDE is scaled with rho_l
-               / liquid_density->getValue(vars) +
-           storage[material_group_id]->getValue(storage_variable);
+    const double drho_dp =
+         _liquid_density->getdValue(vars,
+                                   MaterialLib::Fluid::PropertyVariableType::pl);
+    const double rho = _liquid_density->getValue(vars);
+
+    if (_storage_models.size() > 0)
+    {
+        const int mat_id = _material_ids[pos.getElementID()];
+        const double porosity = _porosity_models[mat_id]->getValue(porosity_variable, T);
+        const double storage = _storage_models[mat_id]->getValue(storage_variable);
+        return porosity * drho_dp / rho + storage;
+    }
+    else
+    {
+        const double storage = _storage_data(t, pos)[0];
+        const double porosity = _porosity_data(t, pos)[0];
+        return porosity * drho_dp / rho + storage;
+    }
+}
+
+Eigen::MatrixXd const& LiquidFlowMaterialProperties
+                ::getPermeability(const double t,
+                                  const SpatialPosition& pos,
+                                  const int dim) const
+{
+    if (_intrinsic_permeability_models.size() > 0)
+    {
+        const int mat_id = _material_ids[pos.getElementID()];
+        return _intrinsic_permeability_models[mat_id];
+    }
+    else
+    {
+        auto const permeability = _intrinsic_permeability_data(t, pos)[0];
+        return MathLib::toMatrix(permeability, dim, dim);
+    }
 }
 
 }  // end of namespace

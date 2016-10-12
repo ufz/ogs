@@ -18,13 +18,6 @@
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 
-#include "MeshLib/PropertyVector.h"
-
-namespace MeshLib
-{
-class Mesh;
-}
-
 namespace MaterialLib
 {
 namespace PorousMedium
@@ -34,15 +27,29 @@ class Storage;
 }
 }
 
+namespace MeshLib
+{
+template <typename PROP_VAL_TYPE> class PropertyVector;
+}
+
 namespace ProcessLib
 {
+template <typename T> struct Parameter;
+class SpatialPosition;
+
 namespace LiquidFlow
 {
-struct LiquidFlowMaterialProperties
+class LiquidFlowMaterialProperties
 {
+public:
     typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
 
-    explicit LiquidFlowMaterialProperties(BaseLib::ConfigTree const& config);
+    LiquidFlowMaterialProperties(
+            BaseLib::ConfigTree const& config,
+            MeshLib::PropertyVector<int> const& material_ids,
+            Parameter<double> const& intrinsic_permeability_data,
+            Parameter<double> const& porosity_data,
+            Parameter<double> const& storage_data);
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -51,34 +58,45 @@ struct LiquidFlowMaterialProperties
      *      \f]
      *     where \f$n\f$ is the porosity, \f$rho_l\f$ is the liquid density,
      *     \f$bata_s\f$ is the storage.
+     * \param t                  Time.
+     * \param pos                Position of element.
+     * \param dim                Dimension of space.
      * \param porosity_variable  The first variable for porosity model, and it
      *                           passes a double type value that could be
      *                           saturation, and invariant of stress or strain.
      * \param storage_variable   Variable for storage model.
      * \param p                  Pressure value
      * \param T                  Temperature value
-     * \param material_group_id  Material ID of the element
      */
-    double getMassCoefficient(const double p, const double T,
+    double getMassCoefficient(const double t, const SpatialPosition& pos,
+                              const double p, const double T,
                               const double porosity_variable,
-                              const double storage_variable,
-                              const unsigned material_group_id = 0) const;
+                              const double storage_variable) const;
+
+    Eigen::MatrixXd const& getPermeability(const double t,
+                                            const SpatialPosition& pos,
+                                            const int dim) const;
 
     double getLiquidDensity(const double p, const double T) const;
 
     double getViscosity(const double p, const double T) const;
 
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity;
+private:
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
 
-    /// Porous medium properties of different material zones.
-    /// The vector is left empty if the property data are given in vtu file,
-    /// e.g for heterogeneous medium.
-    std::vector<Eigen::MatrixXd> intrinsic_permeability;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> porosity;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> storage;
+    /** Use porous medium models for different material zones.
+     *  Material IDs must be given as mesh element properties.
+     */
+    MeshLib::PropertyVector<int> const& _material_ids;
+    std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> _porosity_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> _storage_models;
 
-    // TODO: heterogeneous medium.
+    /// Use data for porous medium properties.
+    Parameter<double> const& _intrinsic_permeability_data;
+    Parameter<double> const& _porosity_data;
+    Parameter<double> const& _storage_data;
 };
 
 }  // end of namespace
