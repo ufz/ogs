@@ -62,13 +62,12 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
 public:
-    LiquidFlowLocalAssembler(
-        MeshLib::Element const& element,
-        std::size_t const /*local_matrix_size*/,
-        bool const is_axially_symmetric,
-        unsigned const integration_order,
-        bool const compute_gravitational_term,
-        LiquidFlowMaterialProperties const& material_propertries)
+    LiquidFlowLocalAssembler(MeshLib::Element const& element,
+                             std::size_t const /*local_matrix_size*/,
+                             bool const is_axially_symmetric,
+                             unsigned const integration_order,
+                             bool const compute_gravitational_term,
+                             LiquidFlowMaterialProperties& material_propertries)
         : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -126,7 +125,7 @@ private:
             std::vector<double>(_integration_method.getNumberOfPoints()));
 
     const bool _compute_gravitational_term;
-    LiquidFlowMaterialProperties const& _material_properties;
+    LiquidFlowMaterialProperties& _material_properties;
     double _temperature;
 };
 

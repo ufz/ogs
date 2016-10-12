@@ -63,6 +63,7 @@ public:
             process_variables,
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
+        MeshLib::PropertyVector<int> const& material_ids,
         bool const compute_gravitational_term,
         BaseLib::ConfigTree const& config);
 

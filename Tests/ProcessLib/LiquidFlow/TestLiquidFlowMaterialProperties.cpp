@@ -11,12 +11,17 @@
  */
 
 #include <gtest/gtest.h>
+#include <memory>
 
 #include "TestTools.h"
 
-#include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
-#include "MaterialLib/Fluid/FluidProperty.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 
+#include "ProcessLib/Parameter/SpatialPosition.h"
+#include "ProcessLib/LiquidFlow/LiquidFlowMaterialProperties.h"
+
+#include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
@@ -67,41 +72,20 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("material_property");
 
-    LiquidFlowMaterialProperties lprop(sub_config);
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::MeshGenerator::generateLineMesh(1u, 1.0));
+    std::vector<int> material_ids({0});
+    MeshLib::addPropertyToMesh(*mesh, "MaterialIDs", MeshLib::MeshItemType::Cell,
+                               1, material_ids);
+    
+    auto const& mat_ids = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
 
-    // Check density
-    const ArrayType vars = {273.15 + 60.0, 1.e+6};
-    const double T0 = 273.15;
-    const double p0 = 1.e+5;
-    const double rho0 = 999.8;
-    const double K = 2.15e+9;
-    const double beta = 2.e-4;
-    const double T = vars[0];
-    const double p = vars[1];
+    LiquidFlowMaterialProperties lprop(sub_config, mat_ids.get());
 
-    const double fac_T = 1. + beta * (T - T0);
-    ASSERT_NEAR(rho0 / fac_T / (1. - (p - p0) / K),
-                lprop.liquid_density->getValue(vars), 1.e-10);
-
-    // Test the derivative with respect to temperature.
-    ASSERT_NEAR(-beta * rho0 / (fac_T * fac_T) / (1. - (p - p0) / K),
-                lprop.liquid_density->getdValue(vars, PropertyVariableType::T), 1.e-10);
-
-    // Test the derivative with respect to pressure.
-    const double fac_p = 1. - (p - p0) / K;
-    ASSERT_NEAR(rho0 / (1. + beta * (T - T0)) / (fac_p * fac_p * K),
-                lprop.liquid_density->getdValue(vars, PropertyVariableType::pl), 1.e-10);
-
-    // Check viscosity
-    ArrayType vars1;
-    vars1[0] = 303.0;
-    const auto var_type = MaterialLib::Fluid::PropertyVariableType::T;
-    ASSERT_NEAR(0.802657e-3, lprop.viscosity->getValue(vars1), 1.e-5);
-    ASSERT_NEAR(-1.87823e-5, lprop.viscosity->getdValue(vars1, var_type),
-                1.e-5);
+    ProcessLib::SpatialPosition pos;
+    pos.setElementID(0);
 
     // Check permeability
-    Eigen::MatrixXd& perm = lprop.intrinsic_permeability[0];
+    const Eigen::MatrixXd& perm = lprop.getPermeability(0., pos, 1);
     ASSERT_EQ(2.e-10, perm(0, 0));
     ASSERT_EQ(0., perm(0, 1));
     ASSERT_EQ(0., perm(0, 2));
@@ -111,12 +95,9 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
     ASSERT_EQ(0., perm(2, 0));
     ASSERT_EQ(0., perm(2, 1));
     ASSERT_EQ(4.e-10, perm(2, 2));
-
-    // Check porosity
-    const double variable = 0.;
-    const double temperature = 0.;
-    ASSERT_EQ(0.2, lprop.porosity[0]->getValue(variable, temperature));
-
-    // Check storage
-    ASSERT_EQ(1.e-4, lprop.storage[0]->getValue(variable));
+    
+    const double T = 273.15 + 60.0;
+    const double p = 1.e+6;
+    const double mass_coef = lprop.getMassCoefficient(0., pos, p, T, 0., 0.);
+    ASSERT_NEAR(0.000100000093, mass_coef, 1.e-10);
 }

@@ -25,7 +25,7 @@ namespace LiquidFlow
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assemble(double const /*t*/, std::vector<double> const& local_x,
+    assemble(double const t, std::vector<double> const& local_x,
              std::vector<double>& local_M_data,
              std::vector<double>& local_K_data,
              std::vector<double>& local_b_data)
@@ -43,9 +43,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    const unsigned mat_id = 0;  // TODO for heterogeneous medium
+    SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    _material_properties.setMaterialID(pos);
+
     const Eigen::MatrixXd& perm =
-        _material_properties.intrinsic_permeability[mat_id];
+        _material_properties.getPermeability(t, pos, _element.getDimension());
 
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
@@ -69,8 +72,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Assemble mass matrix, M
         local_M.noalias() +=
-            _material_properties.getMassCoefficient(porosity_variable, storage_variable,
-                                                    p, _temperature, mat_id) *
+            _material_properties.getMassCoefficient(
+                t, pos, porosity_variable, storage_variable, p, _temperature) *
             sm.N.transpose() * sm.N * integration_factor;
 
         // Compute density:
@@ -81,7 +84,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         const double mu = _material_properties.getViscosity(p, _temperature);
 
         // Assemble Laplacian, K, and RHS by the gravitational term
-        if (perm.size() == 1) //Save the computing time for isotropic permeability.
+        if (perm.size() == 1)
         {
             //  Use scalar number for isotropic permeability
             //  to save the computation time.

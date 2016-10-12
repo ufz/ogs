@@ -29,12 +29,12 @@ class Storage;
 
 namespace MeshLib
 {
-template <typename PROP_VAL_TYPE> class PropertyVector;
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
 }
 
 namespace ProcessLib
 {
-template <typename T> struct Parameter;
 class SpatialPosition;
 
 namespace LiquidFlow
@@ -45,11 +45,10 @@ public:
     typedef MaterialLib::Fluid::FluidProperty::ArrayType ArrayType;
 
     LiquidFlowMaterialProperties(
-            BaseLib::ConfigTree const& config,
-            MeshLib::PropertyVector<int> const& material_ids,
-            Parameter<double> const& intrinsic_permeability_data,
-            Parameter<double> const& porosity_data,
-            Parameter<double> const& storage_data);
+        BaseLib::ConfigTree const& config,
+        MeshLib::PropertyVector<int> const& material_ids);
+
+    void setMaterialID(const SpatialPosition& pos);
 
     /**
      * \brief Compute the coefficient of the mass term by
@@ -60,7 +59,6 @@ public:
      *     \f$bata_s\f$ is the storage.
      * \param t                  Time.
      * \param pos                Position of element.
-     * \param dim                Dimension of space.
      * \param porosity_variable  The first variable for porosity model, and it
      *                           passes a double type value that could be
      *                           saturation, and invariant of stress or strain.
@@ -74,8 +72,8 @@ public:
                               const double storage_variable) const;
 
     Eigen::MatrixXd const& getPermeability(const double t,
-                                            const SpatialPosition& pos,
-                                            const int dim) const;
+                                           const SpatialPosition& pos,
+                                           const int dim) const;
 
     double getLiquidDensity(const double p, const double T) const;
 
@@ -89,14 +87,13 @@ private:
      *  Material IDs must be given as mesh element properties.
      */
     MeshLib::PropertyVector<int> const& _material_ids;
-    std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>> _porosity_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>> _storage_models;
 
-    /// Use data for porous medium properties.
-    Parameter<double> const& _intrinsic_permeability_data;
-    Parameter<double> const& _porosity_data;
-    Parameter<double> const& _storage_data;
+    int _current_material_id = 0;
+    std::vector<Eigen::MatrixXd> _intrinsic_permeability_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
+        _porosity_models;
+    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
+        _storage_models;
 };
 
 }  // end of namespace

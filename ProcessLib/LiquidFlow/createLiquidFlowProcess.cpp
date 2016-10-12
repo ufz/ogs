@@ -11,6 +11,8 @@
  */
 #include "createLiquidFlowProcess.h"
 
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+
 #include "ProcessLib/Utils/ParseSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -54,11 +56,31 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     //! \ogs_file_param{process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    return std::unique_ptr<Process>{new LiquidFlowProcess{
-        mesh, std::move(jacobian_assembler), parameters,
-        integration_order,
-        std::move(process_variables), std::move(secondary_variables),
-        std::move(named_function_caller), has_gravitational_term, mat_config}};
+    auto const& mat_ids =
+        mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    if (mat_ids)
+    {
+        INFO("The liquid flow is in heterogeneous porous media.");
+        return std::unique_ptr<Process>{new LiquidFlowProcess{
+            mesh, std::move(jacobian_assembler), parameters, integration_order,
+            std::move(process_variables), std::move(secondary_variables),
+            std::move(named_function_caller), mat_ids.get(),
+            has_gravitational_term, mat_config}};
+    }
+    else
+    {
+        INFO("The liquid flow is in homogeneous porous media.");
+
+        MeshLib::Properties dummy_property;
+        auto const& dummy_property_vector =
+            dummy_property.createNewPropertyVector<int>(
+                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        return std::unique_ptr<Process>{new LiquidFlowProcess{
+            mesh, std::move(jacobian_assembler), parameters, integration_order,
+            std::move(process_variables), std::move(secondary_variables),
+            std::move(named_function_caller), dummy_property_vector.get(),
+            has_gravitational_term, mat_config}};
+    }
 }
 
 }  // end of namespace

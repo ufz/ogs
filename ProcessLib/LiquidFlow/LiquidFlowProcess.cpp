@@ -14,6 +14,8 @@
 
 #include <cassert>
 
+#include "MeshLib/PropertyVector.h"
+
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "LiquidFlowLocalAssembler.h"
 
@@ -32,14 +34,14 @@ LiquidFlowProcess::LiquidFlowProcess(
     std::vector<std::reference_wrapper<ProcessVariable>>&& process_variables,
     SecondaryVariableCollection&& secondary_variables,
     NumLib::NamedFunctionCaller&& named_function_caller,
+    MeshLib::PropertyVector<int> const& material_ids,
     bool const compute_gravitational_term,
     BaseLib::ConfigTree const& config)
     : Process(mesh, std::move(jacobian_assembler), parameters,
-              integration_order,
-              std::move(process_variables), std::move(secondary_variables),
-              std::move(named_function_caller)),
+              integration_order, std::move(process_variables),
+              std::move(secondary_variables), std::move(named_function_caller)),
       _compute_gravitational_term(compute_gravitational_term),
-      _material_properties(LiquidFlowMaterialProperties(config))
+      _material_properties(LiquidFlowMaterialProperties(config, material_ids))
 {
     DBUG("Create Liquid flow process.");
 }
