@@ -14,7 +14,10 @@ node('master') {
             'Content-Type', value: 'Application/json']]])
 }
 
-properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator',
+properties([[
+    $class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty',
+    strategy: [$class: 'LogRotator',
     artifactDaysToKeepStr: '',
     artifactNumToKeepStr: '5',
-    daysToKeepStr: '', numToKeepStr: '10']]])
+    daysToKeepStr: '',
+    numToKeepStr: '10']]])

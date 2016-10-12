@@ -37,3 +37,11 @@ node('docker') {
         'ogs/scripts/jenkins/clang-log-parser.rules')
     post.cleanup()
 }
+
+properties([[
+    $class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty',
+    strategy: [$class: 'LogRotator',
+    artifactDaysToKeepStr: '',
+    artifactNumToKeepStr: '5',
+    daysToKeepStr: '',
+    numToKeepStr: '25']]])
