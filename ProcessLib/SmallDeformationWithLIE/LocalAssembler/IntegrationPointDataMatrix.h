@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAMATRIX_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAMATRIX_H_
 
 #include <memory>
 #include <vector>
@@ -71,3 +72,4 @@ struct IntegrationPointDataMatrix final
 }  // namespace SmallDeformationWithLIE
 }  // namespace ProcessLib
 
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAMATRIX_H_

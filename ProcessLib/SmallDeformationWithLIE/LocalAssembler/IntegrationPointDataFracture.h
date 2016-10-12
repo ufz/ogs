@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAFRACTURE_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAFRACTURE_H_
 
 #include <Eigen/Eigen>
 
@@ -71,3 +72,4 @@ struct IntegrationPointDataFracture final
 }  // namespace SmallDeformationWithLIE
 }  // namespace ProcessLib
 
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_INTEGRATIONPOINTDATAFRACTURE_H_
