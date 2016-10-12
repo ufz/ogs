@@ -25,5 +25,10 @@ def build(buildDir, cmakeOptions, target) {
     sh "cd ${buildDir} && make -j \$(nproc) ${target}"
 }
 
-properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator',
-    artifactDaysToKeepStr: '', artifactNumToKeepStr: '1', daysToKeepStr: '', numToKeepStr: '5']]])
+properties([[
+    $class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty',
+    strategy: [$class: 'LogRotator',
+    artifactDaysToKeepStr: '',
+    artifactNumToKeepStr: '1',
+    daysToKeepStr: '',
+    numToKeepStr: '5']]])

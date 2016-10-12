@@ -38,4 +38,10 @@ node('master') {
     }
 }
 
-properties ([[$class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '25']]])
+properties([[
+    $class: 'org.jenkinsci.plugins.workflow.job.properties.BuildDiscarderProperty',
+    strategy: [$class: 'LogRotator',
+    artifactDaysToKeepStr: '',
+    artifactNumToKeepStr: '5',
+    daysToKeepStr: '',
+    numToKeepStr: '25']]])
