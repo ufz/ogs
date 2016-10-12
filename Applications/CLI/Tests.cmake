@@ -389,6 +389,17 @@ if(NOT OGS_USE_MPI)
         DIFF_DATA
         square_1e5_expected_pcs_0_ts_4_t_1.000000.vtu square_1e5_pcs_0_ts_4_t_1.000000.vtu displacement displacement
     )
+    AddTest(
+        NAME Mechanics_SDL_square_1e2_quad8_traction_topBC
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e2_quad8_traction_top.prj
+        WRAPPER time
+        TESTER vtkdiff
+        ABSTOL 5e-16 RELTOL 1e-15
+        DIFF_DATA
+        expected_square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu square_1e2_quad8_traction_topBC_pcs_0_ts_4_t_1.000000.vtu displacement displacement
+    )
 
     # Mechanics; Small deformations, Burgers (SDB)
     AddTest(

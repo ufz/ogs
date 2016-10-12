@@ -173,6 +173,14 @@ public:
     virtual Element* clone() const = 0;
 
     /**
+     * Constructs a new object polymorphically. This is similar to clone, but
+     * accepts new nodes and id.
+     * \pre The length of the \c nodes vector is equal to the derived element's
+     * total number of nodes.
+     */
+    virtual Element* clone(Node** nodes, std::size_t id) const = 0;
+
+    /**
      * Computes the length / area / volumen of this element. This is automatically
      * done at initalisation time but can be repeated by calling this function at any time.
      */
