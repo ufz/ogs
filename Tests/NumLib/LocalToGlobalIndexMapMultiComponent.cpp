@@ -63,7 +63,7 @@ public:
         // deep copy because the searcher destroys the elements.
         std::transform(elems.cbegin(), elems.cend(),
                        std::back_inserter(boundary_elements),
-                       std::mem_fn(&MeL::Element::clone));
+                       [](MeL::Element const* e) { return e->clone(); });
 
         std::vector<MeL::Node*> nodes = MeL::getUniqueNodes(boundary_elements);
 
