@@ -9,10 +9,9 @@
 #   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments>
-#   WRAPPER <time|memcheck|callgrind> # optional, defaults to time
+#   WRAPPER <time|memcheck|callgrind> # optional
 #   WRAPPER_ARGS <arguments> # optional
-#   TESTER <diff|memcheck> # optional
-#   DATA <list of all required data files, white-space separated, have to be in PATH>
+#   TESTER <diff|vtkdiff|memcheck> # optional
 # )
 #
 # Conditional arguments:
@@ -53,14 +52,9 @@ function (AddTest)
     if (NOT AddTest_RELTOL)
         set (AddTest_RELTOL 1e-16)
     endif()
-    # message("AddTest_ABSTOL ${AddTest_ABSTOL}")
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
         set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
-    endif()
-
-    if(NOT AddTest_WRAPPER)
-        set(AddTest_WRAPPER time)
     endif()
 
     # --- Implement wrappers ---
@@ -172,8 +166,12 @@ function (AddTest)
     endforeach()
 
     # Run the wrapper
+    if(DEFINED AddTest_WRAPPER)
+        set(AddTest_WRAPPER_STRING "-${AddTest_WRAPPER}")
+    endif()
+    set(TEST_NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}${AddTest_WRAPPER_STRING}")
     add_test(
-        NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}"
+        NAME ${TEST_NAME}
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
         "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
@@ -195,14 +193,14 @@ function (AddTest)
     endif()
 
     # Run the tester
+    set(TESTER_NAME "${TEST_NAME}-${AddTest_TESTER}")
     add_test(
-        NAME "${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}"
+        NAME ${TESTER_NAME}
         COMMAND ${CMAKE_COMMAND}
         -Dcase_path=${AddTest_SOURCE_PATH}
         -DTESTER_COMMAND=${TESTER_COMMAND}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
     )
-    set_tests_properties(${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER}-${AddTest_TESTER}
-        PROPERTIES DEPENDS ${AddTest_EXECUTABLE}-${AddTest_NAME}-${AddTest_WRAPPER})
+    set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
 
 endfunction()
