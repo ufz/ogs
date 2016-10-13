@@ -31,6 +31,8 @@
 template <typename BMatricesType, int DisplacementDim>
 struct IntegrationPointData final
 {
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
     explicit IntegrationPointData(
         MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
         : _solid_material(solid_material),
