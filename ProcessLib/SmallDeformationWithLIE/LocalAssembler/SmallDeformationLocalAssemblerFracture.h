@@ -153,7 +153,8 @@ private:
     std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>> _ip_data;
 
     IntegrationMethod _integration_method;
-    std::vector<ShapeMatrices> _shape_matrices;
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
+        _shape_matrices;
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 };
