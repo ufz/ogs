@@ -62,11 +62,20 @@ add_custom_target(
     ${CONFIG_PARAMETER} --parallel ${NUM_PROCESSORS} --test-action test
     DEPENDS ogs vtkdiff ctest-large-cleanup
 )
+add_custom_target(
+    ctest-large-serial
+    COMMAND ${CMAKE_CTEST_COMMAND} -T Test
+    --force-new-ctest-process
+    --output-on-failure --output-log Tests/ctest-large.log
+    ${CONFIG_PARAMETER} --test-action test
+    DEPENDS ogs vtkdiff ctest-large-cleanup
+)
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
 
 set_target_properties(ctest PROPERTIES FOLDER Testing)
 set_target_properties(ctest-large PROPERTIES FOLDER Testing)
+set_target_properties(ctest-large-serial PROPERTIES FOLDER Testing)
 set_target_properties(ctest-cleanup PROPERTIES FOLDER Testing)
 set_target_properties(ctest-large-cleanup PROPERTIES FOLDER Testing)
