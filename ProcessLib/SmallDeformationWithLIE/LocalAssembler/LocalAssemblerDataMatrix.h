@@ -30,7 +30,7 @@ public:
     LocalAssemblerDataMatrix(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
         : SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
