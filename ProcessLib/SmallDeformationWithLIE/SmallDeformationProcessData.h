@@ -64,12 +64,14 @@ struct SmallDeformationProcessData
     double dt = 0.0;
     double t = 0.0;
 
+    // mesh properties to output stress of elements
     MeshLib::PropertyVector<double>* _mesh_prop_stress_xx = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_stress_yy = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_stress_xy = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_xx = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_yy = nullptr;
     MeshLib::PropertyVector<double>* _mesh_prop_strain_xy = nullptr;
+    // mesh property for fracture aperture
     MeshLib::PropertyVector<double>* _mesh_prop_b = nullptr;
 };
 
