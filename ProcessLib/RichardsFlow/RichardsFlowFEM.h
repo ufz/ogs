@@ -113,10 +113,8 @@ public:
             auto const rho_w = _process_data.water_density(t, pos)[0];
             auto const body_force = _process_data.specific_body_force(t, pos);
             assert(body_force.size() == GlobalDim);
-            auto const b =
-                Eigen::Map<typename ShapeMatricesType::template VectorType<
-                    GlobalDim> const>(body_force.data(), GlobalDim);
-
+            auto const& b =
+                MathLib::toVector<Eigen::VectorXd>(body_force, GlobalDim);
             double Pc = -P_int_pt;
 
             double Sw = interpolated_Pc.getValue(Pc);
