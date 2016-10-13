@@ -65,3 +65,8 @@ add_custom_target(
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
+
+set_target_properties(ctest PROPERTIES FOLDER Testing)
+set_target_properties(ctest-large PROPERTIES FOLDER Testing)
+set_target_properties(ctest-cleanup PROPERTIES FOLDER Testing)
+set_target_properties(ctest-large-cleanup PROPERTIES FOLDER Testing)
