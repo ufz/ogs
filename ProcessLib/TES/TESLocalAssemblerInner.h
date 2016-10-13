@@ -72,7 +72,6 @@ private:
 
 }  // namespace ProcessLib
 
-// tricking cmake dependency checker
-#include "TESLocalAssemblerInner-impl-incl.h"
+#include "TESLocalAssemblerInner-impl.h"
 
 #endif  // PROCESS_LIB_TES_FEM_NOTPL_H_

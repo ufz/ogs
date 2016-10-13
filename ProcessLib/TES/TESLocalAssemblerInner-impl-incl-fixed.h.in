@@ -1,7 +1,0 @@
-#ifndef PROCESSLIB_TES_FEM_DATA_IMPL_INCL
-#define PROCESSLIB_TES_FEM_DATA_IMPL_INCL
-
-static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0, "inconsistent use of macros");
-#include "TESLocalAssemblerInner-impl.h"
-
-#endif // PROCESSLIB_TES_FEM_DATA_IMPL_INCL
