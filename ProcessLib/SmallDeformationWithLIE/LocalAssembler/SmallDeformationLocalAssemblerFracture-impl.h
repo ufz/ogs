@@ -105,6 +105,8 @@ assembleWithJacobian(
     FractureProperty const& frac_prop = *_process_data._fracture_property;
     auto const& R = frac_prop.R;
 
+    // the index of a normal (normal to a fracture plane) component
+    // in a displacement vector
     int const index_normal = DisplacementDim - 1;
 
     unsigned const n_integration_points =
