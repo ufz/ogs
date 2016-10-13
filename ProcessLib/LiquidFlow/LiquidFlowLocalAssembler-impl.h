@@ -16,7 +16,6 @@
 #include "LiquidFlowLocalAssembler.h"
 
 #include "NumLib/Function/Interpolation.h"
-#include "MaterialLib/PhysicalConstant.h"
 
 namespace ProcessLib
 {
@@ -79,7 +78,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Compute density:
         const double rho_g =
             _material_properties.getLiquidDensity(p, _temperature) *
-            MaterialLib::PhysicalConstant::g;
+            _gravitational_acceleration;
         // Compute viscosity:
         const double mu = _material_properties.getViscosity(p, _temperature);
 
@@ -91,20 +90,21 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             const double K = perm(0, 0) / mu;
             const double fac = K * integration_factor;
             local_K.noalias() += fac * sm.dNdx.transpose() * sm.dNdx;
-            if (_compute_gravitational_term)
+            if (_gravitational_axis_id >= 0)
             {
                 local_b.noalias() -=
-                    fac * sm.dNdx.transpose().col(GlobalDim - 1) * rho_g;
+                    fac * sm.dNdx.transpose().col(_gravitational_axis_id) *
+                    rho_g;
             }
         }
         else
         {
             const double fac = integration_factor / mu;
             local_K.noalias() += fac * sm.dNdx.transpose() * perm * sm.dNdx;
-            if (_compute_gravitational_term)
+            if (_gravitational_axis_id >= 0)
             {
-                local_b.noalias() -=
-                    fac * rho_g * sm.dNdx.transpose() * perm.col(GlobalDim - 1);
+                local_b.noalias() -= fac * rho_g * sm.dNdx.transpose() *
+                                     perm.col(_gravitational_axis_id);
             }
         }
     }

@@ -66,14 +66,16 @@ public:
                              std::size_t const /*local_matrix_size*/,
                              bool const is_axially_symmetric,
                              unsigned const integration_order,
-                             bool const compute_gravitational_term,
+                             int const gravitational_axis_id,
+                             double const gravitational_acceleration,
                              LiquidFlowMaterialProperties& material_propertries)
         : _element(element),
           _integration_method(integration_order),
           _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
               element, is_axially_symmetric, _integration_method)),
-          _compute_gravitational_term(compute_gravitational_term),
+          _gravitational_axis_id(gravitational_axis_id),
+          _gravitational_acceleration(gravitational_acceleration),
           _material_properties(material_propertries)
     {
     }
@@ -124,7 +126,8 @@ private:
             GlobalDim,
             std::vector<double>(_integration_method.getNumberOfPoints()));
 
-    const bool _compute_gravitational_term;
+    const int _gravitational_axis_id;
+    const double _gravitational_acceleration;
     LiquidFlowMaterialProperties& _material_properties;
     double _temperature;
 };

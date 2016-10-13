@@ -18,10 +18,6 @@ namespace MaterialLib
  */
 namespace PhysicalConstant
 {
-
-/// Gravitational acceleration
-const double g = 9.81;
-
 /// Zero degrees Celsius in Kelvin
 const double CelsiusZeroInKelvin = 273.15;
 

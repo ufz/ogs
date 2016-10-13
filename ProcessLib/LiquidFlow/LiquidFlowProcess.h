@@ -64,7 +64,8 @@ public:
         SecondaryVariableCollection&& secondary_variables,
         NumLib::NamedFunctionCaller&& named_function_caller,
         MeshLib::PropertyVector<int> const& material_ids,
-        bool const compute_gravitational_term,
+        int const gravitational_axis_id,
+        double const gravitational_acceleration,
         BaseLib::ConfigTree const& config);
 
     bool isLinear() const override { return true; }
@@ -82,7 +83,8 @@ private:
         const double dxdot_dx, const double dx_dx, GlobalMatrix& M,
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
-    const bool _compute_gravitational_term;
+    const int _gravitational_axis_id;
+    const double _gravitational_acceleration;
     LiquidFlowMaterialProperties _material_properties;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>

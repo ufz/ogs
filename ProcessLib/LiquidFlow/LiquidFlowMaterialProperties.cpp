@@ -14,6 +14,8 @@
 
 #include <logog/include/logog.hpp>
 
+#include "BaseLib/reorderVector.h"
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 
@@ -47,11 +49,16 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
     _viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
 
     // Get porous properties
+    std::vector<int> mat_ids;
     //! \ogs_file_param{prj__material_property__porous_medium}
     auto const& poro_config = config.getConfigSubtree("porous_medium");
     //! \ogs_file_param{prj__material_property__porous_medium__porous_medium}
     for (auto const& conf : poro_config.getConfigSubtreeList("porous_medium"))
     {
+        //! \ogs_file_attr{prj__material_property__porous_medium__porous_medium__id}
+        auto const id = conf.getConfigAttributeOptional<int>("id");
+        mat_ids.push_back(*id);
+
         //! \ogs_file_param{prj__material_property__porous_medium__porous_medium__permeability}
         auto const& perm_conf = conf.getConfigSubtree("permeability");
         _intrinsic_permeability_models.emplace_back(
@@ -67,6 +74,10 @@ LiquidFlowMaterialProperties::LiquidFlowMaterialProperties(
         auto beta = MaterialLib::PorousMedium::createStorageModel(stora_conf);
         _storage_models.emplace_back(std::move(beta));
     }
+
+    BaseLib::reorderVector(_intrinsic_permeability_models, mat_ids);
+    BaseLib::reorderVector(_porosity_models, mat_ids);
+    BaseLib::reorderVector(_storage_models, mat_ids);
 }
 
 void LiquidFlowMaterialProperties::setMaterialID(const SpatialPosition& pos)
@@ -107,6 +118,7 @@ double LiquidFlowMaterialProperties::getMassCoefficient(
     const double drho_dp = _liquid_density->getdValue(
         vars, MaterialLib::Fluid::PropertyVariableType::pl);
     const double rho = _liquid_density->getValue(vars);
+    assert(rho > 0.);
 
     const double porosity =
         _porosity_models[_current_material_id]->getValue(porosity_variable, T);

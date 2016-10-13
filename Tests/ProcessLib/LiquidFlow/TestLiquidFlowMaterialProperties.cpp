@@ -25,8 +25,6 @@
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 
-#include "MeshLib/Mesh.h"
-
 using namespace ProcessLib::LiquidFlow;
 using namespace MaterialLib::Fluid;
 using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
@@ -51,7 +49,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
         "        </viscosity>"
         "    </fluid>"
         "    <porous_medium>"
-        "        <porous_medium>"
+        "        <porous_medium  id=\"0\">"
         "            <permeability>"
         "                <values>2.e-10 0. 0. 0. 3.e-10 0. 0. 0. 4.0e-10</values>"
         "            </permeability>"
@@ -72,14 +70,12 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("material_property");
 
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::MeshGenerator::generateLineMesh(1u, 1.0));
-    std::vector<int> material_ids({0});
-    MeshLib::addPropertyToMesh(*mesh, "MaterialIDs", MeshLib::MeshItemType::Cell,
-                               1, material_ids);
-    
-    auto const& mat_ids = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+    MeshLib::Properties dummy_property;
+    auto const& dummy_property_vector =
+                dummy_property.createNewPropertyVector<int>(
+                               "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
 
-    LiquidFlowMaterialProperties lprop(sub_config, mat_ids.get());
+    LiquidFlowMaterialProperties lprop(sub_config, *dummy_property_vector);
 
     ProcessLib::SpatialPosition pos;
     pos.setElementID(0);
@@ -95,7 +91,7 @@ TEST(ProcessLibLiquidFlow, checkLiquidFlowMaterialProperties)
     ASSERT_EQ(0., perm(2, 0));
     ASSERT_EQ(0., perm(2, 1));
     ASSERT_EQ(4.e-10, perm(2, 2));
-    
+
     const double T = 273.15 + 60.0;
     const double p = 1.e+6;
     const double mass_coef = lprop.getMassCoefficient(0., pos, p, T, 0., 0.);

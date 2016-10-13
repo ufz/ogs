@@ -59,12 +59,12 @@ public:
      *     \f$bata_s\f$ is the storage.
      * \param t                  Time.
      * \param pos                Position of element.
+     * \param p                  Pressure value.
+     * \param T                  Temperature value.
      * \param porosity_variable  The first variable for porosity model, and it
      *                           passes a double type value that could be
      *                           saturation, and invariant of stress or strain.
      * \param storage_variable   Variable for storage model.
-     * \param p                  Pressure value
-     * \param T                  Temperature value
      */
     double getMassCoefficient(const double t, const SpatialPosition& pos,
                               const double p, const double T,
@@ -94,6 +94,10 @@ private:
         _porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _storage_models;
+
+    // Note: For the statistical data of porous media, they could be read from
+    // vtu files directly. This can be done by using property vectors directly.
+    // Such property vectors will be added here if they are needed.
 };
 
 }  // end of namespace

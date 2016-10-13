@@ -48,10 +48,22 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     ProcessLib::parseSecondaryVariables(config, secondary_variables,
                                         named_function_caller);
 
-    auto const gravitational_term =
-        //! \ogs_file_param{process__LIQUID_FLOW__gravitational_term}
-        config.getConfigParameter<std::string>("gravitational_term");
-    const bool has_gravitational_term = (gravitational_term == "enabled");
+    auto const gravity_param = config.getConfigParameter("gravitational_term");
+    auto const axis =
+        //! \ogs_file_attr{process__LIQUID_FLOW__gravitational_term__axis}
+        gravity_param.getConfigAttributeOptional<std::string>("axis");
+    // Gravitational acceleration
+    auto const g =
+        //! \ogs_file_attr{process__LIQUID_FLOW__gravitational_term__g}
+        gravity_param.getConfigAttributeOptional<double>("g");
+
+    int gravity_axis_id = -1;
+    if (*axis == "x")
+        gravity_axis_id = 0;
+    else if (*axis == "y")
+        gravity_axis_id = 1;
+    else if (*axis == "z")
+        gravity_axis_id = 2;
 
     //! \ogs_file_param{process__LIQUID_FLOW__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
@@ -64,8 +76,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         return std::unique_ptr<Process>{new LiquidFlowProcess{
             mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(secondary_variables),
-            std::move(named_function_caller), mat_ids.get(),
-            has_gravitational_term, mat_config}};
+            std::move(named_function_caller), *mat_ids, gravity_axis_id, *g,
+            mat_config}};
     }
     else
     {
@@ -78,8 +90,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         return std::unique_ptr<Process>{new LiquidFlowProcess{
             mesh, std::move(jacobian_assembler), parameters, integration_order,
             std::move(process_variables), std::move(secondary_variables),
-            std::move(named_function_caller), dummy_property_vector.get(),
-            has_gravitational_term, mat_config}};
+            std::move(named_function_caller), *dummy_property_vector,
+            gravity_axis_id, *g, mat_config}};
     }
 }
 
