@@ -5,12 +5,12 @@ if(USE_CONAN)
 endif()
 
 if(OGS_LIB_EIGEN STREQUAL "System")
-    find_package(Eigen3 3.2.5 REQUIRED)
+    find_package(Eigen3 3.2.8 REQUIRED)
     if(NOT EIGEN3_FOUND)
         message(FATAL_ERROR "Aborting CMake because system Eigen was not found!")
     endif()
 elseif(OGS_LIB_EIGEN STREQUAL "Default")
-    find_package(Eigen3 3.2.5)
+    find_package(Eigen3 3.2.8)
 endif()
 
 # First check for system Eigen
