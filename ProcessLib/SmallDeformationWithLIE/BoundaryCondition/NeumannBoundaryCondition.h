@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_
 
 #include "ProcessLib/Parameter/Parameter.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
@@ -37,3 +38,5 @@ createNeumannBoundaryCondition(
 
 }  // SmallDeformationWithLIE
 }  // ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_NEUMANNBOUNDARYCONDITION_H_

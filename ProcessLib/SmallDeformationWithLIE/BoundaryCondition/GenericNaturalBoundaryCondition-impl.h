@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_
+
 #include "GenericNaturalBoundaryCondition.h"
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
@@ -92,3 +95,5 @@ void GenericNaturalBoundaryCondition<
 
 }  // SmallDeformationWithLIE
 }  // ProcessLib
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_IMPL_H_

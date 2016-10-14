@@ -7,7 +7,8 @@
  *
  */
 
-#pragma once
+#ifndef PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_H_
+#define PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_H_
 
 #include "MeshLib/MeshSubset.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
@@ -78,3 +79,5 @@ private:
 }  // ProcessLib
 
 #include "GenericNaturalBoundaryCondition-impl.h"
+
+#endif // PROCESSLIB_SMALLDEFORMATION_WITH_LIE_GENERICNATURALBOUNDARYCONDITION_H_
