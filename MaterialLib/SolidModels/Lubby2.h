@@ -64,6 +64,13 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
+        std::unique_ptr<typename MechanicsBase<DisplacementDim>::MaterialStateVariables> clone() override
+        {
+            return std::unique_ptr<
+                typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
+                {new MaterialStateVariables{*this}};
+        }
+
         MaterialStateVariables()
         {
             eps_K_t.resize(KelvinVectorSize);
