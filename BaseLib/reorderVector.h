@@ -17,23 +17,19 @@
 namespace BaseLib
 {
 /**
- * Reorder a vector by a given index vector.
- *  From
- *  <a href="reorderV">http://stackoverflow.com/questions/838384/reorder-vector-using-a-vector-of-indices</a>
+ *  Reorder a vector by a given index vector.
  *
- *  Note: The simple version on that page is taken, which is good enough in performance
- *        for medium size vectors.
+ *  Note: It is good enough in performance for medium size vectors.
  */
 template <typename ValueType, typename IndexType>
 void reorderVector(std::vector<ValueType>& v,
                    std::vector<IndexType> const& order)
 {
-    for (std::size_t s = 1, d; s < order.size(); ++s)
+    std::vector<ValueType> temp_v = v;
+
+    for (std::size_t i=0; i<order.size(); i++)
     {
-        for (d = order[s]; d < s; d = order[d]);
-        if (d == s)
-            while (d = order[d], d != s)
-                std::swap(v[s], v[d]);
+        v[i] =  temp_v[order[i]];
     }
 }
 

@@ -12,6 +12,8 @@
  */
 
 #include <vector>
+#include <algorithm>
+#include <numeric>
 
 #include <gtest/gtest.h>
 
@@ -19,12 +21,19 @@
 
 TEST(BaseLib_reorderVector, testreorderVector)
 {
-    std::vector<double> vec {2016.0, 1996.0, 2006.0, 1986.0};
-    std::vector<int> order {3, 1, 2, 0};
+    const std::size_t size = 100;
+    std::vector<double> vec(size);
+    std::generate(vec.begin(), vec.end(), std::rand);
+    std::vector<double> vec0 = vec;
+
+    std::vector<int> order(size);
+    std::iota(order.begin(), order.end(), 0);
+    std::random_shuffle(order.begin(), order.end());
+
     BaseLib::reorderVector(vec, order);
 
-    EXPECT_EQ(1986.0, vec[0]);
-    EXPECT_EQ(1996.0, vec[1]);
-    EXPECT_EQ(2006.0, vec[2]);
-    EXPECT_EQ(2016.0, vec[3]);
+    for (std::size_t i= 0; i<size; i++)
+    {
+        EXPECT_EQ(vec0[order[i]], vec[i]);
+    }
 }
