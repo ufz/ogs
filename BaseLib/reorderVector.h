@@ -25,11 +25,12 @@ template <typename ValueType, typename IndexType>
 void reorderVector(std::vector<ValueType>& v,
                    std::vector<IndexType> const& order)
 {
-    std::vector<ValueType> temp_v = v;
+    std::vector<ValueType> temp_v(v.size());
+    temp_v.swap(v);
 
     for (std::size_t i=0; i<order.size(); i++)
     {
-        v[i] =  temp_v[order[i]];
+        std::swap(v[i], temp_v[order[i]]);
     }
 }
 
