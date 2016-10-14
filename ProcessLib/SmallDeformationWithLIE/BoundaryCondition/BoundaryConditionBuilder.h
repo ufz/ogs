@@ -31,6 +31,8 @@ namespace ProcessLib
 namespace SmallDeformationWithLIE
 {
 
+/// A boundary condition builder for displacement jumps. Boundary integration,
+/// e.g. for Neumann BC, should take into account the leveset function.
 class BoundaryConditionBuilder : public ProcessLib::BoundaryConditionBuilder
 {
 public:
